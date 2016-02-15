@@ -15,15 +15,9 @@
 
 /**
  * ActorUsage.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.core;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
 
 import adams.core.ClassLister;
 import adams.core.base.BaseRegExp;
@@ -37,6 +31,12 @@ import adams.data.io.output.SpreadSheetWriter;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.env.Environment;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -343,14 +343,14 @@ public class ActorUsage
     String[]				names;
     Row					row;
     List<String>			list;
-    AbstractActor			actor;
-    List<AbstractActor>			actors;
+    Actor				actor;
+    List<Actor>				actors;
     int					count;
     String				flowAct;
 
     // initialize relation
     relation = new HashMap<String,List<String>>();
-    names    = ClassLister.getSingleton().getClassnames(AbstractActor.class);
+    names    = ClassLister.getSingleton().getClassnames(Actor.class);
     for (String name: names)
       relation.put(name, new ArrayList<String>());
 

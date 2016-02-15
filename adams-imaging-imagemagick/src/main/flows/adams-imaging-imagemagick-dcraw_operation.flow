@@ -1,57 +1,13 @@
 # Project: adams
-# Date: 2014-11-05 21:25:33
+# Date: 2016-02-15 14:30:45
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	Uses dcraw, if installed, to load a Canon RAW image (*.cr2)\nand adjusts the brightness. The output is stored in PPM format.
-	-actor
-		adams.flow.source.SelectFile
-			-stop-if-canceled
-			true
-			-file-chooser-title
-			Select raw image
-			-initial-dir
-			${EXAMPLE_FLOWS}/data
-			-extension
-			cr2
-	-actor
-		adams.flow.control.Tee
-			-name
-			output filename
-			-tee
-				adams.flow.transformer.BaseName
-			-tee
-				adams.flow.transformer.PrependDir
-					-prefix
-					${EXAMPLE_FLOWS}/output
-			-tee
-				adams.flow.transformer.Convert
-					-name
-					change extension
-					-conversion
-						adams.data.conversion.ReplaceFileExtension
-							-extension
-							.ppm
-			-tee
-				adams.flow.transformer.SetVariable
-					-var-name
-					outfile
-	-actor
-		adams.flow.transformer.ImageMagickOperation
-			-name
-			brightness
-			-operation
-				adams.data.imagemagick.dcraw.Brightness
-					-level
-					2.0
-			-output
-			@{outfile}
-	-actor
-		adams.flow.sink.Display
-			-writer
-				adams.data.io.output.NullWriter
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "Uses dcraw, if installed, to load a Canon RAW image (*.cr2)\\nand adjusts the brightness. The output is stored in PPM format." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.source.SelectFile -stop-if-canceled true -file-chooser-title "Select raw image" -initial-dir ${EXAMPLE_FLOWS}/data -extension cr2
+ adams.flow.control.Tee -name "output filename"
+  adams.flow.transformer.BaseName
+  adams.flow.transformer.PrependDir -prefix ${EXAMPLE_FLOWS}/output
+  adams.flow.transformer.Convert -name "change extension" -conversion "adams.data.conversion.ReplaceFileExtension -extension .ppm"
+  adams.flow.transformer.SetVariable -var-name outfile
+ adams.flow.transformer.ImageMagickOperation -name brightness -operation "adams.data.imagemagick.dcraw.Brightness -level 2.0" -output @{outfile}
+ adams.flow.sink.Display -writer adams.data.io.output.NullWriter

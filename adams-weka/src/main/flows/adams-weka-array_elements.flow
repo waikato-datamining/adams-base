@@ -1,45 +1,12 @@
 # Project: adams
-# Date: 2014-01-23 15:46:56
+# Date: 2016-02-15 15:16:25
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	This flow demonstrates how to process and access the elements\nof an array. Processing, as in converting the String array into a\nAbstractClassifier array. Accessing elements, as in retrieving a \nvalue and writing back another value.
-	-actor
-		adams.flow.source.StringConstants
-			-output-array
-			true
-			-string
-			weka.classifiers.rules.ZeroR
-			-string
-			weka.classifiers.trees.J48 -C 0.25 -M 2
-			-string
-			weka.classifiers.functions.Logistic -R 1.0E-8 -M -1
-			-string
-			weka.classifiers.functions.SMO -C 1.0 -L 0.0010 -P 1.0E-12 -N 0 -V -1 -W 1 -K "weka.classifiers.functions.supportVector.PolyKernel -C 250007 -E 1.0"
-	-actor
-		adams.flow.control.ArrayProcess
-			-actor
-				adams.flow.transformer.Convert
-					-conversion
-						adams.data.conversion.CommandlineToAny
-			-array-class
-			weka.classifiers.AbstractClassifier
-	-actor
-		adams.flow.transformer.SetArrayElement
-			-index
-			2
-			-value
-			weka.classifiers.functions.MultilayerPerceptron -L 0.3 -M 0.2 -N 500 -V 0 -S 0 -E 20 -H a
-	-actor
-		adams.flow.transformer.ArrayToSequence
-	-actor
-		adams.flow.transformer.Convert
-			-conversion
-				adams.data.conversion.AnyToCommandline
-	-actor
-		adams.flow.sink.Display
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "This flow demonstrates how to process and access the elements\\nof an array. Processing, as in converting the String array into a\\nAbstractClassifier array. Accessing elements, as in retrieving a \\nvalue and writing back another value." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.source.StringConstants -output-array true -string weka.classifiers.rules.ZeroR -string "weka.classifiers.trees.J48 -C 0.25 -M 2" -string "weka.classifiers.functions.Logistic -R 1.0E-8 -M -1" -string "weka.classifiers.functions.SMO -C 1.0 -L 0.0010 -P 1.0E-12 -N 0 -V -1 -W 1 -K \\\"weka.classifiers.functions.supportVector.PolyKernel -C 250007 -E 1.0\\\""
+ adams.flow.control.ArrayProcess -array-class weka.classifiers.AbstractClassifier
+  adams.flow.transformer.Convert -conversion adams.data.conversion.CommandlineToAny
+ adams.flow.transformer.SetArrayElement -index 2 -value "weka.classifiers.functions.MultilayerPerceptron -L 0.3 -M 0.2 -N 500 -V 0 -S 0 -E 20 -H a"
+ adams.flow.transformer.ArrayToSequence
+ adams.flow.transformer.Convert -conversion adams.data.conversion.AnyToCommandline
+ adams.flow.sink.Display -writer adams.data.io.output.NullWriter

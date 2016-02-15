@@ -15,12 +15,12 @@
 
 /**
  * AbstractContainerUpdater.java
- * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.control;
 
 import adams.flow.container.AbstractContainer;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.core.InputConsumer;
 import adams.flow.core.Token;
 import adams.flow.core.Unknown;
@@ -163,7 +163,7 @@ public abstract class AbstractContainerUpdater
   @Override
   protected String doExecute() {
     String		result;
-    AbstractActor	first;
+    Actor 		first;
     Object		input;
     Object		output;
     AbstractContainer	cont;

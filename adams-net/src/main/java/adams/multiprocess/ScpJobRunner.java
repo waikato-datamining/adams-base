@@ -15,7 +15,7 @@
 
 /**
  * ScpJobRunner.java
- * Copyright (C) 2015 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton, NZ
  */
 
 package adams.multiprocess;
@@ -31,7 +31,6 @@ import adams.core.io.TempUtils;
 import adams.core.net.InternetHelper;
 import adams.core.net.Scp;
 import adams.event.JobCompleteListener;
-import adams.flow.core.AbstractActor;
 import adams.flow.core.ActorUtils;
 import adams.flow.standalone.SSHConnection;
 
@@ -235,7 +234,7 @@ public class ScpJobRunner
         if (getFlowContext() == null) {
           return "No flow context set, aborting!";
         }
-        m_Connection = (SSHConnection) ActorUtils.findClosestType((AbstractActor) getFlowContext(), SSHConnection.class);
+        m_Connection = (SSHConnection) ActorUtils.findClosestType(getFlowContext(), SSHConnection.class);
         if (m_Connection == null) {
           return "No " + SSHConnection.class.getName() + " actor found, aborting!";
         }
@@ -710,7 +709,7 @@ public class ScpJobRunner
       if (getFlowContext() == null) {
         return "No flow context set, aborting!";
       }
-      m_Connection = (SSHConnection) ActorUtils.findClosestType((AbstractActor) getFlowContext(), SSHConnection.class);
+      m_Connection = (SSHConnection) ActorUtils.findClosestType(getFlowContext(), SSHConnection.class);
       if (m_Connection == null) {
         return "No " + SSHConnection.class.getName() + " actor found, aborting!";
       }

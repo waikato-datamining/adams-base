@@ -15,7 +15,7 @@
 
 /**
  * FlowTabManager.java
- * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.tab;
 
@@ -23,7 +23,7 @@ import adams.core.ClassLocator;
 import adams.core.CleanUpHandler;
 import adams.core.Properties;
 import adams.env.Environment;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.gui.core.BaseTabbedPaneWithTabHiding;
 import adams.gui.core.DelayedActionRunnable;
 import adams.gui.core.MouseUtils;
@@ -212,7 +212,7 @@ public class FlowTabManager
    * @param paths	the selected paths
    * @param actors	the selected actors
    */
-  public void notifyTabs(final TreePath[] paths, final AbstractActor[] actors) {
+  public void notifyTabs(final TreePath[] paths, final Actor[] actors) {
     DelayedActionRunnable.AbstractAction	action;
 
     if (getTabCount() == 0)
@@ -275,9 +275,9 @@ public class FlowTabManager
    * @param tree	the tree to use as basis
    */
   public void refresh(Tree tree) {
-    TreePath[]		paths;
-    AbstractActor[]	actors;
-    int			i;
+    TreePath[]	paths;
+    Actor[]	actors;
+    int		i;
 
     if (tree == null)
       return;
@@ -285,7 +285,7 @@ public class FlowTabManager
     paths = tree.getSelectionPaths();
     if (paths == null)
       paths = new TreePath[0];
-    actors = new AbstractActor[paths.length];
+    actors = new Actor[paths.length];
     for (i = 0; i < paths.length; i++)
       actors[i] = ((Node) paths[i].getLastPathComponent()).getActor();
 

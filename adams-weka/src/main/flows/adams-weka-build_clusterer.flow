@@ -1,52 +1,13 @@
 # Project: adams
-# Date: 2014-01-23 15:47:58
+# Date: 2016-02-15 15:19:07
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	Builds a clusterer on a dataset with the class attribute removed\nand outputs the generated model.
-	-actor
-		adams.flow.standalone.CallableActors
-			-actor
-				adams.flow.source.WekaClustererSetup
-					-clusterer
-						weka.clusterers.SimpleKMeans
-							-N
-							2
-							-A
-							weka.core.EuclideanDistance -R first-last
-							-I
-							500
-							-num-slots
-							1
-							-S
-							10
-	-actor
-		adams.flow.source.FileSupplier
-			-file
-			${EXAMPLE_FLOWS}/data/anneal.arff
-	-actor
-		adams.flow.transformer.WekaFileReader
-			-loader
-				weka.core.converters.ArffLoader
-	-actor
-		adams.flow.transformer.WekaFilter
-			-filter
-				weka.filters.unsupervised.attribute.Remove
-					
-					
-					
-	-actor
-		adams.flow.transformer.WekaTrainClusterer
-			-post-processor
-				adams.flow.transformer.wekaclusterer.PassThrough
-	-actor
-		adams.flow.control.ContainerValuePicker
-			-tee
-				adams.flow.sink.Display
-			-value
-			Model
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "Builds a clusterer on a dataset with the class attribute removed\\nand outputs the generated model." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.standalone.CallableActors
+  adams.flow.source.WekaClustererSetup -clusterer "weka.clusterers.SimpleKMeans -init 0 -max-candidates 100 -periodic-pruning 10000 -min-density 2.0 -t1 -1.25 -t2 -1.0 -N 2 -A \"weka.core.EuclideanDistance -R first-last\" -I 500 -num-slots 1 -S 10"
+ adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/anneal.arff
+ adams.flow.transformer.WekaFileReader -loader weka.core.converters.ArffLoader
+ adams.flow.transformer.WekaFilter -filter weka.filters.unsupervised.attribute.Remove
+ adams.flow.transformer.WekaTrainClusterer -post-processor adams.flow.transformer.wekaclusterer.PassThrough
+ adams.flow.control.ContainerValuePicker -value Model
+  adams.flow.sink.Display -writer adams.data.io.output.NullWriter

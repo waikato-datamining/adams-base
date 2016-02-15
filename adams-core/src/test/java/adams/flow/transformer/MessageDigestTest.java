@@ -27,7 +27,7 @@ import adams.core.io.FileUtils;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.core.Token;
 import adams.flow.sink.DumpFile;
 import adams.flow.source.StringConstants;
@@ -80,7 +80,7 @@ public class MessageDigestTest
    *
    * @return a suitably configured <code>Flow</code>
    */
-  public AbstractActor getActor() {
+  public Actor getActor() {
     StringConstants con = new StringConstants();
     con.setStrings(new BaseString[]{
 	new BaseString(""),
@@ -96,7 +96,7 @@ public class MessageDigestTest
     df.setOutputFile(new TmpFile("dumpfile.txt"));
 
     Flow flow = new Flow();
-    flow.setActors(new AbstractActor[]{con, actor, df});
+    flow.setActors(new Actor[]{con, actor, df});
 
     return flow;
   }

@@ -26,7 +26,7 @@ import adams.core.option.AbstractArgumentOption;
 import adams.core.option.OptionUtils;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.test.TmpFile;
 
 /**
@@ -97,17 +97,17 @@ public class UpdatePropertiesTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
   @Override
-  public AbstractActor getActor() {
+  public Actor getActor() {
     AbstractArgumentOption    argOption;
 
     Flow flow = new Flow();
 
     try {
       argOption = (AbstractArgumentOption) flow.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp1 = new adams.flow.core.AbstractActor[4];
+      adams.flow.core.Actor[] tmp1 = new adams.flow.core.Actor[4];
       adams.flow.source.ForLoop tmp2 = new adams.flow.source.ForLoop();
       argOption = (AbstractArgumentOption) tmp2.getOptionManager().findByProperty("loopUpper");
       tmp2.setLoopUpper((Integer) argOption.valueOf("5"));
@@ -132,7 +132,7 @@ public class UpdatePropertiesTest
       argOption = (AbstractArgumentOption) tmp9.getOptionManager().findByProperty("teeActor");
       adams.flow.control.Sequence tmp12 = new adams.flow.control.Sequence();
       argOption = (AbstractArgumentOption) tmp12.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp13 = new adams.flow.core.AbstractActor[3];
+      adams.flow.core.Actor[] tmp13 = new adams.flow.core.Actor[3];
       adams.flow.transformer.Convert tmp14 = new adams.flow.transformer.Convert();
       argOption = (AbstractArgumentOption) tmp14.getOptionManager().findByProperty("conversion");
       adams.data.conversion.AnyToString tmp16 = new adams.data.conversion.AnyToString();
@@ -159,7 +159,7 @@ public class UpdatePropertiesTest
       tmp1[2] = tmp9;
       adams.flow.control.Trigger tmp22 = new adams.flow.control.Trigger();
       argOption = (AbstractArgumentOption) tmp22.getOptionManager().findByProperty("teeActor");
-      adams.flow.core.AbstractActor[] tmp25 = new adams.flow.core.AbstractActor[4];
+      adams.flow.core.Actor[] tmp25 = new adams.flow.core.Actor[4];
       adams.flow.source.FileSupplier tmp26 = new adams.flow.source.FileSupplier();
       argOption = (AbstractArgumentOption) tmp26.getOptionManager().findByProperty("files");
       tmp26.setFiles(new adams.core.io.PlaceholderFile[]{(adams.core.io.PlaceholderFile) argOption.valueOf("${TMP}/bolts.arff")});

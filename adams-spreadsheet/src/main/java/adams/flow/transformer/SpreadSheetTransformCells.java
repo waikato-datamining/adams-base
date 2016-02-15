@@ -15,7 +15,7 @@
 
 /**
  * SpreadSheetTransformCells.java
- * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
 
@@ -33,7 +33,7 @@ import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.cellfinder.AbstractCellFinder;
 import adams.data.spreadsheet.cellfinder.CellLocation;
 import adams.data.spreadsheet.cellfinder.CellRange;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.CallableActorHelper;
 import adams.flow.core.CallableActorReference;
@@ -176,7 +176,7 @@ public class SpreadSheetTransformCells
   protected CallableActorHelper m_Helper;
 
   /** the callable actor. */
-  protected AbstractActor m_CallableActor;
+  protected Actor m_CallableActor;
 
   /** used for parsing missing value replacement strings. */
   protected Cell m_Cell;
@@ -491,7 +491,7 @@ public class SpreadSheetTransformCells
    *
    * @return		the callable actor or null if not found
    */
-  protected AbstractActor findCallableActor() {
+  protected Actor findCallableActor() {
     return m_Helper.findCallableActorRecursive(this, getTransformer());
   }
 
@@ -511,7 +511,7 @@ public class SpreadSheetTransformCells
    * @return		the actor, can be null
    */
   @Override
-  public AbstractActor getCallableActor() {
+  public Actor getCallableActor() {
     return m_CallableActor;
   }
 
@@ -551,7 +551,7 @@ public class SpreadSheetTransformCells
     super.restoreState(state);
 
     if (state.containsKey(BACKUP_CALLABLEACTOR)) {
-      m_CallableActor = (AbstractActor) state.get(BACKUP_CALLABLEACTOR);
+      m_CallableActor = (Actor) state.get(BACKUP_CALLABLEACTOR);
       state.remove(BACKUP_CALLABLEACTOR);
     }
   }

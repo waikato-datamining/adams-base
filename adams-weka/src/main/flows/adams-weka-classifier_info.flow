@@ -1,97 +1,25 @@
 # Project: adams
-# Date: 2015-03-17 15:02:40
+# Date: 2016-02-15 15:19:52
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	Trains J48 on iris dataset and outputs model, tree as digraph and and source code.
-	-actor
-		adams.flow.standalone.CallableActors
-			-actor
-				adams.flow.source.WekaClassifierSetup
-					-classifier
-						weka.classifiers.trees.J48
-							-C
-							0.25
-							-M
-							2
-			-actor
-				adams.flow.sink.HistoryDisplay
-					-width
-					800
-					-height
-					600
-					-entry-name-variable
-					entry
-	-actor
-		adams.flow.source.FileSupplier
-			-file
-			${EXAMPLE_FLOWS}/data/iris.arff
-	-actor
-		adams.flow.transformer.WekaFileReader
-			-loader
-				weka.core.converters.AArffLoader
-	-actor
-		adams.flow.transformer.WekaClassSelector
-	-actor
-		adams.flow.transformer.WekaTrainClassifier
-	-actor
-		adams.flow.control.Branch
-			-branch
-				adams.flow.control.Sequence
-					-name
-					model
-					-actor
-						adams.flow.transformer.SetVariable
-							-var-name
-							entry
-							-var-value
-							model
-					-actor
-						adams.flow.transformer.WekaClassifierInfo
-					-actor
-						adams.flow.sink.CallableSink
-							-callable
-							HistoryDisplay
-			-branch
-				adams.flow.control.Sequence
-					-name
-					graph
-					-actor
-						adams.flow.transformer.SetVariable
-							-var-name
-							entry
-							-var-value
-							graph
-					-actor
-						adams.flow.transformer.WekaClassifierInfo
-							-type
-							GRAPH
-					-actor
-						adams.flow.sink.CallableSink
-							-callable
-							HistoryDisplay
-			-branch
-				adams.flow.control.Sequence
-					-name
-					sourcecode
-					-actor
-						adams.flow.transformer.SetVariable
-							-var-name
-							entry
-							-var-value
-							sourcecode
-					-actor
-						adams.flow.transformer.WekaClassifierInfo
-							-type
-							SOURCE_CODE
-					-actor
-						adams.flow.sink.CallableSink
-							-callable
-							HistoryDisplay
-			-num-threads
-			1
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "Trains J48 on iris dataset and outputs model, tree as digraph and and source code." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.standalone.CallableActors
+  adams.flow.source.WekaClassifierSetup -classifier "weka.classifiers.trees.J48 -C 0.25 -M 2"
+  adams.flow.sink.HistoryDisplay -width 800 -height 600 -entry-name-variable entry
+ adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/iris.arff
+ adams.flow.transformer.WekaFileReader -loader weka.core.converters.AArffLoader
+ adams.flow.transformer.WekaClassSelector
+ adams.flow.transformer.WekaTrainClassifier
+ adams.flow.control.Branch -num-threads 1
+  adams.flow.control.Sequence -name model
+   adams.flow.transformer.SetVariable -var-name entry -var-value model
+   adams.flow.transformer.WekaClassifierInfo
+   adams.flow.sink.CallableSink -callable HistoryDisplay
+  adams.flow.control.Sequence -name graph
+   adams.flow.transformer.SetVariable -var-name entry -var-value graph
+   adams.flow.transformer.WekaClassifierInfo -type GRAPH
+   adams.flow.sink.CallableSink -callable HistoryDisplay
+  adams.flow.control.Sequence -name sourcecode
+   adams.flow.transformer.SetVariable -var-name entry -var-value sourcecode
+   adams.flow.transformer.WekaClassifierInfo -type SOURCE_CODE
+   adams.flow.sink.CallableSink -callable HistoryDisplay

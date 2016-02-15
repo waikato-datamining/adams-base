@@ -7,12 +7,9 @@
 package adams.parser.templatesuggestion;
 
 import adams.core.ClassLocator;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.core.ActorUtils;
 import adams.flow.template.AbstractActorTemplate;
-import java_cup.runtime.*;
-import java.io.*;
-import java.util.*;
 
 /** CUP v0.11a beta 20060608 generated parser.
   * @version Thu Aug 15 17:19:43 NZST 2013
@@ -145,13 +142,13 @@ public class Parser extends java_cup.runtime.lr_parser {
   protected AbstractActorTemplate m_Result = null;
 
   /** the parent of the where to suggest the template. */
-  protected AbstractActor m_Parent = null;
+  protected Actor m_Parent = null;
 
   /** the position to add the proposed actor template at. */
   protected Integer m_Position = null;
 
   /** all the current nodes in which to insert/add to the proposed actor. */
-  protected AbstractActor[] m_Actors = null;
+  protected Actor[] m_Actors = null;
 
   /**
    * Sets the result of the evaluation.
@@ -176,7 +173,7 @@ public class Parser extends java_cup.runtime.lr_parser {
    *
    * @param value the parent
    */
-  public void setParent(AbstractActor value) {
+  public void setParent(Actor value) {
     m_Parent = value;
   }
 
@@ -185,7 +182,7 @@ public class Parser extends java_cup.runtime.lr_parser {
    *
    * @return the parent
    */
-  public AbstractActor getParent() {
+  public Actor getParent() {
     return m_Parent;
   }
 
@@ -212,7 +209,7 @@ public class Parser extends java_cup.runtime.lr_parser {
    *
    * @param value the actors
    */
-  public void setActors(AbstractActor[] value) {
+  public void setActors(Actor[] value) {
     m_Actors = value;
   }
 
@@ -221,7 +218,7 @@ public class Parser extends java_cup.runtime.lr_parser {
    *
    * @return the actors
    */
-  public AbstractActor[] getActors() {
+  public Actor[] getActors() {
     return m_Actors;
   }
 

@@ -20,7 +20,6 @@
 package adams.data.io.input;
 
 import adams.core.option.JsonConsumer;
-import adams.flow.core.AbstractActor;
 import adams.flow.core.Actor;
 import adams.gui.flow.tree.Node;
 import adams.gui.flow.tree.TreeHelper;
@@ -88,7 +87,7 @@ public class JsonFlowReader
    */
   @Override
   protected Node doReadNode(File file) {
-    return TreeHelper.buildTree((AbstractActor) readActor(file));
+    return TreeHelper.buildTree(readActor(file));
   }
 
   /**
@@ -99,11 +98,11 @@ public class JsonFlowReader
    */
   @Override
   protected Actor doReadActor(File file) {
-    AbstractActor	result;
+    Actor		result;
     JsonConsumer	consumer;
 
     consumer = new JsonConsumer();
-    result   = (AbstractActor) consumer.read(file.getAbsolutePath());
+    result   = (Actor) consumer.read(file.getAbsolutePath());
 
     // transfer errors/warnings
     m_Errors.addAll(consumer.getErrors());

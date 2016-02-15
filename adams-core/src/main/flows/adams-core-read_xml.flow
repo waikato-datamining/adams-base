@@ -1,23 +1,9 @@
 # Project: adams
-# Date: 2014-01-23 15:24:08
+# Date: 2016-02-15 11:33:50
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	This flow loads an XML file as DOM document, converts it into\na string and displays it.
-	-actor
-		adams.flow.source.FileSupplier
-			-file
-			${EXAMPLE_FLOWS}/data/books.xml
-	-actor
-		adams.flow.transformer.XMLFileReader
-	-actor
-		adams.flow.transformer.Convert
-			-conversion
-				adams.data.conversion.DOMToString
-	-actor
-		adams.flow.sink.Display
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "This flow loads an XML file as DOM document, converts it into\\na string and displays it." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/books.xml
+ adams.flow.transformer.XMLFileReader
+ adams.flow.transformer.Convert -conversion adams.data.conversion.DOMToString
+ adams.flow.sink.Display -writer adams.data.io.output.NullWriter

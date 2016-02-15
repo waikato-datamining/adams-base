@@ -25,7 +25,7 @@ import adams.core.io.PlaceholderFile;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.source.StringConstants;
 import adams.test.TmpFile;
 import junit.framework.Test;
@@ -74,9 +74,9 @@ public class WaitForFileTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
-  public AbstractActor getActor() {
+  public Actor getActor() {
     StringConstants sc = new StringConstants();
     sc.setStrings(new BaseString[]{
 	new BaseString("${TMP}/bolts.csv")
@@ -89,7 +89,7 @@ public class WaitForFileTest
     wff.setGenerateError(true);
 
     Flow flow = new Flow();
-    flow.setActors(new AbstractActor[]{sc, mf, wff});
+    flow.setActors(new Actor[]{sc, mf, wff});
 
     return flow;
   }

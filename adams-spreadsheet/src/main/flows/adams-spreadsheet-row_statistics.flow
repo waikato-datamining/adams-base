@@ -1,53 +1,10 @@
 # Project: adams
-# Date: 2014-09-26 12:40:31
+# Date: 2016-02-15 15:00:27
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	Generates various statistic for a row in a spreadsheet.
-	-actor
-		adams.flow.source.FileSupplier
-			-file
-			${EXAMPLE_FLOWS}/data/bolts.csv
-	-actor
-		adams.flow.transformer.SpreadSheetFileReader
-			-reader
-				adams.data.io.input.CsvSpreadSheetReader
-					-data-row-type
-						adams.data.spreadsheet.DenseDataRow
-					-spreadsheet-type
-						adams.data.spreadsheet.SpreadSheet
-	-actor
-		adams.flow.transformer.Convert
-			-conversion
-				adams.data.conversion.TransposeSpreadSheet
-	-actor
-		adams.flow.transformer.SpreadSheetRowStatistic
-			-statistic
-				adams.data.spreadsheet.rowstatistic.MultiRowStatistic
-					-statistic
-						adams.data.spreadsheet.rowstatistic.Min
-					-statistic
-						adams.data.spreadsheet.rowstatistic.Max
-					-statistic
-						adams.data.spreadsheet.rowstatistic.Mean
-					-statistic
-						adams.data.spreadsheet.rowstatistic.StandardDeviation
-					-statistic
-						adams.data.spreadsheet.rowstatistic.Median
-					-statistic
-						adams.data.spreadsheet.rowstatistic.IQR
-					-statistic
-						adams.data.spreadsheet.rowstatistic.Distinct
-					-statistic
-						adams.data.spreadsheet.rowstatistic.Unique
-					-statistic
-						adams.data.spreadsheet.rowstatistic.Missing
-	-actor
-		adams.flow.sink.SpreadSheetDisplay
-			-writer
-				adams.data.io.output.NullWriter
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "Generates various statistic for a row in a spreadsheet." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/bolts.csv
+ adams.flow.transformer.SpreadSheetFileReader -reader "adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.SpreadSheet"
+ adams.flow.transformer.Convert -conversion adams.data.conversion.TransposeSpreadSheet
+ adams.flow.transformer.SpreadSheetRowStatistic -statistic "adams.data.spreadsheet.rowstatistic.MultiRowStatistic -statistic adams.data.spreadsheet.rowstatistic.Min -statistic adams.data.spreadsheet.rowstatistic.Max -statistic adams.data.spreadsheet.rowstatistic.Mean -statistic adams.data.spreadsheet.rowstatistic.StandardDeviation -statistic adams.data.spreadsheet.rowstatistic.Median -statistic adams.data.spreadsheet.rowstatistic.IQR -statistic adams.data.spreadsheet.rowstatistic.Distinct -statistic adams.data.spreadsheet.rowstatistic.Unique -statistic adams.data.spreadsheet.rowstatistic.Missing"
+ adams.flow.sink.SpreadSheetDisplay -writer adams.data.io.output.NullWriter

@@ -28,7 +28,7 @@ import adams.core.base.BaseString;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.sink.DumpFile;
 import adams.flow.source.StringConstants;
 import adams.test.TmpFile;
@@ -81,7 +81,7 @@ public class StringLengthTest
    * @return a suitably configured <code>Flow</code>
    */
   @Override
-  public AbstractActor getActor() {
+  public Actor getActor() {
     StringConstants con = new StringConstants();
     con.setStrings(new BaseString[]{
 	new BaseString("123"),
@@ -99,7 +99,7 @@ public class StringLengthTest
     df.setAppend(true);
 
     Flow flow = new Flow();
-    flow.setActors(new AbstractActor[]{con, actor, df});
+    flow.setActors(new Actor[]{con, actor, df});
 
     return flow;
   }

@@ -26,7 +26,7 @@ import adams.core.option.AbstractArgumentOption;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.test.TmpFile;
 
 /**
@@ -95,17 +95,17 @@ public class ListStorageNamesTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
   @Override
-  public AbstractActor getActor() {
+  public Actor getActor() {
     AbstractArgumentOption    argOption;
     
     Flow flow = new Flow();
     
     try {
       argOption = (AbstractArgumentOption) flow.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] abstractactor1 = new adams.flow.core.AbstractActor[3];
+      adams.flow.core.Actor[] abstractactor1 = new adams.flow.core.Actor[3];
 
       // Flow.StringConstants
       adams.flow.source.StringConstants stringconstants2 = new adams.flow.source.StringConstants();
@@ -130,7 +130,7 @@ public class ListStorageNamesTest
       // Flow.Trigger
       adams.flow.control.Trigger trigger6 = new adams.flow.control.Trigger();
       argOption = (AbstractArgumentOption) trigger6.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] abstractactor7 = new adams.flow.core.AbstractActor[2];
+      adams.flow.core.Actor[] abstractactor7 = new adams.flow.core.Actor[2];
 
       // Flow.Trigger.ListStorageNames
       adams.flow.source.ListStorageNames liststoragenames8 = new adams.flow.source.ListStorageNames();

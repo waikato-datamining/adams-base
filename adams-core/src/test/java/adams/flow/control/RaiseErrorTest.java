@@ -15,7 +15,7 @@
 
 /*
  * RaiseErrorTest.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -25,7 +25,7 @@ import junit.framework.TestSuite;
 import adams.core.option.AbstractArgumentOption;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.test.TmpFile;
 
 /**
@@ -94,17 +94,17 @@ public class RaiseErrorTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
   @Override
-  public AbstractActor getActor() {
+  public Actor getActor() {
     AbstractArgumentOption    argOption;
     
     Flow flow = new Flow();
     
     try {
       argOption = (AbstractArgumentOption) flow.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] actors1 = new adams.flow.core.AbstractActor[3];
+      adams.flow.core.Actor[] actors1 = new adams.flow.core.Actor[3];
 
       // Flow.StringConstants
       adams.flow.source.StringConstants stringconstants2 = new adams.flow.source.StringConstants();
@@ -125,7 +125,7 @@ public class RaiseErrorTest
       argOption = (AbstractArgumentOption) subprocess6.getOptionManager().findByProperty("name");
       subprocess6.setName((java.lang.String) argOption.valueOf("try"));
       argOption = (AbstractArgumentOption) subprocess6.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] actors8 = new adams.flow.core.AbstractActor[1];
+      adams.flow.core.Actor[] actors8 = new adams.flow.core.Actor[1];
 
       // Flow.TryCatch.try.RaiseError
       adams.flow.control.RaiseError raiseerror9 = new adams.flow.control.RaiseError();
@@ -149,7 +149,7 @@ public class RaiseErrorTest
       argOption = (AbstractArgumentOption) sequencesource15.getOptionManager().findByProperty("name");
       sequencesource15.setName((java.lang.String) argOption.valueOf("catch"));
       argOption = (AbstractArgumentOption) sequencesource15.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] actors17 = new adams.flow.core.AbstractActor[4];
+      adams.flow.core.Actor[] actors17 = new adams.flow.core.Actor[4];
 
       // Flow.TryCatch.catch.Variable
       adams.flow.source.Variable variable18 = new adams.flow.source.Variable();

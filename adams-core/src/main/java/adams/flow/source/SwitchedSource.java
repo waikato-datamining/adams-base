@@ -15,7 +15,7 @@
 
 /**
  * SwitchedSource.java
- * Copyright (C) 2015 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.source;
@@ -26,7 +26,7 @@ import adams.flow.condition.bool.BooleanCondition;
 import adams.flow.condition.bool.IndexedBooleanCondition;
 import adams.flow.condition.bool.IndexedBooleanConditionSupporter;
 import adams.flow.condition.bool.True;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.core.ActorExecution;
 import adams.flow.core.ActorHandler;
 import adams.flow.core.ActorHandlerInfo;
@@ -60,10 +60,10 @@ public class SwitchedSource
   protected BooleanCondition[] m_Conditions;
 
   /** the "cases" to execute if the corresponding expression matches. */
-  protected List<AbstractActor> m_Cases;
+  protected List<Actor> m_Cases;
 
   /** the active case. */
-  protected AbstractActor m_ActiveCase;
+  protected Actor m_ActiveCase;
 
   /**
    * Returns a string describing the object.
@@ -92,7 +92,7 @@ public class SwitchedSource
 
     m_OptionManager.add(
 	    "case", "cases",
-	    new AbstractActor[]{new Start()});
+	    new Actor[]{new Start()});
   }
 
   /**
@@ -102,7 +102,7 @@ public class SwitchedSource
   protected void initialize() {
     super.initialize();
 
-    m_Cases = new ArrayList<AbstractActor>();
+    m_Cases = new ArrayList<>();
   }
 
   /**
@@ -164,7 +164,7 @@ public class SwitchedSource
    *
    * @param value 	the cases
    */
-  public void setCases(AbstractActor[] value) {
+  public void setCases(Actor[] value) {
     int		i;
 
     ActorUtils.uniqueNames(value);
@@ -182,8 +182,8 @@ public class SwitchedSource
    *
    * @return 		the cases
    */
-  public AbstractActor[] getCases() {
-    return m_Cases.toArray(new AbstractActor[m_Cases.size()]);
+  public Actor[] getCases() {
+    return m_Cases.toArray(new Actor[m_Cases.size()]);
   }
 
   /**
@@ -235,7 +235,7 @@ public class SwitchedSource
    * @return		the actor
    */
   @Override
-  public AbstractActor get(int index) {
+  public Actor get(int index) {
     return m_Cases.get(index);
   }
 
@@ -258,7 +258,7 @@ public class SwitchedSource
    * @param actor	the actor to set at this position
    */
   @Override
-  public void set(int index, AbstractActor actor) {
+  public void set(int index, Actor actor) {
     if ((index > -1) && (index < m_Cases.size())) {
       ActorUtils.uniqueName(actor, this, index);
       m_Cases.set(index, actor);
@@ -275,7 +275,7 @@ public class SwitchedSource
    *
    * @param actor	the actor to insert
    */
-  public void add(AbstractActor actor) {
+  public void add(Actor actor) {
     add(size(), actor);
   }
 
@@ -285,7 +285,7 @@ public class SwitchedSource
    * @param index	the position
    * @param actor	the actor to insert
    */
-  public void add(int index, AbstractActor actor) {
+  public void add(int index, Actor actor) {
     m_Cases.add(index, actor);
     reset();
     updateParent();
@@ -297,8 +297,8 @@ public class SwitchedSource
    * @param index	the position
    * @return		the removed actor
    */
-  public AbstractActor remove(int index) {
-    AbstractActor	result;
+  public Actor remove(int index) {
+    Actor	result;
 
     result = m_Cases.remove(index);
     reset();
@@ -343,9 +343,9 @@ public class SwitchedSource
    * @return		the first 'active' actor, null if none available
    */
   @Override
-  public AbstractActor firstActive() {
-    AbstractActor	result;
-    int			i;
+  public Actor firstActive() {
+    Actor	result;
+    int		i;
 
     result = null;
     for (i = 0; i < size(); i++) {
@@ -364,9 +364,9 @@ public class SwitchedSource
    * @return		the last 'active' actor, null if none available
    */
   @Override
-  public AbstractActor lastActive() {
-    AbstractActor	result;
-    int			i;
+  public Actor lastActive() {
+    Actor	result;
+    int		i;
 
     result = null;
     for (i = size() - 1; i >= 0; i--) {

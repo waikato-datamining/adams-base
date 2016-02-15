@@ -15,19 +15,19 @@
 
 /**
  * FlowHandler.java
- * Copyright (C) 2011-2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.previewbrowser;
 
-import java.awt.BorderLayout;
-import java.io.File;
-
 import adams.core.Utils;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.core.ActorUtils;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.flow.tree.Tree;
+
+import java.awt.BorderLayout;
+import java.io.File;
 
 /**
  <!-- globalinfo-start -->
@@ -74,7 +74,7 @@ public class FlowHandler
    */
   @Override
   public String[] getExtensions() {
-    return new String[]{AbstractActor.FILE_EXTENSION, AbstractActor.FILE_EXTENSION_GZ};
+    return new String[]{Actor.FILE_EXTENSION, Actor.FILE_EXTENSION_GZ};
   }
 
   /**
@@ -87,7 +87,7 @@ public class FlowHandler
   protected PreviewPanel createPreview(File file) {
     BasePanel		panel;
     Tree		tree;
-    AbstractActor	actor;
+    Actor		actor;
 
     actor = ActorUtils.read(file.getAbsolutePath());
     tree  = new Tree(null);

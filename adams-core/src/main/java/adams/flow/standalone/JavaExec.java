@@ -15,7 +15,7 @@
 
 /**
  * JavaExec.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.standalone;
 
@@ -28,7 +28,7 @@ import adams.core.management.Launcher;
 import adams.core.management.LoggingObjectOutputPrinter;
 import adams.core.management.RecordingOutputPrinter;
 import adams.flow.control.AbstractControlActor;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.core.ActorExecution;
 import adams.flow.core.ActorHandler;
 import adams.flow.core.ActorHandlerInfo;
@@ -106,12 +106,12 @@ import adams.flow.sink.Null;
  * &nbsp;&nbsp;&nbsp;string) to the appropriate sub-actor for further processing.
  * </pre>
  * 
- * <pre>-stdout &lt;adams.flow.core.AbstractActor&gt; (property: stdOut)
+ * <pre>-stdout &lt;adams.flow.core.Actor&gt; (property: stdOut)
  * &nbsp;&nbsp;&nbsp;The actor for further processing the stdout output (string).
  * &nbsp;&nbsp;&nbsp;default: adams.flow.sink.Null -name stdout
  * </pre>
  * 
- * <pre>-stderr &lt;adams.flow.core.AbstractActor&gt; (property: stdErr)
+ * <pre>-stderr &lt;adams.flow.core.Actor&gt; (property: stdErr)
  * &nbsp;&nbsp;&nbsp;The actor for further processing the stderr output (string).
  * &nbsp;&nbsp;&nbsp;default: adams.flow.sink.Null -name stderr
  * </pre>
@@ -153,10 +153,10 @@ public class JavaExec
   protected boolean m_RecordOutput;
 
   /** the stdout actor. */
-  protected AbstractActor m_StdOut;
+  protected Actor m_StdOut;
 
   /** the stderr actor. */
-  protected AbstractActor m_StdErr;
+  protected Actor m_StdErr;
   
   /**
    * Returns a string describing the object.
@@ -402,7 +402,7 @@ public class JavaExec
    *
    * @param value	the actor
    */
-  public void setStdOut(AbstractActor value) {
+  public void setStdOut(Actor value) {
     if (value instanceof InputConsumer) {
       m_StdOut = value;
       m_StdOut.setName(NAME_STDOUT);
@@ -419,7 +419,7 @@ public class JavaExec
    *
    * @return 		the actor
    */
-  public AbstractActor getStdOut() {
+  public Actor getStdOut() {
     return m_StdOut;
   }
 
@@ -438,7 +438,7 @@ public class JavaExec
    *
    * @param value	the actor
    */
-  public void setStdErr(AbstractActor value) {
+  public void setStdErr(Actor value) {
     if (value instanceof InputConsumer) {
       m_StdErr = value;
       m_StdErr.setName(NAME_STDERR);
@@ -455,7 +455,7 @@ public class JavaExec
    *
    * @return 		the actor
    */
-  public AbstractActor getStdErr() {
+  public Actor getStdErr() {
     return m_StdErr;
   }
 
@@ -497,7 +497,7 @@ public class JavaExec
    * @return		the actor
    */
   @Override
-  public AbstractActor get(int index) {
+  public Actor get(int index) {
     if (index == 0)
       return m_StdOut;
     else if (index == 1)
@@ -513,7 +513,7 @@ public class JavaExec
    * @param actor	the actor to set at this position
    */
   @Override
-  public void set(int index, AbstractActor actor) {
+  public void set(int index, Actor actor) {
     if (index == 0)
       setStdOut(actor);
     else if (index == 1)

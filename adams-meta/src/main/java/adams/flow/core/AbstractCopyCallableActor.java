@@ -15,14 +15,14 @@
 
 /**
  * AbstractCopyCallableActor.java
- * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.core;
 
-import java.util.HashSet;
-
 import adams.core.QuickInfoHelper;
 import adams.core.Variables;
+
+import java.util.HashSet;
 
 /**
  * Ancestor for actors that use a copy of a callable actor.
@@ -41,7 +41,7 @@ public abstract class AbstractCopyCallableActor
   protected CallableActorReference m_CallableName;
 
   /** the callable actor. */
-  protected AbstractActor m_CallableActor;
+  protected Actor m_CallableActor;
 
   /** the helper class. */
   protected CallableActorHelper m_Helper;
@@ -112,7 +112,7 @@ public abstract class AbstractCopyCallableActor
    *
    * @return		the callable actor or null if not found
    */
-  protected AbstractActor findCallableActor() {
+  protected Actor findCallableActor() {
     return m_Helper.findCallableActorRecursive(this, getCallableName());
   }
 
@@ -132,7 +132,7 @@ public abstract class AbstractCopyCallableActor
    * @return		the actor, can be null
    */
   @Override
-  public AbstractActor getCallableActor() {
+  public Actor getCallableActor() {
     return m_CallableActor;
   }
 

@@ -15,13 +15,13 @@
 
 /**
  * AddActorHere.java
- * Copyright (C) 2015 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.flow.tree.keyboardaction;
 
 import adams.flow.control.Sequence;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.core.ActorHandler;
 import adams.gui.core.BaseShortcut;
 import adams.gui.flow.tree.StateContainer;
@@ -74,7 +74,7 @@ public class EncloseActor
    * @return 		the default
    */
   @Override
-  protected AbstractActor getDefaultActor() {
+  protected Actor getDefaultActor() {
     return new Sequence();
   }
 
@@ -84,7 +84,7 @@ public class EncloseActor
    * @param value 	the actor
    */
   @Override
-  public void setActor(AbstractActor value) {
+  public void setActor(Actor value) {
     if (value instanceof ActorHandler)
       super.setActor(value);
     else

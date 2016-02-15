@@ -15,14 +15,14 @@
 
 /**
  * TimedSubProcess.java
- * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.control;
 
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
 import adams.flow.container.TimingContainer;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.CallableActorHelper;
 import adams.flow.core.CallableActorReference;
@@ -143,7 +143,7 @@ public class TimedSubProcess
   protected CallableActorReference m_CallableName;
 
   /** the callable actor. */
-  protected AbstractActor m_CallableActor;
+  protected Actor m_CallableActor;
 
   /** whether the callable actor has been configured. */
   protected boolean m_Configured;
@@ -367,7 +367,7 @@ public class TimedSubProcess
    *
    * @return		the callable actor or null if not found
    */
-  protected AbstractActor findCallableActor() {
+  protected Actor findCallableActor() {
     return m_Helper.findCallableActorRecursive(this, getCallableName());
   }
 
@@ -387,7 +387,7 @@ public class TimedSubProcess
    * @return		the actor, can be null
    */
   @Override
-  public AbstractActor getCallableActor() {
+  public Actor getCallableActor() {
     return m_CallableActor;
   }
 
@@ -430,7 +430,7 @@ public class TimedSubProcess
     super.restoreState(state);
 
     if (state.containsKey(BACKUP_CALLABLEACTOR)) {
-      m_CallableActor = (AbstractActor) state.get(BACKUP_CALLABLEACTOR);
+      m_CallableActor = (Actor) state.get(BACKUP_CALLABLEACTOR);
       state.remove(BACKUP_CALLABLEACTOR);
     }
 

@@ -15,12 +15,12 @@
 
 /**
  * AnnotateActor.java
- * Copyright (C) 2015 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton, NZ
  */
 package adams.gui.flow.tree.menu;
 
 import adams.core.base.BaseAnnotation;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.gui.core.GUIHelper;
 import adams.gui.event.ActorChangeEvent;
 import adams.gui.event.ActorChangeEvent.Type;
@@ -67,10 +67,10 @@ public class AnnotateActor
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    Node		node;
-    AbstractActor       actor;
-    String              annotationOld;
-    String              annotationNew;
+    Node	node;
+    Actor 	actor;
+    String      annotationOld;
+    String      annotationNew;
 
     node = TreeHelper.pathToNode(m_State.selPath);
     addUndoPoint("Annotating " + node.getFullName());

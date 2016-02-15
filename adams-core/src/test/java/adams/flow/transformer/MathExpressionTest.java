@@ -31,7 +31,7 @@ import adams.data.conversion.StringToDouble;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.sink.DumpFile;
 import adams.flow.source.StringConstants;
 import adams.parser.MathematicalExpressionText;
@@ -86,7 +86,7 @@ public class MathExpressionTest
    * @return a suitably configured <code>Flow</code>
    */
   @Override
-  public AbstractActor getActor() {
+  public Actor getActor() {
     StringConstants ids = new StringConstants();
     ids.setStrings(new BaseString[]{
 	new BaseString("1"),
@@ -121,7 +121,7 @@ public class MathExpressionTest
     df.setOutputFile(new TmpFile("dumpfile.txt"));
 
     Flow flow = new Flow();
-    flow.setActors(new AbstractActor[]{ids, conD, me, conS, df});
+    flow.setActors(new Actor[]{ids, conD, me, conS, df});
 
     return flow;
   }
@@ -129,25 +129,25 @@ public class MathExpressionTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
-  public AbstractActor getActorCallableActorAsVariable() {
+  public Actor getActorCallableActorAsVariable() {
     AbstractArgumentOption    argOption;
     
     Flow flow = new Flow();
     
     try {
       argOption = (AbstractArgumentOption) flow.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp1 = new adams.flow.core.AbstractActor[4];
+      adams.flow.core.Actor[] tmp1 = new adams.flow.core.Actor[4];
       adams.flow.standalone.CallableActors tmp2 = new adams.flow.standalone.CallableActors();
       argOption = (AbstractArgumentOption) tmp2.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp3 = new adams.flow.core.AbstractActor[1];
+      adams.flow.core.Actor[] tmp3 = new adams.flow.core.Actor[1];
       adams.flow.source.SequenceSource tmp4 = new adams.flow.source.SequenceSource();
       argOption = (AbstractArgumentOption) tmp4.getOptionManager().findByProperty("name");
       tmp4.setName((java.lang.String) argOption.valueOf("val"));
 
       argOption = (AbstractArgumentOption) tmp4.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp6 = new adams.flow.core.AbstractActor[4];
+      adams.flow.core.Actor[] tmp6 = new adams.flow.core.Actor[4];
       adams.flow.source.Variable tmp7 = new adams.flow.source.Variable();
       argOption = (AbstractArgumentOption) tmp7.getOptionManager().findByProperty("variableName");
       tmp7.setVariableName((adams.core.VariableName) argOption.valueOf("val"));
@@ -188,7 +188,7 @@ public class MathExpressionTest
       tmp1[2] = tmp19;
       adams.flow.control.Trigger tmp21 = new adams.flow.control.Trigger();
       argOption = (AbstractArgumentOption) tmp21.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp22 = new adams.flow.core.AbstractActor[3];
+      adams.flow.core.Actor[] tmp22 = new adams.flow.core.Actor[3];
       adams.flow.source.ForLoop tmp23 = new adams.flow.source.ForLoop();
       argOption = (AbstractArgumentOption) tmp23.getOptionManager().findByProperty("loopLower");
       tmp23.setLoopLower((Integer) argOption.valueOf("10"));

@@ -15,7 +15,7 @@
 
 /*
  * VariableChangedEvent.java
- * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.standalone;
@@ -23,7 +23,7 @@ package adams.flow.standalone;
 import adams.core.QuickInfoHelper;
 import adams.core.VariableNameNoUpdate;
 import adams.event.VariableChangeEvent;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.core.ActorUtils;
 
 /**
@@ -76,7 +76,7 @@ import adams.flow.core.ActorUtils;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-actor &lt;adams.flow.core.AbstractActor&gt; [-actor ...] (property: actors)
+ * <pre>-actor &lt;adams.flow.core.Actor&gt; [-actor ...] (property: actors)
  * &nbsp;&nbsp;&nbsp;The actors to execute in case of a change event.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
@@ -178,7 +178,7 @@ public class VariableChangedEvent
    * @param actors	the actors to check
    * @return		null if accepted, otherwise error message
    */
-  protected String checkActors(AbstractActor[] actors) {
+  protected String checkActors(Actor[] actors) {
     int		i;
 
     for (i = 0; i < actors.length; i++) {

@@ -15,7 +15,7 @@
 
 /**
  * CallableActorScreenshot.java
- * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.control;
 
@@ -24,6 +24,7 @@ import adams.core.io.AbstractFilenameGenerator;
 import adams.core.io.DefaultFilenameGenerator;
 import adams.core.io.PlaceholderFile;
 import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.core.CallableActorHelper;
 import adams.flow.core.CallableActorReference;
 import adams.flow.core.ControlActor;
@@ -136,7 +137,7 @@ public class CallableActorScreenshot
   protected CallableActorHelper m_Helper;
 
   /** the callable actor. */
-  protected AbstractActor m_CallableActor;
+  protected Actor m_CallableActor;
 
   /** the counter for the screenshots. */
   protected int m_Counter;
@@ -352,7 +353,7 @@ public class CallableActorScreenshot
    *
    * @return		the callable actor or null if not found
    */
-  protected AbstractActor findCallableActor() {
+  protected Actor findCallableActor() {
     return m_Helper.findCallableActorRecursive(this, getCallableName());
   }
 

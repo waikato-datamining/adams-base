@@ -1,43 +1,10 @@
 # Project: adams
-# Date: 2014-09-26 15:21:35
+# Date: 2016-02-15 14:59:55
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	Adds a column with the Euclidean distance computed with the first row\nand sorts on this column.
-	-actor
-		adams.flow.source.FileSupplier
-			-file
-			${EXAMPLE_FLOWS}/data/bolts.csv
-	-actor
-		adams.flow.transformer.SpreadSheetFileReader
-			-reader
-				adams.data.io.input.CsvSpreadSheetReader
-					-data-row-type
-						adams.data.spreadsheet.DenseDataRow
-					-spreadsheet-type
-						adams.data.spreadsheet.SpreadSheet
-	-actor
-		adams.flow.transformer.SpreadSheetInsertRowScore
-			-header
-			Euclidean distance
-			-score
-				adams.data.spreadsheet.rowscore.ArrayStatistic
-					-statistic
-						adams.data.statistics.ArrayEuclideanDistance
-					-additional-rows
-					first
-	-actor
-		adams.flow.transformer.SpreadSheetSort
-			-no-copy
-			true
-			-sort-column
-			last
-	-actor
-		adams.flow.sink.SpreadSheetDisplay
-			-writer
-				adams.data.io.output.NullWriter
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "Adds a column with the Euclidean distance computed with the first row\\nand sorts on this column." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/bolts.csv
+ adams.flow.transformer.SpreadSheetFileReader -reader "adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.SpreadSheet"
+ adams.flow.transformer.SpreadSheetInsertRowScore -header "Euclidean distance" -score "adams.data.spreadsheet.rowscore.ArrayStatistic -statistic adams.data.statistics.ArrayEuclideanDistance -additional-rows first"
+ adams.flow.transformer.SpreadSheetSort -no-copy true -sort-column last
+ adams.flow.sink.SpreadSheetDisplay -writer adams.data.io.output.NullWriter

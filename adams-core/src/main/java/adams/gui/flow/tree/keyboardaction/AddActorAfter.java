@@ -15,13 +15,13 @@
 
 /**
  * AddActorHere.java
- * Copyright (C) 2015 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.flow.tree.keyboardaction;
 
 import adams.flow.control.Trigger;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.gui.core.BaseShortcut;
 import adams.gui.flow.tree.StateContainer;
 import adams.gui.flow.tree.TreeOperations;
@@ -63,7 +63,7 @@ public class AddActorAfter
    * @return 		the default
    */
   @Override
-  protected AbstractActor getDefaultActor() {
+  protected Actor getDefaultActor() {
     return new Trigger();
   }
 

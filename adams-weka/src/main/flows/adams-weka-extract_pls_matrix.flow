@@ -1,37 +1,13 @@
 # Project: adams
-# Date: 2015-06-18 20:23:32
+# Date: 2016-02-15 15:23:47
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	Trains a PLS classifier (PLS1) on a numeric dataset\nand displays the content of the P matrix.
-	-actor
-		adams.flow.standalone.CallableActors
-			-actor
-				adams.flow.source.WekaClassifierSetup
-					-classifier
-						weka.classifiers.functions.PLSClassifierWeightedWithLoadings
-							-filter
-							weka.filters.supervised.attribute.PLSFilterWithLoadings -C 3 -M -A PLS1 -P center
-	-actor
-		adams.flow.source.FileSupplier
-			-file
-			${EXAMPLE_FLOWS}/data/bodyfat.arff
-	-actor
-		adams.flow.transformer.WekaFileReader
-			-loader
-				weka.core.converters.ArffLoader
-	-actor
-		adams.flow.transformer.WekaClassSelector
-	-actor
-		adams.flow.transformer.WekaTrainClassifier
-	-actor
-		adams.flow.transformer.WekaExtractPLSMatrix
-	-actor
-		adams.flow.sink.SpreadSheetDisplay
-			-writer
-				adams.data.io.output.NullWriter
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "Trains a PLS classifier (PLS1) on a numeric dataset\\nand displays the content of the P matrix." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.standalone.CallableActors
+  adams.flow.source.WekaClassifierSetup -classifier "weka.classifiers.functions.PLSClassifierWeightedWithLoadings -filter \"weka.filters.supervised.attribute.PLSFilterWithLoadings -C 3 -M -A PLS1 -P center\""
+ adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/bodyfat.arff
+ adams.flow.transformer.WekaFileReader -loader weka.core.converters.ArffLoader
+ adams.flow.transformer.WekaClassSelector
+ adams.flow.transformer.WekaTrainClassifier
+ adams.flow.transformer.WekaExtractPLSMatrix
+ adams.flow.sink.SpreadSheetDisplay -writer adams.data.io.output.NullWriter

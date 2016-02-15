@@ -26,7 +26,7 @@ import adams.core.option.AbstractArgumentOption;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.test.TmpFile;
 
 /**
@@ -97,21 +97,21 @@ public class SpreadSheetAnonymizeTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
   @Override
-  public AbstractActor getActor() {
+  public Actor getActor() {
     AbstractArgumentOption    argOption;
     
     Flow flow = new Flow();
     
     try {
       argOption = (AbstractArgumentOption) flow.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp1 = new adams.flow.core.AbstractActor[6];
+      adams.flow.core.Actor[] tmp1 = new adams.flow.core.Actor[6];
       // Flow.CallableActors
       adams.flow.standalone.CallableActors tmp2 = new adams.flow.standalone.CallableActors();
       argOption = (AbstractArgumentOption) tmp2.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp3 = new adams.flow.core.AbstractActor[1];
+      adams.flow.core.Actor[] tmp3 = new adams.flow.core.Actor[1];
       // Flow.CallableActors.DumpFile
       adams.flow.sink.DumpFile tmp4 = new adams.flow.sink.DumpFile();
       argOption = (AbstractArgumentOption) tmp4.getOptionManager().findByProperty("outputFile");
@@ -139,7 +139,7 @@ public class SpreadSheetAnonymizeTest
       // Flow.Tee
       adams.flow.control.Tee tmp11 = new adams.flow.control.Tee();
       argOption = (AbstractArgumentOption) tmp11.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp12 = new adams.flow.core.AbstractActor[1];
+      adams.flow.core.Actor[] tmp12 = new adams.flow.core.Actor[1];
       // Flow.Tee.GlobalSink
       adams.flow.sink.CallableSink tmp13 = new adams.flow.sink.CallableSink();
       argOption = (AbstractArgumentOption) tmp13.getOptionManager().findByProperty("callableName");

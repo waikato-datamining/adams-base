@@ -1,53 +1,15 @@
 # Project: adams
-# Date: 2014-01-23 15:40:14
+# Date: 2016-02-15 14:56:38
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	In this flow, the data column \"ID\" gets anonymized.\nBoth, the original and the modiifed, spreadsheet get displayed.
-	-actor
-		adams.flow.standalone.CallableActors
-			-actor
-				adams.flow.sink.DisplayPanelManager
-					-provider
-						adams.flow.sink.SpreadSheetDisplay
-					-entry-name-variable
-					name
-	-actor
-		adams.flow.source.FileSupplier
-			-file
-			${EXAMPLE_FLOWS}/data/iris_with_id.csv
-	-actor
-		adams.flow.transformer.SpreadSheetFileReader
-			-reader
-				adams.data.io.input.CsvSpreadSheetReader
-					-spreadsheet-type
-						adams.data.spreadsheet.SpreadSheet
-	-actor
-		adams.flow.control.Tee
-			-tee
-				adams.flow.transformer.SetVariable
-					-var-name
-					name
-					-var-value
-					original
-			-tee
-				adams.flow.sink.CallableSink
-					-callable
-					DisplayPanelManager
-	-actor
-		adams.flow.transformer.SpreadSheetAnonymize
-	-actor
-		adams.flow.transformer.SetVariable
-			-var-name
-			name
-			-var-value
-			anonymized
-	-actor
-		adams.flow.sink.CallableSink
-			-callable
-			DisplayPanelManager
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "In this flow, the data column \\\"ID\\\" gets anonymized.\\nBoth, the original and the modiifed, spreadsheet get displayed." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.standalone.CallableActors
+  adams.flow.sink.DisplayPanelManager -provider "adams.flow.sink.SpreadSheetDisplay -writer adams.data.io.output.NullWriter" -entry-name-variable name
+ adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/iris_with_id.csv
+ adams.flow.transformer.SpreadSheetFileReader -reader "adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.SpreadSheet"
+ adams.flow.control.Tee
+  adams.flow.transformer.SetVariable -var-name name -var-value original
+  adams.flow.sink.CallableSink -callable DisplayPanelManager
+ adams.flow.transformer.SpreadSheetAnonymize
+ adams.flow.transformer.SetVariable -var-name name -var-value anonymized
+ adams.flow.sink.CallableSink -callable DisplayPanelManager

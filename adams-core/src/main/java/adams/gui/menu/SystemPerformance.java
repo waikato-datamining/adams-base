@@ -15,7 +15,7 @@
 
 /*
  * SystemPerformance.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -25,7 +25,7 @@ import adams.core.Utils;
 import adams.core.option.AbstractArgumentOption;
 import adams.flow.control.Flow;
 import adams.flow.control.Flow.ErrorHandling;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.AbstractMenuItemDefinition;
 import adams.gui.application.UserMode;
@@ -148,10 +148,10 @@ public class SystemPerformance
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    * @throws Exception if set up fails
    */
-  public AbstractActor getActor() throws Exception {
+  public Actor getActor() throws Exception {
     AbstractArgumentOption    argOption;
 
     adams.flow.control.Flow actor = new adams.flow.control.Flow();
@@ -160,7 +160,7 @@ public class SystemPerformance
     argOption = (AbstractArgumentOption) actor.getOptionManager().findByProperty("annotations");
     actor.setAnnotations((adams.core.base.BaseAnnotation) argOption.valueOf("Uses flow components to give an overview of the system\'s performance."));
     argOption = (AbstractArgumentOption) actor.getOptionManager().findByProperty("actors");
-    adams.flow.core.AbstractActor[] actors2 = new adams.flow.core.AbstractActor[8];
+    adams.flow.core.Actor[] actors2 = new adams.flow.core.Actor[8];
 
     // Flow.System performance
     adams.flow.standalone.GridView gridview3 = new adams.flow.standalone.GridView();
@@ -173,7 +173,7 @@ public class SystemPerformance
     argOption = (AbstractArgumentOption) gridview3.getOptionManager().findByProperty("y");
     gridview3.setY((Integer) argOption.valueOf("-2"));
     argOption = (AbstractArgumentOption) gridview3.getOptionManager().findByProperty("actors");
-    adams.flow.core.AbstractActor[] actors7 = new adams.flow.core.AbstractActor[3];
+    adams.flow.core.Actor[] actors7 = new adams.flow.core.Actor[3];
 
     //
     adams.flow.sink.SequencePlotter sequenceplotter8 = new adams.flow.sink.SequencePlotter();
@@ -377,14 +377,14 @@ public class SystemPerformance
     // Flow.CallableActors
     adams.flow.standalone.CallableActors callableactors101 = new adams.flow.standalone.CallableActors();
     argOption = (AbstractArgumentOption) callableactors101.getOptionManager().findByProperty("actors");
-    adams.flow.core.AbstractActor[] actors102 = new adams.flow.core.AbstractActor[3];
+    adams.flow.core.Actor[] actors102 = new adams.flow.core.Actor[3];
 
     // Flow.CallableActors.timing_write
     adams.flow.control.Sequence sequence103 = new adams.flow.control.Sequence();
     argOption = (AbstractArgumentOption) sequence103.getOptionManager().findByProperty("name");
     sequence103.setName((java.lang.String) argOption.valueOf("timing_write"));
     argOption = (AbstractArgumentOption) sequence103.getOptionManager().findByProperty("actors");
-    adams.flow.core.AbstractActor[] actors105 = new adams.flow.core.AbstractActor[3];
+    adams.flow.core.Actor[] actors105 = new adams.flow.core.Actor[3];
 
     // Flow.CallableActors.timing_write.ContainerValuePicker
     adams.flow.control.ContainerValuePicker containervaluepicker106 = new adams.flow.control.ContainerValuePicker();
@@ -414,7 +414,7 @@ public class SystemPerformance
     argOption = (AbstractArgumentOption) sequence112.getOptionManager().findByProperty("name");
     sequence112.setName((java.lang.String) argOption.valueOf("timing_cpuspeed"));
     argOption = (AbstractArgumentOption) sequence112.getOptionManager().findByProperty("actors");
-    adams.flow.core.AbstractActor[] actors114 = new adams.flow.core.AbstractActor[3];
+    adams.flow.core.Actor[] actors114 = new adams.flow.core.Actor[3];
 
     // Flow.CallableActors.timing_cpuspeed.ContainerValuePicker
     adams.flow.control.ContainerValuePicker containervaluepicker115 = new adams.flow.control.ContainerValuePicker();
@@ -444,12 +444,12 @@ public class SystemPerformance
     argOption = (AbstractArgumentOption) sequence121.getOptionManager().findByProperty("name");
     sequence121.setName((java.lang.String) argOption.valueOf("timing_overall"));
     argOption = (AbstractArgumentOption) sequence121.getOptionManager().findByProperty("actors");
-    adams.flow.core.AbstractActor[] actors123 = new adams.flow.core.AbstractActor[3];
+    adams.flow.core.Actor[] actors123 = new adams.flow.core.Actor[3];
 
     // Flow.CallableActors.timing_overall.ContainerValuePicker
     adams.flow.control.ContainerValuePicker containervaluepicker124 = new adams.flow.control.ContainerValuePicker();
     argOption = (AbstractArgumentOption) containervaluepicker124.getOptionManager().findByProperty("actors");
-    adams.flow.core.AbstractActor[] actors125 = new adams.flow.core.AbstractActor[1];
+    adams.flow.core.Actor[] actors125 = new adams.flow.core.Actor[1];
 
     // Flow.CallableActors.timing_overall.ContainerValuePicker.SetVariable
     adams.flow.transformer.SetVariable setvariable126 = new adams.flow.transformer.SetVariable();
@@ -467,7 +467,7 @@ public class SystemPerformance
     argOption = (AbstractArgumentOption) containervaluepicker129.getOptionManager().findByProperty("name");
     containervaluepicker129.setName((java.lang.String) argOption.valueOf("ContainerValuePicker-1"));
     argOption = (AbstractArgumentOption) containervaluepicker129.getOptionManager().findByProperty("actors");
-    adams.flow.core.AbstractActor[] actors131 = new adams.flow.core.AbstractActor[1];
+    adams.flow.core.Actor[] actors131 = new adams.flow.core.Actor[1];
 
     // Flow.CallableActors.timing_overall.ContainerValuePicker-1.SetVariable
     adams.flow.transformer.SetVariable setvariable132 = new adams.flow.transformer.SetVariable();
@@ -485,7 +485,7 @@ public class SystemPerformance
     argOption = (AbstractArgumentOption) trigger135.getOptionManager().findByProperty("name");
     trigger135.setName((java.lang.String) argOption.valueOf("generate output"));
     argOption = (AbstractArgumentOption) trigger135.getOptionManager().findByProperty("actors");
-    adams.flow.core.AbstractActor[] actors137 = new adams.flow.core.AbstractActor[2];
+    adams.flow.core.Actor[] actors137 = new adams.flow.core.Actor[2];
 
     // Flow.CallableActors.timing_overall.generate output.CombineVariables
     adams.flow.source.CombineVariables combinevariables138 = new adams.flow.source.CombineVariables();
@@ -513,7 +513,7 @@ public class SystemPerformance
     argOption = (AbstractArgumentOption) standalones142.getOptionManager().findByProperty("name");
     standalones142.setName((java.lang.String) argOption.valueOf("speed variables"));
     argOption = (AbstractArgumentOption) standalones142.getOptionManager().findByProperty("actors");
-    adams.flow.core.AbstractActor[] actors144 = new adams.flow.core.AbstractActor[5];
+    adams.flow.core.Actor[] actors144 = new adams.flow.core.Actor[5];
 
     // Flow.speed variables.# curves
     adams.flow.standalone.SetVariable setvariable145 = new adams.flow.standalone.SetVariable();
@@ -573,7 +573,7 @@ public class SystemPerformance
     argOption = (AbstractArgumentOption) standalones165.getOptionManager().findByProperty("name");
     standalones165.setName((java.lang.String) argOption.valueOf("write variables"));
     argOption = (AbstractArgumentOption) standalones165.getOptionManager().findByProperty("actors");
-    adams.flow.core.AbstractActor[] actors167 = new adams.flow.core.AbstractActor[5];
+    adams.flow.core.Actor[] actors167 = new adams.flow.core.Actor[5];
 
     // Flow.write variables.number of files
     adams.flow.standalone.SetVariable setvariable168 = new adams.flow.standalone.SetVariable();
@@ -637,7 +637,7 @@ public class SystemPerformance
     argOption = (AbstractArgumentOption) trigger189.getOptionManager().findByProperty("name");
     trigger189.setName((java.lang.String) argOption.valueOf("prompt user"));
     argOption = (AbstractArgumentOption) trigger189.getOptionManager().findByProperty("actors");
-    adams.flow.core.AbstractActor[] actors191 = new adams.flow.core.AbstractActor[4];
+    adams.flow.core.Actor[] actors191 = new adams.flow.core.Actor[4];
 
     // Flow.prompt user.Enter parameters
     adams.flow.source.EnterManyValues entermanyvalues192 = new adams.flow.source.EnterManyValues();
@@ -780,7 +780,7 @@ public class SystemPerformance
     argOption = (AbstractArgumentOption) tee247.getOptionManager().findByProperty("name");
     tee247.setName((java.lang.String) argOption.valueOf("output param"));
     argOption = (AbstractArgumentOption) tee247.getOptionManager().findByProperty("actors");
-    adams.flow.core.AbstractActor[] actors249 = new adams.flow.core.AbstractActor[2];
+    adams.flow.core.Actor[] actors249 = new adams.flow.core.Actor[2];
 
     // Flow.prompt user.output param.StringJoin
     adams.flow.transformer.StringJoin stringjoin250 = new adams.flow.transformer.StringJoin();
@@ -802,7 +802,7 @@ public class SystemPerformance
     argOption = (AbstractArgumentOption) tee254.getOptionManager().findByProperty("name");
     tee254.setName((java.lang.String) argOption.valueOf("var name"));
     argOption = (AbstractArgumentOption) tee254.getOptionManager().findByProperty("actors");
-    adams.flow.core.AbstractActor[] actors256 = new adams.flow.core.AbstractActor[2];
+    adams.flow.core.Actor[] actors256 = new adams.flow.core.Actor[2];
 
     // Flow.prompt user.var name.GetArrayElement
     adams.flow.transformer.GetArrayElement getarrayelement257 = new adams.flow.transformer.GetArrayElement();
@@ -822,7 +822,7 @@ public class SystemPerformance
     argOption = (AbstractArgumentOption) tee260.getOptionManager().findByProperty("name");
     tee260.setName((java.lang.String) argOption.valueOf("var value"));
     argOption = (AbstractArgumentOption) tee260.getOptionManager().findByProperty("actors");
-    adams.flow.core.AbstractActor[] actors262 = new adams.flow.core.AbstractActor[2];
+    adams.flow.core.Actor[] actors262 = new adams.flow.core.Actor[2];
 
     // Flow.prompt user.var value.GetArrayElement
     adams.flow.transformer.GetArrayElement getarrayelement263 = new adams.flow.transformer.GetArrayElement();
@@ -847,7 +847,7 @@ public class SystemPerformance
     argOption = (AbstractArgumentOption) timedtrigger266.getOptionManager().findByProperty("name");
     timedtrigger266.setName((java.lang.String) argOption.valueOf("speed"));
     argOption = (AbstractArgumentOption) timedtrigger266.getOptionManager().findByProperty("actors");
-    adams.flow.core.AbstractActor[] actors268 = new adams.flow.core.AbstractActor[2];
+    adams.flow.core.Actor[] actors268 = new adams.flow.core.Actor[2];
 
     // Flow.speed.ForLoop
     adams.flow.source.ForLoop forloop269 = new adams.flow.source.ForLoop();
@@ -860,7 +860,7 @@ public class SystemPerformance
     argOption = (AbstractArgumentOption) timedtrigger270.getOptionManager().findByProperty("name");
     timedtrigger270.setName((java.lang.String) argOption.valueOf("calc curves"));
     argOption = (AbstractArgumentOption) timedtrigger270.getOptionManager().findByProperty("actors");
-    adams.flow.core.AbstractActor[] actors272 = new adams.flow.core.AbstractActor[4];
+    adams.flow.core.Actor[] actors272 = new adams.flow.core.Actor[4];
 
     // Flow.speed.calc curves.ForLoop
     adams.flow.source.ForLoop forloop273 = new adams.flow.source.ForLoop();
@@ -885,7 +885,7 @@ public class SystemPerformance
     argOption = (AbstractArgumentOption) trigger278.getOptionManager().findByProperty("name");
     trigger278.setName((java.lang.String) argOption.valueOf("mean"));
     argOption = (AbstractArgumentOption) trigger278.getOptionManager().findByProperty("actors");
-    adams.flow.core.AbstractActor[] actors280 = new adams.flow.core.AbstractActor[4];
+    adams.flow.core.Actor[] actors280 = new adams.flow.core.Actor[4];
 
     // Flow.speed.calc curves.mean.ForLoop
     adams.flow.source.ForLoop forloop281 = new adams.flow.source.ForLoop();
@@ -910,7 +910,7 @@ public class SystemPerformance
     argOption = (AbstractArgumentOption) trigger286.getOptionManager().findByProperty("name");
     trigger286.setName((java.lang.String) argOption.valueOf("stdev"));
     argOption = (AbstractArgumentOption) trigger286.getOptionManager().findByProperty("actors");
-    adams.flow.core.AbstractActor[] actors288 = new adams.flow.core.AbstractActor[4];
+    adams.flow.core.Actor[] actors288 = new adams.flow.core.Actor[4];
 
     // Flow.speed.calc curves.mean.stdev.plot name
     adams.flow.standalone.SetVariable setvariable289 = new adams.flow.standalone.SetVariable();
@@ -971,7 +971,7 @@ public class SystemPerformance
     argOption = (AbstractArgumentOption) timedtrigger303.getOptionManager().findByProperty("name");
     timedtrigger303.setName((java.lang.String) argOption.valueOf("write"));
     argOption = (AbstractArgumentOption) timedtrigger303.getOptionManager().findByProperty("actors");
-    adams.flow.core.AbstractActor[] actors305 = new adams.flow.core.AbstractActor[5];
+    adams.flow.core.Actor[] actors305 = new adams.flow.core.Actor[5];
 
     // Flow.write.RandomNumberGenerator
     adams.flow.source.RandomNumberGenerator randomnumbergenerator306 = new adams.flow.source.RandomNumberGenerator();
@@ -1008,7 +1008,7 @@ public class SystemPerformance
     argOption = (AbstractArgumentOption) trigger316.getOptionManager().findByProperty("name");
     trigger316.setName((java.lang.String) argOption.valueOf("delete file"));
     argOption = (AbstractArgumentOption) trigger316.getOptionManager().findByProperty("actors");
-    adams.flow.core.AbstractActor[] actors318 = new adams.flow.core.AbstractActor[2];
+    adams.flow.core.Actor[] actors318 = new adams.flow.core.Actor[2];
 
     // Flow.write.delete file.Variable
     adams.flow.source.Variable variable319 = new adams.flow.source.Variable();
@@ -1028,7 +1028,7 @@ public class SystemPerformance
     argOption = (AbstractArgumentOption) trigger322.getOptionManager().findByProperty("name");
     trigger322.setName((java.lang.String) argOption.valueOf("generate random array"));
     argOption = (AbstractArgumentOption) trigger322.getOptionManager().findByProperty("actors");
-    adams.flow.core.AbstractActor[] actors324 = new adams.flow.core.AbstractActor[4];
+    adams.flow.core.Actor[] actors324 = new adams.flow.core.Actor[4];
 
     // Flow.write.generate random array.RandomNumberGenerator
     adams.flow.source.RandomNumberGenerator randomnumbergenerator325 = new adams.flow.source.RandomNumberGenerator();
@@ -1051,7 +1051,7 @@ public class SystemPerformance
     // Flow.write.generate random array.ArrayProcess
     adams.flow.control.ArrayProcess arrayprocess329 = new adams.flow.control.ArrayProcess();
     argOption = (AbstractArgumentOption) arrayprocess329.getOptionManager().findByProperty("actors");
-    adams.flow.core.AbstractActor[] actors330 = new adams.flow.core.AbstractActor[1];
+    adams.flow.core.Actor[] actors330 = new adams.flow.core.Actor[1];
 
     // Flow.write.generate random array.ArrayProcess.Convert
     adams.flow.transformer.Convert convert331 = new adams.flow.transformer.Convert();
@@ -1071,7 +1071,7 @@ public class SystemPerformance
     // Flow.write.generate random array.TimedTee
     adams.flow.control.TimedTee timedtee335 = new adams.flow.control.TimedTee();
     argOption = (AbstractArgumentOption) timedtee335.getOptionManager().findByProperty("actors");
-    adams.flow.core.AbstractActor[] actors336 = new adams.flow.core.AbstractActor[1];
+    adams.flow.core.Actor[] actors336 = new adams.flow.core.Actor[1];
 
     // Flow.write.generate random array.TimedTee.IfThenElse
     adams.flow.control.IfThenElse ifthenelse337 = new adams.flow.control.IfThenElse();
@@ -1088,7 +1088,7 @@ public class SystemPerformance
     argOption = (AbstractArgumentOption) sequence342.getOptionManager().findByProperty("name");
     sequence342.setName((java.lang.String) argOption.valueOf("then"));
     argOption = (AbstractArgumentOption) sequence342.getOptionManager().findByProperty("actors");
-    adams.flow.core.AbstractActor[] actors344 = new adams.flow.core.AbstractActor[2];
+    adams.flow.core.Actor[] actors344 = new adams.flow.core.Actor[2];
 
     // Flow.write.generate random array.TimedTee.IfThenElse.then.StringJoin
     adams.flow.transformer.StringJoin stringjoin345 = new adams.flow.transformer.StringJoin();
@@ -1114,7 +1114,7 @@ public class SystemPerformance
     argOption = (AbstractArgumentOption) sequence350.getOptionManager().findByProperty("name");
     sequence350.setName((java.lang.String) argOption.valueOf("else"));
     argOption = (AbstractArgumentOption) sequence350.getOptionManager().findByProperty("actors");
-    adams.flow.core.AbstractActor[] actors352 = new adams.flow.core.AbstractActor[2];
+    adams.flow.core.Actor[] actors352 = new adams.flow.core.Actor[2];
 
     // Flow.write.generate random array.TimedTee.IfThenElse.else.ArrayToSequence
     adams.flow.transformer.ArrayToSequence arraytosequence353 = new adams.flow.transformer.ArrayToSequence();

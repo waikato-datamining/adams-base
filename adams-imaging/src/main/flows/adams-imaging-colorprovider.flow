@@ -1,23 +1,8 @@
 # Project: adams
-# Date: 2014-07-31 12:19:15
+# Date: 2016-02-15 14:26:46
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	A simple for showing how to generate colors with a \ncolor provider and turning them into their hexa-decimal\nnotation.
-	-actor
-		adams.flow.source.ColorProvider
-			-provider
-				adams.gui.visualization.core.DefaultColorProvider
-	-actor
-		adams.flow.transformer.Convert
-			-conversion
-				adams.data.conversion.ColorToHex
-	-actor
-		adams.flow.sink.Display
-			-writer
-				adams.data.io.output.NullWriter
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "A simple for showing how to generate colors with a \\ncolor provider and turning them into their hexa-decimal\\nnotation." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.source.ColorProvider -provider adams.gui.visualization.core.DefaultColorProvider
+ adams.flow.transformer.Convert -conversion adams.data.conversion.ColorToHex
+ adams.flow.sink.Display -writer adams.data.io.output.NullWriter

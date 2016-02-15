@@ -15,12 +15,12 @@
 
 /**
  * VariablesInstanceLister.java
- * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
 import adams.core.Variables;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 
 /**
  <!-- globalinfo-start -->
@@ -126,8 +126,8 @@ public class VariablesInstanceLister
     m_Result.append(option.getProperty());
     m_Result.append("\t");
     m_Result.append(option.getOwner().getVariables().hashCode());
-    if (option.getOptionHandler() instanceof AbstractActor) {
-      vars = ((AbstractActor) option.getOptionHandler()).getVariables();
+    if (option.getOptionHandler() instanceof Actor) {
+      vars = ((Actor) option.getOptionHandler()).getVariables();
       if (vars != null)
 	m_Result.append("/" + vars.hashCode());
       else

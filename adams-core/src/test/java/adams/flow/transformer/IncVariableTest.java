@@ -29,7 +29,7 @@ import adams.core.option.AbstractArgumentOption;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.test.Regression;
 import adams.test.TmpFile;
 
@@ -99,17 +99,17 @@ public class IncVariableTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
   @Override
-  public AbstractActor getActor() {
+  public Actor getActor() {
     AbstractArgumentOption    argOption;
 
     Flow flow = new Flow();
 
     try {
       argOption = (AbstractArgumentOption) flow.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp1 = new adams.flow.core.AbstractActor[3];
+      adams.flow.core.Actor[] tmp1 = new adams.flow.core.Actor[3];
       adams.flow.source.ForLoop tmp2 = new adams.flow.source.ForLoop();
       tmp1[0] = tmp2;
       adams.flow.transformer.IncVariable tmp3 = new adams.flow.transformer.IncVariable();
@@ -125,7 +125,7 @@ public class IncVariableTest
       tmp1[1] = tmp3;
       adams.flow.control.Trigger tmp7 = new adams.flow.control.Trigger();
       argOption = (AbstractArgumentOption) tmp7.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp8 = new adams.flow.core.AbstractActor[2];
+      adams.flow.core.Actor[] tmp8 = new adams.flow.core.Actor[2];
       adams.flow.source.Variable tmp9 = new adams.flow.source.Variable();
       argOption = (AbstractArgumentOption) tmp9.getOptionManager().findByProperty("variableName");
       tmp9.setVariableName((adams.core.VariableName) argOption.valueOf("inc"));
@@ -154,16 +154,16 @@ public class IncVariableTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
-  public AbstractActor getActorCallableActorAsVariable() {
+  public Actor getActorCallableActorAsVariable() {
     AbstractArgumentOption    argOption;
     
     Flow flow = new Flow();
     
     try {
       argOption = (AbstractArgumentOption) flow.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp1 = new adams.flow.core.AbstractActor[6];
+      adams.flow.core.Actor[] tmp1 = new adams.flow.core.Actor[6];
       adams.flow.standalone.SetVariable tmp2 = new adams.flow.standalone.SetVariable();
       argOption = (AbstractArgumentOption) tmp2.getOptionManager().findByProperty("name");
       tmp2.setName((java.lang.String) argOption.valueOf("SetVariable-1"));
@@ -177,13 +177,13 @@ public class IncVariableTest
       tmp1[0] = tmp2;
       adams.flow.standalone.CallableActors tmp6 = new adams.flow.standalone.CallableActors();
       argOption = (AbstractArgumentOption) tmp6.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp7 = new adams.flow.core.AbstractActor[1];
+      adams.flow.core.Actor[] tmp7 = new adams.flow.core.Actor[1];
       adams.flow.source.SequenceSource tmp8 = new adams.flow.source.SequenceSource();
       argOption = (AbstractArgumentOption) tmp8.getOptionManager().findByProperty("name");
       tmp8.setName((java.lang.String) argOption.valueOf("increment"));
 
       argOption = (AbstractArgumentOption) tmp8.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp10 = new adams.flow.core.AbstractActor[4];
+      adams.flow.core.Actor[] tmp10 = new adams.flow.core.Actor[4];
       adams.flow.source.Variable tmp11 = new adams.flow.source.Variable();
       argOption = (AbstractArgumentOption) tmp11.getOptionManager().findByProperty("variableName");
       tmp11.setVariableName((adams.core.VariableName) argOption.valueOf("i"));
@@ -232,7 +232,7 @@ public class IncVariableTest
       tmp1[4] = tmp25;
       adams.flow.control.Trigger tmp27 = new adams.flow.control.Trigger();
       argOption = (AbstractArgumentOption) tmp27.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp28 = new adams.flow.core.AbstractActor[2];
+      adams.flow.core.Actor[] tmp28 = new adams.flow.core.Actor[2];
       adams.flow.source.Variable tmp29 = new adams.flow.source.Variable();
       argOption = (AbstractArgumentOption) tmp29.getOptionManager().findByProperty("variableName");
       tmp29.setVariableName((adams.core.VariableName) argOption.valueOf("val"));
@@ -270,16 +270,16 @@ public class IncVariableTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
-  public AbstractActor getActorStorageAsVariable() {
+  public Actor getActorStorageAsVariable() {
     AbstractArgumentOption    argOption;
     
     Flow flow = new Flow();
     
     try {
       argOption = (AbstractArgumentOption) flow.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp1 = new adams.flow.core.AbstractActor[5];
+      adams.flow.core.Actor[] tmp1 = new adams.flow.core.Actor[5];
       adams.flow.standalone.SetVariable tmp2 = new adams.flow.standalone.SetVariable();
       argOption = (AbstractArgumentOption) tmp2.getOptionManager().findByProperty("variableName");
       tmp2.setVariableName((adams.core.VariableName) argOption.valueOf("val"));
@@ -292,7 +292,7 @@ public class IncVariableTest
       tmp1[1] = tmp5;
       adams.flow.control.Tee tmp6 = new adams.flow.control.Tee();
       argOption = (AbstractArgumentOption) tmp6.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp7 = new adams.flow.core.AbstractActor[3];
+      adams.flow.core.Actor[] tmp7 = new adams.flow.core.Actor[3];
       adams.flow.transformer.MathExpression tmp8 = new adams.flow.transformer.MathExpression();
       argOption = (AbstractArgumentOption) tmp8.getOptionManager().findByProperty("expression");
       tmp8.setExpression((adams.parser.MathematicalExpressionText) argOption.valueOf("X*2"));
@@ -322,7 +322,7 @@ public class IncVariableTest
       tmp1[3] = tmp15;
       adams.flow.control.Trigger tmp17 = new adams.flow.control.Trigger();
       argOption = (AbstractArgumentOption) tmp17.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp18 = new adams.flow.core.AbstractActor[2];
+      adams.flow.core.Actor[] tmp18 = new adams.flow.core.Actor[2];
       adams.flow.source.Variable tmp19 = new adams.flow.source.Variable();
       argOption = (AbstractArgumentOption) tmp19.getOptionManager().findByProperty("variableName");
       tmp19.setVariableName((adams.core.VariableName) argOption.valueOf("val"));

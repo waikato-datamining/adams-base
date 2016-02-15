@@ -1,75 +1,12 @@
 # Project: adams
-# Date: 2014-01-23 15:21:18
+# Date: 2016-02-15 11:29:08
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	Example flow that demonstrates how to change a value\nof a plot container before it is being plotted, using a\nvariable calculated elsewhere in the flow.
-	-actor
-		adams.flow.source.ForLoop
-			-lower
-			0
-	-actor
-		adams.flow.control.Tee
-			-name
-			calculate Y for plot container
-			-tee
-				adams.flow.transformer.MathExpression
-					-expression
-					X^2
-			-tee
-				adams.flow.transformer.SetVariable
-					-var-name
-					y
-	-actor
-		adams.flow.transformer.MakePlotContainer
-	-actor
-		adams.flow.transformer.SetPlotContainerValue
-			-container-value
-			X_VALUE
-			-value
-			@{y}
-	-actor
-		adams.flow.sink.SequencePlotter
-			-writer
-				adams.gui.print.NullWriter
-			-paintlet
-				adams.gui.visualization.sequence.LinePaintlet
-			-overlay-paintlet
-				adams.gui.visualization.sequence.CirclePaintlet
-			-marker-paintlet
-				adams.flow.sink.sequenceplotter.NoMarkers
-			-error-paintlet
-				adams.flow.sink.sequenceplotter.NoErrorPaintlet
-			-color-provider
-				adams.gui.visualization.core.DefaultColorProvider
-			-overlay-color-provider
-				adams.gui.visualization.core.DefaultColorProvider
-			-axis-x
-				adams.gui.visualization.core.AxisPanelOptions
-					-label
-					x
-					-tick-generator
-						adams.gui.visualization.core.axis.FancyTickGenerator
-					-width
-					40
-					-custom-format
-					0.000
-			-axis-y
-				adams.gui.visualization.core.AxisPanelOptions
-					-label
-					y
-					-tick-generator
-						adams.gui.visualization.core.axis.FancyTickGenerator
-					-width
-					80
-					-custom-format
-					0.0
-			-plot-updater
-				adams.flow.sink.sequenceplotter.SimplePlotUpdater
-			-post-processor
-				adams.flow.sink.sequenceplotter.PassThrough
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "Example flow that demonstrates how to change a value\\nof a plot container before it is being plotted, using a\\nvariable calculated elsewhere in the flow." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.source.ForLoop -lower 0
+ adams.flow.control.Tee -name "calculate Y for plot container"
+  adams.flow.transformer.MathExpression -expression X^2
+  adams.flow.transformer.SetVariable -var-name y
+ adams.flow.transformer.MakePlotContainer
+ adams.flow.transformer.SetPlotContainerValue -container-value X_VALUE -value @{y} -conversion adams.data.conversion.StringToString
+ adams.flow.sink.SequencePlotter -writer adams.gui.print.NullWriter -paintlet adams.gui.visualization.sequence.LinePaintlet -overlay-paintlet adams.gui.visualization.sequence.CirclePaintlet -marker-paintlet adams.flow.sink.sequenceplotter.NoMarkers -error-paintlet adams.flow.sink.sequenceplotter.NoErrorPaintlet -mouse-click-action adams.flow.sink.sequenceplotter.NullClickAction -color-provider adams.gui.visualization.core.DefaultColorProvider -overlay-color-provider adams.gui.visualization.core.DefaultColorProvider -axis-x "adams.gui.visualization.core.AxisPanelOptions -label x -tick-generator adams.gui.visualization.core.axis.FancyTickGenerator -width 40 -custom-format 0.000" -axis-y "adams.gui.visualization.core.AxisPanelOptions -label y -tick-generator adams.gui.visualization.core.axis.FancyTickGenerator -width 80 -custom-format 0.0" -plot-updater adams.flow.sink.sequenceplotter.SimplePlotUpdater -post-processor adams.flow.sink.sequenceplotter.PassThrough

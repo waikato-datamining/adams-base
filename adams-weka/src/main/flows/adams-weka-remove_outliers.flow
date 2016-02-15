@@ -1,117 +1,23 @@
 # Project: adams
-# Date: 2016-01-12 12:40:42
+# Date: 2016-02-15 15:26:09
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	Allows the user to remove outliers interactively.
-	-actor
-		adams.flow.standalone.CallableActors
-			-actor
-				adams.flow.source.WekaClassifierSetup
-					-classifier
-						weka.classifiers.functions.LinearRegression
-							-S
-							0
-							-R
-							1.0E-8
-							-num-decimal-places
-							4
-	-actor
-		adams.flow.source.FileSupplier
-			-file
-			${EXAMPLE_FLOWS}/data/bodyfat.arff
-	-actor
-		adams.flow.transformer.WekaFileReader
-			-loader
-				weka.core.converters.AArffLoader
-	-actor
-		adams.flow.transformer.WekaClassSelector
-	-actor
-		adams.flow.transformer.WekaCrossValidationEvaluator
-			-output
-				weka.classifiers.evaluation.output.prediction.Null
-			-always-use-container
-			true
-	-actor
-		adams.flow.transformer.WekaPredictionsToSpreadSheet
-			-use-original-indices
-			true
-	-actor
-		adams.flow.control.RemoveOutliers
-			-short-title
-			true
-			-stop-if-canceled
-			true
-			-detector
-				adams.flow.control.removeoutliers.StdDev
-	-actor
-		adams.flow.control.Branch
-			-branch
-				adams.flow.control.Sequence
-					-name
-					original
-					-actor
-						adams.flow.control.ContainerValuePicker
-							-value
-							Original
-							-switch-outputs
-							true
-					-actor
-						adams.flow.sink.SpreadSheetDisplay
-							-name
-							original
-							-short-title
-							true
-							-width
-							400
-							-writer
-								adams.data.io.output.NullWriter
-			-branch
-				adams.flow.control.Sequence
-					-name
-					clean
-					-actor
-						adams.flow.control.ContainerValuePicker
-							-value
-							Clean
-							-switch-outputs
-							true
-					-actor
-						adams.flow.sink.SpreadSheetDisplay
-							-name
-							clean
-							-short-title
-							true
-							-width
-							400
-							-x
-							-2
-							-writer
-								adams.data.io.output.NullWriter
-			-branch
-				adams.flow.control.Sequence
-					-name
-					outliers
-					-actor
-						adams.flow.control.ContainerValuePicker
-							-value
-							Outliers
-							-switch-outputs
-							true
-					-actor
-						adams.flow.sink.SpreadSheetDisplay
-							-name
-							outliers
-							-short-title
-							true
-							-width
-							400
-							-x
-							-3
-							-writer
-								adams.data.io.output.NullWriter
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "Allows the user to remove outliers interactively." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.standalone.CallableActors
+  adams.flow.source.WekaClassifierSetup -classifier "weka.classifiers.functions.LinearRegression -S 0 -R 1.0E-8 -num-decimal-places 4"
+ adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/bodyfat.arff
+ adams.flow.transformer.WekaFileReader -loader weka.core.converters.AArffLoader
+ adams.flow.transformer.WekaClassSelector
+ adams.flow.transformer.WekaCrossValidationEvaluator -output weka.classifiers.evaluation.output.prediction.Null -always-use-container true
+ adams.flow.transformer.WekaPredictionsToSpreadSheet -use-original-indices true
+ adams.flow.control.RemoveOutliers -short-title true -stop-if-canceled true -detector adams.flow.control.removeoutliers.StdDev
+ adams.flow.control.Branch
+  adams.flow.control.Sequence -name original
+   adams.flow.control.ContainerValuePicker -value Original -switch-outputs true
+   adams.flow.sink.SpreadSheetDisplay -name original -short-title true -width 400 -writer adams.data.io.output.NullWriter
+  adams.flow.control.Sequence -name clean
+   adams.flow.control.ContainerValuePicker -value Clean -switch-outputs true
+   adams.flow.sink.SpreadSheetDisplay -name clean -short-title true -width 400 -x -2 -writer adams.data.io.output.NullWriter
+  adams.flow.control.Sequence -name outliers
+   adams.flow.control.ContainerValuePicker -value Outliers -switch-outputs true
+   adams.flow.sink.SpreadSheetDisplay -name outliers -short-title true -width 400 -x -3 -writer adams.data.io.output.NullWriter

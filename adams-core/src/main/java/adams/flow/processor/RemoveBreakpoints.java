@@ -15,12 +15,12 @@
 
 /**
  * RemoveBreakpoints.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.processor;
 
 import adams.flow.control.Breakpoint;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.core.ActorHandler;
 import adams.flow.core.MutableActorHandler;
 
@@ -71,10 +71,9 @@ public class RemoveBreakpoints
    * Performs the actual processing.
    *
    * @param actor	the actor to process
-   * @return		the processed actor
    */
   @Override
-  protected void processActor(AbstractActor actor) {
+  protected void processActor(Actor actor) {
     ActorHandler	handler;
     MutableActorHandler	mutable;
     int			i;

@@ -1,77 +1,19 @@
 # Project: adams
-# Date: 2014-01-23 15:24:23
+# Date: 2016-02-15 11:34:36
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	This flow demonstrates how to process the same storage value\nmultiple times with Triggers, but still output and forward in the\nflow. The actual processing is happening below the \n\"StorageValueSequence\" control actor, which also forwards the\nstorage value then.\nThis flow only uses a simple string to show the functionality, but\nit could be any complex data structure that the flow manipulates.
-	-actor
-		adams.flow.standalone.SetVariable
-			-var-name
-			count
-			-var-value
-			0
-	-actor
-		adams.flow.source.StringConstants
-			-string
-			blah
-			-string
-			bloerk
-			-string
-			some
-			-string
-			thing
-	-actor
-		adams.flow.transformer.IncVariable
-			-var-name
-			count
-	-actor
-		adams.flow.transformer.SetStorageValue
-			-storage-name
-			content
-	-actor
-		adams.flow.control.StorageValueSequence
-			-actor
-				adams.flow.control.Trigger
-					-name
-					first processing step
-					-tee
-						adams.flow.source.StorageValue
-							-storage-name
-							content
-					-tee
-						adams.flow.transformer.StringInsert
-							-after
-							true
-							-value
-							@{count}
-					-tee
-						adams.flow.transformer.SetStorageValue
-							-storage-name
-							content
-			-actor
-				adams.flow.control.Trigger
-					-name
-					second processing step
-					-tee
-						adams.flow.source.StorageValue
-							-storage-name
-							content
-					-tee
-						adams.flow.transformer.StringInsert
-							-position
-							first
-							-value
-							@{count}
-					-tee
-						adams.flow.transformer.SetStorageValue
-							-storage-name
-							content
-			-storage-name
-			content
-	-actor
-		adams.flow.sink.Display
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "This flow demonstrates how to process the same storage value\\nmultiple times with Triggers, but still output and forward in the\\nflow. The actual processing is happening below the \\n\\\"StorageValueSequence\\\" control actor, which also forwards the\\nstorage value then.\\nThis flow only uses a simple string to show the functionality, but\\nit could be any complex data structure that the flow manipulates." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.standalone.SetVariable -var-name count -var-value 0
+ adams.flow.source.StringConstants -string blah -string bloerk -string some -string thing
+ adams.flow.transformer.IncVariable -var-name count
+ adams.flow.transformer.SetStorageValue -storage-name content
+ adams.flow.control.StorageValueSequence -storage-name content
+  adams.flow.control.Trigger -name "first processing step"
+   adams.flow.source.StorageValue -storage-name content
+   adams.flow.transformer.StringInsert -after true -value @{count}
+   adams.flow.transformer.SetStorageValue -storage-name content
+  adams.flow.control.Trigger -name "second processing step"
+   adams.flow.source.StorageValue -storage-name content
+   adams.flow.transformer.StringInsert -position first -value @{count}
+   adams.flow.transformer.SetStorageValue -storage-name content
+ adams.flow.sink.Display -writer adams.data.io.output.NullWriter

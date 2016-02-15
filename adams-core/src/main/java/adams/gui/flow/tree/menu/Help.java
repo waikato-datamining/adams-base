@@ -15,12 +15,12 @@
 
 /**
  * Help.java
- * Copyright (C) 2014 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, NZ
  */
 package adams.gui.flow.tree.menu;
 
 import adams.core.option.HtmlHelpProducer;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.gui.dialog.HelpDialog;
 import adams.gui.flow.tree.TreeHelper;
 
@@ -65,7 +65,7 @@ public class Help
   protected void help(TreePath path) {
     HelpDialog		dialog;
     HtmlHelpProducer 	producer;
-    AbstractActor	actor;
+    Actor 		actor;
 
     actor = TreeHelper.pathToActor(path);
     if (getParentDialog() != null)

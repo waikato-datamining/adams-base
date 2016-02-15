@@ -26,7 +26,6 @@ import adams.core.io.FileEncodingSupporter;
 import adams.core.io.FileUtils;
 import adams.core.option.NestedConsumer;
 import adams.core.option.NestedProducer;
-import adams.flow.core.AbstractActor;
 import adams.flow.core.Actor;
 import adams.gui.flow.tree.Node;
 import adams.gui.flow.tree.TreeHelper;
@@ -172,13 +171,13 @@ public class DefaultFlowReader
    * @param lines	the lines to read the actor from
    * @return		the actor, null if failed to read
    */
-  protected AbstractActor readNonCompact(List<String> lines) {
-    AbstractActor	result;
+  protected Actor readNonCompact(List<String> lines) {
+    Actor		result;
     NestedConsumer	consumer;
 
     consumer = new NestedConsumer();
     consumer.setEncoding(m_Encoding);
-    result = (AbstractActor) consumer.fromString(Utils.flatten(lines, "\n"));
+    result = (Actor) consumer.fromString(Utils.flatten(lines, "\n"));
 
     // transfer errors/warnings
     m_Errors.addAll(consumer.getErrors());
@@ -193,13 +192,13 @@ public class DefaultFlowReader
    * @param file	the file to read from
    * @return		the actor, null if failed to read
    */
-  protected AbstractActor readNonCompact(File file) {
-    AbstractActor	result;
+  protected Actor readNonCompact(File file) {
+    Actor		result;
     NestedConsumer	consumer;
 
     consumer = new NestedConsumer();
     consumer.setEncoding(m_Encoding);
-    result = (AbstractActor) consumer.fromFile(file);
+    result = (Actor) consumer.fromFile(file);
 
     // transfer errors/warnings
     m_Errors.addAll(consumer.getErrors());
@@ -243,7 +242,7 @@ public class DefaultFlowReader
    */
   @Override
   protected Actor doReadActor(File file) {
-    AbstractActor	result;
+    Actor		result;
     List<String>	lines;
     Node		node;
     MessageCollection	errors;

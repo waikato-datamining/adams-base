@@ -29,7 +29,7 @@ import adams.data.twitter.TwitterField;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.sink.Console;
 import adams.flow.source.TweetReplay;
 
@@ -78,10 +78,10 @@ public class TwitterConverterTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
   @Override
-  public AbstractActor getActor() {
+  public Actor getActor() {
     TweetReplay tr = new TweetReplay();
     FixedTweets ft = new FixedTweets();
     ft.setTweets(new BaseString[]{
@@ -99,7 +99,7 @@ public class TwitterConverterTest
     Console con = new Console();
 
     Flow flow = new Flow();
-    flow.setActors(new AbstractActor[]{tr, tw, con});
+    flow.setActors(new Actor[]{tr, tw, con});
 
     return flow;
   }

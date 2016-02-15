@@ -34,6 +34,7 @@ import adams.core.base.BaseObject;
 import adams.core.base.BaseShort;
 import adams.core.base.BaseString;
 import adams.core.logging.LoggingObject;
+import adams.core.logging.LoggingSupporter;
 import adams.core.management.LocaleHelper;
 import gnu.trove.list.array.TByteArrayList;
 
@@ -1895,7 +1896,7 @@ public class Utils {
    * @param t		the exception
    * @return		the full error message (message + stacktrace)
    */
-  public static String handleException(LoggingObject source, String msg, Throwable t) {
+  public static String handleException(LoggingSupporter source, String msg, Throwable t) {
     return handleException(source, msg, t, false);
   }
 
@@ -1911,7 +1912,7 @@ public class Utils {
    * 			to the source's logger
    * @return		the full error message (message + stacktrace)
    */
-  public static String handleException(LoggingObject source, String msg, Throwable t, boolean silent) {
+  public static String handleException(LoggingSupporter source, String msg, Throwable t, boolean silent) {
     String	result;
 
     result = msg.trim() + "\n" + Utils.throwableToString(t);

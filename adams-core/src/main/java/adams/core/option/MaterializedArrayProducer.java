@@ -15,17 +15,17 @@
 
 /**
  * MaterializedArrayProducer.java
- * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.core.CallableActorHelper;
 import adams.flow.core.CallableActorReference;
 import adams.flow.provenance.ProvenanceInformation;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 
 /**
  * Specialized ArrayProducer that resolves "callable actor references" into
@@ -61,19 +61,19 @@ public class MaterializedArrayProducer
    * Hook method for performing checks on the input. May throw exceptions
    * if object doesn't pass test(s).
    * <br><br>
-   * Makes sure that the input is derived from AbstractActor.
+   * Makes sure that the input is derived from Actor.
    *
    * @param object	the objec to check
    * @return		the checked object
-   * @see		AbstractActor
+   * @see		Actor
    */
   @Override
   protected OptionHandler checkInput(OptionHandler object) {
-    if (object instanceof AbstractActor)
+    if (object instanceof Actor)
       return object;
     else
       throw new IllegalArgumentException(
-	  "Input needs to be derived from " + AbstractActor.class.getName() + "!");
+	  "Input needs to be derived from " + Actor.class.getName() + "!");
   }
 
   /**
@@ -83,11 +83,11 @@ public class MaterializedArrayProducer
    * @return		the commandline setup
    */
   protected String materialize(CallableActorReference ref) {
-    String		result;
-    AbstractActor	actor;
+    String	result;
+    Actor	actor;
 
     result = null;
-    actor  = m_Helper.findCallableActorRecursive((AbstractActor) m_Input, ref);
+    actor  = m_Helper.findCallableActorRecursive((Actor) m_Input, ref);
     if (actor != null)
       result = OptionUtils.getCommandLine(actor);
     else

@@ -15,7 +15,7 @@
 
 /*
  * PlotProcessorTest.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -26,7 +26,7 @@ import adams.core.base.BaseText;
 import adams.core.option.AbstractArgumentOption;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 
 /**
  * Test for PlotProcessor actor.
@@ -60,17 +60,17 @@ public class PlotProcessorTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
   @Override
-  public AbstractActor getActor() {
+  public Actor getActor() {
     AbstractArgumentOption    argOption;
     
     Flow flow = new Flow();
     
     try {
       argOption = (AbstractArgumentOption) flow.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] actors1 = new adams.flow.core.AbstractActor[7];
+      adams.flow.core.Actor[] actors1 = new adams.flow.core.Actor[7];
 
       // Flow.SetVariable
       adams.flow.standalone.SetVariable setvariable2 = new adams.flow.standalone.SetVariable();

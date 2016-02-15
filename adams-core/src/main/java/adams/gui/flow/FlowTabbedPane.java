@@ -21,7 +21,7 @@ package adams.gui.flow;
 
 import adams.core.CleanUpHandler;
 import adams.core.Properties;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.gui.core.BaseTabbedPane;
 import adams.gui.core.DragAndDropTabbedPane;
 import adams.gui.flow.tab.RegisteredDisplaysTab;
@@ -239,7 +239,7 @@ public class FlowTabbedPane
     if (getPanelCount() == 0)
       m_Owner.getTabs().notifyTabs(
 	  new TreePath[0],
-	  new AbstractActor[0]);
+	  new Actor[0]);
     else
       m_Owner.getTabs().notifyTabs(
 	  m_Owner.getCurrentPanel().getTree().getSelectionPaths(),

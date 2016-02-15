@@ -27,7 +27,7 @@ import adams.core.option.AbstractArgumentOption;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.sink.DumpFile;
 import adams.flow.source.MOAStream;
 import adams.flow.standalone.CallableActors;
@@ -97,20 +97,20 @@ public class MOAMeasurementsFilterTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
   @Override
-  public AbstractActor getActor() {
+  public Actor getActor() {
     AbstractArgumentOption    argOption;
 
     Flow flow = new Flow();
 
     try {
       argOption = (AbstractArgumentOption) flow.getOptionManager().findByProperty("actors");
-      AbstractActor[] tmp1 = new AbstractActor[6];
+      Actor[] tmp1 = new Actor[6];
       CallableActors tmp2 = new CallableActors();
       argOption = (AbstractArgumentOption) tmp2.getOptionManager().findByProperty("actors");
-      AbstractActor[] tmp3 = new AbstractActor[1];
+      Actor[] tmp3 = new Actor[1];
       adams.flow.source.MOAClassifierSetup tmp4 = new adams.flow.source.MOAClassifierSetup();
       argOption = (AbstractArgumentOption) tmp4.getOptionManager().findByProperty("outputInterval");
       tmp4.setName("MOAClassifier");

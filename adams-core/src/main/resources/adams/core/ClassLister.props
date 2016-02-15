@@ -246,7 +246,7 @@ adams.doc.javadoc.Javadoc=\
   adams.doc.javadoc
 
 # the flow actors
-adams.flow.core.AbstractActor=\
+adams.flow.core.Actor=\
   adams.flow.control,\
   adams.flow.standalone,\
   adams.flow.source,\

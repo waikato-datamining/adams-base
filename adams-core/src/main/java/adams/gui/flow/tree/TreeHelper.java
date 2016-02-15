@@ -22,7 +22,6 @@ package adams.gui.flow.tree;
 import adams.core.MessageCollection;
 import adams.core.Utils;
 import adams.core.option.OptionUtils;
-import adams.flow.core.AbstractActor;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorHandler;
 import adams.flow.core.ActorPath;
@@ -79,7 +78,7 @@ public class TreeHelper {
    * @param path	the path to the actor
    * @return		the actor
    */
-  public static AbstractActor pathToActor(TreePath path) {
+  public static Actor pathToActor(TreePath path) {
     return pathToActor(path, false);
   }
 
@@ -91,9 +90,9 @@ public class TreeHelper {
    * @param full	whether to return the full actor
    * @return		the actor
    */
-  public static AbstractActor pathToActor(TreePath path, boolean full) {
-    AbstractActor	result;
-    Node		node;
+  public static Actor pathToActor(TreePath path, boolean full) {
+    Actor	result;
+    Node	node;
     
     if (path == null)
       return null;
@@ -114,7 +113,7 @@ public class TreeHelper {
    * @param paths	the paths to the actors
    * @return		the actors
    */
-  public static AbstractActor[] pathsToActors(TreePath[] paths) {
+  public static Actor[] pathsToActors(TreePath[] paths) {
     return pathsToActors(paths, false);
   }
 
@@ -126,15 +125,15 @@ public class TreeHelper {
    * @param full	whether to return the full actor
    * @return		the actors
    */
-  public static AbstractActor[] pathsToActors(TreePath[] paths, boolean full) {
-    AbstractActor[]	result;
-    Node[]		nodes;
-    int			i;
+  public static Actor[] pathsToActors(TreePath[] paths, boolean full) {
+    Actor[]	result;
+    Node[]	nodes;
+    int		i;
 
     if (paths == null)
       return null;
     
-    result = new AbstractActor[paths.length];
+    result = new Actor[paths.length];
     nodes  = pathsToNodes(paths);
     for (i = 0; i < nodes.length; i++) {
       if (full)
@@ -173,13 +172,13 @@ public class TreeHelper {
    * @param errors	for storing any errors
    */
   protected static void buildTree(List<String> actors, Node root, MessageCollection errors) {
-    int			level;
-    int			index;
-    String		cmdline;
-    AbstractActor	actor;
-    Node 		previous;
-    Node		node;
-    Node		parent;
+    int		level;
+    int		index;
+    String	cmdline;
+    Actor	actor;
+    Node 	previous;
+    Node	node;
+    Node	parent;
 
     previous = root;
 
@@ -192,7 +191,7 @@ public class TreeHelper {
 	level++;
 
       try {
-	actor = (AbstractActor) OptionUtils.forCommandLine(Actor.class, actors.get(index).trim());
+	actor = (Actor) OptionUtils.forCommandLine(Actor.class, actors.get(index).trim());
 	node = new Node(previous.getOwner(), actor);
       }
       catch (Exception e) {
@@ -238,14 +237,14 @@ public class TreeHelper {
    * @return		the root node, null if failed to build
    */
   public static Node buildTree(List<String> actors, MessageCollection errors) {
-    AbstractActor	actor;
-    Node		root;
+    Actor	actor;
+    Node	root;
 
     if (actors.size() == 0)
       return null;
 
     try {
-      actor = (AbstractActor) OptionUtils.forCommandLine(Actor.class, actors.get(0).trim());
+      actor = (Actor) OptionUtils.forCommandLine(Actor.class, actors.get(0).trim());
       root  = new Node(null, actor);
       buildTree(actors, root, errors);
       return root;
@@ -262,7 +261,7 @@ public class TreeHelper {
    * @param root	the root actor, can be null
    * @return		the root node
    */
-  public static Node buildTree(AbstractActor root) {
+  public static Node buildTree(Actor root) {
     return buildTree(null, root, true);
   }
 
@@ -275,8 +274,8 @@ public class TreeHelper {
    * 			return it (recursive calls always append the sub-tree!)
    * @return		the generated node
    */
-  public static Node buildTree(Node parent, AbstractActor actor, boolean append) {
-    return buildTree(parent, new AbstractActor[]{actor}, append)[0];
+  public static Node buildTree(Node parent, Actor actor, boolean append) {
+    return buildTree(parent, new Actor[]{actor}, append)[0];
   }
 
   /**
@@ -288,7 +287,7 @@ public class TreeHelper {
    * 			return it (recursive calls always append the sub-tree!)
    * @return		the generated nodes
    */
-  protected static Node[] buildTree(final Node parent, AbstractActor[] actors, boolean append) {
+  protected static Node[] buildTree(final Node parent, Actor[] actors, boolean append) {
     final Node[]	result;
     int			n;
     int			i;

@@ -26,7 +26,7 @@ import adams.core.option.AbstractArgumentOption;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.test.TmpFile;
 
 /**
@@ -98,17 +98,17 @@ public class HashSetInitTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
   @Override
-  public AbstractActor getActor() {
+  public Actor getActor() {
     AbstractArgumentOption    argOption;
     
     Flow flow = new Flow();
     
     try {
       argOption = (AbstractArgumentOption) flow.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] actors1 = new adams.flow.core.AbstractActor[4];
+      adams.flow.core.Actor[] actors1 = new adams.flow.core.Actor[4];
 
       // Flow.HashSetInit
       adams.flow.standalone.HashSetInit hashsetinit2 = new adams.flow.standalone.HashSetInit();
@@ -121,7 +121,7 @@ public class HashSetInitTest
       // Flow.Trigger
       adams.flow.control.Trigger trigger4 = new adams.flow.control.Trigger();
       argOption = (AbstractArgumentOption) trigger4.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] actors5 = new adams.flow.core.AbstractActor[2];
+      adams.flow.core.Actor[] actors5 = new adams.flow.core.Actor[2];
 
       // Flow.Trigger.ForLoop
       adams.flow.source.ForLoop forloop6 = new adams.flow.source.ForLoop();
@@ -139,7 +139,7 @@ public class HashSetInitTest
       argOption = (AbstractArgumentOption) trigger8.getOptionManager().findByProperty("name");
       trigger8.setName((java.lang.String) argOption.valueOf("Trigger-1"));
       argOption = (AbstractArgumentOption) trigger8.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] actors10 = new adams.flow.core.AbstractActor[3];
+      adams.flow.core.Actor[] actors10 = new adams.flow.core.Actor[3];
 
       // Flow.Trigger-1.ForLoop
       adams.flow.source.ForLoop forloop11 = new adams.flow.source.ForLoop();
@@ -150,7 +150,7 @@ public class HashSetInitTest
       // Flow.Trigger-1.ConditionalTee
       adams.flow.control.ConditionalTee conditionaltee13 = new adams.flow.control.ConditionalTee();
       argOption = (AbstractArgumentOption) conditionaltee13.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] actors14 = new adams.flow.core.AbstractActor[1];
+      adams.flow.core.Actor[] actors14 = new adams.flow.core.Actor[1];
 
       // Flow.Trigger-1.ConditionalTee.DumpFile
       adams.flow.sink.DumpFile dumpfile15 = new adams.flow.sink.DumpFile();
@@ -172,7 +172,7 @@ public class HashSetInitTest
       argOption = (AbstractArgumentOption) conditionaltee19.getOptionManager().findByProperty("name");
       conditionaltee19.setName((java.lang.String) argOption.valueOf("ConditionalTee-1"));
       argOption = (AbstractArgumentOption) conditionaltee19.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] actors21 = new adams.flow.core.AbstractActor[1];
+      adams.flow.core.Actor[] actors21 = new adams.flow.core.Actor[1];
 
       // Flow.Trigger-1.ConditionalTee-1.DumpFile
       adams.flow.sink.DumpFile dumpfile22 = new adams.flow.sink.DumpFile();

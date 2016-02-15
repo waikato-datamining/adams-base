@@ -1,59 +1,15 @@
 # Project: adams
-# Date: 2014-02-04 13:14:50
+# Date: 2016-02-15 14:57:22
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	Shows how to copy (ie duplicate) a range of rows in a spreadsheet.
-	-actor
-		adams.flow.standalone.CallableActors
-			-actor
-				adams.flow.sink.DisplayPanelManager
-					-provider
-						adams.flow.sink.SpreadSheetDisplay
-					-entry-name-variable
-					name
-	-actor
-		adams.flow.source.FileSupplier
-			-file
-			${EXAMPLE_FLOWS}/data/bolts.csv
-	-actor
-		adams.flow.transformer.SpreadSheetFileReader
-			-reader
-				adams.data.io.input.CsvSpreadSheetReader
-					-spreadsheet-type
-						adams.data.spreadsheet.SpreadSheet
-	-actor
-		adams.flow.control.Tee
-			-tee
-				adams.flow.transformer.SetVariable
-					-var-name
-					name
-					-var-value
-					original
-			-tee
-				adams.flow.sink.CallableSink
-					-callable
-					DisplayPanelManager
-	-actor
-		adams.flow.transformer.SpreadSheetCopyRows
-			-rows
-			1-10
-			-position
-			10
-			-after
-			true
-	-actor
-		adams.flow.transformer.SetVariable
-			-var-name
-			name
-			-var-value
-			copied
-	-actor
-		adams.flow.sink.CallableSink
-			-callable
-			DisplayPanelManager
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "Shows how to copy (ie duplicate) a range of rows in a spreadsheet." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.standalone.CallableActors
+  adams.flow.sink.DisplayPanelManager -provider "adams.flow.sink.SpreadSheetDisplay -writer adams.data.io.output.NullWriter" -entry-name-variable name
+ adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/bolts.csv
+ adams.flow.transformer.SpreadSheetFileReader -reader "adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.SpreadSheet"
+ adams.flow.control.Tee
+  adams.flow.transformer.SetVariable -var-name name -var-value original
+  adams.flow.sink.CallableSink -callable DisplayPanelManager
+ adams.flow.transformer.SpreadSheetCopyRows -rows 1-10 -position 10 -after true
+ adams.flow.transformer.SetVariable -var-name name -var-value copied
+ adams.flow.sink.CallableSink -callable DisplayPanelManager

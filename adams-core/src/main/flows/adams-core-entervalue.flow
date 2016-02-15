@@ -1,73 +1,17 @@
 # Project: adams
-# Date: 2014-12-05 09:15:14
+# Date: 2016-02-15 11:29:35
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	Shows the three different ways for entering values:\n- entering free text\n- selecting value from a combobox\n- by clicking on the button of choice
-	-actor
-		adams.flow.standalone.CallableActors
-			-actor
-				adams.flow.sink.Display
-					-writer
-						adams.data.io.output.NullWriter
-	-actor
-		adams.flow.source.Start
-	-actor
-		adams.flow.control.Trigger
-			-name
-			free text
-			-tee
-				adams.flow.source.EnterValue
-					-initial-value
-					blah
-			-tee
-				adams.flow.sink.CallableSink
-					-callable
-					Display
-	-actor
-		adams.flow.control.Trigger
-			-name
-			combobox
-			-tee
-				adams.flow.source.EnterValue
-					-message
-					Please select a value
-					-initial-value
-					B
-					-selection-values
-					A
-					-selection-values
-					B
-					-selection-values
-					C
-			-tee
-				adams.flow.sink.CallableSink
-					-callable
-					Display
-	-actor
-		adams.flow.control.Trigger
-			-name
-			buttons
-			-tee
-				adams.flow.source.EnterValue
-					-message
-					Please select a value
-					-initial-value
-					B
-					-selection-values
-					A
-					-selection-values
-					B
-					-selection-values
-					C
-					-use-buttons
-					true
-			-tee
-				adams.flow.sink.CallableSink
-					-callable
-					Display
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "Shows the three different ways for entering values:\\n- entering free text\\n- selecting value from a combobox\\n- by clicking on the button of choice" -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.standalone.CallableActors
+  adams.flow.sink.Display -writer adams.data.io.output.NullWriter
+ adams.flow.source.Start
+ adams.flow.control.Trigger -name "free text"
+  adams.flow.source.EnterValue -initial-value blah
+  adams.flow.sink.CallableSink -callable Display
+ adams.flow.control.Trigger -name combobox
+  adams.flow.source.EnterValue -message "Please select a value" -initial-value B -selection-values A -selection-values B -selection-values C
+  adams.flow.sink.CallableSink -callable Display
+ adams.flow.control.Trigger -name buttons
+  adams.flow.source.EnterValue -message "Please select a value" -initial-value B -selection-values A -selection-values B -selection-values C -use-buttons true
+  adams.flow.sink.CallableSink -callable Display

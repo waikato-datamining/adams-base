@@ -27,7 +27,7 @@ import adams.core.option.OptionUtils;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.test.TmpFile;
 
 /**
@@ -100,26 +100,26 @@ public class MakeContainerTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
   @Override
-  public AbstractActor getActor() {
+  public Actor getActor() {
     AbstractArgumentOption    argOption;
 
     Flow flow = new Flow();
 
     try {
       argOption = (AbstractArgumentOption) flow.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp1 = new adams.flow.core.AbstractActor[5];
+      adams.flow.core.Actor[] tmp1 = new adams.flow.core.Actor[5];
       adams.flow.standalone.CallableActors tmp2 = new adams.flow.standalone.CallableActors();
       argOption = (AbstractArgumentOption) tmp2.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp3 = new adams.flow.core.AbstractActor[3];
+      adams.flow.core.Actor[] tmp3 = new adams.flow.core.Actor[3];
       adams.flow.source.SequenceSource tmp4 = new adams.flow.source.SequenceSource();
       argOption = (AbstractArgumentOption) tmp4.getOptionManager().findByProperty("name");
       tmp4.setName((java.lang.String) argOption.valueOf("train"));
 
       argOption = (AbstractArgumentOption) tmp4.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp6 = new adams.flow.core.AbstractActor[3];
+      adams.flow.core.Actor[] tmp6 = new adams.flow.core.Actor[3];
       adams.flow.source.FileSupplier tmp7 = new adams.flow.source.FileSupplier();
       argOption = (AbstractArgumentOption) tmp7.getOptionManager().findByProperty("files");
       tmp7.setFiles(new adams.core.io.PlaceholderFile[]{(adams.core.io.PlaceholderFile) argOption.valueOf("${TMP}/anneal_train.arff")});
@@ -141,7 +141,7 @@ public class MakeContainerTest
       tmp13.setName((java.lang.String) argOption.valueOf("test"));
 
       argOption = (AbstractArgumentOption) tmp13.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp15 = new adams.flow.core.AbstractActor[3];
+      adams.flow.core.Actor[] tmp15 = new adams.flow.core.Actor[3];
       adams.flow.source.FileSupplier tmp16 = new adams.flow.source.FileSupplier();
       argOption = (AbstractArgumentOption) tmp16.getOptionManager().findByProperty("files");
       tmp16.setFiles(new adams.core.io.PlaceholderFile[]{(adams.core.io.PlaceholderFile) argOption.valueOf("${TMP}/anneal_test.arff")});

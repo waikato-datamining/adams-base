@@ -1,103 +1,17 @@
 # Project: adams
-# Date: 2014-10-01 12:42:18
+# Date: 2016-02-15 14:35:40
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	Shows how to turn a spreadsheet with GPS data into a KML file.
-	-actor
-		adams.flow.source.FileSupplier
-			-file
-			${EXAMPLE_FLOWS}/data/cow.csv
-	-actor
-		adams.flow.transformer.SpreadSheetFileReader
-			-reader
-				adams.data.io.input.CsvSpreadSheetReader
-					-data-row-type
-						adams.data.spreadsheet.DenseDataRow
-					-spreadsheet-type
-						adams.data.spreadsheet.SpreadSheet
-					-missing
-					
-					-separator
-					;
-					-trim
-					true
-	-actor
-		adams.flow.transformer.SpreadSheetRowFilter
-			-name
-			remove rows with missing ID/name
-			-finder
-				adams.data.spreadsheet.rowfinder.Invert
-					-row-finder
-						adams.data.spreadsheet.rowfinder.MissingValue
-							-att-range
-							"ISOen_name",ISO3166A3
-	-actor
-		adams.flow.transformer.Convert
-			-name
-			join LAT and LON
-			-conversion
-				adams.data.conversion.SpreadSheetJoinColumns
-					-columns
-					"UNc_latitude","UNc_longitude"
-					-glue
-					 
-					-column-name
-					LOCATION
-	-actor
-		adams.flow.transformer.Convert
-			-name
-			create GPS object column
-			-conversion
-				adams.data.conversion.SpreadSheetStringColumnToObject
-					-column
-					LOCATION
-					-handler
-						adams.data.spreadsheet.GPSDecimalDegrees
-	-actor
-		adams.flow.transformer.SpreadSheetRowFilter
-			-name
-			remove rows with missing GPS
-			-finder
-				adams.data.spreadsheet.rowfinder.Invert
-					-row-finder
-						adams.data.spreadsheet.rowfinder.MissingValue
-							-att-range
-							LOCATION
-	-actor
-		adams.flow.transformer.Convert
-			-name
-			generate KML document
-			-conversion
-				adams.data.conversion.SpreadSheetToKML
-					-column-gps
-					LOCATION
-					-column-id
-					ISO3166A3
-					-column-name
-					ISOen_name
-	-actor
-		adams.flow.control.Branch
-			-branch
-				adams.flow.sink.XMLFileWriter
-					-output
-					${EXAMPLE_FLOWS}/output/cow.kml
-			-branch
-				adams.flow.control.Sequence
-					-name
-					display
-					-actor
-						adams.flow.transformer.Convert
-							-name
-							convert to string
-							-conversion
-								adams.data.conversion.DOMToString
-					-actor
-						adams.flow.sink.Display
-							-writer
-								adams.data.io.output.NullWriter
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "Shows how to turn a spreadsheet with GPS data into a KML file." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/cow.csv
+ adams.flow.transformer.SpreadSheetFileReader -reader "adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.SpreadSheet -missing \"\" -separator ; -trim true"
+ adams.flow.transformer.SpreadSheetRowFilter -name "remove rows with missing ID/name" -finder "adams.data.spreadsheet.rowfinder.Invert -row-finder \"adams.data.spreadsheet.rowfinder.MissingValue -att-range \\\"ISOen_name\\\",ISO3166A3\""
+ adams.flow.transformer.Convert -name "join LAT and LON" -conversion "adams.data.conversion.SpreadSheetJoinColumns -columns \"UNc_latitude\",\"UNc_longitude\" -glue \" \" -column-name LOCATION"
+ adams.flow.transformer.Convert -name "create GPS object column" -conversion "adams.data.conversion.SpreadSheetStringColumnToObject -column LOCATION -handler adams.data.spreadsheet.GPSDecimalDegrees"
+ adams.flow.transformer.SpreadSheetRowFilter -name "remove rows with missing GPS" -finder "adams.data.spreadsheet.rowfinder.Invert -row-finder \"adams.data.spreadsheet.rowfinder.MissingValue -att-range LOCATION\""
+ adams.flow.transformer.Convert -name "generate KML document" -conversion "adams.data.conversion.SpreadSheetToKML -column-gps LOCATION -column-id ISO3166A3 -column-name ISOen_name"
+ adams.flow.control.Branch
+  adams.flow.sink.XMLFileWriter -output ${EXAMPLE_FLOWS}/output/cow.kml
+  adams.flow.control.Sequence -name display
+   adams.flow.transformer.Convert -name "convert to string" -conversion adams.data.conversion.DOMToString
+   adams.flow.sink.Display -writer adams.data.io.output.NullWriter

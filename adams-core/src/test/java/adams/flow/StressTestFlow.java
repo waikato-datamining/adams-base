@@ -15,13 +15,13 @@
 
 /*
  * StressTestFlow.java
- * Copyright (C) 2009-2015 University of Waikato
+ * Copyright (C) 2009-2016 University of Waikato
  */
 
 package adams.flow;
 
 import adams.env.Environment;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.core.ActorUtils;
 import adams.gui.core.BaseFrame;
 import adams.gui.flow.FlowEditorPanel;
@@ -180,7 +180,7 @@ public class StressTestFlow
     Worker	result;
 
     result = new Worker(this, iteration) {
-      protected AbstractActor m_Flow;
+      protected Actor m_Flow;
 
       protected Object doInBackground() throws Exception {
 	if (m_UseGUI) {

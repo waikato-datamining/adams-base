@@ -15,16 +15,9 @@
 
 /**
  * DocBookProducer.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
-
-import java.lang.reflect.Array;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.swing.tree.TreeNode;
 
 import adams.core.AdditionalInformationHandler;
 import adams.core.ClassLocator;
@@ -45,6 +38,12 @@ import adams.flow.core.Actor;
 import adams.gui.core.BaseTreeNode;
 import adams.gui.flow.tree.Node;
 import adams.gui.flow.tree.Tree;
+
+import javax.swing.tree.TreeNode;
+import java.lang.reflect.Array;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Generates documentation in
@@ -339,7 +338,7 @@ public class DocBookProducer
    */
   protected String toPlainText(Node node) {
     StringBuilder	result;
-    AbstractActor	actor;
+    Actor		actor;
     ActorPosition	pos;
 
     result = new StringBuilder();
@@ -476,15 +475,15 @@ public class DocBookProducer
     ProgramListing		listing;
     Tree			tree;
     Paragraph			para;
-    AbstractActor		actor;
+    Actor			actor;
     OrderedList			olist;
     ListItem			listitem;
     ActorOptionTraverser	traverser;
     ItemizedList		ilist;
 
     actor = null;
-    if (m_Input instanceof AbstractActor);
-      actor = (AbstractActor) m_Input;
+    if (m_Input instanceof Actor);
+      actor = (Actor) m_Input;
     
     section = new Section("Structure");
     m_Document.getRoot().add(section);
@@ -498,7 +497,7 @@ public class DocBookProducer
 	para.setContent(actor.getAnnotations().getValue());
       }
     }
-    tree = new Tree(null, (AbstractActor) getInput());
+    tree = new Tree(null, (Actor) getInput());
     listing = new ProgramListing();
     listing.setContent(toPlainText(tree));
     section.add(listing);

@@ -26,7 +26,7 @@ import adams.core.option.AbstractArgumentOption;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.test.TmpFile;
 
 /**
@@ -97,17 +97,17 @@ public class TimeseriesInfoTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
   @Override
-  public AbstractActor getActor() {
+  public Actor getActor() {
     AbstractArgumentOption    argOption;
     
     Flow flow = new Flow();
     
     try {
       argOption = (AbstractArgumentOption) flow.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] actors1 = new adams.flow.core.AbstractActor[7];
+      adams.flow.core.Actor[] actors1 = new adams.flow.core.Actor[7];
 
       // Flow.FileSupplier
       adams.flow.source.FileSupplier filesupplier2 = new adams.flow.source.FileSupplier();
@@ -132,7 +132,7 @@ public class TimeseriesInfoTest
       // Flow.Tee
       adams.flow.control.Tee tee9 = new adams.flow.control.Tee();
       argOption = (AbstractArgumentOption) tee9.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] actors10 = new adams.flow.core.AbstractActor[2];
+      adams.flow.core.Actor[] actors10 = new adams.flow.core.Actor[2];
 
       // Flow.Tee.TimeseriesInfo
       adams.flow.transformer.TimeseriesInfo timeseriesinfo11 = new adams.flow.transformer.TimeseriesInfo();
@@ -156,7 +156,7 @@ public class TimeseriesInfoTest
       argOption = (AbstractArgumentOption) tee15.getOptionManager().findByProperty("name");
       tee15.setName((java.lang.String) argOption.valueOf("Tee-1"));
       argOption = (AbstractArgumentOption) tee15.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] actors17 = new adams.flow.core.AbstractActor[2];
+      adams.flow.core.Actor[] actors17 = new adams.flow.core.Actor[2];
 
       // Flow.Tee-1.TimeseriesInfo
       adams.flow.transformer.TimeseriesInfo timeseriesinfo18 = new adams.flow.transformer.TimeseriesInfo();
@@ -180,7 +180,7 @@ public class TimeseriesInfoTest
       argOption = (AbstractArgumentOption) tee22.getOptionManager().findByProperty("name");
       tee22.setName((java.lang.String) argOption.valueOf("Tee-2"));
       argOption = (AbstractArgumentOption) tee22.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] actors24 = new adams.flow.core.AbstractActor[2];
+      adams.flow.core.Actor[] actors24 = new adams.flow.core.Actor[2];
 
       // Flow.Tee-2.TimeseriesInfo
       adams.flow.transformer.TimeseriesInfo timeseriesinfo25 = new adams.flow.transformer.TimeseriesInfo();
@@ -204,7 +204,7 @@ public class TimeseriesInfoTest
       argOption = (AbstractArgumentOption) tee29.getOptionManager().findByProperty("name");
       tee29.setName((java.lang.String) argOption.valueOf("Tee-3"));
       argOption = (AbstractArgumentOption) tee29.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] actors31 = new adams.flow.core.AbstractActor[2];
+      adams.flow.core.Actor[] actors31 = new adams.flow.core.Actor[2];
 
       // Flow.Tee-3.TimeseriesInfo
       adams.flow.transformer.TimeseriesInfo timeseriesinfo32 = new adams.flow.transformer.TimeseriesInfo();
@@ -228,7 +228,7 @@ public class TimeseriesInfoTest
       argOption = (AbstractArgumentOption) tee36.getOptionManager().findByProperty("name");
       tee36.setName((java.lang.String) argOption.valueOf("Tee-4"));
       argOption = (AbstractArgumentOption) tee36.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] actors38 = new adams.flow.core.AbstractActor[2];
+      adams.flow.core.Actor[] actors38 = new adams.flow.core.Actor[2];
 
       // Flow.Tee-4.TimeseriesInfo
       adams.flow.transformer.TimeseriesInfo timeseriesinfo39 = new adams.flow.transformer.TimeseriesInfo();

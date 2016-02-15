@@ -15,13 +15,13 @@
 
 /**
  * ActorClassTreeFilter.java
- * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.goe.classtree;
 
 import adams.core.ClassLocator;
 import adams.core.Utils;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.Compatibility;
 import adams.flow.core.InputConsumer;
@@ -60,9 +60,9 @@ public class ActorClassTreeFilter
   protected Class[] m_Restrictions;
 
   /** for caching class/instance relationship. */
-  protected static Hashtable<Class,AbstractActor> m_Cache;
+  protected static Hashtable<Class,Actor> m_Cache;
   static {
-    m_Cache = new Hashtable<Class,AbstractActor>();
+    m_Cache = new Hashtable<Class,Actor>();
   }
 
   /**
@@ -194,10 +194,10 @@ public class ActorClassTreeFilter
    * @return		true if class can be displayed in the ClassTree
    */
   protected boolean doFilter(String item) {
-    AbstractActor	actor;
-    boolean		result;
-    Class		cls;
-    boolean met;
+    Actor	actor;
+    boolean	result;
+    Class	cls;
+    boolean 	met;
 
     result = true;
 
@@ -215,7 +215,7 @@ public class ActorClassTreeFilter
     synchronized(m_Cache) {
       if (!m_Cache.containsKey(cls)) {
 	try {
-	  actor = (AbstractActor) cls.newInstance();
+	  actor = (Actor) cls.newInstance();
 	  m_Cache.put(cls, actor);
 	}
 	catch (Exception e) {

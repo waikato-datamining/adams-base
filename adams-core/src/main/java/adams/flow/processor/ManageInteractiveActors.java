@@ -15,11 +15,9 @@
 
 /**
  * ManageInteractiveActors.java
- * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.processor;
-
-import java.lang.reflect.Method;
 
 import adams.core.option.AbstractArgumentOption;
 import adams.core.option.AbstractOption;
@@ -27,8 +25,10 @@ import adams.core.option.BooleanOption;
 import adams.core.option.ClassOption;
 import adams.core.option.OptionTraversalPath;
 import adams.core.option.OptionTraverser;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.core.AutomatableInteractiveActor;
+
+import java.lang.reflect.Method;
 
 /**
  <!-- globalinfo-start -->
@@ -123,7 +123,7 @@ public class ManageInteractiveActors
    * @param actor	the actor to process
    */
   @Override
-  protected void processActor(AbstractActor actor) {
+  protected void processActor(Actor actor) {
     actor.getOptionManager().traverse(new OptionTraverser() {
       public void handleClassOption(ClassOption option, OptionTraversalPath path) {
 	// ignored
@@ -133,7 +133,7 @@ public class ManageInteractiveActors
 	  if (option.getProperty().equals("nonInteractive")) {
 	    Method method = option.getDescriptor().getWriteMethod();
 	    try {
-	      method.invoke(option.getOptionHandler(), new Object[]{m_Enable});
+	      method.invoke(option.getOptionHandler(), m_Enable);
 	      m_Modified = true;
 	    }
 	    catch (Exception e) {

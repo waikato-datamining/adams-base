@@ -27,7 +27,7 @@ import adams.core.option.OptionUtils;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.test.TmpFile;
 
 /**
@@ -98,22 +98,22 @@ public class WekaCrossValidationClustererEvaluatorTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
   @Override
-  public AbstractActor getActor() {
+  public Actor getActor() {
     AbstractArgumentOption    argOption;
     
     Flow flow = new Flow();
     
     try {
       argOption = (AbstractArgumentOption) flow.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] abstractactor1 = new adams.flow.core.AbstractActor[7];
+      adams.flow.core.Actor[] abstractactor1 = new adams.flow.core.Actor[7];
 
       // Flow.CallableActors
       adams.flow.standalone.CallableActors globalactors2 = new adams.flow.standalone.CallableActors();
       argOption = (AbstractArgumentOption) globalactors2.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] abstractactor3 = new adams.flow.core.AbstractActor[1];
+      adams.flow.core.Actor[] abstractactor3 = new adams.flow.core.Actor[1];
 
       // Flow.CallableActors.WekaClustererSetup
       adams.flow.source.WekaClustererSetup wekaclusterersetup4 = new adams.flow.source.WekaClustererSetup();

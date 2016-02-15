@@ -15,7 +15,7 @@
 
 /**
  * TimedActor.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.core;
 
@@ -87,5 +87,5 @@ public interface TimedActor
    * @return		the actor, can be null
    */
   @Override
-  public AbstractActor getCallableActor();
+  public Actor getCallableActor();
 }

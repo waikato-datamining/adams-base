@@ -15,12 +15,12 @@
 
 /*
  * Sequence.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
 
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.core.ActorExecution;
 import adams.flow.core.ActorHandlerInfo;
 import adams.flow.core.InputConsumer;
@@ -60,7 +60,7 @@ import java.util.Hashtable;
  *         If set to true, progress information will be output to stdout ('.').
  * </pre>
  *
- * <pre>-actor &lt;adams.flow.core.AbstractActor [options]&gt; [-actor ...] (property: actors)
+ * <pre>-actor &lt;adams.flow.core.Actor [options]&gt; [-actor ...] (property: actors)
  *         All the actors that define this sequence.
  * </pre>
  *
@@ -195,8 +195,8 @@ public class Sequence
    * @return		the Class of objects that can be processed
    */
   public Class[] accepts() {
-    Class[]		result;
-    AbstractActor	first;
+    Class[]	result;
+    Actor 	first;
 
     result = new Class[]{Unknown.class};
 
@@ -213,7 +213,7 @@ public class Sequence
    * @param token	the token to accept and process
    */
   public void input(Token token) {
-    AbstractActor	first;
+    Actor	first;
 
     m_CurrentToken = token;
 

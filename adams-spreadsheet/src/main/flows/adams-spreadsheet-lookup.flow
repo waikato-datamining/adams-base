@@ -1,91 +1,26 @@
 # Project: adams
-# Date: 2014-01-23 15:41:08
+# Date: 2016-02-15 14:58:51
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	Lookup tables can be used a simple alternative to databases.\nThis flow demonstrates how to initialize and use a lookup table.
-	-actor
-		adams.flow.standalone.CallableActors
-			-actor
-				adams.flow.sink.DisplayPanelManager
-					-provider
-						adams.flow.sink.SpreadSheetDisplay
-	-actor
-		adams.flow.source.Start
-	-actor
-		adams.flow.control.Trigger
-			-name
-			load lookup table
-			-tee
-				adams.flow.source.FileSupplier
-					-file
-					${EXAMPLE_FLOWS}/data/lookup.csv
-			-tee
-				adams.flow.transformer.SpreadSheetFileReader
-					-reader
-						adams.data.io.input.CsvSpreadSheetReader
-							-spreadsheet-type
-								adams.data.spreadsheet.SpreadSheet
-			-tee
-				adams.flow.transformer.LookUpInit
-	-actor
-		adams.flow.control.Trigger
-			-name
-			output lookup table (1)
-			-tee
-				adams.flow.source.LookUpTable
-			-tee
-				adams.flow.sink.CallableSink
-					-callable
-					DisplayPanelManager
-	-actor
-		adams.flow.control.Trigger
-			-name
-			extend lookup table
-			-tee
-				adams.flow.source.StringConstants
-					-string
-					DE
-					-string
-					Germany
-					-string
-					FR
-					-string
-					France
-			-tee
-				adams.flow.transformer.SequenceToArray
-					-length
-					2
-			-tee
-				adams.flow.transformer.LookUpAdd
-	-actor
-		adams.flow.control.Trigger
-			-name
-			output lookup table (2)
-			-tee
-				adams.flow.source.LookUpTable
-			-tee
-				adams.flow.sink.CallableSink
-					-callable
-					DisplayPanelManager
-	-actor
-		adams.flow.control.Trigger
-			-name
-			use lookup table
-			-tee
-				adams.flow.source.StringConstants
-					-string
-					NZ
-					-string
-					DE
-			-tee
-				adams.flow.transformer.LookUp
-			-tee
-				adams.flow.sink.Display
-					-x
-					-3
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "Lookup tables can be used a simple alternative to databases.\\nThis flow demonstrates how to initialize and use a lookup table." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.standalone.CallableActors
+  adams.flow.sink.DisplayPanelManager -provider "adams.flow.sink.SpreadSheetDisplay -writer adams.data.io.output.NullWriter"
+ adams.flow.source.Start
+ adams.flow.control.Trigger -name "load lookup table"
+  adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/lookup.csv
+  adams.flow.transformer.SpreadSheetFileReader -reader "adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.SpreadSheet"
+  adams.flow.transformer.LookUpInit
+ adams.flow.control.Trigger -name "output lookup table (1)"
+  adams.flow.source.LookUpTable
+  adams.flow.sink.CallableSink -callable DisplayPanelManager
+ adams.flow.control.Trigger -name "extend lookup table"
+  adams.flow.source.StringConstants -string DE -string Germany -string FR -string France
+  adams.flow.transformer.SequenceToArray -length 2
+  adams.flow.transformer.LookUpAdd
+ adams.flow.control.Trigger -name "output lookup table (2)"
+  adams.flow.source.LookUpTable
+  adams.flow.sink.CallableSink -callable DisplayPanelManager
+ adams.flow.control.Trigger -name "use lookup table"
+  adams.flow.source.StringConstants -string NZ -string DE
+  adams.flow.transformer.LookUp
+  adams.flow.sink.Display -x -3 -writer adams.data.io.output.NullWriter

@@ -1,67 +1,18 @@
 # Project: adams
-# Date: 2014-01-23 15:40:30
+# Date: 2016-02-15 14:57:31
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	Demonstrates how to load spreadsheet data into a database (sqlite)\nand return a subset using a SQL query.
-	-actor
-		adams.flow.standalone.DatabaseConnection
-			-url
-			jdbc:sqlite:${EXAMPLE_FLOWS}/output/test.db
-			-data-type-setup
-				adams.db.datatype.DummySetup
-	-actor
-		adams.flow.source.Start
-	-actor
-		adams.flow.control.Trigger
-			-name
-			drop database
-			-tee
-				adams.flow.standalone.ExecSQL
-					-sql
-					drop table iris
-	-actor
-		adams.flow.control.Trigger
-			-name
-			load data
-			-tee
-				adams.flow.source.FileSupplier
-					-file
-					${EXAMPLE_FLOWS}/data/iris.csv
-			-tee
-				adams.flow.transformer.SpreadSheetFileReader
-					-reader
-						adams.data.io.input.CsvSpreadSheetReader
-							-spreadsheet-type
-								adams.data.spreadsheet.SpreadSheet
-			-tee
-				adams.flow.sink.SpreadSheetDbWriter
-					-table
-					iris
-	-actor
-		adams.flow.control.Trigger
-			-name
-			create indices
-			-tee
-				adams.flow.standalone.ExecSQL
-					-name
-					class
-					-sql
-					create index idx_class on iris (\'CLASS\');
-	-actor
-		adams.flow.control.Trigger
-			-name
-			query database
-			-tee
-				adams.flow.source.SpreadSheetDbReader
-					-query
-					select * from iris where CLASS = \'Iris-setosa\'
-			-tee
-				adams.flow.sink.SpreadSheetDisplay
-	-error-handling
-	ACTORS_DECIDE_TO_STOP_ON_ERROR
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "Demonstrates how to load spreadsheet data into a database (sqlite)\\nand return a subset using a SQL query." -error-handling ACTORS_DECIDE_TO_STOP_ON_ERROR -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.standalone.DatabaseConnection -url jdbc:sqlite:${EXAMPLE_FLOWS}/output/test.db -data-type-setup adams.db.datatype.DummySetup
+ adams.flow.source.Start
+ adams.flow.control.Trigger -name "drop database"
+  adams.flow.standalone.ExecSQL -sql "drop table iris"
+ adams.flow.control.Trigger -name "load data"
+  adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/iris.csv
+  adams.flow.transformer.SpreadSheetFileReader -reader "adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.SpreadSheet"
+  adams.flow.sink.SpreadSheetDbWriter -table iris
+ adams.flow.control.Trigger -name "create indices"
+  adams.flow.standalone.ExecSQL -name class -sql "create index idx_class on iris (\\\'CLASS\\\');"
+ adams.flow.control.Trigger -name "query database"
+  adams.flow.source.SpreadSheetDbReader -query "select * from iris where CLASS = \\\'Iris-setosa\\\'" -data-row-type adams.data.spreadsheet.DenseDataRow
+  adams.flow.sink.SpreadSheetDisplay -writer adams.data.io.output.NullWriter

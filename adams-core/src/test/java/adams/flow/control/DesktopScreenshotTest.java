@@ -15,7 +15,7 @@
 
 /*
  * DesktopScreenshotTest.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -25,7 +25,7 @@ import junit.framework.TestSuite;
 import adams.core.option.AbstractArgumentOption;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 
 /**
  * Test for DesktopScreenshot actor.
@@ -71,17 +71,17 @@ public class DesktopScreenshotTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
   @Override
-  public AbstractActor getActor() {
+  public Actor getActor() {
     AbstractArgumentOption    argOption;
     
     Flow flow = new Flow();
     
     try {
       argOption = (AbstractArgumentOption) flow.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] actors1 = new adams.flow.core.AbstractActor[2];
+      adams.flow.core.Actor[] actors1 = new adams.flow.core.Actor[2];
 
       // Flow.Start
       adams.flow.source.Start start2 = new adams.flow.source.Start();

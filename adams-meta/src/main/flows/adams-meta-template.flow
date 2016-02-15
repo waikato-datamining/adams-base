@@ -1,51 +1,14 @@
 # Project: adams
-# Date: 2014-01-23 15:33:52
+# Date: 2016-02-15 14:37:33
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	The outer loop in this flow generates the file name for\nthe template generator which gets executed in the\ninner loop.
-	-actor
-		adams.flow.source.ForLoop
-			-upper
-			3
-	-actor
-		adams.flow.transformer.Convert
-			-conversion
-				adams.data.conversion.IntToString
-	-actor
-		adams.flow.transformer.StringReplace
-			-find
-			^
-			-replace
-			${EXAMPLE_FLOWS}/adams-meta-external_flow_variable-
-			-placeholder
-			true
-	-actor
-		adams.flow.transformer.StringReplace
-			-name
-			StringReplace-1
-			-find
-			$
-			-replace
-			.flow
-	-actor
-		adams.flow.transformer.SetVariable
-			-var-name
-			filename
-	-actor
-		adams.flow.control.Trigger
-			-tee
-				adams.flow.source.ForLoop
-			-tee
-				adams.flow.transformer.TemplateTransformer
-					-template
-						adams.flow.template.FromFile
-							-template
-							@{filename}
-			-tee
-				adams.flow.sink.Display
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "The outer loop in this flow generates the file name for\\nthe template generator which gets executed in the\\ninner loop." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.source.ForLoop -upper 3
+ adams.flow.transformer.Convert -conversion adams.data.conversion.IntToString
+ adams.flow.transformer.StringReplace -find ^ -replace ${EXAMPLE_FLOWS}/adams-meta-external_flow_variable- -placeholder true
+ adams.flow.transformer.StringReplace -name StringReplace-1 -find $ -replace .flow
+ adams.flow.transformer.SetVariable -var-name filename
+ adams.flow.control.Trigger
+  adams.flow.source.ForLoop
+  adams.flow.transformer.TemplateTransformer -template "adams.flow.template.FromFile -template @{filename}"
+  adams.flow.sink.Display -writer adams.data.io.output.NullWriter

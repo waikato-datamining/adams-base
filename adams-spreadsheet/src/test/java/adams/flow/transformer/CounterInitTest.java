@@ -30,7 +30,7 @@ import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
 import adams.flow.control.Trigger;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.execution.NullListener;
 import adams.flow.sink.DumpFile;
 import adams.flow.source.Counter;
@@ -110,15 +110,15 @@ public class CounterInitTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
-  public AbstractActor getActor() {
+  public Actor getActor() {
     AbstractArgumentOption    argOption;
     
     Flow flow = new Flow();
     
     try {
-      List<AbstractActor> actors = new ArrayList<AbstractActor>();
+      List<Actor> actors = new ArrayList<Actor>();
 
       // Flow.CounterInit
       CounterInit counterinit = new CounterInit();
@@ -130,7 +130,7 @@ public class CounterInitTest
 
       // Flow.Trigger
       Trigger trigger = new Trigger();
-      List<AbstractActor> actors2 = new ArrayList<AbstractActor>();
+      List<Actor> actors2 = new ArrayList<Actor>();
 
       // Flow.Trigger.FileSupplier
       FileSupplier filesupplier = new FileSupplier();
@@ -160,7 +160,7 @@ public class CounterInitTest
       argOption = (AbstractArgumentOption) counteradd.getOptionManager().findByProperty("column");
       counteradd.setColumn((Index) argOption.valueOf("last"));
       actors2.add(counteradd);
-      trigger.setActors(actors2.toArray(new AbstractActor[0]));
+      trigger.setActors(actors2.toArray(new Actor[0]));
 
       actors.add(trigger);
 
@@ -168,7 +168,7 @@ public class CounterInitTest
       Trigger trigger2 = new Trigger();
       argOption = (AbstractArgumentOption) trigger2.getOptionManager().findByProperty("name");
       trigger2.setName((String) argOption.valueOf("Trigger-1"));
-      List<AbstractActor> actors3 = new ArrayList<AbstractActor>();
+      List<Actor> actors3 = new ArrayList<Actor>();
 
       // Flow.Trigger-1.Counter
       Counter counter = new Counter();
@@ -179,10 +179,10 @@ public class CounterInitTest
       argOption = (AbstractArgumentOption) dumpfile.getOptionManager().findByProperty("outputFile");
       dumpfile.setOutputFile((PlaceholderFile) argOption.valueOf("${TMP}/dumpfile.txt"));
       actors3.add(dumpfile);
-      trigger2.setActors(actors3.toArray(new AbstractActor[0]));
+      trigger2.setActors(actors3.toArray(new Actor[0]));
 
       actors.add(trigger2);
-      flow.setActors(actors.toArray(new AbstractActor[0]));
+      flow.setActors(actors.toArray(new Actor[0]));
 
       NullListener nulllistener = new NullListener();
       flow.setFlowExecutionListener(nulllistener);

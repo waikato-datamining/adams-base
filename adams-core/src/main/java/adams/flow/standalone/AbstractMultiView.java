@@ -15,7 +15,7 @@
 
 /**
  * AbstractMultiView.java
- * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.standalone;
 
@@ -24,8 +24,8 @@ import adams.core.Variables;
 import adams.core.io.PlaceholderFile;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetSupporter;
-import adams.flow.core.AbstractActor;
 import adams.flow.core.AbstractDisplay;
+import adams.flow.core.Actor;
 import adams.flow.core.ActorExecution;
 import adams.flow.core.ActorHandler;
 import adams.flow.core.ActorHandlerInfo;
@@ -112,7 +112,7 @@ public abstract class AbstractMultiView
      *
      * @param value	the actor to wrap
      */
-    public void setWrapped(AbstractActor value) {
+    public void setWrapped(Actor value) {
       m_Wrapped = (AbstractDisplay) value;
       m_Wrapped.setParent(this);
       reset();
@@ -123,7 +123,7 @@ public abstract class AbstractMultiView
      *
      * @return 		the wrapped actor
      */
-    public AbstractActor getWrapped() {
+    public Actor getWrapped() {
       return m_Wrapped;
     }
 
@@ -308,7 +308,7 @@ public abstract class AbstractMultiView
   }
   
   /** the underlying display actors. */
-  protected List<AbstractActor> m_Actors;
+  protected List<Actor> m_Actors;
   
   /** the panels in use. */
   protected List<ViewWrapper> m_Wrappers;
@@ -331,7 +331,7 @@ public abstract class AbstractMultiView
 
     m_OptionManager.add(
 	    "actor", "actors",
-	    new AbstractActor[0]);
+	    new Actor[0]);
   }
 
   /**
@@ -341,7 +341,7 @@ public abstract class AbstractMultiView
   protected void initialize() {
     super.initialize();
     
-    m_Actors   = new ArrayList<AbstractActor>();
+    m_Actors   = new ArrayList<>();
     m_Wrappers = null;
   }
 
@@ -350,7 +350,7 @@ public abstract class AbstractMultiView
    *
    * @param value 	the panel providers
    */
-  public void setActors(AbstractActor[] value) {
+  public void setActors(Actor[] value) {
     int		i;
     String	msg;
 
@@ -377,8 +377,8 @@ public abstract class AbstractMultiView
    *
    * @return 		the panel providers
    */
-  public AbstractActor[] getActors() {
-    return m_Actors.toArray(new AbstractActor[m_Actors.size()]);
+  public Actor[] getActors() {
+    return m_Actors.toArray(new Actor[m_Actors.size()]);
   }
 
   /**
@@ -395,7 +395,7 @@ public abstract class AbstractMultiView
    * @param actor	the actor to check
    * @return		null if OK, otherwise error message
    */
-  protected String check(AbstractActor actor) {
+  protected String check(Actor actor) {
     if (!(actor instanceof AbstractDisplay))
       return "Actor '" + actor.getName() + "' not derived from " + adams.flow.sink.AbstractDisplay.class.getName() + "!";
     if (!ActorUtils.isSink(actor))
@@ -423,7 +423,7 @@ public abstract class AbstractMultiView
    * @param actor	the actor to insert
    */
   @Override
-  public void add(AbstractActor actor) {
+  public void add(Actor actor) {
     String	msg;
     
     msg = check(actor);
@@ -440,7 +440,7 @@ public abstract class AbstractMultiView
    * @param actor	the actor to insert
    */
   @Override
-  public void add(int index, AbstractActor actor) {
+  public void add(int index, Actor actor) {
     String	msg;
     
     msg = check(actor);
@@ -457,7 +457,7 @@ public abstract class AbstractMultiView
    * @return		the removed actor
    */
   @Override
-  public AbstractActor remove(int index) {
+  public Actor remove(int index) {
     return m_Actors.remove(index);
   }
 
@@ -518,7 +518,7 @@ public abstract class AbstractMultiView
    * @return		the actor
    */
   @Override
-  public AbstractActor get(int index) {
+  public Actor get(int index) {
     if (m_Wrappers != null)
       return m_Wrappers.get(index);
     else
@@ -532,7 +532,7 @@ public abstract class AbstractMultiView
    * @param actor	the actor to set at this position
    */
   @Override
-  public void set(int index, AbstractActor actor) {
+  public void set(int index, Actor actor) {
     String	msg;
     
     msg = check(actor);
@@ -571,9 +571,9 @@ public abstract class AbstractMultiView
    * @return		the first 'active' actor, null if none available
    */
   @Override
-  public AbstractActor firstActive() {
-    AbstractActor	result;
-    int			i;
+  public Actor firstActive() {
+    Actor	result;
+    int		i;
 
     result = null;
     for (i = 0; i < size(); i++) {
@@ -592,9 +592,9 @@ public abstract class AbstractMultiView
    * @return		the last 'active' actor, null if none available
    */
   @Override
-  public AbstractActor lastActive() {
-    AbstractActor	result;
-    int			i;
+  public Actor lastActive() {
+    Actor	result;
+    int		i;
 
     result = null;
     for (i = size() - 1; i >= 0; i--) {
@@ -696,7 +696,7 @@ public abstract class AbstractMultiView
     
     if (result == null) {
       m_Wrappers = new ArrayList<ViewWrapper>();
-      for (AbstractActor actor: m_Actors) {
+      for (Actor actor: m_Actors) {
 	((AbstractDisplay) actor).setCreateFrame(false);
 	((AbstractDisplay) actor).setDisplayInEditor(false);
 	wrapper = new ViewWrapper();
@@ -735,7 +735,7 @@ public abstract class AbstractMultiView
    * @param actor	the actor this panel is for
    * @param panel	the panel to replace the dummy one
    */
-  public abstract void addPanel(AbstractActor actor, BasePanel panel);
+  public abstract void addPanel(Actor actor, BasePanel panel);
   
   /**
    * Stops the processing of tokens without stopping the flow.

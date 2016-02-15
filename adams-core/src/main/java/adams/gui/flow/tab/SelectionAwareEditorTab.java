@@ -15,13 +15,13 @@
 
 /**
  * SelectionAwareEditorTab.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.tab;
 
-import javax.swing.tree.TreePath;
+import adams.flow.core.Actor;
 
-import adams.flow.core.AbstractActor;
+import javax.swing.tree.TreePath;
 
 /**
  * Interface for flow editor tabs that need to react to changes of
@@ -38,5 +38,5 @@ public interface SelectionAwareEditorTab {
    * @param paths	the selected paths
    * @param actors	the currently selected actors
    */
-  public void actorSelectionChanged(TreePath[] paths, AbstractActor[] actors);
+  public void actorSelectionChanged(TreePath[] paths, Actor[] actors);
 }

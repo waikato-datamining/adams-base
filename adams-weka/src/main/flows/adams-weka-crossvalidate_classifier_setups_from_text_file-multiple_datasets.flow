@@ -1,113 +1,24 @@
 # Project: adams
-# Date: 2015-05-23 08:24:53
+# Date: 2016-02-15 15:22:06
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	The flow loads classifier setups from a text file\n(one setup per line), updates them via the SetVariable\nactor in the CallableActors\' \"Classifier\" actor and then\ncross-validates them on multiple datasets, outputting \nthe results of the CV.\nIn order to distinguish the results better from each other,\nthe classifier setup is output as comment (attaching the \n@{classifier} to the \"comment\" option in the EvaluationSummary\nactor).
-	-actor
-		adams.flow.standalone.CallableActors
-			-actor
-				adams.flow.source.WekaClassifierSetup
-					-name
-					WekaClassifier
-					-classifier
-					@{classifier}
-	-actor
-		adams.flow.source.FileSupplier
-			-file
-			${EXAMPLE_FLOWS}/data/wekaclassifier_setups.txt
-	-actor
-		adams.flow.transformer.TextFileReader
-			-reader
-				adams.data.io.input.LineByLineTextReader
-	-actor
-		adams.flow.transformer.SetVariable
-			-var-name
-			classifier
-	-actor
-		adams.flow.control.Trigger
-			-name
-			evaluate classifier
-			-tee
-				adams.flow.source.DirectoryLister
-					-dir
-					${EXAMPLE_FLOWS}/data
-					-list-files
-					true
-					-regexp
-					[a-zA-Z]*\\.arff
-			-tee
-				adams.flow.control.Tee
-					-name
-					get dataset name
-					-tee
-						adams.flow.transformer.BaseName
-							-remove-extensions
-							true
-					-tee
-						adams.flow.transformer.SetVariable
-							-var-name
-							dataset
-			-tee
-				adams.flow.control.Trigger
-					-name
-					generate entry string
-					-tee
-						adams.flow.source.CombineVariables
-							-expression
-							@{classifier} - @{dataset}
-					-tee
-						adams.flow.transformer.SetVariable
-							-var-name
-							entry
-			-tee
-				adams.flow.transformer.WekaFileReader
-					-loader
-						weka.core.converters.ArffLoader
-			-tee
-				adams.flow.transformer.WekaClassSelector
-			-tee
-				adams.flow.control.Continue
-					-condition
-						adams.flow.condition.bool.WekaCapabilities
-							-capability
-							NUMERIC_ATTRIBUTES
-							-capability
-							STRING_ATTRIBUTES
-							-capability
-							RELATIONAL_ATTRIBUTES
-							-capability
-							NUMERIC_CLASS
-							-capability
-							DATE_CLASS
-							-capability
-							STRING_CLASS
-							-capability
-							RELATIONAL_CLASS
-			-tee
-				adams.flow.transformer.WekaCrossValidationEvaluator
-					-output
-						weka.classifiers.evaluation.output.prediction.Null
-					-classifier
-					WekaClassifier
-					-num-threads
-					-1
-			-tee
-				adams.flow.transformer.WekaEvaluationSummary
-					-relation
-					true
-					-class-details
-					true
-					-comment
-					@{classifier}
-			-tee
-				adams.flow.sink.HistoryDisplay
-					-caret-at-start
-					true
-					-entry-name-variable
-					entry
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "The flow loads classifier setups from a text file\\n(one setup per line), updates them via the SetVariable\\nactor in the CallableActors\\\' \\\"Classifier\\\" actor and then\\ncross-validates them on multiple datasets, outputting \\nthe results of the CV.\\nIn order to distinguish the results better from each other,\\nthe classifier setup is output as comment (attaching the \\n@{classifier} to the \\\"comment\\\" option in the EvaluationSummary\\nactor)." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.standalone.CallableActors
+  adams.flow.source.WekaClassifierSetup -name WekaClassifier -classifier @{classifier}
+ adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/wekaclassifier_setups.txt
+ adams.flow.transformer.TextFileReader -reader adams.data.io.input.LineByLineTextReader
+ adams.flow.transformer.SetVariable -var-name classifier
+ adams.flow.control.Trigger -name "evaluate classifier"
+  adams.flow.source.DirectoryLister -dir ${EXAMPLE_FLOWS}/data -list-files true -regexp [a-zA-Z]*\\.arff
+  adams.flow.control.Tee -name "get dataset name"
+   adams.flow.transformer.BaseName -remove-extensions true
+   adams.flow.transformer.SetVariable -var-name dataset
+  adams.flow.control.Trigger -name "generate entry string"
+   adams.flow.source.CombineVariables -expression "@{classifier} - @{dataset}"
+   adams.flow.transformer.SetVariable -var-name entry
+  adams.flow.transformer.WekaFileReader -loader weka.core.converters.ArffLoader
+  adams.flow.transformer.WekaClassSelector
+  adams.flow.control.Continue -condition "adams.flow.condition.bool.WekaCapabilities -capability NUMERIC_ATTRIBUTES -capability STRING_ATTRIBUTES -capability RELATIONAL_ATTRIBUTES -capability NUMERIC_CLASS -capability DATE_CLASS -capability STRING_CLASS -capability RELATIONAL_CLASS"
+  adams.flow.transformer.WekaCrossValidationEvaluator -output weka.classifiers.evaluation.output.prediction.Null -classifier WekaClassifier -num-threads -1
+  adams.flow.transformer.WekaEvaluationSummary -relation true -class-details true -comment @{classifier}
+  adams.flow.sink.HistoryDisplay -caret-at-start true -entry-name-variable entry

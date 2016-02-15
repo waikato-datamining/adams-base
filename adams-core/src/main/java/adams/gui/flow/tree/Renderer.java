@@ -15,12 +15,12 @@
 
 /*
  * Renderer.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.flow.tree;
 
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.core.ActorExecution;
 import adams.flow.core.ActorHandler;
 import adams.flow.core.ActorUtils;
@@ -447,7 +447,7 @@ public class Renderer
    * @param collapsed	whether the node is collapsed
    * @return		the associated icon or null if not found
    */
-  protected ActorIcon getIcon(AbstractActor parent, AbstractActor actor, boolean collapsed) {
+  protected ActorIcon getIcon(Actor parent, Actor actor, boolean collapsed) {
     ActorIcon		result;
     ImageIcon		icon;
     String		classname;
@@ -535,7 +535,7 @@ public class Renderer
     if (value instanceof Node) {
       Node cNode = (Node) value;
       Node pNode = (Node) cNode.getParent();
-      AbstractActor parent = null;
+      Actor parent = null;
       if (pNode != null)
 	parent = pNode.getActor();
       icon = getIcon(parent, ((Node) value).getActor(), (!expanded && !leaf));

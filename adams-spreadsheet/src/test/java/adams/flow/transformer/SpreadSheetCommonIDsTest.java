@@ -31,7 +31,7 @@ import adams.flow.AbstractFlowTest;
 import adams.flow.control.ArrayProcess;
 import adams.flow.control.Flow;
 import adams.flow.control.Tee;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.execution.NullListener;
 import adams.flow.sink.DumpFile;
 import adams.flow.source.FileSupplier;
@@ -113,15 +113,15 @@ public class SpreadSheetCommonIDsTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
-  public AbstractActor getActor() {
+  public Actor getActor() {
     AbstractArgumentOption    argOption;
     
     Flow flow = new Flow();
     
     try {
-      List<AbstractActor> actors = new ArrayList<AbstractActor>();
+      List<Actor> actors = new ArrayList<Actor>();
 
       // Flow.FileSupplier
       FileSupplier filesupplier = new FileSupplier();
@@ -136,7 +136,7 @@ public class SpreadSheetCommonIDsTest
 
       // Flow.ArrayProcess
       ArrayProcess arrayprocess = new ArrayProcess();
-      List<AbstractActor> actors2 = new ArrayList<AbstractActor>();
+      List<Actor> actors2 = new ArrayList<Actor>();
 
       // Flow.ArrayProcess.SpreadSheetFileReader
       SpreadSheetFileReader spreadsheetfilereader = new SpreadSheetFileReader();
@@ -154,7 +154,7 @@ public class SpreadSheetCommonIDsTest
       spreadsheetfilereader.setReader(csvspreadsheetreader);
 
       actors2.add(spreadsheetfilereader);
-      arrayprocess.setActors(actors2.toArray(new AbstractActor[0]));
+      arrayprocess.setActors(actors2.toArray(new Actor[0]));
 
       actors.add(arrayprocess);
 
@@ -162,7 +162,7 @@ public class SpreadSheetCommonIDsTest
       Tee tee = new Tee();
       argOption = (AbstractArgumentOption) tee.getOptionManager().findByProperty("name");
       tee.setName((String) argOption.valueOf("common"));
-      List<AbstractActor> actors3 = new ArrayList<AbstractActor>();
+      List<Actor> actors3 = new ArrayList<Actor>();
 
       // Flow.common.SpreadSheetCommonIDs
       SpreadSheetCommonIDs spreadsheetcommonids = new SpreadSheetCommonIDs();
@@ -173,7 +173,7 @@ public class SpreadSheetCommonIDsTest
       argOption = (AbstractArgumentOption) dumpfile.getOptionManager().findByProperty("outputFile");
       dumpfile.setOutputFile((PlaceholderFile) argOption.valueOf("${TMP}/dumpfile1.csv"));
       actors3.add(dumpfile);
-      tee.setActors(actors3.toArray(new AbstractActor[0]));
+      tee.setActors(actors3.toArray(new Actor[0]));
 
       actors.add(tee);
 
@@ -181,7 +181,7 @@ public class SpreadSheetCommonIDsTest
       Tee tee2 = new Tee();
       argOption = (AbstractArgumentOption) tee2.getOptionManager().findByProperty("name");
       tee2.setName((String) argOption.valueOf("not in common"));
-      List<AbstractActor> actors4 = new ArrayList<AbstractActor>();
+      List<Actor> actors4 = new ArrayList<Actor>();
 
       // Flow.not in common.SpreadSheetCommonIDs
       SpreadSheetCommonIDs spreadsheetcommonids2 = new SpreadSheetCommonIDs();
@@ -194,10 +194,10 @@ public class SpreadSheetCommonIDsTest
       argOption = (AbstractArgumentOption) dumpfile2.getOptionManager().findByProperty("outputFile");
       dumpfile2.setOutputFile((PlaceholderFile) argOption.valueOf("${TMP}/dumpfile2.csv"));
       actors4.add(dumpfile2);
-      tee2.setActors(actors4.toArray(new AbstractActor[0]));
+      tee2.setActors(actors4.toArray(new Actor[0]));
 
       actors.add(tee2);
-      flow.setActors(actors.toArray(new AbstractActor[0]));
+      flow.setActors(actors.toArray(new Actor[0]));
 
       NullListener nulllistener = new NullListener();
       flow.setFlowExecutionListener(nulllistener);

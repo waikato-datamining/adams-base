@@ -1,17 +1,7 @@
 # Project: adams
-# Date: 2014-01-23 15:22:11
+# Date: 2016-02-15 11:30:50
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	Simple flow that merely outputs the following string:\n  Hello World!
-	-actor
-		adams.flow.source.StringConstants
-			-string
-			Hello World!
-	-actor
-		adams.flow.sink.Display
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "Simple flow that merely outputs the following string:\\n  Hello World!" -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.source.StringConstants -string "Hello World!"
+ adams.flow.sink.Display -writer adams.data.io.output.NullWriter

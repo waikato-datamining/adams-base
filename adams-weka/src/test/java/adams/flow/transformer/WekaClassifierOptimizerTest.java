@@ -24,7 +24,7 @@ import adams.data.conversion.AnyToCommandline;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.sink.DumpFile;
 import adams.flow.source.FileSupplier;
 import adams.flow.transformer.WekaFileReader.OutputType;
@@ -79,9 +79,9 @@ public class WekaClassifierOptimizerTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
-  public AbstractActor getActor() {
+  public Actor getActor() {
     FileSupplier mfs = new FileSupplier();
     mfs.setFiles(
 	new TmpFile[]{
@@ -115,7 +115,7 @@ public class WekaClassifierOptimizerTest
     df.setOutputFile(new TmpFile("dumpfile.txt"));
 
     Flow flow = new Flow();
-    flow.setActors(new AbstractActor[]{mfs, fr, cs, co, conv, df});
+    flow.setActors(new Actor[]{mfs, fr, cs, co, conv, df});
 
     return flow;
   }

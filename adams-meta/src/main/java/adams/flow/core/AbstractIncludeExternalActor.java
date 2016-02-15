@@ -15,7 +15,7 @@
 
 /**
  * AbstractIncludeExternalActor.java
- * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.core;
 
@@ -98,7 +98,7 @@ public abstract class AbstractIncludeExternalActor
    * @param actor	the actor to check
    * @return		null if OK, otherwise error message
    */
-  protected abstract String checkExternalActor(AbstractActor actor);
+  protected abstract String checkExternalActor(Actor actor);
   
   /**
    * Sets up the external actor.
@@ -108,7 +108,7 @@ public abstract class AbstractIncludeExternalActor
   public String setUpExternalActor() {
     String		result;
     List<String>	errors;
-    AbstractActor	externalActor;
+    Actor		externalActor;
 
     result = null;
 

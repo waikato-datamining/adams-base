@@ -15,12 +15,12 @@
 
 /**
  * ActorHelpTab.java
- * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.tab;
 
 import adams.core.option.HtmlHelpProducer;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BrowserHelper.DefaultHyperlinkListener;
 import adams.gui.core.Fonts;
@@ -86,7 +86,7 @@ public class ActorHelpTab
    * @param paths	the selected paths
    * @param actors	the currently selected actors
    */
-  public void actorSelectionChanged(TreePath[] paths, AbstractActor[] actors) {
+  public void actorSelectionChanged(TreePath[] paths, Actor[] actors) {
     HtmlHelpProducer 	producer;
     Runnable		run;
 

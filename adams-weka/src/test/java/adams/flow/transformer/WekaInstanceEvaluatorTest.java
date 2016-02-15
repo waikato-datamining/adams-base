@@ -28,7 +28,7 @@ import adams.data.weka.evaluator.IntervalEstimatorBased;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.core.CallableActorReference;
 import adams.flow.source.FileSupplier;
 import adams.flow.source.SequenceSource;
@@ -83,10 +83,10 @@ public class WekaInstanceEvaluatorTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
   @Override
-  public AbstractActor getActor() {
+  public Actor getActor() {
     FileSupplier sfsTrain = new FileSupplier();
     sfsTrain.setFiles(new adams.core.io.PlaceholderFile[]{new TmpFile("bolts.arff")});
 
@@ -96,14 +96,14 @@ public class WekaInstanceEvaluatorTest
 
     SequenceSource seqs = new SequenceSource();
     seqs.setName("train");
-    seqs.setActors(new AbstractActor[]{
+    seqs.setActors(new Actor[]{
 	sfsTrain,
 	frTrain,
 	csTrain
     });
 
     CallableActors ga = new CallableActors();
-    ga.setActors(new AbstractActor[]{
+    ga.setActors(new Actor[]{
 	seqs
     });
 
@@ -128,7 +128,7 @@ public class WekaInstanceEvaluatorTest
     id.setOutputPrefix(new TmpFile("dumpfile"));
 
     Flow flow = new Flow();
-    flow.setActors(new AbstractActor[]{ga, sfs, fr, cs, eval, id});
+    flow.setActors(new Actor[]{ga, sfs, fr, cs, eval, id});
 
     return flow;
   }

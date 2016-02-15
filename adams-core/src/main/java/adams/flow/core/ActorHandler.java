@@ -15,7 +15,7 @@
 
 /*
  * ActorHandler.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.core;
@@ -57,7 +57,7 @@ public interface ActorHandler
    * @param index	the position
    * @return		the actor
    */
-  public AbstractActor get(int index);
+  public Actor get(int index);
 
   /**
    * Sets the actor at the given position.
@@ -65,7 +65,7 @@ public interface ActorHandler
    * @param index	the position
    * @param actor	the actor to set at this position
    */
-  public void set(int index, AbstractActor actor);
+  public void set(int index, Actor actor);
 
   /**
    * Returns the index of the actor.
@@ -80,14 +80,14 @@ public interface ActorHandler
    *
    * @return		the first 'active' actor, null if none available
    */
-  public AbstractActor firstActive();
+  public Actor firstActive();
 
   /**
    * Returns the last non-skipped actor.
    *
    * @return		the last 'active' actor, null if none available
    */
-  public AbstractActor lastActive();
+  public Actor lastActive();
   
   /**
    * Stops the processing of tokens without stopping the flow.

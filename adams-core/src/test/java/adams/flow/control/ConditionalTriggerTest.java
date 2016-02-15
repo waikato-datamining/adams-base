@@ -15,7 +15,7 @@
 
 /*
  * ConditionalTriggerTest.java
- * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -25,7 +25,7 @@ import junit.framework.TestSuite;
 import adams.core.option.AbstractArgumentOption;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.test.TmpFile;
 
 /**
@@ -94,20 +94,20 @@ public class ConditionalTriggerTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
   @Override
-  public AbstractActor getActor() {
+  public Actor getActor() {
     AbstractArgumentOption    argOption;
     
     Flow flow = new Flow();
     
     try {
       argOption = (AbstractArgumentOption) flow.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp1 = new adams.flow.core.AbstractActor[6];
+      adams.flow.core.Actor[] tmp1 = new adams.flow.core.Actor[6];
       adams.flow.standalone.CallableActors tmp2 = new adams.flow.standalone.CallableActors();
       argOption = (AbstractArgumentOption) tmp2.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp3 = new adams.flow.core.AbstractActor[1];
+      adams.flow.core.Actor[] tmp3 = new adams.flow.core.Actor[1];
       adams.flow.sink.DumpFile tmp4 = new adams.flow.sink.DumpFile();
       argOption = (AbstractArgumentOption) tmp4.getOptionManager().findByProperty("outputFile");
       tmp4.setOutputFile((adams.core.io.PlaceholderFile) argOption.valueOf("${TMP}/dumpfile.txt"));
@@ -132,7 +132,7 @@ public class ConditionalTriggerTest
       tmp1[1] = tmp6;
       adams.flow.control.Tee tmp11 = new adams.flow.control.Tee();
       argOption = (AbstractArgumentOption) tmp11.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp12 = new adams.flow.core.AbstractActor[1];
+      adams.flow.core.Actor[] tmp12 = new adams.flow.core.Actor[1];
       adams.flow.sink.CallableSink tmp13 = new adams.flow.sink.CallableSink();
       argOption = (AbstractArgumentOption) tmp13.getOptionManager().findByProperty("callableName");
       tmp13.setCallableName((adams.flow.core.CallableActorReference) argOption.valueOf("DumpFile"));
@@ -146,7 +146,7 @@ public class ConditionalTriggerTest
       tmp15.setName((java.lang.String) argOption.valueOf("ConditionalTrigger1"));
 
       argOption = (AbstractArgumentOption) tmp15.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp17 = new adams.flow.core.AbstractActor[2];
+      adams.flow.core.Actor[] tmp17 = new adams.flow.core.Actor[2];
       adams.flow.source.StringConstants tmp18 = new adams.flow.source.StringConstants();
       argOption = (AbstractArgumentOption) tmp18.getOptionManager().findByProperty("strings");
       adams.core.base.BaseString[] tmp19 = new adams.core.base.BaseString[1];
@@ -174,7 +174,7 @@ public class ConditionalTriggerTest
       tmp25.setName((java.lang.String) argOption.valueOf("ConditionalTrigger2"));
 
       argOption = (AbstractArgumentOption) tmp25.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp27 = new adams.flow.core.AbstractActor[2];
+      adams.flow.core.Actor[] tmp27 = new adams.flow.core.Actor[2];
       adams.flow.source.StringConstants tmp28 = new adams.flow.source.StringConstants();
       argOption = (AbstractArgumentOption) tmp28.getOptionManager().findByProperty("strings");
       adams.core.base.BaseString[] tmp29 = new adams.core.base.BaseString[1];
@@ -202,7 +202,7 @@ public class ConditionalTriggerTest
       tmp35.setName((java.lang.String) argOption.valueOf("ConditionalTrigger3"));
 
       argOption = (AbstractArgumentOption) tmp35.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp37 = new adams.flow.core.AbstractActor[2];
+      adams.flow.core.Actor[] tmp37 = new adams.flow.core.Actor[2];
       adams.flow.source.StringConstants tmp38 = new adams.flow.source.StringConstants();
       argOption = (AbstractArgumentOption) tmp38.getOptionManager().findByProperty("strings");
       adams.core.base.BaseString[] tmp39 = new adams.core.base.BaseString[1];

@@ -26,7 +26,7 @@ import adams.core.option.AbstractArgumentOption;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 
 /**
  * Test for SpreadSheetStorageRowIterator actor.
@@ -84,17 +84,17 @@ public class SpreadSheetStorageRowIteratorTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
   @Override
-  public AbstractActor getActor() {
+  public Actor getActor() {
     AbstractArgumentOption    argOption;
     
     Flow flow = new Flow();
     
     try {
       argOption = (AbstractArgumentOption) flow.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] abstractactor1 = new adams.flow.core.AbstractActor[3];
+      adams.flow.core.Actor[] abstractactor1 = new adams.flow.core.Actor[3];
 
       // Flow.FileSupplier
       adams.flow.source.FileSupplier singlefilesupplier2 = new adams.flow.source.FileSupplier();

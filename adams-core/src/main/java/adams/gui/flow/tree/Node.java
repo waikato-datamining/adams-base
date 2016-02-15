@@ -84,7 +84,7 @@ public class Node
    * @param owner	the owning tree, can be null
    * @param actor	the underlying actor
    */
-  public Node(Tree owner, AbstractActor actor) {
+  public Node(Tree owner, Actor actor) {
     super();
 
     m_Owner        = owner;
@@ -162,10 +162,10 @@ public class Node
    *
    * @param value	the actor
    */
-  public void setActor(AbstractActor value) {
-    AbstractActor	oldActor;
-    AbstractActor	parent;
-    AbstractActor	stripped;
+  public void setActor(Actor value) {
+    Actor	oldActor;
+    Actor	parent;
+    Actor	stripped;
 
     stripped = strip(value);
     oldActor = getActor();
@@ -188,8 +188,8 @@ public class Node
    *
    * @return		the actor
    */
-  public AbstractActor getActor() {
-    return (AbstractActor) getUserObject();
+  public Actor getActor() {
+    return (Actor) getUserObject();
   }
 
   /**
@@ -222,7 +222,7 @@ public class Node
    *
    * @return		the generated actor
    */
-  public AbstractActor getFullActor() {
+  public Actor getFullActor() {
     return getFullActor(null);
   }
 
@@ -232,8 +232,8 @@ public class Node
    * @param errors	for appending errors encountered while assembling, use null to ignore
    * @return		the generated actor
    */
-  public AbstractActor getFullActor(StringBuilder errors) {
-    AbstractActor	result;
+  public Actor getFullActor(StringBuilder errors) {
+    Actor		result;
     Node		child;
     int			i;
     boolean		mutable;
@@ -305,7 +305,7 @@ public class Node
     HashSet<Class>	excluded;
 
     excluded = new HashSet<Class>();
-    excluded.add(AbstractActor.class);
+    excluded.add(Actor.class);
 
     result = ActorUtils.replace(getActor(), find, replace, recursive, excluded);
 
@@ -459,7 +459,7 @@ public class Node
    * @param actor	the actor to obtain the annotation from
    * @return		the generated string
    */
-  protected String assembleAnnotation(AbstractActor actor) {
+  protected String assembleAnnotation(Actor actor) {
     StringBuilder	result;
     String		colorDef;
     String		sizeDef;
@@ -541,7 +541,7 @@ public class Node
   public String toString() {
     StringBuilder	html;
     String		quickInfo;
-    AbstractActor	actor;
+    Actor		actor;
 
     if (m_RenderString == null) {
       html = new StringBuilder();
@@ -632,7 +632,7 @@ public class Node
     int			i;
     int			n;
     String		quickInfo;
-    AbstractActor	actor;
+    Actor		actor;
 
     if (m_RenderString == null) {
       plain = new StringBuilder();
@@ -705,8 +705,8 @@ public class Node
    * @return		the stripped down actor
    * @see		ActorHandler
    */
-  public static AbstractActor strip(AbstractActor actor) {
-    AbstractActor	result;
+  public static Actor strip(Actor actor) {
+    Actor		result;
     NestedProducer	producer;
     NestedConsumer	consumer;
 
@@ -717,7 +717,7 @@ public class Node
       producer.produce(actor);
       consumer = new NestedConsumer();
       consumer.setInput(producer.getOutput());
-      result = (AbstractActor) consumer.consume();
+      result = (Actor) consumer.consume();
       producer.cleanUp();
       consumer.cleanUp();
     }

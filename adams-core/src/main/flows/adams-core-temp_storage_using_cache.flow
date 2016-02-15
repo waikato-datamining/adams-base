@@ -1,49 +1,13 @@
 # Project: adams
-# Date: 2014-01-23 15:24:45
+# Date: 2016-02-15 11:35:27
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	The \"SetStorageValue\" transformer and \"StorageValue\" source\nactors allow to store arbitrary values during flow execution.\nIt is also possible to store the values in named LRU \n(least-recently-used) caches.\nIn the example here, the random numbers, that the random\nnumber generator source generates, get stored in the LRU \ncache called \"random_numbers\", with the name being the \nvalue of the random number. \nThe Breakpoint actor is used to display the state of the \ninternal storage. Just keep clicking on \"Continue\" to see\nthe LRU cache being slowly filled.
-	-actor
-		adams.flow.standalone.InitStorageCache
-			-cache
-			random_numbers
-	-actor
-		adams.flow.source.RandomNumberGenerator
-			-generator
-				adams.data.random.JavaRandomInt
-					-max-value
-					25
-			-max-num
-			100
-	-actor
-		adams.flow.transformer.SetVariable
-			-var-name
-			rand
-	-actor
-		adams.flow.transformer.SetStorageValue
-			-cache
-			random_numbers
-			-storage-name
-			@{rand}
-	-actor
-		adams.flow.control.Trigger
-			-tee
-				adams.flow.source.StorageValue
-					-cache
-					random_numbers
-					-storage-name
-					@{rand}
-			-tee
-				adams.flow.control.Breakpoint
-					-condition
-						adams.flow.condition.bool.Expression
-					-view
-					STORAGE
-			-tee
-				adams.flow.sink.Display
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "The \\\"SetStorageValue\\\" transformer and \\\"StorageValue\\\" source\\nactors allow to store arbitrary values during flow execution.\\nIt is also possible to store the values in named LRU \\n(least-recently-used) caches.\\nIn the example here, the random numbers, that the random\\nnumber generator source generates, get stored in the LRU \\ncache called \\\"random_numbers\\\", with the name being the \\nvalue of the random number. \\nThe Breakpoint actor is used to display the state of the \\ninternal storage. Just keep clicking on \\\"Continue\\\" to see\\nthe LRU cache being slowly filled." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.standalone.InitStorageCache -cache random_numbers
+ adams.flow.source.RandomNumberGenerator -generator "adams.data.random.JavaRandomInt -max-value 25" -max-num 100
+ adams.flow.transformer.SetVariable -var-name rand
+ adams.flow.transformer.SetStorageValue -cache random_numbers -storage-name @{rand}
+ adams.flow.control.Trigger
+  adams.flow.source.StorageValue -cache random_numbers -storage-name @{rand}
+  adams.flow.control.Breakpoint -condition adams.flow.condition.bool.Expression -view STORAGE
+  adams.flow.sink.Display -writer adams.data.io.output.NullWriter

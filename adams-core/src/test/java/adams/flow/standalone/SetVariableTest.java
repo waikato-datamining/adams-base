@@ -33,7 +33,7 @@ import adams.flow.AbstractFlowTest;
 import adams.flow.condition.bool.Expression;
 import adams.flow.control.Flow;
 import adams.flow.control.WhileLoop;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.sink.DumpFile;
 import adams.flow.source.Start;
 import adams.flow.source.StringConstants;
@@ -88,10 +88,10 @@ public class SetVariableTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
   @Override
-  public AbstractActor getActor() {
+  public Actor getActor() {
     adams.flow.standalone.SetVariable sv1 = new adams.flow.standalone.SetVariable();
     sv1.setVariableName(new VariableName("i"));
     sv1.setVariableValue(new BaseText("0"));
@@ -120,7 +120,7 @@ public class SetVariableTest
     df.setAppend(true);
     df.setOutputFile(new TmpFile("dumpfile.txt"));
 
-    wl.setActors(new AbstractActor[]{
+    wl.setActors(new Actor[]{
 	sc,
 	con,
 	me,
@@ -129,7 +129,7 @@ public class SetVariableTest
     });
 
     Flow flow = new Flow();
-    flow.setActors(new AbstractActor[]{sv1, st, wl});
+    flow.setActors(new Actor[]{sv1, st, wl});
 
     return flow;
   }

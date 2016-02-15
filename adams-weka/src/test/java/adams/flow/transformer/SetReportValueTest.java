@@ -32,7 +32,7 @@ import adams.flow.condition.bool.Counting;
 import adams.flow.control.ConditionalTee;
 import adams.flow.control.Flow;
 import adams.flow.control.Sequence;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.sink.DumpFile;
 import adams.flow.source.FileSupplier;
 import adams.flow.transformer.WekaFileReader.OutputType;
@@ -85,10 +85,10 @@ public class SetReportValueTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
   @Override
-  public AbstractActor getActor() {
+  public Actor getActor() {
     FileSupplier sfs = new FileSupplier();
     sfs.setFiles(new adams.core.io.PlaceholderFile[]{new TmpFile("bolts.arff")});
 
@@ -112,7 +112,7 @@ public class SetReportValueTest
     df.setOutputFile(new TmpFile("dumpfile.txt"));
 
     Sequence seq = new Sequence();
-    seq.setActors(new AbstractActor[]{
+    seq.setActors(new Actor[]{
 	ci, srv, grv, df
     });
 
@@ -124,7 +124,7 @@ public class SetReportValueTest
     ct.add(0, seq);
 
     Flow flow = new Flow();
-    flow.setActors(new AbstractActor[]{sfs, fr, cs, ct});
+    flow.setActors(new Actor[]{sfs, fr, cs, ct});
 
     return flow;
   }

@@ -26,7 +26,7 @@ import adams.core.option.AbstractArgumentOption;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.test.TmpFile;
 
 /**
@@ -95,26 +95,26 @@ public class ArrayCombinationsTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
   @Override
-  public AbstractActor getActor() {
+  public Actor getActor() {
     AbstractArgumentOption    argOption;
 
     Flow flow = new Flow();
 
     try {
       argOption = (AbstractArgumentOption) flow.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp1 = new adams.flow.core.AbstractActor[4];
+      adams.flow.core.Actor[] tmp1 = new adams.flow.core.Actor[4];
       adams.flow.standalone.CallableActors tmp2 = new adams.flow.standalone.CallableActors();
       argOption = (AbstractArgumentOption) tmp2.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp3 = new adams.flow.core.AbstractActor[1];
+      adams.flow.core.Actor[] tmp3 = new adams.flow.core.Actor[1];
       adams.flow.control.Sequence tmp4 = new adams.flow.control.Sequence();
       argOption = (AbstractArgumentOption) tmp4.getOptionManager().findByProperty("name");
       tmp4.setName((java.lang.String) argOption.valueOf("Output"));
 
       argOption = (AbstractArgumentOption) tmp4.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp6 = new adams.flow.core.AbstractActor[2];
+      adams.flow.core.Actor[] tmp6 = new adams.flow.core.Actor[2];
       adams.flow.transformer.Convert tmp7 = new adams.flow.transformer.Convert();
       argOption = (AbstractArgumentOption) tmp7.getOptionManager().findByProperty("conversion");
       adams.data.conversion.AnyToString tmp9 = new adams.data.conversion.AnyToString();
@@ -148,13 +148,13 @@ public class ArrayCombinationsTest
       tmp1[2] = tmp14;
       adams.flow.control.Branch tmp16 = new adams.flow.control.Branch();
       argOption = (AbstractArgumentOption) tmp16.getOptionManager().findByProperty("branches");
-      adams.flow.core.AbstractActor[] tmp17 = new adams.flow.core.AbstractActor[3];
+      adams.flow.core.Actor[] tmp17 = new adams.flow.core.Actor[3];
       adams.flow.control.Sequence tmp18 = new adams.flow.control.Sequence();
       argOption = (AbstractArgumentOption) tmp18.getOptionManager().findByProperty("name");
       tmp18.setName((java.lang.String) argOption.valueOf("combinations"));
 
       argOption = (AbstractArgumentOption) tmp18.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp20 = new adams.flow.core.AbstractActor[2];
+      adams.flow.core.Actor[] tmp20 = new adams.flow.core.Actor[2];
       adams.flow.transformer.ArrayCombinations tmp21 = new adams.flow.transformer.ArrayCombinations();
       argOption = (AbstractArgumentOption) tmp21.getOptionManager().findByProperty("length");
       tmp21.setLength((Integer) argOption.valueOf("2"));
@@ -173,7 +173,7 @@ public class ArrayCombinationsTest
       tmp25.setName((java.lang.String) argOption.valueOf("separator"));
 
       argOption = (AbstractArgumentOption) tmp25.getOptionManager().findByProperty("teeActor");
-      adams.flow.core.AbstractActor[] tmp29 = new adams.flow.core.AbstractActor[2];
+      adams.flow.core.Actor[] tmp29 = new adams.flow.core.Actor[2];
       adams.flow.source.StringConstants tmp30 = new adams.flow.source.StringConstants();
       argOption = (AbstractArgumentOption) tmp30.getOptionManager().findByProperty("strings");
       adams.core.base.BaseString[] tmp31 = new adams.core.base.BaseString[1];
@@ -194,7 +194,7 @@ public class ArrayCombinationsTest
       tmp34.setName((java.lang.String) argOption.valueOf("permutations"));
 
       argOption = (AbstractArgumentOption) tmp34.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp36 = new adams.flow.core.AbstractActor[2];
+      adams.flow.core.Actor[] tmp36 = new adams.flow.core.Actor[2];
       adams.flow.transformer.ArrayCombinations tmp37 = new adams.flow.transformer.ArrayCombinations();
       argOption = (AbstractArgumentOption) tmp37.getOptionManager().findByProperty("length");
       tmp37.setLength((Integer) argOption.valueOf("2"));

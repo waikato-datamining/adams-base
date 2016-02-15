@@ -15,13 +15,13 @@
 
 /*
  * SubProcess.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
 
 
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.core.ActorWithConditionalEquivalent;
 import adams.flow.core.ActorWithTimedEquivalent;
 import adams.flow.core.InputConsumer;
@@ -73,7 +73,7 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-actor &lt;adams.flow.core.AbstractActor&gt; [-actor ...] (property: actors)
+ * <pre>-actor &lt;adams.flow.core.Actor&gt; [-actor ...] (property: actors)
  * &nbsp;&nbsp;&nbsp;All the actors that define this sequence.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
@@ -134,7 +134,7 @@ public class SubProcess
      * @return		null if everything ok, otherwise the error message
      */
     @Override
-    protected String doExecuteActors(AbstractActor startActor) {
+    protected String doExecuteActors(Actor startActor) {
       String		result;
       int		i;
 

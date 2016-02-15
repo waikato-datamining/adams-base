@@ -1,156 +1,33 @@
 # Project: adams
-# Date: 2016-01-19 21:01:24
+# Date: 2016-02-15 15:16:49
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	Performs attribute selection on a training set, then\nextracts the selected attributes and applies the Remove\nfilter to reduce the test set as well.
-	-actor
-		adams.flow.standalone.CallableActors
-			-actor
-				adams.flow.sink.DisplayPanelManager
-					-name
-					train
-					-provider
-						adams.flow.sink.WekaInstancesDisplay
-							-writer
-								adams.gui.print.NullWriter
-					-entry-name-variable
-					name
-			-actor
-				adams.flow.sink.DisplayPanelManager
-					-name
-					test
-					-x
-					-3
-					-provider
-						adams.flow.sink.WekaInstancesDisplay
-							-writer
-								adams.gui.print.NullWriter
-					-entry-name-variable
-					name
-	-actor
-		adams.flow.source.Start
-	-actor
-		adams.flow.control.Trigger
-			-name
-			attsel on train
-			-tee
-				adams.flow.source.FileSupplier
-					-file
-					${EXAMPLE_FLOWS}/data/anneal_train.arff
-			-tee
-				adams.flow.transformer.WekaFileReader
-					-loader
-						weka.core.converters.ArffLoader
-			-tee
-				adams.flow.transformer.WekaClassSelector
-			-tee
-				adams.flow.control.Tee
-					-name
-					original
-					-tee
-						adams.flow.transformer.SetVariable
-							-var-name
-							name
-							-var-value
-							train_original
-					-tee
-						adams.flow.sink.CallableSink
-							-callable
-							train
-			-tee
-				adams.flow.transformer.WekaAttributeSelection
-					-evaluator
-						weka.attributeSelection.CfsSubsetEval
-							-P
-							1
-							-E
-							1
-					-search
-						weka.attributeSelection.BestFirst
-							-D
-							1
-							-N
-							5
-					-folds
-					0
-			-tee
-				adams.flow.control.ContainerValuePicker
-					-name
-					att range
-					-tee
-						adams.flow.transformer.SetVariable
-							-var-name
-							selected
-					-value
-					Selected attributes
-			-tee
-				adams.flow.control.ContainerValuePicker
-					-name
-					reduced
-					-tee
-						adams.flow.transformer.SetVariable
-							-var-name
-							name
-							-var-value
-							train_reduced
-					-tee
-						adams.flow.sink.CallableSink
-							-callable
-							train
-					-value
-					Reduced
-	-actor
-		adams.flow.control.Trigger
-			-name
-			apply selection to test
-			-tee
-				adams.flow.source.FileSupplier
-					-file
-					${EXAMPLE_FLOWS}/data/anneal_test.arff
-			-tee
-				adams.flow.transformer.WekaFileReader
-					-loader
-						weka.core.converters.ArffLoader
-			-tee
-				adams.flow.transformer.WekaClassSelector
-			-tee
-				adams.flow.control.Tee
-					-name
-					original
-					-tee
-						adams.flow.transformer.SetVariable
-							-var-name
-							name
-							-var-value
-							test_original
-					-tee
-						adams.flow.sink.CallableSink
-							-callable
-							test
-			-tee
-				adams.flow.control.UpdateProperties
-					-property
-					filter.attributeIndices
-					-variable
-					selected
-					-sub-actor
-						adams.flow.transformer.WekaFilter
-							-filter
-								weka.filters.unsupervised.attribute.Remove
-									-V
-			-tee
-				adams.flow.transformer.SetVariable
-					-var-name
-					name
-					-var-value
-					test_reduced
-			-tee
-				adams.flow.sink.CallableSink
-					-callable
-					test
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "Performs attribute selection on a training set, then\\nextracts the selected attributes and applies the Remove\\nfilter to reduce the test set as well." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.standalone.CallableActors
+  adams.flow.sink.DisplayPanelManager -name train -provider "adams.flow.sink.WekaInstancesDisplay -writer adams.gui.print.NullWriter" -entry-name-variable name
+  adams.flow.sink.DisplayPanelManager -name test -x -3 -provider "adams.flow.sink.WekaInstancesDisplay -writer adams.gui.print.NullWriter" -entry-name-variable name
+ adams.flow.source.Start
+ adams.flow.control.Trigger -name "attsel on train"
+  adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/anneal_train.arff
+  adams.flow.transformer.WekaFileReader -loader weka.core.converters.ArffLoader
+  adams.flow.transformer.WekaClassSelector
+  adams.flow.control.Tee -name original
+   adams.flow.transformer.SetVariable -var-name name -var-value train_original
+   adams.flow.sink.CallableSink -callable train
+  adams.flow.transformer.WekaAttributeSelection -evaluator "weka.attributeSelection.CfsSubsetEval -P 1 -E 1" -search "weka.attributeSelection.BestFirst -D 1 -N 5" -folds 0
+  adams.flow.control.ContainerValuePicker -name "att range" -value "Selected attributes"
+   adams.flow.transformer.SetVariable -var-name selected
+  adams.flow.control.ContainerValuePicker -name reduced -value Reduced
+   adams.flow.transformer.SetVariable -var-name name -var-value train_reduced
+   adams.flow.sink.CallableSink -callable train
+ adams.flow.control.Trigger -name "apply selection to test"
+  adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/anneal_test.arff
+  adams.flow.transformer.WekaFileReader -loader weka.core.converters.ArffLoader
+  adams.flow.transformer.WekaClassSelector
+  adams.flow.control.Tee -name original
+   adams.flow.transformer.SetVariable -var-name name -var-value test_original
+   adams.flow.sink.CallableSink -callable test
+  adams.flow.control.UpdateProperties -property filter.attributeIndices -variable selected -sub-actor adams.flow.transformer.PassThrough
+   adams.flow.transformer.WekaFilter -filter "weka.filters.unsupervised.attribute.Remove -V"
+  adams.flow.transformer.SetVariable -var-name name -var-value test_reduced
+  adams.flow.sink.CallableSink -callable test

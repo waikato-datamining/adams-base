@@ -15,14 +15,13 @@
 
 /**
  * AbstractBooleanDatabaseCondition.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.condition.bool;
 
 import adams.db.AbstractDatabaseConnection;
 import adams.db.DatabaseConnection;
 import adams.db.DatabaseConnectionHandler;
-import adams.flow.core.AbstractActor;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorUtils;
 
@@ -85,7 +84,7 @@ public abstract class AbstractBooleanDatabaseCondition
    * @param actor	the actor to use for determining the connection
    * @return		the connection
    */
-  protected AbstractDatabaseConnection getConnection(AbstractActor actor) {
+  protected AbstractDatabaseConnection getConnection(Actor actor) {
     return ActorUtils.getDatabaseConnection(
 	  actor,
 	  adams.flow.standalone.DatabaseConnection.class,
@@ -105,8 +104,8 @@ public abstract class AbstractBooleanDatabaseCondition
     result = super.setUp(owner);
     
     if (result == null) {
-      if (owner instanceof AbstractActor)
-	setDatabaseConnection(getConnection((AbstractActor) owner));
+      if (owner instanceof Actor)
+	setDatabaseConnection(getConnection(owner));
     }
     
     return result;

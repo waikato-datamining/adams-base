@@ -15,7 +15,7 @@
 
 /*
  * MutableActorHandler.java
- * Copyright (C) 2009 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.core;
@@ -34,7 +34,7 @@ public interface MutableActorHandler
    *
    * @param actor	the actor to insert
    */
-  public void add(AbstractActor actor);
+  public void add(Actor actor);
 
   /**
    * Inserts the actor at the given position.
@@ -42,7 +42,7 @@ public interface MutableActorHandler
    * @param index	the position
    * @param actor	the actor to insert
    */
-  public void add(int index, AbstractActor actor);
+  public void add(int index, Actor actor);
 
   /**
    * Removes the actor at the given position and returns the removed object.
@@ -50,7 +50,7 @@ public interface MutableActorHandler
    * @param index	the position
    * @return		the removed actor
    */
-  public AbstractActor remove(int index);
+  public Actor remove(int index);
 
   /**
    * Removes all actors.

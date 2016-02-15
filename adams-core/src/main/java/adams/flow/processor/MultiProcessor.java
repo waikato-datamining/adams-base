@@ -15,13 +15,13 @@
 
 /*
  * MultiProcessor.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.processor;
 
 import adams.core.option.OptionUtils;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 
 /**
  <!-- globalinfo-start -->
@@ -125,10 +125,10 @@ public class MultiProcessor
    * @param actor	the actor to process (is a copy of original)
    */
   @Override
-  protected void processActor(AbstractActor actor) {
+  protected void processActor(Actor actor) {
     int				i;
-    AbstractActor		input;
-    AbstractActor		output;
+    Actor			input;
+    Actor			output;
     AbstractActorProcessor	processor;
     ModifyingProcessor		modifying;
     CheckProcessor		check;

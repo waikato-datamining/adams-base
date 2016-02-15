@@ -30,7 +30,7 @@ import adams.flow.condition.bool.Counting;
 import adams.flow.control.Count;
 import adams.flow.control.Flow;
 import adams.flow.control.Stop;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.sink.DumpFile;
 import adams.test.TmpFile;
 
@@ -77,9 +77,9 @@ public class ForLoopTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
-  public AbstractActor getActor() {
+  public Actor getActor() {
     adams.flow.source.ForLoop fl = new adams.flow.source.ForLoop();
     fl.setLoopLower(1);
     fl.setLoopUpper(30);
@@ -96,7 +96,7 @@ public class ForLoopTest
     df.setOutputFile(new TmpFile("dumpfile.txt"));
 
     Flow flow = new Flow();
-    flow.setActors(new AbstractActor[]{fl, cvp, df});
+    flow.setActors(new Actor[]{fl, cvp, df});
 
     return flow;
   }

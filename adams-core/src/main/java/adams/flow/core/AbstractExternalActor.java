@@ -15,7 +15,7 @@
 
 /*
  * AbstractExternalActor.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.core;
@@ -47,7 +47,7 @@ public abstract class AbstractExternalActor
   protected FlowFile m_ActorFile;
 
   /** the external actor itself. */
-  protected AbstractActor m_ExternalActor;
+  protected Actor m_ExternalActor;
 
   /** indicates whether a variable is attached to the external file. */
   protected Boolean m_ActorFileIsVariable;
@@ -115,7 +115,7 @@ public abstract class AbstractExternalActor
    * @param value	the new parent
    */
   @Override
-  public void setParent(AbstractActor value) {
+  public void setParent(Actor value) {
     super.setParent(value);
     if (m_ExternalActor != null) {
       m_ExternalActor.setParent(null);
@@ -152,7 +152,7 @@ public abstract class AbstractExternalActor
    * @return		the actor, can be null if not initialized yet or failed
    * 			to initialize
    */
-  public AbstractActor getExternalActor() {
+  public Actor getExternalActor() {
     return m_ExternalActor;
   }
 

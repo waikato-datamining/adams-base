@@ -23,7 +23,7 @@ package adams.flow.source;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.test.TmpFile;
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -49,9 +49,9 @@ public class ModuleInfoTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
-  public AbstractActor getActor() {
+  public Actor getActor() {
     Flow flow = new Flow();
 
     ModuleInfo info = new ModuleInfo();

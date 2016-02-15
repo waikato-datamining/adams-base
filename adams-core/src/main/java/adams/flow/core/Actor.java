@@ -23,6 +23,7 @@ package adams.flow.core;
 import adams.core.AdditionalInformationHandler;
 import adams.core.CleanUpHandler;
 import adams.core.QuickInfoSupporter;
+import adams.core.ShallowCopySupporter;
 import adams.core.StoppableWithFeedback;
 import adams.core.Variables;
 import adams.core.VariablesInspectionHandler;
@@ -32,7 +33,6 @@ import adams.core.logging.LoggingSupporter;
 import adams.core.option.OptionHandler;
 import adams.event.VariableChangeEvent;
 import adams.event.VariableChangeListener;
-import adams.flow.control.Flow;
 import adams.flow.control.ScopeHandler;
 import adams.flow.control.StorageHandler;
 import adams.flow.execution.FlowExecutionListeningSupporter;
@@ -52,9 +52,8 @@ import java.util.HashSet;
 public interface Actor
   extends Comparable, AdditionalInformationHandler,
           CleanUpHandler, StoppableWithFeedback, VariableChangeListener, OptionHandler,
-          /*ShallowCopySupporter<Actor>,*/ QuickInfoSupporter, ErrorHandler, 
+          ShallowCopySupporter<Actor>, QuickInfoSupporter, ErrorHandler,
           LoggingSupporter, LoggingLevelHandler, VariablesInspectionHandler {
-  // TODO use Actor interface
 
   /** the file extension for flows (excl. dot). */
   public final static String FILE_EXTENSION = "flow";
@@ -156,20 +155,18 @@ public interface Actor
    * @param type	the type of error
    * @param msg		the error message to log
    * @return		null if error has been handled, otherwise the error message
-   * @see		Flow#getLogErrors()
-   * @see		Flow#getErrorHandling()
+   * @see		adams.flow.control.Flow#getLogErrors()
+   * @see		adams.flow.control.Flow#getErrorHandling()
    * @see		#getStopFlowOnError()
    */
-  // TODO use Actor interface
-  public String handleError(AbstractActor source, String type, String msg);
+  public String handleError(Actor source, String type, String msg);
 
   /**
    * Sets the parent of this actor, e.g., the group it belongs to.
    *
    * @param value	the new parent
    */
-  // TODO use Actor interface
-  public void setParent(AbstractActor value);
+  public void setParent(Actor value);
 
   /**
    * Returns the parent of this actor, e.g., the group.
@@ -301,7 +298,6 @@ public interface Actor
    * first before anything else.
    *
    * @return		null if everything is fine, otherwise error message
-   * @see		#reset()
    */
   public String setUp();
 
@@ -430,9 +426,8 @@ public interface Actor
    *
    * @return		the shallow copy
    */
-  // TODO use Actor interface
-  //@Override
-  //public Actor shallowCopy();
+  @Override
+  public Actor shallowCopy();
 
   /**
    * Returns a shallow copy of itself, i.e., based on the commandline options.
@@ -440,9 +435,8 @@ public interface Actor
    * @param expand	whether to expand variables to their current values
    * @return		the shallow copy
    */
-  // TODO use Actor interface
-  //@Override
-  //public Actor shallowCopy(boolean expand);
+  @Override
+  public Actor shallowCopy(boolean expand);
 
   /**
    * Returns the size of the object.
@@ -450,4 +444,11 @@ public interface Actor
    * @return		the size of the object
    */
   public int sizeOf();
+
+  /**
+   * Returns the commandline string.
+   *
+   * @return		 the commandline
+   */
+  public String toCommandLine();
 }

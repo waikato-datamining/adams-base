@@ -1,48 +1,13 @@
 # Project: adams
-# Date: 2014-01-23 15:49:28
+# Date: 2016-02-15 15:22:27
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	Cross-validates a SimpleKMeans clusterer on a\ndataset and outputs the log-likelihood.
-	-actor
-		adams.flow.standalone.CallableActors
-			-actor
-				adams.flow.source.WekaClustererSetup
-					-clusterer
-						weka.clusterers.SimpleKMeans
-							-N
-							2
-							-A
-							weka.core.EuclideanDistance -R first-last
-							-I
-							500
-							-num-slots
-							1
-							-S
-							10
-	-actor
-		adams.flow.source.FileSupplier
-			-file
-			${EXAMPLE_FLOWS}/data/anneal.arff
-	-actor
-		adams.flow.transformer.WekaFileReader
-			-loader
-				weka.core.converters.ArffLoader
-	-actor
-		adams.flow.transformer.WekaFilter
-			-filter
-				weka.filters.unsupervised.attribute.Remove
-					-R
-					last
-					
-	-actor
-		adams.flow.transformer.WekaCrossValidationClustererEvaluator
-	-actor
-		adams.flow.transformer.WekaClusterEvaluationSummary
-	-actor
-		adams.flow.sink.Display
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "Cross-validates a SimpleKMeans clusterer on a\\ndataset and outputs the log-likelihood." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.standalone.CallableActors
+  adams.flow.source.WekaClustererSetup -clusterer "weka.clusterers.SimpleKMeans -init 0 -max-candidates 100 -periodic-pruning 10000 -min-density 2.0 -t1 -1.25 -t2 -1.0 -N 2 -A \"weka.core.EuclideanDistance -R first-last\" -I 500 -num-slots 1 -S 10"
+ adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/anneal.arff
+ adams.flow.transformer.WekaFileReader -loader weka.core.converters.ArffLoader
+ adams.flow.transformer.WekaFilter -filter "weka.filters.unsupervised.attribute.Remove -R last"
+ adams.flow.transformer.WekaCrossValidationClustererEvaluator
+ adams.flow.transformer.WekaClusterEvaluationSummary
+ adams.flow.sink.Display -writer adams.data.io.output.NullWriter

@@ -28,7 +28,7 @@ import adams.core.option.AbstractArgumentOption;
 import adams.env.Environment;
 import adams.flow.AbstractOnlineFlowTest;
 import adams.flow.control.Flow;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 
 /**
  * Test for DownloadFile actor.
@@ -86,10 +86,10 @@ public class DownloadFileTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
   @Override
-  public AbstractActor getActor() {
+  public Actor getActor() {
     AbstractArgumentOption	argOption;
     String			host;
 
@@ -100,7 +100,7 @@ public class DownloadFileTest
       System.err.println("No connection to host '" + host + "'? Trying anyway...");
     try {
       argOption = (AbstractArgumentOption) flow.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp1 = new adams.flow.core.AbstractActor[2];
+      adams.flow.core.Actor[] tmp1 = new adams.flow.core.Actor[2];
       adams.flow.source.URLSupplier tmp2 = new adams.flow.source.URLSupplier();
       argOption = (AbstractArgumentOption) tmp2.getOptionManager().findByProperty("URLs");
       tmp2.setURLs(new BaseURL[]{(adams.core.base.BaseURL) argOption.valueOf("https://" + host + "/index.html")});

@@ -1,71 +1,14 @@
 # Project: adams
-# Date: 2015-06-14 07:23:23
+# Date: 2016-02-15 14:29:52
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	Loads images from disk, processes them and \nturns them into a CSV file.\nThe final images are displayed as well.
-	-actor
-		adams.flow.source.DirectoryLister
-			-dir
-			${EXAMPLE_FLOWS}/data
-			-list-files
-			true
-			-regexp
-			.*.jpg
-	-actor
-		adams.flow.transformer.ImageJReader
-	-actor
-		adams.flow.transformer.ImageJTransformer
-			-transformer
-				adams.data.imagej.transformer.Gray8
-	-actor
-		adams.flow.transformer.ImageJTransformer
-			-name
-			ImageJTransformer-1
-			-transformer
-				adams.data.imagej.transformer.Resize
-					-width
-					50
-					-height
-					50
-	-actor
-		adams.flow.control.Tee
-			-name
-			display image
-			-tee
-				adams.flow.transformer.Convert
-					-conversion
-						adams.data.conversion.ImageJToBufferedImage
-			-tee
-				adams.flow.sink.DisplayPanelManager
-					-x
-					-3
-					-provider
-						adams.flow.sink.ImageViewer
-							-writer
-								adams.gui.print.NullWriter
-							-selection-processor
-								adams.gui.visualization.image.selection.NullProcessor
-							-image-overlay
-								adams.gui.visualization.image.NullOverlay
-	-actor
-		adams.flow.transformer.ImageJFeatureGenerator
-			-algorithm
-				adams.data.imagej.features.Pixels
-					-converter
-						adams.data.featureconverter.SpreadSheet
-							-data-row-type
-								adams.data.spreadsheet.DenseDataRow
-							-spreadsheet-type
-								adams.data.spreadsheet.SpreadSheet
-	-actor
-		adams.flow.sink.SpreadSheetFileWriter
-			-output
-			${EXAMPLE_FLOWS}/output/flattened.csv
-			-writer
-				adams.data.io.output.CsvSpreadSheetWriter
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "Loads images from disk, processes them and \\nturns them into a CSV file.\\nThe final images are displayed as well." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.source.DirectoryLister -dir ${EXAMPLE_FLOWS}/data -list-files true -regexp .*.jpg
+ adams.flow.transformer.ImageJReader
+ adams.flow.transformer.ImageJTransformer -transformer adams.data.imagej.transformer.Gray8
+ adams.flow.transformer.ImageJTransformer -name ImageJTransformer-1 -transformer "adams.data.imagej.transformer.Resize -width 50 -height 50"
+ adams.flow.control.Tee -name "display image"
+  adams.flow.transformer.Convert -conversion adams.data.conversion.ImageJToBufferedImage
+  adams.flow.sink.DisplayPanelManager -x -3 -provider "adams.flow.sink.ImageViewer -writer adams.gui.print.NullWriter -selection-processor adams.gui.visualization.image.selection.NullProcessor -image-overlay adams.gui.visualization.image.NullOverlay"
+ adams.flow.transformer.ImageJFeatureGenerator -algorithm "adams.data.imagej.features.Pixels -converter \"adams.data.featureconverter.SpreadSheet -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.SpreadSheet\""
+ adams.flow.sink.SpreadSheetFileWriter -output ${EXAMPLE_FLOWS}/output/flattened.csv -writer adams.data.io.output.CsvSpreadSheetWriter

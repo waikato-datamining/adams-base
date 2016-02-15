@@ -15,12 +15,12 @@
 
 /*
  * Tee.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
 
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.core.ActorHandlerInfo;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.ActorWithConditionalEquivalent;
@@ -154,7 +154,7 @@ public class Tee
    * @return		null if accepted, otherwise error message
    */
   @Override
-  protected String checkTeeActor(int index, AbstractActor actor) {
+  protected String checkTeeActor(int index, Actor actor) {
     if (ActorUtils.isSource(actor))
       return "You cannot add a source actor ('" + actor.getName() + "'/" + actor.getClass().getName() + ")!";
 
@@ -165,11 +165,11 @@ public class Tee
    * Checks the tee actor before it is set via the setTeeActor method.
    * Returns an error message if the actor is not acceptable, null otherwise.
    *
-   * @param actor	the actor to check
+   * @param actors	the actors to check
    * @return		null if accepted, otherwise error message
    */
   @Override
-  protected String checkTeeActors(AbstractActor[] actors) {
+  protected String checkTeeActors(Actor[] actors) {
     int		i;
 
     if (actors.length > 0) {

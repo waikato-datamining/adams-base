@@ -25,7 +25,7 @@ import adams.core.option.AbstractArgumentOption;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.test.TmpFile;
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -98,17 +98,17 @@ public class TimeseriesAddTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
   @Override
-  public AbstractActor getActor() {
+  public Actor getActor() {
     AbstractArgumentOption    argOption;
     
     Flow flow = new Flow();
     
     try {
       argOption = (AbstractArgumentOption) flow.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] actors1 = new adams.flow.core.AbstractActor[5];
+      adams.flow.core.Actor[] actors1 = new adams.flow.core.Actor[5];
 
       // Flow.FileSupplier
       adams.flow.source.FileSupplier filesupplier2 = new adams.flow.source.FileSupplier();
@@ -131,7 +131,7 @@ public class TimeseriesAddTest
       argOption = (AbstractArgumentOption) tee7.getOptionManager().findByProperty("name");
       tee7.setName((java.lang.String) argOption.valueOf("red"));
       argOption = (AbstractArgumentOption) tee7.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] actors9 = new adams.flow.core.AbstractActor[4];
+      adams.flow.core.Actor[] actors9 = new adams.flow.core.Actor[4];
 
       // Flow.red.Convert
       adams.flow.transformer.Convert convert10 = new adams.flow.transformer.Convert();
@@ -171,7 +171,7 @@ public class TimeseriesAddTest
       argOption = (AbstractArgumentOption) tee21.getOptionManager().findByProperty("name");
       tee21.setName((java.lang.String) argOption.valueOf("white"));
       argOption = (AbstractArgumentOption) tee21.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] actors23 = new adams.flow.core.AbstractActor[4];
+      adams.flow.core.Actor[] actors23 = new adams.flow.core.Actor[4];
 
       // Flow.white.Convert
       adams.flow.transformer.Convert convert24 = new adams.flow.transformer.Convert();
@@ -209,7 +209,7 @@ public class TimeseriesAddTest
       // Flow.Trigger
       adams.flow.control.Trigger trigger35 = new adams.flow.control.Trigger();
       argOption = (AbstractArgumentOption) trigger35.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] actors36 = new adams.flow.core.AbstractActor[3];
+      adams.flow.core.Actor[] actors36 = new adams.flow.core.Actor[3];
 
       // Flow.Trigger.StorageValue
       adams.flow.source.StorageValue storagevalue37 = new adams.flow.source.StorageValue();

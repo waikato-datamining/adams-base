@@ -30,7 +30,7 @@ import adams.data.statistics.MultiArrayStatistic;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.core.CallableActorReference;
 import adams.flow.sink.DumpFile;
 import adams.flow.source.FileSupplier;
@@ -88,16 +88,16 @@ public class WekaExtractArrayTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
   @Override
-  public AbstractActor getActor() {
+  public Actor getActor() {
     WekaClassifierSetup cl = new WekaClassifierSetup();
     cl.setName("cl");
     cl.setClassifier(new weka.classifiers.functions.LinearRegression());
 
     CallableActors ga = new CallableActors();
-    ga.setActors(new AbstractActor[]{
+    ga.setActors(new Actor[]{
 	cl
     });
 
@@ -136,7 +136,7 @@ public class WekaExtractArrayTest
     df.setOutputFile(new TmpFile("dumpfile.txt"));
 
     Flow flow = new Flow();
-    flow.setActors(new AbstractActor[]{ga, sfs, fr, cs, cv, p2i, is, ea, a2s, df});
+    flow.setActors(new Actor[]{ga, sfs, fr, cs, cv, p2i, is, ea, a2s, df});
 
     return flow;
   }

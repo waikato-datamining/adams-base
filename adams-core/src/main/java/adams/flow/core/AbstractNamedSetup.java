@@ -15,7 +15,7 @@
 
 /*
  * AbstractNamedSetup.java
- * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.core;
@@ -41,7 +41,7 @@ public abstract class AbstractNamedSetup
   protected NamedSetup m_Setup;
 
   /** the named setup itself. */
-  protected AbstractActor m_NamedSetupActor;
+  protected Actor m_NamedSetupActor;
 
   /**
    * Adds options to the internal list of options.
@@ -100,7 +100,7 @@ public abstract class AbstractNamedSetup
    * @return		the actor, can be null if not initialized yet or failed
    * 			to initialize
    */
-  public AbstractActor getNamedSetupActor() {
+  public Actor getNamedSetupActor() {
     return m_NamedSetupActor;
   }
 
@@ -114,7 +114,7 @@ public abstract class AbstractNamedSetup
 
     result = null;
 
-    m_NamedSetupActor = (AbstractActor) m_Setup.getSetup();
+    m_NamedSetupActor = (Actor) m_Setup.getSetup();
     if (m_NamedSetupActor == null) {
       result = "Error retrieving named setup '" + m_Setup.getName() + "'!";
     }

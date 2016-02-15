@@ -15,14 +15,14 @@
 
 /**
  * StoreFilenameInVariable.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.template;
 
 import adams.core.VariableName;
 import adams.data.conversion.ReplaceFileExtension;
 import adams.flow.control.Tee;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.transformer.BaseName;
 import adams.flow.transformer.Convert;
 import adams.flow.transformer.SetVariable;
@@ -202,7 +202,7 @@ public class StoreFilenameInVariable
    * @return 		the generated actor
    */
   @Override
-  protected AbstractActor doGenerate() {
+  protected Actor doGenerate() {
     Tee				result;
     BaseName			base;
     SetVariable			setvar;

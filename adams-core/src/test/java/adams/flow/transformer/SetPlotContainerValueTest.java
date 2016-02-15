@@ -25,7 +25,7 @@ import adams.core.option.AbstractArgumentOption;
 import adams.core.option.OptionUtils;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.control.Flow;
 import adams.flow.AbstractFlowTest;
 import adams.parser.MathematicalExpressionText;
@@ -95,16 +95,16 @@ public class SetPlotContainerValueTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
-  public AbstractActor getActor() {
+  public Actor getActor() {
     AbstractArgumentOption    argOption;
     
     Flow flow = new Flow();
     
     try {
       argOption = (AbstractArgumentOption) flow.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp1 = new adams.flow.core.AbstractActor[6];
+      adams.flow.core.Actor[] tmp1 = new adams.flow.core.Actor[6];
       adams.flow.source.ForLoop tmp2 = new adams.flow.source.ForLoop();
       argOption = (AbstractArgumentOption) tmp2.getOptionManager().findByProperty("loopLower");
       tmp2.setLoopLower((Integer) argOption.valueOf("0"));
@@ -112,7 +112,7 @@ public class SetPlotContainerValueTest
       tmp1[0] = tmp2;
       adams.flow.control.Tee tmp4 = new adams.flow.control.Tee();
       argOption = (AbstractArgumentOption) tmp4.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp5 = new adams.flow.core.AbstractActor[2];
+      adams.flow.core.Actor[] tmp5 = new adams.flow.core.Actor[2];
       adams.flow.transformer.MathExpression tmp6 = new adams.flow.transformer.MathExpression();
       argOption = (AbstractArgumentOption) tmp6.getOptionManager().findByProperty("expression");
       tmp6.setExpression(new MathematicalExpressionText("X^2"));

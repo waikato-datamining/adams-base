@@ -1,29 +1,12 @@
 # Project: adams
-# Date: 2014-01-23 15:24:53
+# Date: 2016-02-15 11:35:33
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	This flow demonstrates how to output timestamps into\na Display actor and how to use the Stop actor. The for\nloop is set up to output 10 tokens, with the Timestamp\nactor outputting a timestamp each time a token passes\nthrough. After the Sleep actor waits for 1 second, the\nConditionalTee gets triggered. On the 8th token passing\nthrough this actor, it will finally forward the token and\ntherefore bringing the execution of the flow to a halt.
-	-actor
-		adams.flow.source.ForLoop
-	-actor
-		adams.flow.control.Tee
-			-tee
-				adams.flow.transformer.Timestamp
-			-tee
-				adams.flow.sink.Display
-	-actor
-		adams.flow.control.Sleep
-	-actor
-		adams.flow.control.ConditionalTee
-			-tee
-				adams.flow.control.Stop
-			-condition
-				adams.flow.condition.bool.Counting
-					-min
-					8
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "This flow demonstrates how to output timestamps into\\na Display actor and how to use the Stop actor. The for\\nloop is set up to output 10 tokens, with the Timestamp\\nactor outputting a timestamp each time a token passes\\nthrough. After the Sleep actor waits for 1 second, the\\nConditionalTee gets triggered. On the 8th token passing\\nthrough this actor, it will finally forward the token and\\ntherefore bringing the execution of the flow to a halt." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.source.ForLoop
+ adams.flow.control.Tee
+  adams.flow.transformer.Timestamp
+  adams.flow.sink.Display -writer adams.data.io.output.NullWriter
+ adams.flow.control.Sleep
+ adams.flow.control.ConditionalTee -condition "adams.flow.condition.bool.Counting -min 8"
+  adams.flow.control.Stop

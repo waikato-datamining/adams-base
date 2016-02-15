@@ -15,7 +15,7 @@
 
 /*
  * EventHelper.java
- * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.core;
@@ -49,8 +49,8 @@ public class EventHelper
    * @param name	the name of the event
    * @return		the event or null if not found
    */
-  public AbstractActor findEvent(ActorHandler group, EventReference name) {
-    AbstractActor		result;
+  public Actor findEvent(ActorHandler group, EventReference name) {
+    Actor			result;
     int				i;
     Events			global;
     int				index;
@@ -87,8 +87,8 @@ public class EventHelper
    * @param name	the name of the event
    * @return		the event or null if not found
    */
-  public AbstractActor findEvent(AbstractActor root, EventReference name) {
-    AbstractActor	result;
+  public Actor findEvent(Actor root, EventReference name) {
+    Actor	result;
 
     result = null;
 
@@ -116,10 +116,10 @@ public class EventHelper
    * @param actor	the actor to start from
    * @param name	the name of the event
    * @return		the event or null if not found
-   * @see		ActorUtils#findActorHandlers(AbstractActor, boolean)
+   * @see		ActorUtils#findActorHandlers(Actor, boolean)
    */
-  public AbstractActor findEventRecursive(AbstractActor actor, EventReference name) {
-    AbstractActor	result;
+  public Actor findEventRecursive(Actor actor, EventReference name) {
+    Actor		result;
     List<ActorHandler>	handlers;
     int			i;
 

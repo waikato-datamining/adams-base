@@ -1,115 +1,29 @@
 # Project: adams
-# Date: 2014-12-03 15:31:27
+# Date: 2016-02-15 14:54:28
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	Extracts a random subset of rows from a text file.
-	-actor
-		adams.flow.standalone.CallableActors
-			-actor
-				adams.flow.sink.Display
-					-name
-					Normal
-					-short-title
-					true
-					-writer
-						adams.data.io.output.NullWriter
-			-actor
-				adams.flow.sink.Display
-					-name
-					Inverted
-					-short-title
-					true
-					-x
-					-3
-					-writer
-						adams.data.io.output.NullWriter
-	-actor
-		adams.flow.source.FileSupplier
-			-file
-			${EXAMPLE_FLOWS}/data/numbers.txt
-	-actor
-		adams.flow.transformer.TextFileReader
-			-reader
-				adams.data.io.input.LineArrayTextReader
-	-actor
-		adams.flow.control.Branch
-			-branch
-				adams.flow.control.Sequence
-					-name
-					normal
-					-actor
-						adams.flow.transformer.SetVariable
-							-var-name
-							normal
-							-var-value
-							0
-					-actor
-						adams.flow.transformer.ArrayFolds
-							-generator
-								adams.data.random.JavaRandomInt
-					-actor
-						adams.flow.transformer.IncVariable
-							-var-name
-							normal
-					-actor
-						adams.flow.control.Trigger
-							-name
-							separator
-							-tee
-								adams.flow.source.CombineVariables
-									-expression
-									--> split @{normal}
-							-tee
-								adams.flow.sink.CallableSink
-									-callable
-									Normal
-					-actor
-						adams.flow.transformer.ArrayToSequence
-					-actor
-						adams.flow.sink.CallableSink
-							-callable
-							Normal
-			-branch
-				adams.flow.control.Sequence
-					-name
-					inverted
-					-actor
-						adams.flow.transformer.SetVariable
-							-var-name
-							inverse
-							-var-value
-							0
-					-actor
-						adams.flow.transformer.ArrayFolds
-							-generator
-								adams.data.random.JavaRandomInt
-							-split-result
-							INVERSE
-					-actor
-						adams.flow.transformer.IncVariable
-							-var-name
-							inverse
-					-actor
-						adams.flow.control.Trigger
-							-name
-							separator
-							-tee
-								adams.flow.source.CombineVariables
-									-expression
-									--> split @{inverse}
-							-tee
-								adams.flow.sink.CallableSink
-									-callable
-									Inverted
-					-actor
-						adams.flow.transformer.ArrayToSequence
-					-actor
-						adams.flow.sink.CallableSink
-							-callable
-							Inverted
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "Extracts a random subset of rows from a text file." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.standalone.CallableActors
+  adams.flow.sink.Display -name Normal -short-title true -writer adams.data.io.output.NullWriter
+  adams.flow.sink.Display -name Inverted -short-title true -x -3 -writer adams.data.io.output.NullWriter
+ adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/numbers.txt
+ adams.flow.transformer.TextFileReader -reader adams.data.io.input.LineArrayTextReader
+ adams.flow.control.Branch
+  adams.flow.control.Sequence -name normal
+   adams.flow.transformer.SetVariable -var-name normal -var-value 0
+   adams.flow.transformer.ArrayFolds -generator adams.data.random.JavaRandomInt
+   adams.flow.transformer.IncVariable -var-name normal
+   adams.flow.control.Trigger -name separator
+    adams.flow.source.CombineVariables -expression "--> split @{normal}"
+    adams.flow.sink.CallableSink -callable Normal
+   adams.flow.transformer.ArrayToSequence
+   adams.flow.sink.CallableSink -callable Normal
+  adams.flow.control.Sequence -name inverted
+   adams.flow.transformer.SetVariable -var-name inverse -var-value 0
+   adams.flow.transformer.ArrayFolds -generator adams.data.random.JavaRandomInt -split-result INVERSE
+   adams.flow.transformer.IncVariable -var-name inverse
+   adams.flow.control.Trigger -name separator
+    adams.flow.source.CombineVariables -expression "--> split @{inverse}"
+    adams.flow.sink.CallableSink -callable Inverted
+   adams.flow.transformer.ArrayToSequence
+   adams.flow.sink.CallableSink -callable Inverted

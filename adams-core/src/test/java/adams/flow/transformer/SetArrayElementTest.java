@@ -26,7 +26,7 @@ import adams.core.option.AbstractArgumentOption;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.test.TmpFile;
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -95,16 +95,16 @@ public class SetArrayElementTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
-  public AbstractActor getActor() {
+  public Actor getActor() {
     AbstractArgumentOption    argOption;
     
     Flow flow = new Flow();
     
     try {
       argOption = (AbstractArgumentOption) flow.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp1 = new adams.flow.core.AbstractActor[5];
+      adams.flow.core.Actor[] tmp1 = new adams.flow.core.Actor[5];
       adams.flow.source.StringConstants tmp2 = new adams.flow.source.StringConstants();
       tmp2.setOutputArray(true);
 
@@ -125,7 +125,7 @@ public class SetArrayElementTest
       tmp1[0] = tmp2;
       adams.flow.control.ArrayProcess tmp4 = new adams.flow.control.ArrayProcess();
       argOption = (AbstractArgumentOption) tmp4.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp5 = new adams.flow.core.AbstractActor[1];
+      adams.flow.core.Actor[] tmp5 = new adams.flow.core.Actor[1];
       adams.flow.transformer.Convert tmp6 = new adams.flow.transformer.Convert();
       argOption = (AbstractArgumentOption) tmp6.getOptionManager().findByProperty("conversion");
       adams.data.conversion.StringToDouble tmp8 = new adams.data.conversion.StringToDouble();

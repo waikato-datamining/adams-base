@@ -31,7 +31,7 @@ import adams.core.io.FileUtils;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.sink.DumpFile;
 import adams.flow.sink.Null;
 import adams.flow.source.StringConstants;
@@ -62,7 +62,7 @@ public class StringReplaceTest
    * @return a suitably configured <code>Flow</code>
    */
   @Override
-  public AbstractActor getActor() {
+  public Actor getActor() {
     StringConstants con = new StringConstants();
     con.setStrings(new BaseString[]{
 	new BaseString("ABCDEF"),
@@ -78,7 +78,7 @@ public class StringReplaceTest
     Null nul = new Null();
 
     Flow flow = new Flow();
-    flow.setActors(new AbstractActor[]{con, actor, nul});
+    flow.setActors(new Actor[]{con, actor, nul});
 
     return flow;
   }
@@ -121,7 +121,7 @@ public class StringReplaceTest
     df.setOutputFile(outFile);
     df.setAppend(true);
 
-    flow.setActors(new AbstractActor[]{
+    flow.setActors(new Actor[]{
 	sc,
 	actor,
 	df

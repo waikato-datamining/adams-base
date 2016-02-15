@@ -1,539 +1,106 @@
 # Project: adams
-# Date: 2015-06-19 10:46:43
+# Date: 2016-02-15 15:03:46
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	This flow shows how to do timeseries analysis using a sliding\nwindow approach on multiple timeseries loaded from the\n\"wine\" ARFF dataset.\nThe model gets built using data from start of 1980 to end of 1984.
-	-actor
-		adams.flow.standalone.TabView
-			-width
-			1300
-			-actor
-				adams.flow.sink.DisplayPanelManager
-					-name
-					train
-					-provider
-						adams.flow.sink.SpreadSheetDisplay
-							-writer
-								adams.data.io.output.NullWriter
-					-entry-name-variable
-					entry
-			-actor
-				adams.flow.sink.DisplayPanelManager
-					-name
-					prime
-					-provider
-						adams.flow.sink.SpreadSheetDisplay
-							-writer
-								adams.data.io.output.NullWriter
-					-entry-name-variable
-					entry
-			-actor
-				adams.flow.sink.DisplayPanelManager
-					-name
-					predict
-					-provider
-						adams.flow.sink.SpreadSheetDisplay
-							-writer
-								adams.data.io.output.NullWriter
-					-entry-name-variable
-					entry
-			-actor
-				adams.flow.sink.DisplayPanelManager
-					-name
-					forecast
-					-provider
-						adams.flow.sink.TimeseriesDisplay
-							-writer
-								adams.gui.print.NullWriter
-							-paintlet
-								adams.gui.visualization.timeseries.TimeseriesPaintlet
-							-axis-x
-								adams.gui.visualization.timeseries.DefaultTimeseriesXAxisPanelOptions
-									-label
-									time
-									-type
-									DATE
-									-tick-generator
-										adams.gui.visualization.core.axis.PeriodicityTickGenerator
-									-nth-value
-									1
-									-width
-									40
-									-periodicity
-									YEARLY
-							-axis-y
-								adams.gui.visualization.timeseries.DefaultTimeseriesYAxisPanelOptions
-									-label
-									value
-									-tick-generator
-										adams.gui.visualization.core.axis.FancyTickGenerator
-									-width
-									100
-									-custom-format
-									0
-							-color-provider
-								adams.gui.visualization.core.DefaultColorProvider
-							-plot-updater
-								adams.flow.sink.timeseriesdisplay.SimplePlotUpdater
-					-num-tokens
-					@{num_timeseries}
-					-entry-name-variable
-					wine
-	-actor
-		adams.flow.standalone.CallableActors
-			-actor
-				adams.flow.source.WekaForecasterSetup
-					-name
-					setup
-					-generator
-						adams.flow.source.wekaforecastersetup.WekaForecasterGenerator
-							-classifier
-								weka.classifiers.functions.GaussianProcesses
-									-L
-									1.0
-									-N
-									0
-									-K
-									weka.classifiers.functions.supportVector.PolyKernel -E 1.0 -C 250007
-							-lag-maker
-								adams.flow.core.LagMakerOptions
-									-adjust-for-trends
-									true
-									-time-stamp-field
-									Timestamp
-									-month-of-year
-									true
-									-quarter
-									true
-			-actor
-				adams.flow.source.StorageValue
-					-name
-					model
-					-storage-name
-					model
-	-actor
-		adams.flow.standalone.SetVariable
-			-var-name
-			num_years
-			-var-value
-			9
-	-actor
-		adams.flow.source.Start
-	-actor
-		adams.flow.control.Trigger
-			-name
-			number of timeseries
-			-tee
-				adams.flow.source.Variable
-					-var-name
-					num_years
-			-tee
-				adams.flow.transformer.Convert
-					-conversion
-						adams.data.conversion.StringToDouble
-			-tee
-				adams.flow.transformer.MathExpression
-					-expression
-					X*2
-			-tee
-				adams.flow.transformer.Convert
-					-name
-					Convert-1
-					-conversion
-						adams.data.conversion.DoubleToInt
-			-tee
-				adams.flow.transformer.SetVariable
-					-var-name
-					num_timeseries
-	-actor
-		adams.flow.control.Trigger
-			-name
-			load dataset
-			-tee
-				adams.flow.source.FileSupplier
-					-file
-					${EXAMPLE_FLOWS}/data/wine.arff
-			-tee
-				adams.flow.transformer.WekaFileReader
-					-loader
-						weka.core.converters.ArffLoader
-			-tee
-				adams.flow.transformer.Convert
-					-conversion
-						adams.data.conversion.WekaInstancesToSpreadSheet
-							-data-row-type
-								adams.data.spreadsheet.DenseDataRow
-							-spreadsheet-type
-								adams.data.spreadsheet.SpreadSheet
-			-tee
-				adams.flow.transformer.SetStorageValue
-					-storage-name
-					dataset-full
-	-actor
-		adams.flow.control.Trigger
-			-name
-			create subsets
-			-tee
-				adams.flow.source.StorageValue
-					-storage-name
-					dataset-full
-			-tee
-				adams.flow.transformer.SpreadSheetColumnIterator
-					-range
-					1-3
-			-tee
-				adams.flow.control.Tee
-					-name
-					subset storage name
-					-tee
-						adams.flow.transformer.StringInsert
-							-position
-							first
-							-value
-							subset-
-							-variable
-							true
-					-tee
-						adams.flow.transformer.SetVariable
-							-var-name
-							subset_storage
-			-tee
-				adams.flow.transformer.Convert
-					-conversion
-						adams.data.conversion.SpreadSheetEscapeColumnName
-			-tee
-				adams.flow.transformer.SetVariable
-					-var-name
-					col
-			-tee
-				adams.flow.control.Trigger
-					-name
-					attribute range
-					-tee
-						adams.flow.source.CombineVariables
-							-expression
-							Date,@{col}
-					-tee
-						adams.flow.transformer.SetVariable
-							-var-name
-							cols
-			-tee
-				adams.flow.control.Trigger
-					-name
-					create subset
-					-tee
-						adams.flow.source.StorageValue
-							-storage-name
-							dataset-full
-					-tee
-						adams.flow.transformer.SpreadSheetReorderColumns
-							-order
-							@{cols}
-					-tee
-						adams.flow.transformer.Convert
-							-conversion
-								adams.data.conversion.SpreadSheetToTimeseries
-					-tee
-						adams.flow.transformer.SetStorageValue
-							-storage-name
-							@{subset_storage}
-	-actor
-		adams.flow.control.Trigger
-			-name
-			iterate subsets
-			-tee
-				adams.flow.source.ListStorageNames
-					-regexp
-					subset-.*
-			-tee
-				adams.flow.transformer.SetVariable
-					-var-name
-					subset_storage
-			-tee
-				adams.flow.control.Trigger
-					-name
-					extract wine name
-					-tee
-						adams.flow.source.Variable
-							-var-name
-							subset_storage
-					-tee
-						adams.flow.transformer.StringReplace
-							-find
-							subset-
-							-type
-							SIMPLE
-					-tee
-						adams.flow.transformer.SetVariable
-							-var-name
-							wine
-			-tee
-				adams.flow.control.Trigger
-					-name
-					train
-					-tee
-						adams.flow.source.StorageValue
-							-storage-name
-							@{subset_storage}
-					-tee
-						adams.flow.transformer.TimeseriesFilter
-							-filter
-								adams.data.filter.TimeseriesWindow
-									-start
-									1980-01-01 00:00:00
-									-end
-									@{end}
-					-tee
-						adams.flow.transformer.SetVariable
-							-var-name
-							entry
-							-var-value
-							@{wine}
-					-tee
-						adams.flow.control.Tee
-							-tee
-								adams.flow.transformer.Convert
-									-conversion
-										adams.data.conversion.TimeseriesToSpreadSheet
-											-data-row-type
-												adams.data.spreadsheet.DenseDataRow
-											-spreadsheet-type
-												adams.data.spreadsheet.SpreadSheet
-							-tee
-								adams.flow.sink.CallableSink
-									-callable
-									train
-					-tee
-						adams.flow.transformer.Convert
-							-conversion
-								adams.data.conversion.TimeseriesToWekaInstances
-									-format
-									yyyy-MM-dd
-					-tee
-						adams.flow.transformer.WekaTrainForecaster
-							-forecaster
-							setup
-					-tee
-						adams.flow.transformer.SetStorageValue
-							-storage-name
-							model
-			-tee
-				adams.flow.control.Trigger
-					-name
-					sliding window
-					-tee
-						adams.flow.source.ForLoop
-							-upper
-							@{num_years}
-					-tee
-						adams.flow.transformer.SetVariable
-							-var-name
-							iteration
-					-tee
-						adams.flow.control.Trigger
-							-name
-							create entry name
-							-tee
-								adams.flow.source.CombineVariables
-									-expression
-									@{subset_storage}-@{iteration}
-							-tee
-								adams.flow.transformer.StringReplace
-									-find
-									subset-
-									-type
-									SIMPLE
-							-tee
-								adams.flow.transformer.SetVariable
-									-var-name
-									entry
-							-tee
-								adams.flow.transformer.StringInsert
-									-after
-									true
-									-value
-									-actual
-							-tee
-								adams.flow.transformer.SetVariable
-									-name
-									SetVariable-1
-									-var-name
-									entry-actual
-					-tee
-						adams.flow.control.Trigger
-							-name
-							prime
-							-tee
-								adams.flow.source.StorageValue
-									-storage-name
-									@{subset_storage}
-							-tee
-								adams.flow.control.Trigger
-									-name
-									start
-									-tee
-										adams.flow.source.CombineVariables
-											-expression
-											1985-01-01 00:00:00 +(@{iteration} - 1) YEAR
-									-tee
-										adams.flow.transformer.SetVariable
-											-var-name
-											start
-							-tee
-								adams.flow.control.Trigger
-									-name
-									end
-									-tee
-										adams.flow.source.CombineVariables
-											-expression
-											1985-01-01 00:00:00 +(@{iteration} - 1) YEAR +1 YEAR -1 DAY
-									-tee
-										adams.flow.transformer.SetVariable
-											-var-name
-											end
-							-tee
-								adams.flow.transformer.TimeseriesFilter
-									-filter
-										adams.data.filter.TimeseriesWindow
-											-start
-											@{start}
-											-end
-											@{end}
-							-tee
-								adams.flow.control.Tee
-									-tee
-										adams.flow.transformer.Convert
-											-conversion
-												adams.data.conversion.TimeseriesToSpreadSheet
-													-data-row-type
-														adams.data.spreadsheet.DenseDataRow
-													-spreadsheet-type
-														adams.data.spreadsheet.SpreadSheet
-									-tee
-										adams.flow.sink.CallableSink
-											-callable
-											prime
-							-tee
-								adams.flow.transformer.Convert
-									-conversion
-										adams.data.conversion.TimeseriesToWekaInstances
-											-format
-											yyyy-MM-dd
-							-tee
-								adams.flow.transformer.WekaPrimeForecaster
-									-forecaster
-									model
-							-tee
-								adams.flow.transformer.SetStorageValue
-									-storage-name
-									model
-					-tee
-						adams.flow.control.Trigger
-							-name
-							predict
-							-tee
-								adams.flow.source.StorageValue
-									-storage-name
-									@{subset_storage}
-							-tee
-								adams.flow.control.Trigger
-									-name
-									start
-									-tee
-										adams.flow.source.CombineVariables
-											-expression
-											1985-01-01 00:00:00 +(@{iteration} - 1) YEAR +1 YEAR
-									-tee
-										adams.flow.transformer.SetVariable
-											-var-name
-											start
-							-tee
-								adams.flow.control.Trigger
-									-name
-									end
-									-tee
-										adams.flow.source.CombineVariables
-											-expression
-											1985-01-01 00:00:00 +(@{iteration} - 1) YEAR +2 YEAR
-									-tee
-										adams.flow.transformer.SetVariable
-											-var-name
-											end
-							-tee
-								adams.flow.transformer.TimeseriesFilter
-									-filter
-										adams.data.filter.TimeseriesWindow
-											-start
-											@{start}
-											-end
-											@{end}
-							-tee
-								adams.flow.control.Tee
-									-tee
-										adams.flow.transformer.Convert
-											-conversion
-												adams.data.conversion.TimeseriesToSpreadSheet
-													-data-row-type
-														adams.data.spreadsheet.DenseDataRow
-													-spreadsheet-type
-														adams.data.spreadsheet.SpreadSheet
-									-tee
-										adams.flow.sink.CallableSink
-											-callable
-											predict
-							-tee
-								adams.flow.transformer.Copy
-							-tee
-								adams.flow.transformer.SetID
-									-id
-									@{entry-actual}
-							-tee
-								adams.flow.control.Cast
-									-classname
-									adams.data.timeseries.Timeseries
-							-tee
-								adams.flow.sink.CallableSink
-									-callable
-									forecast
-					-tee
-						adams.flow.control.Trigger
-							-name
-							forecast
-							-tee
-								adams.flow.control.SourceReset
-									-actor
-										adams.flow.source.WekaForecasting
-											-model-actor
-											model
-											-on-the-fly
-											true
-											-num-steps
-											12
-									-var-name
-									wine
-							-tee
-								adams.flow.transformer.Convert
-									-conversion
-										adams.data.conversion.WekaForecastContainerToTimeseries
-											-start
-											@{start}
-											-interval
-											START +1 MONTH
-							-tee
-								adams.flow.transformer.SetID
-									-id
-									@{entry}
-							-tee
-								adams.flow.control.Cast
-									-classname
-									adams.data.timeseries.Timeseries
-							-tee
-								adams.flow.sink.CallableSink
-									-callable
-									forecast
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "This flow shows how to do timeseries analysis using a sliding\\nwindow approach on multiple timeseries loaded from the\\n\\\"wine\\\" ARFF dataset.\\nThe model gets built using data from start of 1980 to end of 1984." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.standalone.TabView -width 1300
+  adams.flow.sink.DisplayPanelManager -name train -provider "adams.flow.sink.SpreadSheetDisplay -writer adams.data.io.output.NullWriter" -entry-name-variable entry
+  adams.flow.sink.DisplayPanelManager -name prime -provider "adams.flow.sink.SpreadSheetDisplay -writer adams.data.io.output.NullWriter" -entry-name-variable entry
+  adams.flow.sink.DisplayPanelManager -name predict -provider "adams.flow.sink.SpreadSheetDisplay -writer adams.data.io.output.NullWriter" -entry-name-variable entry
+  adams.flow.sink.DisplayPanelManager -name forecast -provider "adams.flow.sink.TimeseriesDisplay -writer adams.gui.print.NullWriter -paintlet adams.gui.visualization.timeseries.TimeseriesPaintlet -axis-x \"adams.gui.visualization.timeseries.DefaultTimeseriesXAxisPanelOptions -label time -type DATE -tick-generator adams.gui.visualization.core.axis.PeriodicityTickGenerator -nth-value 1 -width 40 -periodicity YEARLY\" -axis-y \"adams.gui.visualization.timeseries.DefaultTimeseriesYAxisPanelOptions -label value -tick-generator adams.gui.visualization.core.axis.FancyTickGenerator -width 100 -custom-format 0\" -color-provider adams.gui.visualization.core.DefaultColorProvider -plot-updater adams.flow.sink.timeseriesdisplay.SimplePlotUpdater" -num-tokens @{num_timeseries} -entry-name-variable wine
+ adams.flow.standalone.CallableActors
+  adams.flow.source.WekaForecasterSetup -name setup -generator "adams.flow.source.wekaforecastersetup.WekaForecasterGenerator -classifier \"weka.classifiers.functions.GaussianProcesses -L 1.0 -N 0 -K \\\"weka.classifiers.functions.supportVector.PolyKernel -E 1.0 -C 250007\\\" -S 1\" -lag-maker \"adams.flow.core.LagMakerOptions -adjust-for-trends true -time-stamp-field Timestamp -month-of-year true -quarter true\""
+  adams.flow.source.StorageValue -name model -storage-name model
+ adams.flow.standalone.SetVariable -var-name num_years -var-value 9
+ adams.flow.source.Start
+ adams.flow.control.Trigger -name "number of timeseries"
+  adams.flow.source.Variable -var-name num_years
+  adams.flow.transformer.Convert -conversion adams.data.conversion.StringToDouble
+  adams.flow.transformer.MathExpression -expression X*2
+  adams.flow.transformer.Convert -name Convert-1 -conversion adams.data.conversion.DoubleToInt
+  adams.flow.transformer.SetVariable -var-name num_timeseries
+ adams.flow.control.Trigger -name "load dataset"
+  adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/wine.arff
+  adams.flow.transformer.WekaFileReader -loader weka.core.converters.ArffLoader
+  adams.flow.transformer.Convert -conversion "adams.data.conversion.WekaInstancesToSpreadSheet -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.SpreadSheet"
+  adams.flow.transformer.SetStorageValue -storage-name dataset-full
+ adams.flow.control.Trigger -name "create subsets"
+  adams.flow.source.StorageValue -storage-name dataset-full
+  adams.flow.transformer.SpreadSheetColumnIterator -range 1-3
+  adams.flow.control.Tee -name "subset storage name"
+   adams.flow.transformer.StringInsert -position first -value subset- -variable true
+   adams.flow.transformer.SetVariable -var-name subset_storage
+  adams.flow.transformer.Convert -conversion adams.data.conversion.SpreadSheetEscapeColumnName
+  adams.flow.transformer.SetVariable -var-name col
+  adams.flow.control.Trigger -name "attribute range"
+   adams.flow.source.CombineVariables -expression Date,@{col}
+   adams.flow.transformer.SetVariable -var-name cols
+  adams.flow.control.Trigger -name "create subset"
+   adams.flow.source.StorageValue -storage-name dataset-full
+   adams.flow.transformer.SpreadSheetReorderColumns -order @{cols}
+   adams.flow.transformer.Convert -conversion adams.data.conversion.SpreadSheetToTimeseries
+   adams.flow.transformer.SetStorageValue -storage-name @{subset_storage}
+ adams.flow.control.Trigger -name "iterate subsets"
+  adams.flow.source.ListStorageNames -regexp subset-.*
+  adams.flow.transformer.SetVariable -var-name subset_storage
+  adams.flow.control.Trigger -name "extract wine name"
+   adams.flow.source.Variable -var-name subset_storage
+   adams.flow.transformer.StringReplace -find subset- -type SIMPLE
+   adams.flow.transformer.SetVariable -var-name wine
+  adams.flow.control.Trigger -name train
+   adams.flow.source.StorageValue -storage-name @{subset_storage}
+   adams.flow.transformer.TimeseriesFilter -filter "adams.data.filter.TimeseriesWindow -start \"1980-01-01 00:00:00\" -end @{end}"
+   adams.flow.transformer.SetVariable -var-name entry -var-value @{wine}
+   adams.flow.control.Tee
+    adams.flow.transformer.Convert -conversion "adams.data.conversion.TimeseriesToSpreadSheet -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.SpreadSheet"
+    adams.flow.sink.CallableSink -callable train
+   adams.flow.transformer.Convert -conversion "adams.data.conversion.TimeseriesToWekaInstances -format yyyy-MM-dd"
+   adams.flow.transformer.WekaTrainForecaster -forecaster setup
+   adams.flow.transformer.SetStorageValue -storage-name model
+  adams.flow.control.Trigger -name "sliding window"
+   adams.flow.source.ForLoop -upper @{num_years}
+   adams.flow.transformer.SetVariable -var-name iteration
+   adams.flow.control.Trigger -name "create entry name"
+    adams.flow.source.CombineVariables -expression @{subset_storage}-@{iteration}
+    adams.flow.transformer.StringReplace -find subset- -type SIMPLE
+    adams.flow.transformer.SetVariable -var-name entry
+    adams.flow.transformer.StringInsert -after true -value -actual
+    adams.flow.transformer.SetVariable -name SetVariable-1 -var-name entry-actual
+   adams.flow.control.Trigger -name prime
+    adams.flow.source.StorageValue -storage-name @{subset_storage}
+    adams.flow.control.Trigger -name start
+     adams.flow.source.CombineVariables -expression "1985-01-01 00:00:00 +(@{iteration} - 1) YEAR"
+     adams.flow.transformer.SetVariable -var-name start
+    adams.flow.control.Trigger -name end
+     adams.flow.source.CombineVariables -expression "1985-01-01 00:00:00 +(@{iteration} - 1) YEAR +1 YEAR -1 DAY"
+     adams.flow.transformer.SetVariable -var-name end
+    adams.flow.transformer.TimeseriesFilter -filter "adams.data.filter.TimeseriesWindow -start @{start} -end @{end}"
+    adams.flow.control.Tee
+     adams.flow.transformer.Convert -conversion "adams.data.conversion.TimeseriesToSpreadSheet -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.SpreadSheet"
+     adams.flow.sink.CallableSink -callable prime
+    adams.flow.transformer.Convert -conversion "adams.data.conversion.TimeseriesToWekaInstances -format yyyy-MM-dd"
+    adams.flow.transformer.WekaPrimeForecaster -forecaster model
+    adams.flow.transformer.SetStorageValue -storage-name model
+   adams.flow.control.Trigger -name predict
+    adams.flow.source.StorageValue -storage-name @{subset_storage}
+    adams.flow.control.Trigger -name start
+     adams.flow.source.CombineVariables -expression "1985-01-01 00:00:00 +(@{iteration} - 1) YEAR +1 YEAR"
+     adams.flow.transformer.SetVariable -var-name start
+    adams.flow.control.Trigger -name end
+     adams.flow.source.CombineVariables -expression "1985-01-01 00:00:00 +(@{iteration} - 1) YEAR +2 YEAR"
+     adams.flow.transformer.SetVariable -var-name end
+    adams.flow.transformer.TimeseriesFilter -filter "adams.data.filter.TimeseriesWindow -start @{start} -end @{end}"
+    adams.flow.control.Tee
+     adams.flow.transformer.Convert -conversion "adams.data.conversion.TimeseriesToSpreadSheet -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.SpreadSheet"
+     adams.flow.sink.CallableSink -callable predict
+    adams.flow.transformer.Copy
+    adams.flow.transformer.SetID -id @{entry-actual}
+    adams.flow.control.Cast -classname adams.data.timeseries.Timeseries
+    adams.flow.sink.CallableSink -callable forecast
+   adams.flow.control.Trigger -name forecast
+    adams.flow.control.SourceReset -var-name wine
+     adams.flow.source.WekaForecasting -model-actor model -on-the-fly true -num-steps 12
+    adams.flow.transformer.Convert -conversion "adams.data.conversion.WekaForecastContainerToTimeseries -start @{start} -interval \"START +1 MONTH\""
+    adams.flow.transformer.SetID -id @{entry}
+    adams.flow.control.Cast -classname adams.data.timeseries.Timeseries
+    adams.flow.sink.CallableSink -callable forecast

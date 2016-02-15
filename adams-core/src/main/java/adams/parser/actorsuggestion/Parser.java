@@ -8,6 +8,7 @@ package adams.parser.actorsuggestion;
 
 import adams.core.ClassLocator;
 import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.core.ActorHandler;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.Compatibility;
@@ -153,23 +154,23 @@ public class Parser extends java_cup.runtime.lr_parser {
 
 
   /** for storing the result of the expression. */
-  protected AbstractActor m_Result = null;
+  protected Actor m_Result = null;
 
   /** the parent of the proposed actor. */
-  protected AbstractActor m_Parent = null;
+  protected Actor m_Parent = null;
 
   /** the position to add the proposed actor at. */
   protected Integer m_Position = null;
 
   /** all the current nodes in which to insert/add to the proposed actor. */
-  protected AbstractActor[] m_Actors = null;
+  protected Actor[] m_Actors = null;
 
   /**
    * Sets the result of the evaluation.
    *
    * @param value the result
    */
-  public void setResult(AbstractActor value) {
+  public void setResult(Actor value) {
     m_Result = value;
   }
 
@@ -178,7 +179,7 @@ public class Parser extends java_cup.runtime.lr_parser {
    *
    * @return the result
    */
-  public AbstractActor getResult() {
+  public Actor getResult() {
     return m_Result;
   }
 
@@ -187,7 +188,7 @@ public class Parser extends java_cup.runtime.lr_parser {
    *
    * @param value the actor
    */
-  public void setParent(AbstractActor value) {
+  public void setParent(Actor value) {
     m_Parent = value;
   }
 
@@ -196,7 +197,7 @@ public class Parser extends java_cup.runtime.lr_parser {
    *
    * @return the parent
    */
-  public AbstractActor getParent() {
+  public Actor getParent() {
     return m_Parent;
   }
 
@@ -223,7 +224,7 @@ public class Parser extends java_cup.runtime.lr_parser {
    *
    * @param value the actors
    */
-  public void setActors(AbstractActor[] value) {
+  public void setActors(Actor[] value) {
     m_Actors = value;
   }
 
@@ -232,7 +233,7 @@ public class Parser extends java_cup.runtime.lr_parser {
    *
    * @return the actors
    */
-  public AbstractActor[] getActors() {
+  public Actor[] getActors() {
     return m_Actors;
   }
 

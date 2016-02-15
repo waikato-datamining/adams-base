@@ -15,7 +15,7 @@
 
 /*
  * LogEvent.java
- * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.standalone;
@@ -25,7 +25,7 @@ import adams.core.Utils;
 import adams.core.logging.AbstractLogHandler;
 import adams.core.logging.LoggingHelper;
 import adams.core.logging.LoggingListener;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.core.Compatibility;
 import adams.flow.core.DaemonEvent;
 import adams.flow.core.InputConsumer;
@@ -94,7 +94,7 @@ import java.util.logging.LogRecord;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-actor &lt;adams.flow.core.AbstractActor&gt; [-actor ...] (property: actors)
+ * <pre>-actor &lt;adams.flow.core.Actor&gt; [-actor ...] (property: actors)
  * &nbsp;&nbsp;&nbsp;The actors to process the output generated from the log record.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
@@ -161,7 +161,7 @@ public class LogEvent
    * @param actors	the actors to check
    * @return		null if accepted, otherwise error message
    */
-  protected String checkActors(AbstractActor[] actors) {
+  protected String checkActors(Actor[] actors) {
     int			i;
     Compatibility	comp;
 

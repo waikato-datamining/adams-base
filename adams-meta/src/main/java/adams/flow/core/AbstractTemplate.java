@@ -15,7 +15,7 @@
 
 /*
  * AbstractTemplate.java
- * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.core;
@@ -47,7 +47,7 @@ public abstract class AbstractTemplate
   protected AbstractActorTemplate m_Template;
 
   /** the generated actor. */
-  protected AbstractActor m_Actor;
+  protected Actor m_Actor;
 
   /**
    * Adds options to the internal list of options.
@@ -152,7 +152,7 @@ public abstract class AbstractTemplate
   @Override
   protected void restoreState(Hashtable<String,Object> state) {
     if (state.containsKey(BACKUP_ACTOR)) {
-      m_Actor = (AbstractActor) state.get(BACKUP_ACTOR);
+      m_Actor = (Actor) state.get(BACKUP_ACTOR);
       state.remove(BACKUP_ACTOR);
     }
 
@@ -179,8 +179,8 @@ public abstract class AbstractTemplate
   @Override
   protected void forceVariables(Variables value) {
     super.forceVariables(value);
-    if (m_Actor != null)
-      m_Actor.forceVariables(value);
+    if ((m_Actor != null) && (m_Actor instanceof AbstractActor))
+      ((AbstractActor) m_Actor).forceVariables(value);
   }
 
   /**
@@ -216,7 +216,7 @@ public abstract class AbstractTemplate
    *
    * @return		the actual actor, null if not available
    */
-  public AbstractActor getActualActor() {
+  public Actor getActualActor() {
     return m_Actor;
   }
 

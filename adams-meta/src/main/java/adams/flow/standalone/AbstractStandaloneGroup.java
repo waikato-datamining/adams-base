@@ -15,14 +15,13 @@
 
 /**
  * AbstractStandaloneGroup.java
- * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.standalone;
 
 import adams.core.ClassLocator;
 import adams.core.Utils;
 import adams.core.Variables;
-import adams.flow.core.AbstractActor;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorExecution;
 import adams.flow.core.ActorHandler;
@@ -102,7 +101,7 @@ public abstract class AbstractStandaloneGroup<T extends Actor>
    * @param actors	the actor to check
    * @return		null if OK, otherwise the error message
    */
-  protected String checkActors(AbstractActor[] actors) {
+  protected String checkActors(Actor[] actors) {
     int		i;
     String	msg;
     
@@ -121,7 +120,7 @@ public abstract class AbstractStandaloneGroup<T extends Actor>
    * @param actor	the actor to check
    * @return		null if OK, otherwise the error message
    */
-  protected String checkActor(AbstractActor actor) {
+  protected String checkActor(Actor actor) {
     return checkActor(actor, -1);
   }
 
@@ -132,7 +131,7 @@ public abstract class AbstractStandaloneGroup<T extends Actor>
    * @param index	the index of actor, ignored if -1
    * @return		null if OK, otherwise the error message
    */
-  protected String checkActor(AbstractActor actor, int index) {
+  protected String checkActor(Actor actor, int index) {
     String	result;
     Class[]	accepted;
     boolean	found;
@@ -173,7 +172,7 @@ public abstract class AbstractStandaloneGroup<T extends Actor>
    *
    * @param value	the actors
    */
-  protected void setActors(AbstractActor[] value) {
+  protected void setActors(Actor[] value) {
     String	msg;
     
     msg = checkActors(value);
@@ -183,7 +182,7 @@ public abstract class AbstractStandaloneGroup<T extends Actor>
     }
     
     m_Actors.clear();
-    for (AbstractActor actor: value)
+    for (Actor actor: value)
       m_Actors.add((T) actor);
     reset();
     updateParent();
@@ -194,8 +193,8 @@ public abstract class AbstractStandaloneGroup<T extends Actor>
    *
    * @return		the actors
    */
-  protected AbstractActor[] getActors() {
-    return m_Actors.toArray(new AbstractActor[m_Actors.size()]);
+  protected Actor[] getActors() {
+    return m_Actors.toArray(new Actor[m_Actors.size()]);
   }
 
   /**
@@ -205,8 +204,8 @@ public abstract class AbstractStandaloneGroup<T extends Actor>
    * @return		the actor
    */
   @Override
-  public AbstractActor get(int index) {
-    return (AbstractActor) m_Actors.get(index);
+  public Actor get(int index) {
+    return m_Actors.get(index);
   }
 
   /**
@@ -216,7 +215,7 @@ public abstract class AbstractStandaloneGroup<T extends Actor>
    * @param actor	the actor to set at this position
    */
   @Override
-  public void set(int index, AbstractActor actor) {
+  public void set(int index, Actor actor) {
     String	msg;
     
     msg = checkActor(actor, index);
@@ -267,15 +266,15 @@ public abstract class AbstractStandaloneGroup<T extends Actor>
    * @return		the first 'active' actor, null if none available
    */
   @Override
-  public AbstractActor firstActive() {
-    AbstractActor	result;
-    int			i;
+  public Actor firstActive() {
+    Actor	result;
+    int		i;
     
     result = null;
     
     for (i = 0; i < m_Actors.size(); i++) {
       if (!m_Actors.get(i).getSkip()) {
-	result = (AbstractActor) m_Actors.get(i);
+	result = m_Actors.get(i);
 	break;
       }
     }
@@ -289,15 +288,15 @@ public abstract class AbstractStandaloneGroup<T extends Actor>
    * @return		the last 'active' actor, null if none available
    */
   @Override
-  public AbstractActor lastActive() {
-    AbstractActor	result;
-    int			i;
+  public Actor lastActive() {
+    Actor	result;
+    int		i;
     
     result = null;
     
     for (i = m_Actors.size() - 1; i >= 0; i--) {
       if (!m_Actors.get(i).getSkip()) {
-	result = (AbstractActor) m_Actors.get(i);
+	result = m_Actors.get(i);
 	break;
       }
     }

@@ -26,7 +26,7 @@ import adams.core.option.AbstractArgumentOption;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 
 /**
  * Test for ListEnvironmentVariables actor.
@@ -60,17 +60,17 @@ public class ListEnvironmentVariablesTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
   @Override
-  public AbstractActor getActor() {
+  public Actor getActor() {
     AbstractArgumentOption    argOption;
     
     Flow flow = new Flow();
     
     try {
       argOption = (AbstractArgumentOption) flow.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] abstractactor1 = new adams.flow.core.AbstractActor[3];
+      adams.flow.core.Actor[] abstractactor1 = new adams.flow.core.Actor[3];
 
       // Flow.ListEnvironmentVariables
       adams.flow.source.ListEnvironmentVariables listenvironmentvariables2 = new adams.flow.source.ListEnvironmentVariables();
@@ -86,7 +86,7 @@ public class ListEnvironmentVariablesTest
       // Flow.Trigger
       adams.flow.control.Trigger trigger5 = new adams.flow.control.Trigger();
       argOption = (AbstractArgumentOption) trigger5.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] abstractactor6 = new adams.flow.core.AbstractActor[4];
+      adams.flow.core.Actor[] abstractactor6 = new adams.flow.core.Actor[4];
 
       // Flow.Trigger.GetEnvironmentVariable
       adams.flow.source.GetEnvironmentVariable getenvironmentvariable7 = new adams.flow.source.GetEnvironmentVariable();

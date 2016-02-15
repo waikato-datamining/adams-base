@@ -27,7 +27,7 @@ import adams.data.conversion.StringToDouble;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.core.Token;
 import adams.flow.sink.Null;
 import adams.flow.source.StringConstants;
@@ -56,7 +56,7 @@ public class SequenceToArrayTest
    * @return a suitably configured <code>Flow</code>
    */
   @Override
-  public AbstractActor getActor() {
+  public Actor getActor() {
     StringConstants sc = new StringConstants();
     sc.setStrings(new BaseString[]{
 	new BaseString("10.1"),
@@ -75,7 +75,7 @@ public class SequenceToArrayTest
     Null nul = new Null();
 
     Flow flow = new Flow();
-    flow.setActors(new AbstractActor[]{sc, con, s2a, nul});
+    flow.setActors(new Actor[]{sc, con, s2a, nul});
 
     return flow;
   }

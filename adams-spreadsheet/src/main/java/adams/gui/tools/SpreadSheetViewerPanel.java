@@ -15,7 +15,7 @@
 
 /**
  * SpreadSheetViewerPanel.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools;
 
@@ -29,7 +29,7 @@ import adams.data.io.input.SpreadSheetReader;
 import adams.data.io.output.CsvSpreadSheetWriter;
 import adams.data.io.output.SpreadSheetWriter;
 import adams.data.spreadsheet.SpreadSheet;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.core.ActorUtils;
 import adams.gui.chooser.SpreadSheetFileChooser;
 import adams.gui.core.BasePanel;
@@ -1046,7 +1046,7 @@ public class SpreadSheetViewerPanel
    * @param input	the spreadsheet to process
    * @param filter	the transformer
    */
-  public void filterData(String oldTitle, Object input, AbstractActor filter) {
+  public void filterData(String oldTitle, Object input, Actor filter) {
     SwingWorker		worker;
 
     worker = new SwingWorker() {

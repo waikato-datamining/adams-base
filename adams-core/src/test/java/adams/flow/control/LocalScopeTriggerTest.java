@@ -15,7 +15,7 @@
 
 /*
  * LocalScopeTriggerTest.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -26,7 +26,7 @@ import adams.core.base.BaseText;
 import adams.core.option.AbstractArgumentOption;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.test.TmpFile;
 
 /**
@@ -95,17 +95,17 @@ public class LocalScopeTriggerTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
   @Override
-  public AbstractActor getActor() {
+  public Actor getActor() {
     AbstractArgumentOption    argOption;
     
     Flow flow = new Flow();
     
     try {
       argOption = (AbstractArgumentOption) flow.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] actors1 = new adams.flow.core.AbstractActor[5];
+      adams.flow.core.Actor[] actors1 = new adams.flow.core.Actor[5];
 
       // Flow.Start
       adams.flow.source.Start start2 = new adams.flow.source.Start();
@@ -132,7 +132,7 @@ public class LocalScopeTriggerTest
       // Flow.LocalScope
       adams.flow.control.LocalScopeTrigger localscope10 = new adams.flow.control.LocalScopeTrigger();
       argOption = (AbstractArgumentOption) localscope10.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] actors11 = new adams.flow.core.AbstractActor[3];
+      adams.flow.core.Actor[] actors11 = new adams.flow.core.Actor[3];
 
       // Flow.LocalScope.Start
       adams.flow.source.Start start12 = new adams.flow.source.Start();
@@ -166,7 +166,7 @@ public class LocalScopeTriggerTest
       // Flow.Trigger
       adams.flow.control.Trigger trigger21 = new adams.flow.control.Trigger();
       argOption = (AbstractArgumentOption) trigger21.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] actors22 = new adams.flow.core.AbstractActor[3];
+      adams.flow.core.Actor[] actors22 = new adams.flow.core.Actor[3];
 
       // Flow.Trigger.ListVariables
       adams.flow.source.ListVariables listvariables23 = new adams.flow.source.ListVariables();
@@ -183,7 +183,7 @@ public class LocalScopeTriggerTest
       // Flow.Trigger.Trigger
       adams.flow.control.Trigger trigger27 = new adams.flow.control.Trigger();
       argOption = (AbstractArgumentOption) trigger27.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] actors28 = new adams.flow.core.AbstractActor[2];
+      adams.flow.core.Actor[] actors28 = new adams.flow.core.Actor[2];
 
       // Flow.Trigger.Trigger.CombineVariables
       adams.flow.source.CombineVariables combinevariables29 = new adams.flow.source.CombineVariables();

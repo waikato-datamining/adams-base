@@ -15,7 +15,7 @@
 
 /*
  * FreeMemoryTest.java
- * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -23,7 +23,7 @@ package adams.flow.control;
 import adams.core.option.AbstractArgumentOption;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.transformer.BaseName;
 import adams.test.TmpFile;
 import junit.framework.Test;
@@ -97,20 +97,20 @@ public class FreeMemoryTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
   @Override
-  public AbstractActor getActor() {
+  public Actor getActor() {
     AbstractArgumentOption    argOption;
     
     Flow flow = new Flow();
     
     try {
       argOption = (AbstractArgumentOption) flow.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp1 = new adams.flow.core.AbstractActor[4];
+      adams.flow.core.Actor[] tmp1 = new adams.flow.core.Actor[4];
       adams.flow.standalone.CallableActors tmp2 = new adams.flow.standalone.CallableActors();
       argOption = (AbstractArgumentOption) tmp2.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp3 = new adams.flow.core.AbstractActor[1];
+      adams.flow.core.Actor[] tmp3 = new adams.flow.core.Actor[1];
       adams.flow.sink.DumpFile tmp4 = new adams.flow.sink.DumpFile();
       argOption = (AbstractArgumentOption) tmp4.getOptionManager().findByProperty("outputFile");
       tmp4.setOutputFile((adams.core.io.PlaceholderFile) argOption.valueOf("${TMP}/dumpfile.txt"));
@@ -130,7 +130,7 @@ public class FreeMemoryTest
       tmp1[2] = tmp7;
       adams.flow.control.Trigger tmp9 = new adams.flow.control.Trigger();
       argOption = (AbstractArgumentOption) tmp9.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp10 = new adams.flow.core.AbstractActor[4];
+      adams.flow.core.Actor[] tmp10 = new adams.flow.core.Actor[4];
       adams.flow.source.FileSupplier tmp11 = new adams.flow.source.FileSupplier();
       argOption = (AbstractArgumentOption) tmp11.getOptionManager().findByProperty("files");
       tmp11.setFiles(new adams.core.io.PlaceholderFile[]{(adams.core.io.PlaceholderFile) argOption.valueOf("${TMP}/simple.report")});
@@ -139,7 +139,7 @@ public class FreeMemoryTest
       tmp10[1] = new BaseName();
       adams.flow.control.Tee tmp13 = new adams.flow.control.Tee();
       argOption = (AbstractArgumentOption) tmp13.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp14 = new adams.flow.core.AbstractActor[1];
+      adams.flow.core.Actor[] tmp14 = new adams.flow.core.Actor[1];
       adams.flow.sink.CallableSink tmp15 = new adams.flow.sink.CallableSink();
       argOption = (AbstractArgumentOption) tmp15.getOptionManager().findByProperty("callableName");
       tmp15.setCallableName((adams.flow.core.CallableActorReference) argOption.valueOf("DumpFile"));

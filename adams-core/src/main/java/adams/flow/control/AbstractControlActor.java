@@ -15,7 +15,7 @@
 
 /*
  * AbstractControlActor.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -25,6 +25,7 @@ import adams.core.Variables;
 import adams.event.FlowPauseStateEvent;
 import adams.event.FlowPauseStateListener;
 import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.core.ActorHandler;
 import adams.flow.core.ActorHandlerInfo;
 import adams.flow.core.ActorUtils;
@@ -85,7 +86,7 @@ public abstract class AbstractControlActor
    * @param value	the new parent
    */
   @Override
-  public void setParent(AbstractActor value) {
+  public void setParent(Actor value) {
     super.setParent(value);
     if (value != null)
       updateParent();
@@ -148,8 +149,8 @@ public abstract class AbstractControlActor
    * @return		the first 'active' actor, null if none available
    */
   @Override
-  public AbstractActor firstActive() {
-    AbstractActor	result;
+  public Actor firstActive() {
+    Actor	result;
     int			i;
 
     result = null;
@@ -169,9 +170,9 @@ public abstract class AbstractControlActor
    * @return		the last 'active' actor, null if none available
    */
   @Override
-  public AbstractActor lastActive() {
-    AbstractActor	result;
-    int			i;
+  public Actor lastActive() {
+    Actor	result;
+    int		i;
 
     result = null;
     for (i = size() - 1; i >= 0; i--) {
@@ -189,9 +190,9 @@ public abstract class AbstractControlActor
    *
    * @return		the first 'active' InputConsumer, null if none available
    */
-  public AbstractActor firstInputConsumer() {
-    AbstractActor	result;
-    int			i;
+  public Actor firstInputConsumer() {
+    Actor	result;
+    int		i;
 
     result = null;
     for (i = 0; i < size(); i++) {
@@ -211,7 +212,7 @@ public abstract class AbstractControlActor
    * @return		the actor
    */
   @Override
-  public abstract AbstractActor get(int index);
+  public abstract Actor get(int index);
 
   /**
    * Sets the actor at the given position.
@@ -220,7 +221,7 @@ public abstract class AbstractControlActor
    * @param actor	the actor to set at this position
    */
   @Override
-  public abstract void set(int index, AbstractActor actor);
+  public abstract void set(int index, Actor actor);
 
   /**
    * Returns the index of the actor.
@@ -254,9 +255,9 @@ public abstract class AbstractControlActor
   @Override
   public boolean canInspectOptions(Class cls) {
     // we don't inspect sub-actors!
-    if (cls == AbstractActor[].class)
+    if (cls == Actor[].class)
       return false;
-    else if (cls == AbstractActor.class)
+    else if (cls == Actor.class)
       return false;
     else
       return super.canInspectOptions(cls);

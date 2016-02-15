@@ -27,7 +27,7 @@ import adams.core.option.NestedConsumer;
 import adams.core.option.OptionUtils;
 import adams.flow.control.Breakpoint;
 import adams.flow.control.Flow;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.core.ActorHandler;
 import adams.flow.core.ActorPath;
 import adams.flow.core.ActorUtils;
@@ -221,7 +221,7 @@ public class Tree
    * @param owner	the owning panel
    * @param root	the root actor, can be null
    */
-  public Tree(FlowPanel owner, AbstractActor root) {
+  public Tree(FlowPanel owner, Actor root) {
     super();
     m_Owner = owner;
     buildTree(root);
@@ -412,7 +412,7 @@ public class Tree
    *
    * @param root	the root actor, can be null
    */
-  public void buildTree(AbstractActor root) {
+  public void buildTree(Actor root) {
     if (root == null)
       buildTree((Node) null);
     else
@@ -534,7 +534,7 @@ public class Tree
   public boolean updateActorName(final Node node) {
     boolean		result;
     Node 		parent;
-    AbstractActor	actor;
+    Actor 		actor;
     HashSet<String> 	names;
     String		name;
     int			i;
@@ -566,7 +566,7 @@ public class Tree
     }
 
     if (result && (actor != null)) {
-      final AbstractActor fActor = actor;
+      final Actor fActor = actor;
       SwingUtilities.invokeLater(() -> node.setActor(fActor));
     }
 
@@ -920,8 +920,8 @@ public class Tree
    *
    * @return		the actor or null if none available
    */
-  public AbstractActor getActorFromClipboard() {
-    AbstractActor	result;
+  public Actor getActorFromClipboard() {
+    Actor		result;
     NestedConsumer	consumer;
 
     result = null;
@@ -930,7 +930,7 @@ public class Tree
       if (GUIHelper.canPasteStringFromClipboard()) {
 	consumer = new NestedConsumer();
 	consumer.setQuiet(true);
-	result = (AbstractActor) consumer.fromString(GUIHelper.pasteSetupFromClipboard());
+	result = (Actor) consumer.fromString(GUIHelper.pasteSetupFromClipboard());
 	consumer.cleanUp();
       }
     }
@@ -1130,7 +1130,7 @@ public class Tree
 
     for (i = 0; i < nodes.length; i++) {
       final Node fNode = nodes[i];
-      final AbstractActor actor = nodes[i].getActor();
+      final Actor actor = nodes[i].getActor();
       SwingUtilities.invokeLater(() -> {
 	actor.setSkip(!actor.getSkip());
 	fNode.setActor(actor);
@@ -1156,11 +1156,11 @@ public class Tree
    * @param forward	whether to search forward or backwards
    * @return		the nearest actor, null if none found
    */
-  protected AbstractActor getNearestActor(Node parent, int startIndex, boolean forward) {
-    AbstractActor	result;
-    int			index;
-    Node		child;
-    AbstractActor	actor;
+  protected Actor getNearestActor(Node parent, int startIndex, boolean forward) {
+    Actor	result;
+    int		index;
+    Node	child;
+    Actor	actor;
 
     result = null;
 
@@ -1236,7 +1236,7 @@ public class Tree
    *
    * @param value	the flow actor
    */
-  public void setActor(AbstractActor value) {
+  public void setActor(Actor value) {
     buildTree(value);
   }
 
@@ -1251,7 +1251,7 @@ public class Tree
    * @see		#getRootActor()
    * @see		Node#getFullActor()
    */
-  public AbstractActor getActor() {
+  public Actor getActor() {
     return getActor(null);
   }
 
@@ -1267,8 +1267,8 @@ public class Tree
    * @see		#getRootActor()
    * @see		Node#getFullActor()
    */
-  public AbstractActor getActor(StringBuilder errors) {
-    AbstractActor	result;
+  public Actor getActor(StringBuilder errors) {
+    Actor	result;
 
     result = null;
 
@@ -1284,8 +1284,8 @@ public class Tree
    * @return		the flow or null if none stored yet
    * @see		#getActor()
    */
-  public AbstractActor getRootActor() {
-    AbstractActor	result;
+  public Actor getRootActor() {
+    Actor	result;
 
     result = null;
 
@@ -1434,8 +1434,8 @@ public class Tree
    *
    * @return		the selected actor, null if none selected
    */
-  public AbstractActor getSelectedActor() {
-    AbstractActor	result;
+  public Actor getSelectedActor() {
+    Actor	result;
     Node		node;
 
     result = null;
@@ -1452,13 +1452,13 @@ public class Tree
    *
    * @return		the selected actors, 0-length array if none selected
    */
-  public AbstractActor[] getSelectedActors() {
-    AbstractActor[]	result;
+  public Actor[] getSelectedActors() {
+    Actor[]	result;
 
     if (getSelectionPaths() != null)
       result = TreeHelper.pathsToActors(getSelectionPaths());
     else
-      result = new AbstractActor[0];
+      result = new Actor[0];
 
     return result;
   }

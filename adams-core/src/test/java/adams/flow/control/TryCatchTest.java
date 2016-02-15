@@ -15,7 +15,7 @@
 
 /*
  * TryCatchTest.java
- * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -26,7 +26,7 @@ import adams.core.option.AbstractArgumentOption;
 import adams.data.io.input.SingleStringTextReader;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.test.TmpFile;
 
 /**
@@ -95,17 +95,17 @@ public class TryCatchTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
   @Override
-  public AbstractActor getActor() {
+  public Actor getActor() {
     AbstractArgumentOption    argOption;
     
     Flow flow = new Flow();
     
     try {
       argOption = (AbstractArgumentOption) flow.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp1 = new adams.flow.core.AbstractActor[3];
+      adams.flow.core.Actor[] tmp1 = new adams.flow.core.Actor[3];
       adams.flow.source.FileSupplier tmp2 = new adams.flow.source.FileSupplier();
       argOption = (AbstractArgumentOption) tmp2.getOptionManager().findByProperty("files");
       tmp2.setFiles(new adams.core.io.PlaceholderFile[]{(adams.core.io.PlaceholderFile) argOption.valueOf("${CWD}/some/where.txt")});
@@ -118,7 +118,7 @@ public class TryCatchTest
       tmp6.setName((java.lang.String) argOption.valueOf("try"));
 
       argOption = (AbstractArgumentOption) tmp6.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp8 = new adams.flow.core.AbstractActor[1];
+      adams.flow.core.Actor[] tmp8 = new adams.flow.core.Actor[1];
       adams.flow.transformer.TextFileReader tmp9 = new adams.flow.transformer.TextFileReader();
       argOption = (AbstractArgumentOption) tmp9.getOptionManager().findByProperty("outputType");
       tmp9.setReader(new SingleStringTextReader());

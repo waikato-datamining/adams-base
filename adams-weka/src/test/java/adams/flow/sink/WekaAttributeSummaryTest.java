@@ -25,7 +25,7 @@ import adams.core.option.AbstractArgumentOption;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.execution.NullListener;
 import adams.flow.source.FileSupplier;
 import adams.flow.transformer.WekaClassSelector;
@@ -92,15 +92,15 @@ public class WekaAttributeSummaryTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
-  public AbstractActor getActor() {
+  public Actor getActor() {
     AbstractArgumentOption    argOption;
     
     Flow flow = new Flow();
     
     try {
-      List<AbstractActor> actors = new ArrayList<AbstractActor>();
+      List<Actor> actors = new ArrayList<Actor>();
 
       // Flow.FileSupplier
       FileSupplier filesupplier = new FileSupplier();
@@ -127,7 +127,7 @@ public class WekaAttributeSummaryTest
       wekaattributesummary.setWriter(nullwriter);
 
       actors.add(wekaattributesummary);
-      flow.setActors(actors.toArray(new AbstractActor[0]));
+      flow.setActors(actors.toArray(new Actor[0]));
 
       NullListener nulllistener = new NullListener();
       flow.setFlowExecutionListener(nulllistener);

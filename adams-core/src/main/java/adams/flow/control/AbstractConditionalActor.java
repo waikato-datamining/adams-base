@@ -26,6 +26,7 @@ import adams.flow.condition.test.TestCondition;
 import adams.flow.condition.test.TestConditionSupporter;
 import adams.flow.condition.test.True;
 import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.core.ActorHandler;
 
 /**
@@ -46,7 +47,7 @@ public abstract class AbstractConditionalActor
   protected TestCondition m_Condition;
 
   /** the base actor to run if condition is met. */
-  protected AbstractActor m_BaseActor;
+  protected Actor m_BaseActor;
 
   /** whether to test condition during setup or whenever executed. */
   protected boolean m_CheckAtExecutionTime;
@@ -198,14 +199,14 @@ public abstract class AbstractConditionalActor
    *
    * @return		the default actor
    */
-  protected abstract AbstractActor getDefaultActor();
+  protected abstract Actor getDefaultActor();
 
   /**
    * Sets the base actor.
    *
    * @param value 	the actor
    */
-  public void setActor(AbstractActor value) {
+  public void setActor(Actor value) {
     m_BaseActor = value;
     updateParent();
 
@@ -217,7 +218,7 @@ public abstract class AbstractConditionalActor
    *
    * @return 		the actor
    */
-  public AbstractActor getActor() {
+  public Actor getActor() {
     return m_BaseActor;
   }
 
@@ -261,7 +262,7 @@ public abstract class AbstractConditionalActor
    * @param index	the position
    * @return		the actor
    */
-  public AbstractActor get(int index) {
+  public Actor get(int index) {
     if (index == 0)
       return m_BaseActor;
     else
@@ -274,7 +275,7 @@ public abstract class AbstractConditionalActor
    * @param index	the position
    * @param actor	the actor to set at this position
    */
-  public void set(int index, AbstractActor actor) {
+  public void set(int index, Actor actor) {
     if (index == 0) {
       m_BaseActor = actor;
       updateParent();
@@ -302,7 +303,7 @@ public abstract class AbstractConditionalActor
    *
    * @return		the first 'active' actor, null if none available
    */
-  public AbstractActor firstActive() {
+  public Actor firstActive() {
     if (m_BaseActor.getSkip())
       return null;
     else
@@ -314,7 +315,7 @@ public abstract class AbstractConditionalActor
    *
    * @return		the last 'active' actor, null if none available
    */
-  public AbstractActor lastActive() {
+  public Actor lastActive() {
     if (m_BaseActor.getSkip())
       return null;
     else
@@ -332,9 +333,9 @@ public abstract class AbstractConditionalActor
   @Override
   public boolean canInspectOptions(Class cls) {
     // we don't inspect sub-actors!
-    if (cls == AbstractActor[].class)
+    if (cls == Actor[].class)
       return false;
-    else if (cls == AbstractActor.class)
+    else if (cls == Actor.class)
       return false;
     else
       return super.canInspectOptions(cls);

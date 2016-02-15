@@ -1,89 +1,22 @@
 # Project: adams
-# Date: 2014-06-24 11:35:54
+# Date: 2016-02-15 11:28:41
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	This flow loads a binary file, turns it into a BlobContainer,\nadds some meta-data, displays the container and saves\nthe file to ${EXAMPLE_FLOWS}/output/out.jpg
-	-actor
-		adams.flow.source.FileSupplier
-			-file
-			${EXAMPLE_FLOWS}/data/3666455665_18795f0741.jpg
-	-actor
-		adams.flow.control.Tee
-			-name
-			get some info
-			-tee
-				adams.flow.control.Tee
-					-name
-					file size
-					-tee
-						adams.flow.transformer.FileInfo
-							-stop-flow-on-error
-							true
-					-tee
-						adams.flow.transformer.SetVariable
-							-var-name
-							size
-			-tee
-				adams.flow.control.Tee
-					-name
-					last mod
-					-tee
-						adams.flow.transformer.FileInfo
-							-stop-flow-on-error
-							true
-							-type
-							LAST_MODIFIED
-					-tee
-						adams.flow.transformer.SetVariable
-							-var-name
-							lastmod
-	-actor
-		adams.flow.transformer.SetVariable
-			-var-name
-			file
-	-actor
-		adams.flow.transformer.BinaryFileReader
-			-output-array
-			true
-	-actor
-		adams.flow.transformer.Convert
-			-conversion
-				adams.data.conversion.ByteArrayToBlobContainer
-					-id
-					@{file}
-	-actor
-		adams.flow.control.SubProcess
-			-name
-			add meta-data
-			-actor
-				adams.flow.transformer.SetReportValue
-					-name
-					set file size
-					-field
-					filesize[N]
-					-value
-					@{size}
-			-actor
-				adams.flow.transformer.SetReportValue
-					-name
-					set last modified
-					-field
-					lastmodified[S]
-					-value
-					@{lastmod}
-	-actor
-		adams.flow.control.Tee
-			-tee
-				adams.flow.sink.Display
-					-writer
-						adams.data.io.output.NullWriter
-	-actor
-		adams.flow.sink.BinaryFileWriter
-			-output
-			${EXAMPLE_FLOWS}/output/out.jpg
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "This flow loads a binary file, turns it into a BlobContainer,\\nadds some meta-data, displays the container and saves\\nthe file to ${EXAMPLE_FLOWS}/output/out.jpg" -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/3666455665_18795f0741.jpg
+ adams.flow.control.Tee -name "get some info"
+  adams.flow.control.Tee -name "file size"
+   adams.flow.transformer.FileInfo -stop-flow-on-error true
+   adams.flow.transformer.SetVariable -var-name size
+  adams.flow.control.Tee -name "last mod"
+   adams.flow.transformer.FileInfo -stop-flow-on-error true -type LAST_MODIFIED
+   adams.flow.transformer.SetVariable -var-name lastmod
+ adams.flow.transformer.SetVariable -var-name file
+ adams.flow.transformer.BinaryFileReader -output-array true
+ adams.flow.transformer.Convert -conversion "adams.data.conversion.ByteArrayToBlobContainer -id @{file}"
+ adams.flow.control.SubProcess -name "add meta-data"
+  adams.flow.transformer.SetReportValue -name "set file size" -field filesize[N] -value @{size}
+  adams.flow.transformer.SetReportValue -name "set last modified" -field lastmodified[S] -value @{lastmod}
+ adams.flow.control.Tee
+  adams.flow.sink.Display -writer adams.data.io.output.NullWriter
+ adams.flow.sink.BinaryFileWriter -output ${EXAMPLE_FLOWS}/output/out.jpg

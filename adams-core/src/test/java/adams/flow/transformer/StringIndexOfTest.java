@@ -26,7 +26,7 @@ import adams.core.option.AbstractArgumentOption;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.test.TmpFile;
 
 /**
@@ -95,22 +95,22 @@ public class StringIndexOfTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
   @Override
-  public AbstractActor getActor() {
+  public Actor getActor() {
     AbstractArgumentOption    argOption;
     
     Flow flow = new Flow();
     
     try {
       argOption = (AbstractArgumentOption) flow.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] actors1 = new adams.flow.core.AbstractActor[7];
+      adams.flow.core.Actor[] actors1 = new adams.flow.core.Actor[7];
 
       // Flow.CallableActors
       adams.flow.standalone.CallableActors globalactors2 = new adams.flow.standalone.CallableActors();
       argOption = (AbstractArgumentOption) globalactors2.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] actors3 = new adams.flow.core.AbstractActor[1];
+      adams.flow.core.Actor[] actors3 = new adams.flow.core.Actor[1];
 
       // Flow.CallableActors.output
       adams.flow.sink.DumpFile dumpfile4 = new adams.flow.sink.DumpFile();
@@ -136,7 +136,7 @@ public class StringIndexOfTest
       // Flow.Tee
       adams.flow.control.Tee tee9 = new adams.flow.control.Tee();
       argOption = (AbstractArgumentOption) tee9.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] actors10 = new adams.flow.core.AbstractActor[2];
+      adams.flow.core.Actor[] actors10 = new adams.flow.core.Actor[2];
 
       // Flow.Tee.StringIndexOf
       adams.flow.transformer.StringIndexOf stringindexof11 = new adams.flow.transformer.StringIndexOf();
@@ -158,7 +158,7 @@ public class StringIndexOfTest
       argOption = (AbstractArgumentOption) tee15.getOptionManager().findByProperty("name");
       tee15.setName((java.lang.String) argOption.valueOf("Tee-1"));
       argOption = (AbstractArgumentOption) tee15.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] actors17 = new adams.flow.core.AbstractActor[2];
+      adams.flow.core.Actor[] actors17 = new adams.flow.core.Actor[2];
 
       // Flow.Tee-1.StringIndexOf
       adams.flow.transformer.StringIndexOf stringindexof18 = new adams.flow.transformer.StringIndexOf();
@@ -180,7 +180,7 @@ public class StringIndexOfTest
       argOption = (AbstractArgumentOption) tee22.getOptionManager().findByProperty("name");
       tee22.setName((java.lang.String) argOption.valueOf("Tee-2"));
       argOption = (AbstractArgumentOption) tee22.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] actors24 = new adams.flow.core.AbstractActor[2];
+      adams.flow.core.Actor[] actors24 = new adams.flow.core.Actor[2];
 
       // Flow.Tee-2.StringIndexOf
       adams.flow.transformer.StringIndexOf stringindexof25 = new adams.flow.transformer.StringIndexOf();
@@ -206,7 +206,7 @@ public class StringIndexOfTest
       argOption = (AbstractArgumentOption) tee30.getOptionManager().findByProperty("name");
       tee30.setName((java.lang.String) argOption.valueOf("Tee-3"));
       argOption = (AbstractArgumentOption) tee30.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] actors32 = new adams.flow.core.AbstractActor[2];
+      adams.flow.core.Actor[] actors32 = new adams.flow.core.Actor[2];
 
       // Flow.Tee-3.StringIndexOf
       adams.flow.transformer.StringIndexOf stringindexof33 = new adams.flow.transformer.StringIndexOf();
@@ -228,7 +228,7 @@ public class StringIndexOfTest
       argOption = (AbstractArgumentOption) tee37.getOptionManager().findByProperty("name");
       tee37.setName((java.lang.String) argOption.valueOf("Tee-4"));
       argOption = (AbstractArgumentOption) tee37.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] actors39 = new adams.flow.core.AbstractActor[2];
+      adams.flow.core.Actor[] actors39 = new adams.flow.core.Actor[2];
 
       // Flow.Tee-4.StringIndexOf
       adams.flow.transformer.StringIndexOf stringindexof40 = new adams.flow.transformer.StringIndexOf();

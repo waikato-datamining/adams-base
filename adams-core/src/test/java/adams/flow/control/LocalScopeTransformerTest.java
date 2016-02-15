@@ -15,19 +15,19 @@
 
 /*
  * LocalScopeTransformerTest.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import adams.core.base.BaseText;
 import adams.core.option.AbstractArgumentOption;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.test.TmpFile;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Test for LocalScopeTransformer actor.
@@ -95,17 +95,17 @@ public class LocalScopeTransformerTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
   @Override
-  public AbstractActor getActor() {
+  public Actor getActor() {
     AbstractArgumentOption    argOption;
     
     Flow flow = new Flow();
     
     try {
       argOption = (AbstractArgumentOption) flow.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] actors1 = new adams.flow.core.AbstractActor[5];
+      adams.flow.core.Actor[] actors1 = new adams.flow.core.Actor[5];
 
       // Flow.Start
       adams.flow.source.Start start2 = new adams.flow.source.Start();
@@ -132,7 +132,7 @@ public class LocalScopeTransformerTest
       // Flow.LocalScopeTransformer
       adams.flow.control.LocalScopeTransformer localscopetransformer10 = new adams.flow.control.LocalScopeTransformer();
       argOption = (AbstractArgumentOption) localscopetransformer10.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] actors11 = new adams.flow.core.AbstractActor[2];
+      adams.flow.core.Actor[] actors11 = new adams.flow.core.Actor[2];
 
       // Flow.LocalScopeTransformer.LocalScopeTransformer.SetVariable
       adams.flow.transformer.SetVariable setvariable12 = new adams.flow.transformer.SetVariable();
@@ -162,7 +162,7 @@ public class LocalScopeTransformerTest
       // Flow.Trigger
       adams.flow.control.Trigger trigger20 = new adams.flow.control.Trigger();
       argOption = (AbstractArgumentOption) trigger20.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] actors21 = new adams.flow.core.AbstractActor[3];
+      adams.flow.core.Actor[] actors21 = new adams.flow.core.Actor[3];
 
       // Flow.Trigger.ListVariables
       adams.flow.source.ListVariables listvariables22 = new adams.flow.source.ListVariables();
@@ -177,7 +177,7 @@ public class LocalScopeTransformerTest
       // Flow.Trigger.Trigger
       adams.flow.control.Trigger trigger25 = new adams.flow.control.Trigger();
       argOption = (AbstractArgumentOption) trigger25.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] actors26 = new adams.flow.core.AbstractActor[2];
+      adams.flow.core.Actor[] actors26 = new adams.flow.core.Actor[2];
 
       // Flow.Trigger.Trigger.CombineVariables
       adams.flow.source.CombineVariables combinevariables27 = new adams.flow.source.CombineVariables();

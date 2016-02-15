@@ -15,7 +15,7 @@
 
 /*
  * ClearCallableDisplayTest.java
- * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -26,7 +26,7 @@ import adams.core.option.AbstractArgumentOption;
 import adams.data.DecimalFormatString;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 
 /**
  * Test for ClearCallableDisplay actor.
@@ -60,20 +60,20 @@ public class ClearCallableDisplayTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
   @Override
-  public AbstractActor getActor() {
+  public Actor getActor() {
     AbstractArgumentOption    argOption;
 
     Flow flow = new Flow();
 
     try {
       argOption = (AbstractArgumentOption) flow.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp1 = new adams.flow.core.AbstractActor[4];
+      adams.flow.core.Actor[] tmp1 = new adams.flow.core.Actor[4];
       adams.flow.standalone.CallableActors tmp2 = new adams.flow.standalone.CallableActors();
       argOption = (AbstractArgumentOption) tmp2.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp3 = new adams.flow.core.AbstractActor[1];
+      adams.flow.core.Actor[] tmp3 = new adams.flow.core.Actor[1];
       adams.flow.sink.SequencePlotter tmp4 = new adams.flow.sink.SequencePlotter();
       argOption = (AbstractArgumentOption) tmp4.getOptionManager().findByProperty("writer");
       adams.gui.print.NullWriter tmp6 = new adams.gui.print.NullWriter();
@@ -125,7 +125,7 @@ public class ClearCallableDisplayTest
       tmp1[1] = tmp24;
       adams.flow.control.Trigger tmp25 = new adams.flow.control.Trigger();
       argOption = (AbstractArgumentOption) tmp25.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp26 = new adams.flow.core.AbstractActor[3];
+      adams.flow.core.Actor[] tmp26 = new adams.flow.core.Actor[3];
       adams.flow.source.ForLoop tmp27 = new adams.flow.source.ForLoop();
       tmp26[0] = tmp27;
       adams.flow.transformer.MakePlotContainer tmp28 = new adams.flow.transformer.MakePlotContainer();

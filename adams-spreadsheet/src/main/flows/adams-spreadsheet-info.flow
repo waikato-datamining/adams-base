@@ -1,149 +1,36 @@
 # Project: adams
-# Date: 2014-01-23 15:40:59
+# Date: 2016-02-15 14:58:37
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	Outputs some basic information on the spreadsheet.
-	-actor
-		adams.flow.standalone.CallableActors
-			-actor
-				adams.flow.sink.Display
-	-actor
-		adams.flow.source.FileSupplier
-			-file
-			${EXAMPLE_FLOWS}/data/bolts.csv
-	-actor
-		adams.flow.transformer.SpreadSheetFileReader
-			-reader
-				adams.data.io.input.CsvSpreadSheetReader
-					-spreadsheet-type
-						adams.data.spreadsheet.SpreadSheet
-	-actor
-		adams.flow.control.Tee
-			-name
-			# columns
-			-tee
-				adams.flow.transformer.SpreadSheetInfo
-					-type
-					NUM_COLUMNS
-			-tee
-				adams.flow.transformer.SetVariable
-					-var-name
-					num_cols
-			-tee
-				adams.flow.transformer.Convert
-					-conversion
-						adams.data.conversion.AnyToString
-			-tee
-				adams.flow.transformer.StringInsert
-					-position
-					first
-					-value
-					# columns: 
-			-tee
-				adams.flow.sink.CallableSink
-					-callable
-					Display
-	-actor
-		adams.flow.control.Tee
-			-name
-			# rows
-			-tee
-				adams.flow.transformer.SpreadSheetInfo
-			-tee
-				adams.flow.transformer.Convert
-					-conversion
-						adams.data.conversion.AnyToString
-			-tee
-				adams.flow.transformer.StringInsert
-					-position
-					first
-					-value
-					# rows: 
-			-tee
-				adams.flow.sink.CallableSink
-					-callable
-					Display
-	-actor
-		adams.flow.control.Tee
-			-name
-			timezone
-			-tee
-				adams.flow.transformer.SpreadSheetInfo
-					-type
-					TIMEZONE
-			-tee
-				adams.flow.transformer.Convert
-					-conversion
-						adams.data.conversion.AnyToString
-			-tee
-				adams.flow.transformer.StringInsert
-					-position
-					first
-					-value
-					timezone: 
-			-tee
-				adams.flow.sink.CallableSink
-					-callable
-					Display
-	-actor
-		adams.flow.control.Tee
-			-name
-			locale
-			-tee
-				adams.flow.transformer.SpreadSheetInfo
-					-type
-					LOCALE
-			-tee
-				adams.flow.transformer.Convert
-					-conversion
-						adams.data.conversion.AnyToString
-			-tee
-				adams.flow.transformer.StringInsert
-					-position
-					first
-					-value
-					locale: 
-			-tee
-				adams.flow.sink.CallableSink
-					-callable
-					Display
-	-actor
-		adams.flow.transformer.SetStorageValue
-			-storage-name
-			sheet
-	-actor
-		adams.flow.control.Trigger
-			-name
-			column names
-			-tee
-				adams.flow.source.StorageForLoop
-					-upper
-					@{num_cols}
-					-variable
-					col
-					-storage
-					sheet
-			-tee
-				adams.flow.transformer.SpreadSheetInfo
-					-type
-					COLUMN_NAME
-					-column-index
-					@{col}
-			-tee
-				adams.flow.transformer.StringInsert
-					-position
-					first
-					-value
-					column @{col}: 
-					-variable
-					true
-			-tee
-				adams.flow.sink.CallableSink
-					-callable
-					Display
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "Outputs some basic information on the spreadsheet." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.standalone.CallableActors
+  adams.flow.sink.Display -writer adams.data.io.output.NullWriter
+ adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/bolts.csv
+ adams.flow.transformer.SpreadSheetFileReader -reader "adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.SpreadSheet"
+ adams.flow.control.Tee -name "# columns"
+  adams.flow.transformer.SpreadSheetInfo -type NUM_COLUMNS
+  adams.flow.transformer.SetVariable -var-name num_cols
+  adams.flow.transformer.Convert -conversion adams.data.conversion.AnyToString
+  adams.flow.transformer.StringInsert -position first -value "# columns: "
+  adams.flow.sink.CallableSink -callable Display
+ adams.flow.control.Tee -name "# rows"
+  adams.flow.transformer.SpreadSheetInfo
+  adams.flow.transformer.Convert -conversion adams.data.conversion.AnyToString
+  adams.flow.transformer.StringInsert -position first -value "# rows: "
+  adams.flow.sink.CallableSink -callable Display
+ adams.flow.control.Tee -name timezone
+  adams.flow.transformer.SpreadSheetInfo -type TIMEZONE
+  adams.flow.transformer.Convert -conversion adams.data.conversion.AnyToString
+  adams.flow.transformer.StringInsert -position first -value "timezone: "
+  adams.flow.sink.CallableSink -callable Display
+ adams.flow.control.Tee -name locale
+  adams.flow.transformer.SpreadSheetInfo -type LOCALE
+  adams.flow.transformer.Convert -conversion adams.data.conversion.AnyToString
+  adams.flow.transformer.StringInsert -position first -value "locale: "
+  adams.flow.sink.CallableSink -callable Display
+ adams.flow.transformer.SetStorageValue -storage-name sheet
+ adams.flow.control.Trigger -name "column names"
+  adams.flow.source.StorageForLoop -upper @{num_cols} -variable col -storage sheet
+  adams.flow.transformer.SpreadSheetInfo -type COLUMN_NAME -column-index @{col}
+  adams.flow.transformer.StringInsert -position first -value "column @{col}: " -variable true
+  adams.flow.sink.CallableSink -callable Display

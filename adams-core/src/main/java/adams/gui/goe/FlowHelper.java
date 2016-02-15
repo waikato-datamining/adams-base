@@ -15,12 +15,12 @@
 
 /**
  * FlowHelper.java
- * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.goe;
 
 import adams.core.ClassLocator;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.core.ActorHandler;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.CallableActorHandler;
@@ -195,8 +195,8 @@ public class FlowHelper {
   protected static adams.db.AbstractDatabaseConnection getDatabaseConnection(Node parent, Class actorCls, adams.db.AbstractDatabaseConnection defDbCon, boolean up) {
     adams.db.AbstractDatabaseConnection	result;
     Node				current;
-    AbstractActor			actor;
-    AbstractActor			subactor;
+    Actor				actor;
+    Actor 				subactor;
     int					i;
     int					n;
     ActorHandler			handler;
@@ -330,15 +330,15 @@ public class FlowHelper {
    * @return		the nodes with {@link CallableActorHandler} found
    */
   protected static List<Node> findCallableActorsHandler(Node parent, boolean up, HashSet<Class> restrict) {
-    List<Node>	result;
+    List<Node>		result;
     ActorHandler	handler;
-    AbstractActor	actor;
-    AbstractActor	subactor;
+    Actor		actor;
+    Actor		subactor;
     int			i;
     int			n;
     Node		current;
 
-    result = new ArrayList<Node>();
+    result = new ArrayList<>();
 
     if (parent == null)
       return result;
@@ -420,15 +420,15 @@ public class FlowHelper {
    * @return		the nodes with CallableActors found
    */
   public static List<Node> findTopCallableActors(Node parent) {
-    List<Node>	result;
+    List<Node>		result;
     ActorHandler	handler;
-    AbstractActor	actor;
-    AbstractActor	subactor;
+    Actor		actor;
+    Actor		subactor;
     int			i;
     int			n;
     Node		current;
 
-    result = new ArrayList<Node>();
+    result = new ArrayList<>();
 
     if (parent == null)
       return result;

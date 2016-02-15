@@ -15,14 +15,13 @@
 
 /**
  * Actor.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.debug.inspectionhandler;
 
-import java.util.Hashtable;
-
 import adams.core.ClassLocator;
-import adams.flow.core.AbstractActor;
+
+import java.util.Hashtable;
 
 /**
  * Inspection handler for actors.
@@ -40,7 +39,7 @@ public class Actor
    * @return		true if the handler can handle this type of object
    */
   public boolean handles(Class cls) {
-    return ClassLocator.isSubclass(AbstractActor.class, cls);
+    return ClassLocator.hasInterface(Actor.class, cls);
   }
 
   /**
@@ -55,10 +54,10 @@ public class Actor
     adams.core.Variables	vars;
     
     result = super.inspect(obj);
-    name   = ((AbstractActor) obj).getFullName();
+    name   = ((adams.flow.core.Actor) obj).getFullName();
     if (name != null)
       result.put("fullName", name);
-    vars   = ((AbstractActor) obj).getVariables();
+    vars   = ((adams.flow.core.Actor) obj).getVariables();
     if (vars != null)
       result.put("variables", vars);
     

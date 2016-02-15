@@ -40,8 +40,8 @@ import adams.db.LogEntryHandler;
 import adams.env.Environment;
 import adams.env.FlowEditorPanelDefinition;
 import adams.flow.control.Flow;
-import adams.flow.core.AbstractActor;
 import adams.flow.core.AbstractDisplay;
+import adams.flow.core.Actor;
 import adams.flow.core.ActorUtils;
 import adams.flow.execution.AnyActorBreakpoint;
 import adams.flow.processor.AbstractActorProcessor;
@@ -119,7 +119,7 @@ public class FlowPanel
     protected FlowPanel m_Owner;
     
     /** the flow to execute. */
-    protected AbstractActor m_Flow;
+    protected Actor m_Flow;
     
     /** the current flow file. */
     protected File m_File;
@@ -142,7 +142,7 @@ public class FlowPanel
     /**
      * Initializes the worker.
      */
-    public FlowWorker(FlowPanel owner, AbstractActor flow, File file, boolean showNotification, boolean debug) {
+    public FlowWorker(FlowPanel owner, Actor flow, File file, boolean showNotification, boolean debug) {
       m_Owner            = owner;
       m_Flow             = flow;
       m_File             = file;
@@ -378,7 +378,7 @@ public class FlowPanel
      *
      * @return		the flow
      */
-    public AbstractActor getFlow() {
+    public Actor getFlow() {
       return m_Flow;
     }
   }
@@ -390,7 +390,7 @@ public class FlowPanel
   protected FlowTabbedPane m_Owner;
 
   /** the last flow that was run. */
-  protected AbstractActor m_LastFlow;
+  protected Actor m_LastFlow;
 
   /** the filename of the current flow. */
   protected File m_CurrentFile;
@@ -481,7 +481,7 @@ public class FlowPanel
     m_CurrentWorker         = null;
     m_LastVariableSearch    = "";
     m_TitleGenerator        = new TitleGenerator(FlowEditorPanel.DEFAULT_TITLE, true);
-    m_FilenameProposer      = new FilenameProposer(PREFIX_NEW, AbstractActor.FILE_EXTENSION, getProperties().getPath("InitialDir", "%h"));
+    m_FilenameProposer      = new FilenameProposer(PREFIX_NEW, Actor.FILE_EXTENSION, getProperties().getPath("InitialDir", "%h"));
     m_Title                 = "";
     m_RegisteredDisplays    = new HashMap<Class,HashMap<String,AbstractDisplay>>();
     m_CheckOnSave           = getProperties().getBoolean("CheckOnSave", true);
@@ -749,7 +749,7 @@ public class FlowPanel
    *
    * @param actor	the actor to instantiate
    */
-  public void reset(AbstractActor actor) {
+  public void reset(Actor actor) {
     addUndoPoint("Saving undo data...", "New " + actor.getClass().getName().replaceAll(".*\\.", ""));
 
     cleanUp();
@@ -904,7 +904,7 @@ public class FlowPanel
    *
    * @param flow	the flow to use
    */
-  public void setCurrentFlow(AbstractActor flow) {
+  public void setCurrentFlow(Actor flow) {
     if (flow != null)
       getTree().setActor(flow);
     else
@@ -941,7 +941,7 @@ public class FlowPanel
    * @return		the current flow
    * @see		#getCurrentRoot()
    */
-  public AbstractActor getCurrentFlow() {
+  public Actor getCurrentFlow() {
     return getCurrentFlow(null);
   }
 
@@ -956,7 +956,7 @@ public class FlowPanel
    * @return		the current flow
    * @see		#getCurrentRoot()
    */
-  public AbstractActor getCurrentFlow(StringBuilder errors) {
+  public Actor getCurrentFlow(StringBuilder errors) {
     return getTree().getActor(errors);
   }
 
@@ -966,7 +966,7 @@ public class FlowPanel
    * @return		the current root actor
    * @see		#getCurrentFlow()
    */
-  public AbstractActor getCurrentRoot() {
+  public Actor getCurrentRoot() {
     return getTree().getRootActor();
   }
 
@@ -976,7 +976,7 @@ public class FlowPanel
    * @return		the running flow, null if none running right now
    * @see		#isRunning()
    */
-  public AbstractActor getRunningFlow() {
+  public Actor getRunningFlow() {
     if (isRunning())
       return m_CurrentWorker.getFlow();
     else
@@ -988,7 +988,7 @@ public class FlowPanel
    * 
    * @param value	the flow
    */
-  protected void setLastFlow(AbstractActor value) {
+  protected void setLastFlow(Actor value) {
     m_LastFlow = value;
   }
   
@@ -997,7 +997,7 @@ public class FlowPanel
    *
    * @return		the flow, null if not available
    */
-  public AbstractActor getLastFlow() {
+  public Actor getLastFlow() {
     return m_LastFlow;
   }
 
@@ -1101,15 +1101,15 @@ public class FlowPanel
    * @param file	the file to import
    */
   public void importFlow(OptionConsumer consumer, File file) {
-    AbstractActor		actor;
+    Actor		actor;
 
-    actor = (AbstractActor) consumer.fromFile(file);
+    actor = (Actor) consumer.fromFile(file);
     if (actor == null) {
       showNotification("Failed to load flow from:\n" + file, true);
     }
     else {
       getTree().setActor(actor);
-      setCurrentFile(new PlaceholderFile(file.getAbsolutePath() + "." + AbstractActor.FILE_EXTENSION));
+      setCurrentFile(new PlaceholderFile(file.getAbsolutePath() + "." + Actor.FILE_EXTENSION));
       if (!consumer.hasErrors())
 	showNotification("Flow successfully imported from:\n" + file, false);
       else

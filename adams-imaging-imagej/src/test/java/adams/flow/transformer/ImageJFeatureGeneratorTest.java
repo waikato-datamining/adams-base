@@ -27,7 +27,7 @@ import adams.data.imagej.features.Histogram;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.sink.DumpFile;
 import adams.flow.source.FileSupplier;
 import adams.test.TmpFile;
@@ -81,10 +81,10 @@ public class ImageJFeatureGeneratorTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
   @Override
-  public AbstractActor getActor() {
+  public Actor getActor() {
     FileSupplier mfs = new FileSupplier();
     mfs.setFiles(
 	new PlaceholderFile[]{
@@ -102,7 +102,7 @@ public class ImageJFeatureGeneratorTest
     df.setOutputFile(new TmpFile("dumpfile.csv"));
 
     Flow flow = new Flow();
-    flow.setActors(new AbstractActor[]{mfs, ir, ifl, df});
+    flow.setActors(new Actor[]{mfs, ir, ifl, df});
 
     return flow;
   }

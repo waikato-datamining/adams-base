@@ -15,11 +15,11 @@
 
 /**
  * CallableActorRenamed.java
- * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.tree.postprocessor;
 
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.core.CallableActorHandler;
 import adams.flow.processor.UpdateCallableActorName;
 import adams.gui.flow.tree.Tree;
@@ -57,7 +57,7 @@ public class CallableActorRenamed
    * @return		true if this post processor applies to the situation
    */
   @Override
-  public boolean applies(AbstractActor parent, AbstractActor oldActor, AbstractActor newActor) {
+  public boolean applies(Actor parent, Actor oldActor, Actor newActor) {
     return (parent instanceof CallableActorHandler) && !oldActor.getName().equals(newActor.getName());
   }
 
@@ -71,7 +71,7 @@ public class CallableActorRenamed
    * @return		true if tree got modified
    */
   @Override
-  protected boolean doPostProcess(Tree tree, AbstractActor parent, AbstractActor oldActor, AbstractActor newActor) {
+  protected boolean doPostProcess(Tree tree, Actor parent, Actor oldActor, Actor newActor) {
     boolean			result;
     UpdateCallableActorName	updater;
 

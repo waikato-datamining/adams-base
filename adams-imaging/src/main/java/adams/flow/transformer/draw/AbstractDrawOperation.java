@@ -15,15 +15,15 @@
 
 /**
  * AbstractDrawOperation.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer.draw;
 
-import java.awt.image.BufferedImage;
-
 import adams.core.QuickInfoSupporter;
 import adams.core.option.AbstractOptionHandler;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
+
+import java.awt.image.BufferedImage;
 
 /**
  * Ancestor to all draw operations.
@@ -39,14 +39,14 @@ public abstract class AbstractDrawOperation
   private static final long serialVersionUID = 981933376964417371L;
 
   /** the owner of the operation. */
-  protected AbstractActor m_Owner;
+  protected Actor m_Owner;
   
   /**
    * Sets the owner.
    * 
    * @param value	the owning actor
    */
-  public void setOwner(AbstractActor value) {
+  public void setOwner(Actor value) {
     m_Owner = value;
   }
   
@@ -55,7 +55,7 @@ public abstract class AbstractDrawOperation
    * 
    * @return		the owner, null if none set
    */
-  public AbstractActor getOwner() {
+  public Actor getOwner() {
     return m_Owner;
   }
   

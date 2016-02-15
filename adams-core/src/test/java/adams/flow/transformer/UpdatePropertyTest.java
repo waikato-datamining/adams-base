@@ -25,7 +25,7 @@ import adams.core.option.AbstractArgumentOption;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.test.TmpFile;
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -94,21 +94,21 @@ public class UpdatePropertyTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
-  public AbstractActor getActor() {
+  public Actor getActor() {
     AbstractArgumentOption    argOption;
     
     Flow flow = new Flow();
     
     try {
       argOption = (AbstractArgumentOption) flow.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] actors1 = new adams.flow.core.AbstractActor[5];
+      adams.flow.core.Actor[] actors1 = new adams.flow.core.Actor[5];
 
       // Flow.CallableActors
       adams.flow.standalone.CallableActors callableactors2 = new adams.flow.standalone.CallableActors();
       argOption = (AbstractArgumentOption) callableactors2.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] actors3 = new adams.flow.core.AbstractActor[1];
+      adams.flow.core.Actor[] actors3 = new adams.flow.core.Actor[1];
 
       // Flow.CallableActors.DumpFile
       adams.flow.sink.DumpFile dumpfile4 = new adams.flow.sink.DumpFile();
@@ -124,7 +124,7 @@ public class UpdatePropertyTest
       // Flow.SelectObjects
       adams.flow.source.SelectObjects selectobjects6 = new adams.flow.source.SelectObjects();
       argOption = (AbstractArgumentOption) selectobjects6.getOptionManager().findByProperty("superClass");
-      selectobjects6.setSuperClass((BaseClassname) argOption.valueOf("adams.flow.core.AbstractActor"));
+      selectobjects6.setSuperClass((BaseClassname) argOption.valueOf("adams.flow.core.Actor"));
       argOption = (AbstractArgumentOption) selectobjects6.getOptionManager().findByProperty("initialObjects");
       adams.core.base.BaseString[] initialobjects8 = new adams.core.base.BaseString[1];
       initialobjects8[0] = (adams.core.base.BaseString) argOption.valueOf("adams.flow.sink.Display");
@@ -137,7 +137,7 @@ public class UpdatePropertyTest
       argOption = (AbstractArgumentOption) tee9.getOptionManager().findByProperty("name");
       tee9.setName((java.lang.String) argOption.valueOf("get"));
       argOption = (AbstractArgumentOption) tee9.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] actors11 = new adams.flow.core.AbstractActor[2];
+      adams.flow.core.Actor[] actors11 = new adams.flow.core.Actor[2];
 
       // Flow.get.GetProperty
       adams.flow.transformer.GetProperty getproperty12 = new adams.flow.transformer.GetProperty();
@@ -167,7 +167,7 @@ public class UpdatePropertyTest
       argOption = (AbstractArgumentOption) tee19.getOptionManager().findByProperty("name");
       tee19.setName((java.lang.String) argOption.valueOf("get-1"));
       argOption = (AbstractArgumentOption) tee19.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] actors21 = new adams.flow.core.AbstractActor[2];
+      adams.flow.core.Actor[] actors21 = new adams.flow.core.Actor[2];
 
       // Flow.get-1.GetProperty
       adams.flow.transformer.GetProperty getproperty22 = new adams.flow.transformer.GetProperty();

@@ -26,7 +26,7 @@ import weka.core.converters.CSVSaver;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.sink.WekaFileWriter;
 import adams.flow.source.FileSupplier;
 import adams.flow.transformer.WekaFileReader.OutputType;
@@ -82,10 +82,10 @@ public class ExternalTransformerTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
   @Override
-  public AbstractActor getActor() {
+  public Actor getActor() {
     FileSupplier sfs = new FileSupplier();
     sfs.setFiles(new adams.core.io.PlaceholderFile[]{new TmpFile("vote.arff")});
 
@@ -104,7 +104,7 @@ public class ExternalTransformerTest
     fw.setOutputFile(new TmpFile("dumpfile.csv"));
 
     Flow flow = new Flow();
-    flow.setActors(new AbstractActor[]{sfs, fr, cs, ext, fw});
+    flow.setActors(new Actor[]{sfs, fr, cs, ext, fw});
 
     return flow;
   }

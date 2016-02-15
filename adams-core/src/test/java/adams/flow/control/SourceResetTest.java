@@ -15,7 +15,7 @@
 
 /*
  * SourceResetTest.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -23,7 +23,7 @@ package adams.flow.control;
 import adams.core.option.AbstractArgumentOption;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.test.TmpFile;
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -92,16 +92,16 @@ public class SourceResetTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
-  public AbstractActor getActor() {
+  public Actor getActor() {
     AbstractArgumentOption    argOption;
     
     Flow flow = new Flow();
     
     try {
       argOption = (AbstractArgumentOption) flow.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] actors1 = new adams.flow.core.AbstractActor[3];
+      adams.flow.core.Actor[] actors1 = new adams.flow.core.Actor[3];
 
       // Flow.ForLoop
       adams.flow.source.ForLoop forloop2 = new adams.flow.source.ForLoop();
@@ -118,12 +118,12 @@ public class SourceResetTest
       // Flow.Trigger
       adams.flow.control.Trigger trigger6 = new adams.flow.control.Trigger();
       argOption = (AbstractArgumentOption) trigger6.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] actors7 = new adams.flow.core.AbstractActor[2];
+      adams.flow.core.Actor[] actors7 = new adams.flow.core.Actor[2];
 
       // Flow.Trigger.SourceReset
       adams.flow.control.SourceReset sourcereset8 = new adams.flow.control.SourceReset();
       argOption = (AbstractArgumentOption) sourcereset8.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] actors9 = new adams.flow.core.AbstractActor[1];
+      adams.flow.core.Actor[] actors9 = new adams.flow.core.Actor[1];
 
       // Flow.Trigger.SourceReset.RandomNumberGenerator
       adams.flow.source.RandomNumberGenerator randomnumbergenerator10 = new adams.flow.source.RandomNumberGenerator();

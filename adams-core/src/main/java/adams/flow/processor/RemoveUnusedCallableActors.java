@@ -15,19 +15,19 @@
 
 /**
  * RemoveUnusedCallableActors.java
- * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.processor;
 
-import java.util.HashSet;
-
-import adams.flow.core.AbstractActor;
 import adams.flow.core.AbstractCallableActor;
+import adams.flow.core.Actor;
 import adams.flow.core.ActorHandler;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.CallableActorHelper;
 import adams.flow.core.MutableActorHandler;
 import adams.flow.standalone.CallableActors;
+
+import java.util.HashSet;
 
 /**
  <!-- globalinfo-start -->
@@ -85,7 +85,7 @@ public class RemoveUnusedCallableActors
    * @param actor	the actor to search below
    * @return		the full names
    */
-  protected void locateCallableActors(AbstractActor actor, HashSet<String> fullNames) {
+  protected void locateCallableActors(Actor actor, HashSet<String> fullNames) {
     ActorHandler	handler;
     int			i;
 
@@ -108,11 +108,11 @@ public class RemoveUnusedCallableActors
    * @param actor	the actor to search below
    * @return		the full names of the callable actors
    */
-  protected void locateCallableActorReferences(AbstractActor actor, HashSet<String> fullNames) {
+  protected void locateCallableActorReferences(Actor actor, HashSet<String> fullNames) {
     ActorHandler		handler;
     int				i;
     AbstractCallableActor	reference;
-    AbstractActor		callable;
+    Actor			callable;
 
     if (actor instanceof AbstractCallableActor) {
       reference = (AbstractCallableActor) actor;
@@ -133,10 +133,10 @@ public class RemoveUnusedCallableActors
    * @param actor	the actor process
    * @param unused	the unused callable actors to remove
    */
-  protected void removeUnused(AbstractActor actor, HashSet<String> unused) {
+  protected void removeUnused(Actor actor, HashSet<String> unused) {
     CallableActors		callableActors;
     HashSet<CallableActors>	parents;
-    AbstractActor		callable;
+    Actor			callable;
 
     m_Modified = true;
 
@@ -169,7 +169,7 @@ public class RemoveUnusedCallableActors
    * @return		the processed actor
    */
   @Override
-  protected void processActor(AbstractActor actor) {
+  protected void processActor(Actor actor) {
     HashSet<String>	callable;
     HashSet<String>	referenced;
     HashSet<String>	unused;

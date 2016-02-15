@@ -15,7 +15,7 @@
 
 /**
  * AbstractModifyingInteractiveProcessor.java
- * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.processor;
 
@@ -25,7 +25,7 @@ import adams.core.option.BooleanOption;
 import adams.core.option.ClassOption;
 import adams.core.option.OptionTraversalPath;
 import adams.core.option.OptionTraverser;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 
 /**
  * Ancestor for processors that interact with the user and potentially
@@ -101,7 +101,7 @@ public abstract class AbstractModifyingInteractiveProcessor
    * @see		ModifyingProcessor
    */
   @Override
-  protected void processActor(AbstractActor actor) {
+  protected void processActor(Actor actor) {
     m_ContinueInteraction = true;
     
     actor.getOptionManager().traverse(new OptionTraverser() {

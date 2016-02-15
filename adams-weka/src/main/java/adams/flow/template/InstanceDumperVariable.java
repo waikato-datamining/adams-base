@@ -15,14 +15,14 @@
 
 /**
  * InstanceDumperVariable.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.template;
 
 import adams.core.VariableName;
 import adams.core.base.BaseRegExp;
 import adams.flow.control.Trigger;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.core.ActorUtils;
 import adams.flow.source.Variable;
 import adams.flow.transformer.SetVariable;
@@ -129,7 +129,7 @@ public class InstanceDumperVariable
    * @return 		the generated acto
    */
   @Override
-  protected AbstractActor doGenerate() {
+  protected Actor doGenerate() {
     Trigger					result;
     Variable					var;
     adams.flow.transformer.StringReplace	replace;

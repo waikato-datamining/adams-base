@@ -15,7 +15,7 @@
 
 /*
  * FlowRunner.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow;
@@ -37,7 +37,6 @@ import adams.core.option.ArrayConsumer;
 import adams.core.option.OptionUtils;
 import adams.env.Environment;
 import adams.flow.control.Flow;
-import adams.flow.core.AbstractActor;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorUtils;
 import adams.gui.application.AbstractInitialization;
@@ -130,10 +129,10 @@ public class FlowRunner
   protected boolean m_CleanUp;
 
   /** the actor to execute. */
-  protected AbstractActor m_Actor;
+  protected Actor m_Actor;
 
   /** the last actor that was executed. */
-  protected AbstractActor m_LastActor;
+  protected Actor m_LastActor;
 
   /** whether the flow was interrupted by the user. */
   protected boolean m_InterruptedByUser;
@@ -389,7 +388,7 @@ public class FlowRunner
    *
    * @return		the actor or null if no actor has been run yet
    */
-  public AbstractActor getLastActor() {
+  public Actor getLastActor() {
     return m_LastActor;
   }
 

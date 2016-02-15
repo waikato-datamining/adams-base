@@ -26,7 +26,7 @@ import adams.core.option.NestedProducer;
 import adams.core.option.OptionProducer;
 import adams.flow.control.Flow;
 import adams.flow.control.Flow.ErrorHandling;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.test.AbstractDatabaseTestCase;
 import adams.test.AbstractTestHelper;
 import adams.test.TestHelper;
@@ -80,7 +80,7 @@ public abstract class AbstractActorProcessorTestCase
   protected static boolean VERBOSE = false;
 
   /** The actor to be used. */
-  protected AbstractActor m_Actor;
+  protected Actor m_Actor;
 
   /**
    * Constructs the <code>AbstractActorProcessorTest</code>. Called by subclasses.
@@ -108,7 +108,7 @@ public abstract class AbstractActorProcessorTestCase
 
   /**
    * Dumps the actor, in case of an error.
-   * 
+   *
    * @throws Throwable		any test failure
    */
   @Override
@@ -132,9 +132,9 @@ public abstract class AbstractActorProcessorTestCase
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
-  public abstract AbstractActor getActor();
+  public abstract Actor getActor();
 
   /**
    * Returns the setups to use in the regression test.
@@ -158,9 +158,9 @@ public abstract class AbstractActorProcessorTestCase
   public void testRegression() {
     int				i;
     AbstractActorProcessor[]	setups;
-    AbstractActor		input;
-    AbstractActor		inputBak;
-    AbstractActor		output;
+    Actor			input;
+    Actor			inputBak;
+    Actor			output;
     File[]			files;
     String			filenameIn;
     String			filenameOut;
@@ -229,7 +229,7 @@ public abstract class AbstractActorProcessorTestCase
    * @param producer	the option producer to use
    * @return		the actor in the specified format dump
    */
-  protected String dumpActor(AbstractActor actor, OptionProducer producer) {
+  protected String dumpActor(Actor actor, OptionProducer producer) {
     String	result;
 
     producer.produce(actor);
@@ -248,7 +248,7 @@ public abstract class AbstractActorProcessorTestCase
    * @return		true if successfully dumped
    * @see		#PROPERTY_FORMAT
    */
-  protected boolean dumpActor(AbstractActor actor, String filename, boolean append) {
+  protected boolean dumpActor(Actor actor, String filename, boolean append) {
     boolean		result;
     String		content;
     String		format;

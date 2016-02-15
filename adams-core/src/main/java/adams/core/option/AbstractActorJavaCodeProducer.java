@@ -15,12 +15,12 @@
 
 /**
  * AbstractActorJavaCodeProducer.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
 import adams.core.io.FileFormatHandler;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 
 /**
  * Ancestor for producers that generate Java code from actors.
@@ -77,9 +77,9 @@ public abstract class AbstractActorJavaCodeProducer
    */
   @Override
   protected void preProduce() {
-    if (!(m_Input instanceof AbstractActor))
+    if (!(m_Input instanceof Actor))
       throw new IllegalArgumentException(
-	  "Only " + AbstractActor.class.getName() + " objects (and derived ones) can be processed, provided: "
+	  "Only " + Actor.class.getName() + " objects (and derived ones) can be processed, provided: "
 	  + m_Input.getClass().getName());
 
     super.preProduce();

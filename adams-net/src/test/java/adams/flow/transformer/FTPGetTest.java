@@ -27,7 +27,7 @@ import adams.core.base.BaseRegExp;
 import adams.env.Environment;
 import adams.flow.AbstractOnlineFlowTest;
 import adams.flow.control.Flow;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.source.FTPLister;
 import adams.flow.standalone.FTPConnection;
 import adams.test.TmpDirectory;
@@ -53,9 +53,9 @@ public class FTPGetTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
-  public AbstractActor getActor() {
+  public Actor getActor() {
     FTPConnection fc = new FTPConnection();
     fc.setHost("ftp.suse.com");
     fc.setUser("anonymous");
@@ -72,7 +72,7 @@ public class FTPGetTest
     fg.setOutputDirectory(new TmpDirectory());
 
     Flow flow = new Flow();
-    flow.setActors(new AbstractActor[]{
+    flow.setActors(new Actor[]{
 	fc,
 	fl,
 	fg

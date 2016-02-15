@@ -26,7 +26,7 @@ import adams.core.option.AbstractArgumentOption;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.test.TmpFile;
 
 /**
@@ -97,17 +97,17 @@ public class MatchReportFieldsTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
   @Override
-  public AbstractActor getActor() {
+  public Actor getActor() {
     AbstractArgumentOption    argOption;
     
     Flow flow = new Flow();
     
     try {
       argOption = (AbstractArgumentOption) flow.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp1 = new adams.flow.core.AbstractActor[5];
+      adams.flow.core.Actor[] tmp1 = new adams.flow.core.Actor[5];
       adams.flow.source.FileSupplier tmp2 = new adams.flow.source.FileSupplier();
       argOption = (AbstractArgumentOption) tmp2.getOptionManager().findByProperty("files");
       tmp2.setFiles(new adams.core.io.PlaceholderFile[]{new TmpFile("bolts.arff")});
@@ -128,7 +128,7 @@ public class MatchReportFieldsTest
       tmp1[3] = tmp8;
       adams.flow.control.ConditionalTee tmp10 = new adams.flow.control.ConditionalTee();
       argOption = (AbstractArgumentOption) tmp10.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp11 = new adams.flow.core.AbstractActor[3];
+      adams.flow.core.Actor[] tmp11 = new adams.flow.core.Actor[3];
       adams.flow.transformer.Convert tmp12 = new adams.flow.transformer.Convert();
       argOption = (AbstractArgumentOption) tmp12.getOptionManager().findByProperty("conversion");
       adams.data.conversion.WekaInstanceToAdamsInstance tmp14 = new adams.data.conversion.WekaInstanceToAdamsInstance();

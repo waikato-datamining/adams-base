@@ -15,7 +15,7 @@
 
 /**
  * AbstractActorTemplate.java
- * Copyright (C) 2010-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.template;
 
@@ -25,10 +25,10 @@ import adams.core.option.AbstractOptionConsumer;
 import adams.core.option.AbstractOptionHandler;
 import adams.core.option.ArrayConsumer;
 import adams.core.option.OptionUtils;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 
 /**
- * Ancestor for generators that use templates for generating AbstractActor
+ * Ancestor for generators that use templates for generating Actor
  * objects.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -103,7 +103,7 @@ public abstract class AbstractActorTemplate
    *
    * @return 		the generated acto
    */
-  protected abstract AbstractActor doGenerate();
+  protected abstract Actor doGenerate();
 
   /**
    * Hook before generating the actor.
@@ -113,7 +113,7 @@ public abstract class AbstractActorTemplate
    * @param actor	the actor to post-process
    * @return		the processed actor
    */
-  protected AbstractActor postGenerate(AbstractActor actor) {
+  protected Actor postGenerate(Actor actor) {
     if (m_Name.length() > 0)
       actor.setName(m_Name);
 
@@ -125,8 +125,8 @@ public abstract class AbstractActorTemplate
    *
    * @return		the actor
    */
-  public AbstractActor generate() {
-    AbstractActor	result;
+  public Actor generate() {
+    Actor	result;
 
     getLogger().fine("preGenerate");
     preGenerate();

@@ -1,45 +1,11 @@
 # Project: adams
-# Date: 2015-06-22 13:31:56
+# Date: 2016-02-15 14:46:17
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	This flows loads both sheets from the spreadsheet\nand displays them together in a DisplayPanelManager.\nNB: You will have to adapt the path to the sample file.
-	-actor
-		adams.flow.source.FileSupplier
-			-file
-			${EXAMPLE_FLOWS}/data/sample.ods
-	-actor
-		adams.flow.transformer.SpreadSheetFileReader
-			-reader
-				adams.data.io.input.ODFSpreadSheetReader
-					-data-row-type
-						adams.data.spreadsheet.DenseDataRow
-					-spreadsheet-type
-						adams.data.spreadsheet.SpreadSheet
-					-sheets
-					1-2
-	-actor
-		adams.flow.control.Tee
-			-name
-			get sheet name
-			-tee
-				adams.flow.transformer.SpreadSheetInfo
-					-type
-					NAME
-			-tee
-				adams.flow.transformer.SetVariable
-					-var-name
-					sheet
-	-actor
-		adams.flow.sink.DisplayPanelManager
-			-provider
-				adams.flow.sink.SpreadSheetDisplay
-					-writer
-						adams.data.io.output.NullWriter
-			-entry-name-variable
-			sheet
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "This flows loads both sheets from the spreadsheet\\nand displays them together in a DisplayPanelManager.\\nNB: You will have to adapt the path to the sample file." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/sample.ods
+ adams.flow.transformer.SpreadSheetFileReader -reader "adams.data.io.input.ODFSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.SpreadSheet -sheets 1-2"
+ adams.flow.control.Tee -name "get sheet name"
+  adams.flow.transformer.SpreadSheetInfo -type NAME
+  adams.flow.transformer.SetVariable -var-name sheet
+ adams.flow.sink.DisplayPanelManager -provider "adams.flow.sink.SpreadSheetDisplay -writer adams.data.io.output.NullWriter" -entry-name-variable sheet

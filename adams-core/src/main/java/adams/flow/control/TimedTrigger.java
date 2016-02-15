@@ -15,14 +15,14 @@
 
 /**
  * TimedTrigger.java
- * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.control;
 
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
 import adams.flow.container.TimingContainer;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.CallableActorHelper;
 import adams.flow.core.CallableActorReference;
@@ -95,7 +95,7 @@ import java.util.Hashtable;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-tee &lt;adams.flow.core.AbstractActor&gt; [-tee ...] (property: actors)
+ * <pre>-tee &lt;adams.flow.core.Actor&gt; [-tee ...] (property: actors)
  * &nbsp;&nbsp;&nbsp;The actors to siphon-off the tokens to.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
@@ -149,7 +149,7 @@ public class TimedTrigger
   protected CallableActorReference m_CallableName;
 
   /** the callable actor. */
-  protected AbstractActor m_CallableActor;
+  protected Actor m_CallableActor;
 
   /** whether the callable actor has been configured. */
   protected boolean m_Configured;
@@ -373,7 +373,7 @@ public class TimedTrigger
    *
    * @return		the callable actor or null if not found
    */
-  protected AbstractActor findCallableActor() {
+  protected Actor findCallableActor() {
     return m_Helper.findCallableActorRecursive(this, getCallableName());
   }
 
@@ -393,7 +393,7 @@ public class TimedTrigger
    * @return		the actor, can be null
    */
   @Override
-  public AbstractActor getCallableActor() {
+  public Actor getCallableActor() {
     return m_CallableActor;
   }
 
@@ -436,7 +436,7 @@ public class TimedTrigger
     super.restoreState(state);
 
     if (state.containsKey(BACKUP_CALLABLEACTOR)) {
-      m_CallableActor = (AbstractActor) state.get(BACKUP_CALLABLEACTOR);
+      m_CallableActor = (Actor) state.get(BACKUP_CALLABLEACTOR);
       state.remove(BACKUP_CALLABLEACTOR);
     }
 

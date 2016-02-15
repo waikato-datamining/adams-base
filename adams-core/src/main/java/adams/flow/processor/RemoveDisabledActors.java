@@ -15,11 +15,11 @@
 
 /**
  * RemoveDisabledActors.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.processor;
 
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.core.ActorHandler;
 import adams.flow.core.MutableActorHandler;
 
@@ -69,9 +69,8 @@ public class RemoveDisabledActors
    * Performs the actual processing.
    *
    * @param actor	the actor to process
-   * @return		the processed actor
    */
-  protected void processActor(AbstractActor actor) {
+  protected void processActor(Actor actor) {
     ActorHandler	handler;
     MutableActorHandler	mutable;
     int			i;

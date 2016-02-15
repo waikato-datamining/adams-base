@@ -15,7 +15,7 @@
 
 /**
  * SimplePlot.java
- * Copyright (C) 2015 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.core.spreadsheettable;
@@ -24,7 +24,7 @@ import adams.core.option.AbstractOptionHandler;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.control.Flow;
 import adams.flow.control.StorageName;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.source.StorageValue;
 import adams.flow.transformer.ArrayToSequence;
 import adams.flow.transformer.MakePlotContainer;
@@ -112,7 +112,7 @@ public class SimplePlot
     else
       setup = new GenericObjectEditorDialog(GUIHelper.getParentFrame(table), true);
     setup.setDefaultCloseOperation(HistogramFactory.SetupDialog.DISPOSE_ON_CLOSE);
-    setup.getGOEEditor().setClassType(AbstractActor.class);
+    setup.getGOEEditor().setClassType(Actor.class);
     setup.getGOEEditor().setCanChangeClassInDialog(false);
     last = (adams.flow.sink.SimplePlot) table.getLastSetup(getClass(), true, !isColumn);
     if (last == null)

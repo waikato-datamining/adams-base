@@ -15,7 +15,7 @@
 
 /*
  * TriggerOnceTest.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -25,7 +25,7 @@ import junit.framework.TestSuite;
 import adams.core.option.AbstractArgumentOption;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.test.TmpFile;
 
 /**
@@ -94,17 +94,17 @@ public class TriggerOnceTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
   @Override
-  public AbstractActor getActor() {
+  public Actor getActor() {
     AbstractArgumentOption    argOption;
     
     Flow flow = new Flow();
     
     try {
       argOption = (AbstractArgumentOption) flow.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] abstractactor1 = new adams.flow.core.AbstractActor[3];
+      adams.flow.core.Actor[] abstractactor1 = new adams.flow.core.Actor[3];
 
       // Flow.ForLoop
       adams.flow.source.ForLoop forloop2 = new adams.flow.source.ForLoop();
@@ -120,7 +120,7 @@ public class TriggerOnceTest
       // Flow.TriggerOnce
       adams.flow.control.TriggerOnce triggeronce5 = new adams.flow.control.TriggerOnce();
       argOption = (AbstractArgumentOption) triggeronce5.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] abstractactor6 = new adams.flow.core.AbstractActor[2];
+      adams.flow.core.Actor[] abstractactor6 = new adams.flow.core.Actor[2];
 
       // Flow.TriggerOnce.Variable
       adams.flow.source.Variable variable7 = new adams.flow.source.Variable();

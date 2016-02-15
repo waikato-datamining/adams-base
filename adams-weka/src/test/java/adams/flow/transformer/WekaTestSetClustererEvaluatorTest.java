@@ -27,7 +27,7 @@ import adams.core.option.OptionUtils;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.test.TmpFile;
 
 /**
@@ -100,22 +100,22 @@ public class WekaTestSetClustererEvaluatorTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
   @Override
-  public AbstractActor getActor() {
+  public Actor getActor() {
     AbstractArgumentOption    argOption;
     
     Flow flow = new Flow();
     
     try {
       argOption = (AbstractArgumentOption) flow.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] abstractactor1 = new adams.flow.core.AbstractActor[8];
+      adams.flow.core.Actor[] abstractactor1 = new adams.flow.core.Actor[8];
 
       // Flow.CallableActors
       adams.flow.standalone.CallableActors globalactors2 = new adams.flow.standalone.CallableActors();
       argOption = (AbstractArgumentOption) globalactors2.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] abstractactor3 = new adams.flow.core.AbstractActor[2];
+      adams.flow.core.Actor[] abstractactor3 = new adams.flow.core.Actor[2];
 
       // Flow.CallableActors.WekaClustererSetup
       adams.flow.source.WekaClustererSetup wekaclusterersetup4 = new adams.flow.source.WekaClustererSetup();
@@ -132,7 +132,7 @@ public class WekaTestSetClustererEvaluatorTest
       sequencesource7.setName((java.lang.String) argOption.valueOf("Testset"));
 
       argOption = (AbstractArgumentOption) sequencesource7.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] abstractactor9 = new adams.flow.core.AbstractActor[3];
+      adams.flow.core.Actor[] abstractactor9 = new adams.flow.core.Actor[3];
 
       // Flow.CallableActors.Testset.FileSupplier
       adams.flow.source.FileSupplier filesupplier10 = new adams.flow.source.FileSupplier();

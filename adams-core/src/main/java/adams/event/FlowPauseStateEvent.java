@@ -15,14 +15,14 @@
 
 /*
  * FlowPauseStateEvent.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.event;
 
-import java.util.EventObject;
+import adams.flow.core.Actor;
 
-import adams.flow.core.AbstractActor;
+import java.util.EventObject;
 
 /**
  * Event that gets sent by a Flow when the execution of a flow has 
@@ -59,7 +59,7 @@ public class FlowPauseStateEvent
    * @param source	the actor that triggered the event
    * @param type	the type of event
    */
-  public FlowPauseStateEvent(AbstractActor source, Type type) {
+  public FlowPauseStateEvent(Actor source, Type type) {
     super(source);
     
     m_Type = type;
@@ -70,8 +70,8 @@ public class FlowPauseStateEvent
    * 
    * @return		the actor
    */
-  public AbstractActor getActor() {
-    return (AbstractActor) getSource();
+  public Actor getActor() {
+    return (Actor) getSource();
   }
   
   /**

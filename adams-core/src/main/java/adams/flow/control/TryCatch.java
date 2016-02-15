@@ -15,14 +15,14 @@
 
 /**
  * TryCatch.java
- * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.control;
 
 import adams.core.ClassCrossReference;
 import adams.core.QuickInfoHelper;
 import adams.core.VariableName;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.core.ActorExecution;
 import adams.flow.core.ActorHandler;
 import adams.flow.core.ActorHandlerInfo;
@@ -84,12 +84,12 @@ import java.util.Hashtable;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-try &lt;adams.flow.core.AbstractActor&gt; (property: try)
+ * <pre>-try &lt;adams.flow.core.Actor&gt; (property: try)
  * &nbsp;&nbsp;&nbsp;The 'try' branch which is attempted to be executed.
  * &nbsp;&nbsp;&nbsp;default: adams.flow.control.SubProcess -name try
  * </pre>
  * 
- * <pre>-catch &lt;adams.flow.core.AbstractActor&gt; (property: catch)
+ * <pre>-catch &lt;adams.flow.core.Actor&gt; (property: catch)
  * &nbsp;&nbsp;&nbsp;The 'catch' branch which gets executed if the 'try' branch fails.
  * &nbsp;&nbsp;&nbsp;default: adams.flow.control.SubProcess -name catch
  * </pre>
@@ -123,10 +123,10 @@ public class TryCatch
   private static final long serialVersionUID = -9029393233616734995L;
 
   /** the try branch. */
-  protected AbstractActor m_Try;
+  protected Actor m_Try;
 
   /** the catch branch. */
-  protected AbstractActor m_Catch;
+  protected Actor m_Catch;
 
   /** the key for storing the input token in the backup. */
   public final static String BACKUP_INPUT = "input";
@@ -233,7 +233,7 @@ public class TryCatch
    *
    * @return		the default branch
    */
-  protected AbstractActor getDefaultTry() {
+  protected Actor getDefaultTry() {
     Sequence	result;
 
     result = new SubProcess();
@@ -247,7 +247,7 @@ public class TryCatch
    *
    * @param value 	the try branch
    */
-  public void setTry(AbstractActor value) {
+  public void setTry(Actor value) {
     if (ActorUtils.isTransformer(value)) {
       m_Try = value;
       m_Try.setName(NAME_TRY);
@@ -264,7 +264,7 @@ public class TryCatch
    *
    * @return 		the try branch
    */
-  public AbstractActor getTry() {
+  public Actor getTry() {
     return m_Try;
   }
 
@@ -283,7 +283,7 @@ public class TryCatch
    *
    * @return		the default branch
    */
-  protected AbstractActor getDefaultCatch() {
+  protected Actor getDefaultCatch() {
     Sequence	result;
 
     result = new SubProcess();
@@ -297,7 +297,7 @@ public class TryCatch
    *
    * @param value 	the catch branch
    */
-  public void setCatch(AbstractActor value) {
+  public void setCatch(Actor value) {
     if (ActorUtils.isSource(value) || ActorUtils.isTransformer(value)) {
       m_Catch = value;
       m_Catch.setName(NAME_CATCH);
@@ -314,7 +314,7 @@ public class TryCatch
    *
    * @return 		the try branch
    */
-  public AbstractActor getCatch() {
+  public Actor getCatch() {
     return m_Catch;
   }
 
@@ -492,7 +492,7 @@ public class TryCatch
    * @return		the actor
    */
   @Override
-  public AbstractActor get(int index) {
+  public Actor get(int index) {
     if (index == 0)
       return m_Try;
     else if (index == 1)
@@ -508,7 +508,7 @@ public class TryCatch
    * @param actor	the actor to set at this position
    */
   @Override
-  public void set(int index, AbstractActor actor) {
+  public void set(int index, Actor actor) {
     if (index == 0)
       setTry(actor);
     else if (index == 1)
@@ -569,7 +569,7 @@ public class TryCatch
    * @return		always null
    */
   @Override
-  public String handleError(AbstractActor source, String type, String msg) {
+  public String handleError(Actor source, String type, String msg) {
     m_ErrorOccurred = source.getFullName() + "/" + type + ": " + msg;
     // stop further processing of tokens in m_Try
     if (m_Try instanceof ActorHandler)

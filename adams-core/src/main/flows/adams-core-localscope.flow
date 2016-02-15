@@ -1,185 +1,23 @@
 # Project: adams
-# Date: 2014-01-23 15:23:29
+# Date: 2016-02-15 11:32:06
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	This flow demonstrates how to \"localize\" the scope\nof variables (and internal storage) by using the\n\"LocalScope\" control actor.\nThe flow below draws two bell curves concurrently, \nboth using the same variable names, but one uses \na mean of -2.0 and the other of 2.0.
-	-actor
-		adams.flow.source.Start
-	-actor
-		adams.flow.control.Branch
-			-branch
-				adams.flow.control.LocalScopeTrigger
-					-name
-					LocalScopeTrigger (mean -2.0)
-					-tee
-						adams.flow.standalone.SetVariable
-							-var-name
-							mean
-							-var-value
-							-2.0
-					-tee
-						adams.flow.standalone.SetVariable
-							-name
-							SetVariable-1
-							-var-name
-							stdev
-							-var-value
-							1.0
-					-tee
-						adams.flow.source.ForLoop
-							-lower
-							-200
-							-upper
-							200
-					-tee
-						adams.flow.transformer.MathExpression
-							-expression
-							X/33
-					-tee
-						adams.flow.transformer.MathExpression
-							-name
-							MathExpression-1
-							-expression
-							1/sqrt(2*PI*pow(@{stdev},2))*exp(-1*pow(X-@{mean},2)/(2*@{stdev}))
-							-output-value-pair
-							true
-					-tee
-						adams.flow.transformer.MakePlotContainer
-							-plot-name
-							@{mean}
-					-tee
-						adams.flow.sink.SequencePlotter
-							-writer
-								adams.gui.print.NullWriter
-							-paintlet
-								adams.gui.visualization.sequence.LinePaintlet
-							-overlay-paintlet
-								adams.gui.visualization.sequence.CirclePaintlet
-							-marker-paintlet
-								adams.flow.sink.sequenceplotter.NoMarkers
-							-error-paintlet
-								adams.flow.sink.sequenceplotter.NoErrorPaintlet
-							-color-provider
-								adams.gui.visualization.core.DefaultColorProvider
-							-overlay-color-provider
-								adams.gui.visualization.core.DefaultColorProvider
-							-title
-							Bell curve
-							-axis-x
-								adams.gui.visualization.core.AxisPanelOptions
-									-label
-									x
-									-tick-generator
-										adams.gui.visualization.core.axis.FancyTickGenerator
-									-width
-									40
-									-custom-format
-									0.000
-							-axis-y
-								adams.gui.visualization.core.AxisPanelOptions
-									-label
-									y
-									-tick-generator
-										adams.gui.visualization.core.axis.FancyTickGenerator
-									-width
-									40
-									-custom-format
-									0.0
-							-plot-updater
-								adams.flow.sink.sequenceplotter.SimplePlotUpdater
-									-update-interval
-									10
-							-post-processor
-								adams.flow.sink.sequenceplotter.PassThrough
-			-branch
-				adams.flow.control.LocalScopeTrigger
-					-name
-					LocalScopeTrigger (mean 2.0)
-					-tee
-						adams.flow.standalone.SetVariable
-							-var-name
-							mean
-							-var-value
-							2.0
-					-tee
-						adams.flow.standalone.SetVariable
-							-name
-							SetVariable-1
-							-var-name
-							stdev
-							-var-value
-							1.0
-					-tee
-						adams.flow.source.ForLoop
-							-lower
-							-200
-							-upper
-							200
-					-tee
-						adams.flow.transformer.MathExpression
-							-expression
-							X/33
-					-tee
-						adams.flow.transformer.MathExpression
-							-name
-							MathExpression-1
-							-expression
-							1/sqrt(2*PI*pow(@{stdev},2))*exp(-1*pow(X-@{mean},2)/(2*@{stdev}))
-							-output-value-pair
-							true
-					-tee
-						adams.flow.transformer.MakePlotContainer
-							-plot-name
-							@{mean}
-					-tee
-						adams.flow.sink.SequencePlotter
-							-x
-							-3
-							-writer
-								adams.gui.print.NullWriter
-							-paintlet
-								adams.gui.visualization.sequence.LinePaintlet
-							-overlay-paintlet
-								adams.gui.visualization.sequence.CirclePaintlet
-							-marker-paintlet
-								adams.flow.sink.sequenceplotter.NoMarkers
-							-error-paintlet
-								adams.flow.sink.sequenceplotter.NoErrorPaintlet
-							-color-provider
-								adams.gui.visualization.core.DefaultColorProvider
-							-overlay-color-provider
-								adams.gui.visualization.core.DefaultColorProvider
-							-title
-							Bell curve
-							-axis-x
-								adams.gui.visualization.core.AxisPanelOptions
-									-label
-									x
-									-tick-generator
-										adams.gui.visualization.core.axis.FancyTickGenerator
-									-width
-									40
-									-custom-format
-									0.000
-							-axis-y
-								adams.gui.visualization.core.AxisPanelOptions
-									-label
-									y
-									-tick-generator
-										adams.gui.visualization.core.axis.FancyTickGenerator
-									-width
-									40
-									-custom-format
-									0.0
-							-plot-updater
-								adams.flow.sink.sequenceplotter.SimplePlotUpdater
-									-update-interval
-									10
-							-post-processor
-								adams.flow.sink.sequenceplotter.PassThrough
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "This flow demonstrates how to \\\"localize\\\" the scope\\nof variables (and internal storage) by using the\\n\\\"LocalScope\\\" control actor.\\nThe flow below draws two bell curves concurrently, \\nboth using the same variable names, but one uses \\na mean of -2.0 and the other of 2.0." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.source.Start
+ adams.flow.control.Branch
+  adams.flow.control.LocalScopeTrigger -name "LocalScopeTrigger (mean -2.0)"
+   adams.flow.standalone.SetVariable -var-name mean -var-value -2.0
+   adams.flow.standalone.SetVariable -name SetVariable-1 -var-name stdev -var-value 1.0
+   adams.flow.source.ForLoop -lower -200 -upper 200
+   adams.flow.transformer.MathExpression -expression X/33
+   adams.flow.transformer.MathExpression -name MathExpression-1 -expression 1/sqrt(2*PI*pow(@{stdev},2))*exp(-1*pow(X-@{mean},2)/(2*@{stdev})) -output-value-pair true
+   adams.flow.transformer.MakePlotContainer -plot-name @{mean}
+   adams.flow.sink.SequencePlotter -writer adams.gui.print.NullWriter -paintlet adams.gui.visualization.sequence.LinePaintlet -overlay-paintlet adams.gui.visualization.sequence.CirclePaintlet -marker-paintlet adams.flow.sink.sequenceplotter.NoMarkers -error-paintlet adams.flow.sink.sequenceplotter.NoErrorPaintlet -mouse-click-action adams.flow.sink.sequenceplotter.NullClickAction -color-provider adams.gui.visualization.core.DefaultColorProvider -overlay-color-provider adams.gui.visualization.core.DefaultColorProvider -title "Bell curve" -axis-x "adams.gui.visualization.core.AxisPanelOptions -label x -tick-generator adams.gui.visualization.core.axis.FancyTickGenerator -width 40 -custom-format 0.000" -axis-y "adams.gui.visualization.core.AxisPanelOptions -label y -tick-generator adams.gui.visualization.core.axis.FancyTickGenerator -width 40 -custom-format 0.0" -plot-updater "adams.flow.sink.sequenceplotter.SimplePlotUpdater -update-interval 10" -post-processor adams.flow.sink.sequenceplotter.PassThrough
+  adams.flow.control.LocalScopeTrigger -name "LocalScopeTrigger (mean 2.0)"
+   adams.flow.standalone.SetVariable -var-name mean -var-value 2.0
+   adams.flow.standalone.SetVariable -name SetVariable-1 -var-name stdev -var-value 1.0
+   adams.flow.source.ForLoop -lower -200 -upper 200
+   adams.flow.transformer.MathExpression -expression X/33
+   adams.flow.transformer.MathExpression -name MathExpression-1 -expression 1/sqrt(2*PI*pow(@{stdev},2))*exp(-1*pow(X-@{mean},2)/(2*@{stdev})) -output-value-pair true
+   adams.flow.transformer.MakePlotContainer -plot-name @{mean}
+   adams.flow.sink.SequencePlotter -x -3 -writer adams.gui.print.NullWriter -paintlet adams.gui.visualization.sequence.LinePaintlet -overlay-paintlet adams.gui.visualization.sequence.CirclePaintlet -marker-paintlet adams.flow.sink.sequenceplotter.NoMarkers -error-paintlet adams.flow.sink.sequenceplotter.NoErrorPaintlet -mouse-click-action adams.flow.sink.sequenceplotter.NullClickAction -color-provider adams.gui.visualization.core.DefaultColorProvider -overlay-color-provider adams.gui.visualization.core.DefaultColorProvider -title "Bell curve" -axis-x "adams.gui.visualization.core.AxisPanelOptions -label x -tick-generator adams.gui.visualization.core.axis.FancyTickGenerator -width 40 -custom-format 0.000" -axis-y "adams.gui.visualization.core.AxisPanelOptions -label y -tick-generator adams.gui.visualization.core.axis.FancyTickGenerator -width 40 -custom-format 0.0" -plot-updater "adams.flow.sink.sequenceplotter.SimplePlotUpdater -update-interval 10" -post-processor adams.flow.sink.sequenceplotter.PassThrough

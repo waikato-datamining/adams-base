@@ -15,11 +15,10 @@
 
 /**
  * AbstractStandaloneMutableGroup.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.standalone;
 
-import adams.flow.core.AbstractActor;
 import adams.flow.core.Actor;
 
 /**
@@ -41,7 +40,7 @@ public abstract class AbstractStandaloneMutableGroup<T extends Actor>
    * @param actor	the actor to insert
    */
   @Override
-  public void add(AbstractActor actor) {
+  public void add(Actor actor) {
     String	msg;
     
     msg = checkActor(actor);
@@ -62,7 +61,7 @@ public abstract class AbstractStandaloneMutableGroup<T extends Actor>
    * @param actor	the actor to insert
    */
   @Override
-  public void add(int index, AbstractActor actor) {
+  public void add(int index, Actor actor) {
     String	msg;
     
     msg = checkActor(actor, index);
@@ -83,8 +82,8 @@ public abstract class AbstractStandaloneMutableGroup<T extends Actor>
    * @return		the removed actor
    */
   @Override
-  public AbstractActor remove(int index) {
-    return (AbstractActor) m_Actors.remove(index);
+  public Actor remove(int index) {
+    return m_Actors.remove(index);
   }
 
   /**

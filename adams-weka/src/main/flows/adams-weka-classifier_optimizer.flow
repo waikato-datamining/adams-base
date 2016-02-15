@@ -1,118 +1,16 @@
 # Project: adams
-# Date: 2014-01-23 15:48:22
+# Date: 2016-02-15 15:20:11
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	This flow loads a number of datasets and uses GridSearch\nto find the optimal setup of a FilteredClassifier (using J48) \nfor each of the datasets. The setups, prefixed by the dataset \nfile name, are displayed.
-	-actor
-		adams.flow.source.FileSupplier
-			-file
-			${EXAMPLE_FLOWS}/data/anneal.arff
-			-file
-			${EXAMPLE_FLOWS}/data/iris.arff
-			-file
-			${EXAMPLE_FLOWS}/data/labor.arff
-	-actor
-		adams.flow.control.Tee
-			-tee
-				adams.flow.transformer.StringReplace
-					-find
-					.*\\/
-					-type
-					ALL
-			-tee
-				adams.flow.transformer.SetVariable
-					-var-name
-					dataset
-	-actor
-		adams.flow.transformer.WekaFileReader
-			-loader
-				weka.core.converters.ArffLoader
-	-actor
-		adams.flow.transformer.WekaClassSelector
-	-actor
-		adams.flow.transformer.WekaClassifierOptimizer
-			-optimizer
-				weka.classifiers.meta.GridSearch
-					-E
-					ACC
-					-y-property
-					minNumObj
-					-y-min
-					2.0
-					-y-max
-					4.0
-					-y-step
-					1.0
-					-y-base
-					10.0
-					-y-expression
-					I
-					-x-property
-					confidenceFactor
-					-x-min
-					0.1
-					-x-max
-					0.5
-					-x-step
-					0.1
-					-x-base
-					10.0
-					-x-expression
-					I
-					-sample-size
-					100.0
-					-traversal
-					COLUMN-WISE
-					-log-file
-					/home/fracpete/development/projects/adams
-					-num-slots
-					1
-					-S
-					1
-					-W
-					weka.classifiers.trees.J48
-					--
-					-C
-					0.25
-					-M
-					2
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-	-actor
-		adams.flow.transformer.Convert
-			-conversion
-				adams.data.conversion.AnyToCommandline
-	-actor
-		adams.flow.transformer.StringReplace
-			-name
-			StringReplace (separator)
-			-find
-			^
-			-replace
-			: 
-	-actor
-		adams.flow.transformer.StringReplace
-			-name
-			StringReplace (dataset)
-			-find
-			^
-			-replace
-			@{dataset}
-	-actor
-		adams.flow.sink.Display
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "This flow loads a number of datasets and uses GridSearch\\nto find the optimal setup of a FilteredClassifier (using J48) \\nfor each of the datasets. The setups, prefixed by the dataset \\nfile name, are displayed." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/anneal.arff -file ${EXAMPLE_FLOWS}/data/iris.arff -file ${EXAMPLE_FLOWS}/data/labor.arff
+ adams.flow.control.Tee
+  adams.flow.transformer.StringReplace -find .*\\/ -type ALL
+  adams.flow.transformer.SetVariable -var-name dataset
+ adams.flow.transformer.WekaFileReader -loader weka.core.converters.ArffLoader
+ adams.flow.transformer.WekaClassSelector
+ adams.flow.transformer.WekaClassifierOptimizer -optimizer "weka.classifiers.meta.GridSearch -E ACC -y-property minNumObj -y-min 2.0 -y-max 4.0 -y-step 1.0 -y-base 10.0 -y-expression I -x-property confidenceFactor -x-min 0.1 -x-max 0.5 -x-step 0.1 -x-base 10.0 -x-expression I -sample-size 100.0 -traversal COLUMN-WISE -log-file /home/fracpete/development/projects/adams -num-slots 1 -S 1 -W weka.classifiers.trees.J48 -- -C 0.25 -M 2"
+ adams.flow.transformer.Convert -conversion adams.data.conversion.AnyToCommandline
+ adams.flow.transformer.StringReplace -name "StringReplace (separator)" -find ^ -replace ": "
+ adams.flow.transformer.StringReplace -name "StringReplace (dataset)" -find ^ -replace @{dataset}
+ adams.flow.sink.Display -writer adams.data.io.output.NullWriter

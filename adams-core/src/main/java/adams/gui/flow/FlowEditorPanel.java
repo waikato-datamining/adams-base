@@ -30,6 +30,7 @@ import adams.env.FlowEditorPanelMenuDefinition;
 import adams.env.FlowEditorTreePopupMenuDefinition;
 import adams.flow.control.Flow;
 import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.gui.application.ChildFrame;
 import adams.gui.application.ChildWindow;
 import adams.gui.chooser.BaseFileChooser;
@@ -406,7 +407,7 @@ public class FlowEditorPanel
     m_FileChooser         = new FlowFileChooser();
     m_FileChooser.setMultiSelectionEnabled(true);
     m_FileChooser.setCurrentDirectory(new PlaceholderFile(getPropertiesEditor().getPath("InitialDir", "%h")));
-    m_FilenameProposer    = new FilenameProposer(FlowPanel.PREFIX_NEW, AbstractActor.FILE_EXTENSION, getPropertiesEditor().getPath("InitialDir", "%h"));
+    m_FilenameProposer    = new FilenameProposer(FlowPanel.PREFIX_NEW, Actor.FILE_EXTENSION, getPropertiesEditor().getPath("InitialDir", "%h"));
 
     m_MenuItems           = new ArrayList<FlowEditorAction>();
     m_AdditionalMenuItems = new ArrayList<AbstractFlowEditorMenuItem>();
@@ -916,7 +917,7 @@ public class FlowEditorPanel
       }
       prefixPrev = "";
       for (i = 0; i < actors.length; i++) {
-	final AbstractActor actor = AbstractActor.forName(actors[i], new String[0]);
+	final Actor actor = AbstractActor.forName(actors[i], new String[0]);
 	prefix = actors[i].substring(0, actors[i].lastIndexOf('.'));
 	if (!prefix.equals(prefixPrev)) {
 	  menuitem = new JMenuItem(prefix);
@@ -932,12 +933,7 @@ public class FlowEditorPanel
 	else {
 	  menuitem = new JMenuItem(actors[i].replaceAll(".*\\.", ""));
 	  submenu.add(menuitem);
-	  menuitem.addActionListener(new ActionListener() {
-	    @Override
-	    public void actionPerformed(ActionEvent e) {
-	      newFlow(actor);
-	    }
-	  });
+	  menuitem.addActionListener((ActionEvent e) -> newFlow(actor));
 	}
       }
 
@@ -1201,7 +1197,7 @@ public class FlowEditorPanel
    *
    * @param actor	the actor to display in the new panel
    */
-  protected void newFlow(AbstractActor actor) {
+  protected void newFlow(Actor actor) {
     FlowPanel	panel;
 
     panel = m_FlowPanels.newPanel();
@@ -1280,7 +1276,7 @@ public class FlowEditorPanel
    *
    * @param flow	the flow to use
    */
-  public void setCurrentFlow(AbstractActor flow) {
+  public void setCurrentFlow(Actor flow) {
     if (hasCurrentPanel())
       getCurrentPanel().setCurrentFlow(flow);
   }
@@ -1309,7 +1305,7 @@ public class FlowEditorPanel
    * @return		the current root, null if not available
    * @see		#getCurrentFlow()
    */
-  public AbstractActor getCurrentRoot() {
+  public Actor getCurrentRoot() {
     if (hasCurrentPanel())
       return getCurrentPanel().getCurrentRoot();
     else
@@ -1325,7 +1321,7 @@ public class FlowEditorPanel
    *
    * @return		the current flow, null if not available
    */
-  public AbstractActor getCurrentFlow() {
+  public Actor getCurrentFlow() {
     return getCurrentFlow(null);
   }
 
@@ -1339,7 +1335,7 @@ public class FlowEditorPanel
    * @param errors	for storing errors, use null to ignore
    * @return		the current flow, null if not available
    */
-  public AbstractActor getCurrentFlow(StringBuilder errors) {
+  public Actor getCurrentFlow(StringBuilder errors) {
     if (hasCurrentPanel())
       return getCurrentPanel().getCurrentFlow(errors);
     else
@@ -1351,7 +1347,7 @@ public class FlowEditorPanel
    *
    * @return		the currently running flow, null if not available
    */
-  public AbstractActor getRunningFlow() {
+  public Actor getRunningFlow() {
     if (hasCurrentPanel())
       return getCurrentPanel().getRunningFlow();
     else
@@ -1363,7 +1359,7 @@ public class FlowEditorPanel
    *
    * @return		the last executed flow, null if not available
    */
-  public AbstractActor getLastFlow() {
+  public Actor getLastFlow() {
     if (hasCurrentPanel())
       return getCurrentPanel().getLastFlow();
     else
@@ -1458,7 +1454,7 @@ public class FlowEditorPanel
 
     file = panel.getCurrentFile();
     if (file == null)
-      file = new PlaceholderFile(getCurrentDirectory() + File.separator + panel.getTitle() + "." + AbstractActor.FILE_EXTENSION);
+      file = new PlaceholderFile(getCurrentDirectory() + File.separator + panel.getTitle() + "." + Actor.FILE_EXTENSION);
     if (file.exists())
       file = m_FilenameProposer.propose(file);
     m_FileChooser.setSelectedFile(file);
@@ -1708,7 +1704,7 @@ public class FlowEditorPanel
    * @param actor	the actor to display, use null to ignore
    * @return		the new editor panel
    */
-  public FlowEditorPanel newWindow(AbstractActor actor) {
+  public FlowEditorPanel newWindow(Actor actor) {
     FlowEditorPanel 	result;
     ChildFrame 		oldFrame;
     ChildFrame 		newFrame;

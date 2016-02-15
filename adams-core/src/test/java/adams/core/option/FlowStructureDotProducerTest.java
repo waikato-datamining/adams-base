@@ -81,7 +81,7 @@ public class FlowStructureDotProducerTest
 
     try {
       argOption = (AbstractArgumentOption) flow.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp1 = new adams.flow.core.AbstractActor[4];
+      adams.flow.core.Actor[] tmp1 = new adams.flow.core.Actor[4];
       adams.flow.source.FileSupplier tmp2 = new adams.flow.source.FileSupplier();
       argOption = (AbstractArgumentOption) tmp2.getOptionManager().findByProperty("files");
       tmp2.setFiles(new adams.core.io.PlaceholderFile[]{(adams.core.io.PlaceholderFile) argOption.valueOf("${CWD}/parsers.xml")});
@@ -94,7 +94,7 @@ public class FlowStructureDotProducerTest
       tmp1[1] = tmp4;
       adams.flow.control.Tee tmp6 = new adams.flow.control.Tee();
       argOption = (AbstractArgumentOption) tmp6.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp7 = new adams.flow.core.AbstractActor[2];
+      adams.flow.core.Actor[] tmp7 = new adams.flow.core.Actor[2];
       adams.flow.transformer.Convert tmp8 = new adams.flow.transformer.Convert();
       argOption = (AbstractArgumentOption) tmp8.getOptionManager().findByProperty("conversion");
       adams.data.conversion.LowerCase tmp10 = new adams.data.conversion.LowerCase();

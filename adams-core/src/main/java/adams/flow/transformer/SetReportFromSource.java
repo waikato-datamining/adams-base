@@ -15,7 +15,7 @@
 
 /*
  * SetReportFromSource.java
- * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -23,7 +23,7 @@ package adams.flow.transformer;
 import adams.core.QuickInfoHelper;
 import adams.data.report.MutableReportHandler;
 import adams.data.report.Report;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.core.CallableActorHelper;
 import adams.flow.core.CallableActorReference;
 import adams.flow.core.Compatibility;
@@ -215,7 +215,7 @@ public class SetReportFromSource
    *
    * @return		the callable actor or null if not found
    */
-  protected AbstractActor findCallableActor() {
+  protected Actor findCallableActor() {
     return m_Helper.findCallableActorRecursive(this, getReport());
   }
 
@@ -228,7 +228,7 @@ public class SetReportFromSource
   protected String doExecute() {
     String			result;
     MutableReportHandler	handler;
-    AbstractActor		source;
+    Actor			source;
     Compatibility		comp;
     Token			token;
 

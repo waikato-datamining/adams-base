@@ -15,13 +15,13 @@
 
 /*
  * CopyCallableSource.java
- * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
 
-import adams.flow.core.AbstractActor;
 import adams.flow.core.AbstractCopyCallableActor;
+import adams.flow.core.Actor;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.OutputProducer;
 import adams.flow.core.Token;
@@ -95,8 +95,8 @@ public class CopyCallableSource
    * @return		the callable actor or null if not found
    */
   @Override
-  protected AbstractActor findCallableActor() {
-    AbstractActor	result;
+  protected Actor findCallableActor() {
+    Actor	result;
 
     result = super.findCallableActor();
 

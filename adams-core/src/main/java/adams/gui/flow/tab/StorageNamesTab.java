@@ -21,7 +21,7 @@
 package adams.gui.flow.tab;
 
 import adams.flow.control.Flow;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.processor.ListAllStorageNames;
 import adams.flow.processor.ListStorageUsage;
 import adams.gui.core.BaseListWithButtons;
@@ -158,7 +158,7 @@ public class StorageNamesTab
    */
   protected void findUsages() {
     ListStorageUsage 	list;
-    AbstractActor 	actor;
+    Actor 		actor;
 
     actor = getCurrentPanel().getCurrentFlow();
     if (actor instanceof Flow)

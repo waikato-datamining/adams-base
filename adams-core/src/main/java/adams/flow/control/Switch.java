@@ -15,7 +15,7 @@
 
 /*
  * Switch.java
- * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -25,7 +25,7 @@ import adams.flow.condition.bool.BooleanCondition;
 import adams.flow.condition.bool.IndexedBooleanCondition;
 import adams.flow.condition.bool.IndexedBooleanConditionSupporter;
 import adams.flow.condition.bool.True;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.core.ActorExecution;
 import adams.flow.core.ActorHandlerInfo;
 import adams.flow.core.ActorUtils;
@@ -98,7 +98,7 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default: adams.flow.condition.bool.True
  * </pre>
  * 
- * <pre>-case &lt;adams.flow.core.AbstractActor&gt; [-case ...] (property: cases)
+ * <pre>-case &lt;adams.flow.core.Actor&gt; [-case ...] (property: cases)
  * &nbsp;&nbsp;&nbsp;The 'cases' - one of them gets executed if the corresponding 'condition' 
  * &nbsp;&nbsp;&nbsp;evaluates to 'true'.
  * &nbsp;&nbsp;&nbsp;default: adams.flow.sink.Null
@@ -220,9 +220,9 @@ public class Switch
      */
     @Override
     public String execute() {
-      String		result;
-      AbstractActor	caseActor;
-      int		index;
+      String	result;
+      Actor 	caseActor;
+      int	index;
 
       result = null;
 
@@ -283,7 +283,7 @@ public class Switch
   protected BooleanCondition[] m_Conditions;
 
   /** the "cases" to execute if the corresponding expression matches. */
-  protected List<AbstractActor> m_Cases;
+  protected List<Actor> m_Cases;
 
   /** the input token. */
   protected transient Token m_InputToken;
@@ -319,7 +319,7 @@ public class Switch
 
     m_OptionManager.add(
 	    "case", "cases",
-	    new AbstractActor[]{new Null()});
+	    new Actor[]{new Null()});
   }
 
   /**
@@ -330,7 +330,7 @@ public class Switch
     super.initialize();
 
     m_InputToken = null;
-    m_Cases      = new ArrayList<AbstractActor>();
+    m_Cases      = new ArrayList<>();
     m_Queue      = new ArrayList();
   }
   
@@ -403,7 +403,7 @@ public class Switch
    *
    * @param value 	the cases
    */
-  public void setCases(AbstractActor[] value) {
+  public void setCases(Actor[] value) {
     int		i;
 
     ActorUtils.uniqueNames(value);
@@ -421,8 +421,8 @@ public class Switch
    *
    * @return 		the cases
    */
-  public AbstractActor[] getCases() {
-    return m_Cases.toArray(new AbstractActor[m_Cases.size()]);
+  public Actor[] getCases() {
+    return m_Cases.toArray(new Actor[m_Cases.size()]);
   }
 
   /**
@@ -474,7 +474,7 @@ public class Switch
    * @return		the actor
    */
   @Override
-  public AbstractActor get(int index) {
+  public Actor get(int index) {
     return m_Cases.get(index);
   }
 
@@ -485,7 +485,7 @@ public class Switch
    * @param actor	the actor to set at this position
    */
   @Override
-  public void set(int index, AbstractActor actor) {
+  public void set(int index, Actor actor) {
     if ((index > -1) && (index < m_Cases.size())) {
       ActorUtils.uniqueName(actor, this, index);
       m_Cases.set(index, actor);
@@ -502,7 +502,7 @@ public class Switch
    *
    * @param actor	the actor to insert
    */
-  public void add(AbstractActor actor) {
+  public void add(Actor actor) {
     add(size(), actor);
   }
 
@@ -512,7 +512,7 @@ public class Switch
    * @param index	the position
    * @param actor	the actor to insert
    */
-  public void add(int index, AbstractActor actor) {
+  public void add(int index, Actor actor) {
     m_Cases.add(index, actor);
     reset();
     updateParent();
@@ -524,8 +524,8 @@ public class Switch
    * @param index	the position
    * @return		the removed actor
    */
-  public AbstractActor remove(int index) {
-    AbstractActor	result;
+  public Actor remove(int index) {
+    Actor	result;
 
     result = m_Cases.remove(index);
     reset();
@@ -595,7 +595,7 @@ public class Switch
 
     result = new HashSet<Class>();
 
-    for (AbstractActor actor: m_Cases) {
+    for (Actor actor: m_Cases) {
       if (actor instanceof InputConsumer)
 	result.addAll(Arrays.asList(((InputConsumer) actor).accepts()));
     }

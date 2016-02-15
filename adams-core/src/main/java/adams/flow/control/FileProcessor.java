@@ -15,15 +15,13 @@
 
 /**
  * FileProcessor.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.control;
 
-import java.io.File;
-
 import adams.core.Utils;
 import adams.core.logging.LoggingLevel;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.core.ActorHandlerInfo;
 import adams.flow.core.Compatibility;
 import adams.flow.core.ControlActor;
@@ -32,6 +30,8 @@ import adams.flow.core.MutableActorHandler;
 import adams.flow.core.OutputProducer;
 import adams.flow.core.Token;
 import adams.flow.transformer.AbstractDataProcessor;
+
+import java.io.File;
 
 /**
  * TODO: what this class does
@@ -53,7 +53,7 @@ public class FileProcessor
   protected boolean m_UseFiles;
   
   /** the actor to use for input. */
-  protected transient AbstractActor m_Input;
+  protected transient Actor m_Input;
 
   /**
    * Returns a string describing the object.
@@ -77,7 +77,7 @@ public class FileProcessor
 
     m_OptionManager.add(
 	    "actor", "actors",
-	    new AbstractActor[0]);
+	    new Actor[0]);
   }
 
   /**
@@ -129,7 +129,7 @@ public class FileProcessor
    * @param actor	the actor to check
    * @return		null if accepted, otherwise error message
    */
-  protected String checkSubActor(int index, AbstractActor actor) {
+  protected String checkSubActor(int index, Actor actor) {
     Compatibility	comp;
     
     if ((index == 0) && !actor.getSkip()) {
@@ -150,7 +150,7 @@ public class FileProcessor
    * @param actors	the actors to check
    * @return		null if accepted, otherwise error message
    */
-  protected String checkSubActors(AbstractActor[] actors) {
+  protected String checkSubActors(Actor[] actors) {
     Compatibility	comp;
     int			i;
     int			index;
@@ -181,7 +181,7 @@ public class FileProcessor
    *
    * @param value	the actor
    */
-  public void setActors(AbstractActor[] value) {
+  public void setActors(Actor[] value) {
     String	msg;
 
     msg = checkSubActors(value);
@@ -200,7 +200,7 @@ public class FileProcessor
    *
    * @return		the actors
    */
-  public AbstractActor[] getActors() {
+  public Actor[] getActors() {
     return m_Actors.getActors();
   }
 
@@ -250,7 +250,7 @@ public class FileProcessor
    * @return		the actor
    */
   @Override
-  public AbstractActor get(int index) {
+  public Actor get(int index) {
     return m_Actors.get(index);
   }
 
@@ -261,7 +261,7 @@ public class FileProcessor
    * @param actor	the actor to set at this position
    */
   @Override
-  public void set(int index, AbstractActor actor) {
+  public void set(int index, Actor actor) {
     m_Actors.set(index, actor);
   }
 
@@ -282,7 +282,7 @@ public class FileProcessor
    * @return		the first 'active' actor, null if none available
    */
   @Override
-  public AbstractActor firstActive() {
+  public Actor firstActive() {
     return m_Actors.firstActive();
   }
 
@@ -292,7 +292,7 @@ public class FileProcessor
    * @return		the last 'active' actor, null if none available
    */
   @Override
-  public AbstractActor lastActive() {
+  public Actor lastActive() {
     return m_Actors.lastActive();
   }
 
@@ -315,7 +315,7 @@ public class FileProcessor
    * @param actor	the actor to insert
    */
   @Override
-  public void add(AbstractActor actor) {
+  public void add(Actor actor) {
     add(size(), actor);
   }
 
@@ -326,7 +326,7 @@ public class FileProcessor
    * @param actor	the actor to insert
    */
   @Override
-  public void add(int index, AbstractActor actor) {
+  public void add(int index, Actor actor) {
     String	msg;
 
     msg = checkSubActor(index, actor);
@@ -347,8 +347,8 @@ public class FileProcessor
    * @return		the removed actor
    */
   @Override
-  public AbstractActor remove(int index) {
-    AbstractActor	result;
+  public Actor remove(int index) {
+    Actor	result;
 
     result = m_Actors.remove(index);
     reset();

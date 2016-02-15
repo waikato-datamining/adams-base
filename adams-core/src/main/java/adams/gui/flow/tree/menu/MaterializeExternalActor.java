@@ -20,7 +20,7 @@
 package adams.gui.flow.tree.menu;
 
 import adams.core.Utils;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.ExternalActorHandler;
 import adams.gui.core.GUIHelper;
@@ -76,7 +76,7 @@ public class MaterializeExternalActor
   protected void doActionPerformed(ActionEvent e) {
     ExternalActorHandler	handler;
     File			file;
-    AbstractActor		actor;
+    Actor 			actor;
     List<String>		errors;
     Node			newNode;
     int				index;

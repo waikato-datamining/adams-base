@@ -15,14 +15,14 @@
 
 /**
  * AbstractEditPostProcessor.java
- * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.flow.tree.postprocessor;
 
 import adams.core.ClassLister;
 import adams.core.logging.LoggingObject;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.GUIHelper;
 import adams.gui.event.ActorChangeEvent;
@@ -54,7 +54,7 @@ public abstract class AbstractEditPostProcessor
    * @param newActor the new, updated actor
    * @return true if this post processor applies to the situation
    */
-  public abstract boolean applies(AbstractActor parent, AbstractActor oldActor, AbstractActor newActor);
+  public abstract boolean applies(Actor parent, Actor oldActor, Actor newActor);
 
   /**
    * Post-processes the tree.
@@ -65,7 +65,7 @@ public abstract class AbstractEditPostProcessor
    * @param newActor the new, updated actor
    * @return true if tree got modified
    */
-  protected abstract boolean doPostProcess(Tree tree, AbstractActor parent, AbstractActor oldActor, AbstractActor newActor);
+  protected abstract boolean doPostProcess(Tree tree, Actor parent, Actor oldActor, Actor newActor);
 
   /**
    * Post-processes the tree.
@@ -76,7 +76,7 @@ public abstract class AbstractEditPostProcessor
    * @param newActor the new, updated actor
    * @return true if tree got modified
    */
-  public boolean postProcess(Tree tree, AbstractActor parent, AbstractActor oldActor, AbstractActor newActor) {
+  public boolean postProcess(Tree tree, Actor parent, Actor oldActor, Actor newActor) {
     boolean result;
     final List<String> exp;
     final List<String> sel;
@@ -117,7 +117,7 @@ public abstract class AbstractEditPostProcessor
    * @param newActor the new, updated actor
    * @return true if tree got modified
    */
-  public static boolean apply(Tree tree, AbstractActor parent, AbstractActor oldActor, AbstractActor newActor) {
+  public static boolean apply(Tree tree, Actor parent, Actor oldActor, Actor newActor) {
     boolean 			result;
     String[] 			processors;
     AbstractEditPostProcessor 	proc;

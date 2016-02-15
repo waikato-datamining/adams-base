@@ -1,43 +1,12 @@
 # Project: adams
-# Date: 2014-01-23 15:39:35
+# Date: 2016-02-15 14:54:09
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	Generates a plot from a random sample of numbers and saves\nit to a PNG file, all in the same R script. The filename of the \ngenerated image is then displayed.
-	-actor
-		adams.flow.standalone.Rserve
-	-actor
-		adams.flow.standalone.SetVariable
-			-var-name
-			file
-			-var-value
-			${EXAMPLE_FLOWS}/output/graph.png
-	-actor
-		adams.flow.standalone.RStandalone
-			-script
-			x <- sample(1:100, 200, replace=T)\npng(\"@{file}\")\nplot(x)\ndev.off()
-	-actor
-		adams.flow.source.Variable
-			-var-name
-			file
-	-actor
-		adams.flow.transformer.Convert
-			-conversion
-				adams.data.conversion.StringToFile
-					-placeholderfile
-					true
-	-actor
-		adams.flow.transformer.Convert
-			-name
-			Convert-1
-			-conversion
-				adams.data.conversion.FileToString
-					-absolute
-					true
-	-actor
-		adams.flow.sink.Display
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "Generates a plot from a random sample of numbers and saves\\nit to a PNG file, all in the same R script. The filename of the \\ngenerated image is then displayed." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.standalone.Rserve
+ adams.flow.standalone.SetVariable -var-name file -var-value ${EXAMPLE_FLOWS}/output/graph.png
+ adams.flow.standalone.RStandalone -script "x <- sample(1:100, 200, replace=T)\\npng(\\\"@{file}\\\")\\nplot(x)\\ndev.off()"
+ adams.flow.source.Variable -var-name file
+ adams.flow.transformer.Convert -conversion "adams.data.conversion.StringToFile -placeholderfile true"
+ adams.flow.transformer.Convert -name Convert-1 -conversion "adams.data.conversion.FileToString -absolute true"
+ adams.flow.sink.Display -writer adams.data.io.output.NullWriter

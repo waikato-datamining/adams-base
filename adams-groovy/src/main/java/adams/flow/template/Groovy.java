@@ -15,7 +15,7 @@
 
 /*
  *    Groovy.java
- *    Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ *    Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -24,7 +24,7 @@ package adams.flow.template;
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
 import adams.core.scripting.GroovyScript;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 
 /**
  <!-- globalinfo-start -->
@@ -202,7 +202,7 @@ public class Groovy
    * @return		the generated actor
    */
   @Override
-  protected AbstractActor executeScript() {
+  protected Actor executeScript() {
     return ((AbstractActorTemplate) m_ScriptObject).generate();
   }
 }

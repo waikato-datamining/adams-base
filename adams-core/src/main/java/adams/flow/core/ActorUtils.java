@@ -126,10 +126,10 @@ public class ActorUtils {
    * @param children	for collecting the children
    * @param filter	the accepted classes, null if no filtering
    */
-  protected static void enumerate(AbstractActor actor, List<AbstractActor> children, HashSet<Class> filter) {
+  protected static void enumerate(Actor actor, List<Actor> children, HashSet<Class> filter) {
     int			i;
     ActorHandler	handler;
-    AbstractActor	other;
+    Actor		other;
     boolean		add;
 
     if (actor == null)
@@ -151,7 +151,7 @@ public class ActorUtils {
       enumerate(other, children, filter);
     }
     if (ClassLocator.hasInterface(InternalActorHandler.class, actor.getClass())) {
-      other = (AbstractActor) ((InternalActorHandler) actor).getInternalActor();
+      other = ((InternalActorHandler) actor).getInternalActor();
       enumerate(other, children, filter);
     }
     if (ClassLocator.hasInterface(ExternalActorHandler.class, actor.getClass())) {
@@ -166,8 +166,8 @@ public class ActorUtils {
    * @param actor	the actor to obtain all children from
    * @return		all the children (if any)
    */
-  public static List<AbstractActor> enumerate(AbstractActor actor) {
-    return enumerate(actor, (Class[]) null);
+  public static List<Actor> enumerate(Actor actor) {
+    return enumerate(actor, null);
   }
 
   /**
@@ -177,11 +177,11 @@ public class ActorUtils {
    * @param filter	the classes of actors to only enumerate, null for no filtering
    * @return		all the children (if any)
    */
-  public static List<AbstractActor> enumerate(AbstractActor actor, Class[] filter) {
-    ArrayList<AbstractActor>	result;
-    HashSet<Class>		filterSet;
+  public static List<Actor> enumerate(Actor actor, Class[] filter) {
+    ArrayList<Actor>	result;
+    HashSet<Class>	filterSet;
 
-    result    = new ArrayList<AbstractActor>();
+    result    = new ArrayList<Actor>();
     filterSet = null;
     if (filter != null)
       filterSet = new HashSet<Class>(Arrays.asList(filter));
@@ -326,7 +326,7 @@ public class ActorUtils {
    * @param index	the index that this actor will be placed
    * @return		true if the name was updated
    */
-  public static boolean uniqueName(AbstractActor actor, ActorHandler handler, int index) {
+  public static boolean uniqueName(Actor actor, ActorHandler handler, int index) {
     HashSet<String>	names;
     int			i;
 
@@ -348,7 +348,7 @@ public class ActorUtils {
    * @param names	the existing names
    * @return		true if the name was updated
    */
-  public static boolean uniqueName(AbstractActor actor, HashSet<String> names) {
+  public static boolean uniqueName(Actor actor, HashSet<String> names) {
     boolean		result;
     String		name;
     String		baseName;
@@ -382,7 +382,7 @@ public class ActorUtils {
    * @param actors	the actors which names need to be made unique
    * @return		true if at least one name was updated
    */
-  public static boolean uniqueNames(AbstractActor[] actors) {
+  public static boolean uniqueNames(Actor[] actors) {
     boolean		result;
     HashSet<String>	names;
     int			i;
@@ -408,7 +408,7 @@ public class ActorUtils {
    * @return		the list of actor handlers found along the path to
    * 			the root actor
    */
-  public static List<ActorHandler> findActorHandlers(AbstractActor actor) {
+  public static List<ActorHandler> findActorHandlers(Actor actor) {
     return findActorHandlers(actor, false);
   }
 
@@ -422,7 +422,7 @@ public class ActorUtils {
    * @return				the list of actor handlers found along the path
    * 					to the root actor
    */
-  public static List<ActorHandler> findActorHandlers(AbstractActor actor, boolean mustAllowStandalones) {
+  public static List<ActorHandler> findActorHandlers(Actor actor, boolean mustAllowStandalones) {
     return findActorHandlers(actor, mustAllowStandalones, false);
   }
 
@@ -439,16 +439,16 @@ public class ActorUtils {
    * @return				the list of actor handlers found along the path
    * 					to the root actor
    */
-  public static List<ActorHandler> findActorHandlers(AbstractActor actor, boolean mustAllowStandalones, boolean includeSameLevel) {
+  public static List<ActorHandler> findActorHandlers(Actor actor, boolean mustAllowStandalones, boolean includeSameLevel) {
     ArrayList<ActorHandler>	result;
-    AbstractActor		parent;
-    AbstractActor		child;
+    Actor			parent;
+    Actor			child;
     int				index;
     int				i;
     ActorHandler		handler;
     ActorHandler		subhandler;
     ExternalActorHandler	extActor;
-    AbstractActor		root;
+    Actor			root;
     ArrayList<String>		list;
 
     result = new ArrayList<ActorHandler>();
@@ -503,7 +503,7 @@ public class ActorUtils {
     if (LOGGER.getLevel() != Level.OFF) {
       list = new ArrayList<String>();
       for (ActorHandler h: result)
-	list.add(h.getClass().getName() + "/" + ((AbstractActor) h).getFullName());
+	list.add(h.getClass().getName() + "/" + h.getFullName());
       LOGGER.fine("Actor handlers: " + list + "\n" + Utils.getStackTrace(20));
     }
 
@@ -588,7 +588,7 @@ public class ActorUtils {
    * @param actor	the actor to write
    * @return		true if successfully written
    */
-  public static boolean write(String filename, AbstractActor actor) {
+  public static boolean write(String filename, Actor actor) {
     boolean		result;
     FlowWriter 		writer;
 
@@ -606,7 +606,7 @@ public class ActorUtils {
    * @param filename	the file to read the actor
    * @return		the actor or null in case of an error
    */
-  public static AbstractActor read(String filename) {
+  public static Actor read(String filename) {
     return read(filename, null);
   }
 
@@ -617,7 +617,7 @@ public class ActorUtils {
    * @param errors	for storing (potential) errors, ignored if null
    * @return		the actor or null in case of an error
    */
-  public static AbstractActor read(String filename, List<String> errors) {
+  public static Actor read(String filename, List<String> errors) {
     return read(filename, errors, null);
   }
 
@@ -629,14 +629,14 @@ public class ActorUtils {
    * @param warnings	for storing (potential) warnings, ignored if null
    * @return		the actor or null in case of an error
    */
-  public static AbstractActor read(String filename, List<String> errors, List<String> warnings) {
-    AbstractActor	result;
+  public static Actor read(String filename, List<String> errors, List<String> warnings) {
+    Actor		result;
     FlowReader 		reader;
 
     reader = getFileChooser().getReaderForFile(new File(filename));
     if (reader == null)
       reader = new DefaultFlowReader();
-    result = (AbstractActor) reader.readActor(filename);
+    result = reader.readActor(filename);
 
     // transfer errors/warnings
     if (errors != null)
@@ -654,14 +654,14 @@ public class ActorUtils {
    * @return		the names of the callable actors referenced and how
    * 			often they were referenced
    */
-  public static Hashtable<String,Integer> findCallableTransformers(AbstractActor actor) {
-    List<AbstractActor>		actors;
+  public static Hashtable<String,Integer> findCallableTransformers(Actor actor) {
+    List<Actor>		actors;
     Hashtable<String,Integer>	count;
     String			name;
 
     actors = enumerate(actor);
     count  = new Hashtable<String,Integer>();
-    for (AbstractActor current: actors) {
+    for (Actor current: actors) {
       if (current.getSkip())
 	continue;
       if (!(current instanceof CallableTransformer))
@@ -684,8 +684,8 @@ public class ActorUtils {
    * @param type	the type of actor to find the closest for
    * @return		the closest actor or null if not found
    */
-  protected static AbstractActor findClosestType(ActorHandler handler, Class type) {
-    AbstractActor		result;
+  protected static Actor findClosestType(ActorHandler handler, Class type) {
+    Actor			result;
     int				i;
     ExternalActorHandler	external;
 
@@ -717,7 +717,7 @@ public class ActorUtils {
    * @param type		the type of actor to find the closest for
    * @return			the closest actor or null if not found
    */
-  public static AbstractActor findClosestType(AbstractActor actor, Class type) {
+  public static Actor findClosestType(Actor actor, Class type) {
     return findClosestType(actor, type, false);
   }
 
@@ -732,8 +732,8 @@ public class ActorUtils {
    * 				index in the parent
    * @return			the closest actor or null if not found
    */
-  public static AbstractActor findClosestType(AbstractActor actor, Class type, boolean includeSameLevel) {
-    AbstractActor		result;
+  public static Actor findClosestType(Actor actor, Class type, boolean includeSameLevel) {
+    Actor			result;
     List<ActorHandler>		handlers;
     int				i;
 
@@ -742,7 +742,7 @@ public class ActorUtils {
     for (i = 0; i < handlers.size(); i++) {
       // check handlers themselves
       if (type.isInstance(handlers.get(i)) && !handlers.get(i).getSkip()) {
-	result = (AbstractActor) handlers.get(i);
+	result = handlers.get(i);
 	break;
       }
       // check children of handlers
@@ -783,7 +783,7 @@ public class ActorUtils {
     int				i;
 
     result   = new ArrayList<Actor>();
-    handlers = ActorUtils.findActorHandlers((AbstractActor) actor, true, includeSameLevel);
+    handlers = ActorUtils.findActorHandlers(actor, true, includeSameLevel);
     for (i = 0; i < handlers.size(); i++) {
       // check handlers themselves
       if (type.isInstance(handlers.get(i)) && !handlers.get(i).getSkip()) {
@@ -914,7 +914,7 @@ public class ActorUtils {
    * 			in the flow
    * @return		the connection object to use
    */
-  public static adams.db.AbstractDatabaseConnection getDatabaseConnection(AbstractActor actor, Class cls, adams.db.AbstractDatabaseConnection defCon) {
+  public static adams.db.AbstractDatabaseConnection getDatabaseConnection(Actor actor, Class cls, adams.db.AbstractDatabaseConnection defCon) {
     adams.db.AbstractDatabaseConnection			result;
     adams.flow.standalone.AbstractDatabaseConnection	conn;
 
@@ -948,8 +948,8 @@ public class ActorUtils {
    * @param actor	the actor to process
    * @return		the cleaned up actor (or original, if nothing changed)
    */
-  public static AbstractActor removeDisabledActors(AbstractActor actor) {
-    AbstractActor		result;
+  public static Actor removeDisabledActors(Actor actor) {
+    Actor			result;
     RemoveDisabledActors	processor;
 
     processor = new RemoveDisabledActors();
@@ -967,7 +967,7 @@ public class ActorUtils {
    * @param actors	the actors to enclose
    * @return		the processed actor
    */
-  public static Actor createExternalActor(AbstractActor[] actors) {
+  public static Actor createExternalActor(Actor[] actors) {
     int			first;
     int			last;
     int			i;
@@ -981,7 +981,7 @@ public class ActorUtils {
 
     // ensure that all actors have same prefix, i.e., on same level in tree
     paths = new HashSet<String>();
-    for (AbstractActor actor: actors) {
+    for (Actor actor: actors) {
       path = new ActorPath(actor.getFullName());
       paths.add(path.getParentPath().toString());
       if (paths.size() > 1)
@@ -1047,7 +1047,7 @@ public class ActorUtils {
    * @param path	the path elements to traverse (below the parent)
    * @return		the located actor or null if none found
    */
-  public static AbstractActor locate(ActorPath path, AbstractActor parent) {
+  public static Actor locate(ActorPath path, Actor parent) {
     return locate(path, parent, false, false);
   }
 
@@ -1060,10 +1060,10 @@ public class ActorUtils {
    * @param quiet	whether to suppress any error messages
    * @return		the located actor or null if none found
    */
-  public static AbstractActor locate(ActorPath path, AbstractActor parent, boolean included, boolean quiet) {
-    AbstractActor	result;
+  public static Actor locate(ActorPath path, Actor parent, boolean included, boolean quiet) {
+    Actor		result;
     ActorHandler	parentHandler;
-    AbstractActor	child;
+    Actor		child;
     int			index;
     int			i;
 
@@ -1118,7 +1118,7 @@ public class ActorUtils {
    * @param root	the root actor start the search
    * @return		the located actor or null if none found
    */
-  public static AbstractActor locate(String path, AbstractActor root) {
+  public static Actor locate(String path, Actor root) {
     return locate(path, root, false, false);
   }
 
@@ -1131,7 +1131,7 @@ public class ActorUtils {
    * @param quiet	whether to suppress any error messages
    * @return		the located actor or null if none found
    */
-  public static AbstractActor locate(String path, AbstractActor root, boolean included, boolean quiet) {
+  public static Actor locate(String path, Actor root, boolean included, boolean quiet) {
     return locate(new ActorPath(path), root, included, quiet);
   }
 
@@ -1141,8 +1141,8 @@ public class ActorUtils {
    * @param actor	the actor to analyze
    * @return		null if ok, otherwise error message
    */
-  public static String checkForSource(AbstractActor actor) {
-    return checkForSource(new AbstractActor[]{actor});
+  public static String checkForSource(Actor actor) {
+    return checkForSource(new Actor[]{actor});
   }
 
   /**
@@ -1151,10 +1151,10 @@ public class ActorUtils {
    * @param actors	the actors to analyze
    * @return		null if ok, otherwise error message
    */
-  public static String checkForSource(AbstractActor[] actors) {
-    String		result;
-    int			i;
-    AbstractActor	actor;
+  public static String checkForSource(Actor[] actors) {
+    String	result;
+    int		i;
+    Actor	actor;
 
     result = null;
 
@@ -1179,8 +1179,8 @@ public class ActorUtils {
    * @return		null if nothing changed, otherwise the updated flow
    * @see		CleanUpProcessor
    */
-  public static AbstractActor cleanUpFlow(AbstractActor actor) {
-    AbstractActor		result;
+  public static Actor cleanUpFlow(Actor actor) {
+    Actor			result;
     MultiProcessor		processor;
     String[]			names;
     AbstractActorProcessor[]	procs;
@@ -1216,7 +1216,7 @@ public class ActorUtils {
    * @return		null if all checks passed, otherwise the warnings
    * @see		CheckProcessor
    */
-  public static String checkFlow(AbstractActor actor) {
+  public static String checkFlow(Actor actor) {
     return checkFlow(actor, true, true);
   }
 
@@ -1229,7 +1229,7 @@ public class ActorUtils {
    * @return		null if all checks passed, otherwise the warnings
    * @see		CheckProcessor
    */
-  public static String checkFlow(AbstractActor actor, boolean variables, boolean storage) {
+  public static String checkFlow(Actor actor, boolean variables, boolean storage) {
     String				result;
     MultiProcessor			processor;
     String[]				names;
@@ -1299,7 +1299,7 @@ public class ActorUtils {
    * @return		the generated output data as list, null if none produced.
    * @throws Exception	if actor is not a transformer or transformation fails
    */
-  public static List transform(AbstractActor transformer, Object input) throws Exception {
+  public static List transform(Actor transformer, Object input) throws Exception {
     ArrayList	result;
     String	msg;
 
@@ -1474,9 +1474,9 @@ public class ActorUtils {
    * @param text	the text to extract the names from
    * @return		the full names of the located actors
    */
-  public static List<String> extractActorNames(AbstractActor current, String text) {
+  public static List<String> extractActorNames(Actor current, String text) {
     List<String> 	result;
-    AbstractActor	actor;
+    Actor		actor;
     ActorPath 		path;
     String[]		lines;
     String[]		parts;

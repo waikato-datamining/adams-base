@@ -1,43 +1,13 @@
 # Project: adams
-# Date: 2014-11-25 14:37:12
+# Date: 2016-02-15 14:27:45
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	Extracts meta-data, such as EXIF or IPTC from\nthe image and displays the generated spreadsheet\nin textual form.
-	-actor
-		adams.flow.source.FileSupplier
-			-file
-			${EXAMPLE_FLOWS}/data/8726547192_1d08b00bdf_o-small.jpg
-	-actor
-		adams.flow.control.Branch
-			-branch
-				adams.flow.control.Sequence
-					-name
-					ImageMetaData
-					-actor
-						adams.flow.transformer.ImageMetaData
-							-extractor
-								adams.flow.transformer.metadata.Sanselan
-					-actor
-						adams.flow.sink.Display
-							-writer
-								adams.data.io.output.NullWriter
-			-branch
-				adams.flow.control.Sequence
-					-name
-					ImageMetaDataExtractor
-					-actor
-						adams.flow.transformer.ImageMetaData
-							-extractor
-								adams.flow.transformer.metadata.MetaDataExtractor
-					-actor
-						adams.flow.sink.Display
-							-x
-							-3
-							-writer
-								adams.data.io.output.NullWriter
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "Extracts meta-data, such as EXIF or IPTC from\\nthe image and displays the generated spreadsheet\\nin textual form." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/8726547192_1d08b00bdf_o-small.jpg
+ adams.flow.control.Branch
+  adams.flow.control.Sequence -name ImageMetaData
+   adams.flow.transformer.ImageMetaData -extractor adams.flow.transformer.metadata.Sanselan
+   adams.flow.sink.Display -writer adams.data.io.output.NullWriter
+  adams.flow.control.Sequence -name ImageMetaDataExtractor
+   adams.flow.transformer.ImageMetaData -extractor adams.flow.transformer.metadata.MetaDataExtractor
+   adams.flow.sink.Display -x -3 -writer adams.data.io.output.NullWriter

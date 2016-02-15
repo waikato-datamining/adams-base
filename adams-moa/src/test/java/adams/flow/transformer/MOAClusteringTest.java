@@ -25,7 +25,7 @@ import junit.framework.TestSuite;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 
 /**
  * Tests the MOAClustering actor.
@@ -81,10 +81,10 @@ public class MOAClusteringTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
   @Override
-  public AbstractActor getActor() {
+  public Actor getActor() {
     // TODO uncomment when clustering in MOA is stable enough
     /*
     SingleFileSupplier sfs = new SingleFileSupplier();
@@ -110,7 +110,7 @@ public class MOAClusteringTest
     cvp.add(0, df);
 
     Flow flow = new Flow();
-    flow.setActors(new AbstractActor[]{sfs, fr, wf, cls, cvp});
+    flow.setActors(new Actor[]{sfs, fr, wf, cls, cvp});
 
     return flow;
     */

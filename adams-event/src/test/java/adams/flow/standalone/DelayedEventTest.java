@@ -26,7 +26,7 @@ import adams.core.option.AbstractArgumentOption;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 
 /**
  * Test for Events actor.
@@ -60,26 +60,26 @@ public class DelayedEventTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
   @Override
-  public AbstractActor getActor() {
+  public Actor getActor() {
     AbstractArgumentOption    argOption;
 
     Flow flow = new Flow();
 
     try {
       argOption = (AbstractArgumentOption) flow.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp1 = new adams.flow.core.AbstractActor[3];
+      adams.flow.core.Actor[] tmp1 = new adams.flow.core.Actor[3];
       adams.flow.standalone.Events tmp2 = new adams.flow.standalone.Events();
       argOption = (AbstractArgumentOption) tmp2.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp3 = new adams.flow.core.AbstractActor[1];
+      adams.flow.core.Actor[] tmp3 = new adams.flow.core.Actor[1];
       adams.flow.standalone.DelayedEvent tmp4 = new adams.flow.standalone.DelayedEvent();
       argOption = (AbstractArgumentOption) tmp4.getOptionManager().findByProperty("name");
       tmp4.setName((java.lang.String) argOption.valueOf("Blah"));
 
       argOption = (AbstractArgumentOption) tmp4.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp6 = new adams.flow.core.AbstractActor[2];
+      adams.flow.core.Actor[] tmp6 = new adams.flow.core.Actor[2];
       adams.flow.source.DirectoryLister tmp7 = new adams.flow.source.DirectoryLister();
       argOption = (AbstractArgumentOption) tmp7.getOptionManager().findByProperty("watchDir");
       tmp7.setWatchDir((adams.core.io.PlaceholderDirectory) argOption.valueOf("${TMP}"));

@@ -15,13 +15,13 @@
 
 /*
  * TriggerEvent.java
- * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
 
 import adams.core.QuickInfoHelper;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.core.ControlActor;
 import adams.flow.core.EventHelper;
 import adams.flow.core.TriggerableEventReference;
@@ -94,7 +94,7 @@ public class TriggerEvent
   protected TriggerableEventReference m_Event;
 
   /** the event actor to execute. */
-  protected AbstractActor m_EventActor;
+  protected Actor m_EventActor;
 
   /** the helper class. */
   protected EventHelper m_Helper;
@@ -176,7 +176,7 @@ public class TriggerEvent
    *
    * @return		the event or null if not found
    */
-  protected AbstractActor findEventActor() {
+  protected Actor findEventActor() {
     return m_Helper.findEventRecursive(this, getEvent());
   }
 

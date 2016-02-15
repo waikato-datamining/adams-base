@@ -1,83 +1,10 @@
 # Project: adams
-# Date: 2014-02-21 11:17:47
+# Date: 2016-02-15 14:56:32
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	Generates Andrews Curves for the UCI dataset \"iris\".
-	-actor
-		adams.flow.source.FileSupplier
-			-file
-			${HOME}/development/projects/adamsfamily/adams/adams-spreadsheet/src/main/flows/data/iris.csv
-	-actor
-		adams.flow.transformer.SpreadSheetFileReader
-			-reader
-				adams.data.io.input.CsvSpreadSheetReader
-					-spreadsheet-type
-						adams.data.spreadsheet.SpreadSheet
-	-actor
-		adams.flow.transformer.SpreadSheetRemoveRow
-			-position
-			2-50,52-100,102-150
-	-actor
-		adams.flow.transformer.SpreadSheetPlotGenerator
-			-generator
-				adams.flow.transformer.plotgenerator.AndrewsCurvesGenerator
-					-prefix
-					row: 
-					-columns
-					first-last_2
-					-meta-data-columns
-					last
-	-actor
-		adams.flow.sink.SequencePlotter
-			-writer
-				adams.gui.print.NullWriter
-			-paintlet
-				adams.gui.visualization.sequence.LinePaintlet
-			-overlay-paintlet
-				adams.gui.visualization.sequence.CirclePaintlet
-			-marker-paintlet
-				adams.flow.sink.sequenceplotter.NoMarkers
-			-error-paintlet
-				adams.flow.sink.sequenceplotter.NoErrorPaintlet
-			-color-provider
-				adams.gui.visualization.core.DefaultColorProvider
-			-overlay-color-provider
-				adams.gui.visualization.core.DefaultColorProvider
-			-title
-			Andrews Curves
-			-axis-x
-				adams.gui.visualization.core.AxisPanelOptions
-					-label
-					t
-					-tick-generator
-						adams.gui.visualization.core.axis.FancyTickGenerator
-					-nth-value
-					2
-					-width
-					40
-					-custom-format
-					0.0
-			-axis-y
-				adams.gui.visualization.core.AxisPanelOptions
-					-label
-					y
-					-tick-generator
-						adams.gui.visualization.core.axis.FancyTickGenerator
-					-nth-value
-					2
-					-width
-					60
-					-custom-format
-					0.0
-			-plot-updater
-				adams.flow.sink.sequenceplotter.SimplePlotUpdater
-					-update-interval
-					100
-			-post-processor
-				adams.flow.sink.sequenceplotter.PassThrough
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "Generates Andrews Curves for the UCI dataset \\\"iris\\\"." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.source.FileSupplier -file ${HOME}/development/projects/adamsfamily/adams/adams-spreadsheet/src/main/flows/data/iris.csv
+ adams.flow.transformer.SpreadSheetFileReader -reader "adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.SpreadSheet"
+ adams.flow.transformer.SpreadSheetRemoveRow -position 2-50,52-100,102-150
+ adams.flow.transformer.SpreadSheetPlotGenerator -generator "adams.flow.transformer.plotgenerator.AndrewsCurvesGenerator -prefix \"row: \" -columns first-last_2 -meta-data-columns last"
+ adams.flow.sink.SequencePlotter -writer adams.gui.print.NullWriter -paintlet adams.gui.visualization.sequence.LinePaintlet -overlay-paintlet adams.gui.visualization.sequence.CirclePaintlet -marker-paintlet adams.flow.sink.sequenceplotter.NoMarkers -error-paintlet adams.flow.sink.sequenceplotter.NoErrorPaintlet -mouse-click-action adams.flow.sink.sequenceplotter.NullClickAction -color-provider adams.gui.visualization.core.DefaultColorProvider -overlay-color-provider adams.gui.visualization.core.DefaultColorProvider -title "Andrews Curves" -axis-x "adams.gui.visualization.core.AxisPanelOptions -label t -tick-generator adams.gui.visualization.core.axis.FancyTickGenerator -nth-value 2 -width 40 -custom-format 0.0" -axis-y "adams.gui.visualization.core.AxisPanelOptions -label y -tick-generator adams.gui.visualization.core.axis.FancyTickGenerator -nth-value 2 -width 60 -custom-format 0.0" -plot-updater "adams.flow.sink.sequenceplotter.SimplePlotUpdater -update-interval 100" -post-processor adams.flow.sink.sequenceplotter.PassThrough

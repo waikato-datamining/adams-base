@@ -15,7 +15,7 @@
 
 /**
  * CheckPlaceholders.java
- * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.processor;
 
@@ -29,7 +29,7 @@ import adams.core.option.BooleanOption;
 import adams.core.option.ClassOption;
 import adams.core.option.OptionTraversalPath;
 import adams.core.option.OptionTraverser;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.gui.dialog.TextPanel;
 
 import java.awt.Component;
@@ -97,7 +97,7 @@ public class CheckPlaceholders
    * @param actor	the actor to process
    */
   @Override
-  protected void processActor(AbstractActor actor) {
+  protected void processActor(Actor actor) {
     m_Warnings.clear();
     
     actor.getOptionManager().traverse(new OptionTraverser() {

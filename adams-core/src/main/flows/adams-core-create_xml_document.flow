@@ -1,69 +1,16 @@
 # Project: adams
-# Date: 2014-03-31 09:36:26
+# Date: 2016-02-15 11:29:21
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	Simple example for constructing an XML document.
-	-actor
-		adams.flow.source.NewDOMDocument
-	-actor
-		adams.flow.transformer.AddDOMNode
-			-annotation
-			create root node
-			-node-name
-			nodes
-	-actor
-		adams.flow.control.SubProcess
-			-name
-			create first child
-			-actor
-				adams.flow.transformer.AddDOMNode
-					-has-value
-					true
-					-node-value
-					some funky value\non several lines
-			-actor
-				adams.flow.transformer.AddDOMAttribute
-					-attribute
-					count
-					-value
-					1
-	-actor
-		adams.flow.transformer.XPath
-			-annotation
-			select root node again
-			-expression
-			/nodes
-			-result-type
-			NODE
-	-actor
-		adams.flow.control.SubProcess
-			-name
-			create second child
-			-actor
-				adams.flow.transformer.AddDOMNode
-					-has-value
-					true
-					-node-value
-					my value
-			-actor
-				adams.flow.transformer.AddDOMAttribute
-					-attribute
-					count
-					-value
-					2
-	-actor
-		adams.flow.transformer.Convert
-			-conversion
-				adams.data.conversion.DOMToString
-					-encoding
-					UTF-8
-	-actor
-		adams.flow.sink.Display
-			-writer
-				adams.data.io.output.NullWriter
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "Simple example for constructing an XML document." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.source.NewDOMDocument
+ adams.flow.transformer.AddDOMNode -annotation "create root node" -node-name nodes
+ adams.flow.control.SubProcess -name "create first child"
+  adams.flow.transformer.AddDOMNode -has-value true -node-value "some funky value\\non several lines"
+  adams.flow.transformer.AddDOMAttribute -attribute count -value 1
+ adams.flow.transformer.XPath -annotation "select root node again" -expression /nodes -result-type NODE
+ adams.flow.control.SubProcess -name "create second child"
+  adams.flow.transformer.AddDOMNode -has-value true -node-value "my value"
+  adams.flow.transformer.AddDOMAttribute -attribute count -value 2
+ adams.flow.transformer.Convert -conversion "adams.data.conversion.DOMToString -encoding UTF-8"
+ adams.flow.sink.Display -writer adams.data.io.output.NullWriter

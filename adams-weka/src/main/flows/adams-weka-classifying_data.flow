@@ -1,81 +1,20 @@
 # Project: adams
-# Date: 2014-01-23 15:48:39
+# Date: 2016-02-15 15:20:50
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	Outputs the chosen class distribution for each instance read from a dataset.\nThe classifier used for performing the classification is generated from\nanother dataset in the callable actor \"classifier\".
-	-actor
-		adams.flow.standalone.CallableActors
-			-actor
-				adams.flow.source.SequenceSource
-					-name
-					classifier
-					-actor
-						adams.flow.source.FileSupplier
-							-file
-							${EXAMPLE_FLOWS}/data/anneal.arff
-					-actor
-						adams.flow.transformer.WekaFileReader
-							-loader
-								weka.core.converters.ArffLoader
-					-actor
-						adams.flow.transformer.WekaClassSelector
-					-actor
-						adams.flow.transformer.WekaTrainClassifier
-					-actor
-						adams.flow.control.ContainerValuePicker
-							-value
-							Model
-							-switch-outputs
-							true
-			-actor
-				adams.flow.source.WekaClassifierSetup
-					-classifier
-						weka.classifiers.trees.J48
-							-C
-							0.25
-							-M
-							2
-							
-							
-							
-							
-							
-							
-							
-							
-							
-							
-							
-							
-	-actor
-		adams.flow.source.FileSupplier
-			-file
-			${EXAMPLE_FLOWS}/data/anneal_test.arff
-	-actor
-		adams.flow.transformer.WekaFileReader
-			-loader
-				weka.core.converters.ArffLoader
-			-output-type
-			INCREMENTAL
-	-actor
-		adams.flow.transformer.WekaClassSelector
-	-actor
-		adams.flow.transformer.WekaClassifying
-			-model-actor
-			classifier
-	-actor
-		adams.flow.control.ContainerValuePicker
-			-tee
-				adams.flow.transformer.Convert
-					-conversion
-						adams.data.conversion.AnyToString
-			-tee
-				adams.flow.sink.Display
-			-value
-			Distribution
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "Outputs the chosen class distribution for each instance read from a dataset.\\nThe classifier used for performing the classification is generated from\\nanother dataset in the callable actor \\\"classifier\\\"." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.standalone.CallableActors
+  adams.flow.source.SequenceSource -name classifier
+   adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/anneal.arff
+   adams.flow.transformer.WekaFileReader -loader weka.core.converters.ArffLoader
+   adams.flow.transformer.WekaClassSelector
+   adams.flow.transformer.WekaTrainClassifier
+   adams.flow.control.ContainerValuePicker -value Model -switch-outputs true
+  adams.flow.source.WekaClassifierSetup -classifier "weka.classifiers.trees.J48 -C 0.25 -M 2"
+ adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/anneal_test.arff
+ adams.flow.transformer.WekaFileReader -loader weka.core.converters.ArffLoader -output-type INCREMENTAL
+ adams.flow.transformer.WekaClassSelector
+ adams.flow.transformer.WekaClassifying -model-actor classifier
+ adams.flow.control.ContainerValuePicker -value Distribution
+  adams.flow.transformer.Convert -conversion adams.data.conversion.AnyToString
+  adams.flow.sink.Display -writer adams.data.io.output.NullWriter

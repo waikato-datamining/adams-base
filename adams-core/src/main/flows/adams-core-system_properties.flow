@@ -1,53 +1,15 @@
 # Project: adams
-# Date: 2014-01-23 15:24:32
+# Date: 2016-02-15 11:35:08
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	This example shows how to access system properties using\nthe variables mechanism. System properties can be accessed \nvia their name, prefixed with \"system.\".\nOn Windows machines, the \"firefox\" string gets suffixed\nwith \".exe\" and on all other platforms prefixed with \"/usr/bin\".
-	-actor
-		adams.flow.standalone.CallableActors
-			-actor
-				adams.flow.sink.Display
-	-actor
-		adams.flow.source.StringConstants
-			-string
-			firefox
-	-actor
-		adams.flow.control.IfThenElse
-			-condition
-				adams.flow.condition.bool.Expression
-					-expression
-					\"@{system.os.name}\" = \"windows\"
-			-then
-				adams.flow.control.Sequence
-					-name
-					then
-					-actor
-						adams.flow.transformer.StringReplace
-							-find
-							$
-							-replace
-							.exe
-					-actor
-						adams.flow.sink.CallableSink
-							-callable
-							Display
-			-else
-				adams.flow.control.Sequence
-					-name
-					else
-					-actor
-						adams.flow.transformer.StringReplace
-							-find
-							^
-							-replace
-							/usr/bin/
-					-actor
-						adams.flow.sink.CallableSink
-							-callable
-							Display
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "This example shows how to access system properties using\\nthe variables mechanism. System properties can be accessed \\nvia their name, prefixed with \\\"system.\\\".\\nOn Windows machines, the \\\"firefox\\\" string gets suffixed\\nwith \\\".exe\\\" and on all other platforms prefixed with \\\"/usr/bin\\\"." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.standalone.CallableActors
+  adams.flow.sink.Display -writer adams.data.io.output.NullWriter
+ adams.flow.source.StringConstants -string firefox
+ adams.flow.control.IfThenElse -condition "adams.flow.condition.bool.Expression -expression \"\\\\\\\"@{system.os.name}\\\\\\\" = \\\\\\\"windows\\\\\\\"\"" -then "adams.flow.control.Sequence -name then" -else "adams.flow.control.Sequence -name else"
+  adams.flow.control.Sequence -name then
+   adams.flow.transformer.StringReplace -find $ -replace .exe
+   adams.flow.sink.CallableSink -callable Display
+  adams.flow.control.Sequence -name else
+   adams.flow.transformer.StringReplace -find ^ -replace /usr/bin/
+   adams.flow.sink.CallableSink -callable Display

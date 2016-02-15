@@ -23,7 +23,6 @@ package adams.flow.core;
 import adams.core.ClassLister;
 import adams.core.ClassLocator;
 import adams.core.Properties;
-import adams.core.ShallowCopySupporter;
 import adams.core.SizeOf;
 import adams.core.Utils;
 import adams.core.Variables;
@@ -63,13 +62,13 @@ import java.util.logging.Level;
  */
 public abstract class AbstractActor
   extends AbstractOptionHandler
-  implements Actor, ShallowCopySupporter<AbstractActor> {
+  implements Actor {
 
   /** for serialization. */
   private static final long serialVersionUID = 6658513163932343273L;
 
   /** the actor itself. */
-  protected AbstractActor m_Self;
+  protected Actor m_Self;
 
   /** the name of the actor. */
   protected String m_Name;
@@ -81,7 +80,7 @@ public abstract class AbstractActor
   protected String m_LoggingPrefix;
   
   /** the parent actor this actor is part of, e.g., a sequence. */
-  protected AbstractActor m_Parent;
+  protected Actor m_Parent;
 
   /** whether the actor was executed at least once after setup. */
   protected boolean m_Executed;
@@ -120,7 +119,7 @@ public abstract class AbstractActor
   protected Hashtable<String,Object> m_BackupState;
 
   /** cached root actor of the flow. */
-  protected AbstractActor m_Root;
+  protected Actor m_Root;
 
   /** the storage handler. */
   protected StorageHandler m_StorageHandler;
@@ -481,7 +480,7 @@ public abstract class AbstractActor
    * @see		Flow#getErrorHandling()
    * @see		#getStopFlowOnError()
    */
-  public String handleError(AbstractActor source, String type, String msg) {
+  public String handleError(Actor source, String type, String msg) {
     Flow			flow;
     LogEntry			entry;
     MutableLogEntryHandler	handler;
@@ -567,7 +566,8 @@ public abstract class AbstractActor
    *
    * @param value	the new parent
    */
-  public void setParent(AbstractActor value) {
+  @Override
+  public void setParent(Actor value) {
     if (value != m_Parent) {
       m_Parent                      = value;
       m_FullName                    = null;
@@ -584,7 +584,7 @@ public abstract class AbstractActor
    *
    * @return		the current parent, can be null
    */
-  public AbstractActor getParent() {
+  public Actor getParent() {
     return m_Parent;
   }
   
@@ -621,7 +621,7 @@ public abstract class AbstractActor
    *
    * @return		the root, can be null
    */
-  public AbstractActor getRoot() {
+  public Actor getRoot() {
     if (m_Root == null) {
       if (getParent() == null)
 	m_Root = this;
@@ -753,7 +753,7 @@ public abstract class AbstractActor
    */
   public String getFullName() {
     StringBuilder	result;
-    AbstractActor	parent;
+    Actor		parent;
 
     if (m_FullName == null) {
       result = new StringBuilder(getName().replace(".", "\\."));
@@ -831,7 +831,7 @@ public abstract class AbstractActor
    * @param actor	the actor to search
    * @return		the variables that were found
    */
-  protected HashSet<String> findVariables(AbstractActor actor) {
+  protected HashSet<String> findVariables(Actor actor) {
     ActorVariablesFinder	finder;
     HashSet<String>		result;
 
@@ -1263,9 +1263,9 @@ public abstract class AbstractActor
    *
    * @return		the preceding actor, null if not available
    */
-  public AbstractActor getPreviousSibling() {
-    AbstractActor	result;
-    int			index;
+  public Actor getPreviousSibling() {
+    Actor	result;
+    int		index;
 
     result = null;
 
@@ -1284,8 +1284,8 @@ public abstract class AbstractActor
    *
    * @return		the following actor, null if not available
    */
-  public AbstractActor getNextSibling() {
-    AbstractActor	result;
+  public Actor getNextSibling() {
+    Actor	result;
     int			index;
 
     result = null;
@@ -1338,7 +1338,7 @@ public abstract class AbstractActor
    *
    * @return		the shallow copy
    */
-  public AbstractActor shallowCopy() {
+  public Actor shallowCopy() {
     return shallowCopy(false);
   }
 
@@ -1348,8 +1348,8 @@ public abstract class AbstractActor
    * @param expand	whether to expand variables to their current values
    * @return		the shallow copy
    */
-  public AbstractActor shallowCopy(boolean expand) {
-    return (AbstractActor) OptionUtils.shallowCopy(this, expand);
+  public Actor shallowCopy(boolean expand) {
+    return (Actor) OptionUtils.shallowCopy(this, expand);
   }
 
   /**
@@ -1359,8 +1359,8 @@ public abstract class AbstractActor
    */
   @Override
   public synchronized int sizeOf() {
-    int			result;
-    AbstractActor	parent;
+    int		result;
+    Actor	parent;
 
     parent   = m_Parent;
     m_Parent = null;
@@ -1376,7 +1376,7 @@ public abstract class AbstractActor
    * @return		the item classnames
    */
   public static String[] getFlowActors() {
-    return ClassLister.getSingleton().getClassnames(AbstractActor.class);
+    return ClassLister.getSingleton().getClassnames(Actor.class);
   }
 
   /**
@@ -1386,11 +1386,11 @@ public abstract class AbstractActor
    * @param options	the options for the item
    * @return		the instantiated item or null if an error occurred
    */
-  public static AbstractActor forName(String classname, String[] options) {
-    AbstractActor	result;
+  public static Actor forName(String classname, String[] options) {
+    Actor	result;
 
     try {
-      result = (AbstractActor) OptionUtils.forName(AbstractActor.class, classname, options);
+      result = (Actor) OptionUtils.forName(Actor.class, classname, options);
     }
     catch (Exception e) {
       e.printStackTrace();
@@ -1409,7 +1409,7 @@ public abstract class AbstractActor
    * @return		the instantiated item
    * 			or null if an error occurred
    */
-  public static AbstractActor forCommandLine(String cmdline) {
-    return (AbstractActor) AbstractOptionConsumer.fromString(ArrayConsumer.class, cmdline);
+  public static Actor forCommandLine(String cmdline) {
+    return (Actor) AbstractOptionConsumer.fromString(ArrayConsumer.class, cmdline);
   }
 }

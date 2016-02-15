@@ -15,7 +15,7 @@
 
 /**
  * ListAllVariables.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.processor;
 
@@ -32,7 +32,6 @@ import adams.core.option.BooleanOption;
 import adams.core.option.ClassOption;
 import adams.core.option.OptionTraversalPath;
 import adams.core.option.OptionTraverser;
-import adams.flow.core.AbstractActor;
 import adams.flow.core.Actor;
 import adams.gui.dialog.TextPanel;
 
@@ -98,7 +97,7 @@ public class ListAllVariables
    * @param actor	the actor to process
    */
   @Override
-  protected void processActor(AbstractActor actor) {
+  protected void processActor(Actor actor) {
     final Set<String>   variables;
 
     m_Variables.clear();

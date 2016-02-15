@@ -1,43 +1,11 @@
 # Project: adams
-# Date: 2014-01-23 15:40:49
+# Date: 2016-02-15 14:58:18
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	This flow shows how to filter columns from spreadsheets.\nThe original spreadsheet and the filtered one (displays all \ncolumns that have \"T\" in their name) are displayed side-by-side.
-	-actor
-		adams.flow.source.FileSupplier
-			-file
-			${EXAMPLE_FLOWS}/data/bolts.csv
-	-actor
-		adams.flow.transformer.SpreadSheetFileReader
-			-reader
-				adams.data.io.input.CsvSpreadSheetReader
-					-spreadsheet-type
-						adams.data.spreadsheet.SpreadSheet
-	-actor
-		adams.flow.control.Tee
-			-tee
-				adams.flow.sink.SpreadSheetDisplay
-					-name
-					original
-					-short-title
-					true
-					-x
-					-3
-	-actor
-		adams.flow.transformer.SpreadSheetColumnFilter
-			-finder
-				adams.data.spreadsheet.columnfinder.ByName
-					-reg-exp
-					.*T.*
-	-actor
-		adams.flow.sink.SpreadSheetDisplay
-			-name
-			filtered
-			-short-title
-			true
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "This flow shows how to filter columns from spreadsheets.\\nThe original spreadsheet and the filtered one (displays all \\ncolumns that have \\\"T\\\" in their name) are displayed side-by-side." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/bolts.csv
+ adams.flow.transformer.SpreadSheetFileReader -reader "adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.SpreadSheet"
+ adams.flow.control.Tee
+  adams.flow.sink.SpreadSheetDisplay -name original -short-title true -x -3 -writer adams.data.io.output.NullWriter
+ adams.flow.transformer.SpreadSheetColumnFilter -finder "adams.data.spreadsheet.columnfinder.ByName -reg-exp .*T.*"
+ adams.flow.sink.SpreadSheetDisplay -name filtered -short-title true -writer adams.data.io.output.NullWriter

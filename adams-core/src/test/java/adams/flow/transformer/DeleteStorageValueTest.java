@@ -29,7 +29,7 @@ import adams.flow.control.Flow;
 import adams.flow.control.Sequence;
 import adams.flow.control.StorageName;
 import adams.flow.control.Trigger;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.sink.DumpFile;
 import adams.flow.source.RandomNumberGenerator;
 import adams.flow.source.StorageValue;
@@ -81,9 +81,9 @@ public class DeleteStorageValueTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
-  public AbstractActor getActor() {
+  public Actor getActor() {
     RandomNumberGenerator rng = new RandomNumberGenerator();
     rng.setGenerator(new JavaRandomInt());
     rng.setMaxNum(100);
@@ -104,12 +104,12 @@ public class DeleteStorageValueTest
     df.setOutputFile(new TmpFile("dumpfile.txt"));
 
     Trigger tr = new Trigger();
-    tr.setActors(new AbstractActor[]{
+    tr.setActors(new Actor[]{
 	sv, df
     });
 
     Flow flow = new Flow();
-    flow.setActors(new AbstractActor[]{rng, ssv, dsv, tr});
+    flow.setActors(new Actor[]{rng, ssv, dsv, tr});
 
     return flow;
   }

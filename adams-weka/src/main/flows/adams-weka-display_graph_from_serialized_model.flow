@@ -1,37 +1,11 @@
 # Project: adams
-# Date: 2015-03-27 09:57:42
+# Date: 2016-02-15 15:22:45
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	Shows how to load a serialized model and display the tree.
-	-actor
-		adams.flow.source.FileSupplier
-			-file
-			${EXAMPLE_FLOWS}/data/j48.model
-	-actor
-		adams.flow.transformer.WekaModelReader
-	-actor
-		adams.flow.transformer.WekaClassifierInfo
-			-type
-			GRAPH
-	-actor
-		adams.flow.control.Branch
-			-branch
-				adams.flow.sink.WekaTreeVisualizer
-					-short-title
-					true
-					-writer
-						adams.gui.print.NullWriter
-			-branch
-				adams.flow.sink.Display
-					-short-title
-					true
-					-x
-					-3
-					-writer
-						adams.data.io.output.NullWriter
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "Shows how to load a serialized model and display the tree." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/j48.model
+ adams.flow.transformer.WekaModelReader
+ adams.flow.transformer.WekaClassifierInfo -type GRAPH
+ adams.flow.control.Branch
+  adams.flow.sink.WekaTreeVisualizer -short-title true -writer adams.gui.print.NullWriter
+  adams.flow.sink.Display -short-title true -x -3 -writer adams.data.io.output.NullWriter

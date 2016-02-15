@@ -31,7 +31,7 @@ import adams.core.option.AbstractArgumentOption;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.sink.DumpFile;
 import adams.flow.source.StringConstants;
 import adams.test.TmpFile;
@@ -68,17 +68,17 @@ public class StringInsertTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
   @Override
-  public AbstractActor getActor() {
+  public Actor getActor() {
     AbstractArgumentOption    argOption;
 
     Flow flow = new Flow();
 
     try {
       argOption = (AbstractArgumentOption) flow.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp1 = new adams.flow.core.AbstractActor[5];
+      adams.flow.core.Actor[] tmp1 = new adams.flow.core.Actor[5];
       adams.flow.source.DirectoryLister tmp2 = new adams.flow.source.DirectoryLister();
       argOption = (AbstractArgumentOption) tmp2.getOptionManager().findByProperty("watchDir");
       tmp2.setWatchDir((adams.core.io.PlaceholderDirectory) argOption.valueOf("${TMP}"));
@@ -152,7 +152,7 @@ public class StringInsertTest
     df.setOutputFile(outFile);
     df.setAppend(true);
 
-    flow.setActors(new AbstractActor[]{
+    flow.setActors(new Actor[]{
 	sc,
 	actor,
 	df

@@ -28,7 +28,7 @@ import adams.flow.AbstractFlowTest;
 import adams.flow.control.Branch;
 import adams.flow.control.Flow;
 import adams.flow.control.Sequence;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.sink.DumpFile;
 import adams.flow.source.FileSupplier;
 import adams.flow.transformer.WekaFileReader.OutputType;
@@ -83,10 +83,10 @@ public class WekaGetInstanceValueTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
   @Override
-  public AbstractActor getActor() {
+  public Actor getActor() {
     FileSupplier sfs = new FileSupplier();
     sfs.setFiles(new adams.core.io.PlaceholderFile[]{new TmpFile("labor.arff")});
 
@@ -103,7 +103,7 @@ public class WekaGetInstanceValueTest
     df1.setOutputFile(new TmpFile("dumpfile1.txt"));
 
     Sequence seq1 = new Sequence();
-    seq1.setActors(new AbstractActor[]{
+    seq1.setActors(new Actor[]{
 	get1, df1
     });
 
@@ -115,18 +115,18 @@ public class WekaGetInstanceValueTest
     df2.setOutputFile(new TmpFile("dumpfile2.txt"));
 
     Sequence seq2 = new Sequence();
-    seq2.setActors(new AbstractActor[]{
+    seq2.setActors(new Actor[]{
 	get2, df2
     });
 
     Branch br = new Branch();
-    br.setBranches(new AbstractActor[]{
+    br.setBranches(new Actor[]{
 	seq1,
 	seq2
     });
 
     Flow flow = new Flow();
-    flow.setActors(new AbstractActor[]{sfs, fr, cs, br});
+    flow.setActors(new Actor[]{sfs, fr, cs, br});
 
     return flow;
   }

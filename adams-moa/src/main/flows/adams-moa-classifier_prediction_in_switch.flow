@@ -1,167 +1,43 @@
 # Project: adams
-# Date: 2014-01-23 15:34:37
+# Date: 2016-02-15 14:38:49
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	This flow demonstrates how to use the class label\nindex from the prediction that a trained classifier\nreturned in a Switch statement.
-	-actor
-		adams.flow.standalone.CallableActors
-			-actor
-				adams.flow.source.StorageValue
-					-name
-					model
-					-storage-name
-					model
-			-actor
-				adams.flow.sink.Display
-			-actor
-				adams.flow.source.MOAClassifierSetup
-					-classifier
-					moa.classifiers.bayes.NaiveBayes
-	-actor
-		adams.flow.source.Start
-	-actor
-		adams.flow.control.Trigger
-			-name
-			train
-			-tee
-				adams.flow.source.FileSupplier
-					-file
-					${EXAMPLE_FLOWS}/data/anneal_train.arff
-			-tee
-				adams.flow.transformer.WekaFileReader
-					-loader
-						weka.core.converters.ArffLoader
-					-output-type
-					INCREMENTAL
-			-tee
-				adams.flow.transformer.WekaClassSelector
-			-tee
-				adams.flow.transformer.MOATrainClassifier
-					-name
-					MOAClassifier
-					-output-interval
-					1
-			-tee
-				adams.flow.control.ContainerValuePicker
-					-value
-					Model
-					-switch-outputs
-					true
-			-tee
-				adams.flow.transformer.SetStorageValue
-					-storage-name
-					model
-	-actor
-		adams.flow.control.Trigger
-			-name
-			classify
-			-tee
-				adams.flow.source.FileSupplier
-					-file
-					${EXAMPLE_FLOWS}/data/anneal_test.arff
-			-tee
-				adams.flow.transformer.WekaFileReader
-					-loader
-						weka.core.converters.ArffLoader
-					-output-type
-					INCREMENTAL
-			-tee
-				adams.flow.transformer.WekaClassSelector
-			-tee
-				adams.flow.control.Switch
-					-condition
-						adams.flow.condition.bool.MOAClassification
-							-model-actor
-							model
-							-on-the-fly
-							true
-					-case
-						adams.flow.control.Trigger
-							-name
-							class 1
-							-tee
-								adams.flow.source.StringConstants
-									-string
-									Class 1
-							-tee
-								adams.flow.sink.CallableSink
-									-callable
-									Display
-					-case
-						adams.flow.control.Trigger
-							-name
-							class 2
-							-tee
-								adams.flow.source.StringConstants
-									-string
-									Class 2
-							-tee
-								adams.flow.sink.CallableSink
-									-callable
-									Display
-					-case
-						adams.flow.control.Trigger
-							-name
-							class 3
-							-tee
-								adams.flow.source.StringConstants
-									-string
-									Class 3
-							-tee
-								adams.flow.sink.CallableSink
-									-callable
-									Display
-					-case
-						adams.flow.control.Trigger
-							-name
-							class 4
-							-tee
-								adams.flow.source.StringConstants
-									-string
-									Class 4
-							-tee
-								adams.flow.sink.CallableSink
-									-callable
-									Display
-					-case
-						adams.flow.control.Trigger
-							-name
-							class 5
-							-tee
-								adams.flow.source.StringConstants
-									-string
-									Class 5
-							-tee
-								adams.flow.sink.CallableSink
-									-callable
-									Display
-					-case
-						adams.flow.control.Trigger
-							-name
-							class U
-							-tee
-								adams.flow.source.StringConstants
-									-string
-									Class U
-							-tee
-								adams.flow.sink.CallableSink
-									-callable
-									Display
-					-case
-						adams.flow.control.Trigger
-							-name
-							No prediction
-							-tee
-								adams.flow.source.StringConstants
-									-string
-									No prediction
-							-tee
-								adams.flow.sink.CallableSink
-									-callable
-									Display
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "This flow demonstrates how to use the class label\\nindex from the prediction that a trained classifier\\nreturned in a Switch statement." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.standalone.CallableActors
+  adams.flow.source.StorageValue -name model -storage-name model
+  adams.flow.sink.Display -writer adams.data.io.output.NullWriter
+  adams.flow.source.MOAClassifierSetup -classifier moa.classifiers.bayes.NaiveBayes
+ adams.flow.source.Start
+ adams.flow.control.Trigger -name train
+  adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/anneal_train.arff
+  adams.flow.transformer.WekaFileReader -loader weka.core.converters.ArffLoader -output-type INCREMENTAL
+  adams.flow.transformer.WekaClassSelector
+  adams.flow.transformer.MOATrainClassifier -name MOAClassifier -output-interval 1
+  adams.flow.control.ContainerValuePicker -value Model -switch-outputs true
+  adams.flow.transformer.SetStorageValue -storage-name model
+ adams.flow.control.Trigger -name classify
+  adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/anneal_test.arff
+  adams.flow.transformer.WekaFileReader -loader weka.core.converters.ArffLoader -output-type INCREMENTAL
+  adams.flow.transformer.WekaClassSelector
+  adams.flow.control.Switch -condition "adams.flow.condition.bool.MOAClassification -model-actor model -on-the-fly true" -case adams.flow.sink.Null
+   adams.flow.control.Trigger -name "class 1"
+    adams.flow.source.StringConstants -string "Class 1"
+    adams.flow.sink.CallableSink -callable Display
+   adams.flow.control.Trigger -name "class 2"
+    adams.flow.source.StringConstants -string "Class 2"
+    adams.flow.sink.CallableSink -callable Display
+   adams.flow.control.Trigger -name "class 3"
+    adams.flow.source.StringConstants -string "Class 3"
+    adams.flow.sink.CallableSink -callable Display
+   adams.flow.control.Trigger -name "class 4"
+    adams.flow.source.StringConstants -string "Class 4"
+    adams.flow.sink.CallableSink -callable Display
+   adams.flow.control.Trigger -name "class 5"
+    adams.flow.source.StringConstants -string "Class 5"
+    adams.flow.sink.CallableSink -callable Display
+   adams.flow.control.Trigger -name "class U"
+    adams.flow.source.StringConstants -string "Class U"
+    adams.flow.sink.CallableSink -callable Display
+   adams.flow.control.Trigger -name "No prediction"
+    adams.flow.source.StringConstants -string "No prediction"
+    adams.flow.sink.CallableSink -callable Display

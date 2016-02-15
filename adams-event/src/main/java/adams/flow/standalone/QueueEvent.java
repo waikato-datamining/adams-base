@@ -15,7 +15,7 @@
 
 /*
  * QueueEvent.java
- * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.standalone;
@@ -27,6 +27,7 @@ import adams.flow.control.Sequence;
 import adams.flow.control.StorageName;
 import adams.flow.control.StorageQueueHandler;
 import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.core.ActorHandlerInfo;
 import adams.flow.core.DaemonEvent;
 import adams.flow.core.EventRunnable;
@@ -73,7 +74,7 @@ import java.util.logging.Level;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-actor &lt;adams.flow.core.AbstractActor&gt; [-actor ...] (property: actors)
+ * <pre>-actor &lt;adams.flow.core.Actor&gt; [-actor ...] (property: actors)
  * &nbsp;&nbsp;&nbsp;The actor to use for processing the queue element.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
@@ -186,7 +187,7 @@ public class QueueEvent
 
     m_OptionManager.add(
 	    "actor", "actors",
-	    new AbstractActor[0]);
+	    new Actor[0]);
 
     m_OptionManager.add(
 	    "storage-name", "storageName",
@@ -255,7 +256,7 @@ public class QueueEvent
    * @param actors	the actors to check
    * @return		null if accepted, otherwise error message
    */
-  protected String checkActors(AbstractActor[] actors) {
+  protected String checkActors(Actor[] actors) {
     return null;
   }
 
@@ -272,7 +273,7 @@ public class QueueEvent
    *
    * @param value	the actors
    */
-  public void setActors(AbstractActor[] value) {
+  public void setActors(Actor[] value) {
     String	msg;
 
     msg = checkActors(value);
@@ -291,7 +292,7 @@ public class QueueEvent
    *
    * @return		the actors
    */
-  public AbstractActor[] getActors() {
+  public Actor[] getActors() {
     return m_Actors.getActors();
   }
 
@@ -378,7 +379,7 @@ public class QueueEvent
    * @param index	the position
    * @return		the actor
    */
-  public AbstractActor get(int index) {
+  public Actor get(int index) {
     return m_Actors.get(index);
   }
 
@@ -388,7 +389,7 @@ public class QueueEvent
    * @param index	the position
    * @param actor	the actor to set at this position
    */
-  public void set(int index, AbstractActor actor) {
+  public void set(int index, Actor actor) {
     m_Actors.set(index, actor);
     reset();
     updateParent();
@@ -409,7 +410,7 @@ public class QueueEvent
    *
    * @param actor	the actor to insert
    */
-  public void add(AbstractActor actor) {
+  public void add(Actor actor) {
     add(size(), actor);
   }
 
@@ -419,7 +420,7 @@ public class QueueEvent
    * @param index	the position
    * @param actor	the actor to insert
    */
-  public void add(int index, AbstractActor actor) {
+  public void add(int index, Actor actor) {
     m_Actors.add(index, actor);
     reset();
     updateParent();
@@ -431,8 +432,8 @@ public class QueueEvent
    * @param index	the position
    * @return		the removed actor
    */
-  public AbstractActor remove(int index) {
-    AbstractActor	result;
+  public Actor remove(int index) {
+    Actor	result;
 
     result = m_Actors.remove(index);
     reset();
@@ -472,7 +473,7 @@ public class QueueEvent
    *
    * @return		the first 'active' actor, null if none available
    */
-  public AbstractActor firstActive() {
+  public Actor firstActive() {
     return m_Actors.firstActive();
   }
 
@@ -481,7 +482,7 @@ public class QueueEvent
    *
    * @return		the last 'active' actor, null if none available
    */
-  public AbstractActor lastActive() {
+  public Actor lastActive() {
     return m_Actors.lastActive();
   }
 

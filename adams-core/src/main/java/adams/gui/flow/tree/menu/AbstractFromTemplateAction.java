@@ -15,11 +15,11 @@
 
 /**
  * AbstractFromTemplateAction.java
- * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.tree.menu;
 
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.template.AbstractActorTemplate;
 import adams.gui.core.GUIHelper;
 import adams.gui.flow.tree.ActorTemplateSuggestion;
@@ -51,11 +51,11 @@ public abstract class AbstractFromTemplateAction
    */
   protected AbstractActorTemplate[] suggestActorTemplates(TreePath path, TreeOperations.InsertPosition position) {
     AbstractActorTemplate[]	result;
-    AbstractActor		parent;
+    Actor 			parent;
     Node			parentNode;
     Node			node;
     int				pos;
-    AbstractActor[]		actors;
+    Actor[]			actors;
     int				i;
     AbstractActorTemplate[]	suggestions;
 
@@ -75,7 +75,7 @@ public abstract class AbstractFromTemplateAction
       }
 
       parent  = parentNode.getActor();
-      actors  = new AbstractActor[parentNode.getChildCount()];
+      actors  = new Actor[parentNode.getChildCount()];
       for (i = 0; i < actors.length; i++)
 	actors[i] = ((Node) parentNode.getChildAt(i)).getActor();
 
@@ -99,7 +99,7 @@ public abstract class AbstractFromTemplateAction
    * @param position	where to insert the template
    */
   protected void addFromTemplate(TreePath path, AbstractActorTemplate template, TreeOperations.InsertPosition position) {
-    AbstractActor		actor;
+    Actor			actor;
     AbstractActorTemplate[] 	templates;
     GenericObjectEditorDialog	m_TemplateDialog;
 

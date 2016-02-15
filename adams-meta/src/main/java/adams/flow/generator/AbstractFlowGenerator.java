@@ -15,12 +15,12 @@
 
 /**
  * AbstractFlowGenerator.java
- * Copyright (C) 2011-2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.generator;
 
 import adams.core.option.AbstractOptionHandler;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 
 /**
  * Ancestor for generators that use model setups to generate flows.
@@ -29,7 +29,7 @@ import adams.flow.core.AbstractActor;
  * @version $Revision$
  * @param <T> the type of actor that owns this generator
  */
-public abstract class AbstractFlowGenerator<T extends AbstractActor>
+public abstract class AbstractFlowGenerator<T extends Actor>
   extends AbstractOptionHandler
   implements Generator<T> {
 
@@ -42,7 +42,7 @@ public abstract class AbstractFlowGenerator<T extends AbstractActor>
   /**
    * Sets the owner.
    *
-   * @param owner	the owner of this generator
+   * @param value	the owner of this generator
    */
   public void setOwner(T value) {
     m_Owner = value;
@@ -72,14 +72,14 @@ public abstract class AbstractFlowGenerator<T extends AbstractActor>
    *
    * @return		the flow
    */
-  protected abstract AbstractActor doGenerate();
+  protected abstract Actor doGenerate();
 
   /**
    * Generates the flow and returns it.
    *
    * @return		the generated flow
    */
-  public AbstractActor generate() {
+  public Actor generate() {
     check();
     return doGenerate();
   }

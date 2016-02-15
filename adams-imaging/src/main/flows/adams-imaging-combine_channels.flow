@@ -1,89 +1,19 @@
 # Project: adams
-# Date: 2015-04-09 11:44:36
+# Date: 2016-02-15 14:26:51
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	Extracts the R, G and B channel from the image.\nRotates the R channel by 180 degrees before\ncombining them again.
-	-actor
-		adams.flow.standalone.CallableActors
-			-actor
-				adams.flow.sink.DisplayPanelManager
-					-provider
-						adams.flow.sink.ImageViewer
-							-writer
-								adams.gui.print.NullWriter
-							-zoom
-							-1.0
-							-selection-processor
-								adams.gui.visualization.image.selection.NullProcessor
-							-image-overlay
-								adams.gui.visualization.image.NullOverlay
-	-actor
-		adams.flow.source.FileSupplier
-			-file
-			${EXAMPLE_FLOWS}/data/particles.jpg
-	-actor
-		adams.flow.transformer.ImageReader
-			-reader
-				adams.data.io.input.JAIImageReader
-	-actor
-		adams.flow.control.Tee
-			-name
-			original
-			-tee
-				adams.flow.sink.CallableSink
-					-callable
-					DisplayPanelManager
-	-actor
-		adams.flow.transformer.BufferedImageTransformer
-			-output-array
-			true
-			-transformer
-				adams.data.image.transformer.SplitChannels
-					-channel
-					RED
-					-channel
-					GREEN
-					-channel
-					BLUE
-	-actor
-		adams.flow.control.Tee
-			-name
-			process RED channel
-			-tee
-				adams.flow.transformer.GetArrayElement
-			-tee
-				adams.flow.transformer.BufferedImageTransformer
-					-transformer
-						adams.data.jai.transformer.Rotate
-							-angle
-							180.0
-			-tee
-				adams.flow.transformer.SetStorageValue
-					-storage-name
-					red
-	-actor
-		adams.flow.transformer.SetArrayElement
-			-origin
-			STORAGE
-			-storage-name
-			red
-	-actor
-		adams.flow.transformer.BufferedImageMultiImageOperation
-			-operation
-				adams.data.image.multiimageoperation.CombineChannels
-					-channel
-					RED
-					-channel
-					GREEN
-					-channel
-					BLUE
-	-actor
-		adams.flow.sink.CallableSink
-			-callable
-			DisplayPanelManager
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "Extracts the R, G and B channel from the image.\\nRotates the R channel by 180 degrees before\\ncombining them again." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.standalone.CallableActors
+  adams.flow.sink.DisplayPanelManager -provider "adams.flow.sink.ImageViewer -writer adams.gui.print.NullWriter -zoom -1.0 -selection-processor adams.gui.visualization.image.selection.NullProcessor -image-overlay adams.gui.visualization.image.NullOverlay"
+ adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/particles.jpg
+ adams.flow.transformer.ImageReader -reader adams.data.io.input.JAIImageReader
+ adams.flow.control.Tee -name original
+  adams.flow.sink.CallableSink -callable DisplayPanelManager
+ adams.flow.transformer.BufferedImageTransformer -output-array true -transformer "adams.data.image.transformer.SplitChannels -channel RED -channel GREEN -channel BLUE"
+ adams.flow.control.Tee -name "process RED channel"
+  adams.flow.transformer.GetArrayElement
+  adams.flow.transformer.BufferedImageTransformer -transformer "adams.data.jai.transformer.Rotate -angle 180.0"
+  adams.flow.transformer.SetStorageValue -storage-name red
+ adams.flow.transformer.SetArrayElement -origin STORAGE -storage-name red
+ adams.flow.transformer.BufferedImageMultiImageOperation -operation "adams.data.image.multiimageoperation.CombineChannels -channel RED -channel GREEN -channel BLUE"
+ adams.flow.sink.CallableSink -callable DisplayPanelManager

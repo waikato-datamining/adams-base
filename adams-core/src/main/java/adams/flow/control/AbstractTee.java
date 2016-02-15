@@ -15,14 +15,14 @@
 
 /*
  * AbstractTee.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
 
 import adams.core.QuickInfoHelper;
 import adams.core.logging.LoggingLevel;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.core.ActorHandlerInfo;
 import adams.flow.core.InputConsumer;
 import adams.flow.core.MutableActorHandler;
@@ -138,7 +138,7 @@ public abstract class AbstractTee
 
     m_OptionManager.add(
 	    "tee", "actors",
-	    new AbstractActor[0]);
+	    new Actor[0]);
   }
 
   /**
@@ -149,7 +149,7 @@ public abstract class AbstractTee
     super.initialize();
 
     m_Actors = new Sequence();
-    m_Actors.setActors(new AbstractActor[]{new Null()});
+    m_Actors.setActors(new Actor[]{new Null()});
     m_MinimumActiveActors = 1;
     m_AsynchronousWorker  = null;
   }
@@ -183,7 +183,7 @@ public abstract class AbstractTee
    * @param actor	the actor to check
    * @return		null if accepted, otherwise error message
    */
-  protected abstract String checkTeeActor(int index, AbstractActor actor);
+  protected abstract String checkTeeActor(int index, Actor actor);
 
   /**
    * Checks the tee actors before they are set via the setTeeActors method.
@@ -192,14 +192,14 @@ public abstract class AbstractTee
    * @param actors	the actors to check
    * @return		null if accepted, otherwise error message
    */
-  protected abstract String checkTeeActors(AbstractActor[] actors);
+  protected abstract String checkTeeActors(Actor[] actors);
 
   /**
    * Sets the actor to tee-off to.
    *
    * @param value	the actor
    */
-  public void setActors(AbstractActor[] value) {
+  public void setActors(Actor[] value) {
     String	msg;
 
     msg = checkTeeActors(value);
@@ -218,7 +218,7 @@ public abstract class AbstractTee
    *
    * @return		the actors
    */
-  public AbstractActor[] getActors() {
+  public Actor[] getActors() {
     return m_Actors.getActors();
   }
 
@@ -320,7 +320,7 @@ public abstract class AbstractTee
    * @return		the actor
    */
   @Override
-  public AbstractActor get(int index) {
+  public Actor get(int index) {
     return m_Actors.get(index);
   }
 
@@ -329,10 +329,10 @@ public abstract class AbstractTee
    *
    * @param index	the position
    * @param actor	the actor to set at this position
-   * @see		#checkTeeActor(int, AbstractActor)
+   * @see		#checkTeeActor(int, Actor)
    */
   @Override
-  public void set(int index, AbstractActor actor) {
+  public void set(int index, Actor actor) {
     String	msg;
 
     msg = checkTeeActor(index, actor);
@@ -362,7 +362,7 @@ public abstract class AbstractTee
    *
    * @param actor	the actor to insert
    */
-  public void add(AbstractActor actor) {
+  public void add(Actor actor) {
     add(size(), actor);
   }
 
@@ -371,9 +371,9 @@ public abstract class AbstractTee
    *
    * @param index	the position
    * @param actor	the actor to insert
-   * @see		#checkTeeActor(int, AbstractActor)
+   * @see		#checkTeeActor(int, Actor)
    */
-  public void add(int index, AbstractActor actor) {
+  public void add(int index, Actor actor) {
     String	msg;
 
     msg = checkTeeActor(index, actor);
@@ -393,8 +393,8 @@ public abstract class AbstractTee
    * @param index	the position
    * @return		the removed actor
    */
-  public AbstractActor remove(int index) {
-    AbstractActor	result;
+  public Actor remove(int index) {
+    Actor	result;
 
     result = m_Actors.remove(index);
     reset();

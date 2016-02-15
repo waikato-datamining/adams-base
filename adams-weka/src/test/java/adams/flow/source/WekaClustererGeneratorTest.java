@@ -15,7 +15,7 @@
 
 /*
  * WekaClustererGeneratorTest.java
- * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
@@ -25,6 +25,7 @@ import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
 import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.sink.DumpFile;
 import adams.flow.transformer.Convert;
 import adams.test.TmpFile;
@@ -76,9 +77,9 @@ public class WekaClustererGeneratorTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
-  public AbstractActor getActor() {
+  public Actor getActor() {
     WekaClustererGenerator cg = (WekaClustererGenerator) AbstractActor.forCommandLine("adams.flow.source.WekaClustererGenerator -setup \"weka.clusterers.SimpleKMeans -N 2 -A \\\"weka.core.EuclideanDistance -R first-last\\\" -I 500 -S 10\" -parameter \"weka.core.setupgenerator.MathParameter -property numClusters -min 2.0 -max 5.0 -step 1.0 -base 10.0 -expression I\"");
 
     Convert conv = new Convert();
@@ -90,7 +91,7 @@ public class WekaClustererGeneratorTest
     df.setOutputFile(new TmpFile("dumpfile.txt"));
 
     Flow flow = new Flow();
-    flow.setActors(new AbstractActor[]{
+    flow.setActors(new Actor[]{
 	cg, conv, df
     });
 

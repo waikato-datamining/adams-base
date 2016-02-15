@@ -1,13 +1,13 @@
 /*
  * Clipboard.java
- * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.flow.tab;
 
 import adams.core.option.AbstractOptionProducer;
 import adams.core.option.NestedProducer;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.gui.core.BaseList;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseSplitPane;
@@ -58,7 +58,7 @@ public class Clipboard
     protected String m_Name;
     
     /** the actor. */
-    protected AbstractActor m_Actor;
+    protected Actor m_Actor;
     
     /**
      * Initializes the container item.
@@ -66,7 +66,7 @@ public class Clipboard
      * @param name	the name of the item
      * @param actor	the actor to store
      */
-    public ClipboardItem(String name, AbstractActor actor) {
+    public ClipboardItem(String name, Actor actor) {
       super();
       
       m_Name  = name;
@@ -96,7 +96,7 @@ public class Clipboard
      * 
      * @return		the actor
      */
-    public AbstractActor getActor() {
+    public Actor getActor() {
       return m_Actor;
     }
     
@@ -196,7 +196,7 @@ public class Clipboard
     m_ButtonAdd.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-	AbstractActor actor = getCurrentPanel().getTree().getSelectedNode().getFullActor();
+	Actor actor = getCurrentPanel().getTree().getSelectedNode().getFullActor();
 	String name = GUIHelper.showInputDialog(GUIHelper.getParentComponent(m_ListItems), "Please enter name for clipboard item:", actor.getName());
 	if (name == null)
 	  return;
@@ -248,7 +248,7 @@ public class Clipboard
    * @param actors	the currently selected actors
    */
   @Override
-  public void actorSelectionChanged(TreePath[] paths, AbstractActor[] actors) {
+  public void actorSelectionChanged(TreePath[] paths, Actor[] actors) {
     updateButtons();
   }
   
@@ -267,7 +267,7 @@ public class Clipboard
    */
   protected void updatePreview() {
     ClipboardItem	item;
-    AbstractActor	actor;
+    Actor		actor;
     Runnable		run;
     
     if (m_ListItems.getSelectedIndex() == -1) {

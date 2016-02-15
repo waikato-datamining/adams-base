@@ -41,7 +41,7 @@ public abstract class AbstractCallableActorPropertyUpdater
   protected CallableActorReference m_ActorName;
 
   /** the callable actor to update the property for. */
-  protected transient AbstractActor m_CallableActor;
+  protected transient Actor m_CallableActor;
 
   /** the property container of the property to update. */
   protected transient PropertyContainer m_Container;

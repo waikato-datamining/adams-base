@@ -15,11 +15,9 @@
 
 /**
  * ChangeDatabaseConnection.java
- * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.processor;
-
-import java.lang.reflect.Array;
 
 import adams.core.base.BasePassword;
 import adams.core.option.AbstractArgumentOption;
@@ -28,7 +26,9 @@ import adams.core.option.BooleanOption;
 import adams.core.option.ClassOption;
 import adams.core.option.OptionTraversalPath;
 import adams.core.option.OptionTraverser;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
+
+import java.lang.reflect.Array;
 
 /**
  * Processor that updates database connections.
@@ -248,7 +248,7 @@ public class ChangeDatabaseConnection
    * @see		ModifyingProcessor
    */
   @Override
-  protected void processActor(AbstractActor actor) {
+  protected void processActor(Actor actor) {
     actor.getOptionManager().traverse(new OptionTraverser() {
       protected boolean isMatch(String url) {
 	if (m_OldURLIsRegExp)

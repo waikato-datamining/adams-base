@@ -1,251 +1,34 @@
 # Project: adams
-# Date: 2014-01-23 15:43:29
+# Date: 2016-02-15 15:04:08
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	This flow demonstrates how to build, save, load, prime and use\na forecaster to generate some future predictions.\nBased on the following example:\nhttp://wiki.pentaho.com/display/DATAMINING/Time+Series+Analysis+and+Forecasting+with+Weka
-	-actor
-		adams.flow.standalone.CallableActors
-			-actor
-				adams.flow.source.WekaForecasterSetup
-					-name
-					setup
-					-generator
-						adams.flow.source.wekaforecastersetup.WekaForecasterGenerator
-							-classifier
-								weka.classifiers.functions.GaussianProcesses
-									-L
-									1.0
-									-N
-									0
-									-K
-									weka.classifiers.functions.supportVector.PolyKernel -C 250007 -E 1.0
-							-forecast-fields
-							Fortified,Dry-white
-							-lag-maker
-								adams.flow.core.LagMakerOptions
-									-adjust-for-trends
-									true
-									-time-stamp-field
-									Date
-									-month-of-year
-									true
-									-quarter
-									true
-			-actor
-				adams.flow.source.StorageValue
-					-name
-					model
-					-storage-name
-					model
-			-actor
-				adams.flow.source.SequenceSource
-					-name
-					data
-					-actor
-						adams.flow.source.FileSupplier
-							-file
-							${EXAMPLE_FLOWS}/data/wine.arff
-					-actor
-						adams.flow.transformer.WekaFileReader
-							-loader
-								weka.core.converters.ArffLoader
-			-actor
-				adams.flow.sink.SequencePlotter
-					-name
-					forecast
-					-x
-					-3
-					-writer
-						adams.gui.print.NullWriter
-					-paintlet
-						adams.gui.visualization.sequence.PaintletWithFixedYRange
-							-min-y
-							500.0
-							-max-y
-							7000.0
-							-paintlet
-								adams.gui.visualization.sequence.LinePaintlet
-									-paint-all
-									true
-					-overlay-paintlet
-						adams.gui.visualization.sequence.CirclePaintlet
-					-marker-paintlet
-						adams.flow.sink.sequenceplotter.NoMarkers
-					-error-paintlet
-						adams.flow.sink.sequenceplotter.NoErrorPaintlet
-					-color-provider
-						adams.gui.visualization.core.DefaultColorProvider
-					-overlay-color-provider
-						adams.gui.visualization.core.DefaultColorProvider
-					-title
-					Australian wine (forecast)
-					-axis-x
-						adams.gui.visualization.core.AxisPanelOptions
-							-label
-							forecast step
-							-tick-generator
-								adams.gui.visualization.core.axis.FancyTickGenerator
-							-width
-							40
-							-custom-format
-							0
-					-axis-y
-						adams.gui.visualization.core.AxisPanelOptions
-							-label
-							forecast value
-							-tick-generator
-								adams.gui.visualization.core.axis.FancyTickGenerator
-							-width
-							80
-							-custom-format
-							0.00
-					-plot-updater
-						adams.flow.sink.sequenceplotter.SimplePlotUpdater
-							-update-interval
-							20
-					-post-processor
-						adams.flow.sink.sequenceplotter.PassThrough
-			-actor
-				adams.flow.sink.SequencePlotter
-					-name
-					priming
-					-writer
-						adams.gui.print.NullWriter
-					-paintlet
-						adams.gui.visualization.sequence.PaintletWithFixedYRange
-							-min-y
-							500.0
-							-max-y
-							7000.0
-							-paintlet
-								adams.gui.visualization.sequence.LinePaintlet
-									-paint-all
-									true
-					-overlay-paintlet
-						adams.gui.visualization.sequence.CirclePaintlet
-					-marker-paintlet
-						adams.flow.sink.sequenceplotter.NoMarkers
-					-error-paintlet
-						adams.flow.sink.sequenceplotter.NoErrorPaintlet
-					-color-provider
-						adams.gui.visualization.core.DefaultColorProvider
-					-overlay-color-provider
-						adams.gui.visualization.core.DefaultColorProvider
-					-title
-					Australian wine (priming data)
-					-axis-x
-						adams.gui.visualization.core.AxisPanelOptions
-							-label
-							timeseries point
-							-tick-generator
-								adams.gui.visualization.core.axis.FancyTickGenerator
-							-width
-							40
-							-custom-format
-							0
-					-axis-y
-						adams.gui.visualization.core.AxisPanelOptions
-							-label
-							value
-							-tick-generator
-								adams.gui.visualization.core.axis.FancyTickGenerator
-							-width
-							80
-							-custom-format
-							0.00
-					-plot-updater
-						adams.flow.sink.sequenceplotter.SimplePlotUpdater
-							-update-interval
-							20
-					-post-processor
-						adams.flow.sink.sequenceplotter.PassThrough
-	-actor
-		adams.flow.source.Start
-	-actor
-		adams.flow.control.Trigger
-			-name
-			train and save
-			-tee
-				adams.flow.source.CallableSource
-					-callable
-					data
-			-tee
-				adams.flow.transformer.WekaTrainForecaster
-					-forecaster
-					setup
-			-tee
-				adams.flow.sink.WekaModelWriter
-					-output
-					${EXAMPLE_FLOWS}/output/wine.model
-	-actor
-		adams.flow.control.Trigger
-			-name
-			load
-			-tee
-				adams.flow.source.FileSupplier
-					-file
-					${EXAMPLE_FLOWS}/output/wine.model
-			-tee
-				adams.flow.transformer.WekaModelReader
-			-tee
-				adams.flow.transformer.SetStorageValue
-					-storage-name
-					model
-	-actor
-		adams.flow.control.Trigger
-			-name
-			prime
-			-tee
-				adams.flow.source.CallableSource
-					-callable
-					data
-			-tee
-				adams.flow.control.Tee
-					-name
-					plot data
-					-tee
-						adams.flow.transformer.WekaInstanceBuffer
-							-operation
-							INSTANCES_TO_INSTANCE
-					-tee
-						adams.flow.transformer.WekaInstanceStreamPlotGenerator
-							-attributes
-							1,2
-					-tee
-						adams.flow.sink.CallableSink
-							-callable
-							priming
-			-tee
-				adams.flow.transformer.WekaPrimeForecaster
-					-forecaster
-					model
-			-tee
-				adams.flow.transformer.SetStorageValue
-					-storage-name
-					model
-	-actor
-		adams.flow.control.Trigger
-			-name
-			forecast
-			-tee
-				adams.flow.source.WekaForecasting
-					-model-actor
-					model
-					-on-the-fly
-					true
-					-num-steps
-					36
-			-tee
-				adams.flow.transformer.MakeForecastPlotContainer
-					-plot-names
-					Fortified,Dry-white
-			-tee
-				adams.flow.sink.CallableSink
-					-callable
-					forecast
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "This flow demonstrates how to build, save, load, prime and use\\na forecaster to generate some future predictions.\\nBased on the following example:\\nhttp://wiki.pentaho.com/display/DATAMINING/Time+Series+Analysis+and+Forecasting+with+Weka" -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.standalone.CallableActors
+  adams.flow.source.WekaForecasterSetup -name setup -generator "adams.flow.source.wekaforecastersetup.WekaForecasterGenerator -classifier \"weka.classifiers.functions.GaussianProcesses -L 1.0 -N 0 -K \\\"weka.classifiers.functions.supportVector.PolyKernel -E 1.0 -C 250007\\\" -S 1\" -forecast-fields Fortified,Dry-white -lag-maker \"adams.flow.core.LagMakerOptions -adjust-for-trends true -time-stamp-field Date -month-of-year true -quarter true\""
+  adams.flow.source.StorageValue -name model -storage-name model
+  adams.flow.source.SequenceSource -name data
+   adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/wine.arff
+   adams.flow.transformer.WekaFileReader -loader weka.core.converters.ArffLoader
+  adams.flow.sink.SequencePlotter -name forecast -x -3 -writer adams.gui.print.NullWriter -paintlet "adams.gui.visualization.sequence.PaintletWithFixedYRange -min-y 500.0 -max-y 7000.0 -paintlet \"adams.gui.visualization.sequence.LinePaintlet -paint-all true\"" -overlay-paintlet adams.gui.visualization.sequence.CirclePaintlet -marker-paintlet adams.flow.sink.sequenceplotter.NoMarkers -error-paintlet adams.flow.sink.sequenceplotter.NoErrorPaintlet -mouse-click-action adams.flow.sink.sequenceplotter.NullClickAction -color-provider adams.gui.visualization.core.DefaultColorProvider -overlay-color-provider adams.gui.visualization.core.DefaultColorProvider -title "Australian wine (forecast)" -axis-x "adams.gui.visualization.core.AxisPanelOptions -label \"forecast step\" -tick-generator adams.gui.visualization.core.axis.FancyTickGenerator -width 40 -custom-format 0" -axis-y "adams.gui.visualization.core.AxisPanelOptions -label \"forecast value\" -tick-generator adams.gui.visualization.core.axis.FancyTickGenerator -width 80 -custom-format 0.00" -plot-updater "adams.flow.sink.sequenceplotter.SimplePlotUpdater -update-interval 20" -post-processor adams.flow.sink.sequenceplotter.PassThrough
+  adams.flow.sink.SequencePlotter -name priming -writer adams.gui.print.NullWriter -paintlet "adams.gui.visualization.sequence.PaintletWithFixedYRange -min-y 500.0 -max-y 7000.0 -paintlet \"adams.gui.visualization.sequence.LinePaintlet -paint-all true\"" -overlay-paintlet adams.gui.visualization.sequence.CirclePaintlet -marker-paintlet adams.flow.sink.sequenceplotter.NoMarkers -error-paintlet adams.flow.sink.sequenceplotter.NoErrorPaintlet -mouse-click-action adams.flow.sink.sequenceplotter.NullClickAction -color-provider adams.gui.visualization.core.DefaultColorProvider -overlay-color-provider adams.gui.visualization.core.DefaultColorProvider -title "Australian wine (priming data)" -axis-x "adams.gui.visualization.core.AxisPanelOptions -label \"timeseries point\" -tick-generator adams.gui.visualization.core.axis.FancyTickGenerator -width 40 -custom-format 0" -axis-y "adams.gui.visualization.core.AxisPanelOptions -label value -tick-generator adams.gui.visualization.core.axis.FancyTickGenerator -width 80 -custom-format 0.00" -plot-updater "adams.flow.sink.sequenceplotter.SimplePlotUpdater -update-interval 20" -post-processor adams.flow.sink.sequenceplotter.PassThrough
+ adams.flow.source.Start
+ adams.flow.control.Trigger -name "train and save"
+  adams.flow.source.CallableSource -callable data
+  adams.flow.transformer.WekaTrainForecaster -forecaster setup
+  adams.flow.sink.WekaModelWriter -output ${EXAMPLE_FLOWS}/output/wine.model
+ adams.flow.control.Trigger -name load
+  adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/output/wine.model
+  adams.flow.transformer.WekaModelReader
+  adams.flow.transformer.SetStorageValue -storage-name model
+ adams.flow.control.Trigger -name prime
+  adams.flow.source.CallableSource -callable data
+  adams.flow.control.Tee -name "plot data"
+   adams.flow.transformer.WekaInstanceBuffer -operation INSTANCES_TO_INSTANCE
+   adams.flow.transformer.WekaInstanceStreamPlotGenerator -attributes 1,2
+   adams.flow.sink.CallableSink -callable priming
+  adams.flow.transformer.WekaPrimeForecaster -forecaster model
+  adams.flow.transformer.SetStorageValue -storage-name model
+ adams.flow.control.Trigger -name forecast
+  adams.flow.source.WekaForecasting -model-actor model -on-the-fly true -num-steps 36
+  adams.flow.transformer.MakeForecastPlotContainer -plot-names Fortified,Dry-white
+  adams.flow.sink.CallableSink -callable forecast

@@ -22,6 +22,7 @@ package adams.gui.flow.tree.menu;
 import adams.core.ClassLister;
 import adams.flow.control.Flow;
 import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.core.ActorHandler;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.MutableActorHandler;
@@ -66,7 +67,7 @@ public class SwapActor
     String[]		actors;
     int			i;
     List<JMenuItem>	menuitems;
-    AbstractActor	current;
+    Actor 		current;
     boolean		isStandalone;
     boolean		isSource;
     boolean		isTransformer;

@@ -1,155 +1,20 @@
 # Project: adams
-# Date: 2014-01-23 15:22:01
+# Date: 2016-02-15 11:30:28
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	This flow shows two plots below each other (and a Display actor for outputting \nthe ForLoop\'s values), using the GridView standalone.\nGridView can be useful for comparing plots which have quite different scales.
-	-actor
-		adams.flow.standalone.GridView
-			-actor
-				adams.flow.sink.SequencePlotter
-					-name
-					SequencePlotterLog
-					-writer
-						adams.gui.print.NullWriter
-					-paintlet
-						adams.gui.visualization.sequence.LinePaintlet
-					-overlay-paintlet
-						adams.gui.visualization.sequence.CirclePaintlet
-					-marker-paintlet
-						adams.flow.sink.sequenceplotter.NoMarkers
-					-error-paintlet
-						adams.flow.sink.sequenceplotter.NoErrorPaintlet
-					-color-provider
-						adams.gui.visualization.core.DefaultColorProvider
-					-overlay-color-provider
-						adams.gui.visualization.core.DefaultColorProvider
-					-title
-					log
-					-axis-x
-						adams.gui.visualization.core.AxisPanelOptions
-							-label
-							x
-							-tick-generator
-								adams.gui.visualization.core.axis.FancyTickGenerator
-							-width
-							40
-							-custom-format
-							0.000
-					-axis-y
-						adams.gui.visualization.core.AxisPanelOptions
-							-label
-							y
-							-tick-generator
-								adams.gui.visualization.core.axis.FancyTickGenerator
-							-width
-							60
-							-custom-format
-							0.0
-					-plot-updater
-						adams.flow.sink.sequenceplotter.SimplePlotUpdater
-							-update-interval
-							20
-					-post-processor
-						adams.flow.sink.sequenceplotter.PassThrough
-			-actor
-				adams.flow.sink.SequencePlotter
-					-name
-					SequencePlotterExp
-					-writer
-						adams.gui.print.NullWriter
-					-paintlet
-						adams.gui.visualization.sequence.DotPaintlet
-							-stroke-thickness
-							3.0
-					-overlay-paintlet
-						adams.gui.visualization.sequence.CirclePaintlet
-					-marker-paintlet
-						adams.flow.sink.sequenceplotter.NoMarkers
-					-error-paintlet
-						adams.flow.sink.sequenceplotter.NoErrorPaintlet
-					-color-provider
-						adams.gui.visualization.core.DefaultColorProvider
-					-overlay-color-provider
-						adams.gui.visualization.core.DefaultColorProvider
-					-title
-					exp
-					-axis-x
-						adams.gui.visualization.core.AxisPanelOptions
-							-label
-							x
-							-tick-generator
-								adams.gui.visualization.core.axis.FancyTickGenerator
-							-width
-							40
-							-custom-format
-							0.000
-					-axis-y
-						adams.gui.visualization.core.AxisPanelOptions
-							-label
-							y
-							-tick-generator
-								adams.gui.visualization.core.axis.FancyTickGenerator
-							-width
-							60
-							-custom-format
-							0.0
-					-plot-updater
-						adams.flow.sink.sequenceplotter.SimplePlotUpdater
-							-update-interval
-							20
-					-post-processor
-						adams.flow.sink.sequenceplotter.PassThrough
-			-actor
-				adams.flow.sink.Display
-			-num-rows
-			3
-	-actor
-		adams.flow.source.ForLoop
-			-upper
-			2000
-	-actor
-		adams.flow.control.Tee
-			-name
-			log
-			-tee
-				adams.flow.transformer.MathExpression
-					-expression
-					log(X/1000)
-			-tee
-				adams.flow.transformer.MakePlotContainer
-					-plot-name
-					log
-			-tee
-				adams.flow.sink.CallableSink
-					-callable
-					SequencePlotterLog
-	-actor
-		adams.flow.control.Tee
-			-name
-			exp
-			-tee
-				adams.flow.transformer.MathExpression
-					-expression
-					exp(X/1000)
-			-tee
-				adams.flow.transformer.MakePlotContainer
-					-plot-name
-					exp
-			-tee
-				adams.flow.sink.CallableSink
-					-callable
-					SequencePlotterExp
-	-actor
-		adams.flow.control.Tee
-			-name
-			text
-			-tee
-				adams.flow.sink.CallableSink
-					-callable
-					Display
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "This flow shows two plots below each other (and a Display actor for outputting \\nthe ForLoop\\\'s values), using the GridView standalone.\\nGridView can be useful for comparing plots which have quite different scales." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.standalone.GridView -num-rows 3 -writer adams.gui.print.NullWriter
+  adams.flow.sink.SequencePlotter -name SequencePlotterLog -writer adams.gui.print.NullWriter -paintlet adams.gui.visualization.sequence.LinePaintlet -overlay-paintlet adams.gui.visualization.sequence.CirclePaintlet -marker-paintlet adams.flow.sink.sequenceplotter.NoMarkers -error-paintlet adams.flow.sink.sequenceplotter.NoErrorPaintlet -mouse-click-action adams.flow.sink.sequenceplotter.NullClickAction -color-provider adams.gui.visualization.core.DefaultColorProvider -overlay-color-provider adams.gui.visualization.core.DefaultColorProvider -title log -axis-x "adams.gui.visualization.core.AxisPanelOptions -label x -tick-generator adams.gui.visualization.core.axis.FancyTickGenerator -width 40 -custom-format 0.000" -axis-y "adams.gui.visualization.core.AxisPanelOptions -label y -tick-generator adams.gui.visualization.core.axis.FancyTickGenerator -width 60 -custom-format 0.0" -plot-updater "adams.flow.sink.sequenceplotter.SimplePlotUpdater -update-interval 20" -post-processor adams.flow.sink.sequenceplotter.PassThrough
+  adams.flow.sink.SequencePlotter -name SequencePlotterExp -writer adams.gui.print.NullWriter -paintlet "adams.gui.visualization.sequence.DotPaintlet -stroke-thickness 3.0" -overlay-paintlet adams.gui.visualization.sequence.CirclePaintlet -marker-paintlet adams.flow.sink.sequenceplotter.NoMarkers -error-paintlet adams.flow.sink.sequenceplotter.NoErrorPaintlet -mouse-click-action adams.flow.sink.sequenceplotter.NullClickAction -color-provider adams.gui.visualization.core.DefaultColorProvider -overlay-color-provider adams.gui.visualization.core.DefaultColorProvider -title exp -axis-x "adams.gui.visualization.core.AxisPanelOptions -label x -tick-generator adams.gui.visualization.core.axis.FancyTickGenerator -width 40 -custom-format 0.000" -axis-y "adams.gui.visualization.core.AxisPanelOptions -label y -tick-generator adams.gui.visualization.core.axis.FancyTickGenerator -width 60 -custom-format 0.0" -plot-updater "adams.flow.sink.sequenceplotter.SimplePlotUpdater -update-interval 20" -post-processor adams.flow.sink.sequenceplotter.PassThrough
+  adams.flow.sink.Display -writer adams.data.io.output.NullWriter
+ adams.flow.source.ForLoop -upper 2000
+ adams.flow.control.Tee -name log
+  adams.flow.transformer.MathExpression -expression log(X/1000)
+  adams.flow.transformer.MakePlotContainer -plot-name log
+  adams.flow.sink.CallableSink -callable SequencePlotterLog
+ adams.flow.control.Tee -name exp
+  adams.flow.transformer.MathExpression -expression exp(X/1000)
+  adams.flow.transformer.MakePlotContainer -plot-name exp
+  adams.flow.sink.CallableSink -callable SequencePlotterExp
+ adams.flow.control.Tee -name text
+  adams.flow.sink.CallableSink -callable Display

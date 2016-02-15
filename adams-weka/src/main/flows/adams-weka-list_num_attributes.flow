@@ -1,95 +1,24 @@
 # Project: adams
-# Date: 2014-01-23 15:50:15
+# Date: 2016-02-15 15:24:05
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	Lists the number of attributes for all the datasets it finds\nin the directory that the user selects.
-	-actor
-		adams.flow.source.Start
-	-actor
-		adams.flow.control.Trigger
-			-name
-			select directory
-			-tee
-				adams.flow.source.SelectDirectory
-					-stop-if-canceled
-					true
-					-custom-stop-message
-					User canceled selection of dataset directory!
-					-dir-chooser-title
-					Select dir with datasets
-			-tee
-				adams.flow.transformer.SetVariable
-					-var-name
-					dir
-	-actor
-		adams.flow.control.Trigger
-			-name
-			check datasets
-			-tee
-				adams.flow.source.DirectoryLister
-					-dir
-					@{dir}
-					-list-files
-					true
-					-regexp
-					.*.arff
-					-sorting
-					SORT_BY_NAME
-			-tee
-				adams.flow.control.Tee
-					-name
-					Store filename in @{file}
-					-tee
-						adams.flow.transformer.BaseName
-							-remove-extensions
-							true
-					-tee
-						adams.flow.transformer.SetVariable
-							-var-name
-							file
-			-tee
-				adams.flow.control.TryCatch
-					-try
-						adams.flow.control.SubProcess
-							-name
-							try
-							-actor
-								adams.flow.transformer.WekaFileReader
-									-loader
-										weka.core.converters.ArffLoader
-							-actor
-								adams.flow.transformer.WekaClassSelector
-							-actor
-								adams.flow.transformer.WekaInstancesInfo
-									-type
-									NUM_ATTRIBUTES
-							-actor
-								adams.flow.transformer.Convert
-									-conversion
-										adams.data.conversion.AnyToString
-					-catch
-						adams.flow.control.SubProcess
-							-name
-							catch
-							-actor
-								adams.flow.transformer.StringReplace
-									-find
-									.*
-									-replace
-									Error
-			-tee
-				adams.flow.transformer.StringInsert
-					-position
-					first
-					-value
-					@{file}: 
-					-variable
-					true
-			-tee
-				adams.flow.sink.Display
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "Lists the number of attributes for all the datasets it finds\\nin the directory that the user selects." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.source.Start
+ adams.flow.control.Trigger -name "select directory"
+  adams.flow.source.SelectDirectory -stop-if-canceled true -custom-stop-message "User canceled selection of dataset directory!" -dir-chooser-title "Select dir with datasets"
+  adams.flow.transformer.SetVariable -var-name dir
+ adams.flow.control.Trigger -name "check datasets"
+  adams.flow.source.DirectoryLister -dir @{dir} -list-files true -regexp .*.arff -sorting SORT_BY_NAME
+  adams.flow.control.Tee -name "Store filename in @{file}"
+   adams.flow.transformer.BaseName -remove-extensions true
+   adams.flow.transformer.SetVariable -var-name file
+  adams.flow.control.TryCatch -try "adams.flow.control.SubProcess -name try" -catch "adams.flow.control.SubProcess -name catch"
+   adams.flow.control.SubProcess -name try
+    adams.flow.transformer.WekaFileReader -loader weka.core.converters.ArffLoader
+    adams.flow.transformer.WekaClassSelector
+    adams.flow.transformer.WekaInstancesInfo -type NUM_ATTRIBUTES
+    adams.flow.transformer.Convert -conversion adams.data.conversion.AnyToString
+   adams.flow.control.SubProcess -name catch
+    adams.flow.transformer.StringReplace -find .* -replace Error
+  adams.flow.transformer.StringInsert -position first -value "@{file}: " -variable true
+  adams.flow.sink.Display -writer adams.data.io.output.NullWriter

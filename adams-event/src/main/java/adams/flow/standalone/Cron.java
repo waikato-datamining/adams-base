@@ -15,7 +15,7 @@
 
 /*
  * Cron.java
- * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.standalone;
@@ -26,7 +26,7 @@ import adams.core.base.CronSchedule;
 import adams.core.logging.LoggingLevel;
 import adams.flow.condition.bool.True;
 import adams.flow.control.Sequence;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.core.ActorHandlerInfo;
 import adams.flow.core.DaemonEvent;
 import adams.flow.core.EventHelper;
@@ -86,7 +86,7 @@ import java.util.Date;
  * &nbsp;&nbsp;&nbsp; useful for critical actors.
  * </pre>
  * 
- * <pre>-cron-actor &lt;adams.flow.core.AbstractActor&gt; [-cron-actor ...] (property: cronActors)
+ * <pre>-cron-actor &lt;adams.flow.core.Actor&gt; [-cron-actor ...] (property: cronActors)
  * &nbsp;&nbsp;&nbsp;The actor to execute according to the cron schedule.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
@@ -199,7 +199,7 @@ public class Cron
 
     m_OptionManager.add(
 	    "cron-actor", "cronActors",
-	    new AbstractActor[0]);
+	    new Actor[0]);
 
     m_OptionManager.add(
 	    "schedule", "schedule",
@@ -248,7 +248,7 @@ public class Cron
    * @param actors	the actors to check
    * @return		null if accepted, otherwise error message
    */
-  protected String checkCronActors(AbstractActor[] actors) {
+  protected String checkCronActors(Actor[] actors) {
     return null;
   }
 
@@ -265,7 +265,7 @@ public class Cron
    *
    * @param value	the actors
    */
-  public void setCronActors(AbstractActor[] value) {
+  public void setCronActors(Actor[] value) {
     String	msg;
 
     msg = checkCronActors(value);
@@ -284,7 +284,7 @@ public class Cron
    *
    * @return		the actors
    */
-  public AbstractActor[] getCronActors() {
+  public Actor[] getCronActors() {
     return m_CronActors.getActors();
   }
 
@@ -362,7 +362,7 @@ public class Cron
    * @param index	the position
    * @return		the actor
    */
-  public AbstractActor get(int index) {
+  public Actor get(int index) {
     return m_CronActors.get(index);
   }
 
@@ -372,7 +372,7 @@ public class Cron
    * @param index	the position
    * @param actor	the actor to set at this position
    */
-  public void set(int index, AbstractActor actor) {
+  public void set(int index, Actor actor) {
     m_CronActors.set(index, actor);
     reset();
     updateParent();
@@ -393,7 +393,7 @@ public class Cron
    *
    * @param actor	the actor to insert
    */
-  public void add(AbstractActor actor) {
+  public void add(Actor actor) {
     add(size(), actor);
   }
 
@@ -403,7 +403,7 @@ public class Cron
    * @param index	the position
    * @param actor	the actor to insert
    */
-  public void add(int index, AbstractActor actor) {
+  public void add(int index, Actor actor) {
     m_CronActors.add(index, actor);
     reset();
     updateParent();
@@ -415,8 +415,8 @@ public class Cron
    * @param index	the position
    * @return		the removed actor
    */
-  public AbstractActor remove(int index) {
-    AbstractActor	result;
+  public Actor remove(int index) {
+    Actor	result;
 
     result = m_CronActors.remove(index);
     reset();
@@ -456,7 +456,7 @@ public class Cron
    *
    * @return		the first 'active' actor, null if none available
    */
-  public AbstractActor firstActive() {
+  public Actor firstActive() {
     return m_CronActors.firstActive();
   }
 
@@ -465,7 +465,7 @@ public class Cron
    *
    * @return		the last 'active' actor, null if none available
    */
-  public AbstractActor lastActive() {
+  public Actor lastActive() {
     return m_CronActors.lastActive();
   }
 

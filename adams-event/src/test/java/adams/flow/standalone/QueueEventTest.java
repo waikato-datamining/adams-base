@@ -26,7 +26,7 @@ import adams.core.option.AbstractArgumentOption;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 
 /**
  * Test for QueueEvent actor.
@@ -60,17 +60,17 @@ public class QueueEventTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
   @Override
-  public AbstractActor getActor() {
+  public Actor getActor() {
     AbstractArgumentOption    argOption;
     
     Flow flow = new Flow();
     
     try {
       argOption = (AbstractArgumentOption) flow.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] actors1 = new adams.flow.core.AbstractActor[5];
+      adams.flow.core.Actor[] actors1 = new adams.flow.core.Actor[5];
 
       // Flow.QueueInit
       adams.flow.standalone.QueueInit queueinit2 = new adams.flow.standalone.QueueInit();
@@ -79,12 +79,12 @@ public class QueueEventTest
       // Flow.Events
       adams.flow.standalone.Events events3 = new adams.flow.standalone.Events();
       argOption = (AbstractArgumentOption) events3.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] actors4 = new adams.flow.core.AbstractActor[1];
+      adams.flow.core.Actor[] actors4 = new adams.flow.core.Actor[1];
 
       // Flow.Events.QueueEvent
       adams.flow.standalone.QueueEvent queueevent5 = new adams.flow.standalone.QueueEvent();
       argOption = (AbstractArgumentOption) queueevent5.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] actors6 = new adams.flow.core.AbstractActor[1];
+      adams.flow.core.Actor[] actors6 = new adams.flow.core.Actor[1];
 
       // .Sequence.Display
       adams.flow.sink.Display display7 = new adams.flow.sink.Display();

@@ -1,49 +1,13 @@
 # Project: adams
-# Date: 2014-01-23 15:23:11
+# Date: 2016-02-15 11:31:40
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	Demonstrates how to access and display data in JSON files.
-	-actor
-		adams.flow.source.FileSupplier
-			-file
-			${EXAMPLE_FLOWS}/data/webapp.json
-	-actor
-		adams.flow.transformer.JsonFileReader
-	-actor
-		adams.flow.control.Branch
-			-branch
-				adams.flow.control.Sequence
-					-name
-					full display
-					-actor
-						adams.flow.sink.JsonDisplay
-							-writer
-								adams.gui.print.NullWriter
-							-preview
-							true
-							-expand
-							true
-			-branch
-				adams.flow.control.Sequence
-					-name
-					extract servlet names
-					-actor
-						adams.flow.transformer.GetJsonValue
-							-path
-							$..servlet-name
-							-data-type
-							STRING
-					-actor
-						adams.flow.sink.Display
-							-name
-							Servlets
-							-short-title
-							true
-							-x
-							-3
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "Demonstrates how to access and display data in JSON files." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/webapp.json
+ adams.flow.transformer.JsonFileReader
+ adams.flow.control.Branch
+  adams.flow.control.Sequence -name "full display"
+   adams.flow.sink.JsonDisplay -writer adams.gui.print.NullWriter -preview true -expand true
+  adams.flow.control.Sequence -name "extract servlet names"
+   adams.flow.transformer.GetJsonValue -path $..servlet-name -data-type STRING
+   adams.flow.sink.Display -name Servlets -short-title true -x -3 -writer adams.data.io.output.NullWriter

@@ -23,7 +23,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import adams.env.Environment;
 import adams.flow.control.Flow;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.parser.BooleanExpressionText;
 
 /**
@@ -50,10 +50,10 @@ public class RandomNumberExpressionTest
    * @return		the owners (not all conditions might need owners)
    */
   @Override
-  protected AbstractActor[] getRegressionOwners() {
-    AbstractActor[]	result;
+  protected Actor[] getRegressionOwners() {
+    Actor[]	result;
     
-    result    = new AbstractActor[4];
+    result    = new Actor[4];
     result[0] = new Flow();
     result[1] = new Flow();
     result[2] = new Flow();

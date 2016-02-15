@@ -1,6 +1,6 @@
 package adams.flow.condition.bool
 
-import adams.flow.core.AbstractActor
+import adams.flow.core.Actor
 import adams.flow.core.Token
 import adams.flow.core.Unknown
 
@@ -57,7 +57,7 @@ public class TemplateBooleanCondition
    * @param token	the current token passing through the actor
    * @return		the evaluation
    */
-  protected boolean doEvaluate(AbstractActor owner, Token token) {
+  protected boolean doEvaluate(Actor owner, Token token) {
     // FIXME
     return true
   }

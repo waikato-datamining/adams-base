@@ -15,12 +15,12 @@
 
 /**
  * Events.java
- * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.standalone;
 
 import adams.flow.control.AbstractControlActor;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.core.ActorExecution;
 import adams.flow.core.ActorHandler;
 import adams.flow.core.ActorHandlerInfo;
@@ -71,7 +71,7 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp; useful for critical actors.
  * </pre>
  *
- * <pre>-actor &lt;adams.flow.core.AbstractActor&gt; [-actor ...] (property: actors)
+ * <pre>-actor &lt;adams.flow.core.Actor&gt; [-actor ...] (property: actors)
  * &nbsp;&nbsp;&nbsp;The managed events.
  * &nbsp;&nbsp;&nbsp;default:
  * </pre>
@@ -89,7 +89,7 @@ public class Events
   private static final long serialVersionUID = -8393224234458401716L;
 
   /** the events. */
-  protected List<AbstractActor> m_Actors;
+  protected List<Actor> m_Actors;
 
   /**
    * Returns a string describing the object.
@@ -108,7 +108,7 @@ public class Events
   protected void initialize() {
     super.initialize();
 
-    m_Actors = new ArrayList<AbstractActor>();
+    m_Actors = new ArrayList<>();
   }
 
   /**
@@ -120,7 +120,7 @@ public class Events
 
     m_OptionManager.add(
 	    "actor", "actors",
-	    new AbstractActor[0]);
+	    new Actor[0]);
   }
 
   /**
@@ -152,7 +152,7 @@ public class Events
    * @return				the actor if valid
    * @throws IllegalArgumentException	if actor does not implement {@link Event}
    */
-  protected AbstractActor checkActor(AbstractActor actor) {
+  protected Actor checkActor(Actor actor) {
     if (!(actor instanceof Event))
       throw new IllegalArgumentException(
 	    "Only " + Event.class.getName() + " actors are accepted, "
@@ -170,7 +170,7 @@ public class Events
    *
    * @param value 	the sequence items
    */
-  public void setActors(AbstractActor[] value) {
+  public void setActors(Actor[] value) {
     int		i;
 
     ActorUtils.uniqueNames(value);
@@ -188,8 +188,8 @@ public class Events
    *
    * @return 		the sequence items
    */
-  public AbstractActor[] getActors() {
-    return m_Actors.toArray(new AbstractActor[m_Actors.size()]);
+  public Actor[] getActors() {
+    return m_Actors.toArray(new Actor[m_Actors.size()]);
   }
 
   /**
@@ -219,7 +219,7 @@ public class Events
    * @return		the actor
    */
   @Override
-  public AbstractActor get(int index) {
+  public Actor get(int index) {
     return m_Actors.get(index);
   }
 
@@ -230,7 +230,7 @@ public class Events
    * @param actor	the actor to set at this position
    */
   @Override
-  public void set(int index, AbstractActor actor) {
+  public void set(int index, Actor actor) {
     if ((index > -1) && (index < m_Actors.size())) {
       ActorUtils.uniqueName(actor, this, index);
       m_Actors.set(index, checkActor(actor));
@@ -247,7 +247,7 @@ public class Events
    *
    * @param actor	the actor to insert
    */
-  public void add(AbstractActor actor) {
+  public void add(Actor actor) {
     add(size(), actor);
   }
 
@@ -257,7 +257,7 @@ public class Events
    * @param index	the position
    * @param actor	the actor to insert
    */
-  public void add(int index, AbstractActor actor) {
+  public void add(int index, Actor actor) {
     m_Actors.add(index, checkActor(actor));
     reset();
     updateParent();
@@ -269,8 +269,8 @@ public class Events
    * @param index	the position
    * @return		the removed actor
    */
-  public AbstractActor remove(int index) {
-    AbstractActor	result;
+  public Actor remove(int index) {
+    Actor	result;
 
     result = m_Actors.remove(index);
     reset();

@@ -1,105 +1,26 @@
 # Project: adams
-# Date: 2014-01-23 15:34:43
+# Date: 2016-02-15 14:39:01
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-actor
-		adams.flow.standalone.CallableActors
-			-actor
-				adams.flow.source.SequenceSource
-					-name
-					model
-					-actor
-						adams.flow.source.FileSupplier
-							-file
-							${EXAMPLE_FLOWS}/data/naivebayes.model
-					-actor
-						adams.flow.transformer.MOAModelReader
-							-output-only-model
-							true
-	-actor
-		adams.flow.source.Start
-	-actor
-		adams.flow.control.Trigger
-			-name
-			serialized model
-			-annotation
-			This flow uses a serialized model to make predictions on a \ndata set (iris.arff) and output the generated class \ndistributions.
-			-tee
-				adams.flow.source.FileSupplier
-					-file
-					${EXAMPLE_FLOWS}/data/iris.arff
-			-tee
-				adams.flow.transformer.WekaFileReader
-					-loader
-						weka.core.converters.ArffLoader
-					-output-type
-					INCREMENTAL
-			-tee
-				adams.flow.transformer.WekaClassSelector
-			-tee
-				adams.flow.transformer.MOAClassifying
-					-model
-					${EXAMPLE_FLOWS}/data/naivebayes.model
-					-on-the-fly
-					true
-			-tee
-				adams.flow.control.ContainerValuePicker
-					-tee
-						adams.flow.transformer.Convert
-							-conversion
-								adams.data.conversion.AnyToString
-					-tee
-						adams.flow.sink.Display
-							-name
-							Display class distribution (serialized)
-							-short-title
-							true
-					-value
-					Distribution
-	-actor
-		adams.flow.control.Trigger
-			-name
-			callable actor
-			-annotation
-			This flow uses a model obtained from a callable actor to make \npredictions on a data set (iris.arff) and output the \ngenerated class distributions (the callable actor merely loads a\nserialized model in this example).
-			-tee
-				adams.flow.source.FileSupplier
-					-file
-					${EXAMPLE_FLOWS}/data/iris.arff
-			-tee
-				adams.flow.transformer.WekaFileReader
-					-loader
-						weka.core.converters.ArffLoader
-					-output-type
-					INCREMENTAL
-			-tee
-				adams.flow.transformer.WekaClassSelector
-			-tee
-				adams.flow.transformer.MOAClassifying
-					-model
-					${EXAMPLE_FLOWS}
-					-model-actor
-					model
-					-on-the-fly
-					true
-			-tee
-				adams.flow.control.ContainerValuePicker
-					-tee
-						adams.flow.transformer.Convert
-							-conversion
-								adams.data.conversion.AnyToString
-					-tee
-						adams.flow.sink.Display
-							-name
-							Display class distribution (model)
-							-short-title
-							true
-							-x
-							-3
-					-value
-					Distribution
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.standalone.CallableActors
+  adams.flow.source.SequenceSource -name model
+   adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/naivebayes.model
+   adams.flow.transformer.MOAModelReader -output-only-model true
+ adams.flow.source.Start
+ adams.flow.control.Trigger -name "serialized model" -annotation "This flow uses a serialized model to make predictions on a \\ndata set (iris.arff) and output the generated class \\ndistributions."
+  adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/iris.arff
+  adams.flow.transformer.WekaFileReader -loader weka.core.converters.ArffLoader -output-type INCREMENTAL
+  adams.flow.transformer.WekaClassSelector
+  adams.flow.transformer.MOAClassifying -model ${EXAMPLE_FLOWS}/data/naivebayes.model -on-the-fly true
+  adams.flow.control.ContainerValuePicker -value Distribution
+   adams.flow.transformer.Convert -conversion adams.data.conversion.AnyToString
+   adams.flow.sink.Display -name "Display class distribution (serialized)" -short-title true -writer adams.data.io.output.NullWriter
+ adams.flow.control.Trigger -name "callable actor" -annotation "This flow uses a model obtained from a callable actor to make \\npredictions on a data set (iris.arff) and output the \\ngenerated class distributions (the callable actor merely loads a\\nserialized model in this example)."
+  adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/iris.arff
+  adams.flow.transformer.WekaFileReader -loader weka.core.converters.ArffLoader -output-type INCREMENTAL
+  adams.flow.transformer.WekaClassSelector
+  adams.flow.transformer.MOAClassifying -model ${EXAMPLE_FLOWS} -model-actor model -on-the-fly true
+  adams.flow.control.ContainerValuePicker -value Distribution
+   adams.flow.transformer.Convert -conversion adams.data.conversion.AnyToString
+   adams.flow.sink.Display -name "Display class distribution (model)" -short-title true -x -3 -writer adams.data.io.output.NullWriter

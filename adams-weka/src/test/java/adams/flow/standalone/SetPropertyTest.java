@@ -30,7 +30,7 @@ import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
 import adams.flow.control.Trigger;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.core.CallableActorReference;
 import adams.flow.sink.DumpFile;
 import adams.flow.source.FileSupplier;
@@ -89,15 +89,15 @@ public class SetPropertyTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
   @Override
-  public AbstractActor getActor() {
+  public Actor getActor() {
     CallableActors ga = new CallableActors();
     WekaClassifierSetup cls = new WekaClassifierSetup();
     cls.setName("cls");
     cls.setClassifier(new weka.classifiers.trees.J48());
-    ga.setActors(new AbstractActor[]{cls});
+    ga.setActors(new Actor[]{cls});
 
     SetProperty set = new SetProperty();
     set.setActorName(new CallableActorReference("cls"));
@@ -133,10 +133,10 @@ public class SetPropertyTest
     df.setAppend(true);
     df.setOutputFile(new TmpFile("dumpfile.txt"));
 
-    tr.setActors(new AbstractActor[]{sfs, fr, cs, cv, es, df});
+    tr.setActors(new Actor[]{sfs, fr, cs, cv, es, df});
 
     Flow flow = new Flow();
-    flow.setActors(new AbstractActor[]{ga, set, sc, sv, tr});
+    flow.setActors(new Actor[]{ga, set, sc, sv, tr});
 
     return flow;
   }

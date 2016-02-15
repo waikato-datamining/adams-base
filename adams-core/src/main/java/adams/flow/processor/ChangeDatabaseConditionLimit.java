@@ -15,11 +15,9 @@
 
 /**
  * ChangeDatabaseConditionLimit.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.processor;
-
-import java.lang.reflect.Array;
 
 import adams.core.base.BaseRegExp;
 import adams.core.option.AbstractArgumentOption;
@@ -28,7 +26,9 @@ import adams.core.option.BooleanOption;
 import adams.core.option.ClassOption;
 import adams.core.option.OptionTraversalPath;
 import adams.core.option.OptionTraverser;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
+
+import java.lang.reflect.Array;
 
 /**
  * Processor that the limit of a database condition.
@@ -216,7 +216,7 @@ public class ChangeDatabaseConditionLimit
    * @see		ModifyingProcessor
    */
   @Override
-  protected void processActor(AbstractActor actor) {
+  protected void processActor(Actor actor) {
     actor.getOptionManager().traverse(new OptionTraverser() {
       protected void process(Object obj) {
 	if (obj instanceof adams.db.AbstractLimitedConditions) {

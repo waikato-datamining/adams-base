@@ -1,79 +1,10 @@
 # Project: adams
-# Date: 2014-01-23 15:23:42
+# Date: 2016-02-15 11:32:33
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	A simple demonstration of how to use the\nMathExpression actor for generating a\ngraph for the formula x^2.
-	-actor
-		adams.flow.source.ForLoop
-			-upper
-			1000
-	-actor
-		adams.flow.transformer.MathExpression
-			-name
-			MathExpressionX
-			-expression
-			X/10
-	-actor
-		adams.flow.transformer.MathExpression
-			-name
-			MathExpressionY
-			-expression
-			pow(X,2)
-			-output-value-pair
-			true
-	-actor
-		adams.flow.transformer.MakePlotContainer
-			-plot-name
-			X^2
-	-actor
-		adams.flow.sink.SequencePlotter
-			-width
-			600
-			-height
-			600
-			-writer
-				adams.gui.print.NullWriter
-			-paintlet
-				adams.gui.visualization.sequence.PaintletWithFixedYRange
-					-max-y
-					10000.0
-					-paintlet
-						adams.gui.visualization.sequence.LinePaintlet
-			-overlay-paintlet
-				adams.gui.visualization.sequence.CirclePaintlet
-			-marker-paintlet
-				adams.flow.sink.sequenceplotter.NoMarkers
-			-error-paintlet
-				adams.flow.sink.sequenceplotter.NoErrorPaintlet
-			-color-provider
-				adams.gui.visualization.core.DefaultColorProvider
-			-overlay-color-provider
-				adams.gui.visualization.core.DefaultColorProvider
-			-axis-x
-				adams.gui.visualization.core.AxisPanelOptions
-					-label
-					x
-					-tick-generator
-						adams.gui.visualization.core.axis.FancyTickGenerator
-					-width
-					40
-			-axis-y
-				adams.gui.visualization.core.AxisPanelOptions
-					-label
-					y
-					-tick-generator
-						adams.gui.visualization.core.axis.FancyTickGenerator
-					-width
-					60
-			-plot-updater
-				adams.flow.sink.sequenceplotter.SimplePlotUpdater
-					-update-interval
-					20
-			-post-processor
-				adams.flow.sink.sequenceplotter.PassThrough
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "A simple demonstration of how to use the\\nMathExpression actor for generating a\\ngraph for the formula x^2." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.source.ForLoop -upper 1000
+ adams.flow.transformer.MathExpression -name MathExpressionX -expression X/10
+ adams.flow.transformer.MathExpression -name MathExpressionY -expression pow(X,2) -output-value-pair true
+ adams.flow.transformer.MakePlotContainer -plot-name X^2
+ adams.flow.sink.SequencePlotter -width 600 -height 600 -writer adams.gui.print.NullWriter -paintlet "adams.gui.visualization.sequence.PaintletWithFixedYRange -max-y 10000.0 -paintlet adams.gui.visualization.sequence.LinePaintlet" -overlay-paintlet adams.gui.visualization.sequence.CirclePaintlet -marker-paintlet adams.flow.sink.sequenceplotter.NoMarkers -error-paintlet adams.flow.sink.sequenceplotter.NoErrorPaintlet -mouse-click-action adams.flow.sink.sequenceplotter.NullClickAction -color-provider adams.gui.visualization.core.DefaultColorProvider -overlay-color-provider adams.gui.visualization.core.DefaultColorProvider -axis-x "adams.gui.visualization.core.AxisPanelOptions -label x -tick-generator adams.gui.visualization.core.axis.FancyTickGenerator -width 40" -axis-y "adams.gui.visualization.core.AxisPanelOptions -label y -tick-generator adams.gui.visualization.core.axis.FancyTickGenerator -width 60" -plot-updater "adams.flow.sink.sequenceplotter.SimplePlotUpdater -update-interval 20" -post-processor adams.flow.sink.sequenceplotter.PassThrough

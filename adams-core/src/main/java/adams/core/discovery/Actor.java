@@ -49,7 +49,6 @@ public class Actor
    */
   @Override
   protected boolean handles(Object obj) {
-    return (obj instanceof adams.flow.core.Actor)
-      || (obj instanceof adams.flow.core.AbstractActor);
+    return (obj instanceof adams.flow.core.Actor);
   }
 }

@@ -1,103 +1,17 @@
 # Project: adams
-# Date: 2014-01-23 15:49:17
+# Date: 2016-02-15 15:21:58
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	Cross-validates J48 on all datasets in a directory.\nOnly datasets with only letters in their filename \n(apart from the extension) are considered. This\navoids using the train/test splits also present in \nthat directory.
-	-actor
-		adams.flow.standalone.CallableActors
-			-actor
-				adams.flow.source.WekaClassifierSetup
-					-name
-					WekaClassifier
-					-classifier
-						weka.classifiers.trees.J48
-							-C
-							0.25
-							-M
-							2
-							
-							
-							
-							
-							
-							
-							
-							
-							
-							
-							
-							
-	-actor
-		adams.flow.source.DirectoryLister
-			-dir
-			${EXAMPLE_FLOWS}/data
-			-list-files
-			true
-			-regexp
-			[a-zA-Z]*\\.arff
-	-actor
-		adams.flow.control.Tee
-			-name
-			get dataset name
-			-tee
-				adams.flow.transformer.BaseName
-					-remove-extensions
-					true
-			-tee
-				adams.flow.transformer.SetVariable
-					-var-name
-					dataset
-	-actor
-		adams.flow.transformer.WekaFileReader
-			-loader
-				weka.core.converters.ArffLoader
-	-actor
-		adams.flow.transformer.WekaClassSelector
-	-actor
-		adams.flow.control.Continue
-			-condition
-				adams.flow.condition.bool.WekaCapabilities
-					-capability
-					NOMINAL_CLASS
-					-capability
-					BINARY_CLASS
-					-capability
-					NOMINAL_ATTRIBUTES
-					-capability
-					BINARY_ATTRIBUTES
-					-capability
-					UNARY_ATTRIBUTES
-					-capability
-					EMPTY_NOMINAL_ATTRIBUTES
-					-capability
-					NUMERIC_ATTRIBUTES
-					-capability
-					DATE_ATTRIBUTES
-					-capability
-					MISSING_VALUES
-					-invert
-					true
-	-actor
-		adams.flow.transformer.WekaCrossValidationEvaluator
-			-output
-				weka.classifiers.evaluation.output.prediction.Null
-			-classifier
-			WekaClassifier
-			-num-threads
-			-1
-	-actor
-		adams.flow.transformer.WekaEvaluationSummary
-			-relation
-			true
-			-class-details
-			true
-	-actor
-		adams.flow.sink.HistoryDisplay
-			-entry-name-variable
-			dataset
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "Cross-validates J48 on all datasets in a directory.\\nOnly datasets with only letters in their filename \\n(apart from the extension) are considered. This\\navoids using the train/test splits also present in \\nthat directory." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.standalone.CallableActors
+  adams.flow.source.WekaClassifierSetup -name WekaClassifier -classifier "weka.classifiers.trees.J48 -C 0.25 -M 2"
+ adams.flow.source.DirectoryLister -dir ${EXAMPLE_FLOWS}/data -list-files true -regexp [a-zA-Z]*\\.arff
+ adams.flow.control.Tee -name "get dataset name"
+  adams.flow.transformer.BaseName -remove-extensions true
+  adams.flow.transformer.SetVariable -var-name dataset
+ adams.flow.transformer.WekaFileReader -loader weka.core.converters.ArffLoader
+ adams.flow.transformer.WekaClassSelector
+ adams.flow.control.Continue -condition "adams.flow.condition.bool.WekaCapabilities -capability NOMINAL_CLASS -capability BINARY_CLASS -capability NOMINAL_ATTRIBUTES -capability BINARY_ATTRIBUTES -capability UNARY_ATTRIBUTES -capability EMPTY_NOMINAL_ATTRIBUTES -capability NUMERIC_ATTRIBUTES -capability DATE_ATTRIBUTES -capability MISSING_VALUES -invert true"
+ adams.flow.transformer.WekaCrossValidationEvaluator -output weka.classifiers.evaluation.output.prediction.Null -classifier WekaClassifier -num-threads -1
+ adams.flow.transformer.WekaEvaluationSummary -relation true -class-details true
+ adams.flow.sink.HistoryDisplay -entry-name-variable dataset

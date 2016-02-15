@@ -15,7 +15,7 @@
 
 /*
  * SequenceSource.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
@@ -23,7 +23,7 @@ package adams.flow.source;
 import adams.flow.control.AbstractDirectedControlActor;
 import adams.flow.control.MutableConnectedControlActor;
 import adams.flow.control.SequentialDirector;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.core.ActorExecution;
 import adams.flow.core.ActorHandlerInfo;
 import adams.flow.core.OutputProducer;
@@ -72,7 +72,7 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-actor &lt;adams.flow.core.AbstractActor&gt; [-actor ...] (property: actors)
+ * <pre>-actor &lt;adams.flow.core.Actor&gt; [-actor ...] (property: actors)
  * &nbsp;&nbsp;&nbsp;All the actors that define this sequence.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
@@ -132,7 +132,7 @@ public class SequenceSource
      * @return		null if everything ok, otherwise the error message
      */
     @Override
-    protected String doExecuteActors(AbstractActor startActor) {
+    protected String doExecuteActors(Actor startActor) {
       String		result;
       int		i;
 
@@ -221,8 +221,8 @@ public class SequenceSource
    * @return		the Class of objects that can be processed
    */
   public Class[] generates() {
-    Class[]		result;
-    AbstractActor	last;
+    Class[]	result;
+    Actor	last;
 
     result = new Class[]{Unknown.class};
 

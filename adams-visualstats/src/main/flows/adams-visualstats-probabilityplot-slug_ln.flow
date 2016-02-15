@@ -1,52 +1,13 @@
 # Project: adams
-# Date: 2014-01-23 15:45:22
+# Date: 2016-02-15 15:11:41
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	Cross-validates LinearRegression on \"slug\" (log-transformed)\ndataset and displays the predictions as probability plot.
-	-actor
-		adams.flow.standalone.CallableActors
-			-actor
-				adams.flow.source.WekaClassifierSetup
-					-name
-					WekaClassifier
-					-classifier
-						weka.classifiers.functions.LinearRegression
-							-S
-							1
-							-C
-							-R
-							1.0E-8
-	-actor
-		adams.flow.source.FileSupplier
-			-file
-			${EXAMPLE_FLOWS}/data/slug-ln.arff
-	-actor
-		adams.flow.transformer.WekaFileReader
-			-loader
-				weka.core.converters.ArffLoader
-	-actor
-		adams.flow.transformer.WekaClassSelector
-	-actor
-		adams.flow.transformer.WekaCrossValidationEvaluator
-			-output
-				weka.classifiers.evaluation.output.prediction.Null
-			-classifier
-			WekaClassifier
-	-actor
-		adams.flow.transformer.WekaPredictionsToInstances
-	-actor
-		adams.flow.sink.ProbabilityPlotDisplay
-			-writer
-				adams.gui.print.NullWriter
-			-regression
-				adams.gui.visualization.stats.paintlet.Normal
-			-grid
-			true
-			-regression-line
-			true
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "Cross-validates LinearRegression on \\\"slug\\\" (log-transformed)\\ndataset and displays the predictions as probability plot." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.standalone.CallableActors
+  adams.flow.source.WekaClassifierSetup -name WekaClassifier -classifier "weka.classifiers.functions.LinearRegression -S 1 -C -R 1.0E-8 -num-decimal-places 4"
+ adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/slug-ln.arff
+ adams.flow.transformer.WekaFileReader -loader weka.core.converters.ArffLoader
+ adams.flow.transformer.WekaClassSelector
+ adams.flow.transformer.WekaCrossValidationEvaluator -output weka.classifiers.evaluation.output.prediction.Null -classifier WekaClassifier
+ adams.flow.transformer.WekaPredictionsToInstances
+ adams.flow.sink.ProbabilityPlotDisplay -writer adams.gui.print.NullWriter -regression adams.gui.visualization.stats.paintlet.Normal -grid true -regression-line true

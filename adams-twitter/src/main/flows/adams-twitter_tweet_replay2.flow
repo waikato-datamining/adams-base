@@ -1,25 +1,8 @@
 # Project: adams
-# Date: 2014-01-23 15:44:38
+# Date: 2016-02-15 15:06:42
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	Demonstrates how to replay archived tweets (twitter export).\nUseful when experimenting with algorithms processing \ntweets and require the same tweet stream each time.
-	-actor
-		adams.flow.source.TweetReplay
-			-replay
-				adams.data.io.input.TwitterExportArchive
-					-archive
-					${EXAMPLE_FLOWS}/data/twitter-archive.csv
-	-actor
-		adams.flow.transformer.TwitterConverter
-			-converter
-				adams.data.twitter.TextConverter
-					-separator
-					\t
-	-actor
-		adams.flow.sink.Display
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "Demonstrates how to replay archived tweets (twitter export).\\nUseful when experimenting with algorithms processing \\ntweets and require the same tweet stream each time." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.source.TweetReplay -replay "adams.data.io.input.TwitterExportArchive -archive ${EXAMPLE_FLOWS}/data/twitter-archive.csv"
+ adams.flow.transformer.TwitterConverter -converter "adams.data.twitter.TextConverter -separator \\t"
+ adams.flow.sink.Display -writer adams.data.io.output.NullWriter

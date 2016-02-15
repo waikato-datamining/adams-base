@@ -15,13 +15,13 @@
 
 /**
  * UpdateVariable.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.template;
 
 import adams.core.VariableName;
 import adams.flow.control.Trigger;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.source.Variable;
 import adams.flow.transformer.SetVariable;
 
@@ -122,7 +122,7 @@ public class UpdateVariable
    *
    * @return 		the generated acto
    */
-  protected AbstractActor doGenerate() {
+  protected Actor doGenerate() {
     Trigger	result;
     Variable	var;
     SetVariable	setVar;
@@ -136,7 +136,7 @@ public class UpdateVariable
     setVar = new SetVariable();
     setVar.setVariableName((VariableName) m_VariableName.getClone());
 
-    result.setActors(new AbstractActor[]{
+    result.setActors(new Actor[]{
 	var,
 	setVar
     });

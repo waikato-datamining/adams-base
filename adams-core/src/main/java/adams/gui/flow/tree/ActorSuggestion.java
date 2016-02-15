@@ -15,7 +15,7 @@
 
 /**
  * ActorSuggestion.java
- * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.tree;
 
@@ -26,7 +26,6 @@ import adams.core.io.FileUtils;
 import adams.core.logging.LoggingHelper;
 import adams.env.ActorSuggestionDefinition;
 import adams.env.Environment;
-import adams.flow.core.AbstractActor;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorHandler;
 import adams.flow.core.ActorUtils;
@@ -62,7 +61,7 @@ public class ActorSuggestion {
   protected Properties m_Properties;
 
   /** the default actor(s). */
-  protected AbstractActor[] m_Defaults;
+  protected Actor[] m_Defaults;
 
   /** the valid rules. */
   protected String[] m_Rules;
@@ -83,7 +82,7 @@ public class ActorSuggestion {
    */
   protected void initialize() {
     String[]				parts;
-    List<AbstractActor>			actors;
+    List<Actor>				actors;
     List<String>			rules;
     int					i;
     Enumeration<String>			names;
@@ -95,10 +94,10 @@ public class ActorSuggestion {
 
     // get the default(s)
     parts  = m_Properties.getProperty(KEY_DEFAULT, "adams.flow.transformer.PassThrough").split(",");
-    actors = new ArrayList<AbstractActor>();
+    actors = new ArrayList<>();
     for (i = 0; i < parts.length; i++)  {
       try {
-	actors.add((AbstractActor) Class.forName(parts[i]).newInstance());
+	actors.add((Actor) Class.forName(parts[i]).newInstance());
       }
       catch (Exception e) {
 	System.err.println("Failed to instantiate default actor '" + parts[i] + "':");
@@ -107,7 +106,7 @@ public class ActorSuggestion {
     }
     if (actors.size() == 0)
       actors.add(new adams.flow.transformer.PassThrough());
-    m_Defaults = actors.toArray(new AbstractActor[actors.size()]);
+    m_Defaults = actors.toArray(new Actor[actors.size()]);
 
     LOGGER.info("Defaults: " + Utils.arrayToString(m_Defaults, true));
 
@@ -117,7 +116,7 @@ public class ActorSuggestion {
     suggestion = new adams.parser.ActorSuggestion();
     suggestion.setParent(new adams.flow.control.Flow());
     suggestion.setPosition(0);
-    suggestion.setActors(new AbstractActor[0]);
+    suggestion.setActors(new Actor[0]);
     while (names.hasMoreElements()) {
       name = names.nextElement();
       if (name.equals(KEY_DEFAULT))
@@ -143,7 +142,7 @@ public class ActorSuggestion {
    *
    * @return		the default actors
    */
-  public AbstractActor[] getDefaults() {
+  public Actor[] getDefaults() {
     return m_Defaults;
   }
 
@@ -155,15 +154,15 @@ public class ActorSuggestion {
    * @param actors	the actors to insert the suggested actor in
    * @return		the suggested actors
    */
-  public AbstractActor[] suggest(AbstractActor parent, int position, AbstractActor[] actors) {
-    AbstractActor[]		result;
-    List<AbstractActor>		suggestions;
-    AbstractActor[]		suggested;
-    int				i;
-    Class[]			restrictions;
-    boolean			match;
+  public Actor[] suggest(Actor parent, int position, Actor[] actors) {
+    Actor[]		result;
+    List<Actor>		suggestions;
+    Actor[]		suggested;
+    int			i;
+    Class[]		restrictions;
+    boolean		match;
 
-    suggestions  = new ArrayList<AbstractActor>();
+    suggestions  = new ArrayList<>();
     restrictions = ((ActorHandler) parent).getActorHandlerInfo().getRestrictions();
 
     try {
@@ -197,7 +196,7 @@ public class ActorSuggestion {
       e.printStackTrace();
     }
 
-    result = suggestions.toArray(new AbstractActor[suggestions.size()]);
+    result = suggestions.toArray(new Actor[suggestions.size()]);
 
     LOGGER.info(
 	    "suggest: "

@@ -15,7 +15,7 @@
 
 /**
  * StoreReportValueInVariable.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.template;
 
@@ -23,7 +23,7 @@ import adams.core.VariableName;
 import adams.data.report.DataType;
 import adams.data.report.Field;
 import adams.flow.control.Tee;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.transformer.GetReportValue;
 import adams.flow.transformer.SetVariable;
 
@@ -167,7 +167,7 @@ public class StoreReportValueInVariable
    * @return 		the generated actor
    */
   @Override
-  protected AbstractActor doGenerate() {
+  protected Actor doGenerate() {
     Tee			result;
     GetReportValue	getValue;
     SetVariable		setVar;
@@ -181,7 +181,7 @@ public class StoreReportValueInVariable
     setVar = new SetVariable();
     setVar.setVariableName((VariableName) m_VariableName.getClone());
 
-    result.setActors(new AbstractActor[]{
+    result.setActors(new Actor[]{
 	getValue,
 	setVar
     });

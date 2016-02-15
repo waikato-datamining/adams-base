@@ -1,73 +1,18 @@
 # Project: adams
-# Date: 2014-01-23 15:39:25
+# Date: 2016-02-15 14:53:45
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	Uses ADAMS to generate a double array of random numbers\nand feeds that into the RSink actor to generate a plot.\nThe filename of the generated plot is displayed.
-	-actor
-		adams.flow.standalone.Rserve
-	-actor
-		adams.flow.standalone.SetVariable
-			-name
-			number of random numbers
-			-var-name
-			num
-			-var-value
-			200
-	-actor
-		adams.flow.standalone.SetVariable
-			-name
-			plot output file
-			-var-name
-			file
-			-var-value
-			${EXAMPLE_FLOWS}/output/graph.png
-	-actor
-		adams.flow.source.Start
-	-actor
-		adams.flow.control.Trigger
-			-name
-			using R
-			-tee
-				adams.flow.source.RandomNumberGenerator
-					-generator
-						adams.data.random.JavaRandomDouble
-					-max-num
-					@{num}
-			-tee
-				adams.flow.transformer.SequenceToArray
-					-length
-					@{num}
-			-tee
-				adams.flow.sink.RSink
-					-script
-					png(\"@{file}\")\nplot(X)\ntitle(\"Random numbers\")\ndev.off()
-	-actor
-		adams.flow.control.Trigger
-			-name
-			display output filename
-			-tee
-				adams.flow.source.Variable
-					-var-name
-					file
-			-tee
-				adams.flow.transformer.Convert
-					-conversion
-						adams.data.conversion.StringToFile
-							-placeholderfile
-							true
-			-tee
-				adams.flow.transformer.Convert
-					-name
-					Convert-1
-					-conversion
-						adams.data.conversion.FileToString
-							-absolute
-							true
-			-tee
-				adams.flow.sink.Display
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "Uses ADAMS to generate a double array of random numbers\\nand feeds that into the RSink actor to generate a plot.\\nThe filename of the generated plot is displayed." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.standalone.Rserve
+ adams.flow.standalone.SetVariable -name "number of random numbers" -var-name num -var-value 200
+ adams.flow.standalone.SetVariable -name "plot output file" -var-name file -var-value ${EXAMPLE_FLOWS}/output/graph.png
+ adams.flow.source.Start
+ adams.flow.control.Trigger -name "using R"
+  adams.flow.source.RandomNumberGenerator -generator adams.data.random.JavaRandomDouble -max-num @{num}
+  adams.flow.transformer.SequenceToArray -length @{num}
+  adams.flow.sink.RSink -script "png(\\\"@{file}\\\")\\nplot(X)\\ntitle(\\\"Random numbers\\\")\\ndev.off()"
+ adams.flow.control.Trigger -name "display output filename"
+  adams.flow.source.Variable -var-name file
+  adams.flow.transformer.Convert -conversion "adams.data.conversion.StringToFile -placeholderfile true"
+  adams.flow.transformer.Convert -name Convert-1 -conversion "adams.data.conversion.FileToString -absolute true"
+  adams.flow.sink.Display -writer adams.data.io.output.NullWriter

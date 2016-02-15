@@ -15,7 +15,7 @@
 
 /*
  *    AbstractScriptingActor.java
- *    Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ *    Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -39,7 +39,7 @@ public abstract class AbstractScriptingHandlerActor
   private static final long serialVersionUID = -5904986133981940404L;
 
   /** the loaded script object. */
-  protected transient AbstractActor m_ActorObject;
+  protected transient Actor m_ActorObject;
 
   /** the scripting handler to use. */
   protected AbstractScriptingHandler m_Handler;
@@ -124,7 +124,7 @@ public abstract class AbstractScriptingHandlerActor
     Object[]	result;
 
     result = m_Handler.loadScriptObject(
-	AbstractActor.class, 
+	Actor.class,
 	m_ScriptFile, 
 	m_ScriptOptions, 
 	getVariables());
@@ -140,11 +140,11 @@ public abstract class AbstractScriptingHandlerActor
    */
   @Override
   protected String checkScriptObject() {
-    String		result;
-    AbstractActor	script;
+    String	result;
+    Actor	script;
 
     result = null;
-    script = (AbstractActor) m_ScriptObject;
+    script = (Actor) m_ScriptObject;
 
     if (ActorUtils.isStandalone(this) && !ActorUtils.isStandalone(script))
       result = "Script object is not a singleton!";
@@ -170,7 +170,7 @@ public abstract class AbstractScriptingHandlerActor
     result = super.setUp();
 
     if (result == null) {
-      m_ActorObject = (AbstractActor) m_ScriptObject;
+      m_ActorObject = (Actor) m_ScriptObject;
       result        = m_ActorObject.setUp();
     }
 

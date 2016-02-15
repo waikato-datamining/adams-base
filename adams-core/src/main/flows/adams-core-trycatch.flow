@@ -1,33 +1,11 @@
 # Project: adams
-# Date: 2014-02-21 00:22:04
+# Date: 2016-02-15 11:35:58
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	The Try-Catch control in this flow demonstrates how to recover\nfrom errors. The \"protected\" sub-flow (\"try\") tries to read a setup\nfrom a non-existent file and fails. This triggers the \"catch\" sub-flow\nto be executed and forward a default setup.
-	-actor
-		adams.flow.source.FileSupplier
-			-file
-			${CWD}/some/where.txt
-	-actor
-		adams.flow.control.TryCatch
-			-try
-				adams.flow.control.SubProcess
-					-name
-					try
-					-actor
-						adams.flow.transformer.TextFileReader
-							-reader
-								adams.data.io.input.SingleStringTextReader
-			-catch
-				adams.flow.source.StringConstants
-					-name
-					catch
-					-string
-					default setup
-	-actor
-		adams.flow.sink.Display
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "The Try-Catch control in this flow demonstrates how to recover\\nfrom errors. The \\\"protected\\\" sub-flow (\\\"try\\\") tries to read a setup\\nfrom a non-existent file and fails. This triggers the \\\"catch\\\" sub-flow\\nto be executed and forward a default setup." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.source.FileSupplier -file ${CWD}/some/where.txt
+ adams.flow.control.TryCatch -try "adams.flow.control.SubProcess -name try" -catch "adams.flow.control.SubProcess -name catch"
+  adams.flow.control.SubProcess -name try
+   adams.flow.transformer.TextFileReader -reader adams.data.io.input.SingleStringTextReader
+  adams.flow.source.StringConstants -name catch -string "default setup"
+ adams.flow.sink.Display -writer adams.data.io.output.NullWriter

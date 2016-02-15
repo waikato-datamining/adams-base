@@ -15,19 +15,19 @@
 
 /**
  * StorageQueueHandler.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.control;
-
-import java.util.ArrayList;
 
 import adams.core.Properties;
 import adams.core.logging.LoggingLevel;
 import adams.core.logging.LoggingObject;
 import adams.db.LogEntry;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.core.InputConsumer;
 import adams.flow.core.Token;
+
+import java.util.ArrayList;
 
 /**
  * Wrapper class around an {@link ArrayList} object stored in internal storage.
@@ -53,10 +53,10 @@ public class StorageQueueHandler
   protected int m_Limit;
   
   /** the (optional) logging actor. */
-  protected AbstractActor m_Logging;
+  protected Actor m_Logging;
   
   /** the (optional) monitoring actor. */
-  protected AbstractActor m_Monitoring;
+  protected Actor m_Monitoring;
   
   /**
    * Initializes the limitless queue with no logging.
@@ -77,7 +77,7 @@ public class StorageQueueHandler
    * @param monitoring	the monitoring actor for sending the {@link LogEntry}
    * 			objects to
    */
-  public StorageQueueHandler(String name, int limit, AbstractActor logging, AbstractActor monitoring) {
+  public StorageQueueHandler(String name, int limit, Actor logging, Actor monitoring) {
     if (limit <= 0)
       limit = -1;
     m_Name       = name;
@@ -129,7 +129,7 @@ public class StorageQueueHandler
    * 
    * @return		the actor, null if not available
    */
-  public AbstractActor getLogging() {
+  public Actor getLogging() {
     return m_Logging;
   }
   
@@ -147,7 +147,7 @@ public class StorageQueueHandler
    * 
    * @return		the actor, null if not available
    */
-  public AbstractActor getMonitoring() {
+  public Actor getMonitoring() {
     return m_Monitoring;
   }
   
@@ -157,7 +157,7 @@ public class StorageQueueHandler
    * @param log		the log entry to send
    * @param actor	the logging actor to send the LogEntry to
    */
-  protected void log(LogEntry log, AbstractActor actor) {
+  protected void log(LogEntry log, Actor actor) {
     if (actor instanceof InputConsumer) {
       ((InputConsumer) actor).input(new Token(log));
       actor.execute();

@@ -15,7 +15,7 @@
 
 /*
  * AbstractMutableActorDaemonEvent.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.standalone;
@@ -23,7 +23,7 @@ package adams.flow.standalone;
 import adams.core.Variables;
 import adams.core.logging.LoggingLevel;
 import adams.flow.control.Sequence;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.core.ActorHandlerInfo;
 import adams.flow.core.DaemonEvent;
 import adams.flow.core.MutableActorHandler;
@@ -73,7 +73,7 @@ public abstract class AbstractMutableActorDaemonEvent<E, P>
 
     m_OptionManager.add(
 	    "actor", "actors",
-	    new AbstractActor[0]);
+	    new Actor[0]);
   }
 
   /**
@@ -143,14 +143,14 @@ public abstract class AbstractMutableActorDaemonEvent<E, P>
    * @param actors	the actors to check
    * @return		null if accepted, otherwise error message
    */
-  protected abstract String checkActors(AbstractActor[] actors);
+  protected abstract String checkActors(Actor[] actors);
 
   /**
    * Sets the actors to execute on schedule.
    *
    * @param value	the actors
    */
-  public void setActors(AbstractActor[] value) {
+  public void setActors(Actor[] value) {
     String	msg;
 
     msg = checkActors(value);
@@ -169,7 +169,7 @@ public abstract class AbstractMutableActorDaemonEvent<E, P>
    *
    * @return		the actors
    */
-  public AbstractActor[] getActors() {
+  public Actor[] getActors() {
     return m_Actors.getActors();
   }
 
@@ -278,7 +278,7 @@ public abstract class AbstractMutableActorDaemonEvent<E, P>
    * @param index	the position
    * @return		the actor
    */
-  public AbstractActor get(int index) {
+  public Actor get(int index) {
     return m_Actors.get(index);
   }
 
@@ -288,7 +288,7 @@ public abstract class AbstractMutableActorDaemonEvent<E, P>
    * @param index	the position
    * @param actor	the actor to set at this position
    */
-  public void set(int index, AbstractActor actor) {
+  public void set(int index, Actor actor) {
     m_Actors.set(index, actor);
     reset();
     updateParent();
@@ -309,7 +309,7 @@ public abstract class AbstractMutableActorDaemonEvent<E, P>
    *
    * @param actor	the actor to insert
    */
-  public void add(AbstractActor actor) {
+  public void add(Actor actor) {
     add(size(), actor);
   }
 
@@ -319,7 +319,7 @@ public abstract class AbstractMutableActorDaemonEvent<E, P>
    * @param index	the position
    * @param actor	the actor to insert
    */
-  public void add(int index, AbstractActor actor) {
+  public void add(int index, Actor actor) {
     m_Actors.add(index, actor);
     reset();
     updateParent();
@@ -331,8 +331,8 @@ public abstract class AbstractMutableActorDaemonEvent<E, P>
    * @param index	the position
    * @return		the removed actor
    */
-  public AbstractActor remove(int index) {
-    AbstractActor	result;
+  public Actor remove(int index) {
+    Actor	result;
 
     result = m_Actors.remove(index);
     reset();
@@ -372,7 +372,7 @@ public abstract class AbstractMutableActorDaemonEvent<E, P>
    *
    * @return		the first 'active' actor, null if none available
    */
-  public AbstractActor firstActive() {
+  public Actor firstActive() {
     return m_Actors.firstActive();
   }
 
@@ -381,7 +381,7 @@ public abstract class AbstractMutableActorDaemonEvent<E, P>
    *
    * @return		the last 'active' actor, null if none available
    */
-  public AbstractActor lastActive() {
+  public Actor lastActive() {
     return m_Actors.lastActive();
   }
 

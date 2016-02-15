@@ -15,19 +15,19 @@
 
 /*
  * FlowSetupWorker.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.setup;
-
-import javax.swing.SwingWorker;
 
 import adams.core.CleanUpHandler;
 import adams.core.Pausable;
 import adams.core.Stoppable;
 import adams.event.FlowSetupStateEvent;
 import adams.flow.FlowRunner;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
+
+import javax.swing.SwingWorker;
 
 /**
  * A specialized SwingWorker class for executing FlowSetups.
@@ -46,7 +46,7 @@ public class FlowSetupWorker
   protected FlowRunner m_FlowRunner;
 
   /** the last actor that was run. */
-  protected AbstractActor m_LastActor;
+  protected Actor m_LastActor;
 
   /**
    * Initializes the worker.
@@ -75,7 +75,7 @@ public class FlowSetupWorker
    *
    * @return		the actor
    */
-  public AbstractActor getLastActor() {
+  public Actor getLastActor() {
     return m_LastActor;
   }
 

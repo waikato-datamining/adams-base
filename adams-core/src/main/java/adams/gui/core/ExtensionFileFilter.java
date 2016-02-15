@@ -15,13 +15,13 @@
 
 /*
  * ExtensionFileFilter.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
 
 import adams.core.Utils;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 
 import javax.swing.filechooser.FileFilter;
 import java.io.File;
@@ -259,7 +259,7 @@ public class ExtensionFileFilter
    * @return		the flow filter
    */
   public static ExtensionFileFilter getFlowFileFilter() {
-    return new ExtensionFileFilter("Flow files", new String[]{AbstractActor.FILE_EXTENSION, AbstractActor.FILE_EXTENSION_GZ});
+    return new ExtensionFileFilter("Flow files", new String[]{Actor.FILE_EXTENSION, Actor.FILE_EXTENSION_GZ});
   }
 
   /**

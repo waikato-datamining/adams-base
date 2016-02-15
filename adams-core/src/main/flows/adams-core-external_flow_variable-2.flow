@@ -1,11 +1,6 @@
 # Project: adams
-# Date: 2014-01-23 15:21:49
+# Date: 2016-02-15 11:30:21
 # User: fracpete
 # Charset: UTF-8
-#
 adams.flow.control.SubProcess
-	-actor
-		adams.flow.transformer.MathExpression
-			-expression
-			X+2000
-
+ adams.flow.transformer.MathExpression -expression X+2000

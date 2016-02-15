@@ -50,8 +50,8 @@ public class CallableActorHelper
    * @param name	the name of the callable actor
    * @return		the callable actor or null if not found
    */
-  public AbstractActor findCallableActor(ActorHandler group, CallableActorReference name) {
-    AbstractActor		result;
+  public Actor findCallableActor(ActorHandler group, CallableActorReference name) {
+    Actor			result;
     int				i;
     CallableActorHandler	callable;
     int				index;
@@ -88,8 +88,8 @@ public class CallableActorHelper
    * @param name	the name of the callable actor
    * @return		the callable actor or null if not found
    */
-  public AbstractActor findCallableActor(AbstractActor root, CallableActorReference name) {
-    AbstractActor	result;
+  public Actor findCallableActor(Actor root, CallableActorReference name) {
+    Actor	result;
 
     result = null;
 
@@ -117,10 +117,10 @@ public class CallableActorHelper
    * @param actor	the actor to start from
    * @param name	the name of the callable actor
    * @return		the callable actor or null if not found
-   * @see		ActorUtils#findActorHandlers(AbstractActor, boolean)
+   * @see		ActorUtils#findActorHandlers(Actor, boolean)
    */
-  public AbstractActor findCallableActorRecursive(AbstractActor actor, CallableActorReference name) {
-    AbstractActor	result;
+  public Actor findCallableActorRecursive(Actor actor, CallableActorReference name) {
+    Actor		result;
     List<ActorHandler>	handlers;
     int			i;
 
@@ -147,11 +147,11 @@ public class CallableActorHelper
    * @param errors	for storing any errors
    * @return		the setup, null if not found or didn't match class
    */
-  protected static Object getSetup(Class cls, CallableActorReference name, AbstractActor start, AbstractCallableActor callable, MessageCollection errors) {
-    Object		result;
-    AbstractActor	actor;
-    Token		token;
-    String		msg;
+  protected static Object getSetup(Class cls, CallableActorReference name, Actor start, AbstractCallableActor callable, MessageCollection errors) {
+    Object	result;
+    Actor	actor;
+    Token	token;
+    String	msg;
 
     result = null;
 
@@ -200,7 +200,7 @@ public class CallableActorHelper
    * @param errors	for storing any errors
    * @return		the setup, null if not found or didn't match class
    */
-  public static Object getSetup(Class cls, CallableActorReference name, AbstractActor start, MessageCollection errors) {
+  public static Object getSetup(Class cls, CallableActorReference name, Actor start, MessageCollection errors) {
     Object	result;
     
     // source?
@@ -230,7 +230,7 @@ public class CallableActorHelper
    * @param errors	for storing any errors
    * @return		the setup, null if not found or didn't match class
    */
-  public static Object getSetupFromSource(Class cls, CallableActorReference name, AbstractActor start, MessageCollection errors) {
+  public static Object getSetupFromSource(Class cls, CallableActorReference name, Actor start, MessageCollection errors) {
     return getSetup(cls, name, start, new CallableSource(), errors);
   }
 
@@ -243,7 +243,7 @@ public class CallableActorHelper
    * @param start	where the search starts from
    * @return		the setup, null if not found or didn't match class
    */
-  public static Object getSetupFromTransformer(Class cls, CallableActorReference name, AbstractActor start, MessageCollection errors) {
+  public static Object getSetupFromTransformer(Class cls, CallableActorReference name, Actor start, MessageCollection errors) {
     return getSetup(cls, name, start, new CallableTransformer(), errors);
   }
   
@@ -253,7 +253,7 @@ public class CallableActorHelper
    * @param flow	the flow to use
    * @return		the {@link CallableActors} instances
    */
-  public static List<AbstractActor> findAllCallableActors(AbstractActor flow) {
+  public static List<Actor> findAllCallableActors(Actor flow) {
     return ActorUtils.enumerate(flow.getRoot(), new Class[]{CallableActors.class});
   }
   
@@ -266,11 +266,11 @@ public class CallableActorHelper
    * @return		the {@link CallableActors} instance, 
    * 			null in case of error
    */
-  public static CallableActors createCallableActors(AbstractActor actor, boolean insert) {
+  public static CallableActors createCallableActors(Actor actor, boolean insert) {
     CallableActors		result;
     List<ActorHandler>		callable;
     int				i;
-    AbstractActor		root;
+    Actor			root;
     
     result = null;
     
@@ -293,7 +293,7 @@ public class CallableActorHelper
       }
       result = new CallableActors();
       if (root instanceof MutableActorHandler) 
-	((MutableActorHandler) root).add(0, (AbstractActor) result);
+	((MutableActorHandler) root).add(0, result);
       else
 	System.err.println(
 	    "Cannot add " + CallableActors.class.getSimpleName() + " container to root actor!");
@@ -312,7 +312,7 @@ public class CallableActorHelper
    * @return		the replacement actor ({@link CallableSink} etc.), 
    * 			null in case of error
    */
-  public static AbstractActor createCallableActor(AbstractActor actor) {
+  public static Actor createCallableActor(Actor actor) {
     CallableActors		callableActors;
     AbstractCallableActor	replacement;
     int				index;

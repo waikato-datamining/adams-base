@@ -15,7 +15,7 @@
 
 /*
  *    AbstractScriptedTemplate.java
- *    Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
+ *    Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -26,7 +26,7 @@ import adams.core.QuickInfoHelper;
 import adams.core.base.BaseText;
 import adams.core.io.PlaceholderFile;
 import adams.core.scripting.FileBasedScriptingWithOptions;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 
 /**
  * Abstract ancestor for templates that execute external scripts.
@@ -168,7 +168,7 @@ public abstract class AbstractScriptedTemplate
    * 
    * @return		the generated actor
    */
-  protected abstract AbstractActor executeScript();
+  protected abstract Actor executeScript();
   
   /**
    * Generates the actor.
@@ -176,7 +176,7 @@ public abstract class AbstractScriptedTemplate
    * @return 		the generated actor
    */
   @Override
-  protected AbstractActor doGenerate() {
+  protected Actor doGenerate() {
     String 	msg;
 
     msg = initScriptObject();

@@ -29,7 +29,7 @@ import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
 import adams.flow.control.Sequence;
 import adams.flow.control.Trigger;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.sink.DumpFile;
 import adams.flow.source.StringConstants;
 import adams.test.TmpDirectory;
@@ -84,9 +84,9 @@ public class TarTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
-  public AbstractActor getActor() {
+  public Actor getActor() {
     StringConstants dummy = new StringConstants();
     dummy.setStrings(new BaseString[]{
 	new BaseString("dummy")
@@ -106,7 +106,7 @@ public class TarTest
     tar.setOutput(new TmpFile("dumpfile.tar"));
 
     Trigger tr1 = new Trigger();
-    tr1.setActors(new AbstractActor[]{
+    tr1.setActors(new Actor[]{
 	sc, s2a, tar
     });
 
@@ -119,7 +119,7 @@ public class TarTest
     DeleteFile del = new DeleteFile();
 
     Trigger tr2 = new Trigger();
-    tr2.setActors(new AbstractActor[]{
+    tr2.setActors(new Actor[]{
 	dirDel, del
     });
 
@@ -143,12 +143,12 @@ public class TarTest
     df.setOutputFile(new TmpFile("dumpfile.flow"));
 
     Trigger tr3 = new Trigger();
-    tr3.setActors(new AbstractActor[]{
+    tr3.setActors(new Actor[]{
 	dirUn, unzip, a2sUn2, tfr, a2sUn3, df
     });
 
     Flow flow = new Flow();
-    flow.setActors(new AbstractActor[]{dummy, tr1, tr2, tr3});
+    flow.setActors(new Actor[]{dummy, tr1, tr2, tr3});
 
     return flow;
   }

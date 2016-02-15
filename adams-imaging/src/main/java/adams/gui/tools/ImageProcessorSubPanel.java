@@ -15,7 +15,7 @@
 
 /**
  * ImageProcessorSubPanel.java
- * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools;
 
@@ -25,7 +25,7 @@ import adams.data.image.AbstractImageContainer;
 import adams.data.image.BufferedImageContainer;
 import adams.data.io.input.AbstractImageReader;
 import adams.flow.control.SubProcess;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.core.Compatibility;
 import adams.flow.core.Token;
 import adams.flow.transformer.locateobjects.AbstractObjectLocator;
@@ -441,7 +441,7 @@ public class ImageProcessorSubPanel
    * @return		true if flow ok
    */
   protected boolean checkFlow(boolean silent) {
-    AbstractActor	actor;
+    Actor 		actor;
     SubProcess		sub;
     String		msg;
     Compatibility	comp;

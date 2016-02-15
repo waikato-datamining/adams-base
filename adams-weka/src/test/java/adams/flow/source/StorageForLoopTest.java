@@ -27,7 +27,7 @@ import adams.core.option.OptionUtils;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.test.TmpFile;
 
 /**
@@ -98,20 +98,20 @@ public class StorageForLoopTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
   @Override
-  public AbstractActor getActor() {
+  public Actor getActor() {
     AbstractArgumentOption    argOption;
 
     Flow flow = new Flow();
 
     try {
       argOption = (AbstractArgumentOption) flow.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp1 = new adams.flow.core.AbstractActor[4];
+      adams.flow.core.Actor[] tmp1 = new adams.flow.core.Actor[4];
       adams.flow.standalone.CallableActors tmp2 = new adams.flow.standalone.CallableActors();
       argOption = (AbstractArgumentOption) tmp2.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp3 = new adams.flow.core.AbstractActor[1];
+      adams.flow.core.Actor[] tmp3 = new adams.flow.core.Actor[1];
       adams.flow.source.WekaClassifierSetup tmp4 = new adams.flow.source.WekaClassifierSetup();
       argOption = (AbstractArgumentOption) tmp4.getOptionManager().findByProperty("classifier");
       weka.classifiers.trees.J48 tmp6 = new weka.classifiers.trees.J48();
@@ -126,7 +126,7 @@ public class StorageForLoopTest
       tmp1[1] = tmp7;
       adams.flow.control.Trigger tmp8 = new adams.flow.control.Trigger();
       argOption = (AbstractArgumentOption) tmp8.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp9 = new adams.flow.core.AbstractActor[4];
+      adams.flow.core.Actor[] tmp9 = new adams.flow.core.Actor[4];
       adams.flow.source.FileSupplier tmp10 = new adams.flow.source.FileSupplier();
       argOption = (AbstractArgumentOption) tmp10.getOptionManager().findByProperty("files");
       tmp10.setFiles(new adams.core.io.PlaceholderFile[]{(adams.core.io.PlaceholderFile) argOption.valueOf("${TMP}/vote.arff")});
@@ -153,7 +153,7 @@ public class StorageForLoopTest
       tmp18.setName((java.lang.String) argOption.valueOf("Trigger-1"));
 
       argOption = (AbstractArgumentOption) tmp18.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp20 = new adams.flow.core.AbstractActor[5];
+      adams.flow.core.Actor[] tmp20 = new adams.flow.core.Actor[5];
       adams.flow.source.StorageForLoop tmp21 = new adams.flow.source.StorageForLoop();
       argOption = (AbstractArgumentOption) tmp21.getOptionManager().findByProperty("loopUpper");
       tmp21.setLoopUpper((Integer) argOption.valueOf("5"));

@@ -1,40 +1,9 @@
 # Project: adams
-# Date: 2014-01-23 15:45:10
+# Date: 2016-02-15 15:11:10
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	The flow loads the UCI dataset \"iris\" and displays all the numeric \nattributes in box plots, side by side, with the same axis for\nbetter comparison. Non-numeric attributes get removed by\nthe inverted RemoveType filter.
-	-actor
-		adams.flow.source.FileSupplier
-			-file
-			${EXAMPLE_FLOWS}/data/iris.arff
-	-actor
-		adams.flow.transformer.WekaFileReader
-			-loader
-				weka.core.converters.ArffLoader
-	-actor
-		adams.flow.transformer.WekaFilter
-			-filter
-				weka.filters.unsupervised.attribute.RemoveType
-					-V
-					-T
-					numeric
-	-actor
-		adams.flow.sink.BoxPlot
-			-width
-			1300
-			-height
-			750
-			-writer
-				adams.gui.print.NullWriter
-			-height-plot
-			150
-			-num-horizontal
-			4
-			-same-axis
-			true
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "The flow loads the UCI dataset \\\"iris\\\" and displays all the numeric \\nattributes in box plots, side by side, with the same axis for\\nbetter comparison. Non-numeric attributes get removed by\\nthe inverted RemoveType filter." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/iris.arff
+ adams.flow.transformer.WekaFileReader -loader weka.core.converters.ArffLoader
+ adams.flow.transformer.WekaFilter -filter "weka.filters.unsupervised.attribute.RemoveType -V -T numeric"
+ adams.flow.sink.BoxPlot -width 1300 -height 750 -writer adams.gui.print.NullWriter -height-plot 150 -num-horizontal 4 -same-axis true

@@ -26,7 +26,7 @@ import adams.core.option.AbstractArgumentOption;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.test.TmpFile;
 
 /**
@@ -97,20 +97,20 @@ public class WekaNewInstanceTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
   @Override
-  public AbstractActor getActor() {
+  public Actor getActor() {
     AbstractArgumentOption    argOption;
 
     Flow flow = new Flow();
 
     try {
       argOption = (AbstractArgumentOption) flow.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp1 = new adams.flow.core.AbstractActor[5];
+      adams.flow.core.Actor[] tmp1 = new adams.flow.core.Actor[5];
       adams.flow.standalone.CallableActors tmp2 = new adams.flow.standalone.CallableActors();
       argOption = (AbstractArgumentOption) tmp2.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp3 = new adams.flow.core.AbstractActor[1];
+      adams.flow.core.Actor[] tmp3 = new adams.flow.core.Actor[1];
       adams.flow.sink.DumpFile tmp4 = new adams.flow.sink.DumpFile();
       argOption = (AbstractArgumentOption) tmp4.getOptionManager().findByProperty("name");
       tmp4.setName((java.lang.String) argOption.valueOf("out"));
@@ -140,13 +140,13 @@ public class WekaNewInstanceTest
       adams.flow.control.Branch tmp13 = new adams.flow.control.Branch();
       tmp13.setNumThreads(1);
       argOption = (AbstractArgumentOption) tmp13.getOptionManager().findByProperty("branches");
-      adams.flow.core.AbstractActor[] tmp14 = new adams.flow.core.AbstractActor[2];
+      adams.flow.core.Actor[] tmp14 = new adams.flow.core.Actor[2];
       adams.flow.control.Sequence tmp15 = new adams.flow.control.Sequence();
       argOption = (AbstractArgumentOption) tmp15.getOptionManager().findByProperty("name");
       tmp15.setName((java.lang.String) argOption.valueOf("dense"));
 
       argOption = (AbstractArgumentOption) tmp15.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp17 = new adams.flow.core.AbstractActor[2];
+      adams.flow.core.Actor[] tmp17 = new adams.flow.core.Actor[2];
       adams.flow.transformer.WekaNewInstance tmp18 = new adams.flow.transformer.WekaNewInstance();
       tmp17[0] = tmp18;
       adams.flow.sink.CallableSink tmp19 = new adams.flow.sink.CallableSink();
@@ -162,7 +162,7 @@ public class WekaNewInstanceTest
       tmp21.setName((java.lang.String) argOption.valueOf("sparse"));
 
       argOption = (AbstractArgumentOption) tmp21.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp23 = new adams.flow.core.AbstractActor[2];
+      adams.flow.core.Actor[] tmp23 = new adams.flow.core.Actor[2];
       adams.flow.transformer.WekaNewInstance tmp24 = new adams.flow.transformer.WekaNewInstance();
       argOption = (AbstractArgumentOption) tmp24.getOptionManager().findByProperty("instanceClass");
       tmp24.setInstanceClass((java.lang.String) argOption.valueOf("weka.core.SparseInstance"));

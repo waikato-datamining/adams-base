@@ -15,26 +15,25 @@
 
 /**
  * GridView.java
- * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.standalone;
 
-import java.awt.BorderLayout;
-import java.awt.GridLayout;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.SwingUtilities;
-
 import adams.core.QuickInfoHelper;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.sink.CallableSink;
 import adams.flow.sink.ComponentSupplier;
 import adams.gui.core.BasePanel;
 import adams.gui.print.JComponentWriter;
 import adams.gui.print.NullWriter;
+
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.SwingUtilities;
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -105,7 +104,7 @@ import adams.gui.print.NullWriter;
  * &nbsp;&nbsp;&nbsp;minimum: -3
  * </pre>
  * 
- * <pre>-actor &lt;adams.flow.core.AbstractActor&gt; [-actor ...] (property: actors)
+ * <pre>-actor &lt;adams.flow.core.Actor&gt; [-actor ...] (property: actors)
  * &nbsp;&nbsp;&nbsp;The panel-generating actors to display in the grid.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
@@ -350,7 +349,7 @@ public class GridView
    * @param panel	the panel to replace the dummy one
    */
   @Override
-  public void addPanel(AbstractActor actor, BasePanel panel) {
+  public void addPanel(Actor actor, BasePanel panel) {
     int		index;
     Runnable	run;
     

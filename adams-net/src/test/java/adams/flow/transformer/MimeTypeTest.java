@@ -26,7 +26,7 @@ import adams.core.option.AbstractArgumentOption;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.test.TmpFile;
 
 /**
@@ -101,17 +101,17 @@ public class MimeTypeTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
   @Override
-  public AbstractActor getActor() {
+  public Actor getActor() {
     AbstractArgumentOption    argOption;
     
     Flow flow = new Flow();
     
     try {
       argOption = (AbstractArgumentOption) flow.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] actors1 = new adams.flow.core.AbstractActor[5];
+      adams.flow.core.Actor[] actors1 = new adams.flow.core.Actor[5];
 
       // Flow.FileSupplier
       adams.flow.source.FileSupplier filesupplier2 = new adams.flow.source.FileSupplier();
@@ -128,7 +128,7 @@ public class MimeTypeTest
       argOption = (AbstractArgumentOption) tee4.getOptionManager().findByProperty("name");
       tee4.setName((java.lang.String) argOption.valueOf("Store filename in @{file}"));
       argOption = (AbstractArgumentOption) tee4.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] actors6 = new adams.flow.core.AbstractActor[2];
+      adams.flow.core.Actor[] actors6 = new adams.flow.core.Actor[2];
 
       // Flow.Store filename in @{file}.BaseName
       adams.flow.transformer.BaseName basename7 = new adams.flow.transformer.BaseName();

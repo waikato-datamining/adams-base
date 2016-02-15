@@ -28,7 +28,7 @@ import adams.core.option.OptionUtils;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.test.TmpFile;
 
 /**
@@ -99,21 +99,21 @@ public class WekaAggregateEvaluationsTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
   @Override
-  public AbstractActor getActor() {
+  public Actor getActor() {
     AbstractArgumentOption    argOption;
     
     Flow flow = new Flow();
     
     try {
       argOption = (AbstractArgumentOption) flow.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp1 = new adams.flow.core.AbstractActor[9];
+      adams.flow.core.Actor[] tmp1 = new adams.flow.core.Actor[9];
       // Flow.CallableActors
       adams.flow.standalone.CallableActors tmp2 = new adams.flow.standalone.CallableActors();
       argOption = (AbstractArgumentOption) tmp2.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp3 = new adams.flow.core.AbstractActor[1];
+      adams.flow.core.Actor[] tmp3 = new adams.flow.core.Actor[1];
       // Flow.CallableActors.WekaClassifier
       adams.flow.source.WekaClassifierSetup tmp4 = new adams.flow.source.WekaClassifierSetup();
       argOption = (AbstractArgumentOption) tmp4.getOptionManager().findByProperty("classifier");
@@ -171,7 +171,7 @@ public class WekaAggregateEvaluationsTest
       // Flow.ConditionalTee
       adams.flow.control.ConditionalTee tmp21 = new adams.flow.control.ConditionalTee();
       argOption = (AbstractArgumentOption) tmp21.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp22 = new adams.flow.core.AbstractActor[2];
+      adams.flow.core.Actor[] tmp22 = new adams.flow.core.Actor[2];
       // Flow.ConditionalTee.WekaEvaluationSummary
       adams.flow.transformer.WekaEvaluationSummary tmp23 = new adams.flow.transformer.WekaEvaluationSummary();
       tmp23.setOutputRelationName(true);

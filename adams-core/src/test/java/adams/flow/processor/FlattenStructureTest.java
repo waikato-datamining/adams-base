@@ -15,7 +15,7 @@
 
 /**
  * FlattenStructureTest.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.processor;
 
@@ -25,7 +25,7 @@ import adams.core.base.BaseText;
 import adams.core.option.AbstractArgumentOption;
 import adams.env.Environment;
 import adams.flow.condition.bool.Expression;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.source.Start;
 import adams.parser.BooleanExpressionText;
 import adams.parser.MathematicalExpressionText;
@@ -51,17 +51,17 @@ public class FlattenStructureTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
   @Override
-  public AbstractActor getActor() {
+  public Actor getActor() {
     AbstractArgumentOption    argOption;
 
     adams.flow.control.Flow actor = new adams.flow.control.Flow();
 
     try {
       argOption = (AbstractArgumentOption) actor.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp1 = new adams.flow.core.AbstractActor[3];
+      adams.flow.core.Actor[] tmp1 = new adams.flow.core.Actor[3];
       adams.flow.standalone.SetVariable tmp2 = new adams.flow.standalone.SetVariable();
       argOption = (AbstractArgumentOption) tmp2.getOptionManager().findByProperty("variableName");
       tmp2.setVariableName((adams.core.VariableName) argOption.valueOf("i"));
@@ -78,16 +78,16 @@ public class FlattenStructureTest
       tmp6.setCondition(expr);
 
       argOption = (AbstractArgumentOption) tmp6.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp8 = new adams.flow.core.AbstractActor[2];
+      adams.flow.core.Actor[] tmp8 = new adams.flow.core.Actor[2];
       adams.flow.control.Sequence tmp9 = new adams.flow.control.Sequence();
       argOption = (AbstractArgumentOption) tmp9.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp10 = new adams.flow.core.AbstractActor[1];
+      adams.flow.core.Actor[] tmp10 = new adams.flow.core.Actor[1];
       adams.flow.control.Trigger tmp11 = new adams.flow.control.Trigger();
       argOption = (AbstractArgumentOption) tmp11.getOptionManager().findByProperty("teeActors");
-      adams.flow.core.AbstractActor[] tmp12 = new adams.flow.core.AbstractActor[2];
+      adams.flow.core.Actor[] tmp12 = new adams.flow.core.Actor[2];
       adams.flow.control.Sequence tmp13 = new adams.flow.control.Sequence();
       argOption = (AbstractArgumentOption) tmp13.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp14 = new adams.flow.core.AbstractActor[5];
+      adams.flow.core.Actor[] tmp14 = new adams.flow.core.Actor[5];
       adams.flow.source.Variable tmp15 = new adams.flow.source.Variable();
       argOption = (AbstractArgumentOption) tmp15.getOptionManager().findByProperty("variableName");
       tmp15.setVariableName((adams.core.VariableName) argOption.valueOf("i"));

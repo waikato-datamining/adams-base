@@ -1,81 +1,19 @@
 # Project: adams
-# Date: 2014-01-23 15:47:00
+# Date: 2016-02-15 15:16:30
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	In this example, a TrainTestSetContainer gets assembled\nusing the two callable actors \"train\" and \"test\" which output\na train/test set. This container is then fed into the \nTrainTestSetContainer for evaluating the callable J48 classifier.
-	-actor
-		adams.flow.standalone.CallableActors
-			-actor
-				adams.flow.source.SequenceSource
-					-name
-					train
-					-actor
-						adams.flow.source.FileSupplier
-							-file
-							${EXAMPLE_FLOWS}/data/anneal_train.arff
-					-actor
-						adams.flow.transformer.WekaFileReader
-							-loader
-								weka.core.converters.ArffLoader
-					-actor
-						adams.flow.transformer.WekaClassSelector
-			-actor
-				adams.flow.source.SequenceSource
-					-name
-					test
-					-actor
-						adams.flow.source.FileSupplier
-							-file
-							${EXAMPLE_FLOWS}/data/anneal_test.arff
-					-actor
-						adams.flow.transformer.WekaFileReader
-							-loader
-								weka.core.converters.ArffLoader
-					-actor
-						adams.flow.transformer.WekaClassSelector
-			-actor
-				adams.flow.source.WekaClassifierSetup
-					-classifier
-						weka.classifiers.trees.J48
-							-C
-							0.25
-							-M
-							2
-							
-							
-							
-							
-							
-							
-							
-							
-							
-							
-							
-							
-	-actor
-		adams.flow.source.MakeContainer
-			-callable-actor
-			train
-			-callable-actor
-			test
-			-value-name
-			Train
-			-value-name
-			Test
-			-container-class
-				adams.flow.container.WekaTrainTestSetContainer
-	-actor
-		adams.flow.transformer.WekaTrainTestSetEvaluator
-			-output
-				weka.classifiers.evaluation.output.prediction.Null
-	-actor
-		adams.flow.transformer.WekaEvaluationSummary
-	-actor
-		adams.flow.sink.Display
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "In this example, a TrainTestSetContainer gets assembled\\nusing the two callable actors \\\"train\\\" and \\\"test\\\" which output\\na train/test set. This container is then fed into the \\nTrainTestSetContainer for evaluating the callable J48 classifier." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.standalone.CallableActors
+  adams.flow.source.SequenceSource -name train
+   adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/anneal_train.arff
+   adams.flow.transformer.WekaFileReader -loader weka.core.converters.ArffLoader
+   adams.flow.transformer.WekaClassSelector
+  adams.flow.source.SequenceSource -name test
+   adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/anneal_test.arff
+   adams.flow.transformer.WekaFileReader -loader weka.core.converters.ArffLoader
+   adams.flow.transformer.WekaClassSelector
+  adams.flow.source.WekaClassifierSetup -classifier "weka.classifiers.trees.J48 -C 0.25 -M 2"
+ adams.flow.source.MakeContainer -callable-actor train -callable-actor test -value-name Train -value-name Test -container-class adams.flow.container.WekaTrainTestSetContainer
+ adams.flow.transformer.WekaTrainTestSetEvaluator -output weka.classifiers.evaluation.output.prediction.Null
+ adams.flow.transformer.WekaEvaluationSummary
+ adams.flow.sink.Display -writer adams.data.io.output.NullWriter

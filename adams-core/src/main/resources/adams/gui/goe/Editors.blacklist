@@ -14,3 +14,5 @@
 
 adams.flow.core.AbstractActor=true
 adams.flow.core.AbstractActor[]=true
+adams.flow.core.Actor=true
+adams.flow.core.Actor[]=true

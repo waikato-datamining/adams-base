@@ -51,7 +51,7 @@ HOWTO make a release
     version (best to use "adams-addons-all" as this is the most complete):
     
 +--
-  bin/run -main adams.core.ClassLister -super adams.flow.core.AbstractActor > actors.txt
+  bin/run -main adams.core.ClassLister -super adams.flow.core.Actor > actors.txt
   bin/run -main adams.core.ClassLister -super adams.data.conversion.Conversion > conversions.txt
 +--
 

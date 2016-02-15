@@ -25,7 +25,7 @@ import junit.framework.TestSuite;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.sink.DumpFile;
 import adams.flow.source.RandomNumberGenerator;
 import adams.flow.transformer.SequenceToArray;
@@ -76,7 +76,7 @@ public class ArrayLengthTest
    *
    * @return a suitably configured <code>Flow</code>
    */
-  public AbstractActor getActor() {
+  public Actor getActor() {
     RandomNumberGenerator rng = new RandomNumberGenerator();
     rng.setMaxNum(288);
 
@@ -89,7 +89,7 @@ public class ArrayLengthTest
     df.setOutputFile(new TmpFile("dumpfile.txt"));
 
     Flow flow = new Flow();
-    flow.setActors(new AbstractActor[]{rng, s2a, al, df});
+    flow.setActors(new Actor[]{rng, s2a, al, df});
 
     return flow;
   }

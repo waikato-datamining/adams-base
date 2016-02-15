@@ -26,7 +26,7 @@ import adams.core.option.AbstractArgumentOption;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.test.TmpFile;
 
 /**
@@ -97,17 +97,17 @@ public class SpreadSheetMergeTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
   @Override
-  public AbstractActor getActor() {
+  public Actor getActor() {
     AbstractArgumentOption    argOption;
     
     Flow flow = new Flow();
     
     try {
       argOption = (AbstractArgumentOption) flow.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] abstractactor1 = new adams.flow.core.AbstractActor[4];
+      adams.flow.core.Actor[] abstractactor1 = new adams.flow.core.Actor[4];
 
       // Flow.FileSupplier
       adams.flow.source.FileSupplier filesupplier2 = new adams.flow.source.FileSupplier();
@@ -121,7 +121,7 @@ public class SpreadSheetMergeTest
       // Flow.Tee
       adams.flow.control.Tee tee4 = new adams.flow.control.Tee();
       argOption = (AbstractArgumentOption) tee4.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] abstractactor5 = new adams.flow.core.AbstractActor[3];
+      adams.flow.core.Actor[] abstractactor5 = new adams.flow.core.Actor[3];
 
       // Flow.Tee.SpreadSheetFileReader
       adams.flow.transformer.SpreadSheetFileReader spreadsheetfilereader6 = new adams.flow.transformer.SpreadSheetFileReader();
@@ -154,7 +154,7 @@ public class SpreadSheetMergeTest
       tee13.setName((java.lang.String) argOption.valueOf("Tee-1"));
 
       argOption = (AbstractArgumentOption) tee13.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] abstractactor15 = new adams.flow.core.AbstractActor[3];
+      adams.flow.core.Actor[] abstractactor15 = new adams.flow.core.Actor[3];
 
       // Flow.Tee-1.SpreadSheetFileReader
       adams.flow.transformer.SpreadSheetFileReader spreadsheetfilereader16 = new adams.flow.transformer.SpreadSheetFileReader();
@@ -184,7 +184,7 @@ public class SpreadSheetMergeTest
       // Flow.Trigger
       adams.flow.control.Trigger trigger23 = new adams.flow.control.Trigger();
       argOption = (AbstractArgumentOption) trigger23.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] abstractactor24 = new adams.flow.core.AbstractActor[3];
+      adams.flow.core.Actor[] abstractactor24 = new adams.flow.core.Actor[3];
 
       // Flow.Trigger.StorageValuesArray
       adams.flow.source.StorageValuesArray storagevaluesarray25 = new adams.flow.source.StorageValuesArray();

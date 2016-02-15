@@ -15,7 +15,7 @@
 
 /*
  * AbstractFlowTest.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow;
@@ -25,7 +25,7 @@ import adams.core.option.NestedProducer;
 import adams.core.option.OptionProducer;
 import adams.flow.control.Flow;
 import adams.flow.control.Flow.ErrorHandling;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.gui.core.GUIHelper;
 import adams.test.AbstractDatabaseTestCase;
 import adams.test.AbstractTestHelper;
@@ -78,7 +78,7 @@ public abstract class AbstractFlowTest
   protected static boolean VERBOSE = false;
 
   /** The actor to be tested. */
-  protected AbstractActor m_Actor;
+  protected Actor m_Actor;
 
   /** whether to execute the flow regression test. */
   protected boolean m_NoFlowRegressionTest;
@@ -125,9 +125,9 @@ public abstract class AbstractFlowTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
-  public abstract AbstractActor getActor();
+  public abstract Actor getActor();
 
   /**
    * Dumps the actor, in case of an error.
@@ -184,7 +184,7 @@ public abstract class AbstractFlowTest
    *
    * @param files	the files for the regression test
    */
-  protected void performRegressionTest(AbstractActor actor, File[] files, Regression regr, int[] ignoredLines) {
+  protected void performRegressionTest(Actor actor, File[] files, Regression regr, int[] ignoredLines) {
     String	regression;
 
     if (m_NoRegressionTest || m_NoFlowRegressionTest)
@@ -213,7 +213,7 @@ public abstract class AbstractFlowTest
    * @return		the actor in the specified format dump
    * @see		#PROPERTY_FORMAT
    */
-  protected String dumpActor(AbstractActor actor) {
+  protected String dumpActor(Actor actor) {
     String		format;
     OptionProducer	producer;
 
@@ -264,7 +264,7 @@ public abstract class AbstractFlowTest
    * @param actor	the actor to test
    * @return		null if OK
    */
-  protected String performActorExecution(AbstractActor actor) {
+  protected String performActorExecution(Actor actor) {
     String	result;
 
     if (actor instanceof Flow)

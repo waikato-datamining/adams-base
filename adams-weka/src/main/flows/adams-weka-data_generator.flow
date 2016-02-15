@@ -1,29 +1,7 @@
 # Project: adams
-# Date: 2014-01-23 15:49:36
+# Date: 2016-02-15 15:22:38
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	A WEKA data generator is used to generate artificial data,\nwhich is then displayed.
-	-actor
-		adams.flow.source.WekaDataGenerator
-			-generator
-				weka.datagenerators.classifiers.classification.Agrawal
-					-r
-					weka.datagenerators.classifiers.classification.Agrawal-S_1_-n_100_-F_1_-P_0.05
-					-S
-					1
-					-n
-					100
-					-F
-					1
-					-P
-					0.05
-	-actor
-		adams.flow.sink.WekaInstancesDisplay
-			-writer
-				adams.gui.print.NullWriter
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "A WEKA data generator is used to generate artificial data,\\nwhich is then displayed." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.source.WekaDataGenerator -generator "weka.datagenerators.classifiers.classification.Agrawal -r weka.datagenerators.classifiers.classification.Agrawal-S_1_-n_100_-F_1_-P_0.05 -S 1 -n 100 -F 1 -P 0.05"
+ adams.flow.sink.WekaInstancesDisplay -writer adams.gui.print.NullWriter

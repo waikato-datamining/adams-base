@@ -1,57 +1,17 @@
 # Project: adams
-# Date: 2014-05-14 15:06:48
+# Date: 2016-02-15 11:36:10
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	This flow uses a callable actor to derive a value used in the\nMathExpression actor\'s expression. It uses a special notation\nto reference the callable actor and obtain the output of the actor:\n  @{callable:[callable-actor-name]}\nThe callable source \"val\" calculates a value based on the variable\n\"val\". This calculated value is then used in the MathExpression\nactor inside the Trigger.
-	-actor
-		adams.flow.standalone.CallableActors
-			-actor
-				adams.flow.source.SequenceSource
-					-name
-					val
-					-actor
-						adams.flow.source.Variable
-							-var-name
-							val
-					-actor
-						adams.flow.transformer.Convert
-							-conversion
-								adams.data.conversion.StringToDouble
-					-actor
-						adams.flow.transformer.MathExpression
-							-expression
-							X*1000
-					-actor
-						adams.flow.transformer.Convert
-							-name
-							Convert-1
-							-conversion
-								adams.data.conversion.DoubleToInt
-	-actor
-		adams.flow.source.ForLoop
-	-actor
-		adams.flow.transformer.SetVariable
-			-var-name
-			val
-	-actor
-		adams.flow.control.Trigger
-			-tee
-				adams.flow.source.ForLoop
-					-lower
-					10
-					-upper
-					12
-			-tee
-				adams.flow.transformer.MathExpression
-					-expression
-					X+@{callable:val}
-			-tee
-				adams.flow.sink.Display
-					-writer
-						adams.data.io.output.NullWriter
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "This flow uses a callable actor to derive a value used in the\\nMathExpression actor\\\'s expression. It uses a special notation\\nto reference the callable actor and obtain the output of the actor:\\n  @{callable:[callable-actor-name]}\\nThe callable source \\\"val\\\" calculates a value based on the variable\\n\\\"val\\\". This calculated value is then used in the MathExpression\\nactor inside the Trigger." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.standalone.CallableActors
+  adams.flow.source.SequenceSource -name val
+   adams.flow.source.Variable -var-name val
+   adams.flow.transformer.Convert -conversion adams.data.conversion.StringToDouble
+   adams.flow.transformer.MathExpression -expression X*1000
+   adams.flow.transformer.Convert -name Convert-1 -conversion adams.data.conversion.DoubleToInt
+ adams.flow.source.ForLoop
+ adams.flow.transformer.SetVariable -var-name val
+ adams.flow.control.Trigger
+  adams.flow.source.ForLoop -lower 10 -upper 12
+  adams.flow.transformer.MathExpression -expression X+@{callable:val}
+  adams.flow.sink.Display -writer adams.data.io.output.NullWriter

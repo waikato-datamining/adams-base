@@ -15,19 +15,19 @@
 
 /**
  * FlowStructureGraphMLProducer.java
- * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
-
-import java.lang.reflect.Array;
-import java.util.Hashtable;
 
 import adams.core.io.FileFormatHandler;
 import adams.core.net.HtmlUtils;
 import adams.env.Environment;
-import adams.flow.core.AbstractActor;
 import adams.flow.core.AbstractCallableActor;
+import adams.flow.core.Actor;
 import adams.flow.core.CallableActorUser;
+
+import java.lang.reflect.Array;
+import java.util.Hashtable;
 
 /**
  * Outputs the flow structure in GraphML XML format.
@@ -299,15 +299,13 @@ public class FlowStructureGraphMLProducer
    * Adds the actor as node.
    *
    * @param actor	the actor to add as node
-   * @param shape	the shape of the node, null to ignore
-   * @param style	the style of the node, null to ignore
    * @return		the ID used for the node
    */
-  protected String addNode(AbstractActor actor) {
+  protected String addNode(Actor actor) {
     String		result;
     String		label;
-    String		globalID;
-    AbstractActor	globalActor;
+    String 		callableID;
+    Actor 		callableActor;
 
     result = nextNodeID();
 
@@ -322,11 +320,11 @@ public class FlowStructureGraphMLProducer
     // global actor?
     if (actor instanceof CallableActorUser) {
       if (m_LinkCallableActors) {
-	globalActor = ((CallableActorUser) actor).getCallableActor();
-	if (globalActor != null) {
-	  globalID = m_NameIDRelation.get(globalActor.getFullName());
-	  if (globalID != null)
-	    addEdge(result, globalID);
+	callableActor = ((CallableActorUser) actor).getCallableActor();
+	if (callableActor != null) {
+	  callableID = m_NameIDRelation.get(callableActor.getFullName());
+	  if (callableID != null)
+	    addEdge(result, callableID);
 	}
       }
       else {
@@ -344,7 +342,6 @@ public class FlowStructureGraphMLProducer
   /**
    * Adds the actor as node (actor is represented by the variable).
    *
-   * @param actor	the actor to add as node
    * @param variable	the variable representing the acto
    * @return		the ID used for the node
    */
@@ -374,11 +371,11 @@ public class FlowStructureGraphMLProducer
     Object		currValues;
     Object		value;
     int			i;
-    AbstractActor	actor;
+    Actor		actor;
     String		id;
     int			size;
 
-    if (!AbstractActor.class.isAssignableFrom(option.getBaseClass()))
+    if (!Actor.class.isAssignableFrom(option.getBaseClass()))
       return null;
 
     if (option.isVariableAttached()) {
@@ -391,7 +388,7 @@ public class FlowStructureGraphMLProducer
       if (currValue != null) {
 	if (!option.isMultiple()) {
 	  value  = currValue;
-	  actor  = (AbstractActor) value;
+	  actor  = (Actor) value;
 	  id     = addNode(actor);
 	  m_Nesting.push(id);
 	  doProduce(((OptionHandler) value).getOptionManager());
@@ -401,7 +398,7 @@ public class FlowStructureGraphMLProducer
 	  size = m_Nesting.size();
 	  for (i = 0; i < Array.getLength(currValues); i++) {
 	    value  = Array.get(currValues, i);
-	    actor  = (AbstractActor) value;
+	    actor  = (Actor) value;
 	    id     = addNode(actor);
 	    m_Nesting.push(id);
 	    doProduce(((OptionHandler) value).getOptionManager());
@@ -428,7 +425,7 @@ public class FlowStructureGraphMLProducer
   }
 
   /**
-   * Makes sure that the input is an AbstractActor object.
+   * Makes sure that the input is an Actor object.
    *
    * @param object	the objec to check
    * @return		the checked object
@@ -439,9 +436,9 @@ public class FlowStructureGraphMLProducer
 
     result = super.checkInput(object);
 
-    if (!(result instanceof AbstractActor))
+    if (!(result instanceof Actor))
       throw new IllegalArgumentException(
-	  "Input object must be derived from " + AbstractActor.class.getName());
+	  "Input object must be derived from " + Actor.class.getName());
 
     return result;
   }
@@ -451,8 +448,8 @@ public class FlowStructureGraphMLProducer
    */
   @Override
   protected void preProduce() {
-    String		id;
-    AbstractActor	actor;
+    String	id;
+    Actor	actor;
 
     super.preProduce();
 
@@ -471,7 +468,7 @@ public class FlowStructureGraphMLProducer
     else
       m_OutputBuffer.append("  <key id=\"d0\" for=\"node\" attr.name=\"label\" attr.type=\"string\"/>\n");
     m_OutputBuffer.append("  <graph id=\"" + Environment.getInstance().getProject() + "\" edgedefault=\"directed\">\n");
-    actor = (AbstractActor) getInput();
+    actor = (Actor) getInput();
     actor.setUp();
 
     id = addNode(actor);
@@ -483,14 +480,14 @@ public class FlowStructureGraphMLProducer
    */
   @Override
   protected void postProduce() {
-    AbstractActor	actor;
+    Actor	actor;
 
     super.postProduce();
 
     m_OutputBuffer.append("  </graph>\n");
     m_OutputBuffer.append("</graphml>\n");
 
-    actor = (AbstractActor) getInput();
+    actor = (Actor) getInput();
     actor.wrapUp();
     actor.cleanUp();
   }

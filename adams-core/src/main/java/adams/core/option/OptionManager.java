@@ -15,7 +15,7 @@
 
 /**
  * OptionManager.java
- * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
@@ -25,7 +25,7 @@ import adams.core.EnumWithCustomDisplay;
 import adams.core.Variables;
 import adams.core.VariablesHandler;
 import adams.core.base.BaseObject;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 
 import java.beans.BeanInfo;
 import java.beans.Introspector;
@@ -670,7 +670,7 @@ public class OptionManager
 	return true;
       }
       public boolean canRecurse(Class cls) {
-        return !ClassLocator.hasInterface(VariablesHandler.class, cls) && !ClassLocator.isSubclass(AbstractActor.class, cls);
+        return !ClassLocator.hasInterface(VariablesHandler.class, cls) && !ClassLocator.hasInterface(Actor.class, cls);
       }
       public boolean canRecurse(Object obj) {
 	return canRecurse(obj.getClass());

@@ -15,13 +15,13 @@
 
 /*
  * IfStorageValue.java
- * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
 
 import adams.core.QuickInfoHelper;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.core.ActorExecution;
 import adams.flow.core.ActorHandler;
 import adams.flow.core.ActorHandlerInfo;
@@ -82,12 +82,12 @@ import adams.flow.source.StringConstants;
  * &nbsp;&nbsp;&nbsp;default: storage
  * </pre>
  *
- * <pre>-then &lt;adams.flow.core.AbstractActor&gt; (property: thenActor)
+ * <pre>-then &lt;adams.flow.core.Actor&gt; (property: thenActor)
  * &nbsp;&nbsp;&nbsp;The actor of the 'then' branch.
  * &nbsp;&nbsp;&nbsp;default: adams.flow.control.Sequence -name then -actor adams.flow.sink.Null
  * </pre>
  *
- * <pre>-else &lt;adams.flow.core.AbstractActor&gt; (property: elseActor)
+ * <pre>-else &lt;adams.flow.core.Actor&gt; (property: elseActor)
  * &nbsp;&nbsp;&nbsp;The actor of the 'else' branch.
  * &nbsp;&nbsp;&nbsp;default: adams.flow.control.Sequence -name else -actor adams.flow.source.StringConstants
  * </pre>
@@ -184,9 +184,9 @@ public class IfStorageValue
      */
     @Override
     public String execute() {
-      String		result;
-      AbstractActor	branch;
-      Token		token;
+      String	result;
+      Actor	branch;
+      Token	token;
 
       if (doThen())
 	branch = ((IfStorageValue) m_ControlActor).getThenActor();
@@ -240,10 +240,10 @@ public class IfStorageValue
   protected StorageName m_StorageName;
 
   /** the actor to execute in the "then" branch. */
-  protected AbstractActor m_ThenActor;
+  protected Actor m_ThenActor;
 
   /** the actor to execute in the "else" branch. */
-  protected AbstractActor m_ElseActor;
+  protected Actor m_ElseActor;
 
   /**
    * Returns a string describing the object.
@@ -302,14 +302,14 @@ public class IfStorageValue
    *
    * @return		the default actor
    */
-  protected AbstractActor getDefaultThen() {
-    Sequence		result;
-    AbstractActor	actor;
+  protected Actor getDefaultThen() {
+    Sequence	result;
+    Actor	actor;
 
     result = new Sequence();
     result.setName("then");
     actor = new Null();
-    result.setActors(new AbstractActor[]{
+    result.setActors(new Actor[]{
 	actor
     });
 
@@ -321,14 +321,14 @@ public class IfStorageValue
    *
    * @return		the default actor
    */
-  protected AbstractActor getDefaultElse() {
-    Sequence		result;
-    AbstractActor	actor;
+  protected Actor getDefaultElse() {
+    Sequence	result;
+    Actor	actor;
 
     result = new Sequence();
     result.setName("else");
     actor = new StringConstants();
-    result.setActors(new AbstractActor[]{
+    result.setActors(new Actor[]{
 	actor
     });
 
@@ -408,7 +408,7 @@ public class IfStorageValue
    *
    * @param value	the actor
    */
-  public void setThenActor(AbstractActor value) {
+  public void setThenActor(Actor value) {
     ActorUtils.uniqueName(value, this, 0);
     m_ThenActor = value;
     reset();
@@ -420,7 +420,7 @@ public class IfStorageValue
    *
    * @return		the actor
    */
-  public AbstractActor getThenActor() {
+  public Actor getThenActor() {
     return m_ThenActor;
   }
 
@@ -439,7 +439,7 @@ public class IfStorageValue
    *
    * @param value	the actor
    */
-  public void setElseActor(AbstractActor value) {
+  public void setElseActor(Actor value) {
     ActorUtils.uniqueName(value, this, 1);
     m_ElseActor = value;
     reset();
@@ -451,7 +451,7 @@ public class IfStorageValue
    *
    * @return		the actor
    */
-  public AbstractActor getElseActor() {
+  public Actor getElseActor() {
     return m_ElseActor;
   }
 
@@ -503,7 +503,7 @@ public class IfStorageValue
    * @return		the actor
    */
   @Override
-  public AbstractActor get(int index) {
+  public Actor get(int index) {
     if (index == 0)
       return m_ThenActor;
     else if (index == 1)
@@ -519,7 +519,7 @@ public class IfStorageValue
    * @param actor	the actor to set at this position
    */
   @Override
-  public void set(int index, AbstractActor actor) {
+  public void set(int index, Actor actor) {
     if (index == 0)
       setThenActor(actor);
     else if (index == 1)
@@ -563,12 +563,12 @@ public class IfStorageValue
   @Override
   public String check() {
     ActorHandler	handler;
-    AbstractActor[]	actors;
+    Actor[]		actors;
     int			i;
     
     if (m_ElseActor instanceof ActorHandler) {
       handler = (ActorHandler) m_ElseActor;
-      actors  = new AbstractActor[handler.size()];
+      actors  = new Actor[handler.size()];
       for (i = 0; i < handler.size(); i++)
 	actors[i] = handler.get(i);
       return ActorUtils.checkForSource(actors);

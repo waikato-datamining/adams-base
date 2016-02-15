@@ -1,233 +1,28 @@
 # Project: adams
-# Date: 2015-06-08 11:56:45
+# Date: 2016-02-15 15:12:05
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	Generates a Xbar R chart from the samples.\nDraws two charts (with different limits):\n- the top one (\"full\") uses the full data\n- The bottom one (\"split\") uses only the first 10 data rows\n  for initializing the chart/limits. The remainder\n  is simply added. \nIn both cases, only a maximum of 15 data points are \ndisplayed (\"post processor\").\n\nData taken from here:\nhttp://www.wikihow.com/Sample/Control-Chart-for-Multiple-Groups
-	-actor
-		adams.flow.standalone.GridView
-			-actor
-				adams.flow.sink.ControlChartPlot
-					-name
-					ControlChartPlot (full)
-					-short-title
-					true
-					-writer
-						adams.gui.print.NullWriter
-					-violation-finder
-						adams.data.spc.BeyondLimitsViolations
-					-paintlet
-						adams.flow.sink.controlchartplot.ChartPaintlet
-					-limit-paintlet
-						adams.flow.sink.controlchartplot.LimitPaintlet
-					-separator-paintlet
-						adams.flow.sink.sequenceplotter.VerticalMarkers
-					-mouse-click-action
-						adams.flow.sink.sequenceplotter.NullClickAction
-					-color-provider
-						adams.gui.visualization.core.DefaultColorProvider
-					-title
-					full
-					-axis-x
-						adams.gui.visualization.core.AxisPanelOptions
-							-label
-							sample
-							-tick-generator
-								adams.gui.visualization.core.axis.FancyTickGenerator
-									-num-ticks
-									20
-							-nth-value
-							1
-							-width
-							40
-							-top-margin
-							0.05
-							-bottom-margin
-							0.05
-							-custom-format
-							0
-					-axis-y
-						adams.gui.visualization.core.AxisPanelOptions
-							-label
-							y
-							-tick-generator
-								adams.gui.visualization.core.axis.FancyTickGenerator
-							-nth-value
-							2
-							-width
-							60
-							-top-margin
-							0.05
-							-bottom-margin
-							0.05
-							-custom-format
-							0.0
-					-post-processor
-						adams.flow.sink.sequenceplotter.SimplePruning
-							-limit
-							15
-			-actor
-				adams.flow.sink.ControlChartPlot
-					-name
-					ControlChartPlot (split)
-					-short-title
-					true
-					-writer
-						adams.gui.print.NullWriter
-					-violation-finder
-						adams.data.spc.BeyondLimitsViolations
-					-paintlet
-						adams.flow.sink.controlchartplot.ChartPaintlet
-					-limit-paintlet
-						adams.flow.sink.controlchartplot.LimitPaintlet
-					-separator-paintlet
-						adams.flow.sink.sequenceplotter.VerticalMarkers
-					-mouse-click-action
-						adams.flow.sink.sequenceplotter.NullClickAction
-					-color-provider
-						adams.gui.visualization.core.DefaultColorProvider
-					-title
-					split
-					-axis-x
-						adams.gui.visualization.core.AxisPanelOptions
-							-label
-							sample
-							-tick-generator
-								adams.gui.visualization.core.axis.FancyTickGenerator
-									-num-ticks
-									20
-							-nth-value
-							1
-							-width
-							40
-							-top-margin
-							0.05
-							-bottom-margin
-							0.05
-							-custom-format
-							0
-					-axis-y
-						adams.gui.visualization.core.AxisPanelOptions
-							-label
-							y
-							-tick-generator
-								adams.gui.visualization.core.axis.FancyTickGenerator
-							-nth-value
-							2
-							-width
-							60
-							-top-margin
-							0.05
-							-bottom-margin
-							0.05
-							-custom-format
-							0.0
-					-post-processor
-						adams.flow.sink.sequenceplotter.SimplePruning
-							-limit
-							15
-			-num-rows
-			2
-			-writer
-				adams.gui.print.NullWriter
-	-actor
-		adams.flow.source.FileSupplier
-			-file
-			${EXAMPLE_FLOWS}/data/subgroups.csv
-	-actor
-		adams.flow.transformer.SpreadSheetFileReader
-			-reader
-				adams.data.io.input.CsvSpreadSheetReader
-					-data-row-type
-						adams.data.spreadsheet.DenseDataRow
-					-spreadsheet-type
-						adams.data.spreadsheet.SpreadSheet
-					-separator
-					\t
-	-actor
-		adams.flow.control.Branch
-			-branch
-				adams.flow.control.Sequence
-					-name
-					control chart (full)
-					-actor
-						adams.flow.transformer.Convert
-							-conversion
-								adams.data.conversion.SpreadSheetToDoubleMatrix
-					-actor
-						adams.flow.transformer.ControlChart
-							-chart
-								adams.data.spc.XBarRChart
-					-actor
-						adams.flow.sink.CallableSink
-							-callable
-							ControlChartPlot (full)
-			-branch
-				adams.flow.control.Sequence
-					-name
-					control chart (split)
-					-actor
-						adams.flow.control.Branch
-							-branch
-								adams.flow.control.Sequence
-									-name
-									initialize
-									-actor
-										adams.flow.transformer.SpreadSheetRowFilter
-											-finder
-												adams.data.spreadsheet.rowfinder.ByIndex
-													-rows
-													1-10
-									-actor
-										adams.flow.transformer.Convert
-											-conversion
-												adams.data.conversion.SpreadSheetToDoubleMatrix
-									-actor
-										adams.flow.transformer.ControlChart
-											-chart
-												adams.data.spc.XBarRChart
-									-actor
-										adams.flow.sink.CallableSink
-											-callable
-											ControlChartPlot (split)
-							-branch
-								adams.flow.control.Sequence
-									-name
-									apply
-									-actor
-										adams.flow.transformer.SpreadSheetRowFilter
-											-finder
-												adams.data.spreadsheet.rowfinder.Invert
-													-row-finder
-														adams.data.spreadsheet.rowfinder.ByIndex
-															-rows
-															1-10
-									-actor
-										adams.flow.transformer.Convert
-											-conversion
-												adams.data.conversion.SpreadSheetToDoubleMatrix
-									-actor
-										adams.flow.transformer.ArrayToSequence
-									-actor
-										adams.flow.sink.CallableSink
-											-callable
-											ControlChartPlot (split)
-							-num-threads
-							1
-			-branch
-				adams.flow.sink.SpreadSheetDisplay
-					-name
-					Raw
-					-short-title
-					true
-					-width
-					400
-					-x
-					-3
-					-writer
-						adams.data.io.output.NullWriter
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "Generates a Xbar R chart from the samples.\\nDraws two charts (with different limits):\\n- the top one (\\\"full\\\") uses the full data\\n- The bottom one (\\\"split\\\") uses only the first 10 data rows\\n  for initializing the chart/limits. The remainder\\n  is simply added. \\nIn both cases, only a maximum of 15 data points are \\ndisplayed (\\\"post processor\\\").\\n\\nData taken from here:\\nhttp://www.wikihow.com/Sample/Control-Chart-for-Multiple-Groups" -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.standalone.GridView -num-rows 2 -writer adams.gui.print.NullWriter
+  adams.flow.sink.ControlChartPlot -name "ControlChartPlot (full)" -short-title true -writer adams.gui.print.NullWriter -violation-finder adams.data.spc.BeyondLimitsViolations -paintlet adams.flow.sink.controlchartplot.ChartPaintlet -limit-paintlet adams.flow.sink.controlchartplot.LimitPaintlet -separator-paintlet adams.flow.sink.sequenceplotter.VerticalMarkers -mouse-click-action adams.flow.sink.sequenceplotter.NullClickAction -color-provider adams.gui.visualization.core.DefaultColorProvider -title full -axis-x "adams.gui.visualization.core.AxisPanelOptions -label sample -tick-generator \"adams.gui.visualization.core.axis.FancyTickGenerator -num-ticks 20\" -nth-value 1 -width 40 -top-margin 0.05 -bottom-margin 0.05 -custom-format 0" -axis-y "adams.gui.visualization.core.AxisPanelOptions -label y -tick-generator adams.gui.visualization.core.axis.FancyTickGenerator -nth-value 2 -width 60 -top-margin 0.05 -bottom-margin 0.05 -custom-format 0.0" -post-processor "adams.flow.sink.sequenceplotter.SimplePruning -limit 15"
+  adams.flow.sink.ControlChartPlot -name "ControlChartPlot (split)" -short-title true -writer adams.gui.print.NullWriter -violation-finder adams.data.spc.BeyondLimitsViolations -paintlet adams.flow.sink.controlchartplot.ChartPaintlet -limit-paintlet adams.flow.sink.controlchartplot.LimitPaintlet -separator-paintlet adams.flow.sink.sequenceplotter.VerticalMarkers -mouse-click-action adams.flow.sink.sequenceplotter.NullClickAction -color-provider adams.gui.visualization.core.DefaultColorProvider -title split -axis-x "adams.gui.visualization.core.AxisPanelOptions -label sample -tick-generator \"adams.gui.visualization.core.axis.FancyTickGenerator -num-ticks 20\" -nth-value 1 -width 40 -top-margin 0.05 -bottom-margin 0.05 -custom-format 0" -axis-y "adams.gui.visualization.core.AxisPanelOptions -label y -tick-generator adams.gui.visualization.core.axis.FancyTickGenerator -nth-value 2 -width 60 -top-margin 0.05 -bottom-margin 0.05 -custom-format 0.0" -post-processor "adams.flow.sink.sequenceplotter.SimplePruning -limit 15"
+ adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/subgroups.csv
+ adams.flow.transformer.SpreadSheetFileReader -reader "adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.SpreadSheet -separator \\t"
+ adams.flow.control.Branch
+  adams.flow.control.Sequence -name "control chart (full)"
+   adams.flow.transformer.Convert -conversion adams.data.conversion.SpreadSheetToDoubleMatrix
+   adams.flow.transformer.ControlChart -chart adams.data.spc.XBarRChart
+   adams.flow.sink.CallableSink -callable "ControlChartPlot (full)"
+  adams.flow.control.Sequence -name "control chart (split)"
+   adams.flow.control.Branch -num-threads 1
+    adams.flow.control.Sequence -name initialize
+     adams.flow.transformer.SpreadSheetRowFilter -finder "adams.data.spreadsheet.rowfinder.ByIndex -rows 1-10"
+     adams.flow.transformer.Convert -conversion adams.data.conversion.SpreadSheetToDoubleMatrix
+     adams.flow.transformer.ControlChart -chart adams.data.spc.XBarRChart
+     adams.flow.sink.CallableSink -callable "ControlChartPlot (split)"
+    adams.flow.control.Sequence -name apply
+     adams.flow.transformer.SpreadSheetRowFilter -finder "adams.data.spreadsheet.rowfinder.Invert -row-finder \"adams.data.spreadsheet.rowfinder.ByIndex -rows 1-10\""
+     adams.flow.transformer.Convert -conversion adams.data.conversion.SpreadSheetToDoubleMatrix
+     adams.flow.transformer.ArrayToSequence
+     adams.flow.sink.CallableSink -callable "ControlChartPlot (split)"
+  adams.flow.sink.SpreadSheetDisplay -name Raw -short-title true -width 400 -x -3 -writer adams.data.io.output.NullWriter

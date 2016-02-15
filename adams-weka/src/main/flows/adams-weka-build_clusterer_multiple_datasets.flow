@@ -1,70 +1,15 @@
 # Project: adams
-# Date: 2014-01-23 15:48:06
+# Date: 2016-02-15 15:19:26
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	Builds SimpleKMeans models on several datasets.\nOnly datasets with only letters in their filename \n(apart from the extension) are considered. This\navoids using the train/test splits also present in \nthat directory.
-	-actor
-		adams.flow.standalone.CallableActors
-			-actor
-				adams.flow.source.WekaClustererSetup
-					-clusterer
-						weka.clusterers.SimpleKMeans
-							-N
-							2
-							-A
-							weka.core.EuclideanDistance -R first-last
-							-I
-							500
-							-num-slots
-							1
-							-S
-							10
-	-actor
-		adams.flow.source.DirectoryLister
-			-dir
-			${EXAMPLE_FLOWS}/data
-			-list-files
-			true
-			-regexp
-			[a-zA-Z]*\\.arff
-	-actor
-		adams.flow.control.Tee
-			-name
-			get dataset name
-			-tee
-				adams.flow.transformer.BaseName
-					-remove-extensions
-					true
-			-tee
-				adams.flow.transformer.SetVariable
-					-var-name
-					dataset
-	-actor
-		adams.flow.transformer.WekaFileReader
-			-loader
-				weka.core.converters.ArffLoader
-	-actor
-		adams.flow.transformer.WekaFilter
-			-filter
-				weka.filters.unsupervised.attribute.Remove
-					
-					
-					
-	-actor
-		adams.flow.transformer.WekaTrainClusterer
-			-name
-			WekaClusterer
-			-post-processor
-				adams.flow.transformer.wekaclusterer.PassThrough
-	-actor
-		adams.flow.sink.HistoryDisplay
-			-caret-at-start
-			true
-			-entry-name-variable
-			dataset
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "Builds SimpleKMeans models on several datasets.\\nOnly datasets with only letters in their filename \\n(apart from the extension) are considered. This\\navoids using the train/test splits also present in \\nthat directory." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.standalone.CallableActors
+  adams.flow.source.WekaClustererSetup -clusterer "weka.clusterers.SimpleKMeans -init 0 -max-candidates 100 -periodic-pruning 10000 -min-density 2.0 -t1 -1.25 -t2 -1.0 -N 2 -A \"weka.core.EuclideanDistance -R first-last\" -I 500 -num-slots 1 -S 10"
+ adams.flow.source.DirectoryLister -dir ${EXAMPLE_FLOWS}/data -list-files true -regexp [a-zA-Z]*\\.arff
+ adams.flow.control.Tee -name "get dataset name"
+  adams.flow.transformer.BaseName -remove-extensions true
+  adams.flow.transformer.SetVariable -var-name dataset
+ adams.flow.transformer.WekaFileReader -loader weka.core.converters.ArffLoader
+ adams.flow.transformer.WekaFilter -filter weka.filters.unsupervised.attribute.Remove
+ adams.flow.transformer.WekaTrainClusterer -name WekaClusterer -post-processor adams.flow.transformer.wekaclusterer.PassThrough
+ adams.flow.sink.HistoryDisplay -caret-at-start true -entry-name-variable dataset

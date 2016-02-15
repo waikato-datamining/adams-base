@@ -15,7 +15,7 @@
 
 /*
  * StorageValueSequenceTest.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -27,7 +27,7 @@ import adams.core.base.BaseText;
 import adams.core.option.AbstractArgumentOption;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.test.TmpFile;
 
 /**
@@ -96,17 +96,17 @@ public class StorageValueSequenceTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
   @Override
-  public AbstractActor getActor() {
+  public Actor getActor() {
     AbstractArgumentOption    argOption;
     
     Flow flow = new Flow();
     
     try {
       argOption = (AbstractArgumentOption) flow.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp1 = new adams.flow.core.AbstractActor[6];
+      adams.flow.core.Actor[] tmp1 = new adams.flow.core.Actor[6];
       adams.flow.standalone.SetVariable tmp2 = new adams.flow.standalone.SetVariable();
       argOption = (AbstractArgumentOption) tmp2.getOptionManager().findByProperty("variableName");
       tmp2.setVariableName((adams.core.VariableName) argOption.valueOf("count"));
@@ -137,13 +137,13 @@ public class StorageValueSequenceTest
       tmp1[3] = tmp9;
       adams.flow.control.StorageValueSequence tmp11 = new adams.flow.control.StorageValueSequence();
       argOption = (AbstractArgumentOption) tmp11.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp12 = new adams.flow.core.AbstractActor[2];
+      adams.flow.core.Actor[] tmp12 = new adams.flow.core.Actor[2];
       adams.flow.control.Trigger tmp13 = new adams.flow.control.Trigger();
       argOption = (AbstractArgumentOption) tmp13.getOptionManager().findByProperty("name");
       tmp13.setName((java.lang.String) argOption.valueOf("first processing step"));
 
       argOption = (AbstractArgumentOption) tmp13.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp15 = new adams.flow.core.AbstractActor[3];
+      adams.flow.core.Actor[] tmp15 = new adams.flow.core.Actor[3];
       adams.flow.source.StorageValue tmp16 = new adams.flow.source.StorageValue();
       argOption = (AbstractArgumentOption) tmp16.getOptionManager().findByProperty("storageName");
       tmp16.setStorageName((adams.flow.control.StorageName) argOption.valueOf("content"));
@@ -169,7 +169,7 @@ public class StorageValueSequenceTest
       tmp21.setName((java.lang.String) argOption.valueOf("second processing step"));
 
       argOption = (AbstractArgumentOption) tmp21.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp23 = new adams.flow.core.AbstractActor[3];
+      adams.flow.core.Actor[] tmp23 = new adams.flow.core.Actor[3];
       adams.flow.source.StorageValue tmp24 = new adams.flow.source.StorageValue();
       argOption = (AbstractArgumentOption) tmp24.getOptionManager().findByProperty("storageName");
       tmp24.setStorageName((adams.flow.control.StorageName) argOption.valueOf("content"));

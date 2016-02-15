@@ -27,7 +27,7 @@ import adams.core.option.AbstractArgumentOption;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.test.TmpFile;
 
 /**
@@ -100,17 +100,17 @@ public class StorageValuesArrayTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
   @Override
-  public AbstractActor getActor() {
+  public Actor getActor() {
     AbstractArgumentOption    argOption;
     
     Flow flow = new Flow();
     
     try {
       argOption = (AbstractArgumentOption) flow.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] abstractactor1 = new adams.flow.core.AbstractActor[4];
+      adams.flow.core.Actor[] abstractactor1 = new adams.flow.core.Actor[4];
 
       // Flow.SetVariable
       adams.flow.standalone.SetVariable setvariable2 = new adams.flow.standalone.SetVariable();
@@ -132,7 +132,7 @@ public class StorageValuesArrayTest
       trigger6.setName((java.lang.String) argOption.valueOf("load into storage"));
 
       argOption = (AbstractArgumentOption) trigger6.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] abstractactor8 = new adams.flow.core.AbstractActor[4];
+      adams.flow.core.Actor[] abstractactor8 = new adams.flow.core.Actor[4];
 
       // Flow.load into storage.DirectoryLister
       adams.flow.source.DirectoryLister directorylister9 = new adams.flow.source.DirectoryLister();
@@ -152,7 +152,7 @@ public class StorageValuesArrayTest
       // Flow.load into storage.Count
       adams.flow.control.Count count13 = new adams.flow.control.Count();
       argOption = (AbstractArgumentOption) count13.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] abstractactor14 = new adams.flow.core.AbstractActor[2];
+      adams.flow.core.Actor[] abstractactor14 = new adams.flow.core.Actor[2];
 
       // Flow.load into storage.Count.SetVariable
       adams.flow.transformer.SetVariable setvariable15 = new adams.flow.transformer.SetVariable();
@@ -167,7 +167,7 @@ public class StorageValuesArrayTest
       trigger17.setName((java.lang.String) argOption.valueOf("append list"));
 
       argOption = (AbstractArgumentOption) trigger17.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] abstractactor19 = new adams.flow.core.AbstractActor[4];
+      adams.flow.core.Actor[] abstractactor19 = new adams.flow.core.Actor[4];
 
       // Flow.load into storage.Count.append list.Variable
       adams.flow.source.Variable variable20 = new adams.flow.source.Variable();
@@ -228,7 +228,7 @@ public class StorageValuesArrayTest
       trigger31.setName((java.lang.String) argOption.valueOf("output array"));
 
       argOption = (AbstractArgumentOption) trigger31.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] abstractactor33 = new adams.flow.core.AbstractActor[4];
+      adams.flow.core.Actor[] abstractactor33 = new adams.flow.core.Actor[4];
 
       // Flow.output array.StorageValuesArray
       adams.flow.source.StorageValuesArray storagevaluesarray34 = new adams.flow.source.StorageValuesArray();
@@ -244,7 +244,7 @@ public class StorageValuesArrayTest
       // Flow.output array.Count
       adams.flow.control.Count count36 = new adams.flow.control.Count();
       argOption = (AbstractArgumentOption) count36.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] abstractactor37 = new adams.flow.core.AbstractActor[1];
+      adams.flow.core.Actor[] abstractactor37 = new adams.flow.core.Actor[1];
 
       // Flow.output array.Count.SetVariable
       adams.flow.transformer.SetVariable setvariable38 = new adams.flow.transformer.SetVariable();

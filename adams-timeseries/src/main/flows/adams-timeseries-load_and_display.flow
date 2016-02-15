@@ -1,53 +1,8 @@
 # Project: adams
-# Date: 2014-10-07 14:32:23
+# Date: 2016-02-15 15:03:20
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	Loads a timeseries from a file and displays it.
-	-actor
-		adams.flow.source.FileSupplier
-			-file
-			${EXAMPLE_FLOWS}/data/dummy.sts
-	-actor
-		adams.flow.transformer.TimeseriesFileReader
-			-reader
-				adams.data.io.input.SimpleTimeseriesReader
-	-actor
-		adams.flow.sink.TimeseriesDisplay
-			-writer
-				adams.gui.print.NullWriter
-			-axis-x
-				adams.gui.visualization.timeseries.DefaultTimeseriesXAxisPanelOptions
-					-label
-					time
-					-type
-					DATE
-					-tick-generator
-						adams.gui.visualization.core.axis.PeriodicityTickGenerator
-					-nth-value
-					2
-					-width
-					40
-					-periodicity
-					WEEKLY
-			-axis-y
-				adams.gui.visualization.timeseries.DefaultTimeseriesYAxisPanelOptions
-					-label
-					value
-					-tick-generator
-						adams.gui.visualization.core.axis.SimpleTickGenerator
-					-width
-					60
-			-color-provider
-				adams.gui.visualization.core.DefaultColorProvider
-			-overlay
-				adams.gui.visualization.report.ReportDateFieldPaintlet
-					-field
-					Date[S]
-					-prefix
-					Date: 
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "Loads a timeseries from a file and displays it." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/dummy.sts
+ adams.flow.transformer.TimeseriesFileReader -reader adams.data.io.input.SimpleTimeseriesReader
+ adams.flow.sink.TimeseriesDisplay -writer adams.gui.print.NullWriter -paintlet adams.gui.visualization.timeseries.TimeseriesPaintlet -axis-x "adams.gui.visualization.timeseries.DefaultTimeseriesXAxisPanelOptions -label time -type DATE -tick-generator adams.gui.visualization.core.axis.PeriodicityTickGenerator -nth-value 2 -width 40 -periodicity WEEKLY" -axis-y "adams.gui.visualization.timeseries.DefaultTimeseriesYAxisPanelOptions -label value -tick-generator adams.gui.visualization.core.axis.SimpleTickGenerator -width 60" -color-provider adams.gui.visualization.core.DefaultColorProvider -overlay "adams.gui.visualization.report.ReportDateFieldPaintlet -field Date[S] -prefix \"Date: \"" -plot-updater adams.flow.sink.timeseriesdisplay.SimplePlotUpdater

@@ -1,73 +1,18 @@
 # Project: adams
-# Date: 2014-01-23 15:47:12
+# Date: 2016-02-15 15:17:09
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	Builds a clusterer on a dataset with the class attribute removed\nand outputs the evaluation summary generated from evaluating\nthe built clusterer on a separate test-set.
-	-actor
-		adams.flow.standalone.CallableActors
-			-actor
-				adams.flow.source.WekaClustererSetup
-					-clusterer
-						weka.clusterers.SimpleKMeans
-							-N
-							2
-							-A
-							weka.core.EuclideanDistance -R first-last
-							-I
-							500
-							-num-slots
-							1
-							-S
-							10
-			-actor
-				adams.flow.source.SequenceSource
-					-name
-					Testset
-					-actor
-						adams.flow.source.FileSupplier
-							-file
-							${EXAMPLE_FLOWS}/data/anneal_test.arff
-					-actor
-						adams.flow.transformer.WekaFileReader
-							-loader
-								weka.core.converters.ArffLoader
-					-actor
-						adams.flow.transformer.WekaFilter
-							-filter
-								weka.filters.unsupervised.attribute.Remove
-									-R
-									last
-									
-	-actor
-		adams.flow.source.FileSupplier
-			-file
-			${EXAMPLE_FLOWS}/data/anneal_train.arff
-	-actor
-		adams.flow.transformer.WekaFileReader
-			-loader
-				weka.core.converters.ArffLoader
-	-actor
-		adams.flow.transformer.WekaFilter
-			-filter
-				weka.filters.unsupervised.attribute.Remove
-					-R
-					last
-					
-	-actor
-		adams.flow.transformer.WekaTrainClusterer
-			-post-processor
-				adams.flow.transformer.wekaclusterer.PassThrough
-	-actor
-		adams.flow.transformer.WekaTestSetClustererEvaluator
-			-output-model
-			true
-	-actor
-		adams.flow.transformer.WekaClusterEvaluationSummary
-	-actor
-		adams.flow.sink.Display
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "Builds a clusterer on a dataset with the class attribute removed\\nand outputs the evaluation summary generated from evaluating\\nthe built clusterer on a separate test-set." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.standalone.CallableActors
+  adams.flow.source.WekaClustererSetup -clusterer "weka.clusterers.SimpleKMeans -init 0 -max-candidates 100 -periodic-pruning 10000 -min-density 2.0 -t1 -1.25 -t2 -1.0 -N 2 -A \"weka.core.EuclideanDistance -R first-last\" -I 500 -num-slots 1 -S 10"
+  adams.flow.source.SequenceSource -name Testset
+   adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/anneal_test.arff
+   adams.flow.transformer.WekaFileReader -loader weka.core.converters.ArffLoader
+   adams.flow.transformer.WekaFilter -filter "weka.filters.unsupervised.attribute.Remove -R last"
+ adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/anneal_train.arff
+ adams.flow.transformer.WekaFileReader -loader weka.core.converters.ArffLoader
+ adams.flow.transformer.WekaFilter -filter "weka.filters.unsupervised.attribute.Remove -R last"
+ adams.flow.transformer.WekaTrainClusterer -post-processor adams.flow.transformer.wekaclusterer.PassThrough
+ adams.flow.transformer.WekaTestSetClustererEvaluator -output-model true
+ adams.flow.transformer.WekaClusterEvaluationSummary
+ adams.flow.sink.Display -writer adams.data.io.output.NullWriter

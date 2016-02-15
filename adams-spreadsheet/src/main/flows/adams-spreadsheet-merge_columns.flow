@@ -1,31 +1,9 @@
 # Project: adams
-# Date: 2014-01-23 15:41:11
+# Date: 2016-02-15 14:58:58
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	Example flow for merging multiple columns into a single one.
-	-actor
-		adams.flow.source.FileSupplier
-			-file
-			${EXAMPLE_FLOWS}/data/bolts.csv
-	-actor
-		adams.flow.transformer.SpreadSheetFileReader
-			-reader
-				adams.data.io.input.CsvSpreadSheetReader
-					-spreadsheet-type
-						adams.data.spreadsheet.SpreadSheet
-	-actor
-		adams.flow.transformer.Convert
-			-conversion
-				adams.data.conversion.SpreadSheetJoinColumns
-					-columns
-					2-3
-					-glue
-					 | 
-	-actor
-		adams.flow.sink.SpreadSheetDisplay
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "Example flow for merging multiple columns into a single one." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/bolts.csv
+ adams.flow.transformer.SpreadSheetFileReader -reader "adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.SpreadSheet"
+ adams.flow.transformer.Convert -conversion "adams.data.conversion.SpreadSheetJoinColumns -columns 2-3 -glue \" | \""
+ adams.flow.sink.SpreadSheetDisplay -writer adams.data.io.output.NullWriter

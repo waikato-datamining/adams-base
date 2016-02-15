@@ -48,7 +48,7 @@ public abstract class AbstractCallableActor
   protected CallableActorReference m_CallableName;
 
   /** the callable actor. */
-  protected AbstractActor m_CallableActor;
+  protected Actor m_CallableActor;
 
   /** whether the callable actor has been configured. */
   protected boolean m_Configured;
@@ -180,7 +180,7 @@ public abstract class AbstractCallableActor
    *
    * @return		the callable actor or null if not found
    */
-  protected AbstractActor findCallableActor() {
+  protected Actor findCallableActor() {
     m_FindCallableActorError = null;
     return m_Helper.findCallableActorRecursive(this, getCallableName());
   }
@@ -201,7 +201,7 @@ public abstract class AbstractCallableActor
    * @return		the actor, can be null
    */
   @Override
-  public AbstractActor getCallableActor() {
+  public Actor getCallableActor() {
     return m_CallableActor;
   }
 
@@ -244,7 +244,7 @@ public abstract class AbstractCallableActor
     super.restoreState(state);
 
     if (state.containsKey(BACKUP_CALLABLEACTOR)) {
-      m_CallableActor = (AbstractActor) state.get(BACKUP_CALLABLEACTOR);
+      m_CallableActor = (Actor) state.get(BACKUP_CALLABLEACTOR);
       state.remove(BACKUP_CALLABLEACTOR);
     }
 

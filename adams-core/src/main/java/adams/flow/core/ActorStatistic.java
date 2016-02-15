@@ -15,7 +15,7 @@
 
 /**
  * ActorStatistic.java
- * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.core;
 
@@ -63,7 +63,7 @@ public class ActorStatistic
   protected NamedCounter m_ClassStatistics;
 
   /** the actor to create the statistics for. */
-  protected AbstractActor m_Actor;
+  protected Actor m_Actor;
 
   /**
    * Initializes the statistics.
@@ -81,7 +81,7 @@ public class ActorStatistic
    *
    * @param actor	the actor to generate the stats for
    */
-  public ActorStatistic(AbstractActor actor) {
+  public ActorStatistic(Actor actor) {
     this();
     setActor(actor);
   }
@@ -91,7 +91,7 @@ public class ActorStatistic
    *
    * @param value	the actor to use
    */
-  public void setActor(AbstractActor value) {
+  public void setActor(Actor value) {
     m_Actor = value;
     calculate();
   }
@@ -101,7 +101,7 @@ public class ActorStatistic
    *
    * @return		the actor, null if none set
    */
-  public AbstractActor getActor() {
+  public Actor getActor() {
     return m_Actor;
   }
 
@@ -110,7 +110,7 @@ public class ActorStatistic
    *
    * @param actor	the actor to use
    */
-  protected void update(AbstractActor actor) {
+  protected void update(Actor actor) {
     m_TypeStatistics.next(COUNT_ACTORS);
     if (ActorUtils.isControlActor(actor))
       m_TypeStatistics.next(COUNT_CONTROLACTORS);
@@ -129,7 +129,7 @@ public class ActorStatistic
    * Generates the statistics.
    */
   protected void calculate() {
-    List<AbstractActor>		actors;
+    List<Actor>		actors;
 
     // init stats
     m_TypeStatistics.clear();
@@ -146,7 +146,7 @@ public class ActorStatistic
 
     actors = ActorUtils.enumerate(getActor());
     update(m_Actor);
-    for (AbstractActor actor: actors)
+    for (Actor actor: actors)
       update(actor);
   }
 

@@ -15,11 +15,11 @@
 
 /**
  * AbstractModifyingProcessor.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.processor;
 
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 
 /**
  * Ancestor for processors that potentially modify flows that they are processing.
@@ -38,7 +38,7 @@ public abstract class AbstractModifyingProcessor
   protected boolean m_Modified;
 
   /** the modified flow. */
-  protected AbstractActor m_ModifiedActor;
+  protected Actor m_ModifiedActor;
 
   /** whether to suppress copying the actor. */
   protected boolean m_NoCopy;
@@ -77,7 +77,7 @@ public abstract class AbstractModifyingProcessor
    * @param actor	the actor to process
    */
   @Override
-  public void process(AbstractActor actor) {
+  public void process(Actor actor) {
     m_Modified      = false;
     m_ModifiedActor = null;
 
@@ -104,7 +104,7 @@ public abstract class AbstractModifyingProcessor
    *
    * @return		the modified actor, null if not modified
    */
-  public AbstractActor getModifiedActor() {
+  public Actor getModifiedActor() {
     return m_ModifiedActor;
   }
 }

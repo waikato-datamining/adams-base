@@ -27,7 +27,7 @@ import adams.flow.AbstractFlowTest;
 import adams.flow.control.Branch;
 import adams.flow.control.Flow;
 import adams.flow.control.Sequence;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.sink.SequencePlotter;
 import adams.flow.source.FileSupplier;
 import adams.flow.transformer.plotgenerator.SimplePlotGenerator;
@@ -81,10 +81,10 @@ public class SpreadSheetPlotGeneratorTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
   @Override
-  public AbstractActor getActor() {
+  public Actor getActor() {
     FileSupplier sfs = new FileSupplier();
     sfs.setFiles(new adams.core.io.PlaceholderFile[]{new TmpFile("bolts.csv")});
 
@@ -99,7 +99,7 @@ public class SpreadSheetPlotGeneratorTest
     sp1.setPaintlet(new LinePaintlet());
 
     Sequence seq1 = new Sequence();
-    seq1.setActors(new AbstractActor[]{
+    seq1.setActors(new Actor[]{
 	plot1,
 	sp1
     });
@@ -113,7 +113,7 @@ public class SpreadSheetPlotGeneratorTest
     sp2.setPaintlet(new LinePaintlet());
 
     Sequence seq2 = new Sequence();
-    seq2.setActors(new AbstractActor[]{
+    seq2.setActors(new Actor[]{
 	plot2,
 	sp2
     });
@@ -130,21 +130,21 @@ public class SpreadSheetPlotGeneratorTest
     sp3.setPaintlet(dot);
 
     Sequence seq3 = new Sequence();
-    seq3.setActors(new AbstractActor[]{
+    seq3.setActors(new Actor[]{
 	plot3,
 	sp3
     });
 
     Branch br = new Branch();
     br.setNumThreads(0);
-    br.setBranches(new AbstractActor[]{
+    br.setBranches(new Actor[]{
 	seq1,
 	seq2,
 	seq3
     });
 
     Flow flow = new Flow();
-    flow.setActors(new AbstractActor[]{sfs, ssr, br});
+    flow.setActors(new Actor[]{sfs, ssr, br});
 
     return flow;
   }

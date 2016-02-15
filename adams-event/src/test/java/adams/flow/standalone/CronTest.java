@@ -27,7 +27,7 @@ import adams.core.option.AbstractArgumentOption;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.source.Start;
 import adams.parser.BooleanExpressionText;
 import adams.test.TmpFile;
@@ -98,17 +98,17 @@ public class CronTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
   @Override
-  public AbstractActor getActor() {
+  public Actor getActor() {
     AbstractArgumentOption    argOption;
 
     Flow flow = new Flow();
 
     try {
       argOption = (AbstractArgumentOption) flow.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp1 = new adams.flow.core.AbstractActor[5];
+      adams.flow.core.Actor[] tmp1 = new adams.flow.core.Actor[5];
       adams.flow.standalone.DeleteFile tmp2 = new adams.flow.standalone.DeleteFile();
       argOption = (AbstractArgumentOption) tmp2.getOptionManager().findByProperty("directory");
       tmp2.setDirectory((adams.core.io.PlaceholderDirectory) argOption.valueOf("${TMP}"));
@@ -127,10 +127,10 @@ public class CronTest
       tmp1[1] = tmp5;
       adams.flow.standalone.Events tmp8 = new adams.flow.standalone.Events();
       argOption = (AbstractArgumentOption) tmp8.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp9 = new adams.flow.core.AbstractActor[1];
+      adams.flow.core.Actor[] tmp9 = new adams.flow.core.Actor[1];
       adams.flow.standalone.Cron tmp10 = new adams.flow.standalone.Cron();
       argOption = (AbstractArgumentOption) tmp10.getOptionManager().findByProperty("cronActors");
-      adams.flow.core.AbstractActor[] tmp11 = new adams.flow.core.AbstractActor[4];
+      adams.flow.core.Actor[] tmp11 = new adams.flow.core.Actor[4];
       adams.flow.source.Variable tmp12 = new adams.flow.source.Variable();
       argOption = (AbstractArgumentOption) tmp12.getOptionManager().findByProperty("variableName");
       tmp12.setVariableName((adams.core.VariableName) argOption.valueOf("counter"));
@@ -143,7 +143,7 @@ public class CronTest
       tmp11[1] = tmp14;
       adams.flow.control.Tee tmp16 = new adams.flow.control.Tee();
       argOption = (AbstractArgumentOption) tmp16.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp17 = new adams.flow.core.AbstractActor[1];
+      adams.flow.core.Actor[] tmp17 = new adams.flow.core.Actor[1];
       adams.flow.sink.DumpFile tmp18 = new adams.flow.sink.DumpFile();
       argOption = (AbstractArgumentOption) tmp18.getOptionManager().findByProperty("outputFile");
       tmp18.setOutputFile(new TmpFile("dumpfile.txt"));
@@ -168,7 +168,7 @@ public class CronTest
       tmp25.setName((java.lang.String) argOption.valueOf("then"));
 
       argOption = (AbstractArgumentOption) tmp25.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp27 = new adams.flow.core.AbstractActor[1];
+      adams.flow.core.Actor[] tmp27 = new adams.flow.core.Actor[1];
       adams.flow.control.Stop tmp28 = new adams.flow.control.Stop();
       tmp27[0] = tmp28;
       tmp25.setActors(tmp27);
@@ -196,7 +196,7 @@ public class CronTest
       tmp1[3] = tmp33;
       adams.flow.control.WhileLoop tmp34 = new adams.flow.control.WhileLoop();
       argOption = (AbstractArgumentOption) tmp34.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp35 = new adams.flow.core.AbstractActor[2];
+      adams.flow.core.Actor[] tmp35 = new adams.flow.core.Actor[2];
       adams.flow.control.Sleep tmp36 = new adams.flow.control.Sleep();
       tmp35[0] = new Start();
       tmp35[1] = tmp36;

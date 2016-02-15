@@ -15,7 +15,7 @@
 
 /**
  * ActorQuickEditTab.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.tab;
 
@@ -23,7 +23,6 @@ import adams.core.CloneHandler;
 import adams.core.Utils;
 import adams.core.option.OptionHandler;
 import adams.core.option.OptionUtils;
-import adams.flow.core.AbstractActor;
 import adams.flow.core.Actor;
 import adams.gui.core.GUIHelper;
 import adams.gui.event.ActorChangeEvent;
@@ -157,13 +156,13 @@ public class ActorQuickEditTab
 	  Tree tree = m_Owner.getCurrentPanel().getTree();
 	  Node node = (Node) m_TreePath.getLastPathComponent();
 	  Node parent = (Node) node.getParent();
-	  node.setActor((AbstractActor) m_Object);
+	  node.setActor((Actor) m_Object);
 	  tree.updateActorName(node);
 	  tree.setModified(true);
 	  tree.nodeStructureChanged(node);
 	  tree.notifyActorChangeListeners(new ActorChangeEvent(tree, node, Type.MODIFY));
 	  if (!tree.getIgnoreNameChanges())
-	    AbstractEditPostProcessor.apply(tree, ((parent != null) ? parent.getActor() : null), (AbstractActor) m_Backup, node.getActor());
+	    AbstractEditPostProcessor.apply(tree, ((parent != null) ? parent.getActor() : null), (Actor) m_Backup, node.getActor());
 	  m_Backup = copyObject(m_Object);
 	}
       });
@@ -328,7 +327,7 @@ public class ActorQuickEditTab
    * @param paths	the selected paths
    * @param actors	the currently selected actors
    */
-  public void actorSelectionChanged(TreePath[] paths, AbstractActor[] actors) {
+  public void actorSelectionChanged(TreePath[] paths, Actor[] actors) {
     if (actors.length != 1) {
       remove(m_PanelEditor);
       add(m_PanelError, BorderLayout.CENTER);

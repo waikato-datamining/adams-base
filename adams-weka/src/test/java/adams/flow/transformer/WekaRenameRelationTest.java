@@ -27,7 +27,7 @@ import adams.flow.AbstractFlowTest;
 import adams.flow.control.Branch;
 import adams.flow.control.Flow;
 import adams.flow.control.Sequence;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.core.CallableActorReference;
 import adams.flow.sink.CallableSink;
 import adams.flow.sink.DumpFile;
@@ -82,17 +82,17 @@ public class WekaRenameRelationTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
   @Override
-  public AbstractActor getActor() {
+  public Actor getActor() {
     DumpFile df = new DumpFile();
     df.setName("sink");
     df.setAppend(true);
     df.setOutputFile(new TmpFile("dumpfile.txt"));
 
     CallableActors ga = new CallableActors();
-    ga.setActors(new AbstractActor[]{
+    ga.setActors(new Actor[]{
 	df
     });
 
@@ -109,7 +109,7 @@ public class WekaRenameRelationTest
     CallableSink sink1 = new CallableSink();
     sink1.setCallableName(new CallableActorReference("sink"));
     Sequence seq1 = new Sequence();
-    seq1.setActors(new AbstractActor[]{
+    seq1.setActors(new Actor[]{
 	ren1,
 	rel1,
 	sink1
@@ -121,7 +121,7 @@ public class WekaRenameRelationTest
     CallableSink sink2 = new CallableSink();
     sink2.setCallableName(new CallableActorReference("sink"));
     Sequence seq2 = new Sequence();
-    seq2.setActors(new AbstractActor[]{
+    seq2.setActors(new Actor[]{
 	ren2,
 	rel2,
 	sink2
@@ -129,13 +129,13 @@ public class WekaRenameRelationTest
 
     Branch br = new Branch();
     br.setNumThreads(0);
-    br.setBranches(new AbstractActor[]{
+    br.setBranches(new Actor[]{
 	seq1,
 	seq2
     });
 
     Flow flow = new Flow();
-    flow.setActors(new AbstractActor[]{ga, sfs, fr, copy, br});
+    flow.setActors(new Actor[]{ga, sfs, fr, copy, br});
 
     return flow;
   }

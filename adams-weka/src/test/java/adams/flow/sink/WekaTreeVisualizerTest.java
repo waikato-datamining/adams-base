@@ -27,7 +27,7 @@ import adams.core.option.OptionUtils;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 
 /**
  * Test for WekaTreeVisualizer actor.
@@ -85,22 +85,22 @@ public class WekaTreeVisualizerTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
   @Override
-  public AbstractActor getActor() {
+  public Actor getActor() {
     AbstractArgumentOption    argOption;
     
     Flow flow = new Flow();
     
     try {
       argOption = (AbstractArgumentOption) flow.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] actors1 = new adams.flow.core.AbstractActor[6];
+      adams.flow.core.Actor[] actors1 = new adams.flow.core.Actor[6];
 
       // Flow.CallableActors
       adams.flow.standalone.CallableActors globalactors2 = new adams.flow.standalone.CallableActors();
       argOption = (AbstractArgumentOption) globalactors2.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] actors3 = new adams.flow.core.AbstractActor[1];
+      adams.flow.core.Actor[] actors3 = new adams.flow.core.Actor[1];
 
       // Flow.CallableActors.WekaClassifierSetup
       adams.flow.source.WekaClassifierSetup wekaclassifiersetup4 = new adams.flow.source.WekaClassifierSetup();

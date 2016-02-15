@@ -15,11 +15,11 @@
 
 /**
  * DummyTransformer.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.template;
 
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.transformer.PassThrough;
 
 /**
@@ -68,7 +68,7 @@ public class DummyTransformer
    *
    * @return 		the generated actor
    */
-  protected AbstractActor doGenerate() {
+  protected Actor doGenerate() {
     return new PassThrough();
   }
 }

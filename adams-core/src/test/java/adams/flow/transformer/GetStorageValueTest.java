@@ -26,7 +26,7 @@ import adams.core.option.AbstractArgumentOption;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.test.TmpFile;
 
 /**
@@ -95,17 +95,17 @@ public class GetStorageValueTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
   @Override
-  public AbstractActor getActor() {
+  public Actor getActor() {
     AbstractArgumentOption    argOption;
     
     Flow flow = new Flow();
     
     try {
       argOption = (AbstractArgumentOption) flow.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] actors1 = new adams.flow.core.AbstractActor[3];
+      adams.flow.core.Actor[] actors1 = new adams.flow.core.Actor[3];
 
       // Flow.Start
       adams.flow.source.Start start2 = new adams.flow.source.Start();
@@ -114,7 +114,7 @@ public class GetStorageValueTest
       // Flow.Trigger
       adams.flow.control.Trigger trigger3 = new adams.flow.control.Trigger();
       argOption = (AbstractArgumentOption) trigger3.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] actors4 = new adams.flow.core.AbstractActor[4];
+      adams.flow.core.Actor[] actors4 = new adams.flow.core.Actor[4];
 
       // Flow.Trigger.StringConstants
       adams.flow.source.StringConstants stringconstants5 = new adams.flow.source.StringConstants();
@@ -154,7 +154,7 @@ public class GetStorageValueTest
       argOption = (AbstractArgumentOption) trigger13.getOptionManager().findByProperty("name");
       trigger13.setName((java.lang.String) argOption.valueOf("Trigger-1"));
       argOption = (AbstractArgumentOption) trigger13.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] actors15 = new adams.flow.core.AbstractActor[3];
+      adams.flow.core.Actor[] actors15 = new adams.flow.core.Actor[3];
 
       // Flow.Trigger-1.ListStorageNames
       adams.flow.source.ListStorageNames liststoragenames16 = new adams.flow.source.ListStorageNames();

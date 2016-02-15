@@ -1,65 +1,17 @@
 # Project: adams
-# Date: 2015-05-23 08:24:00
+# Date: 2016-02-15 15:22:12
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	The flow loads classifier setups from a text file\n(one setup per line), updates them via the SetVariable\nactor in the CallableActors\' \"Classifier\" actor and then\ncross-validates them, outputting the result of the CV.
-	-actor
-		adams.flow.standalone.CallableActors
-			-actor
-				adams.flow.source.WekaClassifierSetup
-					-name
-					WekaClassifier
-					-classifier
-					@{classifier}
-	-actor
-		adams.flow.source.FileSupplier
-			-file
-			${EXAMPLE_FLOWS}/data/wekaclassifier_setups.txt
-	-actor
-		adams.flow.transformer.TextFileReader
-			-reader
-				adams.data.io.input.LineByLineTextReader
-	-actor
-		adams.flow.transformer.SetVariable
-			-var-name
-			classifier
-	-actor
-		adams.flow.control.Trigger
-			-name
-			evaluate classifier
-			-tee
-				adams.flow.source.FileSupplier
-					-file
-					${EXAMPLE_FLOWS}/data/anneal.arff
-			-tee
-				adams.flow.transformer.WekaFileReader
-					-loader
-						weka.core.converters.ArffLoader
-			-tee
-				adams.flow.transformer.WekaClassSelector
-			-tee
-				adams.flow.transformer.WekaCrossValidationEvaluator
-					-output
-						weka.classifiers.evaluation.output.prediction.Null
-					-classifier
-					WekaClassifier
-					-num-threads
-					-1
-			-tee
-				adams.flow.transformer.WekaEvaluationSummary
-					-relation
-					true
-					-class-details
-					true
-					-comment
-					@{classifier}
-			-tee
-				adams.flow.sink.HistoryDisplay
-					-entry-name-variable
-					classifier
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "The flow loads classifier setups from a text file\\n(one setup per line), updates them via the SetVariable\\nactor in the CallableActors\\\' \\\"Classifier\\\" actor and then\\ncross-validates them, outputting the result of the CV." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.standalone.CallableActors
+  adams.flow.source.WekaClassifierSetup -name WekaClassifier -classifier @{classifier}
+ adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/wekaclassifier_setups.txt
+ adams.flow.transformer.TextFileReader -reader adams.data.io.input.LineByLineTextReader
+ adams.flow.transformer.SetVariable -var-name classifier
+ adams.flow.control.Trigger -name "evaluate classifier"
+  adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/anneal.arff
+  adams.flow.transformer.WekaFileReader -loader weka.core.converters.ArffLoader
+  adams.flow.transformer.WekaClassSelector
+  adams.flow.transformer.WekaCrossValidationEvaluator -output weka.classifiers.evaluation.output.prediction.Null -classifier WekaClassifier -num-threads -1
+  adams.flow.transformer.WekaEvaluationSummary -relation true -class-details true -comment @{classifier}
+  adams.flow.sink.HistoryDisplay -entry-name-variable classifier

@@ -15,14 +15,14 @@
 
 /**
  * AbstractJavaCodeProducer.java
- * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
 import adams.core.NamedCounter;
 import adams.core.Utils;
 import adams.env.Environment;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.core.ActorHandler;
 
 import java.lang.reflect.Array;
@@ -577,10 +577,10 @@ public abstract class AbstractJavaCodeProducer
     String[]			array;
     String[]			newArray;
 
-    if (value instanceof AbstractActor) {
+    if (value instanceof Actor) {
       m_OutputBuffer.append("\n");
       m_OutputBuffer.append(getIndentation());
-      m_OutputBuffer.append("// " + ((AbstractActor) value).getFullName() + "\n");
+      m_OutputBuffer.append("// " + ((Actor) value).getFullName() + "\n");
     }
 
     m_OutputBuffer.append(getIndentation());

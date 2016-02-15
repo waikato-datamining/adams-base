@@ -15,7 +15,7 @@
 
 /*
  * IfThenElse.java
- * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -23,7 +23,7 @@ package adams.flow.control;
 import adams.flow.condition.bool.BooleanCondition;
 import adams.flow.condition.bool.BooleanConditionSupporter;
 import adams.flow.condition.bool.Expression;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.core.ActorExecution;
 import adams.flow.core.ActorHandlerInfo;
 import adams.flow.core.FixedNameActorHandler;
@@ -74,12 +74,12 @@ import java.util.Hashtable;
  * &nbsp;&nbsp;&nbsp;default: adams.flow.condition.Expression
  * </pre>
  *
- * <pre>-then &lt;adams.flow.core.AbstractActor&gt; (property: thenActor)
+ * <pre>-then &lt;adams.flow.core.Actor&gt; (property: thenActor)
  * &nbsp;&nbsp;&nbsp;The actor of the 'then' branch.
  * &nbsp;&nbsp;&nbsp;default: adams.flow.control.Sequence -name then
  * </pre>
  *
- * <pre>-else &lt;adams.flow.core.AbstractActor&gt; (property: elseActor)
+ * <pre>-else &lt;adams.flow.core.Actor&gt; (property: elseActor)
  * &nbsp;&nbsp;&nbsp;The actor of the 'else' branch.
  * &nbsp;&nbsp;&nbsp;default: adams.flow.control.Sequence -name else
  * </pre>
@@ -174,8 +174,8 @@ public class IfThenElse
      */
     @Override
     public String execute() {
-      String		result;
-      AbstractActor	branch;
+      String	result;
+      Actor	branch;
 
       if (doThen())
 	branch = ((IfThenElse) m_ControlActor).getThenActor();
@@ -232,10 +232,10 @@ public class IfThenElse
   protected BooleanCondition m_Condition;
 
   /** the actor to execute in the "then" branch. */
-  protected AbstractActor m_ThenActor;
+  protected Actor m_ThenActor;
 
   /** the actor to execute in the "else" branch. */
-  protected AbstractActor m_ElseActor;
+  protected Actor m_ElseActor;
 
   /** the input token. */
   protected transient Token m_InputToken;
@@ -318,8 +318,8 @@ public class IfThenElse
    *
    * @return		the default actor
    */
-  protected AbstractActor getDefaultThen() {
-    AbstractActor	result;
+  protected Actor getDefaultThen() {
+    Actor	result;
 
     result = new Sequence();
     result.setName(NAME_THEN);
@@ -332,8 +332,8 @@ public class IfThenElse
    *
    * @return		the default actor
    */
-  protected AbstractActor getDefaultElse() {
-    AbstractActor	result;
+  protected Actor getDefaultElse() {
+    Actor	result;
 
     result = new Sequence();
     result.setName(NAME_ELSE);
@@ -387,7 +387,7 @@ public class IfThenElse
    *
    * @param value	the actor
    */
-  public void setThenActor(AbstractActor value) {
+  public void setThenActor(Actor value) {
     m_ThenActor = value;
     m_ThenActor.setName(NAME_THEN);
     reset();
@@ -399,7 +399,7 @@ public class IfThenElse
    *
    * @return		the actor
    */
-  public AbstractActor getThenActor() {
+  public Actor getThenActor() {
     return m_ThenActor;
   }
 
@@ -418,7 +418,7 @@ public class IfThenElse
    *
    * @param value	the actor
    */
-  public void setElseActor(AbstractActor value) {
+  public void setElseActor(Actor value) {
     m_ElseActor = value;
     m_ElseActor.setName(NAME_ELSE);
     reset();
@@ -430,7 +430,7 @@ public class IfThenElse
    *
    * @return		the actor
    */
-  public AbstractActor getElseActor() {
+  public Actor getElseActor() {
     return m_ElseActor;
   }
 
@@ -461,7 +461,7 @@ public class IfThenElse
    * @return		the actor
    */
   @Override
-  public AbstractActor get(int index) {
+  public Actor get(int index) {
     if (index == 0)
       return m_ThenActor;
     else if (index == 1)
@@ -477,7 +477,7 @@ public class IfThenElse
    * @param actor	the actor to set at this position
    */
   @Override
-  public void set(int index, AbstractActor actor) {
+  public void set(int index, Actor actor) {
     if (index == 0)
       setThenActor(actor);
     else if (index == 1)

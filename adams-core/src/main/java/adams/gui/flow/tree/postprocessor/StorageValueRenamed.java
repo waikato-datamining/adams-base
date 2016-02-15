@@ -15,14 +15,14 @@
 
 /**
  * StorageValueRenamed.java
- * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.tree.postprocessor;
 
 import adams.core.option.AbstractArgumentOption;
 import adams.core.option.AbstractOption;
 import adams.flow.control.StorageName;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.processor.UpdateStorageName;
 import adams.gui.flow.tree.Tree;
 
@@ -59,7 +59,7 @@ public class StorageValueRenamed
    * @param actor	the actor to get the variable name from
    * @return		the variable name, null if none found
    */
-  protected StorageName getStorageName(AbstractActor actor) {
+  protected StorageName getStorageName(Actor actor) {
     StorageName			result;
     int				i;
     List<AbstractOption>	options;
@@ -89,7 +89,7 @@ public class StorageValueRenamed
    * @return		true if this post processor applies to the situation
    */
   @Override
-  public boolean applies(AbstractActor parent, AbstractActor oldActor, AbstractActor newActor) {
+  public boolean applies(Actor parent, Actor oldActor, Actor newActor) {
     boolean	result;
     StorageName	oldName;
     StorageName	newName;
@@ -115,7 +115,7 @@ public class StorageValueRenamed
    * @return		true if tree got modified
    */
   @Override
-  protected boolean doPostProcess(Tree tree, AbstractActor parent, AbstractActor oldActor, AbstractActor newActor) {
+  protected boolean doPostProcess(Tree tree, Actor parent, Actor oldActor, Actor newActor) {
     boolean			result;
     UpdateStorageName		updater;
 

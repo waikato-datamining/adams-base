@@ -1,65 +1,18 @@
 # Project: adams
-# Date: 2015-04-21 10:43:34
+# Date: 2016-02-15 11:36:19
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	In this flow, the ability to attach global actors to options is demonstrated.\nThe For-Loop runs from 1 to 10 and the current loop value is stored in\nthe variable \"i\". The variable \"val\", initialized with \"0\", is then incremented\nby the value that the global actor \"increment\" generates (in our case, the\nvalue of \"i\" times 2).
-	-actor
-		adams.flow.standalone.SetVariable
-			-name
-			SetVariable-1
-			-var-name
-			val
-			-var-value
-			0
-	-actor
-		adams.flow.standalone.CallableActors
-			-actor
-				adams.flow.source.SequenceSource
-					-name
-					increment
-					-actor
-						adams.flow.source.Variable
-							-var-name
-							i
-					-actor
-						adams.flow.transformer.Convert
-							-conversion
-								adams.data.conversion.StringToInt
-					-actor
-						adams.flow.transformer.MathExpression
-							-expression
-							X*2
-					-actor
-						adams.flow.transformer.Convert
-							-name
-							Convert-1
-							-conversion
-								adams.data.conversion.DoubleToInt
-	-actor
-		adams.flow.source.ForLoop
-	-actor
-		adams.flow.transformer.SetVariable
-			-var-name
-			i
-	-actor
-		adams.flow.transformer.IncVariable
-			-var-name
-			val
-			-inc-int
-			@{callable:increment}
-	-actor
-		adams.flow.control.Trigger
-			-tee
-				adams.flow.source.Variable
-					-var-name
-					val
-			-tee
-				adams.flow.sink.Display
-					-writer
-						adams.data.io.output.NullWriter
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "In this flow, the ability to attach global actors to options is demonstrated.\\nThe For-Loop runs from 1 to 10 and the current loop value is stored in\\nthe variable \\\"i\\\". The variable \\\"val\\\", initialized with \\\"0\\\", is then incremented\\nby the value that the global actor \\\"increment\\\" generates (in our case, the\\nvalue of \\\"i\\\" times 2)." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.standalone.SetVariable -name SetVariable-1 -var-name val -var-value 0
+ adams.flow.standalone.CallableActors
+  adams.flow.source.SequenceSource -name increment
+   adams.flow.source.Variable -var-name i
+   adams.flow.transformer.Convert -conversion adams.data.conversion.StringToInt
+   adams.flow.transformer.MathExpression -expression X*2
+   adams.flow.transformer.Convert -name Convert-1 -conversion adams.data.conversion.DoubleToInt
+ adams.flow.source.ForLoop
+ adams.flow.transformer.SetVariable -var-name i
+ adams.flow.transformer.IncVariable -var-name val -inc-int @{callable:increment}
+ adams.flow.control.Trigger
+  adams.flow.source.Variable -var-name val
+  adams.flow.sink.Display -writer adams.data.io.output.NullWriter

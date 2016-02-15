@@ -15,7 +15,7 @@
 
 /*
  * InputOutputListenerTest.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -23,7 +23,7 @@ package adams.flow.control;
 import adams.core.option.AbstractArgumentOption;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.test.TmpFile;
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -92,21 +92,21 @@ public class InputOutputListenerTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
-  public AbstractActor getActor() {
+  public Actor getActor() {
     AbstractArgumentOption    argOption;
     
     Flow flow = new Flow();
     
     try {
       argOption = (AbstractArgumentOption) flow.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] actors1 = new adams.flow.core.AbstractActor[6];
+      adams.flow.core.Actor[] actors1 = new adams.flow.core.Actor[6];
 
       // Flow.CallableActors
       adams.flow.standalone.CallableActors callableactors2 = new adams.flow.standalone.CallableActors();
       argOption = (AbstractArgumentOption) callableactors2.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] actors3 = new adams.flow.core.AbstractActor[3];
+      adams.flow.core.Actor[] actors3 = new adams.flow.core.Actor[3];
 
       // Flow.CallableActors.Display
       adams.flow.sink.Display display4 = new adams.flow.sink.Display();
@@ -123,7 +123,7 @@ public class InputOutputListenerTest
       argOption = (AbstractArgumentOption) sequence8.getOptionManager().findByProperty("name");
       sequence8.setName((java.lang.String) argOption.valueOf("input"));
       argOption = (AbstractArgumentOption) sequence8.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] actors10 = new adams.flow.core.AbstractActor[3];
+      adams.flow.core.Actor[] actors10 = new adams.flow.core.Actor[3];
 
       // Flow.CallableActors.input.Convert
       adams.flow.transformer.Convert convert11 = new adams.flow.transformer.Convert();
@@ -161,7 +161,7 @@ public class InputOutputListenerTest
       argOption = (AbstractArgumentOption) sequence20.getOptionManager().findByProperty("name");
       sequence20.setName((java.lang.String) argOption.valueOf("output"));
       argOption = (AbstractArgumentOption) sequence20.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] actors22 = new adams.flow.core.AbstractActor[3];
+      adams.flow.core.Actor[] actors22 = new adams.flow.core.Actor[3];
 
       // Flow.CallableActors.output.Convert
       adams.flow.transformer.Convert convert23 = new adams.flow.transformer.Convert();
@@ -232,7 +232,7 @@ public class InputOutputListenerTest
       // Flow.InputOutputListener
       adams.flow.control.InputOutputListener inputoutputlistener44 = new adams.flow.control.InputOutputListener();
       argOption = (AbstractArgumentOption) inputoutputlistener44.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] actors45 = new adams.flow.core.AbstractActor[1];
+      adams.flow.core.Actor[] actors45 = new adams.flow.core.Actor[1];
 
       // Flow.InputOutputListener.MathExpression-1
       adams.flow.transformer.MathExpression mathexpression46 = new adams.flow.transformer.MathExpression();

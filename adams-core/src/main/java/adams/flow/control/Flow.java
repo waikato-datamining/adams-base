@@ -15,7 +15,7 @@
 
 /*
  * Flow.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -28,7 +28,7 @@ import adams.core.VariablesHandler;
 import adams.core.io.FlowFile;
 import adams.db.LogEntry;
 import adams.db.MutableLogEntryHandler;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.core.ActorExecution;
 import adams.flow.core.ActorHandlerInfo;
 import adams.flow.core.ActorUtils;
@@ -93,7 +93,7 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;If enabled, actor first finishes processing all data before stopping.
  * </pre>
  * 
- * <pre>-actor &lt;adams.flow.core.AbstractActor&gt; [-actor ...] (property: actors)
+ * <pre>-actor &lt;adams.flow.core.Actor&gt; [-actor ...] (property: actors)
  * &nbsp;&nbsp;&nbsp;All the actors that define this flow.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
@@ -176,16 +176,16 @@ public class Flow
   protected FlowFile m_ExecuteOnError;
 
   /** the external actor to execute in case of an abnormal stop. */
-  protected AbstractActor m_ExecuteOnErrorActor;
+  protected Actor m_ExecuteOnErrorActor;
 
   /** the external flow to execute in case the flow finishes normal. */
   protected FlowFile m_ExecuteOnFinish;
 
   /** the external actor to execute in case the flow finishes normal. */
-  protected AbstractActor m_ExecuteOnFinishActor;
+  protected Actor m_ExecuteOnFinishActor;
 
   /** the actor that was executed after the flow finished. */
-  protected AbstractActor m_AfterExecuteActor;
+  protected Actor m_AfterExecuteActor;
   
   /** for managing the pause state. */
   protected PauseStateManager m_PauseStateManager;
@@ -756,7 +756,7 @@ public class Flow
    * @return		the root, always itself
    */
   @Override
-  public AbstractActor getRoot() {
+  public Actor getRoot() {
     return this;
   }
 

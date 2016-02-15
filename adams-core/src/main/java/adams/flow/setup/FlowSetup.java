@@ -15,13 +15,10 @@
 
 /*
  * FlowSetup.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.setup;
-
-import java.util.HashSet;
-import java.util.Iterator;
 
 import adams.core.Pausable;
 import adams.core.Stoppable;
@@ -30,7 +27,10 @@ import adams.core.option.AbstractOptionHandler;
 import adams.core.option.OptionUtils;
 import adams.event.FlowSetupStateEvent;
 import adams.event.FlowSetupStateListener;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
+
+import java.util.HashSet;
+import java.util.Iterator;
 
 /**
  <!-- globalinfo-start -->
@@ -109,7 +109,7 @@ public class FlowSetup
   protected transient FlowSetupWorker m_FlowSetupWorker;
 
   /** the last actor that was executed. */
-  protected AbstractActor m_LastActor;
+  protected Actor m_LastActor;
 
   /** the last error when executing the flow. */
   protected transient String m_LastError;

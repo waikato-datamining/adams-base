@@ -27,7 +27,7 @@ import junit.framework.TestSuite;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.sink.DumpFile;
 import adams.test.TmpFile;
 
@@ -78,10 +78,10 @@ public class GroovyTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
   @Override
-  public AbstractActor getActor() {
+  public Actor getActor() {
     Groovy gr = new Groovy();
     gr.setScriptFile(new TmpFile("SimpleSource.groovy"));
 
@@ -90,7 +90,7 @@ public class GroovyTest
     df.setOutputFile(new TmpFile("dumpfile.txt"));
 
     Flow flow = new Flow();
-    flow.setActors(new AbstractActor[]{gr, df});
+    flow.setActors(new Actor[]{gr, df});
 
     return flow;
   }

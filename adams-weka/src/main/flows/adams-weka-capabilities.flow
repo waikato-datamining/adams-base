@@ -1,31 +1,10 @@
 # Project: adams
-# Date: 2015-11-16 15:32:28
+# Date: 2016-02-15 15:19:33
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	Displays the capabilities of J48 in a spreadsheet.
-	-actor
-		adams.flow.source.WekaClassifierSetup
-			-classifier
-				weka.classifiers.trees.J48
-					-C
-					0.25
-					-M
-					2
-	-actor
-		adams.flow.control.Cast
-	-actor
-		adams.flow.transformer.WekaGetCapabilities
-	-actor
-		adams.flow.transformer.Convert
-			-conversion
-				adams.data.conversion.WekaCapabilitiesToSpreadSheet
-	-actor
-		adams.flow.sink.SpreadSheetDisplay
-			-writer
-				adams.data.io.output.NullWriter
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "Displays the capabilities of J48 in a spreadsheet." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.source.WekaClassifierSetup -classifier "weka.classifiers.trees.J48 -C 0.25 -M 2"
+ adams.flow.control.Cast
+ adams.flow.transformer.WekaGetCapabilities
+ adams.flow.transformer.Convert -conversion adams.data.conversion.WekaCapabilitiesToSpreadSheet
+ adams.flow.sink.SpreadSheetDisplay -writer adams.data.io.output.NullWriter

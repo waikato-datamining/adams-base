@@ -1,119 +1,24 @@
 # Project: adams
-# Date: 2014-11-11 12:00:05
-# Charset: UTF-8
+# Date: 2016-02-15 14:27:10
 # User: fracpete
-#
-adams.flow.control.Flow
-	-annotation
-	Shows how to apply image filters.
-	-actor
-		adams.flow.standalone.CallableActors
-			-actor
-				adams.flow.sink.DisplayPanelManager
-					-provider
-						adams.flow.sink.ImageViewer
-							-writer
-								adams.gui.print.NullWriter
-							-selection-processor
-								adams.gui.visualization.image.selection.NullProcessor
-							-image-overlay
-								adams.gui.visualization.image.NullOverlay
-					-entry-name-variable
-					name
-	-actor
-		adams.flow.source.FileSupplier
-			-file
-			${EXAMPLE_FLOWS}/data/adams_logo.jpg
-	-actor
-		adams.flow.transformer.ImageReader
-			-reader
-				adams.data.io.input.JAIImageReader
-	-actor
-		adams.flow.control.Tee
-			-name
-			original
-			-tee
-				adams.flow.transformer.SetVariable
-					-var-name
-					name
-					-var-value
-					original
-			-tee
-				adams.flow.sink.CallableSink
-					-callable
-					DisplayPanelManager
-	-actor
-		adams.flow.control.Tee
-			-name
-			gray filter
-			-tee
-				adams.flow.transformer.BufferedImageTransformer
-					-transformer
-						adams.data.image.transformer.ImageFilter
-							-filter
-								adams.data.imagefilter.GrayFilterProvider
-							-copy
-							true
-			-tee
-				adams.flow.transformer.SetVariable
-					-var-name
-					name
-					-var-value
-					gray
-			-tee
-				adams.flow.sink.CallableSink
-					-callable
-					DisplayPanelManager
-	-actor
-		adams.flow.control.Tee
-			-name
-			transparent background
-			-tee
-				adams.flow.transformer.BufferedImageTransformer
-					-transformer
-						adams.data.image.transformer.ImageFilter
-							-filter
-								adams.data.imagefilter.TransparentBackground
-							-copy
-							true
-			-tee
-				adams.flow.transformer.SetVariable
-					-var-name
-					name
-					-var-value
-					transparent bg
-			-tee
-				adams.flow.sink.CallableSink
-					-callable
-					DisplayPanelManager
-	-actor
-		adams.flow.control.Tee
-			-name
-			keep only colors
-			-tee
-				adams.flow.transformer.BufferedImageTransformer
-					-transformer
-						adams.data.image.transformer.ImageFilter
-							-filter
-								adams.data.imagefilter.KeepOnlyColors
-									-color
-									#000000
-									-color
-									#0000fe
-									-replacement
-									#00ffffff
-							-copy
-							true
-			-tee
-				adams.flow.transformer.SetVariable
-					-var-name
-					name
-					-var-value
-					keep only
-			-tee
-				adams.flow.sink.CallableSink
-					-callable
-					DisplayPanelManager
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+# Charset: UTF-8
+adams.flow.control.Flow -annotation "Shows how to apply image filters." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.standalone.CallableActors
+  adams.flow.sink.DisplayPanelManager -provider "adams.flow.sink.ImageViewer -writer adams.gui.print.NullWriter -selection-processor adams.gui.visualization.image.selection.NullProcessor -image-overlay adams.gui.visualization.image.NullOverlay" -entry-name-variable name
+ adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/adams_logo.jpg
+ adams.flow.transformer.ImageReader -reader adams.data.io.input.JAIImageReader
+ adams.flow.control.Tee -name original
+  adams.flow.transformer.SetVariable -var-name name -var-value original
+  adams.flow.sink.CallableSink -callable DisplayPanelManager
+ adams.flow.control.Tee -name "gray filter"
+  adams.flow.transformer.BufferedImageTransformer -transformer "adams.data.image.transformer.ImageFilter -filter adams.data.imagefilter.GrayFilterProvider -copy true"
+  adams.flow.transformer.SetVariable -var-name name -var-value gray
+  adams.flow.sink.CallableSink -callable DisplayPanelManager
+ adams.flow.control.Tee -name "transparent background"
+  adams.flow.transformer.BufferedImageTransformer -transformer "adams.data.image.transformer.ImageFilter -filter adams.data.imagefilter.TransparentBackground -copy true"
+  adams.flow.transformer.SetVariable -var-name name -var-value "transparent bg"
+  adams.flow.sink.CallableSink -callable DisplayPanelManager
+ adams.flow.control.Tee -name "keep only colors"
+  adams.flow.transformer.BufferedImageTransformer -transformer "adams.data.image.transformer.ImageFilter -filter \"adams.data.imagefilter.KeepOnlyColors -color #000000 -color #0000fe -replacement #00ffffff\" -copy true"
+  adams.flow.transformer.SetVariable -var-name name -var-value "keep only"
+  adams.flow.sink.CallableSink -callable DisplayPanelManager

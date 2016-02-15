@@ -15,7 +15,7 @@
 
 /*
  * LocalScopeTransformer.java
- * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -25,7 +25,7 @@ import adams.core.Variables;
 import adams.core.VariablesHandler;
 import adams.core.base.BaseRegExp;
 import adams.core.logging.LoggingLevel;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.core.ActorHandlerInfo;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.FlowVariables;
@@ -202,7 +202,7 @@ public class LocalScopeTransformer
 
     m_OptionManager.add(
 	    "actor", "actors",
-	    new AbstractActor[0]);
+	    new Actor[0]);
 
     m_OptionManager.add(
 	    "scope-handling-variables", "scopeHandlingVariables",
@@ -304,7 +304,7 @@ public class LocalScopeTransformer
    *
    * @param value	the actors
    */
-  public void setActors(AbstractActor[] value) {
+  public void setActors(Actor[] value) {
     m_Actors.setActors(value);
     reset();
     updateParent();
@@ -315,7 +315,7 @@ public class LocalScopeTransformer
    *
    * @return		the actors
    */
-  public AbstractActor[] getActors() {
+  public Actor[] getActors() {
     return m_Actors.getActors();
   }
 
@@ -734,7 +734,7 @@ public class LocalScopeTransformer
    * @return		the actor
    */
   @Override
-  public AbstractActor get(int index) {
+  public Actor get(int index) {
     return m_Actors.get(index);
   }
 
@@ -745,7 +745,7 @@ public class LocalScopeTransformer
    * @param actor	the actor to set at this position
    */
   @Override
-  public void set(int index, AbstractActor actor) {
+  public void set(int index, Actor actor) {
     m_Actors.set(index, actor);
     reset();
     updateParent();
@@ -767,7 +767,7 @@ public class LocalScopeTransformer
    *
    * @param actor	the actor to insert
    */
-  public void add(AbstractActor actor) {
+  public void add(Actor actor) {
     add(size(), actor);
   }
 
@@ -777,7 +777,7 @@ public class LocalScopeTransformer
    * @param index	the position
    * @param actor	the actor to insert
    */
-  public void add(int index, AbstractActor actor) {
+  public void add(int index, Actor actor) {
     m_Actors.add(index, actor);
     reset();
     updateParent();
@@ -789,8 +789,8 @@ public class LocalScopeTransformer
    * @param index	the position
    * @return		the removed actor
    */
-  public AbstractActor remove(int index) {
-    AbstractActor	result;
+  public Actor remove(int index) {
+    Actor result;
 
     result = m_Actors.remove(index);
     reset();
@@ -844,9 +844,9 @@ public class LocalScopeTransformer
    */
   @Override
   protected String setUpSubActors() {
-    String		result;
-    AbstractActor	first;
-    AbstractActor	last;
+    String	result;
+    Actor	first;
+    Actor	last;
 
     result = super.setUpSubActors();
     

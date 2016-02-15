@@ -15,7 +15,7 @@
 
 /*
  * PlotAttributeVsAttribute.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -25,7 +25,7 @@ import adams.core.Utils;
 import adams.core.option.AbstractArgumentOption;
 import adams.core.option.OptionUtils;
 import adams.flow.control.Flow;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.UserMode;
 import adams.gui.core.BaseFrame;
@@ -64,19 +64,19 @@ public class PlotAttributeVsAttribute
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    * @throws Exception if set up fails
    */
-  public AbstractActor getActor() throws Exception {
+  public Actor getActor() throws Exception {
     AbstractArgumentOption    argOption;
 
     adams.flow.control.Flow actor = new adams.flow.control.Flow();
 
-    adams.flow.core.AbstractActor[] actors2 = new adams.flow.core.AbstractActor[9];
+    adams.flow.core.Actor[] actors2 = new adams.flow.core.Actor[9];
 
     // Flow.CallableActors
     adams.flow.standalone.CallableActors callableactors3 = new adams.flow.standalone.CallableActors();
-    adams.flow.core.AbstractActor[] actors4 = new adams.flow.core.AbstractActor[1];
+    adams.flow.core.Actor[] actors4 = new adams.flow.core.Actor[1];
 
     // Flow.CallableActors.DisplayPanelManager
     adams.flow.sink.DisplayPanelManager displaypanelmanager5 = new adams.flow.sink.DisplayPanelManager();
@@ -145,7 +145,7 @@ public class PlotAttributeVsAttribute
     adams.flow.control.Trigger trigger26 = new adams.flow.control.Trigger();
     argOption = (AbstractArgumentOption) trigger26.getOptionManager().findByProperty("name");
     trigger26.setName((java.lang.String) argOption.valueOf("first lot of attributes"));
-    adams.flow.core.AbstractActor[] actors28 = new adams.flow.core.AbstractActor[5];
+    adams.flow.core.Actor[] actors28 = new adams.flow.core.Actor[5];
 
     // Flow.first lot of attributes.StorageValue
     adams.flow.source.StorageValue storagevalue29 = new adams.flow.source.StorageValue();
@@ -189,7 +189,7 @@ public class PlotAttributeVsAttribute
     adams.flow.control.Trigger trigger40 = new adams.flow.control.Trigger();
     argOption = (AbstractArgumentOption) trigger40.getOptionManager().findByProperty("name");
     trigger40.setName((java.lang.String) argOption.valueOf("second lot of attributes"));
-    adams.flow.core.AbstractActor[] actors42 = new adams.flow.core.AbstractActor[5];
+    adams.flow.core.Actor[] actors42 = new adams.flow.core.Actor[5];
 
     // Flow.second lot of attributes.StorageValue
     adams.flow.source.StorageValue storagevalue43 = new adams.flow.source.StorageValue();
@@ -233,7 +233,7 @@ public class PlotAttributeVsAttribute
     adams.flow.control.Trigger trigger54 = new adams.flow.control.Trigger();
     argOption = (AbstractArgumentOption) trigger54.getOptionManager().findByProperty("name");
     trigger54.setName((java.lang.String) argOption.valueOf("iterate 1st lot"));
-    adams.flow.core.AbstractActor[] actors56 = new adams.flow.core.AbstractActor[3];
+    adams.flow.core.Actor[] actors56 = new adams.flow.core.Actor[3];
 
     // Flow.iterate 1st lot.StringConstants
     adams.flow.source.StringConstants stringconstants57 = new adams.flow.source.StringConstants();
@@ -251,7 +251,7 @@ public class PlotAttributeVsAttribute
     adams.flow.control.Trigger trigger60 = new adams.flow.control.Trigger();
     argOption = (AbstractArgumentOption) trigger60.getOptionManager().findByProperty("name");
     trigger60.setName((java.lang.String) argOption.valueOf("iterate 2nd lot"));
-    adams.flow.core.AbstractActor[] actors62 = new adams.flow.core.AbstractActor[5];
+    adams.flow.core.Actor[] actors62 = new adams.flow.core.Actor[5];
 
     // Flow.iterate 1st lot.iterate 2nd lot.StringConstants
     adams.flow.source.StringConstants stringconstants63 = new adams.flow.source.StringConstants();
@@ -269,7 +269,7 @@ public class PlotAttributeVsAttribute
     adams.flow.control.Trigger trigger66 = new adams.flow.control.Trigger();
     argOption = (AbstractArgumentOption) trigger66.getOptionManager().findByProperty("name");
     trigger66.setName((java.lang.String) argOption.valueOf("regexp"));
-    adams.flow.core.AbstractActor[] actors68 = new adams.flow.core.AbstractActor[2];
+    adams.flow.core.Actor[] actors68 = new adams.flow.core.Actor[2];
 
     // Flow.iterate 1st lot.iterate 2nd lot.regexp.CombineVariables
     adams.flow.source.CombineVariables combinevariables69 = new adams.flow.source.CombineVariables();
@@ -290,7 +290,7 @@ public class PlotAttributeVsAttribute
     adams.flow.control.Trigger trigger73 = new adams.flow.control.Trigger();
     argOption = (AbstractArgumentOption) trigger73.getOptionManager().findByProperty("name");
     trigger73.setName((java.lang.String) argOption.valueOf("label"));
-    adams.flow.core.AbstractActor[] actors75 = new adams.flow.core.AbstractActor[2];
+    adams.flow.core.Actor[] actors75 = new adams.flow.core.Actor[2];
 
     // Flow.iterate 1st lot.iterate 2nd lot.label.CombineVariables
     adams.flow.source.CombineVariables combinevariables76 = new adams.flow.source.CombineVariables();
@@ -311,7 +311,7 @@ public class PlotAttributeVsAttribute
     adams.flow.control.Trigger trigger80 = new adams.flow.control.Trigger();
     argOption = (AbstractArgumentOption) trigger80.getOptionManager().findByProperty("name");
     trigger80.setName((java.lang.String) argOption.valueOf("create plot"));
-    adams.flow.core.AbstractActor[] actors82 = new adams.flow.core.AbstractActor[3];
+    adams.flow.core.Actor[] actors82 = new adams.flow.core.Actor[3];
 
     // Flow.iterate 1st lot.iterate 2nd lot.create plot.StorageValue
     adams.flow.source.StorageValue storagevalue83 = new adams.flow.source.StorageValue();

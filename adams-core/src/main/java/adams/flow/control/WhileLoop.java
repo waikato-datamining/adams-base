@@ -15,7 +15,7 @@
 
 /*
  * WhileLoop.java
- * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -24,7 +24,7 @@ import adams.core.logging.LoggingLevel;
 import adams.flow.condition.bool.BooleanCondition;
 import adams.flow.condition.bool.BooleanConditionSupporter;
 import adams.flow.condition.bool.Expression;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.core.ActorHandlerInfo;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.InputConsumer;
@@ -74,7 +74,7 @@ import adams.flow.core.Unknown;
  * &nbsp;&nbsp;&nbsp;default: adams.flow.condition.bool.Expression
  * </pre>
  * 
- * <pre>-loop &lt;adams.flow.core.AbstractActor&gt; [-loop ...] (property: actors)
+ * <pre>-loop &lt;adams.flow.core.Actor&gt; [-loop ...] (property: actors)
  * &nbsp;&nbsp;&nbsp;The actors to execute in the loop.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
@@ -122,7 +122,7 @@ public class WhileLoop
 
     m_OptionManager.add(
 	    "loop", "actors",
-	    new AbstractActor[0]);
+	    new Actor[0]);
   }
 
   /**
@@ -183,7 +183,7 @@ public class WhileLoop
    *
    * @param value	the actors
    */
-  public void setActors(AbstractActor[] value) {
+  public void setActors(Actor[] value) {
     m_Actors.setActors(value);
     reset();
     updateParent();
@@ -194,7 +194,7 @@ public class WhileLoop
    *
    * @return		the actors
    */
-  public AbstractActor[] getActors() {
+  public Actor[] getActors() {
     return m_Actors.getActors();
   }
 
@@ -245,7 +245,7 @@ public class WhileLoop
    * @return		the actor
    */
   @Override
-  public AbstractActor get(int index) {
+  public Actor get(int index) {
     return m_Actors.get(index);
   }
 
@@ -256,7 +256,7 @@ public class WhileLoop
    * @param actor	the actor to set at this position
    */
   @Override
-  public void set(int index, AbstractActor actor) {
+  public void set(int index, Actor actor) {
     m_Actors.set(index, actor);
     reset();
     updateParent();
@@ -278,7 +278,7 @@ public class WhileLoop
    *
    * @param actor	the actor to insert
    */
-  public void add(AbstractActor actor) {
+  public void add(Actor actor) {
     add(size(), actor);
   }
 
@@ -288,7 +288,7 @@ public class WhileLoop
    * @param index	the position
    * @param actor	the actor to insert
    */
-  public void add(int index, AbstractActor actor) {
+  public void add(int index, Actor actor) {
     m_Actors.add(index, actor);
     reset();
     updateParent();
@@ -300,8 +300,8 @@ public class WhileLoop
    * @param index	the position
    * @return		the removed actor
    */
-  public AbstractActor remove(int index) {
-    AbstractActor	result;
+  public Actor remove(int index) {
+    Actor	result;
 
     result = m_Actors.remove(index);
     reset();

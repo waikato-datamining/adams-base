@@ -1,55 +1,11 @@
 # Project: adams
-# Date: 2014-01-23 15:20:45
+# Date: 2016-02-15 11:28:07
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	This flow demonstrates how to process and access the elements\nof an array, consisting of objects that have a GenericObjectEditor\neditor implementing the CustomStringRepresentationHandler\ninterface. Processing, as in converting the String array into a\nBaseDouble array. Accessing elements, as in retrieving a value and\nwriting back another value.
-	-actor
-		adams.flow.source.StringConstants
-			-output-array
-			true
-			-string
-			1
-			-string
-			2
-			-string
-			3
-			-string
-			4
-			-string
-			5
-			-string
-			6
-			-string
-			7
-			-string
-			8
-			-string
-			9
-			-string
-			10
-	-actor
-		adams.flow.control.ArrayProcess
-			-actor
-				adams.flow.transformer.Convert
-					-conversion
-						adams.data.conversion.StringToCustomStringRepresentation
-							-classname
-							adams.core.base.BaseDouble
-			-array-class
-			adams.core.base.BaseDouble
-	-actor
-		adams.flow.transformer.SetArrayElement
-			-index
-			5
-			-value
-			5.5
-	-actor
-		adams.flow.transformer.ArrayToSequence
-	-actor
-		adams.flow.sink.Display
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "This flow demonstrates how to process and access the elements\\nof an array, consisting of objects that have a GenericObjectEditor\\neditor implementing the CustomStringRepresentationHandler\\ninterface. Processing, as in converting the String array into a\\nBaseDouble array. Accessing elements, as in retrieving a value and\\nwriting back another value." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.source.StringConstants -output-array true -string 1 -string 2 -string 3 -string 4 -string 5 -string 6 -string 7 -string 8 -string 9 -string 10
+ adams.flow.control.ArrayProcess -array-class adams.core.base.BaseDouble
+  adams.flow.transformer.Convert -conversion "adams.data.conversion.StringToCustomStringRepresentation -classname adams.core.base.BaseDouble"
+ adams.flow.transformer.SetArrayElement -index 5 -value 5.5
+ adams.flow.transformer.ArrayToSequence
+ adams.flow.sink.Display -writer adams.data.io.output.NullWriter

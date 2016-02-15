@@ -1,90 +1,17 @@
 # Project: adams
-# Date: 2014-01-23 15:48:15
+# Date: 2016-02-15 15:19:46
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	A bunch of classifier setups (varying LinearRegression\'s ridge parameter)\nare cross-validated on a dataset and the classifier errors are displayed\nin a single grid for better comparison.
-	-actor
-		adams.flow.standalone.CallableActors
-			-actor
-				adams.flow.sink.DisplayPanelGrid
-					-width
-					1200
-					-height
-					800
-					-provider
-						adams.flow.sink.WekaClassifierErrors
-							-writer
-								adams.gui.print.NullWriter
-							-scaler
-								adams.data.weka.predictions.NumericErrorScalerWithReference
-									-reference-error
-									5.0
-					-panel-width
-					640
-					-panel-height
-					480
-					-title-variable
-					classifier
-			-actor
-				adams.flow.source.WekaClassifierSetup
-					-classifier
-					@{classifier}
-	-actor
-		adams.flow.source.WekaClassifierGenerator
-			-setup
-				weka.classifiers.functions.LinearRegression
-					-S
-					1
-					-C
-					-R
-					1.0E-8
-			-parameter
-				weka.core.setupgenerator.MathParameter
-					-property
-					ridge
-					-min
-					-5.0
-					-max
-					3.0
-					-step
-					1.0
-					-base
-					10.0
-					-expression
-					pow(BASE,I)
-	-actor
-		adams.flow.transformer.Convert
-			-conversion
-				adams.data.conversion.AnyToCommandline
-	-actor
-		adams.flow.transformer.SetVariable
-			-var-name
-			classifier
-	-actor
-		adams.flow.control.Trigger
-			-name
-			evaluate
-			-tee
-				adams.flow.source.FileSupplier
-					-file
-					${EXAMPLE_FLOWS}/data/bodyfat.arff
-			-tee
-				adams.flow.transformer.WekaFileReader
-					-loader
-						weka.core.converters.ArffLoader
-			-tee
-				adams.flow.transformer.WekaClassSelector
-			-tee
-				adams.flow.transformer.WekaCrossValidationEvaluator
-					-output
-						weka.classifiers.evaluation.output.prediction.Null
-			-tee
-				adams.flow.sink.CallableSink
-					-callable
-					DisplayPanelGrid
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "A bunch of classifier setups (varying LinearRegression\\\'s ridge parameter)\\nare cross-validated on a dataset and the classifier errors are displayed\\nin a single grid for better comparison." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.standalone.CallableActors
+  adams.flow.sink.DisplayPanelGrid -width 1200 -height 800 -provider "adams.flow.sink.WekaClassifierErrors -writer adams.gui.print.NullWriter -scaler \"adams.data.weka.predictions.NumericErrorScalerWithReference -reference-error 5.0\"" -panel-width 640 -panel-height 480 -title-variable classifier
+  adams.flow.source.WekaClassifierSetup -classifier @{classifier}
+ adams.flow.source.WekaClassifierGenerator -setup "weka.classifiers.functions.LinearRegression -S 1 -C -R 1.0E-8 -num-decimal-places 4" -parameter "weka.core.setupgenerator.MathParameter -property ridge -min -5.0 -max 3.0 -step 1.0 -base 10.0 -expression pow(BASE,I)"
+ adams.flow.transformer.Convert -conversion adams.data.conversion.AnyToCommandline
+ adams.flow.transformer.SetVariable -var-name classifier
+ adams.flow.control.Trigger -name evaluate
+  adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/bodyfat.arff
+  adams.flow.transformer.WekaFileReader -loader weka.core.converters.ArffLoader
+  adams.flow.transformer.WekaClassSelector
+  adams.flow.transformer.WekaCrossValidationEvaluator -output weka.classifiers.evaluation.output.prediction.Null
+  adams.flow.sink.CallableSink -callable DisplayPanelGrid

@@ -31,7 +31,7 @@ import adams.data.io.output.DefaultSimpleCSVReportWriter;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.source.FileSupplier;
 import adams.flow.standalone.DatabaseConnection;
 import adams.test.TmpDirectory;
@@ -84,10 +84,10 @@ public class ReportFileWriterTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
   @Override
-  public AbstractActor getActor() {
+  public Actor getActor() {
     DatabaseConnection dbcon = new DatabaseConnection();
     dbcon.setURL(getDatabaseURL());
     dbcon.setUser(getDatabaseUser());
@@ -110,7 +110,7 @@ public class ReportFileWriterTest
     fw.setOutputDir(new PlaceholderDirectory(m_TestHelper.getTmpDirectory()));
 
     Flow flow = new Flow();
-    flow.setActors(new AbstractActor[]{dbcon, sfs, fr, fw});
+    flow.setActors(new Actor[]{dbcon, sfs, fr, fw});
 
     return flow;
   }

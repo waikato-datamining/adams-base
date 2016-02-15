@@ -15,24 +15,23 @@
 
 /**
  * TabView.java
- * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.standalone;
 
-import java.awt.BorderLayout;
-
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetSupporter;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.sink.CallableSink;
 import adams.flow.sink.ComponentSupplier;
 import adams.flow.sink.TextSupplier;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseTabbedPane;
 import adams.gui.core.ExtensionFileFilter;
+
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import java.awt.BorderLayout;
 
 /**
  <!-- globalinfo-start -->
@@ -103,7 +102,7 @@ import adams.gui.core.ExtensionFileFilter;
  * &nbsp;&nbsp;&nbsp;minimum: -3
  * </pre>
  * 
- * <pre>-actor &lt;adams.flow.core.AbstractActor&gt; [-actor ...] (property: actors)
+ * <pre>-actor &lt;adams.flow.core.Actor&gt; [-actor ...] (property: actors)
  * &nbsp;&nbsp;&nbsp;The panel-generating actors to display in the tabbed pane.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
@@ -203,7 +202,7 @@ public class TabView
    * @param panel	the panel to replace the dummy one
    */
   @Override
-  public void addPanel(AbstractActor actor, BasePanel panel) {
+  public void addPanel(Actor actor, BasePanel panel) {
     int		index;
     
     index = indexOf(actor.getName());

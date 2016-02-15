@@ -20,8 +20,8 @@
 
 package adams.flow.source;
 
-import adams.flow.core.AbstractActor;
 import adams.flow.core.AbstractCallableActor;
+import adams.flow.core.Actor;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.OutputProducer;
 import adams.flow.core.Token;
@@ -101,8 +101,8 @@ public class CallableSource
    * @return		the callable actor or null if not found
    */
   @Override
-  protected AbstractActor findCallableActor() {
-    AbstractActor	result;
+  protected Actor findCallableActor() {
+    Actor result;
 
     result = super.findCallableActor();
 

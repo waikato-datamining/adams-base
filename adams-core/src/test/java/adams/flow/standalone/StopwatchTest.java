@@ -25,7 +25,7 @@ import adams.core.option.AbstractArgumentOption;
 import adams.core.option.OptionUtils;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.control.Flow;
 import adams.flow.source.Start;
 import adams.flow.AbstractFlowTest;
@@ -62,16 +62,16 @@ public class StopwatchTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
-  public AbstractActor getActor() {
+  public Actor getActor() {
     AbstractArgumentOption    argOption;
     
     Flow flow = new Flow();
     
     try {
       argOption = (AbstractArgumentOption) flow.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp1 = new adams.flow.core.AbstractActor[3];
+      adams.flow.core.Actor[] tmp1 = new adams.flow.core.Actor[3];
       adams.flow.standalone.Stopwatch tmp2 = new adams.flow.standalone.Stopwatch();
       argOption = (AbstractArgumentOption) tmp2.getOptionManager().findByProperty("updateInterval");
       tmp2.setUpdateInterval((Integer) argOption.valueOf("300"));

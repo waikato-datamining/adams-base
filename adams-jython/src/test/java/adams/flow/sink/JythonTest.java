@@ -27,7 +27,7 @@ import adams.core.base.BaseText;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.source.StringConstants;
 import adams.test.TmpFile;
 
@@ -79,10 +79,10 @@ public class JythonTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
   @Override
-  public AbstractActor getActor() {
+  public Actor getActor() {
     StringConstants ids = new StringConstants();
     ids.setStrings(new BaseString[]{
 	new BaseString("1"),
@@ -122,7 +122,7 @@ public class JythonTest
     jy.setScriptOptions(new BaseText("output=${TMP}/dumpfile.txt"));
 
     Flow flow = new Flow();
-    flow.setActors(new AbstractActor[]{ids, jy});
+    flow.setActors(new Actor[]{ids, jy});
 
     return flow;
   }

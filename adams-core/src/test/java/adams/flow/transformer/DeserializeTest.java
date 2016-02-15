@@ -26,7 +26,7 @@ import adams.core.option.AbstractArgumentOption;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.test.TmpFile;
 
 /**
@@ -97,17 +97,17 @@ public class DeserializeTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
   @Override
-  public AbstractActor getActor() {
+  public Actor getActor() {
     AbstractArgumentOption    argOption;
     
     Flow flow = new Flow();
     
     try {
       argOption = (AbstractArgumentOption) flow.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] abstractactor1 = new adams.flow.core.AbstractActor[3];
+      adams.flow.core.Actor[] abstractactor1 = new adams.flow.core.Actor[3];
 
       // Flow.Start
       adams.flow.source.Start start2 = new adams.flow.source.Start();
@@ -119,7 +119,7 @@ public class DeserializeTest
       trigger3.setName((java.lang.String) argOption.valueOf("serialize"));
 
       argOption = (AbstractArgumentOption) trigger3.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] abstractactor5 = new adams.flow.core.AbstractActor[2];
+      adams.flow.core.Actor[] abstractactor5 = new adams.flow.core.Actor[2];
 
       // Flow.serialize.StringConstants
       adams.flow.source.StringConstants stringconstants6 = new adams.flow.source.StringConstants();
@@ -155,7 +155,7 @@ public class DeserializeTest
       trigger10.setName((java.lang.String) argOption.valueOf("deserialize and display"));
 
       argOption = (AbstractArgumentOption) trigger10.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] abstractactor12 = new adams.flow.core.AbstractActor[4];
+      adams.flow.core.Actor[] abstractactor12 = new adams.flow.core.Actor[4];
 
       // Flow.deserialize and display.FileSupplier
       adams.flow.source.FileSupplier filesupplier13 = new adams.flow.source.FileSupplier();

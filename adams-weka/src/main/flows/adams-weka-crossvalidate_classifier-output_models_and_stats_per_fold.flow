@@ -1,333 +1,41 @@
 # Project: adams
-# Date: 2014-01-23 15:49:03
+# Date: 2016-02-15 15:21:45
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	Cross-validates a classifier and outputs\nthe evaluation summary.\nFor each of the folds, the model is displayed and some statistics visualized.
-	-actor
-		adams.flow.standalone.SetVariable
-			-name
-			number of cross-validation folds
-			-var-name
-			folds
-			-var-value
-			10
-	-actor
-		adams.flow.standalone.SetVariable
-			-name
-			current fold
-			-var-name
-			fold
-			-var-value
-			0
-	-actor
-		adams.flow.standalone.GridView
-			-x
-			-3
-			-y
-			-3
-			-actor
-				adams.flow.sink.SequencePlotter
-					-name
-					Accuracy
-					-writer
-						adams.gui.print.NullWriter
-					-paintlet
-						adams.gui.visualization.sequence.PaintletWithFixedYRange
-							-max-y
-							100.0
-							-paintlet
-								adams.gui.visualization.sequence.LinePaintlet
-					-overlay-paintlet
-						adams.gui.visualization.sequence.CirclePaintlet
-					-marker-paintlet
-						adams.flow.sink.sequenceplotter.NoMarkers
-					-error-paintlet
-						adams.flow.sink.sequenceplotter.NoErrorPaintlet
-					-color-provider
-						adams.gui.visualization.core.DefaultColorProvider
-					-overlay-color-provider
-						adams.gui.visualization.core.DefaultColorProvider
-					-title
-					Accuracy
-					-axis-x
-						adams.gui.visualization.core.AxisPanelOptions
-							-label
-							Evaluation step
-							-tick-generator
-								adams.gui.visualization.core.axis.FancyTickGenerator
-							-nth-value
-							2
-							-width
-							40
-							-custom-format
-							0.0
-					-axis-y
-						adams.gui.visualization.core.AxisPanelOptions
-							-label
-							Statistic
-							-tick-generator
-								adams.gui.visualization.core.axis.FancyTickGenerator
-							-nth-value
-							2
-							-width
-							60
-							-custom-format
-							0.0
-					-plot-updater
-						adams.flow.sink.sequenceplotter.SimplePlotUpdater
-							-update-interval
-							-1
-					-post-processor
-						adams.flow.sink.sequenceplotter.PassThrough
-			-actor
-				adams.flow.sink.SequencePlotter
-					-name
-					RMSE
-					-writer
-						adams.gui.print.NullWriter
-					-paintlet
-						adams.gui.visualization.sequence.LinePaintlet
-					-overlay-paintlet
-						adams.gui.visualization.sequence.CirclePaintlet
-					-marker-paintlet
-						adams.flow.sink.sequenceplotter.NoMarkers
-					-error-paintlet
-						adams.flow.sink.sequenceplotter.NoErrorPaintlet
-					-color-provider
-						adams.gui.visualization.core.DefaultColorProvider
-					-overlay-color-provider
-						adams.gui.visualization.core.DefaultColorProvider
-					-title
-					RMSE
-					-axis-x
-						adams.gui.visualization.core.AxisPanelOptions
-							-label
-							Evaluation step
-							-tick-generator
-								adams.gui.visualization.core.axis.FancyTickGenerator
-							-nth-value
-							2
-							-width
-							40
-							-custom-format
-							0.0
-					-axis-y
-						adams.gui.visualization.core.AxisPanelOptions
-							-label
-							Statistic
-							-tick-generator
-								adams.gui.visualization.core.axis.FancyTickGenerator
-							-nth-value
-							2
-							-width
-							60
-							-custom-format
-							0.00
-					-plot-updater
-						adams.flow.sink.sequenceplotter.SimplePlotUpdater
-							-update-interval
-							-1
-					-post-processor
-						adams.flow.sink.sequenceplotter.PassThrough
-			-actor
-				adams.flow.sink.SequencePlotter
-					-name
-					AUC
-					-writer
-						adams.gui.print.NullWriter
-					-paintlet
-						adams.gui.visualization.sequence.PaintletWithFixedYRange
-							-max-y
-							1.0
-							-paintlet
-								adams.gui.visualization.sequence.LinePaintlet
-					-overlay-paintlet
-						adams.gui.visualization.sequence.CirclePaintlet
-					-marker-paintlet
-						adams.flow.sink.sequenceplotter.NoMarkers
-					-error-paintlet
-						adams.flow.sink.sequenceplotter.NoErrorPaintlet
-					-color-provider
-						adams.gui.visualization.core.DefaultColorProvider
-					-overlay-color-provider
-						adams.gui.visualization.core.DefaultColorProvider
-					-title
-					AUC
-					-axis-x
-						adams.gui.visualization.core.AxisPanelOptions
-							-label
-							Evaluation step
-							-tick-generator
-								adams.gui.visualization.core.axis.FancyTickGenerator
-							-nth-value
-							2
-							-width
-							40
-							-custom-format
-							0.0
-					-axis-y
-						adams.gui.visualization.core.AxisPanelOptions
-							-label
-							Statistic
-							-tick-generator
-								adams.gui.visualization.core.axis.FancyTickGenerator
-							-nth-value
-							2
-							-width
-							60
-							-custom-format
-							0.0
-					-plot-updater
-						adams.flow.sink.sequenceplotter.SimplePlotUpdater
-							-update-interval
-							-1
-					-post-processor
-						adams.flow.sink.sequenceplotter.PassThrough
-			-num-rows
-			3
-	-actor
-		adams.flow.standalone.CallableActors
-			-actor
-				adams.flow.sink.Display
-					-name
-					Summary
-					-short-title
-					true
-			-actor
-				adams.flow.sink.HistoryDisplay
-					-name
-					Models
-					-short-title
-					true
-					-x
-					-3
-					-entry-name-variable
-					fold
-			-actor
-				adams.flow.source.WekaClassifierSetup
-					-classifier
-						weka.classifiers.trees.J48
-							-C
-							0.25
-							-M
-							2
-							
-							
-							
-							
-							
-							
-							
-							
-							
-							
-							
-							
-	-actor
-		adams.flow.source.FileSupplier
-			-file
-			${EXAMPLE_FLOWS}/data/labor.arff
-	-actor
-		adams.flow.transformer.WekaFileReader
-			-loader
-				weka.core.converters.ArffLoader
-	-actor
-		adams.flow.transformer.WekaClassSelector
-	-actor
-		adams.flow.transformer.WekaCrossValidationSplit
-			-folds
-			@{folds}
-	-actor
-		adams.flow.transformer.IncVariable
-			-var-name
-			fold
-	-actor
-		adams.flow.transformer.WekaTrainTestSetEvaluator
-			-output
-				weka.classifiers.evaluation.output.prediction.Null
-	-actor
-		adams.flow.control.ContainerValuePicker
-			-tee
-				adams.flow.sink.CallableSink
-					-callable
-					Models
-			-value
-			Model
-	-actor
-		adams.flow.control.ContainerValuePicker
-			-name
-			ContainerValuePicker-1
-			-tee
-				adams.flow.control.Branch
-					-branch
-						adams.flow.control.Sequence
-							-name
-							Accuracy
-							-actor
-								adams.flow.transformer.WekaEvaluationValuePicker
-							-actor
-								adams.flow.transformer.MakePlotContainer
-									-plot-name
-									Accuracy
-							-actor
-								adams.flow.sink.CallableSink
-									-callable
-									Accuracy
-					-branch
-						adams.flow.control.Sequence
-							-name
-							RMSE
-							-actor
-								adams.flow.transformer.WekaEvaluationValuePicker
-									-statistic
-									ROOT_MEAN_SQUARED_ERROR
-							-actor
-								adams.flow.transformer.MakePlotContainer
-									-plot-name
-									RMSE
-							-actor
-								adams.flow.sink.CallableSink
-									-callable
-									RMSE
-					-branch
-						adams.flow.control.Sequence
-							-name
-							AUC
-							-actor
-								adams.flow.transformer.WekaEvaluationValuePicker
-									-statistic
-									AREA_UNDER_ROC
-							-actor
-								adams.flow.transformer.MakePlotContainer
-									-plot-name
-									AUC
-							-actor
-								adams.flow.sink.CallableSink
-									-callable
-									AUC
-			-value
-			Evaluation
-	-actor
-		adams.flow.transformer.WekaAggregateEvaluations
-	-actor
-		adams.flow.control.ConditionalTee
-			-tee
-				adams.flow.transformer.WekaEvaluationSummary
-					-relation
-					true
-					-class-details
-					true
-			-tee
-				adams.flow.sink.CallableSink
-					-callable
-					Summary
-			-condition
-				adams.flow.condition.bool.Counting
-					-min
-					@{folds}
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "Cross-validates a classifier and outputs\\nthe evaluation summary.\\nFor each of the folds, the model is displayed and some statistics visualized." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.standalone.SetVariable -name "number of cross-validation folds" -var-name folds -var-value 10
+ adams.flow.standalone.SetVariable -name "current fold" -var-name fold -var-value 0
+ adams.flow.standalone.GridView -x -3 -y -3 -num-rows 3 -writer adams.gui.print.NullWriter
+  adams.flow.sink.SequencePlotter -name Accuracy -writer adams.gui.print.NullWriter -paintlet "adams.gui.visualization.sequence.PaintletWithFixedYRange -max-y 100.0 -paintlet adams.gui.visualization.sequence.LinePaintlet" -overlay-paintlet adams.gui.visualization.sequence.CirclePaintlet -marker-paintlet adams.flow.sink.sequenceplotter.NoMarkers -error-paintlet adams.flow.sink.sequenceplotter.NoErrorPaintlet -mouse-click-action adams.flow.sink.sequenceplotter.NullClickAction -color-provider adams.gui.visualization.core.DefaultColorProvider -overlay-color-provider adams.gui.visualization.core.DefaultColorProvider -title Accuracy -axis-x "adams.gui.visualization.core.AxisPanelOptions -label \"Evaluation step\" -tick-generator adams.gui.visualization.core.axis.FancyTickGenerator -nth-value 2 -width 40 -custom-format 0.0" -axis-y "adams.gui.visualization.core.AxisPanelOptions -label Statistic -tick-generator adams.gui.visualization.core.axis.FancyTickGenerator -nth-value 2 -width 60 -custom-format 0.0" -plot-updater "adams.flow.sink.sequenceplotter.SimplePlotUpdater -update-interval -1" -post-processor adams.flow.sink.sequenceplotter.PassThrough
+  adams.flow.sink.SequencePlotter -name RMSE -writer adams.gui.print.NullWriter -paintlet adams.gui.visualization.sequence.LinePaintlet -overlay-paintlet adams.gui.visualization.sequence.CirclePaintlet -marker-paintlet adams.flow.sink.sequenceplotter.NoMarkers -error-paintlet adams.flow.sink.sequenceplotter.NoErrorPaintlet -mouse-click-action adams.flow.sink.sequenceplotter.NullClickAction -color-provider adams.gui.visualization.core.DefaultColorProvider -overlay-color-provider adams.gui.visualization.core.DefaultColorProvider -title RMSE -axis-x "adams.gui.visualization.core.AxisPanelOptions -label \"Evaluation step\" -tick-generator adams.gui.visualization.core.axis.FancyTickGenerator -nth-value 2 -width 40 -custom-format 0.0" -axis-y "adams.gui.visualization.core.AxisPanelOptions -label Statistic -tick-generator adams.gui.visualization.core.axis.FancyTickGenerator -nth-value 2 -width 60 -custom-format 0.00" -plot-updater "adams.flow.sink.sequenceplotter.SimplePlotUpdater -update-interval -1" -post-processor adams.flow.sink.sequenceplotter.PassThrough
+  adams.flow.sink.SequencePlotter -name AUC -writer adams.gui.print.NullWriter -paintlet "adams.gui.visualization.sequence.PaintletWithFixedYRange -max-y 1.0 -paintlet adams.gui.visualization.sequence.LinePaintlet" -overlay-paintlet adams.gui.visualization.sequence.CirclePaintlet -marker-paintlet adams.flow.sink.sequenceplotter.NoMarkers -error-paintlet adams.flow.sink.sequenceplotter.NoErrorPaintlet -mouse-click-action adams.flow.sink.sequenceplotter.NullClickAction -color-provider adams.gui.visualization.core.DefaultColorProvider -overlay-color-provider adams.gui.visualization.core.DefaultColorProvider -title AUC -axis-x "adams.gui.visualization.core.AxisPanelOptions -label \"Evaluation step\" -tick-generator adams.gui.visualization.core.axis.FancyTickGenerator -nth-value 2 -width 40 -custom-format 0.0" -axis-y "adams.gui.visualization.core.AxisPanelOptions -label Statistic -tick-generator adams.gui.visualization.core.axis.FancyTickGenerator -nth-value 2 -width 60 -custom-format 0.0" -plot-updater "adams.flow.sink.sequenceplotter.SimplePlotUpdater -update-interval -1" -post-processor adams.flow.sink.sequenceplotter.PassThrough
+ adams.flow.standalone.CallableActors
+  adams.flow.sink.Display -name Summary -short-title true -writer adams.data.io.output.NullWriter
+  adams.flow.sink.HistoryDisplay -name Models -short-title true -x -3 -entry-name-variable fold
+  adams.flow.source.WekaClassifierSetup -classifier "weka.classifiers.trees.J48 -C 0.25 -M 2"
+ adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/labor.arff
+ adams.flow.transformer.WekaFileReader -loader weka.core.converters.ArffLoader
+ adams.flow.transformer.WekaClassSelector
+ adams.flow.transformer.WekaCrossValidationSplit -folds @{folds}
+ adams.flow.transformer.IncVariable -var-name fold
+ adams.flow.transformer.WekaTrainTestSetEvaluator -output weka.classifiers.evaluation.output.prediction.Null
+ adams.flow.control.ContainerValuePicker -value Model
+  adams.flow.sink.CallableSink -callable Models
+ adams.flow.control.ContainerValuePicker -name ContainerValuePicker-1 -value Evaluation
+  adams.flow.control.Branch
+   adams.flow.control.Sequence -name Accuracy
+    adams.flow.transformer.WekaEvaluationValuePicker
+    adams.flow.transformer.MakePlotContainer -plot-name Accuracy
+    adams.flow.sink.CallableSink -callable Accuracy
+   adams.flow.control.Sequence -name RMSE
+    adams.flow.transformer.WekaEvaluationValuePicker -statistic ROOT_MEAN_SQUARED_ERROR
+    adams.flow.transformer.MakePlotContainer -plot-name RMSE
+    adams.flow.sink.CallableSink -callable RMSE
+   adams.flow.control.Sequence -name AUC
+    adams.flow.transformer.WekaEvaluationValuePicker -statistic AREA_UNDER_ROC
+    adams.flow.transformer.MakePlotContainer -plot-name AUC
+    adams.flow.sink.CallableSink -callable AUC
+ adams.flow.transformer.WekaAggregateEvaluations
+ adams.flow.control.ConditionalTee -condition "adams.flow.condition.bool.Counting -min @{folds}"
+  adams.flow.transformer.WekaEvaluationSummary -relation true -class-details true
+  adams.flow.sink.CallableSink -callable Summary

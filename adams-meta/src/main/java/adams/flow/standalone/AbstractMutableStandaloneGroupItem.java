@@ -15,14 +15,13 @@
 
 /**
  * AbstractMutableStandaloneGroupItem.java
- * Copyright (C) 2015 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.standalone;
 
 import adams.core.logging.LoggingLevel;
 import adams.flow.control.AbstractControlActor;
-import adams.flow.core.AbstractActor;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorHandlerInfo;
 import adams.flow.core.MutableActorHandler;
@@ -52,7 +51,7 @@ public abstract class AbstractMutableStandaloneGroupItem<T extends Actor>
 
     m_OptionManager.add(
       "actor", "actors",
-      new AbstractActor[0]);
+      new Actor[0]);
   }
 
   /**
@@ -116,7 +115,7 @@ public abstract class AbstractMutableStandaloneGroupItem<T extends Actor>
    * @param actor	the actor to check
    * @return		null if accepted, otherwise error message
    */
-  protected abstract String checkSubActor(int index, AbstractActor actor);
+  protected abstract String checkSubActor(int index, Actor actor);
 
   /**
    * Checks the sub actors before they are set via the setSubActors method.
@@ -125,20 +124,20 @@ public abstract class AbstractMutableStandaloneGroupItem<T extends Actor>
    * @param actors	the actors to check
    * @return		null if accepted, otherwise error message
    */
-  protected abstract String checkSubActors(AbstractActor[] actors);
+  protected abstract String checkSubActors(Actor[] actors);
 
   /**
    * Sets the sub-actor.
    *
    * @param value	the actor
    */
-  public void setActors(AbstractActor[] value) {
+  public void setActors(Actor[] value) {
     String	msg;
 
     msg = checkSubActors(value);
     if (msg == null) {
       m_Actors.removeAll();
-      for (AbstractActor actor: value)
+      for (Actor actor: value)
         m_Actors.add(actor);
       reset();
       updateParent();
@@ -153,11 +152,11 @@ public abstract class AbstractMutableStandaloneGroupItem<T extends Actor>
    *
    * @return		the actors
    */
-  public AbstractActor[] getActors() {
-    AbstractActor[]	result;
-    int			i;
+  public Actor[] getActors() {
+    Actor[]	result;
+    int		i;
 
-    result = new AbstractActor[m_Actors.size()];
+    result = new Actor[m_Actors.size()];
     for (i = 0; i < m_Actors.size(); i++)
       result[i] = m_Actors.get(i);
 
@@ -199,7 +198,7 @@ public abstract class AbstractMutableStandaloneGroupItem<T extends Actor>
    * @return		the actor
    */
   @Override
-  public AbstractActor get(int index) {
+  public Actor get(int index) {
     return m_Actors.get(index);
   }
 
@@ -208,10 +207,10 @@ public abstract class AbstractMutableStandaloneGroupItem<T extends Actor>
    *
    * @param index	the position
    * @param actor	the actor to set at this position
-   * @see		#checkSubActor(int, AbstractActor)
+   * @see		#checkSubActor(int, Actor)
    */
   @Override
-  public void set(int index, AbstractActor actor) {
+  public void set(int index, Actor actor) {
     String	msg;
 
     msg = checkSubActor(index, actor);
@@ -241,7 +240,7 @@ public abstract class AbstractMutableStandaloneGroupItem<T extends Actor>
    *
    * @param actor	the actor to insert
    */
-  public void add(AbstractActor actor) {
+  public void add(Actor actor) {
     add(size(), actor);
   }
 
@@ -250,9 +249,9 @@ public abstract class AbstractMutableStandaloneGroupItem<T extends Actor>
    *
    * @param index	the position
    * @param actor	the actor to insert
-   * @see		#checkSubActor(int, AbstractActor)
+   * @see		#checkSubActor(int, Actor)
    */
-  public void add(int index, AbstractActor actor) {
+  public void add(int index, Actor actor) {
     String	msg;
 
     msg = checkSubActor(index, actor);
@@ -272,8 +271,8 @@ public abstract class AbstractMutableStandaloneGroupItem<T extends Actor>
    * @param index	the position
    * @return		the removed actor
    */
-  public AbstractActor remove(int index) {
-    AbstractActor	result;
+  public Actor remove(int index) {
+    Actor	result;
 
     result = m_Actors.remove(index);
     reset();

@@ -31,7 +31,7 @@ import adams.flow.condition.bool.Counting;
 import adams.flow.control.ConditionalTee;
 import adams.flow.control.Flow;
 import adams.flow.control.Sequence;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.core.Token;
 import adams.flow.sink.DumpFile;
 import adams.flow.source.FileSupplier;
@@ -86,10 +86,10 @@ public class WekaInstanceBufferTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
   @Override
-  public AbstractActor getActor() {
+  public Actor getActor() {
     FileSupplier sfs = new FileSupplier();
     sfs.setFiles(new adams.core.io.PlaceholderFile[]{new TmpFile("vote.arff")});
 
@@ -103,7 +103,7 @@ public class WekaInstanceBufferTest
     df.setOutputFile(new TmpFile("dumpfile.txt"));
 
     Sequence seq = new Sequence();
-    seq.setActors(new AbstractActor[]{ib, df});
+    seq.setActors(new Actor[]{ib, df});
 
     ConditionalTee ct = new ConditionalTee();
     Counting count = new Counting();
@@ -112,7 +112,7 @@ public class WekaInstanceBufferTest
     ct.add(0, seq);
 
     Flow flow = new Flow();
-    flow.setActors(new AbstractActor[]{sfs, fr, ct});
+    flow.setActors(new Actor[]{sfs, fr, ct});
 
     return flow;
   }

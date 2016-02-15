@@ -15,11 +15,11 @@
 
 /**
  * Generator.java
- * Copyright (C) 2011-2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.generator;
 
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 
 /**
  * Generator interface for flow generators.
@@ -28,12 +28,12 @@ import adams.flow.core.AbstractActor;
  * @version $Revision$
  * @param <T> the type of actor that owns this generator
  */
-public interface Generator<T extends AbstractActor> {
+public interface Generator<T extends Actor> {
 
   /**
    * Sets the owner.
    *
-   * @param owner	the owner of this generator
+   * @param value	the owner of this generator
    */
   public void setOwner(T value);
 
@@ -49,5 +49,5 @@ public interface Generator<T extends AbstractActor> {
    *
    * @return		the generated flow
    */
-  public AbstractActor generate();
+  public Actor generate();
 }

@@ -15,7 +15,7 @@
 
 /*
  * SequentialDirector.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -23,7 +23,7 @@ package adams.flow.control;
 import adams.core.Utils;
 import adams.core.logging.LoggingHelper;
 import adams.core.logging.LoggingLevel;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.InputConsumer;
 import adams.flow.core.OutputProducer;
@@ -97,7 +97,7 @@ public class SequentialDirector
    * @param actor	the actor to check
    * @return		null if actor not stopped, otherwise the error message
    */
-  protected String checkActorHasStopped(AbstractActor actor) {
+  protected String checkActorHasStopped(Actor actor) {
     String	result;
     Throwable	th;
 
@@ -121,7 +121,7 @@ public class SequentialDirector
    * @param t		the exception
    * @return		the combined error string
    */
-  protected String handleException(AbstractActor actor, String msg, Throwable t) {
+  protected String handleException(Actor actor, String msg, Throwable t) {
     return Utils.handleException(actor, msg, t, !hasControlActor() || m_ControlActor.getSilent());
   }
 
@@ -134,7 +134,7 @@ public class SequentialDirector
    * @param msg         the error message, skips handling if null
    * @return            the (potentially) updated error message
    */
-  protected String handleError(AbstractActor actor, String action, String msg) {
+  protected String handleError(Actor actor, String action, String msg) {
     if (msg == null)
       return null;
     if (actor.hasErrorHandler()) {
@@ -152,7 +152,7 @@ public class SequentialDirector
    * @param input	the input token
    * @return		the error message, null if everything OK
    */
-  protected String doInput(AbstractActor actor, Token input) {
+  protected String doInput(Actor actor, Token input) {
     String	result;
 
     result = null;
@@ -184,7 +184,7 @@ public class SequentialDirector
    * @param actor	the actor to use
    * @return		a potential error message
    */
-  protected String doExecute(AbstractActor actor) {
+  protected String doExecute(Actor actor) {
     String	result;
     String	msg;
 
@@ -221,9 +221,9 @@ public class SequentialDirector
    * @param actor	the actor to use (OutputProducer)
    * @return		the token that was retrieved from the actor, null
    * 			in case of an error and not 'stopping on errors'
-   * @see		AbstractDirectedControlActor#getStopOnErrors()
+   * @see		AbstractDirectedControlActor#getStopFlowOnError()
    */
-  protected boolean doHasOutput(AbstractActor actor) {
+  protected boolean doHasOutput(Actor actor) {
     boolean	result;
     String	msgFull;
 
@@ -253,9 +253,9 @@ public class SequentialDirector
    * @param actor	the actor to use
    * @return		the token that was retrieved from the actor, null
    * 			in case of an error and not 'stopping on errors'
-   * @see		AbstractDirectedControlActor#getStopOnErrors()
+   * @see		AbstractDirectedControlActor#getStopFlowOnError()
    */
-  protected Token doOutput(AbstractActor actor) {
+  protected Token doOutput(Actor actor) {
     Token	result;
     String	msgFull;
 
@@ -294,11 +294,11 @@ public class SequentialDirector
    *
    * @return		the first non-standalone actor or null if non present
    */
-  protected AbstractActor doExecuteStandalones() {
-    AbstractActor	result;
-    AbstractActor	curr;
-    int			i;
-    String		actorResult;
+  protected Actor doExecuteStandalones() {
+    Actor	result;
+    Actor	curr;
+    int		i;
+    String	actorResult;
 
     result = null;
 
@@ -344,21 +344,21 @@ public class SequentialDirector
    * @param startActor	the actor to start with
    * @return		null if everything ok, otherwise the error message
    */
-  protected String doExecuteActors(AbstractActor startActor) {
-    String			result;
-    boolean			finished;
-    int				startIndex;
-    int				i;
-    AbstractActor		notFinishedActor;
-    Stack<AbstractActor>	pendingActors;
-    Token			token;
-    AbstractActor		curr;
-    String			actorResult;
-    int				lastActive;
+  protected String doExecuteActors(Actor startActor) {
+    String		result;
+    boolean		finished;
+    int			startIndex;
+    int			i;
+    Actor		notFinishedActor;
+    Stack<Actor>	pendingActors;
+    Token		token;
+    Actor		curr;
+    String		actorResult;
+    int			lastActive;
 
     result           = null;
     notFinishedActor = startActor;
-    pendingActors    = new Stack<AbstractActor>();
+    pendingActors    = new Stack<>();
     getFinalOutput().clear();
     do {
       if (isLoggingEnabled())
@@ -517,9 +517,9 @@ public class SequentialDirector
    */
   @Override
   public String execute() {
-    String		result;
-    String		msg;
-    AbstractActor	start;
+    String	result;
+    String	msg;
+    Actor	start;
 
     result     = null;
     start      = null;

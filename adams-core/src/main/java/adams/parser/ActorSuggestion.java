@@ -15,12 +15,12 @@
 
 /**
  * ActorSuggestion.java
- * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.parser;
 
 import adams.flow.control.Flow;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.parser.actorsuggestion.Parser;
 import adams.parser.actorsuggestion.Scanner;
 import java_cup.runtime.DefaultSymbolFactory;
@@ -87,7 +87,7 @@ import java.util.ArrayList;
  * &nbsp;&nbsp;&nbsp;default: ISFIRST: adams.flow.standalone.GlobalActors
  * </pre>
  * 
- * <pre>-parent &lt;adams.flow.core.AbstractActor&gt; (property: parent)
+ * <pre>-parent &lt;adams.flow.core.Actor&gt; (property: parent)
  * &nbsp;&nbsp;&nbsp;The parent actor to use.
  * &nbsp;&nbsp;&nbsp;default: adams.flow.control.Flow
  * </pre>
@@ -98,7 +98,7 @@ import java.util.ArrayList;
  * &nbsp;&nbsp;&nbsp;minimum: 0
  * </pre>
  * 
- * <pre>-actor &lt;adams.flow.core.AbstractActor&gt; [-actor ...] (property: actors)
+ * <pre>-actor &lt;adams.flow.core.Actor&gt; [-actor ...] (property: actors)
  * &nbsp;&nbsp;&nbsp;The actors to insert the proposed actor in.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
@@ -109,20 +109,20 @@ import java.util.ArrayList;
  * @version $Revision$
  */
 public class ActorSuggestion
-  extends AbstractExpressionEvaluator<AbstractActor>
+  extends AbstractExpressionEvaluator<Actor>
   implements GrammarSupplier {
 
   /** for serialization. */
   private static final long serialVersionUID = -2060968616326323959L;
 
   /** the parent of the proposed actor. */
-  protected AbstractActor m_Parent;
+  protected Actor m_Parent;
 
   /** the position the actor is to be inserted at. */
   protected int m_Position;
 
   /** the actors in which the proposed actor gets inserted. */
-  protected AbstractActor[] m_Actors;
+  protected Actor[] m_Actors;
 
   /**
    * Returns a string describing the object.
@@ -193,7 +193,7 @@ public class ActorSuggestion
 
     m_OptionManager.add(
 	    "actor", "actors",
-	    new AbstractActor[]{});
+	    new Actor[]{});
   }
 
   /**
@@ -222,7 +222,7 @@ public class ActorSuggestion
    *
    * @param value	the parent
    */
-  public void setParent(AbstractActor value) {
+  public void setParent(Actor value) {
     m_Parent = value;
   }
 
@@ -231,7 +231,7 @@ public class ActorSuggestion
    *
    * @return		the parent
    */
-  public AbstractActor getParent() {
+  public Actor getParent() {
     return m_Parent;
   }
 
@@ -278,7 +278,7 @@ public class ActorSuggestion
    *
    * @param value	the actors
    */
-  public void setActors(AbstractActor[] value) {
+  public void setActors(Actor[] value) {
     m_Actors = value;
   }
 
@@ -287,7 +287,7 @@ public class ActorSuggestion
    *
    * @return		the actors
    */
-  public AbstractActor[] getActors() {
+  public Actor[] getActors() {
     return m_Actors;
   }
 
@@ -308,7 +308,7 @@ public class ActorSuggestion
    * @throws Exception	if evaluation fails
    */
   @Override
-  public AbstractActor evaluate() throws Exception {
+  public Actor evaluate() throws Exception {
     SymbolFactory 		sf;
     ByteArrayInputStream 	parserInput;
     Parser 			parser;
@@ -334,8 +334,8 @@ public class ActorSuggestion
    * @return		the proposed classname in case of a match, otherwise null
    * @throws Exception	if evaluation fails
    */
-  public static AbstractActor evaluate(String expr, AbstractActor parent, int position, AbstractActor[] actors) throws Exception {
-    AbstractActor[]	result;
+  public static Actor evaluate(String expr, Actor parent, int position, Actor[] actors) throws Exception {
+    Actor[]	result;
 
     result = evaluate(new String[]{expr}, parent, position, actors);
 
@@ -352,18 +352,18 @@ public class ActorSuggestion
    * @return		array with proposed classnames (cells are null if rule wasn't a match)
    * @throws Exception	if evaluation fails
    */
-  public static AbstractActor[] evaluate(String[] expr, AbstractActor parent, int position, AbstractActor[] actors) throws Exception {
-    ArrayList<AbstractActor>	result;
-    ActorSuggestion		suggestion;
-    int				i;
-    AbstractActor		actor;
+  public static Actor[] evaluate(String[] expr, Actor parent, int position, Actor[] actors) throws Exception {
+    ArrayList<Actor>	result;
+    ActorSuggestion	suggestion;
+    int			i;
+    Actor		actor;
 
     suggestion = new ActorSuggestion();
     suggestion.setParent(parent);
     suggestion.setPosition(position);
     suggestion.setActors(actors);
 
-    result = new ArrayList<AbstractActor>();
+    result = new ArrayList<>();
     for (i = 0; i < expr.length; i++) {
       suggestion.setExpression(expr[i]);
       actor = suggestion.evaluate();
@@ -372,6 +372,6 @@ public class ActorSuggestion
       result.add(actor);
     }
 
-    return result.toArray(new AbstractActor[result.size()]);
+    return result.toArray(new Actor[result.size()]);
   }
 }

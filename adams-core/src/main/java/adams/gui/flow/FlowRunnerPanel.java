@@ -32,7 +32,7 @@ import adams.db.LogEntryHandler;
 import adams.env.Environment;
 import adams.env.FlowRunnerPanelDefinition;
 import adams.flow.control.Flow;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.core.ActorHandler;
 import adams.flow.core.ActorUtils;
 import adams.flow.standalone.SetVariable;
@@ -120,7 +120,7 @@ public class FlowRunnerPanel
   protected boolean m_RunningSwingWorker;
 
   /** the current flow. */
-  protected AbstractActor m_CurrentFlow;
+  protected Actor m_CurrentFlow;
 
   /** the filename of the current flow. */
   protected File m_CurrentFile;
@@ -561,9 +561,9 @@ public class FlowRunnerPanel
    * @param parent	the actor to search below
    * @param list	for storing the SetVariable actors
    */
-  protected void findSetVariableActors(AbstractActor parent, Vector<SetVariable> list) {
-    int			i;
-    AbstractActor	actor;
+  protected void findSetVariableActors(Actor parent, Vector<SetVariable> list) {
+    int		i;
+    Actor 	actor;
 
     if (parent instanceof ActorHandler) {
       for (i = 0; i < ((ActorHandler) parent).size(); i++) {
@@ -844,7 +844,7 @@ public class FlowRunnerPanel
    *
    * @param flow	the flow to use
    */
-  public void setCurrentFlow(AbstractActor flow) {
+  public void setCurrentFlow(Actor flow) {
     m_CurrentFile = null;
     m_CurrentFlow = flow;
   }
@@ -867,7 +867,7 @@ public class FlowRunnerPanel
    *
    * @return		the current flow, can be null
    */
-  public AbstractActor getCurrentFlow() {
+  public Actor getCurrentFlow() {
     return m_CurrentFlow;
   }
 

@@ -1,105 +1,14 @@
 # Project: adams
-# Date: 2015-05-27 22:22:09
+# Date: 2016-02-15 15:12:00
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	Generates a u chart.\nData taken from here:\nhttp://www.spcforexcel.com/knowledge/attribute-control-charts/u-control-charts
-	-actor
-		adams.flow.source.FileSupplier
-			-file
-			${EXAMPLE_FLOWS}/data/infections.csv
-	-actor
-		adams.flow.transformer.SpreadSheetFileReader
-			-reader
-				adams.data.io.input.CsvSpreadSheetReader
-					-data-row-type
-						adams.data.spreadsheet.DenseDataRow
-					-spreadsheet-type
-						adams.data.spreadsheet.SpreadSheet
-	-actor
-		adams.flow.transformer.SpreadSheetColumnFilter
-			-finder
-				adams.data.spreadsheet.columnfinder.ByIndex
-					-columns
-					2-last
-	-actor
-		adams.flow.control.Branch
-			-branch
-				adams.flow.control.Sequence
-					-name
-					control chart
-					-actor
-						adams.flow.transformer.Convert
-							-conversion
-								adams.data.conversion.SpreadSheetToDoubleMatrix
-					-actor
-						adams.flow.transformer.ControlChart
-							-chart
-								adams.data.spc.UChart
-									-non-conform-index
-									2
-									-sizes-index
-									3
-					-actor
-						adams.flow.sink.ControlChartPlot
-							-writer
-								adams.gui.print.NullWriter
-							-violation-finder
-								adams.data.spc.BeyondLimitsViolations
-							-paintlet
-								adams.flow.sink.controlchartplot.ChartPaintlet
-							-limit-paintlet
-								adams.flow.sink.controlchartplot.LimitPaintlet
-							-mouse-click-action
-								adams.flow.sink.sequenceplotter.NullClickAction
-							-color-provider
-								adams.gui.visualization.core.DefaultColorProvider
-							-axis-x
-								adams.gui.visualization.core.AxisPanelOptions
-									-label
-									sample
-									-tick-generator
-										adams.gui.visualization.core.axis.FancyTickGenerator
-									-nth-value
-									1
-									-width
-									40
-									-top-margin
-									0.05
-									-bottom-margin
-									0.05
-									-custom-format
-									0
-							-axis-y
-								adams.gui.visualization.core.AxisPanelOptions
-									-label
-									y
-									-tick-generator
-										adams.gui.visualization.core.axis.FancyTickGenerator
-									-nth-value
-									2
-									-width
-									60
-									-top-margin
-									0.05
-									-bottom-margin
-									0.05
-									-custom-format
-									0.00
-			-branch
-				adams.flow.sink.SpreadSheetDisplay
-					-name
-					Raw
-					-short-title
-					true
-					-width
-					400
-					-x
-					-3
-					-writer
-						adams.data.io.output.NullWriter
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "Generates a u chart.\\nData taken from here:\\nhttp://www.spcforexcel.com/knowledge/attribute-control-charts/u-control-charts" -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/infections.csv
+ adams.flow.transformer.SpreadSheetFileReader -reader "adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.SpreadSheet"
+ adams.flow.transformer.SpreadSheetColumnFilter -finder "adams.data.spreadsheet.columnfinder.ByIndex -columns 2-last"
+ adams.flow.control.Branch
+  adams.flow.control.Sequence -name "control chart"
+   adams.flow.transformer.Convert -conversion adams.data.conversion.SpreadSheetToDoubleMatrix
+   adams.flow.transformer.ControlChart -chart "adams.data.spc.UChart -non-conform-index 2 -sizes-index 3"
+   adams.flow.sink.ControlChartPlot -writer adams.gui.print.NullWriter -violation-finder adams.data.spc.BeyondLimitsViolations -paintlet adams.flow.sink.controlchartplot.ChartPaintlet -limit-paintlet adams.flow.sink.controlchartplot.LimitPaintlet -separator-paintlet adams.flow.sink.sequenceplotter.VerticalMarkers -mouse-click-action adams.flow.sink.sequenceplotter.NullClickAction -color-provider adams.gui.visualization.core.DefaultColorProvider -axis-x "adams.gui.visualization.core.AxisPanelOptions -label sample -tick-generator adams.gui.visualization.core.axis.FancyTickGenerator -nth-value 1 -width 40 -top-margin 0.05 -bottom-margin 0.05 -custom-format 0" -axis-y "adams.gui.visualization.core.AxisPanelOptions -label y -tick-generator adams.gui.visualization.core.axis.FancyTickGenerator -nth-value 2 -width 60 -top-margin 0.05 -bottom-margin 0.05 -custom-format 0.00" -post-processor adams.flow.sink.sequenceplotter.PassThrough
+  adams.flow.sink.SpreadSheetDisplay -name Raw -short-title true -width 400 -x -3 -writer adams.data.io.output.NullWriter

@@ -15,7 +15,7 @@
 
 /*
  * MakeCompatibleDatasets.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -48,6 +48,7 @@ import adams.flow.control.Tee;
 import adams.flow.control.Trigger;
 import adams.flow.control.UpdateProperties;
 import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.execution.NullListener;
 import adams.flow.sink.WekaFileWriter;
 import adams.flow.source.CombineVariables;
@@ -315,7 +316,7 @@ public class MakeCompatibleDatasets
 
     adams.flow.control.Flow actor = new adams.flow.control.Flow();
 
-    List<AbstractActor> actors = new ArrayList<AbstractActor>();
+    List<Actor> actors = new ArrayList<>();
 
     // Flow.out dir
     SetVariable setvariable = new SetVariable();
@@ -346,7 +347,7 @@ public class MakeCompatibleDatasets
     {
       argOption = (AbstractArgumentOption) trigger.getOptionManager().findByProperty("name");
       trigger.setName((String) argOption.valueOf("load files"));
-      List<AbstractActor> actors2 = new ArrayList<AbstractActor>();
+      List<Actor> actors2 = new ArrayList<>();
 
       // Flow.load files.FileSupplier
       FileSupplier filesupplier = new FileSupplier();
@@ -359,7 +360,7 @@ public class MakeCompatibleDatasets
       {
         argOption = (AbstractArgumentOption) tee.getOptionManager().findByProperty("name");
         tee.setName((String) argOption.valueOf("num files"));
-        List<AbstractActor> actors3 = new ArrayList<AbstractActor>();
+        List<Actor> actors3 = new ArrayList<>();
 
         // Flow.load files.num files.ArrayLength
         ArrayLength arraylength = new ArrayLength();
@@ -370,7 +371,7 @@ public class MakeCompatibleDatasets
         argOption = (AbstractArgumentOption) setvariable3.getOptionManager().findByProperty("variableName");
         setvariable3.setVariableName((VariableName) argOption.valueOf("num_files"));
         actors3.add(setvariable3);
-        tee.setActors(actors3.toArray(new AbstractActor[0]));
+        tee.setActors(actors3.toArray(new Actor[0]));
 
       }
       actors2.add(tee);
@@ -380,7 +381,7 @@ public class MakeCompatibleDatasets
       {
         argOption = (AbstractArgumentOption) trigger2.getOptionManager().findByProperty("name");
         trigger2.setName((String) argOption.valueOf("new length array"));
-        List<AbstractActor> actors4 = new ArrayList<AbstractActor>();
+        List<Actor> actors4 = new ArrayList<>();
 
         // Flow.load files.new length array.NewArray
         NewArray newarray = new NewArray();
@@ -395,7 +396,7 @@ public class MakeCompatibleDatasets
         argOption = (AbstractArgumentOption) setstoragevalue.getOptionManager().findByProperty("storageName");
         setstoragevalue.setStorageName((StorageName) argOption.valueOf("lengths"));
         actors4.add(setstoragevalue);
-        trigger2.setActors(actors4.toArray(new AbstractActor[0]));
+        trigger2.setActors(actors4.toArray(new Actor[0]));
 
       }
       actors2.add(trigger2);
@@ -405,7 +406,7 @@ public class MakeCompatibleDatasets
       {
         argOption = (AbstractArgumentOption) trigger3.getOptionManager().findByProperty("name");
         trigger3.setName((String) argOption.valueOf("new name array"));
-        List<AbstractActor> actors5 = new ArrayList<AbstractActor>();
+        List<Actor> actors5 = new ArrayList<Actor>();
 
         // Flow.load files.new name array.NewArray
         NewArray newarray2 = new NewArray();
@@ -418,7 +419,7 @@ public class MakeCompatibleDatasets
         argOption = (AbstractArgumentOption) setstoragevalue2.getOptionManager().findByProperty("storageName");
         setstoragevalue2.setStorageName((StorageName) argOption.valueOf("names"));
         actors5.add(setstoragevalue2);
-        trigger3.setActors(actors5.toArray(new AbstractActor[0]));
+        trigger3.setActors(actors5.toArray(new Actor[0]));
 
       }
       actors2.add(trigger3);
@@ -434,7 +435,7 @@ public class MakeCompatibleDatasets
       // Flow.load files.ArrayProcess
       ArrayProcess arrayprocess = new ArrayProcess();
       {
-        List<AbstractActor> actors6 = new ArrayList<AbstractActor>();
+        List<Actor> actors6 = new ArrayList<>();
 
         // Flow.load files.ArrayProcess.IncVariable
         IncVariable incvariable = new IncVariable();
@@ -447,7 +448,7 @@ public class MakeCompatibleDatasets
         {
           argOption = (AbstractArgumentOption) tee2.getOptionManager().findByProperty("name");
           tee2.setName((String) argOption.valueOf("name"));
-          List<AbstractActor> actors7 = new ArrayList<AbstractActor>();
+          List<Actor> actors7 = new ArrayList<>();
 
           // Flow.load files.ArrayProcess.name.BaseName
           BaseName basename = new BaseName();
@@ -466,7 +467,7 @@ public class MakeCompatibleDatasets
           {
             argOption = (AbstractArgumentOption) trigger4.getOptionManager().findByProperty("name");
             trigger4.setName((String) argOption.valueOf("update array"));
-            List<AbstractActor> actors8 = new ArrayList<AbstractActor>();
+            List<Actor> actors8 = new ArrayList<>();
 
             // Flow.load files.ArrayProcess.name.update array.StorageValue
             StorageValue storagevalue = new StorageValue();
@@ -487,11 +488,11 @@ public class MakeCompatibleDatasets
             argOption = (AbstractArgumentOption) setstoragevalue3.getOptionManager().findByProperty("storageName");
             setstoragevalue3.setStorageName((StorageName) argOption.valueOf("names"));
             actors8.add(setstoragevalue3);
-            trigger4.setActors(actors8.toArray(new AbstractActor[0]));
+            trigger4.setActors(actors8.toArray(new Actor[0]));
 
           }
           actors7.add(trigger4);
-          tee2.setActors(actors7.toArray(new AbstractActor[0]));
+          tee2.setActors(actors7.toArray(new Actor[0]));
 
         }
         actors6.add(tee2);
@@ -501,7 +502,7 @@ public class MakeCompatibleDatasets
         {
           argOption = (AbstractArgumentOption) tee3.getOptionManager().findByProperty("name");
           tee3.setName((String) argOption.valueOf("extension"));
-          List<AbstractActor> actors9 = new ArrayList<AbstractActor>();
+          List<Actor> actors9 = new ArrayList<>();
 
           // Flow.load files.ArrayProcess.extension.FileExtension
           FileExtension fileextension = new FileExtension();
@@ -512,7 +513,7 @@ public class MakeCompatibleDatasets
           argOption = (AbstractArgumentOption) setvariable6.getOptionManager().findByProperty("variableName");
           setvariable6.setVariableName((VariableName) argOption.valueOf("extension"));
           actors9.add(setvariable6);
-          tee3.setActors(actors9.toArray(new AbstractActor[0]));
+          tee3.setActors(actors9.toArray(new Actor[0]));
 
         }
         actors6.add(tee3);
@@ -527,7 +528,7 @@ public class MakeCompatibleDatasets
           conditions.add(expression);
           switch_.setConditions(conditions.toArray(new BooleanCondition[0]));
 
-          List<AbstractActor> cases = new ArrayList<AbstractActor>();
+          List<Actor> cases = new ArrayList<>();
 
           // Flow.load files.ArrayProcess.Switch.SpreadSheetFileReader
           SpreadSheetFileReader spreadsheetfilereader = new SpreadSheetFileReader();
@@ -550,7 +551,7 @@ public class MakeCompatibleDatasets
           {
             argOption = (AbstractArgumentOption) subprocess.getOptionManager().findByProperty("name");
             subprocess.setName((String) argOption.valueOf("weka"));
-            List<AbstractActor> actors10 = new ArrayList<AbstractActor>();
+            List<Actor> actors10 = new ArrayList<>();
 
             // Flow.load files.ArrayProcess.Switch.weka.WekaFileReader
             WekaFileReader wekafilereader = new WekaFileReader();
@@ -575,11 +576,11 @@ public class MakeCompatibleDatasets
             convert.setConversion(wekainstancestospreadsheet);
 
             actors10.add(convert);
-            subprocess.setActors(actors10.toArray(new AbstractActor[0]));
+            subprocess.setActors(actors10.toArray(new Actor[0]));
 
           }
           cases.add(subprocess);
-          switch_.setCases(cases.toArray(new AbstractActor[0]));
+          switch_.setCases(cases.toArray(new Actor[0]));
 
         }
         actors6.add(switch_);
@@ -589,7 +590,7 @@ public class MakeCompatibleDatasets
         {
           argOption = (AbstractArgumentOption) tee4.getOptionManager().findByProperty("name");
           tee4.setName((String) argOption.valueOf("num rows"));
-          List<AbstractActor> actors11 = new ArrayList<AbstractActor>();
+          List<Actor> actors11 = new ArrayList<>();
 
           // Flow.load files.ArrayProcess.num rows.SpreadSheetInfo
           SpreadSheetInfo spreadsheetinfo = new SpreadSheetInfo();
@@ -606,7 +607,7 @@ public class MakeCompatibleDatasets
           {
             argOption = (AbstractArgumentOption) trigger5.getOptionManager().findByProperty("name");
             trigger5.setName((String) argOption.valueOf("update array"));
-            List<AbstractActor> actors12 = new ArrayList<AbstractActor>();
+            List<Actor> actors12 = new ArrayList<>();
 
             // Flow.load files.ArrayProcess.num rows.update array.StorageValue
             StorageValue storagevalue2 = new StorageValue();
@@ -627,15 +628,15 @@ public class MakeCompatibleDatasets
             argOption = (AbstractArgumentOption) setstoragevalue4.getOptionManager().findByProperty("storageName");
             setstoragevalue4.setStorageName((StorageName) argOption.valueOf("lengths"));
             actors12.add(setstoragevalue4);
-            trigger5.setActors(actors12.toArray(new AbstractActor[0]));
+            trigger5.setActors(actors12.toArray(new Actor[0]));
 
           }
           actors11.add(trigger5);
-          tee4.setActors(actors11.toArray(new AbstractActor[0]));
+          tee4.setActors(actors11.toArray(new Actor[0]));
 
         }
         actors6.add(tee4);
-        arrayprocess.setActors(actors6.toArray(new AbstractActor[0]));
+        arrayprocess.setActors(actors6.toArray(new Actor[0]));
 
       }
       actors2.add(arrayprocess);
@@ -645,7 +646,7 @@ public class MakeCompatibleDatasets
       argOption = (AbstractArgumentOption) setstoragevalue5.getOptionManager().findByProperty("storageName");
       setstoragevalue5.setStorageName((StorageName) argOption.valueOf("sheets"));
       actors2.add(setstoragevalue5);
-      trigger.setActors(actors2.toArray(new AbstractActor[0]));
+      trigger.setActors(actors2.toArray(new Actor[0]));
 
     }
     actors.add(trigger);
@@ -655,7 +656,7 @@ public class MakeCompatibleDatasets
     {
       argOption = (AbstractArgumentOption) trigger6.getOptionManager().findByProperty("name");
       trigger6.setName((String) argOption.valueOf("combine files"));
-      List<AbstractActor> actors13 = new ArrayList<AbstractActor>();
+      List<Actor> actors13 = new ArrayList<>();
 
       // Flow.combine files.StorageValue
       StorageValue storagevalue3 = new StorageValue();
@@ -674,7 +675,7 @@ public class MakeCompatibleDatasets
       argOption = (AbstractArgumentOption) spreadsheetappend.getOptionManager().findByProperty("storageName");
       spreadsheetappend.setStorageName((StorageName) argOption.valueOf("combined_sheets"));
       actors13.add(spreadsheetappend);
-      trigger6.setActors(actors13.toArray(new AbstractActor[0]));
+      trigger6.setActors(actors13.toArray(new Actor[0]));
 
     }
     actors.add(trigger6);
@@ -684,7 +685,7 @@ public class MakeCompatibleDatasets
     {
       argOption = (AbstractArgumentOption) trigger7.getOptionManager().findByProperty("name");
       trigger7.setName((String) argOption.valueOf("create combined arff"));
-      List<AbstractActor> actors14 = new ArrayList<AbstractActor>();
+      List<Actor> actors14 = new ArrayList<>();
 
       // Flow.create combined arff.StorageValue
       StorageValue storagevalue4 = new StorageValue();
@@ -704,7 +705,7 @@ public class MakeCompatibleDatasets
       argOption = (AbstractArgumentOption) setstoragevalue6.getOptionManager().findByProperty("storageName");
       setstoragevalue6.setStorageName((StorageName) argOption.valueOf("combined_arff"));
       actors14.add(setstoragevalue6);
-      trigger7.setActors(actors14.toArray(new AbstractActor[0]));
+      trigger7.setActors(actors14.toArray(new Actor[0]));
 
     }
     actors.add(trigger7);
@@ -714,7 +715,7 @@ public class MakeCompatibleDatasets
     {
       argOption = (AbstractArgumentOption) trigger8.getOptionManager().findByProperty("name");
       trigger8.setName((String) argOption.valueOf("create separate arff"));
-      List<AbstractActor> actors15 = new ArrayList<AbstractActor>();
+      List<Actor> actors15 = new ArrayList<>();
 
       // Flow.create separate arff.StorageForLoop
       StorageForLoop storageforloop = new StorageForLoop();
@@ -731,7 +732,7 @@ public class MakeCompatibleDatasets
       {
         argOption = (AbstractArgumentOption) trigger9.getOptionManager().findByProperty("name");
         trigger9.setName((String) argOption.valueOf("get name"));
-        List<AbstractActor> actors16 = new ArrayList<AbstractActor>();
+        List<Actor> actors16 = new ArrayList<>();
 
         // Flow.create separate arff.get name.StorageValue
         StorageValue storagevalue5 = new StorageValue();
@@ -750,7 +751,7 @@ public class MakeCompatibleDatasets
         argOption = (AbstractArgumentOption) setvariable8.getOptionManager().findByProperty("variableName");
         setvariable8.setVariableName((VariableName) argOption.valueOf("name"));
         actors16.add(setvariable8);
-        trigger9.setActors(actors16.toArray(new AbstractActor[0]));
+        trigger9.setActors(actors16.toArray(new Actor[0]));
 
       }
       actors15.add(trigger9);
@@ -760,7 +761,7 @@ public class MakeCompatibleDatasets
       {
         argOption = (AbstractArgumentOption) trigger10.getOptionManager().findByProperty("name");
         trigger10.setName((String) argOption.valueOf("get length"));
-        List<AbstractActor> actors17 = new ArrayList<AbstractActor>();
+        List<Actor> actors17 = new ArrayList<>();
 
         // Flow.create separate arff.get length.StorageValue
         StorageValue storagevalue6 = new StorageValue();
@@ -779,7 +780,7 @@ public class MakeCompatibleDatasets
         argOption = (AbstractArgumentOption) setvariable9.getOptionManager().findByProperty("variableName");
         setvariable9.setVariableName((VariableName) argOption.valueOf("length"));
         actors17.add(setvariable9);
-        trigger10.setActors(actors17.toArray(new AbstractActor[0]));
+        trigger10.setActors(actors17.toArray(new Actor[0]));
 
       }
       actors15.add(trigger10);
@@ -789,7 +790,7 @@ public class MakeCompatibleDatasets
       {
         argOption = (AbstractArgumentOption) trigger11.getOptionManager().findByProperty("name");
         trigger11.setName((String) argOption.valueOf("create range"));
-        List<AbstractActor> actors18 = new ArrayList<AbstractActor>();
+        List<Actor> actors18 = new ArrayList<>();
 
         // Flow.create separate arff.create range.CombineVariables
         CombineVariables combinevariables = new CombineVariables();
@@ -802,7 +803,7 @@ public class MakeCompatibleDatasets
         argOption = (AbstractArgumentOption) setvariable10.getOptionManager().findByProperty("variableName");
         setvariable10.setVariableName((VariableName) argOption.valueOf("range"));
         actors18.add(setvariable10);
-        trigger11.setActors(actors18.toArray(new AbstractActor[0]));
+        trigger11.setActors(actors18.toArray(new Actor[0]));
 
       }
       actors15.add(trigger11);
@@ -812,7 +813,7 @@ public class MakeCompatibleDatasets
       {
         argOption = (AbstractArgumentOption) trigger12.getOptionManager().findByProperty("name");
         trigger12.setName((String) argOption.valueOf("output file"));
-        List<AbstractActor> actors19 = new ArrayList<AbstractActor>();
+        List<Actor> actors19 = new ArrayList<>();
 
         // Flow.create separate arff.output file.CombineVariables
         CombineVariables combinevariables2 = new CombineVariables();
@@ -831,7 +832,7 @@ public class MakeCompatibleDatasets
         argOption = (AbstractArgumentOption) setvariable11.getOptionManager().findByProperty("variableName");
         setvariable11.setVariableName((VariableName) argOption.valueOf("outfile"));
         actors19.add(setvariable11);
-        trigger12.setActors(actors19.toArray(new AbstractActor[0]));
+        trigger12.setActors(actors19.toArray(new Actor[0]));
 
       }
       actors15.add(trigger12);
@@ -915,11 +916,11 @@ public class MakeCompatibleDatasets
         subUpdate.add(setstoragevalue6);
       }
 
-      trigger8.setActors(actors15.toArray(new AbstractActor[0]));
+      trigger8.setActors(actors15.toArray(new Actor[0]));
 
     }
     actors.add(trigger8);
-    actor.setActors(actors.toArray(new AbstractActor[0]));
+    actor.setActors(actors.toArray(new Actor[0]));
 
     NullListener nulllistener = new NullListener();
     actor.setFlowExecutionListener(nulllistener);

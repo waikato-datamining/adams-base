@@ -15,7 +15,7 @@
 
 /**
  * FlowVariables.java
- * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.core;
 
@@ -50,7 +50,7 @@ public class FlowVariables
   public final static String STORAGEREF_NOT_FOUND = "StorageRefNotFound";
   
   /** the flow reference. */
-  protected AbstractActor m_Flow;
+  protected Actor m_Flow;
 
   /** the helper class. */
   protected CallableActorHelper m_Helper;
@@ -70,7 +70,7 @@ public class FlowVariables
    * 
    * @param value	the flow reference
    */
-  public void setFlow(AbstractActor value) {
+  public void setFlow(Actor value) {
     m_Flow = value;
   }
   
@@ -79,7 +79,7 @@ public class FlowVariables
    * 
    * @return		the flow reference
    */
-  public AbstractActor getFlow() {
+  public Actor getFlow() {
     return m_Flow;
   }
   
@@ -131,7 +131,7 @@ public class FlowVariables
   protected Object getCallableActorValue(String name, Object defValue) {
     Object		result;
     String		msg;
-    AbstractActor	callable;
+    Actor		callable;
     OutputProducer	prod;
     Token		output;
     

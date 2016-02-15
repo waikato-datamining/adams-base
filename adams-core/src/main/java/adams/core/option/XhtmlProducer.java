@@ -15,16 +15,9 @@
 
 /**
  * XhtmlProducer.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
-
-import java.lang.reflect.Array;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.swing.tree.TreeNode;
 
 import adams.core.AdditionalInformationHandler;
 import adams.core.ClassLocator;
@@ -48,6 +41,12 @@ import adams.flow.core.Actor;
 import adams.gui.core.BaseTreeNode;
 import adams.gui.flow.tree.Node;
 import adams.gui.flow.tree.Tree;
+
+import javax.swing.tree.TreeNode;
+import java.lang.reflect.Array;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Generates documentation in XHTML.
@@ -215,7 +214,7 @@ public class XhtmlProducer
 
     @Override
     public boolean canRecurse(Class cls) {
-      return !(ClassLocator.hasInterface(Actor.class, cls) || ClassLocator.isSubclass(AbstractActor.class, cls));
+      return !(ClassLocator.hasInterface(Actor.class, cls));
     }
 
     @Override
@@ -343,7 +342,7 @@ public class XhtmlProducer
    */
   protected String toPlainText(Node node) {
     StringBuilder	result;
-    AbstractActor	actor;
+    Actor		actor;
     ActorPosition	pos;
 
     result = new StringBuilder();
@@ -483,7 +482,7 @@ public class XhtmlProducer
     Code			listing;
     Tree			tree;
     Paragraph			para;
-    AbstractActor		actor;
+    Actor			actor;
     OrderedList			olist;
     ListItem			listitem;
     ActorOptionTraverser	traverser;
@@ -491,8 +490,8 @@ public class XhtmlProducer
     String[]			lines;
 
     actor = null;
-    if (m_Input instanceof AbstractActor);
-      actor = (AbstractActor) m_Input;
+    if (m_Input instanceof Actor);
+      actor = (Actor) m_Input;
 
     body    = m_Document.getRoot().getBody();
     heading = new Heading(1, "Structure");
@@ -507,7 +506,7 @@ public class XhtmlProducer
 	para.setContent(actor.getAnnotations().getValue());
       }
     }
-    tree = new Tree(null, (AbstractActor) getInput());
+    tree = new Tree(null, (Actor) getInput());
     listing = new Code();
     lines = Utils.split(toPlainText(tree), "\n");
     listing.setContent(Utils.flatten(lines, "<br>\n"));

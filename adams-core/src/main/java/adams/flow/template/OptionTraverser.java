@@ -15,14 +15,14 @@
 
 /**
  * OptionTraverser.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.template;
 
 import adams.core.option.VariableLister;
 import adams.flow.control.Once;
 import adams.flow.control.Trigger;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.core.MutableActorHandler;
 import adams.flow.sink.Display;
 import adams.flow.sink.HistoryDisplay;
@@ -217,8 +217,8 @@ public class OptionTraverser
    *
    * @return 		the generated acto
    */
-  protected AbstractActor doGenerate() {
-    AbstractActor			result;
+  protected Actor doGenerate() {
+    Actor 				result;
     Trigger				trigger;
     Once				once;
     adams.flow.source.OptionTraverser	traverser;

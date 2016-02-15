@@ -1,269 +1,37 @@
 # Project: adams
-# Date: 2015-09-03 16:58:11
+# Date: 2016-02-15 14:59:45
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-actor
-		adams.flow.standalone.CallableActors
-			-actor
-				adams.flow.sink.SimplePlot
-					-name
-					Plot
-					-short-title
-					true
-					-writer
-						adams.gui.print.NullWriter
-					-paintlet
-						adams.gui.visualization.sequence.LinePaintlet
-					-overlay-paintlet
-						adams.gui.visualization.sequence.NullPaintlet
-					-mouse-click-action
-						adams.flow.sink.sequenceplotter.NullClickAction
-					-color-provider
-						adams.gui.visualization.core.DefaultColorProvider
-					-axis-x
-						adams.gui.visualization.core.AxisPanelOptions
-							-label
-							x
-							-tick-generator
-								adams.gui.visualization.core.axis.FancyTickGenerator
-									-num-ticks
-									20
-							-nth-value
-							2
-							-width
-							40
-							-custom-format
-							0.0
-					-axis-y
-						adams.gui.visualization.core.AxisPanelOptions
-							-label
-							y
-							-tick-generator
-								adams.gui.visualization.core.axis.FancyTickGenerator
-							-nth-value
-							2
-							-width
-							60
-							-custom-format
-							0.0
-					-output
-					@{plotdata}
-			-actor
-				adams.flow.sink.SequencePlotter
-					-name
-					RePlot
-					-short-title
-					true
-					-x
-					-3
-					-writer
-						adams.gui.print.NullWriter
-					-comparison
-					X_AND_Y
-					-paintlet
-						adams.gui.visualization.sequence.LinePaintlet
-					-overlay-paintlet
-						adams.gui.visualization.sequence.NullPaintlet
-					-marker-paintlet
-						adams.flow.sink.sequenceplotter.NoMarkers
-					-error-paintlet
-						adams.flow.sink.sequenceplotter.ErrorBandPaintlet
-					-mouse-click-action
-						adams.flow.sink.sequenceplotter.NullClickAction
-					-color-provider
-						adams.gui.visualization.core.DefaultColorProvider
-					-overlay-color-provider
-						adams.gui.visualization.core.DefaultColorProvider
-					-title
-					@{file}
-					-axis-x
-						adams.gui.visualization.core.AxisPanelOptions
-							-label
-							x
-							-tick-generator
-								adams.gui.visualization.core.axis.FancyTickGenerator
-							-nth-value
-							2
-							-width
-							40
-							-custom-format
-							0.0
-					-axis-y
-						adams.gui.visualization.core.AxisPanelOptions
-							-label
-							y
-							-tick-generator
-								adams.gui.visualization.core.axis.FancyTickGenerator
-							-nth-value
-							2
-							-width
-							60
-							-custom-format
-							0.0
-					-plot-updater
-						adams.flow.sink.sequenceplotter.SimplePlotUpdater
-							-update-interval
-							-1
-					-post-processor
-						adams.flow.sink.sequenceplotter.PassThrough
-	-actor
-		adams.flow.standalone.SetVariable
-			-annotation
-			for storing the plot data
-			-var-name
-			plotdata
-			-var-value
-			${EXAMPLE_FLOWS}/output/plotdata.csv
-	-actor
-		adams.flow.source.Start
-	-actor
-		adams.flow.control.Trigger
-			-name
-			generate plot
-			-tee
-				adams.flow.standalone.SetVariable
-					-var-name
-					mean
-					-var-value
-					0
-			-tee
-				adams.flow.standalone.SetVariable
-					-name
-					SetVariable-1
-					-var-name
-					stdev
-					-var-value
-					1.0
-			-tee
-				adams.flow.source.ForLoop
-					-lower
-					-200
-					-upper
-					200
-			-tee
-				adams.flow.transformer.MathExpression
-					-expression
-					X/33
-			-tee
-				adams.flow.control.Branch
-					-branch
-						adams.flow.control.Sequence
-							-name
-							normal dist
-							-actor
-								adams.flow.transformer.MathExpression
-									-name
-									MathExpression-1
-									-expression
-									1/sqrt(2*PI*pow(@{stdev},2))*exp(-1*pow(X-@{mean},2)/(2*@{stdev}))
-									-output-value-pair
-									true
-							-actor
-								adams.flow.transformer.MakePlotContainer
-									-plot-name
-									normal
-							-actor
-								adams.flow.sink.CallableSink
-									-callable
-									Plot
-					-branch
-						adams.flow.control.Sequence
-							-name
-							first derivative
-							-actor
-								adams.flow.transformer.MathExpression
-									-name
-									MathExpression-1
-									-expression
-									-(X-@{mean})*exp(-((X^2-2*@{mean}*X+@{mean}^2)/(2*@{stdev}^2)))/(sqrt(2)*sqrt(PI)*@{stdev}^2*abs(@{stdev}))
-									-output-value-pair
-									true
-							-actor
-								adams.flow.transformer.MakePlotContainer
-									-plot-name
-									1st deriv normal
-							-actor
-								adams.flow.sink.CallableSink
-									-callable
-									Plot
-					-branch
-						adams.flow.control.Sequence
-							-name
-							partial derivative (stdev)
-							-actor
-								adams.flow.transformer.MathExpression
-									-name
-									MathExpression-1
-									-expression
-									(sqrt(2)*X^2-2^(3/2)*@{mean}*X-sqrt(2)*@{stdev}^2+sqrt(2)*@{mean}^2)*exp(-((X^2-2*@{mean}*X+@{mean}^2)/(2*@{stdev}^2)))/(2*sqrt(PI)*@{stdev}^3*abs(@{stdev}))
-									-output-value-pair
-									true
-							-actor
-								adams.flow.transformer.MakePlotContainer
-									-plot-name
-									partial deriv (stdev)
-							-actor
-								adams.flow.sink.CallableSink
-									-callable
-									Plot
-					-branch
-						adams.flow.control.Sequence
-							-name
-							partial derivative (mean)
-							-actor
-								adams.flow.transformer.MathExpression
-									-name
-									MathExpression-1
-									-expression
-									(X-@{mean})*exp(-((X^2-2*@{mean}*X+@{mean}^2)/(2*@{stdev}^2)))/(sqrt(2)*sqrt(PI)*@{stdev}^2*abs(@{stdev}))
-									-output-value-pair
-									true
-							-actor
-								adams.flow.transformer.MakePlotContainer
-									-plot-name
-									partial deriv (mean)
-							-actor
-								adams.flow.sink.CallableSink
-									-callable
-									Plot
-	-actor
-		adams.flow.control.Trigger
-			-name
-			redisplay data
-			-tee
-				adams.flow.source.Variable
-					-var-name
-					plotdata
-			-tee
-				adams.flow.transformer.SpreadSheetFileReader
-					-reader
-						adams.data.io.input.CsvSpreadSheetReader
-							-data-row-type
-								adams.data.spreadsheet.DenseDataRow
-							-spreadsheet-type
-								adams.data.spreadsheet.SpreadSheet
-							-missing
-							
-							-num-rows-col-type-discovery
-							10
-			-tee
-				adams.flow.transformer.SpreadSheetPlotGenerator
-					-generator
-						adams.flow.transformer.plotgenerator.XYWithErrorsPlotGenerator
-							-plot-name-range
-							1
-							-y-column
-							6
-							-x-column
-							5
-							-y-error-columns
-							9,10
-			-tee
-				adams.flow.sink.CallableSink
-					-callable
-					RePlot
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.standalone.CallableActors
+  adams.flow.sink.SimplePlot -name Plot -short-title true -writer adams.gui.print.NullWriter -paintlet adams.gui.visualization.sequence.LinePaintlet -overlay-paintlet adams.gui.visualization.sequence.NullPaintlet -mouse-click-action adams.flow.sink.sequenceplotter.NullClickAction -color-provider adams.gui.visualization.core.DefaultColorProvider -axis-x "adams.gui.visualization.core.AxisPanelOptions -label x -tick-generator \"adams.gui.visualization.core.axis.FancyTickGenerator -num-ticks 20\" -nth-value 2 -width 40 -custom-format 0.0" -axis-y "adams.gui.visualization.core.AxisPanelOptions -label y -tick-generator adams.gui.visualization.core.axis.FancyTickGenerator -nth-value 2 -width 60 -custom-format 0.0" -output @{plotdata}
+  adams.flow.sink.SequencePlotter -name RePlot -short-title true -x -3 -writer adams.gui.print.NullWriter -comparison X_AND_Y -paintlet adams.gui.visualization.sequence.LinePaintlet -overlay-paintlet adams.gui.visualization.sequence.NullPaintlet -marker-paintlet adams.flow.sink.sequenceplotter.NoMarkers -error-paintlet adams.flow.sink.sequenceplotter.ErrorBandPaintlet -mouse-click-action adams.flow.sink.sequenceplotter.NullClickAction -color-provider adams.gui.visualization.core.DefaultColorProvider -overlay-color-provider adams.gui.visualization.core.DefaultColorProvider -title @{file} -axis-x "adams.gui.visualization.core.AxisPanelOptions -label x -tick-generator adams.gui.visualization.core.axis.FancyTickGenerator -nth-value 2 -width 40 -custom-format 0.0" -axis-y "adams.gui.visualization.core.AxisPanelOptions -label y -tick-generator adams.gui.visualization.core.axis.FancyTickGenerator -nth-value 2 -width 60 -custom-format 0.0" -plot-updater "adams.flow.sink.sequenceplotter.SimplePlotUpdater -update-interval -1" -post-processor adams.flow.sink.sequenceplotter.PassThrough
+ adams.flow.standalone.SetVariable -annotation "for storing the plot data" -var-name plotdata -var-value ${EXAMPLE_FLOWS}/output/plotdata.csv
+ adams.flow.source.Start
+ adams.flow.control.Trigger -name "generate plot"
+  adams.flow.standalone.SetVariable -var-name mean -var-value 0
+  adams.flow.standalone.SetVariable -name SetVariable-1 -var-name stdev -var-value 1.0
+  adams.flow.source.ForLoop -lower -200 -upper 200
+  adams.flow.transformer.MathExpression -expression X/33
+  adams.flow.control.Branch
+   adams.flow.control.Sequence -name "normal dist"
+    adams.flow.transformer.MathExpression -name MathExpression-1 -expression 1/sqrt(2*PI*pow(@{stdev},2))*exp(-1*pow(X-@{mean},2)/(2*@{stdev})) -output-value-pair true
+    adams.flow.transformer.MakePlotContainer -plot-name normal
+    adams.flow.sink.CallableSink -callable Plot
+   adams.flow.control.Sequence -name "first derivative"
+    adams.flow.transformer.MathExpression -name MathExpression-1 -expression -(X-@{mean})*exp(-((X^2-2*@{mean}*X+@{mean}^2)/(2*@{stdev}^2)))/(sqrt(2)*sqrt(PI)*@{stdev}^2*abs(@{stdev})) -output-value-pair true
+    adams.flow.transformer.MakePlotContainer -plot-name "1st deriv normal"
+    adams.flow.sink.CallableSink -callable Plot
+   adams.flow.control.Sequence -name "partial derivative (stdev)"
+    adams.flow.transformer.MathExpression -name MathExpression-1 -expression (sqrt(2)*X^2-2^(3/2)*@{mean}*X-sqrt(2)*@{stdev}^2+sqrt(2)*@{mean}^2)*exp(-((X^2-2*@{mean}*X+@{mean}^2)/(2*@{stdev}^2)))/(2*sqrt(PI)*@{stdev}^3*abs(@{stdev})) -output-value-pair true
+    adams.flow.transformer.MakePlotContainer -plot-name "partial deriv (stdev)"
+    adams.flow.sink.CallableSink -callable Plot
+   adams.flow.control.Sequence -name "partial derivative (mean)"
+    adams.flow.transformer.MathExpression -name MathExpression-1 -expression (X-@{mean})*exp(-((X^2-2*@{mean}*X+@{mean}^2)/(2*@{stdev}^2)))/(sqrt(2)*sqrt(PI)*@{stdev}^2*abs(@{stdev})) -output-value-pair true
+    adams.flow.transformer.MakePlotContainer -plot-name "partial deriv (mean)"
+    adams.flow.sink.CallableSink -callable Plot
+ adams.flow.control.Trigger -name "redisplay data"
+  adams.flow.source.Variable -var-name plotdata
+  adams.flow.transformer.SpreadSheetFileReader -reader "adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.SpreadSheet -missing \"\" -num-rows-col-type-discovery 10"
+  adams.flow.transformer.SpreadSheetPlotGenerator -generator "adams.flow.transformer.plotgenerator.XYWithErrorsPlotGenerator -plot-name-range 1 -y-column 6 -x-column 5 -y-error-columns 9,10"
+  adams.flow.sink.CallableSink -callable RePlot

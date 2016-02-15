@@ -15,14 +15,14 @@
 
 /**
  * ArrayProcess.java
- * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.control;
 
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
 import adams.core.base.BaseClassname;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.core.InputConsumer;
 import adams.flow.core.OutputProducer;
 import adams.flow.core.Token;
@@ -75,7 +75,7 @@ import java.util.Hashtable;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-actor &lt;adams.flow.core.AbstractActor&gt; [-actor ...] (property: actors)
+ * <pre>-actor &lt;adams.flow.core.Actor&gt; [-actor ...] (property: actors)
  * &nbsp;&nbsp;&nbsp;All the actors that define this sequence.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
@@ -295,7 +295,7 @@ public class ArrayProcess
   @Override
   protected String doExecute() {
     String		result;
-    AbstractActor	first;
+    Actor 		first;
     int			len;
     int			i;
     Token		input;

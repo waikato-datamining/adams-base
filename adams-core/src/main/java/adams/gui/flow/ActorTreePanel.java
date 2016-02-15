@@ -20,8 +20,8 @@
 package adams.gui.flow;
 
 import adams.core.option.HtmlHelpProducer;
-import adams.core.option.OptionHandler;
 import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BasePopupMenu;
 import adams.gui.core.BaseScrollPane;
@@ -183,7 +183,7 @@ public class ActorTreePanel
    * @param classname	the class name of the actor to copy to the clipboard
    */
   protected void copyToClipboard(String classname) {
-    AbstractActor		actor;
+    Actor 			actor;
     ClipboardActorContainer	cont;
 
     actor = AbstractActor.forCommandLine(classname);
@@ -191,7 +191,7 @@ public class ActorTreePanel
       return;
 
     cont = new ClipboardActorContainer();
-    cont.setActors(new AbstractActor[]{actor});
+    cont.setActors(new Actor[]{actor});
 
     GUIHelper.copyToClipboard(cont.toNestedString());
   }
@@ -204,7 +204,7 @@ public class ActorTreePanel
   protected void showHelp(String classname) {
     HelpDialog		dialog;
     HtmlHelpProducer 	producer;
-    AbstractActor	actor;
+    Actor		actor;
 
     actor = AbstractActor.forCommandLine(classname);
     if (actor == null)
@@ -216,7 +216,7 @@ public class ActorTreePanel
       dialog = new HelpDialog(getParentFrame());
     dialog.setDefaultCloseOperation(HelpDialog.DISPOSE_ON_CLOSE);
     producer = new HtmlHelpProducer();
-    producer.produce((OptionHandler) actor);
+    producer.produce(actor);
     dialog.setHelp(producer.getOutput(), true);
     dialog.setTitle("Help on " + actor.getClass().getName());
     dialog.setLocation(

@@ -15,21 +15,21 @@
 
 /**
  * QueueInit.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.standalone;
-
-import java.util.Hashtable;
 
 import adams.core.QuickInfoHelper;
 import adams.db.LogEntry;
 import adams.flow.control.StorageName;
 import adams.flow.control.StorageQueueHandler;
 import adams.flow.control.StorageUpdater;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.core.CallableActorHelper;
 import adams.flow.core.CallableActorReference;
 import adams.flow.core.CallableActorUser;
+
+import java.util.Hashtable;
 
 /**
  <!-- globalinfo-start -->
@@ -127,13 +127,13 @@ public class QueueInit
   protected CallableActorReference m_Log;
 
   /** the log actor. */
-  protected AbstractActor m_LogActor;
+  protected Actor m_LogActor;
 
   /** the callable name for the monitor. */
   protected CallableActorReference m_Monitor;
 
   /** the monitor actor. */
-  protected AbstractActor m_MonitorActor;
+  protected Actor m_MonitorActor;
 
   /** the helper class. */
   protected CallableActorHelper m_Helper;
@@ -381,7 +381,7 @@ public class QueueInit
    * @param name	the name of the actor
    * @return		the callable actor or null if not found
    */
-  protected AbstractActor findCallableActor(CallableActorReference name) {
+  protected Actor findCallableActor(CallableActorReference name) {
     return m_Helper.findCallableActorRecursive(this, name);
   }
 
@@ -391,7 +391,7 @@ public class QueueInit
    * @return		the actor, can be null
    */
   @Override
-  public AbstractActor getCallableActor() {
+  public Actor getCallableActor() {
     return m_LogActor;
   }
 
@@ -434,12 +434,12 @@ public class QueueInit
     super.restoreState(state);
 
     if (state.containsKey(BACKUP_LOGACTOR)) {
-      m_LogActor = (AbstractActor) state.get(BACKUP_LOGACTOR);
+      m_LogActor = (Actor) state.get(BACKUP_LOGACTOR);
       state.remove(BACKUP_LOGACTOR);
     }
 
     if (state.containsKey(BACKUP_MONITORACTOR)) {
-      m_MonitorActor = (AbstractActor) state.get(BACKUP_MONITORACTOR);
+      m_MonitorActor = (Actor) state.get(BACKUP_MONITORACTOR);
       state.remove(BACKUP_MONITORACTOR);
     }
   }

@@ -1,87 +1,16 @@
 # Project: adams
-# Date: 2014-09-15 11:45:04
+# Date: 2016-02-15 14:30:20
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	Loads images from disk and displays the originals\nand ones transformed using the ImageJ FFT plugin.
-	-actor
-		adams.flow.source.DirectoryLister
-			-dir
-			${EXAMPLE_FLOWS}/data
-			-list-files
-			true
-			-regexp
-			.*.jpg
-	-actor
-		adams.flow.control.Tee
-			-name
-			extract name
-			-tee
-				adams.flow.transformer.BaseName
-			-tee
-				adams.flow.transformer.SetVariable
-					-var-name
-					name
-	-actor
-		adams.flow.transformer.ImageJReader
-	-actor
-		adams.flow.control.Branch
-			-branch
-				adams.flow.control.Sequence
-					-name
-					fft
-					-actor
-						adams.flow.transformer.ImageJTransformer
-							-transformer
-								adams.data.imagej.transformer.PlugInFilter
-					-actor
-						adams.flow.sink.DisplayPanelManager
-							-name
-							FFT
-							-short-title
-							true
-							-width
-							700
-							-height
-							550
-							-provider
-								adams.flow.sink.ImageViewer
-									-writer
-										adams.gui.print.NullWriter
-									-selection-processor
-										adams.gui.visualization.image.selection.NullProcessor
-									-image-overlay
-										adams.gui.visualization.image.NullOverlay
-							-entry-name-variable
-							name
-			-branch
-				adams.flow.control.Sequence
-					-name
-					original
-					-actor
-						adams.flow.sink.DisplayPanelManager
-							-name
-							Original
-							-short-title
-							true
-							-width
-							700
-							-height
-							550
-							-x
-							-3
-							-provider
-								adams.flow.sink.ImageViewer
-									-writer
-										adams.gui.print.NullWriter
-									-selection-processor
-										adams.gui.visualization.image.selection.NullProcessor
-									-image-overlay
-										adams.gui.visualization.image.NullOverlay
-							-entry-name-variable
-							name
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "Loads images from disk and displays the originals\\nand ones transformed using the ImageJ FFT plugin." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.source.DirectoryLister -dir ${EXAMPLE_FLOWS}/data -list-files true -regexp .*.jpg
+ adams.flow.control.Tee -name "extract name"
+  adams.flow.transformer.BaseName
+  adams.flow.transformer.SetVariable -var-name name
+ adams.flow.transformer.ImageJReader
+ adams.flow.control.Branch
+  adams.flow.control.Sequence -name fft
+   adams.flow.transformer.ImageJTransformer -transformer adams.data.imagej.transformer.PlugInFilter
+   adams.flow.sink.DisplayPanelManager -name FFT -short-title true -width 700 -height 550 -provider "adams.flow.sink.ImageViewer -writer adams.gui.print.NullWriter -selection-processor adams.gui.visualization.image.selection.NullProcessor -image-overlay adams.gui.visualization.image.NullOverlay" -entry-name-variable name
+  adams.flow.control.Sequence -name original
+   adams.flow.sink.DisplayPanelManager -name Original -short-title true -width 700 -height 550 -x -3 -provider "adams.flow.sink.ImageViewer -writer adams.gui.print.NullWriter -selection-processor adams.gui.visualization.image.selection.NullProcessor -image-overlay adams.gui.visualization.image.NullOverlay" -entry-name-variable name

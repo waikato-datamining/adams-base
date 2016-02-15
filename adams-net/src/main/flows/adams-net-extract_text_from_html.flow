@@ -1,25 +1,9 @@
 # Project: adams
-# Date: 2014-12-24 09:54:15
+# Date: 2016-02-15 14:41:29
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	Downloads an HTML page and extracts the text.
-	-actor
-		adams.flow.source.URLSupplier
-			-url
-			https://github.com/index.html
-	-actor
-		adams.flow.transformer.DownloadContent
-	-actor
-		adams.flow.transformer.Convert
-			-conversion
-				adams.data.conversion.HTMLToText
-	-actor
-		adams.flow.sink.Display
-			-writer
-				adams.data.io.output.NullWriter
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "Downloads an HTML page and extracts the text." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.source.URLSupplier -url https://github.com/index.html
+ adams.flow.transformer.DownloadContent
+ adams.flow.transformer.Convert -conversion adams.data.conversion.HTMLToText
+ adams.flow.sink.Display -writer adams.data.io.output.NullWriter

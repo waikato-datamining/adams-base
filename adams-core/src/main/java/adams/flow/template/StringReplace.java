@@ -15,11 +15,9 @@
 
 /**
  * StringReplace.java
- * Copyright (C) 2010-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.template;
-
-import java.util.List;
 
 import adams.core.Utils;
 import adams.core.base.BaseRegExp;
@@ -27,7 +25,9 @@ import adams.core.base.BaseString;
 import adams.core.io.FileUtils;
 import adams.core.option.AbstractOptionConsumer;
 import adams.core.option.NestedConsumer;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
+
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -192,8 +192,8 @@ public class StringReplace
    * @return 		the generated acto
    */
   @Override
-  protected AbstractActor doGenerate() {
-    AbstractActor	result;
+  protected Actor doGenerate() {
+    Actor		result;
     List<String>	lines;
     String		line;
     int			i;
@@ -220,7 +220,7 @@ public class StringReplace
 
 
       // instantiate actor
-      result = (AbstractActor) AbstractOptionConsumer.fromString(NestedConsumer.class, Utils.flatten(lines, "\n"));
+      result = (Actor) AbstractOptionConsumer.fromString(NestedConsumer.class, Utils.flatten(lines, "\n"));
       if (result == null)
 	getLogger().severe("Failed to instantiate actor from: " + m_TemplateFile);
     }

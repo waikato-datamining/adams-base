@@ -27,7 +27,7 @@ import adams.core.option.OptionUtils;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.test.TmpFile;
 
 /**
@@ -100,22 +100,22 @@ public class WekaTrainTestSetClustererEvaluatorTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
   @Override
-  public AbstractActor getActor() {
+  public Actor getActor() {
     AbstractArgumentOption    argOption;
     
     Flow flow = new Flow();
     
     try {
       argOption = (AbstractArgumentOption) flow.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] abstractactor1 = new adams.flow.core.AbstractActor[5];
+      adams.flow.core.Actor[] abstractactor1 = new adams.flow.core.Actor[5];
 
       // Flow.CallableActors
       adams.flow.standalone.CallableActors globalactors2 = new adams.flow.standalone.CallableActors();
       argOption = (AbstractArgumentOption) globalactors2.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] abstractactor3 = new adams.flow.core.AbstractActor[3];
+      adams.flow.core.Actor[] abstractactor3 = new adams.flow.core.Actor[3];
 
       // Flow.CallableActors.train
       adams.flow.source.SequenceSource sequencesource4 = new adams.flow.source.SequenceSource();
@@ -123,7 +123,7 @@ public class WekaTrainTestSetClustererEvaluatorTest
       sequencesource4.setName((java.lang.String) argOption.valueOf("train"));
 
       argOption = (AbstractArgumentOption) sequencesource4.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] abstractactor6 = new adams.flow.core.AbstractActor[3];
+      adams.flow.core.Actor[] abstractactor6 = new adams.flow.core.Actor[3];
 
       // Flow.CallableActors.train.FileSupplier
       adams.flow.source.FileSupplier filesupplier7 = new adams.flow.source.FileSupplier();
@@ -160,7 +160,7 @@ public class WekaTrainTestSetClustererEvaluatorTest
       sequencesource15.setName((java.lang.String) argOption.valueOf("test"));
 
       argOption = (AbstractArgumentOption) sequencesource15.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] abstractactor17 = new adams.flow.core.AbstractActor[3];
+      adams.flow.core.Actor[] abstractactor17 = new adams.flow.core.Actor[3];
 
       // Flow.CallableActors.test.FileSupplier
       adams.flow.source.FileSupplier filesupplier18 = new adams.flow.source.FileSupplier();

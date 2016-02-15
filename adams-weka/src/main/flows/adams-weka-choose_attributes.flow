@@ -1,31 +1,10 @@
 # Project: adams
-# Date: 2014-01-23 15:48:11
+# Date: 2016-02-15 15:19:38
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	In this flow, the user selects the attributes to use\nfurther downstream in the flow. In this case, just\na simple display of the dataset.
-	-actor
-		adams.flow.source.FileSupplier
-			-file
-			${EXAMPLE_FLOWS}/data/anneal.arff
-	-actor
-		adams.flow.transformer.WekaFileReader
-			-loader
-				weka.core.converters.ArffLoader
-	-actor
-		adams.flow.transformer.WekaChooseAttributes
-			-stop-if-canceled
-			true
-			-custom-stop-message
-			User canceled selection of attributes!
-	-actor
-		adams.flow.transformer.WekaClassSelector
-	-actor
-		adams.flow.sink.WekaInstancesDisplay
-			-writer
-				adams.gui.print.NullWriter
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "In this flow, the user selects the attributes to use\\nfurther downstream in the flow. In this case, just\\na simple display of the dataset." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/anneal.arff
+ adams.flow.transformer.WekaFileReader -loader weka.core.converters.ArffLoader
+ adams.flow.transformer.WekaChooseAttributes -stop-if-canceled true -custom-stop-message "User canceled selection of attributes!"
+ adams.flow.transformer.WekaClassSelector
+ adams.flow.sink.WekaInstancesDisplay -writer adams.gui.print.NullWriter

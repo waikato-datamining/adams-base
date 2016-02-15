@@ -1,49 +1,17 @@
 # Project: adams
-# Date: 2014-01-23 15:48:52
+# Date: 2016-02-15 15:21:21
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	This flow demonstrates how to create empty \nweka.core.Instance objects from an existing \ndataset. Both, a dense and a sparse instance\nare generated and displayed.
-	-actor
-		adams.flow.standalone.CallableActors
-			-actor
-				adams.flow.sink.HistoryDisplay
-	-actor
-		adams.flow.source.FileSupplier
-			-file
-			${EXAMPLE_FLOWS}/data/anneal.arff
-	-actor
-		adams.flow.transformer.WekaFileReader
-			-loader
-				weka.core.converters.ArffLoader
-	-actor
-		adams.flow.transformer.WekaClassSelector
-	-actor
-		adams.flow.control.Branch
-			-branch
-				adams.flow.control.Sequence
-					-name
-					dense
-					-actor
-						adams.flow.transformer.WekaNewInstance
-					-actor
-						adams.flow.sink.CallableSink
-							-callable
-							HistoryDisplay
-			-branch
-				adams.flow.control.Sequence
-					-name
-					sparse
-					-actor
-						adams.flow.transformer.WekaNewInstance
-							-instance-class
-							weka.core.SparseInstance
-					-actor
-						adams.flow.sink.CallableSink
-							-callable
-							HistoryDisplay
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "This flow demonstrates how to create empty \\nweka.core.Instance objects from an existing \\ndataset. Both, a dense and a sparse instance\\nare generated and displayed." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.standalone.CallableActors
+  adams.flow.sink.HistoryDisplay
+ adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/anneal.arff
+ adams.flow.transformer.WekaFileReader -loader weka.core.converters.ArffLoader
+ adams.flow.transformer.WekaClassSelector
+ adams.flow.control.Branch
+  adams.flow.control.Sequence -name dense
+   adams.flow.transformer.WekaNewInstance
+   adams.flow.sink.CallableSink -callable HistoryDisplay
+  adams.flow.control.Sequence -name sparse
+   adams.flow.transformer.WekaNewInstance -instance-class weka.core.SparseInstance
+   adams.flow.sink.CallableSink -callable HistoryDisplay

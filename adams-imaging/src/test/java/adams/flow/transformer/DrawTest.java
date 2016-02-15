@@ -25,7 +25,7 @@ import adams.data.io.input.JAIImageReader;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
@@ -85,20 +85,20 @@ public class DrawTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
   @Override
-  public AbstractActor getActor() {
+  public Actor getActor() {
     AbstractArgumentOption    argOption;
     
     Flow flow = new Flow();
     
     try {
       argOption = (AbstractArgumentOption) flow.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp1 = new adams.flow.core.AbstractActor[7];
+      adams.flow.core.Actor[] tmp1 = new adams.flow.core.Actor[7];
       adams.flow.standalone.CallableActors tmp2 = new adams.flow.standalone.CallableActors();
       argOption = (AbstractArgumentOption) tmp2.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp3 = new adams.flow.core.AbstractActor[1];
+      adams.flow.core.Actor[] tmp3 = new adams.flow.core.Actor[1];
       adams.flow.sink.DisplayPanelManager tmp4 = new adams.flow.sink.DisplayPanelManager();
       argOption = (AbstractArgumentOption) tmp4.getOptionManager().findByProperty("panelProvider");
       adams.flow.sink.ImageViewer tmp6 = new adams.flow.sink.ImageViewer();
@@ -125,7 +125,7 @@ public class DrawTest
       tmp12.setName((java.lang.String) argOption.valueOf("display original image"));
 
       argOption = (AbstractArgumentOption) tmp12.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp14 = new adams.flow.core.AbstractActor[2];
+      adams.flow.core.Actor[] tmp14 = new adams.flow.core.Actor[2];
       adams.flow.transformer.Copy tmp15 = new adams.flow.transformer.Copy();
       tmp14[0] = tmp15;
       adams.flow.sink.CallableSink tmp16 = new adams.flow.sink.CallableSink();
@@ -146,7 +146,7 @@ public class DrawTest
       tmp20.setName((java.lang.String) argOption.valueOf("loop x coord"));
 
       argOption = (AbstractArgumentOption) tmp20.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp22 = new adams.flow.core.AbstractActor[3];
+      adams.flow.core.Actor[] tmp22 = new adams.flow.core.Actor[3];
       adams.flow.source.ForLoop tmp23 = new adams.flow.source.ForLoop();
       argOption = (AbstractArgumentOption) tmp23.getOptionManager().findByProperty("loopLower");
       tmp23.setLoopLower((Integer) argOption.valueOf("20"));
@@ -165,7 +165,7 @@ public class DrawTest
       tmp28.setName((java.lang.String) argOption.valueOf("loop y coord"));
 
       argOption = (AbstractArgumentOption) tmp28.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp30 = new adams.flow.core.AbstractActor[7];
+      adams.flow.core.Actor[] tmp30 = new adams.flow.core.Actor[7];
       adams.flow.source.ForLoop tmp31 = new adams.flow.source.ForLoop();
       argOption = (AbstractArgumentOption) tmp31.getOptionManager().findByProperty("loopLower");
       tmp31.setLoopLower((Integer) argOption.valueOf("20"));
@@ -203,7 +203,7 @@ public class DrawTest
       tmp44.setName((java.lang.String) argOption.valueOf("calc RGBA value"));
 
       argOption = (AbstractArgumentOption) tmp44.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp46 = new adams.flow.core.AbstractActor[3];
+      adams.flow.core.Actor[] tmp46 = new adams.flow.core.Actor[3];
       adams.flow.source.RandomNumberGenerator tmp47 = new adams.flow.source.RandomNumberGenerator();
       argOption = (AbstractArgumentOption) tmp47.getOptionManager().findByProperty("generator");
       adams.data.random.JavaRandomInt tmp49 = new adams.data.random.JavaRandomInt();
@@ -238,7 +238,7 @@ public class DrawTest
       tmp57.setName((java.lang.String) argOption.valueOf("update image"));
 
       argOption = (AbstractArgumentOption) tmp57.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp59 = new adams.flow.core.AbstractActor[2];
+      adams.flow.core.Actor[] tmp59 = new adams.flow.core.Actor[2];
       adams.flow.source.StorageValue tmp60 = new adams.flow.source.StorageValue();
       argOption = (AbstractArgumentOption) tmp60.getOptionManager().findByProperty("storageName");
       tmp60.setStorageName((adams.flow.control.StorageName) argOption.valueOf("image"));
@@ -271,7 +271,7 @@ public class DrawTest
       tmp63.setName((java.lang.String) argOption.valueOf("display modified image"));
 
       argOption = (AbstractArgumentOption) tmp63.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp65 = new adams.flow.core.AbstractActor[2];
+      adams.flow.core.Actor[] tmp65 = new adams.flow.core.Actor[2];
       adams.flow.source.StorageValue tmp66 = new adams.flow.source.StorageValue();
       argOption = (AbstractArgumentOption) tmp66.getOptionManager().findByProperty("storageName");
       tmp66.setStorageName((adams.flow.control.StorageName) argOption.valueOf("image"));

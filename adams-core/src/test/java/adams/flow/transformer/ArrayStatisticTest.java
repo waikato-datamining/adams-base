@@ -30,7 +30,7 @@ import adams.data.statistics.MultiArrayStatistic;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.sink.DumpFile;
 import adams.flow.source.RandomNumberGenerator;
 import adams.flow.transformer.ArrayStatistic.DataType;
@@ -81,10 +81,10 @@ public class ArrayStatisticTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
   @Override
-  public AbstractActor getActor() {
+  public Actor getActor() {
     RandomNumberGenerator rng = new RandomNumberGenerator();
     rng.setMaxNum(100);
 
@@ -111,7 +111,7 @@ public class ArrayStatisticTest
     df.setOutputFile(new TmpFile("dumpfile.csv"));
 
     Flow flow = new Flow();
-    flow.setActors(new AbstractActor[]{rng, s2a1, s2a2, is, df});
+    flow.setActors(new Actor[]{rng, s2a1, s2a2, is, df});
 
     return flow;
   }

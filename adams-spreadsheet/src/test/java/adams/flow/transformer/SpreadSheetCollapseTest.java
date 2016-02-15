@@ -30,7 +30,7 @@ import adams.flow.AbstractFlowTest;
 import adams.flow.control.Branch;
 import adams.flow.control.Flow;
 import adams.flow.control.Sequence;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.execution.NullListener;
 import adams.flow.sink.DumpFile;
 import adams.flow.source.FileSupplier;
@@ -113,15 +113,15 @@ public class SpreadSheetCollapseTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
-  public AbstractActor getActor() {
+  public Actor getActor() {
     AbstractArgumentOption    argOption;
     
     Flow flow = new Flow();
     
     try {
-      List<AbstractActor> actors = new ArrayList<AbstractActor>();
+      List<Actor> actors = new ArrayList<Actor>();
 
       // Flow.FileSupplier
       FileSupplier filesupplier = new FileSupplier();
@@ -148,7 +148,7 @@ public class SpreadSheetCollapseTest
 
       // Flow.Branch
       Branch branch = new Branch();
-      List<AbstractActor> branches = new ArrayList<AbstractActor>();
+      List<Actor> branches = new ArrayList<Actor>();
 
       // Flow.Branch.DumpFile
       DumpFile dumpfile = new DumpFile();
@@ -160,7 +160,7 @@ public class SpreadSheetCollapseTest
       Sequence sequence = new Sequence();
       argOption = (AbstractArgumentOption) sequence.getOptionManager().findByProperty("name");
       sequence.setName((String) argOption.valueOf("collapsed"));
-      List<AbstractActor> actors2 = new ArrayList<AbstractActor>();
+      List<Actor> actors2 = new ArrayList<Actor>();
 
       // Flow.Branch.collapsed.SpreadSheetCollapse
       SpreadSheetCollapse spreadsheetcollapse = new SpreadSheetCollapse();
@@ -173,7 +173,7 @@ public class SpreadSheetCollapseTest
       argOption = (AbstractArgumentOption) dumpfile2.getOptionManager().findByProperty("outputFile");
       dumpfile2.setOutputFile((PlaceholderFile) argOption.valueOf("${TMP}/dumpfile2.csv"));
       actors2.add(dumpfile2);
-      sequence.setActors(actors2.toArray(new AbstractActor[0]));
+      sequence.setActors(actors2.toArray(new Actor[0]));
 
       branches.add(sequence);
 
@@ -181,7 +181,7 @@ public class SpreadSheetCollapseTest
       Sequence sequence2 = new Sequence();
       argOption = (AbstractArgumentOption) sequence2.getOptionManager().findByProperty("name");
       sequence2.setName((String) argOption.valueOf("collapsed no dup"));
-      List<AbstractActor> actors3 = new ArrayList<AbstractActor>();
+      List<Actor> actors3 = new ArrayList<Actor>();
 
       // Flow.Branch.collapsed no dup.SpreadSheetCollapse
       SpreadSheetCollapse spreadsheetcollapse2 = new SpreadSheetCollapse();
@@ -196,15 +196,15 @@ public class SpreadSheetCollapseTest
       argOption = (AbstractArgumentOption) dumpfile3.getOptionManager().findByProperty("outputFile");
       dumpfile3.setOutputFile((PlaceholderFile) argOption.valueOf("${TMP}/dumpfile3.csv"));
       actors3.add(dumpfile3);
-      sequence2.setActors(actors3.toArray(new AbstractActor[0]));
+      sequence2.setActors(actors3.toArray(new Actor[0]));
 
       branches.add(sequence2);
-      branch.setBranches(branches.toArray(new AbstractActor[0]));
+      branch.setBranches(branches.toArray(new Actor[0]));
 
       argOption = (AbstractArgumentOption) branch.getOptionManager().findByProperty("numThreads");
       branch.setNumThreads((Integer) argOption.valueOf("1"));
       actors.add(branch);
-      flow.setActors(actors.toArray(new AbstractActor[0]));
+      flow.setActors(actors.toArray(new Actor[0]));
 
       NullListener nulllistener = new NullListener();
       flow.setFlowExecutionListener(nulllistener);

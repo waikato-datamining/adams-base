@@ -15,13 +15,9 @@
 
 /**
  * AbstractNameUpdater.java
- * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.processor;
-
-import java.lang.reflect.Array;
-import java.lang.reflect.Method;
-import java.util.logging.Level;
 
 import adams.core.option.AbstractArgumentOption;
 import adams.core.option.AbstractOption;
@@ -30,7 +26,11 @@ import adams.core.option.ClassOption;
 import adams.core.option.OptionTraversalPath;
 import adams.core.option.OptionTraverser;
 import adams.flow.control.Flow;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
+
+import java.lang.reflect.Array;
+import java.lang.reflect.Method;
+import java.util.logging.Level;
 
 /**
  * Ancestor for processors that update names of actors.
@@ -250,7 +250,7 @@ public abstract class AbstractNameUpdater<T>
    * @param actor	the actor to process
    */
   @Override
-  protected void processActor(AbstractActor actor) {
+  protected void processActor(Actor actor) {
     actor.getOptionManager().traverse(new OptionTraverser() {
       public void handleClassOption(ClassOption option, OptionTraversalPath path) {
 	if (canProcessClassOptions())

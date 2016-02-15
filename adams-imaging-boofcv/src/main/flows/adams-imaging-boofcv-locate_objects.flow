@@ -1,163 +1,30 @@
 # Project: adams
-# Date: 2015-01-21 12:46:33
+# Date: 2016-02-15 14:29:18
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	Locates objects in an image and displays them.
-	-actor
-		adams.flow.standalone.TabView
-			-name
-			Objects
-			-short-title
-			true
-			-actor
-				adams.flow.sink.DisplayPanelManager
-					-name
-					binary contours
-					-width
-					1000
-					-height
-					600
-					-provider
-						adams.flow.sink.ImageViewer
-							-writer
-								adams.gui.print.NullWriter
-							-zoom
-							-1.0
-							-show-properties
-							true
-							-properties-width
-							350
-							-selection-processor
-								adams.gui.visualization.image.selection.NullProcessor
-							-image-overlay
-								adams.gui.visualization.image.NullOverlay
-			-actor
-				adams.flow.sink.DisplayPanelManager
-					-name
-					canny edges
-					-width
-					1000
-					-height
-					600
-					-provider
-						adams.flow.sink.ImageViewer
-							-writer
-								adams.gui.print.NullWriter
-							-zoom
-							-1.0
-							-show-properties
-							true
-							-properties-width
-							350
-							-selection-processor
-								adams.gui.visualization.image.selection.NullProcessor
-							-image-overlay
-								adams.gui.visualization.image.NullOverlay
-	-actor
-		adams.flow.standalone.TabView
-			-name
-			Reports
-			-short-title
-			true
-			-x
-			-3
-			-actor
-				adams.flow.sink.ReportDisplay
-					-name
-					binary contours (report)
-			-actor
-				adams.flow.sink.ReportDisplay
-					-name
-					canny edges (report)
-	-actor
-		adams.flow.source.FileSupplier
-			-file
-			${EXAMPLE_FLOWS}/data/particles.jpg
-	-actor
-		adams.flow.transformer.ImageReader
-			-reader
-				adams.data.io.input.JAIImageReader
-	-actor
-		adams.flow.control.Branch
-			-branch
-				adams.flow.control.Sequence
-					-name
-					binary contours
-					-actor
-						adams.flow.control.Branch
-							-branch
-								adams.flow.control.Sequence
-									-name
-									objects
-									-actor
-										adams.flow.transformer.LocateObjects
-											-locator
-												adams.flow.transformer.locateobjects.BinaryContours
-									-actor
-										adams.flow.sink.CallableSink
-											-callable
-											binary contours
-							-branch
-								adams.flow.control.Sequence
-									-name
-									report
-									-actor
-										adams.flow.transformer.LocateObjects
-											-locator
-												adams.flow.transformer.locateobjects.BinaryContours
-											-generate-report
-											true
-									-actor
-										adams.flow.sink.CallableSink
-											-callable
-											binary contours (report)
-			-branch
-				adams.flow.control.Sequence
-					-name
-					canny edges
-					-actor
-						adams.flow.control.Branch
-							-branch
-								adams.flow.control.Sequence
-									-name
-									objects
-									-actor
-										adams.flow.transformer.LocateObjects
-											-locator
-												adams.flow.transformer.locateobjects.SizeFilter
-													-locator
-														adams.flow.transformer.locateobjects.CannyEdges
-													-min-width
-													10
-													-min-height
-													10
-									-actor
-										adams.flow.sink.CallableSink
-											-callable
-											canny edges
-							-branch
-								adams.flow.control.Sequence
-									-name
-									report
-									-actor
-										adams.flow.transformer.LocateObjects
-											-locator
-												adams.flow.transformer.locateobjects.SizeFilter
-													-locator
-														adams.flow.transformer.locateobjects.CannyEdges
-													-min-width
-													10
-													-min-height
-													10
-											-generate-report
-											true
-									-actor
-										adams.flow.sink.CallableSink
-											-callable
-											canny edges (report)
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "Locates objects in an image and displays them." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.standalone.TabView -name Objects -short-title true
+  adams.flow.sink.DisplayPanelManager -name "binary contours" -width 1000 -height 600 -provider "adams.flow.sink.ImageViewer -writer adams.gui.print.NullWriter -zoom -1.0 -show-properties true -properties-width 350 -selection-processor adams.gui.visualization.image.selection.NullProcessor -image-overlay adams.gui.visualization.image.NullOverlay"
+  adams.flow.sink.DisplayPanelManager -name "canny edges" -width 1000 -height 600 -provider "adams.flow.sink.ImageViewer -writer adams.gui.print.NullWriter -zoom -1.0 -show-properties true -properties-width 350 -selection-processor adams.gui.visualization.image.selection.NullProcessor -image-overlay adams.gui.visualization.image.NullOverlay"
+ adams.flow.standalone.TabView -name Reports -short-title true -x -3
+  adams.flow.sink.ReportDisplay -name "binary contours (report)"
+  adams.flow.sink.ReportDisplay -name "canny edges (report)"
+ adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/particles.jpg
+ adams.flow.transformer.ImageReader -reader adams.data.io.input.JAIImageReader
+ adams.flow.control.Branch
+  adams.flow.control.Sequence -name "binary contours"
+   adams.flow.control.Branch
+    adams.flow.control.Sequence -name objects
+     adams.flow.transformer.LocateObjects -locator adams.flow.transformer.locateobjects.BinaryContours
+     adams.flow.sink.CallableSink -callable "binary contours"
+    adams.flow.control.Sequence -name report
+     adams.flow.transformer.LocateObjects -locator adams.flow.transformer.locateobjects.BinaryContours -generate-report true
+     adams.flow.sink.CallableSink -callable "binary contours (report)"
+  adams.flow.control.Sequence -name "canny edges"
+   adams.flow.control.Branch
+    adams.flow.control.Sequence -name objects
+     adams.flow.transformer.LocateObjects -locator "adams.flow.transformer.locateobjects.SizeFilter -locator adams.flow.transformer.locateobjects.CannyEdges -min-width 10 -min-height 10"
+     adams.flow.sink.CallableSink -callable "canny edges"
+    adams.flow.control.Sequence -name report
+     adams.flow.transformer.LocateObjects -locator "adams.flow.transformer.locateobjects.SizeFilter -locator adams.flow.transformer.locateobjects.CannyEdges -min-width 10 -min-height 10" -generate-report true
+     adams.flow.sink.CallableSink -callable "canny edges (report)"

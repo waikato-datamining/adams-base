@@ -27,7 +27,7 @@ import adams.core.option.AbstractArgumentOption;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 
 /**
  * Test for Gnuplot actor.
@@ -89,10 +89,10 @@ public class GnuplotTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
   @Override
-  public AbstractActor getActor() {
+  public Actor getActor() {
     AbstractArgumentOption    argOption;
     
     Flow flow = new Flow();
@@ -102,7 +102,7 @@ public class GnuplotTest
       flow.setAnnotations((adams.core.base.BaseAnnotation) argOption.valueOf("This flow generates a Gnuplot script file for the \"bolts\" UCI dataset.\nIt then executes gnuplot (executable needs to be on the PATH).\nThe plot closes automatically after 5 seconds."));
 
       argOption = (AbstractArgumentOption) flow.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp2 = new adams.flow.core.AbstractActor[6];
+      adams.flow.core.Actor[] tmp2 = new adams.flow.core.Actor[6];
       adams.flow.standalone.SetVariable tmp3 = new adams.flow.standalone.SetVariable();
       argOption = (AbstractArgumentOption) tmp3.getOptionManager().findByProperty("name");
       tmp3.setName((java.lang.String) argOption.valueOf("SetVariable (data)"));
@@ -132,7 +132,7 @@ public class GnuplotTest
       tmp12.setName((java.lang.String) argOption.valueOf("generate data file"));
 
       argOption = (AbstractArgumentOption) tmp12.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp14 = new adams.flow.core.AbstractActor[3];
+      adams.flow.core.Actor[] tmp14 = new adams.flow.core.Actor[3];
       adams.flow.source.FileSupplier tmp15 = new adams.flow.source.FileSupplier();
       argOption = (AbstractArgumentOption) tmp15.getOptionManager().findByProperty("files");
       tmp15.setFiles(new adams.core.io.PlaceholderFile[]{(adams.core.io.PlaceholderFile) argOption.valueOf("${TMP}/bolts.csv")});
@@ -161,7 +161,7 @@ public class GnuplotTest
       tmp23.setName((java.lang.String) argOption.valueOf("generate script file"));
 
       argOption = (AbstractArgumentOption) tmp23.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp25 = new adams.flow.core.AbstractActor[2];
+      adams.flow.core.Actor[] tmp25 = new adams.flow.core.Actor[2];
       adams.flow.source.Variable tmp26 = new adams.flow.source.Variable();
       argOption = (AbstractArgumentOption) tmp26.getOptionManager().findByProperty("variableName");
       tmp26.setVariableName((adams.core.VariableName) argOption.valueOf("data_file"));
@@ -233,7 +233,7 @@ public class GnuplotTest
       tmp47.setName((java.lang.String) argOption.valueOf("execute gnuplot"));
 
       argOption = (AbstractArgumentOption) tmp47.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp49 = new adams.flow.core.AbstractActor[1];
+      adams.flow.core.Actor[] tmp49 = new adams.flow.core.Actor[1];
       adams.flow.standalone.Gnuplot tmp50 = new adams.flow.standalone.Gnuplot();
       argOption = (AbstractArgumentOption) tmp50.getOptionManager().findByProperty("scriptFile");
       argOption.setVariable("@{script_file}");

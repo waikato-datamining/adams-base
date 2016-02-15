@@ -26,7 +26,7 @@ import adams.core.option.AbstractArgumentOption;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.test.TmpFile;
 
 /**
@@ -97,17 +97,17 @@ public class LookUpTableTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
   @Override
-  public AbstractActor getActor() {
+  public Actor getActor() {
     AbstractArgumentOption    argOption;
     
     Flow flow = new Flow();
     
     try {
       argOption = (AbstractArgumentOption) flow.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] abstractactor1 = new adams.flow.core.AbstractActor[4];
+      adams.flow.core.Actor[] abstractactor1 = new adams.flow.core.Actor[4];
 
       // Flow.FileSupplier
       adams.flow.source.FileSupplier singlefilesupplier2 = new adams.flow.source.FileSupplier();
@@ -131,7 +131,7 @@ public class LookUpTableTest
       // Flow.Trigger
       adams.flow.control.Trigger trigger8 = new adams.flow.control.Trigger();
       argOption = (AbstractArgumentOption) trigger8.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] abstractactor9 = new adams.flow.core.AbstractActor[2];
+      adams.flow.core.Actor[] abstractactor9 = new adams.flow.core.Actor[2];
 
       // Flow.Trigger.LookUpTable
       adams.flow.source.LookUpTable lookuptable10 = new adams.flow.source.LookUpTable();

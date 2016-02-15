@@ -28,7 +28,7 @@ import adams.event.FitnessChangeListener;
 import adams.event.FlowPauseStateEvent;
 import adams.event.FlowPauseStateListener;
 import adams.flow.container.WekaGeneticAlgorithmContainer;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.CallableActorHelper;
 import adams.flow.core.CallableActorReference;
@@ -145,7 +145,7 @@ public class WekaGeneticAlgorithm
   protected CallableActorReference m_CallableName;
 
   /** the callable actor. */
-  protected AbstractActor m_CallableActor;
+  protected Actor m_CallableActor;
 
   /** whether the callable actor has been configured. */
   protected boolean m_Configured;
@@ -344,8 +344,8 @@ public class WekaGeneticAlgorithm
    *
    * @return		the callable actor or null if not found
    */
-  protected AbstractActor findCallableActor() {
-    AbstractActor	result;
+  protected Actor findCallableActor() {
+    Actor	result;
 
     result = m_Helper.findCallableActorRecursive(this, getCallableName());
 
@@ -375,7 +375,7 @@ public class WekaGeneticAlgorithm
    * @return		the actor, can be null
    */
   @Override
-  public AbstractActor getCallableActor() {
+  public Actor getCallableActor() {
     return m_CallableActor;
   }
 
@@ -418,7 +418,7 @@ public class WekaGeneticAlgorithm
     super.restoreState(state);
 
     if (state.containsKey(BACKUP_CALLABLEACTOR)) {
-      m_CallableActor = (AbstractActor) state.get(BACKUP_CALLABLEACTOR);
+      m_CallableActor = (Actor) state.get(BACKUP_CALLABLEACTOR);
       state.remove(BACKUP_CALLABLEACTOR);
     }
 

@@ -1,69 +1,14 @@
 # Project: adams
-# Date: 2015-07-23 12:08:41
+# Date: 2016-02-15 14:39:08
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	Visualizes the clustering of the data stream.\nOne on the raw data, the other one with\nfiltered data.
-	-actor
-		adams.flow.standalone.CallableActors
-			-actor
-				adams.flow.source.MOAClustererSetup
-					-clusterer
-					moa.clusterers.ClusterGenerator
-	-actor
-		adams.flow.source.MOAStream
-			-stream
-			moa.streams.clustering.RandomRBFGeneratorEvents -n -a 10
-			-num-examples
-			500000
-			-chunk-size
-			1000
-	-actor
-		adams.flow.control.Branch
-			-branch
-				adams.flow.control.Sequence
-					-name
-					raw
-					-actor
-						adams.flow.sink.MOAClusterVisualization
-							-name
-							MOAClusterVisualization (raw)
-							-short-title
-							true
-							-writer
-								adams.gui.print.NullWriter
-							-measure
-							F1
-							-measure
-							SSQ
-			-branch
-				adams.flow.control.Sequence
-					-name
-					filtered
-					-actor
-						adams.flow.transformer.WekaStreamFilter
-							-filter
-								weka.filters.MultiFilter
-									-F
-									weka.filters.unsupervised.attribute.AndrewsCurves -num-points 10
-									-F
-									weka.filters.unsupervised.instance.Scale -min 0.0 -max 1.0
-					-actor
-						adams.flow.sink.MOAClusterVisualization
-							-name
-							MOAClusterVisualization (filtered)
-							-short-title
-							true
-							-x
-							-3
-							-writer
-								adams.gui.print.NullWriter
-							-measure
-							F1
-							-measure
-							SSQ
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "Visualizes the clustering of the data stream.\\nOne on the raw data, the other one with\\nfiltered data." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.standalone.CallableActors
+  adams.flow.source.MOAClustererSetup -clusterer moa.clusterers.ClusterGenerator
+ adams.flow.source.MOAStream -stream "moa.streams.clustering.RandomRBFGeneratorEvents -n -a 10" -num-examples 500000 -chunk-size 1000
+ adams.flow.control.Branch
+  adams.flow.control.Sequence -name raw
+   adams.flow.sink.MOAClusterVisualization -name "MOAClusterVisualization (raw)" -short-title true -writer adams.gui.print.NullWriter -measure F1 -measure SSQ
+  adams.flow.control.Sequence -name filtered
+   adams.flow.transformer.WekaStreamFilter -filter "weka.filters.MultiFilter -F \"weka.filters.unsupervised.attribute.AndrewsCurves -num-points 10\" -F \"weka.filters.unsupervised.instance.Scale -min 0.0 -max 1.0\""
+   adams.flow.sink.MOAClusterVisualization -name "MOAClusterVisualization (filtered)" -short-title true -x -3 -writer adams.gui.print.NullWriter -measure F1 -measure SSQ

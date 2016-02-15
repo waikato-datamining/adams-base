@@ -27,7 +27,6 @@ import adams.core.io.FileUtils;
 import adams.core.option.NestedProducer;
 import adams.data.io.input.DefaultFlowReader;
 import adams.env.Environment;
-import adams.flow.core.AbstractActor;
 import adams.flow.core.Actor;
 import adams.gui.flow.tree.Node;
 import adams.gui.flow.tree.TreeHelper;
@@ -221,7 +220,7 @@ public class DefaultFlowWriter
     NestedProducer	producer;
 
     if (getUseCompact()) {
-      return write(TreeHelper.buildTree((AbstractActor) content), file);
+      return write(TreeHelper.buildTree(content), file);
     }
     else {
       producer = new NestedProducer();

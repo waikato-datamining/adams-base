@@ -23,7 +23,7 @@ package adams.flow.transformer;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.core.CallableActorReference;
 import adams.flow.sink.DumpFile;
 import adams.flow.source.FileSupplier;
@@ -82,10 +82,10 @@ public class MOATrainRegressorTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
   @Override
-  public AbstractActor getActor() {
+  public Actor getActor() {
     CallableActors ga = new CallableActors();
     
     ClassOption option = new ClassOption(
@@ -117,7 +117,7 @@ public class MOATrainRegressorTest
     df.setOutputFile(new TmpFile("dumpfile.txt"));
 
     Flow flow = new Flow();
-    flow.setActors(new AbstractActor[]{ga, sfs, fr, cs, cts, df});
+    flow.setActors(new Actor[]{ga, sfs, fr, cs, cts, df});
 
     return flow;
   }

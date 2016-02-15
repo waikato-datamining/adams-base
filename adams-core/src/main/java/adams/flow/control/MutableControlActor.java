@@ -20,12 +20,12 @@
 
 package adams.flow.control;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.MutableActorHandler;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Abstract superclass for actors that allow their sub-actors to modified
@@ -42,7 +42,7 @@ public abstract class MutableControlActor
   private static final long serialVersionUID = 5329012531879115063L;
 
   /** the actors. */
-  protected List<AbstractActor> m_Actors;
+  protected List<Actor> m_Actors;
 
   /**
    * Initializes the members.
@@ -51,7 +51,7 @@ public abstract class MutableControlActor
   protected void initialize() {
     super.initialize();
 
-    m_Actors = new ArrayList<AbstractActor>();
+    m_Actors = new ArrayList<>();
   }
 
   /**
@@ -63,7 +63,7 @@ public abstract class MutableControlActor
 
     m_OptionManager.add(
 	    "actor", "actors",
-	    new AbstractActor[0]);
+	    new Actor[0]);
   }
 
   /**
@@ -71,7 +71,7 @@ public abstract class MutableControlActor
    *
    * @param value 	the sequence items
    */
-  public void setActors(AbstractActor[] value) {
+  public void setActors(Actor[] value) {
     int		i;
 
     ActorUtils.uniqueNames(value);
@@ -89,8 +89,8 @@ public abstract class MutableControlActor
    *
    * @return 		the sequence items
    */
-  public AbstractActor[] getActors() {
-    return m_Actors.toArray(new AbstractActor[m_Actors.size()]);
+  public Actor[] getActors() {
+    return m_Actors.toArray(new Actor[m_Actors.size()]);
   }
 
   /**
@@ -118,7 +118,7 @@ public abstract class MutableControlActor
    * @return		the actor
    */
   @Override
-  public AbstractActor get(int index) {
+  public Actor get(int index) {
     return m_Actors.get(index);
   }
 
@@ -129,7 +129,7 @@ public abstract class MutableControlActor
    * @param actor	the actor to set at this position
    */
   @Override
-  public void set(int index, AbstractActor actor) {
+  public void set(int index, Actor actor) {
     if ((index > -1) && (index < m_Actors.size())) {
       ActorUtils.uniqueName(actor, this, index);
       m_Actors.set(index, actor);
@@ -146,7 +146,7 @@ public abstract class MutableControlActor
    *
    * @param actor	the actor to insert
    */
-  public void add(AbstractActor actor) {
+  public void add(Actor actor) {
     add(size(), actor);
   }
 
@@ -156,7 +156,7 @@ public abstract class MutableControlActor
    * @param index	the position
    * @param actor	the actor to insert
    */
-  public void add(int index, AbstractActor actor) {
+  public void add(int index, Actor actor) {
     ActorUtils.uniqueName(actor, this, index);
     m_Actors.add(index, actor);
     reset();
@@ -169,8 +169,8 @@ public abstract class MutableControlActor
    * @param index	the position
    * @return		the removed actor
    */
-  public AbstractActor remove(int index) {
-    AbstractActor	result;
+  public Actor remove(int index) {
+    Actor	result;
 
     result = m_Actors.remove(index);
     reset();

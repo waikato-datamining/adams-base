@@ -25,7 +25,7 @@ import adams.core.option.AbstractArgumentOption;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.execution.NullListener;
 import adams.flow.sink.DumpFile;
 import adams.flow.source.Counter;
@@ -100,15 +100,15 @@ public class CounterInitTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
-  public AbstractActor getActor() {
+  public Actor getActor() {
     AbstractArgumentOption    argOption;
     
     Flow flow = new Flow();
     
     try {
-      List<AbstractActor> actors = new ArrayList<AbstractActor>();
+      List<Actor> actors = new ArrayList<Actor>();
 
       // Flow.CounterInit
       CounterInit counterinit = new CounterInit();
@@ -122,7 +122,7 @@ public class CounterInitTest
       DumpFile dumpfile = new DumpFile();
       dumpfile.setOutputFile(new PlaceholderDirectory("${TMP}/dumpfile.txt"));
       actors.add(dumpfile);
-      flow.setActors(actors.toArray(new AbstractActor[0]));
+      flow.setActors(actors.toArray(new Actor[0]));
 
       NullListener nulllistener = new NullListener();
       flow.setFlowExecutionListener(nulllistener);

@@ -24,7 +24,7 @@ import junit.framework.TestSuite;
 import adams.data.io.input.CsvSpreadSheetReader;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.env.Environment;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.test.TmpFile;
 
 /**
@@ -75,8 +75,8 @@ public class HasColumnTest
    * @return		the owners (not all conditions might need owners)
    */
   @Override
-  protected AbstractActor[] getRegressionOwners() {
-    return new AbstractActor[]{
+  protected Actor[] getRegressionOwners() {
+    return new Actor[]{
 	null,
 	null,
 	null,

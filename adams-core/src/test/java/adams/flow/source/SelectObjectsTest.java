@@ -25,7 +25,7 @@ import adams.core.option.AbstractArgumentOption;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.test.TmpFile;
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -96,22 +96,22 @@ public class SelectObjectsTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
   @Override
-  public AbstractActor getActor() {
+  public Actor getActor() {
     AbstractArgumentOption    argOption;
     
     Flow flow = new Flow();
     
     try {
       argOption = (AbstractArgumentOption) flow.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] actors1 = new adams.flow.core.AbstractActor[3];
+      adams.flow.core.Actor[] actors1 = new adams.flow.core.Actor[3];
 
       // Flow.SelectObjects
       adams.flow.source.SelectObjects selectobjects2 = new adams.flow.source.SelectObjects();
       argOption = (AbstractArgumentOption) selectobjects2.getOptionManager().findByProperty("superClass");
-      selectobjects2.setSuperClass((BaseClassname) argOption.valueOf("adams.flow.core.AbstractActor"));
+      selectobjects2.setSuperClass((BaseClassname) argOption.valueOf("adams.flow.core.Actor"));
       argOption = (AbstractArgumentOption) selectobjects2.getOptionManager().findByProperty("initialObjects");
       adams.core.base.BaseString[] initialobjects4 = new adams.core.base.BaseString[2];
       initialobjects4[0] = (adams.core.base.BaseString) argOption.valueOf("adams.flow.control.ArrayProcess");

@@ -1,21 +1,7 @@
 # Project: adams
-# Date: 2014-01-23 15:38:16
+# Date: 2016-02-15 14:52:56
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	Displays a simple PDF file in the viewer.
-	-actor
-		adams.flow.source.FileSupplier
-			-file
-			${EXAMPLE_FLOWS}/data/multiple_pages.pdf
-	-actor
-		adams.flow.sink.PDFViewer
-			-writer
-				adams.gui.print.NullWriter
-			-zoom
-			75.0
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "Displays a simple PDF file in the viewer." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/multiple_pages.pdf
+ adams.flow.sink.PDFViewer -writer adams.gui.print.NullWriter -zoom 75.0

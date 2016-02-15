@@ -15,12 +15,12 @@
 
 /*
  * Trigger.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
 
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.core.ActorExecution;
 import adams.flow.core.ActorHandlerInfo;
 import adams.flow.core.ActorUtils;
@@ -73,7 +73,7 @@ import adams.flow.core.Token;
  * &nbsp;&nbsp;&nbsp; useful for critical actors.
  * </pre>
  * 
- * <pre>-tee &lt;adams.flow.core.AbstractActor&gt; [-tee ...] (property: actors)
+ * <pre>-tee &lt;adams.flow.core.Actor&gt; [-tee ...] (property: actors)
  * &nbsp;&nbsp;&nbsp;The actors to siphon-off the tokens to.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
@@ -161,7 +161,7 @@ public class Trigger
    * @return		always null
    */
   @Override
-  protected String checkTeeActor(int index, AbstractActor actor) {
+  protected String checkTeeActor(int index, Actor actor) {
     return null;
   }
 
@@ -173,7 +173,7 @@ public class Trigger
    * @return		null if checks passed or null in case of an error
    */
   @Override
-  protected String checkTeeActors(AbstractActor[] actors) {
+  protected String checkTeeActors(Actor[] actors) {
     return ActorUtils.checkForSource(actors);
   }
 

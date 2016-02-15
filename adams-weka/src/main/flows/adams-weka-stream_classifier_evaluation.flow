@@ -1,75 +1,19 @@
 # Project: adams
-# Date: 2014-11-10 13:02:43
+# Date: 2016-02-15 15:26:38
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	Uses prequential evaluation of an updateable Weka\nclassifier. Every 100 instances, the evaluation is output\nand displayed.
-	-actor
-		adams.flow.standalone.CallableActors
-			-actor
-				adams.flow.source.WekaClassifierSetup
-					-classifier
-						weka.classifiers.bayes.NaiveBayesUpdateable
-	-actor
-		adams.flow.standalone.SetVariable
-			-var-name
-			count
-			-var-value
-			0
-	-actor
-		adams.flow.source.FileSupplier
-			-file
-			${EXAMPLE_FLOWS}/data/anneal.arff
-	-actor
-		adams.flow.transformer.WekaFileReader
-			-loader
-				weka.core.converters.AArffLoader
-			-output-type
-			INCREMENTAL
-	-actor
-		adams.flow.transformer.IncVariable
-			-var-name
-			count
-	-actor
-		adams.flow.transformer.WekaClassSelector
-	-actor
-		adams.flow.transformer.WekaStreamEvaluator
-			-output
-				weka.classifiers.evaluation.output.prediction.Null
-	-actor
-		adams.flow.control.Branch
-			-branch
-				adams.flow.control.Sequence
-					-name
-					summary
-					-actor
-						adams.flow.transformer.WekaEvaluationSummary
-							-confusion-matrix
-							true
-							-class-details
-							true
-					-actor
-						adams.flow.sink.HistoryDisplay
-							-entry-name-variable
-							count
-			-branch
-				adams.flow.control.Sequence
-					-name
-					roc
-					-actor
-						adams.flow.sink.DisplayPanelManager
-							-width
-							740
-							-x
-							-3
-							-provider
-								adams.flow.sink.WekaThresholdCurve
-									-writer
-										adams.gui.print.NullWriter
-							-entry-name-variable
-							count
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "Uses prequential evaluation of an updateable Weka\\nclassifier. Every 100 instances, the evaluation is output\\nand displayed." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.standalone.CallableActors
+  adams.flow.source.WekaClassifierSetup -classifier weka.classifiers.bayes.NaiveBayesUpdateable
+ adams.flow.standalone.SetVariable -var-name count -var-value 0
+ adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/anneal.arff
+ adams.flow.transformer.WekaFileReader -loader weka.core.converters.AArffLoader -output-type INCREMENTAL
+ adams.flow.transformer.IncVariable -var-name count
+ adams.flow.transformer.WekaClassSelector
+ adams.flow.transformer.WekaStreamEvaluator -output weka.classifiers.evaluation.output.prediction.Null
+ adams.flow.control.Branch
+  adams.flow.control.Sequence -name summary
+   adams.flow.transformer.WekaEvaluationSummary -confusion-matrix true -class-details true
+   adams.flow.sink.HistoryDisplay -entry-name-variable count
+  adams.flow.control.Sequence -name roc
+   adams.flow.sink.DisplayPanelManager -width 740 -x -3 -provider "adams.flow.sink.WekaThresholdCurve -writer adams.gui.print.NullWriter" -entry-name-variable count

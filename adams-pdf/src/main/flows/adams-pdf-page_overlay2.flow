@@ -1,69 +1,15 @@
 # Project: adams
-# Date: 2015-03-07 22:32:06
+# Date: 2016-02-15 14:52:49
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	Demonstrates how to add a logo to an existing PDF (bottom left corner).
-	-actor
-		adams.flow.standalone.CallableActors
-			-actor
-				adams.flow.control.Sequence
-					-name
-					display
-					-actor
-						adams.flow.sink.DisplayPanelManager
-							-width
-							800
-							-height
-							800
-							-provider
-								adams.flow.sink.PDFViewer
-									-writer
-										adams.gui.print.NullWriter
-									-zoom
-									75.0
-							-entry-name-variable
-							entry
-	-actor
-		adams.flow.source.FileSupplier
-			-file
-			${EXAMPLE_FLOWS}/data/multiple_images.pdf
-	-actor
-		adams.flow.control.Tee
-			-name
-			original
-			-tee
-				adams.flow.transformer.SetVariable
-					-var-name
-					entry
-					-var-value
-					original
-			-tee
-				adams.flow.sink.CallableSink
-					-callable
-					display
-	-actor
-		adams.flow.transformer.PDFStamp
-			-stamper
-				adams.flow.transformer.pdfstamp.Image
-					-image
-					${EXAMPLE_FLOWS}/data/adams_logo.png
-					-scale
-					0.2
-			-output
-			${TMP}/overlay.pdf
-	-actor
-		adams.flow.transformer.SetVariable
-			-var-name
-			entry
-			-var-value
-			stamped
-	-actor
-		adams.flow.sink.CallableSink
-			-callable
-			display
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "Demonstrates how to add a logo to an existing PDF (bottom left corner)." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.standalone.CallableActors
+  adams.flow.control.Sequence -name display
+   adams.flow.sink.DisplayPanelManager -width 800 -height 800 -provider "adams.flow.sink.PDFViewer -writer adams.gui.print.NullWriter -zoom 75.0" -entry-name-variable entry
+ adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/multiple_images.pdf
+ adams.flow.control.Tee -name original
+  adams.flow.transformer.SetVariable -var-name entry -var-value original
+  adams.flow.sink.CallableSink -callable display
+ adams.flow.transformer.PDFStamp -stamper "adams.flow.transformer.pdfstamp.Image -image ${EXAMPLE_FLOWS}/data/adams_logo.png -scale 0.2" -output ${TMP}/overlay.pdf
+ adams.flow.transformer.SetVariable -var-name entry -var-value stamped
+ adams.flow.sink.CallableSink -callable display

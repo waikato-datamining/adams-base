@@ -28,7 +28,7 @@ import adams.core.io.PlaceholderFile;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.sink.PasteFiles;
 import adams.flow.source.FileSupplier;
 import adams.test.TmpFile;
@@ -84,9 +84,9 @@ public class PasteFilesTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
-  public AbstractActor getActor() {
+  public Actor getActor() {
     FileSupplier mfs = new FileSupplier();
     mfs.setOutputArray(true);
     mfs.setFiles(new PlaceholderFile[]{
@@ -100,7 +100,7 @@ public class PasteFilesTest
     pf.setOutputFile(new TmpFile("dumpfile.csv"));
     
     Flow flow = new Flow();
-    flow.setActors(new AbstractActor[]{
+    flow.setActors(new Actor[]{
 	mfs,
 	pf
     });

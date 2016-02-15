@@ -27,7 +27,7 @@ import adams.flow.AbstractFlowTest;
 import adams.flow.control.Branch;
 import adams.flow.control.Flow;
 import adams.flow.control.Sequence;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.core.CallableActorReference;
 import adams.flow.sink.CallableSink;
 import adams.flow.sink.DumpFile;
@@ -85,14 +85,14 @@ public class WekaRegexToRangeTest
    * @return a suitably configured <code>Flow</code>
    */
   @Override
-  public AbstractActor getActor() {
+  public Actor getActor() {
     DumpFile df = new DumpFile();
     df.setName("out");
     df.setAppend(true);
     df.setOutputFile(new TmpFile("dumpfile.txt"));
 
     CallableActors ga = new CallableActors();
-    ga.setActors(new AbstractActor[]{
+    ga.setActors(new Actor[]{
 	df
     });
 
@@ -107,7 +107,7 @@ public class WekaRegexToRangeTest
     gs1.setCallableName(new CallableActorReference("out"));
 
     Sequence s1 = new Sequence();
-    s1.setActors(new AbstractActor[]{
+    s1.setActors(new Actor[]{
 	rtr1,gs1
     });
 
@@ -118,18 +118,18 @@ public class WekaRegexToRangeTest
     gs2.setCallableName(new CallableActorReference("out"));
 
     Sequence s2 = new Sequence();
-    s2.setActors(new AbstractActor[]{
+    s2.setActors(new Actor[]{
 	rtr2,gs2
     });
 
     Branch br = new Branch();
     br.setNumThreads(0);
-    br.setBranches(new AbstractActor[]{
+    br.setBranches(new Actor[]{
 	s1, s2
     });
 
     Flow flow = new Flow();
-    flow.setActors(new AbstractActor[]{ga, sfs, fr, br});
+    flow.setActors(new Actor[]{ga, sfs, fr, br});
 
     return flow;
   }

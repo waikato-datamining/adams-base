@@ -26,7 +26,7 @@ import adams.core.option.AbstractArgumentOption;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.test.TmpFile;
 
 /**
@@ -95,17 +95,17 @@ public class CopyCallableSinkTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
   @Override
-  public AbstractActor getActor() {
+  public Actor getActor() {
     AbstractArgumentOption    argOption;
     
     Flow flow = new Flow();
     
     try {
       argOption = (AbstractArgumentOption) flow.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp1 = new adams.flow.core.AbstractActor[5];
+      adams.flow.core.Actor[] tmp1 = new adams.flow.core.Actor[5];
       adams.flow.standalone.DeleteFile tmp2 = new adams.flow.standalone.DeleteFile();
       argOption = (AbstractArgumentOption) tmp2.getOptionManager().findByProperty("directory");
       tmp2.setDirectory((adams.core.io.PlaceholderDirectory) argOption.valueOf("${TMP}"));
@@ -116,7 +116,7 @@ public class CopyCallableSinkTest
       tmp1[0] = tmp2;
       adams.flow.standalone.CallableActors tmp5 = new adams.flow.standalone.CallableActors();
       argOption = (AbstractArgumentOption) tmp5.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp6 = new adams.flow.core.AbstractActor[1];
+      adams.flow.core.Actor[] tmp6 = new adams.flow.core.Actor[1];
       adams.flow.sink.DumpFile tmp7 = new adams.flow.sink.DumpFile();
       argOption = (AbstractArgumentOption) tmp7.getOptionManager().findByProperty("outputFile");
       tmp7.setOutputFile((adams.core.io.PlaceholderFile) argOption.valueOf("${TMP}/dumpfile.txt"));
@@ -131,7 +131,7 @@ public class CopyCallableSinkTest
       tmp1[2] = tmp9;
       adams.flow.control.Trigger tmp10 = new adams.flow.control.Trigger();
       argOption = (AbstractArgumentOption) tmp10.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp11 = new adams.flow.core.AbstractActor[4];
+      adams.flow.core.Actor[] tmp11 = new adams.flow.core.Actor[4];
       adams.flow.source.StringConstants tmp12 = new adams.flow.source.StringConstants();
       argOption = (AbstractArgumentOption) tmp12.getOptionManager().findByProperty("strings");
       adams.core.base.BaseString[] tmp13 = new adams.core.base.BaseString[5];
@@ -167,7 +167,7 @@ public class CopyCallableSinkTest
       tmp21.setName((java.lang.String) argOption.valueOf("Trigger-1"));
 
       argOption = (AbstractArgumentOption) tmp21.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp23 = new adams.flow.core.AbstractActor[4];
+      adams.flow.core.Actor[] tmp23 = new adams.flow.core.Actor[4];
       adams.flow.source.StringConstants tmp24 = new adams.flow.source.StringConstants();
       argOption = (AbstractArgumentOption) tmp24.getOptionManager().findByProperty("strings");
       adams.core.base.BaseString[] tmp25 = new adams.core.base.BaseString[5];

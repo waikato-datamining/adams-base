@@ -31,7 +31,7 @@ import adams.flow.core.Actor;
  */
 public abstract class AbstractStandaloneGroupItemGroup<T extends Actor>
   extends AbstractStandaloneGroup<T>
-  implements StandaloneGroupItem {
+  implements StandaloneGroupItem<T> {
 
   private static final long serialVersionUID = -7663947357164807918L;
 

@@ -30,7 +30,7 @@ import adams.flow.AbstractFlowTest;
 import adams.flow.control.Branch;
 import adams.flow.control.Flow;
 import adams.flow.control.Sequence;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.core.CallableActorReference;
 import adams.flow.source.FileSupplier;
 import adams.flow.standalone.CallableActors;
@@ -87,10 +87,10 @@ public class CallableTransformerTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
   @Override
-  public AbstractActor getActor() {
+  public Actor getActor() {
     FileSupplier sfs = new FileSupplier();
     sfs.setFiles(new adams.core.io.PlaceholderFile[]{new TmpFile("vote.arff")});
 
@@ -103,7 +103,7 @@ public class CallableTransformerTest
     wf.setName("global-wf");
 
     CallableActors gas = new CallableActors();
-    gas.setActors(new AbstractActor[]{wf});
+    gas.setActors(new Actor[]{wf});
 
     WekaFilter wf1 = new WekaFilter();
     Remove rem1 = new Remove();
@@ -121,7 +121,7 @@ public class CallableTransformerTest
     id1.setOutputPrefix(new TmpFile("dumpfile1"));
 
     Sequence sq1 = new Sequence();
-    sq1.setActors(new AbstractActor[]{wf1, gt1, ren1, id1});
+    sq1.setActors(new Actor[]{wf1, gt1, ren1, id1});
 
     WekaFilter wf2 = new WekaFilter();
     Remove rem2 = new Remove();
@@ -139,14 +139,14 @@ public class CallableTransformerTest
     id2.setOutputPrefix(new TmpFile("dumpfile2"));
 
     Sequence sq2 = new Sequence();
-    sq2.setActors(new AbstractActor[]{wf2, gt2, ren2, id2});
+    sq2.setActors(new Actor[]{wf2, gt2, ren2, id2});
 
     Branch br = new Branch();
     //br.setNumThreads(0);
-    br.setBranches(new AbstractActor[]{sq1, sq2});
+    br.setBranches(new Actor[]{sq1, sq2});
 
     Flow flow = new Flow();
-    flow.setActors(new AbstractActor[]{gas, sfs, fr, br});
+    flow.setActors(new Actor[]{gas, sfs, fr, br});
 
     return flow;
   }

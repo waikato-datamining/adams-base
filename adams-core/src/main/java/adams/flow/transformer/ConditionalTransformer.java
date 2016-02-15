@@ -15,13 +15,13 @@
 
 /*
  * ConditionalTransformer.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
 import adams.flow.control.AbstractConditionalActor;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.core.ActorExecution;
 import adams.flow.core.ActorHandlerInfo;
 import adams.flow.core.ActorUtils;
@@ -82,7 +82,7 @@ import java.util.Hashtable;
  * &nbsp;&nbsp;&nbsp;If set to true, then the actor is only executed if the condition fails.
  * </pre>
  *
- * <pre>-actor &lt;adams.flow.core.AbstractActor [options]&gt; (property: actor)
+ * <pre>-actor &lt;adams.flow.core.Actor [options]&gt; (property: actor)
  * &nbsp;&nbsp;&nbsp;The base transformer to use.
  * &nbsp;&nbsp;&nbsp;default: adams.flow.transformer.PassThrough
  * </pre>
@@ -119,7 +119,7 @@ public class ConditionalTransformer
    *
    * @return		the default actor
    */
-  protected AbstractActor getDefaultActor() {
+  protected Actor getDefaultActor() {
     return new PassThrough();
   }
 

@@ -15,14 +15,9 @@
 
 /**
  * EditDiff.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.menu;
-
-import java.awt.BorderLayout;
-import java.awt.Dialog.ModalityType;
-import java.awt.event.ActionEvent;
-import java.util.Vector;
 
 import adams.core.DiffUtils;
 import adams.core.DiffUtils.SideBySideDiff;
@@ -30,10 +25,15 @@ import adams.core.option.AbstractOptionConsumer;
 import adams.core.option.AbstractOptionProducer;
 import adams.core.option.NestedConsumer;
 import adams.core.option.NestedProducer;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.gui.core.GUIHelper;
 import adams.gui.dialog.ApprovalDialog;
 import adams.gui.visualization.debug.SideBySideDiffPanel;
+
+import java.awt.BorderLayout;
+import java.awt.Dialog.ModalityType;
+import java.awt.event.ActionEvent;
+import java.util.Vector;
 
 /**
  * Shows differences between versions of flows.
@@ -67,7 +67,7 @@ public class EditDiff
     String		current;
     String		prev;
     Vector		state;
-    AbstractActor	actor;
+    Actor 		actor;
 
     if (!canDiff())
       return null;
@@ -79,10 +79,10 @@ public class EditDiff
     state = (Vector) m_State.getCurrentPanel().getUndo().peekUndo().getData();
     if (state.get(0) == null)
       return null;
-    if (state.get(0) instanceof AbstractActor)
-      actor = (AbstractActor) state.get(0);
+    if (state.get(0) instanceof Actor)
+      actor = (Actor) state.get(0);
     else
-      actor = (AbstractActor) AbstractOptionConsumer.consume(NestedConsumer.class, state.get(0));
+      actor = (Actor) AbstractOptionConsumer.consume(NestedConsumer.class, state.get(0));
     prev = AbstractOptionProducer.toString(NestedProducer.class, actor).replace("\t", "  ");
 
     // generate diff

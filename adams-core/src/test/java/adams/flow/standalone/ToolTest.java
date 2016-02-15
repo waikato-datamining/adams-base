@@ -25,7 +25,7 @@ import junit.framework.TestSuite;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.tools.InitializeTables;
 
 /**
@@ -51,14 +51,14 @@ public class ToolTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
-  public AbstractActor getActor() {
+  public Actor getActor() {
     Tool tool = new Tool();
     tool.setTool(new InitializeTables());
 
     Flow flow = new Flow();
-    flow.setActors(new AbstractActor[]{tool});
+    flow.setActors(new Actor[]{tool});
 
     return flow;
   }

@@ -1,41 +1,12 @@
 # Project: adams
-# Date: 2014-01-23 15:25:39
+# Date: 2016-02-15 11:36:45
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	This flow loads an XML file as DOM document \nand extracts data using XPath.
-	-actor
-		adams.flow.source.FileSupplier
-			-file
-			${EXAMPLE_FLOWS}/data/books.xml
-	-actor
-		adams.flow.transformer.XMLFileReader
-	-actor
-		adams.flow.transformer.XPath
-			-annotation
-			Here we obtain all title nodes.
-			-expression
-			//title[@lang='en']
-	-actor
-		adams.flow.transformer.Convert
-			-conversion
-				adams.data.conversion.DOMNodeListToArray
-	-actor
-		adams.flow.transformer.ArrayToSequence
-	-actor
-		adams.flow.transformer.XPath
-			-name
-			XPath-1
-			-annotation
-			This expression extracts the text of the title nodes, i.e., the titles.
-			-expression
-			./text()
-			-result-type
-			STRING
-	-actor
-		adams.flow.sink.Display
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "This flow loads an XML file as DOM document \\nand extracts data using XPath." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/books.xml
+ adams.flow.transformer.XMLFileReader
+ adams.flow.transformer.XPath -annotation "Here we obtain all title nodes." -expression //title[@lang=\'en\']
+ adams.flow.transformer.Convert -conversion adams.data.conversion.DOMNodeListToArray
+ adams.flow.transformer.ArrayToSequence
+ adams.flow.transformer.XPath -name XPath-1 -annotation "This expression extracts the text of the title nodes, i.e., the titles." -expression ./text() -result-type STRING
+ adams.flow.sink.Display -writer adams.data.io.output.NullWriter

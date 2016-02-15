@@ -15,7 +15,7 @@
 
 /*
  * AbstractActorProcessor.java
- * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.processor;
@@ -27,7 +27,7 @@ import adams.core.option.AbstractOptionConsumer;
 import adams.core.option.AbstractOptionHandler;
 import adams.core.option.ArrayConsumer;
 import adams.core.option.OptionUtils;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -81,7 +81,7 @@ public abstract class AbstractActorProcessor
    *
    * @param actor	the actor to process
    */
-  public void process(AbstractActor actor) {
+  public void process(Actor actor) {
     m_Errors.clear();
 
     try {
@@ -99,7 +99,7 @@ public abstract class AbstractActorProcessor
    *
    * @param actor	the actor to process
    */
-  protected void checkData(AbstractActor actor) {
+  protected void checkData(Actor actor) {
     if (actor == null)
       throw new IllegalStateException("No actor provided!");
   }
@@ -111,7 +111,7 @@ public abstract class AbstractActorProcessor
    * 			processors implementing ModifyingProcessor)
    * @see		ModifyingProcessor
    */
-  protected abstract void processActor(AbstractActor actor);
+  protected abstract void processActor(Actor actor);
 
   /**
    * Adds the error message to the internal list of errors.

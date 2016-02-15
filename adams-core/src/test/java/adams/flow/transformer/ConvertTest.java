@@ -29,7 +29,7 @@ import adams.data.conversion.StringToDouble;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.sink.DumpFile;
 import adams.flow.source.StringConstants;
 import adams.test.TmpFile;
@@ -77,9 +77,9 @@ public class ConvertTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
-  public AbstractActor getActor() {
+  public Actor getActor() {
     StringConstants sc = new StringConstants();
     sc.setStrings(new BaseString[]{
 	new BaseString("1.0"),
@@ -103,7 +103,7 @@ public class ConvertTest
     df.setOutputFile(new TmpFile("dumpfile.txt"));
 
     Flow flow = new Flow();
-    flow.setActors(new AbstractActor[]{sc, ci1, ci2, ci3, df});
+    flow.setActors(new Actor[]{sc, ci1, ci2, ci3, df});
 
     return flow;
   }

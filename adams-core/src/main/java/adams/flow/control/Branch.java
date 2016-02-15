@@ -15,7 +15,7 @@
 
 /*
  * Branch.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -23,7 +23,7 @@ package adams.flow.control;
 import adams.core.QuickInfoHelper;
 import adams.core.ThreadLimiter;
 import adams.core.management.ProcessUtils;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.core.ActorExecution;
 import adams.flow.core.ActorHandler;
 import adams.flow.core.ActorHandlerInfo;
@@ -87,7 +87,7 @@ import java.util.logging.Level;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-branch &lt;adams.flow.core.AbstractActor&gt; [-branch ...] (property: branches)
+ * <pre>-branch &lt;adams.flow.core.Actor&gt; [-branch ...] (property: branches)
  * &nbsp;&nbsp;&nbsp;The different branches that branch off and will be supplied with a copy 
  * &nbsp;&nbsp;&nbsp;of the same object.
  * &nbsp;&nbsp;&nbsp;default: 
@@ -116,7 +116,7 @@ public class Branch
   public final static String BACKUP_CURRENT = "current";
 
   /** the branches. */
-  protected List<AbstractActor> m_Branches;
+  protected List<Actor> m_Branches;
 
   /** the number of threads to use for parallel execution. */
   protected int m_NumThreads;
@@ -161,7 +161,7 @@ public class Branch
   protected void initialize() {
     super.initialize();
 
-    m_Branches = new ArrayList<AbstractActor>();
+    m_Branches = new ArrayList<>();
   }
 
   /**
@@ -177,7 +177,7 @@ public class Branch
 
     m_OptionManager.add(
 	    "branch", "branches",
-	    new AbstractActor[0]);
+	    new Actor[0]);
 
     m_OptionManager.add(
 	    "num-threads", "numThreads",
@@ -244,7 +244,7 @@ public class Branch
    *
    * @param value 	the branches
    */
-  public void setBranches(AbstractActor[] value) {
+  public void setBranches(Actor[] value) {
     int		i;
 
     ActorUtils.uniqueNames(value);
@@ -262,8 +262,8 @@ public class Branch
    *
    * @return 		the branches
    */
-  public AbstractActor[] getBranches() {
-    return m_Branches.toArray(new AbstractActor[m_Branches.size()]);
+  public Actor[] getBranches() {
+    return m_Branches.toArray(new Actor[m_Branches.size()]);
   }
 
   /**
@@ -395,7 +395,7 @@ public class Branch
    * @return		the actor
    */
   @Override
-  public AbstractActor get(int index) {
+  public Actor get(int index) {
     return m_Branches.get(index);
   }
 
@@ -406,7 +406,7 @@ public class Branch
    * @param actor	the actor to set at this position
    */
   @Override
-  public void set(int index, AbstractActor actor) {
+  public void set(int index, Actor actor) {
     if ((index > -1) && (index < m_Branches.size())) {
       ActorUtils.uniqueName(actor, this, index);
       m_Branches.set(index, actor);
@@ -423,7 +423,7 @@ public class Branch
    *
    * @param actor	the actor to insert
    */
-  public void add(AbstractActor actor) {
+  public void add(Actor actor) {
     add(size(), actor);
   }
 
@@ -433,7 +433,7 @@ public class Branch
    * @param index	the position
    * @param actor	the actor to insert
    */
-  public void add(int index, AbstractActor actor) {
+  public void add(int index, Actor actor) {
     m_Branches.add(index, actor);
     reset();
     updateParent();
@@ -445,8 +445,8 @@ public class Branch
    * @param index	the position
    * @return		the removed actor
    */
-  public AbstractActor remove(int index) {
-    AbstractActor	result;
+  public Actor remove(int index) {
+    Actor	result;
 
     result = m_Branches.remove(index);
     reset();
@@ -526,8 +526,8 @@ public class Branch
     Class[]		result;
     int			i;
     int			n;
-    AbstractActor	actor;
-    AbstractActor	actor2;
+    Actor		actor;
+    Actor		actor2;
     HashSet<Class>	all;
     HashSet<Class>	curr;
     Class[]		cls;
@@ -618,11 +618,11 @@ public class Branch
    * @param branch	the branch to check
    * @return		null if everything correct, otherwise the error message
    */
-  protected String checkBranch(AbstractActor branch) {
-    String			result;
-    int				i;
+  protected String checkBranch(Actor branch) {
+    String				result;
+    int					i;
     AbstractDirectedControlActor	group;
-    AbstractActor		curr;
+    Actor				curr;
 
     result = null;
 
@@ -737,7 +737,7 @@ public class Branch
     // create jobs
     jobs = new ArrayList<CallableWithResult<String>>();
     for (i = 0; i < size(); i++) {
-      final AbstractActor branch = get(i);
+      final Actor branch = get(i);
       final int index = i;
       if (branch.getSkip())
 	continue;
@@ -823,10 +823,10 @@ public class Branch
    * @return		null if everything is fine, otherwise error message
    */
   protected String executeSequential() {
-    String		result;
-    int			i;
-    AbstractActor	actor;
-    String		msg;
+    String	result;
+    int		i;
+    Actor	actor;
+    String	msg;
 
     result = null;
 

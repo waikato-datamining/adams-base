@@ -24,7 +24,7 @@ import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Branch;
 import adams.flow.control.Flow;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.sink.WekaExperimentGenerator.EvaluationType;
 import adams.flow.sink.WekaExperimentGenerator.ExperimentType;
 import adams.flow.sink.WekaExperimentGenerator.ResultFormat;
@@ -96,9 +96,9 @@ public class WekaExperimentGeneratorTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
-  public AbstractActor getActor() {
+  public Actor getActor() {
     WekaClassifierGenerator cg = new WekaClassifierGenerator();
     cg.setOutputArray(true);
 
@@ -131,14 +131,14 @@ public class WekaExperimentGeneratorTest
 
     Branch br = new Branch();
     br.setNumThreads(0);
-    br.setBranches(new AbstractActor[]{
+    br.setBranches(new Actor[]{
 	eg_cv,
 	eg_rsr,
 	eg_rsop
     });
 
     Flow flow = new Flow();
-    flow.setActors(new AbstractActor[]{cg, br});
+    flow.setActors(new Actor[]{cg, br});
 
     return flow;
   }

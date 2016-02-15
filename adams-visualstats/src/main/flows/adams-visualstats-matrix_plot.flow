@@ -1,35 +1,9 @@
 # Project: adams
-# Date: 2014-01-23 15:45:17
+# Date: 2016-02-15 15:11:37
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	The flow loads the UCI dataset \"iris\" and displays \nthe data in a matrix plot.
-	-actor
-		adams.flow.source.FileSupplier
-			-file
-			${EXAMPLE_FLOWS}/data/iris.arff
-	-actor
-		adams.flow.transformer.WekaFileReader
-			-loader
-				weka.core.converters.ArffLoader
-	-actor
-		adams.flow.transformer.WekaClassSelector
-	-actor
-		adams.flow.sink.MatrixPlot
-			-writer
-				adams.gui.print.NullWriter
-			-plot-size
-			150
-			-overlay
-				adams.gui.visualization.stats.scatterplot.Lowess
-					-line-thickness
-					1.0
-			-paintlet
-				adams.gui.visualization.stats.paintlet.ScatterPaintletCircle
-					-stroke-thickness
-					0.7
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "The flow loads the UCI dataset \\\"iris\\\" and displays \\nthe data in a matrix plot." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/iris.arff
+ adams.flow.transformer.WekaFileReader -loader weka.core.converters.ArffLoader
+ adams.flow.transformer.WekaClassSelector
+ adams.flow.sink.MatrixPlot -writer adams.gui.print.NullWriter -plot-size 150 -overlay "adams.gui.visualization.stats.scatterplot.Lowess -line-thickness 1.0" -paintlet "adams.gui.visualization.stats.paintlet.ScatterPaintletCircle -stroke-thickness 0.7"

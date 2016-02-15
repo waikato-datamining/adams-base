@@ -26,7 +26,7 @@ import adams.core.option.AbstractArgumentOption;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.test.TmpFile;
 
 /**
@@ -97,20 +97,20 @@ public class SpreadSheetInfoTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
   @Override
-  public AbstractActor getActor() {
+  public Actor getActor() {
     AbstractArgumentOption    argOption;
 
     Flow flow = new Flow();
 
     try {
       argOption = (AbstractArgumentOption) flow.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp1 = new adams.flow.core.AbstractActor[5];
+      adams.flow.core.Actor[] tmp1 = new adams.flow.core.Actor[5];
       adams.flow.standalone.CallableActors tmp2 = new adams.flow.standalone.CallableActors();
       argOption = (AbstractArgumentOption) tmp2.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp3 = new adams.flow.core.AbstractActor[1];
+      adams.flow.core.Actor[] tmp3 = new adams.flow.core.Actor[1];
       adams.flow.sink.DumpFile tmp4 = new adams.flow.sink.DumpFile();
       argOption = (AbstractArgumentOption) tmp4.getOptionManager().findByProperty("outputFile");
       tmp4.setOutputFile((adams.core.io.PlaceholderFile) argOption.valueOf("${TMP}/dumpfile.txt"));
@@ -138,13 +138,13 @@ public class SpreadSheetInfoTest
       tmp1[3] = tmp11;
       adams.flow.control.Branch tmp13 = new adams.flow.control.Branch();
       argOption = (AbstractArgumentOption) tmp13.getOptionManager().findByProperty("branches");
-      adams.flow.core.AbstractActor[] tmp14 = new adams.flow.core.AbstractActor[3];
+      adams.flow.core.Actor[] tmp14 = new adams.flow.core.Actor[3];
       adams.flow.control.Sequence tmp15 = new adams.flow.control.Sequence();
       argOption = (AbstractArgumentOption) tmp15.getOptionManager().findByProperty("name");
       tmp15.setName((java.lang.String) argOption.valueOf("rows"));
 
       argOption = (AbstractArgumentOption) tmp15.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp17 = new adams.flow.core.AbstractActor[2];
+      adams.flow.core.Actor[] tmp17 = new adams.flow.core.Actor[2];
       adams.flow.transformer.SpreadSheetInfo tmp18 = new adams.flow.transformer.SpreadSheetInfo();
       tmp17[0] = tmp18;
       adams.flow.sink.CallableSink tmp19 = new adams.flow.sink.CallableSink();
@@ -160,7 +160,7 @@ public class SpreadSheetInfoTest
       tmp21.setName((java.lang.String) argOption.valueOf("cols"));
 
       argOption = (AbstractArgumentOption) tmp21.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp23 = new adams.flow.core.AbstractActor[3];
+      adams.flow.core.Actor[] tmp23 = new adams.flow.core.Actor[3];
       adams.flow.transformer.SpreadSheetInfo tmp24 = new adams.flow.transformer.SpreadSheetInfo();
       argOption = (AbstractArgumentOption) tmp24.getOptionManager().findByProperty("type");
       tmp24.setType((adams.flow.transformer.SpreadSheetInfo.InfoType) argOption.valueOf("NUM_COLUMNS"));
@@ -184,7 +184,7 @@ public class SpreadSheetInfoTest
       tmp30.setName((java.lang.String) argOption.valueOf("col names"));
 
       argOption = (AbstractArgumentOption) tmp30.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp32 = new adams.flow.core.AbstractActor[3];
+      adams.flow.core.Actor[] tmp32 = new adams.flow.core.Actor[3];
       adams.flow.source.ForLoop tmp33 = new adams.flow.source.ForLoop();
       argOption = (AbstractArgumentOption) tmp33.getOptionManager().findByProperty("loopUpper");
       argOption.setVariable("@{num_cols}");
@@ -197,7 +197,7 @@ public class SpreadSheetInfoTest
       tmp32[1] = tmp34;
       adams.flow.control.Trigger tmp36 = new adams.flow.control.Trigger();
       argOption = (AbstractArgumentOption) tmp36.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp37 = new adams.flow.core.AbstractActor[3];
+      adams.flow.core.Actor[] tmp37 = new adams.flow.core.Actor[3];
       adams.flow.source.StorageValue tmp38 = new adams.flow.source.StorageValue();
       argOption = (AbstractArgumentOption) tmp38.getOptionManager().findByProperty("storageName");
       tmp38.setStorageName((adams.flow.control.StorageName) argOption.valueOf("sheet"));

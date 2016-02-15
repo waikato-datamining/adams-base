@@ -15,7 +15,7 @@
 
 /**
  * UpdateCallableActorNameTest.java
- * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.processor;
 
@@ -24,7 +24,7 @@ import junit.framework.TestSuite;
 import adams.core.option.AbstractArgumentOption;
 import adams.env.Environment;
 import adams.flow.control.Flow;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 
 /**
  * Tests the UpdateCallableActorName processor.
@@ -47,20 +47,20 @@ public class UpdateCallableActorNameTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
   @Override
-  public AbstractActor getActor() {
+  public Actor getActor() {
     AbstractArgumentOption    argOption;
 
     Flow flow = new Flow();
 
     try {
       argOption = (AbstractArgumentOption) flow.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp1 = new adams.flow.core.AbstractActor[3];
+      adams.flow.core.Actor[] tmp1 = new adams.flow.core.Actor[3];
       adams.flow.standalone.CallableActors tmp2 = new adams.flow.standalone.CallableActors();
       argOption = (AbstractArgumentOption) tmp2.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp3 = new adams.flow.core.AbstractActor[2];
+      adams.flow.core.Actor[] tmp3 = new adams.flow.core.Actor[2];
       adams.flow.sink.Display tmp4 = new adams.flow.sink.Display();
       tmp3[0] = tmp4;
       adams.flow.sink.DumpFile tmp5 = new adams.flow.sink.DumpFile();
@@ -80,7 +80,7 @@ public class UpdateCallableActorNameTest
       tmp1[1] = tmp7;
       adams.flow.control.Branch tmp9 = new adams.flow.control.Branch();
       argOption = (AbstractArgumentOption) tmp9.getOptionManager().findByProperty("branches");
-      adams.flow.core.AbstractActor[] tmp10 = new adams.flow.core.AbstractActor[2];
+      adams.flow.core.Actor[] tmp10 = new adams.flow.core.Actor[2];
       adams.flow.sink.CallableSink tmp11 = new adams.flow.sink.CallableSink();
       argOption = (AbstractArgumentOption) tmp11.getOptionManager().findByProperty("callableName");
       tmp11.setCallableName((adams.flow.core.CallableActorReference) argOption.valueOf("Display"));

@@ -15,15 +15,15 @@
 
 /**
  * ProvenanceInformation.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.provenance;
 
-import java.io.Serializable;
-
 import adams.core.CloneHandler;
 import adams.core.option.MaterializedArrayProducer;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
+
+import java.io.Serializable;
 
 /**
  * Container used for storing provenance information.
@@ -55,7 +55,7 @@ public class ProvenanceInformation
    * @param actorType	the type of actor
    * @param actor	the actor
    */
-  public ProvenanceInformation(ActorType actorType, AbstractActor actor) {
+  public ProvenanceInformation(ActorType actorType, Actor actor) {
     this(actorType, toOptions(actor));
   }
 
@@ -76,7 +76,7 @@ public class ProvenanceInformation
    * @param input	the type of input, can be null
    * @param actor	the actor
    */
-  public ProvenanceInformation(ActorType actorType, Class input, AbstractActor actor) {
+  public ProvenanceInformation(ActorType actorType, Class input, Actor actor) {
     this(actorType, input, toOptions(actor));
   }
 
@@ -98,7 +98,7 @@ public class ProvenanceInformation
    * @param actor	the actor
    * @param output	the type of output, can be null
    */
-  public ProvenanceInformation(ActorType actorType, AbstractActor actor, Class output) {
+  public ProvenanceInformation(ActorType actorType, Actor actor, Class output) {
     this(actorType, toOptions(actor), output);
   }
 
@@ -121,7 +121,7 @@ public class ProvenanceInformation
    * @param actor	the actor
    * @param output	the type of output, can be null
    */
-  public ProvenanceInformation(ActorType actorType, Class input, AbstractActor actor, Class output) {
+  public ProvenanceInformation(ActorType actorType, Class input, Actor actor, Class output) {
     this(actorType, input, toOptions(actor), output);
   }
 
@@ -240,7 +240,7 @@ public class ProvenanceInformation
    * @param actor	the actor to get the options for
    * @return		the options array
    */
-  protected static String[] toOptions(AbstractActor actor) {
+  protected static String[] toOptions(Actor actor) {
     MaterializedArrayProducer	producer;
 
     producer = new MaterializedArrayProducer();

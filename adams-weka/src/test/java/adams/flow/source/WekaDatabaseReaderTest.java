@@ -26,7 +26,7 @@ import adams.db.SQLStatement;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 
 /**
  * Tests the DatabaseReader actor.
@@ -49,10 +49,10 @@ public class WekaDatabaseReaderTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
   @Override
-  public AbstractActor getActor() {
+  public Actor getActor() {
     WekaDatabaseReader dbr = new WekaDatabaseReader();
     dbr.setURL(getDatabaseURL());
     dbr.setUser(getDatabaseUser());
@@ -60,7 +60,7 @@ public class WekaDatabaseReaderTest
     dbr.setQuery(new SQLStatement("show tables"));
 
     Flow flow = new Flow();
-    flow.setActors(new AbstractActor[]{dbr});
+    flow.setActors(new Actor[]{dbr});
 
     return flow;
   }

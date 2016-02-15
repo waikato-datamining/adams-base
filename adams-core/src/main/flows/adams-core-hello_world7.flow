@@ -1,35 +1,13 @@
 # Project: adams
-# Date: 2014-01-23 15:23:00
+# Date: 2016-02-15 11:31:23
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	Simple flow that preprocesses the following string before displaying it:\n  Hello World!\nThe string gets processed in parallel and displayed in a Display actor\nthat can be called from anywhere in the flow.
-	-actor
-		adams.flow.standalone.CallableActors
-			-actor
-				adams.flow.sink.Display
-	-actor
-		adams.flow.source.StringConstants
-			-string
-			Hello World!
-	-actor
-		adams.flow.control.Branch
-			-branch
-				adams.flow.sink.CallableSink
-					-callable
-					Display
-			-branch
-				adams.flow.control.Sequence
-					-actor
-						adams.flow.transformer.Convert
-							-conversion
-								adams.data.conversion.UpperCase
-					-actor
-						adams.flow.sink.CallableSink
-							-callable
-							Display
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "Simple flow that preprocesses the following string before displaying it:\\n  Hello World!\\nThe string gets processed in parallel and displayed in a Display actor\\nthat can be called from anywhere in the flow." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.standalone.CallableActors
+  adams.flow.sink.Display -writer adams.data.io.output.NullWriter
+ adams.flow.source.StringConstants -string "Hello World!"
+ adams.flow.control.Branch
+  adams.flow.sink.CallableSink -callable Display
+  adams.flow.control.Sequence
+   adams.flow.transformer.Convert -conversion adams.data.conversion.UpperCase
+   adams.flow.sink.CallableSink -callable Display

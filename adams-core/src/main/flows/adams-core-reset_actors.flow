@@ -1,45 +1,14 @@
 # Project: adams
-# Date: 2014-11-11 16:56:35
+# Date: 2016-02-15 11:34:16
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	Demonstrates how to reset a transformer using a control variable (\"reset\").\nWhenever the variable \"reset\" changes, the TransformerReset control\nactor resets its sub-flow before executing it.
-	-actor
-		adams.flow.standalone.CallableActors
-			-actor
-				adams.flow.sink.Display
-					-writer
-						adams.data.io.output.NullWriter
-	-actor
-		adams.flow.source.ForLoop
-	-actor
-		adams.flow.control.ConditionalTee
-			-tee
-				adams.flow.transformer.SetVariable
-					-var-name
-					reset
-			-condition
-				adams.flow.condition.bool.Counting
-					-interval
-					5
-	-actor
-		adams.flow.control.Sleep
-			-interval
-			100
-	-actor
-		adams.flow.control.TransformerReset
-			-actor
-				adams.flow.control.Count
-					-tee
-						adams.flow.sink.CallableSink
-							-callable
-							Display
-					-condition
-						adams.flow.condition.bool.Counting
-			-var-name
-			reset
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "Demonstrates how to reset a transformer using a control variable (\\\"reset\\\").\\nWhenever the variable \\\"reset\\\" changes, the TransformerReset control\\nactor resets its sub-flow before executing it." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.standalone.CallableActors
+  adams.flow.sink.Display -writer adams.data.io.output.NullWriter
+ adams.flow.source.ForLoop
+ adams.flow.control.ConditionalTee -condition "adams.flow.condition.bool.Counting -interval 5"
+  adams.flow.transformer.SetVariable -var-name reset
+ adams.flow.control.Sleep -interval 100
+ adams.flow.control.TransformerReset -var-name reset
+  adams.flow.control.Count -condition adams.flow.condition.bool.Counting
+   adams.flow.sink.CallableSink -callable Display

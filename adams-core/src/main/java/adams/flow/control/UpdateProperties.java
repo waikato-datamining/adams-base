@@ -15,7 +15,7 @@
 
 /*
  * UpdateProperties.java
- * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -24,7 +24,9 @@ import adams.core.QuickInfoHelper;
 import adams.core.Utils;
 import adams.core.VariableName;
 import adams.core.base.BaseString;
-import adams.flow.core.AbstractActor;
+import adams.core.discovery.PropertyPath;
+import adams.core.discovery.PropertyPath.PropertyContainer;
+import adams.flow.core.Actor;
 import adams.flow.core.ActorExecution;
 import adams.flow.core.ActorHandler;
 import adams.flow.core.ActorHandlerInfo;
@@ -34,8 +36,6 @@ import adams.flow.core.OutputProducer;
 import adams.flow.core.PropertyHelper;
 import adams.flow.core.Token;
 import adams.flow.transformer.PassThrough;
-import adams.core.discovery.PropertyPath;
-import adams.core.discovery.PropertyPath.PropertyContainer;
 
 import java.util.Hashtable;
 
@@ -94,7 +94,7 @@ import java.util.Hashtable;
  * &nbsp;&nbsp;&nbsp;default:
  * </pre>
  *
- * <pre>-sub-actor &lt;adams.flow.core.AbstractActor&gt; (property: subActor)
+ * <pre>-sub-actor &lt;adams.flow.core.Actor&gt; (property: subActor)
  * &nbsp;&nbsp;&nbsp;The transformer to update the properties for.
  * &nbsp;&nbsp;&nbsp;default: adams.flow.transformer.PassThrough
  * </pre>
@@ -130,7 +130,7 @@ public class UpdateProperties
   protected VariableName[] m_VariableNames;
 
   /** the actor to update the properties foe. */
-  protected AbstractActor m_SubActor;
+  protected Actor m_SubActor;
 
   /** the property containers of the properties to update. */
   protected transient PropertyContainer[] m_Containers;
@@ -302,7 +302,7 @@ public class UpdateProperties
    * @param actor	the actor to check
    * @return		null if accepted, otherwise error message
    */
-  protected String checkSubActor(AbstractActor actor) {
+  protected String checkSubActor(Actor actor) {
     if (!ActorUtils.isTransformer(actor))
       return "Not a transformer: " + actor;
 
@@ -314,7 +314,7 @@ public class UpdateProperties
    *
    * @param value	the actor
    */
-  public void setSubActor(AbstractActor value) {
+  public void setSubActor(Actor value) {
     String	msg;
 
     msg = checkSubActor(value);
@@ -333,7 +333,7 @@ public class UpdateProperties
    *
    * @return		the actor
    */
-  public AbstractActor getSubActor() {
+  public Actor getSubActor() {
     return m_SubActor;
   }
 
@@ -364,7 +364,7 @@ public class UpdateProperties
    * @return		the actor
    */
   @Override
-  public AbstractActor get(int index) {
+  public Actor get(int index) {
     if (index == 0)
       return m_SubActor;
     else
@@ -378,7 +378,7 @@ public class UpdateProperties
    * @param actor	the actor to set at this position
    */
   @Override
-  public void set(int index, AbstractActor actor) {
+  public void set(int index, Actor actor) {
     if (index == 0)
       setSubActor(actor);
     else

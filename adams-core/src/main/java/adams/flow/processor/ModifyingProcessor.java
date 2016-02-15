@@ -15,11 +15,11 @@
 
 /**
  * ModifyingProcessor.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.processor;
 
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 
 /**
  * Interface for processors that potentially modify the actor.
@@ -55,5 +55,5 @@ public interface ModifyingProcessor {
    *
    * @return		the modified actor, null if not modified
    */
-  public AbstractActor getModifiedActor();
+  public Actor getModifiedActor();
 }

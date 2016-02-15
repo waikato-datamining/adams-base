@@ -15,13 +15,13 @@
 
 /**
  * FileOpenRemoteFlow.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.menu;
 
 import adams.core.Utils;
 import adams.core.option.NestedConsumer;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.execution.RemoteFlowListener;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.ParameterPanel;
@@ -67,13 +67,13 @@ public class FileOpenRemoteFlow
    * @param port        the port to connect to
    */
   protected void openRemote(String server, int port) {
-    Socket            socket;
-    BufferedReader    in;
-    StringBuilder     buffer;
-    String            line;
-    NestedConsumer    consumer;
-    AbstractActor     actor;
-    FlowPanel         panel;
+    Socket            	socket;
+    BufferedReader    	in;
+    StringBuilder     	buffer;
+    String            	line;
+    NestedConsumer    	consumer;
+    Actor 		actor;
+    FlowPanel         	panel;
 
     buffer = new StringBuilder();
     socket = null;
@@ -104,7 +104,7 @@ public class FileOpenRemoteFlow
     }
 
     consumer = new NestedConsumer();
-    actor    = (AbstractActor) consumer.fromString(buffer.toString());
+    actor    = (Actor) consumer.fromString(buffer.toString());
     if (actor == null) {
       GUIHelper.showErrorMessage(
         m_State.getParentDialog(),

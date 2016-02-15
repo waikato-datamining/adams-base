@@ -26,7 +26,7 @@ import adams.core.option.BooleanOption;
 import adams.core.option.ClassOption;
 import adams.core.option.OptionTraversalPath;
 import adams.core.option.OptionTraverser;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.gui.dialog.TextPanel;
 
 import java.awt.Component;
@@ -127,7 +127,7 @@ public abstract class AbstractListingProcessor
    * @see		ModifyingProcessor
    */
   @Override
-  protected void processActor(AbstractActor actor) {
+  protected void processActor(Actor actor) {
     initializeList();
     
     actor.getOptionManager().traverse(new OptionTraverser() {

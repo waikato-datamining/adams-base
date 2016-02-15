@@ -1,4 +1,4 @@
-import adams.flow.core.AbstractActor
+import adams.flow.core.Actor
 import adams.flow.template.AbstractScript
 import adams.flow.source.StringConstants
 
@@ -16,7 +16,7 @@ class DummySource
     return "A dummy source template, only generates a subflow with a StringConstants actor."
   }
 
-  protected AbstractActor doGenerate() {
+  protected Actor doGenerate() {
     return new StringConstants();
   }
 }

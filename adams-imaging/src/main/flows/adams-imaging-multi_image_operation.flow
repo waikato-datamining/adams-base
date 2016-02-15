@@ -1,75 +1,18 @@
 # Project: adams
-# Date: 2015-02-28 17:02:45
+# Date: 2016-02-15 14:27:50
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	Shows how to use multi-image operations.
-	-actor
-		adams.flow.standalone.CallableActors
-			-actor
-				adams.flow.sink.DisplayPanelManager
-					-width
-					740
-					-height
-					550
-					-provider
-						adams.flow.sink.ImageViewer
-							-writer
-								adams.gui.print.NullWriter
-							-selection-processor
-								adams.gui.visualization.image.selection.NullProcessor
-							-image-overlay
-								adams.gui.visualization.image.NullOverlay
-					-entry-name-variable
-					entry
-	-actor
-		adams.flow.source.FileSupplier
-			-output-array
-			true
-			-file
-			${EXAMPLE_FLOWS}/data/helloworld.png
-			-file
-			${EXAMPLE_FLOWS}/data/helloworld_mask.png
-	-actor
-		adams.flow.control.ArrayProcess
-			-actor
-				adams.flow.control.Tee
-					-name
-					get name
-					-tee
-						adams.flow.transformer.BaseName
-							-remove-extensions
-							true
-					-tee
-						adams.flow.transformer.SetVariable
-							-var-name
-							entry
-			-actor
-				adams.flow.transformer.ImageReader
-					-reader
-						adams.data.io.input.JAIImageReader
-			-actor
-				adams.flow.control.Tee
-					-tee
-						adams.flow.sink.CallableSink
-							-callable
-							DisplayPanelManager
-	-actor
-		adams.flow.transformer.BufferedImageMultiImageOperation
-			-operation
-				adams.data.image.multiimageoperation.And
-	-actor
-		adams.flow.transformer.SetVariable
-			-var-name
-			entry
-			-var-value
-			and
-	-actor
-		adams.flow.sink.CallableSink
-			-callable
-			DisplayPanelManager
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "Shows how to use multi-image operations." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.standalone.CallableActors
+  adams.flow.sink.DisplayPanelManager -width 740 -height 550 -provider "adams.flow.sink.ImageViewer -writer adams.gui.print.NullWriter -selection-processor adams.gui.visualization.image.selection.NullProcessor -image-overlay adams.gui.visualization.image.NullOverlay" -entry-name-variable entry
+ adams.flow.source.FileSupplier -output-array true -file ${EXAMPLE_FLOWS}/data/helloworld.png -file ${EXAMPLE_FLOWS}/data/helloworld_mask.png
+ adams.flow.control.ArrayProcess
+  adams.flow.control.Tee -name "get name"
+   adams.flow.transformer.BaseName -remove-extensions true
+   adams.flow.transformer.SetVariable -var-name entry
+  adams.flow.transformer.ImageReader -reader adams.data.io.input.JAIImageReader
+  adams.flow.control.Tee
+   adams.flow.sink.CallableSink -callable DisplayPanelManager
+ adams.flow.transformer.BufferedImageMultiImageOperation -operation adams.data.image.multiimageoperation.And
+ adams.flow.transformer.SetVariable -var-name entry -var-value and
+ adams.flow.sink.CallableSink -callable DisplayPanelManager

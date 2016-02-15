@@ -26,7 +26,7 @@ import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.condition.test.FileExists;
 import adams.flow.control.Flow;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.transformer.WekaClassSelector;
 import adams.flow.transformer.WekaClassifying;
 import adams.flow.transformer.WekaFileReader;
@@ -83,10 +83,10 @@ public class ConditionalSourceTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
   @Override
-  public AbstractActor getActor() {
+  public Actor getActor() {
     FileSupplier sfs = new FileSupplier();
     sfs.setFiles(new adams.core.io.PlaceholderFile[]{new TmpFile("vote.arff")});
 
@@ -110,7 +110,7 @@ public class ConditionalSourceTest
     id.setOutputPrefix(new TmpFile("dumpfile"));
 
     Flow flow = new Flow();
-    flow.setActors(new AbstractActor[]{conds, fr, cs, cls, id});
+    flow.setActors(new Actor[]{conds, fr, cs, cls, id});
 
     return flow;
   }

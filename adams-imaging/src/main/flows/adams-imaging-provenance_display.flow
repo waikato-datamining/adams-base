@@ -1,47 +1,11 @@
 # Project: adams
-# Date: 2015-09-25 09:51:32
+# Date: 2016-02-15 14:28:38
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	Loads an image from disk, processes it and displays \nthe provenance information.
-	-actor
-		adams.flow.source.FileSupplier
-			-file
-			${EXAMPLE_FLOWS}/data/3666455665_18795f0741.jpg
-	-actor
-		adams.flow.transformer.ImageReader
-			-reader
-				adams.data.io.input.JAIImageReader
-	-actor
-		adams.flow.transformer.BufferedImageTransformer
-			-transformer
-				adams.data.jai.transformer.Gray8
-	-actor
-		adams.flow.transformer.BufferedImageTransformer
-			-name
-			BufferedImageTransformer-1
-			-transformer
-				adams.data.jai.transformer.Resize
-					-width
-					0.5
-					-height
-					0.5
-	-actor
-		adams.flow.transformer.BufferedImageFeatureGenerator
-			-algorithm
-				adams.data.image.features.Pixels
-					-converter
-						adams.data.featureconverter.SpreadSheet
-							-data-row-type
-								adams.data.spreadsheet.DenseDataRow
-							-spreadsheet-type
-								adams.data.spreadsheet.SpreadSheet
-	-actor
-		adams.flow.sink.ProvenanceDisplay
-			-writer
-				adams.gui.print.NullWriter
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "Loads an image from disk, processes it and displays \\nthe provenance information." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/3666455665_18795f0741.jpg
+ adams.flow.transformer.ImageReader -reader adams.data.io.input.JAIImageReader
+ adams.flow.transformer.BufferedImageTransformer -transformer adams.data.jai.transformer.Gray8
+ adams.flow.transformer.BufferedImageTransformer -name BufferedImageTransformer-1 -transformer "adams.data.jai.transformer.Resize -width 0.5 -height 0.5"
+ adams.flow.transformer.BufferedImageFeatureGenerator -algorithm "adams.data.image.features.Pixels -converter \"adams.data.featureconverter.SpreadSheet -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.SpreadSheet\""
+ adams.flow.sink.ProvenanceDisplay -writer adams.gui.print.NullWriter

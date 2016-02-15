@@ -15,7 +15,7 @@
 
 /**
  * ExternalFlow.java
- * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.standalone;
 
@@ -26,6 +26,7 @@ import adams.core.io.FlowFile;
 import adams.event.VariableChangeEvent;
 import adams.event.VariableChangeEvent.Type;
 import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.RunnableWithLogging;
 
@@ -112,7 +113,7 @@ public class ExternalFlow
   protected ExecutionType m_ExecutionType;
   
   /** the external flow itself. */
-  protected AbstractActor m_ExternalFlow;
+  protected Actor m_ExternalFlow;
 
   /** indicates whether a variable is attached to the external file. */
   protected Boolean m_FlowFileIsVariable;

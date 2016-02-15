@@ -1,61 +1,10 @@
 # Project: adams
-# Date: 2014-01-23 15:24:28
+# Date: 2016-02-15 11:34:43
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	This simple flow demonstrates how to make use of the\n\"switch\" control actor. The flow generates random \ninteger numbers from 0 to 999. Values less than 300\nare added to the Display actor on the left, values\nless than 600 in the middle Display actor and the \nremaining ones in the Display actor on the right.
-	-actor
-		adams.flow.source.RandomNumberGenerator
-			-generator
-				adams.data.random.JavaRandomInt
-			-max-num
-			100
-	-actor
-		adams.flow.control.Switch
-			-condition
-				adams.flow.condition.bool.Expression
-					-expression
-					X < 300
-			-condition
-				adams.flow.condition.bool.Expression
-					-expression
-					X < 600
-			-case
-				adams.flow.sink.Display
-					-name
-					< 300
-					-short-title
-					true
-					-width
-					320
-					-height
-					240
-			-case
-				adams.flow.sink.Display
-					-name
-					< 600
-					-short-title
-					true
-					-width
-					320
-					-height
-					240
-					-x
-					-2
-			-case
-				adams.flow.sink.Display
-					-name
-					default
-					-short-title
-					true
-					-width
-					320
-					-height
-					240
-					-x
-					-3
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "This simple flow demonstrates how to make use of the\\n\\\"switch\\\" control actor. The flow generates random \\ninteger numbers from 0 to 999. Values less than 300\\nare added to the Display actor on the left, values\\nless than 600 in the middle Display actor and the \\nremaining ones in the Display actor on the right." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.source.RandomNumberGenerator -generator adams.data.random.JavaRandomInt -max-num 100
+ adams.flow.control.Switch -condition "adams.flow.condition.bool.Expression -expression \"X < 300\"" -condition "adams.flow.condition.bool.Expression -expression \"X < 600\"" -case adams.flow.sink.Null
+  adams.flow.sink.Display -name "< 300" -short-title true -width 320 -height 240 -writer adams.data.io.output.NullWriter
+  adams.flow.sink.Display -name "< 600" -short-title true -width 320 -height 240 -x -2 -writer adams.data.io.output.NullWriter
+  adams.flow.sink.Display -name default -short-title true -width 320 -height 240 -x -3 -writer adams.data.io.output.NullWriter

@@ -20,14 +20,10 @@
 
 package adams.flow.control;
 
-import java.io.File;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.container.WekaModelContainer;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.core.CallableActorReference;
 import adams.flow.sink.DumpFile;
 import adams.flow.source.FileSupplier;
@@ -37,6 +33,10 @@ import adams.flow.transformer.WekaClassSelector;
 import adams.flow.transformer.WekaFileReader;
 import adams.flow.transformer.WekaTrainClassifier;
 import adams.test.TmpFile;
+import junit.framework.Test;
+import junit.framework.TestSuite;
+
+import java.io.File;
 
 /**
  * Tests the ContainerValuePicker actor.
@@ -87,10 +87,10 @@ public class ContainerValuePickerTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
   @Override
-  public AbstractActor getActor() {
+  public Actor getActor() {
     CallableActors ga = new CallableActors();
     
     WekaClassifierSetup wcs = new WekaClassifierSetup();
@@ -119,7 +119,7 @@ public class ContainerValuePickerTest
     df_all.setOutputFile(new TmpFile("dumpfile_all.txt"));
 
     Flow flow = new Flow();
-    flow.setActors(new AbstractActor[]{ga, sfs, fr, cs, cls, cvp, df_all});
+    flow.setActors(new Actor[]{ga, sfs, fr, cs, cls, cvp, df_all});
 
     return flow;
   }

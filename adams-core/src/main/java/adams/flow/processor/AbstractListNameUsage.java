@@ -23,7 +23,6 @@ import adams.core.option.AbstractOption;
 import adams.core.option.OptionHandler;
 import adams.core.option.OptionTraversalPath;
 import adams.flow.control.Flow;
-import adams.flow.core.AbstractActor;
 import adams.flow.core.Actor;
 import adams.gui.core.BaseListWithButtons;
 import adams.gui.core.GUIHelper;
@@ -53,7 +52,7 @@ public abstract class AbstractListNameUsage<T>
   protected String m_Name;
 
   /** the current actor being processed. */
-  protected transient AbstractActor m_Current;
+  protected transient Actor m_Current;
   
   /**
    * Returns a string describing the object.
@@ -187,7 +186,7 @@ public abstract class AbstractListNameUsage<T>
    * 			processors implementing ModifyingProcessor)
    * @see		ModifyingProcessor
    */
-  protected void processActor(AbstractActor actor) {
+  protected void processActor(Actor actor) {
     m_Current = actor;
     super.processActor(actor);
   }

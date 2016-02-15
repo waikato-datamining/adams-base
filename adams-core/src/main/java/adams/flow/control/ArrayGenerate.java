@@ -15,14 +15,14 @@
 
 /**
  * ArrayGenerate.java
- * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.control;
 
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
 import adams.core.base.BaseClassname;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.OutputProducer;
 import adams.flow.core.Token;
@@ -76,7 +76,7 @@ import java.util.Hashtable;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-branch &lt;adams.flow.core.AbstractActor&gt; [-branch ...] (property: branches)
+ * <pre>-branch &lt;adams.flow.core.Actor&gt; [-branch ...] (property: branches)
  * &nbsp;&nbsp;&nbsp;The different branches that branch off and will be supplied with a copy 
  * &nbsp;&nbsp;&nbsp;of the same object.
  * &nbsp;&nbsp;&nbsp;default: 
@@ -285,7 +285,7 @@ public class ArrayGenerate
    * @return		null if everything correct, otherwise the error message
    */
   @Override
-  protected String checkBranch(AbstractActor branch) {
+  protected String checkBranch(Actor branch) {
     String	result;
     
     result = super.checkBranch(branch);

@@ -1,73 +1,10 @@
 # Project: adams
-# Date: 2014-01-23 15:39:28
+# Date: 2016-02-15 14:53:52
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	Uses R to generate an array of random numbers and plots them.
-	-actor
-		adams.flow.standalone.Rserve
-	-actor
-		adams.flow.source.RSource
-			-script
-			x <- sample(1:100, 200, replace=T)\nx2 <- log2(x)
-			-return-type
-			DoubleArray
-	-actor
-		adams.flow.transformer.ArrayToSequence
-	-actor
-		adams.flow.transformer.MakePlotContainer
-			-plot-name
-			x
-	-actor
-		adams.flow.sink.SequencePlotter
-			-writer
-				adams.gui.print.NullWriter
-			-paintlet
-				adams.gui.visualization.sequence.LinePaintlet
-			-overlay-paintlet
-				adams.gui.visualization.sequence.CirclePaintlet
-			-marker-paintlet
-				adams.flow.sink.sequenceplotter.NoMarkers
-			-error-paintlet
-				adams.flow.sink.sequenceplotter.NoErrorPaintlet
-			-color-provider
-				adams.gui.visualization.core.DefaultColorProvider
-			-overlay-color-provider
-				adams.gui.visualization.core.DefaultColorProvider
-			-title
-			Random numbers
-			-axis-x
-				adams.gui.visualization.core.AxisPanelOptions
-					-label
-					Index
-					-tick-generator
-						adams.gui.visualization.core.axis.FancyTickGenerator
-					-nth-value
-					2
-					-width
-					40
-					-custom-format
-					0
-			-axis-y
-				adams.gui.visualization.core.AxisPanelOptions
-					-label
-					Number
-					-tick-generator
-						adams.gui.visualization.core.axis.FancyTickGenerator
-					-nth-value
-					2
-					-width
-					80
-					-custom-format
-					0
-			-plot-updater
-				adams.flow.sink.sequenceplotter.SimplePlotUpdater
-					-update-interval
-					-1
-			-post-processor
-				adams.flow.sink.sequenceplotter.PassThrough
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "Uses R to generate an array of random numbers and plots them." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.standalone.Rserve
+ adams.flow.source.RSource -script "x <- sample(1:100, 200, replace=T)\\nx2 <- log2(x)" -return-type DoubleArray
+ adams.flow.transformer.ArrayToSequence
+ adams.flow.transformer.MakePlotContainer -plot-name x
+ adams.flow.sink.SequencePlotter -writer adams.gui.print.NullWriter -paintlet adams.gui.visualization.sequence.LinePaintlet -overlay-paintlet adams.gui.visualization.sequence.CirclePaintlet -marker-paintlet adams.flow.sink.sequenceplotter.NoMarkers -error-paintlet adams.flow.sink.sequenceplotter.NoErrorPaintlet -mouse-click-action adams.flow.sink.sequenceplotter.NullClickAction -color-provider adams.gui.visualization.core.DefaultColorProvider -overlay-color-provider adams.gui.visualization.core.DefaultColorProvider -title "Random numbers" -axis-x "adams.gui.visualization.core.AxisPanelOptions -label Index -tick-generator adams.gui.visualization.core.axis.FancyTickGenerator -nth-value 2 -width 40 -custom-format 0" -axis-y "adams.gui.visualization.core.AxisPanelOptions -label Number -tick-generator adams.gui.visualization.core.axis.FancyTickGenerator -nth-value 2 -width 80 -custom-format 0" -plot-updater "adams.flow.sink.sequenceplotter.SimplePlotUpdater -update-interval -1" -post-processor adams.flow.sink.sequenceplotter.PassThrough

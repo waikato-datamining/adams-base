@@ -15,14 +15,14 @@
 
 /**
  * EditCleanUpFlow.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.menu;
 
-import java.awt.event.ActionEvent;
-
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.core.ActorUtils;
+
+import java.awt.event.ActionEvent;
 
 /**
  * Cleans up the flow.
@@ -51,7 +51,7 @@ public class EditCleanUpFlow
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    AbstractActor	cleaned;
+    Actor cleaned;
 
     cleaned = ActorUtils.cleanUpFlow(m_State.getCurrentFlow());
 

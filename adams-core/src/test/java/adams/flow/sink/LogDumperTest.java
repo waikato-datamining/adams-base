@@ -28,7 +28,7 @@ import adams.core.base.BaseString;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.sink.LogViewer;
 import adams.flow.source.StringConstants;
 import adams.flow.sink.LogDumper;
@@ -78,9 +78,9 @@ public class LogDumperTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
-  public AbstractActor getActor() {
+  public Actor getActor() {
     StringConstants sc = new StringConstants();
     sc.setStrings(new BaseString[]{
 	new BaseString("1.0"),
@@ -98,7 +98,7 @@ public class LogDumperTest
     ld.setOutputFile(new TmpFile("dumpfile.log"));
 
     Flow flow = new Flow();
-    flow.setActors(new AbstractActor[]{sc, mle, ld});
+    flow.setActors(new Actor[]{sc, mle, ld});
 
     return flow;
   }

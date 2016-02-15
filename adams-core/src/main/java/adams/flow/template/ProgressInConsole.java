@@ -15,13 +15,13 @@
 
 /**
  * ProgressInConsole.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.template;
 
 import adams.flow.condition.bool.Counting;
 import adams.flow.control.Count;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.sink.Console;
 
 /**
@@ -165,7 +165,7 @@ public class ProgressInConsole
    * @return 		the generated acto
    */
   @Override
-  protected AbstractActor doGenerate() {
+  protected Actor doGenerate() {
     Count	result;
     Counting	cnt;
     Console	con;

@@ -15,12 +15,12 @@
 
 /**
  * IncludeExternalTransformer.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
 
-import adams.flow.core.AbstractActor;
 import adams.flow.core.AbstractIncludeExternalActor;
+import adams.flow.core.Actor;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.InputConsumer;
 import adams.flow.core.OutputProducer;
@@ -95,7 +95,7 @@ public class IncludeExternalTransformer
    * @return		null if OK, otherwise error message
    */
   @Override
-  protected String checkExternalActor(AbstractActor actor) {
+  protected String checkExternalActor(Actor actor) {
     if (!ActorUtils.isTransformer(actor))
       return "External actor (" + actor.getClass().getName() + ") is not a transformer!";
     return null;

@@ -1,41 +1,13 @@
 # Project: adams
-# Date: 2014-01-23 15:20:49
+# Date: 2016-02-15 11:28:12
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	This flow shows how to extract a subset of elements\nfrom an array, creating a new array.
-	-actor
-		adams.flow.source.FileSupplier
-			-file
-			${EXAMPLE_FLOWS}/data/bolts.csv
-	-actor
-		adams.flow.transformer.TextFileReader
-	-actor
-		adams.flow.control.Tee
-			-tee
-				adams.flow.transformer.ArrayToSequence
-			-tee
-				adams.flow.sink.Display
-					-name
-					All lines
-					-short-title
-					true
-	-actor
-		adams.flow.transformer.ArraySubset
-			-elements
-			1-5,10-20
-	-actor
-		adams.flow.transformer.ArrayToSequence
-	-actor
-		adams.flow.sink.Display
-			-name
-			Subset of lines
-			-short-title
-			true
-			-x
-			-3
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "This flow shows how to extract a subset of elements\\nfrom an array, creating a new array." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/bolts.csv
+ adams.flow.transformer.TextFileReader -reader adams.data.io.input.LineArrayTextReader
+ adams.flow.control.Tee
+  adams.flow.transformer.ArrayToSequence
+  adams.flow.sink.Display -name "All lines" -short-title true -writer adams.data.io.output.NullWriter
+ adams.flow.transformer.ArraySubset -elements 1-5,10-20
+ adams.flow.transformer.ArrayToSequence
+ adams.flow.sink.Display -name "Subset of lines" -short-title true -x -3 -writer adams.data.io.output.NullWriter

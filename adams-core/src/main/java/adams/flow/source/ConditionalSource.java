@@ -15,13 +15,13 @@
 
 /*
  * ConditionalSource.java
- * Copyright (C) 2009-2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
 
 import adams.flow.control.AbstractConditionalActor;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.core.ActorExecution;
 import adams.flow.core.ActorHandlerInfo;
 import adams.flow.core.ActorUtils;
@@ -110,7 +110,7 @@ public class ConditionalSource
    *
    * @return		the default actor
    */
-  protected AbstractActor getDefaultActor() {
+  protected Actor getDefaultActor() {
     return new StringConstants();
   }
 

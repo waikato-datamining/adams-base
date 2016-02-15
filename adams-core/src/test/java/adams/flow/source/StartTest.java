@@ -28,7 +28,7 @@ import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
 import adams.flow.control.Sequence;
 import adams.flow.control.Trigger;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.sink.DumpFile;
 import adams.test.TmpFile;
 
@@ -75,9 +75,9 @@ public class StartTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
-  public AbstractActor getActor() {
+  public Actor getActor() {
     Start st = new Start();
 
     StringConstants sc = new StringConstants();
@@ -92,12 +92,12 @@ public class StartTest
     df.setOutputFile(new TmpFile("dumpfile.txt"));
 
     Trigger tr = new Trigger();
-    tr.setActors(new AbstractActor[]{
+    tr.setActors(new Actor[]{
 	sc, df
     });
 
     Flow flow = new Flow();
-    flow.setActors(new AbstractActor[]{st, tr});
+    flow.setActors(new Actor[]{st, tr});
 
     return flow;
   }

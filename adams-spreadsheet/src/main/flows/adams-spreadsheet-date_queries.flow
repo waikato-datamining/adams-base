@@ -1,181 +1,41 @@
 # Project: adams
-# Date: 2014-11-28 11:02:07
+# Date: 2016-02-15 14:57:45
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	Demonstrates how to perform queries on dates and how to update date cells.
-	-actor
-		adams.flow.standalone.CallableActors
-			-actor
-				adams.flow.sink.DisplayPanelManager
-					-width
-					740
-					-provider
-						adams.flow.sink.SpreadSheetDisplay
-							-writer
-								adams.data.io.output.NullWriter
-					-entry-name-variable
-					name
-	-actor
-		adams.flow.source.FileSupplier
-			-file
-			${EXAMPLE_FLOWS}/data/dates.csv
-	-actor
-		adams.flow.transformer.SpreadSheetFileReader
-			-reader
-				adams.data.io.input.CsvSpreadSheetReader
-					-data-row-type
-						adams.data.spreadsheet.DenseDataRow
-					-spreadsheet-type
-						adams.data.spreadsheet.SpreadSheet
-					-date-columns
-					1
-	-actor
-		adams.flow.control.Branch
-			-branch
-				adams.flow.control.Sequence
-					-name
-					original
-					-actor
-						adams.flow.transformer.SetVariable
-							-var-name
-							name
-							-var-value
-							original
-					-actor
-						adams.flow.sink.CallableSink
-							-callable
-							DisplayPanelManager
-			-branch
-				adams.flow.control.Sequence
-					-name
-					lt
-					-actor
-						adams.flow.transformer.SetVariable
-							-var-name
-							name
-							-var-value
-							<
-					-actor
-						adams.flow.transformer.SpreadSheetQuery
-							-query
-							SELECT * WHERE date @{name} parse(\"date\", \"2013-11-03\")
-					-actor
-						adams.flow.sink.CallableSink
-							-callable
-							DisplayPanelManager
-			-branch
-				adams.flow.control.Sequence
-					-name
-					le
-					-actor
-						adams.flow.transformer.SetVariable
-							-var-name
-							name
-							-var-value
-							<=
-					-actor
-						adams.flow.transformer.SpreadSheetQuery
-							-query
-							SELECT * WHERE date @{name} parse(\"date\", \"2013-11-03\")
-					-actor
-						adams.flow.sink.CallableSink
-							-callable
-							DisplayPanelManager
-			-branch
-				adams.flow.control.Sequence
-					-name
-					eq
-					-actor
-						adams.flow.transformer.SetVariable
-							-var-name
-							name
-							-var-value
-							=
-					-actor
-						adams.flow.transformer.SpreadSheetQuery
-							-query
-							SELECT * WHERE date @{name} parse(\"date\", \"2013-11-03\")
-					-actor
-						adams.flow.sink.CallableSink
-							-callable
-							DisplayPanelManager
-			-branch
-				adams.flow.control.Sequence
-					-name
-					!eq
-					-actor
-						adams.flow.transformer.SetVariable
-							-var-name
-							name
-							-var-value
-							<>
-					-actor
-						adams.flow.transformer.SpreadSheetQuery
-							-query
-							SELECT * WHERE date @{name} parse(\"date\", \"2013-11-03\")
-					-actor
-						adams.flow.sink.CallableSink
-							-callable
-							DisplayPanelManager
-			-branch
-				adams.flow.control.Sequence
-					-name
-					ge
-					-actor
-						adams.flow.transformer.SetVariable
-							-var-name
-							name
-							-var-value
-							>=
-					-actor
-						adams.flow.transformer.SpreadSheetQuery
-							-query
-							SELECT * WHERE date @{name} parse(\"date\", \"2013-11-03\")
-					-actor
-						adams.flow.sink.CallableSink
-							-callable
-							DisplayPanelManager
-			-branch
-				adams.flow.control.Sequence
-					-name
-					gt
-					-actor
-						adams.flow.transformer.SetVariable
-							-var-name
-							name
-							-var-value
-							>
-					-actor
-						adams.flow.transformer.SpreadSheetQuery
-							-query
-							SELECT * WHERE date @{name} parse(\"date\", \"2013-11-03\")
-					-actor
-						adams.flow.sink.CallableSink
-							-callable
-							DisplayPanelManager
-			-branch
-				adams.flow.control.Sequence
-					-name
-					update date
-					-actor
-						adams.flow.transformer.SetVariable
-							-var-name
-							name
-							-var-value
-							updated
-					-actor
-						adams.flow.transformer.SpreadSheetQuery
-							-query
-							UPDATE  \nSET date = parse(\"date\", \"2014-11-03\")\nWHERE date < parse(\"date\", \"2013-11-03\")
-					-actor
-						adams.flow.sink.CallableSink
-							-callable
-							DisplayPanelManager
-			-num-threads
-			1
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "Demonstrates how to perform queries on dates and how to update date cells." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.standalone.CallableActors
+  adams.flow.sink.DisplayPanelManager -width 740 -provider "adams.flow.sink.SpreadSheetDisplay -writer adams.data.io.output.NullWriter" -entry-name-variable name
+ adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/dates.csv
+ adams.flow.transformer.SpreadSheetFileReader -reader "adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.SpreadSheet -date-columns 1"
+ adams.flow.control.Branch -num-threads 1
+  adams.flow.control.Sequence -name original
+   adams.flow.transformer.SetVariable -var-name name -var-value original
+   adams.flow.sink.CallableSink -callable DisplayPanelManager
+  adams.flow.control.Sequence -name lt
+   adams.flow.transformer.SetVariable -var-name name -var-value <
+   adams.flow.transformer.SpreadSheetQuery -query "SELECT * WHERE date @{name} parse(\\\"date\\\", \\\"2013-11-03\\\")"
+   adams.flow.sink.CallableSink -callable DisplayPanelManager
+  adams.flow.control.Sequence -name le
+   adams.flow.transformer.SetVariable -var-name name -var-value <=
+   adams.flow.transformer.SpreadSheetQuery -query "SELECT * WHERE date @{name} parse(\\\"date\\\", \\\"2013-11-03\\\")"
+   adams.flow.sink.CallableSink -callable DisplayPanelManager
+  adams.flow.control.Sequence -name eq
+   adams.flow.transformer.SetVariable -var-name name -var-value =
+   adams.flow.transformer.SpreadSheetQuery -query "SELECT * WHERE date @{name} parse(\\\"date\\\", \\\"2013-11-03\\\")"
+   adams.flow.sink.CallableSink -callable DisplayPanelManager
+  adams.flow.control.Sequence -name !eq
+   adams.flow.transformer.SetVariable -var-name name -var-value <>
+   adams.flow.transformer.SpreadSheetQuery -query "SELECT * WHERE date @{name} parse(\\\"date\\\", \\\"2013-11-03\\\")"
+   adams.flow.sink.CallableSink -callable DisplayPanelManager
+  adams.flow.control.Sequence -name ge
+   adams.flow.transformer.SetVariable -var-name name -var-value >=
+   adams.flow.transformer.SpreadSheetQuery -query "SELECT * WHERE date @{name} parse(\\\"date\\\", \\\"2013-11-03\\\")"
+   adams.flow.sink.CallableSink -callable DisplayPanelManager
+  adams.flow.control.Sequence -name gt
+   adams.flow.transformer.SetVariable -var-name name -var-value >
+   adams.flow.transformer.SpreadSheetQuery -query "SELECT * WHERE date @{name} parse(\\\"date\\\", \\\"2013-11-03\\\")"
+   adams.flow.sink.CallableSink -callable DisplayPanelManager
+  adams.flow.control.Sequence -name "update date"
+   adams.flow.transformer.SetVariable -var-name name -var-value updated
+   adams.flow.transformer.SpreadSheetQuery -query "UPDATE  \\nSET date = parse(\\\"date\\\", \\\"2014-11-03\\\")\\nWHERE date < parse(\\\"date\\\", \\\"2013-11-03\\\")"
+   adams.flow.sink.CallableSink -callable DisplayPanelManager

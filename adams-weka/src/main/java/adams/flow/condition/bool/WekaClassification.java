@@ -24,7 +24,6 @@ import adams.core.QuickInfoHelper;
 import adams.core.SerializationHelper;
 import adams.core.io.PlaceholderFile;
 import adams.flow.container.WekaModelContainer;
-import adams.flow.core.AbstractActor;
 import adams.flow.core.Actor;
 import adams.flow.core.CallableActorHelper;
 import adams.flow.core.CallableActorReference;
@@ -259,7 +258,7 @@ public class WekaClassification
       // obtain model from callable actor
       try {
 	errors  = new MessageCollection();
-	obj     = CallableActorHelper.getSetup(Classifier.class, m_ModelActor, (AbstractActor) owner, errors);
+	obj     = CallableActorHelper.getSetup(Classifier.class, m_ModelActor, owner, errors);
 	if (obj == null) {
 	  if (!errors.isEmpty())
 	    result = errors.toString();

@@ -15,7 +15,7 @@
 
 /*
  *    AbstractGroovyActor.java
- *    Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ *    Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -40,7 +40,7 @@ public abstract class AbstractGroovyActor
   private static final long serialVersionUID = -5904986133981940404L;
 
   /** the loaded script object. */
-  protected transient AbstractActor m_ActorObject;
+  protected transient Actor m_ActorObject;
   
   /** the inline script. */
   protected GroovyScript m_InlineScript;
@@ -131,7 +131,7 @@ public abstract class AbstractGroovyActor
   protected String loadScriptObject() {
     Object[]	result;
 
-    result         = Groovy.getSingleton().loadScriptObject(AbstractActor.class, m_ScriptFile, m_InlineScript, m_ScriptOptions, getVariables());
+    result         = Groovy.getSingleton().loadScriptObject(Actor.class, m_ScriptFile, m_InlineScript, m_ScriptOptions, getVariables());
     m_ScriptObject = result[1];
 
     return (String) result[0];
@@ -144,11 +144,11 @@ public abstract class AbstractGroovyActor
    */
   @Override
   protected String checkScriptObject() {
-    String		result;
-    AbstractActor	script;
+    String	result;
+    Actor	script;
 
     result = null;
-    script = (AbstractActor) m_ScriptObject;
+    script = (Actor) m_ScriptObject;
 
     if (ActorUtils.isStandalone(this) && !ActorUtils.isStandalone(script))
       result = "Script object is not a singleton!";
@@ -174,7 +174,7 @@ public abstract class AbstractGroovyActor
     result = super.setUp();
 
     if (result == null) {
-      m_ActorObject = (AbstractActor) m_ScriptObject;
+      m_ActorObject = (Actor) m_ScriptObject;
       result        = m_ActorObject.setUp();
     }
 

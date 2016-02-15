@@ -7,5 +7,5 @@
 # Author:  FracPete (fracpete at waikato dot ac dot nz)
 # Version: $Revision$
 
-adams.flow.core.AbstractActor=\
+adams.flow.core.Actor=\
   adams.flow.sink.ProgrammaticSink

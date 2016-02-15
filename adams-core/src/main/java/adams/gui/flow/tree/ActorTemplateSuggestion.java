@@ -19,18 +19,18 @@
  */
 package adams.gui.flow.tree;
 
-import java.util.Enumeration;
-import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import adams.core.Properties;
 import adams.core.Utils;
 import adams.core.logging.LoggingHelper;
 import adams.env.ActorTemplateSuggestionDefinition;
 import adams.env.Environment;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.template.AbstractActorTemplate;
+
+import java.util.Enumeration;
+import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Class for suggesting actor templates when editing a flow, depending on
@@ -87,7 +87,7 @@ public class ActorTemplateSuggestion {
 
     // get the default(s)
     parts     = m_Properties.getProperty(KEY_DEFAULT, "adams.flow.template.UpdateVariable").split(",");
-    templates = new Vector<AbstractActorTemplate>();
+    templates = new Vector<>();
     for (i = 0; i < parts.length; i++)  {
       try {
 	templates.add((AbstractActorTemplate) Class.forName(parts[i]).newInstance());
@@ -109,7 +109,7 @@ public class ActorTemplateSuggestion {
     suggestion = new adams.parser.ActorTemplateSuggestion();
     suggestion.setParent(new adams.flow.control.Flow());
     suggestion.setPosition(0);
-    suggestion.setActors(new AbstractActor[0]);
+    suggestion.setActors(new Actor[0]);
     while (names.hasMoreElements()) {
       name = names.nextElement();
       if (name.equals(KEY_DEFAULT))
@@ -147,13 +147,13 @@ public class ActorTemplateSuggestion {
    * @param actors	the actors to insert the suggested actor template in
    * @return		the suggested actor templates
    */
-  public AbstractActorTemplate[] suggest(AbstractActor parent, int position, AbstractActor[] actors) {
+  public AbstractActorTemplate[] suggest(Actor parent, int position, Actor[] actors) {
     AbstractActorTemplate[]		result;
     Vector<AbstractActorTemplate>	suggestions;
     AbstractActorTemplate[]		suggested;
     int					i;
 
-    suggestions = new Vector<AbstractActorTemplate>();
+    suggestions = new Vector<>();
 
     try {
       suggested = adams.parser.ActorTemplateSuggestion.evaluate(m_Rules, parent, position, actors);

@@ -1,161 +1,39 @@
 # Project: adams
-# Date: 2014-01-23 15:48:25
+# Date: 2016-02-15 15:20:23
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	This flow demonstrates how to use the class label\nindex from the prediction that a trained classifier\nreturned in a Switch statement.
-	-actor
-		adams.flow.standalone.CallableActors
-			-actor
-				adams.flow.source.SequenceSource
-					-name
-					model
-					-actor
-						adams.flow.source.FileSupplier
-							-file
-							${EXAMPLE_FLOWS}/data/anneal_train.arff
-					-actor
-						adams.flow.transformer.WekaFileReader
-							-loader
-								weka.core.converters.ArffLoader
-					-actor
-						adams.flow.transformer.WekaClassSelector
-					-actor
-						adams.flow.transformer.WekaTrainClassifier
-							-name
-							WekaClassifier
-					-actor
-						adams.flow.control.ContainerValuePicker
-							-value
-							Model
-							-switch-outputs
-							true
-			-actor
-				adams.flow.sink.Display
-			-actor
-				adams.flow.source.WekaClassifierSetup
-					-classifier
-						weka.classifiers.trees.J48
-							-C
-							0.25
-							-M
-							2
-							
-							
-							
-							
-							
-							
-							
-							
-							
-							
-							
-							
-	-actor
-		adams.flow.source.FileSupplier
-			-file
-			${EXAMPLE_FLOWS}/data/anneal_test.arff
-	-actor
-		adams.flow.transformer.WekaFileReader
-			-loader
-				weka.core.converters.ArffLoader
-			-output-type
-			INCREMENTAL
-	-actor
-		adams.flow.transformer.WekaClassSelector
-	-actor
-		adams.flow.control.Switch
-			-condition
-				adams.flow.condition.bool.WekaClassification
-					-model-actor
-					model
-			-case
-				adams.flow.control.Trigger
-					-name
-					class 1
-					-tee
-						adams.flow.source.StringConstants
-							-string
-							Class 1
-					-tee
-						adams.flow.sink.CallableSink
-							-callable
-							Display
-			-case
-				adams.flow.control.Trigger
-					-name
-					class 2
-					-tee
-						adams.flow.source.StringConstants
-							-string
-							Class 2
-					-tee
-						adams.flow.sink.CallableSink
-							-callable
-							Display
-			-case
-				adams.flow.control.Trigger
-					-name
-					class 3
-					-tee
-						adams.flow.source.StringConstants
-							-string
-							Class 3
-					-tee
-						adams.flow.sink.CallableSink
-							-callable
-							Display
-			-case
-				adams.flow.control.Trigger
-					-name
-					class 4
-					-tee
-						adams.flow.source.StringConstants
-							-string
-							Class 4
-					-tee
-						adams.flow.sink.CallableSink
-							-callable
-							Display
-			-case
-				adams.flow.control.Trigger
-					-name
-					class 5
-					-tee
-						adams.flow.source.StringConstants
-							-string
-							Class 5
-					-tee
-						adams.flow.sink.CallableSink
-							-callable
-							Display
-			-case
-				adams.flow.control.Trigger
-					-name
-					class U
-					-tee
-						adams.flow.source.StringConstants
-							-string
-							Class U
-					-tee
-						adams.flow.sink.CallableSink
-							-callable
-							Display
-			-case
-				adams.flow.control.Trigger
-					-name
-					No prediction
-					-tee
-						adams.flow.source.StringConstants
-							-string
-							No prediction
-					-tee
-						adams.flow.sink.CallableSink
-							-callable
-							Display
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "This flow demonstrates how to use the class label\\nindex from the prediction that a trained classifier\\nreturned in a Switch statement." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.standalone.CallableActors
+  adams.flow.source.SequenceSource -name model
+   adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/anneal_train.arff
+   adams.flow.transformer.WekaFileReader -loader weka.core.converters.ArffLoader
+   adams.flow.transformer.WekaClassSelector
+   adams.flow.transformer.WekaTrainClassifier -name WekaClassifier
+   adams.flow.control.ContainerValuePicker -value Model -switch-outputs true
+  adams.flow.sink.Display -writer adams.data.io.output.NullWriter
+  adams.flow.source.WekaClassifierSetup -classifier "weka.classifiers.trees.J48 -C 0.25 -M 2"
+ adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/anneal_test.arff
+ adams.flow.transformer.WekaFileReader -loader weka.core.converters.ArffLoader -output-type INCREMENTAL
+ adams.flow.transformer.WekaClassSelector
+ adams.flow.control.Switch -condition "adams.flow.condition.bool.WekaClassification -model-actor model" -case adams.flow.sink.Null
+  adams.flow.control.Trigger -name "class 1"
+   adams.flow.source.StringConstants -string "Class 1"
+   adams.flow.sink.CallableSink -callable Display
+  adams.flow.control.Trigger -name "class 2"
+   adams.flow.source.StringConstants -string "Class 2"
+   adams.flow.sink.CallableSink -callable Display
+  adams.flow.control.Trigger -name "class 3"
+   adams.flow.source.StringConstants -string "Class 3"
+   adams.flow.sink.CallableSink -callable Display
+  adams.flow.control.Trigger -name "class 4"
+   adams.flow.source.StringConstants -string "Class 4"
+   adams.flow.sink.CallableSink -callable Display
+  adams.flow.control.Trigger -name "class 5"
+   adams.flow.source.StringConstants -string "Class 5"
+   adams.flow.sink.CallableSink -callable Display
+  adams.flow.control.Trigger -name "class U"
+   adams.flow.source.StringConstants -string "Class U"
+   adams.flow.sink.CallableSink -callable Display
+  adams.flow.control.Trigger -name "No prediction"
+   adams.flow.source.StringConstants -string "No prediction"
+   adams.flow.sink.CallableSink -callable Display

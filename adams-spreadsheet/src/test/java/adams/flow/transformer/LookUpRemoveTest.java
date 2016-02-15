@@ -26,7 +26,7 @@ import adams.core.option.AbstractArgumentOption;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.test.TmpFile;
 
 /**
@@ -97,17 +97,17 @@ public class LookUpRemoveTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
   @Override
-  public AbstractActor getActor() {
+  public Actor getActor() {
     AbstractArgumentOption    argOption;
     
     Flow flow = new Flow();
     
     try {
       argOption = (AbstractArgumentOption) flow.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] abstractactor1 = new adams.flow.core.AbstractActor[5];
+      adams.flow.core.Actor[] abstractactor1 = new adams.flow.core.Actor[5];
 
       // Flow.FileSupplier
       adams.flow.source.FileSupplier singlefilesupplier2 = new adams.flow.source.FileSupplier();
@@ -131,7 +131,7 @@ public class LookUpRemoveTest
       // Flow.Trigger
       adams.flow.control.Trigger trigger8 = new adams.flow.control.Trigger();
       argOption = (AbstractArgumentOption) trigger8.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] abstractactor9 = new adams.flow.core.AbstractActor[2];
+      adams.flow.core.Actor[] abstractactor9 = new adams.flow.core.Actor[2];
 
       // Flow.Trigger.StringConstants
       adams.flow.source.StringConstants stringconstants10 = new adams.flow.source.StringConstants();
@@ -155,7 +155,7 @@ public class LookUpRemoveTest
       trigger13.setName((java.lang.String) argOption.valueOf("Trigger-1"));
 
       argOption = (AbstractArgumentOption) trigger13.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] abstractactor15 = new adams.flow.core.AbstractActor[2];
+      adams.flow.core.Actor[] abstractactor15 = new adams.flow.core.Actor[2];
 
       // Flow.Trigger-1.LookUpTable
       adams.flow.source.LookUpTable lookuptable16 = new adams.flow.source.LookUpTable();

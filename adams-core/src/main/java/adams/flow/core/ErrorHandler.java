@@ -15,7 +15,7 @@
 
 /**
  * ErrorHandler.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.core;
 
@@ -40,5 +40,5 @@ public interface ErrorHandler {
    * @see		Flow#getLogErrors()
    * @see		Flow#getErrorHandling()
    */
-  public String handleError(AbstractActor source, String type, String msg);
+  public String handleError(Actor source, String type, String msg);
 }

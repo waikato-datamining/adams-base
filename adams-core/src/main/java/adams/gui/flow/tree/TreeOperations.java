@@ -15,7 +15,7 @@
 
 /**
  * TreeOperations.java
- * Copyright (C) 2015 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.flow.tree;
@@ -27,10 +27,10 @@ import adams.flow.condition.bool.BooleanCondition;
 import adams.flow.condition.bool.BooleanConditionSupporter;
 import adams.flow.condition.bool.Expression;
 import adams.flow.control.Flow;
-import adams.flow.core.AbstractActor;
 import adams.flow.core.AbstractCallableActor;
 import adams.flow.core.AbstractDisplay;
 import adams.flow.core.AbstractExternalActor;
+import adams.flow.core.Actor;
 import adams.flow.core.ActorExecution;
 import adams.flow.core.ActorHandler;
 import adams.flow.core.ActorHandlerInfo;
@@ -146,8 +146,8 @@ public class TreeOperations
    * @param parent	the parent to place the actor beneath
    * @return		true if actor can be placed, false if not
    */
-  public boolean checkForStandalones(AbstractActor actor, Node parent) {
-    return checkForStandalones(new AbstractActor[]{actor}, parent);
+  public boolean checkForStandalones(Actor actor, Node parent) {
+    return checkForStandalones(new Actor[]{actor}, parent);
   }
 
   /**
@@ -160,8 +160,8 @@ public class TreeOperations
    * @param parent	the parent to place the actor beneath
    * @return		true if actor can be placed, false if not
    */
-  public boolean checkForStandalones(AbstractActor[] actors, Node parent) {
-    for (AbstractActor actor: actors) {
+  public boolean checkForStandalones(Actor[] actors, Node parent) {
+    for (Actor actor: actors) {
       if (    ActorUtils.isStandalone(actor)
 	  && (parent != null)
 	  && (parent.getActor() instanceof ActorHandler)
@@ -184,10 +184,10 @@ public class TreeOperations
    * @return		the configured filter
    */
   public AbstractItemFilter configureFilter(TreePath path, InsertPosition position) {
-    ActorClassTreeFilter result;
-    AbstractActor		before;
-    AbstractActor		after;
-    AbstractActor		parent;
+    ActorClassTreeFilter 	result;
+    Actor			before;
+    Actor			after;
+    Actor			parent;
     Node			parentNode;
     Node			node;
     int				index;
@@ -301,7 +301,7 @@ public class TreeOperations
    * @param actor	the actor to add, if null a GOE dialog is presented
    * @param position	where to insert the actor
    */
-  public void addActor(TreePath path, AbstractActor actor, InsertPosition position) {
+  public void addActor(TreePath path, Actor actor, InsertPosition position) {
     addActor(path, actor, position, false);
   }
 
@@ -315,13 +315,13 @@ public class TreeOperations
    * @param position	where to insert the actor
    * @param record	whether to record the addition
    */
-  public void addActor(TreePath path, AbstractActor actor, InsertPosition position, boolean record) {
+  public void addActor(TreePath path, Actor actor, InsertPosition position, boolean record) {
     GenericObjectEditorDialog 	dialog;
     final Node			node;
     final Node			parent;
     int				index;
     Node[]			children;
-    AbstractActor[]		actors;
+    Actor[]			actors;
     String			txt;
     final List<String> exp;
 
@@ -340,7 +340,7 @@ public class TreeOperations
 	dialog.setTitle("Add beneath...");
       actors = suggestActors(path, position);
       dialog.getGOEEditor().setCanChangeClassInDialog(true);
-      dialog.getGOEEditor().setClassType(AbstractActor.class);
+      dialog.getGOEEditor().setClassType(Actor.class);
       dialog.getGOEEditor().setFilter(configureFilter(path, position));
       dialog.setProposedClasses(actors);
       if (actors != null)
@@ -351,7 +351,7 @@ public class TreeOperations
       dialog.setVisible(true);
       getOwner().updateCurrentEditing(null, null);
       if (dialog.getResult() == GenericObjectEditorDialog.APPROVE_OPTION)
-        addActor(path, (AbstractActor) dialog.getEditor().getValue(), position, record);
+        addActor(path, (Actor) dialog.getEditor().getValue(), position, record);
     }
     else {
       if (position == InsertPosition.BENEATH) {
@@ -361,7 +361,7 @@ public class TreeOperations
 	if (actor instanceof ClipboardActorContainer)
 	  actors = ((ClipboardActorContainer) actor).getActors();
 	else
-	  actors = new AbstractActor[]{actor};
+	  actors = new Actor[]{actor};
 	if (actors.length < 1)
 	  return;
 	if (!checkForStandalones(actors, node))
@@ -406,7 +406,7 @@ public class TreeOperations
 	if (actor instanceof ClipboardActorContainer)
 	  actors = ((ClipboardActorContainer) actor).getActors();
 	else
-	  actors = new AbstractActor[]{actor};
+	  actors = new Actor[]{actor};
 	if (actors.length < 1)
 	  return;
 	if (!checkForStandalones(actors, parent))
@@ -467,8 +467,8 @@ public class TreeOperations
     Node 			currNode;
     Node			newNode;
     Node			parent;
-    AbstractActor		actor;
-    AbstractActor		actorOld;
+    Actor			actor;
+    Actor			actorOld;
     int				index;
     boolean			changed;
     ActorHandler		handler;
@@ -490,7 +490,7 @@ public class TreeOperations
     else
       dialog.setTitle("Show...");
     dialog.getGOEEditor().setCanChangeClassInDialog(true);
-    dialog.getGOEEditor().setClassType(AbstractActor.class);
+    dialog.getGOEEditor().setClassType(Actor.class);
     dialog.setProposedClasses(null);
     dialog.setCurrent(currNode.getActor().shallowCopy());
     dialog.getGOEEditor().setReadOnly(!editable);
@@ -499,7 +499,7 @@ public class TreeOperations
     dialog.setVisible(true);
     getOwner().updateCurrentEditing(null, null);
     if (dialog.getResult() == GenericObjectEditorDialog.APPROVE_OPTION) {
-      actor = (AbstractActor) dialog.getEditor().getValue();
+      actor = (Actor) dialog.getEditor().getValue();
       // make sure name is not empty
       if (actor.getName().length() == 0)
 	actor.setName(actor.getDefaultName());
@@ -580,8 +580,8 @@ public class TreeOperations
     String 		newName;
     Node		node;
     Node		parent;
-    AbstractActor	actorOld;
-    AbstractActor	actorNew;
+    Actor		actorOld;
+    Actor		actorNew;
     List<TreePath> 	exp;
 
     node    = TreeHelper.pathToNode(path);
@@ -625,7 +625,7 @@ public class TreeOperations
    * @param handler	the handler to use
    */
   public void encloseActor(TreePath[] paths, ActorHandler handler) {
-    AbstractActor[]	currActor;
+    Actor[]		currActor;
     Node		parent;
     Node 		currNode;
     Node		newNode;
@@ -636,7 +636,7 @@ public class TreeOperations
     String		newName;
 
     parent    = null;
-    currActor = new AbstractActor[paths.length];
+    currActor = new Actor[paths.length];
     for (i = 0; i < paths.length; i++) {
       currNode     = TreeHelper.pathToNode(paths[i]);
       currActor[i] = currNode.getFullActor().shallowCopy();
@@ -680,7 +680,7 @@ public class TreeOperations
       else {
 	handler.set(0, currActor[0]);
       }
-      newNode = TreeHelper.buildTree(null, (AbstractActor) handler, false);
+      newNode = TreeHelper.buildTree(null, (Actor) handler, false);
       newNode.setOwner(parent.getOwner());
       for (i = 0; i < paths.length; i++) {
 	currNode = TreeHelper.pathToNode(paths[i]);
@@ -742,7 +742,7 @@ public class TreeOperations
     handler.setAnnotations(current.getAnnotations());
     handler.setSilent(current.getSilent());
     handler.setStopFlowOnError(current.getStopFlowOnError());
-    node.setActor((AbstractActor) handler);
+    node.setActor((Actor) handler);
     node.invalidateRendering();
     SwingUtilities.invokeLater(() -> {
       getOwner().notifyActorChangeListeners(new ActorChangeEvent(getOwner(), node, Type.MODIFY));
@@ -756,7 +756,7 @@ public class TreeOperations
    * @param path	the path of the actor to enclose
    */
   public void encloseInDisplayPanelManager(TreePath path) {
-    AbstractActor	currActor;
+    Actor		currActor;
     Node		currNode;
     DisplayPanelManager manager;
     AbstractDisplay 	display;
@@ -795,15 +795,15 @@ public class TreeOperations
    * @param position	how the actors are to be inserted
    * @return		the actors
    */
-  public AbstractActor[] suggestActors(TreePath path, InsertPosition position) {
-    AbstractActor[]	result;
-    AbstractActor	parent;
+  public Actor[] suggestActors(TreePath path, InsertPosition position) {
+    Actor[]		result;
+    Actor		parent;
     Node		parentNode;
     Node		node;
     int			pos;
-    AbstractActor[]	actors;
+    Actor[]		actors;
     int			i;
-    AbstractActor[]	suggestions;
+    Actor[]		suggestions;
 
     result = null;
 
@@ -820,7 +820,7 @@ public class TreeOperations
     }
 
     parent  = parentNode.getActor();
-    actors  = new AbstractActor[parentNode.getChildCount()];
+    actors  = new Actor[parentNode.getChildCount()];
     for (i = 0; i < actors.length; i++)
       actors[i] = ((Node) parentNode.getChildAt(i)).getActor();
 
@@ -862,8 +862,8 @@ public class TreeOperations
     BaseDialog 				dialog;
     final BaseDialog			fDialog;
     Node				node;
-    AbstractActor			flow;
-    AbstractActor			selected;
+    Actor				flow;
+    Actor				selected;
     final Node				newNode;
     final Node				parent;
     final int				index;
@@ -1024,7 +1024,7 @@ public class TreeOperations
    * @param handler	the callable actors handler
    */
   public void createCallableActor(TreePath path, Class handler) {
-    AbstractActor		currActor;
+    Actor			currActor;
     Node 			currNode;
     Node			callableNode;
     Node			root;
@@ -1081,7 +1081,7 @@ public class TreeOperations
 	    + Utils.throwableToString(e));
 	return;
       }
-      callableNode = new Node(getOwner(), (AbstractActor) callableActors);
+      callableNode = new Node(getOwner(), (Actor) callableActors);
       index = 0;
       // CallableActors has to come after multiview actors
       if (handler == CallableActors.class) {
@@ -1184,8 +1184,8 @@ public class TreeOperations
    * @param paths	the (paths to the) actors to externalize
    */
   public void externalizeActor(TreePath[] paths) {
-    AbstractActor	handler;
-    AbstractActor[]	actors;
+    Actor		handler;
+    Actor[]		actors;
     Node		newNode;
     Node		currNode;
     Node		parent;
@@ -1200,7 +1200,7 @@ public class TreeOperations
     }
 
     // externalize actors
-    actors = new AbstractActor[paths.length];
+    actors = new Actor[paths.length];
     parent = null;
     for (i = 0; i < paths.length; i++) {
       currNode  = TreeHelper.pathToNode(paths[i]);
@@ -1209,7 +1209,7 @@ public class TreeOperations
 	parent = (Node) currNode.getParent();
     }
     try {
-      handler = (AbstractActor) ActorUtils.createExternalActor(actors);
+      handler = (Actor) ActorUtils.createExternalActor(actors);
     }
     catch (Exception e) {
       GUIHelper.showErrorMessage(
@@ -1247,7 +1247,7 @@ public class TreeOperations
    * @param path	the (path to the) actor to externalize
    */
   public void externalizeActor(TreePath path) {
-    AbstractActor		currActor;
+    Actor			currActor;
     Node 			currNode;
     AbstractExternalActor 	extActor;
     FlowEditorDialog		dialog;
@@ -1291,12 +1291,12 @@ public class TreeOperations
    * @param path	the (path to the) actor to turn into its conditional equivalent
    */
   public void makeConditional(TreePath path) {
-    AbstractActor		currActor;
+    Actor			currActor;
     Node 			currNode;
     Node			parentNode;
     Class			condEquiv;
     Node			newNode;
-    AbstractActor		newActor;
+    Actor			newActor;
     boolean			noEquiv;
     int				index;
     boolean			defaultName;
@@ -1330,7 +1330,7 @@ public class TreeOperations
     newNode  = null;
     newActor = null;
     try {
-      newActor = (AbstractActor) condEquiv.newInstance();
+      newActor = (Actor) condEquiv.newInstance();
       // transfer some basic options
       newActor.setAnnotations(currActor.getAnnotations());
       newActor.setSkip(currActor.getSkip());
@@ -1396,16 +1396,16 @@ public class TreeOperations
    * @param path	the (path to the) actor to turn into its timed equivalent
    */
   public void makeTimed(TreePath path) {
-    AbstractActor		currActor;
-    Node 			currNode;
-    Node			parentNode;
-    Class			timedEquiv;
-    Node			newNode;
-    AbstractActor		newActor;
-    boolean			noEquiv;
-    int				index;
-    boolean			defaultName;
-    boolean			expanded;
+    Actor	currActor;
+    Node 	currNode;
+    Node	parentNode;
+    Class	timedEquiv;
+    Node	newNode;
+    Actor	newActor;
+    boolean	noEquiv;
+    int		index;
+    boolean	defaultName;
+    boolean	expanded;
     
     currNode   = TreeHelper.pathToNode(path);
     parentNode = (Node) currNode.getParent();
@@ -1434,7 +1434,7 @@ public class TreeOperations
     newNode  = null;
     newActor = null;
     try {
-      newActor = (AbstractActor) timedEquiv.newInstance();
+      newActor = (Actor) timedEquiv.newInstance();
       // transfer some basic options
       newActor.setAnnotations(currActor.getAnnotations());
       newActor.setSkip(currActor.getSkip());

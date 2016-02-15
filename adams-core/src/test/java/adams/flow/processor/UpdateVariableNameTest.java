@@ -15,7 +15,7 @@
 
 /*
  * UpdateVariableNameTest.java
- * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.processor;
@@ -26,7 +26,7 @@ import adams.core.option.AbstractArgumentOption;
 import adams.data.io.input.SingleStringTextReader;
 import adams.env.Environment;
 import adams.flow.control.Flow;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 
 /**
  * Test for UpdateVariableName processor.
@@ -59,10 +59,10 @@ public class UpdateVariableNameTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
   @Override
-  public AbstractActor getActor() {
+  public Actor getActor() {
     AbstractArgumentOption    argOption;
     
     Flow flow = new Flow();
@@ -72,7 +72,7 @@ public class UpdateVariableNameTest
       flow.setAnnotations((adams.core.base.BaseAnnotation) argOption.valueOf("Simple example for using variables:\n1. The ForLoop generates the index for the file to load\n2. The Tee assembles the full path of the file to load\nand sets the variable \"filename\"\n3. The Trigger loads the file, the variable \"filename\"\nis attached to the \"file\" option of the FileSupplier\nactor."));
 
       argOption = (AbstractArgumentOption) flow.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp2 = new adams.flow.core.AbstractActor[3];
+      adams.flow.core.Actor[] tmp2 = new adams.flow.core.Actor[3];
       adams.flow.source.ForLoop tmp3 = new adams.flow.source.ForLoop();
       argOption = (AbstractArgumentOption) tmp3.getOptionManager().findByProperty("loopUpper");
       tmp3.setLoopUpper((Integer) argOption.valueOf("2"));
@@ -83,7 +83,7 @@ public class UpdateVariableNameTest
       tmp5.setName((java.lang.String) argOption.valueOf("Tee (set filename variable)"));
 
       argOption = (AbstractArgumentOption) tmp5.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp7 = new adams.flow.core.AbstractActor[4];
+      adams.flow.core.Actor[] tmp7 = new adams.flow.core.Actor[4];
       adams.flow.transformer.Convert tmp8 = new adams.flow.transformer.Convert();
       argOption = (AbstractArgumentOption) tmp8.getOptionManager().findByProperty("conversion");
       adams.data.conversion.AnyToString tmp10 = new adams.data.conversion.AnyToString();
@@ -127,7 +127,7 @@ public class UpdateVariableNameTest
       tmp21.setName((java.lang.String) argOption.valueOf("Trigger (load and display file)"));
 
       argOption = (AbstractArgumentOption) tmp21.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp23 = new adams.flow.core.AbstractActor[3];
+      adams.flow.core.Actor[] tmp23 = new adams.flow.core.Actor[3];
       adams.flow.source.FileSupplier tmp24 = new adams.flow.source.FileSupplier();
       argOption = (AbstractArgumentOption) tmp24.getOptionManager().findByProperty("files");
       argOption.setVariable("@{filename}");

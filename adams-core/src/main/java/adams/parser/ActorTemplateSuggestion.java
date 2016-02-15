@@ -15,20 +15,20 @@
 
 /**
  * ActorTemplateSuggestion.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.parser;
 
-import java.io.ByteArrayInputStream;
-import java.util.ArrayList;
-
-import java_cup.runtime.DefaultSymbolFactory;
-import java_cup.runtime.SymbolFactory;
 import adams.flow.control.Flow;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.template.AbstractActorTemplate;
 import adams.parser.templatesuggestion.Parser;
 import adams.parser.templatesuggestion.Scanner;
+import java_cup.runtime.DefaultSymbolFactory;
+import java_cup.runtime.SymbolFactory;
+
+import java.io.ByteArrayInputStream;
+import java.util.ArrayList;
 
 /**
  <!-- globalinfo-start -->
@@ -84,7 +84,7 @@ import adams.parser.templatesuggestion.Scanner;
  * &nbsp;&nbsp;&nbsp;default: TRUE: adams.flow.template.UpdateVariable
  * </pre>
  * 
- * <pre>-parent &lt;adams.flow.core.AbstractActor&gt; (property: parent)
+ * <pre>-parent &lt;adams.flow.core.Actor&gt; (property: parent)
  * &nbsp;&nbsp;&nbsp;The parent actor to use.
  * &nbsp;&nbsp;&nbsp;default: adams.flow.control.Flow
  * </pre>
@@ -95,7 +95,7 @@ import adams.parser.templatesuggestion.Scanner;
  * &nbsp;&nbsp;&nbsp;minimum: 0
  * </pre>
  * 
- * <pre>-actor &lt;adams.flow.core.AbstractActor&gt; [-actor ...] (property: actors)
+ * <pre>-actor &lt;adams.flow.core.Actor&gt; [-actor ...] (property: actors)
  * &nbsp;&nbsp;&nbsp;The actors to insert the proposed actor in.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
@@ -113,13 +113,13 @@ public class ActorTemplateSuggestion
   private static final long serialVersionUID = -2060968616326323959L;
 
   /** the parent of the proposed actor template. */
-  protected AbstractActor m_Parent;
+  protected Actor m_Parent;
 
   /** the position the actor template is to be inserted at. */
   protected int m_Position;
 
   /** the actors in which the proposed actor template gets inserted. */
-  protected AbstractActor[] m_Actors;
+  protected Actor[] m_Actors;
 
   /**
    * Returns a string describing the object.
@@ -186,7 +186,7 @@ public class ActorTemplateSuggestion
 
     m_OptionManager.add(
 	    "actor", "actors",
-	    new AbstractActor[]{});
+	    new Actor[]{});
   }
 
   /**
@@ -215,7 +215,7 @@ public class ActorTemplateSuggestion
    *
    * @param value	the parent
    */
-  public void setParent(AbstractActor value) {
+  public void setParent(Actor value) {
     m_Parent = value;
   }
 
@@ -224,7 +224,7 @@ public class ActorTemplateSuggestion
    *
    * @return		the parent
    */
-  public AbstractActor getParent() {
+  public Actor getParent() {
     return m_Parent;
   }
 
@@ -271,7 +271,7 @@ public class ActorTemplateSuggestion
    *
    * @param value	the actors
    */
-  public void setActors(AbstractActor[] value) {
+  public void setActors(Actor[] value) {
     m_Actors = value;
   }
 
@@ -280,7 +280,7 @@ public class ActorTemplateSuggestion
    *
    * @return		the actors
    */
-  public AbstractActor[] getActors() {
+  public Actor[] getActors() {
     return m_Actors;
   }
 
@@ -327,7 +327,7 @@ public class ActorTemplateSuggestion
    * @return		the proposed classname in case of a match, otherwise null
    * @throws Exception	if evaluation fails
    */
-  public static AbstractActorTemplate evaluate(String expr, AbstractActor parent, int position, AbstractActor[] actors) throws Exception {
+  public static AbstractActorTemplate evaluate(String expr, Actor parent, int position, Actor[] actors) throws Exception {
     AbstractActorTemplate[]	result;
 
     result = evaluate(new String[]{expr}, parent, position, actors);
@@ -345,7 +345,7 @@ public class ActorTemplateSuggestion
    * @return		array with proposed classnames (cells are null if rule wasn't a match)
    * @throws Exception	if evaluation fails
    */
-  public static AbstractActorTemplate[] evaluate(String[] expr, AbstractActor parent, int position, AbstractActor[] actors) throws Exception {
+  public static AbstractActorTemplate[] evaluate(String[] expr, Actor parent, int position, Actor[] actors) throws Exception {
     ArrayList<AbstractActorTemplate>	result;
     ActorTemplateSuggestion		suggestion;
     int					i;
@@ -356,7 +356,7 @@ public class ActorTemplateSuggestion
     suggestion.setPosition(position);
     suggestion.setActors(actors);
 
-    result = new ArrayList<AbstractActorTemplate>();
+    result = new ArrayList<>();
     for (i = 0; i < expr.length; i++) {
       suggestion.setExpression(expr[i]);
       template = suggestion.evaluate();

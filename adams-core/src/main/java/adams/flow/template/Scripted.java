@@ -15,7 +15,7 @@
 
 /*
  *    Scripted.java
- *    Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ *    Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -24,7 +24,7 @@ package adams.flow.template;
 import adams.core.QuickInfoHelper;
 import adams.core.scripting.AbstractScriptingHandler;
 import adams.core.scripting.Dummy;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 
 /**
  <!-- globalinfo-start -->
@@ -192,7 +192,7 @@ public class Scripted
    * @return		the generated actor
    */
   @Override
-  protected AbstractActor executeScript() {
+  protected Actor executeScript() {
     return ((AbstractActorTemplate) m_ScriptObject).generate();
   }
 }

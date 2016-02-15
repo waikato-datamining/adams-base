@@ -1,69 +1,15 @@
 # Project: adams
-# Date: 2014-01-23 15:44:13
+# Date: 2016-02-15 15:04:42
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	Example flow for listening to the sample stream\nof Twitter status updates and filtering them\naccording to a filter expression.\nRequires actual twitter user credentials to work.
-	-actor
-		adams.flow.standalone.TwitterConnection
-	-actor
-		adams.flow.source.TwitterListener
-			-max-updates
-			1000
-	-actor
-		adams.flow.transformer.TwitterFilter
-			-expression
-			text:":)" or text:":("
-	-actor
-		adams.flow.control.Branch
-			-branch
-				adams.flow.control.Sequence
-					-name
-					display
-					-actor
-						adams.flow.transformer.TwitterConverter
-							-converter
-								adams.data.twitter.TextConverter
-									-field
-									CREATED
-									-field
-									USER_NAME
-									-field
-									TEXT
-									-separator
-									\t
-					-actor
-						adams.flow.sink.Display
-			-branch
-				adams.flow.control.Sequence
-					-name
-					file
-					-actor
-						adams.flow.transformer.TwitterConverter
-							-converter
-								adams.data.twitter.SpreadSheetConverter
-									-field
-									ID
-									-field
-									CREATED
-									-field
-									USER_NAME
-									-field
-									TEXT
-									-spreadsheet-type
-										adams.data.spreadsheet.SpreadSheet
-					-actor
-						adams.flow.sink.SpreadSheetFileWriter
-							-output
-							${EXAMPLE_FLOWS}/output/twitter_updates_filtered.csv
-							-writer
-								adams.data.io.output.CsvSpreadSheetWriter
-									-appending
-									true
-									-always-quote-text
-									true
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "Example flow for listening to the sample stream\\nof Twitter status updates and filtering them\\naccording to a filter expression.\\nRequires actual twitter user credentials to work." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.standalone.TwitterConnection
+ adams.flow.source.TwitterListener -max-updates 1000
+ adams.flow.transformer.TwitterFilter -expression "text:\":)\" or text:\":(\""
+ adams.flow.control.Branch
+  adams.flow.control.Sequence -name display
+   adams.flow.transformer.TwitterConverter -converter "adams.data.twitter.TextConverter -field CREATED -field USER_NAME -field TEXT -separator \\t"
+   adams.flow.sink.Display -writer adams.data.io.output.NullWriter
+  adams.flow.control.Sequence -name file
+   adams.flow.transformer.TwitterConverter -converter "adams.data.twitter.SpreadSheetConverter -field ID -field CREATED -field USER_NAME -field TEXT -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.SpreadSheet"
+   adams.flow.sink.SpreadSheetFileWriter -output ${EXAMPLE_FLOWS}/output/twitter_updates_filtered.csv -writer "adams.data.io.output.CsvSpreadSheetWriter -appending true -always-quote-text true"

@@ -29,7 +29,7 @@ import adams.flow.condition.bool.BooleanCondition;
 import adams.flow.condition.bool.Expression;
 import adams.flow.control.Flow;
 import adams.flow.control.Trigger;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.execution.NullListener;
 import adams.flow.sink.DumpFile;
 import adams.flow.transformer.SetVariable;
@@ -106,15 +106,15 @@ public class SwitchedSourceTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
-  public AbstractActor getActor() {
+  public Actor getActor() {
     AbstractArgumentOption    argOption;
     
     Flow flow = new Flow();
     
     try {
-      List<AbstractActor> actors = new ArrayList<AbstractActor>();
+      List<Actor> actors = new ArrayList<Actor>();
 
       // Flow.ForLoop
       ForLoop forloop = new ForLoop();
@@ -128,7 +128,7 @@ public class SwitchedSourceTest
 
       // Flow.Trigger
       Trigger trigger = new Trigger();
-      List<AbstractActor> actors2 = new ArrayList<AbstractActor>();
+      List<Actor> actors2 = new ArrayList<Actor>();
 
       // Flow.Trigger.SwitchedSource
       SwitchedSource switchedsource = new SwitchedSource();
@@ -139,7 +139,7 @@ public class SwitchedSourceTest
       conditions.add(expression);
       switchedsource.setConditions(conditions.toArray(new BooleanCondition[0]));
 
-      List<AbstractActor> cases = new ArrayList<AbstractActor>();
+      List<Actor> cases = new ArrayList<Actor>();
 
       // .MathExpression
       MathExpression mathexpression = new MathExpression();
@@ -154,7 +154,7 @@ public class SwitchedSourceTest
       argOption = (AbstractArgumentOption) mathexpression2.getOptionManager().findByProperty("expression");
       mathexpression2.setExpression((MathematicalExpressionText) argOption.valueOf("@{var} * 100"));
       cases.add(mathexpression2);
-      switchedsource.setCases(cases.toArray(new AbstractActor[0]));
+      switchedsource.setCases(cases.toArray(new Actor[0]));
 
       actors2.add(switchedsource);
 
@@ -164,10 +164,10 @@ public class SwitchedSourceTest
       dumpfile.setOutputFile((PlaceholderFile) argOption.valueOf("${TMP}/dumpfile.txt"));
       dumpfile.setAppend(true);
       actors2.add(dumpfile);
-      trigger.setActors(actors2.toArray(new AbstractActor[0]));
+      trigger.setActors(actors2.toArray(new Actor[0]));
 
       actors.add(trigger);
-      flow.setActors(actors.toArray(new AbstractActor[0]));
+      flow.setActors(actors.toArray(new Actor[0]));
 
       NullListener nulllistener = new NullListener();
       flow.setFlowExecutionListener(nulllistener);

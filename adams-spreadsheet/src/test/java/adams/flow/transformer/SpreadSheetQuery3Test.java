@@ -28,7 +28,7 @@ import adams.core.option.AbstractArgumentOption;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.core.CallableActorReference;
 import adams.parser.SpreadSheetQueryText;
 import adams.test.Regression;
@@ -112,10 +112,10 @@ public class SpreadSheetQuery3Test
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
   @Override
-  public AbstractActor getActor() {
+  public Actor getActor() {
     AbstractArgumentOption    argOption;
     
     Flow flow = new Flow();
@@ -124,24 +124,24 @@ public class SpreadSheetQuery3Test
       argOption = (AbstractArgumentOption) flow.getOptionManager().findByProperty("annotations");
       flow.setAnnotations((adams.core.base.BaseAnnotation) argOption.valueOf("Shows how to select rows based on the cell type of a column/attribute."));
       argOption = (AbstractArgumentOption) flow.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] actors2 = new adams.flow.core.AbstractActor[4];
+      adams.flow.core.Actor[] actors2 = new adams.flow.core.Actor[4];
 
       // Flow.CallableActors
       adams.flow.standalone.CallableActors callableactors3 = new adams.flow.standalone.CallableActors();
       argOption = (AbstractArgumentOption) callableactors3.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] actors4 = new adams.flow.core.AbstractActor[1];
+      adams.flow.core.Actor[] actors4 = new adams.flow.core.Actor[1];
 
       // Flow.CallableActors.output
       adams.flow.control.Sequence sequence5 = new adams.flow.control.Sequence();
       argOption = (AbstractArgumentOption) sequence5.getOptionManager().findByProperty("name");
       sequence5.setName((java.lang.String) argOption.valueOf("output"));
       argOption = (AbstractArgumentOption) sequence5.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] actors7 = new adams.flow.core.AbstractActor[2];
+      adams.flow.core.Actor[] actors7 = new adams.flow.core.Actor[2];
 
       // Flow.CallableActors.output.Trigger
       adams.flow.control.Trigger trigger8 = new adams.flow.control.Trigger();
       argOption = (AbstractArgumentOption) trigger8.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] actors9 = new adams.flow.core.AbstractActor[2];
+      adams.flow.core.Actor[] actors9 = new adams.flow.core.Actor[2];
 
       // Flow.CallableActors.output.Trigger.Variable
       adams.flow.source.Variable variable10 = new adams.flow.source.Variable();
@@ -201,14 +201,14 @@ public class SpreadSheetQuery3Test
       // Flow.Branch
       adams.flow.control.Branch branch25 = new adams.flow.control.Branch();
       argOption = (AbstractArgumentOption) branch25.getOptionManager().findByProperty("branches");
-      adams.flow.core.AbstractActor[] branches26 = new adams.flow.core.AbstractActor[14];
+      adams.flow.core.Actor[] branches26 = new adams.flow.core.Actor[14];
 
       // Flow.Branch.original
       adams.flow.control.Sequence sequence27 = new adams.flow.control.Sequence();
       argOption = (AbstractArgumentOption) sequence27.getOptionManager().findByProperty("name");
       sequence27.setName((java.lang.String) argOption.valueOf("original"));
       argOption = (AbstractArgumentOption) sequence27.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] actors29 = new adams.flow.core.AbstractActor[2];
+      adams.flow.core.Actor[] actors29 = new adams.flow.core.Actor[2];
 
       // Flow.Branch.original.SetVariable
       adams.flow.transformer.SetVariable setvariable30 = new adams.flow.transformer.SetVariable();
@@ -232,7 +232,7 @@ public class SpreadSheetQuery3Test
       argOption = (AbstractArgumentOption) sequence35.getOptionManager().findByProperty("name");
       sequence35.setName((java.lang.String) argOption.valueOf("string"));
       argOption = (AbstractArgumentOption) sequence35.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] actors37 = new adams.flow.core.AbstractActor[3];
+      adams.flow.core.Actor[] actors37 = new adams.flow.core.Actor[3];
 
       // Flow.Branch.string.SetVariable
       adams.flow.transformer.SetVariable setvariable38 = new adams.flow.transformer.SetVariable();
@@ -262,7 +262,7 @@ public class SpreadSheetQuery3Test
       argOption = (AbstractArgumentOption) sequence45.getOptionManager().findByProperty("name");
       sequence45.setName((java.lang.String) argOption.valueOf("boolean"));
       argOption = (AbstractArgumentOption) sequence45.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] actors47 = new adams.flow.core.AbstractActor[3];
+      adams.flow.core.Actor[] actors47 = new adams.flow.core.Actor[3];
 
       // Flow.Branch.boolean.SetVariable
       adams.flow.transformer.SetVariable setvariable48 = new adams.flow.transformer.SetVariable();
@@ -292,7 +292,7 @@ public class SpreadSheetQuery3Test
       argOption = (AbstractArgumentOption) sequence55.getOptionManager().findByProperty("name");
       sequence55.setName((java.lang.String) argOption.valueOf("numeric"));
       argOption = (AbstractArgumentOption) sequence55.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] actors57 = new adams.flow.core.AbstractActor[3];
+      adams.flow.core.Actor[] actors57 = new adams.flow.core.Actor[3];
 
       // Flow.Branch.numeric.SetVariable
       adams.flow.transformer.SetVariable setvariable58 = new adams.flow.transformer.SetVariable();
@@ -322,7 +322,7 @@ public class SpreadSheetQuery3Test
       argOption = (AbstractArgumentOption) sequence65.getOptionManager().findByProperty("name");
       sequence65.setName((java.lang.String) argOption.valueOf("long"));
       argOption = (AbstractArgumentOption) sequence65.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] actors67 = new adams.flow.core.AbstractActor[3];
+      adams.flow.core.Actor[] actors67 = new adams.flow.core.Actor[3];
 
       // Flow.Branch.long.SetVariable
       adams.flow.transformer.SetVariable setvariable68 = new adams.flow.transformer.SetVariable();
@@ -352,7 +352,7 @@ public class SpreadSheetQuery3Test
       argOption = (AbstractArgumentOption) sequence75.getOptionManager().findByProperty("name");
       sequence75.setName((java.lang.String) argOption.valueOf("double"));
       argOption = (AbstractArgumentOption) sequence75.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] actors77 = new adams.flow.core.AbstractActor[3];
+      adams.flow.core.Actor[] actors77 = new adams.flow.core.Actor[3];
 
       // Flow.Branch.double.SetVariable
       adams.flow.transformer.SetVariable setvariable78 = new adams.flow.transformer.SetVariable();
@@ -382,7 +382,7 @@ public class SpreadSheetQuery3Test
       argOption = (AbstractArgumentOption) sequence85.getOptionManager().findByProperty("name");
       sequence85.setName((java.lang.String) argOption.valueOf("time"));
       argOption = (AbstractArgumentOption) sequence85.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] actors87 = new adams.flow.core.AbstractActor[3];
+      adams.flow.core.Actor[] actors87 = new adams.flow.core.Actor[3];
 
       // Flow.Branch.time.SetVariable
       adams.flow.transformer.SetVariable setvariable88 = new adams.flow.transformer.SetVariable();
@@ -412,7 +412,7 @@ public class SpreadSheetQuery3Test
       argOption = (AbstractArgumentOption) sequence95.getOptionManager().findByProperty("name");
       sequence95.setName((java.lang.String) argOption.valueOf("date"));
       argOption = (AbstractArgumentOption) sequence95.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] actors97 = new adams.flow.core.AbstractActor[3];
+      adams.flow.core.Actor[] actors97 = new adams.flow.core.Actor[3];
 
       // Flow.Branch.date.SetVariable
       adams.flow.transformer.SetVariable setvariable98 = new adams.flow.transformer.SetVariable();
@@ -442,7 +442,7 @@ public class SpreadSheetQuery3Test
       argOption = (AbstractArgumentOption) sequence105.getOptionManager().findByProperty("name");
       sequence105.setName((java.lang.String) argOption.valueOf("timestamp"));
       argOption = (AbstractArgumentOption) sequence105.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] actors107 = new adams.flow.core.AbstractActor[3];
+      adams.flow.core.Actor[] actors107 = new adams.flow.core.Actor[3];
 
       // Flow.Branch.timestamp.SetVariable
       adams.flow.transformer.SetVariable setvariable108 = new adams.flow.transformer.SetVariable();
@@ -472,7 +472,7 @@ public class SpreadSheetQuery3Test
       argOption = (AbstractArgumentOption) sequence115.getOptionManager().findByProperty("name");
       sequence115.setName((java.lang.String) argOption.valueOf("anydate"));
       argOption = (AbstractArgumentOption) sequence115.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] actors117 = new adams.flow.core.AbstractActor[3];
+      adams.flow.core.Actor[] actors117 = new adams.flow.core.Actor[3];
 
       // Flow.Branch.anydate.SetVariable
       adams.flow.transformer.SetVariable setvariable118 = new adams.flow.transformer.SetVariable();
@@ -502,7 +502,7 @@ public class SpreadSheetQuery3Test
       argOption = (AbstractArgumentOption) sequence125.getOptionManager().findByProperty("name");
       sequence125.setName((java.lang.String) argOption.valueOf("!object"));
       argOption = (AbstractArgumentOption) sequence125.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] actors127 = new adams.flow.core.AbstractActor[3];
+      adams.flow.core.Actor[] actors127 = new adams.flow.core.Actor[3];
 
       // Flow.Branch.!object.SetVariable
       adams.flow.transformer.SetVariable setvariable128 = new adams.flow.transformer.SetVariable();
@@ -532,7 +532,7 @@ public class SpreadSheetQuery3Test
       argOption = (AbstractArgumentOption) sequence135.getOptionManager().findByProperty("name");
       sequence135.setName((java.lang.String) argOption.valueOf("missing"));
       argOption = (AbstractArgumentOption) sequence135.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] actors137 = new adams.flow.core.AbstractActor[3];
+      adams.flow.core.Actor[] actors137 = new adams.flow.core.Actor[3];
 
       // Flow.Branch.missing.SetVariable
       adams.flow.transformer.SetVariable setvariable138 = new adams.flow.transformer.SetVariable();

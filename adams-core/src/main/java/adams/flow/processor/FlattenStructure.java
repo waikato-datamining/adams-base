@@ -15,11 +15,9 @@
 
 /**
  * FlattenStructure.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.processor;
-
-import java.lang.reflect.Array;
 
 import adams.core.option.AbstractArgumentOption;
 import adams.core.option.AbstractOption;
@@ -32,8 +30,10 @@ import adams.flow.control.Branch;
 import adams.flow.control.LoadBalancer;
 import adams.flow.control.Sequence;
 import adams.flow.control.WhileLoop;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.core.ActorHandler;
+
+import java.lang.reflect.Array;
 
 /**
  <!-- globalinfo-start -->
@@ -80,15 +80,15 @@ public class FlattenStructure
    * @param actor	the actor to process
    */
   @Override
-  protected void processActor(AbstractActor actor) {
+  protected void processActor(Actor actor) {
     actor.getOptionManager().traverse(new OptionTraverser() {
       protected void flattenTee(AbstractTee tee) {
-	AbstractActor[] actors = ((Sequence) tee.get(0)).getActors();
+	Actor[] actors = ((Sequence) tee.get(0)).getActors();
 	tee.setActors(actors);
 	m_Modified = true;
       }
       protected void flattenLoadBalancer(LoadBalancer load) {
-	AbstractActor[] actors = ((Sequence) load.get(0)).getActors();
+	Actor[] actors = ((Sequence) load.get(0)).getActors();
 	load.setLoadActors(actors);
 	m_Modified = true;
       }
@@ -100,7 +100,7 @@ public class FlattenStructure
 	m_Modified = true;
       }
       protected void flattenWhileLoop(WhileLoop load) {
-	AbstractActor[] actors = ((Sequence) load.get(0)).getActors();
+	Actor[] actors = ((Sequence) load.get(0)).getActors();
 	load.setActors(actors);
 	m_Modified = true;
       }

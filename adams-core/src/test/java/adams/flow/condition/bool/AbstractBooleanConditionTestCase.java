@@ -15,14 +15,14 @@
 
 /**
  * AbstractBooleanConditionTestCase.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.condition.bool;
 
 import adams.core.CleanUpHandler;
 import adams.core.Destroyable;
 import adams.core.io.FileUtils;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.core.Token;
 import adams.test.AbstractTestHelper;
 import adams.test.AdamsTestCase;
@@ -62,7 +62,7 @@ public abstract class AbstractBooleanConditionTestCase
    *
    * @return		the owners (not all conditions might need owners)
    */
-  protected abstract AbstractActor[] getRegressionOwners();
+  protected abstract Actor[] getRegressionOwners();
 
   /**
    * Returns the input data to use in the regression test (one per regression setup).
@@ -107,7 +107,7 @@ public abstract class AbstractBooleanConditionTestCase
     boolean			ok;
     String			regression;
     int				i;
-    AbstractActor[]		owners;
+    Actor[]			owners;
     Object[]			inputs;
     AbstractBooleanCondition[]	setups;
     String[]			outputs;

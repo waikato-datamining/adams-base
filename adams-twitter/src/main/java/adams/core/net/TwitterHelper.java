@@ -15,7 +15,7 @@
 
 /*
  * Twitter.java
- * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.net;
@@ -28,7 +28,7 @@ import adams.data.twitter.SimulatedUserMentionEntity;
 import adams.data.twitter.TwitterField;
 import adams.env.Environment;
 import adams.env.TwitterDefinition;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.core.ActorUtils;
 import adams.flow.standalone.TwitterConnection;
 import twitter4j.HashtagEntity;
@@ -161,7 +161,7 @@ public class TwitterHelper {
    * @param actor	the actor start the search from (towards the root)
    * @return		the TwitterConnection actor, or null if none found
    */
-  protected static TwitterConnection getTwitterConnectionActor(AbstractActor actor) {
+  protected static TwitterConnection getTwitterConnectionActor(Actor actor) {
     return (TwitterConnection) ActorUtils.findClosestType(actor, TwitterConnection.class, true);
   }
 
@@ -172,7 +172,7 @@ public class TwitterHelper {
    * @return		the connection, default connection object if no
    * 			TwitterConnection actor found
    */
-  public static twitter4j.Twitter getTwitterConnection(AbstractActor actor) {
+  public static twitter4j.Twitter getTwitterConnection(Actor actor) {
     twitter4j.Twitter	result;
     TwitterConnection	conn;
 
@@ -191,7 +191,7 @@ public class TwitterHelper {
    * @return		the stream connection, null if no TwitterConnection
    * 			actor found
    */
-  public static twitter4j.TwitterStream getTwitterStreamConnection(AbstractActor actor) {
+  public static twitter4j.TwitterStream getTwitterStreamConnection(Actor actor) {
     twitter4j.TwitterStream	result;
     TwitterConnection		conn;
 

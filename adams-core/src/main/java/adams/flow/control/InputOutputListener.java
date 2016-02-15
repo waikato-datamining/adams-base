@@ -15,12 +15,12 @@
 
 /**
  * InputOutputListener.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.control;
 
 import adams.core.QuickInfoHelper;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.CallableActorHelper;
 import adams.flow.core.CallableActorReference;
@@ -132,10 +132,10 @@ public class InputOutputListener
   protected CallableActorReference m_OutputDestination;
 
   /** the callable actor (input). */
-  protected AbstractActor m_CallableInput;
+  protected Actor m_CallableInput;
 
   /** the callable actor (output). */
-  protected AbstractActor m_CallableOutput;
+  protected Actor m_CallableOutput;
 
   /** whether the callable actor has been configured. */
   protected boolean m_Configured;
@@ -378,12 +378,12 @@ public class InputOutputListener
     super.restoreState(state);
 
     if (state.containsKey(BACKUP_CALLABLEINPUT)) {
-      m_CallableInput = (AbstractActor) state.get(BACKUP_CALLABLEINPUT);
+      m_CallableInput = (Actor) state.get(BACKUP_CALLABLEINPUT);
       state.remove(BACKUP_CALLABLEINPUT);
     }
 
     if (state.containsKey(BACKUP_CALLABLEOUTPUT)) {
-      m_CallableOutput = (AbstractActor) state.get(BACKUP_CALLABLEOUTPUT);
+      m_CallableOutput = (Actor) state.get(BACKUP_CALLABLEOUTPUT);
       state.remove(BACKUP_CALLABLEOUTPUT);
     }
 

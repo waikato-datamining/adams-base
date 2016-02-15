@@ -15,7 +15,7 @@
 
 /**
  * ListAllStorageNames.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.processor;
 
@@ -29,7 +29,6 @@ import adams.core.option.OptionTraverser;
 import adams.flow.control.StorageName;
 import adams.flow.control.StorageUpdater;
 import adams.flow.control.StorageUser;
-import adams.flow.core.AbstractActor;
 import adams.flow.core.Actor;
 import adams.gui.dialog.TextPanel;
 
@@ -95,7 +94,7 @@ public class ListAllStorageNames
    * @param actor	the actor to process
    */
   @Override
-  protected void processActor(AbstractActor actor) {
+  protected void processActor(Actor actor) {
     final Set<String>   names;
 
     m_StorageNames.clear();

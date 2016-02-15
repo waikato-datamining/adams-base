@@ -1,59 +1,15 @@
 # Project: adams
-# Date: 2014-01-23 15:21:57
+# Date: 2016-02-15 11:30:05
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	This flow shows how to use variables for dynamically loading external \n(transformer) flows.\nThe outer loop generates the index for the flow file to load (there are 3 \nexternal transformer flows available). The flows merely add a constant \nvalue to the inner for-loop\'s value. This value and the flow filename are\ndisplayed
-	-actor
-		adams.flow.source.ForLoop
-			-upper
-			3
-	-actor
-		adams.flow.control.Tee
-			-name
-			assemble filename of external flow
-			-tee
-				adams.flow.transformer.Convert
-					-conversion
-						adams.data.conversion.IntToString
-			-tee
-				adams.flow.transformer.StringReplace
-					-find
-					.*
-					-replace
-					${EXAMPLE_FLOWS}/adams-core-external_flow_variable-$0.flow
-					-placeholder
-					true
-			-tee
-				adams.flow.transformer.SetVariable
-					-var-name
-					flow_name
-			-tee
-				adams.flow.sink.Display
-					-name
-					flow filename
-					-short-title
-					true
-	-actor
-		adams.flow.control.Trigger
-			-name
-			execute external flow
-			-tee
-				adams.flow.source.ForLoop
-			-tee
-				adams.flow.transformer.ExternalTransformer
-					-file
-					@{flow_name}
-			-tee
-				adams.flow.sink.Display
-					-name
-					output
-					-short-title
-					true
-					-x
-					-3
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "This flow shows how to use variables for dynamically loading external \\n(transformer) flows.\\nThe outer loop generates the index for the flow file to load (there are 3 \\nexternal transformer flows available). The flows merely add a constant \\nvalue to the inner for-loop\\\'s value. This value and the flow filename are\\ndisplayed" -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.source.ForLoop -upper 3
+ adams.flow.control.Tee -name "assemble filename of external flow"
+  adams.flow.transformer.Convert -conversion adams.data.conversion.IntToString
+  adams.flow.transformer.StringReplace -find .* -replace ${EXAMPLE_FLOWS}/adams-core-external_flow_variable-$0.flow -placeholder true
+  adams.flow.transformer.SetVariable -var-name flow_name
+  adams.flow.sink.Display -name "flow filename" -short-title true -writer adams.data.io.output.NullWriter
+ adams.flow.control.Trigger -name "execute external flow"
+  adams.flow.source.ForLoop
+  adams.flow.transformer.ExternalTransformer -file @{flow_name}
+  adams.flow.sink.Display -name output -short-title true -x -3 -writer adams.data.io.output.NullWriter

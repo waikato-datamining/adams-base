@@ -15,7 +15,7 @@
 
 /*
  * LoadBalancer.java
- * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -25,7 +25,7 @@ import adams.core.Variables;
 import adams.core.base.BaseAnnotation;
 import adams.core.logging.LoggingLevel;
 import adams.core.management.ProcessUtils;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.core.ActorExecution;
 import adams.flow.core.ActorHandler;
 import adams.flow.core.ActorHandlerInfo;
@@ -87,7 +87,7 @@ import java.util.concurrent.TimeUnit;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-load &lt;adams.flow.core.AbstractActor&gt; [-load ...] (property: loadActors)
+ * <pre>-load &lt;adams.flow.core.Actor&gt; [-load ...] (property: loadActors)
  * &nbsp;&nbsp;&nbsp;The actors to 'load-balance'.
  * &nbsp;&nbsp;&nbsp;default: adams.flow.sink.Null
  * </pre>
@@ -145,7 +145,7 @@ public class LoadBalancer
     private static final long serialVersionUID = -3358113395261199819L;
 
     /** the only actor. */
-    protected AbstractActor m_Actor;
+    protected Actor m_Actor;
 
     /** the local storage to use (either clone or reference). */
     protected Storage m_LocalStorage;
@@ -163,7 +163,7 @@ public class LoadBalancer
      * @param vars	the variables to use
      * @param storage	the storage to use
      */
-    public ThreadShell(AbstractActor actor, Variables vars, Storage storage) {
+    public ThreadShell(Actor actor, Variables vars, Storage storage) {
       super();
 
       if (actor == null)
@@ -220,7 +220,7 @@ public class LoadBalancer
      * 
      * @return		the actor
      */
-    public AbstractActor getActor() {
+    public Actor getActor() {
       return m_Actor;
     }
     
@@ -231,7 +231,7 @@ public class LoadBalancer
      * @return		the actor
      */
     @Override
-    public AbstractActor get(int index) {
+    public Actor get(int index) {
       if (index == 0)
 	return m_Actor;
       else
@@ -245,7 +245,7 @@ public class LoadBalancer
      * @param actor	the actor to set at this position
      */
     @Override
-    public void set(int index, AbstractActor actor) {
+    public void set(int index, Actor actor) {
       if (index == 0) {
 	m_Actor = actor;
 	reset();
@@ -407,7 +407,7 @@ public class LoadBalancer
   protected boolean m_HasGlobalTransformers;
 
   /** the actors to clean up in the end. */
-  protected List<AbstractActor> m_ToCleanUp;
+  protected List<Actor> m_ToCleanUp;
 
   /** the count of threads spawned so far. */
   protected int m_ThreadsSpawned;
@@ -443,7 +443,7 @@ public class LoadBalancer
 
     m_OptionManager.add(
 	    "load", "loadActors",
-	    new AbstractActor[]{new Null()});
+	    new Actor[]{new Null()});
 
     m_OptionManager.add(
 	    "num-threads", "numThreads",
@@ -470,7 +470,7 @@ public class LoadBalancer
     super.initialize();
 
     m_CurrentToken = null;
-    m_ToCleanUp    = new ArrayList<AbstractActor>();
+    m_ToCleanUp    = new ArrayList<Actor>();
     m_Actors       = new Sequence();
     m_Actors.setAllowStandalones(true);
     m_Actors.setAllowSource(true);
@@ -502,7 +502,7 @@ public class LoadBalancer
    *
    * @param value	the actors
    */
-  public void setLoadActors(AbstractActor[] value) {
+  public void setLoadActors(Actor[] value) {
     m_Actors.setActors(value);
     reset();
     updateParent();
@@ -513,7 +513,7 @@ public class LoadBalancer
    *
    * @return		the actors
    */
-  public AbstractActor[] getLoadActors() {
+  public Actor[] getLoadActors() {
     return m_Actors.getActors();
   }
 
@@ -697,7 +697,7 @@ public class LoadBalancer
    * @return		the actor
    */
   @Override
-  public AbstractActor get(int index) {
+  public Actor get(int index) {
     return m_Actors.get(index);
   }
 
@@ -708,7 +708,7 @@ public class LoadBalancer
    * @param actor	the actor to set at this position
    */
   @Override
-  public void set(int index, AbstractActor actor) {
+  public void set(int index, Actor actor) {
     m_Actors.set(index, actor);
     reset();
     updateParent();
@@ -730,7 +730,7 @@ public class LoadBalancer
    *
    * @param actor	the actor to insert
    */
-  public void add(AbstractActor actor) {
+  public void add(Actor actor) {
     add(size(), actor);
   }
 
@@ -740,7 +740,7 @@ public class LoadBalancer
    * @param index	the position
    * @param actor	the actor to insert
    */
-  public void add(int index, AbstractActor actor) {
+  public void add(int index, Actor actor) {
     m_Actors.add(index, actor);
     reset();
     updateParent();
@@ -752,8 +752,8 @@ public class LoadBalancer
    * @param index	the position
    * @return		the removed actor
    */
-  public AbstractActor remove(int index) {
-    AbstractActor	result;
+  public Actor remove(int index) {
+    Actor	result;
 
     result = m_Actors.remove(index);
     reset();
@@ -872,7 +872,7 @@ public class LoadBalancer
   @Override
   public String setUp() {
     String		result;
-    List<AbstractActor>	actors;
+    List<Actor>	actors;
 
     result = super.setUp();
 
@@ -1035,7 +1035,7 @@ public class LoadBalancer
    * Stops the processing of tokens without stopping the flow.
    */
   public void flushExecution() {
-    for (AbstractActor actor: m_ToCleanUp) {
+    for (Actor actor: m_ToCleanUp) {
       if (actor instanceof ActorHandler)
 	((ActorHandler) actor).flushExecution();
     }

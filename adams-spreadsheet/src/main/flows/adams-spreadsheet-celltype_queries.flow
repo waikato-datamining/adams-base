@@ -1,249 +1,57 @@
 # Project: adams
-# Date: 2014-11-28 15:46:25
+# Date: 2016-02-15 14:56:44
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	Shows how to select rows based on the cell type of a column/attribute.
-	-actor
-		adams.flow.standalone.CallableActors
-			-actor
-				adams.flow.sink.DisplayPanelManager
-					-provider
-						adams.flow.sink.SpreadSheetDisplay
-							-writer
-								adams.data.io.output.NullWriter
-					-entry-name-variable
-					name
-	-actor
-		adams.flow.source.FileSupplier
-			-file
-			${EXAMPLE_FLOWS}/data/celltype.csv
-	-actor
-		adams.flow.transformer.SpreadSheetFileReader
-			-reader
-				adams.data.io.input.CsvSpreadSheetReader
-					-data-row-type
-						adams.data.spreadsheet.DenseDataRow
-					-spreadsheet-type
-						adams.data.spreadsheet.SpreadSheet
-	-actor
-		adams.flow.control.Branch
-			-branch
-				adams.flow.control.Sequence
-					-name
-					original
-					-actor
-						adams.flow.transformer.SetVariable
-							-var-name
-							name
-							-var-value
-							original
-					-actor
-						adams.flow.sink.CallableSink
-							-callable
-							DisplayPanelManager
-			-branch
-				adams.flow.control.Sequence
-					-name
-					string
-					-actor
-						adams.flow.transformer.SetVariable
-							-var-name
-							name
-							-var-value
-							string
-					-actor
-						adams.flow.transformer.SpreadSheetQuery
-							-query
-							SELECT * WHERE CELLTYPE(anyvalue) = \"string\"
-					-actor
-						adams.flow.sink.CallableSink
-							-callable
-							DisplayPanelManager
-			-branch
-				adams.flow.control.Sequence
-					-name
-					boolean
-					-actor
-						adams.flow.transformer.SetVariable
-							-var-name
-							name
-							-var-value
-							boolean
-					-actor
-						adams.flow.transformer.SpreadSheetQuery
-							-query
-							SELECT * WHERE CELLTYPE(anyvalue) = \"boolean\"
-					-actor
-						adams.flow.sink.CallableSink
-							-callable
-							DisplayPanelManager
-			-branch
-				adams.flow.control.Sequence
-					-name
-					numeric
-					-actor
-						adams.flow.transformer.SetVariable
-							-var-name
-							name
-							-var-value
-							numeric
-					-actor
-						adams.flow.transformer.SpreadSheetQuery
-							-query
-							SELECT * WHERE CELLTYPE(anyvalue) = \"numeric\"
-					-actor
-						adams.flow.sink.CallableSink
-							-callable
-							DisplayPanelManager
-			-branch
-				adams.flow.control.Sequence
-					-name
-					long
-					-actor
-						adams.flow.transformer.SetVariable
-							-var-name
-							name
-							-var-value
-							long
-					-actor
-						adams.flow.transformer.SpreadSheetQuery
-							-query
-							SELECT * WHERE CELLTYPE(anyvalue) = \"long\"
-					-actor
-						adams.flow.sink.CallableSink
-							-callable
-							DisplayPanelManager
-			-branch
-				adams.flow.control.Sequence
-					-name
-					double
-					-actor
-						adams.flow.transformer.SetVariable
-							-var-name
-							name
-							-var-value
-							double
-					-actor
-						adams.flow.transformer.SpreadSheetQuery
-							-query
-							SELECT * WHERE CELLTYPE(anyvalue) = \"double\"
-					-actor
-						adams.flow.sink.CallableSink
-							-callable
-							DisplayPanelManager
-			-branch
-				adams.flow.control.Sequence
-					-name
-					time
-					-actor
-						adams.flow.transformer.SetVariable
-							-var-name
-							name
-							-var-value
-							time
-					-actor
-						adams.flow.transformer.SpreadSheetQuery
-							-query
-							SELECT * WHERE CELLTYPE(anyvalue) = \"time\"
-					-actor
-						adams.flow.sink.CallableSink
-							-callable
-							DisplayPanelManager
-			-branch
-				adams.flow.control.Sequence
-					-name
-					date
-					-actor
-						adams.flow.transformer.SetVariable
-							-var-name
-							name
-							-var-value
-							date
-					-actor
-						adams.flow.transformer.SpreadSheetQuery
-							-query
-							SELECT * WHERE CELLTYPE(anyvalue) = \"date\"
-					-actor
-						adams.flow.sink.CallableSink
-							-callable
-							DisplayPanelManager
-			-branch
-				adams.flow.control.Sequence
-					-name
-					timestamp
-					-actor
-						adams.flow.transformer.SetVariable
-							-var-name
-							name
-							-var-value
-							timestamp
-					-actor
-						adams.flow.transformer.SpreadSheetQuery
-							-query
-							SELECT * WHERE CELLTYPE(anyvalue) = \"timestamp\"
-					-actor
-						adams.flow.sink.CallableSink
-							-callable
-							DisplayPanelManager
-			-branch
-				adams.flow.control.Sequence
-					-name
-					anydate
-					-actor
-						adams.flow.transformer.SetVariable
-							-var-name
-							name
-							-var-value
-							anydate
-					-actor
-						adams.flow.transformer.SpreadSheetQuery
-							-query
-							SELECT * WHERE CELLTYPE(anyvalue) = \"anydate\"
-					-actor
-						adams.flow.sink.CallableSink
-							-callable
-							DisplayPanelManager
-			-branch
-				adams.flow.control.Sequence
-					-name
-					!object
-					-actor
-						adams.flow.transformer.SetVariable
-							-var-name
-							name
-							-var-value
-							!object
-					-actor
-						adams.flow.transformer.SpreadSheetQuery
-							-query
-							SELECT * WHERE NOT CELLTYPE(anyvalue) = \"object\"
-					-actor
-						adams.flow.sink.CallableSink
-							-callable
-							DisplayPanelManager
-			-branch
-				adams.flow.control.Sequence
-					-name
-					missing
-					-actor
-						adams.flow.transformer.SetVariable
-							-var-name
-							name
-							-var-value
-							missing
-					-actor
-						adams.flow.transformer.SpreadSheetQuery
-							-query
-							SELECT * WHERE CELLTYPE(anyvalue) = \"missing\"
-					-actor
-						adams.flow.sink.CallableSink
-							-callable
-							DisplayPanelManager
-			-num-threads
-			1
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "Shows how to select rows based on the cell type of a column/attribute." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.standalone.CallableActors
+  adams.flow.sink.DisplayPanelManager -provider "adams.flow.sink.SpreadSheetDisplay -writer adams.data.io.output.NullWriter" -entry-name-variable name
+ adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/celltype.csv
+ adams.flow.transformer.SpreadSheetFileReader -reader "adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.SpreadSheet"
+ adams.flow.control.Branch -num-threads 1
+  adams.flow.control.Sequence -name original
+   adams.flow.transformer.SetVariable -var-name name -var-value original
+   adams.flow.sink.CallableSink -callable DisplayPanelManager
+  adams.flow.control.Sequence -name string
+   adams.flow.transformer.SetVariable -var-name name -var-value string
+   adams.flow.transformer.SpreadSheetQuery -query "SELECT * WHERE CELLTYPE(anyvalue) = \\\"string\\\""
+   adams.flow.sink.CallableSink -callable DisplayPanelManager
+  adams.flow.control.Sequence -name boolean
+   adams.flow.transformer.SetVariable -var-name name -var-value boolean
+   adams.flow.transformer.SpreadSheetQuery -query "SELECT * WHERE CELLTYPE(anyvalue) = \\\"boolean\\\""
+   adams.flow.sink.CallableSink -callable DisplayPanelManager
+  adams.flow.control.Sequence -name numeric
+   adams.flow.transformer.SetVariable -var-name name -var-value numeric
+   adams.flow.transformer.SpreadSheetQuery -query "SELECT * WHERE CELLTYPE(anyvalue) = \\\"numeric\\\""
+   adams.flow.sink.CallableSink -callable DisplayPanelManager
+  adams.flow.control.Sequence -name long
+   adams.flow.transformer.SetVariable -var-name name -var-value long
+   adams.flow.transformer.SpreadSheetQuery -query "SELECT * WHERE CELLTYPE(anyvalue) = \\\"long\\\""
+   adams.flow.sink.CallableSink -callable DisplayPanelManager
+  adams.flow.control.Sequence -name double
+   adams.flow.transformer.SetVariable -var-name name -var-value double
+   adams.flow.transformer.SpreadSheetQuery -query "SELECT * WHERE CELLTYPE(anyvalue) = \\\"double\\\""
+   adams.flow.sink.CallableSink -callable DisplayPanelManager
+  adams.flow.control.Sequence -name time
+   adams.flow.transformer.SetVariable -var-name name -var-value time
+   adams.flow.transformer.SpreadSheetQuery -query "SELECT * WHERE CELLTYPE(anyvalue) = \\\"time\\\""
+   adams.flow.sink.CallableSink -callable DisplayPanelManager
+  adams.flow.control.Sequence -name date
+   adams.flow.transformer.SetVariable -var-name name -var-value date
+   adams.flow.transformer.SpreadSheetQuery -query "SELECT * WHERE CELLTYPE(anyvalue) = \\\"date\\\""
+   adams.flow.sink.CallableSink -callable DisplayPanelManager
+  adams.flow.control.Sequence -name timestamp
+   adams.flow.transformer.SetVariable -var-name name -var-value timestamp
+   adams.flow.transformer.SpreadSheetQuery -query "SELECT * WHERE CELLTYPE(anyvalue) = \\\"timestamp\\\""
+   adams.flow.sink.CallableSink -callable DisplayPanelManager
+  adams.flow.control.Sequence -name anydate
+   adams.flow.transformer.SetVariable -var-name name -var-value anydate
+   adams.flow.transformer.SpreadSheetQuery -query "SELECT * WHERE CELLTYPE(anyvalue) = \\\"anydate\\\""
+   adams.flow.sink.CallableSink -callable DisplayPanelManager
+  adams.flow.control.Sequence -name !object
+   adams.flow.transformer.SetVariable -var-name name -var-value !object
+   adams.flow.transformer.SpreadSheetQuery -query "SELECT * WHERE NOT CELLTYPE(anyvalue) = \\\"object\\\""
+   adams.flow.sink.CallableSink -callable DisplayPanelManager
+  adams.flow.control.Sequence -name missing
+   adams.flow.transformer.SetVariable -var-name name -var-value missing
+   adams.flow.transformer.SpreadSheetQuery -query "SELECT * WHERE CELLTYPE(anyvalue) = \\\"missing\\\""
+   adams.flow.sink.CallableSink -callable DisplayPanelManager

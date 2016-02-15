@@ -15,7 +15,7 @@
 
 /**
  * ActorVariablesFinder.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.core;
 
@@ -50,9 +50,9 @@ public class ActorVariablesFinder
   @Override
   protected boolean isSkipped(AbstractOption option) {
     boolean result = false;
-    if (option.getOptionHandler() instanceof AbstractActor) {
+    if (option.getOptionHandler() instanceof Actor) {
       // skip property is true and no variable attached to it
-      result =    ((AbstractActor) option.getOptionHandler()).getSkip()
+      result =    ((Actor) option.getOptionHandler()).getSkip()
 	  && (option.getOwner().getVariableForProperty("skip") == null);
     }
     return result;

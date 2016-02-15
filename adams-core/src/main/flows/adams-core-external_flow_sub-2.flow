@@ -1,13 +1,7 @@
 # Project: adams
-# Date: 2015-06-19 14:23:44
+# Date: 2016-02-15 11:30:14
 # User: fracpete
 # Charset: UTF-8
-#
 adams.flow.source.SequenceSource
-	-actor
-		adams.flow.source.ForLoop
-	-actor
-		adams.flow.transformer.MathExpression
-			-expression
-			X+2000
-
+ adams.flow.source.ForLoop
+ adams.flow.transformer.MathExpression -expression X+2000

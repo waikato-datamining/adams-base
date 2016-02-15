@@ -1,35 +1,9 @@
 # Project: adams
-# Date: 2014-01-23 15:43:15
+# Date: 2016-02-15 15:03:33
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	This flow demonstrates how to load one or more timeseries\nfrom a CSV file and saves them in a different format.
-	-actor
-		adams.flow.source.FileSupplier
-			-file
-			${EXAMPLE_FLOWS}/data/timeseries.csv
-	-actor
-		adams.flow.transformer.SpreadSheetFileReader
-			-reader
-				adams.data.io.input.CsvSpreadSheetReader
-					-spreadsheet-type
-						adams.data.spreadsheet.SpreadSheet
-	-actor
-		adams.flow.transformer.SpreadSheetToTimeseries
-			-column-id
-			PARENT_ID
-			-column-timestamp
-			TIMESTAMP
-			-column-value
-			TEMPERATURE
-	-actor
-		adams.flow.transformer.TimeseriesFileWriter
-			-writer
-				adams.data.io.output.SimpleTimeseriesWriter
-			-dir
-			${EXAMPLE_FLOWS}/output
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "This flow demonstrates how to load one or more timeseries\\nfrom a CSV file and saves them in a different format." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/timeseries.csv
+ adams.flow.transformer.SpreadSheetFileReader -reader "adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.SpreadSheet"
+ adams.flow.transformer.SpreadSheetToTimeseries -column-id PARENT_ID -column-timestamp TIMESTAMP -column-value TEMPERATURE
+ adams.flow.transformer.TimeseriesFileWriter -writer adams.data.io.output.SimpleTimeseriesWriter -dir ${EXAMPLE_FLOWS}/output

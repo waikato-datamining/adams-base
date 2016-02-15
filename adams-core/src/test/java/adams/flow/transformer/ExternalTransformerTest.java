@@ -26,7 +26,7 @@ import adams.core.option.AbstractArgumentOption;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.test.TmpFile;
 
 /**
@@ -97,16 +97,16 @@ public class ExternalTransformerTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
-  public AbstractActor getActor() {
+  public Actor getActor() {
     AbstractArgumentOption    argOption;
     
     Flow flow = new Flow();
     
     try {
       argOption = (AbstractArgumentOption) flow.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp1 = new adams.flow.core.AbstractActor[3];
+      adams.flow.core.Actor[] tmp1 = new adams.flow.core.Actor[3];
       adams.flow.source.ForLoop tmp2 = new adams.flow.source.ForLoop();
       argOption = (AbstractArgumentOption) tmp2.getOptionManager().findByProperty("loopUpper");
       tmp2.setLoopUpper((Integer) argOption.valueOf("3"));
@@ -117,7 +117,7 @@ public class ExternalTransformerTest
       tmp4.setName((java.lang.String) argOption.valueOf("assemble filename of external flow"));
 
       argOption = (AbstractArgumentOption) tmp4.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp6 = new adams.flow.core.AbstractActor[3];
+      adams.flow.core.Actor[] tmp6 = new adams.flow.core.Actor[3];
       adams.flow.transformer.Convert tmp7 = new adams.flow.transformer.Convert();
       argOption = (AbstractArgumentOption) tmp7.getOptionManager().findByProperty("conversion");
       adams.data.conversion.IntToString tmp9 = new adams.data.conversion.IntToString();
@@ -147,7 +147,7 @@ public class ExternalTransformerTest
       tmp15.setName((java.lang.String) argOption.valueOf("execute external flow"));
 
       argOption = (AbstractArgumentOption) tmp15.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] tmp17 = new adams.flow.core.AbstractActor[3];
+      adams.flow.core.Actor[] tmp17 = new adams.flow.core.Actor[3];
       adams.flow.source.ForLoop tmp18 = new adams.flow.source.ForLoop();
       tmp17[0] = tmp18;
       adams.flow.transformer.ExternalTransformer tmp19 = new adams.flow.transformer.ExternalTransformer();

@@ -15,12 +15,12 @@
 
 /**
  * AbstractKeyboardActionWithActor.java
- * Copyright (C) 2015 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.flow.tree.keyboardaction;
 
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 
 /**
  * Ancestor for actions that do something with a specified actor.
@@ -34,7 +34,7 @@ public abstract class AbstractKeyboardActionWithActor
   private static final long serialVersionUID = 9158512844896786075L;
 
   /** the actor to use. */
-  protected AbstractActor m_Actor;
+  protected Actor m_Actor;
 
   /**
    * Adds options to the internal list of options.
@@ -53,14 +53,14 @@ public abstract class AbstractKeyboardActionWithActor
    *
    * @return 		the default
    */
-  protected abstract AbstractActor getDefaultActor();
+  protected abstract Actor getDefaultActor();
 
   /**
    * Sets the actor of the action.
    *
    * @param value 	the actor
    */
-  public void setActor(AbstractActor value) {
+  public void setActor(Actor value) {
       m_Actor = value;
     reset();
   }
@@ -70,7 +70,7 @@ public abstract class AbstractKeyboardActionWithActor
    *
    * @return 		the actor
    */
-  public AbstractActor getActor() {
+  public Actor getActor() {
     return m_Actor;
   }
 

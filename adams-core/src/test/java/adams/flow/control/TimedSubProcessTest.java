@@ -15,7 +15,7 @@
 
 /*
  * TimedSubProcessTest.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -25,7 +25,7 @@ import junit.framework.TestSuite;
 import adams.core.option.AbstractArgumentOption;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 
 /**
  * Test for TimedSubProcess actor.
@@ -59,22 +59,22 @@ public class TimedSubProcessTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
   @Override
-  public AbstractActor getActor() {
+  public Actor getActor() {
     AbstractArgumentOption    argOption;
     
     Flow flow = new Flow();
     
     try {
       argOption = (AbstractArgumentOption) flow.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] actors1 = new adams.flow.core.AbstractActor[3];
+      adams.flow.core.Actor[] actors1 = new adams.flow.core.Actor[3];
 
       // Flow.CallableActors
       adams.flow.standalone.CallableActors callableactors2 = new adams.flow.standalone.CallableActors();
       argOption = (AbstractArgumentOption) callableactors2.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] actors3 = new adams.flow.core.AbstractActor[1];
+      adams.flow.core.Actor[] actors3 = new adams.flow.core.Actor[1];
 
       // Flow.CallableActors.Display
       adams.flow.sink.Display display4 = new adams.flow.sink.Display();
@@ -94,7 +94,7 @@ public class TimedSubProcessTest
       // Flow.TimedSubProcess
       adams.flow.control.TimedSubProcess timedsubprocess8 = new adams.flow.control.TimedSubProcess();
       argOption = (AbstractArgumentOption) timedsubprocess8.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] actors9 = new adams.flow.core.AbstractActor[1];
+      adams.flow.core.Actor[] actors9 = new adams.flow.core.Actor[1];
 
       // Flow.TimedSubProcess.Sleep
       adams.flow.control.Sleep sleep10 = new adams.flow.control.Sleep();

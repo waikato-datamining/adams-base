@@ -15,18 +15,18 @@
 
 /**
  * CopyActor.java
- * Copyright (C) 2014 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, NZ
  */
 package adams.gui.flow.tree.menu;
 
-import java.awt.event.ActionEvent;
-
 import adams.core.option.AbstractOptionProducer;
 import adams.core.option.NestedProducer;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.gui.core.GUIHelper;
 import adams.gui.flow.tree.ClipboardActorContainer;
 import adams.gui.flow.tree.TreeHelper;
+
+import java.awt.event.ActionEvent;
 
 /**
  * For copying the currently selected actor(s) and placing them on the 
@@ -64,7 +64,7 @@ public class CopyActor
    *
    * @param actors	the actors to put on the clipboard
    */
-  protected void putActorOnClipboard(AbstractActor[] actors) {
+  protected void putActorOnClipboard(Actor[] actors) {
     ClipboardActorContainer	cont;
 
     if (actors.length == 1) {

@@ -15,7 +15,7 @@
 
 /**
  * ChangePath.java
- * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.processor;
 
@@ -28,7 +28,7 @@ import adams.core.option.BooleanOption;
 import adams.core.option.ClassOption;
 import adams.core.option.OptionTraversalPath;
 import adams.core.option.OptionTraverser;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 
 import java.io.File;
 import java.lang.reflect.Array;
@@ -224,7 +224,7 @@ public class ChangePath
    *
    * @param actor	the actor to process
    */
-  protected void checkData(AbstractActor actor) {
+  protected void checkData(Actor actor) {
     super.checkData(actor);
 
     if (m_OldPath.length != m_NewPath.length)
@@ -240,7 +240,7 @@ public class ChangePath
    * @see		ModifyingProcessor
    */
   @Override
-  protected void processActor(AbstractActor actor) {
+  protected void processActor(Actor actor) {
     int		i;
 
     m_OldPathLinux = new BaseString[m_OldPath.length];

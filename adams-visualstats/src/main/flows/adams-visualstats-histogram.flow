@@ -1,53 +1,8 @@
 # Project: adams
-# Date: 2014-01-23 15:45:13
+# Date: 2016-02-15 15:11:22
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	Generates a histogram of the first attribute\nof the UCI dataset \"iris\".
-	-actor
-		adams.flow.source.FileSupplier
-			-file
-			${EXAMPLE_FLOWS}/data/iris.arff
-	-actor
-		adams.flow.transformer.WekaFileReader
-			-loader
-				weka.core.converters.ArffLoader
-	-actor
-		adams.flow.sink.Histogram
-			-writer
-				adams.gui.print.NullWriter
-			-options
-				adams.gui.visualization.stats.histogram.HistogramOptions
-					-axis-x
-						adams.gui.visualization.core.AxisPanelOptions
-							-tick-generator
-								adams.gui.visualization.core.axis.FancyTickGenerator
-									-num-ticks
-									20
-							-nth-value
-							2
-							-width
-							40
-							-custom-format
-							#.#
-					-axis-y
-						adams.gui.visualization.core.AxisPanelOptions
-							-tick-generator
-								adams.gui.visualization.core.axis.FancyTickGenerator
-							-nth-value
-							1
-							-width
-							60
-							-top-margin
-							0.05
-							-custom-format
-							#.#
-					-number-bins
-					20
-					-paintlet
-						adams.gui.visualization.stats.paintlet.HistogramPaintlet
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "Generates a histogram of the first attribute\\nof the UCI dataset \\\"iris\\\"." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/iris.arff
+ adams.flow.transformer.WekaFileReader -loader weka.core.converters.ArffLoader
+ adams.flow.sink.Histogram -writer adams.gui.print.NullWriter -options "adams.gui.visualization.stats.histogram.HistogramOptions -axis-x \"adams.gui.visualization.core.AxisPanelOptions -tick-generator \\\"adams.gui.visualization.core.axis.FancyTickGenerator -num-ticks 20\\\" -nth-value 2 -width 40 -custom-format #.#\" -axis-y \"adams.gui.visualization.core.AxisPanelOptions -tick-generator adams.gui.visualization.core.axis.FancyTickGenerator -nth-value 1 -width 60 -top-margin 0.05 -custom-format #.#\" -number-bins 20 -paintlet adams.gui.visualization.stats.paintlet.HistogramPaintlet"

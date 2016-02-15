@@ -34,7 +34,7 @@ import adams.event.FlowPauseStateEvent.Type;
 import adams.event.FlowPauseStateListener;
 import adams.event.JobCompleteEvent;
 import adams.event.JobCompleteListener;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.CallableActorHelper;
 import adams.flow.core.CallableActorReference;
@@ -990,7 +990,7 @@ public class WekaClassifierRanker
   @Override
   public String setUp() {
     String		result;
-    AbstractActor	actor;
+    Actor 		actor;
     Compatibility	comp;
 
     result = super.setUp();
@@ -1056,7 +1056,7 @@ public class WekaClassifierRanker
     String				result;
     Instances				train;
     Instances				test;
-    AbstractActor			source;
+    Actor				source;
     JobList<RankingJob>			jobs;
     RankingJob				job;
     weka.classifiers.Classifier[]	cls;

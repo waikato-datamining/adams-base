@@ -27,7 +27,7 @@ import adams.core.option.AbstractArgumentOption;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.test.TmpFile;
 
 /**
@@ -96,22 +96,22 @@ public class ConditionalStandalonesTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
   @Override
-  public AbstractActor getActor() {
+  public Actor getActor() {
     AbstractArgumentOption    argOption;
     
     Flow flow = new Flow();
     
     try {
       argOption = (AbstractArgumentOption) flow.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] actors1 = new adams.flow.core.AbstractActor[4];
+      adams.flow.core.Actor[] actors1 = new adams.flow.core.Actor[4];
 
       // Flow.ConditionalStandalones
       adams.flow.standalone.ConditionalStandalones conditionalstandalones2 = new adams.flow.standalone.ConditionalStandalones();
       argOption = (AbstractArgumentOption) conditionalstandalones2.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] actors3 = new adams.flow.core.AbstractActor[2];
+      adams.flow.core.Actor[] actors3 = new adams.flow.core.Actor[2];
 
       // Flow.ConditionalStandalones.SetVariable
       adams.flow.standalone.SetVariable setvariable4 = new adams.flow.standalone.SetVariable();
@@ -143,7 +143,7 @@ public class ConditionalStandalonesTest
       argOption = (AbstractArgumentOption) conditionalstandalones13.getOptionManager().findByProperty("name");
       conditionalstandalones13.setName((java.lang.String) argOption.valueOf("ConditionalStandalones-1"));
       argOption = (AbstractArgumentOption) conditionalstandalones13.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] actors15 = new adams.flow.core.AbstractActor[2];
+      adams.flow.core.Actor[] actors15 = new adams.flow.core.Actor[2];
 
       // Flow.ConditionalStandalones-1.SetVariable
       adams.flow.standalone.SetVariable setvariable16 = new adams.flow.standalone.SetVariable();

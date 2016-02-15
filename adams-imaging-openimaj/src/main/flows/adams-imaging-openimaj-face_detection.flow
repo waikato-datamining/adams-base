@@ -1,95 +1,19 @@
 # Project: adams
-# Date: 2015-09-25 12:39:17
+# Date: 2016-02-15 14:31:55
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	Shows how to detect faces in images.
-	-actor
-		adams.flow.source.FileSupplier
-			-file
-			${EXAMPLE_FLOWS}/data/three-generation.jpg
-			-file
-			${EXAMPLE_FLOWS}/data/two-girl-friends-871278530751FPYN.jpg
-	-actor
-		adams.flow.transformer.SetVariable
-			-var-name
-			index
-			-var-value
-			0
-	-actor
-		adams.flow.control.Tee
-			-name
-			file name
-			-tee
-				adams.flow.transformer.BaseName
-					-remove-extensions
-					true
-			-tee
-				adams.flow.transformer.SetVariable
-					-var-name
-					file
-	-actor
-		adams.flow.transformer.ImageReader
-			-reader
-				adams.data.io.input.JAIImageReader
-	-actor
-		adams.flow.control.Tee
-			-name
-			original image
-			-tee
-				adams.flow.sink.DisplayPanelManager
-					-x
-					-3
-					-provider
-						adams.flow.sink.ImageViewer
-							-writer
-								adams.gui.print.NullWriter
-							-zoom
-							-1.0
-							-selection-processor
-								adams.gui.visualization.image.selection.NullProcessor
-							-image-overlay
-								adams.gui.visualization.image.NullOverlay
-					-entry-name-variable
-					file
-	-actor
-		adams.flow.transformer.LocateObjects
-			-locator
-				adams.flow.transformer.locateobjects.OpenIMAJFaceDetector
-					-detector
-						adams.data.openimaj.facedetector.HaarCascade
-	-actor
-		adams.flow.transformer.IncVariable
-			-var-name
-			index
-	-actor
-		adams.flow.control.Trigger
-			-name
-			create entry name
-			-tee
-				adams.flow.source.CombineVariables
-					-expression
-					@{file}-@{index}
-			-tee
-				adams.flow.transformer.SetVariable
-					-var-name
-					entry
-	-actor
-		adams.flow.sink.DisplayPanelManager
-			-provider
-				adams.flow.sink.ImageViewer
-					-writer
-						adams.gui.print.NullWriter
-					-zoom
-					-1.0
-					-selection-processor
-						adams.gui.visualization.image.selection.NullProcessor
-					-image-overlay
-						adams.gui.visualization.image.ObjectLocationsOverlayFromReport
-			-entry-name-variable
-			entry
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "Shows how to detect faces in images." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/three-generation.jpg -file ${EXAMPLE_FLOWS}/data/two-girl-friends-871278530751FPYN.jpg
+ adams.flow.transformer.SetVariable -var-name index -var-value 0
+ adams.flow.control.Tee -name "file name"
+  adams.flow.transformer.BaseName -remove-extensions true
+  adams.flow.transformer.SetVariable -var-name file
+ adams.flow.transformer.ImageReader -reader adams.data.io.input.JAIImageReader
+ adams.flow.control.Tee -name "original image"
+  adams.flow.sink.DisplayPanelManager -x -3 -provider "adams.flow.sink.ImageViewer -writer adams.gui.print.NullWriter -zoom -1.0 -selection-processor adams.gui.visualization.image.selection.NullProcessor -image-overlay adams.gui.visualization.image.NullOverlay" -entry-name-variable file
+ adams.flow.transformer.LocateObjects -locator "adams.flow.transformer.locateobjects.OpenIMAJFaceDetector -detector adams.data.openimaj.facedetector.HaarCascade"
+ adams.flow.transformer.IncVariable -var-name index
+ adams.flow.control.Trigger -name "create entry name"
+  adams.flow.source.CombineVariables -expression @{file}-@{index}
+  adams.flow.transformer.SetVariable -var-name entry
+ adams.flow.sink.DisplayPanelManager -provider "adams.flow.sink.ImageViewer -writer adams.gui.print.NullWriter -zoom -1.0 -selection-processor adams.gui.visualization.image.selection.NullProcessor -image-overlay adams.gui.visualization.image.ObjectLocationsOverlayFromReport" -entry-name-variable entry

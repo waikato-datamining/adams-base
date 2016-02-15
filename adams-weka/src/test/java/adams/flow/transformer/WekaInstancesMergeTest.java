@@ -26,7 +26,7 @@ import adams.core.base.BaseString;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.sink.DumpFile;
 import adams.flow.source.StringConstants;
 import adams.test.TmpFile;
@@ -78,9 +78,9 @@ public class WekaInstancesMergeTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
-  public AbstractActor getActor() {
+  public Actor getActor() {
     StringConstants sc = new StringConstants();
     sc.setStrings(new BaseString[]{
 	new BaseString("${TMP}/vote.arff"),
@@ -98,7 +98,7 @@ public class WekaInstancesMergeTest
     df.setOutputFile(new TmpFile("dumpfile.txt"));
 
     Flow flow = new Flow();
-    flow.setActors(new AbstractActor[]{sc, s2a, im, df});
+    flow.setActors(new Actor[]{sc, s2a, im, df});
 
     return flow;
   }

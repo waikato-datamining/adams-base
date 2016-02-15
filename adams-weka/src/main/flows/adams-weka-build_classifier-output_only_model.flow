@@ -1,51 +1,13 @@
 # Project: adams
-# Date: 2014-01-23 15:47:15
+# Date: 2016-02-15 15:17:16
 # User: fracpete
 # Charset: UTF-8
-#
-adams.flow.control.Flow
-	-annotation
-	Builds a classifier in batch mode and outputs\nonly the model from the ModelContainer.
-	-actor
-		adams.flow.standalone.CallableActors
-			-actor
-				adams.flow.source.WekaClassifierSetup
-					-classifier
-						weka.classifiers.trees.J48
-							-C
-							0.25
-							-M
-							2
-							
-							
-							
-							
-							
-							
-							
-							
-							
-							
-							
-							
-	-actor
-		adams.flow.source.FileSupplier
-			-file
-			${EXAMPLE_FLOWS}/data/anneal.arff
-	-actor
-		adams.flow.transformer.WekaFileReader
-			-loader
-				weka.core.converters.ArffLoader
-	-actor
-		adams.flow.transformer.WekaClassSelector
-	-actor
-		adams.flow.transformer.WekaTrainClassifier
-	-actor
-		adams.flow.control.ContainerValuePicker
-			-tee
-				adams.flow.sink.Display
-			-value
-			Model
-	-flow-execution-listener
-		adams.flow.execution.NullListener
-
+adams.flow.control.Flow -annotation "Builds a classifier in batch mode and outputs\\nonly the model from the ModelContainer." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.standalone.CallableActors
+  adams.flow.source.WekaClassifierSetup -classifier "weka.classifiers.trees.J48 -C 0.25 -M 2"
+ adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/anneal.arff
+ adams.flow.transformer.WekaFileReader -loader weka.core.converters.ArffLoader
+ adams.flow.transformer.WekaClassSelector
+ adams.flow.transformer.WekaTrainClassifier
+ adams.flow.control.ContainerValuePicker -value Model
+  adams.flow.sink.Display -writer adams.data.io.output.NullWriter

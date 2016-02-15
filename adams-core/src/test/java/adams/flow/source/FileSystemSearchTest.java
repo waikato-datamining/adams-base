@@ -25,7 +25,7 @@ import adams.core.option.AbstractArgumentOption;
 import adams.core.option.OptionUtils;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.control.Flow;
 import adams.flow.AbstractFlowTest;
 
@@ -61,16 +61,16 @@ public class FileSystemSearchTest
   /**
    * Used to create an instance of a specific actor.
    *
-   * @return a suitably configured <code>AbstractActor</code> value
+   * @return a suitably configured <code>Actor</code> value
    */
-  public AbstractActor getActor() {
+  public Actor getActor() {
     AbstractArgumentOption    argOption;
     
     Flow flow = new Flow();
     
     try {
       argOption = (AbstractArgumentOption) flow.getOptionManager().findByProperty("actors");
-      adams.flow.core.AbstractActor[] actors1 = new adams.flow.core.AbstractActor[2];
+      adams.flow.core.Actor[] actors1 = new adams.flow.core.Actor[2];
 
       // Flow.FileSystemSearch
       adams.flow.source.FileSystemSearch filesystemsearch2 = new adams.flow.source.FileSystemSearch();

@@ -28,7 +28,7 @@ import adams.core.base.BaseString;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
-import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.source.StringConstants;
 import adams.flow.transformer.SetVariable;
 
@@ -58,7 +58,7 @@ public class DeleteVariableTest
    *
    * @return 		empty flow
    */
-  public AbstractActor getActor() {
+  public Actor getActor() {
     return new Flow();
   }
 
@@ -78,7 +78,7 @@ public class DeleteVariableTest
     dv.setVariableName(new VariableName(VARIABLE_NAME));
 
     Flow flow = new Flow();
-    flow.setActors(new AbstractActor[]{
+    flow.setActors(new Actor[]{
 	sc,
 	sv,
 	dv

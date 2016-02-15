@@ -15,16 +15,16 @@
 
 /**
  * PauseStateManager.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.core;
 
-import java.util.HashSet;
-
 import adams.core.logging.LoggingObject;
 import adams.event.FlowPauseStateEvent;
-import adams.event.FlowPauseStateListener;
 import adams.event.FlowPauseStateEvent.Type;
+import adams.event.FlowPauseStateListener;
+
+import java.util.HashSet;
 
 /**
  * Manages the pause state in the flow.
@@ -90,7 +90,7 @@ public class PauseStateManager
    * 
    * @param source	the flow that triggers the pausing
    */
-  public synchronized void pause(AbstractActor source) {
+  public synchronized void pause(Actor source) {
     if (m_Paused)
       return;
     
@@ -104,7 +104,7 @@ public class PauseStateManager
    * 
    * @param source	the flow that triggers the resuming
    */
-  public synchronized void resume(AbstractActor source) {
+  public synchronized void resume(Actor source) {
     if (!m_Paused)
       return;
     
