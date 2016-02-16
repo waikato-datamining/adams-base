@@ -15,17 +15,10 @@
 
 /**
  * AbstractCsvArchive.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.input;
 
-import java.util.HashMap;
-
-import twitter4j.GeoLocation;
-import twitter4j.Scopes;
-import twitter4j.Status;
-import twitter4j.SymbolEntity;
-import twitter4j.URLEntity;
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
 import adams.core.io.PlaceholderFile;
@@ -40,6 +33,13 @@ import adams.data.twitter.SimulatedSymbolEntity;
 import adams.data.twitter.SimulatedURLEntity;
 import adams.data.twitter.SimulatedUser;
 import adams.data.twitter.TwitterField;
+import twitter4j.GeoLocation;
+import twitter4j.Scopes;
+import twitter4j.Status;
+import twitter4j.SymbolEntity;
+import twitter4j.URLEntity;
+
+import java.util.HashMap;
 
 /**
  <!-- globalinfo-start -->
@@ -102,6 +102,7 @@ public abstract class AbstractCsvArchive
 
     m_Reader = new CsvSpreadSheetReader();
     m_Reader.setChunkSize(1);
+    m_Reader.setParseFormulas(false);
     //m_Reader.setTextColumns(new Range(Range.ALL));
     m_Reader.setMissingValue("");
   }
