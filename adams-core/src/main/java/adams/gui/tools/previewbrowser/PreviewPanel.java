@@ -15,15 +15,15 @@
 
 /**
  * PreviewPanel.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.previewbrowser;
 
-import java.awt.BorderLayout;
+import adams.core.CleanUpHandler;
+import adams.gui.core.BasePanel;
 
 import javax.swing.JComponent;
-
-import adams.gui.core.BasePanel;
+import java.awt.BorderLayout;
 
 /**
  * The ancestor for all preview panels.
@@ -32,7 +32,8 @@ import adams.gui.core.BasePanel;
  * @version $Revision$
  */
 public class PreviewPanel
-  extends BasePanel {
+  extends BasePanel
+  implements CleanUpHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = 3358752718380986817L;
@@ -72,7 +73,7 @@ public class PreviewPanel
   /**
    * Sets the actual content.
    * 
-   * @return		the content
+   * @param value	the content
    */
   public void setContent(JComponent value) {
     m_Content = value;
@@ -89,5 +90,15 @@ public class PreviewPanel
    */
   public JComponent getContent() {
     return m_Content;
+  }
+
+  /**
+   * Cleans up data structures, frees up memory.
+   */
+  public void cleanUp() {
+    if (m_Content instanceof CleanUpHandler)
+      ((CleanUpHandler) m_Content).cleanUp();
+    if (getComponent(0) instanceof CleanUpHandler)
+      ((CleanUpHandler) getComponent(0)).cleanUp();
   }
 }
