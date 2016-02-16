@@ -15,7 +15,7 @@
 
 /**
  * SpreadSheetHelper.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.spreadsheet;
 
@@ -74,7 +74,7 @@ public class SpreadSheetHelper
 	if (index == null)
 	  continue;
 	if (row.hasCell(headerSecond.getCellKey(i)))
-	  newRow.addCell(headerFirst.getCellKey(index)).setContent(row.getCell(headerSecond.getCellKey(i)).getContent());
+	  newRow.addCell(headerFirst.getCellKey(index)).assign(row.getCell(headerSecond.getCellKey(i)));
       }
     }
     
