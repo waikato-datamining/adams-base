@@ -481,8 +481,11 @@ public class PreviewBrowserPanel
    * @param panel	the view to display
    */
   protected void displayView(final JPanel panel) {
-    if ((m_PanelView.getComponentCount() > 0) && (m_PanelView.getComponent(0) instanceof CleanUpHandler))
-      ((CleanUpHandler) m_PanelView.getComponent(0)).cleanUp();
+    if (m_PanelView.getComponentCount() > 0) {
+      System.out.println(m_PanelView.getComponent(0).getClass().getName());
+      if (m_PanelView.getComponent(0) instanceof CleanUpHandler)
+        ((CleanUpHandler) m_PanelView.getComponent(0)).cleanUp();
+    }
     m_PanelView.removeAll();
     m_PanelView.add(panel, BorderLayout.CENTER);
     m_SplitPane.validate();
