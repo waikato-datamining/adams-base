@@ -15,7 +15,7 @@
 
 /**
  * SpreadSheetJoinColumns.java
- * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
 
@@ -263,7 +263,7 @@ public class SpreadSheetJoinColumns
 	}
       }
       else {
-	headerOutput.addCell("" + n).setContent(headerInput.getCell(i).getContent());
+	headerOutput.addCell("" + n).assign(headerInput.getCell(i));
 	n++;
       }
     }
@@ -293,7 +293,7 @@ public class SpreadSheetJoinColumns
 	}
 	else {
 	  if (rowInput.hasCell(i) && !rowInput.getCell(i).isMissing())
-	    rowOutput.addCell("" + n).setContent(rowInput.getCell(i).getContent());
+	    rowOutput.addCell("" + n).assign(rowInput.getCell(i));
 	  n++;
 	}
       }
