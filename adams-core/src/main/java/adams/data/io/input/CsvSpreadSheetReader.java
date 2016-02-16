@@ -15,7 +15,7 @@
 
 /**
  * CsvSpreadSheetReader.java
- * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.input;
 
@@ -66,157 +66,174 @@ import java.util.logging.Level;
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- *
+ * 
  * <pre>-data-row-type &lt;adams.data.spreadsheet.DataRow&gt; (property: dataRowType)
  * &nbsp;&nbsp;&nbsp;The type of row to use for the data.
  * &nbsp;&nbsp;&nbsp;default: adams.data.spreadsheet.DenseDataRow
  * </pre>
- *
+ * 
  * <pre>-spreadsheet-type &lt;adams.data.spreadsheet.SpreadSheet&gt; (property: spreadSheetType)
  * &nbsp;&nbsp;&nbsp;The type of spreadsheet to use for the data.
  * &nbsp;&nbsp;&nbsp;default: adams.data.spreadsheet.SpreadSheet
  * </pre>
- *
+ * 
  * <pre>-missing &lt;java.lang.String&gt; (property: missingValue)
  * &nbsp;&nbsp;&nbsp;The placeholder for missing values.
  * &nbsp;&nbsp;&nbsp;default: ?
  * </pre>
- *
+ * 
  * <pre>-encoding &lt;adams.core.base.BaseCharset&gt; (property: encoding)
  * &nbsp;&nbsp;&nbsp;The type of encoding to use when reading using a reader, leave empty for 
  * &nbsp;&nbsp;&nbsp;default.
  * &nbsp;&nbsp;&nbsp;default: Default
  * </pre>
- *
+ * 
  * <pre>-comment &lt;java.lang.String&gt; (property: comment)
  * &nbsp;&nbsp;&nbsp;The string denoting the start of a line comment (comments can only precede 
  * &nbsp;&nbsp;&nbsp;header row).
  * &nbsp;&nbsp;&nbsp;default: #
  * </pre>
- *
+ * 
  * <pre>-quote-char &lt;java.lang.String&gt; (property: quoteCharacter)
  * &nbsp;&nbsp;&nbsp;The character to use for surrounding text cells.
  * &nbsp;&nbsp;&nbsp;default: \"
  * </pre>
- *
+ * 
  * <pre>-separator &lt;java.lang.String&gt; (property: separator)
  * &nbsp;&nbsp;&nbsp;The separator to use for the columns; use '\t' for tab.
  * &nbsp;&nbsp;&nbsp;default: ,
  * </pre>
- *
+ * 
  * <pre>-trim &lt;boolean&gt; (property: trim)
  * &nbsp;&nbsp;&nbsp;If enabled, the content of the cells gets trimmed before added.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-text-columns &lt;adams.core.Range&gt; (property: textColumns)
  * &nbsp;&nbsp;&nbsp;The range of columns to treat as text.
  * &nbsp;&nbsp;&nbsp;default: 
  * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts the range '...'; the following placeholders can be used as well: first, second, third, last_2, last_1, last
  * </pre>
- *
+ * 
  * <pre>-date-columns &lt;adams.core.Range&gt; (property: dateColumns)
  * &nbsp;&nbsp;&nbsp;The range of columns to treat as date.
  * &nbsp;&nbsp;&nbsp;default: 
  * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts the range '...'; the following placeholders can be used as well: first, second, third, last_2, last_1, last
  * </pre>
- *
+ * 
  * <pre>-date-format &lt;adams.data.DateFormatString&gt; (property: dateFormat)
  * &nbsp;&nbsp;&nbsp;The format for dates.
  * &nbsp;&nbsp;&nbsp;default: yyyy-MM-dd
  * &nbsp;&nbsp;&nbsp;more: http:&#47;&#47;docs.oracle.com&#47;javase&#47;6&#47;docs&#47;api&#47;java&#47;text&#47;SimpleDateFormat.html
  * </pre>
- *
+ * 
  * <pre>-date-lenient &lt;boolean&gt; (property: dateLenient)
  * &nbsp;&nbsp;&nbsp;Whether date parsing is lenient or not.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-datetime-columns &lt;adams.core.Range&gt; (property: dateTimeColumns)
  * &nbsp;&nbsp;&nbsp;The range of columns to treat as date&#47;time.
  * &nbsp;&nbsp;&nbsp;default: 
  * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts the range '...'; the following placeholders can be used as well: first, second, third, last_2, last_1, last
  * </pre>
- *
+ * 
  * <pre>-datetime-format &lt;adams.data.DateFormatString&gt; (property: dateTimeFormat)
  * &nbsp;&nbsp;&nbsp;The format for date&#47;times.
  * &nbsp;&nbsp;&nbsp;default: yyyy-MM-dd HH:mm:ss
  * &nbsp;&nbsp;&nbsp;more: http:&#47;&#47;docs.oracle.com&#47;javase&#47;6&#47;docs&#47;api&#47;java&#47;text&#47;SimpleDateFormat.html
  * </pre>
- *
+ * 
  * <pre>-datetime-lenient &lt;boolean&gt; (property: dateTimeLenient)
  * &nbsp;&nbsp;&nbsp;Whether date&#47;time parsing is lenient or not.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-datetimemsec-columns &lt;adams.core.Range&gt; (property: dateTimeMsecColumns)
  * &nbsp;&nbsp;&nbsp;The range of columns to treat as date&#47;time msec.
  * &nbsp;&nbsp;&nbsp;default: 
  * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts the range '...'; the following placeholders can be used as well: first, second, third, last_2, last_1, last
  * </pre>
- *
+ * 
  * <pre>-datetimemsec-format &lt;adams.data.DateFormatString&gt; (property: dateTimeMsecFormat)
  * &nbsp;&nbsp;&nbsp;The format for date&#47;time msecs.
  * &nbsp;&nbsp;&nbsp;default: yyyy-MM-dd HH:mm:ss.SSS
  * &nbsp;&nbsp;&nbsp;more: http:&#47;&#47;docs.oracle.com&#47;javase&#47;6&#47;docs&#47;api&#47;java&#47;text&#47;SimpleDateFormat.html
  * </pre>
- *
+ * 
  * <pre>-datetimemsec-lenient &lt;boolean&gt; (property: dateTimeMsecLenient)
  * &nbsp;&nbsp;&nbsp;Whether date&#47;time msec parsing is lenient or not.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-time-columns &lt;adams.core.Range&gt; (property: timeColumns)
  * &nbsp;&nbsp;&nbsp;The range of columns to treat as time.
  * &nbsp;&nbsp;&nbsp;default: 
  * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts the range '...'; the following placeholders can be used as well: first, second, third, last_2, last_1, last
  * </pre>
- *
+ * 
  * <pre>-time-format &lt;adams.data.DateFormatString&gt; (property: timeFormat)
  * &nbsp;&nbsp;&nbsp;The format for times.
  * &nbsp;&nbsp;&nbsp;default: HH:mm:ss
  * &nbsp;&nbsp;&nbsp;more: http:&#47;&#47;docs.oracle.com&#47;javase&#47;6&#47;docs&#47;api&#47;java&#47;text&#47;SimpleDateFormat.html
  * </pre>
- *
+ * 
  * <pre>-time-lenient &lt;boolean&gt; (property: timeLenient)
  * &nbsp;&nbsp;&nbsp;Whether time parsing is lenient or not.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
+ * <pre>-time-msec-columns &lt;adams.core.Range&gt; (property: timeMsecColumns)
+ * &nbsp;&nbsp;&nbsp;The range of columns to treat as time&#47;msec.
+ * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts the range '...'; the following placeholders can be used as well: first, second, third, last_2, last_1, last
+ * </pre>
+ * 
+ * <pre>-time-msec-format &lt;adams.data.DateFormatString&gt; (property: timeMsecFormat)
+ * &nbsp;&nbsp;&nbsp;The format for times&#47;msec.
+ * &nbsp;&nbsp;&nbsp;default: HH:mm:ss.SSS
+ * &nbsp;&nbsp;&nbsp;more: http:&#47;&#47;docs.oracle.com&#47;javase&#47;6&#47;docs&#47;api&#47;java&#47;text&#47;SimpleDateFormat.html
+ * </pre>
+ * 
+ * <pre>-time-msec-lenient &lt;boolean&gt; (property: timeMsecLenient)
+ * &nbsp;&nbsp;&nbsp;Whether time&#47;msec parsing is lenient or not.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
  * <pre>-time-zone &lt;java.util.TimeZone&gt; (property: timeZone)
  * &nbsp;&nbsp;&nbsp;The time zone to use for interpreting dates&#47;times; default is the system-wide 
  * &nbsp;&nbsp;&nbsp;defined one.
  * </pre>
- *
+ * 
  * <pre>-locale &lt;java.util.Locale&gt; (property: locale)
  * &nbsp;&nbsp;&nbsp;The locale to use for parsing the numbers.
  * &nbsp;&nbsp;&nbsp;default: Default
  * </pre>
- *
+ * 
  * <pre>-no-header &lt;boolean&gt; (property: noHeader)
  * &nbsp;&nbsp;&nbsp;If enabled, all rows get added as data rows and a dummy header will get 
  * &nbsp;&nbsp;&nbsp;inserted.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-custom-column-headers &lt;java.lang.String&gt; (property: customColumnHeaders)
  * &nbsp;&nbsp;&nbsp;The custom headers to use for the columns instead (comma-separated list);
  * &nbsp;&nbsp;&nbsp; ignored if empty.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- *
+ * 
  * <pre>-first-row &lt;int&gt; (property: firstRow)
  * &nbsp;&nbsp;&nbsp;The index of the first row to retrieve (1-based).
  * &nbsp;&nbsp;&nbsp;default: 1
  * &nbsp;&nbsp;&nbsp;minimum: 1
  * </pre>
- *
+ * 
  * <pre>-num-rows &lt;int&gt; (property: numRows)
  * &nbsp;&nbsp;&nbsp;The number of data rows to retrieve; use -1 for unlimited.
  * &nbsp;&nbsp;&nbsp;default: -1
  * &nbsp;&nbsp;&nbsp;minimum: -1
  * </pre>
- *
+ * 
  * <pre>-num-rows-col-type-discovery &lt;int&gt; (property: numRowsColumnTypeDiscovery)
  * &nbsp;&nbsp;&nbsp;The number of data rows to use for automatically determining the column 
  * &nbsp;&nbsp;&nbsp;(= speed up for large files with consistent cell types); use 0 to turn off 
@@ -224,14 +241,19 @@ import java.util.logging.Level;
  * &nbsp;&nbsp;&nbsp;default: 0
  * &nbsp;&nbsp;&nbsp;minimum: 0
  * </pre>
- *
+ * 
  * <pre>-chunk-size &lt;int&gt; (property: chunkSize)
  * &nbsp;&nbsp;&nbsp;The maximum number of rows per chunk; using -1 will read put all data into 
  * &nbsp;&nbsp;&nbsp;a single spreadsheet object.
  * &nbsp;&nbsp;&nbsp;default: -1
  * &nbsp;&nbsp;&nbsp;minimum: -1
  * </pre>
- *
+ * 
+ * <pre>-parse-formulas &lt;boolean&gt; (property: parseFormulas)
+ * &nbsp;&nbsp;&nbsp;Whether to try parsing formula-like cells.
+ * &nbsp;&nbsp;&nbsp;default: true
+ * </pre>
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -361,6 +383,9 @@ public class CsvSpreadSheetReader
 
     /** the number of rows to use for automatically determining the column types. */
     protected int m_NumRowsAuto;
+
+    /** whether to parse formula-like cells. */
+    protected boolean m_ParseFormulas;
 
     /** the automatically determined column types. */
     protected ContentType[] m_AutoTypes;
@@ -660,6 +685,8 @@ public class CsvSpreadSheetReader
                         cell.setContent(new Time(m_TimeFormat.parse(cells.get(i))));
                       else if (m_HasTimeMsecCols && m_TimeMsecCols.contains(i) && m_TimeMsecFormat.check(cells.get(i)))
                         cell.setContent(new TimeMsec(m_TimeMsecFormat.parse(cells.get(i))));
+                      else if (!m_ParseFormulas && cells.get(i).startsWith("="))
+                        cell.setContentAsString(cells.get(i));
                       else
                         cell.setContent(cells.get(i));
                     }
@@ -767,6 +794,7 @@ public class CsvSpreadSheetReader
       m_RowCount            = 0;
       m_AutoTypes           = null;
       m_NumRowsAuto         = m_Owner.getNumRowsColumnTypeDiscovery();
+      m_ParseFormulas       = m_Owner.getParseFormulas();
 
       m_DateTimeMsecFormat = m_Owner.getDateTimeMsecFormat().toDateFormat();
       m_DateTimeMsecFormat.setLenient(m_Owner.isDateTimeMsecLenient());
@@ -872,6 +900,9 @@ public class CsvSpreadSheetReader
 
   /** the number of rows to use for automatic discovery of column types (0 = off). */
   protected int m_NumRowsColumnTypeDiscovery;
+
+  /** whether to parse formulas. */
+  protected boolean m_ParseFormulas;
 
   /** for reading the actual data. */
   protected ChunkReader m_Reader;
@@ -1014,6 +1045,10 @@ public class CsvSpreadSheetReader
     m_OptionManager.add(
       "chunk-size", "chunkSize",
       -1, -1, null);
+
+    m_OptionManager.add(
+      "parse-formulas", "parseFormulas",
+      true);
   }
 
   /**
@@ -1869,6 +1904,35 @@ public class CsvSpreadSheetReader
       "The number of data rows to use for automatically determining the "
         + "column (= speed up for large files with consistent cell types); "
         + "use 0 to turn off feature.";
+  }
+
+  /**
+   * Sets whether to parse formula-like cells.
+   *
+   * @param value	if true then formula-like cells get parsed
+   */
+  public void setParseFormulas(boolean value) {
+    m_ParseFormulas = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to parse formula-like cells.
+   *
+   * @return		true if to parse formula-like cells
+   */
+  public boolean getParseFormulas() {
+    return m_ParseFormulas;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the gui
+   */
+  public String parseFormulasTipText() {
+    return "Whether to try parsing formula-like cells.";
   }
 
   /**
