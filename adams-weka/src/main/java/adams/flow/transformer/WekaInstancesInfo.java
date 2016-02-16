@@ -15,7 +15,7 @@
 
 /*
  * WekaInstancesInfo.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -31,6 +31,7 @@ import adams.data.weka.WekaLabelIndex;
 import adams.flow.core.DataInfoActor;
 import weka.core.Attribute;
 import weka.core.AttributeStats;
+import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.Utils;
 
@@ -383,7 +384,7 @@ public class WekaInstancesInfo
    * @return		<!-- flow-accepts-start -->weka.core.Instances.class<!-- flow-accepts-end -->
    */
   public Class[] accepts() {
-    return new Class[]{Instances.class};
+    return new Class[]{Instances.class, Instance.class};
   }
 
   /**
@@ -548,7 +549,10 @@ public class WekaInstancesInfo
 
     result = null;
 
-    inst  = (Instances) m_InputToken.getPayload();
+    if (m_InputToken.getPayload() instanceof Instance)
+      inst = ((Instance) m_InputToken.getPayload()).dataset();
+    else
+      inst = (Instances) m_InputToken.getPayload();
     m_AttributeIndex.setData(inst);
     index = m_AttributeIndex.getIntIndex();
 
