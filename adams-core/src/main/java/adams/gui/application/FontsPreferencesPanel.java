@@ -15,12 +15,14 @@
 
 /**
  * FontsPreferencesPanel.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.application;
 
 import adams.env.Environment;
 import adams.gui.core.PropertiesParameterPanel.PropertyType;
+
+import java.io.File;
 
 /**
  * Preferences for fonts.
@@ -77,7 +79,7 @@ public class FontsPreferencesPanel
    */
   @Override
   public String activate() {
-    if (getPreferences().save(Environment.getInstance().createPropertiesFilename(adams.gui.core.Fonts.FILENAME)))
+    if (getPreferences().save(Environment.getInstance().createPropertiesFilename(new File(adams.gui.core.Fonts.FILENAME).getName())))
       return null;
     else
       return "Failed to save fonts setup!";
