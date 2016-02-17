@@ -15,7 +15,7 @@
 
 /**
  * PropertiesParameterPanel.java
- * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
 
@@ -39,7 +39,6 @@ import adams.gui.chooser.DateTimeChooserPanel;
 import adams.gui.chooser.DirectoryChooserPanel;
 import adams.gui.chooser.FileChooserPanel;
 import adams.gui.chooser.FontChooserPanel;
-import adams.gui.chooser.FontChooserPanelWithPreview;
 import adams.gui.chooser.TimeChooserPanel;
 import adams.gui.goe.FontEditor;
 import adams.gui.goe.GenericArrayEditorPanel;
@@ -879,7 +878,7 @@ public class PropertiesParameterPanel
     SQLSyntaxEditorPanel	query;
     JCheckBox			checkbox;
     JSpinner			spinner;
-    FontChooserPanelWithPreview fontPanel;
+    FontChooserPanel 		fontPanel;
     DirectoryChooserPanel	dirPanel;
     FileChooserPanel		filePanel;
     ColorChooserPanel		colorPanel;
@@ -940,7 +939,7 @@ public class PropertiesParameterPanel
           result.setInteger(key, ((Number) spinner.getValue()).intValue());
           break;
         case FONT:
-          fontPanel = (FontChooserPanelWithPreview) comp;
+          fontPanel = (FontChooserPanel) comp;
           result.setProperty(key, FontEditor.toString(null, fontPanel.getCurrent()));
           break;
         case DIRECTORY:
