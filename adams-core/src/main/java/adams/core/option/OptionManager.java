@@ -546,21 +546,27 @@ public class OptionManager
       result = m_Options.get(index);
 
       // remove option
-      m_Options.remove(index);
+      m_Options.remove(index.intValue());
 
       removeKey = null;
       for (String key: m_CommandlineIndex.keySet()) {
-	if (m_CommandlineIndex.get(key) == index)
-	  removeKey = key;
+	if (m_CommandlineIndex.get(key).intValue() == index) {
+          removeKey = key;
+          break;
+        }
       }
-      m_CommandlineIndex.remove(removeKey);
+      if (removeKey != null)
+        m_CommandlineIndex.remove(removeKey);
 
       removeKey = null;
       for (String key: m_PropertyIndex.keySet()) {
-	if (m_PropertyIndex.get(key) == index)
-	  removeKey = key;
+	if (m_PropertyIndex.get(key).intValue() == index) {
+          removeKey = key;
+	  break;
+        }
       }
-      m_PropertyIndex.remove(removeKey);
+      if (removeKey != null)
+        m_PropertyIndex.remove(removeKey);
 
       // update indices
       for (String key: m_CommandlineIndex.keySet()) {
