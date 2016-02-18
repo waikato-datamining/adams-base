@@ -25,6 +25,7 @@ import adams.core.option.OptionUtils;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorHandler;
 import adams.flow.core.ActorPath;
+import adams.flow.core.ExternalActorHandler;
 
 import javax.swing.tree.TreePath;
 import java.util.ArrayList;
@@ -336,12 +337,16 @@ public class TreeHelper {
    * @param node      	the node to add
    * @param cmdlines	the command lines to add to
    */
-  protected static void getCommandLines(Node node, List<String> cmdlines) {
+  protected static void getCommandLines(Node node, List<String> cmdlines, boolean noExtActors) {
     int		i;
+    boolean	skipChildren;
 
     cmdlines.add(indent(node.getCommandLine(), node.getLevel()));
-    for (i = 0; i < node.getChildCount(); i++)
-      getCommandLines((Node) node.getChildAt(i), cmdlines);
+    skipChildren = noExtActors && (node.getActor() instanceof ExternalActorHandler);
+    if (!skipChildren) {
+      for (i = 0; i < node.getChildCount(); i++)
+	getCommandLines((Node) node.getChildAt(i), cmdlines, noExtActors);
+    }
   }
 
   /**
@@ -352,10 +357,22 @@ public class TreeHelper {
    * @return		the tree as nested commandlines
    */
   public static List<String> getCommandLines(Node root) {
+    return getCommandLines(root, false);
+  }
+
+  /**
+   * Returns the nested commandlines. Indentation in blanks represents
+   * nesting level.
+   *
+   * @param root	the root node
+   * @param noExtActors	whether to exclude external actors
+   * @return		the tree as nested commandlines
+   */
+  public static List<String> getCommandLines(Node root, boolean noExtActors) {
     List<String>	result;
 
     result = new ArrayList<>();
-    getCommandLines(root, result);
+    getCommandLines(root, result, noExtActors);
 
     return result;
   }

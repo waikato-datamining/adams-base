@@ -196,7 +196,7 @@ public class DefaultFlowWriter
     List<String>	lines;
 
     if (getUseCompact()) {
-      lines = TreeHelper.getCommandLines(content);
+      lines = TreeHelper.getCommandLines(content, true);
       lines.add(0, NestedProducer.COMMENT + " " + NestedProducer.CHARSET + ": " + m_Encoding.charsetValue().name());
       lines.add(0, NestedProducer.COMMENT + " " + NestedProducer.USER + ": " + System.getProperty("user.name"));
       lines.add(0, NestedProducer.COMMENT + " " + NestedProducer.DATE + ": " + m_DateFormat.format(new Date()));
