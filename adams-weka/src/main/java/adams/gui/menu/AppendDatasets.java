@@ -15,7 +15,7 @@
 
 /*
  * AppendDatasets.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -35,6 +35,8 @@ import adams.gui.wizard.PageCheck;
 import adams.gui.wizard.WekaSelectDatasetPage;
 import adams.gui.wizard.WekaSelectMultipleDatasetsPage;
 import adams.gui.wizard.WizardPane;
+import gnu.trove.list.array.TIntArrayList;
+import weka.core.Attribute;
 import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.converters.AbstractFileLoader;
@@ -160,12 +162,15 @@ public class AppendDatasets
    * @param output      the output file
    */
   protected void doAppend(ChildFrame frame, File[] input, File output) {
-    Instances[]           data;
-    Instances             full;
-    int                   i;
-    AbstractFileLoader    loader;
-    DataSink              sink;
-    int                   count;
+    Instances[]		data;
+    Instances		full;
+    int			i;
+    int			n;
+    AbstractFileLoader	loader;
+    DataSink		sink;
+    int			count;
+    TIntArrayList 	transferAtt;
+    int			index;
 
     if (input.length < 2) {
       GUIHelper.showErrorMessage(getOwner(), "At least two files are required!");
@@ -173,9 +178,10 @@ public class AppendDatasets
     }
 
     // load and check compatibility
-    loader = ConverterUtils.getLoaderForFile(input[0]);
-    data   = new Instances[input.length];
-    count  = 0;
+    loader      = ConverterUtils.getLoaderForFile(input[0]);
+    data        = new Instances[input.length];
+    count       = 0;
+    transferAtt = new TIntArrayList();
     for (i = 0; i < input.length; i++) {
       try {
         loader.setFile(input[i]);
@@ -188,6 +194,12 @@ public class AppendDatasets
             return;
           }
         }
+	else {
+	  for (n = 0; n < data[0].numAttributes(); n++) {
+	    if (data[0].attribute(n).isString() || data[0].attribute(n).isRelationValued())
+	      transferAtt.add(n);
+	  }
+	}
         count += data[i].numInstances();
       }
       catch (Exception e) {
@@ -200,8 +212,21 @@ public class AppendDatasets
     // combine
     full = new Instances(data[0], count);
     for (i = 0; i < data.length; i++) {
-      for (Instance inst: data[i])
-        full.add(inst);
+      for (Instance inst: data[i]) {
+	if (transferAtt.size() > 0) {
+	  for (n = 0; n < transferAtt.size(); n++) {
+	    index = transferAtt.get(n);
+	    if (inst.attribute(index).isString())
+	      full.attribute(index).addStringValue(inst.stringValue(index));
+	    else if (inst.attribute(n).isRelationValued())
+	      full.attribute(index).addRelation(inst.relationalValue(index));
+	    else
+	      throw new IllegalStateException(
+		"Unhandled attribute type: " + Attribute.typeToString(inst.attribute(index)));
+	  }
+	}
+	full.add(inst);
+      }
     }
 
     // save
