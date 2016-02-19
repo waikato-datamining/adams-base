@@ -15,7 +15,7 @@
 
 /**
  * AbstractStandaloneGroupItemGroup.java
- * Copyright (C) 2015 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.standalone;
@@ -27,11 +27,12 @@ import adams.flow.core.Actor;
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
- * @param <T> the type of the accepted sub-actors
+ * @param <S> the type of the accepted sub-actors
+ * @param <E> the type of the enclosing actor
  */
-public abstract class AbstractStandaloneGroupItemGroup<T extends Actor>
-  extends AbstractStandaloneGroup<T>
-  implements StandaloneGroupItem<T> {
+public abstract class AbstractStandaloneGroupItemGroup<S extends Actor, E extends Actor>
+  extends AbstractStandaloneGroup<S>
+  implements StandaloneGroupItem<E> {
 
   private static final long serialVersionUID = -7663947357164807918L;
 
