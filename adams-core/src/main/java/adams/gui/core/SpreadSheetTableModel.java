@@ -29,6 +29,7 @@ import adams.data.spreadsheet.Cell;
 import adams.data.spreadsheet.Cell.ContentType;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
+import adams.data.spreadsheet.SpreadSheetUtils;
 
 import java.awt.Color;
 import java.util.Date;
@@ -262,7 +263,7 @@ public class SpreadSheetTableModel
 	    + "<center>" 
 	    + "<b>" + row.getCell(columnIndex).getContent() + "</b>"
 	    + "<br>" 
-	    + SpreadSheet.getColumnPosition(columnIndex) + " / " + (columnIndex + 1)
+	    + SpreadSheetUtils.getColumnPosition(columnIndex) + " / " + (columnIndex + 1)
 	    + "</center>"
 	    + "</html>";
     }

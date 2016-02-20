@@ -22,6 +22,7 @@ package adams.data.conversion;
 import adams.core.Range;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
+import adams.data.spreadsheet.SpreadSheetUtils;
 
 /**
  <!-- globalinfo-start -->
@@ -178,8 +179,8 @@ public class SpreadSheetAddSumColumn
     result.insertColumn(result.getColumnCount(), m_Header);
     
     for (i = 0; i < rows.length; i++) {
-      from = SpreadSheet.getCellPosition(rows[i], 0);
-      to   = SpreadSheet.getCellPosition(rows[i], result.getColumnCount() - 2);
+      from = SpreadSheetUtils.getCellPosition(rows[i], 0);
+      to   = SpreadSheetUtils.getCellPosition(rows[i], result.getColumnCount() - 2);
       row  = result.getRow(rows[i]);
       row.addCell(result.getColumnCount() - 1).setContent("=SUM(" + from +  ":" + to + ")");
     }

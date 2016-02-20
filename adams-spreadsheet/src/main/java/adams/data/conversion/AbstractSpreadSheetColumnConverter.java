@@ -24,6 +24,7 @@ import adams.data.spreadsheet.Cell;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetColumnIndex;
+import adams.data.spreadsheet.SpreadSheetUtils;
 
 /**
  * Ancestor for column converter schemes.
@@ -187,7 +188,7 @@ public abstract class AbstractSpreadSheetColumnConverter<T>
 	    convert(cell, newCell);
 	  }
 	  catch (Exception e) {
-	    getLogger().severe("Failed to convert value '" + cell.getContent() + "' at " + SpreadSheet.getCellPosition(r, i));
+	    getLogger().severe("Failed to convert value '" + cell.getContent() + "' at " + SpreadSheetUtils.getCellPosition(r, i));
 	    if (m_KeepFailed)
 	      newCell.assign(cell);
 	    else

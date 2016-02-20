@@ -124,4 +124,137 @@ public class SpreadSheetUtils {
 
     return result;
   }
+
+  /**
+   * Returns the position letter(s) of the column.
+   *
+   * @param col		the column index of the cell (0-based)
+   * @return		the position string
+   */
+  public static String getColumnPosition(int col) {
+    String		result;
+    List<Integer>	digits;
+    int			i;
+
+    result = null;
+
+    // A-Z, AA-ZZ, AAA-ZZZ, AAAA-ZZZZ, AAAAA-ZZZZZ, AAAAAA-ZZZZZZ
+    if (col >= 26 + 676 + 17576 + 456976 + 11881376 + 308915776)
+      throw new IllegalArgumentException("Column of cell too large: " + col + " >= " + (26 + 676 + 17576 + 456976 + 11881376 + 308915776));
+
+    result = "";
+
+    // A-Z
+    if (col < 26) {
+      digits = Utils.toBase(col, 26);
+    }
+    // AA-ZZ
+    else if (col < 26 + 676) {
+      digits = Utils.toBase(col - 26, 26);
+      while (digits.size() < 2)
+	digits.add(0);
+    }
+    // AAA-ZZZ
+    else if (col < 26 + 676 + 17576) {
+      digits = Utils.toBase(col - 26 - 676, 26);
+      while (digits.size() < 3)
+	digits.add(0);
+    }
+    // AAAA-ZZZZ
+    else if (col < 26 + 676 + 17576 + 456976) {
+      digits = Utils.toBase(col - 26 - 676 - 17576, 26);
+      while (digits.size() < 4)
+	digits.add(0);
+    }
+    // AAAAA-ZZZZZ
+    else if (col < 26 + 676 + 17576 + 456976 + 11881376) {
+      digits = Utils.toBase(col - 26 - 676 - 17576 - 456976, 26);
+      while (digits.size() < 5)
+	digits.add(0);
+    }
+    // AAAAAA-ZZZZZZ
+    else /*if (col < 26 + 676 + 17576 + 456976 + 11881376 + 308915776)*/ {
+      digits = Utils.toBase(col - 26 - 676 - 17576 - 456976 - 11881376, 26);
+      while (digits.size() < 6)
+	digits.add(0);
+    }
+
+    for (i = digits.size() - 1; i >= 0; i--)
+      result += (char) ('A' + digits.get(i));
+
+    return result;
+  }
+
+  /**
+   * Returns the position of the cell. A position is a combination of a number
+   * of letters (for the column) and number (for the row).
+   * <br><br>
+   * Note: add "1" to the row indices, since the header row does not count
+   * towards the row count.
+   *
+   * @param row		the row index of the cell (0-based)
+   * @param col		the column index of the cell (0-based)
+   * @return		the position string or null if not found
+   */
+  public static String getCellPosition(int row, int col) {
+    String	result;
+
+    result = getColumnPosition(col);
+
+    if ((row == -1) || (col == -1))
+      return result;
+
+    result += (row + 2);
+
+    return result;
+  }
+
+  /**
+   * Returns row/column index based on the provided position string (e.g., A12).
+   *
+   * @param position	the position string to parse
+   * @return		the array with row and column index (0-based indices)
+   * @throws Exception	in case of an invalid position string
+   */
+  public static int[] getCellLocation(String position) throws Exception {
+    int[]	result;
+    String	row;
+    String	col;
+    int		i;
+    boolean	isCol;
+    char	chr;
+    int		factor;
+
+    result = new int[2];
+
+    isCol = true;
+    row   = "";
+    col   = "";
+    for (i = 0; i < position.length(); i++) {
+      chr = position.charAt(i);
+      if ((chr >= '0') && (chr <= '9')) {
+	isCol = false;
+	row += chr;
+      }
+      else if ((chr >= 'A') && (chr <= 'Z') && isCol) {
+	col += chr;
+      }
+      else {
+	throw new Exception("Invalid character in cell position string: " + chr);
+      }
+    }
+
+    // row
+    result[0] = Integer.parseInt(row) - 2;
+
+    // col
+    factor = 1;
+    for (i = col.length() - 1; i >= 0; i--) {
+      result[1] += (col.charAt(i) - 'A' + 1) * factor;
+      factor *= 26;
+    }
+    result[1]--;
+
+    return result;
+  }
 }

@@ -21,7 +21,7 @@ package adams.data.spreadsheet.cellfinder;
 
 import java.io.Serializable;
 
-import adams.data.spreadsheet.SpreadSheet;
+import adams.data.spreadsheet.SpreadSheetUtils;
 
 /**
  * Container object for a cell location (row and column).
@@ -61,7 +61,7 @@ public class CellLocation
   public CellLocation(String position) throws Exception {
     int[]	pos;
     
-    pos      = SpreadSheet.getCellLocation(position);
+    pos      = SpreadSheetUtils.getCellLocation(position);
     m_Row    = pos[0];
     m_Column = pos[1];
   }
@@ -90,7 +90,7 @@ public class CellLocation
    * @return		the position
    */
   public String toPosition() {
-    return SpreadSheet.getCellPosition(m_Row, m_Column);
+    return SpreadSheetUtils.getCellPosition(m_Row, m_Column);
   }
   
   /**

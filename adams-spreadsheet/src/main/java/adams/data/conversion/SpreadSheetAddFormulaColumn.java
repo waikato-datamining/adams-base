@@ -22,6 +22,7 @@ package adams.data.conversion;
 import adams.core.Range;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
+import adams.data.spreadsheet.SpreadSheetUtils;
 import adams.parser.SpreadSheetFormulaText;
 
 /**
@@ -232,7 +233,7 @@ public class SpreadSheetAddFormulaColumn
     for (i = 0; i < rows.length; i++) {
       formula = m_Formula.getValue();
       formula = formula.replace(PLACEHOLDER_ROW, Integer.toString(rows[i] + 2));
-      formula = formula.replace(PLACEHOLDER_LAST_COL, SpreadSheet.getColumnPosition(result.getColumnCount() - 2));
+      formula = formula.replace(PLACEHOLDER_LAST_COL, SpreadSheetUtils.getColumnPosition(result.getColumnCount() - 2));
       row     = result.getRow(rows[i]);
       row.addCell(result.getColumnCount() - 1).setFormula(formula);
     }

@@ -20,7 +20,7 @@
 package adams.data.conversion;
 
 import adams.core.QuickInfoHelper;
-import adams.data.spreadsheet.SpreadSheet;
+import adams.data.spreadsheet.SpreadSheetUtils;
 
 /**
  <!-- globalinfo-start -->
@@ -236,7 +236,7 @@ public class SpreadSheetInsertCellLocation
     String	result;
     String	cell;
     
-    cell   = SpreadSheet.getCellPosition(m_Row - 1, m_Column - 1);
+    cell   = SpreadSheetUtils.getCellPosition(m_Row - 1, m_Column - 1);
     result = ((String) m_Input).replace(m_Placeholder, cell);
     
     return result;

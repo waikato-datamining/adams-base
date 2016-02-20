@@ -19,7 +19,7 @@
  */
 package adams.data;
 
-import adams.data.spreadsheet.SpreadSheet;
+import adams.data.spreadsheet.SpreadSheetUtils;
 
 /**
  * Anonymizes Integer objects.
@@ -69,6 +69,6 @@ public class StringAnonymizer
    */
   @Override
   protected String toAnonymized(Integer id) {
-    return SpreadSheet.getColumnPosition(id);
+    return SpreadSheetUtils.getColumnPosition(id);
   }
 }

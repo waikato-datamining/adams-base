@@ -19,10 +19,9 @@
  */
 package adams.core;
 
+import adams.data.spreadsheet.SpreadSheetUtils;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Workbook;
-
-import adams.data.spreadsheet.SpreadSheet;
 
 /**
  * Helper class for Excel-related stuff.
@@ -42,7 +41,7 @@ public class ExcelHelper {
   public static int[] getCellLocation(String position) throws Exception {
     int[]	result;
     
-    result = SpreadSheet.getCellLocation(position);
+    result = SpreadSheetUtils.getCellLocation(position);
     result[0]++;
     
     return result;
@@ -55,7 +54,7 @@ public class ExcelHelper {
    * @return		the position string
    */
   public static String getColumnPosition(int col) {
-    return SpreadSheet.getColumnPosition(col);
+    return SpreadSheetUtils.getColumnPosition(col);
   }
 
   /**

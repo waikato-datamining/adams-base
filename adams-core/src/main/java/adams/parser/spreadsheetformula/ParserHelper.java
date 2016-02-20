@@ -22,6 +22,7 @@ package adams.parser.spreadsheetformula;
 import adams.data.spreadsheet.Cell;
 import adams.data.spreadsheet.Cell.ContentType;
 import adams.data.spreadsheet.SpreadSheet;
+import adams.data.spreadsheet.SpreadSheetUtils;
 import adams.data.statistics.AbstractArrayStatistic.StatisticContainer;
 import adams.data.statistics.ArrayLinearRegression;
 import adams.data.statistics.StatUtils;
@@ -87,7 +88,7 @@ public class ParserHelper
     int[] 	pos;
     
     result = Double.NaN;
-    pos    = SpreadSheet.getCellLocation(loc);
+    pos    = SpreadSheetUtils.getCellLocation(loc);
     if (m_Sheet != null) {
       if (m_Sheet.hasCell(pos[0], pos[1])) {
         cell = m_Sheet.getCell(pos[0], pos[1]);
@@ -140,7 +141,7 @@ public class ParserHelper
     int[] 	pos;
     
     result = false;
-    pos    = SpreadSheet.getCellLocation(loc);
+    pos    = SpreadSheetUtils.getCellLocation(loc);
     if (m_Sheet != null)
       result = m_Sheet.hasCell(pos[0], pos[1]);
     
@@ -159,7 +160,7 @@ public class ParserHelper
     int[] 	pos;
     
     result = null;
-    pos    = SpreadSheet.getCellLocation(loc);
+    pos    = SpreadSheetUtils.getCellLocation(loc);
     if (m_Sheet != null) {
       if (m_Sheet.hasCell(pos[0], pos[1]))
         result = m_Sheet.getCell(pos[0], pos[1]);
@@ -186,8 +187,8 @@ public class ParserHelper
     Cell 		cell;
     
     result = new ArrayList<Cell>();
-    from   = SpreadSheet.getCellLocation(fromCell);
-    to     = SpreadSheet.getCellLocation(toCell);
+    from   = SpreadSheetUtils.getCellLocation(fromCell);
+    to     = SpreadSheetUtils.getCellLocation(toCell);
 
     if (m_Sheet != null) {
       if ((from[0] <= to[0]) && (from[1] <= to[1])) {

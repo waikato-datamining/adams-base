@@ -23,6 +23,7 @@ import adams.core.Range;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetColumnRange;
+import adams.data.spreadsheet.SpreadSheetUtils;
 import adams.parser.SpreadSheetFormulaText;
 
 /**
@@ -191,7 +192,7 @@ public class SpreadSheetAddFormulaRow
     
     for (i = 0; i < cols.length; i++) {
       formula = m_Formula.getValue();
-      formula = formula.replace(PLACEHOLDER_COLUMN, SpreadSheet.getColumnPosition(cols[i]));
+      formula = formula.replace(PLACEHOLDER_COLUMN, SpreadSheetUtils.getColumnPosition(cols[i]));
       formula = formula.replace(PLACEHOLDER_LAST_ROW, Integer.toString(result.getRowCount()));
       row.addCell(cols[i]).setFormula(formula);
     }

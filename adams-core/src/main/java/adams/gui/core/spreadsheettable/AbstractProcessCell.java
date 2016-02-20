@@ -22,6 +22,7 @@ package adams.gui.core.spreadsheettable;
 
 import adams.core.option.AbstractOptionHandler;
 import adams.data.spreadsheet.SpreadSheet;
+import adams.data.spreadsheet.SpreadSheetUtils;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.SpreadSheetTable;
 
@@ -112,7 +113,7 @@ public abstract class AbstractProcessCell
     if (result)
       result = doProcessCell(table, sheet, row, column);
     else
-      GUIHelper.showErrorMessage(table, "Failed to process cell " + SpreadSheet.getCellPosition(row, column) + "\n" + error);
+      GUIHelper.showErrorMessage(table, "Failed to process cell " + SpreadSheetUtils.getCellPosition(row, column) + "\n" + error);
 
     return result;
   }

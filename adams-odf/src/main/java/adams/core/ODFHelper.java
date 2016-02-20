@@ -19,7 +19,7 @@
  */
 package adams.core;
 
-import adams.data.spreadsheet.SpreadSheet;
+import adams.data.spreadsheet.SpreadSheetUtils;
 
 /**
  * Helper class for PDF-related stuff.
@@ -39,7 +39,7 @@ public class ODFHelper {
   public static int[] getCellLocation(String position) throws Exception {
     int[]	result;
     
-    result = SpreadSheet.getCellLocation(position);
+    result = SpreadSheetUtils.getCellLocation(position);
     result[0]++;
     
     return result;
@@ -52,7 +52,7 @@ public class ODFHelper {
    * @return		the position string
    */
   public static String getColumnPosition(int col) {
-    return SpreadSheet.getColumnPosition(col);
+    return SpreadSheetUtils.getColumnPosition(col);
   }
 
   /**

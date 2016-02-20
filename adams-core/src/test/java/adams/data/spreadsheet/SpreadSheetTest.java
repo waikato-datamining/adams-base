@@ -105,67 +105,67 @@ public class SpreadSheetTest
   public void testCellPositions() {
     int row = 0;
     int col = 0;
-    String pos = SpreadSheet.getCellPosition(row, col);
+    String pos = SpreadSheetUtils.getCellPosition(row, col);
     assertEquals("position differs", "A2", pos);
 
     row = 1;
     col = 2;
-    pos = SpreadSheet.getCellPosition(row, col);
+    pos = SpreadSheetUtils.getCellPosition(row, col);
     assertEquals("position differs", "C3", pos);
 
     row = 1;
     col = 25;
-    pos = SpreadSheet.getCellPosition(row, col);
+    pos = SpreadSheetUtils.getCellPosition(row, col);
     assertEquals("position differs", "Z3", pos);
 
     row = 1;
     col = 26;
-    pos = SpreadSheet.getCellPosition(row, col);
+    pos = SpreadSheetUtils.getCellPosition(row, col);
     assertEquals("position differs", "AA3", pos);
 
     row = 2;
     col = 51;
-    pos = SpreadSheet.getCellPosition(row, col);
+    pos = SpreadSheetUtils.getCellPosition(row, col);
     assertEquals("position differs", "AZ4", pos);
 
     row = 2;
     col = 52;
-    pos = SpreadSheet.getCellPosition(row, col);
+    pos = SpreadSheetUtils.getCellPosition(row, col);
     assertEquals("position differs", "BA4", pos);
 
     row = 2;
     col = 701;
-    pos = SpreadSheet.getCellPosition(row, col);
+    pos = SpreadSheetUtils.getCellPosition(row, col);
     assertEquals("position differs", "ZZ4", pos);
 
     row = 2;
     col = 702;
-    pos = SpreadSheet.getCellPosition(row, col);
+    pos = SpreadSheetUtils.getCellPosition(row, col);
     assertEquals("position differs", "AAA4", pos);
 
     row = 20;
     col = 900;
-    pos = SpreadSheet.getCellPosition(row, col);
+    pos = SpreadSheetUtils.getCellPosition(row, col);
     assertEquals("position differs", "AHQ22", pos);
 
     row = 23;
     col = 1000;
-    pos = SpreadSheet.getCellPosition(row, col);
+    pos = SpreadSheetUtils.getCellPosition(row, col);
     assertEquals("position differs", "ALM25", pos);
 
     row = 23;
     col = 26 + 676 + 17576 + 1;
-    pos = SpreadSheet.getCellPosition(row, col);
+    pos = SpreadSheetUtils.getCellPosition(row, col);
     assertEquals("position differs", "AAAB25", pos);
 
     row = 23;
     col = 26 + 676 + 17576 + 456976 + 1;
-    pos = SpreadSheet.getCellPosition(row, col);
+    pos = SpreadSheetUtils.getCellPosition(row, col);
     assertEquals("position differs", "AAAAB25", pos);
 
     row = 23;
     col = 26 + 676 + 17576 + 456976 + 11881376 + 1;
-    pos = SpreadSheet.getCellPosition(row, col);
+    pos = SpreadSheetUtils.getCellPosition(row, col);
     assertEquals("position differs", "AAAAAB25", pos);
   }
   
@@ -176,79 +176,79 @@ public class SpreadSheetTest
     try {
       int row = 0;
       int col = 0;
-      int[] loc = SpreadSheet.getCellLocation("A2");
+      int[] loc = SpreadSheetUtils.getCellLocation("A2");
       assertEquals("row differs", row, loc[0]);
       assertEquals("col differs", col, loc[1]);
 
       row = 1;
       col = 2;
-      loc = SpreadSheet.getCellLocation("C3");
+      loc = SpreadSheetUtils.getCellLocation("C3");
       assertEquals("row differs", row, loc[0]);
       assertEquals("col differs", col, loc[1]);
 
       row = 1;
       col = 25;
-      loc = SpreadSheet.getCellLocation("Z3");
+      loc = SpreadSheetUtils.getCellLocation("Z3");
       assertEquals("row differs", row, loc[0]);
       assertEquals("col differs", col, loc[1]);
 
       row = 1;
       col = 26;
-      loc = SpreadSheet.getCellLocation("AA3");
+      loc = SpreadSheetUtils.getCellLocation("AA3");
       assertEquals("row differs", row, loc[0]);
       assertEquals("col differs", col, loc[1]);
 
       row = 2;
       col = 51;
-      loc = SpreadSheet.getCellLocation("AZ4");
+      loc = SpreadSheetUtils.getCellLocation("AZ4");
       assertEquals("row differs", row, loc[0]);
       assertEquals("col differs", col, loc[1]);
 
       row = 2;
       col = 52;
-      loc = SpreadSheet.getCellLocation("BA4");
+      loc = SpreadSheetUtils.getCellLocation("BA4");
       assertEquals("row differs", row, loc[0]);
       assertEquals("col differs", col, loc[1]);
 
       row = 2;
       col = 701;
-      loc = SpreadSheet.getCellLocation("ZZ4");
+      loc = SpreadSheetUtils.getCellLocation("ZZ4");
       assertEquals("row differs", row, loc[0]);
       assertEquals("col differs", col, loc[1]);
 
       row = 2;
       col = 702;
-      loc = SpreadSheet.getCellLocation("AAA4");
+      loc = SpreadSheetUtils.getCellLocation("AAA4");
       assertEquals("row differs", row, loc[0]);
       assertEquals("col differs", col, loc[1]);
 
       row = 20;
       col = 900;
-      loc = SpreadSheet.getCellLocation("AHQ22");
+      loc = SpreadSheetUtils.getCellLocation("AHQ22");
       assertEquals("row differs", row, loc[0]);
       assertEquals("col differs", col, loc[1]);
 
       row = 23;
       col = 1000;
-      loc = SpreadSheet.getCellLocation("ALM25");
+      loc = SpreadSheetUtils.getCellLocation("ALM25");
       assertEquals("row differs", row, loc[0]);
       assertEquals("col differs", col, loc[1]);
 
       row = 23;
       col = 26 + 676 + 17576 + 1;
-      loc = SpreadSheet.getCellLocation("AAAB25");
+      loc = SpreadSheetUtils.getCellLocation("AAAB25");
       assertEquals("row differs", row, loc[0]);
       assertEquals("col differs", col, loc[1]);
 
       row = 23;
       col = 26 + 676 + 17576 + 456976 + 1;
-      loc = SpreadSheet.getCellLocation("AAAAB25");
+      loc = SpreadSheetUtils.getCellLocation("AAAAB25");
       assertEquals("row differs", row, loc[0]);
       assertEquals("col differs", col, loc[1]);
 
       row = 23;
       col = 26 + 676 + 17576 + 456976 + 11881376 + 1;
-      loc = SpreadSheet.getCellLocation("AAAAAB25");
+      loc = SpreadSheetUtils.getCellLocation("AAAAAB25");
       assertEquals("row differs", row, loc[0]);
       assertEquals("col differs", col, loc[1]);
     }

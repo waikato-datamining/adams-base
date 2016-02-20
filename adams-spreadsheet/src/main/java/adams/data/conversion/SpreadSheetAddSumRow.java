@@ -23,6 +23,7 @@ import adams.core.Range;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetColumnRange;
+import adams.data.spreadsheet.SpreadSheetUtils;
 
 /**
  <!-- globalinfo-start -->
@@ -143,8 +144,8 @@ public class SpreadSheetAddSumRow
     row  = result.addRow();
     
     for (i = 0; i < cols.length; i++) {
-      from = SpreadSheet.getCellPosition(0, cols[i]);
-      to   = SpreadSheet.getCellPosition(result.getRowCount() - 2, cols[i]);
+      from = SpreadSheetUtils.getCellPosition(0, cols[i]);
+      to   = SpreadSheetUtils.getCellPosition(result.getRowCount() - 2, cols[i]);
       row.addCell(cols[i]).setContent("=SUM(" + from +  ":" + to + ")");
     }
     

@@ -28,6 +28,7 @@ import adams.core.QuickInfoHelper;
 import adams.data.spreadsheet.Cell;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetColumnIndex;
+import adams.data.spreadsheet.SpreadSheetUtils;
 import adams.data.spreadsheet.rowscore.AbstractRowScore;
 import adams.data.spreadsheet.rowscore.RowStatistic;
 import adams.flow.core.Token;
@@ -383,13 +384,13 @@ public class SpreadSheetInsertRowScore
 	  if (cell != null)
 	    cell.setContent(score[i]);
 	  if (isLoggingEnabled())
-	    getLogger().info(SpreadSheet.getCellPosition(row, currPos) + ": " + score + " " + (cell == null ? "failed to set" : "set"));
+	    getLogger().info(SpreadSheetUtils.getCellPosition(row, currPos) + ": " + score + " " + (cell == null ? "failed to set" : "set"));
 	  currPos++;
 	}
       }
       else {
 	if (isLoggingEnabled())
-	  getLogger().info(SpreadSheet.getCellPosition(row, pos) + ": failed to calculate score");
+	  getLogger().info(SpreadSheetUtils.getCellPosition(row, pos) + ": failed to calculate score");
       }
     }
     

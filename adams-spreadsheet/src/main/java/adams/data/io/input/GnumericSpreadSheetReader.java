@@ -28,6 +28,7 @@ import java.util.zip.GZIPInputStream;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import adams.data.spreadsheet.SpreadSheetUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -317,7 +318,7 @@ public class GnumericSpreadSheetReader
 	    else
 	      row.addCell(cellCol).setContent(content);
 	    if (isLoggingEnabled())
-	      getLogger().info(SpreadSheet.getCellPosition(cellRow, cellCol) + ": " + content);
+	      getLogger().info(SpreadSheetUtils.getCellPosition(cellRow, cellCol) + ": " + content);
 	  }
 	}
       }
