@@ -23,6 +23,7 @@ import adams.core.MessageCollection;
 import adams.core.QuickInfoHelper;
 import adams.core.SerializationHelper;
 import adams.core.VariableName;
+import adams.core.io.ModelFileHandler;
 import adams.core.io.PlaceholderFile;
 import adams.event.VariableChangeEvent;
 import adams.flow.container.AbstractContainer;
@@ -43,7 +44,8 @@ import java.util.Hashtable;
  * @param <T> the type of model to use
  */
 public abstract class AbstractProcessWekaInstanceWithModel<T>
-  extends AbstractTransformer {
+  extends AbstractTransformer
+  implements ModelFileHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = -5275241130624220000L;

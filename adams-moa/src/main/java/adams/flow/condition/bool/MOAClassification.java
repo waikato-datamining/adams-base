@@ -22,6 +22,7 @@ package adams.flow.condition.bool;
 import adams.core.MessageCollection;
 import adams.core.QuickInfoHelper;
 import adams.core.SerializationHelper;
+import adams.core.io.ModelFileHandler;
 import adams.core.io.PlaceholderFile;
 import adams.flow.container.WekaModelContainer;
 import adams.flow.core.Actor;
@@ -70,7 +71,7 @@ import java.util.logging.Level;
  */
 public class MOAClassification
   extends AbstractBooleanCondition 
-  implements IndexedBooleanCondition {
+  implements IndexedBooleanCondition, ModelFileHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = 67062275292481371L;

@@ -23,6 +23,7 @@ package adams.flow.source;
 import adams.core.MessageCollection;
 import adams.core.QuickInfoHelper;
 import adams.core.SerializationHelper;
+import adams.core.io.ModelFileHandler;
 import adams.core.io.PlaceholderFile;
 import adams.flow.container.WekaForecastContainer;
 import adams.flow.container.WekaModelContainer;
@@ -109,7 +110,8 @@ import java.util.List;
  * @version $Revision$
  */
 public class WekaForecasting
-  extends AbstractSimpleSource {
+  extends AbstractSimpleSource
+  implements ModelFileHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = -3019442578354930841L;
