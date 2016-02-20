@@ -1,0 +1,26 @@
+# Project: adams
+# Date: 2016-02-21 11:06:16
+# User: fracpete
+# Charset: UTF-8
+adams.flow.control.Flow -annotation "Shows how to serialize a built filter and then re-use \\nthe serialized filter file for further filter operations." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.standalone.CallableActors
+  adams.flow.sink.DisplayPanelManager -provider "adams.flow.sink.WekaInstancesDisplay -writer adams.gui.print.NullWriter" -entry-name-variable entry
+ adams.flow.standalone.SetVariable -name "filter file" -var-name filter_file -var-value ${EXAMPLE_FLOWS}/output/filter.model
+ adams.flow.source.Start
+ adams.flow.control.Trigger -name train -annotation "initializes and saves the filter"
+  adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/anneal_train.arff
+  adams.flow.transformer.WekaFileReader -loader weka.core.converters.AArffLoader
+  adams.flow.transformer.WekaClassSelector
+  adams.flow.transformer.WekaFilter -filter "weka.filters.unsupervised.attribute.RemoveUseless -M 99.0" -output-container true
+  adams.flow.control.ContainerValuePicker -name "save filter" -value Filter
+   adams.flow.sink.Serialize -output @{filter_file}
+  adams.flow.control.ContainerValuePicker -value Data -switch-outputs true
+  adams.flow.transformer.SetVariable -var-name entry -var-value train
+  adams.flow.sink.CallableSink -callable DisplayPanelManager
+ adams.flow.control.Trigger -name test -annotation "loads the filter from disk and applies it"
+  adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/anneal_test.arff
+  adams.flow.transformer.WekaFileReader -loader weka.core.converters.AArffLoader
+  adams.flow.transformer.WekaClassSelector
+  adams.flow.transformer.WekaFilter -filter weka.filters.AllFilter -model @{filter_file}
+  adams.flow.transformer.SetVariable -var-name entry -var-value test
+  adams.flow.sink.CallableSink -callable DisplayPanelManager
