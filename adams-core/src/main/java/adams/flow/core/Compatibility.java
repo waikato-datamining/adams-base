@@ -15,15 +15,15 @@
 
 /*
  * Compatibility.java
- * Copyright (C) 2009-2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.core;
 
+import adams.core.ClassLocator;
+
 import java.io.Serializable;
 import java.util.HashSet;
-
-import adams.core.ClassLocator;
 
 /**
  * Class that determines compatibility between inputs and outputs.
@@ -34,6 +34,8 @@ import adams.core.ClassLocator;
  *   <li>input is Object.class</li>
  *   <li>output and input are the same class</li>
  * </ul>
+ *
+ * "Strict" mode does not perform any special treatment of Object/Unknown.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
@@ -47,6 +49,24 @@ public class Compatibility
 
   /** whether to use strict compatibility, ie, no special handling for Unknown/Object. */
   protected boolean m_Strict;
+
+  /**
+   * Initializes the checker with non-strict behavior.
+   */
+  public Compatibility() {
+    this(false);
+  }
+
+  /**
+   * Initializes the checker.
+   *
+   * @param strict	whether to perform strict checks or not
+   * @see		#setStrict(boolean)
+   */
+  public Compatibility(boolean strict) {
+    super();
+    setStrict(strict);
+  }
 
   /**
    * Sets whether to use strict or relaxed compatibility checks. "Strict" does
