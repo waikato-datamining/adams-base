@@ -254,7 +254,7 @@ public abstract class LogT
       }
     }
     catch (Exception e) {
-      getLogger().log(Level.SEVERE, "Failed to processed resultset", e);
+      getLogger().log(Level.SEVERE, "Failed to process resultset", e);
     }
 
     return result;
