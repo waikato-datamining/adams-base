@@ -15,7 +15,7 @@
 
 /**
  * LogEntryConditions.java
- * Copyright (C) 2010-2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.db;
 
@@ -416,6 +416,6 @@ public class LogEntryConditions
       m_Status = new BaseRegExp("");
 
     if (m_Source == null)
-      m_Status = new BaseRegExp("");
+      m_Source = new BaseRegExp("");
   }
 }
