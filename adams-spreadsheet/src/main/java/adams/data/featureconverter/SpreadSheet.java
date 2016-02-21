@@ -23,6 +23,7 @@ import adams.data.spreadsheet.Cell;
 import adams.data.spreadsheet.DataRow;
 import adams.data.spreadsheet.DenseDataRow;
 import adams.data.spreadsheet.Row;
+import adams.data.spreadsheet.SpreadSheetTypeHandler;
 
 import java.util.List;
 
@@ -33,7 +34,8 @@ import java.util.List;
  * @version $Revision$
  */
 public class SpreadSheet
-  extends AbstractFeatureConverter<adams.data.spreadsheet.SpreadSheet,Row> {
+  extends AbstractFeatureConverter<adams.data.spreadsheet.SpreadSheet,Row>
+  implements SpreadSheetTypeHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = -1696817128027564877L;

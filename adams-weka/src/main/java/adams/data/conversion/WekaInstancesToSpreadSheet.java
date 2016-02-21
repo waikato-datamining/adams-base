@@ -24,6 +24,7 @@ import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.DenseDataRow;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
+import adams.data.spreadsheet.SpreadSheetTypeHandler;
 import adams.ml.data.Dataset;
 import weka.core.Attribute;
 import weka.core.Instances;
@@ -58,7 +59,8 @@ import java.util.Date;
  * @version $Revision$
  */
 public class WekaInstancesToSpreadSheet
-  extends AbstractConversion {
+  extends AbstractConversion
+  implements SpreadSheetTypeHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = -7728745365733721265L;

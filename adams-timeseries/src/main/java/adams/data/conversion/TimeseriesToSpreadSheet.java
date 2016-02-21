@@ -25,6 +25,7 @@ import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.DenseDataRow;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
+import adams.data.spreadsheet.SpreadSheetTypeHandler;
 import adams.data.timeseries.Timeseries;
 import adams.data.timeseries.TimeseriesPoint;
 
@@ -56,7 +57,8 @@ import adams.data.timeseries.TimeseriesPoint;
  * @version $Revision$
  */
 public class TimeseriesToSpreadSheet
-  extends AbstractConversion {
+  extends AbstractConversion
+  implements SpreadSheetTypeHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = -7385757807406641857L;

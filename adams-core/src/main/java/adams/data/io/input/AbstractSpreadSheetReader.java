@@ -31,6 +31,7 @@ import adams.data.spreadsheet.DataRow;
 import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.DenseDataRow;
 import adams.data.spreadsheet.SpreadSheet;
+import adams.data.spreadsheet.SpreadSheetTypeHandler;
 import org.apache.commons.io.input.ReaderInputStream;
 
 import java.io.BufferedReader;
@@ -49,7 +50,8 @@ import java.util.zip.GZIPInputStream;
  */
 public abstract class AbstractSpreadSheetReader
   extends AbstractOptionHandler 
-  implements SpreadSheetReader, FileEncodingSupporter, FileFormatHandler {
+  implements SpreadSheetReader, FileEncodingSupporter, FileFormatHandler,
+             SpreadSheetTypeHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = 4828477005893179066L;

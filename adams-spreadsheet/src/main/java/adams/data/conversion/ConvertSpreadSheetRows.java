@@ -15,12 +15,13 @@
 
 /**
  * ConvertSpreadSheetRows.java
- * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
 
 import adams.data.spreadsheet.Cell;
 import adams.data.spreadsheet.DataRow;
+import adams.data.spreadsheet.DataRowTypeHandler;
 import adams.data.spreadsheet.DenseDataRow;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
@@ -48,7 +49,8 @@ import adams.data.spreadsheet.SpreadSheet;
  * @version $Revision$
  */
 public class ConvertSpreadSheetRows
-  extends AbstractSpreadSheetConversion {
+  extends AbstractSpreadSheetConversion
+  implements DataRowTypeHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = 1779359599048268798L;

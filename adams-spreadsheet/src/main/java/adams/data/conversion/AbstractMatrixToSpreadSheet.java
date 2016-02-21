@@ -23,6 +23,7 @@ import adams.data.spreadsheet.DataRow;
 import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.DenseDataRow;
 import adams.data.spreadsheet.SpreadSheet;
+import adams.data.spreadsheet.SpreadSheetTypeHandler;
 
 /**
  * Ancestor for conversions that turn a matrix of some type into a spreadsheet.
@@ -31,7 +32,8 @@ import adams.data.spreadsheet.SpreadSheet;
  * @version $Revision$
  */
 public abstract class AbstractMatrixToSpreadSheet
-  extends AbstractConversion {
+  extends AbstractConversion
+  implements SpreadSheetTypeHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = -2047404866165517428L;
