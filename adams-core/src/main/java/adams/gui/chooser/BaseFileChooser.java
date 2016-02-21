@@ -15,7 +15,7 @@
 
 /*
  * BaseFileChooser.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.chooser;
@@ -25,6 +25,7 @@ import adams.core.io.PlaceholderFile;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.ExtensionFileFilter;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.MouseUtils;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
@@ -41,6 +42,8 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.HeadlessException;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 
 /**
@@ -79,6 +82,9 @@ public class BaseFileChooser
 
   /** the edit field for the filter. */
   protected JTextField m_TextFilter;
+
+  /** the icon for clearing the text field. */
+  protected JLabel m_LabelFilterClear;
 
   /** the bookmarks. */
   protected FileChooserBookmarksPanel m_PanelBookmarks;
@@ -176,6 +182,7 @@ public class BaseFileChooser
    */
   protected JComponent createAccessoryPanel() {
     Dimension	dim;
+    JPanel	panel;
 
     m_PanelBookmarksAndFilter = new JPanel(new BorderLayout());
 
@@ -207,14 +214,33 @@ public class BaseFileChooser
 	filterFiles();
       }
       protected void filterFiles() {
+        m_LabelFilterClear.setEnabled(!m_TextFilter.getText().isEmpty());
 	firePropertyChange(JFileChooser.FILE_FILTER_CHANGED_PROPERTY, null, null);
       }
     });
+    m_LabelFilterClear = new JLabel(GUIHelper.getIcon("clear_text.png"));
+    m_LabelFilterClear.setToolTipText("Clears the filter text field");
+    m_LabelFilterClear.setEnabled(false);
+    m_LabelFilterClear.addMouseListener(new MouseAdapter() {
+      @Override
+      public void mouseClicked(MouseEvent e) {
+        if (MouseUtils.isLeftClick(e)) {
+	  e.consume();
+          m_TextFilter.setText("");
+        }
+        else {
+          super.mouseClicked(e);
+        }
+      }
+    });
+    panel = new JPanel(new BorderLayout(0, 0));
+    panel.add(m_TextFilter, BorderLayout.CENTER);
+    panel.add(m_LabelFilterClear, BorderLayout.EAST);
     m_LabelFilter = new JLabel("Filter");
     m_LabelFilter.setDisplayedMnemonic('F');
     m_LabelFilter.setLabelFor(m_TextFilter);
     m_PanelFilter.add(m_LabelFilter);
-    m_PanelFilter.add(m_TextFilter);
+    m_PanelFilter.add(panel);
     m_PanelBookmarksAndFilter.add(m_PanelFilter, BorderLayout.SOUTH);
 
     return m_PanelBookmarksAndFilter;
