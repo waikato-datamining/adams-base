@@ -15,13 +15,14 @@
 
 /**
  * ConsoleOutputAnalyzerPanel.java
- * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools;
 
 import adams.core.Utils;
 import adams.core.base.BaseRegExp;
 import adams.core.io.FileUtils;
+import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetSupporter;
@@ -56,7 +57,6 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingWorker;
@@ -427,7 +427,7 @@ public class ConsoleOutputAnalyzerPanel
       SpreadSheet	result;
       Row		row;
       
-      result = new SpreadSheet();
+      result = new DefaultSpreadSheet();
       
       // header
       row = result.getHeaderRow();

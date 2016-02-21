@@ -15,21 +15,22 @@
 
 /**
  * Statistics.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.spreadsheetviewer;
 
-import java.awt.BorderLayout;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Hashtable;
-
 import adams.data.spreadsheet.Cell.ContentType;
+import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.SpreadSheetTable;
+
+import java.awt.BorderLayout;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Hashtable;
 
 /**
  * Generates a table with some simple statistics.
@@ -110,7 +111,7 @@ public class Statistics
     }
     
     // assemble table
-    stats = new SpreadSheet();
+    stats = new DefaultSpreadSheet();
     row   = stats.getHeaderRow();
     row.addCell("key").setContent("Key");
     row.addCell("value").setContent("Value");

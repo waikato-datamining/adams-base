@@ -15,18 +15,19 @@
 
 /**
  * JsonToSpreadSheet.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
 
-import net.minidev.json.JSONArray;
-import net.minidev.json.JSONAware;
-import net.minidev.json.JSONObject;
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
+import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SparseDataRow;
 import adams.data.spreadsheet.SpreadSheet;
+import net.minidev.json.JSONArray;
+import net.minidev.json.JSONAware;
+import net.minidev.json.JSONObject;
 
 /**
  <!-- globalinfo-start -->
@@ -263,7 +264,7 @@ public class JsonToSpreadSheet
     SpreadSheet	result;
     Row		header;
     
-    result = new SpreadSheet();
+    result = new DefaultSpreadSheet();
     result.setDataRowClass(SparseDataRow.class);
     result.addRow();
     header = result.getHeaderRow();

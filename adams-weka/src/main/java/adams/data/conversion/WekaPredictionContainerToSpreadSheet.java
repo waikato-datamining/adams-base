@@ -15,18 +15,19 @@
 
 /**
  * WekaPredictionContainerToSpreadSheet.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
+
+import adams.data.spreadsheet.DefaultSpreadSheet;
+import adams.data.spreadsheet.Row;
+import adams.data.spreadsheet.SpreadSheet;
+import adams.flow.container.WekaPredictionContainer;
+import weka.core.Instance;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import weka.core.Instance;
-import adams.data.spreadsheet.Row;
-import adams.data.spreadsheet.SpreadSheet;
-import adams.flow.container.WekaPredictionContainer;
 
 /**
  <!-- globalinfo-start -->
@@ -612,7 +613,7 @@ public class WekaPredictionContainerToSpreadSheet
     String			label;
     List<SortContainer>		dists;
 
-    result = new SpreadSheet();
+    result = new DefaultSpreadSheet();
     cont   = (WekaPredictionContainer) m_Input;
 
     // header

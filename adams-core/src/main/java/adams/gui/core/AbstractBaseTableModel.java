@@ -15,17 +15,18 @@
 
 /*
  * AbstractBaseTableModel.java
- * Copyright (C) 2009-2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
 
-import javax.swing.table.AbstractTableModel;
-
 import adams.core.Utils;
+import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetSupporter;
+
+import javax.swing.table.AbstractTableModel;
 
 /**
  * Abstract ancestor for table models. The models are automatically sortable.
@@ -52,7 +53,7 @@ public abstract class AbstractBaseTableModel
     int			n;
     Object		value;
     
-    result = new SpreadSheet();
+    result = new DefaultSpreadSheet();
     
     // header
     row = result.getHeaderRow();

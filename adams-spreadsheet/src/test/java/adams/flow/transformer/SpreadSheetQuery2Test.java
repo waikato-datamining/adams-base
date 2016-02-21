@@ -15,7 +15,7 @@
 
 /*
  * SpreadSheetQueryTest.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -185,7 +185,7 @@ public class SpreadSheetQuery2Test
       csvspreadsheetreader19.setDataRowType(densedatarow21);
 
       argOption = (AbstractArgumentOption) csvspreadsheetreader19.getOptionManager().findByProperty("spreadSheetType");
-      adams.data.spreadsheet.SpreadSheet spreadsheet23 = new adams.data.spreadsheet.SpreadSheet();
+      adams.data.spreadsheet.SpreadSheet spreadsheet23 = new adams.data.spreadsheet.DefaultSpreadSheet();
       csvspreadsheetreader19.setSpreadSheetType(spreadsheet23);
 
       argOption = (AbstractArgumentOption) csvspreadsheetreader19.getOptionManager().findByProperty("dateColumns");

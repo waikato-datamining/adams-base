@@ -28,6 +28,7 @@ import adams.core.option.AbstractOptionHandler;
 import adams.core.option.OptionUtils;
 import adams.data.io.output.CsvSpreadSheetWriter;
 import adams.data.io.output.SpreadSheetWriter;
+import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.env.Environment;
@@ -385,7 +386,7 @@ public class ActorUsage
     // generate spreadsheet
     if (isLoggingEnabled())
       getLogger().info("Generating spreadsheet...");
-    result = new SpreadSheet();
+    result = new DefaultSpreadSheet();
     row    = result.getHeaderRow();
     row.addCell("C").setContent("Class");
     row.addCell("F").setContent("Flow");

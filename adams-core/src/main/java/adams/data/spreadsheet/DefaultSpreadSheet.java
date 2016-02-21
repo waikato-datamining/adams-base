@@ -14,26 +14,22 @@
  */
 
 /*
- * SpreadSheet.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * DefaultSpreadSheet.java
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.spreadsheet;
 
 import adams.core.ClassLocator;
-import adams.core.CloneHandler;
 import adams.core.DateFormat;
 import adams.core.DateUtils;
-import adams.core.Mergeable;
 import adams.core.management.LocaleHelper;
-import adams.core.management.LocaleSupporter;
 import adams.data.SharedStringsTable;
 import adams.data.io.output.CsvSpreadSheetWriter;
 import adams.data.spreadsheet.Cell.ContentType;
 import adams.env.Environment;
 import adams.event.SpreadSheetColumnInsertionEvent;
 
-import java.io.Serializable;
 import java.io.StringWriter;
 import java.lang.reflect.Constructor;
 import java.text.NumberFormat;
@@ -55,9 +51,8 @@ import java.util.TimeZone;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class SpreadSheet
-  implements Serializable, CloneHandler<SpreadSheet>, LocaleSupporter,
-             Mergeable<SpreadSheet> {
+public class DefaultSpreadSheet
+  implements SpreadSheet {
 
   /** for serialization. */
   private static final long serialVersionUID = -5500678849412481001L;
@@ -113,7 +108,7 @@ public class SpreadSheet
   /**
    * default constructor.
    */
-  public SpreadSheet() {
+  public DefaultSpreadSheet() {
     super();
     initialize();
   }
@@ -220,11 +215,11 @@ public class SpreadSheet
    */
   @Override
   public SpreadSheet getClone() {
-    SpreadSheet	result;
-    int		i;
-    DataRow	row;
+    DefaultSpreadSheet	result;
+    int			i;
+    DataRow		row;
 
-    result                = newInstance();
+    result                = (DefaultSpreadSheet) newInstance();
     result.m_Name         = m_Name;
     result.m_StringsTable.assign(m_StringsTable);
     result.m_DataRowClass = m_DataRowClass;
@@ -251,9 +246,9 @@ public class SpreadSheet
    * @return		the spreadsheet
    */
   public SpreadSheet getHeader() {
-    SpreadSheet	result;
+    DefaultSpreadSheet	result;
 
-    result                = newInstance();
+    result                = (DefaultSpreadSheet) newInstance();
     result.m_Name         = m_Name;
     result.m_HeaderRow    = m_HeaderRow.getClone(result);
     result.m_HeaderRow.setOwner(result);
@@ -1418,7 +1413,7 @@ public class SpreadSheet
   
   public static void main(String[] args) {
     Environment.setEnvironmentClass(Environment.class);
-    SpreadSheet sheet = new SpreadSheet();
+    SpreadSheet sheet = new DefaultSpreadSheet();
     sheet.getHeaderRow().addCell("Col").setContent("Col");
     Row row;
     row = sheet.addRow();

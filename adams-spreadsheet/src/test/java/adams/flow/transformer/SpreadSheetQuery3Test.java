@@ -15,7 +15,7 @@
 
 /*
  * SpreadSheetQuery3Test.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -191,7 +191,7 @@ public class SpreadSheetQuery3Test
       csvspreadsheetreader20.setDataRowType(densedatarow22);
 
       argOption = (AbstractArgumentOption) csvspreadsheetreader20.getOptionManager().findByProperty("spreadSheetType");
-      adams.data.spreadsheet.SpreadSheet spreadsheet24 = new adams.data.spreadsheet.SpreadSheet();
+      adams.data.spreadsheet.SpreadSheet spreadsheet24 = new adams.data.spreadsheet.DefaultSpreadSheet();
       csvspreadsheetreader20.setSpreadSheetType(spreadsheet24);
 
       spreadsheetfilereader18.setReader(csvspreadsheetreader20);

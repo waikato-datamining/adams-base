@@ -15,20 +15,21 @@
 
 /**
  * LookUpTable.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.source;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-
 import adams.core.QuickInfoHelper;
+import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.control.StorageName;
 import adams.flow.core.Token;
 import adams.flow.transformer.LookUpInit;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 
 /**
  <!-- globalinfo-start -->
@@ -238,7 +239,7 @@ public class LookUpTable
     }
     else {
       lookup = (HashMap<String,Object>) getStorageHandler().getStorage().get(m_StorageName);
-      sheet  = new SpreadSheet();
+      sheet  = new DefaultSpreadSheet();
       sheet.setName(m_StorageName.getValue());
       sheet.getHeaderRow().addCell("k").setContent(COLUMN_KEY);
       sheet.getHeaderRow().addCell("v").setContent(COLUMN_VALUE);

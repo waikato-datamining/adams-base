@@ -15,7 +15,7 @@
 
 /**
  * SpreadSheetColumnRangeTest.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.spreadsheet;
 
@@ -216,7 +216,7 @@ public class SpreadSheetColumnRangeTest
    * column names.
    */
   public void testSubstrings() {
-    SpreadSheet sheet = new SpreadSheet();
+    SpreadSheet sheet = new DefaultSpreadSheet();
     sheet.getHeaderRow().addCell("0").setContent("blah");
     sheet.getHeaderRow().addCell("1").setContent("dbtimestamp");
     sheet.getHeaderRow().addCell("2").setContent("time");

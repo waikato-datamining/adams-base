@@ -15,23 +15,24 @@
 
 /**
  * CompareDatasets.java
- * Copyright (C) 2010-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.tools;
 
-import java.util.Hashtable;
-
-import weka.core.Attribute;
-import weka.core.Instance;
-import weka.core.Instances;
-import weka.core.converters.ConverterUtils.DataSource;
 import adams.core.Index;
 import adams.core.Range;
 import adams.core.io.PlaceholderFile;
 import adams.data.io.output.CsvSpreadSheetWriter;
+import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.statistics.StatUtils;
+import weka.core.Attribute;
+import weka.core.Instance;
+import weka.core.Instances;
+import weka.core.converters.ConverterUtils.DataSource;
+
+import java.util.Hashtable;
 
 /**
  <!-- globalinfo-start -->
@@ -723,7 +724,7 @@ public class CompareDatasets
     double		correlation;
 
     // spreadsheet headers
-    output = new SpreadSheet();
+    output = new DefaultSpreadSheet();
     row    = output.getHeaderRow();
     if (getUseRowAttribute())
       row.addCell("ID").setContent("ID");
@@ -733,7 +734,7 @@ public class CompareDatasets
 
     missing = null;
     if (!m_Missing.isDirectory()) {
-      missing = new SpreadSheet();
+      missing = new DefaultSpreadSheet();
       row     = missing.getHeaderRow();
       if (getUseRowAttribute())
 	row.addCell("ID").setContent("ID");

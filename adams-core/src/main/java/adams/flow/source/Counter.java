@@ -15,12 +15,13 @@
 
 /**
  * Counter.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.source;
 
 import adams.core.NamedCounter;
 import adams.core.QuickInfoHelper;
+import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.control.StorageName;
@@ -195,7 +196,7 @@ public class Counter
     }
     else {
       counter = (NamedCounter) getStorageHandler().getStorage().get(m_StorageName);
-      sheet  = new SpreadSheet();
+      sheet  = new DefaultSpreadSheet();
       sheet.setName(m_StorageName.getValue());
       sheet.getHeaderRow().addCell("k").setContent(COLUMN_KEY);
       sheet.getHeaderRow().addCell("c").setContent(COLUMN_COUNT);

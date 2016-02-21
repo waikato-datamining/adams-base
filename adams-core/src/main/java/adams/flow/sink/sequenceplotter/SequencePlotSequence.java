@@ -15,13 +15,14 @@
 
 /**
  * SequencePlotterSequence.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.sink.sequenceplotter;
 
 import adams.data.container.DataPointComparator;
 import adams.data.sequence.XYSequence;
 import adams.data.sequence.XYSequencePoint;
+import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SparseDataRow;
 import adams.data.spreadsheet.SpreadSheet;
@@ -124,7 +125,7 @@ public class SequencePlotSequence
       }
     }
     
-    result = new SpreadSheet();
+    result = new DefaultSpreadSheet();
     result.setDataRowClass(SparseDataRow.class);
     result.setName(getID());
     row    = result.getHeaderRow();

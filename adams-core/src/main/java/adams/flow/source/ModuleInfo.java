@@ -14,13 +14,14 @@
  */
 
 /**
- * DumpStorage.java
- * Copyright (C) 2015 University of Waikato, Hamilton, NZ
+ * ModuleInfo.java
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.source;
 
 import adams.core.DateTime;
+import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.env.Modules;
@@ -113,7 +114,7 @@ public class ModuleInfo
     SpreadSheet		sheet;
     Row			row;
 
-    sheet = new SpreadSheet();
+    sheet = new DefaultSpreadSheet();
     sheet.setName("Modules");
     row   = sheet.getHeaderRow();
     row.addCell("N").setContent("Name");

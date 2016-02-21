@@ -15,12 +15,13 @@
 
 /*
  * BaseTable.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
 
 import adams.data.io.output.SpreadSheetWriter;
+import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetSupporter;
@@ -568,7 +569,7 @@ public class BaseTable
     if (getModel() instanceof SpreadSheetSupporter)
       return ((SpreadSheetSupporter) getModel()).toSpreadSheet();
 
-    result = new SpreadSheet();
+    result = new DefaultSpreadSheet();
 
     // header
     row = result.getHeaderRow();

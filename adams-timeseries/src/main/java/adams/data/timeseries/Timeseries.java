@@ -15,12 +15,9 @@
 
 /**
  * Timeseries.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.timeseries;
-
-import java.util.Date;
-import java.util.List;
 
 import adams.core.Constants;
 import adams.core.DateFormat;
@@ -34,11 +31,15 @@ import adams.data.id.MutableDatabaseIDHandler;
 import adams.data.id.MutableIDHandler;
 import adams.data.report.MutableReportHandler;
 import adams.data.report.Report;
+import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetSupporter;
 import adams.data.statistics.InformativeStatisticSupporter;
 import adams.data.statistics.TimeseriesStatistic;
+
+import java.util.Date;
+import java.util.List;
 
 /**
  * Container for a full timeseries.
@@ -397,7 +398,7 @@ public class Timeseries<P extends TimeseriesPoint, R extends Report, S extends T
     TimeseriesPoint	point;
     DateFormat		dformat;
     
-    result = new SpreadSheet();
+    result = new DefaultSpreadSheet();
     result.setName(getID());
     if (hasReport()) {
       result.addComment(getReport().toString());

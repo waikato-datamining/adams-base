@@ -15,11 +15,12 @@
 
 /**
  * AbstractMatrixToSpreadSheet.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
 
 import adams.data.spreadsheet.DataRow;
+import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.DenseDataRow;
 import adams.data.spreadsheet.SpreadSheet;
 
@@ -54,7 +55,7 @@ public abstract class AbstractMatrixToSpreadSheet
 
     m_OptionManager.add(
 	    "spreadsheet-type", "spreadSheetType",
-	    new SpreadSheet());
+	    new DefaultSpreadSheet());
   }
 
   /**

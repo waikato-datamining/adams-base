@@ -15,7 +15,7 @@
 
 /*
  * SpreadSheetColumnStatisticTest.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -122,7 +122,7 @@ public class SpreadSheetColumnStatisticTest
       argOption = (AbstractArgumentOption) spreadsheetfilereader4.getOptionManager().findByProperty("reader");
       adams.data.io.input.CsvSpreadSheetReader csvspreadsheetreader6 = new adams.data.io.input.CsvSpreadSheetReader();
       argOption = (AbstractArgumentOption) csvspreadsheetreader6.getOptionManager().findByProperty("spreadSheetType");
-      adams.data.spreadsheet.SpreadSheet spreadsheet8 = new adams.data.spreadsheet.SpreadSheet();
+      adams.data.spreadsheet.SpreadSheet spreadsheet8 = new adams.data.spreadsheet.DefaultSpreadSheet();
       csvspreadsheetreader6.setSpreadSheetType(spreadsheet8);
 
       spreadsheetfilereader4.setReader(csvspreadsheetreader6);

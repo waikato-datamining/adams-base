@@ -15,16 +15,16 @@
 
 /**
  * SpreadSheet.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.featureconverter;
-
-import java.util.List;
 
 import adams.data.spreadsheet.Cell;
 import adams.data.spreadsheet.DataRow;
 import adams.data.spreadsheet.DenseDataRow;
 import adams.data.spreadsheet.Row;
+
+import java.util.List;
 
 /**
  * Generates features in spreadsheet format.
@@ -114,7 +114,7 @@ public class SpreadSheet
    * @return		the spreadsheet
    */
   protected adams.data.spreadsheet.SpreadSheet getDefaultSpreadSheetType() {
-    return new adams.data.spreadsheet.SpreadSheet();
+    return new adams.data.spreadsheet.DefaultSpreadSheet();
   }
   
   /**
@@ -167,9 +167,10 @@ public class SpreadSheet
   }
 
   /**
-   * Performs the actual generation of a row from the raw data.
-   * 
-   * @param data	the data of the row, elements can be null (= missing)
+   * Performs the actual generation of the header data structure using the
+   * supplied header definition.
+   *
+   * @param header	the header definition
    * @return		the dataset structure
    */
   @Override

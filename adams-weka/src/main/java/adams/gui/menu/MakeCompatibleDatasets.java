@@ -35,6 +35,7 @@ import adams.data.conversion.SpreadSheetToWekaInstances;
 import adams.data.conversion.WekaInstancesToSpreadSheet;
 import adams.data.io.input.CsvSpreadSheetReader;
 import adams.data.io.input.SpreadSheetReader;
+import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.DenseDataRow;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.condition.bool.BooleanCondition;
@@ -47,7 +48,6 @@ import adams.flow.control.Switch;
 import adams.flow.control.Tee;
 import adams.flow.control.Trigger;
 import adams.flow.control.UpdateProperties;
-import adams.flow.core.AbstractActor;
 import adams.flow.core.Actor;
 import adams.flow.execution.NullListener;
 import adams.flow.sink.WekaFileWriter;
@@ -536,7 +536,7 @@ public class MakeCompatibleDatasets
           DenseDataRow densedatarow = new DenseDataRow();
           csvspreadsheetreader.setDataRowType(densedatarow);
 
-          SpreadSheet spreadsheet = new SpreadSheet();
+          SpreadSheet spreadsheet = new DefaultSpreadSheet();
           csvspreadsheetreader.setSpreadSheetType(spreadsheet);
 
 	  if (reader != null)
@@ -570,7 +570,7 @@ public class MakeCompatibleDatasets
             DenseDataRow densedatarow2 = new DenseDataRow();
             wekainstancestospreadsheet.setDataRowType(densedatarow2);
 
-            SpreadSheet spreadsheet2 = new SpreadSheet();
+            SpreadSheet spreadsheet2 = new DefaultSpreadSheet();
             wekainstancestospreadsheet.setSpreadSheetType(spreadsheet2);
 
             convert.setConversion(wekainstancestospreadsheet);

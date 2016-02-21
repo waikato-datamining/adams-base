@@ -15,11 +15,12 @@
 
 /**
  * HashSet.java
- * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.source;
 
 import adams.core.QuickInfoHelper;
+import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.control.StorageName;
@@ -184,7 +185,7 @@ public class HashSet
     }
     else {
       hashset = (java.util.HashSet) getStorageHandler().getStorage().get(m_StorageName);
-      sheet  = new SpreadSheet();
+      sheet  = new DefaultSpreadSheet();
       sheet.setName(m_StorageName.getValue());
       sheet.getHeaderRow().addCell("v").setContent(COLUMN_VALUE);
       values = new ArrayList(hashset);

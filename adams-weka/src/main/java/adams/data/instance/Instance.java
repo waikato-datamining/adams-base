@@ -15,17 +15,11 @@
 
 /*
  * Instance.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.instance;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-
-import weka.core.Attribute;
-import weka.core.Instances;
 import adams.core.Range;
 import adams.data.Notes;
 import adams.data.NotesHandler;
@@ -36,10 +30,17 @@ import adams.data.report.DataType;
 import adams.data.report.Field;
 import adams.data.report.MutableReportHandler;
 import adams.data.report.Report;
+import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetSupporter;
 import adams.data.weka.ArffUtils;
+import weka.core.Attribute;
+import weka.core.Instances;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 
 /**
  * Stores values from weka.core.Instance objects, with X being the
@@ -384,7 +385,7 @@ public class Instance
     Row				row;
     InstancePoint		point;
 
-    result = new SpreadSheet();
+    result = new DefaultSpreadSheet();
     result.setName(getID());
     row    = result.getHeaderRow();
     row.addCell("A").setContent("Attribute");

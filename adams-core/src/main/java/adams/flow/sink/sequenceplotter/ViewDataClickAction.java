@@ -15,9 +15,18 @@
 
 /**
  * ViewDataClickAction.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.sink.sequenceplotter;
+
+import adams.data.sequence.XYSequencePoint;
+import adams.data.spreadsheet.DefaultSpreadSheet;
+import adams.data.spreadsheet.Row;
+import adams.data.spreadsheet.SparseDataRow;
+import adams.data.spreadsheet.SpreadSheet;
+import adams.gui.dialog.SpreadSheetDialog;
+import adams.gui.visualization.sequence.AbstractXYSequencePointHitDetector;
+import adams.gui.visualization.sequence.CircleHitDetector;
 
 import java.awt.Dialog.ModalityType;
 import java.awt.event.MouseEvent;
@@ -26,14 +35,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
-
-import adams.data.sequence.XYSequencePoint;
-import adams.data.spreadsheet.Row;
-import adams.data.spreadsheet.SparseDataRow;
-import adams.data.spreadsheet.SpreadSheet;
-import adams.gui.dialog.SpreadSheetDialog;
-import adams.gui.visualization.sequence.AbstractXYSequencePointHitDetector;
-import adams.gui.visualization.sequence.CircleHitDetector;
 
 /**
  * Displays the data that the user clicked on in a table.
@@ -125,7 +126,7 @@ public class ViewDataClickAction
     cols    = null;
     if (located instanceof Vector) {
       hits   = (Vector<XYSequencePoint>) located;
-      sheet  = new SpreadSheet();
+      sheet  = new DefaultSpreadSheet();
       sheet.setDataRowClass(SparseDataRow.class);
       header = sheet.getHeaderRow();
       for (XYSequencePoint hit: hits) {

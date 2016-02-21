@@ -15,12 +15,13 @@
 
 /**
  * WekaCapabilitiesToSpreadSheet.java
- * Copyright (C) 2015 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.conversion;
 
 import adams.core.option.OptionUtils;
+import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import weka.core.Capabilities;
@@ -93,7 +94,7 @@ public class WekaCapabilitiesToSpreadSheet
     Row			row;
 
     caps   = (Capabilities) m_Input;
-    result = new SpreadSheet();
+    result = new DefaultSpreadSheet();
     result.setName(OptionUtils.getCommandLine(caps.getOwner()));
 
     // header

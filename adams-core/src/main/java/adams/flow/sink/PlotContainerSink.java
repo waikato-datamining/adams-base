@@ -15,22 +15,23 @@
 
 /*
  * PlotContainerSink.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
-
-import java.io.Serializable;
-import java.util.Comparator;
-import java.util.Hashtable;
 
 import adams.core.NamedCounter;
 import adams.core.QuickInfoHelper;
 import adams.data.io.output.CsvSpreadSheetWriter;
 import adams.data.io.output.SpreadSheetWriter;
+import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.container.SequencePlotterContainer;
+
+import java.io.Serializable;
+import java.util.Comparator;
+import java.util.Hashtable;
 
 /**
  <!-- globalinfo-start -->
@@ -188,7 +189,7 @@ public class PlotContainerSink
   protected void initialize() {
     super.initialize();
 
-    m_SpreadSheet = new SpreadSheet();
+    m_SpreadSheet = new DefaultSpreadSheet();
     m_TokenCounts = new NamedCounter();
     m_Comparator  = new DoubleComparator();
   }
@@ -200,7 +201,7 @@ public class PlotContainerSink
   protected void reset() {
     super.reset();
 
-    m_SpreadSheet = new SpreadSheet();
+    m_SpreadSheet = new DefaultSpreadSheet();
     m_SpreadSheet.getHeaderRow().addCell(COLUMN_X).setContent(COLUMN_X);
     m_TokenCounts.clear();
   }

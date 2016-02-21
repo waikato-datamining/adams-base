@@ -20,6 +20,7 @@
 
 package adams.flow.transformer;
 
+import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.statistics.StatUtils;
@@ -178,7 +179,7 @@ public class WekaPredictionsToSpreadSheet
     predictions = eval.predictions();
 
     if (predictions != null) {
-      data = new SpreadSheet();
+      data = new DefaultSpreadSheet();
       data.setName("Predictions");
       
       // create header

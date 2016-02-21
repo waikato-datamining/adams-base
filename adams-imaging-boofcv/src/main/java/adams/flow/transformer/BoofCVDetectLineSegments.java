@@ -15,25 +15,25 @@
 
 /**
  * BoofCVDetectLineSegments.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
-
-import georegression.struct.line.LineSegment2D_F32;
-
-import java.util.List;
 
 import adams.core.License;
 import adams.core.annotation.MixedCopyright;
 import adams.data.boofcv.BoofCVHelper;
 import adams.data.boofcv.BoofCVImageType;
 import adams.data.image.AbstractImageContainer;
+import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.core.Token;
 import boofcv.abst.feature.detect.line.DetectLineSegmentsGridRansac;
 import boofcv.factory.feature.detect.line.FactoryDetectLineAlgs;
 import boofcv.struct.image.ImageFloat32;
+import georegression.struct.line.LineSegment2D_F32;
+
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -330,7 +330,7 @@ public class BoofCVDetectLineSegments
       detector = FactoryDetectLineAlgs.lineRansac(m_RegionSize, m_ThresholdEdge, m_ThresholdAngle, m_ConnectLines, ImageFloat32.class, ImageFloat32.class);
       found    = detector.detect(input);
       
-      sheet = new SpreadSheet();
+      sheet = new DefaultSpreadSheet();
       row   = sheet.getHeaderRow();
       row.addCell("I").setContent("Index");
       row.addCell("AX").setContent("A.X");

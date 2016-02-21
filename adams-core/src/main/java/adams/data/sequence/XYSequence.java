@@ -15,11 +15,18 @@
 
 /*
  * XYSequence.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.sequence;
 
+import adams.data.container.AbstractDataContainer;
+import adams.data.container.DataPointComparator;
+import adams.data.sequence.XYSequencePointComparator.Comparison;
+import adams.data.spreadsheet.DefaultSpreadSheet;
+import adams.data.spreadsheet.Row;
+import adams.data.spreadsheet.SpreadSheet;
+import adams.data.spreadsheet.SpreadSheetSupporter;
 import gnu.trove.list.array.TDoubleArrayList;
 import gnu.trove.map.hash.TDoubleObjectHashMap;
 
@@ -27,20 +34,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import adams.data.container.AbstractDataContainer;
-import adams.data.container.DataPointComparator;
-import adams.data.sequence.XYSequencePointComparator.Comparison;
-import adams.data.spreadsheet.Row;
-import adams.data.spreadsheet.SpreadSheet;
-import adams.data.spreadsheet.SpreadSheetSupporter;
-
 /**
  * A sequence storing 2-dimensional points.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
- * @param <X> the type of X
- * @param <Y> the type of Y
  */
 public class XYSequence
   extends AbstractDataContainer<XYSequencePoint> 
@@ -400,7 +398,6 @@ public class XYSequence
    *
    * @param x		the number to look for
    * @return		the SequencePoint or null if not found
-   * @see		#findClosest(Number)
    */
   public XYSequencePoint find(double x) {
     XYSequencePoint	result;
@@ -422,7 +419,6 @@ public class XYSequence
    *
    * @param x		the number to look for
    * @return		the SpectrumPoint
-   * @see		#find(Number)
    */
   public XYSequencePoint findClosest(double x) {
     XYSequencePoint	result;
@@ -450,7 +446,7 @@ public class XYSequence
     Row					row;
     XYSequencePoint		point;
 
-    result = new SpreadSheet();
+    result = new DefaultSpreadSheet();
     result.setName(getID());
     row    = result.getHeaderRow();
     row.addCell("ID").setContent("ID");

@@ -20,6 +20,7 @@
 package adams.flow.core;
 
 import adams.core.NamedCounter;
+import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.statistics.InformativeStatistic;
@@ -229,7 +230,7 @@ public class ActorStatistic
     Iterator<String>	names;
     String		name;
 
-    result = new SpreadSheet();
+    result = new DefaultSpreadSheet();
 
     // header
     row = result.getHeaderRow();

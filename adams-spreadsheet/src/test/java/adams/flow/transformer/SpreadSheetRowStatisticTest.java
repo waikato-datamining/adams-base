@@ -15,7 +15,7 @@
 
 /*
  * SpreadSheetRowStatisticTest.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -128,7 +128,7 @@ public class SpreadSheetRowStatisticTest
       csvspreadsheetreader7.setDataRowType(densedatarow9);
 
       argOption = (AbstractArgumentOption) csvspreadsheetreader7.getOptionManager().findByProperty("spreadSheetType");
-      adams.data.spreadsheet.SpreadSheet spreadsheet11 = new adams.data.spreadsheet.SpreadSheet();
+      adams.data.spreadsheet.SpreadSheet spreadsheet11 = new adams.data.spreadsheet.DefaultSpreadSheet();
       csvspreadsheetreader7.setSpreadSheetType(spreadsheet11);
 
       spreadsheetfilereader5.setReader(csvspreadsheetreader7);

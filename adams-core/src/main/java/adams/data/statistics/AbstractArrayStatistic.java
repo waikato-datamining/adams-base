@@ -15,15 +15,9 @@
 
 /**
  * AbstractArrayStatistic.java
- * Copyright (C) 2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.statistics;
-
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.List;
 
 import adams.core.ClassLister;
 import adams.core.ShallowCopySupporter;
@@ -33,8 +27,15 @@ import adams.core.option.AbstractOptionHandler;
 import adams.core.option.ArrayConsumer;
 import adams.core.option.OptionUtils;
 import adams.data.spreadsheet.Cell;
+import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.List;
 
 /**
  * Ancestor for classes that calculate statistics from arrays.
@@ -215,7 +216,7 @@ public abstract class AbstractArrayStatistic<T extends Serializable>
       int		i;
       int		n;
 
-      result = new SpreadSheet();
+      result = new DefaultSpreadSheet();
 
       // header
       row = result.getHeaderRow();

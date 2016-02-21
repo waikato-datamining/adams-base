@@ -15,12 +15,13 @@
 
 /**
  * WekaInstancesRenderer.java
- * Copyright (C) 2015 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.debug.objectrenderer;
 
 import adams.core.ClassLocator;
+import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.gui.core.BaseScrollPane;
@@ -78,7 +79,7 @@ public class WekaInstancesRenderer
     if (obj instanceof Instances) {
       data = (Instances) obj;
       if (data.numInstances() == 0) {
-	sheet = new SpreadSheet();
+	sheet = new DefaultSpreadSheet();
 	row = sheet.getHeaderRow();
 	row.addCell("I").setContentAsString("Index");
 	row.addCell("N").setContentAsString("Name");

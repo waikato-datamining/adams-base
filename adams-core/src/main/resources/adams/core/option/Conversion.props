@@ -6,11 +6,13 @@
 # Lists the keys that contain classname mappings.
 # This is used to ensure a minimal backwards compatibility, in case classes
 # get renamed.
-Rename=
+Rename=\
+  Rename-spreadsheet
 
 # general format for classname mappings ("rename"):
 # <key>=<old classname>-<new classname>
 #Rename-transformer_reportvalue=adams.flow.transformer.ReportValue-adams.flow.transformer.GetReportValue
+Rename-spreadsheet=adams.data.spreadsheet.SpreadSheet-adams.data.spreadsheet.DefaultSpreadSheet
 
 # Lists the keys that contain partial classname renaming.
 PartialRename=

@@ -15,15 +15,16 @@
 
 /**
  * InformativeStatistic.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
 
-import java.util.Iterator;
-
+import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.statistics.InformativeStatisticSupporter;
+
+import java.util.Iterator;
 
 /**
  <!-- globalinfo-start -->
@@ -94,7 +95,7 @@ public class InformativeStatistic
     
     stats = ((InformativeStatisticSupporter) m_Input).toStatistic();
 
-    result = new SpreadSheet();
+    result = new DefaultSpreadSheet();
     result.setName(stats.getStatisticDescription());
     row = result.getHeaderRow();
     row.addCell("S").setContent("Statistic");

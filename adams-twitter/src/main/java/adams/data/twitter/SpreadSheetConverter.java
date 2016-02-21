@@ -15,18 +15,19 @@
 
 /**
  * SpreadSheetConverter.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.twitter;
 
-import java.util.Date;
-import java.util.Hashtable;
-
 import adams.core.DateTime;
 import adams.data.spreadsheet.DataRow;
+import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.DenseDataRow;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
+
+import java.util.Date;
+import java.util.Hashtable;
 
 /**
  <!-- globalinfo-start -->
@@ -88,7 +89,7 @@ public class SpreadSheetConverter
 
     m_OptionManager.add(
 	    "spreadsheet-type", "spreadSheetType",
-	    new SpreadSheet());
+	    new DefaultSpreadSheet());
   }
 
   /**

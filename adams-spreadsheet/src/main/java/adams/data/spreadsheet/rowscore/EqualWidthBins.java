@@ -15,11 +15,12 @@
 
 /**
  * EqualWidthBins.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.spreadsheet.rowscore;
 
 import adams.core.Utils;
+import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 
@@ -168,7 +169,7 @@ public class EqualWidthBins
       result = new Double[getNumScores()];
       for (i = 0; i < m_NumBins; i++) {
 	// header
-	subset = new SpreadSheet();
+	subset = new DefaultSpreadSheet();
 	rowNew = subset.getHeaderRow();
 	for (n = bins[i]; n < bins[i + 1]; n++)
 	  rowNew.addCell("" + n).setContent("H-" + n);

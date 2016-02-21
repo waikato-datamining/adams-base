@@ -14,17 +14,12 @@
  */
 
 /*
- * SpreadSheetTest.java
- * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
+ * DefaultSpreadSheetTest.java
+ * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.spreadsheet;
 
-import java.io.File;
-import java.util.List;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import adams.data.io.input.CsvSpreadSheetReader;
 import adams.data.io.output.CsvSpreadSheetWriter;
 import adams.env.Environment;
@@ -32,15 +27,20 @@ import adams.test.AbstractTestHelper;
 import adams.test.AdamsTestCase;
 import adams.test.TestHelper;
 import adams.test.TmpFile;
+import junit.framework.Test;
+import junit.framework.TestSuite;
+
+import java.io.File;
+import java.util.List;
 
 /**
- * Tests the adams.core.io.SpreadSheet class. Run from commandline with: <br><br>
- * java adams.core.io.SpreadSheet
+ * Tests the adams.core.io.DefaultSpreadSheet class. Run from commandline with: <br><br>
+ * java adams.core.io.DefaultSpreadSheetTest
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class SpreadSheetTest
+public class DefaultSpreadSheetTest
   extends AdamsTestCase {
 
   /**
@@ -48,7 +48,7 @@ public class SpreadSheetTest
    *
    * @param name	the name of the test
    */
-  public SpreadSheetTest(String name) {
+  public DefaultSpreadSheetTest(String name) {
     super(name);
   }
 
@@ -516,7 +516,7 @@ public class SpreadSheetTest
    * @return		the test suite
    */
   public static Test suite() {
-    return new TestSuite(SpreadSheetTest.class);
+    return new TestSuite(DefaultSpreadSheetTest.class);
   }
 
   /**

@@ -14,14 +14,15 @@
  */
 
 /*
- * AbstractListTables.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * AbstractDatabaseMetaData.java
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
 
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
+import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.DenseDataRow;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
@@ -436,7 +437,7 @@ public abstract class AbstractDatabaseMetaData
 	reader   = new Reader(DenseDataRow.class);
 	switch (m_MetaDataType) {
 	  case BASIC:
-	    sheet = new SpreadSheet();
+	    sheet = new DefaultSpreadSheet();
 	    row = sheet.getHeaderRow();
 	    row.addCell("K").setContentAsString("Key");
 	    row.addCell("V").setContentAsString("Value");

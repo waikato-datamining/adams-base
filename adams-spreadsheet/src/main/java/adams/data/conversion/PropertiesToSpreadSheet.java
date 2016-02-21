@@ -15,17 +15,18 @@
 
 /**
  * PropertiesToSpreadSheet.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
+
+import adams.data.spreadsheet.DefaultSpreadSheet;
+import adams.data.spreadsheet.Row;
+import adams.data.spreadsheet.SpreadSheet;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
-
-import adams.data.spreadsheet.Row;
-import adams.data.spreadsheet.SpreadSheet;
 
 /**
  <!-- globalinfo-start -->
@@ -94,7 +95,7 @@ public class PropertiesToSpreadSheet
     List<String>	sorted;
     
     props  = (Properties) m_Input;
-    result = new SpreadSheet();
+    result = new DefaultSpreadSheet();
     
     // header
     row = result.getHeaderRow();

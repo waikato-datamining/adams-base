@@ -15,13 +15,14 @@
 
 /**
  * DumpStorage.java
- * Copyright (C) 2015 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.source;
 
 import adams.core.QuickInfoHelper;
 import adams.core.base.BaseRegExp;
+import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.control.Storage;
@@ -290,7 +291,7 @@ public class DumpStorage
 
     Collections.sort(names);
 
-    sheet = new SpreadSheet();
+    sheet = new DefaultSpreadSheet();
     sheet.setName("Storage");
     row   = sheet.getHeaderRow();
     row.addCell("K").setContent("Name");

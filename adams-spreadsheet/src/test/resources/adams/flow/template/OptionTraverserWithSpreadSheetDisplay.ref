@@ -13,7 +13,7 @@ adams.flow.control.Trigger
 							-data-row-type
 								adams.data.spreadsheet.DenseDataRow
 							-spreadsheet-type
-								adams.data.spreadsheet.SpreadSheet
+								adams.data.spreadsheet.DefaultSpreadSheet
 	-tee
 		adams.flow.sink.DisplayPanelManager
 			-provider
@@ -39,7 +39,7 @@ adams.flow.control.Once
 									-data-row-type
 										adams.data.spreadsheet.DenseDataRow
 									-spreadsheet-type
-										adams.data.spreadsheet.SpreadSheet
+										adams.data.spreadsheet.DefaultSpreadSheet
 			-tee
 				adams.flow.sink.SpreadSheetDisplay
 					-writer

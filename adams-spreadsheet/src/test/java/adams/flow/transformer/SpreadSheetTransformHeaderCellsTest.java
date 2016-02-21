@@ -15,7 +15,7 @@
 
 /*
  * SpreadSheetTransformHeaderCellsTest.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -140,7 +140,7 @@ public class SpreadSheetTransformHeaderCellsTest
       argOption = (AbstractArgumentOption) spreadsheetfilereader10.getOptionManager().findByProperty("reader");
       adams.data.io.input.CsvSpreadSheetReader csvspreadsheetreader12 = new adams.data.io.input.CsvSpreadSheetReader();
       argOption = (AbstractArgumentOption) csvspreadsheetreader12.getOptionManager().findByProperty("spreadSheetType");
-      adams.data.spreadsheet.SpreadSheet spreadsheet14 = new adams.data.spreadsheet.SpreadSheet();
+      adams.data.spreadsheet.SpreadSheet spreadsheet14 = new adams.data.spreadsheet.DefaultSpreadSheet();
       csvspreadsheetreader12.setSpreadSheetType(spreadsheet14);
 
       spreadsheetfilereader10.setReader(csvspreadsheetreader12);

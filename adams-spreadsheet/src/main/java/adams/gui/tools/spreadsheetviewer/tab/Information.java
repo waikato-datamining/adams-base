@@ -15,18 +15,19 @@
 
 /**
  * Information.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.spreadsheetviewer.tab;
 
-import java.awt.BorderLayout;
-
+import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.SortableAndSearchableTable;
 import adams.gui.core.SpreadSheetTableModel;
 import adams.gui.tools.spreadsheetviewer.SpreadSheetPanel;
+
+import java.awt.BorderLayout;
 
 /**
  * Simple information tab.
@@ -83,7 +84,7 @@ public class Information
     
     sheet = panel.getSheet();
 
-    info  = new SpreadSheet();
+    info  = new DefaultSpreadSheet();
     row   = info.getHeaderRow();
     row.addCell("K").setContent("Key");
     row.addCell("V").setContent("Value");

@@ -15,19 +15,20 @@
 
 /**
  * WekaExtractPLSMatrix.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
 
-import weka.classifiers.Classifier;
-import weka.core.PLSMatrixAccess;
-import weka.core.matrix.Matrix;
-import weka.filters.Filter;
 import adams.core.QuickInfoHelper;
+import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.container.WekaModelContainer;
 import adams.flow.core.Token;
+import weka.classifiers.Classifier;
+import weka.core.PLSMatrixAccess;
+import weka.core.matrix.Matrix;
+import weka.filters.Filter;
 
 /**
  <!-- globalinfo-start -->
@@ -218,7 +219,7 @@ public class WekaExtractPLSMatrix
     result = null;
     
     if (matrix != null) {
-      result = new SpreadSheet();
+      result = new DefaultSpreadSheet();
       
       // header
       row = result.getHeaderRow();

@@ -15,16 +15,12 @@
 
 /**
  * ExportAsSpreadsheet.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.sendto;
 
-import java.io.File;
-import java.util.logging.Level;
-
-import javax.swing.JTable;
-
 import adams.data.io.output.SpreadSheetWriter;
+import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetSupporter;
@@ -33,6 +29,10 @@ import adams.gui.core.SortableTableModel;
 import adams.gui.core.SpreadSheetTable;
 import adams.gui.core.SpreadSheetTableModel;
 import adams.gui.core.TableRowRange;
+
+import javax.swing.JTable;
+import java.io.File;
+import java.util.logging.Level;
 
 /**
  * Action for exporting a table as spreadsheet.
@@ -120,7 +120,7 @@ public class ExportAsSpreadsheet
 	  sheet = ((SpreadSheetTableModel) ((SortableTableModel) table.getModel()).getUnsortedModel()).toSpreadSheet();
       }
       if (sheet == null) {
-	sheet = new SpreadSheet();
+	sheet = new DefaultSpreadSheet();
 	// header
 	row = sheet.getHeaderRow();
 	for (i = 0; i < table.getColumnCount(); i++)

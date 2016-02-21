@@ -15,16 +15,17 @@
 
 /**
  * NotesToSpreadSheet.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
 
-import java.util.Iterator;
-import java.util.List;
-
 import adams.data.Notes;
+import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
+
+import java.util.Iterator;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -99,7 +100,7 @@ public class NotesToSpreadSheet
     List<String>	list;
     
     input  = (Notes) m_Input;
-    result = new SpreadSheet();
+    result = new DefaultSpreadSheet();
     
     // header
     row = result.getHeaderRow();

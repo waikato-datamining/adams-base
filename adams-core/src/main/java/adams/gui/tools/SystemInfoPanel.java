@@ -15,7 +15,7 @@
 
 /*
  * SystemInfoPanel.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.tools;
@@ -26,6 +26,7 @@ import adams.core.management.JConsole;
 import adams.core.management.JMap;
 import adams.core.management.JVisualVM;
 import adams.data.io.output.CsvSpreadSheetWriter;
+import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.gui.chooser.BaseFileChooser;
@@ -408,7 +409,7 @@ public class SystemInfoPanel
     int		i;
     int		n;
 
-    result = new SpreadSheet();
+    result = new DefaultSpreadSheet();
 
     // header
     for (i = 0; i < 2; i++)

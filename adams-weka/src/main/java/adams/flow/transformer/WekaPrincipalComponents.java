@@ -15,22 +15,23 @@
 
 /**
  * WekaPrincipalComponents.java
- * Copyright (C) 2014 Dutch Sprouts, Wageningen, NL
+ * Copyright (C) 2014-2016 Dutch Sprouts, Wageningen, NL
  */
 package adams.flow.transformer;
 
-import java.util.ArrayList;
-
-import weka.core.Instances;
-import weka.filters.unsupervised.attribute.PublicPrincipalComponents;
 import adams.core.License;
 import adams.core.QuickInfoHelper;
 import adams.core.annotation.ThirdPartyCopyright;
 import adams.data.spreadsheet.Cell;
+import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.HeaderRow;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.core.Token;
+import weka.core.Instances;
+import weka.filters.unsupervised.attribute.PublicPrincipalComponents;
+
+import java.util.ArrayList;
 
 /**
  <!-- globalinfo-start -->
@@ -239,7 +240,7 @@ public class WekaPrincipalComponents
    * @return			A spreadsheet containing the components
    */
   protected SpreadSheet createSpreadSheet(ArrayList<ArrayList<Double>> in) {
-    SpreadSheet result = new SpreadSheet();
+    SpreadSheet result = new DefaultSpreadSheet();
     HeaderRow rw = result.getHeaderRow();
     Cell c = rw.addCell(0);
     c.setContent("variable");

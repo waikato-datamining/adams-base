@@ -15,7 +15,7 @@
 
 /*
  * SpreadSheetTableModel.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
@@ -27,6 +27,7 @@ import adams.core.TimeMsec;
 import adams.core.Utils;
 import adams.data.spreadsheet.Cell;
 import adams.data.spreadsheet.Cell.ContentType;
+import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetUtils;
@@ -84,7 +85,7 @@ public class SpreadSheetTableModel
    * Initializes the model with an empty spread sheet.
    */
   public SpreadSheetTableModel() {
-    this(new SpreadSheet());
+    this(new DefaultSpreadSheet());
   }
 
   /**

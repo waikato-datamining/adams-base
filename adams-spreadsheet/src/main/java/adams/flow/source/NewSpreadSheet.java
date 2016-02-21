@@ -21,6 +21,7 @@ package adams.flow.source;
 
 import adams.core.QuickInfoHelper;
 import adams.data.spreadsheet.DataRow;
+import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.DenseDataRow;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.core.Token;
@@ -140,7 +141,7 @@ public class NewSpreadSheet
 
     m_OptionManager.add(
 	    "spreadsheet-type", "spreadSheetType",
-	    new SpreadSheet());
+	    new DefaultSpreadSheet());
   }
 
   /**

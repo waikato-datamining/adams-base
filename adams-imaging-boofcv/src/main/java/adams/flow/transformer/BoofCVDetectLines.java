@@ -15,19 +15,16 @@
 
 /**
  * BoofCVDetectLines.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
-
-import georegression.struct.line.LineParametric2D_F32;
-
-import java.util.List;
 
 import adams.core.License;
 import adams.core.annotation.MixedCopyright;
 import adams.data.boofcv.BoofCVHelper;
 import adams.data.boofcv.BoofCVImageType;
 import adams.data.image.AbstractImageContainer;
+import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.core.Token;
@@ -36,6 +33,9 @@ import boofcv.factory.feature.detect.line.ConfigHoughPolar;
 import boofcv.factory.feature.detect.line.FactoryDetectLineAlgs;
 import boofcv.struct.image.ImageSInt16;
 import boofcv.struct.image.ImageUInt8;
+import georegression.struct.line.LineParametric2D_F32;
+
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -446,7 +446,7 @@ public class BoofCVDetectLines
 	  ImageSInt16.class);
       found = detector.detect(input);
       
-      sheet = new SpreadSheet();
+      sheet = new DefaultSpreadSheet();
       row   = sheet.getHeaderRow();
       row.addCell("I").setContent("Index");
       row.addCell("SX").setContent("Slope X");

@@ -15,13 +15,14 @@
 
 /*
  * ResultMatrixAdamsCSV.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package weka.experiment;
 
 import adams.data.io.output.CsvSpreadSheetWriter;
+import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.env.Environment;
@@ -299,7 +300,7 @@ public class ResultMatrixAdamsCSV
     int                 i;
     int                 n;
 
-    sheet = new SpreadSheet();
+    sheet = new DefaultSpreadSheet();
     sheet.setName("Matrix");
     cells  = toArray();
 
@@ -327,7 +328,7 @@ public class ResultMatrixAdamsCSV
     Row			row;
     int             	i;
 
-    sheet = new SpreadSheet();
+    sheet = new DefaultSpreadSheet();
     sheet.setName("Key");
     row   = sheet.getHeaderRow();
     row.addCell("I").setContent("Index");
@@ -354,7 +355,7 @@ public class ResultMatrixAdamsCSV
     int         	i;
     int         	j;
 
-    sheet = new SpreadSheet();
+    sheet = new DefaultSpreadSheet();
     sheet.setName("Summary");
     if (m_NonSigWins == null)
       return toString(sheet);
@@ -400,7 +401,7 @@ public class ResultMatrixAdamsCSV
     int           	i;
     int           	curr;
 
-    sheet = new SpreadSheet();
+    sheet = new DefaultSpreadSheet();
     sheet.setName("Ranking");
     if (m_RankingWins == null)
       return "---ranking\n" + toString(sheet);

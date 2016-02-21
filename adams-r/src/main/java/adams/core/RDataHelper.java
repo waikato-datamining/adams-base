@@ -15,13 +15,15 @@
 
 /**
  * RDataHelper.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.core;
 
-import java.util.Arrays;
-import java.util.HashSet;
-
+import adams.data.spreadsheet.Cell;
+import adams.data.spreadsheet.Cell.ContentType;
+import adams.data.spreadsheet.DefaultSpreadSheet;
+import adams.data.spreadsheet.Row;
+import adams.data.spreadsheet.SpreadSheet;
 import org.rosuda.REngine.REXP;
 import org.rosuda.REngine.REXPDouble;
 import org.rosuda.REngine.REXPInteger;
@@ -31,10 +33,8 @@ import org.rosuda.REngine.REXPString;
 import org.rosuda.REngine.REXPVector;
 import org.rosuda.REngine.RList;
 
-import adams.data.spreadsheet.Cell;
-import adams.data.spreadsheet.Cell.ContentType;
-import adams.data.spreadsheet.Row;
-import adams.data.spreadsheet.SpreadSheet;
+import java.util.Arrays;
+import java.util.HashSet;
 
 /**
  * Helper class for R-related stuff.
@@ -142,7 +142,7 @@ public class RDataHelper {
     HashSet<String>	cols;
     String		colName;
     
-    result = new SpreadSheet();
+    result = new DefaultSpreadSheet();
     list   = dframe.asList();
     
     if (columns == null)

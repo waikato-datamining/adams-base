@@ -15,7 +15,7 @@
 
 /**
  * DumpVariables.java
- * Copyright (C) 2015 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.source;
@@ -23,6 +23,7 @@ package adams.flow.source;
 import adams.core.QuickInfoHelper;
 import adams.core.Variables;
 import adams.core.base.BaseRegExp;
+import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.core.Token;
@@ -235,7 +236,7 @@ public class DumpVariables
 
     Collections.sort(names);
 
-    sheet = new SpreadSheet();
+    sheet = new DefaultSpreadSheet();
     sheet.setName("Variables");
     row   = sheet.getHeaderRow();
     row.addCell("K").setContent("Name");

@@ -23,6 +23,7 @@ package adams.flow.transformer;
 import adams.core.QuickInfoHelper;
 import adams.core.Randomizable;
 import adams.core.Range;
+import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.container.WekaAttributeSelectionContainer;
@@ -422,7 +423,7 @@ public class WekaAttributeSelection
 	// generated stats
 	stats = null;
 	if (!crossValidate) {
-	  stats = new SpreadSheet();
+	  stats = new DefaultSpreadSheet();
 	  row   = stats.getHeaderRow();
 	  
 	  useReduced = false;

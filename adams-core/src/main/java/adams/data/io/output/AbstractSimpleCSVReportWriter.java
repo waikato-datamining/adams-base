@@ -15,20 +15,21 @@
 
 /*
  * AbstractCSVReportWriter.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.io.output;
-
-import java.util.Collections;
-import java.util.List;
 
 import adams.data.io.input.AbstractSimpleCSVReportReader;
 import adams.data.report.AbstractField;
 import adams.data.report.DataType;
 import adams.data.report.Report;
+import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Abstract ancestor for writing reports in CSV format.
@@ -97,7 +98,7 @@ public abstract class AbstractSimpleCSVReportWriter<T extends Report>
     int			i;
     Row			row;
 
-    sheet = new SpreadSheet();
+    sheet = new DefaultSpreadSheet();
 
     // header
     row = sheet.getHeaderRow();

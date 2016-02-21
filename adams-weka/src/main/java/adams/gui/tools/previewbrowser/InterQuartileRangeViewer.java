@@ -15,17 +15,17 @@
 
 /**
  * InterQuartileRangeViewer.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.previewbrowser;
 
-import weka.filters.unsupervised.attribute.InterquartileRange;
-import weka.filters.unsupervised.attribute.InterquartileRange.ValueType;
-
+import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.SpreadSheetTable;
+import weka.filters.unsupervised.attribute.InterquartileRange;
+import weka.filters.unsupervised.attribute.InterquartileRange.ValueType;
 
 /**
  * Displays internal values of the {@link InterquartileRange} filter.
@@ -79,7 +79,7 @@ public class InterQuartileRangeViewer
     InterquartileRange	iqr;
 
     // generate output
-    sheet = new SpreadSheet();
+    sheet = new DefaultSpreadSheet();
     
     // header
     iqr = (InterquartileRange) obj;

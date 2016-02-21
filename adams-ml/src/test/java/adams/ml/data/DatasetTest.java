@@ -23,7 +23,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import adams.data.io.input.CsvSpreadSheetReader;
 import adams.data.spreadsheet.SpreadSheet;
-import adams.data.spreadsheet.SpreadSheetTest;
+import adams.data.spreadsheet.DefaultSpreadSheetTest;
 import adams.env.Environment;
 import adams.test.TmpFile;
 
@@ -34,7 +34,7 @@ import adams.test.TmpFile;
  * @version $Revision$
  */
 public class DatasetTest
-  extends SpreadSheetTest {
+  extends DefaultSpreadSheetTest {
 
   /**
    * Initializes the test.

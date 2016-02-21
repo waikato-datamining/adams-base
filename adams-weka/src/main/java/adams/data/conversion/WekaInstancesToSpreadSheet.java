@@ -15,19 +15,20 @@
 
 /**
  * WekaInstancesToSpreadSheet.java
- * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
 
-import java.util.Date;
-
-import weka.core.Attribute;
-import weka.core.Instances;
 import adams.data.spreadsheet.DataRow;
+import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.DenseDataRow;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.ml.data.Dataset;
+import weka.core.Attribute;
+import weka.core.Instances;
+
+import java.util.Date;
 
 /**
  <!-- globalinfo-start -->
@@ -91,7 +92,7 @@ public class WekaInstancesToSpreadSheet
 
     m_OptionManager.add(
 	    "spreadsheet-type", "spreadSheetType",
-	    new SpreadSheet());
+	    new DefaultSpreadSheet());
   }
 
   /**

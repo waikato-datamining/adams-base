@@ -15,22 +15,22 @@
 
 /**
  * TableMapObjectHitListener.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.sink.openstreetmapviewer;
 
-import java.awt.Dialog.ModalityType;
-import java.util.List;
-
-import org.openstreetmap.gui.jmapviewer.JMapViewer;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapObject;
-
 import adams.data.mapobject.MetaDataSupporter;
+import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SparseDataRow;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.gui.core.GUIHelper;
 import adams.gui.dialog.SpreadSheetDialog;
+import org.openstreetmap.gui.jmapviewer.JMapViewer;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapObject;
+
+import java.awt.Dialog.ModalityType;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -110,7 +110,7 @@ public class TableMapObjectHitListener
     MetaDataSupporter	meta;
     List<String>	keys;
     
-    sheet = new SpreadSheet();
+    sheet = new DefaultSpreadSheet();
     sheet.setDataRowClass(SparseDataRow.class);
     row   = sheet.getHeaderRow();
     row.addCell("name").setContent("Name");

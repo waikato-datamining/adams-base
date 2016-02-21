@@ -22,6 +22,7 @@ package adams.flow.container;
 
 import adams.core.CloneHandler;
 import adams.core.Utils;
+import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetSupporter;
@@ -341,7 +342,7 @@ public abstract class AbstractContainer
     
     synchronized(m_Values) {
       names  = new ArrayList<String>(m_Values.keySet());
-      result = new SpreadSheet();
+      result = new DefaultSpreadSheet();
       row    = result.getHeaderRow();
       row.addCell("name").setContent("Name");
       row.addCell("value").setContent("Value");

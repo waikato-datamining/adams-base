@@ -23,6 +23,7 @@ package adams.flow.transformer;
 import adams.core.DateFormat;
 import adams.core.DateUtils;
 import adams.core.QuickInfoHelper;
+import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.statistics.StatUtils;
@@ -485,7 +486,7 @@ public class WekaInstancesInfo
     Row			row;
     int			i;
     
-    result = new SpreadSheet();
+    result = new DefaultSpreadSheet();
     result.setName("Attribute statistics - #" + (index + 1) + " " + data.attribute(index).name());
     
     // header

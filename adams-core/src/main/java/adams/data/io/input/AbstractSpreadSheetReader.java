@@ -15,7 +15,7 @@
 
 /**
  * AbstractSpreadSheetReader.java
- * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.input;
 
@@ -28,6 +28,7 @@ import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
 import adams.core.option.AbstractOptionHandler;
 import adams.data.spreadsheet.DataRow;
+import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.DenseDataRow;
 import adams.data.spreadsheet.SpreadSheet;
 import org.apache.commons.io.input.ReaderInputStream;
@@ -96,7 +97,7 @@ public abstract class AbstractSpreadSheetReader
 
     m_OptionManager.add(
 	    "spreadsheet-type", "spreadSheetType",
-	    new SpreadSheet());
+	    new DefaultSpreadSheet());
   }
 
   /**
