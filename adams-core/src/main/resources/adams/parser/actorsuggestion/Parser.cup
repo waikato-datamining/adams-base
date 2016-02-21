@@ -66,6 +66,9 @@ parser code {:
   /** all the current nodes in which to insert/add to the proposed actor. */
   protected Actor[] m_Actors = null;
 
+  /** for checking compatibility. */
+  protected Compatibility m_Compatibility = new Compatibility(true);
+
   /**
    * Sets the result of the evaluation.
    *
@@ -297,7 +300,6 @@ parser code {:
    */
   public Boolean precedingGenerates(String classname) {
     Class           cls;
-    Compatibility   comp;
 
     if (m_Position == 0)
       return false;
@@ -314,8 +316,7 @@ parser code {:
     if (!(m_Actors[m_Position - 1] instanceof OutputProducer))
       return false;
 
-    comp = new Compatibility();
-    return (comp.isCompatible(((OutputProducer) m_Actors[m_Position - 1]).generates(), new Class[]{cls}));
+    return (m_Compatibility.isCompatible(((OutputProducer) m_Actors[m_Position - 1]).generates(), new Class[]{cls}));
   }
 
   /**
@@ -326,7 +327,6 @@ parser code {:
    */
   public Boolean followingAccepts(String classname) {
     Class           cls;
-    Compatibility   comp;
 
     if (m_Position >= m_Actors.length - 1)
       return false;
@@ -343,8 +343,7 @@ parser code {:
     if (!(m_Actors[m_Position + 1] instanceof InputConsumer))
       return false;
 
-    comp = new Compatibility();
-    return (comp.isCompatible(new Class[]{cls}, ((InputConsumer) m_Actors[m_Position + 1]).accepts()));
+    return (m_Compatibility.isCompatible(new Class[]{cls}, ((InputConsumer) m_Actors[m_Position + 1]).accepts()));
   }
 :}
 
