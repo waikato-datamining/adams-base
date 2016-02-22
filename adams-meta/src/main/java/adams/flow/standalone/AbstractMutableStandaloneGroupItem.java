@@ -337,11 +337,13 @@ public abstract class AbstractMutableStandaloneGroupItem<T extends Actor>
 
   /**
    * Returns the classes that the flow editor uses for filtering.
+   * <br>
+   * Default implementation returns null.
    *
-   * @return		the classes
+   * @return		the classes, null if to use default from underlying actor handler
    */
   protected Class[] getActorFilter() {
-    return new Class[]{Actor.class};
+    return null;
   }
 
   /**
@@ -352,7 +354,10 @@ public abstract class AbstractMutableStandaloneGroupItem<T extends Actor>
    */
   @Override
   public ActorHandlerInfo getActorHandlerInfo() {
-    return new ActorHandlerInfo(true, false, ActorExecution.UNDEFINED, false, getActorFilter());
+    if (getActorFilter() != null)
+      return new ActorHandlerInfo(true, false, ActorExecution.UNDEFINED, false, getActorFilter());
+    else
+      return m_Actors.getActorHandlerInfo();
   }
 
   /**
