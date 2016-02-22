@@ -15,15 +15,15 @@
 
 /**
  * WekaCommandLineHandler.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
+
+import adams.core.ClassLocator;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import adams.core.ClassLocator;
 
 /**
  * Handles objects of classes that implement the weka.core.OptionHandler
@@ -79,7 +79,7 @@ public class WekaCommandLineHandler
       try {
 	classname = args[0];
 	args[0]   = "";
-	result = weka.core.Utils.forName(Object.class, classname, args);
+	result = weka.core.Utils.forName(Object.class, Conversion.rename(classname), args);
       }
       catch (Exception e) {
 	System.err.println("Failed to instantiate object from array (fromArray):");
