@@ -34,8 +34,8 @@ import java.io.File;
 import java.util.List;
 
 /**
- * Tests the adams.core.io.DefaultSpreadSheet class. Run from commandline with: <br><br>
- * java adams.core.io.DefaultSpreadSheetTest
+ * Tests the adams.data.spreadsheet.DefaultSpreadSheet class. Run from commandline with: <br><br>
+ * java adams.data.spreadsheet.DefaultSpreadSheetTest
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
