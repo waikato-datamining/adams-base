@@ -20,9 +20,12 @@
 
 package adams.flow.standalone;
 
+import adams.core.ClassLocator;
+import adams.core.Utils;
 import adams.core.logging.LoggingLevel;
 import adams.flow.control.AbstractControlActor;
 import adams.flow.core.Actor;
+import adams.flow.core.ActorExecution;
 import adams.flow.core.ActorHandlerInfo;
 import adams.flow.core.MutableActorHandler;
 
@@ -115,7 +118,31 @@ public abstract class AbstractMutableStandaloneGroupItem<T extends Actor>
    * @param actor	the actor to check
    * @return		null if accepted, otherwise error message
    */
-  protected abstract String checkSubActor(int index, Actor actor);
+  protected String checkSubActor(int index, Actor actor) {
+    String	result;
+    Class[]	accepted;
+    boolean	found;
+
+    result   = null;
+    accepted = getActorFilter();
+    found    = false;
+
+    for (Class cls: accepted) {
+      if (ClassLocator.isSubclass(cls, actor.getClass())) {
+	found = true;
+	break;
+      }
+      else if (ClassLocator.hasInterface(cls, actor.getClass())) {
+	found = true;
+	break;
+      }
+    }
+
+    if (!found)
+      result = "Actor #" + (index+1) + " is not of type: " + Utils.classesToString(accepted);
+
+    return result;
+  }
 
   /**
    * Checks the sub actors before they are set via the setSubActors method.
@@ -124,7 +151,18 @@ public abstract class AbstractMutableStandaloneGroupItem<T extends Actor>
    * @param actors	the actors to check
    * @return		null if accepted, otherwise error message
    */
-  protected abstract String checkSubActors(Actor[] actors);
+  protected String checkSubActors(Actor[] actors) {
+    int		i;
+    String	msg;
+
+    for (i = 0; i < actors.length; i++) {
+      msg = checkSubActor(i, actors[i]);
+      if (msg != null)
+	return msg;
+    }
+
+    return null;
+  }
 
   /**
    * Sets the sub-actor.
@@ -298,6 +336,15 @@ public abstract class AbstractMutableStandaloneGroupItem<T extends Actor>
   }
 
   /**
+   * Returns the classes that the flow editor uses for filtering.
+   *
+   * @return		the classes
+   */
+  protected Class[] getActorFilter() {
+    return new Class[]{Actor.class};
+  }
+
+  /**
    * Returns some information about the actor handler, e.g., whether it can
    * contain standalones and the actor execution.
    *
@@ -305,7 +352,7 @@ public abstract class AbstractMutableStandaloneGroupItem<T extends Actor>
    */
   @Override
   public ActorHandlerInfo getActorHandlerInfo() {
-    return m_Actors.getActorHandlerInfo();
+    return new ActorHandlerInfo(true, false, ActorExecution.UNDEFINED, false, getActorFilter());
   }
 
   /**
