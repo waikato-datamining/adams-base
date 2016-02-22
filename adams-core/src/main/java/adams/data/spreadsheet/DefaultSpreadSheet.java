@@ -886,7 +886,7 @@ public class DefaultSpreadSheet
    *
    * @see	#rowKeys()
    */
-  public void sort() {
+  public void sortRowKeys() {
     Collections.sort(m_RowKeys);
   }
 
@@ -896,7 +896,7 @@ public class DefaultSpreadSheet
    * @param comp	the comparator to use
    * @see		#rowKeys()
    */
-  public void sort(Comparator<String> comp) {
+  public void sortRowKeys(Comparator<String> comp) {
     Collections.sort(m_RowKeys, comp);
   }
 

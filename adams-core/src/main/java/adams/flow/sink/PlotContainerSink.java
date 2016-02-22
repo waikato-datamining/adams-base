@@ -349,7 +349,7 @@ public class PlotContainerSink
       row.getCell(name).setContent(y);
 
     // sort row keys
-    m_SpreadSheet.sort(m_Comparator);
+    m_SpreadSheet.sortRowKeys(m_Comparator);
 
     if (!m_Writer.write(m_SpreadSheet, m_OutputFile))
       result = "Failed to write plot data to '" + m_OutputFile + "'!";

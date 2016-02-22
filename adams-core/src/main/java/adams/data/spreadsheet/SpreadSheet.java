@@ -432,7 +432,7 @@ public interface SpreadSheet
    *
    * @see	#rowKeys()
    */
-  public void sort();
+  public void sortRowKeys();
 
   /**
    * Sorts the rows according to the row keys.
@@ -440,7 +440,7 @@ public interface SpreadSheet
    * @param comp	the comparator to use
    * @see		#rowKeys()
    */
-  public void sort(Comparator<String> comp);
+  public void sortRowKeys(Comparator<String> comp);
 
   /**
    * Sorts the rows based on the values in the specified column.
