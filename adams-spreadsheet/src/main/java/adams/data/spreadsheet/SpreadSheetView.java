@@ -23,10 +23,12 @@ package adams.data.spreadsheet;
 import adams.core.DateFormat;
 import adams.core.DateUtils;
 import adams.data.SharedStringsTable;
+import adams.data.io.output.CsvSpreadSheetWriter;
 import adams.data.spreadsheet.Cell.ContentType;
 import gnu.trove.list.array.TIntArrayList;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
+import java.io.StringWriter;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -50,11 +52,20 @@ public class SpreadSheetView
   /** the row subset to use (null for all). */
   protected TIntArrayList m_Rows;
 
+  /** the row array. */
+  protected int[] m_RowArray;
+
   /** the column subset to use (null for all). */
   protected TIntArrayList m_Columns;
 
+  /** the column array. */
+  protected int[] m_ColumnArray;
+
   /** the underlying spreadsheet. */
   protected SpreadSheet m_Sheet;
+
+  /** the cached header row. */
+  protected HeaderRow m_HeaderRow;
 
   /**
    * Initializes the view.
@@ -69,17 +80,20 @@ public class SpreadSheetView
     if (sheet == null)
       throw new IllegalArgumentException("Underlying spreadsheet cannot be null!");
 
-    m_Sheet = sheet;
-    m_Rows  = null;
+    m_Sheet    = sheet;
+    m_Rows     = null;
+    m_RowArray = rows;
     if (rows != null) {
       m_Rows = new TIntArrayList();
       m_Rows.addAll(rows);
     }
-    m_Columns = null;
+    m_Columns     = null;
+    m_ColumnArray = columns;
     if (columns != null) {
       m_Columns = new TIntArrayList();
       m_Columns.addAll(columns);
     }
+    m_HeaderRow = null;
   }
 
   /**
@@ -91,7 +105,8 @@ public class SpreadSheetView
   public void assign(SpreadSheet sheet) {
     if (sheet == null)
       throw new IllegalArgumentException("Underlying spreadsheet cannot be null!");
-    m_Sheet = sheet;
+    m_Sheet     = sheet;
+    m_HeaderRow = null;
   }
 
   /**
@@ -134,14 +149,7 @@ public class SpreadSheetView
    */
   @Override
   public SpreadSheet getClone() {
-    SpreadSheetView	result;
-
-    result = new SpreadSheetView(
-      m_Sheet.getClone(),
-      (m_Rows == null) ? null : m_Rows.toArray(),
-      (m_Columns == null) ? null : m_Columns.toArray());
-
-    return result;
+    return new SpreadSheetView(m_Sheet.getClone(), m_RowArray, m_ColumnArray);
   }
 
   /**
@@ -151,14 +159,7 @@ public class SpreadSheetView
    */
   @Override
   public SpreadSheet getHeader() {
-    SpreadSheetView	result;
-
-    result = new SpreadSheetView(
-      m_Sheet.getHeader(),
-      (m_Rows == null) ? null : m_Rows.toArray(),
-      (m_Columns == null) ? null : m_Columns.toArray());
-
-    return result;
+    return new SpreadSheetView(m_Sheet.getHeader(), null, m_ColumnArray);
   }
 
   /**
@@ -233,6 +234,16 @@ public class SpreadSheetView
     }
 
     return result;
+  }
+
+  /**
+   * Wraps the data row in a view container.
+   *
+   * @param row		the row to wrap
+   * @return		the wrapped row
+   */
+  protected DataRowView wrap(DataRow row) {
+    return new DataRowView(this, row, (m_Columns == null) ? null : m_Columns.toArray());
   }
 
   /**
@@ -378,7 +389,7 @@ public class SpreadSheetView
    * @return		the row
    */
   @Override
-  public HeaderRow getHeaderRow() {
+  public synchronized HeaderRow getHeaderRow() {
     HeaderRow	result;
     HeaderRow	other;
     int		i;
@@ -387,10 +398,16 @@ public class SpreadSheetView
       result = m_Sheet.getHeaderRow();
     }
     else {
-      result = new HeaderRow(this);
-      other  = m_Sheet.getHeaderRow();
-      for (i = 0; i < m_Columns.size(); i++)
-	result.addCell(i).assign(other.getCell(m_Columns.get(i)));
+      if (m_HeaderRow == null) {
+	result = new HeaderRow(this);
+	other = m_Sheet.getHeaderRow();
+	for (i = 0; i < m_Columns.size(); i++)
+	  result.addCell(other.getCellKey(m_Columns.get(i))).assign(other.getCell(m_Columns.get(i)));
+	m_HeaderRow = result;
+      }
+      else {
+	result = m_HeaderRow;
+      }
     }
 
     return result;
@@ -608,7 +625,7 @@ public class SpreadSheetView
   public DataRow getRow(String rowKey) {
     rowKey = getActualRow(rowKey);
     if (rowKey != null)
-      return m_Sheet.getRow(rowKey);
+      return wrap(m_Sheet.getRow(rowKey));
     else
       return null;
   }
@@ -621,7 +638,7 @@ public class SpreadSheetView
    */
   @Override
   public DataRow getRow(int rowIndex) {
-    return m_Sheet.getRow(getActualRow(rowIndex));
+    return wrap(m_Sheet.getRow(getActualRow(rowIndex)));
   }
 
   /**
@@ -795,13 +812,14 @@ public class SpreadSheetView
     Collection<DataRow>		result;
     int				i;
 
+    result = new ArrayList<>();
     if (m_Rows == null) {
-      result = m_Sheet.rows();
+      for (DataRow row: m_Sheet.rows())
+	result.add(wrap(row));
     }
     else {
-      result = new ArrayList<>();
       for (i = 0; i < m_Rows.size(); i++)
-	result.add(m_Sheet.getRow(m_Rows.get(i)));
+	result.add(wrap(m_Sheet.getRow(m_Rows.get(i))));
     }
 
     return result;
@@ -1023,51 +1041,6 @@ public class SpreadSheetView
   }
 
   /**
-   * Returns the spreadsheet as matrix, with the header as the first row.
-   * Missing values are represented as null values.
-   *
-   * @return		the row-wise matrix
-   */
-  @Override
-  public Object[][] toMatrix() {
-    Object[][]	result;
-    int		i;
-    int		n;
-    Row		row;
-    String	key;
-    Cell	cell;
-
-    result = new Object[getRowCount() + 1][getColumnCount()];
-
-    // header
-    row = getHeaderRow();
-    for (i = 0; i < getColumnCount(); i++) {
-      if (row.getCell(i).isMissing())
-	continue;
-      result[0][i] = row.getCell(i).getContent();
-    }
-
-    // data
-    for (n = 0; n < getRowCount(); n++) {
-      row = getRow(n);
-      for (i = 0; i < getColumnCount(); i++) {
-	key = getHeaderRow().getCellKey(i);
-	if (!row.hasCell(key))
-	  continue;
-	cell = row.getCell(i);
-	if (cell.isMissing())
-	  continue;
-	if (cell.isNumeric())
-	  result[n + 1][i] = row.getCell(i).toDouble();
-	else
-	  result[n + 1][i] = row.getCell(i).getContent();
-      }
-    }
-
-    return result;
-  }
-
-  /**
    * Removes all cells marked "missing".
    * <br>
    * Not implemented!
@@ -1250,10 +1223,79 @@ public class SpreadSheetView
    * <br>
    * Not implemented!
    *
-   * @param other		the spreadsheet to merge with
+   * @param other	the spreadsheet to merge with
    */
   @Override
   public void mergeWith(SpreadSheet other) {
     throw new NotImplementedException();
+  }
+
+  /**
+   * Returns the underlying sheet.
+   *
+   * @return		the underlying sheet
+   */
+  public SpreadSheet getSheet() {
+    return m_Sheet;
+  }
+
+  /**
+   * Returns the spreadsheet as matrix, with the header as the first row.
+   * Missing values are represented as null values.
+   *
+   * @return		the row-wise matrix
+   */
+  @Override
+  public Object[][] toMatrix() {
+    Object[][]	result;
+    int		i;
+    int		n;
+    Row		row;
+    String	key;
+    Cell	cell;
+
+    result = new Object[getRowCount() + 1][getColumnCount()];
+
+    // header
+    row = getHeaderRow();
+    for (i = 0; i < getColumnCount(); i++) {
+      if (row.getCell(i).isMissing())
+	continue;
+      result[0][i] = row.getCell(i).getContent();
+    }
+
+    // data
+    for (n = 0; n < getRowCount(); n++) {
+      row = getRow(n);
+      for (i = 0; i < getColumnCount(); i++) {
+	key = getHeaderRow().getCellKey(i);
+	if (!row.hasCell(key))
+	  continue;
+	cell = row.getCell(i);
+	if (cell.isMissing())
+	  continue;
+	if (cell.isNumeric())
+	  result[n + 1][i] = row.getCell(i).toDouble();
+	else
+	  result[n + 1][i] = row.getCell(i).getContent();
+      }
+    }
+
+    return result;
+  }
+
+  /**
+   * Returns the spreadsheet as string, i.e., CSV formatted.
+   *
+   * @return		the string representation
+   */
+  @Override
+  public String toString() {
+    StringWriter writer;
+
+    writer = new StringWriter();
+    new CsvSpreadSheetWriter().write(this, writer);
+
+    return writer.toString();
   }
 }

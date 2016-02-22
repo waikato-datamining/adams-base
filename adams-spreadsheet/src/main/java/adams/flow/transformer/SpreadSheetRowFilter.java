@@ -15,13 +15,15 @@
 
 /*
  * SpreadSheetRowFinder.java
- * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
 import adams.data.spreadsheet.SpreadSheet;
+import adams.data.spreadsheet.SpreadSheetView;
+import adams.data.spreadsheet.SpreadSheetViewCreator;
 import adams.data.spreadsheet.rowfinder.AbstractRowFinder;
 import adams.data.spreadsheet.rowfinder.RowFinder;
 import adams.flow.core.Token;
@@ -83,13 +85,17 @@ import adams.flow.core.Token;
  * @version $Revision$
  */
 public class SpreadSheetRowFilter
-  extends AbstractSpreadSheetTransformer {
+  extends AbstractSpreadSheetTransformer
+  implements SpreadSheetViewCreator {
 
   /** for serialization. */
   private static final long serialVersionUID = 3754073511732133649L;
   
   /** the filter to apply. */
   protected adams.data.spreadsheet.rowfinder.RowFinder m_Finder;
+
+  /** whether to create a view only. */
+  protected boolean m_CreateView;
 
   /**
    * Returns a string describing the object.
@@ -112,8 +118,12 @@ public class SpreadSheetRowFilter
     super.defineOptions();
 
     m_OptionManager.add(
-	    "finder", "finder",
-	    new adams.data.spreadsheet.rowfinder.NullFinder());
+      "finder", "finder",
+      new adams.data.spreadsheet.rowfinder.NullFinder());
+
+    m_OptionManager.add(
+      "create-view", "createView",
+      false);
   }
 
   /**
@@ -146,13 +156,50 @@ public class SpreadSheetRowFilter
   }
 
   /**
+   * Sets whether to create a view only.
+   *
+   * @param value	true if to create a view only
+   */
+  public void setCreateView(boolean value) {
+    m_CreateView = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to create only a view.
+   *
+   * @return		true if to create view only
+   */
+  public boolean getCreateView() {
+    return m_CreateView;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String createViewTipText() {
+    return "If enabled, then only a view of the row subset is created.";
+  }
+
+  /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
    */
   @Override
   public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "finder", m_Finder);
+    String	result;
+    String	value;
+
+    result = QuickInfoHelper.toString(this, "finder", m_Finder);
+    value  = QuickInfoHelper.toString(this, "createView", m_CreateView, ", view only");
+    if (value != null)
+      result += value;
+
+    return result;
   }
 
   /**
@@ -166,9 +213,12 @@ public class SpreadSheetRowFilter
     SpreadSheet		input;
     SpreadSheet		output;
 
-    result        = null;
-    input         = (SpreadSheet) m_InputToken.getPayload();
-    output        = AbstractRowFinder.filter(input, m_Finder);
+    result = null;
+    input  = (SpreadSheet) m_InputToken.getPayload();
+    if (m_CreateView)
+      output = new SpreadSheetView(input, m_Finder.findRows(input), null);
+    else
+      output = AbstractRowFinder.filter(input, m_Finder);
     m_OutputToken = new Token(output);
     
     return result;

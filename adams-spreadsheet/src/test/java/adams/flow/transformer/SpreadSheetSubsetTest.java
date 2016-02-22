@@ -106,6 +106,7 @@ public class SpreadSheetSubsetTest
     SpreadSheetSubset ssc1 = new SpreadSheetSubset();
     ssc1.setRows(new Range("10-20"));
     ssc1.setColumns(new SpreadSheetColumnRange("1,3,last"));
+    ssc1.setCreateView(true);
 
     CallableSink gs1 = new CallableSink();
     gs1.setCallableName(new CallableActorReference("out"));
@@ -119,6 +120,7 @@ public class SpreadSheetSubsetTest
     SpreadSheetSubset ssc2 = new SpreadSheetSubset();
     ssc2.setRows(new Range("20-30"));
     ssc2.setColumns(new SpreadSheetColumnRange("2,4,last"));
+    ssc2.setCreateView(true);
 
     CallableSink gs2 = new CallableSink();
     gs2.setCallableName(new CallableActorReference("out"));
@@ -132,6 +134,7 @@ public class SpreadSheetSubsetTest
     SpreadSheetSubset ssc3 = new SpreadSheetSubset();
     ssc3.setRows(new Range("30-40"));
     ssc3.setColumns(new SpreadSheetColumnRange("1,2,last"));
+    ssc3.setCreateView(false);
 
     CallableSink gs3 = new CallableSink();
     gs3.setCallableName(new CallableActorReference("out"));

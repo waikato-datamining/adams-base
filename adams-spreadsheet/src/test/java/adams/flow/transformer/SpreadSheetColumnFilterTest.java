@@ -127,6 +127,7 @@ public class SpreadSheetColumnFilterTest
       adams.data.spreadsheet.columnfinder.ByName tmp9 = new adams.data.spreadsheet.columnfinder.ByName();
       argOption = (AbstractArgumentOption) tmp9.getOptionManager().findByProperty("regExp");
       tmp9.setRegExp((adams.core.base.BaseRegExp) argOption.valueOf(".*T.*"));
+      tmp7.setCreateView(true);
 
       tmp7.setFinder(tmp9);
 

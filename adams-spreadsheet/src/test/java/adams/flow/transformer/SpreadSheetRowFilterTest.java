@@ -127,6 +127,7 @@ public class SpreadSheetRowFilterTest
       adams.data.spreadsheet.rowfinder.ByValue tmp9 = new adams.data.spreadsheet.rowfinder.ByValue();
       argOption = (AbstractArgumentOption) tmp9.getOptionManager().findByProperty("regExp");
       tmp9.setRegExp((adams.core.base.BaseRegExp) argOption.valueOf(".*setosa.*"));
+      tmp7.setCreateView(true);
 
       tmp7.setFinder(tmp9);
 
