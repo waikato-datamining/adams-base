@@ -44,9 +44,12 @@ import adams.flow.execution.GraphicalFlowExecutionListener;
 import adams.flow.execution.ListenerUtils;
 import adams.flow.execution.MultiListener;
 import adams.flow.execution.NullListener;
+import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.core.BaseFrame;
+import adams.gui.core.GUIHelper;
 
 import java.awt.Component;
+import java.awt.Container;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -662,6 +665,24 @@ public class Flow
   @Override
   public Component getParentComponent() {
     return m_ParentComponent;
+  }
+
+  /**
+   * Uses {@link #getParentComponent()} to determine the application frame.
+   *
+   * @return		the application frame, null if failed to determine
+   */
+  public AbstractApplicationFrame getApplicationFrame() {
+    AbstractApplicationFrame	result;
+
+    result = null;
+
+    if ((getParentComponent() != null) && (getParentComponent() instanceof Container)) {
+      result = (AbstractApplicationFrame) GUIHelper.getParent(
+	(Container) getParentComponent(), AbstractApplicationFrame.class);
+    }
+
+    return result;
   }
 
   /**

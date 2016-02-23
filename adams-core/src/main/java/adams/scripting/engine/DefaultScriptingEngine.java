@@ -62,7 +62,6 @@ public class DefaultScriptingEngine
     TByteArrayList 	bytes;
     String		data;
     RemoteCommand	cmd;
-    String		msg;
 
     // read data
     bytes = new TByteArrayList();
@@ -92,6 +91,7 @@ public class DefaultScriptingEngine
 
     // handle command
     if (cmd != null) {
+      cmd.setApplicationContext(getApplicationContext());
       if (cmd.isRequest())
         cmd.handleRequest(m_RequestHandler);
       else

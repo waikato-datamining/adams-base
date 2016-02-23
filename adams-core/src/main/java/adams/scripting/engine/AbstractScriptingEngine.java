@@ -30,6 +30,7 @@ import adams.core.option.AbstractOptionHandler;
 import adams.core.option.ArrayConsumer;
 import adams.core.option.OptionUtils;
 import adams.env.Environment;
+import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.scripting.ScriptingEngine;
 import adams.scripting.permissionhandler.AllowAll;
 import adams.scripting.permissionhandler.PermissionHandler;
@@ -51,6 +52,9 @@ public abstract class AbstractScriptingEngine
   implements RemoteScriptingEngine, StoppableWithFeedback {
 
   private static final long serialVersionUID = -3763240773922918567L;
+
+  /** the application context. */
+  protected AbstractApplicationFrame m_ApplicationContext;
 
   /** the port to listen on. */
   protected int m_Port;
@@ -281,6 +285,24 @@ public abstract class AbstractScriptingEngine
    */
   public String timeoutTipText() {
     return "The timeout in milli-second for waiting on new client connections.";
+  }
+
+  /**
+   * Sets the application context.
+   *
+   * @param value	the context
+   */
+  public void setApplicationContext(AbstractApplicationFrame value) {
+    m_ApplicationContext = value;
+  }
+
+  /**
+   * Returns the application context.
+   *
+   * @return		the context, null if none set
+   */
+  public AbstractApplicationFrame getApplicationContext() {
+    return m_ApplicationContext;
   }
 
   /**

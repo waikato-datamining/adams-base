@@ -21,6 +21,7 @@
 package adams.flow.sink;
 
 import adams.core.QuickInfoHelper;
+import adams.flow.control.Flow;
 import adams.gui.application.AbstractBasicMenuItemDefinition;
 import adams.gui.application.AdditionalParameterHandler;
 import adams.gui.menu.TextEditor;
@@ -171,6 +172,8 @@ public class MenuItem
 	else
 	  params = (String[]) m_InputToken.getPayload();
 	((AdditionalParameterHandler) m_MenuItem).setAdditionalParameters(params);
+        if (getRoot() instanceof Flow)
+          m_MenuItem.setOwner(((Flow) getRoot()).getApplicationFrame());
 	m_MenuItem.launch();
       }
     }

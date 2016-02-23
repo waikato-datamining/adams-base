@@ -1228,8 +1228,10 @@ public abstract class AbstractApplicationFrame
     if (m_RemoteScriptingEngine != null) {
       getLogger().info("Stop listening for remote commands: " + m_RemoteScriptingEngine.getClass().getName());
       m_RemoteScriptingEngine.stopExecution();
+      m_RemoteScriptingEngine.setApplicationContext(null);
     }
     m_RemoteScriptingEngine = value;
+    m_RemoteScriptingEngine.setApplicationContext(this);
     if (value != null) {
       getLogger().info("Start listening for remote commands: " + m_RemoteScriptingEngine.getClass().getName());
       new Thread(() -> m_RemoteScriptingEngine.execute()).start();

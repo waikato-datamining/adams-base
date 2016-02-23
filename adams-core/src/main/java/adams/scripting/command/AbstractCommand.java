@@ -26,6 +26,7 @@ import adams.core.logging.LoggingObject;
 import adams.core.option.AbstractOptionHandler;
 import adams.core.option.OptionUtils;
 import adams.env.Environment;
+import adams.gui.application.AbstractApplicationFrame;
 import org.apache.commons.codec.binary.Base64;
 
 import java.net.Socket;
@@ -46,6 +47,9 @@ public abstract class AbstractCommand
 
   private static final long serialVersionUID = 4357645457118740255L;
 
+  /** the application context. */
+  protected AbstractApplicationFrame m_ApplicationContext;
+
   /** whether the command is a request or response. */
   protected boolean m_Request;
 
@@ -56,7 +60,26 @@ public abstract class AbstractCommand
   protected void initialize() {
     super.initialize();
 
-    m_Request = true;
+    m_Request            = true;
+    m_ApplicationContext = null;
+  }
+
+  /**
+   * Sets the application context.
+   *
+   * @param value	the context
+   */
+  public void setApplicationContext(AbstractApplicationFrame value) {
+    m_ApplicationContext = value;
+  }
+
+  /**
+   * Returns the application context.
+   *
+   * @return		the context, null if none set
+   */
+  public AbstractApplicationFrame getApplicationContext() {
+    return m_ApplicationContext;
   }
 
   /**

@@ -39,7 +39,7 @@ import java.io.StringReader;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class ListFlows
+public class  ListFlows
   extends AbstractCommandWithResponse {
 
   private static final long serialVersionUID = -3350680106789169314L;

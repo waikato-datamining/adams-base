@@ -23,6 +23,7 @@ package adams.scripting.engine;
 import adams.core.Pausable;
 import adams.core.Stoppable;
 import adams.core.option.OptionHandler;
+import adams.gui.application.AbstractApplicationFrame;
 import adams.scripting.permissionhandler.PermissionHandler;
 import adams.scripting.requesthandler.RequestHandler;
 import adams.scripting.responsehandler.ResponseHandler;
@@ -35,6 +36,20 @@ import adams.scripting.responsehandler.ResponseHandler;
  */
 public interface RemoteScriptingEngine
   extends OptionHandler, Pausable, Stoppable {
+
+  /**
+   * Sets the application context.
+   *
+   * @param value	the context
+   */
+  public void setApplicationContext(AbstractApplicationFrame value);
+
+  /**
+   * Returns the application context.
+   *
+   * @return		the context, null if none set
+   */
+  public AbstractApplicationFrame getApplicationContext();
 
   /**
    * Sets the port to listen on.

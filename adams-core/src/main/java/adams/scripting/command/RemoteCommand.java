@@ -21,6 +21,7 @@
 package adams.scripting.command;
 
 import adams.core.Properties;
+import adams.gui.application.AbstractApplicationFrame;
 import adams.scripting.requesthandler.RequestHandler;
 import adams.scripting.responsehandler.ResponseHandler;
 
@@ -49,6 +50,20 @@ public interface RemoteCommand {
 
   /** the width in characters for the base64 encoded payload. */
   int PAYLOAD_WIDTH = 72;
+
+  /**
+   * Sets the application context.
+   *
+   * @param value	the context
+   */
+  public void setApplicationContext(AbstractApplicationFrame value);
+
+  /**
+   * Returns the application context.
+   *
+   * @return		the context, null if none set
+   */
+  public AbstractApplicationFrame getApplicationContext();
 
   /**
    * Parses the header information.

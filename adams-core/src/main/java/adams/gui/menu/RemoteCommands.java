@@ -221,6 +221,7 @@ public class RemoteCommands
     }
 
     // send command
+    m_LastCommand.setApplicationContext(getOwner());
     msg = m_LastCommand.send(props.getProperty(KEY_HOST), props.getInteger(KEY_PORT), true);
     if (msg != null)
       GUIHelper.showErrorMessage(null, "Failed to send command:\n" + msg);
