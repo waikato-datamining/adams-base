@@ -21,16 +21,25 @@
 
 package adams.gui.menu;
 
+import adams.core.Properties;
+import adams.core.Utils;
 import adams.core.option.OptionUtils;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.AbstractSubMenuDefinition;
 import adams.gui.application.UserMode;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.PropertiesParameterPanel;
+import adams.gui.core.PropertiesParameterPanel.PropertyType;
+import adams.gui.dialog.ApprovalDialog;
 import adams.gui.goe.GenericObjectEditorDialog;
+import adams.gui.goe.GenericObjectEditorPanel;
+import adams.scripting.command.RemoteCommand;
+import adams.scripting.command.basic.SystemInfo;
 import adams.scripting.engine.DefaultScriptingEngine;
 import adams.scripting.engine.RemoteScriptingEngine;
 
 import javax.swing.JMenuItem;
+import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 
 /**
@@ -45,11 +54,23 @@ public class RemoteCommands
   /** for serialization. */
   private static final long serialVersionUID = -6548349613973153076L;
 
+  public static final String KEY_COMMAND = "command";
+
+  public static final String KEY_HOST = "host";
+
+  public static final String KEY_PORT = "port";
+
   /** the start listening menu item. */
   protected JMenuItem m_MenuItemStart;
 
   /** the stop listening menu item. */
   protected JMenuItem m_MenuItemStop;
+
+  /** the send menu item. */
+  protected JMenuItem m_MenuItemSend;
+
+  /** the last command sent. */
+  protected RemoteCommand m_LastCommand;
 
   /**
    * Initializes the menu item.
@@ -58,6 +79,16 @@ public class RemoteCommands
    */
   public RemoteCommands(AbstractApplicationFrame owner) {
     super(owner);
+  }
+
+  /**
+   * Initializes members.
+   */
+  @Override
+  protected void initialize() {
+    super.initialize();
+
+    m_LastCommand = null;
   }
 
   /**
@@ -128,9 +159,71 @@ public class RemoteCommands
       dialog.setCurrent(OptionUtils.shallowCopy(getOwner().getRemoteScriptingEngine()));
     dialog.setLocationRelativeTo(null);
     dialog.setVisible(true);
-    if (dialog.getResult() != GenericObjectEditorDialog.APPROVE_OPTION)
+    if (dialog.getResult() != GenericObjectEditorDialog.APPROVE_OPTION) {
+      dialog.dispose();
       return;
+    }
     getOwner().setRemoteScriptingEngine((RemoteScriptingEngine) dialog.getCurrent());
+    dialog.dispose();
+  }
+
+  /**
+   * Allows the sending of a remote command.
+   */
+  protected void sendCommand() {
+    ApprovalDialog		dialog;
+    PropertiesParameterPanel	params;
+    Properties			props;
+    String			msg;
+
+    if (m_LastCommand == null)
+      m_LastCommand = new SystemInfo();
+
+    params = new PropertiesParameterPanel();
+    params.addPropertyType(KEY_COMMAND, PropertyType.OBJECT_EDITOR);
+    params.setChooser(KEY_COMMAND, new GenericObjectEditorPanel(RemoteCommand.class, m_LastCommand, true));
+    params.setLabel(KEY_COMMAND, "Command to send");
+    params.addPropertyType(KEY_HOST, PropertyType.STRING);
+    params.setLabel(KEY_HOST, "Remote host");
+    params.addPropertyType(KEY_PORT, PropertyType.INTEGER);
+    params.setLabel("post", "Remote port");
+
+    props = new Properties();
+    props.setProperty(KEY_HOST, "127.0.0.1");
+    props.setInteger(KEY_PORT, 12345);
+    props.setProperty(KEY_COMMAND, OptionUtils.getCommandLine(m_LastCommand));
+    params.setProperties(props);
+
+    dialog = new ApprovalDialog(getOwner(), true);
+    dialog.setTitle("Remote command");
+    dialog.getContentPane().add(params, BorderLayout.CENTER);
+    dialog.setSize(600, 200);
+    dialog.setLocationRelativeTo(null);
+    dialog.setVisible(true);
+    if (dialog.getOption() != ApprovalDialog.APPROVE_OPTION) {
+      dialog.dispose();
+      return;
+    }
+
+    // retrieve parameters
+    props = params.getProperties();
+    dialog.dispose();
+    try {
+      m_LastCommand = (RemoteCommand) OptionUtils.forCommandLine(
+	RemoteCommand.class, props.getProperty(KEY_COMMAND));
+    }
+    catch (Exception e) {
+      GUIHelper.showErrorMessage(
+	null,
+	"Failed to instantiate command: '" + props.getProperty(KEY_COMMAND) + "'\n"
+	  + Utils.throwableToString(e));
+      return;
+    }
+
+    // send command
+    msg = m_LastCommand.send(props.getProperty(KEY_HOST), props.getInteger(KEY_PORT), true);
+    if (msg != null)
+      GUIHelper.showErrorMessage(null, "Failed to send command:\n" + msg);
   }
 
   /**
@@ -161,9 +254,15 @@ public class RemoteCommands
       updateMenu();
     });
 
+    m_MenuItemSend = new JMenuItem("Send...", GUIHelper.getIcon("remote_command_execute.png"));
+    m_MenuItemSend.addActionListener((ActionEvent e) -> {
+      sendCommand();
+      updateMenu();
+    });
+
     updateMenu();
 
-    result = new JMenuItem[]{m_MenuItemStart, m_MenuItemStop};
+    result = new JMenuItem[]{m_MenuItemStart, m_MenuItemStop, m_MenuItemSend};
 
     return result;
   }
