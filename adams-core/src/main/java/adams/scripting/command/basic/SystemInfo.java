@@ -138,6 +138,15 @@ public class SystemInfo
   }
 
   /**
+   * Returns the system info.
+   *
+   * @return		the info
+   */
+  public Properties getInfo() {
+    return m_Info;
+  }
+
+  /**
    * Returns a short description of the command.
    *
    * @return		the description
