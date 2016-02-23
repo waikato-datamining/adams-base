@@ -116,6 +116,14 @@ public abstract class AbstractCommand
   }
 
   /**
+   * Hook method for preparing the request payload,
+   * <br>
+   * Default implementatio does nothing.
+   */
+  protected void prepareRequestPayload() {
+  }
+
+  /**
    * Assembles the response header.
    *
    * @return		the response header
@@ -128,6 +136,14 @@ public abstract class AbstractCommand
     result.setProperty(KEY_TYPE, VALUE_RESPONSE);
 
     return result;
+  }
+
+  /**
+   * Hook method for preparing the response payload,
+   * <br>
+   * Default implementatio does nothing.
+   */
+  protected void prepareResponsePayload() {
   }
 
   /**
@@ -149,6 +165,10 @@ public abstract class AbstractCommand
       header = assembleResponseHeader();
 
     // payload
+    if (request)
+      prepareRequestPayload();
+    else
+      prepareResponsePayload();
     payload = getPayload();
     if (payload.length == 0)
       data = "";

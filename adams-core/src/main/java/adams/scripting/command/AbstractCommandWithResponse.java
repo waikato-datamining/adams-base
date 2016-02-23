@@ -20,6 +20,9 @@
 
 package adams.scripting.command;
 
+import adams.scripting.requesthandler.RequestHandler;
+import adams.scripting.responsehandler.ResponseHandler;
+
 /**
  * Ancestor for commands that send a response.
  *
@@ -112,5 +115,29 @@ public abstract class AbstractCommandWithResponse
    */
   public String responsePortTipText() {
     return "The port to send the response to.";
+  }
+
+  /**
+   * Handles the request.
+   *
+   * @param handler	for handling the request
+   */
+  public void handleRequest(RequestHandler handler) {
+    String			msg;
+
+    msg = send(m_ResponseHost, m_ResponsePort, false);
+    if (msg != null)
+      handler.requestFailed(this, msg);
+    else
+      handler.requestSuccessful(this);
+  }
+
+  /**
+   * Handles the response.
+   *
+   * @param handler	for handling the response
+   */
+  public void handleResponse(ResponseHandler handler) {
+    handler.responseSuccessful(this);
   }
 }

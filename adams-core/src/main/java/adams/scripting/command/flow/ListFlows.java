@@ -28,8 +28,6 @@ import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.control.Flow;
 import adams.flow.control.RunningFlowsRegistry;
 import adams.scripting.command.AbstractCommandWithResponse;
-import adams.scripting.requesthandler.RequestHandler;
-import adams.scripting.responsehandler.ResponseHandler;
 
 import java.io.StringReader;
 
@@ -121,14 +119,14 @@ public class  ListFlows
   }
 
   /**
-   * Handles the request.
-   *
-   * @param handler	for handling the request
+   * Hook method for preparing the response payload,
    */
-  public void handleRequest(RequestHandler handler) {
+  @Override
+  protected void prepareResponsePayload() {
     SpreadSheet 	sheet;
     Row			row;
-    String		msg;
+
+    super.prepareResponsePayload();
 
     sheet = newSheet();
     for (Flow flow: RunningFlowsRegistry.getSingleton().flows()) {
@@ -138,21 +136,6 @@ public class  ListFlows
     }
 
     m_Flows = sheet;
-
-    msg = send(m_ResponseHost, m_ResponsePort, false);
-    if (msg != null)
-      handler.requestFailed(this, msg);
-    else
-      handler.requestSuccessful(this);
-  }
-
-  /**
-   * Handles the response.
-   *
-   * @param handler	for handling the response
-   */
-  public void handleResponse(ResponseHandler handler) {
-    handler.responseSuccessful(this);
   }
 
   /**

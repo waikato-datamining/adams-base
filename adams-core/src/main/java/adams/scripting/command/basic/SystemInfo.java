@@ -23,8 +23,6 @@ package adams.scripting.command.basic;
 import adams.core.Properties;
 import adams.core.io.GzipUtils;
 import adams.scripting.command.AbstractCommandWithResponse;
-import adams.scripting.requesthandler.RequestHandler;
-import adams.scripting.responsehandler.ResponseHandler;
 
 import java.io.StringReader;
 import java.util.Hashtable;
@@ -105,14 +103,14 @@ public class SystemInfo
   }
 
   /**
-   * Handles the request.
-   *
-   * @param handler	for handling the request
+   * Hook method for preparing the response payload,
    */
-  public void handleRequest(RequestHandler handler) {
+  @Override
+  protected void prepareResponsePayload() {
     Properties 			props;
     Hashtable<String,String> 	info;
-    String			msg;
+
+    super.prepareResponsePayload();
 
     props = new Properties();
     info   = new adams.core.SystemInfo().getInfo();
@@ -120,21 +118,6 @@ public class SystemInfo
       props.setProperty(key, info.get(key));
 
     m_Info = props;
-
-    msg = send(m_ResponseHost, m_ResponsePort, false);
-    if (msg != null)
-      handler.requestFailed(this, msg);
-    else
-      handler.requestSuccessful(this);
-  }
-
-  /**
-   * Handles the response.
-   *
-   * @param handler	for handling the response
-   */
-  public void handleResponse(ResponseHandler handler) {
-    handler.responseSuccessful(this);
   }
 
   /**
