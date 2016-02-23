@@ -1,0 +1,10 @@
+# Project: adams
+# Date: 2016-02-24 00:36:15
+# User: fracpete
+# Charset: UTF-8
+adams.flow.control.Flow -annotation "Sends a worker flow to a remote instance of ADAMS\\nincluding the dataset to be used for cross-validation.\\nOnce finished, an email is sent to the specified recipient\\nin the worker flow (see variable \\\"recipient\\\").\\n(NB: you have to configure the email setup to make this flow work).\\n\\nSetup:\\n- start up another instance of ADAMS and let it listen for \\n  remote commands on port 12345 (main menu)\\n- change the recipient in the worker flow to something useful\\n- run this flow - the recipient should receive an email when CV finishes" -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/anneal.arff
+ adams.flow.transformer.WekaFileReader -loader weka.core.converters.AArffLoader
+ adams.flow.transformer.WekaClassSelector
+ adams.flow.transformer.SetStorageValue -storage-name data
+ adams.flow.sink.SendRemoteCommand -command "adams.scripting.command.flow.RemoteFlowExecution -flow ${EXAMPLE_FLOWS}/adams-base-all-remote_execution-worker.flow -storage-name data"
