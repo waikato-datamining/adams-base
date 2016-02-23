@@ -332,7 +332,8 @@ public abstract class AbstractScriptingEngine
 	  // ignored
 	}
 	catch (Exception e) {
-	  Utils.handleException(this, "Failed to accept connection!", e);
+          if ((m_Server != null) && !m_Server.isClosed())
+            Utils.handleException(this, "Failed to accept connection!", e);
 	}
       }
     }
