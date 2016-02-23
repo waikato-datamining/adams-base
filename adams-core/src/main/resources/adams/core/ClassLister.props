@@ -489,6 +489,10 @@ adams.gui.goe.objectinstance.AbstractObjectInstanceHandler=\
 adams.gui.application.AbstractMenuItemDefinition=\
   adams.gui.menu
 
+# the menu items for the application menu that can be launched
+adams.gui.application.AbstractBasicMenuItemDefinition=\
+  adams.gui.menu
+
 # the database connection panels
 adams.gui.dialog.AbstractDatabaseConnectionPanel=\
   adams.gui.dialog
