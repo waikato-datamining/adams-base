@@ -71,6 +71,7 @@ public class Kill
    */
   @Override
   public void handleRequest(RequestHandler handler) {
+    getLogger().info("Exiting");
     System.exit(0);
   }
 

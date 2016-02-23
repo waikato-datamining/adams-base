@@ -118,6 +118,7 @@ public class Restart
    */
   @Override
   public void handleRequest(RequestHandler handler) {
+    getLogger().info("Restarting" + (m_MoreMemory ? " using more memory" : ""));
     if (m_MoreMemory)
       System.exit(Launcher.CODE_RESTART_MORE_HEAP);
     else
