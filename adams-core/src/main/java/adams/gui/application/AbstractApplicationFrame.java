@@ -63,7 +63,6 @@ import java.awt.Frame;
 import java.awt.Image;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
@@ -71,6 +70,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -141,6 +141,9 @@ public abstract class AbstractApplicationFrame
   /** the logger to use. */
   protected Logger m_Logger;
 
+  /** the commandline of the remote scripting engine to use at startup time. */
+  protected String m_RemoteScriptingEngineCmdLine;
+
   /** the remote command scripting engine. */
   protected RemoteScriptingEngine m_RemoteScriptingEngine;
   
@@ -174,6 +177,10 @@ public abstract class AbstractApplicationFrame
     m_OptionManager.add(
 	"enable-restart", "enableRestart",
 	false);
+
+    m_OptionManager.add(
+	"remote-scripting-engine-cmdline", "remoteScriptingEngineCmdLine",
+	"");
   }
 
   /**
@@ -428,6 +435,37 @@ public abstract class AbstractApplicationFrame
   }
 
   /**
+   * Sets the commandline of the remote scripting engine to execute at startup time.
+   *
+   * @param value	the commandline, use empty string if not to use one
+   */
+  public void setRemoteScriptingEngineCmdLine(String value) {
+    m_RemoteScriptingEngineCmdLine = value;
+    reset();
+  }
+
+  /**
+   * Returns the commandline of the remote scripting engine to execute at startup time.
+   *
+   * @return		the commandline, empty string it not to use one
+   */
+  public String getRemoteScriptingEngineCmdLine() {
+    return m_RemoteScriptingEngineCmdLine;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String remoteScriptingEngineCmdLineTipText() {
+    return
+        "The command-line of the remote scripting engine to execute at startup "
+	  + "time; use empty string for disable scripting.";
+  }
+
+  /**
    * Sets the look'n'feel.
    */
   protected void setLookAndFeel() {
@@ -472,12 +510,31 @@ public abstract class AbstractApplicationFrame
    */
   @Override
   protected void finishInit() {
+    RemoteScriptingEngine 	engine;
+
     super.finishInit();
+
     AbstractInitialization.initAll(this);
     createTitle("");
     m_InitFinished = true;
     setUserMode(m_UserMode);
     LoggingHelper.setDefaultHandler(new ConsolePanelHandler());
+
+    if (!m_RemoteScriptingEngineCmdLine.isEmpty()) {
+      try {
+	engine = (RemoteScriptingEngine) OptionUtils.forAnyCommandLine(RemoteScriptingEngine.class, m_RemoteScriptingEngineCmdLine);
+      }
+      catch (Exception e) {
+	engine = null;
+	getLogger().log(
+	  Level.SEVERE,
+	  "Failed to instantiate remote scripting engine from commandline: '"
+	    + m_RemoteScriptingEngineCmdLine + "'",
+	  e);
+      }
+      if (engine != null)
+	setRemoteScriptingEngine(engine);
+    }
   }
 
   /**
@@ -999,13 +1056,7 @@ public abstract class AbstractApplicationFrame
    * is called when window list changed somehow (add or remove).
    */
   public void windowListChanged() {
-    Runnable run = new Runnable() {
-      @Override
-      public void run() {
-	buildWindowsMenu();
-      }
-    };
-    SwingUtilities.invokeLater(run);
+    SwingUtilities.invokeLater(() -> buildWindowsMenu());
   }
 
   /**
@@ -1025,33 +1076,18 @@ public abstract class AbstractApplicationFrame
     // minimize + restore + separator
     menuitem = new JMenuItem("Minimize");
     menuitem.setIcon(GUIHelper.getIcon("minimize.png"));
-    menuitem.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent evt) {
-        minimizeWindows();
-      }
-    });
+    menuitem.addActionListener((ActionEvent evt) -> minimizeWindows());
     m_MenuWindows.add(menuitem);
 
     menuitem = new JMenuItem("Restore");
     menuitem.setIcon(GUIHelper.getIcon("maximize.png"));
-    menuitem.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent evt) {
-        restoreWindows();
-      }
-    });
+    menuitem.addActionListener((ActionEvent evt) -> restoreWindows());
     m_MenuWindows.add(menuitem);
 
     submenu = new JMenu("User mode");
     for (final UserMode um: UserMode.values()) {
       menuitem = new JMenuItem(um.toString());
-      menuitem.addActionListener(new ActionListener() {
-	@Override
-	public void actionPerformed(ActionEvent e) {
-	  setUserMode(um);
-	}
-      });
+      menuitem.addActionListener((ActionEvent e) -> setUserMode(um));
       submenu.add(menuitem);
     }
 
@@ -1076,19 +1112,16 @@ public abstract class AbstractApplicationFrame
 	menuitem.setIcon(GUIHelper.getEmptyIcon());
       insertMenuItem(m_MenuWindows, menuitem, startIndex);
       menuitem.setActionCommand(Integer.toString(child.hashCode()));
-      menuitem.addActionListener(new ActionListener() {
-        @Override
-	public void actionPerformed(ActionEvent evt) {
-          Iterator<Child> iter = getWindowList();
-          while (iter.hasNext()) {
-            Child child = iter.next();
-            String hashFrame = Integer.toString(child.hashCode());
-            if (hashFrame.equals(evt.getActionCommand())) {
-              showWindow(child);
-              break;
-            }
-          }
-        }
+      menuitem.addActionListener((ActionEvent evt) -> {
+	Iterator<Child> it = getWindowList();
+	while (it.hasNext()) {
+	  Child chld = it.next();
+	  String hashFrame = Integer.toString(chld.hashCode());
+	  if (hashFrame.equals(evt.getActionCommand())) {
+	    showWindow(chld);
+	    break;
+	  }
+	}
       });
     }
   }
@@ -1148,7 +1181,6 @@ public abstract class AbstractApplicationFrame
     int						i;
     AbstractMenuItemDefinition 			item;
     final List<AbstractBasicMenuItemDefinition>	items;
-    Runnable					runnable;
 
     // collect menu items
     items = new ArrayList<AbstractBasicMenuItemDefinition>();
