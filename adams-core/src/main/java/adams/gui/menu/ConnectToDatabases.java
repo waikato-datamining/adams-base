@@ -27,7 +27,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import adams.gui.application.AbstractApplicationFrame;
-import adams.gui.application.AbstractMenuItemDefinition;
+import adams.gui.application.AbstractBasicMenuItemDefinition;
 import adams.gui.application.ChildFrame;
 import adams.gui.application.UserMode;
 import adams.gui.dialog.DatabaseConnectionsPanel;
@@ -39,7 +39,7 @@ import adams.gui.dialog.DatabaseConnectionsPanel;
  * @version $Revision$
  */
 public class ConnectToDatabases
-  extends AbstractMenuItemDefinition {
+  extends AbstractBasicMenuItemDefinition {
 
   /** for serialization. */
   private static final long serialVersionUID = -1363910914896201632L;

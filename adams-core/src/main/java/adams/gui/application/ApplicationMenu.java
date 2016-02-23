@@ -15,7 +15,7 @@
 
 /**
  * ApplicationMenu.java
- * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.application;
 
@@ -215,7 +215,7 @@ public class ApplicationMenu
     JMenuBar		result;
     JMenu[]		menus;
     JMenuItem		menuitem;
-    AbstractMenuItemDefinition	definition;
+    AbstractMenuItemDefinition definition;
     int			i;
     int			n;
     Properties		props;
@@ -248,7 +248,7 @@ public class ApplicationMenu
     // create the menus
     props            = getProperties();
     autoDiscovery    = props.getBoolean(LAYOUT_AUTOMATICDISCOVERY, false);
-    additional       = new HashSet<String>(Arrays.asList(AbstractMenuItemDefinition.getMenuItemDefinitions()));
+    additional       = new HashSet<String>(Arrays.asList(AbstractBasicMenuItemDefinition.getMenuItemDefinitions()));
     items            = props.getProperty(LAYOUT_MENUBAR, "").split(",");
     mnemonics        = GUIHelper.getMnemonics(items);
     menus            = new JMenu[items.length];

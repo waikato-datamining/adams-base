@@ -34,7 +34,7 @@ import adams.core.Utils;
 import adams.data.image.BufferedImageContainer;
 import adams.data.io.output.AbstractImageWriter;
 import adams.gui.application.AbstractApplicationFrame;
-import adams.gui.application.AbstractMenuItemDefinition;
+import adams.gui.application.AbstractBasicMenuItemDefinition;
 import adams.gui.application.UserMode;
 import adams.gui.chooser.ImageFileChooser;
 import adams.gui.core.GUIHelper;
@@ -47,7 +47,7 @@ import adams.gui.print.JComponentWriterFileChooser;
  * @version $Revision$
  */
 public class TakeScreenshot
-  extends AbstractMenuItemDefinition {
+  extends AbstractBasicMenuItemDefinition {
 
   /** for serialization. */
   private static final long serialVersionUID = -1502903491659697700L;

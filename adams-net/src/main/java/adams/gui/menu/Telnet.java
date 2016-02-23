@@ -22,7 +22,7 @@
 package adams.gui.menu;
 
 import adams.gui.application.AbstractApplicationFrame;
-import adams.gui.application.AbstractMenuItemDefinition;
+import adams.gui.application.AbstractBasicMenuItemDefinition;
 import adams.gui.application.UserMode;
 import adams.gui.tools.TelnetPanel;
 
@@ -33,7 +33,7 @@ import adams.gui.tools.TelnetPanel;
  * @version $Revision$
  */
 public class Telnet
-  extends AbstractMenuItemDefinition {
+  extends AbstractBasicMenuItemDefinition {
 
   /** for serialization. */
   private static final long serialVersionUID = 7877532863708882918L;

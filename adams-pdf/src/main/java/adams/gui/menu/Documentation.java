@@ -38,7 +38,7 @@ import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
 import adams.gui.application.AbstractApplicationFrame;
-import adams.gui.application.AbstractMenuItemDefinition;
+import adams.gui.application.AbstractBasicMenuItemDefinition;
 import adams.gui.application.UserMode;
 import adams.gui.visualization.pdf.PDFViewerPanel;
 
@@ -50,7 +50,7 @@ import adams.gui.visualization.pdf.PDFViewerPanel;
  * @see AbstractApplicationFrame#setDocumentationDirectories(PlaceholderDirectory[])
  */
 public class Documentation
-  extends AbstractMenuItemDefinition {
+  extends AbstractBasicMenuItemDefinition {
 
   /** for serialization. */
   private static final long serialVersionUID = -6548349613973153076L;

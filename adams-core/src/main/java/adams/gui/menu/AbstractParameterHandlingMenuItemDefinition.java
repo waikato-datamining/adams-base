@@ -20,7 +20,7 @@
 package adams.gui.menu;
 
 import adams.gui.application.AbstractApplicationFrame;
-import adams.gui.application.AbstractMenuItemDefinition;
+import adams.gui.application.AbstractBasicMenuItemDefinition;
 import adams.gui.application.AdditionalParameterHandler;
 
 /**
@@ -30,7 +30,7 @@ import adams.gui.application.AdditionalParameterHandler;
  * @version $Revision$
  */
 public abstract class AbstractParameterHandlingMenuItemDefinition
-  extends AbstractMenuItemDefinition
+  extends AbstractBasicMenuItemDefinition
   implements AdditionalParameterHandler {
 
   /** for serialization. */

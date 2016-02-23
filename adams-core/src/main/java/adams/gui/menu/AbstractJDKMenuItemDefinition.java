@@ -21,7 +21,7 @@ package adams.gui.menu;
 
 import adams.core.management.Java;
 import adams.gui.application.AbstractApplicationFrame;
-import adams.gui.application.AbstractMenuItemDefinition;
+import adams.gui.application.AbstractBasicMenuItemDefinition;
 import adams.gui.application.UserMode;
 import adams.gui.core.GUIHelper;
 
@@ -32,7 +32,7 @@ import adams.gui.core.GUIHelper;
  * @version $Revision$
  */
 public abstract class AbstractJDKMenuItemDefinition
-  extends AbstractMenuItemDefinition {
+  extends AbstractBasicMenuItemDefinition {
 
   /** for serialization. */
   private static final long serialVersionUID = 5622223654165288462L;

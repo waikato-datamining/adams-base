@@ -23,7 +23,7 @@ package adams.gui.menu;
 
 import adams.data.imagej.ImageJHelper;
 import adams.gui.application.AbstractApplicationFrame;
-import adams.gui.application.AbstractMenuItemDefinition;
+import adams.gui.application.AbstractBasicMenuItemDefinition;
 import adams.gui.application.UserMode;
 import adams.gui.core.GUIHelper;
 
@@ -35,7 +35,7 @@ import adams.gui.core.GUIHelper;
  * @see adams.core.management.ImageJ
  */
 public class ImageJ
-  extends AbstractMenuItemDefinition {
+  extends AbstractBasicMenuItemDefinition {
 
   /** for serialization. */
   private static final long serialVersionUID = 5304941130851992514L;

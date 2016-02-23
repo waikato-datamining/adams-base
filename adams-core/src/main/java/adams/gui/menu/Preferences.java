@@ -30,7 +30,7 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 
 import adams.gui.application.AbstractApplicationFrame;
-import adams.gui.application.AbstractMenuItemDefinition;
+import adams.gui.application.AbstractBasicMenuItemDefinition;
 import adams.gui.application.ChildFrame;
 import adams.gui.application.PreferencesManagerPanel;
 import adams.gui.application.UserMode;
@@ -42,7 +42,7 @@ import adams.gui.application.UserMode;
  * @version $Revision$
  */
 public class Preferences
-  extends AbstractMenuItemDefinition {
+  extends AbstractBasicMenuItemDefinition {
 
   /** for serialization. */
   private static final long serialVersionUID = 3773253573560315512L;

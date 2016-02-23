@@ -25,7 +25,7 @@ import adams.core.Properties;
 import adams.core.Utils;
 import adams.core.option.OptionUtils;
 import adams.gui.application.AbstractApplicationFrame;
-import adams.gui.application.AbstractMenuItemDefinition;
+import adams.gui.application.AbstractBasicMenuItemDefinition;
 import adams.gui.application.ChildFrame;
 import adams.gui.application.UserMode;
 import adams.gui.core.GUIHelper;
@@ -56,7 +56,7 @@ import java.util.logging.Level;
  * @version $Revision$
  */
 public class AppendDatasets
-  extends AbstractMenuItemDefinition {
+  extends AbstractBasicMenuItemDefinition {
 
   /** for serialization. */
   private static final long serialVersionUID = 7586443345167287461L;

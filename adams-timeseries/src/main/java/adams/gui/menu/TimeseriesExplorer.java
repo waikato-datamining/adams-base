@@ -22,7 +22,7 @@
 package adams.gui.menu;
 
 import adams.gui.application.AbstractApplicationFrame;
-import adams.gui.application.AbstractMenuItemDefinition;
+import adams.gui.application.AbstractBasicMenuItemDefinition;
 import adams.gui.application.UserMode;
 
 /**
@@ -32,7 +32,7 @@ import adams.gui.application.UserMode;
  * @version $Revision$
  */
 public class TimeseriesExplorer
-  extends AbstractMenuItemDefinition {
+  extends AbstractBasicMenuItemDefinition {
 
   /** for serialization. */
   private static final long serialVersionUID = 1836650181993639510L;

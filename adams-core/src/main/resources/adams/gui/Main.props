@@ -20,9 +20,9 @@ MenuBar=Program,Visualization,Tools,Maintenance,Windows,Help
 
 Menu-Program=\
   adams.gui.menu.ConnectToDatabases,\
-  adams.gui.menu.JobCompleteViewer,\
   -,\
   adams.gui.menu.ScriptingLog,\
+  adams.gui.menu.RemoteCommands,\
   adams.gui.menu.ConsoleWindow,\
   adams.gui.menu.Terminal,\
   -,\
@@ -118,3 +118,4 @@ Shortcut-adams.gui.menu.Experimenter=ctrl pressed P
 
 Blacklisted-adams.gui.menu.SequenceViewer=true
 Blacklisted-adams.gui.menu.FlowControlCenter=true
+Blacklisted-adams.gui.menu.JobCompleteViewer=true

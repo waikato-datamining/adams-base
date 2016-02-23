@@ -22,7 +22,7 @@
 package adams.gui.menu;
 
 import adams.gui.application.AbstractApplicationFrame;
-import adams.gui.application.AbstractMenuItemDefinition;
+import adams.gui.application.AbstractBasicMenuItemDefinition;
 import adams.gui.application.UserMode;
 import adams.gui.tools.ImageProcessorPanel;
 
@@ -33,7 +33,7 @@ import adams.gui.tools.ImageProcessorPanel;
  * @version $Revision: 6067 $
  */
 public class ImageProcessor
-  extends AbstractMenuItemDefinition {
+  extends AbstractBasicMenuItemDefinition {
 
   /** for serialization. */
   private static final long serialVersionUID = 9146857448447940626L;

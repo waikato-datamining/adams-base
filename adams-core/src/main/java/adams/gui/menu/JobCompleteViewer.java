@@ -22,7 +22,7 @@
 package adams.gui.menu;
 
 import adams.gui.application.AbstractApplicationFrame;
-import adams.gui.application.AbstractMenuItemDefinition;
+import adams.gui.application.AbstractBasicMenuItemDefinition;
 import adams.gui.application.UserMode;
 import adams.gui.tools.JobCompleteManagerPanel;
 
@@ -33,7 +33,7 @@ import adams.gui.tools.JobCompleteManagerPanel;
  * @version $Revision$
  */
 public class JobCompleteViewer
-  extends AbstractMenuItemDefinition {
+  extends AbstractBasicMenuItemDefinition {
 
   /** for serialization. */
   private static final long serialVersionUID = 4542388996174240562L;

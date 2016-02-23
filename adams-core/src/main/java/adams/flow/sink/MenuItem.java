@@ -21,7 +21,7 @@
 package adams.flow.sink;
 
 import adams.core.QuickInfoHelper;
-import adams.gui.application.AbstractMenuItemDefinition;
+import adams.gui.application.AbstractBasicMenuItemDefinition;
 import adams.gui.application.AdditionalParameterHandler;
 import adams.gui.menu.TextEditor;
 
@@ -78,7 +78,7 @@ public class MenuItem
   private static final long serialVersionUID = -4210882711380055794L;
   
   /** the menu item to executre. */
-  protected AbstractMenuItemDefinition m_MenuItem;
+  protected AbstractBasicMenuItemDefinition m_MenuItem;
 
   /**
    * Returns a string describing the object.
@@ -109,7 +109,7 @@ public class MenuItem
    *
    * @param value 	the index
    */
-  public void setMenuItem(AbstractMenuItemDefinition value) {
+  public void setMenuItem(AbstractBasicMenuItemDefinition value) {
     m_MenuItem = value;
     reset();
   }
@@ -119,7 +119,7 @@ public class MenuItem
    *
    * @return 		the index
    */
-  public AbstractMenuItemDefinition getMenuItem() {
+  public AbstractBasicMenuItemDefinition getMenuItem() {
     return m_MenuItem;
   }
 

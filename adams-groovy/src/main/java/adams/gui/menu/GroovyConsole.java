@@ -23,7 +23,7 @@ package adams.gui.menu;
 
 import groovy.ui.Console;
 import adams.gui.application.AbstractApplicationFrame;
-import adams.gui.application.AbstractMenuItemDefinition;
+import adams.gui.application.AbstractBasicMenuItemDefinition;
 import adams.gui.application.UserMode;
 
 /**
@@ -33,7 +33,7 @@ import adams.gui.application.UserMode;
  * @version $Revision$
  */
 public class GroovyConsole
-  extends AbstractMenuItemDefinition {
+  extends AbstractBasicMenuItemDefinition {
 
   /** for serialization. */
   private static final long serialVersionUID = -771667287275117680L;

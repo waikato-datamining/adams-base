@@ -29,7 +29,7 @@ import adams.core.option.OptionHandler;
 import adams.core.option.OptionUtils;
 import adams.env.Environment;
 import adams.env.GUIHelperDefinition;
-import adams.gui.application.AbstractMenuItemDefinition;
+import adams.gui.application.AbstractBasicMenuItemDefinition;
 import adams.gui.application.Child;
 import adams.gui.dialog.ApprovalDialog;
 import adams.gui.dialog.TextDialog;
@@ -2375,7 +2375,7 @@ public class GUIHelper {
    */
   public static boolean launchMenuItem(Container source, Class menuitem) {
     Child			child;
-    AbstractMenuItemDefinition	mitem;
+    AbstractBasicMenuItemDefinition mitem;
     
     child = getParentChild(source);
     if (child == null)
@@ -2384,7 +2384,7 @@ public class GUIHelper {
       return false;
     
     try {
-      mitem = (AbstractMenuItemDefinition) menuitem.newInstance();
+      mitem = (AbstractBasicMenuItemDefinition) menuitem.newInstance();
       mitem.setOwner(child.getParentFrame());
       mitem.launch();
     }

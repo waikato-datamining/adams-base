@@ -23,7 +23,7 @@ package adams.gui.menu;
 
 import moa.gui.GUI;
 import adams.gui.application.AbstractApplicationFrame;
-import adams.gui.application.AbstractMenuItemDefinition;
+import adams.gui.application.AbstractBasicMenuItemDefinition;
 import adams.gui.application.ChildFrame;
 import adams.gui.application.UserMode;
 
@@ -34,7 +34,7 @@ import adams.gui.application.UserMode;
  * @version $Revision$
  */
 public class MOA
-  extends AbstractMenuItemDefinition {
+  extends AbstractBasicMenuItemDefinition {
 
   /** for serialization. */
   private static final long serialVersionUID = -7979357839641531634L;

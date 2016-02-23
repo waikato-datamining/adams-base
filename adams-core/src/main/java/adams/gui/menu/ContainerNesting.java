@@ -25,7 +25,7 @@ import java.awt.BorderLayout;
 import java.awt.Container;
 
 import adams.gui.application.AbstractApplicationFrame;
-import adams.gui.application.AbstractMenuItemDefinition;
+import adams.gui.application.AbstractBasicMenuItemDefinition;
 import adams.gui.application.UserMode;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
@@ -40,7 +40,7 @@ import adams.gui.core.GUIHelper;
  * @version $Revision$
  */
 public class ContainerNesting
-  extends AbstractMenuItemDefinition {
+  extends AbstractBasicMenuItemDefinition {
 
   /** for serialization. */
   private static final long serialVersionUID = 6149133251059325645L;

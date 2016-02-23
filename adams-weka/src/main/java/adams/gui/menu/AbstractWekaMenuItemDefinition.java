@@ -20,7 +20,7 @@
 package adams.gui.menu;
 
 import adams.gui.application.AbstractApplicationFrame;
-import adams.gui.application.AbstractMenuItemDefinition;
+import adams.gui.application.AbstractBasicMenuItemDefinition;
 
 /**
  * Abstract menu item menu item definitions for Weka elements.
@@ -30,7 +30,7 @@ import adams.gui.application.AbstractMenuItemDefinition;
  * @version $Revision$
  */
 public abstract class AbstractWekaMenuItemDefinition
-  extends AbstractMenuItemDefinition {
+  extends AbstractBasicMenuItemDefinition {
 
   /** for serialization. */
   private static final long serialVersionUID = 1668108539323372465L;

@@ -25,7 +25,7 @@ import adams.core.option.OptionUtils;
 import adams.data.conversion.AbstractStringConversion;
 import adams.data.conversion.UnBackQuote;
 import adams.gui.application.AbstractApplicationFrame;
-import adams.gui.application.AbstractMenuItemDefinition;
+import adams.gui.application.AbstractBasicMenuItemDefinition;
 import adams.gui.application.UserMode;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseTextAreaWithButtons;
@@ -50,7 +50,7 @@ import java.awt.event.ActionListener;
  * @version $Revision$
  */
 public class StringConversion
-  extends AbstractMenuItemDefinition {
+  extends AbstractBasicMenuItemDefinition {
 
   /** for serialization. */
   private static final long serialVersionUID = -3102369171000332548L;

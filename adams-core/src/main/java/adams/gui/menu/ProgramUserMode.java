@@ -28,7 +28,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
 import adams.gui.application.AbstractApplicationFrame;
-import adams.gui.application.AbstractMenuItemDefinition;
+import adams.gui.application.AbstractBasicMenuItemDefinition;
 import adams.gui.application.UserMode;
 import adams.gui.core.GUIHelper;
 
@@ -39,7 +39,7 @@ import adams.gui.core.GUIHelper;
  * @version $Revision$
  */
 public class ProgramUserMode
-  extends AbstractMenuItemDefinition {
+  extends AbstractBasicMenuItemDefinition {
 
   /** for serialization. */
   private static final long serialVersionUID = 2322866186840295800L;

@@ -23,7 +23,7 @@ package adams.gui.menu;
 
 import adams.core.base.BaseRegExp;
 import adams.gui.application.AbstractApplicationFrame;
-import adams.gui.application.AbstractMenuItemDefinition;
+import adams.gui.application.AbstractBasicMenuItemDefinition;
 import adams.gui.application.UserMode;
 import adams.gui.core.BasePanel;
 import adams.gui.core.GUIHelper;
@@ -46,7 +46,7 @@ import java.awt.event.ActionListener;
  * @version $Revision$
  */
 public class RegExpTest
-  extends AbstractMenuItemDefinition {
+  extends AbstractBasicMenuItemDefinition {
 
   /** for serialization. */
   private static final long serialVersionUID = 1947370537357191065L;

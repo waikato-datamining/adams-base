@@ -22,7 +22,7 @@
 package adams.gui.menu;
 
 import adams.gui.application.AbstractApplicationFrame;
-import adams.gui.application.AbstractMenuItemDefinition;
+import adams.gui.application.AbstractBasicMenuItemDefinition;
 import adams.gui.application.UserMode;
 import adams.gui.tools.NamedSetupManagementPanel;
 
@@ -33,7 +33,7 @@ import adams.gui.tools.NamedSetupManagementPanel;
  * @version $Revision$
  */
 public class NamedSetupManagement
-  extends AbstractMenuItemDefinition {
+  extends AbstractBasicMenuItemDefinition {
 
   /** for serialization. */
   private static final long serialVersionUID = 7296096432573720259L;

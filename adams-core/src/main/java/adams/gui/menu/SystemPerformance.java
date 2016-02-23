@@ -27,7 +27,7 @@ import adams.flow.control.Flow;
 import adams.flow.control.Flow.ErrorHandling;
 import adams.flow.core.Actor;
 import adams.gui.application.AbstractApplicationFrame;
-import adams.gui.application.AbstractMenuItemDefinition;
+import adams.gui.application.AbstractBasicMenuItemDefinition;
 import adams.gui.application.UserMode;
 import adams.gui.core.BaseFrame;
 import adams.gui.core.GUIHelper;
@@ -39,7 +39,7 @@ import adams.gui.core.GUIHelper;
  * @version $Revision$
  */
 public class SystemPerformance
-  extends AbstractMenuItemDefinition {
+  extends AbstractBasicMenuItemDefinition {
 
   /** for serialization. */
   private static final long serialVersionUID = 7586443345167287461L;

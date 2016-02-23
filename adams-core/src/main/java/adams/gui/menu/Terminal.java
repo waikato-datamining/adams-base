@@ -24,7 +24,7 @@ package adams.gui.menu;
 import java.io.File;
 
 import adams.gui.application.AbstractApplicationFrame;
-import adams.gui.application.AbstractMenuItemDefinition;
+import adams.gui.application.AbstractBasicMenuItemDefinition;
 import adams.gui.application.UserMode;
 
 /**
@@ -34,7 +34,7 @@ import adams.gui.application.UserMode;
  * @version $Revision: 8366 $
  */
 public class Terminal
-  extends AbstractMenuItemDefinition {
+  extends AbstractBasicMenuItemDefinition {
 
   /** for serialization. */
   private static final long serialVersionUID = -1476004907427664251L;

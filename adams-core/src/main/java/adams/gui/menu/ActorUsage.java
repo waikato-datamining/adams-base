@@ -37,7 +37,7 @@ import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.gui.application.AbstractApplicationFrame;
-import adams.gui.application.AbstractMenuItemDefinition;
+import adams.gui.application.AbstractBasicMenuItemDefinition;
 import adams.gui.application.UserMode;
 import adams.gui.chooser.BaseDirectoryChooser;
 import adams.gui.core.BaseTable;
@@ -57,7 +57,7 @@ import adams.gui.event.SearchListener;
  * @version $Revision$
  */
 public class ActorUsage
-  extends AbstractMenuItemDefinition {
+  extends AbstractBasicMenuItemDefinition {
 
   /** for serialization. */
   private static final long serialVersionUID = -6548349613973153076L;

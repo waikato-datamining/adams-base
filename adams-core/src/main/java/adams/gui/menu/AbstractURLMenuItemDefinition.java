@@ -23,7 +23,7 @@ package adams.gui.menu;
 
 import adams.gui.core.BrowserHelper;
 import adams.gui.application.AbstractApplicationFrame;
-import adams.gui.application.AbstractMenuItemDefinition;
+import adams.gui.application.AbstractBasicMenuItemDefinition;
 
 /**
  * Ancestor for menu item definitions that open a URL in a browser.
@@ -32,7 +32,7 @@ import adams.gui.application.AbstractMenuItemDefinition;
  * @version $Revision$
  */
 public abstract class AbstractURLMenuItemDefinition
-  extends AbstractMenuItemDefinition {
+  extends AbstractBasicMenuItemDefinition {
 
   /** for serialization. */
   private static final long serialVersionUID = 4757574306275240997L;

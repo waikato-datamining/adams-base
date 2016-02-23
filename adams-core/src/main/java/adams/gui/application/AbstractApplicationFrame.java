@@ -15,7 +15,7 @@
 
 /*
  * ApplicationFrame.java
- * Copyright (C) 2008-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2016 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -47,6 +47,7 @@ import adams.gui.core.MenuBarProvider;
 import adams.gui.scripting.ScriptingEngine;
 import adams.gui.scripting.ScriptingEngineHandler;
 import adams.gui.scripting.ScriptingLogPanel;
+import adams.scripting.engine.RemoteScriptingEngine;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -139,6 +140,9 @@ public abstract class AbstractApplicationFrame
 
   /** the logger to use. */
   protected Logger m_Logger;
+
+  /** the remote command scripting engine. */
+  protected RemoteScriptingEngine m_RemoteScriptingEngine;
   
   /**
    * Adds options to the internal list of options.
@@ -183,13 +187,14 @@ public abstract class AbstractApplicationFrame
 
     initializeLogger();
     
-    m_DbConn            = getDefaultDatabaseConnection();
+    m_DbConn                = getDefaultDatabaseConnection();
     m_DbConn.addChangeListener(this);
 
-    m_ScriptingLogPanel = new ScriptingLogPanel();
-    m_Children          = new HashSet<Child>();
+    m_ScriptingLogPanel     = new ScriptingLogPanel();
+    m_Children              = new HashSet<Child>();
 
-    m_AppMenu           = null;
+    m_AppMenu               = null;
+    m_RemoteScriptingEngine = null;
   }
   
   /**
@@ -1141,12 +1146,12 @@ public abstract class AbstractApplicationFrame
    */
   protected void startUpMenuItems() {
     int						i;
-    AbstractMenuItemDefinition			item;
-    final List<AbstractMenuItemDefinition>	items;
+    AbstractMenuItemDefinition 			item;
+    final List<AbstractBasicMenuItemDefinition>	items;
     Runnable					runnable;
 
     // collect menu items
-    items = new ArrayList<AbstractMenuItemDefinition>();
+    items = new ArrayList<AbstractBasicMenuItemDefinition>();
     for (i = 0; i < m_StartUps.length; i++) {
       item = AbstractMenuItemDefinition.forCommandLine(this, m_StartUps[i].toString());
       if (getAppMenu().isBlacklisted(item.getClass())) {
@@ -1160,19 +1165,16 @@ public abstract class AbstractApplicationFrame
 	    + getAppMenu().getUserMode() + "' (current: '" + getUserMode() + "')!");
 	continue;
       }
-      items.add(item);
+      if (item instanceof AbstractBasicMenuItemDefinition)
+	items.add((AbstractBasicMenuItemDefinition) item);
     }
 
     // start up menu items
     if (items.size() > 0) {
-      runnable = new Runnable() {
-	@Override
-	public void run() {
-	  for (int i = 0; i < items.size(); i++)
-	    items.get(i).launch();
-	}
-      };
-      SwingUtilities.invokeLater(runnable);
+      SwingUtilities.invokeLater(() -> {
+	for (AbstractBasicMenuItemDefinition it: items)
+	  it.launch();
+      });
     }
   }
 
@@ -1183,6 +1185,32 @@ public abstract class AbstractApplicationFrame
    */
   public ScriptingLogPanel getScriptingLogPanel() {
     return m_ScriptingLogPanel;
+  }
+
+  /**
+   * Sets the scripting engine to execute. Any running engine is stopped first.
+   *
+   * @param value	the engine to use, null to turn off scripting
+   */
+  public void setRemoteScriptingEngine(RemoteScriptingEngine value) {
+    if (m_RemoteScriptingEngine != null) {
+      getLogger().info("Stop listening for remote commands: " + m_RemoteScriptingEngine.getClass().getName());
+      m_RemoteScriptingEngine.stopExecution();
+    }
+    m_RemoteScriptingEngine = value;
+    if (value != null) {
+      getLogger().info("Start listening for remote commands: " + m_RemoteScriptingEngine.getClass().getName());
+      new Thread(() -> m_RemoteScriptingEngine.execute()).start();
+    }
+  }
+
+  /**
+   * Returns the current scripting engine if any.
+   *
+   * @return		the engine in use, null if none running
+   */
+  public RemoteScriptingEngine getRemoteScriptingEngine() {
+    return m_RemoteScriptingEngine;
   }
 
   /**

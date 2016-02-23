@@ -15,7 +15,7 @@
 
 /*
  * MenuItemCodelet.java
- * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -28,10 +28,7 @@ import adams.gui.core.GUIHelper;
 
 import javax.swing.ImageIcon;
 import javax.swing.JMenuItem;
-import javax.swing.SwingUtilities;
 import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.util.logging.Logger;
@@ -148,82 +145,11 @@ public abstract class AbstractMenuItemDefinition
   }
 
   /**
-   * Whether to use a simple runnable for launching or a separate thread.
-   *
-   * @return		true if to use separate thread
-   */
-  protected boolean getUseThread() {
-    return false;
-  }
-
-  /**
-   * Hook method that gets executed just before calling "launch()".
-   * <br><br>
-   * Default implementation does nothing.
-   */
-  public void preLaunch() {
-  }
-
-  /**
-   * Launches the functionality of the menu item.
-   */
-  public abstract void launch();
-
-  /**
-   * Hook method that gets executed just after calling "launch()".
-   * <br><br>
-   * Default implementation does nothing.
-   */
-  public void postLaunch() {
-  }
-
-  /**
    * Returns the JMenuItem to use.
    *
    * @return		the menu item
-   * @see		#launch()
    */
-  public JMenuItem getMenuItem() {
-    JMenuItem	result;
-
-    result = new JMenuItem();
-    result.setIcon(getIcon());
-    result.setText(getTitle());
-    result.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	if (isSingleton() && getOwner().containsWindow(getTitle())) {
-	  Child child = getOwner().getWindow(getTitle());
-	  if (child != null)
-	    getOwner().showWindow(child);
-	}
-	else {
-	  if (!getUseThread()) {
-	    Runnable run = new Runnable() {
-	      @Override
-	      public void run() {
-		preLaunch();
-		launch();
-		postLaunch();
-	      }
-	    };
-	    SwingUtilities.invokeLater(run);
-	  }
-	  else {
-	    Thread thread = new Thread(new Runnable() {
-	      public void run() {
-		preLaunch();
-		launch();
-		postLaunch();
-	      }
-	    });
-	    thread.start();
-	  }
-	}
-      }
-    });
-
-    return result;
-  }
+  public abstract JMenuItem getMenuItem();
 
   /**
    * Returns the title of the window (and text of menuitem).
@@ -376,7 +302,7 @@ public abstract class AbstractMenuItemDefinition
    * 			or null if an error occurred
    */
   public static AbstractMenuItemDefinition forCommandLine(AbstractApplicationFrame owner, String cmdline) {
-    AbstractMenuItemDefinition	result;
+    AbstractMenuItemDefinition result;
     String[]			tmp;
     String			classname;
     String[]			params;
@@ -407,7 +333,7 @@ public abstract class AbstractMenuItemDefinition
    * @return		the generated menu item definition, null in case of an error
    */
   public static AbstractMenuItemDefinition forName(AbstractApplicationFrame owner, String classname, String[] params) {
-    AbstractMenuItemDefinition	result;
+    AbstractMenuItemDefinition result;
     Class			cls;
     Constructor			constr;
 
