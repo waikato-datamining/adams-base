@@ -21,11 +21,9 @@
 package adams.scripting.command.gui;
 
 import adams.flow.control.Flow;
-import adams.flow.core.Actor;
 import adams.gui.application.AbstractBasicMenuItemDefinition;
 import adams.gui.menu.TextEditor;
-import adams.scripting.command.AbstractCommand;
-import adams.scripting.command.FlowAwareRemoteCommand;
+import adams.scripting.command.AbstractFlowAwareCommand;
 import adams.scripting.requesthandler.RequestHandler;
 import adams.scripting.responsehandler.ResponseHandler;
 
@@ -36,16 +34,12 @@ import adams.scripting.responsehandler.ResponseHandler;
  * @version $Revision$
  */
 public class MenuItem
-  extends AbstractCommand
-  implements FlowAwareRemoteCommand {
+  extends AbstractFlowAwareCommand {
 
   private static final long serialVersionUID = -2442701299622203913L;
 
   /** the menu item to executre. */
   protected AbstractBasicMenuItemDefinition m_MenuItem;
-
-  /** the flow context. */
-  protected Actor m_FlowContext;
 
   /**
    * Returns a string describing the object.
@@ -67,16 +61,6 @@ public class MenuItem
     m_OptionManager.add(
 	    "menu-item", "menuItem",
 	    new TextEditor());
-  }
-
-  /**
-   * Initializes the scheme.
-   */
-  @Override
-  protected void initialize() {
-    super.initialize();
-
-    m_FlowContext = null;
   }
 
   /**
@@ -106,24 +90,6 @@ public class MenuItem
    */
   public String menuItemTipText() {
     return "The menu item to launch.";
-  }
-
-  /**
-   * Sets the flow context.
-   *
-   * @param value	the actor
-   */
-  public void setFlowContent(Actor value) {
-    m_FlowContext = value;
-  }
-
-  /**
-   * Returns the flow context, if any.
-   *
-   * @return		the actor, null if none available
-   */
-  public Actor getFlowContext() {
-    return m_FlowContext;
   }
 
   /**
