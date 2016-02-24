@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2016-02-24 00:36:46
+# Date: 2016-02-25 11:07:04
 # User: fracpete
 # Charset: UTF-8
 adams.flow.control.Flow -annotation "Worker flow that performs 10-flow cross-validation using J48\\non the data that was sent with this worker flow to a remote\\ninstance of ADAMS.\\nYou need to run: adams-base-all-remote_execution-send_worker.flow" -flow-execution-listener adams.flow.execution.NullListener
@@ -12,5 +12,5 @@ adams.flow.control.Flow -annotation "Worker flow that performs 10-flow cross-val
  adams.flow.transformer.SetVariable -var-name body
  adams.flow.control.Trigger -name "send email"
   adams.flow.source.Start
-  adams.flow.transformer.CreateEmail -sender "\"Peter Reutemann\" <fracpete@waikato.ac.nz>" -recipient @{recipient} -subject results -body @{body}
+  adams.flow.transformer.CreateEmail -sender "\"Peter Reutemann\" <fracpete@waikato.ac.nz>" -recipient @{recipient} -subject @{subject} -body @{body}
   adams.flow.sink.SendEmail -send-email adams.core.net.JavaMailSendEmail

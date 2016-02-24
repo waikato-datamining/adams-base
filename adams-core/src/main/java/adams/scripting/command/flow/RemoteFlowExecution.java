@@ -21,12 +21,12 @@
 package adams.scripting.command.flow;
 
 import adams.core.SerializationHelper;
+import adams.core.VariableName;
 import adams.core.io.FlowFile;
 import adams.flow.control.StorageName;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorUtils;
 import adams.scripting.command.AbstractFlowAwareCommand;
-import adams.scripting.responsehandler.ResponseHandler;
 
 import java.util.HashMap;
 import java.util.logging.Level;
@@ -49,11 +49,17 @@ public class RemoteFlowExecution
   /** the storage items to transmit. */
   protected StorageName[] m_StorageNames;
 
+  /** the variables to transmit. */
+  protected VariableName[] m_VariableNames;
+
   /** the instantiated flow. */
   protected Actor m_Actor;
 
   /** the storage items. */
-  protected HashMap<String,Object> m_Data;
+  protected HashMap<String,Object> m_Storage;
+
+  /** the variables. */
+  protected HashMap<String,String> m_Variables;
 
   /**
    * Returns a string describing the object.
@@ -81,6 +87,10 @@ public class RemoteFlowExecution
     m_OptionManager.add(
       "storage-name", "storageNames",
       new StorageName[0]);
+
+    m_OptionManager.add(
+      "variable-name", "variableNames",
+      new VariableName[0]);
   }
 
   /**
@@ -90,8 +100,9 @@ public class RemoteFlowExecution
   protected void initialize() {
     super.initialize();
 
-    m_Actor = null;
-    m_Data  = new HashMap<>();
+    m_Actor     = null;
+    m_Storage   = new HashMap<>();
+    m_Variables = new HashMap<>();
   }
 
   /**
@@ -153,6 +164,35 @@ public class RemoteFlowExecution
   }
 
   /**
+   * Sets the names of the variables to transfer.
+   *
+   * @param value	the variable names
+   */
+  public void setVariableNames(VariableName[] value) {
+    m_VariableNames = value;
+    reset();
+  }
+
+  /**
+   * Returns the names of the variables to transfer.
+   *
+   * @return		the variable names
+   */
+  public VariableName[] getVariableNames() {
+    return m_VariableNames;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the gui
+   */
+  public String variableNamesTipText() {
+    return "The (optional) variables to transfer.";
+  }
+
+  /**
    * Sets the payload for the command.
    *
    * @param value	the payload
@@ -165,9 +205,10 @@ public class RemoteFlowExecution
       return;
 
     try {
-      data    = SerializationHelper.fromByteArray(value);
-      m_Actor = (Actor) data[0];
-      m_Data  = (HashMap<String,Object>) data[1];
+      data        = SerializationHelper.fromByteArray(value);
+      m_Actor     = (Actor) data[0];
+      m_Storage   = (HashMap<String,Object>) data[1];
+      m_Variables = (HashMap<String,String>) data[2];
     }
     catch (Exception e) {
       getLogger().log(Level.SEVERE, "Failed to deserialize payload!", e);
@@ -184,7 +225,7 @@ public class RemoteFlowExecution
     byte[]	result;
     Object[]	data;
 
-    data = new Object[]{m_Actor, m_Data};
+    data = new Object[]{m_Actor, m_Storage, m_Variables};
     try {
       result = SerializationHelper.toByteArray(data);
     }
@@ -202,7 +243,8 @@ public class RemoteFlowExecution
   @Override
   protected void prepareRequestPayload() {
     Actor			actor;
-    HashMap<String,Object>	data;
+    HashMap<String,Object> 	storage;
+    HashMap<String,String> 	vars;
 
     super.prepareRequestPayload();
 
@@ -211,12 +253,16 @@ public class RemoteFlowExecution
       getLogger().severe("Failed to load flow from: " + m_Flow);
     m_Actor = actor;
 
-    data = new HashMap<>();
+    storage = new HashMap<>();
+    vars    = new HashMap<>();
     if (getFlowContext() != null) {
       for (StorageName name : m_StorageNames)
-	data.put(name.getValue(), getFlowContext().getStorageHandler().getStorage().get(name));
+	storage.put(name.getValue(), getFlowContext().getStorageHandler().getStorage().get(name));
+      for (VariableName name : m_VariableNames)
+	vars.put(name.getValue(), getFlowContext().getVariables().get(name.getValue()));
     }
-    m_Data = data;
+    m_Storage   = storage;
+    m_Variables = vars;
   }
 
   /**
@@ -230,8 +276,10 @@ public class RemoteFlowExecution
     if (m_Actor != null) {
       result = m_Actor.setUp();
       if (result == null)
-	for (String key: m_Data.keySet())
-	  m_Actor.getStorageHandler().getStorage().put(new StorageName(key), m_Data.get(key));
+	for (String key: m_Storage.keySet())
+	  m_Actor.getStorageHandler().getStorage().put(new StorageName(key), m_Storage.get(key));
+	for (String key: m_Variables.keySet())
+	  m_Actor.getVariables().set(key, m_Variables.get(key));
 	// TODO better to put job in queue?
 	new Thread(() -> {
 	  String res = m_Actor.execute();
@@ -245,14 +293,6 @@ public class RemoteFlowExecution
     }
 
     return result;
-  }
-
-  /**
-   * Handles the response.
-   *
-   * @param handler	for handling the response
-   */
-  public void handleResponse(ResponseHandler handler) {
   }
 
   /**
