@@ -21,12 +21,9 @@
 package adams.scripting.command;
 
 import adams.core.Properties;
-import adams.core.Utils;
 import adams.core.option.AbstractOptionHandler;
 import adams.core.option.OptionUtils;
-import adams.env.Environment;
 import adams.gui.application.AbstractApplicationFrame;
-import org.apache.commons.codec.binary.Base64;
 
 /**
  * Ancestor for remote commands.
@@ -122,10 +119,8 @@ public abstract class AbstractCommand
    * @return		the generated string, null if failed to assemble
    */
   public String assembleRequest() {
-    StringBuilder	result;
     Properties		header;
     byte[]		payload;
-    String		data;
 
     // header
     header = assembleRequestHeader();
@@ -133,17 +128,8 @@ public abstract class AbstractCommand
     // payload
     prepareRequestPayload();
     payload = getPayload();
-    if (payload.length == 0)
-      data = "";
-    else
-      data = Base64.encodeBase64String(payload);
 
-    // command string
-    result = new StringBuilder();
-    result.append(header.toComment());
-    result.append(Utils.flatten(Utils.breakUp(data, PAYLOAD_WIDTH), "\n"));
-
-    return result.toString();
+    return CommandUtils.commandToString(header, payload);
   }
 
   /**

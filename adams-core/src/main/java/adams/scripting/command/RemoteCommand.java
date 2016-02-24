@@ -49,9 +49,6 @@ public interface RemoteCommand
   /** the Response value (type key). */
   String VALUE_RESPONSE = "Response";
 
-  /** the width in characters for the base64 encoded payload. */
-  int PAYLOAD_WIDTH = 72;
-
   /**
    * Sets the application context.
    *

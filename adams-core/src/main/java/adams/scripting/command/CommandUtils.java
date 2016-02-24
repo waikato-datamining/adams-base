@@ -41,6 +41,9 @@ import java.util.logging.Level;
  */
 public class CommandUtils {
 
+  /** the width in characters for the base64 encoded payload. */
+  public static final int PAYLOAD_WIDTH = 72;
+
   /**
    * Sends the command to the specified sscripting engine.
    *
@@ -152,6 +155,30 @@ public class CommandUtils {
     }
 
     return result;
+  }
+
+  /**
+   * Turns the command properties and payload into a single string to send.
+   *
+   * @param header	the header data
+   * @param payload	the payload
+   * @return		the assembled string
+   */
+  public static String commandToString(Properties header, byte[] payload) {
+    StringBuilder	result;
+    String		data;
+
+    if (payload.length == 0)
+      data = "";
+    else
+      data = Base64.encodeBase64String(payload);
+
+    // command string
+    result = new StringBuilder();
+    result.append(header.toComment());
+    result.append(Utils.flatten(Utils.breakUp(data, PAYLOAD_WIDTH), "\n"));
+
+    return result.toString();
   }
 
   /**
