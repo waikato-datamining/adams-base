@@ -22,7 +22,6 @@ package adams.scripting.command.basic;
 
 import adams.scripting.command.AbstractCommand;
 import adams.scripting.requesthandler.RequestHandler;
-import adams.scripting.responsehandler.ResponseHandler;
 
 /**
  * Kills the remote ADAMS instance.
@@ -73,16 +72,6 @@ public class Kill
   public void handleRequest(RequestHandler handler) {
     getLogger().info("Exiting");
     System.exit(0);
-  }
-
-  /**
-   * Does nothing.
-   *
-   * @param handler	for handling the response
-   */
-  @Override
-  public void handleResponse(ResponseHandler handler) {
-
   }
 
   /**

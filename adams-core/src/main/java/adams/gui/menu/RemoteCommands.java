@@ -33,6 +33,7 @@ import adams.gui.core.PropertiesParameterPanel.PropertyType;
 import adams.gui.dialog.ApprovalDialog;
 import adams.gui.goe.GenericObjectEditorDialog;
 import adams.gui.goe.GenericObjectEditorPanel;
+import adams.scripting.command.CommandUtils;
 import adams.scripting.command.RemoteCommand;
 import adams.scripting.command.basic.SystemInfo;
 import adams.scripting.engine.DefaultScriptingEngine;
@@ -222,7 +223,7 @@ public class RemoteCommands
 
     // send command
     m_LastCommand.setApplicationContext(getOwner());
-    msg = m_LastCommand.send(props.getProperty(KEY_HOST), props.getInteger(KEY_PORT), true);
+    msg = CommandUtils.sendRequest(m_LastCommand, props.getProperty(KEY_HOST), props.getInteger(KEY_PORT));
     if (msg != null)
       GUIHelper.showErrorMessage(null, "Failed to send command:\n" + msg);
   }

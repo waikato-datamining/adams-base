@@ -49,6 +49,7 @@ public interface RequestHandler {
    * Handles rejected requests.
    *
    * @param cmd		the command with the request
+   * @param msg		the optional error message, can be null
    */
-  public void requestRejected(RemoteCommand cmd);
+  public void requestRejected(RemoteCommand cmd, String msg);
 }

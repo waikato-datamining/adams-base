@@ -23,7 +23,6 @@ package adams.scripting.command.basic;
 import adams.core.management.Launcher;
 import adams.scripting.command.AbstractCommand;
 import adams.scripting.requesthandler.RequestHandler;
-import adams.scripting.responsehandler.ResponseHandler;
 
 /**
  * Attempts to restart the remote ADAMS instance.
@@ -123,16 +122,6 @@ public class Restart
       System.exit(Launcher.CODE_RESTART_MORE_HEAP);
     else
       System.exit(Launcher.CODE_RESTART);
-  }
-
-  /**
-   * Does nothing.
-   *
-   * @param handler	for handling the response
-   */
-  @Override
-  public void handleResponse(ResponseHandler handler) {
-
   }
 
   /**

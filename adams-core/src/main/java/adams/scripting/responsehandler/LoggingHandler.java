@@ -69,9 +69,10 @@ public class LoggingHandler
    * Handles failed responses.
    *
    * @param cmd		the command with the response
+   * @param msg		message, can be null
    */
   @Override
-  public void responseFailed(RemoteCommand cmd) {
-    getLogger().info("Failed response: " + OptionUtils.getCommandLine(cmd) + "\n" + cmd);
+  public void responseFailed(RemoteCommand cmd, String msg) {
+    getLogger().info("Failed response: " + OptionUtils.getCommandLine(cmd) + "\nMessage: " + msg + "\n" + cmd);
   }
 }

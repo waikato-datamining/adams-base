@@ -21,9 +21,9 @@
 package adams.scripting.command;
 
 import adams.core.Properties;
+import adams.core.logging.LoggingSupporter;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.scripting.requesthandler.RequestHandler;
-import adams.scripting.responsehandler.ResponseHandler;
 
 /**
  * Interface for remote commands. A string representation of a command
@@ -34,7 +34,8 @@ import adams.scripting.responsehandler.ResponseHandler;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public interface RemoteCommand {
+public interface RemoteCommand
+  extends LoggingSupporter {
 
   /** the key for the command in the header section of a command. */
   String KEY_COMMAND = "Command";
@@ -74,14 +75,6 @@ public interface RemoteCommand {
   public String parse(Properties header);
 
   /**
-   * Assembles the command into a string, including any payload.
-   *
-   * @param request	whether Request or Response
-   * @return		the generated string, null if failed to assemble
-   */
-  public String assemble(boolean request);
-
-  /**
    * Sets whether the command is a request or response.
    *
    * @param value	true if request
@@ -110,14 +103,11 @@ public interface RemoteCommand {
   public byte[] getPayload();
 
   /**
-   * Sends the command to the specified sscripting engine.
+   * Assembles the command into a string, including any payload.
    *
-   * @param host	the host to send the command to
-   * @param port	the host port
-   * @param request	whether Request or Response
-   * @return		null if successfully sent, otherwise error message
+   * @return		the generated string, null if failed to assemble
    */
-  public String send(String host, int port, boolean request);
+  public String assembleRequest();
 
   /**
    * Handles the request.
@@ -125,11 +115,4 @@ public interface RemoteCommand {
    * @param handler	for handling the request
    */
   public void handleRequest(RequestHandler handler);
-
-  /**
-   * Handles the response.
-   *
-   * @param handler	for handling the response
-   */
-  public void handleResponse(ResponseHandler handler);
 }

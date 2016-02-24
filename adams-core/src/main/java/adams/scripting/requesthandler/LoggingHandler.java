@@ -80,9 +80,10 @@ public class LoggingHandler
    * Handles rejected requests.
    *
    * @param cmd		the command with the request
+   * @param msg		the optional error message, can be null
    */
   @Override
-  public void requestRejected(RemoteCommand cmd) {
-    getLogger().info("Rejected request: " + OptionUtils.getCommandLine(cmd) + "\n" + cmd);
+  public void requestRejected(RemoteCommand cmd, String msg) {
+    getLogger().info("Rejected request: " + OptionUtils.getCommandLine(cmd) + "\nMessage: " + msg + "\n" + cmd);
   }
 }

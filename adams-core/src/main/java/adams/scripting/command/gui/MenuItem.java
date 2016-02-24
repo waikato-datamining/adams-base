@@ -25,7 +25,6 @@ import adams.gui.application.AbstractBasicMenuItemDefinition;
 import adams.gui.menu.TextEditor;
 import adams.scripting.command.AbstractFlowAwareCommand;
 import adams.scripting.requesthandler.RequestHandler;
-import adams.scripting.responsehandler.ResponseHandler;
 
 /**
  * Launches the specified menu item on the remote machine.
@@ -127,16 +126,6 @@ public class MenuItem
       m_MenuItem.setOwner(m_ApplicationContext);
     }
     m_MenuItem.launch();
-  }
-
-  /**
-   * Handles the response.
-   *
-   * @param handler	for handling the response
-   */
-  @Override
-  public void handleResponse(ResponseHandler handler) {
-
   }
 
   /**

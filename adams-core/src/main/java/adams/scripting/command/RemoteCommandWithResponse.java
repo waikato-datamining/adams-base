@@ -20,6 +20,8 @@
 
 package adams.scripting.command;
 
+import adams.scripting.responsehandler.ResponseHandler;
+
 /**
  * Interface for remote commands that send a response back to a host.
  *
@@ -72,4 +74,18 @@ public interface RemoteCommandWithResponse
    * 			displaying in the gui
    */
   public String responsePortTipText();
+
+  /**
+   * Assembles the command into a string, including any payload.
+   *
+   * @return		the generated string, null if failed to assemble
+   */
+  public String assembleResponse();
+
+  /**
+   * Handles the response.
+   *
+   * @param handler	for handling the response
+   */
+  public void handleResponse(ResponseHandler handler);
 }

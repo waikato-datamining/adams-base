@@ -57,9 +57,10 @@ public class NullHandler
    * Handles failed responses.
    *
    * @param cmd		the command with the response
+   * @param msg		message, can be null
    */
   @Override
-  public void responseFailed(RemoteCommand cmd) {
+  public void responseFailed(RemoteCommand cmd, String msg) {
     // does nothing
   }
 }

@@ -22,6 +22,7 @@ package adams.flow.sink;
 
 import adams.core.QuickInfoHelper;
 import adams.flow.core.Unknown;
+import adams.scripting.command.CommandUtils;
 import adams.scripting.command.FlowAwareRemoteCommand;
 import adams.scripting.command.RemoteCommand;
 import adams.scripting.command.basic.SystemInfo;
@@ -259,7 +260,7 @@ public class SendRemoteCommand
 
     if (m_Command instanceof FlowAwareRemoteCommand)
       ((FlowAwareRemoteCommand) m_Command).setFlowContent(this);
-    result = m_Command.send(m_Host, m_Port, true);
+    result = CommandUtils.sendRequest(m_Command, m_Host, m_Port);
 
     return result;
   }

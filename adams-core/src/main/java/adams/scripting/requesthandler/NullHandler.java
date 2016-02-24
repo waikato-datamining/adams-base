@@ -68,9 +68,10 @@ public class NullHandler
    * Handles rejected requests.
    *
    * @param cmd		the command with the request
+   * @param msg		the optional error message, can be null
    */
   @Override
-  public void requestRejected(RemoteCommand cmd) {
+  public void requestRejected(RemoteCommand cmd, String msg) {
     // does nothing
   }
 }

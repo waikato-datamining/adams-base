@@ -21,8 +21,9 @@
 package adams.scripting.engine;
 
 import adams.env.Environment;
-import adams.scripting.command.AbstractCommand;
+import adams.scripting.command.CommandUtils;
 import adams.scripting.command.RemoteCommand;
+import adams.scripting.command.RemoteCommandWithResponse;
 import gnu.trove.list.array.TByteArrayList;
 
 import java.io.InputStream;
@@ -82,20 +83,25 @@ public class DefaultScriptingEngine
 
     // instantiate command
     data = new String(bytes.toArray());
-    cmd  = AbstractCommand.parse(this, data);
+    cmd  = CommandUtils.parse(this, data);
 
     if (!m_PermissionHandler.permitted(cmd)) {
-      m_RequestHandler.requestRejected(cmd);
+      m_RequestHandler.requestRejected(cmd, "Not permitted!");
       return;
     }
 
     // handle command
     if (cmd != null) {
       cmd.setApplicationContext(getApplicationContext());
-      if (cmd.isRequest())
-        cmd.handleRequest(m_RequestHandler);
-      else
-        cmd.handleResponse(m_ResponseHandler);
+      if (cmd.isRequest()) {
+	cmd.handleRequest(m_RequestHandler);
+      }
+      else {
+	if (cmd instanceof RemoteCommandWithResponse)
+	  ((RemoteCommandWithResponse) cmd).handleResponse(m_ResponseHandler);
+	else
+	  getResponseHandler().responseFailed(cmd, "Command does not support response handling!");
+      }
     }
   }
 

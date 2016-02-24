@@ -22,18 +22,11 @@ package adams.scripting.command;
 
 import adams.core.Properties;
 import adams.core.Utils;
-import adams.core.logging.LoggingObject;
 import adams.core.option.AbstractOptionHandler;
 import adams.core.option.OptionUtils;
 import adams.env.Environment;
 import adams.gui.application.AbstractApplicationFrame;
 import org.apache.commons.codec.binary.Base64;
-
-import java.net.Socket;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Level;
 
 /**
  * Ancestor for remote commands.
@@ -124,51 +117,21 @@ public abstract class AbstractCommand
   }
 
   /**
-   * Assembles the response header.
-   *
-   * @return		the response header
-   */
-  protected Properties assembleResponseHeader() {
-    Properties		result;
-
-    result = new Properties();
-    result.setProperty(KEY_COMMAND, OptionUtils.getCommandLine(this));
-    result.setProperty(KEY_TYPE, VALUE_RESPONSE);
-
-    return result;
-  }
-
-  /**
-   * Hook method for preparing the response payload,
-   * <br>
-   * Default implementatio does nothing.
-   */
-  protected void prepareResponsePayload() {
-  }
-
-  /**
    * Assembles the command into a string, including any payload.
    *
-   * @param request	whether Request or Response
    * @return		the generated string, null if failed to assemble
    */
-  public String assemble(boolean request) {
+  public String assembleRequest() {
     StringBuilder	result;
     Properties		header;
     byte[]		payload;
     String		data;
 
     // header
-    if (request)
-      header = assembleRequestHeader();
-    else
-      header = assembleResponseHeader();
+    header = assembleRequestHeader();
 
     // payload
-    if (request)
-      prepareRequestPayload();
-    else
-      prepareResponsePayload();
+    prepareRequestPayload();
     payload = getPayload();
     if (payload.length == 0)
       data = "";
@@ -181,35 +144,6 @@ public abstract class AbstractCommand
     result.append(Utils.flatten(Utils.breakUp(data, PAYLOAD_WIDTH), "\n"));
 
     return result.toString();
-  }
-
-  /**
-   * Sends the command to the specified sscripting engine.
-   *
-   * @param host	the host to send the command to
-   * @param port	the host port
-   * @param request	whether Request or Response
-   * @return		null if successfully sent, otherwise error message
-   */
-  public String send(String host, int port, boolean request) {
-    String	result;
-    String	data;
-    Socket 	socket;
-
-    result = null;
-    data   = assemble(request);
-    try {
-      socket = new Socket(host, port);
-      socket.getOutputStream().write(data.getBytes(Charset.forName("US-ASCII")));
-      socket.getOutputStream().flush();
-      socket.close();
-    }
-    catch (Exception e) {
-      result = Utils.handleException(
-	this, "Failed to send " + (request ? "request" : "response") + " to " + host + ":" + port, e);
-    }
-
-    return result;
   }
 
   /**
@@ -234,100 +168,4 @@ public abstract class AbstractCommand
    */
   public abstract String toString();
 
-  /**
-   * Instantiates the command from the received data string.
-   *
-   * @param owner	the optional owner, for logging purposes
-   * @param data	the data string to parse
-   * @return		the instantiated command, null if failed to parse
-   */
-  public static RemoteCommand parse(LoggingObject owner, String data) {
-    RemoteCommand	result;
-    List<String> 	headerLines;
-    Properties 		header;
-    List<String> 	payloadLines;
-    String[]		lines;
-    boolean		start;
-    byte[] 		payload;
-    String		cmd;
-
-    lines        = Utils.split(data, "\n");
-    headerLines  = new ArrayList<>();
-    payloadLines = new ArrayList<>();
-    start        = true;
-    for (String line: lines) {
-      if (start && line.startsWith(Properties.COMMENT)) {
-	headerLines.add(line);
-      }
-      else {
-	payloadLines.add(line);
-	start = false;
-      }
-    }
-
-    header = Properties.fromComment(Utils.flatten(headerLines, "\n"));
-    // compression needs to be handle by individual commands
-    payload = Base64.decodeBase64((Utils.flatten(payloadLines, "").getBytes()));
-
-    cmd = header.getProperty(KEY_COMMAND, "");
-    if (cmd.isEmpty()) {
-      if (owner != null)
-	owner.getLogger().severe("No command present in content, failed to parse!");
-      return null;
-    }
-
-    // instantiate command
-    try {
-      result = (RemoteCommand) OptionUtils.forCommandLine(RemoteCommand.class, cmd);
-      result.parse(header);
-      result.setPayload(payload);
-    }
-    catch (Exception e) {
-      if (owner != null)
-	owner.getLogger().log(Level.SEVERE, "Failed to instantiate commandline: " + cmd, e);
-      result = null;
-    }
-
-    return result;
-  }
-
-  /**
-   * For testing commands from the commandline. Parameters:
-   * <host> <port> <request:true|false> <cmd> [<options>]
-   *
-   * @param args	the commandline arguments
-   * @throws Exception	if instantiation of command fails
-   */
-  public static void main(String[] args) throws Exception {
-    String 		host;
-    int 		port;
-    boolean		request;
-    String 		cname;
-    RemoteCommand 	cmd;
-    String		msg;
-
-    if (args.length < 4) {
-      System.err.println("Usage: <host> <port> <request:true|false> <cmd> [<options>]");
-      return;
-    }
-
-    Environment.setEnvironmentClass(Environment.class);
-
-    host    = args[0];
-    port    = Integer.parseInt(args[1]);
-    request = Boolean.parseBoolean(args[2]);
-    cname   = args[3];
-    args[0] = "";
-    args[1] = "";
-    args[2] = "";
-    args[3] = "";
-    cmd = (RemoteCommand) OptionUtils.forName(RemoteCommand.class, cname, args);
-    if (cmd == null) {
-      System.err.println("Failed to instantiate command!");
-      return;
-    }
-    msg = cmd.send(host, port, request);
-    if (msg != null)
-      System.err.println(msg);
-  }
 }

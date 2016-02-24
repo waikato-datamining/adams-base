@@ -20,8 +20,12 @@
 
 package adams.scripting.command;
 
+import adams.core.Properties;
+import adams.core.Utils;
+import adams.core.option.OptionUtils;
 import adams.scripting.requesthandler.RequestHandler;
 import adams.scripting.responsehandler.ResponseHandler;
+import org.apache.commons.codec.binary.Base64;
 
 /**
  * Ancestor for commands that send a response.
@@ -118,6 +122,59 @@ public abstract class AbstractCommandWithResponse
   }
 
   /**
+   * Assembles the response header.
+   *
+   * @return		the response header
+   */
+  protected Properties assembleResponseHeader() {
+    Properties		result;
+
+    result = new Properties();
+    result.setProperty(KEY_COMMAND, OptionUtils.getCommandLine(this));
+    result.setProperty(KEY_TYPE, VALUE_RESPONSE);
+
+    return result;
+  }
+
+  /**
+   * Hook method for preparing the response payload,
+   * <br>
+   * Default implementation does nothing.
+   */
+  protected void prepareResponsePayload() {
+  }
+
+  /**
+   * Assembles the command into a string, including any payload.
+   *
+   * @return		the generated string, null if failed to assemble
+   */
+  public String assembleResponse() {
+    StringBuilder	result;
+    Properties		header;
+    byte[]		payload;
+    String		data;
+
+    // header
+    header = assembleResponseHeader();
+
+    // payload
+    prepareResponsePayload();
+    payload = getPayload();
+    if (payload.length == 0)
+      data = "";
+    else
+      data = Base64.encodeBase64String(payload);
+
+    // command string
+    result = new StringBuilder();
+    result.append(header.toComment());
+    result.append(Utils.flatten(Utils.breakUp(data, PAYLOAD_WIDTH), "\n"));
+
+    return result.toString();
+  }
+
+  /**
    * Handles the request.
    *
    * @param handler	for handling the request
@@ -125,7 +182,7 @@ public abstract class AbstractCommandWithResponse
   public void handleRequest(RequestHandler handler) {
     String			msg;
 
-    msg = send(m_ResponseHost, m_ResponsePort, false);
+    msg = CommandUtils.send(this, m_ResponseHost, m_ResponsePort, false);
     if (msg != null)
       handler.requestFailed(this, msg);
     else

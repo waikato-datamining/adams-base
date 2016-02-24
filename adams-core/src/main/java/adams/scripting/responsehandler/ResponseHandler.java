@@ -41,6 +41,7 @@ public interface ResponseHandler {
    * Handles failed responses.
    *
    * @param cmd		the command with the response
+   * @param msg		message, can be null
    */
-  public void responseFailed(RemoteCommand cmd);
+  public void responseFailed(RemoteCommand cmd, String msg);
 }
