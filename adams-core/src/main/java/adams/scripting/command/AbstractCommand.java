@@ -24,6 +24,7 @@ import adams.core.Properties;
 import adams.core.option.AbstractOptionHandler;
 import adams.core.option.OptionUtils;
 import adams.gui.application.AbstractApplicationFrame;
+import adams.scripting.engine.RemoteScriptingEngine;
 import adams.scripting.requesthandler.RequestHandler;
 
 /**
@@ -136,19 +137,22 @@ public abstract class AbstractCommand
   /**
    * Handles the request.
    *
+   * @param engine	the remote engine handling the request
    * @return		null if successful, otherwise error message
    */
-  protected abstract String doHandleRequest();
+  protected abstract String doHandleRequest(RemoteScriptingEngine engine);
 
   /**
    * Handles the request.
    *
+   * @param engine	the remote engine handling the request
    * @param handler	for handling the request
    */
-  public void handleRequest(RequestHandler handler) {
+  @Override
+  public void handleRequest(RemoteScriptingEngine engine, RequestHandler handler) {
     String	msg;
 
-    msg = doHandleRequest();
+    msg = doHandleRequest(engine);
     if (msg != null)
       handler.requestFailed(this, msg);
     else
@@ -176,5 +180,4 @@ public abstract class AbstractCommand
    * @return		the description
    */
   public abstract String toString();
-
 }

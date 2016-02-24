@@ -20,6 +20,7 @@
 
 package adams.scripting.command;
 
+import adams.scripting.engine.RemoteScriptingEngine;
 import adams.scripting.responsehandler.ResponseHandler;
 
 /**
@@ -85,7 +86,8 @@ public interface RemoteCommandWithResponse
   /**
    * Handles the response.
    *
+   * @param engine	the remote engine handling the response
    * @param handler	for handling the response
    */
-  public void handleResponse(ResponseHandler handler);
+  public void handleResponse(RemoteScriptingEngine engine, ResponseHandler handler);
 }

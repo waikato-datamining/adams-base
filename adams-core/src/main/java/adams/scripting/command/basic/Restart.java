@@ -22,6 +22,7 @@ package adams.scripting.command.basic;
 
 import adams.core.management.Launcher;
 import adams.scripting.command.AbstractCommand;
+import adams.scripting.engine.RemoteScriptingEngine;
 
 /**
  * Attempts to restart the remote ADAMS instance.
@@ -112,9 +113,10 @@ public class Restart
   /**
    * Handles the request.
    *
+   * @param engine	the remote engine handling the request
    * @return		null if successful, otherwise error message
    */
-  protected String doHandleRequest() {
+  protected String doHandleRequest(RemoteScriptingEngine engine) {
     getLogger().info("Restarting" + (m_MoreMemory ? " using more memory" : ""));
     if (m_MoreMemory)
       System.exit(Launcher.CODE_RESTART_MORE_HEAP);

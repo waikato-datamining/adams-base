@@ -32,6 +32,7 @@ import adams.core.option.OptionUtils;
 import adams.env.Environment;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.scripting.ScriptingEngine;
+import adams.multiprocess.CallableWithResult;
 import adams.scripting.permissionhandler.AllowAll;
 import adams.scripting.permissionhandler.PermissionHandler;
 import adams.scripting.requesthandler.RequestHandler;
@@ -40,6 +41,8 @@ import adams.scripting.responsehandler.ResponseHandler;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Ancestor of scripting engine for remote commands.
@@ -71,6 +74,9 @@ public abstract class AbstractScriptingEngine
   /** the timeout for the socket. */
   protected int m_Timeout;
 
+  /** the number of concurrent jobs to allow. */
+  protected int m_MaxConcurrentJobs;
+
   /** whether the engine is paused. */
   protected boolean m_Paused;
 
@@ -79,6 +85,9 @@ public abstract class AbstractScriptingEngine
 
   /** for accepting connections. */
   protected transient ServerSocket m_Server;
+
+  /** the executor service to use for parallel execution. */
+  protected ExecutorService m_Executor;
 
   /**
    * Adds options to the internal list of options.
@@ -106,6 +115,10 @@ public abstract class AbstractScriptingEngine
     m_OptionManager.add(
       "timeout", "timeout",
       3000, 100, null);
+
+    m_OptionManager.add(
+      "max-concurrent-jobs", "maxConcurrentJobs",
+      1, 1, null);
   }
 
   /**
@@ -288,6 +301,37 @@ public abstract class AbstractScriptingEngine
   }
 
   /**
+   * Sets the maximum number of concurrent jobs to execute.
+   *
+   * @param value	the number of jobs
+   */
+  public void setMaxConcurrentJobs(int value) {
+    if (getOptionManager().isValid("maxConcurrentJobs", value)) {
+      m_MaxConcurrentJobs = value;
+      reset();
+    }
+  }
+
+  /**
+   * Returns the maximum number of concurrent jobs to execute.
+   *
+   * @return		the number of jobs
+   */
+  public int getMaxConcurrentJobs() {
+    return m_MaxConcurrentJobs;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the gui
+   */
+  public String maxConcurrentJobsTipText() {
+    return "The maximum number of concurrent jobs to execute.";
+  }
+
+  /**
    * Sets the application context.
    *
    * @param value	the context
@@ -303,6 +347,15 @@ public abstract class AbstractScriptingEngine
    */
   public AbstractApplicationFrame getApplicationContext() {
     return m_ApplicationContext;
+  }
+
+  /**
+   * Queues the job in the execution pipeline.
+   *
+   * @param job		the job to queue
+   */
+  public void queueJob(CallableWithResult<String> job) {
+    m_Executor.submit(job);
   }
 
   /**
@@ -339,6 +392,9 @@ public abstract class AbstractScriptingEngine
 
     // wait for connections
     if (m_Server != null) {
+      // start up job queue
+      m_Executor = Executors.newFixedThreadPool(m_MaxConcurrentJobs);
+
       while (!m_Stopped) {
 	while (m_Paused && !m_Stopped) {
 	  Utils.wait(this, this, 1000, 50);
@@ -361,6 +417,14 @@ public abstract class AbstractScriptingEngine
     }
 
     closeSocket();
+
+    if (!m_Executor.isTerminated()) {
+      getLogger().info("Shutting down job queue...");
+      m_Executor.shutdown();
+      while (!m_Executor.isTerminated())
+	Utils.wait(this, 1000, 100);
+      getLogger().info("Job queue shut down");
+    }
 
     return result;
   }
@@ -413,6 +477,7 @@ public abstract class AbstractScriptingEngine
   public void stopExecution() {
     m_Stopped = true;
     m_Paused  = false;
+    m_Executor.shutdownNow();
     closeSocket();
   }
 

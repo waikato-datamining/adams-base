@@ -23,6 +23,7 @@ package adams.scripting.command;
 import adams.core.Properties;
 import adams.core.logging.LoggingSupporter;
 import adams.gui.application.AbstractApplicationFrame;
+import adams.scripting.engine.RemoteScriptingEngine;
 import adams.scripting.requesthandler.RequestHandler;
 
 /**
@@ -109,7 +110,8 @@ public interface RemoteCommand
   /**
    * Handles the request.
    *
+   * @param engine	the remote engine handling the request
    * @param handler	for handling the request
    */
-  public void handleRequest(RequestHandler handler);
+  public void handleRequest(RemoteScriptingEngine engine, RequestHandler handler);
 }

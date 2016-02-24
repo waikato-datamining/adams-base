@@ -37,7 +37,7 @@ public interface FlowAwareRemoteCommand
    *
    * @param value	the actor
    */
-  public void setFlowContent(Actor value);
+  public void setFlowContext(Actor value);
 
   /**
    * Returns the flow context, if any.

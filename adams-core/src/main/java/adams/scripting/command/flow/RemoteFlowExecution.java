@@ -26,7 +26,9 @@ import adams.core.io.FlowFile;
 import adams.flow.control.StorageName;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorUtils;
+import adams.multiprocess.CallableWithResult;
 import adams.scripting.command.AbstractFlowAwareCommand;
+import adams.scripting.engine.RemoteScriptingEngine;
 
 import java.util.HashMap;
 import java.util.logging.Level;
@@ -268,25 +270,33 @@ public class RemoteFlowExecution
   /**
    * Handles the request.
    *
+   * @param engine	the remote engine handling the request
    * @return		null if successful, otherwise error message
    */
-  protected String doHandleRequest() {
+  protected String doHandleRequest(RemoteScriptingEngine engine) {
     String 	result;
 
     if (m_Actor != null) {
       result = m_Actor.setUp();
-      if (result == null)
-	for (String key: m_Storage.keySet())
+      if (result == null) {
+	// transfer data
+	for (String key : m_Storage.keySet())
 	  m_Actor.getStorageHandler().getStorage().put(new StorageName(key), m_Storage.get(key));
-	for (String key: m_Variables.keySet())
+	for (String key : m_Variables.keySet())
 	  m_Actor.getVariables().set(key, m_Variables.get(key));
-	// TODO better to put job in queue?
-	new Thread(() -> {
-	  String res = m_Actor.execute();
-	  if (res != null)
-	    getLogger().severe("Actor not successful:\n" + res);
-	  m_Actor.cleanUp();
-	}).start();
+
+	// queue job
+	engine.queueJob(new CallableWithResult<String>() {
+	  @Override
+	  protected String doCall() throws Exception {
+	    String res = m_Actor.execute();
+	    if (res != null)
+	      getLogger().severe("Actor not successful:\n" + res);
+	    m_Actor.cleanUp();
+	    return res;
+	  }
+	});
+      }
     }
     else {
       result = "No actor to execute!";

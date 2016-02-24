@@ -94,11 +94,11 @@ public class DefaultScriptingEngine
     if (cmd != null) {
       cmd.setApplicationContext(getApplicationContext());
       if (cmd.isRequest()) {
-	cmd.handleRequest(m_RequestHandler);
+	cmd.handleRequest(this, m_RequestHandler);
       }
       else {
 	if (cmd instanceof RemoteCommandWithResponse)
-	  ((RemoteCommandWithResponse) cmd).handleResponse(m_ResponseHandler);
+	  ((RemoteCommandWithResponse) cmd).handleResponse(this, m_ResponseHandler);
 	else
 	  getResponseHandler().responseFailed(cmd, "Command does not support response handling!");
       }

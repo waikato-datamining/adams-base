@@ -22,6 +22,7 @@ package adams.scripting.command;
 
 import adams.core.Properties;
 import adams.core.option.OptionUtils;
+import adams.scripting.engine.RemoteScriptingEngine;
 import adams.scripting.responsehandler.ResponseHandler;
 
 /**
@@ -163,18 +164,22 @@ public abstract class AbstractCommandWithResponse
   /**
    * Handles the request.
    *
+   * @param engine	the remote engine handling the request
    * @return		null if successful, otherwise error message
    */
-  protected String doHandleRequest() {
+  @Override
+  protected String doHandleRequest(RemoteScriptingEngine engine) {
     return CommandUtils.send(this, m_ResponseHost, m_ResponsePort, false);
   }
 
   /**
    * Handles the response.
    *
+   * @param engine	the remote engine handling the response
    * @param handler	for handling the response
    */
-  public void handleResponse(ResponseHandler handler) {
+  @Override
+  public void handleResponse(RemoteScriptingEngine engine, ResponseHandler handler) {
     handler.responseSuccessful(this);
   }
 }

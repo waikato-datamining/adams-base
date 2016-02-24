@@ -52,7 +52,7 @@ public abstract class AbstractFlowAwareCommandWithResponse
    *
    * @param value	the actor
    */
-  public void setFlowContent(Actor value) {
+  public void setFlowContext(Actor value) {
     m_FlowContext = value;
   }
 

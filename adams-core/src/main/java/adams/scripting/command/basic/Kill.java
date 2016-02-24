@@ -21,6 +21,7 @@
 package adams.scripting.command.basic;
 
 import adams.scripting.command.AbstractCommand;
+import adams.scripting.engine.RemoteScriptingEngine;
 
 /**
  * Kills the remote ADAMS instance.
@@ -65,9 +66,11 @@ public class Kill
   /**
    * Handles the request.
    *
+   * @param engine	the remote engine handling the request
    * @return		null if successful, otherwise error message
    */
-  protected String doHandleRequest() {
+  @Override
+  protected String doHandleRequest(RemoteScriptingEngine engine) {
     getLogger().info("Exiting");
     System.exit(0);
     return null;
