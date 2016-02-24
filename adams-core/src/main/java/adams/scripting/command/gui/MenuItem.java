@@ -20,11 +20,13 @@
 
 package adams.scripting.command.gui;
 
+import adams.core.base.AbstractBaseString;
+import adams.core.base.BaseString;
 import adams.flow.control.Flow;
 import adams.gui.application.AbstractBasicMenuItemDefinition;
+import adams.gui.application.AdditionalParameterHandler;
 import adams.gui.menu.TextEditor;
 import adams.scripting.command.AbstractFlowAwareCommand;
-import adams.scripting.requesthandler.RequestHandler;
 
 /**
  * Launches the specified menu item on the remote machine.
@@ -39,6 +41,9 @@ public class MenuItem
 
   /** the menu item to executre. */
   protected AbstractBasicMenuItemDefinition m_MenuItem;
+
+  /** additional paramers. */
+  protected BaseString[] m_AdditionalParameters;
 
   /**
    * Returns a string describing the object.
@@ -60,6 +65,10 @@ public class MenuItem
     m_OptionManager.add(
 	    "menu-item", "menuItem",
 	    new TextEditor());
+
+    m_OptionManager.add(
+	    "additional-parameter", "additionalParameters",
+	    new BaseString[0]);
   }
 
   /**
@@ -92,6 +101,39 @@ public class MenuItem
   }
 
   /**
+   * Sets the (optional) additional parameters for the menu item, in case
+   * it implements {@link AdditionalParameterHandler}.
+   *
+   * @param value 	the parameters
+   */
+  public void setAdditionalParameters(BaseString[] value) {
+    m_AdditionalParameters = value;
+    reset();
+  }
+
+  /**
+   * Returns the (optional) additional parameters for the menu item, in case
+   * it implements {@link AdditionalParameterHandler}.
+   *
+   * @return 		the parameters
+   */
+  public BaseString[] getAdditionalParameters() {
+    return m_AdditionalParameters;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String additionalParametersTipText() {
+    return
+      "The (optional) additional parameters for the menu item, in case it "
+	+ "implements " + AdditionalParameterHandler.class.getName() + ".";
+  }
+
+  /**
    * Sets the payload for the command.
    *
    * @param value	the payload
@@ -114,10 +156,10 @@ public class MenuItem
   /**
    * Handles the request.
    *
-   * @param handler	for handling the request
+   * @return		null if successful, otherwise error message
    */
   @Override
-  public void handleRequest(RequestHandler handler) {
+  protected String doHandleRequest() {
     if (m_FlowContext != null) {
       if (m_FlowContext.getRoot() instanceof Flow)
 	m_MenuItem.setOwner(((Flow) m_FlowContext.getRoot()).getApplicationFrame());
@@ -125,7 +167,14 @@ public class MenuItem
     else if (m_ApplicationContext != null) {
       m_MenuItem.setOwner(m_ApplicationContext);
     }
+
+    // additional parameters?
+    if ((m_AdditionalParameters.length > 0) && (m_MenuItem instanceof AdditionalParameterHandler))
+      ((AdditionalParameterHandler) m_MenuItem).setAdditionalParameters(AbstractBaseString.toStringArray(m_AdditionalParameters));
+
     m_MenuItem.launch();
+
+    return null;
   }
 
   /**

@@ -22,7 +22,6 @@ package adams.scripting.command.basic;
 
 import adams.core.management.Launcher;
 import adams.scripting.command.AbstractCommand;
-import adams.scripting.requesthandler.RequestHandler;
 
 /**
  * Attempts to restart the remote ADAMS instance.
@@ -113,15 +112,15 @@ public class Restart
   /**
    * Handles the request.
    *
-   * @param handler	for handling the request
+   * @return		null if successful, otherwise error message
    */
-  @Override
-  public void handleRequest(RequestHandler handler) {
+  protected String doHandleRequest() {
     getLogger().info("Restarting" + (m_MoreMemory ? " using more memory" : ""));
     if (m_MoreMemory)
       System.exit(Launcher.CODE_RESTART_MORE_HEAP);
     else
       System.exit(Launcher.CODE_RESTART);
+    return null;
   }
 
   /**

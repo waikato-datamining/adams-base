@@ -22,7 +22,6 @@ package adams.scripting.command;
 
 import adams.core.Properties;
 import adams.core.option.OptionUtils;
-import adams.scripting.requesthandler.RequestHandler;
 import adams.scripting.responsehandler.ResponseHandler;
 
 /**
@@ -164,16 +163,10 @@ public abstract class AbstractCommandWithResponse
   /**
    * Handles the request.
    *
-   * @param handler	for handling the request
+   * @return		null if successful, otherwise error message
    */
-  public void handleRequest(RequestHandler handler) {
-    String			msg;
-
-    msg = CommandUtils.send(this, m_ResponseHost, m_ResponsePort, false);
-    if (msg != null)
-      handler.requestFailed(this, msg);
-    else
-      handler.requestSuccessful(this);
+  protected String doHandleRequest() {
+    return CommandUtils.send(this, m_ResponseHost, m_ResponsePort, false);
   }
 
   /**

@@ -26,7 +26,6 @@ import adams.flow.control.StorageName;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorUtils;
 import adams.scripting.command.AbstractFlowAwareCommand;
-import adams.scripting.requesthandler.RequestHandler;
 import adams.scripting.responsehandler.ResponseHandler;
 
 import java.util.HashMap;
@@ -223,14 +222,14 @@ public class RemoteFlowExecution
   /**
    * Handles the request.
    *
-   * @param handler	for handling the request
+   * @return		null if successful, otherwise error message
    */
-  public void handleRequest(RequestHandler handler) {
-    String	msg;
+  protected String doHandleRequest() {
+    String 	result;
 
     if (m_Actor != null) {
-      msg = m_Actor.setUp();
-      if (msg == null)
+      result = m_Actor.setUp();
+      if (result == null)
 	for (String key: m_Data.keySet())
 	  m_Actor.getStorageHandler().getStorage().put(new StorageName(key), m_Data.get(key));
 	// TODO better to put job in queue?
@@ -242,13 +241,10 @@ public class RemoteFlowExecution
 	}).start();
     }
     else {
-      msg = "No actor to execute!";
+      result = "No actor to execute!";
     }
 
-    if (msg != null)
-      handler.requestFailed(this, msg);
-    else
-      handler.requestSuccessful(this);
+    return result;
   }
 
   /**

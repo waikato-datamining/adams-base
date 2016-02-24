@@ -24,6 +24,7 @@ import adams.core.Properties;
 import adams.core.option.AbstractOptionHandler;
 import adams.core.option.OptionUtils;
 import adams.gui.application.AbstractApplicationFrame;
+import adams.scripting.requesthandler.RequestHandler;
 
 /**
  * Ancestor for remote commands.
@@ -130,6 +131,28 @@ public abstract class AbstractCommand
     payload = getPayload();
 
     return CommandUtils.commandToString(header, payload);
+  }
+
+  /**
+   * Handles the request.
+   *
+   * @return		null if successful, otherwise error message
+   */
+  protected abstract String doHandleRequest();
+
+  /**
+   * Handles the request.
+   *
+   * @param handler	for handling the request
+   */
+  public void handleRequest(RequestHandler handler) {
+    String	msg;
+
+    msg = doHandleRequest();
+    if (msg != null)
+      handler.requestFailed(this, msg);
+    else
+      handler.requestSuccessful(this);
   }
 
   /**
