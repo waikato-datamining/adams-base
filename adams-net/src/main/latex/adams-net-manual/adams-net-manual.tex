@@ -58,8 +58,10 @@
 \listoffigures
 %\listoftables
 
+%%%%%%%%%
+% Email %
+%%%%%%%%%
 
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Email}
 Flows are ideal for being run as background jobs (``-headless'' flag). For
 example, importing or processing data in batches can be done at night time. 
@@ -170,6 +172,10 @@ extension is used (by default).
 Use the \textit{-h} or \textit{-help} option on the command-line to list all 
 the available options.
 
+%%%%%%%
+% FTP %
+%%%%%%%
+
 \chapter{FTP}
 In addition to Email, ADAMS also supports FTP (file transfer protocol). Since
 FTP does not encrypt the commands or transferred data, it is recommended to not
@@ -194,6 +200,10 @@ The \textit{FTPConnection} standalone allows you to enter the password at
 runtime, if you do not want to store the password with the
 flow setup. At execution time, the user gets prompted with a dialog to enter
 a password to be used for the connection.
+
+%%%%%%%
+% SSH %
+%%%%%%%
 
 \chapter{SSH}
 ADAMS also comes with SSH support, thanks to the JSch library
@@ -220,6 +230,10 @@ to enter a password, in case you do not want to store the connection's password
 with the flow setup. The user has to enter the password through a dialog that
 pops up when the flow gets executed.
 
+%%%%%%%
+% SSL %
+%%%%%%%
+
 \chapter{SSL}
 How ADAMS handles SSL, e.g., for HTTPS connections, can be configured in the
 \textit{SSL} preferences. Figure \ref{ssl_setup} shows a screenshot of the
@@ -232,6 +246,25 @@ default settings.
   \label{ssl_setup}
 \end{figure}
 
+%%%%%%%%%%%%%%%%%%%
+% Remote commands %
+%%%%%%%%%%%%%%%%%%%
+
+\chapter{Remote commands}
+
+The \textit{adams-net} module adds a connection scheme to the remote command
+framework that uses SSH tunnelling. With this setup, it is possible to route
+remote commands through to a remote server via SSH. Useful, since remote
+servers are usually locked down and only have a few ports, like SSH, open.
+
+\begin{verbatim}
+adams.scripting.connection.SSHConnection
+\end{verbatim}
+
+
+%%%%%%%%
+% Misc %
+%%%%%%%%
 
 \chapter{Miscellaneous}
 Some other basic, but useful actors are the following:
