@@ -16,10 +16,13 @@
 /**
  * JSchUtils.java
  * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) JSch
  */
 
 package adams.core.net;
 
+import adams.core.License;
+import adams.core.annotation.MixedCopyright;
 import adams.core.logging.LoggingHelper;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Logger;
@@ -33,6 +36,11 @@ import java.io.File;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
+@MixedCopyright(
+  copyright = "JCraft",
+  license = License.BSD3,
+  url = "http://www.jcraft.com/jsch/"
+)
 public class JSchUtils {
 
   /** for logging purposes. */
