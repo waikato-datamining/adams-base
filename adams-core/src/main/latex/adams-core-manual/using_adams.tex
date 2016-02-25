@@ -1884,6 +1884,70 @@ Serialized files can be inspected as well, e.g., for model files generated
 by WEKA. Other modules may offer specific viewers for the objects stored
 in such a file.
 
+%%%%%%%%%%%%%%%%%%%
+% Remote commands %
+%%%%%%%%%%%%%%%%%%%
+
+\chapter{Remote commands}
+
+ADAMS offers a generic framework for remote commands, either uni-directional
+ones (e.g., restarting the remote instance) or bi-directional ones
+(e.g., retrieving system info from the remote instance).
+
+Uni-directional commands, see Figure \ref{remote_command-uni_directional},
+only require the remote instance to \textit{listen} for incoming commands
+using a remote scripting engine. Bi-directional ones, on the other hand,
+require the local and the remote instance to listen for incoming commands.
+Figure \ref{remote_command-bi_directional} shows how the local instance
+sends a request to the remote one and then listens for the response to
+come in.
+
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=8.0cm]{images/remote_command-uni_directional.png}
+  \caption{Uni-directional command.}
+  \label{remote_command-uni_directional}
+\end{figure}
+
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=8.0cm]{images/remote_command-bi_directional.png}
+  \caption{Bi-directional command (\textit{with response}).}
+  \label{remote_command-bi_directional}
+\end{figure}
+
+In order to control the remote scripting engine, you can start/stop them
+from the main menu: \textit{Program $\rightarrow$ Remote commands...}
+
+From this menu, you can also launch commands using the \textit{Send...}
+menu item. The dialog that you get prompted with allows you to configure
+the remote command and the type of connection to use to reach the remote
+host.
+
+The remote command functionality is not only available from the main menu,
+you can also use this functionality within flows, allowing for automation
+of tasks. However, you still need to start the remote scripting engine. Though
+this can be automated via a command-line option when starting up ADAMS
+(\texttt{-remote-scripting-engine-cmdline}) on the remote machine.
+
+Available actors:
+\begin{tight_itemize}
+  \item \textit{NewRemoteCommand} -- configures and forwards a command object.
+  \item \textit{RemoteCommandRaeader} -- transformer that reads a command
+  object from the incoming file.
+  \item \textit{SendRemoteCommand} -- sends the command object across the wire
+  using the specified connection setup.
+  \item \textit{RemoteCommandWriter} -- writes the incoming command object to disk.
+\end{tight_itemize}
+
+Available conversions:
+\begin{tight_itemize}
+  \item \textit{StringToRemoteCommand} -- parses the string and turns it into
+  a \textit{RemoteCommand} object
+  \item \textit{RemoteCommandToString} -- generates a string representation of
+  the remote command (which is used for transmitting across the network)
+\end{tight_itemize}
+
 %%%%%%%%%
 % Tools %
 %%%%%%%%%
