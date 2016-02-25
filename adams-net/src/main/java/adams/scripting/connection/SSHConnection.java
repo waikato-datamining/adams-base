@@ -109,7 +109,7 @@ public class SSHConnection
 
     m_OptionManager.add(
       "host", "host",
-      "");
+      "127.0.0.1");
 
     m_OptionManager.add(
       "port", "port",
