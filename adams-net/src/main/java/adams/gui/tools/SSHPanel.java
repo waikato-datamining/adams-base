@@ -24,7 +24,7 @@ import adams.core.License;
 import adams.core.annotation.MixedCopyright;
 import adams.core.logging.LoggingHelper;
 import adams.core.logging.LoggingSupporter;
-import adams.flow.standalone.SSHConnection.AuthenticationType;
+import adams.core.net.SSHAuthenticationType;
 import adams.gui.chooser.FileChooserPanel;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseTextPaneWithButtons;
@@ -103,13 +103,13 @@ public class SSHPanel
   protected FileChooserPanel m_FileChooserPanelKnownHosts;
 
   /** the authentication panels. */
-  protected HashMap<AuthenticationType,JPanel> m_AuthenticationPanels;
+  protected HashMap<SSHAuthenticationType,JPanel> m_AuthenticationPanels;
 
   /** the authentication panel. */
   protected JPanel m_PanelAuthentication;
 
   /** the combobox for the authentication type. */
-  protected JComboBox<AuthenticationType> m_ComboBoxAuthenticationType;
+  protected JComboBox<SSHAuthenticationType> m_ComboBoxAuthenticationType;
 
   /** the file panel for the key. */
   protected FileChooserPanel m_FileChooserPanelKey;
@@ -257,7 +257,7 @@ public class SSHPanel
     // authentications
     m_PanelAuthentication = new JPanel(new BorderLayout());
     topPanels.add(m_PanelAuthentication);
-    for (AuthenticationType type: AuthenticationType.values()) {
+    for (SSHAuthenticationType type: SSHAuthenticationType.values()) {
       authPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
       switch (type) {
 	case CREDENTIALS:
@@ -301,7 +301,7 @@ public class SSHPanel
       m_AuthenticationPanels.put(type, authPanel);
     }
 
-    m_ComboBoxAuthenticationType = new JComboBox<>(AuthenticationType.values());
+    m_ComboBoxAuthenticationType = new JComboBox<>(SSHAuthenticationType.values());
     m_ComboBoxAuthenticationType.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -494,7 +494,7 @@ public class SSHPanel
 	known = m_FileChooserPanelKnownHosts.getCurrent();
 	if (known.exists())
 	  jsch.setKnownHosts(known.getAbsolutePath());
-	AuthenticationType type = (AuthenticationType) m_ComboBoxAuthenticationType.getSelectedItem();
+	SSHAuthenticationType type = (SSHAuthenticationType) m_ComboBoxAuthenticationType.getSelectedItem();
 	switch (type) {
 	  case CREDENTIALS:
 	    m_Session = jsch.getSession(m_TextUser.getText(), m_TextRemote.getText(), ((Number) m_PortModel.getValue()).intValue());

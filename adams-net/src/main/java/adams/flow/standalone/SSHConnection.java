@@ -30,6 +30,7 @@ import adams.core.TechnicalInformationHandler;
 import adams.core.annotation.MixedCopyright;
 import adams.core.base.BasePassword;
 import adams.core.io.PlaceholderFile;
+import adams.core.net.SSHAuthenticationType;
 import adams.core.net.SSHSessionProvider;
 import adams.flow.core.OptionalPasswordPrompt;
 import adams.gui.dialog.PasswordDialog;
@@ -183,12 +184,6 @@ public class SSHConnection
   /** for serialization. */
   private static final long serialVersionUID = -1959430342987913960L;
 
-  /** the type of authentication. */
-  public enum AuthenticationType {
-    CREDENTIALS,
-    PUBLIC_KEY
-  }
-
   /** the SSH host. */
   protected String m_Host;
 
@@ -196,7 +191,7 @@ public class SSHConnection
   protected int m_Port;
 
   /** the type of authentication to use. */
-  protected AuthenticationType m_AuthenticationType;
+  protected SSHAuthenticationType m_AuthenticationType;
 
   /** the SSH user to use. */
   protected String m_User;
@@ -288,7 +283,7 @@ public class SSHConnection
 
     m_OptionManager.add(
       "authentication-type", "authenticationType",
-      AuthenticationType.CREDENTIALS);
+      SSHAuthenticationType.CREDENTIALS);
 
     m_OptionManager.add(
       "user", "user",
@@ -370,7 +365,7 @@ public class SSHConnection
     List<String>	options;
     String		value;
 
-    if (m_AuthenticationType == AuthenticationType.CREDENTIALS) {
+    if (m_AuthenticationType == SSHAuthenticationType.CREDENTIALS) {
       result = QuickInfoHelper.toString(this, "user", m_User);
       value = QuickInfoHelper.toString(this, "password", m_Password.getValue().replaceAll(".", "*"));
       if (value != null)
@@ -456,7 +451,7 @@ public class SSHConnection
    *
    * @param value	the type
    */
-  public void setAuthenticationType(AuthenticationType value) {
+  public void setAuthenticationType(SSHAuthenticationType value) {
     m_AuthenticationType = value;
     reset();
   }
@@ -466,7 +461,7 @@ public class SSHConnection
    *
    * @return		the type
    */
-  public AuthenticationType getAuthenticationType() {
+  public SSHAuthenticationType getAuthenticationType() {
     return m_AuthenticationType;
   }
 
