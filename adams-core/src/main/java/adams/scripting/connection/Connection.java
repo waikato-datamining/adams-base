@@ -20,6 +20,7 @@
 
 package adams.scripting.connection;
 
+import adams.core.CleanUpHandler;
 import adams.core.option.OptionHandler;
 import adams.scripting.command.RemoteCommand;
 
@@ -30,7 +31,7 @@ import adams.scripting.command.RemoteCommand;
  * @version $Revision$
  */
 public interface Connection
-  extends OptionHandler {
+  extends OptionHandler, CleanUpHandler {
 
   /**
    * Sends the request command.

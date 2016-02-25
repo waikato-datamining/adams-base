@@ -112,4 +112,14 @@ public abstract class AbstractConnection
 
     return result;
   }
+
+  /**
+   * Cleans up data structures, frees up memory.
+   * <br>
+   * Default implementation does nothing.
+   */
+  @Override
+  public void cleanUp() {
+
+  }
 }
