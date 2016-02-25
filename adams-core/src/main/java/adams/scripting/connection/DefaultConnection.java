@@ -64,11 +64,11 @@ public class DefaultConnection
     super.defineOptions();
 
     m_OptionManager.add(
-      "-host", "host",
+      "host", "host",
       "127.0.0.1");
 
     m_OptionManager.add(
-      "-port", "port",
+      "port", "port",
       12345, 1, 65535);
   }
 
