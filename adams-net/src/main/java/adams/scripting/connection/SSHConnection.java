@@ -38,6 +38,8 @@ import java.nio.charset.Charset;
 
 /**
  * Uses an SSH tunnel to connect to the remote scripting engine.
+ * <br>
+ * Inspired by: <a href="http://www.beanizer.org/site/index.php/en/Articles/Java-ssh-tunneling-with-jsch.html">www.beanizer.org</a>
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
