@@ -31,11 +31,11 @@ import adams.core.annotation.MixedCopyright;
 import adams.core.base.BasePassword;
 import adams.core.io.PlaceholderFile;
 import adams.core.net.SSHAuthenticationType;
+import adams.core.net.JSchUtils;
 import adams.core.net.SSHSessionProvider;
 import adams.flow.core.OptionalPasswordPrompt;
 import adams.gui.dialog.PasswordDialog;
 import com.jcraft.jsch.JSch;
-import com.jcraft.jsch.Logger;
 import com.jcraft.jsch.Session;
 
 import java.awt.Dialog;
@@ -878,58 +878,26 @@ public class SSHConnection
    * @return		the session
    */
   public Session newSession(String host, int port) {
-    Session result;
+    Session 	result;
     JSch	jsch;
+    String	password;
 
+    password = m_ActualPassword.getValue();
     try {
-      jsch = new JSch();
-      jsch.setLogger(new Logger() {
-        @Override
-        public boolean isEnabled(int level) {
-          return true;
-        }
-        @Override
-        public void log(int level, String message) {
-          switch (level) {
-            case DEBUG:
-              getLogger().fine(message);
-              break;
-            case INFO:
-              getLogger().info(message);
-              break;
-            case WARN:
-              getLogger().warning(message);
-              break;
-            case ERROR:
-            case FATAL:
-              getLogger().severe(message);
-              break;
-          }
-        }
-      });
-      // TODO choose RSA, DSA, ECDSA?
-      jsch.setKnownHosts(m_KnownHosts.getAbsolutePath());
+      jsch = JSchUtils.newJsch(m_KnownHosts);
       switch (m_AuthenticationType) {
 	case CREDENTIALS:
-	  result = jsch.getSession(m_User, host, port);
-	  result.setPassword(m_ActualPassword.getValue());
-	  result.setConfig("StrictHostKeyChecking", m_StrictHostKeyChecking ? "yes" : "no");
+	  result = JSchUtils.newSession(jsch, m_User, password, host, port);
 	  break;
 	case PUBLIC_KEY:
-	  if (m_ActualPassword.getValue().isEmpty())
-	    jsch.addIdentity(m_PrivateKeyFile.getAbsolutePath());
-	  else
-	    jsch.addIdentity(m_PrivateKeyFile.getAbsolutePath(), m_ActualPassword.getValue());
-	  result = jsch.getSession(m_User, host, port);
-	  result.setConfig("StrictHostKeyChecking", m_StrictHostKeyChecking ? "yes" : "no");
+	  result = JSchUtils.newSession(jsch, m_User, m_PrivateKeyFile, password, host, port);
 	  break;
 	default:
 	  throw new IllegalStateException("Unhandled authentication type: " + m_AuthenticationType);
       }
-      if (m_ForwardX) {
-	result.setX11Host(host);
-	result.setX11Port(6000 + 0);
-      }
+      JSchUtils.configureStrictHostKeyChecking(result, m_StrictHostKeyChecking);
+      if (m_ForwardX)
+	JSchUtils.configureX11(result, host);
       result.connect();
     }
     catch (Exception e) {
