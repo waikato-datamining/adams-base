@@ -22,6 +22,8 @@ package adams.scripting.command;
 
 import adams.core.Properties;
 import adams.core.option.OptionUtils;
+import adams.scripting.connection.Connection;
+import adams.scripting.connection.DefaultConnection;
 import adams.scripting.engine.RemoteScriptingEngine;
 import adams.scripting.responsehandler.ResponseHandler;
 
@@ -37,8 +39,8 @@ public abstract class AbstractCommandWithResponse
 
   private static final long serialVersionUID = -2803551461382517312L;
 
-  /** the response host. */
-  protected String m_ResponseHost;
+  /** the response connection. */
+  protected Connection m_ResponseConnection;
 
   /** the response host port. */
   protected int m_ResponsePort;
@@ -51,31 +53,36 @@ public abstract class AbstractCommandWithResponse
     super.defineOptions();
 
     m_OptionManager.add(
-      "response-host", "responseHost",
-      "127.0.0.1");
-
-    m_OptionManager.add(
-      "response-port", "responsePort",
-      12345, 1, 65535);
+      "response-connection", "responseConnection",
+      getDefaultResponseConnection());
   }
 
   /**
-   * Sets the host to send the response to.
+   * Returns the default connection to use.
    *
-   * @param value	the host
+   * @return		the connection
    */
-  public void setResponseHost(String value) {
-    m_ResponseHost = value;
+  protected Connection getDefaultResponseConnection() {
+    return new DefaultConnection();
+  }
+
+  /**
+   * Sets the connection to send the response to.
+   *
+   * @param value	the connection
+   */
+  public void setResponseConnection(Connection value) {
+    m_ResponseConnection = value;
     reset();
   }
 
   /**
-   * Returns the host to send the response to.
+   * Returns the connection to send the response to.
    *
-   * @return		the host
+   * @return		the connection
    */
-  public String getResponseHost() {
-    return m_ResponseHost;
+  public Connection getResponseConnection() {
+    return m_ResponseConnection;
   }
 
   /**
@@ -84,39 +91,8 @@ public abstract class AbstractCommandWithResponse
    * @return 		tip text for this property suitable for
    * 			displaying in the gui
    */
-  public String responseHostTipText() {
-    return "The host to send the response to.";
-  }
-
-  /**
-   * Sets the port to send the response to.
-   *
-   * @param value	the port
-   */
-  public void setResponsePort(int value) {
-    if (getOptionManager().isValid("responsePort", value)) {
-      m_ResponsePort = value;
-      reset();
-    }
-  }
-
-  /**
-   * Returns the port to send the response to.
-   *
-   * @return		the port
-   */
-  public int getResponsePort() {
-    return m_ResponsePort;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the gui
-   */
-  public String responsePortTipText() {
-    return "The port to send the response to.";
+  public String responseConnectionTipText() {
+    return "The connection to send the response to.";
   }
 
   /**
@@ -169,7 +145,8 @@ public abstract class AbstractCommandWithResponse
    */
   @Override
   protected String doHandleRequest(RemoteScriptingEngine engine) {
-    return CommandUtils.send(this, m_ResponseHost, m_ResponsePort, false);
+    setRequest(false);  // to avoid checks to fail
+    return m_ResponseConnection.sendResponse(this);
   }
 
   /**

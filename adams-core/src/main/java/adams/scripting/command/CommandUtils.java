@@ -24,11 +24,8 @@ import adams.core.Properties;
 import adams.core.Utils;
 import adams.core.logging.LoggingObject;
 import adams.core.option.OptionUtils;
-import adams.env.Environment;
 import org.apache.commons.codec.binary.Base64;
 
-import java.net.Socket;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -43,62 +40,6 @@ public class CommandUtils {
 
   /** the width in characters for the base64 encoded payload. */
   public static final int PAYLOAD_WIDTH = 72;
-
-  /**
-   * Sends the command to the specified sscripting engine.
-   *
-   * @param cmd		the command to send
-   * @param host	the host to send the command to
-   * @param port	the host port
-   * @param request	whether Request or Response
-   * @return		null if successfully sent, otherwise error message
-   */
-  protected static String send(RemoteCommand cmd, String host, int port, boolean request) {
-    String	result;
-    String	data;
-    Socket 	socket;
-
-    result = null;
-    if (request)
-      data = cmd.assembleRequest();
-    else
-      data = ((RemoteCommandWithResponse) cmd).assembleResponse();
-    try {
-      socket = new Socket(host, port);
-      socket.getOutputStream().write(data.getBytes(Charset.forName("US-ASCII")));
-      socket.getOutputStream().flush();
-      socket.close();
-    }
-    catch (Exception e) {
-      result = Utils.handleException(
-	cmd, "Failed to send " + (request ? "request" : "response") + " to " + host + ":" + port, e);
-    }
-
-    return result;
-  }
-
-  /**
-   * Sends the command (request) to the specified sscripting engine.
-   *
-   * @param cmd		the command to send
-   * @param host	the host to send the command to
-   * @param port	the host port
-   * @return		null if successfully sent, otherwise error message
-   */
-  public static String sendRequest(RemoteCommand cmd, String host, int port) {
-    return send(cmd, host, port, true);
-  }
-
-  /**
-   * Sends the command to the specified sscripting engine.
-   *
-   * @param host	the host to send the command to
-   * @param port	the host port
-   * @return		null if successfully sent, otherwise error message
-   */
-  public static String sendResponse(RemoteCommand cmd, String host, int port) {
-    return send(cmd, host, port, false);
-  }
 
   /**
    * Instantiates the command from the received data string.
@@ -179,45 +120,5 @@ public class CommandUtils {
     result.append(Utils.flatten(Utils.breakUp(data, PAYLOAD_WIDTH), "\n"));
 
     return result.toString();
-  }
-
-  /**
-   * For testing commands from the commandline. Parameters:
-   * <host> <port> <request:true|false> <cmd> [<options>]
-   *
-   * @param args	the commandline arguments
-   * @throws Exception	if instantiation of command fails
-   */
-  public static void main(String[] args) throws Exception {
-    String 		host;
-    int 		port;
-    boolean		request;
-    String 		cname;
-    RemoteCommand 	cmd;
-    String		msg;
-
-    if (args.length < 4) {
-      System.err.println("Usage: <host> <port> <request:true|false> <cmd> [<options>]");
-      return;
-    }
-
-    Environment.setEnvironmentClass(Environment.class);
-
-    host    = args[0];
-    port    = Integer.parseInt(args[1]);
-    request = Boolean.parseBoolean(args[2]);
-    cname   = args[3];
-    args[0] = "";
-    args[1] = "";
-    args[2] = "";
-    args[3] = "";
-    cmd = (RemoteCommand) OptionUtils.forName(RemoteCommand.class, cname, args);
-    if (cmd == null) {
-      System.err.println("Failed to instantiate command!");
-      return;
-    }
-    msg = send(cmd, host, port, request);
-    if (msg != null)
-      System.err.println(msg);
   }
 }

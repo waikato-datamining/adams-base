@@ -33,9 +33,10 @@ import adams.gui.core.PropertiesParameterPanel.PropertyType;
 import adams.gui.dialog.ApprovalDialog;
 import adams.gui.goe.GenericObjectEditorDialog;
 import adams.gui.goe.GenericObjectEditorPanel;
-import adams.scripting.command.CommandUtils;
 import adams.scripting.command.RemoteCommand;
 import adams.scripting.command.basic.SystemInfo;
+import adams.scripting.connection.Connection;
+import adams.scripting.connection.DefaultConnection;
 import adams.scripting.engine.DefaultScriptingEngine;
 import adams.scripting.engine.RemoteScriptingEngine;
 
@@ -57,9 +58,7 @@ public class RemoteCommands
 
   public static final String KEY_COMMAND = "command";
 
-  public static final String KEY_HOST = "host";
-
-  public static final String KEY_PORT = "port";
+  public static final String KEY_CONNECTION = "connection";
 
   /** the start listening menu item. */
   protected JMenuItem m_MenuItemStart;
@@ -72,6 +71,9 @@ public class RemoteCommands
 
   /** the last command sent. */
   protected RemoteCommand m_LastCommand;
+
+  /** the last connection used. */
+  protected Connection m_LastConnection;
 
   /**
    * Initializes the menu item.
@@ -89,7 +91,8 @@ public class RemoteCommands
   protected void initialize() {
     super.initialize();
 
-    m_LastCommand = null;
+    m_LastCommand    = null;
+    m_LastConnection = null;
   }
 
   /**
@@ -179,20 +182,20 @@ public class RemoteCommands
 
     if (m_LastCommand == null)
       m_LastCommand = new SystemInfo();
+    if (m_LastConnection == null)
+      m_LastConnection = new DefaultConnection();
 
     params = new PropertiesParameterPanel();
     params.addPropertyType(KEY_COMMAND, PropertyType.OBJECT_EDITOR);
     params.setChooser(KEY_COMMAND, new GenericObjectEditorPanel(RemoteCommand.class, m_LastCommand, true));
     params.setLabel(KEY_COMMAND, "Command to send");
-    params.addPropertyType(KEY_HOST, PropertyType.STRING);
-    params.setLabel(KEY_HOST, "Remote host");
-    params.addPropertyType(KEY_PORT, PropertyType.INTEGER);
-    params.setLabel("post", "Remote port");
+    params.addPropertyType(KEY_CONNECTION, PropertyType.OBJECT_EDITOR);
+    params.setChooser(KEY_CONNECTION, new GenericObjectEditorPanel(Connection.class, m_LastConnection, true));
+    params.setLabel(KEY_CONNECTION, "Connection");
 
     props = new Properties();
-    props.setProperty(KEY_HOST, "127.0.0.1");
-    props.setInteger(KEY_PORT, 12345);
     props.setProperty(KEY_COMMAND, OptionUtils.getCommandLine(m_LastCommand));
+    props.setProperty(KEY_CONNECTION, OptionUtils.getCommandLine(m_LastConnection));
     params.setProperties(props);
 
     dialog = new ApprovalDialog(getOwner(), true);
@@ -220,10 +223,21 @@ public class RemoteCommands
 	  + Utils.throwableToString(e));
       return;
     }
+    try {
+      m_LastConnection = (Connection) OptionUtils.forCommandLine(
+	Connection.class, props.getProperty(KEY_CONNECTION));
+    }
+    catch (Exception e) {
+      GUIHelper.showErrorMessage(
+	null,
+	"Failed to instantiate connection: '" + props.getProperty(KEY_CONNECTION) + "'\n"
+	  + Utils.throwableToString(e));
+      return;
+    }
 
     // send command
     m_LastCommand.setApplicationContext(getOwner());
-    msg = CommandUtils.sendRequest(m_LastCommand, props.getProperty(KEY_HOST), props.getInteger(KEY_PORT));
+    msg = m_LastConnection.sendRequest(m_LastCommand);
     if (msg != null)
       GUIHelper.showErrorMessage(null, "Failed to send command:\n" + msg);
   }

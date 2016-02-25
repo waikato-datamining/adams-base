@@ -22,10 +22,11 @@ package adams.flow.sink;
 
 import adams.core.QuickInfoHelper;
 import adams.flow.core.Unknown;
-import adams.scripting.command.CommandUtils;
 import adams.scripting.command.FlowAwareRemoteCommand;
 import adams.scripting.command.RemoteCommand;
 import adams.scripting.command.basic.SystemInfo;
+import adams.scripting.connection.Connection;
+import adams.scripting.connection.DefaultConnection;
 
 /**
  <!-- globalinfo-start -->
@@ -95,11 +96,8 @@ public class SendRemoteCommand
   /** for serialization. */
   private static final long serialVersionUID = -4210882711380055794L;
 
-  /** the remote host. */
-  protected String m_Host;
-
-  /** the remote port. */
-  protected int m_Port;
+  /** the connection. */
+  protected Connection m_Connection;
 
   /** the command to executre. */
   protected RemoteCommand m_Command;
@@ -123,12 +121,8 @@ public class SendRemoteCommand
     super.defineOptions();
 
     m_OptionManager.add(
-      "host", "host",
-      "127.0.0.1");
-
-    m_OptionManager.add(
-      "port", "port",
-      12345, 1, 65535);
+      "connection", "connection",
+      new DefaultConnection());
 
     m_OptionManager.add(
       "command", "command",
@@ -136,22 +130,22 @@ public class SendRemoteCommand
   }
 
   /**
-   * Sets the host to send the command to.
+   * Sets the connection to send the command to.
    *
-   * @param value	the host
+   * @param value	the connection
    */
-  public void setHost(String value) {
-    m_Host = value;
+  public void setConnection(Connection value) {
+    m_Connection = value;
     reset();
   }
 
   /**
-   * Returns the host to send the command to.
+   * Returns the connection to send the command to.
    *
-   * @return		the host
+   * @return		the connection
    */
-  public String getHost() {
-    return m_Host;
+  public Connection getConnection() {
+    return m_Connection;
   }
 
   /**
@@ -160,39 +154,8 @@ public class SendRemoteCommand
    * @return 		tip text for this property suitable for
    * 			displaying in the gui
    */
-  public String hostTipText() {
-    return "The host to send the command to.";
-  }
-
-  /**
-   * Sets the port to send the command to.
-   *
-   * @param value	the port
-   */
-  public void setPort(int value) {
-    if (getOptionManager().isValid("port", value)) {
-      m_Port = value;
-      reset();
-    }
-  }
-
-  /**
-   * Returns the port to send the command to.
-   *
-   * @return		the port
-   */
-  public int getPort() {
-    return m_Port;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the gui
-   */
-  public String portTipText() {
-    return "The port to send the command to.";
+  public String connectionTipText() {
+    return "The connection to send the command to.";
   }
 
   /**
@@ -233,9 +196,8 @@ public class SendRemoteCommand
   public String getQuickInfo() {
     String	result;
 
-    result  = QuickInfoHelper.toString(this, "host", m_Host, "host: ");
-    result += QuickInfoHelper.toString(this, "port", m_Port, ", port: ");
-    result += QuickInfoHelper.toString(this, "command", m_Command.getClass(), ", cmd: ");
+    result  = QuickInfoHelper.toString(this, "connection", m_Connection, "connection: ");
+    result += QuickInfoHelper.toString(this, "command", m_Command, ", command: ");
 
     return result;
   }
@@ -259,8 +221,8 @@ public class SendRemoteCommand
     String	result;
 
     if (m_Command instanceof FlowAwareRemoteCommand)
-      ((FlowAwareRemoteCommand) m_Command).setFlowContent(this);
-    result = CommandUtils.sendRequest(m_Command, m_Host, m_Port);
+      ((FlowAwareRemoteCommand) m_Command).setFlowContext(this);
+    result = m_Connection.sendRequest(m_Command);
 
     return result;
   }

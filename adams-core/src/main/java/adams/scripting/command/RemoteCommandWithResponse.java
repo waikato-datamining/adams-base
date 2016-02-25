@@ -20,6 +20,7 @@
 
 package adams.scripting.command;
 
+import adams.scripting.connection.Connection;
 import adams.scripting.engine.RemoteScriptingEngine;
 import adams.scripting.responsehandler.ResponseHandler;
 
@@ -33,40 +34,18 @@ public interface RemoteCommandWithResponse
   extends RemoteCommand {
 
   /**
-   * Sets the host to send the response to.
+   * Sets the connection to send the response to.
    *
-   * @param value	the host
+   * @param value	the connection
    */
-  public void setResponseHost(String value);
+  public void setResponseConnection(Connection value);
 
   /**
-   * Returns the host to send the response to.
+   * Returns the connection to send the response to.
    *
-   * @return		the host
+   * @return		the connectio
    */
-  public String getResponseHost();
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the gui
-   */
-  public String responseHostTipText();
-
-  /**
-   * Sets the port to send the response to.
-   *
-   * @param value	the port
-   */
-  public void setResponsePort(int value);
-
-  /**
-   * Returns the port to send the response to.
-   *
-   * @return		the port
-   */
-  public int getResponsePort();
+  public Connection getResponseConnection();
 
   /**
    * Returns the tip text for this property.
@@ -74,7 +53,7 @@ public interface RemoteCommandWithResponse
    * @return 		tip text for this property suitable for
    * 			displaying in the gui
    */
-  public String responsePortTipText();
+  public String responseConnectionTipText();
 
   /**
    * Assembles the command into a string, including any payload.

@@ -635,6 +635,10 @@ adams.scripting.command.RemoteCommand=\
   adams.scripting.command.flow,\
   adams.scripting.command.gui
 
+# handles connections for remote commands
+adams.scripting.connection.Connection=\
+  adams.scripting.connection
+
 # for handling permissions of commands
 adams.scripting.permissionhandler.PermissionHandler=\
   adams.scripting.permissionhandler
