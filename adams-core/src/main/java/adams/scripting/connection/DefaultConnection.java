@@ -21,6 +21,7 @@
 package adams.scripting.connection;
 
 import adams.core.Utils;
+import adams.scripting.command.CommandUtils;
 import adams.scripting.command.RemoteCommand;
 import adams.scripting.command.RemoteCommandWithResponse;
 
@@ -37,8 +38,6 @@ public class DefaultConnection
   extends AbstractConnection {
 
   private static final long serialVersionUID = -6089174908347724451L;
-
-  public static final String MESSAGE_CHARSET = "US-ASCII";
 
   /** the  host. */
   protected String m_Host;
@@ -153,7 +152,7 @@ public class DefaultConnection
       data = ((RemoteCommandWithResponse) cmd).assembleResponse();
     try {
       socket = new Socket(host, port);
-      socket.getOutputStream().write(data.getBytes(Charset.forName(MESSAGE_CHARSET)));
+      socket.getOutputStream().write(data.getBytes(Charset.forName(CommandUtils.MESSAGE_CHARSET)));
       socket.getOutputStream().flush();
       socket.close();
     }

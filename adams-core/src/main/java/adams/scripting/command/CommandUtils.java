@@ -41,6 +41,8 @@ public class CommandUtils {
   /** the width in characters for the base64 encoded payload. */
   public static final int PAYLOAD_WIDTH = 72;
 
+  public static final String MESSAGE_CHARSET = "US-ASCII";
+
   /**
    * Instantiates the command from the received data string.
    *
