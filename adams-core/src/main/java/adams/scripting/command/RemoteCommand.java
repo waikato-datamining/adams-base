@@ -22,9 +22,12 @@ package adams.scripting.command;
 
 import adams.core.Properties;
 import adams.core.logging.LoggingSupporter;
+import adams.core.option.OptionHandler;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.scripting.engine.RemoteScriptingEngine;
 import adams.scripting.requesthandler.RequestHandler;
+
+import java.io.Serializable;
 
 /**
  * Interface for remote commands. A string representation of a command
@@ -36,7 +39,7 @@ import adams.scripting.requesthandler.RequestHandler;
  * @version $Revision$
  */
 public interface RemoteCommand
-  extends LoggingSupporter {
+  extends OptionHandler, Serializable, LoggingSupporter {
 
   /** the key for the command in the header section of a command. */
   String KEY_COMMAND = "Command";

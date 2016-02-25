@@ -21,18 +21,30 @@
 package adams.flow.sink;
 
 import adams.core.QuickInfoHelper;
-import adams.flow.core.Unknown;
+import adams.core.io.FileUtils;
+import adams.core.io.PlaceholderDirectory;
+import adams.core.io.TempUtils;
+import adams.scripting.command.CommandUtils;
 import adams.scripting.command.FlowAwareRemoteCommand;
 import adams.scripting.command.RemoteCommand;
-import adams.scripting.command.basic.SystemInfo;
 import adams.scripting.connection.Connection;
 import adams.scripting.connection.DefaultConnection;
 
+import java.io.File;
+
 /**
  <!-- globalinfo-start -->
- * Executes a remote command.
+ * Sends a command to the remote host defined by the connection settings.<br>
+ * Unsuccessful commands can be store on disk to retry later.
  * <br><br>
  <!-- globalinfo-end -->
+ *
+ <!-- flow-summary-start -->
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;adams.scripting.command.RemoteCommand<br>
+ * <br><br>
+ <!-- flow-summary-end -->
  *
  <!-- options-start -->
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
@@ -68,21 +80,19 @@ import adams.scripting.connection.DefaultConnection;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-host &lt;java.lang.String&gt; (property: host)
- * &nbsp;&nbsp;&nbsp;The host to send the command to.
- * &nbsp;&nbsp;&nbsp;default: 127.0.0.1
+ * <pre>-connection &lt;adams.scripting.connection.Connection&gt; (property: connection)
+ * &nbsp;&nbsp;&nbsp;The connection to send the command to.
+ * &nbsp;&nbsp;&nbsp;default: adams.scripting.connection.DefaultConnection
  * </pre>
  * 
- * <pre>-port &lt;int&gt; (property: port)
- * &nbsp;&nbsp;&nbsp;The port to send the command to.
- * &nbsp;&nbsp;&nbsp;default: 12345
- * &nbsp;&nbsp;&nbsp;minimum: 1
- * &nbsp;&nbsp;&nbsp;maximum: 65535
+ * <pre>-store-unsuccessful &lt;boolean&gt; (property: storeUnsuccessful)
+ * &nbsp;&nbsp;&nbsp;If enabled, unsuccessful remote commands get stored in the specified directory.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-command &lt;adams.scripting.command.RemoteCommand&gt; (property: command)
- * &nbsp;&nbsp;&nbsp;The command to send to the remote host.
- * &nbsp;&nbsp;&nbsp;default: adams.scripting.command.basic.SystemInfo
+ * <pre>-unsuccessful-dir &lt;adams.core.io.PlaceholderDirectory&gt; (property: unsuccessfulDir)
+ * &nbsp;&nbsp;&nbsp;The directory to store the unsuccessful commands in (if enabled).
+ * &nbsp;&nbsp;&nbsp;default: ${CWD}
  * </pre>
  * 
  <!-- options-end -->
@@ -99,8 +109,11 @@ public class SendRemoteCommand
   /** the connection. */
   protected Connection m_Connection;
 
-  /** the command to executre. */
-  protected RemoteCommand m_Command;
+  /** whether to save unsuccessful remote commands to disk. */
+  protected boolean m_StoreUnsuccessful;
+
+  /** the directory for the unsuccessful remote commands. */
+  protected PlaceholderDirectory m_UnsuccessfulDir;
 
   /**
    * Returns a string describing the object.
@@ -110,7 +123,8 @@ public class SendRemoteCommand
   @Override
   public String globalInfo() {
     return
-        "Executes a remote command.";
+        "Sends a command to the remote host defined by the connection settings.\n"
+      + "Unsuccessful commands can be store on disk to retry later.";
   }
 
   /**
@@ -125,8 +139,12 @@ public class SendRemoteCommand
       new DefaultConnection());
 
     m_OptionManager.add(
-      "command", "command",
-      new SystemInfo());
+      "store-unsuccessful", "storeUnsuccessful",
+      false);
+
+    m_OptionManager.add(
+      "unsuccessful-dir", "unsuccessfulDir",
+      new PlaceholderDirectory());
   }
 
   /**
@@ -159,22 +177,22 @@ public class SendRemoteCommand
   }
 
   /**
-   * Sets the command to execute.
+   * Sets whether to store unsuccessful commands on disk.
    *
-   * @param value 	the command
+   * @param value 	true if to store unsuccessful commands
    */
-  public void setCommand(RemoteCommand value) {
-    m_Command = value;
+  public void setStoreUnsuccessful(boolean value) {
+    m_StoreUnsuccessful = value;
     reset();
   }
 
   /**
-   * Returns the command to execute.
+   * Returns whether to store unsuccessful commands on disk.
    *
-   * @return 		the command
+   * @return 		true if to store unsuccessful commands
    */
-  public RemoteCommand getCommand() {
-    return m_Command;
+  public boolean getStoreUnsuccessful() {
+    return m_StoreUnsuccessful;
   }
 
   /**
@@ -183,8 +201,37 @@ public class SendRemoteCommand
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String commandTipText() {
-    return "The command to send to the remote host.";
+  public String storeUnsuccessfulTipText() {
+    return "If enabled, unsuccessful remote commands get stored in the specified directory.";
+  }
+
+  /**
+   * Sets the directory to store the unsuccessful commands ins.
+   *
+   * @param value 	the directory
+   */
+  public void setUnsuccessfulDir(PlaceholderDirectory value) {
+    m_UnsuccessfulDir = value;
+    reset();
+  }
+
+  /**
+   * Returns the directory to store the unsuccessful commands in.
+   *
+   * @return 		the directory
+   */
+  public PlaceholderDirectory getUnsuccessfulDir() {
+    return m_UnsuccessfulDir;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String unsuccessfulDirTipText() {
+    return "The directory to store the unsuccessful commands in (if enabled).";
   }
 
   /**
@@ -197,7 +244,8 @@ public class SendRemoteCommand
     String	result;
 
     result  = QuickInfoHelper.toString(this, "connection", m_Connection, "connection: ");
-    result += QuickInfoHelper.toString(this, "command", m_Command, ", command: ");
+    result += QuickInfoHelper.toString(this, "storeUnsuccessful", (m_StoreUnsuccessful ? "store" : "don't store"), ", ");
+    result += QuickInfoHelper.toString(this, "unsuccessfulDir", m_UnsuccessfulDir, ", dir: ");
 
     return result;
   }
@@ -205,10 +253,10 @@ public class SendRemoteCommand
   /**
    * Returns the class that the consumer accepts.
    *
-   * @return		<!-- flow-accepts-start -->adams.flow.core.Unknown.class<!-- flow-accepts-end -->
+   * @return		<!-- flow-accepts-start -->adams.scripting.command.RemoteCommand.class<!-- flow-accepts-end -->
    */
   public Class[] accepts() {
-    return new Class[]{Unknown.class};
+    return new Class[]{RemoteCommand.class};
   }
 
   /**
@@ -218,12 +266,41 @@ public class SendRemoteCommand
    */
   @Override
   protected String doExecute() {
-    String	result;
+    String		result;
+    File		tmp;
+    RemoteCommand	cmd;
 
-    if (m_Command instanceof FlowAwareRemoteCommand)
-      ((FlowAwareRemoteCommand) m_Command).setFlowContext(this);
-    result = m_Connection.sendRequest(m_Command);
+    cmd = (RemoteCommand) m_InputToken.getPayload();
+    if (cmd instanceof FlowAwareRemoteCommand)
+      ((FlowAwareRemoteCommand) cmd).setFlowContext(this);
+
+    if (cmd.isRequest())
+      result = m_Connection.sendRequest(cmd);
+    else
+      result = m_Connection.sendResponse(cmd);
+
+    if ((result != null) && m_StoreUnsuccessful) {
+      if (!m_UnsuccessfulDir.exists()) {
+	result = "Directory for storing unsuccessful commands does not exist: " + m_UnsuccessfulDir;
+      }
+      else if (!m_UnsuccessfulDir.isDirectory()) {
+	result = "Directory supplied for storing unsuccessful commands is not a directory: " + m_UnsuccessfulDir;
+      }
+      else {
+	tmp    = TempUtils.createTempFile(m_UnsuccessfulDir, "remote", ".rc");
+	result = FileUtils.writeToFileMsg(tmp.getAbsolutePath(), cmd.assembleRequest(), false, CommandUtils.MESSAGE_CHARSET);
+      }
+    }
 
     return result;
+  }
+
+  /**
+   * Cleans up after the execution has finished.
+   */
+  @Override
+  public void wrapUp() {
+    super.wrapUp();
+    m_Connection.cleanUp();
   }
 }
