@@ -15,7 +15,7 @@
 
 /*
  * SSHConnection.java
- * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  * Copyright (C) JSch
  */
 
@@ -423,8 +423,10 @@ public class SSHConnection
    * @param value	the port
    */
   public void setPort(int value) {
-    m_Port = value;
-    reset();
+    if (getOptionManager().isValid("port", value)) {
+      m_Port = value;
+      reset();
+    }
   }
 
   /**
