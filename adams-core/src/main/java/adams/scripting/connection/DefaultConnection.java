@@ -143,7 +143,7 @@ public class DefaultConnection
   protected String send(RemoteCommand cmd, String host, int port, boolean request) {
     String	result;
     String	data;
-    Socket socket;
+    Socket 	socket;
 
     result = null;
     if (request)
