@@ -121,7 +121,6 @@ public class JSchUtils {
     else
       jsch.addIdentity(privateKey.getAbsolutePath(), password);
     result = jsch.getSession(user, host, port);
-    result.setPassword(password);
 
     return result;
   }
