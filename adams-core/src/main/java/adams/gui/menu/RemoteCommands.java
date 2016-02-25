@@ -240,6 +240,9 @@ public class RemoteCommands
     msg = m_LastConnection.sendRequest(m_LastCommand);
     if (msg != null)
       GUIHelper.showErrorMessage(null, "Failed to send command:\n" + msg);
+
+    // clean up
+    m_LastConnection.cleanUp();
   }
 
   /**
