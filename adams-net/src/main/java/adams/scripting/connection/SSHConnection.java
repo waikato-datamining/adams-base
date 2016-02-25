@@ -707,4 +707,24 @@ public class SSHConnection
   protected String doSendResponse(RemoteCommand cmd) {
     return send(cmd, false);
   }
+
+  /**
+   * Cleans up data structures, frees up memory.
+   */
+  @Override
+  public void cleanUp() {
+    super.cleanUp();
+    if (m_Session != null) {
+      if (m_Session.isConnected()) {
+	try {
+	  m_Session.delPortForwardingL(m_AssignedPort);
+	}
+	catch (Exception e) {
+	  // ignored
+	}
+	m_Session.disconnect();
+      }
+      m_Session = null;
+    }
+  }
 }
