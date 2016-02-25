@@ -1231,8 +1231,8 @@ public abstract class AbstractApplicationFrame
       m_RemoteScriptingEngine.setApplicationContext(null);
     }
     m_RemoteScriptingEngine = value;
-    m_RemoteScriptingEngine.setApplicationContext(this);
-    if (value != null) {
+    if (m_RemoteScriptingEngine != null) {
+      m_RemoteScriptingEngine.setApplicationContext(this);
       getLogger().info("Start listening for remote commands: " + m_RemoteScriptingEngine.getClass().getName());
       new Thread(() -> m_RemoteScriptingEngine.execute()).start();
     }
