@@ -1,1 +1,1 @@
-connection: DefaultConnection, command: SystemInfo
+connection: DefaultConnection, don't store, dir: ${CWD}
