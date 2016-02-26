@@ -20,14 +20,11 @@
 
 package adams.flow.transformer;
 
-import adams.core.Utils;
-import adams.core.io.FileUtils;
+import adams.core.MessageCollection;
 import adams.core.io.PlaceholderFile;
 import adams.flow.core.Token;
 import adams.scripting.command.CommandUtils;
 import adams.scripting.command.RemoteCommand;
-
-import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -49,35 +46,35 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- * 
+ *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: RemoteCommandReader
  * </pre>
- * 
+ *
  * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- * 
+ *
  * <pre>-skip &lt;boolean&gt; (property: skip)
  * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
  * &nbsp;&nbsp;&nbsp;as it is.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
  * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
  * &nbsp;&nbsp;&nbsp; useful for critical actors.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-silent &lt;boolean&gt; (property: silent)
  * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
  * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
@@ -127,13 +124,11 @@ public class RemoteCommandReader
   protected String doExecute() {
     String		result;
     PlaceholderFile	file;
-    List<String>	lines;
-    String		data;
     RemoteCommand	cmd;
+    MessageCollection errors;
 
     result = null;
 
-    data = null;
     file = new PlaceholderFile((String) m_InputToken.getPayload());
     if (!file.exists())
       result = "Remote command file does not exist: " + file;
@@ -141,17 +136,15 @@ public class RemoteCommandReader
       result = "Remote command file is a directory: " + file;
 
     if (result == null) {
-      lines = FileUtils.loadFromFile(file);
-      if (lines == null)
-	result = "Failed to read data from remote command file: " + file;
-      else
-	data = Utils.flatten(lines, "\n");
-      if (data != null) {
-	cmd = CommandUtils.parse(this, data);
-	if (cmd == null)
-	  result = "Failed to parse remote command from data:\n" + data;
-	else
-	  m_OutputToken = new Token(cmd);
+      errors = new MessageCollection();
+      cmd    = CommandUtils.read(file, errors);
+      if (cmd == null) {
+	result = "Failed to parse remote command from data!";
+	if (!errors.isEmpty())
+	  result += "\n" + errors;
+      }
+      else {
+	m_OutputToken = new Token(cmd);
       }
     }
 
