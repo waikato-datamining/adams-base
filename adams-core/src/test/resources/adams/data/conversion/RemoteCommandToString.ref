@@ -1,0 +1,5 @@
+--> out-0.txt
+# Type=Request
+# Command=adams.scripting.command.basic.SystemInfo -response-connection adams.scripting.connection.DefaultConnection
+
+
