@@ -20,10 +20,9 @@
 
 package adams.flow.sink;
 
-import adams.core.io.FileUtils;
+import adams.core.MessageCollection;
 import adams.scripting.command.CommandUtils;
 import adams.scripting.command.RemoteCommand;
-import adams.scripting.command.RemoteCommandWithResponse;
 
 /**
  <!-- globalinfo-start -->
@@ -129,25 +128,18 @@ public class RemoteCommandWriter
   @Override
   protected String doExecute() {
     String		result;
-    String		data;
     RemoteCommand	cmd;
+    MessageCollection	errors;
 
     result = null;
     cmd    = (RemoteCommand) m_InputToken.getPayload();
-    data   = null;
+    errors = new MessageCollection();
 
-    if (cmd.isRequest()) {
-      data = cmd.assembleRequest();
+    if (!CommandUtils.write(cmd, m_OutputFile, errors)) {
+      result = "Failed to write command to: " + m_OutputFile;
+      if (!errors.isEmpty())
+	result += "\n" + errors;
     }
-    else {
-      if (cmd instanceof RemoteCommandWithResponse)
-	data = ((RemoteCommandWithResponse) cmd).assembleResponse();
-      else
-	result = "Remote command is not a response but flagged as such:\n" + cmd.toString();
-    }
-
-    if (result == null)
-      result = FileUtils.writeToFileMsg(m_OutputFile.getAbsolutePath(), data, false, CommandUtils.MESSAGE_CHARSET);
 
     return result;
   }
