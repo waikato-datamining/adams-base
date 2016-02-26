@@ -92,6 +92,11 @@ public class  ListFlows
     StringReader 		reader;
     byte[]			decomp;
 
+    if (value.length == 0) {
+      m_Flows = newSheet();
+      return;
+    }
+
     decomp = GzipUtils.decompress(value, 1024);
     sheet  = new DefaultSpreadSheet();
     if (decomp != null) {
@@ -115,7 +120,10 @@ public class  ListFlows
    */
   @Override
   public byte[] getPayload() {
-    return GzipUtils.compress(m_Flows.toString().getBytes());
+    if (isRequest())
+      return new byte[0];
+    else
+      return GzipUtils.compress(m_Flows.toString().getBytes());
   }
 
   /**
