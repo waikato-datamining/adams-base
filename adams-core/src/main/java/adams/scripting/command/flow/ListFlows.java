@@ -14,7 +14,7 @@
  */
 
 /**
- * SystemInfo.java
+ * ListFlows.java
  * Copyright (C) 2016 University of Waikato, Hamilton, NZ
  */
 
@@ -32,7 +32,7 @@ import adams.scripting.command.AbstractCommandWithResponse;
 import java.io.StringReader;
 
 /**
- * Sends the system info of the remote host back.
+ * Sends a list of registered running flows back.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
@@ -52,7 +52,7 @@ public class  ListFlows
    */
   @Override
   public String globalInfo() {
-    return "Requests a list of all registered flows.";
+    return "Requests a list of all registered running flows.";
   }
 
   /**
