@@ -150,4 +150,36 @@ public class CommandUtils {
 
     return cmd;
   }
+
+  /**
+   * Writes a remote command to a file.
+   *
+   * @param cmd		the command to write
+   * @param file	the file to write to
+   * @param errors	for collecting errors
+   * @return		true if successful
+   */
+  public static boolean write(RemoteCommand cmd, File file, MessageCollection errors) {
+    String	data;
+    String	msg;
+
+    data = null;
+    if (cmd.isRequest()) {
+      data = cmd.assembleRequest();
+    }
+    else {
+      if (cmd instanceof RemoteCommandWithResponse)
+	data = ((RemoteCommandWithResponse) cmd).assembleResponse();
+      else
+	errors.add("Remote command is not a response but flagged as such:\n" + cmd.toString());
+    }
+
+    if (errors.isEmpty()) {
+      msg = FileUtils.writeToFileMsg(file.getAbsolutePath(), data, false, MESSAGE_CHARSET);
+      if (msg != null)
+	errors.add(msg);
+    }
+
+    return errors.isEmpty();
+  }
 }
