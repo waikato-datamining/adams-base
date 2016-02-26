@@ -20,7 +20,6 @@
 package adams.gui.flow.tree;
 
 import adams.core.MessageCollection;
-import adams.core.Utils;
 import adams.core.option.OptionUtils;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorHandler;
@@ -196,7 +195,7 @@ public class TreeHelper {
 	node = new Node(previous.getOwner(), actor);
       }
       catch (Exception e) {
-	errors.add("Failed to parse actor: " + actors.get(index) + "\n" + Utils.throwableToString(e));
+	errors.add("Failed to parse actor: " + actors.get(index), e);
 	return;
       }
 
@@ -251,7 +250,7 @@ public class TreeHelper {
       return root;
     }
     catch (Exception e) {
-      errors.add("Failed to parse actor: " + actors.get(0) + "\n" + Utils.throwableToString(e));
+      errors.add("Failed to parse actor: " + actors.get(0), e);
       return null;
     }
   }
