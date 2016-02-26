@@ -74,6 +74,7 @@ public class  ListFlows
     SpreadSheet 	result;
 
     result = new DefaultSpreadSheet();
+    result.getHeaderRow().addCell("I").setContent("ID");
     result.getHeaderRow().addCell("R").setContent("Root");
     result.getHeaderRow().addCell("A").setContent("Annotation");
 
@@ -133,12 +134,17 @@ public class  ListFlows
   protected void prepareResponsePayload() {
     SpreadSheet 	sheet;
     Row			row;
+    Flow		flow;
 
     super.prepareResponsePayload();
 
     sheet = newSheet();
-    for (Flow flow: RunningFlowsRegistry.getSingleton().flows()) {
-      row = sheet.addRow();
+    for (Integer id: RunningFlowsRegistry.getSingleton().ids()) {
+      flow = RunningFlowsRegistry.getSingleton().getFlow(id);
+      if (flow == null)
+	continue;
+      row  = sheet.addRow();
+      row.addCell("I").setContent(id);
       row.addCell("R").setContent(flow.getRoot().getName());
       row.addCell("A").setContent(flow.getRoot().getAnnotations().getValue());
     }
