@@ -73,6 +73,11 @@ public class SystemInfo
     StringReader	reader;
     byte[]		decomp;
 
+    if (value.length == 0) {
+      m_Info = new Properties();
+      return;
+    }
+
     decomp = GzipUtils.decompress(value, 1024);
     props  = new Properties();
     if (decomp != null) {
@@ -99,7 +104,10 @@ public class SystemInfo
    */
   @Override
   public byte[] getPayload() {
-    return GzipUtils.compress(m_Info.toString().getBytes());
+    if (isRequest())
+      return new byte[0];
+    else
+      return GzipUtils.compress(m_Info.toString().getBytes());
   }
 
   /**
