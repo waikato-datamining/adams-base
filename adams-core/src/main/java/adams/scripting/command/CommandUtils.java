@@ -20,15 +20,16 @@
 
 package adams.scripting.command;
 
+import adams.core.MessageCollection;
 import adams.core.Properties;
 import adams.core.Utils;
-import adams.core.logging.LoggingObject;
+import adams.core.io.FileUtils;
 import adams.core.option.OptionUtils;
 import org.apache.commons.codec.binary.Base64;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 
 /**
  * Utility functions for remote commands.
@@ -46,11 +47,11 @@ public class CommandUtils {
   /**
    * Instantiates the command from the received data string.
    *
-   * @param owner	the optional owner, for logging purposes
    * @param data	the data string to parse
+   * @param errors	for collecting errors
    * @return		the instantiated command, null if failed to parse
    */
-  public static RemoteCommand parse(LoggingObject owner, String data) {
+  public static RemoteCommand parse(String data, MessageCollection errors) {
     RemoteCommand	result;
     List<String> headerLines;
     Properties header;
@@ -80,8 +81,7 @@ public class CommandUtils {
 
     cmd = header.getProperty(RemoteCommand.KEY_COMMAND, "");
     if (cmd.isEmpty()) {
-      if (owner != null)
-	owner.getLogger().severe("No command present in content, failed to parse!");
+      errors.add("No command present in content, failed to parse!");
       return null;
     }
 
@@ -92,8 +92,7 @@ public class CommandUtils {
       result.setPayload(payload);
     }
     catch (Exception e) {
-      if (owner != null)
-	owner.getLogger().log(Level.SEVERE, "Failed to instantiate commandline: " + cmd, e);
+      errors.add("Failed to instantiate commandline: " + cmd, e);
       result = null;
     }
 
@@ -122,5 +121,33 @@ public class CommandUtils {
     result.append(Utils.flatten(Utils.breakUp(data, PAYLOAD_WIDTH), "\n"));
 
     return result.toString();
+  }
+
+  /**
+   * Reads a remote command from a file.
+   *
+   * @param file	the file to read
+   * @param errors	for collecting errors
+   * @return		the remote command, null if failed to load
+   */
+  public static RemoteCommand read(File file, MessageCollection errors) {
+    RemoteCommand	cmd;
+    List<String>	lines;
+    String		data;
+
+    cmd   = null;
+    data  = null;
+    lines = FileUtils.loadFromFile(file);
+    if (lines == null)
+      errors.add("Failed to read data from remote command file: " + file);
+    else
+      data = Utils.flatten(lines, "\n");
+    if (data != null) {
+      cmd = parse(data, errors);
+      if (cmd == null)
+	errors.add("Failed to parse remote command from data:\n" + data);
+    }
+
+    return cmd;
   }
 }
