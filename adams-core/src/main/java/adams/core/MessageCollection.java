@@ -81,6 +81,16 @@ public class MessageCollection
   }
 
   /**
+   * Adds the message.
+   *
+   * @param msg		the message to collect
+   * @param t 		the associated exception
+   */
+  public void add(String msg, Throwable t) {
+    m_Messages.add(msg + "\n" + Utils.throwableToString(t));
+  }
+
+  /**
    * Adds the message at the specified index.
    *
    * @param index	the index where to insert the message
@@ -88,6 +98,17 @@ public class MessageCollection
    */
   public void add(int index, String msg) {
     m_Messages.add(index, msg);
+  }
+
+  /**
+   * Adds the message at the specified index.
+   *
+   * @param index	the index where to insert the message
+   * @param msg		the message to collect
+   * @param t 		the associated execption
+   */
+  public void add(int index, String msg, Throwable t) {
+    m_Messages.add(index, msg + "\n" + Utils.throwableToString(t));
   }
 
   /**
