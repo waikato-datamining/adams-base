@@ -137,7 +137,7 @@ public class CommandUtils {
 
     cmd   = null;
     data  = null;
-    lines = FileUtils.loadFromFile(file);
+    lines = FileUtils.loadFromFile(file, MESSAGE_CHARSET);
     if (lines == null)
       errors.add("Failed to read data from remote command file: " + file);
     else
