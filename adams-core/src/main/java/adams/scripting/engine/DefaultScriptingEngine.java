@@ -20,6 +20,7 @@
 
 package adams.scripting.engine;
 
+import adams.core.MessageCollection;
 import adams.env.Environment;
 import adams.scripting.command.CommandUtils;
 import adams.scripting.command.RemoteCommand;
@@ -63,6 +64,7 @@ public class DefaultScriptingEngine
     TByteArrayList 	bytes;
     String		data;
     RemoteCommand	cmd;
+    MessageCollection	errors;
 
     // read data
     bytes = new TByteArrayList();
@@ -82,16 +84,18 @@ public class DefaultScriptingEngine
     }
 
     // instantiate command
-    data = new String(bytes.toArray());
-    cmd  = CommandUtils.parse(this, data);
+    data   = new String(bytes.toArray());
+    errors = new MessageCollection();
+    cmd    = CommandUtils.parse(data, errors);
 
-    if (!m_PermissionHandler.permitted(cmd)) {
-      m_RequestHandler.requestRejected(cmd, "Not permitted!");
-      return;
-    }
-
-    // handle command
     if (cmd != null) {
+      // permitted?
+      if (!m_PermissionHandler.permitted(cmd)) {
+	m_RequestHandler.requestRejected(cmd, "Not permitted!");
+	return;
+      }
+
+      // handle command
       cmd.setApplicationContext(getApplicationContext());
       if (cmd.isRequest()) {
 	cmd.handleRequest(this, m_RequestHandler);
@@ -102,6 +106,12 @@ public class DefaultScriptingEngine
 	else
 	  getResponseHandler().responseFailed(cmd, "Command does not support response handling!");
       }
+    }
+    else {
+      if (!errors.isEmpty())
+	getLogger().severe("Failed to parse command:\n" + errors.toString());
+      else
+	getLogger().severe("Failed to parse command:\n" + data);
     }
   }
 
