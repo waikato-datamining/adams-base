@@ -111,14 +111,23 @@ public class RunningFlowsRegistry
   }
   
   /**
-   * Returns the currently registered of flows.
+   * Returns the currently registered flows.
    * 
    * @return		the current flows
    */
   public synchronized Flow[] flows() {
     return m_Flows.values().toArray(new Flow[m_Flows.size()]);
   }
-  
+
+  /**
+   * Returns the IDs of the currently registered flows.
+   *
+   * @return		the IDs of the current flows
+   */
+  public synchronized Integer[] ids() {
+    return m_Flows.keySet().toArray(new Integer[m_Flows.size()]);
+  }
+
   /**
    * Returns the singleton.
    * 
