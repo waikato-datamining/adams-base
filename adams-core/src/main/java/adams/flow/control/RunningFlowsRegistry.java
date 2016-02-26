@@ -15,13 +15,13 @@
 
 /**
  * RunningFlowsRegistry.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.control;
 
-import java.util.HashSet;
-
 import adams.core.logging.LoggingObject;
+
+import java.util.HashMap;
 
 /**
  * Used for registering running flows.
@@ -36,7 +36,10 @@ public class RunningFlowsRegistry
   private static final long serialVersionUID = 2503815818320314740L;
 
   /** the registered flows. */
-  protected HashSet<Flow> m_Flows;
+  protected HashMap<Integer,Flow> m_Flows;
+
+  /** the counter. */
+  protected int m_Counter;
   
   /** the singleton. */
   protected static RunningFlowsRegistry m_Singleton;
@@ -54,7 +57,8 @@ public class RunningFlowsRegistry
    * Initializes the members.
    */
   protected void initialize() {
-    m_Flows = new HashSet<Flow>();
+    m_Flows   = new HashMap<>();
+    m_Counter = 0;
   }
 
   /**
@@ -68,17 +72,42 @@ public class RunningFlowsRegistry
    * 
    * @param flow	the flow to add
    */
-  public void addFlow(Flow flow) {
-    m_Flows.add(flow);
+  public synchronized void addFlow(Flow flow) {
+    m_Counter++;
+    m_Flows.put(m_Counter, flow);
   }
-  
+
+  /**
+   * Returns the flow associated with the ID.
+   *
+   * @param id		the ID of the flow to retrieve
+   * @return		the associated flow, null if none available for that ID
+   */
+  public synchronized Flow getFlow(int id) {
+    return m_Flows.get(id);
+  }
+
+  /**
+   * Removes the flow from the internal list of registered flows.
+   *
+   * @param id		the if of the flow to remove
+   */
+  public synchronized void removeFlow(int id) {
+    m_Flows.remove(id);
+  }
+
   /**
    * Removes the flow from the internal list of registered flows.
    * 
    * @param flow	the flow to remove
    */
-  public void removeFlow(Flow flow) {
-    m_Flows.remove(flow);
+  public synchronized void removeFlow(Flow flow) {
+    for (Integer id: m_Flows.keySet()) {
+      if (getFlow(id) == flow) {
+	m_Flows.remove(id);
+	return;
+      }
+    }
   }
   
   /**
@@ -87,7 +116,7 @@ public class RunningFlowsRegistry
    * @return		the current flows
    */
   public synchronized Flow[] flows() {
-    return m_Flows.toArray(new Flow[m_Flows.size()]);
+    return m_Flows.values().toArray(new Flow[m_Flows.size()]);
   }
   
   /**
