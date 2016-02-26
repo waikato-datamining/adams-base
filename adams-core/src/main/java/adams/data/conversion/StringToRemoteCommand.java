@@ -19,6 +19,7 @@
  */
 package adams.data.conversion;
 
+import adams.core.MessageCollection;
 import adams.scripting.command.CommandUtils;
 import adams.scripting.command.RemoteCommand;
 
@@ -73,11 +74,19 @@ public class StringToRemoteCommand
    */
   @Override
   protected Object doConvert() throws Exception {
-    try {
-      return CommandUtils.parse(this, (String) m_Input);
+    RemoteCommand	result;
+    MessageCollection	errors;
+
+    errors = new MessageCollection();
+    result = CommandUtils.parse((String) m_Input, errors);
+
+    if (result == null) {
+      if (errors.isEmpty())
+	throw new IllegalStateException("Failed to parse input!");
+      else
+	throw new IllegalStateException("Failed to parse input:\n" + errors);
     }
-    catch (Exception e) {
-      throw new Exception("Failed to parse: " + m_Input, e);
-    }
+
+    return result;
   }
 }
