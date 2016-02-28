@@ -15,26 +15,32 @@
 
 /**
  * SideBySideDiffPanel.java
- * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.debug;
-
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.GridLayout;
-import java.io.File;
-import java.util.List;
-
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import adams.core.DiffUtils;
 import adams.core.DiffUtils.SideBySideDiff;
 import adams.core.io.PlaceholderFile;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
+import adams.gui.core.GUIHelper;
+import adams.gui.core.MouseUtils;
+
+import javax.swing.JLabel;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.File;
+import java.util.List;
 
 /**
  * Panel for displaying side-by-side diff.
@@ -48,6 +54,9 @@ public class SideBySideDiffPanel
   /** for serialization. */
   private static final long serialVersionUID = -7728182993462886323L;
 
+  /** the max length for label text. */
+  public static final int MAX_LABEL_LENGTH = 50;
+
   /** the left content. */
   protected DiffTextPane m_TextLeft;
   
@@ -60,6 +69,9 @@ public class SideBySideDiffPanel
   /** the label for the left content. */
   protected JLabel m_LabelLeft;
 
+  /** the text for the left content. */
+  protected String m_LabelTextLeft;
+
   /** the right content. */
   protected DiffTextPane m_TextRight;
   
@@ -71,7 +83,10 @@ public class SideBySideDiffPanel
   
   /** the label for the right content. */
   protected JLabel m_LabelRight;
-  
+
+  /** the text for the right content. */
+  protected String m_LabelTextRight;
+
   /** for the two sides of a diff. */
   protected BasePanel m_PanelAll;
   
@@ -123,7 +138,19 @@ public class SideBySideDiffPanel
 	m_IgnoreViewportChangesRight = false;
       }
     });
-    m_LabelLeft = new JLabel("Left");
+    m_LabelLeft = new JLabel();
+    m_LabelLeft.addMouseListener(new MouseAdapter() {
+      @Override
+      public void mouseClicked(MouseEvent e) {
+	if (MouseUtils.isRightClick(e)) {
+	  e.consume();
+	  showTextLabelPopupMenu(e, true);
+	}
+	else {
+	  super.mouseClicked(e);
+	}
+      }
+    });
     panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     panel.add(m_LabelLeft);
     m_PanelLeft = new BasePanel(new BorderLayout());
@@ -145,13 +172,32 @@ public class SideBySideDiffPanel
 	m_IgnoreViewportChangesLeft = false;
       }
     });
-    m_LabelRight = new JLabel("Right");
+    m_LabelRight = new JLabel();
+    m_LabelRight.addMouseListener(new MouseAdapter() {
+      @Override
+      public void mouseClicked(MouseEvent e) {
+	if (MouseUtils.isRightClick(e)) {
+	  e.consume();
+	  showTextLabelPopupMenu(e, false);
+	}
+	else {
+	  super.mouseClicked(e);
+	}
+      }
+    });
     panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     panel.add(m_LabelRight);
     m_PanelRight = new BasePanel(new BorderLayout());
     m_PanelRight.add(panel, BorderLayout.NORTH);
     m_PanelRight.add(m_ScrollPaneRight, BorderLayout.CENTER);
     m_PanelAll.add(m_PanelRight);
+  }
+
+  @Override
+  protected void finishInit() {
+    super.finishInit();
+    setLabelText(true, "Left");
+    setLabelText(false, "right");
   }
 
   /**
@@ -196,10 +242,25 @@ public class SideBySideDiffPanel
    * @param text	the text to set
    */
   public void setLabelText(boolean left, String text) {
-    if (left)
-      m_LabelLeft.setText(text);
-    else
-      m_LabelRight.setText(text);
+    String	shortened;
+
+    shortened = GUIHelper.shortenMiddle(text, MAX_LABEL_LENGTH);
+    if (left) {
+      m_LabelTextLeft = text;
+      m_LabelLeft.setText(shortened);
+      if (!text.equals(shortened))
+	m_LabelLeft.setToolTipText(text);
+      else
+	m_LabelLeft.setToolTipText(null);
+    }
+    else {
+      m_LabelTextRight = text;
+      m_LabelRight.setText(shortened);
+      if (!text.equals(shortened))
+	m_LabelRight.setToolTipText(text);
+      else
+	m_LabelRight.setToolTipText(null);
+    }
   }
   
   /**
@@ -211,11 +272,41 @@ public class SideBySideDiffPanel
    */
   public String getLabelText(boolean left) {
     if (left)
-      return m_LabelLeft.getText();
+      return m_LabelTextLeft;
     else
-      return m_LabelRight.getText();
+      return m_LabelTextRight;
   }
-  
+
+  /**
+   * Shows popup menu for text labels showing the filename.
+   *
+   * @param e		the mouse event
+   * @param left	whether left or right label
+   */
+  protected void showTextLabelPopupMenu(MouseEvent e, final boolean left) {
+    JPopupMenu	menu;
+    JMenuItem	menuitem;
+
+    menu = new JPopupMenu();
+
+    menuitem = new JMenuItem("Copy", GUIHelper.getIcon("copy.gif"));
+    menuitem.addActionListener((ActionEvent ae) -> GUIHelper.copyToClipboard(getLabelText(left)));
+    menu.add(menuitem);
+
+    menuitem = new JMenuItem("Paste", GUIHelper.getIcon("paste.gif"));
+    menuitem.addActionListener((ActionEvent ae) -> {
+      String s = GUIHelper.pasteStringFromClipboard();
+      PlaceholderFile file = new PlaceholderFile(s);
+      if (left)
+	updateLeft(file);
+      else
+	updateRight(file);
+    });
+    menu.add(menuitem);
+
+    menu.show(left ? m_LabelLeft : m_LabelRight, e.getX(), e.getY());
+  }
+
   /**
    * Displays the diff of the two files.
    * 
@@ -249,7 +340,18 @@ public class SideBySideDiffPanel
     resetLastFiles();
     display(DiffUtils.sideBySide(list1, list2));
   }
-  
+
+  /**
+   * Sets the last left file - does not update.
+   *
+   * @param file	the new left file, null to reset
+   */
+  public void setLastFileLeft(File file) {
+    if (file == null)
+      file = new PlaceholderFile(".");
+    m_LastFileLeft = file;
+  }
+
   /**
    * Updates the left file.
    * 
@@ -259,7 +361,18 @@ public class SideBySideDiffPanel
     m_LastFileLeft = file;
     display(DiffUtils.sideBySide(m_LastFileLeft, m_LastFileRight));
   }
-  
+
+  /**
+   * Sets the last right file - does not update.
+   *
+   * @param file	the new left file, null to reset
+   */
+  public void setLastFileRight(File file) {
+    if (file == null)
+      file = new PlaceholderFile(".");
+    m_LastFileRight = file;
+  }
+
   /**
    * Updates the right file.
    * 
