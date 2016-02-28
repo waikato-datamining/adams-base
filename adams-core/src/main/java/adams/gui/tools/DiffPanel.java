@@ -19,26 +19,6 @@
  */
 package adams.gui.tools;
 
-import java.awt.BorderLayout;
-import java.awt.Dialog;
-import java.awt.Dialog.ModalityType;
-import java.awt.FlowLayout;
-import java.awt.Frame;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import javax.swing.JButton;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
 import adams.gui.chooser.FileChooserPanel;
@@ -52,6 +32,27 @@ import adams.gui.dialog.ApprovalDialog;
 import adams.gui.event.RecentItemEvent;
 import adams.gui.event.RecentItemListener;
 import adams.gui.visualization.debug.SideBySideDiffPanel;
+
+import javax.swing.JButton;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.SwingWorker;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import java.awt.BorderLayout;
+import java.awt.Cursor;
+import java.awt.Dialog;
+import java.awt.Dialog.ModalityType;
+import java.awt.FlowLayout;
+import java.awt.Frame;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * For comparing two files side-by-side.
@@ -509,7 +510,7 @@ public class DiffPanel
     
     m_RecentFilesHandlerLeft.addRecentItem(m_FileLeft);
     m_RecentFilesHandlerRight.addRecentItem(m_FileRight);
-    
+
     compare();
   }
   
@@ -549,31 +550,52 @@ public class DiffPanel
    * Performs the comparison, either using files or clipboard content.
    */
   protected void compare() {
-    List<String>	left;
-    List<String>	right;
+    SwingWorker 	worker;
 
-    if (m_ClipboardLeft != null) {
-      left = m_ClipboardLeft;
-      m_PanelDiff.setLabelText(true,  "Clipboard");
-    }
-    else {
-      if (m_FileLeft.isDirectory())
-	left = new ArrayList<String>();
-      else
-	left = FileUtils.loadFromFile(m_FileLeft);
-      m_PanelDiff.setLabelText(true,  m_FileLeft.toString());
-    }
-    if (m_ClipboardRight != null) {
-      right = m_ClipboardRight;
-      m_PanelDiff.setLabelText(false,  "Clipboard");
-    }
-    else {
-      if (m_FileRight.isDirectory())
-	right = new ArrayList<String>();
-      else
-	right = FileUtils.loadFromFile(m_FileRight);
-      m_PanelDiff.setLabelText(false,  m_FileRight.toString());
-    }
-    m_PanelDiff.compare(left, right);
+    worker = new SwingWorker() {
+      @Override
+      protected Object doInBackground() throws Exception {
+	List<String>	left;
+	List<String>	right;
+
+	setCursor(new Cursor(Cursor.WAIT_CURSOR));
+
+	if (m_ClipboardLeft != null) {
+	  left = m_ClipboardLeft;
+	  m_PanelDiff.setLabelText(true,  "Clipboard");
+	}
+	else {
+	  if (m_FileLeft.isDirectory())
+	    left = new ArrayList<String>();
+	  else
+	    left = FileUtils.loadFromFile(m_FileLeft);
+	  m_PanelDiff.setLabelText(true,  m_FileLeft.toString());
+	}
+
+	if (m_ClipboardRight != null) {
+	  right = m_ClipboardRight;
+	  m_PanelDiff.setLabelText(false,  "Clipboard");
+	}
+	else {
+	  if (m_FileRight.isDirectory())
+	    right = new ArrayList<String>();
+	  else
+	    right = FileUtils.loadFromFile(m_FileRight);
+	  m_PanelDiff.setLabelText(false,  m_FileRight.toString());
+	}
+
+	m_PanelDiff.compare(left, right);
+	m_PanelDiff.setLastFileLeft(m_FileLeft);
+	m_PanelDiff.setLastFileRight(m_FileRight);
+	return null;
+      }
+
+      @Override
+      protected void done() {
+	setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+	super.done();
+      }
+    };
+    worker.execute();
   }
 }
