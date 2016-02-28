@@ -15,7 +15,7 @@
 
 /*
  * GUIHelper.java
- * Copyright (C) 2008-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
@@ -2479,5 +2479,28 @@ public class GUIHelper {
       property = font.substring("Font.".length()) + ".font";
       UIManager.put(property, fontObj);
     }
+  }
+
+  /**
+   * Shortens the string in the middle (inserting "..") if longer than
+   * specified number of characters.
+   *
+   * @param s		the string to (potentially) shorten
+   * @param max		the maximum number of chars
+   * @return		the processed string
+   */
+  public static String shortenMiddle(String s, int max) {
+    String	result;
+    int		len;
+
+    if (s.length() > max) {
+      len    = max / 2;
+      result = s.substring(0, len) + ".." + s.substring(s.length() - len);
+    }
+    else {
+      result = s;
+    }
+
+    return result;
   }
 }

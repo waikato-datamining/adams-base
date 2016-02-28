@@ -15,7 +15,7 @@
 
 /**
  * BaseTabbedPane.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
 
@@ -312,11 +312,9 @@ public class BaseTabbedPane
    */
   public void setShortenedTitleAt(int index, String title) {
     String  	shortTitle;
-    int		len;
 
-    if (title.length() > m_MaxTitleLength) {
-      len        = m_MaxTitleLength / 2;
-      shortTitle = title.substring(0, len) + ".." + title.substring(title.length() - len);
+    shortTitle = GUIHelper.shortenMiddle(title, m_MaxTitleLength);
+    if (!title.equals(shortTitle)) {
       setTitleAt(index, shortTitle);
       setToolTipTextAt(index, title);
     }
