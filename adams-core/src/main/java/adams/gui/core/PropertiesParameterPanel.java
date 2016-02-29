@@ -944,7 +944,7 @@ public class PropertiesParameterPanel
           break;
         case DIRECTORY:
           dirPanel = (DirectoryChooserPanel) comp;
-          result.setPath(key, dirPanel.getCurrent().getAbsolutePath());
+          result.setProperty(key, dirPanel.getCurrent().getPath());
           break;
         case DIRECTORY_ABSOLUTE:
           dirPanel = (DirectoryChooserPanel) comp;
@@ -952,7 +952,7 @@ public class PropertiesParameterPanel
           break;
         case FILE:
           filePanel = (FileChooserPanel) comp;
-          result.setPath(key, filePanel.getCurrent().getAbsolutePath());
+          result.setProperty(key, filePanel.getCurrent().getPath());
           break;
         case FILE_ABSOLUTE:
           filePanel = (FileChooserPanel) comp;
