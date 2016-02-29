@@ -19,11 +19,11 @@
  */
 package adams.gui.visualization.debug.inspectionhandler;
 
-import java.util.Hashtable;
-
 import adams.core.ClassLocator;
 import adams.data.spreadsheet.Cell;
 import adams.data.spreadsheet.Row;
+
+import java.util.Hashtable;
 
 /**
  * Provides further insight into spreadsheets.
@@ -43,7 +43,7 @@ public class SpreadSheet
   @Override
   public boolean handles(Class cls) {
     return 
-	   ClassLocator.isSubclass(adams.data.spreadsheet.SpreadSheet.class, cls)
+	   ClassLocator.hasInterface(adams.data.spreadsheet.SpreadSheet.class, cls)
 	|| ClassLocator.hasInterface(Row.class, cls)
 	|| ClassLocator.isSubclass(Cell.class, cls);
   }
