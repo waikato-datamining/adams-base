@@ -27,6 +27,7 @@ import adams.gui.core.ColorHelper;
 import adams.gui.core.Fonts;
 import adams.gui.core.GUIHelper;
 
+import javax.swing.text.DefaultStyledDocument;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
@@ -150,7 +151,7 @@ public class DiffTextPane
 
     getTextPane().setText("");
     lineNo = 0;
-    doc    = getTextPane().getStyledDocument();
+    doc    = new DefaultStyledDocument();
     lines  = new SimpleAttributeSet();
     StyleConstants.setBold(lines, true);
     StyleConstants.setFontFamily(lines, "monospaced");
@@ -184,6 +185,10 @@ public class DiffTextPane
       }
     }
     
+    getTextPane().setStyledDocument(doc);
     getTextPane().setCaretPosition(0);
+    invalidate();
+    revalidate();
+    doLayout();
   }
 }
