@@ -15,7 +15,7 @@
 
 /**
  * SpreadSheetRenderer.java
- * Copyright (C) 2015 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.debug.objectrenderer;
@@ -47,7 +47,7 @@ public class SpreadSheetRenderer
    */
   @Override
   public boolean handles(Class cls) {
-    return ClassLocator.isSubclass(SpreadSheet.class, cls);
+    return ClassLocator.hasInterface(SpreadSheet.class, cls);
   }
 
   /**
