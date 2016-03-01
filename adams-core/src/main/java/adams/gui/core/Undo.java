@@ -15,7 +15,7 @@
 
 /*
  * Undo.java
- * Copyright (C) 2008-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
@@ -448,7 +448,7 @@ public class Undo {
    * @return		the comment
    */
   public String peekUndoComment() {
-    return peekUndoComment(false);
+    return peekUndoComment(true);
   }
 
   /**
@@ -554,7 +554,7 @@ public class Undo {
    * @return		the comment
    */
   public String peekRedoComment() {
-    return peekRedoComment(false);
+    return peekRedoComment(true);
   }
 
   /**
@@ -703,13 +703,6 @@ public class Undo {
    * @return		the (potentially) shortened comment
    */
   protected String shortenComment(String s) {
-    String	result;
-
-    result = s;
-
-    if (result.length() > COMMENT_MAX_LENGTH)
-      result = result.substring(0, COMMENT_MAX_LENGTH) + "...";
-
-    return result;
+    return GUIHelper.shortenMiddle(s, COMMENT_MAX_LENGTH);
   }
 }
