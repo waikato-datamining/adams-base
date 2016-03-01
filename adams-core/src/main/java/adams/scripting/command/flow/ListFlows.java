@@ -20,7 +20,6 @@
 
 package adams.scripting.command.flow;
 
-import adams.core.io.GzipUtils;
 import adams.data.io.input.CsvSpreadSheetReader;
 import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.Row;
@@ -110,25 +109,17 @@ public class  ListFlows
     SpreadSheet			sheet;
     CsvSpreadSheetReader 	csv;
     StringReader 		reader;
-    byte[]			decomp;
 
     if (value.length == 0) {
       m_Flows = newSheet();
       return;
     }
 
-    decomp = GzipUtils.decompress(value, 1024);
-    sheet  = new DefaultSpreadSheet();
-    if (decomp != null) {
-      reader = new StringReader(new String(decomp));
-      csv    = new CsvSpreadSheetReader();
-      sheet  = csv.read(reader);
-      if (sheet == null)
-	getLogger().severe("Failed to read payload:\n" + new String(decomp));
-    }
-    else {
-      getLogger().severe("Failed to decompress payload!");
-    }
+    reader = new StringReader(new String(value));
+    csv    = new CsvSpreadSheetReader();
+    sheet  = csv.read(reader);
+    if (sheet == null)
+      getLogger().severe("Failed to read payload:\n" + new String(value));
 
     m_Flows = sheet;
   }
@@ -140,7 +131,7 @@ public class  ListFlows
    */
   @Override
   public byte[] getResponsePayload() {
-    return GzipUtils.compress(m_Flows.toString().getBytes());
+    return m_Flows.toString().getBytes();
   }
 
   /**

@@ -24,6 +24,7 @@ import adams.core.MessageCollection;
 import adams.core.Properties;
 import adams.core.Utils;
 import adams.core.io.FileUtils;
+import adams.core.io.GzipUtils;
 import adams.core.option.OptionUtils;
 import org.apache.commons.codec.binary.Base64;
 
@@ -78,6 +79,13 @@ public class CommandUtils {
     header = Properties.fromComment(Utils.flatten(headerLines, "\n"));
     // compression needs to be handle by individual commands
     payload = Base64.decodeBase64((Utils.flatten(payloadLines, "").getBytes()));
+    if (payload.length > 0) {
+      payload = GzipUtils.decompress(payload, 1024);
+      if (payload == null) {
+        errors.add("Failed to decompress payload!");
+        payload = new byte[0];
+      }
+    }
 
     cmd = header.getProperty(RemoteCommand.KEY_COMMAND, "");
     if (cmd.isEmpty()) {

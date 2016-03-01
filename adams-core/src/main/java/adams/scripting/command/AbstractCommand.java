@@ -21,6 +21,7 @@
 package adams.scripting.command;
 
 import adams.core.Properties;
+import adams.core.io.GzipUtils;
 import adams.core.option.AbstractOptionHandler;
 import adams.core.option.OptionUtils;
 import adams.gui.application.AbstractApplicationFrame;
@@ -130,6 +131,8 @@ public abstract class AbstractCommand
     // payload
     prepareRequestPayload();
     payload = getRequestPayload();
+    if (payload.length > 0)
+      payload = GzipUtils.compress(payload);
 
     return CommandUtils.commandToString(header, payload);
   }

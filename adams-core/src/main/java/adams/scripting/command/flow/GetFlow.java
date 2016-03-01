@@ -20,7 +20,6 @@
 
 package adams.scripting.command.flow;
 
-import adams.core.io.GzipUtils;
 import adams.core.option.OptionUtils;
 import adams.flow.control.RunningFlowsRegistry;
 import adams.flow.core.Actor;
@@ -131,26 +130,18 @@ public class GetFlow
   @Override
   public void setResponsePayload(byte[] value) {
     Actor	flow;
-    byte[]	decomp;
 
     if (value.length == 0) {
       m_Flow = null;
       return;
     }
 
-    decomp = GzipUtils.decompress(value, 1024);
-
     flow = null;
-    if (decomp != null) {
-      try {
-	flow = (Actor) OptionUtils.forCommandLine(Actor.class, new String(decomp));
-      }
-      catch (Exception e) {
-	getLogger().severe("Failed to read actor:\n" + new String(decomp));
-      }
+    try {
+      flow = (Actor) OptionUtils.forCommandLine(Actor.class, new String(value));
     }
-    else {
-      getLogger().severe("Failed to decompress payload!");
+    catch (Exception e) {
+      getLogger().severe("Failed to read actor:\n" + new String(value));
     }
 
     m_Flow = flow;
@@ -163,7 +154,7 @@ public class GetFlow
    */
   @Override
   public byte[] getResponsePayload() {
-    return GzipUtils.compress(m_Flow.toCommandLine().getBytes());
+    return m_Flow.toCommandLine().getBytes();
   }
 
   /**
