@@ -89,7 +89,6 @@ public class SystemInfo
   public void setResponsePayload(byte[] value) {
     Properties		props;
     StringReader	reader;
-    byte[]		decomp;
 
     if (value.length == 0) {
       m_Info = new Properties();
