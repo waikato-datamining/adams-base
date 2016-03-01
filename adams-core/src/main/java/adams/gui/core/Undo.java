@@ -86,7 +86,7 @@ public class Undo {
      * @return		the copy
      */
     public UndoPoint getClone() {
-      return new UndoPoint(Utils.deepCopy(m_Data), new String(m_Comment));
+      return new UndoPoint(Utils.deepCopy(m_Data), m_Comment);
     }
 
     /**
@@ -118,6 +118,19 @@ public class Undo {
     }
   }
 
+  /**
+   * Determines where to shorten the comments.
+   *
+   * @author  fracpete (fracpete at waikato dot ac dot nz)
+   * @version $Revision$
+   */
+  public enum ShorteningType {
+    NONE,
+    START,
+    MIDDLE,
+    END
+  }
+
   /** the maximum length for a comment. */
   public final static int COMMENT_MAX_LENGTH = 40;
 
@@ -147,6 +160,12 @@ public class Undo {
 
   /** the maximum number of undo points. */
   protected int m_MaxUndo;
+
+  /** where to shorten the comments. */
+  protected ShorteningType m_ShorteningType;
+
+  /** the maximum length for comments before shortening. */
+  protected int m_MaxCommentLength;
 
   /**
    * Initializes the undo mechanism. Maximum of DEFAULT_MAX_UNDO undo steps.
@@ -182,14 +201,16 @@ public class Undo {
   public Undo(Class undoClass, boolean onDisk) {
     super();
 
-    m_UndoClass   = undoClass;
-    m_OnDisk      = onDisk && ClassLocator.hasInterface(Serializable.class, undoClass);
-    m_UndoList    = new ArrayList<UndoPoint>();
-    m_RedoList    = new ArrayList<UndoPoint>();
-    m_Listeners   = new HashSet<UndoListener>();
-    m_Enabled     = true;
-    m_Working     = false;
-    m_MaxUndo     = DEFAULT_MAX_UNDO;
+    m_UndoClass        = undoClass;
+    m_OnDisk           = onDisk && ClassLocator.hasInterface(Serializable.class, undoClass);
+    m_UndoList         = new ArrayList<UndoPoint>();
+    m_RedoList         = new ArrayList<UndoPoint>();
+    m_Listeners        = new HashSet<UndoListener>();
+    m_Enabled          = true;
+    m_Working          = false;
+    m_MaxUndo          = DEFAULT_MAX_UNDO;
+    m_ShorteningType   = ShorteningType.MIDDLE;
+    m_MaxCommentLength = COMMENT_MAX_LENGTH;
   }
 
   /**
@@ -309,7 +330,8 @@ public class Undo {
 	file.deleteOnExit();
 
 	// write to disk
-	oos  = new ObjectOutputStream(new FileOutputStream(file));
+	fos = new FileOutputStream(file);
+	oos = new ObjectOutputStream(fos);
 	oos.writeObject(o);
 	oos.flush();
 
@@ -381,7 +403,8 @@ public class Undo {
 	file.deleteOnExit();
 
 	// write to disk
-	oos  = new ObjectOutputStream(new FileOutputStream(file));
+	fos = new FileOutputStream(file);
+	oos = new ObjectOutputStream(fos);
 	oos.writeObject(o);
 	oos.flush();
 
@@ -448,20 +471,7 @@ public class Undo {
    * @return		the comment
    */
   public String peekUndoComment() {
-    return peekUndoComment(true);
-  }
-
-  /**
-   * Returns the comment of the last undo point.
-   *
-   * @param shorten	whether to shorten the comment if too long
-   * @return		the comment
-   */
-  public String peekUndoComment(boolean shorten) {
-    if (shorten)
-      return shortenComment(m_UndoList.get(m_UndoList.size() - 1).getComment());
-    else
-      return m_UndoList.get(m_UndoList.size() - 1).getComment();
+    return shortenComment(m_UndoList.get(m_UndoList.size() - 1).getComment());
   }
 
   /**
@@ -493,12 +503,11 @@ public class Undo {
 	// load object
 	fis    = new FileInputStream(file);
 	ois    = new ObjectInputStream(fis);
-	result = new UndoPoint(ois.readObject(), new String(point.getComment()));
+	result = new UndoPoint(ois.readObject(), point.getComment());
       }
       catch (Exception e) {
 	e.printStackTrace();
 	result  = null;
-	point   = null;
 	success = false;
       }
       finally {
@@ -554,20 +563,7 @@ public class Undo {
    * @return		the comment
    */
   public String peekRedoComment() {
-    return peekRedoComment(true);
-  }
-
-  /**
-   * Returns the comment of the last redo point.
-   *
-   * @param shorten	whether to shorten the comment, if too long
-   * @return		the comment
-   */
-  public String peekRedoComment(boolean shorten) {
-    if (shorten)
-      return shortenComment(m_RedoList.get(m_RedoList.size() - 1).getComment());
-    else
-      return m_RedoList.get(m_RedoList.size() - 1).getComment();
+    return shortenComment(m_RedoList.get(m_RedoList.size() - 1).getComment());
   }
 
   /**
@@ -599,13 +595,12 @@ public class Undo {
 	// load object
 	fis    = new FileInputStream(file);
 	ois    = new ObjectInputStream(fis);
-	result = new UndoPoint(ois.readObject(), new String(point.getComment()));
+	result = new UndoPoint(ois.readObject(), point.getComment());
 	ois.close();
       }
       catch (Exception e) {
 	e.printStackTrace();
 	result  = null;
-	point   = null;
 	success = false;
       }
       finally {
@@ -697,12 +692,60 @@ public class Undo {
   }
 
   /**
+   * Sets how to shorten the comments.
+   *
+   * @param value	the type
+   */
+  public void setShorteningType(ShorteningType value) {
+    m_ShorteningType = value;
+  }
+
+  /**
+   * Returns how to shorten the comments.
+   *
+   * @return		the type
+   */
+  public ShorteningType getShorteningType() {
+    return m_ShorteningType;
+  }
+
+  /**
+   * Sets the maximum length for comments before shortening them.
+   *
+   * @param value	the maximum length
+   */
+  public void setMaxCommentLength(int value) {
+    if (value > 0)
+      m_MaxCommentLength = value;
+  }
+
+  /**
+   * Returns the maximum length for comments before shortening them.
+   *
+   * @return		the maximum length
+   */
+  public int getMaxCommentLength() {
+    return m_MaxCommentLength;
+  }
+
+  /**
    * Shortens the comment.
    *
    * @param s		the comment to process
    * @return		the (potentially) shortened comment
    */
   protected String shortenComment(String s) {
-    return GUIHelper.shortenMiddle(s, COMMENT_MAX_LENGTH);
+    switch (m_ShorteningType) {
+      case NONE:
+	return s;
+      case START:
+	return (s.length() > m_MaxCommentLength ? ("..." + s.substring(s.length() - m_MaxCommentLength, s.length())) : s);
+      case MIDDLE:
+	return GUIHelper.shortenMiddle(s, m_MaxCommentLength);
+      case END:
+	return Utils.shorten(s, m_MaxCommentLength);
+      default:
+	throw new IllegalStateException("Unhandled shortening type: " + m_ShorteningType);
+    }
   }
 }
