@@ -90,18 +90,18 @@ public interface RemoteCommand
   public boolean isRequest();
 
   /**
-   * Sets the payload for the command.
+   * Sets the payload for the request.
    *
    * @param value	the payload
    */
-  public void setPayload(byte[] value);
+  public void setRequestPayload(byte[] value);
 
   /**
-   * Returns the payload of the command, if any.
+   * Returns the payload of the request, if any.
    *
    * @return		the payload
    */
-  public byte[] getPayload();
+  public byte[] getRequestPayload();
 
   /**
    * Assembles the command into a string, including any payload.

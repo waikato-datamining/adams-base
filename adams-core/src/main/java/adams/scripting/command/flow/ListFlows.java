@@ -82,12 +82,31 @@ public class  ListFlows
   }
 
   /**
-   * Sets the payload for the command.
+   * Ignored.
    *
    * @param value	the payload
    */
   @Override
-  public void setPayload(byte[] value) {
+  public void setRequestPayload(byte[] value) {
+  }
+
+  /**
+   * Always zero-length array.
+   *
+   * @return		the payload
+   */
+  @Override
+  public byte[] getRequestPayload() {
+    return new byte[0];
+  }
+
+  /**
+   * Sets the payload for the response.
+   *
+   * @param value	the payload
+   */
+  @Override
+  public void setResponsePayload(byte[] value) {
     SpreadSheet			sheet;
     CsvSpreadSheetReader 	csv;
     StringReader 		reader;
@@ -115,16 +134,13 @@ public class  ListFlows
   }
 
   /**
-   * Returns the payload of the command, if any.
+   * Returns the payload of the response, if any.
    *
    * @return		the payload
    */
   @Override
-  public byte[] getPayload() {
-    if (isRequest())
-      return new byte[0];
-    else
-      return GzipUtils.compress(m_Flows.toString().getBytes());
+  public byte[] getResponsePayload() {
+    return GzipUtils.compress(m_Flows.toString().getBytes());
   }
 
   /**

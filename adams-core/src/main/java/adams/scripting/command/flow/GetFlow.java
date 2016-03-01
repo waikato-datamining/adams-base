@@ -105,12 +105,31 @@ public class GetFlow
   }
 
   /**
-   * Sets the payload for the command.
+   * Ignored.
    *
    * @param value	the payload
    */
   @Override
-  public void setPayload(byte[] value) {
+  public void setRequestPayload(byte[] value) {
+  }
+
+  /**
+   * Always zero-length array.
+   *
+   * @return		the payload
+   */
+  @Override
+  public byte[] getRequestPayload() {
+    return new byte[0];
+  }
+
+  /**
+   * Sets the payload for the response.
+   *
+   * @param value	the payload
+   */
+  @Override
+  public void setResponsePayload(byte[] value) {
     Actor	flow;
     byte[]	decomp;
 
@@ -138,16 +157,13 @@ public class GetFlow
   }
 
   /**
-   * Returns the payload of the command, if any.
+   * Returns the payload of the response, if any.
    *
    * @return		the payload
    */
   @Override
-  public byte[] getPayload() {
-    if (isRequest())
-      return new byte[0];
-    else
-      return GzipUtils.compress(m_Flow.toCommandLine().getBytes());
+  public byte[] getResponsePayload() {
+    return GzipUtils.compress(m_Flow.toCommandLine().getBytes());
   }
 
   /**

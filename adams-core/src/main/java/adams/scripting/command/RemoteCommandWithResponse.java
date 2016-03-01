@@ -56,6 +56,20 @@ public interface RemoteCommandWithResponse
   public String responseConnectionTipText();
 
   /**
+   * Sets the payload for the response.
+   *
+   * @param value	the payload
+   */
+  public void setResponsePayload(byte[] value);
+
+  /**
+   * Returns the payload of the response, if any.
+   *
+   * @return		the payload
+   */
+  public byte[] getResponsePayload();
+
+  /**
    * Assembles the command into a string, including any payload.
    *
    * @return		the generated string, null if failed to assemble

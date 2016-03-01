@@ -195,12 +195,12 @@ public class RemoteFlowExecution
   }
 
   /**
-   * Sets the payload for the command.
+   * Sets the payload for the request.
    *
    * @param value	the payload
    */
   @Override
-  public void setPayload(byte[] value) {
+  public void setRequestPayload(byte[] value) {
     Object[]	data;
 
     if (value.length == 0)
@@ -218,12 +218,12 @@ public class RemoteFlowExecution
   }
 
   /**
-   * Returns the payload of the command, if any.
+   * Returns the payload of the request, if any.
    *
    * @return		the payload
    */
   @Override
-  public byte[] getPayload() {
+  public byte[] getRequestPayload() {
     byte[]	result;
     Object[]	data;
 

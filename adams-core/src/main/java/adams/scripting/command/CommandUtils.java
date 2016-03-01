@@ -89,7 +89,17 @@ public class CommandUtils {
     try {
       result = (RemoteCommand) OptionUtils.forCommandLine(RemoteCommand.class, cmd);
       result.parse(header);
-      result.setPayload(payload);
+      if (result.isRequest()) {
+        result.setRequestPayload(payload);
+      }
+      else {
+        if (result instanceof RemoteCommandWithResponse)
+          ((RemoteCommandWithResponse) result).setResponsePayload(payload);
+        else
+          errors.add(
+            "Command flagged as response but does not implement "
+              + RemoteCommandWithResponse.class.getName() + ": " + cmd);
+      }
     }
     catch (Exception e) {
       errors.add("Failed to instantiate commandline: " + cmd, e);

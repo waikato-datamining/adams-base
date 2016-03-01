@@ -97,7 +97,7 @@ public class Restart
    * @param value	the payload
    */
   @Override
-  public void setPayload(byte[] value) {
+  public void setRequestPayload(byte[] value) {
   }
 
   /**
@@ -106,7 +106,7 @@ public class Restart
    * @return		the payload
    */
   @Override
-  public byte[] getPayload() {
+  public byte[] getRequestPayload() {
     return new byte[0];
   }
 

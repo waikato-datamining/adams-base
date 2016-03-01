@@ -132,7 +132,7 @@ public abstract class AbstractCommandWithResponse
 
     // payload
     prepareResponsePayload();
-    payload = getPayload();
+    payload = getResponsePayload();
 
     return CommandUtils.commandToString(header, payload);
   }

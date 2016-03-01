@@ -50,7 +50,7 @@ public class Kill
    * @param value	the payload
    */
   @Override
-  public void setPayload(byte[] value) {
+  public void setRequestPayload(byte[] value) {
   }
 
   /**
@@ -59,7 +59,7 @@ public class Kill
    * @return		the payload
    */
   @Override
-  public byte[] getPayload() {
+  public byte[] getRequestPayload() {
     return new byte[0];
   }
 
