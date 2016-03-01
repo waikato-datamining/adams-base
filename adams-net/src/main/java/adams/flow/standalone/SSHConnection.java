@@ -86,7 +86,8 @@ import java.util.List;
  * </pre>
  * 
  * <pre>-silent &lt;boolean&gt; (property: silent)
- * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console.
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
@@ -145,9 +146,11 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
- * <pre>-x-port &lt;java.lang.String&gt; (property: XPort)
+ * <pre>-x-port &lt;int&gt; (property: XPort)
  * &nbsp;&nbsp;&nbsp;The xport to connect to.
- * &nbsp;&nbsp;&nbsp;default: 0:0
+ * &nbsp;&nbsp;&nbsp;default: 6000
+ * &nbsp;&nbsp;&nbsp;minimum: 1
+ * &nbsp;&nbsp;&nbsp;maximum: 65535
  * </pre>
  * 
  * <pre>-prompt-for-password &lt;boolean&gt; (property: promptForPassword)
@@ -218,7 +221,7 @@ public class SSHConnection
   protected String m_XHost;
 
   /** the xport to use. */
-  protected String m_XPort;
+  protected int m_XPort;
 
   /** the actual SMTP password to use. */
   protected BasePassword m_ActualPassword;
@@ -329,7 +332,7 @@ public class SSHConnection
 
     m_OptionManager.add(
       "x-port", "XPort",
-      "0:0");
+      6000, 1, 65535);
 
     m_OptionManager.add(
       "prompt-for-password", "promptForPassword",
@@ -718,9 +721,11 @@ public class SSHConnection
    *
    * @param value	the port
    */
-  public void setXPort(String value) {
-    m_XPort = value;
-    reset();
+  public void setXPort(int value) {
+    if (getOptionManager().isValid("XPort", value)) {
+      m_XPort = value;
+      reset();
+    }
   }
 
   /**
@@ -728,7 +733,7 @@ public class SSHConnection
    *
    * @return 		the port
    */
-  public String getXPort() {
+  public int getXPort() {
     return m_XPort;
   }
 
@@ -897,7 +902,7 @@ public class SSHConnection
       }
       JSchUtils.configureStrictHostKeyChecking(result, m_StrictHostKeyChecking);
       if (m_ForwardX)
-	JSchUtils.configureX11(result, host);
+	JSchUtils.configureX11(result, m_XHost, m_XPort);
       result.connect();
     }
     catch (Exception e) {
