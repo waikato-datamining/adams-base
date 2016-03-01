@@ -63,7 +63,7 @@ public class EditUndo
 	&& m_State.getCurrentPanel().getUndo().isEnabled());
     
     if (m_State.hasCurrentPanel() && m_State.getCurrentPanel().getUndo().canUndo()) {
-      setName("Undo - " + m_State.getCurrentPanel().getUndo().peekUndoComment(true));
+      setName("Undo - " + m_State.getCurrentPanel().getUndo().peekUndoComment());
       setToolTipText(m_State.getCurrentPanel().getUndo().peekUndoComment());
     }
     else {

@@ -493,7 +493,7 @@ public class TimeseriesExplorer
     m_MenuItemEnableUndo.setSelected(m_Undo.isEnabled());
     m_MenuItemUndo.setEnabled(m_Undo.canUndo());
     if (m_Undo.canUndo()) {
-      m_MenuItemUndo.setText("Undo - " + m_Undo.peekUndoComment(true));
+      m_MenuItemUndo.setText("Undo - " + m_Undo.peekUndoComment());
       m_MenuItemUndo.setToolTipText(m_Undo.peekUndoComment());
     }
     else {
@@ -502,7 +502,7 @@ public class TimeseriesExplorer
     }
     m_MenuItemRedo.setEnabled(m_Undo.canRedo());
     if (m_Undo.canRedo()) {
-      m_MenuItemRedo.setText("Redo - " + m_Undo.peekRedoComment(true));
+      m_MenuItemRedo.setText("Redo - " + m_Undo.peekRedoComment());
       m_MenuItemRedo.setToolTipText(m_Undo.peekRedoComment());
     }
     else {

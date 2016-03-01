@@ -292,7 +292,7 @@ public class ImageViewerPanel
     m_MenuItemEditEnableUndo.setSelected((panel != null) && panel.getUndo().isEnabled());
     m_MenuItemEditUndo.setEnabled((panel != null) && panel.getUndo().canUndo());
     if ((panel != null) && panel.getUndo().canUndo()) {
-      m_MenuItemEditUndo.setText("Undo - " + panel.getUndo().peekUndoComment(true));
+      m_MenuItemEditUndo.setText("Undo - " + panel.getUndo().peekUndoComment());
       m_MenuItemEditUndo.setToolTipText(panel.getUndo().peekUndoComment());
     }
     else {
@@ -301,7 +301,7 @@ public class ImageViewerPanel
     }
     m_MenuItemEditRedo.setEnabled((panel != null) && panel.getUndo().canRedo());
     if ((panel != null) && panel.getUndo().canRedo()) {
-      m_MenuItemEditRedo.setText("Redo - " + panel.getUndo().peekRedoComment(true));
+      m_MenuItemEditRedo.setText("Redo - " + panel.getUndo().peekRedoComment());
       m_MenuItemEditRedo.setToolTipText(panel.getUndo().peekRedoComment());
     }
     else {

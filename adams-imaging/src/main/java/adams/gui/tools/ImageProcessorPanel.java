@@ -201,7 +201,7 @@ public class ImageProcessorPanel
     // Edit
     if (hasPanel && panel.getUndo().canUndo()) {
       m_MenuItemEditUndo.setEnabled(true);
-      m_MenuItemEditUndo.setText("Undo - " + panel.getUndo().peekUndoComment(true));
+      m_MenuItemEditUndo.setText("Undo - " + panel.getUndo().peekUndoComment());
     }
     else {
       m_MenuItemEditUndo.setEnabled(false);
@@ -209,7 +209,7 @@ public class ImageProcessorPanel
     }
     if (hasPanel && panel.getUndo().canRedo()) {
       m_MenuItemEditRedo.setEnabled(true);
-      m_MenuItemEditRedo.setText("Redo - " + panel.getUndo().peekRedoComment(true));
+      m_MenuItemEditRedo.setText("Redo - " + panel.getUndo().peekRedoComment());
     }
     else {
       m_MenuItemEditRedo.setEnabled(false);

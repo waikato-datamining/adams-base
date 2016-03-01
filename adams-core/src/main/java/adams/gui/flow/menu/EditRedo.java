@@ -63,7 +63,7 @@ public class EditRedo
 	&& m_State.getCurrentPanel().getUndo().isEnabled());
     
     if (m_State.hasCurrentPanel() && m_State.getCurrentPanel().getUndo().canRedo()) {
-      setName("Redo - " + m_State.getCurrentPanel().getUndo().peekRedoComment(true));
+      setName("Redo - " + m_State.getCurrentPanel().getUndo().peekRedoComment());
       setToolTipText(m_State.getCurrentPanel().getUndo().peekRedoComment());
     }
     else {
