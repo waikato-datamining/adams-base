@@ -148,9 +148,10 @@ public class JSchUtils {
    *
    * @param session	the session to configure
    * @param host	the X11 host
+   * @param port	the X11 port
    */
-  public static void configureX11(Session session, String host) {
+  public static void configureX11(Session session, String host, int port) {
     session.setX11Host(host);
-    session.setX11Port(6000 + 0);
+    session.setX11Port(port);
   }
 }
