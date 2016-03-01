@@ -52,6 +52,9 @@ public class SSHConnection
   /** the xport to use. */
   protected int m_XPort;
 
+  /** the time in msec to wait before disconnecting the session again. */
+  protected int m_Wait;
+
   /**
    * Returns a string describing the object.
    *
@@ -80,6 +83,10 @@ public class SSHConnection
     m_OptionManager.add(
       "x-port", "XPort",
       6000, 1, 65535);
+
+    m_OptionManager.add(
+      "wait", "wait",
+      2000, 0, null);
   }
 
   /**
@@ -172,6 +179,37 @@ public class SSHConnection
   }
 
   /**
+   * Sets the period in msec to wait before disconnecting the session.
+   *
+   * @param value	the waiting period
+   */
+  public void setWait(int value) {
+    if (getOptionManager().isValid("wait", value)) {
+      m_Wait = value;
+      reset();
+    }
+  }
+
+  /**
+   * Returns the period in msec to wait before disconnecting the session.
+   *
+   * @return 		the waiting period
+   */
+  public int getWait() {
+    return m_Wait;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return		tip text for this property suitable for
+   *             	displaying in the GUI or for listing the options.
+   */
+  public String waitTipText() {
+    return "The time in milli-second to wait before disconnecting the session.";
+  }
+
+  /**
    * Creates a new {@link Session} object, but does not connect or establish
    * the tunnel.
    *
@@ -216,6 +254,9 @@ public class SSHConnection
       result = Utils.handleException(
 	cmd, "Failed to send " + (request ? "request" : "response"), e);
     }
+
+    if (m_Wait > 0)
+      Utils.wait(this, m_Wait, 100);
 
     return result;
   }
