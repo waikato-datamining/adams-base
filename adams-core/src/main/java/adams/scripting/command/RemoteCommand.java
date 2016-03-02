@@ -104,6 +104,13 @@ public interface RemoteCommand
   public byte[] getRequestPayload();
 
   /**
+   * Returns the objects that represent the request payload.
+   *
+   * @return		the objects
+   */
+  public Object[] getRequestPayloadObjects();
+
+  /**
    * Assembles the command into a string, including any payload.
    *
    * @return		the generated string, null if failed to assemble

@@ -111,6 +111,15 @@ public class Restart
   }
 
   /**
+   * Returns the objects that represent the request payload.
+   *
+   * @return		the objects
+   */
+  public Object[] getRequestPayloadObjects() {
+    return new Object[0];
+  }
+
+  /**
    * Handles the request.
    *
    * @param engine	the remote engine handling the request
@@ -123,15 +132,5 @@ public class Restart
     else
       System.exit(Launcher.CODE_RESTART);
     return null;
-  }
-
-  /**
-   * Returns a short description of the command.
-   *
-   * @return		the description
-   */
-  @Override
-  public String toString() {
-    return "Restart with more memory: " + m_MoreMemory;
   }
 }

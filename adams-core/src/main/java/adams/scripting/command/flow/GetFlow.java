@@ -123,6 +123,15 @@ public class GetFlow
   }
 
   /**
+   * Returns the objects that represent the request payload.
+   *
+   * @return		the objects
+   */
+  public Object[] getRequestPayloadObjects() {
+    return new Object[0];
+  }
+
+  /**
    * Sets the payload for the response.
    *
    * @param value	the payload
@@ -167,23 +176,11 @@ public class GetFlow
   }
 
   /**
-   * Returns the flow.
+   * Returns the objects that represent the response payload.
    *
-   * @return		the flow, null if not available
+   * @return		the objects
    */
-  public Actor getFlow() {
-    return m_Flow;
-  }
-
-  /**
-   * Returns a short description of the command.
-   *
-   * @return		the description
-   */
-  public String toString() {
-    if (m_Flow != null)
-      return m_Flow.toString();
-    else
-      return null;
+  public Object[] getResponsePayloadObjects() {
+    return new Object[]{m_Flow};
   }
 }

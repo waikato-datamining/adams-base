@@ -81,6 +81,15 @@ public class SystemInfo
   }
 
   /**
+   * Returns the objects that represent the request payload.
+   *
+   * @return		the objects
+   */
+  public Object[] getRequestPayloadObjects() {
+    return new Object[0];
+  }
+
+  /**
    * Sets the payload for the response.
    *
    * @param value	the payload
@@ -137,20 +146,11 @@ public class SystemInfo
   }
 
   /**
-   * Returns the system info.
+   * Returns the objects that represent the response payload.
    *
-   * @return		the info
+   * @return		the objects
    */
-  public Properties getInfo() {
-    return m_Info;
-  }
-
-  /**
-   * Returns a short description of the command.
-   *
-   * @return		the description
-   */
-  public String toString() {
-    return m_Info.toStringSimple();
+  public Object[] getResponsePayloadObjects() {
+    return new Object[]{m_Info};
   }
 }

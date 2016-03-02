@@ -240,6 +240,15 @@ public class RemoteFlowExecution
   }
 
   /**
+   * Returns the objects that represent the request payload.
+   *
+   * @return		the objects
+   */
+  public Object[] getRequestPayloadObjects() {
+    return new Object[]{m_Actor, m_Storage, m_Variables};
+  }
+
+  /**
    * Hook method for preparing the request payload,
    */
   @Override
@@ -303,14 +312,5 @@ public class RemoteFlowExecution
     }
 
     return result;
-  }
-
-  /**
-   * Returns a short description of the command.
-   *
-   * @return		the description
-   */
-  public String toString() {
-    return m_Flow.toString();
   }
 }

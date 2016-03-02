@@ -21,6 +21,7 @@
 package adams.scripting.command;
 
 import adams.core.Properties;
+import adams.core.Utils;
 import adams.core.io.GzipUtils;
 import adams.core.option.AbstractOptionHandler;
 import adams.core.option.OptionUtils;
@@ -182,5 +183,7 @@ public abstract class AbstractCommand
    *
    * @return		the description
    */
-  public abstract String toString();
+  public String toString() {
+    return getClass().getName() + ": " + Utils.arrayToString(getRequestPayloadObjects());
+  }
 }

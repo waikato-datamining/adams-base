@@ -70,6 +70,13 @@ public interface RemoteCommandWithResponse
   public byte[] getResponsePayload();
 
   /**
+   * Returns the objects that represent the response payload.
+   *
+   * @return		the objects
+   */
+  public Object[] getResponsePayloadObjects();
+
+  /**
    * Assembles the command into a string, including any payload.
    *
    * @return		the generated string, null if failed to assemble

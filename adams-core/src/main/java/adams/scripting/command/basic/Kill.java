@@ -64,6 +64,15 @@ public class Kill
   }
 
   /**
+   * Returns the objects that represent the request payload.
+   *
+   * @return		the objects
+   */
+  public Object[] getRequestPayloadObjects() {
+    return new Object[0];
+  }
+
+  /**
    * Handles the request.
    *
    * @param engine	the remote engine handling the request
@@ -74,15 +83,5 @@ public class Kill
     getLogger().info("Exiting");
     System.exit(0);
     return null;
-  }
-
-  /**
-   * Returns a short description of the command.
-   *
-   * @return		the description
-   */
-  @Override
-  public String toString() {
-    return "Kill";
   }
 }

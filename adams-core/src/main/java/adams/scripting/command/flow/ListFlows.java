@@ -100,6 +100,15 @@ public class  ListFlows
   }
 
   /**
+   * Returns the objects that represent the request payload.
+   *
+   * @return		the objects
+   */
+  public Object[] getRequestPayloadObjects() {
+    return new Object[0];
+  }
+
+  /**
    * Sets the payload for the response.
    *
    * @param value	the payload
@@ -160,20 +169,11 @@ public class  ListFlows
   }
 
   /**
-   * Returns the flow spreadsheet.
+   * Returns the objects that represent the response payload.
    *
-   * @return		the flows
+   * @return		the objects
    */
-  public SpreadSheet getFlows() {
-    return m_Flows;
-  }
-
-  /**
-   * Returns a short description of the command.
-   *
-   * @return		the description
-   */
-  public String toString() {
-    return m_Flows.toString();
+  public Object[] getResponsePayloadObjects() {
+    return new Object[]{m_Flows};
   }
 }

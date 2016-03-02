@@ -21,6 +21,7 @@
 package adams.scripting.command;
 
 import adams.core.Properties;
+import adams.core.Utils;
 import adams.core.io.GzipUtils;
 import adams.core.option.OptionUtils;
 import adams.scripting.connection.Connection;
@@ -161,5 +162,14 @@ public abstract class AbstractCommandWithResponse
   @Override
   public void handleResponse(RemoteScriptingEngine engine, ResponseHandler handler) {
     handler.responseSuccessful(this);
+  }
+
+  /**
+   * Returns a short description of the command.
+   *
+   * @return		the description
+   */
+  public String toString() {
+    return getClass().getName() + ": " + Utils.arrayToString(isRequest() ? getRequestPayloadObjects() : getResponsePayloadObjects());
   }
 }

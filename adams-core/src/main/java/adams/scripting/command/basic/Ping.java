@@ -20,11 +20,8 @@
 
 package adams.scripting.command.basic;
 
-import adams.core.Properties;
 import adams.core.net.InternetHelper;
 import adams.scripting.command.AbstractCommandWithResponse;
-
-import java.io.StringReader;
 
 /**
  * Requests an 'am alive' signal from the remote host.
@@ -77,16 +74,21 @@ public class Ping
   }
 
   /**
+   * Returns the objects that represent the request payload.
+   *
+   * @return		the objects
+   */
+  public Object[] getRequestPayloadObjects() {
+    return new Object[0];
+  }
+
+  /**
    * Sets the payload for the response.
    *
    * @param value	the payload
    */
   @Override
   public void setResponsePayload(byte[] value) {
-    Properties		props;
-    StringReader	reader;
-    byte[]		decomp;
-
     if (value.length == 0) {
       m_Host = "";
       return;
@@ -114,20 +116,11 @@ public class Ping
   }
 
   /**
-   * Returns the host.
+   * Returns the objects that represent the response payload.
    *
-   * @return		the host
+   * @return		the objects
    */
-  public String getHost() {
-    return m_Host;
-  }
-
-  /**
-   * Returns a short description of the command.
-   *
-   * @return		the description
-   */
-  public String toString() {
-    return m_Host;
+  public Object[] getResponsePayloadObjects() {
+    return new Object[]{m_Host};
   }
 }
