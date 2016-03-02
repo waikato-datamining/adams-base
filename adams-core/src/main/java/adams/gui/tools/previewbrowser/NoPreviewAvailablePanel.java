@@ -15,7 +15,7 @@
 
 /**
  * NoPreviewAvailablePanel.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.previewbrowser;
 
@@ -26,17 +26,16 @@ package adams.gui.tools.previewbrowser;
  * @version $Revision$
  */
 public class NoPreviewAvailablePanel
-  extends MessagePanel {
+  extends PreviewPanel {
 
   /** for serialization. */
   private static final long serialVersionUID = 5863705257041774410L;
 
   /**
-   * Initializes the widgets.
+   * Initializes the panel.
    */
-  protected void initGUI() {
-    super.initGUI();
-
-    setMessage("No preview available");
+  public NoPreviewAvailablePanel() {
+    super(new MessagePanel());
+    ((MessagePanel) getContent()).setMessage("No preview available");
   }
 }
