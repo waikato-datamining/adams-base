@@ -27,6 +27,7 @@ import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
 import adams.core.io.TempUtils;
+import adams.core.logging.LoggingLevel;
 import adams.env.Environment;
 import adams.env.PreviewBrowserPanelDefinition;
 import adams.gui.application.ChildFrame;
@@ -36,6 +37,7 @@ import adams.gui.chooser.DirectoryChooserPanel;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseSplitPane;
+import adams.gui.core.ConsolePanel;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MenuBarProvider;
 import adams.gui.core.MouseUtils;
@@ -542,8 +544,10 @@ public class PreviewBrowserPanel
       }
       catch (Exception e) {
 	m_ArchiveHandler = null;
-	System.err.println("Failed to obtain archive handler for '" + localFiles[0] + "':");
-	e.printStackTrace();
+	ConsolePanel.getSingleton().append(
+	  LoggingLevel.SEVERE,
+	  "Failed to obtain archive handler for '" + localFiles[0] + "':",
+	  e);
       }
     }
     else {
@@ -592,7 +596,7 @@ public class PreviewBrowserPanel
       m_PanelContentHandlers.setVisible(m_ModelContentHandlers.getSize() > 1);
       // set preferred one
       preferred = getPreferredContentHandler(localFiles[0]);
-      prefIndex = 0;
+      prefIndex = -1;
       if (preferred != null) {
 	for (i = 0; i < handlers.size(); i++) {
 	  if (preferred.getClass() == handlers.get(i)) {
@@ -601,16 +605,15 @@ public class PreviewBrowserPanel
 	  }
 	}
       }
+      if ((prefIndex == -1) && (m_ModelContentHandlers.getSize() > 0))
+	prefIndex = 0;
       m_ComboBoxContentHandlers.setSelectedIndex(prefIndex);
       m_IgnoreContentHandlerChanges = false;
+      if (prefIndex == -1)
+	return null;
       // get preferred handler
       try {
-	if (m_ComboBoxContentHandlers.getSelectedIndex() != -1)
-	  cls = Class.forName((String) m_ComboBoxContentHandlers.getSelectedItem());
-	else if (m_ComboBoxContentHandlers.getItemCount() > 0)
-	  cls = Class.forName((String) m_ComboBoxContentHandlers.getItemAt(0));
-	else
-	  return null;
+	cls            = Class.forName((String) m_ComboBoxContentHandlers.getSelectedItem());
 	contentHandler = (AbstractContentHandler) cls.newInstance();
 	if (contentHandler instanceof MultipleFileContentHandler)
 	  result = ((MultipleFileContentHandler) contentHandler).getPreview(localFiles);
@@ -618,9 +621,10 @@ public class PreviewBrowserPanel
 	  result = contentHandler.getPreview(localFiles[0]);
       }
       catch (Exception e) {
-	contentHandler = null;
-	System.err.println("Failed to obtain content handler for '" + Utils.arrayToString(localFiles) + "':");
-	e.printStackTrace();
+	ConsolePanel.getSingleton().append(
+	  LoggingLevel.SEVERE,
+	  "Failed to obtain content handler for '" + Utils.arrayToString(localFiles) + "':",
+	  e);
       }
     }
     
@@ -686,13 +690,17 @@ public class PreviewBrowserPanel
       try {
 	tmpFiles[i] = File.createTempFile("adams-pb-", "." + FileUtils.getExtension(selFiles[i].toString()), TempUtils.getTempDirectory());
 	if (!m_ArchiveHandler.extract(selFiles[i].toString(), tmpFiles[i])) {
-	  System.err.println("Failed to extract file '" + selFiles[i] + "'!");
+	  ConsolePanel.getSingleton().append(
+	    LoggingLevel.SEVERE,
+	    "Failed to extract file '" + selFiles[i] + "'!");
 	  return;
 	}
       }
       catch (Exception e) {
-	System.err.println("Failed to extract file '" + selFiles[i] + "':");
-	e.printStackTrace();
+	ConsolePanel.getSingleton().append(
+	  LoggingLevel.SEVERE,
+	  "Failed to extract file '" + selFiles[i] + "':",
+	  e);
       }
     }
     displayLocalContent(tmpFiles, false);
@@ -724,8 +732,10 @@ public class PreviewBrowserPanel
 	result = (AbstractContentHandler) Class.forName(handler).newInstance();
       }
       catch (Exception e) {
-	System.err.println("Failed to instantiate handler: " + handler);
-	e.printStackTrace();
+	ConsolePanel.getSingleton().append(
+	  LoggingLevel.SEVERE,
+	  "Failed to instantiate handler: " + handler,
+	  e);
       }
     }
 
@@ -763,8 +773,11 @@ public class PreviewBrowserPanel
 
     // save props
     filename = Environment.getInstance().getHome() + File.separator + FILENAME;
-    if (!props.save(filename))
-      System.err.println("Failed to save properties to '" + filename + "'!");
+    if (!props.save(filename)) {
+      ConsolePanel.getSingleton().append(
+	LoggingLevel.SEVERE,
+	"Failed to save properties to '" + filename + "'!");
+    }
   }
 
   /**
@@ -793,8 +806,10 @@ public class PreviewBrowserPanel
 	result = (AbstractArchiveHandler) Class.forName(handler).newInstance();
       }
       catch (Exception e) {
-	System.err.println("Failed to instantiate handler: " + handler);
-	e.printStackTrace();
+	ConsolePanel.getSingleton().append(
+	  LoggingLevel.SEVERE,
+	  "Failed to instantiate handler: " + handler,
+	  e);
       }
     }
 
@@ -831,8 +846,11 @@ public class PreviewBrowserPanel
 
     // save props
     filename = Environment.getInstance().getCustomPropertiesFilename(PreviewBrowserPanelDefinition.KEY);
-    if (!Environment.getInstance().write(PreviewBrowserPanelDefinition.KEY, props))
-      System.err.println("Failed to save properties to '" + filename + "'!");
+    if (!Environment.getInstance().write(PreviewBrowserPanelDefinition.KEY, props)) {
+      ConsolePanel.getSingleton().append(
+	LoggingLevel.SEVERE,
+	"Failed to save properties to '" + filename + "'!");
+    }
   }
 
   /**
