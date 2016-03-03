@@ -15,16 +15,18 @@
 
 /**
  * Text.java
- * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer.draw;
 
 import adams.core.QuickInfoHelper;
+import adams.core.Utils;
 import adams.gui.core.ColorHelper;
 import adams.gui.core.Fonts;
 import adams.gui.core.GUIHelper;
 
-import java.awt.*;
+import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
 /**
@@ -34,13 +36,9 @@ import java.awt.image.BufferedImage;
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- * 
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  * 
  * <pre>-color &lt;java.awt.Color&gt; (property: color)
@@ -60,18 +58,26 @@ import java.awt.image.BufferedImage;
  * &nbsp;&nbsp;&nbsp;minimum: 1
  * </pre>
  * 
+ * <pre>-y-increment &lt;int&gt; (property: YIncrement)
+ * &nbsp;&nbsp;&nbsp;The Y increment when outputting multiple lines of text.
+ * &nbsp;&nbsp;&nbsp;default: 16
+ * &nbsp;&nbsp;&nbsp;minimum: 1
+ * </pre>
+ * 
  * <pre>-font &lt;java.awt.Font&gt; (property: font)
  * &nbsp;&nbsp;&nbsp;The font to use for the text.
- * &nbsp;&nbsp;&nbsp;default: monospaced-PLAIN-12
+ * &nbsp;&nbsp;&nbsp;default: Monospaced-PLAIN-12
  * </pre>
  * 
  * <pre>-text &lt;java.lang.String&gt; (property: text)
- * &nbsp;&nbsp;&nbsp;The text to draw.
+ * &nbsp;&nbsp;&nbsp;The text to draw; it is possible to multiple lines of text, simply use '
+ * &nbsp;&nbsp;&nbsp;\n' as line break.
  * &nbsp;&nbsp;&nbsp;default: Hello World!
  * </pre>
  * 
- * <pre>-anti-aliasing-enabled (property: antiAliasingEnabled)
+ * <pre>-anti-aliasing-enabled &lt;boolean&gt; (property: antiAliasingEnabled)
  * &nbsp;&nbsp;&nbsp;If enabled, uses anti-aliasing for drawing.
+ * &nbsp;&nbsp;&nbsp;default: true
  * </pre>
  * 
  <!-- options-end -->
@@ -91,6 +97,9 @@ public class Text
 
   /** the Y position of the text (1-based). */
   protected int m_Y;
+
+  /** the Y increment when outputting multiple lines. */
+  protected int m_YIncrement;
 
   /** the font to use. */
   protected Font m_Font;
@@ -127,6 +136,10 @@ public class Text
 	    1, 1, null);
 
     m_OptionManager.add(
+	    "y-increment", "YIncrement",
+	    16, 1, null);
+
+    m_OptionManager.add(
 	    "font", "font",
 	    Fonts.getMonospacedFont());
 
@@ -150,6 +163,7 @@ public class Text
 
     result  = QuickInfoHelper.toString(this, "X", m_X, "X: ");
     result += QuickInfoHelper.toString(this, "Y", m_Y, ", Y: ");
+    result += QuickInfoHelper.toString(this, "YIncrement", m_YIncrement, ", Y-Inc.: ");
     result += QuickInfoHelper.toString(this, "font", GUIHelper.encodeFont(m_Font), ", F: ");
     result += QuickInfoHelper.toString(this, "text", m_Text, ", T: ");
     result += QuickInfoHelper.toString(this, "color", ColorHelper.toHex(m_Color), ", Color: ");
@@ -163,12 +177,9 @@ public class Text
    * @param value	the position, 1-based
    */
   public void setX(int value) {
-    if (value > 0) {
+    if (getOptionManager().isValid("X", value)) {
       m_X = value;
       reset();
-    }
-    else {
-      getLogger().severe("X must be >0, provided: " + value);
     }
   }
 
@@ -197,12 +208,9 @@ public class Text
    * @param value	the position, 1-based
    */
   public void setY(int value) {
-    if (value > 0) {
+    if (getOptionManager().isValid("Y", value)) {
       m_Y = value;
       reset();
-    }
-    else {
-      getLogger().severe("Y must be >0, provided: " + value);
     }
   }
 
@@ -223,6 +231,37 @@ public class Text
    */
   public String YTipText() {
     return "The Y position of the top-left corner of the text (1-based).";
+  }
+
+  /**
+   * Sets the Y increment when outputting multiple lines.
+   *
+   * @param value	the increment
+   */
+  public void setYIncrement(int value) {
+    if (getOptionManager().isValid("YIncrement", value)) {
+      m_YIncrement = value;
+      reset();
+    }
+  }
+
+  /**
+   * Returns the Y increment when outputting multiple lines.
+   *
+   * @return		the increment
+   */
+  public int getYIncrement() {
+    return m_YIncrement;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String YIncrementTipText() {
+    return "The Y increment when outputting multiple lines of text.";
   }
 
   /**
@@ -255,22 +294,22 @@ public class Text
   }
 
   /**
-   * Sets the text to draw.
+   * Sets the text to draw. Use \n as line break.
    *
-   * @param value	the text
+   * @param value	the text, backquoted
    */
   public void setText(String value) {
-    m_Text = value;
+    m_Text = Utils.unbackQuoteChars(value);
     reset();
   }
 
   /**
-   * Returns the text to draw.
+   * Returns the text to draw. Uses \n as line break.
    *
-   * @return		the text
+   * @return		the text, backquoted
    */
   public String getText() {
-    return m_Text;
+    return Utils.backQuoteChars(m_Text);
   }
 
   /**
@@ -280,7 +319,7 @@ public class Text
    * 			displaying in the GUI or for listing the options.
    */
   public String textTipText() {
-    return "The text to draw.";
+    return "The text to draw; it is possible to multiple lines of text, simply use '\\n' as line break.";
   }
 
   /**
@@ -341,13 +380,17 @@ public class Text
   @Override
   protected String doDraw(BufferedImage image) {
     Graphics	g;
+    String[] 	lines;
+    int		i;
 
     if (m_Text.length() > 0) {
+      lines = Utils.split(m_Text, "\n");
       g = image.getGraphics();
       g.setColor(m_Color);
       GUIHelper.configureAntiAliasing(g, m_AntiAliasingEnabled);
       g.setFont(m_Font);
-      g.drawString(m_Text, m_X, m_Y);
+      for (i = 0; i < lines.length; i++)
+	g.drawString(lines[i], m_X, m_Y + i * m_YIncrement);
     }
     
     return null;
