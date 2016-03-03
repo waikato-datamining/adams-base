@@ -15,7 +15,7 @@
 
 /**
  * PreviewBrowserPanel.java
- * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools;
 
@@ -482,7 +482,6 @@ public class PreviewBrowserPanel
    */
   protected void displayView(final JPanel panel) {
     if (m_PanelView.getComponentCount() > 0) {
-      System.out.println(m_PanelView.getComponent(0).getClass().getName());
       if (m_PanelView.getComponent(0) instanceof CleanUpHandler)
         ((CleanUpHandler) m_PanelView.getComponent(0)).cleanUp();
     }
