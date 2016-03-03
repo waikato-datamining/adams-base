@@ -1096,7 +1096,7 @@ public class ImagePanel
    */
   public void setCurrentImage(BufferedImage value, double scale) {
     m_CurrentFile = null;
-    m_PaintPanel.setCurrentImage(value, scale);
+    m_PaintPanel.setCurrentImage(value, calcActualScale(scale));
     updateImageProperties();
   }
 
@@ -1117,7 +1117,7 @@ public class ImagePanel
    */
   public void setCurrentImage(AbstractImageContainer value, double scale) {
     m_CurrentFile = null;
-    m_PaintPanel.setCurrentImage(value.toBufferedImage(), scale);
+    m_PaintPanel.setCurrentImage(value.toBufferedImage(), calcActualScale(scale));
     updateImageProperties();
     setAdditionalProperties(value.getReport());
   }
@@ -1403,7 +1403,7 @@ public class ImagePanel
       else
 	cont = BufferedImageHelper.read(file);
       if (cont != null) {
-	m_PaintPanel.setCurrentImage(cont.toBufferedImage(), scale);
+	m_PaintPanel.setCurrentImage(cont.toBufferedImage(), calcActualScale(scale));
 	m_CurrentFile = new PlaceholderFile(file);
 	result        = true;
 	updateImageProperties(cont.getReport());
