@@ -60,6 +60,7 @@ import adams.gui.print.PrintMouseListener;
 import adams.gui.visualization.image.paintlet.Paintlet;
 import adams.gui.visualization.report.ReportFactory;
 
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
@@ -76,7 +77,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
@@ -438,61 +438,54 @@ public class ImagePanel
       if (menu == null) {
 	menu = new BasePopupMenu();
 
+        // undo/redo
         if (getOwner().isUndoSupported() & getOwner().getUndo().isEnabled()) {
 	  undo = getOwner().getUndo();
           menuitem = new JMenuItem("Undo" + (undo.canUndo() ? (" - " + undo.peekUndoComment()) : ""), GUIHelper.getIcon("undo.gif"));
           menuitem.setEnabled(undo.canUndo());
-	  menuitem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-	      getOwner().getUndo().undo();
-            }
-          });
+	  menuitem.addActionListener((ActionEvent ae) -> getOwner().getUndo().undo());
           menu.add(menuitem);
 
           menuitem = new JMenuItem("Redo" + (undo.canRedo() ? (" - " + undo.peekRedoComment()) : ""), GUIHelper.getIcon("redo.gif"));
           menuitem.setEnabled(undo.canRedo());
-          menuitem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-	      getOwner().getUndo().redo();
-            }
-          });
+          menuitem.addActionListener((ActionEvent ae) -> getOwner().getUndo().redo());
           menu.add(menuitem);
 
 	  menu.addSeparator();
         }
 
+        // copy
 	menuitem = new JMenuItem("Copy", GUIHelper.getIcon("copy.gif"));
 	menuitem.setEnabled(getCurrentImage() != null);
-	menuitem.addActionListener(new ActionListener() {
-	  public void actionPerformed(ActionEvent e) {
-	    GUIHelper.copyToClipboard(getCurrentImage());
-	  }
-	});
+	menuitem.addActionListener((ActionEvent ae) -> GUIHelper.copyToClipboard(getCurrentImage()));
 	menu.add(menuitem);
 
+        // export
 	menuitem = new JMenuItem("Export...", GUIHelper.getIcon("save.gif"));
 	menuitem.setEnabled(getCurrentImage() != null);
-	menuitem.addActionListener(new ActionListener() {
-	  public void actionPerformed(ActionEvent e) {
-	    export();
-	  }
-	});
+	menuitem.addActionListener((ActionEvent ae) -> export());
 	menu.addSeparator();
 	menu.add(menuitem);
 
+        // save report
 	menuitem = new JMenuItem("Save report...", GUIHelper.getEmptyIcon());
 	menuitem.setEnabled(getCurrentImage() != null);
-	menuitem.addActionListener(new ActionListener() {
-	  public void actionPerformed(ActionEvent e) {
-	    saveReport();
-	  }
-	});
+	menuitem.addActionListener((ActionEvent ae) -> saveReport());
+        menu.add(menuitem);
+
+	menu.addSeparator();
+
+        // show side pane
+        menuitem = new JCheckBoxMenuItem("Show side pane", GUIHelper.getIcon("properties.gif"));
+        menuitem.setSelected(!getOwner().getSplitPane().isRightComponentHidden());
+        menuitem.addActionListener((ActionEvent ae) ->
+	  getOwner().getSplitPane().setRightComponentHidden(
+	    !getOwner().getSplitPane().isRightComponentHidden()));
         menu.add(menuitem);
 
         // zoom
 	submenu = new JMenu("Zoom");
 	submenu.setIcon(GUIHelper.getIcon("glasses.gif"));
-	menu.addSeparator();
 	menu.add(submenu);
         zooms = new int[]{
           -100,
@@ -512,13 +505,11 @@ public class ImagePanel
           else
             menuitem = new JMenuItem(zooms[i] + "%");
           submenu.add(menuitem);
-          menuitem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-	      if (getOwner() != null)
-		getOwner().setScale((double) fZoom / 100);
-	      else
-		setScale((double) fZoom / 100);
-            }
+          menuitem.addActionListener((ActionEvent ae) -> {
+            if (getOwner() != null)
+              getOwner().setScale((double) fZoom / 100);
+            else
+              setScale((double) fZoom / 100);
           });
         }
       }
