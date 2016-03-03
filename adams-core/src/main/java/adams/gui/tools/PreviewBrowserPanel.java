@@ -579,6 +579,7 @@ public class PreviewBrowserPanel
     int				i;
     AbstractContentHandler 	contentHandler;
     Class 			cls;
+    int prefIndex;
 
     result = new NoPreviewAvailablePanel();
     if (AbstractContentHandler.hasHandler(localFiles[0])) {
@@ -589,17 +590,18 @@ public class PreviewBrowserPanel
       for (Class handler: handlers)
 	m_ModelContentHandlers.addElement(handler.getName());
       m_PanelContentHandlers.setVisible(m_ModelContentHandlers.getSize() > 1);
-      preferred = getPreferredContentHandler(localFiles[0]);
       // set preferred one
-      m_ComboBoxContentHandlers.setSelectedIndex(0);
+      preferred = getPreferredContentHandler(localFiles[0]);
+      prefIndex = 0;
       if (preferred != null) {
 	for (i = 0; i < handlers.size(); i++) {
 	  if (preferred.getClass() == handlers.get(i)) {
-	    m_ComboBoxContentHandlers.setSelectedIndex(i);
+	    prefIndex = i;
 	    break;
 	  }
 	}
       }
+      m_ComboBoxContentHandlers.setSelectedIndex(prefIndex);
       m_IgnoreContentHandlerChanges = false;
       // get preferred handler
       try {
