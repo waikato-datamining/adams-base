@@ -1173,6 +1173,31 @@ public class ActorUtils {
   }
 
   /**
+   * Checks whether an external actor is present in this sub-tree.
+   *
+   * @param actor	the actor to analyze
+   * @return		true if external actor present
+   */
+  public static boolean checkForExternalActor(Actor actor) {
+    boolean	result;
+    List<Actor>	actors;
+
+    result = (actor instanceof ExternalActorHandler);
+
+    if (!result) {
+      actors = enumerate(actor);
+      for (Actor a : actors) {
+	if (a instanceof ExternalActorHandler) {
+	  result = true;
+	  break;
+	}
+      }
+    }
+
+    return result;
+  }
+
+  /**
    * Cleans up the flow, e.g., removing disabled actors, unused callable actors.
    *
    * @param actor	the flow to clean up

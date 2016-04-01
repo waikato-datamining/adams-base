@@ -66,6 +66,7 @@ import adams.gui.core.ErrorMessagePanel;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MenuBarProvider;
 import adams.gui.core.dotnotationtree.AbstractItemFilter;
+import adams.gui.dialog.ApprovalDialog;
 import adams.gui.event.ActorChangeEvent;
 import adams.gui.event.ActorChangeEvent.Type;
 import adams.gui.flow.FlowEditorDialog;
@@ -1081,7 +1082,7 @@ public class TreeOperations
 	    + Utils.throwableToString(e));
 	return;
       }
-      callableNode = new Node(getOwner(), (Actor) callableActors);
+      callableNode = new Node(getOwner(), callableActors);
       index = 0;
       // CallableActors has to come after multiview actors
       if (handler == CallableActors.class) {
@@ -1136,6 +1137,7 @@ public class TreeOperations
       getOwner().notifyActorChangeListeners(new ActorChangeEvent(getOwner(), currNode, Type.MODIFY));
       getOwner().expand(callableNode);
     });
+    SwingUtilities.invokeLater(() -> getOwner().redraw());
     SwingUtilities.invokeLater(() -> {
       getOwner().locateAndDisplay(currNode.getFullName());
     });
@@ -1180,6 +1182,7 @@ public class TreeOperations
 
   /**
    * Opens a new FlowEditor window with the currently selected sub-flow.
+   * Checks for external actors and diplays confirmation dialog if so.
    *
    * @param paths	the (paths to the) actors to externalize
    */
@@ -1191,6 +1194,7 @@ public class TreeOperations
     Node		parent;
     int			index;
     int			i;
+    int			retVal;
 
     if (paths.length == 0)
       return;
@@ -1209,12 +1213,22 @@ public class TreeOperations
 	parent = (Node) currNode.getParent();
     }
     try {
-      handler = (Actor) ActorUtils.createExternalActor(actors);
+      handler = ActorUtils.createExternalActor(actors);
     }
     catch (Exception e) {
       GUIHelper.showErrorMessage(
 	  getOwner(), "Failed to externalize actor(s):\n" + Utils.throwableToString(e));
       return;
+    }
+
+    if (parent == null)
+      return;
+
+    // confirm if external actors present
+    if (ActorUtils.checkForExternalActor(handler)) {
+      retVal = GUIHelper.showConfirmMessage(getOwner(), "External actor(s) already present - continue?");
+      if (retVal != ApprovalDialog.APPROVE_OPTION)
+	return;
     }
 
     getOwner().addUndoPoint("Enclosing " + paths.length + " nodes in " + handler.getClass().getName());
@@ -1238,22 +1252,42 @@ public class TreeOperations
       getOwner().notifyActorChangeListeners(new ActorChangeEvent(getOwner(), fParent, Type.MODIFY));
     });
 
-    externalizeActor(new TreePath(newNode.getPath()));
+    externalizeActor(new TreePath(newNode.getPath()), false);
+  }
+
+  /**
+   * Opens a new FlowEditor window with the currently selected sub-flow.
+   * Checks for external actors and diplays confirmation dialog if so.
+   *
+   * @param path	the (path to the) actor to externalize
+   */
+  public void externalizeActor(TreePath path) {
+    externalizeActor(path, true);
   }
 
   /**
    * Opens a new FlowEditor window with the currently selected sub-flow.
    *
-   * @param path	the (path to the) actor to externalize
+   * @param path		the (path to the) actor to externalize
+   * @param checkExtActors	whether to check for external actors
    */
-  public void externalizeActor(TreePath path) {
+  protected void externalizeActor(TreePath path, boolean checkExtActors) {
     Actor			currActor;
     Node 			currNode;
     AbstractExternalActor 	extActor;
     FlowEditorDialog		dialog;
+    int				retVal;
 
     currNode  = TreeHelper.pathToNode(path);
     currActor = currNode.getFullActor().shallowCopy();
+
+    // confirm if external actors present
+    if (checkExtActors && ActorUtils.checkForExternalActor(currActor)) {
+      retVal = GUIHelper.showConfirmMessage(getOwner(), "External actor(s) already present - continue?");
+      if (retVal != ApprovalDialog.APPROVE_OPTION)
+	return;
+    }
+
     if (getOwner().getParentDialog() != null)
       dialog = new FlowEditorDialog(getOwner().getParentDialog());
     else
