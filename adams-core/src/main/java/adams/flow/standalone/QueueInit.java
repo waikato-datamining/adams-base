@@ -68,8 +68,14 @@ import java.util.Hashtable;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-storage-name &lt;adams.flow.control.StorageName&gt; (property: storageName)
- * &nbsp;&nbsp;&nbsp;The name of the queue in the internal storage.
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-storage-name &lt;adams.flow.control.StorageName&gt; [-storage-name ...] (property: storageName)
+ * &nbsp;&nbsp;&nbsp;The name(s) of the queue(s) in the internal storage.
  * &nbsp;&nbsp;&nbsp;default: queue
  * </pre>
  * 
@@ -114,8 +120,8 @@ public class QueueInit
   /** the key for backing up the monitoring actor. */
   public final static String BACKUP_MONITORACTOR = "monitor actor";
 
-  /** the name of the queue in the internal storage. */
-  protected StorageName m_StorageName;
+  /** the name(s) of the queue in the internal storage. */
+  protected StorageName[] m_StorageName;
   
   /** whether to keep existing queues. */
   protected boolean m_KeepExisting;
@@ -158,7 +164,7 @@ public class QueueInit
 
     m_OptionManager.add(
 	    "storage-name", "storageName",
-	    new StorageName("queue"));
+	    new StorageName[]{new StorageName("queue")});
 
     m_OptionManager.add(
 	    "keep-existing", "keepExisting",
@@ -225,21 +231,21 @@ public class QueueInit
   }
 
   /**
-   * Sets the name for the queue in the internal storage.
+   * Sets the names for the queue in the internal storage.
    *
-   * @param value	the name
+   * @param value	the names
    */
-  public void setStorageName(StorageName value) {
+  public void setStorageName(StorageName[] value) {
     m_StorageName = value;
     reset();
   }
 
   /**
-   * Returns the name for the queue in the internal storage.
+   * Returns the names for the queue in the internal storage.
    *
-   * @return		the name
+   * @return		the names
    */
-  public StorageName getStorageName() {
+  public StorageName[] getStorageName() {
     return m_StorageName;
   }
 
@@ -250,7 +256,7 @@ public class QueueInit
    * 			displaying in the GUI or for listing the options.
    */
   public String storageNameTipText() {
-    return "The name of the queue in the internal storage.";
+    return "The name(s) of the queue(s) in the internal storage.";
   }
 
   /**
@@ -471,11 +477,13 @@ public class QueueInit
   @Override
   protected String doExecute() {
     StorageQueueHandler	handler;
-    
-    if ((m_KeepExisting && !getStorageHandler().getStorage().has(m_StorageName)) || !m_KeepExisting) {
-      handler = new StorageQueueHandler(m_StorageName.getValue(), m_Limit, m_LogActor, m_MonitorActor);
-      handler.setLoggingLevel(getLoggingLevel());
-      getStorageHandler().getStorage().put(m_StorageName, handler);
+
+    for (StorageName name: m_StorageName) {
+      if ((m_KeepExisting && !getStorageHandler().getStorage().has(name)) || !m_KeepExisting) {
+        handler = new StorageQueueHandler(name.getValue(), m_Limit, m_LogActor, m_MonitorActor);
+        handler.setLoggingLevel(getLoggingLevel());
+        getStorageHandler().getStorage().put(name, handler);
+      }
     }
     
     return null;
