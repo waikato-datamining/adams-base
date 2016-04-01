@@ -185,7 +185,7 @@ public class FixedTabularSpreadSheetWriter
     super.defineOptions();
 
     m_OptionManager.add(
-      "enncoding", "encoding",
+      "encoding", "encoding",
       new BaseCharset());
 
     m_OptionManager.add(
