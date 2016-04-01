@@ -20,12 +20,16 @@
 package adams.flow.source;
 
 import adams.core.QuickInfoHelper;
+import adams.core.Utils;
+import adams.core.base.BaseText;
 import adams.data.spreadsheet.DataRow;
 import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.DenseDataRow;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetTypeHandler;
 import adams.flow.core.Token;
+
+import java.util.Arrays;
 
 /**
  <!-- globalinfo-start -->
@@ -51,7 +55,7 @@ import adams.flow.core.Token;
  * &nbsp;&nbsp;&nbsp;default: NewSpreadSheet
  * </pre>
  * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
@@ -68,6 +72,12 @@ import adams.flow.core.Token;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
  * <pre>-spreadsheet-name &lt;java.lang.String&gt; (property: sheetName)
  * &nbsp;&nbsp;&nbsp;The name for the spreadsheet.
  * &nbsp;&nbsp;&nbsp;default: 
@@ -78,14 +88,19 @@ import adams.flow.core.Token;
  * &nbsp;&nbsp;&nbsp;default: A,B,C
  * </pre>
  * 
- * <pre>-data-row-type &lt;DENSE|SPARSE&gt; (property: dataRowType)
+ * <pre>-data-row-type &lt;adams.data.spreadsheet.DataRow&gt; (property: dataRowType)
  * &nbsp;&nbsp;&nbsp;The type of row to use for the data.
- * &nbsp;&nbsp;&nbsp;default: DENSE
+ * &nbsp;&nbsp;&nbsp;default: adams.data.spreadsheet.DenseDataRow
  * </pre>
  * 
  * <pre>-spreadsheet-type &lt;adams.data.spreadsheet.SpreadSheet&gt; (property: spreadSheetType)
  * &nbsp;&nbsp;&nbsp;The type of spreadsheet to use for the data.
- * &nbsp;&nbsp;&nbsp;default: adams.data.spreadsheet.SpreadSheet
+ * &nbsp;&nbsp;&nbsp;default: adams.data.spreadsheet.DefaultSpreadSheet
+ * </pre>
+ * 
+ * <pre>-comments &lt;adams.core.base.BaseText&gt; (property: comments)
+ * &nbsp;&nbsp;&nbsp;The comments to use.
+ * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
  <!-- options-end -->
@@ -111,6 +126,9 @@ public class NewSpreadSheet
 
   /** the type of spreadsheet to use. */
   protected SpreadSheet m_SpreadSheetType;
+
+  /** the initial comments to use. */
+  protected BaseText m_Comments;
 
   /**
    * Returns a string describing the object.
@@ -144,6 +162,10 @@ public class NewSpreadSheet
     m_OptionManager.add(
 	    "spreadsheet-type", "spreadSheetType",
 	    new DefaultSpreadSheet());
+
+    m_OptionManager.add(
+	    "comments", "comments",
+	    new BaseText());
   }
 
   /**
@@ -280,6 +302,35 @@ public class NewSpreadSheet
   }
 
   /**
+   * Sets the comments to use.
+   *
+   * @param value	the comments
+   */
+  public void setComments(BaseText value) {
+    m_Comments = value;
+    reset();
+  }
+
+  /**
+   * Returns the comments to use.
+   *
+   * @return		the comments
+   */
+  public BaseText getComments() {
+    return m_Comments;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String commentsTipText() {
+    return "The comments to use.";
+  }
+
+  /**
    * Returns the class of objects that it generates.
    *
    * @return		the Class of the generated tokens
@@ -299,6 +350,7 @@ public class NewSpreadSheet
     String	result;
     String[]	cols;
     SpreadSheet	sheet;
+    String[]    lines;
     
     result = null;
 
@@ -309,7 +361,12 @@ public class NewSpreadSheet
     cols  = m_Columns.split(",");
     for (String col: cols)
       sheet.getHeaderRow().addCell("" + sheet.getColumnCount()).setContentAsString(col);
-    
+
+    if (!m_Comments.isEmpty()) {
+      lines = Utils.split(m_Comments.getValue(), "\n");
+      sheet.getComments().addAll(Arrays.asList(lines));
+    }
+
     m_OutputToken = new Token(sheet);
     
     return result;
