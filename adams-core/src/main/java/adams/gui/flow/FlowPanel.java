@@ -48,6 +48,7 @@ import adams.gui.core.ButtonTabComponent;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.RecentFilesHandler;
+import adams.gui.core.TabIconSupporter;
 import adams.gui.core.TitleGenerator;
 import adams.gui.core.Undo.UndoPoint;
 import adams.gui.core.UndoPanel;
@@ -84,7 +85,7 @@ import java.util.List;
  */
 public class FlowPanel
   extends UndoPanel
-  implements StatusMessageHandler, SendToActionSupporter, FlowTreeHandler {
+  implements StatusMessageHandler, SendToActionSupporter, FlowTreeHandler, TabIconSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = -3579084888256133873L;

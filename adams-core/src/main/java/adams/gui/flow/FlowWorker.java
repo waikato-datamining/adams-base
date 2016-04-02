@@ -30,6 +30,7 @@ import adams.flow.control.Flow;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorUtils;
 import adams.flow.execution.AnyActorBreakpoint;
+import adams.gui.core.TabIconSupporter;
 
 import java.io.File;
 
@@ -91,7 +92,8 @@ public class FlowWorker
     m_Owner.update();
     m_Owner.cleanUp();
     m_Owner.clearNotification();
-    m_Owner.setTabIcon("run.gif");
+    if (m_Owner instanceof TabIconSupporter)
+      ((TabIconSupporter) m_Owner).setTabIcon("run.gif");
 
     m_Running = true;
     m_Owner.update();
@@ -225,7 +227,8 @@ public class FlowWorker
   public void pauseExecution() {
     showStatus("Pausing");
     ((Pausable) m_Flow).pauseExecution();
-    m_Owner.setTabIcon("pause.gif");
+    if (m_Owner instanceof TabIconSupporter)
+      ((TabIconSupporter) m_Owner).setTabIcon("pause.gif");
     m_Owner.update();
   }
 
@@ -246,7 +249,8 @@ public class FlowWorker
   public void resumeExecution() {
     showStatus("Resuming");
     ((Pausable) m_Flow).resumeExecution();
-    m_Owner.setTabIcon("run.gif");
+    if (m_Owner instanceof TabIconSupporter)
+      ((TabIconSupporter) m_Owner).setTabIcon("run.gif");
     m_Owner.update();
   }
 
