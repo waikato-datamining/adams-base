@@ -1182,7 +1182,7 @@ public class TreeOperations
 
   /**
    * Opens a new FlowEditor window with the currently selected sub-flow.
-   * Checks for external actors and diplays confirmation dialog if so.
+   * Checks for callable actors and diplays confirmation dialog if so.
    *
    * @param paths	the (paths to the) actors to externalize
    */
@@ -1224,9 +1224,9 @@ public class TreeOperations
     if (parent == null)
       return;
 
-    // confirm if external actors present
-    if (ActorUtils.checkForExternalActor(handler)) {
-      retVal = GUIHelper.showConfirmMessage(getOwner(), "External actor(s) already present - continue?");
+    // confirm when callable actors present
+    if (ActorUtils.checkForCallableActorUser(handler)) {
+      retVal = GUIHelper.showConfirmMessage(getOwner(), "Callable actor(s) referenced - continue?");
       if (retVal != ApprovalDialog.APPROVE_OPTION)
 	return;
     }
@@ -1257,7 +1257,7 @@ public class TreeOperations
 
   /**
    * Opens a new FlowEditor window with the currently selected sub-flow.
-   * Checks for external actors and diplays confirmation dialog if so.
+   * Checks for callable actors and diplays confirmation dialog if so.
    *
    * @param path	the (path to the) actor to externalize
    */
@@ -1269,9 +1269,9 @@ public class TreeOperations
    * Opens a new FlowEditor window with the currently selected sub-flow.
    *
    * @param path		the (path to the) actor to externalize
-   * @param checkExtActors	whether to check for external actors
+   * @param checkCallActors	whether to check for callable actors
    */
-  protected void externalizeActor(TreePath path, boolean checkExtActors) {
+  protected void externalizeActor(TreePath path, boolean checkCallActors) {
     Actor			currActor;
     Node 			currNode;
     AbstractExternalActor 	extActor;
@@ -1281,9 +1281,9 @@ public class TreeOperations
     currNode  = TreeHelper.pathToNode(path);
     currActor = currNode.getFullActor().shallowCopy();
 
-    // confirm if external actors present
-    if (checkExtActors && ActorUtils.checkForExternalActor(currActor)) {
-      retVal = GUIHelper.showConfirmMessage(getOwner(), "External actor(s) already present - continue?");
+    // confirm when callable actors present
+    if (checkCallActors && ActorUtils.checkForCallableActorUser(currActor)) {
+      retVal = GUIHelper.showConfirmMessage(getOwner(), "Callable actor(s) referenced - continue?");
       if (retVal != ApprovalDialog.APPROVE_OPTION)
 	return;
     }
