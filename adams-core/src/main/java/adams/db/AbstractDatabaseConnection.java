@@ -15,7 +15,7 @@
 
 /*
  * AbstractDatabaseConnection.java
- * Copyright (C) 2008-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2016 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -81,12 +81,6 @@ public abstract class AbstractDatabaseConnection
   protected static HashMap<Class, AbstractEnvironment> m_Environments;
   static {
     m_Environments = new HashMap<Class, AbstractEnvironment>();
-  }
-
-  /** keeping track of connections. */
-  protected static HashSet<AbstractDatabaseConnection> m_ConnectionObjects;
-  static {
-    m_ConnectionObjects = new HashSet<AbstractDatabaseConnection>();
   }
 
   /** for managing the available options. */
@@ -197,7 +191,6 @@ public abstract class AbstractDatabaseConnection
    * Finishes the initialization.
    */
   protected void finishInit() {
-    getConnectionObjects().add(this);
   }
 
   /**
@@ -1412,34 +1405,6 @@ public abstract class AbstractDatabaseConnection
     result += ", password=" + getPassword();
     result += ", connected=" + isConnected();
     result += ", #listeners=" + getChangeListeners().size();
-
-    return result;
-  }
-
-  /**
-   * Returns the connection objects.
-   *
-   * @return		the connection objects
-   */
-  public static HashSet<AbstractDatabaseConnection> getConnectionObjects() {
-    return m_ConnectionObjects;
-  }
-
-  /**
-   * Returns active (ie currently connected) connection objects.
-   *
-   * @return		the connection objects
-   */
-  public static HashSet<AbstractDatabaseConnection> getActiveConnectionObjects() {
-    AbstractDatabaseConnection[]	conns;
-    HashSet<AbstractDatabaseConnection>	result;
-
-    result = new HashSet<AbstractDatabaseConnection>();
-    conns  = m_ConnectionObjects.toArray(new AbstractDatabaseConnection[m_ConnectionObjects.size()]);
-    for (AbstractDatabaseConnection dbcon: conns) {
-      if (dbcon.isConnected())
-	result.add(dbcon);
-    }
 
     return result;
   }

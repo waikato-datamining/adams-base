@@ -36,6 +36,7 @@ import adams.core.option.OptionUtils;
 import adams.db.AbstractDatabaseConnection;
 import adams.db.AbstractIndexedTable;
 import adams.db.DatabaseConnectionHandler;
+import adams.db.DatabaseManager;
 import adams.env.Environment;
 import adams.event.DatabaseConnectionChangeEvent;
 import adams.event.DatabaseConnectionChangeEvent.EventType;
@@ -828,7 +829,7 @@ public abstract class AbstractApplicationFrame
   public void createTitle(String title) {
     String				newTitle;
     String				name;
-    HashSet<AbstractDatabaseConnection>	conns;
+    List<AbstractDatabaseConnection>	conns;
     HashSet<String>			connsStr;
     List<String>			connsList;
 
@@ -837,7 +838,7 @@ public abstract class AbstractApplicationFrame
     if (name != null)
       newTitle += "@" + name;
 
-    conns = AbstractDatabaseConnection.getActiveConnectionObjects();
+    conns = DatabaseManager.getActiveConnectionObjects();
     if (conns.size() > 0) {
       connsStr = new HashSet<String>();
       for (AbstractDatabaseConnection conn: conns)

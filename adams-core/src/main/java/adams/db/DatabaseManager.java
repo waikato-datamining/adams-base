@@ -15,15 +15,18 @@
 
 /**
  * DatabaseManager.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.db;
 
-import java.io.Serializable;
-import java.util.Hashtable;
-import java.util.Iterator;
-
 import adams.core.base.BasePassword;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Manages the database URL/connection object relations.
@@ -42,10 +45,16 @@ public class DatabaseManager<T extends AbstractDatabaseConnection>
   protected String m_DatabaseName;
 
   /** for storing the database connection objects. */
-  protected Hashtable<String,T> m_Connections;
+  protected HashMap<String,T> m_Connections;
 
   /** the default database connection. */
   protected T m_DefaultDatabaseConnection;
+
+  /** for storing all database connection objects. */
+  protected static HashMap<String,AbstractDatabaseConnection> m_AllConnections;
+  static {
+    m_AllConnections = new HashMap<>();
+  }
 
   /**
    * Initializes the manager.
@@ -56,7 +65,7 @@ public class DatabaseManager<T extends AbstractDatabaseConnection>
     super();
 
     m_DatabaseName = dbName;
-    m_Connections  = new Hashtable<String,T>();
+    m_Connections  = new HashMap<String,T>();
   }
 
   /**
@@ -128,12 +137,17 @@ public class DatabaseManager<T extends AbstractDatabaseConnection>
    * @return		the previous database, null if no previous one stored
    */
   public T add(T dbcon) {
+    String	url;
+
     if (dbcon == null)
       return null;
 
     dbcon.setOwner(this);
 
-    return m_Connections.put(createURL(dbcon), dbcon);
+    url = createURL(dbcon);
+    m_AllConnections.put(url, dbcon);
+
+    return m_Connections.put(url, dbcon);
   }
 
   /**
@@ -175,5 +189,33 @@ public class DatabaseManager<T extends AbstractDatabaseConnection>
   @Override
   public String toString() {
     return getDatabaseName() + ": " + m_Connections.keySet();
+  }
+
+  /**
+   * Returns the connection objects.
+   *
+   * @return		the connection objects
+   */
+  public static List<AbstractDatabaseConnection> getConnectionObjects() {
+    return new ArrayList<>(m_AllConnections.values());
+  }
+
+  /**
+   * Returns active (ie currently connected) connection objects.
+   *
+   * @return		the connection objects
+   */
+  public static List<AbstractDatabaseConnection> getActiveConnectionObjects() {
+    Collection<AbstractDatabaseConnection>	conns;
+    List<AbstractDatabaseConnection> 		result;
+
+    result = new ArrayList<>();
+    conns  = m_AllConnections.values();
+    for (AbstractDatabaseConnection dbcon: conns) {
+      if (dbcon.isConnected())
+	result.add(dbcon);
+    }
+
+    return result;
   }
 }
