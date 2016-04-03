@@ -15,7 +15,7 @@
 
 /**
  * CsvSpreadSheetWriter.java
- * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.output;
 
@@ -68,7 +68,7 @@ import java.util.logging.Level;
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
- * <pre>-enncoding &lt;adams.core.base.BaseCharset&gt; (property: encoding)
+ * <pre>-encoding &lt;adams.core.base.BaseCharset&gt; (property: encoding)
  * &nbsp;&nbsp;&nbsp;The type of encoding to use when writing using a writer, use empty string 
  * &nbsp;&nbsp;&nbsp;for default.
  * &nbsp;&nbsp;&nbsp;default: Default
@@ -89,6 +89,17 @@ import java.util.logging.Level;
  * <pre>-output-as-displayed &lt;boolean&gt; (property: outputAsDisplayed)
  * &nbsp;&nbsp;&nbsp;If enabled, cells are output as displayed, ie, results of formulas instead 
  * &nbsp;&nbsp;&nbsp;of the formulas.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-no-header &lt;boolean&gt; (property: noHeader)
+ * &nbsp;&nbsp;&nbsp;If enabled, no header is output.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-check-file-exists &lt;boolean&gt; (property: checkFileExists)
+ * &nbsp;&nbsp;&nbsp;If enabled, it is checked each time whether the file exists; expensive test 
+ * &nbsp;&nbsp;&nbsp;if processing only one row at a time.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
@@ -146,6 +157,12 @@ import java.util.logging.Level;
  * &nbsp;&nbsp;&nbsp;more: http:&#47;&#47;docs.oracle.com&#47;javase&#47;6&#47;docs&#47;api&#47;java&#47;text&#47;SimpleDateFormat.html
  * </pre>
  * 
+ * <pre>-datetimemsec-format &lt;adams.data.DateFormatString&gt; (property: dateTimeMsecFormat)
+ * &nbsp;&nbsp;&nbsp;The format for date&#47;time msecs.
+ * &nbsp;&nbsp;&nbsp;default: yyyy-MM-dd HH:mm:ss.SSS
+ * &nbsp;&nbsp;&nbsp;more: http:&#47;&#47;docs.oracle.com&#47;javase&#47;6&#47;docs&#47;api&#47;java&#47;text&#47;SimpleDateFormat.html
+ * </pre>
+ * 
  * <pre>-time-format &lt;adams.data.DateFormatString&gt; (property: timeFormat)
  * &nbsp;&nbsp;&nbsp;The format for times.
  * &nbsp;&nbsp;&nbsp;default: HH:mm:ss
@@ -171,6 +188,9 @@ public class CsvSpreadSheetWriter
   /** whether to output the comments. */
   protected boolean m_OutputComments;
 
+  /** whether to skip outputting the header. */
+  protected boolean m_NoHeader;
+
   /** whether to append spreadsheets. */
   protected boolean m_Appending;
 
@@ -182,6 +202,9 @@ public class CsvSpreadSheetWriter
 
   /** whether to keep existing files the first time the writer is called. */
   protected boolean m_KeepExisting;
+
+  /** whether to check whether file exists with each data item being processed. */
+  protected boolean m_CheckFileExists;
 
   /** whether the file already exists. */
   protected boolean m_FileExists;
@@ -246,64 +269,72 @@ public class CsvSpreadSheetWriter
     super.defineOptions();
 
     m_OptionManager.add(
-      "enncoding", "encoding",
+      "encoding", "encoding",
       new BaseCharset());
 
     m_OptionManager.add(
-	    "comment", "comment",
-	    SpreadSheet.COMMENT);
+      "comment", "comment",
+      SpreadSheet.COMMENT);
 
     m_OptionManager.add(
-	    "output-comments", "outputComments",
-	    true);
+      "output-comments", "outputComments",
+      true);
 
     m_OptionManager.add(
-	    "output-as-displayed", "outputAsDisplayed",
-	    false);
+      "output-as-displayed", "outputAsDisplayed",
+      false);
 
     m_OptionManager.add(
-	    "appending", "appending",
-	    false);
+      "no-header", "noHeader",
+      false);
 
     m_OptionManager.add(
-	    "keep-existing", "keepExisting",
-	    false);
+      "check-file-exists", "checkFileExists",
+      false);
 
     m_OptionManager.add(
-	    "quote-char", "quoteCharacter",
-	    "\"");
+      "appending", "appending",
+      false);
 
     m_OptionManager.add(
-	    "separator", "separator",
-	    ",");
+      "keep-existing", "keepExisting",
+      false);
 
     m_OptionManager.add(
-	    "new-line", "newLine",
-	    Utils.backQuoteChars(System.getProperty("line.separator")));
+      "quote-char", "quoteCharacter",
+      "\"");
 
     m_OptionManager.add(
-	    "always-quote-text", "alwaysQuoteText",
-	    false);
+      "separator", "separator",
+      ",");
 
     m_OptionManager.add(
-	    "escape-special-chars", "escapeSpecialChars",
-	    false);
+      "new-line", "newLine",
+      Utils.backQuoteChars(System.getProperty("line.separator")));
 
     m_OptionManager.add(
-	    "date-format", "dateFormat",
-	    new DateFormatString(Constants.DATE_FORMAT));
+      "always-quote-text", "alwaysQuoteText",
+      false);
 
     m_OptionManager.add(
-	    "datetime-format", "dateTimeFormat",
-	    new DateFormatString(Constants.TIMESTAMP_FORMAT));
+      "escape-special-chars", "escapeSpecialChars",
+      false);
 
     m_OptionManager.add(
-	    "datetimemsec-format", "dateTimeMsecFormat",
-	    new DateFormatString(Constants.TIMESTAMP_FORMAT_MSECS));
+      "date-format", "dateFormat",
+      new DateFormatString(Constants.DATE_FORMAT));
 
     m_OptionManager.add(
-	    "time-format", "timeFormat",
-	    new DateFormatString(Constants.TIME_FORMAT));
+      "datetime-format", "dateTimeFormat",
+      new DateFormatString(Constants.TIMESTAMP_FORMAT));
+
+    m_OptionManager.add(
+      "datetimemsec-format", "dateTimeMsecFormat",
+      new DateFormatString(Constants.TIMESTAMP_FORMAT_MSECS));
+
+    m_OptionManager.add(
+      "time-format", "timeFormat",
+      new DateFormatString(Constants.TIME_FORMAT));
   }
 
   /**
@@ -468,6 +499,36 @@ public class CsvSpreadSheetWriter
   }
 
   /**
+   * Sets whether to use a header or not.
+   * file.
+   *
+   * @param value	true if to skip header
+   */
+  public void setNoHeader(boolean value) {
+    m_NoHeader = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to use a header or not.
+   *
+   * @return		true if no header
+   */
+  public boolean getNoHeader() {
+    return m_NoHeader;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   *         		displaying in the explorer/experimenter gui
+   */
+  public String noHeaderTipText() {
+    return "If enabled, no header is output.";
+  }
+
+  /**
    * Sets whether to keep any existing file on first execution.
    *
    * @param value	if true then existing file is kept
@@ -502,6 +563,39 @@ public class CsvSpreadSheetWriter
       + "useful when outputting data in multiple locations in the flow, but "
       + "one needs to be cautious as to not stored mixed content (eg varying "
       + "number of columns, etc).";
+  }
+
+  /**
+   * Sets whether to check whether file exists with each data item being
+   * proceossed.
+   *
+   * @param value	true if to check
+   */
+  public void setCheckFileExists(boolean value) {
+    m_CheckFileExists = value;
+    reset();
+  }
+
+  /**
+   * Returns whether check whether file exists with each data item being
+   * processed.
+   *
+   * @return		true if to check
+   */
+  public boolean getCheckFileExists() {
+    return m_CheckFileExists;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String checkFileExistsTipText() {
+    return
+        "If enabled, it is checked each time whether the file exists; "
+	  + "expensive test if processing only one row at a time.";
   }
 
   /**
@@ -998,10 +1092,10 @@ public class CsvSpreadSheetWriter
     boolean	result;
     
     result = true;
-    
+
     if (m_Header == null) {
       if (!m_FileExists || !m_KeepExisting) {
-	result = doWriteHeader(header, writer);
+	result = m_NoHeader || doWriteHeader(header, writer);
 	// keep header as reference
 	if (m_Appending || m_IsAppending)
 	  m_Header = header.getOwner().getHeader();
@@ -1096,6 +1190,18 @@ public class CsvSpreadSheetWriter
   }
 
   /**
+   * Hook method before writing to a file.
+   *
+   * @param filename	the filename to check
+   */
+  @Override
+  protected void preWriteFile(String filename) {
+    super.preWriteFile(filename);
+    // check whether file still exists
+    checkFileExists(filename);
+  }
+
+  /**
    * Performs the actual writing. The caller must ensure that the writer gets
    * closed.
    *
@@ -1140,6 +1246,22 @@ public class CsvSpreadSheetWriter
   }
 
   /**
+   * Resets the header if the {@link #m_CheckFileExists} flag is set
+   * and the file no longer exists.
+   *
+   * @param filename	the file to check
+   */
+  protected void checkFileExists(String filename) {
+    File	checkFile;
+
+    if (m_CheckFileExists) {
+      checkFile = new File(filename);
+      if (!checkFile.exists())
+	m_Header = null;
+    }
+  }
+
+  /**
    * Writes the spreadsheet to the given file.
    *
    * @param content	the spreadsheet to write
@@ -1153,6 +1275,9 @@ public class CsvSpreadSheetWriter
 
     result        = true;
     m_IsAppending = true;
+
+    // check whether file still exists
+    checkFileExists(filename);
 
     writer = null;
     output = null;
