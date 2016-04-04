@@ -26,6 +26,7 @@ import adams.gui.core.ConsolePanel;
 import adams.gui.core.ConsolePanel.PanelType;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.PopupMenuCustomizer;
+import adams.gui.core.TabIconSupporter;
 import adams.gui.core.TextEditorPanel;
 import adams.gui.dialog.TextPanel;
 
@@ -58,7 +59,7 @@ public class FlowPanelNotificationArea
   private static final long serialVersionUID = -6807606526180616742L;
 
   /** the owner. */
-  protected FlowPanel m_Owner;
+  protected FlowWorkerHandler m_Owner;
   
   /** for displaying the text. */
   protected TextPanel m_TextNotification;
@@ -157,7 +158,7 @@ public class FlowPanelNotificationArea
    * 
    * @param value	the owner
    */
-  public void setOwner(FlowPanel value) {
+  public void setOwner(FlowWorkerHandler value) {
     m_Owner = value;
   }
   
@@ -166,7 +167,7 @@ public class FlowPanelNotificationArea
    * 
    * @return		the owner, null if none set
    */
-  public FlowPanel getOwner() {
+  public FlowWorkerHandler getOwner() {
     return m_Owner;
   }
   
@@ -225,11 +226,13 @@ public class FlowPanelNotificationArea
       if (getOwner() != null) {
 	m_ButtonCloseAndCleanUp.setEnabled(getOwner().getLastFlow() != null);
         if (m_Notification == null) {
-          getOwner().setTabIcon(null);
+          if (getOwner() instanceof TabIconSupporter)
+            ((TabIconSupporter) getOwner()).setTabIcon(null);
           getOwner().getSplitPane().setBottomComponentHidden(true);
         }
         else {
-          getOwner().setTabIcon(m_IsError ? "stop_blue.gif" : "validate_blue.png");
+          if (getOwner() instanceof TabIconSupporter)
+            ((TabIconSupporter) getOwner()).setTabIcon(m_IsError ? "stop_blue.gif" : "validate_blue.png");
           getOwner().getSplitPane().setBottomComponentHidden(false);
         }
       }
@@ -269,23 +272,27 @@ public class FlowPanelNotificationArea
     List<String> 	paths;
     BaseMenu 		submenu;
     JMenuItem 		menuitem;
+    FlowPanel		flowpanel;
 
-    paths = ActorUtils.extractActorNames(getOwner().getCurrentFlow(), source.getContent());
-    if (paths.size() > 0) {
-      submenu = new BaseMenu("Jump to");
-      menu.add(submenu);
-      for (final String path: paths) {
-	menuitem = new JMenuItem(path);
-	menuitem.addActionListener((ActionEvent e) -> getOwner().getTree().locateAndDisplay(path));
-	submenu.add(menuitem);
-      }
+    if (getOwner() instanceof FlowPanel) {
+      flowpanel = (FlowPanel) getOwner();
+      paths = ActorUtils.extractActorNames(flowpanel.getCurrentFlow(), source.getContent());
+      if (paths.size() > 0) {
+        submenu = new BaseMenu("Jump to");
+        menu.add(submenu);
+        for (final String path : paths) {
+          menuitem = new JMenuItem(path);
+          menuitem.addActionListener((ActionEvent e) -> flowpanel.getTree().locateAndDisplay(path));
+          submenu.add(menuitem);
+        }
 
-      submenu = new BaseMenu("Copy location");
-      menu.add(submenu);
-      for (final String path: paths) {
-	menuitem = new JMenuItem(path);
-	menuitem.addActionListener((ActionEvent e) -> GUIHelper.copyToClipboard(path));
-	submenu.add(menuitem);
+        submenu = new BaseMenu("Copy location");
+        menu.add(submenu);
+        for (final String path : paths) {
+          menuitem = new JMenuItem(path);
+          menuitem.addActionListener((ActionEvent e) -> GUIHelper.copyToClipboard(path));
+          submenu.add(menuitem);
+        }
       }
     }
   }

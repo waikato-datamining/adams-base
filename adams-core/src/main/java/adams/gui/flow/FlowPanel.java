@@ -85,7 +85,8 @@ import java.util.List;
  */
 public class FlowPanel
   extends UndoPanel
-  implements StatusMessageHandler, SendToActionSupporter, FlowTreeHandler, TabIconSupporter {
+  implements StatusMessageHandler, SendToActionSupporter, FlowTreeHandler,
+             TabIconSupporter, FlowWorkerHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = -3579084888256133873L;
@@ -408,7 +409,7 @@ public class FlowPanel
   /**
    * updates the enabled state etc. of all the GUI elements.
    */
-  protected void update() {
+  public void update() {
     updateWidgets();
     updateTitle();
     if ((getOwner() != null) && (getOwner().getOwner() != null))
@@ -705,10 +706,10 @@ public class FlowPanel
   /**
    * Sets the flow that was last executed.
    * 
-   * @param value	the flow
+   * @param actor	the flow
    */
-  protected void setLastFlow(Actor value) {
-    m_LastFlow = value;
+  public void setLastFlow(Actor actor) {
+    m_LastFlow = actor;
   }
   
   /**
@@ -875,7 +876,7 @@ public class FlowPanel
   /**
    * Finishes up the execution, setting the worker to null.
    */
-  protected void finishedExecution() {
+  public void finishedExecution() {
     m_CurrentWorker = null;
     m_CurrentThread = null;
     update();
@@ -1189,7 +1190,7 @@ public class FlowPanel
    * 
    * @return		the panel, null if not available
    */
-  protected VariableManagementPanel getVariablesPanel() {
+  public VariableManagementPanel getVariablesPanel() {
     return m_PanelVariables;
   }
   

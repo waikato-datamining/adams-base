@@ -32,6 +32,7 @@ import adams.flow.core.ActorUtils;
 import adams.flow.execution.AnyActorBreakpoint;
 import adams.gui.core.TabIconSupporter;
 
+import java.awt.Component;
 import java.io.File;
 
 /**
@@ -44,7 +45,7 @@ public class FlowWorker
   implements Runnable, Pausable, Stoppable, StatusMessageHandler {
 
   /** the panel this flow belongs to. */
-  protected FlowPanel m_Owner;
+  protected FlowWorkerHandler m_Owner;
 
   /** the flow to execute. */
   protected Actor m_Flow;
@@ -70,7 +71,7 @@ public class FlowWorker
   /**
    * Initializes the worker.
    */
-  public FlowWorker(FlowPanel owner, Actor flow, File file, boolean showNotification, boolean debug) {
+  public FlowWorker(FlowWorkerHandler owner, Actor flow, File file, boolean showNotification, boolean debug) {
     m_Owner            = owner;
     m_Flow             = flow;
     m_File             = file;
@@ -103,7 +104,8 @@ public class FlowWorker
       m_Flow = ActorUtils.removeDisabledActors(m_Flow);
       if (m_Flow instanceof Flow) {
 	((Flow) m_Flow).setHeadless(m_Owner.isHeadless());
-	((Flow) m_Flow).setParentComponent(m_Owner);
+	if (m_Owner instanceof  Component)
+	  ((Flow) m_Flow).setParentComponent((Component) m_Owner);
 	if (m_Debug) {
 	  if (((Flow) m_Flow).firstActive() != null) {
 	    breakpoint = new AnyActorBreakpoint();

@@ -23,7 +23,6 @@ import adams.core.Pausable;
 import adams.core.Properties;
 import adams.core.StatusMessageHandler;
 import adams.core.Utils;
-import adams.core.base.BaseText;
 import adams.core.io.PlaceholderFile;
 import adams.core.logging.LoggingLevel;
 import adams.core.net.HtmlUtils;
@@ -34,7 +33,6 @@ import adams.env.FlowRunnerPanelDefinition;
 import adams.flow.control.Flow;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorHandler;
-import adams.flow.core.ActorUtils;
 import adams.flow.standalone.SetVariable;
 import adams.flow.standalone.Standalones;
 import adams.gui.action.AbstractBaseAction;
@@ -45,6 +43,7 @@ import adams.gui.chooser.BaseFileChooser;
 import adams.gui.chooser.FlowFileChooser;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.BaseScrollPane;
+import adams.gui.core.BaseSplitPane;
 import adams.gui.core.BaseStatusBar;
 import adams.gui.core.BaseStatusBar.StatusProcessor;
 import adams.gui.core.ConsolePanel;
@@ -57,6 +56,7 @@ import adams.gui.event.RecentItemEvent;
 import adams.gui.event.RecentItemListener;
 import adams.gui.flow.tree.Node;
 import adams.gui.tools.LogEntryViewerPanel;
+import adams.gui.tools.VariableManagementPanel;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -69,10 +69,8 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import java.awt.BorderLayout;
 import java.awt.Dialog.ModalityType;
 import java.awt.Dimension;
@@ -96,7 +94,7 @@ import java.util.Vector;
  */
 public class FlowRunnerPanel
   extends ToolBarPanel
-  implements MenuBarProvider, StatusMessageHandler {
+  implements MenuBarProvider, StatusMessageHandler, FlowWorkerHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = -4599322589770009727L;
@@ -109,12 +107,6 @@ public class FlowRunnerPanel
 
   /** the properties. */
   protected static Properties m_Properties;
-
-  /** whether the is currently running. */
-  protected boolean m_Running;
-
-  /** whether the generation is currently being stopped. */
-  protected boolean m_Stopping;
 
   /** whether a flow is currently being loaded, etc. using a SwingWorker. */
   protected boolean m_RunningSwingWorker;
@@ -194,6 +186,21 @@ public class FlowRunnerPanel
   /** the buttons for the current SetVariable singletons. */
   protected Vector<JButton> m_CurrentHelpButtons;
 
+  /** the current worker. */
+  protected FlowWorker m_CurrentWorker;
+
+  /** the current worker thread. */
+  protected Thread m_CurrentThread;
+
+  /** the last flow that was run. */
+  protected Actor m_LastFlow;
+
+  /** the panel for showing notifications. */
+  protected FlowPanelNotificationArea m_PanelNotification;
+
+  /** the split pane to use for tree and notification area. */
+  protected BaseSplitPane m_SplitPane;
+
   /**
    * Initializes the members.
    */
@@ -223,10 +230,15 @@ public class FlowRunnerPanel
 
     super.initGUI();
 
+    setLayout(new BorderLayout());
+
+    m_SplitPane = new BaseSplitPane(BaseSplitPane.VERTICAL_SPLIT);
+    m_SplitPane.setResizeWeight(1.0);
+    m_SplitPane.setOneTouchExpandable(true);
+    add(m_SplitPane, BorderLayout.CENTER);
+
     props = getProperties();
     setToolBarLocation(ToolBarLocation.valueOf(props.getProperty("ToolBar.Location", "NORTH")));
-
-    getContentPanel().setLayout(new BorderLayout());
 
     // parameters
     panel                 = new JPanel(new BorderLayout());
@@ -236,7 +248,7 @@ public class FlowRunnerPanel
     m_ParameterScrollPane.setBorder(BorderFactory.createEmptyBorder());
     panel.add(m_ParameterScrollPane, BorderLayout.CENTER);
     panel.add(m_LabelFlowAnnotation, BorderLayout.NORTH);
-    getContentPanel().add(panel, BorderLayout.CENTER);
+    m_SplitPane.setTopComponent(panel);
 
     // the status
     m_StatusBar = new BaseStatusBar();
@@ -247,7 +259,13 @@ public class FlowRunnerPanel
         return msg.replace(": ", ":\n");
       }
     });
-    getContentPanel().add(m_StatusBar, BorderLayout.SOUTH);
+    add(m_StatusBar, BorderLayout.SOUTH);
+
+    m_PanelNotification = new FlowPanelNotificationArea();
+    m_PanelNotification.setOwner(this);
+    m_PanelNotification.addCloseListener((ActionEvent e) -> clearNotification());
+    m_SplitPane.setBottomComponent(m_PanelNotification);
+    m_SplitPane.setBottomComponentHidden(true);
 
     reset();
   }
@@ -413,11 +431,7 @@ public class FlowRunnerPanel
       menu = new JMenu("File");
       result.add(menu);
       menu.setMnemonic('F');
-      menu.addChangeListener(new ChangeListener() {
-	public void stateChanged(ChangeEvent e) {
-	  updateActions();
-	}
-      });
+      menu.addChangeListener((ChangeEvent e) -> updateActions());
 
       menu.add(new JMenuItem(m_ActionLoad));
 
@@ -443,11 +457,7 @@ public class FlowRunnerPanel
       menu = new JMenu("Execution");
       result.add(menu);
       menu.setMnemonic('E');
-      menu.addChangeListener(new ChangeListener() {
-	public void stateChanged(ChangeEvent e) {
-	  updateActions();
-	}
-      });
+      menu.addChangeListener((ChangeEvent e) -> updateActions());
 
       menu.add(new JMenuItem(m_ActionRun));
       menu.add(new JMenuItem(m_ActionPauseAndResume));
@@ -462,11 +472,7 @@ public class FlowRunnerPanel
 	menu = new JMenu("Window");
 	result.add(menu);
 	menu.setMnemonic('W');
-	menu.addChangeListener(new ChangeListener() {
-	  public void stateChanged(ChangeEvent e) {
-	    updateActions();
-	  }
-	});
+	menu.addChangeListener((ChangeEvent e) -> updateActions());
 	menu.add(new JMenuItem(m_ActionNewWindow));
 	menu.add(new JMenuItem(m_ActionDuplicateWindow));
       }
@@ -495,7 +501,7 @@ public class FlowRunnerPanel
     if (m_MenuBar == null)
       return;
 
-    inputEnabled = !m_Running && !m_Stopping && !m_RunningSwingWorker;
+    inputEnabled = !isRunning() && !isStopping() && !m_RunningSwingWorker;
 
     if ((m_CurrentFlow != null) && (m_CurrentFlow instanceof Pausable))
       pausable = (Pausable) m_CurrentFlow;
@@ -517,8 +523,8 @@ public class FlowRunnerPanel
       m_ActionPauseAndResume.setIcon(GUIHelper.getIcon("pause.gif"));
       m_ActionPauseAndResume.setName("Pause");
     }
-    m_ActionPauseAndResume.setEnabled(m_Running);
-    m_ActionStop.setEnabled(m_Running);
+    m_ActionPauseAndResume.setEnabled(isRunning());
+    m_ActionStop.setEnabled(isRunning());
     m_ActionHeadless.setEnabled(inputEnabled);
     m_ActionExecutionLogErrors.setEnabled(inputEnabled);
     m_ActionExecutionDisplayErrors.setEnabled(
@@ -534,7 +540,7 @@ public class FlowRunnerPanel
     boolean	inputEnabled;
     int		i;
 
-    inputEnabled = !m_Running && !m_Stopping;
+    inputEnabled = !isRunning() && !isStopping();
 
     m_PanelParameters.setEnabled(inputEnabled);
     for (i = 0; i < m_CurrentParameters.size(); i++) {
@@ -547,7 +553,7 @@ public class FlowRunnerPanel
   /**
    * updates the enabled state etc. of all the GUI elements.
    */
-  protected void update() {
+  public void update() {
     updateActions();
     updateWidgets();
     updateTitle();
@@ -615,57 +621,64 @@ public class FlowRunnerPanel
     m_CurrentParameters.clear();
     m_CurrentHelpButtons.clear();
 
-    if (m_CurrentFlow == null) {
+    if (isRunning()) {
       m_ParameterScrollPane.setBorder(BorderFactory.createEmptyBorder());
       m_PanelParameters.setLayout(new BorderLayout());
-      m_PanelParameters.add(new JLabel("No parameters to configure", JLabel.CENTER), BorderLayout.CENTER);
+      m_PanelParameters.add(new JLabel("Flow running", JLabel.CENTER), BorderLayout.CENTER);
     }
     else {
-      m_ParameterScrollPane.setBorder(BorderFactory.createTitledBorder("Available parameters"));
-      findSetVariableActors(m_CurrentFlow, m_CurrentSetVariables);
-      m_PanelParameters.setLayout(new GridLayout(m_CurrentSetVariables.size() + 1, 2));
-
-      // determine mnemonics
-      labels = new String[m_CurrentSetVariables.size()];
-      for (i = 0; i < m_CurrentSetVariables.size(); i++)
-	labels[i] = m_CurrentSetVariables.get(i).getVariableName().getValue();
-      mnemonics = GUIHelper.getMnemonics(labels);
-
-      // set up panel
-      for (i = 0; i < m_CurrentSetVariables.size(); i++) {
-	// text field
-	textfield = new JTextField(15);
-	textfield.setText(m_CurrentSetVariables.get(i).getVariableValue().getValue());
-	buttonHelp = null;
-	final String annotation = m_CurrentSetVariables.get(i).getAnnotations().getValue();
-	final String variable = m_CurrentSetVariables.get(i).getVariableName().getValue();
-	if (annotation.length() > 0) {
-	  buttonHelp = new JButton(GUIHelper.getIcon("help2.png"));
-	  buttonHelp.addActionListener(new ActionListener() {
-	    public void actionPerformed(ActionEvent e) {
-	      GUIHelper.showInformationMessage(
-		  FlowRunnerPanel.this, annotation, "Information on '" + variable + "'");
-	    }
-	  });
-	}
-	panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-	panel.add(textfield);
-	if (buttonHelp != null)
-	  panel.add(buttonHelp);
-	m_CurrentParameters.add(textfield);
-	m_CurrentHelpButtons.add(buttonHelp);
-
-	// label
-	label = new JLabel(labels[i]);
-	label.setDisplayedMnemonic(mnemonics[i]);
-	label.setLabelFor(textfield);
-
-	// add to parameter panel
-	m_PanelParameters.add(label);
-	m_PanelParameters.add(panel);
+      if (m_CurrentFlow == null) {
+	m_ParameterScrollPane.setBorder(BorderFactory.createEmptyBorder());
+	m_PanelParameters.setLayout(new BorderLayout());
+	m_PanelParameters.add(new JLabel("No parameters to configure", JLabel.CENTER), BorderLayout.CENTER);
       }
-      m_PanelParameters.revalidate();
+      else {
+	m_ParameterScrollPane.setBorder(BorderFactory.createTitledBorder("Available parameters"));
+	findSetVariableActors(m_CurrentFlow, m_CurrentSetVariables);
+	m_PanelParameters.setLayout(new GridLayout(m_CurrentSetVariables.size() + 1, 2));
+
+	// determine mnemonics
+	labels = new String[m_CurrentSetVariables.size()];
+	for (i = 0; i < m_CurrentSetVariables.size(); i++)
+	  labels[i] = m_CurrentSetVariables.get(i).getVariableName().getValue();
+	mnemonics = GUIHelper.getMnemonics(labels);
+
+	// set up panel
+	for (i = 0; i < m_CurrentSetVariables.size(); i++) {
+	  // text field
+	  textfield = new JTextField(15);
+	  textfield.setText(m_CurrentSetVariables.get(i).getVariableValue().getValue());
+	  buttonHelp = null;
+	  final String annotation = m_CurrentSetVariables.get(i).getAnnotations().getValue();
+	  final String variable = m_CurrentSetVariables.get(i).getVariableName().getValue();
+	  if (annotation.length() > 0) {
+	    buttonHelp = new JButton(GUIHelper.getIcon("help2.png"));
+	    buttonHelp.addActionListener(new ActionListener() {
+	      public void actionPerformed(ActionEvent e) {
+		GUIHelper.showInformationMessage(
+		  FlowRunnerPanel.this, annotation, "Information on '" + variable + "'");
+	      }
+	    });
+	  }
+	  panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+	  panel.add(textfield);
+	  if (buttonHelp != null)
+	    panel.add(buttonHelp);
+	  m_CurrentParameters.add(textfield);
+	  m_CurrentHelpButtons.add(buttonHelp);
+
+	  // label
+	  label = new JLabel(labels[i]);
+	  label.setDisplayedMnemonic(mnemonics[i]);
+	  label.setLabelFor(textfield);
+
+	  // add to parameter panel
+	  m_PanelParameters.add(label);
+	  m_PanelParameters.add(panel);
+	}
+      }
     }
+    m_SplitPane.revalidate();
   }
   
   /**
@@ -888,7 +901,7 @@ public class FlowRunnerPanel
    * Executes the flow.
    */
   public void run() {
-    run(true);
+    run(true, false);
   }
 
   /**
@@ -896,101 +909,12 @@ public class FlowRunnerPanel
    *
    * @param showNotification	whether to show notifications about
    * 				errors/stopped/finished
+   * @param debug		whether to run in debug mode
    */
-  public void run(boolean showNotification) {
-    final boolean fShowNotification;
-
-    fShowNotification = showNotification;
-    m_Running         = true;
-
-    SwingWorker worker = new SwingWorker() {
-      String m_Output;
-
-      @Override
-      protected Object doInBackground() throws Exception {
-	updateWidgets();
-	updateActions();
-	cleanUp(false);
-
-	try {
-	  showStatus("Initializing");
-	  for (int i = 0; i < m_CurrentParameters.size(); i++)
-	    m_CurrentSetVariables.get(i).setVariableValue(new BaseText(m_CurrentParameters.get(i).getText()));
-	  if (m_CurrentFlow instanceof Flow)
-	    ((Flow) m_CurrentFlow).setParentComponent(FlowRunnerPanel.this);
-	  if (m_ActionHeadless != null) {
-            if (m_CurrentFlow instanceof Flow)
-              ((Flow) m_CurrentFlow).setHeadless(m_ActionHeadless.isSelected());
-          }
-	  if ((m_ActionExecutionLogErrors != null) && (m_CurrentFlow instanceof Flow)) {
-	    // only override if user selects explicitly to log errors
-	    if (m_ActionExecutionLogErrors.isSelected())
-	      ((Flow) m_CurrentFlow).setLogErrors(true);
-	  }
-	  m_CurrentFlow = ActorUtils.removeDisabledActors(m_CurrentFlow);
-	  m_Output      = m_CurrentFlow.setUp();
-	  if ((m_Output == null) && !m_CurrentFlow.isStopped()) {
-	    showStatus("Running");
-	    m_Output = m_CurrentFlow.execute();
-	  }
-	  showStatus("Finishing up");
-	  m_CurrentFlow.wrapUp();
-	}
-	catch (Throwable e) {
-	  e.printStackTrace();
-	  m_Output = Utils.throwableToString(e);
-	}
-
-	return "Done!";
-      }
-
-      @Override
-      protected void done() {
-	String	msg;
-	String	errors;
-	int	countErrors;
-
-	super.done();
-
-	errors = null;
-	if (m_CurrentFlow instanceof LogEntryHandler) {
-	  countErrors = ((LogEntryHandler) m_CurrentFlow).countLogEntries();
-	  if (countErrors > 0)
-	    errors = countErrors + " error(s) logged";
-	}
-
-	if (m_Output != null) {
-	  msg = "Finished with error: " + m_Output;
-	  if (errors != null)
-	    msg += "(" + errors + ")";
-	  showStatus(msg);
-	  if (fShowNotification)
-	    showMessage(m_Output);
-	}
-	else {
-	  if (m_Running)
-	    msg = "Flow finished.";
-	  else
-	    msg = "User stopped flow.";
-	  if (errors != null)
-	    msg += " " + errors + ".";
-	  showStatus(msg);
-	  if (fShowNotification) {
-	    if (m_Running)
-	      GUIHelper.showInformationMessage(m_Self, msg);
-	    else
-	      GUIHelper.showErrorMessage(m_Self, msg);
-	  }
-	}
-
-	m_Running  = false;
-	m_Stopping = false;
-
-	updateWidgets();
-	updateActions();
-      }
-    };
-    worker.execute();
+  public void run(boolean showNotification, boolean debug) {
+    m_CurrentWorker = new FlowWorker(this, getCurrentFlow(), getCurrentFile(), showNotification, debug);
+    m_CurrentThread = new Thread(m_CurrentWorker);
+    m_CurrentThread.start();
   }
 
   /**
@@ -999,7 +923,7 @@ public class FlowRunnerPanel
    * @return		true if a flow is being executed
    */
   public boolean isRunning() {
-    return m_Running;
+    return (m_CurrentWorker != null) && m_CurrentWorker.isRunning();
   }
 
   /**
@@ -1008,7 +932,7 @@ public class FlowRunnerPanel
    * @return		true if a flow is currently being stopped
    */
   public boolean isStopping() {
-    return m_Stopping;
+    return (m_CurrentWorker != null) && m_CurrentWorker.isStopping();
   }
 
   /**
@@ -1022,44 +946,58 @@ public class FlowRunnerPanel
 
   /**
    * Pauses/resumes the flow.
+   *
+   * @return		true if paused, otherwise false
    */
-  protected void pauseAndResume() {
-    Pausable	pausable;
+  protected boolean pauseAndResume() {
+    boolean	result;
 
-    pausable = (Pausable) m_CurrentFlow;
-    if (!pausable.isPaused()) {
-      showStatus("Pausing");
-      m_ActionPauseAndResume.setName("Resume");
-      pausable.pauseExecution();
-    }
-    else {
-      showStatus("Resuming");
-      m_ActionPauseAndResume.setName("Pause");
-      pausable.resumeExecution();
+    result = false;
+    if (m_CurrentWorker != null) {
+      if (!m_CurrentWorker.isPaused()) {
+	m_CurrentWorker.pauseExecution();
+	result = true;
+      }
+      else {
+	m_CurrentWorker.resumeExecution();
+	result = false;
+      }
     }
 
-    updateActions();
+    update();
+
+    return result;
+  }
+
+  /**
+   * Stops the flow. Does not cleanUp.
+   *
+   * @see 	#stop(boolean)
+   */
+  public void stop() {
+    stop(false);
   }
 
   /**
    * Stops the flow.
+   *
+   * @param cleanUp	whether to clean up as well
    */
-  public void stop() {
-    Runnable	runnable;
+  public void stop(final boolean cleanUp) {
+    SwingWorker	worker;
 
-    showStatus("Stopping");
-
-    m_Running  = false;
-    m_Stopping = true;
-    updateActions();
-
-    runnable = new Runnable() {
-      public void run() {
-	m_CurrentFlow.stopExecution();
-	updateActions();
-      }
-    };
-    SwingUtilities.invokeLater(runnable);
+    if (m_CurrentWorker != null) {
+      worker = new SwingWorker() {
+	@Override
+	protected Object doInBackground() throws Exception {
+	  m_CurrentWorker.stopExecution();
+	  if (cleanUp)
+	    cleanUp();
+	  return null;
+	}
+      };
+      worker.execute();
+    }
   }
 
   /**
@@ -1241,6 +1179,113 @@ public class FlowRunnerPanel
    */
   public File getCurrentDirectory() {
     return m_FileChooser.getCurrentDirectory();
+  }
+
+  /**
+   * Returns the panel with the variables.
+   *
+   * @return		always null
+   */
+  public VariableManagementPanel getVariablesPanel() {
+    return null;
+  }
+
+  /**
+   * Returns whether the flow gets executed in headless mode.
+   *
+   * @return		true if the flow gets executed in headless mode
+   */
+  public boolean isHeadless() {
+    return m_ActionHeadless.isSelected();
+  }
+
+  /**
+   * Returns whether the GC gets called after the flow execution.
+   *
+   * @return		always false
+   */
+  public boolean getRunGC() {
+    return false;
+  }
+
+  /**
+   * Returns whether the flow is flagged as modified.
+   *
+   * @return		always false
+   */
+  public boolean isModified() {
+    return false;
+  }
+
+  /**
+   * Returns the split pane.
+   *
+   * @return		the split pane
+   */
+  public BaseSplitPane getSplitPane() {
+    return m_SplitPane;
+  }
+
+  /**
+   * Displays the notification text.
+   *
+   * @param msg		the text to display
+   * @param error	true if error message
+   */
+  public void showNotification(String msg, boolean error) {
+    m_PanelNotification.showNotification(msg, error);
+  }
+
+  /**
+   * Removes the notification.
+   */
+  public void clearNotification() {
+    m_PanelNotification.clearNotification();
+  }
+
+  /**
+   * Cleans up the last flow that was run.
+   */
+  public void cleanUp() {
+    if (m_LastFlow != null) {
+      showStatus("Cleaning up");
+      try {
+	m_LastFlow.destroy();
+	m_LastFlow = null;
+	showStatus("");
+      }
+      catch (Exception e) {
+	e.printStackTrace();
+	showStatus("Error cleaning up: " + e);
+      }
+    }
+  }
+
+  /**
+   * Sets the flow that was last executed.
+   *
+   * @param value	the flow
+   */
+  public void setLastFlow(Actor value) {
+    m_LastFlow = value;
+  }
+
+  /**
+   * Returns the last executed flow (if any).
+   *
+   * @return		the flow, null if not available
+   */
+  public Actor getLastFlow() {
+    return m_LastFlow;
+  }
+
+  /**
+   * Finishes up the execution, setting the worker to null.
+   */
+  public void finishedExecution() {
+    m_CurrentWorker = null;
+    m_CurrentThread = null;
+    update();
   }
 
   /**
