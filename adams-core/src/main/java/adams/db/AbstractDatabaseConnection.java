@@ -184,7 +184,7 @@ public abstract class AbstractDatabaseConnection
     m_ConnectionOK          = false;
     m_LastConnectionError   = "";
     m_Owner                 = null;
-    m_AutoCommit            = false;
+    m_AutoCommit            = true;
   }
 
   /**
