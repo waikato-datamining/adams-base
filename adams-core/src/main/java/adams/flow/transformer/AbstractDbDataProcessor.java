@@ -15,7 +15,7 @@
 
 /*
  * AbstractDbDataProcessor.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -44,7 +44,7 @@ public abstract class AbstractDbDataProcessor
   protected void initialize() {
     super.initialize();
 
-    m_DatabaseConnection = getDefaultDatabaseConnection();
+    m_DatabaseConnection = null;
   }
 
   /**
