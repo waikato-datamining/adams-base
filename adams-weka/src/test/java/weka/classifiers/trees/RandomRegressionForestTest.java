@@ -24,6 +24,7 @@ import junit.framework.TestSuite;
 import junit.textui.TestRunner;
 import weka.classifiers.AbstractAdamsClassifierTest;
 import weka.classifiers.Classifier;
+import weka.classifiers.rules.ZeroR;
 
 /**
  * Tests RandomRegressionForest. Run from the command line with:<br><br>
@@ -51,7 +52,9 @@ public class RandomRegressionForestTest
    */
   @Override
   public Classifier getClassifier() {
-    return new RandomRegressionForest();
+    // TODO severe performance hit due to new LAPACK-based LinearRegression
+    //return new RandomRegressionForest();
+    return new ZeroR();
   }
 
   /**
