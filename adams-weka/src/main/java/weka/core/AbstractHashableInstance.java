@@ -90,34 +90,6 @@ public abstract class AbstractHashableInstance
   }
 
   /**
-   * Copies the instance but fills up its values based on the given array
-   * of doubles. The copy has access to the same dataset.
-   *
-   * @param values the array with new values
-   * @return the new instance
-   */
-  public Instance copy(double[] values) {
-    AbstractHashableInstance	result;
-    Constructor			constr;
-    Instance			data;
-
-    data = m_Data.copy(values);
-
-    try {
-      constr = getClass().getConstructor(new Class[]{Instance.class});
-      result = (AbstractHashableInstance) constr.newInstance(new Object[]{data});
-      result.assign(this);
-    }
-    catch (Exception e) {
-      System.err.println("Failed to create copy of " + getClass().getName() + ":");
-      e.printStackTrace();
-      result = null;
-    }
-
-    return result;
-  }
-
-  /**
    * Assigns all the data, apart from wrapped instance, that the provided
    * hashable instance provides.
    * 
