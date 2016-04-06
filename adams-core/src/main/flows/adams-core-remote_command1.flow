@@ -1,7 +1,7 @@
 # Project: adams
-# Date: 2016-02-23 22:31:02
+# Date: 2016-04-06 15:19:56
 # User: fracpete
 # Charset: UTF-8
-adams.flow.control.Flow -annotation "Setup for this flow to work:\\n- start listening for remote commands on port 12346 (main menu)\\n- open the \\\"Console window\\\" from the main menu\\n- start up another ADAMS instance\\n- on the new ADAMS instance, start listening for remote commands on port 12345\\n- execute the flow\\n\\nIn the \\\"Console window\\\" you should find the system infof output received \\nfrom the other ADAMS instance." -flow-execution-listener adams.flow.execution.NullListener
- adams.flow.source.Start
- adams.flow.sink.SendRemoteCommand -command "adams.scripting.command.basic.SystemInfo -response-port 12346"
+adams.flow.control.Flow -annotation "Setup for this flow to work:\\n- start listening for remote commands on port 12346 (main menu)\\n- open the \\\"Console window\\\" from the main menu\\n- start up another ADAMS instance\\n- on the new ADAMS instance, start listening for remote commands on port 12345\\n- execute the flow\\n\\nIn the \\\"Console window\\\" you should find the system info output received \\nfrom the other ADAMS instance." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.source.NewRemoteCommand -command "adams.scripting.command.basic.SystemInfo -response-connection \"adams.scripting.connection.DefaultConnection -port 12346\""
+ adams.flow.sink.SendRemoteCommand -connection adams.scripting.connection.DefaultConnection
