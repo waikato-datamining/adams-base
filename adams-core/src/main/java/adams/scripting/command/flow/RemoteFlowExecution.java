@@ -195,6 +195,16 @@ public class RemoteFlowExecution
   }
 
   /**
+   * Sets the actor to use instead of loading it from disk. {@link #m_Flow}
+   * must point to a directory.
+   *
+   * @param value	the actor to use instead
+   */
+  public void setActor(Actor value) {
+    m_Actor = value;
+  }
+
+  /**
    * Sets the payload for the request.
    *
    * @param value	the payload
@@ -259,10 +269,12 @@ public class RemoteFlowExecution
 
     super.prepareRequestPayload();
 
-    actor = ActorUtils.read(m_Flow.getAbsolutePath());
-    if (actor == null)
-      getLogger().severe("Failed to load flow from: " + m_Flow);
-    m_Actor = actor;
+    if (!m_Flow.isDirectory()) {
+      actor = ActorUtils.read(m_Flow.getAbsolutePath());
+      if (actor == null)
+	getLogger().severe("Failed to load flow from: " + m_Flow);
+      m_Actor = actor;
+    }
 
     storage = new HashMap<>();
     vars    = new HashMap<>();
