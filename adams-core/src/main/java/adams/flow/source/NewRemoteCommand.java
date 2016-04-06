@@ -213,6 +213,8 @@ public class NewRemoteCommand
     RemoteCommand   cmd;
 
     cmd = (RemoteCommand) OptionUtils.shallowCopy(m_Command);
+    cmd.getOptionManager().setVariables(getVariables());
+    cmd.getOptionManager().updateVariableValues(true);
     cmd.setRequest(m_Request);
     m_OutputToken = new Token(cmd);
 
