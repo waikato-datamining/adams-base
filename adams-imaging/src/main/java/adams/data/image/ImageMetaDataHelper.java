@@ -92,7 +92,7 @@ public class ImageMetaDataHelper {
     keys = new HashSet<String>();
     
     // meta-data
-    meta = Sanselan.getMetadata(file);
+    meta = Sanselan.getMetadata(file.getAbsoluteFile());
     if (meta != null) {
       for (Object item: meta.getItems()) {
 	key   = null;
