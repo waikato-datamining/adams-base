@@ -120,7 +120,7 @@ public class ImageMetaDataHelper {
     }
     
     // image info
-    info = Sanselan.getImageInfo(file);
+    info = Sanselan.getImageInfo(file.getAbsoluteFile());
     if (info != null) {
       infoStr = info.toString();
       lines = infoStr.split(System.lineSeparator());
