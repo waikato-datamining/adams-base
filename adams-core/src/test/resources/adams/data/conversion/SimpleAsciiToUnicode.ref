@@ -1,0 +1,8 @@
+--> out-0.txt
+01-16 | 48 65 6C 6C 6F 20 77 6F 72 6C 64 0A E6 B1 89 E5 | Hello world.....
+17-32 | AD 97 E6 BC A2 E5 AD 97 0A E6 B1 89 20 68 65 6C | ............ hel
+33-48 | 6C 6F 20 E5 AD 97 E6 BC A2 E5 AD 97 20 77 6F 72 | lo ......... wor
+49-64 | 6C 64 0A 44 C3 A1 63 69 6C 20 58 6F 73 C3 A9 0A | ld.D..cil Xos...
+65-80 | 44 C3 A1 63 69 6C 20 58 6F 73 C3 A9 20 27 5C 78 | D..cil Xos.. '\x
+81-96 | 0A
+
