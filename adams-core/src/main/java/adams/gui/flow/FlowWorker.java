@@ -32,6 +32,7 @@ import adams.flow.core.ActorUtils;
 import adams.flow.execution.AnyActorBreakpoint;
 import adams.gui.core.TabIconSupporter;
 
+import javax.swing.SwingUtilities;
 import java.awt.Component;
 import java.io.File;
 
@@ -93,8 +94,7 @@ public class FlowWorker
     m_Owner.update();
     m_Owner.cleanUp();
     m_Owner.clearNotification();
-    if (m_Owner instanceof TabIconSupporter)
-      ((TabIconSupporter) m_Owner).setTabIcon("run.gif");
+    updateTabIcon("run.gif");
 
     m_Running = true;
     m_Owner.update();
@@ -229,8 +229,7 @@ public class FlowWorker
   public void pauseExecution() {
     showStatus("Pausing");
     ((Pausable) m_Flow).pauseExecution();
-    if (m_Owner instanceof TabIconSupporter)
-      ((TabIconSupporter) m_Owner).setTabIcon("pause.gif");
+    updateTabIcon("pause.gif");
     m_Owner.update();
   }
 
@@ -251,8 +250,7 @@ public class FlowWorker
   public void resumeExecution() {
     showStatus("Resuming");
     ((Pausable) m_Flow).resumeExecution();
-    if (m_Owner instanceof TabIconSupporter)
-      ((TabIconSupporter) m_Owner).setTabIcon("run.gif");
+    updateTabIcon("run.gif");
     m_Owner.update();
   }
 
@@ -313,5 +311,17 @@ public class FlowWorker
    */
   public Actor getFlow() {
     return m_Flow;
+  }
+
+  /**
+   * Updates the tab icon, if possible.
+   *
+   * @param icon
+   */
+  protected void updateTabIcon(String icon) {
+    SwingUtilities.invokeLater(() -> {
+      if (m_Owner instanceof TabIconSupporter)
+        ((TabIconSupporter) m_Owner).setTabIcon(icon);
+    });
   }
 }
