@@ -14,22 +14,31 @@
  */
 
 /**
- * FlowAwareRemoteCommand.java
+ * FlowContextHandler.java
  * Copyright (C) 2016 University of Waikato, Hamilton, NZ
  */
 
-package adams.scripting.command;
-
-import adams.flow.core.FlowContextHandler;
+package adams.flow.core;
 
 /**
- * Interface for commands that can utilize a flow that is sending this
- * command.
+ * For classes that need a flow context.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public interface FlowAwareRemoteCommand
-  extends RemoteCommand, FlowContextHandler {
+public interface FlowContextHandler {
 
+  /**
+   * Sets the flow context.
+   *
+   * @param value	the actor
+   */
+  public void setFlowContext(Actor value);
+
+  /**
+   * Returns the flow context, if any.
+   *
+   * @return		the actor, null if none available
+   */
+  public Actor getFlowContext();
 }
