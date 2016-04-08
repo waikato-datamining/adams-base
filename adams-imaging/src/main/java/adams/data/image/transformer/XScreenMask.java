@@ -15,7 +15,7 @@
 
 /*
  * XScreenMask.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.image.transformer;
@@ -42,14 +42,7 @@ import java.awt.image.BufferedImage;
  * &nbsp;&nbsp;&nbsp;Color to be masked.
  * &nbsp;&nbsp;&nbsp;default: RED
  * </pre>
- * 
- * <pre>-bias &lt;int&gt; (property: bias)
- * &nbsp;&nbsp;&nbsp;Bias to be applied after finding the histogram peak.
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: -255
- * &nbsp;&nbsp;&nbsp;maximum: 255
- * </pre>
- * 
+ *
  * <pre>-down &lt;boolean&gt; (property: down)
  * &nbsp;&nbsp;&nbsp;If true, then pixels &lt;= threshold are not masked and the others' alpha channel 
  * &nbsp;&nbsp;&nbsp;are set to 0 (made transparent).
@@ -80,11 +73,6 @@ public class XScreenMask extends AbstractBufferedImageTransformer {
    * Color to be masked out.
    */
   protected Color m_Color;
-
-  /**
-   * Bias to be applied to the auto-threshold value.
-   */
-  protected int m_Bias;
 
   /**
    * If true, then pixels <= threshold are not masked and the others' alpha channel are set to 0 (made transparent).
@@ -148,37 +136,6 @@ public class XScreenMask extends AbstractBufferedImageTransformer {
    */
   public String colorTipText() {
     return "Color to be masked.";
-  }
-
-  /**
-   * Gets bias to be applied to auto-threshold value.
-   *
-   * @return bias
-   */
-  public int getBias() {
-    return m_Bias;
-  }
-
-  /**
-   * Sets bias to be applied to auto-threshold value.
-   *
-   * @param value bias
-   */
-  public void setBias(int value) {
-    if (value >= -255 && value <= 255) {
-      m_Bias = value;
-      reset();
-    } else
-      getLogger().severe("Bias must be -255 >= value <= 255, provided: " + value);
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return tip text for this property suitable for displaying in the GUI or for listing the options.
-   */
-  public String biasTipText() {
-    return "Bias to be applied after finding the histogram peak.";
   }
 
   /**
