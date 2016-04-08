@@ -102,7 +102,6 @@ public class XScreenMask extends AbstractBufferedImageTransformer {
     super.defineOptions();
 
     m_OptionManager.add("color", "color", Color.RED);
-    m_OptionManager.add("bias", "bias", 0, -255, 255);
     m_OptionManager.add("down", "down", true);
     m_OptionManager.add("threshold", "threshold", 127, -1, 255);
   }
