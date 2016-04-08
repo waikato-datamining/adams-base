@@ -15,7 +15,7 @@
 
 /*
  * ImageJTransformer.java
- * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -238,9 +238,11 @@ public class ImageJTransformer
     result = null;
 
     try {
+      m_TransformAlgorithm.setFlowContext(this);
       img = ImageJHelper.toImagePlusContainer((AbstractImageContainer) m_InputToken.getPayload());
       m_Queue.clear();
       m_Queue.addAll(Arrays.asList(m_TransformAlgorithm.transform(img)));
+      m_TransformAlgorithm.setFlowContext(null);
     }
     catch (Exception e) {
       result = handleException("Failed to transform image: ", e);

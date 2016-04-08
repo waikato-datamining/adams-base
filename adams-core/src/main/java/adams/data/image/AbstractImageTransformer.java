@@ -15,7 +15,7 @@
 
 /*
  * AbstractImageTransformer.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.image;
@@ -24,6 +24,8 @@ import adams.core.CleanUpHandler;
 import adams.core.QuickInfoSupporter;
 import adams.core.option.AbstractOptionHandler;
 import adams.core.option.OptionUtils;
+import adams.flow.core.Actor;
+import adams.flow.core.FlowContextHandler;
 
 /**
  * Abstract base class for AbstractImage transformations.
@@ -34,10 +36,41 @@ import adams.core.option.OptionUtils;
  */
 public abstract class AbstractImageTransformer<T extends AbstractImageContainer>
   extends AbstractOptionHandler
-  implements Comparable, CleanUpHandler, QuickInfoSupporter {
+  implements Comparable, CleanUpHandler, QuickInfoSupporter, FlowContextHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = 4566948525813804085L;
+
+  /** the flow context. */
+  protected Actor m_FlowContext;
+
+  /**
+   * Initializes the members.
+   */
+  @Override
+  protected void initialize() {
+    super.initialize();
+
+    m_FlowContext = null;
+  }
+
+  /**
+   * Sets the flow context.
+   *
+   * @param value	the actor
+   */
+  public void setFlowContext(Actor value) {
+    m_FlowContext = value;
+  }
+
+  /**
+   * Returns the flow context, if any.
+   *
+   * @return		the actor, null if none available
+   */
+  public Actor getFlowContext() {
+    return m_FlowContext;
+  }
 
   /**
    * Returns a quick info about the object, which can be displayed in the GUI.
