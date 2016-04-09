@@ -15,7 +15,7 @@
 
 /**
  * XScreenMaskTest.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.image.transformer;
 
@@ -69,7 +69,6 @@ public class XScreenMaskTest
     result = new XScreenMask[2];
     result[0] = new XScreenMask();
     result[1] = new XScreenMask();
-    result[1].setBias(0);
     result[1].setColor(XScreenMaskHelper.Color.RED);
     result[1].setDown(true);
     result[1].setThreshold(-1);
