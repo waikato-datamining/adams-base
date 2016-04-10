@@ -21,7 +21,6 @@
 package adams.scripting.engine;
 
 import adams.core.StoppableWithFeedback;
-import adams.core.Utils;
 import adams.core.logging.LoggingHelper;
 import adams.core.logging.LoggingSupporter;
 import adams.core.management.ProcessUtils;
@@ -38,7 +37,6 @@ import adams.scripting.permissionhandler.PermissionHandler;
 import adams.scripting.requesthandler.RequestHandler;
 import adams.scripting.responsehandler.ResponseHandler;
 
-import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 
@@ -77,9 +75,6 @@ public abstract class AbstractScriptingEngine
 
   /** whether the engine is stopped. */
   protected boolean m_Stopped;
-
-  /** for accepting connections. */
-  protected transient ServerSocket m_Server;
 
   /** the executor service to use for parallel execution. */
   protected ExecutorService m_Executor;
@@ -321,21 +316,6 @@ public abstract class AbstractScriptingEngine
   }
 
   /**
-   * Closes the server socket if necessary.
-   */
-  protected void closeSocket() {
-    if (m_Server != null) {
-      try {
-	m_Server.close();
-      }
-      catch (Exception e) {
-	Utils.handleException(this, "Failed to close server socket!", e);
-      }
-      m_Server = null;
-    }
-  }
-
-  /**
    * Stops the execution.
    */
   @Override
@@ -343,7 +323,6 @@ public abstract class AbstractScriptingEngine
     m_Stopped = true;
     m_Paused  = false;
     m_Executor.shutdownNow();
-    closeSocket();
   }
 
   /**

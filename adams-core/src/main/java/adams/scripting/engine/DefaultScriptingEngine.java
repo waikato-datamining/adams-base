@@ -46,6 +46,9 @@ public class DefaultScriptingEngine
 
   private static final long serialVersionUID = -3763240773922918567L;
 
+  /** for accepting connections. */
+  protected transient ServerSocket m_Server;
+
   /** the port to listen on. */
   protected int m_Port;
 
@@ -100,6 +103,21 @@ public class DefaultScriptingEngine
    */
   public String portTipText() {
     return "The port to listen on for remote connections.";
+  }
+
+  /**
+   * Closes the server socket if necessary.
+   */
+  protected void closeSocket() {
+    if (m_Server != null) {
+      try {
+	m_Server.close();
+      }
+      catch (Exception e) {
+	Utils.handleException(this, "Failed to close server socket!", e);
+      }
+      m_Server = null;
+    }
   }
 
   /**
@@ -227,6 +245,15 @@ public class DefaultScriptingEngine
     }
 
     return result;
+  }
+
+  /**
+   * Stops the execution.
+   */
+  @Override
+  public void stopExecution() {
+    super.stopExecution();
+    closeSocket();
   }
 
   /**
