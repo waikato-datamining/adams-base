@@ -40,9 +40,7 @@ import adams.scripting.responsehandler.ResponseHandler;
 
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.SocketTimeoutException;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * Ancestor of scripting engine for remote commands.
@@ -58,9 +56,6 @@ public abstract class AbstractScriptingEngine
 
   /** the application context. */
   protected AbstractApplicationFrame m_ApplicationContext;
-
-  /** the port to listen on. */
-  protected int m_Port;
 
   /** the permission handler. */
   protected PermissionHandler m_PermissionHandler;
@@ -88,72 +83,6 @@ public abstract class AbstractScriptingEngine
 
   /** the executor service to use for parallel execution. */
   protected ExecutorService m_Executor;
-
-  /**
-   * Adds options to the internal list of options.
-   */
-  @Override
-  public void defineOptions() {
-    super.defineOptions();
-
-    m_OptionManager.add(
-      "port", "port",
-      12345, 1, 65535);
-
-    m_OptionManager.add(
-      "permission-handler", "permissionHandler",
-      getDefaultPermissionHandler());
-
-    m_OptionManager.add(
-      "request-handler", "requestHandler",
-      getDefaultRequestHandler());
-
-    m_OptionManager.add(
-      "response-handler", "responseHandler",
-      getDefaultResponseHandler());
-
-    m_OptionManager.add(
-      "timeout", "timeout",
-      3000, 100, null);
-
-    m_OptionManager.add(
-      "max-concurrent-jobs", "maxConcurrentJobs",
-      1, 1, null);
-  }
-
-  /**
-   * Sets the port to listen on.
-   *
-   * @param value	the port to listen on
-   */
-  @Override
-  public void setPort(int value) {
-    if (getOptionManager().isValid("port", value)) {
-      m_Port = value;
-      reset();
-    }
-  }
-
-  /**
-   * Returns the port to listen on.
-   *
-   * @return		the port listening on
-   */
-  @Override
-  public int getPort() {
-    return m_Port;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the gui
-   */
-  @Override
-  public String portTipText() {
-    return "The port to listen on for remote connections.";
-  }
 
   /**
    * Returns the default permission handler.
@@ -364,70 +293,6 @@ public abstract class AbstractScriptingEngine
    * @param client	the connection to handle
    */
   protected abstract void handleClient(Socket client);
-
-  /**
-   * Executes the scripting engine.
-   *
-   * @return		error message in case of failure to start up or run,
-   * 			otherwise null
-   */
-  @Override
-  public String execute() {
-    String		result;
-    Socket		client;
-
-    result    = null;
-    m_Paused  = false;
-    m_Stopped = false;
-
-    // connect to port
-    try {
-      m_Server = new ServerSocket(m_Port);
-      m_Server.setSoTimeout(m_Timeout);
-    }
-    catch (Exception e) {
-      result   = Utils.handleException(this, "Failed to set up server socket!", e);
-      m_Server = null;
-    }
-
-    // wait for connections
-    if (m_Server != null) {
-      // start up job queue
-      m_Executor = Executors.newFixedThreadPool(m_MaxConcurrentJobs);
-
-      while (!m_Stopped) {
-	while (m_Paused && !m_Stopped) {
-	  Utils.wait(this, this, 1000, 50);
-	}
-
-	try {
-	  client = m_Server.accept();
-	  if (client != null) {
-	    handleClient(client);
-	  }
-	}
-	catch (SocketTimeoutException t) {
-	  // ignored
-	}
-	catch (Exception e) {
-          if ((m_Server != null) && !m_Server.isClosed())
-            Utils.handleException(this, "Failed to accept connection!", e);
-	}
-      }
-    }
-
-    closeSocket();
-
-    if (!m_Executor.isTerminated()) {
-      getLogger().info("Shutting down job queue...");
-      m_Executor.shutdown();
-      while (!m_Executor.isTerminated())
-	Utils.wait(this, 1000, 100);
-      getLogger().info("Job queue shut down");
-    }
-
-    return result;
-  }
 
   /**
    * Pauses the execution.

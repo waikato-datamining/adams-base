@@ -53,28 +53,6 @@ public interface RemoteScriptingEngine
   public AbstractApplicationFrame getApplicationContext();
 
   /**
-   * Sets the port to listen on.
-   *
-   * @param value	the port to listen on
-   */
-  public void setPort(int value);
-
-  /**
-   * Returns the port to listen on.
-   *
-   * @return		the port listening on
-   */
-  public int getPort();
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the gui
-   */
-  public String portTipText();
-
-  /**
    * Sets the permission handler to use.
    *
    * @param value	the permission handler
