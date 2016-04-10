@@ -125,7 +125,6 @@ public class DefaultScriptingEngine
    *
    * @param client	the connection to handle
    */
-  @Override
   protected void handleClient(Socket client) {
     InputStream		in;
     int			b;

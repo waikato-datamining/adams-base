@@ -37,7 +37,6 @@ import adams.scripting.permissionhandler.PermissionHandler;
 import adams.scripting.requesthandler.RequestHandler;
 import adams.scripting.responsehandler.ResponseHandler;
 
-import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 
 /**
@@ -281,13 +280,6 @@ public abstract class AbstractScriptingEngine
   public void queueJob(CallableWithResult<String> job) {
     m_Executor.submit(job);
   }
-
-  /**
-   * Handles the client connection.
-   *
-   * @param client	the connection to handle
-   */
-  protected abstract void handleClient(Socket client);
 
   /**
    * Pauses the execution.
