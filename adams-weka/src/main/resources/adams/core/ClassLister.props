@@ -78,3 +78,7 @@ weka.gui.explorer.AbstractExplorerPanelHandler=\
 # additional explorer panels
 weka.gui.explorer.panels.AdditionalExplorerPanel=\
   weka.gui.explorer.panels
+
+# the code converters
+weka.core.code.Converter=\
+  weka.core.code
