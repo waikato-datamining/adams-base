@@ -564,8 +564,8 @@ public class FlowPanel
 	update();
 
 	addUndoPoint("Saving undo data...", "Loading '" + file.getName() + "'");
-	showStatus("Loading '" + file + "'...");
-        setTabIcon("hourglass.png");
+	SwingUtilities.invokeLater(() -> showStatus("Loading '" + file + "'..."));
+        SwingUtilities.invokeLater(() -> setTabIcon("hourglass.png"));
 	setTitle(FileUtils.replaceExtension(file.getName(), ""));
 	updateTitle();
 
@@ -587,7 +587,8 @@ public class FlowPanel
 
 	m_RunningSwingWorker = false;
         canExecute           = execute && m_Errors.isEmpty();
-        setTabIcon(null);
+
+        SwingUtilities.invokeLater(() -> setTabIcon(null));
 
 	if (m_Errors.isEmpty())
 	  setCurrentFile(file);
