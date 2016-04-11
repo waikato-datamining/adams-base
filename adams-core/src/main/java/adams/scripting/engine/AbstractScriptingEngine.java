@@ -63,9 +63,6 @@ public abstract class AbstractScriptingEngine
   /** the response handler to use. */
   protected ResponseHandler m_ResponseHandler;
 
-  /** the timeout for the socket. */
-  protected int m_Timeout;
-
   /** the number of concurrent jobs to allow. */
   protected int m_MaxConcurrentJobs;
 
@@ -96,10 +93,6 @@ public abstract class AbstractScriptingEngine
     m_OptionManager.add(
       "response-handler", "responseHandler",
       getDefaultResponseHandler());
-
-    m_OptionManager.add(
-      "timeout", "timeout",
-      3000, 100, null);
 
     m_OptionManager.add(
       "max-concurrent-jobs", "maxConcurrentJobs",
@@ -218,37 +211,6 @@ public abstract class AbstractScriptingEngine
    */
   public String responseHandlerTipText() {
     return "The handler for acting on successful and failed responses.";
-  }
-
-  /**
-   * Sets the timeout in milli-second to wait for new connections.
-   *
-   * @param value	the timeout in msec
-   */
-  public void setTimeout(int value) {
-    if (getOptionManager().isValid("timeout", value)) {
-      m_Timeout = value;
-      reset();
-    }
-  }
-
-  /**
-   * Returns the timeout in milli-second to wait for new connections.
-   *
-   * @return		the timeout in msec
-   */
-  public int getTimeout() {
-    return m_Timeout;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the gui
-   */
-  public String timeoutTipText() {
-    return "The timeout in milli-second for waiting on new client connections.";
   }
 
   /**

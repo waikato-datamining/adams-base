@@ -49,6 +49,9 @@ public class DefaultScriptingEngine
   /** for accepting connections. */
   protected transient ServerSocket m_Server;
 
+  /** the timeout for the socket. */
+  protected int m_Timeout;
+
   /** the port to listen on. */
   protected int m_Port;
 
@@ -72,6 +75,10 @@ public class DefaultScriptingEngine
     m_OptionManager.add(
       "port", "port",
       12345, 1, 65535);
+
+    m_OptionManager.add(
+      "timeout", "timeout",
+      3000, 100, null);
   }
 
   /**
@@ -103,6 +110,37 @@ public class DefaultScriptingEngine
    */
   public String portTipText() {
     return "The port to listen on for remote connections.";
+  }
+
+  /**
+   * Sets the timeout in milli-second to wait for new connections.
+   *
+   * @param value	the timeout in msec
+   */
+  public void setTimeout(int value) {
+    if (getOptionManager().isValid("timeout", value)) {
+      m_Timeout = value;
+      reset();
+    }
+  }
+
+  /**
+   * Returns the timeout in milli-second to wait for new connections.
+   *
+   * @return		the timeout in msec
+   */
+  public int getTimeout() {
+    return m_Timeout;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the gui
+   */
+  public String timeoutTipText() {
+    return "The timeout in milli-second for waiting on new client connections.";
   }
 
   /**
