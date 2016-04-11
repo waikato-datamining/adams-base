@@ -131,9 +131,11 @@ public class BaseAnnotationEditor
     fm   = gfx.getFontMetrics();
     vpad = (box.height - fm.getHeight()) / 2;
     if (getValue() == null)
-      val = "null";
+      val = AbstractPropertyEditorSupport.NULL;
     else
       val = toString(null, getValue());
+    if (val.isEmpty())
+      val = AbstractPropertyEditorSupport.EMPTY;
     gfx.drawString(val, 2, fm.getHeight() + vpad);
   }
 

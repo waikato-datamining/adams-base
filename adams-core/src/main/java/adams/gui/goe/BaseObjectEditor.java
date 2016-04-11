@@ -15,12 +15,29 @@
 
 /*
  * BaseObjectEditor.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package adams.gui.goe;
 
+import adams.core.HelpProvider;
+import adams.core.Utils;
+import adams.core.base.BaseObject;
+import adams.core.base.BaseString;
+import adams.core.option.AbstractOption;
+import adams.gui.core.BaseScrollPane;
+import adams.gui.core.BaseTextArea;
+import adams.gui.core.BrowserHelper;
+import adams.gui.core.GUIHelper;
+import adams.gui.dialog.ApprovalDialog;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.text.JTextComponent;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.FlowLayout;
@@ -34,24 +51,6 @@ import java.awt.event.KeyEvent;
 import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.Vector;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.text.JTextComponent;
-
-import adams.core.HelpProvider;
-import adams.core.Utils;
-import adams.core.base.BaseObject;
-import adams.core.base.BaseString;
-import adams.core.option.AbstractOption;
-import adams.gui.core.BaseScrollPane;
-import adams.gui.core.BaseTextArea;
-import adams.gui.core.BrowserHelper;
-import adams.gui.core.GUIHelper;
-import adams.gui.dialog.ApprovalDialog;
 
 /**
  * A PropertyEditor for BaseObject-derived objects.
@@ -209,6 +208,8 @@ public class BaseObjectEditor
     fm   = gfx.getFontMetrics();
     vpad = (box.height - fm.getHeight()) / 2;
     val  = getStringToPaint();
+    if (val.isEmpty())
+      val = AbstractPropertyEditorSupport.EMPTY;
     gfx.drawString(val, 2, fm.getHeight() + vpad);
   }
 

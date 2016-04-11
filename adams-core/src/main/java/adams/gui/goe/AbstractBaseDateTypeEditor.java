@@ -177,9 +177,11 @@ public abstract class AbstractBaseDateTypeEditor<B extends BaseObject & DateValu
     fm   = gfx.getFontMetrics();
     vpad = (box.height - fm.getHeight()) / 2;
     if (getValue() == null)
-      val = "null";
+      val = AbstractPropertyEditorSupport.NULL;
     else
       val = toCustomStringRepresentation(getValue());
+    if (val.isEmpty())
+      val = AbstractPropertyEditorSupport.EMPTY;
     gfx.drawString(val, 2, fm.getHeight() + vpad);
   }
 

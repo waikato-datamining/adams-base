@@ -1178,6 +1178,8 @@ public class GenericObjectEditor
 	  rep += " " + optionStr;
 	  rep = rep.trim();
 	}
+        if (rep.isEmpty())
+          rep = AbstractPropertyEditorSupport.EMPTY;
       }
       else {
 	rep = "None";

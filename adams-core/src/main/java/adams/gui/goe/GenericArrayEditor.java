@@ -15,7 +15,7 @@
 
 /*
  *    GenericArrayEditor.java
- *    Copyright (C) 1999-2015 University of Waikato, Hamilton, New Zealand
+ *    Copyright (C) 1999-2016 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -174,6 +174,8 @@ public class GenericArrayEditor
 	  };
 	}
 	else {
+          if (display.isEmpty())
+            display = AbstractPropertyEditorSupport.EMPTY;
 	  JLabel label = new JLabel(display);
 	  label.setFont(list.getFont().deriveFont(Font.PLAIN));
 	  label.setOpaque(true);

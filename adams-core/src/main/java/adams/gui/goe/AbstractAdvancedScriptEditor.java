@@ -15,7 +15,7 @@
 
 /*
  * AbstractAdvancedScriptEditor.java
- * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -145,9 +145,11 @@ public class AbstractAdvancedScriptEditor
     fm   = gfx.getFontMetrics();
     vpad = (box.height - fm.getHeight()) / 2;
     if (getValue() == null)
-      val = "null";
+      val = AbstractPropertyEditorSupport.NULL;
     else
       val = toString(null, getValue());
+    if (val.isEmpty())
+      val = AbstractPropertyEditorSupport.EMPTY;
     gfx.drawString(val, 2, fm.getHeight() + vpad);
   }
 

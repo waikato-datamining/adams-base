@@ -15,28 +15,11 @@
 
 /*
  * AbstractSimpleScriptEditor.java
- * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package adams.gui.goe;
-
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JComponent;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
 
 import adams.core.AdditionalInformationHandler;
 import adams.core.Utils;
@@ -46,6 +29,22 @@ import adams.gui.core.AbstractSimpleScript;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.StyledTextEditorPanel;
 import adams.gui.dialog.TextDialog;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JComponent;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * A PropertyEditor for AbstractScript-derived objects.
@@ -156,9 +155,11 @@ public class AbstractSimpleScriptEditor
     fm   = gfx.getFontMetrics();
     vpad = (box.height - fm.getHeight()) / 2;
     if (getValue() == null)
-      val = "null";
+      val = AbstractPropertyEditorSupport.NULL;
     else
       val = toString(null, getValue());
+    if (val.isEmpty())
+      val = AbstractPropertyEditorSupport.EMPTY;
     gfx.drawString(val, 2, fm.getHeight() + vpad);
   }
 

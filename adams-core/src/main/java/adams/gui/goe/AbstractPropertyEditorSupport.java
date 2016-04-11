@@ -56,6 +56,12 @@ public abstract class AbstractPropertyEditorSupport
   /** the maximum characters per line for a tool tip. */
   public final static int MAX_TOOLTIP_WIDTH = PropertySheetPanel.MAX_TOOLTIP_WIDTH;
 
+  /** the string to use if there is null value to be display. */
+  public final static String NULL = "[null]";
+
+  /** the string to use if there is an empty string to be display. */
+  public final static String EMPTY = "[empty]";
+
   /** the custom editor. */
   protected JComponent m_CustomEditor;
 

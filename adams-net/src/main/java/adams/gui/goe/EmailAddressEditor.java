@@ -21,19 +21,6 @@
 
 package adams.gui.goe;
 
-import java.awt.BorderLayout;
-import java.awt.Container;
-import java.awt.FlowLayout;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-
 import adams.core.net.EmailAddress;
 import adams.core.net.EmailAddressBook;
 import adams.core.net.EmailContact;
@@ -43,6 +30,18 @@ import adams.gui.dialog.ApprovalDialog;
 import adams.gui.event.DoubleClickEvent;
 import adams.gui.event.DoubleClickListener;
 import adams.gui.selection.SelectEmailAddressPanel;
+
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.FlowLayout;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * A PropertyEditor for EmailAddress objects.
@@ -212,6 +211,8 @@ public class EmailAddressEditor
     val  = curr.stringValue();
     if (val == null)
       val = "";
+    if (val.isEmpty())
+      val = AbstractPropertyEditorSupport.EMPTY;
     gfx.drawString(val, 2, fm.getHeight() + vpad);
   }
 

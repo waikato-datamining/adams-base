@@ -15,12 +15,26 @@
 
 /*
  * NamedSetupEditor.java
- * Copyright (C) 2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package adams.gui.goe;
 
+import adams.core.NamedSetup;
+import adams.core.Utils;
+import adams.core.option.AbstractOption;
+import adams.gui.core.BaseScrollPane;
+import adams.gui.core.MouseUtils;
+import adams.gui.core.SortableAndSearchableTable;
+import adams.gui.tools.NamedSetupManagementPanel.Model;
+
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.FontMetrics;
@@ -30,21 +44,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.ListSelectionModel;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-
-import adams.core.NamedSetup;
-import adams.core.Utils;
-import adams.core.option.AbstractOption;
-import adams.gui.core.BaseScrollPane;
-import adams.gui.core.MouseUtils;
-import adams.gui.core.SortableAndSearchableTable;
-import adams.gui.tools.NamedSetupManagementPanel.Model;
 
 /**
  * A PropertyEditor for NamedSetup objects that lets the user select a
@@ -216,6 +215,8 @@ public class NamedSetupEditor
     fm   = gfx.getFontMetrics();
     vpad = (box.height - fm.getHeight()) / 2 ;
     val  = ((NamedSetup) getValue()).getName();
+    if (val.isEmpty())
+      val = AbstractPropertyEditorSupport.EMPTY;
     gfx.drawString(val, 2, fm.getHeight() + vpad);
   }
 }
