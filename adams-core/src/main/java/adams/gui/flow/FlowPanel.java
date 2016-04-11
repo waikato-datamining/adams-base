@@ -765,28 +765,34 @@ public class FlowPanel
    */
   public void save(final FlowWriter writer, final File file) {
     SwingWorker		worker;
-    String		check;
     final Node 		flow;
-    int			retVal;
-    
+
     flow = getTree().getRootNode();
-    if (getCheckOnSave()) {
-      check = ActorUtils.checkFlow(flow.getFullActor(), false, false);
-      if (check != null) {
-	retVal = GUIHelper.showConfirmMessage(
-	    m_Owner, "Pre-save check failed - continue with save?\n\nDetails:\n\n" + check);
-	if (retVal != ApprovalDialog.APPROVE_OPTION) {
-	  showStatus("Cancelled saving!");
-	  return;
-	}
-      }
-    }
-    
+
     worker = new SwingWorker() {
       boolean m_Result;
+      boolean m_Cancelled;
 
       @Override
       protected Object doInBackground() throws Exception {
+	m_Cancelled = false;
+
+	if (getCheckOnSave()) {
+	  SwingUtilities.invokeLater(() -> setTabIcon("hourglass.png"));
+	  String check = ActorUtils.checkFlow(flow.getFullActor(), false, false);
+	  if (check != null) {
+	    int retVal = GUIHelper.showConfirmMessage(
+	      m_Owner, "Pre-save check failed - continue with save?\n\nDetails:\n\n" + check);
+	    if (retVal != ApprovalDialog.APPROVE_OPTION) {
+	      showStatus("Cancelled saving!");
+	      m_Cancelled = true;
+	      SwingUtilities.invokeLater(() -> setTabIcon("error_blue.png"));
+	      return null;
+	    }
+	  }
+	}
+
+	SwingUtilities.invokeLater(() -> setTabIcon("save.gif"));
 	showStatus("Saving '" + file + "'...");
 	m_Result = writer.write(flow, file);
 	showStatus("");
@@ -795,10 +801,13 @@ public class FlowPanel
 
       @Override
       protected void done() {
-	if (!m_Result)
-	  GUIHelper.showErrorMessage(
-	      m_Owner, "Error saving flow to '" + file.getAbsolutePath() + "'!");
+	if (!m_Result) {
+	  SwingUtilities.invokeLater(() -> setTabIcon("error_blue.png"));
+          GUIHelper.showErrorMessage(
+            m_Owner, "Error saving flow to '" + file.getAbsolutePath() + "'!");
+        }
 	else {
+	  SwingUtilities.invokeLater(() -> setTabIcon("validate_blue.gif"));
 	  showStatus("");
 	  getTree().setModified(false);
 	  if (m_RecentFilesHandler != null)
