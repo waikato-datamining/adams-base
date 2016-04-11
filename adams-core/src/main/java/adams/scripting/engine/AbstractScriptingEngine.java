@@ -79,6 +79,34 @@ public abstract class AbstractScriptingEngine
   protected ExecutorService m_Executor;
 
   /**
+   * Adds options to the internal list of options.
+   */
+  @Override
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+      "permission-handler", "permissionHandler",
+      getDefaultPermissionHandler());
+
+    m_OptionManager.add(
+      "request-handler", "requestHandler",
+      getDefaultRequestHandler());
+
+    m_OptionManager.add(
+      "response-handler", "responseHandler",
+      getDefaultResponseHandler());
+
+    m_OptionManager.add(
+      "timeout", "timeout",
+      3000, 100, null);
+
+    m_OptionManager.add(
+      "max-concurrent-jobs", "maxConcurrentJobs",
+      1, 1, null);
+  }
+
+  /**
    * Returns the default permission handler.
    *
    * @return		the default
