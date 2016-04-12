@@ -14,8 +14,8 @@
  */
 
 /*
- * WekaOptionsConversion.java
- * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
+ * WekaCommandToCode.java
+ * Copyright (C) 2016 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -23,7 +23,7 @@ package adams.gui.menu;
 
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.UserMode;
-import adams.gui.tools.WekaOptionsConversionPanel;
+import weka.gui.CommandToCodePanel;
 
 /**
  * For turning Weka commandline strings into code.
@@ -31,7 +31,7 @@ import adams.gui.tools.WekaOptionsConversionPanel;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class WekaOptionsConversion
+public class WekaCommandToCode
   extends AbstractWekaMenuItemDefinition {
 
   /** for serialization. */
@@ -40,7 +40,7 @@ public class WekaOptionsConversion
   /**
    * Initializes the menu item with no owner.
    */
-  public WekaOptionsConversion() {
+  public WekaCommandToCode() {
     this(null);
   }
 
@@ -49,7 +49,7 @@ public class WekaOptionsConversion
    *
    * @param owner	the owning application
    */
-  public WekaOptionsConversion(AbstractApplicationFrame owner) {
+  public WekaCommandToCode(AbstractApplicationFrame owner) {
     super(owner);
   }
 
@@ -58,7 +58,7 @@ public class WekaOptionsConversion
    */
   @Override
   public void launch() {
-    WekaOptionsConversionPanel panel = new WekaOptionsConversionPanel();
+    CommandToCodePanel panel = new CommandToCodePanel();
     createChildFrame(panel, 800, 600);
   }
 
@@ -69,7 +69,7 @@ public class WekaOptionsConversion
    */
   @Override
   public String getTitle() {
-    return "WEKA Options conversion";
+    return "WEKA Command to code";
   }
 
   /**
