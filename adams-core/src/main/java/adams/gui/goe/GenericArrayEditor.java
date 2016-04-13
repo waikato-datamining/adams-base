@@ -81,6 +81,9 @@ public class GenericArrayEditor
   extends BasePanel
   implements PropertyEditor {
 
+  /** if there are no elements in the list. */
+  public static final String NONE = "[none]";
+
   /**
    * This class handles the creation of list cell renderers from the
    * property editors.
@@ -782,7 +785,7 @@ public class GenericArrayEditor
     fm     = gfx.getFontMetrics();
     vpad   = (box.height - fm.getHeight()) / 2;
     if ((m_ListModel == null) || (m_ListModel.size() == 0)) {
-      rep = "None";
+      rep = NONE;
     }
     else if (m_ListModel.size() == 1) {
       obj = m_ListModel.get(0);
@@ -805,6 +808,8 @@ public class GenericArrayEditor
 	rep += " " + optionStr;
 	rep = rep.trim();
       }
+      if (rep.isEmpty())
+	rep = AbstractPropertyEditorSupport.EMPTY;
     }
     else {
       rep = m_ListModel.getSize() + " " + m_ElementClass.getName().replaceAll(".*\\.", "");
