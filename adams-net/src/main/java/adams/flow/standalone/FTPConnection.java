@@ -15,7 +15,7 @@
 
 /*
  * FTPConnection.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.standalone;
@@ -565,8 +565,7 @@ public class FTPConnection
     
     try {
       m_Client = new FTPClient();
-      if (isLoggingEnabled())
-	m_Client.addProtocolCommandListener(this);
+      m_Client.addProtocolCommandListener(this);
       m_Client.connect(m_Host);
       reply = m_Client.getReplyCode();
       if (!FTPReply.isPositiveCompletion(reply)) {
@@ -626,7 +625,10 @@ public class FTPConnection
    * @param event The ProtocolCommandEvent fired.
    */
   public void protocolCommandSent(ProtocolCommandEvent event) {
-    getLogger().info("cmd sent: " + event.getCommand() + "/" + event.getReplyCode());
+    if (isLoggingEnabled())
+      getLogger().info("cmd sent: " + event.getCommand() + "/" + event.getReplyCode());
+    else if (event.getReplyCode() >= 400)
+      getLogger().severe("cmd sent: " + event.getCommand() + "/" + event.getReplyCode());
   }
 
   /***
@@ -636,6 +638,9 @@ public class FTPConnection
    * @param event The ProtocolCommandEvent fired.
    */
   public void protocolReplyReceived(ProtocolCommandEvent event) {
-    getLogger().info("reply received: " + event.getMessage() + "/" + event.getReplyCode());
+    if (isLoggingEnabled())
+      getLogger().info("reply received: " + event.getMessage() + "/" + event.getReplyCode());
+    else if (event.getReplyCode() >= 400)
+      getLogger().severe("reply received: " + event.getMessage() + "/" + event.getReplyCode());
   }
 }
