@@ -14,7 +14,7 @@
  */
 
 /**
- * TriggerRemoteExecution.java
+ * RemoteExecutionTrigger.java
  * Copyright (C) 2016 University of Waikato, Hamilton, NZ
  */
 
@@ -122,7 +122,7 @@ import java.awt.Container;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class TriggerRemoteExecution
+public class RemoteExecutionTrigger
   extends AbstractTee {
 
   private static final long serialVersionUID = 3640543579873695646L;

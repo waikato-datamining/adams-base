@@ -34,7 +34,7 @@ import junit.framework.TestSuite;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class TriggerRemoteExecutionTest
+public class RemoteExecutionTriggerTest
   extends AbstractFlowTest {
 
   /**
@@ -42,7 +42,7 @@ public class TriggerRemoteExecutionTest
    *
    * @param name	the name of the test
    */
-  public TriggerRemoteExecutionTest(String name) {
+  public RemoteExecutionTriggerTest(String name) {
     super(name);
   }
 
@@ -61,7 +61,7 @@ public class TriggerRemoteExecutionTest
    * @return		the test suite
    */
   public static Test suite() {
-    return new TestSuite(TriggerRemoteExecutionTest.class);
+    return new TestSuite(RemoteExecutionTriggerTest.class);
   }
 
   /**
