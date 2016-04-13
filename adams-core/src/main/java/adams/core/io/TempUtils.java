@@ -15,7 +15,7 @@
 
 /**
  * TempUtils.java
- * Copyright (C) 2015 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton, NZ
  */
 
 package adams.core.io;
@@ -55,7 +55,7 @@ public class TempUtils {
    *
    * @param dir		the directory for the temp file, use null for user's temp dir
    * @param prefix	the prefix for the name, can be null
-   * @param suffix	the suffix, eg the extension, can be null
+   * @param suffix	the suffix, eg the extension (must incl dot), can be null
    * @return		the generated file name
    */
   public static synchronized File createTempFile(PlaceholderDirectory dir, String prefix, String suffix) {
@@ -85,7 +85,7 @@ public class TempUtils {
    * Creates a temp file name in the user's temp directory.
    *
    * @param prefix	the prefix for the name, can be null
-   * @param suffix	the suffix, eg the extension, can be null
+   * @param suffix	the suffix, eg the extension (must incl dot), can be null
    * @return		the generated file name
    */
   public static synchronized File createTempFile(String prefix, String suffix) {
