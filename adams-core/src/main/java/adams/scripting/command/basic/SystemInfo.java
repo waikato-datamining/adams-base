@@ -21,7 +21,12 @@
 package adams.scripting.command.basic;
 
 import adams.core.Properties;
+import adams.core.io.FileUtils;
+import adams.core.io.FileWriter;
+import adams.core.io.PlaceholderFile;
 import adams.scripting.command.AbstractCommandWithResponse;
+import adams.scripting.engine.RemoteScriptingEngine;
+import adams.scripting.responsehandler.ResponseHandler;
 
 import java.io.StringReader;
 import java.util.Hashtable;
@@ -34,12 +39,16 @@ import java.util.logging.Level;
  * @version $Revision$
  */
 public class SystemInfo
-  extends AbstractCommandWithResponse {
+  extends AbstractCommandWithResponse
+  implements FileWriter {
 
   private static final long serialVersionUID = -3350680106789169314L;
 
   /** the payload. */
   protected Properties m_Info;
+
+  /** the output file. */
+  protected PlaceholderFile m_OutputFile;
 
   /**
    * Returns a string describing the object.
@@ -52,6 +61,18 @@ public class SystemInfo
   }
 
   /**
+   * Adds options to the internal list of options.
+   */
+  @Override
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+      "output", "outputFile",
+      new PlaceholderFile());
+  }
+
+  /**
    * Initializes the members.
    */
   @Override
@@ -59,6 +80,35 @@ public class SystemInfo
     super.initialize();
 
     m_Info = new Properties();
+  }
+
+  /**
+   * Set output file.
+   *
+   * @param value	file
+   */
+  public void setOutputFile(PlaceholderFile value) {
+    m_OutputFile = value;
+    reset();
+  }
+
+  /**
+   * Get output file.
+   *
+   * @return	file
+   */
+  public PlaceholderFile getOutputFile() {
+    return m_OutputFile;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String outputFileTipText() {
+    return "The file to write the system into to.";
   }
 
   /**
@@ -152,5 +202,27 @@ public class SystemInfo
    */
   public Object[] getResponsePayloadObjects() {
     return new Object[]{m_Info};
+  }
+
+  /**
+   * Handles the response.
+   *
+   * @param engine	the remote engine handling the response
+   * @param handler	for handling the response
+   */
+  @Override
+  public void handleResponse(RemoteScriptingEngine engine, ResponseHandler handler) {
+    String	msg;
+
+    if (!m_OutputFile.isDirectory()) {
+      msg = FileUtils.writeToFileMsg(m_OutputFile.getAbsolutePath(), m_Info, false, null);
+      if (msg != null)
+	handler.responseFailed(this, msg);
+      else
+	super.handleResponse(engine, handler);
+    }
+    else {
+      super.handleResponse(engine, handler);
+    }
   }
 }
