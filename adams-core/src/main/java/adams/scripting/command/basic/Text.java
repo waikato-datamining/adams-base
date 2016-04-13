@@ -21,6 +21,9 @@
 package adams.scripting.command.basic;
 
 import adams.core.base.BaseText;
+import adams.core.io.FileUtils;
+import adams.core.io.PlaceholderFile;
+import adams.core.io.RemoteFileWriter;
 import adams.scripting.command.AbstractFlowAwareCommand;
 import adams.scripting.engine.RemoteScriptingEngine;
 
@@ -31,12 +34,16 @@ import adams.scripting.engine.RemoteScriptingEngine;
  * @version $Revision$
  */
 public class Text
-  extends AbstractFlowAwareCommand {
+  extends AbstractFlowAwareCommand
+  implements RemoteFileWriter {
 
   private static final long serialVersionUID = -1657908444959620122L;
 
   /** the text to send. */
   protected BaseText m_Text;
+
+  /** the remote file to save it to. */
+  protected PlaceholderFile m_RemoteFile;
 
   /** the actual payload. */
   protected String m_Payload;
@@ -62,6 +69,10 @@ public class Text
     m_OptionManager.add(
       "text", "text",
       new BaseText());
+
+    m_OptionManager.add(
+      "remote-file", "remoteFile",
+      new PlaceholderFile());
   }
 
   /**
@@ -91,6 +102,35 @@ public class Text
    */
   public String textTipText() {
     return "The text to send.";
+  }
+
+  /**
+   * Set remote file.
+   *
+   * @param value	file
+   */
+  public void setRemoteFile(PlaceholderFile value) {
+    m_RemoteFile = value;
+    reset();
+  }
+
+  /**
+   * Get remote file.
+   *
+   * @return	file
+   */
+  public PlaceholderFile getRemoteFile() {
+    return m_RemoteFile;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String remoteFileTipText() {
+    return "The remote file to write the text to.";
   }
 
   /**
@@ -141,7 +181,15 @@ public class Text
    * @return		null if successful, otherwise error message
    */
   protected String doHandleRequest(RemoteScriptingEngine engine) {
-    getLogger().info(m_Payload);
-    return null;
+    String	result;
+
+    result = null;
+
+    if (!m_RemoteFile.isDirectory())
+      result = FileUtils.writeToFileMsg(m_RemoteFile.getAbsolutePath(), m_Payload, false, null);
+    else
+      getLogger().info(m_Payload);
+
+    return result;
   }
 }
