@@ -617,7 +617,6 @@ public class LinearRegressionJ extends AbstractClassifier implements
     setOutputAdditionalStats(Utils.getFlag("additional-stats", options));
 
     super.setOptions(options);
-    Utils.checkForRemainingOptions(options);
   }
 
   /**
