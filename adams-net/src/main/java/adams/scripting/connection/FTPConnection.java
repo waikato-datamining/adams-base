@@ -300,8 +300,7 @@ public class FTPConnection
 
     try {
       m_Client = new FTPClient();
-      if (isLoggingEnabled())
-	m_Client.addProtocolCommandListener(this);
+      m_Client.addProtocolCommandListener(this);
       m_Client.connect(m_Host);
       reply = m_Client.getReplyCode();
       if (!FTPReply.isPositiveCompletion(reply)) {
@@ -391,7 +390,8 @@ public class FTPConnection
 	  getLogger().info("Uploading " + tmpfile + " to " + remotefile);
 	fis    = new FileInputStream(tmpfile.getAbsoluteFile());
 	stream = new BufferedInputStream(fis);
-	client.storeFile(remotefile, stream);
+	if (!client.storeFile(remotefile, stream))
+	  result = "Failed to upload file, check console for error message!";
       }
       catch (Exception e) {
 	result = Utils.handleException(this, "Failed to upload file '" + tmpfile + "' to '" + remotefile + "': ", e);
@@ -434,7 +434,10 @@ public class FTPConnection
    * @param event The ProtocolCommandEvent fired.
    */
   public void protocolCommandSent(ProtocolCommandEvent event) {
-    getLogger().info("cmd sent: " + event.getCommand() + "/" + event.getReplyCode());
+    if (isLoggingEnabled())
+      getLogger().info("cmd sent: " + event.getCommand() + "/" + event.getReplyCode());
+    else if (event.getReplyCode() >= 400)
+      getLogger().severe("cmd sent: " + event.getCommand() + "/" + event.getReplyCode());
   }
 
   /***
@@ -444,7 +447,10 @@ public class FTPConnection
    * @param event The ProtocolCommandEvent fired.
    */
   public void protocolReplyReceived(ProtocolCommandEvent event) {
-    getLogger().info("reply received: " + event.getMessage() + "/" + event.getReplyCode());
+    if (isLoggingEnabled())
+      getLogger().info("reply received: " + event.getMessage() + "/" + event.getReplyCode());
+    else if (event.getReplyCode() >= 400)
+      getLogger().severe("reply received: " + event.getMessage() + "/" + event.getReplyCode());
   }
 
   /**
