@@ -21,6 +21,7 @@ package weka.classifiers.meta;
 
 import adams.core.io.FileUtils;
 import weka.classifiers.SingleClassifierEnhancer;
+import weka.classifiers.functions.LinearRegression;
 import weka.classifiers.functions.LinearRegressionJ;
 import weka.core.Instance;
 import weka.core.Instances;
@@ -160,20 +161,12 @@ public class Corr
   */
 
   /**
-   * Initializes the classifier.
-   * /
-  public Corr() {
-    m_Classifier = new LinearRegression();
-  }
-  */
-
-  /**
    * String describing default classifier.
    *
    * @return		the default classifier
    */
   protected String defaultClassifierString() {
-    return LinearRegressionJ.class.getName();
+    return LinearRegression.class.getName();
   }
 
   /**
