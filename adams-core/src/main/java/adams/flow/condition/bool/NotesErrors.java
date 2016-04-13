@@ -15,7 +15,7 @@
 
 /**
  * NotesErrors.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.condition.bool;
 
@@ -65,7 +65,7 @@ public class NotesErrors
    */
   @Override
   public String getQuickInfo() {
-    return null;
+    return "error in notes?";
   }
 
   /**
