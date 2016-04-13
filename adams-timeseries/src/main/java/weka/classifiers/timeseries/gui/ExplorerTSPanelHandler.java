@@ -19,13 +19,13 @@
  */
 package weka.classifiers.timeseries.gui;
 
-import java.util.ArrayList;
-import java.util.Hashtable;
-
-import weka.classifiers.functions.LinearRegression;
+import weka.classifiers.functions.LinearRegressionJ;
 import weka.classifiers.timeseries.gui.explorer.ExplorerTSPanelPublic;
 import weka.gui.explorer.AbstractExplorerPanelHandler;
 import weka.gui.explorer.Explorer.ExplorerPanel;
+
+import java.util.ArrayList;
+import java.util.Hashtable;
 
 /**
  * Handles the {@link ExplorerTSPanelPublic} panel.
@@ -165,7 +165,7 @@ public class ExplorerTSPanelHandler
 
     // advanced
     advanced = (Hashtable<String,Object>) list.get(1);
-    restoreGOE(advanced, KEY_ADV_BASELEARNER, new LinearRegression(), pnl.m_advancedConfigPanel.m_baseLearnerEditor);
+    restoreGOE(advanced, KEY_ADV_BASELEARNER, new LinearRegressionJ(), pnl.m_advancedConfigPanel.m_baseLearnerEditor);
     restoreSelectedState(advanced, KEY_ADV_LAGADJUST, false, pnl.m_advancedConfigPanel.m_adjustForVarianceCheckBox);
     restoreSelectedState(advanced, KEY_ADV_CUSTOMLAG, false, pnl.m_advancedConfigPanel.m_useCustomLags);
     restoreSpinner(advanced, KEY_ADV_MINLAG, 1, pnl.m_advancedConfigPanel.m_minLagSpinner);

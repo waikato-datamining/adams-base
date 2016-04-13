@@ -21,7 +21,7 @@ package weka.classifiers.meta;
 
 import adams.core.io.FileUtils;
 import weka.classifiers.SingleClassifierEnhancer;
-import weka.classifiers.functions.LinearRegression;
+import weka.classifiers.functions.LinearRegressionJ;
 import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.Option;
@@ -173,7 +173,7 @@ public class Corr
    * @return		the default classifier
    */
   protected String defaultClassifierString() {
-    return LinearRegression.class.getName();
+    return LinearRegressionJ.class.getName();
   }
 
   /**
@@ -487,8 +487,8 @@ public class Corr
 
     m_Classifier.buildClassifier(train);
 
-    if (m_Classifier instanceof LinearRegression) {
-      double[] coeffs = ((LinearRegression)m_Classifier).coefficients();
+    if (m_Classifier instanceof LinearRegressionJ) {
+      double[] coeffs = ((LinearRegressionJ)m_Classifier).coefficients();
       if (getDebug())
 	System.out.println("coeffs " + coeffs.length + " " + Arrays.toString(coeffs));
       if (getDebug())

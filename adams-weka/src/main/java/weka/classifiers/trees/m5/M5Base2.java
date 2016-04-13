@@ -22,7 +22,7 @@
 package weka.classifiers.trees.m5;
 
 import weka.classifiers.AbstractClassifier;
-import weka.classifiers.functions.LinearRegression;
+import weka.classifiers.functions.LinearRegressionJ;
 import weka.core.AdditionalMeasureProducer;
 import weka.core.Capabilities;
 import weka.core.FastVector;
@@ -416,7 +416,7 @@ public abstract class M5Base2
    * @return      the capabilities of this classifier
    */
   public Capabilities getCapabilities() {
-    return new LinearRegression().getCapabilities();
+    return new LinearRegressionJ().getCapabilities();
   }
 
   /**

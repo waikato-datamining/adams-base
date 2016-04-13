@@ -40,6 +40,7 @@ import adams.flow.transformer.WekaExtractArray.ExtractionType;
 import adams.flow.transformer.WekaFileReader.OutputType;
 import adams.flow.transformer.WekaInstancesStatistic.DataType;
 import adams.test.TmpFile;
+import weka.classifiers.functions.LinearRegressionJ;
 
 /**
  * Tests the WekaExtractArray actor.
@@ -94,7 +95,7 @@ public class WekaExtractArrayTest
   public Actor getActor() {
     WekaClassifierSetup cl = new WekaClassifierSetup();
     cl.setName("cl");
-    cl.setClassifier(new weka.classifiers.functions.LinearRegression());
+    cl.setClassifier(new LinearRegressionJ());
 
     CallableActors ga = new CallableActors();
     ga.setActors(new Actor[]{

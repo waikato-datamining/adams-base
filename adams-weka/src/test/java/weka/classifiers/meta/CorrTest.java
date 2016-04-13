@@ -24,7 +24,7 @@ import junit.framework.TestSuite;
 import junit.textui.TestRunner;
 import weka.classifiers.AbstractAdamsClassifierTest;
 import weka.classifiers.Classifier;
-import weka.classifiers.functions.LinearRegression;
+import weka.classifiers.functions.LinearRegressionJ;
 import weka.core.SelectedTag;
 
 /**
@@ -54,13 +54,13 @@ public class CorrTest
   @Override
   public Classifier getClassifier() {
     Corr		result;
-    LinearRegression	lr;
+    LinearRegressionJ lr;
 
     try {
       result = new Corr();
-      lr     = new LinearRegression();
+      lr     = new LinearRegressionJ();
       lr.setEliminateColinearAttributes(false);
-      lr.setAttributeSelectionMethod(new SelectedTag(LinearRegression.SELECTION_NONE, LinearRegression.TAGS_SELECTION));
+      lr.setAttributeSelectionMethod(new SelectedTag(LinearRegressionJ.SELECTION_NONE, LinearRegressionJ.TAGS_SELECTION));
       result.setClassifier(lr);
     }
     catch (Exception e) {

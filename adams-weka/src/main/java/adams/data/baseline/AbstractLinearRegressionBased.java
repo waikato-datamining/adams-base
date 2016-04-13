@@ -22,7 +22,7 @@ package adams.data.baseline;
 
 import java.util.logging.Level;
 
-import weka.classifiers.functions.LinearRegression;
+import weka.classifiers.functions.LinearRegressionJ;
 import weka.core.Instances;
 import weka.core.SelectedTag;
 import adams.core.Utils;
@@ -173,7 +173,7 @@ public abstract class AbstractLinearRegressionBased<T extends DataContainer>
   protected T processData(T data) {
     T			result;
     Instances		inst;
-    LinearRegression	linear;
+    LinearRegressionJ linear;
     double[]		coeff;
 
     inst = getInstances(data);
@@ -181,8 +181,8 @@ public abstract class AbstractLinearRegressionBased<T extends DataContainer>
       getLogger().info("inst:\n" + inst);
 
     try {
-      linear = new LinearRegression();
-      linear.setAttributeSelectionMethod(new SelectedTag(LinearRegression.SELECTION_NONE, LinearRegression.TAGS_SELECTION));
+      linear = new LinearRegressionJ();
+      linear.setAttributeSelectionMethod(new SelectedTag(LinearRegressionJ.SELECTION_NONE, LinearRegressionJ.TAGS_SELECTION));
       linear.setEliminateColinearAttributes(false);
       linear.buildClassifier(inst);
       coeff = linear.coefficients();

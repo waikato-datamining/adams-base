@@ -22,6 +22,7 @@ package adams.flow.source;
 
 import java.io.Serializable;
 
+import weka.classifiers.functions.LinearRegressionJ;
 import weka.classifiers.meta.FilteredClassifier;
 import weka.core.setupgenerator.AbstractParameter;
 import weka.core.setupgenerator.ListParameter;
@@ -109,7 +110,7 @@ public class WekaClassifierGenerator
 
     result = new weka.classifiers.meta.FilteredClassifier();
     result.setFilter(new weka.filters.supervised.attribute.PLSFilter());
-    result.setClassifier(new weka.classifiers.functions.LinearRegression());
+    result.setClassifier(new LinearRegressionJ());
 
     return result;
   }

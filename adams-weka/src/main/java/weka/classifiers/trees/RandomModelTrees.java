@@ -22,7 +22,7 @@
 package weka.classifiers.trees;
 
 import weka.classifiers.RandomizableClassifier;
-import weka.classifiers.functions.LinearRegression;
+import weka.classifiers.functions.LinearRegressionJ;
 import weka.classifiers.meta.Corr;
 import weka.core.Capabilities;
 import weka.core.Capabilities.Capability;
@@ -474,10 +474,10 @@ class Node implements Serializable {
   public void turnIntoLeafLR(List<Instance> data, double ridge) throws Exception {
     splitIndex = -1;
     computeMinMax(data);
-    LinearRegression l = new LinearRegression();
+    LinearRegressionJ l = new LinearRegressionJ();
     l.setOptions(new String[]{});
     l.setEliminateColinearAttributes(false);
-    l.setAttributeSelectionMethod(new SelectedTag(LinearRegression.SELECTION_NONE, LinearRegression.TAGS_SELECTION));
+    l.setAttributeSelectionMethod(new SelectedTag(LinearRegressionJ.SELECTION_NONE, LinearRegressionJ.TAGS_SELECTION));
     l.setRidge(ridge);
     l.turnChecksOff();
     Instances trainData = new Instances(data.get(0).dataset(),data.size());
@@ -506,9 +506,9 @@ class Node implements Serializable {
   public void turnIntoLeafCORR(List<Instance> data, double ridge) throws Exception {
     splitIndex = -1;
     computeMinMax(data);
-    LinearRegression l = new LinearRegression();
+    LinearRegressionJ l = new LinearRegressionJ();
     l.setEliminateColinearAttributes(false);
-    l.setAttributeSelectionMethod(new SelectedTag(LinearRegression.SELECTION_NONE, LinearRegression.TAGS_SELECTION));
+    l.setAttributeSelectionMethod(new SelectedTag(LinearRegressionJ.SELECTION_NONE, LinearRegressionJ.TAGS_SELECTION));
     l.setRidge(ridge);
     l.turnChecksOff();
     Corr corr = new Corr();

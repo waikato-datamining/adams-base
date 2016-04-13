@@ -33,7 +33,7 @@ import adams.optimise.genetic.PackDataDef;
 import adams.optimise.genetic.PackDataGeneticAlgorithm;
 import adams.optimise.genetic.fitnessfunctions.AttributeSelection;
 import weka.classifiers.functions.GPD;
-import weka.classifiers.functions.LinearRegression;
+import weka.classifiers.functions.LinearRegressionJ;
 import weka.classifiers.functions.PLSClassifier;
 import weka.classifiers.meta.FilteredClassifier;
 import weka.core.SelectedTag;
@@ -447,9 +447,9 @@ public class GeneticAlgorithm
     PLSFilter pf=(PLSFilter)pls.getFilter();
     pf.setNumComponents(11);
 
-    LinearRegression reg=new LinearRegression();
+    LinearRegressionJ reg=new LinearRegressionJ();
     reg.setEliminateColinearAttributes(false);
-    reg.setAttributeSelectionMethod(new SelectedTag(LinearRegression.SELECTION_NONE, LinearRegression.TAGS_SELECTION));
+    reg.setAttributeSelectionMethod(new SelectedTag(LinearRegressionJ.SELECTION_NONE, LinearRegressionJ.TAGS_SELECTION));
 
     GPD gp=new GPD();
     gp.setNoise(.01);

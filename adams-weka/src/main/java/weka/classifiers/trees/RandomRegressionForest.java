@@ -21,15 +21,8 @@
 
 package weka.classifiers.trees;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Random;
-import java.util.Vector;
-
 import weka.classifiers.RandomizableClassifier;
-import weka.classifiers.functions.LinearRegression;
+import weka.classifiers.functions.LinearRegressionJ;
 import weka.core.Capabilities;
 import weka.core.Capabilities.Capability;
 import weka.core.Instance;
@@ -40,6 +33,13 @@ import weka.core.Utils;
 import weka.core.WeightedInstancesHandler;
 import weka.filters.Filter;
 import weka.filters.supervised.attribute.PLSFilter;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.Random;
+import java.util.Vector;
 
 /**
  <!-- globalinfo-start -->
@@ -462,7 +462,7 @@ public class RandomRegressionForest
 
     protected int m_SplitIndex = -1;
 
-    protected LinearRegression m_LinearReg;
+    protected LinearRegressionJ m_LinearReg;
 
     protected Node m_Less;
 
@@ -515,10 +515,10 @@ public class RandomRegressionForest
      * @throws Exception	if training of LinearRegression fails
      */
     public void turnIntoLeaf(Instances data) throws Exception {
-      m_LinearReg = new LinearRegression();
+      m_LinearReg = new LinearRegressionJ();
       m_LinearReg.setEliminateColinearAttributes(false);
       m_LinearReg.setAttributeSelectionMethod(
-	  new SelectedTag(LinearRegression.SELECTION_NONE, LinearRegression.TAGS_SELECTION));
+	  new SelectedTag(LinearRegressionJ.SELECTION_NONE, LinearRegressionJ.TAGS_SELECTION));
       m_LinearReg.turnChecksOff();
       m_LinearReg.setMinimal(true);
       m_LinearReg.buildClassifier(data);

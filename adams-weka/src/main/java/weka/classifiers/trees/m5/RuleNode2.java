@@ -23,7 +23,7 @@ package weka.classifiers.trees.m5;
 
 import weka.classifiers.AbstractClassifier;
 import weka.classifiers.Evaluation;
-import weka.classifiers.functions.LinearRegression;
+import weka.classifiers.functions.LinearRegressionJ;
 import weka.classifiers.meta.LeastMedianSq;
 import weka.core.FastVector;
 import weka.core.Instance;
@@ -398,9 +398,9 @@ public class RuleNode2
     
     // build a linear regression for the training data using the
     // tested attributes
-    LinearRegression temp = new LinearRegression();
+    LinearRegressionJ temp = new LinearRegressionJ();
     temp.setEliminateColinearAttributes(false);
-    temp.setAttributeSelectionMethod(new SelectedTag(LinearRegression.SELECTION_NONE, LinearRegression.TAGS_SELECTION));
+    temp.setAttributeSelectionMethod(new SelectedTag(LinearRegressionJ.SELECTION_NONE, LinearRegressionJ.TAGS_SELECTION));
     
     LeastMedianSq lmq= new LeastMedianSq();
     lmq.setNumRegressions(20);
@@ -409,7 +409,7 @@ public class RuleNode2
     lmq.setClassifier(temp);
     lmq.buildClassifier(reducedInst);
     
-    temp=(LinearRegression)lmq.getClassifier();
+    temp=(LinearRegressionJ)lmq.getClassifier();
     
     
     double [] lmCoeffs = temp.coefficients();

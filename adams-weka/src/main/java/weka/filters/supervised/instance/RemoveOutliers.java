@@ -36,7 +36,7 @@ import weka.classifiers.Classifier;
 import weka.classifiers.CrossValidationFoldGenerator;
 import weka.classifiers.CrossValidationHelper;
 import weka.classifiers.Evaluation;
-import weka.classifiers.functions.LinearRegression;
+import weka.classifiers.functions.LinearRegressionJ;
 import weka.core.Capabilities;
 import weka.core.Instance;
 import weka.core.Instances;
@@ -141,7 +141,7 @@ public class RemoveOutliers
    * @return  		the default classifier
    */
   protected Classifier getDefaultClassifier() {
-    return new LinearRegression();
+    return new LinearRegressionJ();
   }
 
   /**

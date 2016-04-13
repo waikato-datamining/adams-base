@@ -24,7 +24,7 @@ import adams.core.Utils;
 import adams.core.option.OptionUtils;
 import adams.flow.core.LagMakerOptions;
 import weka.classifiers.Classifier;
-import weka.classifiers.functions.LinearRegression;
+import weka.classifiers.functions.LinearRegressionJ;
 import weka.classifiers.timeseries.AbstractForecaster;
 import weka.classifiers.timeseries.WekaForecaster;
 
@@ -121,7 +121,7 @@ public class WekaForecasterGenerator
 
     m_OptionManager.add(
 	"classifier", "classifier", 
-	new LinearRegression());
+	new LinearRegressionJ());
 
     m_OptionManager.add(
 	"forecast-fields", "forecastFields", 

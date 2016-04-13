@@ -21,7 +21,7 @@
 
 package weka.core;
 
-import weka.classifiers.functions.LinearRegression;
+import weka.classifiers.functions.LinearRegressionJ;
 import weka.core.TechnicalInformation.Field;
 import weka.core.TechnicalInformation.Type;
 import weka.core.neighboursearch.PerformanceStats;
@@ -82,7 +82,7 @@ public class WeightedEuclideanDistance
   private static final long serialVersionUID = -8518647249857218705L;
   /** Array for storing coefficients of linear regression. */
   protected double[] m_Coefficients=null;
-  protected LinearRegression m_LR=new LinearRegression();
+  protected LinearRegressionJ m_LR=new LinearRegressionJ();
   protected Normalize m_norm=null;
   /**
    * Constructs an Euclidean Distance object, Instances must be still set.
@@ -106,8 +106,8 @@ public class WeightedEuclideanDistance
   @Override
   protected void initialize() {
     super.initialize();
-    m_LR.setAttributeSelectionMethod(new SelectedTag(LinearRegression.SELECTION_NONE,
-	LinearRegression.TAGS_SELECTION));
+    m_LR.setAttributeSelectionMethod(new SelectedTag(LinearRegressionJ.SELECTION_NONE,
+	LinearRegressionJ.TAGS_SELECTION));
     m_LR.setEliminateColinearAttributes(false);
     //m_norm=new Normalize();
     

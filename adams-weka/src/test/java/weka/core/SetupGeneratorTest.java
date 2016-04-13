@@ -25,6 +25,7 @@ import java.util.Enumeration;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;
+import weka.classifiers.functions.LinearRegressionJ;
 import weka.core.setupgenerator.AbstractParameter;
 import weka.core.setupgenerator.ListParameter;
 import weka.core.setupgenerator.MathParameter;
@@ -82,7 +83,7 @@ public class SetupGeneratorTest
     generator = new SetupGenerator();
     fc = new weka.classifiers.meta.FilteredClassifier();
     ((weka.classifiers.meta.FilteredClassifier) fc).setFilter(new weka.filters.supervised.attribute.PLSFilter());
-    ((weka.classifiers.meta.FilteredClassifier) fc).setClassifier(new weka.classifiers.functions.LinearRegression());
+    ((weka.classifiers.meta.FilteredClassifier) fc).setClassifier(new LinearRegressionJ());
     generator.setBaseObject((Serializable) fc);
 
     params = new AbstractParameter[3];

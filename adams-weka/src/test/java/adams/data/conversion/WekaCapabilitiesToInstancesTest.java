@@ -23,7 +23,7 @@ package adams.data.conversion;
 import adams.env.Environment;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import weka.classifiers.functions.LinearRegression;
+import weka.classifiers.functions.LinearRegressionJ;
 import weka.classifiers.trees.J48;
 import weka.core.Capabilities;
 
@@ -80,7 +80,7 @@ public class WekaCapabilitiesToInstancesTest
 
     result    = new Capabilities[2];
     result[0] = new J48().getCapabilities();
-    result[1] = new LinearRegression().getCapabilities();
+    result[1] = new LinearRegressionJ().getCapabilities();
 
     return result;
   }

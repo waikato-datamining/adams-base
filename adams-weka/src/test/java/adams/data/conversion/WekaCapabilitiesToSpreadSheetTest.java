@@ -23,7 +23,7 @@ package adams.data.conversion;
 import adams.env.Environment;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import weka.classifiers.functions.LinearRegression;
+import weka.classifiers.functions.LinearRegressionJ;
 import weka.classifiers.meta.FilteredClassifier;
 import weka.classifiers.trees.J48;
 import weka.core.Capabilities;
@@ -83,7 +83,7 @@ public class WekaCapabilitiesToSpreadSheetTest
     result    = new Capabilities[4];
     result[0] = new Remove().getCapabilities();
     result[1] = new J48().getCapabilities();
-    result[2] = new LinearRegression().getCapabilities();
+    result[2] = new LinearRegressionJ().getCapabilities();
     result[3] = new FilteredClassifier().getCapabilities();
 
     return result;

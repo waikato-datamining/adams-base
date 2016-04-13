@@ -30,7 +30,7 @@ import java.util.Vector;
 import weka.classifiers.AbstainingClassifier;
 import weka.classifiers.Classifier;
 import weka.classifiers.SingleClassifierEnhancer;
-import weka.classifiers.functions.LinearRegression;
+import weka.classifiers.functions.LinearRegressionJ;
 import weka.core.AttributeStats;
 import weka.core.Capabilities;
 import weka.core.Capabilities.Capability;
@@ -421,9 +421,9 @@ public class AbstainLeastMedianSq
    * @throws Exception if an error occurs
    */
   protected void genRegression(Random r) throws Exception {
-    m_currentClassifier = new LinearRegression();
-    ((LinearRegression)(m_currentClassifier)).setEliminateColinearAttributes(false);
-    ((LinearRegression)(m_currentClassifier)) .setAttributeSelectionMethod(new SelectedTag(LinearRegression.SELECTION_NONE, LinearRegression.TAGS_SELECTION));
+    m_currentClassifier = new LinearRegressionJ();
+    ((LinearRegressionJ)(m_currentClassifier)).setEliminateColinearAttributes(false);
+    ((LinearRegressionJ)(m_currentClassifier)) .setAttributeSelectionMethod(new SelectedTag(LinearRegressionJ.SELECTION_NONE, LinearRegressionJ.TAGS_SELECTION));
  
     //m_currentClassifier = //AbstractClassifier.makeCopy(m_Classifier);
     selectSubSample(m_Data,r);
