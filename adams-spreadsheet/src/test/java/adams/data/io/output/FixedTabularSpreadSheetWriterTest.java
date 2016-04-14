@@ -15,14 +15,15 @@
 
 /*
  * FixedTabularSpreadSheetWriterTest.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.io.output;
 
+import adams.core.base.BaseInteger;
+import adams.env.Environment;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import adams.env.Environment;
 
 /**
  * Tests the adams.core.io.FixedTabularSpreadSheetWriter class. Run from commandline with: <br><br>
@@ -54,7 +55,8 @@ public class FixedTabularSpreadSheetWriterTest
     return new String[]{
 	"iris.csv",
 	"iris.csv",
-	"vote.csv"
+	"vote.csv",
+	"iris.csv",
     };
   }
 
@@ -69,7 +71,8 @@ public class FixedTabularSpreadSheetWriterTest
     return new String[]{
 	"iris1.txt",
 	"iris2.txt",
-	"bolts.txt",
+	"vote1.txt",
+	"iris3.txt",
     };
   }
 
@@ -82,18 +85,27 @@ public class FixedTabularSpreadSheetWriterTest
   protected SpreadSheetWriter[] getSetups() {
     FixedTabularSpreadSheetWriter[]	result;
 
-    result = new FixedTabularSpreadSheetWriter[3];
+    result = new FixedTabularSpreadSheetWriter[4];
 
     result[0] = new FixedTabularSpreadSheetWriter();
 
     result[1] = new FixedTabularSpreadSheetWriter();
     result[1].setNumberFormat("0.000");
     result[1].setOnlyFloat(true);
-    result[1].setColumnWidth(15);
+    result[1].setColumnWidth(new BaseInteger[]{new BaseInteger(15)});
 
     result[2] = new FixedTabularSpreadSheetWriter();
     result[2].setNumberFormat("0.000");
     result[2].setMissingValue("N/A");
+
+    result[3] = new FixedTabularSpreadSheetWriter();
+    result[3].setColumnWidth(new BaseInteger[]{
+      new BaseInteger(5),
+      new BaseInteger(5),
+      new BaseInteger(5),
+      new BaseInteger(5),
+      new BaseInteger(20),
+    });
 
     return result;
  }

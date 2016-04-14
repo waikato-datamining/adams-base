@@ -15,7 +15,7 @@
 
 /**
  * FixedTabularSpreadSheetWriter.java
- * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.output;
 
@@ -23,6 +23,7 @@ import adams.core.Constants;
 import adams.core.DateFormat;
 import adams.core.Utils;
 import adams.core.base.BaseCharset;
+import adams.core.base.BaseInteger;
 import adams.data.DateFormatString;
 import adams.data.io.input.SpreadSheetReader;
 import adams.data.spreadsheet.Cell;
@@ -60,16 +61,16 @@ import java.util.logging.Level;
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
- * <pre>-enncoding &lt;adams.core.base.BaseCharset&gt; (property: encoding)
+ * <pre>-encoding &lt;adams.core.base.BaseCharset&gt; (property: encoding)
  * &nbsp;&nbsp;&nbsp;The type of encoding to use when writing using a writer, use empty string 
  * &nbsp;&nbsp;&nbsp;for default.
  * &nbsp;&nbsp;&nbsp;default: Default
  * </pre>
  * 
- * <pre>-column-width &lt;int&gt; (property: columnWidth)
- * &nbsp;&nbsp;&nbsp;The width in characters to use for each column.
+ * <pre>-column-width &lt;adams.core.base.BaseInteger&gt; [-column-width ...] (property: columnWidth)
+ * &nbsp;&nbsp;&nbsp;The width in characters to use for the columns; if only one is specified 
+ * &nbsp;&nbsp;&nbsp;then this is used for all columns.
  * &nbsp;&nbsp;&nbsp;default: 10
- * &nbsp;&nbsp;&nbsp;minimum: 1
  * </pre>
  * 
  * <pre>-new-line &lt;java.lang.String&gt; (property: newLine)
@@ -88,6 +89,12 @@ import java.util.logging.Level;
  * <pre>-datetime-format &lt;adams.data.DateFormatString&gt; (property: dateTimeFormat)
  * &nbsp;&nbsp;&nbsp;The format for date&#47;times.
  * &nbsp;&nbsp;&nbsp;default: yyyy-MM-dd HH:mm:ss
+ * &nbsp;&nbsp;&nbsp;more: http:&#47;&#47;docs.oracle.com&#47;javase&#47;6&#47;docs&#47;api&#47;java&#47;text&#47;SimpleDateFormat.html
+ * </pre>
+ * 
+ * <pre>-datetimemsec-format &lt;adams.data.DateFormatString&gt; (property: dateTimeMsecFormat)
+ * &nbsp;&nbsp;&nbsp;The format for date&#47;time msecs.
+ * &nbsp;&nbsp;&nbsp;default: yyyy-MM-dd HH:mm:ss.SSS
  * &nbsp;&nbsp;&nbsp;more: http:&#47;&#47;docs.oracle.com&#47;javase&#47;6&#47;docs&#47;api&#47;java&#47;text&#47;SimpleDateFormat.html
  * </pre>
  * 
@@ -115,8 +122,11 @@ public class FixedTabularSpreadSheetWriter
   private static final long serialVersionUID = 3420511187768902829L;
 
   /** the column width. */
-  protected int m_ColumnWidth;
-  
+  protected BaseInteger[] m_ColumnWidth;
+
+  /** the actual column widths. */
+  protected int[] m_ActualColumnWidth;
+
   /** the new line. */
   protected String m_NewLine;
 
@@ -190,7 +200,7 @@ public class FixedTabularSpreadSheetWriter
 
     m_OptionManager.add(
 	    "column-width", "columnWidth",
-	    10, 1, null);
+	    new BaseInteger[]{new BaseInteger(10)});
 
     m_OptionManager.add(
 	    "new-line", "newLine",
@@ -222,7 +232,7 @@ public class FixedTabularSpreadSheetWriter
    *
    * @param value	the width in characters
    */
-  public void setColumnWidth(int value) {
+  public void setColumnWidth(BaseInteger[] value) {
     m_ColumnWidth = value;
     reset();
   }
@@ -232,7 +242,7 @@ public class FixedTabularSpreadSheetWriter
    *
    * @return		the width in characters
    */
-  public int getColumnWidth() {
+  public BaseInteger[] getColumnWidth() {
     return m_ColumnWidth;
   }
 
@@ -243,7 +253,7 @@ public class FixedTabularSpreadSheetWriter
    * 			displaying in the GUI or for listing the options.
    */
   public String columnWidthTipText() {
-    return "The width in characters to use for each column.";
+    return "The width in characters to use for the columns; if only one is specified then this is used for all columns.";
   }
 
   /**
@@ -444,16 +454,20 @@ public class FixedTabularSpreadSheetWriter
    * @throws Exception	if writing to writer fails
    */
   protected void addSeparatorLine(SpreadSheet content, Writer writer) throws Exception {
-    StringBuilder	col;
+    StringBuilder[]	col;
     int			i;
-    
-    col = new StringBuilder();
-    for (i = 0; i < m_ColumnWidth; i++)
-      col.append("-");
-    
+    int			n;
+
+    col = new StringBuilder[content.getColumnCount()];
+    for (n = 0; n < content.getColumnCount(); n++) {
+      col[n] = new StringBuilder();
+      for (i = 0; i < m_ActualColumnWidth[n]; i++)
+	col[n].append("-");
+    }
+
     writer.write("+");
     for (i = 0; i < content.getColumnCount(); i++) {
-      writer.write(col.toString());
+      writer.write(col[i].toString());
       writer.write("+");
     }
     writer.write(m_NewLine);
@@ -462,28 +476,29 @@ public class FixedTabularSpreadSheetWriter
   /**
    * Pads a string either on the left or the right hand side with blanks.
    * Shortens it if necessary.
-   * 
+   *
+   * @param col		the column to pad
    * @param s		the string to pad
    * @param leftPad	whether to pad on the left or right
    * @return		the padded string
    */
-  protected String pad(String s, boolean leftPad) {
+  protected String pad(int col, String s, boolean leftPad) {
     StringBuilder	result;
     
     result = new StringBuilder(s);
 
-    while (result.length() < m_ColumnWidth) {
+    while (result.length() < m_ActualColumnWidth[col]) {
       if (leftPad)
 	result.insert(0, " ");
       else
 	result.append(" ");
     }
       
-    if (result.length() > m_ColumnWidth) {
+    if (result.length() > m_ActualColumnWidth[col]) {
       if (leftPad)
-	result.delete(0, result.length() - m_ColumnWidth);
+	result.delete(0, result.length() - m_ActualColumnWidth[col]);
       else
-	result.delete(m_ColumnWidth, result.length());
+	result.delete(m_ActualColumnWidth[col], result.length());
     }
     
     return result.toString();
@@ -505,18 +520,35 @@ public class FixedTabularSpreadSheetWriter
     DateFormat	dtmformat;
     DateFormat	tformat;
     Cell	cell;
-    String	missing;
+    String[]	missing;
     Row		row;
     int		i;
 
     result = true;
 
     try {
+      // sufficient widths defined?
+      if (m_ColumnWidth.length > 1) {
+	if (m_ColumnWidth.length != content.getColumnCount())
+	  throw new IllegalStateException(
+	    "Not enough column widths defined: " + m_ColumnWidth.length + " < " + content.getColumnCount());
+      }
+
+      m_ActualColumnWidth = new int[content.getColumnCount()];
+      for (i = 0; i < content.getColumnCount(); i++) {
+	if (m_ColumnWidth.length == 1)
+	  m_ActualColumnWidth[i] = m_ColumnWidth[0].intValue();
+	else
+	  m_ActualColumnWidth[i] = m_ColumnWidth[i].intValue();
+      }
+
       dformat   = m_DateFormat.toDateFormat();
       dtformat  = m_DateTimeFormat.toDateFormat();
       dtmformat = m_DateTimeMsecFormat.toDateFormat();
       tformat   = m_TimeFormat.toDateFormat();
-      missing   = pad(m_MissingValue, false);
+      missing   = new String[content.getColumnCount()];
+      for (i = 0; i < content.getColumnCount(); i++)
+	missing[i] = pad(i, m_MissingValue, false);
       
       // header
       addSeparatorLine(content, writer);
@@ -524,9 +556,9 @@ public class FixedTabularSpreadSheetWriter
       writer.write("|");
       for (i = 0; i < content.getColumnCount(); i++) {
 	if (!row.hasCell(i) || row.getCell(i).isMissing())
-	  writer.write(missing);
+	  writer.write(missing[i]);
 	else
-	  writer.write(pad(row.getCell(i).getContent(), false));
+	  writer.write(pad(i, row.getCell(i).getContent(), false));
 	writer.write("|");
       }
       writer.write(m_NewLine);
@@ -539,37 +571,37 @@ public class FixedTabularSpreadSheetWriter
 	writer.write("|");
 	for (i = 0; i < content.getColumnCount(); i++) {
 	  if (!drow.hasCell(i) || drow.getCell(i).isMissing()) {
-	    writer.write(missing);
+	    writer.write(missing[i]);
 	  }
 	  else {
 	    cell = drow.getCell(i);
 	    switch (cell.getContentType()) {
 	      case LONG:
 		if (m_OnlyFloat)
-		  writer.write(pad(format(drow.getCell(i).toDouble()), true));
+		  writer.write(pad(i, format(drow.getCell(i).toDouble()), true));
 		else
-		  writer.write(pad(drow.getCell(i).toLong().toString(), true));
+		  writer.write(pad(i, drow.getCell(i).toLong().toString(), true));
 		break;
 	      case DOUBLE:
-		writer.write(pad(format(drow.getCell(i).toDouble()), true));
+		writer.write(pad(i, format(drow.getCell(i).toDouble()), true));
 		break;
 	      case DATE:
-		writer.write(pad(dformat.format(drow.getCell(i).toDate()), false));
+		writer.write(pad(i, dformat.format(drow.getCell(i).toDate()), false));
 		break;
 	      case DATETIME:
-		writer.write(pad(dtformat.format(drow.getCell(i).toDateTime()), false));
+		writer.write(pad(i, dtformat.format(drow.getCell(i).toDateTime()), false));
 		break;
 	      case DATETIMEMSEC:
-		writer.write(pad(dtmformat.format(drow.getCell(i).toDateTimeMsec()), false));
+		writer.write(pad(i, dtmformat.format(drow.getCell(i).toDateTimeMsec()), false));
 		break;
 	      case TIME:
-		writer.write(pad(tformat.format(drow.getCell(i).toTime()), false));
+		writer.write(pad(i, tformat.format(drow.getCell(i).toTime()), false));
 		break;
 	      case BOOLEAN:
-		writer.write(pad(drow.getCell(i).toBoolean().toString(), false));
+		writer.write(pad(i, drow.getCell(i).toBoolean().toString(), false));
 		break;
 	      default:
-		writer.write(pad(drow.getCell(i).getContent(), false));
+		writer.write(pad(i, drow.getCell(i).getContent(), false));
 		break;
 	    }
 	  }
