@@ -20,6 +20,7 @@
 
 package adams.data.io.input;
 
+import adams.core.BasicDateTimeType;
 import adams.core.Constants;
 import adams.core.Range;
 import adams.core.Utils;
@@ -145,20 +146,6 @@ public class SimpleCsvSpreadSheetReader
 
   private static final long serialVersionUID = 2446979875221254720L;
 
-  /**
-   * The type of date/time to use.
-   *
-   * @author FracPete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
-   */
-  public enum DateTimeType {
-    TIME,
-    TIME_MSEC,
-    DATE,
-    DATE_TIME,
-    DATE_TIME_MSEC
-  }
-
   /** the quote character. */
   protected String m_QuoteCharacter;
 
@@ -178,7 +165,7 @@ public class SimpleCsvSpreadSheetReader
   protected boolean m_DateTimeLenient;
 
   /** the type of date/time. */
-  protected DateTimeType m_DateTimeType;
+  protected BasicDateTimeType m_DateTimeType;
 
   /** the timezone to use. */
   protected TimeZone m_TimeZone;
@@ -261,7 +248,7 @@ public class SimpleCsvSpreadSheetReader
 
     m_OptionManager.add(
       "datetime-type", "dateTimeType",
-      DateTimeType.DATE_TIME);
+      BasicDateTimeType.DATE_TIME);
 
     m_OptionManager.add(
       "time-zone", "timeZone",
@@ -485,7 +472,7 @@ public class SimpleCsvSpreadSheetReader
    *
    * @param value	the type
    */
-  public void setDateTimeType(DateTimeType value) {
+  public void setDateTimeType(BasicDateTimeType value) {
     m_DateTimeType = value;
     reset();
   }
@@ -495,7 +482,7 @@ public class SimpleCsvSpreadSheetReader
    *
    * @return		the type
    */
-  public DateTimeType getDateTimeType() {
+  public BasicDateTimeType getDateTimeType() {
     return m_DateTimeType;
   }
 
