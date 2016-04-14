@@ -149,6 +149,9 @@ public class FixedTabularSpreadSheetWriter
   /** whether to skip outputting the header. */
   protected boolean m_NoHeader;
 
+  /** whether to skip outputting the border. */
+  protected boolean m_NoBorder;
+
   /**
    * Returns a string describing the object.
    *
@@ -232,6 +235,10 @@ public class FixedTabularSpreadSheetWriter
 
     m_OptionManager.add(
       "no-header", "noHeader",
+      false);
+
+    m_OptionManager.add(
+      "no-border", "noBorder",
       false);
   }
 
@@ -447,7 +454,6 @@ public class FixedTabularSpreadSheetWriter
 
   /**
    * Sets whether to use a header or not.
-   * file.
    *
    * @param value	true if to skip header
    */
@@ -473,6 +479,35 @@ public class FixedTabularSpreadSheetWriter
    */
   public String noHeaderTipText() {
     return "If enabled, no header is output.";
+  }
+
+  /**
+   * Sets whether to use a border or not.
+   *
+   * @param value	true if to skip border
+   */
+  public void setNoBorder(boolean value) {
+    m_NoBorder = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to use a border or not.
+   *
+   * @return		true if no border
+   */
+  public boolean getNoBorder() {
+    return m_NoBorder;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   *         		displaying in the explorer/experimenter gui
+   */
+  public String noBorderTipText() {
+    return "If enabled, no border is output.";
   }
 
   /**
@@ -590,25 +625,30 @@ public class FixedTabularSpreadSheetWriter
       
       // header
       if (!m_NoHeader) {
-	addSeparatorLine(content, writer);
+	if (!m_NoBorder)
+	  addSeparatorLine(content, writer);
 	row = content.getHeaderRow();
-	writer.write("|");
+	if (!m_NoBorder)
+	  writer.write("|");
 	for (i = 0; i < content.getColumnCount(); i++) {
 	  if (!row.hasCell(i) || row.getCell(i).isMissing())
 	    writer.write(missing[i]);
 	  else
 	    writer.write(pad(i, row.getCell(i).getContent(), false));
-	  writer.write("|");
+	  if (!m_NoBorder)
+	    writer.write("|");
 	}
 	writer.write(m_NewLine);
       }
 
       // separator
-      addSeparatorLine(content, writer);
+      if (!m_NoBorder)
+	addSeparatorLine(content, writer);
 
       // data
       for (Row drow: content.rows()) {
-	writer.write("|");
+	if (!m_NoBorder)
+	  writer.write("|");
 	for (i = 0; i < content.getColumnCount(); i++) {
 	  if (!drow.hasCell(i) || drow.getCell(i).isMissing()) {
 	    writer.write(missing[i]);
@@ -645,12 +685,14 @@ public class FixedTabularSpreadSheetWriter
 		break;
 	    }
 	  }
-	  writer.write("|");
+	  if (!m_NoBorder)
+	    writer.write("|");
 	}
 	writer.write(m_NewLine);
       }
-      
-      addSeparatorLine(content, writer);
+
+      if (!m_NoBorder)
+	addSeparatorLine(content, writer);
     }
     catch (Exception e) {
       result = false;
