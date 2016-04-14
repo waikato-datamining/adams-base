@@ -318,6 +318,32 @@ public abstract class AbstractScriptingEngine
 
   /**
    * Runs the engine from the commandline.
+   * Retrieves the environment from option "-env classname".
+   *
+   *
+   * @param options	the commandline options
+   * @return		the instantiated frame, null in case of an error or
+   * 			invocation of help
+   */
+  public static RemoteScriptingEngine runScriptingEngine(Class engine, String[] options) {
+    String	env;
+    Class	envCls;
+
+    env = OptionUtils.getOption(options, "-env");
+    if (env == null)
+      env = Environment.class.getName();
+
+    try {
+      envCls = Class.forName(env);
+      return runScriptingEngine(envCls, engine, options);
+    }
+    catch (Exception e) {
+      return null;
+    }
+  }
+
+  /**
+   * Runs the engine from the commandline.
    *
    * @param env		the environment class to use
    * @param engine		the engine class

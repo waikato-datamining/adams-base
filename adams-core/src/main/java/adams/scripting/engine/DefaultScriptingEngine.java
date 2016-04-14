@@ -22,7 +22,6 @@ package adams.scripting.engine;
 
 import adams.core.MessageCollection;
 import adams.core.Utils;
-import adams.env.Environment;
 import adams.scripting.command.CommandUtils;
 import adams.scripting.command.RemoteCommand;
 import adams.scripting.command.RemoteCommandWithResponse;
@@ -299,6 +298,6 @@ public class DefaultScriptingEngine
    * @param args  	additional options for the scripting engine
    */
   public static void main(String[] args) {
-    runScriptingEngine(Environment.class, DefaultScriptingEngine.class, args);
+    runScriptingEngine(DefaultScriptingEngine.class, args);
   }
 }

@@ -25,7 +25,6 @@ import adams.core.Utils;
 import adams.core.io.DirectoryLister;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderDirectory;
-import adams.env.Environment;
 import adams.scripting.command.CommandUtils;
 import adams.scripting.command.RemoteCommand;
 import adams.scripting.command.RemoteCommandWithResponse;
@@ -439,6 +438,6 @@ public class FileBasedScriptingEngine
    * @param args  	additional options for the scripting engine
    */
   public static void main(String[] args) {
-    runScriptingEngine(Environment.class, FileBasedScriptingEngine.class, args);
+    runScriptingEngine(FileBasedScriptingEngine.class, args);
   }
 }
