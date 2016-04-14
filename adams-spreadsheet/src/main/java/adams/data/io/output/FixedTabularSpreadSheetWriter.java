@@ -25,6 +25,7 @@ import adams.core.Utils;
 import adams.core.base.BaseCharset;
 import adams.core.base.BaseInteger;
 import adams.data.DateFormatString;
+import adams.data.io.input.FixedTabularSpreadSheetReader;
 import adams.data.io.input.SpreadSheetReader;
 import adams.data.spreadsheet.Cell;
 import adams.data.spreadsheet.Row;
@@ -201,7 +202,7 @@ public class FixedTabularSpreadSheetWriter
    * @return		the reader, null if none available
    */
   public SpreadSheetReader getCorrespondingReader() {
-    return null;
+    return new FixedTabularSpreadSheetReader();
   }
 
   /**
