@@ -177,7 +177,7 @@ import java.util.logging.Level;
 public class CsvSpreadSheetWriter
   extends AbstractFormattedSpreadSheetWriter
   implements AppendableSpreadSheetWriter, SpreadSheetWriterWithFormulaSupport, 
-             IncrementalSpreadSheetWriter {
+             IncrementalSpreadSheetWriter, NoHeaderSpreadSheetWriter {
 
   /** for serialization. */
   private static final long serialVersionUID = -3549185519778801930L;
