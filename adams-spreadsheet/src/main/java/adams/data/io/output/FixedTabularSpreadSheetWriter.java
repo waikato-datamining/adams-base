@@ -116,7 +116,8 @@ import java.util.logging.Level;
  * @version $Revision$
  */
 public class FixedTabularSpreadSheetWriter
-  extends AbstractFormattedSpreadSheetWriter {
+  extends AbstractFormattedSpreadSheetWriter
+  implements NoHeaderSpreadSheetWriter {
 
   /** for serialization. */
   private static final long serialVersionUID = 3420511187768902829L;
@@ -144,6 +145,9 @@ public class FixedTabularSpreadSheetWriter
 
   /** whether to treat all numbers as float. */
   protected boolean m_OnlyFloat;
+
+  /** whether to skip outputting the header. */
+  protected boolean m_NoHeader;
 
   /**
    * Returns a string describing the object.
@@ -199,32 +203,36 @@ public class FixedTabularSpreadSheetWriter
       new BaseCharset());
 
     m_OptionManager.add(
-	    "column-width", "columnWidth",
-	    new BaseInteger[]{new BaseInteger(10)});
+      "column-width", "columnWidth",
+      new BaseInteger[]{new BaseInteger(10)});
 
     m_OptionManager.add(
-	    "new-line", "newLine",
-	    Utils.backQuoteChars(System.getProperty("line.separator")));
+      "new-line", "newLine",
+      Utils.backQuoteChars(System.getProperty("line.separator")));
 
     m_OptionManager.add(
-	    "date-format", "dateFormat",
-	    new DateFormatString(Constants.DATE_FORMAT));
+      "date-format", "dateFormat",
+      new DateFormatString(Constants.DATE_FORMAT));
 
     m_OptionManager.add(
-	    "datetime-format", "dateTimeFormat",
-	    new DateFormatString(Constants.TIMESTAMP_FORMAT));
+      "datetime-format", "dateTimeFormat",
+      new DateFormatString(Constants.TIMESTAMP_FORMAT));
 
     m_OptionManager.add(
-	    "datetimemsec-format", "dateTimeMsecFormat",
-	    new DateFormatString(Constants.TIMESTAMP_FORMAT_MSECS));
+      "datetimemsec-format", "dateTimeMsecFormat",
+      new DateFormatString(Constants.TIMESTAMP_FORMAT_MSECS));
 
     m_OptionManager.add(
-	    "time-format", "timeFormat",
-	    new DateFormatString(Constants.TIME_FORMAT));
+      "time-format", "timeFormat",
+      new DateFormatString(Constants.TIME_FORMAT));
 
     m_OptionManager.add(
-	    "only-float", "onlyFloat",
-	    false);
+      "only-float", "onlyFloat",
+      false);
+
+    m_OptionManager.add(
+      "no-header", "noHeader",
+      false);
   }
 
   /**
@@ -438,6 +446,36 @@ public class FixedTabularSpreadSheetWriter
   }
 
   /**
+   * Sets whether to use a header or not.
+   * file.
+   *
+   * @param value	true if to skip header
+   */
+  public void setNoHeader(boolean value) {
+    m_NoHeader = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to use a header or not.
+   *
+   * @return		true if no header
+   */
+  public boolean getNoHeader() {
+    return m_NoHeader;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   *         		displaying in the explorer/experimenter gui
+   */
+  public String noHeaderTipText() {
+    return "If enabled, no header is output.";
+  }
+
+  /**
    * Returns how the data is written.
    *
    * @return		the type
@@ -551,17 +589,19 @@ public class FixedTabularSpreadSheetWriter
 	missing[i] = pad(i, m_MissingValue, false);
       
       // header
-      addSeparatorLine(content, writer);
-      row = content.getHeaderRow();
-      writer.write("|");
-      for (i = 0; i < content.getColumnCount(); i++) {
-	if (!row.hasCell(i) || row.getCell(i).isMissing())
-	  writer.write(missing[i]);
-	else
-	  writer.write(pad(i, row.getCell(i).getContent(), false));
+      if (!m_NoHeader) {
+	addSeparatorLine(content, writer);
+	row = content.getHeaderRow();
 	writer.write("|");
+	for (i = 0; i < content.getColumnCount(); i++) {
+	  if (!row.hasCell(i) || row.getCell(i).isMissing())
+	    writer.write(missing[i]);
+	  else
+	    writer.write(pad(i, row.getCell(i).getContent(), false));
+	  writer.write("|");
+	}
+	writer.write(m_NewLine);
       }
-      writer.write(m_NewLine);
 
       // separator
       addSeparatorLine(content, writer);

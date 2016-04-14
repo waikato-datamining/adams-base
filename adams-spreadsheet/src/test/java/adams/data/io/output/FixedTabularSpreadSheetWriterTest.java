@@ -57,6 +57,7 @@ public class FixedTabularSpreadSheetWriterTest
 	"iris.csv",
 	"vote.csv",
 	"iris.csv",
+	"iris.csv",
     };
   }
 
@@ -73,6 +74,7 @@ public class FixedTabularSpreadSheetWriterTest
 	"iris2.txt",
 	"vote1.txt",
 	"iris3.txt",
+	"iris4.txt",
     };
   }
 
@@ -85,7 +87,7 @@ public class FixedTabularSpreadSheetWriterTest
   protected SpreadSheetWriter[] getSetups() {
     FixedTabularSpreadSheetWriter[]	result;
 
-    result = new FixedTabularSpreadSheetWriter[4];
+    result = new FixedTabularSpreadSheetWriter[5];
 
     result[0] = new FixedTabularSpreadSheetWriter();
 
@@ -106,6 +108,9 @@ public class FixedTabularSpreadSheetWriterTest
       new BaseInteger(5),
       new BaseInteger(20),
     });
+
+    result[4] = new FixedTabularSpreadSheetWriter();
+    result[4].setNoHeader(true);
 
     return result;
  }
