@@ -712,8 +712,11 @@ public class FixedTabularSpreadSheetReader
       cells = new String[m_ColumnWidth.length];
       while ((line = reader.readLine()) != null) {
 	// split into cells
-	for (i = 0; i < cols.length - 1; i++)
-	  cells[i] = line.substring(cols[i], cols[i+1]);
+	for (i = 0; i < cols.length - 1; i++) {
+          cells[i] = line.substring(cols[i], cols[i + 1]);
+          if (m_Trim)
+            cells[i] = cells[i].trim();
+        }
 
 	// header?
 	if (!m_NoHeader && first) {
