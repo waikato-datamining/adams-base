@@ -15,7 +15,7 @@
 
 /*
  * DownloadFile.java
- * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -140,7 +140,12 @@ public class DownloadFile
    */
   @Override
   public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "bufferSize", m_BufferSize, "Buffer: ");
+    String  	result;
+
+    result  = QuickInfoHelper.toString(this, "bufferSize", m_BufferSize, "Buffer: ");
+    result += QuickInfoHelper.toString(this, "outputFile", m_OutputFile, ", Output: ");
+
+    return result;
   }
 
   /**
