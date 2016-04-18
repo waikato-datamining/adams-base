@@ -20,9 +20,6 @@
 
 package adams.flow.standalone;
 
-import java.awt.Dialog;
-import java.awt.Dialog.ModalityType;
-
 import adams.core.Placeholders;
 import adams.core.QuickInfoHelper;
 import adams.core.base.BasePassword;
@@ -30,6 +27,9 @@ import adams.db.datatype.AbstractDataTypeSetup;
 import adams.db.datatype.DummySetup;
 import adams.flow.core.OptionalPasswordPrompt;
 import adams.gui.dialog.PasswordDialog;
+
+import java.awt.Dialog;
+import java.awt.Dialog.ModalityType;
 
 /**
  * Ancestor for standalone actors providing a database connection different
@@ -318,7 +318,7 @@ public abstract class AbstractDatabaseConnection
   /**
    * Sets the custom message to use when stopping the flow.
    *
-   * @param 		the stop message
+   * @param value	the stop message
    */
   public void setCustomStopMessage(String value) {
     m_CustomStopMessage = value;
