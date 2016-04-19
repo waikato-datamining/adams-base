@@ -22,6 +22,7 @@ package adams.flow.control;
 import adams.core.ClassCrossReference;
 import adams.core.QuickInfoHelper;
 import adams.core.VariableName;
+import adams.flow.control.errorpostprocessor.ErrorPostProcessor;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorExecution;
 import adams.flow.core.ActorHandler;
@@ -84,6 +85,12 @@ import java.util.Hashtable;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
  * <pre>-try &lt;adams.flow.core.Actor&gt; (property: try)
  * &nbsp;&nbsp;&nbsp;The 'try' branch which is attempted to be executed.
  * &nbsp;&nbsp;&nbsp;default: adams.flow.control.SubProcess -name try
@@ -105,9 +112,9 @@ import java.util.Hashtable;
  * &nbsp;&nbsp;&nbsp;default: trycatch
  * </pre>
  * 
- * <pre>-silent &lt;boolean&gt; (property: silent)
- * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console.
- * &nbsp;&nbsp;&nbsp;default: false
+ * <pre>-error-post-processors &lt;adams.flow.control.errorpostprocessor.ErrorPostProcessor&gt; (property: errorPostProcessor)
+ * &nbsp;&nbsp;&nbsp;The error post-processor to use.
+ * &nbsp;&nbsp;&nbsp;default: adams.flow.control.errorpostprocessor.Null
  * </pre>
  * 
  <!-- options-end -->
@@ -148,6 +155,9 @@ public class TryCatch
 
   /** the variable to store the error in. */
   protected VariableName m_ErrorVariable;
+
+  /** the error post-processor to use. */
+  protected ErrorPostProcessor m_ErrorPostProcessor;
 
   /**
    * Returns a string describing the object.
@@ -203,20 +213,24 @@ public class TryCatch
     super.defineOptions();
 
     m_OptionManager.add(
-	    "try", "try",
-	    getDefaultTry());
+      "try", "try",
+      getDefaultTry());
 
     m_OptionManager.add(
-	    "catch", "catch",
-	    getDefaultCatch());
+      "catch", "catch",
+      getDefaultCatch());
 
     m_OptionManager.add(
-	    "store-error", "storeError",
-	    false);
+      "store-error", "storeError",
+      false);
 
     m_OptionManager.add(
-	    "error-variable", "errorVariable",
-	    new VariableName("trycatch"));
+      "error-variable", "errorVariable",
+      new VariableName("trycatch"));
+
+    m_OptionManager.add(
+      "error-post-processors", "errorPostProcessor",
+      new adams.flow.control.errorpostprocessor.Null());
   }
 
   /**
@@ -391,16 +405,48 @@ public class TryCatch
   }
 
   /**
+   * Sets the error post-processor to use.
+   *
+   * @param value 	the post-processor
+   */
+  public void setErrorPostProcessor(ErrorPostProcessor value) {
+    m_ErrorPostProcessor = value;
+    reset();
+  }
+
+  /**
+   * Returns the error post-processor in use.
+   *
+   * @return 		the post-processor
+   */
+  public ErrorPostProcessor getErrorPostProcessor() {
+    return m_ErrorPostProcessor;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String errorPostProcessorTipText() {
+    return "The error post-processor to use.";
+  }
+
+  /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
    */
   @Override
   public String getQuickInfo() {
+    String	result;
+
+    result = QuickInfoHelper.toString(this, "errorPostProcessor", m_ErrorPostProcessor, "error post-processor: ");
     if (QuickInfoHelper.hasVariable(this, "storeError") || m_StoreError)
-      return QuickInfoHelper.toString(this, "errorVariable", m_ErrorVariable.paddedValue(), "error -> ");
-    else
-      return null;
+      result += QuickInfoHelper.toString(this, "errorVariable", m_ErrorVariable.paddedValue(), ", error var: ");
+
+    return result;
   }
 
   /**
@@ -574,6 +620,7 @@ public class TryCatch
     // stop further processing of tokens in m_Try
     if (m_Try instanceof ActorHandler)
       ((ActorHandler) m_Try).flushExecution();
+    m_ErrorPostProcessor.postProcessError(this, source, type, msg);
     return m_ErrorOccurred;
   }
 

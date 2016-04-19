@@ -277,6 +277,10 @@ adams.flow.core.CallableActorHandler=\
   adams.flow.transformer,\
   adams.flow.sink
 
+# the error post-processors
+adams.flow.control.errorpostprocessor.ErrorPostProcessor=\
+  adams.flow.control.errorpostprocessor
+
 # the plot processor algorithms
 adams.flow.control.plotprocessor.AbstractPlotProcessor=\
   adams.flow.control.plotprocessor
