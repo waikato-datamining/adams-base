@@ -746,6 +746,7 @@ public class TreeOperations
     node.setActor(handler);
     node.invalidateRendering();
     SwingUtilities.invokeLater(() -> {
+      getOwner().setModified(true);
       getOwner().notifyActorChangeListeners(new ActorChangeEvent(getOwner(), node, Type.MODIFY));
       getOwner().redraw();
     });
