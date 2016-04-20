@@ -49,6 +49,10 @@ adams.core.option.OptionTraverser=\
   adams.core.option,\
   adams.flow.core
 
+# for transferring options between objects
+adams.core.optiontransfer.AbstractOptionTransfer=\
+  adams.core.optiontransfer
+
 # the scripting handlers
 adams.core.scripting.AbstractScriptingHandler=\
   adams.core.scripting

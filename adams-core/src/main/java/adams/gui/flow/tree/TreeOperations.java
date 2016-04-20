@@ -23,6 +23,7 @@ package adams.gui.flow.tree;
 import adams.core.CleanUpHandler;
 import adams.core.Utils;
 import adams.core.io.FlowFile;
+import adams.core.optiontransfer.AbstractOptionTransfer;
 import adams.flow.condition.bool.BooleanCondition;
 import adams.flow.condition.bool.BooleanConditionSupporter;
 import adams.flow.condition.bool.Expression;
@@ -728,22 +729,21 @@ public class TreeOperations
    * @param handler	the new handler to use
    */
   public void swapActor(TreePath path, ActorHandler handler) {
-    final Node		node;
-    ActorHandler	current;
+    final Node				node;
+    ActorHandler			current;
+    List<AbstractOptionTransfer>	transfers;
 
     node    = TreeHelper.pathToNode(path);
     current = (ActorHandler) TreeHelper.pathToActor(path);
 
     getOwner().addUndoPoint("Swapping node '" + current.getFullName() + "' with " + handler.getClass().getName());
 
-    if (!current.getName().equals(current.getDefaultName()))
-      handler.setName(current.getName());
-    handler.setLoggingLevel(current.getLoggingLevel());
-    handler.setSkip(current.getSkip());
-    handler.setAnnotations(current.getAnnotations());
-    handler.setSilent(current.getSilent());
-    handler.setStopFlowOnError(current.getStopFlowOnError());
-    node.setActor((Actor) handler);
+    // transfer options
+    transfers = AbstractOptionTransfer.getTransfers(current, handler);
+    for (AbstractOptionTransfer transfer: transfers)
+      transfer.transfer(current, handler);
+
+    node.setActor(handler);
     node.invalidateRendering();
     SwingUtilities.invokeLater(() -> {
       getOwner().notifyActorChangeListeners(new ActorChangeEvent(getOwner(), node, Type.MODIFY));
