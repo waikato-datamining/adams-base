@@ -27,6 +27,7 @@ import adams.flow.core.Actor;
 import adams.flow.core.ActorExecution;
 import adams.flow.core.ActorHandlerInfo;
 import adams.flow.core.ActorUtils;
+import adams.flow.core.RemoteExecutionHandler;
 import adams.flow.core.Token;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.core.GUIHelper;
@@ -123,7 +124,8 @@ import java.awt.Container;
  * @version $Revision$
  */
 public class RemoteExecutionTrigger
-  extends AbstractTee {
+  extends AbstractTee
+  implements RemoteExecutionHandler {
 
   private static final long serialVersionUID = 3640543579873695646L;
 
