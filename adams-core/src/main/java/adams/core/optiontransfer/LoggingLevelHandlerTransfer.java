@@ -52,13 +52,13 @@ public class LoggingLevelHandlerTransfer
    */
   @Override
   protected String doTransfer(Object source, Object target) {
-    LoggingLevelHandler lsource;
-    LoggingLevelHandler ltarget;
+    LoggingLevelHandler 	asource;
+    LoggingLevelHandler 	atarget;
 
-    lsource = (LoggingLevelHandler) source;
-    ltarget = (LoggingLevelHandler) target;
+    asource = (LoggingLevelHandler) source;
+    atarget = (LoggingLevelHandler) target;
 
-    ltarget.setLoggingLevel(lsource.getLoggingLevel());
+    atarget.setLoggingLevel(asource.getLoggingLevel());
 
     return null;
   }

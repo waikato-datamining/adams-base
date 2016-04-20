@@ -52,13 +52,13 @@ public class AtomicExecutionTransfer
    */
   @Override
   protected String doTransfer(Object source, Object target) {
-    AtomicExecution lsource;
-    AtomicExecution ltarget;
+    AtomicExecution 	asource;
+    AtomicExecution 	atarget;
 
-    lsource = (AtomicExecution) source;
-    ltarget = (AtomicExecution) target;
+    asource = (AtomicExecution) source;
+    atarget = (AtomicExecution) target;
 
-    ltarget.setFinishBeforeStopping(lsource.getFinishBeforeStopping());
+    atarget.setFinishBeforeStopping(asource.getFinishBeforeStopping());
 
     return null;
   }

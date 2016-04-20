@@ -52,13 +52,13 @@ public class ArrayProviderTransfer
    */
   @Override
   protected String doTransfer(Object source, Object target) {
-    ArrayProvider lsource;
-    ArrayProvider ltarget;
+    ArrayProvider 	asource;
+    ArrayProvider 	atarget;
 
-    lsource = (ArrayProvider) source;
-    ltarget = (ArrayProvider) target;
+    asource = (ArrayProvider) source;
+    atarget = (ArrayProvider) target;
 
-    ltarget.setOutputArray(lsource.getOutputArray());
+    atarget.setOutputArray(asource.getOutputArray());
 
     return null;
   }

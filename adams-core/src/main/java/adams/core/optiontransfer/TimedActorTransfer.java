@@ -52,14 +52,14 @@ public class TimedActorTransfer
    */
   @Override
   protected String doTransfer(Object source, Object target) {
-    TimedActor 		tsource;
-    TimedActor 		ttarget;
+    TimedActor 	asource;
+    TimedActor 	atarget;
 
-    tsource = (TimedActor) source;
-    ttarget = (TimedActor) target;
+    asource = (TimedActor) source;
+    atarget = (TimedActor) target;
 
-    ttarget.setCallableName(tsource.getCallableName());
-    ttarget.setOptional(tsource.getOptional());
+    atarget.setCallableName(asource.getCallableName());
+    atarget.setOptional(asource.getOptional());
 
     return null;
   }

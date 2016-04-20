@@ -52,15 +52,15 @@ public class RemoteExecutionHandlerTransfer
    */
   @Override
   protected String doTransfer(Object source, Object target) {
-    RemoteExecutionHandler 	rsource;
-    RemoteExecutionHandler 	rtarget;
+    RemoteExecutionHandler 	asource;
+    RemoteExecutionHandler 	atarget;
 
-    rsource = (RemoteExecutionHandler) source;
-    rtarget = (RemoteExecutionHandler) target;
+    asource = (RemoteExecutionHandler) source;
+    atarget = (RemoteExecutionHandler) target;
 
-    rtarget.setStorageNames(rsource.getStorageNames());
-    rtarget.setVariableNames(rsource.getVariableNames());
-    rtarget.setConnection(rsource.getConnection());
+    atarget.setStorageNames(asource.getStorageNames());
+    atarget.setVariableNames(asource.getVariableNames());
+    atarget.setConnection(asource.getConnection());
 
     return null;
   }

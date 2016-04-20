@@ -52,13 +52,13 @@ public class BooleanConditionTransfer
    */
   @Override
   protected String doTransfer(Object source, Object target) {
-    BooleanConditionSupporter	csource;
-    BooleanConditionSupporter	ctarget;
+    BooleanConditionSupporter 	asource;
+    BooleanConditionSupporter	atarget;
 
-    csource = (BooleanConditionSupporter) source;
-    ctarget = (BooleanConditionSupporter) target;
+    asource = (BooleanConditionSupporter) source;
+    atarget = (BooleanConditionSupporter) target;
 
-    ctarget.setCondition(csource.getCondition());
+    atarget.setCondition(asource.getCondition());
 
     return null;
   }

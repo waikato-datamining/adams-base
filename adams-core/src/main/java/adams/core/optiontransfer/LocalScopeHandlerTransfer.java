@@ -52,20 +52,20 @@ public class LocalScopeHandlerTransfer
    */
   @Override
   protected String doTransfer(Object source, Object target) {
-    LocalScopeHandler 	lsource;
-    LocalScopeHandler 	ltarget;
+    LocalScopeHandler 	asource;
+    LocalScopeHandler 	atarget;
 
-    lsource = (LocalScopeHandler) source;
-    ltarget = (LocalScopeHandler) target;
+    asource = (LocalScopeHandler) source;
+    atarget = (LocalScopeHandler) target;
 
-    ltarget.setScopeHandlingVariables(lsource.getScopeHandlingVariables());
-    ltarget.setVariablesFilter(lsource.getVariablesFilter());
-    ltarget.setPropagateVariables(lsource.getPropagateVariables());
-    ltarget.setVariablesRegExp(lsource.getVariablesRegExp());
-    ltarget.setScopeHandlingStorage(lsource.getScopeHandlingStorage());
-    ltarget.setStorageFilter(lsource.getStorageFilter());
-    ltarget.setPropagateStorage(lsource.getPropagateStorage());
-    ltarget.setStorageRegExp(lsource.getStorageRegExp());
+    atarget.setScopeHandlingVariables(asource.getScopeHandlingVariables());
+    atarget.setVariablesFilter(asource.getVariablesFilter());
+    atarget.setPropagateVariables(asource.getPropagateVariables());
+    atarget.setVariablesRegExp(asource.getVariablesRegExp());
+    atarget.setScopeHandlingStorage(asource.getScopeHandlingStorage());
+    atarget.setStorageFilter(asource.getStorageFilter());
+    atarget.setPropagateStorage(asource.getPropagateStorage());
+    atarget.setStorageRegExp(asource.getStorageRegExp());
 
     return null;
   }
