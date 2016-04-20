@@ -135,7 +135,7 @@ import java.util.HashSet;
 public class LocalScopeTransformer
   extends AbstractControlActor
   implements InputConsumer, OutputProducer, MutableActorHandler, 
-             VariablesHandler, StorageHandler, ScopeHandler {
+             VariablesHandler, StorageHandler, LocalScopeHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = -2837014912083918343L;

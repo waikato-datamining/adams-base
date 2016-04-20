@@ -147,7 +147,7 @@ import java.util.HashSet;
  */
 public class LocalScopeTrigger
   extends Trigger 
-  implements VariablesHandler, StorageHandler, ScopeHandler {
+  implements VariablesHandler, StorageHandler, LocalScopeHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = -8344934611549310497L;
