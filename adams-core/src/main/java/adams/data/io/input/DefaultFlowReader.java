@@ -143,19 +143,26 @@ public class DefaultFlowReader
     boolean		result;
     List<String>	lines;
     int			i;
+    int			count;
 
     result = false;
     lines  = FileUtils.loadFromFile(file);
+    count  = 0;
     if (lines != null) {
       for (i = 0; i < lines.size(); i++) {
 	if (lines.get(i).startsWith(NestedProducer.COMMENT))
 	  continue;
+	count++;
 	if (lines.get(i).startsWith(" ")) {
 	  result = true;
 	  break;
 	}
       }
     }
+
+    // single actor
+    if (count == 1)
+      result = true;
 
     // transfer data?
     data.clear();
