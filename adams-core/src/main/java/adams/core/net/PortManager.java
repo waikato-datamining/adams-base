@@ -22,6 +22,7 @@ package adams.core.net;
 
 import adams.data.SortedList;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -31,13 +32,16 @@ import java.util.Map;
 /**
  * Keeps track of used ports.
  * <br>
- * NB: Is no guarantee that the port isn't being used already, as not all
- * code might use this class!
+ * NB: Using this class is no guarantee that the port isn't being used already,
+ * as not all code fragments might use this class!
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class PortManager {
+public class PortManager
+  implements Serializable {
+
+  private static final long serialVersionUID = -4542968209872930882L;
 
   /** the minimum (non-privileged) port. */
   public final static int MIN_PORT = 1025;
@@ -75,6 +79,24 @@ public class PortManager {
     m_Ports      = new SortedList<>();
     m_PortClass  = new HashMap<>();
     m_ClassPorts = new HashMap<>();
+  }
+
+  /**
+   * Returns the number of ports used.
+   *
+   * @return		the number of ports
+   */
+  public synchronized int size() {
+    return m_Ports.size();
+  }
+
+  /**
+   * Removes all ports.
+   */
+  public synchronized void clear() {
+    m_Ports.clear();
+    m_PortClass.clear();
+    m_ClassPorts.clear();
   }
 
   /**
