@@ -15,15 +15,17 @@
 
 /**
  * Conversion.java
- * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
-
-import java.util.HashMap;
 
 import adams.core.Properties;
 import adams.env.ConversionDefinition;
 import adams.env.Environment;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * Helper class that converts classnames from options on the fly into the
@@ -54,6 +56,9 @@ public class Conversion {
 
   /** the mapping (exact classname replacement). */
   protected static HashMap<String,String> m_Mapping;
+
+  /** the partial mapping order. */
+  protected static List<String> m_MappingPartialOrder;
 
   /** the mapping (partial renaming). */
   protected static HashMap<String,String> m_MappingPartial;
@@ -111,8 +116,9 @@ public class Conversion {
       }
 
       // partial renaming
-      keys             = props.getPath(KEY_PARTIAL_RENAME, "").split(",");
-      m_MappingPartial = new HashMap<String,String>();
+      keys                  = props.getPath(KEY_PARTIAL_RENAME, "").split(",");
+      m_MappingPartialOrder = new ArrayList<>();
+      m_MappingPartial      = new HashMap<String,String>();
       if ((keys.length >= 1) && (keys[0].length() != 0)) {
 	for (i = 0; i < keys.length; i++) {
 	  if (!props.hasKey(keys[i])) {
@@ -128,6 +134,7 @@ public class Conversion {
 	    continue;
 	  }
 
+	  m_MappingPartialOrder.add(parts[0]);
 	  m_MappingPartial.put(parts[0], parts[1]);
 	}
       }
@@ -200,7 +207,7 @@ public class Conversion {
       result = m_Mapping.get(result);
 
     // partial renaming
-    for (String key: m_MappingPartial.keySet())
+    for (String key: m_MappingPartialOrder)
       result = result.replace(key, m_MappingPartial.get(key));
 
     return result;
