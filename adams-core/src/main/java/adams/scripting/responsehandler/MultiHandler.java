@@ -96,6 +96,9 @@ public class MultiHandler
    */
   @Override
   public void responseSuccessful(RemoteCommand cmd) {
+    if (!m_Enabled)
+      return;
+
     for (ResponseHandler handler: m_Handlers)
       handler.responseSuccessful(cmd);
   }
@@ -108,6 +111,9 @@ public class MultiHandler
    */
   @Override
   public void responseFailed(RemoteCommand cmd, String msg) {
+    if (!m_Enabled)
+      return;
+
     for (ResponseHandler handler: m_Handlers)
       handler.responseFailed(cmd, msg);
   }

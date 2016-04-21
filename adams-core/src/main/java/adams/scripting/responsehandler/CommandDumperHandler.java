@@ -139,6 +139,9 @@ public class CommandDumperHandler
     File 		tmpFile;
     MessageCollection 	errors;
 
+    if (!m_Enabled)
+      return;
+
     tmpFile = TempUtils.createTempFile(m_SuccessfulDir, "successful-", ".rc");
     errors  = new MessageCollection();
     if (!CommandUtils.write(cmd, tmpFile, errors)) {
@@ -159,6 +162,9 @@ public class CommandDumperHandler
   public void responseFailed(RemoteCommand cmd, String msg) {
     File 		tmpFile;
     MessageCollection	errors;
+
+    if (!m_Enabled)
+      return;
 
     tmpFile = TempUtils.createTempFile(m_FailedDir, "failed-", ".rc");
     errors  = new MessageCollection();

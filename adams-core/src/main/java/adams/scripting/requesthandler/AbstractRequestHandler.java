@@ -33,4 +33,48 @@ public abstract class AbstractRequestHandler
   implements RequestHandler {
 
   private static final long serialVersionUID = -5131376236748142498L;
+
+  /** whether the handler is enabled. */
+  protected boolean m_Enabled;
+
+  /**
+   * Adds options to the internal list of options.
+   */
+  @Override
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+      "enabled", "enabled",
+      true);
+  }
+
+  /**
+   * Sets whether the handler is enabled.
+   *
+   * @param value	true if enabled
+   */
+  public void setEnabled(boolean value) {
+    m_Enabled = value;
+    reset();
+  }
+
+  /**
+   * Returns whether the handler is enabled.
+   *
+   * @return		true if enabled
+   */
+  public boolean getEnabled() {
+    return m_Enabled;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the gui
+   */
+  public String enabledTipText() {
+    return "Determines whether the handler is enabled, i.e., reacting to events.";
+  }
 }

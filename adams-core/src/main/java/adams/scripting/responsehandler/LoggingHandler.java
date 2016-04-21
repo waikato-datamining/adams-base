@@ -62,6 +62,9 @@ public class LoggingHandler
    */
   @Override
   public void responseSuccessful(RemoteCommand cmd) {
+    if (!m_Enabled)
+      return;
+
     getLogger().info("Successful response: " + OptionUtils.getCommandLine(cmd) + "\n" + cmd);
   }
 
@@ -73,6 +76,9 @@ public class LoggingHandler
    */
   @Override
   public void responseFailed(RemoteCommand cmd, String msg) {
+    if (!m_Enabled)
+      return;
+
     getLogger().info("Failed response: " + OptionUtils.getCommandLine(cmd) + "\nMessage: " + msg + "\n" + cmd);
   }
 }
