@@ -22,6 +22,12 @@ package adams.core.net;
 
 import adams.data.SortedList;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+
 /**
  * Keeps track of used ports.
  * <br>
@@ -46,7 +52,13 @@ public class PortManager {
   protected static PortManager m_Singleton;
 
   /** the list of ports. */
-  protected SortedList<Integer> m_Ports;
+  protected List<Integer> m_Ports;
+
+  /** the port-class association. */
+  protected Map<Integer,Class> m_PortClass;
+
+  /** the class-ports association. */
+  protected Map<Class,HashSet<Integer>> m_ClassPorts;
 
   /**
    * Initializes the port manager.
@@ -60,31 +72,67 @@ public class PortManager {
    * Initializes the members.
    */
   protected void initialize() {
-    m_Ports = new SortedList<>();
+    m_Ports      = new SortedList<>();
+    m_PortClass  = new HashMap<>();
+    m_ClassPorts = new HashMap<>();
   }
 
   /**
    * Returns the next available port.
    *
+   * @param obj		the object requesting the port
    * @return		the next available port
+   * @throws IllegalArgumentException	if object is null
    */
-  public synchronized Integer next() {
-    return next(MIN_PORT);
+  public synchronized Integer next(Object obj) {
+    if (obj == null)
+      throw new IllegalArgumentException("Object is null!");
+    return next(obj.getClass());
+  }
+
+  /**
+   * Returns the next available port.
+   *
+   * @param cls		the class requesting the port
+   * @return		the next available port
+   * @throws IllegalArgumentException	if class is null
+   */
+  public synchronized Integer next(Class cls) {
+    return next(cls, MIN_PORT);
   }
 
   /**
    * Returns the next available port, starting with the given starting port.
    *
+   * @param obj		the object requesting the port
    * @param start	the first port to start with
    * @return		the next available port,
+   * @throws IllegalArgumentException	if object is null
    */
-  public synchronized Integer next(int start) {
+  public synchronized Integer next(Object obj, int start) {
+    if (obj == null)
+      throw new IllegalArgumentException("Object is null!");
+    return next(obj.getClass(), start);
+  }
+
+  /**
+   * Returns the next available port, starting with the given starting port.
+   *
+   * @param cls		the class requesting the port
+   * @param start	the first port to start with
+   * @return		the next available port,
+   * @throws IllegalArgumentException	if class is null
+   */
+  public synchronized Integer next(Class cls, int start) {
     int		result;
     int		i;
     int		current;
     int		prior;
 
     result = NO_PORT;
+
+    if (cls == null)
+      throw new IllegalArgumentException("Class is null!");
 
     if ((start < MIN_PORT) || (start > MAX_PORT))
       throw new IllegalArgumentException(
@@ -109,6 +157,13 @@ public class PortManager {
       }
     }
 
+    if (result != NO_PORT) {
+      m_PortClass.put(result, cls);
+      if (!m_ClassPorts.containsKey(cls))
+	m_ClassPorts.put(cls, new HashSet<>());
+      m_ClassPorts.get(cls).add(result);
+    }
+
     return result;
   }
 
@@ -127,7 +182,38 @@ public class PortManager {
    * @param port	the port to free
    */
   public synchronized void release(int port) {
+    Class	cls;
+
     m_Ports.remove(port);
+    cls = m_PortClass.remove(port);
+    if (cls != null)
+      m_ClassPorts.get(cls).remove(port);
+  }
+
+  /**
+   * Returns the associated class for the port.
+   *
+   * @param port	the port to get the class for
+   * @return		the class, null if not available
+   */
+  public synchronized Class usedBy(int port) {
+    return m_PortClass.get(port);
+  }
+
+  /**
+   * Returns the ports associated with a class.
+   *
+   * @param cls		the class to get the used ports for
+   * @return		the ports
+   */
+  public synchronized List<Integer> uses(Class cls) {
+    List<Integer>	result;
+
+    result = new ArrayList<>();
+    if (m_ClassPorts.containsKey(cls))
+      result.addAll(m_ClassPorts.get(cls));
+
+    return result;
   }
 
   /**
