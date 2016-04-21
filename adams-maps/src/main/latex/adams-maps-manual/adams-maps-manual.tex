@@ -1,5 +1,4 @@
-% Copyright (c) YYYY by A. Author. 
-% This work is made available under the terms of the 
+% This work is made available under the terms of the
 % Creative Commons Attribution-ShareAlike 3.0 license, 
 % http://creativecommons.org/licenses/by-sa/3.0/. 
 %
@@ -54,11 +53,76 @@
 \end{titlepage}
 
 \tableofcontents
-\listoffigures
+%\listoffigures
 %\listoftables
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\chapter{Introduction}
+\chapter{Flow}
+
+The \textit{adams-maps} module adds basic GIS-capability (geographic
+information system) to the ADAMS framework. This is done mainly in the
+form of GPS support: data types and spreadsheet support.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Databases}
+
+The following sections describe how you can utilize the GIS capabilities
+of various database systems.
+
+\section{Postgresql}
+In order to make use of GIS functionality, you need to install the
+\textit{postgis} extension\cite{postgis} for PostgreSQL\cite{postgresql}.
+
+\subsection{Installation}
+For any new database, you need to install the extensions first:
+\begin{verbatim}
+CREATE EXTENSION postgis;
+\end{verbatim}
+
+\subsection{Data types}
+In order to make use of GPS coordinates in a table, e.g., for calculating
+distances between them, you need to create a combined column. The following
+example queries create a combined column \textit{lon\_lat} from the columns
+\textit{lon} and \textit{lat} of the \textit{some\_table} table.
+As data type, SRID 4269\cite{srid4269} (also called NAD 83) is used.
+
+\noindent First, you need to create the column \textit{lon\_lat} and
+ define it as data type \textit{POINT}:
+
+\begin{verbatim}
+SELECT AddGeometryColumn(
+  'public', 'some_table', 'lon_lat', 4269, 'POINT', 2);
+\end{verbatim}
+
+\noindent Second, you need to fill it with data, using the \textit{ST\_SetSRID}
+function, taking points generated from the \textit{lon} and \textit{lat}
+columns:
+\begin{verbatim}
+UPDATE some_table
+SET lon_lat = ST_SetSRID(ST_Point(lon, lat), 4269);
+\end{verbatim}
+
+\noindent Having done this, you can execute queries, e.g., retrieving records that have
+a distance of less than 50km to the GPS coordinates of longitude of 28.136015
+and latitude of -14.613297, ordered by increasing distance. For distance
+calculation the \textit{ST\_distance\_sphere} method is used:
+\begin{verbatim}
+SELECT *, ST_distance_sphere(
+  ST_GeomFromText('POINT(28.136015 -14.613297)', 4269),
+  ST_GeomFromText(ST_asText(lon_lat), 4269)) AS dist
+FROM
+  some_table
+WHERE ST_distance_sphere(
+  ST_GeomFromText('POINT(28.136015 -14.613297)', 4269),
+  ST_GeomFromText(ST_asText(lon_lat), 4269)) < 50 * 1000.0
+ORDER BY
+  dist ASC
+\end{verbatim}
+
+
+\section{MySQL}
+Spatial extensions in MYSQL\footnote{\url{https://dev.mysql.com/doc/refman/5.6/en/spatial-extensions.html}{}}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
