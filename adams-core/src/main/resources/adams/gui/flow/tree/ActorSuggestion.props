@@ -206,3 +206,11 @@ adams-core.SetVariable8=\
 adams-core.SetVariable9=\
   IF PARENT ALLOWS STANDALONE AND BEFORE SOURCE \
   THEN adams.flow.standalone.SetVariable
+
+adams-core.SetVariable10=\
+  IF AFTER adams.flow.transformer.DirName \
+  THEN adams.flow.transformer.SetVariable
+
+adams-core.SetVariable11=\
+  IF AFTER adams.flow.transformer.BaseName \
+  THEN adams.flow.transformer.SetVariable
