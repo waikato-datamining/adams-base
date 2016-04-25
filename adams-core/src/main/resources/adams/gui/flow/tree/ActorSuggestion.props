@@ -214,3 +214,7 @@ adams-core.SetVariable10=\
 adams-core.SetVariable11=\
   IF AFTER adams.flow.transformer.BaseName \
   THEN adams.flow.transformer.SetVariable
+
+adams-core.SetVariable12=\
+  IF AFTER adams.flow.transformer.LookUp \
+  THEN adams.flow.transformer.SetVariable
