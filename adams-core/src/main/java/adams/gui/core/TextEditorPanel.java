@@ -955,6 +955,42 @@ public class TextEditorPanel
   }
 
   /**
+   * Sets the text of this <code>TextComponent</code>
+   * to the specified text.  If the text is <code>null</code>
+   * or empty, has the effect of simply deleting the old text.
+   * When text has been inserted, the resulting caret location
+   * is determined by the implementation of the caret class.
+   *
+   * <p>
+   * Note that text is not a bound property, so no <code>PropertyChangeEvent
+   * </code> is fired when it changes. To listen for changes to the text,
+   * use <code>DocumentListener</code>.
+   *
+   * @param t the new text to be set
+   * @see #getText
+   */
+  public void setText(String t) {
+    m_TextArea.setText(t);
+  }
+
+  /**
+   * Returns the text contained in this <code>TextComponent</code>.
+   * If the underlying document is <code>null</code>,
+   * will give a <code>NullPointerException</code>.
+   *
+   * Note that text is not a bound property, so no <code>PropertyChangeEvent
+   * </code> is fired when it changes. To listen for changes to the text,
+   * use <code>DocumentListener</code>.
+   *
+   * @return the text
+   * @throws NullPointerException if the document is <code>null</code>
+   * @see #setText
+   */
+  public String getText() {
+    return m_TextArea.getText();
+  }
+
+  /**
    * Returns the selected text contained in this
    * <code>TextComponent</code>.  If the selection is
    * <code>null</code> or the document empty, returns <code>null</code>.
