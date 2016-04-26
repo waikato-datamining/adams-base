@@ -79,7 +79,7 @@ public class WekaCommandLineHandler
       try {
 	classname = args[0];
 	args[0]   = "";
-	result = weka.core.Utils.forName(Object.class, Conversion.rename(classname), args);
+	result = weka.core.Utils.forName(Object.class, Conversion.getSingleton().rename(classname), args);
       }
       catch (Exception e) {
 	System.err.println("Failed to instantiate object from array (fromArray):");

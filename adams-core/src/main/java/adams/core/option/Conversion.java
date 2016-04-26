@@ -52,29 +52,40 @@ public class Conversion {
   public final static String KEY_RENAME_PROPERTY = "RenameProperty";
 
   /** the properties. */
-  protected static Properties m_Properties;
+  protected Properties m_Properties;
 
   /** the mapping (exact classname replacement). */
-  protected static HashMap<String,String> m_Mapping;
+  protected HashMap<String,String> m_Mapping;
 
   /** the partial mapping order. */
-  protected static List<String> m_MappingPartialOrder;
+  protected List<String> m_MappingPartialOrder;
 
   /** the mapping (partial renaming). */
-  protected static HashMap<String,String> m_MappingPartial;
+  protected HashMap<String,String> m_MappingPartial;
 
   /** the mapping (option renaming: class - [-old, -new]). */
-  protected static HashMap<String,HashMap<String,String>> m_MappingOption;
+  protected HashMap<String,HashMap<String,String>> m_MappingOption;
 
   /** the mapping (property renaming: class - [oldProp, newProp]). */
-  protected static HashMap<String,HashMap<String,String>> m_MappingProperty;
+  protected HashMap<String,HashMap<String,String>> m_MappingProperty;
+
+  /** the singleton. */
+  protected static Conversion m_Singleton;
+
+  /**
+   * Initializes the conversions.
+   */
+  protected Conversion() {
+    super();
+    initMappings();
+  }
 
   /**
    * Returns the properties that define the editor.
    *
    * @return		the properties
    */
-  public static synchronized Properties getProperties() {
+  protected synchronized Properties getProperties() {
     if (m_Properties == null)
       m_Properties = Environment.getInstance().read(ConversionDefinition.KEY);
 
@@ -84,7 +95,7 @@ public class Conversion {
   /**
    * Initializes the mapping.
    */
-  protected static synchronized void initMappings() {
+  protected synchronized void initMappings() {
     Properties		props;
     String[]		keys;
     int			i;
@@ -95,7 +106,7 @@ public class Conversion {
 
       // exact mappings
       keys      = props.getPath(KEY_RENAME, "").split(",");
-      m_Mapping = new HashMap<String,String>();
+      m_Mapping = new HashMap<>();
       if ((keys.length >= 1) && (keys[0].length() != 0)) {
 	for (i = 0; i < keys.length; i++) {
 	  if (!props.hasKey(keys[i])) {
@@ -118,7 +129,7 @@ public class Conversion {
       // partial renaming
       keys                  = props.getPath(KEY_PARTIAL_RENAME, "").split(",");
       m_MappingPartialOrder = new ArrayList<>();
-      m_MappingPartial      = new HashMap<String,String>();
+      m_MappingPartial      = new HashMap<>();
       if ((keys.length >= 1) && (keys[0].length() != 0)) {
 	for (i = 0; i < keys.length; i++) {
 	  if (!props.hasKey(keys[i])) {
@@ -141,7 +152,7 @@ public class Conversion {
 
       // option renaming
       keys            = props.getPath(KEY_RENAME_OPTION, "").split(",");
-      m_MappingOption = new HashMap<String,HashMap<String,String>>();
+      m_MappingOption = new HashMap<>();
       if ((keys.length >= 1) && (keys[0].length() != 0)) {
 	for (i = 0; i < keys.length; i++) {
 	  if (!props.hasKey(keys[i])) {
@@ -158,14 +169,14 @@ public class Conversion {
 	  }
 
 	  if (!m_MappingOption.containsKey(parts[0]))
-	    m_MappingOption.put(parts[0], new HashMap<String,String>());
+	    m_MappingOption.put(parts[0], new HashMap<>());
 	  m_MappingOption.get(parts[0]).put(parts[1], parts[2]);
 	}
       }
 
       // property renaming
       keys              = props.getPath(KEY_RENAME_PROPERTY, "").split(",");
-      m_MappingProperty = new HashMap<String,HashMap<String,String>>();
+      m_MappingProperty = new HashMap<>();
       if ((keys.length >= 1) && (keys[0].length() != 0)) {
 	for (i = 0; i < keys.length; i++) {
 	  if (!props.hasKey(keys[i])) {
@@ -182,7 +193,7 @@ public class Conversion {
 	  }
 
 	  if (!m_MappingProperty.containsKey(parts[0]))
-	    m_MappingProperty.put(parts[0], new HashMap<String,String>());
+	    m_MappingProperty.put(parts[0], new HashMap<>());
 	  m_MappingProperty.get(parts[0]).put(parts[1], parts[2]);
 	}
       }
@@ -195,12 +206,10 @@ public class Conversion {
    * @param classname	the classname to process
    * @return		the potentially updated classname
    */
-  public static synchronized String rename(String classname) {
+  public String rename(String classname) {
     String	result;
 
     result = classname;
-
-    initMappings();
 
     // replace classname
     while (m_Mapping.containsKey(result))
@@ -220,14 +229,12 @@ public class Conversion {
    * @param option	the option to process (with or without leading dash)
    * @return		the potentially updated option
    */
-  public static synchronized String renameOption(String classname, String option) {
+  public String renameOption(String classname, String option) {
     String	result;
     boolean	dash;
 
     result = option;
     dash   = option.startsWith("-");
-
-    initMappings();
 
     if (dash)
       option = option.substring(1);
@@ -248,16 +255,25 @@ public class Conversion {
    * @param property	the property to process
    * @return		the potentially updated option
    */
-  public static synchronized String renameProperty(String classname, String property) {
+  public String renameProperty(String classname, String property) {
     String	result;
 
     result = property;
-
-    initMappings();
 
     if (m_MappingProperty.containsKey(classname) && m_MappingProperty.get(classname).containsKey(property))
       result = m_MappingProperty.get(classname).get(property);
     
     return result;
+  }
+
+  /**
+   * Returns the singleton.
+   *
+   * @return		the singleton
+   */
+  public static synchronized Conversion getSingleton() {
+    if (m_Singleton == null)
+      m_Singleton = new Conversion();
+    return m_Singleton;
   }
 }

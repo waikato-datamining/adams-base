@@ -15,9 +15,16 @@
 
 /**
  * JsonConsumer.java
- * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
+
+import adams.core.Utils;
+import adams.core.Variables;
+import adams.core.io.FileFormatHandler;
+import net.minidev.json.JSONArray;
+import net.minidev.json.JSONObject;
+import net.minidev.json.parser.JSONParser;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
@@ -25,13 +32,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
-
-import net.minidev.json.JSONArray;
-import net.minidev.json.JSONObject;
-import net.minidev.json.parser.JSONParser;
-import adams.core.Utils;
-import adams.core.Variables;
-import adams.core.io.FileFormatHandler;
 
 /**
  * Recreates objects from a JSON representation.
@@ -89,7 +89,7 @@ public class JsonConsumer
 
     if (m_Input.containsKey(KEY_CLASS)) {
       try {
-	result = (OptionHandler) Class.forName(Conversion.rename((String) m_Input.get(KEY_CLASS))).newInstance();
+	result = (OptionHandler) Class.forName(Conversion.getSingleton().rename((String) m_Input.get(KEY_CLASS))).newInstance();
       }
       catch (Exception e) {
 	msg = "Failed to instantiate class: ";
@@ -301,7 +301,7 @@ public class JsonConsumer
     iter      = input.keySet().iterator();
     while (iter.hasNext()) {
       name = (String) iter.next();
-      if (Conversion.renameOption(option.getOptionHandler().getClass().getName(), name).equals(optionStr))
+      if (Conversion.getSingleton().renameOption(option.getOptionHandler().getClass().getName(), name).equals(optionStr))
 	result.add(input.get(name));
     }
 
@@ -327,7 +327,7 @@ public class JsonConsumer
       name   = (String) iter.next();
       if (name.equals(KEY_CLASS) || name.equals(KEY_OPTIONS))
 	continue;
-      name   = Conversion.renameOption(manager.getOwner().getClass().getName(), name);
+      name   = Conversion.getSingleton().renameOption(manager.getOwner().getClass().getName(), name);
       option = manager.findByProperty(name);
 
       if (option == null) {

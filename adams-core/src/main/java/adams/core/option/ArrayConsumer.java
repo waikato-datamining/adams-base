@@ -15,19 +15,19 @@
 
 /**
  * ArrayConsumer.java
- * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
+
+import adams.core.Utils;
+import adams.core.Variables;
+import adams.core.logging.LoggingObject;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
-
-import adams.core.Utils;
-import adams.core.Variables;
-import adams.core.logging.LoggingObject;
 
 /**
  * Parses a string array of options. The element in the string array must
@@ -65,7 +65,7 @@ public class ArrayConsumer
     String		msg;
 
     try {
-      result     = (OptionHandler) Class.forName(Conversion.rename(m_Input[0])).newInstance();
+      result     = (OptionHandler) Class.forName(Conversion.getSingleton().rename(m_Input[0])).newInstance();
       m_Input[0] = "";
     }
     catch (Exception e) {
@@ -127,7 +127,7 @@ public class ArrayConsumer
     else
       result = cmdline;
 
-    result = Conversion.rename(result);   // fix classname, if necessary
+    result = Conversion.getSingleton().rename(result);   // fix classname, if necessary
 
     return result;
   }
@@ -258,7 +258,7 @@ public class ArrayConsumer
     i         = 0;
     optionStr = getOptionIdentifier(option);
     while (i < input.length) {
-      if (Conversion.renameOption(option.getOptionHandler().getClass().getName(), input[i]).equals(optionStr)) {
+      if (Conversion.getSingleton().renameOption(option.getOptionHandler().getClass().getName(), input[i]).equals(optionStr)) {
 	input[i] = "";
 	if (hasArg) {
 	  if (isBool) {
@@ -317,7 +317,7 @@ public class ArrayConsumer
 
       if (cmdline.startsWith("-")) {
 	cmdline = cmdline.substring(1);
-	cmdline = Conversion.renameOption(manager.getOwner().getClass().getName(), cmdline);
+	cmdline = Conversion.getSingleton().renameOption(manager.getOwner().getClass().getName(), cmdline);
 	option  = manager.findByFlag(cmdline);
 	values  = null;
 	if (option == null) {

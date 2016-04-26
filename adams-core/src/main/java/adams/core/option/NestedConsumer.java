@@ -15,7 +15,7 @@
 
 /**
  * NestedConsumer.java
- * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
@@ -145,7 +145,7 @@ public class NestedConsumer
 
     try {
       line   = (Line) m_Input.get(0);
-      result = (OptionHandler) Class.forName(Conversion.rename(line.getContent())).newInstance();
+      result = (OptionHandler) Class.forName(Conversion.getSingleton().rename(line.getContent())).newInstance();
       m_Input.remove(0);
       if (m_Input.size() > 0) {
 	if (m_Input.get(0) instanceof ArrayList)
@@ -244,7 +244,7 @@ public class NestedConsumer
 
       subset = (List) values.get(i);
       line   = (Line) subset.get(0);
-      line   = new Line(line.getNumber(), Conversion.rename(line.getContent()));  // fix classname, if necessary
+      line   = new Line(line.getNumber(), Conversion.getSingleton().rename(line.getContent()));  // fix classname, if necessary
       subset.set(0, line);
       object = Class.forName(((Line) subset.get(0)).getContent()).newInstance();  // we need to check actual instance of class, base class could be interface
       if (object instanceof OptionHandler) {
@@ -381,7 +381,7 @@ public class NestedConsumer
     optionStr = getOptionIdentifier(option);
     while (i < input.size()) {
       if (input.get(i).getClass() == Line.class) {
-	if (Conversion.renameOption(option.getOptionHandler().getClass().getName(), ((Line) input.get(i)).getContent()).equals(optionStr)) {
+	if (Conversion.getSingleton().renameOption(option.getOptionHandler().getClass().getName(), ((Line) input.get(i)).getContent()).equals(optionStr)) {
 	  input.remove(i);
 	  if (hasArg) {
 	    if (isBool) {
@@ -450,7 +450,7 @@ public class NestedConsumer
 
       if (cmdline.startsWith("-")) {
 	cmdline = cmdline.substring(1);
-	cmdline = Conversion.renameOption(manager.getOwner().getClass().getName(), cmdline);
+	cmdline = Conversion.getSingleton().renameOption(manager.getOwner().getClass().getName(), cmdline);
 	option  = manager.findByFlag(cmdline);
 	values  = null;
 	if (option == null) {
