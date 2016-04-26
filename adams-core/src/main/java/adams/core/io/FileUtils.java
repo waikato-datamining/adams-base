@@ -1221,6 +1221,37 @@ public class FileUtils {
   }
 
   /**
+   * Checks whether the file (not directory!) exists.
+   *
+   * @param filename	the filename to check
+   * @return		true if file exists
+   */
+  public static boolean fileExists(String filename) {
+    return fileExists(new PlaceholderFile(filename));
+  }
+
+  /**
+   * Checks whether the file (not directory!) exists.
+   *
+   * @param file	the file to check
+   * @return		true if file exists
+   */
+  public static boolean fileExists(File file) {
+    return file.exists() && !file.isDirectory();
+  }
+
+  /**
+   * Checks whether the directory exists. If this file object represents a
+   * file, then the parent directory is checked.
+   *
+   * @param filename	the filename to check
+   * @return		true if directory exists
+   */
+  public static boolean directoryExists(String filename) {
+    return directoryExists(new PlaceholderFile(filename));
+  }
+
+  /**
    * Checks whether the directory exists. If this file object represents a
    * file, then the parent directory is checked.
    *
