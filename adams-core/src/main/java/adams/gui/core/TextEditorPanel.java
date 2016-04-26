@@ -15,7 +15,7 @@
 
 /**
  * TextEditorPanel.java
- * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
  * Copyright (C) Patrick Chan and Addison Wesley, Java Developers Almanac 2000 (undo/redo)
  */
 package adams.gui.core;
@@ -35,15 +35,15 @@ import javax.swing.JTextArea;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.UndoableEditEvent;
-import javax.swing.event.UndoableEditListener;
+import javax.swing.text.Caret;
 import javax.swing.text.Document;
 import javax.swing.undo.UndoManager;
 import java.awt.BorderLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.beans.Transient;
 import java.io.File;
 import java.util.HashSet;
 import java.util.List;
@@ -55,10 +55,10 @@ import java.util.List;
  * @version $Revision$
  */
 @MixedCopyright(
-    copyright = "Patrick Chan and Addision Wesley, Java Developers Almanac 2000",
-    license = License.BSD3,
-    url = "http://java.sun.com/developer/codesamples/examplets/javax.swing.undo/236.html",
-    note = "Undo/redo"
+  copyright = "Patrick Chan and Addision Wesley, Java Developers Almanac 2000",
+  license = License.BSD3,
+  url = "http://java.sun.com/developer/codesamples/examplets/javax.swing.undo/236.html",
+  note = "Undo/redo"
 )
 public class TextEditorPanel
   extends BasePanel
@@ -92,8 +92,8 @@ public class TextEditorPanel
     public TextEditorArea() {
       super();
 
-      m_SetTextListeners = new HashSet<ChangeListener>();
-      m_AppendListeners  = new HashSet<ChangeListener>();
+      m_SetTextListeners = new HashSet<>();
+      m_AppendListeners  = new HashSet<>();
     }
 
     /**
@@ -204,10 +204,10 @@ public class TextEditorPanel
 
   /** the current file. */
   protected File m_CurrentFile;
-  
+
   /** the current file encoding. */
   protected String m_CurrentEncoding;
-  
+
   /** for customizing the popup menu. */
   protected PopupMenuCustomizer<TextEditorPanel> m_PopupMenuCustomizer;
 
@@ -220,7 +220,7 @@ public class TextEditorPanel
 
     m_CurrentFile         = null;
     m_CurrentEncoding     = null;
-    m_ChangeListeners     = new HashSet<ChangeListener>();
+    m_ChangeListeners     = new HashSet<>();
     m_Undo                = new UndoManager();
     m_PopupMenuCustomizer = null;
   }
@@ -237,17 +237,11 @@ public class TextEditorPanel
     // text
     m_TextArea = new TextEditorArea();
     m_TextArea.setWrapStyleWord(true);
-    m_TextArea.addSetTextListener(new ChangeListener() {
-      public void stateChanged(ChangeEvent e) {
-	m_TextArea.setCaretPosition(0);
-	setModified(false);
-      }
+    m_TextArea.addSetTextListener((ChangeEvent e) -> {
+      m_TextArea.setCaretPosition(0);
+      setModified(false);
     });
-    m_TextArea.addAppendListener(new ChangeListener() {
-      public void stateChanged(ChangeEvent e) {
-	notifyChangeListeners();
-      }
-    });
+    m_TextArea.addAppendListener((ChangeEvent e) -> notifyChangeListeners());
     m_TextArea.addMouseListener(new MouseAdapter() {
       @Override
       public void mouseClicked(MouseEvent e) {
@@ -263,12 +257,10 @@ public class TextEditorPanel
     add(new BaseScrollPane(m_TextArea), BorderLayout.CENTER);
 
     // Listen for undo and redo events
-    m_TextArea.getDocument().addUndoableEditListener(new UndoableEditListener() {
-      public void undoableEditHappened(UndoableEditEvent evt) {
-	m_Modified = true;
-	m_Undo.addEdit(evt.getEdit());
-	notifyChangeListeners();
-      }
+    m_TextArea.getDocument().addUndoableEditListener((UndoableEditEvent evt) -> {
+      m_Modified = true;
+      m_Undo.addEdit(evt.getEdit());
+      notifyChangeListeners();
     });
 
     // Create an undo action and add it to the text component
@@ -298,16 +290,16 @@ public class TextEditorPanel
 
   /**
    * Returns the file chooser and creates it if necessary.
-   * 
+   *
    * @return		the file chooser
    */
   protected TextFileChooser getFileChooser() {
     if (m_FileChooser == null)
       m_FileChooser = new TextFileChooser();
-    
+
     return m_FileChooser;
   }
-  
+
   /**
    * Sets the modified state. If false, all edits are discarded and the
    * last search string reset as well.
@@ -543,7 +535,7 @@ public class TextEditorPanel
 
   /**
    * Pops up dialog to open a file.
-   * 
+   *
    * @return		true if successfully opened
    */
   public boolean open() {
@@ -579,7 +571,7 @@ public class TextEditorPanel
 
     if ((encoding == null) || encoding.isEmpty())
       encoding = "UTF-8";
-    
+
     content = FileUtils.loadFromFile(file, encoding);
     result  = (content != null);
     if (result) {
@@ -590,7 +582,7 @@ public class TextEditorPanel
     }
 
     notifyChangeListeners();
-    
+
     return result;
   }
 
@@ -630,7 +622,7 @@ public class TextEditorPanel
     msg = FileUtils.writeToFileMsg(file.getAbsolutePath(), m_TextArea.getText(), false, encoding);
     if (msg != null) {
       GUIHelper.showErrorMessage(
-	  this, "Error saving content to file '" + file + "':\n" + msg);
+	this, "Error saving content to file '" + file + "':\n" + msg);
     }
     else {
       m_CurrentFile     = file;
@@ -725,10 +717,7 @@ public class TextEditorPanel
    * @return		true if text is available for cutting
    */
   public boolean canCut() {
-    if (isEditable() && (m_TextArea.getSelectedText() != null))
-      return true;
-    else
-      return false;
+    return (isEditable() && (m_TextArea.getSelectedText() != null));
   }
 
   /**
@@ -764,10 +753,7 @@ public class TextEditorPanel
    * @return		true if text is available for pasting
    */
   public boolean canPaste() {
-    if (isEditable() && GUIHelper.canPasteStringFromClipboard())
-      return true;
-    else
-      return false;
+    return (isEditable() && GUIHelper.canPasteStringFromClipboard());
   }
 
   /**
@@ -854,13 +840,13 @@ public class TextEditorPanel
 
   /**
    * Returns the current file encoding.
-   * 
+   *
    * @return		the current encoding, null if no file loaded
    */
   public String getCurrentEncoding() {
     return m_CurrentEncoding;
   }
-  
+
   /**
    * Adds the given change listener to its internal list.
    *
@@ -889,19 +875,19 @@ public class TextEditorPanel
     for (ChangeListener l: m_ChangeListeners)
       l.stateChanged(e);
   }
-  
+
   /**
    * Sets the customizer to use.
-   * 
+   *
    * @param value	the customizer, null to unset
    */
   public void setPopupMenuCustomizer(PopupMenuCustomizer<TextEditorPanel> value) {
     m_PopupMenuCustomizer = value;
   }
-  
+
   /**
    * Returns the customizer in use.
-   * 
+   *
    * @return		the customizer, null if none set
    */
   public PopupMenuCustomizer<TextEditorPanel> getPopupMenuCustomizer() {
@@ -910,58 +896,47 @@ public class TextEditorPanel
 
   /**
    * Shows the popup menu for the text area.
-   * 
+   *
    * @param e		the event that triggered the action
    */
   protected void showPopupMenu(MouseEvent e) {
     BasePopupMenu	menu;
     JMenuItem		menuitem;
-    
+
     menu = new BasePopupMenu();
-    
+
     menuitem = new JMenuItem("Copy", GUIHelper.getIcon("copy.gif"));
     menuitem.setEnabled(m_TextArea.getSelectedText() != null);
-    menuitem.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	m_TextArea.requestFocus();
-	GUIHelper.copyToClipboard(m_TextArea.getSelectedText());
-      }
+    menuitem.addActionListener((ActionEvent ae) -> {
+      m_TextArea.requestFocus();
+      GUIHelper.copyToClipboard(m_TextArea.getSelectedText());
     });
     menu.add(menuitem);
-    
+
     menuitem = new JMenuItem("Select all", GUIHelper.getEmptyIcon());
     menuitem.setEnabled(m_TextArea.getText().length() > 0);
-    menuitem.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	m_TextArea.requestFocus();
-	m_TextArea.setSelectionStart(0);
-	m_TextArea.setSelectionEnd(m_TextArea.getText().length());
-      }
+    menuitem.addActionListener((ActionEvent ae) -> {
+      m_TextArea.requestFocus();
+      m_TextArea.setSelectionStart(0);
+      m_TextArea.setSelectionEnd(m_TextArea.getText().length());
     });
     menu.add(menuitem);
-    
+
     menuitem = new JCheckBoxMenuItem("Line wrap", GUIHelper.getEmptyIcon());
     menuitem.setSelected(getLineWrap());
-    menuitem.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	setLineWrap(!getLineWrap());
-      }
-    });
+    menuitem.addActionListener((ActionEvent ae) -> setLineWrap(!getLineWrap()));
     menu.addSeparator();
     menu.add(menuitem);
-    
+
     if (m_PopupMenuCustomizer != null)
       m_PopupMenuCustomizer.customizePopupMenu(this, menu);
-    
+
     menu.showAbsolute(m_TextArea, e);
   }
 
   /**
    * Returns a custom file filter for the file chooser.
-   * 
+   *
    * @return		the file filter, null if to use default one
    */
   @Override
@@ -977,5 +952,96 @@ public class TextEditorPanel
   @Override
   public String supplyText() {
     return getContent();
+  }
+
+  /**
+   * Returns the selected text contained in this
+   * <code>TextComponent</code>.  If the selection is
+   * <code>null</code> or the document empty, returns <code>null</code>.
+   *
+   * @return the text
+   * @throws IllegalArgumentException if the selection doesn't
+   *  have a valid mapping into the document for some reason
+   */
+  public String getSelectedText() {
+    return m_TextArea.getSelectedText();
+  }
+
+  /**
+   * Returns the selected text's start position.  Return 0 for an
+   * empty document, or the value of dot if no selection.
+   *
+   * @return the start position &ge; 0
+   */
+  @Transient
+  public int getSelectionStart() {
+    return m_TextArea.getSelectionStart();
+  }
+
+  /**
+   * Sets the selection start to the specified position.  The new
+   * starting point is constrained to be before or at the current
+   * selection end.
+   * <p>
+   * This is available for backward compatibility to code
+   * that called this method on <code>java.awt.TextComponent</code>.
+   * This is implemented to forward to the <code>Caret</code>
+   * implementation which is where the actual selection is maintained.
+   *
+   * @param selectionStart the start position of the text &ge; 0
+   */
+  public void setSelectionStart(int selectionStart) {
+    m_TextArea.setSelectionStart(selectionStart);
+  }
+
+  /**
+   * Returns the selected text's end position.  Return 0 if the document
+   * is empty, or the value of dot if there is no selection.
+   *
+   * @return the end position &ge; 0
+   */
+  @Transient
+  public int getSelectionEnd() {
+    return m_TextArea.getSelectionEnd();
+  }
+
+  /**
+   * Sets the selection end to the specified position.  The new
+   * end point is constrained to be at or after the current
+   * selection start.
+   * <p>
+   * This is available for backward compatibility to code
+   * that called this method on <code>java.awt.TextComponent</code>.
+   * This is implemented to forward to the <code>Caret</code>
+   * implementation which is where the actual selection is maintained.
+   *
+   * @param selectionEnd the end position of the text &ge; 0
+   */
+  public void setSelectionEnd(int selectionEnd) {
+    m_TextArea.setSelectionEnd(selectionEnd);
+  }
+
+  /**
+   * Fetches the caret that allows text-oriented navigation over
+   * the view.
+   *
+   * @return the caret
+   */
+  @Transient
+  public Caret getCaret() {
+    return m_TextArea.getCaret();
+  }
+
+  /**
+   * Sets the caret to be used.  By default this will be set
+   * by the UI that gets installed.  This can be changed to
+   * a custom caret if desired.  Setting the caret results in a
+   * PropertyChange event ("caret") being fired.
+   *
+   * @param c the caret
+   * @see #getCaret
+   */
+  public void setCaret(Caret c) {
+    m_TextArea.setCaret(c);
   }
 }
