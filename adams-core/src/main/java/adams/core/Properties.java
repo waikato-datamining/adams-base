@@ -25,6 +25,7 @@ import adams.core.base.BaseRegExp;
 import adams.core.io.FileUtils;
 import adams.core.io.TempUtils;
 import adams.core.logging.LoggingHelper;
+import adams.core.management.OS;
 import adams.env.Environment;
 import adams.gui.core.ColorHelper;
 import adams.gui.core.GUIHelper;
@@ -83,6 +84,11 @@ import java.util.regex.Pattern;
  *   <li>white</li>
  *   <li>yellow</li>
  * </ul>
+ * <br>
+ * The {@link #read(String)} and {@link #read(String, List)}  methods
+ * also look for platform-specific properties files using platform-specific
+ * extensions: {@link #EXT_LINUX},  {@link #EXT_ANDROID},  {@link #EXT_MAC},
+ * {@link #EXT_WINDOWS}.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
@@ -105,6 +111,21 @@ public class Properties
 
   /** the date/time format. */
   public final static String FORMAT_DATETIME = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
+
+  /** the default extension (incl dot). */
+  public final static String EXT_DEFAULT = ".props";
+
+  /** the linux extension (incl dot). */
+  public final static String EXT_LINUX = ".linux";
+
+  /** the android extension (incl dot). */
+  public final static String EXT_ANDROID = ".android";
+
+  /** the mac extension (incl dot). */
+  public final static String EXT_MAC = ".mac";
+
+  /** the windows extension (incl dot). */
+  public final static String EXT_WINDOWS = ".windows";
 
   /** the debugging level. */
   private final static Logger LOGGER = LoggingHelper.getConsoleLogger(Properties.class);
@@ -198,6 +219,81 @@ public class Properties
   }
 
   /**
+   * Determines the platform-specific extension.
+   *
+   * @return		the extension (incl dot), null if failed to determine
+   */
+  public static String getPlatformDependentExtension() {
+    String 	result;
+
+    result = null;
+    if (OS.isLinux())
+      result = EXT_LINUX;
+    else if (OS.isMac())
+      result = EXT_MAC;
+    else if (OS.isWindows())
+      result = EXT_WINDOWS;
+    else if (OS.isAndroid())
+      result = EXT_ANDROID;
+
+    return result;
+  }
+
+  /**
+   * Loads the properties from URLs associated with the path.
+   *
+   * @param parent	the parent Properties object, null if first call
+   * @param path	the path of the properties to load
+   * @return		the properties
+   */
+  protected static Properties loadURLs(Properties parent, String path) {
+    Properties		props;
+    Enumeration<URL>	urls;
+    URL			url;
+
+    try {
+      urls = ClassLoader.getSystemResources(path);
+      while (urls.hasMoreElements()) {
+	url = urls.nextElement();
+	LOGGER.log(Level.FINE, "url=" + url);
+	if (parent == null) {
+	  parent = new Properties();
+	  parent.load(url.openStream());
+	  LOGGER.log(Level.FINER, "props=" + parent.toStringSimple());
+	}
+	else {
+	  props = new Properties();
+	  props.load(url.openStream());
+	  LOGGER.log(Level.FINER, "props=" + props.toStringSimple());
+	  parent.mergeWith(props);
+	}
+      }
+    }
+    catch (Exception ex) {
+      System.err.println("Warning, unable to load properties file from system resource: " + path);
+    }
+
+    return parent;
+  }
+
+  /**
+   * Checks whether the properties file exists.
+   *
+   * @param path	the file name
+   * @return		true if it exists
+   */
+  protected static boolean propertiesExist(String path) {
+    boolean	result;
+    File	file;
+
+    file   = new File(path);
+    result = file.exists() && !file.isDirectory();
+    LOGGER.log(Level.INFO, "properties '" + path + "' exist? " + result);
+
+    return result;
+  }
+
+  /**
    * Reads properties that inherit from several locations. Properties
    * are first defined in the system resource location (i.e. in the
    * CLASSPATH).  These default properties must exist.
@@ -215,45 +311,45 @@ public class Properties
     Properties 		result;
     Properties		props;
     int			i;
-    Enumeration<URL>	urls;
-    URL			url;
-    boolean		first;
+    String		ext;
+    String		nameAlt;
+    int			index;
+
+    LOGGER.log(Level.INFO, "read: name=" + name + ", dirs=" + dirs);
 
     name   = name.replaceAll(".*\\/", "");
-    result = new Properties();
-    first  = true;
+    result = null;
+
+    // platform-specific extension to look for as well?
+    nameAlt = null;
+    ext     = getPlatformDependentExtension();
+    if (ext != null) {
+      index   = name.lastIndexOf('.');
+      nameAlt = name.substring(0, index) + ext;
+      LOGGER.log(Level.INFO, "nameAlt=" + nameAlt);
+    }
 
     for (i = 0; i < dirs.size(); i++) {
       LOGGER.log(Level.INFO, "name=" + name + ", dir/" + (i+1) + "=" + dirs.get(i));
 
       if (i == 0) {
-	try {
-	  urls = ClassLoader.getSystemResources(dirs.get(i) + "/" + name);
-	  while (urls.hasMoreElements()) {
-	    url = urls.nextElement();
-	    LOGGER.log(Level.FINE, "url=" + url);
-	    if (first) {
-	      result.load(url.openStream());
-	      first = false;
-	      LOGGER.log(Level.FINER, "props=" + result.toStringSimple());
-	    }
-	    else {
-	      props = new Properties();
-	      props.load(url.openStream());
-	      LOGGER.log(Level.FINER, "props=" + props.toStringSimple());
-	      result.mergeWith(props);
-	    }
-	  }
-	}
-	catch (Exception ex) {
-	  System.err.println("Warning, unable to load properties file from system resource: " + dirs.get(i) + "/" + name);
-	}
+	result = loadURLs(result, dirs.get(i) + "/" + name);
+	if (nameAlt != null)
+	  result = loadURLs(result, dirs.get(i) + "/" + nameAlt);
       }
       else {
-	props = new Properties(result);
-	LOGGER.log(Level.FINE, "file=" + dirs.get(i) + "/" + name);
-	props.load(dirs.get(i) + "/" + name);
-	result = props;
+	if (propertiesExist(dirs.get(i) + "/" + name)) {
+	  props = new Properties(result);
+	  LOGGER.log(Level.FINE, "file=" + dirs.get(i) + "/" + name);
+	  props.load(dirs.get(i) + "/" + name);
+	  result = props;
+	}
+	if ((nameAlt != null) && propertiesExist(dirs.get(i) + "/" + nameAlt)) {
+	  props = new Properties(result);
+	  LOGGER.log(Level.FINE, "file=" + dirs.get(i) + "/" + nameAlt);
+	  props.load(dirs.get(i) + "/" + name);
+	  result = props;
+	}
 	LOGGER.log(Level.FINER, "props=" + result.toStringSimple());
       }
     }
