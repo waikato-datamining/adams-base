@@ -15,7 +15,7 @@
 
 /*
  * Properties.java
- * Copyright (C) 2008-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core;
@@ -105,7 +105,7 @@ public class Properties
 
   /** the date/time format. */
   public final static String FORMAT_DATETIME = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
-  
+
   /** the debugging level. */
   private final static Logger LOGGER = LoggingHelper.getConsoleLogger(Properties.class);
 
@@ -188,7 +188,7 @@ public class Properties
   public static Properties read(String name) throws Exception {
     List<String>	dirs;
 
-    dirs = new ArrayList<String>();
+    dirs = new ArrayList<>();
     dirs.add(name.replaceAll("\\/[^\\/]*$", ""));
     dirs.add(Environment.getInstance().getHome());
     if (!dirs.contains(System.getProperty("user.dir")))
@@ -358,7 +358,7 @@ public class Properties
     HashSet<String>	result;
     Enumeration<String>	enm;
 
-    result = new HashSet<String>();
+    result = new HashSet<>();
     enm    = (Enumeration<String>) propertyNames();
     while (enm.hasMoreElements())
       result.add(enm.nextElement());
@@ -377,7 +377,7 @@ public class Properties
     Enumeration<String>	enm;
     String		key;
 
-    result = new HashSet<String>();
+    result = new HashSet<>();
     enm    = (Enumeration<String>) propertyNames();
     while (enm.hasMoreElements()) {
       key = enm.nextElement();
@@ -399,7 +399,7 @@ public class Properties
     Enumeration<String>	enm;
     String		key;
 
-    result = new HashSet<String>();
+    result = new HashSet<>();
     enm    = (Enumeration<String>) propertyNames();
     while (enm.hasMoreElements()) {
       key = enm.nextElement();
@@ -430,7 +430,7 @@ public class Properties
       regExp = ".*";
 
     pattern = Pattern.compile(regExp);
-    result  = new Vector<String>();
+    result  = new Vector<>();
     enm     = (Enumeration<String>) propertyNames();
     while (enm.hasMoreElements()) {
       key = enm.nextElement();
@@ -452,17 +452,20 @@ public class Properties
   public boolean load(String filename) {
     boolean		result;
     BufferedInputStream	stream;
+    FileInputStream	fis;
     File		file;
 
     result = true;
 
+    fis    = null;
+    stream = null;
     try {
       clear();
       file = new File(filename);
       if (file.exists()) {
-	stream = new BufferedInputStream(new FileInputStream(filename));
+	fis    = new FileInputStream(filename);
+	stream = new BufferedInputStream(fis);
 	load(stream);
-	stream.close();
       }
       else {
 	LOGGER.log(Level.FINE, "file '" + filename + "' does not exist - skipped!");
@@ -472,6 +475,10 @@ public class Properties
       clear();
       result = false;
       e.printStackTrace();
+    }
+    finally {
+      FileUtils.closeQuietly(stream);
+      FileUtils.closeQuietly(fis);
     }
 
     return result;
@@ -504,7 +511,8 @@ public class Properties
     fos    = null;
     stream = null;
     try {
-      stream = new BufferedOutputStream(new FileOutputStream(filename));
+      fos    = new FileOutputStream(filename);
+      stream = new BufferedOutputStream(fos);
       collapse().store(stream, comment);
       stream.flush();
     }
@@ -531,7 +539,7 @@ public class Properties
     Enumeration<String>		names;
     String			name;
 
-    values = new Hashtable<String,String>();
+    values = new Hashtable<>();
     names  = (Enumeration<String>) propertyNames();
     while (names.hasMoreElements()) {
       name = names.nextElement();
@@ -560,8 +568,6 @@ public class Properties
   public String toString(String comment) {
     String		result;
     StringWriter	writer;
-
-    result = null;
 
     try {
       writer = new StringWriter();
@@ -692,7 +698,7 @@ public class Properties
     Pattern		pattern;
 
     keys     = keys();
-    toRemove = new ArrayList<String>();
+    toRemove = new ArrayList<>();
     pattern  = Pattern.compile(regexp);
     while (keys.hasMoreElements()) {
       key = keys.nextElement().toString();
@@ -871,7 +877,7 @@ public class Properties
     try {
       if (hasKey(key)) {
 	value = "" + getProperty(key);
-	if (value != null)
+	if (!value.equals("null"))
 	  result = new Double(value);
       }
     }
@@ -925,7 +931,7 @@ public class Properties
       if (hasKey(key)) {
 	value = getProperty(key);
 	if (value != null)
-	  result = new Boolean(value);
+	  result = Boolean.parseBoolean(value);
       }
     }
     catch (Exception e) {
@@ -1427,7 +1433,7 @@ public class Properties
     StringReader	reader;
 
     result = new Properties();
-    reader = new StringReader(Utils.unComment(comments.toString(), Properties.COMMENT));
+    reader = new StringReader(Utils.unComment(comments, Properties.COMMENT));
     try {
       result.load(reader);
     }
