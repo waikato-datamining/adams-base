@@ -193,7 +193,7 @@ public class FixedTabularSpreadSheetWriter
    */
   @Override
   public String[] getFormatExtensions() {
-    return new String[]{"txt"};
+    return new String[]{"txt", "txt.gz"};
   }
 
   /**

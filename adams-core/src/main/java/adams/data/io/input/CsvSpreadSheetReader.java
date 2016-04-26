@@ -28,6 +28,7 @@ import adams.core.Time;
 import adams.core.TimeMsec;
 import adams.core.Utils;
 import adams.core.base.BaseCharset;
+import adams.core.base.BaseRegExp;
 import adams.core.management.LocaleHelper;
 import adams.core.management.OptionHandlingLocaleSupporter;
 import adams.data.DateFormatString;
@@ -295,7 +296,7 @@ public class CsvSpreadSheetReader
     protected SpreadSheet m_Header;
 
     /** the missing value. */
-    protected String m_MissingValue;
+    protected BaseRegExp m_MissingValue;
 
     /** whether any text columns are defined. */
     protected boolean m_HasTextCols;
@@ -657,7 +658,7 @@ public class CsvSpreadSheetReader
             if (row == null)
               row = result.addRow();
             for (i = 0; (i < m_HeaderCells.size()) && (i < cells.size()); i++) {
-              if (!cells.get(i).equals(m_MissingValue)) {
+              if (!(m_MissingValue.isMatch(cells.get(i)) || (cells.get(i).isEmpty() && m_MissingValue.isEmpty()))) {
                 if (isHeader) {
                   row.addCell("" + i).setContentAsString(cells.get(i));
                 }

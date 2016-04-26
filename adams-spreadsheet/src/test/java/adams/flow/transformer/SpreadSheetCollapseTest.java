@@ -20,6 +20,7 @@
 
 package adams.flow.transformer;
 
+import adams.core.base.BaseRegExp;
 import adams.core.io.PlaceholderFile;
 import adams.core.option.AbstractArgumentOption;
 import adams.data.io.input.CsvSpreadSheetReader;
@@ -142,7 +143,7 @@ public class SpreadSheetCollapseTest
       csvspreadsheetreader.setSpreadSheetType(spreadsheet);
 
       argOption = (AbstractArgumentOption) csvspreadsheetreader.getOptionManager().findByProperty("missingValue");
-      csvspreadsheetreader.setMissingValue((String) argOption.valueOf(""));
+      csvspreadsheetreader.setMissingValue((BaseRegExp) argOption.valueOf(""));
       spreadsheetfilereader.setReader(csvspreadsheetreader);
 
       actors.add(spreadsheetfilereader);

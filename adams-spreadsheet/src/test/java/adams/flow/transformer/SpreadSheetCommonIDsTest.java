@@ -21,6 +21,7 @@
 package adams.flow.transformer;
 
 import adams.core.Range;
+import adams.core.base.BaseRegExp;
 import adams.core.io.PlaceholderFile;
 import adams.core.option.AbstractArgumentOption;
 import adams.data.io.input.CsvSpreadSheetReader;
@@ -149,7 +150,7 @@ public class SpreadSheetCommonIDsTest
       csvspreadsheetreader.setSpreadSheetType(spreadsheet);
 
       argOption = (AbstractArgumentOption) csvspreadsheetreader.getOptionManager().findByProperty("missingValue");
-      csvspreadsheetreader.setMissingValue((String) argOption.valueOf(""));
+      csvspreadsheetreader.setMissingValue((BaseRegExp) argOption.valueOf(""));
       argOption = (AbstractArgumentOption) csvspreadsheetreader.getOptionManager().findByProperty("textColumns");
       csvspreadsheetreader.setTextColumns((Range) argOption.valueOf("1,last"));
       spreadsheetfilereader.setReader(csvspreadsheetreader);

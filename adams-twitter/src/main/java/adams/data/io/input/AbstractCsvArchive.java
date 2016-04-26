@@ -21,6 +21,7 @@ package adams.data.io.input;
 
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
+import adams.core.base.BaseRegExp;
 import adams.core.io.PlaceholderFile;
 import adams.core.net.TwitterHelper;
 import adams.data.spreadsheet.Cell;
@@ -104,7 +105,7 @@ public abstract class AbstractCsvArchive
     m_Reader.setChunkSize(1);
     m_Reader.setParseFormulas(false);
     //m_Reader.setTextColumns(new Range(Range.ALL));
-    m_Reader.setMissingValue("");
+    m_Reader.setMissingValue(new BaseRegExp(""));
   }
 
   /**

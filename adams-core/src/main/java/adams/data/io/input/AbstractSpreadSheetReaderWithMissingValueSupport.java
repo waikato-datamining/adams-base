@@ -15,10 +15,11 @@
 
 /**
  * AbstractSpreadSheetReaderWithMissingValue.java
- * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.input;
 
+import adams.core.base.BaseRegExp;
 import adams.data.spreadsheet.SpreadSheet;
 
 /**
@@ -35,7 +36,7 @@ public abstract class AbstractSpreadSheetReaderWithMissingValueSupport
   private static final long serialVersionUID = 8681736902001611911L;
   
   /** The placeholder for missing values. */
-  protected String m_MissingValue;
+  protected BaseRegExp m_MissingValue;
   
   /**
    * Adds options to the internal list of options.
@@ -54,8 +55,8 @@ public abstract class AbstractSpreadSheetReaderWithMissingValueSupport
    * 
    * @return		the default
    */
-  protected String getDefaultMissingValue() {
-    return SpreadSheet.MISSING_VALUE;
+  protected BaseRegExp getDefaultMissingValue() {
+    return new BaseRegExp("\\" + SpreadSheet.MISSING_VALUE);
   }
   
   /**
@@ -63,7 +64,7 @@ public abstract class AbstractSpreadSheetReaderWithMissingValueSupport
    *
    * @param value	the placeholder
    */
-  public void setMissingValue(String value) {
+  public void setMissingValue(BaseRegExp value) {
     m_MissingValue = value;
   }
 
@@ -72,7 +73,7 @@ public abstract class AbstractSpreadSheetReaderWithMissingValueSupport
    *
    * @return		the placeholder
    */
-  public String getMissingValue() {
+  public BaseRegExp getMissingValue() {
     return m_MissingValue;
   }
 

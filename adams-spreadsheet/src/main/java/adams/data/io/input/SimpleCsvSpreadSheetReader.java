@@ -25,6 +25,7 @@ import adams.core.Constants;
 import adams.core.Range;
 import adams.core.Utils;
 import adams.core.base.BaseCharset;
+import adams.core.base.BaseRegExp;
 import adams.core.management.LocaleHelper;
 import adams.core.management.OptionHandlingLocaleSupporter;
 import adams.data.DateFormatString;
@@ -277,8 +278,8 @@ public class SimpleCsvSpreadSheetReader
    * @return		the default
    */
   @Override
-  protected String getDefaultMissingValue() {
-    return "";
+  protected BaseRegExp getDefaultMissingValue() {
+    return new BaseRegExp("");
   }
 
   /**

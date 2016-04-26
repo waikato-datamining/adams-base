@@ -15,11 +15,12 @@
 
 /*
  * GnuplotSpreadSheetReaderTest.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.io.input;
 
+import adams.core.base.BaseRegExp;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import adams.env.Environment;
@@ -69,7 +70,7 @@ public class GnuplotSpreadSheetReaderTest
     result = new GnuplotSpreadSheetReader[2];
     result[0] = new GnuplotSpreadSheetReader();
     result[1] = new GnuplotSpreadSheetReader();
-    result[1].setMissingValue("10");
+    result[1].setMissingValue(new BaseRegExp("10"));
 
     return result;
   }

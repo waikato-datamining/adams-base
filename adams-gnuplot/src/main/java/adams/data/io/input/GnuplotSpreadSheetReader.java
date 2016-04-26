@@ -15,19 +15,20 @@
 
 /**
  * GnuplotSpreadSheetReader.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.input;
 
-import java.io.File;
-import java.util.List;
-
+import adams.core.base.BaseRegExp;
 import adams.core.io.FileUtils;
 import adams.data.io.output.GnuplotSpreadSheetWriter;
 import adams.data.io.output.SpreadSheetWriter;
 import adams.data.spreadsheet.Cell;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
+
+import java.io.File;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -116,8 +117,8 @@ public class GnuplotSpreadSheetReader
    * @return		the default
    */
   @Override
-  protected String getDefaultMissingValue() {
-    return "-999";
+  protected BaseRegExp getDefaultMissingValue() {
+    return new BaseRegExp("-999");
   }
 
   /**
@@ -172,7 +173,7 @@ public class GnuplotSpreadSheetReader
 	row = result.addRow();
 	for (i = 0; (i < cells.length) && (i < result.getColumnCount()); i++) {
 	  cell = row.addCell("" + i);
-	  if (cells[i].equals(m_MissingValue))
+	  if (m_MissingValue.isMatch(cells[i]) || (cells[i].isEmpty() && m_MissingValue.isEmpty()))
 	    cell.setMissing();
 	  else
 	    cell.setContent(cells[i]);

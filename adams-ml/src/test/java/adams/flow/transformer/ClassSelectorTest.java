@@ -15,11 +15,12 @@
 
 /*
  * ClassSelectorTest.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
+import adams.core.base.BaseRegExp;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import adams.core.option.AbstractArgumentOption;
@@ -126,7 +127,7 @@ public class ClassSelectorTest
       csvspreadsheetreader6.setSpreadSheetType(dataset8);
 
       argOption = (AbstractArgumentOption) csvspreadsheetreader6.getOptionManager().findByProperty("missingValue");
-      csvspreadsheetreader6.setMissingValue((java.lang.String) argOption.valueOf(""));
+      csvspreadsheetreader6.setMissingValue((BaseRegExp) argOption.valueOf(""));
       spreadsheetfilereader4.setReader(csvspreadsheetreader6);
 
       actors1[1] = spreadsheetfilereader4;

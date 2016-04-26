@@ -26,6 +26,7 @@ import adams.core.Range;
 import adams.core.Utils;
 import adams.core.base.BaseCharset;
 import adams.core.base.BaseInteger;
+import adams.core.base.BaseRegExp;
 import adams.core.management.OptionHandlingLocaleSupporter;
 import adams.data.DateFormatString;
 import adams.data.io.output.FixedTabularSpreadSheetWriter;
@@ -270,8 +271,8 @@ public class FixedTabularSpreadSheetReader
    * @return		the default
    */
   @Override
-  protected String getDefaultMissingValue() {
-    return "";
+  protected BaseRegExp getDefaultMissingValue() {
+    return new BaseRegExp("");
   }
 
   /**
@@ -729,7 +730,7 @@ public class FixedTabularSpreadSheetReader
 	  row = result.addRow();
 	  for (i = 0; i < cells.length; i++) {
 	    cell = row.addCell(i);
-	    if (cells[i].equals(m_MissingValue)) {
+            if (m_MissingValue.isMatch(cells[i]) || (cells[i].isEmpty() && m_MissingValue.isEmpty())) {
 	      cell.setMissing();
 	    }
             else if (types[i] == null) {
