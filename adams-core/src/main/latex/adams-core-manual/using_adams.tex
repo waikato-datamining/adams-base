@@ -2373,6 +2373,16 @@ The order in which properties files are read, is as follows:
 	\item home directory
 	\item current directory
 \end{tight_enumerate}
+It is also possible to override the default properties with platform-dependent
+ones. At each point in the order that the properties are read, first the
+default file is read (extension \texttt{.props}) and then it is attempted
+to load the platform specific properties with its platform-specific extension:
+\begin{tight_enumerate}
+	\item Linux: \texttt{.linux}
+	\item Android: \texttt{.android}
+	\item Mac: \texttt{.mac}
+	\item Windows: \texttt{.windows}
+\end{tight_enumerate}
 
 \section{Main menu}
 The menu that ADAMS presents to the user, is defined in the following properties
