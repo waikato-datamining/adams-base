@@ -60,6 +60,6 @@ public class PasteActorBeneath
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    m_State.tree.getOperations().addActor(m_State.selPath, m_State.tree.getActorFromClipboard(), TreeOperations.InsertPosition.BENEATH);
+    m_State.tree.getOperations().addActor(m_State.selPath, TreeOperations.getActorFromClipboard(), TreeOperations.InsertPosition.BENEATH);
   }
 }

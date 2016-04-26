@@ -15,7 +15,7 @@
 
 /**
  * PasteActorHere.java
- * Copyright (C) 2014-2015 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, NZ
  */
 package adams.gui.flow.tree.menu;
 
@@ -60,6 +60,6 @@ public class PasteActorHere
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    m_State.tree.getOperations().addActor(m_State.selPath, m_State.tree.getActorFromClipboard(), TreeOperations.InsertPosition.HERE);
+    m_State.tree.getOperations().addActor(m_State.selPath, TreeOperations.getActorFromClipboard(), TreeOperations.InsertPosition.HERE);
   }
 }

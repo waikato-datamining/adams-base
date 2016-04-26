@@ -23,7 +23,6 @@ package adams.gui.flow.tree;
 import adams.core.ClassLister;
 import adams.core.CleanUpHandler;
 import adams.core.logging.LoggingLevel;
-import adams.core.option.NestedConsumer;
 import adams.core.option.OptionUtils;
 import adams.flow.control.Breakpoint;
 import adams.flow.control.Flow;
@@ -916,38 +915,12 @@ public class Tree
   }
 
   /**
-   * Returns the actor stored on the clipboard.
-   *
-   * @return		the actor or null if none available
-   */
-  public Actor getActorFromClipboard() {
-    Actor		result;
-    NestedConsumer	consumer;
-
-    result = null;
-
-    try {
-      if (GUIHelper.canPasteStringFromClipboard()) {
-	consumer = new NestedConsumer();
-	consumer.setQuiet(true);
-	result = (Actor) consumer.fromString(GUIHelper.pasteSetupFromClipboard());
-	consumer.cleanUp();
-      }
-    }
-    catch (Exception ex) {
-      result = null;
-    }
-
-    return result;
-  }
-
-  /**
    * Checks whether an actor can be pasted.
    *
    * @return		true if pasting is possible
    */
   protected boolean canPasteActor() {
-    return (getActorFromClipboard() != null);
+    return (getOperations().getActorFromClipboard() != null);
   }
 
   /**

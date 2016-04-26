@@ -23,6 +23,7 @@ package adams.gui.flow.tree;
 import adams.core.CleanUpHandler;
 import adams.core.Utils;
 import adams.core.io.FlowFile;
+import adams.core.option.NestedConsumer;
 import adams.core.optiontransfer.AbstractOptionTransfer;
 import adams.flow.condition.bool.BooleanCondition;
 import adams.flow.condition.bool.BooleanConditionSupporter;
@@ -110,9 +111,9 @@ public class TreeOperations
     /** here at this position. */
     HERE,
     /** after this position. */
-    AFTER
-  }
+    AFTER;
 
+  }
   /** the tree to operate on. */
   protected Tree m_Owner;
 
@@ -589,7 +590,7 @@ public class TreeOperations
     node    = TreeHelper.pathToNode(path);
     oldName = node.getActor().getName();
     newName = GUIHelper.showInputDialog(
-	GUIHelper.getParentComponent(getOwner()), 
+	GUIHelper.getParentComponent(getOwner()),
 	"Please enter new name:", oldName);
 
     if (newName != null) {
@@ -1337,14 +1338,14 @@ public class TreeOperations
     boolean			defaultName;
     boolean			expanded;
     GenericObjectEditorDialog	dialog;
-    
+
     currNode   = TreeHelper.pathToNode(path);
     parentNode = (Node) currNode.getParent();
     expanded   = getOwner().isExpanded(path);
     currActor  = currNode.getFullActor().shallowCopy();
     noEquiv    = false;
     condEquiv  = null;
-    
+
     if (!(currActor instanceof ActorWithConditionalEquivalent))
       noEquiv = true;
 
@@ -1353,7 +1354,7 @@ public class TreeOperations
       if (condEquiv == null)
 	noEquiv = true;
     }
-    
+
     if (noEquiv) {
       GUIHelper.showErrorMessage(
 	  getOwner(),
@@ -1377,7 +1378,7 @@ public class TreeOperations
 	  "Failed to instantiate conditional equivalent: " + condEquiv.getName());
       return;
     }
-    
+
     // choose condition
     if (getOwner().getParentDialog() != null)
       dialog = new GenericObjectEditorDialog(getOwner().getParentDialog());
@@ -1396,13 +1397,13 @@ public class TreeOperations
     // create node
     ((BooleanConditionSupporter) newActor).setCondition((BooleanCondition) dialog.getCurrent());
     newNode = new Node(getOwner(), newActor);
-    
+
     getOwner().addUndoPoint("Making conditional actor from '" + currNode.getActor().getFullName());
 
     // move children
     for (BaseTreeNode child: currNode.getChildren())
       newNode.add(child);
-    
+
     // replace node
     defaultName = currActor.getName().equals(currActor.getDefaultName());
     index       = parentNode.getIndex(currNode);
@@ -1441,14 +1442,14 @@ public class TreeOperations
     int		index;
     boolean	defaultName;
     boolean	expanded;
-    
+
     currNode   = TreeHelper.pathToNode(path);
     parentNode = (Node) currNode.getParent();
     expanded   = getOwner().isExpanded(path);
     currActor  = currNode.getFullActor().shallowCopy();
     noEquiv    = false;
     timedEquiv = null;
-    
+
     if (!(currActor instanceof ActorWithTimedEquivalent))
       noEquiv = true;
 
@@ -1457,7 +1458,7 @@ public class TreeOperations
       if (timedEquiv == null)
 	noEquiv = true;
     }
-    
+
     if (noEquiv) {
       GUIHelper.showErrorMessage(
 	  getOwner(),
@@ -1484,13 +1485,13 @@ public class TreeOperations
 
     // create node
     newNode = new Node(getOwner(), newActor);
-    
+
     getOwner().addUndoPoint("Making timed actor from '" + currNode.getActor().getFullName());
 
     // move children
     for (BaseTreeNode child: currNode.getChildren())
       newNode.add(child);
-    
+
     // replace node
     defaultName = currActor.getName().equals(currActor.getDefaultName());
     index       = parentNode.getIndex(currNode);
@@ -1511,6 +1512,32 @@ public class TreeOperations
     getOwner().nodeStructureChanged(parentNode);
     getOwner().locateAndDisplay(newNode.getFullName());
     getOwner().redraw();
+  }
+
+  /**
+   * Returns the actor stored on the clipboard.
+   *
+   * @return		the actor or null if none available
+   */
+  public static Actor getActorFromClipboard() {
+    Actor		result;
+    NestedConsumer 	consumer;
+
+    result = null;
+
+    try {
+      if (GUIHelper.canPasteStringFromClipboard()) {
+	consumer = new NestedConsumer();
+	consumer.setQuiet(true);
+	result = (Actor) consumer.fromString(GUIHelper.pasteSetupFromClipboard());
+	consumer.cleanUp();
+      }
+    }
+    catch (Exception ex) {
+      result = null;
+    }
+
+    return result;
   }
 
   /**
