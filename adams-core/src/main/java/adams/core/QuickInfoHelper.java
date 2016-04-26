@@ -15,13 +15,9 @@
 
 /**
  * QuickInfoHelper.java
- * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.core;
-
-import java.awt.Color;
-import java.lang.reflect.Array;
-import java.util.List;
 
 import adams.core.base.BaseRegExp;
 import adams.core.option.AbstractArgumentOption;
@@ -31,6 +27,10 @@ import adams.core.option.OptionHandler;
 import adams.core.option.OptionProducer;
 import adams.gui.core.ColorHelper;
 
+import java.awt.Color;
+import java.lang.reflect.Array;
+import java.util.List;
+
 /**
  * Helper class for assembling quick info strings returned by classes 
  * implementing {@link QuickInfoSupporter}.
@@ -39,6 +39,12 @@ import adams.gui.core.ColorHelper;
  * @version $Revision$
  */
 public class QuickInfoHelper {
+
+  /** the maximum length of generated array strings. */
+  public final static int MAX_ARRAY_STRING_LENGTH = 40;
+
+  /** the string to use for empty arrays. */
+  public static final String EMPTY_ARRAY_STRING = "-none-";
 
   /**
    * Checks whether a variable is attached to the optionhandler's property.
@@ -179,11 +185,17 @@ public class QuickInfoHelper {
 	    result += "[]";
 	}
 	else {
-	  result = "";
-	  for (i = 0; i < Array.getLength(current); i++) {
-	    if (result.length() > 0)
-	      result += "|";
-	    result += toString(Array.get(current, i));
+	  if (Array.getLength(current) == 0) {
+	    result = EMPTY_ARRAY_STRING;
+	  }
+	  else {
+	    result = "";
+	    for (i = 0; i < Array.getLength(current); i++) {
+	      if (result.length() > 0)
+		result += "|";
+	      result += toString(Array.get(current, i));
+	    }
+	    result = Utils.shorten(result, MAX_ARRAY_STRING_LENGTH);
 	  }
 	}
       }
