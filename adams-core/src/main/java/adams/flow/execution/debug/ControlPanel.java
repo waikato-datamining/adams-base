@@ -15,13 +15,14 @@
 
 /**
  * ControlPanel.java
- * Copyright (C) 2015 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.execution.debug;
 
 import adams.core.CleanUpHandler;
 import adams.core.option.DebugNestedProducer;
+import adams.core.option.NestedConsumer;
 import adams.flow.condition.bool.BooleanCondition;
 import adams.flow.control.Breakpoint;
 import adams.flow.control.Flow;
@@ -36,6 +37,7 @@ import adams.gui.core.Fonts;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.TextEditorPanel;
 import adams.gui.flow.FlowPanel;
+import adams.gui.flow.FlowTabbedPane;
 import adams.gui.flow.FlowTreeHandler;
 import adams.gui.flow.StoragePanel;
 import adams.gui.flow.tree.Tree;
@@ -128,6 +130,9 @@ public class ControlPanel
 
   /** the panel for displaying the source. */
   protected TextEditorPanel m_PanelSource;
+
+  /** the panel for displaying the source (incl buttons). */
+  protected BasePanel m_PanelSourceAll;
 
   /** the panel for displaying the temporary storage. */
   protected StoragePanel m_PanelStorage;
@@ -735,14 +740,55 @@ public class ControlPanel
    * @param visible	if true then displayed, otherwise hidden
    */
   protected void showSource(boolean visible) {
-    String			content;
+    String		content;
     DebugNestedProducer producer;
+    final JButton	buttonCopy;
+    final JButton	buttonPasteAsNew;
+    JPanel		buttons;
 
     if (m_PanelSource == null) {
       m_PanelSource = new TextEditorPanel();
       m_PanelSource.setTextFont(Fonts.getMonospacedFont());
       m_PanelSource.setEditable(false);
       m_PanelSource.setTabSize(2);
+
+      m_PanelSourceAll = new BasePanel(new BorderLayout());
+      m_PanelSourceAll.add(m_PanelSource, BorderLayout.CENTER);
+
+      buttons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+      m_PanelSourceAll.add(buttons, BorderLayout.SOUTH);
+
+      buttonCopy = new JButton(GUIHelper.getIcon("copy.gif"));
+      buttonCopy.setToolTipText("Copy to clipboard");
+      buttonCopy.addActionListener((ActionEvent e) -> {
+	if (m_PanelSource.getSelectedText() == null)
+	  GUIHelper.copyToClipboard(m_PanelSource.getText());
+	else
+	  GUIHelper.copyToClipboard(m_PanelSource.getSelectedText());
+      });
+      buttons.add(buttonCopy);
+
+      buttonPasteAsNew = new JButton(GUIHelper.getIcon("paste_as_new.gif"));
+      buttonPasteAsNew.setToolTipText("Paste as new flow");
+      buttonPasteAsNew.setEnabled(getFlow().getParentComponent() instanceof Container);
+      buttonPasteAsNew.addActionListener((ActionEvent e) -> {
+	if (getFlow().getParentComponent() instanceof Container) {
+	  FlowTabbedPane tabs = (FlowTabbedPane) GUIHelper.getParent((Container) getFlow().getParentComponent(), FlowTabbedPane.class);
+	  if (tabs != null) {
+	    FlowPanel panel = tabs.newPanel();
+	    NestedConsumer consumer;
+	    consumer = new NestedConsumer();
+	    consumer.setQuiet(true);
+	    Actor flow = (Actor) consumer.fromString(m_PanelSource.getText());
+	    consumer.cleanUp();
+	    if (flow != null) {
+	      panel.setCurrentFlow(flow);
+	      panel.setModified(true);
+	    }
+	  }
+	}
+      });
+      buttons.add(buttonPasteAsNew);
     }
 
     if (visible) {
@@ -756,7 +802,7 @@ public class ControlPanel
     }
 
     m_PanelSource.setContent(content);
-    setPanelVisible(m_PanelSource, "Source", visible);
+    setPanelVisible(m_PanelSourceAll, "Source", visible);
   }
 
   /**
