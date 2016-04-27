@@ -29,12 +29,9 @@ import adams.scripting.command.RemoteCommand;
  * @version $Revision$
  */
 public class LoadBalancer
-  extends AbstractConnection {
+  extends AbstractMultiConnection {
 
   private static final long serialVersionUID = 6581951716043112610L;
-
-  /** the connections to balance. */
-  protected Connection[] m_Connections;
 
   /** the current connection for requests. */
   protected int m_CurrentRequest;
@@ -53,18 +50,6 @@ public class LoadBalancer
   }
 
   /**
-   * Adds options to the internal list of options.
-   */
-  @Override
-  public void defineOptions() {
-    super.defineOptions();
-
-    m_OptionManager.add(
-      "connection", "connections",
-      new Connection[0]);
-  }
-
-  /**
    * Initializes the members.
    */
   @Override
@@ -73,25 +58,6 @@ public class LoadBalancer
 
     m_CurrentRequest  = 0;
     m_CurrentResponse = 0;
-  }
-
-  /**
-   * Sets the connections to use for balancing.
-   *
-   * @param value	the connections
-   */
-  public void setConnections(Connection[] value) {
-    m_Connections = value;
-    reset();
-  }
-
-  /**
-   * Returns the connections to use for balancing.
-   *
-   * @return		the connections
-   */
-  public Connection[] getConnections() {
-    return m_Connections;
   }
 
   /**
