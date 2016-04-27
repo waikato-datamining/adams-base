@@ -21,6 +21,7 @@
 package adams.scripting.connection;
 
 import adams.core.Utils;
+import adams.core.net.PortManager;
 import com.jcraft.jsch.Session;
 
 /**
@@ -54,7 +55,7 @@ public abstract class AbstractSSHConnectionWithPortForwarding
 
     m_OptionManager.add(
       "local-port", "localPort",
-      9000, 1, 65535);
+      9000, -1, 65535);
 
     m_OptionManager.add(
       "scripting-port", "scriptingPort",
@@ -64,7 +65,7 @@ public abstract class AbstractSSHConnectionWithPortForwarding
   /**
    * Sets the local port to connect to (SSH tunnel).
    *
-   * @param value	the port
+   * @param value	the port, -1 for automatically getting next available one
    */
   public void setLocalPort(int value) {
     if (getOptionManager().isValid("localPort", value)) {
@@ -132,12 +133,17 @@ public abstract class AbstractSSHConnectionWithPortForwarding
    */
   public Session newSession(String host, int port) {
     Session 	result;
+    int		localPort;
 
     result = super.newSession(host, port);
     if (result != null) {
       try {
         // set up tunnel
-        m_AssignedPort = result.setPortForwardingL(m_LocalPort, host, m_ScriptingPort);
+	if (m_LocalPort < 1)
+	  localPort = PortManager.getSingleton().next(getClass(), 9000);
+	else
+	  localPort = m_LocalPort;
+        m_AssignedPort = result.setPortForwardingL(localPort, host, m_ScriptingPort);
         if (isLoggingEnabled())
           getLogger().info("Assigned port: " + m_AssignedPort);
       }
@@ -163,6 +169,7 @@ public abstract class AbstractSSHConnectionWithPortForwarding
 	catch (Exception e) {
 	  // ignored
 	}
+	PortManager.getSingleton().release(m_AssignedPort);
       }
     }
     super.cleanUp();
