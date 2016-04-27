@@ -1,5 +1,4 @@
-% Copyright (c) 2012-2015 by the University of Waikato, Hamilton, NZ.
-% This work is made available under the terms of the 
+% This work is made available under the terms of the
 % Creative Commons Attribution-ShareAlike 3.0 license, 
 % http://creativecommons.org/licenses/by-sa/3.0/. 
 %
@@ -252,14 +251,16 @@ default settings.
 
 \chapter{Remote commands}
 
-The \textit{adams-net} module adds a connection scheme to the remote command
-framework that uses SSH tunnelling. With this setup, it is possible to route
-remote commands through to a remote server via SSH. Useful, since remote
-servers are usually locked down and only have a few ports, like SSH, open.
+The \textit{adams-net} module adds several connection schemes for the
+remote command framework:
 
-\begin{verbatim}
-adams.scripting.connection.SSHConnection
-\end{verbatim}
+\begin{tight_itemize}
+	\item \textit{FTPConnection} -- sends commands as files via FTP.
+	\item \textit{ScpConnection} -- sends commands as files using secure
+	copy (\texctit{scp}).
+	\item \textit{SSHConnection} -- offers SSH tunnelling, useful when
+	remote servers are locked down.
+\end{tight_itemize}
 
 
 %%%%%%%%
