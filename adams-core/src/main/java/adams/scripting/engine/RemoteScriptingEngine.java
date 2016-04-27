@@ -53,6 +53,20 @@ public interface RemoteScriptingEngine
   public AbstractApplicationFrame getApplicationContext();
 
   /**
+   * Sets the command handler to use.
+   *
+   * @param value	the command handler
+   */
+  public void setCommandHandler(RemoteCommandHandler value);
+
+  /**
+   * Returns the command handler in use.
+   *
+   * @return		the command handler
+   */
+  public RemoteCommandHandler getCommandHandler();
+
+  /**
    * Sets the permission handler to use.
    *
    * @param value	the permission handler
@@ -73,28 +87,6 @@ public interface RemoteScriptingEngine
    * 			displaying in the gui
    */
   public String permissionHandlerTipText();
-
-  /**
-   * Sets the command handler to use.
-   *
-   * @param value	the command handler
-   */
-  public void setCommandHandler(RemoteCommandHandler value);
-
-  /**
-   * Returns the command handler in use.
-   *
-   * @return		the command handler
-   */
-  public RemoteCommandHandler getCommandHandler();
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the gui
-   */
-  public String commandHandlerTipText();
 
   /**
    * Sets the request handler to use.

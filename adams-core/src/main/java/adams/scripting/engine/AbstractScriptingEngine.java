@@ -83,16 +83,50 @@ public abstract class AbstractScriptingEngine
       getDefaultPermissionHandler());
 
     m_OptionManager.add(
-      "command-handler", "commandHandler",
-      getDefaultCommandHandler());
-
-    m_OptionManager.add(
       "request-handler", "requestHandler",
       getDefaultRequestHandler());
 
     m_OptionManager.add(
       "response-handler", "responseHandler",
       getDefaultResponseHandler());
+  }
+
+  /**
+   * Initializes the members.
+   */
+  @Override
+  protected void initialize() {
+    super.initialize();
+
+    m_CommandHandler = getDefaultCommandHandler();
+  }
+
+  /**
+   * Returns the default command handler.
+   *
+   * @return		the default
+   */
+  protected RemoteCommandHandler getDefaultCommandHandler() {
+    return new DefaultRemoteCommandHandler();
+  }
+
+  /**
+   * Sets the command handler to use.
+   *
+   * @param value	the command handler
+   */
+  public void setCommandHandler(RemoteCommandHandler value) {
+    m_CommandHandler = value;
+    m_CommandHandler.setOwner(this);
+  }
+
+  /**
+   * Returns the command handler in use.
+   *
+   * @return		the command handler
+   */
+  public RemoteCommandHandler getCommandHandler() {
+    return m_CommandHandler;
   }
 
   /**
@@ -131,45 +165,6 @@ public abstract class AbstractScriptingEngine
    */
   public String permissionHandlerTipText() {
     return "The handler that determines what request can be executed.";
-  }
-
-  /**
-   * Returns the default command handler.
-   *
-   * @return		the default
-   */
-  protected RemoteCommandHandler getDefaultCommandHandler() {
-    return new DefaultRemoteCommandHandler();
-  }
-
-  /**
-   * Sets the command handler to use.
-   *
-   * @param value	the command handler
-   */
-  public void setCommandHandler(RemoteCommandHandler value) {
-    m_CommandHandler = value;
-    m_CommandHandler.setOwner(this);
-    reset();
-  }
-
-  /**
-   * Returns the command handler in use.
-   *
-   * @return		the command handler
-   */
-  public RemoteCommandHandler getCommandHandler() {
-    return m_CommandHandler;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the gui
-   */
-  public String commandHandlerTipText() {
-    return "The handler that handles the commands.";
   }
 
   /**
