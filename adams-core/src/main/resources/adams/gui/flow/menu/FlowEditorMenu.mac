@@ -1,0 +1,74 @@
+# Configuration file for the Flow Editor menu.
+#
+# Mac-specific shortcuts only.
+#
+# Author: FracPete (fracpete at waikato dot ac dot nz)
+# Version: $Revision: 9847 $
+
+# Format:
+# <action-classname>-Shortcut=<empty or shortcut definition>
+# <action-classname>-Mnemonic=<empty or image filename without path>
+# <action-classname>-Icon=<empty or image filename without path>
+
+# File
+adams.gui.flow.menu.FileNewFlow-Shortcut=meta N
+adams.gui.flow.menu.FileNewFromClipboard-Shortcut=meta alt shift V
+adams.gui.flow.menu.FileOpen-Shortcut=meta O
+adams.gui.flow.menu.FileOpenRemoteFlow-Shortcut=
+adams.gui.flow.menu.FileSave-Shortcut=meta S
+adams.gui.flow.menu.FileSaveAs-Shortcut=meta shift S
+adams.gui.flow.menu.FileCheckOnSave-Shortcut=
+adams.gui.flow.menu.FileRevert-Shortcut=meta F5
+adams.gui.flow.menu.FileCloseTab-Shortcut=meta shift W
+adams.gui.flow.menu.FileImport-Shortcut=
+adams.gui.flow.menu.FileExport-Shortcut=
+adams.gui.flow.menu.FileClose-Shortcut=meta shift Q
+
+# Edit
+adams.gui.flow.menu.EditUndo-Shortcut=meta Z
+adams.gui.flow.menu.EditRedo-Shortcut=meta Y
+adams.gui.flow.menu.EditEnableUndo-Shortcut=
+adams.gui.flow.menu.EditDiff-Shortcut=
+adams.gui.flow.menu.EditFind-Shortcut=meta F
+adams.gui.flow.menu.EditFindNext-Shortcut=meta shift F
+adams.gui.flow.menu.EditLocateActor-Shortcut=meta L
+adams.gui.flow.menu.EditLocateVariable-Shortcut=
+adams.gui.flow.menu.EditLocateStorageName-Shortcut=
+adams.gui.flow.menu.EditCleanUpFlow-Shortcut=
+adams.gui.flow.menu.EditCheckVariables-Shortcut=
+adams.gui.flow.menu.EditInteractiveActors-Shortcut=
+adams.gui.flow.menu.EditIgnoreNameChanges-Shortcut=
+adams.gui.flow.menu.EditProcessActors-Shortcut=meta shift P
+
+# Run
+adams.gui.flow.menu.RunValidateSetup-Shortcut=F7
+adams.gui.flow.menu.RunRun-Shortcut=meta R
+adams.gui.flow.menu.RunDebug-Shortcut=meta shift R
+adams.gui.flow.menu.RunPauseResume-Shortcut=meta P
+adams.gui.flow.menu.RunStop-Shortcut=meta K
+adams.gui.flow.menu.RunKill-Shortcut=
+adams.gui.flow.menu.RunEnableAllBreakpoints-Shortcut=
+adams.gui.flow.menu.RunDisableAllBreakpoints-Shortcut=
+adams.gui.flow.menu.RunRemoveAllBreakpoints-Shortcut=
+adams.gui.flow.menu.RunVariables-Shortcut=
+adams.gui.flow.menu.RunStorage-Shortcut=
+adams.gui.flow.menu.RunDisplayErrors-Shortcut=
+adams.gui.flow.menu.RunClearGraphicalOutput-Shortcut=
+adams.gui.flow.menu.RunHeadless-Shortcut=meta H
+adams.gui.flow.menu.RunGC-Shortcut=
+
+# View
+adams.gui.flow.menu.ViewShowToolbar-Shortcut=
+adams.gui.flow.menu.ViewShowQuickInfo-Shortcut=
+adams.gui.flow.menu.ViewShowAnnotations-Shortcut=
+adams.gui.flow.menu.ViewShowInputOutput-Shortcut=
+adams.gui.flow.menu.ViewShowSource-Shortcut=
+adams.gui.flow.menu.ViewStatistics-Shortcut=
+adams.gui.flow.menu.ViewRedraw-Shortcut=F5
+adams.gui.flow.menu.ViewZoom-Shortcut=
+
+# Window
+adams.gui.flow.menu.WindowNew-Shortcut=
+adams.gui.flow.menu.WindowDuplicateInWindow-Shortcut=
+adams.gui.flow.menu.WindowDuplicateInTab-Shortcut=
+

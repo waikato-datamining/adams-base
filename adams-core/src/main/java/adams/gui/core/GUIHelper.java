@@ -23,7 +23,7 @@ package adams.gui.core;
 import adams.core.ClassLocator;
 import adams.core.Properties;
 import adams.core.Utils;
-import adams.core.management.OS;
+import adams.core.logging.LoggingHelper;
 import adams.core.net.HtmlUtils;
 import adams.core.option.OptionHandler;
 import adams.core.option.OptionUtils;
@@ -85,9 +85,12 @@ import java.io.Serializable;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * A little helper class for GUI related stuff.
@@ -149,6 +152,12 @@ public class GUIHelper {
     "Font.ToolBar",
     "Font.Tree",
   };
+
+  /** the mappings for replacing keystrokes. */
+  protected static HashMap<String,String> m_KeystrokeReplacements;
+
+  /** the debugging level. */
+  private final static Logger LOGGER = LoggingHelper.getConsoleLogger(GUIHelper.class);
 
   /**
    * Helper class that allows external callers to communicate with input
@@ -689,7 +698,7 @@ public class GUIHelper {
       script = m_Properties.getPath(key);
       result = new File(script);
       if (!result.exists()) {
-	System.err.println(
+	LOGGER.severe(
 	    "Startup script '" + script
 	    + "' listed for component '" + c.getClass().getName()
 	    + "' does not exist - ignored!");
@@ -1360,7 +1369,7 @@ public class GUIHelper {
     }
     catch (Exception e) {
       result = false;
-      System.err.println("Can't set look & feel:" + e);
+      LOGGER.severe("Can't set look & feel:" + e);
     }
 
     return result;
@@ -2175,6 +2184,62 @@ public class GUIHelper {
   }
 
   /**
+   * Returns the replacements for the keystrokes.
+   *
+   * @return		the replacements
+   */
+  protected synchronized static HashMap<String,String> getKeystrokeReplacements() {
+    HashMap<String,String>	replacements;
+    String			prop;
+    String[]			list;
+    String[]			parts;
+
+    if (m_KeystrokeReplacements == null) {
+      replacements = new HashMap<>();
+      prop         = getString("ReplaceKeystrokes", "");
+      if (prop.trim().length() > 0) {
+	if (prop.contains(","))
+	  list = prop.split(",");
+	else
+	  list = new String[]{prop};
+	for (String item: list) {
+	  if (item.contains("\t")) {
+	    parts = item.split("\t");
+	    if (parts.length == 1) {
+	      try {
+		KeyStroke.getKeyStroke(parts[0]);
+		replacements.put(parts[0], "");
+	      }
+	      catch (Exception e) {
+		LOGGER.log(Level.SEVERE, "Failed to parse keystroke replacement (format: 'old<tab>new'): " + item, e);
+	      }
+	    }
+	    else if (parts.length == 2) {
+	      try {
+		KeyStroke.getKeyStroke(parts[0]);
+		KeyStroke.getKeyStroke(parts[1]);
+		replacements.put(parts[0], parts[1]);
+	      }
+	      catch (Exception e) {
+		LOGGER.log(Level.SEVERE, "Failed to parse keystroke replacement (format: 'old<tab>new'): " + item, e);
+	      }
+	    }
+	    else {
+	      LOGGER.severe("Invalid keystroke replacement (format: 'old<tab>new'): " + item);
+	    }
+	  }
+	  else {
+	    LOGGER.severe("Invalid keystroke replacement (format: 'old<tab>new'): " + item);
+	  }
+	}
+      }
+      m_KeystrokeReplacements = replacements;
+    }
+
+    return m_KeystrokeReplacements;
+  }
+
+  /**
    * Processes the keystrokes. For Macs, "ctrl/control" is replaced by "meta".
    * Also, if no "ctrl/control/alt" is present, a "meta" is prefix.
    * All other platforms simply return the string.
@@ -2183,17 +2248,15 @@ public class GUIHelper {
    * @return		the (potentially) processed keystroke definition
    */
   public static String processKeyStroke(String keystroke) {
-    String	result;
+    String			result;
+    HashMap<String,String>	replacements;
 
     result = keystroke;
-
-    if (OS.isMac()) {
-      // "meta + Q" usually closes application
-      if (keystroke.toLowerCase().equals("ctrl pressed q") || keystroke.toLowerCase().equals("control pressed q"))
-	keystroke = "ctrl shift pressed W";
-      result = result.replace("ctrl", "meta").replace("control", "meta");
-      if ((result.indexOf("meta") == -1) && (result.indexOf("alt") == -1))
-	result = "meta " + result;
+    if (result != null) {
+      result = result.trim();
+      replacements = getKeystrokeReplacements();
+      if (replacements.containsKey(result))
+	result = replacements.get(result).trim();
     }
 
     return result;
@@ -2207,7 +2270,11 @@ public class GUIHelper {
    * @see		#processKeyStroke(String)
    */
   public static KeyStroke getKeyStroke(String keystroke) {
-    return KeyStroke.getKeyStroke(processKeyStroke(keystroke));
+    keystroke = processKeyStroke(keystroke);
+    if ((keystroke == null) || keystroke.isEmpty())
+      return null;
+    else
+      return KeyStroke.getKeyStroke(keystroke);
   }
   
   /**

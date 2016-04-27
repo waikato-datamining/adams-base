@@ -138,3 +138,9 @@ adams.gui.visualization.debug.DiffTextPane.Modified.Color=#FFCCCC
 
 # Annotations renderer (plain|markdown)
 AnnotationsRenderer=plain
+
+# Mappings for replacing keystrokes
+# Format: old\tnew
+# Note: "new" can be empty if to disable the keystroke
+# Example for Mac: control Q\tmeta W
+ReplaceKeystrokes=

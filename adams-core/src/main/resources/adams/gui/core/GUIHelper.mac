@@ -1,0 +1,21 @@
+# Parameters for the GUI.
+#
+# Mac-specific tweaks.
+#
+# Author:  FracPete (fracpete at waikato dot ac dot nz)
+# Version: $Revision$
+
+# Mappings for replacing keystrokes (comma separated list)
+# Format: old\tnew
+# Note: "new" can be empty if to disable the keystroke
+# Example for Mac: control Q\tmeta W
+ReplaceKeystrokes=\
+  control W\t,\
+  control Q\tmeta W,\
+  control X\tmeta X,\
+  control C\tmeta C,\
+  control V\tmeta V,\
+  control P\tmeta P,\
+  control N\tmeta N,\
+  control O\tmeta O,\
+  control S\tmeta S

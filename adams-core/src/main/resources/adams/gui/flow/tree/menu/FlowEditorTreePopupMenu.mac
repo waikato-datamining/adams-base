@@ -1,0 +1,57 @@
+# Configuration file for the Flow Editor tree popup menu.
+#
+# Mac-specific shortcuts only.
+#
+# Author: FracPete (fracpete at waikato dot ac dot nz)
+# Version: $Revision: 8731 $
+#
+# Format:
+# <action-classname>-Shortcut=<empty or shortcut definition>
+# <action-classname>-Icon=<empty or image filename without path>
+
+adams.gui.flow.tree.menu.AddActor-Shortcut=
+adams.gui.flow.tree.menu.AddActorAfter-Shortcut=alt INSERT
+adams.gui.flow.tree.menu.AddActorBeneath-Shortcut=shift INSERT
+adams.gui.flow.tree.menu.AddActorHere-Shortcut=INSERT
+adams.gui.flow.tree.menu.AddBookmark-Shortcut=meta B
+adams.gui.flow.tree.menu.AddBreakpoint-Shortcut=
+adams.gui.flow.tree.menu.AddBreakpointAfter-Shortcut=
+adams.gui.flow.tree.menu.AddBreakpointBeneath-Shortcut=
+adams.gui.flow.tree.menu.AddBreakpointHere-Shortcut=
+adams.gui.flow.tree.menu.AddFromTemplate-Shortcut=
+adams.gui.flow.tree.menu.AddFromTemplateAfter-Shortcut=
+adams.gui.flow.tree.menu.AddFromTemplateBeneath-Shortcut=
+adams.gui.flow.tree.menu.AddFromTemplateHere-Shortcut=
+adams.gui.flow.tree.menu.AnnotateActor-Shortcut=meta shift A
+adams.gui.flow.tree.menu.AttachListener-Shortcut=
+adams.gui.flow.tree.menu.Bookmark-Shortcut=
+adams.gui.flow.tree.menu.CollapseAll-Shortcut=
+adams.gui.flow.tree.menu.CopyActor-Shortcut=meta C
+adams.gui.flow.tree.menu.CreateCallableActor-Shortcut=
+adams.gui.flow.tree.menu.CutActor-Shortcut=meta X
+adams.gui.flow.tree.menu.EditActor-Shortcut=F10
+adams.gui.flow.tree.menu.EditExternalFlow-Shortcut=shift F10
+adams.gui.flow.tree.menu.EditListeners-Shortcut=
+adams.gui.flow.tree.menu.EncloseActor-Shortcut=
+adams.gui.flow.tree.menu.ExpandAll-Shortcut=
+adams.gui.flow.tree.menu.ExpandCollapseExternalFlow-Shortcut=
+adams.gui.flow.tree.menu.ExternalFlow-Shortcut=
+adams.gui.flow.tree.menu.ExternalizeActor-Shortcut=
+adams.gui.flow.tree.menu.FindUsages-Shortcut=
+adams.gui.flow.tree.menu.MaterializeExternalActor-Shortcut=
+adams.gui.flow.tree.menu.Help-Shortcut=F1
+adams.gui.flow.tree.menu.LastTemplate-Shortcut=
+adams.gui.flow.tree.menu.MakeConditional-Shortcut=
+adams.gui.flow.tree.menu.MakeTimed-Shortcut=
+adams.gui.flow.tree.menu.MenuHeader-Shortcut=
+adams.gui.flow.tree.menu.PasteActor-Shortcut=
+adams.gui.flow.tree.menu.PasteActorAfter-Shortcut=meta alt V
+adams.gui.flow.tree.menu.PasteActorBeneath-Shortcut=meta shift V
+adams.gui.flow.tree.menu.PasteActorHere-Shortcut=meta V
+adams.gui.flow.tree.menu.RemoveActor-Shortcut=DELETE
+adams.gui.flow.tree.menu.RemoveBookmark-Shortcut=meta shift B
+adams.gui.flow.tree.menu.RemoveBreakpoints-Shortcut=
+adams.gui.flow.tree.menu.RemoveListeners-Shortcut=
+adams.gui.flow.tree.menu.RenameActor-Shortcut=F2
+adams.gui.flow.tree.menu.SwapActor-Shortcut=
+adams.gui.flow.tree.menu.ToggleState-Shortcut=SPACE
