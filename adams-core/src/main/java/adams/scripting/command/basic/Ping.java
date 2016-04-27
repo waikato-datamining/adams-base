@@ -20,8 +20,11 @@
 
 package adams.scripting.command.basic;
 
+import adams.core.DateUtils;
 import adams.core.net.InternetHelper;
 import adams.scripting.command.AbstractCommandWithResponse;
+
+import java.util.Date;
 
 /**
  * Requests an 'am alive' signal from the remote host.
@@ -33,6 +36,9 @@ public class Ping
   extends AbstractCommandWithResponse {
 
   private static final long serialVersionUID = -3350680106789169314L;
+
+  /** the start time. */
+  protected String m_TimestampStart;
 
   /** the host. */
   protected String m_Host;
@@ -47,11 +53,24 @@ public class Ping
     return "Requests an 'am alive' signal from the remote host.";
   }
 
+  /**
+   * Initializes the members.
+   */
   @Override
   protected void initialize() {
     super.initialize();
 
-    m_Host = "";
+    m_Host           = "";
+    m_TimestampStart = "";
+  }
+
+  /**
+   * Hook method for preparing the request payload,
+   */
+  @Override
+  protected void prepareRequestPayload() {
+    super.prepareRequestPayload();
+    m_TimestampStart = DateUtils.getTimestampFormatterMsecs().format(new Date());
   }
 
   /**
@@ -61,6 +80,12 @@ public class Ping
    */
   @Override
   public void setRequestPayload(byte[] value) {
+    if (value.length == 0) {
+      m_TimestampStart = "";
+      return;
+    }
+
+    m_TimestampStart = new String(value);
   }
 
   /**
@@ -70,7 +95,7 @@ public class Ping
    */
   @Override
   public byte[] getRequestPayload() {
-    return new byte[0];
+    return m_TimestampStart.getBytes();
   }
 
   /**
@@ -79,7 +104,7 @@ public class Ping
    * @return		the objects
    */
   public Object[] getRequestPayloadObjects() {
-    return new Object[0];
+    return new Object[]{m_TimestampStart};
   }
 
   /**
@@ -89,12 +114,21 @@ public class Ping
    */
   @Override
   public void setResponsePayload(byte[] value) {
-    if (value.length == 0) {
-      m_Host = "";
-      return;
-    }
+    String	tmp;
+    String[]	lines;
 
-    m_Host = new String(value);
+    m_TimestampStart = "";
+    m_Host           = "";
+
+    if (value.length == 0)
+      return;
+
+    tmp    = new String(value);
+    lines  = tmp.split("\n");
+    if (lines.length > 0)
+      m_TimestampStart = lines[0];
+    if (lines.length > 1)
+      m_Host = lines[1];
   }
 
   /**
@@ -104,7 +138,7 @@ public class Ping
    */
   @Override
   public byte[] getResponsePayload() {
-    return m_Host.getBytes();
+    return (m_TimestampStart + "\n" + m_Host).getBytes();
   }
 
   /**
@@ -121,6 +155,6 @@ public class Ping
    * @return		the objects
    */
   public Object[] getResponsePayloadObjects() {
-    return new Object[]{m_Host};
+    return new Object[]{m_TimestampStart, m_Host};
   }
 }
