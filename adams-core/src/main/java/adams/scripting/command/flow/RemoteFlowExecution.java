@@ -269,23 +269,23 @@ public class RemoteFlowExecution
 
     super.prepareRequestPayload();
 
-    if (!m_Flow.isDirectory()) {
-      actor = ActorUtils.read(m_Flow.getAbsolutePath());
-      if (actor == null)
-	getLogger().severe("Failed to load flow from: " + m_Flow);
-      m_Actor = actor;
-    }
-
-    storage = new HashMap<>();
-    vars    = new HashMap<>();
     if (getFlowContext() != null) {
+      if (!m_Flow.isDirectory()) {
+	actor = ActorUtils.read(m_Flow.getAbsolutePath());
+	if (actor == null)
+	  getLogger().severe("Failed to load flow from: " + m_Flow);
+	m_Actor = actor;
+      }
+
+      storage = new HashMap<>();
+      vars    = new HashMap<>();
       for (StorageName name : m_StorageNames)
 	storage.put(name.getValue(), getFlowContext().getStorageHandler().getStorage().get(name));
       for (VariableName name : m_VariableNames)
 	vars.put(name.getValue(), getFlowContext().getVariables().get(name.getValue()));
+      m_Storage   = storage;
+      m_Variables = vars;
     }
-    m_Storage   = storage;
-    m_Variables = vars;
   }
 
   /**
