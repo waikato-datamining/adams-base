@@ -147,4 +147,14 @@ public abstract class AbstractConnection
   public void cleanUp() {
 
   }
+
+  /**
+   * Just returns the commandline.
+   *
+   * @return		the commandline
+   */
+  @Override
+  public String toString() {
+    return OptionUtils.getCommandLine(this);
+  }
 }
