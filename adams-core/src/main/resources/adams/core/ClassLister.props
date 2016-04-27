@@ -644,6 +644,7 @@ adams.scripting.engine.RemoteCommandHandler=\
 adams.scripting.command.RemoteCommand=\
   adams.scripting.command,\
   adams.scripting.command.basic,\
+  adams.scripting.command.distributed,\
   adams.scripting.command.flow,\
   adams.scripting.command.gui
 
