@@ -24,6 +24,7 @@ import adams.core.Pausable;
 import adams.core.Stoppable;
 import adams.core.option.OptionHandler;
 import adams.gui.application.AbstractApplicationFrame;
+import adams.multiprocess.CallableWithResult;
 import adams.scripting.permissionhandler.PermissionHandler;
 import adams.scripting.requesthandler.RequestHandler;
 import adams.scripting.responsehandler.ResponseHandler;
@@ -116,6 +117,13 @@ public interface RemoteScriptingEngine
    * 			displaying in the gui
    */
   public String responseHandlerTipText();
+
+  /**
+   * Executes the job.
+   *
+   * @param job		the job to execute
+   */
+  public void executeJob(CallableWithResult<String> job);
 
   /**
    * Executes the scripting engine.

@@ -21,6 +21,7 @@
 package adams.scripting.engine;
 
 import adams.core.StoppableWithFeedback;
+import adams.core.Utils;
 import adams.core.logging.LoggingHelper;
 import adams.core.logging.LoggingSupporter;
 import adams.core.management.ProcessUtils;
@@ -31,6 +32,7 @@ import adams.core.option.OptionUtils;
 import adams.env.Environment;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.scripting.ScriptingEngine;
+import adams.multiprocess.CallableWithResult;
 import adams.scripting.permissionhandler.AllowAll;
 import adams.scripting.permissionhandler.PermissionHandler;
 import adams.scripting.requesthandler.RequestHandler;
@@ -262,6 +264,25 @@ public abstract class AbstractScriptingEngine
    */
   public AbstractApplicationFrame getApplicationContext() {
     return m_ApplicationContext;
+  }
+
+  /**
+   * Executes the job.
+   *
+   * @param job		the job to execute
+   */
+  public void executeJob(CallableWithResult<String> job) {
+    String 	msg;
+
+    try {
+      msg = job.call();
+    }
+    catch (Exception e) {
+      msg = Utils.handleException(this, "Failed to execute job!", e);
+    }
+
+    if (msg != null)
+      getLogger().severe(msg);
   }
 
   /**

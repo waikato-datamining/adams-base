@@ -88,7 +88,7 @@ public abstract class AbstractScriptingEngineWithJobQueue
    *
    * @param job		the job to queue
    */
-  public void queueJob(CallableWithResult<String> job) {
+  public void executeJob(CallableWithResult<String> job) {
     m_Executor.submit(job);
   }
 

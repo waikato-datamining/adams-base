@@ -20,8 +20,6 @@
 
 package adams.scripting.engine;
 
-import adams.multiprocess.CallableWithResult;
-
 /**
  * Interface for scripting engines that manage a job queue.
  *
@@ -52,11 +50,4 @@ public interface JobQueueHandler
    * 			displaying in the gui
    */
   public String maxConcurrentJobsTipText();
-
-  /**
-   * Queues the job in the execution pipeline.
-   *
-   * @param job		the job to queue
-   */
-  public void queueJob(CallableWithResult<String> job);
 }
