@@ -112,7 +112,7 @@ public abstract class AbstractCommand
   /**
    * Hook method for preparing the request payload,
    * <br>
-   * Default implementatio does nothing.
+   * Default implementation does nothing.
    */
   protected void prepareRequestPayload() {
   }
