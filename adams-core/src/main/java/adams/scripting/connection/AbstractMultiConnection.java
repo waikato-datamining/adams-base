@@ -20,6 +20,10 @@
 
 package adams.scripting.connection;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 /**
  * Ancestor for connection classes that manage multiple base connections.
  *
@@ -32,7 +36,7 @@ public abstract class AbstractMultiConnection
   private static final long serialVersionUID = 6581951716043112610L;
 
   /** the connections to manage. */
-  protected Connection[] m_Connections;
+  protected List<Connection> m_Connections;
 
   /**
    * Adds options to the internal list of options.
@@ -47,12 +51,23 @@ public abstract class AbstractMultiConnection
   }
 
   /**
+   * Initializes the members.
+   */
+  @Override
+  protected void initialize() {
+    super.initialize();
+
+    m_Connections = new ArrayList<>();
+  }
+
+  /**
    * Sets the connections to manage.
    *
    * @param value	the connections
    */
   public void setConnections(Connection[] value) {
-    m_Connections = value;
+    m_Connections.clear();
+    Collections.addAll(m_Connections, value);
     reset();
   }
 
@@ -62,7 +77,7 @@ public abstract class AbstractMultiConnection
    * @return		the connections
    */
   public Connection[] getConnections() {
-    return m_Connections;
+    return m_Connections.toArray(new Connection[m_Connections.size()]);
   }
 
   /**
@@ -72,4 +87,22 @@ public abstract class AbstractMultiConnection
    * 			displaying in the gui
    */
   public abstract String connectionsTipText();
+
+  /**
+   * Allows adding a connecction at runtime, without triggering a reset.
+   *
+   * @param conn	the connection to add
+   */
+  public void addConnection(Connection conn) {
+    m_Connections.add(conn);
+  }
+
+  /**
+   * Allows removing a connecction at runtime, without triggering a reset.
+   *
+   * @param conn	the connection to remove
+   */
+  public void removeConnection(Connection conn) {
+    m_Connections.remove(conn);
+  }
 }

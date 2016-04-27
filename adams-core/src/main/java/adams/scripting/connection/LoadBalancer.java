@@ -82,7 +82,7 @@ public class LoadBalancer
     result = super.checkRequest(cmd);
 
     if (result == null) {
-      if (m_Connections.length == 0)
+      if (m_Connections.size() == 0)
 	result = "No connections defined for balancing!";
     }
 
@@ -99,9 +99,9 @@ public class LoadBalancer
   protected String doSendRequest(RemoteCommand cmd) {
     String	result;
 
-    result = m_Connections[m_CurrentRequest].sendRequest(cmd);
+    result = m_Connections.get(m_CurrentRequest).sendRequest(cmd);
     m_CurrentRequest++;
-    if (m_CurrentRequest >= m_Connections.length)
+    if (m_CurrentRequest >= m_Connections.size())
       m_CurrentRequest = 0;
 
     return result;
@@ -119,7 +119,7 @@ public class LoadBalancer
     result = super.checkResponse(cmd);
 
     if (result == null) {
-      if (m_Connections.length == 0)
+      if (m_Connections.size() == 0)
 	result = "No connections defined for balancing!";
     }
 
@@ -136,9 +136,9 @@ public class LoadBalancer
   protected String doSendResponse(RemoteCommand cmd) {
     String	result;
 
-    result = m_Connections[m_CurrentResponse].sendResponse(cmd);
+    result = m_Connections.get(m_CurrentResponse).sendResponse(cmd);
     m_CurrentResponse++;
-    if (m_CurrentResponse >= m_Connections.length)
+    if (m_CurrentResponse >= m_Connections.size())
       m_CurrentResponse = 0;
 
     return result;
