@@ -98,7 +98,7 @@ public abstract class AbstractScriptingEngine
   protected void initialize() {
     super.initialize();
 
-    m_CommandHandler = getDefaultCommandHandler();
+    setCommandHandler(getDefaultCommandHandler());
   }
 
   /**
