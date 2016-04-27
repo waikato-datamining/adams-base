@@ -31,7 +31,7 @@ public abstract class AbstractMultiConnection
 
   private static final long serialVersionUID = 6581951716043112610L;
 
-  /** the connections to balance. */
+  /** the connections to manage. */
   protected Connection[] m_Connections;
 
   /**
@@ -47,7 +47,7 @@ public abstract class AbstractMultiConnection
   }
 
   /**
-   * Sets the connections to use for balancing.
+   * Sets the connections to manage.
    *
    * @param value	the connections
    */
@@ -57,7 +57,7 @@ public abstract class AbstractMultiConnection
   }
 
   /**
-   * Returns the connections to use for balancing.
+   * Returns the connections to manage.
    *
    * @return		the connections
    */
