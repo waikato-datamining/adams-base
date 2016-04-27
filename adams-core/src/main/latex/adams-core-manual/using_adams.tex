@@ -1923,6 +1923,17 @@ come in.
 
 In order to control the remote scripting engine, you can start/stop them
 from the main menu: \textit{Program $\rightarrow$ Remote commands...}
+The following scripting engines are available:
+\begin{tight_itemize}
+  \item \textit{DefaultScriptingEngine} -- just listens on a specified
+  port for commands.
+  \item \textit{FileBasedScriptingEngine} -- polls a directory for incoming
+  commands.
+  \item \textit{ForwardingScriptingEngine} -- forwards incoming commands
+  to a specified connection. Can act as load-balancer or single point of access
+  in conjunction with the \textit{LoadBalancer} connection and multiple defined
+  sub-connections.
+\end{tight_itemize}
 
 From this menu, you can also launch commands using the \textit{Send...}
 menu item. The dialog that you get prompted with allows you to configure
