@@ -31,7 +31,7 @@ import adams.scripting.connection.DefaultConnection;
  * @version $Revision$
  */
 public class DefaultSlaveScriptingEngine
-  extends AbstractScriptingEngineEnhancerWithJobQueue
+  extends AbstractScriptingEngineEnhancer
   implements SlaveScriptingEngine {
 
   private static final long serialVersionUID = 2201421147846496892L;

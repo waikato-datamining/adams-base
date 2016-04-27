@@ -29,8 +29,7 @@ import adams.scripting.connection.Connection;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public interface SlaveScriptingEngine
-  extends JobQueueHandler {
+public interface SlaveScriptingEngine {
 
   /**
    * Sets the connection for communicating with the master.
