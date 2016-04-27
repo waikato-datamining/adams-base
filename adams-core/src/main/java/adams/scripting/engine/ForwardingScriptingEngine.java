@@ -114,9 +114,6 @@ public class ForwardingScriptingEngine
   /** the connection to forward the commands to. */
   protected Connection m_Forward;
 
-  /** the command handler in use. */
-  protected RemoteCommandGrabber m_CommandHandler;
-
   /**
    * Returns a string describing the object.
    *
@@ -203,10 +200,15 @@ public class ForwardingScriptingEngine
    */
   @Override
   public String execute() {
-    m_CommandHandler = new RemoteCommandGrabber();
-    m_CommandHandler.setForwarder(this);
-    m_ScriptingEngine.setCommandHandler(m_CommandHandler);
+    RemoteCommandGrabber handler;
+
+    handler = new RemoteCommandGrabber();
+    handler.setForwarder(this);
+    handler.setLoggingLevel(getLoggingLevel());
+    m_ScriptingEngine.setCommandHandler(handler);
+
     // TODO load failed commands from "failed" directory
+
     return m_ScriptingEngine.execute();
   }
 
