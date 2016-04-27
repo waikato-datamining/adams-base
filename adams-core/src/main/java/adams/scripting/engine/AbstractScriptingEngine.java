@@ -31,13 +31,10 @@ import adams.core.option.OptionUtils;
 import adams.env.Environment;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.scripting.ScriptingEngine;
-import adams.multiprocess.CallableWithResult;
 import adams.scripting.permissionhandler.AllowAll;
 import adams.scripting.permissionhandler.PermissionHandler;
 import adams.scripting.requesthandler.RequestHandler;
 import adams.scripting.responsehandler.ResponseHandler;
-
-import java.util.concurrent.ExecutorService;
 
 /**
  * Ancestor of scripting engine for remote commands.
@@ -66,17 +63,11 @@ public abstract class AbstractScriptingEngine
   /** the response handler to use. */
   protected ResponseHandler m_ResponseHandler;
 
-  /** the number of concurrent jobs to allow. */
-  protected int m_MaxConcurrentJobs;
-
   /** whether the engine is paused. */
   protected boolean m_Paused;
 
   /** whether the engine is stopped. */
   protected boolean m_Stopped;
-
-  /** the executor service to use for parallel execution. */
-  protected ExecutorService m_Executor;
 
   /**
    * Adds options to the internal list of options.
@@ -100,10 +91,6 @@ public abstract class AbstractScriptingEngine
     m_OptionManager.add(
       "response-handler", "responseHandler",
       getDefaultResponseHandler());
-
-    m_OptionManager.add(
-      "max-concurrent-jobs", "maxConcurrentJobs",
-      1, 1, null);
   }
 
   /**
@@ -260,37 +247,6 @@ public abstract class AbstractScriptingEngine
   }
 
   /**
-   * Sets the maximum number of concurrent jobs to execute.
-   *
-   * @param value	the number of jobs
-   */
-  public void setMaxConcurrentJobs(int value) {
-    if (getOptionManager().isValid("maxConcurrentJobs", value)) {
-      m_MaxConcurrentJobs = value;
-      reset();
-    }
-  }
-
-  /**
-   * Returns the maximum number of concurrent jobs to execute.
-   *
-   * @return		the number of jobs
-   */
-  public int getMaxConcurrentJobs() {
-    return m_MaxConcurrentJobs;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the gui
-   */
-  public String maxConcurrentJobsTipText() {
-    return "The maximum number of concurrent jobs to execute.";
-  }
-
-  /**
    * Sets the application context.
    *
    * @param value	the context
@@ -306,15 +262,6 @@ public abstract class AbstractScriptingEngine
    */
   public AbstractApplicationFrame getApplicationContext() {
     return m_ApplicationContext;
-  }
-
-  /**
-   * Queues the job in the execution pipeline.
-   *
-   * @param job		the job to queue
-   */
-  public void queueJob(CallableWithResult<String> job) {
-    m_Executor.submit(job);
   }
 
   /**
@@ -350,7 +297,6 @@ public abstract class AbstractScriptingEngine
   public void stopExecution() {
     m_Stopped = true;
     m_Paused  = false;
-    m_Executor.shutdownNow();
   }
 
   /**

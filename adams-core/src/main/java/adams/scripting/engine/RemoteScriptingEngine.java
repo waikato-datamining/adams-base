@@ -24,7 +24,6 @@ import adams.core.Pausable;
 import adams.core.Stoppable;
 import adams.core.option.OptionHandler;
 import adams.gui.application.AbstractApplicationFrame;
-import adams.multiprocess.CallableWithResult;
 import adams.scripting.permissionhandler.PermissionHandler;
 import adams.scripting.requesthandler.RequestHandler;
 import adams.scripting.responsehandler.ResponseHandler;
@@ -117,35 +116,6 @@ public interface RemoteScriptingEngine
    * 			displaying in the gui
    */
   public String responseHandlerTipText();
-
-  /**
-   * Sets the maximum number of concurrent jobs to execute.
-   *
-   * @param value	the number of jobs
-   */
-  public void setMaxConcurrentJobs(int value);
-
-  /**
-   * Returns the maximum number of concurrent jobs to execute.
-   *
-   * @return		the number of jobs
-   */
-  public int getMaxConcurrentJobs();
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the gui
-   */
-  public String maxConcurrentJobsTipText();
-
-  /**
-   * Queues the job in the execution pipeline.
-   *
-   * @param job		the job to queue
-   */
-  public void queueJob(CallableWithResult<String> job);
 
   /**
    * Executes the scripting engine.

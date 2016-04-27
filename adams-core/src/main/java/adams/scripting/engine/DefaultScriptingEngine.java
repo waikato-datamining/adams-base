@@ -40,7 +40,7 @@ import java.util.logging.Level;
  * @version $Revision$
  */
 public class DefaultScriptingEngine
-  extends AbstractScriptingEngine {
+  extends AbstractScriptingEngineWithJobQueue {
 
   private static final long serialVersionUID = -3763240773922918567L;
 
