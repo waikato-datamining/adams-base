@@ -34,6 +34,8 @@ public abstract class AbstractScriptingEngineWithJobQueue
   extends AbstractScriptingEngine
   implements JobQueueHandler {
 
+  private static final long serialVersionUID = 1825313928700402608L;
+
   /** the number of concurrent jobs to allow. */
   protected int m_MaxConcurrentJobs;
 

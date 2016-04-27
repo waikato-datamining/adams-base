@@ -33,6 +33,8 @@ public abstract class AbstractRemoteCommandHandler
   extends AbstractOptionHandler
   implements RemoteCommandHandler {
 
+  private static final long serialVersionUID = 2416282434229390042L;
+
   /** the owner. */
   protected RemoteScriptingEngine m_Owner;
 

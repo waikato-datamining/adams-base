@@ -32,6 +32,8 @@ import adams.scripting.command.RemoteCommandWithResponse;
 public class DefaultRemoteCommandHandler
   extends AbstractRemoteCommandHandler {
 
+  private static final long serialVersionUID = -5775927108917582442L;
+
   /**
    * Returns a string describing the object.
    *
