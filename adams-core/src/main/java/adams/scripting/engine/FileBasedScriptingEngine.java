@@ -27,7 +27,6 @@ import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderDirectory;
 import adams.scripting.command.CommandUtils;
 import adams.scripting.command.RemoteCommand;
-import adams.scripting.command.RemoteCommandWithResponse;
 
 import java.io.File;
 import java.util.concurrent.Executors;
@@ -285,6 +284,7 @@ public class FileBasedScriptingEngine
     boolean		result;
     RemoteCommand	cmd;
     MessageCollection	errors;
+    String		msg;
 
     result = true;
     errors = new MessageCollection();
@@ -305,16 +305,10 @@ public class FileBasedScriptingEngine
 
       // handle command
       if (result) {
-	cmd.setApplicationContext(getApplicationContext());
-	if (cmd.isRequest()) {
-	  cmd.handleRequest(this, m_RequestHandler);
-	}
-	else {
-	  if (cmd instanceof RemoteCommandWithResponse)
-	    ((RemoteCommandWithResponse) cmd).handleResponse(this, m_ResponseHandler);
-	  else
-	    getResponseHandler().responseFailed(cmd, "Command does not support response handling!");
-	}
+        msg = m_CommandHandler.handle(cmd);
+        if (msg != null)
+          getLogger().severe("Failed to handle command:\n" + msg);
+        result = (msg == null);
       }
     }
 

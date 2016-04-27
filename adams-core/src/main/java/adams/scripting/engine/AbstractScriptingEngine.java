@@ -57,6 +57,9 @@ public abstract class AbstractScriptingEngine
   /** the permission handler. */
   protected PermissionHandler m_PermissionHandler;
 
+  /** the command handler. */
+  protected RemoteCommandHandler m_CommandHandler;
+  
   /** the request handler. */
   protected RequestHandler m_RequestHandler;
 
@@ -85,6 +88,10 @@ public abstract class AbstractScriptingEngine
     m_OptionManager.add(
       "permission-handler", "permissionHandler",
       getDefaultPermissionHandler());
+
+    m_OptionManager.add(
+      "command-handler", "commandHandler",
+      getDefaultCommandHandler());
 
     m_OptionManager.add(
       "request-handler", "requestHandler",
@@ -135,6 +142,45 @@ public abstract class AbstractScriptingEngine
    */
   public String permissionHandlerTipText() {
     return "The handler that determines what request can be executed.";
+  }
+
+  /**
+   * Returns the default command handler.
+   *
+   * @return		the default
+   */
+  protected RemoteCommandHandler getDefaultCommandHandler() {
+    return new DefaultRemoteCommandHandler();
+  }
+
+  /**
+   * Sets the command handler to use.
+   *
+   * @param value	the command handler
+   */
+  public void setCommandHandler(RemoteCommandHandler value) {
+    m_CommandHandler = value;
+    m_CommandHandler.setOwner(this);
+    reset();
+  }
+
+  /**
+   * Returns the command handler in use.
+   *
+   * @return		the command handler
+   */
+  public RemoteCommandHandler getCommandHandler() {
+    return m_CommandHandler;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the gui
+   */
+  public String commandHandlerTipText() {
+    return "The handler that handles the commands.";
   }
 
   /**

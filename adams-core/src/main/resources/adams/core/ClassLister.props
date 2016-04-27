@@ -636,6 +636,10 @@ adams.parser.plugin.ParserProcedure=\
 adams.scripting.engine.RemoteScriptingEngine=\
   adams.scripting.engine
 
+# the handlers for remote commands
+adams.scripting.engine.RemoteCommandHandler=\
+  adams.scripting.engine
+
 # the remote scripting commands
 adams.scripting.command.RemoteCommand=\
   adams.scripting.command,\

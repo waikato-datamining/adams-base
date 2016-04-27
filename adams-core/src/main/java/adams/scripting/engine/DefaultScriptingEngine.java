@@ -24,7 +24,6 @@ import adams.core.MessageCollection;
 import adams.core.Utils;
 import adams.scripting.command.CommandUtils;
 import adams.scripting.command.RemoteCommand;
-import adams.scripting.command.RemoteCommandWithResponse;
 import gnu.trove.list.array.TByteArrayList;
 
 import java.io.InputStream;
@@ -169,6 +168,7 @@ public class DefaultScriptingEngine
     String		data;
     RemoteCommand	cmd;
     MessageCollection	errors;
+    String		msg;
 
     // read data
     bytes = new TByteArrayList();
@@ -200,16 +200,9 @@ public class DefaultScriptingEngine
       }
 
       // handle command
-      cmd.setApplicationContext(getApplicationContext());
-      if (cmd.isRequest()) {
-	cmd.handleRequest(this, m_RequestHandler);
-      }
-      else {
-	if (cmd instanceof RemoteCommandWithResponse)
-	  ((RemoteCommandWithResponse) cmd).handleResponse(this, m_ResponseHandler);
-	else
-	  getResponseHandler().responseFailed(cmd, "Command does not support response handling!");
-      }
+      msg = m_CommandHandler.handle(cmd);
+      if (msg != null)
+	getLogger().severe("Failed to handle command:\n" + msg);
     }
     else {
       if (!errors.isEmpty())
