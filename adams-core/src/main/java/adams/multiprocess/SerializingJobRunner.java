@@ -344,7 +344,7 @@ public class SerializingJobRunner
   }
 
   /**
-   * Ingored.
+   * Ignored.
    *
    * @param j        job
    * @param jr        job result

@@ -167,7 +167,7 @@ public class FindUsages
   }
 
   /**
-   * Ingored.
+   * Ignored.
    *
    * @return		always null
    */

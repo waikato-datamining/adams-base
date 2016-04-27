@@ -872,7 +872,7 @@ public class ScpJobRunner
   }
 
   /**
-   * Ingored.
+   * Ignored.
    *
    * @param j        job
    * @param jr        job result
