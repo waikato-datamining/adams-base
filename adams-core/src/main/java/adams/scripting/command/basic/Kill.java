@@ -80,6 +80,13 @@ public class Kill
    */
   @Override
   protected String doHandleRequest(RemoteScriptingEngine engine) {
+    if (getApplicationContext() != null) {
+      if (getApplicationContext().getRemoteScriptingEngine() != null) {
+        getLogger().info("Stopping scripting engine");
+        getApplicationContext().getRemoteScriptingEngine().stopExecution();
+      }
+    }
+
     getLogger().info("Exiting");
     System.exit(0);
     return null;

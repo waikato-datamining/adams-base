@@ -126,6 +126,13 @@ public class Restart
    * @return		null if successful, otherwise error message
    */
   protected String doHandleRequest(RemoteScriptingEngine engine) {
+    if (getApplicationContext() != null) {
+      if (getApplicationContext().getRemoteScriptingEngine() != null) {
+        getLogger().info("Stopping scripting engine");
+        getApplicationContext().getRemoteScriptingEngine().stopExecution();
+      }
+    }
+
     getLogger().info("Restarting" + (m_MoreMemory ? " using more memory" : ""));
     if (m_MoreMemory)
       System.exit(Launcher.CODE_RESTART_MORE_HEAP);
