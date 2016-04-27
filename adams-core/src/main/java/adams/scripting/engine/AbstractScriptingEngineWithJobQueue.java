@@ -21,8 +21,7 @@
 package adams.scripting.engine;
 
 import adams.multiprocess.CallableWithResult;
-
-import java.util.concurrent.ExecutorService;
+import adams.multiprocess.PausableFixedThreadPoolExecutor;
 
 /**
  * Ancestor for scripting engines that manage a job queue to restrict executions.
@@ -40,7 +39,7 @@ public abstract class AbstractScriptingEngineWithJobQueue
   protected int m_MaxConcurrentJobs;
 
   /** the executor service to use for parallel execution. */
-  protected ExecutorService m_Executor;
+  protected PausableFixedThreadPoolExecutor m_Executor;
 
   /**
    * Adds options to the internal list of options.
@@ -92,6 +91,24 @@ public abstract class AbstractScriptingEngineWithJobQueue
    */
   public void executeJob(CallableWithResult<String> job) {
     m_Executor.submit(job);
+  }
+
+  /**
+   * Pauses the execution.
+   */
+  @Override
+  public void pauseExecution() {
+    super.pauseExecution();
+    m_Executor.pauseExecution();
+  }
+
+  /**
+   * Resumes the execution.
+   */
+  @Override
+  public void resumeExecution() {
+    super.resumeExecution();
+    m_Executor.resumeExecution();
   }
 
   /**

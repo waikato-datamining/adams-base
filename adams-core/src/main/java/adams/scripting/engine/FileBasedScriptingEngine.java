@@ -25,11 +25,11 @@ import adams.core.Utils;
 import adams.core.io.DirectoryLister;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderDirectory;
+import adams.multiprocess.PausableFixedThreadPoolExecutor;
 import adams.scripting.command.CommandUtils;
 import adams.scripting.command.RemoteCommand;
 
 import java.io.File;
-import java.util.concurrent.Executors;
 
 /**
  * Scripting engine that reads remote commands from disk.
@@ -380,7 +380,7 @@ public class FileBasedScriptingEngine
     m_Stopped = false;
 
     // start up job queue
-    m_Executor = Executors.newFixedThreadPool(m_MaxConcurrentJobs);
+    m_Executor = new PausableFixedThreadPoolExecutor(m_MaxConcurrentJobs);
     lister     = new DirectoryLister();
     lister.setListFiles(true);
     lister.setListDirs(false);

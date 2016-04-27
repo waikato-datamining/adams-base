@@ -22,6 +22,7 @@ package adams.scripting.engine;
 
 import adams.core.MessageCollection;
 import adams.core.Utils;
+import adams.multiprocess.PausableFixedThreadPoolExecutor;
 import adams.scripting.command.CommandUtils;
 import adams.scripting.command.RemoteCommand;
 import gnu.trove.list.array.TByteArrayList;
@@ -30,7 +31,6 @@ import java.io.InputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
-import java.util.concurrent.Executors;
 import java.util.logging.Level;
 
 /**
@@ -240,7 +240,7 @@ public class DefaultScriptingEngine
     // wait for connections
     if (m_Server != null) {
       // start up job queue
-      m_Executor = Executors.newFixedThreadPool(m_MaxConcurrentJobs);
+      m_Executor = new PausableFixedThreadPoolExecutor(m_MaxConcurrentJobs);
 
       while (!m_Stopped) {
 	while (m_Paused && !m_Stopped) {
