@@ -21,7 +21,7 @@
 package adams.scripting.connection;
 
 /**
- * Balances the handling of commands among several connections.
+ * Ancestor for connection classes that manage multiple base connections.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
