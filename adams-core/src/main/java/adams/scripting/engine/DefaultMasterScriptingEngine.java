@@ -22,7 +22,9 @@ package adams.scripting.engine;
 
 import adams.core.logging.LoggingLevel;
 import adams.scripting.command.RemoteCommand;
+import adams.scripting.command.basic.Kill;
 import adams.scripting.command.distributed.DeregisterSlave;
+import adams.scripting.command.distributed.KillSlaves;
 import adams.scripting.command.distributed.RegisterSlave;
 import adams.scripting.connection.Connection;
 import adams.scripting.connection.LoadBalancer;
@@ -116,6 +118,8 @@ public class DefaultMasterScriptingEngine
 	m_Master.registerSlave(((RegisterSlave) cmd).getConnection());
       else if (cmd instanceof DeregisterSlave)
 	m_Master.deregisterSlave(((DeregisterSlave) cmd).getConnection());
+      else if (cmd instanceof KillSlaves)
+	m_Master.killSlaves();
       else
 	result = m_Master.sendCommand(cmd);
 
@@ -187,6 +191,26 @@ public class DefaultMasterScriptingEngine
     if (isLoggingEnabled())
       getLogger().info("Deregistering: " + conn);
     m_Slaves.removeConnection(conn);
+  }
+
+  /**
+   * Kills all slaves registered.
+   */
+  public void killSlaves() {
+    Connection[]	conns;
+    Kill		kill;
+    String		msg;
+
+    conns = m_Slaves.getConnections().clone();
+    for (Connection conn: conns) {
+      if (isLoggingEnabled())
+	getLogger().info("Sending kill to " + conn);
+      m_Slaves.removeConnection(conn);
+      kill = new Kill();
+      msg  = conn.sendRequest(kill);
+      if (msg != null)
+	getLogger().severe(msg);
+    }
   }
 
   /**

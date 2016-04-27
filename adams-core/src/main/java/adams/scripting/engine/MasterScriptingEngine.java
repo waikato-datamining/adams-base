@@ -48,6 +48,11 @@ public interface MasterScriptingEngine
   public void deregisterSlave(Connection conn);
 
   /**
+   * Kills all slaves registered.
+   */
+  public void killSlaves();
+
+  /**
    * Sends the command to a slave.
    *
    * @param cmd		the command to send
