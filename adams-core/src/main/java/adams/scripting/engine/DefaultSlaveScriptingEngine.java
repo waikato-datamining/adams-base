@@ -20,6 +20,7 @@
 
 package adams.scripting.engine;
 
+import adams.scripting.command.distributed.DeregisterSlave;
 import adams.scripting.command.distributed.RegisterSlave;
 import adams.scripting.connection.Connection;
 import adams.scripting.connection.DefaultConnection;
@@ -184,5 +185,22 @@ public class DefaultSlaveScriptingEngine
     }
 
     return result;
+  }
+
+  /**
+   * Stops the scripting engine and deregisters with the master.
+   */
+  @Override
+  public void stopExecution() {
+    DeregisterSlave 	deregister;
+    String 		msg;
+
+    deregister = new DeregisterSlave();
+    deregister.setConnection(m_Slave);
+    msg = m_Master.sendRequest(deregister);
+    if (msg != null)
+      getLogger().severe("Failed to deregister: " + msg);
+
+    super.stopExecution();
   }
 }
