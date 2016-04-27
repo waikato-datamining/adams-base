@@ -28,6 +28,7 @@ import adams.flow.core.Actor;
 import adams.flow.core.ActorUtils;
 import adams.multiprocess.CallableWithResult;
 import adams.scripting.command.AbstractFlowAwareCommand;
+import adams.scripting.engine.JobQueueHandler;
 import adams.scripting.engine.RemoteScriptingEngine;
 
 import java.util.HashMap;
@@ -307,16 +308,24 @@ public class RemoteFlowExecution
 	  m_Actor.getVariables().set(key, m_Variables.get(key));
 
 	// queue job
-	engine.queueJob(new CallableWithResult<String>() {
-	  @Override
-	  protected String doCall() throws Exception {
-	    String res = m_Actor.execute();
-	    if (res != null)
-	      getLogger().severe("Actor not successful:\n" + res);
-	    m_Actor.cleanUp();
-	    return res;
-	  }
-	});
+        if (engine instanceof JobQueueHandler) {
+          ((JobQueueHandler) engine).queueJob(new CallableWithResult<String>() {
+            @Override
+            protected String doCall() throws Exception {
+              String res = m_Actor.execute();
+              if (res != null)
+                getLogger().severe("Actor not successful:\n" + res);
+              m_Actor.cleanUp();
+              return res;
+            }
+          });
+        }
+        else {
+          result = m_Actor.execute();
+          if (result != null)
+            getLogger().severe("Actor not successful:\n" + result);
+          m_Actor.cleanUp();
+        }
       }
     }
     else {
