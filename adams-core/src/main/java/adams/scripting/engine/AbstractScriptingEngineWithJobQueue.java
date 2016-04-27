@@ -99,7 +99,8 @@ public abstract class AbstractScriptingEngineWithJobQueue
   @Override
   public void pauseExecution() {
     super.pauseExecution();
-    m_Executor.pauseExecution();
+    if (m_Executor != null)
+      m_Executor.pauseExecution();
   }
 
   /**
@@ -108,7 +109,8 @@ public abstract class AbstractScriptingEngineWithJobQueue
   @Override
   public void resumeExecution() {
     super.resumeExecution();
-    m_Executor.resumeExecution();
+    if (m_Executor != null)
+      m_Executor.resumeExecution();
   }
 
   /**
@@ -117,6 +119,7 @@ public abstract class AbstractScriptingEngineWithJobQueue
   @Override
   public void stopExecution() {
     super.stopExecution();
-    m_Executor.shutdownNow();
+    if (m_Executor != null)
+      m_Executor.shutdownNow();
   }
 }
