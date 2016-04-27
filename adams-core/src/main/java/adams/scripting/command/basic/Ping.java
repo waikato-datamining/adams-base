@@ -37,8 +37,8 @@ public class Ping
 
   private static final long serialVersionUID = -3350680106789169314L;
 
-  /** the start time. */
-  protected String m_TimestampStart;
+  /** the send time. */
+  protected String m_TimestampSend;
 
   /** the host. */
   protected String m_Host;
@@ -61,7 +61,7 @@ public class Ping
     super.initialize();
 
     m_Host           = "";
-    m_TimestampStart = "";
+    m_TimestampSend = "";
   }
 
   /**
@@ -70,7 +70,7 @@ public class Ping
   @Override
   protected void prepareRequestPayload() {
     super.prepareRequestPayload();
-    m_TimestampStart = DateUtils.getTimestampFormatterMsecs().format(new Date());
+    m_TimestampSend = DateUtils.getTimestampFormatterMsecs().format(new Date());
   }
 
   /**
@@ -81,11 +81,11 @@ public class Ping
   @Override
   public void setRequestPayload(byte[] value) {
     if (value.length == 0) {
-      m_TimestampStart = "";
+      m_TimestampSend = "";
       return;
     }
 
-    m_TimestampStart = new String(value);
+    m_TimestampSend = new String(value);
   }
 
   /**
@@ -95,7 +95,7 @@ public class Ping
    */
   @Override
   public byte[] getRequestPayload() {
-    return m_TimestampStart.getBytes();
+    return m_TimestampSend.getBytes();
   }
 
   /**
@@ -104,7 +104,7 @@ public class Ping
    * @return		the objects
    */
   public Object[] getRequestPayloadObjects() {
-    return new Object[]{m_TimestampStart};
+    return new Object[]{m_TimestampSend};
   }
 
   /**
@@ -117,7 +117,7 @@ public class Ping
     String	tmp;
     String[]	lines;
 
-    m_TimestampStart = "";
+    m_TimestampSend = "";
     m_Host           = "";
 
     if (value.length == 0)
@@ -126,7 +126,7 @@ public class Ping
     tmp    = new String(value);
     lines  = tmp.split("\n");
     if (lines.length > 0)
-      m_TimestampStart = lines[0];
+      m_TimestampSend = lines[0];
     if (lines.length > 1)
       m_Host = lines[1];
   }
@@ -138,7 +138,7 @@ public class Ping
    */
   @Override
   public byte[] getResponsePayload() {
-    return (m_TimestampStart + "\n" + m_Host).getBytes();
+    return (m_TimestampSend + "\n" + m_Host).getBytes();
   }
 
   /**
@@ -155,6 +155,6 @@ public class Ping
    * @return		the objects
    */
   public Object[] getResponsePayloadObjects() {
-    return new Object[]{m_TimestampStart, m_Host};
+    return new Object[]{m_TimestampSend, m_Host};
   }
 }
