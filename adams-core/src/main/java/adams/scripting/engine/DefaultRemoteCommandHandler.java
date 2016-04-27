@@ -50,7 +50,11 @@ public class DefaultRemoteCommandHandler
    */
   @Override
   protected String doHandle(RemoteCommand cmd) {
+    if (isLoggingEnabled())
+      getLogger().info("Handling command: " + cmd.getClass().getName());
+
     cmd.setApplicationContext(m_Owner.getApplicationContext());
+
     if (cmd.isRequest()) {
       cmd.handleRequest(m_Owner, m_Owner.getRequestHandler());
     }
@@ -60,6 +64,7 @@ public class DefaultRemoteCommandHandler
       else
 	m_Owner.getResponseHandler().responseFailed(cmd, "Command does not support response handling!");
     }
+
     return null;
   }
 }
