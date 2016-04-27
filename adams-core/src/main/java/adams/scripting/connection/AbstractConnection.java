@@ -21,6 +21,7 @@
 package adams.scripting.connection;
 
 import adams.core.option.AbstractOptionHandler;
+import adams.core.option.OptionUtils;
 import adams.scripting.command.RemoteCommand;
 
 /**
@@ -111,6 +112,30 @@ public abstract class AbstractConnection
       result = doSendResponse(cmd);
 
     return result;
+  }
+
+  /**
+   * Compares this connection with the other one using the commandline string.
+   *
+   * @param o		the other connection
+   * @return		less than zero, equal to zero or greater than zero if
+   * 			the commandline string is less, equal or greater than
+   * 			this one
+   */
+  @Override
+  public int compareTo(Connection o) {
+    return OptionUtils.getCommandLine(this).compareTo(OptionUtils.getCommandLine(o));
+  }
+
+  /**
+   * Checks whether the object is the same as this one.
+   *
+   * @param o		the other object
+   * @return		true if also a connection object and the same commandline
+   * @see		#compareTo(Connection)
+   */
+  public boolean equals(Object o) {
+    return (o instanceof Connection) && (compareTo((Connection) o) == 0);
   }
 
   /**

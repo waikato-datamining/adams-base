@@ -31,7 +31,7 @@ import adams.scripting.command.RemoteCommand;
  * @version $Revision$
  */
 public interface Connection
-  extends OptionHandler, CleanUpHandler {
+  extends OptionHandler, CleanUpHandler, Comparable<Connection> {
 
   /**
    * Sends the request command.
