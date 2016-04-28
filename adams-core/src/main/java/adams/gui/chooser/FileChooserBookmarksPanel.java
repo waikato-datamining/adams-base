@@ -15,26 +15,25 @@
 
 /**
  * FileChooserBookmarksPanel.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.chooser;
-
-import javax.swing.ImageIcon;
-import javax.swing.JFileChooser;
 
 import adams.core.Properties;
 import adams.env.Environment;
 import adams.gui.core.GUIHelper;
-
 import com.googlecode.jfilechooserbookmarks.AbstractBookmarksPanel;
 import com.googlecode.jfilechooserbookmarks.AbstractFactory;
 import com.googlecode.jfilechooserbookmarks.AbstractIconLoader;
 import com.googlecode.jfilechooserbookmarks.AbstractPropertiesHandler;
 import com.googlecode.jfilechooserbookmarks.DefaultFactory;
 
+import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
+
 /**
  * Panel for bookmarking directories in a {@link JFileChooser}.
- * 
+ *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
@@ -43,13 +42,13 @@ public class FileChooserBookmarksPanel
 
   /** for serialization. */
   private static final long serialVersionUID = -1969362821325599909L;
-  
+
   /** the properties to store the bookmarks in. */
   public final static String FILENAME = "FileChooserBookmarks.props";
 
   /**
    * The ADAMS-specific properties handler.
-   * 
+   *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
    * @version $Revision$
    */
@@ -61,48 +60,48 @@ public class FileChooserBookmarksPanel
 
     /**
      * Not used.
-     * 
+     *
      * @return		always null
      */
     @Override
     protected String getFilename() {
       return null;
     }
-    
+
     /**
      * Loads the properties.
-     * 
+     *
      * @return		the properties loaded from disk
      */
     @Override
     public java.util.Properties loadProperties() {
       try {
-	return Properties.read(FILENAME);
+        return Properties.read(FILENAME);
       }
       catch (Exception e) {
-	return new Properties();
+        return new Properties();
       }
     }
-    
+
     /**
      * Saves the properties.
-     * 
+     *
      * @param props	the properties to save
      */
     @Override
     public boolean saveProperties(java.util.Properties props) {
       Properties	properties;
       if (!(props instanceof Properties))
-	properties = new Properties(props);
+        properties = new Properties(props);
       else
-	properties = (Properties) props;
+        properties = (Properties) props;
       return properties.save(Environment.getInstance().createPropertiesFilename(FILENAME));
     }
   }
-  
+
   /**
    * ADAMS-specific icon loader.
-   * 
+   *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
    * @version $Revision$
    */
@@ -114,7 +113,7 @@ public class FileChooserBookmarksPanel
 
     /**
      * Returns the "down" icon.
-     * 
+     *
      * @return		the icon
      */
     @Override
@@ -124,7 +123,7 @@ public class FileChooserBookmarksPanel
 
     /**
      * Returns the "up" icon.
-     * 
+     *
      * @return		the icon
      */
     @Override
@@ -134,7 +133,7 @@ public class FileChooserBookmarksPanel
 
     /**
      * Returns the "add" icon.
-     * 
+     *
      * @return		the icon
      */
     @Override
@@ -144,7 +143,7 @@ public class FileChooserBookmarksPanel
 
     /**
      * Returns the "remove" icon.
-     * 
+     *
      * @return		the icon
      */
     @Override
@@ -154,40 +153,60 @@ public class FileChooserBookmarksPanel
 
     /**
      * Returns the "rename" icon.
-     * 
+     *
      * @return		the icon
      */
     @Override
     public ImageIcon getRename() {
       return GUIHelper.getEmptyIcon();
     }
+
+    /**
+     * Returns the "copy" icon.
+     *
+     * @return		the icon
+     */
+    @Override
+    public ImageIcon getCopy() {
+      return GUIHelper.getIcon("copy.gif");
+    }
+
+    /**
+     * Returns the "paste" icon.
+     *
+     * @return		the icon
+     */
+    @Override
+    public ImageIcon getPaste() {
+      return GUIHelper.getIcon("paste.gif");
+    }
   }
-  
+
   /**
    * ADAMS-specific factory.
-   * 
+   *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
    * @version $Revision$
    */
   public static class FileChooserBookmarksFactory
     extends DefaultFactory {
-    
+
     /** for serialization. */
     private static final long serialVersionUID = -8327179027505887784L;
 
     /**
      * Returns a new instance of the properties handler to be used.
-     * 
+     *
      * @return		the handler instance
      */
     @Override
     public AbstractPropertiesHandler newPropertiesHandler() {
       return new FileChooserBookmarksPropertiesHandler();
     }
-    
+
     /**
      * Returns a new instance of the icon loader to be used.
-     * 
+     *
      * @return		the loader instance
      */
     @Override
@@ -198,7 +217,7 @@ public class FileChooserBookmarksPanel
 
   /**
    * Creates a new instance of the factory.
-   * 
+   *
    * @return		the factory
    */
   @Override
