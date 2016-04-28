@@ -146,7 +146,7 @@ public class Ping
    */
   @Override
   protected void prepareResponsePayload() {
-    m_Host = InternetHelper.getLocalHostIP() + "/" + InternetHelper.getLocalHostName();
+    m_Host = InternetHelper.getIPFromNetworkInterface() + "/" + InternetHelper.getHostnameFromNetworkInterface();
   }
 
   /**
