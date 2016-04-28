@@ -69,7 +69,8 @@ public class DefaultMasterScriptingEngine
      * Sets the master scripting engine this command handler belongs to.
      *
      * @param value	the owner
-     */    public void setMaster(MasterScriptingEngine value) {
+     */
+    public void setMaster(MasterScriptingEngine value) {
       m_Master = value;
     }
 
