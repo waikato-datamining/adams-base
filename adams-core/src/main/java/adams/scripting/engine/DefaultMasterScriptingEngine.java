@@ -62,7 +62,7 @@ public class DefaultMasterScriptingEngine
      */
     @Override
     public String globalInfo() {
-      return "Handles the register/derigister of slaves.";
+      return "Handles the register/deregister of slaves.";
     }
 
     /**
