@@ -15,9 +15,11 @@
 
 /**
  * InetAddressHelper.java
- * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.net;
+
+import org.apache.commons.codec.binary.Base64;
 
 import java.io.File;
 import java.net.InetAddress;
@@ -25,8 +27,6 @@ import java.net.NetworkInterface;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
-
-import org.apache.commons.codec.binary.Base64;
 
 /**
  * Helper class for internet related stuff.
@@ -66,12 +66,15 @@ public class InternetHelper {
     result = null;
 
     if (m_IPNetworkInterface == null) {
-      list   = new ArrayList<String>();
+      list   = new ArrayList<>();
       found  = false;
       try {
 	enmI = NetworkInterface.getNetworkInterfaces();
 	while (enmI.hasMoreElements()) {
 	  intf = enmI.nextElement();
+	  // skip non-active ones
+	  if (!intf.isUp())
+	    continue;
 	  enmA = intf.getInetAddresses();
 	  while (enmA.hasMoreElements()) {
 	    addr = enmA.nextElement();
@@ -123,12 +126,15 @@ public class InternetHelper {
     result = null;
 
     if (m_HostnameNetworkInterface == null) {
-      list   = new ArrayList<String>();
+      list   = new ArrayList<>();
       found  = false;
       try {
 	enmI = NetworkInterface.getNetworkInterfaces();
 	while (enmI.hasMoreElements()) {
 	  intf = enmI.nextElement();
+	  // skip non-active ones
+	  if (!intf.isUp())
+	    continue;
 	  enmA = intf.getInetAddresses();
 	  while (enmA.hasMoreElements()) {
 	    addr = enmA.nextElement();
