@@ -15,19 +15,15 @@
 
 /**
  * BufferedImage.java
- * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.clipboard;
 
-import adams.core.License;
-import adams.core.annotation.MixedCopyright;
 import adams.data.image.AbstractImageContainer;
 import adams.data.image.BufferedImageContainer;
 import adams.flow.core.Token;
 import adams.gui.core.GUIHelper;
 
-import java.awt.Graphics;
-import java.awt.Image;
 import java.awt.datatransfer.DataFlavor;
 
 /**
@@ -113,30 +109,7 @@ public class BufferedImage
    * 
    * @return		the pasted data, null if failed to paste
    */
-  @MixedCopyright(
-      author = "ImageJ",
-      license = License.PUBLIC_DOMAIN,
-      url = "http://rsbweb.nih.gov/ij/developer/source/ij/plugin/Clipboard.java.html",
-      note = "taken from showSystemClipboard() method"
-  )
   public java.awt.image.BufferedImage paste() {
-    java.awt.image.BufferedImage	result;
-    Image				img;
-    int 				width;
-    int 				height;
-    Graphics 				g;
-
-    result = null;
-    img    = (Image) GUIHelper.pasteFromClipboard(DataFlavor.imageFlavor);
-    if (img != null) {
-      width  = img.getWidth(null);
-      height = img.getHeight(null);
-      result = new java.awt.image.BufferedImage(width, height, java.awt.image.BufferedImage.TYPE_INT_RGB);
-      g      = result.createGraphics();
-      g.drawImage(img, 0, 0, null);
-      g.dispose();
-    }
-
-    return result;
+    return GUIHelper.pasteImageFromClipboard();
   }
 }

@@ -34,8 +34,8 @@ import adams.gui.application.Child;
 import adams.gui.dialog.ApprovalDialog;
 import adams.gui.dialog.TextDialog;
 import adams.gui.dialog.TextPanel;
+import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
-import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -67,9 +67,7 @@ import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
-import java.awt.Toolkit;
 import java.awt.Window;
-import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
@@ -1147,7 +1145,7 @@ public class GUIHelper {
    * @param t		the transferable to copy
    */
   public static void copyToClipboard(Transferable t) {
-    Toolkit.getDefaultToolkit().getSystemClipboard().setContents(t, null);
+    ClipboardHelper.copyToClipboard(t);
   }
 
   /**
@@ -1156,7 +1154,7 @@ public class GUIHelper {
    * @param s		the string to copy
    */
   public static void copyToClipboard(String s) {
-    copyToClipboard(new TransferableString(s));
+    ClipboardHelper.copyToClipboard(s);
   }
 
   /**
@@ -1165,7 +1163,7 @@ public class GUIHelper {
    * @param img		the image to copy
    */
   public static void copyToClipboard(BufferedImage img) {
-    copyToClipboard(new TransferableImage(img));
+    ClipboardHelper.copyToClipboard(img);
   }
 
   /**
@@ -1174,15 +1172,7 @@ public class GUIHelper {
    * @param comp		the component to copy
    */
   public static void copyToClipboard(JComponent comp) {
-    BufferedImage img;
-    Graphics 		g;
-
-    img  = new BufferedImage(comp.getWidth(), comp.getHeight(), BufferedImage.TYPE_INT_RGB);
-    g    = img.getGraphics();
-    g.setPaintMode();
-    g.fillRect(0, 0, comp.getWidth(), comp.getHeight());
-    comp.printAll(g);
-    GUIHelper.copyToClipboard(img);
+    ClipboardHelper.copyToClipboard(comp);
   }
 
   /**
@@ -1191,12 +1181,7 @@ public class GUIHelper {
    * @param table		the table to copy
    */
   public static void copyToClipboard(JTable table) {
-    Action 	copy;
-    ActionEvent event;
-
-    copy  = table.getActionMap().get("copy");
-    event = new ActionEvent(table, ActionEvent.ACTION_PERFORMED, "");
-    copy.actionPerformed(event);
+    ClipboardHelper.copyToClipboard(table);
   }
 
   /**
@@ -1206,18 +1191,7 @@ public class GUIHelper {
    * @return		true if the data can be obtained, false if not available
    */
   public static boolean canPasteFromClipboard(DataFlavor flavor) {
-    Clipboard 		clipboard;
-    boolean		result;
-
-    try {
-      clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-      result    = clipboard.isDataFlavorAvailable(flavor);
-    }
-    catch (Exception e) {
-      result = false;
-    }
-
-    return result;
+    return ClipboardHelper.canPasteFromClipboard(flavor);
   }
 
   /**
@@ -1226,7 +1200,7 @@ public class GUIHelper {
    * @return		true if string can be obtained, false if not available
    */
   public static boolean canPasteStringFromClipboard() {
-    return canPasteFromClipboard(DataFlavor.stringFlavor);
+    return ClipboardHelper.canPasteStringFromClipboard();
   }
 
   /**
@@ -1236,23 +1210,7 @@ public class GUIHelper {
    * @return		the obtained object, null if not available
    */
   public static Object pasteFromClipboard(DataFlavor flavor) {
-    Clipboard 		clipboard;
-    Object		result;
-    Transferable	content;
-
-    result = null;
-
-    try {
-      clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-      content   = clipboard.getContents(null);
-      if ((content != null) && (content.isDataFlavorSupported(flavor)))
-	result = content.getTransferData(flavor);
-    }
-    catch (Exception e) {
-      result = null;
-    }
-
-    return result;
+    return ClipboardHelper.pasteFromClipboard(flavor);
   }
 
   /**
@@ -1261,23 +1219,16 @@ public class GUIHelper {
    * @return		the obtained string, null if not available
    */
   public static String pasteStringFromClipboard() {
-    Clipboard 		clipboard;
-    String		result;
-    Transferable	content;
+    return ClipboardHelper.pasteStringFromClipboard();
+  }
 
-    result = null;
-
-    try {
-      clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-      content   = clipboard.getContents(null);
-      if ((content != null) && (content.isDataFlavorSupported(DataFlavor.stringFlavor)))
-	result = (String) content.getTransferData(DataFlavor.stringFlavor);
-    }
-    catch (Exception e) {
-      result = null;
-    }
-
-    return result;
+  /**
+   * Obtains an image from the clipboard.
+   *
+   * @return		the obtained image, null if not available
+   */
+  public static BufferedImage pasteImageFromClipboard() {
+    return ClipboardHelper.pasteImageFromClipboard();
   }
 
   /**
