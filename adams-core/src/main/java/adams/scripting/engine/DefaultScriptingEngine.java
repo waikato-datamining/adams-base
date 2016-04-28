@@ -22,6 +22,7 @@ package adams.scripting.engine;
 
 import adams.core.MessageCollection;
 import adams.core.Utils;
+import adams.core.net.PortManager;
 import adams.multiprocess.PausableFixedThreadPoolExecutor;
 import adams.scripting.command.CommandUtils;
 import adams.scripting.command.RemoteCommand;
@@ -146,6 +147,7 @@ public class DefaultScriptingEngine
    */
   protected void closeSocket() {
     if (m_Server != null) {
+      PortManager.getSingleton().release(m_Port);
       try {
 	m_Server.close();
       }
@@ -231,6 +233,7 @@ public class DefaultScriptingEngine
     try {
       m_Server = new ServerSocket(m_Port);
       m_Server.setSoTimeout(m_Timeout);
+      PortManager.getSingleton().bind(this, m_Port);
     }
     catch (Exception e) {
       result   = Utils.handleException(this, "Failed to set up server socket!", e);
