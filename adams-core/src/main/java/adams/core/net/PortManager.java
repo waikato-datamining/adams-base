@@ -124,6 +124,36 @@ public class PortManager
   }
 
   /**
+   * Sets a port as used.
+   *
+   * @param obj		the object binding the port
+   * @param port	the port in use
+   * @throws IllegalArgumentException	if object is null
+   */
+  public synchronized void bind(Object obj, int port) {
+    if (obj == null)
+      throw new IllegalArgumentException("Object is null!");
+    bind(obj.getClass(), port);
+  }
+
+  /**
+   * Sets a port as used.
+   *
+   * @param cls		the class binding the port
+   * @param port	the port in use
+   * @throws IllegalArgumentException	if object is null
+   */
+  public synchronized void bind(Class cls, int port) {
+    if (cls == null)
+      throw new IllegalArgumentException("Class is null!");
+    m_Ports.add(port);
+    m_PortClass.put(port, cls);
+      if (!m_ClassPorts.containsKey(cls))
+	m_ClassPorts.put(cls, new HashSet<>());
+      m_ClassPorts.get(cls).add(port);
+  }
+
+  /**
    * Returns the next available port, starting with the given starting port.
    *
    * @param obj		the object requesting the port
