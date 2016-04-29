@@ -15,15 +15,15 @@
 
 /**
  * TreeNodeCollection.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.tree;
 
+import adams.gui.core.DragAndDropTreeNodeCollection;
+import com.github.fracpete.jclipboardhelper.TransferableString;
+
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
-
-import adams.gui.core.DragAndDropTreeNodeCollection;
-import adams.gui.core.TransferableString;
 
 /**
  * Node collection for the flow editor.

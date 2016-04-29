@@ -15,18 +15,17 @@
 
 /*
  * DOMNode.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core.dom;
 
-import java.awt.datatransfer.Transferable;
-
-import org.w3c.dom.Node;
-
 import adams.data.conversion.DOMNodeToString;
 import adams.gui.core.BaseTreeNode;
-import adams.gui.core.TransferableString;
+import com.github.fracpete.jclipboardhelper.TransferableString;
+import org.w3c.dom.Node;
+
+import java.awt.datatransfer.Transferable;
 
 /**
  * Specialized tree node.
@@ -93,7 +92,7 @@ public class DOMNode
    */
   @Override
   public Transferable toTransferable() {
-    TransferableString		result;
+    TransferableString 		result;
     DOMNodeToString		conv;
     String			msg;
     

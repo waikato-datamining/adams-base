@@ -36,7 +36,7 @@ import adams.flow.core.MutableActorHandler;
 import adams.flow.core.OutputProducer;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.LazyExpansionTreeNode;
-import adams.gui.core.TransferableString;
+import com.github.fracpete.jclipboardhelper.TransferableString;
 import org.markdownj.MarkdownProcessor;
 
 import java.awt.Cursor;

@@ -14,10 +14,12 @@
  */
 
 /**
- * BaseTreeNodeCollection.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * DragAndDropTreeNodeCollection.java
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
+
+import com.github.fracpete.jclipboardhelper.TransferableString;
 
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;

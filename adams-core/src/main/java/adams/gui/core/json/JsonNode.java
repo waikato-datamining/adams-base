@@ -15,16 +15,16 @@
 
 /*
  * JsonNode.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core.json;
 
-import java.awt.datatransfer.Transferable;
-
-import net.minidev.json.JSONValue;
 import adams.gui.core.BaseTreeNode;
-import adams.gui.core.TransferableString;
+import com.github.fracpete.jclipboardhelper.TransferableString;
+import net.minidev.json.JSONValue;
+
+import java.awt.datatransfer.Transferable;
 
 /**
  * Specialized tree node.

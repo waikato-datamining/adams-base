@@ -15,7 +15,7 @@
 
 /*
  * DotNotationTree.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core.dotnotationtree;
@@ -26,7 +26,7 @@ import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTreeNode;
 import adams.gui.core.DragAndDropTree;
 import adams.gui.core.MouseUtils;
-import adams.gui.core.TransferableString;
+import com.github.fracpete.jclipboardhelper.TransferableString;
 
 import javax.swing.JFrame;
 import javax.swing.JTextField;
