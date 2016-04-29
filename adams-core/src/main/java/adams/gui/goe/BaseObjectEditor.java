@@ -45,7 +45,6 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.lang.reflect.Array;
@@ -250,7 +249,7 @@ public class BaseObjectEditor
     JButton 		buttonOK;
     JButton 		buttonClose;
 
-    m_TextValue = new BaseTextArea(1, 20);
+    m_TextValue = new BaseTextArea(2, 30);
     ((BaseTextArea) m_TextValue).setLineWrap(true);
     m_TextValue.addKeyListener(new KeyAdapter() {
       @Override
@@ -289,31 +288,19 @@ public class BaseObjectEditor
     m_ButtonHelp = new JButton();
     m_ButtonHelp.setVisible(false);
     m_ButtonHelp.setToolTipText(getHelpDescription());
-    m_ButtonHelp.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	BrowserHelper.openURL(getHelpURL());
-      }
-    });
+    m_ButtonHelp.addActionListener((ActionEvent e) -> BrowserHelper.openURL(getHelpURL()));
     panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     panelAll.add(panel, BorderLayout.EAST);
     panel.add(m_ButtonHelp);
 
     buttonOK = new JButton("OK");
     buttonOK.setMnemonic('O');
-    buttonOK.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	acceptInput();
-      }
-    });
+    buttonOK.addActionListener((ActionEvent e) -> acceptInput());
     panelButtons.add(buttonOK);
 
     buttonClose = new JButton("Cancel");
     buttonClose.setMnemonic('C');
-    buttonClose.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	discardInput();
-      }
-    });
+    buttonClose.addActionListener((ActionEvent e) -> discardInput());
     panelButtons.add(buttonClose);
 
     return panelAll;
