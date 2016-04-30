@@ -31,6 +31,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static adams.flow.transformer.AbstractDeleteReportValue.MatchType.FIELDS;
+
 /**
  * Ancestor for transformers that delete values from a report.
  *
@@ -80,7 +82,7 @@ public abstract class AbstractDeleteReportValue
 
     m_OptionManager.add(
 	    "type", "type",
-	    MatchType.FIELDS);
+	    FIELDS);
 
     m_OptionManager.add(
 	    "field", "fields",
@@ -216,7 +218,11 @@ public abstract class AbstractDeleteReportValue
       if (report != null) {
 	switch (m_Type) {
 	  case REGEXP:
-	    fields = report.getFields();
+	    fields = new ArrayList<>();
+	    for (AbstractField field: report.getFields()) {
+	      if (m_RegExp.isMatch(field.getName()))
+		fields.add(field);
+	    }
 	    break;
 	  case FIELDS:
 	    fields = new ArrayList<>(Arrays.asList(m_Fields));
@@ -227,11 +233,9 @@ public abstract class AbstractDeleteReportValue
 
 	// remove fields
 	for (AbstractField field: fields) {
-	  if (m_RegExp.isMatch(field.getName())) {
-	    if (isLoggingEnabled())
-	      getLogger().info("Deleting field: " + field);
-	    report.removeValue(field);
-	  }
+	  if (isLoggingEnabled())
+	    getLogger().info("Deleting field: " + field);
+	  report.removeValue(field);
 	}
       }
       else {
