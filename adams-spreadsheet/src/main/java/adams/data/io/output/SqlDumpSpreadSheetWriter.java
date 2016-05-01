@@ -606,7 +606,7 @@ public class SqlDumpSpreadSheetWriter
 	  writer.write("-- " + content.getComments().get(i) + newline);
 	writer.write(newline);
 
-	wrter         = new SqlUtils.Writer(content, m_Table, 255, m_ColumnNameConversion, m_StringColumnSQL, m_MaxStringLength);
+	wrter         = new SqlUtils.Writer(content, m_Table, 255, m_ColumnNameConversion, m_StringColumnSQL, m_MaxStringLength, 1);
 	m_Types       = wrter.getContentTypes();
 	m_ColumnNames = wrter.getColumnNames();
 

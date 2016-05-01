@@ -85,6 +85,9 @@ public class SqlUtils {
     /** the maximum length for strings. */
     protected int m_MaxStringLength;
 
+    /** the batch size. */
+    protected int m_BatchSize;
+
     /** whether the last action was stopped. */
     protected boolean m_Stopped;
 
@@ -98,7 +101,7 @@ public class SqlUtils {
      * @param stringCol	the SQL type for string columns
      * @param maxStr	the maximum length for strings (get truncated)
      */
-    public Writer(SpreadSheet sheet, String table, int maxCol, ColumnNameConversion colName, String stringCol, int maxStr) {
+    public Writer(SpreadSheet sheet, String table, int maxCol, ColumnNameConversion colName, String stringCol, int maxStr, int batchSize) {
       super();
 
       m_Sheet                = sheet;
@@ -107,6 +110,7 @@ public class SqlUtils {
       m_ColumnNameConversion = colName;
       m_StringColumnSQL      = stringCol;
       m_MaxStringLength      = maxStr;
+      m_BatchSize            = batchSize;
 
       generate();
     }
@@ -151,7 +155,7 @@ public class SqlUtils {
 
       // column names
       m_ColumnNames = new String[m_Sheet.getColumnCount()];
-      names         = new HashSet<String>();
+      names         = new HashSet<>();
       for (i = 0; i < m_Sheet.getColumnCount(); i++) {
 	name   = m_Sheet.getHeaderRow().getCell(i).getContent();
 	name   = fixColumnName(name);
@@ -159,7 +163,7 @@ public class SqlUtils {
 	count  = 0;
 	while (names.contains(name)) {
 	  count++;
-	  if (new String(prefix + count).length() > m_MaxColumnLength)
+	  if ((prefix + count).length() > m_MaxColumnLength)
 	    prefix = prefix.substring(0, prefix.length() - 1);
 	  name = prefix + count;
 	}
@@ -279,27 +283,27 @@ public class SqlUtils {
 	  result.append(", ");
 	switch (m_ContentTypes[i]) {
 	  case LONG:
-	    result.append(m_ColumnNames[i] + " INTEGER");
+	    result.append(m_ColumnNames[i]).append(" INTEGER");
 	    break;
 	  case DOUBLE:
-	    result.append(m_ColumnNames[i] + " DOUBLE PRECISION");
+	    result.append(m_ColumnNames[i]).append(" DOUBLE PRECISION");
 	    break;
 	  case DATE:
-	    result.append(m_ColumnNames[i] + " DATE");
+	    result.append(m_ColumnNames[i]).append(" DATE");
 	    break;
 	  case DATETIME:
 	  case DATETIMEMSEC:
-	    result.append(m_ColumnNames[i] + " TIMESTAMP");
+	    result.append(m_ColumnNames[i]).append(" TIMESTAMP");
 	    break;
 	  case TIME:
 	  case TIMEMSEC:
-	    result.append(m_ColumnNames[i] + " TIME");
+	    result.append(m_ColumnNames[i]).append(" TIME");
 	    break;
 	  case BOOLEAN:
-	    result.append(m_ColumnNames[i] + " BOOLEAN");
+	    result.append(m_ColumnNames[i]).append(" BOOLEAN");
 	    break;
 	  default:
-	    result.append(m_ColumnNames[i] + " " + stringType);
+	    result.append(m_ColumnNames[i]).append(" ").append(stringType);
 	    break;
 	}
       }
@@ -389,10 +393,10 @@ public class SqlUtils {
       String		result;
       StringBuilder	query;
       PreparedStatement	stmt;
-      int			i;
+      int		i;
       Cell		cell;
-      int			type;
-      int			count;
+      int		type;
+      int		count;
       String		str;
 
       result = null;
@@ -419,7 +423,7 @@ public class SqlUtils {
 	stmt   = null;
       }
 
-      if (result == null) {
+      if ((result == null) && (stmt != null)) {
 	m_Stopped = false;
 	count     = 0;
 	for (Row row: m_Sheet.rows()) {
@@ -464,7 +468,15 @@ public class SqlUtils {
 		}
 	      }
 	    }
-	    stmt.execute();
+	    if (m_BatchSize > 1) {
+	      stmt.addBatch();
+	      if ((count % m_BatchSize == 0) || (count == m_Sheet.getRowCount())) {
+		stmt.executeBatch();
+	      }
+	    }
+	    else {
+	      stmt.execute();
+	    }
 	  }
 	  catch (Exception e) {
 	    result = Utils.handleException(this, "Failed to insert data: " + row + "\nusing: " + stmt, e);

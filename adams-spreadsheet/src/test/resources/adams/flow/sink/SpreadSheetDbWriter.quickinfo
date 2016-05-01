@@ -1,0 +1,1 @@
+table: blah, conversion: UPPER_CASE, max string: 50, string type: VARCHAR(@MAX), batch: 1

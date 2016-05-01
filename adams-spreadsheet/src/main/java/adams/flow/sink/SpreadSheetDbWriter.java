@@ -15,12 +15,13 @@
 
 /*
  * SpreadSheetDbWriter.java
- * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
 
 import adams.core.QuickInfoHelper;
+import adams.core.io.BatchSizeSupporter;
 import adams.data.spreadsheet.Cell.ContentType;
 import adams.data.spreadsheet.ColumnNameConversion;
 import adams.data.spreadsheet.Row;
@@ -71,28 +72,41 @@ import adams.flow.core.ActorUtils;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
  * <pre>-table &lt;java.lang.String&gt; (property: table)
  * &nbsp;&nbsp;&nbsp;The table to write the data to (gets automatically created).
  * &nbsp;&nbsp;&nbsp;default: blah
  * </pre>
- * 
+ *
  * <pre>-column-name-conversion &lt;AS_IS|LOWER_CASE|UPPER_CASE&gt; (property: columnNameConversion)
  * &nbsp;&nbsp;&nbsp;How to convert the column headers into SQL table column names.
  * &nbsp;&nbsp;&nbsp;default: UPPER_CASE
  * </pre>
- * 
+ *
  * <pre>-max-string-length &lt;int&gt; (property: maxStringLength)
  * &nbsp;&nbsp;&nbsp;The maximum length for strings to enforce; can be used as &#64;MAX in the 'stringColumnsSQL'
  * &nbsp;&nbsp;&nbsp; property.
  * &nbsp;&nbsp;&nbsp;default: 50
  * &nbsp;&nbsp;&nbsp;minimum: 1
  * </pre>
- * 
+ *
  * <pre>-string-column-sql &lt;java.lang.String&gt; (property: stringColumnSQL)
- * &nbsp;&nbsp;&nbsp;The SQL type to use for STRING columns in the CREATE statement; you can 
+ * &nbsp;&nbsp;&nbsp;The SQL type to use for STRING columns in the CREATE statement; you can
  * &nbsp;&nbsp;&nbsp;use the &#64;MAX placeholder to tie the type to the 'naxStringLength' property;
  * &nbsp;&nbsp;&nbsp; see also: http:&#47;&#47;en.wikipedia.org&#47;wiki&#47;SQL
  * &nbsp;&nbsp;&nbsp;default: VARCHAR(&#64;MAX)
+ * </pre>
+ *
+ * <pre>-batch-size &lt;int&gt; (property: batchSize)
+ * &nbsp;&nbsp;&nbsp;The size of the batch when inserting the data; can help improve speed of
+ * &nbsp;&nbsp;&nbsp;data import.
+ * &nbsp;&nbsp;&nbsp;default: 1
+ * &nbsp;&nbsp;&nbsp;minimum: 1
  * </pre>
  * 
  <!-- options-end -->
@@ -101,7 +115,8 @@ import adams.flow.core.ActorUtils;
  * @version $Revision$
  */
 public class SpreadSheetDbWriter
-  extends AbstractSink {
+  extends AbstractSink
+  implements BatchSizeSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = 393925191813730213L;
@@ -129,6 +144,9 @@ public class SpreadSheetDbWriter
   
   /** the maximum length for strings. */
   protected int m_MaxStringLength;
+
+  /** the batch size. */
+  protected int m_BatchSize;
 
   /** the writer for writing the data to the database. */
   protected Writer m_Writer;
@@ -165,6 +183,10 @@ public class SpreadSheetDbWriter
     m_OptionManager.add(
 	    "string-column-sql", "stringColumnSQL",
 	    "VARCHAR(" +  Writer.PLACEHOLDER_MAX + ")");
+
+    m_OptionManager.add(
+	    "batch-size", "batchSize",
+	    1, 1, null);
   }
 
   /**
@@ -180,7 +202,8 @@ public class SpreadSheetDbWriter
     result += QuickInfoHelper.toString(this, "columnNameConversion", m_ColumnNameConversion, ", conversion: ");
     result += QuickInfoHelper.toString(this, "maxStringLength", m_MaxStringLength, ", max string: ");
     result += QuickInfoHelper.toString(this, "stringColumnSQL", m_StringColumnSQL, ", string type: ");
-    
+    result += QuickInfoHelper.toString(this, "batchSize", m_BatchSize, ", batch: ");
+
     return result;
   }
 
@@ -248,8 +271,10 @@ public class SpreadSheetDbWriter
    * @param value	the maximum
    */
   public void setMaxStringLength(int value) {
-    m_MaxStringLength = value;
-    reset();
+    if (getOptionManager().isValid("maxStringLength", value)) {
+      m_MaxStringLength = value;
+      reset();
+    }
   }
 
   /**
@@ -303,6 +328,41 @@ public class SpreadSheetDbWriter
 	"The SQL type to use for STRING columns in the CREATE statement; "
 	+ "you can use the " + Writer.PLACEHOLDER_MAX + " placeholder to tie the type "
 	+ "to the 'naxStringLength' property; see also: http://en.wikipedia.org/wiki/SQL";
+  }
+
+  /**
+   * Sets the batch size.
+   *
+   * @param value	the batch size
+   */
+  @Override
+  public void setBatchSize(int value) {
+    if (getOptionManager().isValid("batchSize", value)) {
+      m_BatchSize = value;
+      reset();
+    }
+  }
+
+  /**
+   * Returns the batch size.
+   *
+   * @return		the batch size
+   */
+  @Override
+  public int getBatchSize() {
+    return m_BatchSize;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  @Override
+  public String batchSizeTipText() {
+    return
+	"The size of the batch when inserting the data; can help improve speed of data import.";
   }
 
   /**
@@ -371,7 +431,14 @@ public class SpreadSheetDbWriter
     
     m_Writer = null;
     try {
-      m_Writer = new Writer(sheet, m_Table, sql.getMaxColumnNameLength(), m_ColumnNameConversion, m_StringColumnSQL, m_MaxStringLength);
+      m_Writer = new Writer(
+	sheet,
+	m_Table,
+	sql.getMaxColumnNameLength(),
+	m_ColumnNameConversion,
+	m_StringColumnSQL,
+	m_MaxStringLength,
+	m_BatchSize);
       m_Writer.setLoggingLevel(getLoggingLevel());
     }
     catch (Exception e) {
