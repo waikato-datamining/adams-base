@@ -22,6 +22,7 @@ package adams.data.io.input;
 import adams.core.CleanUpHandler;
 import adams.core.Destroyable;
 import adams.core.io.FileUtils;
+import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.test.AbstractTestHelper;
 import adams.test.AdamsTestCase;
@@ -65,9 +66,17 @@ public abstract class AbstractSpreadSheetReaderTestCase
    */
   protected SpreadSheet load(String filename, SpreadSheetReader scheme) {
     SpreadSheet		result;
+    SpreadSheet		chunk;
 
     m_TestHelper.copyResourceToTmp(filename);
     result = scheme.read(new TmpFile(filename));
+    if (scheme instanceof ChunkedSpreadSheetReader) {
+      while (((ChunkedSpreadSheetReader) scheme).hasMoreChunks()) {
+	chunk = ((ChunkedSpreadSheetReader) scheme).nextChunk();
+	for (Row row : chunk.rows())
+	  result.addRow().assign(row);
+      }
+    }
     m_TestHelper.deleteFileFromTmp(filename);
 
     return result;
