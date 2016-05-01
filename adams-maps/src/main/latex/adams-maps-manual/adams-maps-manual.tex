@@ -29,6 +29,7 @@
   \includegraphics[width=2cm]{images/maps-module.png} \\
 }
 \author{
+  Peter Reutemann \\
   Dale Fletcher
 }
 
@@ -62,6 +63,29 @@
 The \textit{adams-maps} module adds basic GIS-capability (geographic
 information system) to the ADAMS framework. This is done mainly in the
 form of GPS support: data types and spreadsheet support.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Data}
+
+The following spreadsheet readers are available:
+\begin{tight_itemize}
+	\item \textit{ArcInfoASCIIGridReader} -- reads files in
+	ARC/INFO ASCII GRID format\cite{esrigrid}.
+\end{tight_itemize}
+
+\noindent The following spreadsheet object handlers are available:
+\begin{tight_itemize}
+	\item \textit{GPSDecimalDegrees}
+	\item \textit{GPSDecimalMinutes}
+	\item \textit{GPSDecimalSeconds}
+\end{tight_itemize}
+
+\noindent The following conversions are available:
+\begin{tight_itemize}
+	\item \textit{SpreadSheetToKML} -- turns a spreadsheet into
+	KML\cite{kml}.
+\end{tight_itemize}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

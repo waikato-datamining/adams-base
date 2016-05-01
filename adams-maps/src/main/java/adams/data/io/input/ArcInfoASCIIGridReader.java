@@ -28,6 +28,7 @@ import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -62,13 +63,21 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
+ * <pre>-chunk-size &lt;int&gt; (property: chunkSize)
+ * &nbsp;&nbsp;&nbsp;The size of the chunks (= number of rows) of spreadsheets to output if not
+ * &nbsp;&nbsp;&nbsp;in grid mode.
+ * &nbsp;&nbsp;&nbsp;default: -1
+ * &nbsp;&nbsp;&nbsp;minimum: -1
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
 public class ArcInfoASCIIGridReader
-  extends AbstractSpreadSheetReader {
+  extends AbstractSpreadSheetReader
+  implements ChunkedSpreadSheetReader {
 
   private static final long serialVersionUID = 1925577691804114810L;
 
@@ -93,6 +102,21 @@ public class ArcInfoASCIIGridReader
   /** whether to output the grid instead the values alongside their GPS coordinates. */
   protected boolean m_OutputGrid;
 
+  /** the chunk size. */
+  protected int m_ChunkSize;
+
+  /** the raw data. */
+  protected List<String> m_Raw;
+
+  /** the meta data. */
+  protected HashMap<String,String> m_MetaData;
+
+  /** the size of the header in rows. */
+  protected int m_Header;
+
+  /** the current offset. */
+  protected int m_Offset;
+
   /**
    * Returns a string describing the object.
    *
@@ -116,6 +140,23 @@ public class ArcInfoASCIIGridReader
     m_OptionManager.add(
       "output-grid", "outputGrid",
       false);
+
+    m_OptionManager.add(
+      "chunk-size", "chunkSize",
+      -1, -1, null);
+  }
+
+  /**
+   * Resets the scheme.
+   */
+  @Override
+  protected void reset() {
+    super.reset();
+
+    m_Raw      = new ArrayList<>();
+    m_MetaData = new HashMap<>();
+    m_Header   = 0;
+    m_Offset   = 0;
   }
 
   /**
@@ -149,6 +190,40 @@ public class ArcInfoASCIIGridReader
     return
       "If enabled, a spreadsheet is generated that represents the data in "
         + "the file rather than one value per row with GPS coordinates.";
+  }
+
+  /**
+   * Sets the maximum chunk size (non-grid mode).
+   *
+   * @param value	the size of the chunks, &lt; 1 denotes infinity
+   */
+  @Override
+  public void setChunkSize(int value) {
+    m_ChunkSize = value;
+    reset();
+  }
+
+  /**
+   * Returns the current chunk size (non-grid mode).
+   *
+   * @return	the size of the chunks, &lt; 1 denotes infinity
+   */
+  @Override
+  public int getChunkSize() {
+    return m_ChunkSize;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the gui
+   */
+  @Override
+  public String chunkSizeTipText() {
+    return
+      "The size of the chunks (= number of rows) of spreadsheets to output "
+	+ "if not in grid mode.";
   }
 
   /**
@@ -192,7 +267,12 @@ public class ArcInfoASCIIGridReader
     return null;
   }
 
-  protected SpreadSheet readData(List<String> lines, int header, HashMap<String,String> meta) {
+  /**
+   * Generates spreadsheets from the raw ASCII data.
+   *
+   * @return		the generated spreadsheet
+   */
+  protected SpreadSheet readData() {
     SpreadSheet		result;
     String		line;
     String[]		parts;
@@ -207,18 +287,17 @@ public class ArcInfoASCIIGridReader
     double		lon;
     String		missing;
     int 		rowIdx;
-    int colIdx;
-    Number		value;
+    int 		colIdx;
     Row			row;
 
-    cols     = Integer.parseInt(meta.get(KEY_NUMCOLS));
-    rows     = Integer.parseInt(meta.get(KEY_NUMROWS));
-    left     = Double.parseDouble(meta.get(KEY_LEFT));
-    bottom   = Double.parseDouble(meta.get(KEY_BOTTOM));
-    cellSize = Double.parseDouble(meta.get(KEY_CELLSIZE));
+    cols     = Integer.parseInt(m_MetaData.get(KEY_NUMCOLS));
+    rows     = Integer.parseInt(m_MetaData.get(KEY_NUMROWS));
+    left     = Double.parseDouble(m_MetaData.get(KEY_LEFT));
+    bottom   = Double.parseDouble(m_MetaData.get(KEY_BOTTOM));
+    cellSize = Double.parseDouble(m_MetaData.get(KEY_CELLSIZE));
     missing  = null;
-    if (meta.containsKey(KEY_NODATAVALUE))
-      missing = meta.get(KEY_NODATAVALUE);
+    if (m_MetaData.containsKey(KEY_NODATAVALUE))
+      missing = m_MetaData.get(KEY_NODATAVALUE);
 
     // header
     result = new DefaultSpreadSheet();
@@ -235,8 +314,8 @@ public class ArcInfoASCIIGridReader
 
     // data
     values = new Number[cols];
-    for (i = header; i < lines.size(); i++) {
-      line   = lines.get(i).trim();
+    for (i = m_Header + m_Offset; i < m_Raw.size(); i++) {
+      line   = m_Raw.get(i).trim();
       parts  = line.split(" ");
 
       // parse data
@@ -256,7 +335,7 @@ public class ArcInfoASCIIGridReader
 	  row.addCell("" + colIdx).setNative(values[colIdx]);
       }
       else {
-	rowIdx = (rows - 1) - (i - header);  // row from bottom
+	rowIdx = (rows - 1) - (i - m_Header);  // row from bottom
 	lat = bottom + rowIdx * cellSize;
 	for (colIdx = 0; colIdx < parts.length; colIdx++) {
 	  lon = left + colIdx * cellSize;
@@ -266,7 +345,19 @@ public class ArcInfoASCIIGridReader
 	  row.addCell("val").setNative(values[colIdx]);
 	}
       }
+
+      // chunk size reached?
+      if (!m_OutputGrid && (m_ChunkSize > 0)) {
+	if ((i == m_Header + m_Offset + m_ChunkSize - 1) || (i == m_Raw.size() - 1)) {
+	  m_Offset += m_ChunkSize;
+	  break;
+	}
+      }
     }
+
+    // only 1 chunk?
+    if (m_Raw.size() - m_Header < m_ChunkSize)
+      m_Offset = m_Raw.size() - m_Header;
 
     return result;
   }
@@ -283,58 +374,76 @@ public class ArcInfoASCIIGridReader
   @Override
   protected SpreadSheet doRead(File file) {
     SpreadSheet			result;
-    HashMap<String,String>	meta;
-    List<String> 		lines;
     String			line;
     int				i;
-    int				header;
     String[]			parts;
 
     // read data
-    lines = FileUtils.loadFromFile(file, m_Encoding.getValue());
-    if (lines == null) {
+    m_Raw = FileUtils.loadFromFile(file, m_Encoding.getValue());
+    if (m_Raw == null) {
       setLastError("Failed to read data from: " + file);
       return null;
     }
 
     // meta-data
-    meta   = new HashMap<>();
-    header = 0;
-    for (i = 0; i < lines.size(); i++) {
-      line = lines.get(i);
+    m_MetaData.clear();
+    m_Header = 0;
+    for (i = 0; i < m_Raw.size(); i++) {
+      line = m_Raw.get(i);
       if (!line.matches("^[a-zA-Z].*"))
 	break;
       line = line.replaceAll("[ ][ ]*", " ");
-      header++;
+      m_Header++;
       parts = line.split(" ");
       if (parts.length == 2)
-	meta.put(parts[0], parts[1]);
+	m_MetaData.put(parts[0], parts[1]);
       else
 	getLogger().warning("Failed to parse meta-data: " + line);
     }
-    if (!meta.containsKey(KEY_NUMCOLS)) {
+    if (!m_MetaData.containsKey(KEY_NUMCOLS)) {
       setLastError("Missing meta-data: " + KEY_NUMCOLS);
       return null;
     }
-    if (!meta.containsKey(KEY_NUMROWS)) {
+    if (!m_MetaData.containsKey(KEY_NUMROWS)) {
       setLastError("Missing meta-data: " + KEY_NUMROWS);
       return null;
     }
-    if (!meta.containsKey(KEY_LEFT)) {
+    if (!m_MetaData.containsKey(KEY_LEFT)) {
       setLastError("Missing meta-data: " + KEY_LEFT);
       return null;
     }
-    if (!meta.containsKey(KEY_BOTTOM)) {
+    if (!m_MetaData.containsKey(KEY_BOTTOM)) {
       setLastError("Missing meta-data: " + KEY_BOTTOM);
       return null;
     }
-    if (!meta.containsKey(KEY_CELLSIZE)) {
+    if (!m_MetaData.containsKey(KEY_CELLSIZE)) {
       setLastError("Missing meta-data: " + KEY_CELLSIZE);
       return null;
     }
 
-    result = readData(lines, header, meta);
+    m_Offset = 0;
+    result = readData();
 
     return result;
+  }
+
+  /**
+   * Checks whether there is more data to read.
+   *
+   * @return		true if there is more data available
+   */
+  @Override
+  public boolean hasMoreChunks() {
+    return !m_OutputGrid && (m_ChunkSize > 0) && (m_Offset < m_Raw.size() - m_Header - 1);
+  }
+
+  /**
+   * Returns the next chunk.
+   *
+   * @return		the next chunk
+   */
+  @Override
+  public SpreadSheet nextChunk() {
+    return readData();
   }
 }

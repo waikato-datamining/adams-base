@@ -54,6 +54,8 @@ public class ArcInfoASCIIGridReaderTest
     return new String[]{
 	"wcs_small.txt",
 	"wcs_small.txt",
+	"wcs_small.txt",
+	"wcs_small.txt",
     };
   }
 
@@ -66,13 +68,19 @@ public class ArcInfoASCIIGridReaderTest
   protected SpreadSheetReader[] getRegressionSetups() {
     ArcInfoASCIIGridReader[]	result;
     
-    result    = new ArcInfoASCIIGridReader[2];
+    result    = new ArcInfoASCIIGridReader[4];
     
     result[0] = new ArcInfoASCIIGridReader();
 
     result[1] = new ArcInfoASCIIGridReader();
     result[1].setOutputGrid(true);
-    
+
+    result[2] = new ArcInfoASCIIGridReader();
+    result[2].setChunkSize(100);
+
+    result[3] = new ArcInfoASCIIGridReader();
+    result[3].setChunkSize(10);
+
     return result;
   }
 
