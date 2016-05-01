@@ -15,7 +15,7 @@
 
 /**
  * ChunkedSpreadSheetReader.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.input;
 
@@ -40,7 +40,7 @@ public interface ChunkedSpreadSheetReader {
   /**
    * Returns the current chunk size.
    * 
-   * @param value	the size of the chunks, &lt; 1 denotes infinity
+   * @return	the size of the chunks, &lt; 1 denotes infinity
    */
   public int getChunkSize();
 
