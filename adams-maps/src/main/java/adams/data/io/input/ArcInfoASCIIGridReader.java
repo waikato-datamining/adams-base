@@ -318,6 +318,9 @@ public class ArcInfoASCIIGridReader
       line   = m_Raw.get(i).trim();
       parts  = line.split(" ");
 
+      if (m_Stopped)
+	break;
+
       // parse data
       for (colIdx = 0; colIdx < parts.length; colIdx++) {
 	if ((missing != null) && parts[colIdx].equals(missing))
@@ -358,6 +361,9 @@ public class ArcInfoASCIIGridReader
     // only 1 chunk?
     if (m_Raw.size() - m_Header < m_ChunkSize)
       m_Offset = m_Raw.size() - m_Header;
+
+    if (m_Stopped)
+      result = null;
 
     return result;
   }
