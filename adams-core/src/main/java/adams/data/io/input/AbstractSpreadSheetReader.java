@@ -109,7 +109,9 @@ public abstract class AbstractSpreadSheetReader
   protected void initialize() {
     super.initialize();
     
-    m_Encoding = new BaseCharset();
+    m_Encoding        = new BaseCharset();
+    m_SpreadSheetType = getDefaultSpreadSheet();
+    m_DataRowType     = getDefaultDataRowType();
   }
   
   /**
@@ -134,6 +136,15 @@ public abstract class AbstractSpreadSheetReader
    */
   public String getDefaultFormatExtension() {
     return getFormatExtensions()[0];
+  }
+
+  /**
+   * Returns the default spreadsheet type.
+   *
+   * @return		the default
+   */
+  protected SpreadSheet getDefaultSpreadSheet() {
+    return new DefaultSpreadSheet();
   }
 
   /**
