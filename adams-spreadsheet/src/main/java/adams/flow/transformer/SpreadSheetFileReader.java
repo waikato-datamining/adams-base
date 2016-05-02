@@ -15,7 +15,7 @@
 
 /*
  * SpreadSheetFileReader.java
- * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -149,7 +149,7 @@ public class SpreadSheetFileReader
    */
   @Override
   protected Class getItemClass() {
-    if (m_Reader != null)
+    if ((m_Reader != null) && (m_Reader.getSpreadSheetType() != null))
       return m_Reader.getSpreadSheetType().getClass();
     else
       return SpreadSheet.class;
