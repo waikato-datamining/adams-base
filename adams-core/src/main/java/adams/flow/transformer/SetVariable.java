@@ -15,19 +15,19 @@
 
 /*
  * SetVariable.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import adams.core.QuickInfoHelper;
 import adams.core.VariableName;
 import adams.core.VariableUpdater;
 import adams.core.base.BaseText;
 import adams.flow.core.Unknown;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -358,7 +358,7 @@ public class SetVariable
 
     try {
       value = null;
-      if (!m_VariableValue.isEmpty()) {
+      if (!m_VariableValue.isEmpty() || getOptionManager().hasVariableForProperty("variableValue")) {
 	value = m_VariableValue.getValue();
       }
       else {
