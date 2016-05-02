@@ -631,6 +631,16 @@ public class OptionManager
   }
 
   /**
+   * Returns whether there is a variable attached to the property.
+   *
+   * @param property	the property to check for a variable
+   * @return		true if variable attached
+   */
+  public boolean hasVariableForProperty(String property) {
+    return (getVariableForProperty(property) != null);
+  }
+
+  /**
    * Sets the default values.
    */
   public void setDefaults() {
@@ -642,7 +652,7 @@ public class OptionManager
       option = m_Options.get(i);
       method = option.getWriteMethod();
       try {
-        method.invoke(option.getOptionHandler(), new Object[]{option.getDefaultValue()});
+        method.invoke(option.getOptionHandler(), option.getDefaultValue());
       }
       catch (Exception e) {
 	if (!m_Quiet)
@@ -968,7 +978,7 @@ public class OptionManager
       props = bi.getPropertyDescriptors();
       for (PropertyDescriptor prop: props) {
 	if ((prop.getReadMethod() != null) && (prop.getWriteMethod() != null)) {
-	  current = prop.getReadMethod().invoke(obj, new Object[]{});
+	  current = prop.getReadMethod().invoke(obj);
 	  if (current != null) {
 	    path.push(prop.getName(), current);
 	    if (current instanceof OptionHandler)
