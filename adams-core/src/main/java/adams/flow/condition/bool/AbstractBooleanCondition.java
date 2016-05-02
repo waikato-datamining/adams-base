@@ -64,7 +64,8 @@ public abstract class AbstractBooleanCondition
     
     result = null;
 
-    m_Logger = owner.getLogger();
+    if (owner != null)
+      m_Logger = owner.getLogger();
 
     if (this instanceof IndexedBooleanCondition) {
       if (!(owner instanceof IndexedBooleanConditionSupporter))
