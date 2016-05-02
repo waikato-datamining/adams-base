@@ -22,6 +22,7 @@
 package weka.classifiers.lazy;
 
 import weka.classifiers.ThreadSafeClassifier;
+import weka.classifiers.functions.GaussianProcessesNoWeights;
 import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.Option;
@@ -169,7 +170,7 @@ public class LWLSynchro
   public LWLSynchro() {
     super();
 
-    m_Classifier = new weka.classifiers.functions.GaussianProcesses();
+    m_Classifier = new GaussianProcessesNoWeights();
   }
 
   /**
@@ -179,7 +180,7 @@ public class LWLSynchro
    */
   @Override
   protected String defaultClassifierString() {
-    return weka.classifiers.functions.GaussianProcesses.class.getName();
+    return GaussianProcessesNoWeights.class.getName();
   }
 
   /**

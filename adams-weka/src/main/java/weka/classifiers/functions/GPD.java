@@ -118,13 +118,13 @@ public class GPD
   protected NominalToBinary m_NominalToBinary;
 
   /** normalizes the data */
-  public static final int FILTER_NORMALIZE = GaussianProcesses.FILTER_NORMALIZE;
+  public static final int FILTER_NORMALIZE = GaussianProcessesNoWeights.FILTER_NORMALIZE;
 
   /** standardizes the data */
-  public static final int FILTER_STANDARDIZE = GaussianProcesses.FILTER_STANDARDIZE;
+  public static final int FILTER_STANDARDIZE = GaussianProcessesNoWeights.FILTER_STANDARDIZE;
 
   /** no filter */
-  public static final int FILTER_NONE = GaussianProcesses.FILTER_NONE;
+  public static final int FILTER_NONE = GaussianProcessesNoWeights.FILTER_NONE;
 
   /** The filter to apply to the training data */
   public static final Tag[] TAGS_FILTER = {
@@ -170,7 +170,7 @@ public class GPD
   protected double[] m_t;
 
   /** the fallback model. */
-  protected GaussianProcesses m_FallBack;
+  protected GaussianProcessesNoWeights m_FallBack;
 
   /**
    * Returns a string describing classifier
@@ -639,11 +639,11 @@ public class GPD
       RBFKernel kernel = new RBFKernel();
       kernel.setGamma(getGamma());
       kernel.setChecksTurnedOff(m_checksTurnedOff);
-      m_FallBack = new GaussianProcesses();
+      m_FallBack = new GaussianProcessesNoWeights();
       m_FallBack.setDoNotCheckCapabilities(getDoNotCheckCapabilities());
       m_FallBack.setNoise(getNoise());
       m_FallBack.setKernel(kernel);
-      m_FallBack.setFilterType(new SelectedTag(m_filterType, GaussianProcesses.TAGS_FILTER));
+      m_FallBack.setFilterType(new SelectedTag(m_filterType, GaussianProcessesNoWeights.TAGS_FILTER));
       m_FallBack.buildClassifier(fallbackData);
     }
   }

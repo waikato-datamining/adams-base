@@ -22,7 +22,7 @@ package adams.flow.transformer;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import weka.classifiers.functions.GaussianProcesses;
+import weka.classifiers.functions.GaussianProcessesNoWeights;
 import weka.classifiers.functions.supportVector.RBFKernel;
 import adams.data.weka.evaluator.IntervalEstimatorBased;
 import adams.env.Environment;
@@ -115,7 +115,7 @@ public class WekaInstanceEvaluatorTest
 
     WekaClassSelector cs = new WekaClassSelector();
 
-    GaussianProcesses gp = new GaussianProcesses();
+    GaussianProcessesNoWeights gp = new GaussianProcessesNoWeights();
     gp.setKernel(new RBFKernel());
     gp.setNoise(0.01);
     IntervalEstimatorBased ieb = new IntervalEstimatorBased();

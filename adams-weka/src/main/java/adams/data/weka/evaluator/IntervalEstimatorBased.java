@@ -25,7 +25,7 @@ import java.util.logging.Level;
 
 import weka.classifiers.Classifier;
 import weka.classifiers.IntervalEstimator;
-import weka.classifiers.functions.GaussianProcesses;
+import weka.classifiers.functions.GaussianProcessesNoWeights;
 import weka.core.Instance;
 import weka.core.Instances;
 import adams.core.Utils;
@@ -234,7 +234,7 @@ public class IntervalEstimatorBased
 
     m_OptionManager.add(
 	    "classifier", "classifier",
-	    new GaussianProcesses());
+	    new GaussianProcessesNoWeights());
 
     m_OptionManager.add(
 	    "level", "confidenceLevel",
