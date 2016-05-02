@@ -15,7 +15,7 @@
 
 /**
  * AbstractBooleanCondition.java
- * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.condition.bool;
 
@@ -63,7 +63,9 @@ public abstract class AbstractBooleanCondition
     String	result;
     
     result = null;
-    
+
+    m_Logger = owner.getLogger();
+
     if (this instanceof IndexedBooleanCondition) {
       if (!(owner instanceof IndexedBooleanConditionSupporter))
 	result = "Actor " + owner.getFullName() + " does not support " + IndexedBooleanCondition.class.getName() + "!";
