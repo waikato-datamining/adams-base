@@ -15,7 +15,7 @@
 
 /**
  * AbstractAdamsClassifierTest.java
- * Copyright (C) 2011-2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package weka.classifiers;
@@ -51,5 +51,6 @@ public abstract class AbstractAdamsClassifierTest
    */
   protected void setUpEnvironment() {
     Environment.setEnvironmentClass(adams.env.Environment.class);
+    System.setProperty("weka.test.maventest", "true");
   }
 }
