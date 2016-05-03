@@ -15,7 +15,7 @@
 
 /**
  * AbstractJavaCodeProducer.java
- * Copyright (C) 2011-2016University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
@@ -650,7 +650,7 @@ public abstract class AbstractJavaCodeProducer
 	tmp = getNextTmpVariable(option);
 	if (option.isMultiple()) {
 	  m_OutputBuffer.append(getIndentation());
-	  m_OutputBuffer.append("List<" + getClassname(option) + "> " + tmp + " = new ArrayList<" + getClassname(option) + ">();\n");
+	  m_OutputBuffer.append("List<" + getClassname(option) + "> " + tmp + " = new ArrayList<>();\n");
 	  for (i = 0; i < Array.getLength(currValue); i++) {
 	    value = Array.get(currValue, i);
 	    tmp2  = getNextTmpVariable(value.getClass());
@@ -726,7 +726,7 @@ public abstract class AbstractJavaCodeProducer
 	tmp = getNextTmpVariable(option);
 	if (option.isMultiple()) {
 	  m_OutputBuffer.append(getIndentation());
-	  m_OutputBuffer.append("List<" + getClassname(option) + "> " + tmp + " = new ArrayList<" + getClassname(option) + ">();\n");
+	  m_OutputBuffer.append("List<" + getClassname(option) + "> " + tmp + " = new ArrayList<>();\n");
 	  for (i = 0; i < Array.getLength(currValue); i++) {
 	    value = Array.get(currValue, i);
 	    m_OutputBuffer.append(getIndentation());
