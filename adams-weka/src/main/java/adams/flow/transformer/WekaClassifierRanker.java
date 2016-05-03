@@ -402,7 +402,7 @@ public class WekaClassifierRanker
 	m_BestClassifier = getBestClassifier(m_Classifier, cls);
 	cls              = null;
       }
-      m_Performance = new Performance(new Point(new Integer[]{m_Index}), new DefaultEvaluationWrapper(eval, new DefaultEvaluationMetrics()), m_Measure.getMeasure());
+      m_Performance = new Performance(new Point(new Integer[]{m_Index}), new DefaultEvaluationWrapper(eval, new DefaultEvaluationMetrics()), m_Measure.getMeasure(), m_Classifier);
       eval = null;
     }
 
