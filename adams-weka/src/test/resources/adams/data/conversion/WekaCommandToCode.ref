@@ -1,0 +1,28 @@
+--> out-0.txt
+String[] options = new String[7];
+options[0] = "weka.classifiers.meta.Vote";
+options[1] = "-S";
+options[2] = "1";
+options[3] = "-B";
+options[4] = "weka.classifiers.rules.ZeroR ";
+options[5] = "-R";
+options[6] = "AVG";
+String[] options = new String[17];
+options[0] = "weka.classifiers.functions.SMO";
+options[1] = "-C";
+options[2] = "1.0";
+options[3] = "-L";
+options[4] = "0.001";
+options[5] = "-P";
+options[6] = "1.0E-12";
+options[7] = "-N";
+options[8] = "0";
+options[9] = "-V";
+options[10] = "-1";
+options[11] = "-W";
+options[12] = "1";
+options[13] = "-K";
+options[14] = "weka.classifiers.functions.supportVector.PolyKernel -E 1.0 -C 250007";
+options[15] = "-calibrator";
+options[16] = "weka.classifiers.functions.Logistic -R 1.0E-8 -M -1";
+
