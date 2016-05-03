@@ -75,12 +75,12 @@ import java.util.logging.Level;
  * 
  * <pre>-spreadsheet-type &lt;adams.data.spreadsheet.SpreadSheet&gt; (property: spreadSheetType)
  * &nbsp;&nbsp;&nbsp;The type of spreadsheet to use for the data.
- * &nbsp;&nbsp;&nbsp;default: adams.data.spreadsheet.SpreadSheet
+ * &nbsp;&nbsp;&nbsp;default: adams.data.spreadsheet.DefaultSpreadSheet
  * </pre>
  * 
- * <pre>-missing &lt;java.lang.String&gt; (property: missingValue)
+ * <pre>-missing &lt;adams.core.base.BaseRegExp&gt; (property: missingValue)
  * &nbsp;&nbsp;&nbsp;The placeholder for missing values.
- * &nbsp;&nbsp;&nbsp;default: ?
+ * &nbsp;&nbsp;&nbsp;default: ^(\\\\?|)$
  * </pre>
  * 
  * <pre>-encoding &lt;adams.core.base.BaseCharset&gt; (property: encoding)
@@ -1050,6 +1050,15 @@ public class CsvSpreadSheetReader
     m_OptionManager.add(
       "parse-formulas", "parseFormulas",
       true);
+  }
+
+  /**
+   * Returns the default missing value to use.
+   *
+   * @return		the default
+   */
+  protected BaseRegExp getDefaultMissingValue() {
+    return new BaseRegExp("^(\\" + SpreadSheet.MISSING_VALUE + "|)$");
   }
 
   /**
