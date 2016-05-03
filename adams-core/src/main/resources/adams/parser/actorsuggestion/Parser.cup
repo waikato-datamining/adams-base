@@ -40,11 +40,13 @@ import adams.flow.core.ActorHandler;
 import adams.flow.core.Compatibility;
 import adams.flow.core.InputConsumer;
 import adams.flow.core.OutputProducer;
+import adams.parser.ParserHelper;
 
 import java_cup.runtime.*;
 
 import java.io.*;
 import java.util.*;
+import java.util.logging.Level;
 
 /**
  * A parser for parsing a rule file for suggesting an actor.
@@ -54,6 +56,9 @@ import java.util.*;
  */
 
 parser code {:
+  /** the helper. */
+  protected ParserHelper m_Helper = new ParserHelper();
+
   /** for storing the result of the expression. */
   protected Actor m_Result = null;
 
@@ -68,6 +73,15 @@ parser code {:
 
   /** for checking compatibility. */
   protected Compatibility m_Compatibility = new Compatibility(true);
+
+  /**
+   * Returns the parser helper.
+   *
+   * @return the helper
+   */
+  public ParserHelper getHelper() {
+    return m_Helper;
+  }
 
   /**
    * Sets the result of the evaluation.
@@ -308,8 +322,7 @@ parser code {:
       cls = Class.forName(classname);
     }
     catch (Exception e) {
-      System.err.println("ActorSuggestion (preceding generates): Failed to instantiate class '" + classname + "'!");
-      e.printStackTrace();
+      getHelper().getLogger().log(Level.SEVERE, "ActorSuggestion (preceding generates): Failed to instantiate class '" + classname + "'!", e);
       return false;
     }
 
@@ -335,8 +348,7 @@ parser code {:
       cls = Class.forName(classname);
     }
     catch (Exception e) {
-      System.err.println("ActorSuggestion (following accepts): Failed to instantiate class '" + classname + "'!");
-      e.printStackTrace();
+      getHelper().getLogger().log(Level.SEVERE, "ActorSuggestion (following accepts): Failed to instantiate class '" + classname + "'!", e);
       return false;
     }
 

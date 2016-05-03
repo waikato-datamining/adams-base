@@ -37,11 +37,13 @@ import adams.flow.core.AbstractActor;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorUtils;
 import adams.flow.template.AbstractActorTemplate;
+import adams.parser.ParserHelper;
 
 import java_cup.runtime.*;
 
 import java.io.*;
 import java.util.*;
+import java.util.logging.Level;
 
 /**
  * A parser for parsing a rule file for suggesting a template generator in
@@ -52,6 +54,9 @@ import java.util.*;
  */
 
 parser code {:
+  /** the helper. */
+  protected ParserHelper m_Helper = new ParserHelper();
+
   /** for storing the result of the expression. */
   protected AbstractActorTemplate m_Result = null;
 
@@ -63,6 +68,15 @@ parser code {:
 
   /** all the current nodes in which to insert/add to the proposed actor. */
   protected Actor[] m_Actors = null;
+
+  /**
+   * Returns the parser helper.
+   *
+   * @return the helper
+   */
+  public ParserHelper getHelper() {
+    return m_Helper;
+  }
 
   /**
    * Sets the result of the evaluation.
