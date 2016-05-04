@@ -144,6 +144,10 @@ ORDER BY
   dist ASC
 \end{verbatim}
 
+\noindent \textbf{NB:} These distance calculations are computationally quite expensive
+and, if possible, you should have indices on the \textit{lat}, \textit{long}
+and \textit{lon\_lat} columns, as well as restricting the window for the longitude
+and latitude that you are performing this query on.
 
 \section{MySQL}
 Spatial extensions in MYSQL\footnote{\url{https://dev.mysql.com/doc/refman/5.6/en/spatial-extensions.html}{}}
