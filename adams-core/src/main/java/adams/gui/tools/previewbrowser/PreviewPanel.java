@@ -22,6 +22,7 @@ package adams.gui.tools.previewbrowser;
 import adams.core.CleanUpHandler;
 import adams.gui.core.BasePanel;
 
+import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import java.awt.BorderLayout;
 
@@ -56,6 +57,7 @@ public class PreviewPanel
    */
   public PreviewPanel(JComponent component, JComponent content) {
     super(new BorderLayout());
+    setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
     setContent(content);
     add(component, BorderLayout.CENTER);
   }
