@@ -57,6 +57,12 @@ public class Capabilities
   /** the maximum number of columns (-1 is undefined). */
   protected int m_MaxColumns;
 
+  /** the minimum number of class attributes (-1 is undefined). */
+  protected int m_MinClassColumns;
+
+  /** the maximum number of class attributes (-1 is undefined). */
+  protected int m_MaxClassColumns;
+
   /**
    * Initializes the capabilities.
    *
@@ -72,7 +78,9 @@ public class Capabilities
     m_MinRows               = -1;
     m_MaxRows               = -1;
     m_MinColumns            = -1;
-    m_MaxRows               = -1;
+    m_MaxColumns            = -1;
+    m_MinClassColumns       = -1;
+    m_MaxClassColumns       = -1;
   }
 
   /**
@@ -111,6 +119,8 @@ public class Capabilities
     result.setMaxRows(getMaxRows());
     result.setMinColumns(getMinColumns());
     result.setMaxColumns(getMaxColumns());
+    result.setMinClassColumns(getMinClassColumns());
+    result.setMaxClassColumns(getMaxClassColumns());
 
     return result;
   }
@@ -271,6 +281,46 @@ public class Capabilities
   }
 
   /**
+   * Sets the minimum number of required class columns.
+   *
+   * @param value	the minimum, -1 for undefined
+   */
+  public void setMinClassColumns(int value) {
+    if (value < -1)
+      value = -1;
+    m_MinClassColumns = value;
+  }
+
+  /**
+   * Returns the minimum number of required class columns.
+   *
+   * @return		the minimum, -1 if undefined
+   */
+  public int getMinClassColumns() {
+    return m_MinClassColumns;
+  }
+
+  /**
+   * Sets the maximum number of required class columns.
+   *
+   * @param value	the maximum, -1 for undefined
+   */
+  public void setMaxClassColumns(int value) {
+    if (value < -1)
+      value = -1;
+    m_MaxClassColumns = value;
+  }
+
+  /**
+   * Returns the maximum number of required class columns.
+   *
+   * @return		the maximum, -1 if undefined
+   */
+  public int getMaxClassColumns() {
+    return m_MaxClassColumns;
+  }
+
+  /**
    * Returns a short description of itself.
    *
    * @return		the description
@@ -289,6 +339,8 @@ public class Capabilities
     result.append("Rows: ").append("min=").append(getMinRows()).append(", max=").append(getMaxRows());
     result.append("\n");
     result.append("Columns: ").append("min=").append(getMinColumns()).append(", max=").append(getMaxColumns());
+    result.append("\n");
+    result.append("Class columns: ").append("min=").append(getMinClassColumns()).append(", max=").append(getMaxClassColumns());
 
     return result.toString();
   }
