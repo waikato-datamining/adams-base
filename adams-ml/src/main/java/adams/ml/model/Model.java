@@ -20,12 +20,15 @@
 
 package adams.ml.model;
 
+import java.io.Serializable;
+
 /**
  * Ancestor for models.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public interface Model {
+public interface Model
+  extends Serializable {
 
 }
