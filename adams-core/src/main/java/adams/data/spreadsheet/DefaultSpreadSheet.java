@@ -757,27 +757,6 @@ public class DefaultSpreadSheet
   }
 
   /**
-   * Checks whether the cell with the given keys already exists.
-   *
-   * @param rowKey	the key of the row to look for
-   * @param cellKey	the key of the cell in the row to look for
-   * @return		true if the cell exists
-   */
-  public boolean hasCell(String rowKey, String cellKey) {
-    boolean	result;
-    Row		row;
-
-    result = hasRow(rowKey);
-
-    if (result) {
-      row    = getRow(rowKey);
-      result = row.hasCell(cellKey);
-    }
-
-    return result;
-  }
-
-  /**
    * Checks whether the cell with the given indices already exists.
    *
    * @param rowIndex	the index of the row to look for
@@ -794,26 +773,6 @@ public class DefaultSpreadSheet
       row    = getRow(rowIndex);
       result = row.hasCell(columnIndex);
     }
-
-    return result;
-  }
-
-  /**
-   * Returns the corresponding cell or null if not found.
-   *
-   * @param rowKey	the key of the row the cell is in
-   * @param cellKey	the key of the cell to retrieve
-   * @return		the cell or null if not found
-   */
-  public Cell getCell(String rowKey, String cellKey) {
-    Cell	result;
-    Row		row;
-
-    result = null;
-
-    row    = getRow(rowKey);
-    if (row != null)
-      result = row.getCell(cellKey);
 
     return result;
   }

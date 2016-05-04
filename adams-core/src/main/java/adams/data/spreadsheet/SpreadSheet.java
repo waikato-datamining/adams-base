@@ -367,15 +367,6 @@ public interface SpreadSheet
   public int getCellIndex(String cellKey);
 
   /**
-   * Checks whether the cell with the given keys already exists.
-   *
-   * @param rowKey	the key of the row to look for
-   * @param cellKey	the key of the cell in the row to look for
-   * @return		true if the cell exists
-   */
-  public boolean hasCell(String rowKey, String cellKey);
-
-  /**
    * Checks whether the cell with the given indices already exists.
    *
    * @param rowIndex	the index of the row to look for
@@ -383,15 +374,6 @@ public interface SpreadSheet
    * @return		true if the cell exists
    */
   public boolean hasCell(int rowIndex, int columnIndex);
-
-  /**
-   * Returns the corresponding cell or null if not found.
-   *
-   * @param rowKey	the key of the row the cell is in
-   * @param cellKey	the key of the cell to retrieve
-   * @return		the cell or null if not found
-   */
-  public Cell getCell(String rowKey, String cellKey);
 
   /**
    * Returns the corresponding cell or null if not found.

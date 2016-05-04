@@ -703,19 +703,6 @@ public class SpreadSheetView
   }
 
   /**
-   * Checks whether the cell with the given keys already exists.
-   *
-   * @param rowKey	the key of the row to look for
-   * @param cellKey	the key of the cell in the row to look for
-   * @return		true if the cell exists
-   */
-  @Override
-  public boolean hasCell(String rowKey, String cellKey) {
-    return ((getRowIndex(rowKey) > -1) && (getCellIndex(cellKey) > -1))
-      && hasCell(getRowIndex(rowKey), getCellIndex(cellKey));
-  }
-
-  /**
    * Checks whether the cell with the given indices already exists.
    *
    * @param rowIndex	the index of the row to look for
@@ -728,21 +715,6 @@ public class SpreadSheetView
 
     row = getRow(rowIndex);
     return (row != null) && row.hasCell(columnIndex);
-  }
-
-  /**
-   * Returns the corresponding cell or null if not found.
-   *
-   * @param rowKey	the key of the row the cell is in
-   * @param cellKey	the key of the cell to retrieve
-   * @return		the cell or null if not found
-   */
-  @Override
-  public Cell getCell(String rowKey, String cellKey) {
-    if ((getRowIndex(rowKey) > -1) && (getCellIndex(cellKey) > -1))
-      return getCell(getRowIndex(rowKey), getCellIndex(cellKey));
-    else
-      return null;
   }
 
   /**
