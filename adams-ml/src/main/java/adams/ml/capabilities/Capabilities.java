@@ -18,7 +18,7 @@
  * Copyright (C) 2016 University of Waikato, Hamilton, NZ
  */
 
-package adams.ml.core;
+package adams.ml.capabilities;
 
 import adams.core.logging.LoggingObject;
 

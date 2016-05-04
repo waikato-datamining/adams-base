@@ -20,8 +20,8 @@
 
 package adams.ml.model;
 
-import adams.ml.core.Capabilities;
-import adams.ml.core.CapabilitiesHandler;
+import adams.ml.capabilities.Capabilities;
+import adams.ml.capabilities.CapabilitiesHandler;
 import adams.ml.data.Dataset;
 
 /**
