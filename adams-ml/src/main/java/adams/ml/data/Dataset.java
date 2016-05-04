@@ -98,13 +98,11 @@ public class Dataset
    * @return		the clone
    */
   @Override
-  public SpreadSheet getClone() {
-    SpreadSheet	result;
+  public Dataset getClone() {
+    Dataset	result;
     
-    result = super.getClone();
-    
-    if (result instanceof Dataset)
-      ((Dataset) result).m_ClassAttributes.addAll(m_ClassAttributes);
+    result = (Dataset) super.getClone();
+    result.m_ClassAttributes.addAll(m_ClassAttributes);
     
     return result;
   }
@@ -115,13 +113,11 @@ public class Dataset
    * @return		the spreadsheet
    */
   @Override
-  public SpreadSheet getHeader() {
-    SpreadSheet	result;
+  public Dataset getHeader() {
+    Dataset	result;
     
-    result = super.getHeader();
-
-    if (result instanceof Dataset)
-      ((Dataset) result).m_ClassAttributes.addAll(m_ClassAttributes);
+    result = (Dataset) super.getHeader();
+    result.m_ClassAttributes.addAll(m_ClassAttributes);
     
     return result;
   }
