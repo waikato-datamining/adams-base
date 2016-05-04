@@ -1152,8 +1152,7 @@ public class TreeOperations
    */
   public void editFlow(TreePath path) {
     Node			node;
-    FlowEditorDialog dialog;
-    ExternalActorHandler actor;
+    ExternalActorHandler 	actor;
 
     node = TreeHelper.pathToNode(path);
     if (node == null)
@@ -1161,19 +1160,11 @@ public class TreeOperations
     actor = (ExternalActorHandler) node.getActor();
     if (actor == null)
       return;
-
-    if (getOwner().getParentDialog() != null)
-      dialog = new FlowEditorDialog(getOwner().getParentDialog());
-    else
-      dialog = new FlowEditorDialog(getOwner().getParentFrame());
-    dialog.getFlowEditorPanel().loadUnsafe(actor.getActorFile());
-    dialog.setVisible(true);
-    if (dialog.getFlowEditorPanel().getCurrentFile() != null) {
-      if ((actor.getActorFile() == null) || (!actor.getActorFile().equals(dialog.getFlowEditorPanel().getCurrentFile()))) {
-	actor.setActorFile(new FlowFile(dialog.getFlowEditorPanel().getCurrentFile()));
-	getOwner().setModified(true);
-      }
-    }
+    if (getOwner() == null)
+      return;
+    if (getOwner().getEditor() == null)
+      return;
+    getOwner().getEditor().loadUnsafe(actor.getActorFile());
 
     // external flow might have changed, discard any inlined actors
     node.collapse();
