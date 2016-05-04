@@ -20,16 +20,17 @@
 
 package adams.gui.visualization.stats.fourinone;
 
-import java.awt.BorderLayout;
-import java.awt.Graphics;
-
-import weka.core.Instances;
+import adams.data.spreadsheet.SpreadSheet;
+import adams.data.spreadsheet.SpreadSheetUtils;
 import adams.data.statistics.StatUtils;
 import adams.gui.visualization.core.AxisPanel;
 import adams.gui.visualization.core.PaintablePanel;
 import adams.gui.visualization.core.PlotPanel;
 import adams.gui.visualization.core.plot.Axis;
 import adams.gui.visualization.stats.paintlet.VsOrderPaintlet;
+
+import java.awt.BorderLayout;
+import java.awt.Graphics;
 
 /**
  * Class that creates a versus order plot with the residuals
@@ -45,7 +46,7 @@ extends PaintablePanel{
   private static final long serialVersionUID = 6182760237927361108L;
 
   /** Instances containing the data */
-  protected Instances m_Instances;
+  protected SpreadSheet m_Data;
 
   /**Panel for displaying the data */
   protected VersusOrderPanel m_Plot;
@@ -101,15 +102,15 @@ extends PaintablePanel{
    */
   @Override
   public void prepareUpdate() {
-    if (m_Instances != null) {
-      m_Val.setInstances(m_Instances);
+    if (m_Data != null) {
+      m_Val.setData(m_Data);
       m_Val.setIndex(m_Index);
       m_Val.setRepaintOnChange(true);
       
       AxisPanel axisBottom = getPlot().getAxis(Axis.BOTTOM);
       AxisPanel axisLeft = getPlot().getAxis(Axis.LEFT);
 
-      double[] residuals = m_Instances.attributeToDoubleArray(m_Index);
+      double[] residuals = SpreadSheetUtils.getNumericColumn(m_Data, m_Index);
       double minY = StatUtils.min(residuals);
       double maxY = StatUtils.max(residuals);
       axisBottom.setMinimum(0);
@@ -127,23 +128,23 @@ extends PaintablePanel{
    */
   @Override
   protected boolean canPaint(Graphics g) {
-    return (m_Plot != null) && (m_Instances != null);
+    return (m_Plot != null) && (m_Data != null);
   }
 
   /**
    * Get the instances for this versus order
    * @return			Instances for this plot
    */
-  public Instances getInstances() {
-    return m_Instances;
+  public SpreadSheet getData() {
+    return m_Data;
   }
 
   /**
    * Set the instances for this versus order
-   * @param inst				Instances for this plot
+   * @param data				Instances for this plot
    */
-  public void setInstances(Instances inst) {
-    m_Instances = inst;
+  public void setData(SpreadSheet data) {
+    m_Data = data;
   }
 
   /**

@@ -20,23 +20,9 @@
 
 package adams.gui.visualization.stats.scatterplot;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-
-import javax.swing.BorderFactory;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JComboBox;
-import javax.swing.JPanel;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
-import weka.core.Attribute;
-import weka.core.Instances;
 import adams.core.Index;
 import adams.core.base.BaseRegExp;
+import adams.data.spreadsheet.SpreadSheet;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.ParameterPanel;
 import adams.gui.goe.GenericArrayEditorPanel;
@@ -45,6 +31,18 @@ import adams.gui.visualization.core.PlotPanel;
 import adams.gui.visualization.stats.core.IndexSet;
 import adams.gui.visualization.stats.paintlet.AbstractScatterPlotPaintlet;
 import adams.gui.visualization.stats.paintlet.ScatterPaintletCircle;
+
+import javax.swing.BorderFactory;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JComboBox;
+import javax.swing.JPanel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 
 /**
  * create a paintable panel displaying a scatter plot
@@ -115,14 +113,14 @@ public class ScatterPlot
    */
   public void reset() {
     //add the attributes to combo box models
-    for(int i =0; i< m_Instances.numAttributes(); i++)
+    for(int i =0; i< m_Data.getColumnCount(); i++)
     {
-      m_ComboBoxX.addElement(m_Instances.attribute(i).name());
-      m_ComboBoxY.addElement(m_Instances.attribute(i).name());
+      m_ComboBoxX.addElement(m_Data.getColumnName(i));
+      m_ComboBoxY.addElement(m_Data.getColumnName(i));
     }
     //set the indices for attribute positions
     int temp = -1;
-    temp = IndexSet.getIndex(m_XIndexReg, m_XInd, m_Instances, temp);
+    temp = IndexSet.getIndex(m_XIndexReg, m_XInd, m_Data, temp);
     if(temp == -1) {
       temp = 0;
       System.err.println("changed to 0");
@@ -130,7 +128,7 @@ public class ScatterPlot
     m_XIndex = temp;
 
     temp = -1;
-    temp = IndexSet.getIndex(m_YIndexReg, m_YInd, m_Instances, temp);
+    temp = IndexSet.getIndex(m_YIndexReg, m_YInd, m_Data, temp);
     if(temp == -1) {
       temp = 0;
       System.err.println("changed to 0");
@@ -142,7 +140,7 @@ public class ScatterPlot
     if(m_Array == null)
       m_Array = new AbstractScatterPlotOverlay[]{};
     m_Val.setPanel(this);
-    m_Val.setInstances(m_Instances);
+    m_Val.setData(m_Data);
     change();
   }
 
@@ -158,7 +156,7 @@ public class ScatterPlot
     }
     for(int i = 0; i< m_Array.length; i++) {
       AbstractScatterPlotOverlay temp = m_Array[i];
-      temp.inst(m_Instances);
+      temp.inst(m_Data);
       temp.setParent(this);
       temp.setUp();
     }
@@ -174,7 +172,7 @@ public class ScatterPlot
     m_Val.setPanel(this);
     m_Val.setY_Index(m_YIndex);
     m_Val.setX_Index(m_XIndex);
-    m_Val.setInstances(m_Instances);
+    m_Val.setData(m_Data);
     change();
   }
 
@@ -320,7 +318,7 @@ public class ScatterPlot
 
   /**
    * Get the overlays array containing overlays to apply
-   * @param val		Array containing overlays to apply to the scatter plot
+   * @return		Array containing overlays to apply to the scatter plot
    */
   public AbstractScatterPlotOverlay[] getOverlays() {
     return m_Array;
@@ -353,15 +351,14 @@ public class ScatterPlot
       m_parent = parent;
     }
     public void itemStateChanged(ItemEvent arg0) {
-      Instances inst = m_parent.getInstances();
+      SpreadSheet data = m_parent.getData();
       int ind = m_parent.getY_Index();
       if(arg0.getStateChange() == ItemEvent.SELECTED) {
-	String item = (String)arg0.getItem();
-	Attribute chose = inst.attribute(item);
+	String chose = (String)arg0.getItem();
 	//finds position of attribute
-	for(int t = 0; t<inst.numAttributes(); t++)
+	for(int t = 0; t< data.getColumnCount(); t++)
 	{
-	  if(inst.attribute(t) == chose) {
+	  if(data.getColumnName(t).equals(chose)) {
 	    for(int i = 0; i< m_Array.length; i++) {
 	      m_Array[i].getPaintlet().setCalculated(false);
 	    }
@@ -387,14 +384,13 @@ public class ScatterPlot
     }
 
     public void itemStateChanged(ItemEvent arg0) {
-      Instances inst = m_parent.getInstances();
+      SpreadSheet data = m_parent.getData();
       if(arg0.getStateChange() == ItemEvent.SELECTED) {
-	String item = (String)arg0.getItem();
-	Attribute chose = inst.attribute(item);
+	String chose = (String)arg0.getItem();
 	//finds position of attribute
-	for(int t = 0; t<inst.numAttributes(); t++)
+	for(int t = 0; t< data.getColumnCount(); t++)
 	{
-	  if(inst.attribute(t) == chose) {
+	  if(data.getColumnName(t).equals(chose)) {
 	    for(int i = 0; i< m_Array.length; i++) {
 	      m_Array[i].getPaintlet().setCalculated(false);
 	    }
@@ -411,14 +407,14 @@ public class ScatterPlot
    * called when a field has changed, updates all paintlets etc
    */
   public void change() {
-    if(m_Instances != null)
-      m_Plot.setinstances(m_Instances);
+    if(m_Data != null)
+      m_Plot.setData(m_Data);
     m_Plot.setX(m_XIndex);
     m_Plot.setY(m_YIndex);
     m_Plot.reset();
     m_Val.setX_Index(m_XIndex);
     m_Val.setY_Index(m_YIndex);
-    m_Val.setInstances(m_Instances);
+    m_Val.setData(m_Data);
     update();
   }
 
@@ -428,7 +424,7 @@ public class ScatterPlot
   public void prepareUpdate() {
     for(int i = 0; i< m_Array.length; i++) {
       if(m_Array[i].getPaintlet() != null) {
-	m_Array[i].getPaintlet().parameters(m_Instances, m_XIndex, m_YIndex);
+	m_Array[i].getPaintlet().parameters(m_Data, m_XIndex, m_YIndex);
 	if(m_Array[i].getPaintlet().getCalculated() == false)
 	  m_Array[i].getPaintlet().calculate();
       }

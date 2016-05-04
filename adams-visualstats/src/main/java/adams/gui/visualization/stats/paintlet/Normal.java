@@ -20,18 +20,19 @@
 
 package adams.gui.visualization.stats.paintlet;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.util.Arrays;
-
 import JSci.maths.statistics.NormalDistribution;
+import adams.data.spreadsheet.SpreadSheetUtils;
 import adams.data.statistics.StatUtils;
 import adams.gui.core.GUIHelper;
 import adams.gui.event.PaintEvent.PaintMoment;
 import adams.gui.visualization.core.axis.Type;
 import adams.gui.visualization.core.plot.Axis;
+
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.util.Arrays;
 
 /**
  <!-- globalinfo-start -->
@@ -109,11 +110,11 @@ extends AbstractProbabilityPaintlet{
     //estimated cumulative probability
     double median;
     NormalDistribution normal = new NormalDistribution(mean,var);
-    m_Data = m_Instances.attributeToDoubleArray(m_Index);
-    m_TransformedY = new double[m_Data.length];
-    Arrays.sort(m_Data);
-    for(int i = 0; i< m_Data.length; i++) {
-      median = ((i+1)-0.3)/(m_Data.length+0.4);
+    m_Sorted = SpreadSheetUtils.getNumericColumn(m_Data, m_Index);
+    m_TransformedY = new double[m_Sorted.length];
+    Arrays.sort(m_Sorted);
+    for(int i = 0; i< m_Sorted.length; i++) {
+      median = ((i+1)-0.3)/(m_Sorted.length+0.4);
       //Get the z value representing the probability
       //calculated using the chosen median formula
       m_TransformedY[i] = (normal.inverse(median)-mean)/Math.sqrt(var);
@@ -126,15 +127,15 @@ extends AbstractProbabilityPaintlet{
     else {
       getLogger().severe("errors in plotting");
     }
-    if(m_AxisBottom.getType().canHandle(m_Data[0], m_Data[m_Data.length-1])) {
-      m_AxisBottom.setMinimum(m_Data[0]);
-      m_AxisBottom.setMaximum(m_Data[m_Data.length-1]);
+    if(m_AxisBottom.getType().canHandle(m_Sorted[0], m_Sorted[m_Sorted.length-1])) {
+      m_AxisBottom.setMinimum(m_Sorted[0]);
+      m_AxisBottom.setMaximum(m_Sorted[m_Sorted.length-1]);
     }
     else {
       getLogger().severe("errors in plotting");
     }
 
-    m_AxisBottom.setAxisName(m_Instances.attribute(m_Index).name());
+    m_AxisBottom.setAxisName(m_Data.getColumnName(m_Index));
     m_AxisLeft.setAxisName("Inverse Normal");
   }
 
@@ -146,10 +147,10 @@ extends AbstractProbabilityPaintlet{
    */
   @Override
   public void performPaint(Graphics g, PaintMoment moment) {
-    if ((m_Instances != null) && (m_Data != null)) {
+    if ((m_Data != null) && (m_Sorted != null)) {
       GUIHelper.configureAntiAliasing(g, m_AntiAliasingEnabled);
 
-      for(int i = 0; i< m_Data.length; i++) {
+      for(int i = 0; i< m_Sorted.length; i++) {
 	//plot the transformed value on the y axis against the original
 	//data point on the x axis
 	Graphics2D g2d = (Graphics2D)g;
@@ -157,23 +158,23 @@ extends AbstractProbabilityPaintlet{
 	if(m_Fill) {
 	  g2d.setColor(m_FillColor);
 	  g2d.setStroke(new BasicStroke(0));
-	  g2d.fillOval(m_AxisBottom.valueToPos(m_Data[i]) -m_Size/2, m_AxisLeft.valueToPos(m_TransformedY[i]) -m_Size/2, m_Size, m_Size);
+	  g2d.fillOval(m_AxisBottom.valueToPos(m_Sorted[i]) -m_Size/2, m_AxisLeft.valueToPos(m_TransformedY[i]) -m_Size/2, m_Size, m_Size);
 	}
 	//Outline of data point
 	g2d.setStroke(new BasicStroke(m_StrokeThickness));
 	g2d.setColor(m_Color);
-	g2d.drawOval(m_AxisBottom.valueToPos(m_Data[i]) -m_Size/2, m_AxisLeft.valueToPos(m_TransformedY[i]) -m_Size/2, m_Size, m_Size);
+	g2d.drawOval(m_AxisBottom.valueToPos(m_Sorted[i]) -m_Size/2, m_AxisLeft.valueToPos(m_TransformedY[i]) -m_Size/2, m_Size, m_Size);
 
       }
       //if drawing regression fit diagonal
       if(m_RegressionLine) {
 	g.setColor(Color.BLACK);
-	double mn = StatUtils.mean(m_Data);
-	double std = StatUtils.stddev(m_Data, false);
-	for(int i = 0; i< m_Data.length-1; i++) {
-	  double p1 = (m_Data[i]-mn)/std;
-	  double p2 = (m_Data[i+1]-mn)/std;
-	  g.drawLine(m_AxisBottom.valueToPos(m_Data[i]), m_AxisLeft.valueToPos(p1), m_AxisBottom.valueToPos(m_Data[i+1]), m_AxisLeft.valueToPos(p2));
+	double mn = StatUtils.mean(m_Sorted);
+	double std = StatUtils.stddev(m_Sorted, false);
+	for(int i = 0; i< m_Sorted.length-1; i++) {
+	  double p1 = (m_Sorted[i]-mn)/std;
+	  double p2 = (m_Sorted[i+1]-mn)/std;
+	  g.drawLine(m_AxisBottom.valueToPos(m_Sorted[i]), m_AxisLeft.valueToPos(p1), m_AxisBottom.valueToPos(m_Sorted[i+1]), m_AxisLeft.valueToPos(p2));
 	}
       }
     }

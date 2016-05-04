@@ -15,17 +15,15 @@
 
 /*
  * ScatterDisplay.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
 
-import java.util.ArrayList;
-
-import weka.core.Attribute;
-import weka.core.Instances;
 import adams.core.Index;
 import adams.core.base.BaseRegExp;
+import adams.data.spreadsheet.DefaultSpreadSheet;
+import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.core.Token;
 import adams.gui.core.BasePanel;
 import adams.gui.visualization.stats.paintlet.AbstractScatterPlotPaintlet;
@@ -172,7 +170,7 @@ extends AbstractGraphicalDisplay {
   }
 
   public Class[] accepts() {
-    return new Class[]{Instances.class};
+    return new Class[]{SpreadSheet.class};
   }
 
   /**
@@ -381,8 +379,8 @@ extends AbstractGraphicalDisplay {
   @Override
   public void clearPanel() {
     if (m_ScatPlot != null) {
-      Instances temp = new Instances("Empty", new ArrayList<Attribute>(), 0);
-      m_ScatPlot.setInstances(temp);
+      SpreadSheet temp = new DefaultSpreadSheet();
+      m_ScatPlot.setData(temp);
     }
   }
 
@@ -404,7 +402,7 @@ extends AbstractGraphicalDisplay {
     m_ScatPlot.setX_Ind(new Index(m_XAttribute));
     m_ScatPlot.setY_IndexReg(m_YAttributeName);
     m_ScatPlot.setY_Ind(new Index(m_YAttribute));
-    m_ScatPlot.setInstances((Instances) token.getPayload());
+    m_ScatPlot.setData((SpreadSheet) token.getPayload());
     m_ScatPlot.setOverlays(m_Overlays);
     m_ScatPlot.setPaintlet(m_Paintlet);
     m_ScatPlot.reset();

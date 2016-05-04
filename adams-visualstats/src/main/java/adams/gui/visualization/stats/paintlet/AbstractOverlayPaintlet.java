@@ -15,17 +15,17 @@
 
 /*
  * AbstractOverlayPaintlet.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.stats.paintlet;
 
-import java.awt.Graphics;
-
-import weka.core.Instances;
+import adams.data.spreadsheet.SpreadSheet;
 import adams.gui.event.PaintEvent.PaintMoment;
 import adams.gui.visualization.core.AxisPanel;
 import adams.gui.visualization.core.plot.Axis;
+
+import java.awt.Graphics;
 
 /**
  * Abstract class for paintlets that draw the overlays.
@@ -60,12 +60,12 @@ extends AbstractColorPaintlet{
 
   /**
    * Pass the parameters required by the overlay paintlet
-   * @param inst		instances to plot
+   * @param data		instances to plot
    * @param x			Index of attribute on x axis
    * @param y			Index of attribute on y axis
    */
-  public void parameters(Instances inst, int x, int y) {
-    m_Instances = inst;
+  public void parameters(SpreadSheet data, int x, int y) {
+    m_Data = data;
     m_XInd = x;
     m_YInd = y;
     m_Calculated = false;

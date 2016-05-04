@@ -15,23 +15,21 @@
 
 /*
  * BoxPlotTest.java
- * Copyright (C) 2011-2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import adams.core.Range;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
 import adams.flow.core.Actor;
 import adams.flow.source.FileSupplier;
-import adams.flow.transformer.WekaClassSelector;
-import adams.flow.transformer.WekaFileReader;
-import adams.flow.transformer.WekaFileReader.OutputType;
+import adams.flow.transformer.SpreadSheetFileReader;
 import adams.test.TmpFile;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Tests the BoxPlot actor.
@@ -60,7 +58,7 @@ public class BoxPlotTest
   protected void setUp() throws Exception {
     super.setUp();
 
-    m_TestHelper.copyResourceToTmp("waveform-5000.arff");
+    m_TestHelper.copyResourceToTmp("waveform-5000.csv");
   }
 
   /**
@@ -70,7 +68,7 @@ public class BoxPlotTest
    */
   @Override
   protected void tearDown() throws Exception {
-    m_TestHelper.deleteFileFromTmp("waveform-5000.arff");
+    m_TestHelper.deleteFileFromTmp("waveform-5000.csv");
 
     super.tearDown();
   }
@@ -83,12 +81,9 @@ public class BoxPlotTest
   @Override
   public Actor getActor() {
     FileSupplier sfs = new FileSupplier();
-    sfs.setFiles(new adams.core.io.PlaceholderFile[]{new TmpFile("waveform-5000.arff")});
+    sfs.setFiles(new adams.core.io.PlaceholderFile[]{new TmpFile("waveform-5000.csv")});
 
-    WekaFileReader fr = new WekaFileReader();
-    fr.setOutputType(OutputType.DATASET);
-
-    WekaClassSelector cs = new WekaClassSelector();
+    SpreadSheetFileReader fr = new SpreadSheetFileReader();
 
     BoxPlot bp = new BoxPlot();
     bp.setNumHorizontal(10);
@@ -97,7 +92,7 @@ public class BoxPlotTest
     bp.setAttributes(new Range("1-40"));
 
     Flow flow = new Flow();
-    flow.setActors(new Actor[]{sfs, fr, cs, bp});
+    flow.setActors(new Actor[]{sfs, fr, bp});
 
     return flow;
   }

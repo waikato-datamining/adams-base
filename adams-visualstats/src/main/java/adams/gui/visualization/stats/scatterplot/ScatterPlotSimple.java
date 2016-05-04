@@ -44,9 +44,9 @@ extends AbstractScatterPlot{
   protected ArrayList<AbstractScatterPlotOverlay> m_overs;
 
   public void prepareUpdate() {
-    if(m_Instances != null){
+    if(m_Data != null){
       //set the data for the scatterplot
-      m_Plot.setinstances(m_Instances);
+      m_Plot.setData(m_Data);
       m_Plot.setX(m_XIndex);
       m_Plot.setY(m_YIndex);
       //set the data for the paintlet
@@ -54,7 +54,7 @@ extends AbstractScatterPlot{
 	m_Val.setRepaintOnChange(false);
 	m_Val.setX_Index(m_XIndex);
 	m_Val.setY_Index(m_YIndex);
-	m_Val.setInstances(m_Instances);
+	m_Val.setData(m_Data);
 	m_Val.setRepaintOnChange(true);
       }
     }

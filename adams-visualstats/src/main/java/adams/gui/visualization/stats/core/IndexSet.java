@@ -15,14 +15,14 @@
 
 /*
  * IndexSet.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.stats.core;
 
-import weka.core.Instances;
 import adams.core.Index;
 import adams.core.base.BaseRegExp;
+import adams.data.spreadsheet.SpreadSheet;
 
 /**
  * Class containing a static method for setting an
@@ -42,12 +42,12 @@ public class IndexSet {
    * @param index	the default index
    * @return		the determined index
    */
-  public static int getIndex(BaseRegExp reg, Index ind, Instances inst, int index) {
+  public static int getIndex(BaseRegExp reg, Index ind, SpreadSheet inst, int index) {
     //Sets the index. First check's if a regular expression has been set
     // if not, uses the index.
     if(!reg.isEmpty()) {
-      for(int i = 0; i< inst.numAttributes(); i++) {
-	String name = inst.attribute(i).name();
+      for(int i = 0; i< inst.getColumnCount(); i++) {
+	String name = inst.getColumnName(i);
 	if(reg.isMatch(name)) {
 	  index = i;
 	  break;
@@ -55,7 +55,7 @@ public class IndexSet {
       }
     }
     else {
-      ind.setMax(inst.numAttributes());
+      ind.setMax(inst.getColumnCount());
       try {
 	index = ind.getIntIndex();
       }

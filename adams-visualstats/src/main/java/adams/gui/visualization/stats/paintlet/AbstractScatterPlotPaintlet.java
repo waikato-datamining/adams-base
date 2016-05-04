@@ -15,19 +15,20 @@
 
 /*
  * AbstractScatterPlotPaintlet.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.stats.paintlet;
 
-import java.awt.Graphics;
-
 import adams.core.option.OptionUtils;
+import adams.data.spreadsheet.SpreadSheetUtils;
 import adams.gui.core.AntiAliasingSupporter;
 import adams.gui.core.GUIHelper;
 import adams.gui.event.PaintEvent.PaintMoment;
 import adams.gui.visualization.core.AxisPanel;
 import adams.gui.visualization.core.plot.Axis;
+
+import java.awt.Graphics;
 
 /**
  * Abstract class for creating scatterplot paintlets.
@@ -131,7 +132,7 @@ public abstract class AbstractScatterPlotPaintlet
    */
   @Override
   public void performPaint(Graphics g, PaintMoment moment) {
-    if(m_Instances != null)
+    if(m_Data != null)
       drawData(g);
   }
 
@@ -148,14 +149,14 @@ public abstract class AbstractScatterPlotPaintlet
    * @param g		Graphics object to draw on
    */
   protected void drawData(Graphics g) {
-    if(m_Instances != null) {
+    if(m_Data != null) {
       g.setColor(m_Color);
 
       GUIHelper.configureAntiAliasing(g, m_AntiAliasingEnabled);
 
       //arrays of data to be plotted
-      m_XData = m_Instances.attributeToDoubleArray(m_XIndex);
-      m_YData = m_Instances.attributeToDoubleArray(m_YIndex);
+      m_XData = SpreadSheetUtils.getNumericColumn(m_Data, m_XIndex);
+      m_YData = SpreadSheetUtils.getNumericColumn(m_Data, m_YIndex);
 
       m_AxisBottom = getPanel().getPlot().getAxis(Axis.BOTTOM);
       m_AxisLeft = getPanel().getPlot().getAxis(Axis.LEFT);

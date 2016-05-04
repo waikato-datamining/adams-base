@@ -20,11 +20,11 @@
 
 package adams.gui.visualization.stats.paintlet;
 
+import adams.data.statistics.StatUtils;
+
 import java.awt.BasicStroke;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-
-import adams.data.statistics.StatUtils;
 
 /**
  <!-- globalinfo-start -->
@@ -76,13 +76,13 @@ extends AbstractZScorePaintlet{
 
     int crossSize;
     int halfCross;
-    double mean = StatUtils.mean(m_Data);
-    double max = Math.max((StatUtils.max(m_Data) -mean), (mean -StatUtils.min(m_Data)));
+    double mean = StatUtils.mean(m_Values);
+    double max = Math.max((StatUtils.max(m_Values) -mean), (mean -StatUtils.min(m_Values)));
 
-    for(int i = 0; i< m_Data.length; i++) {
+    for(int i = 0; i< m_Values.length; i++) {
       posX = m_AxisBottom.valueToPos(i);
-      posY = m_AxisLeft.valueToPos(m_Data[i]);
-      crossSize = (int)(((m_Data[i] - mean)/max)* 20);
+      posY = m_AxisLeft.valueToPos(m_Values[i]);
+      crossSize = (int)(((m_Values[i] - mean)/max)* 20);
       halfCross = (int)(crossSize/2);
       g.setColor(m_Color);
       Graphics2D g2d = (Graphics2D)g;
@@ -90,9 +90,9 @@ extends AbstractZScorePaintlet{
       g2d.drawLine(posX-halfCross, posY-halfCross, posX+halfCross, posY+ halfCross);
       g2d.drawLine(posX-halfCross, posY+halfCross, posX+ halfCross, posY-halfCross);
 
-      if(i+1 < m_Data.length) {
+      if(i+1 < m_Values.length) {
 	int posX2 = m_AxisBottom.valueToPos(i+1);
-	int posY2 = m_AxisLeft.valueToPos(m_Data[i+1]);
+	int posY2 = m_AxisLeft.valueToPos(m_Values[i+1]);
 	g.setColor(m_LineColor);
 	g.drawLine(posX, posY, posX2, posY2);
       }

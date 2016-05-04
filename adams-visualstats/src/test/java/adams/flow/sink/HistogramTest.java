@@ -15,11 +15,12 @@
 
 /*
  * HistogramTest.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
 
+import adams.flow.transformer.SpreadSheetFileReader;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import adams.core.option.AbstractArgumentOption;
@@ -56,7 +57,7 @@ public class HistogramTest
   protected void setUp() throws Exception {
     super.setUp();
     
-    m_TestHelper.copyResourceToTmp("iris.arff");
+    m_TestHelper.copyResourceToTmp("iris.csv");
   }
 
   /**
@@ -66,7 +67,7 @@ public class HistogramTest
    */
   @Override
   protected void tearDown() throws Exception {
-    m_TestHelper.deleteFileFromTmp("iris.arff");
+    m_TestHelper.deleteFileFromTmp("iris.csv");
     
     super.tearDown();
   }
@@ -100,19 +101,16 @@ public class HistogramTest
       adams.flow.core.Actor[] abstractactor2 = new adams.flow.core.Actor[3];
 
       // Flow.FileSupplier
-      adams.flow.source.FileSupplier singlefilesupplier3 = new adams.flow.source.FileSupplier();
-      argOption = (AbstractArgumentOption) singlefilesupplier3.getOptionManager().findByProperty("files");
-      singlefilesupplier3.setFiles(new adams.core.io.PlaceholderFile[]{(adams.core.io.PlaceholderFile) argOption.valueOf("${TMP}/iris.arff")});
+      adams.flow.source.FileSupplier filesupplier3 = new adams.flow.source.FileSupplier();
+      argOption = (AbstractArgumentOption) filesupplier3.getOptionManager().findByProperty("files");
+      filesupplier3.setFiles(new adams.core.io.PlaceholderFile[]{(adams.core.io.PlaceholderFile) argOption.valueOf("${TMP}/iris.csv")});
 
-      abstractactor2[0] = singlefilesupplier3;
+      abstractactor2[0] = filesupplier3;
 
       // Flow.WekaFileReader
-      adams.flow.transformer.WekaFileReader wekafilereader5 = new adams.flow.transformer.WekaFileReader();
-      argOption = (AbstractArgumentOption) wekafilereader5.getOptionManager().findByProperty("customLoader");
-      weka.core.converters.ArffLoader arffloader7 = new weka.core.converters.ArffLoader();
-      wekafilereader5.setCustomLoader(arffloader7);
+      SpreadSheetFileReader fr = new SpreadSheetFileReader();
 
-      abstractactor2[1] = wekafilereader5;
+      abstractactor2[1] = fr;
 
       // Flow.Histogram
       adams.flow.sink.Histogram histogram8 = new adams.flow.sink.Histogram();

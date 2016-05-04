@@ -15,21 +15,15 @@
 
 /*
  * ZScoreDisplay.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.util.ArrayList;
-
-import javax.swing.JComponent;
-
-import weka.core.Attribute;
-import weka.core.Instances;
 import adams.core.Index;
 import adams.core.base.BaseRegExp;
+import adams.data.spreadsheet.DefaultSpreadSheet;
+import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.core.Token;
 import adams.gui.core.BasePanel;
 import adams.gui.visualization.stats.paintlet.AbstractZScorePaintlet;
@@ -38,6 +32,10 @@ import adams.gui.visualization.stats.zscore.AbstractZScoreOverlay;
 import adams.gui.visualization.stats.zscore.Mean;
 import adams.gui.visualization.stats.zscore.StdDev;
 import adams.gui.visualization.stats.zscore.ZScore;
+
+import javax.swing.JComponent;
+import java.awt.BorderLayout;
+import java.awt.Color;
 
 /**
  <!-- globalinfo-start -->
@@ -158,7 +156,7 @@ public class ZScoreDisplay
   protected boolean m_ShowOptions;
 
   public Class[] accepts() {
-    return new Class[]{Instances.class};
+    return new Class[]{SpreadSheet.class};
   }
 
   @Override
@@ -341,8 +339,8 @@ public class ZScoreDisplay
   @Override
   public void clearPanel() {
     if (m_ZScore != null) {
-      Instances temp = new Instances("Empty", new ArrayList<Attribute>(), 0);
-      m_ZScore.setInstances(temp);
+      SpreadSheet temp = new DefaultSpreadSheet();
+      m_ZScore.setData(temp);
     }
   }
 
@@ -357,7 +355,7 @@ public class ZScoreDisplay
   protected void display(Token token) {
     m_ZScore.setAttReg(m_Att);
     m_ZScore.setAttindex(new Index(m_AttIndex));
-    m_ZScore.setInstances((Instances) token.getPayload());
+    m_ZScore.setData((SpreadSheet) token.getPayload());
     m_ZScore.setOverlays(m_Overlays);
     m_ZScore.setPaintlet(m_Paintlet);
     m_ZScore.reset();
@@ -373,7 +371,7 @@ public class ZScoreDisplay
     AbstractDisplayPanel	result;
     String			name;
 
-    name = "ZScore Display (" + ((Instances) token.getPayload()).relationName() + ")";
+    name = "ZScore Display (" + ((SpreadSheet) token.getPayload()).getName() + ")";
 
     result = new AbstractComponentDisplayPanel(name) {
       private static final long serialVersionUID = 3272038733338355773L;
@@ -391,7 +389,7 @@ public class ZScoreDisplay
 	try {
 	  m_ZScore.setAttReg(m_Att);
 	  m_ZScore.setAttindex(new Index(m_AttIndex));
-	  m_ZScore.setInstances((Instances) token.getPayload());
+	  m_ZScore.setData((SpreadSheet) token.getPayload());
 	  m_ZScore.setOverlays(m_Overlays);
 	  m_ZScore.setPaintlet(m_Paintlet);
 	  m_ZScore.reset();
@@ -406,10 +404,10 @@ public class ZScoreDisplay
       }
       @Override
       public void clearPanel() {
-	m_ZScore.setInstances(null);
+	m_ZScore.setData(null);
       }
       public void cleanUp() {
-	m_ZScore.setInstances(null);
+	m_ZScore.setData(null);
       }
     };
     

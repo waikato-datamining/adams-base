@@ -15,19 +15,19 @@
 
 /*
  * NormalPlot.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.stats.probabilityplot;
 
-import java.awt.BorderLayout;
-import java.awt.Graphics;
-
-import weka.core.Instances;
+import adams.data.spreadsheet.SpreadSheet;
 import adams.gui.visualization.core.PaintablePanel;
 import adams.gui.visualization.core.PlotPanel;
 import adams.gui.visualization.core.plot.Axis;
 import adams.gui.visualization.stats.paintlet.Normal;
+
+import java.awt.BorderLayout;
+import java.awt.Graphics;
 
 /**
  * Probability plot that only displays the normal distribution,
@@ -43,7 +43,7 @@ extends PaintablePanel{
   private static final long serialVersionUID = 2806317665479264377L;
 
   /** Instances to plot */
-  protected Instances m_Instances;
+  protected SpreadSheet m_Data;
 
   /**Panel for displaying data */
   protected ProbabilityPlotPanel m_Plot;
@@ -62,7 +62,7 @@ extends PaintablePanel{
     super.initialize();
     
     m_NormOptions = new NormalPlotOptions();
-    m_Instances   = null;
+    m_Data = null;
     m_Index       = 0;
   }
   
@@ -106,10 +106,10 @@ extends PaintablePanel{
    */
   @Override
   public void prepareUpdate() {
-    if (m_Instances != null) {
+    if (m_Data != null) {
       m_Val.setLine(m_NormOptions.m_RegLine);
       m_Val.setIndex(m_Index);
-      m_Val.setInstances(m_Instances);
+      m_Val.setData(m_Data);
       m_Val.configureAxes();
       m_Val.calculateDimensions();
     }
@@ -123,15 +123,15 @@ extends PaintablePanel{
    */
   @Override
   protected boolean canPaint(Graphics g) {
-    return (m_Plot != null) && (m_Instances != null);
+    return (m_Plot != null) && (m_Data != null);
   }
 
   /**
    * Set the instances to plot
-   * @param inst		instances to plot
+   * @param data		instances to plot
    */
-  public void setInstances(Instances inst) {
-    m_Instances = inst;
+  public void setData(SpreadSheet data) {
+    m_Data = data;
     update();
   }
 

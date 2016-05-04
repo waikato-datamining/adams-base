@@ -20,11 +20,12 @@
 
 package adams.gui.visualization.stats.paintlet;
 
+import adams.data.spreadsheet.SpreadSheetUtils;
+import adams.data.statistics.StatUtils;
+
 import java.awt.BasicStroke;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-
-import adams.data.statistics.StatUtils;
 
 /**
  <!-- globalinfo-start -->
@@ -85,7 +86,7 @@ extends AbstractZOverlayPaintlet{
   public void calculate() {
     super.calculate();
 
-    double[] data = m_Instances.attributeToDoubleArray(m_Ind);
+    double[] data = SpreadSheetUtils.getNumericColumn(m_Data, m_Ind);
     m_Mean = StatUtils.mean(data);
     m_Calculated = true;
   }

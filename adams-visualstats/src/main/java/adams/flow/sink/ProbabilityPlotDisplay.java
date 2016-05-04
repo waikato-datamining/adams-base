@@ -15,17 +15,15 @@
 
 /*
  * ProbabilityPlotDisplay.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
 
-import java.util.ArrayList;
-
-import weka.core.Attribute;
-import weka.core.Instances;
 import adams.core.Index;
 import adams.core.base.BaseRegExp;
+import adams.data.spreadsheet.DefaultSpreadSheet;
+import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.core.Token;
 import adams.gui.core.BasePanel;
 import adams.gui.visualization.stats.paintlet.AbstractProbabilityPaintlet;
@@ -153,14 +151,14 @@ extends AbstractGraphicalDisplay{
   protected String m_AttIndex;
 
   public Class[] accepts() {
-    return new Class[]{Instances.class};
+    return new Class[]{SpreadSheet.class};
   }
 
   @Override
   public void clearPanel() {
     if (m_Plot != null) {
-      Instances temp = new Instances("Empty", new ArrayList<Attribute>(), 0);
-      m_Plot.setInstances(temp);
+      SpreadSheet temp = new DefaultSpreadSheet();
+      m_Plot.setData(temp);
     }
   }
 
@@ -172,7 +170,7 @@ extends AbstractGraphicalDisplay{
 
   @Override
   protected void display(Token token) {
-    m_Plot.setInstances((Instances)token.getPayload());
+    m_Plot.setData((SpreadSheet) token.getPayload());
     m_Plot.setRegression(m_Val);
     m_Plot.setGrid(m_Grid);
     m_Plot.setRegressionLine(m_Regression);

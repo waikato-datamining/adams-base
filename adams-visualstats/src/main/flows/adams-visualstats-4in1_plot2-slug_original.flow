@@ -1,16 +1,8 @@
 # Project: adams
-# Date: 2016-02-15 15:10:58
+# Date: 2016-05-04 16:33:36
 # User: fracpete
 # Charset: UTF-8
-adams.flow.control.Flow -annotation "Trains and evaluates LinearRegression on the \\\"slug\\\" dataset\\nand displays the predictions in a 4-in-1 plot." -flow-execution-listener adams.flow.execution.NullListener
- adams.flow.standalone.CallableActors
-  adams.flow.source.SequenceSource -name Data
-   adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/slug-original.arff
-   adams.flow.transformer.WekaFileReader -loader weka.core.converters.ArffLoader
-   adams.flow.transformer.WekaClassSelector
-  adams.flow.source.WekaClassifierSetup -classifier "weka.classifiers.functions.LinearRegression -S 1 -C -R 1.0E-8 -num-decimal-places 4"
- adams.flow.source.CallableSource -callable Data
- adams.flow.transformer.WekaTrainClassifier -name WekaClassifier
- adams.flow.transformer.WekaTestSetEvaluator -output weka.classifiers.evaluation.output.prediction.Null -testset Data
- adams.flow.transformer.WekaPredictionsToInstances
+adams.flow.control.Flow -annotation "Loads the predictions obtained from an evaluated LinearRegression on \\nthe \\\"slug\\\" dataset and displays the predictions in a 4-in-1 plot." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/slug-original_pred.csv
+ adams.flow.transformer.SpreadSheetFileReader -reader "adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.DefaultSpreadSheet"
  adams.flow.sink.FourInOneDisplay -writer adams.gui.print.NullWriter -normal-plot-options "adams.gui.visualization.stats.probabilityplot.NormalPlotOptions -axis-x \"adams.gui.visualization.core.AxisPanelOptions -tick-generator \\\"adams.gui.visualization.core.axis.FancyTickGenerator -num-ticks 20\\\" -nth-value 2 -width 40 -custom-format #.#\" -axis-y \"adams.gui.visualization.core.AxisPanelOptions -tick-generator adams.gui.visualization.core.axis.FancyTickGenerator -nth-value 1 -width 60 -custom-format #.#\"" -versus-fit-options "adams.gui.visualization.stats.fourinone.VersusFitOptions -axis-x \"adams.gui.visualization.core.AxisPanelOptions -label Predicted -tick-generator \\\"adams.gui.visualization.core.axis.FancyTickGenerator -num-ticks 20\\\" -nth-value 2 -width 40 -top-margin 0.05 -bottom-margin 0.05 -custom-format #.#\" -axis-y \"adams.gui.visualization.core.AxisPanelOptions -label Residuals -tick-generator adams.gui.visualization.core.axis.FancyTickGenerator -nth-value 1 -width 60 -top-margin 0.05 -bottom-margin 0.05 -custom-format #.#\" -paintlet adams.gui.visualization.stats.paintlet.VsFitPaintlet" -histogram-options "adams.gui.visualization.stats.histogram.HistogramOptions -axis-x \"adams.gui.visualization.core.AxisPanelOptions -tick-generator \\\"adams.gui.visualization.core.axis.FancyTickGenerator -num-ticks 20\\\" -nth-value 2 -width 40 -custom-format #.#\" -axis-y \"adams.gui.visualization.core.AxisPanelOptions -tick-generator adams.gui.visualization.core.axis.FancyTickGenerator -nth-value 1 -width 60 -top-margin 0.05 -custom-format #.#\" -number-bins 25 -y-axis-type MANUAL -paintlet adams.gui.visualization.stats.paintlet.HistogramPaintlet" -versus-order-options "adams.gui.visualization.stats.fourinone.VersusOrderOptions -axis-x \"adams.gui.visualization.core.AxisPanelOptions -label Order -tick-generator \\\"adams.gui.visualization.core.axis.FancyTickGenerator -num-ticks 20\\\" -nth-value 2 -width 40 -custom-format #\" -axis-y \"adams.gui.visualization.core.AxisPanelOptions -label Residuals -tick-generator adams.gui.visualization.core.axis.FancyTickGenerator -nth-value 1 -width 60 -top-margin 0.05 -bottom-margin 0.05 -custom-format #.#\" -paintlet adams.gui.visualization.stats.paintlet.VsOrderPaintlet"

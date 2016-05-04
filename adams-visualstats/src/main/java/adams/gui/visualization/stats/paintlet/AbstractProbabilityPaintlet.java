@@ -15,17 +15,17 @@
 
 /*
  * AbstractProbabilityPaintlet.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.stats.paintlet;
-
-import java.awt.Color;
 
 import adams.gui.core.AntiAliasingSupporter;
 import adams.gui.core.GUIHelper;
 import adams.gui.event.PaintEvent.PaintMoment;
 import adams.gui.visualization.core.AxisPanel;
+
+import java.awt.Color;
 
 /**
  * Abstract class for paintlets that plot the regression in the
@@ -60,7 +60,7 @@ public abstract class AbstractProbabilityPaintlet
   protected AxisPanel m_AxisBottom;
 
   /** the sorted data. */
-  protected double[] m_Data;
+  protected double[] m_Sorted;
 
   /**Transformed data for the y axis */
   protected double[] m_TransformedY;
@@ -100,7 +100,7 @@ public abstract class AbstractProbabilityPaintlet
     super.initialize();
     
     m_TransformedY = new double[0];
-    m_Data         = new double[0];
+    m_Sorted = new double[0];
   }
   
   /**

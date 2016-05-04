@@ -15,17 +15,17 @@
 
 /*
  * AbstractZOverlayPaintlet.java
- * Copyright (C) 2011-2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.stats.paintlet;
 
-import java.awt.Graphics;
-
-import weka.core.Instances;
+import adams.data.spreadsheet.SpreadSheet;
 import adams.gui.event.PaintEvent.PaintMoment;
 import adams.gui.visualization.core.AxisPanel;
 import adams.gui.visualization.core.plot.Axis;
+
+import java.awt.Graphics;
 
 /**
  * abstract class for creating z score overlay paintlets.
@@ -69,11 +69,11 @@ extends AbstractColorPaintlet{
 
   /**
    * Pass the paramters required by the overlay paintlet
-   * @param inst				Instances to be plotted
+   * @param data				Instances to be plotted
    * @param ind				index of the attribute within the instacnes
    */
-  public void parameters(Instances inst, int ind) {
-    m_Instances = inst;
+  public void parameters(SpreadSheet data, int ind) {
+    m_Data = data;
     m_Ind = ind;
   }
 

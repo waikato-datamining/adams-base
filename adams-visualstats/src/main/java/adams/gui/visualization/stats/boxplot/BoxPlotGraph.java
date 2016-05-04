@@ -15,27 +15,23 @@
 
 /*
  * BoxPlotGraph.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.stats.boxplot;
 
-import java.awt.Color;
-import java.awt.Graphics;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
-import weka.core.Attribute;
-import weka.core.Instances;
-import adams.data.statistics.Percentile;
+import adams.data.spreadsheet.SpreadSheet;
+import adams.data.spreadsheet.SpreadSheetUtils;
 import adams.data.statistics.StatUtils;
 import adams.gui.visualization.core.PlotPanel;
 import adams.gui.visualization.core.axis.FancyTickGenerator;
 import adams.gui.visualization.core.axis.Type;
 import adams.gui.visualization.core.axis.Visibility;
 import adams.gui.visualization.core.plot.Axis;
+
+import java.awt.Color;
+import java.awt.Graphics;
+import java.util.Arrays;
 
 /**
  * Class that displays a single box plot graph.
@@ -91,36 +87,24 @@ public class BoxPlotGraph
   
   /**
    * Passes in the data to construct the box plot graph
-   * @param i		Instance data
+   * @param data		Instance data
    * @param att		Attribute being graphed in this box plot
    */
-  public void pass(Instances i, Attribute att) {
+  public void pass(SpreadSheet data, String att) {
     //position of attribute in instance data
     int pos = -1;
     //finds position of attribute
-    for(int t = 0; t<i.numAttributes(); t++) {
-      if(i.attribute(t) == att)
+    for(int t = 0; t< data.getColumnCount(); t++) {
+      if(data.getColumnName(t).equals(att))
 	pos = t;
     }
     //gets all data for the specific attribute
-    m_Data = i.attributeToDoubleArray(pos);
+    m_Data = SpreadSheetUtils.getNumericColumn(data, pos);
     //finding statistics for drawing box plot
     m_Median = StatUtils.median(m_Data);
     m_Min = StatUtils.min(m_Data);
     m_Max = StatUtils.max(m_Data);
-    
-    
-    //version 1
-//    Percentile<Double> percent= new Percentile<Double>();
-//    List<Double> vec = new ArrayList<Double>();
-//    for(double d: m_Data) {
-//      vec.add(d);
-//    }
-//    percent.addAll(vec);
-//    m_Lower = percent.getPercentile(0.25);
-//    m_Upper = percent.getPercentile(0.75);
-    
-    //version 2
+
     Double[] copyArray = new Double[m_Data.length];
     for(int j = 0; j < m_Data.length; j++) {
     	copyArray[j] = m_Data[j];

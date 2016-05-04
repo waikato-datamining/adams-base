@@ -15,21 +15,20 @@
 
 /*
  * BoxPlot.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
 
-import java.awt.Color;
-import java.util.ArrayList;
-
-import weka.core.Attribute;
-import weka.core.Instances;
 import adams.core.QuickInfoHelper;
 import adams.core.Range;
+import adams.data.spreadsheet.DefaultSpreadSheet;
+import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.core.Token;
 import adams.gui.core.BasePanel;
 import adams.gui.visualization.stats.boxplot.BoxPlotManager;
+
+import java.awt.Color;
 
 /**
  * <!-- globalinfo-start -->
@@ -194,14 +193,14 @@ extends AbstractGraphicalDisplay {
   protected Color m_Color;
 
   public Class[] accepts() {
-    return new Class[]{Instances.class};
+    return new Class[]{SpreadSheet.class};
   }
 
   @Override
   public void clearPanel() {
     if (m_BoxPlot != null) {
-      Instances temp = new Instances("Empty", new ArrayList<Attribute>(),0);
-      m_BoxPlot.setInstances(temp);
+      SpreadSheet temp = new DefaultSpreadSheet();
+      m_BoxPlot.setData(temp);
       m_BoxPlot.reset();
     }
   }
@@ -223,7 +222,7 @@ extends AbstractGraphicalDisplay {
     m_BoxPlot.setNumHorizontal(m_NumHorizontal);
     m_BoxPlot.setSameAxis(m_SameAxis);
     m_BoxPlot.setRange(m_AttString);
-    m_BoxPlot.setInstances((Instances)token.getPayload());
+    m_BoxPlot.setData((SpreadSheet) token.getPayload());
     m_BoxPlot.setFill(m_Fill);
     m_BoxPlot.setColor(m_Color);
     m_BoxPlot.reset();

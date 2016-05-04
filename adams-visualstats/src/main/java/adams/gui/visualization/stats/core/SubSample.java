@@ -15,13 +15,13 @@
 
 /*
  * SubSample.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.stats.core;
 
-import weka.core.Instances;
-import weka.filters.Filter;
+import adams.data.spreadsheet.SpreadSheet;
+import adams.data.statistics.StatUtils;
 
 /**
  * Class for taking a smaller sample of a dataset. Used by the matrix class.
@@ -32,7 +32,7 @@ import weka.filters.Filter;
 public class SubSample {
 
   /** Instances to plot */
-  protected Instances m_Instances;
+  protected SpreadSheet m_Data;
 
   /**Percentage of data to take */
   protected double m_Percentage;
@@ -42,8 +42,8 @@ public class SubSample {
    * @param inst			Instances for plotting
    * @param percent		Percent of data for sub sample
    */
-  public SubSample(Instances inst, double percent) {
-    m_Instances = inst;
+  public SubSample(SpreadSheet inst, double percent) {
+    m_Data = inst;
     m_Percentage = percent;
   }
 
@@ -52,27 +52,15 @@ public class SubSample {
    * @return				Instances containing specified instances of the original instances
    * @throws Exception
    */
-  public Instances sample() throws Exception {
+  public SpreadSheet sample() throws Exception {
+    SpreadSheet		result;
+    int[]		indices;
 
-    m_Instances.setClassIndex(m_Instances.numAttributes() -1);
-    int seed = 42;
-    Filter filter = null;
-    if(m_Instances.classAttribute().isNominal()) {
-      weka.filters.supervised.instance.Resample resampleNom = new weka.
-      filters.supervised.instance.Resample();
-      resampleNom.setRandomSeed(seed);
-      resampleNom.setSampleSizePercent(m_Percentage);
-      filter = resampleNom;
-    }
-    else {
-      weka.filters.unsupervised.instance.Resample resampleOther = new
-      weka.filters.unsupervised.instance.Resample();
-      resampleOther.setRandomSeed(seed);
-      resampleOther.setSampleSizePercent(m_Percentage);
-      filter = resampleOther;
-    }
-    filter.setInputFormat(m_Instances);
-    Instances sample = Filter.useFilter(m_Instances, filter);
-    return sample;
+    result  = m_Data.getHeader();
+    indices = StatUtils.subsample(m_Data.getRowCount(), m_Percentage / 100, 42).toArray();
+    for (int index: indices)
+      result.addRow().assign(m_Data.getRow(index));
+
+    return result;
   }
 }

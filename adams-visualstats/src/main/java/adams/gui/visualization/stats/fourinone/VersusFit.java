@@ -15,21 +15,22 @@
 
 /*
  * VersusFit.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.stats.fourinone;
 
-import java.awt.BorderLayout;
-import java.awt.Graphics;
-
-import weka.core.Instances;
+import adams.data.spreadsheet.SpreadSheet;
+import adams.data.spreadsheet.SpreadSheetUtils;
 import adams.data.statistics.StatUtils;
 import adams.gui.visualization.core.AxisPanel;
 import adams.gui.visualization.core.PaintablePanel;
 import adams.gui.visualization.core.PlotPanel;
 import adams.gui.visualization.core.plot.Axis;
 import adams.gui.visualization.stats.paintlet.VsFitPaintlet;
+
+import java.awt.BorderLayout;
+import java.awt.Graphics;
 
 /**
  * Class that displays a versus fit graph. Plotting the residuals on the
@@ -45,7 +46,7 @@ extends PaintablePanel{
   private static final long serialVersionUID = 2542241196305925848L;
 
   /** Instances containing the data */
-  protected Instances m_Instances;
+  protected SpreadSheet m_Data;
 
   /** Panel for displaying the data */
   protected VersusFitPanel m_Plot;
@@ -104,16 +105,16 @@ extends PaintablePanel{
    */
   @Override
   public void prepareUpdate() {
-    if (m_Instances != null) {
-      m_val.setInstances(m_Instances);
+    if (m_Data != null) {
+      m_val.setData(m_Data);
       m_val.setIndices(m_Index, m_PredInd);
       m_val.setRepaintOnChange(true);
 
       AxisPanel axisBottom = getPlot().getAxis(Axis.BOTTOM);
       AxisPanel axisLeft = getPlot().getAxis(Axis.LEFT);
 
-      double[] predicted = m_Instances.attributeToDoubleArray(m_PredInd);
-      double[] residuals = m_Instances.attributeToDoubleArray(m_Index);
+      double[] predicted = SpreadSheetUtils.getNumericColumn(m_Data, m_PredInd);
+      double[] residuals = SpreadSheetUtils.getNumericColumn(m_Data, m_Index);
       double minY = StatUtils.min(residuals);
       double maxY = StatUtils.max(residuals);
       double maxX = StatUtils.max(predicted);
@@ -133,23 +134,23 @@ extends PaintablePanel{
    */
   @Override
   protected boolean canPaint(Graphics g) {
-    return (m_Plot != null) && (m_Instances != null);
+    return (m_Plot != null) && (m_Data != null);
   }
 
   /**
    * get the instances being plotted
    * @return		Instances for plotting
    */
-  public Instances getInstances() {
-    return m_Instances;
+  public SpreadSheet getData() {
+    return m_Data;
   }
 
   /**
    * Set the instances to be plotted
-   * @param inst		Instances for plotting
+   * @param value		Instances for plotting
    */
-  public void setInstances(Instances inst) {
-    m_Instances = inst;
+  public void setData(SpreadSheet value) {
+    m_Data = value;
   }
 
   /**

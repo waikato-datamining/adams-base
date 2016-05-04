@@ -15,21 +15,22 @@
 
 /*
  * VsOrderPaintlet.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.stats.paintlet;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-
+import adams.data.spreadsheet.SpreadSheetUtils;
 import adams.gui.core.AntiAliasingSupporter;
 import adams.gui.core.GUIHelper;
 import adams.gui.event.PaintEvent.PaintMoment;
 import adams.gui.visualization.core.AxisPanel;
 import adams.gui.visualization.core.plot.Axis;
+
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 
 /**
  <!-- globalinfo-start -->
@@ -244,13 +245,13 @@ public class VsOrderPaintlet
    */
   @Override
   public void performPaint(Graphics g, PaintMoment moment) {
-    if(m_Instances != null) {
+    if(m_Data != null) {
       GUIHelper.configureAntiAliasing(g, m_AntiAliasingEnabled);
 
       AxisPanel axisBottom = getPanel().getPlot().getAxis(Axis.BOTTOM);
       AxisPanel axisLeft = getPanel().getPlot().getAxis(Axis.LEFT);
 
-      double[] residuals = m_Instances.attributeToDoubleArray(m_Index);
+      double[] residuals = SpreadSheetUtils.getNumericColumn(m_Data, m_Index);
 
       g.setColor(Color.BLACK);
       g.drawLine(0, axisLeft.valueToPos(0), axisBottom.valueToPos(axisBottom.getMaximum()), axisLeft.valueToPos(0));

@@ -15,22 +15,24 @@
 
 /*
  * BoxPlotManager.java
- * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.stats.boxplot;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.util.ArrayList;
-import java.util.Arrays;
+import adams.core.Range;
+import adams.data.spreadsheet.SpreadSheet;
+import adams.data.spreadsheet.SpreadSheetUtils;
+import adams.data.statistics.StatUtils;
+import adams.gui.core.BaseListWithButtons;
+import adams.gui.core.BasePanel;
+import adams.gui.core.BaseScrollPane;
+import adams.gui.core.BaseSplitPane;
+import adams.gui.core.ParameterPanel;
+import adams.gui.event.PaintEvent;
+import adams.gui.event.PaintEvent.PaintMoment;
+import adams.gui.event.PaintListener;
+import adams.gui.visualization.core.plot.Axis;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
@@ -46,20 +48,17 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-
-import weka.core.Attribute;
-import weka.core.Instances;
-import adams.core.Range;
-import adams.data.statistics.StatUtils;
-import adams.gui.core.BaseListWithButtons;
-import adams.gui.core.BasePanel;
-import adams.gui.core.BaseScrollPane;
-import adams.gui.core.BaseSplitPane;
-import adams.gui.core.ParameterPanel;
-import adams.gui.event.PaintEvent;
-import adams.gui.event.PaintEvent.PaintMoment;
-import adams.gui.event.PaintListener;
-import adams.gui.visualization.core.plot.Axis;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Class that displays box plots for a number of attributes
@@ -85,7 +84,7 @@ public class BoxPlotManager
   protected JPanel m_Centre;
 
   /** Instances to be graphed */
-  protected Instances m_Instances;
+  protected SpreadSheet m_Data;
 
   /** width of left hand panel of the box plot manager */
   protected int m_WidthLeft;
@@ -178,8 +177,8 @@ public class BoxPlotManager
    * @param inst
    *          Instances object for displaying
    */
-  public void setInstances(Instances inst) {
-    m_Instances = inst;
+  public void setData(SpreadSheet inst) {
+    m_Data = inst;
     updateButtons();
   }
 
@@ -401,7 +400,7 @@ public class BoxPlotManager
     m_GridSpin.setValue(m_NumHorizontal);
     m_WidthSpin.setValue(m_Width);
     m_FillCheck.setSelected(m_Fill);
-    if (m_Instances != null)
+    if (m_Data != null)
       update();
     updateButtons();
   }
@@ -414,20 +413,20 @@ public class BoxPlotManager
 	  m_Chosen.removeAllElements();
 	  updateGui();
     // add attributes to list, including class attribute
-    for (int g = 0; g < m_Instances.numAttributes(); g++) {
-      m_Attributes.addElement(m_Instances.attribute(g).name());
+    for (int g = 0; g < m_Data.getColumnCount(); g++) {
+      m_Attributes.addElement(m_Data.getColumnName(g));
     }
     // If options have been set specifying the initial box plots to display
     // creates an arraylist of the indices of box attributes to display
     if (m_Range != null) {
-      ArrayList<Integer> indices = new ArrayList<Integer>();
-      m_Range.setMax(m_Instances.numAttributes());
-      for (int t = 0; t < m_Instances.size(); t++) {
+      ArrayList<Integer> indices = new ArrayList<>();
+      m_Range.setMax(m_Data.getColumnCount());
+      for (int t = 0; t < m_Data.getRowCount(); t++) {
 	if (m_Range.isInRange(t)) {
 	  indices.add(t);
 	}
       }
-      ArrayList<String> chosen = new ArrayList<String>();
+      ArrayList<String> chosen = new ArrayList<>();
       for (int t: indices) {
 	chosen.add((String) m_Attributes.get(t));
       }
@@ -486,8 +485,8 @@ public class BoxPlotManager
   protected void removeAllClicked() {
     m_Attributes.removeAllElements();
     m_Chosen.removeAllElements();
-    for (int g = 0; g < m_Instances.numAttributes(); g++) {
-      m_Attributes.addElement(m_Instances.attribute(g).name());
+    for (int g = 0; g < m_Data.getColumnCount(); g++) {
+      m_Attributes.addElement(m_Data.getColumnName(g));
     }
     updateButtons();
     update();
@@ -499,8 +498,8 @@ public class BoxPlotManager
   protected void addAllClicked() {
     m_Attributes.removeAllElements();
     m_Chosen.removeAllElements();
-    for (int g = 0; g < m_Instances.numAttributes(); g++) {
-      m_Chosen.addElement(m_Instances.attribute(g).name());
+    for (int g = 0; g < m_Data.getColumnCount(); g++) {
+      m_Chosen.addElement(m_Data.getColumnName(g));
     }
     updateButtons();
     update();
@@ -515,7 +514,7 @@ public class BoxPlotManager
   protected void spinWidthChange(ChangeEvent e) {
     JSpinner spin = (JSpinner) e.getSource();
     m_Width = (Integer) spin.getModel().getValue();
-    if (m_Instances != null)
+    if (m_Data != null)
       update();
   }
 
@@ -528,7 +527,7 @@ public class BoxPlotManager
   protected void spinHeightChange(ChangeEvent e) {
     JSpinner spin = (JSpinner) e.getSource();
     m_Height = (Integer) spin.getModel().getValue();
-    if (m_Instances != null)
+    if (m_Data != null)
       update();
   }
 
@@ -541,7 +540,7 @@ public class BoxPlotManager
   protected void spinAxisChange(ChangeEvent e) {
     JSpinner spin = (JSpinner) e.getSource();
     m_AxisWidth = (Integer) spin.getModel().getValue();
-    if (m_Instances != null)
+    if (m_Data != null)
       update();
   }
 
@@ -554,7 +553,7 @@ public class BoxPlotManager
   protected void spinHorizontalChange(ChangeEvent e) {
     JSpinner spin = (JSpinner) e.getSource();
     m_NumHorizontal = (Integer) spin.getModel().getValue();
-    if (m_Instances != null)
+    if (m_Data != null)
       update();
   }
 
@@ -566,7 +565,7 @@ public class BoxPlotManager
    */
   protected void sameAxisChange(ItemEvent e) {
     m_AxisSame = (e.getStateChange() == ItemEvent.SELECTED);
-    if (m_Instances != null)
+    if (m_Data != null)
       update();
 
   }
@@ -734,18 +733,18 @@ public class BoxPlotManager
     	  String chosen;
     	  String inst;
     	  
-    	  for (int i = 0; i < m_Instances.numAttributes(); i++) {
+    	  for (int i = 0; i < m_Data.getColumnCount(); i++) {
     		  contains = false;
     		  for(int j = 0; j < m_Chosen.size(); j++) {
     			  chosen = m_Chosen.get(j).toString();
-    			  inst = m_Instances.attribute(i).name();
+    			  inst = m_Data.getColumnName(i);
     			  if(chosen.equals(inst)) {
     				  contains = true;
     				  break;
     			  }
     		  }
     		  if(contains) {
-    		  double[] data = m_Instances.attributeToDoubleArray(i);
+    		  double[] data = SpreadSheetUtils.getNumericColumn(m_Data, i);
     		  double tempMax = StatUtils.max(data);
     		  double tempMin = StatUtils.min(data);
     		  if (max == null)
@@ -761,7 +760,7 @@ public class BoxPlotManager
     	  
     	  //old version
 	// finding max and min values
-//	for (int i = 0; i < m_Instances.numAttributes(); i++) {
+//	for (int i = 0; i < m_Instances.getColumnCount(); i++) {
 //	  double[] data = m_Instances.attributeToDoubleArray(i);
 //	  double tempMax = StatUtils.max(data);
 //	  double tempMin = StatUtils.min(data);
@@ -783,10 +782,9 @@ public class BoxPlotManager
       m_Centre.add(holdScroll, BorderLayout.CENTER);
       // displaying each of the graphs
       for (int r = 0; r < m_Chosen.size(); r++) {
-	Attribute toPlot = m_Instances.attribute((String) m_Chosen
-	    .getElementAt(r));
+	String toPlot = (String) m_Chosen.getElementAt(r);
 	BoxPlotGraph graph = new BoxPlotGraph();
-	graph.pass(m_Instances, toPlot);
+	graph.pass(m_Data, toPlot);
 	graph.setPreferredSize(dim);
 	// set axis the same if required
 	if (m_AxisSame) {
@@ -797,7 +795,7 @@ public class BoxPlotManager
 	graph.setAxisWidth(Axis.LEFT, m_AxisWidth);
 	graph.addPaintListener(this);
 	JPanel graphPanel = new JPanel(new BorderLayout());
-	JLabel title = new JLabel(toPlot.name(), null, JLabel.CENTER);
+	JLabel title = new JLabel(toPlot, null, JLabel.CENTER);
 	graphPanel.add(title, BorderLayout.NORTH);
 	graphPanel.add(graph, BorderLayout.CENTER);
 	// need to put a border around the panel so they can be separated easily

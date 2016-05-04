@@ -20,6 +20,7 @@
 
 package adams.gui.visualization.stats.zscore;
 
+import adams.data.spreadsheet.SpreadSheetUtils;
 import adams.gui.visualization.core.AxisPanel;
 import adams.gui.visualization.core.plot.AbstractDistanceBasedHitDetector;
 import adams.gui.visualization.core.plot.Axis;
@@ -80,7 +81,7 @@ extends AbstractDistanceBasedHitDetector {
     //mouse positions
     double x = e.getX();
     double y = e.getY();
-    double[] data = m_Owner.getInstances().attributeToDoubleArray(m_Owner.getIndex());
+    double[] data = SpreadSheetUtils.getNumericColumn(m_Owner.getData(), m_Owner.getIndex());
     for(int i = 0; i< data.length; i++) {
       //distance from point to mouse position
       double thisDistance = Math.sqrt(Math.pow((x-bottom.valueToPos(i)), 2) + Math.pow(y-left.valueToPos(data[i]), 2));

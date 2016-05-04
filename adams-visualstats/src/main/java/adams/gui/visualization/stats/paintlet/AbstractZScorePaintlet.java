@@ -15,20 +15,21 @@
 
 /*
  * AbstractZScorePaintlet.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.stats.paintlet;
 
-import java.awt.Color;
-import java.awt.Graphics;
-
-import weka.core.Instances;
+import adams.data.spreadsheet.SpreadSheet;
+import adams.data.spreadsheet.SpreadSheetUtils;
 import adams.gui.core.AntiAliasingSupporter;
 import adams.gui.core.GUIHelper;
 import adams.gui.event.PaintEvent.PaintMoment;
 import adams.gui.visualization.core.AxisPanel;
 import adams.gui.visualization.core.plot.Axis;
+
+import java.awt.Color;
+import java.awt.Graphics;
 
 /**
  * Abstract class for creating z score paintlets.
@@ -47,7 +48,7 @@ public abstract class AbstractZScorePaintlet
   protected int m_Index;
 
   /**data from the attribute */
-  protected double[] m_Data;
+  protected double[] m_Values;
 
   /** y axis of plot */
   protected AxisPanel m_AxisLeft;
@@ -152,7 +153,7 @@ public abstract class AbstractZScorePaintlet
    */
   @Override
   public void performPaint(Graphics g, PaintMoment moment) {
-    if(m_Instances != null)
+    if(m_Data != null)
       drawData(g);
   }
 
@@ -164,21 +165,21 @@ public abstract class AbstractZScorePaintlet
 
   /**
    * pass the required parameters for the paintlet
-   * @param inst			Instances to be plotted
+   * @param data			Instances to be plotted
    * @param ind			index of the attribute
    */
-  public void parameters(Instances inst, int ind) {
-    m_Instances = inst;
+  public void parameters(SpreadSheet data, int ind) {
+    m_Data = data;
     m_Index = ind;
   }
 
   protected void drawData(Graphics g) {
     GUIHelper.configureAntiAliasing(g, m_AntiAliasingEnabled);
 
-    if (m_Instances != null) {
+    if (m_Data != null) {
       g.setColor(Color.BLACK);
 
-      m_Data = m_Instances.attributeToDoubleArray(m_Index);
+      m_Values = SpreadSheetUtils.getNumericColumn(m_Data, m_Index);
       m_AxisBottom = getPanel().getPlot().getAxis(Axis.BOTTOM);
       m_AxisLeft = getPanel().getPlot().getAxis(Axis.LEFT);
     }

@@ -15,13 +15,14 @@
 
 /*
  * ZScorePanel.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.stats.zscore;
 
+import adams.data.spreadsheet.SpreadSheet;
+import adams.data.spreadsheet.SpreadSheetUtils;
 import adams.data.statistics.StatUtils;
-import weka.core.Instances;
 import adams.gui.visualization.core.AxisPanel;
 import adams.gui.visualization.core.PlotPanel;
 import adams.gui.visualization.core.axis.Visibility;
@@ -40,7 +41,7 @@ extends PlotPanel{
   private static final long serialVersionUID = -4445527264369086318L;
 
   /** instances to be displayed */
-  protected Instances m_Instances;
+  protected SpreadSheet m_Data;
 
   /**Index of the attribute plotted */
   protected int m_Index;
@@ -49,8 +50,8 @@ extends PlotPanel{
    * Set the instances of the z score panel
    * @param inst			Instances containing data
    */
-  protected void setInstances(Instances inst) {
-    m_Instances = inst;
+  protected void setData(SpreadSheet inst) {
+    m_Data = inst;
   }
 
   protected void initGUI() {
@@ -65,11 +66,11 @@ extends PlotPanel{
    * Sets up the graph, called when all the fields have been set
    */
   public void reset() {
-    double[] m_Data = m_Instances.attributeToDoubleArray(m_Index);
+    double[] data = SpreadSheetUtils.getNumericColumn(m_Data, m_Index);
     int xMin = 0;
-    int xMax = m_Data.length;
-    double yMin = StatUtils.min(m_Data);
-    double yMax = StatUtils.max(m_Data);
+    int xMax = data.length;
+    double yMin = StatUtils.min(data);
+    double yMax = StatUtils.max(data);
 
     m_AxisLeft.setMinimum(yMin);
     m_AxisLeft.setMaximum(yMax);
@@ -79,7 +80,7 @@ extends PlotPanel{
     m_AxisLeft.setBottomMargin(0.15);
     m_AxisLeft.setTopMargin(0.15);
 
-    m_AxisLeft.setAxisName(m_Instances.attribute(m_Index).name());
+    m_AxisLeft.setAxisName(this.m_Data.getColumnName(m_Index));
     validate();
     repaint();
   }

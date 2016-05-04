@@ -188,9 +188,9 @@ extends AbstractZScorePaintlet{
     int posX;
     int posY;
 
-    for(int i = 0; i< m_Data.length; i++) {
+    for(int i = 0; i< m_Values.length; i++) {
       posX = m_AxisBottom.valueToPos(i);
-      posY = m_AxisLeft.valueToPos(m_Data[i]);
+      posY = m_AxisLeft.valueToPos(m_Values[i]);
       Graphics2D g2d = (Graphics2D)g;
       //if filling points
       if(m_Fill) {
@@ -203,9 +203,9 @@ extends AbstractZScorePaintlet{
       g2d.setColor(m_Color);
       g2d.drawOval(posX -(int)(0.5*m_Size), posY - (int)(0.5*m_Size), m_Size, m_Size);
       //line connecting data points
-      if(i+1 < m_Data.length) {
+      if(i+1 < m_Values.length) {
 	int posX2 = m_AxisBottom.valueToPos(i+1);
-	int posY2 = m_AxisLeft.valueToPos(m_Data[i+1]);
+	int posY2 = m_AxisLeft.valueToPos(m_Values[i+1]);
 	g.setColor(m_LineColor);
 	g2d.setStroke(new BasicStroke(1.0f));
 	g.drawLine(posX, posY, posX2, posY2);

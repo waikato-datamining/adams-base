@@ -15,15 +15,15 @@
 
 /*
  * AbstractColorPaintlet.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.stats.paintlet;
 
-import java.awt.Color;
-
-import weka.core.Instances;
+import adams.data.spreadsheet.SpreadSheet;
 import adams.gui.visualization.core.AbstractStrokePaintlet;
+
+import java.awt.Color;
 
 /**
  * Abstract class for paintlets with a stroke color option and instances member,
@@ -39,7 +39,7 @@ public abstract class AbstractColorPaintlet
   private static final long serialVersionUID = -8699393621452567665L;
 
   /** Instances containing the data */
-  protected Instances m_Instances;
+  protected SpreadSheet m_Data;
 
   /** Color of the stroke for the paintlet */
   protected Color m_Color;
@@ -84,15 +84,15 @@ public abstract class AbstractColorPaintlet
    * Set the instances for the paintlet
    * @param val		Instances containing the data
    */
-  public void setInstances(Instances val) {
-    m_Instances = val;
+  public void setData(SpreadSheet val) {
+    m_Data = val;
   }
 
   /**
    * Get the instances for the paintlet
    * @return		Instances containing the data
    */
-  public Instances getInstances() {
-    return m_Instances;
+  public SpreadSheet getData() {
+    return m_Data;
   }
 }

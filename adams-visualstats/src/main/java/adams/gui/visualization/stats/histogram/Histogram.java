@@ -15,15 +15,13 @@
 
 /*
  * Histogram.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.stats.histogram;
 
-import java.awt.BorderLayout;
-import java.awt.Graphics;
-
-import weka.core.Instances;
+import adams.data.spreadsheet.SpreadSheet;
+import adams.data.spreadsheet.SpreadSheetUtils;
 import adams.data.statistics.AbstractArrayStatistic.StatisticContainer;
 import adams.data.statistics.ArrayHistogram;
 import adams.data.statistics.ArrayHistogram.BinCalculation;
@@ -34,6 +32,9 @@ import adams.gui.visualization.core.PlotPanel;
 import adams.gui.visualization.core.plot.Axis;
 import adams.gui.visualization.stats.histogram.HistogramOptions.BoxType;
 import adams.gui.visualization.stats.paintlet.HistogramPaintlet;
+
+import java.awt.BorderLayout;
+import java.awt.Graphics;
 
 /**
  * Class that displays a histogram displaying the data provided.
@@ -47,8 +48,8 @@ public class Histogram
   /** for serialization */
   private static final long serialVersionUID = -4366437103496819542L;
 
-  /**Instances to be plotted */
-  protected Instances m_Instances;
+  /**Data to be plotted */
+  protected SpreadSheet m_Data;
 
   /** double array to plot. */
   protected Double[] m_Array;
@@ -62,7 +63,7 @@ public class Histogram
   /**Options for the histogram */
   protected HistogramOptions m_HistOptions;
 
-  /** Position of the residuals attribute within the instances */
+  /** Position of the residuals attribute within the data */
   protected int m_Index;
   
   /** the name to use for the x-axis. */
@@ -85,7 +86,7 @@ public class Histogram
     super.initialize();
     
     m_HistOptions = new HistogramOptions();
-    m_Instances   = null;
+    m_Data = null;
     m_Array       = null;
     m_DataName    = "";
     m_Index       = 0;
@@ -129,11 +130,11 @@ public class Histogram
   }
 
   /**
-   * Set the instances for the histogram
-   * @param inst			Instances for the histogram plot
+   * Set the data for the histogram
+   * @param value			Data for the histogram plot
    */
-  public void setInstances(Instances inst) {
-    m_Instances = inst;
+  public void setData(SpreadSheet value) {
+    m_Data = value;
     m_Array     = null;
     update();
   }
@@ -141,10 +142,10 @@ public class Histogram
   /**
    * Returns the instanecs for the histogram.
    * 
-   * @return		the instances, null if not set
+   * @return		the data, null if not set
    */
-  public Instances getInstances() {
-    return m_Instances;
+  public SpreadSheet getData() {
+    return m_Data;
   }
   
   /**
@@ -154,7 +155,7 @@ public class Histogram
    */
   public void setArray(Double[] value) {
     m_Array     = value;
-    m_Instances = null;
+    m_Data = null;
     update();
   }
   
@@ -202,11 +203,11 @@ public class Histogram
   public void prepareUpdate() {
     //Calculate bin size and frequency
     StatisticContainer cont;
-    ArrayHistogram<Number> aHist = new ArrayHistogram<Number>();
+    ArrayHistogram<Number> aHist = new ArrayHistogram<>();
     Number[] numData;
-    if (m_Instances != null) {
-      numData = StatUtils.toNumberArray(m_Instances.attributeToDoubleArray(m_Index));
-      m_Name  = m_Instances.attribute(m_Index).name();
+    if (m_Data != null) {
+      numData = StatUtils.toNumberArray(SpreadSheetUtils.getNumericColumn(m_Data, m_Index));
+      m_Name  = m_Data.getColumnName(m_Index);
     }
     else {
       numData = m_Array;
@@ -274,7 +275,7 @@ public class Histogram
   }
 
   /**
-   * Set the index of residuals attribute within the instances
+   * Set the index of residuals attribute within the data
    * @param val			Position of residuals attribute
    */
   public void setIndex(int val) {

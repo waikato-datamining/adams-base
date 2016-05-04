@@ -75,7 +75,7 @@ extends AbstractScatterPlotOverlay {
 
   public void setUp() {
     m_Paintlet = new DiagonalPaintlet();
-    m_Paintlet.parameters(m_Instances, m_Parent.getX_Index(), m_Parent.getY_Index());
+    m_Paintlet.parameters(m_Data, m_Parent.getX_Index(), m_Parent.getY_Index());
     m_Paintlet.setRepaintOnChange(true);
     m_Paintlet.setStrokeThickness(m_Thickness);
     m_Paintlet.setIndicator(m_Indicator);

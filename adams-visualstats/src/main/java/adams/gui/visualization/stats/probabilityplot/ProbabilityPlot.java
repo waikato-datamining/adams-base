@@ -15,32 +15,15 @@
 
 /*
  * ProbabilityPlot.java
- * Copyright (C) 2011-2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.stats.probabilityplot;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.text.DecimalFormat;
-
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
-import javax.swing.JCheckBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
-import weka.core.Instances;
 import adams.core.Index;
 import adams.core.base.BaseRegExp;
+import adams.data.spreadsheet.SpreadSheet;
+import adams.data.spreadsheet.SpreadSheetUtils;
 import adams.data.statistics.StatUtils;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.ParameterPanel;
@@ -52,6 +35,23 @@ import adams.gui.visualization.core.plot.Axis;
 import adams.gui.visualization.stats.core.IndexSet;
 import adams.gui.visualization.stats.paintlet.AbstractProbabilityPaintlet;
 import adams.gui.visualization.stats.paintlet.Normal;
+
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.text.DecimalFormat;
 
 /**
  * Probability plot visualization.
@@ -66,7 +66,7 @@ extends PaintablePanel{
   private static final long serialVersionUID = 5997080502859878659L;
 
   /**Instances to display */
-  protected Instances m_Instances;
+  protected SpreadSheet m_Data;
 
   /**Panel to display data on */
   protected ProbabilityPlotPanel m_Plot;
@@ -201,9 +201,9 @@ extends PaintablePanel{
    */
   @Override
   public void prepareUpdate() {
-    if ((m_Instances != null) && (m_AttReg != null) && (m_Index != null)) {
+    if ((m_Data != null) && (m_AttReg != null) && (m_Index != null)) {
       int temp = -1;
-      temp = IndexSet.getIndex(m_AttReg, m_Index, m_Instances, temp);
+      temp = IndexSet.getIndex(m_AttReg, m_Index, m_Data, temp);
       if(temp == -1) {
         temp = 0;
         System.err.println("changed to 0");
@@ -212,11 +212,11 @@ extends PaintablePanel{
 
       DecimalFormat df = new DecimalFormat("#.##");
       //labels showing statistics
-      m_Mean.setText("Mean: " + df.format(StatUtils.mean(m_Instances.attributeToDoubleArray(m_IntIndex))));
-      m_Std.setText("Std dev: " + df.format(StatUtils.stddev(m_Instances.attributeToDoubleArray(m_IntIndex), false)));
+      m_Mean.setText("Mean: " + df.format(StatUtils.mean(SpreadSheetUtils.getNumericColumn(m_Data, m_IntIndex))));
+      m_Std.setText("Std dev: " + df.format(StatUtils.stddev(SpreadSheetUtils.getNumericColumn(m_Data, m_IntIndex), false)));
       
       m_val.setIndex(m_IntIndex);
-      m_val.setInstances(m_Instances);
+      m_val.setData(m_Data);
       m_val.configureAxes();
       m_val.calculateDimensions();
       line.setEnabled(m_val.hasFitLine());
@@ -233,25 +233,25 @@ extends PaintablePanel{
    */
   @Override
   protected boolean canPaint(Graphics g) {
-    return (m_Plot != null) && (m_Instances != null);
+    return (m_Plot != null) && (m_Data != null);
   }
 
   /**
    * get the instances used for this probability plot
    * @return			Instances plotted
    */
-  public Instances getInstances() {
-    return m_Instances;
+  public SpreadSheet getData() {
+    return m_Data;
   }
 
   /**
    * Set the instances to be plotted
-   * @param inst			instances to be plotted
+   * @param data			instances to be plotted
    */
-  public void setInstances(Instances inst) {
-    m_Instances = inst;
+  public void setData(SpreadSheet data) {
+    m_Data = data;
     //initially index set to the last attribute
-    m_IntIndex = m_Instances.numAttributes() - 1;
+    m_IntIndex = m_Data.getColumnCount() - 1;
     update();
   }
 
@@ -264,7 +264,7 @@ extends PaintablePanel{
     m_val.setPanel(this);
     m_val.configureAxes();
     m_val.setIndex(m_IntIndex);
-    m_val.setInstances(m_Instances);
+    m_val.setData(m_Data);
     line.setEnabled(m_val.hasFitLine());
     if(m_val.hasFitLine()) {
       m_val.setLine(m_Line);

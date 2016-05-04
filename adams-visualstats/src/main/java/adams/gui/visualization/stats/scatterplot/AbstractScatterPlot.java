@@ -15,17 +15,17 @@
 
 /*
  * AbstractScatterPlot.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.stats.scatterplot;
 
-import java.awt.Graphics;
-
-import weka.core.Instances;
+import adams.data.spreadsheet.SpreadSheet;
 import adams.gui.visualization.core.PaintablePanel;
 import adams.gui.visualization.core.PlotPanel;
 import adams.gui.visualization.stats.paintlet.AbstractScatterPlotPaintlet;
+
+import java.awt.Graphics;
 
 /**
  * Abstract class for displaying a single scatterplotpanel on a paintable panel.
@@ -43,7 +43,7 @@ extends PaintablePanel{
   protected ScatterPlotPanel m_Plot;
 
   /**Instances to be plotted */
-  protected  Instances m_Instances;
+  protected SpreadSheet m_Data;
 
   /**Index of attribute to be displayed on x axis */
   protected int m_XIndex = 0;
@@ -71,7 +71,7 @@ extends PaintablePanel{
   }
 
   protected boolean canPaint(Graphics g) {
-    if(m_Plot != null && m_Instances != null)
+    if(m_Plot != null && m_Data != null)
       return true;
     else
       return false;
@@ -79,18 +79,18 @@ extends PaintablePanel{
 
   /**
    * Sets the instances to be plotted
-   * @param inst	Instances to be plotted
+   * @param data	Instances to be plotted
    */
-  public void setInstances(Instances inst) {
-    m_Instances = inst;
+  public void setData(SpreadSheet data) {
+    m_Data = data;
   }
 
   /**
    * Get the instances being plotted
    * @return		Instances being plotted
    */
-  public Instances getInstances() {
-    return m_Instances;
+  public SpreadSheet getData() {
+    return m_Data;
   }
 
   /**

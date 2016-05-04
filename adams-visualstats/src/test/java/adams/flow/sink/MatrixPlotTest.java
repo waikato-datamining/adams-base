@@ -15,25 +15,23 @@
 
 /*
  * MatrixPlotTest.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
 import adams.flow.core.Actor;
 import adams.flow.source.FileSupplier;
-import adams.flow.transformer.WekaClassSelector;
-import adams.flow.transformer.WekaFileReader;
-import adams.flow.transformer.WekaFileReader.OutputType;
+import adams.flow.transformer.SpreadSheetFileReader;
 import adams.gui.visualization.stats.paintlet.ScatterPaintletCircle;
 import adams.gui.visualization.stats.scatterplot.AbstractScatterPlotOverlay;
 import adams.gui.visualization.stats.scatterplot.Diagonal;
 import adams.test.TmpFile;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Tests the MatrixPlot actor.
@@ -62,7 +60,7 @@ public class MatrixPlotTest
   protected void setUp() throws Exception {
     super.setUp();
 
-    m_TestHelper.copyResourceToTmp("bodyfat.arff");
+    m_TestHelper.copyResourceToTmp("bodyfat.csv");
   }
 
   /**
@@ -72,7 +70,7 @@ public class MatrixPlotTest
    */
   @Override
   protected void tearDown() throws Exception {
-    m_TestHelper.deleteFileFromTmp("bodyfat.arff");
+    m_TestHelper.deleteFileFromTmp("bodyfat.csv");
 
     super.tearDown();
   }
@@ -85,12 +83,9 @@ public class MatrixPlotTest
   @Override
   public Actor getActor() {
     FileSupplier sfs = new FileSupplier();
-    sfs.setFiles(new adams.core.io.PlaceholderFile[]{new TmpFile("bodyfat.arff")});
+    sfs.setFiles(new adams.core.io.PlaceholderFile[]{new TmpFile("bodyfat.csv")});
 
-    WekaFileReader fr = new WekaFileReader();
-    fr.setOutputType(OutputType.DATASET);
-
-    WekaClassSelector cs = new WekaClassSelector();
+    SpreadSheetFileReader fr = new SpreadSheetFileReader();
 
     MatrixPlot mp = new MatrixPlot();
     mp.setPlotSize(150);
@@ -100,7 +95,7 @@ public class MatrixPlotTest
     mp.setPaintlet(new ScatterPaintletCircle());
 
     Flow flow = new Flow();
-    flow.setActors(new Actor[]{sfs, fr, cs, mp});
+    flow.setActors(new Actor[]{sfs, fr, mp});
 
     return flow;
   }

@@ -15,17 +15,17 @@
 
 /*
  * AbstractZScoreOverlay.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.stats.zscore;
 
-import java.awt.Color;
-
-import weka.core.Instances;
 import adams.core.option.AbstractOptionHandler;
 import adams.core.option.OptionUtils;
+import adams.data.spreadsheet.SpreadSheet;
 import adams.gui.visualization.stats.paintlet.AbstractZOverlayPaintlet;
+
+import java.awt.Color;
 
 /**
  * Abstract superclass for overlays on the z score graph.
@@ -43,7 +43,7 @@ extends AbstractOptionHandler{
   protected ZScore m_Parent;
 
   /** Instances object containing the data */
-  protected Instances m_Instances;
+  protected SpreadSheet m_Data;
 
   /** Paintlet for the plotting */
   protected AbstractZOverlayPaintlet m_Paintlet;
@@ -114,10 +114,10 @@ extends AbstractOptionHandler{
 
   /**
    * Set the instances for the overlay
-   * @param inst			Instances for plotting
+   * @param value			Instances for plotting
    */
-  public void setInstances(Instances inst) {
-    m_Instances = inst;
+  public void setData(SpreadSheet value) {
+    m_Data = value;
   }
 
   /**

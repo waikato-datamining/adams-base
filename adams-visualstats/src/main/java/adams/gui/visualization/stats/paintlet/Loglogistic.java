@@ -15,21 +15,22 @@
 
 /*
  * Loglogistic.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.stats.paintlet;
+
+import adams.data.spreadsheet.SpreadSheetUtils;
+import adams.gui.core.GUIHelper;
+import adams.gui.event.PaintEvent.PaintMoment;
+import adams.gui.visualization.core.axis.Type;
+import adams.gui.visualization.core.plot.Axis;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.util.Arrays;
-
-import adams.gui.core.GUIHelper;
-import adams.gui.event.PaintEvent.PaintMoment;
-import adams.gui.visualization.core.axis.Type;
-import adams.gui.visualization.core.plot.Axis;
 
 /**
  <!-- globalinfo-start -->
@@ -100,18 +101,18 @@ extends AbstractProbabilityPaintlet{
   @Override
   public void calculateDimensions() {
     double median;
-    m_Data = m_Instances.attributeToDoubleArray(m_Index);
-    m_TransformedY = new double[m_Data.length];
-    Arrays.sort(m_Data);
-    for(int i = 0; i< m_Data.length; i++) {
-      median = ((i+1)-0.3)/(m_Data.length +0.4);
+    m_Sorted = SpreadSheetUtils.getNumericColumn(m_Data, m_Index);
+    m_TransformedY = new double[m_Sorted.length];
+    Arrays.sort(m_Sorted);
+    for(int i = 0; i< m_Sorted.length; i++) {
+      median = ((i+1)-0.3)/(m_Sorted.length +0.4);
       //calculate the transformed values using inverse exponential
       m_TransformedY[i] = median/(1-median);
     }
     //Check axis can handle data
-    if(m_AxisBottom.getType().canHandle(m_Data[0], m_Data[m_Data.length-1])) {
-      m_AxisBottom.setMinimum(m_Data[0]);
-      m_AxisBottom.setMaximum(m_Data[m_Data.length-1]);
+    if(m_AxisBottom.getType().canHandle(m_Sorted[0], m_Sorted[m_Sorted.length-1])) {
+      m_AxisBottom.setMinimum(m_Sorted[0]);
+      m_AxisBottom.setMaximum(m_Sorted[m_Sorted.length-1]);
     }
     else {
       getLogger().severe("errors in plotting");
@@ -123,7 +124,7 @@ extends AbstractProbabilityPaintlet{
     else {
       getLogger().severe("errors in plotting");
     }
-    m_AxisBottom.setAxisName(m_Instances.attribute(m_Index).name() + ")");
+    m_AxisBottom.setAxisName(m_Data.getColumnName(m_Index) + ")");
     m_AxisLeft.setAxisName("Inverse Loglogistic");
   }
 
@@ -135,36 +136,36 @@ extends AbstractProbabilityPaintlet{
    */
   @Override
   public void performPaint(Graphics g, PaintMoment moment) {
-    if ((m_Instances != null) && (m_Data != null)) {
+    if ((m_Data != null) && (m_Sorted != null)) {
       GUIHelper.configureAntiAliasing(g, m_AntiAliasingEnabled);
 
-      for(int i = 0; i< m_Data.length; i++) {
+      for(int i = 0; i< m_Sorted.length; i++) {
 	Graphics2D g2d = (Graphics2D)g;
 	//If data points are to be filled
 	if(m_Fill) {
 	  g2d.setColor(m_FillColor);
 	  g2d.setStroke(new BasicStroke(0));
-	  g2d.fillOval(m_AxisBottom.valueToPos(m_Data[i])-m_Size/2, m_AxisLeft.valueToPos(m_TransformedY[i])-m_Size/2, m_Size, m_Size);
+	  g2d.fillOval(m_AxisBottom.valueToPos(m_Sorted[i])-m_Size/2, m_AxisLeft.valueToPos(m_TransformedY[i])-m_Size/2, m_Size, m_Size);
 	}
 	//Outline of data point
 	g2d.setStroke(new BasicStroke(m_StrokeThickness));
 	g2d.setColor(m_Color);
-	g2d.drawOval(m_AxisBottom.valueToPos(m_Data[i])-m_Size/2, m_AxisLeft.valueToPos(m_TransformedY[i])-m_Size/2, m_Size, m_Size);
+	g2d.drawOval(m_AxisBottom.valueToPos(m_Sorted[i])-m_Size/2, m_AxisLeft.valueToPos(m_TransformedY[i])-m_Size/2, m_Size, m_Size);
       }
       //If drawing regression fit diagonal
       if(m_RegressionLine) {
 	g.setColor(Color.BLACK);
-	double[] newData = new double[m_Data.length];
-	for(int i = 0; i < m_Data.length; i++) {
-	  newData[i] = Math.log(m_Data[i]);
+	double[] newData = new double[m_Sorted.length];
+	for(int i = 0; i < m_Sorted.length; i++) {
+	  newData[i] = Math.log(m_Sorted[i]);
 	}
 	//fairly simple calculation of loglogistic
-	for(int i = 0; i< m_Data.length-1; i++) {
+	for(int i = 0; i< m_Sorted.length-1; i++) {
 	  double prob1 = 1/(1+Math.exp(-newData[i]));
 	  double prob2 = 1/(1+Math.exp(-newData[i+1]));
 	  double p1 = prob1/(1-prob1);
 	  double p2 = prob2/(1-prob2);
-	  g.drawLine(m_AxisBottom.valueToPos(m_Data[i]), m_AxisLeft.valueToPos(p1), m_AxisBottom.valueToPos(m_Data[i+1]), m_AxisLeft.valueToPos(p2));
+	  g.drawLine(m_AxisBottom.valueToPos(m_Sorted[i]), m_AxisLeft.valueToPos(p1), m_AxisBottom.valueToPos(m_Sorted[i+1]), m_AxisLeft.valueToPos(p2));
 	}
       }
     }

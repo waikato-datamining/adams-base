@@ -1,9 +1,8 @@
 # Project: adams
-# Date: 2016-02-15 15:11:37
+# Date: 2016-05-04 16:34:13
 # User: fracpete
 # Charset: UTF-8
 adams.flow.control.Flow -annotation "The flow loads the UCI dataset \\\"iris\\\" and displays \\nthe data in a matrix plot." -flow-execution-listener adams.flow.execution.NullListener
- adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/iris.arff
- adams.flow.transformer.WekaFileReader -loader weka.core.converters.ArffLoader
- adams.flow.transformer.WekaClassSelector
+ adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/iris.csv
+ adams.flow.transformer.SpreadSheetFileReader -reader "adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.DefaultSpreadSheet"
  adams.flow.sink.MatrixPlot -writer adams.gui.print.NullWriter -plot-size 150 -overlay "adams.gui.visualization.stats.scatterplot.Lowess -line-thickness 1.0" -paintlet "adams.gui.visualization.stats.paintlet.ScatterPaintletCircle -stroke-thickness 0.7"

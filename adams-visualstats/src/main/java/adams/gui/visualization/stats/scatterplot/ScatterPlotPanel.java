@@ -15,12 +15,13 @@
 
 /*
  * ScatterPlotPanel.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.stats.scatterplot;
 
-import weka.core.Instances;
+import adams.data.spreadsheet.SpreadSheet;
+import adams.data.spreadsheet.SpreadSheetUtils;
 import adams.data.statistics.StatUtils;
 import adams.gui.visualization.core.PlotPanel;
 import adams.gui.visualization.core.axis.FancyTickGenerator;
@@ -40,7 +41,7 @@ extends PlotPanel{
   private static final long serialVersionUID = 107298737463861170L;
 
   /** Instances to be plotted */
-  private Instances m_Instances;
+  private SpreadSheet m_Data;
 
   /** index of attribute for x axis */
   private int m_XIndex = 0;
@@ -61,8 +62,8 @@ extends PlotPanel{
    * set the instances for the scatter plot panel
    * @param inst			Instances to be plotted
    */
-  protected void setinstances(Instances inst) {
-    m_Instances = inst;
+  protected void setData(SpreadSheet inst) {
+    m_Data = inst;
   }
 
   /**
@@ -70,8 +71,8 @@ extends PlotPanel{
    * called by the calling class when all the fields have been set
    */
   public void reset() {
-    double[] m_DataX = m_Instances.attributeToDoubleArray(m_XIndex);
-    double[] m_DataY = m_Instances.attributeToDoubleArray(m_YIndex);
+    double[] m_DataX = SpreadSheetUtils.getNumericColumn(m_Data, m_XIndex);
+    double[] m_DataY = SpreadSheetUtils.getNumericColumn(m_Data, m_YIndex);
     double xMin = StatUtils.min(m_DataX);
     double xMax = StatUtils.max(m_DataX);
     double yMin = StatUtils.min(m_DataY);
@@ -87,8 +88,8 @@ extends PlotPanel{
     m_AxisBottom.setBottomMargin(0.10);
     m_AxisBottom.setTopMargin(0.10);
     //set axis names
-    m_AxisLeft.setAxisName(m_Instances.attribute(m_YIndex).name());
-    m_AxisBottom.setAxisName(m_Instances.attribute(m_XIndex).name());
+    m_AxisLeft.setAxisName(m_Data.getColumnName(m_YIndex));
+    m_AxisBottom.setAxisName(m_Data.getColumnName(m_XIndex));
     
     m_AxisLeft.setTickGenerator(new FancyTickGenerator());
     m_AxisBottom.setTickGenerator(new FancyTickGenerator());

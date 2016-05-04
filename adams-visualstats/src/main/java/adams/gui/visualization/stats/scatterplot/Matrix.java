@@ -15,12 +15,13 @@
 
 /*
  * Matrix.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.stats.scatterplot;
 
 import adams.core.option.OptionUtils;
+import adams.data.spreadsheet.SpreadSheet;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseSplitPane;
@@ -30,7 +31,6 @@ import adams.gui.goe.GenericObjectEditorPanel;
 import adams.gui.visualization.stats.core.SubSample;
 import adams.gui.visualization.stats.paintlet.AbstractScatterPlotPaintlet;
 import adams.gui.visualization.stats.paintlet.ScatterPaintletCircle;
-import weka.core.Instances;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -70,10 +70,10 @@ extends BasePanel{
   private static final long serialVersionUID = -7593836818545034592L;
 
   /**Instances for plotting */
-  private Instances m_Instances;
+  private SpreadSheet m_Data;
 
   /**Full set of of instances, used when the sub sample changes m_instances */
-  private Instances m_InstancesOriginal;
+  private SpreadSheet m_DataOriginal;
 
   /**Size of each of the scatter plots */
   private int m_PlotSize;
@@ -153,9 +153,9 @@ extends BasePanel{
    * Set the instances to be displayed
    * @param inst		Instances containing the data
    */
-  public void setInstances(Instances inst) {
-    m_InstancesOriginal = inst;
-    m_Instances = inst;
+  public void setData(SpreadSheet inst) {
+    m_DataOriginal = inst;
+    m_Data = inst;
   }
 
   /**
@@ -257,7 +257,7 @@ extends BasePanel{
       //set the indices of each paintlet i.e. what attributes
       temp.setX_Index(m_ScatterPlots.get(j).m_XIndex);
       temp.setY_Index(m_ScatterPlots.get(j).m_YIndex);
-      temp.setInstances(m_Instances);
+      temp.setData(m_Data);
     }
     repaint();
     revalidate();
@@ -390,9 +390,9 @@ extends BasePanel{
    */
   private void sample() {
     //take subsample of the data using original instances
-    SubSample subSam = new SubSample(m_InstancesOriginal, m_Percent);
+    SubSample subSam = new SubSample(m_DataOriginal, m_Percent);
     try {
-      m_Instances = subSam.sample();
+      m_Data = subSam.sample();
       //need it to redo overlays now as well, populate the hashset
       //of overlays to add with all the current overlays
       m_NewOverlay = new HashSet<String>();
@@ -407,7 +407,7 @@ extends BasePanel{
     //if scatterplots havn't been created
     if(m_ScatterPlots != null) {
       for(ScatterPlotSimple s: m_ScatterPlots) {
-	s.setInstances(m_Instances);
+	s.setData(m_Data);
       }
     }
   }
@@ -427,20 +427,20 @@ extends BasePanel{
       m_ScatterPlots = new ArrayList<ScatterPlotSimple>();
       size = new Dimension(m_PlotSize, m_PlotSize);
       //grid for displaying scatterplots, as many rows as there are attributes
-      JPanel fullGrid = new JPanel(new GridLayout(m_Instances.numAttributes(), 0));
+      JPanel fullGrid = new JPanel(new GridLayout(m_Data.getColumnCount(), 0));
       //for scrolling the grid
       BaseScrollPane scrollPane = new BaseScrollPane(fullGrid);
       m_Centre.add(scrollPane, BorderLayout.CENTER);
-      for(int j = 0; j< m_Instances.numAttributes(); j++) {
+      for(int j = 0; j< m_Data.getColumnCount(); j++) {
 	JPanel display = new JPanel();
 	display.setBackground(Color.GRAY);
-	for(int i = 0; i< m_Instances.numAttributes(); i++) {
+	for(int i = 0; i< m_Data.getColumnCount(); i++) {
 	  //if a label, instead of plotting attribute against itself
 	  if(j==i)
 	  {
 	    JPanel temp = new JPanel(new BorderLayout());
 	    temp.setBackground(Color.BLACK);
-	    JLabel label = new JLabel(m_Instances.attribute(i).name());
+	    JLabel label = new JLabel(m_Data.getColumnName(i));
 	    label.setForeground(Color.WHITE);
 	    //set maximum possible size for font for label
 	    int siz = 22;
@@ -454,7 +454,7 @@ extends BasePanel{
 	  //if a scatterplot, plotting attribute against another attribute
 	  else {
 	    ScatterPlotSimple scat = new ScatterPlotSimple();
-	    scat.setInstances(m_Instances);
+	    scat.setData(m_Data);
 	    scat.setX(i);
 	    scat.setY(j);
 	    scat.setPreferredSize(size);
@@ -604,7 +604,7 @@ extends BasePanel{
 	    //just add the diagonal overlay if the forcommandline doesn't work
 	    temp = new Diagonal();
 	  }
-	  temp.inst(m_Instances);
+	  temp.inst(m_Data);
 	  temp.setParent(m_ScatterPlots.get(j));
 	  temp.setUp();
 	  m_ScatterPlots.get(j).addOverlay(temp);

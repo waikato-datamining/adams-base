@@ -15,12 +15,12 @@
 
 /**
  * Histogram.java
- * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.sink;
 
-import weka.core.Instances;
 import adams.core.Index;
+import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.core.Token;
 import adams.gui.core.BasePanel;
 import adams.gui.visualization.stats.histogram.HistogramOptions;
@@ -248,7 +248,7 @@ public class Histogram
    */
   @Override
   public Class[] accepts() {
-    return new Class[]{Double[].class, Instances.class};
+    return new Class[]{Double[].class, SpreadSheet.class};
   }
 
   /**
@@ -260,14 +260,14 @@ public class Histogram
   @Override
   protected void display(Token token) {
     adams.gui.visualization.stats.histogram.Histogram	hist;
-    Instances						inst;
+    SpreadSheet 					data;
     
     hist = (adams.gui.visualization.stats.histogram.Histogram) m_Panel;
     
-    if (token.getPayload() instanceof Instances) {
-      inst = (Instances) token.getPayload();
-      m_Index.setMax(inst.numAttributes());
-      hist.setInstances(inst);
+    if (token.getPayload() instanceof SpreadSheet) {
+      data = (SpreadSheet) token.getPayload();
+      m_Index.setMax(data.getColumnCount());
+      hist.setData(data);
       hist.setIndex(m_Index.getIntIndex());
     }
     else {
@@ -286,7 +286,7 @@ public class Histogram
     
     if (m_Panel != null) {
       hist = (adams.gui.visualization.stats.histogram.Histogram) m_Panel;
-      hist.setInstances(null);
+      hist.setData(null);
       hist.setArray(null);
       hist.update();
     }

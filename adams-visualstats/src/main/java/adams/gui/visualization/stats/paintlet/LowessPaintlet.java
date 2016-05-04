@@ -15,13 +15,14 @@
 
 /*
  * LowessPaintlet.java
- * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.stats.paintlet;
 
 import adams.core.TechnicalInformation;
 import adams.core.TechnicalInformationHandler;
+import adams.data.spreadsheet.SpreadSheetUtils;
 import adams.data.utils.LOWESS;
 import adams.gui.core.AntiAliasingSupporter;
 import adams.gui.core.GUIHelper;
@@ -183,8 +184,8 @@ public class LowessPaintlet
   @Override
   public void calculate() {
     super.calculate();
-    double[] x_data = m_Instances.attributeToDoubleArray(m_XInd);
-    double[] y_data = m_Instances.attributeToDoubleArray(m_YInd);
+    double[] x_data = SpreadSheetUtils.getNumericColumn(m_Data, m_XInd);
+    double[] y_data = SpreadSheetUtils.getNumericColumn(m_Data, m_YInd);
     //create an arraylist of points from the instance data
     ArrayList<Point2D> points = new ArrayList<Point2D>();
     for(int i = 0; i< x_data.length; i++) {

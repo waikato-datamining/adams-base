@@ -15,31 +15,28 @@
 
 /*
  * FourInOne.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.stats.fourinone;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.FlowLayout;
-import java.awt.GridLayout;
-import java.util.ArrayList;
-
-import javax.swing.BorderFactory;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-
-import weka.core.Attribute;
-import weka.core.Instances;
-import weka.filters.Filter;
-import weka.filters.unsupervised.attribute.AddExpression;
 import adams.core.Index;
+import adams.data.spreadsheet.Cell;
+import adams.data.spreadsheet.Row;
+import adams.data.spreadsheet.SpreadSheet;
 import adams.gui.core.BasePanel;
 import adams.gui.visualization.stats.histogram.Histogram;
 import adams.gui.visualization.stats.histogram.HistogramOptions;
 import adams.gui.visualization.stats.probabilityplot.NormalPlot;
 import adams.gui.visualization.stats.probabilityplot.NormalPlotOptions;
+
+import javax.swing.BorderFactory;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.FlowLayout;
+import java.awt.GridLayout;
 
 /**
  * Class that displays a four-in-1 plot containing a histogram, vs order plot,
@@ -55,7 +52,7 @@ extends BasePanel{
   private static final long serialVersionUID = -993210228989776486L;
 
   /**Instances containing the data */
-  protected Instances m_Instances;
+  protected SpreadSheet m_Data;
 
   /**Panel for displaying the four plots */
   protected JPanel m_Centre;
@@ -91,8 +88,8 @@ extends BasePanel{
    * Set the instances used in the four-in-plot
    * @param val		Instances for the plot
    */
-  public void setInstances(Instances val) {
-    m_Instances = val;
+  public void setData(SpreadSheet val) {
+    m_Data = val;
   }
 
   @Override
@@ -112,8 +109,8 @@ extends BasePanel{
    * have been set
    */
   public void reset() {
-    m_Act.setMax(m_Instances.numAttributes());
-    m_Pred.setMax(m_Instances.numAttributes());
+    m_Act.setMax(m_Data.getColumnCount());
+    m_Pred.setMax(m_Data.getColumnCount());
     //set the position of the actual attribute using the index provided
     try {
       m_ActInd = m_Act.getIntIndex();
@@ -155,25 +152,22 @@ extends BasePanel{
     m_Centre.add(vsOrderPanel);
 
     //new set of instances for the graphs, contains a residuals attribute
-    AddExpression add = new AddExpression();
-    add.setName("residuals");
-    //need to update the expression
-    add.setExpression("a"+(m_ActInd+1) + "-a" + (m_PredInd+1));
-    try {
-      add.setInputFormat(m_Instances);
-    } catch (Exception e1) {
-      e1.printStackTrace();}
-    Instances theInst = new Instances("Empty", new ArrayList<Attribute>(), 0);
-    try {
-      theInst = Filter.useFilter(m_Instances, add);
-    } catch (Exception e) {
-      e.printStackTrace();
+    SpreadSheet sheet = m_Data.getClone();
+    sheet.insertColumn(sheet.getColumnCount(), "residuals");
+    for (int i = 0; i < sheet.getRowCount(); i++) {
+      Row row = sheet.getRow(i);
+      if (row.hasCell(m_ActInd) && row.hasCell(m_PredInd)) {
+	Cell act = row.getCell(m_ActInd);
+	Cell pred = row.getCell(m_PredInd);
+	if (!act.isMissing() && !pred.isMissing() && act.isNumeric() && pred.isNumeric())
+	  row.getCell(sheet.getColumnCount() - 1).setContent(act.toDouble() - pred.toDouble());
+      }
     }
-    m_Index = theInst.numAttributes()-1;
+    m_Index = sheet.getColumnCount() - 1;
 
     //Normal plot
     NormalPlot norm = new NormalPlot();
-    norm.setInstances(theInst);
+    norm.setData(sheet);
     norm.setIndex(m_Index);
     norm.setOptions(m_NormOptions);
     normPanel.add(norm, BorderLayout.CENTER);
@@ -185,7 +179,7 @@ extends BasePanel{
 
     //vs fit plot
     VersusFit vsFit = new VersusFit();
-    vsFit.setInstances(theInst);
+    vsFit.setData(sheet);
     vsFit.setIndices(m_Index, m_PredInd);
     vsFit.setOptions(m_VsFitOptions);
     vsFitPanel.add(vsFit, BorderLayout.CENTER);
@@ -197,7 +191,7 @@ extends BasePanel{
 
     //Histogram plot
     Histogram hist = new Histogram();
-    hist.setInstances(theInst);
+    hist.setData(sheet);
     hist.setOptions(m_HistogramOptions);
     hist.setIndex(m_Index);
     histogramPanel.add(hist, BorderLayout.CENTER);
@@ -209,7 +203,7 @@ extends BasePanel{
 
     //Vs order plot
     VersusOrder VsOrder = new VersusOrder();
-    VsOrder.setInstances(theInst);
+    VsOrder.setData(sheet);
     VsOrder.setIndex(m_Index);
     VsOrder.setOptions(m_VsOrderOptions);
     vsOrderPanel.add(VsOrder, BorderLayout.CENTER);

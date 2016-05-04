@@ -15,17 +15,17 @@
 
 /*
  * AbstractScatterPlotOverlay.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.stats.scatterplot;
 
-import java.awt.Color;
-
-import weka.core.Instances;
 import adams.core.option.AbstractOptionHandler;
 import adams.core.option.OptionUtils;
+import adams.data.spreadsheet.SpreadSheet;
 import adams.gui.visualization.stats.paintlet.AbstractOverlayPaintlet;
+
+import java.awt.Color;
 
 /**
  * Abstract superclass for overlays on the scatterplot graph.
@@ -40,7 +40,7 @@ extends AbstractOptionHandler {
   protected AbstractScatterPlot m_Parent;
 
   /**Instances object containing data */
-  protected Instances m_Instances;
+  protected SpreadSheet m_Data;
 
   /**Paintlet to do the drawing */
   protected AbstractOverlayPaintlet m_Paintlet;
@@ -116,8 +116,8 @@ extends AbstractOptionHandler {
    * Pass the instances to the overlay object
    * @param inst		Instances to be plotted
    */
-  public void inst(Instances inst) {
-    m_Instances = inst;
+  public void inst(SpreadSheet inst) {
+    m_Data = inst;
   }
 
   /**

@@ -64,7 +64,7 @@ extends AbstractZScoreOverlay{
 
   public void setUp() {
     m_Paintlet = new MeanPaintlet();
-    m_Paintlet.parameters(m_Instances, m_Parent.getIndex());
+    m_Paintlet.parameters(m_Data, m_Parent.getIndex());
     m_Paintlet.setRepaintOnChange(true);
     m_Paintlet.setStrokeThickness(m_Thickness);
     m_Paintlet.setColor(m_Color);
