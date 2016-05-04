@@ -14,3 +14,27 @@ adams.data.spreadsheet.SpreadSheet=\
 # the outlier detectors
 adams.flow.control.removeoutliers.AbstractOutlierDetector=\
   adams.flow.control.removeoutliers
+
+# the classifiers
+adams.ml.model.classification.Classifier=\
+  adams.ml.model.classification
+
+# the incremental classifiers
+adams.ml.model.classification.IncrementalClassifier=\
+  adams.ml.model.classification
+
+# the regressors
+adams.ml.model.regression.Regressor=\
+  adams.ml.model.regression
+
+# the incremental regressors
+adams.ml.model.regression.IncrementalRegressor=\
+  adams.ml.model.regression
+
+# the clusterers
+adams.ml.model.clustering.Clusterer=\
+  adams.ml.model.clustering
+
+# the incremental clusterers
+adams.ml.model.clustering.IncrementalClusterer=\
+  adams.ml.model.clustering
