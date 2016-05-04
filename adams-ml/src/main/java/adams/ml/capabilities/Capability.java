@@ -32,8 +32,7 @@ public enum Capability {
   CATEGORICAL_ATTRIBUTE(false),
   CATEGORICAL_CLASS(true),
   DATETYPE_ATTRIBUTE(false),
-  DATETYPE_CLASS(true),
-  NO_CLASS(true);
+  DATETYPE_CLASS(true);
 
   /** whether the capability is class-related. */
   private boolean m_ClassRelated;
