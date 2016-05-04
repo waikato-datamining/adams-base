@@ -15,11 +15,12 @@
 
 /**
  * SpreadSheetUtils.java
- * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.spreadsheet;
 
 import adams.core.Utils;
+import gnu.trove.list.array.TDoubleArrayList;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -256,5 +257,34 @@ public class SpreadSheetUtils {
     result[1]--;
 
     return result;
+  }
+
+  /**
+   * Returns the content of a numeric column as double array.
+   *
+   * @param sheet	the sheet to use
+   * @param col		the index of the numeric column
+   * @return		the numeric data, elements are NaN if missing or not numeric
+   */
+  public static double[] getNumericColumn(SpreadSheet sheet, int col) {
+    TDoubleArrayList result;
+    int			i;
+    Row			row;
+    Cell		cell;
+    double		val;
+
+    result = new TDoubleArrayList(sheet.getRowCount());
+    for (i = 0; i < sheet.getRowCount(); i++) {
+      row = sheet.getRow(i);
+      val = Double.NaN;
+      if (row.hasCell(col)) {
+	cell = row.getCell(col);
+	if (cell.isNumeric())
+	  val = cell.toDouble();
+      }
+      result.add(val);
+    }
+
+    return result.toArray();
   }
 }
