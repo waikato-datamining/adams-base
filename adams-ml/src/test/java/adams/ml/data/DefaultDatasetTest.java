@@ -14,8 +14,8 @@
  */
 
 /**
- * DatasetTest.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * DefaultDatasetTest.java
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.ml.data;
 
@@ -33,7 +33,7 @@ import adams.test.TmpFile;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class DatasetTest
+public class DefaultDatasetTest
   extends DefaultSpreadSheetTest {
 
   /**
@@ -41,7 +41,7 @@ public class DatasetTest
    *
    * @param name	the name of the test
    */
-  public DatasetTest(String name) {
+  public DefaultDatasetTest(String name) {
     super(name);
   }
 
@@ -182,7 +182,7 @@ public class DatasetTest
    * @return		the test suite
    */
   public static Test suite() {
-    return new TestSuite(DatasetTest.class);
+    return new TestSuite(DefaultDatasetTest.class);
   }
   
   /**
