@@ -19,9 +19,9 @@
  */
 package adams.gui.visualization.debug.inspectionhandler;
 
-import java.util.Hashtable;
-
 import adams.core.ClassLocator;
+
+import java.util.Hashtable;
 
 /**
  * Provides further insight into spreadsheets.
@@ -52,14 +52,15 @@ public class Dataset
   @Override
   public Hashtable<String,Object> inspect(Object obj) {
     Hashtable<String,Object>	result;
-    adams.ml.data.Dataset	data;
+    adams.ml.data.Dataset data;
     int[]			indices;
     StringBuilder		classes;
 
-    result = new Hashtable<String,Object>();
+    result = new Hashtable<>();
 
     if (obj instanceof adams.ml.data.Dataset) {
       data = (adams.ml.data.Dataset) obj;
+      result.put("Dataset.Class",    data.getClass().getName());
       result.put("Dataset.Full",    data.toString());
       result.put("Dataset.Header",  data.getHeader().toString());
       result.put("Dataset.Rows",    data.getRowCount());

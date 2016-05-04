@@ -28,7 +28,7 @@ import adams.env.Environment;
 import adams.test.TmpFile;
 
 /**
- * Tests the {@link Dataset} class.
+ * Tests the {@link DefaultDataset} class.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
@@ -70,45 +70,45 @@ public class DatasetTest
   }
   
   /**
-   * Tests the {@link Dataset#getClone()} method.
+   * Tests the {@link DefaultDataset#getClone()} method.
    */
   public void textDatasetClone() {
     CsvSpreadSheetReader reader = new CsvSpreadSheetReader();
-    reader.setSpreadSheetType(new Dataset());
-    Dataset data = (Dataset) reader.read(new TmpFile("sample.csv").getAbsolutePath());
-    Dataset copy = (Dataset) data.getClone();
+    reader.setSpreadSheetType(new DefaultDataset());
+    DefaultDataset data = (DefaultDataset) reader.read(new TmpFile("sample.csv").getAbsolutePath());
+    DefaultDataset copy = (DefaultDataset) data.getClone();
     assertNull("equalHeaders should return null", data.equalsHeader(copy));
 
     data.setClassAttribute(1, true);
     assertNotNull("equalHeaders should not return null", data.equalsHeader(copy));
 
-    copy = (Dataset) data.getClone();
+    copy = (DefaultDataset) data.getClone();
     assertNull("equalHeaders should return null (after setting class attribute)", data.equalsHeader(copy));
   }
   
   /**
-   * Tests the {@link Dataset#setClassAttribute(int, boolean)},
-   * {@link Dataset#setClassAttribute(String, boolean)},
-   * {@link Dataset#getClassAttributeIndices()} 
-   * and {@link Dataset#getClassAttributeKeys()} methods.
+   * Tests the {@link DefaultDataset#setClassAttribute(int, boolean)},
+   * {@link DefaultDataset#setClassAttribute(String, boolean)},
+   * {@link DefaultDataset#getClassAttributeIndices()}
+   * and {@link DefaultDataset#getClassAttributeKeys()} methods.
    */
   public void testClassAttribute() {
     CsvSpreadSheetReader reader = new CsvSpreadSheetReader();
-    reader.setSpreadSheetType(new Dataset());
-    Dataset data = (Dataset) reader.read(new TmpFile("sample.csv").getAbsolutePath());
-    Dataset copy = (Dataset) data.getClone();
+    reader.setSpreadSheetType(new DefaultDataset());
+    DefaultDataset data = (DefaultDataset) reader.read(new TmpFile("sample.csv").getAbsolutePath());
+    DefaultDataset copy = (DefaultDataset) data.getClone();
 
     data.setClassAttribute(1, true);
     assertNotNull("equalHeaders should return a string", data.equalsHeader(copy));
     assertTrue("col should be a class attribute", data.isClassAttribute(1));
 
-    data = (Dataset) copy.getClone();
+    data = (DefaultDataset) copy.getClone();
     String key = data.getHeaderRow().getCellKey(1);
     data.setClassAttribute(key, true);
     assertNotNull("equalHeaders should return a string", data.equalsHeader(copy));
     assertTrue("col should be a class attribute", data.isClassAttribute(key));
 
-    data = (Dataset) copy.getClone();
+    data = (DefaultDataset) copy.getClone();
     assertTrue("Failed to update class attribute flag at 0", data.setClassAttribute(0, true));
     assertTrue("Failed to update class attribute flag at 1", data.setClassAttribute(1, true));
     assertFalse("Succeeded to update class attribute flag at 3", data.setClassAttribute(3, true));
@@ -132,13 +132,13 @@ public class DatasetTest
   }
   
   /**
-   * Tests the {@link Dataset#getInputs()} method.
+   * Tests the {@link DefaultDataset#getInputs()} method.
    */
   public void testInputs() {
     CsvSpreadSheetReader reader = new CsvSpreadSheetReader();
-    reader.setSpreadSheetType(new Dataset());
-    Dataset data = (Dataset) reader.read(new TmpFile("labor.csv").getAbsolutePath());
-    Dataset copy = (Dataset) data.getClone();
+    reader.setSpreadSheetType(new DefaultDataset());
+    DefaultDataset data = (DefaultDataset) reader.read(new TmpFile("labor.csv").getAbsolutePath());
+    DefaultDataset copy = (DefaultDataset) data.getClone();
     
     SpreadSheet inputs = data.getInputs();
     assertNotNull("input features should not have been null", inputs);
@@ -155,12 +155,12 @@ public class DatasetTest
   }
   
   /**
-   * Tests the {@link Dataset#getOutputs()} method.
+   * Tests the {@link DefaultDataset#getOutputs()} method.
    */
   public void testOutputs() {
     CsvSpreadSheetReader reader = new CsvSpreadSheetReader();
-    reader.setSpreadSheetType(new Dataset());
-    Dataset data = (Dataset) reader.read(new TmpFile("labor.csv").getAbsolutePath());
+    reader.setSpreadSheetType(new DefaultDataset());
+    DefaultDataset data = (DefaultDataset) reader.read(new TmpFile("labor.csv").getAbsolutePath());
     
     SpreadSheet outputs = data.getOutputs();
     assertNull("output features should have been null", outputs);

@@ -21,6 +21,7 @@
 package adams.flow.transformer;
 
 import adams.core.base.BaseRegExp;
+import adams.ml.data.DefaultDataset;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import adams.core.option.AbstractArgumentOption;
@@ -123,7 +124,7 @@ public class ClassSelectorTest
       argOption = (AbstractArgumentOption) spreadsheetfilereader4.getOptionManager().findByProperty("reader");
       adams.data.io.input.CsvSpreadSheetReader csvspreadsheetreader6 = new adams.data.io.input.CsvSpreadSheetReader();
       argOption = (AbstractArgumentOption) csvspreadsheetreader6.getOptionManager().findByProperty("spreadSheetType");
-      adams.ml.data.Dataset dataset8 = new adams.ml.data.Dataset();
+      DefaultDataset dataset8 = new DefaultDataset();
       csvspreadsheetreader6.setSpreadSheetType(dataset8);
 
       argOption = (AbstractArgumentOption) csvspreadsheetreader6.getOptionManager().findByProperty("missingValue");

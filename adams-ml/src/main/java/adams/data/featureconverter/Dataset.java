@@ -19,6 +19,8 @@
  */
 package adams.data.featureconverter;
 
+import adams.ml.data.DefaultDataset;
+
 /**
  * Turns the features into ADAMS dataset format.
  * 
@@ -48,6 +50,6 @@ public class Dataset
    */
   @Override
   protected adams.data.spreadsheet.SpreadSheet getDefaultSpreadSheetType() {
-    return new adams.ml.data.Dataset();
+    return new DefaultDataset();
   }
 }

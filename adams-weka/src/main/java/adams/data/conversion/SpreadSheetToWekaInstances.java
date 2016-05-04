@@ -19,15 +19,6 @@
  */
 package adams.data.conversion;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-
-import weka.core.Attribute;
-import weka.core.DenseInstance;
-import weka.core.FastVector;
-import weka.core.Instances;
 import adams.core.Constants;
 import adams.core.Utils;
 import adams.data.spreadsheet.Cell;
@@ -36,6 +27,15 @@ import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.env.Environment;
 import adams.ml.data.Dataset;
+import weka.core.Attribute;
+import weka.core.DenseInstance;
+import weka.core.FastVector;
+import weka.core.Instances;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 
 /**
  <!-- globalinfo-start -->

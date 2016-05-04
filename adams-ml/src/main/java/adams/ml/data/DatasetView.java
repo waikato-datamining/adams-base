@@ -40,6 +40,7 @@ import java.io.StringWriter;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
@@ -49,13 +50,11 @@ import java.util.TimeZone;
 /**
  * Provides a view of another dataset.
  *
- * TODO class attribute related methods
- *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
 public class DatasetView
-  implements SpreadSheet {
+  implements Dataset {
 
   private static final long serialVersionUID = -3933080370817564099L;
 
@@ -160,7 +159,7 @@ public class DatasetView
    * @return		the clone
    */
   @Override
-  public SpreadSheet getClone() {
+  public Dataset getClone() {
     return new DatasetView(m_Dataset.getClone(), m_RowArray, m_ColumnArray);
   }
 
@@ -170,7 +169,7 @@ public class DatasetView
    * @return		the spreadsheet
    */
   @Override
-  public SpreadSheet getHeader() {
+  public Dataset getHeader() {
     return new DatasetView(m_Dataset.getHeader(), null, m_ColumnArray);
   }
 
@@ -1221,6 +1220,189 @@ public class DatasetView
    */
   public Dataset getDataset() {
     return m_Dataset;
+  }
+
+  /**
+   * Removes all set class attributes.
+   * <br>
+   * Not implemented!
+   */
+  public void removeClassAttributes() {
+    throw new NotImplementedException();
+  }
+
+  /**
+   * Returns whether the specified column is a class attribute.
+   *
+   * @param colKey	they key of the column to query
+   * @return		true if column a class attribute
+   */
+  public boolean isClassAttribute(String colKey) {
+    if ((colKey == null) || (getActualColumn(colKey) == null))
+      return false;
+    else
+      return m_Dataset.isClassAttribute(getActualColumn(colKey));
+  }
+
+  /**
+   * Returns whether the specified column is a class attribute.
+   *
+   * @param colIndex	they index of the column to query
+   * @return		true if column a class attribute
+   */
+  public boolean isClassAttribute(int colIndex) {
+    return isClassAttribute(m_HeaderRow.getCellKey(colIndex));
+  }
+
+  /**
+   * Sets the class attribute status for a column.
+   * <br>
+   * Not implemented!
+   *
+   * @param colKey	the column to set the class attribute status for
+   * @param isClass	if true then the column will be flagged as class
+   * 			attribute, otherwise the flag will get removed
+   * @return		true if successfully updated
+   */
+  public boolean setClassAttribute(String colKey, boolean isClass) {
+    throw new NotImplementedException();
+  }
+
+  /**
+   * Sets the class attribute status for a column.
+   * <br>
+   * Not implemented!
+   *
+   * @param colIndex	the column to set the class attribute status for
+   * @param isClass	if true then the column will be flagged as class
+   * 			attribute, otherwise the flag will get removed
+   * @return		true if successfully updated
+   */
+  public boolean setClassAttribute(int colIndex, boolean isClass) {
+    throw new NotImplementedException();
+  }
+
+  /**
+   * Returns all the class attributes that are currently set.
+   *
+   * @return		the column keys of class attributes (not ordered)
+   */
+  public String[] getClassAttributeKeys() {
+    List<String>	result;
+
+    result = new ArrayList<>();
+    for (String key: m_Dataset.getClassAttributeKeys()) {
+      key = getActualColumn(key);
+      if (key != null)
+	result.add(key);
+    }
+
+    return result.toArray(new String[result.size()]);
+  }
+
+  /**
+   * Returns all the class attributes that are currently set.
+   *
+   * @return		the indices of class attributes (sorted asc)
+   */
+  public int[] getClassAttributeIndices() {
+    int[]	result;
+    String[]	keys;
+    int		i;
+
+    keys   = getClassAttributeKeys();
+    result = new int[keys.length];
+    for (i = 0; i < keys.length; i++)
+      result[i] = getHeaderRow().indexOf(keys[i]);
+    Arrays.sort(result);
+
+    return result;
+  }
+
+  /**
+   * Returns a spreadsheet containing only the input columns, not class
+   * columns.
+   *
+   * @return		the input features, null if data conists only of class columns
+   */
+  public SpreadSheet getInputs() {
+    SpreadSheet		result;
+    TIntArrayList	indices;
+    int			i;
+    Row			newRow;
+
+    if (getClassAttributeKeys().length == 0)
+      return getClone();
+    else if (getClassAttributeKeys().length == getColumnCount())
+      return null;
+
+    // determine indices
+    indices = new TIntArrayList();
+    for (i = 0; i < getColumnCount(); i++) {
+      if (!isClassAttribute(i))
+	indices.add(i);
+    }
+
+    result = newInstance();
+
+    // header
+    newRow = result.getHeaderRow();
+    for (i = 0; i < indices.size(); i++)
+      newRow.addCell("" + i).assign(getHeaderRow().getCell(indices.get(i)));
+
+    // data
+    for (Row row: rows()) {
+      newRow = result.addRow();
+      for (i = 0; i < indices.size(); i++) {
+	if (row.hasCell(indices.get(i)))
+	  newRow.addCell(i).assign(row.getCell(indices.get(i)));
+      }
+    }
+
+    return result;
+  }
+
+  /**
+   * Returns a spreadsheet containing only output columns, i.e., the class
+   * columns.
+   *
+   * @return		the output features, null if data has no class columns
+   */
+  public SpreadSheet getOutputs() {
+    SpreadSheet		result;
+    TIntArrayList	indices;
+    int			i;
+    Row			newRow;
+
+    if (getClassAttributeKeys().length == 0)
+      return null;
+    else if (getClassAttributeKeys().length == getColumnCount())
+      return getClone();
+
+    // determine indices
+    indices = new TIntArrayList();
+    for (i = 0; i < getColumnCount(); i++) {
+      if (isClassAttribute(i))
+	indices.add(i);
+    }
+
+    result = newInstance();
+
+    // header
+    newRow = result.getHeaderRow();
+    for (i = 0; i < indices.size(); i++)
+      newRow.addCell("" + i).assign(getHeaderRow().getCell(indices.get(i)));
+
+    // data
+    for (Row row: rows()) {
+      newRow = result.addRow();
+      for (i = 0; i < indices.size(); i++) {
+	if (row.hasCell(indices.get(i)))
+	  newRow.addCell(i).assign(row.getCell(indices.get(i)));
+      }
+    }
+
+    return result;
   }
 
   /**

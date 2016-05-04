@@ -29,6 +29,7 @@ import adams.flow.provenance.Provenance;
 import adams.flow.provenance.ProvenanceContainer;
 import adams.flow.provenance.ProvenanceInformation;
 import adams.flow.provenance.ProvenanceSupporter;
+import adams.ml.data.DefaultDataset;
 import adams.ml.data.Dataset;
 
 /**
@@ -292,7 +293,7 @@ public class ClassSelector
   protected String doExecute() {
     String	result;
     SpreadSheet	sheet;
-    Dataset	data;
+    Dataset data;
     int[]	indices;
 
     result = null;
@@ -301,7 +302,7 @@ public class ClassSelector
     if (sheet instanceof Dataset)
       data = (Dataset) sheet;
     else
-      data = new Dataset(sheet);
+      data = new DefaultDataset(sheet);
     
     indices = data.getClassAttributeIndices();
     if (m_Unset) {

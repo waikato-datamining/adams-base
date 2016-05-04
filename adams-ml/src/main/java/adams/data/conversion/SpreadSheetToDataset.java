@@ -15,13 +15,14 @@
 
 /**
  * SpreadSheetToDataset.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
 
 import adams.core.QuickInfoHelper;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetColumnRange;
+import adams.ml.data.DefaultDataset;
 import adams.ml.data.Dataset;
 
 /**
@@ -145,10 +146,10 @@ public class SpreadSheetToDataset
    */
   @Override
   protected Object doConvert() throws Exception {
-    Dataset	result;
+    Dataset result;
     int[]	indices;
     
-    result = new Dataset();
+    result = new DefaultDataset();
     result.assign((SpreadSheet) m_Input);
     m_ClassAttribute.setData(result);
     indices = m_ClassAttribute.getIntIndices();
