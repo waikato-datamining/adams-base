@@ -37,14 +37,16 @@ public interface IncrementalAlgorithm<T extends Model>
    *
    * @param row		the data to train with
    * @return		the updated model
+   * @throws Exception  if update fails
    */
-  public T updateModel(Row row);
+  public T updateModel(Row row) throws Exception;
 
   /**
    * Updates the model with the given data.
    *
-   * @param data		the data to train with
+   * @param data	the data to train with
    * @return		the updated model
+   * @throws Exception  if update fails
    */
-  public T updateModel(Dataset data);
+  public T updateModel(Dataset data) throws Exception;
 }
