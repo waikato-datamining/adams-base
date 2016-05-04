@@ -31,7 +31,7 @@ import adams.ml.data.Dataset;
  * @version $Revision$
  * @param <T> the type of model to generate
  */
-public interface Algorithm<T>
+public interface Algorithm<T extends Model>
   extends CapabilitiesHandler {
 
   /**
