@@ -21,10 +21,14 @@
 package adams.data.statistics;
 
 import adams.core.Utils;
+import adams.data.random.JavaRandomInt;
+import adams.data.random.RandomIntegerRangeGenerator;
 import adams.env.Environment;
+import gnu.trove.list.array.TIntArrayList;
 import org.apache.commons.math3.distribution.NormalDistribution;
 
 import java.util.Arrays;
+import java.util.Random;
 
 /**
  * A statistical helper class.
@@ -1953,6 +1957,61 @@ public class StatUtils {
       result[i] = new Double[matrix[i].length];
       for (n = 0; n < matrix[i].length; n++)
 	result[i][n] = new Double(matrix[i][n]);
+    }
+
+    return result;
+  }
+
+  /**
+   * Creates a random sub-sample of indices of a certain percentage using
+   * the specified number of entrie. Uses {@link JavaRandomInt}.
+   *
+   * @param num		the maximum number of indices
+   * @param perc	the size of the subsample (0-1)
+   * @param seed	the seed value for JavaRandomInt
+   * @return		the subsample of indices (chosen from 0 to num-1)
+   */
+  public static TIntArrayList subsample(int num, double perc, long seed) {
+    JavaRandomInt	generator;
+
+    generator = new JavaRandomInt();
+    generator.setSeed(seed);
+
+    return subsample(num, perc, generator);
+  }
+
+  /**
+   * Creates a random sub-sample of indices of a certain percentage using
+   * the specified number of entrie.
+   *
+   * @param num		the maximum number of indices
+   * @param perc	the size of the subsample (0-1)
+   * @param generator	the random int generator to use
+   * @return		the subsample of indices (chosen from 0 to num-1)
+   */
+  public static TIntArrayList subsample(int num, double perc, RandomIntegerRangeGenerator generator) {
+    TIntArrayList 	result;
+    TIntArrayList	available;
+    int			i;
+    int			size;
+    Random		rand;
+
+    available = new TIntArrayList();
+    for (i = 0; i < num; i++)
+      available.add(i);
+    result = new TIntArrayList();
+    size    = (int) Math.round(num * perc);
+    while (size > 0) {
+      if (available.size() == 1) {
+	i = 0;
+      }
+      else {
+	generator.setMaxValue(available.size() - 1);
+	i = generator.next().intValue();
+      }
+      result.add(available.get(i));
+      available.removeAt(i);
+      size--;
     }
 
     return result;
