@@ -224,18 +224,4 @@ public class FileChooserBookmarksPanel
   protected AbstractFactory newFactory() {
     return new FileChooserBookmarksFactory();
   }
-
-  /**
-   * Checks whether the string represents a valid directory.
-   *
-   * @param dirStr	the string to test
-   * @return		true if valid and existing directory
-   */
-  @Override
-  protected boolean isValidPath(String dirStr) {
-    if (dirStr == null)
-      return false;
-    else
-      return super.isValidPath(dirStr);
-  }
 }
