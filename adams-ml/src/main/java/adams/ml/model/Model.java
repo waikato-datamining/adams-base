@@ -31,4 +31,10 @@ import java.io.Serializable;
 public interface Model
   extends Serializable {
 
+  /**
+   * Gets a short string description of the model.
+   *
+   * @return		the description, null if none available
+   */
+  public String getModelDescription();
 }
