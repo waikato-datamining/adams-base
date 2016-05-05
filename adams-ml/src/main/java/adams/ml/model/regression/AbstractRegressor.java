@@ -27,8 +27,6 @@ import adams.ml.capabilities.Capabilities;
 import adams.ml.capabilities.CapabilitiesHelper;
 import adams.ml.capabilities.Capability;
 import adams.ml.data.Dataset;
-import adams.ml.model.classification.ClassificationModel;
-import adams.ml.model.classification.Classifier;
 
 import java.util.Date;
 
@@ -40,7 +38,7 @@ import java.util.Date;
  */
 public abstract class AbstractRegressor
   extends AbstractOptionHandler
-  implements Classifier {
+  implements Regressor {
 
   private static final long serialVersionUID = 1493597879425680024L;
 
@@ -159,7 +157,7 @@ public abstract class AbstractRegressor
    * @return		the generated model
    * @throws Exception	if the build fails
    */
-  protected abstract ClassificationModel doBuildModel(Dataset data) throws Exception;
+  protected abstract RegressionModel doBuildModel(Dataset data) throws Exception;
 
   /**
    * Builds a model from the data.
@@ -168,8 +166,8 @@ public abstract class AbstractRegressor
    * @return		the generated model
    * @throws Exception	if the build fails
    */
-  public ClassificationModel buildModel(Dataset data) throws Exception {
-    ClassificationModel		result;
+  public RegressionModel buildModel(Dataset data) throws Exception {
+    RegressionModel		result;
 
     // check data
     if (isLoggingEnabled())
