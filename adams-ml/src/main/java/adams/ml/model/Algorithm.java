@@ -20,6 +20,7 @@
 
 package adams.ml.model;
 
+import adams.core.option.OptionHandler;
 import adams.ml.capabilities.Capabilities;
 import adams.ml.capabilities.CapabilitiesHandler;
 import adams.ml.data.Dataset;
@@ -32,7 +33,7 @@ import adams.ml.data.Dataset;
  * @param <T> the type of model to generate
  */
 public interface Algorithm<T extends Model>
-  extends CapabilitiesHandler {
+  extends CapabilitiesHandler, OptionHandler {
 
   /**
    * Returns the algorithm's capabilities in terms of data.
@@ -46,9 +47,9 @@ public interface Algorithm<T extends Model>
    *
    * @param data	the data to check
    * @param strict	whether to perform a strict check
-   * @return		true if data can be handled
+   * @return		null if data can be handled, otherwise error message
    */
-  public boolean handles(Dataset data, boolean strict);
+  public String handles(Dataset data, boolean strict);
 
   /**
    * Builds a model from the data.
