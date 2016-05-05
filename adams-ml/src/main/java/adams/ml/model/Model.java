@@ -20,6 +20,8 @@
 
 package adams.ml.model;
 
+import adams.ml.data.DatasetInfo;
+
 import java.io.Serializable;
 
 /**
@@ -30,6 +32,13 @@ import java.io.Serializable;
  */
 public interface Model
   extends Serializable {
+
+  /**
+   * Returns information about the dataset used for building the model.
+   *
+   * @return		the information
+   */
+  public DatasetInfo getDatasetInfo();
 
   /**
    * Gets a short string description of the model.
