@@ -37,14 +37,16 @@ public interface ClustererModel
    *
    * @param row		the row to classify
    * @return		the cluster index
+   * @throws Exception	if prediction fails
    */
-  public int cluster(Row row);
+  public int cluster(Row row) throws Exception;
 
   /**
    * Returns the cluster distribution for the given row.
    *
    * @param row		the row to generate the class distribution for
    * @return		the cluster distribution
+   * @throws Exception	if prediction fails
    */
-  public double[] distribution(Row row);
+  public double[] distribution(Row row) throws Exception;
 }

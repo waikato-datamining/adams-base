@@ -37,14 +37,16 @@ public interface ClassificationModel
    *
    * @param row		the row to classify
    * @return		the class label
+   * @throws Exception	if prediction fails
    */
-  public String classify(Row row);
+  public String classify(Row row) throws Exception;
 
   /**
    * Returns the class distribution for the given row.
    *
    * @param row		the row to generate the class distribution for
    * @return		the class distribution
+   * @throws Exception	if prediction fails
    */
-  public double[] distribution(Row row);
+  public double[] distribution(Row row) throws Exception;
 }

@@ -37,6 +37,7 @@ public interface RegressionModel
    *
    * @param row		the row to make predictions for
    * @return		the prediction
+   * @throws Exception	if prediction fails
    */
-  public double classify(Row row);
+  public double classify(Row row) throws Exception;
 }
