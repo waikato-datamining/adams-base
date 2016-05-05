@@ -29,6 +29,6 @@ import adams.ml.model.Algorithm;
  * @version $Revision$
  */
 public interface Clusterer
-  extends Algorithm<ClustererModel> {
+  extends Algorithm<ClusteringModel> {
 
 }

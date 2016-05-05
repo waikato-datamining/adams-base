@@ -29,6 +29,6 @@ import adams.ml.model.IncrementalAlgorithm;
  * @version $Revision$
  */
 public interface IncrementalClusterer
-  extends Clusterer, IncrementalAlgorithm<ClustererModel> {
+  extends Clusterer, IncrementalAlgorithm<ClusteringModel> {
 
 }
