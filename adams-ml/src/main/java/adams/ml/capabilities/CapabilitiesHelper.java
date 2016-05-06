@@ -38,7 +38,7 @@ public class CapabilitiesHelper {
    */
   public static Capabilities forDataset(Dataset data) {
     // TODO
-    return new Capabilities(null);
+    return new Capabilities();
   }
 
   /**
