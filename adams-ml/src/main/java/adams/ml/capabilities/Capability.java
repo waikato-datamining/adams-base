@@ -27,6 +27,8 @@ package adams.ml.capabilities;
  * @version $Revision$
  */
 public enum Capability {
+  MISSING_ATTRIBUTE_VALUE(false),
+  MISSING_CLASS_VALUE(true),
   NUMERIC_ATTRIBUTE(false),
   NUMERIC_CLASS(true),
   CATEGORICAL_ATTRIBUTE(false),
