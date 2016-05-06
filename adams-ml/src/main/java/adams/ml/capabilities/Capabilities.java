@@ -162,6 +162,42 @@ public class Capabilities
   }
 
   /**
+   * Enables all capabilities.
+   */
+  public void enableAll() {
+    for (Capability cap: Capability.values())
+      enable(cap);
+  }
+
+  /**
+   * Disables all capabilities.
+   */
+  public void disableAll() {
+    for (Capability cap: Capability.values())
+      disable(cap);
+  }
+
+  /**
+   * Enables all class capabilities.
+   */
+  public void enableAllClass() {
+    for (Capability cap: Capability.values()) {
+      if (cap.isClassRelated())
+	enable(cap);
+    }
+  }
+
+  /**
+   * Disables all class capabilities.
+   */
+  public void disableAllClass() {
+    for (Capability cap: Capability.values()) {
+      if (cap.isClassRelated())
+	disable(cap);
+    }
+  }
+
+  /**
    * Returns whether the specified capability is enabled, i.e., supported.
    *
    * @param cap		the capability to check
