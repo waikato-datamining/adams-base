@@ -21,6 +21,11 @@
 package adams.ml.model;
 
 import adams.ml.data.Dataset;
+import adams.ml.data.DatasetInfo;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Helper class for models.
@@ -38,7 +43,25 @@ public class ModelHelper {
    * @return		null if compatible, otherwise error message
    */
   public static String isCompatible(Model model, Dataset data) {
-    // TODO
-    return null;
+    String		result;
+    DatasetInfo		info;
+    Set<String> 	modelClasses;
+    Set<String> 	dataClasses;
+
+    info   = model.getDatasetInfo();
+    result = info.getHeader().equalsHeader(data);
+    if (result == null) {
+      modelClasses = info.getClassColumns();
+      dataClasses  = new HashSet<>(Arrays.asList(data.getClassAttributeNames()));
+      if (modelClasses.size() != dataClasses.size()) {
+	result = "Number of class columns differ: " + modelClasses + " != " + dataClasses;
+      }
+      else {
+	if (!(modelClasses.containsAll(dataClasses) && dataClasses.containsAll(modelClasses)))
+	  result = "Class column names differ: " + modelClasses + " != " + dataClasses;
+      }
+    }
+
+    return result;
   }
 }
