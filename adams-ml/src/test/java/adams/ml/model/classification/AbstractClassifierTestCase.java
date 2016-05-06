@@ -179,15 +179,22 @@ public abstract class AbstractClassifierTestCase
    */
   protected boolean save(double[][] preds, String filename) {
     StringBuilder	data;
+    int			i;
 
     data = new StringBuilder();
     for (double[] pred: preds) {
       if (data.length() > 0)
 	data.append("\n");
-      if (pred == null)
+      if (pred == null) {
 	data.append("null");
-      else
-	data.append(Utils.arrayToString(pred));
+      }
+      else {
+	for (i = 0; i < pred.length; i++) {
+	  if (i > 0)
+	    data.append(",");
+	  data.append(Utils.doubleToString(pred[i], 6));
+	}
+      }
     }
 
     return FileUtils.writeToFile(new TmpFile(filename).getAbsolutePath(), data, false);

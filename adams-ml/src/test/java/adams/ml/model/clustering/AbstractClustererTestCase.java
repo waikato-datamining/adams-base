@@ -14,11 +14,11 @@
  */
 
 /**
- * AbstractRegressorTestCase.java
+ * AbstractClustererTestCase.java
  * Copyright (C) 2016 University of Waikato, Hamilton, NZ
  */
 
-package adams.ml.model.regression;
+package adams.ml.model.clustering;
 
 import adams.core.Utils;
 import adams.core.io.FileUtils;
@@ -41,7 +41,7 @@ import adams.test.TmpFile;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public abstract class AbstractRegressorTestCase
+public abstract class AbstractClustererTestCase
   extends AdamsTestCase {
 
   /**
@@ -49,7 +49,7 @@ public abstract class AbstractRegressorTestCase
    *
    * @param name the name of the test
    */
-  public AbstractRegressorTestCase(String name) {
+  public AbstractClustererTestCase(String name) {
     super(name);
   }
 
@@ -60,7 +60,7 @@ public abstract class AbstractRegressorTestCase
    */
   @Override
   protected AbstractTestHelper newTestHelper() {
-    return new TestHelper(this, "adams/ml/model/regression/data");
+    return new TestHelper(this, "adams/ml/model/clustering/data");
   }
 
   /**
@@ -80,19 +80,11 @@ public abstract class AbstractRegressorTestCase
   protected abstract SpreadSheetReader[] getRegressionInputReaders();
 
   /**
-   * Returns the class attributes names for the input data files to use
-   * in the regression test.
-   *
-   * @return		the attribute names
-   */
-  protected abstract String[] getRegressionInputClasses();
-
-  /**
    * Returns the setups to use in the regression test.
    *
    * @return		the setups
    */
-  protected abstract Regressor[] getRegressionSetups();
+  protected abstract Clusterer[] getRegressionSetups();
 
   /**
    * Returns the ignored line indices to use in the regression test.
@@ -108,10 +100,9 @@ public abstract class AbstractRegressorTestCase
    *
    * @param filename	the file to read (no path)
    * @param reader	the reader for loading the data
-   * @param cls		the class attribute name
    * @return		the generated content
    */
-  protected Dataset load(String filename, SpreadSheetReader reader, String cls) {
+  protected Dataset load(String filename, SpreadSheetReader reader) {
     DefaultDataset	result;
     SpreadSheet 	full;
     SpreadSheet		chunk;
@@ -128,7 +119,6 @@ public abstract class AbstractRegressorTestCase
     m_TestHelper.deleteFileFromTmp(filename);
 
     result = new DefaultDataset(full);
-    result.setClassAttributeByName(cls, true);
 
     return result;
   }
@@ -140,12 +130,12 @@ public abstract class AbstractRegressorTestCase
    * @param data	the training data
    * @return		the predictions on the training data
    */
-  protected double[] predict(Regressor cls, Dataset data) {
-    double[]		result;
-    RegressionModel	model;
+  protected double[][] predict(Clusterer cls, Dataset data) {
+    double[][]		result;
+    ClusteringModel	model;
     int			i;
 
-    result = new double[data.getRowCount()];
+    result = new double[data.getRowCount()][];
 
     try {
       model = cls.buildModel(data);
@@ -160,10 +150,10 @@ public abstract class AbstractRegressorTestCase
 
     for (i = 0; i < data.getRowCount(); i++) {
       try {
-	result[i] = model.classify(data.getRow(i));
+	result[i] = model.distribution(data.getRow(i));
       }
       catch (Exception e) {
-	result[i] = Double.NaN;
+	result[i] = null;
       }
     }
 
@@ -177,14 +167,24 @@ public abstract class AbstractRegressorTestCase
    * @param filename	the file to save the data to (in the temp directory)
    * @return		true if successfully saved
    */
-  protected boolean save(double[] preds, String filename) {
+  protected boolean save(double[][] preds, String filename) {
     StringBuilder	data;
+    int			i;
 
     data = new StringBuilder();
-    for (double pred: preds) {
+    for (double[] pred: preds) {
       if (data.length() > 0)
 	data.append("\n");
-      data.append(Utils.doubleToString(pred, 6));
+      if (pred == null) {
+	data.append("null");
+      }
+      else {
+	for (i = 0; i < pred.length; i++) {
+	  if (i > 0)
+	    data.append(",");
+	  data.append(Utils.doubleToString(pred[i], 6));
+	}
+      }
     }
 
     return FileUtils.writeToFile(new TmpFile(filename).getAbsolutePath(), data, false);
@@ -228,10 +228,9 @@ public abstract class AbstractRegressorTestCase
     int			i;
     String[]		input;
     SpreadSheetReader[]	readers;
-    String[]		classes;
-    Regressor[]		setups;
+    Clusterer[]		setups;
     String[]		output;
-    double[] 		preds;
+    double[][] 		preds;
     TmpFile[]		outputFiles;
     String		modified;
 
@@ -240,16 +239,14 @@ public abstract class AbstractRegressorTestCase
 
     input     = getRegressionInputFiles();
     readers   = getRegressionInputReaders();
-    classes   = getRegressionInputClasses();
     output    = new String[input.length];
     setups    = getRegressionSetups();
     assertEquals("Number of files and readers differ!", input.length, readers.length);
-    assertEquals("Number of files and classes differ!", input.length, classes.length);
     assertEquals("Number of files and setups differ!", input.length, setups.length);
 
     // process data
     for (i = 0; i < input.length; i++) {
-      data = load(input[i], readers[i], classes[i]);
+      data = load(input[i], readers[i]);
       assertNotNull("Failed to load data?", data);
       dataCopy = data.getClone();
 
