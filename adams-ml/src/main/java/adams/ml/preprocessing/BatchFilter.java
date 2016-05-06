@@ -20,6 +20,8 @@
 
 package adams.ml.preprocessing;
 
+import adams.ml.capabilities.Capabilities;
+import adams.ml.capabilities.CapabilitiesHandler;
 import adams.ml.data.Dataset;
 
 /**
@@ -28,7 +30,15 @@ import adams.ml.data.Dataset;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public interface BatchFilter {
+public interface BatchFilter
+  extends CapabilitiesHandler {
+
+  /**
+   * Returns the capabilities.
+   *
+   * @return		the capabilities
+   */
+  public Capabilities getCapabilities();
 
   /**
    * Filters the dataset coming through.
