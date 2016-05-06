@@ -20,6 +20,7 @@
 
 package adams.ml.capabilities;
 
+import adams.core.Mergeable;
 import adams.core.logging.LoggingObject;
 
 import java.util.HashSet;
@@ -32,7 +33,8 @@ import java.util.Set;
  * @version $Revision$
  */
 public class Capabilities
-  extends LoggingObject {
+  extends LoggingObject
+  implements Mergeable<Capabilities> {
 
   private static final long serialVersionUID = -3901300565162711500L;
 
@@ -82,12 +84,22 @@ public class Capabilities
 
     m_Capabilities          = new HashSet<>();
     m_DependentCapabilities = new HashSet<>();
-    m_MinRows               = -1;
-    m_MaxRows               = -1;
-    m_MinColumns            = -1;
-    m_MaxColumns            = -1;
-    m_MinClassColumns       = -1;
-    m_MaxClassColumns       = -1;
+
+    reset();
+  }
+
+  /**
+   * Resets the capabilities.
+   */
+  protected void reset() {
+    m_Capabilities.clear();
+    m_DependentCapabilities.clear();
+    m_MinRows         = -1;
+    m_MaxRows         = -1;
+    m_MinColumns      = -1;
+    m_MaxColumns      = -1;
+    m_MinClassColumns = -1;
+    m_MaxClassColumns = -1;
   }
 
   /**
@@ -128,17 +140,61 @@ public class Capabilities
    * @param other	the capabilities to use instead
    */
   public void assign(Capabilities other) {
+    reset();
+    mergeWith(other);
+  }
+
+  /**
+   * Widens the min/max values.
+   *
+   * @param current	the current value
+   * @param proposed	the proposed value
+   * @param up		whether a maximum (= true) or minimum (= false)
+   * @return		the new value
+   */
+  protected int widen(int current, int proposed, boolean up) {
+    // same?
+    if (current == proposed)
+      return current;
+
+    // different
+    if (up) {
+      if (current == -1)
+	return proposed;
+      else if (proposed == -1)
+	return current;
+      else
+	return Math.max(current, proposed);
+    }
+    else {
+      if (current == -1)
+	return proposed;
+      else if (proposed == -1)
+	return current;
+      else
+	return Math.min(current, proposed);
+    }
+  }
+
+  /**
+   * Merges with the capabilities from the provided capabilities object.
+   * Min/Max properties get widened, if necessary, to accommodate both
+   * capabilities. Capabilities and dependent ones simply get added.
+   *
+   * @param other	the capabilities to merge with
+   */
+  public void mergeWith(Capabilities other) {
     for (Capability cap: other.capabilities())
       enable(cap);
     for (Capability cap: other.dependentCapabilities())
       enableDependent(cap);
-
-    setMinRows(other.getMinRows());
-    setMaxRows(other.getMaxRows());
-    setMinColumns(other.getMinColumns());
-    setMaxColumns(other.getMaxColumns());
-    setMinClassColumns(other.getMinClassColumns());
-    setMaxClassColumns(other.getMaxClassColumns());
+    
+    setMinRows(widen(getMinRows(), other.getMinRows(), false));
+    setMaxRows(widen(getMaxRows(), other.getMaxRows(), true));
+    setMinColumns(widen(getMinColumns(), other.getMinColumns(), false));
+    setMaxColumns(widen(getMaxColumns(), other.getMaxColumns(), true));
+    setMinClassColumns(widen(getMinClassColumns(), other.getMinClassColumns(), false));
+    setMaxClassColumns(widen(getMaxClassColumns(), other.getMaxClassColumns(), true));
   }
 
   /**
