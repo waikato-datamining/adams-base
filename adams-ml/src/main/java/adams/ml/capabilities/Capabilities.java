@@ -117,19 +117,28 @@ public class Capabilities
     Capabilities	result;
 
     result = new Capabilities(getOwner());
-    for (Capability cap: capabilities())
-      result.enable(cap);
-    for (Capability cap: dependentCapabilities())
-      result.enableDependent(cap);
-
-    result.setMinRows(getMinRows());
-    result.setMaxRows(getMaxRows());
-    result.setMinColumns(getMinColumns());
-    result.setMaxColumns(getMaxColumns());
-    result.setMinClassColumns(getMinClassColumns());
-    result.setMaxClassColumns(getMaxClassColumns());
+    result.assign(this);
 
     return result;
+  }
+
+  /**
+   * Uses the capabilities from the provided capabilities object.
+   *
+   * @param other	the capabilities to use instead
+   */
+  public void assign(Capabilities other) {
+    for (Capability cap: other.capabilities())
+      enable(cap);
+    for (Capability cap: other.dependentCapabilities())
+      enableDependent(cap);
+
+    setMinRows(other.getMinRows());
+    setMaxRows(other.getMaxRows());
+    setMinColumns(other.getMinColumns());
+    setMaxColumns(other.getMaxColumns());
+    setMinClassColumns(other.getMinClassColumns());
+    setMaxClassColumns(other.getMaxClassColumns());
   }
 
   /**
