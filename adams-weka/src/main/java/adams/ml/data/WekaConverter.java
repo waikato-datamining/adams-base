@@ -24,6 +24,8 @@ import adams.data.conversion.SpreadSheetToWekaInstances;
 import adams.data.conversion.WekaInstancesToSpreadSheet;
 import adams.data.spreadsheet.Cell;
 import adams.data.spreadsheet.Row;
+import adams.ml.capabilities.Capabilities;
+import adams.ml.capabilities.Capability;
 import weka.core.Attribute;
 import weka.core.DenseInstance;
 import weka.core.Instance;
@@ -141,6 +143,71 @@ public class WekaConverter {
 
     result = new DenseInstance(1.0, values);
     result.setDataset(data);
+
+    return result;
+  }
+
+  /**
+   * Transfers the specified capability if enabled. Also checks whether
+   * dependency is flagged.
+   *
+   * @param fromCaps	the Weka capabilities
+   * @param fromCap	the Weka capability to check
+   * @param toCaps	the ADAMS capabilities
+   * @param toCap	the ADAMS capability to set, if necessary
+   */
+  protected static void transferCapability(weka.core.Capabilities fromCaps, weka.core.Capabilities.Capability fromCap, Capabilities toCaps, Capability toCap) {
+    if (fromCaps.handles(fromCap)) {
+      if (toCap == null)
+	throw new IllegalStateException("Unsupported attribute capability: " + fromCap);
+      toCaps.enable(toCap);
+    }
+    if (fromCaps.hasDependency(fromCap))
+      toCaps.enableDependent(toCap);
+  }
+
+  /**
+   * Converts Weka capabilities into ADAMS ones.
+   *
+   * @param caps	the capabilities to convert
+   * @return		the converted capabilities
+   */
+  public static Capabilities convertCapabilities(weka.core.Capabilities caps) {
+    Capabilities	result;
+
+    result = new Capabilities();
+
+    // # of rows
+    if (caps.getMinimumNumberInstances() > 0)
+      result.setMinRows(caps.getMinimumNumberInstances());
+
+    // # of classes
+    if (caps.handles(weka.core.Capabilities.Capability.NO_CLASS)) {
+      result.setMinClassColumns(0);
+      result.setMaxClassColumns(0);
+    }
+
+    // missing values
+    transferCapability(caps, weka.core.Capabilities.Capability.MISSING_CLASS_VALUES, result, Capability.MISSING_CLASS_VALUE);
+    transferCapability(caps, weka.core.Capabilities.Capability.MISSING_VALUES, result, Capability.MISSING_ATTRIBUTE_VALUE);
+
+    // attributes
+    transferCapability(caps, weka.core.Capabilities.Capability.NOMINAL_ATTRIBUTES, result, Capability.CATEGORICAL_ATTRIBUTE);
+    transferCapability(caps, weka.core.Capabilities.Capability.BINARY_ATTRIBUTES, result, Capability.CATEGORICAL_ATTRIBUTE);
+    transferCapability(caps, weka.core.Capabilities.Capability.UNARY_ATTRIBUTES, result, Capability.CATEGORICAL_ATTRIBUTE);
+    transferCapability(caps, weka.core.Capabilities.Capability.NUMERIC_ATTRIBUTES, result, Capability.NUMERIC_ATTRIBUTE);
+    transferCapability(caps, weka.core.Capabilities.Capability.DATE_ATTRIBUTES, result, Capability.DATETYPE_ATTRIBUTE);
+    transferCapability(caps, weka.core.Capabilities.Capability.STRING_ATTRIBUTES, result, null);
+    transferCapability(caps, weka.core.Capabilities.Capability.RELATIONAL_ATTRIBUTES, result, null);
+
+    // classes
+    transferCapability(caps, weka.core.Capabilities.Capability.NOMINAL_CLASS, result, Capability.CATEGORICAL_CLASS);
+    transferCapability(caps, weka.core.Capabilities.Capability.BINARY_CLASS, result, Capability.CATEGORICAL_CLASS);
+    transferCapability(caps, weka.core.Capabilities.Capability.UNARY_CLASS, result, Capability.CATEGORICAL_CLASS);
+    transferCapability(caps, weka.core.Capabilities.Capability.NUMERIC_CLASS, result, Capability.NUMERIC_CLASS);
+    transferCapability(caps, weka.core.Capabilities.Capability.DATE_CLASS, result, Capability.DATETYPE_CLASS);
+    transferCapability(caps, weka.core.Capabilities.Capability.STRING_CLASS, result, null);
+    transferCapability(caps, weka.core.Capabilities.Capability.RELATIONAL_CLASS, result, null);
 
     return result;
   }

@@ -121,8 +121,12 @@ public class WekaRegressor
    */
   @Override
   public Capabilities getCapabilities() {
-    // TODO
-    return super.getCapabilities();
+    Capabilities	result;
+
+    result = super.getCapabilities();
+    result.assign(WekaConverter.convertCapabilities(m_Classifier.getCapabilities()));
+
+    return result;
   }
 
   /**

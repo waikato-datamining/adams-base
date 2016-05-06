@@ -121,8 +121,12 @@ public class WekaClusterer
    */
   @Override
   public Capabilities getCapabilities() {
-    // TODO
-    return super.getCapabilities();
+    Capabilities	result;
+
+    result = super.getCapabilities();
+    result.assign(WekaConverter.convertCapabilities(m_Clusterer.getCapabilities()));
+
+    return result;
   }
 
   /**
