@@ -24,8 +24,10 @@ import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import gnu.trove.list.array.TIntArrayList;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 
 /**
  * Extended {@link DefaultSpreadSheet} class, providing additional machine
@@ -68,7 +70,7 @@ public class DefaultDataset
   protected void initialize() {
     super.initialize();
     
-    m_ClassAttributes = new HashSet<String>();
+    m_ClassAttributes = new HashSet<>();
   }
 
   /**
@@ -124,6 +126,16 @@ public class DefaultDataset
   }
 
   /**
+   * Returns the index of the column using the specified name.
+   *
+   * @param name	the name of the column to locate
+   * @return		the index, -1 if failed to locate
+   */
+  public int indexOfColumn(String name) {
+    return getHeaderRow().indexOfContent(name);
+  }
+
+  /**
    * Removes the specified column.
    *
    * @param columnKey	the column to remove
@@ -162,7 +174,20 @@ public class DefaultDataset
    * @return		true if column a class attribute
    */
   public boolean isClassAttribute(int colIndex) {
-    return isClassAttribute(m_HeaderRow.getCellKey(colIndex));
+    if (colIndex > -1)
+      return isClassAttribute(m_HeaderRow.getCellKey(colIndex));
+    else
+      return false;
+  }
+
+  /**
+   * Returns whether the specified column is a class attribute.
+   *
+   * @param name	they name of the column to query
+   * @return		true if column a class attribute
+   */
+  public boolean isClassAttributeByName(String name) {
+    return isClassAttribute(getHeaderRow().indexOfContent(name));
   }
 
   /**
@@ -200,12 +225,42 @@ public class DefaultDataset
   }
 
   /**
+   * Sets the class attribute status for a column.
+   *
+   * @param name	the name of the column to set the class attribute status for
+   * @param isClass	if true then the column will be flagged as class
+   * 			attribute, otherwise the flag will get removed
+   * @return		true if successfully updated
+   */
+  public boolean setClassAttributeByName(String name, boolean isClass) {
+    int		col;
+
+    col = indexOfColumn(name);
+    return (col > -1) && setClassAttribute(col, isClass);
+  }
+
+  /**
    * Returns all the class attributes that are currently set.
    *
    * @return		the column keys of class attributes (not ordered)
    */
   public String[] getClassAttributeKeys() {
     return m_ClassAttributes.toArray(new String[m_ClassAttributes.size()]);
+  }
+
+  /**
+   * Returns all the class attributes that are currently set.
+   *
+   * @return		the column names of class attributes (not ordered)
+   */
+  public String[] getClassAttributeNames() {
+    List<String>	result;
+
+    result = new ArrayList<>();
+    for (int index: getClassAttributeIndices())
+      result.add(getColumnName(index));
+
+    return result.toArray(new String[result.size()]);
   }
 
   /**

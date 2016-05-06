@@ -48,6 +48,14 @@ public interface Dataset
   public Dataset getHeader();
 
   /**
+   * Returns the index of the column using the specified name.
+   *
+   * @param name	the name of the column to locate
+   * @return		the index, -1 if failed to locate
+   */
+  public int indexOfColumn(String name);
+
+  /**
    * Removes all set class attributes.
    */
   public void removeClassAttributes();
@@ -59,6 +67,14 @@ public interface Dataset
    * @return		true if column a class attribute
    */
   public boolean isClassAttribute(String colKey);
+
+  /**
+   * Returns whether the specified column is a class attribute.
+   *
+   * @param name	they name of the column to query
+   * @return		true if column a class attribute
+   */
+  public boolean isClassAttributeByName(String name);
 
   /**
    * Returns whether the specified column is a class attribute.
@@ -81,6 +97,16 @@ public interface Dataset
   /**
    * Sets the class attribute status for a column.
    *
+   * @param name	the name of the column to set the class attribute status for
+   * @param isClass	if true then the column will be flagged as class
+   * 			attribute, otherwise the flag will get removed
+   * @return		true if successfully updated
+   */
+  public boolean setClassAttributeByName(String name, boolean isClass);
+
+  /**
+   * Sets the class attribute status for a column.
+   *
    * @param colIndex	the column to set the class attribute status for
    * @param isClass	if true then the column will be flagged as class
    * 			attribute, otherwise the flag will get removed
@@ -94,6 +120,13 @@ public interface Dataset
    * @return		the column keys of class attributes (not ordered)
    */
   public String[] getClassAttributeKeys();
+
+  /**
+   * Returns all the class attributes that are currently set.
+   *
+   * @return		the column names of class attributes (not ordered)
+   */
+  public String[] getClassAttributeNames();
 
   /**
    * Returns all the class attributes that are currently set.

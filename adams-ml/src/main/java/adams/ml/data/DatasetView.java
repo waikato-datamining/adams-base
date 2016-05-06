@@ -174,6 +174,16 @@ public class DatasetView
   }
 
   /**
+   * Returns the index of the column using the specified name.
+   *
+   * @param name	the name of the column to locate
+   * @return		the index, -1 if failed to locate
+   */
+  public int indexOfColumn(String name) {
+    return getHeaderRow().indexOfContent(name);
+  }
+
+  /**
    * Returns the actual row index.
    *
    * @param rowIndex	the row in the view
@@ -1251,7 +1261,20 @@ public class DatasetView
    * @return		true if column a class attribute
    */
   public boolean isClassAttribute(int colIndex) {
-    return isClassAttribute(m_HeaderRow.getCellKey(colIndex));
+    if (colIndex > -1)
+      return isClassAttribute(m_HeaderRow.getCellKey(colIndex));
+    else
+      return false;
+  }
+
+  /**
+   * Returns whether the specified column is a class attribute.
+   *
+   * @param name	they name of the column to query
+   * @return		true if column a class attribute
+   */
+  public boolean isClassAttributeByName(String name) {
+    return isClassAttribute(getHeaderRow().indexOfContent(name));
   }
 
   /**
@@ -1283,6 +1306,20 @@ public class DatasetView
   }
 
   /**
+   * Sets the class attribute status for a column.
+   * <br>
+   * Not implemented!
+   *
+   * @param name	the name of the column to set the class attribute status for
+   * @param isClass	if true then the column will be flagged as class
+   * 			attribute, otherwise the flag will get removed
+   * @return		true if successfully updated
+   */
+  public boolean setClassAttributeByName(String name, boolean isClass) {
+    throw new NotImplementedException();
+  }
+
+  /**
    * Returns all the class attributes that are currently set.
    *
    * @return		the column keys of class attributes (not ordered)
@@ -1296,6 +1333,21 @@ public class DatasetView
       if (key != null)
 	result.add(key);
     }
+
+    return result.toArray(new String[result.size()]);
+  }
+
+  /**
+   * Returns all the class attributes that are currently set.
+   *
+   * @return		the column names of class attributes (not ordered)
+   */
+  public String[] getClassAttributeNames() {
+    List<String>	result;
+
+    result = new ArrayList<>();
+    for (int index: getClassAttributeIndices())
+      result.add(getColumnName(index));
 
     return result.toArray(new String[result.size()]);
   }
