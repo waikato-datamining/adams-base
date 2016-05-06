@@ -64,6 +64,13 @@ public class Capabilities
   protected int m_MaxClassColumns;
 
   /**
+   * Initializes the capabilities with no owner.
+   */
+  public Capabilities() {
+    this(null);
+  }
+
+  /**
    * Initializes the capabilities.
    *
    * @param owner	the owner
