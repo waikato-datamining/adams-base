@@ -25,6 +25,7 @@ import adams.data.spreadsheet.Row;
 import adams.ml.data.Dataset;
 import adams.ml.data.DatasetInfo;
 import adams.ml.data.WekaConverter;
+import adams.ml.model.ModelHelper;
 import weka.core.Instance;
 import weka.core.Instances;
 
@@ -125,5 +126,15 @@ public class WekaClusteringModel
   @Override
   public String getModelDescription() {
     return m_Model.toString();
+  }
+
+  /**
+   * Checks whether the dataset is compatible with the model.
+   *
+   * @param data	the dataset to check
+   * @return		null if compatible, otherwise error message why not
+   */
+  public String isCompatible(Dataset data) {
+    return ModelHelper.isCompatible(this, data);
   }
 }

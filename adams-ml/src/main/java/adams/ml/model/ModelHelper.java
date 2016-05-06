@@ -14,45 +14,31 @@
  */
 
 /**
- * Model.java
+ * ModelHelper.java
  * Copyright (C) 2016 University of Waikato, Hamilton, NZ
  */
 
 package adams.ml.model;
 
 import adams.ml.data.Dataset;
-import adams.ml.data.DatasetInfo;
-
-import java.io.Serializable;
 
 /**
- * Ancestor for models.
+ * Helper class for models.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public interface Model
-  extends Serializable {
+public class ModelHelper {
 
   /**
-   * Returns information about the dataset used for building the model.
+   * Checks whether the model is compatible with the dataset.
    *
-   * @return		the information
+   * @param model	the model to check against
+   * @param data	the data to check
+   * @return		null if compatible, otherwise error message
    */
-  public DatasetInfo getDatasetInfo();
-
-  /**
-   * Gets a short string description of the model.
-   *
-   * @return		the description, null if none available
-   */
-  public String getModelDescription();
-
-  /**
-   * Checks whether the dataset is compatible with the model.
-   *
-   * @param data	the dataset to check
-   * @return		null if compatible, otherwise error message why not
-   */
-  public String isCompatible(Dataset data);
+  public static String isCompatible(Model model, Dataset data) {
+    // TODO
+    return null;
+  }
 }
