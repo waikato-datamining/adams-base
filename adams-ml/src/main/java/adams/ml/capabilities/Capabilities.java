@@ -23,8 +23,11 @@ package adams.ml.capabilities;
 import adams.core.Mergeable;
 import adams.core.logging.LoggingObject;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -492,14 +495,19 @@ public class Capabilities
    */
   public String toString() {
     StringBuilder	result;
+    List<Capability>	caps;
 
     result = new StringBuilder();
 
-    result.append("Owner: ").append(getOwner().getClass().getName());
+    result.append("Owner: ").append(getOwner() != null ? getOwner().getClass().getName() : "-none-");
     result.append("\n");
-    result.append("Capabilities: ").append(capabilities().toString());
+    caps = new ArrayList<>(capabilities());
+    Collections.sort(caps);
+    result.append("Capabilities: ").append(caps.toString());
     result.append("\n");
-    result.append("Dependent capabilities: ").append(dependentCapabilities().toString());
+    caps = new ArrayList<>(dependentCapabilities());
+    Collections.sort(caps);
+    result.append("Dependent capabilities: ").append(caps.toString());
     result.append("\n");
     result.append("Rows: ").append("min=").append(getMinRows()).append(", max=").append(getMaxRows());
     result.append("\n");
