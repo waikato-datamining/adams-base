@@ -23,6 +23,7 @@ package adams.ml.model.regression;
 import adams.data.io.input.CsvSpreadSheetReader;
 import adams.data.io.input.SpreadSheetReader;
 import adams.env.Environment;
+import adams.ml.data.Dataset;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
@@ -42,6 +43,24 @@ public class WekaRegressorTest
    */
   public WekaRegressorTest(String name) {
     super(name);
+  }
+
+  /**
+   * Returns a typical setup.
+   *
+   * @return		the setup
+   */
+  protected Regressor getTypicalSetup() {
+    return new WekaRegressor();
+  }
+
+  /**
+   * Returns a typical dataset.
+   *
+   * @return		the dataset
+   */
+  protected Dataset getTypicalDataset() {
+    return load("bolts.csv",  new CsvSpreadSheetReader(), "T20BOLT");
   }
 
   /**

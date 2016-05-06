@@ -23,6 +23,7 @@ package adams.ml.model.clustering;
 import adams.data.io.input.CsvSpreadSheetReader;
 import adams.data.io.input.SpreadSheetReader;
 import adams.env.Environment;
+import adams.ml.data.Dataset;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import weka.clusterers.SimpleKMeans;
@@ -43,6 +44,37 @@ public class WekaClustererTest
    */
   public WekaClustererTest(String name) {
     super(name);
+  }
+
+  /**
+   * Returns a typical setup.
+   *
+   * @return		the setup
+   */
+  protected Clusterer getTypicalSetup() {
+    WekaClusterer	result;
+    SimpleKMeans	simple;
+
+    result = new WekaClusterer();
+    simple = new SimpleKMeans();
+    try {
+      simple.setNumClusters(3);
+    }
+    catch (Exception e) {
+      fail("Failed to set the number of clusters!");
+    }
+    result.setClusterer(simple);
+
+    return result;
+  }
+
+  /**
+   * Returns a typical dataset.
+   *
+   * @return		the dataset
+   */
+  protected Dataset getTypicalDataset() {
+    return load("iris_no_class.csv",  new CsvSpreadSheetReader());
   }
 
   /**

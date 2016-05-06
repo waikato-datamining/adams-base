@@ -56,11 +56,87 @@ public abstract class AbstractClassifierTestCase
   /**
    * Returns the test helper class to use.
    *
-   * @return		the helper class instance
+   * @return the helper class instance
    */
   @Override
   protected AbstractTestHelper newTestHelper() {
     return new TestHelper(this, "adams/ml/model/classification/data");
+  }
+
+  /**
+   * Returns a typical setup.
+   *
+   * @return		the setup
+   */
+  protected abstract Classifier getTypicalSetup();
+
+  /**
+   * Returns a typical dataset.
+   *
+   * @return		the dataset
+   */
+  protected abstract Dataset getTypicalDataset();
+
+  /**
+   * Tests whether the algorithm changes the input data.
+   */
+  public void testDoesntChangeInput() {
+    Dataset	data;
+    Dataset	dataCopy;
+    Classifier	algorithm;
+
+    data      = getTypicalDataset();
+    dataCopy  = data.getClone();
+    algorithm = getTypicalSetup();
+    try {
+      algorithm.buildModel(data);
+    }
+    catch (Exception e) {
+      fail("Failed to build model: " + Utils.throwableToString(e));
+      return;
+    }
+
+    assertNull("Changed input data", SpreadSheetHelper.compare(dataCopy, data));
+  }
+
+  /**
+   * Tests whether the algorithm produces the same data in subsequent builds.
+   */
+  public void testSubsequentBuilds() {
+    Dataset	data;
+    Classifier	algorithm;
+    double[][]	pred1;
+    double[][]	pred2;
+    int		x;
+    int		y;
+
+    data      = getTypicalDataset();
+    algorithm = getTypicalSetup();
+    try {
+      algorithm.buildModel(data);
+      pred1 = predict(algorithm, data);
+    }
+    catch (Exception e) {
+      fail("Failed to build model (1): " + Utils.throwableToString(e));
+      return;
+    }
+    try {
+      algorithm.buildModel(data);
+      pred2 = predict(algorithm, data);
+    }
+    catch (Exception e) {
+      fail("Failed to build model (1): " + Utils.throwableToString(e));
+      return;
+    }
+
+    for (y = 0; y < pred1.length; y++) {
+      if ((pred1[y] == null) && (pred2[y] == null))
+	continue;
+      assertNotNull("predictions1 at #" + (y+1) + " are null", pred1[y]);
+      assertNotNull("predictions2 at #" + (y+1) + " are null", pred2[y]);
+      assertEquals("Number of predictions at #" + (y+1) + " differ in length", pred1[y].length, pred2[y].length);
+      assertEqualsArrays("Predictions at #" + (y+1) + " differ", pred1[y], pred2[y]);
+    }
   }
 
   /**
@@ -232,7 +308,6 @@ public abstract class AbstractClassifierTestCase
    */
   public void testRegression() {
     Dataset		data;
-    Dataset		dataCopy;
     boolean		ok;
     String		regression;
     int			i;
@@ -243,7 +318,6 @@ public abstract class AbstractClassifierTestCase
     String[]		output;
     double[][]		classDist;
     TmpFile[]		outputFiles;
-    String		modified;
 
     if (m_NoRegressionTest)
       return;
@@ -261,13 +335,9 @@ public abstract class AbstractClassifierTestCase
     for (i = 0; i < input.length; i++) {
       data = load(input[i], readers[i], classes[i]);
       assertNotNull("Failed to load data?", data);
-      dataCopy = data.getClone();
 
       classDist = predict(setups[i], data);
       assertNotNull("Failed to make predictions?", classDist);
-
-      modified = SpreadSheetHelper.compare(data, dataCopy);
-      assertNull("Algorithm modified data?", modified);
 
       output[i] = createOutputFilename(input[i], i);
       ok        = save(classDist, output[i]);
