@@ -15,7 +15,7 @@
 
 /*
  * BaseTimeMsec.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.base;
@@ -26,6 +26,7 @@ import adams.parser.BaseTimeMsecExpression;
 import adams.parser.GrammarSupplier;
 
 import java.util.Date;
+import java.util.TimeZone;
 
 /**
  * Wrapper for a Time string to be editable in the GOE. Dates have to be of
@@ -86,6 +87,7 @@ public class BaseTimeMsec
   protected static DateFormat m_Format;
   static {
     m_Format = new DateFormat(FORMAT);
+    m_Format.setTimeZone(TimeZone.getTimeZone("GMT"));
   }
 
   /** the start time to use. */
