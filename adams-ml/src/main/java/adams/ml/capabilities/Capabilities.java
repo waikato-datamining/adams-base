@@ -23,6 +23,7 @@ package adams.ml.capabilities;
 import adams.core.Mergeable;
 import adams.core.logging.LoggingObject;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -230,7 +231,27 @@ public class Capabilities
    * @param cap		the capability to disable
    */
   public void disable(Capability cap) {
-    m_Capabilities.add(cap);
+    m_Capabilities.remove(cap);
+  }
+
+  /**
+   * Enables all capabilities.
+   *
+   * @param caps	the capabilities to enable
+   */
+  public void enableAll(Collection<Capability> caps) {
+    for (Capability cap: caps)
+      enable(cap);
+  }
+
+  /**
+   * Disables all capabilities.
+   *
+   * @param caps	the capabilities to disable
+   */
+  public void disableAll(Collection<Capability> caps) {
+    for (Capability cap: caps)
+      disable(cap);
   }
 
   /**
@@ -294,7 +315,43 @@ public class Capabilities
    * @param cap		the capability to disable
    */
   public void disableDependent(Capability cap) {
-    m_DependentCapabilities.add(cap);
+    m_DependentCapabilities.remove(cap);
+  }
+
+  /**
+   * Enables the dependent capabilities.
+   *
+   * @param caps	the capabilities to enable
+   */
+  public void enableAllDependent(Collection<Capability> caps) {
+    for (Capability cap: caps)
+      enableDependent(cap);
+  }
+
+  /**
+   * Disables the dependent capabilities.
+   *
+   * @param caps	the capabilities to disable
+   */
+  public void disableAllDependent(Collection<Capability> caps) {
+    for (Capability cap: caps)
+      disableDependent(cap);
+  }
+
+  /**
+   * Enables the dependent capabilities for all currently set capabilities.
+   */
+  public void enableAllDependent() {
+    for (Capability cap: capabilities())
+      enableDependent(cap);
+  }
+
+  /**
+   * Disables all the dependent capabilities.
+   */
+  public void disableAllDependent() {
+    for (Capability cap: dependentCapabilities())
+      disableDependent(cap);
   }
 
   /**
