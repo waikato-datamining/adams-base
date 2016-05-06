@@ -80,4 +80,72 @@ public class SpreadSheetHelper
     
     return first;
   }
+
+  /**
+   * Compares the two cells.
+   *
+   * @param first	the first cell
+   * @param second	the second cell
+   * @return		null if the same, otherwise message on difference
+   */
+  protected static String compareCells(Cell first, Cell second) {
+    // null?
+    if ((first == null) && (second == null))
+      return null;
+    if (first == null)
+      return "First cell is missing";
+    else if (second == null)
+      return "Second cell is missing";
+
+    // missing flag?
+    if (first.isMissing() && second.isMissing())
+      return null;
+    if (first.isMissing())
+      return "First cell is missing";
+    else if (second.isMissing())
+      return "Second cell is missing";
+
+    // different content?
+    if (!first.getContent().equals(second.getContent()))
+      return "Cells differs: '" + first.getContent() + "' != '" + second.getContent() + "'";
+
+    return null;
+  }
+
+  /**
+   * Compares two spreadsheets.
+   *
+   * @param first	the first spreadsheet
+   * @param second	the second spreadsheet
+   * @return		null if the same, otherwise message indicating
+   * 			(first) difference
+   */
+  public static String compare(SpreadSheet first, SpreadSheet second) {
+    int		x;
+    int		y;
+    String	msg;
+
+    if (first.getColumnCount() != second.getColumnCount())
+      return "Different number of columns: " + first.getColumnCount() + " != " + second.getColumnCount();
+    if (first.getRowCount() != second.getRowCount())
+      return "Different number of rows: " + first.getRowCount() + " != " + second.getRowCount();
+
+    // header
+    for (x = 0; x < first.getColumnCount(); x++) {
+      msg = compareCells(first.getHeaderRow().getCell(x), second.getHeaderRow().getCell(x));
+      if (msg != null)
+	return "Header differs at #" + (x+1) + ": " + msg;
+    }
+
+    // data
+    for (y = 0; y < first.getRowCount(); y++) {
+      for (x = 0; x < first.getColumnCount(); x++) {
+	msg = compareCells(first.getHeaderRow().getCell(x), second.getHeaderRow().getCell(x));
+	if (msg != null)
+	  return "Data differs at row " + (y+1) + "/col " + (x+1) + ": " + msg;
+      }
+    }
+
+    return null;
+  }
 }
