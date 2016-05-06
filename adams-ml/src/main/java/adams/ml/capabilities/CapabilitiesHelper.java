@@ -20,7 +20,10 @@
 
 package adams.ml.capabilities;
 
+import adams.data.spreadsheet.Cell.ContentType;
 import adams.ml.data.Dataset;
+
+import java.util.Collection;
 
 /**
  * Helper class for capabilities.
@@ -37,8 +40,89 @@ public class CapabilitiesHelper {
    * @return		the capabilities
    */
   public static Capabilities forDataset(Dataset data) {
-    // TODO
-    return new Capabilities();
+    Capabilities	result;
+    int			i;
+
+    result = new Capabilities();
+
+    for (i = 0; i < data.getColumnCount(); i++)
+      result.mergeWith(forDataset(data, i));
+
+    return result;
+  }
+
+  /**
+   * Returns capabilities that are required for the specified dataset column.
+   *
+   * @param data	the dataset to get the capabilities for
+   * @param col		the column to generate the capabilities for
+   * @return		the capabilities
+   */
+  public static Capabilities forDataset(Dataset data, int col) {
+    Capabilities		result;
+    Collection<ContentType>	types;
+
+    result = new Capabilities();
+
+    // regular attribute?
+    if (!data.isClassAttribute(col)) {
+      types = data.getContentTypes(col);
+      for (ContentType type: types) {
+	switch (type) {
+	  case DATE:
+	  case DATETIME:
+	  case DATETIMEMSEC:
+	  case TIME:
+	  case TIMEMSEC:
+	    result.enable(Capability.DATETYPE_ATTRIBUTE);
+	    break;
+	  case MISSING:
+	    result.enable(Capability.MISSING_ATTRIBUTE_VALUE);
+	    break;
+	  case BOOLEAN:
+	  case STRING:
+	  case OBJECT:
+	    result.enable(Capability.CATEGORICAL_ATTRIBUTE);
+	    break;
+	  case LONG:
+	  case DOUBLE:
+	    result.enable(Capability.NUMERIC_ATTRIBUTE);
+	    break;
+	  default:
+	    throw new IllegalStateException("Unhandled cell content type: " + type);
+	}
+      }
+    }
+    else {
+      types = data.getContentTypes(col);
+      for (ContentType type: types) {
+	switch (type) {
+	  case DATE:
+	  case DATETIME:
+	  case DATETIMEMSEC:
+	  case TIME:
+	  case TIMEMSEC:
+	    result.enable(Capability.DATETYPE_CLASS);
+	    break;
+	  case MISSING:
+	    result.enable(Capability.MISSING_CLASS_VALUE);
+	    break;
+	  case BOOLEAN:
+	  case STRING:
+	  case OBJECT:
+	    result.enable(Capability.CATEGORICAL_CLASS);
+	    break;
+	  case LONG:
+	  case DOUBLE:
+	    result.enable(Capability.NUMERIC_CLASS);
+	    break;
+	  default:
+	    throw new IllegalStateException("Unhandled cell content type: " + type);
+	}
+      }
+    }
+
+    return result;
   }
 
   /**
@@ -60,8 +144,20 @@ public class CapabilitiesHelper {
    * @return		null if OK, otherwise error message
    */
   public static String handles(Capabilities caps, Dataset data) {
-    // TODO
-    return null;
+    String		result;
+    Capabilities 	capsData;
+
+    result   = null;
+    capsData = forDataset(data);
+
+    for (Capability cap: capsData.capabilities()) {
+      if (!caps.isEnabled(cap)) {
+	result = "Cannot handle " + cap;
+	break;
+      }
+    }
+
+    return result;
   }
 
   /**
@@ -73,8 +169,20 @@ public class CapabilitiesHelper {
    * @return		null if OK, otherwise error message
    */
   public static String handles(Capabilities caps, Dataset data, int col) {
-    // TODO
-    return null;
+    String		result;
+    Capabilities 	capsData;
+
+    result   = null;
+    capsData = forDataset(data, col);
+
+    for (Capability cap: capsData.capabilities()) {
+      if (!caps.isEnabled(cap)) {
+	result = "Cannot handle " + cap + ", column " + (col+1);
+	break;
+      }
+    }
+
+    return result;
   }
 
   /**
@@ -98,6 +206,10 @@ public class CapabilitiesHelper {
    * @throws Exception	if failed to adjust
    */
   public static Dataset adjust(Capabilities caps, Dataset data) throws Exception {
+    Capabilities 	capsData;
+
+    capsData = forDataset(data);
+
     // TODO create view with columns turned off
     return data;
   }
