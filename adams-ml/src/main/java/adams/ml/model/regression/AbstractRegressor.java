@@ -119,7 +119,7 @@ public abstract class AbstractRegressor
 
     if (!strict && (result != null)) {
       try {
-	adjusted = CapabilitiesHelper.adjust(getCapabilities(), data);
+	adjusted = CapabilitiesHelper.adjust(data, getCapabilities());
 	result   = CapabilitiesHelper.handles(getCapabilities(), adjusted);
       }
       catch (Exception e) {
@@ -145,7 +145,7 @@ public abstract class AbstractRegressor
       throw new Exception("Capabilities check failed: " + msg);
 
     if (!m_StrictCapabilities)
-      return CapabilitiesHelper.adjust(getCapabilities(), data);
+      return CapabilitiesHelper.adjust(data, getCapabilities());
     else
       return data;
   }
