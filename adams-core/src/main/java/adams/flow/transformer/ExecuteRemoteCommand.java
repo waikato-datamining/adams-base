@@ -26,6 +26,7 @@ import adams.core.option.OptionUtils;
 import adams.event.FlowPauseStateEvent;
 import adams.event.FlowPauseStateEvent.Type;
 import adams.event.FlowPauseStateListener;
+import adams.flow.control.Flow;
 import adams.flow.core.Token;
 import adams.scripting.command.RemoteCommand;
 import adams.scripting.engine.ManualFeedScriptingEngine;
@@ -244,6 +245,8 @@ public class ExecuteRemoteCommand
     if (m_ScriptingEngine == null) {
       m_ScriptingEngine = new ManualFeedScriptingEngine();
       m_ScriptingEngine.setMaxCommands(m_MaxCommands);
+      if (getRoot() instanceof Flow)
+	m_ScriptingEngine.setApplicationContext(((Flow) getRoot()).getApplicationFrame());
       m_ScriptingEngine.setPermissionHandler((PermissionHandler) OptionUtils.shallowCopy(m_PermissionHandler));
       new Thread(() -> {
 	String msg = m_ScriptingEngine.execute();
