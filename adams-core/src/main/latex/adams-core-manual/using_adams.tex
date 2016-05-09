@@ -1937,6 +1937,8 @@ The following scripting engines are available:
   to a specified connection. Can act as load-balancer or single point of access
   in conjunction with the \textit{LoadBalancer} connection and multiple defined
   sub-connections.
+  \item \textit{ManualFeedScriptingEngine} -- only to be used internally, where
+  the commands are being added programmatically.
 \end{tight_itemize}
 
 From this menu, you can also launch commands using the \textit{Send...}
@@ -1952,6 +1954,7 @@ this can be automated via a command-line option when starting up ADAMS
 
 Available actors:
 \begin{tight_itemize}
+  \item \textit{ExecuteRemoteCommand} -- executes the command coming through.
   \item \textit{GetRemoteCommandPayload} -- retrieves the payload objects (if
   any) from a remote command
   \item \textit{NewRemoteCommand} -- configures and forwards a command object.
