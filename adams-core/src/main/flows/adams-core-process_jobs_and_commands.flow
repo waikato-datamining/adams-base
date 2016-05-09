@@ -1,0 +1,28 @@
+# Project: adams
+# Date: 2016-05-09 18:04:51
+# User: fracpete
+# Charset: UTF-8
+adams.flow.control.Flow -annotation "Flow that processes jobrunner or remote command files that\\nappear in the ROOT/incoming directory (serialized objects). \\nThe following directories are expected as well:\\n- ROOT/processing: files that get currently processed\\n- ROOT/processed: files that got successfully processed\\n- ROOT/failed: files that failed to get processed\\nThe default value for ROOT is /opt/data, but this can be overridden\\nusing the ADAMS_DIR_ROOT environment variable." -error-handling ACTORS_DECIDE_TO_STOP_ON_ERROR -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.source.Start
+ adams.flow.control.Trigger -name "determine root dir"
+  adams.flow.standalone.SetVariable -var-name root -var-value /opt/data
+  adams.flow.source.GetEnvironmentVariable -variable ADAMS_DIR_ROOT
+  adams.flow.transformer.SetVariable -name SetVariable-1 -var-name root
+ adams.flow.control.Trigger -name "setup env"
+  adams.flow.standalone.SetVariable -name incoming -var-name dir_incoming -var-value @{root}/incoming -expand-value true
+  adams.flow.standalone.SetVariable -name processing -var-name dir_processing -var-value @{root}/processing -expand-value true
+  adams.flow.standalone.SetVariable -name processed -var-name dir_processed -var-value @{root}/processed -expand-value true
+  adams.flow.standalone.SetVariable -name failed -var-name dir_failed -var-value @{root}/failed -expand-value true
+ adams.flow.control.WhileLoop -condition adams.flow.condition.bool.Expression
+  adams.flow.source.Start
+  adams.flow.control.Trigger -name "process files"
+   adams.flow.source.FileSystemSearch -output-array true -search "adams.flow.source.filesystemsearch.FileSearch -directory @{dir_incoming} -sorting SORT_BY_LAST_MODIFIED"
+   adams.flow.transformer.ArrayToSequence
+   adams.flow.control.Continue -condition "adams.flow.condition.bool.FileInUse -generator adams.core.io.NullFilenameGenerator"
+   adams.flow.control.FileProcessor -processing @{dir_processing} -processed @{dir_processed} -failed @{dir_failed} -atomic-move true
+    adams.flow.transformer.Deserialize
+    adams.flow.control.Switch -condition "adams.flow.condition.bool.HasInterface -interface adams.multiprocess.JobRunner" -condition "adams.flow.condition.bool.HasInterface -interface adams.scripting.command.RemoteCommand" -case adams.flow.sink.Null
+     adams.flow.transformer.ExecuteJobs
+     adams.flow.transformer.ExecuteRemoteCommand -permission-handler adams.scripting.permissionhandler.AllowAll
+     adams.flow.control.RaiseError -condition adams.flow.condition.bool.True -error-msg "Failed to process!"
+  adams.flow.control.Sleep
