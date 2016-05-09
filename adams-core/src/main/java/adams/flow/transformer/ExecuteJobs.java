@@ -14,8 +14,8 @@
  */
 
 /*
- * Deserialize.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * ExecuteJobs.java
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -24,6 +24,7 @@ import adams.core.Pausable;
 import adams.event.FlowPauseStateEvent;
 import adams.event.FlowPauseStateEvent.Type;
 import adams.event.FlowPauseStateListener;
+import adams.flow.core.Token;
 import adams.multiprocess.JobRunner;
 
 /**
@@ -135,6 +136,7 @@ public class ExecuteJobs
       m_JobRunner.setFlowContext(this);
       m_JobRunner.start();
       m_JobRunner.stop();
+      m_OutputToken = new Token(m_JobRunner);
     }
     catch (Exception e) {
       result = handleException("Failed to execute jobs!", e);
