@@ -64,7 +64,7 @@ public class ManualFeedScriptingEngine
     super.defineOptions();
 
     m_OptionManager.add(
-      "max-commands", "max-commands",
+      "max-commands", "maxCommands",
       100, 1, null);
   }
 
@@ -76,6 +76,7 @@ public class ManualFeedScriptingEngine
   public void setMaxCommands(int value) {
     if (getOptionManager().isValid("maxCommands", value)) {
       m_MaxCommands = value;
+      m_Queue = new ArrayBlockingQueue<RemoteCommand>(m_MaxCommands);
       reset();
     }
   }
@@ -142,7 +143,6 @@ public class ManualFeedScriptingEngine
     result    = null;
     m_Paused  = false;
     m_Stopped = false;
-    m_Queue   = new ArrayBlockingQueue<>(m_MaxCommands);
 
     // start up job queue
     m_Executor = new PausableFixedThreadPoolExecutor(m_MaxConcurrentJobs);
