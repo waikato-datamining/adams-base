@@ -45,6 +45,7 @@ import adams.flow.execution.ListenerUtils;
 import adams.flow.execution.MultiListener;
 import adams.flow.execution.NullListener;
 import adams.gui.application.AbstractApplicationFrame;
+import adams.gui.application.Child;
 import adams.gui.core.BaseFrame;
 import adams.gui.core.GUIHelper;
 
@@ -674,12 +675,19 @@ public class Flow
    */
   public AbstractApplicationFrame getApplicationFrame() {
     AbstractApplicationFrame	result;
+    Child 			child;
 
     result = null;
 
     if ((getParentComponent() != null) && (getParentComponent() instanceof Container)) {
       result = (AbstractApplicationFrame) GUIHelper.getParent(
 	(Container) getParentComponent(), AbstractApplicationFrame.class);
+      if (result == null) {
+	child = (Child) GUIHelper.getParent(
+	  (Container) getParentComponent(), Child.class);
+	if (child != null)
+	  result = child.getParentFrame();
+      }
     }
 
     return result;
