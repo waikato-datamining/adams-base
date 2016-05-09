@@ -1264,6 +1264,6 @@ public class FileUtils {
     else if (file.isFile())
       return file.getParentFile().exists();
     else
-      return (!file.exists() && file.getParentFile().exists() && file.getParentFile().isDirectory());
+      return (!file.exists() && (file.getParentFile() != null) && file.getParentFile().exists() && file.getParentFile().isDirectory());
   }
 }
