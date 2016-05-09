@@ -235,8 +235,10 @@ public class PortManager
    */
   public synchronized void release(int port) {
     Class	cls;
+    int		index;
 
-    m_Ports.remove(port);
+    index = m_Ports.indexOf(port);
+    m_Ports.remove(index);
     cls = m_PortClass.remove(port);
     if (cls != null)
       m_ClassPorts.get(cls).remove(port);
