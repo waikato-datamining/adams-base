@@ -823,7 +823,7 @@ public class GenericObjectEditor
 
     m_DefaultValueDetermined = null;
     m_DefaultValue           = null;
-    m_MinimumChars           = 2;
+    m_MinimumChars           = 0;
 
     setCanChangeClassInDialog(canChangeClassInDialog);
   }

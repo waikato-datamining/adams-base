@@ -94,16 +94,16 @@ public class DotNotationTree<N extends DotNotationNode>
     setCellRenderer(getDefaultRenderer());
     setToggleClickCount(0);  // to avoid double clicks from toggling expanded/collapsed state
 
-    m_Items              = new ArrayList<String>();
+    m_Items              = new ArrayList<>();
     m_Search             = "";
     m_Compress           = true;
     m_Filter             = null;
     m_PopupMenuHandler   = null;
     m_Sorted             = false;
-    m_InfoNodeGenerators = new ArrayList<AbstractInfoNodeGenerator>();
+    m_InfoNodeGenerators = new ArrayList<>();
     m_SelectionMode      = TreeSelectionModel.SINGLE_TREE_SELECTION;
 
-    setItems(new ArrayList<String>());
+    setItems(new ArrayList<>());
   }
 
   /**
@@ -176,7 +176,6 @@ public class DotNotationTree<N extends DotNotationNode>
     BaseTreeNode 	node;
 
     menu = null;
-    node = null;
     path = getClosestPathForLocation(e.getX(), e.getY());
     if (path != null) {
       node = (BaseTreeNode) path.getLastPathComponent();
@@ -254,7 +253,7 @@ public class DotNotationTree<N extends DotNotationNode>
     if (m_Sorted != value) {
       m_Sorted = value;
       if (m_Sorted) {
-	items = new ArrayList<String>(m_Items);
+	items = new ArrayList<>(m_Items);
 	setItems(items);
       }
     }
@@ -285,9 +284,9 @@ public class DotNotationTree<N extends DotNotationNode>
     }
     else {
       search = m_Search.toLowerCase();
-      result = new ArrayList<String>();
+      result = new ArrayList<>();
       for (i = 0; i < items.size(); i++) {
-	if (items.get(i).toLowerCase().indexOf(search) > -1)
+	if (items.get(i).toLowerCase().contains(search))
 	  result.add(items.get(i));
       }
     }
@@ -696,6 +695,7 @@ public class DotNotationTree<N extends DotNotationNode>
   public void setFilter(AbstractItemFilter value) {
     m_Filter = value;
     buildTree();
+    expandAfterSearch();
   }
 
   /**
@@ -750,7 +750,7 @@ public class DotNotationTree<N extends DotNotationNode>
     if ((m_Filter == null) || !m_Filter.isEnabled())
       return items;
 
-    result = new ArrayList<String>();
+    result = new ArrayList<>();
 
     for (String item: items) {
       if (m_Filter.filter(item))
@@ -868,7 +868,7 @@ public class DotNotationTree<N extends DotNotationNode>
     N			node;
     List<TreePath>	paths;
 
-    paths = new ArrayList<TreePath>();
+    paths = new ArrayList<>();
     for (String item: items) {
       node = findItem(findRoot((N) getTreeModel().getRoot(), item), item);
       if (node != null) {
@@ -907,7 +907,7 @@ public class DotNotationTree<N extends DotNotationNode>
     N			selected;
     TreePath[]		paths;
 
-    result = new ArrayList<String>();
+    result = new ArrayList<>();
 
     paths = getSelectionPaths();
     if (paths != null) {
@@ -927,12 +927,19 @@ public class DotNotationTree<N extends DotNotationNode>
    * @param value	the search string, use null or empty string to display all
    */
   public void setSearch(String value) {
+    List<String>	before;
+    List<String>	after;
+
     if (value == null)
       value = "";
     m_Search = value;
 
-    buildTree();
-    expandAfterSearch();
+    before = applyItemFilter(m_Items);
+    after  = applySearchFilter(applyItemFilter(m_Items));
+    if ((before.size() != after.size()) || m_Search.isEmpty()) {
+      buildTree();
+      expandAfterSearch();
+    }
   }
 
   /**
@@ -1000,7 +1007,7 @@ public class DotNotationTree<N extends DotNotationNode>
    * @param args	ignored
    */
   public static void main(String[] args) {
-    List<String> classes = new ArrayList<String>();
+    List<String> classes = new ArrayList<>();
     classes.add("weka.classifiers.trees.J48");
     classes.add("weka.classifiers.rules.ZeroR");
     classes.add("dummy.classifiers.trees.MyJ48");
