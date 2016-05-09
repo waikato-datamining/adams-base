@@ -15,7 +15,7 @@
 
 /*
  * ContainerManager.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.container;
@@ -48,6 +48,9 @@ public abstract class AbstractContainerManager<T extends AbstractContainer>
   /** the containers. */
   protected List<T> m_List;
 
+  /** the containers while updating. */
+  protected List<T> m_UpdateList;
+
   /** the listeners for data changes. */
   protected HashSet<DataChangeListener> m_DataChangeListeners;
 
@@ -64,10 +67,11 @@ public abstract class AbstractContainerManager<T extends AbstractContainer>
   protected AbstractContainerManager() {
     super();
 
-    m_List                = new ArrayList<T>();
-    m_DataChangeListeners = new HashSet<DataChangeListener>();
+    m_List                = new ArrayList<>();
+    m_UpdateList          = new ArrayList<>();
+    m_DataChangeListeners = new HashSet<>();
     m_Updating            = false;
-    m_AllowRemoval         = true;
+    m_AllowRemoval        = true;
   }
 
   /**
@@ -94,6 +98,7 @@ public abstract class AbstractContainerManager<T extends AbstractContainer>
    * @see		#isUpdating()
    */
   public void startUpdate() {
+    m_UpdateList = new ArrayList<>(m_List);
     m_Updating = true;
   }
 
@@ -115,6 +120,9 @@ public abstract class AbstractContainerManager<T extends AbstractContainer>
   public void finishUpdate(boolean notify) {
     m_Updating = false;
 
+    m_List = new ArrayList<>(m_UpdateList);
+    m_UpdateList.clear();
+
     if (notify)
       notifyDataChangeListeners(new DataChangeEvent(this, Type.BULK_UPDATE));
   }
@@ -132,6 +140,9 @@ public abstract class AbstractContainerManager<T extends AbstractContainer>
    * Clears the container list.
    */
   public void clear() {
+    if (m_Updating)
+      return;
+
     m_List.clear();
 
     notifyDataChangeListeners(new DataChangeEvent(this, Type.CLEAR));
@@ -189,8 +200,14 @@ public abstract class AbstractContainerManager<T extends AbstractContainer>
 
     c.setManager(this);
     c = preAdd(c);
-    m_List.add(c);
-    index = indexOf(c);
+    if (m_Updating) {
+      m_UpdateList.add(c);
+      index = -1;
+    }
+    else {
+      m_List.add(c);
+      index = indexOf(c);
+    }
 
     if (index > -1)
       notifyDataChangeListeners(new DataChangeEvent(this, Type.ADDITION, index));
@@ -217,22 +234,23 @@ public abstract class AbstractContainerManager<T extends AbstractContainer>
   public void addAll(Collection<T> c) {
     Iterator<T>		iter;
     TIntArrayList 	indices;
-    T			cont;
     int			index;
 
+    // add containers
     startUpdate();
+    iter = c.iterator();
+    while (iter.hasNext())
+      add(iter.next());
+    finishUpdate(false);
 
+    // determine indices of containers
     indices = new TIntArrayList();
     iter    = c.iterator();
     while (iter.hasNext()) {
-      cont = iter.next();
-      add(cont);
-      index = indexOf(cont);
+      index = indexOf(iter.next());
       if (index > -1)
 	indices.add(index);
     }
-
-    finishUpdate(false);
 
     if (indices.size() > 0)
       notifyDataChangeListeners(new DataChangeEvent(this, Type.ADDITION, indices.toArray()));
@@ -259,7 +277,7 @@ public abstract class AbstractContainerManager<T extends AbstractContainer>
     T		cont;
     int		i;
 
-    result = new ArrayList<T>();
+    result = new ArrayList<>();
 
     for (i = 0; i < count(); i++) {
       cont = (T) get(i).copy();
@@ -297,7 +315,10 @@ public abstract class AbstractContainerManager<T extends AbstractContainer>
     if (localUpdating)
       m_Updating = true;
 
-    result = m_List.set(index, preSet(index, c));
+    if (localUpdating)
+      result = m_List.set(index, preSet(index, c));
+    else
+      result = m_UpdateList.set(index, preSet(index, c));
 
     if (localUpdating)
       m_Updating = false;
@@ -326,15 +347,19 @@ public abstract class AbstractContainerManager<T extends AbstractContainer>
    * Removes the container at the specified position.
    *
    * @param index	the index of the container to remove
-   * @return		the container that got removed, null if nothing removed, e.g. if no remove allowed
+   * @return		the container that got removed, null if nothing removed,
+   * 			e.g. if no remove allowed or currently updating
    */
   public T remove(int index) {
     T		result;
-    
+
     if (!m_AllowRemoval)
       return null;
 
-    result = m_List.remove(index);
+    if (isUpdating())
+      result = m_UpdateList.remove(index);
+    else
+      result = m_List.remove(index);
 
     notifyDataChangeListeners(new DataChangeEvent(this, Type.REMOVAL, index, result));
 

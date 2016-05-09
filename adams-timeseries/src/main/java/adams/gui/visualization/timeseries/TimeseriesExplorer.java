@@ -15,7 +15,7 @@
 
 /*
  * TimeseriesExplorer.java
- * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.timeseries;
@@ -1116,10 +1116,8 @@ public class TimeseriesExplorer
 
 	UndoPoint point = m_Undo.undo();
 	List<TimeseriesContainer> data = (List<TimeseriesContainer>) point.getData();
-	getContainerManager().startUpdate();
 	getContainerManager().clear();
 	getContainerManager().addAll(data);
-	getContainerManager().finishUpdate();
 
 	return "Done!";
       };
@@ -1150,10 +1148,8 @@ public class TimeseriesExplorer
 
 	UndoPoint point = m_Undo.redo();
 	List<TimeseriesContainer> data = (List<TimeseriesContainer>) point.getData();
-	getContainerManager().startUpdate();
 	getContainerManager().clear();
 	getContainerManager().addAll(data);
-	getContainerManager().finishUpdate();
 
 	return "Done!";
       };

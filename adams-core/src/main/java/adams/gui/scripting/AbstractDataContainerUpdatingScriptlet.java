@@ -15,19 +15,19 @@
 
 /**
  * AbstractDataContainerUpdatingScriptlet.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.scripting;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
 
 import adams.data.container.DataContainer;
 import adams.gui.visualization.container.AbstractContainer;
 import adams.gui.visualization.container.AbstractContainerManager;
 import adams.gui.visualization.container.VisibilityContainer;
 import adams.gui.visualization.container.VisibilityContainerManager;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 
 /**
  * Abstract ancestor for scriptlets that update spectra in a ChromatogramPanel.
@@ -62,7 +62,7 @@ public abstract class AbstractDataContainerUpdatingScriptlet
    * @param overlay	whether to overlay the DataContainers
    */
   protected void updateDataContainers(List<DataContainer> conts, boolean overlay) {
-    updateDataContainers(conts, overlay, new HashSet<Integer>());
+    updateDataContainers(conts, overlay, new HashSet<>());
   }
 
   /**
@@ -84,7 +84,7 @@ public abstract class AbstractDataContainerUpdatingScriptlet
     for (i = 0; i < visible.length; i++)
       visible[i] = ((VisibilityContainerManager) manager).isVisible(i);
 
-    data = new ArrayList<AbstractContainer>();
+    data = new ArrayList<>();
     n    = 0;
     for (i = 0; i < visible.length; i++) {
       if (!visible[i]) {
@@ -109,10 +109,8 @@ public abstract class AbstractDataContainerUpdatingScriptlet
     }
 
     // update
-    manager.startUpdate();
     manager.clear();
     manager.addAll(data);
-    manager.finishUpdate();
 
     // post-process data
     if (m_PostProcessor != null)
