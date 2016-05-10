@@ -181,10 +181,10 @@ public class ActorUtils {
     ArrayList<Actor>	result;
     HashSet<Class>	filterSet;
 
-    result    = new ArrayList<Actor>();
+    result    = new ArrayList<>();
     filterSet = null;
     if (filter != null)
-      filterSet = new HashSet<Class>(Arrays.asList(filter));
+      filterSet = new HashSet<>(Arrays.asList(filter));
 
     enumerate(actor, result, filterSet);
 
@@ -252,7 +252,7 @@ public class ActorUtils {
 	  // get current value
 	  desc = options.get(i).getDescriptor();
 	  try {
-	    value = desc.getReadMethod().invoke(handler, new Object[0]);
+	    value = desc.getReadMethod().invoke(handler);
 	  }
 	  catch (Exception e) {
 	    e.printStackTrace();
@@ -276,7 +276,7 @@ public class ActorUtils {
       // get current value
       desc = options.get(i).getDescriptor();
       try {
-	value = desc.getReadMethod().invoke(handler, new Object[0]);
+	value = desc.getReadMethod().invoke(handler);
       }
       catch (Exception e) {
 	e.printStackTrace();
@@ -331,7 +331,7 @@ public class ActorUtils {
     int			i;
 
     // get all names
-    names = new HashSet<String>();
+    names = new HashSet<>();
     for (i = 0; i < handler.size(); i++) {
       if (i != index)
 	names.add(handler.get(i).getName());
@@ -389,7 +389,7 @@ public class ActorUtils {
 
     result = false;
 
-    names = new HashSet<String>();
+    names = new HashSet<>();
     for (i = 0; i < actors.length; i++) {
       if (i > 0)
 	result = uniqueName(actors[i], names) || result;
@@ -451,7 +451,7 @@ public class ActorUtils {
     Actor			root;
     ArrayList<String>		list;
 
-    result = new ArrayList<ActorHandler>();
+    result = new ArrayList<>();
 
     root   = actor.getRoot();
     child  = actor;
@@ -501,7 +501,7 @@ public class ActorUtils {
     }
 
     if (LOGGER.getLevel() != Level.OFF) {
-      list = new ArrayList<String>();
+      list = new ArrayList<>();
       for (ActorHandler h: result)
 	list.add(h.getClass().getName() + "/" + h.getFullName());
       LOGGER.fine("Actor handlers: " + list + "\n" + Utils.getStackTrace(20));
@@ -660,7 +660,7 @@ public class ActorUtils {
     String			name;
 
     actors = enumerate(actor);
-    count  = new Hashtable<String,Integer>();
+    count  = new Hashtable<>();
     for (Actor current: actors) {
       if (current.getSkip())
 	continue;
@@ -755,6 +755,35 @@ public class ActorUtils {
   }
 
   /**
+   * Checks an actor handler's children whether they contain the actor type
+   * we're looking for.
+   *
+   * @param handler	the actor handler to check
+   * @param type	the type of actor to find the closest for
+   * @return		the closest actors, empty list if none found
+   */
+  protected static List<Actor> findClosestTypes(ActorHandler handler, Class type) {
+    List<Actor>			result;
+    int				i;
+    ExternalActorHandler	external;
+
+    result = new ArrayList<>();
+
+    for (i = 0; i < handler.size(); i++) {
+      if (type.isInstance(handler.get(i)) && !handler.get(i).getSkip()) {
+	result.add(handler.get(i));
+      }
+      else if (handler.get(i) instanceof ExternalActorHandler) {
+	external = (ExternalActorHandler) handler.get(i);
+	if (external.getExternalActor() instanceof ActorHandler)
+	  result.addAll(findClosestTypes((ActorHandler) external.getExternalActor(), type));
+      }
+    }
+
+    return result;
+  }
+
+  /**
    * Tries to find the closest types in the actor tree, starting with the current
    * actor.
    *
@@ -782,7 +811,7 @@ public class ActorUtils {
     List<ActorHandler>		handlers;
     int				i;
 
-    result   = new ArrayList<Actor>();
+    result   = new ArrayList<>();
     handlers = ActorUtils.findActorHandlers(actor, true, includeSameLevel);
     for (i = 0; i < handlers.size(); i++) {
       // check handlers themselves
@@ -1295,7 +1324,7 @@ public class ActorUtils {
     if (result == null) {
       processor = new MultiProcessor();
       names     = ClassLister.getSingleton().getClassnames(CheckProcessor.class);
-      procs     = new ArrayList<AbstractActorProcessor>();
+      procs     = new ArrayList<>();
       for (i = 0; i < names.length; i++) {
 	try {
 	  proc = (AbstractActorProcessor) Class.forName(names[i]).newInstance();
