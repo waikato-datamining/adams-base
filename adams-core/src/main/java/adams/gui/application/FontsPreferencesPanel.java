@@ -23,6 +23,8 @@ import adams.env.Environment;
 import adams.gui.core.PropertiesParameterPanel.PropertyType;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Preferences for fonts.
@@ -41,6 +43,8 @@ public class FontsPreferencesPanel
    */
   @Override
   protected void initGUI() {
+    List<String> 	order;
+
     super.initGUI();
 
     addPropertyType("Monospaced", PropertyType.FONT);
@@ -48,6 +52,13 @@ public class FontsPreferencesPanel
 
     for (String font: adams.gui.core.Fonts.FONTS)
       addPropertyType(font, PropertyType.FONT);
+
+    order = new ArrayList<>();
+    order.add("Monospaced");
+    order.add("Sans");
+    for (String font: adams.gui.core.Fonts.FONTS)
+      order.add(font);
+    setPropertyOrder(order);
 
     setPreferences(adams.gui.core.Fonts.getProperties());
   }

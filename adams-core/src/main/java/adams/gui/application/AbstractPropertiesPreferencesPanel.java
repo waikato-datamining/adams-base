@@ -15,18 +15,19 @@
 
 /**
  * AbstractPropertiesPreferencesPanel.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.application;
-
-import java.awt.BorderLayout;
-import java.awt.Component;
 
 import adams.core.Properties;
 import adams.gui.chooser.AbstractChooserPanel;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.PropertiesParameterPanel;
 import adams.gui.core.PropertiesParameterPanel.PropertyType;
+
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.util.List;
 
 /**
  * Displays all properties in a props file as preferences.
@@ -301,6 +302,33 @@ public abstract class AbstractPropertiesPreferencesPanel
    */
   public String getHelp(String property) {
     return m_PanelPreferences.getHelp(property);
+  }
+
+  /**
+   * Sets the order for the properties.
+   *
+   * @param value	the ordered property names
+   */
+  public void setPropertyOrder(String[] value) {
+    m_PanelPreferences.setPropertyOrder(value);
+  }
+
+  /**
+   * Sets the order for the properties.
+   *
+   * @param value	the ordered property names
+   */
+  public void setPropertyOrder(List<String> value) {
+    m_PanelPreferences.setPropertyOrder(value);
+  }
+
+  /**
+   * Returns the order for the properties.
+   *
+   * @return		the ordered property names
+   */
+  public List<String> getPropertyOrder() {
+    return m_PanelPreferences.getPropertyOrder();
   }
 
   /**

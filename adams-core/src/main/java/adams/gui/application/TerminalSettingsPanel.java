@@ -15,7 +15,7 @@
 
 /**
  * TerminalSettingsPanel.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.application;
 
@@ -47,6 +47,14 @@ public class TerminalSettingsPanel
     addPropertyType(Terminal.MAC_OPTIONS, PropertyType.STRING);
     addPropertyType(Terminal.WINDOWS_EXECUTABLE, PropertyType.STRING);
     addPropertyType(Terminal.WINDOWS_OPTIONS, PropertyType.STRING);
+    setPropertyOrder(new String[]{
+      Terminal.LINUX_EXECUTABLE,
+      Terminal.LINUX_OPTIONS,
+      Terminal.MAC_EXECUTABLE,
+      Terminal.MAC_OPTIONS,
+      Terminal.WINDOWS_EXECUTABLE,
+      Terminal.WINDOWS_OPTIONS,
+    });
     setPreferences(Terminal.getProperties());
   }
 
