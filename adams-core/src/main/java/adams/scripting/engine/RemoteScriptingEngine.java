@@ -23,6 +23,8 @@ package adams.scripting.engine;
 import adams.core.Pausable;
 import adams.core.Stoppable;
 import adams.core.option.OptionHandler;
+import adams.flow.core.Actor;
+import adams.flow.core.FlowContextHandler;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.multiprocess.CallableWithResult;
 import adams.scripting.permissionhandler.PermissionHandler;
@@ -36,7 +38,7 @@ import adams.scripting.responsehandler.ResponseHandler;
  * @version $Revision$
  */
 public interface RemoteScriptingEngine
-  extends OptionHandler, Pausable, Stoppable {
+  extends OptionHandler, Pausable, Stoppable, FlowContextHandler {
 
   /**
    * Sets the application context.
@@ -51,6 +53,20 @@ public interface RemoteScriptingEngine
    * @return		the context, null if none set
    */
   public AbstractApplicationFrame getApplicationContext();
+
+  /**
+   * Sets the flow context.
+   *
+   * @param value	the actor
+   */
+  public void setFlowContext(Actor value);
+
+  /**
+   * Returns the flow context, if any.
+   *
+   * @return		the actor, null if none available
+   */
+  public Actor getFlowContext();
 
   /**
    * Sets the command handler to use.

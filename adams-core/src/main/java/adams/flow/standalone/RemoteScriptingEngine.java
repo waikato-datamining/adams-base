@@ -155,6 +155,7 @@ public class RemoteScriptingEngine
   @Override
   protected String doExecute() {
     new Thread(() -> {
+      m_Engine.setFlowContext(this);
       if (getRoot() instanceof Flow)
 	m_Engine.setApplicationContext(((Flow) getRoot()).getApplicationFrame());
       String msg = m_Engine.execute();

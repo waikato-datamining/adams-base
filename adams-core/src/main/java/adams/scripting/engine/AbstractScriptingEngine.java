@@ -30,6 +30,7 @@ import adams.core.option.AbstractOptionHandler;
 import adams.core.option.ArrayConsumer;
 import adams.core.option.OptionUtils;
 import adams.env.Environment;
+import adams.flow.core.Actor;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.scripting.ScriptingEngine;
 import adams.multiprocess.CallableWithResult;
@@ -52,6 +53,9 @@ public abstract class AbstractScriptingEngine
 
   /** the application context. */
   protected AbstractApplicationFrame m_ApplicationContext;
+
+  /** the flow context. */
+  protected Actor m_FlowContext;
 
   /** the permission handler. */
   protected PermissionHandler m_PermissionHandler;
@@ -259,6 +263,24 @@ public abstract class AbstractScriptingEngine
    */
   public AbstractApplicationFrame getApplicationContext() {
     return m_ApplicationContext;
+  }
+
+  /**
+   * Sets the flow context.
+   *
+   * @param value	the actor
+   */
+  public void setFlowContext(Actor value) {
+    m_FlowContext = value;
+  }
+
+  /**
+   * Returns the flow context, if any.
+   *
+   * @return		the actor, null if none available
+   */
+  public Actor getFlowContext() {
+    return m_FlowContext;
   }
 
   /**

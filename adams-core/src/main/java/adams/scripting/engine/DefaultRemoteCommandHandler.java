@@ -20,6 +20,7 @@
 
 package adams.scripting.engine;
 
+import adams.scripting.command.FlowAwareRemoteCommand;
 import adams.scripting.command.RemoteCommand;
 import adams.scripting.command.RemoteCommandWithResponse;
 
@@ -56,6 +57,8 @@ public class DefaultRemoteCommandHandler
       getLogger().info("Handling command: " + cmd.getClass().getName());
 
     cmd.setApplicationContext(m_Owner.getApplicationContext());
+    if ((cmd instanceof FlowAwareRemoteCommand) && (m_Owner.getFlowContext() != null))
+      ((FlowAwareRemoteCommand) cmd).setFlowContext(m_Owner.getFlowContext());
 
     if (cmd.isRequest()) {
       cmd.handleRequest(m_Owner, m_Owner.getRequestHandler());
