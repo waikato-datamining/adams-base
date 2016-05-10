@@ -187,6 +187,7 @@ public abstract class AbstractScriptingEngine
    */
   public void setRequestHandler(RequestHandler value) {
     m_RequestHandler = value;
+    m_RequestHandler.setOwner(this);
     reset();
   }
 
@@ -225,6 +226,7 @@ public abstract class AbstractScriptingEngine
    */
   public void setResponseHandler(ResponseHandler value) {
     m_ResponseHandler = value;
+    m_ResponseHandler.setOwner(this);
     reset();
   }
 

@@ -21,6 +21,7 @@
 package adams.scripting.requesthandler;
 
 import adams.core.option.AbstractOptionHandler;
+import adams.flow.standalone.RemoteScriptingEngine;
 
 /**
  * Ancestor for request handlers.
@@ -33,6 +34,9 @@ public abstract class AbstractRequestHandler
   implements RequestHandler {
 
   private static final long serialVersionUID = -5131376236748142498L;
+
+  /** the owner. */
+  protected RemoteScriptingEngine m_Owner;
 
   /** whether the handler is enabled. */
   protected boolean m_Enabled;
@@ -47,6 +51,24 @@ public abstract class AbstractRequestHandler
     m_OptionManager.add(
       "enabled", "enabled",
       true);
+  }
+
+  /**
+   * Sets the owning engine.
+   *
+   * @param value	the owner
+   */
+  public void setOwner(RemoteScriptingEngine value) {
+    m_Owner = value;
+  }
+
+  /**
+   * Returns the owning engine.
+   *
+   * @return		the owner, null if none set
+   */
+  public RemoteScriptingEngine getOwner() {
+    return m_Owner;
   }
 
   /**

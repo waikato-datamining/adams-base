@@ -21,6 +21,7 @@
 package adams.scripting.responsehandler;
 
 import adams.scripting.command.RemoteCommand;
+import adams.scripting.engine.RemoteScriptingEngine;
 
 /**
  * For handling responses.
@@ -29,6 +30,20 @@ import adams.scripting.command.RemoteCommand;
  * @version $Revision$
  */
 public interface ResponseHandler {
+
+  /**
+   * Sets the owning engine.
+   *
+   * @param value	the owner
+   */
+  public void setOwner(RemoteScriptingEngine value);
+
+  /**
+   * Returns the owning engine.
+   *
+   * @return		the owner, null if none set
+   */
+  public RemoteScriptingEngine getOwner();
 
   /**
    * Handles successful responses.
