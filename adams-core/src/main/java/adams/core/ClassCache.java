@@ -15,9 +15,11 @@
 
 /**
  * ClassCache.java
- * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.core;
+
+import adams.core.logging.LoggingObject;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -32,8 +34,6 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 import java.util.logging.Level;
-
-import adams.core.logging.LoggingObject;
 
 /**
  * A singleton that stores all classes on the classpath.
@@ -225,7 +225,10 @@ public class ClassCache
     Attributes	atts;
     String	cp;
     String[]	parts;
-    
+
+    if (manifest == null)
+      return;
+
     atts = manifest.getMainAttributes();
     cp   = atts.getValue("Class-Path");
     if (cp == null)
