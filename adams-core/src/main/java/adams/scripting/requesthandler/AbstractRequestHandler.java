@@ -21,7 +21,7 @@
 package adams.scripting.requesthandler;
 
 import adams.core.option.AbstractOptionHandler;
-import adams.flow.standalone.RemoteScriptingEngine;
+import adams.scripting.engine.RemoteScriptingEngine;
 
 /**
  * Ancestor for request handlers.
