@@ -5,12 +5,65 @@
 #
 # Author: fracpete (fracpete at waikato dot ac dot nz)
 
-REPO="$HOME/.m2/repository"
-GROUP="nz/ac/waikato/cms/adams"
-VERSION="0.4.13-SNAPSHOT"
-OUTDIR="$HOME/temp/central/out"
-SCRIPT="$OUTDIR/upload.sh"
+# the usage of this script
+function usage()
+{
+   echo
+   echo "${0##*/} -o <outdir> -v <version> [-r <repo>] [-h]"
+   echo
+   echo "Creates a bash script that uploads artifacts to Maven central,"
+   echo "using the local Maven repository."
+   echo
+   echo " -h   this help"
+   echo " -o   <outdir>"
+   echo "      the output directory for artifacts and upload script"
+   echo "      default: $OUTDIR_DEF"
+   echo " -v   <version>"
+   echo "      the version of the artifacts"
+   echo "      default: $VERSION_DEF"
+   echo " -r   <repo>"
+   echo "      the local Maven repository directory"
+   echo "      default: $REPO_DEF"
+   echo
+}
 
+GROUP="nz/ac/waikato/cms/adams"
+REPO_DEF="$HOME/.m2/repository"
+REPO=$REPO_DEF
+VERSION_DEF="0.4.13-SNAPSHOT"
+VERSION=$VERSION_DEF
+OUTDIR_DEF="/tmp/central"
+OUTDIR=$OUTDIR_DEF
+
+# interpret parameters
+while getopts ":ho:v:r:" flag
+do
+  case $flag in
+    o) OUTDIR=$OPTARG
+       ;;
+    v) VERSION=$OPTARG
+       ;;
+    r) REPO=$OPTARG
+       ;;
+    h) usage
+       exit 0
+       ;;
+    *) usage
+       exit 1
+       ;;
+  esac
+done
+
+# start?
+echo
+echo "Creating upload for artifacts version: $VERSION"
+echo "Using repository: $REPO"
+echo "Creating output in directory: $OUTDIR"
+echo ""
+echo "Proceed with <Enter> or cancel with <Ctrl+C>?"
+read
+
+SCRIPT="$OUTDIR/upload.sh"
 LIST=`find $REPO/$GROUP -name "adams-*$VERSION.pom" | sort`
 
 # init output dir
