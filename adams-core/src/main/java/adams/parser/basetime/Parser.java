@@ -6,6 +6,7 @@
 
 package adams.parser.basetime;
 
+import adams.core.DateUtils;
 import adams.parser.ParserHelper;
 import java_cup.runtime.DefaultSymbolFactory;
 import java_cup.runtime.SymbolFactory;
@@ -240,7 +241,7 @@ public class Parser extends java_cup.runtime.lr_parser {
   protected Date m_End = null;
 
   /** an instance of a gregorian calendar. */
-  protected Calendar m_Calendar = new GregorianCalendar(java.util.TimeZone.getTimeZone("GMT"), java.util.Locale.ENGLISH);
+  protected Calendar m_Calendar = new GregorianCalendar(java.util.TimeZone.getTimeZone("GMT"), DateUtils.getLocale());
 
   /** the helper. */
   protected ParserHelper m_Helper = new ParserHelper();
