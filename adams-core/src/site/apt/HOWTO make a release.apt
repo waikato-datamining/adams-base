@@ -69,6 +69,12 @@ HOWTO make a release
   adams.cms.waikato.ac.nz:/var/www/html/releases/adams
 +--
 
+  * deploy artifacts on Maven Central
+
++--
+  adams-core/src/main/scripts/central.sh
++--
+
   * update adams webpage
 
 +--
