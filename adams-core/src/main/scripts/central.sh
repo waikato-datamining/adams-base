@@ -27,6 +27,7 @@ function usage()
    echo
 }
 
+URL="https://oss.sonatype.org/service/local/staging/deploy/maven2/"
 GROUP="nz/ac/waikato/cms/adams"
 REPO_DEF="$HOME/.m2/repository"
 REPO=$REPO_DEF
@@ -63,24 +64,25 @@ echo ""
 echo "Proceed with <Enter> or cancel with <Ctrl+C>?"
 read
 
-SCRIPT="$OUTDIR/upload.sh"
-LIST=`find $REPO/$GROUP -name "adams-*$VERSION.pom" | sort`
-
 # init output dir
 mkdir -p $OUTDIR
 rm -f $OUTDIR/*
 
 # init script
+SCRIPT="$OUTDIR/upload.sh"
 echo "#!/bin/bash" > $SCRIPT
 echo "#" >> $SCRIPT
 echo "# Uploads version $VERSION to Maven Central" >> $SCRIPT
 echo "" >> $SCRIPT
 chmod a+x $SCRIPT
 
+# copy artifacts and fill script
+LIST=`find $REPO/$GROUP -name "adams-*$VERSION.pom" | sort`
 for i in $LIST
 do
-  COUNT=`cat $i | grep "incubator\|-all\|archetype" | wc -l`
-  if [ $COUNT -eq 0 ]
+  COUNT=`cat $i | grep "incubator\|archetype" | wc -l`
+  MODULES=`cat $i | grep "<modules>" | wc -l`
+  if [ $COUNT -eq 0 ] || [ $MODULES -gt 0 ]
   then
     POM=$i
     POM_SHORT=`echo $POM | sed s/".*\/"//g`
@@ -88,12 +90,31 @@ do
     JAR_SHORT=`echo $JAR | sed s/".*\/"//g`
     SRC=`echo $i | sed s/"\.pom$"/"-sources.jar"/g`
     SRC_SHORT=`echo $SRC | sed s/".*\/"//g`
-    echo $POM
+
+    echo $POM_SHORT
+
+    # pom
     cp $POM $OUTDIR
-    cp $JAR $OUTDIR
-    cp $SRC $OUTDIR
-    echo "mvn gpg:sign-and-deploy-file -Durl=https://oss.sonatype.org/service/local/staging/deploy/maven2/ -DrepositoryId=sonatype-nexus-staging -DpomFile=$POM_SHORT -Dfile=$JAR_SHORT" >> $SCRIPT
-    echo "mvn gpg:sign-and-deploy-file -Durl=https://oss.sonatype.org/service/local/staging/deploy/maven2/ -DrepositoryId=sonatype-nexus-staging -DpomFile=$POM_SHORT -Dfile=$SRC_SHORT -Dclassifier=sources" >> $SCRIPT
+    if [ $MODULES -gt 0 ]
+    then
+      echo "mvn gpg:sign-and-deploy-file -Durl=$URL -DrepositoryId=sonatype-nexus-staging -Dfile=$POM_SHORT -Dpackaging=pom" >> $SCRIPT
+    fi
+
+    # jar
+    if [ -f "$JAR" ]
+    then
+      echo "--> $JAR_SHORT"
+      cp $JAR $OUTDIR
+      echo "mvn gpg:sign-and-deploy-file -Durl=$URL -DrepositoryId=sonatype-nexus-staging -DpomFile=$POM_SHORT -Dfile=$JAR_SHORT -Dclassifier=sources" >> $SCRIPT
+    fi
+
+    # sources
+    if [ -f "$SRC" ]
+    then
+      echo "--> $SRC_SHORT"
+      cp $SRC $OUTDIR
+      echo "mvn gpg:sign-and-deploy-file -Durl=$URL -DrepositoryId=sonatype-nexus-staging -DpomFile=$POM_SHORT -Dfile=$SRC_SHORT -Dclassifier=sources" >> $SCRIPT
+    fi
   fi
 done
 
