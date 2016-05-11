@@ -7,5 +7,6 @@
 Drivers=\
   com.mysql.jdbc.Driver,\
   org.sqlite.JDBC,\
+  org.hsqldb.jdbcDriver,\
   org.postgresql.Driver,\
   net.sourceforge.jtds.jdbc.Driver

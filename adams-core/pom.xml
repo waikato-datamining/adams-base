@@ -75,6 +75,12 @@
     </dependency>
 
     <dependency>
+      <groupId>hsqldb</groupId>
+      <artifactId>hsqldb</artifactId>
+      <version>1.8.0.10</version>
+    </dependency>
+
+    <dependency>
       <groupId>org.xerial</groupId>
       <artifactId>sqlite-jdbc</artifactId>
       <version>3.8.11.2</version>
@@ -193,7 +199,7 @@
     <dependency>
       <groupId>com.jayway.jsonpath</groupId>
       <artifactId>json-path</artifactId>
-      <version>2.0.0</version>
+      <version>2.2.0</version>
     </dependency>
     
     <dependency>
