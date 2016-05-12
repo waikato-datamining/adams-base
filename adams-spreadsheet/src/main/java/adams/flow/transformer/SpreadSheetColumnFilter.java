@@ -22,7 +22,6 @@ package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
 import adams.data.spreadsheet.SpreadSheet;
-import adams.data.spreadsheet.SpreadSheetView;
 import adams.data.spreadsheet.SpreadSheetViewCreator;
 import adams.data.spreadsheet.columnfinder.AbstractColumnFinder;
 import adams.data.spreadsheet.columnfinder.ColumnFinder;
@@ -225,7 +224,7 @@ public class SpreadSheetColumnFilter
     result = null;
     input  = (SpreadSheet) m_InputToken.getPayload();
     if (m_CreateView)
-      output = new SpreadSheetView(input, null, m_Finder.findColumns(input));
+      output = input.toView(null, m_Finder.findColumns(input));
     else
       output = AbstractColumnFinder.filter(input, m_Finder);
     m_OutputToken = new Token(output);

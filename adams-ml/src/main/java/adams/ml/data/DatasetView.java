@@ -87,8 +87,8 @@ public class DatasetView
    * Initializes the view.
    *
    * @param dataset	the underlying dataset
-   * @param columns	the columns to use, null for all
    * @param rows	the rows to use, null for all
+   * @param columns	the columns to use, null for all
    */
   public DatasetView(Dataset dataset, int[] rows, int[] columns) {
     super();
@@ -256,7 +256,7 @@ public class DatasetView
       result = cellKey;
     }
     else {
-      cell = m_Dataset.getRowIndex(cellKey);
+      cell = m_Dataset.getHeaderRow().indexOf(cellKey);
       if (m_Columns.contains(cell))
 	result = cellKey;
     }
@@ -1522,5 +1522,16 @@ public class DatasetView
     new CsvSpreadSheetWriter().write(this, writer);
 
     return writer.toString();
+  }
+
+  /**
+   * Creates a view of the spreadsheet with the specified rows/columns.
+   *
+   * @param columns	the columns to use, null for all
+   * @param rows	the rows to use, null for all
+   * @return		the view
+   */
+  public DatasetView toView(int[] rows, int[] columns) {
+    return new DatasetView(this, rows, columns);
   }
 }

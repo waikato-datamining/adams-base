@@ -687,4 +687,12 @@ public interface SpreadSheet
    * @param other		the spreadsheet to merge with
    */
   public void mergeWith(SpreadSheet other);
+
+  /**
+   * Creates a view of the spreadsheet with the specified rows/columns.
+   *
+   * @param columns	the columns to use, null for all
+   * @param rows	the rows to use, null for all
+   */
+  public SpreadSheet toView(int[] rows, int[] columns);
 }

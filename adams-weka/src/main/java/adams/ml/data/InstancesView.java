@@ -33,6 +33,7 @@ import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.RowComparator;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetUtils;
+import adams.data.spreadsheet.SpreadSheetView;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import weka.core.Attribute;
 import weka.core.DenseInstance;
@@ -1375,5 +1376,16 @@ public class InstancesView
     catch (Exception e) {
       throw new IllegalStateException("Failed to apply Remove filter!", e);
     }
+  }
+
+  /**
+   * Creates a view of the spreadsheet with the specified rows/columns.
+   *
+   * @param columns	the columns to use, null for all
+   * @param rows	the rows to use, null for all
+   * @return		the view
+   */
+  public SpreadSheetView toView(int[] rows, int[] columns) {
+    return new SpreadSheetView(this, rows, columns);
   }
 }

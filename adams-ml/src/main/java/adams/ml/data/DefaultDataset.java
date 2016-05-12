@@ -424,4 +424,15 @@ public class DefaultDataset
     
     return result;
   }
+
+  /**
+   * Creates a view of the spreadsheet with the specified rows/columns.
+   *
+   * @param columns	the columns to use, null for all
+   * @param rows	the rows to use, null for all
+   * @return		the view
+   */
+  public DatasetView toView(int[] rows, int[] columns) {
+    return new DatasetView(this, rows, columns);
+  }
 }

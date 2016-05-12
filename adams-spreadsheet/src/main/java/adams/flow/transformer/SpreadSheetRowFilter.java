@@ -22,7 +22,6 @@ package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
 import adams.data.spreadsheet.SpreadSheet;
-import adams.data.spreadsheet.SpreadSheetView;
 import adams.data.spreadsheet.SpreadSheetViewCreator;
 import adams.data.spreadsheet.rowfinder.AbstractRowFinder;
 import adams.data.spreadsheet.rowfinder.RowFinder;
@@ -216,7 +215,7 @@ public class SpreadSheetRowFilter
     result = null;
     input  = (SpreadSheet) m_InputToken.getPayload();
     if (m_CreateView)
-      output = new SpreadSheetView(input, m_Finder.findRows(input), null);
+      output = input.toView(m_Finder.findRows(input), null);
     else
       output = AbstractRowFinder.filter(input, m_Finder);
     m_OutputToken = new Token(output);

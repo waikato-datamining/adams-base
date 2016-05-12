@@ -25,7 +25,6 @@ import adams.core.Range;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetColumnRange;
-import adams.data.spreadsheet.SpreadSheetView;
 import adams.data.spreadsheet.SpreadSheetViewCreator;
 import adams.flow.core.Token;
 
@@ -298,7 +297,7 @@ public class SpreadSheetSubset
     }
     else {
       if (m_CreateView) {
-	subset = new SpreadSheetView(sheet, rows, cols);
+	subset = sheet.toView(rows, cols);
       }
       else {
 	subset = sheet.newInstance();

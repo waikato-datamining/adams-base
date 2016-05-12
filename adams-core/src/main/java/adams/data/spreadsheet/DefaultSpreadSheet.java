@@ -1369,7 +1369,18 @@ public class DefaultSpreadSheet
       rowThis.mergeWith(rowOther);
     }
   }
-  
+
+  /**
+   * Creates a view of the spreadsheet with the specified rows/columns.
+   *
+   * @param columns	the columns to use, null for all
+   * @param rows	the rows to use, null for all
+   * @return		the view
+   */
+  public SpreadSheet toView(int[] rows, int[] columns) {
+    return new SpreadSheetView(this, rows, columns);
+  }
+
   public static void main(String[] args) {
     Environment.setEnvironmentClass(Environment.class);
     SpreadSheet sheet = new DefaultSpreadSheet();

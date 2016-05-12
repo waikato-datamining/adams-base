@@ -235,7 +235,7 @@ public class SpreadSheetView
       result = cellKey;
     }
     else {
-      cell = m_Sheet.getRowIndex(cellKey);
+      cell = m_Sheet.getHeaderRow().indexOf(cellKey);
       if (m_Columns.contains(cell))
 	result = cellKey;
     }
@@ -1276,5 +1276,16 @@ public class SpreadSheetView
     new CsvSpreadSheetWriter().write(this, writer);
 
     return writer.toString();
+  }
+
+  /**
+   * Creates a view of the spreadsheet with the specified rows/columns.
+   *
+   * @param columns	the columns to use, null for all
+   * @param rows	the rows to use, null for all
+   * @return		the view
+   */
+  public SpreadSheet toView(int[] rows, int[] columns) {
+    return new SpreadSheetView(this, rows, columns);
   }
 }
