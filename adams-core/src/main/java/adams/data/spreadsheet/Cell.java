@@ -105,7 +105,7 @@ public interface Cell
   /**
    * Sets the content of the cell.
    *
-   * @param value	the content; null intepreted as missing value
+   * @param value	the content; null interpreted as missing value
    * @return		the cell itself
    */
   public Cell setContent(Boolean value);
@@ -113,7 +113,7 @@ public interface Cell
   /**
    * Sets the content of the cell.
    *
-   * @param value	the content; null intepreted as missing value
+   * @param value	the content; null interpreted as missing value
    * @return		the cell itself
    */
   public Cell setContent(Byte value);
@@ -121,7 +121,7 @@ public interface Cell
   /**
    * Sets the content of the cell.
    *
-   * @param value	the content; null intepreted as missing value
+   * @param value	the content; null interpreted as missing value
    * @return		the cell itself
    */
   public Cell setContent(Short value);
@@ -129,7 +129,7 @@ public interface Cell
   /**
    * Sets the content of the cell.
    *
-   * @param value	the content; null intepreted as missing value
+   * @param value	the content; null interpreted as missing value
    * @return		the cell itself
    */
   public Cell setContent(Integer value);
@@ -137,7 +137,7 @@ public interface Cell
   /**
    * Sets the content of the cell.
    *
-   * @param value	the content; null intepreted as missing value
+   * @param value	the content; null interpreted as missing value
    * @return		the cell itself
    */
   public Cell setContent(Long value);
@@ -145,7 +145,7 @@ public interface Cell
   /**
    * Sets the content of the cell.
    *
-   * @param value	the content; null or NaN is intepreted as missing value
+   * @param value	the content; null or NaN is interpreted as missing value
    * @return		the cell itself
    */
   public Cell setContent(Float value);
@@ -153,7 +153,7 @@ public interface Cell
   /**
    * Sets the content of the cell.
    *
-   * @param value	the content; null or NaN is intepreted as missing value
+   * @param value	the content; null or NaN is interpreted as missing value
    * @return		the cell itself
    */
   public Cell setContent(Double value);
@@ -161,7 +161,7 @@ public interface Cell
   /**
    * Sets the content of the cell.
    *
-   * @param value	the content; null is intepreted as missing value
+   * @param value	the content; null is interpreted as missing value
    * @return		the cell itself
    */
   public Cell setContent(Date value);
@@ -169,7 +169,7 @@ public interface Cell
   /**
    * Sets the content of the cell.
    *
-   * @param value	the content; null is intepreted as missing value
+   * @param value	the content; null is interpreted as missing value
    * @return		the cell itself
    */
   public Cell setContent(DateTime value);
@@ -177,7 +177,7 @@ public interface Cell
   /**
    * Sets the content of the cell.
    *
-   * @param value	the content; null is intepreted as missing value
+   * @param value	the content; null is interpreted as missing value
    * @return		the cell itself
    */
   public Cell setContent(DateTimeMsec value);
@@ -185,7 +185,7 @@ public interface Cell
   /**
    * Sets the content of the cell.
    *
-   * @param value	the content; null is intepreted as missing value
+   * @param value	the content; null is interpreted as missing value
    * @return		the cell itself
    */
   public Cell setContent(Time value);
@@ -193,7 +193,7 @@ public interface Cell
   /**
    * Sets the content of the cell.
    *
-   * @param value	the content; null is intepreted as missing value
+   * @param value	the content; null is interpreted as missing value
    * @return		the cell itself
    */
   public Cell setContent(TimeMsec value);
