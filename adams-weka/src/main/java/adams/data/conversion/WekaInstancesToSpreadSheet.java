@@ -19,6 +19,7 @@
  */
 package adams.data.conversion;
 
+import adams.core.DateTimeMsec;
 import adams.data.spreadsheet.DataRow;
 import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.DenseDataRow;
@@ -26,6 +27,7 @@ import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetTypeHandler;
 import adams.ml.data.Dataset;
+import adams.ml.data.InstancesView;
 import weka.core.Attribute;
 import weka.core.Instances;
 
@@ -193,7 +195,13 @@ public class WekaInstancesToSpreadSheet
     int			n;
     String		str;
 
-    data  = (Instances) m_Input;
+    data = (Instances) m_Input;
+
+    // special case for InstancesViews
+    if (m_SpreadSheetType instanceof InstancesView) {
+      result = new InstancesView((Instances) m_Input);
+      return result;
+    }
 
     // create header
     result  = m_SpreadSheetType.newInstance();
@@ -214,7 +222,7 @@ public class WekaInstancesToSpreadSheet
 	if (data.instance(i).isMissing(n))
 	  continue;
 	if (data.attribute(n).type() == Attribute.DATE) {
-	  row.addCell("" + n).setContent(new Date((long) data.instance(i).value(n)));
+	  row.addCell("" + n).setContent(new DateTimeMsec(new Date((long) data.instance(i).value(n))));
 	}
 	else if (data.attribute(n).type() == Attribute.NUMERIC) {
 	  row.addCell("" + n).setContent(data.instance(i).value(n));
