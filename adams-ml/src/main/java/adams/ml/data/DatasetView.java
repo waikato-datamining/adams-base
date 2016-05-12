@@ -77,6 +77,13 @@ public class DatasetView
   protected HeaderRow m_HeaderRow;
 
   /**
+   * Initializes the view with a dummy dataset.
+   */
+  public DatasetView() {
+    this(new DefaultDataset(), null, null);
+  }
+
+  /**
    * Initializes the view.
    *
    * @param dataset	the underlying dataset

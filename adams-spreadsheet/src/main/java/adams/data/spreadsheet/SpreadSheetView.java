@@ -68,6 +68,13 @@ public class SpreadSheetView
   protected HeaderRow m_HeaderRow;
 
   /**
+   * Initializes the view with a dummy spreadsheet.
+   */
+  public SpreadSheetView() {
+    this(new DefaultSpreadSheet(), null, null);
+  }
+
+  /**
    * Initializes the view.
    *
    * @param sheet	the underlying spreadsheet
