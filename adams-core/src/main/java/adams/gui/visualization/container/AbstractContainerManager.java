@@ -98,8 +98,10 @@ public abstract class AbstractContainerManager<T extends AbstractContainer>
    * @see		#isUpdating()
    */
   public void startUpdate() {
-    m_UpdateList = new ArrayList<>(m_List);
-    m_Updating = true;
+    if (!isUpdating()) {
+      m_UpdateList = new ArrayList<>(m_List);
+      m_Updating = true;
+    }
   }
 
   /**
@@ -118,10 +120,11 @@ public abstract class AbstractContainerManager<T extends AbstractContainer>
    * @see		#isUpdating()
    */
   public void finishUpdate(boolean notify) {
-    m_Updating = false;
-
-    m_List = new ArrayList<>(m_UpdateList);
-    m_UpdateList.clear();
+    if (isUpdating()) {
+      m_Updating = false;
+      m_List = new ArrayList<>(m_UpdateList);
+      m_UpdateList.clear();
+    }
 
     if (notify)
       notifyDataChangeListeners(new DataChangeEvent(this, Type.BULK_UPDATE));
