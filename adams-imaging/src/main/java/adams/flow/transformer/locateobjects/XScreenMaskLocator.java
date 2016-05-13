@@ -15,7 +15,7 @@
 
 /**
  * XScreenMaskLocator.java
- * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer.locateobjects;
 
@@ -411,8 +411,10 @@ public class XScreenMaskLocator extends AbstractObjectLocator {
     tmp = m_Crop.crop(tmp);
     Point offset = m_Crop.getTopLeft();
 
-    RenderedOp renderedOp = ScaleDescriptor.create(tmp, (float) m_Scale, (float) m_Scale, 0.0f, 0.0f, Interpolation.getInstance(Interpolation.INTERP_NEAREST), null);
-    tmp = renderedOp.getAsBufferedImage(new Rectangle(0, 0, (int) Math.floor(image.getWidth() * m_Scale), (int) Math.floor(image.getHeight() * m_Scale)), null);
+    if (m_Scale != 1.0f) {
+      RenderedOp renderedOp = ScaleDescriptor.create(tmp, (float) m_Scale, (float) m_Scale, 0.0f, 0.0f, Interpolation.getInstance(Interpolation.INTERP_NEAREST), null);
+      tmp = renderedOp.getAsBufferedImage(new Rectangle(0, 0, (int) Math.floor(image.getWidth() * m_Scale), (int) Math.floor(image.getHeight() * m_Scale)), null);
+    }
 
     int[][] mask = XScreenMaskHelper.generateMask(tmp, m_Color);
     XScreenMaskHelper.binarizeMask(mask, m_Threshold, m_Down, getLogger());
