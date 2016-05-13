@@ -40,7 +40,7 @@ public abstract class AbstractBatchFilter<T extends DataContainer>
    *
    * @param data	the data to filter
    */
-  protected void checkData(T[] data) {
+  protected void checkBatchData(T[] data) {
     if (data == null)
       throw new IllegalStateException("No input data provided (null)!");
     if (data.length == 0)
@@ -48,24 +48,24 @@ public abstract class AbstractBatchFilter<T extends DataContainer>
   }
 
   /**
-   * Performs the actual filtering.
+   * Performs the actual batch filtering.
    *
    * @param data	the data to filter
    * @return		the filtered data
    */
-  protected abstract T[] processData(T[] data);
+  protected abstract T[] processBatchData(T[] data);
 
   /**
-   * Filters the data.
+   * Batch filters the data.
    *
    * @param data	the data to filter
    * @return		the filtered data
    */
-  public T[] filter(T[] data) {
+  public T[] batchFilter(T[] data) {
     T[]	result;
 
-    checkData(data);
-    result = processData(data);
+    checkBatchData(data);
+    result = processBatchData(data);
 
     if (!m_DontUpdateID) {
       for (T r : result)
