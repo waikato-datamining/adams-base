@@ -15,7 +15,7 @@
 
 /**
  * TimeseriesRowNormTest.java
- * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.filter;
 
@@ -48,7 +48,7 @@ public class TimeseriesRowNormTest
    *
    * @return		the filter
    */
-  public AbstractFilter<Timeseries> getFilter() {
+  public Filter<Timeseries> getFilter() {
     return new TimeseriesRowNorm();
   }
 
@@ -71,7 +71,7 @@ public class TimeseriesRowNormTest
    * @return		the setups
    */
   @Override
-  protected AbstractFilter[] getRegressionSetups() {
+  protected Filter[] getRegressionSetups() {
     TimeseriesRowNorm[]	result;
 
     result = new TimeseriesRowNorm[1];

@@ -15,24 +15,23 @@
 
 /*
  * GenericArrayEditorDialog.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.goe;
 
+import adams.core.Utils;
+import adams.env.Environment;
+import adams.gui.core.BaseDialog;
+import adams.gui.core.GUIHelper;
+
+import javax.swing.JFileChooser;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dialog;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
-import javax.swing.JFileChooser;
-
-import adams.core.Utils;
-import adams.env.Environment;
-import adams.gui.core.BaseDialog;
-import adams.gui.core.GUIHelper;
 
 /**
  * Displays a GenericArrayEditor.
@@ -311,7 +310,7 @@ public class GenericArrayEditorDialog
     Environment.setEnvironmentClass(Environment.class);
     GenericArrayEditorDialog dialog = new GenericArrayEditorDialog((Frame) null, "Array editor", true);
     dialog.setDefaultCloseOperation(GenericArrayEditorDialog.DISPOSE_ON_CLOSE);
-    dialog.setCurrent(new adams.data.filter.AbstractFilter[]{new adams.data.filter.PassThrough()});
+    dialog.setCurrent(new adams.data.filter.Filter[]{new adams.data.filter.PassThrough()});
     dialog.setLocationRelativeTo(null);
     dialog.setVisible(true);
     if (dialog.getResult() == APPROVE_OPTION)

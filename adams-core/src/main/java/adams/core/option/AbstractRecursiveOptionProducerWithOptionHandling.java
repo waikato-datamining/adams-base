@@ -15,7 +15,7 @@
 
 /**
  * AbstractRecursiveOptionProducerWithOptionHandling.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
@@ -113,5 +113,15 @@ public abstract class AbstractRecursiveOptionProducerWithOptionHandling<O,I>
    */
   public void destroy() {
     cleanUpOptions();
+  }
+
+  /**
+   * Returns the commandline string.
+   *
+   * @return		 the commandline
+   */
+  @Override
+  public String toCommandLine() {
+    return OptionUtils.getCommandLine(this);
   }
 }

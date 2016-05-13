@@ -15,12 +15,12 @@
 
 /**
  * FilterDialog.java
- * Copyright (C) 2009 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.container;
 
 import adams.data.container.DataContainer;
-import adams.data.filter.AbstractFilter;
+import adams.data.filter.Filter;
 import adams.data.filter.PassThrough;
 import adams.gui.core.BaseDialog;
 import adams.gui.event.FilterEvent;
@@ -55,7 +55,7 @@ public class FilterDialog<T extends DataContainer>
   private static final long serialVersionUID = 3690400655773745448L;
 
   /** the current filter. */
-  protected AbstractFilter<T> m_CurrentFilter;
+  protected Filter<T> m_CurrentFilter;
 
   /** the panel with the filter. */
   protected GenericObjectEditorPanel m_PanelFilter;
@@ -118,7 +118,7 @@ public class FilterDialog<T extends DataContainer>
     m_PanelFilter.setPrefix("Filter");
     m_PanelFilter.addChangeListener(new ChangeListener() {
       public void stateChanged(ChangeEvent e) {
-	m_CurrentFilter = (AbstractFilter) ((GenericObjectEditorPanel) e.getSource()).getCurrent();
+	m_CurrentFilter = (Filter) ((GenericObjectEditorPanel) e.getSource()).getCurrent();
       }
     });
 
@@ -176,7 +176,7 @@ public class FilterDialog<T extends DataContainer>
    *
    * @return		the filter
    */
-  protected AbstractFilter<T> getDefaultFilter() {
+  protected Filter<T> getDefaultFilter() {
     return new PassThrough<T>();
   }
 
@@ -186,7 +186,7 @@ public class FilterDialog<T extends DataContainer>
    * @return		the panel
    */
   protected GenericObjectEditorPanel createGOEPanel() {
-    return new GenericObjectEditorPanel(AbstractFilter.class, m_CurrentFilter, true);
+    return new GenericObjectEditorPanel(Filter.class, m_CurrentFilter, true);
   }
 
 
@@ -195,7 +195,7 @@ public class FilterDialog<T extends DataContainer>
    *
    * @param value	the filter
    */
-  public void setFilter(AbstractFilter<T> value) {
+  public void setFilter(Filter<T> value) {
     m_CurrentFilter = value;
     m_PanelFilter.setCurrent(value);
   }
@@ -205,7 +205,7 @@ public class FilterDialog<T extends DataContainer>
    *
    * @return		the filter
    */
-  public AbstractFilter<T> getFilter() {
+  public Filter<T> getFilter() {
     return m_CurrentFilter;
   }
 

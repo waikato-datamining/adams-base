@@ -15,20 +15,16 @@
 
 /*
  * AbstractOptionTest.java
- * Copyright (C) 2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.option;
 
+import adams.core.Utils;
+import adams.test.AdamsTestCase;
+
 import java.io.Serializable;
 import java.util.List;
-import java.util.Vector;
-
-import adams.core.Utils;
-import adams.core.option.ArrayConsumer;
-import adams.core.option.ArrayProducer;
-import adams.core.option.OptionManager;
-import adams.test.AdamsTestCase;
 
 /**
  * Ancestor for option tests.
@@ -98,6 +94,16 @@ public abstract class AbstractOptionTest
      */
     public void destroy() {
       cleanUpOptions();
+    }
+
+    /**
+     * Returns the commandline string.
+     *
+     * @return		 the commandline
+     */
+    @Override
+    public String toCommandLine() {
+      return OptionUtils.getCommandLine(this);
     }
   }
 

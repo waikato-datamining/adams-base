@@ -15,13 +15,14 @@
 
 /*
  * DatabaseConnection.java
- * Copyright (C) 2008-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2016 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package adams.db;
 
 import adams.core.base.BasePassword;
+import adams.core.option.OptionUtils;
 import adams.env.AbstractEnvironment;
 import adams.env.DatabaseConnectionDefinition;
 import adams.env.Environment;
@@ -45,7 +46,7 @@ public class DatabaseConnection
   /** for managing the database connections. */
   private static DatabaseManager<DatabaseConnection> m_DatabaseManager;
   static {
-    m_DatabaseManager = new DatabaseManager<DatabaseConnection>("adams");
+    m_DatabaseManager = new DatabaseManager<>("adams");
     DatabaseConnection dbcon = new DatabaseConnection();
     m_DatabaseManager.setDefault(DatabaseConnection.getSingleton(dbcon.getURL(), dbcon.getUser(), dbcon.getPassword()));
   }
@@ -62,7 +63,6 @@ public class DatabaseConnection
    * connection to the database specified in the URL, with the given username
    * and password.
    *
-   * @param driver      the JDBC driver
    * @param url         the JDBC URL
    * @param user        the user to connect with
    * @param password    the password for the user
@@ -124,9 +124,18 @@ public class DatabaseConnection
    *
    * @return		the singleton
    * @see		#getConnectOnStartUp()
-   * @see		AbstractDatabaseConnection#SUFFIX_CONNECTONSTARTUP
    */
   public static synchronized DatabaseConnection getSingleton() {
     return m_DatabaseManager.getDefault();
+  }
+
+  /**
+   * Returns the commandline string.
+   *
+   * @return		 the commandline
+   */
+  @Override
+  public String toCommandLine() {
+    return OptionUtils.getCommandLine(this);
   }
 }

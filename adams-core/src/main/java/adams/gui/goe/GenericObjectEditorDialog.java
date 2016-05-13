@@ -15,11 +15,20 @@
 
 /*
  * GenericObjectEditorDialog.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.goe;
 
+import adams.env.Environment;
+import adams.gui.core.BaseDialog;
+import adams.gui.core.GUIHelper;
+import adams.gui.goe.GenericObjectEditor.GOEPanel;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
@@ -29,16 +38,6 @@ import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyEditor;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JFileChooser;
-import javax.swing.JPanel;
-
-import adams.env.Environment;
-import adams.gui.core.BaseDialog;
-import adams.gui.core.GUIHelper;
-import adams.gui.goe.GenericObjectEditor.GOEPanel;
 
 /**
  * Displays a GenericObjectEditor.
@@ -432,7 +431,7 @@ public class GenericObjectEditorDialog
     Environment.setEnvironmentClass(Environment.class);
     GenericObjectEditorDialog dialog = new GenericObjectEditorDialog((Frame) null, "Object editor", true);
     dialog.setDefaultCloseOperation(GenericObjectEditorDialog.DISPOSE_ON_CLOSE);
-    dialog.getGOEEditor().setClassType(adams.data.filter.AbstractFilter.class);
+    dialog.getGOEEditor().setClassType(adams.data.filter.Filter.class);
     dialog.getGOEEditor().setCanChangeClassInDialog(true);
     dialog.setCurrent(new adams.data.filter.PassThrough());
     dialog.setLocationRelativeTo(null);

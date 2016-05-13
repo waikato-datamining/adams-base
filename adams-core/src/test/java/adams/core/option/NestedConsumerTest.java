@@ -15,15 +15,10 @@
 
 /**
  * NestedConsumerTest.java
- * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import adams.core.base.BaseString;
 import adams.core.io.PlaceholderFile;
 import adams.core.logging.LoggingLevel;
@@ -31,6 +26,11 @@ import adams.core.option.NestedFormatHelper.Line;
 import adams.env.Environment;
 import adams.flow.core.AbstractActor;
 import adams.parser.MathematicalExpressionText;
+import junit.framework.Test;
+import junit.framework.TestSuite;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Tests the NestedConsumer class.
@@ -102,7 +102,7 @@ public class NestedConsumerTest
   public void testConsumeDeep() {
     adams.data.filter.MultiFilter handler = new adams.data.filter.MultiFilter();
     handler.setLoggingLevel(LoggingLevel.INFO);
-    adams.data.filter.AbstractFilter[] filters = new adams.data.filter.AbstractFilter[2];
+    adams.data.filter.Filter[] filters = new adams.data.filter.Filter[2];
     filters[0] = new adams.data.filter.PassThrough();
     filters[0].setLoggingLevel(LoggingLevel.FINE);
     filters[1] = new adams.data.filter.MultiFilter();
@@ -147,7 +147,7 @@ public class NestedConsumerTest
   public void testFromStringDeep() {
     adams.data.filter.MultiFilter handler = new adams.data.filter.MultiFilter();
     handler.setLoggingLevel(LoggingLevel.INFO);
-    adams.data.filter.AbstractFilter[] filters = new adams.data.filter.AbstractFilter[2];
+    adams.data.filter.Filter[] filters = new adams.data.filter.Filter[2];
     filters[0] = new adams.data.filter.PassThrough();
     filters[0].setLoggingLevel(LoggingLevel.FINE);
     filters[1] = new adams.data.filter.MultiFilter();

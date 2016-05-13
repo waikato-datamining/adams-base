@@ -1408,4 +1408,13 @@ public abstract class AbstractDatabaseConnection
 
     return result;
   }
+
+  /**
+   * Returns the commandline string.
+   *
+   * @return		 the commandline
+   */
+  public String toCommandLine() {
+    return OptionUtils.getCommandLine(this);
+  }
 }

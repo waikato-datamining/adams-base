@@ -15,15 +15,15 @@
 
 /**
  * FilterEvent.java
- * Copyright (C) 2009 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.event;
 
-import java.util.EventObject;
-
 import adams.data.container.DataContainer;
-import adams.data.filter.AbstractFilter;
+import adams.data.filter.Filter;
 import adams.gui.visualization.container.FilterDialog;
+
+import java.util.EventObject;
 
 /**
  * Event that gets sent from a FilterDialog.
@@ -39,7 +39,7 @@ public class FilterEvent<T extends DataContainer>
   private static final long serialVersionUID = 5898322483535512283L;
 
   /** the filter to use. */
-  protected AbstractFilter<T> m_Filter;
+  protected Filter<T> m_Filter;
 
   /** whether to overlay the original data. */
   protected boolean m_OverlayOriginalData;
@@ -51,7 +51,7 @@ public class FilterEvent<T extends DataContainer>
    * @param filter	the selected filter
    * @param overlay	if true then the original data will be overlayed
    */
-  public FilterEvent(FilterDialog source, AbstractFilter<T> filter, boolean overlay) {
+  public FilterEvent(FilterDialog source, Filter<T> filter, boolean overlay) {
     super(source);
 
     m_Filter              = filter;
@@ -72,7 +72,7 @@ public class FilterEvent<T extends DataContainer>
    *
    * @return		the filter
    */
-  public AbstractFilter<T> getFilter() {
+  public Filter<T> getFilter() {
     return m_Filter;
   }
 

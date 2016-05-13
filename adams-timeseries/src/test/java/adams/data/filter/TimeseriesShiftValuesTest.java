@@ -15,7 +15,7 @@
 
 /**
  * TimeseriesShiftValuesTest.java
- * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.filter;
 
@@ -48,7 +48,7 @@ public class TimeseriesShiftValuesTest
    *
    * @return		the filter
    */
-  public AbstractFilter<Timeseries> getFilter() {
+  public Filter<Timeseries> getFilter() {
     return new TimeseriesShiftValues();
   }
 
@@ -73,7 +73,7 @@ public class TimeseriesShiftValuesTest
    * @return		the setups
    */
   @Override
-  protected AbstractFilter[] getRegressionSetups() {
+  protected Filter[] getRegressionSetups() {
     TimeseriesShiftValues[]	result;
 
     result = new TimeseriesShiftValues[3];

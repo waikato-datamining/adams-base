@@ -15,7 +15,7 @@
 
 /*
  * Scripted.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.filter;
@@ -72,7 +72,7 @@ public class Scripted
   private static final long serialVersionUID = 1304903578667689350L;
 
   /** the loaded script object. */
-  protected transient AbstractFilter m_FilterObject;
+  protected transient Filter m_FilterObject;
 
   /** the scripting handler to use. */
   protected AbstractScriptingHandler m_Handler;
@@ -154,7 +154,7 @@ public class Scripted
     Object[]	result;
     
     result = m_Handler.loadScriptObject(
-	AbstractFilter.class, 
+	Filter.class,
 	m_ScriptFile, 
 	m_ScriptOptions, 
 	getOptionManager().getVariables());
@@ -183,7 +183,7 @@ public class Scripted
   protected void checkData(DataContainer data) {
     super.checkData(data);
 
-    m_FilterObject = (AbstractFilter) m_ScriptObject;
+    m_FilterObject = (Filter) m_ScriptObject;
   }
 
   /**

@@ -58,4 +58,11 @@ public interface OptionHandler
    * Cleans up the options.
    */
   public void cleanUpOptions();
+
+  /**
+   * Returns the commandline string.
+   *
+   * @return		 the commandline
+   */
+  public String toCommandLine();
 }

@@ -15,15 +15,13 @@
 
 /*
  * AbstractFilter.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.filter;
 
 import adams.core.ClassLister;
-import adams.core.CleanUpHandler;
 import adams.core.Performance;
-import adams.core.ShallowCopySupporter;
 import adams.core.option.AbstractOptionConsumer;
 import adams.core.option.AbstractOptionHandler;
 import adams.core.option.ArrayConsumer;
@@ -54,7 +52,7 @@ import java.util.List;
  */
 public abstract class AbstractFilter<T extends DataContainer>
   extends AbstractOptionHandler
-  implements Comparable, CleanUpHandler, ShallowCopySupporter<AbstractFilter> {
+  implements Filter<T> {
 
   /** for serialization. */
   private static final long serialVersionUID = 3610605513320220903L;
@@ -72,7 +70,7 @@ public abstract class AbstractFilter<T extends DataContainer>
     private static final long serialVersionUID = 5544327082749651329L;
 
     /** the filter to use. */
-    protected AbstractFilter m_Filter;
+    protected Filter m_Filter;
 
     /** the data to push through the filter. */
     protected T m_Data;
@@ -86,7 +84,7 @@ public abstract class AbstractFilter<T extends DataContainer>
      * @param filter	the filter to use for filtering
      * @param data	the data to pass through the filter
      */
-    public FilterJob(AbstractFilter filter, T data) {
+    public FilterJob(Filter filter, T data) {
       super();
 
       m_Filter       = filter;
@@ -99,7 +97,7 @@ public abstract class AbstractFilter<T extends DataContainer>
      *
      * @return		the filter in use
      */
-    public AbstractFilter getFilter() {
+    public Filter getFilter() {
       return m_Filter;
     }
 
@@ -358,7 +356,7 @@ public abstract class AbstractFilter<T extends DataContainer>
    *
    * @return		the shallow copy
    */
-  public AbstractFilter shallowCopy() {
+  public Filter<T> shallowCopy() {
     return shallowCopy(false);
   }
 
@@ -368,8 +366,8 @@ public abstract class AbstractFilter<T extends DataContainer>
    * @param expand	whether to expand variables to their current values
    * @return		the shallow copy
    */
-  public AbstractFilter shallowCopy(boolean expand) {
-    return (AbstractFilter) OptionUtils.shallowCopy(this, expand);
+  public Filter<T> shallowCopy(boolean expand) {
+    return (Filter<T>) OptionUtils.shallowCopy(this, expand);
   }
 
   /**
@@ -378,7 +376,7 @@ public abstract class AbstractFilter<T extends DataContainer>
    * @return		the filter classnames
    */
   public static String[] getFilters() {
-    return ClassLister.getSingleton().getClassnames(AbstractFilter.class);
+    return ClassLister.getSingleton().getClassnames(Filter.class);
   }
 
   /**
@@ -388,11 +386,11 @@ public abstract class AbstractFilter<T extends DataContainer>
    * @param options	the options for the filter
    * @return		the instantiated filter or null if an error occurred
    */
-  public static AbstractFilter forName(String classname, String[] options) {
-    AbstractFilter	result;
+  public static Filter forName(String classname, String[] options) {
+    Filter	result;
 
     try {
-      result = (AbstractFilter) OptionUtils.forName(AbstractFilter.class, classname, options);
+      result = (Filter) OptionUtils.forName(Filter.class, classname, options);
     }
     catch (Exception e) {
       e.printStackTrace();
@@ -411,8 +409,8 @@ public abstract class AbstractFilter<T extends DataContainer>
    * @return		the instantiated filter
    * 			or null if an error occurred
    */
-  public static AbstractFilter forCommandLine(String cmdline) {
-    return (AbstractFilter) AbstractOptionConsumer.fromString(ArrayConsumer.class, cmdline);
+  public static Filter forCommandLine(String cmdline) {
+    return (Filter) AbstractOptionConsumer.fromString(ArrayConsumer.class, cmdline);
   }
 
   /**
@@ -422,15 +420,15 @@ public abstract class AbstractFilter<T extends DataContainer>
    * @param data	the data to pass through the filter
    * @return		the filtered data
    */
-  public static DataContainer filter(AbstractFilter filter, DataContainer data) {
+  public static DataContainer filter(Filter filter, DataContainer data) {
     DataContainer		result;
     List<List<DataContainer>>	filtered;
     List<DataContainer>		dataList;
-    List<AbstractFilter>	filterList;
+    List<Filter>		filterList;
 
-    dataList   = new ArrayList<DataContainer>();
+    dataList   = new ArrayList<>();
     dataList.add(data);
-    filterList = new ArrayList<AbstractFilter>();
+    filterList = new ArrayList<>();
     filterList.add(filter);
     filtered   = filter(filterList, dataList);
     result     = filtered.get(0).get(0);
@@ -449,15 +447,15 @@ public abstract class AbstractFilter<T extends DataContainer>
    * @return		the filtered data, the index corresponds to the
    * 			data index
    */
-  public static List<DataContainer> filter(AbstractFilter filter, List<DataContainer> data) {
+  public static List<DataContainer> filter(Filter filter, List<DataContainer> data) {
     List<DataContainer>		result;
     List<List<DataContainer>>	filtered;
     List<DataContainer>		dataList;
-    List<AbstractFilter>	filterList;
+    List<Filter>		filterList;
 
-    dataList   = new ArrayList<DataContainer>();
+    dataList   = new ArrayList<>();
     dataList.addAll(data);
-    filterList = new ArrayList<AbstractFilter>();
+    filterList = new ArrayList<>();
     filterList.add(filter);
     filtered   = filter(filterList, dataList);
     result     = filtered.get(0);
@@ -476,19 +474,19 @@ public abstract class AbstractFilter<T extends DataContainer>
    * @return		the filtered data, the index corresponds to the filter
    * 			index
    */
-  public static List<DataContainer> filter(List<AbstractFilter> filter, DataContainer data) {
+  public static List<DataContainer> filter(List<Filter> filter, DataContainer data) {
     List<DataContainer>		result;
     List<List<DataContainer>>	filtered;
     List<DataContainer>		dataList;
-    List<AbstractFilter>	filterList;
+    List<Filter>		filterList;
     int				i;
 
-    dataList   = new ArrayList<DataContainer>();
+    dataList   = new ArrayList<>();
     dataList.add(data);
-    filterList = new ArrayList<AbstractFilter>();
+    filterList = new ArrayList<>();
     filterList.addAll(filter);
     filtered   = filter(filterList, dataList);
-    result     = new ArrayList<DataContainer>();
+    result     = new ArrayList<>();
     for (i = 0; i < filtered.size(); i++)
       result.add(filtered.get(i).get(0));
 
@@ -507,21 +505,21 @@ public abstract class AbstractFilter<T extends DataContainer>
    * 			correspond to the filter index, the inner Vector to
    * 			the index of the data
    */
-  public static List<List<DataContainer>> filter(List<AbstractFilter> filter, List<DataContainer> data) {
+  public static List<List<DataContainer>> filter(List<Filter> filter, List<DataContainer> data) {
     List<List<DataContainer>>	result;
     List<DataContainer>		subresult;
-    AbstractFilter		threadFilter;
+    Filter			threadFilter;
     JobRunner<FilterJob> 	runner;
     JobList<FilterJob>		jobs;
     FilterJob			job;
     int				i;
     int				n;
 
-    result = new ArrayList<List<DataContainer>>();
+    result = new ArrayList<>();
 
     if (Performance.getMultiProcessingEnabled()) {
-      runner = new LocalJobRunner<FilterJob>();
-      jobs   = new JobList<FilterJob>();
+      runner = new LocalJobRunner<>();
+      jobs   = new JobList<>();
 
       // fill job list
       for (n = 0; n < filter.size(); n++) {
@@ -538,7 +536,7 @@ public abstract class AbstractFilter<T extends DataContainer>
       subresult = null;
       for (i = 0; i < jobs.size(); i++) {
 	if (i % data.size() == 0) {
-	  subresult = new ArrayList<DataContainer>();
+	  subresult = new ArrayList<>();
 	  result.add(subresult);
 	}
 	job = jobs.get(i);
@@ -552,7 +550,7 @@ public abstract class AbstractFilter<T extends DataContainer>
     }
     else {
       for (n = 0; n < filter.size(); n++) {
-	subresult = new ArrayList<DataContainer>();
+	subresult = new ArrayList<>();
 	result.add(subresult);
 	for (i = 0; i < data.size(); i++) {
 	  threadFilter = filter.get(n).shallowCopy(true);

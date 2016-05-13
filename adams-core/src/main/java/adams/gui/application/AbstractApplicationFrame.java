@@ -1249,6 +1249,16 @@ public abstract class AbstractApplicationFrame
   }
 
   /**
+   * Returns the commandline string.
+   *
+   * @return		 the commandline
+   */
+  @Override
+  public String toCommandLine() {
+    return OptionUtils.getCommandLine(this);
+  }
+
+  /**
    * Runs the application from the commandline.
    *
    * @param env		the environment class to use

@@ -15,7 +15,7 @@
 
 /*
  * NamedSetup.java
- * Copyright (C) 2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.filter;
@@ -62,7 +62,7 @@ public class NamedSetup<T extends DataContainer>
   protected adams.core.NamedSetup m_Setup;
 
   /** the actual scheme. */
-  protected AbstractFilter<T> m_ActualScheme;
+  protected Filter<T> m_ActualScheme;
 
   /**
    * Returns a string describing the object.
@@ -142,9 +142,9 @@ public class NamedSetup<T extends DataContainer>
    *
    * @return		the actual scheme to use
    */
-  protected AbstractFilter getActualScheme() {
+  protected Filter getActualScheme() {
     if (m_ActualScheme == null) {
-      m_ActualScheme = (AbstractFilter<T>) m_Setup.getSetup();
+      m_ActualScheme = (Filter<T>) m_Setup.getSetup();
       if (m_ActualScheme == null)
 	throw new IllegalStateException(
 	    "Failed to instantiate named setup '" + m_Setup + "'!");

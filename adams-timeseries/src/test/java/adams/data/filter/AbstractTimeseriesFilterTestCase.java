@@ -15,7 +15,7 @@
 
 /**
  * AbstractTimeseriesFilterTestCase.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.filter;
 
@@ -30,7 +30,7 @@ import adams.test.TimeseriesTestHelper;
  * @version $Revision$
  */
 public abstract class AbstractTimeseriesFilterTestCase
-  extends AbstractFilterTestCase<AbstractFilter, Timeseries> {
+  extends AbstractFilterTestCase<Filter, Timeseries> {
 
   /**
    * Constructs the test case. Called by subclasses.

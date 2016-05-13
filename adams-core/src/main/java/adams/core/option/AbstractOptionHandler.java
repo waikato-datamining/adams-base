@@ -22,8 +22,6 @@ package adams.core.option;
 
 import adams.core.logging.CustomLoggingLevelObject;
 import adams.core.logging.LoggingLevel;
-import adams.core.logging.LoggingLevelHandler;
-import adams.core.logging.LoggingObject;
 
 /**
  * Abstract superclass for classes that handle options.

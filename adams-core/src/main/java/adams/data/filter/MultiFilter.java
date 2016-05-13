@@ -15,7 +15,7 @@
 
 /*
  * MultiFilter.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.filter;
@@ -56,7 +56,7 @@ public class MultiFilter<T extends DataContainer>
   private static final long serialVersionUID = 805661569976845842L;
 
   /** the filters. */
-  protected AbstractFilter<T>[] m_Filters;
+  protected Filter<T>[] m_Filters;
 
   /**
    * Returns a string describing the object.
@@ -77,7 +77,7 @@ public class MultiFilter<T extends DataContainer>
 
     m_OptionManager.add(
 	    "filter", "subFilters",
-	    new AbstractFilter[]{new PassThrough<T>()});
+	    new Filter[]{new PassThrough<T>()});
   }
 
   /**
@@ -105,7 +105,7 @@ public class MultiFilter<T extends DataContainer>
    *
    * @param value	the filters to use
    */
-  public void setSubFilters(AbstractFilter<T>[] value) {
+  public void setSubFilters(Filter<T>[] value) {
     if (value != null) {
       m_Filters = value;
       updateDatabaseConnection();
@@ -122,7 +122,7 @@ public class MultiFilter<T extends DataContainer>
    *
    * @return		the filters
    */
-  public AbstractFilter<T>[] getSubFilters() {
+  public Filter<T>[] getSubFilters() {
     return m_Filters;
   }
 
@@ -131,7 +131,7 @@ public class MultiFilter<T extends DataContainer>
    */
   @Override
   protected void updateDatabaseConnection() {
-    for (AbstractFilter filter: m_Filters) {
+    for (Filter filter: m_Filters) {
       if (filter instanceof DatabaseConnectionHandler)
 	((DatabaseConnectionHandler) filter).setDatabaseConnection(getDatabaseConnection());
     }
@@ -149,7 +149,7 @@ public class MultiFilter<T extends DataContainer>
     int			i;
     T			input;
     T			output;
-    AbstractFilter<T>	filter;
+    Filter<T>		filter;
 
     input  = data;
     output = data;  // in case there are no filters provided

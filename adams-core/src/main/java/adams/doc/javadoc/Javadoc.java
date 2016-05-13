@@ -15,7 +15,7 @@
 
 /*
  * Javadoc.java
- * Copyright (C) 2006-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2006-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.doc.javadoc;
@@ -648,6 +648,16 @@ public abstract class Javadoc
    */
   @Override
   public String toString() {
+    return toCommandLine();
+  }
+
+  /**
+   * Returns the commandline string.
+   *
+   * @return		 the commandline
+   */
+  @Override
+  public String toCommandLine() {
     return OptionUtils.getCommandLine(this);
   }
 

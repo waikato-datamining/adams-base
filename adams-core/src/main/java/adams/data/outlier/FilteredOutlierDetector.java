@@ -15,19 +15,19 @@
 
 /*
  * FilteredOutlierDetector.java
- * Copyright (C) 2008-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.outlier;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import adams.data.container.DataContainer;
-import adams.data.filter.AbstractFilter;
+import adams.data.filter.Filter;
 import adams.db.AbstractDatabaseConnection;
 import adams.db.DatabaseConnection;
 import adams.db.DatabaseConnectionHandler;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -74,7 +74,7 @@ public class FilteredOutlierDetector<T extends DataContainer>
   private static final long serialVersionUID = 6570555834680774914L;
 
   /** the filter to use. */
-  protected AbstractFilter m_Filter;
+  protected Filter m_Filter;
 
   /** the detector to use. */
   protected AbstractOutlierDetector m_Detector;
@@ -156,7 +156,7 @@ public class FilteredOutlierDetector<T extends DataContainer>
    *
    * @param value	the filter to use
    */
-  public void setFilter(AbstractFilter value) {
+  public void setFilter(Filter value) {
     if (value != null) {
       m_Filter = value;
       updateDatabaseConnection();
@@ -173,7 +173,7 @@ public class FilteredOutlierDetector<T extends DataContainer>
    *
    * @return		the filter
    */
-  public AbstractFilter getFilter() {
+  public Filter getFilter() {
     return m_Filter;
   }
 

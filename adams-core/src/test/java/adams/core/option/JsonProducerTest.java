@@ -15,7 +15,7 @@
 
 /**
  * JsonProducerTest.java
- * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
@@ -71,7 +71,7 @@ public class JsonProducerTest
   public void testDeep() {
     adams.data.filter.MultiFilter handler = new adams.data.filter.MultiFilter();
     handler.setLoggingLevel(LoggingLevel.INFO);
-    adams.data.filter.AbstractFilter[] filters = new adams.data.filter.AbstractFilter[2];
+    adams.data.filter.Filter[] filters = new adams.data.filter.Filter[2];
     filters[0] = new adams.data.filter.PassThrough();
     filters[0].setLoggingLevel(LoggingLevel.FINE);
     filters[1] = new adams.data.filter.MultiFilter();

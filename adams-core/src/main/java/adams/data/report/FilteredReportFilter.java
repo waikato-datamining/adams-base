@@ -15,13 +15,13 @@
 
 /*
  * FilteredReportFilter.java
- * Copyright (C) 2010-2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.report;
 
 import adams.data.container.DataContainer;
-import adams.data.filter.AbstractFilter;
+import adams.data.filter.Filter;
 import adams.db.AbstractDatabaseConnection;
 import adams.db.DatabaseConnection;
 import adams.db.DatabaseConnectionHandler;
@@ -65,7 +65,7 @@ public class FilteredReportFilter<T extends DataContainer>
   private static final long serialVersionUID = 8646651693938769168L;
 
   /** the pre-filter for filtering the data. */
-  protected AbstractFilter m_DataFilter;
+  protected Filter m_DataFilter;
 
   /** the post-filter for filtering the report. */
   protected AbstractReportFilter m_ReportFilter;
@@ -115,7 +115,7 @@ public class FilteredReportFilter<T extends DataContainer>
    *
    * @param value	the data filter
    */
-  public void setDataFilter(adams.data.filter.AbstractFilter value) {
+  public void setDataFilter(adams.data.filter.Filter value) {
     m_DataFilter = value;
     updateDatabaseConnection();
     reset();
@@ -126,7 +126,7 @@ public class FilteredReportFilter<T extends DataContainer>
    *
    * @return		the data filter
    */
-  public adams.data.filter.AbstractFilter getDataFilter() {
+  public adams.data.filter.Filter getDataFilter() {
     return m_DataFilter;
   }
 

@@ -15,7 +15,7 @@
 
 /*
  * AbstractFilter.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -44,7 +44,7 @@ public abstract class AbstractFilter
   private static final long serialVersionUID = 4527040722924866539L;
 
   /** the filter to apply. */
-  protected adams.data.filter.AbstractFilter m_Filter;
+  protected adams.data.filter.Filter m_Filter;
 
   /**
    * Returns a string describing the object.
@@ -73,7 +73,7 @@ public abstract class AbstractFilter
    *
    * @param value	the filter
    */
-  public void setFilter(adams.data.filter.AbstractFilter value) {
+  public void setFilter(adams.data.filter.Filter value) {
     m_Filter = value;
     reset();
   }
@@ -83,7 +83,7 @@ public abstract class AbstractFilter
    *
    * @return		the filter
    */
-  public adams.data.filter.AbstractFilter getFilter() {
+  public adams.data.filter.Filter getFilter() {
     return m_Filter;
   }
 

@@ -15,7 +15,7 @@
 
 /**
  * ArrayConsumerTest.java
- * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
@@ -90,7 +90,7 @@ public class ArrayConsumerTest
   public void testConsumeDeep() {
     adams.data.filter.MultiFilter handler = new adams.data.filter.MultiFilter();
     handler.setLoggingLevel(LoggingLevel.INFO);
-    adams.data.filter.AbstractFilter[] filters = new adams.data.filter.AbstractFilter[2];
+    adams.data.filter.Filter[] filters = new adams.data.filter.Filter[2];
     filters[0] = new adams.data.filter.PassThrough();
     filters[0].setLoggingLevel(LoggingLevel.FINE);
     filters[1] = new adams.data.filter.MultiFilter();
@@ -117,7 +117,7 @@ public class ArrayConsumerTest
   public void testFromStringDeep() {
     adams.data.filter.MultiFilter handler = new adams.data.filter.MultiFilter();
     handler.setLoggingLevel(LoggingLevel.INFO);
-    adams.data.filter.AbstractFilter[] filters = new adams.data.filter.AbstractFilter[2];
+    adams.data.filter.Filter[] filters = new adams.data.filter.Filter[2];
     filters[0] = new adams.data.filter.PassThrough();
     filters[0].setLoggingLevel(LoggingLevel.FINE);
     filters[1] = new adams.data.filter.MultiFilter();

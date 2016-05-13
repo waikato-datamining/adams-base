@@ -15,12 +15,11 @@
 
 /*
  * AbstractPreFilter.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.filter;
 
-import adams.core.Mergeable;
 import adams.data.container.DataContainer;
 
 /**
@@ -31,14 +30,14 @@ import adams.data.container.DataContainer;
  * @version $Revision$
  * @param <T> the data to process
  */
-public abstract class AbstractPreFilter<T extends DataContainer & Mergeable>
+public abstract class AbstractPreFilter<T extends DataContainer>
   extends AbstractFilter<T> {
 
   /** for serialization. */
   private static final long serialVersionUID = -631871037799637776L;
 
   /** the filter to apply to the data first. */
-  protected AbstractFilter m_Filter;
+  protected Filter m_Filter;
 
   /**
    * Returns a string describing the object.
@@ -67,7 +66,7 @@ public abstract class AbstractPreFilter<T extends DataContainer & Mergeable>
    *
    * @return		the default
    */
-  protected AbstractFilter getDefaultFilter() {
+  protected Filter getDefaultFilter() {
     return new PassThrough();
   }
 
@@ -76,7 +75,7 @@ public abstract class AbstractPreFilter<T extends DataContainer & Mergeable>
    *
    * @param value 	the filter
    */
-  public void setFilter(AbstractFilter value) {
+  public void setFilter(Filter value) {
     m_Filter = value;
     reset();
   }
@@ -86,7 +85,7 @@ public abstract class AbstractPreFilter<T extends DataContainer & Mergeable>
    *
    * @return 		the filter
    */
-  public AbstractFilter getFilter() {
+  public Filter getFilter() {
     return m_Filter;
   }
 
@@ -117,11 +116,11 @@ public abstract class AbstractPreFilter<T extends DataContainer & Mergeable>
    * @return		the filtered data
    */
   protected T processData(T data) {
-    T			result;
-    T			filtered;
-    AbstractFilter<T>	filter;
+    T		result;
+    T		filtered;
+    Filter<T>	filter;
 
-    filter   = (AbstractFilter<T>) m_Filter.shallowCopy(true);
+    filter   = (Filter<T>) m_Filter.shallowCopy(true);
     filtered = filter.filter(data);
     filter.destroy();
 

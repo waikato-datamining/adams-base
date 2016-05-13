@@ -15,17 +15,17 @@
 
 /*
  * AbstractGlobalDataContainerFilter.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.filter;
 
-import java.util.HashSet;
-import java.util.Iterator;
-
 import adams.data.container.DataContainer;
 import adams.data.filter.event.GlobalDataContainerFilterChangeEvent;
 import adams.data.filter.event.GlobalDataContainerFilterChangeListener;
+
+import java.util.HashSet;
+import java.util.Iterator;
 
 /**
  * Ancestor for global filters that are used to filter data containers coming
@@ -38,10 +38,10 @@ import adams.data.filter.event.GlobalDataContainerFilterChangeListener;
 public abstract class AbstractGlobalDataContainerFilter<T extends DataContainer> {
 
   /** the filter to apply to the data before caching. */
-  protected AbstractFilter m_DefaultFilter;
+  protected Filter<T> m_DefaultFilter;
 
   /** the filter being used in this table object. */
-  protected AbstractFilter m_Filter;
+  protected Filter<T> m_Filter;
 
   /** the listeners in case of changes to the filter. */
   protected HashSet<GlobalDataContainerFilterChangeListener> m_ChangeListeners;
@@ -60,7 +60,7 @@ public abstract class AbstractGlobalDataContainerFilter<T extends DataContainer>
    *
    * @param value 	the filter
    */
-  public synchronized void setFilter(AbstractFilter value) {
+  public synchronized void setFilter(Filter value) {
     if ((m_DefaultFilter == null) || (!m_DefaultFilter.equals(value))) {
       m_DefaultFilter = value;
       setupFilter();
@@ -75,7 +75,7 @@ public abstract class AbstractGlobalDataContainerFilter<T extends DataContainer>
    *
    * @return 		the filter
    */
-  public final AbstractFilter getFilter() {
+  public final Filter getFilter() {
     if (m_DefaultFilter == null)
       return new PassThrough();
     else
@@ -103,14 +103,14 @@ public abstract class AbstractGlobalDataContainerFilter<T extends DataContainer>
    * @see		#m_Filter
    */
   public synchronized T filter(T c) {
-    AbstractFilter	filter;
+    Filter<T>	filter;
 
     // filter data
     if (m_Filter != null) {
       synchronized(m_Filter) {
 	filter = m_Filter.shallowCopy(true);
       }
-      c = (T) filter.filter(c);
+      c = filter.filter(c);
       filter.destroy();
     }
 

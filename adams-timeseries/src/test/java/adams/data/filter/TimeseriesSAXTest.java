@@ -15,7 +15,7 @@
 
 /**
  * TimeseriesSAXTest.java
- * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.filter;
 
@@ -64,7 +64,7 @@ public class TimeseriesSAXTest
    *
    * @return		the filter
    */
-  public AbstractFilter<Timeseries> getFilter() {
+  public Filter<Timeseries> getFilter() {
     return new TimeseriesSAX();
   }
 
@@ -90,7 +90,7 @@ public class TimeseriesSAXTest
    * @return		the setups
    */
   @Override
-  protected AbstractFilter[] getRegressionSetups() {
+  protected Filter[] getRegressionSetups() {
     MultiFilter[]	result;
     TimeseriesRowNorm row;
     TimeseriesSAX sax;
@@ -101,7 +101,7 @@ public class TimeseriesSAXTest
     
     result[0] = new MultiFilter();
     sax       = new TimeseriesSAX();
-    result[0].setSubFilters(new AbstractFilter[]{
+    result[0].setSubFilters(new Filter[]{
 	row,
 	sax
     });
@@ -110,7 +110,7 @@ public class TimeseriesSAXTest
     sax       = new TimeseriesSAX();
     sax.setNumBins(20);
     sax.setNumWindows(20);
-    result[1].setSubFilters(new AbstractFilter[]{
+    result[1].setSubFilters(new Filter[]{
 	row,
 	sax
     });
@@ -119,7 +119,7 @@ public class TimeseriesSAXTest
     sax       = new TimeseriesSAX();
     sax.setNumBins(5);
     sax.setNumWindows(5);
-    result[2].setSubFilters(new AbstractFilter[]{
+    result[2].setSubFilters(new Filter[]{
 	row,
 	sax
     });
@@ -127,7 +127,7 @@ public class TimeseriesSAXTest
     result[3] = new MultiFilter();
     sax       = new TimeseriesSAX();
     sax.setOutputLabels(false);
-    result[3].setSubFilters(new AbstractFilter[]{
+    result[3].setSubFilters(new Filter[]{
 	row,
 	sax
     });

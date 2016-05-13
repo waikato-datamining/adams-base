@@ -15,18 +15,18 @@
 
 /**
  * AbstractFilterScriptlet.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.scripting;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import adams.data.container.DataContainer;
 import adams.data.filter.AbstractFilter;
 import adams.db.DatabaseConnectionHandler;
 import adams.gui.visualization.container.AbstractContainerManager;
 import adams.gui.visualization.container.VisibilityContainerManager;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Abstract filter scriptlet.
@@ -59,7 +59,7 @@ public abstract class AbstractFilterScriptlet
    * @throws Exception 	if something goes wrong
    */
   public String process(String options, boolean overlay) throws Exception {
-    AbstractFilter 		runScheme;
+    adams.data.filter.Filter 	runScheme;
     int				i;
     List<DataContainer> 	runInput;
     List<DataContainer> 	runOutput;
@@ -72,7 +72,7 @@ public abstract class AbstractFilterScriptlet
       return "No visible containers!";
 
     // get data that is to be filtered
-    runInput = new ArrayList<DataContainer>();
+    runInput = new ArrayList<>();
     for (i = 0; i < manager.count(); i++) {
       if (((VisibilityContainerManager) manager).isVisible(i))
 	runInput.add((DataContainer) manager.get(i).getPayload());
@@ -90,7 +90,7 @@ public abstract class AbstractFilterScriptlet
 
     // pass through filter
     runOutput  = AbstractFilter.filter(runScheme.shallowCopy(true), runInput);
-    runOutputC = new ArrayList<DataContainer>();
+    runOutputC = new ArrayList<>();
     for (i = 0; i < runOutput.size(); i++)
       runOutputC.add(runOutput.get(i));
 

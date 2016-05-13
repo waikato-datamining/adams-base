@@ -15,7 +15,7 @@
 
 /**
  * AbstractFilterTestCase.java
- * Copyright (C) 2010-2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.filter;
 
@@ -32,7 +32,7 @@ import adams.test.TestHelper;
  * @param <A> the type of algorithm to use
  * @param <D> the type of data to filter
  */
-public abstract class AbstractFilterTestCase<A extends AbstractFilter, D extends DataContainer>
+public abstract class AbstractFilterTestCase<A extends Filter, D extends DataContainer>
   extends AbstractDataProcessorTestCase<A, D, D> {
 
   /**

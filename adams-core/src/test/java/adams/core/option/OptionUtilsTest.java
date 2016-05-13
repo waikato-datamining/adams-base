@@ -15,19 +15,19 @@
 
 /**
  * OptionUtilsTest.java
- * Copyright (C) 2010-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
-import java.util.Arrays;
-import java.util.Vector;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import adams.core.logging.LoggingLevel;
 import adams.data.baseline.SlidingWindow;
 import adams.env.Environment;
 import adams.test.AdamsTestCase;
+import junit.framework.Test;
+import junit.framework.TestSuite;
+
+import java.util.Arrays;
+import java.util.Vector;
 
 
 /**
@@ -75,7 +75,7 @@ public class OptionUtilsTest
     baseline.setLoggingLevel(LoggingLevel.FINE);
     filter.setBaselineCorrection(baseline);
 
-    Object obj = OptionUtils.forCommandLine(adams.data.filter.AbstractFilter.class, cmdline);
+    Object obj = OptionUtils.forCommandLine(adams.data.filter.Filter.class, cmdline);
     assertEquals("Class differs", filter.getClass(), obj.getClass());
 
     ArrayProducer prodFilter = new ArrayProducer();
@@ -102,7 +102,7 @@ public class OptionUtilsTest
     baseline.setLoggingLevel(LoggingLevel.FINE);
     filter.setBaselineCorrection(baseline);
 
-    Object obj = OptionUtils.forName(adams.data.filter.AbstractFilter.class, classname, options);
+    Object obj = OptionUtils.forName(adams.data.filter.Filter.class, classname, options);
     assertEquals("Class differs", filter.getClass(), obj.getClass());
 
     ArrayProducer prodFilter = new ArrayProducer();
@@ -128,7 +128,7 @@ public class OptionUtilsTest
     filter.setBaselineCorrection(baseline);
 
     String str = "adams.data.filter.BaselineCorrection -baseline \"adams.data.baseline.SlidingWindow -logging-level FINE -baseline adams.data.baseline.PassThrough\"";
-    assertEquals("objects differ (1)", filter, OptionUtils.forString(adams.data.filter.AbstractFilter.class, str));
+    assertEquals("objects differ (1)", filter, OptionUtils.forString(adams.data.filter.Filter.class, str));
 
     str =   "# some dummy comment\n"
           + "adams.data.filter.BaselineCorrection\n"
@@ -138,7 +138,7 @@ public class OptionUtilsTest
           + "\t\t\tFINE\n"
           + "\t\t\t-baseline\n"
           + "\t\t\t\tadams.data.baseline.PassThrough\n";
-    assertEquals("objects differ (2)", filter, OptionUtils.forString(adams.data.filter.AbstractFilter.class, str));
+    assertEquals("objects differ (2)", filter, OptionUtils.forString(adams.data.filter.Filter.class, str));
   }
 
   /**
@@ -160,47 +160,47 @@ public class OptionUtilsTest
   public void testHelpRequested() {
     String[] options = new String[]{};
     assertFalse("Shouldn't detect help", OptionUtils.helpRequested(options));
-    assertFalse("Shouldn't detect help", OptionUtils.helpRequested(new Vector<String>(Arrays.asList(options))));
+    assertFalse("Shouldn't detect help", OptionUtils.helpRequested(new Vector<>(Arrays.asList(options))));
 
     options = new String[]{"-H"};
     assertFalse("Shouldn't detect help", OptionUtils.helpRequested(options));
-    assertFalse("Shouldn't detect help", OptionUtils.helpRequested(new Vector<String>(Arrays.asList(options))));
+    assertFalse("Shouldn't detect help", OptionUtils.helpRequested(new Vector<>(Arrays.asList(options))));
 
     options = new String[]{"-Help"};
     assertFalse("Shouldn't detect help", OptionUtils.helpRequested(options));
-    assertFalse("Shouldn't detect help", OptionUtils.helpRequested(new Vector<String>(Arrays.asList(options))));
+    assertFalse("Shouldn't detect help", OptionUtils.helpRequested(new Vector<>(Arrays.asList(options))));
 
     options = new String[]{"-h"};
     assertTrue("Should have detected help", OptionUtils.helpRequested(options));
-    assertTrue("Should have detected help", OptionUtils.helpRequested(new Vector<String>(Arrays.asList(options))));
+    assertTrue("Should have detected help", OptionUtils.helpRequested(new Vector<>(Arrays.asList(options))));
 
     options = new String[]{"-help"};
     assertTrue("Should have detected help", OptionUtils.helpRequested(options));
-    assertTrue("Should have detected help", OptionUtils.helpRequested(new Vector<String>(Arrays.asList(options))));
+    assertTrue("Should have detected help", OptionUtils.helpRequested(new Vector<>(Arrays.asList(options))));
 
     options = new String[]{"-blah", "hello", "-h"};
     assertTrue("Should have detected help", OptionUtils.helpRequested(options));
-    assertTrue("Should have detected help", OptionUtils.helpRequested(new Vector<String>(Arrays.asList(options))));
+    assertTrue("Should have detected help", OptionUtils.helpRequested(new Vector<>(Arrays.asList(options))));
 
     options = new String[]{"-blah", "hello", "-help"};
     assertTrue("Should have detected help", OptionUtils.helpRequested(options));
-    assertTrue("Should have detected help", OptionUtils.helpRequested(new Vector<String>(Arrays.asList(options))));
+    assertTrue("Should have detected help", OptionUtils.helpRequested(new Vector<>(Arrays.asList(options))));
 
     options = new String[]{"-blah", "hello", "-h", "-some", "3"};
     assertTrue("Should have detected help", OptionUtils.helpRequested(options));
-    assertTrue("Should have detected help", OptionUtils.helpRequested(new Vector<String>(Arrays.asList(options))));
+    assertTrue("Should have detected help", OptionUtils.helpRequested(new Vector<>(Arrays.asList(options))));
 
     options = new String[]{"-blah", "hello", "-help", "-some", "3"};
     assertTrue("Should have detected help", OptionUtils.helpRequested(options));
-    assertTrue("Should have detected help", OptionUtils.helpRequested(new Vector<String>(Arrays.asList(options))));
+    assertTrue("Should have detected help", OptionUtils.helpRequested(new Vector<>(Arrays.asList(options))));
 
     options = new String[]{"-h", "-some", "3"};
     assertTrue("Should have detected help", OptionUtils.helpRequested(options));
-    assertTrue("Should have detected help", OptionUtils.helpRequested(new Vector<String>(Arrays.asList(options))));
+    assertTrue("Should have detected help", OptionUtils.helpRequested(new Vector<>(Arrays.asList(options))));
 
     options = new String[]{"-help", "-some", "3"};
     assertTrue("Should have detected help", OptionUtils.helpRequested(options));
-    assertTrue("Should have detected help", OptionUtils.helpRequested(new Vector<String>(Arrays.asList(options))));
+    assertTrue("Should have detected help", OptionUtils.helpRequested(new Vector<>(Arrays.asList(options))));
   }
 
   /**
@@ -263,7 +263,7 @@ public class OptionUtilsTest
     assertTrue(OptionUtils.hasFlag(optArray, "-B"));
     assertTrue(OptionUtils.hasFlag(optArray, "-I"));   // does not distinguish between flags and options with arguments
 
-    Vector<String> optVector = new Vector<String>(Arrays.asList(optArray));
+    Vector<String> optVector = new Vector<>(Arrays.asList(optArray));
     assertFalse(OptionUtils.hasFlag(optVector, "-C"));
     assertTrue(OptionUtils.hasFlag(optVector, "-B"));
     assertTrue(OptionUtils.hasFlag(optVector, "-I"));   // does not distinguish between flags and options with arguments
@@ -278,7 +278,7 @@ public class OptionUtilsTest
     assertEquals("-I", OptionUtils.getOption(optArray, "-B"));   // does not distinguish between flags and options with arguments
     assertEquals("6", OptionUtils.getOption(optArray, "-I"));
 
-    Vector<String> optVector = new Vector<String>(Arrays.asList(optArray));
+    Vector<String> optVector = new Vector<>(Arrays.asList(optArray));
     assertNull(OptionUtils.getOption(optVector, "-C"));
     assertEquals("-I", OptionUtils.getOption(optVector, "-B"));   // does not distinguish between flags and options with arguments
     assertEquals("6", OptionUtils.getOption(optVector, "-I"));

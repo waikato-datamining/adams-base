@@ -15,7 +15,7 @@
 
 /*
  * Jython.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.filter;
@@ -71,7 +71,7 @@ public class Jython
   private static final long serialVersionUID = 1304903578667689350L;
 
   /** the loaded script object. */
-  protected transient AbstractFilter m_FilterObject;
+  protected transient Filter m_FilterObject;
   
   /** the inline script. */
   protected JythonScript m_InlineScript;
@@ -160,7 +160,7 @@ public class Jython
     Object[]	result;
 
     result = adams.core.scripting.Jython.getSingleton().loadScriptObject(
-	AbstractFilter.class, 
+	Filter.class,
 	m_ScriptFile, 
 	m_InlineScript, 
 	m_ScriptOptions, 
@@ -190,7 +190,7 @@ public class Jython
   protected void checkData(DataContainer data) {
     super.checkData(data);
 
-    m_FilterObject = (AbstractFilter) m_ScriptObject;
+    m_FilterObject = (Filter) m_ScriptObject;
   }
 
   /**

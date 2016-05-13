@@ -15,7 +15,7 @@
 
 /*
  * AbstractFrameWithOptionHandling.java
- * Copyright (C) 2009-2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -166,6 +166,16 @@ public abstract class AbstractFrameWithOptionHandling
    */
   public String homeTipText() {
     return "The directory to use as the project's home directory, overriding the automatically determined one.";
+  }
+
+  /**
+   * Returns the commandline string.
+   *
+   * @return		 the commandline
+   */
+  @Override
+  public String toCommandLine() {
+    return OptionUtils.getCommandLine(this);
   }
 
   /**

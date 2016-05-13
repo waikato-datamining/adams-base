@@ -15,7 +15,7 @@
 
 /**
  * MultiFilterTest.java
- * Copyright (C) 2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.filter;
 
@@ -59,8 +59,8 @@ public class MultiFilterTest
    *
    * @return		the setups
    */
-  protected AbstractFilter[] getRegressionSetups() {
-    return new AbstractFilter[0];
+  protected Filter[] getRegressionSetups() {
+    return new Filter[0];
   }
 
   /**

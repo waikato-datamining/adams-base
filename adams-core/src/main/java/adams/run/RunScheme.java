@@ -15,7 +15,7 @@
 
 /*
  * RunScheme.java
- * Copyright (C) 2008-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.run;
@@ -150,6 +150,16 @@ public abstract class RunScheme
 
     getLogger().info("\n--> Post-run");
     postRun();
+  }
+
+  /**
+   * Returns the commandline string.
+   *
+   * @return		 the commandline
+   */
+  @Override
+  public String toCommandLine() {
+    return OptionUtils.getCommandLine(this);
   }
 
   /**

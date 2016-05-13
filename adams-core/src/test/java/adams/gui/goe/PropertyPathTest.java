@@ -19,18 +19,18 @@
  */
 package adams.gui.goe;
 
-import java.util.ArrayList;
-
 import adams.core.discovery.PropertyPath;
+import adams.core.discovery.PropertyPath.Path;
 import adams.core.logging.LoggingLevel;
-import adams.data.filter.AbstractFilter;
 import adams.data.filter.BaselineCorrection;
+import adams.data.filter.Filter;
 import adams.data.filter.MultiFilter;
 import adams.data.filter.NamedSetup;
 import adams.data.filter.RemoveNoise;
 import adams.data.filter.ReportFilter;
-import adams.core.discovery.PropertyPath.Path;
 import adams.test.AdamsTestCase;
+
+import java.util.ArrayList;
 
 /**
  * Tests the {@link PropertyPath} class.
@@ -90,7 +90,7 @@ public class PropertyPathTest
     RemoveNoise noise = new RemoveNoise();
     ReportFilter report = new ReportFilter();
     MultiFilter multi = new MultiFilter();
-    multi.setSubFilters(new AbstractFilter[]{
+    multi.setSubFilters(new Filter[]{
 	base,
 	noise,
 	report
@@ -157,7 +157,7 @@ public class PropertyPathTest
     RemoveNoise noise = new RemoveNoise();
     ReportFilter report = new ReportFilter();
     MultiFilter multi = new MultiFilter();
-    multi.setSubFilters(new AbstractFilter[]{
+    multi.setSubFilters(new Filter[]{
 	base,
 	noise,
 	report

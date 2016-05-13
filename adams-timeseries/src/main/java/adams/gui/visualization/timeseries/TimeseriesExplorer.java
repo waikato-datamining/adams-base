@@ -28,7 +28,6 @@ import adams.core.base.BaseString;
 import adams.core.io.PlaceholderFile;
 import adams.core.logging.LoggingLevel;
 import adams.core.option.OptionUtils;
-import adams.data.filter.AbstractFilter;
 import adams.data.io.input.AbstractDataContainerReader;
 import adams.data.timeseries.PeriodicityHelper;
 import adams.data.timeseries.PeriodicityType;
@@ -197,7 +196,7 @@ public class TimeseriesExplorer
   protected GenericObjectEditor m_GenericObjectEditorCorrelationStatistics;
 
   /** the current filter. */
-  protected AbstractFilter<Timeseries> m_CurrentFilter;
+  protected adams.data.filter.Filter<Timeseries> m_CurrentFilter;
 
   /** indicates whether the filtered data was overlayed over the original. */
   protected boolean m_FilterOverlayOriginalData;

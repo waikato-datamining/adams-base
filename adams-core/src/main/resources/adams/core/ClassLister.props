@@ -98,7 +98,11 @@ adams.data.featureconverter.AbstractFeatureConverter=\
   adams.data.featureconverter
 
 # filters
-adams.data.filter.AbstractFilter=\
+adams.data.filter.Filter=\
+  adams.data.filter
+
+# batch filters
+adams.data.filter.BatchFilter=\
   adams.data.filter
 
 # the ID generators

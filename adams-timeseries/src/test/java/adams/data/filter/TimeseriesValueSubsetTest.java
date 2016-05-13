@@ -15,7 +15,7 @@
 
 /**
  * TimeseriesValueSubsetTest.java
- * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.filter;
 
@@ -48,7 +48,7 @@ public class TimeseriesValueSubsetTest
    *
    * @return		the filter
    */
-  public AbstractFilter<Timeseries> getFilter() {
+  public Filter<Timeseries> getFilter() {
     return new TimeseriesValueSubset();
   }
 
@@ -74,7 +74,7 @@ public class TimeseriesValueSubsetTest
    * @return		the setups
    */
   @Override
-  protected AbstractFilter[] getRegressionSetups() {
+  protected Filter[] getRegressionSetups() {
     TimeseriesValueSubset[]	result;
 
     result = new TimeseriesValueSubset[4];
