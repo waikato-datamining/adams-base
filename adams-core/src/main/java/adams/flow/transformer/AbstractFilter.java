@@ -22,6 +22,7 @@ package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
 import adams.data.container.DataContainer;
+import adams.data.filter.BatchFilter;
 import adams.db.DatabaseConnectionHandler;
 import adams.flow.core.Token;
 import adams.flow.provenance.ActorType;
@@ -29,6 +30,11 @@ import adams.flow.provenance.Provenance;
 import adams.flow.provenance.ProvenanceContainer;
 import adams.flow.provenance.ProvenanceInformation;
 import adams.flow.provenance.ProvenanceSupporter;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Ancestor for domain-specific filter transformers.
@@ -108,6 +114,44 @@ public abstract class AbstractFilter
   }
 
   /**
+   * Returns the class that the consumer accepts.
+   *
+   * @return		the default DataContainer class for the project
+   */
+  public Class[] accepts() {
+    List<Class> 	result;
+
+    result = new ArrayList<>();
+    result.addAll(Arrays.asList(super.accepts()));
+
+    if (m_Filter instanceof BatchFilter) {
+      result.add(DataContainer[].class);
+      result.add(Array.newInstance(getDataContainerClass(), 0).getClass());
+    }
+
+    return result.toArray(new Class[result.size()]);
+  }
+
+  /**
+   * Returns the class of objects that it generates.
+   *
+   * @return		the default DataContainer class for the project
+   */
+  public Class[] generates() {
+    List<Class> 	result;
+
+    result = new ArrayList<>();
+    result.addAll(Arrays.asList(super.generates()));
+
+    if (m_Filter instanceof BatchFilter) {
+      result.add(DataContainer[].class);
+      result.add(Array.newInstance(getDataContainerClass(), 0).getClass());
+    }
+
+    return result.toArray(new Class[result.size()]);
+  }
+
+  /**
    * Returns the data container class in use.
    *
    * @return		the container class
@@ -149,15 +193,25 @@ public abstract class AbstractFilter
   @Override
   protected String doExecute() {
     String		result;
-    DataContainer	chr;
+    DataContainer 	cont;
+    DataContainer[]	conts;
 
     result = null;
 
-    chr = m_Filter.filter((DataContainer) m_InputToken.getPayload());
-    if (chr == null)
-      result = "No data obtained from filter: " + m_InputToken;
-    else
-      m_OutputToken = new Token(chr);
+    if (m_InputToken.getPayload() instanceof DataContainer) {
+      cont = m_Filter.filter((DataContainer) m_InputToken.getPayload());
+      if (cont == null)
+	result = "No data obtained from filter: " + m_InputToken;
+      else
+	m_OutputToken = new Token(cont);
+    }
+    else if ((m_Filter instanceof BatchFilter) && (m_InputToken.getPayload().getClass().isArray())) {
+      conts = ((BatchFilter) m_Filter).batchFilter((DataContainer[]) m_InputToken.getPayload());
+      if (conts == null)
+	result = "No data obtained from filter: " + m_InputToken;
+      else
+	m_OutputToken = new Token(conts);
+    }
 
     if (m_OutputToken != null)
       updateProvenance(m_OutputToken);

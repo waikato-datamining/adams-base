@@ -15,12 +15,14 @@
 
 /*
  * PassThrough.java
- * Copyright (C) 2009 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.filter;
 
 import adams.data.container.DataContainer;
+
+import java.lang.reflect.Array;
 
 /**
  <!-- globalinfo-start -->
@@ -42,7 +44,7 @@ import adams.data.container.DataContainer;
  * @param <T> the type of data to pass through the filter
  */
 public class PassThrough<T extends DataContainer>
-  extends AbstractFilter<T> {
+  extends AbstractBatchFilter<T> {
 
   /** for serialization. */
   private static final long serialVersionUID = -3576292594181295517L;
@@ -64,5 +66,23 @@ public class PassThrough<T extends DataContainer>
    */
   protected T processData(T data) {
     return (T) data.getClone();
+  }
+
+  /**
+   * Performs no filtering at all, just uses a copy of the input as filtered data.
+   *
+   * @param data	the data to filter
+   * @return		the filtered data
+   */
+  @Override
+  protected T[] processBatchData(T[] data) {
+    T[]		result;
+    int		i;
+
+    result = (T[]) Array.newInstance(data.getClass().getComponentType(), data.length);
+    for (i = 0; i < data.length; i++)
+      result[i] = (T) data[i].getClone();
+
+    return result;
   }
 }
