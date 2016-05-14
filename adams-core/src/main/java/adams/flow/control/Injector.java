@@ -15,14 +15,10 @@
 
 /*
  * Injector.java
- * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
-
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.List;
 
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
@@ -31,6 +27,10 @@ import adams.data.conversion.StringToString;
 import adams.flow.core.ControlActor;
 import adams.flow.core.Token;
 import adams.flow.transformer.AbstractTransformer;
+
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -77,8 +77,19 @@ import adams.flow.transformer.AbstractTransformer;
  * </pre>
  * 
  * <pre>-silent &lt;boolean&gt; (property: silent)
- * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console.
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-type &lt;STRING|STORAGE&gt; (property: type)
+ * &nbsp;&nbsp;&nbsp;The type of data to inject.
+ * &nbsp;&nbsp;&nbsp;default: STRING
+ * </pre>
+ * 
+ * <pre>-location &lt;BEFORE|AFTER|INPLACE&gt; (property: location)
+ * &nbsp;&nbsp;&nbsp;The location where to inject the data.
+ * &nbsp;&nbsp;&nbsp;default: AFTER
  * </pre>
  * 
  * <pre>-injection &lt;java.lang.String&gt; (property: injection)
@@ -87,20 +98,20 @@ import adams.flow.transformer.AbstractTransformer;
  * &nbsp;&nbsp;&nbsp;default: inject_me
  * </pre>
  * 
- * <pre>-location &lt;BEFORE|AFTER&gt; (property: location)
- * &nbsp;&nbsp;&nbsp;The location where to inject the string.
- * &nbsp;&nbsp;&nbsp;default: AFTER
+ * <pre>-conversion &lt;adams.data.conversion.ConversionFromString&gt; (property: conversion)
+ * &nbsp;&nbsp;&nbsp;The conversion to apply to the string before injecting it.
+ * &nbsp;&nbsp;&nbsp;default: adams.data.conversion.StringToString
+ * </pre>
+ * 
+ * <pre>-storage-name &lt;adams.flow.control.StorageName&gt; (property: storageName)
+ * &nbsp;&nbsp;&nbsp;The name of the storage item to inject.
+ * &nbsp;&nbsp;&nbsp;default: storage
  * </pre>
  * 
  * <pre>-nth &lt;int&gt; (property: everyNth)
  * &nbsp;&nbsp;&nbsp;The number of tokens after which the injection takes place.
  * &nbsp;&nbsp;&nbsp;default: 1
  * &nbsp;&nbsp;&nbsp;minimum: 1
- * </pre>
- * 
- * <pre>-conversion &lt;adams.data.conversion.ConversionFromString&gt; (property: conversion)
- * &nbsp;&nbsp;&nbsp;The conversion to apply to the string before injecting it.
- * &nbsp;&nbsp;&nbsp;default: adams.data.conversion.StringToString
  * </pre>
  * 
  <!-- options-end -->
@@ -122,6 +133,19 @@ public class Injector
   public final static String BACKUP_QUEUE = "queue";
 
   /**
+   * Enumeration of what type of data to inject.
+   *
+   * @author  fracpete (fracpete at waikato dot ac dot nz)
+   * @version $Revision$
+   */
+  public enum DataType {
+    /** the specified string. */
+    STRING,
+    /** the specified storage item. */
+    STORAGE
+  }
+
+  /**
    * Enumeration for where to inject the String.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -131,20 +155,28 @@ public class Injector
     /** before the current token. */
     BEFORE,
     /** after the current token. */
-    AFTER
+    AFTER,
+    /** replace the current token. */
+    INPLACE
   }
 
-  /** the string to inject. */
-  protected String m_Injection;
+  /** the data to inject. */
+  protected DataType m_Type;
 
   /** where to inject the string. */
   protected Location m_Location;
+
+  /** the string to inject. */
+  protected String m_Injection;
 
   /** every nth token the string will get injected. */
   protected int m_EveryNth;
 
   /** the conversion for turning the string into another object type. */
   protected ConversionFromString m_Conversion;
+
+  /** the storage item. */
+  protected StorageName m_StorageName;
 
   /** the strings to output. */
   protected List m_Queue;
@@ -173,20 +205,28 @@ public class Injector
     super.defineOptions();
 
     m_OptionManager.add(
-	    "injection", "injection",
-	    "inject_me");
+      "type", "type",
+      DataType.STRING);
 
     m_OptionManager.add(
-	    "location", "location",
-	    Location.AFTER);
+      "location", "location",
+      Location.AFTER);
 
     m_OptionManager.add(
-	    "nth", "everyNth",
-	    1, 1, null);
+      "injection", "injection",
+      "inject_me");
 
     m_OptionManager.add(
-	    "conversion", "conversion",
-	    new StringToString());
+      "conversion", "conversion",
+      new StringToString());
+
+    m_OptionManager.add(
+      "storage-name", "storageName",
+      new StorageName());
+
+    m_OptionManager.add(
+      "nth", "everyNth",
+      1, 1, null);
   }
 
   /**
@@ -198,10 +238,22 @@ public class Injector
   public String getQuickInfo() {
     String    result;
 
-    result  = QuickInfoHelper.toString(this, "injection", (m_Injection.length() > 0 ? m_Injection : "-none-"));
+    result  = QuickInfoHelper.toString(this, "type", m_Type, "type: ");
     result += QuickInfoHelper.toString(this, "location", m_Location, ", location: ");
+    if (!getOptionManager().hasVariableForProperty("type")) {
+      switch (m_Type) {
+	case STRING:
+	  result += QuickInfoHelper.toString(this, "injection", (m_Injection.length() > 0 ? m_Injection : "-none-"), ", inject: ");
+	  result += QuickInfoHelper.toString(this, "conversion", m_Conversion, ", conversion: ");
+	  break;
+	case STORAGE:
+	  result += QuickInfoHelper.toString(this, "storageName", m_StorageName, ", storage: ");
+	  break;
+	default:
+	  throw new IllegalStateException("Unhandled data type: " + m_Type);
+      }
+    }
     result += QuickInfoHelper.toString(this, "everyNth", m_EveryNth, ", every: ");
-    result += QuickInfoHelper.toString(this, "conversion", m_Conversion, ", conversion: ");
 
     return result;
   }
@@ -214,6 +266,64 @@ public class Injector
     super.initialize();
 
     m_Queue = new ArrayList();
+  }
+
+  /**
+   * Sets the type of data to inject.
+   *
+   * @param value	the type
+   */
+  public void setType(DataType value) {
+    m_Type = value;
+    reset();
+  }
+
+  /**
+   * Returns the type of data to inject.
+   *
+   * @return		the type
+   */
+  public DataType getType() {
+    return m_Type;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String typeTipText() {
+    return "The type of data to inject.";
+  }
+
+  /**
+   * Sets the location where to inject the data.
+   *
+   * @param value	the location
+   */
+  public void setLocation(Location value) {
+    m_Location = value;
+    reset();
+  }
+
+  /**
+   * Returns the location where to inject the data.
+   *
+   * @return		the location
+   */
+  public Location getLocation() {
+    return m_Location;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String locationTipText() {
+    return "The location where to inject the data.";
   }
 
   /**
@@ -246,22 +356,22 @@ public class Injector
   }
 
   /**
-   * Sets the location where to inject the string.
+   * Sets the name of the storage item to inject.
    *
-   * @param value	the location
+   * @param value	the name
    */
-  public void setLocation(Location value) {
-    m_Location = value;
+  public void setStorageName(StorageName value) {
+    m_StorageName = value;
     reset();
   }
 
   /**
-   * Returns the location wher to inject the string.
+   * Returns the name of the storage item to inject.
    *
-   * @return		the location
+   * @return		the name
    */
-  public Location getLocation() {
-    return m_Location;
+  public StorageName getStorageName() {
+    return m_StorageName;
   }
 
   /**
@@ -270,8 +380,8 @@ public class Injector
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String locationTipText() {
-    return "The location where to inject the string.";
+  public String storageNameTipText() {
+    return "The name of the storage item to inject.";
   }
 
   /**
@@ -426,27 +536,50 @@ public class Injector
 
     result = null;
 
+    m_Queue.clear();
     m_Counter++;
 
-    m_Queue.add(m_InputToken.getPayload());
-
     if (m_Counter % m_EveryNth == 0) {
-      obj = m_Injection;
-      if (!(m_Conversion instanceof StringToString)) {
-        m_Conversion.setInput(obj);
-        result = m_Conversion.convert();
-        if (result == null)
-          obj = m_Conversion.getOutput();
-        m_Conversion.cleanUp();
+      switch (m_Type) {
+	case STRING:
+	  obj = m_Injection;
+	  if (!(m_Conversion instanceof StringToString)) {
+	    m_Conversion.setInput(obj);
+	    result = m_Conversion.convert();
+	    if (result == null)
+	      obj = m_Conversion.getOutput();
+	    m_Conversion.cleanUp();
+	  }
+	  break;
+	case STORAGE:
+	  obj = getStorageHandler().getStorage().get(m_StorageName);
+	  if (obj == null)
+	    result = "Failed to obtain storage item: " + m_StorageName;
+	  break;
+	default:
+	  throw new IllegalStateException("Unhandled data type: " + m_Type);
       }
+
       if (result == null) {
-        if (m_Location == Location.BEFORE)
-          m_Queue.add(0, obj);
-        else if (m_Location == Location.AFTER)
-          m_Queue.add(obj);
-        else
-          result = "Unhandled location: " + m_Location;
+	switch (m_Location) {
+	  case BEFORE:
+	    m_Queue.add(obj);
+	    m_Queue.add(m_InputToken.getPayload());
+	    break;
+	  case AFTER:
+	    m_Queue.add(m_InputToken.getPayload());
+	    m_Queue.add(obj);
+	    break;
+	  case INPLACE:
+	    m_Queue.add(obj);
+	    break;
+	  default:
+	    throw new IllegalStateException("Unhandled location: " + m_Location);
+	}
       }
+    }
+    else {
+      m_Queue.add(m_InputToken.getPayload());
     }
 
     return result;

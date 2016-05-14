@@ -1,0 +1,15 @@
+# Project: adams
+# Date: 2016-05-15 08:55:51
+# User: fracpete
+# Charset: UTF-8
+adams.flow.control.Flow -annotation "Uses the Injector control actor to replace tokens processed with the ArrayProcess actor." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.source.ForLoop -upper 100 -output-array true
+ adams.flow.control.ArrayProcess -array-class java.lang.Double
+  adams.flow.transformer.Convert -conversion adams.data.conversion.IntToDouble
+  adams.flow.transformer.SetStorageValue -storage-name data
+  adams.flow.control.ConditionalTee -name calc -condition "adams.flow.condition.bool.Expression -expression \"sin(X) >= 0\""
+   adams.flow.transformer.MathExpression -expression sqrt(X)
+   adams.flow.transformer.SetStorageValue -storage-name data
+  adams.flow.control.Injector -type STORAGE -location INPLACE -conversion adams.data.conversion.StringToString -storage-name data
+ adams.flow.transformer.ArrayToSequence
+ adams.flow.sink.Display -writer adams.data.io.output.NullWriter
