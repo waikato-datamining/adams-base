@@ -141,7 +141,7 @@ public abstract class AbstractFilter
    * 			displaying in the GUI or for listing the options.
    */
   public String variableNameTipText() {
-    return "The variable to monitor.";
+    return "The variable to monitor for resetting trainable batch filters.";
   }
 
   /**
