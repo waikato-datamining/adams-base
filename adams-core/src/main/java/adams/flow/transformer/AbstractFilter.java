@@ -21,10 +21,15 @@
 package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
+import adams.core.VariableName;
 import adams.data.container.DataContainer;
 import adams.data.filter.BatchFilter;
+import adams.data.filter.TrainableBatchFilter;
 import adams.db.DatabaseConnectionHandler;
+import adams.event.VariableChangeEvent;
+import adams.event.VariableChangeEvent.Type;
 import adams.flow.core.Token;
+import adams.flow.core.VariableMonitor;
 import adams.flow.provenance.ActorType;
 import adams.flow.provenance.Provenance;
 import adams.flow.provenance.ProvenanceContainer;
@@ -44,13 +49,16 @@ import java.util.List;
  */
 public abstract class AbstractFilter
   extends AbstractDataContainerTransformer
-  implements ProvenanceSupporter {
+  implements ProvenanceSupporter, VariableMonitor {
 
   /** for serialization. */
   private static final long serialVersionUID = 4527040722924866539L;
 
   /** the filter to apply. */
   protected adams.data.filter.Filter m_Filter;
+
+  /** the variable to listen to. */
+  protected VariableName m_VariableName;
 
   /**
    * Returns a string describing the object.
@@ -70,8 +78,12 @@ public abstract class AbstractFilter
     super.defineOptions();
 
     m_OptionManager.add(
-	    "filter", "filter",
-	    new adams.data.filter.PassThrough());
+      "filter", "filter",
+      new adams.data.filter.PassThrough());
+
+    m_OptionManager.add(
+      "var-name", "variableName",
+      new VariableName());
   }
 
   /**
@@ -104,13 +116,47 @@ public abstract class AbstractFilter
   }
 
   /**
+   * Sets the name of the variable to monitor.
+   *
+   * @param value	the name
+   */
+  public void setVariableName(VariableName value) {
+    m_VariableName = value;
+    reset();
+  }
+
+  /**
+   * Returns the name of the variable to monitor.
+   *
+   * @return		the name
+   */
+  public VariableName getVariableName() {
+    return m_VariableName;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String variableNameTipText() {
+    return "The variable to monitor.";
+  }
+
+  /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
    */
   @Override
   public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "filter", m_Filter);
+    String	result;
+
+    result  = QuickInfoHelper.toString(this, "filter", m_Filter);
+    result += QuickInfoHelper.toString(this, "variableName", m_VariableName.paddedValue(), ", monitor: ");
+
+    return result;
   }
 
   /**
@@ -167,6 +213,24 @@ public abstract class AbstractFilter
   protected abstract adams.db.AbstractDatabaseConnection getDatabaseConnection();
 
   /**
+   * Gets triggered when a variable changed (added, modified, removed).
+   *
+   * @param e		the event
+   */
+  @Override
+  public void variableChanged(VariableChangeEvent e) {
+    super.variableChanged(e);
+    if ((e.getType() == Type.MODIFIED) || (e.getType() == Type.ADDED)) {
+      if (e.getName().equals(m_VariableName.getValue())) {
+	if (m_Filter instanceof TrainableBatchFilter)
+	  ((TrainableBatchFilter) m_Filter).resetFilter();
+        if (isLoggingEnabled())
+          getLogger().info("Reset 'trainable filter'");
+      }
+    }
+  }
+
+  /**
    * Initializes the item for flow execution.
    *
    * @return		null if everything is fine, otherwise error message
@@ -192,9 +256,11 @@ public abstract class AbstractFilter
    */
   @Override
   protected String doExecute() {
-    String		result;
-    DataContainer 	cont;
-    DataContainer[]	conts;
+    String			result;
+    DataContainer 		cont;
+    DataContainer[]		conts;
+    BatchFilter			bfilter;
+    TrainableBatchFilter 	tfilter;
 
     result = null;
 
@@ -206,7 +272,16 @@ public abstract class AbstractFilter
 	m_OutputToken = new Token(cont);
     }
     else if ((m_Filter instanceof BatchFilter) && (m_InputToken.getPayload().getClass().isArray())) {
-      conts = ((BatchFilter) m_Filter).batchFilter((DataContainer[]) m_InputToken.getPayload());
+      bfilter = (BatchFilter) m_Filter;
+      if (bfilter instanceof TrainableBatchFilter) {
+	tfilter = (TrainableBatchFilter) bfilter;
+	if (!tfilter.isTrained()) {
+	  if (isLoggingEnabled())
+	    getLogger().info("Training filter with input data");
+	  tfilter.trainFilter((DataContainer[]) m_InputToken.getPayload());
+	}
+      }
+      conts = bfilter.batchFilter((DataContainer[]) m_InputToken.getPayload());
       if (conts == null)
 	result = "No data obtained from filter: " + m_InputToken;
       else
