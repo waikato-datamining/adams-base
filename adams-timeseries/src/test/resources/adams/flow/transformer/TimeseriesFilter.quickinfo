@@ -1,1 +1,1 @@
-PassThrough
+PassThrough, monitor: @{variable}
