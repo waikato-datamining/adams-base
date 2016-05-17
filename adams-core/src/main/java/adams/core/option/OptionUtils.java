@@ -15,7 +15,7 @@
 
 /**
  * OptionUtils.java
- * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
@@ -389,7 +389,9 @@ public class OptionUtils {
 	escape = true;
 
       for (n = 0; n < optionArray[i].length(); n++) {
-	if (Character.isWhitespace(optionArray[i].charAt(n))) {
+        if ( Character.isWhitespace(optionArray[i].charAt(n))
+          || (optionArray[i].charAt(n) == '"')
+          || (optionArray[i].charAt(n) == '\'') ) {
 	  escape = true;
 	  break;
 	}
