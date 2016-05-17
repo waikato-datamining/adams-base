@@ -15,18 +15,18 @@
 
 /**
  * TimeZoneHelper.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.management;
+
+import adams.core.Properties;
+import adams.env.Environment;
+import adams.env.TimeZoneDefinition;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.TimeZone;
-
-import adams.core.Properties;
-import adams.env.Environment;
-import adams.env.TimeZoneDefinition;
 
 /**
  * Helper class for timezone setup.
@@ -66,7 +66,8 @@ public class TimeZoneHelper {
    * Initializes the timezone with the current settings.
    */
   public void initializeTimezone() {
-    TimeZone.setDefault(TimeZone.getTimeZone(getTimezone()));
+    if (!getTimezone().equals(DEFAULT_TIMEZONE))
+      TimeZone.setDefault(TimeZone.getTimeZone(getTimezone()));
   }
 
   /**
@@ -141,7 +142,7 @@ public class TimeZoneHelper {
   /**
    * Returns the timezone as string.
    *
-   * @param object	the timezone object to convert
+   * @param tz		the timezone object to convert
    * @return		the generated string
    */
   public static String toString(TimeZone tz) {
@@ -175,7 +176,7 @@ public class TimeZoneHelper {
   public static String[] getIDs() {
     ArrayList<String>	result;
     
-    result = new ArrayList<String>(Arrays.asList(TimeZone.getAvailableIDs().clone()));
+    result = new ArrayList<>(Arrays.asList(TimeZone.getAvailableIDs().clone()));
     Collections.sort(result);
     result.add(0, TimeZoneHelper.DEFAULT_TIMEZONE);
     
