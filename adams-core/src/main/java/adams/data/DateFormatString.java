@@ -15,7 +15,7 @@
 
 /**
  * DateFormatString.java
- * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.data;
 
@@ -23,6 +23,8 @@ import adams.core.Constants;
 import adams.core.DateFormat;
 import adams.core.HelpProvider;
 import adams.core.base.AbstractBaseString;
+
+import java.util.TimeZone;
 
 /**
  * Wrapper for date/time formats.
@@ -97,7 +99,22 @@ public class DateFormatString
   public DateFormat toDateFormat() {
     return new DateFormat(getValue());
   }
-  
+
+  /**
+   * Returns a configured {@link DateFormat} object.
+   *
+   * @param tz		the timezone to use
+   * @return		the configured object
+   */
+  public DateFormat toDateFormat(TimeZone tz) {
+    DateFormat	result;
+
+    result = new DateFormat(getValue());
+    result.setTimeZone(tz);
+
+    return result;
+  }
+
   /**
    * Returns a URL with additional information.
    * 
