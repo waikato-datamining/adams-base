@@ -20,6 +20,7 @@
 package adams.data.io.input;
 
 import adams.core.ClassLister;
+import adams.core.Utils;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
 import adams.core.option.AbstractOptionHandler;
@@ -170,7 +171,7 @@ public abstract class AbstractFlowReader
     }
     catch (Exception e) {
       result = null;
-      getLogger().log(Level.SEVERE, "Failed to read node from: " + filename, e);
+      addError("Failed to read node from: " + filename, e);
     }
     finally {
       if (!(this instanceof ChunkedSpreadSheetReader)) {
@@ -210,7 +211,7 @@ public abstract class AbstractFlowReader
     }
     catch (Exception e) {
       result = null;
-      getLogger().log(Level.SEVERE, "Failed to read node from input stream!", e);
+      addError("Failed to read node from input stream!", e);
     }
 
     return result;
@@ -244,7 +245,7 @@ public abstract class AbstractFlowReader
     }
     catch (Exception e) {
       result = null;
-      getLogger().log(Level.SEVERE, "Failed to read node from reader!", e);
+      addError("Failed to read node from reader!", e);
     }
 
     return result;
@@ -335,8 +336,7 @@ public abstract class AbstractFlowReader
     }
     catch (Exception e) {
       result = null;
-      getLogger().log(Level.SEVERE, "Failed to read actor from file: " + filename, e);
-      e.printStackTrace();
+      addError("Failed to read actor from file: " + filename, e);
     }
     finally {
       if (!(this instanceof ChunkedSpreadSheetReader)) {
@@ -376,7 +376,7 @@ public abstract class AbstractFlowReader
     }
     catch (Exception e) {
       result = null;
-      getLogger().log(Level.SEVERE, "Failed to read actor from input stream!", e);
+      addError("Failed to read actor from input stream!", e);
     }
 
     return result;
@@ -410,7 +410,7 @@ public abstract class AbstractFlowReader
     }
     catch (Exception e) {
       result = null;
-      getLogger().log(Level.SEVERE, "Failed to read actor from reader!", e);
+      addError("Failed to read actor from reader!", e);
     }
 
     return result;
@@ -454,7 +454,33 @@ public abstract class AbstractFlowReader
   protected Actor doReadActor(InputStream in) {
     return null;
   }
-  
+
+  /**
+   * Adds the warning message.
+   *
+   * @param msg		the warning message to add
+   */
+  protected void addWarning(String msg) {
+    addWarning(msg, null);
+  }
+
+  /**
+   * Adds the warning message and exception.
+   *
+   * @param msg		the warning message to add
+   * @param t 		the exception, ignored if null
+   */
+  protected void addWarning(String msg, Throwable t) {
+    if (t == null) {
+      m_Warnings.add(msg);
+      getLogger().warning(msg);
+    }
+    else {
+      m_Warnings.add(msg + "\n" + Utils.throwableToString(t));
+      getLogger().log(Level.WARNING, msg, t);
+    }
+  }
+
   /**
    * Returns any warnings that were encountered while reading.
    * 
@@ -463,7 +489,33 @@ public abstract class AbstractFlowReader
   public List<String> getWarnings() {
     return m_Warnings;
   }
-  
+
+  /**
+   * Adds the error message.
+   *
+   * @param msg		the error message to add
+   */
+  protected void addError(String msg) {
+    addError(msg, null);
+  }
+
+  /**
+   * Adds the error message and exception.
+   *
+   * @param msg		the error message to add
+   * @param t 		the exception, ignored if null
+   */
+  protected void addError(String msg, Throwable t) {
+    if (t == null) {
+      m_Errors.add(msg);
+      getLogger().severe(msg);
+    }
+    else {
+      m_Errors.add(msg + "\n" + Utils.throwableToString(t));
+      getLogger().log(Level.SEVERE, msg, t);
+    }
+  }
+
   /**
    * Returns any errors that were encountered while reading.
    * 
