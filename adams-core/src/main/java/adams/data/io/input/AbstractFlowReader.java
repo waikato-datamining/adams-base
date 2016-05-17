@@ -36,6 +36,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 /**
  * Ancestor for classes that can read flows.
@@ -78,8 +79,8 @@ public abstract class AbstractFlowReader
   protected void initialize() {
     super.initialize();
     
-    m_Warnings = new ArrayList<String>();
-    m_Errors   = new ArrayList<String>();
+    m_Warnings = new ArrayList<>();
+    m_Errors   = new ArrayList<>();
   }
   
   /**
@@ -149,6 +150,8 @@ public abstract class AbstractFlowReader
     reader = null;
     input  = null;
     try {
+      if (!FileUtils.fileExists(filename))
+        throw new IllegalArgumentException("File does not exist: " + filename);
       switch (getInputType()) {
 	case FILE:
 	  result = doReadNode(new PlaceholderFile(filename));
@@ -167,7 +170,7 @@ public abstract class AbstractFlowReader
     }
     catch (Exception e) {
       result = null;
-      e.printStackTrace();
+      getLogger().log(Level.SEVERE, "Failed to read node from: " + filename, e);
     }
     finally {
       if (!(this instanceof ChunkedSpreadSheetReader)) {
@@ -207,7 +210,7 @@ public abstract class AbstractFlowReader
     }
     catch (Exception e) {
       result = null;
-      e.printStackTrace();
+      getLogger().log(Level.SEVERE, "Failed to read node from input stream!", e);
     }
 
     return result;
@@ -228,7 +231,7 @@ public abstract class AbstractFlowReader
     try {
       switch (getInputType()) {
 	case FILE:
-	  throw new IllegalStateException("Only supports reading from files, not input streams!");
+	  throw new IllegalStateException("Only supports reading from files, not readers!");
 	case STREAM:
 	  result = doReadNode(new ReaderInputStream(r));
 	  break;
@@ -241,7 +244,7 @@ public abstract class AbstractFlowReader
     }
     catch (Exception e) {
       result = null;
-      e.printStackTrace();
+      getLogger().log(Level.SEVERE, "Failed to read node from reader!", e);
     }
 
     return result;
@@ -312,6 +315,8 @@ public abstract class AbstractFlowReader
     reader = null;
     input  = null;
     try {
+      if (!FileUtils.fileExists(filename))
+	throw new IllegalArgumentException("File does not exist: " + filename);
       switch (getInputType()) {
 	case FILE:
 	  result = doReadActor(new PlaceholderFile(filename));
@@ -330,6 +335,7 @@ public abstract class AbstractFlowReader
     }
     catch (Exception e) {
       result = null;
+      getLogger().log(Level.SEVERE, "Failed to read actor from file: " + filename, e);
       e.printStackTrace();
     }
     finally {
@@ -370,7 +376,7 @@ public abstract class AbstractFlowReader
     }
     catch (Exception e) {
       result = null;
-      e.printStackTrace();
+      getLogger().log(Level.SEVERE, "Failed to read actor from input stream!", e);
     }
 
     return result;
@@ -391,7 +397,7 @@ public abstract class AbstractFlowReader
     try {
       switch (getInputType()) {
 	case FILE:
-	  throw new IllegalStateException("Only supports reading from files, not input streams!");
+	  throw new IllegalStateException("Only supports reading from files, not readers!");
 	case STREAM:
 	  result = doReadActor(new ReaderInputStream(r));
 	  break;
@@ -404,7 +410,7 @@ public abstract class AbstractFlowReader
     }
     catch (Exception e) {
       result = null;
-      e.printStackTrace();
+      getLogger().log(Level.SEVERE, "Failed to read actor from reader!", e);
     }
 
     return result;
