@@ -15,23 +15,24 @@
 
 /*
  *    TimeZoneEditor.java
- *    Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ *    Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package adams.gui.goe;
 
-import java.awt.Container;
-import java.beans.PropertyEditorSupport;
-import java.lang.reflect.Array;
-import java.util.Arrays;
-import java.util.TimeZone;
-import java.util.Vector;
-
 import adams.core.Utils;
 import adams.core.management.TimeZoneHelper;
 import adams.core.option.AbstractOption;
 import adams.gui.dialog.ApprovalDialog;
+
+import java.awt.Container;
+import java.beans.PropertyEditorSupport;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.TimeZone;
 
 /**
  * A PropertyEditor that displays time zones. {@link TimeZoneHelper#DEFAULT_TIMEZONE}
@@ -120,7 +121,7 @@ public class TimeZoneEditor
   public Object[] getSelectedObjects(Container parent) {
     Object[]			result;
     MultiLineValueDialog	dialog;
-    Vector<String>		lines;
+    List<String> 		lines;
     int				i;
 
     dialog = new MultiLineValueDialog();
@@ -129,7 +130,7 @@ public class TimeZoneEditor
     dialog.setVisible(true);
 
     if (dialog.getOption() == ApprovalDialog.APPROVE_OPTION) {
-      lines = new Vector<String>(Arrays.asList(dialog.getContent().split("\n")));
+      lines = new ArrayList<>(Arrays.asList(dialog.getContent().split("\n")));
       Utils.removeEmptyLines(lines);
       result = (Object[]) Array.newInstance(TimeZone.class, lines.size());
       for (i = 0; i < lines.size(); i++)
