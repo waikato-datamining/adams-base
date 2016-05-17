@@ -22,6 +22,7 @@ package adams.flow.transformer;
 
 import adams.core.DateFormat;
 import adams.core.QuickInfoHelper;
+import adams.core.management.TimeZoneHelper;
 import adams.data.DateFormatString;
 import adams.flow.core.Token;
 import adams.flow.core.Unknown;
@@ -167,7 +168,7 @@ public class Timestamp
     String	result;
 
     result  = QuickInfoHelper.toString(this, "format", (!m_Format.isEmpty() ? m_Format.getValue() : null));
-    result += QuickInfoHelper.toString(this, "timeZone", m_TimeZone, ", tz: ");
+    result += QuickInfoHelper.toString(this, "timeZone", TimeZoneHelper.toString(m_TimeZone), ", tz: ");
 
     return result;
   }
