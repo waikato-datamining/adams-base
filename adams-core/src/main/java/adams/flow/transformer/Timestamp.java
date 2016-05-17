@@ -15,18 +15,19 @@
 
 /*
  * Timestamp.java
- * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
-
-import java.util.Date;
 
 import adams.core.DateFormat;
 import adams.core.QuickInfoHelper;
 import adams.data.DateFormatString;
 import adams.flow.core.Token;
 import adams.flow.core.Unknown;
+
+import java.util.Date;
+import java.util.TimeZone;
 
 /**
  <!-- globalinfo-start -->
@@ -54,7 +55,7 @@ import adams.flow.core.Unknown;
  * &nbsp;&nbsp;&nbsp;default: Timestamp
  * </pre>
  * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
@@ -71,10 +72,21 @@ import adams.flow.core.Unknown;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
  * <pre>-format &lt;adams.data.DateFormatString&gt; (property: format)
  * &nbsp;&nbsp;&nbsp;The format of the timestamp to generate.
  * &nbsp;&nbsp;&nbsp;default: yyyy-MM-dd HH:mm:ss
  * &nbsp;&nbsp;&nbsp;more: http:&#47;&#47;docs.oracle.com&#47;javase&#47;6&#47;docs&#47;api&#47;java&#47;text&#47;SimpleDateFormat.html
+ * </pre>
+ * 
+ * <pre>-time-zone &lt;java.util.TimeZone&gt; (property: timeZone)
+ * &nbsp;&nbsp;&nbsp;The time zone to use for interpreting dates&#47;times; default is the system-wide 
+ * &nbsp;&nbsp;&nbsp;defined one.
  * </pre>
  * 
  <!-- options-end -->
@@ -90,6 +102,9 @@ public class Timestamp
 
   /** the format to use. */
   protected DateFormatString m_Format;
+
+  /** the timezone to use. */
+  protected TimeZone m_TimeZone;
 
   /** for generating the timestamp. */
   protected transient DateFormat m_Formatter;
@@ -112,8 +127,12 @@ public class Timestamp
     super.defineOptions();
 
     m_OptionManager.add(
-	    "format", "format",
-	    getDefaultFormat());
+      "format", "format",
+      getDefaultFormat());
+
+    m_OptionManager.add(
+      "time-zone", "timeZone",
+      TimeZone.getDefault(), false);
   }
 
   /**
@@ -133,7 +152,7 @@ public class Timestamp
    */
   protected synchronized DateFormat getFormatter() {
     if (m_Formatter == null)
-      m_Formatter = m_Format.toDateFormat();
+      m_Formatter = m_Format.toDateFormat(m_TimeZone);
 
     return m_Formatter;
   }
@@ -145,7 +164,12 @@ public class Timestamp
    */
   @Override
   public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "format", (!m_Format.isEmpty() ? m_Format.getValue() : null));
+    String	result;
+
+    result  = QuickInfoHelper.toString(this, "format", (!m_Format.isEmpty() ? m_Format.getValue() : null));
+    result += QuickInfoHelper.toString(this, "timeZone", m_TimeZone, ", tz: ");
+
+    return result;
   }
 
   /**
@@ -184,6 +208,35 @@ public class Timestamp
    */
   public String formatTipText() {
     return "The format of the timestamp to generate.";
+  }
+
+  /**
+   * Sets the time zone to use.
+   *
+   * @param value	the time zone
+   */
+  public void setTimeZone(TimeZone value) {
+    m_TimeZone = value;
+    reset();
+  }
+
+  /**
+   * Returns the time zone in use.
+   *
+   * @return		the time zone
+   */
+  public TimeZone getTimeZone() {
+    return m_TimeZone;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the gui
+   */
+  public String timeZoneTipText() {
+    return "The time zone to use for interpreting dates/times; default is the system-wide defined one.";
   }
 
   /**
