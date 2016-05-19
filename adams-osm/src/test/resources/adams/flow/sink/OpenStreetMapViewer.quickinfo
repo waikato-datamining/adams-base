@@ -1,1 +1,0 @@
-source: OpenStreetMapSource, loader: OpenStreetMapLoader, hits: NullMapObjectHitListener, clicks: NullMapClickListener, pruner: NullPruner, overlay: NullPruner, layers: Default,  [zoom ctrls]
