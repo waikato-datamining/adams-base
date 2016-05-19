@@ -38,27 +38,19 @@
     <module>adams-event</module>
     <module>adams-excel</module>
     <module>adams-groovy</module>
-    <module>adams-gnuplot</module>
     <module>adams-imaging</module>
     <module>adams-imaging-boofcv</module>
     <module>adams-imaging-imagej</module>
     <module>adams-imaging-imagemagick</module>
     <module>adams-imaging-openimaj</module>
     <module>adams-jython</module>
-    <module>adams-latex</module>
-    <module>adams-maps</module>
     <module>adams-meta</module>
     <module>adams-ml</module>
-    <module>adams-moa</module>
     <module>adams-net</module>
     <module>adams-odf</module>
-    <module>adams-osm</module>
     <module>adams-pdf</module>
-    <module>adams-r</module>
-    <module>adams-random</module>
     <module>adams-spreadsheet</module>
     <module>adams-timeseries</module>
-    <module>adams-twitter</module>
     <module>adams-visualstats</module>
     <module>adams-weka</module>
   </modules>
