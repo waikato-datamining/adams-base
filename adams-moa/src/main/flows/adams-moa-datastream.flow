@@ -1,7 +1,0 @@
-# Project: adams
-# Date: 2016-02-15 14:40:16
-# User: fracpete
-# Charset: UTF-8
-adams.flow.control.Flow -annotation "Simply generates 100 rows of data using the Waveform\\nstream generator and displays them." -flow-execution-listener adams.flow.execution.NullListener
- adams.flow.source.MOAStream -stream moa.streams.generators.WaveformGenerator -num-examples 100
- adams.flow.sink.WekaInstanceViewer -writer adams.gui.print.NullWriter

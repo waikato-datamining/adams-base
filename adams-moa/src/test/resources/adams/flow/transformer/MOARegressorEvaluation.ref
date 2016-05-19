@@ -1,7 +1,0 @@
---> dumpfile.txt
-classified instances = 39
-mean absolute error = 22.18
-root mean squared error = 28.117
-relative mean absolute error = 0.96
-relative root mean squared error = 0.99
-
