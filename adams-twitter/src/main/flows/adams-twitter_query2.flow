@@ -1,9 +1,0 @@
-# Project: adams
-# Date: 2016-02-15 15:05:10
-# User: fracpete
-# Charset: UTF-8
-adams.flow.control.Flow -annotation "Example flow for querying the Twitter API.\\nGenerates a CSV file from the obtained tweets.\\nFor query examples, see the following web page:\\nhttps://dev.twitter.com/rest/public/search" -flow-execution-listener adams.flow.execution.NullListener
- adams.flow.standalone.TwitterConnection
- adams.flow.source.TwitterQuery -query "movie -scary :)" -max-tweets 200
- adams.flow.transformer.TwitterConverter -converter "adams.data.twitter.SpreadSheetConverter -field ID -field CREATED -field USER_NAME -field TEXT -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.SpreadSheet"
- adams.flow.sink.SpreadSheetFileWriter -output ${EXAMPLE_FLOWS}/output/tweets.csv -writer "adams.data.io.output.CsvSpreadSheetWriter -appending true -always-quote-text true"
