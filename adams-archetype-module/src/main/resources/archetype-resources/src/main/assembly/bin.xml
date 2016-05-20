@@ -75,6 +75,13 @@
       <useProjectArtifact>true</useProjectArtifact>
       <excludes>
         <exclude>de.jflex:jflex:*</exclude>
+        <exclude>*:android-arm</exclude>
+        <exclude>*:android-x86</exclude>
+        <exclude>*:linux-x86</exclude>
+        <exclude>*:linux-x86_64</exclude>
+        <exclude>*:macosx-x86_64</exclude>
+        <exclude>*:windows-x86</exclude>
+        <exclude>*:windows-x86_64</exclude>
       </excludes>
     </dependencySet>
   </dependencySets>
