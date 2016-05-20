@@ -157,21 +157,6 @@
       <type>test-jar</type>
     </dependency>
 
-    <!-- gnuplot -->
-    <dependency>
-      <groupId>nz.ac.waikato.cms.adams</groupId>
-      <artifactId>adams-gnuplot</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>nz.ac.waikato.cms.adams</groupId>
-      <artifactId>adams-gnuplot</artifactId>
-      <version>${project.version}</version>
-      <scope>test</scope>
-      <type>test-jar</type>
-    </dependency>
-
     <!-- imaging -->
     <dependency>
       <groupId>nz.ac.waikato.cms.adams</groupId>
@@ -258,36 +243,6 @@
       <type>test-jar</type>
     </dependency>
 
-    <!-- latex -->
-    <dependency>
-      <groupId>nz.ac.waikato.cms.adams</groupId>
-      <artifactId>adams-latex</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>nz.ac.waikato.cms.adams</groupId>
-      <artifactId>adams-latex</artifactId>
-      <version>${project.version}</version>
-      <scope>test</scope>
-      <type>test-jar</type>
-    </dependency>
-
-    <!-- maps -->
-    <dependency>
-      <groupId>nz.ac.waikato.cms.adams</groupId>
-      <artifactId>adams-maps</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>nz.ac.waikato.cms.adams</groupId>
-      <artifactId>adams-maps</artifactId>
-      <version>${project.version}</version>
-      <scope>test</scope>
-      <type>test-jar</type>
-    </dependency>
-
     <!-- meta -->
     <dependency>
       <groupId>nz.ac.waikato.cms.adams</groupId>
@@ -310,24 +265,9 @@
       <version>${project.version}</version>
     </dependency>
 
-    <!--dependency>
+    <dependency>
       <groupId>nz.ac.waikato.cms.adams</groupId>
       <artifactId>adams-ml</artifactId>
-      <version>0.4.4-SNAPSHOT</version>
-      <scope>test</scope>
-      <type>test-jar</type>
-    </dependency-->
-
-    <!-- moa -->
-    <dependency>
-      <groupId>nz.ac.waikato.cms.adams</groupId>
-      <artifactId>adams-moa</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>nz.ac.waikato.cms.adams</groupId>
-      <artifactId>adams-moa</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
       <type>test-jar</type>
@@ -363,21 +303,6 @@
       <type>test-jar</type>
     </dependency>
 
-    <!-- osm -->
-    <dependency>
-      <groupId>nz.ac.waikato.cms.adams</groupId>
-      <artifactId>adams-osm</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>nz.ac.waikato.cms.adams</groupId>
-      <artifactId>adams-osm</artifactId>
-      <version>${project.version}</version>
-      <scope>test</scope>
-      <type>test-jar</type>
-    </dependency>
-
     <!-- pdf -->
     <dependency>
       <groupId>nz.ac.waikato.cms.adams</groupId>
@@ -388,36 +313,6 @@
     <dependency>
       <groupId>nz.ac.waikato.cms.adams</groupId>
       <artifactId>adams-pdf</artifactId>
-      <version>${project.version}</version>
-      <scope>test</scope>
-      <type>test-jar</type>
-    </dependency>
-
-    <!-- r -->
-    <dependency>
-      <groupId>nz.ac.waikato.cms.adams</groupId>
-      <artifactId>adams-r</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>nz.ac.waikato.cms.adams</groupId>
-      <artifactId>adams-r</artifactId>
-      <version>${project.version}</version>
-      <scope>test</scope>
-      <type>test-jar</type>
-    </dependency>
-
-    <!-- random -->
-    <dependency>
-      <groupId>nz.ac.waikato.cms.adams</groupId>
-      <artifactId>adams-random</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>nz.ac.waikato.cms.adams</groupId>
-      <artifactId>adams-random</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
       <type>test-jar</type>
@@ -445,24 +340,9 @@
       <version>${project.version}</version>
     </dependency>
 
-    <!--dependency>
+    <dependency>
       <groupId>nz.ac.waikato.cms.adams</groupId>
       <artifactId>adams-timeseries</artifactId>
-      <version>0.4.4-SNAPSHOT</version>
-      <scope>test</scope>
-      <type>test-jar</type>
-    </dependency-->
-
-    <!-- twitter -->
-    <dependency>
-      <groupId>nz.ac.waikato.cms.adams</groupId>
-      <artifactId>adams-twitter</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>nz.ac.waikato.cms.adams</groupId>
-      <artifactId>adams-twitter</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
       <type>test-jar</type>
