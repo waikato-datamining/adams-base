@@ -293,7 +293,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-dependency-plugin</artifactId>
-          <version>2.2</version>
+          <version>2.10</version>
           <executions>
             <!-- graph with just adams -->
             <execution>
@@ -306,6 +306,21 @@
                 <outputType>graphml</outputType>
                 <outputFile>${project.build.directory}/${project.artifactId}-${project.version}.graphml</outputFile>
                 <includes>${project.groupId}:*</includes>
+              </configuration>
+            </execution>
+            <!-- list with just adams -->
+            <execution>
+              <id>list</id>
+              <phase>package</phase>
+              <goals>
+                <goal>list</goal>
+              </goals>
+              <configuration>
+                <includeGroupIds>nz.ac.waikato.cms.adams</includeGroupIds>
+                <outputFile>${project.build.directory}/${project.artifactId}-${project.version}.dep</outputFile>
+                <sort>true</sort>
+                <type>jar</type>
+                <includeScope>compile</includeScope>
               </configuration>
             </execution>
             <!-- graph with all deps -->
