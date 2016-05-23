@@ -315,6 +315,8 @@ public class ApplicationMenu
 	      continue;
 	    if (definition.requiresRestartableApplication() && !m_Owner.getEnableRestart())
 	      continue;
+            if (!definition.isAvailable())
+              continue;
 	    menus[i].setVisible(true);
 	    menuitem = definition.getMenuItem();
 	    if (menuitem == null)
@@ -386,6 +388,8 @@ public class ApplicationMenu
       }
       Collections.sort(additionalDefs);
       for (AbstractMenuItemDefinition def: additionalDefs) {
+        if (!def.isAvailable())
+          continue;
 	menuitem = def.getMenuItem();
 	added    = false;
 	for (i = 0; i < menus.length; i++) {

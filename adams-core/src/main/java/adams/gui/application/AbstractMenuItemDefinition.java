@@ -116,6 +116,15 @@ public abstract class AbstractMenuItemDefinition
   }
 
   /**
+   * Returns whether the menu item is available.
+   *
+   * @return		true if available
+   */
+  public boolean isAvailable() {
+    return true;
+  }
+
+  /**
    * Returns the file name of the icon.
    *
    * @return		the filename or null if no icon available
