@@ -15,16 +15,15 @@
 
 /*
  * ActorPathTest.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.core;
 
+import adams.env.Environment;
+import adams.test.AdamsTestCase;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import adams.env.Environment;
-import adams.flow.core.ActorPath;
-import adams.test.AdamsTestCase;
 
 /**
  * Tests the adams.flow.core.ActorPath class. Run from commandline with: <br><br>
@@ -94,10 +93,11 @@ public class ActorPathTest
    * Example: [Flow.ContainerValuePicker/700475288-DEBUG]
    */
   public static void testConsoleString() {
-    ActorPath path = new ActorPath("[Flow.ContainerValuePicker/700475288-DEBUG]");
-    assertEquals("Path length differs", 2, path.getPathCount());
+    ActorPath path = new ActorPath("[Flow.ArrayProcess.BufferedImageTransformer-11-INFO/20160523-151112.448]");
+    assertEquals("Path length differs", 3, path.getPathCount());
     assertEquals("Path element 1 differs", "Flow", path.getPathComponent(0));
-    assertEquals("Path element 2 differs", "ContainerValuePicker", path.getPathComponent(1));
+    assertEquals("Path element 2 differs", "ArrayProcess", path.getPathComponent(1));
+    assertEquals("Path element 3 differs", "BufferedImageTransformer", path.getPathComponent(2));
   }
 
   /**

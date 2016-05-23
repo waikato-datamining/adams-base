@@ -15,7 +15,7 @@
 
 /**
  * ActorPath.java
- * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.core;
 
@@ -63,14 +63,16 @@ public class ActorPath
       // mask escaped "." in names
       path = path.replace("\\.", "\t");
       // remove surrounding "[]"
-      if (path.startsWith("[") && path.endsWith("]"))
-	path = path.substring(1, path.length() - 1);
+      path = path.replaceFirst(".*\\[(.*)\\].*", "$1");
       // remove the directors from the path
       if (path.matches(".*\\.[\\w]*Director$"))
 	path = path.replaceAll("\\.[\\w]*Director$", "");
       // remove any trailing text after "/" (incl)
       if (path.indexOf('/') > -1)
-	path = path.replaceAll("\\/[0-9]+-(OUT|ERR|DEBUG).*", "");
+	path = path.replaceAll("\\/[0-9\\.-]+$", "");
+      // remove flow ID and type of debugging output
+      path = path.replaceAll("-[0-9]+-(SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST)", "");
+      path = path.replaceAll("-(SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST)", "");
       // remove any trailing white spaces
       path = path.replaceAll("\\s*$", "");
 
