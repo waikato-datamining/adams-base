@@ -24,7 +24,9 @@ import adams.core.base.BaseText;
 import adams.core.option.AbstractArgumentOption;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
+import adams.flow.condition.bool.Expression;
 import adams.flow.core.Actor;
+import adams.parser.BooleanExpressionText;
 import adams.test.TmpFile;
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -177,7 +179,7 @@ public class LocalScopeTransformerTest
       // Flow.Trigger.Trigger
       adams.flow.control.Trigger trigger25 = new adams.flow.control.Trigger();
       argOption = (AbstractArgumentOption) trigger25.getOptionManager().findByProperty("actors");
-      adams.flow.core.Actor[] actors26 = new adams.flow.core.Actor[2];
+      adams.flow.core.Actor[] actors26 = new adams.flow.core.Actor[3];
 
       // Flow.Trigger.Trigger.CombineVariables
       adams.flow.source.CombineVariables combinevariables27 = new adams.flow.source.CombineVariables();
@@ -185,13 +187,20 @@ public class LocalScopeTransformerTest
       combinevariables27.setExpression((adams.core.base.BaseText) argOption.valueOf("@{v}: @{@{v}}"));
       actors26[0] = combinevariables27;
 
+      // continue if variable starts with "flow_"
+      Expression expr = new Expression();
+      expr.setExpression(new BooleanExpressionText("matches(\"@{v}\", \"flow_.*\")"));
+      Continue cont = new Continue();
+      cont.setCondition(expr);
+      actors26[1] = cont;
+
       // Flow.Trigger.Trigger.DumpFile
       adams.flow.sink.DumpFile dumpfile29 = new adams.flow.sink.DumpFile();
       argOption = (AbstractArgumentOption) dumpfile29.getOptionManager().findByProperty("outputFile");
       dumpfile29.setOutputFile((adams.core.io.PlaceholderFile) argOption.valueOf("${TMP}/dumpfile.txt"));
       dumpfile29.setAppend(true);
 
-      actors26[1] = dumpfile29;
+      actors26[2] = dumpfile29;
       trigger25.setActors(actors26);
 
       actors21[2] = trigger25;
