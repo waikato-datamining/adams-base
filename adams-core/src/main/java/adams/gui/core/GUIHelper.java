@@ -1449,9 +1449,32 @@ public class GUIHelper {
    *
    * @param parent	the parent, to make the dialog modal; can be null
    * @param msg		the error message to display
+   * @param t 		the exception to append to the message
+   */
+  public static void showErrorMessage(Component parent, String msg, Throwable t) {
+    showErrorMessage(parent, msg + "\n" + Utils.throwableToString(t), "Error");
+  }
+
+  /**
+   * Displays an error message with the default title "Error".
+   *
+   * @param parent	the parent, to make the dialog modal; can be null
+   * @param msg		the error message to display
    */
   public static void showErrorMessage(Component parent, String msg) {
     showErrorMessage(parent, msg, "Error");
+  }
+
+  /**
+   * Displays an error message.
+   *
+   * @param parent	the parent, to make the dialog modal; can be null
+   * @param msg		the error message to display
+   * @param title	the title of the error message
+   * @param t 		the exception to append to the message
+   */
+  public static void showErrorMessage(Component parent, final String msg, Throwable t, String title) {
+    showErrorMessage(parent, msg + "\n" + Utils.throwableToString(t), title);
   }
 
   /**
@@ -1466,7 +1489,7 @@ public class GUIHelper {
     String[]			lines;
     int				height;
     ErrorMessagePanel		errorPanel;
-    
+
     parent = GUIHelper.getParentComponent(parent);
 
     lines  = msg.split("\n");
@@ -1484,7 +1507,7 @@ public class GUIHelper {
     dlg.setDiscardVisible(false);
     dlg.setDefaultCloseOperation(TextDialog.DISPOSE_ON_CLOSE);
     dlg.setIconImage(GUIHelper.getIcon("stop.gif").getImage());
-    
+
     errorPanel = new ErrorMessagePanel();
     errorPanel.setTitle(title);
     errorPanel.setErrorMessage(msg);
@@ -1492,7 +1515,7 @@ public class GUIHelper {
     dlg.getButtonsPanel(true).add(errorPanel.getConsoleCheckBox());
     dlg.getContentPane().add(errorPanel, BorderLayout.CENTER);
     dlg.setJMenuBar(errorPanel.getMenuBar());
-    
+
     dlg.pack();
     dlg.setSize(600, Math.min(dlg.getHeight() + height, (int) (getScreenBounds(dlg).height * 0.5)));
     errorPanel.setErrorMessage(msg);
