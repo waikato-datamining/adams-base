@@ -383,7 +383,7 @@
         <plugin>
           <groupId>com.github.fracpete</groupId>
           <artifactId>maven-dependency-list-plugin</artifactId>
-          <version>0.0.2-SNAPSHOT</version>
+          <version>0.0.2</version>
           <executions>
             <execution>
               <id>list</id>
