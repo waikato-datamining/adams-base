@@ -113,6 +113,7 @@ public class SendErrorReport
     AbstractSendEmail 		sendEmail;
     Email			email;
     List<File> 			atts;
+    File			prefix;
     File			file;
     String			console;
     SpreadSheet 		info;
@@ -126,16 +127,17 @@ public class SendErrorReport
     info    = new adams.core.SystemInfo().toSpreadSheet();
 
     // attachements
-    atts = new ArrayList<>();
+    atts   = new ArrayList<>();
+    prefix = TempUtils.createTempFile("errorreport", null);
 
-    file = TempUtils.createTempFile("errorreport", ".txt");
+    file = new File(prefix.getAbsolutePath() + ".txt");
     if (FileUtils.writeToFile(file.getAbsolutePath(), console, false))
       atts.add(file);
     else
       ConsolePanel.getSingleton().append(
 	LoggingLevel.SEVERE, "Failed to write console panel content for error report to: " + file);
 
-    file   = TempUtils.createTempFile("errorreport", ".csv");
+    file   = new File(prefix.getAbsolutePath() + ".csv");
     writer = new CsvSpreadSheetWriter();
     if (writer.write(info, file))
       atts.add(file);

@@ -481,6 +481,10 @@ adams.gui.flow.menu.FlowEditorAction=\
 adams.gui.flow.menu.AbstractFlowEditorMenuItem=\
   adams.gui.flow.menu
 
+# the actions for the notification area
+adams.gui.flow.notificationareaaction.AbstractNotificationAreaAction=\
+  adams.gui.flow.notificationareaaction
+
 # the popup menu actions in the flow editor
 adams.gui.flow.tree.menu.TreePopupAction=\
   adams.gui.flow.tree.menu

@@ -19,6 +19,7 @@
  */
 package adams.gui.flow;
 
+import adams.core.logging.LoggingLevel;
 import adams.flow.core.ActorUtils;
 import adams.gui.core.BaseMenu;
 import adams.gui.core.BasePanel;
@@ -29,9 +30,12 @@ import adams.gui.core.PopupMenuCustomizer;
 import adams.gui.core.TabIconSupporter;
 import adams.gui.core.TextEditorPanel;
 import adams.gui.dialog.TextPanel;
+import adams.gui.flow.notificationareaaction.AbstractNotificationAreaAction;
+import adams.gui.flow.notificationareaaction.CloseAndCleanUp;
+import com.jidesoft.swing.JideButton;
+import com.jidesoft.swing.JideSplitButton;
 
 import javax.swing.BorderFactory;
-import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
@@ -42,6 +46,7 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
@@ -63,15 +68,15 @@ public class FlowPanelNotificationArea
   
   /** for displaying the text. */
   protected TextPanel m_TextNotification;
-  
-  /** the close button. */
-  protected JButton m_ButtonClose;
-  
-  /** the copy button. */
-  protected JButton m_ButtonCopy;
 
-  /** the close/cleanup button. */
-  protected JButton m_ButtonCloseAndCleanUp;
+  /** the panel for the buttons. */
+  protected JPanel m_PanelButtons;
+
+  /** the close button. */
+  protected JideButton m_ButtonClose;
+  
+  /** the action button. */
+  protected JideSplitButton m_ButtonAction;
 
   /** the checkbox for including the console output. */
   protected JCheckBox m_CheckBoxConsole;
@@ -84,18 +89,36 @@ public class FlowPanelNotificationArea
   
   /** whether it was an error. */
   protected boolean m_IsError;
+
+  /** the available actions. */
+  protected List<AbstractNotificationAreaAction> m_Actions;
   
   /**
    * Initializes the members.
    */
   @Override
   protected void initialize() {
+    String[]				classes;
+    AbstractNotificationAreaAction	action;
+
     super.initialize();
     
     m_Owner          = null;
-    m_CloseListeners = new HashSet<ActionListener>();
+    m_CloseListeners = new HashSet<>();
     m_Notification   = null;
     m_IsError        = false;
+    m_Actions        = new ArrayList<>();
+    classes        = AbstractNotificationAreaAction.getActions();
+    for (String cls: classes) {
+      try {
+	action = (AbstractNotificationAreaAction) Class.forName(cls).newInstance();
+	action.setOwner(this);
+	m_Actions.add(action);
+      }
+      catch (Exception e) {
+	ConsolePanel.getSingleton().append(LoggingLevel.SEVERE, "Failed to instantiate action: " + cls, e);
+      }
+    }
   }
   
   /**
@@ -103,9 +126,8 @@ public class FlowPanelNotificationArea
    */
   @Override
   protected void initGUI() {
-    JPanel	panelRight;
-    JPanel	panelButtons;
-    
+    JPanel		panelRight;
+
     super.initGUI();
     
     setLayout(new BorderLayout());
@@ -121,38 +143,36 @@ public class FlowPanelNotificationArea
     panelRight.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
     add(panelRight, BorderLayout.EAST);
     
-    panelButtons = new JPanel(new GridLayout(4, 1, 5, 5));
-    panelRight.add(panelButtons, BorderLayout.NORTH);
-    
-    m_ButtonClose = new JButton("Close");
+    m_PanelButtons = new JPanel(new GridLayout(0, 1, 5, 5));
+    panelRight.add(m_PanelButtons, BorderLayout.NORTH);
+
+    m_ButtonAction = new JideSplitButton();
+    m_ButtonAction.setAlwaysDropdown(false);
+    m_ButtonAction.setButtonEnabled(true);
+    m_ButtonAction.setButtonStyle(JideSplitButton.TOOLBOX_STYLE);
+    for (AbstractNotificationAreaAction action: m_Actions) {
+      if (action instanceof CloseAndCleanUp)
+	m_ButtonAction.setAction(action);
+      else
+	m_ButtonAction.add(action);
+    }
+    m_PanelButtons.add(m_ButtonAction);
+
+    m_ButtonClose = new JideButton("Close");
+    m_ButtonClose.setButtonStyle(JideButton.TOOLBOX_STYLE);
     m_ButtonClose.setIcon(GUIHelper.getIcon("delete.gif"));
     m_ButtonClose.addActionListener((ActionEvent e) -> {
       clearNotification();
       notifyCloseListeners();
     });
-    panelButtons.add(m_ButtonClose);
-
-    m_ButtonCloseAndCleanUp = new JButton("Close/Clean up");
-    m_ButtonCloseAndCleanUp.setIcon(GUIHelper.getIcon("close_window.png"));
-    m_ButtonCloseAndCleanUp.addActionListener((ActionEvent e) -> {
-      if (getOwner() != null)
-        getOwner().cleanUp();
-      clearNotification();
-      notifyCloseListeners();
-    });
-    panelButtons.add(m_ButtonCloseAndCleanUp);
-
-    m_ButtonCopy = new JButton("Copy");
-    m_ButtonCopy.setIcon(GUIHelper.getIcon("copy.gif"));
-    m_ButtonCopy.addActionListener((ActionEvent e) -> GUIHelper.copyToClipboard(m_TextNotification.getContent()));
-    panelButtons.add(m_ButtonCopy);
+    m_PanelButtons.add(m_ButtonClose);
 
     m_CheckBoxConsole = new JCheckBox("Console output");
     m_CheckBoxConsole.setSelected(false);
     m_CheckBoxConsole.addActionListener((ActionEvent e) -> update());
-    panelButtons.add(m_CheckBoxConsole);
+    m_PanelButtons.add(m_CheckBoxConsole);
   }
-  
+
   /**
    * Sets the owning panel.
    * 
@@ -194,7 +214,7 @@ public class FlowPanelNotificationArea
   /**
    * Notifies all the listeners that the close button was pressed.
    */
-  protected synchronized void notifyCloseListeners() {
+  public synchronized void notifyCloseListeners() {
     ActionEvent	event;
     
     event = new ActionEvent(this, ActionEvent.ACTION_FIRST, "close");
@@ -224,7 +244,6 @@ public class FlowPanelNotificationArea
       }
 
       if (getOwner() != null) {
-	m_ButtonCloseAndCleanUp.setEnabled(getOwner().getLastFlow() != null);
         if (m_Notification == null) {
           if (getOwner() instanceof TabIconSupporter)
             ((TabIconSupporter) getOwner()).setTabIcon(null);
@@ -236,6 +255,9 @@ public class FlowPanelNotificationArea
           getOwner().getSplitPane().setBottomComponentHidden(false);
         }
       }
+
+      for (AbstractNotificationAreaAction action: m_Actions)
+	action.update();
     };
     SwingUtilities.invokeLater(run);
   }
@@ -295,5 +317,14 @@ public class FlowPanelNotificationArea
         }
       }
     }
+  }
+
+  /**
+   * Returns the textual content of the notification area.
+   *
+   * @return		the text
+   */
+  public String getContent() {
+    return m_TextNotification.getContent();
   }
 }
