@@ -140,6 +140,12 @@
         <artifactId>maven-jar-plugin</artifactId>
       </plugin>
 
+      <!-- generates list of dependent modules -->
+      <plugin>
+        <groupId>com.github.fracpete</groupId>
+        <artifactId>maven-dependency-list-plugin</artifactId>
+      </plugin>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-assembly-plugin</artifactId>

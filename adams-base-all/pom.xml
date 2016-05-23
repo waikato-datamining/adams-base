@@ -442,6 +442,12 @@
         <artifactId>maven-dependency-plugin</artifactId>
       </plugin>
 
+      <!-- generates list of dependent modules -->
+      <plugin>
+        <groupId>com.github.fracpete</groupId>
+        <artifactId>maven-dependency-list-plugin</artifactId>
+      </plugin>
+
       <!-- updates/uses 'src/license/THIRD-PARTY.properties' for missing libraries -->
       <plugin>
         <groupId>org.codehaus.mojo</groupId>

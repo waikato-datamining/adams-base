@@ -103,6 +103,12 @@
         </executions>
       </plugin>
 
+      <!-- generates list of dependent modules -->
+      <plugin>
+        <groupId>com.github.fracpete</groupId>
+        <artifactId>maven-dependency-list-plugin</artifactId>
+      </plugin>
+
       <!-- for generating the parsers: mvn compile exec:java -->
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
