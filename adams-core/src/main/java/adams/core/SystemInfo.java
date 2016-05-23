@@ -15,17 +15,22 @@
 
 /**
  * SystemInfo.java
- * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.core;
 
 import adams.core.management.Java;
 import adams.core.management.OS;
 import adams.core.management.ProcessUtils;
+import adams.data.spreadsheet.DefaultSpreadSheet;
+import adams.data.spreadsheet.Row;
+import adams.data.spreadsheet.SpreadSheet;
+import adams.data.spreadsheet.SpreadSheetSupporter;
 import adams.env.Environment;
 import adams.env.Modules;
 import adams.env.Modules.Module;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -39,7 +44,10 @@ import java.util.Properties;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class SystemInfo {
+public class SystemInfo
+  implements Serializable, SpreadSheetSupporter {
+
+  private static final long serialVersionUID = -4633948405872915214L;
 
   /** the hashtable containing the information. */
   protected Hashtable<String,String> m_Info;
@@ -49,9 +57,6 @@ public class SystemInfo {
 
   /** the project prefix. */
   public final static String PROJECT_PREFIX = "project.";
-
-  /** the revisions prefix. */
-  public final static String REVISIONS_PREFIX = "revisions.";
 
   /** the placeholder prefix. */
   public final static String PLACEHOLDER_PREFIX = "placeholder.";
@@ -99,7 +104,7 @@ public class SystemInfo {
     Enumeration<String>	enm;
     String		name;
 
-    m_Info = new Hashtable<String,String>();
+    m_Info = new Hashtable<>();
 
     // general
     props = System.getProperties();
@@ -166,7 +171,7 @@ public class SystemInfo {
     List<String>	keys;
 
     result = new StringBuilder();
-    keys   = new ArrayList<String>(m_Info.keySet());
+    keys   = new ArrayList<>(m_Info.keySet());
     Collections.sort(keys);
     for (String key: keys) {
       result.append(key);
@@ -176,6 +181,36 @@ public class SystemInfo {
     }
 
     return result.toString();
+  }
+
+  /**
+   * Returns the content as spreadsheet.
+   *
+   * @return		the content
+   */
+  @Override
+  public SpreadSheet toSpreadSheet() {
+    SpreadSheet		result;
+    Row			row;
+
+    result = new DefaultSpreadSheet();
+
+    // header
+    row = result.getHeaderRow();
+    row.addCell("K").setContentAsString("Key");
+    row.addCell("V").setContentAsString("Value");
+
+    // data
+    for (String key: m_Info.keySet()) {
+      row = result.addRow();
+      row.addCell("K").setContentAsString(key);
+      row.addCell("V").setContentAsString(m_Info.get(key));
+    }
+
+    // sort
+    result.sort(0, true);
+
+    return result;
   }
 
   /**
