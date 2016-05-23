@@ -15,20 +15,9 @@
 
 /**
  * EmailSetupPanel.java
- * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.application;
-
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.JCheckBox;
-import javax.swing.JPasswordField;
-import javax.swing.JSpinner;
-import javax.swing.JTextField;
-import javax.swing.SpinnerNumberModel;
 
 import adams.core.Constants;
 import adams.core.Properties;
@@ -39,6 +28,16 @@ import adams.core.net.EmailHelper;
 import adams.gui.chooser.BaseTextChooserPanel;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.ParameterPanel;
+
+import javax.swing.JCheckBox;
+import javax.swing.JPasswordField;
+import javax.swing.JSpinner;
+import javax.swing.JTextField;
+import javax.swing.SpinnerNumberModel;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * Panel for configuring the system-wide Email settings.
@@ -90,6 +89,9 @@ public class EmailSetupPanel
 
   /** the default signature. */
   protected BaseTextChooserPanel m_TextDefaultSignature;
+
+  /** the support email addres. */
+  protected JTextField m_TextSupportEmailAddress;
 
   /**
    * Initializes the members.
@@ -168,6 +170,10 @@ public class EmailSetupPanel
     m_TextDefaultSignature.setTextColumns(16);  // TODO longer
     m_TextDefaultSignature.setCurrent(new BaseText(Utils.unbackQuoteChars(EmailHelper.getDefaultSignature())));
     m_PanelParameters.addParameter("Default signature", new BaseScrollPane(m_TextDefaultSignature));
+
+    m_TextSupportEmailAddress = new JTextField(20);
+    m_TextSupportEmailAddress.setText(EmailHelper.getSupportEmail());
+    m_PanelParameters.addParameter("Suport email address", m_TextSupportEmailAddress);
   }
 
   /**
@@ -191,6 +197,7 @@ public class EmailSetupPanel
     result.setPassword(EmailHelper.SMTP_PASSWORD, new BasePassword(m_TextSmtpPassword.getText()));
     result.setProperty(EmailHelper.DEFAULT_ADDRESS_FROM, m_TextDefaultFromAddress.getText());
     result.setProperty(EmailHelper.DEFAULT_SIGNATURE, Utils.backQuoteChars(m_TextDefaultSignature.getCurrent().getValue()));
+    result.setProperty(EmailHelper.SUPPORT_EMAIL, m_TextSupportEmailAddress.getText());
 
     return result;
   }
