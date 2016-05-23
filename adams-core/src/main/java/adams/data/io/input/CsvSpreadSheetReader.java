@@ -1820,12 +1820,9 @@ public class CsvSpreadSheetReader
    * @param value	the first row (1-based), greater than 0
    */
   public void setFirstRow(int value) {
-    if (value > 0) {
+    if (getOptionManager().isValid("firstRow", value)) {
       m_FirstRow = value;
       reset();
-    }
-    else {
-      getLogger().warning("First row must be > 0, provided: " + value);
     }
   }
 
