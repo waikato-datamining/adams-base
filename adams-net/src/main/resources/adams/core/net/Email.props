@@ -38,3 +38,6 @@ DefaultSignature=
 
 # The default class for sending emails
 DefaultSendEmail=adams.core.net.JavaMailSendEmail
+
+# The support email address to use
+SupportEmail=

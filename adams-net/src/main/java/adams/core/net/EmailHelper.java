@@ -15,7 +15,7 @@
 
 /*
  * EmailHelper.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.net;
@@ -77,6 +77,9 @@ public class EmailHelper {
 
   /** The default "send email". */
   public final static String DEFAULT_SENDEMAIL = "DefaultSendEmail";
+
+  /** The support email address. */
+  public final static String SUPPORT_EMAIL = "SupportEmail";
 
   /** the separator between body and signature. */
   public final static String SIGNATURE_SEPARATOR = "--";
@@ -247,6 +250,15 @@ public class EmailHelper {
     catch (Exception e) {
       return new JavaMailSendEmail();
     }
+  }
+
+  /**
+   * Returns the email address for the support.
+   *
+   * @return		the email address, if any
+   */
+  public static String getSupportEmail() {
+    return getProperties().getProperty(SUPPORT_EMAIL, "");
   }
 
   /**
