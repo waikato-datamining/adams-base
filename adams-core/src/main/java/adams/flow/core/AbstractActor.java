@@ -258,8 +258,11 @@ public abstract class AbstractActor
    * Updates the prefix of the logger.
    */
   protected void updatePrefix() {
-    m_LoggingPrefix = getFullName();
-    m_Logger        = null;
+    if (getRoot() instanceof Flow)
+      m_LoggingPrefix = getFullName() + "-" + ((Flow) getRoot()).getFlowID();
+    else
+      m_LoggingPrefix = getFullName();
+    m_Logger = null;
   }
 
   /**

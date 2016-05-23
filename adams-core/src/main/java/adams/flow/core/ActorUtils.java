@@ -92,14 +92,14 @@ public class ActorUtils {
   /** the variable for the directory the flow is located in. */
   public final static String FLOW_DIR = "flow_dir";
 
+  /** the variable for the flow ID. */
+  public final static String FLOW_ID = "flow_id";
+
   /** functional type: primitive. */
   public final static String FUNCTIONAL_PRIMITIVE = "primitive";
 
   /** functional type: handler. */
   public final static String FUNCTIONAL_HANDLER = "handler";
-
-  /** functional type: control. */
-  public final static String FUNCTIONAL_CONTROL = "control";
 
   /** procedural type: standalone. */
   public final static String PROCEDURAL_STANDALONE = "standalone";
@@ -1357,6 +1357,7 @@ public class ActorUtils {
    * @return		true if successfully added
    * @see		#FLOW_FILENAME_LONG
    * @see		#FLOW_FILENAME_SHORT
+   * @see		#FLOW_DIR
    */
   public static boolean updateVariablesWithFlowFilename(VariablesHandler handler, File flow) {
     if (flow == null)

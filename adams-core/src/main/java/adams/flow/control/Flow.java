@@ -26,6 +26,7 @@ import adams.core.Utils;
 import adams.core.Variables;
 import adams.core.VariablesHandler;
 import adams.core.io.FlowFile;
+import adams.data.id.RuntimeIDGenerator;
 import adams.db.LogEntry;
 import adams.db.MutableLogEntryHandler;
 import adams.flow.core.Actor;
@@ -218,6 +219,9 @@ public class Flow
   /** whether the execution is to be headless, i.e., no GUI components. */
   protected boolean m_Headless;
 
+  /** the flow ID. */
+  protected int m_FlowID;
+
   /**
    * Returns a string describing the object.
    *
@@ -267,16 +271,17 @@ public class Flow
   protected void initialize() {
     super.initialize();
 
-    m_LogEntries               = new ArrayList<LogEntry>();
+    m_LogEntries               = new ArrayList<>();
     m_Variables                = new FlowVariables();
     m_ExecuteOnErrorActor      = null;
     m_ExecuteOnFinishActor     = null;
     m_PauseStateManager        = new PauseStateManager();
-    m_CallableNames            = new HashSet<String>();
+    m_CallableNames            = new HashSet<>();
     m_EnforceCallableNameCheck = true;
     m_ParentComponent          = null;
     m_DefaultCloseOperation    = BaseFrame.HIDE_ON_CLOSE;
     m_Headless                 = false;
+    m_FlowID = RuntimeIDGenerator.getSingleton().next();
   }
 
   /**
@@ -569,11 +574,11 @@ public class Flow
     else {
       if (m_FlowExecutionListener instanceof MultiListener) {
 	multi     = (MultiListener) m_FlowExecutionListener;
-	listeners = new ArrayList<FlowExecutionListener>(Arrays.asList(multi.getSubListeners()));
+	listeners = new ArrayList<>(Arrays.asList(multi.getSubListeners()));
       }
       else {
 	multi     = new MultiListener();
-	listeners = new ArrayList<FlowExecutionListener>();
+	listeners = new ArrayList<>();
         multi.setOwner(this);
 	multi.startListening();
       }
@@ -841,7 +846,9 @@ public class Flow
     String		result;
     List<String>	errors;
 
+    // variables
     forceVariables(getVariables());
+    getVariables().set(ActorUtils.FLOW_ID, "" + getFlowID());
     
     result = super.setUp();
 
@@ -849,7 +856,7 @@ public class Flow
 
     if (result == null) {
       if (!m_ExecuteOnError.isDirectory() && m_ExecuteOnError.exists()) {
-	errors = new ArrayList<String>();
+	errors = new ArrayList<>();
 	m_ExecuteOnErrorActor = ActorUtils.read(m_ExecuteOnError.getAbsolutePath(), errors);
 	if (!errors.isEmpty())
 	  result = "Error loading execute-on-error actor '" + m_ExecuteOnError.getAbsolutePath() + "':\n" + Utils.flatten(errors, "\n");
@@ -862,7 +869,7 @@ public class Flow
 
     if (result == null) {
       if (!m_ExecuteOnFinish.isDirectory() && m_ExecuteOnFinish.exists()) {
-	errors = new ArrayList<String>();
+	errors = new ArrayList<>();
 	m_ExecuteOnFinishActor = ActorUtils.read(m_ExecuteOnFinish.getAbsolutePath(), errors);
 	if (!errors.isEmpty())
 	  result = "Finish loading execute-on-finish actor '" + m_ExecuteOnFinish.getAbsolutePath() + "':\n" + Utils.flatten(errors, "\n");
@@ -945,6 +952,15 @@ public class Flow
       m_Storage = new Storage();
 
     return m_Storage;
+  }
+
+  /**
+   * Returns the flow ID (runtime).
+   *
+   * @return		the ID
+   */
+  public int getFlowID() {
+    return m_FlowID;
   }
 
   /**
