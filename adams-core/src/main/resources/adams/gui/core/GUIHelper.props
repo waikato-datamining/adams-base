@@ -9,7 +9,6 @@ LookAndFeel=javax.swing.plaf.metal.MetalLookAndFeel
 #LookAndFeel=com.sun.java.swing.plaf.gtk.GTKLookAndFeel
 #LookAndFeel=com.sun.java.swing.plaf.windows.WindowsLookAndFeel
 #LookAndFeel=com.sun.java.swing.plaf.windows.WindowsClassicLookAndFeel
-#LookAndFeel=com.pagosoft.plaf.PgsLookAndFeel
 
 # The image directory prefix:
 ImagesDirectory=adams/gui/images/

@@ -124,9 +124,9 @@
     </dependency>
 
     <dependency>
-      <groupId>com.github.arnabk</groupId>
-      <artifactId>pgslookandfeel</artifactId>
-      <version>1.1.4</version>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-simple</artifactId>
+      <version>1.7.21</version>
     </dependency>
 
     <dependency>
