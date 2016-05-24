@@ -338,10 +338,10 @@ public abstract class AbstractSpreadSheetReader
 	  throw new IllegalStateException("Unhandled input type: " + getInputType());
       }
     }
-    catch (Exception e) {
+    catch (Throwable e) {
       result = null;
       m_LastError = "Failed to read '" + filename + "'!\n" + Utils.throwableToString(e);
-      e.printStackTrace();
+      getLogger().severe(m_LastError);
     }
     finally {
       if (!(this instanceof ChunkedSpreadSheetReader)) {
@@ -388,7 +388,7 @@ public abstract class AbstractSpreadSheetReader
     catch (Exception e) {
       result = null;
       m_LastError = "Failed to read from stream!\n" + Utils.throwableToString(e);
-      e.printStackTrace();
+      getLogger().severe(m_LastError);
     }
     
     if (m_Stopped)
@@ -429,7 +429,7 @@ public abstract class AbstractSpreadSheetReader
     catch (Exception e) {
       result = null;
       m_LastError = "Failed to read from reader!\n" + Utils.throwableToString(e);
-      e.printStackTrace();
+      getLogger().severe(m_LastError);
     }
     
     if (m_Stopped)
