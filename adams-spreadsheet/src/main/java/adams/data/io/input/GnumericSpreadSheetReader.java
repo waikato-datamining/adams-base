@@ -512,7 +512,7 @@ public class GnumericSpreadSheetReader
 		row = sheet.getRow(cellRow - firstRow - 1);
 	      }
 	    }
-	    if (content.equals(m_MissingValue))
+	    if (m_MissingValue.isMatch(content))
 	      content = null;
 	    if (content == null)
 	      row.addCell(cellCol).setMissing();

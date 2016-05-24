@@ -30,7 +30,8 @@ import adams.data.spreadsheet.SpreadSheet;
  * @version $Revision$
  */
 public abstract class AbstractSpreadSheetReaderWithMissingValueSupport
-  extends AbstractSpreadSheetReader {
+  extends AbstractSpreadSheetReader
+  implements MissingValueSpreadSheetReader {
   
   /** for serialization. */
   private static final long serialVersionUID = 8681736902001611911L;

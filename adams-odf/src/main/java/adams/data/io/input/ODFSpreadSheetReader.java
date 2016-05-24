@@ -168,16 +168,6 @@ public class ODFSpreadSheetReader
   }
 
   /**
-   * Returns the default string for missing values.
-   * 
-   * @return		the default
-   */
-  @Override
-  protected String getDefaultMissingValue() {
-    return "";
-  }
-
-  /**
    * Returns a string describing the format (used in the file chooser).
    *
    * @return 			a description suitable for displaying in the
@@ -526,7 +516,7 @@ public class ODFSpreadSheetReader
 	      }
 	      empty = false;
 	    }
-	    if ((data[i] != null) && data[i].equals(m_MissingValue))
+	    if ((data[i] != null) && m_MissingValue.isMatch("" + data[i]))
 	      data[i] = null;
 	  }
 	  // no more data?

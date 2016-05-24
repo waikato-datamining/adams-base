@@ -327,7 +327,7 @@ public class ExcelSpreadSheetReader
 	      switch (cellType) {
 		case Cell.CELL_TYPE_BLANK:
 		case Cell.CELL_TYPE_ERROR:
-		  if ((m_MissingValue.length() == 0))
+		  if (m_MissingValue.isEmpty())
 		    spRow.addCell(n).setMissing();
 		  else
 		    spRow.addCell(n).setContent("");
@@ -341,7 +341,7 @@ public class ExcelSpreadSheetReader
 		    spRow.addCell(n).setContentAsString(numericToString(exCell));
 		  break;
 		default:
-		  if (exCell.getStringCellValue().equals(m_MissingValue))
+		  if (m_MissingValue.isMatch(exCell.getStringCellValue()))
 		    spRow.addCell(n).setMissing();
 		  else
 		    spRow.addCell(n).setContentAsString(exCell.getStringCellValue());

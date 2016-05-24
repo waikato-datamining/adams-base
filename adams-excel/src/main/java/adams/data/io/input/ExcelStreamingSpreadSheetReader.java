@@ -472,7 +472,7 @@ public class ExcelStreamingSpreadSheetReader
 	  }
 	  if (m_Owner.isLoggingEnabled())
 	    m_Owner.getLogger().info("  content: " + content);
-	  if (content.equals(m_Owner.getMissingValue())) {
+	  if (m_Owner.getMissingValue().isMatch(content)) {
 	    cell.setMissing();
 	  }
 	  else {

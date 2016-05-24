@@ -95,16 +95,6 @@ public abstract class AbstractExcelSpreadSheetReader
   }
 
   /**
-   * Returns the default string for missing values.
-   * 
-   * @return		the default
-   */
-  @Override
-  protected String getDefaultMissingValue() {
-    return "";
-  }
-
-  /**
    * Sets whether to extend the header if rows have more cells than the header.
    *
    * @param value	if true then the header gets extended if necessary
