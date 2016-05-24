@@ -35,6 +35,7 @@ import adams.data.spreadsheet.Cell;
 import adams.data.spreadsheet.Cell.ContentType;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
+import adams.data.spreadsheet.SpreadSheetUtils;
 
 import java.io.BufferedReader;
 import java.io.Reader;
@@ -66,7 +67,7 @@ import java.util.TimeZone;
  * &nbsp;&nbsp;&nbsp;default: adams.data.spreadsheet.DefaultSpreadSheet
  * </pre>
  * 
- * <pre>-missing &lt;java.lang.String&gt; (property: missingValue)
+ * <pre>-missing &lt;adams.core.base.BaseRegExp&gt; (property: missingValue)
  * &nbsp;&nbsp;&nbsp;The placeholder for missing values.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
@@ -128,6 +129,18 @@ import java.util.TimeZone;
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
+ * <pre>-first-row &lt;int&gt; (property: firstRow)
+ * &nbsp;&nbsp;&nbsp;The index of the first row to retrieve (1-based).
+ * &nbsp;&nbsp;&nbsp;default: 1
+ * &nbsp;&nbsp;&nbsp;minimum: 1
+ * </pre>
+ * 
+ * <pre>-num-rows &lt;int&gt; (property: numRows)
+ * &nbsp;&nbsp;&nbsp;The number of data rows to retrieve; use -1 for unlimited.
+ * &nbsp;&nbsp;&nbsp;default: -1
+ * &nbsp;&nbsp;&nbsp;minimum: -1
+ * </pre>
+ * 
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
@@ -135,7 +148,8 @@ import java.util.TimeZone;
  */
 public class FixedTabularSpreadSheetReader
   extends AbstractSpreadSheetReaderWithMissingValueSupport
-  implements OptionHandlingLocaleSupporter, NoHeaderSpreadSheetReader {
+  implements OptionHandlingLocaleSupporter, NoHeaderSpreadSheetReader,
+             WindowedSpreadSheetReader {
 
   private static final long serialVersionUID = 2446979875221254720L;
 
@@ -171,6 +185,12 @@ public class FixedTabularSpreadSheetReader
 
   /** whether to trim the cells. */
   protected boolean m_Trim;
+
+  /** the first row to retrieve (1-based). */
+  protected int m_FirstRow;
+
+  /** the number of rows to retrieve (less than 1 = unlimited). */
+  protected int m_NumRows;
 
   /**
    * Returns a string describing the object.
@@ -234,6 +254,14 @@ public class FixedTabularSpreadSheetReader
     m_OptionManager.add(
       "custom-column-headers", "customColumnHeaders",
       "");
+
+    m_OptionManager.add(
+      "first-row", "firstRow",
+      1, 1, null);
+
+    m_OptionManager.add(
+      "num-rows", "numRows",
+      -1, -1, null);
   }
 
   /**
@@ -571,6 +599,69 @@ public class FixedTabularSpreadSheetReader
   }
 
   /**
+   * Sets the first row to return.
+   *
+   * @param value	the first row (1-based), greater than 0
+   */
+  public void setFirstRow(int value) {
+    if (getOptionManager().isValid("firstRow", value)) {
+      m_FirstRow = value;
+      reset();
+    }
+  }
+
+  /**
+   * Returns the first row to return.
+   *
+   * @return		the first row (1-based), greater than 0
+   */
+  public int getFirstRow() {
+    return m_FirstRow;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String firstRowTipText() {
+    return "The index of the first row to retrieve (1-based).";
+  }
+
+  /**
+   * Sets the number of data rows to return.
+   *
+   * @param value	the number of rows, -1 for unlimited
+   */
+  public void setNumRows(int value) {
+    if (value < 0)
+      m_NumRows = -1;
+    else
+      m_NumRows = value;
+    reset();
+  }
+
+  /**
+   * Returns the number of data rows to return.
+   *
+   * @return		the number of rows, -1 for unlimited
+   */
+  public int getNumRows() {
+    return m_NumRows;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String numRowsTipText() {
+    return "The number of data rows to retrieve; use -1 for unlimited.";
+  }
+
+  /**
    * Returns a string describing the format (used in the file chooser).
    *
    * @return 			a description suitable for displaying in the
@@ -640,6 +731,9 @@ public class FixedTabularSpreadSheetReader
     int[]		cols;
     ContentType[]	types;
     Cell 		cell;
+    int			firstRow;
+    int 		lastRow;
+    int			count;
 
     result = m_SpreadSheetType.newInstance();
     result.setDataRowClass(getDataRowType().getClass());
@@ -657,6 +751,11 @@ public class FixedTabularSpreadSheetReader
 	      + m_ColumnWidth.length + " != " + custom.length);
 	for (i = 0; i < m_ColumnWidth.length; i++)
 	  row.addCell("" + i).setContentAsString(custom[i]);
+      }
+      else {
+	cells = SpreadSheetUtils.createHeader(m_ColumnWidth.length, "").toArray(new String[0]);
+	for (i = 0; i < cells.length; i++)
+	  row.addCell("" + i).setContentAsString(cells[i]);
       }
     }
     else {
@@ -702,16 +801,27 @@ public class FixedTabularSpreadSheetReader
     for (i = 0; i < m_ColumnWidth.length; i++)
       cols[i+1] = cols[i] + m_ColumnWidth[i].intValue();
 
-    first = true;
-
     if (r instanceof BufferedReader)
       reader = (BufferedReader) r;
     else
       reader = new BufferedReader(r);
 
     try {
-      cells = new String[m_ColumnWidth.length];
+      first    = true;
+      cells    = new String[m_ColumnWidth.length];
+      count    = -1;
+      firstRow = m_FirstRow - 1;
+      if (m_NumRows > 0)
+	lastRow = firstRow + m_NumRows - 1;
+      else
+        lastRow = -1;
       while ((line = reader.readLine()) != null) {
+	count++;
+	if (count < firstRow)
+	  continue;
+	if ((lastRow > -1) && (count > lastRow))
+	  break;
+
 	// split into cells
 	for (i = 0; i < cols.length - 1; i++) {
           cells[i] = line.substring(cols[i], cols[i + 1]);
