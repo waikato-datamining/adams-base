@@ -15,30 +15,28 @@
 
 /**
  * GnumericSpreadSheetReader.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.input;
-
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.zip.GZIPInputStream;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
-import adams.data.spreadsheet.SpreadSheetUtils;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import adams.core.Utils;
 import adams.data.io.output.GnumericSpreadSheetWriter;
 import adams.data.io.output.SpreadSheetWriter;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
+import adams.data.spreadsheet.SpreadSheetUtils;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.zip.GZIPInputStream;
 
 /**
  <!-- globalinfo-start -->
@@ -47,26 +45,25 @@ import adams.data.spreadsheet.SpreadSheet;
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- * 
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  * 
- * <pre>-data-row-type &lt;DENSE|SPARSE&gt; (property: dataRowType)
+ * <pre>-data-row-type &lt;adams.data.spreadsheet.DataRow&gt; (property: dataRowType)
  * &nbsp;&nbsp;&nbsp;The type of row to use for the data.
- * &nbsp;&nbsp;&nbsp;default: DENSE
+ * &nbsp;&nbsp;&nbsp;default: adams.data.spreadsheet.DenseDataRow
+ * </pre>
+ * 
+ * <pre>-spreadsheet-type &lt;adams.data.spreadsheet.SpreadSheet&gt; (property: spreadSheetType)
+ * &nbsp;&nbsp;&nbsp;The type of spreadsheet to use for the data.
+ * &nbsp;&nbsp;&nbsp;default: adams.data.spreadsheet.DefaultSpreadSheet
  * </pre>
  * 
  * <pre>-sheets &lt;adams.core.Range&gt; (property: sheetRange)
- * &nbsp;&nbsp;&nbsp;The range of sheets to load; A range is a comma-separated list of single 
- * &nbsp;&nbsp;&nbsp;1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts 
- * &nbsp;&nbsp;&nbsp;the range '...'; the following placeholders can be used as well: first, 
- * &nbsp;&nbsp;&nbsp;second, third, last_2, last_1, last
+ * &nbsp;&nbsp;&nbsp;The range of sheets to load.
  * &nbsp;&nbsp;&nbsp;default: first
+ * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts the range '...'; the following placeholders can be used as well: first, second, third, last_2, last_1, last
  * </pre>
  * 
  * <pre>-missing &lt;java.lang.String&gt; (property: missingValue)
@@ -74,8 +71,33 @@ import adams.data.spreadsheet.SpreadSheet;
  * &nbsp;&nbsp;&nbsp;default: ?
  * </pre>
  * 
- * <pre>-uncompressed (property: uncompressedOutput)
+ * <pre>-uncompressed &lt;boolean&gt; (property: uncompressedInput)
  * &nbsp;&nbsp;&nbsp;If enabled, file is assumed to be uncompressed XML rather than GZIP compressed.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-no-header &lt;boolean&gt; (property: noHeader)
+ * &nbsp;&nbsp;&nbsp;If enabled, all rows get added as data rows and a dummy header will get 
+ * &nbsp;&nbsp;&nbsp;inserted.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-custom-column-headers &lt;java.lang.String&gt; (property: customColumnHeaders)
+ * &nbsp;&nbsp;&nbsp;The custom headers to use for the columns instead (comma-separated list);
+ * &nbsp;&nbsp;&nbsp; ignored if empty.
+ * &nbsp;&nbsp;&nbsp;default: 
+ * </pre>
+ * 
+ * <pre>-first-row &lt;int&gt; (property: firstRow)
+ * &nbsp;&nbsp;&nbsp;The index of the first row to retrieve (1-based).
+ * &nbsp;&nbsp;&nbsp;default: 1
+ * &nbsp;&nbsp;&nbsp;minimum: 1
+ * </pre>
+ * 
+ * <pre>-num-rows &lt;int&gt; (property: numRows)
+ * &nbsp;&nbsp;&nbsp;The number of data rows to retrieve; use -1 for unlimited.
+ * &nbsp;&nbsp;&nbsp;default: -1
+ * &nbsp;&nbsp;&nbsp;minimum: -1
  * </pre>
  * 
  <!-- options-end -->
@@ -84,7 +106,8 @@ import adams.data.spreadsheet.SpreadSheet;
  * @version $Revision$
  */
 public class GnumericSpreadSheetReader
-  extends AbstractMultiSheetSpreadSheetReaderWithMissingValueSupport {
+  extends AbstractMultiSheetSpreadSheetReaderWithMissingValueSupport
+  implements NoHeaderSpreadSheetReader, WindowedSpreadSheetReader {
 
   /** for serialization. */
   private static final long serialVersionUID = -2259236765510690348L;
@@ -92,8 +115,20 @@ public class GnumericSpreadSheetReader
   /** the version. */
   public final static String VERSION = GnumericSpreadSheetWriter.VERSION;
 
-  /** whether to use uncompressed output. */
-  protected boolean m_UncompressedOutput;
+  /** whether to use uncompressed input. */
+  protected boolean m_UncompressedInput;
+
+  /** whether the file has a header or not. */
+  protected boolean m_NoHeader;
+
+  /** the comma-separated list of column header names. */
+  protected String m_CustomColumnHeaders;
+
+  /** the first row to retrieve (1-based). */
+  protected int m_FirstRow;
+
+  /** the number of rows to retrieve (less than 1 = unlimited). */
+  protected int m_NumRows;
 
   /**
    * Returns a string describing the object.
@@ -113,27 +148,43 @@ public class GnumericSpreadSheetReader
     super.defineOptions();
 
     m_OptionManager.add(
-	    "uncompressed", "uncompressedOutput",
-	    false);
+      "uncompressed", "uncompressedInput",
+      false);
+
+    m_OptionManager.add(
+      "no-header", "noHeader",
+      false);
+
+    m_OptionManager.add(
+      "custom-column-headers", "customColumnHeaders",
+      "");
+
+    m_OptionManager.add(
+      "first-row", "firstRow",
+      1, 1, null);
+
+    m_OptionManager.add(
+      "num-rows", "numRows",
+      -1, -1, null);
   }
 
   /**
-   * Sets whether to output uncompressed XML.
+   * Sets whether input is uncompressed XML.
    *
-   * @param value	if true uncompressed XML is generated
+   * @param value	true if uncompressed XML
    */
-  public void setUncompressedOutput(boolean value) {
-    m_UncompressedOutput = value;
+  public void setUncompressedInput(boolean value) {
+    m_UncompressedInput = value;
     reset();
   }
 
   /**
-   * Returns whether to output uncompressed XML.
+   * Returns whether input is uncompressed XML.
    *
-   * @return		true if uncompressed XML is generated
+   * @return		true if uncompressed XML
    */
-  public boolean getUncompressedOutput() {
-    return m_UncompressedOutput;
+  public boolean getUncompressedInput() {
+    return m_UncompressedInput;
   }
 
   /**
@@ -142,8 +193,129 @@ public class GnumericSpreadSheetReader
    * @return 		tip text for this property suitable for
    *         		displaying in the explorer/experimenter gui
    */
-  public String uncompressedOutputTipText() {
+  public String uncompressedInputTipText() {
     return "If enabled, file is assumed to be uncompressed XML rather than GZIP compressed.";
+  }
+
+  /**
+   * Sets whether the file contains a header row or not.
+   *
+   * @param value	true if no header row available
+   */
+  public void setNoHeader(boolean value) {
+    m_NoHeader = value;
+    reset();
+  }
+
+  /**
+   * Returns whether the file contains a header row or not.
+   *
+   * @return		true if no header row available
+   */
+  public boolean getNoHeader() {
+    return m_NoHeader;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the gui
+   */
+  public String noHeaderTipText() {
+    return "If enabled, all rows get added as data rows and a dummy header will get inserted.";
+  }
+
+  /**
+   * Sets the custom headers to use.
+   *
+   * @param value	the comma-separated list
+   */
+  public void setCustomColumnHeaders(String value) {
+    m_CustomColumnHeaders = value;
+    reset();
+  }
+
+  /**
+   * Returns whether the file contains a header row or not.
+   *
+   * @return		the comma-separated list
+   */
+  public String getCustomColumnHeaders() {
+    return m_CustomColumnHeaders;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the gui
+   */
+  public String customColumnHeadersTipText() {
+    return "The custom headers to use for the columns instead (comma-separated list); ignored if empty.";
+  }
+
+  /**
+   * Sets the first row to return.
+   *
+   * @param value	the first row (1-based), greater than 0
+   */
+  public void setFirstRow(int value) {
+    if (getOptionManager().isValid("firstRow", value)) {
+      m_FirstRow = value;
+      reset();
+    }
+  }
+
+  /**
+   * Returns the first row to return.
+   *
+   * @return		the first row (1-based), greater than 0
+   */
+  public int getFirstRow() {
+    return m_FirstRow;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String firstRowTipText() {
+    return "The index of the first row to retrieve (1-based).";
+  }
+
+  /**
+   * Sets the number of data rows to return.
+   *
+   * @param value	the number of rows, -1 for unlimited
+   */
+  public void setNumRows(int value) {
+    if (value < 0)
+      m_NumRows = -1;
+    else
+      m_NumRows = value;
+    reset();
+  }
+
+  /**
+   * Returns the number of data rows to return.
+   *
+   * @return		the number of rows, -1 for unlimited
+   */
+  public int getNumRows() {
+    return m_NumRows;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String numRowsTipText() {
+    return "The number of data rows to retrieve; use -1 for unlimited.";
   }
 
   /**
@@ -217,11 +389,14 @@ public class GnumericSpreadSheetReader
     String			type;
     String			nname;
     String			content;
-    
-    result = new ArrayList<SpreadSheet>();
+    int				firstRow;
+    int 			lastRow;
+    boolean			isHeader;
+
+    result = new ArrayList<>();
     
     try {
-      if (!m_UncompressedOutput)
+      if (!m_UncompressedInput)
 	in = new GZIPInputStream(in);
 
       dbFactory = DocumentBuilderFactory.newInstance();
@@ -249,9 +424,9 @@ public class GnumericSpreadSheetReader
 	  if ("gnm:Name".equals(nname) || "Name".equals(nname))
 	    name = node.getTextContent();
 	  else if ("gnm:MaxRow".equals(nname) || "MaxRow".equals(nname))
-	    rows = Integer.parseInt(node.getTextContent());
+	    rows = Integer.parseInt(node.getTextContent()) + 1;
 	  else if ("gnm:MaxCol".equals(nname) || "MaxCol".equals(nname))
-	    cols = Integer.parseInt(node.getTextContent());
+	    cols = Integer.parseInt(node.getTextContent()) + 1;
 	}
 	sheet.setName(name);
 	if (isLoggingEnabled()) {
@@ -263,15 +438,23 @@ public class GnumericSpreadSheetReader
 	// generate matrix
 	if (cols != -1) {
 	  row = sheet.getHeaderRow();
-	  for (n = 0; n < cols; n++)
-	    row.addCell("" + n).setContent("Col" + (n+1));
+	  if (m_NoHeader) {
+	    for (String col: SpreadSheetUtils.createHeader(cols, m_CustomColumnHeaders))
+	      row.addCell("" + sheet.getColumnCount()).setContentAsString(col);
+	  }
+	  else {
+	    // gets filled in later on
+	    for (n = 0; n < cols; n++)
+	      row.addCell("" + n).setContentAsString(SpreadSheetUtils.PREFIX_COL + (n + 1));
+	  }
 	}
-	if (rows != -1) {
-	  for (n = 0; n < rows; n++)
-	    sheet.addRow();
-	}
-	
+
 	// cells
+	firstRow = m_FirstRow - 1;
+	if (m_NumRows > 0)
+	  lastRow = firstRow + m_NumRows - 1;
+	else
+	  lastRow = -1;
 	cellList = ((Element) sheetNode).getElementsByTagName("gnm:Cell");
 	for (n = 0; n < cellList.getLength(); n++) {
 	  cellNode = cellList.item(n);
@@ -297,22 +480,44 @@ public class GnumericSpreadSheetReader
 	    node = cellNode.getAttributes().getNamedItem("gnm:Row");
 	  if (node != null)
 	    cellRow = Integer.parseInt(node.getTextContent());
+	  // valid location?
+	  if (cellRow < firstRow)
+	    continue;
+	  if ((lastRow > -1) && (cellRow > lastRow))
+	    continue;
 	  // add cell
 	  if ((cellCol != -1) && (cellRow != -1)) {
 	    // make sure cell can be placed
 	    while (sheet.getColumnCount() <= cellCol)
-	      sheet.getHeaderRow().addCell("" + sheet.getColumnCount()).setContent("Col" + sheet.getColumnCount());
-	    while (sheet.getRowCount() < cellRow)  // header is extra!
-	      sheet.addRow();
+	      sheet.getHeaderRow().addCell("" + sheet.getColumnCount()).setContent(SpreadSheetUtils.PREFIX_COL + sheet.getColumnCount());
+	    if (m_NoHeader) {
+	      while (sheet.getRowCount() <= cellRow - firstRow)
+		sheet.addRow();
+	    }
+	    else {
+	      while (sheet.getRowCount() < cellRow - firstRow)  // header is extra!
+		sheet.addRow();
+	    }
 	    // add cell
-	    if (cellRow == 0)
-	      row = sheet.getHeaderRow();
-	    else
-	      row = sheet.getRow(cellRow - 1);
+	    isHeader = false;
+	    if (m_NoHeader) {
+	      row = sheet.getRow(cellRow - firstRow);
+	    }
+	    else {
+	      if (cellRow - firstRow == 0) {
+		isHeader = true;
+		row      = sheet.getHeaderRow();
+	      }
+	      else {
+		row = sheet.getRow(cellRow - firstRow - 1);
+	      }
+	    }
 	    if (content.equals(m_MissingValue))
 	      content = null;
 	    if (content == null)
 	      row.addCell(cellCol).setMissing();
+	    else if (isHeader)
+	      row.addCell(cellCol).setContentAsString(content);
 	    else if (type.equals(GnumericSpreadSheetWriter.VALUETYPE_NUMERIC) && (content.length() > 0))
 	      row.addCell(cellCol).setContent(Double.parseDouble(content));
 	    else
