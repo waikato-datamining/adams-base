@@ -15,7 +15,7 @@
 
 /**
  * AbstractExcelSpreadSheetReader.java
- * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.input;
 
@@ -29,7 +29,7 @@ import adams.core.Range;
  */
 public abstract class AbstractExcelSpreadSheetReader
   extends AbstractMultiSheetSpreadSheetReaderWithMissingValueSupport
-  implements NoHeaderSpreadSheetReader {
+  implements NoHeaderSpreadSheetReader, WindowedSpreadSheetReader {
 
   /** for serialization. */
   private static final long serialVersionUID = 4755872204697328246L;
@@ -45,6 +45,12 @@ public abstract class AbstractExcelSpreadSheetReader
 
   /** the comma-separated list of column header names. */
   protected String m_CustomColumnHeaders;
+
+  /** the first row to retrieve (1-based). */
+  protected int m_FirstRow;
+
+  /** the number of rows to retrieve (less than 1 = unlimited). */
+  protected int m_NumRows;
 
   /**
    * Adds options to the internal list of options.
@@ -68,6 +74,14 @@ public abstract class AbstractExcelSpreadSheetReader
     m_OptionManager.add(
       "custom-column-headers", "customColumnHeaders",
       "");
+
+    m_OptionManager.add(
+      "first-row", "firstRow",
+      1, 1, null);
+
+    m_OptionManager.add(
+      "num-rows", "numRows",
+      -1, -1, null);
   }
 
   /**
@@ -204,5 +218,68 @@ public abstract class AbstractExcelSpreadSheetReader
    */
   public String customColumnHeadersTipText() {
     return "The custom headers to use for the columns instead (comma-separated list); ignored if empty.";
+  }
+
+  /**
+   * Sets the first row to return.
+   *
+   * @param value	the first row (1-based), greater than 0
+   */
+  public void setFirstRow(int value) {
+    if (getOptionManager().isValid("firstRow", value)) {
+      m_FirstRow = value;
+      reset();
+    }
+  }
+
+  /**
+   * Returns the first row to return.
+   *
+   * @return		the first row (1-based), greater than 0
+   */
+  public int getFirstRow() {
+    return m_FirstRow;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String firstRowTipText() {
+    return "The index of the first row to retrieve (1-based).";
+  }
+
+  /**
+   * Sets the number of data rows to return.
+   *
+   * @param value	the number of rows, -1 for unlimited
+   */
+  public void setNumRows(int value) {
+    if (value < 0)
+      m_NumRows = -1;
+    else
+      m_NumRows = value;
+    reset();
+  }
+
+  /**
+   * Returns the number of data rows to return.
+   *
+   * @return		the number of rows, -1 for unlimited
+   */
+  public int getNumRows() {
+    return m_NumRows;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String numRowsTipText() {
+    return "The number of data rows to retrieve; use -1 for unlimited.";
   }
 }

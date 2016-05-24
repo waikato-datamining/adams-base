@@ -71,44 +71,66 @@ import java.util.logging.Level;
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- * 
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  * 
- * <pre>-data-row-type &lt;DENSE|SPARSE&gt; (property: dataRowType)
+ * <pre>-data-row-type &lt;adams.data.spreadsheet.DataRow&gt; (property: dataRowType)
  * &nbsp;&nbsp;&nbsp;The type of row to use for the data.
- * &nbsp;&nbsp;&nbsp;default: DENSE
+ * &nbsp;&nbsp;&nbsp;default: adams.data.spreadsheet.DenseDataRow
+ * </pre>
+ * 
+ * <pre>-spreadsheet-type &lt;adams.data.spreadsheet.SpreadSheet&gt; (property: spreadSheetType)
+ * &nbsp;&nbsp;&nbsp;The type of spreadsheet to use for the data.
+ * &nbsp;&nbsp;&nbsp;default: adams.data.spreadsheet.DefaultSpreadSheet
  * </pre>
  * 
  * <pre>-sheets &lt;adams.core.Range&gt; (property: sheetRange)
- * &nbsp;&nbsp;&nbsp;The range of sheets to load; A range is a comma-separated list of single 
- * &nbsp;&nbsp;&nbsp;1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts 
- * &nbsp;&nbsp;&nbsp;the range '...'; the following placeholders can be used as well: first, 
- * &nbsp;&nbsp;&nbsp;second, third, last_2, last_1, last
+ * &nbsp;&nbsp;&nbsp;The range of sheets to load.
  * &nbsp;&nbsp;&nbsp;default: first
+ * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts the range '...'; the following placeholders can be used as well: first, second, third, last_2, last_1, last
  * </pre>
  * 
  * <pre>-missing &lt;java.lang.String&gt; (property: missingValue)
  * &nbsp;&nbsp;&nbsp;The placeholder for missing values.
- * &nbsp;&nbsp;&nbsp;default: ?
+ * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
- * <pre>-no-auto-extend-header (property: autoExtendHeader)
+ * <pre>-no-auto-extend-header &lt;boolean&gt; (property: autoExtendHeader)
  * &nbsp;&nbsp;&nbsp;If enabled, the header gets automatically extended if rows have more cells 
  * &nbsp;&nbsp;&nbsp;than the header.
+ * &nbsp;&nbsp;&nbsp;default: true
  * </pre>
  * 
- * <pre>-text-columns &lt;java.lang.String&gt; (property: textColumns)
- * &nbsp;&nbsp;&nbsp;The range of columns to treat as text; A range is a comma-separated list 
- * &nbsp;&nbsp;&nbsp;of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(..
- * &nbsp;&nbsp;&nbsp;.)' inverts the range '...'; the following placeholders can be used as well:
- * &nbsp;&nbsp;&nbsp; first, second, third, last_2, last_1, last
+ * <pre>-text-columns &lt;adams.core.Range&gt; (property: textColumns)
+ * &nbsp;&nbsp;&nbsp;The range of columns to treat as text.
  * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts the range '...'; the following placeholders can be used as well: first, second, third, last_2, last_1, last
+ * </pre>
+ * 
+ * <pre>-no-header &lt;boolean&gt; (property: noHeader)
+ * &nbsp;&nbsp;&nbsp;If enabled, all rows get added as data rows and a dummy header will get 
+ * &nbsp;&nbsp;&nbsp;inserted.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-custom-column-headers &lt;java.lang.String&gt; (property: customColumnHeaders)
+ * &nbsp;&nbsp;&nbsp;The custom headers to use for the columns instead (comma-separated list);
+ * &nbsp;&nbsp;&nbsp; ignored if empty.
+ * &nbsp;&nbsp;&nbsp;default: 
+ * </pre>
+ * 
+ * <pre>-first-row &lt;int&gt; (property: firstRow)
+ * &nbsp;&nbsp;&nbsp;The index of the first row to retrieve (1-based).
+ * &nbsp;&nbsp;&nbsp;default: 1
+ * &nbsp;&nbsp;&nbsp;minimum: 1
+ * </pre>
+ * 
+ * <pre>-num-rows &lt;int&gt; (property: numRows)
+ * &nbsp;&nbsp;&nbsp;The number of data rows to retrieve; use -1 for unlimited.
+ * &nbsp;&nbsp;&nbsp;default: -1
+ * &nbsp;&nbsp;&nbsp;minimum: -1
  * </pre>
  * 
  * <pre>-cell-type-id &lt;adams.core.base.BaseString&gt; [-cell-type-id ...] (property: cellTypeID)
@@ -116,19 +138,19 @@ import java.util.logging.Level;
  * &nbsp;&nbsp;&nbsp;default: b, s
  * </pre>
  * 
- * <pre>-cell-type-contenttype &lt;MISSING|STRING|BOOLEAN|LONG|DOUBLE|DATE|DATETIME|TIME|OBJECT&gt; [-cell-type-contenttype ...] (property: cellTypeContentType)
+ * <pre>-cell-type-contenttype &lt;MISSING|STRING|BOOLEAN|LONG|DOUBLE|DATE|DATETIME|DATETIMEMSEC|TIME|TIMEMSEC|OBJECT&gt; [-cell-type-contenttype ...] (property: cellTypeContentType)
  * &nbsp;&nbsp;&nbsp;The corresponding content types for the cell types to parse.
  * &nbsp;&nbsp;&nbsp;default: BOOLEAN, STRING
  * </pre>
  * 
  * <pre>-cell-string-id &lt;adams.core.base.BaseString&gt; [-cell-string-id ...] (property: cellStringID)
  * &nbsp;&nbsp;&nbsp;The IDs (= strings) for the cell strings to parse.
- * &nbsp;&nbsp;&nbsp;default: 1, 2, 3, 4, 7, 8
+ * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
- * <pre>-cell-string-contenttype &lt;MISSING|STRING|BOOLEAN|LONG|DOUBLE|DATE|DATETIME|TIME|OBJECT&gt; [-cell-string-contenttype ...] (property: cellStringContentType)
+ * <pre>-cell-string-contenttype &lt;MISSING|STRING|BOOLEAN|LONG|DOUBLE|DATE|DATETIME|DATETIMEMSEC|TIME|TIMEMSEC|OBJECT&gt; [-cell-string-contenttype ...] (property: cellStringContentType)
  * &nbsp;&nbsp;&nbsp;The corresponding content types for the cell strings to parse.
- * &nbsp;&nbsp;&nbsp;default: DATE, TIME, DOUBLE, DATE, DATE, LONG
+ * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
  <!-- options-end -->
@@ -233,6 +255,12 @@ public class ExcelStreamingSpreadSheetReader
     /** the text columns. */
     protected TIntHashSet m_TextColumns;
 
+    /** the first row. */
+    protected int m_FirstRow;
+
+    /** the last row. */
+    protected int m_LastRow;
+
     /**
      * Initializes the SAX handler.
      * 
@@ -252,13 +280,18 @@ public class ExcelStreamingSpreadSheetReader
       m_Stopped            = false;
       m_LoggingAtLeastFine = LoggingHelper.isAtLeast(m_Owner.getLogger(), Level.FINE);
       m_TextColumns        = null;
+      m_FirstRow           = owner.getFirstRow() - 1;
+      if (owner.getNumRows() < 1)
+        m_LastRow = -1;
+      else
+        m_LastRow = m_FirstRow + owner.getNumRows() - 1;
 
-      m_CellTypes                  = new HashMap<String,ContentType>();
-      m_CellStrings                = new HashMap<String,ContentType>();
-      m_UnknownCellTypes           = new HashSet<String>();
-      m_UnknownCellTypesExamples   = new HashMap<String,String>();
-      m_UnknownCellStrings         = new HashSet<String>();
-      m_UnknownCellStringsExamples = new HashMap<String,String>();
+      m_CellTypes                  = new HashMap<>();
+      m_CellStrings                = new HashMap<>();
+      m_UnknownCellTypes           = new HashSet<>();
+      m_UnknownCellTypesExamples   = new HashMap<>();
+      m_UnknownCellStrings         = new HashSet<>();
+      m_UnknownCellStringsExamples = new HashMap<>();
       
       for (i = 0; i < m_Owner.getCellTypeID().length; i++)
 	m_CellTypes.put(m_Owner.getCellTypeID()[i].stringValue(), m_Owner.getCellTypeContentType()[i]);
@@ -335,6 +368,20 @@ public class ExcelStreamingSpreadSheetReader
     }
 
     /**
+     * Checks whether the 0-based row is in the window that we want to read in.
+     *
+     * @param row	the row to check
+     * @return		true if inside the window
+     */
+    protected boolean isInRange(int row) {
+      if (row < m_FirstRow)
+	return false;
+      if ((m_LastRow >= 0) && (row > m_LastRow))
+	return false;
+      return true;
+    }
+
+    /**
      * Receive notification of the end of an element.
      *
      * @param uri The Namespace URI, or the empty string if the
@@ -354,6 +401,7 @@ public class ExcelStreamingSpreadSheetReader
       Row	row;
       Cell	cell;
       String	content;
+      int	actualRow;
       
       // Process the last contents as required.
       // Do now, as characters() may be called more than once
@@ -368,21 +416,35 @@ public class ExcelStreamingSpreadSheetReader
       if (!m_Reference.isEmpty()) {
 	try {
 	  loc = ExcelHelper.getCellLocation(m_Reference);
-	  // fill in rows, if necessary
-	  while (m_Sheet.getRowCount() < loc[0])
-	    m_Sheet.addRow();
-	  // fill in columns, if necessary
-	  while (m_Sheet.getColumnCount() <= loc[1])
-	    m_Sheet.insertColumn(m_Sheet.getColumnCount(), "col" + (m_Sheet.getColumnCount() + 1));
-	  if (loc[0] == 0)
-	    row = m_Sheet.getHeaderRow();
-	  else
-	    row = m_Sheet.getRow(loc[0] - 1);
-	  if ((m_Owner.getTextColumns().getMax() < m_Sheet.getColumnCount()) || (m_TextColumns == null)) {
-	    m_Owner.getTextColumns().setMax(m_Sheet.getColumnCount());
-	    m_TextColumns = new TIntHashSet(m_Owner.getTextColumns().getIntIndices());
+	  if (isInRange(loc[0])) {
+	    actualRow = loc[0] - m_FirstRow;
+	    // fill in rows, if necessary
+	    if (m_Owner.getNoHeader()) {
+	      while (m_Sheet.getRowCount() < actualRow + 1)
+		m_Sheet.addRow();
+	    }
+	    else {
+	      while (m_Sheet.getRowCount() < actualRow)
+		m_Sheet.addRow();
+	    }
+	    // fill in columns, if necessary
+	    while (m_Sheet.getColumnCount() <= loc[1])
+	      m_Sheet.insertColumn(m_Sheet.getColumnCount(), SpreadSheetUtils.PREFIX_COL + (m_Sheet.getColumnCount() + 1));
+	    if (m_Owner.getNoHeader()) {
+	      row = m_Sheet.getRow(actualRow);
+	    }
+	    else {
+	      if (actualRow == 0)
+		row = m_Sheet.getHeaderRow();
+	      else
+		row = m_Sheet.getRow(actualRow - 1);
+	    }
+	    if ((m_Owner.getTextColumns().getMax() < m_Sheet.getColumnCount()) || (m_TextColumns == null)) {
+	      m_Owner.getTextColumns().setMax(m_Sheet.getColumnCount());
+	      m_TextColumns = new TIntHashSet(m_Owner.getTextColumns().getIntIndices());
+	    }
+	    cell = row.addCell(loc[1]);
 	  }
-	  cell = row.addCell(loc[1]);
 	}
 	catch (Exception e) {
 	  loc = null;
@@ -812,11 +874,11 @@ public class ExcelStreamingSpreadSheetReader
     Row                         row;
     int                         i;
 
-    result = new ArrayList<SpreadSheet>();
+    result = new ArrayList<>();
 
     try {
       m_SheetRange.setMax(getSheetCount(file));
-      indices = new HashSet<Integer>(Utils.toList(m_SheetRange.getIntIndices()));
+      indices = new HashSet<>(Utils.toList(m_SheetRange.getIntIndices()));
       pkg       = OPCPackage.open(file.getAbsolutePath(), PackageAccess.READ);
       reader    = new XSSFReader(pkg);
       sst       = reader.getSharedStringsTable();
@@ -838,23 +900,11 @@ public class ExcelStreamingSpreadSheetReader
 	    sheetSource = new InputSource(sheet);
 	    parser.parse(sheetSource);
 	    // fix header?
-	    if (getNoHeader()) {
+	    if (!getCustomColumnHeaders().trim().isEmpty()) {
 	      header = SpreadSheetUtils.createHeader(spsheet.getColumnCount(), getCustomColumnHeaders());
-	      rowOld = spsheet.getHeaderRow();
-	      row = spsheet.insertRow(0);
-	      for (i = 0; i < spsheet.getColumnCount(); i++)
-		row.getCell(i).assign(rowOld.getCell(i));
 	      row = spsheet.getHeaderRow();
 	      for (i = 0; i < header.size() && i < spsheet.getColumnCount(); i++)
 		row.getCell(i).setContent(header.get(i));
-	    }
-	    else {
-	      if (!getCustomColumnHeaders().trim().isEmpty()) {
-		header = SpreadSheetUtils.createHeader(spsheet.getColumnCount(), getCustomColumnHeaders());
-		row = spsheet.getHeaderRow();
-		for (i = 0; i < header.size() && i < spsheet.getColumnCount(); i++)
-		  row.getCell(i).setContent(header.get(i));
-	      }
 	    }
 	    result.add(spsheet);
 	    // missing types?

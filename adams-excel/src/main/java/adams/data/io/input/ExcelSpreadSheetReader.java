@@ -15,7 +15,7 @@
 
 /**
  * ExcelSpreadSheetReader.java
- * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.input;
 
@@ -46,44 +46,66 @@ import java.util.logging.Level;
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- * 
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  * 
- * <pre>-data-row-type &lt;DENSE|SPARSE&gt; (property: dataRowType)
+ * <pre>-data-row-type &lt;adams.data.spreadsheet.DataRow&gt; (property: dataRowType)
  * &nbsp;&nbsp;&nbsp;The type of row to use for the data.
- * &nbsp;&nbsp;&nbsp;default: DENSE
+ * &nbsp;&nbsp;&nbsp;default: adams.data.spreadsheet.DenseDataRow
+ * </pre>
+ * 
+ * <pre>-spreadsheet-type &lt;adams.data.spreadsheet.SpreadSheet&gt; (property: spreadSheetType)
+ * &nbsp;&nbsp;&nbsp;The type of spreadsheet to use for the data.
+ * &nbsp;&nbsp;&nbsp;default: adams.data.spreadsheet.DefaultSpreadSheet
  * </pre>
  * 
  * <pre>-sheets &lt;adams.core.Range&gt; (property: sheetRange)
- * &nbsp;&nbsp;&nbsp;The range of sheets to load; A range is a comma-separated list of single 
- * &nbsp;&nbsp;&nbsp;1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts 
- * &nbsp;&nbsp;&nbsp;the range '...'; the following placeholders can be used as well: first, 
- * &nbsp;&nbsp;&nbsp;second, third, last_2, last_1, last
+ * &nbsp;&nbsp;&nbsp;The range of sheets to load.
  * &nbsp;&nbsp;&nbsp;default: first
+ * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts the range '...'; the following placeholders can be used as well: first, second, third, last_2, last_1, last
  * </pre>
  * 
  * <pre>-missing &lt;java.lang.String&gt; (property: missingValue)
  * &nbsp;&nbsp;&nbsp;The placeholder for missing values.
- * &nbsp;&nbsp;&nbsp;default: ?
+ * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
- * <pre>-no-auto-extend-header (property: autoExtendHeader)
+ * <pre>-no-auto-extend-header &lt;boolean&gt; (property: autoExtendHeader)
  * &nbsp;&nbsp;&nbsp;If enabled, the header gets automatically extended if rows have more cells 
  * &nbsp;&nbsp;&nbsp;than the header.
+ * &nbsp;&nbsp;&nbsp;default: true
  * </pre>
  * 
- * <pre>-text-columns &lt;java.lang.String&gt; (property: textColumns)
- * &nbsp;&nbsp;&nbsp;The range of columns to treat as text; A range is a comma-separated list 
- * &nbsp;&nbsp;&nbsp;of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(..
- * &nbsp;&nbsp;&nbsp;.)' inverts the range '...'; the following placeholders can be used as well:
- * &nbsp;&nbsp;&nbsp; first, second, third, last_2, last_1, last
+ * <pre>-text-columns &lt;adams.core.Range&gt; (property: textColumns)
+ * &nbsp;&nbsp;&nbsp;The range of columns to treat as text.
  * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts the range '...'; the following placeholders can be used as well: first, second, third, last_2, last_1, last
+ * </pre>
+ * 
+ * <pre>-no-header &lt;boolean&gt; (property: noHeader)
+ * &nbsp;&nbsp;&nbsp;If enabled, all rows get added as data rows and a dummy header will get 
+ * &nbsp;&nbsp;&nbsp;inserted.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-custom-column-headers &lt;java.lang.String&gt; (property: customColumnHeaders)
+ * &nbsp;&nbsp;&nbsp;The custom headers to use for the columns instead (comma-separated list);
+ * &nbsp;&nbsp;&nbsp; ignored if empty.
+ * &nbsp;&nbsp;&nbsp;default: 
+ * </pre>
+ * 
+ * <pre>-first-row &lt;int&gt; (property: firstRow)
+ * &nbsp;&nbsp;&nbsp;The index of the first row to retrieve (1-based).
+ * &nbsp;&nbsp;&nbsp;default: 1
+ * &nbsp;&nbsp;&nbsp;minimum: 1
+ * </pre>
+ * 
+ * <pre>-num-rows &lt;int&gt; (property: numRows)
+ * &nbsp;&nbsp;&nbsp;The number of data rows to retrieve; use -1 for unlimited.
+ * &nbsp;&nbsp;&nbsp;default: -1
+ * &nbsp;&nbsp;&nbsp;minimum: -1
  * </pre>
  * 
  <!-- options-end -->
@@ -188,9 +210,11 @@ public class ExcelSpreadSheetReader
     DateFormat			dformat;
     boolean			numeric;
     int                 	dataRowStart;
+    int				firstRow;
+    int 			lastRow;
     List<String>        	header;
 
-    result = new ArrayList<SpreadSheet>();
+    result = new ArrayList<>();
 
     workbook = null;
     dformat  = DateUtils.getTimestampFormatter();
@@ -198,7 +222,8 @@ public class ExcelSpreadSheetReader
       workbook = WorkbookFactory.create(in);
       m_SheetRange.setMax(workbook.getNumberOfSheets());
       indices      = m_SheetRange.getIntIndices();
-      dataRowStart = getNoHeader() ? 0 : 1;
+      firstRow     = m_FirstRow - 1;
+      dataRowStart = getNoHeader() ? firstRow : firstRow + 1;
       for (int index: indices) {
 	if (m_Stopped)
 	  break;
@@ -220,7 +245,7 @@ public class ExcelSpreadSheetReader
 	// header
 	if (isLoggingEnabled())
 	  getLogger().info("header row");
-	exRow = sheet.getRow(0);
+	exRow = sheet.getRow(firstRow);
 	if (exRow == null) {
 	  getLogger().warning("No data in sheet #" + (index + 1) + "?");
 	}
@@ -271,7 +296,11 @@ public class ExcelSpreadSheetReader
 
 	// data
 	if (spsheet.getColumnCount() > 0) {
-	  for (i = dataRowStart; i <= sheet.getLastRowNum(); i++) {
+	  if (m_NumRows < 1)
+	    lastRow = sheet.getLastRowNum();
+	  else
+	    lastRow = Math.min(firstRow + m_NumRows - 1, sheet.getLastRowNum());
+	  for (i = dataRowStart; i <= lastRow; i++) {
 	    if (m_Stopped)
 	      break;
 	    if (isLoggingEnabled())

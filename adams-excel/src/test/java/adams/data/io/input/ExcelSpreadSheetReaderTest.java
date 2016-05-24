@@ -15,7 +15,7 @@
 
 /*
  * ExcelSpreadSheetReaderTest.java
- * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.io.input;
@@ -56,6 +56,8 @@ public class ExcelSpreadSheetReaderTest
 	"sample2.xlsx",
 	"sample2.xlsx",
 	"sample2.xlsx",
+	"sample2.xlsx",
+	"sample2.xlsx",
     };
   }
 
@@ -68,7 +70,7 @@ public class ExcelSpreadSheetReaderTest
   protected SpreadSheetReader[] getRegressionSetups() {
     ExcelSpreadSheetReader[]  result;
 
-    result    = new ExcelSpreadSheetReader[4];
+    result    = new ExcelSpreadSheetReader[6];
     result[0] = new ExcelSpreadSheetReader();
     result[1] = new ExcelSpreadSheetReader();
     result[2] = new ExcelSpreadSheetReader();
@@ -76,6 +78,13 @@ public class ExcelSpreadSheetReaderTest
     result[3] = new ExcelSpreadSheetReader();
     result[3].setNoHeader(true);
     result[3].setCustomColumnHeaders("1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54");
+    result[4] = new ExcelSpreadSheetReader();
+    result[4].setFirstRow(3);
+    result[4].setNumRows(2);
+    result[5] = new ExcelSpreadSheetReader();
+    result[5].setNoHeader(true);
+    result[5].setFirstRow(3);
+    result[5].setNumRows(2);
 
     return result;
   }
