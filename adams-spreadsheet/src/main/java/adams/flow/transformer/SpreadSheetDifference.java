@@ -15,12 +15,10 @@
 
 /*
  * SpreadSheetDifference.java
- * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
-
-import java.util.HashSet;
 
 import adams.core.QuickInfoHelper;
 import adams.data.spreadsheet.Cell;
@@ -29,6 +27,8 @@ import adams.data.spreadsheet.RowIdentifier;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetColumnRange;
 import adams.flow.core.Token;
+
+import java.util.HashSet;
 
 /**
  <!-- globalinfo-start -->
@@ -341,7 +341,7 @@ public class SpreadSheetDifference
       else {
 	for (n = 0; n < sheets[0].getRowCount() && n < sheets[1].getRowCount(); n++) {
 	  row1 = sheets[0].getRow(n);
-	  row2 = sheets[0].getRow(n);
+	  row2 = sheets[1].getRow(n);
 	  generateOutputRow(output, difference(output, row1, row2));
 	}
       }

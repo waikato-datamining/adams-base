@@ -60,6 +60,7 @@ public class SpreadSheetDifferenceTest
     super.setUp();
     
     m_TestHelper.copyResourceToTmp("bolts.csv");
+    m_TestHelper.copyResourceToTmp("bolts2.csv");
     m_TestHelper.copyResourceToTmp("simple1.csv");
     m_TestHelper.copyResourceToTmp("simple2.csv");
     m_TestHelper.deleteFileFromTmp("dumpfile.csv");
@@ -73,6 +74,7 @@ public class SpreadSheetDifferenceTest
   @Override
   protected void tearDown() throws Exception {
     m_TestHelper.deleteFileFromTmp("bolts.csv");
+    m_TestHelper.deleteFileFromTmp("bolts2.csv");
     m_TestHelper.deleteFileFromTmp("simple1.csv");
     m_TestHelper.deleteFileFromTmp("simple2.csv");
     m_TestHelper.deleteFileFromTmp("dumpfile.csv");
@@ -122,7 +124,7 @@ public class SpreadSheetDifferenceTest
 	argOption = (AbstractArgumentOption) tmp2.getOptionManager().findByProperty("files");
 	adams.core.io.PlaceholderFile[] tmp3 = new adams.core.io.PlaceholderFile[2];
 	tmp3[0] = (adams.core.io.PlaceholderFile) argOption.valueOf("${TMP}/bolts.csv");
-	tmp3[1] = (adams.core.io.PlaceholderFile) argOption.valueOf("${TMP}/bolts.csv");
+	tmp3[1] = (adams.core.io.PlaceholderFile) argOption.valueOf("${TMP}/bolts2.csv");
 	tmp2.setFiles(tmp3);
 
 	tmp1[0] = tmp2;
