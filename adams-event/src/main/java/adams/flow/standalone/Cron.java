@@ -257,7 +257,7 @@ public class Cron
    */
   protected void updateParent() {
     m_CronActors.setParent(null);
-    m_CronActors.setParent(this);
+    m_CronActors.setParent(getParent());
   }
 
   /**
@@ -506,8 +506,10 @@ public class Cron
 
     result = super.setUp();
 
-    if (result == null)
+    if (result == null) {
+      updateParent();
       result = m_CronActors.setUp();
+    }
 
     return result;
   }
