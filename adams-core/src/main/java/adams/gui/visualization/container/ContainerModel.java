@@ -15,7 +15,7 @@
 
 /*
  * ContainerModel.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.container;
@@ -369,6 +369,7 @@ public class ContainerModel<M extends AbstractContainerManager, C extends Abstra
    */
   public Object getValueAt(int rowIndex, int columnIndex) {
     SearchableContainerManager	smanager;
+    C 				cont;
 
     if (m_Manager.isUpdating())
       return null;
@@ -376,34 +377,34 @@ public class ContainerModel<M extends AbstractContainerManager, C extends Abstra
     if ((m_Manager instanceof SearchableContainerManager) && ((SearchableContainerManager) m_Manager).isFiltered()) {
       smanager = (SearchableContainerManager) m_Manager;
       if (rowIndex < smanager.countFiltered()) {
-	if (columnIndex == getVisibilityColumn())
-	  return ((VisibilityContainer) smanager.getFiltered(rowIndex)).isVisible();
-	else if (columnIndex == getDatabaseIDColumn())
-	  return ((DatabaseContainer) smanager.getFiltered(rowIndex)).getDatabaseID();
-	else if (columnIndex == getDataColumn())
-	  return m_Generator.getDisplay(smanager.getFiltered(rowIndex));
+	cont = (C) smanager.getFiltered(rowIndex);
+	if (cont == null)
+	  return null;
 
-	throw new IllegalStateException("Invalid column index: " + columnIndex);
-      }
-      else {
-	return null;
+	if (columnIndex == getVisibilityColumn())
+	  return ((VisibilityContainer) cont).isVisible();
+	else if (columnIndex == getDatabaseIDColumn())
+	  return ((DatabaseContainer) cont).getDatabaseID();
+	else if (columnIndex == getDataColumn())
+	  return m_Generator.getDisplay(cont);
       }
     }
     else {
       if (rowIndex < m_Manager.count()) {
-	if (columnIndex == getVisibilityColumn())
-	  return ((VisibilityContainerManager) getManager()).isVisible(rowIndex);
-	else if (columnIndex == getDatabaseIDColumn())
-	  return ((DatabaseContainer) getManager().get(rowIndex)).getDatabaseID();
-	else if (columnIndex == getDataColumn())
-	  return m_Generator.getDisplay(getManager().get(rowIndex));
+	cont = (C) getManager().get(rowIndex);
+	if (cont == null)
+	  return null;
 
-	throw new IllegalStateException("Invalid column index: " + columnIndex);
-      }
-      else {
-	return null;
+	if (columnIndex == getVisibilityColumn())
+	  return ((VisibilityContainer) cont).isVisible();
+	else if (columnIndex == getDatabaseIDColumn())
+	  return ((DatabaseContainer) cont).getDatabaseID();
+	else if (columnIndex == getDataColumn())
+	  return m_Generator.getDisplay(cont);
       }
     }
+
+    return null;
   }
 
   /**
@@ -462,65 +463,26 @@ public class ContainerModel<M extends AbstractContainerManager, C extends Abstra
    */
   public void dataChanged(DataChangeEvent e) {
     final int[]	indices;
-    Runnable	runnable;
 
     indices  = e.getIndices();
-    runnable = null;
 
     if ((indices == null) || (indices.length == 0)) {
-      runnable = new Runnable() {
-	public void run() {
-	  fireTableDataChanged();
-	}
-      };
+      SwingUtilities.invokeLater(() -> fireTableDataChanged());
     }
     else {
-      if (e.getType() == Type.ADDITION) {
-	runnable = new Runnable() {
-	  public void run() {
-	    fireTableRowsInserted(indices[0], indices[indices.length - 1]);
-	  }
-	};
-      }
-      else if (e.getType() == Type.REMOVAL) {
-	runnable = new Runnable() {
-	  public void run() {
-	    fireTableRowsDeleted(indices[0], indices[0]);
-	  }
-	};
-      }
-      else if (e.getType() == Type.CLEAR) {
-	runnable = new Runnable() {
-	  public void run() {
-	    fireTableDataChanged();
-	  }
-	};
-      }
-      else if (e.getType() == Type.REPLACEMENT) {
-	runnable = new Runnable() {
-	  public void run() {
-	    fireTableRowsUpdated(indices[0], indices[0]);
-	  }
-	};
-      }
-      else if (e.getType() == Type.VISIBILITY) {
-	runnable = new Runnable() {
-	  public void run() {
-	    fireTableRowsUpdated(indices[0], indices[0]);
-	  }
-	};
-      }
-      else {
-	runnable = new Runnable() {
-	  public void run() {
-	    fireTableDataChanged();
-	  }
-	};
-      }
+      if (e.getType() == Type.ADDITION)
+	SwingUtilities.invokeLater(() -> fireTableRowsInserted(indices[0], indices[indices.length - 1]));
+      else if (e.getType() == Type.REMOVAL)
+	SwingUtilities.invokeLater(() -> fireTableRowsDeleted(indices[0], indices[0]));
+      else if (e.getType() == Type.CLEAR)
+	SwingUtilities.invokeLater(() -> fireTableDataChanged());
+      else if (e.getType() == Type.REPLACEMENT)
+	SwingUtilities.invokeLater(() -> fireTableRowsUpdated(indices[0], indices[0]));
+      else if (e.getType() == Type.VISIBILITY)
+	SwingUtilities.invokeLater(() -> fireTableRowsUpdated(indices[0], indices[0]));
+      else
+	SwingUtilities.invokeLater(() -> fireTableDataChanged());
     }
-
-    if (runnable != null)
-      SwingUtilities.invokeLater(runnable);
   }
 
   /**
