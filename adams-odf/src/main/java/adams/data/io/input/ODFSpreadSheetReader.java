@@ -44,39 +44,59 @@ import java.util.logging.Level;
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- * 
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  * 
- * <pre>-data-row-type &lt;DENSE|SPARSE&gt; (property: dataRowType)
+ * <pre>-data-row-type &lt;adams.data.spreadsheet.DataRow&gt; (property: dataRowType)
  * &nbsp;&nbsp;&nbsp;The type of row to use for the data.
- * &nbsp;&nbsp;&nbsp;default: DENSE
+ * &nbsp;&nbsp;&nbsp;default: adams.data.spreadsheet.DenseDataRow
+ * </pre>
+ * 
+ * <pre>-spreadsheet-type &lt;adams.data.spreadsheet.SpreadSheet&gt; (property: spreadSheetType)
+ * &nbsp;&nbsp;&nbsp;The type of spreadsheet to use for the data.
+ * &nbsp;&nbsp;&nbsp;default: adams.data.spreadsheet.DefaultSpreadSheet
  * </pre>
  * 
  * <pre>-sheets &lt;adams.core.Range&gt; (property: sheetRange)
- * &nbsp;&nbsp;&nbsp;The range of sheets to load; A range is a comma-separated list of single 
- * &nbsp;&nbsp;&nbsp;1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts 
- * &nbsp;&nbsp;&nbsp;the range '...'; the following placeholders can be used as well: first, 
- * &nbsp;&nbsp;&nbsp;second, third, last_2, last_1, last
+ * &nbsp;&nbsp;&nbsp;The range of sheets to load.
  * &nbsp;&nbsp;&nbsp;default: first
+ * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts the range '...'; the following placeholders can be used as well: first, second, third, last_2, last_1, last
  * </pre>
  * 
  * <pre>-missing &lt;java.lang.String&gt; (property: missingValue)
  * &nbsp;&nbsp;&nbsp;The placeholder for missing values.
- * &nbsp;&nbsp;&nbsp;default: ?
+ * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
  * <pre>-text-columns &lt;java.lang.String&gt; (property: textColumns)
- * &nbsp;&nbsp;&nbsp;The range of columns to treat as text; A range is a comma-separated list 
- * &nbsp;&nbsp;&nbsp;of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(..
- * &nbsp;&nbsp;&nbsp;.)' inverts the range '...'; the following placeholders can be used as well:
- * &nbsp;&nbsp;&nbsp; first, second, third, last_2, last_1, last
+ * &nbsp;&nbsp;&nbsp;The range of columns to treat as text.
  * &nbsp;&nbsp;&nbsp;default: 
+ * </pre>
+ * 
+ * <pre>-no-header &lt;boolean&gt; (property: noHeader)
+ * &nbsp;&nbsp;&nbsp;If enabled, all rows get added as data rows and a dummy header will get 
+ * &nbsp;&nbsp;&nbsp;inserted.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-custom-column-headers &lt;java.lang.String&gt; (property: customColumnHeaders)
+ * &nbsp;&nbsp;&nbsp;The custom headers to use for the columns instead (comma-separated list);
+ * &nbsp;&nbsp;&nbsp; ignored if empty.
+ * &nbsp;&nbsp;&nbsp;default: 
+ * </pre>
+ * 
+ * <pre>-first-row &lt;int&gt; (property: firstRow)
+ * &nbsp;&nbsp;&nbsp;The index of the first row to retrieve (1-based).
+ * &nbsp;&nbsp;&nbsp;default: 1
+ * &nbsp;&nbsp;&nbsp;minimum: 1
+ * </pre>
+ * 
+ * <pre>-num-rows &lt;int&gt; (property: numRows)
+ * &nbsp;&nbsp;&nbsp;The number of data rows to retrieve; use -1 for unlimited.
+ * &nbsp;&nbsp;&nbsp;default: -1
+ * &nbsp;&nbsp;&nbsp;minimum: -1
  * </pre>
  * 
  <!-- options-end -->
@@ -86,7 +106,7 @@ import java.util.logging.Level;
  */
 public class ODFSpreadSheetReader
   extends AbstractMultiSheetSpreadSheetReaderWithMissingValueSupport
-  implements NoHeaderSpreadSheetReader {
+  implements NoHeaderSpreadSheetReader, WindowedSpreadSheetReader {
 
   /** for serialization. */
   private static final long serialVersionUID = 4755872204697328246L;
@@ -99,6 +119,12 @@ public class ODFSpreadSheetReader
 
   /** the comma-separated list of column header names. */
   protected String m_CustomColumnHeaders;
+
+  /** the first row to retrieve (1-based). */
+  protected int m_FirstRow;
+
+  /** the number of rows to retrieve (less than 1 = unlimited). */
+  protected int m_NumRows;
 
   /**
    * Returns a string describing the object.
@@ -131,6 +157,14 @@ public class ODFSpreadSheetReader
     m_OptionManager.add(
       "custom-column-headers", "customColumnHeaders",
       "");
+
+    m_OptionManager.add(
+      "first-row", "firstRow",
+      1, 1, null);
+
+    m_OptionManager.add(
+      "num-rows", "numRows",
+      -1, -1, null);
   }
 
   /**
@@ -271,6 +305,69 @@ public class ODFSpreadSheetReader
   }
 
   /**
+   * Sets the first row to return.
+   *
+   * @param value	the first row (1-based), greater than 0
+   */
+  public void setFirstRow(int value) {
+    if (getOptionManager().isValid("firstRow", value)) {
+      m_FirstRow = value;
+      reset();
+    }
+  }
+
+  /**
+   * Returns the first row to return.
+   *
+   * @return		the first row (1-based), greater than 0
+   */
+  public int getFirstRow() {
+    return m_FirstRow;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String firstRowTipText() {
+    return "The index of the first row to retrieve (1-based).";
+  }
+
+  /**
+   * Sets the number of data rows to return.
+   *
+   * @param value	the number of rows, -1 for unlimited
+   */
+  public void setNumRows(int value) {
+    if (value < 0)
+      m_NumRows = -1;
+    else
+      m_NumRows = value;
+    reset();
+  }
+
+  /**
+   * Returns the number of data rows to return.
+   *
+   * @return		the number of rows, -1 for unlimited
+   */
+  public int getNumRows() {
+    return m_NumRows;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String numRowsTipText() {
+    return "The number of data rows to retrieve; use -1 for unlimited.";
+  }
+
+  /**
    * Returns how to read the data, from a file, stream or reader.
    *
    * @return		how to read the data
@@ -321,20 +418,23 @@ public class ODFSpreadSheetReader
     ContentType[]	cellTypes;
     int[]		indices;
     int                 dataRowStart;
+    int			firstRow;
+    int 		lastRow;
     List<String>        header;
 
-    result = new ArrayList<SpreadSheet>();
+    result = new ArrayList<>();
 
     try {
       spreadsheet = org.jopendocument.dom.spreadsheet.SpreadSheet.get(new ODPackage(in));
       m_SheetRange.setMax(spreadsheet.getSheetCount());
       indices = m_SheetRange.getIntIndices();
-      dataRowStart = getNoHeader() ? 0 : 1;
+      firstRow = m_FirstRow - 1;
+      dataRowStart = getNoHeader() ? firstRow : firstRow + 1;
       for (int index: indices) {
 	spsheet = m_SpreadSheetType.newInstance();
 	spsheet.setDataRowClass(m_DataRowType.getClass());
 	result.add(spsheet);
-	sheet       = spreadsheet.getSheet(index);
+	sheet   = spreadsheet.getSheet(index);
 	spsheet.setName(sheet.getName());
 	if (isLoggingEnabled())
 	  getLogger().info("sheet: " + (index+1));
@@ -358,7 +458,7 @@ public class ODFSpreadSheetReader
             for (i = 0; i < sheet.getColumnCount(); i++) {
               if (m_Stopped)
                 break;
-              cellStr = sheet.getCellAt(i, 0).getTextValue();
+              cellStr = sheet.getCellAt(i, firstRow).getTextValue();
               if (cellStr.length() == 0)
                 break;
               row.addCell("" + (i + 1)).setContent(cellStr);
@@ -368,7 +468,11 @@ public class ODFSpreadSheetReader
 
 	// data
 	m_TextColumns.setMax(spsheet.getColumnCount());
-	for (n = dataRowStart; n < sheet.getRowCount(); n++) {
+	if (m_NumRows < 1)
+	  lastRow = sheet.getRowCount() - 1;
+	else
+	  lastRow = Math.min(firstRow + m_NumRows, sheet.getRowCount() - 1);
+	for (n = dataRowStart; n <= lastRow; n++) {
 	  if (m_Stopped)
 	    break;
 	  if (isLoggingEnabled())
