@@ -33,7 +33,9 @@ import java.util.List;
  * @version $Revision$
  */
 public class SpreadSheetUtils {
-  
+
+  public static final String PREFIX_COL = "Col-";
+
   /**
    * Attempts to split a string, using the specified delimiter character.
    * A delimiter gets ignored if inside double quotes.
@@ -118,7 +120,7 @@ public class SpreadSheetUtils {
       result.addAll(Arrays.asList(customCols.split(",")));
 
     while (result.size() < numCols)
-      result.add("Col-" + (result.size() + 1));
+      result.add(PREFIX_COL + (result.size() + 1));
 
     while (result.size() > numCols)
       result.remove(result.size() - 1);
