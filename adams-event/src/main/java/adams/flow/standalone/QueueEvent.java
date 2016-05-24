@@ -26,7 +26,6 @@ import adams.core.logging.LoggingLevel;
 import adams.flow.control.Sequence;
 import adams.flow.control.StorageName;
 import adams.flow.control.StorageQueueHandler;
-import adams.flow.core.AbstractActor;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorHandlerInfo;
 import adams.flow.core.DaemonEvent;
@@ -265,7 +264,8 @@ public class QueueEvent
    */
   protected void updateParent() {
     m_Actors.setParent(null);
-    m_Actors.setParent(this);
+    m_Actors.setParent(getParent());
+    m_Actors.setName(getName());
   }
 
   /**
@@ -523,8 +523,10 @@ public class QueueEvent
 
     result = super.setUp();
 
-    if (result == null)
+    if (result == null) {
+      updateParent();
       result = m_Actors.setUp();
+    }
 
     return result;
   }

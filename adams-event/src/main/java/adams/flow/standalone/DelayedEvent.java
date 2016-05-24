@@ -175,7 +175,8 @@ public class DelayedEvent
    */
   protected void updateParent() {
     m_Actors.setParent(null);
-    m_Actors.setParent(this);
+    m_Actors.setParent(getParent());
+    m_Actors.setName(getName());
   }
 
   /**
@@ -404,8 +405,10 @@ public class DelayedEvent
 
     result = super.setUp();
 
-    if (result == null)
+    if (result == null) {
+      updateParent();
       result = m_Actors.setUp();
+    }
 
     return result;
   }

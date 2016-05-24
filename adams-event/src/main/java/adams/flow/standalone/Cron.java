@@ -258,6 +258,7 @@ public class Cron
   protected void updateParent() {
     m_CronActors.setParent(null);
     m_CronActors.setParent(getParent());
+    m_CronActors.setName(getName());
   }
 
   /**
