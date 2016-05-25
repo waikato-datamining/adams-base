@@ -52,6 +52,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.TreeSelectionEvent;
@@ -320,6 +321,9 @@ public class GenericObjectEditor
       m_Scroller.setPreferredSize(new Dimension(width, height));
       revalidate();
       pack();
+
+      // request focus
+      SwingUtilities.invokeLater(() -> m_TextSearch.requestFocus());
     }
   }
 
