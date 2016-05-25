@@ -101,7 +101,7 @@ public abstract class AbstractDataContainerUpdatingScriptlet
       }
     }
     n = 0;
-    for (i = 0; i < visible.length; i++) {
+    for (i = 0; i < visible.length && n < conts.size(); i++) {
       if (visible[i] && !exclude.contains(i)) {
 	data.add(manager.newContainer(conts.get(n)));
 	n++;

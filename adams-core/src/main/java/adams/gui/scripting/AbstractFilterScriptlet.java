@@ -21,11 +21,14 @@ package adams.gui.scripting;
 
 import adams.data.container.DataContainer;
 import adams.data.filter.AbstractFilter;
+import adams.data.filter.BatchFilter;
 import adams.db.DatabaseConnectionHandler;
 import adams.gui.visualization.container.AbstractContainerManager;
 import adams.gui.visualization.container.VisibilityContainerManager;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -62,9 +65,12 @@ public abstract class AbstractFilterScriptlet
     adams.data.filter.Filter 	runScheme;
     int				i;
     List<DataContainer> 	runInput;
+    Object			runInputA;
     List<DataContainer> 	runOutput;
+    DataContainer[] 		runOutputA;
     List<DataContainer> 	runOutputC;
-    AbstractContainerManager		manager;
+    AbstractContainerManager	manager;
+    adams.data.filter.Filter 	actualScheme;
 
     manager = getDataContainerPanel().getContainerManager();
 
@@ -89,8 +95,19 @@ public abstract class AbstractFilterScriptlet
     showStatus("Filtering...");
 
     // pass through filter
-    runOutput  = AbstractFilter.filter(runScheme.shallowCopy(true), runInput);
-    runOutputC = new ArrayList<>();
+    actualScheme = runScheme.shallowCopy(true);
+    runOutputC   = new ArrayList<>();
+    if (actualScheme instanceof BatchFilter) {
+      runInputA  = Array.newInstance(runInput.get(0).getClass(), runInput.size());
+      for (i = 0; i < runInput.size(); i++)
+	Array.set(runInputA, i, runInput.get(i));
+      runOutputA = ((BatchFilter) actualScheme).batchFilter((DataContainer[]) (runInputA));
+      runOutput  = new ArrayList<>();
+      runOutput.addAll(Arrays.asList(runOutputA));
+    }
+    else {
+      runOutput = AbstractFilter.filter(actualScheme, runInput);
+    }
     for (i = 0; i < runOutput.size(); i++)
       runOutputC.add(runOutput.get(i));
 
@@ -98,6 +115,7 @@ public abstract class AbstractFilterScriptlet
     updateDataContainers(runOutputC, overlay);
 
     runScheme.destroy();
+    actualScheme.destroy();
 
     showStatus("");
 
