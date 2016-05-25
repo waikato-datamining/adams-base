@@ -11,6 +11,7 @@
   
   <componentDescriptors>
     <componentDescriptor>src/main/assembly/component-flows.xml</componentDescriptor>
+    <componentDescriptor>src/main/assembly/component-native.xml</componentDescriptor>
   </componentDescriptors>
 
   <fileSets>
