@@ -543,7 +543,7 @@ will look like this, listing both packages:
 
 \subsection{Additional class hierarchy}
 Adding a new class hierarchy works just the same. You merely have to use the
-superclass that all other classes are derived from as key in the props file and
+superclass or interface that all other classes are derived from as key in the props file and
 list all the packages to look for derived classes. Here is an example for a
 class hierarchy derived from \texttt{org.funky.AbstractFunkiness}, which has
 derived classes in the packages \texttt{org.funky} and \texttt{org.notsofunky}:
@@ -552,6 +552,9 @@ derived classes in the packages \texttt{org.funky} and \texttt{org.notsofunky}:
     org.funky,\
     org.notsofunky
 \end{verbatim}
+For new class hierarchies, I recommend you sub-classing \texttt{AbstractOptionHandler}
+(package: \texttt{adams.core.option}). This will ensure that option-handling
+will work properly and that the classes are serializable.
 
 \subsection{Blacklisting classes}
 In production environments it might not always be wise to list all the classes
