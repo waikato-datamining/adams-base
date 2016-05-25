@@ -15,7 +15,7 @@
 
 /*
  *    GenericObjectEditor.java
- *    Copyright (C) 2002-2015 University of Waikato, Hamilton, New Zealand
+ *    Copyright (C) 2002-2016 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -38,7 +38,6 @@ import adams.gui.core.GUIHelper;
 import adams.gui.core.MouseUtils;
 import adams.gui.core.dotnotationtree.AbstractItemFilter;
 import adams.gui.goe.Favorites.FavoriteSelectionEvent;
-import adams.gui.goe.Favorites.FavoriteSelectionListener;
 import adams.gui.goe.classtree.ClassTree;
 import adams.gui.goe.classtree.StrictClassTreeFilter;
 import adams.gui.goe.objectinstance.AbstractObjectInstanceHandler;
@@ -56,7 +55,6 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreeSelectionModel;
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -245,16 +243,14 @@ public class GenericObjectEditor
 	m_CheckBoxFilter = new JCheckBox("Filtering");
 	m_CheckBoxFilter.setMnemonic('F');
 	m_CheckBoxFilter.setSelected(m_Tree.getFilter().isEnabled());
-	m_CheckBoxFilter.addActionListener(new ActionListener() {
-	  public void actionPerformed(ActionEvent e) {
-	    AbstractItemFilter filter = m_Tree.getFilter();
-	    filter.setEnabled(m_CheckBoxFilter.isSelected());
-	    m_Tree.setFilter(filter);
-	    m_CheckBoxStrict.setEnabled(
-		   m_CheckBoxFilter.isEnabled()
-		&& m_CheckBoxFilter.isSelected()
-		&& (m_Tree.getFilter() instanceof StrictClassTreeFilter));
-	  }
+	m_CheckBoxFilter.addActionListener((ActionEvent e) -> {
+          AbstractItemFilter filter = m_Tree.getFilter();
+          filter.setEnabled(m_CheckBoxFilter.isSelected());
+          m_Tree.setFilter(filter);
+          m_CheckBoxStrict.setEnabled(
+            m_CheckBoxFilter.isEnabled()
+              && m_CheckBoxFilter.isSelected()
+              && (m_Tree.getFilter() instanceof StrictClassTreeFilter));
 	});
 	panel.add(m_CheckBoxFilter);
 
@@ -267,12 +263,10 @@ public class GenericObjectEditor
 	m_CheckBoxStrict.setSelected(
 	       m_CheckBoxStrict.isEnabled()
 	    && ((StrictClassTreeFilter) m_Tree.getFilter()).isStrict());
-	m_CheckBoxStrict.addActionListener(new ActionListener() {
-	  public void actionPerformed(ActionEvent e) {
-	    ((StrictClassTreeFilter) m_Tree.getFilter()).setStrict(
-		!((StrictClassTreeFilter) m_Tree.getFilter()).isStrict());
-	    m_Tree.setFilter(m_Tree.getFilter());
-	  }
+	m_CheckBoxStrict.addActionListener((ActionEvent e) -> {
+          ((StrictClassTreeFilter) m_Tree.getFilter()).setStrict(
+            !((StrictClassTreeFilter) m_Tree.getFilter()).isStrict());
+          m_Tree.setFilter(m_Tree.getFilter());
 	});
 	panel.add(m_CheckBoxStrict);
       }
@@ -282,11 +276,9 @@ public class GenericObjectEditor
       bottomPanel.add(panel, BorderLayout.EAST);
       m_CloseButton = new JButton("Close");
       m_CloseButton.setMnemonic('C');
-      m_CloseButton.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  if (e.getSource() == m_CloseButton)
-	    m_Self.setVisible(false);
-	}
+      m_CloseButton.addActionListener((ActionEvent e) -> {
+        if (e.getSource() == m_CloseButton)
+          m_Self.setVisible(false);
       });
       panel.add(m_CloseButton);
 
@@ -349,7 +341,7 @@ public class GenericObjectEditor
     protected PropertySheetPanel m_PropertySheetChild;
 
     /** The names of the proposed classes. */
-    protected JComboBox m_ComboBoxClassname;
+    protected JComboBox<String> m_ComboBoxClassname;
 
     /** The name of the current class. */
     protected JLabel m_LabelClassname;
@@ -392,61 +384,47 @@ public class GenericObjectEditor
       m_Backup = copyObject(m_Object);
 
       m_LabelClassname = new JLabel("None");
-      m_ComboBoxClassname = new JComboBox(new String[]{"None"});
+      m_ComboBoxClassname = new JComboBox<>(new String[]{"None"});
       m_ComboBoxClassname.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
-      m_ComboBoxClassname.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          if ((m_ComboBoxClassname.getSelectedIndex() == -1) || m_IgnoreChanges)
-            return;
-          // update property sheet
-          try {
-            setValue(newInstance("" + m_ComboBoxClassname.getSelectedItem()));
-          }
-          catch (Exception ex) {
-            ex.printStackTrace();
-          }
-        }
+      m_ComboBoxClassname.addActionListener((ActionEvent e) -> {
+	if ((m_ComboBoxClassname.getSelectedIndex() == -1) || m_IgnoreChanges)
+	  return;
+	// update property sheet
+	try {
+	  setValue(newInstance("" + m_ComboBoxClassname.getSelectedItem()));
+	}
+	catch (Exception ex) {
+	  ex.printStackTrace();
+	}
       });
 
       m_PropertySheetChild = new PropertySheetPanel();
-      m_PropertySheetChild.addPropertyChangeListener(new PropertyChangeListener() {
-	public void propertyChange(PropertyChangeEvent evt) {
-	  GenericObjectEditor.this.firePropertyChange();
-	}
-      });
+      m_PropertySheetChild.addPropertyChangeListener((PropertyChangeEvent evt) -> GenericObjectEditor.this.firePropertyChange());
 
       m_ButtonOpen = new JButton(GUIHelper.getIcon("open.gif"));
       m_ButtonOpen.setActionCommand(ACTION_CMD_OPEN);
       m_ButtonOpen.setToolTipText("Load a serialized object");
       m_ButtonOpen.setEnabled(true);
-      m_ButtonOpen.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  Object object = openObject();
-	  if (object != null)
-	    setValue(object);
-	}
+      m_ButtonOpen.addActionListener((ActionEvent e) -> {
+	Object object = openObject();
+	if (object != null)
+	  setValue(object);
       });
 
       m_ButtonSave = new JButton(GUIHelper.getIcon("save.gif"));
       m_ButtonSave.setActionCommand(ACTION_CMD_SAVE);
       m_ButtonSave.setToolTipText("Save the current as serialized object");
       m_ButtonSave.setEnabled(true);
-      m_ButtonSave.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  saveObject(m_Object);
-	}
-      });
+      m_ButtonSave.addActionListener((ActionEvent e) -> saveObject(m_Object));
 
       m_ButtonOK = new JButton("OK");
       m_ButtonOK.setActionCommand(ACTION_CMD_OK);
       m_ButtonOK.setEnabled(true);
       m_ButtonOK.setMnemonic('O');
       m_ButtonOK.setToolTipText("Use this setup and close dialog");
-      m_ButtonOK.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  m_Backup = copyObject(m_Object);
-	  close();
-	}
+      m_ButtonOK.addActionListener((ActionEvent e) -> {
+	m_Backup = copyObject(m_Object);
+	close();
       });
 
       m_ButtonCancel = new JButton("Cancel");
@@ -454,27 +432,23 @@ public class GenericObjectEditor
       m_ButtonCancel.setEnabled(true);
       m_ButtonCancel.setMnemonic('C');
       m_ButtonCancel.setToolTipText("Discard changes and close dialog");
-      m_ButtonCancel.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  if (m_Backup != null)
-	    m_Object = copyObject(m_Backup);
-	  close();
-	}
+      m_ButtonCancel.addActionListener((ActionEvent e) -> {
+	if (m_Backup != null)
+	  m_Object = copyObject(m_Backup);
+	close();
       });
 
       m_ButtonRevert = new JButton(GUIHelper.getIcon("undo.gif"));
       m_ButtonRevert.setActionCommand(ACTION_CMD_REVERT);
       m_ButtonRevert.setEnabled(true);
       m_ButtonRevert.setToolTipText("Revert changes");
-      m_ButtonRevert.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  if (m_Backup != null) {
-	    m_Object = copyObject(m_Backup);
-	    GenericObjectEditor.this.firePropertyChange();
-	    m_ObjectNames = getClassesFromProperties();
-	    updateObjectNames();
-	    updateChildPropertySheet();
-	  }
+      m_ButtonRevert.addActionListener((ActionEvent e) -> {
+	if (m_Backup != null) {
+	  m_Object = copyObject(m_Backup);
+	  GenericObjectEditor.this.firePropertyChange();
+	  m_ObjectNames = getClassesFromProperties();
+	  updateObjectNames();
+	  updateChildPropertySheet();
 	}
       });
 
@@ -484,22 +458,16 @@ public class GenericObjectEditor
       m_ButtonChoose.setVisible(m_canChangeClassInDialog);
       m_ButtonCopyPaste = new JButton("...");
       m_ButtonCopyPaste.setToolTipText("Displays copy/paste/favorites action menu");
-      m_ButtonCopyPaste.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          GenericObjectEditorPopupMenu menu = new GenericObjectEditorPopupMenu(GenericObjectEditor.this, m_ButtonCopyPaste);
-          // favorites
-          menu.addSeparator();
-          Favorites.getSingleton().customizePopupMenu(
-              menu,
-              getClassType(),
-              getValue(),
-              new FavoriteSelectionListener() {
-        	public void favoriteSelected(FavoriteSelectionEvent e) {
-        	  setValue(e.getFavorite().getObject());
-        	}
-              });
-          menu.show(m_ButtonCopyPaste, 0, m_ButtonCopyPaste.getHeight());
-        }
+      m_ButtonCopyPaste.addActionListener((ActionEvent e) -> {
+	GenericObjectEditorPopupMenu menu = new GenericObjectEditorPopupMenu(GenericObjectEditor.this, m_ButtonCopyPaste);
+	// favorites
+	menu.addSeparator();
+	Favorites.getSingleton().customizePopupMenu(
+	  menu,
+	  getClassType(),
+	  getValue(),
+	  (FavoriteSelectionEvent fe) -> setValue(fe.getFavorite().getObject()));
+	menu.show(m_ButtonCopyPaste, 0, m_ButtonCopyPaste.getHeight());
       });
       m_TopPanel = new JPanel(new BorderLayout());
       JPanel chooseButtonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
@@ -522,11 +490,7 @@ public class GenericObjectEditor
 
 	    if (chooseButtonFinal.isVisible()) {
 	      JMenuItem item = new JMenuItem("Choose...", GUIHelper.getIcon("tree.gif"));
-	      item.addActionListener(new ActionListener() {
-		public void actionPerformed(ActionEvent e) {
-		  chooseButtonFinal.doClick();
-		}
-	      });
+	      item.addActionListener((ActionEvent ae) -> chooseButtonFinal.doClick());
 	      menu.insert(new JPopupMenu.Separator(), 0);
 	      menu.insert(item, 0);
 	    }
@@ -537,11 +501,7 @@ public class GenericObjectEditor
 		menu,
 		getClassType(),
 		getValue(),
-		new FavoriteSelectionListener() {
-		  public void favoriteSelected(FavoriteSelectionEvent e) {
-		    setValue(e.getFavorite().getObject());
-		  }
-		});
+		(FavoriteSelectionEvent fe) -> setValue(fe.getFavorite().getObject()));
 
 	    menu.show(m_Self, e.getX(), e.getY());
 	  }
@@ -734,7 +694,7 @@ public class GenericObjectEditor
       if (m_Object != null)
 	classname = m_Object.getClass().getName();
 
-      list = new ArrayList<String>();
+      list = new ArrayList<>();
       list.add(classname);
       for (Class cls: m_ProposedClasses) {
 	if (cls.getName().equals(classname))
@@ -742,7 +702,7 @@ public class GenericObjectEditor
 	list.add(cls.getName());
       }
       Collections.sort(list);
-      m_ComboBoxClassname.setModel(new DefaultComboBoxModel(list.toArray()));
+      m_ComboBoxClassname.setModel(new DefaultComboBoxModel<>(list.toArray(new String[list.size()])));
       m_ComboBoxClassname.setSelectedItem(classname);
       m_LabelClassname.setText(classname);
 
@@ -907,7 +867,7 @@ public class GenericObjectEditor
     String[] 		classes;
     int			i;
 
-    result     = new ArrayList<String>();
+    result     = new ArrayList<>();
     classesStr = ClassLister.getSingleton().getClasses().getProperty(m_ClassType.getName());
     if (classesStr == null)
       classes = new String[]{m_ClassType.getName()};
@@ -1305,7 +1265,7 @@ public class GenericObjectEditor
 	      ((JPanel) getComponent(i)).setToolTipText(text);
 	    }
 	  }
-	};
+	}
       };
       buttonPanel = new JPanel(new GridLayout(1, 1));
       m_CustomPanelChooseButton = createChooseClassButton();
@@ -1329,18 +1289,16 @@ public class GenericObjectEditor
 
     // anonymous action listener shows a JTree popup and allows the user
     // to choose the class they want
-    setButton.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        JPopupMenu popup = getChooseClassPopupMenu();
+    setButton.addActionListener((ActionEvent e) -> {
+      JPopupMenu popup = getChooseClassPopupMenu();
 
-        // show the popup where the source component is
-        if (e.getSource() instanceof Component) {
-          Component comp = (Component) e.getSource();
-          popup.pack();
-          Point p = comp.getLocationOnScreen();
-          popup.show(comp, comp.getWidth(), 0);
-          GUIHelper.setSizeAndLocation(popup, (int) p.getY(), (int) p.getX() + comp.getWidth());
-        }
+      // show the popup where the source component is
+      if (e.getSource() instanceof Component) {
+	Component comp = (Component) e.getSource();
+	popup.pack();
+	Point p = comp.getLocationOnScreen();
+	popup.show(comp, comp.getWidth(), 0);
+	GUIHelper.setSizeAndLocation(popup, (int) p.getY(), (int) p.getX() + comp.getWidth());
       }
     });
 
@@ -1362,19 +1320,19 @@ public class GenericObjectEditor
     tree.setItems(m_ObjectNames);
     tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
     tree.setSelectedItem(getValue().getClass().getName());
+    if (tree.getSelectedItem() == null)
+      tree.expandAll();
 
     // create the popup
     final BasePopupMenu popup = new GOETreePopupMenu(tree);
 
     // respond when the user chooses a class
-    tree.addTreeSelectionListener(new TreeSelectionListener() {
-      public void valueChanged(TreeSelectionEvent e) {
-        String classname = tree.getSelectedItem();
-        if (classname == null)
-          return;
-        classSelected(classname);
-        popup.setVisible(false);
-      }
+    tree.addTreeSelectionListener((TreeSelectionEvent e) -> {
+      String classname = tree.getSelectedItem();
+      if (classname == null)
+        return;
+      classSelected(classname);
+      popup.setVisible(false);
     });
 
     return popup;
