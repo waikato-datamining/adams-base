@@ -60,6 +60,9 @@ public abstract class AbstractFilter
   /** the variable to listen to. */
   protected VariableName m_VariableName;
 
+  /** whether the database connection has been updated. */
+  protected boolean m_DatabaseConnectionUpdated;
+
   /**
    * Returns a string describing the object.
    *
@@ -84,6 +87,16 @@ public abstract class AbstractFilter
     m_OptionManager.add(
       "var-name", "variableName",
       new VariableName());
+  }
+
+  /**
+   * Resets the scheme.
+   */
+  @Override
+  protected void reset() {
+    super.reset();
+
+    m_DatabaseConnectionUpdated = false;
   }
 
   /**
@@ -231,25 +244,6 @@ public abstract class AbstractFilter
   }
 
   /**
-   * Initializes the item for flow execution.
-   *
-   * @return		null if everything is fine, otherwise error message
-   */
-  @Override
-  public String setUp() {
-    String	result;
-
-    result = super.setUp();
-
-    if (result == null) {
-      if (m_Filter instanceof DatabaseConnectionHandler)
-	((DatabaseConnectionHandler) m_Filter).setDatabaseConnection(getDatabaseConnection());
-    }
-
-    return result;
-  }
-
-  /**
    * Executes the flow item.
    *
    * @return		null if everything is fine, otherwise error message
@@ -263,6 +257,12 @@ public abstract class AbstractFilter
     TrainableBatchFilter 	tfilter;
 
     result = null;
+
+    if (!m_DatabaseConnectionUpdated) {
+      m_DatabaseConnectionUpdated = true;
+      if (m_Filter instanceof DatabaseConnectionHandler)
+	((DatabaseConnectionHandler) m_Filter).setDatabaseConnection(getDatabaseConnection());
+    }
 
     if (m_InputToken.getPayload() instanceof DataContainer) {
       cont = m_Filter.filter((DataContainer) m_InputToken.getPayload());

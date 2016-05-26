@@ -106,7 +106,8 @@ public abstract class AbstractSpreadSheetDbReader
   protected void reset() {
     super.reset();
     
-    m_OutputToken = null;
+    m_OutputToken        = null;
+    m_DatabaseConnection = null;
   }
 
   /**
@@ -225,23 +226,6 @@ public abstract class AbstractSpreadSheetDbReader
   protected abstract adams.db.AbstractDatabaseConnection getDatabaseConnection();
 
   /**
-   * Initializes the item for flow execution.
-   *
-   * @return		null if everything is fine, otherwise error message
-   */
-  @Override
-  public String setUp() {
-    String	result;
-
-    result = super.setUp();
-
-    if (result == null)
-      m_DatabaseConnection = getDatabaseConnection();
-
-    return result;
-  }
-
-  /**
    * Returns the class of objects that it generates.
    *
    * @return		the Class of the generated tokens
@@ -264,6 +248,9 @@ public abstract class AbstractSpreadSheetDbReader
     String		query;
     
     result = null;
+
+    if (m_DatabaseConnection == null)
+      m_DatabaseConnection = getDatabaseConnection();
 
     sheet = null;
     query = m_Query.getValue();

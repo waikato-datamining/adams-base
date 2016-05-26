@@ -15,14 +15,10 @@
 
 /*
  * AbstractReportFileReader.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
-
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.List;
 
 import adams.core.QuickInfoHelper;
 import adams.core.io.PlaceholderFile;
@@ -38,6 +34,10 @@ import adams.flow.provenance.Provenance;
 import adams.flow.provenance.ProvenanceContainer;
 import adams.flow.provenance.ProvenanceInformation;
 import adams.flow.provenance.ProvenanceSupporter;
+
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.List;
 
 /**
  * Abstract ancestor for report file reader transformers.
@@ -59,8 +59,11 @@ public abstract class AbstractReportFileReader<T extends Report>
   /** the reader to use. */
   protected AbstractReportReader<T> m_Reader;
 
-  /** the chromatograms that were read. */
+  /** the reports that were read. */
   protected List<T> m_Reports;
+
+  /** whether the database connection has been updated. */
+  protected boolean m_DatabaseConnectionUpdated;
 
   /**
    * Adds options to the internal list of options.
@@ -184,7 +187,8 @@ public abstract class AbstractReportFileReader<T extends Report>
   protected void reset() {
     super.reset();
 
-    m_Reports = new ArrayList<T>();
+    m_Reports                   = new ArrayList<>();
+    m_DatabaseConnectionUpdated = false;
   }
   
   /**
@@ -207,27 +211,6 @@ public abstract class AbstractReportFileReader<T extends Report>
 	  adams.flow.standalone.DatabaseConnection.class,
 	  getDefaultDatabaseConnection());
   }
-  
-  /**
-   * Initializes the item for flow execution. Also calls the reset() method
-   * first before anything else.
-   *
-   * @return		null if everything is fine, otherwise error message
-   * @see		#reset()
-   */
-  @Override
-  public String setUp() {
-    String	result;
-    
-    result = super.setUp();
-
-    if (result == null) {
-      if (m_Reader instanceof DatabaseConnectionHandler)
-	((DatabaseConnectionHandler) m_Reader).setDatabaseConnection(getDatabaseConnection());
-    }
-    
-    return result;
-  }
 
   /**
    * Executes the flow item.
@@ -240,6 +223,12 @@ public abstract class AbstractReportFileReader<T extends Report>
     PlaceholderFile	file;
 
     result = null;
+
+    if (!m_DatabaseConnectionUpdated) {
+      m_DatabaseConnectionUpdated = true;
+      if (m_Reader instanceof DatabaseConnectionHandler)
+	((DatabaseConnectionHandler) m_Reader).setDatabaseConnection(getDatabaseConnection());
+    }
 
     file = new PlaceholderFile((String) m_InputToken.getPayload());
 

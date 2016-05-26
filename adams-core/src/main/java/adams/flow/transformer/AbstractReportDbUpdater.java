@@ -15,13 +15,10 @@
 
 /*
  * AbstractReportDbUpdater.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
-
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 
 import adams.core.Constants;
 import adams.core.QuickInfoHelper;
@@ -35,6 +32,9 @@ import adams.db.SQL;
 import adams.db.SQLStatement;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.Token;
+
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 
 /**
  * Ancestor for transformers that update {@link Report} objects or reports that 
@@ -106,6 +106,16 @@ public abstract class AbstractReportDbUpdater
     m_OptionManager.add(
 	    "lenient", "lenient",
 	    false);
+  }
+
+  /**
+   * Resets the scheme.
+   */
+  @Override
+  protected void reset() {
+    super.reset();
+
+    m_DatabaseConnection = null;
   }
 
   /**
@@ -318,26 +328,6 @@ public abstract class AbstractReportDbUpdater
   }
 
   /**
-   * Configures the database connection if necessary.
-   *
-   * @return		null if successful, otherwise error message
-   */
-  @Override
-  public String setUp() {
-    String	result;
-
-    result = super.setUp();
-
-    if (result == null) {
-      m_DatabaseConnection = getDatabaseConnection();
-      if (m_DatabaseConnection == null)
-	result = "No database connection available!";
-    }
-
-    return result;
-  }
-
-  /**
    * Adds the specified value to the report.
    * 
    * @param report	the report to modify
@@ -390,74 +380,82 @@ public abstract class AbstractReportDbUpdater
     ResultSetMetaData		meta;
     
     result = null;
-    
-    report    = null;
-    handler   = null;
-    isHandler = false;
-    if (m_InputToken.getPayload() instanceof MutableReportHandler) {
-      handler = (MutableReportHandler) m_InputToken.getPayload();
-      isHandler = true;
-      if (!handler.hasReport())
-	handler.setReport(new Report());
-      report = handler.getReport();
+
+    if (m_DatabaseConnection == null) {
+      m_DatabaseConnection = getDatabaseConnection();
+      if (m_DatabaseConnection == null)
+	result = "No database connection available!";
     }
-    else {
-      report = (Report) m_InputToken.getPayload();
-    }
-    
-    query = null;
-    try {
-      query = m_SQL.getValue();
-      if (isHandler && (handler instanceof IDHandler))
-	query = query.replace(Constants.PLACEHOLDER_ID, ((IDHandler) handler).getID());
-      query = getVariables().expand(query);
-      if (isLoggingEnabled())
-	getLogger().fine("query: " + query);
-      
-      rs       = SQL.getSingleton(m_DatabaseConnection).getResultSet(query);
-      dataRead = false;
-      
-      switch (m_QueryType) {
-	case KEY_VALUE:
-	  while (rs.next()) {
-	    dataRead = true;
-	    key      = rs.getObject(m_ColumnKey).toString();
-	    value    = rs.getObject(m_ColumnValue);
-	    addToReport(report, key, value);
-	  }
-	  break;
-	  
-	case COLUMN_AS_KEY:
-	  if (rs.next()) {
-	    dataRead = true;
-	    meta     = rs.getMetaData();
-	    for (i = 1; i <= meta.getColumnCount(); i++) {
-	      if (meta.getColumnName(i).toLowerCase().equals(m_ColumnKey.toString()))
-		continue;
-	      key   = meta.getColumnName(i).toLowerCase();
-	      value = rs.getObject(i);
-	      addToReport(report, key, value);
-	    }
-	  }
-	  break;
-	  
-	default:
-	  throw new IllegalStateException("Unhandled query type: " + m_QueryType);
-      }
-      SQL.closeAll(rs);
-      if (!dataRead && !m_Lenient)
-	result = "No data found: " + query;
-      
-      if (isHandler) {
-	((MutableReportHandler) handler).setReport(report);
-	m_OutputToken = new Token(handler);
+
+    if (result == null) {
+      report    = null;
+      handler   = null;
+      isHandler = false;
+      if (m_InputToken.getPayload() instanceof MutableReportHandler) {
+        handler = (MutableReportHandler) m_InputToken.getPayload();
+        isHandler = true;
+        if (!handler.hasReport())
+          handler.setReport(new Report());
+        report = handler.getReport();
       }
       else {
-	m_OutputToken = new Token(report);
+        report = (Report) m_InputToken.getPayload();
       }
-    }
-    catch (Exception e) {
-      result = handleException("Failed to read report data: " + query, e);
+
+      query = null;
+      try {
+        query = m_SQL.getValue();
+        if (isHandler && (handler instanceof IDHandler))
+          query = query.replace(Constants.PLACEHOLDER_ID, ((IDHandler) handler).getID());
+        query = getVariables().expand(query);
+        if (isLoggingEnabled())
+          getLogger().fine("query: " + query);
+
+        rs = SQL.getSingleton(m_DatabaseConnection).getResultSet(query);
+        dataRead = false;
+
+        switch (m_QueryType) {
+          case KEY_VALUE:
+            while (rs.next()) {
+              dataRead = true;
+              key = rs.getObject(m_ColumnKey).toString();
+              value = rs.getObject(m_ColumnValue);
+              addToReport(report, key, value);
+            }
+            break;
+
+          case COLUMN_AS_KEY:
+            if (rs.next()) {
+              dataRead = true;
+              meta = rs.getMetaData();
+              for (i = 1; i <= meta.getColumnCount(); i++) {
+                if (meta.getColumnName(i).toLowerCase().equals(m_ColumnKey.toString()))
+                  continue;
+                key = meta.getColumnName(i).toLowerCase();
+                value = rs.getObject(i);
+                addToReport(report, key, value);
+              }
+            }
+            break;
+
+          default:
+            throw new IllegalStateException("Unhandled query type: " + m_QueryType);
+        }
+        SQL.closeAll(rs);
+        if (!dataRead && !m_Lenient)
+          result = "No data found: " + query;
+
+        if (isHandler) {
+          handler.setReport(report);
+          m_OutputToken = new Token(handler);
+        }
+        else {
+          m_OutputToken = new Token(report);
+        }
+      }
+      catch (Exception e) {
+        result = handleException("Failed to read report data: " + query, e);
+      }
     }
     
     return result;

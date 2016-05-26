@@ -24,6 +24,7 @@ import adams.db.DatabaseConnection;
 import adams.db.DatabaseConnectionHandler;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorUtils;
+import adams.flow.core.Token;
 
 /**
  * Ancestor for conditions that operate on a database.
@@ -40,7 +41,10 @@ public abstract class AbstractBooleanDatabaseCondition
   
   /** the database connection in use. */
   protected AbstractDatabaseConnection m_DatabaseConnection;
-  
+
+  /** whether the DB connection has been updated. */
+  protected boolean m_DatabaseConnectionUpdated;
+
   /**
    * Initializes the members.
    */
@@ -50,7 +54,17 @@ public abstract class AbstractBooleanDatabaseCondition
     
     m_DatabaseConnection = getDefaultDatabaseConnection();
   }
-  
+
+  /**
+   * Resets the scheme.
+   */
+  @Override
+  protected void reset() {
+    super.reset();
+
+    m_DatabaseConnectionUpdated = false;
+  }
+
   /**
    * Returns the default database connection to use.
    * 
@@ -80,7 +94,7 @@ public abstract class AbstractBooleanDatabaseCondition
 
   /**
    * Returns the database connection from the flow.
-   * 
+   *
    * @param actor	the actor to use for determining the connection
    * @return		the connection
    */
@@ -90,24 +104,27 @@ public abstract class AbstractBooleanDatabaseCondition
 	  adams.flow.standalone.DatabaseConnection.class,
 	  getDefaultDatabaseConnection());
   }
-  
+
   /**
-   * Configures the condition.
+   * Uses the token to determine the evaluation.
    *
-   * @param owner	the actor this condition belongs to
-   * @return		null if everything is fine, otherwise error message
+   * @param owner	the owning actor
+   * @param token	the current token passing through
+   * @return		null if OK, otherwise error message
    */
-  @Override
-  public String setUp(Actor owner) {
+  protected String preEvaluate(Actor owner, Token token) {
     String	result;
-    
-    result = super.setUp(owner);
-    
+
+    result = super.preEvaluate(owner, token);
+
     if (result == null) {
-      if (owner instanceof Actor)
-	setDatabaseConnection(getConnection(owner));
+      if (!m_DatabaseConnectionUpdated) {
+	m_DatabaseConnectionUpdated = true;
+	if (owner instanceof Actor)
+	  setDatabaseConnection(getConnection(owner));
+      }
     }
-    
+
     return result;
   }
 }

@@ -15,14 +15,9 @@
 
 /**
  * TimeseriesDbReader.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
-
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.Types;
-import java.util.Date;
 
 import adams.core.Constants;
 import adams.core.QuickInfoHelper;
@@ -33,6 +28,11 @@ import adams.db.SQL;
 import adams.db.SQLStatement;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.Token;
+
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.Types;
+import java.util.Date;
 
 /**
  <!-- globalinfo-start -->
@@ -195,6 +195,8 @@ public class TimeseriesDbReader
     m_ColumnTimestampIndex = -1;
     m_ColumnValueType      = Types.OTHER;
     m_ColumnValueIndex     = -1;
+
+    m_DatabaseConnection   = null;
   }
 
   /**
@@ -484,28 +486,36 @@ public class TimeseriesDbReader
     Timeseries	ts;
     
     result = null;
-    
-    query = null;
-    id    = m_InputToken.getPayload().toString();
-    rs    = null;
-    try {
-      query = m_SQL.getValue().replace(PLACEHOLDER_ID, id);
-      query = getVariables().expand(query);
-      rs    = SQL.getSingleton(m_DatabaseConnection).getResultSet(query);
-      if (isLoggingEnabled())
-	getLogger().fine("SQL: " + query);
-      if (m_ColumnTimestampIndex== -1)
-	analyzeColumns(rs);
-      ts = read(rs);
-      ts.setID(id);
-      m_OutputToken = new Token(ts);
+
+    if (m_DatabaseConnection == null) {
+      m_DatabaseConnection = getDatabaseConnection();
+      if (m_DatabaseConnection == null)
+	result = "No database connection available!";
     }
-    catch (Exception e) {
-      result = handleException("Failed to execute statement: " + ((query == null) ? m_SQL : query), e);
-    }
-    finally {
-      if (rs != null)
-	SQL.closeAll(rs);
+
+    if (result == null) {
+      query = null;
+      id = m_InputToken.getPayload().toString();
+      rs = null;
+      try {
+        query = m_SQL.getValue().replace(PLACEHOLDER_ID, id);
+        query = getVariables().expand(query);
+        rs = SQL.getSingleton(m_DatabaseConnection).getResultSet(query);
+        if (isLoggingEnabled())
+          getLogger().fine("SQL: " + query);
+        if (m_ColumnTimestampIndex == -1)
+          analyzeColumns(rs);
+        ts = read(rs);
+        ts.setID(id);
+        m_OutputToken = new Token(ts);
+      }
+      catch (Exception e) {
+        result = handleException("Failed to execute statement: " + ((query == null) ? m_SQL : query), e);
+      }
+      finally {
+        if (rs != null)
+          SQL.closeAll(rs);
+      }
     }
     
     return result;

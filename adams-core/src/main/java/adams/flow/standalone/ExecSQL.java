@@ -15,18 +15,18 @@
 
 /*
  * ExecSQL.java
- * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.standalone;
-
-import java.util.logging.Level;
 
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
 import adams.db.SQL;
 import adams.db.SQLStatement;
 import adams.flow.core.ActorUtils;
+
+import java.util.logging.Level;
 
 /**
  <!-- globalinfo-start -->
@@ -118,6 +118,16 @@ public class ExecSQL
     m_OptionManager.add(
 	    "dry-run", "dryRun",
 	    false);
+  }
+
+  /**
+   * Resets the scheme.
+   */
+  @Override
+  protected void reset() {
+    super.reset();
+
+    m_DatabaseConnection = null;
   }
 
   /**
@@ -213,23 +223,6 @@ public class ExecSQL
   }
 
   /**
-   * Initializes the item for flow execution.
-   *
-   * @return		null if everything is fine, otherwise error message
-   */
-  @Override
-  public String setUp() {
-    String	result;
-
-    result = super.setUp();
-
-    if (result == null)
-      m_DatabaseConnection = getDatabaseConnection();
-
-    return result;
-  }
-
-  /**
    * Executes the flow item.
    *
    * @return		null if everything is fine, otherwise error message
@@ -241,6 +234,9 @@ public class ExecSQL
     String	query;
 
     result = null;
+
+    if (m_DatabaseConnection == null)
+      m_DatabaseConnection = getDatabaseConnection();
 
     query  = m_SQL.getValue();
     // replace variables

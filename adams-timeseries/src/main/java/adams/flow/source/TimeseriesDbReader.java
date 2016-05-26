@@ -15,14 +15,9 @@
 
 /**
  * TimeseriesDbReader.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.source;
-
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.Types;
-import java.util.Date;
 
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
@@ -32,6 +27,11 @@ import adams.db.SQL;
 import adams.db.SQLStatement;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.Token;
+
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.Types;
+import java.util.Date;
 
 /**
  <!-- globalinfo-start -->
@@ -189,16 +189,6 @@ public class TimeseriesDbReader
   }
 
   /**
-   * Initializes the members.
-   */
-  @Override
-  protected void initialize() {
-    super.initialize();
-
-    m_DatabaseConnection = null;
-  }
-  
-  /**
    * Resets the scheme.
    */
   @Override
@@ -213,6 +203,8 @@ public class TimeseriesDbReader
     m_ColumnValueType      = Types.OTHER;
     m_ColumnValueIndex     = -1;
     SQL.closeAll(m_ResultSet);
+
+    m_DatabaseConnection   = null;
   }
 
   /**
@@ -370,26 +362,6 @@ public class TimeseriesDbReader
   @Override
   public String getQuickInfo() {
     return QuickInfoHelper.toString(this, "SQL", Utils.shorten(m_SQL.getValue().replaceAll("\\s", " ").replaceAll("[ ]+", " "), 50));
-  }
-
-  /**
-   * Configures the database connection if necessary.
-   *
-   * @return		null if successful, otherwise error message
-   */
-  @Override
-  public String setUp() {
-    String	result;
-
-    result = super.setUp();
-
-    if (result == null) {
-      m_DatabaseConnection = getDatabaseConnection();
-      if (m_DatabaseConnection == null)
-	result = "No database connection available!";
-    }
-
-    return result;
   }
 
   /**
@@ -578,19 +550,27 @@ public class TimeseriesDbReader
     String	query;
     
     result = null;
-    
-    query = null;
-    try {
-      query = m_SQL.getValue();
-      query = getVariables().expand(query);
-      m_ResultSet = SQL.getSingleton(m_DatabaseConnection).getResultSet(query);
-      if (isLoggingEnabled())
-	getLogger().fine("SQL: " + query);
-      analyzeColumns();
-      read();
+
+    if (m_DatabaseConnection == null) {
+      m_DatabaseConnection = getDatabaseConnection();
+      if (m_DatabaseConnection == null)
+        result = "No database connection available!";
     }
-    catch (Exception e) {
-      result = handleException("Failed to execute statement: " + ((query == null) ? m_SQL : query), e);
+
+    if (result == null) {
+      query = null;
+      try {
+        query = m_SQL.getValue();
+        query = getVariables().expand(query);
+        m_ResultSet = SQL.getSingleton(m_DatabaseConnection).getResultSet(query);
+        if (isLoggingEnabled())
+          getLogger().fine("SQL: " + query);
+        analyzeColumns();
+        read();
+      }
+      catch (Exception e) {
+        result = handleException("Failed to execute statement: " + ((query == null) ? m_SQL : query), e);
+      }
     }
     
     return result;

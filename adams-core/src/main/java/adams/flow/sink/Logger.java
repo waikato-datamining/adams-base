@@ -15,7 +15,7 @@
 
 /*
  * Logger.java
- * Copyright (C) 2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -95,22 +95,24 @@ public class Logger
   }
 
   /**
-   * Initializes the item for flow execution.
+   * Pre-execute hook.
    *
    * @return		null if everything is fine, otherwise error message
    */
-  public String setUp() {
+  protected String preExecute() {
     String		result;
 
     result = super.setUp();
 
     if (result == null) {
-      m_DatabaseConnection = ActorUtils.getDatabaseConnection(
-	  this,
-	  adams.flow.standalone.DatabaseConnection.class,
-	  adams.db.DatabaseConnection.getSingleton());
-      if (!m_DatabaseConnection.isConnected())
-	result = "No active database connection available!";
+      if (m_DatabaseConnection == null) {
+        m_DatabaseConnection = ActorUtils.getDatabaseConnection(
+          this,
+          adams.flow.standalone.DatabaseConnection.class,
+          adams.db.DatabaseConnection.getSingleton());
+        if (!m_DatabaseConnection.isConnected())
+          result = "No active database connection available!";
+      }
     }
 
     return result;

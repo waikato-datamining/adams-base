@@ -190,6 +190,16 @@ public class SpreadSheetDbWriter
   }
 
   /**
+   * Resets the scheme.
+   */
+  @Override
+  protected void reset() {
+    super.reset();
+
+    m_DatabaseConnection = null;
+  }
+
+  /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
@@ -387,23 +397,6 @@ public class SpreadSheetDbWriter
   }
 
   /**
-   * Initializes the item for flow execution.
-   *
-   * @return		null if everything is fine, otherwise error message
-   */
-  @Override
-  public String setUp() {
-    String	result;
-
-    result = super.setUp();
-
-    if (result == null)
-      m_DatabaseConnection = getDatabaseConnection();
-
-    return result;
-  }
-  
-  /**
    * Executes the flow item.
    *
    * @return		null if everything is fine, otherwise error message
@@ -416,6 +409,9 @@ public class SpreadSheetDbWriter
     SQL			sql;
 
     result = null;
+
+    if (m_DatabaseConnection == null)
+      m_DatabaseConnection = getDatabaseConnection();
 
     if (m_InputToken.getPayload() instanceof Row) {
       row   = (Row) m_InputToken.getPayload();
