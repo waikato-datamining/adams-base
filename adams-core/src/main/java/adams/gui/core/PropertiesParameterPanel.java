@@ -22,9 +22,12 @@ package adams.gui.core;
 import adams.core.EnumHelper;
 import adams.core.Properties;
 import adams.core.Utils;
+import adams.core.base.BaseDate;
+import adams.core.base.BaseDateTime;
 import adams.core.base.BasePassword;
 import adams.core.base.BaseString;
 import adams.core.base.BaseText;
+import adams.core.base.BaseTime;
 import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
 import adams.core.logging.LoggingLevel;
@@ -666,21 +669,21 @@ public class PropertiesParameterPanel
         switch (type) {
           case TIME:
             timePanel = new TimeChooserPanel();
-            timePanel.setCurrent(value.getTime(key));
+            timePanel.setCurrent(new BaseTime(value.getProperty(key)).timeValue());
             timePanel.setToolTipText(help);
             timePanel.setInlineEditingEnabled(true);
             addProperty(key, label, timePanel);
             break;
           case DATE:
             datePanel = new DateChooserPanel();
-            datePanel.setCurrent(value.getDate(key));
+            datePanel.setCurrent(new BaseDate(value.getProperty(key)).dateValue());
             datePanel.setToolTipText(help);
             datePanel.setInlineEditingEnabled(true);
             addProperty(key, label, datePanel);
             break;
           case DATETIME:
             dateTimePanel = new DateTimeChooserPanel();
-            dateTimePanel.setCurrent(value.getDateTime(key));
+            dateTimePanel.setCurrent(new BaseDateTime(value.getProperty(key)).dateTimeValue());
             dateTimePanel.setToolTipText(help);
             dateTimePanel.setInlineEditingEnabled(true);
             addProperty(key, label, dateTimePanel);
