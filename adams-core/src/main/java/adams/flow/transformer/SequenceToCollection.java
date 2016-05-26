@@ -15,19 +15,19 @@
 
 /*
  * SequenceToCollection.java
- * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
+
+import adams.core.QuickInfoHelper;
+import adams.flow.core.Token;
+import adams.flow.core.Unknown;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Hashtable;
 import java.util.List;
-
-import adams.core.QuickInfoHelper;
-import adams.flow.core.Token;
-import adams.flow.core.Unknown;
 
 /**
  <!-- globalinfo-start -->
@@ -46,8 +46,6 @@ import adams.flow.core.Unknown;
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- * 
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
@@ -58,7 +56,7 @@ import adams.flow.core.Unknown;
  * &nbsp;&nbsp;&nbsp;default: SequenceToCollection
  * </pre>
  * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
@@ -75,10 +73,24 @@ import adams.flow.core.Unknown;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
  * <pre>-size &lt;int&gt; (property: collectionSize)
  * &nbsp;&nbsp;&nbsp;The size of the collection(s).
  * &nbsp;&nbsp;&nbsp;default: 1
  * &nbsp;&nbsp;&nbsp;minimum: -1
+ * </pre>
+ * 
+ * <pre>-overlap &lt;int&gt; (property: overlap)
+ * &nbsp;&nbsp;&nbsp;The overlap of elements between collections; e.g., sequence of 1,2,3,4 with 
+ * &nbsp;&nbsp;&nbsp;length=2 and overlap=0 gets packaged in to (1,2),(3,4); with overlap=1, 
+ * &nbsp;&nbsp;&nbsp;this changes to (1,2),(2,3),(3,4); collection size option must be &gt; 0.
+ * &nbsp;&nbsp;&nbsp;default: 0
+ * &nbsp;&nbsp;&nbsp;minimum: 0
  * </pre>
  * 
  * <pre>-collection-class &lt;java.lang.String&gt; (property: collectionClass)
@@ -100,13 +112,16 @@ public class SequenceToCollection
   /** the key for storing the current elements in the backup. */
   public final static String BACKUP_ELEMENTS = "elements";
 
-  /** the buffered elements of the array that still need to be broadcasted. */
+  /** the buffered elements of the collection that still need to be broadcasted. */
   protected List m_Elements;
 
-  /** the length of the arrays. */
+  /** the length of the collections. */
   protected int m_CollectionSize;
 
-  /** the class for the array. */
+  /** the overlap in elements between collections. */
+  protected int m_Overlap;
+
+  /** the class for the collection. */
   protected String m_CollectionClass;
 
   /**
@@ -116,11 +131,11 @@ public class SequenceToCollection
    */
   @Override
   public String globalInfo() {
-    return 
-	  "Turns a sequence of tokens into a collection.\n"
-	+ "In case of unspecified length (ie -1), a collection containing all "
-	+ "elements collected so far is output each time a token arrives, "
-	+ "i.e., the internal buffer never gets reset.";
+    return
+      "Turns a sequence of tokens into a collection.\n"
+        + "In case of unspecified length (ie -1), a collection containing all "
+        + "elements collected so far is output each time a token arrives, "
+        + "i.e., the internal buffer never gets reset.";
   }
 
   /**
@@ -131,12 +146,16 @@ public class SequenceToCollection
     super.defineOptions();
 
     m_OptionManager.add(
-	    "size", "collectionSize",
-	    1, -1, null);
+      "size", "collectionSize",
+      1, -1, null);
 
     m_OptionManager.add(
-	    "collection-class", "collectionClass",
-	    ArrayList.class.getName());
+      "overlap", "overlap",
+      0, 0, null);
+
+    m_OptionManager.add(
+      "collection-class", "collectionClass",
+      ArrayList.class.getName());
   }
 
   /**
@@ -148,8 +167,9 @@ public class SequenceToCollection
   public String getQuickInfo() {
     String	result;
 
-    result  = QuickInfoHelper.toString(this, "collectionSize", m_CollectionSize, "Size: ");
-    result += QuickInfoHelper.toString(this, "collectionClass", (m_CollectionClass.length() != 0 ? m_CollectionClass : "-none-"), ", Class: ");
+    result  = QuickInfoHelper.toString(this, "collectionSize", m_CollectionSize, "size: ");
+    result += QuickInfoHelper.toString(this, "overlap", m_Overlap, ", overlap: ");
+    result += QuickInfoHelper.toString(this, "collectionClass", (m_CollectionClass.length() != 0 ? m_CollectionClass : "-none-"), ", class: ");
 
     return result;
   }
@@ -160,12 +180,9 @@ public class SequenceToCollection
    * @param value	the size
    */
   public void setCollectionSize(int value) {
-    if ((value > 0) || (value == -1)) {
+    if (getOptionManager().isValid("collectionSize", value)) {
       m_CollectionSize = value;
       reset();
-    }
-    else {
-      getLogger().severe("Collection(s) must have a size of at least 1 (or -1 for unspecified size), provided: " + value + "!");
     }
   }
 
@@ -186,6 +203,40 @@ public class SequenceToCollection
    */
   public String collectionSizeTipText() {
     return "The size of the collection(s).";
+  }
+
+  /**
+   * Sets the overlap of elements between collections.
+   *
+   * @param value	the overlap
+   */
+  public void setOverlap(int value) {
+    if (getOptionManager().isValid("overlap", value)) {
+      m_Overlap = value;
+      reset();
+    }
+  }
+
+  /**
+   * Returns the overlap of elements between collections.
+   *
+   * @return		the overlap
+   */
+  public int getOverlap() {
+    return m_Overlap;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String overlapTipText() {
+    return
+      "The overlap of elements between collections; e.g., sequence of 1,2,3,4 with "
+	+ "length=2 and overlap=0 gets packaged in to (1,2),(3,4); with overlap=1, "
+	+ "this changes to (1,2),(2,3),(3,4); collection size option must be > 0.";
   }
 
   /**
@@ -307,24 +358,41 @@ public class SequenceToCollection
   protected String doExecute() {
     String	result;
     Collection	coll;
+    int		diff;
 
     result = null;
 
-    try {
-      m_Elements.add(m_InputToken.getPayload());
-      getLogger().info("Buffered elements: " + m_Elements.size());
-      if ((m_CollectionSize == -1) || (m_Elements.size() == m_CollectionSize)) {
-	coll = (Collection) Class.forName(m_CollectionClass).newInstance();
-	getLogger().info("Collection type: " + coll.getClass().getComponentType());
-	coll.addAll(m_Elements);
-	m_OutputToken = new Token(coll);
-	if (m_CollectionSize > -1)
-	  m_Elements.clear();
-	getLogger().info("Collection generated");
-      }
+    diff = m_Elements.size();
+    if (m_CollectionSize > -1) {
+      diff = m_CollectionSize - m_Overlap;
+      if (diff <= 0)
+	result = "Overlap must be smaller than collection size: overlap=" + m_Overlap + " >= collectionSize=" + m_CollectionSize;
     }
-    catch (Exception e) {
-      result = handleException("Failed to turn sequence into collection: ", e);
+
+    if (result == null) {
+      try {
+	m_Elements.add(m_InputToken.getPayload());
+	if (isLoggingEnabled())
+	  getLogger().info("Buffered elements: " + m_Elements.size());
+	if ((m_CollectionSize == -1) || (m_Elements.size() == m_CollectionSize)) {
+	  coll = (Collection) Class.forName(m_CollectionClass).newInstance();
+	  if (isLoggingEnabled())
+	    getLogger().info("Collection type: " + coll.getClass().getComponentType());
+	  coll.addAll(m_Elements);
+	  m_OutputToken = new Token(coll);
+	  if (m_CollectionSize > -1) {
+	    while (diff > 0) {
+	      m_Elements.remove(0);
+	      diff--;
+	    }
+	  }
+	  if (isLoggingEnabled())
+	    getLogger().info("Collection generated");
+	}
+      }
+      catch (Exception e) {
+	result = handleException("Failed to turn sequence into collection: ", e);
+      }
     }
 
     return result;

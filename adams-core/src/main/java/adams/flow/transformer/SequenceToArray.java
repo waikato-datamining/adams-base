@@ -15,20 +15,20 @@
 
 /*
  * SequenceToArray.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
-
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.List;
 
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
 import adams.flow.core.Token;
 import adams.flow.core.Unknown;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -47,8 +47,6 @@ import adams.flow.core.Unknown;
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- * 
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
@@ -59,7 +57,7 @@ import adams.flow.core.Unknown;
  * &nbsp;&nbsp;&nbsp;default: SequenceToArray
  * </pre>
  * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
@@ -76,11 +74,25 @@ import adams.flow.core.Unknown;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
  * <pre>-length &lt;int&gt; (property: arrayLength)
  * &nbsp;&nbsp;&nbsp;The length of the output array; use -1 to output an array with all collected 
  * &nbsp;&nbsp;&nbsp;elements so far whenever a token arrives.
  * &nbsp;&nbsp;&nbsp;default: 1
  * &nbsp;&nbsp;&nbsp;minimum: -1
+ * </pre>
+ * 
+ * <pre>-overlap &lt;int&gt; (property: overlap)
+ * &nbsp;&nbsp;&nbsp;The overlap of elements between arrays; e.g., sequence of 1,2,3,4 with length
+ * &nbsp;&nbsp;&nbsp;=2 and overlap=0 gets packaged in to (1,2),(3,4); with overlap=1, this changes 
+ * &nbsp;&nbsp;&nbsp;to (1,2),(2,3),(3,4); array length option must be &gt; 0.
+ * &nbsp;&nbsp;&nbsp;default: 0
+ * &nbsp;&nbsp;&nbsp;minimum: 0
  * </pre>
  * 
  * <pre>-array-class &lt;java.lang.String&gt; (property: arrayClass)
@@ -109,6 +121,9 @@ public class SequenceToArray
   /** the length of the arrays. */
   protected int m_ArrayLength;
 
+  /** the overlap in elements between arrays. */
+  protected int m_Overlap;
+
   /** the class for the array. */
   protected String m_ArrayClass;
 
@@ -134,12 +149,16 @@ public class SequenceToArray
     super.defineOptions();
 
     m_OptionManager.add(
-	    "length", "arrayLength",
-	    1, -1, null);
+      "length", "arrayLength",
+      1, -1, null);
 
     m_OptionManager.add(
-	    "array-class", "arrayClass",
-	    "");
+      "overlap", "overlap",
+      0, 0, null);
+
+    m_OptionManager.add(
+      "array-class", "arrayClass",
+      "");
   }
 
   /**
@@ -151,8 +170,9 @@ public class SequenceToArray
   public String getQuickInfo() {
     String	result;
 
-    result  = QuickInfoHelper.toString(this, "arrayLength", m_ArrayLength, "Length: ");
-    result += QuickInfoHelper.toString(this, "arrayClass", (m_ArrayClass.length() != 0 ? m_ArrayClass : "-from 1st element-"), ", Class: ");
+    result  = QuickInfoHelper.toString(this, "arrayLength", m_ArrayLength, "length: ");
+    result += QuickInfoHelper.toString(this, "overlap", m_Overlap, ", overlap: ");
+    result += QuickInfoHelper.toString(this, "arrayClass", (m_ArrayClass.length() != 0 ? m_ArrayClass : "-from 1st element-"), ", class: ");
 
     return result;
   }
@@ -163,12 +183,9 @@ public class SequenceToArray
    * @param value	the length
    */
   public void setArrayLength(int value) {
-    if ((value > 0) || (value == -1)) {
+    if (getOptionManager().isValid("arrayLength", value)) {
       m_ArrayLength = value;
       reset();
-    }
-    else {
-      getLogger().severe("Arrays must have a length of at least 1 (or -1 for unspecified length), provided: " + value + "!");
     }
   }
 
@@ -189,6 +206,40 @@ public class SequenceToArray
    */
   public String arrayLengthTipText() {
     return "The length of the output array; use -1 to output an array with all collected elements so far whenever a token arrives.";
+  }
+
+  /**
+   * Sets the overlap of elements between arrays.
+   *
+   * @param value	the overlap
+   */
+  public void setOverlap(int value) {
+    if (getOptionManager().isValid("overlap", value)) {
+      m_Overlap = value;
+      reset();
+    }
+  }
+
+  /**
+   * Returns the overlap of elements between arrays.
+   *
+   * @return		the overlap
+   */
+  public int getOverlap() {
+    return m_Overlap;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String overlapTipText() {
+    return
+      "The overlap of elements between arrays; e.g., sequence of 1,2,3,4 with "
+	+ "length=2 and overlap=0 gets packaged in to (1,2),(3,4); with overlap=1, "
+	+ "this changes to (1,2),(2,3),(3,4); array length option must be > 0.";
   }
 
   /**
@@ -304,28 +355,45 @@ public class SequenceToArray
     String	result;
     int		i;
     Object	array;
+    int		diff;
 
     result = null;
 
-    try {
-      m_Elements.add(m_InputToken.getPayload());
-      getLogger().info("Buffered elements: " + m_Elements.size());
-      if ((m_ArrayLength == -1) || (m_Elements.size() == m_ArrayLength)) {
-	if (m_ArrayClass.length() == 0)
-	  array = Array.newInstance(m_Elements.get(0).getClass(), m_Elements.size());
-	else
-	  array = Utils.newArray(m_ArrayClass, m_Elements.size());
-	getLogger().info("Array type: " + array.getClass().getComponentType());
-	for (i = 0; i < m_Elements.size(); i++)
-	  Array.set(array, i, m_Elements.get(i));
-	m_OutputToken = new Token(array);
-	if (m_ArrayLength > -1)
-	  m_Elements.clear();
-	getLogger().info("Array generated");
-      }
+    diff = m_Elements.size();
+    if (m_ArrayLength > -1) {
+      diff = m_ArrayLength - m_Overlap;
+      if (diff <= 0)
+	result = "Overlap must be smaller than array length: overlap=" + m_Overlap + " >= arraylength=" + m_ArrayLength;
     }
-    catch (Exception e) {
-      result = handleException("Failed to turn sequence into array: ", e);
+
+    if (result == null) {
+      try {
+	m_Elements.add(m_InputToken.getPayload());
+	if (isLoggingEnabled())
+	  getLogger().info("Buffered elements: " + m_Elements.size());
+	if ((m_ArrayLength == -1) || (m_Elements.size() == m_ArrayLength)) {
+	  if (m_ArrayClass.length() == 0)
+	    array = Array.newInstance(m_Elements.get(0).getClass(), m_Elements.size());
+	  else
+	    array = Utils.newArray(m_ArrayClass, m_Elements.size());
+	  if (isLoggingEnabled())
+	    getLogger().info("Array type: " + array.getClass().getComponentType());
+	  for (i = 0; i < m_Elements.size(); i++)
+	    Array.set(array, i, m_Elements.get(i));
+	  m_OutputToken = new Token(array);
+	  if (m_ArrayLength > -1) {
+	    while (diff > 0) {
+	      m_Elements.remove(0);
+	      diff--;
+	    }
+	  }
+	  if (isLoggingEnabled())
+	    getLogger().info("Array generated");
+	}
+      }
+      catch (Exception e) {
+	result = handleException("Failed to turn sequence into array: ", e);
+      }
     }
 
     return result;
