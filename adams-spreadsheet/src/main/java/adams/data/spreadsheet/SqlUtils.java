@@ -519,6 +519,9 @@ public class SqlUtils {
     /** the row class to use. */
     protected Class m_RowClass;
 
+    /** whether to use time with msec. */
+    protected boolean m_TimeWithMsec;
+
     /** indicates whether the reading has finished. */
     protected boolean m_Finished;
     
@@ -537,13 +540,14 @@ public class SqlUtils {
      * @param rowClass	the class for the rows in the spreadsheet, 
      * 			e.g. {@link DenseDataRow}
      */
-    public Reader(Class rowClass) {
+    public Reader(Class rowClass, boolean timeWithMsec) {
       if (rowClass == null)
 	throw new IllegalArgumentException("No row class specified!");
       
-      m_RowClass = rowClass;
-      m_Header   = null;
-      m_Type     = new int[0];
+      m_RowClass     = rowClass;
+      m_TimeWithMsec = timeWithMsec;
+      m_Header       = null;
+      m_Type         = new int[0];
     }
 
     /**
@@ -637,13 +641,13 @@ public class SqlUtils {
       while (!m_Finished && !m_Stopped) {
 	row = result.addRow();
 	for (i = 1; i <= result.getColumnCount(); i++) {
-	  type = SqlUtils.sqlTypeToContentType(m_Type[i - 1]);
+	  type = SqlUtils.sqlTypeToContentType(m_Type[i - 1], m_TimeWithMsec);
 	  switch (type) {
 	    case TIME:
 	      row.addCell(i - 1).setContent(new Time(rs.getTime(i)));
 	      break;
 	    case TIMEMSEC:
-	      row.addCell(i - 1).setContent(new TimeMsec(rs.getTime(i)));
+	      row.addCell(i - 1).setContent(new TimeMsec(rs.getTimestamp(i)));
 	      break;
 	    case DATE:
 	      row.addCell(i - 1).setContent(rs.getDate(i));
@@ -717,10 +721,13 @@ public class SqlUtils {
    * @param colType	the SQL column type to interpret
    * @return		the type, default is {@link ContentType#STRING}
    */
-  public static ContentType sqlTypeToContentType(int colType) {
+  public static ContentType sqlTypeToContentType(int colType, boolean timeWithMsec) {
     switch (colType) {
       case Types.TIME:
-	return ContentType.TIME;
+	if (timeWithMsec)
+	  return ContentType.TIMEMSEC;
+	else
+	  return ContentType.TIME;
       case Types.DATE:
 	return ContentType.DATE;
       case Types.TIMESTAMP:

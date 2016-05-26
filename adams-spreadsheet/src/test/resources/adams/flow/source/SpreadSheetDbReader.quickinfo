@@ -1,0 +1,1 @@
+query: select * from blah, row type: DenseDataRow, time: no msec
