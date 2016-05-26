@@ -15,13 +15,14 @@
 
 /*
  * BaseDateTimeMsec.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.base;
 
 import adams.core.Constants;
 import adams.core.DateFormat;
+import adams.core.DateTimeMsec;
 import adams.core.DateValueSupporter;
 import adams.parser.BaseDateTimeMsecExpression;
 import adams.parser.GrammarSupplier;
@@ -242,6 +243,15 @@ public class BaseDateTimeMsec
    */
   public Date dateValue() {
     return parse(getValue(), false);
+  }
+
+  /**
+   * Returns the DateTimeMsec value.
+   *
+   * @return		the DateTimeMsec value
+   */
+  public DateTimeMsec dateTimeMsecValue() {
+    return new DateTimeMsec(dateValue());
   }
 
   /**

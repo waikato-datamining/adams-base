@@ -15,13 +15,14 @@
 
 /*
  * BaseDateTime.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.base;
 
 import adams.core.Constants;
 import adams.core.DateFormat;
+import adams.core.DateTime;
 import adams.core.DateValueSupporter;
 import adams.parser.BaseDateTimeExpression;
 import adams.parser.GrammarSupplier;
@@ -242,6 +243,15 @@ public class BaseDateTime
    */
   public Date dateValue() {
     return parse(getValue(), false);
+  }
+
+  /**
+   * Returns the DateTime value.
+   *
+   * @return		the DateTime value
+   */
+  public DateTime dateTimeValue() {
+    return new DateTime(dateValue());
   }
 
   /**

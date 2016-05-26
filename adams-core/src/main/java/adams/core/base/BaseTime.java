@@ -15,17 +15,18 @@
 
 /*
  * BaseTime.java
- * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.base;
 
-import java.util.Date;
-
 import adams.core.DateFormat;
 import adams.core.DateValueSupporter;
+import adams.core.Time;
 import adams.parser.BaseTimeExpression;
 import adams.parser.GrammarSupplier;
+
+import java.util.Date;
 
 /**
  * Wrapper for a Time string to be editable in the GOE. Dates have to be of
@@ -47,7 +48,7 @@ import adams.parser.GrammarSupplier;
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
- * @see #DATE_FORMAT
+ * @see #FORMAT
  * @see #setStart(Date)
  * @see #setEnd(Date)
  */
@@ -241,6 +242,15 @@ public class BaseTime
    */
   public Date dateValue() {
     return parse(getValue(), false);
+  }
+
+  /**
+   * Returns the Time value.
+   *
+   * @return		the Time value
+   */
+  public Time timeValue() {
+    return new Time(parse(getValue(), false));
   }
 
   /**

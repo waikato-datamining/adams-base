@@ -22,6 +22,7 @@ package adams.core.base;
 
 import adams.core.DateFormat;
 import adams.core.DateValueSupporter;
+import adams.core.TimeMsec;
 import adams.parser.BaseTimeMsecExpression;
 import adams.parser.GrammarSupplier;
 
@@ -243,6 +244,15 @@ public class BaseTimeMsec
    */
   public Date dateValue() {
     return parse(getValue(), false);
+  }
+
+  /**
+   * Returns the TimeMsec value.
+   *
+   * @return		the TimeMsec value
+   */
+  public TimeMsec timeMsecValue() {
+    return new TimeMsec(dateValue());
   }
 
   /**
