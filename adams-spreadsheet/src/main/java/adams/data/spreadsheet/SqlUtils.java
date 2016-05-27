@@ -19,11 +19,7 @@
  */
 package adams.data.spreadsheet;
 
-import adams.core.DateTime;
-import adams.core.DateTimeMsec;
 import adams.core.Stoppable;
-import adams.core.Time;
-import adams.core.TimeMsec;
 import adams.core.Utils;
 import adams.core.logging.LoggingLevel;
 import adams.core.logging.LoggingObject;
@@ -644,19 +640,19 @@ public class SqlUtils {
 	  type = SqlUtils.sqlTypeToContentType(m_Type[i - 1], m_TimeWithMsec);
 	  switch (type) {
 	    case TIME:
-	      row.addCell(i - 1).setContent(new Time(rs.getTime(i)));
+	      row.addCell(i - 1).setContentAs(rs.getTime(i).toString(), type);
 	      break;
 	    case TIMEMSEC:
-	      row.addCell(i - 1).setContent(new TimeMsec(rs.getTimestamp(i)));
+	      row.addCell(i - 1).setContentAs(rs.getTimestamp(i).toString(), type);
 	      break;
 	    case DATE:
-	      row.addCell(i - 1).setContent(rs.getDate(i));
+	      row.addCell(i - 1).setContentAs(rs.getDate(i).toString(), type);
 	      break;
 	    case DATETIME:
-	      row.addCell(i - 1).setContent(new DateTime(rs.getTimestamp(i)));
+	      row.addCell(i - 1).setContentAs(rs.getTimestamp(i).toString(), type);
 	      break;
 	    case DATETIMEMSEC:
-	      row.addCell(i - 1).setContent(new DateTimeMsec(rs.getTimestamp(i)));
+	      row.addCell(i - 1).setContentAs(rs.getTimestamp(i).toString(), type);
 	      break;
 	    case LONG:
 	      row.addCell(i - 1).setContent(rs.getLong(i));
