@@ -15,7 +15,7 @@
 
 /*
  * FloatCell.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.spreadsheet;
@@ -621,6 +621,26 @@ public class FloatCell
       m_Object      = null;
       m_ContentType = ContentType.STRING;
     }
+    return this;
+  }
+
+  /**
+   * Sets the content of the cell, trying to parse the content using the
+   * specified content type.
+   *
+   * @param value	the content
+   * @param type	the type to use
+   * @return		the cell itself
+   */
+  public Cell setContentAs(String value, ContentType type) {
+    Object	obj;
+
+    obj = parseContent(value, type);
+    if (obj.equals(SpreadSheet.MISSING_VALUE))
+      setMissing();
+    else
+      setNative(obj);
+
     return this;
   }
 

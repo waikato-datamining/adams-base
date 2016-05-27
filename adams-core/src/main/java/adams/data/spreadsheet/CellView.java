@@ -327,6 +327,20 @@ public class CellView
   }
 
   /**
+   * Sets the content of the cell, trying to parse the content using the
+   * specified content type.
+   * <br>
+   * Not implemented!
+   *
+   * @param value	the content
+   * @param type	the type to use
+   * @return		the cell itself
+   */
+  public Cell setContentAs(String value, ContentType type) {
+    throw new NotImplementedException();
+  }
+
+  /**
    * Sets the object content of the cell.
    * <br>
    * Not implemented!

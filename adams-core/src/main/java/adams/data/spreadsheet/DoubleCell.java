@@ -625,6 +625,26 @@ public class DoubleCell
   }
 
   /**
+   * Sets the content of the cell, trying to parse the content using the
+   * specified content type.
+   *
+   * @param value	the content
+   * @param type	the type to use
+   * @return		the cell itself
+   */
+  public Cell setContentAs(String value, ContentType type) {
+    Object	obj;
+
+    obj = parseContent(value, type);
+    if (obj.equals(SpreadSheet.MISSING_VALUE))
+      setMissing();
+    else
+      setNative(obj);
+
+    return this;
+  }
+
+  /**
    * Sets the object content of the cell.
    *
    * @param value	the content
