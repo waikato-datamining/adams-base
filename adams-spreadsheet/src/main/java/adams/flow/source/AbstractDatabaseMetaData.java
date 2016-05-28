@@ -434,7 +434,7 @@ public abstract class AbstractDatabaseMetaData
       sheet = null;
       try {
 	metadata = m_DatabaseConnection.getConnection(false).getMetaData();
-	reader   = new Reader(DenseDataRow.class, false);
+	reader   = new Reader(DenseDataRow.class);
 	switch (m_MetaDataType) {
 	  case BASIC:
 	    sheet = new DefaultSpreadSheet();

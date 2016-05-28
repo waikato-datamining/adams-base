@@ -51,9 +51,6 @@ public abstract class AbstractSpreadSheetDbReader
   /** the data row type to use. */
   protected DataRow m_DataRowType;
 
-  /** whether to use time with msec. */
-  protected boolean m_TimeWithMsec;
-
   /** the chunk size to use. */
   protected int m_ChunkSize;
   
@@ -98,10 +95,6 @@ public abstract class AbstractSpreadSheetDbReader
       new DenseDataRow());
 
     m_OptionManager.add(
-      "time-with-msec", "timeWithMsec",
-      false);
-
-    m_OptionManager.add(
       "chunk-size", "chunkSize",
       -1, -1, null);
   }
@@ -129,7 +122,6 @@ public abstract class AbstractSpreadSheetDbReader
 
     result  = QuickInfoHelper.toString(this, "query", Utils.shorten(m_Query.stringValue(), 40), "query: ");
     result += QuickInfoHelper.toString(this, "dataRowType", m_DataRowType, ", row type: ");
-    result += QuickInfoHelper.toString(this, "timeWithMsec", m_TimeWithMsec ? "with msec" : "no msec", ", time: ");
     value   = QuickInfoHelper.toString(this, "chunkSize", (m_ChunkSize > 0 ? m_ChunkSize : null), ", chunk: ");
     if (value != null)
       result += value;
@@ -193,35 +185,6 @@ public abstract class AbstractSpreadSheetDbReader
    */
   public String dataRowTypeTipText() {
     return "The type of row to use for the data.";
-  }
-
-  /**
-   * Sets whether time values will have msec.
-   *
-   * @param value	true if to use msec
-   */
-  public void setTimeWithMsec(boolean value) {
-    m_TimeWithMsec = value;
-    reset();
-  }
-
-  /**
-   * Returns whether time values will have msec.
-   *
-   * @return		true if to use msec
-   */
-  public boolean getTimeWithMsec() {
-    return m_TimeWithMsec;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String timeWithMsecTipText() {
-    return "If enabled, time is output with msec, otherwise just with with sec.";
   }
 
   /**
@@ -295,7 +258,7 @@ public abstract class AbstractSpreadSheetDbReader
     try {
       sql      = new SQL(m_DatabaseConnection);
       sql.setDebug(isLoggingEnabled());
-      m_Reader = new Reader(m_DataRowType.getClass(), m_TimeWithMsec);
+      m_Reader = new Reader(m_DataRowType.getClass());
       m_Reader.setLoggingLevel(getLoggingLevel());
       if (isLoggingEnabled())
 	getLogger().info("Query: " + query);
