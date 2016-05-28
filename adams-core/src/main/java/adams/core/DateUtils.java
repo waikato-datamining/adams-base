@@ -125,34 +125,22 @@ public class DateUtils {
 
   /**
    * Returns a time formatting object, initialized with time format.
-   * Uses GMT as timezone to start time always at 00:00:00.
    *
    * @return		the formatter
    * @see		Constants#TIME_FORMAT
    */
   public static DateFormat getTimeFormatter() {
-    DateFormat	result;
-
-    result = new DateFormat(Constants.TIME_FORMAT);
-    result.setTimeZone(TimeZone.getTimeZone("GMT"));
-
-    return result;
+    return new DateFormat(Constants.TIME_FORMAT);
   }
 
   /**
    * Returns a time formatting object, initialized with time format (incl msecs).
-   * Uses GMT as timezone to start time always at 00:00:00.000.
    *
    * @return		the formatter
    * @see		Constants#TIME_FORMAT_MSECS
    */
   public static DateFormat getTimeFormatterMsecs() {
-    DateFormat	result;
-
-    result = new DateFormat(Constants.TIME_FORMAT_MSECS);
-    result.setTimeZone(TimeZone.getTimeZone("GMT"));
-
-    return result;
+    return new DateFormat(Constants.TIME_FORMAT_MSECS);
   }
 
   /**
