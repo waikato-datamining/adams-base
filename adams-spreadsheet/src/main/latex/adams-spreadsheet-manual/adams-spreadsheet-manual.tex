@@ -486,6 +486,31 @@ through the \textit{Help -> Formulas} menu in the \textit{Spreadsheet file viewe
 \end{tight_itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\clearpage
+\chapter{Troubleshooting}
+\section{Fractional times}
+Despite database systems supporting fractional times, i.e., times with
+fractional seconds (= milliseconds), the JDBC interface does not support
+this (at this stage). This results in fractions always getting set to 0.
+
+However, JDBC drivers, like the MySQL one starting with 5.1.37, may support
+in some cases the sending of fractional seconds to the server where the may
+be subject to rounding (for MySQL use \texttt{sendFractionalSeconds=true|false}
+in the JDBC URL).
+
+In order to avoid the truncating of fractions, you can do two things:
+\begin{tight_itemize}
+  \item Create your own queries and have them executed using the \textit{ExecSQL}
+  standalone - this bypasses the JDBC driver's checks for fractions.
+  \item Turn the columns in the spreadsheet, when using the \textit{SpreadSheetDbWriter},
+  into strings. They will get converted automatically, at least in the case
+  of MySQL, automatically into fractional times again before being inserted.
+  Either use the \textit{SpreadSheetAnyColumnToString} conversion or
+  use \texttt{concat("", column\_name)} to return the column \textit{column\_name}
+  as string from the database in the first place.
+\end{tight_itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \input{bibliography}
 
 \end{document}
