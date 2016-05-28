@@ -15,7 +15,7 @@
 
 /**
  * SpreadSheetStringColumnToTime.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
 
@@ -34,25 +34,36 @@ import adams.data.spreadsheet.SpreadSheet;
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- * 
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  * 
- * <pre>-column &lt;adams.core.Index&gt; (property: column)
- * &nbsp;&nbsp;&nbsp;The column to convert to date; An index is a number starting with 1; the 
- * &nbsp;&nbsp;&nbsp;following placeholders can be used as well: first, second, third, last_2,
- * &nbsp;&nbsp;&nbsp; last_1, last
+ * <pre>-no-copy &lt;boolean&gt; (property: noCopy)
+ * &nbsp;&nbsp;&nbsp;If enabled, no copy of the spreadsheet is created before processing it.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-column &lt;adams.data.spreadsheet.SpreadSheetColumnIndex&gt; (property: column)
+ * &nbsp;&nbsp;&nbsp;The column to convert to date; An index is a number starting with 1; column 
+ * &nbsp;&nbsp;&nbsp;names (case-sensitive) as well as the following placeholders can be used:
+ * &nbsp;&nbsp;&nbsp; first, second, third, last_2, last_1, last; numeric indices can be enforced 
+ * &nbsp;&nbsp;&nbsp;by preceding them with '#' (eg '#12'); column names can be surrounded by 
+ * &nbsp;&nbsp;&nbsp;double quotes.
  * &nbsp;&nbsp;&nbsp;default: first
+ * &nbsp;&nbsp;&nbsp;example: An index is a number starting with 1; column names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last; numeric indices can be enforced by preceding them with '#' (eg '#12'); column names can be surrounded by double quotes.
  * </pre>
  * 
- * <pre>-format &lt;java.lang.String&gt; (property: format)
+ * <pre>-keep-failed &lt;boolean&gt; (property: keepFailed)
+ * &nbsp;&nbsp;&nbsp;Whether to keep the original value of cells which conversion has failed 
+ * &nbsp;&nbsp;&nbsp;rather than setting them to missing.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-format &lt;adams.data.DateFormatString&gt; (property: format)
  * &nbsp;&nbsp;&nbsp;The format string used for parsing the strings.
- * &nbsp;&nbsp;&nbsp;default: HH:mm
+ * &nbsp;&nbsp;&nbsp;default: HH:mm:ss
+ * &nbsp;&nbsp;&nbsp;more: http:&#47;&#47;docs.oracle.com&#47;javase&#47;6&#47;docs&#47;api&#47;java&#47;text&#47;SimpleDateFormat.html
  * </pre>
  * 
  <!-- options-end -->
@@ -95,7 +106,7 @@ public class SpreadSheetStringColumnToTime
 
     m_OptionManager.add(
 	    "format", "format",
-	    new DateFormatString("HH:mm"));
+	    new DateFormatString("HH:mm:ss"));
   }
 
   /**
