@@ -20,6 +20,7 @@
 
 package adams.core.base;
 
+import adams.core.Constants;
 import adams.core.DateFormat;
 import adams.core.DateValueSupporter;
 import adams.core.TimeMsec;
@@ -27,7 +28,6 @@ import adams.parser.BaseTimeMsecExpression;
 import adams.parser.GrammarSupplier;
 
 import java.util.Date;
-import java.util.TimeZone;
 
 /**
  * Wrapper for a Time string to be editable in the GOE. Dates have to be of
@@ -82,13 +82,12 @@ public class BaseTimeMsec
   public final static String END = "END";
 
   /** the date format. */
-  public final static String FORMAT = "HH:mm:ss.SSS";
+  public final static String FORMAT = Constants.TIME_FORMAT_MSECS;
 
   /** for formatting/parsing the dates. */
   protected static DateFormat m_Format;
   static {
     m_Format = new DateFormat(FORMAT);
-    m_Format.setTimeZone(TimeZone.getTimeZone("GMT"));
   }
 
   /** the start time to use. */

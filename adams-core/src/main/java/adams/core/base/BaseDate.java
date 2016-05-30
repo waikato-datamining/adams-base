@@ -20,6 +20,7 @@
 
 package adams.core.base;
 
+import adams.core.Constants;
 import adams.core.DateFormat;
 import adams.core.DateValueSupporter;
 import adams.parser.BaseDateExpression;
@@ -79,7 +80,7 @@ public class BaseDate
   public final static String END = "END";
 
   /** the date format. */
-  public final static String FORMAT = "yyyy-MM-dd";
+  public final static String FORMAT = Constants.DATE_FORMAT;
 
   /** for formatting/parsing the dates. */
   protected static DateFormat m_Format;

@@ -241,7 +241,7 @@ public class Parser extends java_cup.runtime.lr_parser {
   protected Date m_End = null;
 
   /** an instance of a gregorian calendar. */
-  protected Calendar m_Calendar = new GregorianCalendar(java.util.TimeZone.getTimeZone("GMT"), DateUtils.getLocale());
+  protected Calendar m_Calendar = new GregorianCalendar(DateUtils.getLocale());
 
   /** the helper. */
   protected ParserHelper m_Helper = new ParserHelper();

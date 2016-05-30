@@ -20,6 +20,7 @@
 
 package adams.core.base;
 
+import adams.core.Constants;
 import adams.core.DateFormat;
 import adams.core.DateValueSupporter;
 import adams.core.Time;
@@ -81,7 +82,7 @@ public class BaseTime
   public final static String END = "END";
 
   /** the date format. */
-  public final static String FORMAT = "HH:mm:ss";
+  public final static String FORMAT = Constants.TIME_FORMAT;
 
   /** for formatting/parsing the dates. */
   protected static DateFormat m_Format;
