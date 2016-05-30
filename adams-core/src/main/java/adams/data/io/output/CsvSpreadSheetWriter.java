@@ -38,6 +38,7 @@ import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.util.TimeZone;
 import java.util.logging.Level;
 
 /**
@@ -239,6 +240,9 @@ public class CsvSpreadSheetWriter
   /** the format string for the times. */
   protected DateFormatString m_TimeFormat;
 
+  /** the format string for the times with msec. */
+  protected DateFormatString m_TimeMsecFormat;
+
   /** the date formatter. */
   protected transient DateFormat m_DateFormatter;
 
@@ -250,7 +254,13 @@ public class CsvSpreadSheetWriter
 
   /** the time formatter. */
   protected transient DateFormat m_TimeFormatter;
-  
+
+  /** the time msec formatter. */
+  protected transient DateFormat m_TimeMsecFormatter;
+
+  /** the timezone to use. */
+  protected TimeZone m_TimeZone;
+
   /**
    * Returns a string describing the object.
    *
@@ -335,6 +345,14 @@ public class CsvSpreadSheetWriter
     m_OptionManager.add(
       "time-format", "timeFormat",
       new DateFormatString(Constants.TIME_FORMAT));
+
+    m_OptionManager.add(
+      "timemsec-format", "timeMsecFormat",
+      new DateFormatString(Constants.TIME_FORMAT_MSECS));
+
+    m_OptionManager.add(
+      "time-zone", "timeZone",
+      TimeZone.getDefault(), false);
   }
 
   /**
@@ -355,8 +373,13 @@ public class CsvSpreadSheetWriter
   public void reset() {
     super.reset();
 
-    m_Header     = null;
-    m_FileExists = false;
+    m_Header                = null;
+    m_FileExists            = false;
+    m_TimeFormatter         = null;
+    m_TimeMsecFormatter     = null;
+    m_DateFormatter         = null;
+    m_DateTimeFormatter     = null;
+    m_DateTimeMsecFormatter = null;
   }
 
   /**
@@ -875,6 +898,64 @@ public class CsvSpreadSheetWriter
   }
 
   /**
+   * Sets the format for time msec columns.
+   *
+   * @param value	the format
+   */
+  public void setTimeMsecFormat(DateFormatString value) {
+    m_TimeMsecFormat = value;
+    reset();
+  }
+
+  /**
+   * Returns the format for time msec columns.
+   *
+   * @return		the format
+   */
+  public DateFormatString getTimeMsecFormat() {
+    return m_TimeMsecFormat;
+  }
+
+  /**
+   * Returns the tip time for this property.
+   *
+   * @return 		tip time for this property suitable for
+   * 			displaying in the gui
+   */
+  public String timeMsecFormatTipText() {
+    return "The format for times with milli-seconds.";
+  }
+
+  /**
+   * Sets the time zone to use.
+   *
+   * @param value	the time zone
+   */
+  public void setTimeZone(TimeZone value) {
+    m_TimeZone = value;
+    reset();
+  }
+
+  /**
+   * Returns the time zone in use.
+   *
+   * @return		the time zone
+   */
+  public TimeZone getTimeZone() {
+    return m_TimeZone;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the gui
+   */
+  public String timeZoneTipText() {
+    return "The time zone to use for interpreting dates/times; default is the system-wide defined one.";
+  }
+
+  /**
    * Sets whether the output file already exists.
    *
    * @param value	true if the output file already exists
@@ -951,7 +1032,7 @@ public class CsvSpreadSheetWriter
    */
   protected DateFormat getDateFormatter() {
     if (m_DateFormatter == null)
-      m_DateFormatter = m_DateFormat.toDateFormat();
+      m_DateFormatter = m_DateFormat.toDateFormat(m_TimeZone);
     return m_DateFormatter;
   }
   
@@ -962,7 +1043,7 @@ public class CsvSpreadSheetWriter
    */
   protected DateFormat getDateTimeFormatter() {
     if (m_DateTimeFormatter == null)
-      m_DateTimeFormatter = m_DateTimeFormat.toDateFormat();
+      m_DateTimeFormatter = m_DateTimeFormat.toDateFormat(m_TimeZone);
     return m_DateTimeFormatter;
   }
 
@@ -973,7 +1054,7 @@ public class CsvSpreadSheetWriter
    */
   protected DateFormat getDateTimeMsecFormatter() {
     if (m_DateTimeMsecFormatter == null)
-      m_DateTimeMsecFormatter = m_DateTimeMsecFormat.toDateFormat();
+      m_DateTimeMsecFormatter = m_DateTimeMsecFormat.toDateFormat(m_TimeZone);
     return m_DateTimeMsecFormatter;
   }
 
@@ -984,8 +1065,19 @@ public class CsvSpreadSheetWriter
    */
   protected DateFormat getTimeFormatter() {
     if (m_TimeFormatter == null)
-      m_TimeFormatter = m_TimeFormat.toDateFormat();
+      m_TimeFormatter = m_TimeFormat.toDateFormat(m_TimeZone);
     return m_TimeFormatter;
+  }
+
+  /**
+   * Returns the formatter for times with milli-seconds.
+   *
+   * @return		the formatter
+   */
+  protected DateFormat getTimeMsecFormatter() {
+    if (m_TimeMsecFormatter == null)
+      m_TimeMsecFormatter = m_TimeMsecFormat.toDateFormat(m_TimeZone);
+    return m_TimeMsecFormatter;
   }
 
   /**
@@ -1121,6 +1213,7 @@ public class CsvSpreadSheetWriter
     DateFormat			dtformat;
     DateFormat			dtmformat;
     DateFormat			tformat;
+    DateFormat			tmformat;
 
     result = true;
 
@@ -1129,6 +1222,7 @@ public class CsvSpreadSheetWriter
       dtformat  = getDateTimeFormatter();
       dtmformat = getDateTimeMsecFormatter();
       tformat   = getTimeFormatter();
+      tmformat  = getTimeMsecFormatter();
 
       // write data rows
       first = true;
@@ -1163,6 +1257,9 @@ public class CsvSpreadSheetWriter
 		break;
 	      case TIME:
 		writer.write(quoteString(tformat.format(cell.toTime())));
+		break;
+	      case TIMEMSEC:
+		writer.write(quoteString(tmformat.format(cell.toTimeMsec())));
 		break;
 	      case BOOLEAN:
 		writer.write(quoteString(cell.toBoolean().toString()));
