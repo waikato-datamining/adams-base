@@ -118,9 +118,6 @@ public abstract class AbstractActor
   /** for backing up the state of an actor. */
   protected Hashtable<String,Object> m_BackupState;
 
-  /** cached root actor of the flow. */
-  protected Actor m_Root;
-
   /** the storage handler. */
   protected StorageHandler m_StorageHandler;
   
@@ -232,7 +229,6 @@ public abstract class AbstractActor
     super.initialize();
 
     m_Parent                  = null;
-    m_Root                    = null;
     m_FullName                = null;
     m_Name                    = "";
     m_DetectedVariables       = null;
@@ -571,10 +567,9 @@ public abstract class AbstractActor
    */
   @Override
   public void setParent(Actor value) {
-    if (value != m_Parent) {
+    if ((value != m_Parent) || (value == null)) {
       m_Parent                      = value;
       m_FullName                    = null;
-      m_Root                        = null;
       m_StorageHandler              = null;
       m_ScopeHandler                = null;
       m_ExecutionListeningSupporter = null;
@@ -625,14 +620,10 @@ public abstract class AbstractActor
    * @return		the root, can be null
    */
   public Actor getRoot() {
-    if (m_Root == null) {
-      if (getParent() == null)
-	m_Root = this;
-      else
-	m_Root = getParent().getRoot();
-    }
-
-    return m_Root;
+    if (getParent() == null)
+      return this;
+    else
+      return getParent().getRoot();
   }
 
   /**
