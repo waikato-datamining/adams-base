@@ -28,14 +28,13 @@ import adams.core.logging.LoggingLevel;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorHandlerInfo;
 import adams.flow.core.ActorUtils;
+import adams.flow.core.CallableNamesRecorder;
 import adams.flow.core.FlowVariables;
 import adams.flow.core.InputConsumer;
 import adams.flow.core.MutableActorHandler;
 import adams.flow.core.OutputProducer;
 import adams.flow.core.Token;
 import adams.flow.core.Unknown;
-
-import java.util.HashSet;
 
 /**
  <!-- globalinfo-start -->
@@ -150,7 +149,7 @@ public class LocalScopeTransformer
   protected FlowVariables m_LocalVariables;
   
   /** the callable names. */
-  protected HashSet<String> m_CallableNames;
+  protected CallableNamesRecorder m_CallableNames;
   
   /** whether the callable name check is enforced. */
   protected boolean m_EnforceCallableNameCheck;
@@ -249,7 +248,7 @@ public class LocalScopeTransformer
     m_Actors.setAllowStandalones(false);
     m_Actors.setAllowEmpty(true);
 
-    m_CallableNames            = new HashSet<String>();
+    m_CallableNames            = new CallableNamesRecorder();
     m_EnforceCallableNameCheck = true;
   }
 
@@ -606,31 +605,31 @@ public class LocalScopeTransformer
   /**
    * Checks whether a callable name is already in use.
    * 
-   * @param name	the name to check
+   * @param actor	the actor name to check
    * @see		#getEnforceCallableNameCheck()
    */
-  public boolean isCallableNameUsed(String name) {
+  public boolean isCallableNameUsed(Actor actor) {
     if (!getEnforceCallableNameCheck())
       return false;
     else
-      return m_CallableNames.contains(name);
+      return m_CallableNames.contains(actor);
   }
 
   /**
-   * Adds the global name to the list of used ones.
+   * Adds the callable name to the list of used ones.
    * 
-   * @param name	the name to add
+   * @param actor	the actor name to add
    * @return		null if successfully added, otherwise error message
    * @see		#getEnforceCallableNameCheck()
    */
-  public String addCallableName(String name) {
+  public String addCallableName(Actor actor) {
     if (!getEnforceCallableNameCheck())
       return null;
     
-    if (isCallableNameUsed(name))
-      return "Callable name '" + name + "' is already used in this scope ('" + getFullName() + "')!";
+    if (isCallableNameUsed(actor))
+      return "Callable name '" + actor.getName() + "' is already used in this scope ('" + getFullName() + "')!";
     
-    m_CallableNames.add(name);
+    m_CallableNames.add(actor);
     return null;
   }
   
@@ -715,6 +714,7 @@ public class LocalScopeTransformer
     m_Actors.setName(getName());
     m_Actors.setParent(null);
     m_Actors.setParent(this);
+    super.updateParent();
   }
 
   /**

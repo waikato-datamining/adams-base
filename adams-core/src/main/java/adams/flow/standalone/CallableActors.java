@@ -21,14 +21,14 @@
 package adams.flow.standalone;
 
 
-import java.util.HashSet;
-
 import adams.flow.control.AbstractDirector;
 import adams.flow.control.MutableControlActor;
 import adams.flow.core.ActorExecution;
 import adams.flow.core.ActorHandler;
 import adams.flow.core.ActorHandlerInfo;
 import adams.flow.core.CallableActorHandler;
+
+import java.util.HashSet;
 
 /**
  <!-- globalinfo-start -->
@@ -174,7 +174,7 @@ public class CallableActors
       }
       else {
 	if (getScopeHandler() != null)
-	  result = getScopeHandler().addCallableName(get(i).getName());
+	  result = getScopeHandler().addCallableName(get(i));
 	if (result != null)
 	  break;
 	names.add(get(i).getName());

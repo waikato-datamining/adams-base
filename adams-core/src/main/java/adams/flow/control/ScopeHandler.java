@@ -19,6 +19,7 @@
  */
 package adams.flow.control;
 
+import adams.flow.core.Actor;
 import adams.flow.core.ActorHandler;
 
 /**
@@ -63,17 +64,17 @@ public interface ScopeHandler
   /**
    * Checks whether a callable name is already in use.
    * 
-   * @param name	the name to check
+   * @param actor	the actor name to check
    * @see		#getEnforceCallableNameCheck()
    */
-  public boolean isCallableNameUsed(String name);
+  public boolean isCallableNameUsed(Actor actor);
 
   /**
    * Adds the callable name to the list of used ones.
    * 
-   * @param name	the name to add
+   * @param actor	the actor name to add
    * @return		null if successfully added, otherwise error message
    * @see		#getEnforceCallableNameCheck()
    */
-  public String addCallableName(String name);
+  public String addCallableName(Actor actor);
 }
