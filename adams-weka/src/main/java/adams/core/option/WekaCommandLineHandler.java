@@ -24,6 +24,7 @@ import adams.core.ClassLocator;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Level;
 
 /**
  * Handles objects of classes that implement the weka.core.OptionHandler
@@ -53,8 +54,7 @@ public class WekaCommandLineHandler
       result = fromArray(weka.core.Utils.splitOptions(cmd));
     }
     catch (Exception e) {
-      System.err.println("Failed to process commandline '" + cmd + "':");
-      e.printStackTrace();
+      getLogger().log(Level.SEVERE, "Failed to process commandline '" + cmd + "':", e);
       result = null;
     }
 
@@ -82,8 +82,7 @@ public class WekaCommandLineHandler
 	result = weka.core.Utils.forName(Object.class, Conversion.getSingleton().rename(classname), args);
       }
       catch (Exception e) {
-	System.err.println("Failed to instantiate object from array (fromArray):");
-	e.printStackTrace();
+        getLogger().log(Level.SEVERE, "Failed to instantiate object from array (fromArray):", e);
 	result = null;
       }
     }
@@ -142,7 +141,7 @@ public class WekaCommandLineHandler
   public String[] toArray(Object obj) {
     List<String>	result;
 
-    result = new ArrayList<String>();
+    result = new ArrayList<>();
     result.add(obj.getClass().getName());
     if (obj instanceof weka.core.OptionHandler)
       result.addAll(Arrays.asList(((weka.core.OptionHandler) obj).getOptions()));

@@ -19,11 +19,11 @@
  */
 package adams.core.option;
 
-import java.io.Serializable;
-import java.util.Hashtable;
-
 import adams.core.ClassLister;
 import adams.core.StaticClassLister;
+import adams.core.logging.LoggingObject;
+
+import java.util.Hashtable;
 
 /**
  * Ancestor for classes that handle commandline options for various frameworks.
@@ -32,7 +32,7 @@ import adams.core.StaticClassLister;
  * @version $Revision$
  */
 public abstract class AbstractCommandLineHandler
-  implements Serializable {
+  extends LoggingObject {
 
   /** for serialization. */
   private static final long serialVersionUID = -200830732847780663L;

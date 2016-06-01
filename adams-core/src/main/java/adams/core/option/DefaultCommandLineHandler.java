@@ -20,6 +20,8 @@
 package adams.core.option;
 
 
+import java.util.logging.Level;
+
 /**
  * Only uses the classname as commandline, no actual option handling.
  *
@@ -67,8 +69,7 @@ public class DefaultCommandLineHandler
 	result = Class.forName(Conversion.getSingleton().rename(args[0])).newInstance();
       }
       catch (Exception e) {
-	System.err.println("Failed to instantiate object from array (fromArray):");
-	e.printStackTrace();
+        getLogger().log(Level.SEVERE, "Failed to instantiate object from array (fromArray):", e);
       }
     }
 
