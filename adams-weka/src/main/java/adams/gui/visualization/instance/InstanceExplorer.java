@@ -978,6 +978,7 @@ public class InstanceExplorer
     paintlet.setPanel(getInstancePanel());
     getInstancePanel().removePaintlet(getInstancePanel().getInstancePaintlet());
     getInstancePanel().addPaintlet(paintlet);
+    getInstancePanel().getZoomOverviewPanel().setDataContainerPanel(getInstancePanel());
   }
   
   /**
