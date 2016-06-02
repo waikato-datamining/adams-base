@@ -15,7 +15,7 @@
 
 /*
  * InstanceLinePaintlet.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.instance;
@@ -47,30 +47,38 @@ import java.util.List;
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- *
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- *
+ * 
  * <pre>-stroke-thickness &lt;float&gt; (property: strokeThickness)
  * &nbsp;&nbsp;&nbsp;The thickness of the stroke.
  * &nbsp;&nbsp;&nbsp;default: 1.0
  * &nbsp;&nbsp;&nbsp;minimum: 0.01
  * </pre>
- *
+ * 
  * <pre>-markers-extent &lt;int&gt; (property: markerExtent)
+ * &nbsp;&nbsp;&nbsp;The size of the markers in pixels.
  * &nbsp;&nbsp;&nbsp;default: 7
  * &nbsp;&nbsp;&nbsp;minimum: 0
  * </pre>
- *
- * <pre>-markers-disabled (property: markersDisabled)
+ * 
+ * <pre>-markers-disabled &lt;boolean&gt; (property: markersDisabled)
  * &nbsp;&nbsp;&nbsp;If set to true, the markers are disabled.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
+ * <pre>-always-show-markers &lt;boolean&gt; (property: alwaysShowMarkers)
+ * &nbsp;&nbsp;&nbsp;If set to true, the markers are always displayed, not just when zoomed in.
+ * &nbsp;&nbsp;&nbsp;default: true
+ * </pre>
+ * 
+ * <pre>-anti-aliasing-enabled &lt;boolean&gt; (property: antiAliasingEnabled)
+ * &nbsp;&nbsp;&nbsp;If enabled, uses anti-aliasing for drawing lines.
+ * &nbsp;&nbsp;&nbsp;default: true
+ * </pre>
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -97,7 +105,7 @@ public class InstanceLinePaintlet
     /** a circle. */
     CIRCLE,
     /** a triangle. */
-    TRIANGLE;
+    TRIANGLE
   }
 
   /** the maximum width/height of the shape to plot around the points (= data
@@ -106,6 +114,9 @@ public class InstanceLinePaintlet
 
   /** indicates whether marker shapes are painted or not. */
   protected boolean m_MarkersEnabled;
+
+  /** whether to show markers all the time. */
+  protected boolean m_AlwaysShowMarkers;
 
   /** whether anti-aliasing is enabled. */
   protected boolean m_AntiAliasingEnabled;
@@ -134,6 +145,10 @@ public class InstanceLinePaintlet
     m_OptionManager.add(
 	    "markers-disabled", "markersDisabled",
 	    !GUIHelper.getBoolean(getClass(), "markersEnabled", true));
+
+    m_OptionManager.add(
+	    "always-show-markers", "alwaysShowMarkers",
+	    GUIHelper.getBoolean(getClass(), "alwaysShowMarkers", true));
 
     m_OptionManager.add(
 	    "anti-aliasing-enabled", "antiAliasingEnabled",
@@ -207,6 +222,35 @@ public class InstanceLinePaintlet
   }
 
   /**
+   * Returns whether marker shapes are always drawn.
+   *
+   * @return		true if marker shapes are always drawn, not just when zoomed in
+   */
+  public boolean getAlwaysShowMarkers() {
+    return m_AlwaysShowMarkers;
+  }
+
+  /**
+   * Sets whether to always draw markers.
+   *
+   * @param value	if true then marker are always drawn, not just when zoomed in
+   */
+  public void setAlwaysShowMarkers(boolean value) {
+    m_AlwaysShowMarkers = value;
+    memberChanged();
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String alwaysShowMarkersTipText() {
+    return "If set to true, the markers are always displayed, not just when zoomed in.";
+  }
+
+  /**
    * Sets the extent (width and height of the shape around the plotted point).
    * 0 turns the plotting off. Should be an odd number for centering the shape.
    *
@@ -238,7 +282,7 @@ public class InstanceLinePaintlet
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String markersExtentTipText() {
+  public String markerExtentTipText() {
     return "The size of the markers in pixels.";
   }
 
@@ -317,7 +361,7 @@ public class InstanceLinePaintlet
     prevY       = axisY.valueToPos(points.get(start).getY());
 
     for (i = start; i <= end; i++) {
-      curr = (InstancePoint) points.get(i);
+      curr = points.get(i);
 
       // determine coordinates
       currX = axisX.valueToPos(XYSequencePoint.toDouble(curr.getX()));
@@ -380,7 +424,7 @@ public class InstanceLinePaintlet
 
     result = MarkerShape.NONE;
 
-    if (m_MarkersEnabled && (m_MarkerExtent > 0) && getPlot().isZoomed()) {
+    if (m_MarkersEnabled && (m_MarkerExtent > 0) && (getPlot().isZoomed() || m_AlwaysShowMarkers)) {
       shapes = MarkerShape.values();
       result = shapes[(index % (shapes.length - 1)) + 1];
     }
