@@ -15,17 +15,10 @@
 
 /*
  * TimeseriesPaintlet.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.timeseries;
-
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
-import java.util.Date;
-import java.util.List;
 
 import adams.data.timeseries.Timeseries;
 import adams.data.timeseries.TimeseriesPoint;
@@ -33,12 +26,20 @@ import adams.data.timeseries.TimeseriesUtils;
 import adams.gui.core.AntiAliasingSupporter;
 import adams.gui.core.GUIHelper;
 import adams.gui.event.PaintEvent.PaintMoment;
-import adams.gui.visualization.container.ColorContainer;
 import adams.gui.visualization.container.AbstractContainer;
 import adams.gui.visualization.container.AbstractContainerManager;
+import adams.gui.visualization.container.ColorContainer;
 import adams.gui.visualization.container.VisibilityContainer;
 import adams.gui.visualization.core.AxisPanel;
+import adams.gui.visualization.core.PaintletWithMarkers;
 import adams.gui.visualization.core.plot.Axis;
+
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.util.Date;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -79,7 +80,7 @@ import adams.gui.visualization.core.plot.Axis;
  */
 public class TimeseriesPaintlet
   extends AbstractTimeseriesPaintlet
-  implements AntiAliasingSupporter {
+  implements AntiAliasingSupporter, PaintletWithMarkers {
 
   /** for serialization. */
   private static final long serialVersionUID = -6475036298238205843L;
@@ -108,6 +109,9 @@ public class TimeseriesPaintlet
   /** indicates whether marker shapes are painted or not. */
   protected boolean m_MarkersEnabled;
 
+  /** whether to show markers all the time. */
+  protected boolean m_AlwaysShowMarkers;
+
   /** whether anti-aliasing is enabled. */
   protected boolean m_AntiAliasingEnabled;
 
@@ -135,6 +139,10 @@ public class TimeseriesPaintlet
     m_OptionManager.add(
 	    "markers-disabled", "markersDisabled",
 	    !GUIHelper.getBoolean(getClass(), "markersEnabled", true));
+
+    m_OptionManager.add(
+	    "always-show-markers", "alwaysShowMarkers",
+	    GUIHelper.getBoolean(getClass(), "alwaysShowMarkers", true));
 
     m_OptionManager.add(
 	    "anti-aliasing-enabled", "antiAliasingEnabled",
@@ -196,6 +204,35 @@ public class TimeseriesPaintlet
    */
   public String markersDisabledTipText() {
     return "If set to true, the markers are disabled.";
+  }
+
+  /**
+   * Returns whether marker shapes are always drawn.
+   *
+   * @return		true if marker shapes are always drawn, not just when zoomed in
+   */
+  public boolean getAlwaysShowMarkers() {
+    return m_AlwaysShowMarkers;
+  }
+
+  /**
+   * Sets whether to always draw markers.
+   *
+   * @param value	if true then marker are always drawn, not just when zoomed in
+   */
+  public void setAlwaysShowMarkers(boolean value) {
+    m_AlwaysShowMarkers = value;
+    memberChanged();
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String alwaysShowMarkersTipText() {
+    return "If set to true, the markers are always displayed, not just when zoomed in.";
   }
 
   /**
@@ -378,7 +415,7 @@ public class TimeseriesPaintlet
 
     result = MarkerShape.NONE;
 
-    if (m_MarkersEnabled && (m_MarkerExtent > 0) && getPlot().isZoomed()) {
+    if (m_MarkersEnabled && (m_MarkerExtent > 0) && (getPlot().isZoomed() || m_AlwaysShowMarkers)) {
       shapes = MarkerShape.values();
       result = shapes[(index % (shapes.length - 1)) + 1];
     }

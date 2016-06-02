@@ -15,12 +15,9 @@
 
 /**
  * AbstractDataContainerZoomOverviewPanel.java
- * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.container;
-
-import java.awt.Dimension;
-import java.awt.Graphics;
 
 import adams.core.Properties;
 import adams.data.container.DataContainer;
@@ -33,9 +30,13 @@ import adams.gui.event.PlotPanelZoomListener;
 import adams.gui.scripting.AbstractScriptingEngine;
 import adams.gui.visualization.core.AxisPanel;
 import adams.gui.visualization.core.Paintlet;
+import adams.gui.visualization.core.PaintletWithMarkers;
 import adams.gui.visualization.core.PlotPanel;
 import adams.gui.visualization.core.axis.SimpleTickGenerator;
 import adams.gui.visualization.core.plot.Axis;
+
+import java.awt.Dimension;
+import java.awt.Graphics;
 
 /**
  * Panel that shows the zoom in the data container panel as overlay.
@@ -144,6 +145,8 @@ public abstract class AbstractDataContainerZoomOverviewPanel<P extends DataConta
     if (m_ContainerPanel != null) {
       props = m_ContainerPanel.getProperties();
       m_ContainerPaintlet = (C) m_ContainerPanel.getContainerPaintlet().shallowCopy();
+      if (m_ContainerPaintlet instanceof PaintletWithMarkers)
+        ((PaintletWithMarkers) m_ContainerPaintlet).setMarkersDisabled(true);
       m_ContainerPaintlet.setPanel(this);
       
       // update axes properties

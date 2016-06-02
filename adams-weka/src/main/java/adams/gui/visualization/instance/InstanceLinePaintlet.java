@@ -33,6 +33,7 @@ import adams.gui.visualization.container.ColorContainer;
 import adams.gui.visualization.container.SearchableContainerManager;
 import adams.gui.visualization.container.VisibilityContainer;
 import adams.gui.visualization.core.AxisPanel;
+import adams.gui.visualization.core.PaintletWithMarkers;
 import adams.gui.visualization.core.plot.Axis;
 
 import java.awt.Color;
@@ -85,7 +86,7 @@ import java.util.List;
  */
 public class InstanceLinePaintlet
   extends AbstractInstancePaintlet
-  implements AntiAliasingSupporter {
+  implements AntiAliasingSupporter, PaintletWithMarkers {
 
   /** for serialization. */
   private static final long serialVersionUID = -2971846774962333662L;

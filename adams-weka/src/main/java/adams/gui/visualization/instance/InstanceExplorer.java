@@ -15,7 +15,7 @@
 
 /*
  * InstanceExplorer.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.instance;
@@ -47,7 +47,6 @@ import adams.gui.event.DataChangeListener;
 import adams.gui.event.RecentItemEvent;
 import adams.gui.event.RecentItemListener;
 import adams.gui.event.SearchEvent;
-import adams.gui.event.SearchListener;
 import adams.gui.goe.GenericObjectEditorDialog;
 import adams.gui.sendto.SendToActionSupporter;
 import adams.gui.sendto.SendToActionUtils;
@@ -56,6 +55,7 @@ import adams.gui.visualization.container.ContainerListPopupMenuSupplier;
 import adams.gui.visualization.container.ContainerTable;
 import adams.gui.visualization.container.NotesFactory;
 import adams.gui.visualization.core.AbstractColorProvider;
+import adams.gui.visualization.core.Paintlet;
 import adams.gui.visualization.core.PopupMenuCustomizer;
 import adams.gui.visualization.report.ReportContainerList;
 import adams.gui.visualization.report.ReportFactory;
@@ -80,12 +80,10 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.ArrayList;
@@ -142,6 +140,9 @@ public class InstanceExplorer
   /** the color provider menu item. */
   protected JMenuItem m_MenuItemViewColorProvider;
 
+  /** the paintlet  menu item. */
+  protected JMenuItem m_MenuItemViewPaintlet;
+
   /** the clear data menu item. */
   protected JMenuItem m_MenuItemClearData;
 
@@ -169,6 +170,9 @@ public class InstanceExplorer
   /** the dialog for selecting the color provider. */
   protected GenericObjectEditorDialog m_DialogColorProvider;
 
+  /** the dialog for selecting the paintlet. */
+  protected GenericObjectEditorDialog m_DialogPaintlet;
+
   /**
    * Initializes the members.
    */
@@ -181,6 +185,7 @@ public class InstanceExplorer
     m_RecentFilesHandler     = null;
     m_HistogramSetup         = null;
     m_DialogColorProvider    = null;
+    m_DialogPaintlet         = null;
   }
 
   /**
@@ -202,24 +207,22 @@ public class InstanceExplorer
     // 1. page: graph
     panelData = new JPanel(new BorderLayout());
     m_TabbedPane.addTab("Data", panelData);
-    m_TabbedPane.addChangeListener(new ChangeListener() {
-      public void stateChanged(ChangeEvent e) {
-	ContainerTable dtable = getInstanceContainerList().getTable();
-	// data
-	if (m_TabbedPane.getSelectedIndex() == 0) {
-	  BaseTable rtable = m_Reports.getReportContainerList().getTable();
-	  if ((rtable == null) || (rtable.getSelectedRowCount() != 1))
-	    return;
-	  int row = rtable.getSelectedRow();
-	  dtable.getSelectionModel().clearSelection();
-	  dtable.getSelectionModel().setSelectionInterval(row, row);
-	}
-	// reports
-	else if (m_TabbedPane.getSelectedIndex() == 1) {
-	  if (dtable.getSelectedRowCount() != 1)
-	    return;
-	  m_Reports.setCurrentTable(dtable.getSelectedRow());
-	}
+    m_TabbedPane.addChangeListener((ChangeEvent e) -> {
+      ContainerTable dtable = getInstanceContainerList().getTable();
+      // data
+      if (m_TabbedPane.getSelectedIndex() == 0) {
+        BaseTable rtable = m_Reports.getReportContainerList().getTable();
+        if ((rtable == null) || (rtable.getSelectedRowCount() != 1))
+          return;
+        int row = rtable.getSelectedRow();
+        dtable.getSelectionModel().clearSelection();
+        dtable.getSelectionModel().setSelectionInterval(row, row);
+      }
+      // reports
+      else if (m_TabbedPane.getSelectedIndex() == 1) {
+        if (dtable.getSelectedRowCount() != 1)
+          return;
+        m_Reports.setCurrentTable(dtable.getSelectedRow());
       }
     });
 
@@ -238,12 +241,10 @@ public class InstanceExplorer
     panelReports.add(m_Reports, BorderLayout.CENTER);
 
     m_SearchPanel = new SearchPanel(LayoutType.HORIZONTAL, true);
-    m_SearchPanel.addSearchListener(new SearchListener() {
-      public void searchInitiated(SearchEvent e) {
-        m_Reports.search(
-            m_SearchPanel.getSearchText(), m_SearchPanel.isRegularExpression());
-	m_SearchPanel.grabFocus();
-      }
+    m_SearchPanel.addSearchListener((SearchEvent e) -> {
+      m_Reports.search(
+        m_SearchPanel.getSearchText(), m_SearchPanel.isRegularExpression());
+      m_SearchPanel.grabFocus();
     });
     panel = new JPanel(new BorderLayout());
     panel.add(m_SearchPanel, BorderLayout.WEST);
@@ -351,11 +352,7 @@ public class InstanceExplorer
       menu = new JMenu("File");
       result.add(menu);
       menu.setMnemonic('F');
-      menu.addChangeListener(new ChangeListener() {
-	public void stateChanged(ChangeEvent e) {
-	  updateMenu();
-	}
-      });
+      menu.addChangeListener((ChangeEvent e) -> updateMenu());
 
       // File/Clear
       menuitem = new JMenuItem("Clear data");
@@ -363,11 +360,7 @@ public class InstanceExplorer
       menuitem.setMnemonic('C');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed N"));
       menuitem.setIcon(GUIHelper.getIcon("new.gif"));
-      menuitem.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  clearData();
-	}
-      });
+      menuitem.addActionListener((ActionEvent e) -> clearData());
       m_MenuItemClearData = menuitem;
 
       // File/Load from file
@@ -376,16 +369,12 @@ public class InstanceExplorer
       menuitem.setMnemonic('o');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed O"));
       menuitem.setIcon(GUIHelper.getIcon("open.gif"));
-      menuitem.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  loadDataFromDisk();
-	}
-      });
+      menuitem.addActionListener((ActionEvent e) -> loadDataFromDisk());
 
       // File/Recent files
       submenu = new JMenu("Load recent");
       menu.add(submenu);
-      m_RecentFilesHandler = new RecentFilesHandler<JMenu>(
+      m_RecentFilesHandler = new RecentFilesHandler<>(
 	  SESSION_FILE, getProperties().getInteger("MaxRecentFiles", 5), submenu);
       m_RecentFilesHandler.addRecentItemListener(new RecentItemListener<JMenu,File>() {
 	public void recentItemAdded(RecentItemEvent<JMenu,File> e) {
@@ -403,11 +392,7 @@ public class InstanceExplorer
       menuitem.setMnemonic('L');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl shift pressed O"));
       menuitem.setIcon(GUIHelper.getEmptyIcon());
-      menuitem.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  loadDataFromDatabase();
-	}
-      });
+      menuitem.addActionListener((ActionEvent e) -> loadDataFromDatabase());
 
       // File/Send to
       menu.addSeparator();
@@ -420,21 +405,13 @@ public class InstanceExplorer
       menuitem.setMnemonic('C');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed Q"));
       menuitem.setIcon(GUIHelper.getIcon("exit.png"));
-      menuitem.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  close();
-	}
-      });
+      menuitem.addActionListener((ActionEvent e) -> close());
 
       // View
       menu = new JMenu("View");
       result.add(menu);
       menu.setMnemonic('V');
-      menu.addChangeListener(new ChangeListener() {
-	public void stateChanged(ChangeEvent e) {
-	  updateMenu();
-	}
-      });
+      menu.addChangeListener((ChangeEvent e) -> updateMenu());
       m_MenuView = menu;
 
       // View/Display zoom overview
@@ -442,11 +419,7 @@ public class InstanceExplorer
       menu.add(menuitem);
       menuitem.setMnemonic('Z');
       menuitem.setSelected(isZoomOverviewPanelVisible());
-      menuitem.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  setZoomOverviewPanelVisible(m_MenuItemViewZoomOverview.isSelected());
-	}
-      });
+      menuitem.addActionListener((ActionEvent e) -> setZoomOverviewPanelVisible(m_MenuItemViewZoomOverview.isSelected()));
       m_MenuItemViewZoomOverview = menuitem;
 
       // View/Anti-aliasing
@@ -454,23 +427,24 @@ public class InstanceExplorer
       menu.add(menuitem);
       menuitem.setMnemonic('A');
       menuitem.setSelected(getInstancePanel().isAntiAliasingEnabled());
-      menuitem.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  getInstancePanel().setAntiAliasingEnabled(m_MenuItemViewAntiAliasing.isSelected());
-	}
-      });
+      menuitem.addActionListener((ActionEvent e) ->
+	  getInstancePanel().setAntiAliasingEnabled(m_MenuItemViewAntiAliasing.isSelected())
+      );
       m_MenuItemViewAntiAliasing = menuitem;
 
       // View/Color provider
       menuitem = new JMenuItem("Color provider...");
       menu.add(menuitem);
-      menuitem.setMnemonic('P');
-      menuitem.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  selectColorProvider();
-	}
-      });
+      menuitem.setMnemonic('d');
+      menuitem.addActionListener((ActionEvent e) -> selectColorProvider());
       m_MenuItemViewColorProvider = menuitem;
+
+      // View/Paintlet
+      menuitem = new JMenuItem("Paintlet...");
+      menu.add(menuitem);
+      menuitem.setMnemonic('P');
+      menuitem.addActionListener((ActionEvent e) -> selectPaintlet());
+      m_MenuItemViewPaintlet = menuitem;
 
       // update menu
       m_MenuBar = result;
@@ -524,7 +498,7 @@ public class InstanceExplorer
       query.connectToDatabase();
 
       showStatus("Loading data...");
-      data    = new ArrayList<InstanceContainer>();
+      data    = new ArrayList<>();
       dataset = query.retrieveInstances();
       for (i = 0; i < dataset.numInstances(); i++) {
         inst = new Instance();
@@ -594,7 +568,7 @@ public class InstanceExplorer
     if (m_RecentFilesHandler != null)
       m_RecentFilesHandler.addRecentItem(m_LoadFromDiskDialog.getCurrent());
 
-    attTypes = new HashSet<Integer>();
+    attTypes = new HashSet<>();
     if (m_LoadFromDiskDialog.getIncludeAttributes(Attribute.NUMERIC))
       attTypes.add(Attribute.NUMERIC);
     if (m_LoadFromDiskDialog.getIncludeAttributes(Attribute.DATE))
@@ -607,7 +581,7 @@ public class InstanceExplorer
       attTypes.add(Attribute.RELATIONAL);
 
     showStatus("Loading data...");
-    data       = new ArrayList<InstanceContainer>();
+    data       = new ArrayList<>();
     dataset    = m_LoadFromDiskDialog.getDataset();
     additional = m_LoadFromDiskDialog.getAdditionalAttributes();
     range      = m_LoadFromDiskDialog.getCurrentAttributeRange();
@@ -823,40 +797,36 @@ public class InstanceExplorer
       indices = table.getSelectedRows();
 
     item = new JMenuItem("Toggle visibility");
-    item.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        getContainerManager().startUpdate();
-	for (int i = 0; i < indices.length; i++) {
-	  InstanceContainer cont = getContainerManager().get(indices[i]);
-	  cont.setVisible(!cont.isVisible());
-	}
-        getContainerManager().finishUpdate();
+    item.addActionListener((ActionEvent e) -> {
+      getContainerManager().startUpdate();
+      for (int i = 0; i < indices.length; i++) {
+	InstanceContainer cont = getContainerManager().get(indices[i]);
+	cont.setVisible(!cont.isVisible());
       }
+      getContainerManager().finishUpdate();
     });
     result.add(item);
 
     item = new JMenuItem("Choose color...");
-    item.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	Color c = null;
-	if (indices.length == 1) {
-	  c = JColorChooser.showDialog(
-	      table,
-	      "Choose color for " + getContainerManager().get(indices[0]).getData().getID(),
-	      getContainerManager().get(indices[0]).getColor());
-	}
-	else {
-	  c = JColorChooser.showDialog(
-	      table,
-	      "Choose color",
-	      getContainerManager().get(row).getColor());
-	}
-	if (c != null) {
-          getContainerManager().startUpdate();
-	  for (int index: indices)
-	    getContainerManager().get(index).setColor(c);
-          getContainerManager().finishUpdate();
-	}
+    item.addActionListener((ActionEvent e) -> {
+      Color c = null;
+      if (indices.length == 1) {
+	c = JColorChooser.showDialog(
+	  table,
+	  "Choose color for " + getContainerManager().get(indices[0]).getData().getID(),
+	  getContainerManager().get(indices[0]).getColor());
+      }
+      else {
+	c = JColorChooser.showDialog(
+	  table,
+	  "Choose color",
+	  getContainerManager().get(row).getColor());
+      }
+      if (c != null) {
+	getContainerManager().startUpdate();
+	for (int index: indices)
+	  getContainerManager().get(index).setColor(c);
+	getContainerManager().finishUpdate();
       }
     });
     result.add(item);
@@ -865,35 +835,27 @@ public class InstanceExplorer
       result.addSeparator();
 
       item = new JMenuItem("Remove");
-      item.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  getContainerManager().startUpdate();
-	  for (int i = indices.length - 1; i >= 0; i--)
-	    getContainerManager().remove(indices[i]);
-	  getContainerManager().finishUpdate();
-	}
+      item.addActionListener((ActionEvent e) -> {
+	getContainerManager().startUpdate();
+	for (int i = indices.length - 1; i >= 0; i--)
+	  getContainerManager().remove(indices[i]);
+	getContainerManager().finishUpdate();
       });
       result.add(item);
 
       item = new JMenuItem("Remove all");
-      item.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  getContainerManager().clear();
-	}
-      });
+      item.addActionListener((ActionEvent e) -> getContainerManager().clear());
       result.add(item);
     }
 
     result.addSeparator();
 
     item = new JMenuItem("Notes");
-    item.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	List<InstanceContainer> data = new ArrayList<InstanceContainer>();
-	for (int i = 0; i < indices.length; i++)
-	  data.add(getContainerManager().get(indices[i]));
-	showNotes(data);
-      }
+    item.addActionListener((ActionEvent e) -> {
+      List<InstanceContainer> data = new ArrayList<>();
+      for (int i = 0; i < indices.length; i++)
+	data.add(getContainerManager().get(indices[i]));
+      showNotes(data);
     });
     result.add(item);
 
@@ -990,6 +952,33 @@ public class InstanceExplorer
       return;
     getContainerManager().setColorProvider(((AbstractColorProvider) m_DialogColorProvider.getCurrent()).shallowCopy());
   }
+
+  /**
+   * Lets the user select a new paintlet.
+   */
+  protected void selectPaintlet() {
+    Paintlet 	paintlet;
+
+    if (m_DialogPaintlet == null) {
+      if (getParentDialog() != null)
+	m_DialogPaintlet = new GenericObjectEditorDialog(getParentDialog(), ModalityType.DOCUMENT_MODAL);
+      else
+	m_DialogPaintlet = new GenericObjectEditorDialog(getParentFrame(), true);
+      m_DialogPaintlet.setTitle("Select paintlet");
+      m_DialogPaintlet.getGOEEditor().setClassType(AbstractInstancePaintlet.class);
+      m_DialogPaintlet.getGOEEditor().setCanChangeClassInDialog(true);
+      m_DialogPaintlet.setLocationRelativeTo(this);
+    }
+    
+    m_DialogPaintlet.setCurrent(getInstancePanel().getInstancePaintlet().shallowCopy());
+    m_DialogPaintlet.setVisible(true);
+    if (m_DialogPaintlet.getResult() != GenericObjectEditorDialog.APPROVE_OPTION)
+      return;
+    paintlet = (Paintlet) m_DialogPaintlet.getCurrent();
+    paintlet.setPanel(getInstancePanel());
+    getInstancePanel().removePaintlet(getInstancePanel().getInstancePaintlet());
+    getInstancePanel().addPaintlet(paintlet);
+  }
   
   /**
    * Returns the classes that the supporter generates.
@@ -1052,6 +1041,10 @@ public class InstanceExplorer
     if (m_DialogColorProvider != null) {
       m_DialogColorProvider.dispose();
       m_DialogColorProvider = null;
+    }
+    if (m_DialogPaintlet != null) {
+      m_DialogPaintlet.dispose();
+      m_DialogPaintlet = null;
     }
   }
 
