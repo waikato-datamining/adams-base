@@ -958,6 +958,7 @@ public class InstanceExplorer
    */
   protected void selectPaintlet() {
     Paintlet 	paintlet;
+    boolean	zoomVisible;
 
     if (m_DialogPaintlet == null) {
       if (getParentDialog() != null)
@@ -978,7 +979,9 @@ public class InstanceExplorer
     paintlet.setPanel(getInstancePanel());
     getInstancePanel().removePaintlet(getInstancePanel().getInstancePaintlet());
     getInstancePanel().addPaintlet(paintlet);
+    zoomVisible = getInstancePanel().isZoomOverviewPanelVisible();
     getInstancePanel().getZoomOverviewPanel().setDataContainerPanel(getInstancePanel());
+    getInstancePanel().setZoomOverviewPanelVisible(zoomVisible);
   }
   
   /**
