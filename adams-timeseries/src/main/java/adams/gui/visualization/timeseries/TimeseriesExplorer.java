@@ -55,6 +55,8 @@ import adams.gui.core.BaseTable;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MenuBarProvider;
+import adams.gui.core.RecentFilesHandlerWithCommandline;
+import adams.gui.core.RecentFilesHandlerWithCommandline.Setup;
 import adams.gui.core.SearchPanel;
 import adams.gui.core.SearchPanel.LayoutType;
 import adams.gui.core.Undo.UndoPoint;
@@ -64,6 +66,8 @@ import adams.gui.event.DataChangeEvent;
 import adams.gui.event.DataChangeListener;
 import adams.gui.event.FilterEvent;
 import adams.gui.event.FilterListener;
+import adams.gui.event.RecentItemEvent;
+import adams.gui.event.RecentItemListener;
 import adams.gui.event.SearchEvent;
 import adams.gui.event.SearchListener;
 import adams.gui.event.UndoEvent;
@@ -118,6 +122,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import static adams.gui.flow.FlowEditorPanel.getPropertiesEditor;
+
 /**
  * A panel for exploring Timeseries, manipulating them with filters, etc.
  *
@@ -134,6 +140,9 @@ public class TimeseriesExplorer
 
   /** for serialization. */
   private static final long serialVersionUID = 3953271131937711340L;
+
+  /** the file to store the recent files in. */
+  public final static String SESSION_FILE = "TimeseriesExplorerSession.props";
 
   /** the panel for displaying. */
   protected TimeseriesPanel m_PanelTimeseries;
@@ -231,6 +240,9 @@ public class TimeseriesExplorer
   /** the dialog for selecting the paintlet. */
   protected GenericObjectEditorDialog m_DialogPaintlet;
 
+  /** the recent files handler. */
+  protected RecentFilesHandlerWithCommandline<JMenu> m_RecentFilesHandler;
+
   /**
    * default constructor.
    */
@@ -252,6 +264,7 @@ public class TimeseriesExplorer
     m_TimeseriesFileChooser.setMultiSelectionEnabled(true);
     m_CurrentFilter         = new adams.data.filter.PassThrough();
     m_DialogSQL             = null;
+    m_RecentFilesHandler    = null;
     m_DatabaseConnection    = getDefaultDatabaseConnection();
     m_DatabaseConnection.addChangeListener(this);
   }
@@ -641,7 +654,7 @@ public class TimeseriesExplorer
       menu.addChangeListener((ChangeEvent e) -> updateMenu());
 
       // File/Clear
-      menuitem = new JMenuItem("Clear data");
+      menuitem = new JMenuItem("Clear");
       menu.add(menuitem);
       menuitem.setMnemonic('C');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed N"));
@@ -649,21 +662,43 @@ public class TimeseriesExplorer
       menuitem.addActionListener((ActionEvent e) -> clearData());
       m_MenuItemClearData = menuitem;
 
-      // File/Load from file
-      menuitem = new JMenuItem("Load data from disk...");
-      menu.add(menuitem);
-      menuitem.setMnemonic('o');
-      menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl shift pressed O"));
-      menuitem.setIcon(GUIHelper.getIcon("open.gif"));
-      menuitem.addActionListener((ActionEvent e) -> loadDataFromDisk());
+      menu.addSeparator();
 
-      // File/Load from db
-      menuitem = new JMenuItem("Load data from DB...");
+      // File/Database
+      menuitem = new JMenuItem("Database...");
       menu.add(menuitem);
-      menuitem.setMnemonic('B');
+      menuitem.setMnemonic('D');
+      menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed D"));
+      menuitem.setIcon(GUIHelper.getIcon("database.gif"));
+      menuitem.addActionListener(e -> loadDataFromDatabase());
+
+      // File/Open
+      menuitem = new JMenuItem("Open...");
+      menu.add(menuitem);
+      menuitem.setMnemonic('O');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed O"));
-      menuitem.setIcon(GUIHelper.getEmptyIcon());
-      menuitem.addActionListener((ActionEvent e) -> loadDataFromDatabase());
+      menuitem.setIcon(GUIHelper.getIcon("open.gif"));
+      menuitem.addActionListener(e -> loadDataFromDisk());
+
+      // File/Recent files
+      submenu = new JMenu("Open recent");
+      menu.add(submenu);
+      m_RecentFilesHandler = new RecentFilesHandlerWithCommandline<>(
+	  SESSION_FILE, getPropertiesEditor().getInteger("MaxRecentFlows", 5), submenu);
+      m_RecentFilesHandler.addRecentItemListener(new RecentItemListener<JMenu,Setup>() {
+        @Override
+        public void recentItemAdded(RecentItemEvent<JMenu, Setup> e) {
+          // ignored
+        }
+
+        @Override
+        public void recentItemSelected(RecentItemEvent<JMenu, Setup> e) {
+          AbstractDataContainerReader reader = (AbstractDataContainerReader) e.getItem().getHandler();
+          reader.setInput(new PlaceholderFile(e.getItem().getFile()));
+          getScriptingEngine().setDatabaseConnection(getDatabaseConnection());
+          getScriptingEngine().add(TimeseriesExplorer.this, AddDataFile.ACTION + " " + OptionUtils.getCommandLine(reader));
+        }
+      });
 
       // File/Send to
       menu.addSeparator();
@@ -894,6 +929,8 @@ public class TimeseriesExplorer
       getScriptingEngine().setDatabaseConnection(DatabaseConnection.getSingleton());
       getScriptingEngine().add(
 	getTimeseriesPanel(), AddDataFile.ACTION + " " + OptionUtils.getCommandLine(reader));
+      if (m_RecentFilesHandler != null)
+	m_RecentFilesHandler.addRecentItem(new Setup(files[0], reader));
     }
     else {
       opts = new ArrayList<>();
@@ -903,6 +940,10 @@ public class TimeseriesExplorer
       getScriptingEngine().setDatabaseConnection(DatabaseConnection.getSingleton());
       getScriptingEngine().add(
 	getTimeseriesPanel(), AddDataFiles.ACTION + " " + OptionUtils.joinOptions(opts.toArray(new String[opts.size()])));
+      if (m_RecentFilesHandler != null) {
+	for (i = 0; i < files.length; i++)
+	  m_RecentFilesHandler.addRecentItem(new Setup(files[i], reader));
+      }
     }
   }
 
