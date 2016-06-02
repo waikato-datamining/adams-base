@@ -139,6 +139,8 @@ public abstract class AbstractDataContainerZoomOverviewPanel<P extends DataConta
     if (m_ContainerPanel != null) {
       m_ContainerPanel.getPlot().removeZoomListener(this);
       m_ContainerPanel.getPlot().removePanningListener(this);
+      if (m_ContainerPaintlet != null)
+        m_ContainerPanel.removePaintlet(m_ContainerPaintlet);
     }
     
     m_ContainerPanel = value;
