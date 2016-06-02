@@ -67,7 +67,6 @@ import adams.gui.event.FilterListener;
 import adams.gui.event.SearchEvent;
 import adams.gui.event.SearchListener;
 import adams.gui.event.UndoEvent;
-import adams.gui.goe.GenericObjectEditor;
 import adams.gui.goe.GenericObjectEditorDialog;
 import adams.gui.scripting.AbstractScriptingEngine;
 import adams.gui.scripting.AddDataFile;
@@ -88,6 +87,7 @@ import adams.gui.visualization.container.ContainerListManager;
 import adams.gui.visualization.container.ContainerTable;
 import adams.gui.visualization.container.FilterDialog;
 import adams.gui.visualization.core.AbstractColorProvider;
+import adams.gui.visualization.core.Paintlet;
 import adams.gui.visualization.core.axis.PeriodicityTickGenerator;
 import adams.gui.visualization.core.plot.Axis;
 import adams.gui.visualization.report.ReportContainer;
@@ -192,8 +192,8 @@ public class TimeseriesExplorer
   /** the color provider menu item. */
   protected JMenuItem m_MenuItemViewColorProvider;
 
-  /** the GenericObjectEditor for correlation statistics. */
-  protected GenericObjectEditor m_GenericObjectEditorCorrelationStatistics;
+  /** the paintlet  menu item. */
+  protected JMenuItem m_MenuItemViewPaintlet;
 
   /** the current filter. */
   protected adams.data.filter.Filter<Timeseries> m_CurrentFilter;
@@ -228,6 +228,9 @@ public class TimeseriesExplorer
   /** the dialog for selecting the color provider. */
   protected GenericObjectEditorDialog m_DialogColorProvider;
 
+  /** the dialog for selecting the paintlet. */
+  protected GenericObjectEditorDialog m_DialogPaintlet;
+
   /**
    * default constructor.
    */
@@ -244,6 +247,7 @@ public class TimeseriesExplorer
 
     m_ScriptingDialog       = null;
     m_DialogColorProvider   = null;
+    m_DialogPaintlet        = null;
     m_TimeseriesFileChooser = new TimeseriesFileChooser();
     m_TimeseriesFileChooser.setMultiSelectionEnabled(true);
     m_CurrentFilter         = new adams.data.filter.PassThrough();
@@ -634,12 +638,7 @@ public class TimeseriesExplorer
       menu = new JMenu("File");
       result.add(menu);
       menu.setMnemonic('F');
-      menu.addChangeListener(new ChangeListener() {
-	@Override
-	public void stateChanged(ChangeEvent e) {
-	  updateMenu();
-	}
-      });
+      menu.addChangeListener((ChangeEvent e) -> updateMenu());
 
       // File/Clear
       menuitem = new JMenuItem("Clear data");
@@ -647,12 +646,7 @@ public class TimeseriesExplorer
       menuitem.setMnemonic('C');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed N"));
       menuitem.setIcon(GUIHelper.getIcon("new.gif"));
-      menuitem.addActionListener(new ActionListener() {
-	@Override
-	public void actionPerformed(ActionEvent e) {
-	  clearData();
-	}
-      });
+      menuitem.addActionListener((ActionEvent e) -> clearData());
       m_MenuItemClearData = menuitem;
 
       // File/Load from file
@@ -661,12 +655,7 @@ public class TimeseriesExplorer
       menuitem.setMnemonic('o');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl shift pressed O"));
       menuitem.setIcon(GUIHelper.getIcon("open.gif"));
-      menuitem.addActionListener(new ActionListener() {
-	@Override
-	public void actionPerformed(ActionEvent e) {
-	  loadDataFromDisk();
-	}
-      });
+      menuitem.addActionListener((ActionEvent e) -> loadDataFromDisk());
 
       // File/Load from db
       menuitem = new JMenuItem("Load data from DB...");
@@ -674,12 +663,7 @@ public class TimeseriesExplorer
       menuitem.setMnemonic('B');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed O"));
       menuitem.setIcon(GUIHelper.getEmptyIcon());
-      menuitem.addActionListener(new ActionListener() {
-	@Override
-	public void actionPerformed(ActionEvent e) {
-	  loadDataFromDatabase();
-	}
-      });
+      menuitem.addActionListener((ActionEvent e) -> loadDataFromDatabase());
 
       // File/Send to
       menu.addSeparator();
@@ -692,42 +676,29 @@ public class TimeseriesExplorer
       menuitem.setMnemonic('C');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed Q"));
       menuitem.setIcon(GUIHelper.getIcon("exit.png"));
-      menuitem.addActionListener(new ActionListener() {
-	@Override
-	public void actionPerformed(ActionEvent e) {
-	  close();
-	}
-      });
+      menuitem.addActionListener((ActionEvent e) -> close());
 
       // Edit
       menu = new JMenu("Edit");
       result.add(menu);
       menu.setMnemonic('E');
-      menu.addChangeListener(new ChangeListener() {
-	@Override
-	public void stateChanged(ChangeEvent e) {
-	  updateMenu();
-	}
-      });
+      menu.addChangeListener((ChangeEvent e) -> updateMenu());
 
       // Edit/Enable Undo
       menuitem = new JCheckBoxMenuItem("Undo enabled");
       menu.add(menuitem);
       menuitem.setMnemonic('n');
-      ((JCheckBoxMenuItem) menuitem).setSelected(m_Undo.isEnabled());
+      menuitem.setSelected(m_Undo.isEnabled());
       menuitem.setIcon(GUIHelper.getEmptyIcon());
-      menuitem.addActionListener(new ActionListener() {
-	@Override
-	public void actionPerformed(ActionEvent e) {
-	  if (m_MenuItemEnableUndo.isSelected())
-	    getScriptingEngine().add(
-		getTimeseriesPanel(),
-		EnableUndo.ACTION);
-	  else
-	    getScriptingEngine().add(
-		getTimeseriesPanel(),
-		DisableUndo.ACTION);
-	}
+      menuitem.addActionListener((ActionEvent e) -> {
+        if (m_MenuItemEnableUndo.isSelected())
+          getScriptingEngine().add(
+            getTimeseriesPanel(),
+            EnableUndo.ACTION);
+        else
+          getScriptingEngine().add(
+            getTimeseriesPanel(),
+            DisableUndo.ACTION);
       });
       m_MenuItemEnableUndo = (JCheckBoxMenuItem) menuitem;
 
@@ -738,12 +709,7 @@ public class TimeseriesExplorer
       menuitem.setEnabled(m_Undo.canUndo());
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed Z"));
       menuitem.setIcon(GUIHelper.getIcon("undo.gif"));
-      menuitem.addActionListener(new ActionListener() {
-	@Override
-	public void actionPerformed(ActionEvent e) {
-	  undo();
-	}
-      });
+      menuitem.addActionListener((ActionEvent e) -> undo());
       m_MenuItemUndo = menuitem;
 
       menuitem = new JMenuItem("Redo");
@@ -752,24 +718,14 @@ public class TimeseriesExplorer
       menuitem.setEnabled(m_Undo.canUndo());
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed Y"));
       menuitem.setIcon(GUIHelper.getIcon("redo.gif"));
-      menuitem.addActionListener(new ActionListener() {
-	@Override
-	public void actionPerformed(ActionEvent e) {
-	  redo();
-	}
-      });
+      menuitem.addActionListener((ActionEvent e) -> redo());
       m_MenuItemRedo = menuitem;
 
       // Process
       menu = new JMenu("Process");
       result.add(menu);
       menu.setMnemonic('P');
-      menu.addChangeListener(new ChangeListener() {
-	@Override
-	public void stateChanged(ChangeEvent e) {
-	  updateMenu();
-	}
-      });
+      menu.addChangeListener((ChangeEvent e) -> updateMenu());
 
       // Process/Filter
       menuitem = new JMenuItem("Filter...");
@@ -777,24 +733,14 @@ public class TimeseriesExplorer
       menuitem.setMnemonic('F');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed F"));
       menuitem.setIcon(GUIHelper.getIcon("run.gif"));
-      menuitem.addActionListener(new ActionListener() {
-	@Override
-	public void actionPerformed(ActionEvent e) {
-	  filter();
-	}
-      });
+      menuitem.addActionListener((ActionEvent e) -> filter());
       m_MenuItemFilter = menuitem;
 
       // Scripts
       menu = new JMenu("Scripts");
       result.add(menu);
       menu.setMnemonic('S');
-      menu.addChangeListener(new ChangeListener() {
-	@Override
-	public void stateChanged(ChangeEvent e) {
-	  updateMenu();
-	}
-      });
+      menu.addChangeListener((ChangeEvent e) -> updateMenu());
       m_MenuScripts = menu;
 
       // Scripts/Manage scripts
@@ -803,24 +749,14 @@ public class TimeseriesExplorer
       menuitem.setMnemonic('m');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed M"));
       menuitem.setIcon(GUIHelper.getEmptyIcon());
-      menuitem.addActionListener(new ActionListener() {
-	@Override
-	public void actionPerformed(ActionEvent e) {
-	  manageScripts();
-	}
-      });
+      menuitem.addActionListener((ActionEvent e) -> manageScripts());
 
       // Scripts/Start recording
       menuitem = new JMenuItem("Start recording");
       menu.add(menuitem);
       menuitem.setMnemonic('S');
       menuitem.setIcon(GUIHelper.getEmptyIcon());
-      menuitem.addActionListener(new ActionListener() {
-	@Override
-	public void actionPerformed(ActionEvent e) {
-	  startRecording();
-	}
-      });
+      menuitem.addActionListener((ActionEvent e) -> startRecording());
       m_MenuItemStartRecording = menuitem;
 
       // Scripts/Start recording
@@ -828,12 +764,7 @@ public class TimeseriesExplorer
       menu.add(menuitem);
       menuitem.setMnemonic('t');
       menuitem.setIcon(GUIHelper.getEmptyIcon());
-      menuitem.addActionListener(new ActionListener() {
-	@Override
-	public void actionPerformed(ActionEvent e) {
-	  stopRecording();
-	}
-      });
+      menuitem.addActionListener((ActionEvent e) -> stopRecording());
       m_MenuItemStopRecording = menuitem;
 
       // Scripts/Overlay flow output
@@ -847,24 +778,14 @@ public class TimeseriesExplorer
       menuitem = new JMenuItem("Refresh");
       menu.add(menuitem);
       menuitem.setMnemonic('R');
-      menuitem.addActionListener(new ActionListener() {
-        @Override
-	public void actionPerformed(ActionEvent e) {
-          refreshScripts();
-        }
-      });
+      menuitem.addActionListener((ActionEvent e) -> refreshScripts());
       m_MenuItemRefreshScripts = menuitem;
 
       // View
       menu = new JMenu("View");
       result.add(menu);
       menu.setMnemonic('V');
-      menu.addChangeListener(new ChangeListener() {
-	@Override
-	public void stateChanged(ChangeEvent e) {
-	  updateMenu();
-	}
-      });
+      menu.addChangeListener((ChangeEvent e) -> updateMenu());
       m_MenuView = menu;
 
       // View/Display selected timestamp
@@ -873,12 +794,9 @@ public class TimeseriesExplorer
       menuitem.setMnemonic('G');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl shift pressed W"));
       menuitem.setSelected(getTimeseriesPanel().getSelectedTimestampPaintlet().isEnabled());
-      menuitem.addActionListener(new ActionListener() {
-	@Override
-	public void actionPerformed(ActionEvent e) {
-	  getTimeseriesPanel().getSelectedTimestampPaintlet().setEnabled(m_MenuItemViewSelectedTimestamp.isSelected());
-	  getTimeseriesPanel().update();
-	}
+      menuitem.addActionListener((ActionEvent e) -> {
+        getTimeseriesPanel().getSelectedTimestampPaintlet().setEnabled(m_MenuItemViewSelectedTimestamp.isSelected());
+        getTimeseriesPanel().update();
       });
       m_MenuItemViewSelectedTimestamp = menuitem;
 
@@ -887,12 +805,8 @@ public class TimeseriesExplorer
       menu.add(menuitem);
       menuitem.setMnemonic('Z');
       menuitem.setSelected(isZoomOverviewPanelVisible());
-      menuitem.addActionListener(new ActionListener() {
-	@Override
-	public void actionPerformed(ActionEvent e) {
-	  setZoomOverviewPanelVisible(m_MenuItemViewZoomOverview.isSelected());
-	}
-      });
+      menuitem.addActionListener((ActionEvent e) -> 
+	  setZoomOverviewPanelVisible(m_MenuItemViewZoomOverview.isSelected()));
       m_MenuItemViewZoomOverview = menuitem;
 
       // View/Anti-aliasing
@@ -900,11 +814,8 @@ public class TimeseriesExplorer
       menu.add(menuitem);
       menuitem.setMnemonic('A');
       menuitem.setSelected(getTimeseriesPanel().isAntiAliasingEnabled());
-      menuitem.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  getTimeseriesPanel().setAntiAliasingEnabled(m_MenuItemViewAntiAliasing.isSelected());
-	}
-      });
+      menuitem.addActionListener((ActionEvent e) -> 
+	  getTimeseriesPanel().setAntiAliasingEnabled(m_MenuItemViewAntiAliasing.isSelected()));
       m_MenuItemViewAntiAliasing = menuitem;
 
       // View/Periodicity
@@ -918,13 +829,11 @@ public class TimeseriesExplorer
 	group.add(menuitem);
 	submenu.add(menuitem);
 	menuitem.setSelected(type == getTimeseriesPanel().getPeriodicityPaintlet().getPeriodicity());
-	menuitem.addActionListener(new ActionListener() {
-	  public void actionPerformed(ActionEvent e) {
-	    getTimeseriesPanel().getPeriodicityPaintlet().setPeriodicity(type);
-	    if (getTimeseriesPanel().getPlot().getAxis(Axis.BOTTOM).getTickGenerator() instanceof PeriodicityTickGenerator)
-	      ((PeriodicityTickGenerator) getTimeseriesPanel().getPlot().getAxis(Axis.BOTTOM).getTickGenerator()).setPeriodicity(type);
-	    getTimeseriesPanel().getPlot().getAxis(Axis.BOTTOM).setNumberFormat(PeriodicityHelper.getFormat(type));
-	  }
+	menuitem.addActionListener((ActionEvent e) -> {
+          getTimeseriesPanel().getPeriodicityPaintlet().setPeriodicity(type);
+          if (getTimeseriesPanel().getPlot().getAxis(Axis.BOTTOM).getTickGenerator() instanceof PeriodicityTickGenerator)
+            ((PeriodicityTickGenerator) getTimeseriesPanel().getPlot().getAxis(Axis.BOTTOM).getTickGenerator()).setPeriodicity(type);
+          getTimeseriesPanel().getPlot().getAxis(Axis.BOTTOM).setNumberFormat(PeriodicityHelper.getFormat(type));
 	});
       }
 
@@ -932,12 +841,15 @@ public class TimeseriesExplorer
       menuitem = new JMenuItem("Color provider...");
       menu.add(menuitem);
       menuitem.setMnemonic('P');
-      menuitem.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  selectColorProvider();
-	}
-      });
+      menuitem.addActionListener((ActionEvent e) -> selectColorProvider());
       m_MenuItemViewColorProvider = menuitem;
+
+      // View/Paintlet
+      menuitem = new JMenuItem("Paintlet...");
+      menu.add(menuitem);
+      menuitem.setMnemonic('P');
+      menuitem.addActionListener((ActionEvent e) -> selectPaintlet());
+      m_MenuItemViewPaintlet = menuitem;
 
       // update menu
       m_MenuBar = result;
@@ -1241,6 +1153,37 @@ public class TimeseriesExplorer
   }
 
   /**
+   * Lets the user select a new paintlet.
+   */
+  protected void selectPaintlet() {
+    Paintlet paintlet;
+    boolean	zoomVisible;
+
+    if (m_DialogPaintlet == null) {
+      if (getParentDialog() != null)
+	m_DialogPaintlet = new GenericObjectEditorDialog(getParentDialog(), ModalityType.DOCUMENT_MODAL);
+      else
+	m_DialogPaintlet = new GenericObjectEditorDialog(getParentFrame(), true);
+      m_DialogPaintlet.setTitle("Select paintlet");
+      m_DialogPaintlet.getGOEEditor().setClassType(AbstractTimeseriesPaintlet.class);
+      m_DialogPaintlet.getGOEEditor().setCanChangeClassInDialog(true);
+      m_DialogPaintlet.setLocationRelativeTo(this);
+    }
+    
+    m_DialogPaintlet.setCurrent(getTimeseriesPanel().getTimeseriesPaintlet().shallowCopy());
+    m_DialogPaintlet.setVisible(true);
+    if (m_DialogPaintlet.getResult() != GenericObjectEditorDialog.APPROVE_OPTION)
+      return;
+    paintlet = (Paintlet) m_DialogPaintlet.getCurrent();
+    paintlet.setPanel(getTimeseriesPanel());
+    getTimeseriesPanel().removePaintlet(getTimeseriesPanel().getTimeseriesPaintlet());
+    getTimeseriesPanel().addPaintlet(paintlet);
+    zoomVisible = getTimeseriesPanel().isZoomOverviewPanelVisible();
+    getTimeseriesPanel().getZoomOverviewPanel().setDataContainerPanel(getTimeseriesPanel());
+    getTimeseriesPanel().setZoomOverviewPanelVisible(zoomVisible);
+  }
+
+  /**
    * Returns the classes that the supporter generates.
    *
    * @return		the classes
@@ -1283,25 +1226,6 @@ public class TimeseriesExplorer
   }
 
   /**
-   * Cleans up data structures, frees up memory.
-   */
-  @Override
-  public void cleanUp() {
-    m_PanelTimeseries.getContainerManager().removeDataChangeListener(this);
-    m_PanelTimeseries.cleanUp();
-    if (m_ScriptingDialog != null)
-      m_ScriptingDialog.cleanUp();
-    if (m_DialogSQL != null) {
-      m_DialogSQL.dispose();
-      m_DialogSQL = null;
-    }
-    if (m_DialogColorProvider != null) {
-      m_DialogColorProvider.dispose();
-      m_DialogColorProvider = null;
-    }
-  }
-
-  /**
    * Returns the currently used database connection object, can be null.
    *
    * @return		the current object
@@ -1328,5 +1252,28 @@ public class TimeseriesExplorer
   public void databaseConnectionStateChanged(DatabaseConnectionChangeEvent e) {
     if (e.getType() == EventType.CONNECT)
       m_DatabaseConnection = e.getDatabaseConnection();
+  }
+
+  /**
+   * Cleans up data structures, frees up memory.
+   */
+  @Override
+  public void cleanUp() {
+    m_PanelTimeseries.getContainerManager().removeDataChangeListener(this);
+    m_PanelTimeseries.cleanUp();
+    if (m_ScriptingDialog != null)
+      m_ScriptingDialog.cleanUp();
+    if (m_DialogSQL != null) {
+      m_DialogSQL.dispose();
+      m_DialogSQL = null;
+    }
+    if (m_DialogColorProvider != null) {
+      m_DialogColorProvider.dispose();
+      m_DialogColorProvider = null;
+    }
+    if (m_DialogPaintlet != null) {
+      m_DialogPaintlet.dispose();
+      m_DialogPaintlet = null;
+    }
   }
 }
