@@ -15,7 +15,7 @@
 
 /*
  * TimeseriesPanel.java
- * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.timeseries;
@@ -357,6 +357,15 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
    */
   public boolean isZoomOverviewPanelVisible() {
     return m_PanelZoomOverview.isVisible();
+  }
+
+  /**
+   * Returns the zoom overview panel.
+   *
+   * @return		the panel
+   */
+  public TimeseriesZoomOverviewPanel getZoomOverviewPanel() {
+    return m_PanelZoomOverview;
   }
 
   /**
