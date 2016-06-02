@@ -355,7 +355,7 @@ public class InstanceExplorer
       menu.addChangeListener((ChangeEvent e) -> updateMenu());
 
       // File/Clear
-      menuitem = new JMenuItem("Clear data");
+      menuitem = new JMenuItem("Clear");
       menu.add(menuitem);
       menuitem.setMnemonic('C');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed N"));
@@ -363,8 +363,18 @@ public class InstanceExplorer
       menuitem.addActionListener((ActionEvent e) -> clearData());
       m_MenuItemClearData = menuitem;
 
+      menu.addSeparator();
+
+      // File/Database
+      menuitem = new JMenuItem("Database...");
+      menu.add(menuitem);
+      menuitem.setMnemonic('D');
+      menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed D"));
+      menuitem.setIcon(GUIHelper.getIcon("database.gif"));
+      menuitem.addActionListener((ActionEvent e) -> loadDataFromDatabase());
+
       // File/Load from file
-      menuitem = new JMenuItem("Load data from disk...");
+      menuitem = new JMenuItem("Open...");
       menu.add(menuitem);
       menuitem.setMnemonic('o');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed O"));
@@ -372,7 +382,7 @@ public class InstanceExplorer
       menuitem.addActionListener((ActionEvent e) -> loadDataFromDisk());
 
       // File/Recent files
-      submenu = new JMenu("Load recent");
+      submenu = new JMenu("Open recent");
       menu.add(submenu);
       m_RecentFilesHandler = new RecentFilesHandler<>(
 	  SESSION_FILE, getProperties().getInteger("MaxRecentFiles", 5), submenu);
@@ -385,14 +395,6 @@ public class InstanceExplorer
 	}
       });
       m_MenuItemLoadRecent = submenu;
-
-      // File/Load data from database
-      menuitem = new JMenuItem("Load data from database");
-      menu.add(menuitem);
-      menuitem.setMnemonic('L');
-      menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl shift pressed O"));
-      menuitem.setIcon(GUIHelper.getEmptyIcon());
-      menuitem.addActionListener((ActionEvent e) -> loadDataFromDatabase());
 
       // File/Send to
       menu.addSeparator();
