@@ -15,21 +15,26 @@
 
 /*
  * WekaInstanceViewer.java
- * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
-
-import java.awt.BorderLayout;
 
 import adams.data.report.DataType;
 import adams.data.report.Field;
 import adams.flow.core.Token;
 import adams.gui.core.BasePanel;
 import adams.gui.core.ExtensionFileFilter;
+import adams.gui.visualization.core.AbstractColorProvider;
+import adams.gui.visualization.core.DefaultColorProvider;
+import adams.gui.visualization.core.Paintlet;
+import adams.gui.visualization.instance.AbstractInstancePaintlet;
 import adams.gui.visualization.instance.InstanceContainer;
 import adams.gui.visualization.instance.InstanceContainerManager;
+import adams.gui.visualization.instance.InstanceLinePaintlet;
 import adams.gui.visualization.instance.InstancePanel;
+
+import java.awt.BorderLayout;
 
 /**
  <!-- globalinfo-start -->
@@ -73,9 +78,21 @@ import adams.gui.visualization.instance.InstancePanel;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
  * <pre>-short-title &lt;boolean&gt; (property: shortTitle)
  * &nbsp;&nbsp;&nbsp;If enabled uses just the name for the title instead of the actor's full 
  * &nbsp;&nbsp;&nbsp;name.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-display-in-editor &lt;boolean&gt; (property: displayInEditor)
+ * &nbsp;&nbsp;&nbsp;If enabled displays the panel in a tab in the flow editor rather than in 
+ * &nbsp;&nbsp;&nbsp;a separate frame.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
@@ -110,6 +127,16 @@ import adams.gui.visualization.instance.InstancePanel;
  * &nbsp;&nbsp;&nbsp;default: adams.gui.print.NullWriter
  * </pre>
  * 
+ * <pre>-color-provider &lt;adams.gui.visualization.core.AbstractColorProvider&gt; (property: colorProvider)
+ * &nbsp;&nbsp;&nbsp;The color provider in use for coloring the instances.
+ * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.core.DefaultColorProvider
+ * </pre>
+ * 
+ * <pre>-paintlet &lt;adams.gui.visualization.instance.AbstractInstancePaintlet&gt; (property: paintlet)
+ * &nbsp;&nbsp;&nbsp;The paintlet to use for drawing the instances.
+ * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.instance.InstanceLinePaintlet
+ * </pre>
+ * 
  * <pre>-zoom-overview &lt;boolean&gt; (property: zoomOverview)
  * &nbsp;&nbsp;&nbsp;If enabled, a zoom overview panel gets displayed as well.
  * &nbsp;&nbsp;&nbsp;default: false
@@ -134,6 +161,12 @@ public class WekaInstanceViewer
 
   /** the panel with the instances. */
   protected InstancePanel m_InstancePanel;
+
+  /** the color provider to use. */
+  protected AbstractColorProvider m_ColorProvider;
+
+  /** the paintlet to use. */
+  protected AbstractInstancePaintlet m_Paintlet;
 
   /** whether to display the zoom overview. */
   protected boolean m_ZoomOverview;
@@ -161,12 +194,20 @@ public class WekaInstanceViewer
     super.defineOptions();
 
     m_OptionManager.add(
-	    "zoom-overview", "zoomOverview",
-	    false);
+      "color-provider", "colorProvider",
+      new DefaultColorProvider());
 
     m_OptionManager.add(
-	    "id", "ID",
-	    "");
+      "paintlet", "paintlet",
+      new InstanceLinePaintlet());
+
+    m_OptionManager.add(
+      "zoom-overview", "zoomOverview",
+      false);
+
+    m_OptionManager.add(
+      "id", "ID",
+      "");
   }
 
   /**
@@ -187,6 +228,64 @@ public class WekaInstanceViewer
   @Override
   protected int getDefaultHeight() {
     return 500;
+  }
+
+  /**
+   * Sets the color provider to use.
+   *
+   * @param value 	the color provider
+   */
+  public void setColorProvider(AbstractColorProvider value) {
+    m_ColorProvider = value;
+    reset();
+  }
+
+  /**
+   * Returns the color provider in use.
+   *
+   * @return 		the color provider
+   */
+  public AbstractColorProvider getColorProvider() {
+    return m_ColorProvider;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String colorProviderTipText() {
+    return "The color provider in use for coloring the instances.";
+  }
+
+  /**
+   * Sets the paintlet to use.
+   *
+   * @param value 	the paintlet
+   */
+  public void setPaintlet(AbstractInstancePaintlet value) {
+    m_Paintlet = value;
+    reset();
+  }
+
+  /**
+   * Returns the paintlet in use.
+   *
+   * @return 		the paintlet
+   */
+  public AbstractInstancePaintlet getPaintlet() {
+    return m_Paintlet;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String paintletTipText() {
+    return "The paintlet to use for drawing the instances.";
   }
 
   /**
@@ -264,10 +363,16 @@ public class WekaInstanceViewer
   @Override
   protected BasePanel newPanel() {
     BasePanel	result;
+    Paintlet	paintlet;
 
     result          = new BasePanel(new BorderLayout());
     m_InstancePanel = new InstancePanel();
     m_InstancePanel.setZoomOverviewPanelVisible(m_ZoomOverview);
+    m_InstancePanel.getContainerManager().setColorProvider(m_ColorProvider.shallowCopy(true));
+    paintlet = m_Paintlet.shallowCopy(true);
+    paintlet.setPanel(m_InstancePanel);
+    m_InstancePanel.removePaintlet(m_InstancePanel.getInstancePaintlet());
+    m_InstancePanel.addPaintlet(paintlet);
     result.add(m_InstancePanel, BorderLayout.CENTER);
 
     return result;

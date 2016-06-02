@@ -14,8 +14,8 @@
  */
 
 /*
- * InstanceLinePaintlet.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * SimpleInstanceLinePaintlet.java
+ * Copyright (C) 2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.instance;
@@ -41,7 +41,7 @@ import java.util.List;
 
 /**
  <!-- globalinfo-start -->
- * Paintlet for generating a line plot for Instance objects.
+ * Paintlet for generating a line plot for Instance objects (no markers).
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -57,22 +57,6 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;minimum: 0.01
  * </pre>
  * 
- * <pre>-markers-extent &lt;int&gt; (property: markerExtent)
- * &nbsp;&nbsp;&nbsp;The size of the markers in pixels.
- * &nbsp;&nbsp;&nbsp;default: 7
- * &nbsp;&nbsp;&nbsp;minimum: 0
- * </pre>
- * 
- * <pre>-markers-disabled &lt;boolean&gt; (property: markersDisabled)
- * &nbsp;&nbsp;&nbsp;If set to true, the markers are disabled.
- * &nbsp;&nbsp;&nbsp;default: false
- * </pre>
- * 
- * <pre>-always-show-markers &lt;boolean&gt; (property: alwaysShowMarkers)
- * &nbsp;&nbsp;&nbsp;If set to true, the markers are always displayed, not just when zoomed in.
- * &nbsp;&nbsp;&nbsp;default: true
- * </pre>
- * 
  * <pre>-anti-aliasing-enabled &lt;boolean&gt; (property: antiAliasingEnabled)
  * &nbsp;&nbsp;&nbsp;If enabled, uses anti-aliasing for drawing lines.
  * &nbsp;&nbsp;&nbsp;default: true
@@ -83,39 +67,12 @@ import java.util.List;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class InstanceLinePaintlet
+public class SimpleInstanceLinePaintlet
   extends AbstractInstancePaintlet
   implements AntiAliasingSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = -2971846774962333662L;
-
-  /**
-   * Enum for the marker shape to plot around the data points.
-   *
-   * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
-   */
-  public enum MarkerShape {
-    /** nothing. */
-    NONE,
-    /** a square box. */
-    BOX,
-    /** a circle. */
-    CIRCLE,
-    /** a triangle. */
-    TRIANGLE
-  }
-
-  /** the maximum width/height of the shape to plot around the points (= data
-   * point marker), if there's enough space. */
-  protected int m_MarkerExtent;
-
-  /** indicates whether marker shapes are painted or not. */
-  protected boolean m_MarkersEnabled;
-
-  /** whether to show markers all the time. */
-  protected boolean m_AlwaysShowMarkers;
 
   /** whether anti-aliasing is enabled. */
   protected boolean m_AntiAliasingEnabled;
@@ -127,7 +84,7 @@ public class InstanceLinePaintlet
    */
   @Override
   public String globalInfo() {
-    return "Paintlet for generating a line plot for Instance objects.";
+    return "Paintlet for generating a line plot for Instance objects (no markers).";
   }
 
   /**
@@ -136,18 +93,6 @@ public class InstanceLinePaintlet
   @Override
   public void defineOptions() {
     super.defineOptions();
-
-    m_OptionManager.add(
-	    "markers-extent", "markerExtent",
-	    GUIHelper.getInteger(getClass(), "markersExtent", 7), 0, null);
-
-    m_OptionManager.add(
-	    "markers-disabled", "markersDisabled",
-	    !GUIHelper.getBoolean(getClass(), "markersEnabled", true));
-
-    m_OptionManager.add(
-	    "always-show-markers", "alwaysShowMarkers",
-	    GUIHelper.getBoolean(getClass(), "alwaysShowMarkers", true));
 
     m_OptionManager.add(
 	    "anti-aliasing-enabled", "antiAliasingEnabled",
@@ -170,100 +115,6 @@ public class InstanceLinePaintlet
       result = ((ColorContainer) cont).getColor();
       
     return result;
-  }
-
-  /**
-   * Returns whether marker shapes are disabled.
-   *
-   * @return		true if marker shapes are disabled
-   */
-  public boolean isMarkersDisabled() {
-    return !m_MarkersEnabled;
-  }
-
-  /**
-   * Sets whether to draw markers or not.
-   *
-   * @param value	if true then marker shapes won't be drawn
-   */
-  public void setMarkersDisabled(boolean value) {
-    m_MarkersEnabled = !value;
-    memberChanged();
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String markersDisabledTipText() {
-    return "If set to true, the markers are disabled.";
-  }
-
-  /**
-   * Returns whether marker shapes are always drawn.
-   *
-   * @return		true if marker shapes are always drawn, not just when zoomed in
-   */
-  public boolean getAlwaysShowMarkers() {
-    return m_AlwaysShowMarkers;
-  }
-
-  /**
-   * Sets whether to always draw markers.
-   *
-   * @param value	if true then marker are always drawn, not just when zoomed in
-   */
-  public void setAlwaysShowMarkers(boolean value) {
-    m_AlwaysShowMarkers = value;
-    memberChanged();
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String alwaysShowMarkersTipText() {
-    return "If set to true, the markers are always displayed, not just when zoomed in.";
-  }
-
-  /**
-   * Sets the extent (width and height of the shape around the plotted point).
-   * 0 turns the plotting off. Should be an odd number for centering the shape.
-   *
-   * @param value	the new extent
-   */
-  public void setMarkerExtent(int value) {
-    if (value >= 0) {
-      m_MarkerExtent = value;
-      memberChanged();
-    }
-    else {
-      System.err.println("Marker extent must be >= 0 (provided: " + value + ")!");
-    }
-  }
-
-  /**
-   * Returns the current marker extent (which is the width and height of the
-   * shape).
-   *
-   * @return		the current extent
-   */
-  public int getMarkerExtent() {
-    return m_MarkerExtent;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String markerExtentTipText() {
-    return "The size of the markers in pixels.";
   }
 
   /**
@@ -301,17 +152,14 @@ public class InstanceLinePaintlet
    * @param g		the graphics context
    * @param data	the data to draw
    * @param color	the color to draw in
-   * @param marker	the type of marker to draw
    */
-  protected void drawData(Graphics g, Instance data, Color color, MarkerShape marker) {
+  protected void drawData(Graphics g, Instance data, Color color) {
     List<InstancePoint>	points;
     InstancePoint	curr;
     int			currX;
     int			currY;
     int			prevX;
     int			prevY;
-    int			prevMarkerX;
-    int			prevMarkerY;
     AxisPanel		axisX;
     AxisPanel		axisY;
     int			i;
@@ -333,12 +181,10 @@ public class InstanceLinePaintlet
     if (end < data.size() - 1)
       end++;
 
-    currX       = Integer.MIN_VALUE;
-    currY       = Integer.MIN_VALUE;
-    prevMarkerX = 0;
-    prevMarkerY = 0;
-    prevX       = axisX.valueToPos(points.get(start).getX());
-    prevY       = axisY.valueToPos(points.get(start).getY());
+    currX = Integer.MIN_VALUE;
+    currY = Integer.MIN_VALUE;
+    prevX = axisX.valueToPos(points.get(start).getX());
+    prevY = axisY.valueToPos(points.get(start).getY());
 
     for (i = start; i <= end; i++) {
       curr = points.get(i);
@@ -351,66 +197,12 @@ public class InstanceLinePaintlet
 
       // draw line
       g.drawLine(prevX, prevY, currX, currY);
-      if (marker != MarkerShape.NONE) {
-	if (Math.sqrt(Math.pow(currX - prevMarkerX, 2) + Math.pow(currY - prevMarkerY, 2)) > m_MarkerExtent * 2) {
-	  if (marker == MarkerShape.BOX) {
-	    g.drawRect(
-		currX - (m_MarkerExtent / 2),
-		currY - (m_MarkerExtent / 2),
-		m_MarkerExtent - 1,
-		m_MarkerExtent - 1);
-	  }
-	  else if (marker == MarkerShape.CIRCLE) {
-	    g.drawArc(
-		currX - (m_MarkerExtent / 2),
-		currY - (m_MarkerExtent / 2),
-		m_MarkerExtent - 1,
-		m_MarkerExtent - 1,
-		0,
-		360);
-	  }
-	  else if (marker == MarkerShape.TRIANGLE) {
-	    int[] x = new int[3];
-	    int[] y = new int[3];
-	    x[0] = currX - (m_MarkerExtent / 2);
-	    y[0] = currY + (m_MarkerExtent / 2);
-	    x[1] = x[0] + m_MarkerExtent;
-	    y[1] = y[0];
-	    x[2] = currX;
-	    y[2] = y[0] - m_MarkerExtent;
-	    g.drawPolygon(x, y, 3);
-	  }
-
-	  prevMarkerX = currX;
-	  prevMarkerY = currY;
-	}
-      }
 
       prevX = currX;
       prevY = currY;
     }
   }
 
-  /**
-   * Determines the shape to paint around the data points, based on the index
-   * of the data.
-   *
-   * @param index	the index of the spectrum
-   * @return		the marker shape
-   */
-  protected MarkerShape getMarkerShape(int index) {
-    MarkerShape		result;
-    MarkerShape[]	shapes;
-
-    result = MarkerShape.NONE;
-
-    if (m_MarkersEnabled && (m_MarkerExtent > 0) && (getPlot().isZoomed() || m_AlwaysShowMarkers)) {
-      shapes = MarkerShape.values();
-      result = shapes[(index % (shapes.length - 1)) + 1];
-    }
-
-    return result;
-  }
   /**
    * The paint routine of the paintlet.
    *
@@ -439,7 +231,7 @@ public class InstanceLinePaintlet
         }
 	data = (Instance) cont.getPayload();
 	synchronized(data) {
-	  drawData(g, data, getColor(i), getMarkerShape(i));
+	  drawData(g, data, getColor(i));
 	}
       }
     }

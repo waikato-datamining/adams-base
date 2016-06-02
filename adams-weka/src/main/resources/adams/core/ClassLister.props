@@ -39,6 +39,10 @@ adams.data.weka.predictions.AbstractErrorScaler=\
 adams.flow.transformer.wekaclusterer.AbstractClustererPostProcessor=\
   adams.flow.transformer.wekaclusterer
 
+# the paintlets for the instance panel
+adams.gui.visualization.instance.AbstractInstancePaintlet=\
+  adams.gui.visualization.instance
+
 # WEKA file loaders
 weka.core.converters.AbstractFileLoader=\
   weka.core.converters
