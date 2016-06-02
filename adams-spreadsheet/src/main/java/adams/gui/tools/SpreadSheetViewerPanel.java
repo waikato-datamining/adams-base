@@ -45,7 +45,6 @@ import adams.gui.dialog.ApprovalDialog;
 import adams.gui.event.RecentItemEvent;
 import adams.gui.event.RecentItemListener;
 import adams.gui.event.TabVisibilityChangeEvent;
-import adams.gui.event.TabVisibilityChangeListener;
 import adams.gui.sendto.SendToActionSupporter;
 import adams.gui.sendto.SendToActionUtils;
 import adams.gui.tools.spreadsheetviewer.AbstractDataPlugin;
@@ -232,7 +231,7 @@ public class SpreadSheetViewerPanel
 
     m_RecentFilesHandler = null;
     m_ApplyToAll         = false;
-    m_Actions          = new ArrayList<SpreadSheetViewerAction>();
+    m_Actions          = new ArrayList<>();
   }
 
   /**
@@ -256,12 +255,8 @@ public class SpreadSheetViewerPanel
     m_SplitPane.setLeftComponent(m_TabbedPane);
     
     m_ViewerTabs = new ViewerTabManager(this);
-    m_ViewerTabs.addTabVisibilityChangeListener(new TabVisibilityChangeListener() {
-      @Override
-      public void tabVisibilityChanged(TabVisibilityChangeEvent e) {
-	m_SplitPane.setRightComponentHidden(m_ViewerTabs.getTabCount() == 0);
-      }
-    });
+    m_ViewerTabs.addTabVisibilityChangeListener((TabVisibilityChangeEvent e) ->
+	m_SplitPane.setRightComponentHidden(m_ViewerTabs.getTabCount() == 0));
     m_SplitPane.setRightComponent(m_ViewerTabs);
     m_SplitPane.setRightComponentHidden(m_ViewerTabs.getTabCount() == 0);
     m_SplitPane.setDividerLocation(0.8);
@@ -444,7 +439,7 @@ public class SpreadSheetViewerPanel
       // File/Recent files
       submenu = new JMenu("Open recent");
       menu.add(submenu);
-      m_RecentFilesHandler = new RecentFilesHandlerWithCommandline<JMenu>(
+      m_RecentFilesHandler = new RecentFilesHandlerWithCommandline<>(
 	  SESSION_FILE, getProperties().getInteger("MaxRecentFiles", 5), submenu);
       m_RecentFilesHandler.addRecentItemListener(new RecentItemListener<JMenu,Setup>() {
 	@Override
@@ -488,8 +483,8 @@ public class SpreadSheetViewerPanel
       classes = AbstractDataPlugin.getPlugins();
       if (classes.length > 0) {
 	menu.addSeparator();
-	m_MenuItemDataPlugins = new ArrayList<JMenuItem>();
-	m_DataPlugins         = new ArrayList<AbstractDataPlugin>();
+	m_MenuItemDataPlugins = new ArrayList<>();
+	m_DataPlugins         = new ArrayList<>();
 	for (String cls: classes) {
 	  try {
 	    final AbstractDataPlugin data = (AbstractDataPlugin) Class.forName(cls).newInstance();
@@ -529,8 +524,8 @@ public class SpreadSheetViewerPanel
       classes = AbstractViewPlugin.getPlugins();
       if (classes.length > 0) {
 	menu.addSeparator();
-	m_MenuItemViewPlugins = new ArrayList<JMenuItem>();
-	m_ViewPlugins         = new ArrayList<AbstractViewPlugin>();
+	m_MenuItemViewPlugins = new ArrayList<>();
+	m_ViewPlugins         = new ArrayList<>();
 	for (String cls: classes) {
 	  try {
 	    final AbstractViewPlugin view = (AbstractViewPlugin) Class.forName(cls).newInstance();
