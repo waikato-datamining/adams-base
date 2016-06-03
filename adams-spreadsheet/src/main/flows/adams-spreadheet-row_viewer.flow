@@ -1,0 +1,9 @@
+# Project: adams
+# Date: 2016-06-03 14:34:49
+# User: fracpete
+# Charset: UTF-8
+adams.flow.control.Flow -annotation "Visualizes the numeric UCI dataset \\\"iris\\\"" -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/iris_with_id.csv
+ adams.flow.transformer.SpreadSheetFileReader -reader "adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.DefaultSpreadSheet"
+ adams.flow.transformer.SpreadSheetRowBuffer -operation SPREADSHEET_TO_ROW
+ adams.flow.sink.SpreadSheetRowViewer -writer adams.gui.print.NullWriter -color-provider adams.gui.visualization.core.DefaultColorProvider -paintlet "adams.gui.visualization.spreadsheet.SpreadSheetRowLinePaintlet -always-show-markers false" -id ID
