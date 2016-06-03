@@ -66,3 +66,7 @@ adams.gui.tools.spreadsheetviewer.chart.AbstractChartGenerator=\
 # the painlets for the spreadsheet explorer
 adams.gui.visualization.spreadsheet.AbstractSpreadSheetRowPaintlet=\
   adams.gui.visualization.spreadsheet
+
+# the spreadsheet row panel updaters
+adams.gui.visualization.spreadsheet.AbstractSpreadSheetRowPanelUpdater=\
+  adams.gui.visualization.spreadsheet
