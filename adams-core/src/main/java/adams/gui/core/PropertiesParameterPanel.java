@@ -51,6 +51,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JSpinner;
@@ -58,6 +59,7 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileFilter;
+import javax.swing.text.JTextComponent;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -65,6 +67,7 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -147,6 +150,8 @@ public class PropertiesParameterPanel
     REGEXP,
     /** string constrained by regular expression. */
     REGEXP_CONSTRAINED_STRING,
+    /** custom component. */
+    CUSTOM_COMPONENT,
   }
 
   /** the panel for the properties. */
@@ -178,6 +183,9 @@ public class PropertiesParameterPanel
 
   /** the property/regexp relation. */
   protected HashMap<String,BaseRegExp> m_RegExp;
+
+  /** the property/component relation. */
+  protected HashMap<String,Component> m_Component;
 
   /** the custom order for the properties. */
   protected List<String> m_Order;
@@ -212,7 +220,8 @@ public class PropertiesParameterPanel
     m_Lists               = new HashMap<>();
     m_Help                = new HashMap<>();
     m_Label               = new HashMap<>();
-    m_RegExp = new HashMap<>();
+    m_RegExp              = new HashMap<>();
+    m_Component           = new HashMap<>();
     m_Order               = new ArrayList<>();
     m_FileChooser         = null;
     m_DefaultSQLDimension = new Dimension(200, 70);
@@ -480,6 +489,39 @@ public class PropertiesParameterPanel
   }
 
   /**
+   * Checks whether a custom component has been specified for a particular
+   * property.
+   *
+   * @param property	the property check
+   * @return		true if a custom component has been specified
+   */
+  public boolean hasComponent(String property) {
+    return m_Component.containsKey(property);
+  }
+
+  /**
+   * Associates the custom component with a particular property.\
+   * Must have setText(String) and getText() methods!
+   *
+   * @param property	the property to associate the chooser with
+   * @param value	the custom component to use
+   */
+  public void setComponent(String property, Component value) {
+    m_Component.put(property, value);
+  }
+
+  /**
+   * Returns the custom component associated with a particular
+   * property.
+   *
+   * @param property	the property to get the chooser for
+   * @return		the custom component, null if none available
+   */
+  public Component getComponent(String property) {
+    return m_Component.get(property);
+  }
+
+  /**
    * Checks whether a enum has been specified for a particular
    * property.
    *
@@ -640,6 +682,94 @@ public class PropertiesParameterPanel
   }
 
   /**
+   * Makes sure that the specified property type can be actually displayed.
+   *
+   * @param key		the property
+   * @param type	the type
+   * @return		the (potentially) fixed type
+   */
+  protected PropertyType fixPropertyType(String key, PropertyType type) {
+    if (type == PropertyType.OBJECT_EDITOR) {
+      if (!hasChooser(key))
+	type = PropertyType.STRING;
+    }
+    else if (type == PropertyType.CUSTOM_COMPONENT) {
+      if (!hasComponent(key))
+	type = PropertyType.STRING;
+    }
+    else if (type == PropertyType.REGEXP_CONSTRAINED_STRING) {
+      if (!hasRegExp(key))
+	type = PropertyType.STRING;
+    }
+    else if (type == PropertyType.ENUM) {
+      if (!hasEnum(key))
+	type = PropertyType.STRING;
+    }
+    else if (type == PropertyType.LIST) {
+      if (!hasList(key))
+	type = PropertyType.STRING;
+    }
+    return type;
+  }
+
+  /**
+   * Updates the tool tip.
+   *
+   * @param comp	the component to update
+   * @param help	the tip text to use
+   */
+  protected void updateToolTipText(Component comp, String help) {
+    if (comp instanceof JComponent)
+      ((JComponent) comp).setToolTipText(help);
+  }
+
+  /**
+   * Updates the text of the component.
+   *
+   * @param comp	the component to update
+   * @param text	the text to set
+   */
+  protected void setText(Component comp, String text) {
+    Method	method;
+
+    if (comp instanceof JTextComponent) {
+      ((JTextComponent) comp).setText(text);
+    }
+    else {
+      try {
+	method = comp.getClass().getMethod("setText", String.class);
+	method.invoke(comp, text);
+      }
+      catch (Exception e) {
+	throw new IllegalStateException("Class " + comp.getClass().getName() + " has no setText(String) method!");
+      }
+    }
+  }
+
+  /**
+   * Returns the text from the component.
+   *
+   * @param comp	the component to get the text from
+   * @return		the obtained text
+   */
+  protected String getText(Component comp) {
+    Method	method;
+
+    if (comp instanceof JTextComponent) {
+      return ((JTextComponent) comp).getText();
+    }
+    else {
+      try {
+	method = comp.getClass().getMethod("getText");
+	return (String) method.invoke(comp);
+      }
+      catch (Exception e) {
+	throw new IllegalStateException("Class " + comp.getClass().getName() + " has no getText() method that returns a String object!");
+      }
+    }
+  }
+
+  /**
    * Sets the properties to base the properties on.
    *
    * @param value	the properties to use
@@ -662,6 +792,7 @@ public class PropertiesParameterPanel
     RegExpTextField		regexpText;
     RegExpConstrainedTextField	regexpConstText;
     JComboBox			combo;
+    Component			comp;
     String			help;
     BaseString[]		list;
     String[]			parts;
@@ -674,22 +805,8 @@ public class PropertiesParameterPanel
     Collections.sort(keys);
     keys.addAll(0, m_Order);
     for (String key: keys) {
-      type = getPropertyType(key);
+      type = fixPropertyType(key, getPropertyType(key));
       help = getHelp(key);
-
-      // ensure that we have an editor available
-      if (type == PropertyType.OBJECT_EDITOR) {
-        if (!hasChooser(key))
-          type = PropertyType.STRING;
-      }
-      else if (type == PropertyType.ENUM) {
-        if (!hasEnum(key))
-          type = PropertyType.STRING;
-      }
-      else if (type == PropertyType.LIST) {
-        if (!hasList(key))
-          type = PropertyType.STRING;
-      }
 
       m_ActualPropertyTypes.put(key, type);
       label = hasLabel(key) ? getLabel(key) : key;
@@ -727,17 +844,14 @@ public class PropertiesParameterPanel
               public void removeUpdate(DocumentEvent e) {
                 check(e);
               }
-
               @Override
               public void insertUpdate(DocumentEvent e) {
                 check(e);
               }
-
               @Override
               public void changedUpdate(DocumentEvent e) {
                 check(e);
               }
-
               protected void check(DocumentEvent e) {
                 String text = textfield.getText();
                 if ((text.length() == 0) || Utils.isDouble(text))
@@ -888,6 +1002,12 @@ public class PropertiesParameterPanel
             regexpConstText.setText(value.getProperty(key));
             regexpConstText.setToolTipText(help);
             addProperty(key, label, regexpConstText);
+            break;
+	  case CUSTOM_COMPONENT:
+	    comp = getComponent(key);
+	    setText(comp, value.getProperty(key));
+	    updateToolTipText(comp, help);
+            addProperty(key, label, getComponent(key));
             break;
           default:
             throw new IllegalStateException("Unhandled property type (property '" + keys + "'): " + type);
@@ -1043,6 +1163,9 @@ public class PropertiesParameterPanel
           regexpConstText = (RegExpConstrainedTextField) comp;
           result.setProperty(key, regexpConstText.getText());
           break;
+	case CUSTOM_COMPONENT:
+          result.setProperty(key, getText(comp));
+	  break;
         default:
           throw new IllegalStateException("Unhandled property type (property '" + key + "'): " + type);
       }
