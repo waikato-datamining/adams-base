@@ -26,6 +26,7 @@ import adams.core.option.AbstractArgumentOption;
 import adams.flow.control.Flow;
 import adams.flow.control.Flow.ErrorHandling;
 import adams.flow.core.Actor;
+import adams.flow.source.valuedefinition.ValueDefinition;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.AbstractBasicMenuItemDefinition;
 import adams.gui.application.UserMode;
@@ -648,8 +649,8 @@ public class SystemPerformance
     argOption = (AbstractArgumentOption) entermanyvalues192.getOptionManager().findByProperty("message");
     entermanyvalues192.setMessage((java.lang.String) argOption.valueOf("Please enter the performance test parameters"));
     argOption = (AbstractArgumentOption) entermanyvalues192.getOptionManager().findByProperty("values");
-    adams.flow.source.ValueDefinition[] values195 = new adams.flow.source.ValueDefinition[10];
-    adams.flow.source.ValueDefinition valuedefinition196 = new adams.flow.source.ValueDefinition();
+    ValueDefinition[] values195 = new ValueDefinition[10];
+    ValueDefinition valuedefinition196 = new ValueDefinition();
     argOption = (AbstractArgumentOption) valuedefinition196.getOptionManager().findByProperty("name");
     valuedefinition196.setName((java.lang.String) argOption.valueOf("num_curves"));
     argOption = (AbstractArgumentOption) valuedefinition196.getOptionManager().findByProperty("display");
@@ -661,7 +662,7 @@ public class SystemPerformance
     argOption = (AbstractArgumentOption) valuedefinition196.getOptionManager().findByProperty("defaultValue");
     argOption.setVariable("@{num_curves}");
     values195[0] = valuedefinition196;
-    adams.flow.source.ValueDefinition valuedefinition201 = new adams.flow.source.ValueDefinition();
+    ValueDefinition valuedefinition201 = new ValueDefinition();
     argOption = (AbstractArgumentOption) valuedefinition201.getOptionManager().findByProperty("name");
     valuedefinition201.setName((java.lang.String) argOption.valueOf("num_means"));
     argOption = (AbstractArgumentOption) valuedefinition201.getOptionManager().findByProperty("display");
@@ -673,7 +674,7 @@ public class SystemPerformance
     argOption = (AbstractArgumentOption) valuedefinition201.getOptionManager().findByProperty("defaultValue");
     argOption.setVariable("@{num_means}");
     values195[1] = valuedefinition201;
-    adams.flow.source.ValueDefinition valuedefinition206 = new adams.flow.source.ValueDefinition();
+    ValueDefinition valuedefinition206 = new ValueDefinition();
     argOption = (AbstractArgumentOption) valuedefinition206.getOptionManager().findByProperty("name");
     valuedefinition206.setName((java.lang.String) argOption.valueOf("num_stdevs"));
     argOption = (AbstractArgumentOption) valuedefinition206.getOptionManager().findByProperty("display");
@@ -685,7 +686,7 @@ public class SystemPerformance
     argOption = (AbstractArgumentOption) valuedefinition206.getOptionManager().findByProperty("defaultValue");
     argOption.setVariable("@{num_stdevs}");
     values195[2] = valuedefinition206;
-    adams.flow.source.ValueDefinition valuedefinition211 = new adams.flow.source.ValueDefinition();
+    ValueDefinition valuedefinition211 = new ValueDefinition();
     argOption = (AbstractArgumentOption) valuedefinition211.getOptionManager().findByProperty("name");
     valuedefinition211.setName((java.lang.String) argOption.valueOf("num_points"));
     argOption = (AbstractArgumentOption) valuedefinition211.getOptionManager().findByProperty("display");
@@ -697,7 +698,7 @@ public class SystemPerformance
     argOption = (AbstractArgumentOption) valuedefinition211.getOptionManager().findByProperty("defaultValue");
     argOption.setVariable("@{num_points}");
     values195[3] = valuedefinition211;
-    adams.flow.source.ValueDefinition valuedefinition216 = new adams.flow.source.ValueDefinition();
+    ValueDefinition valuedefinition216 = new ValueDefinition();
     argOption = (AbstractArgumentOption) valuedefinition216.getOptionManager().findByProperty("name");
     valuedefinition216.setName((java.lang.String) argOption.valueOf("cpu_plot_update"));
     argOption = (AbstractArgumentOption) valuedefinition216.getOptionManager().findByProperty("display");
@@ -709,7 +710,7 @@ public class SystemPerformance
     argOption = (AbstractArgumentOption) valuedefinition216.getOptionManager().findByProperty("defaultValue");
     argOption.setVariable("@{cpu_plot_update}");
     values195[4] = valuedefinition216;
-    adams.flow.source.ValueDefinition valuedefinition221 = new adams.flow.source.ValueDefinition();
+    ValueDefinition valuedefinition221 = new ValueDefinition();
     argOption = (AbstractArgumentOption) valuedefinition221.getOptionManager().findByProperty("name");
     valuedefinition221.setName((java.lang.String) argOption.valueOf("num_files"));
     argOption = (AbstractArgumentOption) valuedefinition221.getOptionManager().findByProperty("display");
@@ -721,7 +722,7 @@ public class SystemPerformance
     argOption = (AbstractArgumentOption) valuedefinition221.getOptionManager().findByProperty("defaultValue");
     argOption.setVariable("@{num_files}");
     values195[5] = valuedefinition221;
-    adams.flow.source.ValueDefinition valuedefinition226 = new adams.flow.source.ValueDefinition();
+    ValueDefinition valuedefinition226 = new ValueDefinition();
     argOption = (AbstractArgumentOption) valuedefinition226.getOptionManager().findByProperty("name");
     valuedefinition226.setName((java.lang.String) argOption.valueOf("num_rand"));
     argOption = (AbstractArgumentOption) valuedefinition226.getOptionManager().findByProperty("display");
@@ -733,7 +734,7 @@ public class SystemPerformance
     argOption = (AbstractArgumentOption) valuedefinition226.getOptionManager().findByProperty("defaultValue");
     argOption.setVariable("@{num_rand}");
     values195[6] = valuedefinition226;
-    adams.flow.source.ValueDefinition valuedefinition231 = new adams.flow.source.ValueDefinition();
+    ValueDefinition valuedefinition231 = new ValueDefinition();
     argOption = (AbstractArgumentOption) valuedefinition231.getOptionManager().findByProperty("name");
     valuedefinition231.setName((java.lang.String) argOption.valueOf("combine_numbers"));
     argOption = (AbstractArgumentOption) valuedefinition231.getOptionManager().findByProperty("display");
@@ -745,7 +746,7 @@ public class SystemPerformance
     argOption = (AbstractArgumentOption) valuedefinition231.getOptionManager().findByProperty("defaultValue");
     argOption.setVariable("@{combine_numbers}");
     values195[7] = valuedefinition231;
-    adams.flow.source.ValueDefinition valuedefinition236 = new adams.flow.source.ValueDefinition();
+    ValueDefinition valuedefinition236 = new ValueDefinition();
     argOption = (AbstractArgumentOption) valuedefinition236.getOptionManager().findByProperty("name");
     valuedefinition236.setName((java.lang.String) argOption.valueOf("outfile"));
     argOption = (AbstractArgumentOption) valuedefinition236.getOptionManager().findByProperty("display");
@@ -757,7 +758,7 @@ public class SystemPerformance
     argOption = (AbstractArgumentOption) valuedefinition236.getOptionManager().findByProperty("defaultValue");
     argOption.setVariable("@{outfile}");
     values195[8] = valuedefinition236;
-    adams.flow.source.ValueDefinition valuedefinition241 = new adams.flow.source.ValueDefinition();
+    ValueDefinition valuedefinition241 = new ValueDefinition();
     argOption = (AbstractArgumentOption) valuedefinition241.getOptionManager().findByProperty("name");
     valuedefinition241.setName((java.lang.String) argOption.valueOf("write_plot_update"));
     argOption = (AbstractArgumentOption) valuedefinition241.getOptionManager().findByProperty("display");

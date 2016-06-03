@@ -27,6 +27,7 @@ import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.core.AutomatableInteractiveActor;
 import adams.flow.core.Token;
+import adams.flow.source.valuedefinition.AbstractValueDefinition;
 import adams.gui.core.PropertiesParameterPanel;
 import adams.gui.dialog.ApprovalDialog;
 
@@ -101,7 +102,7 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default: Please enter values
  * </pre>
  * 
- * <pre>-value &lt;adams.flow.source.ValueDefinition&gt; [-value ...] (property: values)
+ * <pre>-value &lt;adams.flow.source.valuedefinition.ValueDefinition&gt; [-value ...] (property: values)
  * &nbsp;&nbsp;&nbsp;The value definitions that define the dialog prompting the user to enter 
  * &nbsp;&nbsp;&nbsp;the values.
  * &nbsp;&nbsp;&nbsp;default: 

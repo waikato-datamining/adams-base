@@ -350,8 +350,8 @@ adams.flow.source.newlist.AbstractListGenerator=\
   adams.flow.source.newlist
 
 # the value definitions
-adams.flow.source.AbstractValueDefinition=\
-  adams.flow.source
+adams.flow.source.valuedefinition.AbstractValueDefinition=\
+  adams.flow.source.valuedefinition
 
 # flow conditions
 adams.flow.condition.test.TestCondition=\

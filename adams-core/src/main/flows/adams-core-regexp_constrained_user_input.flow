@@ -1,0 +1,7 @@
+# Project: adams
+# Date: 2016-06-03 16:03:28
+# User: fracpete
+# Charset: UTF-8
+adams.flow.control.Flow -annotation "Shows how to use regular expressions to constrain string input,\\nin this case the input must be a valid email address." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.source.EnterManyValues -value "adams.flow.source.valuedefinition.RegExpConstrainedStringDefinition -name email -display \"Enter email\" -regexp ^[_A-Za-z0-9-\\\\+]+(\\\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\\\.[A-Za-z0-9]+)*(\\\\.[A-Za-z]{2,})$ -default-value john@doe.com"
+ adams.flow.sink.Display -writer adams.data.io.output.NullWriter

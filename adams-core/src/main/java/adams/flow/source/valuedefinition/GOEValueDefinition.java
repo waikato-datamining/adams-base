@@ -15,10 +15,10 @@
 
 /**
  * GOEValueDefinition.java
- * Copyright (C) 2015 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton, NZ
  */
 
-package adams.flow.source;
+package adams.flow.source.valuedefinition;
 
 import adams.core.base.BaseClassname;
 import adams.core.base.BaseCommandLine;
@@ -29,7 +29,7 @@ import adams.gui.chooser.AbstractChooserPanel;
 import adams.gui.goe.GenericObjectEditorPanel;
 
 /**
- * Definition for generic WEKA GOE objects.
+ * Definition for generic GOE objects.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$

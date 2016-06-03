@@ -70,7 +70,6 @@ adams.data.report.Field=adams.gui.goe.FieldEditor
 adams.data.report.PrefixField=adams.gui.goe.PrefixFieldEditor
 adams.data.report.SuffixField=adams.gui.goe.SuffixFieldEditor
 adams.flow.core.CallableActorReference=adams.gui.goe.CallableActorReferenceEditor
-adams.flow.source.ValueDefinition=adams.gui.goe.GenericObjectEditor
 adams.core.VariableName=adams.gui.goe.BaseObjectEditor
 adams.core.VariableNameNoUpdate=adams.gui.goe.BaseObjectEditor
 adams.db.SQLStatement=adams.gui.goe.AbstractSimpleScriptEditor

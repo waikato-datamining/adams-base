@@ -18,7 +18,7 @@
  * Copyright (C) 2015 University of Waikato, Hamilton, NZ
  */
 
-package adams.flow.source;
+package adams.flow.source.valuedefinition;
 
 import adams.core.base.BaseClassname;
 import adams.core.base.BaseCommandLine;

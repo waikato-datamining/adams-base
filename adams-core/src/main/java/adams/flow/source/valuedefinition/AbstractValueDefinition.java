@@ -15,12 +15,13 @@
 
 /*
  * AbstractValueDefinition.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton, New Zealand
  */
 
-package adams.flow.source;
+package adams.flow.source.valuedefinition;
 
 import adams.core.option.AbstractOptionHandler;
+import adams.flow.source.EnterManyValues;
 import adams.gui.core.PropertiesParameterPanel;
 import adams.gui.core.PropertiesParameterPanel.PropertyType;
 

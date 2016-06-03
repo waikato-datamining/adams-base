@@ -7,16 +7,12 @@
 # This is used to ensure a minimal backwards compatibility, in case classes
 # get renamed.
 Rename=\
-  Rename-spreadsheet,\
-  Rename-valuedefinition,\
-  Rename-goevaluedefinition
+  Rename-wekagoevaluedefinition
 
 # general format for classname mappings ("rename"):
 # <key>=<old classname>-<new classname>
 #Rename-transformer_reportvalue=adams.flow.transformer.ReportValue-adams.flow.transformer.GetReportValue
-Rename-spreadsheet=adams.data.spreadsheet.SpreadSheet-adams.data.spreadsheet.DefaultSpreadSheet
-Rename-valuedefinition=adams.flow.source.ValueDefinition-adams.flow.source.valuedefinition.ValueDefinition
-Rename-goevaluedefinition=adams.flow.source.GOEValueDefinition-adams.flow.source.valuedefinition.GOEValueDefinition
+Rename-wekagoevaluedefinition=adams.flow.source.WekaGOEValueDefinition-adams.flow.source.valuedefinition.WekaGOEValueDefinition
 
 # Lists the keys that contain partial classname renaming.
 PartialRename=

@@ -14,11 +14,11 @@
  */
 
 /**
- * GOEValueDefinition.java
- * Copyright (C) 2015 University of Waikato, Hamilton, NZ
+ * AbstractGOEValueDefinition.java
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton, NZ
  */
 
-package adams.flow.source;
+package adams.flow.source.valuedefinition;
 
 import adams.core.Utils;
 import adams.core.base.BaseClassname;

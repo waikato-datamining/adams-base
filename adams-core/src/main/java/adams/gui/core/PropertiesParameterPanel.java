@@ -25,6 +25,7 @@ import adams.core.Utils;
 import adams.core.base.BaseDate;
 import adams.core.base.BaseDateTime;
 import adams.core.base.BasePassword;
+import adams.core.base.BaseRegExp;
 import adams.core.base.BaseString;
 import adams.core.base.BaseText;
 import adams.core.base.BaseTime;
@@ -64,11 +65,10 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -145,6 +145,8 @@ public class PropertiesParameterPanel
     RANGE,
     /** regular expression. */
     REGEXP,
+    /** string constrained by regular expression. */
+    REGEXP_CONSTRAINED_STRING,
   }
 
   /** the panel for the properties. */
@@ -154,25 +156,28 @@ public class PropertiesParameterPanel
   protected List<String> m_Identifiers;
 
   /** the property/property type relation. */
-  protected Hashtable<String,PropertyType> m_PropertyTypes;
+  protected HashMap<String,PropertyType> m_PropertyTypes;
 
   /** the actual property/property type relation. */
-  protected Hashtable<String,PropertyType> m_ActualPropertyTypes;
+  protected HashMap<String,PropertyType> m_ActualPropertyTypes;
 
   /** the property/chooser relation. */
-  protected Hashtable<String,AbstractChooserPanel> m_Choosers;
+  protected HashMap<String,AbstractChooserPanel> m_Choosers;
 
   /** the property/enum relation. */
-  protected Hashtable<String,Class> m_Enums;
+  protected HashMap<String,Class> m_Enums;
 
   /** the property/lists relation. */
-  protected Hashtable<String,String[]> m_Lists;
+  protected HashMap<String,String[]> m_Lists;
 
   /** the property/help relation. */
-  protected Hashtable<String,String> m_Help;
+  protected HashMap<String,String> m_Help;
 
   /** the property/label relation. */
-  protected Hashtable<String,String> m_Label;
+  protected HashMap<String,String> m_Label;
+
+  /** the property/regexp relation. */
+  protected HashMap<String,BaseRegExp> m_RegExp;
 
   /** the custom order for the properties. */
   protected List<String> m_Order;
@@ -199,15 +204,16 @@ public class PropertiesParameterPanel
   protected void initialize() {
     super.initialize();
 
-    m_Identifiers         = new ArrayList<String>();
-    m_PropertyTypes       = new Hashtable<String,PropertyType>();
-    m_ActualPropertyTypes = new Hashtable<String,PropertyType>();
-    m_Choosers            = new Hashtable<String,AbstractChooserPanel>();
-    m_Enums               = new Hashtable<String,Class>();
-    m_Lists               = new Hashtable<String,String[]>();
-    m_Help                = new Hashtable<String,String>();
-    m_Label               = new Hashtable<String,String>();
-    m_Order               = new ArrayList<String>();
+    m_Identifiers         = new ArrayList<>();
+    m_PropertyTypes       = new HashMap<>();
+    m_ActualPropertyTypes = new HashMap<>();
+    m_Choosers            = new HashMap<>();
+    m_Enums               = new HashMap<>();
+    m_Lists               = new HashMap<>();
+    m_Help                = new HashMap<>();
+    m_Label               = new HashMap<>();
+    m_RegExp = new HashMap<>();
+    m_Order               = new ArrayList<>();
     m_FileChooser         = null;
     m_DefaultSQLDimension = new Dimension(200, 70);
   }
@@ -233,21 +239,11 @@ public class PropertiesParameterPanel
     m_PanelButtons.add(panel, BorderLayout.WEST);
 
     m_ButtonLoad = new JButton(GUIHelper.getIcon("open.gif"));
-    m_ButtonLoad.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        loadProperties();
-      }
-    });
+    m_ButtonLoad.addActionListener((ActionEvent e) -> loadProperties());
     panel.add(m_ButtonLoad);
 
     m_ButtonSave = new JButton(GUIHelper.getIcon("save.gif"));
-    m_ButtonSave.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        saveProperties();
-      }
-    });
+    m_ButtonSave.addActionListener((ActionEvent e) -> saveProperties());
     panel.add(m_ButtonSave);
   }
 
@@ -612,6 +608,38 @@ public class PropertiesParameterPanel
   }
 
   /**
+   * Checks whether a regexp has been specified for a particular
+   * property.
+   *
+   * @param property	the property check
+   * @return		true if a regexp has been specified
+   */
+  public boolean hasRegExp(String property) {
+    return m_RegExp.containsKey(property);
+  }
+
+  /**
+   * Associates the regexp with a particular property.
+   *
+   * @param property	the property to associate the label with
+   * @param value	the regexp to use
+   */
+  public void setRegExp(String property, BaseRegExp value) {
+    m_RegExp.put(property, value);
+  }
+
+  /**
+   * Returns the regexp associated with a particular
+   * property.
+   *
+   * @param property	the property to get the label for
+   * @return		the regexp, null if none available
+   */
+  public BaseRegExp getRegExp(String property) {
+    return m_RegExp.get(property);
+  }
+
+  /**
    * Sets the properties to base the properties on.
    *
    * @param value	the properties to use
@@ -632,6 +660,7 @@ public class PropertiesParameterPanel
     IndexTextField		indexText;
     RangeTextField		rangeText;
     RegExpTextField		regexpText;
+    RegExpConstrainedTextField	regexpConstText;
     JComboBox			combo;
     String			help;
     BaseString[]		list;
@@ -640,7 +669,7 @@ public class PropertiesParameterPanel
     String			label;
 
     clearProperties();
-    keys = new ArrayList<String>(value.keySetAll());
+    keys = new ArrayList<>(value.keySetAll());
     keys.removeAll(m_Order);
     Collections.sort(keys);
     keys.addAll(0, m_Order);
@@ -853,6 +882,13 @@ public class PropertiesParameterPanel
             regexpText.setToolTipText(help);
             addProperty(key, label, regexpText);
             break;
+	  case REGEXP_CONSTRAINED_STRING:
+            regexpConstText = new RegExpConstrainedTextField(hasRegExp(key) ? getRegExp(key) : new BaseRegExp(BaseRegExp.MATCH_ALL));
+            regexpConstText.setColumns(20);
+            regexpConstText.setText(value.getProperty(key));
+            regexpConstText.setToolTipText(help);
+            addProperty(key, label, regexpConstText);
+            break;
           default:
             throw new IllegalStateException("Unhandled property type (property '" + keys + "'): " + type);
         }
@@ -893,6 +929,7 @@ public class PropertiesParameterPanel
     IndexTextField		indexText;
     RangeTextField		rangeText;
     RegExpTextField		regexpText;
+    RegExpConstrainedTextField	regexpConstText;
     JComboBox			comboEnum;
     BaseString[]		list;
     String			key;
@@ -1001,6 +1038,10 @@ public class PropertiesParameterPanel
         case REGEXP:
           regexpText = (RegExpTextField) comp;
           result.setProperty(key, regexpText.getText());
+          break;
+	case REGEXP_CONSTRAINED_STRING:
+          regexpConstText = (RegExpConstrainedTextField) comp;
+          result.setProperty(key, regexpConstText.getText());
           break;
         default:
           throw new IllegalStateException("Unhandled property type (property '" + key + "'): " + type);
