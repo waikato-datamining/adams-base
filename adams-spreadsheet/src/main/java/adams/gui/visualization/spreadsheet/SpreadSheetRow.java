@@ -227,6 +227,7 @@ public class SpreadSheetRow
     int					i;
     String				fieldStr;
     Cell 				cell;
+    Double				dbl;
 
     clear();
 
@@ -240,7 +241,10 @@ public class SpreadSheetRow
 	continue;
       if ((attTypes != null) && (!attTypes.containsAll(row.getOwner().getContentTypes(i))))
 	continue;
-      list.add(new SpreadSheetRowPoint(i, row.getCell(i).toDouble()));
+      cell = row.getCell(i);
+      if ((cell == null) || cell.isMissing() || !cell.isNumeric())
+	continue;
+      list.add(new SpreadSheetRowPoint(i, cell.toDouble()));
     }
 
     addAll(list);
