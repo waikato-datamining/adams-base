@@ -1,0 +1,27 @@
+# Configuration file for the Spreadsheet Explorer.
+#
+# Author: FracPete (fracpete at waikato dot ac dot nz)
+# Version: $Revision$
+
+# The initial directory for loading files.
+# the following placeholders are recognized
+#   %t - the temp directory
+#   %h - the user's home directory
+#   %p - the project's home directory
+#   %c - the current directory
+#   %% - gets replaced by a single percentage sign
+InitialDir=%h
+
+# The number of recent files to display in the menu.
+MaxRecentFiles=5
+
+# The default attribute index used for sorting (first,last or integer for
+# absolute, 1-based index); leave empty to not set any attribute for sorting
+# by default.
+SortIndex=
+
+# The default range
+AttributeRange=first-last
+
+# Maximum number of containers before switching off anti-aliasing
+MaxNumContainersWithAntiAliasing=50
