@@ -29,10 +29,12 @@ import adams.gui.visualization.core.AbstractColorProvider;
 import adams.gui.visualization.core.DefaultColorProvider;
 import adams.gui.visualization.core.Paintlet;
 import adams.gui.visualization.instance.AbstractInstancePaintlet;
+import adams.gui.visualization.instance.AbstractInstancePanelUpdater;
 import adams.gui.visualization.instance.InstanceContainer;
 import adams.gui.visualization.instance.InstanceContainerManager;
 import adams.gui.visualization.instance.InstanceLinePaintlet;
 import adams.gui.visualization.instance.InstancePanel;
+import adams.gui.visualization.instance.SimpleInstancePanelUpdater;
 
 import java.awt.BorderLayout;
 
@@ -147,6 +149,11 @@ import java.awt.BorderLayout;
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
+ * <pre>-updater &lt;adams.gui.visualization.instance.AbstractInstancePanelUpdater&gt; (property: updater)
+ * &nbsp;&nbsp;&nbsp;The updater in use for updating the visualization.
+ * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.instance.SimpleInstancePanelUpdater
+ * </pre>
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -173,7 +180,10 @@ public class WekaInstanceViewer
   
   /** the name of the attribute/field to use as ID. */
   protected String m_ID;
-  
+
+  /** the updater to use. */
+  protected AbstractInstancePanelUpdater m_Updater;
+
   /**
    * Returns a string describing the object.
    *
@@ -208,6 +218,10 @@ public class WekaInstanceViewer
     m_OptionManager.add(
       "id", "ID",
       "");
+
+    m_OptionManager.add(
+      "updater", "updater",
+      new SimpleInstancePanelUpdater());
   }
 
   /**
@@ -347,6 +361,35 @@ public class WekaInstanceViewer
   }
 
   /**
+   * Sets the updater to use.
+   *
+   * @param value 	the updater
+   */
+  public void setUpdater(AbstractInstancePanelUpdater value) {
+    m_Updater = value;
+    reset();
+  }
+
+  /**
+   * Returns the updater in use.
+   *
+   * @return 		the updater
+   */
+  public AbstractInstancePanelUpdater getUpdater() {
+    return m_Updater;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String updaterTipText() {
+    return "The updater in use for updating the visualization.";
+  }
+
+  /**
    * Clears the content of the panel.
    */
   @Override
@@ -425,7 +468,10 @@ public class WekaInstanceViewer
 
     manager = m_InstancePanel.getContainerManager();
     cont    = manager.newContainer(inst);
+    manager.startUpdate();
     manager.add(cont);
+
+    m_Updater.update((InstancePanel) getPanel(), cont);
   }
 
   /**
@@ -546,5 +592,16 @@ public class WekaInstanceViewer
    */
   public boolean displayPanelRequiresScrollPane() {
     return true;
+  }
+
+  /**
+   * Cleans up after the execution has finished.
+   */
+  @Override
+  public void wrapUp() {
+    if (m_Panel != null)
+      m_Updater.update(m_InstancePanel);
+
+    super.wrapUp();
   }
 }

@@ -43,6 +43,10 @@ adams.flow.transformer.wekaclusterer.AbstractClustererPostProcessor=\
 adams.gui.visualization.instance.AbstractInstancePaintlet=\
   adams.gui.visualization.instance
 
+# the instance panel updaters
+adams.gui.visualization.instance.AbstractInstancePanelUpdater=\
+  adams.gui.visualization.instance
+
 # WEKA file loaders
 weka.core.converters.AbstractFileLoader=\
   weka.core.converters
