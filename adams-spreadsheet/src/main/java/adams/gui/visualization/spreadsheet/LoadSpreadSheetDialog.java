@@ -44,13 +44,13 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.BorderLayout;
 import java.awt.Dialog;
 import java.awt.FlowLayout;
 import java.awt.Frame;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 
 /**
@@ -134,6 +134,12 @@ public class LoadSpreadSheetDialog
   /** the default sort index. */
   protected Index m_DefaultSortIndex;
 
+  /** the listener waiting for the user to accept the input. */
+  protected ChangeListener m_AcceptListener;
+
+  /** the listener waiting for the user to cancel the dialog. */
+  protected ChangeListener m_CancelListener;
+
   /**
    * Creates a modal dialog.
    *
@@ -150,7 +156,7 @@ public class LoadSpreadSheetDialog
    * @param title	the title of the dialog
    */
   public LoadSpreadSheetDialog(Dialog owner, String title) {
-    super(owner, title, ModalityType.DOCUMENT_MODAL);
+    super(owner, title, ModalityType.MODELESS);
   }
 
   /**
@@ -169,7 +175,7 @@ public class LoadSpreadSheetDialog
    * @param title	the title of the dialog
    */
   public LoadSpreadSheetDialog(Frame owner, String title) {
-    super(owner, title, true);
+    super(owner, title, false);
   }
 
   /**
@@ -178,17 +184,19 @@ public class LoadSpreadSheetDialog
   protected void initialize() {
     super.initialize();
 
-    m_Self                               = this;
-    m_Sheet = null;
-    m_ComboBoxSortingModel               = new DefaultComboBoxModel();
+    m_Self                          = this;
+    m_Sheet                         = null;
+    m_ComboBoxSortingModel          = new DefaultComboBoxModel();
     m_ComboBoxSortingModel.addElement(NO_SORTING);
-    m_ComboBoxIDModel                    = new DefaultComboBoxModel();
+    m_ComboBoxIDModel               = new DefaultComboBoxModel();
     m_ComboBoxIDModel.addElement(NO_ID);
-    m_ListAdditionalAttributesModel      = new DefaultListModel();
-    m_DefaultClassIndex                  = new Index();
-    m_DefaultIDIndex                     = new Index();
-    m_DefaultSortIndex                   = new Index();
-    m_DefaultAttributeRange              = new Range(Range.ALL);
+    m_ListAdditionalAttributesModel = new DefaultListModel();
+    m_DefaultClassIndex             = new Index();
+    m_DefaultIDIndex                = new Index();
+    m_DefaultSortIndex              = new Index();
+    m_DefaultAttributeRange         = new Range(Range.ALL);
+    m_AcceptListener                = null;
+    m_CancelListener                = null;
   }
 
   /**
@@ -311,20 +319,12 @@ public class LoadSpreadSheetDialog
     m_ButtonLoad = new JButton("OK");
     m_ButtonLoad.setMnemonic('O');
     m_ButtonLoad.setEnabled(false);
-    m_ButtonLoad.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        acceptSelection();
-      }
-    });
+    m_ButtonLoad.addActionListener((ActionEvent e) -> acceptSelection());
     panelAll.add(m_ButtonLoad);
 
     m_ButtonClose = new JButton("Cancel");
     m_ButtonClose.setMnemonic('l');
-    m_ButtonClose.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        close();
-      }
-    });
+    m_ButtonClose.addActionListener((ActionEvent e) -> close());
     panelAll.add(m_ButtonClose);
 
     pack();
@@ -598,6 +598,9 @@ public class LoadSpreadSheetDialog
       m_Indices[i] = ((Integer) m_TableData.getValueAt(indices[i], 0)) - 1;
 
     setVisible(false);
+
+    if (m_AcceptListener != null)
+      m_AcceptListener.stateChanged(new ChangeEvent(this));
   }
 
   /**
@@ -620,6 +623,9 @@ public class LoadSpreadSheetDialog
     m_Indices = null;
 
     setVisible(false);
+
+    if (m_CancelListener != null)
+      m_CancelListener.stateChanged(new ChangeEvent(this));
   }
 
   /**
@@ -667,5 +673,41 @@ public class LoadSpreadSheetDialog
    */
   public File getCurrent() {
     return m_FilePanel.getCurrent();
+  }
+
+  /**
+   * Sets the listener for the event that the user accepts the input.
+   *
+   * @param l		the listener to use
+   */
+  public void setAcceptListener(ChangeListener l) {
+    m_AcceptListener = l;
+  }
+
+  /**
+   * Returns the listener for the event that the user accepts the input.
+   *
+   * @return		the listener in use, null if none set
+   */
+  public ChangeListener getAcceptListener() {
+    return m_AcceptListener;
+  }
+
+  /**
+   * Sets the listener for the event that the user discarded the input.
+   *
+   * @param l		the listener to use
+   */
+  public void setCancelListener(ChangeListener l) {
+    m_CancelListener = l;
+  }
+
+  /**
+   * Returns the listener for the event that the user discarded the input.
+   *
+   * @return		the listener in use, null if none set
+   */
+  public ChangeListener getCancelListener() {
+    return m_CancelListener;
   }
 }

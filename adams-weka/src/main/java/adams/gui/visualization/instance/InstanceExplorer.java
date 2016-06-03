@@ -166,7 +166,7 @@ public class InstanceExplorer
 
   /** the dialog for the histogram setup. */
   protected HistogramFactory.SetupDialog m_HistogramSetup;
-  
+
   /** the dialog for selecting the color provider. */
   protected GenericObjectEditorDialog m_DialogColorProvider;
 
@@ -534,17 +534,6 @@ public class InstanceExplorer
    * @param file	an optional file, use null to ignore
    */
   public void loadDataFromDisk(File file) {
-    int[]			indices;
-    int[]			additional;
-    int				i;
-    Instances 			dataset;
-    weka.core.Instance		winst;
-    Instance			inst;
-    List<InstanceContainer>	data;
-    Range			range;
-    HashSet<Integer>		attTypes;
-    int 			id;
-
     if (m_LoadFromDiskDialog == null) {
       if (getParentDialog() != null)
 	m_LoadFromDiskDialog = new LoadDatasetDialog(getParentDialog());
@@ -559,54 +548,56 @@ public class InstanceExplorer
       m_LoadFromDiskDialog.setDefaultIncludeAttributes(Attribute.NOMINAL, getProperties().getBoolean("IncludeNominalAttributes", false));
       m_LoadFromDiskDialog.setDefaultIncludeAttributes(Attribute.STRING, getProperties().getBoolean("IncludeStringAttributes", false));
       m_LoadFromDiskDialog.setDefaultIncludeAttributes(Attribute.RELATIONAL, getProperties().getBoolean("IncludeRelationalAttributes", false));
+      m_LoadFromDiskDialog.setAcceptListener((ChangeEvent e) -> {
+	int[] indices = m_LoadFromDiskDialog.getIndices();
+	if (indices == null)
+	  return;
+	if (m_RecentFilesHandler != null)
+	  m_RecentFilesHandler.addRecentItem(m_LoadFromDiskDialog.getCurrent());
+
+	HashSet<Integer> attTypes = new HashSet<>();
+	if (m_LoadFromDiskDialog.getIncludeAttributes(Attribute.NUMERIC))
+	  attTypes.add(Attribute.NUMERIC);
+	if (m_LoadFromDiskDialog.getIncludeAttributes(Attribute.DATE))
+	  attTypes.add(Attribute.DATE);
+	if (m_LoadFromDiskDialog.getIncludeAttributes(Attribute.NOMINAL))
+	  attTypes.add(Attribute.NOMINAL);
+	if (m_LoadFromDiskDialog.getIncludeAttributes(Attribute.STRING))
+	  attTypes.add(Attribute.STRING);
+	if (m_LoadFromDiskDialog.getIncludeAttributes(Attribute.RELATIONAL))
+	  attTypes.add(Attribute.RELATIONAL);
+
+	showStatus("Loading data...");
+	List<InstanceContainer> data = new ArrayList<>();
+	Instances dataset = m_LoadFromDiskDialog.getDataset();
+	int[] additional = m_LoadFromDiskDialog.getAdditionalAttributes();
+	Range range = m_LoadFromDiskDialog.getCurrentAttributeRange();
+	int id = m_LoadFromDiskDialog.getCurrentIDIndex();
+	for (int i = 0; i < indices.length; i++) {
+	  weka.core.Instance winst = dataset.instance(indices[i]);
+	  Instance inst = new Instance();
+	  inst.set(winst, i, additional, range, attTypes);
+	  if (id == -1) {
+	    inst.setID((indices[i] + 1) + "." + dataset.relationName());
+	  }
+	  else {
+	    if (winst.attribute(id).isNumeric())
+	      inst.setID("" + winst.value(id));
+	    else
+	      inst.setID(winst.stringValue(id));
+	  }
+	  data.add(getContainerManager().newContainer(inst));
+	  showStatus("Loading data " + (i+1) + "/" + dataset.numInstances());
+	}
+	loadData(dataset, data);
+
+	showStatus("");
+      });
     }
 
     if (file != null)
       m_LoadFromDiskDialog.setCurrent(file);
     m_LoadFromDiskDialog.setVisible(true);
-    indices = m_LoadFromDiskDialog.getIndices();
-    if (indices == null)
-      return;
-    if (m_RecentFilesHandler != null)
-      m_RecentFilesHandler.addRecentItem(m_LoadFromDiskDialog.getCurrent());
-
-    attTypes = new HashSet<>();
-    if (m_LoadFromDiskDialog.getIncludeAttributes(Attribute.NUMERIC))
-      attTypes.add(Attribute.NUMERIC);
-    if (m_LoadFromDiskDialog.getIncludeAttributes(Attribute.DATE))
-      attTypes.add(Attribute.DATE);
-    if (m_LoadFromDiskDialog.getIncludeAttributes(Attribute.NOMINAL))
-      attTypes.add(Attribute.NOMINAL);
-    if (m_LoadFromDiskDialog.getIncludeAttributes(Attribute.STRING))
-      attTypes.add(Attribute.STRING);
-    if (m_LoadFromDiskDialog.getIncludeAttributes(Attribute.RELATIONAL))
-      attTypes.add(Attribute.RELATIONAL);
-
-    showStatus("Loading data...");
-    data       = new ArrayList<>();
-    dataset    = m_LoadFromDiskDialog.getDataset();
-    additional = m_LoadFromDiskDialog.getAdditionalAttributes();
-    range      = m_LoadFromDiskDialog.getCurrentAttributeRange();
-    id         = m_LoadFromDiskDialog.getCurrentIDIndex();
-    for (i = 0; i < indices.length; i++) {
-      winst = dataset.instance(indices[i]);
-      inst = new Instance();
-      inst.set(winst, i, additional, range, attTypes);
-      if (id == -1) {
-	inst.setID((indices[i] + 1) + "." + dataset.relationName());
-      }
-      else {
-	if (winst.attribute(id).isNumeric())
-	  inst.setID("" + winst.value(id));
-	else
-	  inst.setID(winst.stringValue(id));
-      }
-      data.add(getContainerManager().newContainer(inst));
-      showStatus("Loading data " + (i+1) + "/" + dataset.numInstances());
-    }
-    loadData(dataset, data);
-
-    showStatus("");
   }
 
   /**
@@ -679,16 +670,16 @@ public class InstanceExplorer
 
   /**
    * Sets the zoom overview panel visible or not.
-   * 
+   *
    * @param value	if true then the panel is visible
    */
   public void setZoomOverviewPanelVisible(boolean value) {
     m_PanelInstance.setZoomOverviewPanelVisible(value);
   }
-  
+
   /**
    * Returns whether the zoom overview panel is visible or not.
-   * 
+   *
    * @return		true if visible
    */
   public boolean isZoomOverviewPanelVisible() {
@@ -947,7 +938,7 @@ public class InstanceExplorer
       m_DialogColorProvider.getGOEEditor().setCanChangeClassInDialog(true);
       m_DialogColorProvider.setLocationRelativeTo(this);
     }
-    
+
     m_DialogColorProvider.setCurrent(getContainerManager().getColorProvider().shallowCopy());
     m_DialogColorProvider.setVisible(true);
     if (m_DialogColorProvider.getResult() != GenericObjectEditorDialog.APPROVE_OPTION)
@@ -972,7 +963,7 @@ public class InstanceExplorer
       m_DialogPaintlet.getGOEEditor().setCanChangeClassInDialog(true);
       m_DialogPaintlet.setLocationRelativeTo(this);
     }
-    
+
     m_DialogPaintlet.setCurrent(getInstancePanel().getInstancePaintlet().shallowCopy());
     m_DialogPaintlet.setVisible(true);
     if (m_DialogPaintlet.getResult() != GenericObjectEditorDialog.APPROVE_OPTION)
@@ -985,7 +976,7 @@ public class InstanceExplorer
     getInstancePanel().getZoomOverviewPanel().setDataContainerPanel(getInstancePanel());
     getInstancePanel().setZoomOverviewPanelVisible(zoomVisible);
   }
-  
+
   /**
    * Returns the classes that the supporter generates.
    *

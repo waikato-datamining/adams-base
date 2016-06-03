@@ -459,17 +459,6 @@ public class SpreadSheetExplorer
    * @param file	an optional file, use null to ignore
    */
   public void loadData(File file) {
-    int[]				indices;
-    int[]				additional;
-    int					i;
-    SpreadSheet 			sheet;
-    Row 				srow;
-    SpreadSheetRow 			row;
-    List<SpreadSheetRowContainer>	data;
-    Range				range;
-    HashSet<Integer>			attTypes;
-    int 				id;
-
     if (m_LoadFromDiskDialog == null) {
       if (getParentDialog() != null)
 	m_LoadFromDiskDialog = new LoadSpreadSheetDialog(getParentDialog());
@@ -478,40 +467,42 @@ public class SpreadSheetExplorer
       m_LoadFromDiskDialog.setCurrent(new File(getProperties().getPath("InitialDir", "%h")));
       m_LoadFromDiskDialog.setDefaultAttributeRange(getProperties().getPath("AttributeRange", "first-last"));
       m_LoadFromDiskDialog.setDefaultSortIndex(getProperties().getPath("SortIndex", ""));
+      m_LoadFromDiskDialog.setAcceptListener((ChangeEvent e) -> {
+	int[] indices = m_LoadFromDiskDialog.getIndices();
+	if (indices == null)
+	  return;
+	if (m_RecentFilesHandler != null)
+	  m_RecentFilesHandler.addRecentItem(m_LoadFromDiskDialog.getCurrent());
+
+	showStatus("Loading data...");
+	List<SpreadSheetRowContainer> data = new ArrayList<>();
+	SpreadSheet sheet = m_LoadFromDiskDialog.getSpreadSheet();
+	int[] additional = m_LoadFromDiskDialog.getAdditionalAttributes();
+	Range range = m_LoadFromDiskDialog.getCurrentAttributeRange();
+	int id = m_LoadFromDiskDialog.getCurrentIDIndex();
+	HashSet<Integer> attTypes = null;
+	for (int i = 0; i < indices.length; i++) {
+	  Row srow = sheet.getRow(indices[i]);
+	  SpreadSheetRow row = new SpreadSheetRow();
+	  row.set(srow, i, additional, range, attTypes);
+	  if (id == -1) {
+	    row.setID((indices[i] + 1) + "." + (sheet.getName() != null ? sheet.getName() : "sheet"));
+	  }
+	  else {
+	    row.setID(srow.getCell(id).getContent());
+	  }
+	  data.add(getContainerManager().newContainer(row));
+	  showStatus("Loading data " + (i+1) + "/" + sheet.getRowCount());
+	}
+	loadData(sheet, data);
+
+	showStatus("");
+      });
     }
 
     if (file != null)
       m_LoadFromDiskDialog.setCurrent(file);
     m_LoadFromDiskDialog.setVisible(true);
-    indices = m_LoadFromDiskDialog.getIndices();
-    if (indices == null)
-      return;
-    if (m_RecentFilesHandler != null)
-      m_RecentFilesHandler.addRecentItem(m_LoadFromDiskDialog.getCurrent());
-
-    showStatus("Loading data...");
-    data       = new ArrayList<>();
-    sheet      = m_LoadFromDiskDialog.getSpreadSheet();
-    additional = m_LoadFromDiskDialog.getAdditionalAttributes();
-    range      = m_LoadFromDiskDialog.getCurrentAttributeRange();
-    id         = m_LoadFromDiskDialog.getCurrentIDIndex();
-    attTypes   = null;
-    for (i = 0; i < indices.length; i++) {
-      srow = sheet.getRow(indices[i]);
-      row = new SpreadSheetRow();
-      row.set(srow, i, additional, range, attTypes);
-      if (id == -1) {
-	row.setID((indices[i] + 1) + "." + (sheet.getName() != null ? sheet.getName() : "sheet"));
-      }
-      else {
-	row.setID(srow.getCell(id).getContent());
-      }
-      data.add(getContainerManager().newContainer(row));
-      showStatus("Loading data " + (i+1) + "/" + sheet.getRowCount());
-    }
-    loadData(sheet, data);
-
-    showStatus("");
   }
 
   /**

@@ -15,7 +15,7 @@
 
 /*
  * LoadDatasetDialog.java
- * Copyright (C) 2009-2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.instance;
@@ -30,7 +30,6 @@ import adams.gui.core.GUIHelper;
 import adams.gui.core.SearchPanel;
 import adams.gui.core.SearchPanel.LayoutType;
 import adams.gui.event.SearchEvent;
-import adams.gui.event.SearchListener;
 import weka.core.Attribute;
 import weka.core.Instances;
 
@@ -53,7 +52,6 @@ import java.awt.FlowLayout;
 import java.awt.Frame;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 
 /**
@@ -176,6 +174,12 @@ public class LoadDatasetDialog
   /** the default for relational attributes. */
   protected boolean m_DefaultIncludeRelationalAttributes;
 
+  /** the listener waiting for the user to accept the input. */
+  protected ChangeListener m_AcceptListener;
+
+  /** the listener waiting for the user to cancel the dialog. */
+  protected ChangeListener m_CancelListener;
+
   /**
    * Creates a modal dialog.
    *
@@ -192,7 +196,7 @@ public class LoadDatasetDialog
    * @param title	the title of the dialog
    */
   public LoadDatasetDialog(Dialog owner, String title) {
-    super(owner, title, ModalityType.DOCUMENT_MODAL);
+    super(owner, title, ModalityType.MODELESS);
   }
 
   /**
@@ -211,7 +215,7 @@ public class LoadDatasetDialog
    * @param title	the title of the dialog
    */
   public LoadDatasetDialog(Frame owner, String title) {
-    super(owner, title, true);
+    super(owner, title, false);
   }
 
   /**
@@ -238,6 +242,8 @@ public class LoadDatasetDialog
     m_DefaultIncludeStringAttributes     = false;
     m_DefaultIncludeRelationalAttributes = false;
     m_DefaultAttributeRange              = new Range(Range.ALL);
+    m_AcceptListener                     = null;
+    m_CancelListener                     = null;
   }
 
   /**
@@ -266,23 +272,17 @@ public class LoadDatasetDialog
     m_FilePanel = new DatasetFileChooserPanel();
     m_FilePanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 0, 5));
     m_FilePanel.setPrefix("File");
-    m_FilePanel.addChangeListener(new ChangeListener() {
-      public void stateChanged(ChangeEvent e) {
-        m_ButtonLoad.setEnabled(getFilename().length() > 0);
-        if (m_ButtonLoad.isEnabled())
-          loadFile(false);
-        m_ButtonReload.setEnabled(m_ButtonLoad.isEnabled());
-      }
+    m_FilePanel.addChangeListener((ChangeEvent e) -> {
+      m_ButtonLoad.setEnabled(getFilename().length() > 0);
+      if (m_ButtonLoad.isEnabled())
+        loadFile(false);
+      m_ButtonReload.setEnabled(m_ButtonLoad.isEnabled());
     });
     panel.add(m_FilePanel, BorderLayout.CENTER);
 
     m_ButtonReload = new JButton(GUIHelper.getIcon("refresh.gif"));
     m_ButtonReload.setEnabled(false);
-    m_ButtonReload.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	loadFile(true);
-      }
-    });
+    m_ButtonReload.addActionListener((ActionEvent e) -> loadFile(true));
     panelAttributes = new JPanel(new BorderLayout());
     panelAttributes.setBorder(BorderFactory.createEmptyBorder(5, 0, 0, 0));
     panelAttributes.add(m_ButtonReload, BorderLayout.CENTER);
@@ -304,11 +304,7 @@ public class LoadDatasetDialog
     // search
     m_SearchPanel = new SearchPanel(LayoutType.HORIZONTAL, false);
     m_SearchPanel.setTextColumns(15);
-    m_SearchPanel.addSearchListener(new SearchListener() {
-      public void searchInitiated(SearchEvent e) {
-	search();
-      }
-    });
+    m_SearchPanel.addSearchListener((SearchEvent e) -> search());
     panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     panel.add(m_SearchPanel);
     panel.setBorder(BorderFactory.createEmptyBorder());
@@ -395,20 +391,12 @@ public class LoadDatasetDialog
     m_ButtonLoad = new JButton("OK");
     m_ButtonLoad.setMnemonic('O');
     m_ButtonLoad.setEnabled(false);
-    m_ButtonLoad.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        acceptSelection();
-      }
-    });
+    m_ButtonLoad.addActionListener((ActionEvent e) -> acceptSelection());
     panelAll.add(m_ButtonLoad);
 
     m_ButtonClose = new JButton("Cancel");
     m_ButtonClose.setMnemonic('l');
-    m_ButtonClose.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        close();
-      }
-    });
+    m_ButtonClose.addActionListener((ActionEvent e) -> close());
     panelAll.add(m_ButtonClose);
 
     pack();
@@ -866,6 +854,9 @@ public class LoadDatasetDialog
       m_Indices[i] = ((Integer) m_TableData.getValueAt(indices[i], 0)) - 1;
 
     setVisible(false);
+
+    if (m_AcceptListener != null)
+      m_AcceptListener.stateChanged(new ChangeEvent(this));
   }
 
   /**
@@ -888,6 +879,9 @@ public class LoadDatasetDialog
     m_Indices = null;
 
     setVisible(false);
+
+    if (m_CancelListener != null)
+      m_CancelListener.stateChanged(new ChangeEvent(this));
   }
 
   /**
@@ -935,5 +929,41 @@ public class LoadDatasetDialog
    */
   public File getCurrent() {
     return m_FilePanel.getCurrent();
+  }
+
+  /**
+   * Sets the listener for the event that the user accepts the input.
+   *
+   * @param l		the listener to use
+   */
+  public void setAcceptListener(ChangeListener l) {
+    m_AcceptListener = l;
+  }
+
+  /**
+   * Returns the listener for the event that the user accepts the input.
+   *
+   * @return		the listener in use, null if none set
+   */
+  public ChangeListener getAcceptListener() {
+    return m_AcceptListener;
+  }
+
+  /**
+   * Sets the listener for the event that the user discarded the input.
+   *
+   * @param l		the listener to use
+   */
+  public void setCancelListener(ChangeListener l) {
+    m_CancelListener = l;
+  }
+
+  /**
+   * Returns the listener for the event that the user discarded the input.
+   *
+   * @return		the listener in use, null if none set
+   */
+  public ChangeListener getCancelListener() {
+    return m_CancelListener;
   }
 }
