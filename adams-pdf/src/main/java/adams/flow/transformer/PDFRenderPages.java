@@ -24,11 +24,11 @@ import adams.core.MessageCollection;
 import adams.core.QuickInfoHelper;
 import adams.core.Range;
 import adams.core.io.PDFBox;
-import adams.core.io.PDFBoxRenderer;
 import adams.core.io.PlaceholderFile;
 import adams.data.image.BufferedImageContainer;
 import adams.flow.core.Token;
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.rendering.PDFRenderer;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -208,7 +208,7 @@ public class PDFRenderPages
     File			file;
     PDDocument 			doc;
     BufferedImageContainer	cont;
-    PDFBoxRenderer		renderer;
+    PDFRenderer			renderer;
     BufferedImage		img;
     MessageCollection		errors;
 
@@ -225,7 +225,7 @@ public class PDFRenderPages
       if (isLoggingEnabled())
 	getLogger().info("Rendering pages from '" + file + "'");
       m_Pages.setMax(doc.getNumberOfPages());
-      renderer = new PDFBoxRenderer(doc);
+      renderer = new PDFRenderer(doc);
       errors   = new MessageCollection();
       for (int page: m_Pages.getIntIndices()) {
 	if (isLoggingEnabled())
