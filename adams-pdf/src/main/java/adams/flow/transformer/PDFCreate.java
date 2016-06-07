@@ -20,19 +20,18 @@
 
 package adams.flow.transformer;
 
-import java.io.File;
-
 import adams.core.QuickInfoHelper;
-import adams.flow.transformer.pdfproclet.AbstractPdfProclet;
-import adams.flow.transformer.pdfproclet.SpreadSheet;
 import adams.core.io.FileUtils;
-import adams.flow.transformer.pdfproclet.Image;
-import adams.core.io.PDFGenerator;
-import adams.core.io.PDFGenerator.PageOrientation;
-import adams.core.io.PDFGenerator.PageSize;
 import adams.core.io.PlaceholderFile;
-import adams.flow.transformer.pdfproclet.PlainText;
 import adams.flow.core.Token;
+import adams.flow.transformer.PDFGenerator.PageOrientation;
+import adams.flow.transformer.PDFGenerator.PageSize;
+import adams.flow.transformer.pdfproclet.AbstractPdfProclet;
+import adams.flow.transformer.pdfproclet.Image;
+import adams.flow.transformer.pdfproclet.PlainText;
+import adams.flow.transformer.pdfproclet.SpreadSheet;
+
+import java.io.File;
 
 /**
  <!-- globalinfo-start -->

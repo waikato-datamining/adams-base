@@ -17,8 +17,10 @@
  * PDF.java
  * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
  */
-package adams.core.io;
+package adams.flow.transformer;
 
+import adams.core.io.FileUtils;
+import adams.core.io.PlaceholderFile;
 import adams.flow.transformer.pdfproclet.AbstractPdfProclet;
 import adams.flow.transformer.pdfproclet.AbstractPdfProclet.DocumentState;
 import adams.env.Environment;
