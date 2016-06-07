@@ -15,13 +15,14 @@
 
 /**
  * AdditionalOptions.java
- * Copyright (C) 2010-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.core;
 
-import java.util.Hashtable;
-
 import adams.core.Utils;
+import adams.core.io.PlaceholderFile;
+
+import java.util.Hashtable;
 
 /**
  * An extended Hashtable class for easier retrieval of options.
@@ -80,6 +81,16 @@ public class AdditionalOptions
    */
   public void putString(String key, String value) {
     put(key, value);
+  }
+
+  /**
+   * Stores the given placeholder file value under the specified key.
+   *
+   * @param key		the key to store the value under
+   * @param value	the placeholder file value to store
+   */
+  public void putPlaceholderFile(String key, PlaceholderFile value) {
+    put(key, value.toString());
   }
 
   /**
@@ -201,6 +212,30 @@ public class AdditionalOptions
   public String getString(String key, String defValue) {
     if (containsKey(key))
       return get(key);
+    else
+      return defValue;
+  }
+
+  /**
+   * Returns the stored placeholder file.
+   *
+   * @param key		the key to look for
+   * @return		the value or null if not found
+   */
+  public PlaceholderFile getPlaceholderFile(String key) {
+    return getPlaceholderFile(key, null);
+  }
+
+  /**
+   * Returns the stored placeholder file or the default value if not found.
+   *
+   * @param key		the key to look for
+   * @param defValue	the default value
+   * @return		the value or the default value if not found
+   */
+  public PlaceholderFile getPlaceholderFile(String key, PlaceholderFile defValue) {
+    if (containsKey(key))
+      return new PlaceholderFile(get(key));
     else
       return defValue;
   }
