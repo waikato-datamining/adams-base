@@ -131,12 +131,9 @@ public class Image
    * @param value	the degrees
    */
   public void setRotation(int value) {
-    if ((value >= 0) && (value <= 360)) {
+    if (getOptionManager().isValid("rotation", value)) {
       m_Rotation = value;
       reset();
-    }
-    else {
-      getLogger().warning("Degrees must be from 0 to 360!");
     }
   }
 
@@ -165,12 +162,9 @@ public class Image
    * @param value	the scale factor, 0 to turn off scaling
    */
   public void setScale(double value) {
-    if ((value >= 0) && (value <= 1)) {
+    if (getOptionManager().isValid("scale", value)) {
       m_Scale = value;
       reset();
-    }
-    else {
-      getLogger().warning("Scale must satisfy 0 <= x <= 1!");
     }
   }
 
