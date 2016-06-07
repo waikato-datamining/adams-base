@@ -194,7 +194,7 @@ public class PDFMetaData
 
     try {
       row      = sheet.addRow();
-      document = PDDocument.load(file.getAbsolutePath());
+      document = PDDocument.load(file.getAbsoluteFile());
       info     = document.getDocumentInformation();
 
       addCell(row, "Title",             info.getTitle());

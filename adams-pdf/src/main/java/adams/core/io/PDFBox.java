@@ -15,14 +15,19 @@
 
 /**
  * PDFBox.java
- * Copyright (C) 2015 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton, NZ
  */
 
 package adams.core.io;
 
+import adams.core.logging.LoggingHelper;
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.printing.PDFPageable;
 
+import java.awt.print.PrinterJob;
 import java.io.File;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Helper class for PDFBox library.
@@ -31,6 +36,9 @@ import java.io.File;
  * @version $Revision$
  */
 public class PDFBox {
+
+  /** the logger in use. */
+  private static Logger LOGGER = LoggingHelper.getLogger(PDFBox.class);
 
   /**
    * Loads the PDF file.
@@ -53,8 +61,7 @@ public class PDFBox {
       return PDDocument.load(file.getAbsoluteFile());
     }
     catch (Exception e) {
-      System.err.println("Failed to load PDF: " + file);
-      e.printStackTrace();
+      LOGGER.log(Level.SEVERE, "Failed to load PDF: " + file, e);
       return null;
     }
   }
@@ -101,8 +108,7 @@ public class PDFBox {
       result = true;
     }
     catch (Exception e) {
-      System.err.println("Failed to save PDF document to file '" + file + "':");
-      e.printStackTrace();
+      LOGGER.log(Level.SEVERE, "Failed to save PDF document to file '" + file + "':", e);
       result = false;
     }
 
@@ -147,12 +153,57 @@ public class PDFBox {
    */
   public static boolean print(PDDocument document) {
     try {
-      document.print();
+      PrinterJob job = PrinterJob.getPrinterJob();
+      job.setPageable(new PDFPageable(document));
+      job.print();
       return true;
     }
     catch (Exception e) {
-      System.err.println("Failed to print PDF document!");
-      e.printStackTrace();
+      LOGGER.log(Level.SEVERE, "Failed to print PDF document!", e);
+      return false;
+    }
+  }
+
+  /**
+   * Prints the PDF document, bringing up a dialog.
+   *
+   * @param file	the PDF file print
+   * @return		true if successfully printed
+   */
+  public static boolean printWithDialog(File file) {
+    boolean	result;
+    PDDocument	document;
+
+    result   = false;
+    document = load(file);
+    if (document != null) {
+      result = print(document);
+      close(document);
+    }
+
+    return result;
+  }
+
+  /**
+   * Prints the PDF document, bringing up a dialog.
+   *
+   * @param document	the PDF document to print
+   * @return		true if successfully printed
+   */
+  public static boolean printWithDialog(PDDocument document) {
+    try {
+      PrinterJob job = PrinterJob.getPrinterJob();
+      job.setPageable(new PDFPageable(document));
+      if (job.printDialog()) {
+	job.print();
+	return true;
+      }
+      else {
+	return false;
+      }
+    }
+    catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Failed to print PDF document!", e);
       return false;
     }
   }

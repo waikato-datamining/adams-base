@@ -75,6 +75,20 @@
       <groupId>org.openimaj</groupId>
       <artifactId>image-processing</artifactId>
       <version>${openimaj.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>jama</groupId>
+          <artifactId>jama</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>bouncycastle</groupId>
+          <artifactId>bcmail-jdk14</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>bouncycastle</groupId>
+          <artifactId>bcprov-jdk14</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
