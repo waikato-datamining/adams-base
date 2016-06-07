@@ -14,8 +14,8 @@
  */
 
 /**
- * VariableFileExtensionPdfProclet.java
- * Copyright (C) 2010 University of Waikato, Hamilton, New Zealand
+ * PdfProcletWithVariableFileExtension.java
+ * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer.pdfproclet;
 
