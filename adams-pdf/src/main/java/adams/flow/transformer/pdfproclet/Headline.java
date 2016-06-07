@@ -334,20 +334,12 @@ public class Headline
    */
   protected boolean doProcess(PDFGenerator generator, File file) throws Exception {
     boolean	result;
-    String[]	paragraphs;
-    int		i;
 
     result = addFilename(generator, file);
-    if (!result)
-      return result;
-
-    paragraphs = m_Headline.getValue().split("\n");
-    for (i = 0; i < paragraphs.length; i++) {
-      result = generator.getDocument().add(new Paragraph(paragraphs[i], m_FontHeadline.toFont(m_ColorHeadline)));
+    if (result) {
+      result = generator.getDocument().add(new Paragraph(m_Headline.getValue(), m_FontHeadline.toFont(m_ColorHeadline)));
       if (result)
-	generator.getState().contentAdded();
-      else
-	break;
+        generator.getState().contentAdded();
     }
 
     return result;

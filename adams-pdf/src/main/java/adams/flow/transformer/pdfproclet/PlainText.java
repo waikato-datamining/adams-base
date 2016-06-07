@@ -19,6 +19,7 @@
  */
 package adams.flow.transformer.pdfproclet;
 
+import adams.core.Utils;
 import adams.core.base.BaseString;
 import adams.core.io.FileUtils;
 import adams.core.io.PdfFont;
@@ -242,19 +243,13 @@ public class PlainText
   protected boolean doProcess(PDFGenerator generator, File file) throws Exception {
     boolean		result;
     List<String>	paragraphs;
-    int			i;
 
     result = addFilename(generator, file);
-    if (!result)
-      return result;
-
-    paragraphs = FileUtils.loadFromFile(file);
-    for (i = 0; i < paragraphs.size(); i++) {
-      result = generator.getDocument().add(new Paragraph(paragraphs.get(i), m_FontContent.toFont(m_ColorContent)));
+    if (result) {
+      paragraphs = FileUtils.loadFromFile(file);
+      result = generator.getDocument().add(new Paragraph(Utils.flatten(paragraphs, "\n"), m_FontContent.toFont(m_ColorContent)));
       if (result)
 	generator.getState().contentAdded();
-      else
-	break;
     }
 
     return result;

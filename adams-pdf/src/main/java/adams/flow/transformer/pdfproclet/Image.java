@@ -217,23 +217,22 @@ public class Image
     float	scale;
 
     result = addFilename(generator, file);
-    if (!result)
-      return result;
-
-    image = com.itextpdf.text.Image.getInstance(file.getAbsolutePath());
-    if (m_Rotation != 0) {
-      image.setRotationDegrees(m_Rotation);
-      image.rotate();
+    if (result) {
+      image = com.itextpdf.text.Image.getInstance(file.getAbsolutePath());
+      if (m_Rotation != 0) {
+	image.setRotationDegrees(m_Rotation);
+	image.rotate();
+      }
+      if (m_Scale > 0) {
+	scale = (float) m_Scale;
+	image.scaleToFit(
+	  generator.getDocument().getPageSize().getWidth() * scale,
+	  generator.getDocument().getPageSize().getHeight() * scale);
+      }
+      result = generator.getDocument().add(image);
+      if (result)
+	generator.getState().contentAdded();
     }
-    if (m_Scale > 0) {
-      scale = (float) m_Scale;
-      image.scaleToFit(
-	  generator.getDocument().getPageSize().getWidth()*scale,
-	  generator.getDocument().getPageSize().getHeight()*scale);
-    }
-    result = generator.getDocument().add(image);
-    if (result)
-      generator.getState().contentAdded();
 
     return result;
   }
