@@ -207,8 +207,10 @@ public class PDFViewer
    */
   @Override
   public void clearPanel() {
-    if (m_PDFPanel != null)
+    if (m_PDFPanel != null) {
+      JPod.close(m_PDFPanel.getDocument());
       m_PDFPanel.setDocument(null);
+    }
   }
 
   /**
@@ -239,6 +241,7 @@ public class PDFViewer
    */
   @Override
   protected void display(Token token) {
+    clearPanel();
     if (token.getPayload() instanceof String)
       m_PDFPanel.setDocument(JPod.load(new PlaceholderFile((String) token.getPayload())));
     else if (token.getPayload() instanceof File)
