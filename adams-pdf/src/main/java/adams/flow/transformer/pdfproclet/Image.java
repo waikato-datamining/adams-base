@@ -229,9 +229,7 @@ public class Image
 	  generator.getDocument().getPageSize().getWidth() * scale,
 	  generator.getDocument().getPageSize().getHeight() * scale);
       }
-      result = generator.getDocument().add(image);
-      if (result)
-	generator.getState().contentAdded();
+      result = addElement(generator, image);
     }
 
     return result;

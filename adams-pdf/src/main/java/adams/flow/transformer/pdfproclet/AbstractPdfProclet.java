@@ -22,6 +22,7 @@ package adams.flow.transformer.pdfproclet;
 import adams.core.base.BaseString;
 import adams.core.io.PdfFont;
 import adams.core.option.AbstractOptionHandler;
+import com.itextpdf.text.Element;
 import com.itextpdf.text.Paragraph;
 
 import java.awt.Color;
@@ -169,26 +170,41 @@ public abstract class AbstractPdfProclet
   }
 
   /**
+   * Adds the element to the document.
+   *
+   * @param generator	the context
+   * @param element	the element to add
+   * @return		true if successfully added
+   * @throws Exception	if adding fails
+   */
+  protected boolean addElement(PDFGenerator generator, Element element) throws Exception {
+    boolean	result;
+
+    result = generator.getDocument().add(element);
+    if (result)
+      generator.getState().contentAdded();
+
+    return result;
+  }
+
+  /**
    * Adds the filename to the page as header, if necessary.
    *
    * @param generator	the context
    * @param file	the plain text file
-   * @return		true if sucessfully added
+   * @return		true if successfully added
    * @throws Exception	if something goes wrong
    */
   protected boolean addFilename(PDFGenerator generator, File file) throws Exception {
     boolean	result;
-    Paragraph	para;
 
     result = true;
 
     // add filename?
-    if (m_AddFilename) {
-      para = new Paragraph(file.getName() + "\n", m_FontFilename.toFont(m_ColorFilename));
-      result = generator.getDocument().add(para);
-      if (result)
-	generator.getState().contentAdded();
-    }
+    if (m_AddFilename)
+      result = addElement(
+	generator,
+	new Paragraph(file.getName() + "\n", m_FontFilename.toFont(m_ColorFilename)));
 
     return result;
   }

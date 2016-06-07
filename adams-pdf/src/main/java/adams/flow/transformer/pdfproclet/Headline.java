@@ -336,11 +336,8 @@ public class Headline
     boolean	result;
 
     result = addFilename(generator, file);
-    if (result) {
-      result = generator.getDocument().add(new Paragraph(m_Headline.getValue(), m_FontHeadline.toFont(m_ColorHeadline)));
-      if (result)
-        generator.getState().contentAdded();
-    }
+    if (result)
+      addElement(generator, new Paragraph(m_Headline.getValue(), m_FontHeadline.toFont(m_ColorHeadline)));
 
     return result;
   }

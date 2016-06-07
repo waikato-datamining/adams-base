@@ -19,6 +19,7 @@
  */
 package adams.flow.transformer.pdfproclet;
 
+import adams.core.Utils;
 import adams.core.base.BaseString;
 import adams.core.io.PdfFont;
 import adams.data.io.input.CsvSpreadSheetReader;
@@ -46,6 +47,22 @@ import java.text.DecimalFormat;
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  * 
+ * <pre>-add-filename &lt;boolean&gt; (property: addFilename)
+ * &nbsp;&nbsp;&nbsp;Whether to add the file name before the actual file content as separate 
+ * &nbsp;&nbsp;&nbsp;paragraph.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-font-filename &lt;adams.core.io.PdfFont&gt; (property: fontFilename)
+ * &nbsp;&nbsp;&nbsp;The font to use for printing the file name header.
+ * &nbsp;&nbsp;&nbsp;default: Helvetica-Bold-12
+ * </pre>
+ * 
+ * <pre>-color-filename &lt;java.awt.Color&gt; (property: colorFilename)
+ * &nbsp;&nbsp;&nbsp;The color to use for printing the file name header.
+ * &nbsp;&nbsp;&nbsp;default: #000000
+ * </pre>
+ * 
  * <pre>-page-break-before &lt;boolean&gt; (property: pageBreakBefore)
  * &nbsp;&nbsp;&nbsp;If true, then a page-break is added before the content of the file is inserted.
  * &nbsp;&nbsp;&nbsp;default: false
@@ -63,20 +80,9 @@ import java.text.DecimalFormat;
  * &nbsp;&nbsp;&nbsp;minimum: -1
  * </pre>
  * 
- * <pre>-add-filename &lt;boolean&gt; (property: addFilename)
- * &nbsp;&nbsp;&nbsp;Whether to add the file name before the actual file content as separate 
- * &nbsp;&nbsp;&nbsp;paragraph.
+ * <pre>-add-comments &lt;boolean&gt; (property: addComments)
+ * &nbsp;&nbsp;&nbsp;If enabled, the spreadsheet comments (if any) get added before the table.
  * &nbsp;&nbsp;&nbsp;default: false
- * </pre>
- * 
- * <pre>-font-filename &lt;adams.core.io.PdfFont&gt; (property: fontFilename)
- * &nbsp;&nbsp;&nbsp;The font to use for printing the file name header.
- * &nbsp;&nbsp;&nbsp;default: Helvetica-Bold-12
- * </pre>
- * 
- * <pre>-color-filename &lt;java.awt.Color&gt; (property: colorFilename)
- * &nbsp;&nbsp;&nbsp;The color to use for printing the file name header.
- * &nbsp;&nbsp;&nbsp;default: #000000
  * </pre>
  * 
  * <pre>-font-comments &lt;adams.core.io.PdfFont&gt; (property: fontComments)
@@ -132,7 +138,7 @@ import java.text.DecimalFormat;
  * 
  * <pre>-reader &lt;adams.data.io.input.SpreadSheetReader&gt; (property: reader)
  * &nbsp;&nbsp;&nbsp;The reader to use for loading the spreadsheet files.
- * &nbsp;&nbsp;&nbsp;default: adams.data.io.input.CsvSpreadSheetReader -spreadsheet-type adams.data.spreadsheet.SpreadSheet
+ * &nbsp;&nbsp;&nbsp;default: adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.DefaultSpreadSheet
  * </pre>
  * 
  <!-- options-end -->
@@ -146,6 +152,9 @@ public class SpreadSheet
 
   /** for serialization. */
   private static final long serialVersionUID = -5894153152920062499L;
+
+  /** whether to add the comments. */
+  protected boolean m_AddComments;
 
   /** the font for the comments. */
   protected PdfFont m_FontComments;
@@ -176,7 +185,7 @@ public class SpreadSheet
 
   /** the number of decimals for numbers in tables. */
   protected int m_NumDecimals;
-  
+
   /** the reader to use for loading the csv files. */
   protected SpreadSheetReader m_Reader;
 
@@ -198,48 +207,81 @@ public class SpreadSheet
     super.defineOptions();
 
     m_OptionManager.add(
-	    "font-comments", "fontComments",
-	    new PdfFont(PdfFont.HELVETICA, PdfFont.ITALIC, 12.0f));
+      "add-comments", "addComments",
+      false);
 
     m_OptionManager.add(
-	    "color-comments", "colorComments",
-	    Color.DARK_GRAY);
+      "font-comments", "fontComments",
+      new PdfFont(PdfFont.HELVETICA, PdfFont.ITALIC, 12.0f));
 
     m_OptionManager.add(
-	    "font-table-header", "fontTableHeader",
-	    new PdfFont(PdfFont.HELVETICA, PdfFont.BOLD, 12.0f));
+      "color-comments", "colorComments",
+      Color.DARK_GRAY);
 
     m_OptionManager.add(
-	    "color-table-header", "colorTableHeader",
-	    Color.BLACK);
+      "font-table-header", "fontTableHeader",
+      new PdfFont(PdfFont.HELVETICA, PdfFont.BOLD, 12.0f));
 
     m_OptionManager.add(
-	    "font-general-content", "fontGeneralContent",
-	    new PdfFont(PdfFont.HELVETICA, PdfFont.NORMAL, 12.0f));
+      "color-table-header", "colorTableHeader",
+      Color.BLACK);
 
     m_OptionManager.add(
-	    "color-general-content", "colorGeneralContent",
-	    Color.BLACK);
+      "font-general-content", "fontGeneralContent",
+      new PdfFont(PdfFont.HELVETICA, PdfFont.NORMAL, 12.0f));
 
     m_OptionManager.add(
-	    "font-numeric-content", "fontNumericContent",
-	    new PdfFont(PdfFont.HELVETICA, PdfFont.NORMAL, 12.0f));
+      "color-general-content", "colorGeneralContent",
+      Color.BLACK);
 
     m_OptionManager.add(
-	    "color-numeric-content", "colorNumericContent",
-	    Color.BLACK);
+      "font-numeric-content", "fontNumericContent",
+      new PdfFont(PdfFont.HELVETICA, PdfFont.NORMAL, 12.0f));
 
     m_OptionManager.add(
-	    "num-decimals", "numDecimals",
-	    1, 0, null);
+      "color-numeric-content", "colorNumericContent",
+      Color.BLACK);
 
     m_OptionManager.add(
-	    "extension", "extensions",
-	    new BaseString[]{new BaseString("csv")});
+      "num-decimals", "numDecimals",
+      1, 0, null);
 
     m_OptionManager.add(
-	    "reader", "reader",
-	    new CsvSpreadSheetReader());
+      "extension", "extensions",
+      new BaseString[]{new BaseString("csv")});
+
+    m_OptionManager.add(
+      "reader", "reader",
+      new CsvSpreadSheetReader());
+  }
+
+  /**
+   * Sets whether to add the comments.
+   *
+   * @param value	true if to add
+   */
+  public void setAddComments(boolean value) {
+    m_AddComments = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to add the comments.
+   *
+   * @return 		true if to add
+   */
+  public boolean getAddComments() {
+    return m_AddComments;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String addCommentsTipText() {
+    return "If enabled, the spreadsheet comments (if any) get added before the table.";
   }
 
   /**
@@ -606,11 +648,9 @@ public class SpreadSheet
       return result;
 
     // comments
-    for (i = 0; i < sheet.getComments().size(); i++) {
-      result = generator.getDocument().add(new Paragraph(sheet.getComments().get(i), m_FontComments.toFont(m_ColorComments)));
-      if (result)
-	generator.getState().contentAdded();
-      else
+    if (m_AddComments) {
+      result = addElement(generator, new Paragraph(Utils.flatten(sheet.getComments(), "\n"), m_FontComments.toFont(m_ColorComments)));
+      if (!result)
 	return result;
     }
 
@@ -644,11 +684,9 @@ public class SpreadSheet
 	table.addCell(pdfCell);
       }
     }
-    result = generator.getDocument().add(new Paragraph("\n"));
-    if (result) {
-      generator.getState().contentAdded();
-      result = generator.getDocument().add(table);
-    }
+    result = addElement(generator, new Paragraph("\n"));
+    if (result)
+      result = addElement(generator, table);
 
     return result;
   }

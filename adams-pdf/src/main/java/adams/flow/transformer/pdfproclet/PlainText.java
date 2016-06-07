@@ -247,9 +247,9 @@ public class PlainText
     result = addFilename(generator, file);
     if (result) {
       paragraphs = FileUtils.loadFromFile(file);
-      result = generator.getDocument().add(new Paragraph(Utils.flatten(paragraphs, "\n"), m_FontContent.toFont(m_ColorContent)));
-      if (result)
-	generator.getState().contentAdded();
+      result = addElement(
+	generator,
+	new Paragraph(Utils.flatten(paragraphs, "\n"), m_FontContent.toFont(m_ColorContent)));
     }
 
     return result;
