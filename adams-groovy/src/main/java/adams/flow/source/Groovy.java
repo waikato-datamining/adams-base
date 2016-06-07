@@ -136,6 +136,6 @@ public class Groovy
    * @return		true if there is pending output
    */
   public boolean hasPendingOutput() {
-    return ((OutputProducer) m_ActorObject).hasPendingOutput();
+    return (m_ActorObject != null) && ((OutputProducer) m_ActorObject).hasPendingOutput();
   }
 }

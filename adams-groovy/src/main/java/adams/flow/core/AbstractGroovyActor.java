@@ -58,6 +58,16 @@ public abstract class AbstractGroovyActor
   }
 
   /**
+   * Resets the scheme.
+   */
+  @Override
+  protected void reset() {
+    super.reset();
+
+    m_ActorObject = null;
+  }
+
+  /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
@@ -163,19 +173,21 @@ public abstract class AbstractGroovyActor
   }
 
   /**
-   * Initializes the item for flow execution.
+   * Pre-execute hook.
    *
    * @return		null if everything is fine, otherwise error message
    */
   @Override
-  public String setUp() {
+  public String preExecute() {
     String	result;
 
-    result = super.setUp();
+    result = super.preExecute();
 
     if (result == null) {
-      m_ActorObject = (Actor) m_ScriptObject;
-      result        = m_ActorObject.setUp();
+      if (m_ActorObject == null) {
+        m_ActorObject = (Actor) m_ScriptObject;
+        result = m_ActorObject.setUp();
+      }
     }
 
     return result;

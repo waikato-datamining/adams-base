@@ -170,7 +170,6 @@ public class Scripted
    */
   public void input(Token token) {
     m_InputToken = token;
-    ((InputConsumer) m_ActorObject).input(token);
   }
 
   /**
@@ -212,11 +211,12 @@ public class Scripted
   protected String doExecute() {
     String	result;
     
-    m_InputToken = null;
-
     result = updateScriptOptions();
-    if (result == null)
+    if (result == null) {
+      ((InputConsumer) m_ActorObject).input(m_InputToken);
       result = m_ActorObject.execute();
+    }
+    m_InputToken = null;
     
     return result;
   }
@@ -237,7 +237,7 @@ public class Scripted
    * @return		true if there is pending output
    */
   public boolean hasPendingOutput() {
-    return ((OutputProducer) m_ActorObject).hasPendingOutput();
+    return (m_ActorObject != null) && ((OutputProducer) m_ActorObject).hasPendingOutput();
   }
 
   /**

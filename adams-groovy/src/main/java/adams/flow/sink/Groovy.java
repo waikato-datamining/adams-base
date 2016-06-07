@@ -152,7 +152,6 @@ public class Groovy
    */
   public void input(Token token) {
     m_InputToken = token;
-    ((InputConsumer) m_ActorObject).input(token);
   }
 
   /**
@@ -182,12 +181,13 @@ public class Groovy
   protected String doExecute() {
     String	result;
     
-    m_InputToken = null;
-    
     result = updateScriptOptions();
-    if (result == null)
+    if (result == null) {
+      ((InputConsumer) m_ActorObject).input(m_InputToken);
       result = m_ActorObject.execute();
-    
+    }
+    m_InputToken = null;
+
     return result;
   }
 

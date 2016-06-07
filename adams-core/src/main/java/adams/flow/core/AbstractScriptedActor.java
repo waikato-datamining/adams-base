@@ -15,7 +15,7 @@
 
 /*
  *    AbstractScriptedActor.java
- *    Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ *    Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -221,15 +221,15 @@ public abstract class AbstractScriptedActor
   }
 
   /**
-   * Initializes the item for flow execution.
+   * Pre-execute hook.
    *
    * @return		null if everything is fine, otherwise error message
    */
   @Override
-  public String setUp() {
+  public String preExecute() {
     String	result;
 
-    result = super.setUp();
+    result = super.preExecute();
 
     if (result == null)
       result = initScriptObject();
