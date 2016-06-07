@@ -1,8 +1,8 @@
 # Project: adams
-# Date: 2016-06-08 09:44:02
+# Date: 2016-06-08 10:45:39
 # User: fracpete
 # Charset: UTF-8
 adams.flow.control.Flow -annotation "Generating a PDF from existing files is very easy as this flow\\ndemonstrates. The PDF actor adds all files that it can handle\\nfrom the array received as input, using the specified proclets." -flow-execution-listener adams.flow.execution.NullListener
  adams.flow.source.FileSystemSearch -output-array true -search "adams.flow.source.filesystemsearch.FileSearch -directory ${EXAMPLE_FLOWS}/data -regexp (bolts.csv|lorem.txt|366.*.jpg)"
- adams.flow.transformer.PDFCreate -output ${EXAMPLE_FLOWS}/output/out.pdf -proclet "adams.flow.transformer.pdfproclet.PlainText -page-break-before true -font-content Courier-Normal-10" -proclet "adams.flow.transformer.pdfproclet.SpreadSheet -page-break-before true -reader \"adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.DefaultSpreadSheet\"" -proclet "adams.flow.transformer.pdfproclet.Image -page-break-before true -scale 0.75"
+ adams.flow.transformer.PDFCreate -output ${EXAMPLE_FLOWS}/output/out.pdf -proclet "adams.flow.transformer.pdfproclet.PlainText -page-break-before true -font-content Courier-Normal-10" -proclet "adams.flow.transformer.pdfproclet.SpreadSheet -page-break-before true -reader \"adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.DefaultSpreadSheet\"" -proclet "adams.flow.transformer.pdfproclet.Image -page-break-before true -scale 0.75 -use-absolute-position true -x 50.0 -y 100.0"
  adams.flow.sink.PDFViewer -writer adams.gui.print.NullWriter -zoom 75.0

@@ -30,67 +30,84 @@ import java.io.File;
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- *
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- *
- * <pre>-page-break-before (property: pageBreakBefore)
+ * 
+ * <pre>-add-filename &lt;boolean&gt; (property: addFilename)
+ * &nbsp;&nbsp;&nbsp;Whether to add the file name before the actual file content as separate 
+ * &nbsp;&nbsp;&nbsp;paragraph.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-font-filename &lt;adams.core.io.PdfFont&gt; (property: fontFilename)
+ * &nbsp;&nbsp;&nbsp;The font to use for printing the file name header.
+ * &nbsp;&nbsp;&nbsp;default: Helvetica-Bold-12
+ * </pre>
+ * 
+ * <pre>-color-filename &lt;java.awt.Color&gt; (property: colorFilename)
+ * &nbsp;&nbsp;&nbsp;The color to use for printing the file name header.
+ * &nbsp;&nbsp;&nbsp;default: #000000
+ * </pre>
+ * 
+ * <pre>-page-break-before &lt;boolean&gt; (property: pageBreakBefore)
  * &nbsp;&nbsp;&nbsp;If true, then a page-break is added before the content of the file is inserted.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
- * <pre>-page-break-after (property: pageBreakAfter)
+ * 
+ * <pre>-page-break-after &lt;boolean&gt; (property: pageBreakAfter)
  * &nbsp;&nbsp;&nbsp;If true, then a page-break is added after the content of the file is inserted.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-num-files &lt;int&gt; (property: numFilesPerPage)
  * &nbsp;&nbsp;&nbsp;The number of files to put on a page before adding an automatic page break;
  * &nbsp;&nbsp;&nbsp; use -1 for unlimited.
  * &nbsp;&nbsp;&nbsp;default: -1
  * &nbsp;&nbsp;&nbsp;minimum: -1
  * </pre>
- *
- * <pre>-add-filename (property: addFilename)
- * &nbsp;&nbsp;&nbsp;Whether to add the file name before the actual file content as separate
- * &nbsp;&nbsp;&nbsp;paragraph.
- * </pre>
- *
- * <pre>-font-filename &lt;adams.core.io.PdfFont&gt; (property: fontFilename)
- * &nbsp;&nbsp;&nbsp;The font to use for printing the file name header.
- * &nbsp;&nbsp;&nbsp;default: Helvetica-Bold-12
- * </pre>
- *
- * <pre>-color-filename &lt;java.awt.Color&gt; (property: colorFilename)
- * &nbsp;&nbsp;&nbsp;The color to use for printing the file name header.
- * &nbsp;&nbsp;&nbsp;default: #000000
- * </pre>
- *
+ * 
  * <pre>-rotation &lt;int&gt; (property: rotation)
  * &nbsp;&nbsp;&nbsp;The rotation in degrees.
  * &nbsp;&nbsp;&nbsp;default: 0
  * &nbsp;&nbsp;&nbsp;minimum: 0
  * &nbsp;&nbsp;&nbsp;maximum: 360
  * </pre>
- *
+ * 
  * <pre>-scale &lt;double&gt; (property: scale)
- * &nbsp;&nbsp;&nbsp;The scaling factor for the image, ie, scaling it to the page dimensions;
+ * &nbsp;&nbsp;&nbsp;The scaling factor for the image, ie, scaling it to the page dimensions; 
  * &nbsp;&nbsp;&nbsp;use 0 to turn scaling off.
  * &nbsp;&nbsp;&nbsp;default: 1.0
  * &nbsp;&nbsp;&nbsp;minimum: 0.0
  * &nbsp;&nbsp;&nbsp;maximum: 1.0
  * </pre>
- *
+ * 
+ * <pre>-use-absolute-position &lt;boolean&gt; (property: useAbsolutePosition)
+ * &nbsp;&nbsp;&nbsp;If enabled, the absolute position is used (from bottom-left corner).
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-x &lt;float&gt; (property: X)
+ * &nbsp;&nbsp;&nbsp;The absolute X position.
+ * &nbsp;&nbsp;&nbsp;default: 0.0
+ * &nbsp;&nbsp;&nbsp;minimum: 0.0
+ * </pre>
+ * 
+ * <pre>-y &lt;float&gt; (property: Y)
+ * &nbsp;&nbsp;&nbsp;The absolute Y position.
+ * &nbsp;&nbsp;&nbsp;default: 0.0
+ * &nbsp;&nbsp;&nbsp;minimum: 0.0
+ * </pre>
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
 public class Image
-  extends AbstractPdfProcletWithPageBreaks {
+  extends AbstractPdfProcletWithPageBreaks
+  implements PdfProcletWithOptionalAbsolutePosition {
 
   /** for serialization. */
   private static final long serialVersionUID = 3962046484864891107L;
@@ -100,6 +117,15 @@ public class Image
 
   /** the percentage (0-1) to scale the images to. */
   protected double m_Scale;
+
+  /** whether to use absolute position. */
+  protected boolean m_UseAbsolutePosition;
+
+  /** the absolute X position. */
+  protected float m_X;
+
+  /** the absolute Y position. */
+  protected float m_Y;
 
   /**
    * Returns a short description of the writer.
@@ -117,12 +143,24 @@ public class Image
     super.defineOptions();
 
     m_OptionManager.add(
-	    "rotation", "rotation",
-	    0, 0, 360);
+      "rotation", "rotation",
+      0, 0, 360);
 
     m_OptionManager.add(
-	    "scale", "scale",
-	    1.0, 0.0, 1.0);
+      "scale", "scale",
+      1.0, 0.0, 1.0);
+
+    m_OptionManager.add(
+      "use-absolute-position", "useAbsolutePosition",
+      false);
+
+    m_OptionManager.add(
+      "x", "X",
+      0.0f, 0.0f, null);
+
+    m_OptionManager.add(
+      "y", "Y",
+      0.0f, 0.0f, null);
   }
 
   /**
@@ -190,6 +228,97 @@ public class Image
   }
 
   /**
+   * Sets whether to use absolute positioning (from bottom-left corner).
+   *
+   * @param value	true if absolute
+   */
+  public void setUseAbsolutePosition(boolean value) {
+    m_UseAbsolutePosition = value;
+    reset();
+  }
+
+  /**
+   * Returns whether absolute positioning is used (from bottom-left corner).
+   *
+   * @return		true if absolute
+   */
+  public boolean getUseAbsolutePosition() {
+    return m_UseAbsolutePosition;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String useAbsolutePositionTipText() {
+    return "If enabled, the absolute position is used (from bottom-left corner).";
+  }
+
+  /**
+   * Sets the absolute X position.
+   *
+   * @param value	the X position
+   */
+  public void setX(float value) {
+    if (getOptionManager().isValid("X", value)) {
+      m_X = value;
+      reset();
+    }
+  }
+
+  /**
+   * Returns the absolute X position.
+   *
+   * @return		the X position
+   */
+  public float getX() {
+    return m_X;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String XTipText() {
+    return "The absolute X position.";
+  }
+
+  /**
+   * Sets the absolute Y position.
+   *
+   * @param value	the Y position
+   */
+  public void setY(float value) {
+    if (getOptionManager().isValid("Y", value)) {
+      m_Y = value;
+      reset();
+    }
+  }
+
+  /**
+   * Returns the absolute Y position.
+   *
+   * @return		the Y position
+   */
+  public float getY() {
+    return m_Y;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String YTipText() {
+    return "The absolute Y position.";
+  }
+
+  /**
    * Returns the extensions that the processor can process.
    *
    * @return		the extensions (no dot)
@@ -229,6 +358,8 @@ public class Image
 	  generator.getDocument().getPageSize().getWidth() * scale,
 	  generator.getDocument().getPageSize().getHeight() * scale);
       }
+      if (m_UseAbsolutePosition)
+	image.setAbsolutePosition(m_X, m_Y);
       result = addElement(generator, image);
     }
 
