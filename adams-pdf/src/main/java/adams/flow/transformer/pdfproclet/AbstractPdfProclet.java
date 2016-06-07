@@ -17,18 +17,18 @@
  * AbstractPdfProclet.java
  * Copyright (C) 2010-2013 University of Waikato, Hamilton, New Zealand
  */
-package adams.core.io;
+package adams.flow.transformer.pdfproclet;
+
+import adams.core.base.BaseString;
+import adams.core.io.PdfFont;
+import adams.core.option.AbstractOptionHandler;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.Paragraph;
 
 import java.awt.Color;
 import java.io.File;
 import java.io.Serializable;
 import java.util.logging.Level;
-
-import adams.core.base.BaseString;
-import adams.core.option.AbstractOptionHandler;
-
-import com.itextpdf.text.Document;
-import com.itextpdf.text.Paragraph;
 
 /**
  * Abstract ancestor for processors that add the content of files to a PDF

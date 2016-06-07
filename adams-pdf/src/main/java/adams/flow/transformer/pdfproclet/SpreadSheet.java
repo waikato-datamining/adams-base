@@ -14,27 +14,26 @@
  */
 
 /**
- * CsvPdfProclet.java
+ * SpreadSheet.java
  * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
  */
-package adams.core.io;
-
-import java.awt.Color;
-import java.io.File;
-import java.text.DecimalFormat;
+package adams.flow.transformer.pdfproclet;
 
 import adams.core.base.BaseString;
+import adams.core.io.PdfFont;
 import adams.data.io.input.CsvSpreadSheetReader;
 import adams.data.io.input.SpreadSheetReader;
 import adams.data.spreadsheet.Cell;
 import adams.data.spreadsheet.Row;
-import adams.data.spreadsheet.SpreadSheet;
-
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
+
+import java.awt.Color;
+import java.io.File;
+import java.text.DecimalFormat;
 
 /**
  <!-- globalinfo-start -->
@@ -142,7 +141,7 @@ import com.itextpdf.text.pdf.PdfPTable;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class CsvPdfProclet
+public class SpreadSheet
   extends AbstractPdfProclet
   implements VariableFileExtensionPdfProclet {
 
@@ -581,7 +580,7 @@ public class CsvPdfProclet
   @Override
   protected boolean doProcess(Document doc, DocumentState state, File file) throws Exception {
     boolean		result;
-    SpreadSheet		sheet;
+    adams.data.spreadsheet.SpreadSheet sheet;
     Row			row;
     Cell		cell;
     int			i;

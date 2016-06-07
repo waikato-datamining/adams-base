@@ -19,7 +19,8 @@
  */
 package adams.core.io;
 
-import adams.core.io.AbstractPdfProclet.DocumentState;
+import adams.flow.transformer.pdfproclet.AbstractPdfProclet;
+import adams.flow.transformer.pdfproclet.AbstractPdfProclet.DocumentState;
 import adams.env.Environment;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Rectangle;

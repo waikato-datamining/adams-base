@@ -17,7 +17,7 @@
  * VariableFileExtensionPdfProclet.java
  * Copyright (C) 2010 University of Waikato, Hamilton, New Zealand
  */
-package adams.core.io;
+package adams.flow.transformer.pdfproclet;
 
 import adams.core.base.BaseString;
 

@@ -23,15 +23,15 @@ package adams.flow.transformer;
 import java.io.File;
 
 import adams.core.QuickInfoHelper;
-import adams.core.io.AbstractPdfProclet;
-import adams.core.io.CsvPdfProclet;
+import adams.flow.transformer.pdfproclet.AbstractPdfProclet;
+import adams.flow.transformer.pdfproclet.SpreadSheet;
 import adams.core.io.FileUtils;
-import adams.core.io.ImagePdfProclet;
+import adams.flow.transformer.pdfproclet.Image;
 import adams.core.io.PDFGenerator;
 import adams.core.io.PDFGenerator.PageOrientation;
 import adams.core.io.PDFGenerator.PageSize;
 import adams.core.io.PlaceholderFile;
-import adams.core.io.PlainTextPdfProclet;
+import adams.flow.transformer.pdfproclet.PlainText;
 import adams.flow.core.Token;
 
 /**
@@ -98,9 +98,9 @@ import adams.flow.core.Token;
  * &nbsp;&nbsp;&nbsp;default: PORTRAIT
  * </pre>
  *
- * <pre>-proclet &lt;adams.core.io.AbstractPdfProclet&gt; [-proclet ...] (property: proclets)
+ * <pre>-proclet &lt;adams.flow.transformer.pdfproclet.AbstractPdfProclet&gt; [-proclet ...] (property: proclets)
  * &nbsp;&nbsp;&nbsp;The processors for processing the files.
- * &nbsp;&nbsp;&nbsp;default: adams.core.io.PlainTextPdfProclet, adams.core.io.CsvPdfProclet, adams.core.io.ImagePdfProclet
+ * &nbsp;&nbsp;&nbsp;default: adams.flow.transformer.pdfproclet.PlainTextPdfProclet, adams.flow.transformer.pdfproclet.CsvPdfProclet, adams.flow.transformer.pdfproclet.ImagePdfProclet
  * </pre>
  *
  <!-- options-end -->
@@ -162,9 +162,9 @@ public class PDFCreate
     m_OptionManager.add(
 	    "proclet", "proclets",
 	    new AbstractPdfProclet[]{
-		new PlainTextPdfProclet(),
-		new CsvPdfProclet(),
-		new ImagePdfProclet()});
+		new PlainText(),
+		new SpreadSheet(),
+		new Image()});
   }
 
   /**

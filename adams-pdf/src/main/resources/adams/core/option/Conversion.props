@@ -6,8 +6,16 @@
 # Lists the keys that contain classname mappings.
 # This is used to ensure a minimal backwards compatibility, in case classes
 # get renamed.
-Rename=
+Rename=\
+  Rename-csvpdfproclet,\
+  Rename-headlinepdfproclet,\
+  Rename-imagepdfproclet,\
+  Rename-plaintextpdfproclet
 
 # general format for classname mappings ("rename"):
 # <key>=<old classname>-<new classname>
 #Rename-transformer_pdf=adams.flow.transformer.PDF-adams.flow.transformer.PDFCreate
+Rename-csvpdfproclet=adams.core.io.CsvPdfProclet-adams.flow.transformer.pdfproclet.SpreadSheet
+Rename-headlinepdfproclet=adams.core.io.HeadlinePdfProclet-adams.flow.transformer.pdfproclet.Headline
+Rename-imagepdfproclet=adams.core.io.ImagePdfProclet-adams.flow.transformer.pdfproclet.Image
+Rename-plaintextpdfproclet=adams.core.io.PlainTextPdfProclet-adams.flow.transformer.pdfproclet.PlainText

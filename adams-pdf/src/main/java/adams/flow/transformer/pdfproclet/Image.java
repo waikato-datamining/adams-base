@@ -14,14 +14,13 @@
  */
 
 /**
- * ImagePdfProclet.java
- * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
+ * Image.java
+ * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
  */
-package adams.core.io;
+package adams.flow.transformer.pdfproclet;
 
 import adams.core.base.BaseString;
 import com.itextpdf.text.Document;
-import com.itextpdf.text.Image;
 
 import java.io.File;
 
@@ -91,7 +90,7 @@ import java.io.File;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class ImagePdfProclet
+public class Image
   extends AbstractPdfProclet {
 
   /** for serialization. */
@@ -222,14 +221,14 @@ public class ImagePdfProclet
    */
   protected boolean doProcess(Document doc, DocumentState state, File file) throws Exception {
     boolean	result;
-    Image	image;
+    com.itextpdf.text.Image image;
     float	scale;
 
     result = addFilename(doc, state, file);
     if (!result)
       return result;
 
-    image = Image.getInstance(file.getAbsolutePath());
+    image = com.itextpdf.text.Image.getInstance(file.getAbsolutePath());
     if (m_Rotation != 0) {
       image.setRotationDegrees(m_Rotation);
       image.rotate();

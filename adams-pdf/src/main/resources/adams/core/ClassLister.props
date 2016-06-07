@@ -8,8 +8,8 @@
 # Version: $Revision$
 
 # the PDF processors writers
-adams.core.io.AbstractPdfProclet=\
-  adams.core.io
+adams.flow.transformer.pdfproclet.AbstractPdfProclet=\
+  adams.flow.transformer.pdfproclet
 
 # the stamp algorithms
 adams.flow.transformer.pdfstamp.AbstractStamper=\

@@ -14,23 +14,24 @@
  */
 
 /**
- * HeadlinePdfProclet.java
- * Copyright (C) 2010-2011 University of Waikato, Hamilton, New Zealand
+ * PlainText.java
+ * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
  */
-package adams.core.io;
-
-import java.awt.Color;
-import java.io.File;
+package adams.flow.transformer.pdfproclet;
 
 import adams.core.base.BaseString;
-import adams.core.base.BaseText;
-
+import adams.core.io.FileUtils;
+import adams.core.io.PdfFont;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Paragraph;
 
+import java.awt.Color;
+import java.io.File;
+import java.util.List;
+
 /**
  <!-- globalinfo-start -->
- * Adds a simple headline, but no file content.
+ * Adds plain-text files line by line.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -74,28 +75,19 @@ import com.itextpdf.text.Paragraph;
  * &nbsp;&nbsp;&nbsp;default: #000000
  * </pre>
  *
- * <pre>-headline &lt;adams.core.base.BaseText&gt; (property: headline)
- * &nbsp;&nbsp;&nbsp;The headline to add, can be multi-line.
- * &nbsp;&nbsp;&nbsp;default: Fill in headline
+ * <pre>-font-content &lt;adams.core.io.PdfFont&gt; (property: fontContent)
+ * &nbsp;&nbsp;&nbsp;The font to use for the file content.
+ * &nbsp;&nbsp;&nbsp;default: Helvetica-Normal-12
  * </pre>
  *
- * <pre>-font-headline &lt;adams.core.io.PdfFont&gt; (property: fontHeadline)
- * &nbsp;&nbsp;&nbsp;The font to use for the headline.
- * &nbsp;&nbsp;&nbsp;default: Helvetica-Bold-14
- * </pre>
- *
- * <pre>-color-headline &lt;java.awt.Color&gt; (property: colorHeadline)
- * &nbsp;&nbsp;&nbsp;The color to use for the headline.
+ * <pre>-color-content &lt;java.awt.Color&gt; (property: colorContent)
+ * &nbsp;&nbsp;&nbsp;The color to use for the content.
  * &nbsp;&nbsp;&nbsp;default: #000000
  * </pre>
  *
  * <pre>-extension &lt;adams.core.base.BaseString&gt; [-extension ...] (property: extensions)
  * &nbsp;&nbsp;&nbsp;The file extension(s) that the processor will be used for.
- * &nbsp;&nbsp;&nbsp;default: *
- * </pre>
- *
- * <pre>-first-page-only (property: firstPageOnly)
- * &nbsp;&nbsp;&nbsp;If set to true, then the headline is only added to the first page.
+ * &nbsp;&nbsp;&nbsp;default: txt
  * </pre>
  *
  <!-- options-end -->
@@ -103,110 +95,69 @@ import com.itextpdf.text.Paragraph;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class HeadlinePdfProclet
+public class PlainText
   extends AbstractPdfProclet
   implements VariableFileExtensionPdfProclet {
 
   /** for serialization. */
   private static final long serialVersionUID = 3962046484864891107L;
 
-  /** the headline to add. */
-  protected BaseText m_Headline;
+  /** the font for the content. */
+  protected PdfFont m_FontContent;
 
-  /** the font for the headline. */
-  protected PdfFont m_FontHeadline;
-
-  /** the color for the headline. */
-  protected Color m_ColorHeadline;
+  /** the color for the content. */
+  protected Color m_ColorContent;
 
   /** the file extensions. */
   protected BaseString[] m_Extensions;
-
-  /** whether to add it only on the first page. */
-  protected boolean m_FirstPageOnly;
 
   /**
    * Returns a short description of the writer.
    *
    * @return		a description of the writer
    */
+  @Override
   public String globalInfo() {
-    return "Adds a simple headline, but no file content.";
+    return "Adds plain-text files line by line.";
   }
 
   /**
    * Adds options to the internal list of options.
    */
+  @Override
   public void defineOptions() {
     super.defineOptions();
 
     m_OptionManager.add(
-	    "headline", "headline",
-	    new BaseText("Fill in headline"));
+	    "font-content", "fontContent",
+	    new PdfFont(PdfFont.HELVETICA, PdfFont.NORMAL, 12.0f));
 
     m_OptionManager.add(
-	    "font-headline", "fontHeadline",
-	    new PdfFont(PdfFont.HELVETICA, PdfFont.BOLD, 14.0f));
-
-    m_OptionManager.add(
-	    "color-headline", "colorHeadline",
+	    "color-content", "colorContent",
 	    Color.BLACK);
 
     m_OptionManager.add(
 	    "extension", "extensions",
-	    new BaseString[]{new BaseString(MATCH_ALL_EXTENSION)});
-
-    m_OptionManager.add(
-	    "first-page-only", "firstPageOnly",
-	    false);
+	    new BaseString[]{new BaseString("txt")});
   }
 
   /**
-   * Sets the headline to add.
-   *
-   * @param value	the headline
-   */
-  public void setHeadline(BaseText value) {
-    m_Headline = value;
-    reset();
-  }
-
-  /**
-   * Returns the headline to add.
-   *
-   * @return 		the headline
-   */
-  public BaseText getHeadline() {
-    return m_Headline;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String headlineTipText() {
-    return "The headline to add, can be multi-line.";
-  }
-
-  /**
-   * Sets the font to use for the headline.
+   * Sets the font to use for adding the content.
    *
    * @param value	the font
    */
-  public void setFontHeadline(PdfFont value) {
-    m_FontHeadline = value;
+  public void setFontContent(PdfFont value) {
+    m_FontContent = value;
     reset();
   }
 
   /**
-   * Returns the font to use for the headline.
+   * Returns the font to use for adding the content.
    *
    * @return 		the font
    */
-  public PdfFont getFontHeadline() {
-    return m_FontHeadline;
+  public PdfFont getFontContent() {
+    return m_FontContent;
   }
 
   /**
@@ -215,27 +166,27 @@ public class HeadlinePdfProclet
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String fontHeadlineTipText() {
-    return "The font to use for the headline.";
+  public String fontContentTipText() {
+    return "The font to use for the file content.";
   }
 
   /**
-   * Sets the color to use for the headline.
+   * Sets the color to use for the content.
    *
    * @param value	the color
    */
-  public void setColorHeadline(Color value) {
-    m_ColorHeadline = value;
+  public void setColorContent(Color value) {
+    m_ColorContent = value;
     reset();
   }
 
   /**
-   * Returns the color to use for the headline.
+   * Returns the color to use for the content.
    *
    * @return 		the color
    */
-  public Color getColorHeadline() {
-    return m_ColorHeadline;
+  public Color getColorContent() {
+    return m_ColorContent;
   }
 
   /**
@@ -244,8 +195,8 @@ public class HeadlinePdfProclet
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String colorHeadlineTipText() {
-    return "The color to use for the headline.";
+  public String colorContentTipText() {
+    return "The color to use for the content.";
   }
 
   /**
@@ -253,6 +204,7 @@ public class HeadlinePdfProclet
    *
    * @return		the extensions (no dot)
    */
+  @Override
   public BaseString[] getExtensions() {
     return m_Extensions;
   }
@@ -262,6 +214,7 @@ public class HeadlinePdfProclet
    *
    * @param value	the extensions (no dot)
    */
+  @Override
   public void setExtensions(BaseString[] value) {
     m_Extensions = value;
     reset();
@@ -273,56 +226,9 @@ public class HeadlinePdfProclet
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
+  @Override
   public String extensionsTipText() {
     return "The file extension(s) that the processor will be used for.";
-  }
-
-  /**
-   * Sets the whether to add the headline only on the first page.
-   *
-   * @param value	if true then the headline is only added on the first page
-   */
-  public void setFirstPageOnly(boolean value) {
-    m_FirstPageOnly = value;
-    reset();
-  }
-
-  /**
-   * Returns the whether to add the headline only on the first page.
-   *
-   * @return 		true if the headline is only on the first page
-   */
-  public boolean getFirstPageOnly() {
-    return m_FirstPageOnly;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String firstPageOnlyTipText() {
-    return "If set to true, then the headline is only added to the first page.";
-  }
-
-  /**
-   * Whether the processor can handle this particular file.
-   *
-   * @param state	the document state
-   * @param file	the file to check
-   * @return		true if the file can be handled
-   */
-  public boolean canProcess(DocumentState state, File file) {
-    if (m_FirstPageOnly) {
-      if (state.numTotalFiles() == 0)
-	return super.canProcess(state, file);
-      else
-	return false;
-    }
-    else {
-      return super.canProcess(state, file);
-    }
   }
 
   /**
@@ -334,18 +240,19 @@ public class HeadlinePdfProclet
    * @return		true if successfully added
    * @throws Exception	if something goes wrong
    */
+  @Override
   protected boolean doProcess(Document doc, DocumentState state, File file) throws Exception {
-    boolean	result;
-    String[]	paragraphs;
-    int		i;
+    boolean		result;
+    List<String>	paragraphs;
+    int			i;
 
     result = addFilename(doc, state, file);
     if (!result)
       return result;
 
-    paragraphs = m_Headline.getValue().split("\n");
-    for (i = 0; i < paragraphs.length; i++) {
-      result = doc.add(new Paragraph(paragraphs[i], m_FontHeadline.toFont(m_ColorHeadline)));
+    paragraphs = FileUtils.loadFromFile(file);
+    for (i = 0; i < paragraphs.size(); i++) {
+      result = doc.add(new Paragraph(paragraphs.get(i), m_FontContent.toFont(m_ColorContent)));
       if (result)
 	state.contentAdded();
       else
