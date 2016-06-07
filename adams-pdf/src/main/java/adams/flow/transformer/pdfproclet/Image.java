@@ -20,7 +20,6 @@
 package adams.flow.transformer.pdfproclet;
 
 import adams.core.base.BaseString;
-import com.itextpdf.text.Document;
 
 import java.io.File;
 
@@ -213,18 +212,17 @@ public class Image
   /**
    * The actual processing of the document.
    *
-   * @param doc		the PDF document to add the file content to
-   * @param state	the current document state
+   * @param generator	the context
    * @param file	the file to add
    * @return		true if successfully added
    * @throws Exception	if something goes wrong
    */
-  protected boolean doProcess(Document doc, DocumentState state, File file) throws Exception {
+  protected boolean doProcess(PDFGenerator generator, File file) throws Exception {
     boolean	result;
     com.itextpdf.text.Image image;
     float	scale;
 
-    result = addFilename(doc, state, file);
+    result = addFilename(generator, file);
     if (!result)
       return result;
 
@@ -236,12 +234,12 @@ public class Image
     if (m_Scale > 0) {
       scale = (float) m_Scale;
       image.scaleToFit(
-	  doc.getPageSize().getWidth()*scale,
-	  doc.getPageSize().getHeight()*scale);
+	  generator.getDocument().getPageSize().getWidth()*scale,
+	  generator.getDocument().getPageSize().getHeight()*scale);
     }
-    result = doc.add(image);
+    result = generator.getDocument().add(image);
     if (result)
-      state.contentAdded();
+      generator.getState().contentAdded();
 
     return result;
   }

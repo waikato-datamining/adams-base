@@ -22,7 +22,6 @@ package adams.flow.transformer.pdfproclet;
 import adams.core.base.BaseString;
 import adams.core.io.FileUtils;
 import adams.core.io.PdfFont;
-import com.itextpdf.text.Document;
 import com.itextpdf.text.Paragraph;
 
 import java.awt.Color;
@@ -234,27 +233,26 @@ public class PlainText
   /**
    * The actual processing of the document.
    *
-   * @param doc		the PDF document to add the file content to
-   * @param state	the current document state
+   * @param generator	the context
    * @param file	the file to add
    * @return		true if successfully added
    * @throws Exception	if something goes wrong
    */
   @Override
-  protected boolean doProcess(Document doc, DocumentState state, File file) throws Exception {
+  protected boolean doProcess(PDFGenerator generator, File file) throws Exception {
     boolean		result;
     List<String>	paragraphs;
     int			i;
 
-    result = addFilename(doc, state, file);
+    result = addFilename(generator, file);
     if (!result)
       return result;
 
     paragraphs = FileUtils.loadFromFile(file);
     for (i = 0; i < paragraphs.size(); i++) {
-      result = doc.add(new Paragraph(paragraphs.get(i), m_FontContent.toFont(m_ColorContent)));
+      result = generator.getDocument().add(new Paragraph(paragraphs.get(i), m_FontContent.toFont(m_ColorContent)));
       if (result)
-	state.contentAdded();
+	generator.getState().contentAdded();
       else
 	break;
     }

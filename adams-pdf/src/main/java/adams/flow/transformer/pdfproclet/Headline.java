@@ -22,7 +22,6 @@ package adams.flow.transformer.pdfproclet;
 import adams.core.base.BaseString;
 import adams.core.base.BaseText;
 import adams.core.io.PdfFont;
-import com.itextpdf.text.Document;
 import com.itextpdf.text.Paragraph;
 
 import java.awt.Color;
@@ -309,45 +308,44 @@ public class Headline
   /**
    * Whether the processor can handle this particular file.
    *
-   * @param state	the document state
+   * @param generator	the context
    * @param file	the file to check
    * @return		true if the file can be handled
    */
-  public boolean canProcess(DocumentState state, File file) {
+  public boolean canProcess(PDFGenerator generator, File file) {
     if (m_FirstPageOnly) {
-      if (state.numTotalFiles() == 0)
-	return super.canProcess(state, file);
+      if (generator.getState().numTotalFiles() == 0)
+	return super.canProcess(generator, file);
       else
 	return false;
     }
     else {
-      return super.canProcess(state, file);
+      return super.canProcess(generator, file);
     }
   }
 
   /**
    * The actual processing of the document.
    *
-   * @param doc		the PDF document to add the file content to
-   * @param state	the current document state
+   * @param generator	the context
    * @param file	the file to add
    * @return		true if successfully added
    * @throws Exception	if something goes wrong
    */
-  protected boolean doProcess(Document doc, DocumentState state, File file) throws Exception {
+  protected boolean doProcess(PDFGenerator generator, File file) throws Exception {
     boolean	result;
     String[]	paragraphs;
     int		i;
 
-    result = addFilename(doc, state, file);
+    result = addFilename(generator, file);
     if (!result)
       return result;
 
     paragraphs = m_Headline.getValue().split("\n");
     for (i = 0; i < paragraphs.length; i++) {
-      result = doc.add(new Paragraph(paragraphs[i], m_FontHeadline.toFont(m_ColorHeadline)));
+      result = generator.getDocument().add(new Paragraph(paragraphs[i], m_FontHeadline.toFont(m_ColorHeadline)));
       if (result)
-	state.contentAdded();
+	generator.getState().contentAdded();
       else
 	break;
     }

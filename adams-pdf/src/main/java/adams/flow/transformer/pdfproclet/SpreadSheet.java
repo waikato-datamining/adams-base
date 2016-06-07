@@ -25,7 +25,6 @@ import adams.data.io.input.CsvSpreadSheetReader;
 import adams.data.io.input.SpreadSheetReader;
 import adams.data.spreadsheet.Cell;
 import adams.data.spreadsheet.Row;
-import com.itextpdf.text.Document;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfPCell;
@@ -571,14 +570,13 @@ public class SpreadSheet
   /**
    * The actual processing of the document.
    *
-   * @param doc		the PDF document to add the file content to
-   * @param state	the current document state
+   * @param generator	the context
    * @param file	the file to add
    * @return		true if successfully added
    * @throws Exception	if something goes wrong
    */
   @Override
-  protected boolean doProcess(Document doc, DocumentState state, File file) throws Exception {
+  protected boolean doProcess(PDFGenerator generator, File file) throws Exception {
     boolean		result;
     adams.data.spreadsheet.SpreadSheet sheet;
     Row			row;
@@ -590,7 +588,7 @@ public class SpreadSheet
     DecimalFormat	format;
     Paragraph		para;
 
-    result = addFilename(doc, state, file);
+    result = addFilename(generator, file);
     if (!result)
       return result;
 
@@ -609,9 +607,9 @@ public class SpreadSheet
 
     // comments
     for (i = 0; i < sheet.getComments().size(); i++) {
-      result = doc.add(new Paragraph(sheet.getComments().get(i), m_FontComments.toFont(m_ColorComments)));
+      result = generator.getDocument().add(new Paragraph(sheet.getComments().get(i), m_FontComments.toFont(m_ColorComments)));
       if (result)
-	state.contentAdded();
+	generator.getState().contentAdded();
       else
 	return result;
     }
@@ -646,10 +644,10 @@ public class SpreadSheet
 	table.addCell(pdfCell);
       }
     }
-    result = doc.add(new Paragraph("\n"));
+    result = generator.getDocument().add(new Paragraph("\n"));
     if (result) {
-      state.contentAdded();
-      result = doc.add(table);
+      generator.getState().contentAdded();
+      result = generator.getDocument().add(table);
     }
 
     return result;

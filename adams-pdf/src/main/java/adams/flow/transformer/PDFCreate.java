@@ -15,7 +15,7 @@
 
 /*
  * PDFCreate.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -24,10 +24,11 @@ import adams.core.QuickInfoHelper;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
 import adams.flow.core.Token;
-import adams.flow.transformer.PDFGenerator.PageOrientation;
-import adams.flow.transformer.PDFGenerator.PageSize;
 import adams.flow.transformer.pdfproclet.AbstractPdfProclet;
 import adams.flow.transformer.pdfproclet.Image;
+import adams.flow.transformer.pdfproclet.PDFGenerator;
+import adams.flow.transformer.pdfproclet.PageOrientation;
+import adams.flow.transformer.pdfproclet.PageSize;
 import adams.flow.transformer.pdfproclet.PlainText;
 import adams.flow.transformer.pdfproclet.SpreadSheet;
 
@@ -53,55 +54,59 @@ import java.io.File;
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- *
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- *
+ * 
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: PDFCreate
  * </pre>
- *
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * 
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default:
+ * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- *
- * <pre>-skip (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
+ * 
+ * <pre>-skip &lt;boolean&gt; (property: skip)
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
  * &nbsp;&nbsp;&nbsp;as it is.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
- * <pre>-stop-flow-on-error (property: stopFlowOnError)
+ * 
+ * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
  * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
  * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
  * <pre>-output &lt;adams.core.io.PlaceholderFile&gt; (property: output)
  * &nbsp;&nbsp;&nbsp;The PDF file to generate.
  * &nbsp;&nbsp;&nbsp;default: ${CWD}
  * </pre>
- *
+ * 
  * <pre>-page-size &lt;A0|A1|A10|A2|A3|A4|A5|A6|A7|A8|A9|ARCH_A|ARCH_B|ARCH_C|ARCH_D|ARCH_E|B0|B1|B10|B2|B3|B4|B5|B6|B7|B8|B9|CROWN_OCTAVO|CROWN_QUARTO|DEMY_OCTAVO|DEMY_QUARTO|EXECUTIVE|FLSA|FLSE|HALFLETTER|ID_1|ID_2|ID_3|LARGE_CROWN_OCTAVO|LARGE_CROWN_QUARTO|LEDGER|LEGAL|LETTER|NOTE|PENGUIN_LARGE_PAPERBACK|PENGUIN_SMALL_PAPERBACK|POSTCARD|ROYAL_OCTAVO|ROYAL_QUARTO|SMALL_PAPERBACK|TABLOID&gt; (property: pageSize)
  * &nbsp;&nbsp;&nbsp;The page size of the generated PDF.
  * &nbsp;&nbsp;&nbsp;default: A4
  * </pre>
- *
+ * 
  * <pre>-page-orientation &lt;PORTRAIT|LANDSCAPE&gt; (property: pageOrientation)
  * &nbsp;&nbsp;&nbsp;The page orientation of the generated PDF.
  * &nbsp;&nbsp;&nbsp;default: PORTRAIT
  * </pre>
- *
+ * 
  * <pre>-proclet &lt;adams.flow.transformer.pdfproclet.AbstractPdfProclet&gt; [-proclet ...] (property: proclets)
  * &nbsp;&nbsp;&nbsp;The processors for processing the files.
- * &nbsp;&nbsp;&nbsp;default: adams.flow.transformer.pdfproclet.PlainTextPdfProclet, adams.flow.transformer.pdfproclet.CsvPdfProclet, adams.flow.transformer.pdfproclet.ImagePdfProclet
+ * &nbsp;&nbsp;&nbsp;default: adams.flow.transformer.pdfproclet.PlainText, adams.flow.transformer.pdfproclet.SpreadSheet -reader \"adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.DefaultSpreadSheet\", adams.flow.transformer.pdfproclet.Image
  * </pre>
- *
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -319,7 +324,7 @@ public class PDFCreate
   protected String doExecute() {
     String		result;
     PlaceholderFile[]	files;
-    PDFGenerator	generator;
+    PDFGenerator generator;
 
     result = null;
 

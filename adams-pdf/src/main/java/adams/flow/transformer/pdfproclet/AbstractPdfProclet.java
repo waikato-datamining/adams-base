@@ -22,12 +22,10 @@ package adams.flow.transformer.pdfproclet;
 import adams.core.base.BaseString;
 import adams.core.io.PdfFont;
 import adams.core.option.AbstractOptionHandler;
-import com.itextpdf.text.Document;
 import com.itextpdf.text.Paragraph;
 
 import java.awt.Color;
 import java.io.File;
-import java.io.Serializable;
 import java.util.logging.Level;
 
 /**
@@ -43,122 +41,6 @@ public abstract class AbstractPdfProclet
 
   /** for serialization. */
   private static final long serialVersionUID = -9041126884910193987L;
-
-  /**
-   * Container class for storing state information about the document
-   * currently being processed.
-   *
-   * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
-   */
-  public static class DocumentState
-    implements Serializable {
-
-    /** for serialization. */
-    private static final long serialVersionUID = 4076944821318913218L;
-
-    /** whether a new page got added. */
-    protected boolean m_NewPageAdded;
-
-    /** the files added so far. */
-    protected int m_TotalFiles;
-
-    /** the files added since last page break. */
-    protected int m_CurrentFiles;
-
-    /**
-     * Initializes the state.
-     */
-    public DocumentState() {
-      super();
-    }
-
-    /**
-     * Adds a new page only if none has been added so far.
-     *
-     * @param doc	the document to add the page to
-     * @return		true if successfully added (or not necessary)
-     */
-    public boolean newPage(Document doc) {
-      boolean	result;
-
-      result = true;
-
-      if (!isNewPage()) {
-	result = doc.newPage();
-	if (result)
-	  newPageAdded();
-      }
-
-      return result;
-    }
-
-    /**
-     * Stores that a new page got added.
-     */
-    public void newPageAdded() {
-      m_NewPageAdded = true;
-    }
-
-    /**
-     * Stores that content was added.
-     */
-    public void contentAdded() {
-      m_NewPageAdded = false;
-    }
-
-    /**
-     * Returns whether a new page was just added.
-     *
-     * @return		true if a new page was just added
-     */
-    public boolean isNewPage() {
-      return m_NewPageAdded;
-    }
-
-    /**
-     * Increments the file counters.
-     */
-    public void addFile() {
-      m_TotalFiles++;
-      m_CurrentFiles++;
-    }
-
-    /**
-     * Resets the counter for the current files.
-     */
-    public void resetCurrentFiles() {
-      m_CurrentFiles = 0;
-    }
-
-    /**
-     * Returns the number of files that have been added so far.
-     *
-     * @return		the number of files
-     */
-    public int numTotalFiles() {
-      return m_TotalFiles;
-    }
-
-    /**
-     * Returns the number of files that have been added since the last page break.
-     *
-     * @return		the number of files
-     */
-    public int numCurrentFiles() {
-      return m_CurrentFiles;
-    }
-
-    /**
-     * Returns a short representation of the document state.
-     *
-     * @return		the representation
-     */
-    @Override
-    public String toString() {
-      return "#total=" + numTotalFiles() + "#current=" + numCurrentFiles() + ", newPage=" + isNewPage();
-    }
-  }
 
   /** the "match-all" file extension. */
   public final static String MATCH_ALL_EXTENSION = "*";
@@ -407,13 +289,12 @@ public abstract class AbstractPdfProclet
   /**
    * Adds the filename to the page as header, if necessary.
    *
-   * @param doc		the document to process
-   * @param state	the current document state
+   * @param generator	the context
    * @param file	the plain text file
    * @return		true if sucessfully added
    * @throws Exception	if something goes wrong
    */
-  protected boolean addFilename(Document doc, DocumentState state, File file) throws Exception {
+  protected boolean addFilename(PDFGenerator generator, File file) throws Exception {
     boolean	result;
     Paragraph	para;
 
@@ -422,9 +303,9 @@ public abstract class AbstractPdfProclet
     // add filename?
     if (m_AddFilename) {
       para = new Paragraph(file.getName() + "\n", m_FontFilename.toFont(m_ColorFilename));
-      result = doc.add(para);
+      result = generator.getDocument().add(para);
       if (result)
-	state.contentAdded();
+	generator.getState().contentAdded();
     }
 
     return result;
@@ -433,19 +314,18 @@ public abstract class AbstractPdfProclet
   /**
    * For pre-processing the document.
    *
-   * @param doc		the PDF document to add the file content to
-   * @param state	the current document state
+   * @param generator	the context
    * @param file	the file to add
    * @return		true if successfully added
    * @throws Exception	if something goes wrong
    */
-  protected boolean preProcess(Document doc, DocumentState state, File file) throws Exception {
+  protected boolean preProcess(PDFGenerator generator, File file) throws Exception {
     boolean	result;
 
     result = true;
 
     if (m_PageBreakBefore)
-      result = state.newPage(doc);
+      result = generator.getState().newPage(generator.getDocument());
 
     return result;
   }
@@ -453,31 +333,29 @@ public abstract class AbstractPdfProclet
   /**
    * The actual processing of the document.
    *
-   * @param doc		the PDF document to add the file content to
-   * @param state	the current document state
+   * @param generator	the context
    * @param file	the file to add
    * @return		true if successfully added
    * @throws Exception	if something goes wrong
    */
-  protected abstract boolean doProcess(Document doc, DocumentState state, File file) throws Exception;
+  protected abstract boolean doProcess(PDFGenerator generator, File file) throws Exception;
 
   /**
    * For post-processing the document.
    *
-   * @param doc		the PDF document to add the file content to
-   * @param state	the current document state
+   * @param generator	the context
    * @param file	the file to add
    * @return		true if successfully added
    * @throws Exception	if something goes wrong
    */
-  protected boolean postProcess(Document doc, DocumentState state, File file) throws Exception {
+  protected boolean postProcess(PDFGenerator generator, File file) throws Exception {
     boolean	result;
 
     result = true;
 
-    if (m_PageBreakAfter || (state.numCurrentFiles() == m_NumFilesPerPage)) {
-      result = doc.newPage();
-      state.resetCurrentFiles();
+    if (m_PageBreakAfter || (generator.getState().numCurrentFiles() == m_NumFilesPerPage)) {
+      result = generator.getDocument().newPage();
+      generator.getState().resetCurrentFiles();
     }
 
     return result;
@@ -486,11 +364,11 @@ public abstract class AbstractPdfProclet
   /**
    * Whether the processor can handle this particular file.
    *
-   * @param state	the document state
+   * @param generator	the context
    * @param file	the file to check
    * @return		true if the file can be handled
    */
-  public boolean canProcess(DocumentState state, File file) {
+  public boolean canProcess(PDFGenerator generator, File file) {
     boolean	result;
     String	extension;
 
@@ -512,30 +390,29 @@ public abstract class AbstractPdfProclet
   /**
    * Processes the given file.
    *
-   * @param doc		the PDF document to add the file content to
-   * @param state	the current document state
+   * @param generator	the context
    * @param file	the file to add
    * @return		true if successfully added
    */
-  public boolean process(Document doc, DocumentState state, File file) {
+  public boolean process(PDFGenerator generator, File file) {
     boolean	result;
 
     try {
       if (isLoggingEnabled())
 	getLogger().info("preProcess: " + file);
-      result = preProcess(doc, state, file);
+      result = preProcess(generator, file);
 
       if (result) {
 	if (isLoggingEnabled())
 	  getLogger().info("doProcess: " + file);
-	result = doProcess(doc, state, file);
+	result = doProcess(generator, file);
       }
 
       if (result) {
-	state.addFile();
+	generator.getState().addFile();
 	if (isLoggingEnabled())
 	  getLogger().info("postProcess: " + file);
-	result = postProcess(doc, state, file);
+	result = postProcess(generator, file);
       }
     }
     catch (Exception e) {

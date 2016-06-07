@@ -14,15 +14,13 @@
  */
 
 /**
- * PDF.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * PDFGenerator.java
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
-package adams.flow.transformer;
+package adams.flow.transformer.pdfproclet;
 
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
-import adams.flow.transformer.pdfproclet.AbstractPdfProclet;
-import adams.flow.transformer.pdfproclet.AbstractPdfProclet.DocumentState;
 import adams.env.Environment;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Rectangle;
@@ -38,77 +36,6 @@ import java.io.FileOutputStream;
  * @version $Revision$
  */
 public class PDFGenerator {
-
-  /**
-   * Enumeration of all possible page sizes.
-   *
-   * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
-   */
-  public enum PageSize {
-    A0,
-    A1,
-    A10,
-    A2,
-    A3,
-    A4,
-    A5,
-    A6,
-    A7,
-    A8,
-    A9,
-    ARCH_A,
-    ARCH_B,
-    ARCH_C,
-    ARCH_D,
-    ARCH_E,
-    B0,
-    B1,
-    B10,
-    B2,
-    B3,
-    B4,
-    B5,
-    B6,
-    B7,
-    B8,
-    B9,
-    CROWN_OCTAVO,
-    CROWN_QUARTO,
-    DEMY_OCTAVO,
-    DEMY_QUARTO,
-    EXECUTIVE,
-    FLSA,
-    FLSE,
-    HALFLETTER,
-    ID_1,
-    ID_2,
-    ID_3,
-    LARGE_CROWN_OCTAVO,
-    LARGE_CROWN_QUARTO,
-    LEDGER,
-    LEGAL,
-    LETTER,
-    NOTE,
-    PENGUIN_LARGE_PAPERBACK,
-    PENGUIN_SMALL_PAPERBACK,
-    POSTCARD,
-    ROYAL_OCTAVO,
-    ROYAL_QUARTO,
-    SMALL_PAPERBACK,
-    TABLOID
-  }
-
-  /**
-   * The orientation in the document.
-   *
-   * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
-   */
-  public enum PageOrientation {
-    PORTRAIT,
-    LANDSCAPE
-  }
 
   /** the output file. */
   protected PlaceholderFile m_Output;
@@ -131,6 +58,9 @@ public class PDFGenerator {
   /** the document state. */
   protected DocumentState m_State;
 
+  /** the writer. */
+  protected PdfWriter m_Writer;
+
   /**
    * Initializes the PDF generator.
    */
@@ -152,10 +82,10 @@ public class PDFGenerator {
      * Resets the variables.
      */
   protected void resetVariables() {
-    m_Output              = null;
-    m_PageSize            = PageSize.A4;
-    m_PageOrientation     = PageOrientation.PORTRAIT;
-    m_Proclets            = new AbstractPdfProclet[0];
+    m_Output          = null;
+    m_PageSize        = PageSize.A4;
+    m_PageOrientation = PageOrientation.PORTRAIT;
+    m_Proclets        = new AbstractPdfProclet[0];
   }
 
   /**
@@ -164,6 +94,7 @@ public class PDFGenerator {
   protected void resetState() {
     m_Document = null;
     m_State    = null;
+    m_Writer   = null;
   }
 
   /**
@@ -236,6 +167,33 @@ public class PDFGenerator {
    */
   public AbstractPdfProclet[] getProclets() {
     return m_Proclets;
+  }
+
+  /**
+   * The current PDF document.
+   *
+   * @return		the document
+   */
+  public Document getDocument() {
+    return m_Document;
+  }
+
+  /**
+   * Returns the PDF document state.
+   *
+   * @return		the state
+   */
+  public DocumentState getState() {
+    return m_State;
+  }
+
+  /**
+   * Returns the PDF writer.
+   *
+   * @return		the writer
+   */
+  public PdfWriter getWriter() {
+    return m_Writer;
   }
 
   /**
@@ -419,7 +377,7 @@ public class PDFGenerator {
     else
       m_Document = new Document(determinePageSize().rotate());
     m_Stream = new FileOutputStream(m_Output.getAbsoluteFile());
-    PdfWriter.getInstance(m_Document, m_Stream);
+    m_Writer = PdfWriter.getInstance(m_Document, m_Stream);
     m_Document.open();
     m_Document.addCreationDate();
     m_Document.addCreator(Environment.getInstance().getProject());
@@ -449,8 +407,8 @@ public class PDFGenerator {
     processed = false;
 
     for (AbstractPdfProclet proclet: m_Proclets) {
-      if (proclet.canProcess(m_State, file)) {
-	proclet.process(m_Document, m_State, file);
+      if (proclet.canProcess(this, file)) {
+	proclet.process(this, file);
 	processed = true;
       }
     }
