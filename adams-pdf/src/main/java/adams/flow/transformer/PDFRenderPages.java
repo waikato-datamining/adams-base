@@ -91,6 +91,12 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts the range '...'; the following placeholders can be used as well: first, second, third, last_2, last_1, last
  * </pre>
  * 
+ * <pre>-dpi &lt;int&gt; (property: DPI)
+ * &nbsp;&nbsp;&nbsp;The DPI to use (dots per inch).
+ * &nbsp;&nbsp;&nbsp;default: 72
+ * &nbsp;&nbsp;&nbsp;minimum: 1
+ * </pre>
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -104,6 +110,9 @@ public class PDFRenderPages
 
   /** the pages to render. */
   protected Range m_Pages;
+
+  /** the dpi setting to use. */
+  protected int m_DPI;
 
   /** the images to forward. */
   protected List<BufferedImageContainer> m_Images;
@@ -128,6 +137,10 @@ public class PDFRenderPages
     m_OptionManager.add(
 	    "pages", "pages",
 	    new Range(Range.ALL));
+
+    m_OptionManager.add(
+	    "dpi", "DPI",
+	    72, 1, null);
   }
 
   /**
@@ -170,6 +183,37 @@ public class PDFRenderPages
   }
 
   /**
+   * Sets the DPI setting.
+   *
+   * @param value	the setting
+   */
+  public void setDPI(int value) {
+    if (getOptionManager().isValid("DPI", value)) {
+      m_DPI = value;
+      reset();
+    }
+  }
+
+  /**
+   * Returns the DPI setting.
+   *
+   * @return 		the setting
+   */
+  public int getDPI() {
+    return m_DPI;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return         tip text for this property suitable for
+   *             displaying in the GUI or for listing the options.
+   */
+  public String DPITipText() {
+    return "The DPI to use (dots per inch).";
+  }
+
+  /**
    * Returns the class that the consumer accepts.
    *
    * @return		<!-- flow-accepts-start -->java.lang.String.class, java.io.File.class<!-- flow-accepts-end -->
@@ -194,7 +238,12 @@ public class PDFRenderPages
    */
   @Override
   public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "pages", m_Pages, "pages: ");
+    String	result;
+
+    result  = QuickInfoHelper.toString(this, "pages", m_Pages, "pages: ");
+    result += QuickInfoHelper.toString(this, "DPI", m_DPI, ", DPI: ");
+
+    return result;
   }
 
   /**
@@ -231,7 +280,7 @@ public class PDFRenderPages
 	if (isLoggingEnabled())
 	  getLogger().info("Rendering page #" + (page + 1));
 	try {
-	  img  = renderer.renderImage(page);
+	  img  = renderer.renderImageWithDPI(page, m_DPI);
 	  cont = new BufferedImageContainer();
 	  cont.setImage(img);
 	  cont.getReport().setStringValue("File", file.getAbsolutePath());
