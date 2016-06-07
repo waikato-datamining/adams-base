@@ -148,7 +148,7 @@ import java.text.DecimalFormat;
  */
 public class SpreadSheet
   extends AbstractPdfProcletWithPageBreaks
-  implements VariableFileExtensionPdfProclet {
+  implements PdfProcletWithVariableFileExtension {
 
   /** for serialization. */
   private static final long serialVersionUID = -5894153152920062499L;

@@ -63,7 +63,7 @@ import java.io.File;
  */
 public class PageBreak
   extends AbstractPdfProclet
-  implements VariableFileExtensionPdfProclet {
+  implements PdfProcletWithVariableFileExtension {
 
   /** for serialization. */
   private static final long serialVersionUID = 3962046484864891107L;
