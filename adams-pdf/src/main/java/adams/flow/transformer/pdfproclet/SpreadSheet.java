@@ -141,7 +141,7 @@ import java.text.DecimalFormat;
  * @version $Revision$
  */
 public class SpreadSheet
-  extends AbstractPdfProclet
+  extends AbstractPdfProcletWithPageBreaks
   implements VariableFileExtensionPdfProclet {
 
   /** for serialization. */

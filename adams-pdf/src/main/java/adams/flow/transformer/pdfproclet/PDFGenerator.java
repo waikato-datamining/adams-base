@@ -197,6 +197,15 @@ public class PDFGenerator {
   }
 
   /**
+   * Adds a new page.
+   *
+   * @return		true if successfully added (or not necessary)
+   */
+  public boolean newPage() {
+    return m_State.newPage(m_Document);
+  }
+
+  /**
    * Returns the PageSize object based on the current setup.
    *
    * @return		the page size rectangle

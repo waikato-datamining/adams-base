@@ -56,7 +56,7 @@ public class DocumentState
   /**
    * Adds a new page only if none has been added so far.
    *
-   * @param doc	the document to add the page to
+   * @param doc		the document to add the page to
    * @return		true if successfully added (or not necessary)
    */
   public boolean newPage(Document doc) {

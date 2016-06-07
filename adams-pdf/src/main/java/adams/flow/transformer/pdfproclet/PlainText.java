@@ -95,7 +95,7 @@ import java.util.List;
  * @version $Revision$
  */
 public class PlainText
-  extends AbstractPdfProclet
+  extends AbstractPdfProcletWithPageBreaks
   implements VariableFileExtensionPdfProclet {
 
   /** for serialization. */

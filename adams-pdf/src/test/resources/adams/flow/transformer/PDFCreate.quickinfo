@@ -1,1 +1,1 @@
-${CWD}
+output: ${CWD}, size: A4, orientation: PORTRAIT

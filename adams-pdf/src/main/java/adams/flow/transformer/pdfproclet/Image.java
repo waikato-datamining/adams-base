@@ -90,7 +90,7 @@ import java.io.File;
  * @version $Revision$
  */
 public class Image
-  extends AbstractPdfProclet {
+  extends AbstractPdfProcletWithPageBreaks {
 
   /** for serialization. */
   private static final long serialVersionUID = 3962046484864891107L;

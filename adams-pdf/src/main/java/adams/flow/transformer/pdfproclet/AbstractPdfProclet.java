@@ -45,15 +45,6 @@ public abstract class AbstractPdfProclet
   /** the "match-all" file extension. */
   public final static String MATCH_ALL_EXTENSION = "*";
 
-  /** whether to add a page-break before adding the file. */
-  protected boolean m_PageBreakBefore;
-
-  /** whether to add a page-break after adding the file. */
-  protected boolean m_PageBreakAfter;
-
-  /** the number of files per page. */
-  protected int m_NumFilesPerPage;
-
   /** add the filename as header. */
   protected boolean m_AddFilename;
 
@@ -69,18 +60,6 @@ public abstract class AbstractPdfProclet
   @Override
   public void defineOptions() {
     super.defineOptions();
-
-    m_OptionManager.add(
-	    "page-break-before", "pageBreakBefore",
-	    false);
-
-    m_OptionManager.add(
-	    "page-break-after", "pageBreakAfter",
-	    false);
-
-    m_OptionManager.add(
-	    "num-files", "numFilesPerPage",
-	    -1, -1, null);
 
     m_OptionManager.add(
 	    "add-filename", "addFilename",
@@ -101,103 +80,6 @@ public abstract class AbstractPdfProclet
    * @return		the extensions (no dot)
    */
   public abstract BaseString[] getExtensions();
-
-  /**
-   * Whether to add a page break before the file is inserted.
-   *
-   * @param value 	if true then a page-break is added before the file
-   * 			is inserted
-   */
-  public void setPageBreakBefore(boolean value) {
-    m_PageBreakBefore = value;
-    reset();
-  }
-
-  /**
-   * Returns whether a page break is added before the file is inserted.
-   *
-   * @return 		true if a page break is added before the file is
-   * 			inserted
-   */
-  public boolean getPageBreakBefore() {
-    return m_PageBreakBefore;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String pageBreakBeforeTipText() {
-    return "If true, then a page-break is added before the content of the file is inserted.";
-  }
-
-  /**
-   * Whether to add a page break after the file is inserted.
-   *
-   * @param value 	if true then a page-break is added after the file
-   * 			is inserted
-   */
-  public void setPageBreakAfter(boolean value) {
-    m_PageBreakAfter = value;
-    reset();
-  }
-
-  /**
-   * Returns whether a page break is added after the file is inserted.
-   *
-   * @return 		true if a page break is added after the file is
-   * 			inserted
-   */
-  public boolean getPageBreakAfter() {
-    return m_PageBreakAfter;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String pageBreakAfterTipText() {
-    return "If true, then a page-break is added after the content of the file is inserted.";
-  }
-
-  /**
-   * Sets the number of files per page.
-   *
-   * @param value 	the number of files
-   */
-  public void setNumFilesPerPage(int value) {
-    if (value >= -1) {
-      m_NumFilesPerPage = value;
-      reset();
-    }
-    else {
-      getLogger().severe(
-	  "Number of files per page has to be at least 1 (or -1), provided: " + value);
-    }
-  }
-
-  /**
-   * Returns the number of files to put on a single page.
-   *
-   * @return 		the number of files
-   */
-  public int getNumFilesPerPage() {
-    return m_NumFilesPerPage;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String numFilesPerPageTipText() {
-    return "The number of files to put on a page before adding an automatic page break; use -1 for unlimited.";
-  }
 
   /**
    * Sets whether to output the filename as well.
@@ -320,14 +202,7 @@ public abstract class AbstractPdfProclet
    * @throws Exception	if something goes wrong
    */
   protected boolean preProcess(PDFGenerator generator, File file) throws Exception {
-    boolean	result;
-
-    result = true;
-
-    if (m_PageBreakBefore)
-      result = generator.getState().newPage(generator.getDocument());
-
-    return result;
+    return true;
   }
 
   /**
@@ -349,16 +224,7 @@ public abstract class AbstractPdfProclet
    * @throws Exception	if something goes wrong
    */
   protected boolean postProcess(PDFGenerator generator, File file) throws Exception {
-    boolean	result;
-
-    result = true;
-
-    if (m_PageBreakAfter || (generator.getState().numCurrentFiles() == m_NumFilesPerPage)) {
-      result = generator.getDocument().newPage();
-      generator.getState().resetCurrentFiles();
-    }
-
-    return result;
+    return true;
   }
 
   /**

@@ -294,7 +294,13 @@ public class PDFCreate
    */
   @Override
   public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "output", m_Output);
+    String	result;
+
+    result  = QuickInfoHelper.toString(this, "output", m_Output, "output: ");
+    result += QuickInfoHelper.toString(this, "pageSize", m_PageSize, ", size: ");
+    result += QuickInfoHelper.toString(this, "pageOrientation", m_PageOrientation, ", orientation: ");
+
+    return result;
   }
 
   /**

@@ -103,7 +103,7 @@ import java.io.File;
  * @version $Revision$
  */
 public class Headline
-  extends AbstractPdfProclet
+  extends AbstractPdfProcletWithPageBreaks
   implements VariableFileExtensionPdfProclet {
 
   /** for serialization. */

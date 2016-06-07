@@ -87,10 +87,11 @@ to the specified output PDF file. Basic options, like page size and orientation,
 can be set as well. How and what files get added to the PDF, is determined by
 the ``proclets'', i.e., little processor classes, that you specify and configure:
 \begin{tight_itemize}
-	\item \textit{CsvPdfProclet} -- for adding CSV files as tables.
-	\item \textit{HeadlinePdfProclet} -- for adding a headline.
-	\item \textit{ImagePdfProclet} -- for adding images (GIF, JPEG, PNG).
-	\item \textit{PlainTextPdfProclet} -- for adding plain text files as paragraphs.
+	\item \textit{SpreadSheet} -- for adding spreadsheet files as tables.
+	\item \textit{Headline} -- for adding a headline.
+	\item \textit{Image} -- for adding images (GIF, JPEG, PNG).
+	\item \textit{PageBreak} -- forces a pagebreak.
+	\item \textit{PlainText} -- for adding plain text files as paragraphs.
 \end{tight_itemize}
 
 Figure \ref{pdf-create-flow} shows a flow\footnote{adams-pdf-create\_pdf.flow} 
