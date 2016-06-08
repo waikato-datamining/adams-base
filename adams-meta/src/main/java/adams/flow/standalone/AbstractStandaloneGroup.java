@@ -370,7 +370,7 @@ public abstract class AbstractStandaloneGroup<T extends Actor>
 	  continue;
 	result = m_Actors.get(i).setUp();
 	if (result != null) {
-	  result = "Actor #" + (i+1) + " failed setup: " + result;
+	  result = m_Actors.get(i).getFullName() + ": " + result;
 	  break;
 	}
       }
