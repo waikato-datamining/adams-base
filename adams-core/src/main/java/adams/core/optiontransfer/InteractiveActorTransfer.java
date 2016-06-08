@@ -61,6 +61,9 @@ public class InteractiveActorTransfer
     atarget.setStopFlowIfCanceled(asource.getStopFlowIfCanceled());
     atarget.setCustomStopMessage(asource.getCustomStopMessage());
 
+    transferVariable(asource, atarget, "stopFlowIfCanceled");
+    transferVariable(asource, atarget, "customStopMessage");
+
     return null;
   }
 }

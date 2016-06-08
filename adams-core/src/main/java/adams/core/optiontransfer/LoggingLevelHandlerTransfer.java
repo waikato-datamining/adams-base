@@ -21,6 +21,7 @@
 package adams.core.optiontransfer;
 
 import adams.core.logging.LoggingLevelHandler;
+import adams.core.option.OptionHandler;
 
 /**
  * Transfers options between {@link LoggingLevelHandler} objects.
@@ -59,6 +60,8 @@ public class LoggingLevelHandlerTransfer
     atarget = (LoggingLevelHandler) target;
 
     atarget.setLoggingLevel(asource.getLoggingLevel());
+    if ((asource instanceof OptionHandler) && (atarget instanceof OptionHandler))
+      transferVariable((OptionHandler) asource, (OptionHandler) atarget, "loggingLevel");
 
     return null;
   }

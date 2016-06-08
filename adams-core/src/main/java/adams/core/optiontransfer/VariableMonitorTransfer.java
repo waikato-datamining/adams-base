@@ -20,6 +20,7 @@
 
 package adams.core.optiontransfer;
 
+import adams.core.option.OptionHandler;
 import adams.flow.core.VariableMonitor;
 
 /**
@@ -59,6 +60,8 @@ public class VariableMonitorTransfer
     atarget = (VariableMonitor) target;
 
     atarget.setVariableName(asource.getVariableName());
+    if ((asource instanceof OptionHandler) && (atarget instanceof OptionHandler))
+      transferVariable((OptionHandler) asource, (OptionHandler) atarget, "variableName");
 
     return null;
   }

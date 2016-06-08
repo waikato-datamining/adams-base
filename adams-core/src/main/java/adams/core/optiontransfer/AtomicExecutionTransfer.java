@@ -59,6 +59,7 @@ public class AtomicExecutionTransfer
     atarget = (AtomicExecution) target;
 
     atarget.setFinishBeforeStopping(asource.getFinishBeforeStopping());
+    transferVariable(asource, atarget, "finishBeforeStopping");
 
     return null;
   }

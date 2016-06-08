@@ -59,6 +59,7 @@ public class ArrayProviderTransfer
     atarget = (ArrayProvider) target;
 
     atarget.setOutputArray(asource.getOutputArray());
+    transferVariable(asource, atarget, "outputArray");
 
     return null;
   }

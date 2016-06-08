@@ -62,6 +62,10 @@ public class RemoteExecutionHandlerTransfer
     atarget.setVariableNames(asource.getVariableNames());
     atarget.setConnection(asource.getConnection());
 
+    transferVariable(asource, atarget, "storageNames");
+    transferVariable(asource, atarget, "variableNames");
+    transferVariable(asource, atarget, "connection");
+
     return null;
   }
 }

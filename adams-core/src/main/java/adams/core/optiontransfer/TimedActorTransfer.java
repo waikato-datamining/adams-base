@@ -61,6 +61,9 @@ public class TimedActorTransfer
     atarget.setCallableName(asource.getCallableName());
     atarget.setOptional(asource.getOptional());
 
+    transferVariable(asource, atarget, "callableName");
+    transferVariable(asource, atarget, "optional");
+
     return null;
   }
 }

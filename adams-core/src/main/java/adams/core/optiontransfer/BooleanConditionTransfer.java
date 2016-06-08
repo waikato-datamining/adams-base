@@ -20,6 +20,7 @@
 
 package adams.core.optiontransfer;
 
+import adams.core.option.OptionHandler;
 import adams.flow.condition.bool.BooleanConditionSupporter;
 
 /**
@@ -59,6 +60,8 @@ public class BooleanConditionTransfer
     atarget = (BooleanConditionSupporter) target;
 
     atarget.setCondition(asource.getCondition());
+    if ((asource instanceof OptionHandler) && (atarget instanceof OptionHandler))
+      transferVariable((OptionHandler) asource, (OptionHandler) atarget, "condition");
 
     return null;
   }

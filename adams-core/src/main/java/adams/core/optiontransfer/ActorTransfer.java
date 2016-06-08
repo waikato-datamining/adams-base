@@ -65,6 +65,12 @@ public class ActorTransfer
     atarget.setSilent(asource.getSilent());
     atarget.setStopFlowOnError(asource.getStopFlowOnError());
 
+    transferVariable(asource, atarget, "name");
+    transferVariable(asource, atarget, "skip");
+    transferVariable(asource, atarget, "annotations");
+    transferVariable(asource, atarget, "silet");
+    transferVariable(asource, atarget, "stopFlowOnError");
+
     return null;
   }
 }

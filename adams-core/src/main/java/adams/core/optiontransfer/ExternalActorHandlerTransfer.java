@@ -20,6 +20,7 @@
 
 package adams.core.optiontransfer;
 
+import adams.core.option.OptionHandler;
 import adams.flow.core.ExternalActorHandler;
 
 /**
@@ -59,6 +60,8 @@ public class ExternalActorHandlerTransfer
     atarget = (ExternalActorHandler) target;
 
     atarget.setActorFile(asource.getActorFile());
+    if ((asource instanceof OptionHandler) && (atarget instanceof OptionHandler))
+      transferVariable((OptionHandler) asource, (OptionHandler) atarget, "actorFile");
 
     return null;
   }

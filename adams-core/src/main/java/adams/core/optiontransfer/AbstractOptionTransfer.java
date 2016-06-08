@@ -21,6 +21,9 @@
 package adams.core.optiontransfer;
 
 import adams.core.ClassLister;
+import adams.core.option.AbstractArgumentOption;
+import adams.core.option.AbstractOption;
+import adams.core.option.OptionHandler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,6 +61,25 @@ public abstract class AbstractOptionTransfer {
     if (target == null)
       return "Target object is null!";
     return null;
+  }
+
+  /**
+   * Transfers the variable (if any attached).
+   *
+   * @param source	the source from which to transfer the variable
+   * @param target	the target to receive the variable
+   * @param property	the property for which to transfer the variable
+   */
+  protected void transferVariable(OptionHandler source, OptionHandler target, String property) {
+    String		var;
+    AbstractOption	option;
+
+    if (source.getOptionManager().hasVariableForProperty(property)) {
+      var    = source.getOptionManager().getVariableForProperty(property);
+      option = target.getOptionManager().findByProperty(property);
+      if ((option != null) && (option instanceof AbstractArgumentOption))
+	((AbstractArgumentOption) option).setVariable(var);
+    }
   }
 
   /**

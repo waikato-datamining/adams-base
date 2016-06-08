@@ -59,6 +59,7 @@ public class OptionalPasswordPromptTransfer
     atarget = (OptionalPasswordPrompt) target;
 
     atarget.setPromptForPassword(asource.getPromptForPassword());
+    transferVariable(asource, atarget, "promptForPassword");
 
     return null;
   }

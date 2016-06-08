@@ -67,6 +67,15 @@ public class LocalScopeHandlerTransfer
     atarget.setPropagateStorage(asource.getPropagateStorage());
     atarget.setStorageRegExp(asource.getStorageRegExp());
 
+    transferVariable(asource, atarget, "scopeHandlingVariables");
+    transferVariable(asource, atarget, "variablesFilter");
+    transferVariable(asource, atarget, "propagateVariables");
+    transferVariable(asource, atarget, "variablesRegExp");
+    transferVariable(asource, atarget, "scopeHandlingStorage");
+    transferVariable(asource, atarget, "storageFilter");
+    transferVariable(asource, atarget, "propagateStorage");
+    transferVariable(asource, atarget, "storageRegExp");
+
     return null;
   }
 }
