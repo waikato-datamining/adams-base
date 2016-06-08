@@ -15,7 +15,7 @@
 
 /**
  * TextPanel.java
- * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.dialog;
 
@@ -867,5 +867,12 @@ public class TextPanel
    */
   public boolean getUpdateParentTitle() {
     return m_TitleGenerator.isEnabled();
+  }
+
+  /**
+   * Pops up a print dialog.
+   */
+  public void printText() {
+    m_TextPanel.printText();
   }
 }

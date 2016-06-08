@@ -327,4 +327,11 @@ public class FlowPanelNotificationArea
   public String getContent() {
     return m_TextNotification.getContent();
   }
+
+  /**
+   * Pops up a print dialog.
+   */
+  public void printText() {
+    m_TextNotification.printText();
+  }
 }
