@@ -20,9 +20,9 @@
 
 package adams.data.spreadsheet;
 
+import adams.core.exception.NotImplementedException;
 import adams.event.SpreadSheetColumnInsertionEvent;
 import gnu.trove.list.array.TIntArrayList;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.ArrayList;
 import java.util.Collection;

@@ -22,11 +22,11 @@ package adams.data.spreadsheet;
 
 import adams.core.DateFormat;
 import adams.core.DateUtils;
+import adams.core.exception.NotImplementedException;
 import adams.data.SharedStringsTable;
 import adams.data.io.output.CsvSpreadSheetWriter;
 import adams.data.spreadsheet.Cell.ContentType;
 import gnu.trove.list.array.TIntArrayList;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.StringWriter;
 import java.text.NumberFormat;

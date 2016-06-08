@@ -21,12 +21,12 @@
 package adams.ml.data;
 
 import adams.core.Utils;
+import adams.core.exception.NotImplementedException;
 import adams.data.spreadsheet.Cell;
 import adams.data.spreadsheet.DataRow;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.event.SpreadSheetColumnInsertionEvent;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import weka.core.Instance;
 
 import java.util.ArrayList;

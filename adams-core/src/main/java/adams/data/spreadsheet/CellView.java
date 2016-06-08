@@ -24,7 +24,7 @@ import adams.core.DateTime;
 import adams.core.DateTimeMsec;
 import adams.core.Time;
 import adams.core.TimeMsec;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+import adams.core.exception.NotImplementedException;
 
 import java.util.Date;
 

@@ -21,6 +21,7 @@
 package adams.data.spreadsheet;
 
 import adams.core.Utils;
+import adams.core.exception.NotImplementedException;
 import adams.data.io.input.CsvSpreadSheetReader;
 import adams.data.io.output.CsvSpreadSheetWriter;
 import adams.env.Environment;
@@ -30,7 +31,6 @@ import adams.test.TestHelper;
 import adams.test.TmpFile;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.File;
 import java.util.List;
