@@ -21,6 +21,7 @@
 package adams.gui.flow.notificationareaaction;
 
 import adams.core.ClassLister;
+import adams.core.StatusMessageHandler;
 import adams.gui.action.AbstractBaseAction;
 import adams.gui.flow.FlowPanelNotificationArea;
 
@@ -31,7 +32,8 @@ import adams.gui.flow.FlowPanelNotificationArea;
  * @version $Revision$
  */
 public abstract class AbstractNotificationAreaAction
-  extends AbstractBaseAction {
+  extends AbstractBaseAction
+  implements StatusMessageHandler {
 
   private static final long serialVersionUID = -3555111594280198534L;
 
@@ -68,5 +70,18 @@ public abstract class AbstractNotificationAreaAction
    */
   public static String[] getActions() {
     return ClassLister.getSingleton().getClassnames(AbstractNotificationAreaAction.class);
+  }
+
+  /**
+   * Displays a message.
+   *
+   * @param msg		the message to display
+   */
+  public void showStatus(String msg) {
+    if (m_Owner == null)
+      return;
+    if (m_Owner.getOwner() == null)
+      return;
+    m_Owner.getOwner().showStatus(msg);
   }
 }
