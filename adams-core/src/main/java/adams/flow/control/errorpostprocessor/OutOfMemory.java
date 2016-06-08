@@ -167,7 +167,7 @@ public class OutOfMemory
       m_LogActor      = m_Helper.findCallableActorRecursive(source, getLog());
       if (m_LogActor == null) {
         msg = "Couldn't find callable log actor '" + getLog() + "' - logging disabled!";
-        getLogger().severe(msg);
+        getLogger().warning(msg);
       }
       else {
 	comp = new Compatibility();
