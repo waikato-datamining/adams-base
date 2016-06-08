@@ -52,6 +52,7 @@ public class Copy
   @Override
   protected void doActionPerformed(ActionEvent e) {
     GUIHelper.copyToClipboard(m_Owner.getContent());
+    showStatus("Content copied");
   }
 
   /**
