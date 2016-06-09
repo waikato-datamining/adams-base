@@ -36,60 +36,64 @@ import java.util.List;
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- *
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- *
- * <pre>-page-break-before (property: pageBreakBefore)
+ * 
+ * <pre>-regexp-filename &lt;adams.core.base.BaseRegExp&gt; (property: regExpFilename)
+ * &nbsp;&nbsp;&nbsp;The regular expression that the filename must match.
+ * &nbsp;&nbsp;&nbsp;default: .*
+ * </pre>
+ * 
+ * <pre>-add-filename &lt;boolean&gt; (property: addFilename)
+ * &nbsp;&nbsp;&nbsp;Whether to add the file name before the actual file content as separate 
+ * &nbsp;&nbsp;&nbsp;paragraph.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-font-filename &lt;adams.core.io.PdfFont&gt; (property: fontFilename)
+ * &nbsp;&nbsp;&nbsp;The font to use for printing the file name header.
+ * &nbsp;&nbsp;&nbsp;default: Helvetica-Bold-12
+ * </pre>
+ * 
+ * <pre>-color-filename &lt;java.awt.Color&gt; (property: colorFilename)
+ * &nbsp;&nbsp;&nbsp;The color to use for printing the file name header.
+ * &nbsp;&nbsp;&nbsp;default: #000000
+ * </pre>
+ * 
+ * <pre>-page-break-before &lt;boolean&gt; (property: pageBreakBefore)
  * &nbsp;&nbsp;&nbsp;If true, then a page-break is added before the content of the file is inserted.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
- * <pre>-page-break-after (property: pageBreakAfter)
+ * 
+ * <pre>-page-break-after &lt;boolean&gt; (property: pageBreakAfter)
  * &nbsp;&nbsp;&nbsp;If true, then a page-break is added after the content of the file is inserted.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-num-files &lt;int&gt; (property: numFilesPerPage)
  * &nbsp;&nbsp;&nbsp;The number of files to put on a page before adding an automatic page break;
  * &nbsp;&nbsp;&nbsp; use -1 for unlimited.
  * &nbsp;&nbsp;&nbsp;default: -1
  * &nbsp;&nbsp;&nbsp;minimum: -1
  * </pre>
- *
- * <pre>-add-filename (property: addFilename)
- * &nbsp;&nbsp;&nbsp;Whether to add the file name before the actual file content as separate
- * &nbsp;&nbsp;&nbsp;paragraph.
- * </pre>
- *
- * <pre>-font-filename &lt;adams.core.io.PdfFont&gt; (property: fontFilename)
- * &nbsp;&nbsp;&nbsp;The font to use for printing the file name header.
- * &nbsp;&nbsp;&nbsp;default: Helvetica-Bold-12
- * </pre>
- *
- * <pre>-color-filename &lt;java.awt.Color&gt; (property: colorFilename)
- * &nbsp;&nbsp;&nbsp;The color to use for printing the file name header.
- * &nbsp;&nbsp;&nbsp;default: #000000
- * </pre>
- *
+ * 
  * <pre>-font-content &lt;adams.core.io.PdfFont&gt; (property: fontContent)
  * &nbsp;&nbsp;&nbsp;The font to use for the file content.
  * &nbsp;&nbsp;&nbsp;default: Helvetica-Normal-12
  * </pre>
- *
+ * 
  * <pre>-color-content &lt;java.awt.Color&gt; (property: colorContent)
  * &nbsp;&nbsp;&nbsp;The color to use for the content.
  * &nbsp;&nbsp;&nbsp;default: #000000
  * </pre>
- *
+ * 
  * <pre>-extension &lt;adams.core.base.BaseString&gt; [-extension ...] (property: extensions)
  * &nbsp;&nbsp;&nbsp;The file extension(s) that the processor will be used for.
  * &nbsp;&nbsp;&nbsp;default: txt
  * </pre>
- *
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)

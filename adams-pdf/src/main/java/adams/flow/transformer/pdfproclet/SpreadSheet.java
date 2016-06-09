@@ -15,7 +15,7 @@
 
 /**
  * SpreadSheet.java
- * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer.pdfproclet;
 
@@ -45,6 +45,11 @@ import java.text.DecimalFormat;
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
+ * </pre>
+ * 
+ * <pre>-regexp-filename &lt;adams.core.base.BaseRegExp&gt; (property: regExpFilename)
+ * &nbsp;&nbsp;&nbsp;The regular expression that the filename must match.
+ * &nbsp;&nbsp;&nbsp;default: .*
  * </pre>
  * 
  * <pre>-add-filename &lt;boolean&gt; (property: addFilename)

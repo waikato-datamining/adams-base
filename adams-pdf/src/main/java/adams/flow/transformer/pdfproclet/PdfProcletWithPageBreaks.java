@@ -26,44 +26,24 @@ package adams.flow.transformer.pdfproclet;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public interface PdfProcletWithAbsolutePosition
+public interface PdfProcletWithPageBreaks
   extends PdfProclet {
 
   /**
-   * Sets the absolute X position.
+   * Whether to add a page break before the file is inserted.
    *
-   * @param value	the X position
+   * @param value 	if true then a page-break is added before the file
+   * 			is inserted
    */
-  public void setX(float value);
+  public void setPageBreakBefore(boolean value);
 
   /**
-   * Returns the absolute X position.
+   * Returns whether a page break is added before the file is inserted.
    *
-   * @return		the X position
+   * @return 		true if a page break is added before the file is
+   * 			inserted
    */
-  public float getX();
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String XTipText();
-
-  /**
-   * Sets the absolute Y position.
-   *
-   * @param value	the Y position
-   */
-  public void setY(float value);
-
-  /**
-   * Returns the absolute Y position.
-   *
-   * @return		the Y position
-   */
-  public float getY();
+  public boolean getPageBreakBefore();
 
   /**
    * Returns the tip text for this property.
@@ -71,5 +51,51 @@ public interface PdfProcletWithAbsolutePosition
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String YTipText();
+  public String pageBreakBeforeTipText();
+
+  /**
+   * Whether to add a page break after the file is inserted.
+   *
+   * @param value 	if true then a page-break is added after the file
+   * 			is inserted
+   */
+  public void setPageBreakAfter(boolean value);
+
+  /**
+   * Returns whether a page break is added after the file is inserted.
+   *
+   * @return 		true if a page break is added after the file is
+   * 			inserted
+   */
+  public boolean getPageBreakAfter();
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String pageBreakAfterTipText();
+
+  /**
+   * Sets the number of files per page.
+   *
+   * @param value 	the number of files
+   */
+  public void setNumFilesPerPage(int value);
+
+  /**
+   * Returns the number of files to put on a single page.
+   *
+   * @return 		the number of files
+   */
+  public int getNumFilesPerPage();
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String numFilesPerPageTipText();
 }

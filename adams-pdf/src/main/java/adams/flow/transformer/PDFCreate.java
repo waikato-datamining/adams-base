@@ -29,6 +29,7 @@ import adams.flow.transformer.pdfproclet.Image;
 import adams.flow.transformer.pdfproclet.PDFGenerator;
 import adams.flow.transformer.pdfproclet.PageOrientation;
 import adams.flow.transformer.pdfproclet.PageSize;
+import adams.flow.transformer.pdfproclet.PdfProclet;
 import adams.flow.transformer.pdfproclet.PlainText;
 import adams.flow.transformer.pdfproclet.SpreadSheet;
 
@@ -128,7 +129,7 @@ public class PDFCreate
   protected PageOrientation m_PageOrientation;
 
   /** the PDF processors. */
-  protected AbstractPdfProclet[] m_Proclets;
+  protected PdfProclet[] m_Proclets;
 
   /**
    * Returns a string describing the object.
@@ -165,7 +166,7 @@ public class PDFCreate
 
     m_OptionManager.add(
 	    "proclet", "proclets",
-	    new AbstractPdfProclet[]{
+	    new PdfProclet[]{
 		new PlainText(),
 		new SpreadSheet(),
 		new Image()});
@@ -263,7 +264,7 @@ public class PDFCreate
    *
    * @param value	the processors to use
    */
-  public void setProclets(AbstractPdfProclet[] value) {
+  public void setProclets(PdfProclet[] value) {
     m_Proclets = value;
     reset();
   }
@@ -273,7 +274,7 @@ public class PDFCreate
    *
    * @return 		the processors in use
    */
-  public AbstractPdfProclet[] getProclets() {
+  public PdfProclet[] getProclets() {
     return m_Proclets;
   }
 

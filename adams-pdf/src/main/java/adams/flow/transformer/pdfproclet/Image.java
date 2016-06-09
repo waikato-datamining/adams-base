@@ -35,6 +35,11 @@ import java.io.File;
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  * 
+ * <pre>-regexp-filename &lt;adams.core.base.BaseRegExp&gt; (property: regExpFilename)
+ * &nbsp;&nbsp;&nbsp;The regular expression that the filename must match.
+ * &nbsp;&nbsp;&nbsp;default: .*
+ * </pre>
+ * 
  * <pre>-add-filename &lt;boolean&gt; (property: addFilename)
  * &nbsp;&nbsp;&nbsp;Whether to add the file name before the actual file content as separate 
  * &nbsp;&nbsp;&nbsp;paragraph.

@@ -14,7 +14,7 @@
  */
 
 /**
- * Rectangle.java
+ * Line.java
  * Copyright (C) 2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer.pdfproclet;
@@ -28,7 +28,7 @@ import java.io.File;
 
 /**
  <!-- globalinfo-start -->
- * Draws a rectangle.
+ * Draws a line.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -48,26 +48,26 @@ import java.io.File;
  * &nbsp;&nbsp;&nbsp;default: *
  * </pre>
  * 
- * <pre>-x &lt;float&gt; (property: X)
- * &nbsp;&nbsp;&nbsp;The absolute X position.
+ * <pre>-x1 &lt;float&gt; (property: X1)
+ * &nbsp;&nbsp;&nbsp;The absolute X1 position.
  * &nbsp;&nbsp;&nbsp;default: 0.0
  * &nbsp;&nbsp;&nbsp;minimum: 0.0
  * </pre>
  * 
- * <pre>-y &lt;float&gt; (property: Y)
- * &nbsp;&nbsp;&nbsp;The absolute Y position.
+ * <pre>-y1 &lt;float&gt; (property: Y1)
+ * &nbsp;&nbsp;&nbsp;The absolute Y1 position.
  * &nbsp;&nbsp;&nbsp;default: 0.0
  * &nbsp;&nbsp;&nbsp;minimum: 0.0
  * </pre>
  * 
- * <pre>-width &lt;float&gt; (property: width)
- * &nbsp;&nbsp;&nbsp;The width.
+ * <pre>-x2 &lt;float&gt; (property: X2)
+ * &nbsp;&nbsp;&nbsp;The absolute X2 position.
  * &nbsp;&nbsp;&nbsp;default: 10.0
  * &nbsp;&nbsp;&nbsp;minimum: 0.001
  * </pre>
  * 
- * <pre>-height &lt;float&gt; (property: height)
- * &nbsp;&nbsp;&nbsp;The height of the rectangle.
+ * <pre>-y2 &lt;float&gt; (property: Y2)
+ * &nbsp;&nbsp;&nbsp;The absolute Y2 position.
  * &nbsp;&nbsp;&nbsp;default: 10.0
  * &nbsp;&nbsp;&nbsp;minimum: 0.001
  * </pre>
@@ -83,17 +83,12 @@ import java.io.File;
  * &nbsp;&nbsp;&nbsp;minimum: 0.001
  * </pre>
  * 
- * <pre>-fill &lt;boolean&gt; (property: fill)
- * &nbsp;&nbsp;&nbsp;If enabled the shape gets filled with the specified color.
- * &nbsp;&nbsp;&nbsp;default: false
- * </pre>
- * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class Rectangle
+public class Line
   extends AbstractPdfProclet
   implements PdfProcletWithVariableFileExtension {
 
@@ -103,17 +98,17 @@ public class Rectangle
   /** the file extensions. */
   protected BaseString[] m_Extensions;
 
-  /** the absolute X position. */
-  protected float m_X;
+  /** the absolute X1 position. */
+  protected float m_X1;
 
-  /** the absolute Y position. */
-  protected float m_Y;
+  /** the absolute Y1 position. */
+  protected float m_Y1;
 
-  /** the width. */
-  protected float m_Width;
+  /** the absolute X2 position. */
+  protected float m_X2;
 
-  /** the height. */
-  protected float m_Height;
+  /** the absolute Y2 position. */
+  protected float m_Y2;
 
   /** the color. */
   protected Color m_Color;
@@ -121,16 +116,13 @@ public class Rectangle
   /** the line width. */
   protected float m_LineWidth;
 
-  /** whether to fill the circle. */
-  protected boolean m_Fill;
-
   /**
    * Returns a short description of the writer.
    *
    * @return		a description of the writer
    */
   public String globalInfo() {
-    return "Draws a rectangle.";
+    return "Draws a line.";
   }
 
   /**
@@ -144,19 +136,19 @@ public class Rectangle
       new BaseString[]{new BaseString(MATCH_ALL_EXTENSION)});
 
     m_OptionManager.add(
-      "x", "X",
+      "x1", "X1",
       0.0f, 0.0f, null);
 
     m_OptionManager.add(
-      "y", "Y",
+      "y1", "Y1",
       0.0f, 0.0f, null);
 
     m_OptionManager.add(
-      "width", "width",
+      "x2", "X2",
       10.0f, 0.001f, null);
 
     m_OptionManager.add(
-      "height", "height",
+      "y2", "Y2",
       10.0f, 0.001f, null);
 
     m_OptionManager.add(
@@ -166,10 +158,6 @@ public class Rectangle
     m_OptionManager.add(
       "line-width", "lineWidth",
       1.0f, 0.001f, null);
-
-    m_OptionManager.add(
-      "fill", "fill",
-      false);
   }
 
   /**
@@ -202,24 +190,24 @@ public class Rectangle
   }
 
   /**
-   * Sets the absolute X position.
+   * Sets the absolute X1 position.
    *
-   * @param value	the X position
+   * @param value	the X1 position
    */
-  public void setX(float value) {
-    if (getOptionManager().isValid("X", value)) {
-      m_X = value;
+  public void setX1(float value) {
+    if (getOptionManager().isValid("X1", value)) {
+      m_X1 = value;
       reset();
     }
   }
 
   /**
-   * Returns the absolute X position.
+   * Returns the absolute X1 position.
    *
-   * @return		the X position
+   * @return		the X1 position
    */
-  public float getX() {
-    return m_X;
+  public float getX1() {
+    return m_X1;
   }
 
   /**
@@ -228,29 +216,29 @@ public class Rectangle
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String XTipText() {
-    return "The absolute X position.";
+  public String X1TipText() {
+    return "The absolute X1 position.";
   }
 
   /**
-   * Sets the absolute Y position.
+   * Sets the absolute Y1 position.
    *
-   * @param value	the Y position
+   * @param value	the Y1 position
    */
-  public void setY(float value) {
-    if (getOptionManager().isValid("Y", value)) {
-      m_Y = value;
+  public void setY1(float value) {
+    if (getOptionManager().isValid("Y1", value)) {
+      m_Y1 = value;
       reset();
     }
   }
 
   /**
-   * Returns the absolute Y position.
+   * Returns the absolute Y1 position.
    *
-   * @return		the Y position
+   * @return		the Y1 position
    */
-  public float getY() {
-    return m_Y;
+  public float getY1() {
+    return m_Y1;
   }
 
   /**
@@ -259,29 +247,29 @@ public class Rectangle
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String YTipText() {
-    return "The absolute Y position.";
+  public String Y1TipText() {
+    return "The absolute Y1 position.";
   }
 
   /**
-   * Sets the width.
+   * Sets the absolute X2 position.
    *
-   * @param value	the width
+   * @param value	the X2 position
    */
-  public void setWidth(float value) {
-    if (getOptionManager().isValid("width", value)) {
-      m_Width = value;
+  public void setX2(float value) {
+    if (getOptionManager().isValid("X2", value)) {
+      m_X2 = value;
       reset();
     }
   }
 
   /**
-   * Returns the width.
+   * Returns the absolute X2 position.
    *
-   * @return		the width
+   * @return		the X2 position
    */
-  public float getWidth() {
-    return m_Width;
+  public float getX2() {
+    return m_X2;
   }
 
   /**
@@ -290,29 +278,29 @@ public class Rectangle
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String widthTipText() {
-    return "The width.";
+  public String X2TipText() {
+    return "The absolute X2 position.";
   }
 
   /**
-   * Sets the height.
+   * Sets the absolute Y2 position.
    *
-   * @param value	the height
+   * @param value	the Y2 position
    */
-  public void setHeight(float value) {
-    if (getOptionManager().isValid("height", value)) {
-      m_Height = value;
+  public void setY2(float value) {
+    if (getOptionManager().isValid("Y2", value)) {
+      m_Y2 = value;
       reset();
     }
   }
 
   /**
-   * Returns the height.
+   * Returns the absolute Y2 position.
    *
-   * @return		the height
+   * @return		the Y2 position
    */
-  public float getHeight() {
-    return m_Height;
+  public float getY2() {
+    return m_Y2;
   }
 
   /**
@@ -321,8 +309,8 @@ public class Rectangle
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String heightTipText() {
-    return "The height of the rectangle.";
+  public String Y2TipText() {
+    return "The absolute Y2 position.";
   }
 
   /**
@@ -386,35 +374,6 @@ public class Rectangle
   }
 
   /**
-   * Sets whether to fill the shape with the specified color.
-   *
-   * @param value	true if to fill
-   */
-  public void setFill(boolean value) {
-    m_Fill = value;
-    reset();
-  }
-
-  /**
-   * Returns whether to fill the shape with the specified color.
-   *
-   * @return		true if to fill
-   */
-  public boolean getFill() {
-    return m_Fill;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String fillTipText() {
-    return "If enabled the shape gets filled with the specified color.";
-  }
-
-  /**
    * The actual processing of the document.
    *
    * @param generator	the context
@@ -428,13 +387,10 @@ public class Rectangle
     cb = generator.getWriter().getDirectContent();
     cb.saveState();
     cb.setColorStroke(new BaseColor(m_Color.getRGB()));
-    cb.setColorFill(new BaseColor(m_Color.getRGB()));
     cb.setLineWidth(m_LineWidth);
-    cb.rectangle(m_X, m_Y, m_X + m_Width, m_Y + m_Height);
-    if (m_Fill)
-      cb.fillStroke();
-    else
-      cb.stroke();
+    cb.moveTo(m_X1, m_Y1);
+    cb.lineTo(m_X2, m_Y2);
+    cb.stroke();
     cb.restoreState();
 
     return true;

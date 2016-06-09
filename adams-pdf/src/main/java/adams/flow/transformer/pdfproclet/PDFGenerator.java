@@ -47,7 +47,7 @@ public class PDFGenerator {
   protected PageOrientation m_PageOrientation;
 
   /** the PDF processors. */
-  protected AbstractPdfProclet[] m_Proclets;
+  protected PdfProclet[] m_Proclets;
 
   /** the documentation that is being worked on. */
   protected Document m_Document;
@@ -156,7 +156,7 @@ public class PDFGenerator {
    *
    * @param value	the processors
    */
-  public void setProclets(AbstractPdfProclet[] value) {
+  public void setProclets(PdfProclet[] value) {
     m_Proclets = value;
   }
 
@@ -165,7 +165,7 @@ public class PDFGenerator {
    *
    * @return 		the processors
    */
-  public AbstractPdfProclet[] getProclets() {
+  public PdfProclet[] getProclets() {
     return m_Proclets;
   }
 
@@ -415,7 +415,7 @@ public class PDFGenerator {
 
     processed = false;
 
-    for (AbstractPdfProclet proclet: m_Proclets) {
+    for (PdfProclet proclet: m_Proclets) {
       if (proclet.canProcess(this, file)) {
 	proclet.process(this, file);
 	processed = true;

@@ -14,23 +14,22 @@
  */
 
 /**
- * AbstractPdfProclet.java
- * Copyright (C) 2010-2013 University of Waikato, Hamilton, New Zealand
+ * AbstractPdfProcletWithPageBreaks.java
+ * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer.pdfproclet;
 
 import java.io.File;
 
 /**
- * Abstract ancestor for processors that add the content of files to a PDF
- * document. Derived classes only require to implement the
- * <code>doProcess(Document,File)</code> method.
+ * Ancestor for processors handle page breaks.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
 public abstract class AbstractPdfProcletWithPageBreaks
-  extends AbstractPdfProclet {
+  extends AbstractPdfProcletWithFilenameOutput
+  implements PdfProcletWithPageBreaks {
 
   /** for serialization. */
   private static final long serialVersionUID = -9041126884910193987L;

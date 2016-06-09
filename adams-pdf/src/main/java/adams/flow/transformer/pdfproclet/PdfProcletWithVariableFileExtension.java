@@ -28,7 +28,8 @@ import adams.core.base.BaseString;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public interface PdfProcletWithVariableFileExtension {
+public interface PdfProcletWithVariableFileExtension
+  extends PdfProclet {
 
   /**
    * Sets the extensions that the processor can process.

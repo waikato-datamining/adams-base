@@ -15,46 +15,34 @@
 
 /**
  * AbstractPdfProclet.java
- * Copyright (C) 2010-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer.pdfproclet;
 
 import adams.core.base.BaseRegExp;
 import adams.core.base.BaseString;
-import adams.core.io.PdfFont;
 import adams.core.option.AbstractOptionHandler;
 import com.itextpdf.text.Element;
-import com.itextpdf.text.Paragraph;
 
-import java.awt.Color;
 import java.io.File;
 import java.util.logging.Level;
 
 /**
  * Abstract ancestor for processors that add the content of files to a PDF
- * document. Derived classes only require to implement the
- * <code>doProcess(Document,File)</code> method.
+ * document.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
 public abstract class AbstractPdfProclet
-  extends AbstractOptionHandler {
+  extends AbstractOptionHandler
+  implements PdfProclet {
 
   /** for serialization. */
   private static final long serialVersionUID = -9041126884910193987L;
 
   /** the "match-all" file extension. */
   public final static String MATCH_ALL_EXTENSION = "*";
-
-  /** add the filename as header. */
-  protected boolean m_AddFilename;
-
-  /** the font for the filename header. */
-  protected PdfFont m_FontFilename;
-
-  /** the color for the filename header. */
-  protected Color m_ColorFilename;
 
   /** the regexp to use on the filename. */
   protected BaseRegExp m_RegExpFilename;
@@ -67,114 +55,8 @@ public abstract class AbstractPdfProclet
     super.defineOptions();
 
     m_OptionManager.add(
-      "add-filename", "addFilename",
-      false);
-
-    m_OptionManager.add(
-      "font-filename", "fontFilename",
-      new PdfFont(PdfFont.HELVETICA, PdfFont.BOLD, 12.0f));
-
-    m_OptionManager.add(
-      "color-filename", "colorFilename",
-      Color.BLACK);
-
-    m_OptionManager.add(
       "regexp-filename", "regExpFilename",
       new BaseRegExp(BaseRegExp.MATCH_ALL));
-  }
-
-  /**
-   * Returns the extensions that the processor can process.
-   *
-   * @return		the extensions (no dot)
-   */
-  public abstract BaseString[] getExtensions();
-
-  /**
-   * Sets whether to output the filename as well.
-   *
-   * @param value	if true then the filename gets added as well
-   */
-  public void setAddFilename(boolean value) {
-    m_AddFilename = value;
-    reset();
-  }
-
-  /**
-   * Returns whether to output the filename as well.
-   *
-   * @return 		true if the filename gets added as well
-   */
-  public boolean getAddFilename() {
-    return m_AddFilename;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String addFilenameTipText() {
-    return "Whether to add the file name before the actual file content as separate paragraph.";
-  }
-
-  /**
-   * Sets the font to use for adding the filename header.
-   *
-   * @param value	the font
-   */
-  public void setFontFilename(PdfFont value) {
-    m_FontFilename = value;
-    reset();
-  }
-
-  /**
-   * Returns the font to use for adding the filename header.
-   *
-   * @return 		the font
-   */
-  public PdfFont getFontFilename() {
-    return m_FontFilename;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String fontFilenameTipText() {
-    return "The font to use for printing the file name header.";
-  }
-
-  /**
-   * Sets the color to use for adding the filename header.
-   *
-   * @param value	the color
-   */
-  public void setColorFilename(Color value) {
-    m_ColorFilename = value;
-    reset();
-  }
-
-  /**
-   * Returns the color to use for adding the filename header.
-   *
-   * @return 		the color
-   */
-  public Color getColorFilename() {
-    return m_ColorFilename;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String colorFilenameTipText() {
-    return "The color to use for printing the file name header.";
   }
 
   /**
@@ -207,6 +89,13 @@ public abstract class AbstractPdfProclet
   }
 
   /**
+   * Returns the extensions that the processor can process.
+   *
+   * @return		the extensions (no dot)
+   */
+  public abstract BaseString[] getExtensions();
+
+  /**
    * Adds the element to the document.
    *
    * @param generator	the context
@@ -220,28 +109,6 @@ public abstract class AbstractPdfProclet
     result = generator.getDocument().add(element);
     if (result)
       generator.getState().contentAdded();
-
-    return result;
-  }
-
-  /**
-   * Adds the filename to the page as header, if necessary.
-   *
-   * @param generator	the context
-   * @param file	the plain text file
-   * @return		true if successfully added
-   * @throws Exception	if something goes wrong
-   */
-  protected boolean addFilename(PDFGenerator generator, File file) throws Exception {
-    boolean	result;
-
-    result = true;
-
-    // add filename?
-    if (m_AddFilename)
-      result = addElement(
-	generator,
-	new Paragraph(file.getName() + "\n", m_FontFilename.toFont(m_ColorFilename)));
 
     return result;
   }
@@ -290,23 +157,20 @@ public abstract class AbstractPdfProclet
   public boolean canProcess(PDFGenerator generator, File file) {
     boolean	result;
     String	extension;
-    boolean	match;
 
-    result = m_RegExpFilename.isMatch(file.getAbsolutePath());
+    result = false;
 
-    if (result) {
-      extension = file.getName().replaceAll(".*\\.", "");
-      match     = false;
-      for (BaseString ext : getExtensions()) {
-	if (ext.stringValue().equals(MATCH_ALL_EXTENSION))
-	  match = true;
-	else if (ext.stringValue().equalsIgnoreCase(extension))
-	  match = true;
-	if (match)
-	  break;
-      }
-      result = match;
+    extension = file.getName().replaceAll(".*\\.", "");
+    for (BaseString ext : getExtensions()) {
+      if (ext.stringValue().equals(MATCH_ALL_EXTENSION))
+	result = true;
+      else if (ext.stringValue().equalsIgnoreCase(extension))
+	result = true;
+      if (result)
+	break;
     }
+
+    result = result && m_RegExpFilename.isMatch(file.getAbsolutePath());
 
     return result;
   }

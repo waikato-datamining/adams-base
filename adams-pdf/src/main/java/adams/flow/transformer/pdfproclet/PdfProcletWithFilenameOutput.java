@@ -19,6 +19,10 @@
  */
 package adams.flow.transformer.pdfproclet;
 
+import adams.core.io.PdfFont;
+
+import java.awt.Color;
+
 /**
  * Interface for PDF proclets that allow absolute positioning.
  * From bottom-left corner.
@@ -26,44 +30,22 @@ package adams.flow.transformer.pdfproclet;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public interface PdfProcletWithAbsolutePosition
+public interface PdfProcletWithFilenameOutput
   extends PdfProclet {
 
   /**
-   * Sets the absolute X position.
+   * Sets whether to output the filename as well.
    *
-   * @param value	the X position
+   * @param value	if true then the filename gets added as well
    */
-  public void setX(float value);
+  public void setAddFilename(boolean value);
 
   /**
-   * Returns the absolute X position.
+   * Returns whether to output the filename as well.
    *
-   * @return		the X position
+   * @return 		true if the filename gets added as well
    */
-  public float getX();
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String XTipText();
-
-  /**
-   * Sets the absolute Y position.
-   *
-   * @param value	the Y position
-   */
-  public void setY(float value);
-
-  /**
-   * Returns the absolute Y position.
-   *
-   * @return		the Y position
-   */
-  public float getY();
+  public boolean getAddFilename();
 
   /**
    * Returns the tip text for this property.
@@ -71,5 +53,49 @@ public interface PdfProcletWithAbsolutePosition
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String YTipText();
+  public String addFilenameTipText();
+
+  /**
+   * Sets the font to use for adding the filename header.
+   *
+   * @param value	the font
+   */
+  public void setFontFilename(PdfFont value);
+
+  /**
+   * Returns the font to use for adding the filename header.
+   *
+   * @return 		the font
+   */
+  public PdfFont getFontFilename();
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String fontFilenameTipText();
+
+  /**
+   * Sets the color to use for adding the filename header.
+   *
+   * @param value	the color
+   */
+  public void setColorFilename(Color value);
+
+  /**
+   * Returns the color to use for adding the filename header.
+   *
+   * @return 		the color
+   */
+  public Color getColorFilename();
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String colorFilenameTipText();
 }

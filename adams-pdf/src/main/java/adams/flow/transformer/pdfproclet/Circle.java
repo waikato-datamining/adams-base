@@ -14,7 +14,7 @@
  */
 
 /**
- * Rectangle.java
+ * Circle.java
  * Copyright (C) 2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer.pdfproclet;
@@ -28,7 +28,7 @@ import java.io.File;
 
 /**
  <!-- globalinfo-start -->
- * Draws a rectangle.
+ * Draws a circle.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -60,14 +60,8 @@ import java.io.File;
  * &nbsp;&nbsp;&nbsp;minimum: 0.0
  * </pre>
  * 
- * <pre>-width &lt;float&gt; (property: width)
- * &nbsp;&nbsp;&nbsp;The width.
- * &nbsp;&nbsp;&nbsp;default: 10.0
- * &nbsp;&nbsp;&nbsp;minimum: 0.001
- * </pre>
- * 
- * <pre>-height &lt;float&gt; (property: height)
- * &nbsp;&nbsp;&nbsp;The height of the rectangle.
+ * <pre>-radius &lt;float&gt; (property: radius)
+ * &nbsp;&nbsp;&nbsp;The radius.
  * &nbsp;&nbsp;&nbsp;default: 10.0
  * &nbsp;&nbsp;&nbsp;minimum: 0.001
  * </pre>
@@ -93,7 +87,7 @@ import java.io.File;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class Rectangle
+public class Circle
   extends AbstractPdfProclet
   implements PdfProcletWithVariableFileExtension {
 
@@ -109,11 +103,8 @@ public class Rectangle
   /** the absolute Y position. */
   protected float m_Y;
 
-  /** the width. */
-  protected float m_Width;
-
-  /** the height. */
-  protected float m_Height;
+  /** the radius. */
+  protected float m_Radius;
 
   /** the color. */
   protected Color m_Color;
@@ -130,7 +121,7 @@ public class Rectangle
    * @return		a description of the writer
    */
   public String globalInfo() {
-    return "Draws a rectangle.";
+    return "Draws a circle.";
   }
 
   /**
@@ -152,11 +143,7 @@ public class Rectangle
       0.0f, 0.0f, null);
 
     m_OptionManager.add(
-      "width", "width",
-      10.0f, 0.001f, null);
-
-    m_OptionManager.add(
-      "height", "height",
+      "radius", "radius",
       10.0f, 0.001f, null);
 
     m_OptionManager.add(
@@ -264,24 +251,24 @@ public class Rectangle
   }
 
   /**
-   * Sets the width.
+   * Sets the radius.
    *
-   * @param value	the width
+   * @param value	the radius
    */
-  public void setWidth(float value) {
-    if (getOptionManager().isValid("width", value)) {
-      m_Width = value;
+  public void setRadius(float value) {
+    if (getOptionManager().isValid("radius", value)) {
+      m_Radius = value;
       reset();
     }
   }
 
   /**
-   * Returns the width.
+   * Returns the radius.
    *
-   * @return		the width
+   * @return		the radius
    */
-  public float getWidth() {
-    return m_Width;
+  public float getRadius() {
+    return m_Radius;
   }
 
   /**
@@ -290,39 +277,8 @@ public class Rectangle
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String widthTipText() {
-    return "The width.";
-  }
-
-  /**
-   * Sets the height.
-   *
-   * @param value	the height
-   */
-  public void setHeight(float value) {
-    if (getOptionManager().isValid("height", value)) {
-      m_Height = value;
-      reset();
-    }
-  }
-
-  /**
-   * Returns the height.
-   *
-   * @return		the height
-   */
-  public float getHeight() {
-    return m_Height;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String heightTipText() {
-    return "The height of the rectangle.";
+  public String radiusTipText() {
+    return "The radius.";
   }
 
   /**
@@ -430,7 +386,7 @@ public class Rectangle
     cb.setColorStroke(new BaseColor(m_Color.getRGB()));
     cb.setColorFill(new BaseColor(m_Color.getRGB()));
     cb.setLineWidth(m_LineWidth);
-    cb.rectangle(m_X, m_Y, m_X + m_Width, m_Y + m_Height);
+    cb.circle(m_X, m_Y, m_Radius);
     if (m_Fill)
       cb.fillStroke();
     else

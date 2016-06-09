@@ -35,20 +35,9 @@ import java.io.File;
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  * 
- * <pre>-add-filename &lt;boolean&gt; (property: addFilename)
- * &nbsp;&nbsp;&nbsp;Whether to add the file name before the actual file content as separate 
- * &nbsp;&nbsp;&nbsp;paragraph.
- * &nbsp;&nbsp;&nbsp;default: false
- * </pre>
- * 
- * <pre>-font-filename &lt;adams.core.io.PdfFont&gt; (property: fontFilename)
- * &nbsp;&nbsp;&nbsp;The font to use for printing the file name header.
- * &nbsp;&nbsp;&nbsp;default: Helvetica-Bold-12
- * </pre>
- * 
- * <pre>-color-filename &lt;java.awt.Color&gt; (property: colorFilename)
- * &nbsp;&nbsp;&nbsp;The color to use for printing the file name header.
- * &nbsp;&nbsp;&nbsp;default: #000000
+ * <pre>-regexp-filename &lt;adams.core.base.BaseRegExp&gt; (property: regExpFilename)
+ * &nbsp;&nbsp;&nbsp;The regular expression that the filename must match.
+ * &nbsp;&nbsp;&nbsp;default: .*
  * </pre>
  * 
  * <pre>-extension &lt;adams.core.base.BaseString&gt; [-extension ...] (property: extensions)
@@ -129,12 +118,6 @@ public class PageBreak
    * @throws Exception	if something goes wrong
    */
   protected boolean doProcess(PDFGenerator generator, File file) throws Exception {
-    boolean	result;
-
-    result = addFilename(generator, file);
-    if (result)
-      result = generator.newPage();
-
-    return result;
+    return generator.newPage();
   }
 }
