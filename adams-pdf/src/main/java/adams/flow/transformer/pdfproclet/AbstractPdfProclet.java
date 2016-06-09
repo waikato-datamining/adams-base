@@ -23,6 +23,7 @@ import adams.core.base.BaseRegExp;
 import adams.core.base.BaseString;
 import adams.core.option.AbstractOptionHandler;
 import com.itextpdf.text.Element;
+import com.itextpdf.text.pdf.ColumnText;
 
 import java.io.File;
 import java.util.logging.Level;
@@ -109,6 +110,23 @@ public abstract class AbstractPdfProclet
     result = generator.getDocument().add(element);
     if (result)
       generator.getState().contentAdded();
+
+    return result;
+  }
+
+  /**
+   * Adds the column text to the document at the specified location.
+   * Dimension: x to page width, 0 to y.
+   *
+   * @param generator	the context
+   * @return		the column text
+   * @throws Exception	if adding fails
+   */
+  protected ColumnText addColumnTextAt(PDFGenerator generator, float x, float y) throws Exception {
+    ColumnText result;
+
+    result = new ColumnText(generator.getWriter().getDirectContent());
+    result.setSimpleColumn(x, y, generator.getDocument().getPageSize().getWidth(), 0);
 
     return result;
   }

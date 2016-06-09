@@ -24,6 +24,7 @@ import adams.core.base.BaseString;
 import adams.core.io.FileUtils;
 import adams.core.io.PdfFont;
 import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.ColumnText;
 
 import java.awt.Color;
 import java.io.File;
@@ -94,6 +95,23 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default: txt
  * </pre>
  * 
+ * <pre>-use-absolute-position &lt;boolean&gt; (property: useAbsolutePosition)
+ * &nbsp;&nbsp;&nbsp;If enabled, the absolute position is used (from bottom-left corner).
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-x &lt;float&gt; (property: X)
+ * &nbsp;&nbsp;&nbsp;The absolute X position.
+ * &nbsp;&nbsp;&nbsp;default: 0.0
+ * &nbsp;&nbsp;&nbsp;minimum: 0.0
+ * </pre>
+ * 
+ * <pre>-y &lt;float&gt; (property: Y)
+ * &nbsp;&nbsp;&nbsp;The absolute Y position.
+ * &nbsp;&nbsp;&nbsp;default: 0.0
+ * &nbsp;&nbsp;&nbsp;minimum: 0.0
+ * </pre>
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -101,7 +119,7 @@ import java.util.List;
  */
 public class PlainText
   extends AbstractPdfProcletWithPageBreaks
-  implements PdfProcletWithVariableFileExtension {
+  implements PdfProcletWithVariableFileExtension, PdfProcletWithOptionalAbsolutePosition {
 
   /** for serialization. */
   private static final long serialVersionUID = 3962046484864891107L;
@@ -114,6 +132,15 @@ public class PlainText
 
   /** the file extensions. */
   protected BaseString[] m_Extensions;
+
+  /** whether to use absolute position. */
+  protected boolean m_UseAbsolutePosition;
+
+  /** the absolute X position. */
+  protected float m_X;
+
+  /** the absolute Y position. */
+  protected float m_Y;
 
   /**
    * Returns a short description of the writer.
@@ -133,16 +160,28 @@ public class PlainText
     super.defineOptions();
 
     m_OptionManager.add(
-	    "font-content", "fontContent",
-	    new PdfFont(PdfFont.HELVETICA, PdfFont.NORMAL, 12.0f));
+      "font-content", "fontContent",
+      new PdfFont(PdfFont.HELVETICA, PdfFont.NORMAL, 12.0f));
 
     m_OptionManager.add(
-	    "color-content", "colorContent",
-	    Color.BLACK);
+      "color-content", "colorContent",
+      Color.BLACK);
 
     m_OptionManager.add(
-	    "extension", "extensions",
-	    new BaseString[]{new BaseString("txt")});
+      "extension", "extensions",
+      new BaseString[]{new BaseString("txt")});
+
+    m_OptionManager.add(
+      "use-absolute-position", "useAbsolutePosition",
+      false);
+
+    m_OptionManager.add(
+      "x", "X",
+      0.0f, 0.0f, null);
+
+    m_OptionManager.add(
+      "y", "Y",
+      0.0f, 0.0f, null);
   }
 
   /**
@@ -236,6 +275,97 @@ public class PlainText
   }
 
   /**
+   * Sets whether to use absolute positioning (from bottom-left corner).
+   *
+   * @param value	true if absolute
+   */
+  public void setUseAbsolutePosition(boolean value) {
+    m_UseAbsolutePosition = value;
+    reset();
+  }
+
+  /**
+   * Returns whether absolute positioning is used (from bottom-left corner).
+   *
+   * @return		true if absolute
+   */
+  public boolean getUseAbsolutePosition() {
+    return m_UseAbsolutePosition;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String useAbsolutePositionTipText() {
+    return "If enabled, the absolute position is used (from bottom-left corner).";
+  }
+
+  /**
+   * Sets the absolute X position.
+   *
+   * @param value	the X position
+   */
+  public void setX(float value) {
+    if (getOptionManager().isValid("X", value)) {
+      m_X = value;
+      reset();
+    }
+  }
+
+  /**
+   * Returns the absolute X position.
+   *
+   * @return		the X position
+   */
+  public float getX() {
+    return m_X;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String XTipText() {
+    return "The absolute X position.";
+  }
+
+  /**
+   * Sets the absolute Y position.
+   *
+   * @param value	the Y position
+   */
+  public void setY(float value) {
+    if (getOptionManager().isValid("Y", value)) {
+      m_Y = value;
+      reset();
+    }
+  }
+
+  /**
+   * Returns the absolute Y position.
+   *
+   * @return		the Y position
+   */
+  public float getY() {
+    return m_Y;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String YTipText() {
+    return "The absolute Y position.";
+  }
+
+  /**
    * The actual processing of the document.
    *
    * @param generator	the context
@@ -247,13 +377,22 @@ public class PlainText
   protected boolean doProcess(PDFGenerator generator, File file) throws Exception {
     boolean		result;
     List<String>	paragraphs;
+    ColumnText		ct;
 
     result = addFilename(generator, file);
     if (result) {
       paragraphs = FileUtils.loadFromFile(file);
-      result = addElement(
-	generator,
-	new Paragraph(Utils.flatten(paragraphs, "\n"), m_FontContent.toFont(m_ColorContent)));
+      if (m_UseAbsolutePosition) {
+	ct = addColumnTextAt(generator, m_X, m_Y);
+	ct.addElement(new Paragraph(Utils.flatten(paragraphs, "\n"), m_FontContent.toFont(m_ColorContent)));
+	ct.go();
+	generator.getState().contentAdded();
+      }
+      else {
+	result = addElement(
+	  generator,
+	  new Paragraph(Utils.flatten(paragraphs, "\n"), m_FontContent.toFont(m_ColorContent)));
+      }
     }
 
     return result;

@@ -28,6 +28,7 @@ import adams.data.spreadsheet.Cell;
 import adams.data.spreadsheet.Row;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.ColumnText;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 
@@ -146,6 +147,23 @@ import java.text.DecimalFormat;
  * &nbsp;&nbsp;&nbsp;default: adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.DefaultSpreadSheet
  * </pre>
  * 
+ * <pre>-use-absolute-position &lt;boolean&gt; (property: useAbsolutePosition)
+ * &nbsp;&nbsp;&nbsp;If enabled, the absolute position is used (from bottom-left corner).
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-x &lt;float&gt; (property: X)
+ * &nbsp;&nbsp;&nbsp;The absolute X position.
+ * &nbsp;&nbsp;&nbsp;default: 0.0
+ * &nbsp;&nbsp;&nbsp;minimum: 0.0
+ * </pre>
+ * 
+ * <pre>-y &lt;float&gt; (property: Y)
+ * &nbsp;&nbsp;&nbsp;The absolute Y position.
+ * &nbsp;&nbsp;&nbsp;default: 0.0
+ * &nbsp;&nbsp;&nbsp;minimum: 0.0
+ * </pre>
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -153,7 +171,7 @@ import java.text.DecimalFormat;
  */
 public class SpreadSheet
   extends AbstractPdfProcletWithPageBreaks
-  implements PdfProcletWithVariableFileExtension {
+  implements PdfProcletWithVariableFileExtension, PdfProcletWithOptionalAbsolutePosition {
 
   /** for serialization. */
   private static final long serialVersionUID = -5894153152920062499L;
@@ -193,6 +211,15 @@ public class SpreadSheet
 
   /** the reader to use for loading the csv files. */
   protected SpreadSheetReader m_Reader;
+
+  /** whether to use absolute position. */
+  protected boolean m_UseAbsolutePosition;
+
+  /** the absolute X position. */
+  protected float m_X;
+
+  /** the absolute Y position. */
+  protected float m_Y;
 
   /**
    * Returns a short description of the writer.
@@ -258,6 +285,18 @@ public class SpreadSheet
     m_OptionManager.add(
       "reader", "reader",
       new CsvSpreadSheetReader());
+
+    m_OptionManager.add(
+      "use-absolute-position", "useAbsolutePosition",
+      false);
+
+    m_OptionManager.add(
+      "x", "X",
+      0.0f, 0.0f, null);
+
+    m_OptionManager.add(
+      "y", "Y",
+      0.0f, 0.0f, null);
   }
 
   /**
@@ -615,6 +654,97 @@ public class SpreadSheet
   }
 
   /**
+   * Sets whether to use absolute positioning (from bottom-left corner).
+   *
+   * @param value	true if absolute
+   */
+  public void setUseAbsolutePosition(boolean value) {
+    m_UseAbsolutePosition = value;
+    reset();
+  }
+
+  /**
+   * Returns whether absolute positioning is used (from bottom-left corner).
+   *
+   * @return		true if absolute
+   */
+  public boolean getUseAbsolutePosition() {
+    return m_UseAbsolutePosition;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String useAbsolutePositionTipText() {
+    return "If enabled, the absolute position is used (from bottom-left corner).";
+  }
+
+  /**
+   * Sets the absolute X position.
+   *
+   * @param value	the X position
+   */
+  public void setX(float value) {
+    if (getOptionManager().isValid("X", value)) {
+      m_X = value;
+      reset();
+    }
+  }
+
+  /**
+   * Returns the absolute X position.
+   *
+   * @return		the X position
+   */
+  public float getX() {
+    return m_X;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String XTipText() {
+    return "The absolute X position.";
+  }
+
+  /**
+   * Sets the absolute Y position.
+   *
+   * @param value	the Y position
+   */
+  public void setY(float value) {
+    if (getOptionManager().isValid("Y", value)) {
+      m_Y = value;
+      reset();
+    }
+  }
+
+  /**
+   * Returns the absolute Y position.
+   *
+   * @return		the Y position
+   */
+  public float getY() {
+    return m_Y;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String YTipText() {
+    return "The absolute Y position.";
+  }
+
+  /**
    * The actual processing of the document.
    *
    * @param generator	the context
@@ -634,10 +764,12 @@ public class SpreadSheet
     String		pattern;
     DecimalFormat	format;
     Paragraph		para;
+    Paragraph		paraComments;
+    ColumnText 		ct;
 
     result = addFilename(generator, file);
     if (!result)
-      return result;
+      return false;
 
     pattern = "#0";
     for (i = 0; i < m_NumDecimals; i++) {
@@ -647,22 +779,19 @@ public class SpreadSheet
     }
     format = new DecimalFormat(pattern);
     sheet  = m_Reader.read(file.getAbsolutePath());
-    table  = null;
     result = (sheet != null);
     if (!result)
-      return result;
+      return false;
 
     // comments
-    if (m_AddComments) {
-      result = addElement(generator, new Paragraph(Utils.flatten(sheet.getComments(), "\n"), m_FontComments.toFont(m_ColorComments)));
-      if (!result)
-	return result;
-    }
+    paraComments = null;
+    if (m_AddComments)
+      paraComments = new Paragraph(Utils.flatten(sheet.getComments(), "\n"), m_FontComments.toFont(m_ColorComments));
 
     // table
     // 1. header
-    table   = new PdfPTable(sheet.getColumnCount());
-    row     = sheet.getHeaderRow();
+    table = new PdfPTable(sheet.getColumnCount());
+    row   = sheet.getHeaderRow();
     for (String key: sheet.getHeaderRow().cellKeys()) {
       cell    = row.getCell(key);
       para    = new Paragraph(cell.toString(), m_FontTableHeader.toFont(m_ColorTableHeader));
@@ -675,7 +804,7 @@ public class SpreadSheet
       row = sheet.getRow(i);
       for (String key: sheet.getHeaderRow().cellKeys()) {
 	cell = row.getCell(key);
-	if (cell == null) {
+	if ((cell == null) || cell.isMissing()) {
 	  pdfCell = new PdfPCell(new Paragraph(""));
 	}
 	else if (cell.isNumeric()) {
@@ -689,9 +818,29 @@ public class SpreadSheet
 	table.addCell(pdfCell);
       }
     }
-    result = addElement(generator, new Paragraph("\n"));
-    if (result)
-      result = addElement(generator, table);
+
+    if (m_UseAbsolutePosition) {
+      ct = addColumnTextAt(generator, m_X, m_Y);
+      if (paraComments != null) {
+	ct.addElement(paraComments);
+	ct.addElement(new Paragraph("\n"));
+      }
+      ct.addElement(new Paragraph("\n"));
+      ct.addElement(table);
+      ct.go();
+      generator.getState().contentAdded();
+    }
+    else {
+      if (paraComments != null) {
+	result = addElement(generator, paraComments);
+	if (result)
+	  result = addElement(generator, new Paragraph("\n"));
+      }
+      if (result)
+	result = addElement(generator, new Paragraph("\n"));
+      if (result)
+	result = addElement(generator, table);
+    }
 
     return result;
   }
