@@ -1204,11 +1204,13 @@ public class SequencePlotter
     if (m_UseOutputFile)
       writePlotContainer(plotName, type, x, y, dX, dY, errorX, errorY);
 
-    // limit size of sequence?
-    if (type != ContentType.MARKER)
-      m_PostProcessor.postProcess(manager, plotName);
-
     m_PlotUpdater.update((SequencePlotterPanel) getPanel(), plotCont);
+
+    // post-process sequence?
+    if (type != ContentType.MARKER) {
+      if (manager.indexOf(plotName) > -1)
+        m_PostProcessor.postProcess(manager, plotName);
+    }
   }
 
   /**
