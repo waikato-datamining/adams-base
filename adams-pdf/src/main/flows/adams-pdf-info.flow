@@ -1,0 +1,23 @@
+# Project: adams
+# Date: 2016-06-09 16:48:41
+# User: fracpete
+# Charset: UTF-8
+adams.flow.control.Flow -annotation "Outputs information on a PDF file." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.standalone.CallableActors
+  adams.flow.sink.Display -writer adams.data.io.output.NullWriter
+ adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/multiple_pages.pdf
+ adams.flow.control.Tee -name "# pages"
+  adams.flow.transformer.PDFInfo
+  adams.flow.transformer.Convert -conversion adams.data.conversion.AnyToString
+  adams.flow.transformer.StringInsert -position first -value "# pages: "
+  adams.flow.sink.CallableSink -callable Display
+ adams.flow.control.Tee -name width
+  adams.flow.transformer.PDFInfo -type WIDTH
+  adams.flow.transformer.Convert -conversion adams.data.conversion.AnyToString
+  adams.flow.transformer.StringInsert -position first -value "width: "
+  adams.flow.sink.CallableSink -callable Display
+ adams.flow.control.Tee -name height
+  adams.flow.transformer.PDFInfo -type HEIGHT
+  adams.flow.transformer.Convert -conversion adams.data.conversion.AnyToString
+  adams.flow.transformer.StringInsert -position first -value "height: "
+  adams.flow.sink.CallableSink -callable Display
