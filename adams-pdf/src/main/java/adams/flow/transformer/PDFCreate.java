@@ -24,7 +24,6 @@ import adams.core.QuickInfoHelper;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
 import adams.flow.core.Token;
-import adams.flow.transformer.pdfproclet.AbstractPdfProclet;
 import adams.flow.transformer.pdfproclet.Image;
 import adams.flow.transformer.pdfproclet.PDFGenerator;
 import adams.flow.transformer.pdfproclet.PageOrientation;
@@ -103,7 +102,7 @@ import java.io.File;
  * &nbsp;&nbsp;&nbsp;default: PORTRAIT
  * </pre>
  * 
- * <pre>-proclet &lt;adams.flow.transformer.pdfproclet.AbstractPdfProclet&gt; [-proclet ...] (property: proclets)
+ * <pre>-proclet &lt;adams.flow.transformer.pdfproclet.PdfProclet&gt; [-proclet ...] (property: proclets)
  * &nbsp;&nbsp;&nbsp;The processors for processing the files.
  * &nbsp;&nbsp;&nbsp;default: adams.flow.transformer.pdfproclet.PlainText, adams.flow.transformer.pdfproclet.SpreadSheet -reader \"adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.DefaultSpreadSheet\", adams.flow.transformer.pdfproclet.Image
  * </pre>
