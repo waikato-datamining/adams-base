@@ -13,44 +13,40 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*
- * PDFCreate.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+/**
+ * PDFNewDocument.java
+ * Copyright (C) 2016 University of Waikato, Hamilton, NZ
  */
 
-package adams.flow.transformer;
+package adams.flow.source;
 
+import adams.core.ClassCrossReference;
 import adams.core.QuickInfoHelper;
-import adams.core.io.FileUtils;
 import adams.core.io.FileWriter;
 import adams.core.io.PlaceholderFile;
 import adams.flow.core.Token;
-import adams.flow.transformer.pdfproclet.Image;
+import adams.flow.sink.PDFCloseDocument;
+import adams.flow.transformer.PDFAppendDocument;
 import adams.flow.transformer.pdfproclet.PDFGenerator;
 import adams.flow.transformer.pdfproclet.PageOrientation;
 import adams.flow.transformer.pdfproclet.PageSize;
-import adams.flow.transformer.pdfproclet.PdfProclet;
-import adams.flow.transformer.pdfproclet.PlainText;
-import adams.flow.transformer.pdfproclet.SpreadSheet;
-
-import java.io.File;
 
 /**
  <!-- globalinfo-start -->
- * Actor for generating PDF files. Images (GIF&#47;PNG&#47;JPEG), plain text files and CSV files are supported. CSV files are automatically added as tables (if they contain comments, then these will get added as well).<br>
- * The filename of the generated PDF is forwarded.
+ * Creates an empty PDF document.<br>
+ * Needs to be finalized with adams.flow.sink.PDFCloseDocument.<br>
+ * The output of this source can be processed by adams.flow.transformer.PDFAppendDocument.<br>
+ * <br>
+ * See also:<br>
+ * adams.flow.transformer.PDFAppendDocument<br>
+ * adams.flow.sink.PDFCloseDocument
  * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
  * Input&#47;output:<br>
- * - accepts:<br>
- * &nbsp;&nbsp;&nbsp;java.lang.String<br>
- * &nbsp;&nbsp;&nbsp;java.lang.String[]<br>
- * &nbsp;&nbsp;&nbsp;java.io.File<br>
- * &nbsp;&nbsp;&nbsp;java.io.File[]<br>
  * - generates:<br>
- * &nbsp;&nbsp;&nbsp;java.lang.String<br>
+ * &nbsp;&nbsp;&nbsp;adams.flow.transformer.pdfproclet.PDFGenerator<br>
  * <br><br>
  <!-- flow-summary-end -->
  *
@@ -62,7 +58,7 @@ import java.io.File;
  * 
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
- * &nbsp;&nbsp;&nbsp;default: PDFCreate
+ * &nbsp;&nbsp;&nbsp;default: PDFNewDocument
  * </pre>
  * 
  * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
@@ -88,8 +84,8 @@ import java.io.File;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-output &lt;adams.core.io.PlaceholderFile&gt; (property: output)
- * &nbsp;&nbsp;&nbsp;The PDF file to generate.
+ * <pre>-output-file &lt;adams.core.io.PlaceholderFile&gt; (property: outputFile)
+ * &nbsp;&nbsp;&nbsp;The name of the PDF file to generate.
  * &nbsp;&nbsp;&nbsp;default: ${CWD}
  * </pre>
  * 
@@ -103,25 +99,16 @@ import java.io.File;
  * &nbsp;&nbsp;&nbsp;default: PORTRAIT
  * </pre>
  * 
- * <pre>-proclet &lt;adams.flow.transformer.pdfproclet.PdfProclet&gt; [-proclet ...] (property: proclets)
- * &nbsp;&nbsp;&nbsp;The processors for processing the files.
- * &nbsp;&nbsp;&nbsp;default: adams.flow.transformer.pdfproclet.PlainText, adams.flow.transformer.pdfproclet.SpreadSheet -reader \"adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.DefaultSpreadSheet\", adams.flow.transformer.pdfproclet.Image
- * </pre>
- * 
  <!-- options-end -->
  *
- * @author  fracpete (fracpete at waikato dot ac dot nz)
+ * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class PDFCreate
-  extends AbstractTransformer
-  implements FileWriter {
+public class PDFNewDocument
+  extends AbstractSimpleSource
+  implements FileWriter, ClassCrossReference {
 
-  /** for serialization. */
-  private static final long serialVersionUID = 5783362940767103716L;
-
-  /** the output file. */
-  protected PlaceholderFile m_OutputFile;
+  private static final long serialVersionUID = -4271476585270701409L;
 
   /** the page size. */
   protected PageSize m_PageSize;
@@ -129,8 +116,8 @@ public class PDFCreate
   /** the page orientation. */
   protected PageOrientation m_PageOrientation;
 
-  /** the PDF processors. */
-  protected PdfProclet[] m_Proclets;
+  /** the output file. */
+  protected PlaceholderFile m_OutputFile;
 
   /**
    * Returns a string describing the object.
@@ -140,10 +127,21 @@ public class PDFCreate
   @Override
   public String globalInfo() {
     return
-        "Actor for generating PDF files. Images (GIF/PNG/JPEG), plain text "
-      + "files and CSV files are supported. CSV files are automatically added "
-      + "as tables (if they contain comments, then these will get added as well).\n"
-      + "The filename of the generated PDF is forwarded.";
+      "Creates an empty PDF document.\n"
+	+ "Needs to be finalized with " + PDFCloseDocument.class.getName() + ".\n"
+	+ "The output of this source can be processed by " + PDFAppendDocument.class.getName() + ".";
+  }
+
+  /**
+   * Returns the cross-referenced classes.
+   *
+   * @return		the classes
+   */
+  public Class[] getClassCrossReferences() {
+    return new Class[]{
+      PDFAppendDocument.class,
+      PDFCloseDocument.class
+    };
   }
 
   /**
@@ -154,29 +152,22 @@ public class PDFCreate
     super.defineOptions();
 
     m_OptionManager.add(
-	    "output", "outputFile",
-	    new PlaceholderFile("."));
+      "output-file", "outputFile",
+      new PlaceholderFile("."));
 
     m_OptionManager.add(
-	    "page-size", "pageSize",
-	    PageSize.A4);
+      "page-size", "pageSize",
+      PageSize.A4);
 
     m_OptionManager.add(
-	    "page-orientation", "pageOrientation",
-	    PageOrientation.PORTRAIT);
-
-    m_OptionManager.add(
-	    "proclet", "proclets",
-	    new PdfProclet[]{
-		new PlainText(),
-		new SpreadSheet(),
-		new Image()});
+      "page-orientation", "pageOrientation",
+      PageOrientation.PORTRAIT);
   }
 
   /**
-   * Sets the output file.
+   * Set output file.
    *
-   * @param value	the file
+   * @param value	file
    */
   public void setOutputFile(PlaceholderFile value) {
     m_OutputFile = value;
@@ -184,9 +175,9 @@ public class PDFCreate
   }
 
   /**
-   * Returns the output file.
+   * Get output file.
    *
-   * @return 		the file
+   * @return	file
    */
   public PlaceholderFile getOutputFile() {
     return m_OutputFile;
@@ -195,11 +186,11 @@ public class PDFCreate
   /**
    * Returns the tip text for this property.
    *
-   * @return         tip text for this property suitable for
-   *             displaying in the GUI or for listing the options.
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
    */
   public String outputFileTipText() {
-    return "The PDF file to generate.";
+    return "The name of the PDF file to generate.";
   }
 
   /**
@@ -261,32 +252,13 @@ public class PDFCreate
   }
 
   /**
-   * Sets the processors for processing the files.
+   * Returns the class of objects that it generates.
    *
-   * @param value	the processors to use
+   * @return		the Class of the generated tokens
    */
-  public void setProclets(PdfProclet[] value) {
-    m_Proclets = value;
-    reset();
-  }
-
-  /**
-   * Returns the processors in use.
-   *
-   * @return 		the processors in use
-   */
-  public PdfProclet[] getProclets() {
-    return m_Proclets;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return         tip text for this property suitable for
-   *             displaying in the GUI or for listing the options.
-   */
-  public String procletsTipText() {
-    return "The processors for processing the files.";
+  @Override
+  public Class[] generates() {
+    return new Class[]{PDFGenerator.class};
   }
 
   /**
@@ -306,24 +278,6 @@ public class PDFCreate
   }
 
   /**
-   * Returns the class that the consumer accepts.
-   *
-   * @return		<!-- flow-accepts-start -->java.lang.String.class, java.lang.String[].class, java.io.File.class, java.io.File[].class<!-- flow-accepts-end -->
-   */
-  public Class[] accepts() {
-    return new Class[]{String.class, String[].class, File.class, File[].class};
-  }
-
-  /**
-   * Returns the class of objects that it generates.
-   *
-   * @return		<!-- flow-generates-start -->java.lang.String.class<!-- flow-generates-end -->
-   */
-  public Class[] generates() {
-    return new Class[]{String.class};
-  }
-
-  /**
    * Executes the flow item.
    *
    * @return		null if everything is fine, otherwise error message
@@ -331,39 +285,26 @@ public class PDFCreate
   @Override
   protected String doExecute() {
     String		result;
-    PlaceholderFile[]	files;
-    PDFGenerator generator;
+    PDFGenerator	generator;
 
     result = null;
 
-    // get files
-    files = FileUtils.toPlaceholderFileArray(m_InputToken.getPayload());
+    if (m_OutputFile.isDirectory())
+      result = "Output file points to a directory: " + m_OutputFile;
 
-    // create PDF document
-    generator = new PDFGenerator();
-    generator.setOutput(getOutputFile());
-    generator.setPageSize(getPageSize());
-    generator.setPageOrientation(getPageOrientation());
-    generator.setProclets(getProclets());
-    try {
-      generator.open();
-      for (File file: files) {
-	try {
-	  generator.addFile(file);
-	}
-	catch (Exception e) {
-	  handleException("Problems adding file '" + file + "'!", e);
-	}
+    if (result == null) {
+      generator = new PDFGenerator();
+      generator.setOutput(m_OutputFile);
+      generator.setPageOrientation(m_PageOrientation);
+      generator.setPageSize(m_PageSize);
+      try {
+	generator.open();
+	m_OutputToken = new Token(generator);
+      }
+      catch (Exception e) {
+	result = handleException("Failed to create PDF document: " + m_OutputFile, e);
       }
     }
-    catch (Exception e) {
-      result = handleException("Failed to create PDF: " + m_OutputFile, e);
-    }
-    finally {
-      generator.close();
-    }
-
-    m_OutputToken = new Token(m_OutputFile.getAbsolutePath());
 
     return result;
   }

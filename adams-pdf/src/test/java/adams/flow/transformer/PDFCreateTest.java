@@ -86,7 +86,7 @@ public class PDFCreateTest
     sfs.setFiles(new adams.core.io.PlaceholderFile[]{new TmpFile("bolts_small.csv")});
 
     PDFCreate pdf = new PDFCreate();
-    pdf.setOutput(new TmpFile("dumpfile.pdf"));
+    pdf.setOutputFile(new TmpFile("dumpfile.pdf"));
 
     Flow flow = new Flow();
     flow.setActors(new Actor[]{sfs, pdf});

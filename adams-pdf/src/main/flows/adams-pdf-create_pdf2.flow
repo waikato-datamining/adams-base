@@ -1,0 +1,16 @@
+# Project: adams
+# Date: 2016-06-09 15:36:27
+# User: fracpete
+# Charset: UTF-8
+adams.flow.control.Flow -annotation "Shows how to create an empty PDF document and fill it with content." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.standalone.SetVariable -var-name outfile -var-value ${EXAMPLE_FLOWS}/output/out2.pdf
+ adams.flow.source.Start
+ adams.flow.control.Trigger -name "create PDF"
+  adams.flow.source.PDFNewDocument -output-file @{outfile}
+  adams.flow.transformer.PDFAppendDocument -name "add image" -proclet "adams.flow.transformer.pdfproclet.Image -add-filename true -scale 0.33" -input-file ${EXAMPLE_FLOWS}/data/3666455665_18795f0741.jpg
+  adams.flow.transformer.PDFAppendDocument -name "add table" -proclet "adams.flow.transformer.pdfproclet.SpreadSheet -add-filename true -page-break-before true -reader \"adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.DefaultSpreadSheet\"" -input-file ${EXAMPLE_FLOWS}/data/bolts.csv
+  adams.flow.transformer.PDFAppendDocument -name "add text" -proclet "adams.flow.transformer.pdfproclet.PlainText -add-filename true -page-break-before true" -input-file ${EXAMPLE_FLOWS}/data/lorem.txt
+  adams.flow.sink.PDFCloseDocument
+ adams.flow.control.Trigger -name "display PDF"
+  adams.flow.source.FileSupplier -file @{outfile}
+  adams.flow.sink.PDFViewer -writer adams.gui.print.NullWriter

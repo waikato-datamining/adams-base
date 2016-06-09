@@ -65,18 +65,28 @@ libraries for creating, manipulating and viewing of PDF files.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Flow}
-For manipulating and viewing PDF files, you can use the following actors:
+The following source actors are available:
 \begin{tight_itemize}
-	\item \textit{PDFCreate} -- for creating PDFs, using text files, 
+	\item \textit{PDFNewDocument} -- creates an empty PDF document.\footnote{adams-pdf-create\_pdf2.flow}
+\end{tight_itemize}
+The following transformers are available:
+\begin{tight_itemize}
+	\item \textit{PDFAppendDocument} -- appends a PDF document.\footnote{adams-pdf-create\_pdf2.flow}
+	\item \textit{PDFCreate} -- for creating PDFs, using text files,
 	spreadsheets and images.\footnote{adams-pdf-create\_pdf.flow}
 	\item \textit{PDFExtract} -- extracts a range of pages.
 	\item \textit{PDFExtractImages} -- extracts the images from a PDF.\footnote{adams-pdf-extract\_images.flow}
 	\item \textit{PDFExtractText} -- obtaining the plain text of the PDF.\footnote{adams-pdf-extract\_text.flow}
 	\item \textit{PDFMerge} -- merges several PDFs into a single one.\footnote{adams-pdf-page\_count.flow}
-	\item \textit{PDFPageCount} -- determines the number of pages in a 
+	\item \textit{PDFPageCount} -- determines the number of pages in a
 	PDF.\footnote{adams-pdf-page\_count.flow}
 	\item \textit{PDFRenderPages} -- renders pages of a PDF as images.\footnote{adams-pdf-render\_pages.flow}
 	\item \textit{PDFStamp} -- allows to add an overlay to a PDF.\footnote{adams-pdf-page\_overlay.flow}
+\end{tight_itemize}
+The following sinks are available:
+\begin{tight_itemize}
+	\item \textit{PDFCloseDocument} -- closes a PDF document, writes out the content
+	to disk.\footnote{adams-pdf-create\_pdf2.flow}
 	\item \textit{PDFViewer} -- for viewing PDFs.\footnote{adams-pdf-view\_pdf.flow}
 \end{tight_itemize}
 
