@@ -15,17 +15,9 @@
 
 /**
  * MemoryMonitorPanel.java
- * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
-
-import java.awt.BorderLayout;
-import java.lang.management.ManagementFactory;
-import java.lang.management.MemoryMXBean;
-import java.lang.management.MemoryUsage;
-
-import javax.swing.BorderFactory;
-import javax.swing.SwingUtilities;
 
 import adams.core.NamedCounter;
 import adams.core.Properties;
@@ -42,6 +34,7 @@ import adams.flow.sink.sequenceplotter.SequencePlotterPanel;
 import adams.gui.visualization.core.AbstractColorProvider;
 import adams.gui.visualization.core.AxisPanelOptions;
 import adams.gui.visualization.core.DefaultColorProvider;
+import adams.gui.visualization.core.PaintletWithMarkers;
 import adams.gui.visualization.core.axis.AbstractTickGenerator;
 import adams.gui.visualization.core.axis.FancyTickGenerator;
 import adams.gui.visualization.core.axis.Type;
@@ -49,6 +42,13 @@ import adams.gui.visualization.core.plot.Axis;
 import adams.gui.visualization.sequence.PaintletWithFixedYRange;
 import adams.gui.visualization.sequence.XYSequenceContainer;
 import adams.gui.visualization.sequence.XYSequenceContainerManager;
+
+import javax.swing.BorderFactory;
+import javax.swing.SwingUtilities;
+import java.awt.BorderLayout;
+import java.lang.management.ManagementFactory;
+import java.lang.management.MemoryMXBean;
+import java.lang.management.MemoryUsage;
 
 /**
  * Displays the memory consumption.
@@ -147,6 +147,8 @@ public class MemoryMonitorPanel
     m_PlotPanel.getPlot().setZoomingEnabled(false);
     // paintlet
     paintlet = new PaintletWithFixedYRange();
+    if (paintlet.getPaintlet() instanceof PaintletWithMarkers)
+      ((PaintletWithMarkers) paintlet.getPaintlet()).setMarkersDisabled(true);
     paintlet.setMinY(0.0);
     paintlet.setMaxY(scale(m_Memory.getHeapMemoryUsage().getMax()));
     m_PlotPanel.setPaintlet(paintlet);
@@ -222,7 +224,8 @@ public class MemoryMonitorPanel
     point = new XYSequencePoint("" + System.currentTimeMillis(), new Double(System.currentTimeMillis()), new Double(scale(value)));
     seq.add(point);
 
-    m_PostProcessor.postProcess(manager, name);
+    if (manager.indexOf(name) > -1)
+      m_PostProcessor.postProcess(manager, name);
   }
   
   /**
