@@ -19,6 +19,7 @@
  */
 package adams.flow.transformer.pdfproclet;
 
+import adams.core.base.BaseRegExp;
 import adams.core.base.BaseString;
 import adams.core.io.PdfFont;
 import adams.core.option.AbstractOptionHandler;
@@ -55,6 +56,9 @@ public abstract class AbstractPdfProclet
   /** the color for the filename header. */
   protected Color m_ColorFilename;
 
+  /** the regexp to use on the filename. */
+  protected BaseRegExp m_RegExpFilename;
+
   /**
    * Adds options to the internal list of options.
    */
@@ -63,16 +67,20 @@ public abstract class AbstractPdfProclet
     super.defineOptions();
 
     m_OptionManager.add(
-	    "add-filename", "addFilename",
-	    false);
+      "add-filename", "addFilename",
+      false);
 
     m_OptionManager.add(
-	    "font-filename", "fontFilename",
-	    new PdfFont(PdfFont.HELVETICA, PdfFont.BOLD, 12.0f));
+      "font-filename", "fontFilename",
+      new PdfFont(PdfFont.HELVETICA, PdfFont.BOLD, 12.0f));
 
     m_OptionManager.add(
-	    "color-filename", "colorFilename",
-	    Color.BLACK);
+      "color-filename", "colorFilename",
+      Color.BLACK);
+
+    m_OptionManager.add(
+      "regexp-filename", "regExpFilename",
+      new BaseRegExp(BaseRegExp.MATCH_ALL));
   }
 
   /**
@@ -170,6 +178,35 @@ public abstract class AbstractPdfProclet
   }
 
   /**
+   * Sets the regular expression that the filename must match.
+   *
+   * @param value	the expression
+   */
+  public void setRegExpFilename(BaseRegExp value) {
+    m_RegExpFilename = value;
+    reset();
+  }
+
+  /**
+   * Returns the regular expression that the filename must match.
+   *
+   * @return 		the expression
+   */
+  public BaseRegExp getRegExpFilename() {
+    return m_RegExpFilename;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String regExpFilenameTipText() {
+    return "The regular expression that the filename must match.";
+  }
+
+  /**
    * Adds the element to the document.
    *
    * @param generator	the context
@@ -253,17 +290,22 @@ public abstract class AbstractPdfProclet
   public boolean canProcess(PDFGenerator generator, File file) {
     boolean	result;
     String	extension;
+    boolean	match;
 
-    result    = false;
-    extension = file.getName().replaceAll(".*\\.", "");
+    result = m_RegExpFilename.isMatch(file.getAbsolutePath());
 
-    for (BaseString ext: getExtensions()) {
-      if (ext.stringValue().equals(MATCH_ALL_EXTENSION))
-	result = true;
-      else if (ext.stringValue().equalsIgnoreCase(extension))
-	result = true;
-      if (result)
-	break;
+    if (result) {
+      extension = file.getName().replaceAll(".*\\.", "");
+      match     = false;
+      for (BaseString ext : getExtensions()) {
+	if (ext.stringValue().equals(MATCH_ALL_EXTENSION))
+	  match = true;
+	else if (ext.stringValue().equalsIgnoreCase(extension))
+	  match = true;
+	if (match)
+	  break;
+      }
+      result = match;
     }
 
     return result;
