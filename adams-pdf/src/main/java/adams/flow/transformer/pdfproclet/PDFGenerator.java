@@ -21,9 +21,13 @@ package adams.flow.transformer.pdfproclet;
 
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
+import adams.core.io.TempUtils;
 import adams.env.Environment;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.pdf.PdfContentByte;
+import com.itextpdf.text.pdf.PdfImportedPage;
+import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfWriter;
 
 import java.io.File;
@@ -78,9 +82,9 @@ public class PDFGenerator {
     resetState();
   }
 
-    /**
-     * Resets the variables.
-     */
+  /**
+   * Resets the variables.
+   */
   protected void resetVariables() {
     m_Output          = null;
     m_PageSize        = PageSize.A4;
@@ -216,157 +220,157 @@ public class PDFGenerator {
     switch (m_PageSize) {
       case A0:
 	result = com.itextpdf.text.PageSize.A0;
-    	break;
+	break;
       case A1:
 	result = com.itextpdf.text.PageSize.A1;
-  	break;
+	break;
       case A10:
 	result = com.itextpdf.text.PageSize.A10;
-  	break;
+	break;
       case A2:
 	result = com.itextpdf.text.PageSize.A2;
-  	break;
+	break;
       case A3:
 	result = com.itextpdf.text.PageSize.A3;
-  	break;
+	break;
       case A4:
 	result = com.itextpdf.text.PageSize.A4;
-  	break;
+	break;
       case A5:
 	result = com.itextpdf.text.PageSize.A5;
-  	break;
+	break;
       case A6:
 	result = com.itextpdf.text.PageSize.A6;
-  	break;
+	break;
       case A7:
 	result = com.itextpdf.text.PageSize.A7;
-  	break;
+	break;
       case A8:
 	result = com.itextpdf.text.PageSize.A8;
-  	break;
+	break;
       case A9:
 	result = com.itextpdf.text.PageSize.A9;
-  	break;
+	break;
       case ARCH_A:
 	result = com.itextpdf.text.PageSize.ARCH_A;
-  	break;
+	break;
       case ARCH_B:
 	result = com.itextpdf.text.PageSize.ARCH_B;
-  	break;
+	break;
       case ARCH_C:
 	result = com.itextpdf.text.PageSize.ARCH_C;
-  	break;
+	break;
       case ARCH_D:
 	result = com.itextpdf.text.PageSize.ARCH_D;
-  	break;
+	break;
       case ARCH_E:
 	result = com.itextpdf.text.PageSize.ARCH_E;
-  	break;
+	break;
       case B0:
 	result = com.itextpdf.text.PageSize.B0;
-  	break;
+	break;
       case B1:
 	result = com.itextpdf.text.PageSize.B1;
-  	break;
+	break;
       case B10:
 	result = com.itextpdf.text.PageSize.B10;
-  	break;
+	break;
       case B2:
 	result = com.itextpdf.text.PageSize.B2;
-  	break;
+	break;
       case B3:
 	result = com.itextpdf.text.PageSize.B3;
-  	break;
+	break;
       case B4:
 	result = com.itextpdf.text.PageSize.B4;
-  	break;
+	break;
       case B5:
 	result = com.itextpdf.text.PageSize.B5;
-  	break;
+	break;
       case B6:
 	result = com.itextpdf.text.PageSize.B6;
-  	break;
+	break;
       case B7:
 	result = com.itextpdf.text.PageSize.B7;
-  	break;
+	break;
       case B8:
 	result = com.itextpdf.text.PageSize.B8;
-  	break;
+	break;
       case B9:
 	result = com.itextpdf.text.PageSize.B9;
-  	break;
+	break;
       case CROWN_OCTAVO:
 	result = com.itextpdf.text.PageSize.CROWN_OCTAVO;
-  	break;
+	break;
       case CROWN_QUARTO:
 	result = com.itextpdf.text.PageSize.CROWN_QUARTO;
-  	break;
+	break;
       case DEMY_OCTAVO:
 	result = com.itextpdf.text.PageSize.DEMY_OCTAVO;
-  	break;
+	break;
       case DEMY_QUARTO:
 	result = com.itextpdf.text.PageSize.DEMY_QUARTO;
-  	break;
+	break;
       case EXECUTIVE:
 	result = com.itextpdf.text.PageSize.EXECUTIVE;
-  	break;
+	break;
       case FLSA:
 	result = com.itextpdf.text.PageSize.FLSA;
-  	break;
+	break;
       case FLSE:
 	result = com.itextpdf.text.PageSize.FLSE;
-  	break;
+	break;
       case HALFLETTER:
 	result = com.itextpdf.text.PageSize.HALFLETTER;
-  	break;
+	break;
       case ID_1:
 	result = com.itextpdf.text.PageSize.ID_1;
-  	break;
+	break;
       case ID_2:
 	result = com.itextpdf.text.PageSize.ID_2;
-  	break;
+	break;
       case ID_3:
 	result = com.itextpdf.text.PageSize.ID_3;
-  	break;
+	break;
       case LARGE_CROWN_OCTAVO:
 	result = com.itextpdf.text.PageSize.LARGE_CROWN_OCTAVO;
-  	break;
+	break;
       case LARGE_CROWN_QUARTO:
 	result = com.itextpdf.text.PageSize.LARGE_CROWN_QUARTO;
-  	break;
+	break;
       case LEDGER:
 	result = com.itextpdf.text.PageSize.LEDGER;
-  	break;
+	break;
       case LEGAL:
 	result = com.itextpdf.text.PageSize.LEGAL;
-  	break;
+	break;
       case LETTER:
 	result = com.itextpdf.text.PageSize.LETTER;
-  	break;
+	break;
       case NOTE:
 	result = com.itextpdf.text.PageSize.NOTE;
-  	break;
+	break;
       case PENGUIN_LARGE_PAPERBACK:
 	result = com.itextpdf.text.PageSize.PENGUIN_LARGE_PAPERBACK;
-  	break;
+	break;
       case PENGUIN_SMALL_PAPERBACK:
 	result = com.itextpdf.text.PageSize.PENGUIN_SMALL_PAPERBACK;
-  	break;
+	break;
       case POSTCARD:
 	result = com.itextpdf.text.PageSize.POSTCARD;
-  	break;
+	break;
       case ROYAL_OCTAVO:
 	result = com.itextpdf.text.PageSize.ROYAL_OCTAVO;
-  	break;
+	break;
       case ROYAL_QUARTO:
 	result = com.itextpdf.text.PageSize.ROYAL_QUARTO;
-  	break;
+	break;
       case SMALL_PAPERBACK:
 	result = com.itextpdf.text.PageSize.SMALL_PAPERBACK;
-  	break;
+	break;
       case TABLOID:
 	result = com.itextpdf.text.PageSize.TABLOID;
-    	break;
+	break;
       default:
 	throw new IllegalArgumentException("Unknown page size: " + m_PageSize);
     }
@@ -392,6 +396,53 @@ public class PDFGenerator {
     m_Document.addCreator(Environment.getInstance().getProject());
     m_Document.addAuthor(System.getProperty("user.name"));
     m_State = new DocumentState();
+  }
+
+  /**
+   * Opens the document for appending content.
+   *
+   * @throws Exception	if opening fails
+   */
+  public void append() throws Exception {
+    PdfReader		reader;
+    File		tmpFile;
+    int			i;
+    PdfImportedPage 	page;
+    PdfContentByte	cb;
+
+    resetState();
+
+    tmpFile = TempUtils.createTempFile("adams", ".pdf");
+    if (tmpFile.exists()) {
+      if (!tmpFile.delete())
+	throw new IllegalStateException("Failed to delete temporary PDF file '" + tmpFile + "'!");
+    }
+    if (!FileUtils.copy(m_Output, tmpFile))
+      throw new IllegalStateException("Failed to move original PDF file '" + m_Output + "' to '" + tmpFile + "'!");
+
+    reader = new PdfReader(tmpFile.getAbsolutePath());
+    if (reader.getNumberOfPages() > 0) {
+      m_Document = new Document(reader.getPageSize(1));
+    }
+    else {
+      if (m_PageOrientation == PageOrientation.PORTRAIT)
+	m_Document = new Document(determinePageSize());
+      else
+	m_Document = new Document(determinePageSize().rotate());
+    }
+    m_Stream = new FileOutputStream(m_Output.getAbsoluteFile());
+    m_Writer = PdfWriter.getInstance(m_Document, m_Stream);
+    m_Document.open();
+    m_Document.addCreationDate();
+    m_Document.addCreator(Environment.getInstance().getProject());
+    m_Document.addAuthor(System.getProperty("user.name"));
+    m_State = new DocumentState();
+    cb      = m_Writer.getDirectContent();
+    for (i = 0; i < reader.getNumberOfPages(); i++) {
+      page = m_Writer.getImportedPage(reader, i+1);
+      m_Document.newPage();
+      cb.addTemplate(page, 0, 0);
+    }
   }
 
   /**
