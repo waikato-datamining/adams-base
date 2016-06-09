@@ -14,7 +14,7 @@
  */
 
 /**
- * PageBreak.java
+ * NewPage.java
  * Copyright (C) 2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer.pdfproclet;
@@ -25,7 +25,7 @@ import java.io.File;
 
 /**
  <!-- globalinfo-start -->
- * Forces a page break whenever a file with the specified extension is processed.
+ * Adds a new page whenever a file with the specified extension is processed.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -50,7 +50,7 @@ import java.io.File;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class PageBreak
+public class NewPage
   extends AbstractPdfProclet
   implements PdfProcletWithVariableFileExtension {
 
@@ -66,7 +66,7 @@ public class PageBreak
    * @return		a description of the writer
    */
   public String globalInfo() {
-    return "Forces a page break whenever a file with the specified extension is processed.";
+    return "Adds a new page whenever a file with the specified extension is processed.";
   }
 
   /**
