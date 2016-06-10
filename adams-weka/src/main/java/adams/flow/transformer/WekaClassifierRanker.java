@@ -29,6 +29,7 @@ import adams.core.Utils;
 import adams.core.logging.LoggingHelper;
 import adams.core.option.AbstractOption;
 import adams.core.option.OptionUtils;
+import adams.data.weka.WekaLabelIndex;
 import adams.event.FlowPauseStateEvent;
 import adams.event.FlowPauseStateEvent.Type;
 import adams.event.FlowPauseStateListener;
@@ -83,76 +84,76 @@ import java.util.logging.Level;
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- * 
+ *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: WekaClassifierRanker
  * </pre>
- * 
+ *
  * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- * 
+ *
  * <pre>-skip &lt;boolean&gt; (property: skip)
  * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
  * &nbsp;&nbsp;&nbsp;as it is.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
  * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
  * &nbsp;&nbsp;&nbsp; useful for critical actors.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-max &lt;int&gt; (property: max)
  * &nbsp;&nbsp;&nbsp;The maximum number of top-ranked classifiers to forward; use -1 to forward 
  * &nbsp;&nbsp;&nbsp;all of them (ranked array).
  * &nbsp;&nbsp;&nbsp;default: 3
  * &nbsp;&nbsp;&nbsp;minimum: -1
  * </pre>
- * 
+ *
  * <pre>-seed &lt;long&gt; (property: seed)
  * &nbsp;&nbsp;&nbsp;The seed value to use in the cross-validation.
  * &nbsp;&nbsp;&nbsp;default: 1
  * </pre>
- * 
+ *
  * <pre>-folds &lt;int&gt; (property: folds)
  * &nbsp;&nbsp;&nbsp;The number of folds to use in cross-validation.
  * &nbsp;&nbsp;&nbsp;default: 10
  * &nbsp;&nbsp;&nbsp;minimum: 1
  * </pre>
- * 
+ *
  * <pre>-measure &lt;CC|RMSE|RRSE|MAE|RAE|COMBINED|ACC|KAPPA&gt; (property: measure)
  * &nbsp;&nbsp;&nbsp;The measure used for ranking the classifiers.
  * &nbsp;&nbsp;&nbsp;default: CC
  * </pre>
- * 
+ *
  * <pre>-train &lt;adams.flow.core.CallableActorReference&gt; (property: train)
  * &nbsp;&nbsp;&nbsp;The name of the callable actor that is used for obtaining the training set.
  * &nbsp;&nbsp;&nbsp;default: train
  * </pre>
- * 
+ *
  * <pre>-test &lt;adams.flow.core.CallableActorReference&gt; (property: test)
  * &nbsp;&nbsp;&nbsp;The name of the callable actor that is used for obtaining the test set (
  * &nbsp;&nbsp;&nbsp;only if folds &lt;2).
  * &nbsp;&nbsp;&nbsp;default: test
  * </pre>
- * 
+ *
  * <pre>-output-best &lt;boolean&gt; (property: outputBestSetup)
  * &nbsp;&nbsp;&nbsp;If true, then for optimizers like GridSearch and MultiSearch the best setup 
  * &nbsp;&nbsp;&nbsp;that was found will be output instead of the optimizer setup.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-num-threads &lt;int&gt; (property: numThreads)
  * &nbsp;&nbsp;&nbsp;The number of threads to use for evaluating the classifiers in parallel 
  * &nbsp;&nbsp;&nbsp;(-1 means one for each core&#47;cpu).
  * &nbsp;&nbsp;&nbsp;default: -1
  * &nbsp;&nbsp;&nbsp;minimum: -1
  * </pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -198,6 +199,9 @@ public class WekaClassifierRanker
     /** the measure to use for ranking. */
     protected Measure m_Measure;
 
+    /** the class label index. */
+    protected WekaLabelIndex m_ClassLabel;
+
     /** the performance. */
     protected Performance m_Performance;
 
@@ -220,9 +224,10 @@ public class WekaClassifierRanker
      * @param seed	the seed value to use
      * @param folds	the number of folds to use
      * @param measure	the measure to use for ranking
+     * @param classLabel	the class label index to use
      * @param best	whether to output the best classifier setup (for optimizers)
      */
-    public RankingJob(weka.classifiers.Classifier cls, int index, Instances train, Instances test, long seed, int folds, Measure measure, boolean best) {
+    public RankingJob(weka.classifiers.Classifier cls, int index, Instances train, Instances test, long seed, int folds, Measure measure, WekaLabelIndex classLabel, boolean best) {
       super();
 
       m_Classifier      = cls;
@@ -232,6 +237,7 @@ public class WekaClassifierRanker
       m_Seed            = seed;
       m_Folds           = folds;
       m_Measure         = measure;
+      m_ClassLabel      = classLabel;
       m_Performance     = null;
       m_EvaluationError = "";
       m_BestClassifier  = (weka.classifiers.Classifier) Utils.deepCopy(cls);
@@ -364,17 +370,17 @@ public class WekaClassifierRanker
       result = template;
 
       if (m_OutputBestSetup && (m_Folds < 2)) {
-        try {
-          if (trained instanceof GridSearch)
-            result = (weka.classifiers.Classifier) OptionUtils.shallowCopy(((GridSearch) trained).getBestClassifier());
-          else if (trained instanceof MultiSearch)
-            result = (weka.classifiers.Classifier) OptionUtils.shallowCopy(((MultiSearch) trained).getBestClassifier());
-          // TODO: further optimizers
-        }
-        catch (Exception e) {
-          getLogger().log(Level.SEVERE, "Failed to copy best '" + trained.getClass().getName() + "' classifier:", e);
-          result = template;
-        }
+	try {
+	  if (trained instanceof GridSearch)
+	    result = (weka.classifiers.Classifier) OptionUtils.shallowCopy(((GridSearch) trained).getBestClassifier());
+	  else if (trained instanceof MultiSearch)
+	    result = (weka.classifiers.Classifier) OptionUtils.shallowCopy(((MultiSearch) trained).getBestClassifier());
+	  // TODO: further optimizers
+	}
+	catch (Exception e) {
+	  getLogger().log(Level.SEVERE, "Failed to copy best '" + trained.getClass().getName() + "' classifier:", e);
+	  result = template;
+	}
       }
 
       return result;
@@ -382,7 +388,7 @@ public class WekaClassifierRanker
 
     /**
      * Does the actual execution of the job.
-     * 
+     *
      * @throws Exception if fails to execute job
      */
     @Override
@@ -402,7 +408,13 @@ public class WekaClassifierRanker
 	m_BestClassifier = getBestClassifier(m_Classifier, cls);
 	cls              = null;
       }
-      m_Performance = new Performance(new Point(new Integer[]{m_Index}), new DefaultEvaluationWrapper(eval, new DefaultEvaluationMetrics()), m_Measure.getMeasure(), m_Classifier);
+      m_ClassLabel.setData(m_Train.classAttribute());
+      m_Performance = new Performance(
+	new Point(new Integer[]{m_Index}),
+	new DefaultEvaluationWrapper(eval, new DefaultEvaluationMetrics()),
+	m_Measure.getMeasure(),
+	m_ClassLabel.getIntIndex(),
+	m_Classifier);
       eval = null;
     }
 
@@ -552,7 +564,7 @@ public class WekaClassifierRanker
      * @return		the enum or null if not found
      */
     public Measure parse(String s) {
-      return (Measure) valueOf((AbstractOption) null, s);
+      return valueOf((AbstractOption) null, s);
     }
 
     /**
@@ -580,10 +592,10 @@ public class WekaClassifierRanker
 
       // default parsing
       try {
-        result = valueOf(str);
+	result = valueOf(str);
       }
       catch (Exception e) {
-        // ignored
+	// ignored
       }
 
       // try display
@@ -618,6 +630,9 @@ public class WekaClassifierRanker
   /** the measure for the evaluation. */
   protected Measure m_Measure;
 
+  /** the class label (in case of class-specific measures). */
+  protected WekaLabelIndex m_ClassLabel;
+
   /** whether to output the best setup in case of GridSearch/MultiSearch. */
   protected boolean m_OutputBestSetup;
 
@@ -641,10 +656,10 @@ public class WekaClassifierRanker
   @Override
   public String globalInfo() {
     return
-        "Performs a quick evaluation using cross-validation on a single dataset "
-      + "(or evaluation on a separate test set if the number of folds is less than 2) to "
-      + "rank the classifiers received on the input and forwarding the x best "
-      + "ones. Further evaluation can be performed using the Experimenter.";
+      "Performs a quick evaluation using cross-validation on a single dataset "
+	+ "(or evaluation on a separate test set if the number of folds is less than 2) to "
+	+ "rank the classifiers received on the input and forwarding the x best "
+	+ "ones. Further evaluation can be performed using the Experimenter.";
   }
 
   /**
@@ -655,36 +670,40 @@ public class WekaClassifierRanker
     super.defineOptions();
 
     m_OptionManager.add(
-	    "max", "max",
-	    3, -1, null);
+      "max", "max",
+      3, -1, null);
 
     m_OptionManager.add(
-	    "seed", "seed",
-	    1L);
+      "seed", "seed",
+      1L);
 
     m_OptionManager.add(
-	    "folds", "folds",
-	    10, 1, null);
+      "folds", "folds",
+      10, 1, null);
 
     m_OptionManager.add(
-	    "measure", "measure",
-	    Measure.CC);
+      "measure", "measure",
+      Measure.CC);
 
     m_OptionManager.add(
-	    "train", "train",
-	    new CallableActorReference("train"));
+      "class-label", "classLabel",
+      new WekaLabelIndex(WekaLabelIndex.FIRST));
 
     m_OptionManager.add(
-	    "test", "test",
-	    new CallableActorReference("test"));
+      "train", "train",
+      new CallableActorReference("train"));
+
+    m_OptionManager.add(
+      "test", "test",
+      new CallableActorReference("test"));
 
     m_OptionManager.add(
       "output-best", "outputBestSetup",
       false);
 
     m_OptionManager.add(
-	    "num-threads", "numThreads",
-	    -1, -1, null);
+      "num-threads", "numThreads",
+      -1, -1, null);
   }
 
   /**
@@ -742,7 +761,7 @@ public class WekaClassifierRanker
     }
     else {
       getLogger().severe(
-	  "Maximum number must be >0 or -1 for 'all', provided: " + value);
+	"Maximum number must be >0 or -1 for 'all', provided: " + value);
     }
   }
 
@@ -763,8 +782,8 @@ public class WekaClassifierRanker
    */
   public String maxTipText() {
     return
-        "The maximum number of top-ranked classifiers to forward; use -1 to "
-      + "forward all of them (ranked array).";
+      "The maximum number of top-ranked classifiers to forward; use -1 to "
+	+ "forward all of them (ranked array).";
   }
 
   /**
@@ -808,7 +827,7 @@ public class WekaClassifierRanker
     }
     else {
       getLogger().severe(
-	  "Number of folds must be >=1, provided: " + value);
+	"Number of folds must be >=1, provided: " + value);
     }
   }
 
@@ -858,6 +877,35 @@ public class WekaClassifierRanker
    */
   public String measureTipText() {
     return "The measure used for ranking the classifiers.";
+  }
+
+  /**
+   * Sets the class label index to use for class-specific measures.
+   *
+   * @param value	the label index
+   */
+  public void setClassLabel(WekaLabelIndex value) {
+    m_ClassLabel = value;
+    reset();
+  }
+
+  /**
+   * Returns the class label index to use for class-specific measures.
+   *
+   * @return		the label index
+   */
+  public WekaLabelIndex getClassLabel() {
+    return m_ClassLabel;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String classLabelTipText() {
+    return "The class label index to use in case of class-specific measures.";
   }
 
   /**
@@ -947,8 +995,8 @@ public class WekaClassifierRanker
    */
   public String outputBestSetupTipText() {
     return
-        "If true, then for optimizers like GridSearch and MultiSearch the "
-      + "best setup that was found will be output instead of the optimizer setup.";
+      "If true, then for optimizers like GridSearch and MultiSearch the "
+	+ "best setup that was found will be output instead of the optimizer setup.";
   }
 
   /**
@@ -1095,9 +1143,9 @@ public class WekaClassifierRanker
       }
 
       // evaluate classifiers
-      jobs = new JobList<RankingJob>();
+      jobs = new JobList<>();
       for (i = 0; i < cls.length; i++) {
-	job = new RankingJob(cls[i], i, train, test, m_Seed, m_Folds, m_Measure, m_OutputBestSetup);
+	job = new RankingJob(cls[i], i, train, test, m_Seed, m_Folds, m_Measure, m_ClassLabel, m_OutputBestSetup);
 	jobs.add(job);
       }
       if (m_JobRunnerSetup == null)
@@ -1112,7 +1160,7 @@ public class WekaClassifierRanker
 	public void jobCompleted(JobCompleteEvent e) {
 	  if (isLoggingEnabled())
 	    System.out.print(".");
-        }
+	}
       });
       m_JobRunner.add(jobs);
       m_JobRunner.start();
@@ -1147,16 +1195,16 @@ public class WekaClassifierRanker
 	Collections.sort(ranking, new PerformanceComparator(m_Measure.getMeasure(), new DefaultEvaluationMetrics()));
 
 	// generate output
-	  if (LoggingHelper.isAtLeast(getLogger(), Level.FINE))
+	if (LoggingHelper.isAtLeast(getLogger(), Level.FINE))
 	  getLogger().fine("\nChosen classifiers (ranked):");
-	ranked = new ArrayList<weka.classifiers.Classifier>();
+	ranked = new ArrayList<>();
 	i      = ranking.size() - 1;
 	while ((i >= 0) && (ranked.size() < m_Max)) {
 	  index = (Integer) ranking.get(i).getValues().getValue(0);
 	  ranked.add(jobs.get(index).getBestClassifier());
 	  if (LoggingHelper.isAtLeast(getLogger(), Level.FINE))
 	    getLogger().fine(
-		(i+1) + ". " + OptionUtils.getCommandLine(ranked.get(ranked.size() - 1))
+	      (i+1) + ". " + OptionUtils.getCommandLine(ranked.get(ranked.size() - 1))
 		+ "/" + m_Measure.toRaw() + ": "
 		+ ranking.get(i).getPerformance());
 	  i--;
@@ -1166,7 +1214,7 @@ public class WekaClassifierRanker
 
       // clean up
       for (i = 0; i < jobs.size(); i++) {
-	job = (RankingJob) jobs.get(i);
+	job = jobs.get(i);
 	job.cleanUp();
       }
       m_JobRunner.cleanUp();
@@ -1181,7 +1229,7 @@ public class WekaClassifierRanker
 
   /**
    * Gets called when the pause state of the flow changes.
-   * 
+   *
    * @param e		the event
    */
   public void flowPauseStateChanged(FlowPauseStateEvent e) {
