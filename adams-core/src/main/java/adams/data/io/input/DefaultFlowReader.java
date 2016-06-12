@@ -146,7 +146,7 @@ public class DefaultFlowReader
     int			count;
 
     result = false;
-    lines  = FileUtils.loadFromFile(file);
+    lines  = FileUtils.loadFromFile(file, m_Encoding.getValue());
     count  = 0;
     if (lines != null) {
       for (i = 0; i < lines.size(); i++) {
