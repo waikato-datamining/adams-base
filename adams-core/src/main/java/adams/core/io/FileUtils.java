@@ -127,7 +127,34 @@ public class FileUtils {
       IGNORED_EXTENSION_SUFFIXES = getProperties().getProperty("IgnoredExtensionSuffixes", "7z,bz2,gz").replaceAll(" ", "").split(",");
     return IGNORED_EXTENSION_SUFFIXES;
   }
-  
+
+  /**
+   * Removes byte order marks (BOMs) from the start of the string (if present).
+   * For UTF-16 and UTF-32.
+   *
+   * @param s		the string to process
+   * @return		the processed string
+   */
+  public static String removeByteOrderMarks(String s) {
+    if (s.length() >= 2) {
+      // UTF-16 little endian
+      if (s.startsWith("\uFFFE"))
+	return s.substring(1);
+      // UTF-16 big endian
+      if (s.startsWith("\uFEFF"))
+	return s.substring(1);
+    }
+    if (s.length() >= 4) {
+      // UTF-32 little endian
+      if (s.startsWith("\uFFFE\u0000"))
+	return s.substring(2);
+      // UTF-32 big endian
+      if (s.startsWith("\u0000\uFEFF"))
+	return s.substring(2);
+    }
+    return s;
+  }
+
   /**
    * Returns the content of the given file, null in case of an error.
    *
@@ -146,11 +173,17 @@ public class FileUtils {
    * @return		the content/lines of the file, null in case of an error
    */
   public static List<String> loadFromFile(File file, String encoding) {
+    List<String>	result;
+
     try {
       if (encoding == null)
-	return Files.readAllLines(file.toPath());
+	result = Files.readAllLines(file.toPath());
       else
-	return Files.readAllLines(file.toPath(), Charset.forName(encoding));
+	result = Files.readAllLines(file.toPath(), Charset.forName(encoding));
+      // remove byte order marks
+      if (result.size() > 0)
+	result.set(0, removeByteOrderMarks(result.get(0)));
+      return result;
     }
     catch (Exception e) {
       System.err.println("Failed to read lines from '" + file + "':");
