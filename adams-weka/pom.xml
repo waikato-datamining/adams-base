@@ -191,6 +191,19 @@
         </exclusion>
       </exclusions>
     </dependency>
+
+    <dependency>
+      <groupId>com.github.fracpete</groupId>
+      <artifactId>missing-values-imputation-weka-package</artifactId>
+      <version>2016.6.12</version>
+      <type>jar</type>
+      <exclusions>
+        <exclusion>
+          <groupId>nz.ac.waikato.cms.weka</groupId>
+          <artifactId>weka-dev</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
   </dependencies>
 
   <build>

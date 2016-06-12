@@ -90,3 +90,12 @@ weka.gui.explorer.panels.AdditionalExplorerPanel=\
 # the code converters
 weka.core.code.Converter=\
   weka.core.code
+
+# The imputation algorithms
+weka.filters.unsupervised.attribute.missingvaluesimputation.Imputation=\
+  weka.filters.unsupervised.attribute.missingvaluesimputation
+
+# The injection algorithms
+weka.filters.unsupervised.attribute.missingvaluesinjection.Injection=\
+  weka.filters.unsupervised.attribute.missingvaluesinjection
+
