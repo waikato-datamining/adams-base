@@ -20,6 +20,8 @@
 package adams.data.io.input;
 
 import adams.core.option.JsonConsumer;
+import adams.data.io.output.FlowWriter;
+import adams.data.io.output.JsonFlowWriter;
 import adams.flow.core.Actor;
 import adams.gui.flow.tree.Node;
 import adams.gui.flow.tree.TreeHelper;
@@ -109,5 +111,15 @@ public class JsonFlowReader
     m_Warnings.addAll(consumer.getWarnings());
 
     return result;
+  }
+
+  /**
+   * Returns the corresponding writer, if available.
+   *
+   * @return		the writer, null if none available
+   */
+  @Override
+  public FlowWriter getCorrespondingWriter() {
+    return new JsonFlowWriter();
   }
 }

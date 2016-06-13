@@ -20,6 +20,7 @@
 package adams.data.io.output;
 
 import adams.core.option.JsonProducer;
+import adams.data.io.input.FlowReader;
 import adams.data.io.input.JsonFlowReader;
 import adams.flow.core.Actor;
 import adams.gui.flow.tree.Node;
@@ -108,5 +109,15 @@ public class JsonFlowWriter
     result = producer.write(file.getAbsolutePath());
 
     return result;
+  }
+
+  /**
+   * Returns the corresponding reader, if available.
+   *
+   * @return		the reader, null if none available
+   */
+  @Override
+  public FlowReader getCorrespondingReader() {
+    return new JsonFlowReader();
   }
 }

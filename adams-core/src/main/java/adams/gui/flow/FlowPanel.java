@@ -47,7 +47,8 @@ import adams.gui.core.BaseSplitPane;
 import adams.gui.core.ButtonTabComponent;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.GUIHelper;
-import adams.gui.core.RecentFilesHandler;
+import adams.gui.core.RecentFilesHandlerWithCommandline;
+import adams.gui.core.RecentFilesHandlerWithCommandline.Setup;
 import adams.gui.core.TabIconSupporter;
 import adams.gui.core.TitleGenerator;
 import adams.gui.core.Undo.UndoPoint;
@@ -131,7 +132,7 @@ public class FlowPanel
   protected Tree m_Tree;
 
   /** the recent files handler. */
-  protected RecentFilesHandler<JMenu> m_RecentFilesHandler;
+  protected RecentFilesHandlerWithCommandline<JMenu> m_RecentFilesHandler;
 
   /** for proposing filenames for new flows. */
   protected FilenameProposer m_FilenameProposer;
@@ -165,7 +166,13 @@ public class FlowPanel
 
   /** the panel for showing notifications. */
   protected FlowPanelNotificationArea m_PanelNotification;
-  
+
+  /** the last flow reader used. */
+  protected FlowReader m_LastReader;
+
+  /** the last flow writer used. */
+  protected FlowWriter m_LastWriter;
+
   /**
    * Initializes the panel with no owner.
    */
@@ -205,6 +212,8 @@ public class FlowPanel
     m_Title                 = "";
     m_RegisteredDisplays    = new HashMap<Class,HashMap<String,AbstractDisplay>>();
     m_CheckOnSave           = getProperties().getBoolean("CheckOnSave", true);
+    m_LastReader            = null;
+    m_LastWriter            = null;
   }
 
   /**
@@ -550,6 +559,8 @@ public class FlowPanel
     SwingWorker		worker;
 
     m_RunningSwingWorker = true;
+    m_LastReader         = (FlowReader) OptionUtils.shallowCopy(reader);
+
     worker = new SwingWorker() {
       protected Node m_Flow = null;
       protected List<String> m_Errors;
@@ -557,8 +568,8 @@ public class FlowPanel
 
       @Override
       protected Object doInBackground() throws Exception {
-	m_Errors   = new ArrayList<String>();
-	m_Warnings = new ArrayList<String>();
+	m_Errors   = new ArrayList<>();
+	m_Warnings = new ArrayList<>();
 
 	cleanUp();
 	update();
@@ -593,7 +604,7 @@ public class FlowPanel
 	if (m_Errors.isEmpty())
 	  setCurrentFile(file);
 	if (m_RecentFilesHandler != null)
-	  m_RecentFilesHandler.addRecentItem(file);
+	  m_RecentFilesHandler.addRecentItem(new Setup(file, reader));
 	if (!m_Errors.isEmpty()) {
 	  GUIHelper.showErrorMessage(
 	      m_Owner, 
@@ -723,6 +734,24 @@ public class FlowPanel
   }
 
   /**
+   * Returns the last flow reader in use.
+   *
+   * @return		the reader, null if not available
+   */
+  public FlowReader getLastReader() {
+    return m_LastReader;
+  }
+
+  /**
+   * Returns the last flow writer in use.
+   *
+   * @return		the writer, null if not available
+   */
+  public FlowWriter getLastWriter() {
+    return m_LastWriter;
+  }
+
+  /**
    * Sets whether the flow is modified or not.
    *
    * @param value	true if the flow is to be flagged as modified
@@ -768,7 +797,8 @@ public class FlowPanel
     SwingWorker		worker;
     final Node 		flow;
 
-    flow = getTree().getRootNode();
+    flow         = getTree().getRootNode();
+    m_LastWriter = (FlowWriter) OptionUtils.shallowCopy(writer);
 
     worker = new SwingWorker() {
       boolean m_Result;
@@ -812,7 +842,7 @@ public class FlowPanel
 	  showStatus("");
 	  getTree().setModified(false);
 	  if (m_RecentFilesHandler != null)
-	    m_RecentFilesHandler.addRecentItem(file);
+	    m_RecentFilesHandler.addRecentItem(new Setup(file, writer.getCorrespondingReader()));
 	  setCurrentFile(file);
 	}
 
@@ -1340,7 +1370,7 @@ public class FlowPanel
    *
    * @param value	the handler to use
    */
-  public void setRecentFilesHandler(RecentFilesHandler<JMenu> value) {
+  public void setRecentFilesHandler(RecentFilesHandlerWithCommandline<JMenu> value) {
     m_RecentFilesHandler = value;
   }
 
@@ -1349,7 +1379,7 @@ public class FlowPanel
    *
    * @return		the handler in use, null if none set
    */
-  public RecentFilesHandler<JMenu> getRecentFilesHandler() {
+  public RecentFilesHandlerWithCommandline<JMenu> getRecentFilesHandler() {
     return m_RecentFilesHandler;
   }
 

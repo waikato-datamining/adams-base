@@ -21,6 +21,7 @@ package adams.data.io.output;
 
 import adams.core.io.FileFormatHandler;
 import adams.core.option.OptionHandler;
+import adams.data.io.input.FlowReader;
 import adams.flow.core.Actor;
 import adams.gui.flow.tree.Node;
 
@@ -112,4 +113,11 @@ public interface FlowWriter
    * @return		true if successfully written
    */
   public boolean write(Actor content, Writer writer);
+
+  /**
+   * Returns the corresponding reader, if available.
+   *
+   * @return		the reader, null if none available
+   */
+  public FlowReader getCorrespondingReader();
 }

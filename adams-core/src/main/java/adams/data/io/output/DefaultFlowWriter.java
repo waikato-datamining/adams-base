@@ -26,6 +26,7 @@ import adams.core.io.FileEncodingSupporter;
 import adams.core.io.FileUtils;
 import adams.core.option.NestedProducer;
 import adams.data.io.input.DefaultFlowReader;
+import adams.data.io.input.FlowReader;
 import adams.env.Environment;
 import adams.flow.core.Actor;
 import adams.gui.flow.tree.Node;
@@ -229,5 +230,20 @@ public class DefaultFlowWriter
       producer.produce(content);
       return producer.write(file.getAbsolutePath());
     }
+  }
+
+  /**
+   * Returns the corresponding reader, if available.
+   *
+   * @return		the reader, null if none available
+   */
+  @Override
+  public FlowReader getCorrespondingReader() {
+    DefaultFlowReader	result;
+
+    result = new DefaultFlowReader();
+    result.setEncoding(getEncoding());
+
+    return result;
   }
 }

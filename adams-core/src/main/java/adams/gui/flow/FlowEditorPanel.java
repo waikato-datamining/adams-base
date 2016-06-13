@@ -22,8 +22,11 @@ package adams.gui.flow;
 
 import adams.core.Properties;
 import adams.core.StatusMessageHandler;
+import adams.core.io.FileEncodingSupporter;
 import adams.core.io.FilenameProposer;
 import adams.core.io.PlaceholderFile;
+import adams.data.io.input.FlowReader;
+import adams.data.io.output.FlowWriter;
 import adams.env.Environment;
 import adams.env.FlowEditorPanelDefinition;
 import adams.env.FlowEditorPanelMenuDefinition;
@@ -39,15 +42,14 @@ import adams.gui.core.BaseMenu;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.BaseStatusBar;
 import adams.gui.core.BaseStatusBar.PopupMenuCustomizer;
-import adams.gui.core.BaseStatusBar.StatusProcessor;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MenuBarProvider;
-import adams.gui.core.RecentFilesHandler;
+import adams.gui.core.RecentFilesHandlerWithCommandline;
+import adams.gui.core.RecentFilesHandlerWithCommandline.Setup;
 import adams.gui.core.ToolBarPanel;
 import adams.gui.event.RecentItemEvent;
 import adams.gui.event.RecentItemListener;
 import adams.gui.event.TabVisibilityChangeEvent;
-import adams.gui.event.TabVisibilityChangeListener;
 import adams.gui.event.UndoEvent;
 import adams.gui.flow.menu.AbstractFlowEditorMenuItem;
 import adams.gui.flow.menu.EditCheckVariables;
@@ -118,11 +120,9 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JSplitPane;
 import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -130,7 +130,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Vector;
 
 /**
  * A panel for setting up, modifying, saving and loading "simple" flows.
@@ -375,7 +374,7 @@ public class FlowEditorPanel
   protected BaseStatusBar m_StatusBar;
 
   /** the recent files handler. */
-  protected RecentFilesHandler<JMenu> m_RecentFilesHandler;
+  protected RecentFilesHandlerWithCommandline<JMenu> m_RecentFilesHandler;
 
   /** for proposing filenames for new flows. */
   protected FilenameProposer m_FilenameProposer;
@@ -409,8 +408,8 @@ public class FlowEditorPanel
     m_FileChooser.setCurrentDirectory(new PlaceholderFile(getPropertiesEditor().getPath("InitialDir", "%h")));
     m_FilenameProposer    = new FilenameProposer(FlowPanel.PREFIX_NEW, Actor.FILE_EXTENSION, getPropertiesEditor().getPath("InitialDir", "%h"));
 
-    m_MenuItems           = new ArrayList<FlowEditorAction>();
-    m_AdditionalMenuItems = new ArrayList<AbstractFlowEditorMenuItem>();
+    m_MenuItems           = new ArrayList<>();
+    m_AdditionalMenuItems = new ArrayList<>();
     additionals           = AbstractFlowEditorMenuItem.getMenuItems();
     for (String additional: additionals) {
       try {
@@ -460,12 +459,9 @@ public class FlowEditorPanel
 
     // the tabs
     m_Tabs = new FlowTabManager(this);
-    m_Tabs.addTabVisibilityChangeListener(new TabVisibilityChangeListener() {
-      @Override
-      public void tabVisibilityChanged(TabVisibilityChangeEvent e) {
-	m_SplitPane.setRightComponentHidden(m_Tabs.getTabCount() == 0);
-      }
-    });
+    m_Tabs.addTabVisibilityChangeListener((TabVisibilityChangeEvent e) ->
+      m_SplitPane.setRightComponentHidden(m_Tabs.getTabCount() == 0)
+    );
     m_SplitPane.setRightComponent(m_Tabs);
     m_SplitPane.setRightComponentHidden(m_Tabs.getTabCount() == 0);
 
@@ -474,11 +470,8 @@ public class FlowEditorPanel
     m_StatusBar.setDialogSize(new Dimension(props.getInteger("StatusBar.Width", 600), props.getInteger("StatusBar.Height", 400)));
     m_StatusBar.setMouseListenerActive(true);
     m_StatusBar.setPopupMenuCustomizer(this);
-    m_StatusBar.setStatusProcessor(new StatusProcessor() {
-      @Override
-      public String process(String msg) {
-        return msg.replace(": ", ":\n");
-      }
+    m_StatusBar.setStatusProcessor((String msg) -> {
+      return msg.replace(": ", ":\n");
     });
     getContentPanel().add(m_StatusBar, BorderLayout.SOUTH);
   }
@@ -860,7 +853,7 @@ public class FlowEditorPanel
     JMenuItem		menuitem;
     String[]		actors;
     int			i;
-    Vector<String>	prefixes;
+    List<String>	prefixes;
     String		prefix;
     String		prefixPrev;
 
@@ -893,12 +886,7 @@ public class FlowEditorPanel
       menu = new BaseMenu(MENU_FILE);
       result.add(menu);
       menu.setMnemonic('F');
-      menu.addChangeListener(new ChangeListener() {
-	@Override
-	public void stateChanged(ChangeEvent e) {
-	  updateActions();
-	}
-      });
+      menu.addChangeListener((ChangeEvent e) -> updateActions());
 
       // File/New
       submenu = new JMenu("New");
@@ -909,7 +897,7 @@ public class FlowEditorPanel
       submenu.add(m_ActionFileNewFromClipboard);
       submenu.addSeparator();
       actors = getPropertiesEditor().getProperty("NewList", Flow.class.getName()).replace(" ", "").split(",");
-      prefixes = new Vector<String>();
+      prefixes = new ArrayList<>();
       for (i = 0; i < actors.length; i++) {
 	prefix = actors[i].substring(0, actors[i].lastIndexOf('.'));
 	if (!prefixes.contains(prefix))
@@ -942,17 +930,17 @@ public class FlowEditorPanel
       // File/Recent files
       submenu = new JMenu("Open recent");
       menu.add(submenu);
-      m_RecentFilesHandler = new RecentFilesHandler<JMenu>(
+      m_RecentFilesHandler = new RecentFilesHandlerWithCommandline<>(
 	  SESSION_FILE, getPropertiesEditor().getInteger("MaxRecentFlows", 5), submenu);
-      m_RecentFilesHandler.addRecentItemListener(new RecentItemListener<JMenu,File>() {
+      m_RecentFilesHandler.addRecentItemListener(new RecentItemListener<JMenu,Setup>() {
 	@Override
-	public void recentItemAdded(RecentItemEvent<JMenu,File> e) {
+	public void recentItemAdded(RecentItemEvent<JMenu,Setup> e) {
 	  // ignored
 	}
 	@Override
-	public void recentItemSelected(RecentItemEvent<JMenu,File> e) {
+	public void recentItemSelected(RecentItemEvent<JMenu,Setup> e) {
 	  FlowPanel panel = m_FlowPanels.newPanel();
-	  panel.load(m_FileChooser.getReaderForFile(e.getItem()), e.getItem());
+	  panel.load((FlowReader) e.getItem().getHandler(), e.getItem().getFile());
 	}
       });
       m_MenuFileOpenRecent = submenu;
@@ -976,12 +964,7 @@ public class FlowEditorPanel
       menu = new BaseMenu(MENU_EDIT);
       result.add(menu);
       menu.setMnemonic('E');
-      menu.addChangeListener(new ChangeListener() {
-	@Override
-	public void stateChanged(ChangeEvent e) {
-	  updateActions();
-	}
-      });
+      menu.addChangeListener((ChangeEvent e) -> updateActions());
 
       menu.add(m_ActionEditEnableUndo);
       menu.add(m_ActionEditUndo);
@@ -1006,12 +989,7 @@ public class FlowEditorPanel
       menu = new BaseMenu(MENU_RUN);
       result.add(menu);
       menu.setMnemonic('R');
-      menu.addChangeListener(new ChangeListener() {
-	@Override
-	public void stateChanged(ChangeEvent e) {
-	  updateActions();
-	}
-      });
+      menu.addChangeListener((ChangeEvent e) -> updateActions());
 
       menu.add(m_ActionRunValidateSetup);
       menu.add(m_ActionRunRun);
@@ -1036,12 +1014,7 @@ public class FlowEditorPanel
       menu = new BaseMenu(MENU_VIEW);
       result.add(menu);
       menu.setMnemonic('V');
-      menu.addChangeListener(new ChangeListener() {
-	@Override
-	public void stateChanged(ChangeEvent e) {
-	  updateActions();
-	}
-      });
+      menu.addChangeListener((ChangeEvent e) -> updateActions());
 
       menu.add(m_ActionViewShowToolbar);
       menu.add(m_ActionViewShowQuickInfo);
@@ -1060,12 +1033,7 @@ public class FlowEditorPanel
 	menu = new BaseMenu(MENU_WINDOW);
 	result.add(menu);
 	menu.setMnemonic('W');
-	menu.addChangeListener(new ChangeListener() {
-	  @Override
-	  public void stateChanged(ChangeEvent e) {
-	    updateActions();
-	  }
-	});
+	menu.addChangeListener((ChangeEvent e) -> updateActions());
 
 	menu.add(m_ActionNewWindow);
 	menu.add(m_ActionDuplicateTabInNewWindow);
@@ -1427,6 +1395,8 @@ public class FlowEditorPanel
    */
   public void save() {
     FlowPanel	panel;
+    FlowWriter	writer;
+    FlowReader reader;
 
     panel = getCurrentPanel();
     if (panel == null)
@@ -1437,7 +1407,17 @@ public class FlowEditorPanel
       return;
     }
 
-    panel.save(m_FileChooser.getWriterForFile(panel.getCurrentFile()), panel.getCurrentFile());
+    writer = panel.getLastWriter();
+    reader = panel.getLastReader();
+    if (writer == null) {
+      writer = m_FileChooser.getWriterForFile(panel.getCurrentFile());
+      if (reader != null) {
+	// transfer encoding?
+	if ((writer instanceof FileEncodingSupporter) && (reader instanceof FileEncodingSupporter))
+	  ((FileEncodingSupporter) writer).setEncoding(((FileEncodingSupporter) reader).getEncoding());
+      }
+    }
+    panel.save(writer, panel.getCurrentFile());
   }
 
   /**
@@ -1494,10 +1474,7 @@ public class FlowEditorPanel
    * @return		true if a flow is being executed
    */
   public boolean isRunning() {
-    if (getCurrentPanel() == null)
-      return false;
-    else
-      return getCurrentPanel().isRunning();
+    return (getCurrentPanel() != null) && getCurrentPanel().isRunning();
   }
 
   /**
@@ -1527,10 +1504,7 @@ public class FlowEditorPanel
    * @return		true if a flow is currently being stopped
    */
   public boolean isStopping() {
-    if (getCurrentPanel() == null)
-      return false;
-    else
-      return getCurrentPanel().isStopping();
+    return (getCurrentPanel() != null) && getCurrentPanel().isStopping();
   }
 
   /**
@@ -1560,10 +1534,7 @@ public class FlowEditorPanel
    * @return		true if flow is paused
    */
   public boolean isPaused() {
-    if (getCurrentPanel() == null)
-      return false;
-    else
-      return getCurrentPanel().isPaused();
+    return (getCurrentPanel() != null) && getCurrentPanel().isPaused();
   }
 
   /**
@@ -1837,7 +1808,7 @@ public class FlowEditorPanel
    *
    * @return		the handler
    */
-  public RecentFilesHandler<JMenu> getRecentFilesHandler() {
+  public RecentFilesHandlerWithCommandline<JMenu> getRecentFilesHandler() {
     return m_RecentFilesHandler;
   }
 
@@ -1888,12 +1859,7 @@ public class FlowEditorPanel
     
     if ((source.getStatus() != null) && (source.getStatus().length() > 0)) {
       menuitem = new JMenuItem("Copy");
-      menuitem.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-          GUIHelper.copyToClipboard(source.getStatus());
-        }
-      });
+      menuitem.addActionListener((ActionEvent e) -> GUIHelper.copyToClipboard(source.getStatus()));
       menu.add(menuitem);
     }
   }

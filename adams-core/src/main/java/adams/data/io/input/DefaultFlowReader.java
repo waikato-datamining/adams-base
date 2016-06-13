@@ -26,6 +26,8 @@ import adams.core.io.FileEncodingSupporter;
 import adams.core.io.FileUtils;
 import adams.core.option.NestedConsumer;
 import adams.core.option.NestedProducer;
+import adams.data.io.output.DefaultFlowWriter;
+import adams.data.io.output.FlowWriter;
 import adams.flow.core.Actor;
 import adams.gui.flow.tree.Node;
 import adams.gui.flow.tree.TreeHelper;
@@ -268,6 +270,21 @@ public class DefaultFlowReader
     else {
       result = readNonCompact(lines);
     }
+
+    return result;
+  }
+
+  /**
+   * Returns the corresponding writer, if available.
+   *
+   * @return		the writer, null if none available
+   */
+  @Override
+  public FlowWriter getCorrespondingWriter() {
+    DefaultFlowWriter	result;
+
+    result = new DefaultFlowWriter();
+    result.setEncoding(getEncoding());
 
     return result;
   }
