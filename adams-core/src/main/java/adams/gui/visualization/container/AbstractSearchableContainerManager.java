@@ -135,7 +135,6 @@ public abstract class AbstractSearchableContainerManager<T extends AbstractConta
    */
   @Override
   public T remove(int index) {
-    int		i;
     T		result;
     
     if (!m_AllowRemoval)
