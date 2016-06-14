@@ -15,18 +15,18 @@
 
 /*
  * SelectedTimestampPaintlet.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.timeseries;
-
-import java.awt.Color;
-import java.awt.Graphics;
 
 import adams.data.timeseries.TimeseriesPoint;
 import adams.gui.event.PaintEvent.PaintMoment;
 import adams.gui.visualization.core.AxisPanel;
 import adams.gui.visualization.core.plot.Axis;
+
+import java.awt.Color;
+import java.awt.Graphics;
 
 /**
  <!-- globalinfo-start -->
@@ -183,17 +183,15 @@ public class SelectedTimestampPaintlet
     if (point != null) {
       axisX = getPanel().getPlot().getAxis(Axis.BOTTOM);
       g.setColor(getColor());
-      synchronized(point) {
-	g.drawLine(
-	    axisX.valueToPos(point.getTimestamp().getTime()),
-	    0,
-	    axisX.valueToPos(point.getTimestamp().getTime()),
-	    getPanel().getHeight());
-	g.drawString(
-	    axisX.valueToDisplay(point.getTimestamp().getTime()),
-	    axisX.valueToPos(point.getTimestamp().getTime()) + 10,
-	    10);
-      }
+      g.drawLine(
+        axisX.valueToPos(point.getTimestamp().getTime()),
+        0,
+        axisX.valueToPos(point.getTimestamp().getTime()),
+        getPanel().getHeight());
+      g.drawString(
+        axisX.valueToDisplay(point.getTimestamp().getTime()),
+        axisX.valueToPos(point.getTimestamp().getTime()) + 10,
+        10);
     }
   }
 }

@@ -15,17 +15,10 @@
 
 /*
  * TimeseriesContainerManager.java
- * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.timeseries;
-
-import gnu.trove.list.array.TIntArrayList;
-
-import java.awt.Color;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
 
 import adams.data.timeseries.Timeseries;
 import adams.db.AbstractDatabaseConnection;
@@ -36,6 +29,12 @@ import adams.gui.visualization.container.NamedContainerManagerWithUniqueNames;
 import adams.gui.visualization.container.VisibilityContainerManager;
 import adams.gui.visualization.core.AbstractColorProvider;
 import adams.gui.visualization.core.DefaultColorProvider;
+import gnu.trove.list.array.TIntArrayList;
+
+import java.awt.Color;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 
 /**
  * A handler for the Timeseries containers.
@@ -407,7 +406,7 @@ public class TimeseriesContainerManager<C extends TimeseriesContainer>
     C		cont;
     int		i;
 
-    result = new ArrayList<C>();
+    result = new ArrayList<>();
 
     for (i = 0; i < count(); i++) {
       if (!isVisible(i))
@@ -430,8 +429,8 @@ public class TimeseriesContainerManager<C extends TimeseriesContainer>
   @Override
   protected boolean isMatch(C cont, String search, boolean regExp) {
     if (regExp)
-      return (cont.getID().matches(search));
+      return cont.getID().matches(search);
     else
-      return (cont.getID().indexOf(search) > -1);
+      return cont.getID().toLowerCase().contains(search);
   }
 }

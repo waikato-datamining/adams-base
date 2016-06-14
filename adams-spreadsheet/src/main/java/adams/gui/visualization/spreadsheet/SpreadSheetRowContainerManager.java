@@ -399,7 +399,7 @@ public class SpreadSheetRowContainerManager
     if (regExp)
       return cont.getID().matches(search);
     else
-      return cont.getID().contains(search);
+      return cont.getID().toLowerCase().contains(search);
   }
 
   /**

@@ -28,10 +28,7 @@ import adams.gui.core.AntiAliasingSupporter;
 import adams.gui.core.GUIHelper;
 import adams.gui.event.PaintEvent.PaintMoment;
 import adams.gui.visualization.container.AbstractContainer;
-import adams.gui.visualization.container.AbstractContainerManager;
 import adams.gui.visualization.container.ColorContainer;
-import adams.gui.visualization.container.SearchableContainerManager;
-import adams.gui.visualization.container.VisibilityContainer;
 import adams.gui.visualization.core.AxisPanel;
 import adams.gui.visualization.core.plot.Axis;
 
@@ -211,29 +208,21 @@ public class SimpleInstanceLinePaintlet
    */
   @Override
   public void performPaint(Graphics g, PaintMoment moment) {
-    int			i;
-    Instance		data;
-    AbstractContainerManager	manager;
-    AbstractContainer		cont;
+    int				i;
+    Instance			data;
+    InstanceContainerManager	manager;
+    InstanceContainer		cont;
 
     // paint all points
-    manager = getDataContainerPanel().getContainerManager();
-    synchronized(manager) {
-      for (i = 0; i < manager.count(); i++) {
-	cont = manager.get(i);
-	if (cont instanceof VisibilityContainer) {
-	  if (!((VisibilityContainer) cont).isVisible())
-	    continue;
-	}
-        if (manager instanceof SearchableContainerManager) {
-          if (((SearchableContainerManager) manager).isFiltered() && !((SearchableContainerManager) manager).isFiltered(i))
-            continue;
-        }
-	data = (Instance) cont.getPayload();
-	synchronized(data) {
-	  drawData(g, data, getColor(i));
-	}
-      }
+    manager = (InstanceContainerManager) getDataContainerPanel().getContainerManager();
+    for (i = 0; i < manager.count(); i++) {
+      cont = manager.get(i);
+      if (!cont.isVisible())
+	continue;
+      if (manager.isFiltered() && !manager.isFiltered(i))
+	continue;
+      data = (Instance) cont.getPayload();
+      drawData(g, data, getColor(i));
     }
   }
 }

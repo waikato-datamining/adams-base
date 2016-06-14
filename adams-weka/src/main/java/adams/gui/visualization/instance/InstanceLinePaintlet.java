@@ -28,10 +28,7 @@ import adams.gui.core.AntiAliasingSupporter;
 import adams.gui.core.GUIHelper;
 import adams.gui.event.PaintEvent.PaintMoment;
 import adams.gui.visualization.container.AbstractContainer;
-import adams.gui.visualization.container.AbstractContainerManager;
 import adams.gui.visualization.container.ColorContainer;
-import adams.gui.visualization.container.SearchableContainerManager;
-import adams.gui.visualization.container.VisibilityContainer;
 import adams.gui.visualization.core.AxisPanel;
 import adams.gui.visualization.core.PaintletWithMarkers;
 import adams.gui.visualization.core.plot.Axis;
@@ -51,34 +48,34 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- * 
+ *
  * <pre>-stroke-thickness &lt;float&gt; (property: strokeThickness)
  * &nbsp;&nbsp;&nbsp;The thickness of the stroke.
  * &nbsp;&nbsp;&nbsp;default: 1.0
  * &nbsp;&nbsp;&nbsp;minimum: 0.01
  * </pre>
- * 
+ *
  * <pre>-markers-extent &lt;int&gt; (property: markerExtent)
  * &nbsp;&nbsp;&nbsp;The size of the markers in pixels.
  * &nbsp;&nbsp;&nbsp;default: 7
  * &nbsp;&nbsp;&nbsp;minimum: 0
  * </pre>
- * 
+ *
  * <pre>-markers-disabled &lt;boolean&gt; (property: markersDisabled)
  * &nbsp;&nbsp;&nbsp;If set to true, the markers are disabled.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-always-show-markers &lt;boolean&gt; (property: alwaysShowMarkers)
  * &nbsp;&nbsp;&nbsp;If set to true, the markers are always displayed, not just when zoomed in.
  * &nbsp;&nbsp;&nbsp;default: true
  * </pre>
- * 
+ *
  * <pre>-anti-aliasing-enabled &lt;boolean&gt; (property: antiAliasingEnabled)
  * &nbsp;&nbsp;&nbsp;If enabled, uses anti-aliasing for drawing lines.
  * &nbsp;&nbsp;&nbsp;default: true
  * </pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -139,20 +136,20 @@ public class InstanceLinePaintlet
     super.defineOptions();
 
     m_OptionManager.add(
-	    "markers-extent", "markerExtent",
-	    GUIHelper.getInteger(getClass(), "markersExtent", 7), 0, null);
+      "markers-extent", "markerExtent",
+      GUIHelper.getInteger(getClass(), "markersExtent", 7), 0, null);
 
     m_OptionManager.add(
-	    "markers-disabled", "markersDisabled",
-	    !GUIHelper.getBoolean(getClass(), "markersEnabled", true));
+      "markers-disabled", "markersDisabled",
+      !GUIHelper.getBoolean(getClass(), "markersEnabled", true));
 
     m_OptionManager.add(
-	    "always-show-markers", "alwaysShowMarkers",
-	    GUIHelper.getBoolean(getClass(), "alwaysShowMarkers", true));
+      "always-show-markers", "alwaysShowMarkers",
+      GUIHelper.getBoolean(getClass(), "alwaysShowMarkers", true));
 
     m_OptionManager.add(
-	    "anti-aliasing-enabled", "antiAliasingEnabled",
-	    GUIHelper.getBoolean(getClass(), "antiAliasingEnabled", true));
+      "anti-aliasing-enabled", "antiAliasingEnabled",
+      GUIHelper.getBoolean(getClass(), "antiAliasingEnabled", true));
   }
 
   /**
@@ -164,12 +161,12 @@ public class InstanceLinePaintlet
   public Color getColor(int index) {
     Color	result;
     AbstractContainer	cont;
-    
+
     result = Color.BLUE;
     cont   = getDataContainerPanel().getContainerManager().get(index);
     if (cont instanceof ColorContainer)
       result = ((ColorContainer) cont).getColor();
-      
+
     return result;
   }
 
@@ -347,44 +344,44 @@ public class InstanceLinePaintlet
       // determine coordinates
       currX = axisX.valueToPos(XYSequencePoint.toDouble(curr.getX()));
       if ((i != start) && (i != end) && (currX == prevX))
-	continue;
+        continue;
       currY = axisY.valueToPos(XYSequencePoint.toDouble(curr.getY()));
 
       // draw line
       g.drawLine(prevX, prevY, currX, currY);
       if (marker != MarkerShape.NONE) {
-	if (Math.sqrt(Math.pow(currX - prevMarkerX, 2) + Math.pow(currY - prevMarkerY, 2)) > m_MarkerExtent * 2) {
-	  if (marker == MarkerShape.BOX) {
-	    g.drawRect(
-		currX - (m_MarkerExtent / 2),
-		currY - (m_MarkerExtent / 2),
-		m_MarkerExtent - 1,
-		m_MarkerExtent - 1);
-	  }
-	  else if (marker == MarkerShape.CIRCLE) {
-	    g.drawArc(
-		currX - (m_MarkerExtent / 2),
-		currY - (m_MarkerExtent / 2),
-		m_MarkerExtent - 1,
-		m_MarkerExtent - 1,
-		0,
-		360);
-	  }
-	  else if (marker == MarkerShape.TRIANGLE) {
-	    int[] x = new int[3];
-	    int[] y = new int[3];
-	    x[0] = currX - (m_MarkerExtent / 2);
-	    y[0] = currY + (m_MarkerExtent / 2);
-	    x[1] = x[0] + m_MarkerExtent;
-	    y[1] = y[0];
-	    x[2] = currX;
-	    y[2] = y[0] - m_MarkerExtent;
-	    g.drawPolygon(x, y, 3);
-	  }
+        if (Math.sqrt(Math.pow(currX - prevMarkerX, 2) + Math.pow(currY - prevMarkerY, 2)) > m_MarkerExtent * 2) {
+          if (marker == MarkerShape.BOX) {
+            g.drawRect(
+              currX - (m_MarkerExtent / 2),
+              currY - (m_MarkerExtent / 2),
+              m_MarkerExtent - 1,
+              m_MarkerExtent - 1);
+          }
+          else if (marker == MarkerShape.CIRCLE) {
+            g.drawArc(
+              currX - (m_MarkerExtent / 2),
+              currY - (m_MarkerExtent / 2),
+              m_MarkerExtent - 1,
+              m_MarkerExtent - 1,
+              0,
+              360);
+          }
+          else if (marker == MarkerShape.TRIANGLE) {
+            int[] x = new int[3];
+            int[] y = new int[3];
+            x[0] = currX - (m_MarkerExtent / 2);
+            y[0] = currY + (m_MarkerExtent / 2);
+            x[1] = x[0] + m_MarkerExtent;
+            y[1] = y[0];
+            x[2] = currX;
+            y[2] = y[0] - m_MarkerExtent;
+            g.drawPolygon(x, y, 3);
+          }
 
-	  prevMarkerX = currX;
-	  prevMarkerY = currY;
-	}
+          prevMarkerX = currX;
+          prevMarkerY = currY;
+        }
       }
 
       prevX = currX;
@@ -420,29 +417,21 @@ public class InstanceLinePaintlet
    */
   @Override
   public void performPaint(Graphics g, PaintMoment moment) {
-    int			i;
-    Instance		data;
-    AbstractContainerManager	manager;
-    AbstractContainer		cont;
+    int				i;
+    Instance			data;
+    InstanceContainerManager	manager;
+    InstanceContainer		cont;
 
     // paint all points
-    manager = getDataContainerPanel().getContainerManager();
-    synchronized(manager) {
-      for (i = 0; i < manager.count(); i++) {
-	cont = manager.get(i);
-	if (cont instanceof VisibilityContainer) {
-	  if (!((VisibilityContainer) cont).isVisible())
-	    continue;
-	}
-        if (manager instanceof SearchableContainerManager) {
-          if (((SearchableContainerManager) manager).isFiltered() && !((SearchableContainerManager) manager).isFiltered(i))
-            continue;
-        }
-	data = (Instance) cont.getPayload();
-	synchronized(data) {
-	  drawData(g, data, getColor(i), getMarkerShape(i));
-	}
-      }
+    manager = (InstanceContainerManager) getDataContainerPanel().getContainerManager();
+    for (i = 0; i < manager.count(); i++) {
+      cont = manager.get(i);
+      if (!cont.isVisible())
+	continue;
+      if (manager.isFiltered() && !manager.isFiltered(i))
+	continue;
+      data = (Instance) cont.getPayload();
+      drawData(g, data, getColor(i), getMarkerShape(i));
     }
   }
 }

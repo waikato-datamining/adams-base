@@ -15,7 +15,7 @@
 
 /*
  * InstanceContainerManager.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.instance;
@@ -400,7 +400,7 @@ public class InstanceContainerManager
     if (regExp)
       return cont.getID().matches(search);
     else
-      return cont.getID().contains(search);
+      return cont.getID().toLowerCase().contains(search);
   }
 
   /**

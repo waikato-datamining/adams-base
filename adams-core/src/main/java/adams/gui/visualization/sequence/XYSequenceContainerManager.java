@@ -15,16 +15,10 @@
 
 /*
  * XYSequenceContainerManager.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.sequence;
-
-import gnu.trove.list.array.TIntArrayList;
-
-import java.awt.Color;
-import java.util.ArrayList;
-import java.util.List;
 
 import adams.data.sequence.XYSequence;
 import adams.gui.event.DataChangeEvent;
@@ -37,6 +31,11 @@ import adams.gui.visualization.container.NamedContainerManager;
 import adams.gui.visualization.container.VisibilityContainerManager;
 import adams.gui.visualization.core.AbstractColorProvider;
 import adams.gui.visualization.core.DefaultColorProvider;
+import gnu.trove.list.array.TIntArrayList;
+
+import java.awt.Color;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A handler for the XY sequence containers.
@@ -218,7 +217,7 @@ public class XYSequenceContainerManager
     XYSequenceContainer		cont;
     int				i;
 
-    result = new ArrayList<XYSequenceContainer>();
+    result = new ArrayList<>();
 
     for (i = 0; i < count(); i++) {
       if (!isVisible(i))
@@ -247,7 +246,6 @@ public class XYSequenceContainerManager
    *
    * @param index	the index of the container
    * @param visible	if true then the container will be made visible
-   * @see		SequencePanel
    */
   public void setVisible(int index, boolean visible) {
     get(index).setVisible(visible);
@@ -310,8 +308,8 @@ public class XYSequenceContainerManager
   @Override
   protected boolean isMatch(XYSequenceContainer cont, String search, boolean regExp) {
     if (regExp)
-      return (cont.getID().matches(search));
+      return cont.getID().matches(search);
     else
-      return (cont.getID().indexOf(search) > -1);
+      return cont.getID().toLowerCase().contains(search);
   }
 }

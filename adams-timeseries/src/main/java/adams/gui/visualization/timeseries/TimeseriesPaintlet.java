@@ -27,9 +27,7 @@ import adams.gui.core.AntiAliasingSupporter;
 import adams.gui.core.GUIHelper;
 import adams.gui.event.PaintEvent.PaintMoment;
 import adams.gui.visualization.container.AbstractContainer;
-import adams.gui.visualization.container.AbstractContainerManager;
 import adams.gui.visualization.container.ColorContainer;
-import adams.gui.visualization.container.VisibilityContainer;
 import adams.gui.visualization.core.AxisPanel;
 import adams.gui.visualization.core.PaintletWithMarkers;
 import adams.gui.visualization.core.plot.Axis;
@@ -133,20 +131,20 @@ public class TimeseriesPaintlet
     super.defineOptions();
 
     m_OptionManager.add(
-	    "markers-extent", "markerExtent",
-	    GUIHelper.getInteger(getClass(), "markersExtent", 7), 0, null);
+      "markers-extent", "markerExtent",
+      GUIHelper.getInteger(getClass(), "markersExtent", 7), 0, null);
 
     m_OptionManager.add(
-	    "markers-disabled", "markersDisabled",
-	    !GUIHelper.getBoolean(getClass(), "markersEnabled", true));
+      "markers-disabled", "markersDisabled",
+      !GUIHelper.getBoolean(getClass(), "markersEnabled", true));
 
     m_OptionManager.add(
-	    "always-show-markers", "alwaysShowMarkers",
-	    GUIHelper.getBoolean(getClass(), "alwaysShowMarkers", true));
+      "always-show-markers", "alwaysShowMarkers",
+      GUIHelper.getBoolean(getClass(), "alwaysShowMarkers", true));
 
     m_OptionManager.add(
-	    "anti-aliasing-enabled", "antiAliasingEnabled",
-	    GUIHelper.getBoolean(getClass(), "antiAliasingEnabled", true));
+      "anti-aliasing-enabled", "antiAliasingEnabled",
+      GUIHelper.getBoolean(getClass(), "antiAliasingEnabled", true));
   }
 
   /**
@@ -168,12 +166,12 @@ public class TimeseriesPaintlet
   public Color getColor(int index) {
     Color	result;
     AbstractContainer	cont;
-    
+
     result = Color.BLUE;
     cont   = getDataContainerPanel().getContainerManager().get(index);
     if (cont instanceof ColorContainer)
       result = ((ColorContainer) cont).getColor();
-      
+
     return result;
   }
 
@@ -325,7 +323,7 @@ public class TimeseriesPaintlet
 
     if (data.size() == 0)
       return;
-    
+
     points = data.toList();
     axisX  = getPanel().getPlot().getAxis(Axis.BOTTOM);
     axisY  = getPanel().getPlot().getAxis(Axis.LEFT);
@@ -366,19 +364,19 @@ public class TimeseriesPaintlet
 	if (Math.sqrt(Math.pow(currX - prevMarkerX, 2) + Math.pow(currY - prevMarkerY, 2)) > m_MarkerExtent * 2) {
 	  if (marker == MarkerShape.BOX) {
 	    g.drawRect(
-		currX - (m_MarkerExtent / 2),
-		currY - (m_MarkerExtent / 2),
-		m_MarkerExtent - 1,
-		m_MarkerExtent - 1);
+	      currX - (m_MarkerExtent / 2),
+	      currY - (m_MarkerExtent / 2),
+	      m_MarkerExtent - 1,
+	      m_MarkerExtent - 1);
 	  }
 	  else if (marker == MarkerShape.CIRCLE) {
 	    g.drawArc(
-		currX - (m_MarkerExtent / 2),
-		currY - (m_MarkerExtent / 2),
-		m_MarkerExtent - 1,
-		m_MarkerExtent - 1,
-		0,
-		360);
+	      currX - (m_MarkerExtent / 2),
+	      currY - (m_MarkerExtent / 2),
+	      m_MarkerExtent - 1,
+	      m_MarkerExtent - 1,
+	      0,
+	      360);
 	  }
 	  else if (marker == MarkerShape.TRIANGLE) {
 	    int[] x = new int[3];
@@ -431,25 +429,20 @@ public class TimeseriesPaintlet
    */
   @Override
   public void performPaint(Graphics g, PaintMoment moment) {
-    int			i;
-    Timeseries	data;
-    AbstractContainerManager	manager;
-    AbstractContainer		cont;
+    int				i;
+    Timeseries			data;
+    TimeseriesContainerManager	manager;
+    TimeseriesContainer		cont;
 
-    // paint all points
-    manager = getDataContainerPanel().getContainerManager();
-    synchronized(manager) {
-      for (i = 0; i < manager.count(); i++) {
-	cont = manager.get(i);
-	if (cont instanceof VisibilityContainer) {
-	  if (!((VisibilityContainer) cont).isVisible())
-	    continue;
-	}
-	data = (Timeseries) cont.getPayload();
-	synchronized(data) {
-	  drawData(g, data, getColor(i), getMarkerShape(i));
-	}
-      }
+    manager = (TimeseriesContainerManager) getDataContainerPanel().getContainerManager();
+    for (i = 0; i < manager.count(); i++) {
+      cont = (TimeseriesContainer) manager.get(i);
+      if (!cont.isVisible())
+	continue;
+      if (manager.isFiltered() && !manager.isFiltered(i))
+	continue;
+      data = (Timeseries) cont.getPayload();
+      drawData(g, data, getColor(i), getMarkerShape(i));
     }
   }
 }
