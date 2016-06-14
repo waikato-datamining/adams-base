@@ -754,6 +754,13 @@ public class OptionUtils {
 	((DatabaseConnectionHandler) result).setDatabaseConnection(
 	    ((DatabaseConnectionHandler) o).getDatabaseConnection());
       }
+
+      // transfer variables
+      if (!expand) {
+        result.getOptionManager().setVariables(o.getOptionManager().getVariables());
+        result.getOptionManager().updateVariablesInstance(o.getOptionManager().getVariables());
+        result.getOptionManager().updateVariableValues(true);
+      }
     }
     catch (Exception e) {
       System.err.println("Failed to create shallow copy for OptionHandler!");
