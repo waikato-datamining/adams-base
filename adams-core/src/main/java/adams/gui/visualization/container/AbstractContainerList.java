@@ -15,7 +15,7 @@
 
 /*
  * AbstractContainerList.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.container;
@@ -30,11 +30,9 @@ import adams.gui.core.SearchPanel.LayoutType;
 import adams.gui.event.DataChangeEvent;
 import adams.gui.event.DataChangeListener;
 import adams.gui.event.SearchEvent;
-import adams.gui.event.SearchListener;
 
 import javax.swing.JLabel;
 import javax.swing.ListSelectionModel;
-import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
@@ -89,8 +87,8 @@ public class AbstractContainerList<M extends AbstractContainerManager, C extends
     super.initialize();
 
     m_PopupMenuSupplier      = null;
-    m_TableModelListeners    = new HashSet<TableModelListener>();
-    m_ListSelectionListeners = new HashSet<ListSelectionListener>();
+    m_TableModelListeners    = new HashSet<>();
+    m_ListSelectionListeners = new HashSet<>();
   }
 
   /**
@@ -127,17 +125,14 @@ public class AbstractContainerList<M extends AbstractContainerManager, C extends
     
     m_PanelSearch = new SearchPanel(LayoutType.HORIZONTAL, false, null, true, "");
     m_PanelSearch.setVisible(getManager() instanceof SearchableContainerManager);
-    m_PanelSearch.addSearchListener(new SearchListener() {
-      @Override
-      public void searchInitiated(SearchEvent e) {
-	if (!getAllowSearch())
-	  return;
-	SearchableContainerManager smanager = (SearchableContainerManager) getManager();
-	if (e.getParameters().getSearchString() == null)
-	  smanager.clearSearch();
-	else
-	  smanager.search(e.getParameters().getSearchString(), e.getParameters().isRegExp());
-      }
+    m_PanelSearch.addSearchListener((SearchEvent e) -> {
+      if (!getAllowSearch())
+        return;
+      SearchableContainerManager smanager = (SearchableContainerManager) getManager();
+      if (e.getParameters().getSearchString() == null)
+        smanager.clearSearch();
+      else
+        smanager.search(e.getParameters().getSearchString(), e.getParameters().isRegExp());
     });
     add(m_PanelSearch, BorderLayout.SOUTH);
   }
@@ -148,7 +143,7 @@ public class AbstractContainerList<M extends AbstractContainerManager, C extends
    * @return		the new table
    */
   protected ContainerTable<M,C> createTable() {
-    return new ContainerTable<M,C>();
+    return new ContainerTable<>();
   }
 
   /**
@@ -158,7 +153,7 @@ public class AbstractContainerList<M extends AbstractContainerManager, C extends
    * @return		the new model
    */
   protected ContainerModel<M,C> createModel(M manager) {
-    return new ContainerModel<M,C>(manager);
+    return new ContainerModel<>(manager);
   }
 
   /**
@@ -422,7 +417,7 @@ public class AbstractContainerList<M extends AbstractContainerManager, C extends
    * @see #tableChanged(TableModelEvent)
    */
   protected void updateTableColumnWidths() {
-    SwingUtilities.invokeLater(() -> m_Table.setOptimalColumnWidth());
+    m_Table.setOptimalColumnWidth();
   }
 
   /**
