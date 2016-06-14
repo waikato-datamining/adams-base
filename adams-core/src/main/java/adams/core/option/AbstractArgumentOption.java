@@ -230,6 +230,7 @@ public abstract class AbstractArgumentOption
    * Updates the variable, i.e., retrieves the value for the variable
    * and calls the read-method of this option to set it.
    *
+   * @param silent	wether to suppress error messages in the console
    * @return		null if successfully updated, otherwise error message
    */
   public String updateVariable(boolean silent) {
