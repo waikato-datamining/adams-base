@@ -731,7 +731,7 @@ public class OptionManager
 	if (    option.isVariableModified() 
 	     || (option.isVariableAttached() && forceUpdate) 
 	     || option.isVariableReferencingObject() ) {
-	  String error = option.updateVariable();
+	  String error = option.updateVariable(true);
 	  if (error != null) {
 	    if (m_Result.length() > 0)
 	      m_Result.append("\n");
