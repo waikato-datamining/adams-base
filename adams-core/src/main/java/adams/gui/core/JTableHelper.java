@@ -15,7 +15,7 @@
 
 /*
  * JTableHelper.java
- * Copyright (C) 2005-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2005-2016 University of Waikato, Hamilton, New Zealand
  * Copyright http://fopps.sourceforge.net/
  */
 
@@ -197,15 +197,12 @@ public class JTableHelper {
       width = calcColumnWidth(table, col);
 
       if (width >= 0) {
-        SwingUtilities.invokeLater(new Runnable() {
-          @Override
-          public void run() {
-            JTableHeader header = table.getTableHeader();
-            TableColumn column = table.getColumnModel().getColumn(col);
-            column.setPreferredWidth(width);
-            table.doLayout();
-            header.repaint();
-          }
+        SwingUtilities.invokeLater(() -> {
+          JTableHeader header = table.getTableHeader();
+          TableColumn column = table.getColumnModel().getColumn(col);
+          column.setPreferredWidth(width);
+          table.doLayout();
+          header.repaint();
         });
       }
     }
@@ -252,15 +249,12 @@ public class JTableHelper {
       width = calcHeaderWidth(table, col);
 
       if (width >= 0) {
-        SwingUtilities.invokeLater(new Runnable() {
-          @Override
-          public void run() {
-            JTableHeader header = table.getTableHeader();
-            TableColumn column = table.getColumnModel().getColumn(col);
-            column.setPreferredWidth(width);
-            table.doLayout();
-            header.repaint();
-          }
+        SwingUtilities.invokeLater(() -> {
+          JTableHeader header = table.getTableHeader();
+          TableColumn column = table.getColumnModel().getColumn(col);
+          column.setPreferredWidth(width);
+          table.doLayout();
+          header.repaint();
         });
       }
     }
