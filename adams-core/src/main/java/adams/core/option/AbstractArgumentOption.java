@@ -261,7 +261,7 @@ public abstract class AbstractArgumentOption
     else
       value = vars.get(m_Variable);
     if (value == null) {
-      if (!m_Owner.isQuiet())
+      if (!m_Owner.isQuiet() && !silent)
 	System.err.println("Variable '" + m_Variable + "' has no value associated!");
       return "Variable '" + m_Variable + "' has no value associated";
     }
@@ -275,7 +275,7 @@ public abstract class AbstractArgumentOption
 	return null;
       }
       catch (Exception e) {
-	if (!m_Owner.isQuiet()) {
+	if (!m_Owner.isQuiet() && !silent) {
 	  System.err.println(
 	      "Failed to set value for variable '" + m_Variable + "' (" + value.getClass().getName() + "): " + value);
 	  e.printStackTrace();
