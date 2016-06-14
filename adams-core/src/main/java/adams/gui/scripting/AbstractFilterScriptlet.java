@@ -24,6 +24,7 @@ import adams.data.filter.AbstractFilter;
 import adams.data.filter.BatchFilter;
 import adams.db.DatabaseConnectionHandler;
 import adams.gui.visualization.container.AbstractContainerManager;
+import adams.gui.visualization.container.ColorContainer;
 import adams.gui.visualization.container.VisibilityContainerManager;
 
 import java.lang.reflect.Array;
@@ -107,9 +108,17 @@ public abstract class AbstractFilterScriptlet
     }
     else {
       runOutput = AbstractFilter.filter(actualScheme, runInput);
+      // transfer color
+      if (!overlay && (runOutput.size() == runInput.size())) {
+        for (i = 0; i < runOutput.size(); i++) {
+          if (runOutput.get(i) instanceof ColorContainer)
+            ((ColorContainer) runOutput.get(i)).setColor(((ColorContainer) runInput.get(i)).getColor());
+        }
+      }
     }
     for (i = 0; i < runOutput.size(); i++)
       runOutputC.add(runOutput.get(i));
+
 
     // update containers
     updateDataContainers(runOutputC, overlay);

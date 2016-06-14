@@ -15,11 +15,9 @@
 
 /**
  * AbstractFlowScriptlet.java
- * Copyright (C) 2009 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.scripting;
-
-import java.util.Vector;
 
 import adams.core.Utils;
 import adams.core.option.OptionUtils;
@@ -28,7 +26,11 @@ import adams.flow.control.SubProcess;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.Token;
 import adams.gui.visualization.container.AbstractContainerManager;
+import adams.gui.visualization.container.ColorContainer;
 import adams.gui.visualization.container.VisibilityContainerManager;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Ancestor for scriptlets that run flows.
@@ -65,11 +67,11 @@ public abstract class AbstractFlowScriptlet
     String			result;
     String[]			list;
     int				i;
-    AbstractContainerManager		manager;
-    Vector<DataContainer>	runInput;
-    Vector<DataContainer>	runOutput;
+    AbstractContainerManager	manager;
+    List<DataContainer> 	runInput;
+    List<DataContainer>		runOutput;
     Class[]			flowClasses;
-    Vector<String>		errors;
+    List<String>		errors;
 
     manager = getDataContainerPanel().getContainerManager();
 
@@ -80,7 +82,7 @@ public abstract class AbstractFlowScriptlet
     list    = OptionUtils.splitOptions(options);
     if (list.length != 1)
       return "Needs a single filename as parameter!";
-    errors = new Vector<String>();
+    errors = new ArrayList<>();
     actor  = (SubProcess) ActorUtils.read(list[0], errors);
     if (!errors.isEmpty())
       return "Failed to load actor from '" + list[0] + "':\n" + Utils.flatten(errors, "\n");
@@ -112,14 +114,14 @@ public abstract class AbstractFlowScriptlet
       return result;
 
     // get data that is to be run through flow
-    runInput = new Vector<DataContainer>();
+    runInput = new ArrayList<>();
     for (i = 0; i < manager.count(); i++) {
       if (((VisibilityContainerManager) manager).isVisible(i))
 	runInput.add((DataContainer) manager.get(i).getPayload());
     }
 
     // process data
-    runOutput = new Vector<DataContainer>();
+    runOutput = new ArrayList<>();
     for (i = 0; i < runInput.size(); i++) {
       showStatus("Passing data through flow " + (i+1) + "/" + ((VisibilityContainerManager) manager).countVisible());
 
@@ -139,6 +141,14 @@ public abstract class AbstractFlowScriptlet
     showStatus("");
     if (result != null)
       return result;
+
+    // transfer color
+    if (!overlay && (runOutput.size() == runInput.size())) {
+      for (i = 0; i < runOutput.size(); i++) {
+	if (runOutput.get(i) instanceof ColorContainer)
+	  ((ColorContainer) runOutput.get(i)).setColor(((ColorContainer) runInput.get(i)).getColor());
+      }
+    }
 
     // undo
     addUndoPoint("Saving undo data...", "Flow: " + list[0]);
