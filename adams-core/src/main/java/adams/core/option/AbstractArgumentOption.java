@@ -15,20 +15,20 @@
 
 /*
  * AbstractArgumentOption.java
- * Copyright (C) 2010-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.option;
-
-import java.lang.reflect.Array;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
 
 import adams.core.Utils;
 import adams.core.Variables;
 import adams.event.VariableChangeEvent;
 import adams.event.VariableChangeListener;
+
+import java.lang.reflect.Array;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The ancestor of all option classes that take an argument.
@@ -223,6 +223,16 @@ public abstract class AbstractArgumentOption
    * @return		null if successfully updated, otherwise error message
    */
   public String updateVariable() {
+    return updateVariable(false);
+  }
+
+  /**
+   * Updates the variable, i.e., retrieves the value for the variable
+   * and calls the read-method of this option to set it.
+   *
+   * @return		null if successfully updated, otherwise error message
+   */
+  public String updateVariable(boolean silent) {
     Method	method;
     Variables	vars;
     Object	value;
@@ -241,7 +251,7 @@ public abstract class AbstractArgumentOption
 
     vars = getOwner().getVariables();
     if (!vars.has(m_Variable)) {
-      if (!m_Owner.isQuiet())
+      if (!m_Owner.isQuiet() && !silent)
 	System.err.println("Variable '" + m_Variable + "' is not defined (" + getOwner().getVariables().hashCode() + ")!");
       return "Variable '" + m_Variable + "' not defined (" + getOwner().getVariables().hashCode() + ")";
     }
