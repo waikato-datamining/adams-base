@@ -38,7 +38,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
@@ -200,17 +199,14 @@ public class BaseTable
    * Initializes some GUI-related things.
    */
   protected void initGUI() {
-    m_RemoveItemsListeners     = new HashSet<RemoveItemsListener>();
-    m_HeaderPopupMenuListeners = new HashSet<PopupMenuListener>();
-    m_CellPopupMenuListeners   = new HashSet<PopupMenuListener>();
+    m_RemoveItemsListeners     = new HashSet<>();
+    m_HeaderPopupMenuListeners = new HashSet<>();
+    m_CellPopupMenuListeners   = new HashSet<>();
     m_ShowSimpleCellPopupMenu  = false;
 
-    m_SimpleCellPopupMenuListener = new PopupMenuListener() {
-      @Override
-      public void showPopupMenu(MouseEvent e) {
-	if (m_ShowSimpleCellPopupMenu) {
-	  showSimpleCellPopupMenu(e);
-	}
+    m_SimpleCellPopupMenuListener = (MouseEvent e) -> {
+      if (m_ShowSimpleCellPopupMenu) {
+        showSimpleCellPopupMenu(e);
       }
     };
 
@@ -220,22 +216,13 @@ public class BaseTable
 	// just the selecte column
 	if (MouseUtils.isDoubleClick(e) && e.isControlDown() && !e.isAltDown() && !e.isShiftDown()) {
 	  final int col = columnAtPoint(e.getPoint());
-	  if ((col != -1) && isVisible()) {
-	    SwingUtilities.invokeLater(new Runnable() {
-	      public void run() {
-		getTableHelper().setOptimalColumnWidth(col);
-	      }
-	    });
-	  }
+	  if ((col != -1) && isVisible())
+	    SwingUtilities.invokeLater(() -> getTableHelper().setOptimalColumnWidth(col));
 	}
 	// all columns
 	else if (MouseUtils.isDoubleClick(e) && e.isControlDown() && !e.isAltDown() && e.isShiftDown()) {
 	  if (isVisible()) {
-	    SwingUtilities.invokeLater(new Runnable() {
-	      public void run() {
-		getTableHelper().setOptimalColumnWidth();
-	      }
-	    });
+	    SwingUtilities.invokeLater(() -> getTableHelper().setOptimalColumnWidth());
 	  }
 	}
 	else if (MouseUtils.isRightClick(e)) {
@@ -282,13 +269,8 @@ public class BaseTable
    * to BaseTable.AUTO_RESIZE_OFF.
    */
   public void setOptimalColumnWidth() {
-    if (isVisible()) {
-      SwingUtilities.invokeLater(new Runnable() {
-	public void run() {
-	  getTableHelper().setOptimalColumnWidth();
-	}
-      });
-    }
+    if (isVisible())
+      SwingUtilities.invokeLater(() -> getTableHelper().setOptimalColumnWidth());
   }
 
   /**
@@ -298,13 +280,8 @@ public class BaseTable
    * @param column	the column to resize
    */
   public void setOptimalColumnWidth(final int column) {
-    if (isVisible()) {
-      SwingUtilities.invokeLater(new Runnable() {
-	public void run() {
-	  getTableHelper().setOptimalColumnWidth(column);
-	}
-      });
-    }
+    if (isVisible())
+      SwingUtilities.invokeLater(() -> getTableHelper().setOptimalColumnWidth(column));
   }
 
   /**
@@ -472,81 +449,64 @@ public class BaseTable
     col = columnAtPoint(e.getPoint());
 
     menuitem = new JMenuItem("Copy cell", GUIHelper.getIcon("copy_cell.gif"));
-    menuitem.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	if ((row == -1) || (col == -1))
-	  return;
-	Object value = getValueAt(row, col);
-	if (value != null)
-	  GUIHelper.copyToClipboard("" + value);
-      }
+    menuitem.addActionListener((ActionEvent ae) -> {
+      if ((row == -1) || (col == -1))
+        return;
+      Object value = getValueAt(row, col);
+      if (value != null)
+        GUIHelper.copyToClipboard("" + value);
     });
     menu.add(menuitem);
 
     menuitem = new JMenuItem("Copy row", GUIHelper.getIcon("copy_row.gif"));
-    menuitem.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	if (row == -1)
-	  return;
-        StringBuilder content = new StringBuilder();
-        for (int i = 0; i < getColumnCount(); i++) {
-          Object value = getValueAt(row, i);
-          if (i > 0)
-            content.append("\t");
-          if (value != null)
-            content.append(value.toString());
-        }
-        GUIHelper.copyToClipboard(content.toString());
+    menuitem.addActionListener((ActionEvent ae) -> {
+      if (row == -1)
+        return;
+      StringBuilder content = new StringBuilder();
+      for (int i = 0; i < getColumnCount(); i++) {
+        Object value = getValueAt(row, i);
+        if (i > 0)
+          content.append("\t");
+        if (value != null)
+          content.append(value.toString());
       }
+      GUIHelper.copyToClipboard(content.toString());
     });
     menu.add(menuitem);
 
     menuitem = new JMenuItem("Copy column", GUIHelper.getIcon("copy_column.gif"));
-    menuitem.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	if (col == -1)
-	  return;
-        String sep = System.getProperty("line.separator");
-        StringBuilder content = new StringBuilder(getColumnName(col));
-        for (int i = 0; i < getRowCount(); i++) {
-          content.append(sep);
-          Object value = getValueAt(i, col);
-          if (value != null)
-            content.append(value.toString());
-          else
-            content.append("");
-        }
-        GUIHelper.copyToClipboard(content.toString());
+    menuitem.addActionListener((ActionEvent ae) -> {
+      if (col == -1)
+        return;
+      String sep = System.getProperty("line.separator");
+      StringBuilder content = new StringBuilder(getColumnName(col));
+      for (int i = 0; i < getRowCount(); i++) {
+        content.append(sep);
+        Object value = getValueAt(i, col);
+        if (value != null)
+          content.append(value.toString());
+        else
+          content.append("");
       }
+      GUIHelper.copyToClipboard(content.toString());
     });
     menu.add(menuitem);
 
     menuitem = new JMenuItem("Copy table", GUIHelper.getIcon("copy_table.gif"));
-    menuitem.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	GUIHelper.copyToClipboard(toSpreadSheet().toString());
-      }
-    });
+    menuitem.addActionListener((ActionEvent ae) -> GUIHelper.copyToClipboard(toSpreadSheet().toString()));
     menu.add(menuitem);
 
     menu.addSeparator();
 
     menuitem = new JMenuItem("Save table as...", GUIHelper.getIcon("save.gif"));
-    menuitem.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	SpreadSheetFileChooser chooser = new SpreadSheetFileChooser();
-	int retVal = chooser.showSaveDialog(BaseTable.this);
-	if (retVal != SpreadSheetFileChooser.APPROVE_OPTION)
-	  return;
-	SpreadSheetWriter writer = chooser.getWriter();
-	if (!writer.write(toSpreadSheet(), chooser.getSelectedFile()))
-	  GUIHelper.showErrorMessage(BaseTable.this, "Failed to save table to '" + chooser.getSelectedFile() + "'!");
-      }
+    menuitem.addActionListener((ActionEvent ae) -> {
+      SpreadSheetFileChooser chooser = new SpreadSheetFileChooser();
+      int retVal = chooser.showSaveDialog(BaseTable.this);
+      if (retVal != SpreadSheetFileChooser.APPROVE_OPTION)
+        return;
+      SpreadSheetWriter writer = chooser.getWriter();
+      if (!writer.write(toSpreadSheet(), chooser.getSelectedFile()))
+        GUIHelper.showErrorMessage(BaseTable.this, "Failed to save table to '" + chooser.getSelectedFile() + "'!");
     });
     menu.add(menuitem);
 
