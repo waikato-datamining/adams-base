@@ -15,15 +15,14 @@
 
 /*
  * ContainerTableCellRenderer.java
- * Copyright (C) 2009 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.container;
 
-import java.awt.Component;
-
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
+import java.awt.Component;
 
 /**
  * The cell renderer for displaying the containers.
@@ -59,7 +58,13 @@ public class ContainerTableCellRenderer<M extends AbstractContainerManager, C ex
 
     M manager = ((ContainerModel<M,C>) table.getModel()).getManager();
     if (!manager.isUpdating() && (row < manager.count())) {
-      C cont = (C) manager.get(row);
+      C cont = null;
+      if (manager instanceof SearchableContainerManager) {
+        if (((SearchableContainerManager) manager).isFiltered())
+          cont = (C) ((SearchableContainerManager) manager).getFiltered(row);
+      }
+      if (cont == null)
+        cont = (C) manager.get(row);
       if (cont instanceof ColorContainer)
         c.setForeground(((ColorContainer) cont).getColor());
     }
