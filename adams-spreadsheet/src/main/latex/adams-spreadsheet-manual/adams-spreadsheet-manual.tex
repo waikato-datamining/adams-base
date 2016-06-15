@@ -215,6 +215,8 @@ The following conversion schemes are available:
 	into a different format, e.g., into sparse representation.
 	\item \textit{DoubleMatrixToSpreadSheet} -- converts a two-dimensional double
 	array (i.e., matrix) into a spreadsheet object.
+	\item \textit{MapToSpreadSheet} -- turns a \textit{java.util.Map} object
+	into a spreadsheet.
 	\item \textit{NotesToSpreadSheet} -- generates a spreadsheet from a Notes
 	object.
 	\item \textit{PropertiesToSpreadSheet} -- generates a spreadsheet from a 
@@ -271,6 +273,8 @@ The following conversion schemes are available:
 	\item \textit{SpreadSheetToDoubleMatrix} -- turns all the numeric columns of
 	a spreadsheet into a two-dimensional double matrix.
 	\item \textit{SpreadSheetToJson} -- turns a spreadsheet into a JSON array object.
+	\item \textit{SpreadSheetToMap} -- uses two columns from a spreadsheet
+	(key and value) to populate a \textit{java.util.Map} object.
 	\item \textit{SpreadSheetToStringMatrix} -- turns all columns of
 	a spreadsheet into a two-dimensional string matrix.
 	\item \textit{SpreadSheetUnescapeColumnName} -- reverses the escaping for
