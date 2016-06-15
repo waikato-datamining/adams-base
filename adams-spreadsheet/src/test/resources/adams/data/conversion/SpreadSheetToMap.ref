@@ -1,0 +1,6 @@
+--> out-0.txt
+{1=2, abc=def, hello=world}
+
+--> out-1.txt
+{hello=world, abc=def, 1=2}
+
