@@ -12,7 +12,7 @@ adams.data.conversion.AbstractSpreadSheetColumnConverter=\
   adams.data.conversion
 
 # The cell locators
-adams.data.spreadsheet.cellfinder.AbstractCellFinder=\
+adams.data.spreadsheet.cellfinder.CellFinder=\
   adams.data.spreadsheet.cellfinder
 
 # The RowFinder algorithms

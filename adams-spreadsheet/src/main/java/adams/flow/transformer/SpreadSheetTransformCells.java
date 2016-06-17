@@ -30,7 +30,7 @@ import adams.data.spreadsheet.Cell.ContentType;
 import adams.data.spreadsheet.HeaderRow;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
-import adams.data.spreadsheet.cellfinder.AbstractCellFinder;
+import adams.data.spreadsheet.cellfinder.CellFinder;
 import adams.data.spreadsheet.cellfinder.CellLocation;
 import adams.data.spreadsheet.cellfinder.CellRange;
 import adams.flow.core.Actor;
@@ -99,7 +99,7 @@ import java.util.Iterator;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
- * <pre>-finder &lt;adams.data.spreadsheet.cellfinder.AbstractCellFinder&gt; (property: finder)
+ * <pre>-finder &lt;adams.data.spreadsheet.cellfinder.CellFinder&gt; (property: finder)
  * &nbsp;&nbsp;&nbsp;The cell finder to use.
  * &nbsp;&nbsp;&nbsp;default: adams.data.spreadsheet.cellfinder.CellRange
  * </pre>
@@ -152,7 +152,7 @@ public class SpreadSheetTransformCells
   public final static String BACKUP_CALLABLEACTOR = "callable actor";
 
   /** for locating the cells. */
-  protected AbstractCellFinder m_Finder;
+  protected CellFinder m_Finder;
 
   /** whether to force the input type. */
   protected boolean m_ForceInputType;
@@ -285,7 +285,7 @@ public class SpreadSheetTransformCells
    *
    * @param value	the finder
    */
-  public void setFinder(AbstractCellFinder value) {
+  public void setFinder(CellFinder value) {
     m_Finder = value;
     reset();
   }
@@ -295,7 +295,7 @@ public class SpreadSheetTransformCells
    *
    * @return		the finder
    */
-  public AbstractCellFinder getFinder() {
+  public CellFinder getFinder() {
     return m_Finder;
   }
 

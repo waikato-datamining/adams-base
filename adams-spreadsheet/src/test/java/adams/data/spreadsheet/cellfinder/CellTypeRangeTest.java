@@ -63,7 +63,7 @@ public class CellTypeRangeTest
    * @return		the setups
    */
   @Override
-  protected AbstractCellFinder[] getRegressionSetups() {
+  protected CellFinder[] getRegressionSetups() {
     CellTypeRange[]	result;
     
     result    = new CellTypeRange[4];

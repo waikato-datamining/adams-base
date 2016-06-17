@@ -61,7 +61,7 @@ public class SingleCellTest
    * @return		the setups
    */
   @Override
-  protected AbstractCellFinder[] getRegressionSetups() {
+  protected CellFinder[] getRegressionSetups() {
     SingleCell[]	result;
     
     result    = new SingleCell[3];

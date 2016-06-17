@@ -15,20 +15,18 @@
 
 /**
  * AbstractCellFinder.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.spreadsheet.cellfinder;
 
-import java.util.Iterator;
-
 import adams.core.ClassLister;
-import adams.core.QuickInfoSupporter;
-import adams.core.ShallowCopySupporter;
 import adams.core.option.AbstractOptionConsumer;
 import adams.core.option.AbstractOptionHandler;
 import adams.core.option.ArrayConsumer;
 import adams.core.option.OptionUtils;
 import adams.data.spreadsheet.SpreadSheet;
+
+import java.util.Iterator;
 
 /**
  * Ancestor for schemes that locate cells of interest in a spreadsheet.
@@ -38,7 +36,7 @@ import adams.data.spreadsheet.SpreadSheet;
  */
 public abstract class AbstractCellFinder
   extends AbstractOptionHandler 
-  implements ShallowCopySupporter<AbstractCellFinder>, QuickInfoSupporter {
+  implements CellFinder {
 
   /** for serialization. */
   private static final long serialVersionUID = 3647241823201101006L;
@@ -90,7 +88,7 @@ public abstract class AbstractCellFinder
    *
    * @return		the shallow copy
    */
-  public AbstractCellFinder shallowCopy() {
+  public CellFinder shallowCopy() {
     return shallowCopy(false);
   }
 
@@ -100,8 +98,8 @@ public abstract class AbstractCellFinder
    * @param expand	whether to expand variables to their current values
    * @return		the shallow copy
    */
-  public AbstractCellFinder shallowCopy(boolean expand) {
-    return (AbstractCellFinder) OptionUtils.shallowCopy(this, expand);
+  public CellFinder shallowCopy(boolean expand) {
+    return (CellFinder) OptionUtils.shallowCopy(this, expand);
   }
 
   /**
@@ -110,7 +108,7 @@ public abstract class AbstractCellFinder
    * @return		the cell finder classnames
    */
   public static String[] getCellFinders() {
-    return ClassLister.getSingleton().getClassnames(AbstractCellFinder.class);
+    return ClassLister.getSingleton().getClassnames(CellFinder.class);
   }
 
   /**
@@ -120,11 +118,11 @@ public abstract class AbstractCellFinder
    * @param options	the options for the cell finder
    * @return		the instantiated cell finder or null if an error occurred
    */
-  public static AbstractCellFinder forName(String classname, String[] options) {
-    AbstractCellFinder	result;
+  public static CellFinder forName(String classname, String[] options) {
+    CellFinder	result;
 
     try {
-      result = (AbstractCellFinder) OptionUtils.forName(AbstractCellFinder.class, classname, options);
+      result = (CellFinder) OptionUtils.forName(CellFinder.class, classname, options);
     }
     catch (Exception e) {
       e.printStackTrace();
@@ -143,7 +141,7 @@ public abstract class AbstractCellFinder
    * @return		the instantiated cell finder
    * 			or null if an error occurred
    */
-  public static AbstractCellFinder forCommandLine(String cmdline) {
-    return (AbstractCellFinder) AbstractOptionConsumer.fromString(ArrayConsumer.class, cmdline);
+  public static CellFinder forCommandLine(String cmdline) {
+    return (CellFinder) AbstractOptionConsumer.fromString(ArrayConsumer.class, cmdline);
   }
 }

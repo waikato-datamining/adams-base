@@ -15,15 +15,15 @@
 
 /**
  * CorrespondingColumn.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.spreadsheet.cellfinder;
-
-import java.util.Iterator;
 
 import adams.core.PositionType;
 import adams.core.QuickInfoHelper;
 import adams.data.spreadsheet.SpreadSheet;
+
+import java.util.Iterator;
 
 /**
  <!-- globalinfo-start -->
@@ -42,7 +42,7 @@ import adams.data.spreadsheet.SpreadSheet;
  * &nbsp;&nbsp;&nbsp;minimum: 0
  * </pre>
  * 
- * <pre>-finder &lt;adams.data.spreadsheet.cellfinder.AbstractCellFinder&gt; (property: finder)
+ * <pre>-finder &lt;adams.data.spreadsheet.cellfinder.CellFinder&gt; (property: finder)
  * &nbsp;&nbsp;&nbsp;The base cell finder to locate the cells.
  * &nbsp;&nbsp;&nbsp;default: adams.data.spreadsheet.cellfinder.ColumnFinderRange -column-finder adams.data.spreadsheet.columnfinder.ByIndex
  * </pre>
@@ -112,7 +112,7 @@ public class CorrespondingColumn
   }
   
   /** the base cell finder to use. */
-  protected AbstractCellFinder m_Finder;
+  protected CellFinder m_Finder;
   
   /** whether the corresponding column is relative or absolute. */
   protected PositionType m_CorrespondingPosition;
@@ -159,7 +159,7 @@ public class CorrespondingColumn
    *
    * @param value	the finder
    */
-  public void setFinder(AbstractCellFinder value) {
+  public void setFinder(CellFinder value) {
     m_Finder = value;
     reset();
   }
@@ -169,7 +169,7 @@ public class CorrespondingColumn
    *
    * @return		the finder
    */
-  public AbstractCellFinder getFinder() {
+  public CellFinder getFinder() {
     return m_Finder;
   }
 

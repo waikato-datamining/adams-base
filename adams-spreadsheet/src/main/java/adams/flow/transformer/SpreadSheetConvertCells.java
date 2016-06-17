@@ -15,7 +15,7 @@
 
 /**
  * SpreadSheetConvertCells.java
- * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
 
@@ -31,7 +31,7 @@ import adams.data.spreadsheet.Cell.ContentType;
 import adams.data.spreadsheet.HeaderRow;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
-import adams.data.spreadsheet.cellfinder.AbstractCellFinder;
+import adams.data.spreadsheet.cellfinder.CellFinder;
 import adams.data.spreadsheet.cellfinder.CellLocation;
 import adams.data.spreadsheet.cellfinder.CellRange;
 import adams.flow.core.Token;
@@ -93,7 +93,7 @@ import java.util.Iterator;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-finder &lt;adams.data.spreadsheet.cellfinder.AbstractCellFinder&gt; (property: finder)
+ * <pre>-finder &lt;adams.data.spreadsheet.cellfinder.CellFinder&gt; (property: finder)
  * &nbsp;&nbsp;&nbsp;The cell finder to use.
  * &nbsp;&nbsp;&nbsp;default: adams.data.spreadsheet.cellfinder.CellRange
  * </pre>
@@ -130,7 +130,7 @@ public class SpreadSheetConvertCells
   private static final long serialVersionUID = -4633161214275622241L;
 
   /** for locating the cells. */
-  protected AbstractCellFinder m_Finder;
+  protected CellFinder m_Finder;
   
   /** whether to skip missing cells. */
   protected boolean m_SkipMissing;
@@ -222,7 +222,7 @@ public class SpreadSheetConvertCells
    *
    * @param value	the finder
    */
-  public void setFinder(AbstractCellFinder value) {
+  public void setFinder(CellFinder value) {
     m_Finder = value;
     reset();
   }
@@ -232,7 +232,7 @@ public class SpreadSheetConvertCells
    *
    * @return		the finder
    */
-  public AbstractCellFinder getFinder() {
+  public CellFinder getFinder() {
     return m_Finder;
   }
 

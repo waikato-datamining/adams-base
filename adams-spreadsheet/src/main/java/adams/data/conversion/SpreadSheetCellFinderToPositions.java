@@ -15,19 +15,19 @@
 
 /**
  * SpreadSheetCellFinderToPositions.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
+
+import adams.core.QuickInfoHelper;
+import adams.data.spreadsheet.SpreadSheet;
+import adams.data.spreadsheet.cellfinder.CellFinder;
+import adams.data.spreadsheet.cellfinder.CellLocation;
+import adams.data.spreadsheet.cellfinder.SingleCell;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
-import adams.core.QuickInfoHelper;
-import adams.data.spreadsheet.SpreadSheet;
-import adams.data.spreadsheet.cellfinder.AbstractCellFinder;
-import adams.data.spreadsheet.cellfinder.CellLocation;
-import adams.data.spreadsheet.cellfinder.SingleCell;
 
 /**
  <!-- globalinfo-start -->
@@ -41,7 +41,7 @@ import adams.data.spreadsheet.cellfinder.SingleCell;
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  * 
- * <pre>-cell-finder &lt;adams.data.spreadsheet.cellfinder.AbstractCellFinder&gt; (property: cellFinder)
+ * <pre>-cell-finder &lt;adams.data.spreadsheet.cellfinder.CellFinder&gt; (property: cellFinder)
  * &nbsp;&nbsp;&nbsp;The cell finder to use.
  * &nbsp;&nbsp;&nbsp;default: adams.data.spreadsheet.cellfinder.SingleCell
  * </pre>
@@ -58,7 +58,7 @@ public class SpreadSheetCellFinderToPositions
   private static final long serialVersionUID = 4117708470154504868L;
   
   /** the CellFinder to apply. */
-  protected AbstractCellFinder m_CellFinder;
+  protected CellFinder m_CellFinder;
 
   /**
    * Returns a string describing the object.
@@ -89,7 +89,7 @@ public class SpreadSheetCellFinderToPositions
    *
    * @param value	the cell finder
    */
-  public void setCellFinder(AbstractCellFinder value) {
+  public void setCellFinder(CellFinder value) {
     m_CellFinder = value;
     reset();
   }
@@ -99,7 +99,7 @@ public class SpreadSheetCellFinderToPositions
    *
    * @return		the cell finder
    */
-  public AbstractCellFinder getCellFinder() {
+  public CellFinder getCellFinder() {
     return m_CellFinder;
   }
 

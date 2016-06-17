@@ -65,7 +65,7 @@ public class RowFinderRangeTest
    * @return		the setups
    */
   @Override
-  protected AbstractCellFinder[] getRegressionSetups() {
+  protected CellFinder[] getRegressionSetups() {
     RowFinderRange[]	result;
     RowFinder		finder;
     

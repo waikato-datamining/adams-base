@@ -15,18 +15,18 @@
 
 /**
  * SpreadSheetMaterializeFormulas.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
-
-import java.util.Iterator;
 
 import adams.core.QuickInfoHelper;
 import adams.data.spreadsheet.Cell;
 import adams.data.spreadsheet.SpreadSheet;
-import adams.data.spreadsheet.cellfinder.AbstractCellFinder;
+import adams.data.spreadsheet.cellfinder.CellFinder;
 import adams.data.spreadsheet.cellfinder.CellLocation;
 import adams.data.spreadsheet.cellfinder.CellRange;
+
+import java.util.Iterator;
 
 /**
  <!-- globalinfo-start -->
@@ -48,7 +48,7 @@ import adams.data.spreadsheet.cellfinder.CellRange;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-finder &lt;adams.data.spreadsheet.cellfinder.AbstractCellFinder&gt; (property: finder)
+ * <pre>-finder &lt;adams.data.spreadsheet.cellfinder.CellFinder&gt; (property: finder)
  * &nbsp;&nbsp;&nbsp;The cell finder to use.
  * &nbsp;&nbsp;&nbsp;default: adams.data.spreadsheet.cellfinder.CellRange
  * </pre>
@@ -65,7 +65,7 @@ public class SpreadSheetMaterializeFormulas
   private static final long serialVersionUID = -4911635975083212510L;
   
   /** for locating the cells. */
-  protected AbstractCellFinder m_Finder;
+  protected CellFinder m_Finder;
   
   /**
    * Returns a string describing the object.
@@ -109,7 +109,7 @@ public class SpreadSheetMaterializeFormulas
    *
    * @param value	the finder
    */
-  public void setFinder(AbstractCellFinder value) {
+  public void setFinder(CellFinder value) {
     m_Finder = value;
     reset();
   }
@@ -119,7 +119,7 @@ public class SpreadSheetMaterializeFormulas
    *
    * @return		the finder
    */
-  public AbstractCellFinder getFinder() {
+  public CellFinder getFinder() {
     return m_Finder;
   }
 

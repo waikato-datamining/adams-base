@@ -15,17 +15,12 @@
 
 /**
  * AbstractCellFinderTestCase.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.spreadsheet.cellfinder;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import adams.core.CleanUpHandler;
 import adams.core.Destroyable;
-import adams.core.ShallowCopySupporter;
 import adams.core.io.FileUtils;
 import adams.core.option.OptionUtils;
 import adams.data.io.input.CsvSpreadSheetReader;
@@ -34,6 +29,10 @@ import adams.test.AbstractTestHelper;
 import adams.test.AdamsTestCase;
 import adams.test.TestHelper;
 import adams.test.TmpFile;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Ancestor for cell locator test cases.
@@ -68,7 +67,6 @@ public abstract class AbstractCellFinderTestCase
    *
    * @param filename		the filename to load (without path)
    * @return			the data, null if it could not be loaded
-   * @see			#getDataDirectory()
    */
   protected SpreadSheet load(String filename) {
     SpreadSheet			result;
@@ -95,7 +93,7 @@ public abstract class AbstractCellFinderTestCase
    *
    * @return		the setups
    */
-  protected abstract AbstractCellFinder[] getRegressionSetups();
+  protected abstract CellFinder[] getRegressionSetups();
 
   /**
    * Processes the input data and returns the processed data.
@@ -104,12 +102,12 @@ public abstract class AbstractCellFinderTestCase
    * @param scheme	the scheme to process the data with
    * @return		the processed data
    */
-  protected CellLocation[] process(SpreadSheet data, AbstractCellFinder scheme) {
+  protected CellLocation[] process(SpreadSheet data, CellFinder scheme) {
     ArrayList<CellLocation>	result;
     Iterator<CellLocation>	iter;
     
     iter   = scheme.findCells(data);
-    result = new ArrayList<CellLocation>();
+    result = new ArrayList<>();
     while (iter.hasNext())
       result.add(iter.next());
     
@@ -165,16 +163,16 @@ public abstract class AbstractCellFinderTestCase
    * Compares the processed data against previously saved output data.
    */
   public void testRegression() {
-    SpreadSheet			data;
-    CellLocation[]		processed;
-    boolean			ok;
-    String			regression;
-    int				i;
-    String[]			input;
-    AbstractCellFinder[]	setups;
-    AbstractCellFinder		current;
-    String[]			output;
-    TmpFile[]			outputFiles;
+    SpreadSheet		data;
+    CellLocation[]	processed;
+    boolean		ok;
+    String		regression;
+    int			i;
+    String[]		input;
+    CellFinder[]	setups;
+    CellFinder		current;
+    String[]		output;
+    TmpFile[]		outputFiles;
 
     if (m_NoRegressionTest)
       return;
@@ -189,7 +187,7 @@ public abstract class AbstractCellFinderTestCase
       data = load(input[i]);
       assertNotNull("Could not load data for regression test from " + input[i], data);
 
-      current = (AbstractCellFinder) ((ShallowCopySupporter) setups[i]).shallowCopy();
+      current = (CellFinder) OptionUtils.shallowCopy(setups[i]);
       assertNotNull("Failed to create copy of algorithm: " + OptionUtils.getCommandLine(setups[i]), current);
 
       processed = process(data, current);

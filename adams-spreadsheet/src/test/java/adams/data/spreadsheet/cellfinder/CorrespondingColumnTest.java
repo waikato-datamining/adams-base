@@ -63,10 +63,10 @@ public class CorrespondingColumnTest
    * @return		the setups
    */
   @Override
-  protected AbstractCellFinder[] getRegressionSetups() {
+  protected CellFinder[] getRegressionSetups() {
     CorrespondingColumn[]	result;
     RowFinder			finder;
-    AbstractCellFinder		cfinder;
+    CellFinder			cfinder;
     
     result    = new CorrespondingColumn[2];
     
