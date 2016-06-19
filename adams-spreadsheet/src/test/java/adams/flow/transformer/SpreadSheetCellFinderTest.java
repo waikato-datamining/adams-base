@@ -23,6 +23,7 @@ package adams.flow.transformer;
 import adams.core.io.PlaceholderFile;
 import adams.core.option.AbstractArgumentOption;
 import adams.data.conversion.AnyToString;
+import adams.data.conversion.SpreadSheetCellLocationToCoordinates;
 import adams.data.io.input.CsvSpreadSheetReader;
 import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.DenseDataRow;
@@ -169,16 +170,22 @@ public class SpreadSheetCellFinderTest
       ArrayProcess arrayprocess = new ArrayProcess();
       List<Actor> actors2 = new ArrayList<>();
 
-      // Flow.ArrayProcess.GetArrayElement
-      GetArrayElement getarrayelement = new GetArrayElement();
-      actors2.add(getarrayelement);
-
       // Flow.ArrayProcess.Convert
       Convert convert = new Convert();
-      AnyToString anytostring = new AnyToString();
-      convert.setConversion(anytostring);
-
+      SpreadSheetCellLocationToCoordinates celltocoords = new SpreadSheetCellLocationToCoordinates();
+      convert.setConversion(celltocoords);
       actors2.add(convert);
+
+      // Flow.ArrayProcess.GetArrayElement
+      GetArrayElement getelem = new GetArrayElement();
+      actors2.add(getelem);
+
+      // Flow.ArrayProcess.Convert
+      Convert convert2 = new Convert();
+      AnyToString anytostring = new AnyToString();
+      convert2.setConversion(anytostring);
+      actors2.add(convert2);
+
       arrayprocess.setActors(actors2.toArray(new Actor[0]));
 
       actors.add(arrayprocess);

@@ -29,7 +29,7 @@ import java.util.Iterator;
 
 /**
  <!-- globalinfo-start -->
- * Outputs the 1-based row&#47;column pairs that the cell finder located.
+ * Outputs the cell locations that the cell finder located.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -38,7 +38,7 @@ import java.util.Iterator;
  * - accepts:<br>
  * &nbsp;&nbsp;&nbsp;adams.data.spreadsheet.SpreadSheet<br>
  * - generates:<br>
- * &nbsp;&nbsp;&nbsp;int[]<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.spreadsheet.cellfinder.CellLocation<br>
  * <br><br>
  <!-- flow-summary-end -->
  *
@@ -108,7 +108,7 @@ public class SpreadSheetCellFinder
   @Override
   public String globalInfo() {
     return 
-	"Outputs the 1-based row/column pairs that the cell finder located.";
+	"Outputs the cell locations that the cell finder located.";
   }
 
   /**
@@ -141,7 +141,7 @@ public class SpreadSheetCellFinder
    */
   @Override
   protected Class getItemClass() {
-    return int[].class;
+    return CellLocation.class;
   }
 
   /**
@@ -212,20 +212,15 @@ public class SpreadSheetCellFinder
    */
   @Override
   protected String doExecute() {
-    String			result;
     SpreadSheet 		sheet;
     Iterator<CellLocation> 	locs;
-    CellLocation		loc;
 
-    result = null;
     m_Queue.clear();
     sheet = (SpreadSheet) m_InputToken.getPayload();
     locs  = m_Finder.findCells(sheet);
-    while (locs.hasNext()) {
-      loc = locs.next();
-      m_Queue.add(new int[]{loc.getRow() + 1, loc.getColumn() + 1});
-    }
-    
-    return result;
+    while (locs.hasNext())
+      m_Queue.add(locs.next());
+
+    return null;
   }
 }

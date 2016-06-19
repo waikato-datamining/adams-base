@@ -238,8 +238,10 @@ The following conversion schemes are available:
 	formula.
 	\item \textit{SpreadSheetAnyColumnToString} -- converts any data types in 
 	a column to strings.
-	\item \textit{SpreadSheetCellFinderToPositions} -- outputs a string array
-	of the cell positions (eg 'A2') that the cell finder generates.
+	\item \textit{SpreadSheetCellLocationToCoordinates} -- turns a cell location
+	into an integer array of 1-based coordinates
+	\item \textit{SpreadSheetCellLocationToPosition} -- turns a cell location
+	obtained from a cell finder into a position string (eg 'A2').
 	\item \textit{SpreadSheetColumnFinderToRange} -- outputs a range string
 	of the columns that the finder located (eg '1-6,8').
 	\item \textit{SpreadSheetDoubleColumnToLong} -- converts any floating values

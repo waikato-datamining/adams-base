@@ -24,6 +24,7 @@ import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.cellfinder.CellFinder;
 import adams.data.spreadsheet.cellfinder.CellLocation;
 import adams.data.spreadsheet.cellfinder.SingleCell;
+import adams.flow.transformer.SpreadSheetCellFinder;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -51,6 +52,7 @@ import java.util.List;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision: 6556 $
  */
+@Deprecated
 public class SpreadSheetCellFinderToPositions
   extends AbstractConversion {
 
@@ -67,8 +69,11 @@ public class SpreadSheetCellFinderToPositions
    */
   @Override
   public String globalInfo() {
-    return 
-	"Turns the cells that the specified cell finder locates into an "
+    return
+      "DEPRECATED!\n"
+	+ "Use " + SpreadSheetCellFinder.class.getName() + " in conjunction with "
+	+ SpreadSheetCellLocationToPosition.class.getName() + " instead.\n\n"
+	+ "Turns the cells that the specified cell finder locates into an "
 	+ "array of cell positions (like 'A2').";
   }
 
