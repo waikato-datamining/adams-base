@@ -20,12 +20,13 @@
 
 package adams.flow.transformer;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import adams.core.Index;
 import adams.core.QuickInfoHelper;
+import adams.core.Utils;
 import adams.flow.core.Token;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -44,8 +45,6 @@ import adams.flow.core.Token;
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- * 
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
@@ -56,7 +55,7 @@ import adams.flow.core.Token;
  * &nbsp;&nbsp;&nbsp;default: StringIndexOf
  * </pre>
  * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
@@ -73,8 +72,15 @@ import adams.flow.core.Token;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
  * <pre>-find &lt;java.lang.String&gt; (property: find)
- * &nbsp;&nbsp;&nbsp;The string to look for.
+ * &nbsp;&nbsp;&nbsp;The string to look for; backquoted, so you can use '\t' for tab and '\n' 
+ * &nbsp;&nbsp;&nbsp;for new lines.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
@@ -169,7 +175,7 @@ public class StringIndexOf
     result += QuickInfoHelper.toString(this, "fromIndex", m_FromIndex, ", from: ");
 
     // further options
-    options = new ArrayList<String>();
+    options = new ArrayList<>();
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "caseSensitive", m_CaseSensitive, "case-sensitive"));
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "backward", m_Backward, "backward"));
     result += QuickInfoHelper.flatten(options);
@@ -178,22 +184,24 @@ public class StringIndexOf
   }
 
   /**
-   * Sets the string to find.
+   * Sets the string to find. Backquoted, so you can enter "\t" for tab
+   * and "\n" for new lines.
    *
-   * @param value	the expression
+   * @param value	the string
    */
   public void setFind(String value) {
-    m_Find = value;
+    m_Find = Utils.unbackQuoteChars(value);
     reset();
   }
 
   /**
-   * Returns the string to find.
+   * Returns the string to find. Backquoted, so you can enter "\t" for tab
+   * and "\n" for new lines.
    *
    * @return		the expression
    */
   public String getFind() {
-    return m_Find;
+    return Utils.backQuoteChars(m_Find);
   }
 
   /**
@@ -203,7 +211,7 @@ public class StringIndexOf
    * 			displaying in the GUI or for listing the options.
    */
   public String findTipText() {
-    return "The string to look for.";
+    return "The string to look for; backquoted, so you can use '\\t' for tab and '\\n' for new lines.";
   }
 
   /**
