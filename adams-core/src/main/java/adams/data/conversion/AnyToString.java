@@ -15,11 +15,12 @@
 
 /**
  * AnyToString.java
- * Copyright (C) 2011-2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
 
 import adams.core.Utils;
+import adams.flow.core.Unknown;
 
 /**
  <!-- globalinfo-start -->
@@ -67,7 +68,7 @@ public class AnyToString
    * @return		the class
    */
   public Class accepts() {
-    return Object.class;
+    return Unknown.class;
   }
 
   /**
