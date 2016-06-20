@@ -11,6 +11,8 @@ Key,Value
 "Image Width","500 pixels"
 "Number of Components",3
 "Resolution Units",inch
+"Thumbnail Height Pixels",0
+"Thumbnail Width Pixels",0
 Version,1.1
 "X Resolution","72 dots"
 "Y Resolution","72 dots"
@@ -24,6 +26,7 @@ Artist,"Public Domain"
 "Component 3","Cr component: Quantization table 1, Sampling factors 1 horiz/1 vert"
 "Components Configuration",YCbCr
 "Compressed Bits Per Pixel","2 bits/pixel"
+Compression,"JPEG (old-style)"
 "Compression Type","Progressive, Huffman"
 Contrast,None
 "Custom Rendered","Normal process"
@@ -31,7 +34,7 @@ Contrast,None
 Date/Time,"2014-05-26 14:59:26"
 "Date/Time Digitized","2010-04-23 15:51:35"
 "Date/Time Original","2010-04-23 15:51:35"
-"Digital Zoom Ratio","Digital zoom not used."
+"Digital Zoom Ratio","Digital zoom not used"
 "Exif Image Height","73 pixels"
 "Exif Image Width","100 pixels"
 "Exif Version",2.21
@@ -45,8 +48,8 @@ F-Number,f/5.6
 "File Source","Digital Still Camera (DSC)"
 Flash,"Flash did not fire, auto"
 "FlashPix Version",1
-"Focal Length","34.0 mm"
-"Focal Length 35",68mm
+"Focal Length","34 mm"
+"Focal Length 35","68 mm"
 "Gain Control",None
 Gamma,2.2
 "ISO Speed Ratings",100
@@ -60,7 +63,7 @@ Model,DMC-GF1
 "Number of Components",3
 Orientation,"Top, left side (Horizontal / normal)"
 "Primary Chromaticities","64/100 33/100 21/100 71/100 15/100 6/100"
-"Print IM","[208 bytes]"
+"Print IM","[208 values]"
 "Resolution Unit",Inch
 "Resolution Unit",Inch
 "Resolution Units",inch
@@ -70,9 +73,10 @@ Saturation,None
 "Sensing Method","One-chip color area sensor"
 Sharpness,None
 Software,"GIMP 2.8.2"
-"Thumbnail Compression","JPEG (old-style)"
+"Thumbnail Height Pixels",0
 "Thumbnail Length","1790 bytes"
 "Thumbnail Offset","1238 bytes"
+"Thumbnail Width Pixels",0
 Version,1.1
 "White Balance",Unknown
 "White Balance Mode","Manual white balance"
