@@ -15,11 +15,9 @@
 
 /**
  * JAIImageReader.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.input;
-
-import javax.imageio.ImageIO;
 
 import adams.core.Utils;
 import adams.core.io.PlaceholderFile;
@@ -28,9 +26,11 @@ import adams.data.image.BufferedImageHelper;
 import adams.data.io.output.AbstractImageWriter;
 import adams.data.io.output.JAIImageWriter;
 
+import javax.imageio.ImageIO;
+
 /**
  <!-- globalinfo-start -->
- * Java Advanced Imaging (JAI) image reader for: jpg, bmp, jpeg, wbmp, png, gif
+ * Java Advanced Imaging (JAI) image reader for: jpg, bmp, gif, png, jpeg, wbmp
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -38,6 +38,11 @@ import adams.data.io.output.JAIImageWriter;
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
+ * </pre>
+ * 
+ * <pre>-add-meta-data &lt;boolean&gt; (property: addMetaData)
+ * &nbsp;&nbsp;&nbsp;If enabled, any available meta-data gets added the image report.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
  <!-- options-end -->
@@ -50,6 +55,9 @@ public class JAIImageReader
 
   /** for serialization. */
   private static final long serialVersionUID = 8416312222136406140L;
+
+  /** whether to add the meta-data. */
+  protected boolean m_AddMetaData;
 
   /** the format extensions. */
   protected String[] m_FormatExtensions;
@@ -65,13 +73,54 @@ public class JAIImageReader
   }
 
   /**
+   * Adds options to the internal list of options.
+   */
+  @Override
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+      "add-meta-data", "addMetaData",
+      false);
+  }
+
+  /**
    * Initializes the members.
    */
   @Override
   protected void initialize() {
     super.initialize();
-    
+
     m_FormatExtensions = ImageIO.getReaderFileSuffixes();
+  }
+
+  /**
+   * Sets whether to add the meta-data.
+   *
+   * @param value	true if to add meta-data
+   */
+  public void setAddMetaData(boolean value) {
+    m_AddMetaData = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to add the meta-data.
+   *
+   * @return		true if to add the meta-data
+   */
+  public boolean getAddMetaData() {
+    return m_AddMetaData;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String addMetaDataTipText() {
+    return "If enabled, any available meta-data gets added the image report.";
   }
 
   /**
@@ -123,6 +172,6 @@ public class JAIImageReader
    */
   @Override
   protected BufferedImageContainer doRead(PlaceholderFile file) {
-    return BufferedImageHelper.read(file);
+    return BufferedImageHelper.read(file, m_AddMetaData);
   }
 }
