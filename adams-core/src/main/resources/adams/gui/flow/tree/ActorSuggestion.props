@@ -25,6 +25,10 @@ adams-core.DisplayCallable=\
   IF PARENT IS adams.flow.standalone.CallableActors \
   THEN adams.flow.sink.Display
 
+adams-core.DisplayPanelManagerCallable=\
+  IF PARENT IS adams.flow.standalone.CallableActors \
+  THEN adams.flow.sink.DisplayPanelManager
+
 adams-core.SequencePlotterCallable=\
   IF PARENT IS adams.flow.standalone.CallableActors \
   THEN adams.flow.sink.SequencePlotter
