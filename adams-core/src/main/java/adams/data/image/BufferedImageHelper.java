@@ -15,7 +15,7 @@
 
 /**
  * BufferedImageHelper.java
- * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.image;
 
@@ -424,11 +424,22 @@ public class BufferedImageHelper {
 
   /**
    * Reads an image, also fills in meta-data.
-   * 
+   *
    * @param file	the file to read
    * @return		the image container, null if failed to read
    */
   public static BufferedImageContainer read(File file) {
+    return read(file, true);
+  }
+
+  /**
+   * Reads an image, also fills in meta-data.
+   * 
+   * @param file	the file to read
+   * @param addMetaData whether to add the meta-data
+   * @return		the image container, null if failed to read
+   */
+  public static BufferedImageContainer read(File file, boolean addMetaData) {
     BufferedImageContainer	result;
     FileInputStream		fis;
     ImageInputStream 		iis;
@@ -455,19 +466,21 @@ public class BufferedImageHelper {
       reader.setInput(iis);
       
       // meta
-      meta = reader.getImageMetadata(0);
-      convert = new DOMToProperties();
-      convert.setStoreAttributes(true);
-      convert.setSkipRoot(true);
-      formats = meta.getMetadataFormatNames();
-      props   = new Properties();
-      for (String format: formats) {
-	convert.setInput(meta.getAsTree(format));
-	if (convert.convert() == null)
-	  props.add((Properties) convert.getOutput());
+      if (addMetaData) {
+        meta = reader.getImageMetadata(0);
+        convert = new DOMToProperties();
+        convert.setStoreAttributes(true);
+        convert.setSkipRoot(true);
+        formats = meta.getMetadataFormatNames();
+        props = new Properties();
+        for (String format : formats) {
+          convert.setInput(meta.getAsTree(format));
+          if (convert.convert() == null)
+            props.add((Properties) convert.getOutput());
+        }
+        convert.cleanUp();
+        result.setReport(Report.parseProperties(props));
       }
-      convert.cleanUp();
-      result.setReport(Report.parseProperties(props));
 
       // image
       image = reader.read(0);
