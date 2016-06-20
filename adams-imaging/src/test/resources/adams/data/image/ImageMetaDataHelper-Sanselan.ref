@@ -1,0 +1,94 @@
+--> out-0.csv
+Key,Value
+"Bits Per Pixel",24
+"Color Type",RGB
+Comments,0
+"Compression Algorithm",JPEG
+Format,JPEG
+"Format Details","Jpeg/JFIF v.1.1"
+"Format Name","JPEG (Joint Photographic Experts Group) Format"
+Height,375
+"Is Progressive",false
+"Is Transparent",false
+MimeType,image/jpeg
+"Number Of Images",1
+"Physical Height Dpi",72
+"Physical Height Inch",5.2083335
+"Physical Width Dpi",72
+"Physical Width Inch",6.9444447
+"Uses Palette",false
+Width,500
+
+--> out-1.csv
+Key,Value
+Artist,"Public Domain"
+"Bits Per Pixel",24
+"Color Space",65535
+"Color Type",RGB
+Comments,0
+"Components Configuration","1, 2, 3, 0"
+"Compressed Bits Per Pixel",2
+Compression,6
+"Compression Algorithm",JPEG
+Contrast,0
+"Create Date","2010-04-23 15:51:35"
+"Custom Rendered",0
+"Date Time Original","2010-04-23 15:51:35"
+"Digital Zoom Ratio",0
+"Exif Image Length",73
+"Exif Image Width",100
+"Exif Offset",638
+"Exif Version","48, 50, 50, 49"
+"Exposure Compensation","-33/100 (-0.33)"
+"Exposure Mode",0
+"Exposure Program",4
+"Exposure Time","10/1250 (0.008)"
+FNumber,"56/10 (5.6)"
+"File Source",3
+Flash,16
+"Flashpix Version","48, 49, 48, 48"
+"Focal Length",34
+"Focal Length In 3 5mm Format",68
+Format,JPEG
+"Format Details","Jpeg/JFIF v.1.1"
+"Format Name","JPEG (Joint Photographic Experts Group) Format"
+"Gain Control",0
+Gamma,"22/10 (2.2)"
+Height,73
+ISO,100
+"Image Description","Photograph of X-Rite ColorChecker Color Rendition Chart"
+"Is Progressive",true
+"Is Transparent",false
+"Jpg From Raw Length",1790
+"Jpg From Raw Start",1238
+"Light Source",0
+Make,Panasonic
+"Max Aperture Value","1259/256 (4.918)"
+"Metering Mode",5
+MimeType,image/jpeg
+Model,DMC-GF1
+"Modify Date","2014-05-26 14:59:26"
+"Number Of Images",1
+Orientation,1
+"Physical Height Dpi",200
+"Physical Height Inch",0.365
+"Physical Width Dpi",200
+"Physical Width Inch",0.5
+"Primary Chromaticities","64/100 (0.64), 33/100 (0.33), 21/100 (0.21), 71/100 (0.71), 15/100 (0.15), 6/100 (0.06)"
+"Print IM","80, 114, 105, 110, 116, 73, 77, 0, 48, 50, 53, 48, 0, 0, 14, 0, 1, 0, 22, 0, 22, 0, 2, 0, 0, 0, 0, 0, 3, 0, 100, 0, 0, 0, 7, 0, 0, 0, 0, 0, 8, 0, 0, 0, 0, 0, 9, 0, 0, 0, 0... (208)"
+"Resolution Unit",2
+Saturation,0
+"Scene Capture Type",0
+"Scene Type",1
+"Sensing Method",2
+Sharpness,0
+Software,"GIMP 2.8.2"
+"Uses Palette",false
+"White Balance",1
+"White Point","313/1000 (0.313), 329/1000 (0.329)"
+Width,100
+XResolution,200
+"YCbCr Coefficients","299/1000 (0.299), 587/1000 (0.587), 114/1000 (0.114)"
+"YCbCr Positioning",2
+YResolution,200
+

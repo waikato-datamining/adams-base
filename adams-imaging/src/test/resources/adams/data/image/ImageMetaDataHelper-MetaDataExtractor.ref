@@ -1,0 +1,88 @@
+--> out-0.csv
+Key,Value
+"Component 1","Y component: Quantization table 0, Sampling factors 1 horiz/1 vert"
+"Component 2","Cb component: Quantization table 1, Sampling factors 1 horiz/1 vert"
+"Component 3","Cr component: Quantization table 1, Sampling factors 1 horiz/1 vert"
+"Compression Type",Baseline
+"Data Precision","8 bits"
+"File Name",3666455665_18795f0741.jpg
+"File Size","173766 bytes"
+"Image Height","375 pixels"
+"Image Width","500 pixels"
+"Number of Components",3
+"Resolution Units",inch
+Version,1.1
+"X Resolution","72 dots"
+"Y Resolution","72 dots"
+
+--> out-1.csv
+Key,Value
+Artist,"Public Domain"
+"Color Space",Undefined
+"Component 1","Y component: Quantization table 0, Sampling factors 1 horiz/1 vert"
+"Component 2","Cb component: Quantization table 1, Sampling factors 1 horiz/1 vert"
+"Component 3","Cr component: Quantization table 1, Sampling factors 1 horiz/1 vert"
+"Components Configuration",YCbCr
+"Compressed Bits Per Pixel","2 bits/pixel"
+"Compression Type","Progressive, Huffman"
+Contrast,None
+"Custom Rendered","Normal process"
+"Data Precision","8 bits"
+Date/Time,"2014-05-26 14:59:26"
+"Date/Time Digitized","2010-04-23 15:51:35"
+"Date/Time Original","2010-04-23 15:51:35"
+"Digital Zoom Ratio","Digital zoom not used."
+"Exif Image Height","73 pixels"
+"Exif Image Width","100 pixels"
+"Exif Version",2.21
+"Exposure Bias Value","-33/100 EV"
+"Exposure Mode","Auto exposure"
+"Exposure Program","Shutter priority"
+"Exposure Time","1/125 sec"
+F-Number,f/5.6
+"File Name",ColorChecker100423.jpg
+"File Size","20274 bytes"
+"File Source","Digital Still Camera (DSC)"
+Flash,"Flash did not fire, auto"
+"FlashPix Version",1
+"Focal Length","34.0 mm"
+"Focal Length 35",68mm
+"Gain Control",None
+Gamma,2.2
+"ISO Speed Ratings",100
+"Image Description","Photograph of X-Rite ColorChecker Color Rendition Chart"
+"Image Height","73 pixels"
+"Image Width","100 pixels"
+Make,Panasonic
+"Max Aperture Value",f/5.5
+"Metering Mode",Multi-segment
+Model,DMC-GF1
+"Number of Components",3
+Orientation,"Top, left side (Horizontal / normal)"
+"Primary Chromaticities","64/100 33/100 21/100 71/100 15/100 6/100"
+"Print IM","[208 bytes]"
+"Resolution Unit",Inch
+"Resolution Unit",Inch
+"Resolution Units",inch
+Saturation,None
+"Scene Capture Type",Standard
+"Scene Type","Directly photographed image"
+"Sensing Method","One-chip color area sensor"
+Sharpness,None
+Software,"GIMP 2.8.2"
+"Thumbnail Compression","JPEG (old-style)"
+"Thumbnail Length","1790 bytes"
+"Thumbnail Offset","1238 bytes"
+Version,1.1
+"White Balance",Unknown
+"White Balance Mode","Manual white balance"
+"White Point","313/1000 329/1000"
+"X Resolution","200 dots"
+"X Resolution","200 dots per inch"
+"X Resolution","72 dots per inch"
+"Y Resolution","200 dots"
+"Y Resolution","200 dots per inch"
+"Y Resolution","72 dots per inch"
+"YCbCr Coefficients","299/1000 587/1000 114/1000"
+"YCbCr Positioning","Datum point"
+
