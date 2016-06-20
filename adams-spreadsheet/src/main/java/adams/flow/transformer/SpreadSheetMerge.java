@@ -15,7 +15,7 @@
 
 /**
  * SpreadSheetMerge.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
 
@@ -645,11 +645,11 @@ public class SpreadSheetMerge
    * Merges the datasets based on the collected IDs.
    *
    * @param orig	the original datasets
-   * @param inst	the processed datasets to merge into one
+   * @param sheets	the processed datasets to merge into one
    * @param ids		the IDs for identifying the rows
    * @return		the merged dataset
    */
-  protected SpreadSheet merge(SpreadSheet[] orig, SpreadSheet[] inst, HashSet ids) {
+  protected SpreadSheet merge(SpreadSheet[] orig, SpreadSheet[] sheets, HashSet ids) {
     SpreadSheet			result;
     int				i;
     int				n;
@@ -668,12 +668,12 @@ public class SpreadSheetMerge
     if (isLoggingEnabled())
       getLogger().info("Creating merged header...");
     result = orig[0].newInstance();
-    indexStart = new int[inst.length];
-    for (i = 0; i < inst.length; i++) {
+    indexStart = new int[sheets.length];
+    for (i = 0; i < sheets.length; i++) {
       indexStart[i] = result.getColumnCount();
-      for (n = 0; n < inst[i].getColumnCount(); n++) {
+      for (n = 0; n < sheets[i].getColumnCount(); n++) {
 	result.getHeaderRow().addCell("" + result.getColumnCount()).setContent(
-	    inst[i].getHeaderRow().getCell(n).getContent());
+	    sheets[i].getHeaderRow().getCell(n).getContent());
       }
     }
 
@@ -696,25 +696,25 @@ public class SpreadSheetMerge
     Collections.sort(sortedIDs);
 
     // generate rows
-    hashmap = new HashMap<Integer,Integer>();
-    for (i = 0; i < inst.length; i++) {
+    hashmap = new HashMap<>();
+    for (i = 0; i < sheets.length; i++) {
       if (isStopped())
 	return null;
       if (isLoggingEnabled())
 	getLogger().info("Adding sheet #" + (i+1));
       prefix   = createPrefix(i);
-      colIndex = inst[i].getHeaderRow().indexOfContent(prefix + m_UniqueID);
-      numeric  = inst[i].isNumeric(colIndex);
-      for (n = 0; n < inst[i].getRowCount(); n++) {
+      colIndex = sheets[i].getHeaderRow().indexOfContent(prefix + m_UniqueID);
+      numeric  = sheets[i].isNumeric(colIndex);
+      for (n = 0; n < sheets[i].getRowCount(); n++) {
 	// progress
 	if (isLoggingEnabled() && ((n+1) % 1000 == 0))
 	  getLogger().info("" + (n+1));
 
 	// determine index of row
 	if (numeric)
-	  index = Collections.binarySearch(sortedIDs, inst[i].getCell(n, colIndex).toDouble());
+	  index = Collections.binarySearch(sortedIDs, sheets[i].getCell(n, colIndex).toDouble());
 	else
-	  index = Collections.binarySearch(sortedIDs, inst[i].getCell(n, colIndex).getContent());
+	  index = Collections.binarySearch(sortedIDs, sheets[i].getCell(n, colIndex).getContent());
 	if (index < 0)
 	  throw new IllegalStateException(
 	      "Failed to determine index for row #" + (n+1) + " of sheet #" + (i+1) + "!");
@@ -724,22 +724,22 @@ public class SpreadSheetMerge
 	hashmap.put(index, hashmap.get(index) + 1);
 
 	// add attribute values
-	for (m = 0; m < inst[i].getColumnCount(); m++) {
+	for (m = 0; m < sheets[i].getColumnCount(); m++) {
 	  // missing value?
-	  if (!inst[i].hasCell(n, m) || inst[i].getCell(n, m).isMissing())
+	  if (!sheets[i].hasCell(n, m) || sheets[i].getCell(n, m).isMissing())
 	    continue;
-	  result.getCell(index, indexStart[i] + m).assign(inst[i].getCell(n, m));
+	  result.getCell(index, indexStart[i] + m).assign(sheets[i].getCell(n, m));
 	}
       }
     }
 
     if (getRemove()) {
-      hs = new HashSet<Integer>();
+      hs = new HashSet<>();
       for (Integer x: hashmap.keySet()){
-	if (hashmap.get(x) != inst.length)
+	if (hashmap.get(x) != sheets.length)
 	  hs.add(x);
       }
-      indices = new ArrayList<Integer>(hs);
+      indices = new ArrayList<>(hs);
       Collections.sort(indices);
       Collections.reverse(indices);
       for (Integer ind: indices)
