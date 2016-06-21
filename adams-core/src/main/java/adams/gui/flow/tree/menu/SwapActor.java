@@ -19,15 +19,10 @@
  */
 package adams.gui.flow.tree.menu;
 
-import adams.core.ClassLister;
-import adams.flow.control.Flow;
-import adams.flow.core.AbstractActor;
 import adams.flow.core.Actor;
-import adams.flow.core.ActorHandler;
-import adams.flow.core.ActorUtils;
-import adams.flow.core.MutableActorHandler;
 import adams.gui.core.BaseMenu;
 import adams.gui.core.MenuItemComparator;
+import adams.gui.flow.tree.actorswap.AbstractActorSwapSuggestion;
 
 import javax.swing.JMenuItem;
 import java.awt.event.ActionEvent;
@@ -64,38 +59,16 @@ public class SwapActor
   public JMenuItem getMenuItem() {
     BaseMenu		result;
     JMenuItem		menuitem;
-    String[]		actors;
     int			i;
     List<JMenuItem>	menuitems;
-    Actor 		current;
-    boolean		isStandalone;
-    boolean		isSource;
-    boolean		isTransformer;
-    boolean		isSink;
+    List<Actor>		suggestions;
+    Actor		current;
 
-    current       = m_State.selNode.getActor();
-    isStandalone  = ActorUtils.isStandalone(current);
-    isSource      = ActorUtils.isSource(current);
-    isTransformer = ActorUtils.isTransformer(current);
-    isSink        = ActorUtils.isSink(current);
-    menuitems     = new ArrayList<JMenuItem>();
-    actors        = ClassLister.getSingleton().getClassnames(ActorHandler.class);
-    for (i = 0; i < actors.length; i++) {
-      final ActorHandler actor = (ActorHandler) AbstractActor.forName(actors[i], new String[0]);
-      if (!(actor instanceof MutableActorHandler))
-        continue;
-      if (actor instanceof Flow)
-	continue;
-      if (actor.getClass() == m_State.selNode.getActor().getClass())
-	continue;
-      if (isStandalone && !ActorUtils.isStandalone(actor))
-	continue;
-      if (isSource && !ActorUtils.isSource(actor))
-	continue;
-      if (isTransformer && !ActorUtils.isTransformer(actor))
-	continue;
-      if (isSink && !ActorUtils.isSink(actor))
-	continue;
+    current     = m_State.selNode.getActor();
+    suggestions = AbstractActorSwapSuggestion.suggestAll(current);
+    menuitems   = new ArrayList<>();
+    for (i = 0; i < suggestions.size(); i++) {
+      final Actor actor = suggestions.get(i);
       menuitem = new JMenuItem(actor.getClass().getSimpleName());
       menuitems.add(menuitem);
       menuitem.addActionListener((ActionEvent e) -> m_State.tree.getOperations().swapActor(m_State.selPath, actor));
@@ -117,7 +90,7 @@ public class SwapActor
     setEnabled(
       m_State.editable
         && (m_State.numSel == 1)
-        && (m_State.selNode.getActor() instanceof MutableActorHandler));
+        && (AbstractActorSwapSuggestion.suggestAll(m_State.selNode.getActor()).size() > 0));
   }
 
   /**

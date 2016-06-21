@@ -441,6 +441,10 @@ adams.gui.flow.tree.keyboardaction.AbstractKeyboardAction=\
 adams.gui.flow.tree.postprocessor.AbstractEditPostProcessor=\
   adams.gui.flow.tree.postprocessor
 
+# the schemes for suggesting swaps for actors
+adams.gui.flow.tree.actorswap.AbstractActorSwapSuggestion=\
+  adams.gui.flow.tree.actorswap
+
 # the startup initialization applets
 adams.gui.application.Initialization=\
   adams.gui.application

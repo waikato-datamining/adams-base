@@ -726,25 +726,25 @@ public class TreeOperations
    * Swaps the actor handler of the node with the new node, keeping the children
    * intact, as well as some basic options.
    *
-   * @param path	the path to the actor to swap out
-   * @param handler	the new handler to use
+   * @param sourcePath	the path to the actor to swap out
+   * @param target	the new handler to use
    */
-  public void swapActor(TreePath path, ActorHandler handler) {
+  public void swapActor(TreePath sourcePath, Actor target) {
     final Node				node;
-    ActorHandler			current;
+    Actor 				source;
     List<AbstractOptionTransfer>	transfers;
 
-    node    = TreeHelper.pathToNode(path);
-    current = (ActorHandler) TreeHelper.pathToActor(path);
+    node   = TreeHelper.pathToNode(sourcePath);
+    source = TreeHelper.pathToActor(sourcePath);
 
-    getOwner().addUndoPoint("Swapping node '" + current.getFullName() + "' with " + handler.getClass().getName());
+    getOwner().addUndoPoint("Swapping node '" + source.getFullName() + "' with " + target.getClass().getName());
 
     // transfer options
-    transfers = AbstractOptionTransfer.getTransfers(current, handler);
+    transfers = AbstractOptionTransfer.getTransfers(source, target);
     for (AbstractOptionTransfer transfer: transfers)
-      transfer.transfer(current, handler);
+      transfer.transfer(source, target);
 
-    node.setActor(handler);
+    node.setActor(target);
     node.invalidateRendering();
     SwingUtilities.invokeLater(() -> {
       getOwner().setModified(true);
