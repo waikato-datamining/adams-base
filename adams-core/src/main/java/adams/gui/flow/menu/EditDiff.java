@@ -21,19 +21,15 @@ package adams.gui.flow.menu;
 
 import adams.core.DiffUtils;
 import adams.core.DiffUtils.SideBySideDiff;
-import adams.core.option.AbstractOptionConsumer;
-import adams.core.option.AbstractOptionProducer;
-import adams.core.option.NestedConsumer;
-import adams.core.option.NestedProducer;
-import adams.flow.core.Actor;
 import adams.gui.core.GUIHelper;
 import adams.gui.dialog.ApprovalDialog;
+import adams.gui.flow.tree.Tree.TreeState;
 import adams.gui.visualization.debug.SideBySideDiffPanel;
 
 import java.awt.BorderLayout;
 import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
-import java.util.Vector;
+import java.util.List;
 
 /**
  * Shows differences between versions of flows.
@@ -64,29 +60,24 @@ public class EditDiff
    */
   protected SideBySideDiff getDiff() {
     SideBySideDiff	result;
-    String		current;
-    String		prev;
-    Vector		state;
-    Actor 		actor;
+    List<String> 	current;
+    List<String>	prev;
+    TreeState		state;
 
     if (!canDiff())
       return null;
 
     // current flow
-    current = AbstractOptionProducer.toString(NestedProducer.class, m_State.getCurrentFlow()).replace("\t", "  ");
+    current = m_State.getCurrentTree().getCommandLines();
 
     // undo step
-    state = (Vector) m_State.getCurrentPanel().getUndo().peekUndo().getData();
-    if (state.get(0) == null)
+    state = (TreeState) m_State.getCurrentPanel().getUndo().peekUndo().getData();
+    if (state.actors.size() == 0)
       return null;
-    if (state.get(0) instanceof Actor)
-      actor = (Actor) state.get(0);
-    else
-      actor = (Actor) AbstractOptionConsumer.consume(NestedConsumer.class, state.get(0));
-    prev = AbstractOptionProducer.toString(NestedProducer.class, actor).replace("\t", "  ");
+    prev = state.actors;
 
     // generate diff
-    result = DiffUtils.sideBySide(prev.split("\n"), current.split("\n"));
+    result = DiffUtils.sideBySide(prev, current);
 
     return result;
   }
