@@ -33,6 +33,10 @@ import java.util.logging.Logger;
 
 /**
  * Ancestor for classes the return potential swaps for an actor.
+ * <br>
+ * Make sure that the options get transferred as well, by having
+ * the appropriate {@link adams.core.optiontransfer.AbstractOptionTransfer}
+ * class(es) in place.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
