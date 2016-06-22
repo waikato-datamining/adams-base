@@ -29,6 +29,8 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * The ancestor of all option classes that take an argument.
@@ -230,30 +232,52 @@ public abstract class AbstractArgumentOption
    * Updates the variable, i.e., retrieves the value for the variable
    * and calls the read-method of this option to set it.
    *
-   * @param silent	wether to suppress error messages in the console
+   * @param silent	whether to suppress error messages in the console
    * @return		null if successfully updated, otherwise error message
    */
   public String updateVariable(boolean silent) {
+    return updateVariable(silent, null);
+  }
+
+  /**
+   * Updates the variable, i.e., retrieves the value for the variable
+   * and calls the read-method of this option to set it.
+   *
+   * @param silent	whether to suppress error messages in the console
+   * @param log		the logger to use for errors, can be null
+   * @return		null if successfully updated, otherwise error message
+   */
+  public String updateVariable(boolean silent, Logger log) {
     Method	method;
     Variables	vars;
     Object	value;
     String[]	values;
     Object	objects;
     int		i;
+    String	msg;
 
     method = getWriteMethod();
     if (method == null) {
-      if (!m_Owner.isQuiet())
-	System.err.println(
-	    "Failed to obtain write method for option '" + getCommandline() + "/" + getProperty()
-	    + ", cannot set variable value ('" + m_Variable + "')!");
+      if (!m_Owner.isQuiet()) {
+	msg = "Failed to obtain write method for option '" + getCommandline() + "/" + getProperty()
+	    + ", cannot set variable value ('" + m_Variable + "')!";
+	if (log == null)
+	  System.err.println(msg);
+	else
+	  log.severe(msg);
+      }
       return "Write method not found";
     }
 
     vars = getOwner().getVariables();
     if (!vars.has(m_Variable)) {
-      if (!m_Owner.isQuiet() && !silent)
-	System.err.println("Variable '" + m_Variable + "' is not defined (" + getOwner().getVariables().hashCode() + ")!");
+      if (!m_Owner.isQuiet() && !silent) {
+	msg = "Variable '" + m_Variable + "' is not defined (" + getOwner().getVariables().hashCode() + ")!";
+	if (log == null)
+	  System.err.println(msg);
+	else
+	  log.severe(msg);
+      }
       return "Variable '" + m_Variable + "' not defined (" + getOwner().getVariables().hashCode() + ")";
     }
 
@@ -262,25 +286,39 @@ public abstract class AbstractArgumentOption
     else
       value = vars.get(m_Variable);
     if (value == null) {
-      if (!m_Owner.isQuiet() && !silent)
-	System.err.println("Variable '" + m_Variable + "' has no value associated!");
+      if (!m_Owner.isQuiet() && !silent) {
+	msg = "Variable '" + m_Variable + "' has no value associated!";
+	if (log == null)
+	  System.err.println(msg);
+	else
+	  log.severe(msg);
+      }
       return "Variable '" + m_Variable + "' has no value associated";
     }
+
+    if (log != null)
+      log.info(getOwner().getVariables().hashCode() + "/" + m_Variable + " -> " + value);
 
     if (vars.isObject(m_Variable)) {
       try {
 	method.invoke(
 	    getOptionHandler(),
-	    new Object[]{value});
+	    value);
 	m_VariableModified = false;
 	return null;
       }
       catch (Exception e) {
 	if (!m_Owner.isQuiet() && !silent) {
-	  System.err.println(
-	      "Failed to set value for variable '" + m_Variable + "' (" + value.getClass().getName() + "): " + value);
-	  e.printStackTrace();
-	  System.err.println("Wrong class? Attempting to set value using string representation instead!");
+	  msg = "Failed to set value for variable '" + m_Variable + "' (" + value.getClass().getName() + "): " + value;
+	  if (log == null)
+	    System.err.println(msg + "\n" + Utils.throwableToString(e));
+	  else
+	    log.log(Level.SEVERE, msg, e);
+	  msg = "Wrong class? Attempting to set value using string representation instead!";
+	  if (log == null)
+	    System.err.println(msg);
+	  else
+	    log.severe(msg);
 	}
 	value = vars.get(m_Variable);
       }
@@ -299,18 +337,19 @@ public abstract class AbstractArgumentOption
       }
       method.invoke(
 	  getOptionHandler(),
-	  new Object[]{value});
+	  value);
       m_VariableModified = false;
     }
     catch (Exception e) {
       if (!m_Owner.isQuiet()) {
 	if (value.getClass().isArray())
-	  System.err.println(
-	      "Failed to set value for variable '" + m_Variable + "' (" + Utils.getArrayClass(value.getClass()).getName() + "): " + value);
+	  msg = "Failed to set value for variable '" + m_Variable + "' (" + Utils.getArrayClass(value.getClass()).getName() + "): " + value;
 	else
-	  System.err.println(
-	      "Failed to set value for variable '" + m_Variable + "' (" + value.getClass().getName() + "): " + value);
-	e.printStackTrace();
+	  msg = "Failed to set value for variable '" + m_Variable + "' (" + value.getClass().getName() + "): " + value;
+	if (log == null)
+	  System.err.println(msg + "\n" + Utils.throwableToString(e));
+	else
+	  log.log(Level.SEVERE, msg, e);
       }
       return "Failed to set value for variable '" + m_Variable + "'";
     }
