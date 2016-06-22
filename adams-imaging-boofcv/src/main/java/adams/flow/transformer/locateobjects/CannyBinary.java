@@ -15,7 +15,7 @@
 
 /**
  * CannyBinary.java
- * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer.locateobjects;
 
@@ -47,6 +47,28 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  * 
+ * <pre>-center-on-canvas &lt;boolean&gt; (property: centerOnCanvas)
+ * &nbsp;&nbsp;&nbsp;If enabled, the located objects get centered on a canvas of fixed size.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-canvas-width &lt;int&gt; (property: canvasWidth)
+ * &nbsp;&nbsp;&nbsp;The width of the canvas in pixels.
+ * &nbsp;&nbsp;&nbsp;default: 100
+ * &nbsp;&nbsp;&nbsp;minimum: 1
+ * </pre>
+ * 
+ * <pre>-canvas-height &lt;int&gt; (property: canvasHeight)
+ * &nbsp;&nbsp;&nbsp;The height of the canvas in pixels.
+ * &nbsp;&nbsp;&nbsp;default: 100
+ * &nbsp;&nbsp;&nbsp;minimum: 1
+ * </pre>
+ * 
+ * <pre>-canvas-color &lt;java.awt.Color&gt; (property: canvasColor)
+ * &nbsp;&nbsp;&nbsp;The color to use for filling the canvas.
+ * &nbsp;&nbsp;&nbsp;default: #ffffff
+ * </pre>
+ * 
  * <pre>-blur-radius &lt;int&gt; (property: blurRadius)
  * &nbsp;&nbsp;&nbsp;The blur radius.
  * &nbsp;&nbsp;&nbsp;default: 2
@@ -63,6 +85,11 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;The high threshold.
  * &nbsp;&nbsp;&nbsp;default: 0.3
  * &nbsp;&nbsp;&nbsp;minimum: 0.0
+ * </pre>
+ * 
+ * <pre>-connect-rule &lt;FOUR|EIGHT&gt; (property: connectRule)
+ * &nbsp;&nbsp;&nbsp;The connect rule to apply.
+ * &nbsp;&nbsp;&nbsp;default: EIGHT
  * </pre>
  * 
  <!-- options-end -->
@@ -90,7 +117,10 @@ public class CannyBinary
   
   /** the high threshold. */
   protected float m_ThresholdHigh;
-  
+
+  /** the connect rule. */
+  protected ConnectRule m_ConnectRule;
+
   /**
    * Returns a string describing the object.
    *
@@ -109,16 +139,20 @@ public class CannyBinary
     super.defineOptions();
 
     m_OptionManager.add(
-	    "blur-radius", "blurRadius",
-	    2, 0, null);
+      "blur-radius", "blurRadius",
+      2, 0, null);
 
     m_OptionManager.add(
-	    "threshold-low", "thresholdLow",
-	    0.1f, 0.0f, null);
+      "threshold-low", "thresholdLow",
+      0.1f, 0.0f, null);
 
     m_OptionManager.add(
-	    "threshold-high", "thresholdHigh",
-	    0.3f, 0.0f, null);
+      "threshold-high", "thresholdHigh",
+      0.3f, 0.0f, null);
+
+    m_OptionManager.add(
+      "connect-rule", "connectRule",
+      ConnectRule.EIGHT);
   }
 
   /**
@@ -224,6 +258,35 @@ public class CannyBinary
   }
 
   /**
+   * Sets the connect rule to apply.
+   *
+   * @param value	the rule
+   */
+  public void setConnectRule(ConnectRule value) {
+    m_ConnectRule = value;
+    reset();
+  }
+
+  /**
+   * Returns the connect rule to apply.
+   *
+   * @return		the rule
+   */
+  public ConnectRule getConnectRule() {
+    return m_ConnectRule;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the gui
+   */
+  public String connectRuleTipText() {
+    return "The connect rule to apply.";
+  }
+
+  /**
    * Returns a quick info about the object, which can be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
@@ -235,7 +298,8 @@ public class CannyBinary
     result  = QuickInfoHelper.toString(this, "blurRadius", m_BlurRadius, "radius: ");
     result += QuickInfoHelper.toString(this, "thresholdLow", m_ThresholdLow, ", low: ");
     result += QuickInfoHelper.toString(this, "thresholdHigh", m_ThresholdHigh, ", high: ");
-    
+    result += QuickInfoHelper.toString(this, "connectRule", m_ConnectRule, ", rule: ");
+
     return result;
   }
 
@@ -262,7 +326,7 @@ public class CannyBinary
     // Finds edges inside the image
     canny = FactoryEdgeDetectors.canny(m_BlurRadius, true, true, ImageFloat32.class, ImageFloat32.class);
     canny.process(input, m_ThresholdLow, m_ThresholdHigh, binary);
-    contours = BinaryImageOps.contour(binary, ConnectRule.EIGHT, null);
+    contours = BinaryImageOps.contour(binary, m_ConnectRule, null);
     
     result = new LocatedObjects();
     for (Contour contour: contours) {

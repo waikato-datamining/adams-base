@@ -15,13 +15,10 @@
 
 /*
  * CannyEdgeDetection.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.boofcv.transformer;
-
-import java.awt.image.BufferedImage;
-import java.util.List;
 
 import adams.core.License;
 import adams.core.TechnicalInformation;
@@ -43,6 +40,9 @@ import boofcv.struct.ConnectRule;
 import boofcv.struct.image.ImageFloat32;
 import boofcv.struct.image.ImageSInt16;
 import boofcv.struct.image.ImageUInt8;
+
+import java.awt.image.BufferedImage;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -77,6 +77,11 @@ import boofcv.struct.image.ImageUInt8;
  * <pre>-low-threshold &lt;float&gt; (property: lowThreshold)
  * &nbsp;&nbsp;&nbsp;The low threshold to use.
  * &nbsp;&nbsp;&nbsp;default: 0.1
+ * </pre>
+ * 
+ * <pre>-connect-rule &lt;FOUR|EIGHT&gt; (property: connectRule)
+ * &nbsp;&nbsp;&nbsp;The connect rule to apply.
+ * &nbsp;&nbsp;&nbsp;default: EIGHT
  * </pre>
  * 
  * <pre>-high-threshold &lt;float&gt; (property: highThreshold)
@@ -119,7 +124,10 @@ public class CannyEdgeDetection
   
   /** the high threshold to use. */
   protected float m_HighThreshold;
-  
+
+  /** the connect rule. */
+  protected ConnectRule m_ConnectRule;
+
   /** the type of output to generate. */
   protected OutputType m_Type;
   
@@ -162,16 +170,20 @@ public class CannyEdgeDetection
     super.defineOptions();
 
     m_OptionManager.add(
-	    "type", "type",
-	    OutputType.BINARY_EDGES);
+      "type", "type",
+      OutputType.BINARY_EDGES);
 
     m_OptionManager.add(
-	    "low-threshold", "lowThreshold",
-	    0.1f);
+      "low-threshold", "lowThreshold",
+      0.1f);
 
     m_OptionManager.add(
-	    "high-threshold", "highThreshold",
-	    0.3f);
+      "connect-rule", "connectRule",
+      ConnectRule.EIGHT);
+
+    m_OptionManager.add(
+      "high-threshold", "highThreshold",
+      0.3f);
   }
 
   /**
@@ -262,6 +274,35 @@ public class CannyEdgeDetection
   }
 
   /**
+   * Sets the connect rule to apply.
+   *
+   * @param value	the rule
+   */
+  public void setConnectRule(ConnectRule value) {
+    m_ConnectRule = value;
+    reset();
+  }
+
+  /**
+   * Returns the connect rule to apply.
+   *
+   * @return		the rule
+   */
+  public ConnectRule getConnectRule() {
+    return m_ConnectRule;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the gui
+   */
+  public String connectRuleTipText() {
+    return "The connect rule to apply.";
+  }
+
+  /**
    * Performs no transformation at all, just returns the input.
    *
    * @param img		the image to process (can be modified, since it is a copy)
@@ -294,7 +335,7 @@ public class CannyEdgeDetection
     // The 'edgeContours' is a tree graph that can be difficult to process.  An alternative is to extract
     // the contours from the binary image, which will produce a single loop for each connected cluster of pixels.
     // Note that you are only interested in external contours.
-    contours = BinaryImageOps.contour(edgeImage, ConnectRule.EIGHT, null);
+    contours = BinaryImageOps.contour(edgeImage, m_ConnectRule, null);
 
     // render the result
     switch (m_Type) {

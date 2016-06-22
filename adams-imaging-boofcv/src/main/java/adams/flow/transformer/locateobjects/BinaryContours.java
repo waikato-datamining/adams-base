@@ -15,7 +15,7 @@
 
 /**
  * BinaryContours.java
- * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer.locateobjects;
 
@@ -47,9 +47,36 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  * 
+ * <pre>-center-on-canvas &lt;boolean&gt; (property: centerOnCanvas)
+ * &nbsp;&nbsp;&nbsp;If enabled, the located objects get centered on a canvas of fixed size.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-canvas-width &lt;int&gt; (property: canvasWidth)
+ * &nbsp;&nbsp;&nbsp;The width of the canvas in pixels.
+ * &nbsp;&nbsp;&nbsp;default: 100
+ * &nbsp;&nbsp;&nbsp;minimum: 1
+ * </pre>
+ * 
+ * <pre>-canvas-height &lt;int&gt; (property: canvasHeight)
+ * &nbsp;&nbsp;&nbsp;The height of the canvas in pixels.
+ * &nbsp;&nbsp;&nbsp;default: 100
+ * &nbsp;&nbsp;&nbsp;minimum: 1
+ * </pre>
+ * 
+ * <pre>-canvas-color &lt;java.awt.Color&gt; (property: canvasColor)
+ * &nbsp;&nbsp;&nbsp;The color to use for filling the canvas.
+ * &nbsp;&nbsp;&nbsp;default: #ffffff
+ * </pre>
+ * 
  * <pre>-remove-small-blobs &lt;boolean&gt; (property: removeSmallBlobs)
  * &nbsp;&nbsp;&nbsp;If enabled, small blobs are removed using erode8&#47;dilate8.
  * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-connect-rule &lt;FOUR|EIGHT&gt; (property: connectRule)
+ * &nbsp;&nbsp;&nbsp;The connect rule to apply.
+ * &nbsp;&nbsp;&nbsp;default: EIGHT
  * </pre>
  * 
  <!-- options-end -->
@@ -72,6 +99,9 @@ public class BinaryContours
   /** whether to remove small blobs. */
   protected boolean m_RemoveSmallBlobs;
 
+  /** the connect rule. */
+  protected ConnectRule m_ConnectRule;
+
   /**
    * Returns a string describing the object.
    *
@@ -90,8 +120,12 @@ public class BinaryContours
     super.defineOptions();
 
     m_OptionManager.add(
-	    "remove-small-blobs", "removeSmallBlobs",
-	    false);
+      "remove-small-blobs", "removeSmallBlobs",
+      false);
+
+    m_OptionManager.add(
+      "connect-rule", "connectRule",
+      ConnectRule.EIGHT);
   }
 
   /**
@@ -124,13 +158,50 @@ public class BinaryContours
   }
 
   /**
+   * Sets the connect rule to apply.
+   *
+   * @param value	the rule
+   */
+  public void setConnectRule(ConnectRule value) {
+    m_ConnectRule = value;
+    reset();
+  }
+
+  /**
+   * Returns the connect rule to apply.
+   *
+   * @return		the rule
+   */
+  public ConnectRule getConnectRule() {
+    return m_ConnectRule;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the gui
+   */
+  public String connectRuleTipText() {
+    return "The connect rule to apply.";
+  }
+
+  /**
    * Returns a quick info about the object, which can be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
    */
   @Override
   public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "removeSmallBlobs", m_RemoveSmallBlobs, "remove small blobs");
+    String	result;
+    String	value;
+
+    result = QuickInfoHelper.toString(this, "connectRule", m_ConnectRule, "rule: ");
+    value = QuickInfoHelper.toString(this, "removeSmallBlobs", m_RemoveSmallBlobs, "remove small blobs", ", ");
+    if (value != null)
+      result += value;
+
+    return result;
   }
 
   /**
@@ -167,7 +238,7 @@ public class BinaryContours
       filtered = binary;
     }
     // Find the contour around the shapes
-    contours = BinaryImageOps.contour(filtered, ConnectRule.EIGHT, null);
+    contours = BinaryImageOps.contour(filtered, m_ConnectRule, null);
     
     result = new LocatedObjects();
     for (Contour contour: contours) {

@@ -15,12 +15,9 @@
 
 /**
  * BinaryContours.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.boofcv.transformer;
-
-import java.awt.image.BufferedImage;
-import java.util.List;
 
 import adams.core.License;
 import adams.core.annotation.MixedCopyright;
@@ -33,6 +30,9 @@ import boofcv.core.image.ConvertBufferedImage;
 import boofcv.gui.binary.VisualizeBinaryData;
 import boofcv.struct.ConnectRule;
 import boofcv.struct.image.ImageUInt8;
+
+import java.awt.image.BufferedImage;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -49,6 +49,11 @@ import boofcv.struct.image.ImageUInt8;
  * <pre>-remove-small-blobs &lt;boolean&gt; (property: removeSmallBlobs)
  * &nbsp;&nbsp;&nbsp;If enabled, small blobs are removed using erode8&#47;dilate8.
  * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-connect-rule &lt;FOUR|EIGHT&gt; (property: connectRule)
+ * &nbsp;&nbsp;&nbsp;The connect rule to apply.
+ * &nbsp;&nbsp;&nbsp;default: EIGHT
  * </pre>
  * 
  <!-- options-end -->
@@ -71,6 +76,9 @@ public class BinaryContours
   /** whether to remove small blobs. */
   protected boolean m_RemoveSmallBlobs;
 
+  /** the connect rule. */
+  protected ConnectRule m_ConnectRule;
+
   /**
    * Returns a string describing the object.
    *
@@ -89,8 +97,12 @@ public class BinaryContours
     super.defineOptions();
 
     m_OptionManager.add(
-	    "remove-small-blobs", "removeSmallBlobs",
-	    false);
+      "remove-small-blobs", "removeSmallBlobs",
+      false);
+
+    m_OptionManager.add(
+      "connect-rule", "connectRule",
+      ConnectRule.EIGHT);
   }
 
   /**
@@ -123,6 +135,35 @@ public class BinaryContours
   }
 
   /**
+   * Sets the connect rule to apply.
+   *
+   * @param value	the rule
+   */
+  public void setConnectRule(ConnectRule value) {
+    m_ConnectRule = value;
+    reset();
+  }
+
+  /**
+   * Returns the connect rule to apply.
+   *
+   * @return		the rule
+   */
+  public ConnectRule getConnectRule() {
+    return m_ConnectRule;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the gui
+   */
+  public String connectRuleTipText() {
+    return "The connect rule to apply.";
+  }
+
+  /**
    * Performs no transformation at all, just returns the input.
    *
    * @param img		the image to process (can be modified, since it is a copy)
@@ -146,7 +187,7 @@ public class BinaryContours
       filtered = input;
     }
     // Find the contour around the shapes
-    contours = BinaryImageOps.contour(filtered, ConnectRule.EIGHT, null);
+    contours = BinaryImageOps.contour(filtered, m_ConnectRule, null);
     rendered = VisualizeBinaryData.renderExternal(contours, null, input.width, input.height, null);
 
     result = new BoofCVImageContainer[1];
