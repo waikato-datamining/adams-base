@@ -23,6 +23,7 @@ package adams.flow.core;
 import adams.core.ClassLister;
 import adams.core.ClassLocator;
 import adams.core.Utils;
+import adams.core.Variables;
 import adams.core.VariablesHandler;
 import adams.core.logging.LoggingHelper;
 import adams.core.option.AbstractArgumentOption;
@@ -1587,6 +1588,28 @@ public class ActorUtils {
     }
 
     Collections.sort(result);
+
+    return result;
+  }
+
+  /**
+   * Forces the update of the variables of this actor.
+   *
+   * @param actor	the actor to update
+   * @param vars	the variables to propagate
+   * @return		null if successful, otherwise error message
+   */
+  public static String forceVariables(Actor actor, Variables vars) {
+    String	result;
+
+    result = null;
+
+    if (actor != null) {
+      actor.setVariables(vars);
+      actor.getOptionManager().setVariables(vars);
+      actor.getOptionManager().updateVariablesInstance(vars);
+      result = actor.getOptionManager().updateVariableValues(true);
+    }
 
     return result;
   }
