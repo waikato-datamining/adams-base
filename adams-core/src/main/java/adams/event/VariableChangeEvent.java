@@ -15,9 +15,11 @@
 
 /**
  * VariableChangeEvent.java
- * Copyright (C) 2009 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.event;
+
+import adams.core.Variables;
 
 import java.util.EventObject;
 
@@ -57,15 +59,24 @@ public class VariableChangeEvent
   /**
    * Initializes the event.
    *
-   * @param source	the object that triggered the event
+   * @param source	the Variables object that triggered the event
    * @param type	the type of event
    * @param name	the name of the variable
    */
-  public VariableChangeEvent(Object source, Type type, String name) {
+  public VariableChangeEvent(Variables source, Type type, String name) {
     super(source);
 
     m_Type = type;
     m_Name = name;
+  }
+
+  /**
+   * Returns the variables that triggered the event.
+   *
+   * @return		the source
+   */
+  public Variables getVariables() {
+    return (Variables) getSource();
   }
 
   /**
