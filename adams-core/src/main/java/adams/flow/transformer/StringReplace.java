@@ -20,13 +20,13 @@
 
 package adams.flow.transformer;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import adams.core.Placeholders;
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
 import adams.core.base.BaseRegExp;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -395,6 +395,9 @@ public class StringReplace
   @Override
   protected String process(String s) {
     String	replace;
+
+    if (isLoggingEnabled())
+      getLogger().info("pattern: " + m_Find);
 
     // do we need to replace variables?
     replace = m_Replace;

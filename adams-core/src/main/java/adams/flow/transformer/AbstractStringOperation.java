@@ -15,15 +15,15 @@
 
 /*
  * AbstractStringOperation.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
+import adams.flow.core.Token;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import adams.flow.core.Token;
 
 /**
  * Ancestor for transformers that perform operations on strings.
@@ -86,9 +86,13 @@ public abstract class AbstractStringOperation
       else
 	str = new String[]{(String) m_InputToken.getPayload()};
 
-      strNew = new ArrayList<String>();
+      strNew = new ArrayList<>();
       for (i = 0; i < str.length; i++) {
+        if (isLoggingEnabled())
+          getLogger().info("input: " + str[i]);
 	strTmp = process(str[i]);
+        if (isLoggingEnabled())
+          getLogger().info("output: " + strTmp);
 	if (strTmp != null)
 	  strNew.add(strTmp);
       }
