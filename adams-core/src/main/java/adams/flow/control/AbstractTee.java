@@ -500,6 +500,7 @@ public abstract class AbstractTee
   protected void restoreState(Hashtable<String,Object> state) {
     if (state.containsKey(BACKUP_INPUT)) {
       m_InputToken = (Token) state.get(BACKUP_INPUT);
+      input(m_InputToken);
       state.remove(BACKUP_INPUT);
     }
 
@@ -522,17 +523,6 @@ public abstract class AbstractTee
    * @return		null if everything OK, otherwise error message
    */
   protected abstract String setUpTeeActors();
-
-  /**
-   * Resets the scheme.
-   */
-  @Override
-  protected void reset() {
-    super.reset();
-
-    m_InputToken  = null;
-    m_OutputToken = null;
-  }
 
   /**
    * Sets the minimum of (active) actors that need to be present in the
@@ -761,6 +751,8 @@ public abstract class AbstractTee
   public void wrapUp() {
     waitForAsynchronousExecution();
     m_Actors.wrapUp();
+    m_InputToken  = null;
+    m_OutputToken = null;
     super.wrapUp();
   }
 
@@ -771,6 +763,8 @@ public abstract class AbstractTee
   @Override
   public void cleanUp() {
     m_Actors.cleanUp();
+    m_InputToken  = null;
+    m_OutputToken = null;
     super.cleanUp();
   }
 }
