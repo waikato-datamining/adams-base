@@ -15,11 +15,9 @@
 
 /**
  * BoofCVHelper.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.boofcv;
-
-import java.awt.image.BufferedImage;
 
 import adams.data.Notes;
 import adams.data.image.AbstractImageContainer;
@@ -29,6 +27,8 @@ import boofcv.gui.binary.VisualizeBinaryData;
 import boofcv.struct.image.ImageBase;
 import boofcv.struct.image.ImageSingleBand;
 import boofcv.struct.image.ImageUInt8;
+
+import java.awt.image.BufferedImage;
 
 /**
  * Helper class for BoofCV operations.
@@ -109,7 +109,7 @@ public class BoofCVHelper {
   /**
    * Converts the image container to the specified image type if necessary.
    * 
-   * @param img		the image container to convert
+   * @param cont	the image container to convert
    * @param type	the type of image
    * @return		the converted image
    */
@@ -125,7 +125,6 @@ public class BoofCVHelper {
    * {@link BoofCVImageType#FLOAT_32}, otherwise it just casts the object.
    * 
    * @param cont	the cont to cast/convert
-   * @param type	the type of image
    * @return		the casted/converted container
    */
   public static BoofCVImageContainer toBoofCVImageContainer(AbstractImageContainer cont) {
