@@ -36,6 +36,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * Class for managing option definitions.
@@ -706,13 +707,26 @@ public class OptionManager
 
   /**
    * Updates the variables, i.e., in case an option uses a variable and this
-   * variable's value has changed (or update is enforced), the updated value 
+   * variable's value has changed (or update is enforced), the updated value
    * will be set.
-   * 
+   *
    * @param forceUpdate	whether to force the update
    * @return		null if all variables were successfully updated
    */
   public String updateVariableValues(final boolean forceUpdate) {
+    return updateVariableValues(forceUpdate, null);
+  }
+
+  /**
+   * Updates the variables, i.e., in case an option uses a variable and this
+   * variable's value has changed (or update is enforced), the updated value 
+   * will be set.
+   * 
+   * @param forceUpdate	whether to force the update
+   * @param log		optional logger for logging traversal, can be null
+   * @return		null if all variables were successfully updated
+   */
+  public String updateVariableValues(final boolean forceUpdate, final Logger log) {
     OptionTraverserWithResult<StringBuilder>	traverser;
     StringBuilder				result;
 
@@ -731,11 +745,17 @@ public class OptionManager
 	if (    option.isVariableModified() 
 	     || (option.isVariableAttached() && forceUpdate) 
 	     || option.isVariableReferencingObject() ) {
-	  String error = option.updateVariable(true);
+	  String error = option.updateVariable(true, log);
 	  if (error != null) {
 	    if (m_Result.length() > 0)
 	      m_Result.append("\n");
 	    m_Result.append(option.getOptionHandler().getClass().getName() + "/" + option.getProperty() + ": " + error);
+	    if (log != null)
+	      log.severe(path + "/" + option.getOptionHandler().getClass().getName() + "/" + option.getProperty() + "/" + getVariables().hashCode() + ":" + error);
+	  }
+	  else {
+	    if (log != null)
+	      log.info(path + "/" + option.getOptionHandler().getClass().getName() + "/" + option.getProperty() + "/" + getVariables().hashCode() + ": updated");
 	  }
 	}
       }
