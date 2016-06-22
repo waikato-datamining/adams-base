@@ -540,8 +540,7 @@ public class SequentialDirector
       }
     }
     else {
-      if (m_ControlActor.size() > 0)
-	start = m_ControlActor.get(0);
+      start = m_ControlActor.firstActive();
     }
 
     // execute other actors until finished
