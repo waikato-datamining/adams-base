@@ -15,7 +15,7 @@
 
 /**
  * AbstractSpreadSheetWriter.java
- * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.output;
 
@@ -319,8 +319,7 @@ public abstract class AbstractSpreadSheetWriter
   }
 
   /**
-   * Performs the actual writing. The caller must ensure that the writer gets
-   * closed.
+   * Performs the actual writing.
    * <br><br>
    * Default implementation returns always false.
    *
