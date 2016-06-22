@@ -854,7 +854,7 @@ public abstract class AbstractActor
 
     if (m_DetectedVariables.contains(e.getName()) && (e.getType() != Type.REMOVED)) {
       m_VariablesUpdated.add(e.getName());
-      getLogger().info("Changes in variable '" + e.getName() + "'");
+      getLogger().info("Changes in variable '" + e.getName() + "' (" + e.getVariables().hashCode() + ")");
     }
   }
 
@@ -977,7 +977,7 @@ public abstract class AbstractActor
 
     // obtain the new value(s)
     m_BackupState = backupState();
-    getOptionManager().updateVariableValues();
+    getOptionManager().updateVariableValues(false, isLoggingEnabled() ? getLogger() : null);
 
     // re-initialize the actor
     result = setUp();
