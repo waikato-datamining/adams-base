@@ -26,8 +26,8 @@ import adams.core.base.BaseDateTime;
 import adams.env.Environment;
 
 /**
- * Tests the adams.core.io.GnumericSpreadSheetWriter class. Run from commandline with: <br><br>
- * java adams.core.io.GnumericSpreadSheetWriter
+ * Tests the adams.data.io.output.GnumericSpreadSheetWriter class. Run from commandline with: <br><br>
+ * java adams.data.io.output.GnumericSpreadSheetWriter
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$

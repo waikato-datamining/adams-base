@@ -26,8 +26,8 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 /**
- * Tests the adams.core.io.FixedTabularSpreadSheetWriter class. Run from commandline with: <br><br>
- * java adams.core.io.FixedTabularSpreadSheetWriter
+ * Tests the adams.data.io.output.FixedTabularSpreadSheetWriter class. Run from commandline with: <br><br>
+ * java adams.data.io.output.FixedTabularSpreadSheetWriter
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
