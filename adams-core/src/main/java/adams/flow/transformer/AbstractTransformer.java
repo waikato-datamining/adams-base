@@ -15,7 +15,7 @@
 
 /*
  * AbstractTransformer.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -52,17 +52,6 @@ public abstract class AbstractTransformer
 
   /** the current output token. */
   protected transient Token m_OutputToken;
-
-  /**
-   * Resets the scheme.
-   */
-  @Override
-  protected void reset() {
-    super.reset();
-
-    m_InputToken  = null;
-    m_OutputToken = null;
-  }
 
   /**
    * Backs up the current state of the actor before update the variables.
