@@ -379,17 +379,17 @@ public class SetVariable
 	  case REPLACE:
 	    getVariables().set(m_VariableName.getValue(), value);
 	    if (isLoggingEnabled())
-	      getLogger().info("Replacing variable '" + m_VariableName + "': " + value);
+	      getLogger().info("Replacing variable '" + m_VariableName + "' (" + getVariables().hashCode() + "): " + value);
 	    break;
 	  case APPEND:
 	    getVariables().set(m_VariableName.getValue(), current + value);
 	    if (isLoggingEnabled())
-	      getLogger().info("Appending variable '" + m_VariableName + "': " + current + value);
+	      getLogger().info("Appending variable '" + m_VariableName + "' (" + getVariables().hashCode() + "): " + current + value);
 	    break;
 	  case PREPEND:
 	    getVariables().set(m_VariableName.getValue(), value + current);
 	    if (isLoggingEnabled())
-	      getLogger().info("Prepending variable '" + m_VariableName + "': " + value + current);
+	      getLogger().info("Prepending variable '" + m_VariableName + "' (" + getVariables().hashCode() + "): " + value + current);
 	    break;
 	  default:
 	    throw new IllegalStateException("Unhandled update type: " + m_UpdateType);

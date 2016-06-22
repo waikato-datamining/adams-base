@@ -15,7 +15,7 @@
 
 /*
  * DeleteVariable.java
- * Copyright (C) 2010-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -186,11 +186,11 @@ public class DeleteVariable
 	if (getVariables().has(m_VariableName.getValue())) {
 	  oldValue = getVariables().remove(m_VariableName.getValue());
 	  if (isLoggingEnabled())
-	    getLogger().info("Removed scoped variable '" + m_VariableName.getValue() + "', value:" + oldValue);
+	    getLogger().info("Removed scoped variable '" + m_VariableName.getValue() + "' (" + getVariables().hashCode() + "), value:" + oldValue);
 	}
 	oldValue = getVariables().remove(m_VariableName.getValue());
 	if (isLoggingEnabled())
-	  getLogger().info("Removed variable '" + m_VariableName.getValue() + "', value:" + oldValue);
+	  getLogger().info("Removed variable '" + m_VariableName.getValue() + "' (" + getVariables().hashCode() + "), value:" + oldValue);
       }
     }
     catch (Exception e) {
