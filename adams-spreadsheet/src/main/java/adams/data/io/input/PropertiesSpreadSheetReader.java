@@ -34,7 +34,7 @@ import java.util.List;
 
 /**
  <!-- globalinfo-start -->
- * Turns Java properties files into spreadsheets with two columns: key and value.
+ * Turns Java properties files into spreadsheets with two columns: Key and Value.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -54,6 +54,12 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default: adams.data.spreadsheet.DefaultSpreadSheet
  * </pre>
  * 
+ * <pre>-force-string &lt;boolean&gt; (property: forceString)
+ * &nbsp;&nbsp;&nbsp;If enabled, the property values are set as string, bypassing the spreadsheet's 
+ * &nbsp;&nbsp;&nbsp;parsing.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
@@ -70,6 +76,9 @@ public class PropertiesSpreadSheetReader
   /** the header for the value column. */
   public final static String HEADER_VALUE = "Value";
 
+  /** whether to set values as string. */
+  protected boolean m_ForceString;
+
   /**
    * Returns a string describing the object.
    *
@@ -80,6 +89,49 @@ public class PropertiesSpreadSheetReader
     return
       "Turns Java properties files into spreadsheets with two columns: "
 	+ HEADER_KEY + " and " + HEADER_VALUE + ".";
+  }
+
+  /**
+   * Adds options to the internal list of options.
+   */
+  @Override
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+	    "force-string", "forceString",
+	    false);
+  }
+
+  /**
+   * Sets whether to force setting the values as string, bypassing the
+   * spreadsheet's parsing.
+   *
+   * @param value	true if to force string
+   */
+  public void setForceString(boolean value) {
+    m_ForceString = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to force setting the values as string, bypassing the
+   * spreadsheet's parsing.
+   *
+   * @return		true if string type is enforced
+   */
+  public boolean getForceString() {
+    return m_ForceString;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String forceStringTipText() {
+    return "If enabled, the property values are set as string, bypassing the spreadsheet's parsing.";
   }
 
   /**
@@ -151,12 +203,15 @@ public class PropertiesSpreadSheetReader
     row.addCell("V").setContentAsString(HEADER_VALUE);
 
     // data
-    keys   = new ArrayList<>(props.keySetAll());
+    keys = new ArrayList<>(props.keySetAll());
     Collections.sort(keys);
     for (String key: keys) {
       row = result.addRow();
       row.addCell("K").setContentAsString(key);
-      row.addCell("V").setContent(props.getProperty(key));
+      if (m_ForceString)
+	row.addCell("V").setContentAsString(props.getProperty(key));
+      else
+	row.addCell("V").setContent(props.getProperty(key));
     }
 
     return result;
