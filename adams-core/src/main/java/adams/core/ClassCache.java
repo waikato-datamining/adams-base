@@ -27,8 +27,9 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.jar.Attributes;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -91,7 +92,10 @@ public class ClassCache
   public final static String DEFAULT_PACKAGE = "DEFAULT";
 
   /** for caching all classes on the class path (package-name &lt;-&gt; HashSet with classnames). */
-  protected Hashtable<String,HashSet<String>> m_Cache;
+  protected HashMap<String,HashSet<String>> m_NameCache;
+
+  /** for caching all classes on the class path (package-name &lt;-&gt; HashSet with classes). */
+  protected HashMap<String,HashSet<Class>> m_ClassCache;
 
   /**
    * Initializes the cache.
@@ -151,9 +155,12 @@ public class ClassCache
     pkgname   = extractPackage(classname);
     
     // add to cache
-    if (!m_Cache.containsKey(pkgname))
-      m_Cache.put(pkgname, new HashSet<>());
-    names = m_Cache.get(pkgname);
+    if (!m_NameCache.containsKey(pkgname))
+      m_NameCache.put(pkgname, new HashSet<>());
+    if (!m_ClassCache.containsKey(pkgname))
+      m_ClassCache.put(pkgname, new HashSet<>());
+    names = m_NameCache.get(pkgname);
+
     return names.add(classname);
   }
 
@@ -169,7 +176,7 @@ public class ClassCache
 
     classname = cleanUp(classname);
     pkgname   = extractPackage(classname);
-    names     = m_Cache.get(pkgname);
+    names     = m_NameCache.get(pkgname);
     if (names != null)
       return names.remove(classname);
     else
@@ -281,8 +288,8 @@ public class ClassCache
    *
    * @return		the package names
    */
-  public Enumeration<String> packages() {
-    return m_Cache.keys();
+  public Iterator<String> packages() {
+    return m_NameCache.keySet().iterator();
   }
 
   /**
@@ -292,8 +299,21 @@ public class ClassCache
    * @return		the classes (sorted by name)
    */
   public HashSet<String> getClassnames(String pkgname) {
-    if (m_Cache.containsKey(pkgname))
-      return m_Cache.get(pkgname);
+    if (m_NameCache.containsKey(pkgname))
+      return m_NameCache.get(pkgname);
+    else
+      return new HashSet<>();
+  }
+
+  /**
+   * Returns all the classes for the given package.
+   *
+   * @param pkgname	the package to get the classes for
+   * @return		the classes (sorted by name)
+   */
+  public HashSet<Class> getClasses(String pkgname) {
+    if (m_ClassCache.containsKey(pkgname))
+      return m_ClassCache.get(pkgname);
     else
       return new HashSet<>();
   }
@@ -340,7 +360,8 @@ public class ClassCache
     URLClassLoader 	sysLoader;
     URL[] 		urls;
 
-    m_Cache   = new Hashtable<>();
+    m_NameCache  = new HashMap<>();
+    m_ClassCache = new HashMap<>();
     sysLoader = (URLClassLoader) getClass().getClassLoader();
     urls      = sysLoader.getURLs();
     for (URL url: urls) {
@@ -358,9 +379,9 @@ public class ClassCache
    */
   public static void main(String[] args) {
     ClassCache cache = new ClassCache();
-    Enumeration<String> packages = cache.packages();
-    while (packages.hasMoreElements()) {
-      String key = packages.nextElement();
+    Iterator<String> packages = cache.packages();
+    while (packages.hasNext()) {
+      String key = packages.next();
       System.out.println(key + ": " + cache.getClassnames(key).size());
     }
   }

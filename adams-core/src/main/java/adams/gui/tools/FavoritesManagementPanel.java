@@ -539,7 +539,7 @@ public class FavoritesManagementPanel
     dialog.getContentPane().setLayout(new BorderLayout());
 
     // combobox
-    superclasses = new Vector<String>(ClassLister.getSingleton().getClasses().keySetAll());
+    superclasses = new Vector<String>(ClassLister.getSingleton().getProperties().keySetAll());
     Collections.sort(superclasses);
     panelBox = new BasePanel(new FlowLayout(FlowLayout.LEFT));
     final JComboBox combobox = new JComboBox(superclasses);

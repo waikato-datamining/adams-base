@@ -15,24 +15,24 @@
 
 /*
  * ClassLocator.java
- * Copyright (C) 2005-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2005-2016 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package adams.core;
 
+import adams.core.logging.ConsoleLoggingObject;
+
 import java.awt.HeadlessException;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.HashSet;
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
-
-import adams.core.logging.ConsoleLoggingObject;
 
 /**
  * This class is used for discovering classes that implement a certain
@@ -50,14 +50,17 @@ public class ClassLocator
   /** for serialization. */
   private static final long serialVersionUID = 6443115424919701746L;
 
-  /** for caching queries (classname-packagename &lt;-&gt; Vector with classnames). */
-  protected Hashtable<String,List<String>> m_Cache;
+  /** for caching queries (classname-packagename &lt;-&gt; List with classnames). */
+  protected HashMap<String,List<String>> m_CacheNames;
+
+  /** for caching queries (classname-packagename &lt;-&gt; List with classes). */
+  protected HashMap<String,List<Class>> m_CacheClasses;
 
   /** for caching failed instantiations (classnames). */
   protected HashSet<String> m_BlackListed;
 
   /** the overall class cache. */
-  protected ClassCache m_ClassCache;
+  protected ClassCache m_Cache;
 
   /** the singleton. */
   protected static ClassLocator m_Singleton;
@@ -78,18 +81,43 @@ public class ClassLocator
    * @param pkgnames        the packages to search in
    * @return                a list with all the found classnames
    */
-  public List<String> find(String classname, String[] pkgnames) {
+  public List<String> findNames(String classname, String[] pkgnames) {
     List<String>	result;
     Class		cls;
 
-    result = new ArrayList<String>();
+    result = new ArrayList<>();
 
     try {
       cls    = Class.forName(classname);
-      result = find(cls, pkgnames);
+      result = findNames(cls, pkgnames);
     }
     catch (Throwable t) {
-      getLogger().log(Level.SEVERE, "Failed to instantiate '" + classname + "'/" + Utils.arrayToString(pkgnames) + " (find):", t);
+      getLogger().log(Level.SEVERE, "Failed to instantiate '" + classname + "'/" + Utils.arrayToString(pkgnames) + " (findNames):", t);
+    }
+
+    return result;
+  }
+
+  /**
+   * Checks the given packages for classes that inherited from the given class,
+   * in case it's a class, or implement this class, in case it's an interface.
+   *
+   * @param classname       the class/interface to look for
+   * @param pkgnames        the packages to search in
+   * @return                a list with all the found classes
+   */
+  public List<Class> findClasses(String classname, String[] pkgnames) {
+    List<Class>	result;
+    Class		cls;
+
+    result = new ArrayList<>();
+
+    try {
+      cls    = Class.forName(classname);
+      result = findClasses(cls, pkgnames);
+    }
+    catch (Throwable t) {
+      getLogger().log(Level.SEVERE, "Failed to instantiate '" + classname + "'/" + Utils.arrayToString(pkgnames) + " (findClasses):", t);
     }
 
     return result;
@@ -103,20 +131,46 @@ public class ClassLocator
    * @param pkgnames        the packages to search in
    * @return                a list with all the found classnames
    */
-  public List<String> find(Class cls, String[] pkgnames) {
+  public List<String> findNames(Class cls, String[] pkgnames) {
     List<String>	result;
     int			i;
     HashSet<String>	names;
 
-    result = new ArrayList<String>();
+    result = new ArrayList<>();
 
-    names = new HashSet<String>();
+    names = new HashSet<>();
     for (i = 0; i < pkgnames.length; i++)
-      names.addAll(findInPackage(cls, pkgnames[i]));
+      names.addAll(findNamesInPackage(cls, pkgnames[i]));
 
     // sort result
     result.addAll(names);
     Collections.sort(result, new StringCompare());
+
+    return result;
+  }
+
+  /**
+   * Checks the given packages for classes that inherited from the given class,
+   * in case it's a class, or implement this class, in case it's an interface.
+   *
+   * @param cls             the class/interface to look for
+   * @param pkgnames        the packages to search in
+   * @return                a list with all the found classes
+   */
+  public List<Class> findClasses(Class cls, String[] pkgnames) {
+    List<Class>		result;
+    int			i;
+    HashSet<Class> 	classes;
+
+    result = new ArrayList<>();
+
+    classes = new HashSet<>();
+    for (i = 0; i < pkgnames.length; i++)
+      classes.addAll(findClassesInPackage(cls, pkgnames[i]));
+
+    // sort result
+    result.addAll(classes);
+    Collections.sort(result, new ClassCompare());
 
     return result;
   }
@@ -129,18 +183,43 @@ public class ClassLocator
    * @param pkgname         the package to search in
    * @return                a list with all the found classnames
    */
-  public List<String> findInPackage(String classname, String pkgname) {
+  public List<String> findNamesInPackage(String classname, String pkgname) {
     List<String>	result;
     Class		cls;
 
-    result = new ArrayList<String>();
+    result = new ArrayList<>();
 
     try {
       cls    = Class.forName(classname);
-      result = findInPackage(cls, pkgname);
+      result = findNamesInPackage(cls, pkgname);
     }
     catch (Throwable t) {
-      getLogger().log(Level.SEVERE, "Failed to instantiate '" + classname + "'/" + pkgname + " (findInPackage):", t);
+      getLogger().log(Level.SEVERE, "Failed to instantiate '" + classname + "'/" + pkgname + " (findNamesInPackage):", t);
+    }
+
+    return result;
+  }
+
+  /**
+   * Checks the given package for classes that inherited from the given class,
+   * in case it's a class, or implement this class, in case it's an interface.
+   *
+   * @param classname       the class/interface to look for
+   * @param pkgname         the package to search in
+   * @return                a list with all the found classes
+   */
+  public List<Class> findClassesInPackage(String classname, String pkgname) {
+    List<Class>		result;
+    Class		cls;
+
+    result = new ArrayList<>();
+
+    try {
+      cls    = Class.forName(classname);
+      result = findClassesInPackage(cls, pkgname);
+    }
+    catch (Throwable t) {
+      getLogger().log(Level.SEVERE, "Failed to instantiate '" + classname + "'/" + pkgname + " (findClassesInPackage):", t);
     }
 
     return result;
@@ -154,20 +233,22 @@ public class ClassLocator
    * @param pkgname         the package to search in
    * @return                a list with all the found classnames
    */
-  public List<String> findInPackage(Class cls, String pkgname) {
+  public List<String> findNamesInPackage(Class cls, String pkgname) {
     List<String>	result;
+    List<Class>		classes;
     int			i;
     Class		clsNew;
 
     // already cached?
-    result = getCache(cls, pkgname);
+    result = getNameCache(cls, pkgname);
 
     if (result == null) {
       getLogger().info("Searching for '" + cls.getName() + "' in '" + pkgname + "':");
 
-      result = new ArrayList<String>();
-      if (m_ClassCache.getClassnames(pkgname) != null)
-	result.addAll(m_ClassCache.getClassnames(pkgname));
+      result  = new ArrayList<>();
+      classes = new ArrayList<>();
+      if (m_Cache.getClassnames(pkgname) != null)
+	result.addAll(m_Cache.getClassnames(pkgname));
 
       // check classes
       i = 0;
@@ -187,7 +268,7 @@ public class ClassLocator
 	  clsNew = Class.forName(result.get(i));
 	  // no abstract classes
 	  if (Modifier.isAbstract(clsNew.getModifiers())) {
-	    m_ClassCache.remove(result.get(i));
+	    m_Cache.remove(result.get(i));
 	    result.remove(i);
 	  }
 	  // must implement interface
@@ -199,6 +280,7 @@ public class ClassLocator
 	    result.remove(i);
 	  }
 	  else {
+	    classes.add(clsNew);
 	    i++;
 	  }
 	}
@@ -215,13 +297,32 @@ public class ClassLocator
       }
 
       // sort result
+      if (result.size() != classes.size())
+	throw new IllegalStateException(
+	  "Differing number of classnames and classes: " + result.size() + " != " + classes.size());
+
       Collections.sort(result, new StringCompare());
+      Collections.sort(classes, new ClassCompare());
 
       // add to cache
-      addCache(cls, pkgname, result);
+      addCache(cls, pkgname, result, classes);
     }
 
     return result;
+  }
+
+  /**
+   * Checks the given package for classes that inherited from the given class,
+   * in case it's a class, or implement this class, in case it's an interface.
+   *
+   * @param cls             the class/interface to look for
+   * @param pkgname         the package to search in
+   * @return                a list with all the found classes
+   */
+  public List<Class> findClassesInPackage(Class cls, String pkgname) {
+    // to fill cache
+    findNamesInPackage(cls, pkgname);
+    return getClassCache(cls, pkgname);
   }
 
   /**
@@ -231,12 +332,12 @@ public class ClassLocator
    */
   public List<String> findPackages() {
     List<String>	result;
-    Enumeration<String>	packages;
+    Iterator<String> packages;
 
-    result   = new ArrayList<String>();
-    packages = m_ClassCache.packages();
-    while (packages.hasMoreElements())
-      result.add(packages.nextElement());
+    result   = new ArrayList<>();
+    packages = m_Cache.packages();
+    while (packages.hasNext())
+      result.add(packages.next());
     Collections.sort(result, new StringCompare());
 
     return result;
@@ -246,12 +347,14 @@ public class ClassLocator
    * initializes the cache for the classnames.
    */
   protected void initCache() {
-    if (m_Cache == null)
-      m_Cache = new Hashtable<String,List<String>>();
+    if (m_CacheNames == null)
+      m_CacheNames = new HashMap<>();
+    if (m_CacheClasses == null)
+      m_CacheClasses = new HashMap<>();
     if (m_BlackListed == null)
-      m_BlackListed = new HashSet<String>();
-    if (m_ClassCache == null)
-      m_ClassCache = new ClassCache();
+      m_BlackListed = new HashSet<>();
+    if (m_Cache == null)
+      m_Cache = new ClassCache();
   }
 
   /**
@@ -261,8 +364,9 @@ public class ClassLocator
    * @param pkgname	the package name the classes were found in
    * @param classnames	the list of classnames to cache
    */
-  protected void addCache(Class cls, String pkgname, List<String> classnames) {
-    m_Cache.put(cls.getName() + "-" + pkgname, classnames);
+  protected void addCache(Class cls, String pkgname, List<String> classnames, List<Class> classes) {
+    m_CacheNames.put(cls.getName() + "-" + pkgname, classnames);
+    m_CacheClasses.put(cls.getName() + "-" + pkgname, classes);
   }
 
   /**
@@ -273,8 +377,20 @@ public class ClassLocator
    * @param pkgname	the package name for the classes
    * @return		the classnames if found, otherwise null
    */
-  protected List<String> getCache(Class cls, String pkgname) {
-    return m_Cache.get(cls.getName() + "-" + pkgname);
+  protected List<String> getNameCache(Class cls, String pkgname) {
+    return m_CacheNames.get(cls.getName() + "-" + pkgname);
+  }
+
+  /**
+   * returns the list of classes associated with this class and package, if
+   * available, otherwise null.
+   *
+   * @param cls		the class to get the classes for
+   * @param pkgname	the package name for the classes
+   * @return		the classes if found, otherwise null
+   */
+  protected List<Class> getClassCache(Class cls, String pkgname) {
+    return m_CacheClasses.get(cls.getName() + "-" + pkgname);
   }
 
   /**
@@ -409,15 +525,15 @@ public class ClassLocator
     }
     else if (args.length == 2) {
       // packages
-      packages = new ArrayList<String>();
+      packages = new ArrayList<>();
       tok = new StringTokenizer(args[1], ",");
       while (tok.hasMoreTokens())
         packages.add(tok.nextToken());
 
       // search
-      list = getSingleton().find(
-  		args[0],
-  		packages.toArray(new String[packages.size()]));
+      list = getSingleton().findNames(
+	args[0],
+	packages.toArray(new String[packages.size()]));
 
       // print result, if any
       System.out.println(

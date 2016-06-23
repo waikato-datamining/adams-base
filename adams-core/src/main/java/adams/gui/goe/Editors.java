@@ -74,7 +74,7 @@ public class Editors {
 
     result  = new Properties();
 
-    classes = ClassLister.getSingleton().getClasses();
+    classes = ClassLister.getSingleton().getProperties();
 
     // determine the editors
     goeEditor = GenericObjectEditor.class.getName();
@@ -108,7 +108,7 @@ public class Editors {
     iter = uniquePackages.iterator();
     while (iter.hasNext()) {
       pkg   = iter.next();
-      enums = ClassLocator.getSingleton().findInPackage(Enum.class, pkg);
+      enums = ClassLocator.getSingleton().findNamesInPackage(Enum.class, pkg);
       for (String cname: enums) {
 	if (!result.hasKey(cname)) {
           result.setProperty(cname, enmEditor);

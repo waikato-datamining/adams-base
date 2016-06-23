@@ -14,8 +14,8 @@
  */
 
 /**
- * StringCompare.java
- * Copyright (C) 2005-2010 University of Waikato, Hamilton, New Zealand
+ * ClassCompare.java
+ * Copyright (C) 2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.core;
 
@@ -23,19 +23,17 @@ import java.io.Serializable;
 import java.util.Comparator;
 
 /**
- * Compares two strings with the following order:
+ * Compares the names of two classes with the following order:
  * <ul>
  *    <li>case insensitive</li>
- *    <li>german umlauts (&auml; , &ouml; etc.) or other non-ASCII letters
- *    are treated as special chars</li>
  *    <li>special chars &lt; numbers &lt; letters</li>
  * </ul>
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class StringCompare
-  implements Comparator<String>, Serializable {
+public class ClassCompare
+  implements Comparator<Class>, Serializable {
 
   /** for serialization. */
   private static final long serialVersionUID = 7944139083514487579L;
@@ -49,7 +47,6 @@ public class StringCompare
     return 
 	"Compares two strings with the following order:\n"
 	+ "- case insensitive\n"
-	+ "- german umlauts or other non-ASCII letters are treated as special chars\n"
 	+ "- special chars < numbers < letters";
   }
   
@@ -88,11 +85,11 @@ public class StringCompare
   /**
    * Compares its two arguments for order.
    *
-   * @param o1		the first string
-   * @param o2		the second string
+   * @param o1		the first class
+   * @param o2		the second class
    * @return		-1 if o1&lt;o2, 0 if o1=o2 and 1 if o1&;gt;o2
    */
-  public int compare(String o1, String o2) {
+  public int compare(Class o1, Class o2) {
     String        s1;
     String        s2;
     int           i;
@@ -103,8 +100,8 @@ public class StringCompare
     result = 0;   // they're equal
 
     // get lower case string
-    s1 = o1.toLowerCase();
-    s2 = o2.toLowerCase();
+    s1 = o1.getName().toLowerCase();
+    s2 = o2.getName().toLowerCase();
 
     // same length
     s1 = fillUp(s1, s2.length());
@@ -148,6 +145,6 @@ public class StringCompare
    */
   @Override
   public boolean equals(Object obj) {
-    return (obj instanceof StringCompare);
+    return (obj instanceof ClassCompare);
   }
 }

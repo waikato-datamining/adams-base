@@ -872,7 +872,7 @@ public class GenericObjectEditor
     int			i;
 
     result     = new ArrayList<>();
-    classesStr = ClassLister.getSingleton().getClasses().getProperty(m_ClassType.getName());
+    classesStr = ClassLister.getSingleton().getProperties().getProperty(m_ClassType.getName());
     if (classesStr == null)
       classes = new String[]{m_ClassType.getName()};
     else

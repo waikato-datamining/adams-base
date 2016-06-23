@@ -15,19 +15,10 @@
 
 /*
  * ClassLister.java
- * Copyright (C) 2007-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2007-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.regex.Pattern;
 
 import adams.core.base.BaseRegExp;
 import adams.core.logging.ConsoleLoggingObject;
@@ -35,6 +26,15 @@ import adams.core.option.OptionUtils;
 import adams.env.ClassListerBlacklistDefinition;
 import adams.env.ClassListerDefinition;
 import adams.env.Environment;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.HashMap;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.regex.Pattern;
 
 /**
  * Determines the classnames of superclasses that are to be displayed in
@@ -80,10 +80,19 @@ public class ClassLister
   protected Properties m_Packages;
 
   /** the properties (superclass/classes). */
-  protected Properties m_Classes;
+  protected Properties m_Properties; // TODO remove??
+
+  /** the cache (superclass/classnames). */
+  protected HashMap<String,HashSet<String>> m_CacheNames;
+
+  /** the list (superclass/classnames). */
+  protected HashMap<String,List<String>> m_ListNames;
 
   /** the cache (superclass/classes). */
-  protected Hashtable<String,HashSet<String>> m_ClassesCache;
+  protected HashMap<String,HashSet<Class>> m_CacheClasses;
+
+  /** the list (superclass/classes). */
+  protected HashMap<String,List<Class>> m_ListClasses;
 
   /** the singleton. */
   protected static ClassLister m_Singleton;
@@ -103,7 +112,8 @@ public class ClassLister
     Enumeration			enm;
     String			superclass;
     String[]			packages;
-    List<String>		classes;
+    List<String> 		names;
+    List<Class>			classes;
     Properties			blacklist;
     String[]			patterns;
     int				i;
@@ -111,24 +121,37 @@ public class ClassLister
 
     try {
       m_Packages     = Environment.getInstance().read(ClassListerDefinition.KEY);
-      m_Classes      = new Properties();
-      m_ClassesCache = new Hashtable<String,HashSet<String>>();
+      m_Properties   = new Properties();
+      m_CacheNames   = new HashMap<>();
+      m_ListNames    = new HashMap<>();
+      m_CacheClasses = new HashMap<>();
+      m_ListClasses  = new HashMap<>();
       blacklist      = Environment.getInstance().read(ClassListerBlacklistDefinition.KEY);
 
       enm = m_Packages.propertyNames();
       while (enm.hasMoreElements()) {
 	superclass = (String) enm.nextElement();
 	packages   = m_Packages.getProperty(superclass).replaceAll(" ", "").split(",");
-	classes    = ClassLocator.getSingleton().find(superclass, packages);
+	names      = ClassLocator.getSingleton().findNames(superclass, packages);
+	classes    = ClassLocator.getSingleton().findClasses(superclass, packages);
 	// remove blacklisted classes
 	if (blacklist.hasKey(superclass)) {
 	  try {
 	    patterns = blacklist.getProperty(superclass).replaceAll(" ", "").split(",");
 	    for (String pattern: patterns) {
 	      p = Pattern.compile(pattern);
+	      // names
+	      i = 0;
+	      while (i < names.size()) {
+		if (p.matcher(names.get(i)).matches())
+		  names.remove(i);
+		else
+		  i++;
+	      }
+	      // classes
 	      i = 0;
 	      while (i < classes.size()) {
-		if (p.matcher(classes.get(i)).matches())
+		if (p.matcher(classes.get(i).getName()).matches())
 		  classes.remove(i);
 		else
 		  i++;
@@ -140,8 +163,11 @@ public class ClassLister
 	  }
 	}
 	// create class list
-	m_Classes.setProperty(superclass, Utils.flatten(classes, ","));
-	m_ClassesCache.put(superclass, new HashSet<String>(classes));
+	m_Properties.setProperty(superclass, Utils.flatten(names, ","));
+	m_CacheNames.put(superclass, new HashSet<>(names));
+	m_ListNames.put(superclass, new ArrayList<>(names));
+	m_CacheClasses.put(superclass, new HashSet<>(classes));
+	m_ListClasses.put(superclass, new ArrayList<>(classes));
       }
     }
     catch (Exception e) {
@@ -167,13 +193,39 @@ public class ClassLister
    * @return		the classnames of the derived classes
    */
   public String[] getClassnames(String superclass) {
-    String	classes;
+    List<String>	list;
 
-    classes = m_Classes.getProperty(superclass);
-    if ((classes == null) || (classes.length() == 0))
+    list = m_ListNames.get(superclass);
+    if (list == null)
       return new String[0];
     else
-      return classes.split(",");
+      return list.toArray(new String[list.size()]);
+  }
+
+  /**
+   * Returns all the classs that were found for this superclass.
+   *
+   * @param superclass	the superclass to return the derived classes for
+   * @return		the classes of the derived classes
+   */
+  public Class[] getClasses(Class superclass) {
+    return getClasses(superclass.getName());
+  }
+
+  /**
+   * Returns all the classes that were found for this superclass.
+   *
+   * @param superclass	the superclass to return the derived classes for
+   * @return		the classes of the derived classes
+   */
+  public Class[] getClasses(String superclass) {
+    List<Class>	list;
+
+    list = m_ListClasses.get(superclass);
+    if (list == null)
+      return new Class[0];
+    else
+      return list.toArray(new Class[list.size()]);
   }
 
   /**
@@ -193,12 +245,12 @@ public class ClassLister
    * @return		the superclass(es)
    */
   public String[] getSuperclasses(String cls) {
-    ArrayList<String>	result;
+    List<String>	result;
     
-    result = new ArrayList<String>();
+    result = new ArrayList<>();
     
-    for (String superclass: m_ClassesCache.keySet()) {
-      if (m_ClassesCache.get(superclass).contains(cls))
+    for (String superclass: m_CacheNames.keySet()) {
+      if (m_CacheNames.get(superclass).contains(cls))
 	result.add(superclass);
     }
     
@@ -214,9 +266,9 @@ public class ClassLister
    * @return		the superclasses
    */
   public String[] getSuperclasses() {
-    ArrayList<String>	result;
+    List<String>	result;
     
-    result = new ArrayList<String>(m_ClassesCache.keySet());
+    result = new ArrayList<>(m_CacheNames.keySet());
     Collections.sort(result);
     
     return result.toArray(new String[result.size()]);
@@ -227,8 +279,8 @@ public class ClassLister
    *
    * @return		the properties object listing all found classes
    */
-  public Properties getClasses() {
-    return m_Classes;
+  public Properties getProperties() {
+    return m_Properties;
   }
 
   /**
@@ -274,7 +326,7 @@ public class ClassLister
    */
   @Override
   public String toString() {
-    return m_Classes.toString();
+    return m_Properties.toString();
   }
 
   /**
@@ -292,9 +344,8 @@ public class ClassLister
   /**
    * Outputs a list of available conversions.
    * 
-   * @param lister	the classname lister to use
    * @param args	the commandline options: [-env classname] [-super classname] [-match regexp]
-   * @throws		if invalid environment class or invalid regular expression
+   * @throws Exception	if invalid environment class or invalid regular expression
    */
   public static void main(String[] args) throws Exception {
     if (OptionUtils.helpRequested(args)) {

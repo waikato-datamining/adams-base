@@ -519,7 +519,7 @@ public class NamedSetupManagementPanel
 
     // first: select superclass
     superclasses = new Vector<String>();
-    enm          = ClassLister.getSingleton().getClasses().propertyNames();
+    enm          = ClassLister.getSingleton().getProperties().propertyNames();
     while (enm.hasMoreElements())
       superclasses.add(enm.nextElement().toString());
     Collections.sort(superclasses);

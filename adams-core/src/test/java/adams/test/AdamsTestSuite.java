@@ -72,7 +72,7 @@ public class AdamsTestSuite
     result = new ArrayList();
     unique = new HashSet<String>();
 
-    names = ClassLocator.getSingleton().find(superclass, packages.toArray(new String[packages.size()]));
+    names = ClassLocator.getSingleton().findNames(superclass, packages.toArray(new String[packages.size()]));
     for (i = 0; i < names.size(); i++) {
       // skip non-public classes
       if (!isValidClassname((String) names.get(i)))
