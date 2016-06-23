@@ -33,7 +33,8 @@ import java.util.List;
  * @version $Revision: 9391 $
  */
 public abstract class AbstractIncludeExternalActor
-  extends AbstractActor {
+  extends AbstractActor
+  implements ExternalActorFileHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = -7860206690560690212L;

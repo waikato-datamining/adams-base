@@ -41,7 +41,7 @@ import adams.flow.core.ActorWithConditionalEquivalent;
 import adams.flow.core.ActorWithTimedEquivalent;
 import adams.flow.core.CallableActorHandler;
 import adams.flow.core.CallableActorReference;
-import adams.flow.core.ExternalActorHandler;
+import adams.flow.core.ExternalActorFileHandler;
 import adams.flow.core.InputConsumer;
 import adams.flow.core.MutableActorHandler;
 import adams.flow.core.OutputProducer;
@@ -1152,12 +1152,12 @@ public class TreeOperations
    */
   public void editFlow(TreePath path) {
     Node			node;
-    ExternalActorHandler 	actor;
+    ExternalActorFileHandler 	actor;
 
     node = TreeHelper.pathToNode(path);
     if (node == null)
       return;
-    actor = (ExternalActorHandler) node.getActor();
+    actor = (ExternalActorFileHandler) node.getActor();
     if (actor == null)
       return;
     if (getOwner() == null)

@@ -15,12 +15,12 @@
 
 /**
  * EditExternalFlow.java
- * Copyright (C) 2014-2015 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, NZ
  */
 package adams.gui.flow.tree.menu;
 
 import adams.core.io.FlowFile;
-import adams.flow.core.ExternalActorHandler;
+import adams.flow.core.ExternalActorFileHandler;
 
 import java.awt.event.ActionEvent;
 
@@ -51,9 +51,9 @@ public class EditExternalFlow
    */
   @Override
   protected void doUpdate() {
-    boolean enabled = m_State.editable && m_State.isSingleSel && (m_State.selNode.getActor() instanceof ExternalActorHandler);
+    boolean enabled = m_State.editable && m_State.isSingleSel && (m_State.selNode.getActor() instanceof ExternalActorFileHandler);
     if (enabled) {
-      FlowFile file = ((ExternalActorHandler) m_State.selNode.getActor()).getActorFile();
+      FlowFile file = ((ExternalActorFileHandler) m_State.selNode.getActor()).getActorFile();
       enabled = file.exists() && !file.isDirectory();
     }
     setEnabled(enabled);
