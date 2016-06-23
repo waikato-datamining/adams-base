@@ -210,7 +210,7 @@ public class FlowPanel
     m_TitleGenerator        = new TitleGenerator(FlowEditorPanel.DEFAULT_TITLE, true);
     m_FilenameProposer      = new FilenameProposer(PREFIX_NEW, Actor.FILE_EXTENSION, getProperties().getPath("InitialDir", "%h"));
     m_Title                 = "";
-    m_RegisteredDisplays    = new HashMap<Class,HashMap<String,AbstractDisplay>>();
+    m_RegisteredDisplays    = new HashMap<>();
     m_CheckOnSave           = getProperties().getBoolean("CheckOnSave", true);
     m_LastReader            = null;
     m_LastWriter            = null;
@@ -1336,15 +1336,7 @@ public class FlowPanel
    */
   @Override
   public void grabFocus() {
-    Runnable	runnable;
-
-    runnable = new Runnable() {
-      @Override
-      public void run() {
-	getTree().grabFocus();
-      }
-    };
-    SwingUtilities.invokeLater(runnable);
+    SwingUtilities.invokeLater(() -> getTree().grabFocus());
   }
 
   /**
@@ -1482,7 +1474,7 @@ public class FlowPanel
     HashMap<String,AbstractDisplay>	panels;
     
     if (!m_RegisteredDisplays.containsKey(cls))
-      m_RegisteredDisplays.put(cls, new HashMap<String,AbstractDisplay>());
+      m_RegisteredDisplays.put(cls, new HashMap<>());
     
     panels = m_RegisteredDisplays.get(cls);
     result = panels.put(name, panel);
