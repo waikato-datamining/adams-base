@@ -23,12 +23,12 @@ import adams.core.CleanUpHandler;
 import adams.core.Properties;
 import adams.flow.core.Actor;
 import adams.gui.core.BaseTabbedPane;
+import adams.gui.core.ConsolePanel;
 import adams.gui.core.DragAndDropTabbedPane;
 import adams.gui.flow.tab.RegisteredDisplaysTab;
 import adams.gui.flow.tree.Tree;
 
 import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.tree.TreePath;
 import java.awt.Component;
 import java.io.File;
@@ -50,6 +50,9 @@ public class FlowTabbedPane
   /** the owning editor. */
   protected FlowEditorPanel m_Owner;
 
+  /** the flowpanel class to use. */
+  protected Class m_FlowPanelClass;
+
   /**
    * Initializes the tabbed pane.
    *
@@ -62,22 +65,16 @@ public class FlowTabbedPane
 
     setCloseTabsWithMiddelMouseButton(true);
     setShowCloseTabButton(true);
-    setMiddleMouseButtonCloseApprover(new MiddleMouseButtonCloseApprover() {
-      public boolean approveClosingWithMiddleMouseButton(BaseTabbedPane source) {
-	boolean	result = checkForModified();
-	// to avoid second popup from checkModified() in removeTab method
-	FlowPanel panel = getCurrentPanel();
-	if (result && panel.isModified())
-	  panel.setModified(false);
-	return result;
-      }
+    setMiddleMouseButtonCloseApprover((BaseTabbedPane source) -> {
+      boolean	result = checkForModified();
+      // to avoid second popup from checkModified() in removeTab method
+      FlowPanel panel = getCurrentPanel();
+      if (result && panel.isModified())
+	panel.setModified(false);
+      return result;
     });
 
-    addChangeListener(new ChangeListener() {
-      public void stateChanged(ChangeEvent e) {
-	tabSelected(e);
-      }
-    });
+    addChangeListener((ChangeEvent e) -> tabSelected(e));
   }
 
   /**
@@ -98,19 +95,26 @@ public class FlowTabbedPane
     FlowPanel	result;
     Properties	props;
     String	clsname;
-    Class	cls;
     Constructor	constr;
-    
-    props   = FlowEditorPanel.getPropertiesEditor();
-    clsname = props.getProperty("FlowPanelClass", FlowPanel.class.getName());
+
+    if (m_FlowPanelClass == null) {
+      props   = FlowEditorPanel.getPropertiesEditor();
+      clsname = props.getProperty("FlowPanelClass", FlowPanel.class.getName());
+      try {
+        m_FlowPanelClass = Class.forName(clsname);
+      }
+      catch (Exception e) {
+	m_FlowPanelClass = FlowPanel.class;
+	ConsolePanel.getSingleton().append("Failed to instantiate flow panel class: " + clsname, e);
+      }
+    }
+
     try {
-      cls    = Class.forName(clsname);
-      constr = cls.getConstructor(new Class[]{FlowTabbedPane.class});
-      result = (FlowPanel) constr.newInstance(new Object[]{this});
+      constr = m_FlowPanelClass.getConstructor(FlowTabbedPane.class);
+      result = (FlowPanel) constr.newInstance(this);
     }
     catch (Exception e) {
-      System.err.println("Failed to instantiate flow panel class: " + clsname);
-      e.printStackTrace();
+      ConsolePanel.getSingleton().append("Failed to instantiate flow panel class: " + m_FlowPanelClass.getClass().getName(), e);
       result = new FlowPanel(this);
     }
 
