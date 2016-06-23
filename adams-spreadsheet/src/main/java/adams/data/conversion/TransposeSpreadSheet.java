@@ -15,10 +15,11 @@
 
 /**
  * TransposeSpreadSheet.java
- * Copyright (C) 2011-2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
 
+import adams.data.spreadsheet.Cell;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 
@@ -192,17 +193,52 @@ public class TransposeSpreadSheet
   }
 
   /**
+   * Turns the spreadsheet into a matrix of Cell objects (first row is header).
+   *
+   * @param sheet	the spreadsheet to turn into matrix
+   * @return		the generated matrix, missing cells are depicted by null
+   */
+  protected Cell[][] toMatrix(SpreadSheet sheet) {
+    Cell[][]	result;
+    int		x;
+    int		y;
+    Row		row;
+
+    result = new Cell[sheet.getRowCount() + 1][sheet.getColumnCount()];
+
+    // header
+    row = sheet.getHeaderRow();
+    for (x = 0; x < sheet.getColumnCount(); x++) {
+      result[0][x] = null;
+      if (row.hasCell(x) && !row.getCell(x).isMissing())
+	result[0][x] = row.getCell(x);
+    }
+
+    // data
+    for (y = 0; y < sheet.getRowCount(); y++) {
+      row = sheet.getRow(y);
+      for (x = 0; x < sheet.getColumnCount(); x++) {
+	result[y+1][x] = null;
+	if (row.hasCell(x) && !row.getCell(x).isMissing())
+	  result[y+1][x] = row.getCell(x);
+      }
+    }
+
+    return result;
+  }
+
+  /**
    * Transposes the matrix.
    * 
-   * @param matrix	the matrix to transose
-   * @return		the tranposed matrix
+   * @param matrix	the matrix to transpose
+   * @return		the transposed matrix
    */
-  protected Object[][] transpose(Object[][] matrix) {
-    Object[][]	result;
+  protected Cell[][] transpose(Cell[][] matrix) {
+    Cell[][]	result;
     int		x;
     int		y;
     
-    result = new Object[matrix[0].length][matrix.length];
+    result = new Cell[matrix[0].length][matrix.length];
     
     for (y = 0; y < matrix.length; y++) {
       for (x = 0; x < matrix[0].length; x++) {
@@ -290,7 +326,7 @@ public class TransposeSpreadSheet
     int			x;
     int			y;
     Row			rowOut;
-    Object[][]		matrix;
+    Cell[][]		matrix;
 
     result = input.newInstance();
     result.setDataRowClass(input.getDataRowClass());
@@ -300,7 +336,7 @@ public class TransposeSpreadSheet
     for (String comment: input.getComments())
       result.addComment(comment);
 
-    matrix = transpose(input.toMatrix());
+    matrix = transpose(toMatrix(input));
     
     // !FAH & !HAF
     if (!m_UseFirstColumnAsHeader && !m_UseHeaderAsFirstColumn) {
@@ -314,9 +350,9 @@ public class TransposeSpreadSheet
 	rowOut = result.addRow();
 	for (x = 1; x < matrix[0].length; x++) {
 	  if (matrix[y][x] == null)
-	    rowOut.addCell(x - 1).setContent(SpreadSheet.MISSING_VALUE);
+	    rowOut.addCell(x - 1).setMissing();
 	  else
-	    rowOut.addCell(x - 1).setContent(matrix[y][x].toString());
+	    rowOut.addCell(x - 1).assign(matrix[y][x]);
 	}
       }
     }
@@ -325,16 +361,16 @@ public class TransposeSpreadSheet
       // header
       rowOut = result.getHeaderRow();
       for (x = 1; x < matrix[0].length; x++) {
-	rowOut.addCell("" + (x - 1)).setContent(matrix[0][x].toString());
+	rowOut.addCell("" + (x - 1)).assign(matrix[0][x]);
       }
       // data
       for (y = 1; y < matrix.length; y++) {
 	rowOut = result.addRow();
 	for (x = 1; x < matrix[0].length; x++) {
 	  if (matrix[y][x] == null)
-	    rowOut.addCell(x - 1).setContent(SpreadSheet.MISSING_VALUE);
+	    rowOut.addCell(x - 1).setMissing();
 	  else
-	    rowOut.addCell(x - 1).setContent(matrix[y][x].toString());
+	    rowOut.addCell(x - 1).assign(matrix[y][x]);
 	}
       }
     }
@@ -350,9 +386,9 @@ public class TransposeSpreadSheet
 	rowOut = result.addRow();
 	for (x = 0; x < matrix[0].length; x++) {
 	  if (matrix[y][x] == null)
-	    rowOut.addCell(x).setContent(SpreadSheet.MISSING_VALUE);
+	    rowOut.addCell(x).setMissing();
 	  else
-	    rowOut.addCell(x).setContent(matrix[y][x].toString());
+	    rowOut.addCell(x).assign(matrix[y][x]);
 	}
       }
     }
@@ -365,16 +401,16 @@ public class TransposeSpreadSheet
 	if (matrix[y][x] == null)
 	  rowOut.addCell("" + x).setContent(m_ColumnPrefix + (x + 1));
 	else
-	  rowOut.addCell("" + x).setContent(matrix[y][x].toString());
+	  rowOut.addCell("" + x).assign(matrix[y][x]);
       }
       // data
       for (y = 1; y < matrix.length; y++) {
 	rowOut = result.addRow();
 	for (x = 0; x < matrix[0].length; x++) {
 	  if (matrix[y][x] == null)
-	    rowOut.addCell(x).setContent(SpreadSheet.MISSING_VALUE);
+	    rowOut.addCell(x).setMissing();
 	  else
-	    rowOut.addCell(x).setContent(matrix[y][x].toString());
+	    rowOut.addCell(x).assign(matrix[y][x]);
 	}
       }
     }
