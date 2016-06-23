@@ -93,10 +93,15 @@ public class Tree
    * @version $Revision$
    */
   public static class TreeState {
+    /** the nested commandlines. */
     public List<String> actors;
+    /** the full names of the expanded actors. */
     public List<String> expanded;
+    /** whether the tree is modified. */
     public boolean modified;
+    /** the associated file, if any. */
     public File file;
+    /** the full names of the currently selected actors. */
     public List<String> selection;
   }
 
@@ -221,7 +226,7 @@ public class Tree
    * @param root	the root actor, can be null
    */
   public Tree(FlowPanel owner, Actor root) {
-    super();
+    super(new DefaultTreeModel(null));
     m_Owner = owner;
     buildTree(root);
   }
@@ -231,7 +236,7 @@ public class Tree
    */
   @Override
   protected void initialize() {
-    String[]		classes;
+    Class[]		classes;
     TreePopupAction	action;
 
     super.initialize();
@@ -239,7 +244,7 @@ public class Tree
     m_Self                        = this;
     m_Operations                  = new TreeOperations(this);
     m_Modified                    = false;
-    m_ActorChangeListeners        = new HashSet<ActorChangeListener>();
+    m_ActorChangeListeners        = new HashSet<>();
     m_LastSearchString            = "";
     m_LastSearchNode              = null;
     m_ShowQuickInfo               = true;
@@ -299,15 +304,15 @@ public class Tree
     });
 
     m_Shortcuts = new ArrayList<>();
-    classes     = ClassLister.getSingleton().getClassnames(TreePopupAction.class);
-    for (String cls: classes) {
+    classes     = ClassLister.getSingleton().getClasses(TreePopupAction.class);
+    for (Class cls: classes) {
       try {
-	action = (TreePopupAction) Class.forName(cls).newInstance();
+	action = (TreePopupAction) cls.newInstance();
 	if (action.hasAccelerator())
 	  m_Shortcuts.add(action);
       }
       catch (Exception e) {
-	ConsolePanel.getSingleton().append(this, "Failed to instantiate action '" + cls + "':", e);
+	ConsolePanel.getSingleton().append(this, "Failed to instantiate action '" + cls.getName() + "':", e);
       }
     }
     addKeyListener(new KeyAdapter() {
@@ -351,9 +356,9 @@ public class Tree
 
     addNodeDroppedListener((NodeDroppedEvent e) -> {
       BaseTreeNode[] tnodes = e.getNodes();
-      ArrayList<Node> nodes = new ArrayList<Node>();
-
-      // TODO queue
+      ArrayList<Node> nodes = new ArrayList<>();
+      for (BaseTreeNode node: tnodes)
+	nodes.add((Node) node);
 
       // update actor name, if necessary
       if (e.getNotificationTime() == NotificationTime.FINISHED) {
@@ -554,7 +559,7 @@ public class Tree
       }
       else if (parent.getActor() instanceof ActorHandler) {
 	actor = node.getActor();
-	names = new HashSet<String>();
+	names = new HashSet<>();
 	for (i = 0; i < parent.getChildCount(); i++) {
 	  if (parent.getChildAt(i) == node)
 	    continue;
