@@ -112,9 +112,9 @@ public class ClassCache
 
     result = classname;
 
-    if (result.indexOf("/") > -1)
+    if (result.contains("/"))
       result = result.replace("/", ".");
-    if (result.indexOf("\\") > -1)
+    if (result.contains("\\"))
       result = result.replace("\\", ".");
     if (result.endsWith(".class"))
       result = result.substring(0, result.length() - 6);
@@ -129,7 +129,7 @@ public class ClassCache
    * @return		the package name
    */
   protected String extractPackage(String classname) {
-    if (classname.indexOf(".") > -1)
+    if (classname.contains("."))
       return classname.substring(0, classname.lastIndexOf("."));
     else
       return DEFAULT_PACKAGE;
@@ -152,7 +152,7 @@ public class ClassCache
     
     // add to cache
     if (!m_Cache.containsKey(pkgname))
-      m_Cache.put(pkgname, new HashSet<String>());
+      m_Cache.put(pkgname, new HashSet<>());
     names = m_Cache.get(pkgname);
     return names.add(classname);
   }
@@ -295,7 +295,7 @@ public class ClassCache
     if (m_Cache.containsKey(pkgname))
       return m_Cache.get(pkgname);
     else
-      return new HashSet<String>();
+      return new HashSet<>();
   }
 
   /**
@@ -340,7 +340,7 @@ public class ClassCache
     URLClassLoader 	sysLoader;
     URL[] 		urls;
 
-    m_Cache   = new Hashtable<String,HashSet<String>>();
+    m_Cache   = new Hashtable<>();
     sysLoader = (URLClassLoader) getClass().getClassLoader();
     urls      = sysLoader.getURLs();
     for (URL url: urls) {
