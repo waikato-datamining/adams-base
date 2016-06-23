@@ -79,9 +79,6 @@ public class ClassLister
   /** the properties (superclass/packages). */
   protected Properties m_Packages;
 
-  /** the properties (superclass/classes). */
-  protected Properties m_Properties; // TODO remove??
-
   /** the cache (superclass/classnames). */
   protected HashMap<String,HashSet<String>> m_CacheNames;
 
@@ -121,7 +118,6 @@ public class ClassLister
 
     try {
       m_Packages     = Environment.getInstance().read(ClassListerDefinition.KEY);
-      m_Properties   = new Properties();
       m_CacheNames   = new HashMap<>();
       m_ListNames    = new HashMap<>();
       m_CacheClasses = new HashMap<>();
@@ -163,7 +159,6 @@ public class ClassLister
 	  }
 	}
 	// create class list
-	m_Properties.setProperty(superclass, Utils.flatten(names, ","));
 	m_CacheNames.put(superclass, new HashSet<>(names));
 	m_ListNames.put(superclass, new ArrayList<>(names));
 	m_CacheClasses.put(superclass, new HashSet<>(classes));
@@ -275,15 +270,6 @@ public class ClassLister
   }
   
   /**
-   * Returns the superclass-found_classes relation.
-   *
-   * @return		the properties object listing all found classes
-   */
-  public Properties getProperties() {
-    return m_Properties;
-  }
-
-  /**
    * Returns all the packages that were found for this superclass.
    *
    * @param superclass	the superclass to return the packages for
@@ -326,7 +312,19 @@ public class ClassLister
    */
   @Override
   public String toString() {
-    return m_Properties.toString();
+    StringBuilder	result;
+    List<String>	keys;
+
+    result = new StringBuilder();
+
+    keys = new ArrayList<>(m_ListNames.keySet());
+    Collections.sort(keys);
+    for (String key: keys) {
+      result.append(key).append("\n");
+      result.append(Utils.flatten(m_ListNames.get(key), ",")).append("\n\n");
+    }
+
+    return result.toString();
   }
 
   /**

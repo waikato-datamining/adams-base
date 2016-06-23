@@ -79,6 +79,7 @@ import java.beans.PropertyEditor;
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -450,7 +451,7 @@ public class GenericObjectEditor
 	if (m_Backup != null) {
 	  m_Object = copyObject(m_Backup);
 	  GenericObjectEditor.this.firePropertyChange();
-	  m_ObjectNames = getClassesFromProperties();
+	  m_ObjectNames = getClasses();
 	  updateObjectNames();
 	  updateChildPropertySheet();
 	}
@@ -535,7 +536,7 @@ public class GenericObjectEditor
       add(allButs, BorderLayout.SOUTH);
 
       if (m_ClassType != null) {
-	m_ObjectNames = getClassesFromProperties();
+	m_ObjectNames = getClasses();
 	if (m_Object != null) {
 	  updateObjectNames();
 	  updateChildPropertySheet();
@@ -865,23 +866,8 @@ public class GenericObjectEditor
    *
    * @return 		the vector containing all the (sorted) classnames
    */
-  protected List<String> getClassesFromProperties() {
-    List<String> 	result;
-    String		classesStr;
-    String[] 		classes;
-    int			i;
-
-    result     = new ArrayList<>();
-    classesStr = ClassLister.getSingleton().getProperties().getProperty(m_ClassType.getName());
-    if (classesStr == null)
-      classes = new String[]{m_ClassType.getName()};
-    else
-      classes = classesStr.replaceAll(" ", "").split(",");
-    for (i = 0; i < classes.length; i++)
-      result.add(classes[i]);
-    Collections.sort(result);
-
-    return result;
+  protected List<String> getClasses() {
+    return new ArrayList<>(Arrays.asList(ClassLister.getSingleton().getClassnames(m_ClassType)));
   }
 
   /**
@@ -890,7 +876,7 @@ public class GenericObjectEditor
    */
   protected void updateObjectNames() {
     if (m_ObjectNames == null)
-      m_ObjectNames = getClassesFromProperties();
+      m_ObjectNames = getClasses();
 
     if (m_Object != null) {
       String className = m_Object.getClass().getName();
@@ -919,7 +905,7 @@ public class GenericObjectEditor
    */
   public void setClassType(Class type) {
     m_ClassType = type;
-    m_ObjectNames = getClassesFromProperties();
+    m_ObjectNames = getClasses();
     m_DefaultValueDetermined = null;
   }
 
@@ -945,7 +931,7 @@ public class GenericObjectEditor
 
     if (m_DefaultValueDetermined == null) {
       m_DefaultValueDetermined = true;
-      list = getClassesFromProperties();
+      list = getClasses();
       if (m_Filter != null) {
 	i    = 0;
 	while ((list.size() > 0) && (i < list.size())) {

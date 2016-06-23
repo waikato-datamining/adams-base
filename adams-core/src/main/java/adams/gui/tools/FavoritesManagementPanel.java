@@ -51,7 +51,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.Vector;
 
 /**
@@ -523,13 +523,14 @@ public class FavoritesManagementPanel
    * adding a favorite.
    */
   protected void addSuperclass() {
-    BaseDialog		dialog;
-    BasePanel		panel;
-    BasePanel		panelBox;
-    JButton		buttonOK;
-    JButton		buttonCancel;
-    JLabel		label;
-    Vector<String>	superclasses;
+    BaseDialog			dialog;
+    BasePanel			panel;
+    BasePanel			panelBox;
+    JButton			buttonOK;
+    JButton			buttonCancel;
+    JLabel			label;
+    String[] 			superclasses;
+    final JComboBox<String> 	combobox;
 
     if (getParentFrame() != null)
       dialog = new BaseDialog(getParentFrame(), true);
@@ -539,10 +540,10 @@ public class FavoritesManagementPanel
     dialog.getContentPane().setLayout(new BorderLayout());
 
     // combobox
-    superclasses = new Vector<String>(ClassLister.getSingleton().getProperties().keySetAll());
-    Collections.sort(superclasses);
+    superclasses = ClassLister.getSingleton().getSuperclasses();
+    Arrays.sort(superclasses);
     panelBox = new BasePanel(new FlowLayout(FlowLayout.LEFT));
-    final JComboBox combobox = new JComboBox(superclasses);
+    combobox = new JComboBox<>(superclasses);
     label = new JLabel("Superclass");
     label.setDisplayedMnemonic('S');
     label.setLabelFor(combobox);

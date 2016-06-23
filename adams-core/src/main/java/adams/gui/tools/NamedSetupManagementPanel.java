@@ -19,30 +19,6 @@
  */
 package adams.gui.tools;
 
-import java.awt.BorderLayout;
-import java.awt.Dialog.ModalityType;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.Vector;
-
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
-
 import adams.core.ClassLister;
 import adams.core.NamedSetup;
 import adams.core.NamedSetups;
@@ -57,6 +33,32 @@ import adams.gui.core.BaseTableWithButtons;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MenuBarProvider;
 import adams.gui.goe.GenericObjectEditorDialog;
+
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+import java.awt.BorderLayout;
+import java.awt.Dialog.ModalityType;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Vector;
 
 /**
  * Management panel for the system-wide named setups.
@@ -508,20 +510,16 @@ public class NamedSetupManagementPanel
    * Adds a named setup.
    */
   protected void add() {
-    Vector<String>		superclasses;
+    List<String> 		superclasses;
     String[]			classes;
     String			selected;
-    Enumeration			enm;
     GenericObjectEditorDialog	dialog;
     Class			cls;
     Object			defValue;
     String			name;
 
     // first: select superclass
-    superclasses = new Vector<String>();
-    enm          = ClassLister.getSingleton().getProperties().propertyNames();
-    while (enm.hasMoreElements())
-      superclasses.add(enm.nextElement().toString());
+    superclasses = new ArrayList<>(Arrays.asList(ClassLister.getSingleton().getSuperclasses()));
     Collections.sort(superclasses);
 
     selected = GUIHelper.showInputDialog(

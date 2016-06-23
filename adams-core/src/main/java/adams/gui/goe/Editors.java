@@ -58,7 +58,6 @@ public class Editors {
    */
   protected static Properties getAvailableEditors() {
     Properties			result;
-    Properties			classes;
     Properties			packages;
     List<String>		enums;
     String			goeEditor;
@@ -74,8 +73,6 @@ public class Editors {
 
     result  = new Properties();
 
-    classes = ClassLister.getSingleton().getProperties();
-
     // determine the editors
     goeEditor = GenericObjectEditor.class.getName();
     arrEditor = GenericArrayEditor.class.getName();
@@ -85,16 +82,14 @@ public class Editors {
     result.setProperty(Object.class.getName() + "[]", arrEditor);
 
     // superclasses
-    enm = (Enumeration<String>) classes.propertyNames();
-    while (enm.hasMoreElements()) {
-      classname = enm.nextElement();
-      result.setProperty(classname, goeEditor);
-      result.setProperty(classname + "[]", arrEditor);
+    for (String superclass: ClassLister.getSingleton().getSuperclasses()) {
+      result.setProperty(superclass, goeEditor);
+      result.setProperty(superclass + "[]", arrEditor);
     }
 
     // enums
     // 1. generate package list to search for enums
-    uniquePackages = new HashSet<String>();
+    uniquePackages = new HashSet<>();
     packages       = ClassLister.getSingleton().getPackages();
     enm            = (Enumeration<String>) packages.propertyNames();
     while (enm.hasMoreElements()) {
