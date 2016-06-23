@@ -68,8 +68,8 @@ public abstract class AbstractNotificationAreaAction
    *
    * @return		the action classnames
    */
-  public static String[] getActions() {
-    return ClassLister.getSingleton().getClassnames(AbstractNotificationAreaAction.class);
+  public static Class[] getActions() {
+    return ClassLister.getSingleton().getClasses(AbstractNotificationAreaAction.class);
   }
 
   /**

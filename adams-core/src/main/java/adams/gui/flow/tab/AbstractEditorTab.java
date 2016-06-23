@@ -20,7 +20,6 @@
 package adams.gui.flow.tab;
 
 import adams.core.ClassLister;
-import adams.core.option.OptionUtils;
 import adams.gui.core.BasePanel;
 import adams.gui.flow.FlowPanel;
 
@@ -114,31 +113,11 @@ public abstract class AbstractEditorTab
   }
 
   /**
-   * Returns a list with classnames of tabs.
+   * Returns a list with classes of tabs.
    *
-   * @return		the tab classnames
+   * @return		the tab classes
    */
-  public static String[] getTabs() {
-    return ClassLister.getSingleton().getClassnames(AbstractEditorTab.class);
-  }
-
-  /**
-   * Instantiates the tab with the given options.
-   *
-   * @param classname	the classname of the tab to instantiate
-   * @return		the instantiated tab or null if an error occurred
-   */
-  public static AbstractEditorTab forName(String classname) {
-    AbstractEditorTab	result;
-
-    try {
-      result = (AbstractEditorTab) OptionUtils.forName(AbstractEditorTab.class, classname, new String[0]);
-    }
-    catch (Exception e) {
-      e.printStackTrace();
-      result = null;
-    }
-
-    return result;
+  public static Class[] getTabs() {
+    return ClassLister.getSingleton().getClasses(AbstractEditorTab.class);
   }
 }

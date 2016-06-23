@@ -80,23 +80,23 @@ public abstract class AbstractActorSwapSuggestion
   public static List<Actor> suggestAll(Actor current) {
     List<Actor>			result;
     List<Actor>			list;
-    String[]			classnames;
+    Class[]			classes;
     AbstractActorSwapSuggestion	suggestion;
 
     if (m_Cache.containsKey(current.getClass()))
       return m_Cache.get(current.getClass());
 
-    result     = new ArrayList<>();
-    classnames = ClassLister.getSingleton().getClassnames(AbstractActorSwapSuggestion.class);
-    for (String classname: classnames) {
+    result  = new ArrayList<>();
+    classes = ClassLister.getSingleton().getClasses(AbstractActorSwapSuggestion.class);
+    for (Class cls: classes) {
       try {
-	suggestion = (AbstractActorSwapSuggestion) Class.forName(classname).newInstance();
+	suggestion = (AbstractActorSwapSuggestion) cls.newInstance();
 	list       = suggestion.suggest(current);
 	if (list.size() > 0)
 	  result.addAll(list);
       }
       catch (Exception e) {
-	LOGGER.log(Level.SEVERE, "Failed to retrieve swap suggestions from: " + classname);
+	LOGGER.log(Level.SEVERE, "Failed to retrieve swap suggestions from: " + cls.getName());
       }
     }
     m_Cache.put(current.getClass(), result);

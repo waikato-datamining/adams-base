@@ -148,7 +148,7 @@ public abstract class AbstractFlowEditorMenuItem
    *
    * @return		the menu item classnames
    */
-  public static String[] getMenuItems() {
-    return ClassLister.getSingleton().getClassnames(AbstractFlowEditorMenuItem.class);
+  public static Class[] getMenuItems() {
+    return ClassLister.getSingleton().getClasses(AbstractFlowEditorMenuItem.class);
   }
 }

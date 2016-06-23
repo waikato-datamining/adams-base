@@ -100,12 +100,12 @@ public abstract class AbstractEditPostProcessor
   }
 
   /**
-   * Returns a list with classnames of post-processors.
+   * Returns a list with classes of post-processors.
    *
-   * @return the post-processor classnames
+   * @return the post-processor classes
    */
-  public static String[] getPostProcessors() {
-    return ClassLister.getSingleton().getClassnames(AbstractEditPostProcessor.class);
+  public static Class[] getPostProcessors() {
+    return ClassLister.getSingleton().getClasses(AbstractEditPostProcessor.class);
   }
 
   /**
@@ -119,7 +119,7 @@ public abstract class AbstractEditPostProcessor
    */
   public static boolean apply(Tree tree, Actor parent, Actor oldActor, Actor newActor) {
     boolean 			result;
-    String[] 			processors;
+    Class[] 			processors;
     AbstractEditPostProcessor 	proc;
     boolean 			confirmed;
     boolean 			modified;
@@ -132,9 +132,9 @@ public abstract class AbstractEditPostProcessor
     processors = getPostProcessors();
     exp        = tree.getExpandedFullNames();
     sel        = tree.getSelectionFullNames();
-    for (String processor : processors) {
+    for (Class processor : processors) {
       try {
-	proc = (AbstractEditPostProcessor) Class.forName(processor).newInstance();
+	proc = (AbstractEditPostProcessor) processor.newInstance();
 	if (proc.applies(parent, oldActor, newActor)) {
 	  if (!confirmed) {
 	    if (JOptionPane.showConfirmDialog(GUIHelper.getParentComponent(tree), "Propagate changes throughout the tree (if applicable)?") == JOptionPane.YES_OPTION)
@@ -147,7 +147,7 @@ public abstract class AbstractEditPostProcessor
 	}
       }
       catch (Exception e) {
-	ConsolePanel.getSingleton().append("Error applying edit post-processor '" + processor + "':", e);
+	ConsolePanel.getSingleton().append("Error applying edit post-processor '" + processor.getName() + "':", e);
       }
     }
     SwingUtilities.invokeLater(() -> tree.setExpandedFullNames(exp));

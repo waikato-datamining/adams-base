@@ -98,7 +98,7 @@ public class FlowPanelNotificationArea
    */
   @Override
   protected void initialize() {
-    String[]				classes;
+    Class[]				classes;
     AbstractNotificationAreaAction	action;
 
     super.initialize();
@@ -108,15 +108,15 @@ public class FlowPanelNotificationArea
     m_Notification   = null;
     m_IsError        = false;
     m_Actions        = new ArrayList<>();
-    classes        = AbstractNotificationAreaAction.getActions();
-    for (String cls: classes) {
+    classes          = AbstractNotificationAreaAction.getActions();
+    for (Class cls: classes) {
       try {
-	action = (AbstractNotificationAreaAction) Class.forName(cls).newInstance();
+	action = (AbstractNotificationAreaAction) cls.newInstance();
 	action.setOwner(this);
 	m_Actions.add(action);
       }
       catch (Exception e) {
-	ConsolePanel.getSingleton().append(LoggingLevel.SEVERE, "Failed to instantiate action: " + cls, e);
+	ConsolePanel.getSingleton().append(LoggingLevel.SEVERE, "Failed to instantiate action: " + cls.getName(), e);
       }
     }
   }

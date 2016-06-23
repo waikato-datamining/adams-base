@@ -22,9 +22,11 @@ package adams.gui.flow.tab;
 import adams.core.ClassLocator;
 import adams.core.CleanUpHandler;
 import adams.core.Properties;
+import adams.core.logging.LoggingLevel;
 import adams.env.Environment;
 import adams.flow.core.Actor;
 import adams.gui.core.BaseTabbedPaneWithTabHiding;
+import adams.gui.core.ConsolePanel;
 import adams.gui.core.DelayedActionRunnable;
 import adams.gui.core.MouseUtils;
 import adams.gui.flow.FlowEditorPanel;
@@ -114,7 +116,7 @@ public class FlowTabManager
    */
   @Override
   protected void initialize() {
-    String[]		tabs;
+    Class[]		tabs;
     AbstractEditorTab	tab;
     Properties		props;
     String		key;
@@ -125,25 +127,30 @@ public class FlowTabManager
     setCloseTabsWithMiddelMouseButton(false);
 
     tabs      = AbstractEditorTab.getTabs();
-    m_TabList = new ArrayList<AbstractEditorTab>();
+    m_TabList = new ArrayList<>();
     props     = getProperties();
     update    = false;
-    for (String tabName: tabs) {
-      tab = AbstractEditorTab.forName(tabName);
-      if (tab != null) {
-	tab.setOwner(this);
-	m_TabList.add(tab);
-	key = createPropertyKey(tab.getClass());
-	if (!props.hasKey(key)) {
-	  props.setBoolean(key, !(tab instanceof RuntimeTab) && !(tab instanceof ActorQuickEditTab));
-	  update = true;
-	}
-	else if (tab instanceof RuntimeTab) {
-	  if (props.getBoolean(key)) {
-	    props.setBoolean(key, false);
-	    update = true;
-	  }
-	}
+    for (Class tabClass: tabs) {
+      try {
+        tab = (AbstractEditorTab) tabClass.newInstance();
+        if (tab != null) {
+          tab.setOwner(this);
+          m_TabList.add(tab);
+          key = createPropertyKey(tab.getClass());
+          if (!props.hasKey(key)) {
+            props.setBoolean(key, !(tab instanceof RuntimeTab) && !(tab instanceof ActorQuickEditTab));
+            update = true;
+          }
+          else if (tab instanceof RuntimeTab) {
+            if (props.getBoolean(key)) {
+              props.setBoolean(key, false);
+              update = true;
+            }
+          }
+        }
+      }
+      catch (Exception e) {
+	ConsolePanel.getSingleton().append(LoggingLevel.SEVERE, "Failed to instantiate editor tab: " + tabClass.getName(), e);
       }
     }
     Collections.sort(m_TabList);

@@ -396,7 +396,7 @@ public class FlowEditorPanel
    */
   @Override
   protected void initialize() {
-    String[]			additionals;
+    Class[]			additionals;
     AbstractFlowEditorMenuItem	item;
 
     super.initialize();
@@ -411,9 +411,9 @@ public class FlowEditorPanel
     m_MenuItems           = new ArrayList<>();
     m_AdditionalMenuItems = new ArrayList<>();
     additionals           = AbstractFlowEditorMenuItem.getMenuItems();
-    for (String additional: additionals) {
+    for (Class additional: additionals) {
       try {
-	item = (AbstractFlowEditorMenuItem) Class.forName(additional).newInstance();
+	item = (AbstractFlowEditorMenuItem) additional.newInstance();
 	item.setOwner(m_Self);
 	m_AdditionalMenuItems.add(item);
       }
