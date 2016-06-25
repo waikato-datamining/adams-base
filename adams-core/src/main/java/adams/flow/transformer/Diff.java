@@ -15,14 +15,10 @@
 
 /*
  * Diff.java
- * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
-
-import java.io.File;
-import java.util.Arrays;
-import java.util.List;
 
 import adams.core.DiffUtils;
 import adams.core.DiffUtils.SideBySideDiff;
@@ -31,9 +27,14 @@ import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
 import adams.flow.core.Token;
 
+import java.io.File;
+import java.util.Arrays;
+import java.util.List;
+
 /**
  <!-- globalinfo-start -->
- * Compares two files to two string arrays and generates a diff representation.
+ * Compares two files or two string arrays and generates a diff representation.<br>
+ * In case of BRIEF, the output is whether the two files&#47;arrays are different.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -49,8 +50,6 @@ import adams.flow.core.Token;
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- * 
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
@@ -61,19 +60,27 @@ import adams.flow.core.Token;
  * &nbsp;&nbsp;&nbsp;default: Diff
  * </pre>
  * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
- * <pre>-skip (property: skip)
+ * <pre>-skip &lt;boolean&gt; (property: skip)
  * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
  * &nbsp;&nbsp;&nbsp;as it is.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-stop-flow-on-error (property: stopFlowOnError)
+ * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
  * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
  * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
  * <pre>-type &lt;BRIEF|UNIFIED|SIDE_BY_SIDE&gt; (property: type)
@@ -118,7 +125,8 @@ public class Diff
   @Override
   public String globalInfo() {
     return
-        "Compares two files to two string arrays and generates a diff representation.";
+        "Compares two files or two string arrays and generates a diff representation.\n"
+          + "In case of " + DiffType.BRIEF + ", the output is whether the two files/arrays are different.";
   }
 
   /**
