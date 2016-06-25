@@ -15,19 +15,16 @@
 
 /**
  * AbstractDiscoveryHandler.java
- * Copyright (C) 2015 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton, NZ
  */
 
 package adams.core.discovery;
 
-import adams.core.ClassLister;
 import adams.core.ShallowCopySupporter;
 import adams.core.base.BaseRegExp;
 import adams.core.discovery.PropertyPath.Path;
 import adams.core.discovery.PropertyPath.PropertyContainer;
-import adams.core.option.AbstractOptionConsumer;
 import adams.core.option.AbstractOptionHandler;
-import adams.core.option.ArrayConsumer;
 import adams.core.option.OptionUtils;
 
 import java.util.ArrayList;
@@ -216,48 +213,5 @@ public abstract class AbstractDiscoveryHandler
       result.append(" - " + cont.getPath().getFullPath() + "\n");
 
     return result.toString();
-  }
-
-  /**
-   * Returns a list with classnames of handlers.
-   *
-   * @return		the handler classnames
-   */
-  public static String[] getFilters() {
-    return ClassLister.getSingleton().getClassnames(AbstractDiscoveryHandler.class);
-  }
-
-  /**
-   * Instantiates the handler with the given options.
-   *
-   * @param classname	the classname of the handler to instantiate
-   * @param options	the options for the handler
-   * @return		the instantiated handler or null if an error occurred
-   */
-  public static AbstractDiscoveryHandler forName(String classname, String[] options) {
-    AbstractDiscoveryHandler	result;
-
-    try {
-      result = (AbstractDiscoveryHandler) OptionUtils.forName(AbstractDiscoveryHandler.class, classname, options);
-    }
-    catch (Exception e) {
-      e.printStackTrace();
-      result = null;
-    }
-
-    return result;
-  }
-
-  /**
-   * Instantiates the handler from the given commandline
-   * (i.e., classname and optional options).
-   *
-   * @param cmdline	the classname (and optional options) of the
-   * 			handler to instantiate
-   * @return		the instantiated handler
-   * 			or null if an error occurred
-   */
-  public static AbstractDiscoveryHandler forCommandLine(String cmdline) {
-    return (AbstractDiscoveryHandler) AbstractOptionConsumer.fromString(ArrayConsumer.class, cmdline);
   }
 }
