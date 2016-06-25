@@ -178,19 +178,9 @@ public class ClassLister
    * @return		the classnames of the derived classes
    */
   public String[] getClassnames(Class superclass) {
-    return getClassnames(superclass.getName());
-  }
-
-  /**
-   * Returns all the classnames that were found for this superclass.
-   *
-   * @param superclass	the superclass to return the derived classes for
-   * @return		the classnames of the derived classes
-   */
-  public String[] getClassnames(String superclass) {
     List<String>	list;
 
-    list = m_ListNames.get(superclass);
+    list = m_ListNames.get(superclass.getName());
     if (list == null)
       return new String[0];
     else
