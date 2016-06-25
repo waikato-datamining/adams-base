@@ -116,21 +116,21 @@ public abstract class AbstractOptionTransfer {
    */
   public static synchronized List<AbstractOptionTransfer> getTransfers(Object source, Object target) {
     List<AbstractOptionTransfer>	result;
-    String[]				classes;
+    Class[]				classes;
     AbstractOptionTransfer		transfer;
 
     result = new ArrayList<>();
 
     if (m_Transfers == null) {
       m_Transfers = new ArrayList<>();
-      classes     = ClassLister.getSingleton().getClassnames(AbstractOptionTransfer.class);
-      for (String cls: classes) {
+      classes     = ClassLister.getSingleton().getClasses(AbstractOptionTransfer.class);
+      for (Class cls: classes) {
 	try {
-	  transfer = (AbstractOptionTransfer) Class.forName(cls).newInstance();
+	  transfer = (AbstractOptionTransfer) cls.newInstance();
 	  m_Transfers.add(transfer);
 	}
 	catch (Exception e) {
-	  System.err.println("Failed to instantiate: " + cls);
+	  System.err.println("Failed to instantiate: " + cls.getName());
 	  e.printStackTrace();
 	}
       }
