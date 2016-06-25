@@ -15,7 +15,7 @@
 
 /*
  * AdamsTestSuite.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -52,7 +52,7 @@ public class AdamsTestSuite
    * @return            whether the classname is a valid one
    */
   protected static boolean isValidClassname(String classname) {
-    return (classname.indexOf("$") == -1) && (classname.startsWith(Environment.getInstance().getProject() + "."));
+    return classname.contains("$") && (classname.startsWith(Environment.getInstance().getProject() + "."));
   }
 
   /**
@@ -70,7 +70,7 @@ public class AdamsTestSuite
     HashSet<String>	unique;
 
     result = new ArrayList();
-    unique = new HashSet<String>();
+    unique = new HashSet<>();
 
     names = ClassLocator.getSingleton().findNames(superclass, packages.toArray(new String[packages.size()]));
     for (i = 0; i < names.size(); i++) {
@@ -98,27 +98,27 @@ public class AdamsTestSuite
    * @see               ClassLister
    */
   protected static List<String> getClassnames(String property) {
-    String[]		classes;
+    Class[]		classes;
     HashSet<String>	unique;
     List<String>	result;
     int			i;
 
-    result = new ArrayList<String>();
-    unique = new HashSet<String>();
+    result = new ArrayList<>();
+    unique = new HashSet<>();
 
     try {
-      classes = ClassLister.getSingleton().getClassnames(property);
+      classes = ClassLister.getSingleton().getClasses(property);
       for (i = 0; i < classes.length; i++) {
         // skip non-public classes
-        if (!isValidClassname(classes[i]))
+        if (!isValidClassname(classes[i].getName()))
           continue;
 
         // already included?
-        if (unique.contains(classes[i]))
+        if (unique.contains(classes[i].getName()))
           continue;
 
-        result.add(classes[i]);
-        unique.add(classes[i]);
+        result.add(classes[i].getName());
+        unique.add(classes[i].getName());
       }
     }
     catch (Exception e) {
