@@ -15,15 +15,12 @@
 
 /*
  * AbstractIDGenerator.java
- * Copyright (C) 2009 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.id;
 
-import adams.core.ClassLister;
 import adams.core.ShallowCopySupporter;
-import adams.core.option.AbstractOptionConsumer;
-import adams.core.option.ArrayConsumer;
 import adams.core.option.AbstractOptionHandler;
 import adams.core.option.OptionUtils;
 
@@ -144,48 +141,5 @@ public abstract class AbstractIDGenerator<T>
    */
   public AbstractIDGenerator shallowCopy(boolean expand) {
     return (AbstractIDGenerator) OptionUtils.shallowCopy(this, expand);
-  }
-
-  /**
-   * Returns a list with classnames of generators.
-   *
-   * @return		the generator classnames
-   */
-  public static String[] getGenerators() {
-    return ClassLister.getSingleton().getClassnames(AbstractIDGenerator.class);
-  }
-
-  /**
-   * Instantiates the generator with the given options.
-   *
-   * @param classname	the classname of the generator to instantiate
-   * @param options	the options for the generator
-   * @return		the instantiated generator or null if an error occurred
-   */
-  public static AbstractIDGenerator forName(String classname, String[] options) {
-    AbstractIDGenerator	result;
-
-    try {
-      result = (AbstractIDGenerator) OptionUtils.forName(AbstractIDGenerator.class, classname, options);
-    }
-    catch (Exception e) {
-      e.printStackTrace();
-      result = null;
-    }
-
-    return result;
-  }
-
-  /**
-   * Instantiates the generator from the given commandline
-   * (i.e., classname and optional options).
-   *
-   * @param cmdline	the classname (and optional options) of the
-   * 			generator to instantiate
-   * @return		the instantiated generator
-   * 			or null if an error occurred
-   */
-  public static AbstractIDGenerator forCommandLine(String cmdline) {
-    return (AbstractIDGenerator) AbstractOptionConsumer.fromString(ArrayConsumer.class, cmdline);
   }
 }
