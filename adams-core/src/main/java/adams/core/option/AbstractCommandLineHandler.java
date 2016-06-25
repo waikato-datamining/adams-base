@@ -46,15 +46,11 @@ public abstract class AbstractCommandLineHandler
   /** the cache for object class / handler relation. */
   protected static Hashtable<Class,Class> m_Cache;
 
-  /** the handlers (classnames) currently available. */
-  protected static String[] m_Handlers;
-
   /** the handlers (classes) currently available. */
   protected static Class[] m_HandlerClasses;
 
   static {
-    m_Cache          = new Hashtable<Class,Class>();
-    m_Handlers       = null;
+    m_Cache          = new Hashtable<>();
     m_HandlerClasses = null;
   }
 
@@ -156,28 +152,28 @@ public abstract class AbstractCommandLineHandler
   protected static synchronized void initHandlers() {
     int		i;
     String	propsfile;
+    String[]	handlers;
 
-    if (m_Handlers != null)
+    if (m_HandlerClasses != null)
       return;
 
-    m_Handlers = ClassLister.getSingleton().getClassnames(AbstractCommandLineHandler.class);
+    m_HandlerClasses = ClassLister.getSingleton().getClasses(AbstractCommandLineHandler.class);
     // no dynamic class discovery available?
-    if (m_Handlers.length == 0) {
-      propsfile  = "adams/core/option/" + FILENAME;
-      m_Handlers = StaticClassLister.getSingleton().getClasses(propsfile, KEY_HANDLERS);
+    if (m_HandlerClasses.length == 0) {
+      propsfile = "adams/core/option/" + FILENAME;
+      handlers  = StaticClassLister.getSingleton().getClassnames(propsfile, KEY_HANDLERS);
       System.err.println(
 	  "WARNING: no commandline handlers determined using dynamic class discovery, "
 	  + "falling back to using class names stored in '" + propsfile + "' files.");
-    }
-
-    m_HandlerClasses = new Class[m_Handlers.length];
-    for (i = 0; i < m_Handlers.length; i++) {
-      try {
-	m_HandlerClasses[i] = Class.forName(m_Handlers[i]);
-      }
-      catch (Exception e) {
-	System.err.println("Failed to instantiate commandline handler '" + m_Handlers[i] + "': ");
-	e.printStackTrace();
+      m_HandlerClasses = new Class[handlers.length];
+      for (i = 0; i < handlers.length; i++) {
+	try {
+	  m_HandlerClasses[i] = Class.forName(handlers[i]);
+	}
+	catch (Exception e) {
+	  System.err.println("Failed to instantiate commandline handler '" + handlers[i] + "': ");
+	  e.printStackTrace();
+	}
       }
     }
   }
@@ -242,15 +238,5 @@ public abstract class AbstractCommandLineHandler
     m_Cache.put(cls, result.getClass());
 
     return result;
-  }
-
-  /**
-   * Returns a list with classnames of handlers.
-   *
-   * @return		the handler classnames
-   */
-  public static synchronized String[] getHandlers() {
-    initHandlers();
-    return m_Handlers;
   }
 }

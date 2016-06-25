@@ -15,7 +15,7 @@
 
 /*
  * AbstractEnvironment.java
- * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.env;
@@ -145,9 +145,9 @@ public abstract class AbstractEnvironment
     String[]				definitions;
     AbstractPropertiesDefinition	definition;
 
-    m_Properties  = new Hashtable<String,List<Setup>>();
-    m_Definitions = new Hashtable<String,AbstractPropertiesDefinition>();
-    definitions   = StaticClassLister.getSingleton().getClasses(getPropertiesDefinitions(), KEY_DEFINITIONS);
+    m_Properties  = new Hashtable<>();
+    m_Definitions = new Hashtable<>();
+    definitions   = StaticClassLister.getSingleton().getClassnames(getPropertiesDefinitions(), KEY_DEFINITIONS);
 
     for (String name: definitions) {
       try {
@@ -191,7 +191,6 @@ public abstract class AbstractEnvironment
    *
    * @param project	the project name
    * @return		the home directory, null if none available
-   * @see		#hasHome()
    */
   public String getDefaultHome(String project) {
     if (OS.isWindows())
@@ -207,7 +206,6 @@ public abstract class AbstractEnvironment
    *
    * @return		the home directory, null if none available
    * @see		#getProject()
-   * @see		#hasHome()
    */
   public String getDefaultHome() {
     return getDefaultHome(getProject());
@@ -220,7 +218,6 @@ public abstract class AbstractEnvironment
    *
    * @return		the home directory, null if none available
    * @see		#getProject()
-   * @see		#hasHome()
    */
   public String getHome() {
     if (m_HomeDirectory == null)
@@ -259,7 +256,7 @@ public abstract class AbstractEnvironment
   public List<String> getDirectories(String propsfile, String home) {
     List<String>	result;
 
-    result = new ArrayList<String>();
+    result = new ArrayList<>();
 
     result.add(propsfile.replaceAll("\\/[^/]*$", ""));
     if (home != null)
@@ -319,7 +316,7 @@ public abstract class AbstractEnvironment
     setup = new Setup(propsfile, dirs, overrides);
     
     if (!m_Properties.containsKey(key))
-      m_Properties.put(key, new ArrayList<Setup>());
+      m_Properties.put(key, new ArrayList<>());
     if (!m_Properties.get(key).contains(setup))
       m_Properties.get(key).add(setup);
   }
@@ -356,7 +353,7 @@ public abstract class AbstractEnvironment
    * @param dirs	the directories to look for
    */
   public void replace(String key, String propsfile, List<String> dirs) {
-    m_Properties.put(key, new ArrayList<Setup>());
+    m_Properties.put(key, new ArrayList<>());
     m_Properties.get(key).add(new Setup(propsfile, dirs));
   }
 
@@ -421,7 +418,7 @@ public abstract class AbstractEnvironment
 	getLogger().log(Level.INFO, "key=" + key + ", files=" + files);
 
       // load props files
-      props = new ArrayList<Properties>();
+      props = new ArrayList<>();
       for (i = 0; i < files.size(); i++) {
 	setup = files.get(i);
 	try {
@@ -567,7 +564,7 @@ public abstract class AbstractEnvironment
     List<Setup>		setups;
 
     result = new StringBuilder();
-    keys   = new ArrayList<String>(m_Properties.keySet());
+    keys   = new ArrayList<>(m_Properties.keySet());
     Collections.sort(keys);
 
     for (String key: keys) {

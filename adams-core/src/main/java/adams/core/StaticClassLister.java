@@ -15,7 +15,7 @@
 
 /**
  * StaticClassLister.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.core;
 
@@ -58,8 +58,8 @@ public class StaticClassLister
    * @param key		the key in the props file to retrieve the classnames from
    * @return		the retrieved classnames
    */
-  public String[] getClasses(String propsfile, String key) {
-    return getClasses(new String[]{propsfile}, key);
+  public String[] getClassnames(String propsfile, String key) {
+    return getClassnames(new String[]{propsfile}, key);
   }
 
   /**
@@ -72,7 +72,7 @@ public class StaticClassLister
     List<URL>		result;
     Enumeration<URL>	urls;
 
-    result = new ArrayList<URL>();
+    result = new ArrayList<>();
     try {
       urls = getClass().getClassLoader().getResources(resource);
       while (urls.hasMoreElements())
@@ -94,8 +94,8 @@ public class StaticClassLister
    * @param key		the key in the props files to retrieve the classnames from
    * @return		the retrieved classnames
    */
-  public String[] getClasses(List<String> propsfiles, String key) {
-    return getClasses(propsfiles.toArray(new String[propsfiles.size()]), key);
+  public String[] getClassnames(List<String> propsfiles, String key) {
+    return getClassnames(propsfiles.toArray(new String[propsfiles.size()]), key);
   }
 
   /**
@@ -106,17 +106,17 @@ public class StaticClassLister
    * @param key		the key in the props files to retrieve the classnames from
    * @return		the retrieved classnames
    */
-  public String[] getClasses(String[] propsfiles, String key) {
+  public String[] getClassnames(String[] propsfiles, String key) {
     List<String>	result;
     List<URL>		urls;
     InputStream		stream;
     Properties		props;
     String[]		names;
 
-    result = new ArrayList<String>();
+    result = new ArrayList<>();
 
     // locate propsfiles
-    urls = new ArrayList<URL>();
+    urls = new ArrayList<>();
     for (String propsfile: propsfiles)
       urls.addAll(locate(propsfile));
 
