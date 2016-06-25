@@ -15,7 +15,7 @@
 
 /**
  * AddDataFile.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.scripting;
 
@@ -108,7 +108,7 @@ public class AddDataFile
     result = null;
 
     // obtain reader
-    reader = AbstractDataContainerReader.forCommandLine(options);
+    reader = (AbstractDataContainerReader) OptionUtils.forCommandLine(AbstractDataContainerReader.class, options);
 
     // undo
     addUndoPoint("Saving undo data...", "Loading data with: " + OptionUtils.getCommandLine(reader));
@@ -118,14 +118,14 @@ public class AddDataFile
       data = reader.read();
     }
     catch (Exception e) {
-      data   = new ArrayList<DataContainer>();
+      data   = new ArrayList<>();
       result = "Error reading data: " + Utils.throwableToString(e);
       getLogger().severe(result);
     }
 
     if (result == null) {
       manager = getDataContainerPanel().getContainerManager();
-      cont = new ArrayList<AbstractContainer>();
+      cont = new ArrayList<>();
       for (i = 0; i < data.size(); i++)
         cont.add(manager.newContainer(data.get(i)));
 

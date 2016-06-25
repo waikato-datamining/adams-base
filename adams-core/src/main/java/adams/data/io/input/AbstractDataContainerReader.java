@@ -380,46 +380,4 @@ public abstract class AbstractDataContainerReader<T extends DataContainer>
   public AbstractDataContainerReader shallowCopy(boolean expand) {
     return (AbstractDataContainerReader) OptionUtils.shallowCopy(this, expand);
   }
-
-  /**
-   * Returns a list with classnames of readers.
-   *
-   * @return		the reader classnames
-   */
-  public static String[] getReaders() {
-    return ClassLister.getSingleton().getClassnames(AbstractDataContainerReader.class);
-  }
-
-  /**
-   * Instantiates the spectrum reader with the given options.
-   *
-   * @param classname	the classname of the reader to instantiate
-   * @param options	the options for the reader
-   * @return		the instantiated reader or null if an error occurred
-   */
-  public static AbstractDataContainerReader forName(String classname, String[] options) {
-    AbstractDataContainerReader	result;
-
-    try {
-      result = (AbstractDataContainerReader) OptionUtils.forName(AbstractDataContainerReader.class, classname, options);
-    }
-    catch (Exception e) {
-      e.printStackTrace();
-      result = null;
-    }
-
-    return result;
-  }
-
-  /**
-   * Instantiates the spectrum reader from the given commandline
-   * (i.e., classname and optional options).
-   *
-   * @param cmdline	the classname (and optional options) of the
-   * 			reader to instantiate
-   * @return		the instantiated reader or null if an error occurred
-   */
-  public static AbstractDataContainerReader forCommandLine(String cmdline) {
-    return (AbstractDataContainerReader) AbstractOptionConsumer.fromString(ArrayConsumer.class, cmdline);
-  }
 }

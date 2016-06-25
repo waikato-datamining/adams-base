@@ -15,7 +15,7 @@
 
 /**
  * AddDataFiles.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.scripting;
 
@@ -115,7 +115,7 @@ public class AddDataFiles
 	"At least data container reader commandline and one file is expected, provided: " + options);
 
     // obtain reader
-    reader = AbstractDataContainerReader.forCommandLine(opts[0]);
+    reader = (AbstractDataContainerReader) OptionUtils.forCommandLine(AbstractDataContainerReader.class, opts[0]);
 
     // undo
     addUndoPoint("Saving undo data...", "Loading data with: " + OptionUtils.getCommandLine(reader));
@@ -134,7 +134,7 @@ public class AddDataFiles
 	data = reader.read();
       }
       catch (Exception e) {
-	data = new ArrayList<DataContainer>();
+	data = new ArrayList<>();
 	msg = "Error reading data from '" + opts[n] + "': " + Utils.throwableToString(e);
 	getLogger().severe(result);
       }
