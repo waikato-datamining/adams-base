@@ -19,6 +19,7 @@
  */
 package adams.gui.scripting;
 
+import adams.core.option.OptionUtils;
 import adams.data.container.DataContainer;
 import adams.data.filter.AbstractFilter;
 import adams.data.filter.BatchFilter;
@@ -86,7 +87,7 @@ public abstract class AbstractFilterScriptlet
     }
 
     // run filter
-    runScheme = AbstractFilter.forCommandLine(options);
+    runScheme = (AbstractFilter) OptionUtils.forCommandLine(AbstractFilter.class, options);
     if (runScheme instanceof DatabaseConnectionHandler)
       ((DatabaseConnectionHandler) runScheme).setDatabaseConnection(getOwner().getDatabaseConnection());
 

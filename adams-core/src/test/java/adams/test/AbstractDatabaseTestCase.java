@@ -20,12 +20,12 @@
 
 package adams.test;
 
-import java.util.Hashtable;
-
 import adams.core.Properties;
 import adams.core.base.BasePassword;
 import adams.db.AbstractDatabaseConnection;
 import adams.db.AbstractIndexedTable;
+
+import java.util.Hashtable;
 
 /**
  * Abstract Test class for flow actors.
@@ -215,6 +215,6 @@ public abstract class AbstractDatabaseTestCase
 
     // FIXME
     //GlobalDataContainerFilter.setFilter(
-	//AbstractFilter.forCommandLine(getDatabaseProperties().getString("GlobalFilter")));
+	//(AbstractFilter) OptionUtils.forCommandLine(AbstractFilter.class, getDatabaseProperties().getString("GlobalFilter")));
   }
 }

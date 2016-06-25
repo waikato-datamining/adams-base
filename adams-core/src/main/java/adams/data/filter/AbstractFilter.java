@@ -20,7 +20,6 @@
 
 package adams.data.filter;
 
-import adams.core.ClassLister;
 import adams.core.Performance;
 import adams.core.option.AbstractOptionConsumer;
 import adams.core.option.AbstractOptionHandler;
@@ -368,36 +367,6 @@ public abstract class AbstractFilter<T extends DataContainer>
    */
   public Filter<T> shallowCopy(boolean expand) {
     return (Filter<T>) OptionUtils.shallowCopy(this, expand);
-  }
-
-  /**
-   * Returns a list with classnames of filters.
-   *
-   * @return		the filter classnames
-   */
-  public static String[] getFilters() {
-    return ClassLister.getSingleton().getClassnames(Filter.class);
-  }
-
-  /**
-   * Instantiates the filter with the given options.
-   *
-   * @param classname	the classname of the filter to instantiate
-   * @param options	the options for the filter
-   * @return		the instantiated filter or null if an error occurred
-   */
-  public static Filter forName(String classname, String[] options) {
-    Filter	result;
-
-    try {
-      result = (Filter) OptionUtils.forName(Filter.class, classname, options);
-    }
-    catch (Exception e) {
-      e.printStackTrace();
-      result = null;
-    }
-
-    return result;
   }
 
   /**
