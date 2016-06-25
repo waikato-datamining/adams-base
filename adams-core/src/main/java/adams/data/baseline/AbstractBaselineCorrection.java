@@ -15,12 +15,11 @@
 
 /*
  * AbstractBaselineCorrection.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.baseline;
 
-import adams.core.ClassLister;
 import adams.core.CleanUpHandler;
 import adams.core.Performance;
 import adams.core.ShallowCopySupporter;
@@ -323,36 +322,6 @@ public abstract class AbstractBaselineCorrection<T extends DataContainer>
   @Override
   public boolean equals(Object o) {
     return (compareTo(o) == 0);
-  }
-
-  /**
-   * Returns a list with classnames of baseline correction schemes.
-   *
-   * @return		the baseline correction classnames
-   */
-  public static String[] getBaselineCorrections() {
-    return ClassLister.getSingleton().getClassnames(AbstractBaselineCorrection.class);
-  }
-
-  /**
-   * Instantiates the baseline correction scheme with the given options.
-   *
-   * @param classname	the classname of the baseline correction scheme to instantiate
-   * @param options	the options for the baseline correction scheme
-   * @return		the instantiated baseline correction scheme or null if an error occurred
-   */
-  public static AbstractBaselineCorrection forName(String classname, String[] options) {
-    AbstractBaselineCorrection	result;
-
-    try {
-      result = (AbstractBaselineCorrection) OptionUtils.forName(AbstractBaselineCorrection.class, classname, options);
-    }
-    catch (Exception e) {
-      e.printStackTrace();
-      result = null;
-    }
-
-    return result;
   }
 
   /**

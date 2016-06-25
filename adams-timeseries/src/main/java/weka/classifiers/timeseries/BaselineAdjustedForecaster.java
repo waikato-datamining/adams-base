@@ -190,7 +190,7 @@ public class BaselineAdjustedForecaster
     if (tmpStr.isEmpty())
       setCorrection(new TimeseriesLOWESSBased());
     else
-      setCorrection(AbstractBaselineCorrection.forCommandLine(tmpStr));
+      setCorrection((AbstractBaselineCorrection) OptionUtils.forCommandLine(AbstractBaselineCorrection.class, tmpStr));
 
     tmpStr = Utils.getOption("baseline", options);
     if (tmpStr.isEmpty())
