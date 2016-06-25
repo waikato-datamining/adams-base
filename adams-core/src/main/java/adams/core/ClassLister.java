@@ -380,12 +380,12 @@ public class ClassLister
     // list them
     for (String superclass: superclasses) {
       cls = Class.forName(superclass);
-      String[] classnames = getSingleton().getClassnames(cls);
-      if ((classnames.length > 0) || allowEmpty) {
+      Class[] classes = getSingleton().getClasses(cls);
+      if ((classes.length > 0) || allowEmpty) {
 	System.out.println("--> " + superclass);
-	for (String classname: classnames) {
-	  if (regexp.isMatch(classname))
-	    System.out.println(classname);
+	for (Class c: classes) {
+	  if (regexp.isMatch(c.getName()))
+	    System.out.println(c.getName());
 	}
 	System.out.println();
       }
