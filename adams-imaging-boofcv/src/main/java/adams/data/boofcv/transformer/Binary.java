@@ -431,7 +431,7 @@ public class Binary
 	break;
       case OTSU:
 	binary    = (ImageUInt8) BoofCVHelper.toBoofCVImage(img.getImage(), BoofCVImageType.UNSIGNED_INT_8);
-	threshold = GThresholdImageOps.computeOtsu((ImageUInt8) binary, 0, 255);
+	threshold = GThresholdImageOps.computeOtsu(binary, 0, 256);
 	getLogger().info("otsu: " + threshold);
 	ThresholdImageOps.threshold(input, binary, (float) threshold, m_ThresholdDown);
 	break;
