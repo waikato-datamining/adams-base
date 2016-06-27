@@ -28,7 +28,7 @@ import java.util.List;
 
 /**
  * Helper class for spreadsheet related functionality.
- * 
+ *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
@@ -39,7 +39,7 @@ public class SpreadSheetUtils {
   /**
    * Attempts to split a string, using the specified delimiter character.
    * A delimiter gets ignored if inside double quotes.
-   * 
+   *
    * @param s		the string to split
    * @param delimiter	the delimiting character
    * @return		the parts (single array element if no range)
@@ -47,58 +47,93 @@ public class SpreadSheetUtils {
   public static String[] split(String s, char delimiter) {
     return split(s, delimiter, false);
   }
-  
+
   /**
    * Attempts to split a string, using the specified delimiter character.
    * A delimiter gets ignored if inside double quotes.
-   * 
+   *
    * @param s		the string to split
    * @param delimiter	the delimiting character
    * @param unquote	whether to remove double quotes
    * @return		the parts (single array element if no range)
    */
   public static String[] split(String s, char delimiter, boolean unquote) {
+    return split(s, delimiter, unquote, '"', false);
+  }
+
+  /**
+   * Attempts to split a string, using the specified delimiter character.
+   * A delimiter gets ignored if inside double quotes.
+   *
+   * @param s		the string to split
+   * @param delimiter	the delimiting character
+   * @param unquote	whether to remove single/double quotes
+   * @param quoteChar	the quote character to use
+   * @param escaped	if true then quotes preceded by backslash ('escaped') get ignored
+   * @return		the parts (single array element if no range)
+   */
+  public static String[] split(String s, char delimiter, boolean unquote, char quoteChar, boolean escaped) {
     List<String>	result;
     int			i;
     StringBuilder	current;
-    boolean		escaped;
+    boolean 		quoted;
     char		c;
-    
-    result = new ArrayList<String>();
-    
-    current = new StringBuilder();
-    escaped = false;
+    boolean		backslash;
+
+    result = new ArrayList<>();
+
+    current   = new StringBuilder();
+    quoted    = false;
+    backslash = false;
     for (i = 0; i < s.length(); i++) {
       c = s.charAt(i);
-      if (c == '"') {
-	escaped = !escaped;
+      if (c == quoteChar) {
+	if (!backslash)
+	  quoted = !quoted;
 	current.append(c);
       }
       else if (c == delimiter) {
-	if (escaped) {
+	if (quoted) {
 	  current.append(c);
 	}
 	else {
-	  if (unquote)
-	    result.add(Utils.unDoubleQuote(current.toString()));
-	  else
+	  if (unquote) {
+	    if (quoteChar == '"')
+	      result.add(Utils.unDoubleQuote(current.toString()));
+	    else if (quoteChar == '\'')
+	      result.add(Utils.unquote(current.toString()));
+	    else
+	      result.add(current.toString());
+	  }
+	  else {
 	    result.add(current.toString());
+	  }
 	  current.delete(0, current.length());
 	}
       }
       else {
 	current.append(c);
       }
+
+      if (escaped)
+	backslash = (c == '\\');
     }
-    
+
     // add last string
     if (current.length() > 0) {
-      if (unquote)
-	result.add(Utils.unDoubleQuote(current.toString()));
-      else
+      if (unquote) {
+	if (quoteChar == '"')
+	  result.add(Utils.unDoubleQuote(current.toString()));
+	else if (quoteChar == '\'')
+	  result.add(Utils.unquote(current.toString()));
+	else
+	  result.add(current.toString());
+      }
+      else {
 	result.add(current.toString());
+      }
     }
-    
+
     return result.toArray(new String[result.size()]);
   }
 

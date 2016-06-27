@@ -77,6 +77,12 @@ public class SpreadSheetUtilsTest
     
     s = "A-\"B-D\"-C";
     compare(new String[]{"A","\"B-D\"","C"}, SpreadSheetUtils.split(s, '-'));
+
+    s = "A,'B C',D,'\"E F G\"'";
+    compare(new String[]{"A","B C","D", "\"E F G\""}, SpreadSheetUtils.split(s, ',', true, '\'', true));
+
+    s = "A,'B C',D,'\"E F G\"'";
+    compare(new String[]{"A", "'B C'", "D", "'\"E F G\"'"}, SpreadSheetUtils.split(s, ',', false, '\'', true));
   }
 
   /**
