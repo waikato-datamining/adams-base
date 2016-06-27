@@ -1,0 +1,13 @@
+@relation date
+
+@attribute id string
+@attribute year date 'yyyy'
+@attribute year date 'yyyy-MM-dd HH:mm:ss'
+@attribute class {y,n}
+
+@data
+1,2001,'2001-01-01 01:01:01',n
+2,2002,'2002-02-02 02:02:02',y
+3,2003,'2003-03-03 03:03:03',n
+4,2004,'2004-04-04 04:04:04',y
+5,2005,'2005-05-05 05:05:05',n
