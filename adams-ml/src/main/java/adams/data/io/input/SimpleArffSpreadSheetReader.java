@@ -310,12 +310,14 @@ public class SimpleArffSpreadSheetReader
 	  }
 	}
 	else {
-	  cells = SpreadSheetUtils.split(line, ',', true, '\'', true);
+	  cells = SpreadSheetUtils.split(line, ',', false, '\'', true);
 	  row   = result.addRow();
 	  for (i = 0; i < cells.length && i < result.getColumnCount(); i++) {
 	    if (cells[i].equals("?"))
 	      continue;
 	    cell = row.addCell(i);
+	    if (!cells[i].equals("'?'"))
+	      cells[i] = Utils.unquote(cells[i]);
 	    switch (types.get(i)) {
 	      case NUMERIC:
 		cell.setContent(Double.parseDouble(cells[i]));

@@ -417,7 +417,10 @@ public class SimpleArffSpreadSheetWriter
 	  if ((cell != null) && !cell.isMissing()) {
 	    switch (types[i]) {
 	      case STRING:
-		bwriter.write(Utils.quote(cell.getContent()));
+                if (cell.getContent().equals("?"))
+                  bwriter.write("'?'");
+                else
+                  bwriter.write(Utils.quote(cell.getContent()));
 		break;
 	      case DOUBLE:
 		bwriter.write(Utils.doubleToString(cell.toDouble(), m_MaxDecimals));

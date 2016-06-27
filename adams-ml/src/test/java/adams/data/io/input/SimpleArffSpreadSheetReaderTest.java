@@ -55,6 +55,7 @@ public class SimpleArffSpreadSheetReaderTest
       "iris.arff",
       "vote.arff",
       "date.arff",
+      "anneal.arff",
     };
   }
 
@@ -66,6 +67,7 @@ public class SimpleArffSpreadSheetReaderTest
   @Override
   protected SpreadSheetReader[] getRegressionSetups() {
     return new SpreadSheetReader[]{
+      new SimpleArffSpreadSheetReader(),
       new SimpleArffSpreadSheetReader(),
       new SimpleArffSpreadSheetReader(),
       new SimpleArffSpreadSheetReader(),
