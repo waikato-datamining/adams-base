@@ -25,7 +25,7 @@ import java.util.Map;
 
 /**
  <!-- globalinfo-start -->
- * Converts the Map in YAML notation into a Map object.
+ * Converts the YAML string into a java.util.Map object.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -52,7 +52,7 @@ public class YamlStringToMap
    * @return 			a description suitable for displaying in the gui
    */
   public String globalInfo() {
-    return "Converts the Map in YAML notation into a Map object.";
+    return "Converts the YAML string into a " + Map.class.getName() + " object.";
   }
 
   /**
