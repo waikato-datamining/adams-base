@@ -15,11 +15,16 @@
 
 /*
  * JsonFileWriter.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
 
+import adams.core.io.PrettyPrintingSupporter;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import net.minidev.json.JSONAware;
 import adams.core.io.FileUtils;
 
@@ -32,18 +37,14 @@ import adams.core.io.FileUtils;
  <!-- flow-summary-start -->
  * Input&#47;output:<br>
  * - accepts:<br>
- * &nbsp;&nbsp;&nbsp;org.json.simple.JSONAware<br>
+ * &nbsp;&nbsp;&nbsp;net.minidev.json.JSONAware<br>
  * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- * 
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  * 
  * <pre>-name &lt;java.lang.String&gt; (property: name)
@@ -51,24 +52,37 @@ import adams.core.io.FileUtils;
  * &nbsp;&nbsp;&nbsp;default: JsonFileWriter
  * </pre>
  * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
- * <pre>-skip (property: skip)
+ * <pre>-skip &lt;boolean&gt; (property: skip)
  * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
  * &nbsp;&nbsp;&nbsp;as it is.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-stop-flow-on-error (property: stopFlowOnError)
+ * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
  * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
  * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
  * <pre>-output &lt;adams.core.io.PlaceholderFile&gt; (property: outputFile)
  * &nbsp;&nbsp;&nbsp;The name of the output file.
  * &nbsp;&nbsp;&nbsp;default: ${CWD}
+ * </pre>
+ * 
+ * <pre>-pretty-printing &lt;boolean&gt; (property: prettyPrinting)
+ * &nbsp;&nbsp;&nbsp;If enabled, the output is printed in a 'pretty' format.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
  <!-- options-end -->
@@ -77,10 +91,14 @@ import adams.core.io.FileUtils;
  * @version $Revision$
  */
 public class JsonFileWriter
-  extends AbstractFileWriter {
+  extends AbstractFileWriter
+  implements PrettyPrintingSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = 3613018887562327088L;
+
+  /** whether to use pretty-printing. */
+  protected boolean m_PrettyPrinting;
 
   /**
    * Returns a string describing the object.
@@ -90,6 +108,17 @@ public class JsonFileWriter
   @Override
   public String globalInfo() {
     return "Writes a JSON object/array to a file.";
+  }
+
+  /**
+   * Adds options to the internal list of options.
+   */
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+      "pretty-printing", "prettyPrinting",
+      false);
   }
 
   /**
@@ -104,9 +133,38 @@ public class JsonFileWriter
   }
 
   /**
+   * Sets whether to use pretty-printing or not.
+   *
+   * @param value	true if to use pretty-printing
+   */
+  public void setPrettyPrinting(boolean value) {
+    m_PrettyPrinting = value;
+    reset();
+  }
+
+  /**
+   * Returns whether pretty-printing is used or not.
+   *
+   * @return		true if to use pretty-printing
+   */
+  public boolean getPrettyPrinting() {
+    return m_PrettyPrinting;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String prettyPrintingTipText() {
+    return "If enabled, the output is printed in a 'pretty' format.";
+  }
+
+  /**
    * Returns the class that the consumer accepts.
    *
-   * @return		<!-- flow-accepts-start -->org.json.simple.JSONAware.class<!-- flow-accepts-end -->
+   * @return		<!-- flow-accepts-start -->net.minidev.json.JSONAware.class<!-- flow-accepts-end -->
    */
   public Class[] accepts() {
     return new Class[]{JSONAware.class};
@@ -119,11 +177,24 @@ public class JsonFileWriter
    */
   @Override
   protected String doExecute() {
-    String		result;
+    String	result;
+    String	content;
+    Gson 	gson;
+    JsonParser 	jp;
+    JsonElement	je;
 
     result = null;
-    
-    if (!FileUtils.writeToFile(m_OutputFile.getAbsolutePath(), m_InputToken.getPayload(), false))
+
+    content = ((JSONAware) m_InputToken.getPayload()).toJSONString();
+
+    if (m_PrettyPrinting) {
+      gson    = new GsonBuilder().setPrettyPrinting().create();
+      jp      = new JsonParser();
+      je      = jp.parse(content);
+      content = gson.toJson(je);
+    }
+
+    if (!FileUtils.writeToFile(m_OutputFile.getAbsolutePath(), content, false))
       result = "Failed to write JSON file: " + m_OutputFile;
 
     return result;

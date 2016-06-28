@@ -19,6 +19,11 @@
  */
 package adams.data.conversion;
 
+import adams.core.io.PrettyPrintingSupporter;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import net.minidev.json.JSONAware;
 
 /**
@@ -43,10 +48,14 @@ import net.minidev.json.JSONAware;
  * @version $Revision$
  */
 public class JsonToString
-  extends AbstractConversionToString {
+  extends AbstractConversionToString
+  implements PrettyPrintingSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = -468714756281370533L;
+
+  /** whether to use pretty-printing. */
+  protected boolean m_PrettyPrinting;
 
   /**
    * Returns a string describing the object.
@@ -56,6 +65,46 @@ public class JsonToString
   @Override
   public String globalInfo() {
     return "Turns a JSON object/array into a string.";
+  }
+
+  /**
+   * Adds options to the internal list of options.
+   */
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+      "pretty-printing", "prettyPrinting",
+      false);
+  }
+
+  /**
+   * Sets whether to use pretty-printing or not.
+   *
+   * @param value	true if to use pretty-printing
+   */
+  public void setPrettyPrinting(boolean value) {
+    m_PrettyPrinting = value;
+    reset();
+  }
+
+  /**
+   * Returns whether pretty-printing is used or not.
+   *
+   * @return		true if to use pretty-printing
+   */
+  public boolean getPrettyPrinting() {
+    return m_PrettyPrinting;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String prettyPrintingTipText() {
+    return "If enabled, the output is printed in a 'pretty' format.";
   }
 
   /**
@@ -76,6 +125,20 @@ public class JsonToString
    */
   @Override
   protected Object doConvert() throws Exception {
-    return ((JSONAware) m_Input).toJSONString();
+    String	result;
+    Gson 	gson;
+    JsonParser 	jp;
+    JsonElement	je;
+
+    result = ((JSONAware) m_Input).toJSONString();
+
+    if (m_PrettyPrinting) {
+      gson   = new GsonBuilder().setPrettyPrinting().create();
+      jp     = new JsonParser();
+      je     = jp.parse(result);
+      result = gson.toJson(je);
+    }
+
+    return result;
   }
 }
