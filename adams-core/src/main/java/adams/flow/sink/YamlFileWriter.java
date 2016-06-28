@@ -21,8 +21,11 @@
 package adams.flow.sink;
 
 import adams.core.io.FileUtils;
+import org.yaml.snakeyaml.DumperOptions.FlowStyle;
 import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.nodes.Tag;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -36,6 +39,7 @@ import java.util.Map;
  * Input&#47;output:<br>
  * - accepts:<br>
  * &nbsp;&nbsp;&nbsp;java.util.Map<br>
+ * &nbsp;&nbsp;&nbsp;java.util.List<br>
  * <br><br>
  <!-- flow-summary-end -->
  *
@@ -115,10 +119,10 @@ public class YamlFileWriter
   /**
    * Returns the class that the consumer accepts.
    *
-   * @return		<!-- flow-accepts-start -->java.util.Map.class<!-- flow-accepts-end -->
+   * @return		<!-- flow-accepts-start -->java.util.Map.class, java.util.List.class<!-- flow-accepts-end -->
    */
   public Class[] accepts() {
-    return new Class[]{Map.class};
+    return new Class[]{Map.class, List.class};
   }
 
   /**
@@ -130,11 +134,19 @@ public class YamlFileWriter
   protected String doExecute() {
     String	result;
     Yaml	yaml;
+    String	content;
 
     result = null;
     yaml   = new Yaml();
 
-    if (!FileUtils.writeToFile(m_OutputFile.getAbsolutePath(), yaml.dumpAsMap(m_InputToken.getPayload()), false))
+    if (m_InputToken.getPayload() instanceof Map)
+      content = yaml.dumpAs(m_InputToken.getPayload(), Tag.MAP, FlowStyle.BLOCK);
+    else if (m_InputToken.getPayload() instanceof List)
+      content = yaml.dumpAs(m_InputToken.getPayload(), Tag.SEQ, FlowStyle.BLOCK);
+    else
+      content = yaml.dump(m_InputToken.getPayload());
+
+    if (!FileUtils.writeToFile(m_OutputFile.getAbsolutePath(), content, false))
       result = "Failed to write YAML file: " + m_OutputFile;
 
     return result;

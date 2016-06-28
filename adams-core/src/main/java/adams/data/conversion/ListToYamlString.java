@@ -14,16 +14,20 @@
  */
 
 /**
- * MapToJson.java
+ * ListToYamlString.java
  * Copyright (C) 2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
 
-import java.util.Map;
+import org.yaml.snakeyaml.DumperOptions.FlowStyle;
+import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.nodes.Tag;
+
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
- * Converts the java.util.Map into a JSON object. Handles nested maps, lists and arrays.
+ * Converts the java.util.List object into a YAML string.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -38,8 +42,8 @@ import java.util.Map;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision: 10824 $
  */
-public class MapToJson
-  extends AbstractObjectToJson {
+public class ListToYamlString
+  extends AbstractConversionToString {
 
   /** for serialization. */
   private static final long serialVersionUID = -4017583319699378889L;
@@ -50,7 +54,7 @@ public class MapToJson
    * @return 			a description suitable for displaying in the gui
    */
   public String globalInfo() {
-    return "Converts the " + Map.class.getName() + " into a JSON object. Handles nested maps, lists and arrays.";
+    return "Converts the " + List.class.getName() + " object into a YAML string.";
   }
 
   /**
@@ -60,6 +64,19 @@ public class MapToJson
    */
   @Override
   public Class accepts() {
-    return Map.class;
+    return List.class;
+  }
+
+  /**
+   * Performs the actual conversion.
+   *
+   * @return		the converted data
+   * @throws Exception	if something goes wrong with the conversion
+   */
+  protected Object doConvert() throws Exception {
+    Yaml	yaml;
+
+    yaml = new Yaml();
+    return yaml.dumpAs(m_Input, Tag.SEQ, FlowStyle.BLOCK);
   }
 }

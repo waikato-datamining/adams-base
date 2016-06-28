@@ -14,16 +14,16 @@
  */
 
 /**
- * MapToJson.java
+ * ListToJson.java
  * Copyright (C) 2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
 
-import java.util.Map;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
- * Converts the java.util.Map into a JSON object. Handles nested maps, lists and arrays.
+ * Converts the java.util.List into a JSON object. Handles nested maps, lists and arrays.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -38,7 +38,7 @@ import java.util.Map;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision: 10824 $
  */
-public class MapToJson
+public class ListToJson
   extends AbstractObjectToJson {
 
   /** for serialization. */
@@ -50,7 +50,7 @@ public class MapToJson
    * @return 			a description suitable for displaying in the gui
    */
   public String globalInfo() {
-    return "Converts the " + Map.class.getName() + " into a JSON object. Handles nested maps, lists and arrays.";
+    return "Converts the " + List.class.getName() + " into a JSON object. Handles nested maps, lists and arrays.";
   }
 
   /**
@@ -60,6 +60,6 @@ public class MapToJson
    */
   @Override
   public Class accepts() {
-    return Map.class;
+    return List.class;
   }
 }

@@ -20,6 +20,7 @@
 
 package adams.flow.transformer;
 
+import adams.core.QuickInfoHelper;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
 import adams.flow.core.Token;
@@ -28,6 +29,7 @@ import org.yaml.snakeyaml.Yaml;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -81,6 +83,11 @@ import java.util.Map;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
+ * <pre>-type &lt;MAP|LIST&gt; (property: type)
+ * &nbsp;&nbsp;&nbsp;The data structure type to use.
+ * &nbsp;&nbsp;&nbsp;default: MAP
+ * </pre>
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -93,6 +100,17 @@ public class YamlFileReader
   private static final long serialVersionUID = -184602726110144511L;
 
   /**
+   * How to read the YAML file.
+   */
+  public enum DataStructureType {
+    MAP,
+    LIST
+  }
+
+  /** the data structure to read the YAML file into. */
+  protected DataStructureType m_Type;
+
+  /**
    * Returns a string describing the object.
    *
    * @return 			a description suitable for displaying in the gui
@@ -102,6 +120,57 @@ public class YamlFileReader
     return
         "Reads a YAML file and forwards the generated Map object.\n"
       + "http://yaml.org/";
+  }
+
+  /**
+   * Adds options to the internal list of options.
+   */
+  @Override
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+      "type", "type",
+      DataStructureType.MAP);
+  }
+
+  /**
+   * Sets the data structure type.
+   *
+   * @param value	the type
+   */
+  public void setType(DataStructureType value) {
+    m_Type = value;
+    reset();
+  }
+
+  /**
+   * Returns the data structure type.
+   *
+   * @return		the type
+   */
+  public DataStructureType getType() {
+    return m_Type;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String typeTipText() {
+    return "The data structure type to use.";
+  }
+
+  /**
+   * Returns a quick info about the actor, which will be displayed in the GUI.
+   *
+   * @return		null if no info available, otherwise short string
+   */
+  @Override
+  public String getQuickInfo() {
+    return QuickInfoHelper.toString(this, "type", m_Type, "data structure: ");
   }
 
   /**
@@ -121,7 +190,14 @@ public class YamlFileReader
    */
   @Override
   public Class[] generates() {
-    return new Class[]{Map.class};
+    switch (m_Type) {
+      case LIST:
+	return new Class[]{List.class};
+      case MAP:
+	return new Class[]{Map.class};
+      default:
+	throw new IllegalStateException("Unhandled data structure type: " + m_Type);
+    }
   }
 
   /**
@@ -137,7 +213,7 @@ public class YamlFileReader
     FileReader		freader;
     BufferedReader	breader;
     Yaml		yaml;
-    Map			obj;
+    Object		obj;
 
     result = null;
 
@@ -153,7 +229,16 @@ public class YamlFileReader
       freader = new FileReader(file.getAbsolutePath());
       breader = new BufferedReader(freader);
       yaml    = new Yaml();
-      obj     = yaml.loadAs(breader, Map.class);
+      switch (m_Type) {
+	case LIST:
+	  obj = yaml.loadAs(breader, List.class);
+	  break;
+	case MAP:
+	  obj = yaml.loadAs(breader, Map.class);
+	  break;
+	default:
+	  throw new IllegalStateException("Unhandled data structure type: " + m_Type);
+      }
       m_OutputToken = new Token(obj);
     }
     catch (Exception e) {
