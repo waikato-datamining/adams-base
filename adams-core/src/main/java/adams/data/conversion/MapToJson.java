@@ -24,11 +24,12 @@ import net.minidev.json.JSONAware;
 import net.minidev.json.JSONObject;
 
 import java.lang.reflect.Array;
+import java.util.List;
 import java.util.Map;
 
 /**
  <!-- globalinfo-start -->
- * Converts the Map into a JSON object. Handles nested maps.
+ * Converts the Map into a JSON object. Handles nested maps, lists and arrays.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -55,7 +56,7 @@ public class MapToJson
    * @return 			a description suitable for displaying in the gui
    */
   public String globalInfo() {
-    return "Converts the Map into a JSON object. Handles nested maps.";
+    return "Converts the Map into a JSON object. Handles nested maps, lists and arrays.";
   }
 
   /**
@@ -79,33 +80,40 @@ public class MapToJson
   }
 
   /**
-   * Transfers the map key/value into the JSON object.
+   * Turns the object into a JSON object, if necessary.
    *
-   * @param json	where to store the map data
-   * @param key		the key of the value
    * @param value	the value associated with the key
    */
-  protected void add(JSONObject json, Object key, Object value) {
-    Map		nestedMap;
-    JSONObject	nestedJson;
-    JSONArray	nestedArray;
+  protected Object toJSON(Object value) {
+    Map 	map;
+    List	list;
+    JSONObject 	json;
+    JSONArray 	array;
     int		i;
 
-      if (value instanceof Map) {
-	nestedMap = (Map) value;
-	nestedJson = new JSONObject();
-	convert(nestedJson, nestedMap);
-	json.put(key.toString(), nestedJson);
-      }
-      else if (value.getClass().isArray()) {
-	nestedArray = new JSONArray();
-	for (i = 0; i < Array.getLength(value); i++)
-	  nestedArray.add(Array.get(value, i));
-	json.put(key.toString(), nestedArray);
-      }
-      else {
-	json.put(key.toString(), value);
-      }
+    if (value instanceof Map) {
+      map  = (Map) value;
+      json = new JSONObject();
+      for (Object key : map.keySet())
+	json.put(key.toString(), toJSON(map.get(key)));
+      return json;
+    }
+    else if (value instanceof List) {
+      list  = (List) value;
+      array = new JSONArray();
+      for (i = 0; i < list.size(); i++)
+	array.add(toJSON(list.get(i)));
+      return array;
+    }
+    else if (value.getClass().isArray()) {
+      array = new JSONArray();
+      for (i = 0; i < Array.getLength(value); i++)
+	array.add(toJSON(Array.get(value, i)));
+      return array;
+    }
+    else {
+      return value;
+    }
   }
 
   /**
@@ -119,7 +127,7 @@ public class MapToJson
 
     for (Object key : map.keySet()) {
       value = map.get(key);
-      add(json, key, value);
+      json.put(key.toString(), toJSON(value));
     }
   }
 
@@ -130,13 +138,6 @@ public class MapToJson
    * @throws Exception	if something goes wrong with the conversion
    */
   protected Object doConvert() throws Exception {
-    Map		map;
-    JSONObject	result;
-
-    map    = (Map) m_Input;
-    result = new JSONObject();
-    convert(result, map);
-
-    return result;
+    return toJSON(m_Input);
   }
 }
