@@ -26,6 +26,7 @@ import adams.core.Variables;
 import adams.core.io.FlowFile;
 import adams.event.VariableChangeEvent;
 import adams.event.VariableChangeEvent.Type;
+import adams.flow.control.FlowStructureModifier;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +39,7 @@ import java.util.List;
  */
 public abstract class AbstractExternalActor
   extends AbstractActor
-  implements ExternalActorHandler {
+  implements ExternalActorHandler, FlowStructureModifier {
 
   /** for serialization. */
   private static final long serialVersionUID = 1024129351334661368L;
@@ -183,7 +184,7 @@ public abstract class AbstractExternalActor
       result = "'" + m_ActorFile.getAbsolutePath() + "' does not point to a file!";
     }
     else {
-      errors = new ArrayList<String>();
+      errors = new ArrayList<>();
       if (isLoggingEnabled())
 	getLogger().fine("Attempting to load actor file: " + m_ActorFile);
       m_ExternalActor = ActorUtils.read(m_ActorFile.getAbsolutePath(), errors);
@@ -254,6 +255,15 @@ public abstract class AbstractExternalActor
     }
 
     return result;
+  }
+
+  /**
+   * Returns whether the actor is modifying the structure.
+   *
+   * @return		true if the actor is modifying the structure
+   */
+  public boolean isModifyingStructure() {
+    return !getSkip();
   }
 
   /**

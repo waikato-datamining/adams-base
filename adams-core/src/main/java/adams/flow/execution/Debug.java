@@ -22,15 +22,21 @@ package adams.flow.execution;
 import adams.core.Stoppable;
 import adams.core.Variables;
 import adams.core.base.BaseString;
+import adams.core.option.DebugNestedProducer;
+import adams.core.option.NestedConsumer;
 import adams.flow.condition.bool.BooleanConditionSupporter;
 import adams.flow.core.Actor;
 import adams.flow.core.InputConsumer;
 import adams.flow.core.Token;
 import adams.flow.execution.debug.ControlPanel;
 import adams.flow.execution.debug.View;
+import adams.flow.processor.ListStructureModifyingActors;
 import adams.gui.core.BasePanel;
+import adams.gui.core.GUIHelper;
+import adams.gui.flow.FlowPanel;
 import adams.gui.tools.ExpressionWatchPanel.ExpressionType;
 
+import java.awt.Container;
 import java.awt.Dimension;
 
 /**
@@ -45,46 +51,46 @@ import java.awt.Dimension;
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- * 
+ *
  * <pre>-width &lt;int&gt; (property: width)
  * &nbsp;&nbsp;&nbsp;The width of the dialog.
  * &nbsp;&nbsp;&nbsp;default: 800
  * &nbsp;&nbsp;&nbsp;minimum: -1
  * </pre>
- * 
+ *
  * <pre>-height &lt;int&gt; (property: height)
  * &nbsp;&nbsp;&nbsp;The height of the dialog.
  * &nbsp;&nbsp;&nbsp;default: 600
  * &nbsp;&nbsp;&nbsp;minimum: -1
  * </pre>
- * 
+ *
  * <pre>-breakpoint &lt;adams.flow.execution.AbstractBreakpoint&gt; [-breakpoint ...] (property: breakpoints)
  * &nbsp;&nbsp;&nbsp;The breakpoints to use for suspending the flow execution.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- * 
+ *
  * <pre>-watch &lt;adams.core.base.BaseString&gt; [-watch ...] (property: watches)
  * &nbsp;&nbsp;&nbsp;The expression to display initially in the watch dialog; the type of the 
  * &nbsp;&nbsp;&nbsp;watch needs to be specified as well.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- * 
+ *
  * <pre>-watch-type &lt;VARIABLE|BOOLEAN|NUMERIC|STRING&gt; [-watch-type ...] (property: watchTypes)
  * &nbsp;&nbsp;&nbsp;The types of the watch expressions; determines how the expressions get evaluated 
  * &nbsp;&nbsp;&nbsp;and displayed.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- * 
+ *
  * <pre>-view &lt;SOURCE|EXPRESSIONS|VARIABLES|STORAGE|INSPECT_TOKEN|BREAKPOINTS&gt; [-view ...] (property: views)
  * &nbsp;&nbsp;&nbsp;The views to display automatically when the breakpoint is reached.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- * 
+ *
  * <pre>-step-by-step &lt;boolean&gt; (property: stepByStep)
  * &nbsp;&nbsp;&nbsp;Whether to start in step-by-step mode or wait for first breakpoint.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -118,17 +124,14 @@ public class Debug
   /** whether to start in auto-progress mode. */
   protected boolean m_StepByStep;
 
-  /** debug panel. */
-  protected transient ControlPanel m_DebugPanel;
-  
+  /** control panel. */
+  protected transient ControlPanel m_ControlPanel;
+
   /** whether the GUI currently blocks the flow execution. */
   protected boolean m_Blocked;
 
   /** the current actor. */
   protected transient Actor m_Current;
-
-  /** whether we can execute the next step. */
-  protected boolean m_ExecuteNext;
 
   /** whether the flow got stopped. */
   protected boolean m_Stopped;
@@ -140,13 +143,13 @@ public class Debug
    */
   @Override
   public String globalInfo() {
-    return 
-	"Allows the user to define breakpoints that suspend the execution "
-	  + "of the flow, allowing the inspection of the current flow state.\n"
-	  + "Tokens can only inspected during 'preInput', 'preExecute' and 'postOutput' "
-	  + "of Breakpoint control actors. Step-wise debugging stops in "
-	  + "'preExecute', which should be able to access the current token in "
-	  + "case of input consumers (ie transformers and sinks).";
+    return
+      "Allows the user to define breakpoints that suspend the execution "
+	+ "of the flow, allowing the inspection of the current flow state.\n"
+	+ "Tokens can only inspected during 'preInput', 'preExecute' and 'postOutput' "
+	+ "of Breakpoint control actors. Step-wise debugging stops in "
+	+ "'preExecute', which should be able to access the current token in "
+	+ "case of input consumers (ie transformers and sinks).";
   }
 
   /**
@@ -157,32 +160,32 @@ public class Debug
     super.defineOptions();
 
     m_OptionManager.add(
-	    "width", "width",
-	    getDefaultWidth(), -1, null);
+      "width", "width",
+      getDefaultWidth(), -1, null);
 
     m_OptionManager.add(
-	    "height", "height",
-	    getDefaultHeight(), -1, null);
+      "height", "height",
+      getDefaultHeight(), -1, null);
 
     m_OptionManager.add(
-	    "breakpoint", "breakpoints",
-	    new AbstractBreakpoint[0]);
+      "breakpoint", "breakpoints",
+      new AbstractBreakpoint[0]);
 
     m_OptionManager.add(
-	    "watch", "watches",
-	    new BaseString[0]);
+      "watch", "watches",
+      new BaseString[0]);
 
     m_OptionManager.add(
-	    "watch-type", "watchTypes",
-	    new ExpressionType[0]);
+      "watch-type", "watchTypes",
+      new ExpressionType[0]);
 
     m_OptionManager.add(
-	    "view", "views",
-	    new View[0]);
+      "view", "views",
+      new View[0]);
 
     m_OptionManager.add(
-	    "step-by-step", "stepByStep",
-	    false);
+      "step-by-step", "stepByStep",
+      false);
   }
 
   /**
@@ -324,8 +327,8 @@ public class Debug
    */
   public String watchesTipText() {
     return
-        "The expression to display initially in the watch dialog; the type of "
-      + "the watch needs to be specified as well.";
+      "The expression to display initially in the watch dialog; the type of "
+	+ "the watch needs to be specified as well.";
   }
 
   /**
@@ -355,8 +358,8 @@ public class Debug
    */
   public String watchTypesTipText() {
     return
-        "The types of the watch expressions; determines how the expressions "
-      + "get evaluated and displayed.";
+      "The types of the watch expressions; determines how the expressions "
+	+ "get evaluated and displayed.";
   }
 
   /**
@@ -423,8 +426,8 @@ public class Debug
    * @param value	true if step mode
    */
   public void setStepMode(boolean value) {
-    if (m_DebugPanel != null)
-      m_DebugPanel.setStepModeEnabled(value);
+    if (m_ControlPanel != null)
+      m_ControlPanel.setStepModeEnabled(value);
   }
 
   /**
@@ -433,15 +436,15 @@ public class Debug
    * @return		true if step mode
    */
   public boolean isStepMode() {
-    if (m_DebugPanel != null)
-      return m_DebugPanel.isStepModeEnabled();
+    if (m_ControlPanel != null)
+      return m_ControlPanel.isStepModeEnabled();
     else
       return false;
   }
 
   /**
    * The title of this listener.
-   * 
+   *
    * @return		the title
    */
   @Override
@@ -460,25 +463,51 @@ public class Debug
 
   /**
    * Returns the panel to use.
-   * 
+   *
    * @return		the panel, null if none available
    */
   @Override
   public BasePanel newListenerPanel() {
-    int		i;
-    
-    m_DebugPanel = new ControlPanel();
-    m_DebugPanel.setOwner(this);
+    int					i;
+    FlowPanel				panel;
+    FlowPanel				panelCopy;
+    Actor				expanded;
+    DebugNestedProducer			producer;
+    NestedConsumer			consumer;
+    ListStructureModifyingActors	proc;
+
+    m_ControlPanel = new ControlPanel();
+    m_ControlPanel.setOwner(this);
     for (i = 0; i < m_Watches.length; i++)
-      m_DebugPanel.addWatch(m_Watches[i].getValue(), m_WatchTypes[i]);
+      m_ControlPanel.addWatch(m_Watches[i].getValue(), m_WatchTypes[i]);
     setStepMode(m_StepByStep);
 
-    return m_DebugPanel;
+    // display copy of flow for debugging purposes
+    if ((m_Owner.getParentComponent() != null) && (m_Owner.getParentComponent() instanceof Container)) {
+      panel = (FlowPanel) GUIHelper.getParent((Container) m_Owner.getParentComponent(), FlowPanel.class);
+      if ((panel != null) && (panel.getOwner() != null)) {
+	proc = new ListStructureModifyingActors();
+	proc.process(panel.getCurrentFlow());
+	if (proc.getList().size() > 0) {
+	  consumer = new NestedConsumer();
+	  producer = new DebugNestedProducer();
+	  consumer.setInput(producer.produce(getOwner()));
+	  expanded = (Actor) consumer.consume();
+	  panelCopy = panel.getOwner().newPanel();
+	  panelCopy.setCurrentFlow(expanded);
+	  panelCopy.setTitle("Debugging: " + panel.getTitle());
+	  panelCopy.updateTitle();
+	  m_Owner.setParentComponent(panelCopy);
+	}
+      }
+    }
+
+    return m_ControlPanel;
   }
-  
+
   /**
    * Returns the default size for the frame.
-   * 
+   *
    * @return		the frame size
    */
   @Override
@@ -500,24 +529,24 @@ public class Debug
    */
   @Override
   protected void updateGUI() {
-    if (m_DebugPanel != null)
-      m_DebugPanel.closeParent();
+    if (m_ControlPanel != null)
+      m_ControlPanel.closeParent();
   }
-  
+
   /**
    * Returns whether the flow execution is currently blocked.
    */
   public boolean isBlocked() {
     return m_Blocked;
   }
-  
+
   /**
    * Blocks thhe flow execution.
    */
   public void blockExecution() {
     m_Blocked = true;
-    m_DebugPanel.update();
-    while (m_Blocked && !m_Stopped && !m_DebugPanel.getCurrentActor().isStopped()) {
+    m_ControlPanel.update();
+    while (m_Blocked && !m_Stopped && !m_ControlPanel.getCurrentActor().isStopped()) {
       try {
 	synchronized(this) {
 	  wait(50);
@@ -528,17 +557,17 @@ public class Debug
       }
     }
   }
-  
+
   /**
    * Unblocks the flow execution.
    */
   public void unblockExecution() {
     m_Blocked = false;
   }
-  
+
   /**
    * Suspends the flow execution.
-   * 
+   *
    * @param point	the breakpoint that triggered the suspend
    * @param actor	the current actor
    * @param stage	the hook method (eg preInput)
@@ -554,24 +583,24 @@ public class Debug
 
     blocked = ((point == null) && isStepMode()) || (point != null);
 
-    m_DebugPanel.setCurrentStage(stage);
-    m_DebugPanel.setCurrentActor(actor);
-    m_DebugPanel.setCurrentToken(null);
-    m_DebugPanel.setCurrentBreakpoint(point);
+    m_ControlPanel.setCurrentStage(stage);
+    m_ControlPanel.setCurrentActor(actor);
+    m_ControlPanel.setCurrentToken(null);
+    m_ControlPanel.setCurrentBreakpoint(point);
     if (point instanceof BooleanConditionSupporter)
-      m_DebugPanel.setCurrentCondition(((BooleanConditionSupporter) point).getCondition());
+      m_ControlPanel.setCurrentCondition(((BooleanConditionSupporter) point).getCondition());
     else
-      m_DebugPanel.setCurrentCondition(null);
-    m_DebugPanel.showFrame();
-    m_DebugPanel.breakpointReached(blocked);
+      m_ControlPanel.setCurrentCondition(null);
+    m_ControlPanel.showFrame();
+    m_ControlPanel.breakpointReached(blocked);
 
     if (blocked)
       blockExecution();
   }
-  
+
   /**
    * Suspends the flow execution.
-   * 
+   *
    * @param point	the breakpoint that triggered the suspend
    * @param actor	the current actor
    * @param stage	the hook method (eg preInput)
@@ -588,24 +617,24 @@ public class Debug
 
     blocked = ((point == null) && isStepMode()) || (point != null);
 
-    m_DebugPanel.setCurrentStage(stage);
-    m_DebugPanel.setCurrentActor(actor);
-    m_DebugPanel.setCurrentToken(token);
-    m_DebugPanel.setCurrentBreakpoint(point);
+    m_ControlPanel.setCurrentStage(stage);
+    m_ControlPanel.setCurrentActor(actor);
+    m_ControlPanel.setCurrentToken(token);
+    m_ControlPanel.setCurrentBreakpoint(point);
     if (point instanceof BooleanConditionSupporter)
-      m_DebugPanel.setCurrentCondition(((BooleanConditionSupporter) point).getCondition());
+      m_ControlPanel.setCurrentCondition(((BooleanConditionSupporter) point).getCondition());
     else
-      m_DebugPanel.setCurrentCondition(null);
-    m_DebugPanel.showFrame();
-    m_DebugPanel.breakpointReached(blocked);
+      m_ControlPanel.setCurrentCondition(null);
+    m_ControlPanel.showFrame();
+    m_ControlPanel.breakpointReached(blocked);
 
     if (blocked)
       blockExecution();
   }
-  
+
   /**
    * Gets called before the actor receives the token.
-   * 
+   *
    * @param actor	the actor that will receive the token
    * @param token	the token that the actor will receive
    */
@@ -618,10 +647,10 @@ public class Debug
       }
     }
   }
-  
+
   /**
    * Gets called after the actor received the token.
-   * 
+   *
    * @param actor	the actor that received the token
    */
   @Override
@@ -633,10 +662,10 @@ public class Debug
       }
     }
   }
-  
+
   /**
    * Gets called before the actor gets executed.
-   * 
+   *
    * @param actor	the actor that will get executed
    */
   @Override
@@ -660,7 +689,7 @@ public class Debug
 
   /**
    * Gets called after the actor was executed.
-   * 
+   *
    * @param actor	the actor that was executed
    */
   @Override
@@ -672,10 +701,10 @@ public class Debug
       }
     }
   }
-  
+
   /**
    * Gets called before a token gets obtained from the actor.
-   * 
+   *
    * @param actor	the actor the token gets obtained from
    */
   @Override
@@ -687,10 +716,10 @@ public class Debug
       }
     }
   }
-  
+
   /**
    * Gets called after a token was acquired from the actor.
-   * 
+   *
    * @param actor	the actor that the token was acquired from
    * @param token	the token that was acquired from the actor
    */

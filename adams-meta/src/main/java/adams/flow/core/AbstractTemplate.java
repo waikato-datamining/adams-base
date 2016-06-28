@@ -170,6 +170,15 @@ public abstract class AbstractTemplate
   }
 
   /**
+   * Returns whether the actor is modifying the structure.
+   *
+   * @return		true if the actor is modifying the structure
+   */
+  public boolean isModifyingStructure() {
+    return !getSkip();
+  }
+
+  /**
    * Updates the Variables instance in use.
    * <br><br>
    * Use with caution!

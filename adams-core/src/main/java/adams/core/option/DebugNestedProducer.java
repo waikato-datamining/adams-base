@@ -19,10 +19,19 @@
  */
 package adams.core.option;
 
+import adams.core.option.NestedFormatHelper.Line;
+import adams.flow.control.Sequence;
+import adams.flow.control.SubProcess;
+import adams.flow.core.Actor;
+import adams.flow.core.ActorUtils;
+import adams.flow.core.ExternalActorHandler;
+import adams.flow.core.InternalActorHandler;
+import adams.flow.source.SequenceSource;
+import adams.flow.standalone.Standalones;
+
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
-
-import adams.flow.core.ExternalActorHandler;
 
 /**
  * Nested producer that outputs format useful for debugging purposes.
@@ -37,82 +46,120 @@ public class DebugNestedProducer
   /** for serialization. */
   private static final long serialVersionUID = 931016182843089428L;
 
-  /** the property for the external actors. */
-  public final static String PROPERTY_EXTERNALACTOR_FILE = "actorFile";
-
   /**
-   * Returns the current value for the option.
+   * Visits a class option.
    *
-   * @param option	the option to get the current value for
-   * @return		the current value (can be array)
-   */
-  @Override
-  protected Object getCurrentValue(AbstractOption option) {
-    if (    (option.getOwner().getOwner() instanceof ExternalActorHandler)
-	 && option.getProperty().equals(PROPERTY_EXTERNALACTOR_FILE) )
-      return ((ExternalActorHandler) option.getOwner().getOwner()).getExternalActor();
-    else
-      return option.getCurrentValue();
-  }
-
-  /**
-   * Checks whether the value represents the default value for the option.
-   *
-   * @param option	the option to check the default value for
-   * @param value	the (potential) default value
-   * @return		true if the value represents the default value
-   */
-  @Override
-  protected boolean isDefaultValue(AbstractArgumentOption option, Object value) {
-    if (    (option.getOwner().getOwner() instanceof ExternalActorHandler)
-	 && option.getProperty().equals(PROPERTY_EXTERNALACTOR_FILE) )
-      return false;
-    else
-      return option.isDefaultValue(value);
-  }
-
-  /**
-   * Visits an argument option.
-   *
-   * @param option	the argument option
+   * @param option	the class option
    * @return		the last internal data structure that was generated
    */
   @Override
-  public List processOption(AbstractArgumentOption option) {
-    List		result;
-    List		nested;
-    NestedProducer	producer;
-    Object		current;
+  public List processOption(ClassOption option) {
+    ArrayList			result;
+    Object			currValue;
+    Object			currValues;
+    Object			value;
+    int				i;
+    ArrayList			nested;
+    ArrayList			nestedDeeper;
+    AbstractCommandLineHandler	handler;
+    Actor			actor;
+    Actor			wrapper;
 
-    if (option.getProperty().equals(PROPERTY_EXTERNALACTOR_FILE)) {
-      current = getCurrentValue(option);
-      result = new ArrayList();
-      if (getUsePropertyNames())
-	result.add(getOptionIdentifier(option) + "Expanded");
-      else
-	result.add(getOptionIdentifier(option) + "-expanded");
-      if (current != null) {
-	producer = new DebugNestedProducer();
-	nested   = producer.produce((OptionHandler) current);
-      }
-      else {
-	nested = new ArrayList();
-	nested.add("null");
-      }
-      result.add(nested);
+    result = new ArrayList();
 
-      if (m_Nesting.empty())
-	m_Output.addAll(result);
-      else
-	((List) m_Nesting.peek()).addAll(result);
+    if (option.isVariableAttached() && !m_OutputVariableValues) {
+      result.add(new Line(getOptionIdentifier(option)));
+      result.add(new Line(option.getVariable()));
     }
     else {
-      result = super.processOption(option);
+      currValue = getCurrentValue(option);
+
+      if (!isDefaultValue(option, currValue)) {
+	currValues = null;
+
+	if (currValue != null) {
+	  if (!option.isMultiple()) {
+	    currValues = Array.newInstance(option.getBaseClass(), 1);
+	    Array.set(currValues, 0, currValue);
+	  }
+	  else {
+	    currValues = currValue;
+	  }
+
+	  for (i = 0; i < Array.getLength(currValues); i++) {
+	    value = Array.get(currValues, i);
+	    actor = null;
+            if (value instanceof ExternalActorHandler) {
+              if (((ExternalActorHandler) value).getExternalActor() != null) {
+		actor = ((ExternalActorHandler) value).getExternalActor();
+		if (ActorUtils.isStandalone(actor)) {
+		  wrapper = new Standalones();
+		  wrapper.setName(((Actor) value).getName());
+		  ((Standalones) wrapper).removeAll();
+		  ((Standalones) wrapper).add(actor);
+		  actor = wrapper;
+		}
+		else if (ActorUtils.isSource(actor)) {
+		  wrapper = new SequenceSource();
+		  wrapper.setName(((Actor) value).getName());
+		  ((SequenceSource) wrapper).removeAll();
+		  ((SequenceSource) wrapper).add(actor);
+		  actor = wrapper;
+		}
+		else if (ActorUtils.isTransformer(actor)) {
+		  wrapper = new SubProcess();
+		  wrapper.setName(((Actor) value).getName());
+		  ((SubProcess) wrapper).removeAll();
+		  ((SubProcess) wrapper).add(actor);
+		  actor = wrapper;
+		}
+		else if (ActorUtils.isSink(actor)) {
+		  wrapper = new Sequence();
+		  wrapper.setName(((Actor) value).getName());
+		  ((Sequence) wrapper).removeAll();
+		  ((Sequence) wrapper).add(actor);
+		  actor = wrapper;
+		}
+		actor.setParent(((Actor) value).getParent());
+	      }
+            }
+            else if (value instanceof InternalActorHandler) {
+              if (((InternalActorHandler) value).getInternalActor() != null)
+                actor = ((InternalActorHandler) value).getInternalActor();
+            }
+	    if (actor != null)
+	      value = actor;
+	    result.add(new Line(getOptionIdentifier(option)));
+	    nested = new ArrayList();
+	    result.add(nested);
+	    nested.add(new Line(value.getClass().getName()));
+	    nestedDeeper = new ArrayList();
+	    nested.add(nestedDeeper);
+	    if (value instanceof OptionHandler) {
+	      m_Nesting.push(nested);
+	      m_Nesting.push(nestedDeeper);
+	      doProduce(((OptionHandler) value).getOptionManager());
+	      m_Nesting.pop();
+	      m_Nesting.pop();
+	    }
+	    else {
+	      handler = AbstractCommandLineHandler.getHandler(value);
+	      for (String line: handler.getOptions(value))
+		nestedDeeper.add(new Line(line));
+	    }
+	  }
+	}
+      }
     }
+
+    if (m_Nesting.empty())
+      m_Output.addAll(result);
+    else
+      m_Nesting.peek().addAll(result);
 
     return result;
   }
-  
+
   /**
    * Executes the producer from commandline.
    * 

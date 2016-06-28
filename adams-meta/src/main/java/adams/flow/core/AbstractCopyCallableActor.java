@@ -32,7 +32,7 @@ import java.util.HashSet;
  */
 public abstract class AbstractCopyCallableActor
   extends AbstractActor
-  implements CallableActorUser {
+  implements CallableActorUser, InternalActorHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = -7860206690560690212L;
@@ -134,6 +134,25 @@ public abstract class AbstractCopyCallableActor
   @Override
   public Actor getCallableActor() {
     return m_CallableActor;
+  }
+
+  /**
+   * Returns the internal actor.
+   *
+   * @return		the actor, null if not available
+   */
+  @Override
+  public Actor getInternalActor() {
+    return m_CallableActor;
+  }
+
+  /**
+   * Returns whether the actor is modifying the structure.
+   *
+   * @return		true if the actor is modifying the structure
+   */
+  public boolean isModifyingStructure() {
+    return !getSkip();
   }
 
   /**
