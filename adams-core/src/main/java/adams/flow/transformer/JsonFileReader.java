@@ -15,19 +15,20 @@
 
 /*
  * JsonFileReader.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
+import adams.core.io.FileUtils;
+import adams.core.io.PlaceholderFile;
+import adams.flow.core.Token;
+import net.minidev.json.JSONAware;
+import net.minidev.json.parser.JSONParser;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-
-import net.minidev.json.JSONAware;
-import net.minidev.json.parser.JSONParser;
-import adams.core.io.PlaceholderFile;
-import adams.flow.core.Token;
 
 /**
  <!-- globalinfo-start -->
@@ -128,7 +129,8 @@ public class JsonFileReader
     Object		fileObj;
     File		file;
     JSONParser		parser;
-    BufferedReader	reader;
+    FileReader		freader;
+    BufferedReader 	breader;
     Object		obj;
 
     result = null;
@@ -139,15 +141,21 @@ public class JsonFileReader
     else
       file = new PlaceholderFile((String) fileObj);
 
+    freader = null;
+    breader = null;
     try {
-      reader = new BufferedReader(new FileReader(file.getAbsolutePath()));
-      parser = new JSONParser(JSONParser.MODE_JSON_SIMPLE);
-      obj    = parser.parse(reader);
+      freader = new FileReader(file.getAbsolutePath());
+      breader = new BufferedReader(freader);
+      parser  = new JSONParser(JSONParser.MODE_JSON_SIMPLE);
+      obj     = parser.parse(breader);
       m_OutputToken = new Token(obj);
-      reader.close();
     }
     catch (Exception e) {
       result = handleException("Failed to read JSON file: " + file, e);
+    }
+    finally {
+      FileUtils.closeQuietly(breader);
+      FileUtils.closeQuietly(freader);
     }
 
     return result;
