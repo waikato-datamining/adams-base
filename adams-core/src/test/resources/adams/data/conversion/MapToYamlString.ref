@@ -1,0 +1,8 @@
+--> out-0.txt
+a: value
+number: 10.9
+hello: world
+map:
+  nested: value
+
+

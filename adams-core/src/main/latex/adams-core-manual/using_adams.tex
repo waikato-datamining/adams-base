@@ -1063,7 +1063,7 @@ statistics.
 \newpage
 \section{JSON}
 \label{json}
-Flows cannot only be saved as JSON files (and read in again), but flows 
+Flows cannot only be saved as JSON\cite{json} files (and read in again), but flows
 themselves can process JSON data structures as well. \\
 The following transformers are available:
 \begin{tight_itemize}
@@ -1156,6 +1156,35 @@ The following conversions are available:
 	\item \textit{DOMNodeListToArray} -- turns the list of DOM nodes into an array.
 	\item \textit{XMLToDOM} -- parses the XML string and generates a DOM 
 	object.
+\end{tight_itemize}
+
+
+\newpage
+\section{YAML}
+\label{yaml}
+Flows can process YAML\cite{yaml} files and strings as long as they are in map notation,
+which is commonly used for configuration files. \\
+The following transformers are available:
+\begin{tight_itemize}
+	\item \textit{GetMapValue} -- extracts a value associated with the
+	specified key from a \textit{java.util.Map} object.
+	\item \textit{SetMapValue} -- sets the value of a \textit{java.util.Map}
+	object (either specified value or obtained from a callable actor).
+	\item \textit{YamlFileReader} -- reads the specific YAML file and forwards
+	a Map object.
+\end{tight_itemize}
+The following sinks are available:
+\begin{tight_itemize}
+	\item \textit{YamlFileWriter} -- writes the \textit{java.util.Map}
+	object to disk.
+\end{tight_itemize}
+The following conversion are available:
+\begin{tight_itemize}
+	\item \textit{MapToYamlString} -- turns a \textit{java.util.Map} object
+	into a YAML string.
+	\item \textit{YamlStringToMap} -- generates a \textit{java.util.Map}
+	object from the YAML string.
+	object/array.
 \end{tight_itemize}
 
 

@@ -1,0 +1,16 @@
+# Project: adams
+# Date: 2016-06-28 13:08:25
+# User: fracpete
+# Charset: UTF-8
+adams.flow.control.Flow -annotation "Loads a YAML file, extracts a value and displays\\nfull YAML file content and extracted value." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.standalone.GridView -writer adams.gui.print.NullWriter
+  adams.flow.sink.Display -name full -writer adams.data.io.output.NullWriter
+  adams.flow.sink.Display -name value -writer adams.data.io.output.NullWriter
+ adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/course.yaml
+ adams.flow.transformer.YamlFileReader
+ adams.flow.control.Tee -name "get value"
+  adams.flow.transformer.GetMapValue -key course
+  adams.flow.transformer.GetMapValue -name GetMapValue-1 -key blurb
+  adams.flow.sink.CallableSink -callable value
+ adams.flow.transformer.Convert -conversion adams.data.conversion.MapToYamlString
+ adams.flow.sink.CallableSink -callable full

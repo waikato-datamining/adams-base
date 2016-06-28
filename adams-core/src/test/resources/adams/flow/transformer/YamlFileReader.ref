@@ -1,0 +1,53 @@
+--> dumpfile.txt
+course:
+  admin_user_emails: ''
+  title: Power Searching with Google
+  blurb: |
+    Google Search makes it amazingly easy to find information. Come learn about
+    the powerful advanced tools we provide to help you find just the right
+    information when the stakes are high.
+  instructor_details: Daniel Russell <br> Senior Research Scientist <br> Google, Inc.
+  main_video:
+    url: https://www.youtube.com/embed/Kdg2drcUjYI?rel=0
+  main_image:
+    url: assets/img/banner1.png
+    alt_text: Photo of Dan Russell
+  explorer_image:
+    url: assets/img/banner1_small.png
+    alt_text: Photo of Dan Russell
+  start_date: July 10, 2012
+  forum_email: My-Course@googlegroups.com
+  forum_url: https://groups.google.com/group/My-Course
+  forum_embed_url: https://groups.google.com/forum/embed/?place=forum/My-Course
+  announcement_list_email: My-Course-Announce@googlegroups.com
+  announcement_list_url: https://groups.google.com/group/My-Course-Announce
+  locale: en_US
+  now_available: true
+  browsable: true
+preview:
+  after_top_content_ends: <!-- preview.after_top_content_ends -->
+  after_main_content_ends: <!-- preview.after_main_content_ends -->
+reg_form:
+  header_text: |
+    Welcome!  Please answer the following question, and you will be
+    enrolled in the course.
+  additional_registration_fields: <!-- reg_form.additional_registration_fields -->
+  can_register: true
+assessment_confirmations:
+  result_text:
+    pass: |
+      Based on your overall course score of %s%%, you have passed the course.
+      Congratulations!
+    fail: |
+      Unfortunately, based on your overall course score of %s%%, you did not
+      receive a sufficiently high score to obtain a certificate of completion.
+      We encourage you to review the lessons noted and to attempt the
+      assessment again before it closes. Certificate or not, we hope you
+      enjoyed taking the course and learned new skills!
+unit:
+  after_leftnav_begins: <!-- unit.after_leftnav_begins -->
+  before_leftnav_ends: <!-- unit.before_leftnav_ends -->
+  after_content_begins: <!-- unit.after_content_begins -->
+  before_content_ends: <!-- unit.before_content_ends -->
+
+

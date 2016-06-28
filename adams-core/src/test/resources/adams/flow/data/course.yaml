@@ -1,0 +1,149 @@
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS-IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# FIXME: You can use this configuration file to customize Course Builder
+# for a specific course. More information on YAML can be found at:
+#
+#     http://www.yaml.org/spec/1.2/spec.html#id2759963
+#
+# Note that the values in this file can contain arbitrary HTML.
+
+############################
+# General course information
+############################
+
+course:
+  # A new line or a space separated list of email addresses of course
+  # administrative users. Each email address must be placed between '[' and ']',
+  # for example: '[test@example.com]'. Regular expressions are not supported,
+  # exact match only.
+  admin_user_emails: ''
+
+  # Course title
+  title: 'Power Searching with Google'
+
+  # Main page blurb. (The '|' at the beginning enables multi-line input.)
+  blurb: |
+    Google Search makes it amazingly easy to find information. Come learn about
+    the powerful advanced tools we provide to help you find just the right
+    information when the stakes are high.
+
+  # Information about the instructor to display on the main page.
+  instructor_details: 'Daniel Russell <br> Senior Research Scientist <br> Google, Inc.'
+
+  # You can choose whether you want a video or an image on the main page.
+  # If you specify both a video and an image link, then the video will take
+  # priority. The image alt text allows the image to be understood by text-only
+  # screen readers.
+  main_video:
+    url: https://www.youtube.com/embed/Kdg2drcUjYI?rel=0
+  main_image:
+    url: assets/img/banner1.png
+    alt_text: Photo of Dan Russell
+  explorer_image:
+    url: assets/img/banner1_small.png
+    alt_text: Photo of Dan Russell
+
+  # Course start date.
+  start_date: 'July 10, 2012'
+
+  # Forum URL. For details, see
+  #
+  #     http://code.google.com/p/course-builder/wiki/WebForums.
+  forum_email: My-Course@googlegroups.com
+  forum_url: https://groups.google.com/group/My-Course
+
+  # Forum embedding URL. This link is used to embed the forum in an iframe on
+  # the forum.html page. Set this value to False if you don't use forum and/or
+  # to remove the Forum link from the student navigation bar.
+  forum_embed_url: https://groups.google.com/forum/embed/?place=forum/My-Course
+
+  # URL for the mailing list where students can register to receive course
+  # announcements. For details, see
+  #
+  #     http://code.google.com/p/course-builder/wiki/CreateEmailList
+  announcement_list_email: My-Course-Announce@googlegroups.com
+  announcement_list_url: https://groups.google.com/group/My-Course-Announce
+
+  # Locale for internationalization. See modules/i18n/resources/locale for
+  # available locales.
+  locale: 'en_US'
+
+  # Whether the course is open to the students.
+  now_available: true
+
+  # Whether the course material can be accessed without requiring users to log
+  # in or register.
+  browsable: true
+
+
+########################
+# Course preview page
+########################
+
+preview:
+  # HTML to be included in the course preview page.
+  after_top_content_ends: '<!-- preview.after_top_content_ends -->'
+  after_main_content_ends: '<!-- preview.after_main_content_ends -->'
+
+
+##########################
+# Course registration form
+##########################
+
+reg_form:
+  # Header text for the course registration form.
+  header_text: |
+    Welcome!  Please answer the following question, and you will be
+    enrolled in the course.
+
+  # HTML representing additional fields to include in the course
+  # registration form, in addition to the student's name. These should
+  # be wrapped in <li></li> tags.
+  additional_registration_fields: '<!-- reg_form.additional_registration_fields -->'
+
+  # Whether to allow new students to register for the course.
+  can_register: True
+
+
+##############################
+# Assessment confirmation page
+##############################
+
+# HTML to be displayed on the final assessment's confirmation page (which is
+# displayed when the student has completed the final assessment). You can
+# optionally add code here to load or generate a Certificate of Completion
+# image. Note that the result text includes a '%s', which will be substituted
+# with the student's actual score. ('%%' results in a single '%'.)
+assessment_confirmations:
+  result_text:
+    pass: |
+      Based on your overall course score of %s%%, you have passed the course.
+      Congratulations!
+    fail: |
+      Unfortunately, based on your overall course score of %s%%, you did not
+      receive a sufficiently high score to obtain a certificate of completion.
+      We encourage you to review the lessons noted and to attempt the
+      assessment again before it closes. Certificate or not, we hope you
+      enjoyed taking the course and learned new skills!
+
+
+########################
+# Units and lessons page
+########################
+
+unit:
+  # HTML to be included in the course unit/lesson pages.
+  after_leftnav_begins: '<!-- unit.after_leftnav_begins -->'
+  before_leftnav_ends: '<!-- unit.before_leftnav_ends -->'
+  after_content_begins: '<!-- unit.after_content_begins -->'
+  before_content_ends: '<!-- unit.before_content_ends -->'
