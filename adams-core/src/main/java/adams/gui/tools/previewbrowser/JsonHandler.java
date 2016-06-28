@@ -15,19 +15,20 @@
 
 /**
  * JsonHandler.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.previewbrowser;
+
+import adams.core.Utils;
+import adams.core.io.FileUtils;
+import adams.gui.core.TextEditorPanel;
+import adams.gui.core.json.JsonTreeWithPreview;
+import net.minidev.json.JSONAware;
+import net.minidev.json.parser.JSONParser;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-
-import net.minidev.json.JSONAware;
-import net.minidev.json.parser.JSONParser;
-import adams.core.Utils;
-import adams.gui.core.TextEditorPanel;
-import adams.gui.core.json.JsonTreeWithPreview;
 
 /**
  <!-- globalinfo-start -->
@@ -86,14 +87,18 @@ public class JsonHandler
     PreviewPanel	result;
     TextEditorPanel	textPanel;
     JSONParser		parser;
-    BufferedReader	reader;
+    FileReader		freader;
+    BufferedReader 	breader;
     Object		obj;
     JsonTreeWithPreview	jsonPanel;
 
+    freader = null;
+    breader = null;
     try {
-      reader = new BufferedReader(new FileReader(file.getAbsolutePath()));
+      freader = new FileReader(file.getAbsolutePath());
+      breader = new BufferedReader(freader);
       parser = new JSONParser(JSONParser.MODE_JSON_SIMPLE);
-      obj    = parser.parse(reader);
+      obj    = parser.parse(breader);
       if (obj == null)
 	throw new IllegalStateException("Failed to parse: " + file);
       if (!(obj instanceof JSONAware))
@@ -108,6 +113,10 @@ public class JsonHandler
       textPanel.open(file);
       textPanel.setEditable(false);
       result = new PreviewPanel(textPanel, textPanel.getTextArea());
+    }
+    finally {
+      FileUtils.closeQuietly(breader);
+      FileUtils.closeQuietly(freader);
     }
     
     return result;
