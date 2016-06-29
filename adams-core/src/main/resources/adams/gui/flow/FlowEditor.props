@@ -173,6 +173,7 @@ Tree.PopupMenu=\
   adams.gui.flow.tree.menu.MakeTimed,\
   adams.gui.flow.tree.menu.ExternalizeActor,\
   adams.gui.flow.tree.menu.MaterializeExternalActor,\
+  adams.gui.flow.tree.menu.CompareActors,\
   -,\
   adams.gui.flow.tree.menu.ExpandAll,\
   adams.gui.flow.tree.menu.CollapseAll,\
