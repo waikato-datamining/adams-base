@@ -21,7 +21,7 @@ package adams.data.io.output;
 
 import adams.core.Utils;
 import adams.core.io.PlaceholderFile;
-import adams.data.image.BufferedImageContainer;
+import adams.data.boofcv.BoofCVImageContainer;
 import adams.data.io.input.AbstractImageReader;
 import adams.data.io.input.BoofCVImageReader;
 import boofcv.io.image.UtilImageIO;
@@ -52,7 +52,7 @@ import java.util.List;
  * @version $Revision$
  */
 public class BoofCVImageWriter
-  extends AbstractImageWriter<BufferedImageContainer> {
+  extends AbstractImageWriter<BoofCVImageContainer> {
 
   /** for serialization. */
   private static final long serialVersionUID = 6385191315392140321L;
@@ -83,7 +83,7 @@ public class BoofCVImageWriter
     
     super.initialize();
     
-    formats = new ArrayList<String>();
+    formats = new ArrayList<>();
     formats.addAll(Arrays.asList(ImageIO.getWriterFileSuffixes()));
     if (!formats.contains("ppm"))
       formats.add("ppm");
@@ -132,8 +132,8 @@ public class BoofCVImageWriter
    * @return		always null
    */
   @Override
-  protected String doWrite(PlaceholderFile file, BufferedImageContainer cont) {
-    UtilImageIO.saveImage(cont.getImage(), file.getAbsolutePath());
+  protected String doWrite(PlaceholderFile file, BoofCVImageContainer cont) {
+    UtilImageIO.saveImage(cont.toBufferedImage(), file.getAbsolutePath());
     return null;
   }
 }

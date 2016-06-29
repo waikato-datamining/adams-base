@@ -15,13 +15,14 @@
 
 /**
  * BoofCVImageReader.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.input;
 
 import adams.core.Utils;
 import adams.core.io.PlaceholderFile;
-import adams.data.image.BufferedImageContainer;
+import adams.data.boofcv.BoofCVHelper;
+import adams.data.boofcv.BoofCVImageContainer;
 import adams.data.io.output.AbstractImageWriter;
 import adams.data.io.output.BoofCVImageWriter;
 import boofcv.io.image.UtilImageIO;
@@ -53,7 +54,7 @@ import java.util.List;
  * @version $Revision$
  */
 public class BoofCVImageReader
-  extends AbstractImageReader<BufferedImageContainer> {
+  extends AbstractImageReader<BoofCVImageContainer> {
   
   /** for serialization. */
   private static final long serialVersionUID = 5347100846354068540L;
@@ -84,7 +85,7 @@ public class BoofCVImageReader
     
     super.initialize();
     
-    formats = new ArrayList<String>();
+    formats = new ArrayList<>();
     formats.addAll(Arrays.asList(ImageIO.getReaderFileSuffixes()));
     if (!formats.contains("ppm"))
       formats.add("ppm");
@@ -132,16 +133,16 @@ public class BoofCVImageReader
    * @return		the image container, null if failed to read
    */
   @Override
-  protected BufferedImageContainer doRead(PlaceholderFile file) {
-    BufferedImageContainer	result;
+  protected BoofCVImageContainer doRead(PlaceholderFile file) {
+    BoofCVImageContainer	result;
     BufferedImage		image;
     
     result = null;
     image  = UtilImageIO.loadImage(file.getAbsolutePath());
     
     if (image != null) {
-      result = new BufferedImageContainer();
-      result.setImage(image);
+      result = new BoofCVImageContainer();
+      result.setImage(BoofCVHelper.toBoofCVImage(image));
     }
     
     return result;
