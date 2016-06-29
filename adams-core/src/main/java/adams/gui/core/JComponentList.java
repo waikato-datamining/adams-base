@@ -652,7 +652,7 @@ public class JComponentList
     JFrame frame = new JFrame("Test");
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     frame.setLayout(new BorderLayout());
-    frame.setSize(400, 300);
+    frame.setSize(GUIHelper.getDefaultTinyDialogDimension());
     JComponentListModel model = new JComponentListModel();
     JComponentList list = new JComponentList(model);
     frame.add(new BaseScrollPane(list), BorderLayout.CENTER);

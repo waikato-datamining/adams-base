@@ -19,6 +19,20 @@
  */
 package adams.gui.selection;
 
+import adams.core.net.EmailAddress;
+import adams.core.net.EmailAddressBook;
+import adams.core.net.EmailContact;
+import adams.core.option.OptionUtils;
+import adams.gui.core.BaseDialog;
+import adams.gui.core.GUIHelper;
+import adams.gui.core.SearchParameters;
+import adams.gui.tools.EmailAddressBookPanel;
+
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JTextField;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import java.awt.BorderLayout;
 import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
@@ -27,20 +41,6 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JTextField;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-
-import adams.core.net.EmailAddress;
-import adams.core.net.EmailAddressBook;
-import adams.core.net.EmailContact;
-import adams.core.option.OptionUtils;
-import adams.gui.core.BaseDialog;
-import adams.gui.core.SearchParameters;
-import adams.gui.tools.EmailAddressBookPanel;
 
 /**
  * Allows the selection of email addresses.
@@ -451,7 +451,9 @@ public class SelectEmailAddressPanel
     dialog.setTitle("Email addressbook");
     panel = new EmailAddressBookPanel();
     dialog.getContentPane().add(panel, BorderLayout.CENTER);
-    dialog.setSize(800, 800);
+    dialog.setSize(
+      GUIHelper.getInteger("DefaultDialog.Width", 800),
+      GUIHelper.getInteger("DefaultDialog.Width", 800));
     dialog.setLocationRelativeTo(this);
     dialog.setVisible(true);
     

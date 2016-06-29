@@ -192,7 +192,7 @@ public class GenericObjectEditorPopupMenu
 	dlg.getContentPane().add(panel, BorderLayout.SOUTH);
 
 	dlg.pack();
-	dlg.setSize(400, 300);
+	dlg.setSize(GUIHelper.getDefaultTinyDialogDimension());
 	dlg.setLocationRelativeTo(comp);
 	dlg.setVisible(true);
       }

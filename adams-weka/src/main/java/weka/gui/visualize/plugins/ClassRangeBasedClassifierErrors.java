@@ -20,20 +20,20 @@
 
 package weka.gui.visualize.plugins;
 
-import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-
-import javax.swing.JFrame;
-import javax.swing.JMenuItem;
-
+import adams.gui.core.GUIHelper;
 import weka.core.FastVector;
 import weka.core.Instances;
 import weka.gui.visualize.Plot2D;
 import weka.gui.visualize.PlotData2D;
 import weka.gui.visualize.VisualizePanel;
+
+import javax.swing.JFrame;
+import javax.swing.JMenuItem;
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 /**
  * Displays the classifier errors using Weka panels, but with a sizes adjusted
@@ -131,7 +131,7 @@ public class ClassRangeBasedClassifierErrors
 
 	// create and display frame
 	final JFrame jf = new JFrame("Class-range based classifier errors for " + predInst.relationName());
-	jf.setSize(800,600);
+	jf.setSize(GUIHelper.getDefaultDialogDimension());
 	jf.getContentPane().setLayout(new BorderLayout());
 	jf.getContentPane().add(vp, BorderLayout.CENTER);
 	jf.addWindowListener(new WindowAdapter() {

@@ -568,7 +568,9 @@ public class InstancePanel
       dialog = new SpreadSheetDialog(getParentFrame(), false);
     m_ViewDialogs.add(dialog);
     dialog.setTitle("Instance: " + cont.getDisplayID());
-    dialog.setSize(400, 600);
+    dialog.setSize(
+      GUIHelper.getInteger("DefaultSmallDialog.Height", 400),
+      GUIHelper.getInteger("DefaultSmallDialog.Width", 600));
     dialog.setLocationRelativeTo(this);
     dialog.setSpreadSheet(sheet);
     dialog.setVisible(true);

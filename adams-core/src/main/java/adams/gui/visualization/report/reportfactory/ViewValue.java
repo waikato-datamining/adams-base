@@ -20,6 +20,7 @@
 package adams.gui.visualization.report.reportfactory;
 
 import adams.data.report.AbstractField;
+import adams.gui.core.GUIHelper;
 import adams.gui.dialog.TextDialog;
 import adams.gui.visualization.report.ReportFactory;
 
@@ -92,7 +93,9 @@ public class ViewValue
     dialog = new TextDialog();
     dialog.setDialogTitle("Report values");
     dialog.setContent(content.toString());
-    dialog.setSize(600, 600);
+    dialog.setSize(
+      GUIHelper.getInteger("DefaultSmallDialog.Width", 600),
+      GUIHelper.getInteger("DefaultSmallDialog.Width", 600));
     dialog.setLocationRelativeTo(getTable());
     dialog.setVisible(true);
   }

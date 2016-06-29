@@ -480,7 +480,7 @@ public class MultiExplorer
       frame.getContentPane().setLayout(new BorderLayout());
       frame.getContentPane().add(m_Explorer, BorderLayout.CENTER);
       frame.pack();
-      frame.setSize(1000, 800);
+      frame.setSize(GUIHelper.getDefaultLargeDialogDimension());
       frame.setLocationRelativeTo(null);
       frame.setVisible(true);
 

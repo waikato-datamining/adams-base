@@ -1518,7 +1518,9 @@ public class GUIHelper {
     dlg.setJMenuBar(errorPanel.getMenuBar());
 
     dlg.pack();
-    dlg.setSize(600, Math.min(dlg.getHeight() + height, (int) (getScreenBounds(dlg).height * 0.5)));
+    dlg.setSize(
+      getInteger("DefaultSmallDialog.Width", 600),
+      Math.min(dlg.getHeight() + height, (int) (getScreenBounds(dlg).height * 0.5)));
     errorPanel.setErrorMessage(msg);
     dlg.setLocationRelativeTo(parent);
     dlg.getApproveButton().requestFocusInWindow();
@@ -1567,7 +1569,9 @@ public class GUIHelper {
     editor.setLineWrap(true);
     dlg.getContentPane().add(editor, BorderLayout.CENTER);
     dlg.pack();
-    dlg.setSize(600, Math.min(dlg.getHeight() + height, (int) (getScreenBounds(dlg).height * 0.5)));
+    dlg.setSize(
+      getInteger("DefaultSmallDialog.Width", 600),
+      Math.min(dlg.getHeight() + height, (int) (getScreenBounds(dlg).height * 0.5)));
     dlg.setLocationRelativeTo(parent);
     editor.setContent(msg);
     dlg.getApproveButton().requestFocusInWindow();
@@ -1667,7 +1671,9 @@ public class GUIHelper {
       editor.setInfoText(header);
     dlg.getContentPane().add(editor, BorderLayout.CENTER);
     dlg.pack();
-    dlg.setSize(600, Math.min(dlg.getHeight() + height, (int) (getScreenBounds(dlg).height * 0.5)));
+    dlg.setSize(
+      getInteger("DefaultSmallDialog.Width", 600),
+      Math.min(dlg.getHeight() + height, (int) (getScreenBounds(dlg).height * 0.5)));
     dlg.setLocationRelativeTo(parent);
     editor.setContent(msg);
     dlg.getCancelButton().requestFocusInWindow();
@@ -2552,9 +2558,41 @@ public class GUIHelper {
    * @return		the default
    */
   public static Dimension getDefaultDialogDimension() {
-    initializeProperties();
     return new Dimension(
       getInteger("DefaultDialog.Width", 800),
       getInteger("DefaultDialog.Height", 600));
+  }
+
+  /**
+   * Returns the default dimensions for a small dialog.
+   *
+   * @return		the default
+   */
+  public static Dimension getDefaultSmallDialogDimension() {
+    return new Dimension(
+      getInteger("DefaultSmallDialog.Width", 600),
+      getInteger("DefaultSmallDialog.Height", 400));
+  }
+
+  /**
+   * Returns the default dimensions for a tiny dialog.
+   *
+   * @return		the default
+   */
+  public static Dimension getDefaultTinyDialogDimension() {
+    return new Dimension(
+      getInteger("DefaultTinyDialog.Width", 400),
+      getInteger("DefaultTinyDialog.Height", 300));
+  }
+
+  /**
+   * Returns the default dimensions for a large dialog.
+   *
+   * @return		the default
+   */
+  public static Dimension getDefaultLargeDialogDimension() {
+    return new Dimension(
+      getInteger("DefaultLargeDialog.Width", 1000),
+      getInteger("DefaultLargeDialog.Height", 800));
   }
 }

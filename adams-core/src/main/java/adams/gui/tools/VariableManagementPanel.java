@@ -498,7 +498,7 @@ public class VariableManagementPanel
     dlg = new TextDialog();
     dlg.setDefaultCloseOperation(TextDialog.DISPOSE_ON_CLOSE);
     dlg.setContent("" + m_Table.getValueAt(row, 1));
-    dlg.setSize(400, 300);
+    dlg.setSize(GUIHelper.getDefaultTinyDialogDimension());
     dlg.setLineWrap(true);
     dlg.setLocationRelativeTo(VariableManagementPanel.this);
     dlg.setVisible(true);

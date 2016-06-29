@@ -671,7 +671,9 @@ public class PropertySheetPanel extends BasePanel
     if (isHtml)
       m_DialogHelp.setSize(GUIHelper.getDefaultDialogDimension());
     else
-      m_DialogHelp.setSize(400, 350);
+      m_DialogHelp.setSize(
+        GUIHelper.getInteger("DefaultTinyDialog.Width", 400),
+        GUIHelper.getInteger("DefaultTinyDialog.Width", 400));
     m_DialogHelp.setVisible(true);
   }
 

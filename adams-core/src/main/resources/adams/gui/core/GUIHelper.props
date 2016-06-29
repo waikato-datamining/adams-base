@@ -47,7 +47,19 @@ BaseDirectoryChooser.ShowBookmarks=false
 
 # The default width/height for dialogs
 DefaultDialog.Width=800
-DefaultDialog.Height=800
+DefaultDialog.Height=600
+
+# The default width/height for small dialogs
+DefaultSmallDialog.Width=600
+DefaultSmallDialog.Height=400
+
+# The default width/height for tiny dialogs
+DefaultTinyDialog.Width=400
+DefaultTinyDialog.Height=300
+
+# The default width/height for large dialogs
+DefaultLargeDialog.Width=1000
+DefaultLargeDialog.Height=800
 
 # Whether to use the frame maximization fix (affects only Linux) (true|false|LINUX|ANDROID|MAC|WINDOWS)
 UseFrameMaximizationFix=LINUX

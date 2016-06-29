@@ -288,7 +288,7 @@ public class MarkdownTextAreaWithPreview
     frame.setDefaultCloseOperation(BaseFrame.EXIT_ON_CLOSE);
     frame.getContentPane().setLayout(new BorderLayout());
     frame.getContentPane().add(new MarkdownTextAreaWithPreview(), BorderLayout.CENTER);
-    frame.setSize(600, 400);
+    frame.setSize(GUIHelper.getDefaultSmallDialogDimension());
     frame.setLocationRelativeTo(null);
     frame.setVisible(true);
   }

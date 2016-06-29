@@ -201,7 +201,9 @@ public class RemoteCommands
     dialog = new ApprovalDialog(getOwner(), true);
     dialog.setTitle("Remote command");
     dialog.getContentPane().add(params, BorderLayout.CENTER);
-    dialog.setSize(600, 200);
+    dialog.setSize(
+      GUIHelper.getInteger("DefaultSmallDialog.Width", 600),
+      GUIHelper.getInteger("DefaultSmallDialog.Height", 400) / 2);
     dialog.setLocationRelativeTo(null);
     dialog.setVisible(true);
     if (dialog.getOption() != ApprovalDialog.APPROVE_OPTION) {

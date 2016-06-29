@@ -203,7 +203,7 @@ public class BaseAnnotationEditor
 	String help = getHelpDescription();
 	TextDialog dlg = new TextDialog();
 	dlg.setDefaultCloseOperation(TextDialog.DISPOSE_ON_CLOSE);
-	dlg.setSize(400, 300);
+	dlg.setSize(GUIHelper.getDefaultTinyDialogDimension());
 	dlg.setDialogTitle("Help");
 	dlg.setContent(help);
 	dlg.setLineWrap(true);

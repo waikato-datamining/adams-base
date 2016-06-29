@@ -23,6 +23,7 @@ import adams.core.Utils;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.transformer.metadata.AbstractMetaDataExtractor;
 import adams.flow.transformer.metadata.Sanselan;
+import adams.gui.core.GUIHelper;
 import adams.gui.dialog.SpreadSheetDialog;
 import adams.gui.visualization.image.ImagePanel;
 
@@ -135,7 +136,9 @@ public class ImageFileMetaData
       dialog.setTitle("Meta-data - " + m_CurrentPanel.getCurrentFile().getName() + " [" + m_CurrentPanel.getCurrentFile().getParent() + "]");
       dialog.setSpreadSheet(sheet);
       dialog.setShowSearch(true);
-      dialog.setSize(600, 600);
+      dialog.setSize(
+        GUIHelper.getInteger("DefaultSmallDialog.Width", 600),
+        GUIHelper.getInteger("DefaultSmallDialog.Width", 600));
       dialog.setLocationRelativeTo(null);
       dialog.setVisible(true);
     }

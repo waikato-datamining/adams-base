@@ -25,6 +25,7 @@ import adams.data.barcode.decode.AbstractBarcodeDecoder;
 import adams.data.barcode.decode.ZXing;
 import adams.data.image.BufferedImageContainer;
 import adams.data.text.TextContainer;
+import adams.gui.core.GUIHelper;
 import adams.gui.dialog.TextDialog;
 import adams.gui.visualization.image.ImagePanel;
 import org.apache.commons.lang.time.StopWatch;
@@ -146,7 +147,9 @@ public class Barcode
       dialog.setEditable(false);
       if (text != null) {
 	dialog.setContent(text.getContent() + "\n\nTime (ms): " + watch.getTime() + "\n\nMeta-data\n\n" + text.getReport());
-	dialog.setSize(400, 400);
+	dialog.setSize(
+          GUIHelper.getInteger("DefaultTinyDialog.Width", 400),
+          GUIHelper.getInteger("DefaultTinyDialog.Width", 400));
 	dialog.setLocationRelativeTo(null);
 	dialog.setVisible(true);
       }

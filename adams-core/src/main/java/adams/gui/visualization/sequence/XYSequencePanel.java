@@ -771,7 +771,9 @@ public class XYSequencePanel
     if (sheet.getColumnCount() > 2)
       dialog.setSize(GUIHelper.getDefaultDialogDimension());
     else
-      dialog.setSize(400, 600);
+      dialog.setSize(
+        GUIHelper.getInteger("DefaultSmallDialog.Height", 400),
+        GUIHelper.getInteger("DefaultSmallDialog.Width", 600));
     dialog.setLocationRelativeTo(this);
     dialog.setSpreadSheet(sheet);
     dialog.setVisible(true);

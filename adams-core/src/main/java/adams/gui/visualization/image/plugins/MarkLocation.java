@@ -214,7 +214,9 @@ public class MarkLocation
     dialog.getContentPane().setLayout(new BorderLayout());
     dialog.getContentPane().add(wizard, BorderLayout.CENTER);
     dialog.setTitle("Mark locations");
-    dialog.setSize(600, 500);
+    dialog.setSize(
+      GUIHelper.getInteger("DefaultSmallDialog.Width", 600),
+      GUIHelper.getInteger("DefaultSmallDialog.Width", 600));
     dialog.setLocationRelativeTo(null);
     dialog.setVisible(true);
 

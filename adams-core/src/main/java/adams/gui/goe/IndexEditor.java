@@ -237,7 +237,9 @@ public class IndexEditor
 	dlg.setDefaultCloseOperation(TextDialog.DISPOSE_ON_CLOSE);
 	dlg.setDialogTitle("Help");
 	dlg.setContent(getHelpDescription());
-	dlg.setSize(400, 400);
+	dlg.setSize(
+          GUIHelper.getInteger("DefaultTinyDialog.Width", 400),
+          GUIHelper.getInteger("DefaultTinyDialog.Width", 400));
 	dlg.setLocationRelativeTo(m_ButtonHelp);
 	dlg.setLineWrap(true);
 	dlg.setEditable(false);

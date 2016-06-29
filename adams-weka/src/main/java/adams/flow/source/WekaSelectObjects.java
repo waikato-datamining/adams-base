@@ -21,6 +21,7 @@ package adams.flow.source;
 
 import adams.core.base.BaseString;
 import adams.core.option.OptionUtils;
+import adams.gui.core.GUIHelper;
 import adams.gui.dialog.ApprovalDialog;
 import weka.gui.GenericArrayEditor;
 
@@ -205,7 +206,7 @@ public class WekaSelectObjects
 	m_Dialog.setTitle(getFullName());
       m_ArrayEditor = new GenericArrayEditor();
       m_Dialog.getContentPane().add(m_ArrayEditor.getCustomEditor(), BorderLayout.CENTER);
-      m_Dialog.setSize(600, 400);
+      m_Dialog.setSize(GUIHelper.getDefaultSmallDialogDimension());
       m_Dialog.setLocationRelativeTo(null);
     }
 

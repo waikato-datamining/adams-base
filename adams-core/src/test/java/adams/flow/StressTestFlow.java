@@ -24,6 +24,7 @@ import adams.env.Environment;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorUtils;
 import adams.gui.core.BaseFrame;
+import adams.gui.core.GUIHelper;
 import adams.gui.flow.FlowEditorPanel;
 import adams.gui.scripting.ScriptingEngine;
 import adams.test.AbstractFileStressTest;
@@ -189,7 +190,7 @@ public class StressTestFlow
 	    m_Frame = new BaseFrame();
 	    m_Frame.getContentPane().setLayout(new BorderLayout());
 	    m_Frame.getContentPane().add(m_Panel, BorderLayout.CENTER);
-	    m_Frame.setSize(600, 400);
+	    m_Frame.setSize(GUIHelper.getDefaultSmallDialogDimension());
 	    m_Frame.setLocationRelativeTo(null);
 	    m_Frame.setVisible(true);
 	  }

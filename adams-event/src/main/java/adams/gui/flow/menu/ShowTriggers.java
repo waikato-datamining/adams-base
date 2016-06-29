@@ -24,6 +24,7 @@ import adams.gui.action.AbstractBaseAction;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.BaseTable;
 import adams.gui.core.BaseTableWithButtons;
+import adams.gui.core.GUIHelper;
 import adams.gui.core.KeyValuePairTableModel;
 import adams.gui.dialog.ApprovalDialog;
 import adams.gui.dialog.TextDialog;
@@ -128,7 +129,7 @@ public class ShowTriggers
 	    TextDialog editor = new TextDialog();
 	    editor.setEditable(false);
 	    editor.setContent("Group: " + table.getValueAt(row, 0) + "\n" + "Trigger: " + table.getValueAt(row, 1));
-	    editor.setSize(400, 300);
+	    editor.setSize(GUIHelper.getDefaultTinyDialogDimension());
 	    editor.setLocationRelativeTo(table);
 	    editor.setVisible(true);
 	  }

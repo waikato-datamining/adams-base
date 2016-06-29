@@ -182,7 +182,7 @@ public class MarkdownTextPane
     frame.setDefaultCloseOperation(BaseFrame.EXIT_ON_CLOSE);
     frame.getContentPane().setLayout(new BorderLayout());
     frame.getContentPane().add(pane, BorderLayout.CENTER);
-    frame.setSize(600, 400);
+    frame.setSize(GUIHelper.getDefaultSmallDialogDimension());
     frame.setLocationRelativeTo(null);
     frame.setVisible(true);
   }

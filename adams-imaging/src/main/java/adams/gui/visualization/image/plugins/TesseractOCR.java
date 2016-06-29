@@ -27,6 +27,7 @@ import adams.core.management.ProcessUtils;
 import adams.core.management.ProcessUtils.ProcessResult;
 import adams.core.option.OptionUtils;
 import adams.data.tesseract.TesseractHelper;
+import adams.gui.core.GUIHelper;
 import adams.gui.dialog.TextDialog;
 import adams.gui.visualization.image.ImagePanel;
 
@@ -170,7 +171,9 @@ public class TesseractOCR
       dialog.setDialogTitle("OCR Result");
       dialog.setContent(Utils.flatten(lines, "\n"));
       dialog.setEditable(false);
-      dialog.setSize(600, 600);
+      dialog.setSize(
+        GUIHelper.getInteger("DefaultSmallDialog.Width", 600),
+        GUIHelper.getInteger("DefaultSmallDialog.Width", 600));
       dialog.setLocationRelativeTo(m_CurrentPanel);
       dialog.setVisible(true);
     }
