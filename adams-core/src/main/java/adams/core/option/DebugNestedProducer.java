@@ -65,7 +65,7 @@ public class DebugNestedProducer
     ArrayList			nestedDeeper;
     AbstractCommandLineHandler	handler;
     Actor			actor;
-    Actor			wrapper;
+    MutableActorHandler		wrapper;
 
     result = new ArrayList();
 
@@ -77,8 +77,6 @@ public class DebugNestedProducer
       currValue = getCurrentValue(option);
 
       if (!isDefaultValue(option, currValue)) {
-	currValues = null;
-
 	if (currValue != null) {
 	  if (!option.isMultiple()) {
 	    currValues = Array.newInstance(option.getBaseClass(), 1);
@@ -107,8 +105,8 @@ public class DebugNestedProducer
 		else
 		  getLogger().severe("Failed to find wrapper for actor class: " + actor.getClass().getName());
 		if (wrapper != null) {
-		  ((MutableActorHandler) wrapper).removeAll();
-		  ((MutableActorHandler) wrapper).add(actor);
+		  wrapper.removeAll();
+		  wrapper.add(actor);
 		  wrapper.setName(((Actor) value).getName());
 		  wrapper.setAnnotations(new BaseAnnotation("dummy wrapper required for debugging when using external actors"));
 		  wrapper.setParent(((Actor) value).getParent());
