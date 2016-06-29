@@ -15,7 +15,7 @@
 
 /**
  * DebugOptionProducer.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
@@ -24,6 +24,9 @@ package adams.core.option;
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
+ * @param <O> the type of output data that gets generated
+ * @param <I> the internal type used while nesting
  */
-public interface DebugOptionProducer {
+public interface DebugOptionProducer<O,I>
+  extends OptionProducer<O,I> {
 }
