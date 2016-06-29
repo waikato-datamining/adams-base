@@ -939,7 +939,7 @@ public class ExperimentPanel
 	}
       });
       jf.pack();
-      jf.setSize(800, 600);
+      jf.setSize(GUIHelper.getDefaultDialogDimension());
       jf.setVisible(true);
       if (args.length == 1) {
 	System.err.println("Loading instances from " + args[0]);

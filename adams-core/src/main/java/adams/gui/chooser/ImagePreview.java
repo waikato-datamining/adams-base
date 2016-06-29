@@ -263,7 +263,7 @@ public class ImagePreview
     panel.getUndo().setEnabled(false);
     panel.load(m_File, 1.0);
     dialog.getContentPane().add(panel, BorderLayout.CENTER);
-    dialog.setSize(800, 600);
+    dialog.setSize(GUIHelper.getDefaultDialogDimension());
     dialog.setLocationRelativeTo(GUIHelper.getParentComponent(this));
     dialog.setVisible(true);
   }

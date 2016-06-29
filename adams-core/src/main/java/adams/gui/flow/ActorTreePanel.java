@@ -222,7 +222,7 @@ public class ActorTreePanel
     dialog.setLocation(
 	getTopLevelAncestor().getLocationOnScreen().x + getTopLevelAncestor().getSize().width,
 	getTopLevelAncestor().getLocationOnScreen().y);
-    dialog.setSize(800, 600);
+    dialog.setSize(GUIHelper.getDefaultDialogDimension());
     dialog.setVisible(true);
   }
 

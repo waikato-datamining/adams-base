@@ -114,7 +114,7 @@ public class EditDiff
     panel.setLabelText(false, "Current");
     panel.display(diff);
     dialog.getContentPane().add(panel, BorderLayout.CENTER);
-    dialog.setSize(800, 600);
+    dialog.setSize(GUIHelper.getDefaultDialogDimension());
     dialog.setLocationRelativeTo(m_State);
     dialog.setVisible(true);
   }

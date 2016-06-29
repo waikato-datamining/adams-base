@@ -19,38 +19,6 @@
  */
 package weka.gui.explorer;
 
-import java.awt.BorderLayout;
-import java.awt.Container;
-import java.awt.Dialog.ModalityType;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
-
-import javax.swing.JButton;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.filechooser.FileFilter;
-
-import weka.core.Instances;
-import weka.core.converters.AbstractFileLoader;
-import weka.core.converters.AbstractFileSaver;
-import weka.core.converters.ArffLoader;
-import weka.core.converters.ConverterUtils;
-import weka.core.converters.ConverterUtils.DataSink;
-import weka.core.logging.Logger;
-import weka.core.logging.Logger.Level;
-import weka.gui.AdamsHelper;
-import weka.gui.ConverterFileChooser;
-import weka.gui.ExtensionFileFilter;
-import weka.gui.LookAndFeel;
-import weka.gui.explorer.panels.AbstractAdditionalExplorerPanel;
-import weka.gui.explorer.panels.AdditionalExplorerPanel;
-import weka.gui.sql.SqlViewerDialog;
 import adams.core.Range;
 import adams.core.Utils;
 import adams.core.io.PlaceholderFile;
@@ -69,6 +37,37 @@ import adams.gui.sendto.SendToActionSupporter;
 import adams.gui.sendto.SendToActionUtils;
 import adams.gui.visualization.instance.InstanceContainerManager;
 import adams.gui.visualization.instance.InstancePanel;
+import weka.core.Instances;
+import weka.core.converters.AbstractFileLoader;
+import weka.core.converters.AbstractFileSaver;
+import weka.core.converters.ArffLoader;
+import weka.core.converters.ConverterUtils;
+import weka.core.converters.ConverterUtils.DataSink;
+import weka.core.logging.Logger;
+import weka.core.logging.Logger.Level;
+import weka.gui.AdamsHelper;
+import weka.gui.ConverterFileChooser;
+import weka.gui.ExtensionFileFilter;
+import weka.gui.LookAndFeel;
+import weka.gui.explorer.panels.AbstractAdditionalExplorerPanel;
+import weka.gui.explorer.panels.AdditionalExplorerPanel;
+import weka.gui.sql.SqlViewerDialog;
+
+import javax.swing.JButton;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.filechooser.FileFilter;
+import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.Dialog.ModalityType;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
 
 /**
  * An extended Explorer interface using menus instead of buttons, as well
@@ -856,7 +855,7 @@ public class ExplorerExt
     dialog.setTitle("Instance Explorer - " + data.relationName());
     panel = new InstancePanel();
     dialog.getContentPane().add(panel, BorderLayout.CENTER);
-    dialog.setSize(800, 600);
+    dialog.setSize(GUIHelper.getDefaultDialogDimension());
     dialog.setLocationRelativeTo(this);
     manager = panel.getContainerManager();
     manager.startUpdate();
@@ -1037,7 +1036,7 @@ public class ExplorerExt
       frame.getContentPane().setLayout(new BorderLayout());
       frame.getContentPane().add(m_Explorer, BorderLayout.CENTER);
       frame.pack();
-      frame.setSize(800, 600);
+      frame.setSize(GUIHelper.getDefaultDialogDimension());
       frame.setLocationRelativeTo(null);
       frame.setVisible(true);
 

@@ -966,7 +966,7 @@ public class TimeseriesExplorer
 	m_DialogSQL = new TimeseriesImportDatabaseDialog(getParentFrame(), true);
       m_DialogSQL.setDefaultCloseOperation(TimeseriesImportDatabaseDialog.HIDE_ON_CLOSE);
       m_DialogSQL.setTitle("Load timeseries from database");
-      m_DialogSQL.setSize(800, 600);
+      m_DialogSQL.setSize(GUIHelper.getDefaultDialogDimension());
     }
     m_DialogSQL.setLocationRelativeTo(this);
     m_DialogSQL.setVisible(true);

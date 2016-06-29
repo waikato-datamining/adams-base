@@ -20,6 +20,7 @@
 
 package weka.gui.explorer;
 
+import adams.gui.core.GUIHelper;
 import weka.core.Instances;
 import weka.experiment.InstanceQuery;
 import weka.gui.Logger;
@@ -28,6 +29,9 @@ import weka.gui.explorer.Explorer.ExplorerPanel;
 import weka.gui.explorer.Explorer.LogHandler;
 import weka.gui.sql.SqlViewer;
 
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
@@ -35,10 +39,6 @@ import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
 
 /**
  * A simple demonstration for extending the Explorer by another tab, in this
@@ -254,7 +254,7 @@ public class SqlPanel
 	}
       });
       jf.pack();
-      jf.setSize(800, 600);
+      jf.setSize(GUIHelper.getDefaultDialogDimension());
       jf.setVisible(true);
     }
     catch (Exception ex) {

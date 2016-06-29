@@ -669,7 +669,7 @@ public class PropertySheetPanel extends BasePanel
 	m_PanelAbout.getTopLevelAncestor().getLocationOnScreen().x + m_PanelAbout.getTopLevelAncestor().getSize().width,
 	m_PanelAbout.getTopLevelAncestor().getLocationOnScreen().y);
     if (isHtml)
-      m_DialogHelp.setSize(800, 600);
+      m_DialogHelp.setSize(GUIHelper.getDefaultDialogDimension());
     else
       m_DialogHelp.setSize(400, 350);
     m_DialogHelp.setVisible(true);

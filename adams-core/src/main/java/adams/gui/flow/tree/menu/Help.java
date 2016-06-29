@@ -21,6 +21,7 @@ package adams.gui.flow.tree.menu;
 
 import adams.core.option.HtmlHelpProducer;
 import adams.flow.core.Actor;
+import adams.gui.core.GUIHelper;
 import adams.gui.dialog.HelpDialog;
 import adams.gui.flow.tree.TreeHelper;
 
@@ -80,7 +81,7 @@ public class Help
     dialog.setLocation(
 	m_State.tree.getTopLevelAncestor().getLocationOnScreen().x + m_State.tree.getTopLevelAncestor().getSize().width,
 	m_State.tree.getTopLevelAncestor().getLocationOnScreen().y);
-    dialog.setSize(800, 600);
+    dialog.setSize(GUIHelper.getDefaultDialogDimension());
     dialog.setVisible(true);
   }
 

@@ -369,7 +369,7 @@ public class WekaPropertySheetPanelPage
     frame.setDefaultCloseOperation(BaseFrame.EXIT_ON_CLOSE);
     frame.getContentPane().setLayout(new BorderLayout());
     frame.getContentPane().add(wizard, BorderLayout.CENTER);
-    frame.setSize(800, 600);
+    frame.setSize(GUIHelper.getDefaultDialogDimension());
     frame.setVisible(true);
   }
 }

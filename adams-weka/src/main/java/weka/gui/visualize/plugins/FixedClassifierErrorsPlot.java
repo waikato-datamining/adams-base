@@ -30,6 +30,7 @@ import adams.flow.sink.sequenceplotter.SequencePlotPoint;
 import adams.flow.sink.sequenceplotter.SequencePlotSequence;
 import adams.flow.sink.sequenceplotter.SequencePlotterPanel;
 import adams.flow.sink.sequenceplotter.ViewDataClickAction;
+import adams.gui.core.GUIHelper;
 import adams.gui.core.PropertiesParameterPanel;
 import adams.gui.core.PropertiesParameterPanel.PropertyType;
 import adams.gui.dialog.ApprovalDialog;
@@ -188,7 +189,7 @@ public class FixedClassifierErrorsPlot
 	dialog.setDefaultCloseOperation(ApprovalDialog.DISPOSE_ON_CLOSE);
 	dialog.setTitle("Absolute classifier errors");
 	dialog.getContentPane().add(plot, BorderLayout.CENTER);
-	dialog.setSize(800, 600);
+	dialog.setSize(GUIHelper.getDefaultDialogDimension());
 	dialog.setLocationRelativeTo(null);
 	dialog.setVisible(true);
       }

@@ -769,7 +769,7 @@ public class XYSequencePanel
     m_ViewDialogs.add(dialog);
     dialog.setTitle("Sequence: " + cont.getDisplayID());
     if (sheet.getColumnCount() > 2)
-      dialog.setSize(800, 600);
+      dialog.setSize(GUIHelper.getDefaultDialogDimension());
     else
       dialog.setSize(400, 600);
     dialog.setLocationRelativeTo(this);

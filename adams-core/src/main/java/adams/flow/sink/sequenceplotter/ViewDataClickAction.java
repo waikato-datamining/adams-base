@@ -24,6 +24,7 @@ import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SparseDataRow;
 import adams.data.spreadsheet.SpreadSheet;
+import adams.gui.core.GUIHelper;
 import adams.gui.dialog.SpreadSheetDialog;
 import adams.gui.visualization.sequence.AbstractXYSequencePointHitDetector;
 import adams.gui.visualization.sequence.CircleHitDetector;
@@ -161,7 +162,7 @@ public class ViewDataClickAction
 	  dialog = new SpreadSheetDialog(panel.getParentFrame(), false);
 	dialog.setDefaultCloseOperation(SpreadSheetDialog.DISPOSE_ON_CLOSE);
 	dialog.setTitle(panel.getTitle());
-	dialog.setSize(800, 600);
+	dialog.setSize(GUIHelper.getDefaultDialogDimension());
 	dialog.setLocationRelativeTo(panel);
 	dialog.setSpreadSheet(sheet);
 	dialog.setVisible(true);

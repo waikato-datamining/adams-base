@@ -392,7 +392,7 @@ public class NestedFormatViewerPanel
       panel.openFile(new PlaceholderFile(args[0]));
     frame.getContentPane().add(panel, BorderLayout.CENTER);
     frame.setJMenuBar(panel.getMenuBar());
-    frame.setSize(800, 600);
+    frame.setSize(GUIHelper.getDefaultDialogDimension());
     frame.setLocationRelativeTo(null);
     frame.setVisible(true);
   }

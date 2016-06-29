@@ -735,7 +735,7 @@ public class InstanceComparePanel
       panel.add(buttonClose);
       dialog.getContentPane().add(panel, BorderLayout.SOUTH);
       dialog.pack();
-      dialog.setSize(800, 600);
+      dialog.setSize(GUIHelper.getDefaultDialogDimension());
       if (getParentDialog() != null)
 	dialog.setLocationRelativeTo(getParentDialog());
       else

@@ -19,16 +19,16 @@
  */
 package adams.gui.tools.spreadsheetviewer.menu;
 
-import java.awt.Dialog;
-import java.awt.Frame;
-import java.awt.event.ActionEvent;
-
 import adams.core.Properties;
 import adams.gui.action.AbstractPropertiesMenuItemAction;
 import adams.gui.application.Child;
 import adams.gui.core.GUIHelper;
 import adams.gui.dialog.TextDialog;
 import adams.gui.tools.SpreadSheetViewerPanel;
+
+import java.awt.Dialog;
+import java.awt.Frame;
+import java.awt.event.ActionEvent;
 
 /**
  * Ancestor for help dialogs that display simple text content.
@@ -104,7 +104,7 @@ public abstract class AbstractHelpTextAction
     result.setContent(getHelpContent());
     result.setEditable(false);
     result.setDefaultCloseOperation(TextDialog.HIDE_ON_CLOSE);
-    result.setSize(800, 600);
+    result.setSize(GUIHelper.getDefaultDialogDimension());
     GUIHelper.setSizeAndLocation(result);
     result.setLocationRelativeTo(m_State);
     

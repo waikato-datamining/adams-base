@@ -488,7 +488,7 @@ public class StoragePanel
     }
     m_DialogInspect.setTitle("Inspect (" + getSelectedObjectID() + ")");
     m_PanelInspect.setCurrent(getSelectedObject());
-    m_DialogInspect.setSize(800, 600);
+    m_DialogInspect.setSize(GUIHelper.getDefaultDialogDimension());
     m_DialogInspect.setVisible(true);
   }
 

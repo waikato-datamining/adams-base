@@ -45,6 +45,10 @@ BaseDirectoryChooser.Height=500
 # Whether the BaseDirectoryChooser shows bookmarks
 BaseDirectoryChooser.ShowBookmarks=false
 
+# The default width/height for dialogs
+DefaultDialog.Width=800
+DefaultDialog.Height=800
+
 # Whether to use the frame maximization fix (affects only Linux) (true|false|LINUX|ANDROID|MAC|WINDOWS)
 UseFrameMaximizationFix=LINUX
 

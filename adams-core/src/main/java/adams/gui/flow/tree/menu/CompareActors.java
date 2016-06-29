@@ -108,7 +108,7 @@ public class CompareActors
     panel.setLabelText(false, nodes[0].getFullName());
     panel.display(diff);
     dialog.getContentPane().add(panel, BorderLayout.CENTER);
-    dialog.setSize(800, 600);
+    dialog.setSize(GUIHelper.getDefaultDialogDimension());
     dialog.setLocationRelativeTo(m_State.tree);
     dialog.setVisible(true);
 

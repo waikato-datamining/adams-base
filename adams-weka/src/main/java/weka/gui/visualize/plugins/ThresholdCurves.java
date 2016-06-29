@@ -25,6 +25,7 @@ import adams.data.sequence.XYSequence;
 import adams.data.sequence.XYSequencePoint;
 import adams.data.sequence.XYSequencePointComparator.Comparison;
 import adams.gui.core.BaseDialog;
+import adams.gui.core.GUIHelper;
 import adams.gui.visualization.core.plot.Axis;
 import adams.gui.visualization.sequence.LinePaintlet;
 import adams.gui.visualization.sequence.PaintletWithFixedXYRange;
@@ -113,7 +114,7 @@ public class ThresholdCurves
 	dialog.setTitle("Threshold curves (" + classAtt.name() + ")");
 	dialog.getContentPane().setLayout(new BorderLayout());
 	dialog.getContentPane().add(panel, BorderLayout.CENTER);
-	dialog.setSize(800, 600);
+	dialog.setSize(GUIHelper.getDefaultDialogDimension());
 	dialog.setLocationRelativeTo(null);
 	dialog.setVisible(true);
       }
