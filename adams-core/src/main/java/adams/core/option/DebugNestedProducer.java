@@ -66,6 +66,7 @@ public class DebugNestedProducer
     AbstractCommandLineHandler	handler;
     Actor			actor;
     MutableActorHandler		wrapper;
+    String			msg;
 
     result = new ArrayList();
 
@@ -113,10 +114,31 @@ public class DebugNestedProducer
 		  actor = wrapper;
 		}
 	      }
+	      else {
+		if (value instanceof Actor) {
+		  actor = (Actor) value;
+		  msg   = "Unable to obtain internally used actor for debugging purposes";
+		  if (actor.getAnnotations().isEmpty())
+		    actor.getAnnotations().setValue(msg);
+		  else
+		    actor.getAnnotations().setValue(actor.getAnnotations().getValue() + "\n" + msg);
+		}
+	      }
             }
             else if (value instanceof InternalActorHandler) {
-              if (((InternalActorHandler) value).getInternalActor() != null)
-                actor = ((InternalActorHandler) value).getInternalActor();
+              if (((InternalActorHandler) value).getInternalActor() != null) {
+		actor = ((InternalActorHandler) value).getInternalActor();
+	      }
+	      else {
+		if (value instanceof Actor) {
+		  actor = (Actor) value;
+		  msg   = "Unable to obtain internally used actor for debugging purposes";
+		  if (actor.getAnnotations().isEmpty())
+		    actor.getAnnotations().setValue(msg);
+		  else
+		    actor.getAnnotations().setValue(actor.getAnnotations().getValue() + "\n" + msg);
+		}
+	      }
             }
 	    if (actor != null)
 	      value = actor;
