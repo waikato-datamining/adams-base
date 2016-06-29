@@ -19,6 +19,7 @@
  */
 package adams.core.option;
 
+import adams.core.base.BaseAnnotation;
 import adams.core.option.NestedFormatHelper.Line;
 import adams.flow.control.Sequence;
 import adams.flow.control.SubProcess;
@@ -26,6 +27,7 @@ import adams.flow.core.Actor;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.ExternalActorHandler;
 import adams.flow.core.InternalActorHandler;
+import adams.flow.core.MutableActorHandler;
 import adams.flow.source.SequenceSource;
 import adams.flow.standalone.Standalones;
 
@@ -92,35 +94,26 @@ public class DebugNestedProducer
             if (value instanceof ExternalActorHandler) {
               if (((ExternalActorHandler) value).getExternalActor() != null) {
 		actor = ((ExternalActorHandler) value).getExternalActor();
-		if (ActorUtils.isStandalone(actor)) {
+		// insert fake level to make fullnames work in debugger
+		wrapper = null;
+		if (ActorUtils.isStandalone(actor))
 		  wrapper = new Standalones();
-		  wrapper.setName(((Actor) value).getName());
-		  ((Standalones) wrapper).removeAll();
-		  ((Standalones) wrapper).add(actor);
-		  actor = wrapper;
-		}
-		else if (ActorUtils.isSource(actor)) {
+		else if (ActorUtils.isSource(actor))
 		  wrapper = new SequenceSource();
-		  wrapper.setName(((Actor) value).getName());
-		  ((SequenceSource) wrapper).removeAll();
-		  ((SequenceSource) wrapper).add(actor);
-		  actor = wrapper;
-		}
-		else if (ActorUtils.isTransformer(actor)) {
+		else if (ActorUtils.isTransformer(actor))
 		  wrapper = new SubProcess();
-		  wrapper.setName(((Actor) value).getName());
-		  ((SubProcess) wrapper).removeAll();
-		  ((SubProcess) wrapper).add(actor);
-		  actor = wrapper;
-		}
-		else if (ActorUtils.isSink(actor)) {
+		else if (ActorUtils.isSink(actor))
 		  wrapper = new Sequence();
+		else
+		  getLogger().severe("Failed to find wrapper for actor class: " + actor.getClass().getName());
+		if (wrapper != null) {
+		  ((MutableActorHandler) wrapper).removeAll();
+		  ((MutableActorHandler) wrapper).add(actor);
 		  wrapper.setName(((Actor) value).getName());
-		  ((Sequence) wrapper).removeAll();
-		  ((Sequence) wrapper).add(actor);
+		  wrapper.setAnnotations(new BaseAnnotation("dummy wrapper required for debugging when using external actors"));
+		  wrapper.setParent(((Actor) value).getParent());
 		  actor = wrapper;
 		}
-		actor.setParent(((Actor) value).getParent());
 	      }
             }
             else if (value instanceof InternalActorHandler) {
