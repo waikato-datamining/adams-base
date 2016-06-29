@@ -495,7 +495,8 @@ public class Debug
 	  expanded = (Actor) consumer.consume();
 	  panelCopy = panel.getOwner().newPanel();
 	  panelCopy.setCurrentFlow(expanded);
-	  panelCopy.setTitle("Debugging: " + panel.getTitle());
+	  panelCopy.setTitle(panel.getTitle());
+	  panelCopy.setTabIcon("run_debug.png");
 	  panelCopy.updateTitle();
 	  m_Owner.setParentComponent(panelCopy);
 	}
