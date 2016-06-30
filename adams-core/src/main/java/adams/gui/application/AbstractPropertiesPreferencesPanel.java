@@ -209,6 +209,72 @@ public abstract class AbstractPropertiesPreferencesPanel
   }
 
   /**
+   * Checks whether a custom array class has been specified for a particular
+   * property.
+   *
+   * @param property	the property check
+   * @return		true if a custom array class has been specified
+   */
+  public boolean hasArrayClass(String property) {
+    return m_PanelPreferences.hasArrayClass(property);
+  }
+
+  /**
+   * Associates the custom array class with a particular property.\
+   * Must have setText(String) and getText() methods!
+   *
+   * @param property	the property to associate the chooser with
+   * @param value	the custom array class to use
+   */
+  public void setArrayClass(String property, Class value) {
+    m_PanelPreferences.setArrayClass(property, value);
+  }
+
+  /**
+   * Returns the custom array class associated with a particular
+   * property.
+   *
+   * @param property	the property to get the chooser for
+   * @return		the custom array class, null if none available
+   */
+  public Class getArrayClass(String property) {
+    return m_PanelPreferences.getArrayClass(property);
+  }
+
+  /**
+   * Checks whether a custom array separator has been specified for a particular
+   * property. If no separator specified, comma is used.
+   *
+   * @param property	the property check
+   * @return		true if a custom array separator has been specified
+   */
+  public boolean hasArraySeparator(String property) {
+    return m_PanelPreferences.hasArraySeparator(property);
+  }
+
+  /**
+   * Associates the custom array separator with a particular property.
+   * If no separator specified, comma is used.
+   *
+   * @param property	the property to associate the chooser with
+   * @param value	the custom array separator to use
+   */
+  public void setArraySeparator(String property, String value) {
+    m_PanelPreferences.setArraySeparator(property, value);
+  }
+
+  /**
+   * Returns the custom array separator associated with a particular
+   * property. If no separator specified, comma is used.
+   *
+   * @param property	the property to get the chooser for
+   * @return		the custom array separator, null if none available
+   */
+  public String getArraySeparator(String property) {
+    return m_PanelPreferences.getArraySeparator(property);
+  }
+
+  /**
    * Checks whether a enum has been specified for a particular
    * property.
    *
