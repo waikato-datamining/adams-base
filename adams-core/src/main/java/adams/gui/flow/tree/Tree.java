@@ -49,9 +49,9 @@ import adams.gui.flow.FlowEditorPanel;
 import adams.gui.flow.FlowPanel;
 import adams.gui.flow.tree.keyboardaction.AbstractKeyboardAction;
 import adams.gui.flow.tree.menu.EditActor;
+import adams.gui.flow.tree.menu.Separator;
 import adams.gui.flow.tree.menu.TreePopupAction;
 import adams.gui.goe.FlowHelper;
-import adams.gui.goe.GenericObjectEditorDialog;
 
 import javax.swing.ImageIcon;
 import javax.swing.KeyStroke;
@@ -174,9 +174,6 @@ public class Tree
   /** the input/output class prefixes to remove. */
   protected String[] m_InputOutputPrefixes;
 
-  /** the dialog for selecting a template for generating a flow fragment. */
-  protected GenericObjectEditorDialog m_TemplateDialog;
-
   /** the node that is currently being edited. */
   protected Node m_CurrentEditingNode;
 
@@ -209,6 +206,9 @@ public class Tree
 
   /** for complex operations. */
   protected TreeOperations m_Operations;
+
+  /** the classes for the tree popup. */
+  protected List<Class> m_NodePopupClasses;
 
   /**
    * Initializes the tree.
@@ -272,6 +272,7 @@ public class Tree
     m_AllowNodePopup              = true;
     m_AllowKeyboardShortcuts      = true;
     m_KeyboardActions             = new ArrayList<>();
+    m_NodePopupClasses            = null;
 
     putClientProperty("JTree.lineStyle", "None");
     setLargeModel(true);
@@ -1059,21 +1060,40 @@ public class Tree
       return null;
 
     menu  = new BasePopupMenu();
-    items = FlowEditorPanel.getPropertiesEditor().getProperty("Tree.PopupMenu", "").replace(" ", "").split(",");
-    for (String item: items) {
-      if (item.trim().length() == 0)
-	continue;
-      if (item.equals("-")) {
+
+    // cache classes?
+    if (m_NodePopupClasses == null) {
+      m_NodePopupClasses = new ArrayList<>();
+      items              = FlowEditorPanel.getPropertiesEditor().getProperty("Tree.PopupMenu", "").replace(" ", "").split(",");
+      for (String item : items) {
+	if (item.trim().length() == 0)
+	  continue;
+	if (item.equals("-")) {
+	  m_NodePopupClasses.add(Separator.class);
+	}
+	else {
+	  try {
+	    m_NodePopupClasses.add(Class.forName(item));
+	  }
+	  catch (Exception ex) {
+	    ConsolePanel.getSingleton().append(this, "Failed to instantiate tree popup menu item class '" + item + "':", ex);
+	  }
+	}
+      }
+    }
+
+    for (Class cls : m_NodePopupClasses) {
+      if (cls == Separator.class) {
 	menu.addSeparator();
       }
       else {
 	try {
-	  action = (TreePopupAction) Class.forName(item).newInstance();
+	  action = (TreePopupAction) cls.newInstance();
 	  action.update(state);
 	  menu.add(action.getMenuItem());
 	}
 	catch (Exception ex) {
-	  ConsolePanel.getSingleton().append(this, "Failed to instantiate tree popup menu item '" + item + "':", ex);
+	  ConsolePanel.getSingleton().append(this, "Failed to instantiate tree popup menu item '" + cls.getName() + "':", ex);
 	}
       }
     }
