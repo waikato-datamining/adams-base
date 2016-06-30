@@ -85,7 +85,7 @@ public class CompareActors
     for (i = 0; i < 2; i++) {
       nodes[i] = (Node) m_State.selPaths[i].getLastPathComponent();
       producer.produce((nodes[i]).getActor());
-      actors[i] = producer.toString().split("\n");
+      actors[i] = producer.toString().replace("\t", "  ").split("\n");
     }
 
     diff = DiffUtils.sideBySide(actors[0], actors[1]);
@@ -95,11 +95,11 @@ public class CompareActors
     }
 
     if (getParentDialog() != null)
-      dialog = new ApprovalDialog(getParentDialog(), ModalityType.DOCUMENT_MODAL);
+      dialog = new ApprovalDialog(getParentDialog(), ModalityType.MODELESS);
     else
-      dialog = new ApprovalDialog(getParentFrame(), true);
+      dialog = new ApprovalDialog(getParentFrame(), false);
     dialog.setDefaultCloseOperation(ApprovalDialog.DISPOSE_ON_CLOSE);
-    dialog.setTitle("Comparison");
+    dialog.setTitle("Comparison (" + (DiffUtils.isDifferent(actors[0], actors[1]) ? "different" : "no difference") + ")");
     dialog.setCancelVisible(false);
     dialog.setApproveCaption("Close");
     dialog.setApproveMnemonic('l');
@@ -108,7 +108,7 @@ public class CompareActors
     panel.setLabelText(false, nodes[0].getFullName());
     panel.display(diff);
     dialog.getContentPane().add(panel, BorderLayout.CENTER);
-    dialog.setSize(GUIHelper.getDefaultDialogDimension());
+    dialog.setSize(GUIHelper.getDefaultLargeDialogDimension());
     dialog.setLocationRelativeTo(m_State.tree);
     dialog.setVisible(true);
 
