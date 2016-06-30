@@ -25,6 +25,7 @@ import adams.core.StatusMessageHandler;
 import adams.core.io.FileEncodingSupporter;
 import adams.core.io.FilenameProposer;
 import adams.core.io.PlaceholderFile;
+import adams.core.option.OptionUtils;
 import adams.data.io.input.FlowReader;
 import adams.data.io.output.FlowWriter;
 import adams.env.Environment;
@@ -32,7 +33,6 @@ import adams.env.FlowEditorPanelDefinition;
 import adams.env.FlowEditorPanelMenuDefinition;
 import adams.env.FlowEditorTreePopupMenuDefinition;
 import adams.flow.control.Flow;
-import adams.flow.core.AbstractActor;
 import adams.flow.core.Actor;
 import adams.gui.application.ChildFrame;
 import adams.gui.application.ChildWindow;
@@ -42,6 +42,7 @@ import adams.gui.core.BaseMenu;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.BaseStatusBar;
 import adams.gui.core.BaseStatusBar.PopupMenuCustomizer;
+import adams.gui.core.ConsolePanel;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MenuBarProvider;
 import adams.gui.core.RecentFilesHandlerWithCommandline;
@@ -482,7 +483,7 @@ public class FlowEditorPanel
   @Override
   protected void initActions() {
     FlowEditorAction	action;
-    
+
     // File/New (flow)
     action = new FileNewFlow();
     m_ActionFileNew = action;
@@ -805,7 +806,7 @@ public class FlowEditorPanel
     int			index;
     HashSet<String>	separatorAdded;
 
-    separatorAdded = new HashSet<String>();
+    separatorAdded = new HashSet<>();
     for (AbstractFlowEditorMenuItem item: m_AdditionalMenuItems) {
       // determine menu to add the time to
       menu = null;
@@ -896,33 +897,40 @@ public class FlowEditorPanel
       m_MenuFileNew = submenu;
       submenu.add(m_ActionFileNewFromClipboard);
       submenu.addSeparator();
-      actors = getPropertiesEditor().getProperty("NewList", Flow.class.getName()).replace(" ", "").split(",");
+      actors = getPropertiesEditor().getProperty("NewList", Flow.class.getName()).split(",");
       prefixes = new ArrayList<>();
       for (i = 0; i < actors.length; i++) {
-	prefix = actors[i].substring(0, actors[i].lastIndexOf('.'));
+        prefix = actors[i].trim().replaceAll("[ ].*", "");
+	prefix = prefix.substring(0, prefix.lastIndexOf('.'));
 	if (!prefixes.contains(prefix))
 	  prefixes.add(prefix);
       }
       prefixPrev = "";
       for (i = 0; i < actors.length; i++) {
-	final Actor actor = AbstractActor.forName(actors[i], new String[0]);
-	prefix = actors[i].substring(0, actors[i].lastIndexOf('.'));
-	if (!prefix.equals(prefixPrev)) {
-	  menuitem = new JMenuItem(prefix);
-	  menuitem.setEnabled(false);
-	  if (prefixPrev.length() > 0)
-	    submenu.addSeparator();
-	  submenu.add(menuitem);
-	  prefixPrev = prefix;
-	}
-	if (actor instanceof Flow) {
-	  submenu.add(m_ActionFileNew);
-	}
-	else {
-	  menuitem = new JMenuItem(actors[i].replaceAll(".*\\.", ""));
-	  submenu.add(menuitem);
-	  menuitem.addActionListener((ActionEvent e) -> newFlow(actor));
-	}
+        try {
+          final Actor actor = (Actor) OptionUtils.forAnyCommandLine(Actor.class, actors[i]);
+	  prefix = actors[i].trim().replaceAll("[ ].*", "");
+	  prefix = prefix.substring(0, prefix.lastIndexOf('.'));
+          if (!prefix.equals(prefixPrev)) {
+            menuitem = new JMenuItem(prefix);
+            menuitem.setEnabled(false);
+            if (prefixPrev.length() > 0)
+              submenu.addSeparator();
+            submenu.add(menuitem);
+            prefixPrev = prefix;
+          }
+          if (actor instanceof Flow) {
+            submenu.add(m_ActionFileNew);
+          }
+          else {
+            menuitem = new JMenuItem(actors[i].replaceAll("[ ].*", "").replaceAll(".*\\.", ""));
+            submenu.add(menuitem);
+            menuitem.addActionListener((ActionEvent e) -> newFlow(actor));
+          }
+        }
+        catch (Exception e) {
+          ConsolePanel.getSingleton().append(this, "Failed to instantiate actor: " + actors[i], e);
+        }
       }
 
       menu.add(m_ActionFileOpen);

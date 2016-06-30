@@ -21,8 +21,11 @@ package adams.gui.application;
 
 import adams.env.Environment;
 import adams.env.FlowEditorPanelDefinition;
+import adams.flow.control.Flow;
+import adams.flow.core.Actor;
 import adams.gui.core.PropertiesParameterPanel.PropertyType;
 import adams.gui.core.ToolBarPanel.ToolBarLocation;
+import adams.gui.goe.GenericArrayEditorPanel;
 
 /**
  * Preferences for the flow editor.
@@ -48,7 +51,10 @@ public class FlowPreferencesPanel
     addPropertyType("ShowInputOutput", PropertyType.BOOLEAN);
     addPropertyType("DividerLocation", PropertyType.INTEGER);
     addPropertyType("GarbageCollectAfterFinish", PropertyType.BOOLEAN);
-    addPropertyType("NewList", PropertyType.COMMA_SEPARATED_LIST);
+    addPropertyType("NewList", PropertyType.ARRAY_EDITOR);
+    setChooser("NewList", new GenericArrayEditorPanel(new Actor[]{new Flow()}));
+    setArrayClass("NewList", Actor.class);
+    setArraySeparator("NewList", ",");
     addPropertyType("Tree.ActorName.Size", PropertyType.INTEGER);
     addPropertyType("Tree.ActorName.Color", PropertyType.COLOR);
     addPropertyType("Tree.QuickInfo.Size", PropertyType.INTEGER);
