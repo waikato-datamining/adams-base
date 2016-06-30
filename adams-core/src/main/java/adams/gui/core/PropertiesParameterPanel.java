@@ -67,6 +67,7 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
+import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -152,6 +153,8 @@ public class PropertiesParameterPanel
     REGEXP_CONSTRAINED_STRING,
     /** custom component. */
     CUSTOM_COMPONENT,
+    /** Array editor. */
+    ARRAY_EDITOR,
   }
 
   /** the panel for the properties. */
@@ -186,6 +189,12 @@ public class PropertiesParameterPanel
 
   /** the property/component relation. */
   protected HashMap<String,Component> m_Component;
+
+  /** the property/arrayclass relation. */
+  protected HashMap<String,Class> m_ArrayClass;
+
+  /** the property/arrayseparator relation. */
+  protected HashMap<String,String> m_ArraySeparator;
 
   /** the custom order for the properties. */
   protected List<String> m_Order;
@@ -222,6 +231,8 @@ public class PropertiesParameterPanel
     m_Label               = new HashMap<>();
     m_RegExp              = new HashMap<>();
     m_Component           = new HashMap<>();
+    m_ArrayClass          = new HashMap<>();
+    m_ArraySeparator      = new HashMap<>();
     m_Order               = new ArrayList<>();
     m_FileChooser         = null;
     m_DefaultSQLDimension = new Dimension(200, 70);
@@ -301,6 +312,8 @@ public class PropertiesParameterPanel
     m_PropertyTypes.clear();
     m_ActualPropertyTypes.clear();
     m_Choosers.clear();
+    m_ArrayClass.clear();
+    m_ArraySeparator.clear();
     m_Enums.clear();
     m_Lists.clear();
     m_Help.clear();
@@ -522,6 +535,71 @@ public class PropertiesParameterPanel
   }
 
   /**
+   * Checks whether a custom array class has been specified for a particular
+   * property.
+   *
+   * @param property	the property check
+   * @return		true if a custom array class has been specified
+   */
+  public boolean hasArrayClass(String property) {
+    return m_ArrayClass.containsKey(property);
+  }
+
+  /**
+   * Associates the custom array class with a particular property.\
+   *
+   * @param property	the property to associate the chooser with
+   * @param value	the custom array class to use
+   */
+  public void setArrayClass(String property, Class value) {
+    m_ArrayClass.put(property, value);
+  }
+
+  /**
+   * Returns the custom array class associated with a particular
+   * property.
+   *
+   * @param property	the property to get the chooser for
+   * @return		the custom array class, null if none available
+   */
+  public Class getArrayClass(String property) {
+    return m_ArrayClass.get(property);
+  }
+
+  /**
+   * Checks whether a custom array separator has been specified for a particular
+   * property. If no separator specified, comma is used.
+   *
+   * @param property	the property check
+   * @return		true if a custom array separator has been specified
+   */
+  public boolean hasArraySeparator(String property) {
+    return m_ArraySeparator.containsKey(property);
+  }
+
+  /**
+   * Associates the custom array separator with a particular property.
+   * If no separator specified, comma is used.
+   *
+   * @param property	the property to associate the chooser with
+   * @param value	the custom array separator to use
+   */
+  public void setArraySeparator(String property, String value) {
+    m_ArraySeparator.put(property, value);
+  }
+
+  /**
+   * Returns the custom array separator associated with a particular
+   * property. If no separator specified, comma is used.
+   *
+   * @param property	the property to get the chooser for
+   * @return		the custom array separator, null if none available
+   */
+  public String getArraySeparator(String property) {
+    return m_ArraySeparator.get(property);
+  }
+
+  /**
    * Checks whether a enum has been specified for a particular
    * property.
    *
@@ -693,6 +771,10 @@ public class PropertiesParameterPanel
       if (!hasChooser(key))
 	type = PropertyType.STRING;
     }
+    if (type == PropertyType.ARRAY_EDITOR) {
+      if (!hasChooser(key) || !hasArrayClass(key))
+	type = PropertyType.STRING;
+    }
     else if (type == PropertyType.CUSTOM_COMPONENT) {
       if (!hasComponent(key))
 	type = PropertyType.STRING;
@@ -798,6 +880,8 @@ public class PropertiesParameterPanel
     String[]			parts;
     int				i;
     String			label;
+    Object			array;
+    String			sep;
 
     clearProperties();
     keys = new ArrayList<>(value.keySetAll());
@@ -975,6 +1059,35 @@ public class PropertiesParameterPanel
             }
             addProperty(key, label, chooserPanel);
             break;
+          case ARRAY_EDITOR:
+	    if (hasArraySeparator(key))
+	      sep = getArraySeparator(key);
+	    else
+	      sep = ",";
+            chooserPanel = getChooser(key);
+            chooserPanel.setPreferredSize(new Dimension(DEFAULT_WIDTH_CHOOSERS, chooserPanel.getPreferredSize().height));
+            chooserPanel.setToolTipText(help);
+            try {
+              if (value.getProperty(key).trim().length() > 0) {
+		if (sep.equals(" "))
+		  parts = OptionUtils.splitOptions(value.getProperty(key).trim());
+		else
+		  parts = value.getProperty(key).trim().split(sep);
+	      }
+	      else {
+		parts = new String[0];
+	      }
+	      array = Array.newInstance(getArrayClass(key), parts.length);
+	      for (i = 0; i < parts.length; i++)
+		Array.set(array, i, OptionUtils.forAnyCommandLine(getArrayClass(key), parts[i]));
+	      chooserPanel.setCurrent(array);
+            }
+            catch (Exception e) {
+              System.err.println("Failed to create array: " + value.getProperty(key));
+              e.printStackTrace();
+            }
+            addProperty(key, label, chooserPanel);
+            break;
           case INDEX:
             indexText = new IndexTextField();
             indexText.setColumns(20);
@@ -1053,6 +1166,10 @@ public class PropertiesParameterPanel
     JComboBox			comboEnum;
     BaseString[]		list;
     String			key;
+    Object			array;
+    String[]			items;
+    int				n;
+    String			sep;
 
     result = new Properties();
 
@@ -1146,6 +1263,21 @@ public class PropertiesParameterPanel
         case OBJECT_EDITOR:
           chooserPanel = (AbstractChooserPanel) comp;
           result.setProperty(key, OptionUtils.getCommandLine(chooserPanel.getCurrent()));
+          break;
+	case ARRAY_EDITOR:
+          chooserPanel = (AbstractChooserPanel) comp;
+	  array = chooserPanel.getCurrent();
+	  items = new String[Array.getLength(array)];
+	  if (hasArraySeparator(key))
+	    sep = getArraySeparator(key);
+	  else
+	    sep = ",";
+	  for (n = 0; n < items.length; n++)
+	    items[n] = OptionUtils.getCommandLine(Array.get(array, n));
+	  if (sep.equals(" "))
+	    result.setProperty(key, OptionUtils.joinOptions(items));
+	  else
+	    result.setProperty(key, Utils.flatten(items, sep));
           break;
         case INDEX:
           indexText = (IndexTextField) comp;
