@@ -15,7 +15,7 @@
 
 /**
  * LoggingHelper.java
- * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.logging;
 
@@ -50,7 +50,7 @@ public class LoggingHelper {
   protected static Handler m_DefaultHandler = new SimpleConsoleHandler();
   
   /** the formatter for the timestamp. */
-  protected static DateFormat m_DateFormat = new DateFormat("yyyyMMdd-HHmmss.S");
+  protected static DateFormat m_DateFormat = new DateFormat("yyyyMMdd-HHmmss.SSS");
   
   /**
    * Returns the log level for the specified class. E.g., for the class
