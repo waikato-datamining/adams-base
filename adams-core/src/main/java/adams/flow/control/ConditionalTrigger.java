@@ -15,13 +15,13 @@
 
 /**
  * ConditionalTrigger.java
- * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.control;
 
 import adams.flow.condition.bool.BooleanCondition;
 import adams.flow.condition.bool.BooleanConditionSupporter;
-import adams.flow.condition.bool.Counting;
+import adams.flow.condition.bool.Expression;
 import adams.flow.core.Token;
 
 /**
@@ -37,16 +37,15 @@ import adams.flow.core.Token;
  * - generates:<br>
  * &nbsp;&nbsp;&nbsp;adams.flow.core.Unknown<br>
  * <br><br>
+ * Conditional equivalent:<br>
+ * &nbsp;&nbsp;&nbsp;adams.flow.control.ConditionalTrigger
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- * 
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  * 
  * <pre>-name &lt;java.lang.String&gt; (property: name)
@@ -54,29 +53,48 @@ import adams.flow.core.Token;
  * &nbsp;&nbsp;&nbsp;default: ConditionalTrigger
  * </pre>
  * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
- * <pre>-skip (property: skip)
+ * <pre>-skip &lt;boolean&gt; (property: skip)
  * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
  * &nbsp;&nbsp;&nbsp;as it is.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-stop-flow-on-error (property: stopFlowOnError)
+ * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
  * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
  * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-tee &lt;adams.flow.core.AbstractActor&gt; [-tee ...] (property: actors)
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-finish-before-stopping &lt;boolean&gt; (property: finishBeforeStopping)
+ * &nbsp;&nbsp;&nbsp;If enabled, actor first finishes processing all data before stopping.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-asynchronous &lt;boolean&gt; (property: asynchronous)
+ * &nbsp;&nbsp;&nbsp;If enabled, the sub-actors get executed asynchronously rather than the flow 
+ * &nbsp;&nbsp;&nbsp;waiting for them to finish before proceeding with execution.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-tee &lt;adams.flow.core.Actor&gt; [-tee ...] (property: actors)
  * &nbsp;&nbsp;&nbsp;The actors to siphon-off the tokens to.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
  * <pre>-condition &lt;adams.flow.condition.bool.BooleanCondition&gt; (property: condition)
  * &nbsp;&nbsp;&nbsp;The boolean condition to evaluate.
- * &nbsp;&nbsp;&nbsp;default: adams.flow.condition.bool.Counting
+ * &nbsp;&nbsp;&nbsp;default: adams.flow.condition.bool.Expression
  * </pre>
  * 
  <!-- options-end -->
@@ -116,7 +134,7 @@ public class ConditionalTrigger
 
     m_OptionManager.add(
 	    "condition", "condition",
-	    new Counting());
+	    new Expression());
   }
 
   /**
