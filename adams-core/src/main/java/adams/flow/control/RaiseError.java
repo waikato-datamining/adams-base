@@ -15,12 +15,13 @@
 
 /**
  * RaiseError.java
- * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.control;
 
 import adams.core.ClassCrossReference;
 import adams.core.QuickInfoHelper;
+import adams.core.Utils;
 import adams.flow.condition.bool.BooleanCondition;
 import adams.flow.condition.bool.BooleanConditionSupporter;
 import adams.flow.condition.bool.Expression;
@@ -74,13 +75,20 @@ import adams.flow.transformer.AbstractTransformer;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
  * <pre>-condition &lt;adams.flow.condition.bool.BooleanCondition&gt; (property: condition)
  * &nbsp;&nbsp;&nbsp;The boolean condition to evaluate.
  * &nbsp;&nbsp;&nbsp;default: adams.flow.condition.bool.Expression
  * </pre>
  * 
  * <pre>-error-msg &lt;java.lang.String&gt; (property: errorMessage)
- * &nbsp;&nbsp;&nbsp;The error message to raise.
+ * &nbsp;&nbsp;&nbsp;The error message to raise; variables can be used and backquoted characters 
+ * &nbsp;&nbsp;&nbsp;like '\t' and '\n'.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
@@ -187,7 +195,7 @@ public class RaiseError
    * @param value	the message
    */
   public void setErrorMessage(String value) {
-    m_ErrorMessage = value;
+    m_ErrorMessage = Utils.unbackQuoteChars(value);
     reset();
   }
 
@@ -197,7 +205,7 @@ public class RaiseError
    * @return		the message
    */
   public String getErrorMessage() {
-    return m_ErrorMessage;
+    return Utils.backQuoteChars(m_ErrorMessage);
   }
 
   /**
@@ -207,7 +215,7 @@ public class RaiseError
    * 			displaying in the GUI or for listing the options.
    */
   public String errorMessageTipText() {
-    return "The error message to raise.";
+    return "The error message to raise; variables can be used and backquoted characters like '\\t' and '\\n'.";
   }
 
   /**
@@ -238,9 +246,9 @@ public class RaiseError
   protected String doExecute() {
     if (m_Condition.evaluate(this, m_InputToken)) {
       if (m_ErrorMessage.isEmpty())
-	throw new Error();
+        throw new Error();
       else
-	throw new Error(m_ErrorMessage);
+        throw new Error(getVariables().expand(m_ErrorMessage));
     }
     else {
       m_OutputToken = m_InputToken;
