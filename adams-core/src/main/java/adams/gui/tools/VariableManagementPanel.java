@@ -15,7 +15,7 @@
 
 /*
  * VariableManagementPanel.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.tools;
@@ -497,6 +497,8 @@ public class VariableManagementPanel
     
     dlg = new TextDialog();
     dlg.setDefaultCloseOperation(TextDialog.DISPOSE_ON_CLOSE);
+    dlg.setUpdateParentTitle(false);
+    dlg.setTitle("" + m_Table.getValueAt(row, 0));
     dlg.setContent("" + m_Table.getValueAt(row, 1));
     dlg.setSize(GUIHelper.getDefaultTinyDialogDimension());
     dlg.setLineWrap(true);
