@@ -15,16 +15,16 @@
 
 /**
  * TextDialog.java
- * Copyright (C) 2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.dialog;
+
+import adams.gui.core.BaseDialog;
 
 import java.awt.BorderLayout;
 import java.awt.Dialog;
 import java.awt.Font;
 import java.awt.Frame;
-
-import adams.gui.core.BaseDialog;
 
 /**
  * A simple dialog for displaying text.
@@ -281,5 +281,23 @@ public class TextDialog
    */
   public boolean getLineWrap() {
     return m_TextPanel.getLineWrap();
+  }
+
+  /**
+   * Sets whether to update the parent's title.
+   *
+   * @param value	if true the parent's title will get updated
+   */
+  public void setUpdateParentTitle(boolean value) {
+    m_TextPanel.setUpdateParentTitle(value);
+  }
+
+  /**
+   * Returns whether to update the parent's title.
+   *
+   * @return		true if to update the parent's title
+   */
+  public boolean getUpdateParentTitle() {
+    return m_TextPanel.getUpdateParentTitle();
   }
 }
