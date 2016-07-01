@@ -15,9 +15,11 @@
 
 /**
  * AbstractDirectoryListerBasedSearchlet.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.source.filesystemsearch;
+
+import adams.core.logging.LoggingLevel;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -50,6 +52,17 @@ public abstract class AbstractDirectoryListerBasedSearchlet
   }
 
   /**
+   * Sets the logging level.
+   *
+   * @param value 	the level
+   */
+  @Override
+  public synchronized void setLoggingLevel(LoggingLevel value) {
+    super.setLoggingLevel(value);
+    m_Lister.setLoggingLevel(value);
+  }
+
+  /**
    * Performs the actual search.
    * 
    * @return		the search result
@@ -59,7 +72,7 @@ public abstract class AbstractDirectoryListerBasedSearchlet
   protected List<String> doSearch() throws Exception {
     List<String>	result;
     
-    result = new ArrayList<String>();
+    result = new ArrayList<>();
     result.addAll(Arrays.asList(m_Lister.list()));
     
     return result;

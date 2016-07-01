@@ -15,7 +15,7 @@
 
 /*
  * DeleteFile.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.standalone;
@@ -29,6 +29,7 @@ import adams.core.base.BaseRegExp;
 import adams.core.io.DirectoryLister;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderDirectory;
+import adams.core.logging.LoggingLevel;
 
 /**
  <!-- globalinfo-start -->
@@ -167,11 +168,22 @@ public class DeleteFile
 
     result  = QuickInfoHelper.toString(this, "directory", getDirectory());
     result += QuickInfoHelper.toString(this, "regExp", getRegExp(), File.separator);
-    options = new ArrayList<String>();
+    options = new ArrayList<>();
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "recursive", getRecursive(), "(recursive)"));
     result += QuickInfoHelper.flatten(options);
 
     return result;
+  }
+
+  /**
+   * Sets the logging level.
+   *
+   * @param value 	the level
+   */
+  @Override
+  public synchronized void setLoggingLevel(LoggingLevel value) {
+    super.setLoggingLevel(value);
+    m_Lister.setLoggingLevel(value);
   }
 
   /**

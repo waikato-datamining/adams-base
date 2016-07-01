@@ -15,7 +15,7 @@
 
 /*
  * DirectoryLister.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
@@ -28,6 +28,7 @@ import adams.core.base.BaseDateTime;
 import adams.core.base.BaseRegExp;
 import adams.core.io.DirectoryLister.Sorting;
 import adams.core.io.PlaceholderDirectory;
+import adams.core.logging.LoggingLevel;
 
 
 /**
@@ -282,7 +283,7 @@ public class DirectoryLister
     result += QuickInfoHelper.toString(this, "watchDir", getWatchDir());
 
     // further options
-    options = new ArrayList<String>();
+    options = new ArrayList<>();
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "sorting", getSorting()));
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "sortDescending", (getSorting() != Sorting.NO_SORTING) && getSortDescending(), "descending"));
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "recursive", getRecursive(), "recursive"));
@@ -312,6 +313,17 @@ public class DirectoryLister
     super.reset();
 
     m_PauseRequired = false;
+  }
+
+  /**
+   * Sets the logging level.
+   *
+   * @param value 	the level
+   */
+  @Override
+  public synchronized void setLoggingLevel(LoggingLevel value) {
+    super.setLoggingLevel(value);
+    m_Lister.setLoggingLevel(value);
   }
 
   /**
