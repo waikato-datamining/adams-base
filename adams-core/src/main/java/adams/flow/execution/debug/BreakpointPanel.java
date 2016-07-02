@@ -21,9 +21,6 @@
 package adams.flow.execution.debug;
 
 import adams.core.CleanUpHandler;
-import adams.flow.execution.AbstractBreakpoint;
-import adams.flow.execution.AnyActorBreakpoint;
-import adams.flow.execution.PathBreakpoint;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseTableWithButtons;
 import adams.gui.flow.FlowTreeHandler;

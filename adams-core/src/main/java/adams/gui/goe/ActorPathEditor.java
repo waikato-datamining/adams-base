@@ -34,6 +34,7 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import java.awt.BorderLayout;
@@ -43,7 +44,6 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -253,20 +253,12 @@ public class ActorPathEditor
 
     buttonOK = new JButton("OK");
     buttonOK.setMnemonic('O');
-    buttonOK.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	acceptInput();
-      }
-    });
+    buttonOK.addActionListener((ActionEvent e) -> acceptInput());
     panelButtons.add(buttonOK);
 
     buttonClose = new JButton("Cancel");
     buttonClose.setMnemonic('C');
-    buttonClose.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	discardInput();
-      }
-    });
+    buttonClose.addActionListener((ActionEvent e) -> discardInput());
     panelButtons.add(buttonClose);
 
     return panelTree;
@@ -327,7 +319,7 @@ public class ActorPathEditor
     if (tree != null) {
       m_Tree.setActor(tree.getActor());
       if (!m_TextValue.getText().isEmpty())
-	m_Tree.locateAndDisplay(m_TextValue.getText());
+        SwingUtilities.invokeLater(() -> m_Tree.locateAndDisplay(m_TextValue.getText()));
     }
 
     m_TextValue.grabFocus();

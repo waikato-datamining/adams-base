@@ -14,20 +14,18 @@
  */
 
 /**
- * ClassBreakpoint.java
+ * PathBreakpoint.java
  * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
-package adams.flow.execution;
+package adams.flow.execution.debug;
 
-import adams.flow.condition.bool.BooleanCondition;
-import adams.flow.condition.bool.BooleanConditionSupporter;
-import adams.flow.condition.bool.Expression;
 import adams.flow.core.Actor;
 import adams.flow.core.Token;
+import adams.flow.execution.debug.AbstractBreakpoint;
 
 /**
  <!-- globalinfo-start -->
- * Triggers when the specified (exact) class of actor is encountered during listening.
+ * Triggers with any actor encountered during listening.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -92,34 +90,16 @@ import adams.flow.core.Token;
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
- * <pre>-class-name &lt;java.lang.String&gt; (property: className)
- * &nbsp;&nbsp;&nbsp;The (exact) actor class name listen for.
- * &nbsp;&nbsp;&nbsp;default: 
- * </pre>
- * 
- * <pre>-condition &lt;adams.flow.condition.bool.BooleanCondition&gt; (property: condition)
- * &nbsp;&nbsp;&nbsp;The condition to evaluate; if the condition evaluates to 'true', the execution 
- * &nbsp;&nbsp;&nbsp;of the flow is interrupted and the control panel can be used.
- * &nbsp;&nbsp;&nbsp;default: adams.flow.condition.bool.Expression
- * </pre>
- * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class ClassBreakpoint
-  extends AbstractBreakpoint
-  implements BooleanConditionSupporter {
+public class AnyActorBreakpoint
+  extends AbstractBreakpoint {
 
   /** for serialization. */
-  private static final long serialVersionUID = 2287374088984820821L;
-  
-  /** the actor class to listen for. */
-  protected String m_ClassName;
-
-  /** the condition to evaluate. */
-  protected BooleanCondition m_Condition;
+  private static final long serialVersionUID = 3782327753485131754L;
 
   /**
    * Returns a string describing the object.
@@ -128,83 +108,7 @@ public class ClassBreakpoint
    */
   @Override
   public String globalInfo() {
-    return "Triggers when the specified (exact) class of actor is encountered during listening.";
-  }
-
-  /**
-   * Adds options to the internal list of options.
-   */
-  @Override
-  public void defineOptions() {
-    super.defineOptions();
-    
-    m_OptionManager.add(
-	    "class-name", "className",
-	    "");
-
-    m_OptionManager.add(
-	    "condition", "condition",
-	    new Expression());
-  }
-  
-  /**
-   * Sets the actor class to listen for.
-   *
-   * @param value	the class
-   */
-  public void setClassName(String value) {
-    m_ClassName = value;
-    reset();
-  }
-
-  /**
-   * Returns the actor class to listen for.
-   *
-   * @return		the class
-   */
-  public String getClassName() {
-    return m_ClassName;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String classNameTipText() {
-    return "The (exact) actor class name listen for.";
-  }
-
-  /**
-   * Sets the break condition to evaluate.
-   *
-   * @param value	the expression
-   */
-  public void setCondition(BooleanCondition value) {
-    m_Condition = value;
-    reset();
-  }
-
-  /**
-   * Returns the break condition to evaluate.
-   *
-   * @return		the expression
-   */
-  public BooleanCondition getCondition() {
-    return m_Condition;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String conditionTipText() {
-    return
-        "The condition to evaluate; if the condition evaluates to 'true', "
-      + "the execution of the flow is interrupted and the control panel can be used.";
+    return "Triggers with any actor encountered during listening.";
   }
 
   /**
@@ -216,7 +120,7 @@ public class ClassBreakpoint
    */
   @Override
   protected boolean evaluatePreInput(Actor actor, Token token) {
-    return actor.getClass().getName().equals(m_ClassName) && m_Condition.evaluate(actor, token);
+    return true;
   }
   
   /**
@@ -227,7 +131,7 @@ public class ClassBreakpoint
    */
   @Override
   protected boolean evaluatePostInput(Actor actor) {
-    return actor.getClass().getName().equals(m_ClassName) && m_Condition.evaluate(actor, null);
+    return true;
   }
   
   /**
@@ -238,7 +142,7 @@ public class ClassBreakpoint
    */
   @Override
   protected boolean evaluatePreExecute(Actor actor) {
-    return actor.getClass().getName().equals(m_ClassName) && m_Condition.evaluate(actor, null);
+    return true;
   }
   
   /**
@@ -249,7 +153,7 @@ public class ClassBreakpoint
    */
   @Override
   protected boolean evaluatePostExecute(Actor actor) {
-    return actor.getClass().getName().equals(m_ClassName) && m_Condition.evaluate(actor, null);
+    return true;
   }
   
   /**
@@ -260,7 +164,7 @@ public class ClassBreakpoint
    */
   @Override
   protected boolean evaluatePreOutput(Actor actor) {
-    return actor.getClass().getName().equals(m_ClassName) && m_Condition.evaluate(actor, null);
+    return true;
   }
   
   /**
@@ -272,6 +176,6 @@ public class ClassBreakpoint
    */
   @Override
   protected boolean evaluatePostOutput(Actor actor, Token token) {
-    return actor.getClass().getName().equals(m_ClassName) && m_Condition.evaluate(actor, token);
+    return true;
   }
 }

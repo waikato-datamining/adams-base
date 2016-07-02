@@ -17,14 +17,13 @@
  * AbstractBreakpoint.java
  * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
  */
-package adams.flow.execution;
+package adams.flow.execution.debug;
 
 import adams.core.Variables;
 import adams.core.base.BaseString;
 import adams.core.option.AbstractOptionHandler;
 import adams.flow.core.Actor;
 import adams.flow.core.Token;
-import adams.flow.execution.debug.View;
 import adams.gui.tools.ExpressionWatchPanel.ExpressionType;
 
 /**

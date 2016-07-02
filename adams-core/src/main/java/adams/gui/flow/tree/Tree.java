@@ -1574,11 +1574,13 @@ public class Tree
 
     actorPath = new ActorPath(path);
     root      = getRootNode();
-    if (actorPath.getFirstPathComponent().equals(root.getActor().getName())) {
-      if (actorPath.getPathCount() == 1)
-	result = root;
-      else
-	result = locate(root, actorPath.getChildPath());
+    if (root != null) {
+      if (actorPath.getFirstPathComponent().equals(root.getActor().getName())) {
+        if (actorPath.getPathCount() == 1)
+          result = root;
+        else
+          result = locate(root, actorPath.getChildPath());
+      }
     }
 
     return result;

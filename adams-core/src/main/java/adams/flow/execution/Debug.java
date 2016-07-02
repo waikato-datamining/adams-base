@@ -15,7 +15,7 @@
 
 /**
  * Debug.java
- * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.execution;
 
@@ -28,7 +28,10 @@ import adams.flow.condition.bool.BooleanConditionSupporter;
 import adams.flow.core.Actor;
 import adams.flow.core.InputConsumer;
 import adams.flow.core.Token;
+import adams.flow.execution.debug.AbstractBreakpoint;
+import adams.flow.execution.debug.AbstractScopeRestriction;
 import adams.flow.execution.debug.ControlPanel;
+import adams.flow.execution.debug.NoScopeRestriction;
 import adams.flow.execution.debug.View;
 import adams.flow.processor.ListStructureModifyingActors;
 import adams.gui.core.BasePanel;
@@ -64,7 +67,7 @@ import java.awt.Dimension;
  * &nbsp;&nbsp;&nbsp;minimum: -1
  * </pre>
  *
- * <pre>-breakpoint &lt;adams.flow.execution.AbstractBreakpoint&gt; [-breakpoint ...] (property: breakpoints)
+ * <pre>-breakpoint &lt;adams.flow.execution.debug.AbstractBreakpoint&gt; [-breakpoint ...] (property: breakpoints)
  * &nbsp;&nbsp;&nbsp;The breakpoints to use for suspending the flow execution.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
@@ -111,6 +114,9 @@ public class Debug
 
   /** the breakpoints to use. */
   protected AbstractBreakpoint[] m_Breakpoints;
+
+  /** the scope restriction to use. */
+  protected AbstractScopeRestriction m_ScopeRestriction;
 
   /** the views to display automatically. */
   protected View[] m_Views;
@@ -170,6 +176,10 @@ public class Debug
     m_OptionManager.add(
       "breakpoint", "breakpoints",
       new AbstractBreakpoint[0]);
+
+    m_OptionManager.add(
+      "scope-restriction", "scopeRestriction",
+      new NoScopeRestriction());
 
     m_OptionManager.add(
       "watch", "watches",
@@ -291,6 +301,35 @@ public class Debug
    */
   public String breakpointsTipText() {
     return "The breakpoints to use for suspending the flow execution.";
+  }
+
+  /**
+   * Sets the restriction for the scope to use for suspending the flow execution.
+   *
+   * @param value	the restriction
+   */
+  public void setScopeRestriction(AbstractScopeRestriction value) {
+    m_ScopeRestriction = value;
+    reset();
+  }
+
+  /**
+   * Returns the restriction for the scope to use for suspending the flow execution.
+   *
+   * @return		the restriction
+   */
+  public AbstractScopeRestriction getScopeRestriction() {
+    return m_ScopeRestriction;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String scopeRestrictionTipText() {
+    return "The scopeRestriction to use for suspending the flow execution.";
   }
 
   /**
@@ -641,6 +680,9 @@ public class Debug
    */
   @Override
   public void preInput(Actor actor, Token token) {
+    if (!m_ScopeRestriction.checkScope(actor, ExecutionStage.PRE_INPUT))
+      return;
+
     for (AbstractBreakpoint point: m_Breakpoints) {
       if (!point.getDisabled() && point.triggersPreInput(actor, token)) {
 	triggered(point, actor, ExecutionStage.PRE_INPUT, token);
@@ -656,6 +698,9 @@ public class Debug
    */
   @Override
   public void postInput(Actor actor) {
+    if (!m_ScopeRestriction.checkScope(actor, ExecutionStage.POST_INPUT))
+      return;
+
     for (AbstractBreakpoint point: m_Breakpoints) {
       if (!point.getDisabled() && point.triggersPostInput(actor)) {
 	triggered(point, actor, ExecutionStage.POST_INPUT);
@@ -672,6 +717,9 @@ public class Debug
   @Override
   public void preExecute(Actor actor) {
     Token	token;
+
+    if (!m_ScopeRestriction.checkScope(actor, ExecutionStage.PRE_EXECUTE))
+      return;
 
     token = null;
     if (actor instanceof InputConsumer)
@@ -695,6 +743,9 @@ public class Debug
    */
   @Override
   public void postExecute(Actor actor) {
+    if (!m_ScopeRestriction.checkScope(actor, ExecutionStage.POST_EXECUTE))
+      return;
+
     for (AbstractBreakpoint point: m_Breakpoints) {
       if (!point.getDisabled() && point.triggersPostExecute(actor)) {
 	triggered(point, actor, ExecutionStage.POST_EXECUTE);
@@ -710,6 +761,9 @@ public class Debug
    */
   @Override
   public void preOutput(Actor actor) {
+    if (!m_ScopeRestriction.checkScope(actor, ExecutionStage.PRE_OUTPUT))
+      return;
+
     for (AbstractBreakpoint point: m_Breakpoints) {
       if (!point.getDisabled() && point.triggersPreOutput(actor)) {
 	triggered(point, actor, ExecutionStage.PRE_OUTPUT);
@@ -726,6 +780,9 @@ public class Debug
    */
   @Override
   public void postOutput(Actor actor, Token token) {
+    if (!m_ScopeRestriction.checkScope(actor, ExecutionStage.POST_OUTPUT))
+      return;
+
     for (AbstractBreakpoint point: m_Breakpoints) {
       if (!point.getDisabled() && point.triggersPostOutput(actor, token)) {
 	triggered(point, actor, ExecutionStage.POST_OUTPUT);

@@ -15,7 +15,7 @@
 
 /*
  * Breakpoint.java
- * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -29,8 +29,10 @@ import adams.flow.condition.bool.Expression;
 import adams.flow.core.ActorPath;
 import adams.flow.core.ControlActor;
 import adams.flow.core.Unknown;
+import adams.flow.execution.debug.AbstractScopeRestriction;
+import adams.flow.execution.debug.NoScopeRestriction;
 import adams.flow.execution.debug.View;
-import adams.flow.execution.PathBreakpoint;
+import adams.flow.execution.debug.PathBreakpoint;
 import adams.flow.transformer.AbstractTransformer;
 import adams.gui.tools.ExpressionWatchPanel.ExpressionType;
 
@@ -69,8 +71,14 @@ import adams.gui.tools.ExpressionWatchPanel.ExpressionType;
  * </pre>
  * 
  * <pre>-silent &lt;boolean&gt; (property: silent)
- * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console.
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-scope-restriction &lt;adams.flow.execution.debug.AbstractScopeRestriction&gt; (property: scopeRestriction)
+ * &nbsp;&nbsp;&nbsp;The scopeRestriction to use for suspending the flow execution.
+ * &nbsp;&nbsp;&nbsp;default: adams.flow.execution.debug.NoScopeRestriction
  * </pre>
  * 
  * <pre>-on-pre-input &lt;boolean&gt; (property: onPreInput)
@@ -141,6 +149,9 @@ public class Breakpoint
   /** for serialization. */
   private static final long serialVersionUID = 1670185555433805533L;
 
+  /** the scope restriction to use. */
+  protected AbstractScopeRestriction m_ScopeRestriction;
+
   /** break on preInput. */
   protected boolean m_OnPreInput;
 
@@ -191,44 +202,48 @@ public class Breakpoint
     super.defineOptions();
 
     m_OptionManager.add(
-	    "on-pre-input", "onPreInput",
-	    false);
+      "scope-restriction", "scopeRestriction",
+      new NoScopeRestriction());
 
     m_OptionManager.add(
-	    "on-post-input", "onPostInput",
-	    false);
+      "on-pre-input", "onPreInput",
+      false);
 
     m_OptionManager.add(
-	    "on-pre-execute", "onPreExecute",
-	    true);
+      "on-post-input", "onPostInput",
+      false);
 
     m_OptionManager.add(
-	    "on-post-execute", "onPostExecute",
-	    false);
+      "on-pre-execute", "onPreExecute",
+      true);
 
     m_OptionManager.add(
-	    "on-pre-output", "onPreOutput",
-	    false);
+      "on-post-execute", "onPostExecute",
+      false);
 
     m_OptionManager.add(
-	    "on-post-output", "onPostOutput",
-	    false);
+      "on-pre-output", "onPreOutput",
+      false);
 
     m_OptionManager.add(
-	    "condition", "condition",
-	    new Expression());
+      "on-post-output", "onPostOutput",
+      false);
 
     m_OptionManager.add(
-	    "watch", "watches",
-	    new BaseString[0]);
+      "condition", "condition",
+      new Expression());
 
     m_OptionManager.add(
-	    "watch-type", "watchTypes",
-	    new ExpressionType[0]);
+      "watch", "watches",
+      new BaseString[0]);
 
     m_OptionManager.add(
-	    "view", "views",
-	    new View[0]);
+      "watch-type", "watchTypes",
+      new ExpressionType[0]);
+
+    m_OptionManager.add(
+      "view", "views",
+      new View[0]);
   }
 
   /**
@@ -239,6 +254,35 @@ public class Breakpoint
   @Override
   public String getQuickInfo() {
     return QuickInfoHelper.toString(this, "condition", m_Condition.getQuickInfo());
+  }
+
+  /**
+   * Sets the restriction for the scope to use for suspending the flow execution.
+   *
+   * @param value	the restriction
+   */
+  public void setScopeRestriction(AbstractScopeRestriction value) {
+    m_ScopeRestriction = value;
+    reset();
+  }
+
+  /**
+   * Returns the restriction for the scope to use for suspending the flow execution.
+   *
+   * @return		the restriction
+   */
+  public AbstractScopeRestriction getScopeRestriction() {
+    return m_ScopeRestriction;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String scopeRestrictionTipText() {
+    return "The scopeRestriction to use for suspending the flow execution.";
   }
 
   /**
@@ -574,7 +618,7 @@ public class Breakpoint
         breakpoint.setWatchTypes(m_WatchTypes.clone());
 	breakpoint.setPath(new ActorPath(getFullName()));
 
-	flow.addBreakpoint(breakpoint);
+	flow.addBreakpoint(breakpoint, m_ScopeRestriction);
       }
       else {
 	result = "Root actor is not a flow, failed to set breakpoint!";

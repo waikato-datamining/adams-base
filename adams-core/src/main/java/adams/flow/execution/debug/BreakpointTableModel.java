@@ -22,7 +22,6 @@ package adams.flow.execution.debug;
 
 import adams.core.option.OptionUtils;
 import adams.flow.condition.bool.BooleanConditionSupporter;
-import adams.flow.execution.AbstractBreakpoint;
 import adams.gui.core.AbstractBaseTableModel;
 
 import java.util.ArrayList;

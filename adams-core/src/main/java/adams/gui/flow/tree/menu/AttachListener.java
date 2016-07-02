@@ -22,10 +22,10 @@ package adams.gui.flow.tree.menu;
 import adams.core.Pausable;
 import adams.flow.core.ActorPath;
 import adams.flow.core.ActorUtils;
-import adams.flow.execution.AbstractBreakpoint;
+import adams.flow.execution.debug.AbstractBreakpoint;
 import adams.flow.execution.Debug;
 import adams.flow.execution.FlowExecutionListener;
-import adams.flow.execution.PathBreakpoint;
+import adams.flow.execution.debug.PathBreakpoint;
 import adams.gui.goe.GenericObjectEditorDialog;
 
 import java.awt.Dialog;

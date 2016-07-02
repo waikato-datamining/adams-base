@@ -38,7 +38,7 @@ import adams.flow.core.FlowVariables;
 import adams.flow.core.PauseStateHandler;
 import adams.flow.core.PauseStateManager;
 import adams.flow.core.TriggerableEvent;
-import adams.flow.execution.AbstractBreakpoint;
+import adams.flow.execution.debug.AbstractBreakpoint;
 import adams.flow.execution.Debug;
 import adams.flow.execution.FlowExecutionListener;
 import adams.flow.execution.FlowExecutionListeningSupporter;
@@ -46,6 +46,8 @@ import adams.flow.execution.GraphicalFlowExecutionListener;
 import adams.flow.execution.ListenerUtils;
 import adams.flow.execution.MultiListener;
 import adams.flow.execution.NullListener;
+import adams.flow.execution.debug.AbstractScopeRestriction;
+import adams.flow.execution.debug.MultiScopeRestriction;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.Child;
 import adams.gui.core.BaseFrame;
@@ -65,13 +67,9 @@ import java.util.List;
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- * 
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  * 
  * <pre>-name &lt;java.lang.String&gt; (property: name)
@@ -79,23 +77,32 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default: Flow
  * </pre>
  * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
- * <pre>-skip (property: skip)
+ * <pre>-skip &lt;boolean&gt; (property: skip)
  * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
  * &nbsp;&nbsp;&nbsp;as it is.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-stop-flow-on-error (property: stopFlowOnError)
+ * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
  * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
  * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-finish-before-stopping (property: finishBeforeStopping)
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-finish-before-stopping &lt;boolean&gt; (property: finishBeforeStopping)
  * &nbsp;&nbsp;&nbsp;If enabled, actor first finishes processing all data before stopping.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
  * <pre>-actor &lt;adams.flow.core.Actor&gt; [-actor ...] (property: actors)
@@ -110,8 +117,9 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default: ACTORS_ALWAYS_STOP_ON_ERROR
  * </pre>
  * 
- * <pre>-log-errors (property: logErrors)
+ * <pre>-log-errors &lt;boolean&gt; (property: logErrors)
  * &nbsp;&nbsp;&nbsp;If set to true, errors are logged and can be retrieved after execution.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
  * <pre>-execute-on-error &lt;adams.core.io.FlowFile&gt; (property: executeOnError)
@@ -126,8 +134,9 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default: ${CWD}
  * </pre>
  * 
- * <pre>-flow-execution-listening-enabled (property: flowExecutionListeningEnabled)
+ * <pre>-flow-execution-listening-enabled &lt;boolean&gt; (property: flowExecutionListeningEnabled)
  * &nbsp;&nbsp;&nbsp;Enables&#47;disables the flow execution listener.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
  * <pre>-flow-execution-listener &lt;adams.flow.execution.FlowExecutionListener&gt; (property: flowExecutionListener)
@@ -601,13 +610,16 @@ public class Flow
    * Adds the breakpoint to its flow execution listener setup.
    *
    * @param breakpoint		the breakpoint to add
+   * @param restriction		the scope restriction to use
    */
-  public void addBreakpoint(AbstractBreakpoint breakpoint) {
-    Debug			debug;
-    MultiListener		multi;
-    FlowExecutionListener	listener;
-    List<FlowExecutionListener>	listeners;
-    List<AbstractBreakpoint> 	breakpoints;
+  public void addBreakpoint(AbstractBreakpoint breakpoint, AbstractScopeRestriction restriction) {
+    Debug				debug;
+    MultiListener 			multiListen;
+    MultiScopeRestriction		multiScope;
+    FlowExecutionListener		listener;
+    List<FlowExecutionListener>		listeners;
+    List<AbstractBreakpoint> 		breakpoints;
+    List<AbstractScopeRestriction>	restrictions;
 
     if (!isFlowExecutionListeningEnabled())
       setFlowExecutionListeningEnabled(true);
@@ -616,6 +628,7 @@ public class Flow
     if (listener instanceof NullListener) {
       debug = new Debug();
       debug.setBreakpoints(new AbstractBreakpoint[]{breakpoint});
+      debug.setScopeRestriction(restriction);
       setFlowExecutionListener(debug);
     }
     else if (listener instanceof Debug) {
@@ -623,11 +636,17 @@ public class Flow
       breakpoints = new ArrayList<>(Arrays.asList(debug.getBreakpoints()));
       breakpoints.add(breakpoint);
       debug.setBreakpoints(breakpoints.toArray(new AbstractBreakpoint[breakpoints.size()]));
+      multiScope = new MultiScopeRestriction();
+      multiScope.setRestrictions(new AbstractScopeRestriction[]{
+	debug.getScopeRestriction(),
+	restriction
+      });
+      debug.setScopeRestriction(multiScope);
     }
     else if (listener instanceof MultiListener) {
-      multi = (MultiListener) listener;
+      multiListen = (MultiListener) listener;
       debug = null;
-      for (FlowExecutionListener l: multi.getSubListeners()) {
+      for (FlowExecutionListener l: multiListen.getSubListeners()) {
 	if (l instanceof Debug) {
 	  debug = (Debug) l;
 	  break;
@@ -636,21 +655,30 @@ public class Flow
       if (debug == null) {
 	debug = new Debug();
 	debug.setBreakpoints(new AbstractBreakpoint[]{breakpoint});
-	listeners = new ArrayList<>(Arrays.asList(multi.getSubListeners()));
+	debug.setScopeRestriction(restriction);
+	listeners = new ArrayList<>(Arrays.asList(multiListen.getSubListeners()));
 	listeners.add(debug);
-	multi.setSubListeners(listeners.toArray(new FlowExecutionListener[listeners.size()]));
+	multiListen.setSubListeners(listeners.toArray(new FlowExecutionListener[listeners.size()]));
       }
       else {
 	breakpoints = new ArrayList<>(Arrays.asList(debug.getBreakpoints()));
 	breakpoints.add(breakpoint);
 	debug.setBreakpoints(breakpoints.toArray(new AbstractBreakpoint[breakpoints.size()]));
+	multiScope = new MultiScopeRestriction();
+	multiScope.setRestrictions(new AbstractScopeRestriction[]{
+	  debug.getScopeRestriction(),
+	  restriction
+	});
+	debug.setScopeRestriction(multiScope);
       }
     }
     else {
-      multi = new MultiListener();
+      multiListen = new MultiListener();
       debug = new Debug();
-      multi.setSubListeners(new FlowExecutionListener[]{listener, debug});
-      setFlowExecutionListener(multi);
+      debug.setBreakpoints(new AbstractBreakpoint[]{breakpoint});
+      debug.setScopeRestriction(restriction);
+      multiListen.setSubListeners(new FlowExecutionListener[]{listener, debug});
+      setFlowExecutionListener(multiListen);
     }
   }
 

@@ -28,7 +28,6 @@ import adams.flow.control.Breakpoint;
 import adams.flow.control.Flow;
 import adams.flow.core.Actor;
 import adams.flow.core.Token;
-import adams.flow.execution.AbstractBreakpoint;
 import adams.flow.execution.Debug;
 import adams.flow.execution.ExecutionStage;
 import adams.gui.core.BasePanel;

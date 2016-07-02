@@ -302,8 +302,12 @@ adams.flow.execution.FlowExecutionListener=\
   adams.flow.execution
 
 # the breakpoints for the flow execution listeners
-adams.flow.execution.AbstractBreakpoint=\
-  adams.flow.execution
+adams.flow.execution.debug.AbstractBreakpoint=\
+  adams.flow.execution.debug
+
+# the scope restrictions for debugging
+adams.flow.execution.debug.AbstractScopeRestriction=\
+  adams.flow.execution.debug
 
 # the flow actors that can generate panels for external use
 adams.flow.sink.DisplayPanelProvider=\

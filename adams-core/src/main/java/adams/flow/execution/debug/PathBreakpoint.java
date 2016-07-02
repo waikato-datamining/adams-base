@@ -17,7 +17,7 @@
  * PathBreakpoint.java
  * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
  */
-package adams.flow.execution;
+package adams.flow.execution.debug;
 
 import adams.flow.condition.bool.BooleanCondition;
 import adams.flow.condition.bool.BooleanConditionSupporter;
@@ -26,6 +26,7 @@ import adams.flow.core.Actor;
 import adams.flow.core.ActorPath;
 import adams.flow.core.InputConsumer;
 import adams.flow.core.Token;
+import adams.flow.execution.debug.AbstractBreakpoint;
 
 /**
  <!-- globalinfo-start -->

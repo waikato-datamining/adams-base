@@ -29,7 +29,8 @@ import adams.db.LogEntryHandler;
 import adams.flow.control.Flow;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorUtils;
-import adams.flow.execution.AnyActorBreakpoint;
+import adams.flow.execution.debug.AnyActorBreakpoint;
+import adams.flow.execution.debug.NoScopeRestriction;
 import adams.gui.core.TabIconSupporter;
 
 import javax.swing.SwingUtilities;
@@ -110,7 +111,7 @@ public class FlowWorker
 	  if (((Flow) m_Flow).firstActive() != null) {
 	    breakpoint = new AnyActorBreakpoint();
 	    breakpoint.setOnPreExecute(true);
-	    ((Flow) m_Flow).addBreakpoint(breakpoint);
+	    ((Flow) m_Flow).addBreakpoint(breakpoint, new NoScopeRestriction());
 	  }
 	}
       }
