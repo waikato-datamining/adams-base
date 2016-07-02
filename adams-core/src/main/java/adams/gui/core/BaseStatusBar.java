@@ -15,7 +15,7 @@
 
 /**
  * BaseStatusBar.java
- * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
 
@@ -36,7 +36,6 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -314,24 +313,16 @@ public class BaseStatusBar
 
     result = new BasePopupMenu();
 
-    menuitem = new JMenuItem("Show status");
+    menuitem = new JMenuItem("Show status", GUIHelper.getIcon("editor.gif"));
     menuitem.setEnabled(m_Status.length() > 0);
-    menuitem.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	displayStatus();
-      }
-    });
+    menuitem.addActionListener((ActionEvent e) -> displayStatus());
     result.add(menuitem);
 
     result.addSeparator();
 
-    menuitem = new JMenuItem("Clear status");
+    menuitem = new JMenuItem("Clear status", GUIHelper.getIcon("new.gif"));
     menuitem.setEnabled(m_Status.length() > 0);
-    menuitem.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	clearStatus();
-      }
-    });
+    menuitem.addActionListener((ActionEvent e) ->clearStatus());
     result.add(menuitem);
     
     if (m_PopupMenuCustomizer != null)

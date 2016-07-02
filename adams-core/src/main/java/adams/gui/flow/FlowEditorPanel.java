@@ -1866,7 +1866,7 @@ public class FlowEditorPanel
     JMenuItem	menuitem;
     
     if ((source.getStatus() != null) && (source.getStatus().length() > 0)) {
-      menuitem = new JMenuItem("Copy");
+      menuitem = new JMenuItem("Copy", GUIHelper.getIcon("copy.gif"));
       menuitem.addActionListener((ActionEvent e) -> GUIHelper.copyToClipboard(source.getStatus()));
       menu.add(menuitem);
     }
