@@ -915,7 +915,8 @@ covered by the rules. The properties file that houses these rules is
 Below is the grammar for the rules:
 {\small \begin{verbatim}
 expr_list ::= expr_list expr_part | expr_part ;
-expr_part ::= boolexpr : <classname | classname+options>;
+expr_part ::= IF boolexpr THEN cmdexpr ;
+
 boolexpr ::=    ( boolean )
               | boolean
               | boolexpr AND boolexpr
@@ -925,11 +926,14 @@ boolexpr ::=    ( boolean )
               | NOT boolexpr
               | ISFIRST
               | ISLAST
-              | PARENT IS <classname|interface>
+              | PARENT IS classexpr
+              | PARENT LIKE classexpr
               | PARENT ALLOWS STANDALONE
               | PARENT ALLOWS SOURCE
-              | PRECEDING GENERATES <classname|interface>
-              | FOLLOWING ACCEPTS <classname|interface>
+              | ANYPARENT IS classexpr
+              | ANYPARENT LIKE classexpr
+              | PRECEDING GENERATES classexpr
+              | FOLLOWING ACCEPTS classexpr
               | BEFORE STANDALONE
               | AFTER STANDALONE
               | BEFORE SOURCE
@@ -938,9 +942,30 @@ boolexpr ::=    ( boolean )
               | AFTER TRANSFORMER
               | BEFORE SINK
               | AFTER SINK
-              | BEFORE <classname|interface>
-              | AFTER <classname|interface>
+              | BEFORE classexpr
+              | AFTER classexpr
+              ;
+classexpr ::=  "classname (interface or class)"
+              ;
+cmdexpr ::=     classname
+              | "classname + options"
+              ;
 \end{verbatim}}
+
+\noindent \textbf{Notes}
+\begin{tight_itemize}
+  \item \texttt{ANYPARENT} tests any parent to the root until successful or no more parents
+  \item \texttt{IS} uses exact classname testing
+  \item \texttt{LIKE} tests whether the class is either a subclass of a class or implements a class
+  \item A \texttt{cmdexpr} string surrounded by double quotes can also contain placeholders:
+    \begin{tight_itemize}
+      \item classname: \texttt{\${PARENT.CLASS}}, \texttt{\${LASTPARENT.CLASS}}, \texttt{\${PRECEDING.CLASS}}, \texttt{\${FOLLOWING.CLASS}}
+      \item actor's name: \texttt{\${PARENT.NAME}}, \texttt{\${LASTPARENT.NAME}}, \texttt{\${PRECEDING.NAME}}, \texttt{\${FOLLOWING.NAME}}
+      \item actor's fullname: \texttt{\${PARENT.FULL}}, \texttt{\${LASTPARENT.FULL}}, \texttt{\${PRECEDING.FULL}}, \texttt{\${FOLLOWING.FULL}}
+    \end{tight_itemize}
+  \item \texttt{\${LASTPARENT.X}} refers to the last parent that was located, e.g., using \texttt{IF ANYPARENT...}
+  or \texttt{IF PARENT...}. If none set, then the immediate parent is used.
+\end{tight_itemize}
 
 \noindent And here are some examples:
 \begin{tight_itemize}

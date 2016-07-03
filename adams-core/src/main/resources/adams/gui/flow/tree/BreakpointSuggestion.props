@@ -1,5 +1,5 @@
 # Rules for determining what Breakpoint setup to use in what context
-# see ActorSuggestion.props for examples of rules
+# see adams.parser.ActorSuggestion for grammar
 
 # The default Breakpoint setup
 Default=adams.flow.control.Breakpoint

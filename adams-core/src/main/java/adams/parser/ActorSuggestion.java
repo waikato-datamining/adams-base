@@ -68,9 +68,6 @@ import java.util.ArrayList;
  *                | AFTER classexpr<br>
  *                ;<br>
  *  classexpr ::=  "classname (interface or class)"<br>
- *                | FULLNAME ( PARENT )<br>
- *                | FULLNAME ( PRECEDING )<br>
- *                | FULLNAME ( FOLLOWING )<br>
  *                ;<br>
  *  cmdexpr ::=     classname<br>
  *                | "classname + options"<br>
@@ -84,6 +81,8 @@ import java.util.ArrayList;
  *   classname: ${PARENT.CLASS}, ${PRECEDING.CLASS}, ${FOLLOWING.CLASS}<br>
  *   actor's name: ${PARENT.NAME}, ${PRECEDING.NAME}, ${FOLLOWING.NAME}<br>
  *   actor's fullname: ${PARENT.FULL}, ${PRECEDING.FULL}, ${FOLLOWING.FULL}<br>
+ * - '${PARENT.X}' refers to the last parent that was located, e.g., using 'IF ANYPARENT...'<br>
+ *   or 'IF PARENT...'. If none set, then the immediate parent is used.<br>
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -226,9 +225,6 @@ public class ActorSuggestion
       + "               | AFTER classexpr\n"
       + "               ;\n"
       + " classexpr ::=  \"classname (interface or class)\"\n"
-      + "               | FULLNAME ( PARENT )\n"
-      + "               | FULLNAME ( PRECEDING )\n"
-      + "               | FULLNAME ( FOLLOWING )\n"
       + "               ;\n"
       + " cmdexpr ::=     classname\n"
       + "               | \"classname + options\"\n"
@@ -239,9 +235,11 @@ public class ActorSuggestion
       + "- 'IS' uses exact classname testing\n"
       + "- 'LIKE' tests whether the class is either a subclass of a class or implements a class\n"
       + "- A 'cmdexpr' string surrounded by double quotes can also contain placeholders:\n"
-      + "  classname: ${PARENT.CLASS}, ${PRECEDING.CLASS}, ${FOLLOWING.CLASS}\n"
-      + "  actor's name: ${PARENT.NAME}, ${PRECEDING.NAME}, ${FOLLOWING.NAME}\n"
-      + "  actor's fullname: ${PARENT.FULL}, ${PRECEDING.FULL}, ${FOLLOWING.FULL}\n"
+      + "  classname: ${PARENT.CLASS}, ${LASTPARENT.CLASS}, ${PRECEDING.CLASS}, ${FOLLOWING.CLASS}\n"
+      + "  actor's name: ${PARENT.NAME}, ${LASTPARENT.NAME}, ${PRECEDING.NAME}, ${FOLLOWING.NAME}\n"
+      + "  actor's fullname: ${PARENT.FULL}, ${LASTPARENT.FULL}, ${PRECEDING.FULL}, ${FOLLOWING.FULL}\n"
+      + "- '${LASTPARENT.X}' refers to the last parent that was located, e.g., using 'IF ANYPARENT...'\n"
+      + "  or 'IF PARENT...'. If none set, then the immediate parent is used.\n"
       ;
   }
 

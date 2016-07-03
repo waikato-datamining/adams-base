@@ -313,7 +313,7 @@
         <artifactId>maven-dependency-list-plugin</artifactId>
       </plugin>
 
-      <!-- for generating the parsers: mvn compile exec:java -->
+      <!-- for generating the parsers: mvn exec:java -->
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
