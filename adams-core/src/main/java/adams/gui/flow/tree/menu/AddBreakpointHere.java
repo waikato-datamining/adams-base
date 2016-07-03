@@ -15,12 +15,11 @@
 
 /**
  * AddBreakpointHere.java
- * Copyright (C) 2014-2015 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, NZ
  */
 package adams.gui.flow.tree.menu;
 
-import adams.flow.control.Breakpoint;
-import adams.gui.flow.tree.TreeOperations;
+import adams.gui.flow.tree.TreeOperations.InsertPosition;
 
 import java.awt.event.ActionEvent;
 
@@ -31,7 +30,7 @@ import java.awt.event.ActionEvent;
  * @version $Revision$
  */
 public class AddBreakpointHere
-  extends AbstractTreePopupMenuItemAction {
+  extends AbstractAddBreakpointAction {
 
   /** for serialization. */
   private static final long serialVersionUID = 3991575839421394939L;
@@ -61,6 +60,9 @@ public class AddBreakpointHere
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    m_State.tree.getOperations().addActor(m_State.selPath, new Breakpoint(), TreeOperations.InsertPosition.HERE);
+    m_State.tree.getOperations().addActor(
+      m_State.selPath,
+      suggestBreakpoint(m_State.selPath, InsertPosition.HERE),
+      InsertPosition.HERE);
   }
 }

@@ -81,6 +81,7 @@ import java.util.*;
   "THEN"        { return sf.newSymbol("Then",        sym.THEN); }
   "TRUE"        { return sf.newSymbol("True",        sym.TRUE); }
   "FALSE"       { return sf.newSymbol("False",       sym.FALSE); }
+  "FULLNAME"    { return sf.newSymbol("Fullname",    sym.FULLNAME); }
 
   // classname
   ([a-zA-Z_$][0-9a-zA-Z\d_$]*\.)*[a-zA-Z_$][0-9a-zA-Z\d_$]* { return sf.newSymbol("Classname", sym.CLASSNAME, new String(yytext())); }
@@ -98,7 +99,7 @@ import java.util.*;
 
 <STRING> {
   \"            { yybegin(YYINITIAL);
-                  return sf.newSymbol("Classname", sym.CLASSNAME, string.toString()); }
+                  return sf.newSymbol("Classname", sym.CMDLINE, string.toString()); }
   [^\n\r\"\\]+  { string.append(yytext()); }
   \\t           { string.append('\t'); }
   \\n           { string.append('\n'); }

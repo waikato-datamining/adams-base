@@ -6,6 +6,7 @@
 Definitions=\
   adams.env.ActorSuggestionDefinition,\
   adams.env.AdvancedScriptEditorTemplatesDefinition,\
+  adams.env.BreakpointSuggestionDefinition,\
   adams.env.BrowserDefinition,\
   adams.env.CharsetDefinition,\
   adams.env.ClassListerBlacklistDefinition,\

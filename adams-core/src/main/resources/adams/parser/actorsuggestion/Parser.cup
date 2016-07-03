@@ -40,6 +40,7 @@ import adams.flow.core.ActorHandler;
 import adams.flow.core.Compatibility;
 import adams.flow.core.InputConsumer;
 import adams.flow.core.OutputProducer;
+import adams.gui.flow.tree.Node;
 import adams.parser.ParserHelper;
 
 import java_cup.runtime.*;
@@ -65,11 +66,17 @@ parser code {:
   /** the parent of the proposed actor. */
   protected Actor m_Parent = null;
 
+  /** the parent node of the proposed actor. */
+  protected Node m_ParentNode = null;
+
   /** the position to add the proposed actor at. */
   protected Integer m_Position = null;
 
-  /** all the current nodes in which to insert/add to the proposed actor. */
+  /** all the current actors in which to insert/add to the proposed actor. */
   protected Actor[] m_Actors = null;
+
+  /** all the current nodes in which to insert/add to the proposed actor. */
+  protected Node[] m_ActorNodes = null;
 
   /** for checking compatibility. */
   protected Compatibility m_Compatibility = new Compatibility(true);
@@ -120,6 +127,24 @@ parser code {:
   }
 
   /**
+   * Sets the parent node of the proposed actor.
+   *
+   * @param value the actor
+   */
+  public void setParentNode(Node value) {
+    m_ParentNode = value;
+  }
+
+  /**
+   * Returns the parent node of the proposed actor.
+   *
+   * @return the parent
+   */
+  public Node getParentNode() {
+    return m_ParentNode;
+  }
+
+  /**
    * Sets the position of the proposed actor.
    *
    * @param value the position
@@ -153,6 +178,24 @@ parser code {:
    */
   public Actor[] getActors() {
     return m_Actors;
+  }
+
+  /**
+   * Sets the nodes in which to insert the proposed actor.
+   *
+   * @param value the nodes
+   */
+  public void setActorNodes(Node[] value) {
+    m_ActorNodes = value;
+  }
+
+  /**
+   * Returns the nodes in which to insert the proposed actor.
+   *
+   * @return the nodes
+   */
+  public Node[] getActorNodes() {
+    return m_ActorNodes;
   }
 
   /**
@@ -357,9 +400,83 @@ parser code {:
 
     return (m_Compatibility.isCompatible(new Class[]{cls}, ((InputConsumer) m_Actors[m_Position + 1]).accepts()));
   }
+
+  /**
+   * Returns the name or fullname of the specified actor.
+   *
+   * @param actor the actor (PARENT, PRECEDING, FOLLOWING)
+   * @param full whether to return full name or just the actor's name
+   * @return the name/fullname of the specified actor or empty string if not available
+   */
+  public String getName(String actor, boolean full) {
+    if (actor.equals("PARENT")) {
+      if (full)
+        return getParent().getFullName();
+      else
+        return getParent().getName();
+    }
+    else if (actor.equals("PRECEDING")) {
+      if (m_Position > 0) {
+        if (full)
+          return m_Actors[m_Position - 1].getFullName();
+        else
+          return m_Actors[m_Position - 1].getName();
+      }
+    }
+    else if (actor.equals("FOLLOWING")) {
+      if (m_Position < m_Actors.length - 1) {
+        if (full)
+          return m_Actors[m_Position + 1].getFullName();
+        else
+          return m_Actors[m_Position + 1].getName();
+      }
+    }
+    return "";
+  }
+
+  /**
+   * Processes the commandline and fills in placeholders:
+   * classname: ${PARENT.CLASS}, ${PRECEDING.CLASS}, ${FOLLOWING.CLASS}
+   * actor's name: ${PARENT.NAME}, ${PRECEDING.NAME}, ${FOLLOWING.NAME}
+   * actor's full name: ${PARENT.FULL}, ${PRECEDING.FULL}, ${FOLLOWING.FULL}
+   *
+   * @param cmdline the commandline to process
+   * @return the fullname of the specified actor or empty string if not available
+   */
+  public String insertPlaceholders(String cmdline) {
+    String result;
+
+    result = cmdline;
+
+    // classname
+    if (result.contains("${PARENT.CLASS}"))
+      result = result.replace("${PARENT.CLASS}", getParent().getClass().getName());
+    if (result.contains("${PRECEDING.CLASS}") && (m_Position > 0))
+      result = result.replace("${PRECEDING.CLASS}", m_Actors[m_Position - 1].getClass().getName());
+    if (result.contains("${FOLLOWING.CLASS}") && (m_Position < m_Actors.length - 1))
+      result = result.replace("${FOLLOWING.CLASS}", m_Actors[m_Position + 1].getClass().getName());
+
+    // name
+    if (result.contains("${PARENT.NAME}"))
+      result = result.replace("${PARENT.NAME}", getParent().getName());
+    if (result.contains("${PRECEDING.NAME}") && (m_Position > 0))
+      result = result.replace("${PRECEDING.NAME}", m_Actors[m_Position - 1].getName());
+    if (result.contains("${FOLLOWING.NAME}") && (m_Position < m_Actors.length - 1))
+      result = result.replace("${FOLLOWING.NAME}", m_Actors[m_Position + 1].getName());
+
+    // fullname
+    if (result.contains("${PARENT.FULL}"))
+      result = result.replace("${PARENT.FULL}", (m_ParentNode != null) ? m_ParentNode.getFullName() : getParent().getFullName());
+    if (result.contains("${PRECEDING.FULL}") && (m_Position > 0))
+      result = result.replace("${PRECEDING.FULL}", (m_ActorNodes != null) ? m_ActorNodes[m_Position - 1].getFullName() : m_Actors[m_Position - 1].getFullName());
+    if (result.contains("${FOLLOWING.FULL}") && (m_Position < m_Actors.length - 1))
+      result = result.replace("${FOLLOWING.FULL}", (m_ActorNodes != null) ? m_ActorNodes[m_Position + 1].getFullName() : m_Actors[m_Position + 1].getFullName());
+
+    return result;
+  }
 :}
 
-terminal String CLASSNAME;
+terminal String CLASSNAME, FULLNAME, CMDLINE;
 terminal String PARENT, PRECEDING, FOLLOWING;
 terminal Boolean ISFIRST, ISLAST, ALLOWS, GENERATES, ACCEPTS;
 terminal Boolean STANDALONE, SOURCE, TRANSFORMER, SINK;
@@ -374,6 +491,8 @@ terminal IS, NOT;
 non terminal rule;
 non terminal expr_list, expr;
 non terminal Boolean boolexpr;
+non terminal String classexpr;
+non terminal String cmdexpr;
 
 precedence left AND, OR;
 precedence left LPAREN, RPAREN;
@@ -382,10 +501,10 @@ precedence left NOT;
 rule     ::=    expr expr_list
               | expr;
 
-expr     ::=    IF boolexpr:e THEN CLASSNAME:c
+expr     ::=    IF boolexpr:e THEN cmdexpr:c
                 {:
-                  if (e)
-                    parser.setResult(AbstractActor.forCommandLine(c));
+                  if (e && !c.isEmpty())
+                    parser.setResult(AbstractActor.forCommandLine(parser.insertPlaceholders(c)));
                   else
                     parser.setResult(null);
                 :} ;
@@ -408,15 +527,15 @@ boolexpr ::=    LPAREN boolexpr:b RPAREN
                 {: RESULT = parser.isFirst(); :}
               | ISLAST
                 {: RESULT = parser.isLast(); :}
-              | PARENT IS CLASSNAME:c
+              | PARENT IS classexpr:c
                 {: RESULT = new Boolean(parser.getParent().getClass().getName().equals(c)); :}
               | PARENT ALLOWS STANDALONE
                 {: RESULT = ((ActorHandler) parser.getParent()).getActorHandlerInfo().canContainStandalones(); :}
               | PARENT ALLOWS SOURCE
                 {: RESULT = ((ActorHandler) parser.getParent()).getActorHandlerInfo().canContainSource(); :}
-              | PRECEDING GENERATES CLASSNAME:c
+              | PRECEDING GENERATES classexpr:c
                 {: RESULT = parser.precedingGenerates(c); :}
-              | FOLLOWING ACCEPTS CLASSNAME:c
+              | FOLLOWING ACCEPTS classexpr:c
                 {: RESULT = parser.followingAccepts(c); :}
               | BEFORE STANDALONE
                 {: RESULT = parser.isStandalone(true); :}
@@ -434,8 +553,24 @@ boolexpr ::=    LPAREN boolexpr:b RPAREN
                 {: RESULT = parser.isSink(true); :}
               | AFTER SINK
                 {: RESULT = parser.isSink(false); :}
-              | BEFORE CLASSNAME:c
+              | BEFORE classexpr:c
                 {: RESULT = parser.isClassname(true, c); :}
-              | AFTER CLASSNAME:c
+              | AFTER classexpr:c
                 {: RESULT = parser.isClassname(false, c); :}
+              ;
+
+classexpr ::=   CLASSNAME:c
+                {: RESULT = c; :}
+              | FULLNAME LPAREN PARENT RPAREN
+                {: RESULT = parser.getName("PARENT", true); :}
+              | FULLNAME LPAREN PRECEDING RPAREN
+                {: RESULT = parser.getName("PRECEDING", true); :}
+              | FULLNAME LPAREN FOLLOWING RPAREN
+                {: RESULT = parser.getName("FOLLOWING", true); :}
+              ;
+
+cmdexpr ::=     CLASSNAME:c
+                {: RESULT = c; :}
+              | CMDLINE:c
+                {: RESULT = c; :}
               ;

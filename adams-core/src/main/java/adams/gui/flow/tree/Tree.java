@@ -1574,7 +1574,7 @@ public class Tree
 
     actorPath = new ActorPath(path);
     root      = getRootNode();
-    if (root != null) {
+    if ((root != null) && (actorPath.getFirstPathComponent() != null)) {
       if (actorPath.getFirstPathComponent().equals(root.getActor().getName())) {
         if (actorPath.getPathCount() == 1)
           result = root;

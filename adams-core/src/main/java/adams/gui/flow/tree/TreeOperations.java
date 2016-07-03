@@ -76,6 +76,7 @@ import adams.gui.flow.tree.postprocessor.AbstractEditPostProcessor;
 import adams.gui.goe.FlowHelper;
 import adams.gui.goe.GenericObjectEditorDialog;
 import adams.gui.goe.classtree.ActorClassTreeFilter;
+import adams.parser.ActorSuggestion.SuggestionData;
 
 import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
@@ -111,9 +112,9 @@ public class TreeOperations
     /** here at this position. */
     HERE,
     /** after this position. */
-    AFTER;
-
+    AFTER
   }
+
   /** the tree to operate on. */
   protected Tree m_Owner;
 
@@ -792,23 +793,20 @@ public class TreeOperations
   }
 
   /**
-   * Tries to figure what actors fit best in the tree at the given position.
+   * Returns the context for making actor suggestions.
    *
    * @param path	the path where to insert the actors
    * @param position	how the actors are to be inserted
    * @return		the actors
    */
-  public Actor[] suggestActors(TreePath path, InsertPosition position) {
-    Actor[]		result;
-    Actor		parent;
+  public SuggestionData configureSuggestionContext(TreePath path, InsertPosition position) {
+    SuggestionData	result;
     Node		parentNode;
     Node		node;
     int			pos;
-    Actor[]		actors;
     int			i;
-    Actor[]		suggestions;
 
-    result = null;
+    result = new SuggestionData();
 
     if (position == InsertPosition.BENEATH) {
       parentNode = TreeHelper.pathToNode(path);
@@ -822,12 +820,35 @@ public class TreeOperations
 	pos++;
     }
 
-    parent  = parentNode.getActor();
-    actors  = new Actor[parentNode.getChildCount()];
-    for (i = 0; i < actors.length; i++)
-      actors[i] = ((Node) parentNode.getChildAt(i)).getActor();
+    result.parent     = parentNode.getActor();
+    result.parentNode = parentNode;
+    result.position   = pos;
+    result.actors     = new Actor[parentNode.getChildCount()];
+    result.actorNodes = new Node[parentNode.getChildCount()];
+    for (i = 0; i < result.actors.length; i++) {
+      result.actorNodes[i] = (Node) parentNode.getChildAt(i);
+      result.actors[i]     = result.actorNodes[i].getActor();
+    }
 
-    suggestions = ActorSuggestion.getSingleton().suggest(parent, pos, actors);
+    return result;
+  }
+
+  /**
+   * Tries to figure what actors fit best in the tree at the given position.
+   *
+   * @param path	the path where to insert the actors
+   * @param position	how the actors are to be inserted
+   * @return		the actors
+   */
+  public Actor[] suggestActors(TreePath path, InsertPosition position) {
+    Actor[]		result;
+    SuggestionData	context;
+    Actor[]		suggestions;
+
+    result = null;
+
+    context     = configureSuggestionContext(path, position);
+    suggestions = ActorSuggestion.getSingleton().suggest(context);
     if (suggestions.length > 0)
       result = suggestions;
 
