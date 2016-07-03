@@ -48,6 +48,7 @@ import adams.flow.execution.MultiListener;
 import adams.flow.execution.NullListener;
 import adams.flow.execution.debug.AbstractScopeRestriction;
 import adams.flow.execution.debug.MultiScopeRestriction;
+import adams.flow.execution.debug.MultiScopeRestriction.ScopeCombination;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.Child;
 import adams.gui.core.BaseFrame;
@@ -619,7 +620,6 @@ public class Flow
     FlowExecutionListener		listener;
     List<FlowExecutionListener>		listeners;
     List<AbstractBreakpoint> 		breakpoints;
-    List<AbstractScopeRestriction>	restrictions;
 
     if (!isFlowExecutionListeningEnabled())
       setFlowExecutionListeningEnabled(true);
@@ -637,6 +637,7 @@ public class Flow
       breakpoints.add(breakpoint);
       debug.setBreakpoints(breakpoints.toArray(new AbstractBreakpoint[breakpoints.size()]));
       multiScope = new MultiScopeRestriction();
+      multiScope.setCombination(ScopeCombination.OR);
       multiScope.setRestrictions(new AbstractScopeRestriction[]{
 	debug.getScopeRestriction(),
 	restriction
@@ -665,6 +666,7 @@ public class Flow
 	breakpoints.add(breakpoint);
 	debug.setBreakpoints(breakpoints.toArray(new AbstractBreakpoint[breakpoints.size()]));
 	multiScope = new MultiScopeRestriction();
+	multiScope.setCombination(ScopeCombination.OR);
 	multiScope.setRestrictions(new AbstractScopeRestriction[]{
 	  debug.getScopeRestriction(),
 	  restriction
