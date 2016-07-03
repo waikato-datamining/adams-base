@@ -350,6 +350,48 @@ parser code {:
   }
 
   /**
+   * Checks whether the parent is the specified classname.
+   *
+   * @param classname the class that parent must be
+   * @param exact whether to perform exact classname matching (or just an instance of)
+   * @param anyParent if any parent in the node hierarchy is tested
+   * @return true if it is a match
+   */
+  public Boolean checkParent(String classname, boolean exact, boolean anyParent) {
+    Node   parent;
+
+    if (anyParent) {
+      parent = getParentNode();
+      while (parent != null) {
+        if (exact) {
+          if (parent.getActor().getClass().getName().equals(classname))
+            return true;
+        }
+        else {
+          if (   ClassLocator.getSingleton().isSubclass(classname, parent.getActor().getClass().getName())
+              || ClassLocator.getSingleton().hasInterface(classname, parent.getActor().getClass().getName()) )
+            return true;
+        }
+
+        if (parent.getParent() != null)
+          parent = (Node) parent.getParent();
+      }
+    }
+    else {
+      if (exact) {
+        return (getParent().getClass().getName().equals(classname));
+      }
+      else {
+        return
+             ClassLocator.getSingleton().isSubclass(classname, getParent().getClass().getName())
+          || ClassLocator.getSingleton().hasInterface(classname, getParent().getClass().getName());
+      }
+    }
+
+    return false;
+  }
+
+  /**
    * Checks whether the preceding actor generates the specified class.
    *
    * @param classname the class that the preceding actor must generate
@@ -477,7 +519,7 @@ parser code {:
 :}
 
 terminal String CLASSNAME, FULLNAME, CMDLINE;
-terminal String PARENT, PRECEDING, FOLLOWING;
+terminal String PARENT, ANYPARENT, PRECEDING, FOLLOWING;
 terminal Boolean ISFIRST, ISLAST, ALLOWS, GENERATES, ACCEPTS;
 terminal Boolean STANDALONE, SOURCE, TRANSFORMER, SINK;
 terminal Boolean BOOLEAN, TRUE, FALSE;
@@ -486,7 +528,7 @@ terminal LPAREN, RPAREN;
 terminal IF, THEN;
 terminal AND, OR;
 terminal BEFORE, AFTER;
-terminal IS, NOT;
+terminal IS, LIKE, NOT;
 
 non terminal rule;
 non terminal expr_list, expr;
@@ -528,11 +570,17 @@ boolexpr ::=    LPAREN boolexpr:b RPAREN
               | ISLAST
                 {: RESULT = parser.isLast(); :}
               | PARENT IS classexpr:c
-                {: RESULT = new Boolean(parser.getParent().getClass().getName().equals(c)); :}
+                {: RESULT = new Boolean(parser.checkParent(c, true, false)); :}
+              | PARENT LIKE classexpr:c
+                {: RESULT = new Boolean(parser.checkParent(c, false, false)); :}
               | PARENT ALLOWS STANDALONE
                 {: RESULT = ((ActorHandler) parser.getParent()).getActorHandlerInfo().canContainStandalones(); :}
               | PARENT ALLOWS SOURCE
                 {: RESULT = ((ActorHandler) parser.getParent()).getActorHandlerInfo().canContainSource(); :}
+              | ANYPARENT IS classexpr:c
+                {: RESULT = new Boolean(parser.checkParent(c, true, true)); :}
+              | ANYPARENT LIKE classexpr:c
+                {: RESULT = new Boolean(parser.checkParent(c, false, true)); :}
               | PRECEDING GENERATES classexpr:c
                 {: RESULT = parser.precedingGenerates(c); :}
               | FOLLOWING ACCEPTS classexpr:c

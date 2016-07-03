@@ -49,8 +49,11 @@ import java.util.ArrayList;
  *                | ISFIRST<br>
  *                | ISLAST<br>
  *                | PARENT IS classexpr<br>
+ *                | PARENT LIKE classexpr<br>
  *                | PARENT ALLOWS STANDALONE<br>
  *                | PARENT ALLOWS SOURCE<br>
+ *                | ANYPARENT IS classexpr<br>
+ *                | ANYPARENT LIKE classexpr<br>
  *                | PRECEDING GENERATES classexpr<br>
  *                | FOLLOWING ACCEPTS classexpr<br>
  *                | BEFORE STANDALONE<br>
@@ -74,6 +77,9 @@ import java.util.ArrayList;
  *                ;<br>
  * <br>
  * Notes:<br>
+ * - 'ANYPARENT' tests any parent to the root until successful or no more parents<br>
+ * - 'IS' uses exact classname testing<br>
+ * - 'LIKE' tests whether the class is either a subclass of a class or implements a class<br>
  * - A 'cmdexpr' string surrounded by double quotes can also contain placeholders:<br>
  *   classname: ${PARENT.CLASS}, ${PRECEDING.CLASS}, ${FOLLOWING.CLASS}<br>
  *   actor's name: ${PARENT.NAME}, ${PRECEDING.NAME}, ${FOLLOWING.NAME}<br>
@@ -86,34 +92,34 @@ import java.util.ArrayList;
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- *
+ * 
  * <pre>-env &lt;java.lang.String&gt; (property: environment)
  * &nbsp;&nbsp;&nbsp;The class to use for determining the environment.
  * &nbsp;&nbsp;&nbsp;default: adams.env.Environment
  * </pre>
- *
+ * 
  * <pre>-expression &lt;java.lang.String&gt; (property: expression)
- * &nbsp;&nbsp;&nbsp;The rule for determining the actor to propose (result is null if rul does
+ * &nbsp;&nbsp;&nbsp;The rule for determining the actor to propose (result is null if rul does 
  * &nbsp;&nbsp;&nbsp;not apply).
  * &nbsp;&nbsp;&nbsp;default: ISFIRST: adams.flow.standalone.CallableActors
  * </pre>
- *
+ * 
  * <pre>-parent &lt;adams.flow.core.Actor&gt; (property: parent)
  * &nbsp;&nbsp;&nbsp;The parent actor to use.
  * &nbsp;&nbsp;&nbsp;default: adams.flow.control.Flow -flow-execution-listener adams.flow.execution.NullListener
  * </pre>
- *
+ * 
  * <pre>-position &lt;int&gt; (property: position)
  * &nbsp;&nbsp;&nbsp;The position to add the proposed actor at.
  * &nbsp;&nbsp;&nbsp;default: 0
  * &nbsp;&nbsp;&nbsp;minimum: 0
  * </pre>
- *
+ * 
  * <pre>-actor &lt;adams.flow.core.Actor&gt; [-actor ...] (property: actors)
  * &nbsp;&nbsp;&nbsp;The actors to insert the proposed actor in.
- * &nbsp;&nbsp;&nbsp;default:
+ * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- *
+ * 
  <!-- options-end -->
  *
  * In order to get access to the full name, the {@link Node}s from the
@@ -201,8 +207,11 @@ public class ActorSuggestion
       + "               | ISFIRST\n"
       + "               | ISLAST\n"
       + "               | PARENT IS classexpr\n"
+      + "               | PARENT LIKE classexpr\n"
       + "               | PARENT ALLOWS STANDALONE\n"
       + "               | PARENT ALLOWS SOURCE\n"
+      + "               | ANYPARENT IS classexpr\n"
+      + "               | ANYPARENT LIKE classexpr\n"
       + "               | PRECEDING GENERATES classexpr\n"
       + "               | FOLLOWING ACCEPTS classexpr\n"
       + "               | BEFORE STANDALONE\n"
@@ -226,6 +235,9 @@ public class ActorSuggestion
       + "               ;\n"
       + "\n"
       + "Notes:\n"
+      + "- 'ANYPARENT' tests any parent to the root until successful or no more parents\n"
+      + "- 'IS' uses exact classname testing\n"
+      + "- 'LIKE' tests whether the class is either a subclass of a class or implements a class\n"
       + "- A 'cmdexpr' string surrounded by double quotes can also contain placeholders:\n"
       + "  classname: ${PARENT.CLASS}, ${PRECEDING.CLASS}, ${FOLLOWING.CLASS}\n"
       + "  actor's name: ${PARENT.NAME}, ${PRECEDING.NAME}, ${FOLLOWING.NAME}\n"
