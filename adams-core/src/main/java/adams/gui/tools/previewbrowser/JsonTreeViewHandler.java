@@ -32,13 +32,11 @@ import java.io.FileReader;
 
 /**
  <!-- globalinfo-start -->
- * Displays JSON files: json
+ * Displays JSON files as hierarchical tree: json
  * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- * 
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
