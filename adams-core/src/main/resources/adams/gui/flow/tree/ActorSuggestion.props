@@ -17,6 +17,10 @@ adams-core.CallableActors=\
   IF PARENT IS adams.flow.control.Flow AND ISFIRST \
   THEN adams.flow.standalone.CallableActors
 
+adams-core.CallableActors2=\
+  IF PARENT IS adams.flow.control.Trigger AND ISFIRST \
+  THEN adams.flow.standalone.CallableActors
+
 adams-core.SequenceSource=\
   IF PARENT IS adams.flow.standalone.CallableActors \
   THEN adams.flow.source.SequenceSource
