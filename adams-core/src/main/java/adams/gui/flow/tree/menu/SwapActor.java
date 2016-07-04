@@ -69,7 +69,10 @@ public class SwapActor
     menuitems   = new ArrayList<>();
     for (i = 0; i < suggestions.size(); i++) {
       final Actor actor = suggestions.get(i);
-      menuitem = new JMenuItem(actor.getClass().getSimpleName());
+      if (current.getClass().getSimpleName().equals(actor.getClass().getSimpleName()))
+        menuitem = new JMenuItem(actor.getClass().getSimpleName() + " (" + actor.getClass().getPackage().getName() + ")");
+      else
+        menuitem = new JMenuItem(actor.getClass().getSimpleName());
       menuitems.add(menuitem);
       menuitem.addActionListener((ActionEvent e) -> m_State.tree.getOperations().swapActor(m_State.selPath, actor));
     }
