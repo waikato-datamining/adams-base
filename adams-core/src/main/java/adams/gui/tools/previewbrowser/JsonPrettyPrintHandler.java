@@ -14,17 +14,18 @@
  */
 
 /**
- * JsonHandler.java
- * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
+ * JsonPrettyPrintHandler.java
+ * Copyright (C) 2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.previewbrowser;
 
 import adams.core.Utils;
 import adams.core.io.FileUtils;
 import adams.gui.core.TextEditorPanel;
-import adams.gui.core.json.JsonTreeWithPreview;
-import net.minidev.json.JSONAware;
-import net.minidev.json.parser.JSONParser;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -32,24 +33,15 @@ import java.io.FileReader;
 
 /**
  <!-- globalinfo-start -->
- * Displays JSON files: json
- * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- * 
- * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
- * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
- * &nbsp;&nbsp;&nbsp;default: WARNING
- * </pre>
- * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
+ * @version $Revision: 13654 $
  */
-public class JsonHandler
+public class JsonPrettyPrintHandler
   extends AbstractContentHandler {
 
   /** for serialization. */
@@ -62,7 +54,7 @@ public class JsonHandler
    */
   @Override
   public String globalInfo() {
-    return "Displays JSON files: " + Utils.arrayToString(getExtensions());
+    return "Displays JSON files in pretty print format: " + Utils.arrayToString(getExtensions());
   }
 
   /**
@@ -86,27 +78,26 @@ public class JsonHandler
   protected PreviewPanel createPreview(File file) {
     PreviewPanel	result;
     TextEditorPanel	textPanel;
-    JSONParser		parser;
     FileReader		freader;
     BufferedReader 	breader;
-    Object		obj;
-    JsonTreeWithPreview	jsonPanel;
+    Gson 		gson;
+    JsonParser 		jp;
+    JsonElement 	je;
+    String		content;
 
     freader = null;
     breader = null;
     try {
       freader = new FileReader(file.getAbsolutePath());
       breader = new BufferedReader(freader);
-      parser = new JSONParser(JSONParser.MODE_JSON_SIMPLE);
-      obj    = parser.parse(breader);
-      if (obj == null)
-	throw new IllegalStateException("Failed to parse: " + file);
-      if (!(obj instanceof JSONAware))
-	throw new IllegalStateException("Cannot display: " + obj.getClass().getName());
-      jsonPanel = new JsonTreeWithPreview();
-      jsonPanel.setJSON((JSONAware) obj);
-      jsonPanel.getTree().expandAll();
-      result = new PreviewPanel(jsonPanel);
+      gson    = new GsonBuilder().setPrettyPrinting().create();
+      jp      = new JsonParser();
+      je      = jp.parse(breader);
+      content = gson.toJson(je);
+      textPanel = new TextEditorPanel();
+      textPanel.setContent(content);
+      textPanel.setEditable(false);
+      result = new PreviewPanel(textPanel, textPanel.getTextArea());
     }
     catch (Exception e) {
       textPanel = new TextEditorPanel();
