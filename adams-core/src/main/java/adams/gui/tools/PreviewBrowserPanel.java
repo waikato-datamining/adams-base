@@ -300,20 +300,18 @@ public class PreviewBrowserPanel
     m_ListLocalFiles.addMouseListener(new MouseAdapter() {
       @Override
       public void mouseClicked(MouseEvent e) {
-	displayLocalFile();
-      }
-    });
-    m_ListLocalFiles.addMouseListener(new MouseAdapter() {
-      @Override
-      public void mouseClicked(MouseEvent e) {
-        if (MouseUtils.isRightClick(e)) {
+	if (MouseUtils.isLeftClick(e)) {
+	  e.consume();
+	  displayLocalFile();
+	}
+        else if (MouseUtils.isRightClick(e)) {
 	  e.consume();
 	  JPopupMenu menu = getLocalFilesPopupMenu(e);
 	  menu.show(m_ListLocalFiles, e.getX(), e.getY());
         }
-        else {
-          super.mouseClicked(e);
-        }
+	else {
+	  super.mouseClicked(e);
+	}
       }
     });
     m_PanelLocalFiles.add(new BaseScrollPane(m_ListLocalFiles), BorderLayout.CENTER);
