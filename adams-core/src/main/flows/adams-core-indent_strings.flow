@@ -1,0 +1,12 @@
+# Project: adams
+# Date: 2016-07-06 09:56:40
+# User: fracpete
+# Charset: UTF-8
+adams.flow.control.Flow -annotation "Shows how to indent strings." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.standalone.SetVariable -var-name count -var-value 0
+ adams.flow.source.StringConstants -string "The quick brown fox " -string "jumps over the lazy " -string dog.
+ adams.flow.transformer.IncVariable -var-name count
+ adams.flow.transformer.StringIndent -indentation "  "
+ adams.flow.control.ConditionalSubProcess -condition "adams.flow.condition.bool.Expression -expression \"@{count} % 2 = 1\""
+  adams.flow.transformer.StringIndent -indentation "  "
+ adams.flow.sink.Display -writer adams.data.io.output.NullWriter
