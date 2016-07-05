@@ -1,0 +1,11 @@
+# Project: adams
+# Date: 2016-07-06 11:09:10
+# User: fracpete
+# Charset: UTF-8
+adams.flow.control.Flow -annotation "Loads a YAML file and displays all the keys." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.standalone.CallableActors
+  adams.flow.sink.Display -name keys -writer adams.data.io.output.NullWriter
+ adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/course.yaml
+ adams.flow.transformer.YamlFileReader
+ adams.flow.transformer.GetMapKeys
+ adams.flow.sink.CallableSink -callable keys
