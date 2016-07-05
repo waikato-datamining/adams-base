@@ -15,7 +15,7 @@
 
 /*
  * AbstractSetReportValue.java
- * Copyright (C) 2010-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -151,6 +151,7 @@ public abstract class AbstractSetReportValue
     String	result;
     Report	report;
     Field	field;
+    String	value;
 
     result = null;
 
@@ -158,6 +159,7 @@ public abstract class AbstractSetReportValue
       report = ((ReportHandler) m_InputToken.getPayload()).getReport();
     else
       report = (Report) m_InputToken.getPayload();
+    value = getVariables().expand(m_Value);
 
     try {
       if (report == null) {
@@ -170,7 +172,7 @@ public abstract class AbstractSetReportValue
       if (report != null) {
 	field = new Field(m_Field);
 	report.addField(field);
-	report.addParameter(m_Field.getName(), m_Value);
+	report.addParameter(m_Field.getName(), value);
       }
       else {
 	if (isLoggingEnabled())
@@ -178,7 +180,7 @@ public abstract class AbstractSetReportValue
       }
     }
     catch (Exception e) {
-      result = handleException("Failed to set report value: " + m_Field + "/" + m_Value, e);
+      result = handleException("Failed to set report value: " + m_Field + "/" + value, e);
     }
 
     // broadcast data

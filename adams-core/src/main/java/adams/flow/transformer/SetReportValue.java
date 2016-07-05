@@ -15,7 +15,7 @@
 
 /*
  * SetReportValue.java
- * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -153,7 +153,7 @@ public class SetReportValue
    */
   @Override
   public String valueTipText() {
-    return "The value to set in the report.";
+    return "The value to set in the report; variables get expanded.";
   }
 
   /**
@@ -165,7 +165,7 @@ public class SetReportValue
   public Class[] accepts() {
     List<Class>	result;
 
-    result = new ArrayList<Class>();
+    result = new ArrayList<>();
 
     result.add(ReportHandler.class);
     result.add(Report.class);
