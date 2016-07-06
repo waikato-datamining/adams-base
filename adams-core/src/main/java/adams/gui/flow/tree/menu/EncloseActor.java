@@ -15,7 +15,7 @@
 
 /**
  * EncloseActor.java
- * Copyright (C) 2014-2015 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, NZ
  */
 package adams.gui.flow.tree.menu;
 
@@ -24,10 +24,9 @@ import adams.flow.control.Flow;
 import adams.flow.core.AbstractActor;
 import adams.flow.core.ActorHandler;
 import adams.flow.core.MutableActorHandler;
-import adams.flow.sink.DisplayPanelManager;
-import adams.flow.sink.DisplayPanelProvider;
 import adams.gui.core.BaseMenu;
 import adams.gui.core.MenuItemComparator;
+import adams.gui.flow.tree.enclose.AbstractEncloseActor;
 
 import javax.swing.JMenuItem;
 import java.awt.event.ActionEvent;
@@ -67,8 +66,9 @@ public class EncloseActor
     String[]		actors;
     int			i;
     List<JMenuItem>	menuitems;
-    
-    menuitems = new ArrayList<JMenuItem>();
+    JMenuItem[]		others;
+
+    menuitems = new ArrayList<>();
     actors    = ClassLister.getSingleton().getClassnames(ActorHandler.class);
     for (i = 0; i < actors.length; i++) {
       final ActorHandler actor = (ActorHandler) AbstractActor.forName(actors[i], new String[0]);
@@ -88,13 +88,14 @@ public class EncloseActor
     result.setEnabled(isEnabled());
     result.setIcon(getIcon());
 
-    if (m_State.isSingleSel && (m_State.selNode.getActor() instanceof DisplayPanelProvider)) {
-      result.addSeparator();
-      menuitem = new JMenuItem(DisplayPanelManager.class.getSimpleName());
-      result.add(menuitem);
-      menuitem.addActionListener((ActionEvent e) -> m_State.tree.getOperations().encloseInDisplayPanelManager(m_State.selPaths[0]));
+    // special cases
+    others = AbstractEncloseActor.encloseAll(m_State);
+    for (i = 0; i < others.length; i++) {
+      if (i == 0)
+	result.addSeparator();
+      result.add(others[i]);
     }
-    
+
     return result;
   }
 

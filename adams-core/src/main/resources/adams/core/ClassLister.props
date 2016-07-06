@@ -449,6 +449,10 @@ adams.gui.flow.tree.postprocessor.AbstractEditPostProcessor=\
 adams.gui.flow.tree.actorswap.AbstractActorSwapSuggestion=\
   adams.gui.flow.tree.actorswap
 
+# the schemes for enclosing other actors
+adams.gui.flow.tree.enclose.AbstractEncloseActor=\
+  adams.gui.flow.tree.enclose
+
 # the startup initialization applets
 adams.gui.application.Initialization=\
   adams.gui.application

@@ -30,7 +30,6 @@ import adams.flow.condition.bool.BooleanConditionSupporter;
 import adams.flow.condition.bool.Expression;
 import adams.flow.control.Flow;
 import adams.flow.core.AbstractCallableActor;
-import adams.flow.core.AbstractDisplay;
 import adams.flow.core.AbstractExternalActor;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorExecution;
@@ -50,8 +49,6 @@ import adams.flow.processor.GraphicalOutputProducingProcessor;
 import adams.flow.processor.ModifyingProcessor;
 import adams.flow.processor.RemoveDisabledActors;
 import adams.flow.sink.CallableSink;
-import adams.flow.sink.DisplayPanelManager;
-import adams.flow.sink.DisplayPanelProvider;
 import adams.flow.sink.ExternalSink;
 import adams.flow.source.CallableSource;
 import adams.flow.source.ExternalSource;
@@ -751,44 +748,6 @@ public class TreeOperations
       getOwner().setModified(true);
       getOwner().notifyActorChangeListeners(new ActorChangeEvent(getOwner(), node, Type.MODIFY));
       getOwner().redraw();
-    });
-  }
-
-  /**
-   * Encloses the specified actor in a DisplayPanelManager actor.
-   *
-   * @param path	the path of the actor to enclose
-   */
-  public void encloseInDisplayPanelManager(TreePath path) {
-    Actor		currActor;
-    Node		currNode;
-    DisplayPanelManager manager;
-    AbstractDisplay 	display;
-
-    currNode  = TreeHelper.pathToNode(path);
-    currActor = currNode.getFullActor().shallowCopy();
-    manager   = new DisplayPanelManager();
-    manager.setName(currActor.getName());
-    manager.setPanelProvider((DisplayPanelProvider) currActor);
-    if (currActor instanceof AbstractDisplay) {
-      display = (AbstractDisplay) currActor;
-      manager.setWidth(display.getWidth() + 100);
-      manager.setHeight(display.getHeight());
-      manager.setX(display.getX());
-      manager.setY(display.getY());
-    }
-
-    getOwner().addUndoPoint("Enclosing node '" + currNode.getActor().getFullName() + "' in " + manager.getClass().getName());
-
-    SwingUtilities.invokeLater(() -> {
-      List<String> exp = getOwner().getExpandedFullNames();
-      currNode.setActor(manager);
-      getOwner().setModified(true);
-      getOwner().nodeStructureChanged((Node) currNode.getParent());
-      getOwner().notifyActorChangeListeners(new ActorChangeEvent(getOwner(), currNode, Type.MODIFY));
-      getOwner().setExpandedFullNames(exp);
-      getOwner().expand(currNode);
-      getOwner().locateAndDisplay(currNode.getFullName());
     });
   }
 
