@@ -118,14 +118,14 @@ public interface Actor
   public boolean getSkip();
 
   /**
-   * Sets whether to stop the flow in case this actor encounters an error.
+   * Sets whether to stop the flow execution at this level in case this actor encounters an error.
    *
    * @param value 	true if flow gets stopped in case of an error
    */
   public void setStopFlowOnError(boolean value);
 
   /**
-   * Returns whether to stop the flow in case this actor encounters an error.
+   * Returns whether to stop the flow execution at this level in case this actor encounters an error.
    *
    * @return 		true if flow gets stopped in case of an error
    */

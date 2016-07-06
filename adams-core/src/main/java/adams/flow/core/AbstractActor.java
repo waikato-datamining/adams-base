@@ -408,7 +408,7 @@ public abstract class AbstractActor
   }
 
   /**
-   * Sets whether to stop the flow in case this actor encounters an error.
+   * Sets whether to stop the flow execution at this level in case this actor encounters an error.
    *
    * @param value 	true if flow gets stopped in case of an error
    */
@@ -418,7 +418,7 @@ public abstract class AbstractActor
   }
 
   /**
-   * Returns whether to stop the flow in case this actor encounters an error.
+   * Returns whether to stop the flow execution at this level in case this actor encounters an error.
    *
    * @return 		true if flow gets stopped in case of an error
    */
@@ -433,7 +433,7 @@ public abstract class AbstractActor
    * 			displaying in the GUI or for listing the options.
    */
   public String stopFlowOnErrorTipText() {
-    return "If set to true, the flow gets stopped in case this actor encounters an error; useful for critical actors.";
+    return "If set to true, the flow execution at this level gets stopped in case this actor encounters an error; the error gets propagated; useful for critical actors.";
   }
 
   /**

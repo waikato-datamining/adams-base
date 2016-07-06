@@ -417,6 +417,8 @@ public class SequentialDirector
 	      getLogger().severe(
 		  curr.getFullName() + " generated following error output:\n"
 		  + actorResult);
+              if (curr.getStopFlowOnError())
+                result = actorResult;
 	      if (curr.getStopFlowOnError() || isFlushing())
 		break;
 	    }
@@ -450,6 +452,8 @@ public class SequentialDirector
 	    getLogger().severe(
 		curr.getFullName() + " generated following error output:\n"
 		+ actorResult);
+            if (curr.getStopFlowOnError())
+              result = actorResult;
 	    if (curr.getStopFlowOnError() || isFlushing())
 	      break;
 	  }
