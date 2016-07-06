@@ -38,6 +38,7 @@ adams.gui.flow.menu.EditCleanUpFlow-Shortcut=
 adams.gui.flow.menu.EditCheckVariables-Shortcut=
 adams.gui.flow.menu.EditInteractiveActors-Shortcut=
 adams.gui.flow.menu.EditIgnoreNameChanges-Shortcut=
+adams.gui.flow.menu.EditListTODOs-Shortcut=
 adams.gui.flow.menu.EditProcessActors-Shortcut=meta shift P
 
 # Run

@@ -61,6 +61,7 @@ import adams.gui.flow.menu.EditFind;
 import adams.gui.flow.menu.EditFindNext;
 import adams.gui.flow.menu.EditIgnoreNameChanges;
 import adams.gui.flow.menu.EditInteractiveActors;
+import adams.gui.flow.menu.EditListTODOs;
 import adams.gui.flow.menu.EditLocateActor;
 import adams.gui.flow.menu.EditLocateStorageName;
 import adams.gui.flow.menu.EditLocateVariable;
@@ -277,6 +278,9 @@ public class FlowEditorPanel
 
   /** the ignore name changes action. */
   protected FlowEditorAction m_ActionEditIgnoreNameChanges;
+
+  /** the "list TODOs" action. */
+  protected FlowEditorAction m_ActionEditListTODOs;
 
   /** the "process actors" action. */
   protected FlowEditorAction m_ActionEditProcessActors;
@@ -617,6 +621,11 @@ public class FlowEditorPanel
     // Edit/Ignore name changes (checkbox)
     action = new EditIgnoreNameChanges();
     m_ActionEditIgnoreNameChanges = action;
+    m_MenuItems.add(action);
+
+    // Edit/List TODOs
+    action = new EditListTODOs();
+    m_ActionEditListTODOs = action;
     m_MenuItems.add(action);
 
     // Edit/Process actors
@@ -990,6 +999,7 @@ public class FlowEditorPanel
       menu.add(m_ActionEditInteractiveActors);
       menu.add(m_ActionEditTimedActors);
       menu.add(m_ActionEditIgnoreNameChanges);
+      menu.add(m_ActionEditListTODOs);
       menu.addSeparator();
       menu.add(m_ActionEditProcessActors);
 
