@@ -77,7 +77,6 @@ import adams.gui.flow.menu.FileImport;
 import adams.gui.flow.menu.FileNewFlow;
 import adams.gui.flow.menu.FileNewFromClipboard;
 import adams.gui.flow.menu.FileOpen;
-import adams.gui.flow.menu.FileOpenRemoteFlow;
 import adams.gui.flow.menu.FileProperties;
 import adams.gui.flow.menu.FileRevert;
 import adams.gui.flow.menu.FileSave;
@@ -197,9 +196,6 @@ public class FlowEditorPanel
 
   /** the "open" action. */
   protected FlowEditorAction m_ActionFileOpen;
-
-  /** the "open remote flow" action. */
-  protected FlowEditorAction m_ActionFileOpenRemote;
 
   /** the "open recent" submenu. */
   protected JMenu m_MenuFileOpenRecent;
@@ -501,11 +497,6 @@ public class FlowEditorPanel
     // File/Open
     action = new FileOpen();
     m_ActionFileOpen = action;
-    m_MenuItems.add(action);
-
-    // File/Open remote flow
-    action = new FileOpenRemoteFlow();
-    m_ActionFileOpenRemote = action;
     m_MenuItems.add(action);
 
     // File/Save
@@ -962,7 +953,6 @@ public class FlowEditorPanel
       });
       m_MenuFileOpenRecent = submenu;
 
-      menu.add(m_ActionFileOpenRemote);
       menu.add(m_ActionFileSave);
       menu.add(m_ActionFileSaveAs);
       menu.add(m_ActionFileCheckOnSave);

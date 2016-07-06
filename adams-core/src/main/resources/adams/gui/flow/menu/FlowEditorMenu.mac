@@ -14,7 +14,6 @@
 adams.gui.flow.menu.FileNewFlow-Shortcut=meta N
 adams.gui.flow.menu.FileNewFromClipboard-Shortcut=meta alt shift V
 adams.gui.flow.menu.FileOpen-Shortcut=meta O
-adams.gui.flow.menu.FileOpenRemoteFlow-Shortcut=
 adams.gui.flow.menu.FileSave-Shortcut=meta S
 adams.gui.flow.menu.FileSaveAs-Shortcut=meta shift S
 adams.gui.flow.menu.FileCheckOnSave-Shortcut=
