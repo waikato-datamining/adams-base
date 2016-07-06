@@ -82,7 +82,6 @@ public class TryCatchEnclosure
       else
 	state.tree.addUndoPoint("Enclosing " + state.selPaths.length + " nodes in " + TryCatch.class.getName());
 
-      MutableActorHandler parent = (MutableActorHandler) state.parent.getActor();
       Node currNode;
       TryCatch trycatch = new TryCatch();
       MutableActorHandler trybranch = (MutableActorHandler) trycatch.getTry();
