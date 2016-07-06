@@ -15,15 +15,14 @@
 
 /**
  * SearchableBaseList.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
 
-import java.util.Hashtable;
-import java.util.Vector;
-
 import javax.swing.DefaultListModel;
 import javax.swing.ListModel;
+import java.util.Hashtable;
+import java.util.Vector;
 
 /**
  * Extended BaseList class that allows searching in its elements.
@@ -52,6 +51,7 @@ public class SearchableBaseList
    */
   public SearchableBaseList() {
     super();
+    setModel(new DefaultListModel());
   }
 
   /**
@@ -69,7 +69,12 @@ public class SearchableBaseList
    *                   {@code non-null}
    */
   public SearchableBaseList(final Object[] listData) {
-    super(listData);
+    super();
+
+    DefaultListModel model = new DefaultListModel();
+    for (Object obj: listData)
+      model.addElement(obj);
+    setModel(model);
   }
 
   /**
@@ -87,7 +92,12 @@ public class SearchableBaseList
    *		         data model, {@code non-null}
    */
   public SearchableBaseList(final Vector<?> listData) {
-    super(listData);
+    super();
+
+    DefaultListModel model = new DefaultListModel();
+    for (Object obj: listData)
+      model.addElement(obj);
+    setModel(model);
   }
 
   /**
@@ -102,7 +112,8 @@ public class SearchableBaseList
    * @throws IllegalArgumentException if the model is {@code null}
    */
   public SearchableBaseList(ListModel dataModel) {
-    super(dataModel);
+    super();
+    setModel(dataModel);
   }
 
   /**
@@ -124,7 +135,7 @@ public class SearchableBaseList
   protected Hashtable<String,Object> backupModelSettings(ListModel model) {
     Hashtable<String,Object>	result;
 
-    result = new Hashtable<String,Object>();
+    result = new Hashtable<>();
 
     if (model instanceof SearchableListModel) {
       if (((SearchableListModel) model).getSeachString() != null)
