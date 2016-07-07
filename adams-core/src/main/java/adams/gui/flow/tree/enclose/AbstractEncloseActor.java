@@ -83,7 +83,7 @@ public abstract class AbstractEncloseActor
 	  result.add(enclose.enclose(state));
       }
       catch (Exception e) {
-	LOGGER.log(Level.SEVERE, "Failed to retrieve swap suggestions from: " + cls.getName());
+	LOGGER.log(Level.SEVERE, "Failed to retrieve enclose suggestions from: " + cls.getName(), e);
       }
     }
 

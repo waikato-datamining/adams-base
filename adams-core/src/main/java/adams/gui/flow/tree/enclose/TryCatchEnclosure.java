@@ -62,7 +62,7 @@ public class TryCatchEnclosure
    */
   @Override
   protected boolean canEnclose(StateContainer state) {
-    return (state.numSel > 0) && (state.parent.getActor() instanceof MutableActorHandler);
+    return (state.numSel > 0) && (state.parent != null) && (state.parent.getActor() instanceof MutableActorHandler);
   }
 
   /**
