@@ -27,6 +27,7 @@ import adams.core.option.OptionHandler;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.AbstractBasicMenuItemDefinition;
 import adams.gui.application.UserMode;
+import adams.gui.core.BaseSplitPane;
 import adams.gui.core.BrowserHelper.DefaultHyperlinkListener;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.Fonts;
@@ -139,7 +140,7 @@ public class ClassHelp
   @Override
   public void launch() {
     JPanel		panel;
-    JPanel		panel2;
+    BaseSplitPane	split;
     List<String>	classes;
     int			i;
     String		name;
@@ -150,7 +151,7 @@ public class ClassHelp
     m_TextSearch = new JTextField();
     m_TextSearch.getDocument().addDocumentListener(new DocumentListener() {
       protected void update() {
-	m_ListClasses.search(m_TextSearch.getText(), false);
+	m_ListClasses.search(m_TextSearch.getText().length() == 0 ? null : m_TextSearch.getText(), false);
       }
       @Override
       public void insertUpdate(DocumentEvent e) {
@@ -167,8 +168,8 @@ public class ClassHelp
     });
     panel.add(m_TextSearch, BorderLayout.NORTH);
 
-    panel2 = new JPanel(new BorderLayout(5, 5));
-    panel.add(panel2, BorderLayout.CENTER);
+    split = new BaseSplitPane(BaseSplitPane.VERTICAL_SPLIT);
+    panel.add(split, BorderLayout.CENTER);
 
     classes = new ArrayList<>();
     for (String supercls: ClassLister.getSingleton().getSuperclasses()) {
@@ -188,6 +189,7 @@ public class ClassHelp
       }
     }
     m_ListClasses = new SearchableBaseList(classes.toArray(new String[classes.size()]));
+    m_ListClasses.search(null, false);
     m_ListClasses.setPreferredSize(new Dimension(400, 200));
     m_ListClasses.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     m_ListClasses.addListSelectionListener((ListSelectionEvent e) -> {
@@ -224,14 +226,14 @@ public class ClassHelp
 	ConsolePanel.getSingleton().append(Level.SEVERE, "Failed to instantiate class: " + clsName, ex);
       }
     });
-    panel2.add(new BaseScrollPane(m_ListClasses), BorderLayout.NORTH);
+    split.setTopComponent(new BaseScrollPane(m_ListClasses));
 
     m_TextPaneHelp = new JEditorPane();
     m_TextPaneHelp.setEditable(false);
     m_TextPaneHelp.setFont(Fonts.getMonospacedFont());
     m_TextPaneHelp.setAutoscrolls(true);
     m_TextPaneHelp.addHyperlinkListener(new DefaultHyperlinkListener());
-    panel2.add(new BaseScrollPane(m_TextPaneHelp), BorderLayout.CENTER);
+    split.setBottomComponent(new BaseScrollPane(m_TextPaneHelp));
 
     createChildFrame(panel, 600, 600);
   }
