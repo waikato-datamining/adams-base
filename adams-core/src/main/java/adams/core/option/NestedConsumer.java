@@ -263,7 +263,7 @@ public class NestedConsumer
 	  optionsSet = new ArrayList();
 	options = new String[optionsSet.size()];
 	for (n = 0; n < optionsSet.size(); n++)
-	  options[n] = ((Line) optionsSet.get(n)).getContent();
+	  options[n] = Utils.unbackQuoteChars(((Line) optionsSet.get(n)).getContent(), NestedProducer.BACKQUOTE_STRINGS, NestedProducer.BACKQUOTE_CHARS);
 	handler = AbstractCommandLineHandler.getHandler(object);
 	handler.setOptions(object, options);
       }
@@ -487,6 +487,10 @@ public class NestedConsumer
 	    getLogger().log(Level.SEVERE, msg, e);
 	  }
 	}
+      }
+      else {
+        getLogger().severe("Orphaned string? '" + cmdline + "'");
+        i++;
       }
     }
   }

@@ -15,7 +15,7 @@
 
 /**
  * NestedProducer.java
- * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
@@ -66,6 +66,12 @@ public class NestedProducer
 
   /** the information on the class path. */
   public static final String CLASS_PATH = "Class-Path";
+
+  /** the characters to backquote. */
+  public static final char[] BACKQUOTE_CHARS = new char[]{'\r', '\n', '\t'};
+
+  /** the backquoted stringsf. */
+  public static final String[] BACKQUOTE_STRINGS = new String[]{"\\r", "\\n", "\\t"};
 
   /** blacklisted classes. */
   protected Class[] m_Blacklisted;
@@ -356,7 +362,7 @@ public class NestedProducer
 	    else {
 	      handler = AbstractCommandLineHandler.getHandler(value);
 	      for (String line: handler.getOptions(value))
-		nestedDeeper.add(new Line(line));
+                nestedDeeper.add(new Line(Utils.backQuoteChars(line, BACKQUOTE_CHARS, BACKQUOTE_STRINGS)));
 	    }
 	  }
 	}
