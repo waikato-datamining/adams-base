@@ -74,13 +74,15 @@ import java.util.Hashtable;
  * </pre>
  * 
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this 
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical 
+ * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
  * <pre>-silent &lt;boolean&gt; (property: silent)
- * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console.
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
@@ -89,7 +91,7 @@ import java.util.Hashtable;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-actor &lt;adams.flow.core.AbstractActor&gt; [-actor ...] (property: actors)
+ * <pre>-actor &lt;adams.flow.core.Actor&gt; [-actor ...] (property: actors)
  * &nbsp;&nbsp;&nbsp;All the actors that define this sequence.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
@@ -100,7 +102,7 @@ import java.util.Hashtable;
  * </pre>
  * 
  * <pre>-prefix &lt;java.lang.String&gt; (property: prefix)
- * &nbsp;&nbsp;&nbsp;The prefix to store in the timing container.
+ * &nbsp;&nbsp;&nbsp;The prefix to store in the timing container; automatically expands variables.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
@@ -282,7 +284,7 @@ public class TimedSubProcess
    * 			displaying in the GUI or for listing the options.
    */
   public String prefixTipText() {
-    return "The prefix to store in the timing container.";
+    return "The prefix to store in the timing container; automatically expands variables.";
   }
 
   /**
@@ -519,7 +521,7 @@ public class TimedSubProcess
     String	    result;
     TimingContainer cont;
 
-    cont = new TimingContainer(msec, m_Prefix, getFullName());
+    cont = new TimingContainer(msec, getVariables().expand(m_Prefix), getFullName());
     ((InputConsumer) m_CallableActor).input(new Token(cont));
     result = m_CallableActor.execute();
 
