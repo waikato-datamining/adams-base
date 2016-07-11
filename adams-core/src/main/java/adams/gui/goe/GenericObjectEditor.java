@@ -26,6 +26,7 @@ import adams.core.CloneHandler;
 import adams.core.CustomDisplayStringProvider;
 import adams.core.Utils;
 import adams.core.io.PlaceholderFile;
+import adams.core.logging.LoggingHelper;
 import adams.core.option.AbstractCommandLineHandler;
 import adams.core.option.OptionHandler;
 import adams.core.option.OptionUtils;
@@ -78,10 +79,13 @@ import java.beans.PropertyChangeSupport;
 import java.beans.PropertyEditor;
 import java.io.File;
 import java.io.Serializable;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * A PropertyEditor for objects.
@@ -110,6 +114,20 @@ public class GenericObjectEditor
 
   /** the action command for Revert. */
   public final static String ACTION_CMD_REVERT = "revert";
+
+  /**
+   * How to copy an object.
+   */
+  public enum CopyType {
+    OPTIONHANDLER,
+    CLONEHANDLER,
+    SERIALIZABLE,
+    NEWINSTANCE,
+    UNSUPPORTED
+  }
+
+  /** for logging. */
+  protected static Logger LOGGER = LoggingHelper.getLogger(GenericObjectEditor.class);
 
   /** The object being configured. */
   protected Object m_Object;
@@ -951,8 +969,7 @@ public class GenericObjectEditor
 	  m_DefaultValue = newInstance(defaultValue);
       }
       catch (Exception e) {
-	System.err.println("Problem loading the first class: " + defaultValue);
-	e.printStackTrace();
+	LOGGER.log(Level.SEVERE, "Problem loading the first class: " + defaultValue, e);
 	m_DefaultValue = null;
       }
     }
@@ -980,20 +997,19 @@ public class GenericObjectEditor
     
     superclasses = ClassLister.getSingleton().getSuperclasses(obj.getClass());
     if (superclasses.length == 0) {
-      System.err.println("No class type set up for GenericObjectEditor and unable to determine one!");
+      LOGGER.log(Level.SEVERE, "No class type set up for GenericObjectEditor and unable to determine one!");
       return false;
     }
     
     if (superclasses.length > 1)
-      System.err.println("No class type set up for GenericObjectEditor and more than one superclass found, defaulting to: " + superclasses[0]);
+      LOGGER.log(Level.SEVERE, "No class type set up for GenericObjectEditor and more than one superclass found, defaulting to: " + superclasses[0]);
     
     try {
       m_ClassType              = Class.forName(superclasses[0]);
       m_canChangeClassInDialog = true;
     }
     catch (Exception e) {
-      System.err.println("Failed to initialize class type: " + superclasses[0]);
-      e.printStackTrace();
+      LOGGER.log(Level.SEVERE, "Failed to initialize class type: " + superclasses[0], e);
       return false;
     }
     
@@ -1008,7 +1024,7 @@ public class GenericObjectEditor
     Object	defaultValue;
 
     if (m_ClassType == null) {
-      System.err.println("setDefaultValue: No class type set up for GenericObjectEditor!");
+      LOGGER.log(Level.SEVERE, "setDefaultValue: No class type set up for GenericObjectEditor!");
       return;
     }
 
@@ -1029,7 +1045,7 @@ public class GenericObjectEditor
       return;
 
     if (!m_ClassType.isAssignableFrom(o.getClass())) {
-      System.err.println("setValue object not of correct type: " + m_ClassType.getName() + " != " + o.getClass().getName());
+      LOGGER.log(Level.SEVERE, "setValue object not of correct type: " + m_ClassType.getName() + " != " + o.getClass().getName());
       return;
     }
 
@@ -1357,8 +1373,7 @@ public class GenericObjectEditor
 	  setDefaultValue();
       }
       catch(Exception e) {
-	System.err.println(ex.getMessage());
-	ex.printStackTrace();
+	LOGGER.log(Level.SEVERE, ex.getMessage(), e);
       }
     }
   }
@@ -1416,6 +1431,35 @@ public class GenericObjectEditor
   }
 
   /**
+   * Determines how to copy an object.
+   *
+   * @param source 	the object to inspect, cannot be null
+   * @return 		the copy type
+   */
+  public static CopyType copyType(Object source) {
+    if (source == null)
+      throw new IllegalArgumentException("Object cannot be null!");
+
+    if (source instanceof OptionHandler)
+      return CopyType.OPTIONHANDLER;
+    else if (source instanceof CloneHandler)
+      return CopyType.CLONEHANDLER;
+    else if (source instanceof Serializable)
+      return CopyType.SERIALIZABLE;
+    else {
+      try {
+        newInstance(source.getClass());
+        return CopyType.NEWINSTANCE;
+      }
+      catch (Exception e) {
+        // ignored
+      }
+    }
+
+    return CopyType.UNSUPPORTED;
+  }
+
+  /**
    * Makes a copy of an object using OptionUtils#shallowCopy(Object),
    * CloneHandler#getClone() or serialization.
    *
@@ -1423,27 +1467,67 @@ public class GenericObjectEditor
    * @return 		a copy of the source object
    */
   public static Object copyObject(Object source) {
-    Object 	result;
-
     if (source == null)
       return null;
 
-    if (source instanceof OptionHandler) {
-      result = OptionUtils.shallowCopy(source);
-    }
-    else if (source instanceof CloneHandler) {
-      result = ((CloneHandler) source).getClone();
-    }
-    else if (source instanceof Serializable) {
-      result = Utils.deepCopy(source);
-    }
-    else {
-      try {
-        result = newInstance(source.getClass());
-      }
-      catch (Exception e) {
-        throw new IllegalStateException("Failed to create copy of object!", e);
-      }
+    return copyObjects(new Object[]{source})[0];
+  }
+
+  /**
+   * Makes a copy of the objects using OptionUtils#shallowCopy(Object),
+   * CloneHandler#getClone() or serialization.
+   *
+   * @param source 	the objects to copy
+   * @return 		a copy of the source objects
+   */
+  public static Object[] copyObjects(Object[] source) {
+    Object[] 				result;
+    CopyType				type;
+    int					i;
+    Class				cls;
+    AbstractObjectInstanceHandler	instHandler;
+
+    if (source == null)
+      return null;
+    if (source.length == 0)
+      return new Object[0];
+
+    type   = copyType(source[0]);
+    result = (Object[]) Array.newInstance(source[0].getClass(), source.length);
+    switch (type) {
+      case OPTIONHANDLER:
+	for (i = 0; i < source.length; i++)
+	  result[i] = OptionUtils.shallowCopy(source[i]);
+	break;
+      case CLONEHANDLER:
+	for (i = 0; i < source.length; i++)
+	  result[i] = ((CloneHandler) source[i]).getClone();
+	break;
+      case SERIALIZABLE:
+	result = (Object[]) Utils.deepCopy(source);
+	break;
+      case NEWINSTANCE:
+	cls         = source[0].getClass();
+	instHandler = AbstractObjectInstanceHandler.getHandler(cls);
+	if (instHandler != null) {
+	  for (i = 0; i < source.length; i++)
+	    result[i] = instHandler.newInstance(cls);
+	}
+	else {
+	  for (i = 0; i < source.length; i++) {
+	    try {
+	      result[i] = cls.newInstance();
+	    }
+	    catch (Exception e) {
+	      if (i == 0) {
+		LOGGER.log(Level.SEVERE, "Failed to instantiate class: " + cls.getName(), e);
+	      }
+	    }
+	  }
+	}
+	break;
+      default:
+	throw new IllegalStateException("Unhandled type of object copying: " + type);
     }
 
     return result;

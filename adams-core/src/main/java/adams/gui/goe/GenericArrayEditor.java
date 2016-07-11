@@ -24,6 +24,7 @@ package adams.gui.goe;
 import adams.core.ClassLocator;
 import adams.core.CustomDisplayStringProvider;
 import adams.core.Utils;
+import adams.core.logging.LoggingHelper;
 import adams.core.option.AbstractCommandLineHandler;
 import adams.core.option.AbstractOptionProducer;
 import adams.core.option.ArrayProducer;
@@ -68,6 +69,7 @@ import java.beans.PropertyEditor;
 import java.beans.PropertyEditorManager;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
+import java.util.logging.Logger;
 
 /**
  * A PropertyEditor for arrays of objects that themselves have
@@ -201,6 +203,9 @@ public class GenericArrayEditor
 
   /** for serialization. */
   private static final long serialVersionUID = 3914616975334750480L;
+
+  /** for logging. */
+  protected static Logger LOGGER = LoggingHelper.getLogger(GenericArrayEditor.class);
 
   /** Handles property change notification. */
   protected PropertyChangeSupport m_Support;
@@ -605,7 +610,7 @@ public class GenericArrayEditor
       }
 
       if (view == null) {
-	System.err.println("No property editor for class: " + elementClass.getName());
+	LOGGER.warning("No property editor for class: " + elementClass.getName());
       }
       else {
 	panel = new JPanel();
@@ -983,20 +988,23 @@ public class GenericArrayEditor
    * @return		true if all objects were added successfully
    */
   public boolean addMultipleObjects(Object[] objects) {
-    boolean	result;
-    int 	selected;
-    int		i;
-    Object 	value;
-    
+    boolean		result;
+    int 		selected;
+    int			i;
+    DefaultListModel	updated;
+
     result   = true;
+    objects  = GenericObjectEditor.copyObjects(objects);
     selected = m_ElementList.getSelectedIndex();
+    updated  = new DefaultListModel();
+    for (i = 0; i < m_ListModel.getSize(); i++)
+      updated.addElement(m_ListModel.getElementAt(i));
     for (i = 0; i < objects.length; i++) {
       try {
-        value = GenericObjectEditor.copyObject(objects[i]);
 	if (selected != -1)
-	  m_ListModel.insertElementAt(value, selected + i);
+	  updated.insertElementAt(objects[i], selected + i);
 	else
-	  m_ListModel.addElement(value);
+	  updated.addElement(objects[i]);
 	m_Modified = true;
       }
       catch (Exception ex) {
@@ -1006,6 +1014,8 @@ public class GenericArrayEditor
 	    "Could not create an object copy/add object #" + (i+1) + ":\n" + Utils.throwableToString(ex));
       }
     }
+    m_ListModel = updated;
+    m_ElementList.setModel(m_ListModel);
     updateButtons();
 
     return result;
