@@ -28,6 +28,8 @@ import adams.flow.core.InputConsumer;
 import adams.flow.core.Token;
 
 import java.util.ArrayList;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Wrapper class around an {@link ArrayList} object stored in internal storage.
@@ -47,7 +49,7 @@ public class StorageQueueHandler
   protected String m_Name;
   
   /** the queue itself. */
-  protected ArrayList m_Queue;
+  protected ArrayBlockingQueue m_Queue;
   
   /** the limit for the queue (-1 is unlimited). */
   protected int m_Limit;
@@ -79,9 +81,9 @@ public class StorageQueueHandler
    */
   public StorageQueueHandler(String name, int limit, Actor logging, Actor monitoring) {
     if (limit <= 0)
-      limit = -1;
+      limit = 65535;
     m_Name       = name;
-    m_Queue      = new ArrayList();
+    m_Queue      = new ArrayBlockingQueue(limit);
     m_Limit      = limit;
     m_Logging    = logging;
     m_Monitoring = monitoring;
@@ -261,7 +263,19 @@ public class StorageQueueHandler
   public synchronized int size() {
     return m_Queue.size();
   }
-  
+
+  /**
+   * Polls the queue in a blocking fashion.
+   *
+   * @param timeout	the timeout for the poll
+   * @param unit	the time unit
+   * @return		the value from the queue
+   * @throws InterruptedException	if interrupted
+   */
+  public Object poll(long timeout, TimeUnit unit) throws InterruptedException {
+    return m_Queue.poll(timeout, unit);
+  }
+
   /**
    * Returns a short description of the queue.
    * 
