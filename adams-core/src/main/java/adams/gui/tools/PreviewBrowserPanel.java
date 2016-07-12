@@ -76,7 +76,6 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ListSelectionEvent;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -157,7 +156,7 @@ public class PreviewBrowserPanel
   protected DirectoryChooserPanel m_PanelDir;
 
   /** the panel for browsing. */
-  protected BasePanel m_PanelBrowsing;
+  protected BaseSplitPane m_PaneBrowsing;
 
   /** the panel with the local files. */
   protected BasePanel m_PanelLocalFiles;
@@ -166,13 +165,16 @@ public class PreviewBrowserPanel
   protected SearchableBaseList m_ListLocalFiles;
 
   /** the model for the local files. */
-  protected DefaultListModel m_ModelLocalFiles;
+  protected DefaultListModel<String> m_ModelLocalFiles;
 
   /** the search panel for the local files. */
   protected SearchPanel m_SearchLocalFiles;
 
   /** the panel with the archive files. */
   protected BasePanel m_PanelArchiveFiles;
+
+  /** the panel with the archive files (bottom). */
+  protected BasePanel m_PanelArchiveFilesBottom;
 
   /** the list with the archive files. */
   protected SearchableBaseList m_ListArchiveFiles;
@@ -196,7 +198,7 @@ public class PreviewBrowserPanel
   protected JComboBox m_ComboBoxContentHandlers;
 
   /** the model of the combobox. */
-  protected DefaultComboBoxModel m_ModelContentHandlers;
+  protected DefaultComboBoxModel<String> m_ModelContentHandlers;
 
   /** whether to ignore selections of the content handler combobox temporarily. */
   protected boolean m_IgnoreContentHandlerChanges;
@@ -208,7 +210,7 @@ public class PreviewBrowserPanel
   protected JComboBox m_ComboBoxArchiveHandlers;
 
   /** the model of the combobox. */
-  protected DefaultComboBoxModel m_ModelArchiveHandlers;
+  protected DefaultComboBoxModel<String> m_ModelArchiveHandlers;
 
   /** whether to ignore selections of the archive handler combobox temporarily. */
   protected boolean m_IgnoreArchiveHandlerChanges;
@@ -275,11 +277,11 @@ public class PreviewBrowserPanel
     add(m_SplitPane, BorderLayout.CENTER);
 
     // browsing
-    m_PanelBrowsing = new BasePanel(new GridLayout(2, 1));
-    m_SplitPane.setLeftComponent(m_PanelBrowsing);
+    m_PaneBrowsing = new BaseSplitPane(BaseSplitPane.VERTICAL_SPLIT);
+    m_SplitPane.setLeftComponent(m_PaneBrowsing);
 
     m_PanelLocalFiles = new BasePanel(new BorderLayout(0, 5));
-    m_PanelBrowsing.add(m_PanelLocalFiles);
+    m_PaneBrowsing.setTopComponent(m_PanelLocalFiles);
     m_PanelLocalFiles.setBorder(BorderFactory.createTitledBorder("Files"));
 
     m_PanelDir = new DirectoryChooserPanel(props.getPath("InitialDir", "%h"));
@@ -290,7 +292,7 @@ public class PreviewBrowserPanel
     });
     m_PanelLocalFiles.add(m_PanelDir, BorderLayout.NORTH);
 
-    m_ModelLocalFiles = new DefaultListModel();
+    m_ModelLocalFiles = new DefaultListModel<>();
     m_ListLocalFiles  = new SearchableBaseList(m_ModelLocalFiles);
     m_ListLocalFiles.addListSelectionListener((ListSelectionEvent e) -> {
       if (e.getValueIsAdjusting())
@@ -321,8 +323,8 @@ public class PreviewBrowserPanel
     m_PanelLocalFiles.add(m_SearchLocalFiles, BorderLayout.SOUTH);
 
     m_PanelArchiveFiles = new BasePanel(new BorderLayout());
-    m_PanelBrowsing.add(m_PanelArchiveFiles);
-    m_PanelArchiveFiles.setVisible(false);
+    m_PaneBrowsing.setBottomComponent(m_PanelArchiveFiles);
+    m_PaneBrowsing.setBottomComponentHidden(true);
     m_PanelArchiveFiles.setBorder(BorderFactory.createTitledBorder("Archive"));
 
     m_ModelArchiveFiles = new DefaultListModel();
@@ -340,16 +342,19 @@ public class PreviewBrowserPanel
     });
     m_PanelArchiveFiles.add(new BaseScrollPane(m_ListArchiveFiles), BorderLayout.CENTER);
 
+    m_PanelArchiveFilesBottom = new BasePanel(new BorderLayout());
+    m_PanelArchiveFiles.add(m_PanelArchiveFilesBottom, BorderLayout.SOUTH);
+
     m_SearchArchiveFiles = new SearchPanel(LayoutType.VERTICAL, false);
     m_SearchArchiveFiles.addSearchListener((SearchEvent e) -> m_ListArchiveFiles.search(e.getParameters().getSearchString(), e.getParameters().isRegExp()));
-    m_PanelArchiveFiles.add(m_SearchArchiveFiles, BorderLayout.SOUTH);
+    m_PanelArchiveFilesBottom.add(m_SearchArchiveFiles, BorderLayout.CENTER);
 
     m_PanelArchiveHandlers = new BasePanel(new FlowLayout(FlowLayout.LEFT));
     m_PanelArchiveHandlers.setVisible(false);
-    m_PanelArchiveFiles.add(m_PanelArchiveHandlers, BorderLayout.SOUTH);
+    m_PanelArchiveFilesBottom.add(m_PanelArchiveHandlers, BorderLayout.SOUTH);
 
-    m_ModelArchiveHandlers    = new DefaultComboBoxModel();
-    m_ComboBoxArchiveHandlers = new JComboBox(m_ModelArchiveHandlers);
+    m_ModelArchiveHandlers    = new DefaultComboBoxModel<>();
+    m_ComboBoxArchiveHandlers = new JComboBox<>(m_ModelArchiveHandlers);
     m_ComboBoxArchiveHandlers.addActionListener((ActionEvent e) -> {
       if (m_IgnoreArchiveHandlerChanges)
         return;
@@ -370,8 +375,8 @@ public class PreviewBrowserPanel
     m_PanelContentHandlers.setVisible(false);
     m_PanelContent.add(m_PanelContentHandlers, BorderLayout.SOUTH);
 
-    m_ModelContentHandlers    = new DefaultComboBoxModel();
-    m_ComboBoxContentHandlers = new JComboBox(m_ModelContentHandlers);
+    m_ModelContentHandlers    = new DefaultComboBoxModel<>();
+    m_ComboBoxContentHandlers = new JComboBox<>(m_ModelContentHandlers);
     m_ComboBoxContentHandlers.addActionListener((ActionEvent e) -> {
       if (m_IgnoreContentHandlerChanges)
         return;
@@ -400,7 +405,7 @@ public class PreviewBrowserPanel
    * @return		the filtered files
    */
   protected File[] filterFiles(File[] files) {
-    ArrayList<File>	result;
+    List<File>		result;
     boolean		showHidden;
     boolean		showTemp;
     BaseRegExp		regExp;
@@ -435,7 +440,7 @@ public class PreviewBrowserPanel
     if (showHidden && showTemp)
       return files;
     
-    result = new ArrayList<File>();
+    result = new ArrayList<>();
     for (File file: files) {
       if (!showTemp && regExp.isMatch(file.getName()))
 	continue;
@@ -453,11 +458,11 @@ public class PreviewBrowserPanel
   protected synchronized void refreshLocalFiles() {
     File		dir;
     File[]		files;
-    ArrayList<File>	fileList;
+    List<File>		fileList;
 
     dir   = m_PanelDir.getCurrent();
     files = filterFiles(dir.listFiles());
-    fileList = new ArrayList<File>();
+    fileList = new ArrayList<>();
     for (File file: files) {
       if (file.isDirectory())
 	continue;
@@ -472,7 +477,7 @@ public class PreviewBrowserPanel
 
     m_ListArchiveFiles.clearSelection();
     m_ModelArchiveFiles.clear();
-    m_PanelArchiveFiles.setVisible(false);
+    m_PaneBrowsing.setBottomComponentHidden(true);
   }
 
   /**
@@ -516,7 +521,7 @@ public class PreviewBrowserPanel
       localFiles[n] = new PlaceholderFile(m_PanelDir.getCurrent().getAbsolutePath() + File.separator + m_ListLocalFiles.getSelectedValues()[n]);
 
     if (AbstractArchiveHandler.hasHandler(localFiles[0])) {
-      m_PanelArchiveFiles.setVisible(true);
+      m_PaneBrowsing.setBottomComponentHidden(false);
       handlers = AbstractArchiveHandler.getHandlersForFile(localFiles[0]);
       // update combobox
       m_IgnoreArchiveHandlerChanges = true;
@@ -553,7 +558,7 @@ public class PreviewBrowserPanel
     }
 
     m_ModelArchiveFiles.clear();
-    m_PanelArchiveFiles.setVisible((m_ArchiveHandler != null));
+    m_PaneBrowsing.setBottomComponentHidden(m_ArchiveHandler == null);
     m_PanelView.removeAll();
     if (m_ArchiveHandler == null) {
       displayLocalContent(localFiles, false);
@@ -566,6 +571,9 @@ public class PreviewBrowserPanel
 	m_ModelArchiveFiles.addElement(file);
     }
     m_ListArchiveFiles.search(m_ListArchiveFiles.getSeachString(), m_ListArchiveFiles.isRegExpSearch());
+    // reset selection
+    m_ListArchiveFiles.setSelectedIndices(new int[0]);
+    displayView(new NoPreviewAvailablePanel());
   }
 
   /**
@@ -682,7 +690,7 @@ public class PreviewBrowserPanel
     // notify user
     displayCreatingView();
 
-    selFiles = (Object[]) m_ListArchiveFiles.getSelectedValues();
+    selFiles = m_ListArchiveFiles.getSelectedValues();
     tmpFiles = new File[selFiles.length];
     for (i = 0; i < selFiles.length; i++) {
       try {
@@ -720,7 +728,7 @@ public class PreviewBrowserPanel
 
     ext = FileUtils.getExtension(file);
     if (ext == null)
-      return result;
+      return null;
     ext = ext.toLowerCase();
 
     props = getProperties();
@@ -794,7 +802,7 @@ public class PreviewBrowserPanel
 
     ext = FileUtils.getExtension(file);
     if (ext == null)
-      return result;
+      return null;
     ext = ext.toLowerCase();
 
     props = getProperties();
@@ -920,7 +928,7 @@ public class PreviewBrowserPanel
       // File/Recent files
       submenu = new JMenu("Open recent");
       menu.add(submenu);
-      m_RecentFilesHandler = new RecentFilesHandler<JMenu>(
+      m_RecentFilesHandler = new RecentFilesHandler<>(
 	  SESSION_FILE, getProperties().getInteger("MaxRecentDirs", 5), submenu);
       m_RecentFilesHandler.addRecentItemListener(new RecentItemListener<JMenu,File>() {
 	public void recentItemAdded(RecentItemEvent<JMenu,File> e) {
