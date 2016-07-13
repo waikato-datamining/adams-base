@@ -19,16 +19,13 @@
  */
 package adams.gui.workspace;
 
-import adams.core.StatusMessageHandler;
 import adams.core.Utils;
 import adams.gui.core.BasePanel;
-import adams.gui.core.BaseStatusBar;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MenuBarProvider;
 import adams.gui.core.TitleGenerator;
 
 import javax.swing.JMenuBar;
-import java.awt.BorderLayout;
 
 /**
  * The ancestor for a workspace panel.
@@ -38,16 +35,13 @@ import java.awt.BorderLayout;
  */
 public abstract class AbstractWorkspacePanel
   extends BasePanel
-  implements MenuBarProvider, StatusMessageHandler {
+  implements MenuBarProvider {
 
   /** for serialization. */
   private static final long serialVersionUID = 7314544066929763500L;
 
   /** the menu bar, if used. */
   protected JMenuBar m_MenuBar;
-
-  /** the status bar. */
-  protected BaseStatusBar m_StatusBar;
 
   /** for generating the title. */
   protected TitleGenerator m_TitleGenerator;
@@ -59,20 +53,9 @@ public abstract class AbstractWorkspacePanel
   protected void initialize() {
     super.initialize();
 
-    m_TitleGenerator = new TitleGenerator("Experimenter", true);
+    m_TitleGenerator = new TitleGenerator(getDefaultTitle(), true);
   }
 
-  /**
-   * For initializing the GUI.
-   */
-  @Override
-  protected void initGUI() {
-    super.initGUI();
-
-    m_StatusBar = new BaseStatusBar();
-    add(m_StatusBar, BorderLayout.SOUTH);
-  }
-  
   /**
    * finishes the initialization.
    */
@@ -122,6 +105,13 @@ public abstract class AbstractWorkspacePanel
    * updates the enabled state of the menu items.
    */
   protected abstract void updateMenu();
+
+  /**
+   * Returns the default title.
+   *
+   * @return		the default title
+   */
+  protected abstract String getDefaultTitle();
 
   /**
    * Sets the base title to use for the title generator.
@@ -177,13 +167,4 @@ public abstract class AbstractWorkspacePanel
    * @param title	the title for the dialog
    */
   public abstract void logError(String msg, String title);
-
-  /**
-   * Displays a message.
-   * 
-   * @param msg		the message to display
-   */
-  public void showStatus(String msg) {
-    m_StatusBar.showStatus(msg);
-  }
 }

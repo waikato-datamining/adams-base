@@ -20,18 +20,16 @@
 package weka.gui.experiment.ext;
 
 import adams.core.Properties;
-import adams.core.StatusMessageHandler;
 import adams.core.Utils;
 import adams.core.logging.LoggingLevel;
 import adams.gui.chooser.BaseFileChooser;
 import adams.gui.core.BaseTabbedPane;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.GUIHelper;
-import adams.gui.core.MenuBarProvider;
 import adams.gui.core.RecentFilesHandler;
 import adams.gui.event.RecentItemEvent;
 import adams.gui.event.RecentItemListener;
-import adams.gui.workspace.AbstractWorkspacePanel;
+import adams.gui.workspace.AbstractWorkspacePanelWithStatusBar;
 import weka.core.Instances;
 import weka.core.converters.AbstractFileLoader;
 import weka.core.converters.AbstractFileSaver;
@@ -57,8 +55,7 @@ import java.io.File;
  * @version $Revision$
  */
 public class ExperimenterPanel
-  extends AbstractWorkspacePanel
-  implements MenuBarProvider, StatusMessageHandler {
+  extends AbstractWorkspacePanelWithStatusBar {
 
   /** for serialization. */
   private static final long serialVersionUID = 7314544066929763500L;
@@ -159,6 +156,15 @@ public class ExperimenterPanel
     m_PanelLog = new LogPanel();
     m_PanelLog.setOwner(this);
     m_TabbedPane.addTab("Log", m_PanelLog);
+  }
+
+  /**
+   * Returns the default title.
+   *
+   * @return		the default title
+   */
+  protected String getDefaultTitle() {
+    return "Experimenter";
   }
 
   /**
