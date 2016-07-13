@@ -53,12 +53,128 @@ import adams.gui.visualization.sequence.StraightLineOverlayPaintlet;
 
 /**
  <!-- globalinfo-start -->
+ * Plots actual vs predicted columns obtained from a spreadsheet.
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.spreadsheet.SpreadSheet<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
+ * </pre>
+ * 
+ * <pre>-name &lt;java.lang.String&gt; (property: name)
+ * &nbsp;&nbsp;&nbsp;The name of the actor.
+ * &nbsp;&nbsp;&nbsp;default: ActualVsPredictedPlot
+ * </pre>
+ * 
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
+ * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
+ * &nbsp;&nbsp;&nbsp;default: 
+ * </pre>
+ * 
+ * <pre>-skip &lt;boolean&gt; (property: skip)
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
+ * &nbsp;&nbsp;&nbsp;as it is.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this 
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical 
+ * &nbsp;&nbsp;&nbsp;actors.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-short-title &lt;boolean&gt; (property: shortTitle)
+ * &nbsp;&nbsp;&nbsp;If enabled uses just the name for the title instead of the actor's full 
+ * &nbsp;&nbsp;&nbsp;name.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-display-in-editor &lt;boolean&gt; (property: displayInEditor)
+ * &nbsp;&nbsp;&nbsp;If enabled displays the panel in a tab in the flow editor rather than in 
+ * &nbsp;&nbsp;&nbsp;a separate frame.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-width &lt;int&gt; (property: width)
+ * &nbsp;&nbsp;&nbsp;The width of the dialog.
+ * &nbsp;&nbsp;&nbsp;default: 800
+ * &nbsp;&nbsp;&nbsp;minimum: -1
+ * </pre>
+ * 
+ * <pre>-height &lt;int&gt; (property: height)
+ * &nbsp;&nbsp;&nbsp;The height of the dialog.
+ * &nbsp;&nbsp;&nbsp;default: 350
+ * &nbsp;&nbsp;&nbsp;minimum: -1
+ * </pre>
+ * 
+ * <pre>-x &lt;int&gt; (property: x)
+ * &nbsp;&nbsp;&nbsp;The X position of the dialog (&gt;=0: absolute, -1: left, -2: center, -3: right
+ * &nbsp;&nbsp;&nbsp;).
+ * &nbsp;&nbsp;&nbsp;default: -1
+ * &nbsp;&nbsp;&nbsp;minimum: -3
+ * </pre>
+ * 
+ * <pre>-y &lt;int&gt; (property: y)
+ * &nbsp;&nbsp;&nbsp;The Y position of the dialog (&gt;=0: absolute, -1: top, -2: center, -3: bottom
+ * &nbsp;&nbsp;&nbsp;).
+ * &nbsp;&nbsp;&nbsp;default: -1
+ * &nbsp;&nbsp;&nbsp;minimum: -3
+ * </pre>
+ * 
+ * <pre>-actual &lt;adams.data.spreadsheet.SpreadSheetColumnIndex&gt; (property: actual)
+ * &nbsp;&nbsp;&nbsp;The column with the actual values.
+ * &nbsp;&nbsp;&nbsp;default: Actual
+ * &nbsp;&nbsp;&nbsp;example: An index is a number starting with 1; column names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last; numeric indices can be enforced by preceding them with '#' (eg '#12'); column names can be surrounded by double quotes.
+ * </pre>
+ * 
+ * <pre>-actual-min &lt;double&gt; (property: actualMin)
+ * &nbsp;&nbsp;&nbsp;The minimum to use for the display of the actual axis; use NaN for unlimited.
+ * &nbsp;&nbsp;&nbsp;default: -Infinity
+ * </pre>
+ * 
+ * <pre>-actual-max &lt;double&gt; (property: actualMax)
+ * &nbsp;&nbsp;&nbsp;The maximum to use for the display of the actual axis; use NaN for unlimited.
+ * &nbsp;&nbsp;&nbsp;default: Infinity
+ * </pre>
+ * 
+ * <pre>-predicted &lt;adams.data.spreadsheet.SpreadSheetColumnIndex&gt; (property: predicted)
+ * &nbsp;&nbsp;&nbsp;The column with the predicted values.
+ * &nbsp;&nbsp;&nbsp;default: Predicted
+ * &nbsp;&nbsp;&nbsp;example: An index is a number starting with 1; column names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last; numeric indices can be enforced by preceding them with '#' (eg '#12'); column names can be surrounded by double quotes.
+ * </pre>
+ * 
+ * <pre>-predicted-min &lt;double&gt; (property: predictedMin)
+ * &nbsp;&nbsp;&nbsp;The minimum to use for the display of the predicted axis; use NaN for unlimited.
+ * &nbsp;&nbsp;&nbsp;default: -Infinity
+ * </pre>
+ * 
+ * <pre>-predicted-max &lt;double&gt; (property: predictedMax)
+ * &nbsp;&nbsp;&nbsp;The maximum to use for the display of the predicted axis; use NaN for unlimited.
+ * &nbsp;&nbsp;&nbsp;default: Infinity
+ * </pre>
+ * 
+ * <pre>-error &lt;adams.data.spreadsheet.SpreadSheetColumnIndex&gt; (property: error)
+ * &nbsp;&nbsp;&nbsp;The column with the error values.
+ * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;example: An index is a number starting with 1; column names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last; numeric indices can be enforced by preceding them with '#' (eg '#12'); column names can be surrounded by double quotes.
+ * </pre>
+ * 
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
@@ -69,6 +185,24 @@ public class ActualVsPredictedPlot
   implements FlowStructureModifier {
 
   private static final long serialVersionUID = -1277441640187943194L;
+
+  /** whether to use just the actor name or the full name as title. */
+  protected boolean m_ShortTitle;
+
+  /** the width of the dialog. */
+  protected int m_Width;
+
+  /** the height of the dialog. */
+  protected int m_Height;
+
+  /** the X position of the dialog. */
+  protected int m_X;
+
+  /** the Y position of the dialog. */
+  protected int m_Y;
+
+  /** whether to display the panel in the editor rather than in a separate frame. */
+  protected boolean m_DisplayInEditor;
 
   /** the column with the actual values. */
   protected SpreadSheetColumnIndex m_Actual;
@@ -109,6 +243,30 @@ public class ActualVsPredictedPlot
     super.defineOptions();
 
     m_OptionManager.add(
+      "short-title", "shortTitle",
+      getDefaultShortTitle());
+
+    m_OptionManager.add(
+      "display-in-editor", "displayInEditor",
+      getDefaultDisplayInEditor());
+
+    m_OptionManager.add(
+      "width", "width",
+      getDefaultWidth(), -1, null);
+
+    m_OptionManager.add(
+      "height", "height",
+      getDefaultHeight(), -1, null);
+
+    m_OptionManager.add(
+      "x", "x",
+      getDefaultX(), -3, null);
+
+    m_OptionManager.add(
+      "y", "y",
+      getDefaultY(), -3, null);
+
+    m_OptionManager.add(
       "actual", "actual",
       new SpreadSheetColumnIndex("Actual"));
 
@@ -135,6 +293,239 @@ public class ActualVsPredictedPlot
     m_OptionManager.add(
       "error", "error",
       new SpreadSheetColumnIndex(""));
+  }
+
+  /**
+   * Returns the default value for short title.
+   *
+   * @return		the default
+   */
+  protected boolean getDefaultShortTitle() {
+    return false;
+  }
+
+  /**
+   * Returns the default value for displaying the panel in the editor
+   * rather than in a separate frame.
+   *
+   * @return		the default
+   */
+  protected boolean getDefaultDisplayInEditor() {
+    return false;
+  }
+
+  /**
+   * Returns the default X position for the dialog.
+   *
+   * @return		the default X position
+   */
+  protected int getDefaultX() {
+    return -1;
+  }
+
+  /**
+   * Returns the default Y position for the dialog.
+   *
+   * @return		the default Y position
+   */
+  protected int getDefaultY() {
+    return -1;
+  }
+
+  /**
+   * Returns the default width for the dialog.
+   *
+   * @return		the default width
+   */
+  protected int getDefaultWidth() {
+    return 800;
+  }
+
+  /**
+   * Returns the default height for the dialog.
+   *
+   * @return		the default height
+   */
+  protected int getDefaultHeight() {
+    return 350;
+  }
+
+  /**
+   * Sets whether to use just the name of the actor or the full name.
+   *
+   * @param value 	if true just the name will get used, otherwise the full name
+   */
+  public void setShortTitle(boolean value) {
+    m_ShortTitle = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to use just the name of the actor or the full name.
+   *
+   * @return 		true if just the name used, otherwise full name
+   */
+  public boolean getShortTitle() {
+    return m_ShortTitle;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String shortTitleTipText() {
+    return "If enabled uses just the name for the title instead of the actor's full name.";
+  }
+
+  /**
+   * Sets the width of the dialog.
+   *
+   * @param value 	the width
+   */
+  public void setWidth(int value) {
+    m_Width = value;
+    reset();
+  }
+
+  /**
+   * Returns the currently set width of the dialog.
+   *
+   * @return 		the width
+   */
+  public int getWidth() {
+    return m_Width;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String widthTipText() {
+    return "The width of the dialog.";
+  }
+
+  /**
+   * Sets the height of the dialog.
+   *
+   * @param value 	the height
+   */
+  public void setHeight(int value) {
+    m_Height = value;
+    reset();
+  }
+
+  /**
+   * Returns the currently set height of the dialog.
+   *
+   * @return 		the height
+   */
+  public int getHeight() {
+    return m_Height;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String heightTipText() {
+    return "The height of the dialog.";
+  }
+
+  /**
+   * Sets the X position of the dialog.
+   *
+   * @param value 	the X position
+   */
+  public void setX(int value) {
+    m_X = value;
+    reset();
+  }
+
+  /**
+   * Returns the currently set X position of the dialog.
+   *
+   * @return 		the X position
+   */
+  public int getX() {
+    return m_X;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String xTipText() {
+    return "The X position of the dialog (>=0: absolute, -1: left, -2: center, -3: right).";
+  }
+
+  /**
+   * Sets the Y position of the dialog.
+   *
+   * @param value 	the Y position
+   */
+  public void setY(int value) {
+    m_Y = value;
+    reset();
+  }
+
+  /**
+   * Returns the currently set Y position of the dialog.
+   *
+   * @return 		the Y position
+   */
+  public int getY() {
+    return m_Y;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String yTipText() {
+    return "The Y position of the dialog (>=0: absolute, -1: top, -2: center, -3: bottom).";
+  }
+
+  /**
+   * Sets whether to display the panel in the flow editor rather than
+   * in a separate frame.
+   *
+   * @param value 	true if to display in editor
+   */
+  public void setDisplayInEditor(boolean value) {
+    m_DisplayInEditor = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to display the panel in the flow editor rather than
+   * in a separate frame.
+   *
+   * @return 		true if to display in editor
+   */
+  public boolean getDisplayInEditor() {
+    return m_DisplayInEditor;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String displayInEditorTipText() {
+    return
+	"If enabled displays the panel in a tab in the flow editor rather "
+	+ "than in a separate frame.";
   }
 
   /**
@@ -348,8 +739,33 @@ public class ActualVsPredictedPlot
   @Override
   public String getQuickInfo() {
     String	result;
+    String	value;
 
-    result  = QuickInfoHelper.toString(this, "actual", m_Actual, "actual: ");
+    if (m_X == -1)
+      value = "left";
+    else if (m_X == -2)
+      value = "center";
+    else if (m_X == -3)
+      value = "right";
+    else
+      value = "" + m_X;
+    result = QuickInfoHelper.toString(this, "x", value, "X:");
+
+    if (m_Y == -1)
+      value = "top";
+    else if (m_Y == -2)
+      value = "center";
+    else if (m_Y == -3)
+      value = "bottom";
+    else
+      value = "" + m_Y;
+    result += QuickInfoHelper.toString(this, "y", value, ", Y:");
+
+    result += QuickInfoHelper.toString(this, "width", m_Width, ", W:");
+    result += QuickInfoHelper.toString(this, "height", m_Height, ", H:");
+    result += QuickInfoHelper.toString(this, "shortTitle", m_ShortTitle, "short title", ", ");
+
+    result += QuickInfoHelper.toString(this, "actual", m_Actual, ", actual: ");
     result += QuickInfoHelper.toString(this, "predicted", m_Predicted, ", predicted: ");
     result += QuickInfoHelper.toString(this, "error", (m_Error.isEmpty() ? "-none-" : m_Error), ", error: ");
 
@@ -407,7 +823,7 @@ public class ActualVsPredictedPlot
     SimplePlot			plot;
     int				index;
     AbstractXYSequencePaintlet	paintlet;
-    PaintletWithFixedXYRange	fixedPaintlet;
+    PaintletWithFixedXYRange fixedPaintlet;
 
     result = super.setUp();
 
@@ -423,18 +839,18 @@ public class ActualVsPredictedPlot
       teeName.setName("spreadsheet name");
       local.add(teeName);
       {
-        svName1 = new SetVariable();
-        svName1.setVariableName(new VariableName("__relname__"));
-        svName1.setVariableValue(new BaseText("act vs pred"));
-        teeName.add(svName1);
+	svName1 = new SetVariable();
+	svName1.setVariableName(new VariableName("__relname__"));
+	svName1.setVariableValue(new BaseText("act vs pred"));
+	teeName.add(svName1);
 
-        info = new SpreadSheetInfo();
-        info.setType(InfoType.NAME);
-        teeName.add(info);
+	info = new SpreadSheetInfo();
+	info.setType(InfoType.NAME);
+	teeName.add(info);
 
-        svName2 = new SetVariable();
-        svName2.setVariableName(new VariableName("__relname__"));
-        teeName.add(svName2);
+	svName2 = new SetVariable();
+	svName2.setVariableName(new VariableName("__relname__"));
+	teeName.add(svName2);
       }
 
       // actual - min
@@ -584,17 +1000,17 @@ public class ActualVsPredictedPlot
       // plot generator
       plotgen = new SpreadSheetPlotGenerator();
       if (m_Error.isEmpty()) {
-        xy = new XYPlotGenerator();
-        xy.setXColumn(m_Actual.getIndex());
-        xy.setPlotColumns(m_Predicted.getIndex());
-        plotgen.setGenerator(xy);
+	xy = new XYPlotGenerator();
+	xy.setXColumn(m_Actual.getIndex());
+	xy.setPlotColumns(m_Predicted.getIndex());
+	plotgen.setGenerator(xy);
       }
       else {
-        xye = new XYWithErrorsPlotGenerator();
-        xye.setXColumn(m_Actual);
-        xye.setYColumn(m_Predicted);
-        xye.setYErrorColumns(new SpreadSheetColumnRange(m_Error.getIndex()));
-        plotgen.setGenerator(xye);
+	xye = new XYWithErrorsPlotGenerator();
+	xye.setXColumn(m_Actual);
+	xye.setYColumn(m_Predicted);
+	xye.setYErrorColumns(new SpreadSheetColumnRange(m_Error.getIndex()));
+	plotgen.setGenerator(xye);
       }
       local.add(plotgen);
 
@@ -606,14 +1022,20 @@ public class ActualVsPredictedPlot
 
       // plot
       plot = new SimplePlot();
-      plot.setName("Plot");
+      plot.setName(getName());
+      plot.setShortTitle(getShortTitle());
+      plot.setDisplayInEditor(getDisplayInEditor());
+      plot.setX(getX());
+      plot.setY(getY());
+      plot.setWidth(getWidth());
+      plot.setHeight(getHeight());
       plot.setOverlayPaintlet(new StraightLineOverlayPaintlet());
       plot.getAxisX().setLabel("Actual");
       plot.getAxisY().setLabel("Predicted");
       if (m_Error.isEmpty())
-        paintlet = new CrossPaintlet();
+	paintlet = new CrossPaintlet();
       else
-        paintlet = new ErrorCrossPaintlet();
+	paintlet = new ErrorCrossPaintlet();
       fixedPaintlet = new PaintletWithFixedXYRange();
       fixedPaintlet.getOptionManager().setVariableForProperty("minX", "__actmin__");
       fixedPaintlet.getOptionManager().setVariableForProperty("maxX", "__actmax__");
