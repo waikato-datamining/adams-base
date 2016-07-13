@@ -805,6 +805,7 @@ public class ActualVsPredictedPlot
     Tee				teeName;
     Tee 			teeAct;
     Tee				teePred;
+    Tee				tee;
     SetVariable 		svName1;
     SetVariable			svName2;
     SetVariable			svMin;
@@ -840,6 +841,7 @@ public class ActualVsPredictedPlot
       local.add(teeName);
       {
 	svName1 = new SetVariable();
+	svName1.setName("relation name (default)");
 	svName1.setVariableName(new VariableName("__relname__"));
 	svName1.setVariableValue(new BaseText("act vs pred"));
 	teeName.add(svName1);
@@ -849,16 +851,17 @@ public class ActualVsPredictedPlot
 	teeName.add(info);
 
 	svName2 = new SetVariable();
+	svName2.setName("relation name");
 	svName2.setVariableName(new VariableName("__relname__"));
 	teeName.add(svName2);
       }
 
-      // actual - min
+      // actual
       teeAct = new Tee();
-      teeAct.setName("actual - min");
+      teeAct.setName("actual");
       local.add(teeAct);
       {
-	if (Double.isInfinite(m_ActualMin)) {
+	if (Double.isInfinite(m_ActualMin) || Double.isInfinite(m_ActualMax)) {
 	  info = new SpreadSheetInfo();
 	  info.setColumnIndex(m_Actual.getClone());
 	  info.setType(InfoType.CELL_VALUES);
@@ -873,64 +876,59 @@ public class ActualVsPredictedPlot
 
 	  sort = new Sort();
 	  teeAct.add(sort);
+	}
+
+	// min
+	if (Double.isInfinite(m_ActualMin)) {
+	  tee = new Tee();
+	  tee.setName("min");
+	  teeAct.add(tee);
 
 	  min = new Min();
-	  teeAct.add(min);
+	  tee.add(min);
 
 	  svMin = new SetVariable();
+	  svMin.setName("actual min");
 	  svMin.setVariableName(new VariableName("__actmin__"));
-	  teeAct.add(svMin);
+	  tee.add(svMin);
 	}
 	else {
 	  svMin = new SetVariable();
+	  svMin.setName("actual min");
 	  svMin.setVariableName(new VariableName("__actmin__"));
 	  svMin.setVariableValue(new BaseText(Double.toString(m_ActualMin)));
 	  teeAct.add(svMin);
 	}
-      }
 
-      // actual - max
-      teeAct = new Tee();
-      teeAct.setName("actual - max");
-      local.add(teeAct);
-      {
+	// max
 	if (Double.isInfinite(m_ActualMax)) {
-	  info = new SpreadSheetInfo();
-	  info.setColumnIndex(m_Actual.getClone());
-	  info.setType(InfoType.CELL_VALUES);
-	  info.setOutputArray(true);
-	  teeAct.add(info);
-
-	  arrayProc = new ArrayProcess();
-	  conv = new Convert();
-	  conv.setConversion(new StringToDouble());
-	  arrayProc.add(conv);
-	  teeAct.add(arrayProc);
-
-	  sort = new Sort();
-	  teeAct.add(sort);
+	  tee = new Tee();
+	  tee.setName("max");
+	  teeAct.add(tee);
 
 	  max = new Max();
-	  teeAct.add(max);
+	  tee.add(max);
 
 	  svMax = new SetVariable();
+	  svMax.setName("actual max");
 	  svMax.setVariableName(new VariableName("__actmax__"));
-	  teeAct.add(svMax);
+	  tee.add(svMax);
 	}
 	else {
 	  svMax = new SetVariable();
+	  svMax.setName("actual max");
 	  svMax.setVariableName(new VariableName("__actmax__"));
 	  svMax.setVariableValue(new BaseText(Double.toString(m_ActualMax)));
 	  teeAct.add(svMax);
 	}
       }
 
-      // predicted - min
+      // predicted
       teePred = new Tee();
-      teePred.setName("predicted - min");
+      teePred.setName("predicted");
       local.add(teePred);
       {
-	if (Double.isInfinite(m_PredictedMin)) {
+	if (Double.isInfinite(m_PredictedMin) || Double.isInfinite(m_PredictedMax)) {
 	  info = new SpreadSheetInfo();
 	  info.setColumnIndex(m_Predicted.getClone());
 	  info.setType(InfoType.CELL_VALUES);
@@ -945,52 +943,47 @@ public class ActualVsPredictedPlot
 
 	  sort = new Sort();
 	  teePred.add(sort);
+	}
+
+	// min
+	if (Double.isInfinite(m_PredictedMin)) {
+	  tee = new Tee();
+	  tee.setName("min");
+	  teePred.add(tee);
 
 	  min = new Min();
-	  teePred.add(min);
+	  tee.add(min);
 
 	  svMin = new SetVariable();
+	  svMin.setName("predicted min");
 	  svMin.setVariableName(new VariableName("__predmin__"));
-	  teePred.add(svMin);
+	  tee.add(svMin);
 	}
 	else {
 	  svMin = new SetVariable();
+	  svMin.setName("predicted min");
 	  svMin.setVariableName(new VariableName("__predmin__"));
 	  svMin.setVariableValue(new BaseText(Double.toString(m_PredictedMin)));
 	  teePred.add(svMin);
 	}
-      }
 
-      // predicted - max
-      teePred = new Tee();
-      teePred.setName("predicted - max");
-      local.add(teePred);
-      {
+	// max
 	if (Double.isInfinite(m_PredictedMax)) {
-	  info = new SpreadSheetInfo();
-	  info.setColumnIndex(m_Predicted.getClone());
-	  info.setType(InfoType.CELL_VALUES);
-	  info.setOutputArray(true);
-	  teePred.add(info);
-
-	  arrayProc = new ArrayProcess();
-	  conv = new Convert();
-	  conv.setConversion(new StringToDouble());
-	  arrayProc.add(conv);
-	  teePred.add(arrayProc);
-
-	  sort = new Sort();
-	  teePred.add(sort);
+	  tee = new Tee();
+	  tee.setName("max");
+	  teePred.add(tee);
 
 	  max = new Max();
-	  teePred.add(max);
+	  tee.add(max);
 
 	  svMax = new SetVariable();
+	  svMax.setName("predicted max");
 	  svMax.setVariableName(new VariableName("__predmax__"));
-	  teePred.add(svMax);
+	  tee.add(svMax);
 	}
 	else {
 	  svMax = new SetVariable();
+	  svMax.setName("predicted max");
 	  svMax.setVariableName(new VariableName("__predmax__"));
 	  svMax.setVariableValue(new BaseText(Double.toString(m_PredictedMax)));
 	  teePred.add(svMax);
