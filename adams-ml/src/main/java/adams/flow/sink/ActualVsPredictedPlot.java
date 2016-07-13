@@ -23,22 +23,32 @@ package adams.flow.sink;
 import adams.core.QuickInfoHelper;
 import adams.core.VariableName;
 import adams.core.base.BaseText;
+import adams.data.conversion.StringToDouble;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetColumnIndex;
 import adams.data.spreadsheet.SpreadSheetColumnRange;
+import adams.flow.control.ArrayProcess;
+import adams.flow.control.FlowStructureModifier;
+import adams.flow.control.LocalScopeTransformer;
 import adams.flow.control.PlotContainerUpdater.PlotContainerValue;
 import adams.flow.control.Sequence;
 import adams.flow.control.Tee;
 import adams.flow.core.ActorHandler;
 import adams.flow.sink.sequenceplotter.ErrorCrossPaintlet;
+import adams.flow.transformer.Convert;
+import adams.flow.transformer.Max;
+import adams.flow.transformer.Min;
 import adams.flow.transformer.SetPlotContainerValue;
 import adams.flow.transformer.SetVariable;
+import adams.flow.transformer.Sort;
 import adams.flow.transformer.SpreadSheetInfo;
 import adams.flow.transformer.SpreadSheetInfo.InfoType;
 import adams.flow.transformer.SpreadSheetPlotGenerator;
 import adams.flow.transformer.plotgenerator.XYPlotGenerator;
 import adams.flow.transformer.plotgenerator.XYWithErrorsPlotGenerator;
+import adams.gui.visualization.sequence.AbstractXYSequencePaintlet;
 import adams.gui.visualization.sequence.CrossPaintlet;
+import adams.gui.visualization.sequence.PaintletWithFixedXYRange;
 import adams.gui.visualization.sequence.StraightLineOverlayPaintlet;
 
 /**
@@ -55,7 +65,8 @@ import adams.gui.visualization.sequence.StraightLineOverlayPaintlet;
  * @version $Revision$
  */
 public class ActualVsPredictedPlot
-  extends AbstractSink {
+  extends AbstractSink
+  implements FlowStructureModifier {
 
   private static final long serialVersionUID = -1277441640187943194L;
 
@@ -67,6 +78,18 @@ public class ActualVsPredictedPlot
 
   /** the column with the error values (optional). */
   protected SpreadSheetColumnIndex m_Error;
+
+  /** the minimum to use for the actual values (neg inf = restriction). */
+  protected double m_ActualMin;
+
+  /** the maximum to use for the actual values (pos inf = restriction). */
+  protected double m_ActualMax;
+
+  /** the minimum to use for the predicted values (neg inf = restriction). */
+  protected double m_PredictedMin;
+
+  /** the maximum to use for the predicted values (pos inf = restriction). */
+  protected double m_PredictedMax;
 
   /**
    * Returns a string describing the object.
@@ -86,16 +109,32 @@ public class ActualVsPredictedPlot
     super.defineOptions();
 
     m_OptionManager.add(
-	    "actual", "actual",
-	    new SpreadSheetColumnIndex("Actual"));
+      "actual", "actual",
+      new SpreadSheetColumnIndex("Actual"));
 
     m_OptionManager.add(
-	    "predicted", "predicted",
-	    new SpreadSheetColumnIndex("Predicted"));
+      "actual-min", "actualMin",
+      Double.NEGATIVE_INFINITY);
 
     m_OptionManager.add(
-	    "error", "error",
-	    new SpreadSheetColumnIndex(""));
+      "actual-max", "actualMax",
+      Double.POSITIVE_INFINITY);
+
+    m_OptionManager.add(
+      "predicted", "predicted",
+      new SpreadSheetColumnIndex("Predicted"));
+
+    m_OptionManager.add(
+      "predicted-min", "predictedMin",
+      Double.NEGATIVE_INFINITY);
+
+    m_OptionManager.add(
+      "predicted-max", "predictedMax",
+      Double.POSITIVE_INFINITY);
+
+    m_OptionManager.add(
+      "error", "error",
+      new SpreadSheetColumnIndex(""));
   }
 
   /**
@@ -128,6 +167,64 @@ public class ActualVsPredictedPlot
   }
 
   /**
+   * Sets the lower limit in use for the actual values.
+   *
+   * @param value	the limit, neg inf if unlimited
+   */
+  public void setActualMin(double value) {
+    m_ActualMin = value;
+    reset();
+  }
+
+  /**
+   * Returns the lower limit in use for the actual values.
+   *
+   * @return		the limit, neg inf if unlimited
+   */
+  public double getActualMin() {
+    return m_ActualMin;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String actualMinTipText() {
+    return "The minimum to use for the display of the actual axis; use " + Double.NaN + " for unlimited.";
+  }
+
+  /**
+   * Sets the upper limit in use for the actual values.
+   *
+   * @param value	the limit, pos inf if unlimited
+   */
+  public void setActualMax(double value) {
+    m_ActualMax = value;
+    reset();
+  }
+
+  /**
+   * Returns the upper limit in use for the actual values.
+   *
+   * @return		the limit, pos inf if unlimited
+   */
+  public double getActualMax() {
+    return m_ActualMax;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String actualMaxTipText() {
+    return "The maximum to use for the display of the actual axis; use " + Double.NaN + " for unlimited.";
+  }
+
+  /**
    * Sets the column with the predicted values.
    *
    * @param value	the column
@@ -154,6 +251,64 @@ public class ActualVsPredictedPlot
    */
   public String predictedTipText() {
     return "The column with the predicted values.";
+  }
+
+  /**
+   * Sets the lower limit in use for the predicted values.
+   *
+   * @param value	the limit, neg inf if unlimited
+   */
+  public void setPredictedMin(double value) {
+    m_PredictedMin = value;
+    reset();
+  }
+
+  /**
+   * Returns the lower limit in use for the predicted values.
+   *
+   * @return		the limit, neg inf if unlimited
+   */
+  public double getPredictedMin() {
+    return m_PredictedMin;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String predictedMinTipText() {
+    return "The minimum to use for the display of the predicted axis; use " + Double.NaN + " for unlimited.";
+  }
+
+  /**
+   * Sets the upper limit in use for the predicted values.
+   *
+   * @param value	the limit, pos inf if unlimited
+   */
+  public void setPredictedMax(double value) {
+    m_PredictedMax = value;
+    reset();
+  }
+
+  /**
+   * Returns the upper limit in use for the predicted values.
+   *
+   * @return		the limit, pos inf if unlimited
+   */
+  public double getPredictedMax() {
+    return m_PredictedMax;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String predictedMaxTipText() {
+    return "The maximum to use for the display of the predicted axis; use " + Double.NaN + " for unlimited.";
   }
 
   /**
@@ -212,6 +367,15 @@ public class ActualVsPredictedPlot
   }
 
   /**
+   * Returns whether the actor is modifying the structure.
+   *
+   * @return		true if the actor is modifying the structure
+   */
+  public boolean isModifyingStructure() {
+    return !getSkip();
+  }
+
+  /**
    * Initializes the item for flow execution. Also calls the reset() method
    * first before anything else.
    *
@@ -220,17 +384,30 @@ public class ActualVsPredictedPlot
   @Override
   public String setUp() {
     String			result;
-    Sequence 			seq;
+    Sequence			seq;
+    LocalScopeTransformer 	local;
     Tee				teeName;
+    Tee 			teeAct;
+    Tee				teePred;
     SetVariable 		svName1;
     SetVariable			svName2;
+    SetVariable			svMin;
+    SetVariable			svMax;
+    Sort			sort;
+    ArrayProcess		arrayProc;
+    Convert			conv;
+    Min				min;
+    Max 			max;
     SpreadSheetInfo		info;
     SpreadSheetPlotGenerator	plotgen;
     XYPlotGenerator		xy;
     XYWithErrorsPlotGenerator 	xye;
     SetPlotContainerValue	setplot;
+    Tee				teePlot;
     SimplePlot			plot;
     int				index;
+    AbstractXYSequencePaintlet	paintlet;
+    PaintletWithFixedXYRange	fixedPaintlet;
 
     result = super.setUp();
 
@@ -238,47 +415,194 @@ public class ActualVsPredictedPlot
       seq = new Sequence();
       seq.setName(getName());
 
+      local = new LocalScopeTransformer();
+      seq.add(local);
+
       // spreadsheet name
       teeName = new Tee();
       teeName.setName("spreadsheet name");
-      seq.add(teeName);
+      local.add(teeName);
       {
-	svName1 = new SetVariable();
-	svName1.setVariableName(new VariableName("__relname__"));
-	svName1.setVariableValue(new BaseText("act vs pred"));
-	teeName.add(svName1);
+        svName1 = new SetVariable();
+        svName1.setVariableName(new VariableName("__relname__"));
+        svName1.setVariableValue(new BaseText("act vs pred"));
+        teeName.add(svName1);
 
-	info = new SpreadSheetInfo();
-	info.setType(InfoType.NAME);
-	teeName.add(info);
+        info = new SpreadSheetInfo();
+        info.setType(InfoType.NAME);
+        teeName.add(info);
 
-	svName2 = new SetVariable();
-	svName2.setVariableName(new VariableName("__relname__"));
-	teeName.add(svName2);
+        svName2 = new SetVariable();
+        svName2.setVariableName(new VariableName("__relname__"));
+        teeName.add(svName2);
+      }
+
+      // actual - min
+      teeAct = new Tee();
+      teeAct.setName("actual - min");
+      local.add(teeAct);
+      {
+	if (Double.isInfinite(m_ActualMin)) {
+	  info = new SpreadSheetInfo();
+	  info.setColumnIndex(m_Actual.getClone());
+	  info.setType(InfoType.CELL_VALUES);
+	  info.setOutputArray(true);
+	  teeAct.add(info);
+
+	  arrayProc = new ArrayProcess();
+	  conv = new Convert();
+	  conv.setConversion(new StringToDouble());
+	  arrayProc.add(conv);
+	  teeAct.add(arrayProc);
+
+	  sort = new Sort();
+	  teeAct.add(sort);
+
+	  min = new Min();
+	  teeAct.add(min);
+
+	  svMin = new SetVariable();
+	  svMin.setVariableName(new VariableName("__actmin__"));
+	  teeAct.add(svMin);
+	}
+	else {
+	  svMin = new SetVariable();
+	  svMin.setVariableName(new VariableName("__actmin__"));
+	  svMin.setVariableValue(new BaseText(Double.toString(m_ActualMin)));
+	  teeAct.add(svMin);
+	}
+      }
+
+      // actual - max
+      teeAct = new Tee();
+      teeAct.setName("actual - max");
+      local.add(teeAct);
+      {
+	if (Double.isInfinite(m_ActualMax)) {
+	  info = new SpreadSheetInfo();
+	  info.setColumnIndex(m_Actual.getClone());
+	  info.setType(InfoType.CELL_VALUES);
+	  info.setOutputArray(true);
+	  teeAct.add(info);
+
+	  arrayProc = new ArrayProcess();
+	  conv = new Convert();
+	  conv.setConversion(new StringToDouble());
+	  arrayProc.add(conv);
+	  teeAct.add(arrayProc);
+
+	  sort = new Sort();
+	  teeAct.add(sort);
+
+	  max = new Max();
+	  teeAct.add(max);
+
+	  svMax = new SetVariable();
+	  svMax.setVariableName(new VariableName("__actmax__"));
+	  teeAct.add(svMax);
+	}
+	else {
+	  svMax = new SetVariable();
+	  svMax.setVariableName(new VariableName("__actmax__"));
+	  svMax.setVariableValue(new BaseText(Double.toString(m_ActualMax)));
+	  teeAct.add(svMax);
+	}
+      }
+
+      // predicted - min
+      teePred = new Tee();
+      teePred.setName("predicted - min");
+      local.add(teePred);
+      {
+	if (Double.isInfinite(m_PredictedMin)) {
+	  info = new SpreadSheetInfo();
+	  info.setColumnIndex(m_Predicted.getClone());
+	  info.setType(InfoType.CELL_VALUES);
+	  info.setOutputArray(true);
+	  teePred.add(info);
+
+	  arrayProc = new ArrayProcess();
+	  conv = new Convert();
+	  conv.setConversion(new StringToDouble());
+	  arrayProc.add(conv);
+	  teePred.add(arrayProc);
+
+	  sort = new Sort();
+	  teePred.add(sort);
+
+	  min = new Min();
+	  teePred.add(min);
+
+	  svMin = new SetVariable();
+	  svMin.setVariableName(new VariableName("__predmin__"));
+	  teePred.add(svMin);
+	}
+	else {
+	  svMin = new SetVariable();
+	  svMin.setVariableName(new VariableName("__predmin__"));
+	  svMin.setVariableValue(new BaseText(Double.toString(m_PredictedMin)));
+	  teePred.add(svMin);
+	}
+      }
+
+      // predicted - max
+      teePred = new Tee();
+      teePred.setName("predicted - max");
+      local.add(teePred);
+      {
+	if (Double.isInfinite(m_PredictedMax)) {
+	  info = new SpreadSheetInfo();
+	  info.setColumnIndex(m_Predicted.getClone());
+	  info.setType(InfoType.CELL_VALUES);
+	  info.setOutputArray(true);
+	  teePred.add(info);
+
+	  arrayProc = new ArrayProcess();
+	  conv = new Convert();
+	  conv.setConversion(new StringToDouble());
+	  arrayProc.add(conv);
+	  teePred.add(arrayProc);
+
+	  sort = new Sort();
+	  teePred.add(sort);
+
+	  max = new Max();
+	  teePred.add(max);
+
+	  svMax = new SetVariable();
+	  svMax.setVariableName(new VariableName("__predmax__"));
+	  teePred.add(svMax);
+	}
+	else {
+	  svMax = new SetVariable();
+	  svMax.setVariableName(new VariableName("__predmax__"));
+	  svMax.setVariableValue(new BaseText(Double.toString(m_PredictedMax)));
+	  teePred.add(svMax);
+	}
       }
 
       // plot generator
       plotgen = new SpreadSheetPlotGenerator();
       if (m_Error.isEmpty()) {
-	xy = new XYPlotGenerator();
-	xy.setXColumn(m_Actual.getIndex());
-	xy.setPlotColumns(m_Predicted.getIndex());
-	plotgen.setGenerator(xy);
+        xy = new XYPlotGenerator();
+        xy.setXColumn(m_Actual.getIndex());
+        xy.setPlotColumns(m_Predicted.getIndex());
+        plotgen.setGenerator(xy);
       }
       else {
-	xye = new XYWithErrorsPlotGenerator();
-	xye.setXColumn(m_Actual);
-	xye.setYColumn(m_Predicted);
-	xye.setYErrorColumns(new SpreadSheetColumnRange(m_Error.getIndex()));
-	plotgen.setGenerator(xye);
+        xye = new XYWithErrorsPlotGenerator();
+        xye.setXColumn(m_Actual);
+        xye.setYColumn(m_Predicted);
+        xye.setYErrorColumns(new SpreadSheetColumnRange(m_Error.getIndex()));
+        plotgen.setGenerator(xye);
       }
-      seq.add(plotgen);
+      local.add(plotgen);
 
       // plot name
       setplot = new SetPlotContainerValue();
       setplot.setContainerValue(PlotContainerValue.PLOT_NAME);
       setplot.getOptionManager().setVariableForProperty("value", "__relname__");
-      seq.add(setplot);
+      local.add(setplot);
 
       // plot
       plot = new SimplePlot();
@@ -287,14 +611,26 @@ public class ActualVsPredictedPlot
       plot.getAxisX().setLabel("Actual");
       plot.getAxisY().setLabel("Predicted");
       if (m_Error.isEmpty())
-	plot.setPaintlet(new CrossPaintlet());
+        paintlet = new CrossPaintlet();
       else
-	plot.setPaintlet(new ErrorCrossPaintlet());
-      seq.add(plot);
+        paintlet = new ErrorCrossPaintlet();
+      fixedPaintlet = new PaintletWithFixedXYRange();
+      fixedPaintlet.getOptionManager().setVariableForProperty("minX", "__actmin__");
+      fixedPaintlet.getOptionManager().setVariableForProperty("maxX", "__actmax__");
+      fixedPaintlet.getOptionManager().setVariableForProperty("minY", "__predmin__");
+      fixedPaintlet.getOptionManager().setVariableForProperty("maxY", "__predmax__");
+      fixedPaintlet.setPaintlet(paintlet);
+      plot.setPaintlet(fixedPaintlet);
+
+      teePlot = new Tee();
+      teePlot.setName("plot");
+      teePlot.add(plot);
+      local.add(teePlot);
 
       // add to flow
       index = index();
       ((ActorHandler) getParent()).set(index, seq);
+      seq.setVariables(getParent().getVariables());
       result = getParent().setUp();
       setParent(null);
     }
