@@ -15,19 +15,14 @@
 
 /**
  * TarUtils.java
- * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  * Copyright (C) 2010 jcscoobyrs
  */
 package adams.core.io;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.util.ArrayList;
-import java.util.List;
-
+import adams.core.License;
+import adams.core.annotation.MixedCopyright;
+import adams.core.base.BaseRegExp;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
@@ -36,9 +31,13 @@ import org.apache.commons.compress.compressors.bzip2.BZip2CompressorOutputStream
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
 
-import adams.core.License;
-import adams.core.annotation.MixedCopyright;
-import adams.core.base.BaseRegExp;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A helper class for Tar-file related tasks.
@@ -148,7 +147,6 @@ public class TarUtils {
    * @param output	the output file to generate
    * @param files	the files to store in the tar file
    * @return		null if successful, otherwise error message
-   * @see		#compress(File, File[], int)
    */
   public static String compress(File output, File[] files) {
     return compress(output, files, 1024);
@@ -161,7 +159,6 @@ public class TarUtils {
    * @param files	the files to store in the tar file
    * @param bufferSize	the buffer size to use
    * @return		null if successful, otherwise error message
-   * @see		#compress(File, File[], String, int)
    */
   public static String compress(File output, File[] files, int bufferSize) {
     return compress(output, files, "", bufferSize);
@@ -268,7 +265,6 @@ public class TarUtils {
    * @param input	the tar file to decompress
    * @param outputDir	the directory where to store the extracted files
    * @return		the successfully extracted files
-   * @see		#decompress(File, File, boolean)
    */
   public static List<File> decompress(File input, File outputDir) {
     return decompress(input, outputDir, false);
@@ -282,7 +278,6 @@ public class TarUtils {
    * @param createDirs	whether to re-create the directory structure from the
    * 			tar file
    * @return		the successfully extracted files
-   * @see		#decompress(File, File, boolean, String, boolean)
    */
   public static List<File> decompress(File input, File outputDir, boolean createDirs) {
     return decompress(input, outputDir, createDirs, new BaseRegExp(""), false);
@@ -299,7 +294,6 @@ public class TarUtils {
    * @param match	the regular expression that the files are matched against
    * @param invertMatch	whether to invert the matching sense
    * @return		the successfully extracted files
-   * @see		#decompress(File, File, boolean, String, boolean, int)
    */
   public static List<File> decompress(File input, File outputDir, boolean createDirs, BaseRegExp match, boolean invertMatch) {
     return decompress(input, outputDir, createDirs, match, invertMatch, 1024);
@@ -351,7 +345,7 @@ public class TarUtils {
     long			size;
     long			read;
 
-    result  = new ArrayList<File>();
+    result  = new ArrayList<>();
     archive = null;
     fis     = null;
     fos     = null;
@@ -615,15 +609,16 @@ public class TarUtils {
     TarArchiveInputStream	archive;
     TarArchiveEntry		entry;
 
-    result  = new ArrayList<File>();
+    result  = new ArrayList<>();
     archive = null;
     fis     = null;
     try {
       fis     = new FileInputStream(input.getAbsolutePath());
       archive = openArchiveForReading(input, fis);
       while ((entry = archive.getNextTarEntry()) != null) {
-	if (entry.isDirectory() && listDirs) {
-	  result.add(new File(entry.getName()));
+	if (entry.isDirectory()) {
+          if (listDirs)
+            result.add(new File(entry.getName()));
 	}
 	else {
 	  result.add(new File(entry.getName()));

@@ -15,10 +15,17 @@
 
 /**
  * ZipUtils.java
- * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
  * Copyright (C) Apache compress commons
  */
 package adams.core.io;
+
+import adams.core.License;
+import adams.core.annotation.MixedCopyright;
+import adams.core.base.BaseRegExp;
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
+import org.apache.commons.compress.archivers.zip.ZipFile;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -28,14 +35,6 @@ import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
-
-import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
-import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
-import org.apache.commons.compress.archivers.zip.ZipFile;
-
-import adams.core.License;
-import adams.core.annotation.MixedCopyright;
-import adams.core.base.BaseRegExp;
 
 /**
  * A helper class for ZIP-file related tasks.
@@ -51,7 +50,6 @@ public class ZipUtils {
    * @param output	the output file to generate
    * @param files	the files to store in the zip file
    * @return		null if successful, otherwise error message
-   * @see		#compress(File, File[], int)
    */
   public static String compress(File output, File[] files) {
     return compress(output, files, 1024);
@@ -64,7 +62,6 @@ public class ZipUtils {
    * @param files	the files to store in the zip file
    * @param bufferSize	the buffer size to use
    * @return		null if successful, otherwise error message
-   * @see		#compress(File, File[], String, int)
    */
   public static String compress(File output, File[] files, int bufferSize) {
     return compress(output, files, "", bufferSize);
@@ -167,7 +164,6 @@ public class ZipUtils {
    * @param input	the ZIP file to unzip
    * @param outputDir	the directory where to store the extracted files
    * @return		the successfully extracted files
-   * @see		#decompress(File, File, boolean)
    */
   public static List<File> decompress(File input, File outputDir) {
     return decompress(input, outputDir, false);
@@ -181,7 +177,6 @@ public class ZipUtils {
    * @param createDirs	whether to re-create the directory structure from the
    * 			ZIP file
    * @return		the successfully extracted files
-   * @see		#decompress(File, File, boolean, String, boolean)
    */
   public static List<File> decompress(File input, File outputDir, boolean createDirs) {
     return decompress(input, outputDir, createDirs, new BaseRegExp(""), false);
@@ -198,7 +193,6 @@ public class ZipUtils {
    * @param match	the regular expression that the files are matched against
    * @param invertMatch	whether to invert the matching sense
    * @return		the successfully extracted files
-   * @see		#decompress(File, File, boolean, String, boolean, int)
    */
   public static List<File> decompress(File input, File outputDir, boolean createDirs, BaseRegExp match, boolean invertMatch) {
     return decompress(input, outputDir, createDirs, match, invertMatch, 1024);
@@ -255,7 +249,7 @@ public class ZipUtils {
     String				error;
     long				read;
 
-    result  = new ArrayList<File>();
+    result  = new ArrayList<>();
     archive = null;
     try {
       // unzip archive
@@ -523,7 +517,7 @@ public class ZipUtils {
     Enumeration<ZipArchiveEntry>	enm;
     ZipArchiveEntry			entry;
 
-    result  = new ArrayList<File>();
+    result  = new ArrayList<>();
     zipfile = null;
     try {
       zipfile = new ZipFile(input.getAbsoluteFile());
@@ -532,8 +526,9 @@ public class ZipUtils {
 	entry = enm.nextElement();
 
 	// extract
-	if (entry.isDirectory() && listDirs) {
-	  result.add(new File(entry.getName()));
+	if (entry.isDirectory()) {
+          if (listDirs)
+            result.add(new File(entry.getName()));
 	}
 	else {
 	  result.add(new File(entry.getName()));
