@@ -31,7 +31,6 @@ import adams.flow.control.ArrayProcess;
 import adams.flow.control.FlowStructureModifier;
 import adams.flow.control.LocalScopeTransformer;
 import adams.flow.control.PlotContainerUpdater.PlotContainerValue;
-import adams.flow.control.Sequence;
 import adams.flow.control.Tee;
 import adams.flow.core.ActorHandler;
 import adams.flow.sink.sequenceplotter.ErrorCrossPaintlet;
@@ -800,7 +799,6 @@ public class ActualVsPredictedPlot
   @Override
   public String setUp() {
     String			result;
-    Sequence			seq;
     LocalScopeTransformer 	local;
     Tee				teeName;
     Tee 			teeAct;
@@ -829,11 +827,8 @@ public class ActualVsPredictedPlot
     result = super.setUp();
 
     if (result == null) {
-      seq = new Sequence();
-      seq.setName(getName());
-
       local = new LocalScopeTransformer();
-      seq.add(local);
+      local.setName(getName());
 
       // spreadsheet name
       teeName = new Tee();
@@ -1044,8 +1039,8 @@ public class ActualVsPredictedPlot
 
       // add to flow
       index = index();
-      ((ActorHandler) getParent()).set(index, seq);
-      seq.setVariables(getParent().getVariables());
+      ((ActorHandler) getParent()).set(index, local);
+      local.setVariables(getParent().getVariables());
       result = getParent().setUp();
       setParent(null);
     }
