@@ -24,16 +24,14 @@ import adams.core.StatusMessageHandler;
 import adams.core.Utils;
 import adams.core.logging.LoggingLevel;
 import adams.gui.chooser.BaseFileChooser;
-import adams.gui.core.BasePanel;
-import adams.gui.core.BaseStatusBar;
 import adams.gui.core.BaseTabbedPane;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MenuBarProvider;
 import adams.gui.core.RecentFilesHandler;
-import adams.gui.core.TitleGenerator;
 import adams.gui.event.RecentItemEvent;
 import adams.gui.event.RecentItemListener;
+import adams.gui.workspace.AbstractWorkspacePanel;
 import weka.core.Instances;
 import weka.core.converters.AbstractFileLoader;
 import weka.core.converters.AbstractFileSaver;
@@ -59,7 +57,7 @@ import java.io.File;
  * @version $Revision$
  */
 public class ExperimenterPanel
-  extends BasePanel
+  extends AbstractWorkspacePanel
   implements MenuBarProvider, StatusMessageHandler {
 
   /** for serialization. */
@@ -79,9 +77,6 @@ public class ExperimenterPanel
 
   /** the recent files handler for results. */
   protected RecentFilesHandler<JMenu> m_RecentFilesHandlerResults;
-
-  /** the menu bar, if used. */
-  protected JMenuBar m_MenuBar;
 
   /** the "load recent" submenu. */
   protected JMenu m_MenuItemFileLoadRecent;
@@ -104,15 +99,9 @@ public class ExperimenterPanel
   /** the save results menu item. */
   protected JMenuItem m_MenuItemResultsSave;
 
-  /** the status bar. */
-  protected BaseStatusBar m_StatusBar;
-  
   /** the current file. */
   protected File m_CurrentFile;
 
-  /** for generating the title. */
-  protected TitleGenerator m_TitleGenerator;
-  
   /** the tabbed pane. */
   protected BaseTabbedPane m_TabbedPane;
   
@@ -143,7 +132,6 @@ public class ExperimenterPanel
 
     m_RecentFilesHandlerSetups  = null;
     m_RecentFilesHandlerResults = null;
-    m_TitleGenerator            = new TitleGenerator("Experimenter", true);
     m_Experiment                = null;
     m_FileChooserResults        = new ConverterFileChooser();
     AdamsHelper.updateFileChooserAccessory(m_FileChooserResults);
@@ -171,25 +159,6 @@ public class ExperimenterPanel
     m_PanelLog = new LogPanel();
     m_PanelLog.setOwner(this);
     m_TabbedPane.addTab("Log", m_PanelLog);
-    
-    m_StatusBar = new BaseStatusBar();
-    add(m_StatusBar, BorderLayout.SOUTH);
-  }
-  
-  /**
-   * finishes the initialization.
-   */
-  @Override
-  protected void finishInit() {
-    super.finishInit();
-    update();
-  }
-  
-  /**
-   * Closes the dialog.
-   */
-  public void close() {
-    GUIHelper.closeParent(this);
   }
 
   /**
@@ -687,23 +656,6 @@ public class ExperimenterPanel
   }
 
   /**
-   * Updates title and menu items.
-   */
-  public void update() {
-    updateTitle();
-    updateMenu();
-  }
-  
-  /**
-   * Returns the title generator in use.
-   * 
-   * @return		the generator
-   */
-  public TitleGenerator getTitleGenerator() {
-    return m_TitleGenerator;
-  }
-
-  /**
    * Updates the title of the dialog.
    */
   protected void updateTitle() {
@@ -733,28 +685,7 @@ public class ExperimenterPanel
     // Analysis
     m_MenuItemResultsSave.setEnabled(m_PanelAnalysis.hasResults());
   }
-  
-  /**
-   * Sets the base title to use for the title generator.
-   * 
-   * @param value	the title to use
-   * @see		#m_TitleGenerator
-   */
-  public void setTitle(String value) {
-    m_TitleGenerator.setTitle(value);
-    update();
-  }
-  
-  /**
-   * Returns the base title in use by the title generator.
-   * 
-   * @return		the title in use
-   * @see		#m_TitleGenerator
-   */
-  public String getTitle() {
-    return m_TitleGenerator.getTitle();
-  }
-  
+
   /**
    * Returns the current experiment.
    * 
@@ -782,16 +713,7 @@ public class ExperimenterPanel
   public String handlesExperiment(Experiment exp) {
     return m_PanelSetup.handlesExperiment(exp);
   }
-  
-  /**
-   * Logs the exception with no dialog.
-   * 
-   * @param t		the exception
-   */
-  public void logMessage(Throwable t) {
-    logMessage(Utils.throwableToString(t));
-  }
-  
+
   /**
    * Logs the message.
    * 
@@ -800,17 +722,7 @@ public class ExperimenterPanel
   public void logMessage(String msg) {
     m_PanelLog.append(msg);
   }
-  
-  /**
-   * Logs the exception and also displays an error dialog.
-   * 
-   * @param t		the exception
-   * @param title	the title for the dialog
-   */
-  public void logError(Throwable t, String title) {
-    logError(Utils.throwableToString(t), title);
-  }
-  
+
   /**
    * Logs the error message and also displays an error dialog.
    * 
@@ -822,15 +734,6 @@ public class ExperimenterPanel
     GUIHelper.showErrorMessage(this,
 	msg,
 	title);
-  }
-  
-  /**
-   * Displays a message.
-   * 
-   * @param msg		the message to display
-   */
-  public void showStatus(String msg) {
-    m_StatusBar.showStatus(msg);
   }
 
   /**

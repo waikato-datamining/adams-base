@@ -22,21 +22,15 @@ package weka.gui.experiment.ext;
 import adams.core.Utils;
 import adams.env.Environment;
 import adams.gui.core.BaseFrame;
-import adams.gui.core.BasePanel;
 import adams.gui.core.GUIHelper;
+import adams.gui.workspace.AbstractWorkspaceManagerPanel;
 import weka.core.Memory;
 import weka.core.logging.Logger;
 import weka.core.logging.Logger.Level;
 import weka.gui.LookAndFeel;
 
-import javax.swing.JButton;
-import javax.swing.JSplitPane;
 import javax.swing.SwingUtilities;
 import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 
 /**
@@ -47,212 +41,39 @@ import java.io.File;
  * @version $Revision: 8799 $
  */
 public class MultiExperimenter
-  extends BasePanel {
+  extends AbstractWorkspaceManagerPanel<ExperimenterPanel> {
 
   /** for serialization. */
   private static final long serialVersionUID = -20320489406680254L;
 
-  /** the default name for new panels. */
-  public final static String DEFAULT_NAME = "Experiment";
-  
-  /** the split pane for the components. */
-  protected JSplitPane m_SplitPane;
-
-  /** the history panel. */
-  protected ExperimenterEntryPanel m_History;
-
-  /** the actual panel for displaying the other panels. */
-  protected BasePanel m_PanelExperimenter;
-
-  /** the history panel. */
-  protected BasePanel m_PanelHistory;
-  
-  /** the panel for the buttons. */
-  protected BasePanel m_PanelButtons;
-  
-  /** the button for adding a panel. */
-  protected JButton m_ButtonAdd;
-  
-  /** the button for removing a panel. */
-  protected JButton m_ButtonRemove;
+  /**
+   * The default name for a workspace.
+   *
+   * @return		the default
+   */
+  protected String getDefaultWorkspaceName() {
+    return "Experiment";
+  }
 
   /**
-   * For initializing the GUI.
+   * Returns a new workspace instance.
+   *
+   * @return		the workspace
    */
   @Override
-  protected void initGUI() {
-    int		height;
-    
-    super.initGUI();
-
-    setLayout(new BorderLayout());
-    
-    m_SplitPane = new JSplitPane();
-    add(m_SplitPane, BorderLayout.CENTER);
-
-    // right
-    m_PanelExperimenter = new BasePanel(new BorderLayout());
-    m_PanelExperimenter.setMinimumSize(new Dimension(100, 0));
-    m_SplitPane.setBottomComponent(m_PanelExperimenter);
-
-    // left
-    m_History = new ExperimenterEntryPanel();
-    m_History.setPanel(m_PanelExperimenter);
-    m_History.setAllowRename(true);
-    m_PanelHistory = new BasePanel(new BorderLayout());
-    m_PanelHistory.setMinimumSize(new Dimension(100, 0));
-    m_PanelHistory.add(m_History, BorderLayout.CENTER);
-    m_PanelButtons = new BasePanel(new FlowLayout(FlowLayout.LEFT));
-    m_PanelHistory.add(m_PanelButtons, BorderLayout.SOUTH);
-    m_SplitPane.setTopComponent(m_PanelHistory);
-
-    // left buttons
-    m_ButtonAdd = new JButton(GUIHelper.getIcon("add.gif"));
-    height = m_ButtonAdd.getHeight();
-    m_ButtonAdd.setSize(height, height);
-    m_ButtonAdd.setToolTipText("Adds a new Experimenter panel");
-    m_ButtonAdd.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	String initial = m_History.newEntryName(DEFAULT_NAME);
-	String name = GUIHelper.showInputDialog(
-	    MultiExperimenter.this, 
-	    "Please enter the name for the Experimenter panel:", 
-	    initial);
-	if (name == null)
-	  return;
-	addPanel(new ExperimenterPanel(), name);
-      }
-    });
-    m_PanelButtons.add(m_ButtonAdd);
-
-    m_ButtonRemove = new JButton(GUIHelper.getIcon("remove.gif"));
-    m_ButtonRemove.setSize(height, height);
-    m_ButtonRemove.setToolTipText("Removes all selected Experimenter panels");
-    m_ButtonRemove.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	int[] indices = m_History.getSelectedIndices();
-	for (int i = indices.length - 1; i >= 0; i--)
-	  removePanel(indices[i]);
-      }
-    });
-    m_PanelButtons.add(m_ButtonRemove);
-    
-    m_SplitPane.setOneTouchExpandable(true);
-    m_SplitPane.setResizeWeight(0);
-    m_SplitPane.setDividerLocation(250);
+  protected ExperimenterPanel newWorkspace() {
+    return new ExperimenterPanel();
   }
 
   /**
-   * finishes the initialization.
-   */
-  @Override
-  protected void finishInit() {
-    Runnable	run;
-    
-    super.finishInit();
-    
-    run = new Runnable() {
-      @Override
-      public void run() {
-	addPanel(new ExperimenterPanel(), DEFAULT_NAME);
-      }
-    };
-    SwingUtilities.invokeLater(run);
-  }
-  
-  /**
-   * Removes all panels.
-   */
-  public void clear() {
-    Runnable	run;
-    
-    run = new Runnable() {
-      @Override
-      public void run() {
-	m_History.clear();
-	m_PanelExperimenter.removeAll();
-      }
-    };
-    
-    SwingUtilities.invokeLater(run);
-  }
-
-  /**
-   * Returns the number of experimenter panels.
+   * Instantiates a new panel for workspaces.
    *
-   * @return		the number of panels
+   * @return		the list panel
    */
-  public int count() {
-    return m_History.count();
+  protected ExperimenterEntryPanel newWorkspaceList() {
+    return new ExperimenterEntryPanel();
   }
 
-  /**
-   * Returns the underlying history panel.
-   *
-   * @return		the panel
-   */
-  public ExperimenterEntryPanel getHistory() {
-    return m_History;
-  }
-  
-  /**
-   * Adds the given experimenter panel.
-   *
-   * @param panel	the panel to add
-   * @param name	the name for the panel
-   */
-  public synchronized void addPanel(ExperimenterPanel panel, String name) {
-    m_History.addEntry(m_History.newEntryName(name), panel);
-    m_History.setSelectedIndex(count() - 1);
-  }
-  
-  /**
-   * Removes the panel with the given name.
-   * 
-   * @param name	the name of the panel to remove
-   * @return		true if successfully removed
-   */
-  public synchronized boolean removePanel(String name) {
-    boolean	result;
-    int		index;
-    
-    result = false;
-    if (!m_History.hasEntry(name))
-      return result;
-    index  = m_History.indexOfEntry(name);
-    result = (m_History.removeEntry(name) != null);
-    
-    if (m_History.count() > 0) {
-      if (m_History.count() <= index)
-	index--;
-      m_History.updateEntry(m_History.getEntryName(index));
-    }
-    
-    return result;
-  }
-  
-  /**
-   * Removes the panel at the specified index.
-   * 
-   * @param index	the index of the panel to remove
-   * @return		true if successfully removed
-   */
-  public synchronized boolean removePanel(int index) {
-    return removePanel(m_History.getEntryName(index));
-  }
-  
-  /**
-   * Returns the panel with the specified name.
-   * 
-   * @param name	the name of the panel to retrieve
-   * @return		the panel, null if not found
-   */
-  public ExperimenterPanel getPanel(String name) {
-    return m_History.getEntry(name);
-  }
-  
   /**
    * Loads the specified file in a new panel.
    * 
@@ -269,31 +90,15 @@ public class MultiExperimenter
    */
   public void load(File[] files) {
     String	name;
-    Runnable	run;
-    
+
     for (final File file: files) {
       name = file.getName();
       if (name.lastIndexOf('.') > -1)
 	name = name.substring(0, name.lastIndexOf('.'));
       final ExperimenterPanel panel = new ExperimenterPanel();
       addPanel(panel, name);
-      run = new Runnable() {
-	@Override
-	public void run() {
-	  panel.openSetup(file);
-	}
-      };
-      SwingUtilities.invokeLater(run);
+      SwingUtilities.invokeLater(() -> panel.openSetup(file));
     }
-  }
-
-  /**
-   * Returns the panel with the experimenter panel entries.
-   * 
-   * @return		the panel entries
-   */
-  public ExperimenterEntryPanel getEntryPanel() {
-    return m_History;
   }
 
   /**
@@ -312,7 +117,7 @@ public class MultiExperimenter
    */
   public static void runExperimenter(String[] args) {
     // configure environment
-    String env = "";
+    String env;
     try {
       env = weka.core.Utils.getOption("env", args);
     }
