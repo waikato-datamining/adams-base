@@ -21,6 +21,7 @@ package adams.gui.workspace;
 
 import adams.core.ClassLocator;
 import adams.core.io.FileUtils;
+import adams.gui.chooser.BaseFileChooser;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -180,4 +181,11 @@ public abstract class AbstractWorkspaceHelper<P extends AbstractWorkspacePanel, 
 
     return (P) exp[1];
   }
+
+  /**
+   * Creates a filechooser for loading/saving workspaces.
+   *
+   * @return the filechooser
+   */
+  public abstract BaseFileChooser newFileChooser();
 }
