@@ -21,30 +21,24 @@
 package adams.flow.sink;
 
 import adams.core.QuickInfoHelper;
-import adams.core.VariableName;
-import adams.core.base.BaseText;
-import adams.data.conversion.StringToDouble;
+import adams.data.DecimalFormatString;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetColumnIndex;
-import adams.data.spreadsheet.SpreadSheetColumnRange;
-import adams.flow.control.ArrayProcess;
-import adams.flow.control.FlowStructureModifier;
-import adams.flow.control.LocalScopeTransformer;
-import adams.flow.control.PlotContainerUpdater.PlotContainerValue;
-import adams.flow.control.Tee;
-import adams.flow.core.ActorHandler;
+import adams.data.spreadsheet.SpreadSheetHelper;
+import adams.flow.core.ActorUtils;
+import adams.flow.core.Token;
 import adams.flow.sink.sequenceplotter.ErrorCrossPaintlet;
-import adams.flow.transformer.Convert;
-import adams.flow.transformer.Max;
-import adams.flow.transformer.Min;
-import adams.flow.transformer.SetPlotContainerValue;
-import adams.flow.transformer.SetVariable;
-import adams.flow.transformer.Sort;
-import adams.flow.transformer.SpreadSheetInfo;
-import adams.flow.transformer.SpreadSheetInfo.InfoType;
-import adams.flow.transformer.SpreadSheetPlotGenerator;
-import adams.flow.transformer.plotgenerator.XYPlotGenerator;
-import adams.flow.transformer.plotgenerator.XYWithErrorsPlotGenerator;
+import adams.flow.sink.sequenceplotter.SequencePlotContainer;
+import adams.flow.sink.sequenceplotter.SequencePlotContainerManager;
+import adams.flow.sink.sequenceplotter.SequencePlotPoint;
+import adams.flow.sink.sequenceplotter.SequencePlotSequence;
+import adams.flow.sink.sequenceplotter.SequencePlotterPanel;
+import adams.gui.core.BasePanel;
+import adams.gui.visualization.core.AxisPanelOptions;
+import adams.gui.visualization.core.DefaultColorProvider;
+import adams.gui.visualization.core.axis.FancyTickGenerator;
+import adams.gui.visualization.core.axis.Type;
+import adams.gui.visualization.core.plot.Axis;
 import adams.gui.visualization.sequence.AbstractXYSequencePaintlet;
 import adams.gui.visualization.sequence.CrossPaintlet;
 import adams.gui.visualization.sequence.PaintletWithFixedXYRange;
@@ -136,6 +130,11 @@ import adams.gui.visualization.sequence.StraightLineOverlayPaintlet;
  * &nbsp;&nbsp;&nbsp;minimum: -3
  * </pre>
  * 
+ * <pre>-writer &lt;adams.gui.print.JComponentWriter&gt; (property: writer)
+ * &nbsp;&nbsp;&nbsp;The writer to use for generating the graphics output.
+ * &nbsp;&nbsp;&nbsp;default: adams.gui.print.NullWriter
+ * </pre>
+ * 
  * <pre>-actual &lt;adams.data.spreadsheet.SpreadSheetColumnIndex&gt; (property: actual)
  * &nbsp;&nbsp;&nbsp;The column with the actual values.
  * &nbsp;&nbsp;&nbsp;default: Actual
@@ -180,28 +179,9 @@ import adams.gui.visualization.sequence.StraightLineOverlayPaintlet;
  * @version $Revision$
  */
 public class ActualVsPredictedPlot
-  extends AbstractSink
-  implements FlowStructureModifier {
+  extends AbstractGraphicalDisplay {
 
-  private static final long serialVersionUID = -1277441640187943194L;
-
-  /** whether to use just the actor name or the full name as title. */
-  protected boolean m_ShortTitle;
-
-  /** the width of the dialog. */
-  protected int m_Width;
-
-  /** the height of the dialog. */
-  protected int m_Height;
-
-  /** the X position of the dialog. */
-  protected int m_X;
-
-  /** the Y position of the dialog. */
-  protected int m_Y;
-
-  /** whether to display the panel in the editor rather than in a separate frame. */
-  protected boolean m_DisplayInEditor;
+  private static final long serialVersionUID = -278662766780196125L;
 
   /** the column with the actual values. */
   protected SpreadSheetColumnIndex m_Actual;
@@ -212,16 +192,16 @@ public class ActualVsPredictedPlot
   /** the column with the error values (optional). */
   protected SpreadSheetColumnIndex m_Error;
 
-  /** the minimum to use for the actual values (neg inf = restriction). */
+  /** the minimum to use for the actual values (neg inf = no restriction). */
   protected double m_ActualMin;
 
-  /** the maximum to use for the actual values (pos inf = restriction). */
+  /** the maximum to use for the actual values (pos inf = no restriction). */
   protected double m_ActualMax;
 
-  /** the minimum to use for the predicted values (neg inf = restriction). */
+  /** the minimum to use for the predicted values (neg inf = no restriction). */
   protected double m_PredictedMin;
 
-  /** the maximum to use for the predicted values (pos inf = restriction). */
+  /** the maximum to use for the predicted values (pos inf = no restriction). */
   protected double m_PredictedMax;
 
   /**
@@ -240,30 +220,6 @@ public class ActualVsPredictedPlot
   @Override
   public void defineOptions() {
     super.defineOptions();
-
-    m_OptionManager.add(
-      "short-title", "shortTitle",
-      getDefaultShortTitle());
-
-    m_OptionManager.add(
-      "display-in-editor", "displayInEditor",
-      getDefaultDisplayInEditor());
-
-    m_OptionManager.add(
-      "width", "width",
-      getDefaultWidth(), -1, null);
-
-    m_OptionManager.add(
-      "height", "height",
-      getDefaultHeight(), -1, null);
-
-    m_OptionManager.add(
-      "x", "x",
-      getDefaultX(), -3, null);
-
-    m_OptionManager.add(
-      "y", "y",
-      getDefaultY(), -3, null);
 
     m_OptionManager.add(
       "actual", "actual",
@@ -295,43 +251,6 @@ public class ActualVsPredictedPlot
   }
 
   /**
-   * Returns the default value for short title.
-   *
-   * @return		the default
-   */
-  protected boolean getDefaultShortTitle() {
-    return false;
-  }
-
-  /**
-   * Returns the default value for displaying the panel in the editor
-   * rather than in a separate frame.
-   *
-   * @return		the default
-   */
-  protected boolean getDefaultDisplayInEditor() {
-    return false;
-  }
-
-  /**
-   * Returns the default X position for the dialog.
-   *
-   * @return		the default X position
-   */
-  protected int getDefaultX() {
-    return -1;
-  }
-
-  /**
-   * Returns the default Y position for the dialog.
-   *
-   * @return		the default Y position
-   */
-  protected int getDefaultY() {
-    return -1;
-  }
-
-  /**
    * Returns the default width for the dialog.
    *
    * @return		the default width
@@ -347,184 +266,6 @@ public class ActualVsPredictedPlot
    */
   protected int getDefaultHeight() {
     return 350;
-  }
-
-  /**
-   * Sets whether to use just the name of the actor or the full name.
-   *
-   * @param value 	if true just the name will get used, otherwise the full name
-   */
-  public void setShortTitle(boolean value) {
-    m_ShortTitle = value;
-    reset();
-  }
-
-  /**
-   * Returns whether to use just the name of the actor or the full name.
-   *
-   * @return 		true if just the name used, otherwise full name
-   */
-  public boolean getShortTitle() {
-    return m_ShortTitle;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String shortTitleTipText() {
-    return "If enabled uses just the name for the title instead of the actor's full name.";
-  }
-
-  /**
-   * Sets the width of the dialog.
-   *
-   * @param value 	the width
-   */
-  public void setWidth(int value) {
-    m_Width = value;
-    reset();
-  }
-
-  /**
-   * Returns the currently set width of the dialog.
-   *
-   * @return 		the width
-   */
-  public int getWidth() {
-    return m_Width;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String widthTipText() {
-    return "The width of the dialog.";
-  }
-
-  /**
-   * Sets the height of the dialog.
-   *
-   * @param value 	the height
-   */
-  public void setHeight(int value) {
-    m_Height = value;
-    reset();
-  }
-
-  /**
-   * Returns the currently set height of the dialog.
-   *
-   * @return 		the height
-   */
-  public int getHeight() {
-    return m_Height;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String heightTipText() {
-    return "The height of the dialog.";
-  }
-
-  /**
-   * Sets the X position of the dialog.
-   *
-   * @param value 	the X position
-   */
-  public void setX(int value) {
-    m_X = value;
-    reset();
-  }
-
-  /**
-   * Returns the currently set X position of the dialog.
-   *
-   * @return 		the X position
-   */
-  public int getX() {
-    return m_X;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String xTipText() {
-    return "The X position of the dialog (>=0: absolute, -1: left, -2: center, -3: right).";
-  }
-
-  /**
-   * Sets the Y position of the dialog.
-   *
-   * @param value 	the Y position
-   */
-  public void setY(int value) {
-    m_Y = value;
-    reset();
-  }
-
-  /**
-   * Returns the currently set Y position of the dialog.
-   *
-   * @return 		the Y position
-   */
-  public int getY() {
-    return m_Y;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String yTipText() {
-    return "The Y position of the dialog (>=0: absolute, -1: top, -2: center, -3: bottom).";
-  }
-
-  /**
-   * Sets whether to display the panel in the flow editor rather than
-   * in a separate frame.
-   *
-   * @param value 	true if to display in editor
-   */
-  public void setDisplayInEditor(boolean value) {
-    m_DisplayInEditor = value;
-    reset();
-  }
-
-  /**
-   * Returns whether to display the panel in the flow editor rather than
-   * in a separate frame.
-   *
-   * @return 		true if to display in editor
-   */
-  public boolean getDisplayInEditor() {
-    return m_DisplayInEditor;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String displayInEditorTipText() {
-    return
-	"If enabled displays the panel in a tab in the flow editor rather "
-	+ "than in a separate frame.";
   }
 
   /**
@@ -738,32 +479,8 @@ public class ActualVsPredictedPlot
   @Override
   public String getQuickInfo() {
     String	result;
-    String	value;
 
-    if (m_X == -1)
-      value = "left";
-    else if (m_X == -2)
-      value = "center";
-    else if (m_X == -3)
-      value = "right";
-    else
-      value = "" + m_X;
-    result = QuickInfoHelper.toString(this, "x", value, "X:");
-
-    if (m_Y == -1)
-      value = "top";
-    else if (m_Y == -2)
-      value = "center";
-    else if (m_Y == -3)
-      value = "bottom";
-    else
-      value = "" + m_Y;
-    result += QuickInfoHelper.toString(this, "y", value, ", Y:");
-
-    result += QuickInfoHelper.toString(this, "width", m_Width, ", W:");
-    result += QuickInfoHelper.toString(this, "height", m_Height, ", H:");
-    result += QuickInfoHelper.toString(this, "shortTitle", m_ShortTitle, "short title", ", ");
-
+    result  = super.getQuickInfo();
     result += QuickInfoHelper.toString(this, "actual", m_Actual, ", actual: ");
     result += QuickInfoHelper.toString(this, "predicted", m_Predicted, ", predicted: ");
     result += QuickInfoHelper.toString(this, "error", (m_Error.isEmpty() ? "-none-" : m_Error), ", error: ");
@@ -782,279 +499,176 @@ public class ActualVsPredictedPlot
   }
 
   /**
-   * Returns whether the actor is modifying the structure.
+   * Returns the setup for the X axis.
    *
-   * @return		true if the actor is modifying the structure
+   * @return 		the setup
    */
-  public boolean isModifyingStructure() {
-    return !getSkip();
-  }
+  protected AxisPanelOptions getDefaultAxisX() {
+    AxisPanelOptions	result;
+    FancyTickGenerator tick;
 
-  /**
-   * Initializes the item for flow execution. Also calls the reset() method
-   * first before anything else.
-   *
-   * @return		null if everything is fine, otherwise error message
-   */
-  @Override
-  public String setUp() {
-    String			result;
-    LocalScopeTransformer 	local;
-    Tee				teeName;
-    Tee 			teeAct;
-    Tee				teePred;
-    Tee				tee;
-    SetVariable 		svName1;
-    SetVariable			svName2;
-    SetVariable			svMin;
-    SetVariable			svMax;
-    Sort			sort;
-    ArrayProcess		arrayProc;
-    Convert			conv;
-    Min				min;
-    Max 			max;
-    SpreadSheetInfo		info;
-    SpreadSheetPlotGenerator	plotgen;
-    XYPlotGenerator		xy;
-    XYWithErrorsPlotGenerator 	xye;
-    SetPlotContainerValue	setplot;
-    Tee				teePlot;
-    SimplePlot			plot;
-    int				index;
-    AbstractXYSequencePaintlet	paintlet;
-    PaintletWithFixedXYRange fixedPaintlet;
-
-    result = super.setUp();
-
-    if (result == null) {
-      local = new LocalScopeTransformer();
-      local.setName(getName());
-
-      // spreadsheet name
-      teeName = new Tee();
-      teeName.setName("spreadsheet name");
-      local.add(teeName);
-      {
-	svName1 = new SetVariable();
-	svName1.setName("relation name (default)");
-	svName1.setVariableName(new VariableName("__relname__"));
-	svName1.setVariableValue(new BaseText("act vs pred"));
-	teeName.add(svName1);
-
-	info = new SpreadSheetInfo();
-	info.setType(InfoType.NAME);
-	teeName.add(info);
-
-	svName2 = new SetVariable();
-	svName2.setName("relation name");
-	svName2.setVariableName(new VariableName("__relname__"));
-	teeName.add(svName2);
-      }
-
-      // actual
-      teeAct = new Tee();
-      teeAct.setName("actual");
-      local.add(teeAct);
-      {
-	if (Double.isInfinite(m_ActualMin) || Double.isInfinite(m_ActualMax)) {
-	  info = new SpreadSheetInfo();
-	  info.setColumnIndex(m_Actual.getClone());
-	  info.setType(InfoType.CELL_VALUES);
-	  info.setOutputArray(true);
-	  teeAct.add(info);
-
-	  arrayProc = new ArrayProcess();
-	  conv = new Convert();
-	  conv.setConversion(new StringToDouble());
-	  arrayProc.add(conv);
-	  teeAct.add(arrayProc);
-
-	  sort = new Sort();
-	  teeAct.add(sort);
-	}
-
-	// min
-	if (Double.isInfinite(m_ActualMin)) {
-	  tee = new Tee();
-	  tee.setName("min");
-	  teeAct.add(tee);
-
-	  min = new Min();
-	  tee.add(min);
-
-	  svMin = new SetVariable();
-	  svMin.setName("actual min");
-	  svMin.setVariableName(new VariableName("__actmin__"));
-	  tee.add(svMin);
-	}
-	else {
-	  svMin = new SetVariable();
-	  svMin.setName("actual min");
-	  svMin.setVariableName(new VariableName("__actmin__"));
-	  svMin.setVariableValue(new BaseText(Double.toString(m_ActualMin)));
-	  teeAct.add(svMin);
-	}
-
-	// max
-	if (Double.isInfinite(m_ActualMax)) {
-	  tee = new Tee();
-	  tee.setName("max");
-	  teeAct.add(tee);
-
-	  max = new Max();
-	  tee.add(max);
-
-	  svMax = new SetVariable();
-	  svMax.setName("actual max");
-	  svMax.setVariableName(new VariableName("__actmax__"));
-	  tee.add(svMax);
-	}
-	else {
-	  svMax = new SetVariable();
-	  svMax.setName("actual max");
-	  svMax.setVariableName(new VariableName("__actmax__"));
-	  svMax.setVariableValue(new BaseText(Double.toString(m_ActualMax)));
-	  teeAct.add(svMax);
-	}
-      }
-
-      // predicted
-      teePred = new Tee();
-      teePred.setName("predicted");
-      local.add(teePred);
-      {
-	if (Double.isInfinite(m_PredictedMin) || Double.isInfinite(m_PredictedMax)) {
-	  info = new SpreadSheetInfo();
-	  info.setColumnIndex(m_Predicted.getClone());
-	  info.setType(InfoType.CELL_VALUES);
-	  info.setOutputArray(true);
-	  teePred.add(info);
-
-	  arrayProc = new ArrayProcess();
-	  conv = new Convert();
-	  conv.setConversion(new StringToDouble());
-	  arrayProc.add(conv);
-	  teePred.add(arrayProc);
-
-	  sort = new Sort();
-	  teePred.add(sort);
-	}
-
-	// min
-	if (Double.isInfinite(m_PredictedMin)) {
-	  tee = new Tee();
-	  tee.setName("min");
-	  teePred.add(tee);
-
-	  min = new Min();
-	  tee.add(min);
-
-	  svMin = new SetVariable();
-	  svMin.setName("predicted min");
-	  svMin.setVariableName(new VariableName("__predmin__"));
-	  tee.add(svMin);
-	}
-	else {
-	  svMin = new SetVariable();
-	  svMin.setName("predicted min");
-	  svMin.setVariableName(new VariableName("__predmin__"));
-	  svMin.setVariableValue(new BaseText(Double.toString(m_PredictedMin)));
-	  teePred.add(svMin);
-	}
-
-	// max
-	if (Double.isInfinite(m_PredictedMax)) {
-	  tee = new Tee();
-	  tee.setName("max");
-	  teePred.add(tee);
-
-	  max = new Max();
-	  tee.add(max);
-
-	  svMax = new SetVariable();
-	  svMax.setName("predicted max");
-	  svMax.setVariableName(new VariableName("__predmax__"));
-	  tee.add(svMax);
-	}
-	else {
-	  svMax = new SetVariable();
-	  svMax.setName("predicted max");
-	  svMax.setVariableName(new VariableName("__predmax__"));
-	  svMax.setVariableValue(new BaseText(Double.toString(m_PredictedMax)));
-	  teePred.add(svMax);
-	}
-      }
-
-      // plot generator
-      plotgen = new SpreadSheetPlotGenerator();
-      if (m_Error.isEmpty()) {
-	xy = new XYPlotGenerator();
-	xy.setXColumn(m_Actual.getIndex());
-	xy.setPlotColumns(m_Predicted.getIndex());
-	plotgen.setGenerator(xy);
-      }
-      else {
-	xye = new XYWithErrorsPlotGenerator();
-	xye.setXColumn(m_Actual);
-	xye.setYColumn(m_Predicted);
-	xye.setYErrorColumns(new SpreadSheetColumnRange(m_Error.getIndex()));
-	plotgen.setGenerator(xye);
-      }
-      local.add(plotgen);
-
-      // plot name
-      setplot = new SetPlotContainerValue();
-      setplot.setContainerValue(PlotContainerValue.PLOT_NAME);
-      setplot.getOptionManager().setVariableForProperty("value", "__relname__");
-      local.add(setplot);
-
-      // plot
-      plot = new SimplePlot();
-      plot.setName(getName());
-      plot.setShortTitle(getShortTitle());
-      plot.setDisplayInEditor(getDisplayInEditor());
-      plot.setX(getX());
-      plot.setY(getY());
-      plot.setWidth(getWidth());
-      plot.setHeight(getHeight());
-      plot.setOverlayPaintlet(new StraightLineOverlayPaintlet());
-      plot.getAxisX().setLabel("Actual");
-      plot.getAxisY().setLabel("Predicted");
-      if (m_Error.isEmpty())
-	paintlet = new CrossPaintlet();
-      else
-	paintlet = new ErrorCrossPaintlet();
-      fixedPaintlet = new PaintletWithFixedXYRange();
-      fixedPaintlet.getOptionManager().setVariableForProperty("minX", "__actmin__");
-      fixedPaintlet.getOptionManager().setVariableForProperty("maxX", "__actmax__");
-      fixedPaintlet.getOptionManager().setVariableForProperty("minY", "__predmin__");
-      fixedPaintlet.getOptionManager().setVariableForProperty("maxY", "__predmax__");
-      fixedPaintlet.setPaintlet(paintlet);
-      plot.setPaintlet(fixedPaintlet);
-
-      teePlot = new Tee();
-      teePlot.setName("plot");
-      teePlot.add(plot);
-      local.add(teePlot);
-
-      // add to flow
-      index = index();
-      ((ActorHandler) getParent()).set(index, local);
-      local.setVariables(getParent().getVariables());
-      result = getParent().setUp();
-      setParent(null);
-    }
+    result = new AxisPanelOptions();
+    result.setType(Type.ABSOLUTE);
+    result.setLabel("Actual");
+    result.setShowGridLines(true);
+    result.setLengthTicks(4);
+    result.setNthValueToShow(2);
+    result.setWidth(40);
+    result.setTopMargin(0.0);
+    result.setBottomMargin(0.0);
+    result.setCustomFormat(new DecimalFormatString("0.0"));
+    tick = new FancyTickGenerator();
+    tick.setNumTicks(20);
+    result.setTickGenerator(tick);
 
     return result;
   }
 
   /**
-   * Executes the flow item.
+   * Returns the setup for the Y axis.
    *
-   * @return		null if everything is fine, otherwise error message
+   * @return 		the setup
+   */
+  protected AxisPanelOptions getDefaultAxisY() {
+    AxisPanelOptions	result;
+    FancyTickGenerator	tick;
+
+    result = new AxisPanelOptions();
+    result.setType(Type.ABSOLUTE);
+    result.setLabel("Predicted");
+    result.setShowGridLines(true);
+    result.setLengthTicks(4);
+    result.setNthValueToShow(2);
+    result.setWidth(60);
+    result.setTopMargin(0.0);
+    result.setBottomMargin(0.0);
+    result.setCustomFormat(new DecimalFormatString("0.0"));
+    tick = new FancyTickGenerator();
+    tick.setNumTicks(10);
+    result.setTickGenerator(tick);
+
+    return result;
+  }
+
+  /**
+   * Creates the panel to display in the dialog.
+   *
+   * @return		the panel
    */
   @Override
-  protected String doExecute() {
-    return null;
+  protected BasePanel newPanel() {
+    SequencePlotterPanel 	result;
+    AbstractXYSequencePaintlet 	paintlet;
+    PaintletWithFixedXYRange 	fixedPaintlet;
+
+    result = new SequencePlotterPanel("act vs pred");
+    if (m_Error.isEmpty())
+      paintlet = new CrossPaintlet();
+    else
+      paintlet = new ErrorCrossPaintlet();
+    fixedPaintlet = new PaintletWithFixedXYRange();
+    fixedPaintlet.setPaintlet(paintlet);
+    result.setPaintlet(fixedPaintlet);
+    ActorUtils.updateFlowAwarePaintlet(result.getPaintlet(), this);
+    result.setOverlayPaintlet(new StraightLineOverlayPaintlet());
+    ActorUtils.updateFlowAwarePaintlet(result.getOverlayPaintlet(), this);
+    getDefaultAxisX().configure(result.getPlot(), Axis.BOTTOM);
+    getDefaultAxisY().configure(result.getPlot(), Axis.LEFT);
+    result.setColorProvider(new DefaultColorProvider());
+    result.setSidePanelVisible(true);
+
+    return result;
+  }
+
+  /**
+   * Clears the content of the panel.
+   */
+  @Override
+  public void clearPanel() {
+    if (m_Panel != null)
+      ((SequencePlotterPanel) m_Panel).getContainerManager().clear();
+  }
+
+  /**
+   * Displays the token (the panel and dialog have already been created at
+   * this stage).
+   *
+   * @param token	the token to display
+   */
+  @Override
+  protected void display(Token token) {
+    SpreadSheet				sheet;
+    SequencePlotterPanel		panel;
+    PaintletWithFixedXYRange		paintlet;
+    double[]				act;
+    double[]				pred;
+    double[]				error;
+    double				actMin;
+    double				actMax;
+    double				predMin;
+    double				predMax;
+    SequencePlotContainerManager	manager;
+    SequencePlotContainer 		cont;
+    SequencePlotSequence		seq;
+    int					i;
+    String				id;
+
+    sheet    = (SpreadSheet) token.getPayload();
+    panel    = (SequencePlotterPanel) m_Panel;
+    paintlet = (PaintletWithFixedXYRange) panel.getPaintlet();
+    manager  = (SequencePlotContainerManager) panel.getContainerManager();
+
+    m_Actual.setData(sheet);
+    if (m_Actual.getIntIndex() == -1)
+      throw new IllegalStateException("'Actual' column not found: " + m_Actual);
+    m_Predicted.setData(sheet);
+    if (m_Predicted.getIntIndex() == -1)
+      throw new IllegalStateException("'Predicted' column not found: " + m_Predicted);
+    error = null;
+    if (!m_Error.isEmpty()) {
+      m_Error.setData(sheet);
+      if (m_Error.getIntIndex() == -1)
+	throw new IllegalStateException("'Error' column not found: " + m_Error);
+    }
+
+    // create plot data
+    if (sheet.hasName())
+      id = sheet.getName();
+    else
+      id = "act vs pred";
+    act     = SpreadSheetHelper.getNumericColumn(sheet, m_Actual.getIntIndex());
+    pred    = SpreadSheetHelper.getNumericColumn(sheet, m_Predicted.getIntIndex());
+    if (!m_Error.isEmpty())
+      error = SpreadSheetHelper.getNumericColumn(sheet, m_Error.getIntIndex());
+    seq     = new SequencePlotSequence();
+    actMin  = Double.POSITIVE_INFINITY;
+    actMax  = Double.NEGATIVE_INFINITY;
+    predMin = Double.POSITIVE_INFINITY;
+    predMax = Double.NEGATIVE_INFINITY;
+    for (i = 0; i < act.length; i++) {
+      if (Double.isNaN(act[i]) || Double.isNaN(pred[i]))
+	continue;
+      if ((error != null) && (Double.isNaN(error[i])))
+	continue;
+      actMin  = Math.min(actMin,  act[i]);
+      actMax  = Math.max(actMax,  act[i]);
+      predMin = Math.min(predMin, pred[i]);
+      predMax = Math.max(predMax, pred[i]);
+      if (error == null)
+	seq.add(new SequencePlotPoint(id, act[i], pred[i]));
+      else
+	seq.add(new SequencePlotPoint(id, act[i], pred[i], new Double[]{error[i]}, null));
+    }
+
+    // actual min/max
+    paintlet.setMinX(Double.isInfinite(m_ActualMin)    ? actMin  : m_ActualMin);
+    paintlet.setMaxX(Double.isInfinite(m_ActualMax)    ? actMax  : m_ActualMax);
+    paintlet.setMinY(Double.isInfinite(m_PredictedMin) ? predMin : m_PredictedMin);
+    paintlet.setMaxY(Double.isInfinite(m_PredictedMax) ? predMax : m_PredictedMax);
+
+    // add sequence
+    cont = manager.newContainer(seq);
+    cont.setID(id);
+    panel.getContainerManager().add(cont);
   }
 }
