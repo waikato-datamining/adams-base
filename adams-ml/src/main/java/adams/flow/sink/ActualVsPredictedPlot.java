@@ -44,6 +44,9 @@ import adams.gui.visualization.sequence.CrossPaintlet;
 import adams.gui.visualization.sequence.PaintletWithFixedXYRange;
 import adams.gui.visualization.sequence.StraightLineOverlayPaintlet;
 
+import javax.swing.JComponent;
+import java.awt.BorderLayout;
+
 /**
  <!-- globalinfo-start -->
  * Plots actual vs predicted columns obtained from a spreadsheet.
@@ -179,7 +182,8 @@ import adams.gui.visualization.sequence.StraightLineOverlayPaintlet;
  * @version $Revision$
  */
 public class ActualVsPredictedPlot
-  extends AbstractGraphicalDisplay {
+  extends AbstractGraphicalDisplay
+  implements DisplayPanelProvider {
 
   private static final long serialVersionUID = -278662766780196125L;
 
@@ -590,15 +594,12 @@ public class ActualVsPredictedPlot
   }
 
   /**
-   * Displays the token (the panel and dialog have already been created at
-   * this stage).
+   * Adds the spreadsheet to the given panel.
    *
-   * @param token	the token to display
+   * @param panel	the panel to the add the spreadsheet data to
+   * @param sheet	the data to add
    */
-  @Override
-  protected void display(Token token) {
-    SpreadSheet				sheet;
-    SequencePlotterPanel		panel;
+  protected void addData(SequencePlotterPanel panel, SpreadSheet sheet) {
     PaintletWithFixedXYRange		paintlet;
     double[]				act;
     double[]				pred;
@@ -613,8 +614,6 @@ public class ActualVsPredictedPlot
     int					i;
     String				id;
 
-    sheet    = (SpreadSheet) token.getPayload();
-    panel    = (SequencePlotterPanel) m_Panel;
     paintlet = (PaintletWithFixedXYRange) panel.getPaintlet();
     manager  = (SequencePlotContainerManager) panel.getContainerManager();
 
@@ -670,5 +669,85 @@ public class ActualVsPredictedPlot
     cont = manager.newContainer(seq);
     cont.setID(id);
     panel.getContainerManager().add(cont);
+  }
+
+  /**
+   * Displays the token (the panel and dialog have already been created at
+   * this stage).
+   *
+   * @param token	the token to display
+   */
+  @Override
+  protected void display(Token token) {
+    addData((SequencePlotterPanel) m_Panel, (SpreadSheet) token.getPayload());
+  }
+
+  /**
+   * Creates a new display panel for the token.
+   *
+   * @param token	the token to display in a new panel, can be null
+   * @return		the generated panel
+   */
+  @Override
+  public AbstractDisplayPanel createDisplayPanel(Token token) {
+    AbstractDisplayPanel	result;
+
+    result = new AbstractComponentDisplayPanel(getClass().getSimpleName()) {
+      private static final long serialVersionUID = 4356468458332186521L;
+      protected SequencePlotterPanel m_Panel;
+      @Override
+      protected void initGUI() {
+        super.initGUI();
+	m_Panel = new SequencePlotterPanel("act vs pred");
+	AbstractXYSequencePaintlet paintlet;
+	PaintletWithFixedXYRange fixedPaintlet;
+	if (m_Error.isEmpty())
+	  paintlet = new CrossPaintlet();
+	else
+	  paintlet = new ErrorCrossPaintlet();
+	fixedPaintlet = new PaintletWithFixedXYRange();
+	fixedPaintlet.setPaintlet(paintlet);
+	m_Panel.setPaintlet(fixedPaintlet);
+	ActorUtils.updateFlowAwarePaintlet(m_Panel.getPaintlet(), ActualVsPredictedPlot.this);
+	m_Panel.setOverlayPaintlet(new StraightLineOverlayPaintlet());
+	ActorUtils.updateFlowAwarePaintlet(m_Panel.getOverlayPaintlet(), ActualVsPredictedPlot.this);
+	getDefaultAxisX().configure(m_Panel.getPlot(), Axis.BOTTOM);
+	getDefaultAxisY().configure(m_Panel.getPlot(), Axis.LEFT);
+	m_Panel.setColorProvider(new DefaultColorProvider());
+	m_Panel.setSidePanelVisible(true);
+	add(m_Panel, BorderLayout.CENTER);
+      }
+      @Override
+      public void display(Token token) {
+	addData(m_Panel, (SpreadSheet) token.getPayload());
+      }
+      @Override
+      public void clearPanel() {
+	m_Panel.getContainerManager().clear();
+      }
+      @Override
+      public void cleanUp() {
+	m_Panel.getContainerManager().clear();
+      }
+      @Override
+      public JComponent supplyComponent() {
+	return m_Panel;
+      }
+    };
+
+    if (token != null)
+      result.display(token);
+
+    return result;
+  }
+
+  /**
+   * Returns whether the created display panel requires a scroll pane or not.
+   *
+   * @return		true if the display panel requires a scroll pane
+   */
+  @Override
+  public boolean displayPanelRequiresScrollPane() {
+    return false;
   }
 }
