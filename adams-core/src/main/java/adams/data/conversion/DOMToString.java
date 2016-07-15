@@ -15,22 +15,26 @@
 
 /**
  * DOMToString.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
 
-import java.io.ByteArrayOutputStream;
+import adams.core.QuickInfoHelper;
+import adams.core.base.BaseCharset;
+import adams.core.io.PrettyPrintingSupporter;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
+import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-
-import adams.core.QuickInfoHelper;
-import adams.core.base.BaseCharset;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathFactory;
+import java.io.StringWriter;
 
 /**
  <!-- globalinfo-start -->
@@ -50,19 +54,28 @@ import adams.core.base.BaseCharset;
  * &nbsp;&nbsp;&nbsp;default: Default
  * </pre>
  * 
+ * <pre>-pretty-printing &lt;boolean&gt; (property: prettyPrinting)
+ * &nbsp;&nbsp;&nbsp;If enabled, the XML is output in pretty-print format.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
 public class DOMToString
-  extends AbstractConversionToString {
+  extends AbstractConversionToString
+  implements PrettyPrintingSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = 6744245717394758406L;
 
   /** the encoding to use. */
   protected BaseCharset m_Encoding;
+
+  /** whether to use pretty printing. */
+  protected boolean m_PrettyPrinting;
 
   /**
    * Returns a string describing the object.
@@ -86,8 +99,12 @@ public class DOMToString
     super.defineOptions();
 
     m_OptionManager.add(
-	    "encoding", "encoding",
-	    new BaseCharset());
+      "encoding", "encoding",
+      new BaseCharset());
+
+    m_OptionManager.add(
+      "pretty-printing", "prettyPrinting",
+      false);
   }
   
   /**
@@ -120,13 +137,47 @@ public class DOMToString
   }
 
   /**
+   * Sets whether to use pretty-printing or not.
+   *
+   * @param value	true if to use pretty-printing
+   */
+  public void setPrettyPrinting(boolean value) {
+    m_PrettyPrinting = value;
+    reset();
+  }
+
+  /**
+   * Returns whether pretty-printing is used or not.
+   *
+   * @return		true if to use pretty-printing
+   */
+  public boolean getPrettyPrinting() {
+    return m_PrettyPrinting;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String prettyPrintingTipText() {
+    return "If enabled, the XML is output in pretty-print format.";
+  }
+
+  /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
    */
   @Override
   public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "encoding", m_Encoding);
+    String	result;
+
+    result  = QuickInfoHelper.toString(this, "encoding", m_Encoding, "encoding: ");
+    result += QuickInfoHelper.toString(this, "prettyPrinting", (m_PrettyPrinting ? "pretty" : "not-so-pretty"), ", ");
+
+    return result;
   }
 
   /**
@@ -148,9 +199,11 @@ public class DOMToString
   @Override
   protected Object doConvert() throws Exception {
     Document			doc;
-    DOMSource 			dsource;
-    ByteArrayOutputStream	ostream;
-    StreamResult 		sresult;
+    XPath 			xPath;
+    NodeList 			nodeList;
+    int 			i;
+    Node 			node;
+    StringWriter 		swriter;
     TransformerFactory 		factory;
     Transformer 		transformer;
     
@@ -158,14 +211,29 @@ public class DOMToString
       doc = (Document) m_Input;
     else
       doc = ((Node) m_Input).getOwnerDocument();
-    
-    dsource     = new DOMSource(doc);
-    ostream     = new ByteArrayOutputStream();
-    sresult     = new StreamResult(ostream);
-    factory     = TransformerFactory.newInstance();
-    transformer = factory.newTransformer();
-    transformer.transform(dsource, sresult);
-    
-    return new String(ostream.toByteArray(), m_Encoding.charsetValue());
+
+    synchronized(doc) {
+      if (m_PrettyPrinting) {
+	doc = (Document) doc.cloneNode(true);
+	xPath = XPathFactory.newInstance().newXPath();
+	nodeList = (NodeList) xPath.evaluate("//text()[normalize-space()='']", doc, XPathConstants.NODESET);
+	for (i = 0; i < nodeList.getLength(); ++i) {
+	  node = nodeList.item(i);
+	  node.getParentNode().removeChild(node);
+	}
+      }
+
+      factory = TransformerFactory.newInstance();
+      if (m_PrettyPrinting)
+	factory.setAttribute("indent-number", 2);
+      transformer = factory.newTransformer();
+      transformer.setOutputProperty(OutputKeys.ENCODING, m_Encoding.charsetValue().toString());
+      if (m_PrettyPrinting)
+	transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+      swriter = new StringWriter();
+      transformer.transform(new DOMSource(doc), new StreamResult(swriter));
+    }
+
+    return swriter.toString();
   }
 }
