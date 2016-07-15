@@ -16,6 +16,7 @@ Definitions=\
   adams.env.DatabaseConnectionDefinition,\
   adams.env.DriversDefinition,\
   adams.env.FlowControlCenterPanelDefinition,\
+  adams.env.FlowDefinition,\
   adams.env.FlowEditorPanelDefinition,\
   adams.env.FlowEditorPanelMenuDefinition,\
   adams.env.FlowEditorTreePopupMenuDefinition,\

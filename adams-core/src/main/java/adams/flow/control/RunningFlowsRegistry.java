@@ -74,6 +74,7 @@ public class RunningFlowsRegistry
    */
   public synchronized void addFlow(Flow flow) {
     m_Counter++;
+    removeFlow(flow);
     m_Flows.put(m_Counter, flow);
   }
 

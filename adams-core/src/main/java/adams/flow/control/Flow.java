@@ -21,6 +21,7 @@
 package adams.flow.control;
 
 import adams.core.DateUtils;
+import adams.core.Properties;
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
 import adams.core.Variables;
@@ -29,6 +30,8 @@ import adams.core.io.FlowFile;
 import adams.data.id.RuntimeIDGenerator;
 import adams.db.LogEntry;
 import adams.db.MutableLogEntryHandler;
+import adams.env.Environment;
+import adams.env.FlowDefinition;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorExecution;
 import adams.flow.core.ActorHandlerInfo;
@@ -38,7 +41,6 @@ import adams.flow.core.FlowVariables;
 import adams.flow.core.PauseStateHandler;
 import adams.flow.core.PauseStateManager;
 import adams.flow.core.TriggerableEvent;
-import adams.flow.execution.debug.AbstractBreakpoint;
 import adams.flow.execution.Debug;
 import adams.flow.execution.FlowExecutionListener;
 import adams.flow.execution.FlowExecutionListeningSupporter;
@@ -46,6 +48,7 @@ import adams.flow.execution.GraphicalFlowExecutionListener;
 import adams.flow.execution.ListenerUtils;
 import adams.flow.execution.MultiListener;
 import adams.flow.execution.NullListener;
+import adams.flow.execution.debug.AbstractBreakpoint;
 import adams.flow.execution.debug.AbstractScopeRestriction;
 import adams.flow.execution.debug.MultiScopeRestriction;
 import adams.flow.execution.debug.MultiScopeRestriction.ScopeCombination;
@@ -171,6 +174,9 @@ public class Flow
     /** actors only stop on errors if the "stopFlowOnError" flag is set. */
     ACTORS_DECIDE_TO_STOP_ON_ERROR
   }
+
+  /** the filename for flow settings. */
+  public final static String FILENAME = "Flow.props";
 
   /** the error handling. */
   protected ErrorHandling m_ErrorHandling;
@@ -875,6 +881,7 @@ public class Flow
   public String setUp() {
     String		result;
     List<String>	errors;
+    Properties 		props;
 
     // variables
     forceVariables(getVariables());
@@ -912,6 +919,14 @@ public class Flow
     
     if (result != null)
       getLogger().severe(result);
+
+    // properties
+    if (result == null) {
+      props = Environment.getInstance().read(FlowDefinition.KEY);
+      // auto-register?
+      if (props.getBoolean("AutoRegister", false))
+	RunningFlowsRegistry.getSingleton().addFlow(this);
+    }
 
     return result;
   }
@@ -1132,6 +1147,8 @@ public class Flow
 	}
       }
     }
+
+    RunningFlowsRegistry.getSingleton().removeFlow(this);
 
     super.wrapUp();
   }

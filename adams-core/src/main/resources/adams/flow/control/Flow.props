@@ -1,0 +1,9 @@
+# Configuration file for flows.
+#
+# Author: FracPete (fracpete at waikato dot ac dot nz)
+# Version: $Revision: 5288 $
+
+# Whether to auto-register flows for remote command access
+# see adams.flow.control.RunningFlowsRegistry
+# (true|false)
+AutoRegister=false
