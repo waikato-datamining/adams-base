@@ -15,7 +15,7 @@
 
 /*
  * RegisterFlow.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.standalone;
@@ -25,7 +25,7 @@ import adams.flow.control.RunningFlowsRegistry;
 
 /**
  <!-- globalinfo-start -->
- * Simply registers the flow that it is part of with the running flows registry.
+ * Simply registers the flow with the running flows registry.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -80,7 +80,7 @@ public class RegisterFlow
    */
   @Override
   public String globalInfo() {
-    return "Simply registers the flow that it is part of with the running flows registry.";
+    return "Simply registers the flow with the running flows registry.";
   }
 
   /**
