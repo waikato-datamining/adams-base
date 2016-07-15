@@ -15,7 +15,7 @@
 
 /*
  * PropertiesViewer.java
- * Copyright (C) 2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -24,6 +24,7 @@ package adams.gui.menu;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.AbstractBasicMenuItemDefinition;
 import adams.gui.application.UserMode;
+import adams.gui.core.GUIHelper;
 import adams.gui.tools.PropertiesViewerPanel;
 
 /**
@@ -67,7 +68,7 @@ public class PropertiesViewer
    * Launches the functionality of the menu item.
    */
   public void launch() {
-    createChildFrame(new PropertiesViewerPanel(), 600, 600);
+    createChildFrame(new PropertiesViewerPanel(), GUIHelper.getDefaultSmallDialogDimension());
   }
 
   /**

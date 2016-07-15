@@ -15,7 +15,7 @@
 
 /*
  * FlowEditor.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -24,6 +24,7 @@ package adams.gui.menu;
 import adams.core.io.PlaceholderFile;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.UserMode;
+import adams.gui.core.GUIHelper;
 import adams.gui.flow.FlowEditorPanel;
 
 import java.util.ArrayList;
@@ -111,7 +112,7 @@ public class FlowEditor
     for (String param: run)
       m_FlowEditorPanel.runUnsafe(new PlaceholderFile(param));
 
-    createChildFrame(m_FlowEditorPanel, 1000, 700);
+    createChildFrame(m_FlowEditorPanel, GUIHelper.getDefaultLargeDialogDimension());
   }
 
   /**

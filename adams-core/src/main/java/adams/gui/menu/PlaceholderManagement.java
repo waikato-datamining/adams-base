@@ -15,7 +15,7 @@
 
 /*
  * PlaceholderManagement.java
- * Copyright (C) 2009 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -24,6 +24,7 @@ package adams.gui.menu;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.AbstractBasicMenuItemDefinition;
 import adams.gui.application.UserMode;
+import adams.gui.core.GUIHelper;
 import adams.gui.tools.PlaceholderManagementPanel;
 
 /**
@@ -67,7 +68,7 @@ public class PlaceholderManagement
    * Launches the functionality of the menu item.
    */
   public void launch() {
-    createChildFrame(new PlaceholderManagementPanel(), 600, 400);
+    createChildFrame(new PlaceholderManagementPanel(), GUIHelper.getDefaultSmallDialogDimension());
   }
 
   /**

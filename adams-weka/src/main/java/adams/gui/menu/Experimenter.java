@@ -15,7 +15,7 @@
 
 /*
  * Experimenter.java
- * Copyright (C) 2009 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -23,6 +23,7 @@ package adams.gui.menu;
 
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.UserMode;
+import adams.gui.core.GUIHelper;
 
 /**
  * Opens the WEKA Experimenter.
@@ -56,7 +57,7 @@ public class Experimenter
    * Launches the functionality of the menu item.
    */
   public void launch() {
-    createChildFrame(new weka.gui.experiment.Experimenter(false), 800, 600);
+    createChildFrame(new weka.gui.experiment.Experimenter(false), GUIHelper.getDefaultDialogDimension());
   }
 
   /**

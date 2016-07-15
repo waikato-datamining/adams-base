@@ -60,6 +60,7 @@ import javax.swing.WindowConstants;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.Image;
 import java.awt.Window;
@@ -630,13 +631,12 @@ public abstract class AbstractApplicationFrame
    *
    * @param title		the title of the frame
    * @param c			the component to place, can be null
-   * @param width		the width of the frame, ignored if -1
-   * @param height		the height of the frame, ignored if -1
+   * @param size		the size of the frame, ignored if -1 and -1
    * @param icon		the icon to use, null for default
    * @return			the generated frame
    */
-  protected ChildFrame createChildFrame(String title, Component c, int width, int height, String icon) {
-    return createChildFrame(this, title, c, width, height, icon);
+  protected ChildFrame createChildFrame(String title, Component c, Dimension size, String icon) {
+    return createChildFrame(this, title, c, size, icon);
   }
 
   /**
@@ -645,12 +645,11 @@ public abstract class AbstractApplicationFrame
    * @param owner		the owner
    * @param title		the title of the frame
    * @param c			the component to place, can be null
-   * @param width		the width of the frame, ignored if -1
-   * @param height		the height of the frame, ignored if -1
+   * @param size		the size of the frame, ignored if -1 and -1
    * @param icon		the icon to use, null for default
    * @return			the generated frame
    */
-  public static ChildFrame createChildFrame(AbstractApplicationFrame owner, String title, Component c, int width, int height, String icon) {
+  public static ChildFrame createChildFrame(AbstractApplicationFrame owner, String title, Component c, Dimension size, String icon) {
     ChildFrame 			result;
     int 			screenHeight;
     int 			screenWidth;
@@ -665,8 +664,8 @@ public abstract class AbstractApplicationFrame
 
     // size
     result.pack();
-    if ((width > -1) && (height > -1))
-      result.setSize(width, height);
+    if ((size.getWidth() > -1) && (size.getHeight() > -1))
+      result.setSize(size);
     result.validate();
 
     // location
@@ -707,13 +706,12 @@ public abstract class AbstractApplicationFrame
    *
    * @param title		the title of the frame
    * @param c			the component to place, can be null
-   * @param width		the width of the frame, ignored if -1
-   * @param height		the height of the frame, ignored if -1
+   * @param size		the size of the frame, ignored if -1 and -1
    * @param icon		the icon to use, null for default
    * @return			the generated frame
    */
-  protected ChildWindow createChildWindow(String title, Component c, int width, int height, String icon) {
-    return createChildWindow(this, title, c, width, height, icon);
+  protected ChildWindow createChildWindow(String title, Component c, Dimension size, String icon) {
+    return createChildWindow(this, title, c, size, icon);
   }
 
   /**
@@ -722,12 +720,11 @@ public abstract class AbstractApplicationFrame
    * @param owner		the owner
    * @param title		the title of the frame
    * @param c			the component to place, can be null
-   * @param width		the width of the frame, ignored if -1
-   * @param height		the height of the frame, ignored if -1
+   * @param size		the size of the frame, ignored if -1 and -1
    * @param icon		the icon to use, null for default
    * @return			the generated frame
    */
-  public static ChildWindow createChildWindow(AbstractApplicationFrame owner, String title, Component c, int width, int height, String icon) {
+  public static ChildWindow createChildWindow(AbstractApplicationFrame owner, String title, Component c, Dimension size, String icon) {
     ChildWindow 		result;
     int 			screenHeight;
     int 			screenWidth;
@@ -742,8 +739,8 @@ public abstract class AbstractApplicationFrame
 
     // size
     result.pack();
-    if ((width > -1) && (height > -1))
-      result.setSize(width, height);
+    if ((size.getWidth() > -1) && (size.getHeight() > -1))
+      result.setSize(size);
     result.validate();
 
     // location

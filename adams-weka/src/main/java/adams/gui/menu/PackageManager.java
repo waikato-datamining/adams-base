@@ -15,7 +15,7 @@
 
 /*
  * PackageManager.java
- * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -25,6 +25,7 @@ import adams.core.logging.LoggingLevel;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.UserMode;
 import adams.gui.core.ConsolePanel.ConsolePanelOutputStream;
+import adams.gui.core.GUIHelper;
 import weka.core.WekaPackageManager;
 
 import java.io.PrintStream;
@@ -63,7 +64,7 @@ public class PackageManager
   @Override
   public void launch() {
     WekaPackageManager.establishCacheIfNeeded(new PrintStream(new ConsolePanelOutputStream(LoggingLevel.INFO)));
-    createChildFrame(new weka.gui.PackageManager(), 800, 600);
+    createChildFrame(new weka.gui.PackageManager(), GUIHelper.getDefaultDialogDimension());
   }
 
   /**

@@ -15,7 +15,7 @@
 
 /*
  * MergeDatasets.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -136,7 +136,7 @@ public class MergeDatasets
     finalpage.setLogo(null);
     finalpage.setDescription("<html><h2>Ready</h2>Please click on <b>Merge</b> to start the process.</html>");
     wizard.addPage(finalpage);
-    frame = createChildFrame(wizard, 800, 600);
+    frame = createChildFrame(wizard, GUIHelper.getDefaultDialogDimension());
     wizard.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {

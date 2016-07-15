@@ -23,6 +23,7 @@ package adams.gui.menu;
 
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.UserMode;
+import adams.gui.core.GUIHelper;
 import weka.gui.CommandToCodePanel;
 
 /**
@@ -59,7 +60,7 @@ public class WekaCommandToCode
   @Override
   public void launch() {
     CommandToCodePanel panel = new CommandToCodePanel();
-    createChildFrame(panel, 800, 600);
+    createChildFrame(panel, GUIHelper.getDefaultDialogDimension());
   }
 
   /**

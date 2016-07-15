@@ -15,7 +15,7 @@
 
 /*
  * SqlViewer.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -24,6 +24,7 @@ package adams.gui.menu;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.ChildFrame;
 import adams.gui.application.UserMode;
+import adams.gui.core.GUIHelper;
 
 import javax.swing.JPanel;
 
@@ -60,7 +61,7 @@ public class SqlViewer
    */
   public void launch() {
     JPanel dummy = new JPanel();
-    ChildFrame frame = createChildFrame(dummy, 800, 600);
+    ChildFrame frame = createChildFrame(dummy, GUIHelper.getDefaultDialogDimension());
     weka.gui.sql.SqlViewer panel = new weka.gui.sql.SqlViewer(frame);
     dummy.getParent().remove(dummy);
     frame.getContentPane().add(panel);

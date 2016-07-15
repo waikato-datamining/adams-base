@@ -15,7 +15,7 @@
 
 /*
  * InstancesPlot.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -118,7 +118,7 @@ public class InstancesPlot
     }
 
     // create frame
-    ChildFrame frame = createChildFrame(panel, 800, 600);
+    ChildFrame frame = createChildFrame(panel, GUIHelper.getDefaultDialogDimension());
     frame.setTitle(frame.getTitle()  + " - " + file);
   }
 

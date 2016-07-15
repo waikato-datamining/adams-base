@@ -31,6 +31,7 @@ import adams.gui.core.BaseSplitPane;
 import adams.gui.core.BrowserHelper.DefaultHyperlinkListener;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.Fonts;
+import adams.gui.core.GUIHelper;
 import adams.gui.core.SearchableBaseList;
 import com.googlecode.jfilechooserbookmarks.gui.BaseScrollPane;
 
@@ -235,7 +236,7 @@ public class ClassHelp
     m_TextPaneHelp.addHyperlinkListener(new DefaultHyperlinkListener());
     split.setBottomComponent(new BaseScrollPane(m_TextPaneHelp));
 
-    createChildFrame(panel, 600, 600);
+    createChildFrame(panel, GUIHelper.getDefaultDialogDimension());
   }
 
   /**

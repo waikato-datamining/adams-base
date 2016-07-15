@@ -15,7 +15,7 @@
 
 /*
  * BoundaryVisualizer.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -23,6 +23,7 @@ package adams.gui.menu;
 
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.UserMode;
+import adams.gui.core.GUIHelper;
 
 import javax.swing.JFileChooser;
 import java.io.File;
@@ -72,7 +73,7 @@ public class BoundaryVisualizer
    * Launches the functionality of the menu item.
    */
   public void launch() {
-    createChildFrame(new weka.gui.boundaryvisualizer.BoundaryVisualizer(), 800, 600);
+    createChildFrame(new weka.gui.boundaryvisualizer.BoundaryVisualizer(), GUIHelper.getDefaultDialogDimension());
     weka.gui.boundaryvisualizer.BoundaryVisualizer.setExitIfNoWindowsOpen(false);
   }
 

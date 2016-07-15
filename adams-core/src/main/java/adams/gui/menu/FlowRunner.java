@@ -15,7 +15,7 @@
 
 /*
  * FlowRunner.java
- * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -24,6 +24,7 @@ package adams.gui.menu;
 import adams.core.io.PlaceholderFile;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.UserMode;
+import adams.gui.core.GUIHelper;
 import adams.gui.flow.FlowRunnerPanel;
 
 /**
@@ -70,7 +71,7 @@ public class FlowRunner
    */
   public void launch() {
     FlowRunnerPanel panel = new FlowRunnerPanel();
-    createChildFrame(panel, 640, 480);
+    createChildFrame(panel, GUIHelper.getDefaultSmallDialogDimension());
     if (m_Parameters.length > 0) {
       if (m_Parameters[0].startsWith("run:"))
         panel.runUnsafe(new PlaceholderFile(m_Parameters[0].substring(4)));

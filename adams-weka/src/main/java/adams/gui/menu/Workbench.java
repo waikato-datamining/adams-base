@@ -64,7 +64,7 @@ public class Workbench
   @Override
   public void launch() {
     WorkbenchApp app = new WorkbenchApp();
-    createChildFrame(app, 1024, 768);
+    createChildFrame(app, GUIHelper.getDefaultLargeDialogDimension());
     if (app.getMainPerspective().acceptsInstances()) {
       if (m_Parameters.length > 0) {
         PlaceholderFile[] files = new PlaceholderFile[m_Parameters.length];

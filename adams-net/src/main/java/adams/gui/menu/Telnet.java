@@ -15,7 +15,7 @@
 
 /*
  * Telnet.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -24,6 +24,7 @@ package adams.gui.menu;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.AbstractBasicMenuItemDefinition;
 import adams.gui.application.UserMode;
+import adams.gui.core.GUIHelper;
 import adams.gui.tools.TelnetPanel;
 
 /**
@@ -69,7 +70,7 @@ public class Telnet
    */
   @Override
   public void launch() {
-    createChildFrame(new TelnetPanel(), 800, 600);
+    createChildFrame(new TelnetPanel(), GUIHelper.getDefaultDialogDimension());
   }
 
   /**

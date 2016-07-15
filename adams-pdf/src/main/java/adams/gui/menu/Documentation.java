@@ -15,21 +15,11 @@
 
 /*
  * Documentation.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package adams.gui.menu;
-
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
 
 import adams.core.base.BaseRegExp;
 import adams.core.io.DirectoryLister;
@@ -40,7 +30,17 @@ import adams.core.io.PlaceholderFile;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.AbstractBasicMenuItemDefinition;
 import adams.gui.application.UserMode;
+import adams.gui.core.GUIHelper;
 import adams.gui.visualization.pdf.PDFViewerPanel;
+
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Displays all available PDF documents in the documentation directories.
@@ -135,7 +135,7 @@ public class Documentation
       menuitem.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e) {
 	  PDFViewerPanel panel = new PDFViewerPanel();
-	  createChildFrame(panel, 800, 600);
+	  createChildFrame(panel, GUIHelper.getDefaultDialogDimension());
 	  panel.load(file);
 	}
       });

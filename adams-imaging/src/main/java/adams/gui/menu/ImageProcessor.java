@@ -15,7 +15,7 @@
 
 /*
  * ImageProcessor.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -24,6 +24,7 @@ package adams.gui.menu;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.AbstractBasicMenuItemDefinition;
 import adams.gui.application.UserMode;
+import adams.gui.core.GUIHelper;
 import adams.gui.tools.ImageProcessorPanel;
 
 /**
@@ -69,7 +70,7 @@ public class ImageProcessor
    */
   @Override
   public void launch() {
-    createChildFrame(new ImageProcessorPanel(), 1000, 800);
+    createChildFrame(new ImageProcessorPanel(), GUIHelper.getDefaultLargeDialogDimension());
   }
 
   /**

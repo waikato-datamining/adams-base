@@ -15,14 +15,11 @@
 
 /*
  * ContainerNesting.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package adams.gui.menu;
-
-import java.awt.BorderLayout;
-import java.awt.Container;
 
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.AbstractBasicMenuItemDefinition;
@@ -32,6 +29,9 @@ import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTree;
 import adams.gui.core.BaseTreeNode;
 import adams.gui.core.GUIHelper;
+
+import java.awt.BorderLayout;
+import java.awt.Container;
 
 /**
  * Displays the ContainerNesting dialog.
@@ -87,7 +87,7 @@ public class ContainerNesting
     tree.setShowsRootHandles(true);
     tree.expand((BaseTreeNode) tree.getModel().getRoot());
     
-    createChildFrame(panel, 800, 800);
+    createChildFrame(panel, GUIHelper.getDefaultDialogDimension());
   }
 
   /**

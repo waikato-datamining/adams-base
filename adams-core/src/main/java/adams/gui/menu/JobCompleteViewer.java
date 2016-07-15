@@ -15,7 +15,7 @@
 
 /*
  * JobCompleteViewer.java
- * Copyright (C) 2009-2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -24,6 +24,7 @@ package adams.gui.menu;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.AbstractBasicMenuItemDefinition;
 import adams.gui.application.UserMode;
+import adams.gui.core.GUIHelper;
 import adams.gui.tools.JobCompleteManagerPanel;
 
 /**
@@ -70,7 +71,7 @@ public class JobCompleteViewer
   @Override
   public void launch() {
     JobCompleteManagerPanel panel = new JobCompleteManagerPanel();
-    createChildFrame(panel, 800, 600);
+    createChildFrame(panel, GUIHelper.getDefaultDialogDimension());
   }
 
   /**

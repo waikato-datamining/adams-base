@@ -220,7 +220,7 @@ public class MakeCompatibleDatasets
     finalpage.setLogo(null);
     finalpage.setDescription("<html><h2>Ready</h2>Please click on <b>Generate</b> to start the process.</html>");
     wizard.addPage(finalpage);
-    frame = createChildFrame(wizard, 900, 600);
+    frame = createChildFrame(wizard, GUIHelper.getDefaultDialogDimension());
     wizard.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {

@@ -15,12 +15,13 @@
 
 /*
  * BayesNetEditor.java
- * Copyright (C) 2009 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package adams.gui.menu;
 
+import adams.gui.core.GUIHelper;
 import weka.classifiers.bayes.net.GUI;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.ChildFrame;
@@ -68,7 +69,7 @@ public class BayesNetEditor
    */
   public void launch() {
     GUI panel = new GUI();
-    ChildFrame frame = createChildFrame(panel, 800, 600);
+    ChildFrame frame = createChildFrame(panel, GUIHelper.getDefaultDialogDimension());
     frame.setJMenuBar(panel.getMenuBar());
   }
 

@@ -14,8 +14,8 @@
  */
 
 /*
- * OptionsConversion.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * StringConversion.java
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -186,7 +186,7 @@ public class StringConversion
     });
     buttons.add(buttonCancel);
 
-    createChildFrame(panel, 600, 400);
+    createChildFrame(panel, GUIHelper.getDefaultSmallDialogDimension());
   }
 
   /**

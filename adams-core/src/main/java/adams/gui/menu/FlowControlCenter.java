@@ -15,7 +15,7 @@
 
 /*
  * FlowControlCenter.java
- * Copyright (C) 2009 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -24,6 +24,7 @@ package adams.gui.menu;
 import adams.core.io.PlaceholderFile;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.UserMode;
+import adams.gui.core.GUIHelper;
 import adams.gui.flow.FlowControlCenterPanel;
 
 /**
@@ -68,7 +69,7 @@ public class FlowControlCenter
    */
   public void launch() {
     FlowControlCenterPanel panel = new FlowControlCenterPanel();
-    createChildFrame(panel, 800, 600);
+    createChildFrame(panel, GUIHelper.getDefaultDialogDimension());
     if (m_Parameters.length > 0)
       panel.load(new PlaceholderFile(m_Parameters[0]));
   }

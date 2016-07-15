@@ -15,7 +15,7 @@
 
 /*
  * ImageViewer.java
- * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -24,6 +24,7 @@ package adams.gui.menu;
 import adams.core.io.PlaceholderFile;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.UserMode;
+import adams.gui.core.GUIHelper;
 
 /**
  * For displaying images.
@@ -69,7 +70,7 @@ public class ImageViewer
   @Override
   public void launch() {
     adams.gui.visualization.image.ImageViewerPanel panel = new adams.gui.visualization.image.ImageViewerPanel();
-    createChildFrame(panel, 1200, 800);
+    createChildFrame(panel, GUIHelper.getDefaultLargeDialogDimension());
     for (int i = 0; i < m_Parameters.length; i++)
       panel.load(new PlaceholderFile(m_Parameters[i]));
   }

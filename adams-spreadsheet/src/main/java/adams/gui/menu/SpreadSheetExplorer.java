@@ -24,6 +24,7 @@ package adams.gui.menu;
 import adams.core.io.PlaceholderFile;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.UserMode;
+import adams.gui.core.GUIHelper;
 
 /**
  * For visualizing spreadsheets.
@@ -67,7 +68,7 @@ public class SpreadSheetExplorer
    */
   public void launch() {
     adams.gui.visualization.spreadsheet.SpreadSheetExplorer panel = new adams.gui.visualization.spreadsheet.SpreadSheetExplorer();
-    createChildFrame(panel, 800, 600);
+    createChildFrame(panel, GUIHelper.getDefaultDialogDimension());
     for (int i = 0; i < m_Parameters.length; i++)
       panel.loadData(new PlaceholderFile(m_Parameters[i]));
   }

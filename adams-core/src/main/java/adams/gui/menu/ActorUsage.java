@@ -15,23 +15,11 @@
 
 /*
  * ActorUsage.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package adams.gui.menu;
-
-import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
 import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
@@ -48,6 +36,17 @@ import adams.gui.core.SortableAndSearchableTableWithButtons;
 import adams.gui.core.SpreadSheetTableModel;
 import adams.gui.event.SearchEvent;
 import adams.gui.event.SearchListener;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Scans a user-selected directory for flows and analyzes/displays the actor
@@ -224,7 +223,7 @@ public class ActorUsage
 	editFlow.setEnabled(table.getSelectedRowCount() > 0);
       }
     });
-    createChildFrame(table, 800, 600);
+    createChildFrame(table, GUIHelper.getDefaultDialogDimension());
     table.setOptimalColumnWidth();
   }
   

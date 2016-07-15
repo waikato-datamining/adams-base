@@ -15,7 +15,7 @@
 
 /*
  * InstanceCompare.java
- * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -24,6 +24,7 @@ package adams.gui.menu;
 import adams.core.io.PlaceholderFile;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.UserMode;
+import adams.gui.core.GUIHelper;
 import adams.gui.visualization.instance.InstanceComparePanel;
 
 /**
@@ -68,7 +69,7 @@ public class InstanceCompare
    */
   public void launch() {
     InstanceComparePanel panel = new InstanceComparePanel();
-    createChildFrame(panel, 1000, 800);
+    createChildFrame(panel, GUIHelper.getDefaultLargeDialogDimension());
     if (m_Parameters.length > 0)
       panel.setFirstDataset(new PlaceholderFile(m_Parameters[0]));
     if (m_Parameters.length > 1)

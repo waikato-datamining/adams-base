@@ -15,7 +15,7 @@
 
 /*
  * InstancesExplorer.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -24,6 +24,7 @@ package adams.gui.menu;
 import adams.core.io.PlaceholderFile;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.UserMode;
+import adams.gui.core.GUIHelper;
 
 /**
  * For displaying and filtering instances.
@@ -67,7 +68,7 @@ public class InstanceExplorer
    */
   public void launch() {
     adams.gui.visualization.instance.InstanceExplorer panel = new adams.gui.visualization.instance.InstanceExplorer();
-    createChildFrame(panel, 800, 600);
+    createChildFrame(panel, GUIHelper.getDefaultDialogDimension());
     for (int i = 0; i < m_Parameters.length; i++)
       panel.loadDataFromDisk(new PlaceholderFile(m_Parameters[i]));
   }

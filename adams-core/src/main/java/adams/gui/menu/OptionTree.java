@@ -15,7 +15,7 @@
 
 /*
  * OptionTree.java
- * Copyright (C) 2009 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -24,6 +24,7 @@ package adams.gui.menu;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.AbstractBasicMenuItemDefinition;
 import adams.gui.application.UserMode;
+import adams.gui.core.GUIHelper;
 
 /**
  * Displays the OptionTree dialog.
@@ -57,7 +58,7 @@ public class OptionTree
    * Launches the functionality of the menu item.
    */
   public void launch() {
-    createChildFrame(new adams.gui.tools.OptionTree(), 800, 600);
+    createChildFrame(new adams.gui.tools.OptionTree(), GUIHelper.getDefaultDialogDimension());
   }
 
   /**

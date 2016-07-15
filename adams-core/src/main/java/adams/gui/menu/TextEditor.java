@@ -15,7 +15,7 @@
 
 /*
  * TextEditor.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -24,6 +24,7 @@ package adams.gui.menu;
 import adams.core.io.PlaceholderFile;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.UserMode;
+import adams.gui.core.GUIHelper;
 import adams.gui.dialog.TextPanel;
 
 /**
@@ -60,7 +61,7 @@ public class TextEditor
   public void launch() {
     TextPanel panel = new TextPanel();
     panel.setCanOpenFiles(true);
-    createChildFrame(panel, 800, 600);
+    createChildFrame(panel, GUIHelper.getDefaultDialogDimension());
     if (m_Parameters.length > 0)
       panel.open(new PlaceholderFile(m_Parameters[0]));
   }

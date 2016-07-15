@@ -15,7 +15,7 @@
 
 /*
  * ConsoleWindow.ava
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -25,6 +25,7 @@ import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.AbstractBasicMenuItemDefinition;
 import adams.gui.application.UserMode;
 import adams.gui.core.ConsolePanel;
+import adams.gui.core.GUIHelper;
 
 /**
  * Shows the global console window.
@@ -67,7 +68,7 @@ public class ConsoleWindow
    * Launches the functionality of the menu item.
    */
   public void launch() {
-    createChildFrame(ConsolePanel.getSingleton(), 800, 600);
+    createChildFrame(ConsolePanel.getSingleton(), GUIHelper.getDefaultDialogDimension());
   }
 
   /**

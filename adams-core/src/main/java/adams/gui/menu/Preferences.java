@@ -15,25 +15,25 @@
 
 /*
  * Preferences.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package adams.gui.menu;
-
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.JButton;
-import javax.swing.JPanel;
 
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.AbstractBasicMenuItemDefinition;
 import adams.gui.application.ChildFrame;
 import adams.gui.application.PreferencesManagerPanel;
 import adams.gui.application.UserMode;
+import adams.gui.core.GUIHelper;
+
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * For managing the system-wide preferences.
@@ -79,7 +79,7 @@ public class Preferences
   @Override
   public void launch() {
     final PreferencesManagerPanel prefs = new PreferencesManagerPanel();
-    final ChildFrame frame = createChildFrame(prefs, 800, 600);
+    final ChildFrame frame = createChildFrame(prefs, GUIHelper.getDefaultDialogDimension());
     JPanel panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     prefs.add(panel, BorderLayout.SOUTH);
     JButton ok = new JButton("OK");

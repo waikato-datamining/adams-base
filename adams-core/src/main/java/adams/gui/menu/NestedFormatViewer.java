@@ -15,7 +15,7 @@
 
 /*
  * NestedFormatViewer.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -24,6 +24,7 @@ package adams.gui.menu;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.AbstractBasicMenuItemDefinition;
 import adams.gui.application.UserMode;
+import adams.gui.core.GUIHelper;
 
 /**
  * Displays the NestedFormatViewer dialog.
@@ -68,7 +69,7 @@ public class NestedFormatViewer
    */
   @Override
   public void launch() {
-    createChildFrame(new adams.gui.tools.NestedFormatViewerPanel(), 800, 600);
+    createChildFrame(new adams.gui.tools.NestedFormatViewerPanel(), GUIHelper.getDefaultDialogDimension());
   }
 
   /**

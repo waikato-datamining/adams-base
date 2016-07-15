@@ -15,7 +15,7 @@
 
 /*
  * DatasetCompatibility.java
- * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -24,6 +24,7 @@ package adams.gui.menu;
 import adams.core.io.PlaceholderFile;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.UserMode;
+import adams.gui.core.GUIHelper;
 import adams.gui.tools.DatasetCompatibilityPanel;
 
 import java.io.File;
@@ -72,7 +73,7 @@ public class DatasetCompatibility
   @Override
   public void launch() {
     DatasetCompatibilityPanel panel = new DatasetCompatibilityPanel();
-    createChildFrame(panel, 800, 600);
+    createChildFrame(panel, GUIHelper.getDefaultDialogDimension());
     if (m_Parameters.length > 1) {
       File[] files = new File[m_Parameters.length];
       for (int i = 0; i < m_Parameters.length; i++)

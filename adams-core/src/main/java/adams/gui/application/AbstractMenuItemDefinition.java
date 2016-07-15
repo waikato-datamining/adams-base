@@ -29,6 +29,7 @@ import adams.gui.core.GUIHelper;
 import javax.swing.ImageIcon;
 import javax.swing.JMenuItem;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.util.logging.Logger;
@@ -239,22 +240,21 @@ public abstract class AbstractMenuItemDefinition
    * @return			the generated frame
    */
   protected ChildFrame createChildFrame(Component c) {
-    return createChildFrame(c, -1, -1);
+    return createChildFrame(c, new Dimension(-1, -1));
   }
 
   /**
    * creates a frame and returns it.
    *
    * @param c			the component to place, can be null
-   * @param width		the width of the frame, ignored if -1
-   * @param height		the height of the frame, ignored if -1
+   * @param size		the size of the frame, ignored if -1 and -1
    * @return			the generated frame
    */
-  protected ChildFrame createChildFrame(Component c, int width, int height) {
+  protected ChildFrame createChildFrame(Component c, Dimension size) {
     if (getOwner() != null)
-      return getOwner().createChildFrame(getTitle(), c, width, height, getIconName());
+      return getOwner().createChildFrame(getTitle(), c, size, getIconName());
     else
-      return AbstractApplicationFrame.createChildFrame(null, getTitle(), c, width, height, getIconName());
+      return AbstractApplicationFrame.createChildFrame(null, getTitle(), c, size, getIconName());
   }
 
   /**
@@ -264,22 +264,21 @@ public abstract class AbstractMenuItemDefinition
    * @return			the generated window
    */
   protected ChildWindow createChildWindow(Component c) {
-    return createChildWindow(c, -1, -1);
+    return createChildWindow(c, new Dimension(-1, -1));
   }
 
   /**
    * creates a window and returns it.
    *
    * @param c			the component to place, can be null
-   * @param width		the width of the frame, ignored if -1
-   * @param height		the height of the frame, ignored if -1
+   * @param size		the size of the frame, ignored if -1 and -1
    * @return			the generated window
    */
-  protected ChildWindow createChildWindow(Component c, int width, int height) {
+  protected ChildWindow createChildWindow(Component c, Dimension size) {
     if (getOwner() != null)
-      return getOwner().createChildWindow(getTitle(), c, width, height, getIconName());
+      return getOwner().createChildWindow(getTitle(), c, size, getIconName());
     else
-      return AbstractApplicationFrame.createChildWindow(null, getTitle(), c, width, height, getIconName());
+      return AbstractApplicationFrame.createChildWindow(null, getTitle(), c, size, getIconName());
   }
 
   /**

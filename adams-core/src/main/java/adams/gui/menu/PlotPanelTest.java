@@ -15,7 +15,7 @@
 
 /*
  * PlotPanelTest.java
- * Copyright (C) 2009 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -24,6 +24,7 @@ package adams.gui.menu;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.AbstractBasicMenuItemDefinition;
 import adams.gui.application.UserMode;
+import adams.gui.core.GUIHelper;
 import adams.gui.visualization.core.PlotPanel;
 
 /**
@@ -58,7 +59,7 @@ public class PlotPanelTest
    * Launches the functionality of the menu item.
    */
   public void launch() {
-    createChildFrame(new PlotPanel(true), 800, 600);
+    createChildFrame(new PlotPanel(true), GUIHelper.getDefaultDialogDimension());
   }
 
   /**

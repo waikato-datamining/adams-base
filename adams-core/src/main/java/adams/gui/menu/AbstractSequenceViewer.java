@@ -15,7 +15,7 @@
 
 /*
  * AbstractSequenceViewer.java
- * Copyright (C) 2009-2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -24,6 +24,7 @@ package adams.gui.menu;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.AbstractBasicMenuItemDefinition;
 import adams.gui.application.UserMode;
+import adams.gui.core.GUIHelper;
 import adams.gui.tools.AbstractSequenceViewerPanel;
 
 /**
@@ -65,7 +66,7 @@ public abstract class AbstractSequenceViewer
    * Launches the functionality of the menu item.
    */
   public void launch() {
-    createChildFrame(newPanel(), 1000, 800);
+    createChildFrame(newPanel(), GUIHelper.getDefaultLargeDialogDimension());
   }
 
   /**

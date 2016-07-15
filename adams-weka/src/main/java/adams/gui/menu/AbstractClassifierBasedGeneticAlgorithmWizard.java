@@ -15,7 +15,7 @@
 
 /*
  * AbstractClassifierBasedGeneticAlgorithmWizard.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -63,6 +63,7 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.SwingWorker;
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -373,7 +374,7 @@ public abstract class AbstractClassifierBasedGeneticAlgorithmWizard
     finalpage.setDescription("<html><h2>Ready</h2>Please click on <b>Execute</b> to start the optimization.</html>");
     wizard.addPage(finalpage);
 
-    frame = createChildFrame(wizard, 800, 600);
+    frame = createChildFrame(wizard, GUIHelper.getDefaultDialogDimension());
     wizard.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -459,7 +460,7 @@ public abstract class AbstractClassifierBasedGeneticAlgorithmWizard
     panelButtons.add(buttonResume);
     panelButtons.add(buttonStop);
 
-    createChildFrame(panelAll, 800, 300);
+    createChildFrame(panelAll, new Dimension(GUIHelper.getDefaultDialogDimension().width, GUIHelper.getDefaultDialogDimension().height / 2));
     worker = new SwingWorker() {
       @Override
       protected Object doInBackground() throws Exception {
