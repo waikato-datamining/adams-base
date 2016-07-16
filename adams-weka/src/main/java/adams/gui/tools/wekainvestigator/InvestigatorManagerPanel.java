@@ -18,7 +18,7 @@
  * Copyright (C) 2016 University of Waikato, Hamilton, NZ
  */
 
-package adams.gui.tools.investigator;
+package adams.gui.tools.wekainvestigator;
 
 import adams.env.Environment;
 import adams.gui.core.BaseFrame;

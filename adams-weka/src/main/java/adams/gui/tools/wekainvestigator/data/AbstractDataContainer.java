@@ -14,54 +14,62 @@
  */
 
 /**
- * DataContainer.java
+ * AbstractDataContainer.java
  * Copyright (C) 2016 University of Waikato, Hamilton, NZ
  */
 
-package adams.gui.tools.investigator.data;
+package adams.gui.tools.wekainvestigator.data;
 
 import weka.core.Instances;
 
+import java.io.Serializable;
+
 /**
- * Interface for data containers.
+ * Ancestor for data containers.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public interface DataContainer {
+public abstract class AbstractDataContainer
+  implements Serializable, DataContainer {
+
+  private static final long serialVersionUID = 6267905940957451551L;
+
+  /** the underlying data. */
+  protected Instances m_Data;
 
   /**
-   * Returns the source of the data item.
-   *
-   * @return		the source
+   * Initializes the container with no data.
    */
-  public String getSource();
+  public AbstractDataContainer() {
+    m_Data = null;
+  }
 
   /**
-   * Whether it is possible to reload this item.
+   * Initializes the container with just the data.
    *
-   * @return		true if reloadable
+   * @param data	the data to use
    */
-  public boolean canReload();
-
-  /**
-   * Reloads the data.
-   *
-   * @return		true if succesfully reloaded
-   */
-  public boolean reload();
+  public AbstractDataContainer(Instances data) {
+    m_Data = data;
+  }
 
   /**
    * Sets the data.
    *
    * @param value	the data to use
    */
-  public void setData(Instances value);
+  public void setData(Instances value) {
+    m_Data = value;
+  }
 
   /**
    * Returns the actual underlying data.
    *
    * @return		the data
    */
-  public Instances getData();
+  @Override
+  public Instances getData() {
+    return m_Data;
+  }
 }

@@ -14,56 +14,54 @@
  */
 
 /**
- * AbstractInvestigatorTab.java
+ * DataContainer.java
  * Copyright (C) 2016 University of Waikato, Hamilton, NZ
  */
 
-package adams.gui.tools.investigator.tab;
+package adams.gui.tools.wekainvestigator.data;
 
-import adams.gui.core.BasePanel;
-import adams.gui.tools.investigator.InvestigatorPanel;
+import weka.core.Instances;
 
 /**
- * Ancestor for tabs in the Investigator.
+ * Interface for data containers.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public abstract class AbstractInvestigatorTab
-  extends BasePanel {
-
-  private static final long serialVersionUID = 1860821657853747908L;
-
-  /** the owner. */
-  protected InvestigatorPanel m_Owner;
+public interface DataContainer {
 
   /**
-   * Sets the owner for this tab.
+   * Returns the source of the data item.
    *
-   * @param value	the owner
+   * @return		the source
    */
-  public void setOwner(InvestigatorPanel value) {
-    m_Owner = value;
-  }
+  public String getSource();
 
   /**
-   * Returns the owner of this tab.
+   * Whether it is possible to reload this item.
    *
-   * @return		the owner, null if none set
+   * @return		true if reloadable
    */
-  public InvestigatorPanel getOwner() {
-    return m_Owner;
-  }
+  public boolean canReload();
 
   /**
-   * Returns the title of this table.
+   * Reloads the data.
    *
-   * @return		the title
+   * @return		true if succesfully reloaded
    */
-  public abstract String getTitle();
+  public boolean reload();
 
   /**
-   * Notifies the tab that the data changed.
+   * Sets the data.
+   *
+   * @param value	the data to use
    */
-  public abstract void dataChanged();
+  public void setData(Instances value);
+
+  /**
+   * Returns the actual underlying data.
+   *
+   * @return		the data
+   */
+  public Instances getData();
 }

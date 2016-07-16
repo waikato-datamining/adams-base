@@ -14,62 +14,56 @@
  */
 
 /**
- * AbstractDataContainer.java
+ * AbstractInvestigatorTab.java
  * Copyright (C) 2016 University of Waikato, Hamilton, NZ
  */
 
-package adams.gui.tools.investigator.data;
+package adams.gui.tools.wekainvestigator.tab;
 
-import weka.core.Instances;
-
-import java.io.Serializable;
+import adams.gui.core.BasePanel;
+import adams.gui.tools.wekainvestigator.InvestigatorPanel;
 
 /**
- * Ancestor for data containers.
+ * Ancestor for tabs in the Investigator.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public abstract class AbstractDataContainer
-  implements Serializable, DataContainer {
+public abstract class AbstractInvestigatorTab
+  extends BasePanel {
 
-  private static final long serialVersionUID = 6267905940957451551L;
+  private static final long serialVersionUID = 1860821657853747908L;
 
-  /** the underlying data. */
-  protected Instances m_Data;
-
-  /**
-   * Initializes the container with no data.
-   */
-  public AbstractDataContainer() {
-    m_Data = null;
-  }
+  /** the owner. */
+  protected InvestigatorPanel m_Owner;
 
   /**
-   * Initializes the container with just the data.
+   * Sets the owner for this tab.
    *
-   * @param data	the data to use
+   * @param value	the owner
    */
-  public AbstractDataContainer(Instances data) {
-    m_Data = data;
+  public void setOwner(InvestigatorPanel value) {
+    m_Owner = value;
   }
 
   /**
-   * Sets the data.
+   * Returns the owner of this tab.
    *
-   * @param value	the data to use
+   * @return		the owner, null if none set
    */
-  public void setData(Instances value) {
-    m_Data = value;
+  public InvestigatorPanel getOwner() {
+    return m_Owner;
   }
 
   /**
-   * Returns the actual underlying data.
+   * Returns the title of this table.
    *
-   * @return		the data
+   * @return		the title
    */
-  @Override
-  public Instances getData() {
-    return m_Data;
-  }
+  public abstract String getTitle();
+
+  /**
+   * Notifies the tab that the data changed.
+   */
+  public abstract void dataChanged();
 }
