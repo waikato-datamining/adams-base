@@ -22,12 +22,16 @@ package adams.gui.tools.wekainvestigator;
 
 import adams.gui.core.BaseStatusBar;
 import adams.gui.core.GUIHelper;
+import adams.gui.tools.wekainvestigator.data.DataContainer;
+import adams.gui.tools.wekainvestigator.tab.AbstractInvestigatorTab;
 import adams.gui.tools.wekainvestigator.tab.InvestigatorTabbedPane;
 import adams.gui.tools.wekainvestigator.tab.LogTab;
 import adams.gui.workspace.AbstractWorkspacePanel;
 
 import javax.swing.JMenuBar;
 import java.awt.BorderLayout;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The main panel for the Investigator.
@@ -49,6 +53,9 @@ public class InvestigatorPanel
   /** the log. */
   protected StringBuilder m_Log;
 
+  /** the data loaded. */
+  protected List<DataContainer> m_Data;
+
   /**
    * Initializes the members.
    */
@@ -56,7 +63,8 @@ public class InvestigatorPanel
   protected void initialize() {
     super.initialize();
 
-    m_Log = new StringBuilder();
+    m_Log  = new StringBuilder();
+    m_Data = new ArrayList<>();
   }
 
   /**
@@ -97,7 +105,7 @@ public class InvestigatorPanel
    */
   @Override
   protected void updateTitle() {
-    // TODO
+    setParentTitle(m_TitleGenerator.generate(getDefaultTitle()));
   }
 
   /**
@@ -156,5 +164,24 @@ public class InvestigatorPanel
    */
   public void clearLog() {
     m_Log.setLength(0);
+  }
+
+  /**
+   * Returns the currently loaded data.
+   *
+   * @return		the data
+   */
+  public List<DataContainer> getData() {
+    return m_Data;
+  }
+
+  /**
+   * Notifies all the tabs that the data has changed.
+   */
+  public void fireDataChange() {
+    int		i;
+
+    for (i = 0; i < m_TabbedPane.getTabCount(); i++)
+      ((AbstractInvestigatorTab) m_TabbedPane.getTabComponentAt(i)).dataChanged();
   }
 }
