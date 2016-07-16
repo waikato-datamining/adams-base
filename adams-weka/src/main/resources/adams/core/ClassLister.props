@@ -40,8 +40,8 @@ adams.flow.transformer.wekaclusterer.AbstractClustererPostProcessor=\
   adams.flow.transformer.wekaclusterer
 
 # the tabs for the investigator
-adams.gui.tools.investigator.tab.AbstractInvestigatorTab=\
-  adams.gui.tools.investigator.tab
+adams.gui.tools.wekainvestigator.tab.AbstractInvestigatorTab=\
+  adams.gui.tools.wekainvestigator.tab
 
 # the paintlets for the instance panel
 adams.gui.visualization.instance.AbstractInstancePaintlet=\
