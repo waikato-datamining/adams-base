@@ -14,60 +14,47 @@
  */
 
 /**
- * AbstractSetupOptionPanel.java
+ * AbstractExperimenterPanel.java
  * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
  */
-package weka.gui.experiment.ext;
+package adams.gui.tools.wekaevaluator;
 
 import adams.gui.core.BasePanel;
 import adams.gui.core.GUIHelper;
 
 /**
- * Ancestor for panels that get added to a {@link AbstractSetupPanel}.
+ * Ancestor for panels in the experimenter.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public abstract class AbstractSetupOptionPanel
+public class AbstractExperimenterPanel
   extends BasePanel {
 
   /** for serialization. */
-  private static final long serialVersionUID = -8401733616002637499L;
+  private static final long serialVersionUID = 8569236330801128393L;
   
-  /** the setup panel this option panel belongs to. */
-  protected AbstractSetupPanel m_Owner;
-  
-  /** whether to ignored changes. */
-  protected boolean m_IgnoreChanges;
+  /** the owner. */
+  protected ExperimenterPanel m_Owner;
   
   /**
-   * Initializes the members.
-   */
-  @Override
-  protected void initialize() {
-    super.initialize();
-    
-    m_IgnoreChanges = false;
-  }
-  
-  /**
-   * finishes the initialization.
-   */
-  @Override
-  protected void finishInit() {
-    super.finishInit();
-    update();
-  }
-  
-  /**
-   * Sets the setup panel this option panel belongs to.
+   * Sets the experimenter this panel belongs to.
    * 
    * @param value	the owner
    * @see		#ownerChanged()
    */
-  public void setOwner(AbstractSetupPanel value) {
+  public void setOwner(ExperimenterPanel value) {
     m_Owner = value;
     ownerChanged();
+  }
+  
+  /**
+   * Returns the experimenter this panel belongs to.
+   * 
+   * @return		the owner
+   */
+  public ExperimenterPanel getOwner() {
+    return m_Owner;
   }
   
   /**
@@ -76,33 +63,6 @@ public abstract class AbstractSetupOptionPanel
    * Default implementation does nothing
    */
   protected void ownerChanged() {
-  }
-  
-  /**
-   * Returns the setup panel this option panel belongs to.
-   * 
-   * @return		the owner
-   */
-  public AbstractSetupPanel getOwner() {
-    return m_Owner;
-  }
-  
-  /**
-   * Sets the modified flag in the owner.
-   */
-  protected void modified() {
-    if (m_IgnoreChanges)
-      return;
-    if (m_Owner != null)
-      m_Owner.setModified(true);
-  }
-  
-  /**
-   * Performs GUI updates.
-   * <br><br>
-   * Default implementation does nothing.
-   */
-  protected void update() {
   }
   
   /**

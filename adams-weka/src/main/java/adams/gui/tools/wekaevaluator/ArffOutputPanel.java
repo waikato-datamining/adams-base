@@ -14,10 +14,10 @@
  */
 
 /**
- * CsvOutputPanel.java
+ * ArffOutputPanel.java
  * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
  */
-package weka.gui.experiment.ext;
+package adams.gui.tools.wekaevaluator;
 
 import java.awt.BorderLayout;
 import java.io.File;
@@ -25,7 +25,7 @@ import java.io.File;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import weka.experiment.CSVResultListener;
+import weka.experiment.InstancesResultListener;
 import weka.experiment.ResultListener;
 import adams.core.io.PlaceholderFile;
 import adams.gui.chooser.FileChooserPanel;
@@ -33,17 +33,17 @@ import adams.gui.core.ExtensionFileFilter;
 import adams.gui.core.ParameterPanel;
 
 /**
- * Stores the results in a CSV file.
+ * Stores the results in an ARFF file.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class CsvOutputPanel
+public class ArffOutputPanel
   extends AbstractOutputPanel {
 
   /** for serialization. */
-  private static final long serialVersionUID = -221969681088761768L;
-  
+  private static final long serialVersionUID = 3142999120128854278L;
+
   /** the file chooser panel. */
   protected FileChooserPanel m_PanelFile;
   
@@ -58,7 +58,7 @@ public class CsvOutputPanel
     
     panel = new ParameterPanel();
     m_PanelFile = new FileChooserPanel(new PlaceholderFile("${TMP}"));
-    m_PanelFile.addChoosableFileFilter(new ExtensionFileFilter("CSV file", "csv"));
+    m_PanelFile.addChoosableFileFilter(new ExtensionFileFilter("ARFF file", "arff"));
     m_PanelFile.addChangeListener(new ChangeListener() {
       @Override
       public void stateChanged(ChangeEvent e) {
@@ -76,7 +76,7 @@ public class CsvOutputPanel
    */
   @Override
   public String getOutputName() {
-    return "CSV";
+    return "ARFF";
   }
   
   /**
@@ -87,7 +87,7 @@ public class CsvOutputPanel
    */
   @Override
   public boolean handlesResultListener(ResultListener listener) {
-    return (listener.getClass() == CSVResultListener.class);
+    return (listener.getClass() == InstancesResultListener.class);
   }
 
   /**
@@ -97,7 +97,7 @@ public class CsvOutputPanel
    */
   @Override
   public void setResultListener(ResultListener value) {
-    m_PanelFile.setCurrent(((CSVResultListener) value).getOutputFile());
+    m_PanelFile.setCurrent(((InstancesResultListener) value).getOutputFile());
   }
 
   /**
@@ -107,10 +107,10 @@ public class CsvOutputPanel
    */
   @Override
   public ResultListener getResultListener() {
-    CSVResultListener	result;
-    File		file;
+    InstancesResultListener	result;
+    File			file;
     
-    result = new CSVResultListener();
+    result = new InstancesResultListener();
     file   = m_PanelFile.getCurrent();
     if (!file.isDirectory())
       result.setOutputFile(file.getAbsoluteFile());

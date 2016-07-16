@@ -17,7 +17,7 @@
  * ExperimenterPanel.java
  * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
  */
-package weka.gui.experiment.ext;
+package adams.gui.tools.wekaevaluator;
 
 import adams.core.Properties;
 import adams.core.Utils;

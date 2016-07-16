@@ -14,10 +14,10 @@
  */
 
 /**
- * DefaultExperimentIO.java
+ * RemoteExperimentIO.java
  * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
  */
-package weka.gui.experiment.ext;
+package adams.gui.tools.wekaevaluator;
 
 import java.io.File;
 import java.util.logging.Level;
@@ -26,13 +26,13 @@ import weka.experiment.Experiment;
 import weka.experiment.RemoteExperiment;
 
 /**
- * Default IO handler for experiments.
+ * IO handler for remote experiments.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class DefaultExperimentIO
-  extends AbstractExperimentIO<Experiment> {
+public class RemoteExperimentIO
+  extends AbstractExperimentIO<RemoteExperiment> {
 
   /** for serialization. */
   private static final long serialVersionUID = -7678768486122004558L;
@@ -43,8 +43,14 @@ public class DefaultExperimentIO
    * @return		the generated experiment, null if failed
    */
   @Override
-  public Experiment create() {
-    return new Experiment();
+  public RemoteExperiment create() {
+    try {
+      return new RemoteExperiment();
+    }
+    catch (Exception e) {
+      getLogger().log(Level.SEVERE, "Failed to instantiate new remote experiment!", e);
+      return null;
+    }
   }
 
   /**
@@ -54,16 +60,19 @@ public class DefaultExperimentIO
    * @return		the experiment, null if failed to load
    */
   @Override
-  public Experiment load(File file) {
-    Experiment	result;
+  public RemoteExperiment load(File file) {
+    RemoteExperiment	result;
+    Experiment		exp;
     try {
-      result = Experiment.read(file.getAbsolutePath());
-      if (result instanceof RemoteExperiment)
-	result = ((RemoteExperiment) result).getBaseExperiment();
+      exp = Experiment.read(file.getAbsolutePath());
+      if (!(exp instanceof RemoteExperiment))
+	result = new RemoteExperiment(exp);
+      else
+	result = (RemoteExperiment) exp;
       return result;
     }
     catch (Exception e) {
-      getLogger().log(Level.SEVERE, "Failed to load experiment from " + file + "!", e);
+      getLogger().log(Level.SEVERE, "Failed to load remote experiment from " + file + "!", e);
       return null;
     }
   }
@@ -76,13 +85,13 @@ public class DefaultExperimentIO
    * @return		false if failed to save
    */
   @Override
-  public boolean save(Experiment exp, File file) {
+  public boolean save(RemoteExperiment exp, File file) {
     try {
       Experiment.write(file.getAbsolutePath(), exp);
       return true;
     }
     catch (Exception e) {
-      getLogger().log(Level.SEVERE, "Failed to write experiment to " + file + "!", e);
+      getLogger().log(Level.SEVERE, "Failed to write remote experiment to " + file + "!", e);
       return false;
     }
   }
@@ -96,6 +105,6 @@ public class DefaultExperimentIO
    */
   @Override
   public AbstractExperimentRunner createRunner(ExperimenterPanel owner) throws Exception {
-    return new DefaultExperimentRunner(owner);
+    return new RemoteExperimentRunner(owner);
   }
 }

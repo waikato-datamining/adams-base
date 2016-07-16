@@ -17,7 +17,7 @@
  * RemoteExperimentRunner.java
  * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
  */
-package weka.gui.experiment.ext;
+package adams.gui.tools.wekaevaluator;
 
 import weka.experiment.RemoteExperiment;
 import weka.experiment.RemoteExperimentEvent;

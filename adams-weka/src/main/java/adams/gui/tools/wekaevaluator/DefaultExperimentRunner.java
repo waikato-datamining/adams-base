@@ -17,7 +17,7 @@
  * DefaultExperimentRunner.java
  * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
  */
-package weka.gui.experiment.ext;
+package adams.gui.tools.wekaevaluator;
 
 import java.io.File;
 import java.util.Date;
