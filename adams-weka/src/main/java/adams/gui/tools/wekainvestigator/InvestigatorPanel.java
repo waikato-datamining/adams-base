@@ -20,9 +20,14 @@
 
 package adams.gui.tools.wekainvestigator;
 
+import adams.gui.core.BaseStatusBar;
+import adams.gui.core.GUIHelper;
+import adams.gui.tools.wekainvestigator.tab.InvestigatorTabbedPane;
+import adams.gui.tools.wekainvestigator.tab.LogTab;
 import adams.gui.workspace.AbstractWorkspacePanel;
 
 import javax.swing.JMenuBar;
+import java.awt.BorderLayout;
 
 /**
  * The main panel for the Investigator.
@@ -34,6 +39,47 @@ public class InvestigatorPanel
   extends AbstractWorkspacePanel {
 
   private static final long serialVersionUID = 7442747356297265526L;
+
+  /** the tabbed pane for the tabs. */
+  protected InvestigatorTabbedPane m_TabbedPane;
+
+  /** the status bar. */
+  protected BaseStatusBar m_StatusBar;
+
+  /** the log. */
+  protected StringBuilder m_Log;
+
+  /**
+   * Initializes the members.
+   */
+  @Override
+  protected void initialize() {
+    super.initialize();
+
+    m_Log = new StringBuilder();
+  }
+
+  /**
+   * Initializes the widgets.
+   */
+  @Override
+  protected void initGUI() {
+    LogTab	log;
+
+    super.initGUI();
+
+    setLayout(new BorderLayout());
+
+    m_TabbedPane = new InvestigatorTabbedPane(this);
+    add(m_TabbedPane, BorderLayout.CENTER);
+
+    log = new LogTab();
+    log.setOwner(this);
+    m_TabbedPane.addTab(log.getTitle(), log);
+
+    m_StatusBar = new BaseStatusBar();
+    add(m_StatusBar, BorderLayout.SOUTH);
+  }
 
   /**
    * Creates a menu bar (singleton per panel object). Can be used in frames.
@@ -79,7 +125,9 @@ public class InvestigatorPanel
    */
   @Override
   public void logMessage(String msg) {
-    // TODO
+    m_Log.append(msg);
+    m_Log.append("\n");
+    m_StatusBar.showStatus(msg);
   }
 
   /**
@@ -90,6 +138,23 @@ public class InvestigatorPanel
    */
   @Override
   public void logError(String msg, String title) {
-    // TODO
+    logMessage(msg);
+    GUIHelper.showErrorMessage(this, msg, title);
+  }
+
+  /**
+   * Returns the internal log buffer.
+   *
+   * @return		the buffer
+   */
+  public StringBuilder getLog() {
+    return m_Log;
+  }
+
+  /**
+   * Empties the log.
+   */
+  public void clearLog() {
+    m_Log.setLength(0);
   }
 }
