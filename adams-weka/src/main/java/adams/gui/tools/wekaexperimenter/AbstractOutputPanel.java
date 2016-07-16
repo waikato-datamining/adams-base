@@ -17,7 +17,7 @@
  * AbstractOutputPanel.java
  * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
  */
-package adams.gui.tools.wekaevaluator;
+package adams.gui.tools.wekaexperimenter;
 
 import weka.experiment.ResultListener;
 import adams.core.ClassLister;

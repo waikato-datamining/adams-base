@@ -17,7 +17,7 @@
  * LogPanel.java
  * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
  */
-package adams.gui.tools.wekaevaluator;
+package adams.gui.tools.wekaexperimenter;
 
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTextArea;

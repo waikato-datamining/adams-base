@@ -14,38 +14,35 @@
  */
 
 /**
- * ArffOutputPanel.java
+ * CustomOutputPanel.java
  * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
  */
-package adams.gui.tools.wekaevaluator;
+package adams.gui.tools.wekaexperimenter;
 
 import java.awt.BorderLayout;
-import java.io.File;
 
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import weka.experiment.InstancesResultListener;
 import weka.experiment.ResultListener;
-import adams.core.io.PlaceholderFile;
-import adams.gui.chooser.FileChooserPanel;
-import adams.gui.core.ExtensionFileFilter;
 import adams.gui.core.ParameterPanel;
+import adams.gui.goe.WekaGenericObjectEditorPanel;
 
 /**
- * Stores the results in an ARFF file.
+ * Allows the user to configure any {@link ResultListener}.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class ArffOutputPanel
+public class CustomOutputPanel
   extends AbstractOutputPanel {
 
   /** for serialization. */
-  private static final long serialVersionUID = 3142999120128854278L;
-
-  /** the file chooser panel. */
-  protected FileChooserPanel m_PanelFile;
+  private static final long serialVersionUID = 6294601080342288801L;
+  
+  /** the GOE panel. */
+  protected WekaGenericObjectEditorPanel m_PanelGOE;
   
   /**
    * Initializes the widgets.
@@ -57,15 +54,14 @@ public class ArffOutputPanel
     super.initGUI();
     
     panel = new ParameterPanel();
-    m_PanelFile = new FileChooserPanel(new PlaceholderFile("${TMP}"));
-    m_PanelFile.addChoosableFileFilter(new ExtensionFileFilter("ARFF file", "arff"));
-    m_PanelFile.addChangeListener(new ChangeListener() {
+    m_PanelGOE = new WekaGenericObjectEditorPanel(ResultListener.class, new InstancesResultListener(), true);
+    m_PanelGOE.addChangeListener(new ChangeListener() {
       @Override
       public void stateChanged(ChangeEvent e) {
 	m_Owner.setModified(true);
       }
     });
-    panel.addParameter("File", m_PanelFile);
+    panel.addParameter("Results", m_PanelGOE);
     add(panel, BorderLayout.CENTER);
   }
 
@@ -76,7 +72,7 @@ public class ArffOutputPanel
    */
   @Override
   public String getOutputName() {
-    return "ARFF";
+    return "Custom";
   }
   
   /**
@@ -87,7 +83,7 @@ public class ArffOutputPanel
    */
   @Override
   public boolean handlesResultListener(ResultListener listener) {
-    return (listener.getClass() == InstancesResultListener.class);
+    return true;
   }
 
   /**
@@ -97,7 +93,7 @@ public class ArffOutputPanel
    */
   @Override
   public void setResultListener(ResultListener value) {
-    m_PanelFile.setCurrent(((InstancesResultListener) value).getOutputFile());
+    m_PanelGOE.setCurrent(value);
   }
 
   /**
@@ -107,14 +103,6 @@ public class ArffOutputPanel
    */
   @Override
   public ResultListener getResultListener() {
-    InstancesResultListener	result;
-    File			file;
-    
-    result = new InstancesResultListener();
-    file   = m_PanelFile.getCurrent();
-    if (!file.isDirectory())
-      result.setOutputFile(file.getAbsoluteFile());
-    
-    return result;
+    return (ResultListener) m_PanelGOE.getCurrent();
   }
 }

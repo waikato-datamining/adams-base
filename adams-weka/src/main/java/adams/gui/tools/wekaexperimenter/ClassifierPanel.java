@@ -14,15 +14,14 @@
  */
 
 /**
- * DatasetPanel.java
+ * ClassifierPanel.java
  * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
  */
-package adams.gui.tools.wekaevaluator;
+package adams.gui.tools.wekaexperimenter;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 import java.util.Arrays;
 
 import javax.swing.DefaultListModel;
@@ -31,10 +30,11 @@ import javax.swing.JLabel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import weka.gui.AdamsHelper;
-import weka.gui.ConverterFileChooser;
-import adams.core.io.PlaceholderFile;
+import weka.classifiers.Classifier;
+import weka.classifiers.rules.ZeroR;
+import adams.core.option.OptionUtils;
 import adams.gui.core.BaseListWithButtons;
+import adams.gui.goe.WekaGenericObjectEditorPanel;
 
 /**
  * Panel for listing datasets.
@@ -42,35 +42,38 @@ import adams.gui.core.BaseListWithButtons;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class DatasetPanel
+public class ClassifierPanel
   extends AbstractSetupOptionPanel {
 
   /** for serialization. */
   private static final long serialVersionUID = -832431512063524253L;
 
-  /** the file chooser for selecting files. */
-  protected ConverterFileChooser m_FileChooser;
+  /** the GOE for setting up classifiers. */
+  protected WekaGenericObjectEditorPanel m_PanelGOE;
   
-  /** the button for adding files. */
+  /** for listing the classifiers. */
+  protected BaseListWithButtons m_List;
+  
+  /** the button for adding classifiers. */
   protected JButton m_ButtonAdd;
   
-  /** the button for removing files. */
+  /** the button for editing a classifier. */
+  protected JButton m_ButtonEdit;
+  
+  /** the button for removing classifiers. */
   protected JButton m_ButtonRemove;
   
-  /** the button for removing all files. */
+  /** the button for removing all classifiers. */
   protected JButton m_ButtonRemoveAll;
   
-  /** the button for moving files up. */
+  /** the button for moving classifiers up. */
   protected JButton m_ButtonUp;
   
-  /** the button for moving files down. */
+  /** the button for moving classifiers down. */
   protected JButton m_ButtonDown;
   
-  /** for listing the files. */
-  protected BaseListWithButtons m_List;
-
   /** the model. */
-  protected DefaultListModel<File> m_Model;
+  protected DefaultListModel<String> m_Model;
 
   /**
    * Initializes the members.
@@ -79,10 +82,7 @@ public class DatasetPanel
   protected void initialize() {
     super.initialize();
     
-    m_FileChooser = new ConverterFileChooser();
-    AdamsHelper.updateFileChooserAccessory(m_FileChooser);
-    m_FileChooser.setMultiSelectionEnabled(true);
-    m_Model = new DefaultListModel<File>();
+    m_Model = new DefaultListModel<String>();
   }
   
   /**
@@ -92,21 +92,37 @@ public class DatasetPanel
   protected void initGUI() {
     super.initGUI();
     
+    m_PanelGOE = new WekaGenericObjectEditorPanel(Classifier.class, new ZeroR(), true);
+    add(m_PanelGOE, BorderLayout.NORTH);
+    
     m_List = new BaseListWithButtons(m_Model);
     add(m_List, BorderLayout.CENTER);
     
-    m_ButtonAdd = new JButton("Add...");
+    m_ButtonAdd = new JButton("Add");
     m_ButtonAdd.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-	int retVal = m_FileChooser.showOpenDialog(DatasetPanel.this);
-	if (retVal != ConverterFileChooser.APPROVE_OPTION)
-	  return;
-	if (m_FileChooser.getSelectedFiles().length == 0)
-	  return;
-	for (File file: m_FileChooser.getSelectedFiles())
-	  m_Model.addElement(file);
+	m_Model.addElement(OptionUtils.getCommandLine(m_PanelGOE.getCurrent()));
 	modified();
+	update();
+      }
+    });
+    
+    m_ButtonEdit = new JButton("Edit");
+    m_ButtonEdit.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+	try {
+	  m_PanelGOE.setCurrent((Classifier) OptionUtils.forAnyCommandLine(Classifier.class, (String) m_List.getSelectedValue()));
+	  m_PanelGOE.choose();
+	  m_Model.setElementAt(OptionUtils.getCommandLine(m_PanelGOE.getCurrent()), m_List.getSelectedIndex());
+	  modified();
+	}
+	catch (Exception ex) {
+	  System.err.println("Failed to instantiate classifier: " + m_List.getSelectedValue());
+	  ex.printStackTrace();
+	}
+	update();
       }
     });
     
@@ -115,12 +131,11 @@ public class DatasetPanel
       @Override
       public void actionPerformed(ActionEvent e) {
 	int[] indices = m_List.getSelectedIndices();
-	if (indices.length == 0)
-	  return;
 	Arrays.sort(indices);
-	for (int i = indices.length; i >= 0; i--)
+	for (int i = indices.length - 1; i >= 0; i--)
 	  m_Model.remove(indices[i]);
 	modified();
+	update();
       }
     });
 
@@ -130,6 +145,7 @@ public class DatasetPanel
       public void actionPerformed(ActionEvent e) {
 	m_Model.clear();
 	modified();
+	update();
       }
     });
 
@@ -139,6 +155,7 @@ public class DatasetPanel
       public void actionPerformed(ActionEvent e) {
 	m_List.moveUp();
 	modified();
+	update();
       }
     });
 
@@ -148,71 +165,34 @@ public class DatasetPanel
       public void actionPerformed(ActionEvent e) {
 	m_List.moveDown();
 	modified();
+	update();
       }
     });
 
     m_List.addToButtonsPanel(m_ButtonAdd);
+    m_List.addToButtonsPanel(m_ButtonEdit);
     m_List.addToButtonsPanel(m_ButtonRemove);
     m_List.addToButtonsPanel(m_ButtonRemoveAll);
     m_List.addToButtonsPanel(new JLabel(""));
     m_List.addToButtonsPanel(m_ButtonUp);
     m_List.addToButtonsPanel(m_ButtonDown);
+    m_List.setDoubleClickButton(m_ButtonEdit);
     
     m_List.addListSelectionListener(new ListSelectionListener() {
       @Override
       public void valueChanged(ListSelectionEvent e) {
-	m_ButtonRemove.setEnabled(m_List.getSelectedIndices().length > 0);
-	m_ButtonRemoveAll.setEnabled(m_Model.getSize() > 0);
-	m_ButtonUp.setEnabled(m_List.canMoveUp());
-	m_ButtonDown.setEnabled(m_List.canMoveDown());
+	update();
       }
     });
   }
   
   /**
-   * Gets called when the owner changes.
+   * Finalizes the initialization.
    */
   @Override
-  protected void ownerChanged() {
-    super.ownerChanged();
-    
-    if (getOwner() != null) {
-      m_FileChooser.setCurrentDirectory(
-	  new PlaceholderFile(
-	      ExperimenterPanel.getProperties().getPath(
-		  "DatasetsInitialDir", "%h")).getAbsoluteFile());
-    }
-  }
-
-  /**
-   * Sets the files to use.
-   * 
-   * @param value	the files
-   */
-  public void setFiles(File[] value) {
-    m_IgnoreChanges = true;
-    
-    m_Model.clear();
-    for (File file: value)
-      m_Model.addElement(file);
-    
-    m_IgnoreChanges = false;
-  }
-  
-  /**
-   * Returns the current files.
-   * 
-   * @return		the files
-   */
-  public File[] getFiles() {
-    File[]	result;
-    int		i;
-    
-    result = new File[m_Model.getSize()];
-    for (i = 0; i < m_Model.getSize(); i++)
-      result[i] = m_Model.getElementAt(i);
-    
-    return result;
+  protected void finishInit() {
+    super.finishInit();
+    update();
   }
   
   /**
@@ -221,9 +201,49 @@ public class DatasetPanel
   @Override
   protected void update() {
     super.update();
+    m_ButtonEdit.setEnabled(m_List.getSelectedIndices().length == 1);
     m_ButtonRemove.setEnabled(m_List.getSelectedIndices().length > 0);
     m_ButtonRemoveAll.setEnabled(m_Model.getSize() > 0);
     m_ButtonUp.setEnabled(m_List.canMoveUp());
     m_ButtonDown.setEnabled(m_List.canMoveDown());
+  }
+  
+  /**
+   * Sets the classifiers to use.
+   * 
+   * @param value	the classifiers
+   */
+  public void setClassifiers(Classifier[] value) {
+    m_IgnoreChanges = true;
+    
+    m_Model.clear();
+    for (Classifier c: value)
+      m_Model.addElement(OptionUtils.getCommandLine(c));
+    
+    m_IgnoreChanges = false;
+  }
+  
+  /**
+   * Returns the current classifiers.
+   * 
+   * @return		the classifiers
+   */
+  public Classifier[] getClassifiers() {
+    Classifier[]	result;
+    int			i;
+    
+    result = new Classifier[m_Model.getSize()];
+    for (i = 0; i < m_Model.getSize(); i++) {
+      try {
+	result[i] = (Classifier) OptionUtils.forAnyCommandLine(Classifier.class, m_Model.getElementAt(i));
+      }
+      catch (Exception e) {
+	System.err.println("Failed to instantiate classifier: " + m_Model.getElementAt(i));
+	e.printStackTrace();
+	result[i] = new ZeroR();
+      }
+    }
+    
+    return result;
   }
 }

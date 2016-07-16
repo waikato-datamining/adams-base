@@ -14,31 +14,52 @@
  */
 
 /**
- * ExperimenterEntryPanel.java
+ * DefaultAnalysisPanel.java
  * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
  */
-package adams.gui.tools.wekaevaluator;
+package adams.gui.tools.wekaexperimenter;
 
-import adams.gui.workspace.AbstractWorkspaceListPanel;
+import weka.core.Instances;
 
 /**
- * Allows the display of multiple Experimenter panels.
- *
+ * Default panel for analyzing results from experiments.
+ * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 6682 $
+ * @version $Revision$
  */
-public class ExperimenterEntryPanel
-  extends AbstractWorkspaceListPanel<ExperimenterPanel> {
+public class DefaultAnalysisPanel
+  extends AbstractAnalysisPanel {
 
   /** for serialization. */
-  private static final long serialVersionUID = 1704390033157269580L;
+  private static final long serialVersionUID = 7850777725811230009L;
   
   /**
-   * Returns the default title to use for dialogs.
-   *
-   * @return		the title
+   * For initializing the GUI.
    */
-  protected String getDefaultDialogTitle() {
-    return "Experimenter";
+  @Override
+  protected void initGUI() {
+    super.initGUI();
+  }
+  
+  /**
+   * Returns the name to display in the GUI.
+   * 
+   * @return		the name
+   */
+  @Override
+  public String getAnalysisName() {
+    return "Default";
+  }
+
+  /**
+   * Checks whether the results can be handled at all.
+   * 
+   * @param results	the results to check
+   * @return		null if can handle, otherwise error message
+   */
+  @Override
+  public String handlesResults(Instances results) {
+    // TODO
+    return null;
   }
 }
