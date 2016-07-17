@@ -2016,6 +2016,18 @@ Available conversions:
   the remote command (which is used for transmitting across the network)
 \end{tight_itemize}
 
+\section{Registering flows}
+In order to use the \textit{GetFlow} or \textit{ListFlows} remote commands,
+the flows running on the remote server need to be registered with the
+registry for \textit{running flows}. This can be achieved in two ways:
+\begin{tight_itemize}
+  \item \textbf{per flow} -- by using the \textit{RegisterFlow} standalone
+  actor in a flow.
+  \item \textbf{system-wide} -- by setting the \textit{AutoRegister} property
+  in the \textit{adams/flow/control/Flow.props} file to \textit{true}.
+\end{tight_itemize}
+
+
 %%%%%%%%%
 % Tools %
 %%%%%%%%%
