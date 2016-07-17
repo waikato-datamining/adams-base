@@ -20,12 +20,19 @@
 
 package adams.gui.tools.wekainvestigator.tab;
 
-import adams.gui.core.BaseTextArea;
+import adams.core.io.FileUtils;
+import adams.gui.chooser.BaseFileChooser;
+import adams.gui.core.BaseTextAreaWithButtons;
+import adams.gui.core.ExtensionFileFilter;
 import adams.gui.core.Fonts;
+import adams.gui.core.GUIHelper;
 import adams.gui.tools.wekainvestigator.InvestigatorPanel;
+import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 import com.googlecode.jfilechooserbookmarks.gui.BaseScrollPane;
 
+import javax.swing.JButton;
 import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
 
 /**
  * Just displays the log messages.
@@ -39,7 +46,35 @@ public class LogTab
   private static final long serialVersionUID = -94945456385486233L;
 
   /** the text area for the log. */
-  protected BaseTextArea m_TextLog;
+  protected BaseTextAreaWithButtons m_TextLog;
+
+  /** the button for emptying the log. */
+  protected JButton m_ButtonClear;
+
+  /** the button for copying the text. */
+  protected JButton m_ButtonCopy;
+
+  /** the button for saving the text. */
+  protected JButton m_ButtonSave;
+
+  /** the filechooser for saving the log. */
+  protected BaseFileChooser m_FileChooser;
+
+  /**
+   * Initializes the members.
+   */
+  @Override
+  protected void initialize() {
+    ExtensionFileFilter		filter;
+
+    super.initialize();
+
+    m_FileChooser = new BaseFileChooser();
+    filter = ExtensionFileFilter.getLogFileFilter();
+    m_FileChooser.addChoosableFileFilter(filter);
+    m_FileChooser.addChoosableFileFilter(ExtensionFileFilter.getTextFileFilter());
+    m_FileChooser.setFileFilter(filter);
+  }
 
   /**
    * Initializes the widgets.
@@ -50,9 +85,48 @@ public class LogTab
 
     setLayout(new BorderLayout());
 
-    m_TextLog = new BaseTextArea();
+    m_TextLog = new BaseTextAreaWithButtons();
     m_TextLog.setTextFont(Fonts.getMonospacedFont());
+    m_TextLog.setEditable(false);
     add(new BaseScrollPane(m_TextLog), BorderLayout.CENTER);
+
+    m_ButtonClear = new JButton("Clear", GUIHelper.getIcon("new.gif"));
+    m_ButtonClear.addActionListener((ActionEvent e) -> m_Owner.clearLog());
+    m_TextLog.addToButtonsPanel(m_ButtonClear);
+
+    m_ButtonCopy = new JButton("Copy", GUIHelper.getIcon("copy.gif"));
+    m_ButtonClear.addActionListener((ActionEvent e) -> {
+      if (m_TextLog.getSelectedText() != null)
+	ClipboardHelper.copyToClipboard(m_TextLog.getSelectedText());
+      else
+	ClipboardHelper.copyToClipboard(m_TextLog.getText());
+    });
+    m_TextLog.addToButtonsPanel(m_ButtonCopy);
+
+    m_ButtonSave = new JButton("Save...", GUIHelper.getIcon("save.gif"));
+    m_ButtonSave.addActionListener((ActionEvent e) -> {
+      int retVal = m_FileChooser.showSaveDialog(LogTab.this);
+      if (retVal != BaseFileChooser.APPROVE_OPTION)
+	return;
+      String msg = FileUtils.writeToFileMsg(
+	m_FileChooser.getSelectedFile().getAbsolutePath(),
+	m_TextLog.getText(),
+	false,
+	null);
+      if (msg != null)
+	GUIHelper.showErrorMessage(LogTab.this, msg);
+    });
+    m_TextLog.addToButtonsPanel(m_ButtonSave);
+  }
+
+  /**
+   * Finishes the initialization.
+   */
+  @Override
+  protected void finishInit() {
+    super.finishInit();
+
+    updateButtons();
   }
 
   /**
@@ -64,6 +138,7 @@ public class LogTab
   public void setOwner(InvestigatorPanel value) {
     super.setOwner(value);
     m_TextLog.setText(value.getLog().toString());
+    updateButtons();
   }
 
   /**
@@ -77,6 +152,27 @@ public class LogTab
   }
 
   /**
+   * Updates the buttons.
+   */
+  protected void updateButtons() {
+    boolean	hasText;
+
+    hasText = (m_TextLog.getText().length() > 0);
+
+    m_ButtonClear.setEnabled(hasText);
+    m_ButtonCopy.setEnabled(hasText);
+    m_ButtonSave.setEnabled(hasText);
+  }
+
+  /**
+   * Clears the log.
+   */
+  public void clearLog() {
+    m_TextLog.setText("");
+    updateButtons();
+  }
+
+  /**
    * Appends the message to the log.
    *
    * @param msg		the message
@@ -84,6 +180,7 @@ public class LogTab
   public void append(String msg) {
     m_TextLog.append(msg);
     m_TextLog.append("\n");
+    updateButtons();
   }
 
   /**

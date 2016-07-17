@@ -307,7 +307,13 @@ public class InvestigatorPanel
    * Empties the log.
    */
   public void clearLog() {
+    int		i;
+
     m_Log.setLength(0);
+    for (i = 0; i < m_TabbedPane.getTabCount(); i++) {
+      if (m_TabbedPane.getTabComponentAt(i) instanceof LogTab)
+	((LogTab) m_TabbedPane.getTabComponentAt(i)).clearLog();
+    }
   }
 
   /**
