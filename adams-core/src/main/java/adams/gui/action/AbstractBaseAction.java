@@ -111,6 +111,17 @@ public abstract class AbstractBaseAction
 
   /**
    * Sets the icon of the action, i.e., the menuitem/button icon.
+   *
+   * @param name	the icon
+   * @see		#setIcon(Icon)
+   * @see		GUIHelper#getIcon(String)
+   */
+  public void setIcon(String name) {
+    setIcon(GUIHelper.getIcon(name));
+  }
+
+  /**
+   * Sets the icon of the action, i.e., the menuitem/button icon.
    * Sets SMALL_ICON and LARGE_ICON_KEY at the same time.
    *
    * @param value	the icon

@@ -14,18 +14,18 @@
  */
 
 /**
- * PropertiesAction.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * BaseAction.java
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.action;
 
-import java.awt.event.KeyEvent;
+import adams.core.CleanUpHandler;
+import adams.gui.core.GUIHelper;
 
 import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.KeyStroke;
-
-import adams.core.CleanUpHandler;
+import java.awt.event.KeyEvent;
 
 /**
  * Extended interface for actions.
@@ -49,6 +49,15 @@ public interface BaseAction
    * @return		the name
    */
   public String getName();
+
+  /**
+   * Sets the icon of the action, i.e., the menuitem/button icon.
+   *
+   * @param name	the icon
+   * @see		#setIcon(Icon)
+   * @see		GUIHelper#getIcon(String)
+   */
+  public void setIcon(String name);
 
   /**
    * Sets the icon of the action, i.e., the menuitem/button icon.
