@@ -22,6 +22,7 @@ package adams.gui.tools.wekainvestigator;
 
 import adams.env.Environment;
 import adams.gui.core.BaseFrame;
+import adams.gui.core.GUIHelper;
 import adams.gui.workspace.AbstractWorkspaceListPanel;
 import adams.gui.workspace.AbstractWorkspaceManagerPanel;
 
@@ -75,7 +76,7 @@ public class InvestigatorManagerPanel
     frame.setDefaultCloseOperation(BaseFrame.EXIT_ON_CLOSE);
     frame.getContentPane().setLayout(new BorderLayout());
     frame.getContentPane().add(panel, BorderLayout.CENTER);
-    frame.setSize(800, 600);
+    frame.setSize(GUIHelper.getDefaultLargeDialogDimension());
     frame.setLocationRelativeTo(null);
     frame.setVisible(true);
   }
