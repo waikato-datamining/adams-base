@@ -77,6 +77,16 @@ public class LogTab
   }
 
   /**
+   * Appends the message to the log.
+   *
+   * @param msg		the message
+   */
+  public void append(String msg) {
+    m_TextLog.append(msg);
+    m_TextLog.append("\n");
+  }
+
+  /**
    * Notifies the tab that the data changed.
    */
   @Override

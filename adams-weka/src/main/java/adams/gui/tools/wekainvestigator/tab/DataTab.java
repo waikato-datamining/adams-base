@@ -14,46 +14,33 @@
  */
 
 /**
- * AbstractInvestigatorTab.java
+ * DataTab.java
  * Copyright (C) 2016 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab;
 
-import adams.gui.core.BasePanel;
-import adams.gui.tools.wekainvestigator.InvestigatorPanel;
+import java.awt.BorderLayout;
 
 /**
- * Ancestor for tabs in the Investigator.
+ * Lists the currently loaded datasets.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public abstract class AbstractInvestigatorTab
-  extends BasePanel {
+public class DataTab
+  extends AbstractInvestigatorTab {
 
-  private static final long serialVersionUID = 1860821657853747908L;
-
-  /** the owner. */
-  protected InvestigatorPanel m_Owner;
+  private static final long serialVersionUID = -94945456385486233L;
 
   /**
-   * Sets the owner for this tab.
-   *
-   * @param value	the owner
+   * Initializes the widgets.
    */
-  public void setOwner(InvestigatorPanel value) {
-    m_Owner = value;
-    dataChanged();
-  }
+  @Override
+  protected void initGUI() {
+    super.initGUI();
 
-  /**
-   * Returns the owner of this tab.
-   *
-   * @return		the owner, null if none set
-   */
-  public InvestigatorPanel getOwner() {
-    return m_Owner;
+    setLayout(new BorderLayout());
   }
 
   /**
@@ -61,10 +48,16 @@ public abstract class AbstractInvestigatorTab
    *
    * @return		the title
    */
-  public abstract String getTitle();
+  @Override
+  public String getTitle() {
+    return "Data";
+  }
 
   /**
    * Notifies the tab that the data changed.
    */
-  public abstract void dataChanged();
+  @Override
+  public void dataChanged() {
+    // TODO update display
+  }
 }
