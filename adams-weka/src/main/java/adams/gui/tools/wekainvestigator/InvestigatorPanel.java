@@ -25,6 +25,7 @@ import adams.core.Utils;
 import adams.core.io.PlaceholderFile;
 import adams.gui.action.AbstractBaseAction;
 import adams.gui.action.BaseAction;
+import adams.gui.chooser.WekaFileChooser;
 import adams.gui.core.BaseMenu;
 import adams.gui.core.BaseStatusBar;
 import adams.gui.core.ConsolePanel;
@@ -41,8 +42,6 @@ import adams.gui.tools.wekainvestigator.tab.LogTab;
 import adams.gui.workspace.AbstractWorkspacePanel;
 import weka.core.converters.AbstractFileLoader;
 import weka.core.converters.ConverterUtils;
-import weka.gui.AdamsHelper;
-import weka.gui.ConverterFileChooser;
 
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -99,7 +98,7 @@ public class InvestigatorPanel
   protected List<DataContainer> m_Data;
 
   /** the filechooser for datasets. */
-  protected ConverterFileChooser m_FileChooser;
+  protected WekaFileChooser m_FileChooser;
 
   /** the recent files handler. */
   protected RecentFilesHandler<JMenu> m_RecentFilesHandler;
@@ -113,8 +112,7 @@ public class InvestigatorPanel
 
     m_Log         = new StringBuilder();
     m_Data        = new ArrayList<>();
-    m_FileChooser = new ConverterFileChooser();
-    AdamsHelper.updateFileChooserAccessory(m_FileChooser);
+    m_FileChooser = new WekaFileChooser();
     m_RecentFilesHandler = null;
   }
 
@@ -398,11 +396,11 @@ public class InvestigatorPanel
     FileContainer	cont;
 
     retVal = m_FileChooser.showOpenDialog(this);
-    if (retVal != ConverterFileChooser.APPROVE_OPTION)
+    if (retVal != WekaFileChooser.APPROVE_OPTION)
       return;
 
     logMessage("Loading: " + m_FileChooser.getSelectedFile());
-    cont = new FileContainer(m_FileChooser.getLoader(), new PlaceholderFile(m_FileChooser.getSelectedFile()));
+    cont = new FileContainer(m_FileChooser.getReader(), new PlaceholderFile(m_FileChooser.getSelectedFile()));
     m_Data.add(cont);
     if (m_RecentFilesHandler != null)
       m_RecentFilesHandler.addRecentItem(m_FileChooser.getSelectedFile());
