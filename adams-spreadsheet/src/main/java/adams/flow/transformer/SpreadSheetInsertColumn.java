@@ -15,13 +15,10 @@
 
 /*
  * SpreadSheetInsertColumn.java
- * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import adams.core.Index;
 import adams.core.Placeholders;
@@ -30,6 +27,9 @@ import adams.core.Utils;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetColumnIndex;
 import adams.flow.core.Token;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -232,7 +232,7 @@ public class SpreadSheetInsertColumn
 
     result += QuickInfoHelper.toString(this, "value", "'" + getValue() + "'", ", insert: ");
 
-    options = new ArrayList<String>();
+    options = new ArrayList<>();
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "valueContainsPlaceholder", m_ValueContainsPlaceholder, "PH"));
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "valueContainsVariable", m_ValueContainsVariable, "Var"));
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "forceString", m_ForceString, "string"));
@@ -478,10 +478,13 @@ public class SpreadSheetInsertColumn
       value = Placeholders.getSingleton().expand(value).replace("\\", "/");
     
     // determine position
-    m_Position.setSpreadSheet(sheetOld);
-    pos = m_Position.getIntIndex();
-    if (m_After)
-      pos++;
+    pos = 0;
+    if (sheetOld.getColumnCount() > 0) {
+      m_Position.setSpreadSheet(sheetOld);
+      pos = m_Position.getIntIndex();
+      if (m_After)
+        pos++;
+    }
     
     // add column
     if (m_NoCopy)
