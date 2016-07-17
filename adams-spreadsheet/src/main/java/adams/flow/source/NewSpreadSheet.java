@@ -358,9 +358,11 @@ public class NewSpreadSheet
     if (!m_SheetName.isEmpty())
       sheet.setName(m_SheetName);
     sheet.setDataRowClass(m_DataRowType.getClass());
-    cols  = m_Columns.split(",");
-    for (String col: cols)
-      sheet.getHeaderRow().addCell("" + sheet.getColumnCount()).setContentAsString(col);
+    if (!m_Columns.isEmpty()) {
+      cols = m_Columns.split(",");
+      for (String col : cols)
+        sheet.getHeaderRow().addCell("" + sheet.getColumnCount()).setContentAsString(col);
+    }
 
     if (!m_Comments.isEmpty()) {
       lines = Utils.split(m_Comments.getValue(), "\n");
