@@ -15,7 +15,7 @@
 
 /*
  * BaseTextAreaWithButtons.java
- * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
@@ -101,10 +101,10 @@ public class BaseTextAreaWithButtons
   @Override
   public BaseTextArea createComponent() {
     BaseTextArea	result;
-    
+
     result = new BaseTextArea();
     result.setWrapStyleWord(true);
-    
+
     return result;
   }
 
@@ -276,5 +276,15 @@ public class BaseTextAreaWithButtons
   @Override
   public void setCaretPositionLast() {
     m_Component.setCaretPositionLast();
+  }
+
+  /**
+   * Appends the given text to the end of the document.  Does nothing if
+   * the model is null or the string is null or empty.
+   *
+   * @param str the text to insert
+   */
+  public void append(String text) {
+    m_Component.append(text);
   }
 }
