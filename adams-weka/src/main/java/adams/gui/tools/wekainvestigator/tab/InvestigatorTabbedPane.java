@@ -50,4 +50,23 @@ public class InvestigatorTabbedPane
     setCloseTabsWithMiddelMouseButton(true);
     setShowCloseTabButton(true);
   }
+
+  /**
+   * Returns the owner.
+   *
+   * @return		the owner
+   */
+  public InvestigatorPanel getOwner() {
+    return m_Owner;
+  }
+
+  /**
+   * Adds the tab.
+   *
+   * @param tab		the tab to add
+   */
+  public void addTab(AbstractInvestigatorTab tab) {
+    tab.setOwner(getOwner());
+    addTab(tab.getTitle(), tab);
+  }
 }

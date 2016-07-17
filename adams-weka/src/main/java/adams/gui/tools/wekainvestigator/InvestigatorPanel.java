@@ -21,17 +21,28 @@
 package adams.gui.tools.wekainvestigator;
 
 import adams.core.ClassLister;
+import adams.core.Utils;
+import adams.core.io.PlaceholderFile;
 import adams.gui.action.AbstractBaseAction;
 import adams.gui.action.BaseAction;
 import adams.gui.core.BaseMenu;
 import adams.gui.core.BaseStatusBar;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.RecentFilesHandler;
+import adams.gui.event.RecentItemEvent;
+import adams.gui.event.RecentItemListener;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
+import adams.gui.tools.wekainvestigator.data.FileContainer;
 import adams.gui.tools.wekainvestigator.tab.AbstractInvestigatorTab;
+import adams.gui.tools.wekainvestigator.tab.DataTab;
 import adams.gui.tools.wekainvestigator.tab.InvestigatorTabbedPane;
 import adams.gui.tools.wekainvestigator.tab.LogTab;
 import adams.gui.workspace.AbstractWorkspacePanel;
+import weka.core.converters.AbstractFileLoader;
+import weka.core.converters.ConverterUtils;
+import weka.gui.AdamsHelper;
+import weka.gui.ConverterFileChooser;
 
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -39,6 +50,7 @@ import javax.swing.JMenuItem;
 import javax.swing.event.ChangeEvent;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,6 +65,9 @@ public class InvestigatorPanel
 
   private static final long serialVersionUID = 7442747356297265526L;
 
+  /** the file to store the recent files in. */
+  public final static String SESSION_FILE = "InvestigatorSession.props";
+
   /** the tabbed pane for the tabs. */
   protected InvestigatorTabbedPane m_TabbedPane;
 
@@ -63,22 +78,31 @@ public class InvestigatorPanel
   protected JMenuBar m_MenuBar;
 
   /** the submenu for a new tab. */
-  protected BaseMenu m_MenuNewTab;
+  protected BaseMenu m_MenuFileNewTab;
 
   /** the action for closing a tab. */
-  protected BaseAction m_ActionCloseTab;
+  protected BaseAction m_ActionFileCloseTab;
 
   /** the action for closing all tabs. */
-  protected BaseAction m_ActionCloseAllTabs;
+  protected BaseAction m_ActionFileCloseAllTabs;
 
   /** the action for closing the investigator. */
-  protected BaseAction m_ActionClose;
+  protected BaseAction m_ActionFileClose;
+
+  /** the action for loading a dataset. */
+  protected BaseAction m_ActionFileOpen;
 
   /** the log. */
   protected StringBuilder m_Log;
 
   /** the data loaded. */
   protected List<DataContainer> m_Data;
+
+  /** the filechooser for datasets. */
+  protected ConverterFileChooser m_FileChooser;
+
+  /** the recent files handler. */
+  protected RecentFilesHandler<JMenu> m_RecentFilesHandler;
 
   /**
    * Initializes the members.
@@ -87,8 +111,11 @@ public class InvestigatorPanel
   protected void initialize() {
     super.initialize();
 
-    m_Log  = new StringBuilder();
-    m_Data = new ArrayList<>();
+    m_Log         = new StringBuilder();
+    m_Data        = new ArrayList<>();
+    m_FileChooser = new ConverterFileChooser();
+    AdamsHelper.updateFileChooserAccessory(m_FileChooser);
+    m_RecentFilesHandler = null;
   }
 
   /**
@@ -96,8 +123,6 @@ public class InvestigatorPanel
    */
   @Override
   protected void initGUI() {
-    LogTab	log;
-
     super.initGUI();
 
     setLayout(new BorderLayout());
@@ -105,9 +130,8 @@ public class InvestigatorPanel
     m_TabbedPane = new InvestigatorTabbedPane(this);
     add(m_TabbedPane, BorderLayout.CENTER);
 
-    log = new LogTab();
-    log.setOwner(this);
-    m_TabbedPane.addTab(log.getTitle(), log);
+    m_TabbedPane.addTab(new DataTab());
+    m_TabbedPane.addTab(new LogTab());
 
     m_StatusBar = new BaseStatusBar();
     add(m_StatusBar, BorderLayout.SOUTH);
@@ -120,7 +144,7 @@ public class InvestigatorPanel
    */
   protected void initActions() {
     // tabs
-    m_ActionCloseTab = new AbstractBaseAction() {
+    m_ActionFileCloseTab = new AbstractBaseAction() {
       private static final long serialVersionUID = 1028160012672649573L;
       @Override
       protected void doActionPerformed(ActionEvent e) {
@@ -130,10 +154,10 @@ public class InvestigatorPanel
 	updateMenu();
       }
     };
-    m_ActionCloseTab.setName("Close tab");
-    m_ActionCloseTab.setIcon(GUIHelper.getEmptyIcon());
+    m_ActionFileCloseTab.setName("Close tab");
+    m_ActionFileCloseTab.setIcon(GUIHelper.getEmptyIcon());
 
-    m_ActionCloseAllTabs = new AbstractBaseAction() {
+    m_ActionFileCloseAllTabs = new AbstractBaseAction() {
       private static final long serialVersionUID = 2162739410818834253L;
       @Override
       protected void doActionPerformed(ActionEvent e) {
@@ -141,27 +165,38 @@ public class InvestigatorPanel
 	updateMenu();
       }
     };
-    m_ActionCloseAllTabs.setName("Close all tabs");
-    m_ActionCloseAllTabs.setIcon(GUIHelper.getEmptyIcon());
+    m_ActionFileCloseAllTabs.setName("Close all tabs");
+    m_ActionFileCloseAllTabs.setIcon(GUIHelper.getEmptyIcon());
 
-    m_ActionClose = new AbstractBaseAction() {
+    m_ActionFileClose = new AbstractBaseAction() {
       private static final long serialVersionUID = -1104246458353845500L;
       @Override
       protected void doActionPerformed(ActionEvent e) {
 	closeParent();
       }
     };
-    m_ActionClose.setName("Close");
-    m_ActionClose.setIcon("exit.png");
-    m_ActionClose.setAccelerator("ctrl pressed Q");
+    m_ActionFileClose.setName("Close");
+    m_ActionFileClose.setIcon("exit.png");
+    m_ActionFileClose.setAccelerator("ctrl pressed Q");
+
+    m_ActionFileOpen = new AbstractBaseAction() {
+      private static final long serialVersionUID = -1104246458353845500L;
+      @Override
+      protected void doActionPerformed(ActionEvent e) {
+	openFile();
+      }
+    };
+    m_ActionFileOpen.setName("Open...");
+    m_ActionFileOpen.setIcon("open.gif");
+    m_ActionFileOpen.setAccelerator("ctrl pressed O");
   }
 
   /**
    * Updates the actions.
    */
   protected void updateActions() {
-    m_ActionCloseTab.setEnabled(m_TabbedPane.getTabCount() > 0);
-    m_ActionCloseAllTabs.setEnabled(m_TabbedPane.getTabCount() > 0);
+    m_ActionFileCloseTab.setEnabled(m_TabbedPane.getTabCount() > 0);
+    m_ActionFileCloseAllTabs.setEnabled(m_TabbedPane.getTabCount() > 0);
   }
 
   /**
@@ -173,6 +208,7 @@ public class InvestigatorPanel
   public JMenuBar getMenuBar() {
     JMenuBar			result;
     JMenu			menu;
+    JMenu			submenu;
     JMenuItem			menuitem;
     Class[]			classes;
     AbstractInvestigatorTab	tab;
@@ -186,9 +222,9 @@ public class InvestigatorPanel
       result.add(menu);
 
       // File/New tab
-      m_MenuNewTab = new BaseMenu("New tab");
-      m_MenuNewTab.setIcon(GUIHelper.getIcon("new.gif"));
-      menu.add(m_MenuNewTab);
+      m_MenuFileNewTab = new BaseMenu("New tab");
+      m_MenuFileNewTab.setIcon(GUIHelper.getIcon("new.gif"));
+      menu.add(m_MenuFileNewTab);
       classes = ClassLister.getSingleton().getClasses(AbstractInvestigatorTab.class);
       for (final Class cls: classes) {
 	try {
@@ -197,22 +233,39 @@ public class InvestigatorPanel
 	  menuitem.addActionListener((ActionEvent e) -> {
 	    try {
 	      AbstractInvestigatorTab tabNew = (AbstractInvestigatorTab) cls.newInstance();
-	      m_TabbedPane.addTab(tabNew.getTitle(), tabNew);
+	      m_TabbedPane.addTab(tabNew);
 	    }
 	    catch (Exception ex) {
 	      ConsolePanel.getSingleton().append("Failed to instantiate tab class: " + cls.getName(), ex);
 	    }
 	  });
-	  m_MenuNewTab.add(menuitem);
+	  m_MenuFileNewTab.add(menuitem);
 	}
 	catch (Exception e) {
 	  ConsolePanel.getSingleton().append("Failed to instantiate tab class: " + cls.getName(), e);
 	}
       }
-      m_MenuNewTab.sort();
+      m_MenuFileNewTab.sort();
+      menu.add(m_ActionFileCloseTab);
+      menu.add(m_ActionFileCloseAllTabs);
+
+      menu.addSeparator();
 
       // File/Open file
-      // TODO
+      menu.add(m_ActionFileOpen);
+
+      // File/Recent files
+      submenu = new JMenu("Open recent");
+      menu.add(submenu);
+      m_RecentFilesHandler = new RecentFilesHandler<>(SESSION_FILE, 10, submenu);
+      m_RecentFilesHandler.addRecentItemListener(new RecentItemListener<JMenu,File>() {
+	public void recentItemAdded(RecentItemEvent<JMenu,File> e) {
+	  // ignored
+	}
+	public void recentItemSelected(RecentItemEvent<JMenu,File> e) {
+	  openRecent(e);
+	}
+      });
 
       // File/Open database
       // TODO
@@ -223,7 +276,7 @@ public class InvestigatorPanel
       menu.addSeparator();
 
       // File/Close
-      menu.add(m_ActionClose);
+      menu.add(m_ActionFileClose);
 
 
       m_MenuBar = result;
@@ -277,8 +330,8 @@ public class InvestigatorPanel
     m_StatusBar.showStatus(msg);
 
     for (i = 0; i < m_TabbedPane.getTabCount(); i++) {
-      if (m_TabbedPane.getTabComponentAt(i) instanceof LogTab)
-	((LogTab) m_TabbedPane.getTabComponentAt(i)).append(msg);
+      if (m_TabbedPane.getComponentAt(i) instanceof LogTab)
+	((LogTab) m_TabbedPane.getComponentAt(i)).append(msg);
     }
   }
 
@@ -311,8 +364,8 @@ public class InvestigatorPanel
 
     m_Log.setLength(0);
     for (i = 0; i < m_TabbedPane.getTabCount(); i++) {
-      if (m_TabbedPane.getTabComponentAt(i) instanceof LogTab)
-	((LogTab) m_TabbedPane.getTabComponentAt(i)).clearLog();
+      if (m_TabbedPane.getComponentAt(i) instanceof LogTab)
+	((LogTab) m_TabbedPane.getComponentAt(i)).clearLog();
     }
   }
 
@@ -332,6 +385,55 @@ public class InvestigatorPanel
     int		i;
 
     for (i = 0; i < m_TabbedPane.getTabCount(); i++)
-      ((AbstractInvestigatorTab) m_TabbedPane.getTabComponentAt(i)).dataChanged();
+      ((AbstractInvestigatorTab) m_TabbedPane.getComponentAt(i)).dataChanged();
+
+    updateMenu();
+  }
+
+  /**
+   * Lets user select a dataset.
+   */
+  public void openFile() {
+    int			retVal;
+    FileContainer	cont;
+
+    retVal = m_FileChooser.showOpenDialog(this);
+    if (retVal != ConverterFileChooser.APPROVE_OPTION)
+      return;
+
+    logMessage("Loading: " + m_FileChooser.getSelectedFile());
+    cont = new FileContainer(m_FileChooser.getLoader(), new PlaceholderFile(m_FileChooser.getSelectedFile()));
+    m_Data.add(cont);
+    if (m_RecentFilesHandler != null)
+      m_RecentFilesHandler.addRecentItem(m_FileChooser.getSelectedFile());
+    logMessage("Loaded: " + m_FileChooser.getSelectedFile());
+    fireDataChange();
+  }
+
+  /**
+   * For opening a recently used file.
+   *
+   * @param e		the event
+   */
+  public void openRecent(RecentItemEvent<JMenu,File> e) {
+    AbstractFileLoader loader;
+
+    loader = ConverterUtils.getLoaderForFile(e.getItem());
+    if (loader == null) {
+      logError("Failed to determine file loader for the following file:\n" + e.getItem(), "Error reloading data");
+      return;
+    }
+
+    try {
+      logMessage("Loading: " + e.getItem());
+      loader.setFile(e.getItem());
+      m_Data.add(new FileContainer(loader, new PlaceholderFile(e.getItem())));
+      m_FileChooser.setCurrentDirectory(e.getItem().getParentFile());
+      logMessage("Loaded: " + e.getItem());
+      fireDataChange();
+    }
+    catch (Exception ex) {
+      logError("Failed to load file:\n" + e.getItem() + "\n" + Utils.throwableToString(ex), "Error reloading data");
+    }
   }
 }

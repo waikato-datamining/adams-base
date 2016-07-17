@@ -23,6 +23,7 @@ package adams.gui.tools.wekainvestigator.data;
 import adams.core.io.PlaceholderFile;
 import weka.core.Instances;
 import weka.core.converters.AbstractFileLoader;
+import weka.core.converters.ConverterUtils.DataSource;
 
 /**
  * File-based dataset.
@@ -41,9 +42,6 @@ public class FileContainer
   /** the reader used to load the data. */
   protected AbstractFileLoader m_Loader;
 
-  /** the underlying data. */
-  protected Instances m_Data;
-
   /**
    * Loads the data using the specified loader.
    *
@@ -54,7 +52,7 @@ public class FileContainer
     super();
     try {
       loader.setFile(source.getParentFile());
-      m_Data   = loader.getDataSet();
+      m_Data   = DataSource.read(loader);
       m_Source = source;
       m_Loader = loader;
     }
