@@ -29,7 +29,7 @@ import weka.core.Instances;
 import java.awt.event.ActionEvent;
 
 /**
- * Exports the selected data.
+ * Appends the selected datasets into single dataset.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
