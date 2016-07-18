@@ -27,8 +27,8 @@ import adams.gui.tools.wekainvestigator.data.FileContainer;
 import com.googlecode.jfilechooserbookmarks.gui.BaseScrollPane;
 import weka.core.converters.AbstractFileSaver;
 import weka.core.converters.ConverterUtils.DataSink;
-import weka.gui.arffviewer.ArffSortedTableModel;
-import weka.gui.arffviewer.ArffTable;
+import adams.gui.tools.wekainvestigator.viewer.ArffSortedTableModel;
+import adams.gui.tools.wekainvestigator.viewer.ArffTable;
 
 import javax.swing.JButton;
 import javax.swing.ListSelectionModel;
