@@ -22,6 +22,7 @@ package adams.gui.tools.wekainvestigator.tab;
 
 import adams.core.io.PlaceholderFile;
 import adams.gui.chooser.WekaFileChooser;
+import adams.gui.core.BaseSplitPane;
 import adams.gui.core.BaseTable;
 import adams.gui.core.SortableAndSearchableTableWithButtons;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
@@ -72,6 +73,9 @@ public class DataTab
   /** the file chooser for exporting. */
   protected WekaFileChooser m_FileChooser;
 
+  /** the split pane. */
+  protected BaseSplitPane m_SplitPane;
+
   /**
    * Initializes the members.
    */
@@ -91,16 +95,20 @@ public class DataTab
 
     setLayout(new BorderLayout());
 
+    m_SplitPane = new BaseSplitPane(BaseSplitPane.VERTICAL_SPLIT);
+    add(m_SplitPane, BorderLayout.CENTER);
+
     m_Model = new DataTableModel(new ArrayList<>());
     m_Table = new SortableAndSearchableTableWithButtons(m_Model);
-    m_Table.setPreferredSize(new Dimension(200, 100));
+    m_Table.setPreferredSize(new Dimension(200, 150));
     m_Table.setAutoResizeMode(BaseTable.AUTO_RESIZE_OFF);
     m_Table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
     m_Table.getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> {
       updateButtons();
       displayData();
     });
-    add(new BaseScrollPane(m_Table), BorderLayout.NORTH);
+    m_SplitPane.setTopComponent(new BaseScrollPane(m_Table));
+    m_SplitPane.setTopComponentHidden(false);
 
     m_ButtonRemove = new JButton("Remove");
     m_ButtonRemove.addActionListener((ActionEvent e) -> removeData(m_Table.getSelectedRows()));
@@ -111,8 +119,8 @@ public class DataTab
     m_Table.addToButtonsPanel(m_ButtonExport);
 
     m_PanelData = new JPanel(new BorderLayout());
-    m_PanelData.setVisible(false);
-    add(m_PanelData, BorderLayout.CENTER);
+    m_SplitPane.setBottomComponent(m_PanelData);
+    m_SplitPane.setBottomComponentHidden(true);
   }
 
   /**
@@ -139,11 +147,14 @@ public class DataTab
       table = new ArffTable(model);
       m_PanelData.removeAll();
       m_PanelData.add(new BaseScrollPane(table), BorderLayout.CENTER);
-      m_PanelData.setVisible(true);
+      if (m_SplitPane.isBottomComponentHidden()) {
+	m_SplitPane.setDividerLocation(150);
+	m_SplitPane.setBottomComponentHidden(false);
+      }
     }
     else {
       m_PanelData.removeAll();
-      m_PanelData.setVisible(false);
+      m_SplitPane.setBottomComponentHidden(true);
     }
     invalidate();
     revalidate();
