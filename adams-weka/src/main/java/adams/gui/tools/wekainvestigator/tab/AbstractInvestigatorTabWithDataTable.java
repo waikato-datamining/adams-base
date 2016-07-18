@@ -68,6 +68,7 @@ public abstract class AbstractInvestigatorTabWithDataTable
     setLayout(new BorderLayout());
 
     m_SplitPane = new BaseSplitPane(BaseSplitPane.VERTICAL_SPLIT);
+    m_SplitPane.setOneTouchExpandable(true);
     add(m_SplitPane, BorderLayout.CENTER);
 
     m_Model = new DataTableModel(new ArrayList<>(), hasReadOnlyTable());
