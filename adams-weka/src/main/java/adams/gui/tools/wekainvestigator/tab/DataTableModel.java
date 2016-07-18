@@ -195,6 +195,7 @@ public class DataTableModel
   public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
     DataContainer	cont;
     Attribute		att;
+    String		name;
 
     if (m_ReadOnly)
       return;
@@ -209,12 +210,28 @@ public class DataTableModel
 	fireTableRowsUpdated(rowIndex, rowIndex);
 	break;
       case 3:  // class
-	att = cont.getData().attribute("" + aValue);
-	if (att != null) {
-	  cont.getData().setClassIndex(att.index());
+	name = "" + aValue;
+	if (name.isEmpty()) {
+	  cont.getData().setClassIndex(-1);
 	  fireTableRowsUpdated(rowIndex, rowIndex);
+	}
+	else {
+	  att = cont.getData().attribute(name);
+	  if (att != null) {
+	    cont.getData().setClassIndex(att.index());
+	    fireTableRowsUpdated(rowIndex, rowIndex);
+	  }
 	}
 	break;
     }
+  }
+
+  /**
+   * Returns the underlying data.
+   *
+   * @return		the data
+   */
+  public List<DataContainer> getData() {
+    return m_Data;
   }
 }

@@ -28,6 +28,8 @@ import com.googlecode.jfilechooserbookmarks.gui.BaseScrollPane;
 import javax.swing.JPanel;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.util.ArrayList;
@@ -39,7 +41,8 @@ import java.util.ArrayList;
  * @version $Revision$
  */
 public abstract class AbstractInvestigatorTabWithDataTable
-  extends AbstractInvestigatorTab {
+  extends AbstractInvestigatorTab
+  implements TableModelListener {
 
   private static final long serialVersionUID = -94945456385486233L;
 
@@ -47,7 +50,7 @@ public abstract class AbstractInvestigatorTabWithDataTable
   protected DataTableModel m_Model;
 
   /** the table. */
-  protected SortableAndSearchableTableWithButtons m_Table;
+  protected DataTableWithButtons m_Table;
 
   /** the panel with the data. */
   protected JPanel m_PanelData;
@@ -68,7 +71,7 @@ public abstract class AbstractInvestigatorTabWithDataTable
     add(m_SplitPane, BorderLayout.CENTER);
 
     m_Model = new DataTableModel(new ArrayList<>(), hasReadOnlyTable());
-    m_Table = new SortableAndSearchableTableWithButtons(m_Model);
+    m_Table = new DataTableWithButtons(m_Model);
     m_Table.setPreferredSize(new Dimension(200, 150));
     m_Table.setAutoResizeMode(BaseTable.AUTO_RESIZE_OFF);
     m_Table.setSelectionMode(getDataTableListSelectionMode());
@@ -115,12 +118,24 @@ public abstract class AbstractInvestigatorTabWithDataTable
    */
   @Override
   public void dataChanged() {
+    m_Model.removeTableModelListener(this);
     m_Model = new DataTableModel(getData(), hasReadOnlyTable());
+    m_Model.addTableModelListener(this);
     m_Table.setModel(m_Model);
     m_Table.setOptimalColumnWidth();
     if (m_Table.getSelectedRow() == -1) {
       if (m_Model.getRowCount() > 0)
 	m_Table.getComponent().setRowSelectionInterval(0, 0);
     }
+  }
+
+  /**
+   * This fine grain notification tells listeners the exact range
+   * of cells, rows, or columns that changed.
+   *
+   * @see	#fireDataChange()
+   */
+  public void tableChanged(TableModelEvent e) {
+    fireDataChange();
   }
 }
