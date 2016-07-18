@@ -15,7 +15,7 @@
 
 /**
  * ClearCallableDisplay.java
- * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.control;
 
@@ -177,8 +177,6 @@ public class ClearCallableDisplay
   protected String executeCallableActor() {
     if (!isHeadless())
       ((AbstractDisplay) m_CallableActor).clearPanel();
-    m_OutputToken = m_InputToken;
-    m_InputToken  = null;
     return null;
   }
 
@@ -200,10 +198,8 @@ public class ClearCallableDisplay
   public String execute() {
     String	result;
 
-    result = super.execute();
-    
-    if (m_Skip)
-      m_OutputToken = m_InputToken;
+    result        = super.execute();
+    m_OutputToken = m_InputToken;
     
     return result;
   }

@@ -452,8 +452,10 @@ public class CallableActorScreenshot
     final PlaceholderFile	filename;
     Runnable			run;
 
-    if (m_Writer instanceof NullWriter)
+    if (m_Writer instanceof NullWriter) {
+      m_OutputToken = m_InputToken;
       return null;
+    }
     
     m_ScreenshotResult = null;
     filename           = generateFilename();
