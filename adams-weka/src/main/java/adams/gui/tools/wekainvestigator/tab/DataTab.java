@@ -20,7 +20,6 @@
 
 package adams.gui.tools.wekainvestigator.tab;
 
-import adams.core.Utils;
 import adams.core.io.PlaceholderFile;
 import adams.gui.chooser.WekaFileChooser;
 import adams.gui.core.BaseTable;
@@ -136,7 +135,7 @@ public class DataTab
 
     if (m_Table.getSelectedRow() > -1) {
       index = m_Table.getActualRow(m_Table.getSelectedRow());
-      model = new ArffSortedTableModel(getOwner().getData().get(index).getData());
+      model = new ArffSortedTableModel(getData().get(index).getData());
       table = new ArffTable(model);
       m_PanelData.removeAll();
       m_PanelData.add(new BaseScrollPane(table), BorderLayout.CENTER);
@@ -156,7 +155,7 @@ public class DataTab
    */
   @Override
   public void dataChanged() {
-    m_Model = new DataTableModel(getOwner().getData());
+    m_Model = new DataTableModel(getData());
     m_Table.setModel(m_Model);
     m_Table.setOptimalColumnWidth();
     if (m_Table.getSelectedRow() == -1) {
@@ -176,8 +175,8 @@ public class DataTab
     int		i;
 
     if (rows == null) {
-      getOwner().getData().clear();
-      getOwner().fireDataChange();
+      getData().clear();
+      fireDataChange();
     }
     else {
       actRows = new int[rows.length];
@@ -185,10 +184,10 @@ public class DataTab
 	actRows[i] = m_Table.getActualRow(rows[i]);
       Arrays.sort(actRows);
       for (i = actRows.length - 1; i >= 0; i--) {
-	getOwner().logMessage("Removing: " + getOwner().getData().get(i).getSourceFull());
-	getOwner().getData().remove(actRows[i]);
+	logMessage("Removing: " + getData().get(i).getSourceFull());
+	getData().remove(actRows[i]);
       }
-      getOwner().fireDataChange();
+      fireDataChange();
     }
   }
 
@@ -207,27 +206,27 @@ public class DataTab
 
     for (i = 0; i < rows.length; i++) {
       actRow = m_Table.getActualRow(rows[i]);
-      data   = getOwner().getData().get(actRow);
+      data   = getData().get(actRow);
       m_FileChooser.setDialogTitle("Exporting " + (i+1) + "/" + (rows.length) + ": " + data.getData().relationName());
       m_FileChooser.setSelectedFile(new PlaceholderFile(m_FileChooser.getCurrentDirectory().getAbsolutePath() + File.separator + data.getSourceShort()));
       retVal = m_FileChooser.showSaveDialog(this);
       if (retVal != WekaFileChooser.APPROVE_OPTION)
 	break;
       try {
-	getOwner().logMessage("Exporting: " + data.getSourceFull());
+	logMessage("Exporting: " + data.getSourceFull());
 	saver = m_FileChooser.getWriter();
 	saver.setFile(m_FileChooser.getSelectedFile());
 	DataSink.write(saver, data.getData());
-	getOwner().logMessage("Exported: " + m_FileChooser.getSelectedFile());
+	logMessage("Exported: " + m_FileChooser.getSelectedFile());
 	cont = new FileContainer(m_FileChooser.getReaderForFile(m_FileChooser.getSelectedFile()), m_FileChooser.getSelectedFile());
-	getOwner().getData().set(actRow, cont);
+	getData().set(actRow, cont);
       }
       catch (Exception e) {
-	getOwner().logError("Failed to export: " + m_FileChooser.getSelectedFile() + "\n" + Utils.throwableToString(e), "Export");
+	logError("Failed to export: " + m_FileChooser.getSelectedFile() + "\n", e, "Export");
 	break;
       }
     }
-    getOwner().fireDataChange();
+    fireDataChange();
   }
 
   /**

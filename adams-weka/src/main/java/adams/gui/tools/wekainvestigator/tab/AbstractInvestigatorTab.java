@@ -22,6 +22,9 @@ package adams.gui.tools.wekainvestigator.tab;
 
 import adams.gui.core.BasePanel;
 import adams.gui.tools.wekainvestigator.InvestigatorPanel;
+import adams.gui.tools.wekainvestigator.data.DataContainer;
+
+import java.util.List;
 
 /**
  * Ancestor for tabs in the Investigator.
@@ -64,7 +67,53 @@ public abstract class AbstractInvestigatorTab
   public abstract String getTitle();
 
   /**
+   * Returns the currently loaded data.
+   *
+   * @return		the data
+   */
+  public List<DataContainer> getData() {
+    return getOwner().getData();
+  }
+
+  /**
    * Notifies the tab that the data changed.
    */
   public abstract void dataChanged();
+
+  /**
+   * Notifies all the tabs that the data has changed.
+   */
+  public void fireDataChange() {
+    getOwner().fireDataChange();
+  }
+
+  /**
+   * Logs the message.
+   *
+   * @param msg		the log message
+   */
+  public void logMessage(String msg) {
+    getOwner().logMessage(msg);
+  }
+
+  /**
+   * Logs the exception and also displays an error dialog.
+   *
+   * @param msg		the log message
+   * @param t		the exception
+   * @param title	the title for the dialog
+   */
+  public void logError(String msg, Throwable t, String title) {
+    getOwner().logError(msg, t, title);
+  }
+
+  /**
+   * Logs the error message and also displays an error dialog.
+   *
+   * @param msg		the error message
+   * @param title	the title for the dialog
+   */
+  public void logError(String msg, String title) {
+    getOwner().logError(msg, title);
+  }
 }
