@@ -20,6 +20,22 @@
 
 package adams.gui.tools.wekainvestigator.tab;
 
+import adams.core.option.OptionUtils;
+import adams.gui.core.ConsolePanel;
+import adams.gui.goe.WekaGenericObjectEditorPanel;
+import adams.gui.tools.wekainvestigator.InvestigatorPanel;
+import adams.gui.tools.wekainvestigator.tab.classifytab.AbstractClassifierEvaluation;
+import weka.classifiers.Classifier;
+import weka.classifiers.rules.ZeroR;
+
+import javax.swing.BorderFactory;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JComboBox;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.util.logging.Level;
+
 /**
  * Tab for classification.
  *
@@ -30,6 +46,113 @@ public class ClassifyTab
   extends AbstractInvestigatorTab {
 
   private static final long serialVersionUID = -4106630131554796889L;
+
+  /** the GOe with the classifier. */
+  protected WekaGenericObjectEditorPanel m_PanelGOE;
+
+  /** the panel on the left-hand side. */
+  protected JPanel m_PanelLeft;
+
+  /** the panel with the evaluation. */
+  protected JPanel m_PanelEvaluation;
+
+  /** the combobox with the available evaluations. */
+  protected JComboBox<AbstractClassifierEvaluation> m_ComboBoxEvaluations;
+
+  /** the model with the available evaluations. */
+  protected DefaultComboBoxModel<AbstractClassifierEvaluation> m_ModelEvaluations;
+
+  /** the panel for the evaluation setup to be embedded in. */
+  protected JPanel m_PanelEvaluationSetup;
+
+  /** the current evaluation. */
+  protected AbstractClassifierEvaluation m_CurrentEvaluation;
+
+  /**
+   * Initializes the widgets.
+   */
+  @Override
+  protected void initialize() {
+    super.initialize();
+
+    m_CurrentEvaluation = null;
+  }
+
+  /**
+   * Initializes the widgets.
+   */
+  @Override
+  protected void initGUI() {
+    Classifier				cls;
+    Class[]				classes;
+    AbstractClassifierEvaluation	eval;
+    JPanel				panel;
+
+    super.initGUI();
+
+    setLayout(new BorderLayout());
+    setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+
+    try {
+      cls = (Classifier) OptionUtils.forAnyCommandLine(
+	Classifier.class,
+	InvestigatorPanel.getProperties().getProperty(
+	  "Classify.Classifier", ZeroR.class.getName()));
+    }
+    catch (Exception e) {
+      cls = new ZeroR();
+    }
+    m_PanelGOE = new WekaGenericObjectEditorPanel(Classifier.class, cls, true);
+    panel = new JPanel(new BorderLayout());
+    panel.add(m_PanelGOE, BorderLayout.CENTER);
+    panel.setBorder(BorderFactory.createTitledBorder("Classifier"));
+    add(panel, BorderLayout.NORTH);
+
+    m_PanelLeft = new JPanel(new BorderLayout());
+    add(m_PanelLeft, BorderLayout.WEST);
+
+    m_PanelEvaluation = new JPanel(new BorderLayout());
+    m_PanelEvaluation.setBorder(BorderFactory.createTitledBorder("Evaluation"));
+    m_PanelLeft.add(m_PanelEvaluation, BorderLayout.NORTH);
+
+    m_ModelEvaluations = new DefaultComboBoxModel<>();
+    classes            = AbstractClassifierEvaluation.getEvaluations();
+    for (Class c: classes) {
+      try {
+	eval = (AbstractClassifierEvaluation) c.newInstance();
+	eval.setOwner(this);
+	m_ModelEvaluations.addElement(eval);
+      }
+      catch (Exception e) {
+	ConsolePanel.getSingleton().append(Level.SEVERE, "Failed to instantiate classifier evaluation: " + c.getName(), e);
+      }
+    }
+    m_ComboBoxEvaluations = new JComboBox<>(m_ModelEvaluations);
+    m_ComboBoxEvaluations.addActionListener((ActionEvent e) -> {
+      if (m_ComboBoxEvaluations.getSelectedIndex() == -1)
+	return;
+      m_CurrentEvaluation = (AbstractClassifierEvaluation) m_ComboBoxEvaluations.getSelectedItem();
+      m_PanelEvaluationSetup.removeAll();
+      m_PanelEvaluationSetup.add(m_CurrentEvaluation.getPanel());
+      m_PanelEvaluationSetup.invalidate();
+      m_PanelEvaluationSetup.revalidate();
+      m_PanelEvaluationSetup.doLayout();
+    });
+    m_PanelEvaluation.add(m_ComboBoxEvaluations, BorderLayout.NORTH);
+
+    m_PanelEvaluationSetup = new JPanel(new BorderLayout());
+    m_PanelEvaluation.add(m_PanelEvaluationSetup, BorderLayout.CENTER);
+  }
+
+  /**
+   * Finishes up the initialization.
+   */
+  @Override
+  protected void finishInit() {
+    super.finishInit();
+
+    m_ComboBoxEvaluations.setSelectedIndex(0);
+  }
 
   /**
    * Returns the title of this table.
@@ -50,8 +173,12 @@ public class ClassifyTab
     return "classifier.png";
   }
 
+  /**
+   * Notifies the tab that the data changed.
+   */
   @Override
   public void dataChanged() {
-    // TODO update evaluations
+    if (m_CurrentEvaluation != null)
+      m_CurrentEvaluation.update();
   }
 }

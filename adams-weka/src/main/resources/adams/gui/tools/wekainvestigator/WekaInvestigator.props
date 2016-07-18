@@ -13,3 +13,15 @@ DefaultTabs=\
 # the default height for the data table for tabs that display one
 # (integer)
 DefaultDataTableHeight=150
+
+# the default classifier
+Classify.Classifier=weka.classifiers.rules.ZeroR
+
+# the number of folds for cross-validation
+Classify.NumFolds=10
+
+# the random seed
+Classify.Seed=1
+
+# the percentage split
+Classify.TrainPercentage=66
