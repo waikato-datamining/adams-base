@@ -124,4 +124,14 @@ public abstract class AbstractDataContainer
 
     return result;
   }
+
+  /**
+   * Returns a short description of the container.
+   *
+   * @return		the description
+   */
+  @Override
+  public String toString() {
+    return getData().relationName() + " [" + getSourceFull() + "]";
+  }
 }
