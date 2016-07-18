@@ -14,59 +14,76 @@
  */
 
 /**
- * AbstractInvestigatorTab.java
+ * AbstractDataTabAction.java
  * Copyright (C) 2016 University of Waikato, Hamilton, NZ
  */
 
-package adams.gui.tools.wekainvestigator.tab;
+package adams.gui.tools.wekainvestigator.tab.datatabactions;
 
+import adams.core.ClassLister;
 import adams.core.StatusMessageHandler;
-import adams.gui.core.BasePanel;
-import adams.gui.tools.wekainvestigator.InvestigatorPanel;
+import adams.gui.action.AbstractBaseAction;
+import adams.gui.core.SortableAndSearchableTableWithButtons;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
+import adams.gui.tools.wekainvestigator.tab.DataTab;
 
 import java.util.List;
 
 /**
- * Ancestor for tabs in the Investigator.
+ * Ancestor for actions on the data displayed in the {@link DataTab}.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public abstract class AbstractInvestigatorTab
-  extends BasePanel
+public abstract class AbstractDataTabAction
+  extends AbstractBaseAction
   implements StatusMessageHandler {
 
-  private static final long serialVersionUID = 1860821657853747908L;
+  private static final long serialVersionUID = -3555111594280198534L;
 
   /** the owner. */
-  protected InvestigatorPanel m_Owner;
+  protected DataTab m_Owner;
 
   /**
-   * Sets the owner for this tab.
+   * Sets the owner.
    *
    * @param value	the owner
    */
-  public void setOwner(InvestigatorPanel value) {
+  public void setOwner(DataTab value) {
     m_Owner = value;
-    dataChanged();
   }
 
   /**
-   * Returns the owner of this tab.
+   * Returns the owner.
    *
    * @return		the owner, null if none set
    */
-  public InvestigatorPanel getOwner() {
+  public DataTab getOwner() {
     return m_Owner;
   }
 
   /**
-   * Returns the title of this table.
+   * Returns the table.
    *
-   * @return		the title
+   * @return    the table
    */
-  public abstract String getTitle();
+  public SortableAndSearchableTableWithButtons getTable() {
+    return m_Owner.getTable();
+  }
+
+  /**
+   * Updates the action.
+   */
+  public abstract void update();
+
+  /**
+   * Returns the available actions.
+   *
+   * @return		the action classnames
+   */
+  public static Class[] getActions() {
+    return ClassLister.getSingleton().getClasses(AbstractDataTabAction.class);
+  }
 
   /**
    * Returns the currently loaded data.
@@ -76,11 +93,6 @@ public abstract class AbstractInvestigatorTab
   public List<DataContainer> getData() {
     return getOwner().getData();
   }
-
-  /**
-   * Notifies the tab that the data changed.
-   */
-  public abstract void dataChanged();
 
   /**
    * Notifies all the tabs that the data has changed.
@@ -125,6 +137,8 @@ public abstract class AbstractInvestigatorTab
    * @param msg		the message to display
    */
   public void showStatus(String msg) {
-    getOwner().showStatus(msg);
+    if (m_Owner == null)
+      return;
+    m_Owner.showStatus(msg);
   }
 }

@@ -20,22 +20,22 @@
 
 package adams.gui.tools.wekainvestigator.tab;
 
-import adams.core.io.PlaceholderFile;
-import adams.gui.chooser.WekaFileChooser;
-import adams.gui.tools.wekainvestigator.data.DataContainer;
-import adams.gui.tools.wekainvestigator.data.FileContainer;
-import com.googlecode.jfilechooserbookmarks.gui.BaseScrollPane;
-import weka.core.converters.AbstractFileSaver;
-import weka.core.converters.ConverterUtils.DataSink;
+import adams.core.logging.LoggingLevel;
+import adams.gui.core.ConsolePanel;
+import adams.gui.tools.wekainvestigator.tab.datatabactions.AbstractDataTabAction;
+import adams.gui.tools.wekainvestigator.tab.datatabactions.Export;
 import adams.gui.tools.wekainvestigator.viewer.ArffSortedTableModel;
 import adams.gui.tools.wekainvestigator.viewer.ArffTable;
+import com.googlecode.jfilechooserbookmarks.gui.BaseScrollPane;
+import com.jidesoft.swing.JideButton;
+import com.jidesoft.swing.JideSplitButton;
 
-import javax.swing.JButton;
 import javax.swing.ListSelectionModel;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
-import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Lists the currently loaded datasets.
@@ -49,10 +49,38 @@ public class DataTab
   private static final long serialVersionUID = -94945456385486233L;
 
   /** the button for removing a dataset. */
-  protected JButton m_ButtonRemove;
+  protected JideButton m_ButtonRemove;
 
-  /** the button for exporting a dataset. */
-  protected JButton m_ButtonExport;
+  /** the action button. */
+  protected JideSplitButton m_ButtonAction;
+
+  /** the available actions. */
+  protected List<AbstractDataTabAction> m_Actions;
+
+  /**
+   * Initializes the members.
+   */
+  @Override
+  protected void initialize() {
+    Class[]			classes;
+    AbstractDataTabAction 	action;
+
+    super.initialize();
+
+    m_Owner          = null;
+    m_Actions        = new ArrayList<>();
+    classes          = AbstractDataTabAction.getActions();
+    for (Class cls: classes) {
+      try {
+	action = (AbstractDataTabAction) cls.newInstance();
+	action.setOwner(this);
+	m_Actions.add(action);
+      }
+      catch (Exception e) {
+	ConsolePanel.getSingleton().append(LoggingLevel.SEVERE, "Failed to instantiate action: " + cls.getName(), e);
+      }
+    }
+  }
 
   /**
    * Initializes the widgets.
@@ -61,13 +89,22 @@ public class DataTab
   protected void initGUI() {
     super.initGUI();
 
-    m_ButtonRemove = new JButton("Remove");
+    m_ButtonRemove = new JideButton("Remove");
+    m_ButtonRemove.setButtonStyle(JideButton.TOOLBOX_STYLE);
     m_ButtonRemove.addActionListener((ActionEvent e) -> removeData(m_Table.getSelectedRows()));
     m_Table.addToButtonsPanel(m_ButtonRemove);
 
-    m_ButtonExport = new JButton("Export...");
-    m_ButtonExport.addActionListener((ActionEvent e) -> exportData(m_Table.getSelectedRows()));
-    m_Table.addToButtonsPanel(m_ButtonExport);
+    m_ButtonAction = new JideSplitButton();
+    m_ButtonAction.setAlwaysDropdown(false);
+    m_ButtonAction.setButtonEnabled(true);
+    m_ButtonAction.setButtonStyle(JideSplitButton.TOOLBOX_STYLE);
+    for (AbstractDataTabAction action: m_Actions) {
+      if (action instanceof Export)
+	m_ButtonAction.setAction(action);
+      else
+	m_ButtonAction.add(action);
+    }
+    m_Table.addToButtonsPanel(m_ButtonAction);
   }
 
   /**
@@ -103,7 +140,8 @@ public class DataTab
    */
   protected void updateButtons() {
     m_ButtonRemove.setEnabled(m_Table.getSelectedRowCount() > 0);
-    m_ButtonExport.setEnabled(m_Table.getSelectedRowCount() > 0);
+    for (AbstractDataTabAction action: m_Actions)
+      action.update();
   }
 
   /**
@@ -158,43 +196,5 @@ public class DataTab
       }
       fireDataChange();
     }
-  }
-
-  /**
-   * Exports the selected rows.
-   *
-   * @param rows	the rows to export
-   */
-  protected void exportData(int[] rows) {
-    int			actRow;
-    int			i;
-    DataContainer	data;
-    FileContainer	cont;
-    int			retVal;
-    AbstractFileSaver	saver;
-
-    for (i = 0; i < rows.length; i++) {
-      actRow = m_Table.getActualRow(rows[i]);
-      data   = getData().get(actRow);
-      m_FileChooser.setDialogTitle("Exporting " + (i+1) + "/" + (rows.length) + ": " + data.getData().relationName());
-      m_FileChooser.setSelectedFile(new PlaceholderFile(m_FileChooser.getCurrentDirectory().getAbsolutePath() + File.separator + data.getSourceShort()));
-      retVal = m_FileChooser.showSaveDialog(this);
-      if (retVal != WekaFileChooser.APPROVE_OPTION)
-	break;
-      try {
-	logMessage("Exporting: " + data.getSourceFull());
-	saver = m_FileChooser.getWriter();
-	saver.setFile(m_FileChooser.getSelectedFile());
-	DataSink.write(saver, data.getData());
-	logMessage("Exported: " + m_FileChooser.getSelectedFile());
-	cont = new FileContainer(m_FileChooser.getReaderForFile(m_FileChooser.getSelectedFile()), m_FileChooser.getSelectedFile());
-	getData().set(actRow, cont);
-      }
-      catch (Exception e) {
-	logError("Failed to export: " + m_FileChooser.getSelectedFile() + "\n", e, "Export");
-	break;
-      }
-    }
-    fireDataChange();
   }
 }

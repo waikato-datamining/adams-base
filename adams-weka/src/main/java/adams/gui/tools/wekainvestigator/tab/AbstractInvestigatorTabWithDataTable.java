@@ -20,7 +20,6 @@
 
 package adams.gui.tools.wekainvestigator.tab;
 
-import adams.gui.chooser.WekaFileChooser;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.BaseTable;
 import adams.gui.core.SortableAndSearchableTableWithButtons;
@@ -53,21 +52,8 @@ public abstract class AbstractInvestigatorTabWithDataTable
   /** the panel with the data. */
   protected JPanel m_PanelData;
 
-  /** the file chooser for exporting. */
-  protected WekaFileChooser m_FileChooser;
-
   /** the split pane. */
   protected BaseSplitPane m_SplitPane;
-
-  /**
-   * Initializes the members.
-   */
-  @Override
-  protected void initialize() {
-    super.initialize();
-
-    m_FileChooser = new WekaFileChooser();
-  }
 
   /**
    * Initializes the widgets.
@@ -107,6 +93,15 @@ public abstract class AbstractInvestigatorTabWithDataTable
    * Gets called when the used changes the selection.
    */
   protected abstract void dataTableSelectionChanged();
+
+  /**
+   * Returns the table.
+   *
+   * @return		the table
+   */
+  public SortableAndSearchableTableWithButtons getTable() {
+    return m_Table;
+  }
 
   /**
    * Notifies the tab that the data changed.

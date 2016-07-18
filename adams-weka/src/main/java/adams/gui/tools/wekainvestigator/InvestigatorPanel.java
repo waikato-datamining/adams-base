@@ -21,6 +21,7 @@
 package adams.gui.tools.wekainvestigator;
 
 import adams.core.ClassLister;
+import adams.core.StatusMessageHandler;
 import adams.core.Utils;
 import adams.gui.action.AbstractBaseAction;
 import adams.gui.action.BaseAction;
@@ -59,7 +60,8 @@ import java.util.List;
  * @version $Revision$
  */
 public class InvestigatorPanel
-  extends AbstractWorkspacePanel {
+  extends AbstractWorkspacePanel
+  implements StatusMessageHandler {
 
   private static final long serialVersionUID = 7442747356297265526L;
 
@@ -432,5 +434,14 @@ public class InvestigatorPanel
     catch (Exception ex) {
       logError("Failed to load file:\n" + e.getItem() + "\n" + Utils.throwableToString(ex), "Error reloading data");
     }
+  }
+
+  /**
+   * Displays a message.
+   *
+   * @param msg		the message to display
+   */
+  public void showStatus(String msg) {
+    m_StatusBar.showStatus(msg);
   }
 }
