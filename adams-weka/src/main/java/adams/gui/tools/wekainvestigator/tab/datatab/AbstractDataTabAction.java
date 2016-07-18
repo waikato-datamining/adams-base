@@ -113,15 +113,6 @@ public abstract class AbstractDataTabAction
   public abstract void update();
 
   /**
-   * Returns the available actions.
-   *
-   * @return		the action classnames
-   */
-  public static Class[] getActions() {
-    return ClassLister.getSingleton().getClasses(AbstractDataTabAction.class);
-  }
-
-  /**
    * Returns the currently loaded data.
    *
    * @return		the data
@@ -176,5 +167,14 @@ public abstract class AbstractDataTabAction
     if (m_Owner == null)
       return;
     m_Owner.showStatus(msg);
+  }
+
+  /**
+   * Returns the available actions.
+   *
+   * @return		the action classnames
+   */
+  public static Class[] getActions() {
+    return ClassLister.getSingleton().getClasses(AbstractDataTabAction.class);
   }
 }
