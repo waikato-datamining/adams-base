@@ -25,6 +25,9 @@ import weka.core.Instances;
 import weka.core.converters.AbstractFileLoader;
 import weka.core.converters.ConverterUtils.DataSource;
 
+import java.io.File;
+import java.util.logging.Level;
+
 /**
  * File-based dataset.
  *
@@ -37,7 +40,7 @@ public class FileContainer
   private static final long serialVersionUID = 6267905940957451551L;
 
   /** the source. */
-  protected PlaceholderFile m_Source;
+  protected File m_Source;
 
   /** the reader used to load the data. */
   protected AbstractFileLoader m_Loader;
@@ -49,9 +52,19 @@ public class FileContainer
    * @param source	the file to load
    */
   public FileContainer(AbstractFileLoader loader, PlaceholderFile source) {
+    this(loader, (File) source);
+  }
+
+  /**
+   * Loads the data using the specified loader.
+   *
+   * @param loader	the loader to use
+   * @param source	the file to load
+   */
+  public FileContainer(AbstractFileLoader loader, File source) {
     super();
     try {
-      loader.setFile(source.getParentFile());
+      loader.setFile(source.getAbsoluteFile());
       m_Data   = DataSource.read(loader);
       m_Source = source;
       m_Loader = loader;
@@ -113,13 +126,14 @@ public class FileContainer
    * @return		true if succesfully reloaded
    */
   @Override
-  public boolean reload() {
+  protected boolean doReload() {
     try {
-      m_Loader.setFile(m_Source.getParentFile());
+      m_Loader.setFile(m_Source.getAbsoluteFile());
       m_Data   = m_Loader.getDataSet();
       return true;
     }
     catch (Exception e) {
+      getLogger().log(Level.SEVERE, "Failed to reload: " + m_Source, e);
       return false;
     }
   }

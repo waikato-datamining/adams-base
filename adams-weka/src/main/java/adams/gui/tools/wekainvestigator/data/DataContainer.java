@@ -59,6 +59,20 @@ public interface DataContainer {
   public boolean reload();
 
   /**
+   * Checks whether the data has been modified.
+   *
+   * @return		true if modified
+   */
+  public boolean isModified();
+
+  /**
+   * Sets whether the data has been modified.
+   *
+   * @param value	true if modified
+   */
+  public void setModified(boolean value);
+
+  /**
    * Sets the data.
    *
    * @param value	the data to use

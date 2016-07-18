@@ -22,7 +22,6 @@ package adams.gui.tools.wekainvestigator;
 
 import adams.core.ClassLister;
 import adams.core.Utils;
-import adams.core.io.PlaceholderFile;
 import adams.gui.action.AbstractBaseAction;
 import adams.gui.action.BaseAction;
 import adams.gui.chooser.WekaFileChooser;
@@ -400,7 +399,7 @@ public class InvestigatorPanel
       return;
 
     logMessage("Loading: " + m_FileChooser.getSelectedFile());
-    cont = new FileContainer(m_FileChooser.getReader(), new PlaceholderFile(m_FileChooser.getSelectedFile()));
+    cont = new FileContainer(m_FileChooser.getReader(), m_FileChooser.getSelectedFile());
     m_Data.add(cont);
     if (m_RecentFilesHandler != null)
       m_RecentFilesHandler.addRecentItem(m_FileChooser.getSelectedFile());
@@ -425,7 +424,7 @@ public class InvestigatorPanel
     try {
       logMessage("Loading: " + e.getItem());
       loader.setFile(e.getItem());
-      m_Data.add(new FileContainer(loader, new PlaceholderFile(e.getItem())));
+      m_Data.add(new FileContainer(loader, e.getItem()));
       m_FileChooser.setCurrentDirectory(e.getItem().getParentFile());
       logMessage("Loaded: " + e.getItem());
       fireDataChange();

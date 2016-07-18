@@ -26,6 +26,7 @@ import adams.gui.chooser.WekaFileChooser;
 import adams.gui.core.BaseTable;
 import adams.gui.core.SortableAndSearchableTableWithButtons;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
+import adams.gui.tools.wekainvestigator.data.FileContainer;
 import com.googlecode.jfilechooserbookmarks.gui.BaseScrollPane;
 import weka.core.converters.AbstractFileSaver;
 import weka.core.converters.ConverterUtils.DataSink;
@@ -200,6 +201,7 @@ public class DataTab
     int			actRow;
     int			i;
     DataContainer	data;
+    FileContainer	cont;
     int			retVal;
     AbstractFileSaver	saver;
 
@@ -212,17 +214,20 @@ public class DataTab
       if (retVal != WekaFileChooser.APPROVE_OPTION)
 	break;
       try {
-	getOwner().logMessage("Exporting: " + getOwner().getData().get(i).getSourceFull());
+	getOwner().logMessage("Exporting: " + data.getSourceFull());
 	saver = m_FileChooser.getWriter();
 	saver.setFile(m_FileChooser.getSelectedFile());
 	DataSink.write(saver, data.getData());
 	getOwner().logMessage("Exported: " + m_FileChooser.getSelectedFile());
+	cont = new FileContainer(m_FileChooser.getReaderForFile(m_FileChooser.getSelectedFile()), m_FileChooser.getSelectedFile());
+	getOwner().getData().set(actRow, cont);
       }
       catch (Exception e) {
 	getOwner().logError("Failed to export: " + m_FileChooser.getSelectedFile() + "\n" + Utils.throwableToString(e), "Export");
 	break;
       }
     }
+    getOwner().fireDataChange();
   }
 
   /**

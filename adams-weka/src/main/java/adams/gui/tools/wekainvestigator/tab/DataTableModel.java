@@ -70,6 +70,7 @@ public class DataTableModel
 
     result = 0;
     result++;  // index
+    result++;  // modified
     result++;  // relation
     result++;  // class
     result++;  // source short
@@ -84,12 +85,14 @@ public class DataTableModel
       case 0:
 	return "Index";
       case 1:
-	return "Relation";
+	return "Mod";
       case 2:
-	return "Class";
+	return "Relation";
       case 3:
-	return "Source (short)";
+	return "Class";
       case 4:
+	return "Source (short)";
+      case 5:
 	return "Source (full)";
       default:
 	return null;
@@ -113,12 +116,14 @@ public class DataTableModel
       case 0:
 	return (rowIndex + 1);
       case 1:
-	return cont.getData().relationName();
+	return cont.isModified() ? "*" : "";
       case 2:
-	return (cont.getData().classIndex() == -1) ? "<none>" : cont.getData().classAttribute().name();
+	return cont.getData().relationName();
       case 3:
-	return cont.getSourceShort();
+	return (cont.getData().classIndex() == -1) ? "<none>" : cont.getData().classAttribute().name();
       case 4:
+	return cont.getSourceShort();
+      case 5:
 	return cont.getSourceFull();
       default:
 	return null;
