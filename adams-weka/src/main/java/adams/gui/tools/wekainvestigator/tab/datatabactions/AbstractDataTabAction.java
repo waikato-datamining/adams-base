@@ -72,6 +72,42 @@ public abstract class AbstractDataTabAction
   }
 
   /**
+   * Returns the currently selected data containers.
+   *
+   * @return		the selected data
+   */
+  protected int[] getActualSelectedRows() {
+    int[]		result;
+    int[]		rows;
+    int			i;
+
+    rows   = getTable().getSelectedRows();
+    result = new int[rows.length];
+    for (i = 0; i < rows.length; i++)
+      result[i] = getTable().getActualRow(rows[i]);
+
+    return result;
+  }
+
+  /**
+   * Returns the currently selected data containers.
+   *
+   * @return		the selected data
+   */
+  protected DataContainer[] getSelectedData() {
+    DataContainer[]	result;
+    int[]		rows;
+    int			i;
+
+    rows = getActualSelectedRows();
+    result = new DataContainer[rows.length];
+    for (i = 0; i < rows.length; i++)
+      result[i] = getData().get(rows[i]);
+
+    return result;
+  }
+
+  /**
    * Updates the action.
    */
   public abstract void update();

@@ -65,21 +65,24 @@ public class Export
   }
 
   /**
-   * Exports the selected rows.
+   * Invoked when an action occurs.
    *
-   * @param rows	the rows to export
+   * @param e		the event
    */
-  protected void exportData(int[] rows) {
-    int			actRow;
+  @Override
+  protected void doActionPerformed(ActionEvent e) {
+    DataContainer[]	conts;
+    int[]		rows;
     int			i;
-    DataContainer data;
-    FileContainer cont;
+    DataContainer 	data;
+    FileContainer 	cont;
     int			retVal;
-    AbstractFileSaver saver;
+    AbstractFileSaver 	saver;
 
-    for (i = 0; i < rows.length; i++) {
-      actRow = getTable().getActualRow(rows[i]);
-      data   = getData().get(actRow);
+    conts = getSelectedData();
+    rows  = getActualSelectedRows();
+    for (i = 0; i < conts.length; i++) {
+      data   = conts[i];
       m_FileChooser.setDialogTitle("Exporting " + (i+1) + "/" + (rows.length) + ": " + data.getData().relationName());
       m_FileChooser.setSelectedFile(new PlaceholderFile(m_FileChooser.getCurrentDirectory().getAbsolutePath() + File.separator + data.getSourceShort()));
       retVal = m_FileChooser.showSaveDialog(getOwner());
@@ -92,24 +95,14 @@ public class Export
 	DataSink.write(saver, data.getData());
 	logMessage("Exported: " + m_FileChooser.getSelectedFile());
 	cont = new FileContainer(m_FileChooser.getReaderForFile(m_FileChooser.getSelectedFile()), m_FileChooser.getSelectedFile());
-	getData().set(actRow, cont);
+	getData().set(rows[i], cont);
       }
-      catch (Exception e) {
-	logError("Failed to export: " + m_FileChooser.getSelectedFile() + "\n", e, "Export");
+      catch (Exception ex) {
+	logError("Failed to export: " + m_FileChooser.getSelectedFile() + "\n", ex, "Export");
 	break;
       }
     }
     fireDataChange();
-  }
-
-  /**
-   * Invoked when an action occurs.
-   *
-   * @param e		the event
-   */
-  @Override
-  protected void doActionPerformed(ActionEvent e) {
-    exportData(getTable().getSelectedRows());
   }
 
   /**
