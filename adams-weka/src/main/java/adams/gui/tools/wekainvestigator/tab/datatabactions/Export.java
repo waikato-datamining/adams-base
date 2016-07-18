@@ -22,7 +22,6 @@ package adams.gui.tools.wekainvestigator.tab.datatabactions;
 
 import adams.core.io.PlaceholderFile;
 import adams.gui.chooser.WekaFileChooser;
-import adams.gui.core.GUIHelper;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
 import adams.gui.tools.wekainvestigator.data.FileContainer;
 import weka.core.converters.AbstractFileSaver;
@@ -51,7 +50,7 @@ public class Export
   public Export() {
     super();
     setName("Export");
-    setIcon(GUIHelper.getIcon("save.gif"));
+    setIcon("save.gif");
   }
 
   /**

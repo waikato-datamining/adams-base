@@ -22,7 +22,6 @@ package adams.gui.tools.wekainvestigator.tab.datatabactions;
 
 import adams.flow.core.Token;
 import adams.flow.transformer.WekaInstancesAppend;
-import adams.gui.core.GUIHelper;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
 import adams.gui.tools.wekainvestigator.data.MemoryContainer;
 import weka.core.Instances;
@@ -46,7 +45,7 @@ public class Append
   public Append() {
     super();
     setName("Append");
-    setIcon(GUIHelper.getIcon("append.png"));
+    setIcon("append.png");
   }
 
   /**
