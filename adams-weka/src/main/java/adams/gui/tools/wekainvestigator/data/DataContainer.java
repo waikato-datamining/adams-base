@@ -31,11 +31,18 @@ import weka.core.Instances;
 public interface DataContainer {
 
   /**
-   * Returns the source of the data item.
+   * Returns the full version of the source of the data item.
    *
    * @return		the source
    */
-  public String getSource();
+  public String getSourceFull();
+
+  /**
+   * Returns the short version of the source of the data item.
+   *
+   * @return		the source
+   */
+  public String getSourceShort();
 
   /**
    * Whether it is possible to reload this item.
