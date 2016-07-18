@@ -69,6 +69,17 @@ public abstract class AbstractInvestigatorTab
   public abstract String getTitle();
 
   /**
+   * Returns the icon name for the tab icon.
+   * <br>
+   * Default implementation returns null.
+   *
+   * @return		the icon name, null if not available
+   */
+  public String getTabIcon() {
+    return null;
+  }
+
+  /**
    * Returns the currently loaded data.
    *
    * @return		the data

@@ -118,6 +118,15 @@ public class DataTab
   }
 
   /**
+   * Returns the icon name for the tab icon.
+   *
+   * @return		the icon name, null if not available
+   */
+  public String getTabIcon() {
+    return "spreadsheet.png";
+  }
+
+  /**
    * Returns whether a readonly table is used.
    *
    * @return		true if readonly

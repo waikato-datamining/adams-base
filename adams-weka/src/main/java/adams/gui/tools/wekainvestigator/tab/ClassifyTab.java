@@ -41,6 +41,15 @@ public class ClassifyTab
     return "Classify";
   }
 
+  /**
+   * Returns the icon name for the tab icon.
+   *
+   * @return		the icon name, null if not available
+   */
+  public String getTabIcon() {
+    return "classifier.png";
+  }
+
   @Override
   public void dataChanged() {
     // TODO update evaluations

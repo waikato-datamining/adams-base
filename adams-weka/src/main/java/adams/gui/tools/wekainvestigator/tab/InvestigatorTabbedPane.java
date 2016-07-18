@@ -20,11 +20,13 @@
 
 package adams.gui.tools.wekainvestigator.tab;
 
+import adams.gui.core.ButtonTabComponent;
 import adams.gui.core.DragAndDropTabbedPane;
+import adams.gui.core.GUIHelper;
 import adams.gui.tools.wekainvestigator.InvestigatorPanel;
 
 /**
- * TODO: What class does.
+ * Tabbed pane for managing the tabs of the Investigator.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
@@ -66,7 +68,13 @@ public class InvestigatorTabbedPane
    * @param tab		the tab to add
    */
   public void addTab(AbstractInvestigatorTab tab) {
+    ButtonTabComponent	button;
+
     tab.setOwner(getOwner());
     addTab(tab.getTitle(), tab);
+
+    // icon
+    button = (ButtonTabComponent) getTabComponentAt(getTabCount() - 1);
+    button.setIcon((tab.getTabIcon() == null) ? null : GUIHelper.getIcon(tab.getTabIcon()));
   }
 }

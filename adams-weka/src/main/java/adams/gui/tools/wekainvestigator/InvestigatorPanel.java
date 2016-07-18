@@ -249,6 +249,10 @@ public class InvestigatorPanel
 	try {
 	  tab      = (AbstractInvestigatorTab) cls.newInstance();
 	  menuitem = new JMenuItem(tab.getTitle());
+	  if (tab.getTabIcon() == null)
+	    menuitem.setIcon(GUIHelper.getEmptyIcon());
+	  else
+	    menuitem.setIcon(GUIHelper.getIcon(tab.getTabIcon()));
 	  menuitem.addActionListener((ActionEvent e) -> {
 	    try {
 	      AbstractInvestigatorTab tabNew = (AbstractInvestigatorTab) cls.newInstance();

@@ -152,6 +152,15 @@ public class LogTab
   }
 
   /**
+   * Returns the icon name for the tab icon.
+   *
+   * @return		the icon name, null if not available
+   */
+  public String getTabIcon() {
+    return "log.gif";
+  }
+
+  /**
    * Updates the buttons.
    */
   protected void updateButtons() {

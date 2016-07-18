@@ -48,6 +48,15 @@ public class MatrixTab
   }
 
   /**
+   * Returns the icon name for the tab icon.
+   *
+   * @return		the icon name, null if not available
+   */
+  public String getTabIcon() {
+    return "matrixplot.png";
+  }
+
+  /**
    * Returns whether a readonly table is used.
    *
    * @return		true if readonly
