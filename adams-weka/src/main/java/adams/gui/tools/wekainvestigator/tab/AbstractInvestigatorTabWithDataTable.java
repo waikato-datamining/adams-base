@@ -67,7 +67,7 @@ public abstract class AbstractInvestigatorTabWithDataTable
     m_SplitPane = new BaseSplitPane(BaseSplitPane.VERTICAL_SPLIT);
     add(m_SplitPane, BorderLayout.CENTER);
 
-    m_Model = new DataTableModel(new ArrayList<>());
+    m_Model = new DataTableModel(new ArrayList<>(), hasReadOnlyTable());
     m_Table = new SortableAndSearchableTableWithButtons(m_Model);
     m_Table.setPreferredSize(new Dimension(200, 150));
     m_Table.setAutoResizeMode(BaseTable.AUTO_RESIZE_OFF);
@@ -80,6 +80,13 @@ public abstract class AbstractInvestigatorTabWithDataTable
     m_SplitPane.setBottomComponent(m_PanelData);
     m_SplitPane.setBottomComponentHidden(true);
   }
+
+  /**
+   * Returns whether a readonly table is used.
+   *
+   * @return		true if readonly
+   */
+  protected abstract boolean hasReadOnlyTable();
 
   /**
    * Returns the list selection mode to use.
@@ -108,7 +115,7 @@ public abstract class AbstractInvestigatorTabWithDataTable
    */
   @Override
   public void dataChanged() {
-    m_Model = new DataTableModel(getData());
+    m_Model = new DataTableModel(getData(), hasReadOnlyTable());
     m_Table.setModel(m_Model);
     m_Table.setOptimalColumnWidth();
     if (m_Table.getSelectedRow() == -1) {

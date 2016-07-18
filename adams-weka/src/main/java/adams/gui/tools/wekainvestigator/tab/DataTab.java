@@ -118,6 +118,15 @@ public class DataTab
   }
 
   /**
+   * Returns whether a readonly table is used.
+   *
+   * @return		true if readonly
+   */
+  protected boolean hasReadOnlyTable() {
+    return false;
+  }
+
+  /**
    * Returns the list selection mode to use.
    *
    * @return		the mode

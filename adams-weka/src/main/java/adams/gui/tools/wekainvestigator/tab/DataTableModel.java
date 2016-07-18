@@ -22,6 +22,7 @@ package adams.gui.tools.wekainvestigator.tab;
 
 import adams.gui.core.AbstractBaseTableModel;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
+import weka.core.Attribute;
 
 import java.util.List;
 
@@ -39,14 +40,28 @@ public class DataTableModel
   /** the underlying data. */
   protected List<DataContainer> m_Data;
 
+  /** whether the model is read-only. */
+  protected boolean m_ReadOnly;
+
   /**
    * Initializes the model.
    *
    * @param data	the data to use
+   * @param readOnly	whether the model is readonly
    */
-  public DataTableModel(List<DataContainer> data) {
+  public DataTableModel(List<DataContainer> data, boolean readOnly) {
     super();
-    m_Data = data;
+    m_Data     = data;
+    m_ReadOnly = readOnly;
+  }
+
+  /**
+   * Returns whether the model is readonly.
+   *
+   * @return		true if readonly
+   */
+  public boolean isReadOnly() {
+    return m_ReadOnly;
   }
 
   /**
@@ -79,6 +94,12 @@ public class DataTableModel
     return result;
   }
 
+  /**
+   * Returns the column name.
+   *
+   * @param column	the index of the column
+   * @return		the name
+   */
   @Override
   public String getColumnName(int column) {
     switch (column) {
@@ -116,7 +137,7 @@ public class DataTableModel
       case 0:
 	return (rowIndex + 1);
       case 1:
-	return cont.isModified() ? "*" : "";
+	return cont.isModified();
       case 2:
 	return cont.getData().relationName();
       case 3:
@@ -127,6 +148,73 @@ public class DataTableModel
 	return cont.getSourceFull();
       default:
 	return null;
+    }
+  }
+
+  /**
+   * Returns the class type for the column.
+   *
+   * @param columnIndex	the column
+   * @return		the class
+   */
+  @Override
+  public Class<?> getColumnClass(int columnIndex) {
+    if (columnIndex == 0)
+      return Integer.class;
+    if (columnIndex == 1)
+      return Boolean.class;
+    return super.getColumnClass(columnIndex);
+  }
+
+  /**
+   * Returns whether a cell is editable.
+   *
+   * @param rowIndex	the row
+   * @param columnIndex	the column
+   * @return		true if editable
+   */
+  @Override
+  public boolean isCellEditable(int rowIndex, int columnIndex) {
+    if (m_ReadOnly)
+      return false;
+    if (columnIndex == 1)
+      return true;
+    if (columnIndex == 3)
+      return true;
+    return false;
+  }
+
+  /**
+   * Sets the value at the specified position, if possible.
+   *
+   * @param aValue	the value to set
+   * @param rowIndex	the row
+   * @param columnIndex	the column
+   */
+  @Override
+  public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+    DataContainer	cont;
+    Attribute		att;
+
+    if (m_ReadOnly)
+      return;
+    if (aValue == null)
+      return;
+
+    cont = m_Data.get(rowIndex);
+
+    switch (columnIndex) {
+      case 1: // modified
+	cont.setModified((Boolean) aValue);
+	fireTableRowsUpdated(rowIndex, rowIndex);
+	break;
+      case 3:  // class
+	att = cont.getData().attribute("" + aValue);
+	if (att != null) {
+	  cont.getData().setClassIndex(att.index());
+	  fireTableRowsUpdated(rowIndex, rowIndex);
+	}
+	break;
     }
   }
 }
