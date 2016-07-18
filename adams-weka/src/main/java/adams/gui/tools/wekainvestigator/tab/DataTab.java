@@ -22,9 +22,6 @@ package adams.gui.tools.wekainvestigator.tab;
 
 import adams.core.io.PlaceholderFile;
 import adams.gui.chooser.WekaFileChooser;
-import adams.gui.core.BaseSplitPane;
-import adams.gui.core.BaseTable;
-import adams.gui.core.SortableAndSearchableTableWithButtons;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
 import adams.gui.tools.wekainvestigator.data.FileContainer;
 import com.googlecode.jfilechooserbookmarks.gui.BaseScrollPane;
@@ -34,14 +31,10 @@ import weka.gui.arffviewer.ArffSortedTableModel;
 import weka.gui.arffviewer.ArffTable;
 
 import javax.swing.JButton;
-import javax.swing.JPanel;
 import javax.swing.ListSelectionModel;
-import javax.swing.event.ListSelectionEvent;
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
@@ -51,40 +44,15 @@ import java.util.Arrays;
  * @version $Revision$
  */
 public class DataTab
-  extends AbstractInvestigatorTab {
+  extends AbstractInvestigatorTabWithDataTable {
 
   private static final long serialVersionUID = -94945456385486233L;
-
-  /** the table model. */
-  protected DataTableModel m_Model;
-
-  /** the table. */
-  protected SortableAndSearchableTableWithButtons m_Table;
 
   /** the button for removing a dataset. */
   protected JButton m_ButtonRemove;
 
   /** the button for exporting a dataset. */
   protected JButton m_ButtonExport;
-
-  /** the panel with the data. */
-  protected JPanel m_PanelData;
-
-  /** the file chooser for exporting. */
-  protected WekaFileChooser m_FileChooser;
-
-  /** the split pane. */
-  protected BaseSplitPane m_SplitPane;
-
-  /**
-   * Initializes the members.
-   */
-  @Override
-  protected void initialize() {
-    super.initialize();
-
-    m_FileChooser = new WekaFileChooser();
-  }
 
   /**
    * Initializes the widgets.
@@ -93,23 +61,6 @@ public class DataTab
   protected void initGUI() {
     super.initGUI();
 
-    setLayout(new BorderLayout());
-
-    m_SplitPane = new BaseSplitPane(BaseSplitPane.VERTICAL_SPLIT);
-    add(m_SplitPane, BorderLayout.CENTER);
-
-    m_Model = new DataTableModel(new ArrayList<>());
-    m_Table = new SortableAndSearchableTableWithButtons(m_Model);
-    m_Table.setPreferredSize(new Dimension(200, 150));
-    m_Table.setAutoResizeMode(BaseTable.AUTO_RESIZE_OFF);
-    m_Table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-    m_Table.getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> {
-      updateButtons();
-      displayData();
-    });
-    m_SplitPane.setTopComponent(new BaseScrollPane(m_Table));
-    m_SplitPane.setTopComponentHidden(false);
-
     m_ButtonRemove = new JButton("Remove");
     m_ButtonRemove.addActionListener((ActionEvent e) -> removeData(m_Table.getSelectedRows()));
     m_Table.addToButtonsPanel(m_ButtonRemove);
@@ -117,10 +68,6 @@ public class DataTab
     m_ButtonExport = new JButton("Export...");
     m_ButtonExport.addActionListener((ActionEvent e) -> exportData(m_Table.getSelectedRows()));
     m_Table.addToButtonsPanel(m_ButtonExport);
-
-    m_PanelData = new JPanel(new BorderLayout());
-    m_SplitPane.setBottomComponent(m_PanelData);
-    m_SplitPane.setBottomComponentHidden(true);
   }
 
   /**
@@ -131,6 +78,32 @@ public class DataTab
   @Override
   public String getTitle() {
     return "Data";
+  }
+
+  /**
+   * Returns the list selection mode to use.
+   *
+   * @return		the mode
+   * @see                ListSelectionModel
+   */
+  protected int getDataTableListSelectionMode() {
+    return ListSelectionModel.MULTIPLE_INTERVAL_SELECTION;
+  }
+
+  /**
+   * Gets called when the used changes the selection.
+   */
+  protected void dataTableSelectionChanged() {
+    updateButtons();
+    displayData();
+  }
+
+  /**
+   * Updates the state of the buttons.
+   */
+  protected void updateButtons() {
+    m_ButtonRemove.setEnabled(m_Table.getSelectedRowCount() > 0);
+    m_ButtonExport.setEnabled(m_Table.getSelectedRowCount() > 0);
   }
 
   /**
@@ -159,21 +132,6 @@ public class DataTab
     invalidate();
     revalidate();
     doLayout();
-  }
-
-  /**
-   * Notifies the tab that the data changed.
-   */
-  @Override
-  public void dataChanged() {
-    m_Model = new DataTableModel(getData());
-    m_Table.setModel(m_Model);
-    m_Table.setOptimalColumnWidth();
-    if (m_Table.getSelectedRow() == -1) {
-      if (m_Model.getRowCount() > 0)
-	m_Table.getComponent().setRowSelectionInterval(0, 0);
-    }
-    updateButtons();
   }
 
   /**
@@ -238,13 +196,5 @@ public class DataTab
       }
     }
     fireDataChange();
-  }
-
-  /**
-   * Updates the state of the buttons.
-   */
-  protected void updateButtons() {
-    m_ButtonRemove.setEnabled(m_Table.getSelectedRowCount() > 0);
-    m_ButtonExport.setEnabled(m_Table.getSelectedRowCount() > 0);
   }
 }
