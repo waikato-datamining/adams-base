@@ -20,11 +20,15 @@
 
 package adams.gui.tools.wekainvestigator.tab;
 
-import adams.gui.core.AbstractBaseTableModel;
+import adams.core.Utils;
+import adams.core.io.PlaceholderFile;
+import adams.gui.chooser.WekaFileChooser;
 import adams.gui.core.BaseTable;
 import adams.gui.core.SortableAndSearchableTableWithButtons;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
 import com.googlecode.jfilechooserbookmarks.gui.BaseScrollPane;
+import weka.core.converters.AbstractFileSaver;
+import weka.core.converters.ConverterUtils.DataSink;
 import weka.gui.arffviewer.ArffSortedTableModel;
 import weka.gui.arffviewer.ArffTable;
 
@@ -35,9 +39,9 @@ import javax.swing.event.ListSelectionEvent;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 /**
  * Lists the currently loaded datasets.
@@ -50,102 +54,6 @@ public class DataTab
 
   private static final long serialVersionUID = -94945456385486233L;
 
-  /**
-   * Model for displaying the loaded data.
-   *
-   * @author FracPete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
-   */
-  public static class DataTableModel
-    extends AbstractBaseTableModel {
-
-    private static final long serialVersionUID = 8586181476263855804L;
-
-    /** the underlying data. */
-    protected List<DataContainer> m_Data;
-
-    /**
-     * Initializes the model.
-     *
-     * @param data	the data to use
-     */
-    public DataTableModel(List<DataContainer> data) {
-      super();
-      m_Data = data;
-    }
-
-    /**
-     * The number of datasets loaded.
-     *
-     * @return		the number of datasets
-     */
-    @Override
-    public int getRowCount() {
-      return m_Data.size();
-    }
-
-    /**
-     * The number of columns.
-     *
-     * @return		the number of columns
-     */
-    @Override
-    public int getColumnCount() {
-      int	result;
-
-      result = 0;
-      result++;  // index
-      result++;  // relation
-      result++;  // class
-      result++;  // source
-
-      return result;
-    }
-
-    @Override
-    public String getColumnName(int column) {
-      switch (column) {
-	case 0:
-	  return "Index";
-	case 1:
-	  return "Relation";
-	case 2:
-	  return "Class";
-	case 3:
-	  return "Source";
-	default:
-	  return null;
-      }
-    }
-
-    /**
-     * Returns the value at the specified position.
-     *
-     * @param rowIndex		the row
-     * @param columnIndex	the column
-     * @return			the value
-     */
-    @Override
-    public Object getValueAt(int rowIndex, int columnIndex) {
-      DataContainer	cont;
-
-      cont = m_Data.get(rowIndex);
-
-      switch (columnIndex) {
-	case 0:
-	  return (rowIndex + 1);
-	case 1:
-	  return cont.getData().relationName();
-	case 2:
-	  return (cont.getData().classIndex() == -1) ? "<none>" : cont.getData().classAttribute().name();
-	case 3:
-	  return cont.getSource();
-	default:
-	  return null;
-      }
-    }
-  }
-
   /** the table model. */
   protected DataTableModel m_Model;
 
@@ -155,8 +63,24 @@ public class DataTab
   /** the button for removing a dataset. */
   protected JButton m_ButtonRemove;
 
+  /** the button for exporting a dataset. */
+  protected JButton m_ButtonExport;
+
   /** the panel with the data. */
   protected JPanel m_PanelData;
+
+  /** the file chooser for exporting. */
+  protected WekaFileChooser m_FileChooser;
+
+  /**
+   * Initializes the members.
+   */
+  @Override
+  protected void initialize() {
+    super.initialize();
+
+    m_FileChooser = new WekaFileChooser();
+  }
 
   /**
    * Initializes the widgets.
@@ -171,7 +95,7 @@ public class DataTab
     m_Table = new SortableAndSearchableTableWithButtons(m_Model);
     m_Table.setPreferredSize(new Dimension(200, 100));
     m_Table.setAutoResizeMode(BaseTable.AUTO_RESIZE_OFF);
-    m_Table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+    m_Table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
     m_Table.getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> {
       updateButtons();
       displayData();
@@ -181,6 +105,10 @@ public class DataTab
     m_ButtonRemove = new JButton("Remove");
     m_ButtonRemove.addActionListener((ActionEvent e) -> removeData(m_Table.getSelectedRows()));
     m_Table.addToButtonsPanel(m_ButtonRemove);
+
+    m_ButtonExport = new JButton("Export...");
+    m_ButtonExport.addActionListener((ActionEvent e) -> exportData(m_Table.getSelectedRows()));
+    m_Table.addToButtonsPanel(m_ButtonExport);
 
     m_PanelData = new JPanel(new BorderLayout());
     m_PanelData.setVisible(false);
@@ -255,9 +183,45 @@ public class DataTab
       for (i = 0; i < actRows.length; i++)
 	actRows[i] = m_Table.getActualRow(rows[i]);
       Arrays.sort(actRows);
-      for (i = actRows.length - 1; i >= 0; i--)
+      for (i = actRows.length - 1; i >= 0; i--) {
+	getOwner().logMessage("Removing: " + getOwner().getData().get(i).getSourceFull());
 	getOwner().getData().remove(actRows[i]);
+      }
       getOwner().fireDataChange();
+    }
+  }
+
+  /**
+   * Exports the selected rows.
+   *
+   * @param rows	the rows to export
+   */
+  protected void exportData(int[] rows) {
+    int			actRow;
+    int			i;
+    DataContainer	data;
+    int			retVal;
+    AbstractFileSaver	saver;
+
+    for (i = 0; i < rows.length; i++) {
+      actRow = m_Table.getActualRow(rows[i]);
+      data   = getOwner().getData().get(actRow);
+      m_FileChooser.setDialogTitle("Exporting " + (i+1) + "/" + (rows.length) + ": " + data.getData().relationName());
+      m_FileChooser.setSelectedFile(new PlaceholderFile(m_FileChooser.getCurrentDirectory().getAbsolutePath() + File.separator + data.getSourceShort()));
+      retVal = m_FileChooser.showSaveDialog(this);
+      if (retVal != WekaFileChooser.APPROVE_OPTION)
+	break;
+      try {
+	getOwner().logMessage("Exporting: " + getOwner().getData().get(i).getSourceFull());
+	saver = m_FileChooser.getWriter();
+	saver.setFile(m_FileChooser.getSelectedFile());
+	DataSink.write(saver, data.getData());
+	getOwner().logMessage("Exported: " + m_FileChooser.getSelectedFile());
+      }
+      catch (Exception e) {
+	getOwner().logError("Failed to export: " + m_FileChooser.getSelectedFile() + "\n" + Utils.throwableToString(e), "Export");
+	break;
+      }
     }
   }
 
@@ -266,5 +230,6 @@ public class DataTab
    */
   protected void updateButtons() {
     m_ButtonRemove.setEnabled(m_Table.getSelectedRowCount() > 0);
+    m_ButtonExport.setEnabled(m_Table.getSelectedRowCount() > 0);
   }
 }
