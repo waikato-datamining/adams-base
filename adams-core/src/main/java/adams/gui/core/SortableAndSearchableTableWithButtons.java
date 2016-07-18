@@ -42,8 +42,8 @@ import adams.gui.event.RemoveItemsListener;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class SortableAndSearchableTableWithButtons
-  extends AbstractDoubleClickableComponentWithButtons<SortableAndSearchableTable> {
+public class SortableAndSearchableTableWithButtons<T extends SortableAndSearchableTable>
+  extends AbstractDoubleClickableComponentWithButtons<T> {
 
   /** for serialization. */
   private static final long serialVersionUID = -773857386370817514L;
@@ -86,17 +86,22 @@ public class SortableAndSearchableTableWithButtons
    *
    * @return		the component
    */
-  protected SortableAndSearchableTable createComponent() {
-    SortableAndSearchableTable	result;
+  protected T createComponent() {
+    T	result;
 
-    result = new SortableAndSearchableTable();
-    result.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-      public void valueChanged(ListSelectionEvent e) {
-	updateCounts();
-      }
-    });
+    result = (T) new SortableAndSearchableTable();
+    result.getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> updateCounts());
 
     return result;
+  }
+
+  /**
+   * Returns the underlying component.
+   *
+   * @return		the underlying component
+   */
+  public T getComponent() {
+    return m_Component;
   }
 
   /**
