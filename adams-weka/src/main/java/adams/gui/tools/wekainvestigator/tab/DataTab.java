@@ -22,8 +22,8 @@ package adams.gui.tools.wekainvestigator.tab;
 
 import adams.core.logging.LoggingLevel;
 import adams.gui.core.ConsolePanel;
-import adams.gui.tools.wekainvestigator.tab.datatabactions.AbstractDataTabAction;
-import adams.gui.tools.wekainvestigator.tab.datatabactions.Export;
+import adams.gui.tools.wekainvestigator.tab.datatab.AbstractDataTabAction;
+import adams.gui.tools.wekainvestigator.tab.datatab.Export;
 import adams.gui.tools.wekainvestigator.viewer.ArffSortedTableModel;
 import adams.gui.tools.wekainvestigator.viewer.ArffTable;
 import com.googlecode.jfilechooserbookmarks.gui.BaseScrollPane;

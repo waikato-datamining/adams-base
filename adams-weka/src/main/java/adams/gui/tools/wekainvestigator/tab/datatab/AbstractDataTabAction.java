@@ -18,7 +18,7 @@
  * Copyright (C) 2016 University of Waikato, Hamilton, NZ
  */
 
-package adams.gui.tools.wekainvestigator.tab.datatabactions;
+package adams.gui.tools.wekainvestigator.tab.datatab;
 
 import adams.core.ClassLister;
 import adams.core.StatusMessageHandler;

@@ -14,24 +14,25 @@
  */
 
 /**
- * Rename.java
+ * Compatibility.java
  * Copyright (C) 2016 University of Waikato, Hamilton, NZ
  */
 
-package adams.gui.tools.wekainvestigator.tab.datatabactions;
+package adams.gui.tools.wekainvestigator.tab.datatab;
 
+import adams.core.Utils;
 import adams.gui.core.GUIHelper;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
 
 import java.awt.event.ActionEvent;
 
 /**
- * Renames the selected dataset.
+ * Checks the compatibility of the selected datasets.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class Rename
+public class Compatibility
   extends AbstractDataTabAction {
 
   private static final long serialVersionUID = -8374323161691034031L;
@@ -39,10 +40,10 @@ public class Rename
   /**
    * Instantiates the action.
    */
-  public Rename() {
+  public Compatibility() {
     super();
-    setName("Rename");
-    setIcon("question.png");
+    setName("Compatibility");
+    setIcon("validate.png");
   }
 
   /**
@@ -52,18 +53,24 @@ public class Rename
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    DataContainer 	cont;
-    String  		newName;
+    StringBuilder	result;
+    DataContainer[]	conts;
+    int			i;
+    int			n;
+    String		msg;
 
-    cont = getSelectedData()[0];
-    logMessage("Renaming dataset: " + cont.getData().relationName() + " [" + cont.getSourceFull() + "]");
-    newName = GUIHelper.showInputDialog(getOwner(), "Please enter new relation name: ", cont.getData().relationName());
-    if (newName == null) {
-      logMessage("Renaming cancelled!");
-      return;
+    result = new StringBuilder();
+    conts  = getSelectedData();
+    for (i = 0; i < conts.length - 1; i++) {
+      for (n = i + 1; n < conts.length; n++) {
+	msg = conts[i].getData().equalHeadersMsg(conts[n].getData());
+	result.append(
+	    "--> " + conts[i].getData().relationName() + " [" + conts[i].getSourceFull() + "]\n"
+	    + "and " + conts[n].getData().relationName() + " [" + conts[n].getSourceFull() + "]\n"
+	    + Utils.indent((msg == null) ? "match" : msg, 4) + "\n");
+      }
     }
-    cont.getData().setRelationName(newName);
-    fireDataChange();
+    GUIHelper.showInformationMessage(getOwner(), result.toString(), "Compatibility");
   }
 
   /**
@@ -71,6 +78,6 @@ public class Rename
    */
   @Override
   public void update() {
-    setEnabled(getTable().getSelectedRowCount() == 1);
+    setEnabled(getTable().getSelectedRowCount() > 1);
   }
 }

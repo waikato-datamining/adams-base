@@ -14,25 +14,28 @@
  */
 
 /**
- * Compatibility.java
+ * Append.java
  * Copyright (C) 2016 University of Waikato, Hamilton, NZ
  */
 
-package adams.gui.tools.wekainvestigator.tab.datatabactions;
+package adams.gui.tools.wekainvestigator.tab.datatab;
 
-import adams.core.Utils;
-import adams.gui.core.GUIHelper;
+import adams.flow.core.Token;
+import adams.flow.transformer.WekaInstancesAppend;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
+import adams.gui.tools.wekainvestigator.data.MemoryContainer;
+import weka.core.Instances;
 
 import java.awt.event.ActionEvent;
 
 /**
- * Checks the compatibility of the selected datasets.
+ * Appends the selected datasets into single dataset (one-after-the-other).
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
+ * @see Merge
  */
-public class Compatibility
+public class Append
   extends AbstractDataTabAction {
 
   private static final long serialVersionUID = -8374323161691034031L;
@@ -40,10 +43,10 @@ public class Compatibility
   /**
    * Instantiates the action.
    */
-  public Compatibility() {
+  public Append() {
     super();
-    setName("Compatibility");
-    setIcon("validate.png");
+    setName("Append");
+    setIcon("append.png");
   }
 
   /**
@@ -53,24 +56,46 @@ public class Compatibility
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    StringBuilder	result;
     DataContainer[]	conts;
+    Instances[]		data;
     int			i;
-    int			n;
+    Token 		token;
+    WekaInstancesAppend append;
     String		msg;
+    MemoryContainer	cont;
 
-    result = new StringBuilder();
-    conts  = getSelectedData();
-    for (i = 0; i < conts.length - 1; i++) {
-      for (n = i + 1; n < conts.length; n++) {
-	msg = conts[i].getData().equalHeadersMsg(conts[n].getData());
-	result.append(
-	    "--> " + conts[i].getData().relationName() + " [" + conts[i].getSourceFull() + "]\n"
-	    + "and " + conts[n].getData().relationName() + " [" + conts[n].getSourceFull() + "]\n"
-	    + Utils.indent((msg == null) ? "match" : msg, 4) + "\n");
+    // collect data
+    conts = getSelectedData();
+    data  = new Instances[conts.length];
+    msg   = "";
+    for (i = 0; i < conts.length; i++) {
+      if (i > 0)
+	msg += ", ";
+      data[i] = conts[i].getData();
+      msg += conts[i].getData().relationName();
+    }
+    logMessage("Appending: " + msg);
+
+    // transform
+    token  = new Token(data);
+    append = new WekaInstancesAppend();
+    msg    = append.setUp();
+    if (msg == null) {
+      append.input(token);
+      msg = append.execute();
+      if (msg == null) {
+	token = append.output();
+	cont = new MemoryContainer((Instances) token.getPayload());
+	getData().add(cont);
+	fireDataChange();
       }
     }
-    GUIHelper.showInformationMessage(getOwner(), result.toString(), "Compatibility");
+    append.destroy();
+
+    if (msg != null)
+      logError(msg, "Failed to append datasets");
+    else
+      logMessage("Appended datasets successfully!");
   }
 
   /**
