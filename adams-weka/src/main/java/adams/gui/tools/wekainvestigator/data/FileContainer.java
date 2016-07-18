@@ -75,24 +75,13 @@ public class FileContainer
   }
 
   /**
-   * Initializes the container with just the data.
-   *
-   * @param data	the data to use
-   */
-  public FileContainer(Instances data) {
-    super(data);
-    m_Loader = null;
-    m_Source = null;
-  }
-
-  /**
    * Returns a short version of the source of the data item.
    *
    * @return		the source
    */
   public String getSourceShort() {
     if (m_Source == null)
-      return "unknown";
+      return "<unknown>";
     else
       return m_Source.getName();
   }
@@ -105,7 +94,7 @@ public class FileContainer
   @Override
   public String getSourceFull() {
     if (m_Source == null)
-      return "unknown";
+      return "<unknown>";
     else
       return m_Source.toString();
   }
