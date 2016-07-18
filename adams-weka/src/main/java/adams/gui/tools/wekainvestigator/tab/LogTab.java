@@ -180,6 +180,7 @@ public class LogTab
   public void append(String msg) {
     m_TextLog.append(msg);
     m_TextLog.append("\n");
+    m_TextLog.setCaretPositionLast();
     updateButtons();
   }
 
