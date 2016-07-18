@@ -1,0 +1,15 @@
+# Configuration for the Weka Investigator
+#
+# Author: FracPete (fracpete at waikato dot ac dot nz)
+
+# the tabs to display by default
+# (comma-separated list of classnames)
+DefaultTabs=\
+  adams.gui.tools.wekainvestigator.tab.DataTab,\
+  adams.gui.tools.wekainvestigator.tab.ClassifyTab,\
+  adams.gui.tools.wekainvestigator.tab.MatrixTab,\
+  adams.gui.tools.wekainvestigator.tab.LogTab
+
+# the default height for the data table for tabs that display one
+# (integer)
+DefaultDataTableHeight=150

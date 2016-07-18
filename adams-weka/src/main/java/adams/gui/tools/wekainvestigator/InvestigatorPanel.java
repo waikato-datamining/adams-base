@@ -21,8 +21,11 @@
 package adams.gui.tools.wekainvestigator;
 
 import adams.core.ClassLister;
+import adams.core.Properties;
 import adams.core.StatusMessageHandler;
 import adams.core.Utils;
+import adams.env.Environment;
+import adams.env.WekaInvestigatorDefinition;
 import adams.gui.action.AbstractBaseAction;
 import adams.gui.action.BaseAction;
 import adams.gui.chooser.WekaFileChooser;
@@ -36,10 +39,8 @@ import adams.gui.event.RecentItemListener;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
 import adams.gui.tools.wekainvestigator.data.FileContainer;
 import adams.gui.tools.wekainvestigator.tab.AbstractInvestigatorTab;
-import adams.gui.tools.wekainvestigator.tab.DataTab;
 import adams.gui.tools.wekainvestigator.tab.InvestigatorTabbedPane;
 import adams.gui.tools.wekainvestigator.tab.LogTab;
-import adams.gui.tools.wekainvestigator.tab.MatrixTab;
 import adams.gui.workspace.AbstractWorkspacePanel;
 import weka.core.converters.AbstractFileLoader;
 import weka.core.converters.ConverterUtils;
@@ -53,6 +54,7 @@ import java.awt.event.ActionEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 /**
  * The main panel for the Investigator.
@@ -67,7 +69,13 @@ public class InvestigatorPanel
   private static final long serialVersionUID = 7442747356297265526L;
 
   /** the file to store the recent files in. */
-  public final static String SESSION_FILE = "InvestigatorSession.props";
+  public final static String SESSION_FILE = "WekaInvestigatorSession.props";
+
+  /** the name of the props file. */
+  public final static String FILENAME = "WekaInvestigator.props";
+
+  /** the properties. */
+  protected static Properties m_Properties;
 
   /** the tabbed pane for the tabs. */
   protected InvestigatorTabbedPane m_TabbedPane;
@@ -123,6 +131,9 @@ public class InvestigatorPanel
    */
   @Override
   protected void initGUI() {
+    String[]			classes;
+    AbstractInvestigatorTab	tab;
+
     super.initGUI();
 
     setLayout(new BorderLayout());
@@ -130,9 +141,16 @@ public class InvestigatorPanel
     m_TabbedPane = new InvestigatorTabbedPane(this);
     add(m_TabbedPane, BorderLayout.CENTER);
 
-    m_TabbedPane.addTab(new DataTab());
-    m_TabbedPane.addTab(new MatrixTab());
-    m_TabbedPane.addTab(new LogTab());
+    classes = getProperties().getProperty("DefaultTabs", LogTab.class.getName()).split(",");
+    for (String cls: classes) {
+      try {
+	tab = (AbstractInvestigatorTab) Class.forName(cls).newInstance();
+	m_TabbedPane.addTab(tab);
+      }
+      catch (Exception e) {
+	ConsolePanel.getSingleton().append(Level.SEVERE, "Failed to instantiate investigator tab: ", e);
+      }
+    }
 
     m_StatusBar = new BaseStatusBar();
     add(m_StatusBar, BorderLayout.SOUTH);
@@ -445,5 +463,17 @@ public class InvestigatorPanel
    */
   public void showStatus(String msg) {
     m_StatusBar.showStatus(msg);
+  }
+
+  /**
+   * Returns the properties that define the editor.
+   *
+   * @return		the properties
+   */
+  public static synchronized Properties getProperties() {
+    if (m_Properties == null)
+      m_Properties = Environment.getInstance().read(WekaInvestigatorDefinition.KEY);
+
+    return m_Properties;
   }
 }

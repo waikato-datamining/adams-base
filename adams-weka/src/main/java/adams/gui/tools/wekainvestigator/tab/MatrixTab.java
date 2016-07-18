@@ -82,10 +82,10 @@ public class MatrixTab
       panel.setInstances(getData().get(index).getData());
       m_PanelData.removeAll();
       m_PanelData.add(panel, BorderLayout.CENTER);
-      m_PanelData.setPreferredSize(new Dimension(200, 150));
+      m_PanelData.setPreferredSize(new Dimension(200, m_DefaultDataTableHeight));
       if (m_SplitPane.isBottomComponentHidden()) {
 	m_SplitPane.setBottomComponentHidden(false);
-	m_SplitPane.setDividerLocation(150);
+	m_SplitPane.setDividerLocation(m_DefaultDataTableHeight);
       }
     }
     else {

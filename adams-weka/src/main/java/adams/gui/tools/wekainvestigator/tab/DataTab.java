@@ -168,7 +168,7 @@ public class DataTab
       m_PanelData.removeAll();
       m_PanelData.add(new BaseScrollPane(table), BorderLayout.CENTER);
       if (m_SplitPane.isBottomComponentHidden()) {
-	m_SplitPane.setDividerLocation(150);
+	m_SplitPane.setDividerLocation(m_DefaultDataTableHeight);
 	m_SplitPane.setBottomComponentHidden(false);
       }
     }

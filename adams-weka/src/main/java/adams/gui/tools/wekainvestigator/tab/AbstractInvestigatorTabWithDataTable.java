@@ -23,6 +23,7 @@ package adams.gui.tools.wekainvestigator.tab;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.BaseTable;
 import adams.gui.core.SortableAndSearchableTableWithButtons;
+import adams.gui.tools.wekainvestigator.InvestigatorPanel;
 import com.googlecode.jfilechooserbookmarks.gui.BaseScrollPane;
 
 import javax.swing.JPanel;
@@ -58,6 +59,19 @@ public abstract class AbstractInvestigatorTabWithDataTable
   /** the split pane. */
   protected BaseSplitPane m_SplitPane;
 
+  /** the default data table height. */
+  protected int m_DefaultDataTableHeight;
+
+  /**
+   * Initializes the members.
+   */
+  @Override
+  protected void initialize() {
+    super.initialize();
+
+    m_DefaultDataTableHeight = InvestigatorPanel.getProperties().getInteger("DefaultDataTableHeight", 150);
+  }
+
   /**
    * Initializes the widgets.
    */
@@ -73,7 +87,7 @@ public abstract class AbstractInvestigatorTabWithDataTable
 
     m_Model = new DataTableModel(new ArrayList<>(), hasReadOnlyTable());
     m_Table = new DataTableWithButtons(m_Model);
-    m_Table.setPreferredSize(new Dimension(200, 150));
+    m_Table.setPreferredSize(new Dimension(200, m_DefaultDataTableHeight));
     m_Table.setAutoResizeMode(BaseTable.AUTO_RESIZE_OFF);
     m_Table.setSelectionMode(getDataTableListSelectionMode());
     m_Table.getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> dataTableSelectionChanged());
