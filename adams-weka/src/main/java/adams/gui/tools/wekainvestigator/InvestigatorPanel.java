@@ -39,6 +39,7 @@ import adams.gui.tools.wekainvestigator.tab.AbstractInvestigatorTab;
 import adams.gui.tools.wekainvestigator.tab.DataTab;
 import adams.gui.tools.wekainvestigator.tab.InvestigatorTabbedPane;
 import adams.gui.tools.wekainvestigator.tab.LogTab;
+import adams.gui.tools.wekainvestigator.tab.MatrixTab;
 import adams.gui.workspace.AbstractWorkspacePanel;
 import weka.core.converters.AbstractFileLoader;
 import weka.core.converters.ConverterUtils;
@@ -130,6 +131,7 @@ public class InvestigatorPanel
     add(m_TabbedPane, BorderLayout.CENTER);
 
     m_TabbedPane.addTab(new DataTab());
+    m_TabbedPane.addTab(new MatrixTab());
     m_TabbedPane.addTab(new LogTab());
 
     m_StatusBar = new BaseStatusBar();
