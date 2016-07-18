@@ -152,6 +152,17 @@ public abstract class AbstractWorkspacePanel
 
   /**
    * Logs the exception and also displays an error dialog.
+   *
+   * @param msg		the log message
+   * @param t		the exception
+   * @param title	the title for the dialog
+   */
+  public void logError(String msg, Throwable t, String title) {
+    logError(msg + "\n" + Utils.throwableToString(t), title);
+  }
+
+  /**
+   * Logs the exception and also displays an error dialog.
    * 
    * @param t		the exception
    * @param title	the title for the dialog
