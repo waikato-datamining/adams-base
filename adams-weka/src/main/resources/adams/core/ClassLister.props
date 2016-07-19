@@ -39,6 +39,10 @@ adams.data.weka.predictions.AbstractErrorScaler=\
 adams.flow.transformer.wekaclusterer.AbstractClustererPostProcessor=\
   adams.flow.transformer.wekaclusterer
 
+# the heuristics for determining the class attribute
+adams.data.weka.classattribute.AbstractClassAttributeHeuristic=\
+  adams.data.weka.classattribute
+
 # the tabs for the investigator
 adams.gui.tools.wekainvestigator.tab.AbstractInvestigatorTab=\
   adams.gui.tools.wekainvestigator.tab

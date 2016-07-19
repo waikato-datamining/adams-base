@@ -24,6 +24,7 @@ import adams.core.ClassLister;
 import adams.core.Properties;
 import adams.core.StatusMessageHandler;
 import adams.core.Utils;
+import adams.core.option.OptionUtils;
 import adams.env.Environment;
 import adams.env.WekaInvestigatorDefinition;
 import adams.gui.action.AbstractBaseAction;
@@ -36,12 +37,16 @@ import adams.gui.core.GUIHelper;
 import adams.gui.core.RecentFilesHandler;
 import adams.gui.event.RecentItemEvent;
 import adams.gui.event.RecentItemListener;
+import adams.gui.goe.GenericObjectEditorDialog;
+import adams.data.weka.classattribute.AbstractClassAttributeHeuristic;
+import adams.data.weka.classattribute.LastAttribute;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
 import adams.gui.tools.wekainvestigator.data.FileContainer;
 import adams.gui.tools.wekainvestigator.tab.AbstractInvestigatorTab;
 import adams.gui.tools.wekainvestigator.tab.InvestigatorTabbedPane;
 import adams.gui.tools.wekainvestigator.tab.LogTab;
 import adams.gui.workspace.AbstractWorkspacePanel;
+import weka.core.Instances;
 import weka.core.converters.AbstractFileLoader;
 import weka.core.converters.ConverterUtils;
 
@@ -50,6 +55,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.event.ChangeEvent;
 import java.awt.BorderLayout;
+import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.util.ArrayList;
@@ -101,6 +107,9 @@ public class InvestigatorPanel
   /** the action for loading a dataset. */
   protected BaseAction m_ActionFileOpen;
 
+  /** the action for selecting the class attribute heuristic. */
+  protected BaseAction m_ActionFileClassAttribute;
+
   /** the log. */
   protected StringBuilder m_Log;
 
@@ -113,17 +122,32 @@ public class InvestigatorPanel
   /** the recent files handler. */
   protected RecentFilesHandler<JMenu> m_RecentFilesHandler;
 
+  /** the heuristic for selecting the class attribute. */
+  protected AbstractClassAttributeHeuristic m_ClassAttribute;
+
   /**
    * Initializes the members.
    */
   @Override
   protected void initialize() {
+    String	cmdline;
+
     super.initialize();
 
-    m_Log         = new StringBuilder();
-    m_Data        = new ArrayList<>();
-    m_FileChooser = new WekaFileChooser();
+    m_Log                = new StringBuilder();
+    m_Data               = new ArrayList<>();
+    m_FileChooser        = new WekaFileChooser();
     m_RecentFilesHandler = null;
+
+    cmdline = getProperties().getProperty("ClassAttributeHeuristic", OptionUtils.getCommandLine(new LastAttribute()));
+    try {
+      m_ClassAttribute = (AbstractClassAttributeHeuristic) OptionUtils.forAnyCommandLine(
+        AbstractClassAttributeHeuristic.class, cmdline);
+    }
+    catch (Exception e) {
+      ConsolePanel.getSingleton().append(Level.SEVERE, "Failed to instantiate class attribute heuristic: " + cmdline, e);
+      m_ClassAttribute = new LastAttribute();
+    }
   }
 
   /**
@@ -208,6 +232,16 @@ public class InvestigatorPanel
     m_ActionFileOpen.setName("Open...");
     m_ActionFileOpen.setIcon("open.gif");
     m_ActionFileOpen.setAccelerator("ctrl pressed O");
+
+    m_ActionFileClassAttribute = new AbstractBaseAction() {
+      private static final long serialVersionUID = -1104246458353845500L;
+      @Override
+      protected void doActionPerformed(ActionEvent e) {
+	chooseClassAttributeHeuristic();
+      }
+    };
+    m_ActionFileClassAttribute.setName("Class attribute...");
+    m_ActionFileClassAttribute.setIcon(GUIHelper.getEmptyIcon());
   }
 
   /**
@@ -295,6 +329,9 @@ public class InvestigatorPanel
 
       // File/Generate
       // TODO
+
+      // File/Class attribute
+      menu.add(m_ActionFileClassAttribute);
 
       menu.addSeparator();
 
@@ -414,6 +451,18 @@ public class InvestigatorPanel
   }
 
   /**
+   * Updates the class attribute, if not set.
+   *
+   * @param data	the data to update
+   * @return		the (potentially) updated data
+   */
+  protected Instances updateClassAttribute(Instances data) {
+    if (data.classIndex() == -1)
+      data.setClassIndex(m_ClassAttribute.determineClassAttribute(data));
+    return data;
+  }
+
+  /**
    * Lets user select a dataset.
    */
   public void openFile() {
@@ -426,6 +475,7 @@ public class InvestigatorPanel
 
     logMessage("Loading: " + m_FileChooser.getSelectedFile());
     cont = new FileContainer(m_FileChooser.getReader(), m_FileChooser.getSelectedFile());
+    updateClassAttribute(cont.getData());
     m_Data.add(cont);
     if (m_RecentFilesHandler != null)
       m_RecentFilesHandler.addRecentItem(m_FileChooser.getSelectedFile());
@@ -439,7 +489,8 @@ public class InvestigatorPanel
    * @param e		the event
    */
   public void openRecent(RecentItemEvent<JMenu,File> e) {
-    AbstractFileLoader loader;
+    AbstractFileLoader 	loader;
+    FileContainer	cont;
 
     loader = ConverterUtils.getLoaderForFile(e.getItem());
     if (loader == null) {
@@ -450,7 +501,9 @@ public class InvestigatorPanel
     try {
       logMessage("Loading: " + e.getItem());
       loader.setFile(e.getItem());
-      m_Data.add(new FileContainer(loader, e.getItem()));
+      cont = new FileContainer(loader, e.getItem());
+      updateClassAttribute(cont.getData());
+      m_Data.add(cont);
       m_FileChooser.setCurrentDirectory(e.getItem().getParentFile());
       logMessage("Loaded: " + e.getItem());
       fireDataChange();
@@ -458,6 +511,28 @@ public class InvestigatorPanel
     catch (Exception ex) {
       logError("Failed to load file:\n" + e.getItem() + "\n" + Utils.throwableToString(ex), "Error reloading data");
     }
+  }
+
+  /**
+   * Lets the user choose the class attribute heuristic.
+   */
+  public void chooseClassAttributeHeuristic() {
+    GenericObjectEditorDialog	dialog;
+
+    if (getParentDialog() != null)
+      dialog = new GenericObjectEditorDialog(getParentDialog(), ModalityType.DOCUMENT_MODAL);
+    else
+      dialog = new GenericObjectEditorDialog(getParentFrame(), true);
+    dialog.setTitle("Select class attribute heuristic");
+    dialog.getGOEEditor().setClassType(AbstractClassAttributeHeuristic.class);
+    dialog.getGOEEditor().setCanChangeClassInDialog(true);
+    dialog.setCurrent(m_ClassAttribute);
+    dialog.pack();
+    dialog.setLocationRelativeTo(this);
+    dialog.setVisible(true);
+    if (dialog.getResult() == GenericObjectEditorDialog.APPROVE_OPTION)
+      m_ClassAttribute = (AbstractClassAttributeHeuristic) dialog.getCurrent();
+    dialog.dispose();
   }
 
   /**

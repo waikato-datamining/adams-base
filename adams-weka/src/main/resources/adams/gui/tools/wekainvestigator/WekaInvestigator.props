@@ -14,6 +14,10 @@ DefaultTabs=\
 # (integer)
 DefaultDataTableHeight=150
 
+# the heuristic for selecting the class attribute when loading data
+# and no class attribute is present
+ClassAttributeHeuristic=adams.data.weka.classattribute.LastAttribute
+
 # the default classifier
 Classify.Classifier=weka.classifiers.rules.ZeroR
 
