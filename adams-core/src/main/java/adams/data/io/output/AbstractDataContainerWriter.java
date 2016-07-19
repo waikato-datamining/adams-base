@@ -15,14 +15,16 @@
 
 /*
  * AbstractDataContainerWriter.java
- * Copyright (C) 2008-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.io.output;
 
+import adams.core.AdditionalInformationHandler;
 import adams.core.ClassLister;
 import adams.core.CleanUpHandler;
 import adams.core.ShallowCopySupporter;
+import adams.core.Utils;
 import adams.core.io.FileFormatHandler;
 import adams.core.io.PlaceholderFile;
 import adams.core.io.TempUtils;
@@ -45,7 +47,8 @@ import java.util.List;
  */
 public abstract class AbstractDataContainerWriter<T extends DataContainer>
   extends AbstractOptionHandler
-  implements Comparable, CleanUpHandler, ShallowCopySupporter<AbstractDataContainerWriter>, FileFormatHandler {
+  implements Comparable, CleanUpHandler, ShallowCopySupporter<AbstractDataContainerWriter>,
+             FileFormatHandler, AdditionalInformationHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = 7097110023547675936L;
@@ -77,6 +80,23 @@ public abstract class AbstractDataContainerWriter<T extends DataContainer>
    */
   public String getDefaultFormatExtension() {
     return getFormatExtensions()[0];
+  }
+
+  /**
+   * Returns the additional information.
+   *
+   * @return		the additional information, null or 0-length string for no information
+   */
+  public String getAdditionalInformation() {
+    StringBuilder	result;
+
+    result = new StringBuilder();
+
+    result.append("Supported file extensions: " + Utils.flatten(getFormatExtensions(), ", "));
+    result.append("\n");
+    result.append("Default file extension: " + getDefaultFormatExtension());
+
+    return result.toString();
   }
 
   /**

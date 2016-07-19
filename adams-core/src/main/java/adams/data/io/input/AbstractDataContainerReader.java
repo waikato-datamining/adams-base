@@ -15,26 +15,25 @@
 
 /*
  * AbstractDataContainerReader.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.io.input;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import adams.core.ClassLister;
+import adams.core.AdditionalInformationHandler;
 import adams.core.CleanUpHandler;
 import adams.core.ShallowCopySupporter;
+import adams.core.Utils;
 import adams.core.io.FileFormatHandler;
 import adams.core.io.PlaceholderFile;
-import adams.core.option.AbstractOptionConsumer;
 import adams.core.option.AbstractOptionHandler;
-import adams.core.option.ArrayConsumer;
 import adams.core.option.OptionUtils;
 import adams.data.container.DataContainer;
 import adams.data.report.MutableReportHandler;
 import adams.data.report.Report;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Abstract ancestor for readers that read files in various formats and
@@ -46,7 +45,8 @@ import adams.data.report.Report;
  */
 public abstract class AbstractDataContainerReader<T extends DataContainer>
   extends AbstractOptionHandler
-  implements Comparable, CleanUpHandler, ShallowCopySupporter<AbstractDataContainerReader>, FileFormatHandler {
+  implements Comparable, CleanUpHandler, ShallowCopySupporter<AbstractDataContainerReader>,
+             FileFormatHandler, AdditionalInformationHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = -4690065186988048507L;
@@ -88,6 +88,23 @@ public abstract class AbstractDataContainerReader<T extends DataContainer>
    */
   public String getDefaultFormatExtension() {
     return getFormatExtensions()[0];
+  }
+
+  /**
+   * Returns the additional information.
+   *
+   * @return		the additional information, null or 0-length string for no information
+   */
+  public String getAdditionalInformation() {
+    StringBuilder	result;
+
+    result = new StringBuilder();
+
+    result.append("Supported file extensions: " + Utils.flatten(getFormatExtensions(), ", "));
+    result.append("\n");
+    result.append("Default file extension: " + getDefaultFormatExtension());
+
+    return result.toString();
   }
 
   /**
