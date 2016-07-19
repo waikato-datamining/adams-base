@@ -30,9 +30,11 @@ import weka.classifiers.rules.ZeroR;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.util.logging.Level;
 
@@ -68,6 +70,21 @@ public class ClassifyTab
   /** the current evaluation. */
   protected AbstractClassifierEvaluation m_CurrentEvaluation;
 
+  /** the current classifier. */
+  protected Classifier m_CurrentClassifier;
+
+  /** the panel with the buttons. */
+  protected JPanel m_PanelEvaluationButtons;
+
+  /** the start button. */
+  protected JButton m_ButtonStart;
+
+  /** the stop button. */
+  protected JButton m_ButtonStop;
+
+  /** whether the evaluation is currently running. */
+  protected Thread m_Worker;
+
   /**
    * Initializes the widgets.
    */
@@ -76,6 +93,8 @@ public class ClassifyTab
     super.initialize();
 
     m_CurrentEvaluation = null;
+    m_CurrentClassifier = null;
+    m_Worker            = null;
   }
 
   /**
@@ -103,14 +122,16 @@ public class ClassifyTab
       cls = new ZeroR();
     }
     m_PanelGOE = new WekaGenericObjectEditorPanel(Classifier.class, cls, true);
+    m_PanelGOE.setPrefix("Classifier");
     panel = new JPanel(new BorderLayout());
     panel.add(m_PanelGOE, BorderLayout.CENTER);
-    panel.setBorder(BorderFactory.createTitledBorder("Classifier"));
+    panel.setBorder(BorderFactory.createTitledBorder(""));
     add(panel, BorderLayout.NORTH);
 
     m_PanelLeft = new JPanel(new BorderLayout());
     add(m_PanelLeft, BorderLayout.WEST);
 
+    // evaluation
     m_PanelEvaluation = new JPanel(new BorderLayout());
     m_PanelEvaluation.setBorder(BorderFactory.createTitledBorder("Evaluation"));
     m_PanelLeft.add(m_PanelEvaluation, BorderLayout.NORTH);
@@ -140,8 +161,21 @@ public class ClassifyTab
     });
     m_PanelEvaluation.add(m_ComboBoxEvaluations, BorderLayout.NORTH);
 
+    // setup
     m_PanelEvaluationSetup = new JPanel(new BorderLayout());
     m_PanelEvaluation.add(m_PanelEvaluationSetup, BorderLayout.CENTER);
+
+    // buttons
+    m_PanelEvaluationButtons = new JPanel(new GridLayout(1, 2));
+    m_PanelEvaluation.add(m_PanelEvaluationButtons, BorderLayout.SOUTH);
+
+    m_ButtonStart = new JButton("Start");
+    m_ButtonStart.addActionListener((ActionEvent e) -> startEvaluation());
+    m_PanelEvaluationButtons.add(m_ButtonStart);
+
+    m_ButtonStop = new JButton("Stop");
+    m_ButtonStop.addActionListener((ActionEvent e) -> stopEvaluation());
+    m_PanelEvaluationButtons.add(m_ButtonStop);
   }
 
   /**
@@ -180,5 +214,53 @@ public class ClassifyTab
   public void dataChanged() {
     if (m_CurrentEvaluation != null)
       m_CurrentEvaluation.update();
+    updateButtons();
+  }
+
+  /**
+   * Starts the evaluation.
+   */
+  protected void startEvaluation() {
+    if (m_Worker != null)
+      return;
+
+    m_Worker = new Thread(() -> {
+      m_CurrentClassifier = (Classifier) m_PanelGOE.getCurrent();
+      logMessage("Starting evaluation '" + m_CurrentEvaluation.getName() + "' using: " + OptionUtils.getCommandLine(m_CurrentClassifier));
+      try {
+	m_CurrentEvaluation.evaluate(m_CurrentClassifier);
+	logMessage("Finished evaluation '" + m_CurrentEvaluation.getName() + "' using: " + OptionUtils.getCommandLine(m_CurrentClassifier));
+      }
+      catch (Exception e) {
+	logError("Failed to evaluate classifier", e, "Classifier evaluation");
+      }
+      m_Worker = null;
+      updateButtons();
+    });
+    m_Worker.start();
+    updateButtons();
+  }
+
+  /**
+   * Stops the evaluation.
+   */
+  protected void stopEvaluation() {
+    if (m_Worker == null)
+      return;
+
+    m_Worker.stop();
+    logMessage("Stopped evaluation '" + m_CurrentEvaluation.getName() + "' using: " + OptionUtils.getCommandLine(m_CurrentClassifier));
+    updateButtons();
+  }
+
+  /**
+   * Updates the buttons.
+   */
+  public void updateButtons() {
+    Classifier cls;
+
+    cls = (Classifier) m_PanelGOE.getCurrent();
+    m_ButtonStart.setEnabled((m_Worker == null) && (m_CurrentEvaluation != null) && m_CurrentEvaluation.canEvaluate(cls));
+    m_ButtonStop.setEnabled(m_Worker != null);
   }
 }

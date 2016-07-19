@@ -21,6 +21,8 @@
 package adams.gui.tools.wekainvestigator.tab.classifytab;
 
 import adams.core.ClassLister;
+import adams.core.StatusMessageHandler;
+import adams.core.logging.LoggingObject;
 import adams.gui.tools.wekainvestigator.tab.ClassifyTab;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
@@ -34,7 +36,11 @@ import java.awt.BorderLayout;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public abstract class AbstractClassifierEvaluation {
+public abstract class AbstractClassifierEvaluation
+  extends LoggingObject
+  implements StatusMessageHandler {
+
+  private static final long serialVersionUID = -5847790432092994409L;
 
   /** the owner. */
   protected ClassifyTab m_Owner;
@@ -126,6 +132,15 @@ public abstract class AbstractClassifierEvaluation {
    * Updates the settings panel.
    */
   public abstract void update();
+
+  /**
+   * Displays a message.
+   *
+   * @param msg		the message to display
+   */
+  public void showStatus(String msg) {
+    m_Owner.showStatus(msg);
+  }
 
   /**
    * Returns the available actions.

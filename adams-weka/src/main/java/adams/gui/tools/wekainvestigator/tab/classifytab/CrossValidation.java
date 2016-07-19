@@ -169,5 +169,7 @@ public class CrossValidation
       m_ComboBoxDatasets.setSelectedIndex(0);
     else if (index > -1)
       m_ComboBoxDatasets.setSelectedIndex(index);
+
+    getOwner().updateButtons();
   }
 }
