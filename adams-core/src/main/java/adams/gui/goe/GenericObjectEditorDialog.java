@@ -33,6 +33,7 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dialog;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
@@ -185,6 +186,7 @@ public class GenericObjectEditorDialog
     ((GOEPanel) m_Editor.getCustomEditor()).addOkListener(this);
 
     pack();
+    fixSize();
   }
 
   /**
@@ -207,7 +209,7 @@ public class GenericObjectEditorDialog
     if (m_Editor.getCustomEditor() instanceof GOEPanel)
       ((GOEPanel) m_Editor.getCustomEditor()).addOkListener(this);
     if (m_Editor.supportsCustomEditor()) {
-      view = (Component) m_Editor.getCustomEditor();
+      view = m_Editor.getCustomEditor();
     }
     else {
       view        = EditorHelper.findView(m_Editor);
@@ -215,12 +217,7 @@ public class GenericObjectEditorDialog
       panelAll.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
       panelButton = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 5));
       buttonOK    = new JButton("Close");
-      buttonOK.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-          GUIHelper.closeParent(buttonOK);
-        }
-      });
+      buttonOK.addActionListener((ActionEvent e) -> GUIHelper.closeParent(buttonOK));
       panelButton.add(buttonOK);
       panelAll.add(panelButton, BorderLayout.SOUTH);
       panelAll.add(view, BorderLayout.CENTER);
@@ -228,6 +225,38 @@ public class GenericObjectEditorDialog
     }
     getContentPane().add(view, BorderLayout.CENTER);
     pack();
+    fixSize();
+  }
+
+  /**
+   * Ensures that the dialog doesn't get too big.
+   */
+  protected void fixSize() {
+    boolean	update;
+    int		width;
+    int		height;
+    Dimension	max;
+
+    update = false;
+
+    width  = getWidth();
+    height = getHeight();
+    max    = GUIHelper.getDefaultLargeDialogDimension();
+
+    // width
+    if (width > max.getWidth()) {
+      width = (int) max.getWidth();
+      update = true;
+    }
+
+    // height
+    if (height > max.getHeight()) {
+      height = (int) max.getHeight();
+      update = true;
+    }
+
+    if (update)
+      setSize(width, height);
   }
 
   /**
@@ -275,7 +304,7 @@ public class GenericObjectEditorDialog
     else
       m_Result = APPROVE_OPTION;
 
-    GUIHelper.adjustSize(this);
+    fixSize();
   }
 
   /**
@@ -289,7 +318,7 @@ public class GenericObjectEditorDialog
     else
       m_Editor.setValue(value);
     m_Current = value;
-    GUIHelper.adjustSize(this);
+    fixSize();
   }
 
   /**
