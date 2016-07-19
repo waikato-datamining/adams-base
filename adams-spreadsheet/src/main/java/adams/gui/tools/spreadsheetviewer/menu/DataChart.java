@@ -15,7 +15,7 @@
 
 /**
  * DataChart.java
- * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.spreadsheetviewer.menu;
 
@@ -40,6 +40,9 @@ public class DataChart
 
   /** for serialization. */
   private static final long serialVersionUID = 5235570137451285010L;
+
+  /** the last chart used. */
+  protected AbstractChartGenerator m_LastChart;
 
   /**
    * Returns the caption of this action.
@@ -67,7 +70,7 @@ public class DataChart
     result.setTitle("Chart");
     result.getGOEEditor().setClassType(AbstractChartGenerator.class);
     result.getGOEEditor().setCanChangeClassInDialog(true);
-    result.getGOEEditor().setValue(new ScatterPlot());
+    result.setCurrent(m_LastChart);
     result.setLocationRelativeTo(m_State);
     
     return result;
@@ -85,6 +88,9 @@ public class DataChart
     panel = getTabbedPane().getCurrentPanel();
     if (panel == null)
       return;
+
+    if (m_LastChart == null)
+      m_LastChart = new ScatterPlot();
 
     getDialog().setVisible(true);
     if (getDialog().getResult() != GenericObjectEditorDialog.APPROVE_OPTION)

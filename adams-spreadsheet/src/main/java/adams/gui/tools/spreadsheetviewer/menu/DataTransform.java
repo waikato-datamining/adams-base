@@ -15,18 +15,18 @@
 
 /**
  * DataTransform.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.spreadsheetviewer.menu;
-
-import java.awt.Dialog.ModalityType;
-import java.awt.event.ActionEvent;
 
 import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.transformer.AbstractSpreadSheetTransformer;
 import adams.flow.transformer.AbstractTransformer;
 import adams.flow.transformer.SpreadSheetSubset;
 import adams.gui.goe.GenericObjectEditorDialog;
+
+import java.awt.Dialog.ModalityType;
+import java.awt.event.ActionEvent;
 
 /**
  * Filters the columns.
@@ -39,6 +39,9 @@ public class DataTransform
 
   /** for serialization. */
   private static final long serialVersionUID = 5235570137451285010L;
+
+  /** the last transformer. */
+  protected AbstractSpreadSheetTransformer m_LastTransformer;
 
   /**
    * Returns the caption of this action.
@@ -66,7 +69,7 @@ public class DataTransform
     result.setTitle("Transformer");
     result.getGOEEditor().setClassType(AbstractSpreadSheetTransformer.class);
     result.getGOEEditor().setCanChangeClassInDialog(true);
-    result.getGOEEditor().setValue(new SpreadSheetSubset());
+    result.setCurrent(m_LastTransformer);
     result.setLocationRelativeTo(m_State);
     
     return result;
@@ -83,6 +86,9 @@ public class DataTransform
     sheet = getTabbedPane().getCurrentSheet();
     if (sheet == null)
       return;
+
+    if (m_LastTransformer == null)
+      m_LastTransformer = new SpreadSheetSubset();
 
     getDialog().setVisible(true);
     if (getDialog().getResult() != GenericObjectEditorDialog.APPROVE_OPTION)

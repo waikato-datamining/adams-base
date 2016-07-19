@@ -15,18 +15,18 @@
 
 /**
  * DataFilterRows.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.spreadsheetviewer.menu;
-
-import java.awt.Dialog.ModalityType;
-import java.awt.event.ActionEvent;
 
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.rowfinder.ByValue;
 import adams.data.spreadsheet.rowfinder.RowFinder;
 import adams.flow.transformer.SpreadSheetRowFilter;
 import adams.gui.goe.GenericObjectEditorDialog;
+
+import java.awt.Dialog.ModalityType;
+import java.awt.event.ActionEvent;
 
 /**
  * Filters the rows.
@@ -39,6 +39,9 @@ public class DataFilterRows
 
   /** for serialization. */
   private static final long serialVersionUID = 5235570137451285010L;
+
+  /** the last finder. */
+  protected RowFinder m_LastFinder;
 
   /**
    * Returns the caption of this action.
@@ -66,7 +69,7 @@ public class DataFilterRows
     result.setTitle("Row finder");
     result.getGOEEditor().setClassType(RowFinder.class);
     result.getGOEEditor().setCanChangeClassInDialog(true);
-    result.getGOEEditor().setValue(new ByValue());
+    result.setCurrent(m_LastFinder);
     result.setLocationRelativeTo(m_State);
     
     return result;
@@ -84,6 +87,9 @@ public class DataFilterRows
     sheet = getTabbedPane().getCurrentSheet();
     if (sheet == null)
       return;
+
+    if (m_LastFinder == null)
+      m_LastFinder = new ByValue();
 
     getDialog().setVisible(true);
     if (getDialog().getResult() != GenericObjectEditorDialog.APPROVE_OPTION)

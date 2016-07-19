@@ -15,12 +15,9 @@
 
 /**
  * DataConvert.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.spreadsheetviewer.menu;
-
-import java.awt.Dialog.ModalityType;
-import java.awt.event.ActionEvent;
 
 import adams.data.conversion.AbstractSpreadSheetConversion;
 import adams.data.conversion.Conversion;
@@ -28,6 +25,9 @@ import adams.data.conversion.TransposeSpreadSheet;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.transformer.Convert;
 import adams.gui.goe.GenericObjectEditorDialog;
+
+import java.awt.Dialog.ModalityType;
+import java.awt.event.ActionEvent;
 
 /**
  * Converts the spreadsheet.
@@ -40,6 +40,9 @@ public class DataConvert
 
   /** for serialization. */
   private static final long serialVersionUID = 5235570137451285010L;
+
+  /** the last conversion. */
+  protected AbstractSpreadSheetConversion m_LastConversion;
 
   /**
    * Returns the caption of this action.
@@ -67,7 +70,7 @@ public class DataConvert
     result.setTitle("Conversion");
     result.getGOEEditor().setClassType(AbstractSpreadSheetConversion.class);
     result.getGOEEditor().setCanChangeClassInDialog(true);
-    result.getGOEEditor().setValue(new TransposeSpreadSheet());
+    result.setCurrent(m_LastConversion);
     result.setLocationRelativeTo(m_State);
     
     return result;
@@ -85,6 +88,9 @@ public class DataConvert
     sheet = getTabbedPane().getCurrentSheet();
     if (sheet == null)
       return;
+
+    if (m_LastConversion == null)
+      m_LastConversion = new TransposeSpreadSheet();
 
     getDialog().setVisible(true);
     if (getDialog().getResult() != GenericObjectEditorDialog.APPROVE_OPTION)
