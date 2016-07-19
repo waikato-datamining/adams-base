@@ -24,6 +24,11 @@ adams.gui.tools.spreadsheetviewer.menu.FileExit-Icon=exit.png
 adams.gui.tools.spreadsheetviewer.menu.FileExit-Mnemonic=C
 adams.gui.tools.spreadsheetviewer.menu.FileExit-Shortcut=ctrl pressed Q
 
+# Edit
+adams.gui.tools.spreadsheetviewer.menu.EditPasteFromClipboard-Icon=paste.gif
+adams.gui.tools.spreadsheetviewer.menu.EditPasteFromClipboard-Mnemonic=C
+adams.gui.tools.spreadsheetviewer.menu.EditPasteFromClipboard-Shortcut=
+
 # Data
 adams.gui.tools.spreadsheetviewer.menu.DataFilterColumns-Icon=filter_columns.gif
 adams.gui.tools.spreadsheetviewer.menu.DataFilterColumns-Mnemonic=C

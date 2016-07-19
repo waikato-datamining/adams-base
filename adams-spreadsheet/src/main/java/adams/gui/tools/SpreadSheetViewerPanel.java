@@ -60,6 +60,7 @@ import adams.gui.tools.spreadsheetviewer.menu.DataSort;
 import adams.gui.tools.spreadsheetviewer.menu.DataTransform;
 import adams.gui.tools.spreadsheetviewer.menu.FileCloseTab;
 import adams.gui.tools.spreadsheetviewer.menu.FileExit;
+import adams.gui.tools.spreadsheetviewer.menu.EditPasteFromClipboard;
 import adams.gui.tools.spreadsheetviewer.menu.FileOpen;
 import adams.gui.tools.spreadsheetviewer.menu.FileSave;
 import adams.gui.tools.spreadsheetviewer.menu.FileSaveAs;
@@ -149,6 +150,9 @@ public class SpreadSheetViewerPanel
 
   /** the "exit" menu item. */
   protected SpreadSheetViewerAction m_ActionFileExit;
+
+  /** the "paste from clipboard" menu item. */
+  protected SpreadSheetViewerAction m_ActionEditPasteFromClipboard;
 
   /** the "filter columns" menu item. */
   protected SpreadSheetViewerAction m_ActionDataFilterColumns;
@@ -292,6 +296,11 @@ public class SpreadSheetViewerPanel
     // File/Exit
     action = new FileExit();
     m_ActionFileExit = action;
+    m_Actions.add(action);
+
+    // Edit/Paste from clipboard
+    action = new EditPasteFromClipboard();
+    m_ActionEditPasteFromClipboard = action;
     m_Actions.add(action);
 
     // Data/Filter columns
@@ -464,6 +473,14 @@ public class SpreadSheetViewerPanel
 	menu.addSeparator();
 
       menu.add(m_ActionFileExit);
+
+      // Edit
+      menu = new JMenu("Edit");
+      result.add(menu);
+      menu.setMnemonic('E');
+      menu.addChangeListener(e -> updateMenu());
+
+      menu.add(m_ActionEditPasteFromClipboard);
 
       // Data
       menu = new JMenu("Data");
