@@ -19,6 +19,7 @@
  */
 package adams.data.io.input;
 
+import adams.core.AdditionalInformationHandler;
 import adams.core.ClassLister;
 import adams.core.Utils;
 import adams.core.base.BaseCharset;
@@ -51,7 +52,7 @@ import java.util.zip.GZIPInputStream;
 public abstract class AbstractSpreadSheetReader
   extends AbstractOptionHandler 
   implements SpreadSheetReader, FileEncodingSupporter, FileFormatHandler,
-             SpreadSheetTypeHandler {
+             SpreadSheetTypeHandler, AdditionalInformationHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = 4828477005893179066L;
@@ -136,6 +137,23 @@ public abstract class AbstractSpreadSheetReader
    */
   public String getDefaultFormatExtension() {
     return getFormatExtensions()[0];
+  }
+
+  /**
+   * Returns the additional information.
+   *
+   * @return		the additional information, null or 0-length string for no information
+   */
+  public String getAdditionalInformation() {
+    StringBuilder	result;
+
+    result = new StringBuilder();
+
+    result.append("Supported file extensions: " + Utils.flatten(getFormatExtensions(), ", "));
+    result.append("\n");
+    result.append("Default file extension: " + getDefaultFormatExtension());
+
+    return result.toString();
   }
 
   /**

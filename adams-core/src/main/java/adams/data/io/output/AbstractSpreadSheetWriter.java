@@ -19,7 +19,9 @@
  */
 package adams.data.io.output;
 
+import adams.core.AdditionalInformationHandler;
 import adams.core.ClassLister;
+import adams.core.Utils;
 import adams.core.base.BaseCharset;
 import adams.core.io.FileEncodingSupporter;
 import adams.core.io.FileUtils;
@@ -43,7 +45,7 @@ import java.util.zip.GZIPOutputStream;
  */
 public abstract class AbstractSpreadSheetWriter
   extends AbstractOptionHandler
-  implements SpreadSheetWriter, FileEncodingSupporter {
+  implements SpreadSheetWriter, FileEncodingSupporter, AdditionalInformationHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = -3547064795252689769L;
@@ -108,6 +110,23 @@ public abstract class AbstractSpreadSheetWriter
    */
   public String getDefaultFormatExtension() {
     return getFormatExtensions()[0];
+  }
+
+  /**
+   * Returns the additional information.
+   *
+   * @return		the additional information, null or 0-length string for no information
+   */
+  public String getAdditionalInformation() {
+    StringBuilder	result;
+
+    result = new StringBuilder();
+
+    result.append("Supported file extensions: " + Utils.flatten(getFormatExtensions(), ", "));
+    result.append("\n");
+    result.append("Default file extension: " + getDefaultFormatExtension());
+
+    return result.toString();
   }
 
   /**
