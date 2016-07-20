@@ -26,7 +26,6 @@ import adams.core.option.OptionUtils;
 import adams.flow.container.WekaTrainTestSetContainer;
 import adams.gui.core.ParameterPanel;
 import adams.gui.tools.wekainvestigator.InvestigatorPanel;
-import adams.gui.tools.wekainvestigator.data.DataContainer;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
 import weka.classifiers.RandomSplitGenerator;
@@ -37,7 +36,6 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JTextField;
 import java.awt.BorderLayout;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -180,27 +178,15 @@ public class TrainTestSplit
   @Override
   public void update() {
     List<String>	datasets;
-    int			i;
-    String		oldDataset;
     int			index;
-    DataContainer 	data;
 
     if (getOwner() == null)
       return;
     if (getOwner().getOwner() == null)
       return;
 
-    oldDataset = (String) m_ComboBoxDatasets.getSelectedItem();
-    if (oldDataset != null)
-      oldDataset = oldDataset.replaceAll("^[0-9]]+: ", "");
-    datasets = new ArrayList<>();
-    index    = -1;
-    for (i = 0; i < getOwner().getData().size(); i++) {
-      data = getOwner().getData().get(i);
-      datasets.add((i + 1) + ": " + data.getData().relationName());
-      if ((oldDataset != null) && data.getData().relationName().equals(oldDataset))
-	index = i;
-    }
+    datasets = generateDatasetList();
+    index    = indexOfDataset((String) m_ComboBoxDatasets.getSelectedItem());
     m_ModelDatasets = new DefaultComboBoxModel<>(datasets.toArray(new String[datasets.size()]));
     m_ComboBoxDatasets.setModel(m_ModelDatasets);
     if ((index == -1) && (m_ModelDatasets.getSize() > 0))

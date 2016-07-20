@@ -23,12 +23,15 @@ package adams.gui.tools.wekainvestigator.tab.classifytab;
 import adams.core.ClassLister;
 import adams.core.StatusMessageHandler;
 import adams.core.logging.LoggingObject;
+import adams.gui.tools.wekainvestigator.data.DataContainer;
 import adams.gui.tools.wekainvestigator.tab.ClassifyTab;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
 
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Ancestor for classifier evaluation setups.
@@ -140,6 +143,49 @@ public abstract class AbstractClassifierEvaluation
    */
   public void showStatus(String msg) {
     m_Owner.showStatus(msg);
+  }
+
+  /**
+   * Generates the list of datasets for a combobox.
+   *
+   * @return		the list
+   */
+  protected List<String> generateDatasetList() {
+    List<String> 	result;
+    int			i;
+    DataContainer 	data;
+
+    result = new ArrayList<>();
+    for (i = 0; i < getOwner().getData().size(); i++) {
+      data = getOwner().getData().get(i);
+      result.add((i + 1) + ": " + data.getData().relationName());
+    }
+
+    return result;
+  }
+
+  /**
+   * Determines the index of the old dataset name in the current dataset list.
+   *
+   * @param oldDataset	the old dataset to look for
+   * @return		the index, -1 if not found
+   */
+  protected int indexOfDataset(String oldDataset) {
+    int 		result;
+    int			i;
+    DataContainer	data;
+
+    result = -1;
+
+    if (oldDataset != null)
+      oldDataset = oldDataset.replaceAll("^[0-9]]+: ", "");
+    for (i = 0; i < getOwner().getData().size(); i++) {
+      data = getOwner().getData().get(i);
+      if ((oldDataset != null) && data.getData().relationName().equals(oldDataset))
+	result = i;
+    }
+
+    return result;
   }
 
   /**
