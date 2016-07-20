@@ -20,7 +20,10 @@
 
 package adams.gui.tools.wekainvestigator.tab.classifytab;
 
+import adams.core.Properties;
 import adams.core.Utils;
+import adams.core.option.OptionUtils;
+import adams.gui.core.AbstractNamedHistoryPanel;
 import adams.gui.core.ParameterPanel;
 import adams.gui.tools.wekainvestigator.InvestigatorPanel;
 import weka.classifiers.Classifier;
@@ -28,6 +31,7 @@ import weka.classifiers.Evaluation;
 import weka.core.Instances;
 
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
@@ -66,12 +70,19 @@ public class CrossValidation
   /** the seed value. */
   protected JTextField m_TextSeed;
 
+  /** whether to produce a final model. */
+  protected JCheckBox m_CheckBoxFinalModel;
+
   /**
    * Initializes the widgets.
    */
   @Override
   protected void initGUI() {
+    Properties 		props;
+
     super.initGUI();
+
+    props = getProperties();
 
     m_PanelParameters = new ParameterPanel();
     m_PanelOptions.add(m_PanelParameters, BorderLayout.CENTER);
@@ -109,6 +120,13 @@ public class CrossValidation
       }
     });
     m_PanelParameters.addParameter("Seed", m_TextSeed);
+
+    // final model?
+    m_CheckBoxFinalModel = new JCheckBox();
+    m_CheckBoxFinalModel.setSelected(props.getBoolean("Classify.CrossValidationFinalModel", true));
+    m_CheckBoxFinalModel.setToolTipText("Produce a final model using the full training data?");
+    m_CheckBoxFinalModel.addActionListener((ActionEvent e) -> update());
+    m_PanelParameters.addParameter("Final model", m_CheckBoxFinalModel);
   }
 
   /**
@@ -143,21 +161,37 @@ public class CrossValidation
    * Evaluates the classifier and returns the generated evaluation object.
    *
    * @return		the evaluation
+   * @param history	the history to add the result to
    * @throws Exception	if evaluation fails
    */
   @Override
-  public Evaluation evaluate(Classifier classifier) throws Exception {
+  public Evaluation evaluate(Classifier classifier, AbstractNamedHistoryPanel<ResultItem> history) throws Exception {
     Evaluation	result;
     Instances	data;
+    ResultItem	item;
+    boolean	finalModel;
+    Classifier	model;
 
     if (!canEvaluate(classifier))
       throw new IllegalArgumentException("Cannot evaluate classifier!");
 
-    data   = getOwner().getData().get(m_ComboBoxDatasets.getSelectedIndex()).getData();
-    result = new Evaluation(data);
+    data       = getOwner().getData().get(m_ComboBoxDatasets.getSelectedIndex()).getData();
+    finalModel = m_CheckBoxFinalModel.isSelected() ;
+    result     = new Evaluation(data);
     result.crossValidateModel(
       classifier, data, ((Number) m_SpinnerFolds.getValue()).intValue(),
       new Random(Integer.parseInt(m_TextSeed.getText())));
+
+    // final model?
+    model = null;
+    if (finalModel) {
+      model = (Classifier) OptionUtils.shallowCopy(classifier);
+      model.buildClassifier(data);
+    }
+
+    // history
+    item = new ResultItem(result, model, new Instances(data, 0));
+    history.addEntry(item.getName(), item);
 
     return result;
   }
@@ -187,5 +221,14 @@ public class CrossValidation
     }
 
     getOwner().updateButtons();
+  }
+
+  /**
+   * Adds the result to the specified history list.
+   *
+   * @param history	the history to add the result to
+   */
+  public void addResult(AbstractNamedHistoryPanel<ResultItem> history) {
+
   }
 }

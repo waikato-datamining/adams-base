@@ -21,8 +21,11 @@
 package adams.gui.tools.wekainvestigator.tab.classifytab;
 
 import adams.core.ClassLister;
+import adams.core.Properties;
 import adams.core.StatusMessageHandler;
 import adams.core.logging.LoggingObject;
+import adams.gui.core.AbstractNamedHistoryPanel;
+import adams.gui.tools.wekainvestigator.InvestigatorPanel;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
 import adams.gui.tools.wekainvestigator.tab.ClassifyTab;
 import weka.classifiers.Classifier;
@@ -121,9 +124,10 @@ public abstract class AbstractClassifierEvaluation
    * Evaluates the classifier and returns the generated evaluation object.
    *
    * @return		the evaluation
+   * @param history	the history to add the result to
    * @throws Exception	if evaluation fails
    */
-  public abstract Evaluation evaluate(Classifier classifier) throws Exception;
+  public abstract Evaluation evaluate(Classifier classifier, AbstractNamedHistoryPanel<ResultItem> history) throws Exception;
 
   /**
    * Returns just the name of the evaluation.
@@ -215,6 +219,15 @@ public abstract class AbstractClassifierEvaluation
     }
 
     return result;
+  }
+
+  /**
+   * Returns the properties that define the editor.
+   *
+   * @return		the properties
+   */
+  public static Properties getProperties() {
+    return InvestigatorPanel.getProperties();
   }
 
   /**

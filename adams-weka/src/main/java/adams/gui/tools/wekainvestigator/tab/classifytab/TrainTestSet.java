@@ -21,6 +21,7 @@
 package adams.gui.tools.wekainvestigator.tab.classifytab;
 
 import adams.core.option.OptionUtils;
+import adams.gui.core.AbstractNamedHistoryPanel;
 import adams.gui.core.ParameterPanel;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
@@ -120,13 +121,15 @@ public class TrainTestSet
    * Evaluates the classifier and returns the generated evaluation object.
    *
    * @return		the evaluation
+   * @param history	the history to add the result to
    * @throws Exception	if evaluation fails
    */
   @Override
-  public Evaluation evaluate(Classifier classifier) throws Exception {
-    Evaluation			result;
-    Instances			train;
-    Instances			test;
+  public Evaluation evaluate(Classifier classifier, AbstractNamedHistoryPanel<ResultItem> history) throws Exception {
+    Evaluation	result;
+    Instances	train;
+    Instances	test;
+    ResultItem	item;
 
     if (!canEvaluate(classifier))
       throw new IllegalArgumentException("Cannot evaluate classifier!");
@@ -137,6 +140,10 @@ public class TrainTestSet
     classifier.buildClassifier(train);
     result = new Evaluation(train);
     result.evaluateModel(classifier, test);
+
+    // history
+    item = new ResultItem(result, classifier, new Instances(train, 0));
+    history.addEntry(item.getName(), item);
 
     return result;
   }

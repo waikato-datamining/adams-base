@@ -21,10 +21,12 @@
 package adams.gui.tools.wekainvestigator.tab;
 
 import adams.core.option.OptionUtils;
+import adams.gui.core.AbstractNamedHistoryPanel;
 import adams.gui.core.ConsolePanel;
 import adams.gui.goe.WekaGenericObjectEditorPanel;
 import adams.gui.tools.wekainvestigator.InvestigatorPanel;
 import adams.gui.tools.wekainvestigator.tab.classifytab.AbstractClassifierEvaluation;
+import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
 import weka.classifiers.Classifier;
 import weka.classifiers.rules.ZeroR;
 
@@ -81,6 +83,9 @@ public class ClassifyTab
 
   /** the stop button. */
   protected JButton m_ButtonStop;
+
+  /** the history. */
+  protected AbstractNamedHistoryPanel<ResultItem> m_History;
 
   /** whether the evaluation is currently running. */
   protected Thread m_Worker;
@@ -177,6 +182,16 @@ public class ClassifyTab
     m_ButtonStop = new JButton("Stop");
     m_ButtonStop.addActionListener((ActionEvent e) -> stopEvaluation());
     m_PanelEvaluationButtons.add(m_ButtonStop);
+
+    // history
+    m_History = new AbstractNamedHistoryPanel<ResultItem>() {
+      private static final long serialVersionUID = 8740813441072965573L;
+      @Override
+      protected void updateEntry(String name) {
+      }
+    };
+    m_History.setAllowRemove(false);
+    m_PanelLeft.add(m_History, BorderLayout.CENTER);
   }
 
   /**
@@ -229,7 +244,7 @@ public class ClassifyTab
       m_CurrentClassifier = (Classifier) m_PanelGOE.getCurrent();
       logMessage("Starting evaluation '" + m_CurrentEvaluation.getName() + "' using: " + OptionUtils.getCommandLine(m_CurrentClassifier));
       try {
-	m_CurrentEvaluation.evaluate(m_CurrentClassifier);
+	m_CurrentEvaluation.evaluate(m_CurrentClassifier, m_History);
 	logMessage("Finished evaluation '" + m_CurrentEvaluation.getName() + "' using: " + OptionUtils.getCommandLine(m_CurrentClassifier));
       }
       catch (Exception e) {

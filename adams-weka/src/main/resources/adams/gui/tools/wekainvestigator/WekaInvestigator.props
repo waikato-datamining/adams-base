@@ -25,6 +25,10 @@ Classify.Classifier=weka.classifiers.rules.ZeroR
 # (integer; 2-n)
 Classify.NumFolds=10
 
+# whether to produce a final model for cross-validation
+# (true|false)
+Classify.CrossValidationFinalModel=true
+
 # the random seed
 # (integer)
 Classify.Seed=1

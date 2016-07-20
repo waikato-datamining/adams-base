@@ -24,6 +24,7 @@ import adams.core.Properties;
 import adams.core.Utils;
 import adams.core.option.OptionUtils;
 import adams.flow.container.WekaTrainTestSetContainer;
+import adams.gui.core.AbstractNamedHistoryPanel;
 import adams.gui.core.ParameterPanel;
 import adams.gui.tools.wekainvestigator.InvestigatorPanel;
 import weka.classifiers.Classifier;
@@ -175,16 +176,18 @@ public class TrainTestSplit
    * Evaluates the classifier and returns the generated evaluation object.
    *
    * @return		the evaluation
+   * @param history	the history to add the result to
    * @throws Exception	if evaluation fails
    */
   @Override
-  public Evaluation evaluate(Classifier classifier) throws Exception {
+  public Evaluation evaluate(Classifier classifier, AbstractNamedHistoryPanel<ResultItem> history) throws Exception {
     Evaluation			result;
     Instances			data;
     Instances			train;
     Instances			test;
     RandomSplitGenerator	generator;
     WekaTrainTestSetContainer	cont;
+    ResultItem			item;
 
     if (!canEvaluate(classifier))
       throw new IllegalArgumentException("Cannot evaluate classifier!");
@@ -201,6 +204,10 @@ public class TrainTestSplit
     classifier.buildClassifier(train);
     result = new Evaluation(train);
     result.evaluateModel(classifier, test);
+
+    // history
+    item = new ResultItem(result, classifier, new Instances(train, 0));
+    history.addEntry(item.getName(), item);
 
     return result;
   }
