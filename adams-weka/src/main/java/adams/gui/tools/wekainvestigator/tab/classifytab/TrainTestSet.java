@@ -156,23 +156,25 @@ public class TrainTestSet
 
     datasets = generateDatasetList();
     
-    // train
-    index = indexOfDataset((String) m_ComboBoxTrain.getSelectedItem());
-    m_ModelDatasets = new DefaultComboBoxModel<>(datasets.toArray(new String[datasets.size()]));
-    m_ComboBoxTrain.setModel(m_ModelDatasets);
-    if ((index == -1) && (m_ModelDatasets.getSize() > 0))
-      m_ComboBoxTrain.setSelectedIndex(0);
-    else if (index > -1)
-      m_ComboBoxTrain.setSelectedIndex(index);
-    
-    // test
-    index = indexOfDataset((String) m_ComboBoxTest.getSelectedItem());
-    m_ModelDatasets = new DefaultComboBoxModel<>(datasets.toArray(new String[datasets.size()]));
-    m_ComboBoxTest.setModel(m_ModelDatasets);
-    if ((index == -1) && (m_ModelDatasets.getSize() > 0))
-      m_ComboBoxTest.setSelectedIndex(0);
-    else if (index > -1)
-      m_ComboBoxTest.setSelectedIndex(index);
+    if (hasDataChanged(datasets, m_ModelDatasets)) {
+      // train
+      index = indexOfDataset((String) m_ComboBoxTrain.getSelectedItem());
+      m_ModelDatasets = new DefaultComboBoxModel<>(datasets.toArray(new String[datasets.size()]));
+      m_ComboBoxTrain.setModel(m_ModelDatasets);
+      if ((index == -1) && (m_ModelDatasets.getSize() > 0))
+	m_ComboBoxTrain.setSelectedIndex(0);
+      else if (index > -1)
+	m_ComboBoxTrain.setSelectedIndex(index);
+
+      // test
+      index = indexOfDataset((String) m_ComboBoxTest.getSelectedItem());
+      m_ModelDatasets = new DefaultComboBoxModel<>(datasets.toArray(new String[datasets.size()]));
+      m_ComboBoxTest.setModel(m_ModelDatasets);
+      if ((index == -1) && (m_ModelDatasets.getSize() > 0))
+	m_ComboBoxTest.setSelectedIndex(0);
+      else if (index > -1)
+	m_ComboBoxTest.setSelectedIndex(index);
+    }
 
     getOwner().updateButtons();
   }

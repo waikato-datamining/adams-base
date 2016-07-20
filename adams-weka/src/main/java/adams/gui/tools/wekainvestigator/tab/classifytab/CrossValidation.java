@@ -32,6 +32,9 @@ import javax.swing.JComboBox;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.util.List;
@@ -85,11 +88,26 @@ public class CrossValidation
     ((SpinnerNumberModel) m_SpinnerFolds.getModel()).setStepSize(1);
     m_SpinnerFolds.setValue(InvestigatorPanel.getProperties().getInteger("Classify.NumFolds", 10));
     m_SpinnerFolds.setToolTipText("The number of folds to use (>= 2)");
+    m_SpinnerFolds.addChangeListener((ChangeEvent e) -> update());
     m_PanelParameters.addParameter("Folds", m_SpinnerFolds);
 
     // seed
     m_TextSeed = new JTextField("" + InvestigatorPanel.getProperties().getInteger("Classify.Seed", 1));
     m_TextSeed.setToolTipText("The seed value for randomizing the data");
+    m_TextSeed.getDocument().addDocumentListener(new DocumentListener() {
+      @Override
+      public void insertUpdate(DocumentEvent e) {
+	update();
+      }
+      @Override
+      public void removeUpdate(DocumentEvent e) {
+	update();
+      }
+      @Override
+      public void changedUpdate(DocumentEvent e) {
+	update();
+      }
+    });
     m_PanelParameters.addParameter("Seed", m_TextSeed);
   }
 
@@ -159,12 +177,14 @@ public class CrossValidation
 
     datasets = generateDatasetList();
     index    = indexOfDataset((String) m_ComboBoxDatasets.getSelectedItem());
-    m_ModelDatasets = new DefaultComboBoxModel<>(datasets.toArray(new String[datasets.size()]));
-    m_ComboBoxDatasets.setModel(m_ModelDatasets);
-    if ((index == -1) && (m_ModelDatasets.getSize() > 0))
-      m_ComboBoxDatasets.setSelectedIndex(0);
-    else if (index > -1)
-      m_ComboBoxDatasets.setSelectedIndex(index);
+    if (hasDataChanged(datasets, m_ModelDatasets)) {
+      m_ModelDatasets = new DefaultComboBoxModel<>(datasets.toArray(new String[datasets.size()]));
+      m_ComboBoxDatasets.setModel(m_ModelDatasets);
+      if ((index == -1) && (m_ModelDatasets.getSize() > 0))
+	m_ComboBoxDatasets.setSelectedIndex(0);
+      else if (index > -1)
+	m_ComboBoxDatasets.setSelectedIndex(index);
+    }
 
     getOwner().updateButtons();
   }

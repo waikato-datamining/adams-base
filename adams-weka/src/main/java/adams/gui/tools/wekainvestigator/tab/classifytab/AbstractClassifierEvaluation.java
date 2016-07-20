@@ -28,10 +28,13 @@ import adams.gui.tools.wekainvestigator.tab.ClassifyTab;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
 
+import javax.swing.ComboBoxModel;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Ancestor for classifier evaluation setups.
@@ -183,6 +186,32 @@ public abstract class AbstractClassifierEvaluation
       data = getOwner().getData().get(i);
       if ((oldDataset != null) && data.getData().relationName().equals(oldDataset))
 	result = i;
+    }
+
+    return result;
+  }
+
+  /**
+   * Checks whether the data has changed and the model needs updating.
+   *
+   * @param newDatasets		the new list of datasets
+   * @param currentModel	the current model
+   * @return			true if changed
+   */
+  protected boolean hasDataChanged(List<String> newDatasets, ComboBoxModel<String> currentModel) {
+    boolean	result;
+    int		i;
+    Set<String>	setDatasets;
+    Set<String>	setModel;
+
+    result = (newDatasets.size() != currentModel.getSize());
+
+    if (!result) {
+      setDatasets = new HashSet<>(newDatasets);
+      setModel    = new HashSet<>();
+      for (i = 0; i < currentModel.getSize(); i++)
+	setModel.add(currentModel.getElementAt(i));
+      result = setDatasets.containsAll(setModel) && setModel.containsAll(setDatasets);
     }
 
     return result;

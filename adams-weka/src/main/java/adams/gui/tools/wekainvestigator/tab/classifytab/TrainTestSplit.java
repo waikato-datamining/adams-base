@@ -35,6 +35,8 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.util.List;
@@ -91,17 +93,46 @@ public class TrainTestSplit
     // percentage
     m_TextPercentage = new JTextField("" + props.getInteger("Classify.TrainPercentage", 1));
     m_TextPercentage.setToolTipText("Percentage for train set (0 < x < 100)");
+    m_TextPercentage.getDocument().addDocumentListener(new DocumentListener() {
+      @Override
+      public void insertUpdate(DocumentEvent e) {
+	update();
+      }
+      @Override
+      public void removeUpdate(DocumentEvent e) {
+	update();
+      }
+      @Override
+      public void changedUpdate(DocumentEvent e) {
+	update();
+      }
+    });
     m_PanelParameters.addParameter("Percentage", m_TextPercentage);
 
     // preserve order?
     m_CheckBoxPreserveOrder = new JCheckBox();
     m_CheckBoxPreserveOrder.setSelected(props.getBoolean("Classify.PreserveOrder", false));
     m_CheckBoxPreserveOrder.setToolTipText("No randomization is performed if checked");
+    m_CheckBoxPreserveOrder.addActionListener((ActionEvent e) -> update());
     m_PanelParameters.addParameter("Preserve order", m_CheckBoxPreserveOrder);
 
     // seed
     m_TextSeed = new JTextField("" + props.getInteger("Classify.Seed", 1));
     m_TextSeed.setToolTipText("The seed value for randomizing the data");
+    m_TextSeed.getDocument().addDocumentListener(new DocumentListener() {
+      @Override
+      public void insertUpdate(DocumentEvent e) {
+	update();
+      }
+      @Override
+      public void removeUpdate(DocumentEvent e) {
+	update();
+      }
+      @Override
+      public void changedUpdate(DocumentEvent e) {
+	update();
+      }
+    });
     m_PanelParameters.addParameter("Seed", m_TextSeed);
   }
 
@@ -189,12 +220,14 @@ public class TrainTestSplit
 
     datasets = generateDatasetList();
     index    = indexOfDataset((String) m_ComboBoxDatasets.getSelectedItem());
-    m_ModelDatasets = new DefaultComboBoxModel<>(datasets.toArray(new String[datasets.size()]));
-    m_ComboBoxDatasets.setModel(m_ModelDatasets);
-    if ((index == -1) && (m_ModelDatasets.getSize() > 0))
-      m_ComboBoxDatasets.setSelectedIndex(0);
-    else if (index > -1)
-      m_ComboBoxDatasets.setSelectedIndex(index);
+    if (hasDataChanged(datasets, m_ModelDatasets)) {
+      m_ModelDatasets = new DefaultComboBoxModel<>(datasets.toArray(new String[datasets.size()]));
+      m_ComboBoxDatasets.setModel(m_ModelDatasets);
+      if ((index == -1) && (m_ModelDatasets.getSize() > 0))
+	m_ComboBoxDatasets.setSelectedIndex(0);
+      else if (index > -1)
+	m_ComboBoxDatasets.setSelectedIndex(index);
+    }
 
     getOwner().updateButtons();
   }
