@@ -33,6 +33,7 @@ import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
 import java.util.List;
 import java.util.Random;
 
@@ -75,6 +76,7 @@ public class CrossValidation
     // dataset
     m_ModelDatasets    = new DefaultComboBoxModel<>();
     m_ComboBoxDatasets = new JComboBox<>(m_ModelDatasets);
+    m_ComboBoxDatasets.addActionListener((ActionEvent e) -> update());
     m_PanelParameters.addParameter("Dataset", m_ComboBoxDatasets);
 
     // folds

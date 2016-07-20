@@ -14,38 +14,31 @@
  */
 
 /**
- * TrainTestSplit.java
+ * TrainTestSet.java
  * Copyright (C) 2016 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab.classifytab;
 
-import adams.core.Properties;
-import adams.core.Utils;
 import adams.core.option.OptionUtils;
-import adams.flow.container.WekaTrainTestSetContainer;
 import adams.gui.core.ParameterPanel;
-import adams.gui.tools.wekainvestigator.InvestigatorPanel;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
-import weka.classifiers.RandomSplitGenerator;
 import weka.core.Instances;
 
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.JTextField;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.util.List;
 
 /**
- * Uses a (random) percentage split to generate train/test.
+ * Uses dedicated train/test sets.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class TrainTestSplit
+public class TrainTestSet
   extends AbstractClassifierEvaluation {
 
   private static final long serialVersionUID = -4460266467650893551L;
@@ -53,56 +46,36 @@ public class TrainTestSplit
   /** the panel with the parameters. */
   protected ParameterPanel m_PanelParameters;
 
-  /** the datasets. */
-  protected JComboBox<String> m_ComboBoxDatasets;
+  /** the train set. */
+  protected JComboBox<String> m_ComboBoxTrain;
+
+  /** the test set. */
+  protected JComboBox<String> m_ComboBoxTest;
 
   /** the datasets model. */
   protected DefaultComboBoxModel<String> m_ModelDatasets;
-
-  /** the split percentage. */
-  protected JTextField m_TextPercentage;
-
-  /** whether to preserve the order. */
-  protected JCheckBox m_CheckBoxPreserveOrder;
-
-  /** the seed value. */
-  protected JTextField m_TextSeed;
 
   /**
    * Initializes the widgets.
    */
   @Override
   protected void initGUI() {
-    Properties	props;
-
     super.initGUI();
-
-    props = InvestigatorPanel.getProperties();
 
     m_PanelParameters = new ParameterPanel();
     m_PanelOptions.add(m_PanelParameters, BorderLayout.CENTER);
 
-    // dataset
-    m_ModelDatasets    = new DefaultComboBoxModel<>();
-    m_ComboBoxDatasets = new JComboBox<>(m_ModelDatasets);
-    m_ComboBoxDatasets.addActionListener((ActionEvent e) -> update());
-    m_PanelParameters.addParameter("Dataset", m_ComboBoxDatasets);
+    m_ModelDatasets = new DefaultComboBoxModel<>();
 
-    // percentage
-    m_TextPercentage = new JTextField("" + props.getInteger("Classify.TrainPercentage", 1));
-    m_TextPercentage.setToolTipText("Percentage for train set (0 < x < 100)");
-    m_PanelParameters.addParameter("Percentage", m_TextPercentage);
+    // Train
+    m_ComboBoxTrain = new JComboBox<>(m_ModelDatasets);
+    m_ComboBoxTrain.addActionListener((ActionEvent e) -> update());
+    m_PanelParameters.addParameter("Train", m_ComboBoxTrain);
 
-    // preserve order?
-    m_CheckBoxPreserveOrder = new JCheckBox();
-    m_CheckBoxPreserveOrder.setSelected(props.getBoolean("Classify.PreserveOrder", false));
-    m_CheckBoxPreserveOrder.setToolTipText("No randomization is performed if checked");
-    m_PanelParameters.addParameter("Preserve order", m_CheckBoxPreserveOrder);
-
-    // seed
-    m_TextSeed = new JTextField("" + props.getInteger("Classify.Seed", 1));
-    m_TextSeed.setToolTipText("The seed value for randomizing the data");
-    m_PanelParameters.addParameter("Seed", m_TextSeed);
+    // Test
+    m_ComboBoxTest = new JComboBox<>(m_ModelDatasets);
+    m_ComboBoxTest.addActionListener((ActionEvent e) -> update());
+    m_PanelParameters.addParameter("Test", m_ComboBoxTest);
   }
 
   /**
@@ -112,7 +85,7 @@ public class TrainTestSplit
    */
   @Override
   public String getName() {
-    return "Train/test split";
+    return "Train/test set";
   }
 
   /**
@@ -121,23 +94,26 @@ public class TrainTestSplit
    * @return		true if possible
    */
   public boolean canEvaluate(Classifier classifier) {
-    Instances	data;
-    double	perc;
+    Instances train;
+    Instances test;
 
-    if (m_ComboBoxDatasets.getSelectedIndex() == -1)
+    if (m_ComboBoxTrain.getSelectedIndex() == -1)
+      return false;
+    if (m_ComboBoxTest.getSelectedIndex() == -1)
       return false;
 
-    if (!Utils.isInteger(m_TextSeed.getText()))
+    train = getOwner().getData().get(m_ComboBoxTrain.getSelectedIndex()).getData();
+    if (!classifier.getCapabilities().test(train))
       return false;
 
-    if (!Utils.isDouble(m_TextPercentage.getText()))
-      return false;
-    perc = Utils.toDouble(m_TextPercentage.getText());
-    if ((perc <= 0) || (perc >= 100))
+    test = getOwner().getData().get(m_ComboBoxTest.getSelectedIndex()).getData();
+    if (!classifier.getCapabilities().test(test))
       return false;
 
-    data = getOwner().getData().get(m_ComboBoxDatasets.getSelectedIndex()).getData();
-    return classifier.getCapabilities().test(data);
+    if (!train.equalHeaders(test))
+      return false;
+
+    return true;
   }
 
   /**
@@ -149,23 +125,14 @@ public class TrainTestSplit
   @Override
   public Evaluation evaluate(Classifier classifier) throws Exception {
     Evaluation			result;
-    Instances			data;
     Instances			train;
     Instances			test;
-    RandomSplitGenerator	generator;
-    WekaTrainTestSetContainer	cont;
 
     if (!canEvaluate(classifier))
       throw new IllegalArgumentException("Cannot evaluate classifier!");
 
-    data   = getOwner().getData().get(m_ComboBoxDatasets.getSelectedIndex()).getData();
-    if (m_CheckBoxPreserveOrder.isSelected())
-      generator = new RandomSplitGenerator(data, Utils.toDouble(m_TextPercentage.getText()) / 100.0);
-    else
-      generator = new RandomSplitGenerator(data, Integer.parseInt(m_TextSeed.getText()), Utils.toDouble(m_TextPercentage.getText()) / 100.0);
-    cont  = generator.next();
-    train = (Instances) cont.getValue(WekaTrainTestSetContainer.VALUE_TRAIN);
-    test  = (Instances) cont.getValue(WekaTrainTestSetContainer.VALUE_TEST);
+    train = getOwner().getData().get(m_ComboBoxTrain.getSelectedIndex()).getData();
+    test = getOwner().getData().get(m_ComboBoxTest.getSelectedIndex()).getData();
     classifier = (Classifier) OptionUtils.shallowCopy(classifier);
     classifier.buildClassifier(train);
     result = new Evaluation(train);
@@ -188,13 +155,24 @@ public class TrainTestSplit
       return;
 
     datasets = generateDatasetList();
-    index    = indexOfDataset((String) m_ComboBoxDatasets.getSelectedItem());
+    
+    // train
+    index = indexOfDataset((String) m_ComboBoxTrain.getSelectedItem());
     m_ModelDatasets = new DefaultComboBoxModel<>(datasets.toArray(new String[datasets.size()]));
-    m_ComboBoxDatasets.setModel(m_ModelDatasets);
+    m_ComboBoxTrain.setModel(m_ModelDatasets);
     if ((index == -1) && (m_ModelDatasets.getSize() > 0))
-      m_ComboBoxDatasets.setSelectedIndex(0);
+      m_ComboBoxTrain.setSelectedIndex(0);
     else if (index > -1)
-      m_ComboBoxDatasets.setSelectedIndex(index);
+      m_ComboBoxTrain.setSelectedIndex(index);
+    
+    // test
+    index = indexOfDataset((String) m_ComboBoxTest.getSelectedItem());
+    m_ModelDatasets = new DefaultComboBoxModel<>(datasets.toArray(new String[datasets.size()]));
+    m_ComboBoxTest.setModel(m_ModelDatasets);
+    if ((index == -1) && (m_ModelDatasets.getSize() > 0))
+      m_ComboBoxTest.setSelectedIndex(0);
+    else if (index > -1)
+      m_ComboBoxTest.setSelectedIndex(index);
 
     getOwner().updateButtons();
   }

@@ -178,7 +178,7 @@ public abstract class AbstractClassifierEvaluation
     result = -1;
 
     if (oldDataset != null)
-      oldDataset = oldDataset.replaceAll("^[0-9]]+: ", "");
+      oldDataset = oldDataset.replaceAll("^[0-9]+: ", "");
     for (i = 0; i < getOwner().getData().size(); i++) {
       data = getOwner().getData().get(i);
       if ((oldDataset != null) && data.getData().relationName().equals(oldDataset))
