@@ -155,6 +155,7 @@ public class ClassifyTab
       m_CurrentEvaluation = (AbstractClassifierEvaluation) m_ComboBoxEvaluations.getSelectedItem();
       m_PanelEvaluationSetup.removeAll();
       m_PanelEvaluationSetup.add(m_CurrentEvaluation.getPanel());
+      m_CurrentEvaluation.update();
       m_PanelEvaluationSetup.invalidate();
       m_PanelEvaluationSetup.revalidate();
       m_PanelEvaluationSetup.doLayout();
