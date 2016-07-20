@@ -22,10 +22,17 @@ ClassAttributeHeuristic=adams.data.weka.classattribute.LastAttribute
 Classify.Classifier=weka.classifiers.rules.ZeroR
 
 # the number of folds for cross-validation
+# (integer; 2-n)
 Classify.NumFolds=10
 
 # the random seed
+# (integer)
 Classify.Seed=1
 
 # the percentage split
+# (double; 0-100)
 Classify.TrainPercentage=66
+
+# wether to preserve order (for random split)
+# (true|false)
+Classify.PreserveOrder=false
