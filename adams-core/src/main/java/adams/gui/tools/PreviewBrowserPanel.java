@@ -28,10 +28,13 @@ import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
 import adams.core.io.TempUtils;
 import adams.core.logging.LoggingLevel;
+import adams.core.management.FileBrowser;
 import adams.env.Environment;
 import adams.env.PreviewBrowserPanelDefinition;
 import adams.gui.application.ChildFrame;
 import adams.gui.application.ChildWindow;
+import adams.gui.chooser.AbstractChooserPanel;
+import adams.gui.chooser.AbstractChooserPanel.PopupMenuCustomizer;
 import adams.gui.chooser.BaseFileChooser;
 import adams.gui.chooser.DirectoryChooserPanel;
 import adams.gui.core.BasePanel;
@@ -289,6 +292,15 @@ public class PreviewBrowserPanel
       refreshLocalFiles();
       if (m_RecentFilesHandler != null)
         m_RecentFilesHandler.addRecentItem(m_PanelDir.getCurrent());
+    });
+    m_PanelDir.setPopupMenuCustomizer(new PopupMenuCustomizer() {
+      @Override
+      public void customizePopupMenu(AbstractChooserPanel owner, JPopupMenu menu) {
+	JMenuItem menuitem = new JMenuItem("Open in file browser...");
+	menuitem.setIcon(GUIHelper.getIcon("filebrowser.png"));
+	menuitem.addActionListener((ActionEvent ae) -> FileBrowser.launch(m_PanelDir.getCurrent()));
+	menu.add(menuitem);
+      }
     });
     m_PanelLocalFiles.add(m_PanelDir, BorderLayout.NORTH);
 
