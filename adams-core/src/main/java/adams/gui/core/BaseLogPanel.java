@@ -22,6 +22,7 @@ package adams.gui.core;
 
 import adams.core.io.FileUtils;
 import adams.gui.chooser.BaseFileChooser;
+import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -195,9 +196,9 @@ public class BaseLogPanel
    */
   public void copy() {
     if (m_TextLog.getSelectedText() == null)
-      GUIHelper.copyToClipboard(m_TextLog.getText());
+      ClipboardHelper.copyToClipboard(m_TextLog.getText());
     else
-      GUIHelper.copyToClipboard(m_TextLog.getSelectedText());
+      ClipboardHelper.copyToClipboard(m_TextLog.getSelectedText());
   }
 
   /**

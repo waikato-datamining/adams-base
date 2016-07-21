@@ -34,13 +34,11 @@ import adams.gui.application.Child;
 import adams.gui.dialog.ApprovalDialog;
 import adams.gui.dialog.TextDialog;
 import adams.gui.dialog.TextPanel;
-import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
@@ -48,7 +46,6 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-import javax.swing.JTable;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
@@ -69,8 +66,6 @@ import java.awt.GraphicsDevice;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Window;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
@@ -78,7 +73,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.Serializable;
 import java.net.URL;
@@ -1141,163 +1135,6 @@ public class GUIHelper {
     };
     
     SwingUtilities.invokeLater(run);
-  }
-  
-  /**
-   * Copies the given transferable to the system's clipboard.
-   *
-   * @param t		the transferable to copy
-   */
-  public static void copyToClipboard(Transferable t) {
-    ClipboardHelper.copyToClipboard(t);
-  }
-
-  /**
-   * Copies the given string to the system's clipboard.
-   *
-   * @param s		the string to copy
-   */
-  public static void copyToClipboard(String s) {
-    ClipboardHelper.copyToClipboard(s);
-  }
-
-  /**
-   * Copies the given image to the system's clipboard.
-   *
-   * @param img		the image to copy
-   */
-  public static void copyToClipboard(BufferedImage img) {
-    ClipboardHelper.copyToClipboard(img);
-  }
-
-  /**
-   * Copies the given JComponent as image to the system's clipboard.
-   *
-   * @param comp		the component to copy
-   */
-  public static void copyToClipboard(JComponent comp) {
-    ClipboardHelper.copyToClipboard(comp);
-  }
-
-  /**
-   * Copies the given JTable as text to the system's clipboard.
-   *
-   * @param table		the table to copy
-   */
-  public static void copyToClipboard(JTable table) {
-    ClipboardHelper.copyToClipboard(table);
-  }
-
-  /**
-   * Checks whether the specified "flavor" can be obtained from the clipboard.
-   *
-   * @param flavor	the type of data to look for
-   * @return		true if the data can be obtained, false if not available
-   */
-  public static boolean canPasteFromClipboard(DataFlavor flavor) {
-    return ClipboardHelper.canPasteFromClipboard(flavor);
-  }
-
-  /**
-   * Checks whether a string can be obtained from the clipboard.
-   *
-   * @return		true if string can be obtained, false if not available
-   */
-  public static boolean canPasteStringFromClipboard() {
-    return ClipboardHelper.canPasteStringFromClipboard();
-  }
-
-  /**
-   * Obtains an object from the clipboard.
-   *
-   * @param flavor	the type of object to obtain
-   * @return		the obtained object, null if not available
-   */
-  public static Object pasteFromClipboard(DataFlavor flavor) {
-    return ClipboardHelper.pasteFromClipboard(flavor);
-  }
-
-  /**
-   * Obtains a string from the clipboard.
-   *
-   * @return		the obtained string, null if not available
-   */
-  public static String pasteStringFromClipboard() {
-    return ClipboardHelper.pasteStringFromClipboard();
-  }
-
-  /**
-   * Obtains an image from the clipboard.
-   *
-   * @return		the obtained image, null if not available
-   */
-  public static BufferedImage pasteImageFromClipboard() {
-    return ClipboardHelper.pasteImageFromClipboard();
-  }
-
-  /**
-   * Obtains a setup string from the clipboard. This command can be spread
-   * across several lines, each line (apart from last one) ending with a "\".
-   * If that is the case, then the lines are collapsed into a single line.
-   *
-   * @return		the obtained string, null if not available
-   */
-  public static String pasteSetupFromClipboard() {
-    StringBuilder	result;
-    String              pasted;
-    String[]		parts;
-    List<String>	lines;
-    String		line;
-    int			i;
-    boolean		formatOK;
-
-    result = null;
-    pasted = pasteStringFromClipboard();
-
-    if (pasted != null) {
-      result = new StringBuilder(pasted);
-      parts = result.toString().replaceAll("\r", "").split("\n");
-      if (parts.length > 1) {
-	// preprocess string
-	lines = new ArrayList<String>();
-	for (i = 0; i < parts.length; i++) {
-	  line = parts[i].trim();
-	  if (line.length() == 0)
-	    continue;
-	  lines.add(line);
-	}
-
-	// check format:
-	// all lines apart from last one must have a trailing backslash
-	formatOK = true;
-	for (i = 0; i < lines.size(); i++) {
-	  if (i < lines.size() - 1)
-	    formatOK = lines.get(i).endsWith("\\");
-	  else
-	    formatOK = !lines.get(i).endsWith("\\");
-	  if (!formatOK)
-	    break;
-	}
-
-	// collapse the command
-	if (formatOK) {
-	  result = new StringBuilder();
-	  for (i = 0; i < lines.size(); i++) {
-	    if (i > 0)
-	      result.append(" ");
-	    line = lines.get(i);
-	    if (i < lines.size() - 1)
-	      line = line.substring(0, lines.get(i).length() - 1).trim();
-	    result.append(line);
-	  }
-	}
-      }
-    }
-
-    if (result == null)
-      return null;
-    else
-      return result.toString();
   }
 
   /**

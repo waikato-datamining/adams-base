@@ -22,9 +22,9 @@ package adams.gui.flow.tree.menu;
 import adams.core.option.AbstractOptionProducer;
 import adams.core.option.NestedProducer;
 import adams.flow.core.Actor;
-import adams.gui.core.GUIHelper;
 import adams.gui.flow.tree.ClipboardActorContainer;
 import adams.gui.flow.tree.TreeHelper;
+import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
 import java.awt.event.ActionEvent;
 
@@ -68,12 +68,12 @@ public class CopyActor
     ClipboardActorContainer	cont;
 
     if (actors.length == 1) {
-      GUIHelper.copyToClipboard(AbstractOptionProducer.toString(NestedProducer.class, actors[0]));
+      ClipboardHelper.copyToClipboard(AbstractOptionProducer.toString(NestedProducer.class, actors[0]));
     }
     else if (actors.length > 1) {
       cont = new ClipboardActorContainer();
       cont.setActors(actors);
-      GUIHelper.copyToClipboard(cont.toNestedString());
+      ClipboardHelper.copyToClipboard(cont.toNestedString());
     }
   }
 

@@ -49,6 +49,7 @@ import adams.gui.visualization.core.PlotPanel;
 import adams.gui.visualization.core.PopupMenuCustomizer;
 import adams.gui.visualization.core.plot.Axis;
 import adams.gui.visualization.core.plot.TipTextCustomizer;
+import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 import weka.core.Instances;
 
 import javax.swing.JColorChooser;
@@ -509,7 +510,7 @@ public class InstancePanel
 	  id.append("\n");
 	id.append(getContainerManager().get(indices[i]).getDisplayID());
       }
-      GUIHelper.copyToClipboard(id.toString());
+      ClipboardHelper.copyToClipboard(id.toString());
     });
     result.add(item);
 

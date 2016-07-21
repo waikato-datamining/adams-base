@@ -29,6 +29,7 @@ import adams.gui.chooser.SpreadSheetFileChooser;
 import adams.gui.event.PopupMenuListener;
 import adams.gui.event.RemoveItemsEvent;
 import adams.gui.event.RemoveItemsListener;
+import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
 import javax.swing.Action;
 import javax.swing.JMenuItem;
@@ -454,7 +455,7 @@ public class BaseTable
         return;
       Object value = getValueAt(row, col);
       if (value != null)
-        GUIHelper.copyToClipboard("" + value);
+        ClipboardHelper.copyToClipboard("" + value);
     });
     menu.add(menuitem);
 
@@ -470,7 +471,7 @@ public class BaseTable
         if (value != null)
           content.append(value.toString());
       }
-      GUIHelper.copyToClipboard(content.toString());
+      ClipboardHelper.copyToClipboard(content.toString());
     });
     menu.add(menuitem);
 
@@ -488,12 +489,12 @@ public class BaseTable
         else
           content.append("");
       }
-      GUIHelper.copyToClipboard(content.toString());
+      ClipboardHelper.copyToClipboard(content.toString());
     });
     menu.add(menuitem);
 
     menuitem = new JMenuItem("Copy table", GUIHelper.getIcon("copy_table.gif"));
-    menuitem.addActionListener((ActionEvent ae) -> GUIHelper.copyToClipboard(toSpreadSheet().toString()));
+    menuitem.addActionListener((ActionEvent ae) -> ClipboardHelper.copyToClipboard(toSpreadSheet().toString()));
     menu.add(menuitem);
 
     menu.addSeparator();

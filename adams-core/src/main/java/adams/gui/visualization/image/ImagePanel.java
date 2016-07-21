@@ -59,6 +59,7 @@ import adams.gui.event.UndoEvent;
 import adams.gui.print.PrintMouseListener;
 import adams.gui.visualization.image.paintlet.Paintlet;
 import adams.gui.visualization.report.ReportFactory;
+import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
@@ -457,7 +458,7 @@ public class ImagePanel
         // copy
 	menuitem = new JMenuItem("Copy", GUIHelper.getIcon("copy.gif"));
 	menuitem.setEnabled(getCurrentImage() != null);
-	menuitem.addActionListener((ActionEvent ae) -> GUIHelper.copyToClipboard(getCurrentImage()));
+	menuitem.addActionListener((ActionEvent ae) -> ClipboardHelper.copyToClipboard(getCurrentImage()));
 	menu.add(menuitem);
 
         // export

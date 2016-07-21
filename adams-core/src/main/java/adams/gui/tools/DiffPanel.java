@@ -32,6 +32,7 @@ import adams.gui.dialog.ApprovalDialog;
 import adams.gui.event.RecentItemEvent;
 import adams.gui.event.RecentItemListener;
 import adams.gui.visualization.debug.SideBySideDiffPanel;
+import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
 import javax.swing.JButton;
 import javax.swing.JMenu;
@@ -463,17 +464,17 @@ public class DiffPanel
 
     m_MenuFileLoadRecentLeft.setEnabled(m_RecentFilesHandlerLeft.size() > 0);
     m_MenuFileLoadRecentRight.setEnabled(m_RecentFilesHandlerRight.size() > 0);
-    m_MenuItemEditPasteLeft.setEnabled(GUIHelper.canPasteStringFromClipboard());
-    m_MenuItemEditPasteRight.setEnabled(GUIHelper.canPasteStringFromClipboard());
+    m_MenuItemEditPasteLeft.setEnabled(ClipboardHelper.canPasteStringFromClipboard());
+    m_MenuItemEditPasteRight.setEnabled(ClipboardHelper.canPasteStringFromClipboard());
   }
 
   /**
    * Pastes the clipboard content into the left panel, if possible.
    */
   protected void pasteLeft() {
-    if (!GUIHelper.canPasteStringFromClipboard())
+    if (!ClipboardHelper.canPasteStringFromClipboard())
       return;
-    m_ClipboardLeft = new ArrayList(Arrays.asList(GUIHelper.pasteStringFromClipboard().split("\n")));
+    m_ClipboardLeft = new ArrayList(Arrays.asList(ClipboardHelper.pasteStringFromClipboard().split("\n")));
     compare();
   }
 
@@ -481,9 +482,9 @@ public class DiffPanel
    * Pastes the clipboard content into the right panel, if possible.
    */
   protected void pasteRight() {
-    if (!GUIHelper.canPasteStringFromClipboard())
+    if (!ClipboardHelper.canPasteStringFromClipboard())
       return;
-    m_ClipboardRight = new ArrayList(Arrays.asList(GUIHelper.pasteStringFromClipboard().split("\n")));
+    m_ClipboardRight = new ArrayList(Arrays.asList(ClipboardHelper.pasteStringFromClipboard().split("\n")));
     compare();
   }
   

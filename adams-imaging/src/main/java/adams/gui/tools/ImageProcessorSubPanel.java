@@ -42,6 +42,7 @@ import adams.gui.goe.GenericObjectEditorDialog;
 import adams.gui.visualization.image.ImageOverlay;
 import adams.gui.visualization.image.ImagePanel;
 import adams.gui.visualization.image.ObjectLocationsOverlayFromReport;
+import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
 import javax.swing.JButton;
 import javax.swing.JMenu;
@@ -134,7 +135,7 @@ public class ImageProcessorSubPanel
       menuitem.setEnabled(getPanel().getCurrentImage() != null);
       menuitem.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e) {
-	  GUIHelper.copyToClipboard(getPanel().getCurrentImage());
+	  ClipboardHelper.copyToClipboard(getPanel().getCurrentImage());
 	}
       });
       menu.add(menuitem);

@@ -27,6 +27,7 @@ import adams.db.DatabaseConnectionHandler;
 import adams.env.Environment;
 import adams.env.OptionsDefinition;
 import adams.gui.goe.CustomStringRepresentationHandler;
+import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
 import java.beans.BeanInfo;
 import java.beans.Introspector;
@@ -1172,5 +1173,70 @@ public class OptionUtils {
     }
 
     return result;
+  }
+
+  /**
+   * Obtains a setup string from the clipboard. This command can be spread
+   * across several lines, each line (apart from last one) ending with a "\".
+   * If that is the case, then the lines are collapsed into a single line.
+   *
+   * @return		the obtained string, null if not available
+   */
+  public static String pasteSetupFromClipboard() {
+    StringBuilder	result;
+    String              pasted;
+    String[]		parts;
+    List<String>	lines;
+    String		line;
+    int			i;
+    boolean		formatOK;
+
+    result = null;
+    pasted = ClipboardHelper.pasteStringFromClipboard();
+
+    if (pasted != null) {
+      result = new StringBuilder(pasted);
+      parts = result.toString().replaceAll("\r", "").split("\n");
+      if (parts.length > 1) {
+	// preprocess string
+	lines = new ArrayList<>();
+	for (i = 0; i < parts.length; i++) {
+	  line = parts[i].trim();
+	  if (line.length() == 0)
+	    continue;
+	  lines.add(line);
+	}
+
+	// check format:
+	// all lines apart from last one must have a trailing backslash
+	formatOK = true;
+	for (i = 0; i < lines.size(); i++) {
+	  if (i < lines.size() - 1)
+	    formatOK = lines.get(i).endsWith("\\");
+	  else
+	    formatOK = !lines.get(i).endsWith("\\");
+	  if (!formatOK)
+	    break;
+	}
+
+	// collapse the command
+	if (formatOK) {
+	  result = new StringBuilder();
+	  for (i = 0; i < lines.size(); i++) {
+	    if (i > 0)
+	      result.append(" ");
+	    line = lines.get(i);
+	    if (i < lines.size() - 1)
+	      line = line.substring(0, lines.get(i).length() - 1).trim();
+	    result.append(line);
+	  }
+	}
+      }
+    }
+
+    if (result == null)
+      return null;
+    else
+      return result.toString();
   }
 }

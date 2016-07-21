@@ -61,6 +61,7 @@ import adams.gui.visualization.core.plot.AbstractHitDetector;
 import adams.gui.visualization.core.plot.Axis;
 import adams.gui.visualization.core.plot.HitDetectorSupporter;
 import adams.gui.visualization.core.plot.TipTextCustomizer;
+import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
 import javax.swing.JColorChooser;
 import javax.swing.JMenuItem;
@@ -628,7 +629,7 @@ public class XYSequencePanel
 	  id.append("\n");
 	id.append(getContainerManager().get(indices[i]).getDisplayID());
       }
-      GUIHelper.copyToClipboard(id.toString());
+      ClipboardHelper.copyToClipboard(id.toString());
     });
     result.add(item);
 

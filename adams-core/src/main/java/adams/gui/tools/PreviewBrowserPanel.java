@@ -60,6 +60,7 @@ import adams.gui.tools.previewbrowser.CreatingPreviewPanel;
 import adams.gui.tools.previewbrowser.MultipleFileContentHandler;
 import adams.gui.tools.previewbrowser.NoPreviewAvailablePanel;
 import adams.gui.tools.previewbrowser.PreviewPanel;
+import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
@@ -1043,7 +1044,7 @@ public class PreviewBrowserPanel
       Object obj = m_ListLocalFiles.getSelectedValue();
       if (obj == null)
 	return;
-      GUIHelper.copyToClipboard(obj.toString());
+      ClipboardHelper.copyToClipboard(obj.toString());
     });
     result.add(menuitem);
 
@@ -1052,7 +1053,7 @@ public class PreviewBrowserPanel
       Object obj = m_ListLocalFiles.getSelectedValue();
       if (obj == null)
 	return;
-      GUIHelper.copyToClipboard(m_PanelDir.getCurrent() + File.separator + obj.toString());
+      ClipboardHelper.copyToClipboard(m_PanelDir.getCurrent() + File.separator + obj.toString());
     });
     result.add(menuitem);
 

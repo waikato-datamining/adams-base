@@ -34,6 +34,7 @@ import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;
 import javax.swing.text.Document;
 
+import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
@@ -546,7 +547,7 @@ public abstract class AbstractTextAreaPanelWithAdvancedSyntaxHighlighting
    */
   public void copy() {
     if (m_TextArea.getSelectedText() == null)
-      GUIHelper.copyToClipboard(m_TextArea.getText());
+      ClipboardHelper.copyToClipboard(m_TextArea.getText());
     else
       m_TextArea.copy();
   }
@@ -557,7 +558,7 @@ public abstract class AbstractTextAreaPanelWithAdvancedSyntaxHighlighting
    * @return		true if text is available for pasting
    */
   public boolean canPaste() {
-    if (isEditable() && GUIHelper.canPasteStringFromClipboard())
+    if (isEditable() && ClipboardHelper.canPasteStringFromClipboard())
       return true;
     else
       return false;

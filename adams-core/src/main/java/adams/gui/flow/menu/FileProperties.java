@@ -28,6 +28,7 @@ import adams.gui.core.MouseUtils;
 import adams.gui.core.ParameterPanel;
 import adams.gui.dialog.ApprovalDialog;
 import adams.gui.visualization.statistics.InformativeStatisticFactory;
+import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
 import javax.swing.JButton;
 import javax.swing.JMenuItem;
@@ -132,7 +133,7 @@ public class FileProperties
 	  menuitem.addActionListener(new ActionListener() {
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
-	      GUIHelper.copyToClipboard(textFile.getText());
+	      ClipboardHelper.copyToClipboard(textFile.getText());
 	    }
 	  });
 	  menu.add(menuitem);

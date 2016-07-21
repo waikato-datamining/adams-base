@@ -34,6 +34,7 @@ import adams.gui.scripting.ScriptingEngineHandler;
 import adams.tools.AbstractTool;
 import adams.tools.InitializeTables;
 import adams.tools.RunTool;
+import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -100,7 +101,7 @@ public abstract class AbstractRunToolPanel
 	  public void actionPerformed(ActionEvent e) {
 	    RunTool runTool = getRunTool();
 	    runTool.setTool(m_CurrentTool);
-            GUIHelper.copyToClipboard(AbstractOptionProducer.toString(NestedProducer.class, runTool));
+            ClipboardHelper.copyToClipboard(AbstractOptionProducer.toString(NestedProducer.class, runTool));
 	  }
 	});
 	menu.addSeparator();

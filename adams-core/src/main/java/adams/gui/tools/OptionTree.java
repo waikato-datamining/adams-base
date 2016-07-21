@@ -44,6 +44,7 @@ import adams.core.option.OptionUtils;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.GUIHelper;
+import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
 /**
  * Displays commandline options as tree.
@@ -164,7 +165,7 @@ public class OptionTree
     m_ButtonCopy.setIcon(GUIHelper.getIcon("copy.gif"));
     m_ButtonCopy.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-	GUIHelper.copyToClipboard(m_TextOptionsSelected.getText());
+	ClipboardHelper.copyToClipboard(m_TextOptionsSelected.getText());
       }
     });
     panel.add(m_ButtonCopy);

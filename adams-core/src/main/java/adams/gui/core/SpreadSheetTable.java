@@ -27,6 +27,7 @@ import adams.gui.chooser.SpreadSheetFileChooser;
 import adams.gui.core.spreadsheettable.SpreadSheetTablePopupMenuItemHelper;
 import adams.gui.event.PopupMenuListener;
 import adams.gui.visualization.core.PopupMenuCustomizer;
+import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
@@ -307,7 +308,7 @@ public class SpreadSheetTable
     
     menuitem = new JMenuItem("Copy column name", GUIHelper.getIcon("copy.gif"));
     menuitem.setEnabled((getShowRowColumn() && (col > 0) || !getShowRowColumn()));
-    menuitem.addActionListener((ActionEvent ae) -> GUIHelper.copyToClipboard(((SpreadSheetTableModel) getUnsortedModel()).toSpreadSheet().getColumnName(actCol)));
+    menuitem.addActionListener((ActionEvent ae) -> ClipboardHelper.copyToClipboard(((SpreadSheetTableModel) getUnsortedModel()).toSpreadSheet().getColumnName(actCol)));
     menu.add(menuitem);
     
     menuitem = new JMenuItem("Copy column", GUIHelper.getIcon("copy_column.gif"));
@@ -323,7 +324,7 @@ public class SpreadSheetTable
 	else
 	  content.append(sheet.getCell(i, actCol).getContent() + sep);
       }
-      GUIHelper.copyToClipboard(content.toString());
+      ClipboardHelper.copyToClipboard(content.toString());
     });
     menu.add(menuitem);
     
@@ -451,7 +452,7 @@ public class SpreadSheetTable
 	return;
       if (col == -1)
 	return;
-      GUIHelper.copyToClipboard("" + getValueAt(row, col));
+      ClipboardHelper.copyToClipboard("" + getValueAt(row, col));
     });
     menu.add(menuitem);
 

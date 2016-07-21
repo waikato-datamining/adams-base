@@ -28,6 +28,7 @@ import java.awt.event.ActionListener;
 import adams.gui.core.ColorHelper;
 import adams.gui.core.GUIHelper;
 import adams.gui.dialog.ApprovalDialog;
+import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
 /**
  * Color picker dialog.
@@ -86,7 +87,7 @@ public class ColorPickerDialog
     m_ButtonApprove.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-	GUIHelper.copyToClipboard(ColorHelper.toHex(m_PanelPicker.getSelectedColor()));
+	ClipboardHelper.copyToClipboard(ColorHelper.toHex(m_PanelPicker.getSelectedColor()));
       }
     });
   }

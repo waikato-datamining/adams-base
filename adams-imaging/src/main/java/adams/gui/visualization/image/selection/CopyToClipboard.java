@@ -19,11 +19,12 @@
  */
 package adams.gui.visualization.image.selection;
 
-import java.awt.Point;
-import java.awt.image.BufferedImage;
-
 import adams.gui.core.GUIHelper;
 import adams.gui.visualization.image.ImagePanel;
+import com.github.fracpete.jclipboardhelper.ClipboardHelper;
+
+import java.awt.Point;
+import java.awt.image.BufferedImage;
 
 /**
  <!-- globalinfo-start -->
@@ -127,7 +128,7 @@ public class CopyToClipboard
 	panel.mouseToPixelLocation(bottomRight).x - panel.mouseToPixelLocation(topLeft).x + 1,
 	panel.mouseToPixelLocation(bottomRight).y - panel.mouseToPixelLocation(topLeft).y + 1);
     
-    GUIHelper.copyToClipboard(selection);
+    ClipboardHelper.copyToClipboard(selection);
     
     GUIHelper.showInformationMessage(panel, "Selection copied to clipboard!");
   }

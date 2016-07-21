@@ -29,6 +29,7 @@ import adams.gui.core.GUIHelper;
 import adams.gui.core.MouseUtils;
 import adams.gui.dialog.ApprovalDialog;
 import adams.gui.goe.PropertyPanel.PopupMenuCustomizer;
+import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -391,19 +392,19 @@ public class InlineEditor
     menuitem.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
 	if (m_TextField.getSelectedText() != null)
-	  GUIHelper.copyToClipboard(m_TextField.getSelectedText());
+	  ClipboardHelper.copyToClipboard(m_TextField.getSelectedText());
 	else
-	  GUIHelper.copyToClipboard(m_TextField.getText());
+	  ClipboardHelper.copyToClipboard(m_TextField.getText());
       }
     });
     menu.add(menuitem);
 
     menuitem = new JMenuItem("Paste");
     menuitem.setIcon(GUIHelper.getIcon("paste.gif"));
-    menuitem.setEnabled(GUIHelper.canPasteStringFromClipboard());
+    menuitem.setEnabled(ClipboardHelper.canPasteStringFromClipboard());
     menuitem.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-	m_TextField.replaceSelection(GUIHelper.pasteStringFromClipboard());
+	m_TextField.replaceSelection(ClipboardHelper.pasteStringFromClipboard());
       }
     });
     menu.add(menuitem);

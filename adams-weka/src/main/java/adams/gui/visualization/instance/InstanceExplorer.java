@@ -60,6 +60,7 @@ import adams.gui.visualization.core.PopupMenuCustomizer;
 import adams.gui.visualization.report.ReportContainerList;
 import adams.gui.visualization.report.ReportFactory;
 import adams.gui.visualization.statistics.InformativeStatisticFactory;
+import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 import weka.core.Attribute;
 import weka.core.Instances;
 import weka.core.converters.AbstractFileSaver;
@@ -852,7 +853,7 @@ public class InstanceExplorer
 	  id.append("\n");
 	id.append(getContainerManager().get(indices[i]).getDisplayID());
       }
-      GUIHelper.copyToClipboard(id.toString());
+      ClipboardHelper.copyToClipboard(id.toString());
     });
     result.add(item);
 

@@ -21,11 +21,13 @@
 package adams.gui.chooser;
 
 import adams.core.CleanUpHandler;
+import adams.core.option.OptionUtils;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BasePopupMenu;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.KeyUtils;
 import adams.gui.core.MouseUtils;
+import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -178,7 +180,7 @@ public abstract class AbstractChooserPanel<T>
           e.consume();
           copyToClipboard();
         }
-        else if (KeyUtils.isPaste(e) && GUIHelper.canPasteStringFromClipboard()) {
+        else if (KeyUtils.isPaste(e) && ClipboardHelper.canPasteStringFromClipboard()) {
           e.consume();
           pasteFromClipboard();
         }
@@ -347,7 +349,7 @@ public abstract class AbstractChooserPanel<T>
    * Copies the current settings to the clipboard.
    */
   protected void copyToClipboard() {
-    GUIHelper.copyToClipboard(m_TextSelection.getText());
+    ClipboardHelper.copyToClipboard(m_TextSelection.getText());
   }
 
   /**
@@ -355,7 +357,7 @@ public abstract class AbstractChooserPanel<T>
    */
   protected void pasteFromClipboard() {
     try {
-      setCurrent(fromString(GUIHelper.pasteSetupFromClipboard()));
+      setCurrent(fromString(OptionUtils.pasteSetupFromClipboard()));
       notifyChangeListeners(new ChangeEvent(m_Self));
     }
     catch (Exception e) {
@@ -562,7 +564,7 @@ public abstract class AbstractChooserPanel<T>
 
     menuitem = new JMenuItem("Paste", GUIHelper.getIcon("paste.gif"));
     menuitem.setAccelerator(GUIHelper.getKeyStroke("control pressed V"));
-    menuitem.setEnabled(isEditable() && GUIHelper.canPasteStringFromClipboard());
+    menuitem.setEnabled(isEditable() && ClipboardHelper.canPasteStringFromClipboard());
     menuitem.addActionListener(e -> pasteFromClipboard());
     result.add(menuitem);
 

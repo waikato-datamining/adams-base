@@ -47,6 +47,7 @@ import adams.gui.visualization.core.PlotPanel;
 import adams.gui.visualization.core.PopupMenuCustomizer;
 import adams.gui.visualization.core.plot.Axis;
 import adams.gui.visualization.core.plot.TipTextCustomizer;
+import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
 import javax.swing.JColorChooser;
 import javax.swing.JMenuItem;
@@ -483,7 +484,7 @@ public class SpreadSheetRowPanel
 	  id.append("\n");
 	id.append(getContainerManager().get(indices[i]).getDisplayID());
       }
-      GUIHelper.copyToClipboard(id.toString());
+      ClipboardHelper.copyToClipboard(id.toString());
     });
     result.add(item);
 

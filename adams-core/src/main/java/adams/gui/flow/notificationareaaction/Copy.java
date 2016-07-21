@@ -21,6 +21,7 @@
 package adams.gui.flow.notificationareaaction;
 
 import adams.gui.core.GUIHelper;
+import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
 import java.awt.event.ActionEvent;
 
@@ -51,7 +52,7 @@ public class Copy
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    GUIHelper.copyToClipboard(m_Owner.getContent());
+    ClipboardHelper.copyToClipboard(m_Owner.getContent());
     showStatus("Content copied");
   }
 

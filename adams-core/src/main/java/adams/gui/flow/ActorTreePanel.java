@@ -39,6 +39,7 @@ import adams.gui.flow.tree.ClipboardActorContainer;
 import adams.gui.goe.classtree.ClassNode;
 import adams.gui.goe.classtree.ClassTree;
 import adams.gui.goe.classtree.GlobalInfoNodeGenerator;
+import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
@@ -193,7 +194,7 @@ public class ActorTreePanel
     cont = new ClipboardActorContainer();
     cont.setActors(new Actor[]{actor});
 
-    GUIHelper.copyToClipboard(cont.toNestedString());
+    ClipboardHelper.copyToClipboard(cont.toNestedString());
   }
 
   /**

@@ -32,6 +32,7 @@ import adams.gui.core.TextEditorPanel;
 import adams.gui.dialog.TextPanel;
 import adams.gui.flow.notificationareaaction.AbstractNotificationAreaAction;
 import adams.gui.flow.notificationareaaction.CloseAndCleanUp;
+import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 import com.jidesoft.swing.JideButton;
 import com.jidesoft.swing.JideSplitButton;
 
@@ -312,7 +313,7 @@ public class FlowPanelNotificationArea
         menu.add(submenu);
         for (final String path : paths) {
           menuitem = new JMenuItem(path);
-          menuitem.addActionListener((ActionEvent e) -> GUIHelper.copyToClipboard(path));
+          menuitem.addActionListener((ActionEvent e) -> ClipboardHelper.copyToClipboard(path));
           submenu.add(menuitem);
         }
       }

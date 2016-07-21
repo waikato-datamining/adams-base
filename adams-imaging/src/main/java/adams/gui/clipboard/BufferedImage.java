@@ -22,7 +22,7 @@ package adams.gui.clipboard;
 import adams.data.image.AbstractImageContainer;
 import adams.data.image.BufferedImageContainer;
 import adams.flow.core.Token;
-import adams.gui.core.GUIHelper;
+import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
 import java.awt.datatransfer.DataFlavor;
 
@@ -62,7 +62,7 @@ public class BufferedImage
    * @param data	the data to copy
    */
   public void copy(java.awt.image.BufferedImage data) {
-    GUIHelper.copyToClipboard(data);
+    ClipboardHelper.copyToClipboard(data);
   }
   
   /**
@@ -86,7 +86,7 @@ public class BufferedImage
    * @return		true if data is available
    */
   public boolean canPaste() {
-    return GUIHelper.canPasteFromClipboard(DataFlavor.imageFlavor);
+    return ClipboardHelper.canPasteFromClipboard(DataFlavor.imageFlavor);
   }
   
   /**
@@ -110,6 +110,6 @@ public class BufferedImage
    * @return		the pasted data, null if failed to paste
    */
   public java.awt.image.BufferedImage paste() {
-    return GUIHelper.pasteImageFromClipboard();
+    return ClipboardHelper.pasteImageFromClipboard();
   }
 }

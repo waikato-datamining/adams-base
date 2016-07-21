@@ -32,6 +32,7 @@ import adams.gui.core.BasePanel;
 import adams.gui.core.GUIHelper;
 import adams.gui.dialog.PreviewBrowserDialog;
 import adams.gui.goe.PropertyPanel.PopupMenuCustomizer;
+import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
 import javax.swing.JComponent;
 import javax.swing.JMenuItem;
@@ -315,7 +316,7 @@ public class FileEditor
     menuitem.setEnabled(true);
     menuitem.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-	GUIHelper.copyToClipboard(file.getAbsolutePath());
+	ClipboardHelper.copyToClipboard(file.getAbsolutePath());
       }
     });
     menu.add(menuitem);

@@ -26,6 +26,7 @@ import adams.gui.core.BaseSplitPane;
 import adams.gui.core.BaseTextArea;
 import adams.gui.core.Fonts;
 import adams.gui.core.GUIHelper;
+import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 import net.minidev.json.JSONAware;
 import net.minidev.json.JSONObject;
 
@@ -112,7 +113,7 @@ public class JsonTreeWithPreview
     m_ButtonCopy.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-	GUIHelper.copyToClipboard(m_TextArea.getText());
+	ClipboardHelper.copyToClipboard(m_TextArea.getText());
       }
     });
     panelButtons.add(m_ButtonCopy, BorderLayout.NORTH);

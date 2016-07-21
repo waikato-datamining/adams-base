@@ -19,10 +19,11 @@
  */
 package adams.gui.clipboard;
 
-import java.awt.datatransfer.DataFlavor;
-
 import adams.flow.core.Token;
 import adams.gui.core.GUIHelper;
+import com.github.fracpete.jclipboardhelper.ClipboardHelper;
+
+import java.awt.datatransfer.DataFlavor;
 
 /**
  * Copies/pastes strings.
@@ -73,7 +74,7 @@ public class String
    * @param data	the data to copy
    */
   public void copy(java.lang.String data) {
-    GUIHelper.copyToClipboard(data);
+    ClipboardHelper.copyToClipboard(data);
   }
   
   /**
@@ -82,7 +83,7 @@ public class String
    * @return		true if data is available
    */
   public boolean canPaste() {
-    return GUIHelper.canPasteFromClipboard(DataFlavor.stringFlavor);
+    return ClipboardHelper.canPasteFromClipboard(DataFlavor.stringFlavor);
   }
 
   /**
@@ -91,7 +92,7 @@ public class String
    * @return		the pasted data, null if failed to paste
    */
   public java.lang.String paste() {
-    return GUIHelper.pasteStringFromClipboard();
+    return ClipboardHelper.pasteStringFromClipboard();
   }
   
   /**

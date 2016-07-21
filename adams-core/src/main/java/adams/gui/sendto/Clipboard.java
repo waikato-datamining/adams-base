@@ -19,7 +19,7 @@
  */
 package adams.gui.sendto;
 
-import adams.gui.core.GUIHelper;
+import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
 import javax.swing.JComponent;
 import javax.swing.JTable;
@@ -86,13 +86,13 @@ public class Clipboard
     result = null;
 
     if (o instanceof String)
-      GUIHelper.copyToClipboard((String) o);
+      ClipboardHelper.copyToClipboard((String) o);
     else if (o instanceof JTextComponent)
-      GUIHelper.copyToClipboard(((JTextComponent) o).getText());
+      ClipboardHelper.copyToClipboard(((JTextComponent) o).getText());
     else if (o instanceof JTable)
-      GUIHelper.copyToClipboard((JTable) o);
+      ClipboardHelper.copyToClipboard((JTable) o);
     else if (o instanceof JComponent)
-      GUIHelper.copyToClipboard((JComponent) o);
+      ClipboardHelper.copyToClipboard((JComponent) o);
     else
       result = "Cannot copy object: " + o.getClass();
 

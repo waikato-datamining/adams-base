@@ -23,6 +23,7 @@ import adams.gui.core.BasePopupMenu;
 import adams.gui.core.BaseTree;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MouseUtils;
+import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -153,7 +154,7 @@ public class DOMTree
       menuitem.setEnabled(selNode.hasValue());
       menuitem.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          GUIHelper.copyToClipboard(selNode.toTransferable());
+          ClipboardHelper.copyToClipboard(selNode.toTransferable());
         }
       });
       menu.add(menuitem);

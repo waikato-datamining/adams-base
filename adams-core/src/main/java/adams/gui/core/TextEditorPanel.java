@@ -27,6 +27,7 @@ import adams.core.io.FileUtils;
 import adams.flow.sink.TextSupplier;
 import adams.gui.chooser.BaseFileChooser;
 import adams.gui.chooser.TextFileChooser;
+import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
 import javax.swing.AbstractAction;
 import javax.swing.JCheckBoxMenuItem;
@@ -742,7 +743,7 @@ public class TextEditorPanel
    */
   public void copy() {
     if (m_TextArea.getSelectedText() == null)
-      GUIHelper.copyToClipboard(m_TextArea.getText());
+      ClipboardHelper.copyToClipboard(m_TextArea.getText());
     else
       m_TextArea.copy();
   }
@@ -753,7 +754,7 @@ public class TextEditorPanel
    * @return		true if text is available for pasting
    */
   public boolean canPaste() {
-    return (isEditable() && GUIHelper.canPasteStringFromClipboard());
+    return (isEditable() && ClipboardHelper.canPasteStringFromClipboard());
   }
 
   /**
@@ -909,7 +910,7 @@ public class TextEditorPanel
     menuitem.setEnabled(m_TextArea.getSelectedText() != null);
     menuitem.addActionListener((ActionEvent ae) -> {
       m_TextArea.requestFocus();
-      GUIHelper.copyToClipboard(m_TextArea.getSelectedText());
+      ClipboardHelper.copyToClipboard(m_TextArea.getSelectedText());
     });
     menu.add(menuitem);
 

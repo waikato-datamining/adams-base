@@ -26,6 +26,7 @@ import adams.core.annotation.MixedCopyright;
 import adams.core.io.FileUtils;
 import adams.gui.chooser.BaseFileChooser;
 import adams.gui.chooser.TextFileChooser;
+import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
 import javax.swing.AbstractAction;
 import javax.swing.event.ChangeEvent;
@@ -554,7 +555,7 @@ public class StyledTextEditorPanel
    */
   public void copy() {
     if (m_TextPane.getTextPane().getSelectedText() == null)
-      GUIHelper.copyToClipboard(m_TextPane.getTextPane().getText());
+      ClipboardHelper.copyToClipboard(m_TextPane.getTextPane().getText());
     else
       m_TextPane.getTextPane().copy();
   }
@@ -565,7 +566,7 @@ public class StyledTextEditorPanel
    * @return		true if text is available for pasting
    */
   public boolean canPaste() {
-    if (isEditable() && GUIHelper.canPasteStringFromClipboard())
+    if (isEditable() && ClipboardHelper.canPasteStringFromClipboard())
       return true;
     else
       return false;

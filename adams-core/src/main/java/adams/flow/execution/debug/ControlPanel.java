@@ -46,6 +46,7 @@ import adams.gui.tools.ExpressionWatchPanel;
 import adams.gui.tools.ExpressionWatchPanel.ExpressionType;
 import adams.gui.tools.VariableManagementPanel;
 import adams.gui.visualization.debug.InspectionPanel;
+import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -344,7 +345,7 @@ public class ControlPanel
     m_ButtonActorPath.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-	GUIHelper.copyToClipboard(m_TextActorPath.getText());
+	ClipboardHelper.copyToClipboard(m_TextActorPath.getText());
       }
     });
     m_TextStage = new JTextField(15);
@@ -761,9 +762,9 @@ public class ControlPanel
       buttonCopy.setToolTipText("Copy to clipboard");
       buttonCopy.addActionListener((ActionEvent e) -> {
 	if (m_PanelSource.getSelectedText() == null)
-	  GUIHelper.copyToClipboard(m_PanelSource.getText());
+	  ClipboardHelper.copyToClipboard(m_PanelSource.getText());
 	else
-	  GUIHelper.copyToClipboard(m_PanelSource.getSelectedText());
+	  ClipboardHelper.copyToClipboard(m_PanelSource.getSelectedText());
       });
       buttons.add(buttonCopy);
 

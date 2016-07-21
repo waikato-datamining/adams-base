@@ -37,6 +37,7 @@ import adams.gui.core.ExtensionFileFilter;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MenuBarProvider;
 import adams.gui.core.MouseUtils;
+import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
 import javax.swing.ImageIcon;
 import javax.swing.JMenu;
@@ -234,7 +235,7 @@ public class NestedFormatViewerPanel
         @Override
         public void actionPerformed(ActionEvent e) {
           BaseTreeNode node = (BaseTreeNode) path.getLastPathComponent();
-          GUIHelper.copyToClipboard(node.getUserObject().toString());
+          ClipboardHelper.copyToClipboard(node.getUserObject().toString());
         }
       });
       result.add(menuitem);

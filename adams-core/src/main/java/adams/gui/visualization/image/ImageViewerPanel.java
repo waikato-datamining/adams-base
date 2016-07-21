@@ -48,6 +48,7 @@ import adams.gui.sendto.SendToActionSupporter;
 import adams.gui.sendto.SendToActionUtils;
 import adams.gui.visualization.core.PopupMenuCustomizer;
 import adams.gui.visualization.image.plugins.ImageViewerPluginManager;
+import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JColorChooser;
@@ -897,7 +898,7 @@ public class ImageViewerPanel
    * Copies the current image to the clipboard.
    */
   protected void copy() {
-    GUIHelper.copyToClipboard(getCurrentImage());
+    ClipboardHelper.copyToClipboard(getCurrentImage());
   }
   
   /**

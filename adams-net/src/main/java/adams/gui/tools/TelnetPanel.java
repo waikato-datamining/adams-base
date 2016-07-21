@@ -27,6 +27,7 @@ import adams.gui.core.BaseTextAreaWithButtons;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.Fonts;
 import adams.gui.core.GUIHelper;
+import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 import org.apache.commons.net.telnet.EchoOptionHandler;
 import org.apache.commons.net.telnet.SuppressGAOptionHandler;
 import org.apache.commons.net.telnet.TelnetClient;
@@ -195,9 +196,9 @@ public class TelnetPanel
       @Override
       public void actionPerformed(ActionEvent e) {
 	if (m_TextOutput.getSelectedText().length() > 0)
-	  GUIHelper.copyToClipboard(m_TextOutput.getSelectedText());
+	  ClipboardHelper.copyToClipboard(m_TextOutput.getSelectedText());
 	else if (m_TextOutput.getText().length() > 0)
-	  GUIHelper.copyToClipboard(m_TextOutput.getText());
+	  ClipboardHelper.copyToClipboard(m_TextOutput.getText());
       }
     });
     m_TextOutput = new BaseTextAreaWithButtons(10, 40);

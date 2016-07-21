@@ -24,6 +24,7 @@ import java.awt.event.ActionEvent;
 import adams.data.report.AbstractField;
 import adams.gui.core.GUIHelper;
 import adams.gui.visualization.report.ReportFactory;
+import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
 /**
  * Copies the field name.
@@ -93,6 +94,6 @@ public class CopyFieldName
       str.append("" + getFields()[i].toString());
     }
     
-    GUIHelper.copyToClipboard(str.toString());
+    ClipboardHelper.copyToClipboard(str.toString());
   }
 }

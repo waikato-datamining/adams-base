@@ -70,6 +70,7 @@ import adams.gui.visualization.report.reportfactory.PrintReport;
 import adams.gui.visualization.report.reportfactory.RemoveField;
 import adams.gui.visualization.report.reportfactory.SaveReport;
 import adams.gui.visualization.report.reportfactory.ViewValue;
+import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
@@ -1779,7 +1780,7 @@ public class ReportFactory {
 	}
       });
       button = new JButton("Copy", GUIHelper.getIcon("copy.gif"));
-      button.addActionListener(e -> GUIHelper.copyToClipboard(textArea.getText()));
+      button.addActionListener(e -> ClipboardHelper.copyToClipboard(textArea.getText()));
       textArea.addToButtonsPanel(button);
       button = new JButton("Save as...", GUIHelper.getIcon("save.gif"));
       button.addActionListener(e -> {

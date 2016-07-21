@@ -34,6 +34,7 @@ import adams.gui.event.DoubleClickEvent;
 import adams.gui.event.DoubleClickListener;
 import adams.gui.event.SearchEvent;
 import adams.gui.event.SearchListener;
+import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
@@ -632,7 +633,7 @@ public abstract class AbstractTableBasedSelectionPanel<T>
 	  menuitem.addActionListener(new ActionListener() {
 	    public void actionPerformed(ActionEvent e) {
 	      if (obj != null)
-		GUIHelper.copyToClipboard(obj.toString());
+		ClipboardHelper.copyToClipboard(obj.toString());
 	    }
 	  });
 	  result.add(menuitem);

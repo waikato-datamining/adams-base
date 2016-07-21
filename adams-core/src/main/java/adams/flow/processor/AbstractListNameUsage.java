@@ -28,6 +28,7 @@ import adams.gui.core.BaseListWithButtons;
 import adams.gui.core.GUIHelper;
 import adams.gui.flow.FlowPanel;
 import adams.gui.flow.tree.Tree;
+import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -248,7 +249,7 @@ public abstract class AbstractListNameUsage<T>
           content.append("\n");
         content.append("" + value);
       }
-      GUIHelper.copyToClipboard(content.toString());
+      ClipboardHelper.copyToClipboard(content.toString());
     });
     result.addToButtonsPanel(buttonCopy);
 

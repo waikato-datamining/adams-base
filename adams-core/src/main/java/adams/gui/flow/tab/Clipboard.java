@@ -13,6 +13,7 @@ import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.GUIHelper;
 import adams.gui.flow.FlowPanel;
+import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -224,7 +225,7 @@ public class Clipboard
       @Override
       public void actionPerformed(ActionEvent e) {
 	ClipboardItem item = (ClipboardItem) m_ListItems.getSelectedValue();
-	GUIHelper.copyToClipboard(AbstractOptionProducer.toString(NestedProducer.class, item.getActor()));
+	ClipboardHelper.copyToClipboard(AbstractOptionProducer.toString(NestedProducer.class, item.getActor()));
       }
     });
     m_PanelButtons.add(m_ButtonCopy);

@@ -38,6 +38,7 @@ import adams.gui.dialog.TextDialog;
 import adams.gui.event.PopupMenuListener;
 import adams.gui.event.SearchEvent;
 import adams.gui.event.SearchListener;
+import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -475,7 +476,7 @@ public class VariableManagementPanel
    * @param row		the row in the table
    */
   protected void copyName(int row) {
-    GUIHelper.copyToClipboard("" + m_Table.getValueAt(row, 0));
+    ClipboardHelper.copyToClipboard("" + m_Table.getValueAt(row, 0));
   }
   
   /**
@@ -484,7 +485,7 @@ public class VariableManagementPanel
    * @param row		the row in the table
    */
   protected void copyValue(int row) {
-    GUIHelper.copyToClipboard("" + m_Table.getValueAt(row, 1));
+    ClipboardHelper.copyToClipboard("" + m_Table.getValueAt(row, 1));
   }
 
   /**

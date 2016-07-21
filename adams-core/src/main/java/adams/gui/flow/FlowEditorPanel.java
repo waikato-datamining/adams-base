@@ -112,6 +112,7 @@ import adams.gui.flow.tab.FlowTabManager;
 import adams.gui.flow.tree.Tree;
 import adams.gui.sendto.SendToActionSupporter;
 import adams.gui.sendto.SendToActionUtils;
+import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -1867,7 +1868,7 @@ public class FlowEditorPanel
     
     if ((source.getStatus() != null) && (source.getStatus().length() > 0)) {
       menuitem = new JMenuItem("Copy", GUIHelper.getIcon("copy.gif"));
-      menuitem.addActionListener((ActionEvent e) -> GUIHelper.copyToClipboard(source.getStatus()));
+      menuitem.addActionListener((ActionEvent e) -> ClipboardHelper.copyToClipboard(source.getStatus()));
       menu.add(menuitem);
     }
   }

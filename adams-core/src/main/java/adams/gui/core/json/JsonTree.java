@@ -24,6 +24,7 @@ import adams.gui.core.BasePopupMenu;
 import adams.gui.core.BaseTree;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MouseUtils;
+import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONAware;
 import net.minidev.json.JSONObject;
@@ -208,7 +209,7 @@ public class JsonTree
       menuitem.setEnabled(selNode.hasValue());
       menuitem.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          GUIHelper.copyToClipboard(selNode.toTransferable());
+          ClipboardHelper.copyToClipboard(selNode.toTransferable());
         }
       });
       menu.add(menuitem);

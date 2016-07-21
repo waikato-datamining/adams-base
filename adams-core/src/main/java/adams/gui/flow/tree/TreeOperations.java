@@ -24,6 +24,7 @@ import adams.core.CleanUpHandler;
 import adams.core.Utils;
 import adams.core.io.FlowFile;
 import adams.core.option.NestedConsumer;
+import adams.core.option.OptionUtils;
 import adams.core.optiontransfer.AbstractOptionTransfer;
 import adams.flow.condition.bool.BooleanCondition;
 import adams.flow.condition.bool.BooleanConditionSupporter;
@@ -74,6 +75,7 @@ import adams.gui.goe.FlowHelper;
 import adams.gui.goe.GenericObjectEditorDialog;
 import adams.gui.goe.classtree.ActorClassTreeFilter;
 import adams.parser.ActorSuggestion.SuggestionData;
+import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
 import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
@@ -1497,10 +1499,10 @@ public class TreeOperations
     result = null;
 
     try {
-      if (GUIHelper.canPasteStringFromClipboard()) {
+      if (ClipboardHelper.canPasteStringFromClipboard()) {
 	consumer = new NestedConsumer();
 	consumer.setQuiet(true);
-	result = (Actor) consumer.fromString(GUIHelper.pasteSetupFromClipboard());
+	result = (Actor) consumer.fromString(OptionUtils.pasteSetupFromClipboard());
 	consumer.cleanUp();
       }
     }

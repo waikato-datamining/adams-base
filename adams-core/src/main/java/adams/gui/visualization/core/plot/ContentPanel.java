@@ -40,6 +40,7 @@ import adams.gui.visualization.core.PlotPanel;
 import adams.gui.visualization.core.PopupMenuCustomizer;
 import adams.gui.visualization.core.axis.Tick;
 import adams.gui.visualization.core.axis.Visibility;
+import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
 import javax.swing.JMenuItem;
 import javax.swing.event.ChangeEvent;
@@ -997,7 +998,7 @@ public class ContentPanel
    * Copies the plot to the clipboard.
    */
   public void copyPlot() {
-    GUIHelper.copyToClipboard(m_Owner);
+    ClipboardHelper.copyToClipboard(m_Owner);
   }
 
   /**

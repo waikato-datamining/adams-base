@@ -49,6 +49,7 @@ import adams.gui.event.RecentItemListener;
 import adams.gui.menu.ConsoleWindow;
 import adams.gui.sendto.SendToActionSupporter;
 import adams.gui.sendto.SendToActionUtils;
+import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
@@ -797,7 +798,7 @@ public class ConsoleOutputAnalyzerPanel
     menuitem.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        GUIHelper.copyToClipboard(value.toString());
+        ClipboardHelper.copyToClipboard(value.toString());
       }
     });
     if (result.getSubElements().length > 0)

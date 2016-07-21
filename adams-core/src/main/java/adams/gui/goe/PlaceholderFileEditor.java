@@ -41,6 +41,7 @@ import adams.gui.core.BasePanel;
 import adams.gui.core.GUIHelper;
 import adams.gui.dialog.PreviewBrowserDialog;
 import adams.gui.goe.PropertyPanel.PopupMenuCustomizer;
+import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
 /**
  * A PropertyEditor for FlowFile objects that lets the user select a file.
@@ -311,7 +312,7 @@ public class PlaceholderFileEditor
     menuitem.setEnabled(true);
     menuitem.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-	GUIHelper.copyToClipboard(file.getAbsolutePath());
+	ClipboardHelper.copyToClipboard(file.getAbsolutePath());
       }
     });
     menu.add(menuitem);

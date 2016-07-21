@@ -29,6 +29,7 @@ import adams.gui.visualization.debug.inspectionhandler.AbstractInspectionHandler
 import adams.gui.visualization.debug.objectexport.AbstractObjectExporter;
 import adams.gui.visualization.debug.objecttree.Node.NodeType;
 import adams.gui.visualization.debug.propertyextractor.AbstractPropertyExtractor;
+import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
 import javax.swing.JMenuItem;
 import javax.swing.tree.DefaultTreeModel;
@@ -434,7 +435,7 @@ public class Tree
         copyToClipboard(obj);
 	List<AbstractObjectPlainTextRenderer> list = AbstractObjectPlainTextRenderer.getRenderer(obj.getClass());
 	String rendered = list.get(0).render(obj);
-	GUIHelper.copyToClipboard(rendered);
+	ClipboardHelper.copyToClipboard(rendered);
       }
     });
     menu.add(menuitem);
@@ -463,7 +464,7 @@ public class Tree
 
     list     = AbstractObjectPlainTextRenderer.getRenderer(obj.getClass());
     rendered = list.get(0).render(obj);
-    GUIHelper.copyToClipboard(rendered);
+    ClipboardHelper.copyToClipboard(rendered);
   }
 
   /**

@@ -62,6 +62,7 @@ import adams.gui.visualization.core.PopupMenuCustomizer;
 import adams.gui.visualization.report.ReportContainerList;
 import adams.gui.visualization.report.ReportFactory;
 import adams.gui.visualization.statistics.InformativeStatisticFactory;
+import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JColorChooser;
@@ -748,7 +749,7 @@ public class SpreadSheetExplorer
 	  id.append("\n");
 	id.append(getContainerManager().get(indices[i]).getDisplayID());
       }
-      GUIHelper.copyToClipboard(id.toString());
+      ClipboardHelper.copyToClipboard(id.toString());
     });
     result.add(item);
 

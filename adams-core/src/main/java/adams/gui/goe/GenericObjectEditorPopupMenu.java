@@ -27,6 +27,7 @@ import adams.gui.core.BaseDialog;
 import adams.gui.core.BasePopupMenu;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.TextEditorPanel;
+import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -103,7 +104,7 @@ public class GenericObjectEditorPopupMenu
       item = new JMenuItem("Copy nested setup", GUIHelper.getIcon("copy.gif"));
       item.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e) {
-	  GUIHelper.copyToClipboard(AbstractOptionProducer.toString(NestedProducer.class, (OptionHandler) editor.getValue()));
+	  ClipboardHelper.copyToClipboard(AbstractOptionProducer.toString(NestedProducer.class, (OptionHandler) editor.getValue()));
 	}
       });
       add(item);
@@ -139,17 +140,17 @@ public class GenericObjectEditorPopupMenu
 	    content.append(OptionUtils.getCommandLine(current));
 	}
 	if (content.length() > 0)
-	  GUIHelper.copyToClipboard(content.toString());
+	  ClipboardHelper.copyToClipboard(content.toString());
       }
     });
     add(item);
 
     // paste
     item = new JMenuItem("Paste " + itemText, GUIHelper.getIcon("paste.gif"));
-    item.setEnabled(GUIHelper.canPasteStringFromClipboard());
+    item.setEnabled(ClipboardHelper.canPasteStringFromClipboard());
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-	updateEditor(editor, comp, canChangeClass, customStringRepresentation, GUIHelper.pasteSetupFromClipboard());
+	updateEditor(editor, comp, canChangeClass, customStringRepresentation, OptionUtils.pasteSetupFromClipboard());
       }
     });
     add(item);

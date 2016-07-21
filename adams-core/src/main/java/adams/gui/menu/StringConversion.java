@@ -32,6 +32,7 @@ import adams.gui.core.BaseTextAreaWithButtons;
 import adams.gui.core.Fonts;
 import adams.gui.core.GUIHelper;
 import adams.gui.goe.GenericObjectEditorPanel;
+import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -109,7 +110,7 @@ public class StringConversion
     button.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-	GUIHelper.copyToClipboard(textLeft.getText());
+	ClipboardHelper.copyToClipboard(textLeft.getText());
       }
     });
     textLeft.addToButtonsPanel(button);
@@ -117,7 +118,7 @@ public class StringConversion
     button.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-	textLeft.setText(GUIHelper.pasteStringFromClipboard());
+	textLeft.setText(ClipboardHelper.pasteStringFromClipboard());
       }
     });
     textLeft.addToButtonsPanel(button);
@@ -141,7 +142,7 @@ public class StringConversion
     button.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-	GUIHelper.copyToClipboard(textRight.getText());
+	ClipboardHelper.copyToClipboard(textRight.getText());
       }
     });
     textRight.addToButtonsPanel(button);

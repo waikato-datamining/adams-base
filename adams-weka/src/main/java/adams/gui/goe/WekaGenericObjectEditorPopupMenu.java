@@ -24,6 +24,7 @@ import adams.gui.core.BaseDialog;
 import adams.gui.core.BasePopupMenu;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.TextEditorPanel;
+import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -89,7 +90,7 @@ public class WekaGenericObjectEditorPopupMenu
 	  content.append(OptionUtils.getCommandLine(current));
 	}
 	if (content.length() > 0)
-	  GUIHelper.copyToClipboard(content.toString());
+	  ClipboardHelper.copyToClipboard(content.toString());
       }
     });
     add(item);
@@ -97,10 +98,10 @@ public class WekaGenericObjectEditorPopupMenu
     if (canChangeClass) {
       // paste
       item = new JMenuItem("Paste setup", GUIHelper.getIcon("paste.gif"));
-      item.setEnabled(GUIHelper.canPasteStringFromClipboard());
+      item.setEnabled(ClipboardHelper.canPasteStringFromClipboard());
       item.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e) {
-	  updateEditor(editor, comp, GUIHelper.pasteSetupFromClipboard());
+	  updateEditor(editor, comp, OptionUtils.pasteSetupFromClipboard());
 	}
       });
       add(item);
