@@ -60,7 +60,7 @@ public class MultiExplorer
   @Override
   public void launch() {
     weka.gui.explorer.MultiExplorer explorer = new weka.gui.explorer.MultiExplorer();
-    createChildFrame(explorer, GUIHelper.getDefaultLargeDialogDimension());
+    createChildFrame(explorer, GUIHelper.makeWider(GUIHelper.getDefaultLargeDialogDimension()));
     if (m_Parameters.length > 0) {
       PlaceholderFile[] files = new PlaceholderFile[m_Parameters.length];
       for (int i = 0; i < m_Parameters.length; i++)

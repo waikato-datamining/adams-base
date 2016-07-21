@@ -68,7 +68,7 @@ public class InstanceExplorer
    */
   public void launch() {
     adams.gui.visualization.instance.InstanceExplorer panel = new adams.gui.visualization.instance.InstanceExplorer();
-    createChildFrame(panel, GUIHelper.getDefaultDialogDimension());
+    createChildFrame(panel, GUIHelper.makeWider(GUIHelper.getDefaultDialogDimension()));
     for (int i = 0; i < m_Parameters.length; i++)
       panel.loadDataFromDisk(new PlaceholderFile(m_Parameters[i]));
   }
