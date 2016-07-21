@@ -2595,4 +2595,25 @@ public class GUIHelper {
       getInteger("DefaultLargeDialog.Width", 1000),
       getInteger("DefaultLargeDialog.Height", 800));
   }
+
+  /**
+   * Widens the rectangle by 20%.
+   *
+   * @param size  	the current size
+   * @return		the widened rectangle
+   */
+  public static Dimension makeWider(Dimension size) {
+    return makeWider(size, 0.2);
+  }
+
+  /**
+   * Widens the rectangle by the specified percentage.
+   *
+   * @param size  	the current size
+   * @param percent 	the percentage to make it wider (0-1)
+   * @return		the widened rectangle
+   */
+  public static Dimension makeWider(Dimension size, double percent) {
+    return new Dimension((int) (size.width * (1 + percent)), size.height);
+  }
 }

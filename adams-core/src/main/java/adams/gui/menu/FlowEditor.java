@@ -112,7 +112,7 @@ public class FlowEditor
     for (String param: run)
       m_FlowEditorPanel.runUnsafe(new PlaceholderFile(param));
 
-    createChildFrame(m_FlowEditorPanel, GUIHelper.getDefaultLargeDialogDimension());
+    createChildFrame(m_FlowEditorPanel, GUIHelper.makeWider(GUIHelper.getDefaultLargeDialogDimension()));
   }
 
   /**

@@ -76,7 +76,7 @@ public class InvestigatorManagerPanel
     frame.setDefaultCloseOperation(BaseFrame.EXIT_ON_CLOSE);
     frame.getContentPane().setLayout(new BorderLayout());
     frame.getContentPane().add(panel, BorderLayout.CENTER);
-    frame.setSize(GUIHelper.getDefaultLargeDialogDimension());
+    frame.setSize(GUIHelper.makeWider(GUIHelper.getDefaultLargeDialogDimension()));
     frame.setLocationRelativeTo(null);
     frame.setVisible(true);
   }
