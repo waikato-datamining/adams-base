@@ -384,14 +384,24 @@ public class ClassifyTab
     m_Worker = new Thread(() -> {
       m_CurrentClassifier = (Classifier) m_PanelGOE.getCurrent();
       logMessage("Starting evaluation '" + m_CurrentEvaluation.getName() + "' using: " + OptionUtils.getCommandLine(m_CurrentClassifier));
+      ResultItem item;
       try {
-	ResultItem item = m_CurrentEvaluation.evaluate(m_CurrentClassifier, m_History);
-	for (int i = 0; i < m_OutputGenerators.length; i++)
-	  m_OutputGenerators[i].generateOutput(item);
+	item = m_CurrentEvaluation.evaluate(m_CurrentClassifier, m_History);
 	logMessage("Finished evaluation '" + m_CurrentEvaluation.getName() + "' using: " + OptionUtils.getCommandLine(m_CurrentClassifier));
       }
       catch (Exception e) {
 	logError("Failed to evaluate classifier", e, "Classifier evaluation");
+	item = null;
+      }
+      if (item != null) {
+	for (int i = 0; i < m_OutputGenerators.length; i++) {
+	  try {
+	    m_OutputGenerators[i].generateOutput(item);
+	  }
+	  catch (Exception e) {
+	    logError("Failed to generate output with " + m_OutputGenerators[i].toCommandLine(), e, "Classifier output generation");
+	  }
+	}
       }
       m_Worker = null;
       updateButtons();
