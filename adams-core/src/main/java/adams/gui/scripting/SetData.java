@@ -22,9 +22,14 @@ package adams.gui.scripting;
 import adams.core.Constants;
 import adams.core.option.OptionUtils;
 import adams.data.container.DataContainer;
+import adams.data.io.input.AbstractDataContainerReader;
+import adams.data.report.Report;
+import adams.data.report.ReportHandler;
 import adams.gui.visualization.container.AbstractContainer;
 import adams.gui.visualization.container.AbstractContainerManager;
 import adams.gui.visualization.container.NamedContainer;
+
+import java.util.List;
 
 /**
  <!-- scriptlet-parameters-start -->
@@ -45,7 +50,7 @@ import adams.gui.visualization.container.NamedContainer;
  * @version $Revision$
  */
 public class SetData
-  extends AbstractDataContainerPanelScriptlet {
+  extends AbstractFileReaderScriptlet {
 
   /** for serialization. */
   private static final long serialVersionUID = -5936800338572570006L;
@@ -90,29 +95,56 @@ public class SetData
    * @throws Exception 	if something goes wrong
    */
   public String process(String options) throws Exception {
-    String[]		list;
-    int			index;
-    int 		id;
-    DataContainer	data;
+    String[]			list;
+    int				index;
+    int 			id;
+    DataContainer		data;
+    List<DataContainer> 	dataList;
     AbstractContainer		cont;
     AbstractContainer		contNew;
     AbstractContainerManager	manager;
-    String		idNew;
+    String			idNew;
+    Report			report;
+    AbstractDataContainerReader	reader;
 
-    list  = OptionUtils.splitOptions(options);
-    index = Integer.parseInt(list[0]) - 1;
-    id    = new Integer(list[1]);
+    list    = OptionUtils.splitOptions(options);
+    index   = Integer.parseInt(list[0]) - 1;
+    id      = new Integer(list[1]);
+    manager = getDataContainerPanel().getContainerManager();
+    cont    = manager.get(index);
+    reader  = null;
 
-    if (id == Constants.NO_ID)
-      return "No database ID provided, ignored!";
+    if (id == Constants.NO_ID) {
+      if (cont.getPayload() instanceof ReportHandler) {
+	report = ((ReportHandler) cont.getPayload()).getReport();
+	if (report.hasValue(READER_SETUP)) {
+	  reader = (AbstractDataContainerReader) OptionUtils.forAnyCommandLine(
+	    AbstractDataContainerReader.class,
+	    report.getStringValue(READER_SETUP));
+	}
+      }
+      if (reader == null)
+	return "No database ID provided, ignored!";
+    }
 
     // undo
     addUndoPoint("Saving undo data...", "Set data at " + (index+1) + ": " + id);
 
     // load data
     showStatus("Loading the data...");
-    data    = m_DataProvider.load(id);
-    manager = getDataContainerPanel().getContainerManager();
+    data = null;
+    if (reader == null) {
+      data = m_DataProvider.load(id);
+    }
+    else {
+      dataList = reader.read();
+      storeReaderData(dataList, reader);
+      if (dataList.size() == 0)
+	return "Failed to read data from file using: " + OptionUtils.getCommandLine(reader);
+      if (dataList.size() > 1)
+	return "More than one container read: " + OptionUtils.getCommandLine(reader);
+      data = dataList.get(0);
+    }
     showStatus("Setting the data...");
     if (data != null) {
       cont    = manager.get(index);

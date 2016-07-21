@@ -48,7 +48,7 @@ import java.util.List;
  * @version $Revision$
  */
 public class AddDataFiles
-  extends AbstractDataContainerPanelScriptlet {
+  extends AbstractFileReaderScriptlet {
 
   /** for serialization. */
   private static final long serialVersionUID = -3048379013750352301L;
@@ -132,6 +132,7 @@ public class AddDataFiles
       try {
 	reader.setInput(new PlaceholderFile(opts[n]));
 	data = reader.read();
+        storeReaderData(data, reader);
       }
       catch (Exception e) {
 	data = new ArrayList<>();
