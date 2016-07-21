@@ -20,6 +20,7 @@
 package adams.gui.core;
 
 import adams.core.CleanUpHandler;
+import adams.core.Shortening;
 
 import javax.swing.Icon;
 import javax.swing.JTabbedPane;
@@ -313,7 +314,7 @@ public class BaseTabbedPane
   public void setShortenedTitleAt(int index, String title) {
     String  	shortTitle;
 
-    shortTitle = GUIHelper.shortenMiddle(title, m_MaxTitleLength);
+    shortTitle = Shortening.shortenMiddle(title, m_MaxTitleLength);
     if (!title.equals(shortTitle)) {
       setTitleAt(index, shortTitle);
       setToolTipTextAt(index, title);

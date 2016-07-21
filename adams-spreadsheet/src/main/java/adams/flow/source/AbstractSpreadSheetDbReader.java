@@ -20,6 +20,7 @@
 package adams.flow.source;
 
 import adams.core.QuickInfoHelper;
+import adams.core.Shortening;
 import adams.core.Utils;
 import adams.data.spreadsheet.DataRow;
 import adams.data.spreadsheet.DataRowTypeHandler;
@@ -120,7 +121,7 @@ public abstract class AbstractSpreadSheetDbReader
     String	result;
     String	value;
 
-    result  = QuickInfoHelper.toString(this, "query", Utils.shorten(m_Query.stringValue(), 40), "query: ");
+    result  = QuickInfoHelper.toString(this, "query", Shortening.shortenEnd(m_Query.stringValue(), 40), "query: ");
     result += QuickInfoHelper.toString(this, "dataRowType", m_DataRowType, ", row type: ");
     value   = QuickInfoHelper.toString(this, "chunkSize", (m_ChunkSize > 0 ? m_ChunkSize : null), ", chunk: ");
     if (value != null)

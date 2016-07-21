@@ -24,6 +24,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 
 import adams.core.QuickInfoHelper;
+import adams.core.Shortening;
 import adams.core.Utils;
 import adams.flow.core.Actor;
 import adams.flow.core.Capability;
@@ -143,7 +144,7 @@ public abstract class AbstractAttributeCapabilities
    */
   @Override
   public String getQuickInfo() {
-    return (m_Invert ? "! " : "") + QuickInfoHelper.toString(this, "capabilities", Utils.shorten(Utils.arrayToString(m_Capabilities), 50));
+    return (m_Invert ? "! " : "") + QuickInfoHelper.toString(this, "capabilities", Shortening.shortenEnd(Utils.arrayToString(m_Capabilities), 50));
   }
 
   /**

@@ -21,7 +21,7 @@
 package adams.flow.source;
 
 import adams.core.QuickInfoHelper;
-import adams.core.Utils;
+import adams.core.Shortening;
 import adams.core.base.BaseText;
 import adams.flow.core.Token;
 
@@ -143,7 +143,7 @@ public class CombineVariables
    */
   @Override
   public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "expression", Utils.shorten(m_Expression.stringValue(), 40));
+    return QuickInfoHelper.toString(this, "expression", Shortening.shortenEnd(m_Expression.stringValue(), 40));
   }
 
   /**

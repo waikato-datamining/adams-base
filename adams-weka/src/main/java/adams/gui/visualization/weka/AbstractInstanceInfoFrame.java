@@ -20,13 +20,18 @@
 
 package adams.gui.visualization.weka;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.lang.reflect.Method;
-import java.util.HashSet;
-import java.util.Vector;
+import adams.core.Constants;
+import adams.core.Shortening;
+import adams.data.weka.ArffUtils;
+import adams.env.Environment;
+import adams.gui.core.BasePanel;
+import adams.gui.core.BaseScrollPane;
+import adams.gui.core.BaseTabbedPane;
+import adams.gui.core.JTableHelper;
+import adams.gui.core.SortableAndSearchableTable;
+import weka.core.Attribute;
+import weka.core.Instances;
+import weka.gui.arffviewer.ArffSortedTableModel;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
@@ -38,19 +43,13 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
-
-import weka.core.Attribute;
-import weka.core.Instances;
-import weka.gui.arffviewer.ArffSortedTableModel;
-import adams.core.Constants;
-import adams.core.Utils;
-import adams.data.weka.ArffUtils;
-import adams.env.Environment;
-import adams.gui.core.BasePanel;
-import adams.gui.core.BaseScrollPane;
-import adams.gui.core.BaseTabbedPane;
-import adams.gui.core.JTableHelper;
-import adams.gui.core.SortableAndSearchableTable;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.lang.reflect.Method;
+import java.util.HashSet;
+import java.util.Vector;
 
 /**
  * Ancestor for frames for displaying information on the displayed data, with
@@ -444,7 +443,7 @@ public abstract class AbstractInstanceInfoFrame
     // data
     datasets = new String[data.size()];
     for (i = 0; i < data.size(); i++)
-      datasets[i] = (i+1) + " :" + Utils.shorten(data.get(i).relationName(), 30);
+      datasets[i] = (i+1) + " :" + Shortening.shortenEnd(data.get(i).relationName(), 30);
     m_ComboBoxData.setModel(new DefaultComboBoxModel(datasets));
     m_ComboBoxData.setSelectedIndex(0);
     m_PanelComboBoxData.setVisible(data.size() > 1);

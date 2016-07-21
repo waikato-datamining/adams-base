@@ -21,6 +21,7 @@ package adams.flow.transformer;
 
 import adams.core.Constants;
 import adams.core.QuickInfoHelper;
+import adams.core.Shortening;
 import adams.core.Utils;
 import adams.data.timeseries.Timeseries;
 import adams.data.timeseries.TimeseriesPoint;
@@ -334,7 +335,7 @@ public class TimeseriesDbReader
    */
   @Override
   public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "SQL", Utils.shorten(m_SQL.getValue().replaceAll("\\s", " ").replaceAll("[ ]+", " "), 50));
+    return QuickInfoHelper.toString(this, "SQL", Shortening.shortenEnd(m_SQL.getValue().replaceAll("\\s", " ").replaceAll("[ ]+", " "), 50));
   }
 
   /**

@@ -22,6 +22,7 @@ package adams.flow.transformer;
 
 import java.util.Arrays;
 
+import adams.core.Shortening;
 import org.im4java.core.ConvertCmd;
 import org.im4java.core.IMOperation;
 import org.im4java.core.Stream2BufferedImage;
@@ -145,7 +146,7 @@ public class ImageMagickTransformer
    */
   @Override
   public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "commands", Utils.shorten(m_Commands.stringValue(), 100));
+    return QuickInfoHelper.toString(this, "commands", Shortening.shortenEnd(m_Commands.stringValue(), 100));
   }
 
   /**

@@ -20,6 +20,7 @@
 
 package adams.data.imagej.transformer;
 
+import adams.core.Shortening;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.WindowManager;
@@ -168,7 +169,7 @@ public class Command
    */
   @Override
   public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "command", Utils.shorten(m_Command, 40));
+    return QuickInfoHelper.toString(this, "command", Shortening.shortenEnd(m_Command, 40));
   }
 
   /**

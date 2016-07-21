@@ -22,6 +22,7 @@
 package adams.flow.condition.bool;
 
 import adams.core.QuickInfoHelper;
+import adams.core.Shortening;
 import adams.core.Utils;
 import adams.core.scripting.JythonScript;
 import adams.flow.core.Actor;
@@ -108,7 +109,7 @@ public class Jython
     if (QuickInfoHelper.hasVariable(this, "scriptFile") || !m_ScriptFile.isDirectory())
       return super.getQuickInfo();
     else
-      return QuickInfoHelper.toString(this, "inlineScript", Utils.shorten(m_InlineScript.stringValue(), 50));
+      return QuickInfoHelper.toString(this, "inlineScript", Shortening.shortenEnd(m_InlineScript.stringValue(), 50));
   }
 
   /**

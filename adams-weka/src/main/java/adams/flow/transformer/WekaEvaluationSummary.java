@@ -22,6 +22,7 @@ package adams.flow.transformer;
 
 import java.util.ArrayList;
 
+import adams.core.Shortening;
 import weka.classifiers.Evaluation;
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
@@ -183,7 +184,7 @@ public class WekaEvaluationSummary
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "complexityStatistics", m_ComplexityStatistics, "complexity stats"));
     result = QuickInfoHelper.flatten(options);
     
-    value = QuickInfoHelper.toString(this, "comment", (m_Comment.stringValue().length() > 0 ? Utils.shorten(m_Comment.stringValue(), 20) : null));
+    value = QuickInfoHelper.toString(this, "comment", (m_Comment.stringValue().length() > 0 ? Shortening.shortenEnd(m_Comment.stringValue(), 20) : null));
     if (value != null) {
       if (result.length() > 0)
 	result += ", ";

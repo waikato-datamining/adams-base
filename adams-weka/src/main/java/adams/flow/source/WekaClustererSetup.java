@@ -21,6 +21,7 @@
 package adams.flow.source;
 
 import adams.core.QuickInfoHelper;
+import adams.core.Shortening;
 import adams.core.Utils;
 import adams.core.option.OptionUtils;
 import adams.flow.core.Token;
@@ -145,7 +146,7 @@ public class WekaClustererSetup
    */
   @Override
   public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "clusterer", Utils.shorten(OptionUtils.getShortCommandLine(m_Clusterer), 40));
+    return QuickInfoHelper.toString(this, "clusterer", Shortening.shortenEnd(OptionUtils.getShortCommandLine(m_Clusterer), 40));
   }
 
   /**

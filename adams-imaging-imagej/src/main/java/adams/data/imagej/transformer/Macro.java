@@ -20,6 +20,7 @@
 
 package adams.data.imagej.transformer;
 
+import adams.core.Shortening;
 import ij.IJ;
 import ij.ImagePlus;
 
@@ -129,7 +130,7 @@ public class Macro
    */
   @Override
   public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "commands", Utils.shorten(m_Commands.stringValue(), 40));
+    return QuickInfoHelper.toString(this, "commands", Shortening.shortenEnd(m_Commands.stringValue(), 40));
   }
 
   /**

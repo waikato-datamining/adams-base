@@ -22,6 +22,8 @@ package adams.gui.core;
 
 import adams.core.ClassLocator;
 import adams.core.CloneHandler;
+import adams.core.Shortening;
+import adams.core.ShorteningType;
 import adams.core.Utils;
 import adams.core.io.FileUtils;
 import adams.core.io.TempUtils;
@@ -116,19 +118,6 @@ public class Undo {
     public String toString() {
       return m_Data.getClass().getName() + " - " + getComment();
     }
-  }
-
-  /**
-   * Determines where to shorten the comments.
-   *
-   * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
-   */
-  public enum ShorteningType {
-    NONE,
-    START,
-    MIDDLE,
-    END
   }
 
   /** the maximum length for a comment. */
@@ -735,17 +724,6 @@ public class Undo {
    * @return		the (potentially) shortened comment
    */
   protected String shortenComment(String s) {
-    switch (m_ShorteningType) {
-      case NONE:
-	return s;
-      case START:
-	return (s.length() > m_MaxCommentLength ? ("..." + s.substring(s.length() - m_MaxCommentLength, s.length())) : s);
-      case MIDDLE:
-	return GUIHelper.shortenMiddle(s, m_MaxCommentLength);
-      case END:
-	return Utils.shorten(s, m_MaxCommentLength);
-      default:
-	throw new IllegalStateException("Unhandled shortening type: " + m_ShorteningType);
-    }
+    return Shortening.shorten(s, m_MaxCommentLength, m_ShorteningType);
   }
 }

@@ -20,6 +20,7 @@
 package adams.flow.source.wekaforecastersetup;
 
 import adams.core.QuickInfoHelper;
+import adams.core.Shortening;
 import adams.core.Utils;
 import adams.core.option.OptionUtils;
 import adams.flow.core.LagMakerOptions;
@@ -331,7 +332,7 @@ public class WekaForecasterGenerator
   @Override
   public String getQuickInfo() {
     return QuickInfoHelper.toString(this, "classifier",
-	Utils.shorten(OptionUtils.getShortCommandLine(m_Classifier), 40));
+	Shortening.shortenEnd(OptionUtils.getShortCommandLine(m_Classifier), 40));
   }
 
   /**

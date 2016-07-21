@@ -21,6 +21,7 @@
 package adams.flow.source;
 
 import adams.core.QuickInfoHelper;
+import adams.core.Shortening;
 import adams.core.Utils;
 import adams.core.option.OptionUtils;
 import adams.flow.core.Token;
@@ -145,7 +146,7 @@ public class WekaClassifierSetup
    */
   @Override
   public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "classifier", Utils.shorten(OptionUtils.getShortCommandLine(m_Classifier), 40));
+    return QuickInfoHelper.toString(this, "classifier", Shortening.shortenEnd(OptionUtils.getShortCommandLine(m_Classifier), 40));
   }
 
   /**

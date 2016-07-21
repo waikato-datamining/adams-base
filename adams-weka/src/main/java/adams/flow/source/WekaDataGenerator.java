@@ -20,6 +20,7 @@
 
 package adams.flow.source;
 
+import adams.core.Shortening;
 import weka.core.Instances;
 import weka.datagenerators.classifiers.classification.Agrawal;
 import adams.core.QuickInfoHelper;
@@ -119,7 +120,7 @@ public class WekaDataGenerator
    */
   @Override
   public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "generator", Utils.shorten(OptionUtils.getShortCommandLine(m_DataGenerator), 40));
+    return QuickInfoHelper.toString(this, "generator", Shortening.shortenEnd(OptionUtils.getShortCommandLine(m_DataGenerator), 40));
   }
 
   /**

@@ -22,6 +22,7 @@ package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
 import adams.core.SerializationHelper;
+import adams.core.Shortening;
 import adams.core.Utils;
 import adams.core.io.ModelFileHandler;
 import adams.core.io.PlaceholderFile;
@@ -371,7 +372,7 @@ public class WekaFilter
   public String getQuickInfo() {
     String	result;
 
-    result  = QuickInfoHelper.toString(this, "filter", Utils.shorten(OptionUtils.getShortCommandLine(m_Filter), 40));
+    result  = QuickInfoHelper.toString(this, "filter", Shortening.shortenEnd(OptionUtils.getShortCommandLine(m_Filter), 40));
     result += QuickInfoHelper.toString(this, "modelFile", m_ModelFile, ", model: ");
     result += QuickInfoHelper.toString(this, "keepRelationName", m_KeepRelationName, "keep relation name", ", ");
     result += QuickInfoHelper.toString(this, "outputContainer", m_OutputContainer, "output container", ", ");

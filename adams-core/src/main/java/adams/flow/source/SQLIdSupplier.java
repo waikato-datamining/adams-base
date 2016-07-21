@@ -20,7 +20,7 @@
 package adams.flow.source;
 
 import adams.core.QuickInfoHelper;
-import adams.core.Utils;
+import adams.core.Shortening;
 import adams.db.SQL;
 import adams.db.SQLStatement;
 import adams.flow.core.ActorUtils;
@@ -154,7 +154,7 @@ public class SQLIdSupplier
     String	result;
 
     result  = QuickInfoHelper.toString(this, "type", m_Type);
-    result += QuickInfoHelper.toString(this, "SQL", Utils.shorten(m_SQL.getValue().replaceAll("\\s", " ").replaceAll("[ ]+", " "), 50), ": ");
+    result += QuickInfoHelper.toString(this, "SQL", Shortening.shortenEnd(m_SQL.getValue().replaceAll("\\s", " ").replaceAll("[ ]+", " "), 50), ": ");
     result += QuickInfoHelper.toString(this, "outputArray", (m_OutputArray ? "as array" : "one by one"), ", ");
 
     return result;

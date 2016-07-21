@@ -828,21 +828,6 @@ public class Utils {
   }
 
   /**
-   * Shortens a string (and appends "...") if longer than the allowed
-   * maximum number of characters.
-   *
-   * @param s		the string to process
-   * @param max		the maximum number of characters.
-   * @return		the processed string
-   */
-  public static String shorten(String s, int max) {
-    if (s.length() > max)
-      return s.substring(0, max) + "...";
-    else
-      return s;
-  }
-
-  /**
    * Inserts comment characters at the start of each line.
    *
    * @param s		the string to process

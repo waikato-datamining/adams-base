@@ -20,14 +20,8 @@
 
 package adams.flow.sink;
 
-import java.awt.BorderLayout;
-import java.awt.image.BufferedImage;
-import java.io.File;
-
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-
 import adams.core.QuickInfoHelper;
+import adams.core.Shortening;
 import adams.core.Utils;
 import adams.core.io.PlaceholderFile;
 import adams.core.option.OptionUtils;
@@ -41,6 +35,12 @@ import adams.gui.tools.previewbrowser.NoDataToPreviewPanel;
 import adams.gui.tools.previewbrowser.NoPreviewAvailablePanel;
 import adams.gui.tools.previewbrowser.PlainTextHandler;
 import adams.gui.tools.previewbrowser.PreviewPanel;
+
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+import java.awt.image.BufferedImage;
+import java.io.File;
 
 /**
  <!-- globalinfo-start -->
@@ -385,7 +385,7 @@ public class FilePreview
     result = null;
 
     if (QuickInfoHelper.hasVariable(this, "useCustomPreview") || m_UseCustomPreview)
-      result = QuickInfoHelper.toString(this, "preview", Utils.shorten(OptionUtils.getShortCommandLine(getPreview()), 40));
+      result = QuickInfoHelper.toString(this, "preview", Shortening.shortenEnd(OptionUtils.getShortCommandLine(getPreview()), 40));
     else
       result = "automatic";
  

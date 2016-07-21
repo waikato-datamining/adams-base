@@ -21,7 +21,7 @@
 package adams.flow.standalone;
 
 import adams.core.QuickInfoHelper;
-import adams.core.Utils;
+import adams.core.Shortening;
 import adams.db.SQL;
 import adams.db.SQLStatement;
 import adams.flow.core.ActorUtils;
@@ -140,7 +140,7 @@ public class ExecSQL
     String	result;
     String	value;
     
-    result = QuickInfoHelper.toString(this, "SQL", Utils.shorten(m_SQL.getValue().replaceAll("\\s", " ").replaceAll("[ ]+", " "), 50));
+    result = QuickInfoHelper.toString(this, "SQL", Shortening.shortenEnd(m_SQL.getValue().replaceAll("\\s", " ").replaceAll("[ ]+", " "), 50));
     value  = QuickInfoHelper.toString(this, "dryRun", m_DryRun, "dry run", (result != null ? ", " : ""));
     if (value != null) {
       if (result == null)

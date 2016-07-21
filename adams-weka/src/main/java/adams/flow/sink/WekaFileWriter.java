@@ -22,6 +22,7 @@ package adams.flow.sink;
 
 import java.io.File;
 
+import adams.core.Shortening;
 import weka.core.Instances;
 import weka.core.converters.AbstractFileSaver;
 import weka.core.converters.ArffSaver;
@@ -267,7 +268,7 @@ public class WekaFileWriter
     result += QuickInfoHelper.toString(this, "useRelationNameAsFilename", m_UseRelationNameAsFilename, "relation name as filename", ", ");
     
     if (QuickInfoHelper.hasVariable(this, "useCustomSaver") || m_UseCustomSaver) {
-      value = QuickInfoHelper.toString(this, "customSaver", Utils.shorten(OptionUtils.getShortCommandLine(getCustomSaver()), 40), ", saver: ");
+      value = QuickInfoHelper.toString(this, "customSaver", Shortening.shortenEnd(OptionUtils.getShortCommandLine(getCustomSaver()), 40), ", saver: ");
       if (value != null)
 	result += value;
     }

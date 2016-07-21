@@ -26,6 +26,7 @@ import java.util.logging.Level;
 
 import javax.swing.JComponent;
 
+import adams.core.Shortening;
 import weka.classifiers.Evaluation;
 import weka.classifiers.evaluation.Prediction;
 import weka.core.Attribute;
@@ -408,7 +409,7 @@ public class WekaClassifierErrors
     String	result;
 
     result  = super.getQuickInfo();
-    result += QuickInfoHelper.toString(this, "errorScaler", Utils.shorten(OptionUtils.getShortCommandLine(m_ErrorScaler), 40), ", error scaler: ");
+    result += QuickInfoHelper.toString(this, "errorScaler", Shortening.shortenEnd(OptionUtils.getShortCommandLine(m_ErrorScaler), 40), ", error scaler: ");
     
     return result;
   }

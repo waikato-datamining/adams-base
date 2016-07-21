@@ -21,6 +21,7 @@ package adams.gui.visualization.debug;
 
 import adams.core.DiffUtils;
 import adams.core.DiffUtils.SideBySideDiff;
+import adams.core.Shortening;
 import adams.core.io.PlaceholderFile;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
@@ -244,7 +245,7 @@ public class SideBySideDiffPanel
   public void setLabelText(boolean left, String text) {
     String	shortened;
 
-    shortened = GUIHelper.shortenMiddle(text, MAX_LABEL_LENGTH);
+    shortened = Shortening.shortenMiddle(text, MAX_LABEL_LENGTH);
     if (left) {
       m_LabelTextLeft = text;
       m_LabelLeft.setText(shortened);

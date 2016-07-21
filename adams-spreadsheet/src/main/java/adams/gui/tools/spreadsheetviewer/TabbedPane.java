@@ -20,6 +20,7 @@
 package adams.gui.tools.spreadsheetviewer;
 
 import adams.core.CleanUpHandler;
+import adams.core.Shortening;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.gui.core.BaseTabbedPane;
 import adams.gui.core.DragAndDropTabbedPane;
@@ -558,7 +559,7 @@ public class TabbedPane
    * @return		the generated filename
    */
   public String createTabTitle(File file, SpreadSheet sheet) {
-    return file.getName() + (sheet.getName() != null ? "/" + sheet.getName() : "");
+    return file.getName() + (sheet.getName() != null ? "/" + Shortening.shortenEnd(sheet.getName(), 20) : "");
   }
   
   /**

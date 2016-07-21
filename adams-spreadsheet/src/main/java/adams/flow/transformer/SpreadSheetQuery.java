@@ -20,6 +20,7 @@
 package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
+import adams.core.Shortening;
 import adams.core.Utils;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.core.Token;
@@ -238,7 +239,7 @@ public class SpreadSheetQuery
    */
   @Override
   public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "query", Utils.shorten(m_Query.getValue().replaceAll("\\s+", " "), 50));
+    return QuickInfoHelper.toString(this, "query", Shortening.shortenEnd(m_Query.getValue().replaceAll("\\s+", " "), 50));
   }
 
   /**

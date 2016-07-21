@@ -19,6 +19,7 @@
  */
 package adams.gui.visualization.report.reportfactory;
 
+import adams.core.Shortening;
 import adams.core.Utils;
 import adams.data.report.AbstractField;
 import adams.data.report.Report;
@@ -365,6 +366,6 @@ public abstract class AbstractTableAction
       str.append("'" + fields[i].toDisplayString() + "'");
     }
 
-    return prefix + (fields.length != 1 ? "s" : "") + " " + Utils.shorten(str.toString(), limit);
+    return prefix + (fields.length != 1 ? "s" : "") + " " + Shortening.shortenEnd(str.toString(), limit);
   }
 }

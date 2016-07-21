@@ -19,7 +19,7 @@
  */
 package adams.gui.tools;
 
-import adams.core.Utils;
+import adams.core.Shortening;
 import adams.core.base.BaseRegExp;
 import adams.core.io.FileUtils;
 import adams.data.spreadsheet.DefaultSpreadSheet;
@@ -763,7 +763,7 @@ public class ConsoleOutputAnalyzerPanel
     // origin
     if (col == 1) {
       // search
-      menuitem = new JMenuItem("Search for origin '" + Utils.shorten(value.toString(), 15) + "'");
+      menuitem = new JMenuItem("Search for origin '" + Shortening.shortenEnd(value.toString(), 15) + "'");
       menuitem.setIcon(GUIHelper.getIcon("find.gif"));
       menuitem.addActionListener(new ActionListener() {
         @Override

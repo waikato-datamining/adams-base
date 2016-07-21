@@ -21,6 +21,7 @@
 package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
+import adams.core.Shortening;
 import adams.core.Utils;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
@@ -199,7 +200,7 @@ public class WekaFileReader
     result = null;
 
     if (QuickInfoHelper.hasVariable(this, "useCustomLoader") || m_UseCustomLoader)
-      result = QuickInfoHelper.toString(this, "loader", Utils.shorten(OptionUtils.getShortCommandLine(getCustomLoader()), 40));
+      result = QuickInfoHelper.toString(this, "loader", Shortening.shortenEnd(OptionUtils.getShortCommandLine(getCustomLoader()), 40));
     else
       result = "automatic";
 

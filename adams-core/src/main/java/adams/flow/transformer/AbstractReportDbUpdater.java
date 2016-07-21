@@ -22,6 +22,7 @@ package adams.flow.transformer;
 
 import adams.core.Constants;
 import adams.core.QuickInfoHelper;
+import adams.core.Shortening;
 import adams.core.Utils;
 import adams.data.id.IDHandler;
 import adams.data.report.DataType;
@@ -307,7 +308,7 @@ public abstract class AbstractReportDbUpdater
     String	value;
     
     result  = QuickInfoHelper.toString(this, "queryType", m_QueryType, "type: ");
-    result += QuickInfoHelper.toString(this, "SQL", Utils.shorten(m_SQL.getValue().replaceAll("\\s", " ").replaceAll("[ ]+", " "), 50), ", query: ");
+    result += QuickInfoHelper.toString(this, "SQL", Shortening.shortenEnd(m_SQL.getValue().replaceAll("\\s", " ").replaceAll("[ ]+", " "), 50), ", query: ");
     value   = QuickInfoHelper.toString(this, "lenient", m_Lenient, "lenient", ", ");
     if (value != null)
       result += value;

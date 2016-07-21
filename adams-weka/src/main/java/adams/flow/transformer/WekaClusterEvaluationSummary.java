@@ -20,6 +20,7 @@
 
 package adams.flow.transformer;
 
+import adams.core.Shortening;
 import weka.clusterers.ClusterEvaluation;
 
 import adams.core.QuickInfoHelper;
@@ -127,7 +128,7 @@ public class WekaClusterEvaluationSummary
    */
   @Override
   public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "comment", (m_Comment.stringValue().length() > 0 ? Utils.shorten(m_Comment.stringValue(), 20) : null));
+    return QuickInfoHelper.toString(this, "comment", (m_Comment.stringValue().length() > 0 ? Shortening.shortenEnd(m_Comment.stringValue(), 20) : null));
   }
 
   /**

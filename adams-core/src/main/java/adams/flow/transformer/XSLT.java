@@ -20,22 +20,20 @@
 
 package adams.flow.transformer;
 
-import java.io.ByteArrayOutputStream;
-import java.io.StringReader;
+import adams.core.QuickInfoHelper;
+import adams.core.Shortening;
+import adams.core.base.XSLTStyleSheet;
+import adams.core.io.PlaceholderFile;
+import adams.flow.core.Token;
+import org.w3c.dom.Document;
 
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
-
-import org.w3c.dom.Document;
-
-import adams.core.QuickInfoHelper;
-import adams.core.Utils;
-import adams.core.base.XSLTStyleSheet;
-import adams.core.io.PlaceholderFile;
-import adams.flow.core.Token;
+import java.io.ByteArrayOutputStream;
+import java.io.StringReader;
 
 /**
  <!-- globalinfo-start -->
@@ -205,7 +203,7 @@ public class XSLT
     if (QuickInfoHelper.hasVariable(this, "styleSheet") || !m_StyleSheet.isDirectory())
       return super.getQuickInfo();
     else
-      return QuickInfoHelper.toString(this, "inline", Utils.shorten(m_Inline.stringValue(), 50));
+      return QuickInfoHelper.toString(this, "inline", Shortening.shortenEnd(m_Inline.stringValue(), 50));
   }
 
   /**

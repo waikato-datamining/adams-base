@@ -195,7 +195,7 @@ public class QuickInfoHelper {
 		result += "|";
 	      result += toString(Array.get(current, i));
 	    }
-	    result = Utils.shorten(result, MAX_ARRAY_STRING_LENGTH);
+	    result = Shortening.shortenEnd(result, MAX_ARRAY_STRING_LENGTH);
 	  }
 	}
       }

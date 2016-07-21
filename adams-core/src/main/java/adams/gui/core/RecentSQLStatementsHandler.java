@@ -20,7 +20,7 @@
 
 package adams.gui.core;
 
-import adams.core.Utils;
+import adams.core.Shortening;
 import adams.db.SQLStatement;
 
 /**
@@ -125,6 +125,6 @@ public class RecentSQLStatementsHandler<M>
    */
   @Override
   protected String createMenuItemText(int index, SQLStatement item) {
-    return Utils.shorten(item.getValue().replaceAll("\\s", " "), 40);
+    return Shortening.shortenEnd(item.getValue().replaceAll("\\s", " "), 40);
   }
 }
