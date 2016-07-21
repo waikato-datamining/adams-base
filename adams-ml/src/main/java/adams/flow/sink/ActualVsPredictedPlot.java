@@ -176,6 +176,14 @@ import java.awt.BorderLayout;
  * &nbsp;&nbsp;&nbsp;example: An index is a number starting with 1; column names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last; numeric indices can be enforced by preceding them with '#' (eg '#12'); column names can be surrounded by double quotes.
  * </pre>
  * 
+ * <pre>-limit &lt;NONE|ACTUAL|SPECIFIED&gt; (property: limit)
+ * &nbsp;&nbsp;&nbsp;The type of limit to impose on the axes; NONE just uses the range determined 
+ * &nbsp;&nbsp;&nbsp;from the data; ACTUAL uses the min&#47;max from the actual column for both axes;
+ * &nbsp;&nbsp;&nbsp; SPECIFIED uses the specified limits or, if a value is 'infinity' then the 
+ * &nbsp;&nbsp;&nbsp;corresponding value from the determine range.
+ * &nbsp;&nbsp;&nbsp;default: NONE
+ * </pre>
+ * 
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
@@ -187,6 +195,18 @@ public class ActualVsPredictedPlot
 
   private static final long serialVersionUID = -278662766780196125L;
 
+  /**
+   * Determines what limits to use on the axes.
+   *
+   * @author FracPete (fracpete at waikato dot ac dot nz)
+   * @version $Revision$
+   */
+  public enum LimitType {
+    NONE,
+    ACTUAL,
+    SPECIFIED
+  }
+
   /** the column with the actual values. */
   protected SpreadSheetColumnIndex m_Actual;
 
@@ -195,6 +215,9 @@ public class ActualVsPredictedPlot
 
   /** the column with the error values (optional). */
   protected SpreadSheetColumnIndex m_Error;
+
+  /** the limit type. */
+  protected LimitType m_Limit;
 
   /** the minimum to use for the actual values (neg inf = no restriction). */
   protected double m_ActualMin;
@@ -252,6 +275,10 @@ public class ActualVsPredictedPlot
     m_OptionManager.add(
       "error", "error",
       new SpreadSheetColumnIndex(""));
+
+    m_OptionManager.add(
+      "limit", "limit",
+      LimitType.NONE);
   }
 
   /**
@@ -476,6 +503,40 @@ public class ActualVsPredictedPlot
   }
 
   /**
+   * Sets the limit to impose on the axes.
+   *
+   * @param value	the limit type
+   */
+  public void setLimit(LimitType value) {
+    m_Limit = value;
+    reset();
+  }
+
+  /**
+   * Returns the limit to impose on the axes.
+   *
+   * @return		the limit type
+   */
+  public LimitType getLimit() {
+    return m_Limit;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String limitTipText() {
+    return
+      "The type of limit to impose on the axes; NONE just uses the range "
+	+ "determined from the data; ACTUAL uses the min/max from the actual "
+	+ "column for both axes; SPECIFIED uses the specified limits or, if "
+        + "a value is 'infinity' then the corresponding value from the "
+	+ "determine range.";
+  }
+
+  /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
@@ -488,6 +549,7 @@ public class ActualVsPredictedPlot
     result += QuickInfoHelper.toString(this, "actual", m_Actual, ", actual: ");
     result += QuickInfoHelper.toString(this, "predicted", m_Predicted, ", predicted: ");
     result += QuickInfoHelper.toString(this, "error", (m_Error.isEmpty() ? "-none-" : m_Error), ", error: ");
+    result += QuickInfoHelper.toString(this, "limit", m_Limit, ", limit: ");
 
     return result;
   }
@@ -660,10 +722,31 @@ public class ActualVsPredictedPlot
     }
 
     // actual min/max
-    paintlet.setMinX(Double.isInfinite(m_ActualMin)    ? actMin  : m_ActualMin);
-    paintlet.setMaxX(Double.isInfinite(m_ActualMax)    ? actMax  : m_ActualMax);
-    paintlet.setMinY(Double.isInfinite(m_PredictedMin) ? predMin : m_PredictedMin);
-    paintlet.setMaxY(Double.isInfinite(m_PredictedMax) ? predMax : m_PredictedMax);
+    switch (m_Limit) {
+      case NONE:
+	paintlet.setMinX(actMin);
+	paintlet.setMaxX(actMax);
+	paintlet.setMinY(predMin);
+	paintlet.setMaxY(predMax);
+	break;
+
+      case ACTUAL:
+	paintlet.setMinX(actMin);
+	paintlet.setMaxX(actMax);
+	paintlet.setMinY(actMin);
+	paintlet.setMaxY(actMax);
+	break;
+
+      case SPECIFIED:
+	paintlet.setMinX(Double.isInfinite(m_ActualMin)    ? actMin  : m_ActualMin);
+	paintlet.setMaxX(Double.isInfinite(m_ActualMax)    ? actMax  : m_ActualMax);
+	paintlet.setMinY(Double.isInfinite(m_PredictedMin) ? predMin : m_PredictedMin);
+	paintlet.setMaxY(Double.isInfinite(m_PredictedMax) ? predMax : m_PredictedMax);
+	break;
+
+      default:
+	throw new IllegalStateException("Unhandled limit type: " + m_Limit);
+    }
 
     // add sequence
     cont = manager.newContainer(seq);
