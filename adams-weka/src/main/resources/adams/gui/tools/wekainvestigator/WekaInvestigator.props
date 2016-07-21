@@ -44,3 +44,9 @@ Classify.TrainPercentage=66
 # wether to preserve order (for random split)
 # (true|false)
 Classify.PreserveOrder=false
+
+# the default output generators to use
+# (blank-separated list of "classname + options")
+Classify.DefaultOutputGenerators=\
+  adams.gui.tools.wekainvestigator.tab.classifytab.output.TextStatistics \
+  adams.gui.tools.wekainvestigator.tab.classifytab.output.ModelOutput

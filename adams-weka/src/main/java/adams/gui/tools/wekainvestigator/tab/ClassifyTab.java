@@ -25,13 +25,12 @@ import adams.core.option.OptionUtils;
 import adams.gui.core.AbstractNamedHistoryPanel;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.ConsolePanel;
+import adams.gui.goe.GenericArrayEditorDialog;
 import adams.gui.goe.WekaGenericObjectEditorPanel;
 import adams.gui.tools.wekainvestigator.InvestigatorPanel;
-import adams.gui.tools.wekainvestigator.tab.classifytab.evaluation.AbstractClassifierEvaluation;
-import adams.gui.tools.wekainvestigator.tab.classifytab.output.ClassifierErrors;
-import adams.gui.tools.wekainvestigator.tab.classifytab.output.LegacyClassifierErrors;
-import adams.gui.tools.wekainvestigator.tab.classifytab.output.ModelOutput;
 import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
+import adams.gui.tools.wekainvestigator.tab.classifytab.evaluation.AbstractClassifierEvaluation;
+import adams.gui.tools.wekainvestigator.tab.classifytab.output.AbstractOutputGenerator;
 import adams.gui.tools.wekainvestigator.tab.classifytab.output.TextStatistics;
 import weka.classifiers.Classifier;
 import weka.classifiers.rules.ZeroR;
@@ -40,10 +39,15 @@ import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
+import java.awt.Dialog.ModalityType;
+import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 
 /**
@@ -56,6 +60,48 @@ public class ClassifyTab
   extends AbstractInvestigatorTab {
 
   private static final long serialVersionUID = -4106630131554796889L;
+
+  /**
+   * Customized history panel.
+   */
+  public static class HistoryPanel
+    extends AbstractNamedHistoryPanel<ResultItem> {
+
+    private static final long serialVersionUID = 8740813441072965573L;
+
+    /** the owner. */
+    protected ClassifyTab m_Owner;
+
+    /**
+     * Initializes the history.
+     *
+     * @param owner	the owning tab
+     */
+    public HistoryPanel(ClassifyTab owner) {
+      super();
+      m_Owner = owner;
+      setAllowRemove(true);
+      setAllowRename(false);
+    }
+
+    /**
+     * Displays the specified entry.
+     *
+     * @param name	the name of the entry, can be null to empty display
+     */
+    @Override
+    protected void updateEntry(String name) {
+      m_Owner.getPanelRight().removeAll();
+      if (name != null) {
+	if (hasEntry(name))
+	  m_Owner.getPanelRight().add(getEntry(name).getTabbedPane());
+      }
+      m_Owner.getPanelRight().invalidate();
+      m_Owner.getPanelRight().revalidate();
+      m_Owner.getPanelRight().doLayout();
+      m_Owner.getPanelRight().repaint();
+    }
+  }
 
   /** the GOe with the classifier. */
   protected WekaGenericObjectEditorPanel m_PanelGOE;
@@ -87,8 +133,14 @@ public class ClassifyTab
   /** the current classifier. */
   protected Classifier m_CurrentClassifier;
 
+  /** the panel with output generators. */
+  protected JPanel m_PanelOutputGenerators;
+
+  /** the button for editing the output generators. */
+  protected JButton m_ButtonOutputGenerators;
+
   /** the panel with the buttons. */
-  protected JPanel m_PanelEvaluationButtons;
+  protected JPanel m_PanelExecutionButtons;
 
   /** the start button. */
   protected JButton m_ButtonStart;
@@ -97,21 +149,57 @@ public class ClassifyTab
   protected JButton m_ButtonStop;
 
   /** the history. */
-  protected AbstractNamedHistoryPanel<ResultItem> m_History;
+  protected HistoryPanel m_History;
 
   /** whether the evaluation is currently running. */
   protected Thread m_Worker;
+
+  /** the output generators to use. */
+  protected AbstractOutputGenerator[] m_OutputGenerators;
 
   /**
    * Initializes the widgets.
    */
   @Override
   protected void initialize() {
+    Properties				props;
+    String[]				cmds;
+    List<AbstractOutputGenerator>	generators;
+    AbstractOutputGenerator		generator;
+    int					i;
+
     super.initialize();
+
+    props = InvestigatorPanel.getProperties();
 
     m_CurrentEvaluation = null;
     m_CurrentClassifier = null;
     m_Worker            = null;
+
+    try {
+      cmds = OptionUtils.splitOptions(
+	props.getProperty("Classify.DefaultOutputGenerators", TextStatistics.class.getName()));
+    }
+    catch (Exception e) {
+      ConsolePanel.getSingleton().append(
+	Level.SEVERE,
+	"Failed to parse output generators:\n" + props.getProperty("Classify.DefaultOutputGenerators"), e);
+      cmds = new String[]{TextStatistics.class.getName()};
+    }
+
+    generators = new ArrayList<>();
+    for (i = 0; i < cmds.length; i++) {
+      try {
+	generator = (AbstractOutputGenerator) OptionUtils.forAnyCommandLine(AbstractOutputGenerator.class, cmds[i]);
+	generators.add(generator);
+      }
+      catch (Exception e) {
+	ConsolePanel.getSingleton().append(
+	  Level.SEVERE,
+	  "Failed to instantiate output generator:\n" + cmds[i], e);
+      }
+    }
+    m_OutputGenerators = generators.toArray(new AbstractOutputGenerator[generators.size()]);
   }
 
   /**
@@ -124,6 +212,8 @@ public class ClassifyTab
     AbstractClassifierEvaluation	eval;
     JPanel				panel;
     Properties				props;
+    JPanel				buttonsAll;
+    JLabel 				label;
 
     super.initGUI();
 
@@ -192,35 +282,34 @@ public class ClassifyTab
     m_PanelEvaluationSetup = new JPanel(new BorderLayout());
     m_PanelEvaluation.add(m_PanelEvaluationSetup, BorderLayout.CENTER);
 
-    // buttons
-    m_PanelEvaluationButtons = new JPanel(new GridLayout(1, 2));
-    m_PanelEvaluation.add(m_PanelEvaluationButtons, BorderLayout.SOUTH);
+    // all buttons
+    buttonsAll = new JPanel(new GridLayout(2, 1));
+    m_PanelEvaluation.add(buttonsAll, BorderLayout.SOUTH);
+
+    // output generators
+    m_ButtonOutputGenerators = new JButton("...");
+    m_ButtonOutputGenerators.addActionListener((ActionEvent) -> editOutputGenerators());
+    label = new JLabel("Output generators");
+    label.setLabelFor(m_ButtonOutputGenerators);
+    panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    panel.add(label);
+    panel.add(m_ButtonOutputGenerators);
+    buttonsAll.add(panel);
+
+    // start/stop buttons
+    m_PanelExecutionButtons = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    buttonsAll.add(m_PanelExecutionButtons);
 
     m_ButtonStart = new JButton("Start");
     m_ButtonStart.addActionListener((ActionEvent e) -> startEvaluation());
-    m_PanelEvaluationButtons.add(m_ButtonStart);
+    m_PanelExecutionButtons.add(m_ButtonStart);
 
     m_ButtonStop = new JButton("Stop");
     m_ButtonStop.addActionListener((ActionEvent e) -> stopEvaluation());
-    m_PanelEvaluationButtons.add(m_ButtonStop);
+    m_PanelExecutionButtons.add(m_ButtonStop);
 
     // history
-    m_History = new AbstractNamedHistoryPanel<ResultItem>() {
-      private static final long serialVersionUID = 8740813441072965573L;
-      @Override
-      protected void updateEntry(String name) {
-	m_PanelRight.removeAll();
-	if (name != null) {
-	  if (hasEntry(name))
-	    m_PanelRight.add(getEntry(name).getTabbedPane());
-	}
-	m_PanelRight.invalidate();
-	m_PanelRight.revalidate();
-	m_PanelRight.doLayout();
-	m_PanelRight.repaint();
-      }
-    };
-    m_History.setAllowRemove(false);
+    m_History = new HistoryPanel(this);
     m_PanelLeft.add(m_History, BorderLayout.CENTER);
   }
 
@@ -264,6 +353,28 @@ public class ClassifyTab
   }
 
   /**
+   * Allows the user to modify the output generators.
+   */
+  protected void editOutputGenerators() {
+    GenericArrayEditorDialog	dialog;
+
+    if (getParentDialog() != null)
+      dialog = new GenericArrayEditorDialog(getParentDialog(), ModalityType.DOCUMENT_MODAL);
+    else
+      dialog = new GenericArrayEditorDialog(getParentFrame(), true);
+    dialog.setDefaultCloseOperation(GenericArrayEditorDialog.DISPOSE_ON_CLOSE);
+    dialog.setOkAlwaysEnabled(true);
+    dialog.setTitle("Output generators");
+    dialog.setCurrent(m_OutputGenerators);
+    dialog.pack();
+    dialog.setLocationRelativeTo(this);
+    dialog.setVisible(true);
+    if (dialog.getResult() != GenericArrayEditorDialog.APPROVE_OPTION)
+      return;
+    m_OutputGenerators = (AbstractOutputGenerator[]) dialog.getCurrent();
+  }
+
+  /**
    * Starts the evaluation.
    */
   protected void startEvaluation() {
@@ -275,11 +386,8 @@ public class ClassifyTab
       logMessage("Starting evaluation '" + m_CurrentEvaluation.getName() + "' using: " + OptionUtils.getCommandLine(m_CurrentClassifier));
       try {
 	ResultItem item = m_CurrentEvaluation.evaluate(m_CurrentClassifier, m_History);
-	// TODO user specified?
-	new ModelOutput().generateOutput(item);
-	new TextStatistics().generateOutput(item);
-	new LegacyClassifierErrors().generateOutput(item);
-	new ClassifierErrors().generateOutput(item);
+	for (int i = 0; i < m_OutputGenerators.length; i++)
+	  m_OutputGenerators[i].generateOutput(item);
 	logMessage("Finished evaluation '" + m_CurrentEvaluation.getName() + "' using: " + OptionUtils.getCommandLine(m_CurrentClassifier));
       }
       catch (Exception e) {
@@ -313,5 +421,23 @@ public class ClassifyTab
     cls = (Classifier) m_PanelGOE.getCurrent();
     m_ButtonStart.setEnabled((m_Worker == null) && (m_CurrentEvaluation != null) && (m_CurrentEvaluation.canEvaluate(cls) == null));
     m_ButtonStop.setEnabled(m_Worker != null);
+  }
+
+  /**
+   * Returns the left panel.
+   *
+   * @return		the left panel
+   */
+  public JPanel getPanelLeft() {
+    return m_PanelLeft;
+  }
+
+  /**
+   * Returns the right panel.
+   *
+   * @return		the right panel
+   */
+  public JPanel getPanelRight() {
+    return m_PanelRight;
   }
 }
