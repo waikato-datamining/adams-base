@@ -60,7 +60,7 @@ import adams.gui.tools.spreadsheetviewer.menu.DataSort;
 import adams.gui.tools.spreadsheetviewer.menu.DataTransform;
 import adams.gui.tools.spreadsheetviewer.menu.FileCloseTab;
 import adams.gui.tools.spreadsheetviewer.menu.FileExit;
-import adams.gui.tools.spreadsheetviewer.menu.EditPasteFromClipboard;
+import adams.gui.tools.spreadsheetviewer.menu.EditPasteAsNew;
 import adams.gui.tools.spreadsheetviewer.menu.FileOpen;
 import adams.gui.tools.spreadsheetviewer.menu.FileSave;
 import adams.gui.tools.spreadsheetviewer.menu.FileSaveAs;
@@ -299,7 +299,7 @@ public class SpreadSheetViewerPanel
     m_Actions.add(action);
 
     // Edit/Paste from clipboard
-    action = new EditPasteFromClipboard();
+    action = new EditPasteAsNew();
     m_ActionEditPasteFromClipboard = action;
     m_Actions.add(action);
 

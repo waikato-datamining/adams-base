@@ -14,7 +14,7 @@
  */
 
 /**
- * EditPasteFromClipboard.java
+ * EditPasteAsNew.java
  * Copyright (C) 2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.spreadsheetviewer.menu;
@@ -36,7 +36,7 @@ import java.awt.event.ActionEvent;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class EditPasteFromClipboard
+public class EditPasteAsNew
   extends AbstractSpreadSheetViewerMenuItemAction {
 
   /** for serialization. */
@@ -52,7 +52,7 @@ public class EditPasteFromClipboard
    */
   @Override
   protected String getTitle() {
-    return "Paste from clipboard...";
+    return "Paste as new...";
   }
 
   /**
@@ -68,7 +68,7 @@ public class EditPasteFromClipboard
       result = new GenericObjectEditorDialog(getParentDialog(), ModalityType.DOCUMENT_MODAL);
     else
       result = new GenericObjectEditorDialog(getParentFrame(), true);
-    result.setTitle("Import");
+    result.setTitle("Import of clipboard content");
     result.getGOEEditor().setClassType(SpreadSheetReader.class);
     result.getGOEEditor().setCanChangeClassInDialog(true);
     result.setCurrent(m_LastReader);
