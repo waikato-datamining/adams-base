@@ -276,7 +276,7 @@ public class ClassifyTab
     Classifier cls;
 
     cls = (Classifier) m_PanelGOE.getCurrent();
-    m_ButtonStart.setEnabled((m_Worker == null) && (m_CurrentEvaluation != null) && m_CurrentEvaluation.canEvaluate(cls));
+    m_ButtonStart.setEnabled((m_Worker == null) && (m_CurrentEvaluation != null) && (m_CurrentEvaluation.canEvaluate(cls) == null));
     m_ButtonStop.setEnabled(m_Worker != null);
   }
 }

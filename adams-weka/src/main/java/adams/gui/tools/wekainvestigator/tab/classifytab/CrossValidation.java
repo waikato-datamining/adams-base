@@ -28,6 +28,7 @@ import adams.gui.core.ParameterPanel;
 import adams.gui.tools.wekainvestigator.InvestigatorPanel;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
+import weka.core.Capabilities;
 import weka.core.Instances;
 
 import javax.swing.DefaultComboBoxModel;
@@ -142,19 +143,28 @@ public class CrossValidation
   /**
    * Tests whether the classifier can be evaluated.
    *
-   * @return		true if possible
+   * @return		null if successful, otherwise error message
    */
-  public boolean canEvaluate(Classifier classifier) {
-    Instances	data;
+  public String canEvaluate(Classifier classifier) {
+    Instances		data;
+    Capabilities 	caps;
 
     if (m_ComboBoxDatasets.getSelectedIndex() == -1)
-      return false;
+      return "No data available!";
 
     if (!Utils.isInteger(m_TextSeed.getText()))
-      return false;
+      return "Seed value is not an integer!";
 
     data = getOwner().getData().get(m_ComboBoxDatasets.getSelectedIndex()).getData();
-    return classifier.getCapabilities().test(data);
+    caps = classifier.getCapabilities();
+    if (!caps.test(data)) {
+      if (caps.getFailReason() != null)
+	return caps.getFailReason().getMessage();
+      else
+	return "Classifier cannot handle data!";
+    }
+
+    return null;
   }
 
   /**
@@ -167,13 +177,14 @@ public class CrossValidation
   @Override
   public Evaluation evaluate(Classifier classifier, AbstractNamedHistoryPanel<ResultItem> history) throws Exception {
     Evaluation	result;
+    String	msg;
     Instances	data;
     ResultItem	item;
     boolean	finalModel;
     Classifier	model;
 
-    if (!canEvaluate(classifier))
-      throw new IllegalArgumentException("Cannot evaluate classifier!");
+    if ((msg = canEvaluate(classifier)) != null)
+      throw new IllegalArgumentException("Cannot evaluate classifier!\n" + msg);
 
     data       = getOwner().getData().get(m_ComboBoxDatasets.getSelectedIndex()).getData();
     finalModel = m_CheckBoxFinalModel.isSelected() ;

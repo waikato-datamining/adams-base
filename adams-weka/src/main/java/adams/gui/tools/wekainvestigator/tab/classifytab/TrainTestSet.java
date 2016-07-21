@@ -25,6 +25,7 @@ import adams.gui.core.AbstractNamedHistoryPanel;
 import adams.gui.core.ParameterPanel;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
+import weka.core.Capabilities;
 import weka.core.Instances;
 
 import javax.swing.DefaultComboBoxModel;
@@ -92,29 +93,40 @@ public class TrainTestSet
   /**
    * Tests whether the classifier can be evaluated.
    *
-   * @return		true if possible
+   * @return		null if successful, otherwise error message
    */
-  public boolean canEvaluate(Classifier classifier) {
-    Instances train;
-    Instances test;
+  public String canEvaluate(Classifier classifier) {
+    Instances 		train;
+    Instances 		test;
+    Capabilities 	caps;
 
     if (m_ComboBoxTrain.getSelectedIndex() == -1)
-      return false;
+      return "No train data available!";
     if (m_ComboBoxTest.getSelectedIndex() == -1)
-      return false;
+      return "No test data available!";
 
+    caps  = classifier.getCapabilities();
     train = getOwner().getData().get(m_ComboBoxTrain.getSelectedIndex()).getData();
-    if (!classifier.getCapabilities().test(train))
-      return false;
+    if (!caps.test(train)) {
+      if (caps.getFailReason() != null)
+	return caps.getFailReason().getMessage();
+      else
+	return "Classifier cannot handle tain data!";
+    }
 
+    caps = classifier.getCapabilities();
     test = getOwner().getData().get(m_ComboBoxTest.getSelectedIndex()).getData();
-    if (!classifier.getCapabilities().test(test))
-      return false;
+    if (!caps.test(test)) {
+      if (caps.getFailReason() != null)
+	return caps.getFailReason().getMessage();
+      else
+	return "Classifier cannot handle test data!";
+    }
 
     if (!train.equalHeaders(test))
-      return false;
+      return train.equalHeadersMsg(test);
 
-    return true;
+    return null;
   }
 
   /**
@@ -130,9 +142,10 @@ public class TrainTestSet
     Instances	train;
     Instances	test;
     ResultItem	item;
+    String	msg;
 
-    if (!canEvaluate(classifier))
-      throw new IllegalArgumentException("Cannot evaluate classifier!");
+    if ((msg = canEvaluate(classifier)) != null)
+      throw new IllegalArgumentException("Cannot evaluate classifier!\n" + msg);
 
     train = getOwner().getData().get(m_ComboBoxTrain.getSelectedIndex()).getData();
     test = getOwner().getData().get(m_ComboBoxTest.getSelectedIndex()).getData();
@@ -162,7 +175,7 @@ public class TrainTestSet
       return;
 
     datasets = generateDatasetList();
-    
+
     if (hasDataChanged(datasets, m_ModelDatasets)) {
       // train
       index = indexOfDataset((String) m_ComboBoxTrain.getSelectedItem());

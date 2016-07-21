@@ -14,45 +14,40 @@
  */
 
 /**
- * TrainTestSplit.java
+ * ReevaluateModel.java
  * Copyright (C) 2016 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab.classifytab;
 
-import adams.core.Properties;
-import adams.core.Utils;
-import adams.core.option.OptionUtils;
-import adams.flow.container.WekaTrainTestSetContainer;
+import adams.core.SerializationHelper;
+import adams.gui.chooser.FileChooserPanel;
 import adams.gui.core.AbstractNamedHistoryPanel;
+import adams.gui.core.ExtensionFileFilter;
 import adams.gui.core.ParameterPanel;
-import adams.gui.tools.wekainvestigator.InvestigatorPanel;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
-import weka.classifiers.RandomSplitGenerator;
 import weka.core.Capabilities;
 import weka.core.Instances;
 
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.JTextField;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
+import javax.swing.event.ChangeEvent;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
+import java.io.File;
 import java.util.List;
 
 /**
- * Uses a (random) percentage split to generate train/test.
+ * Re-evaluates a serialized model.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class TrainTestSplit
+public class ReevaluateModel
   extends AbstractClassifierEvaluation {
 
-  private static final long serialVersionUID = -4460266467650893551L;
+  private static final long serialVersionUID = 1175400993991698944L;
 
   /** the panel with the parameters. */
   protected ParameterPanel m_PanelParameters;
@@ -63,25 +58,34 @@ public class TrainTestSplit
   /** the datasets model. */
   protected DefaultComboBoxModel<String> m_ModelDatasets;
 
-  /** the split percentage. */
-  protected JTextField m_TextPercentage;
+  /** the serialized model. */
+  protected FileChooserPanel m_PanelModel;
 
-  /** whether to preserve the order. */
-  protected JCheckBox m_CheckBoxPreserveOrder;
+  /** the current model. */
+  protected Classifier m_Model;
 
-  /** the seed value. */
-  protected JTextField m_TextSeed;
+  /** the training header (if any). */
+  protected Instances m_Header;
+
+  /**
+   * Initializes the members.
+   */
+  @Override
+  protected void initialize() {
+    super.initialize();
+
+    m_Model  = null;
+    m_Header = null;
+  }
 
   /**
    * Initializes the widgets.
    */
   @Override
   protected void initGUI() {
-    Properties	props;
+    ExtensionFileFilter filter;
 
     super.initGUI();
-
-    props = InvestigatorPanel.getProperties();
 
     m_PanelParameters = new ParameterPanel();
     m_PanelOptions.add(m_PanelParameters, BorderLayout.CENTER);
@@ -92,50 +96,14 @@ public class TrainTestSplit
     m_ComboBoxDatasets.addActionListener((ActionEvent e) -> update());
     m_PanelParameters.addParameter("Dataset", m_ComboBoxDatasets);
 
-    // percentage
-    m_TextPercentage = new JTextField("" + props.getInteger("Classify.TrainPercentage", 1));
-    m_TextPercentage.setToolTipText("Percentage for train set (0 < x < 100)");
-    m_TextPercentage.getDocument().addDocumentListener(new DocumentListener() {
-      @Override
-      public void insertUpdate(DocumentEvent e) {
-	update();
-      }
-      @Override
-      public void removeUpdate(DocumentEvent e) {
-	update();
-      }
-      @Override
-      public void changedUpdate(DocumentEvent e) {
-	update();
-      }
-    });
-    m_PanelParameters.addParameter("Percentage", m_TextPercentage);
-
-    // preserve order?
-    m_CheckBoxPreserveOrder = new JCheckBox();
-    m_CheckBoxPreserveOrder.setSelected(props.getBoolean("Classify.PreserveOrder", false));
-    m_CheckBoxPreserveOrder.setToolTipText("No randomization is performed if checked");
-    m_CheckBoxPreserveOrder.addActionListener((ActionEvent e) -> update());
-    m_PanelParameters.addParameter("Preserve order", m_CheckBoxPreserveOrder);
-
-    // seed
-    m_TextSeed = new JTextField("" + props.getInteger("Classify.Seed", 1));
-    m_TextSeed.setToolTipText("The seed value for randomizing the data");
-    m_TextSeed.getDocument().addDocumentListener(new DocumentListener() {
-      @Override
-      public void insertUpdate(DocumentEvent e) {
-	update();
-      }
-      @Override
-      public void removeUpdate(DocumentEvent e) {
-	update();
-      }
-      @Override
-      public void changedUpdate(DocumentEvent e) {
-	update();
-      }
-    });
-    m_PanelParameters.addParameter("Seed", m_TextSeed);
+    // model file
+    m_PanelModel = new FileChooserPanel();
+    filter = ExtensionFileFilter.getModelFileFilter();
+    m_PanelModel.addChoosableFileFilter(filter);
+    m_PanelModel.setFileFilter(filter);
+    m_PanelModel.setAcceptAllFileFilterUsed(true);
+    m_PanelModel.addChangeListener((ChangeEvent e) -> loadModel());
+    m_PanelParameters.addParameter("Model", m_PanelModel);
   }
 
   /**
@@ -145,7 +113,40 @@ public class TrainTestSplit
    */
   @Override
   public String getName() {
-    return "Train/test split";
+    return "Re-evaluate model";
+  }
+
+  /**
+   * Attempts to load the model and (if available) the header.
+   *
+   * @return		true if successfully loaded
+   */
+  protected boolean loadModel() {
+    File	file;
+    Object[]	obj;
+
+    m_Model  = null;
+    m_Header = null;
+
+    file = m_PanelModel.getCurrent();
+    if (file.isDirectory())
+      return false;
+    if (!file.exists())
+      return false;
+
+    try {
+      obj = SerializationHelper.readAll(file.getAbsolutePath());
+      if (obj.length > 0)
+	m_Model = (Classifier) obj[0];
+      if (obj.length > 1)
+	m_Header = (Instances) obj[1];
+    }
+    catch (Exception e) {
+      showStatus("Failed to load model: " + file);
+      return false;
+    }
+
+    return true;
   }
 
   /**
@@ -155,23 +156,30 @@ public class TrainTestSplit
    */
   public String canEvaluate(Classifier classifier) {
     Instances		data;
-    double		perc;
-    Capabilities	caps;
+    File		file;
+    Capabilities 	caps;
 
     if (m_ComboBoxDatasets.getSelectedIndex() == -1)
       return "No data available!";
 
-    if (!Utils.isInteger(m_TextSeed.getText()))
-      return "Seed value is not an integer!";
+    file = m_PanelModel.getCurrent();
+    if (file.isDirectory())
+      return "Model points to directory: " + file;
+    if (!file.exists())
+      return "Model does not exist: " + file;
 
-    if (!Utils.isDouble(m_TextPercentage.getText()))
-      return "Percentage is not a number!";
-    perc = Utils.toDouble(m_TextPercentage.getText());
-    if ((perc <= 0) || (perc >= 100))
-      return "Percentage must satisfy 0 < x < 100!";
+    if (m_Model == null)
+      loadModel();
+    if (m_Model == null)
+      return "Failed to load model: " + file;
 
     data = getOwner().getData().get(m_ComboBoxDatasets.getSelectedIndex()).getData();
-    caps = classifier.getCapabilities();
+    if (m_Header != null) {
+      if (!data.equalHeaders(m_Header))
+	return data.equalHeadersMsg(m_Header);
+    }
+
+    caps = m_Model.getCapabilities();
     if (!caps.test(data)) {
       if (caps.getFailReason() != null)
 	return caps.getFailReason().getMessage();
@@ -191,33 +199,20 @@ public class TrainTestSplit
    */
   @Override
   public Evaluation evaluate(Classifier classifier, AbstractNamedHistoryPanel<ResultItem> history) throws Exception {
-    Evaluation			result;
-    Instances			data;
-    Instances			train;
-    Instances			test;
-    RandomSplitGenerator	generator;
-    WekaTrainTestSetContainer	cont;
-    ResultItem			item;
-    String			msg;
+    Evaluation	result;
+    Instances	data;
+    ResultItem	item;
+    String	msg;
 
     if ((msg = canEvaluate(classifier)) != null)
       throw new IllegalArgumentException("Cannot evaluate classifier!\n" + msg);
 
     data   = getOwner().getData().get(m_ComboBoxDatasets.getSelectedIndex()).getData();
-    if (m_CheckBoxPreserveOrder.isSelected())
-      generator = new RandomSplitGenerator(data, Utils.toDouble(m_TextPercentage.getText()) / 100.0);
-    else
-      generator = new RandomSplitGenerator(data, Integer.parseInt(m_TextSeed.getText()), Utils.toDouble(m_TextPercentage.getText()) / 100.0);
-    cont  = generator.next();
-    train = (Instances) cont.getValue(WekaTrainTestSetContainer.VALUE_TRAIN);
-    test  = (Instances) cont.getValue(WekaTrainTestSetContainer.VALUE_TEST);
-    classifier = (Classifier) OptionUtils.shallowCopy(classifier);
-    classifier.buildClassifier(train);
-    result = new Evaluation(train);
-    result.evaluateModel(classifier, test);
+    result = new Evaluation(data);
+    result.evaluateModel(m_Model, data);
 
     // history
-    item = new ResultItem(result, classifier, new Instances(train, 0));
+    item = new ResultItem(result, m_Model, m_Header);
     history.addEntry(item.getName(), item);
 
     return result;

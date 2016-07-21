@@ -116,9 +116,9 @@ public abstract class AbstractClassifierEvaluation
   /**
    * Tests whether the classifier can be evaluated.
    *
-   * @return		true if possible
+   * @return		null if successful, otherwise error message
    */
-  public abstract boolean canEvaluate(Classifier classifier);
+  public abstract String canEvaluate(Classifier classifier);
 
   /**
    * Evaluates the classifier and returns the generated evaluation object.
