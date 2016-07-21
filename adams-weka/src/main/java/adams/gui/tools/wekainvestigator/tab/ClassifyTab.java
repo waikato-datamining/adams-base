@@ -28,6 +28,8 @@ import adams.gui.core.ConsolePanel;
 import adams.gui.goe.WekaGenericObjectEditorPanel;
 import adams.gui.tools.wekainvestigator.InvestigatorPanel;
 import adams.gui.tools.wekainvestigator.tab.classifytab.AbstractClassifierEvaluation;
+import adams.gui.tools.wekainvestigator.tab.classifytab.ClassifierErrors;
+import adams.gui.tools.wekainvestigator.tab.classifytab.LegacyClassifierErrors;
 import adams.gui.tools.wekainvestigator.tab.classifytab.ModelOutput;
 import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
 import adams.gui.tools.wekainvestigator.tab.classifytab.TextStatistics;
@@ -276,6 +278,8 @@ public class ClassifyTab
 	// TODO user specified?
 	new ModelOutput().generateOutput(item);
 	new TextStatistics().generateOutput(item);
+	new LegacyClassifierErrors().generateOutput(item);
+	new ClassifierErrors().generateOutput(item);
 	logMessage("Finished evaluation '" + m_CurrentEvaluation.getName() + "' using: " + OptionUtils.getCommandLine(m_CurrentClassifier));
       }
       catch (Exception e) {

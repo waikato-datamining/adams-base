@@ -129,6 +129,18 @@ public abstract class AbstractClassifierEvaluation
   public abstract ResultItem evaluate(Classifier classifier, AbstractNamedHistoryPanel<ResultItem> history) throws Exception;
 
   /**
+   * Adds the item to the history and selects it.
+   *
+   * @param item	the item to add
+   * @return		the item
+   */
+  protected ResultItem addToHistory(AbstractNamedHistoryPanel<ResultItem> history, ResultItem item) {
+    history.addEntry(item.getName(), item);
+    history.setSelectedIndex(history.count() - 1);
+    return item;
+  }
+
+  /**
    * Returns just the name of the evaluation.
    *
    * @return		the evaluation

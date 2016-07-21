@@ -212,10 +212,7 @@ public class ReevaluateModel
     eval.evaluateModel(m_Model, data);
 
     // history
-    result = new ResultItem(eval, m_Model, m_Header);
-    history.addEntry(result.getName(), result);
-
-    return result;
+    return addToHistory(history, new ResultItem(eval, m_Model, m_Header));
   }
 
   /**

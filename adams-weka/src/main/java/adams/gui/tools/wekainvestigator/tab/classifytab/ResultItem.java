@@ -82,7 +82,7 @@ public class ResultItem
     m_Header     = header;
     m_TabbedPane = new BaseTabbedPane();
     m_Timestamp  = new Date();
-    m_Name       = classifier.getClass().getSimpleName() + " - " + DateUtils.getTimeFormatterMsecs().format(m_Timestamp);
+    m_Name       = DateUtils.getTimeFormatterMsecs().format(m_Timestamp) + " - " + classifier.getClass().getSimpleName();
   }
 
   /**

@@ -201,10 +201,7 @@ public class CrossValidation
     }
 
     // history
-    result = new ResultItem(eval, model, new Instances(data, 0));
-    history.addEntry(result.getName(), result);
-
-    return result;
+    return addToHistory(history, new ResultItem(eval, model, new Instances(data, 0)));
   }
 
   /**

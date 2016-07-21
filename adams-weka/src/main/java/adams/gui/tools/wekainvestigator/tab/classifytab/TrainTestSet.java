@@ -155,10 +155,7 @@ public class TrainTestSet
     eval.evaluateModel(classifier, test);
 
     // history
-    result = new ResultItem(eval, classifier, new Instances(train, 0));
-    history.addEntry(result.getName(), result);
-
-    return result;
+    return addToHistory(history, new ResultItem(eval, classifier, new Instances(train, 0)));
   }
 
   /**
