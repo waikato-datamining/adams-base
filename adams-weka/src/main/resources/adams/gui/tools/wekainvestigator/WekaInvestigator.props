@@ -21,6 +21,10 @@ ClassAttributeHeuristic=adams.data.weka.classattribute.LastAttribute
 # the default classifier
 Classify.Classifier=weka.classifiers.rules.ZeroR
 
+# the width of the left-hand side of the classification panel
+# (integer)
+Classify.LeftPanelWidth=275
+
 # the number of folds for cross-validation
 # (integer; 2-n)
 Classify.NumFolds=10

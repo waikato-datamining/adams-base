@@ -20,8 +20,10 @@
 
 package adams.gui.tools.wekainvestigator.tab;
 
+import adams.core.Properties;
 import adams.core.option.OptionUtils;
 import adams.gui.core.AbstractNamedHistoryPanel;
+import adams.gui.core.BaseSplitPane;
 import adams.gui.core.ConsolePanel;
 import adams.gui.goe.WekaGenericObjectEditorPanel;
 import adams.gui.tools.wekainvestigator.InvestigatorPanel;
@@ -54,8 +56,14 @@ public class ClassifyTab
   /** the GOe with the classifier. */
   protected WekaGenericObjectEditorPanel m_PanelGOE;
 
+  /** the split pane for left/right panels. */
+  protected BaseSplitPane m_SplitPane;
+
   /** the panel on the left-hand side. */
   protected JPanel m_PanelLeft;
+
+  /** the panel on the right-hand side (displays results). */
+  protected JPanel m_PanelRight;
 
   /** the panel with the evaluation. */
   protected JPanel m_PanelEvaluation;
@@ -111,8 +119,11 @@ public class ClassifyTab
     Class[]				classes;
     AbstractClassifierEvaluation	eval;
     JPanel				panel;
+    Properties				props;
 
     super.initGUI();
+
+    props = InvestigatorPanel.getProperties();
 
     setLayout(new BorderLayout());
     setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
@@ -133,8 +144,14 @@ public class ClassifyTab
     panel.setBorder(BorderFactory.createTitledBorder(""));
     add(panel, BorderLayout.NORTH);
 
+    m_SplitPane = new BaseSplitPane(BaseSplitPane.HORIZONTAL_SPLIT);
+    m_SplitPane.setOneTouchExpandable(true);
+    add(m_SplitPane, BorderLayout.CENTER);
     m_PanelLeft = new JPanel(new BorderLayout());
-    add(m_PanelLeft, BorderLayout.WEST);
+    m_SplitPane.setLeftComponent(m_PanelLeft);
+    m_PanelRight = new JPanel(new BorderLayout());
+    m_SplitPane.setRightComponent(m_PanelRight);
+    m_SplitPane.setDividerLocation(props.getInteger("Classify.LeftPanelWidth", 200));
 
     // evaluation
     m_PanelEvaluation = new JPanel(new BorderLayout());
