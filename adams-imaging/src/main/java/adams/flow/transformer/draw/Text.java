@@ -164,7 +164,7 @@ public class Text
     result  = QuickInfoHelper.toString(this, "X", m_X, "X: ");
     result += QuickInfoHelper.toString(this, "Y", m_Y, ", Y: ");
     result += QuickInfoHelper.toString(this, "YIncrement", m_YIncrement, ", Y-Inc.: ");
-    result += QuickInfoHelper.toString(this, "font", GUIHelper.encodeFont(m_Font), ", F: ");
+    result += QuickInfoHelper.toString(this, "font", Fonts.encodeFont(m_Font), ", F: ");
     result += QuickInfoHelper.toString(this, "text", m_Text, ", T: ");
     result += QuickInfoHelper.toString(this, "color", ColorHelper.toHex(m_Color), ", Color: ");
     

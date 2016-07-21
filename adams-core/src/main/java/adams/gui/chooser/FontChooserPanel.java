@@ -21,7 +21,6 @@
 package adams.gui.chooser;
 
 import adams.gui.core.Fonts;
-import adams.gui.core.GUIHelper;
 
 import java.awt.Font;
 
@@ -94,7 +93,7 @@ public class FontChooserPanel
    * @return		the generated string
    */
   protected String toString(Font value) {
-    return GUIHelper.encodeFont(value);
+    return Fonts.encodeFont(value);
   }
 
   /**

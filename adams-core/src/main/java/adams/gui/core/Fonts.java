@@ -200,4 +200,40 @@ public class Fonts {
       UIManager.put(property, fontObj);
     }
   }
+
+  /**
+   * Parses a font string ('name-face-size') and returns the Font object.
+   *
+   * @param s		the string to parse
+   * @return		the font
+   * @see		Font#decode(String)
+   */
+  public static Font decodeFont(String s) {
+    return Font.decode(s);
+  }
+
+  /**
+   * Turns a font into a string representation that can get parsed with
+   * {@link #decodeFont(String)} again.
+   *
+   * @param f		the font to turn into a string
+   * @return		the font
+   */
+  public static String encodeFont(Font f) {
+    String	result;
+    String	face;
+
+    if (f.isBold() && f.isItalic())
+      face = "BOLDITALIC";
+    else if (f.isBold())
+      face = "BOLD";
+    else if (f.isItalic())
+      face = "ITALIC";
+    else
+      face = "PLAIN";
+
+    result = f.getName() + "-" + face + "-" + f.getSize();
+
+    return result;
+  }
 }

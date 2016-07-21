@@ -28,7 +28,7 @@ import adams.core.logging.LoggingHelper;
 import adams.core.management.OS;
 import adams.env.Environment;
 import adams.gui.core.ColorHelper;
-import adams.gui.core.GUIHelper;
+import adams.gui.core.Fonts;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -1362,7 +1362,7 @@ public class Properties
    * @param value	the font to store
    */
   public void setFont(String key, Font value) {
-    setProperty(key, GUIHelper.encodeFont(value));
+    setProperty(key, Fonts.encodeFont(value));
   }
 
   /**
