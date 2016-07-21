@@ -584,6 +584,19 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
 
     result.addSeparator();
 
+    item = new JMenuItem("Copy ID" + (indices.length > 1 ? "s" : ""));
+    item.setEnabled(indices.length > 0);
+    item.addActionListener((ActionEvent e) -> {
+      StringBuilder id = new StringBuilder();
+      for (int i = 0; i < indices.length; i++) {
+	if (id.length() > 0)
+	  id.append("\n");
+	id.append(getContainerManager().get(indices[i]).getDisplayID());
+      }
+      GUIHelper.copyToClipboard(id.toString());
+    });
+    result.add(item);
+
     item = new JMenuItem("Information");
     item.addActionListener(new ActionListener() {
       @Override

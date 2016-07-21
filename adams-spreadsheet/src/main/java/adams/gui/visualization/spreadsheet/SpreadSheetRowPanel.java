@@ -474,6 +474,21 @@ public class SpreadSheetRowPanel
 
     result.addSeparator();
 
+    item = new JMenuItem("Copy ID" + (indices.length > 1 ? "s" : ""));
+    item.setEnabled(indices.length > 0);
+    item.addActionListener((ActionEvent e) -> {
+      StringBuilder id = new StringBuilder();
+      for (int i = 0; i < indices.length; i++) {
+	if (id.length() > 0)
+	  id.append("\n");
+	id.append(getContainerManager().get(indices[i]).getDisplayID());
+      }
+      GUIHelper.copyToClipboard(id.toString());
+    });
+    result.add(item);
+
+    result.addSeparator();
+
     item = new JMenuItem("Save as...");
     item.setEnabled(indices.length == 1);
     item.addActionListener((ActionEvent e) -> saveInstance(getContainerManager().get(indices[0])));
