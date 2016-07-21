@@ -22,6 +22,7 @@ package adams.gui.tools.wekainvestigator.tab.classifytab;
 
 import adams.core.DateUtils;
 import adams.core.logging.LoggingObject;
+import adams.gui.core.BaseTabbedPane;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
 import weka.core.Instances;
@@ -55,6 +56,9 @@ public class ResultItem
   /** the header. */
   protected Instances m_Header;
 
+  /** the tabbed pane with the generated output. */
+  protected BaseTabbedPane m_TabbedPane;
+
   /**
    * Initializes the item with no evaluation.
    *
@@ -76,6 +80,7 @@ public class ResultItem
     m_Evaluation = evaluation;
     m_Classifier = classifier;
     m_Header     = header;
+    m_TabbedPane = new BaseTabbedPane();
     m_Timestamp  = new Date();
     m_Name       = classifier.getClass().getSimpleName() + " - " + DateUtils.getTimeFormatterMsecs().format(m_Timestamp);
   }
@@ -141,6 +146,15 @@ public class ResultItem
    */
   public Instances getHeader() {
     return m_Header;
+  }
+
+  /**
+   * The tabbed pane for the results.
+   *
+   * @return		the tabbed pane
+   */
+  public BaseTabbedPane getTabbedPane() {
+    return m_TabbedPane;
   }
 
   /**

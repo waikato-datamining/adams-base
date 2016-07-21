@@ -185,25 +185,25 @@ public class TrainTestSplit
   /**
    * Evaluates the classifier and returns the generated evaluation object.
    *
-   * @return		the evaluation
    * @param history	the history to add the result to
+   * @return		the generate history item
    * @throws Exception	if evaluation fails
    */
   @Override
-  public Evaluation evaluate(Classifier classifier, AbstractNamedHistoryPanel<ResultItem> history) throws Exception {
-    Evaluation			result;
+  public ResultItem evaluate(Classifier classifier, AbstractNamedHistoryPanel<ResultItem> history) throws Exception {
+    ResultItem 			result;
+    Evaluation 			eval;
     Instances			data;
     Instances			train;
     Instances			test;
     RandomSplitGenerator	generator;
     WekaTrainTestSetContainer	cont;
-    ResultItem			item;
     String			msg;
 
     if ((msg = canEvaluate(classifier)) != null)
       throw new IllegalArgumentException("Cannot evaluate classifier!\n" + msg);
 
-    data   = getOwner().getData().get(m_ComboBoxDatasets.getSelectedIndex()).getData();
+    data = getOwner().getData().get(m_ComboBoxDatasets.getSelectedIndex()).getData();
     if (m_CheckBoxPreserveOrder.isSelected())
       generator = new RandomSplitGenerator(data, Utils.toDouble(m_TextPercentage.getText()) / 100.0);
     else
@@ -213,12 +213,12 @@ public class TrainTestSplit
     test  = (Instances) cont.getValue(WekaTrainTestSetContainer.VALUE_TEST);
     classifier = (Classifier) OptionUtils.shallowCopy(classifier);
     classifier.buildClassifier(train);
-    result = new Evaluation(train);
-    result.evaluateModel(classifier, test);
+    eval = new Evaluation(train);
+    eval.evaluateModel(classifier, test);
 
     // history
-    item = new ResultItem(result, classifier, new Instances(train, 0));
-    history.addEntry(item.getName(), item);
+    result = new ResultItem(eval, classifier, new Instances(train, 0));
+    history.addEntry(result.getName(), result);
 
     return result;
   }

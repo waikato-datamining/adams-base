@@ -28,7 +28,9 @@ import adams.gui.core.ConsolePanel;
 import adams.gui.goe.WekaGenericObjectEditorPanel;
 import adams.gui.tools.wekainvestigator.InvestigatorPanel;
 import adams.gui.tools.wekainvestigator.tab.classifytab.AbstractClassifierEvaluation;
+import adams.gui.tools.wekainvestigator.tab.classifytab.ModelOutput;
 import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
+import adams.gui.tools.wekainvestigator.tab.classifytab.TextStatistics;
 import weka.classifiers.Classifier;
 import weka.classifiers.rules.ZeroR;
 
@@ -205,6 +207,15 @@ public class ClassifyTab
       private static final long serialVersionUID = 8740813441072965573L;
       @Override
       protected void updateEntry(String name) {
+	m_PanelRight.removeAll();
+	if (name != null) {
+	  if (hasEntry(name))
+	    m_PanelRight.add(getEntry(name).getTabbedPane());
+	}
+	m_PanelRight.invalidate();
+	m_PanelRight.revalidate();
+	m_PanelRight.doLayout();
+	m_PanelRight.repaint();
       }
     };
     m_History.setAllowRemove(false);
@@ -261,7 +272,10 @@ public class ClassifyTab
       m_CurrentClassifier = (Classifier) m_PanelGOE.getCurrent();
       logMessage("Starting evaluation '" + m_CurrentEvaluation.getName() + "' using: " + OptionUtils.getCommandLine(m_CurrentClassifier));
       try {
-	m_CurrentEvaluation.evaluate(m_CurrentClassifier, m_History);
+	ResultItem item = m_CurrentEvaluation.evaluate(m_CurrentClassifier, m_History);
+	// TODO user specified?
+	new ModelOutput().generateOutput(item);
+	new TextStatistics().generateOutput(item);
 	logMessage("Finished evaluation '" + m_CurrentEvaluation.getName() + "' using: " + OptionUtils.getCommandLine(m_CurrentClassifier));
       }
       catch (Exception e) {

@@ -29,7 +29,6 @@ import adams.gui.tools.wekainvestigator.InvestigatorPanel;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
 import adams.gui.tools.wekainvestigator.tab.ClassifyTab;
 import weka.classifiers.Classifier;
-import weka.classifiers.Evaluation;
 
 import javax.swing.ComboBoxModel;
 import javax.swing.JPanel;
@@ -123,11 +122,11 @@ public abstract class AbstractClassifierEvaluation
   /**
    * Evaluates the classifier and returns the generated evaluation object.
    *
-   * @return		the evaluation
    * @param history	the history to add the result to
+   * @return		the generate history item
    * @throws Exception	if evaluation fails
    */
-  public abstract Evaluation evaluate(Classifier classifier, AbstractNamedHistoryPanel<ResultItem> history) throws Exception;
+  public abstract ResultItem evaluate(Classifier classifier, AbstractNamedHistoryPanel<ResultItem> history) throws Exception;
 
   /**
    * Returns just the name of the evaluation.

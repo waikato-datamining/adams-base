@@ -51,6 +51,10 @@ adams.gui.tools.wekainvestigator.tab.AbstractInvestigatorTab=\
 adams.gui.tools.wekainvestigator.tab.classifytab.AbstractClassifierEvaluation=\
   adams.gui.tools.wekainvestigator.tab.classifytab
 
+# the output generators
+adams.gui.tools.wekainvestigator.tab.classifytab.AbstractOutputGenerator=\
+  adams.gui.tools.wekainvestigator.tab.classifytab
+
 # the actions for the data tab of the investigator
 adams.gui.tools.wekainvestigator.tab.datatab.AbstractDataTabAction=\
   adams.gui.tools.wekainvestigator.tab.datatab

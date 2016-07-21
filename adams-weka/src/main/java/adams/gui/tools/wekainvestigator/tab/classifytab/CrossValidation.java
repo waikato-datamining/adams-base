@@ -170,16 +170,16 @@ public class CrossValidation
   /**
    * Evaluates the classifier and returns the generated evaluation object.
    *
-   * @return		the evaluation
    * @param history	the history to add the result to
+   * @return		the generate history item
    * @throws Exception	if evaluation fails
    */
   @Override
-  public Evaluation evaluate(Classifier classifier, AbstractNamedHistoryPanel<ResultItem> history) throws Exception {
-    Evaluation	result;
+  public ResultItem evaluate(Classifier classifier, AbstractNamedHistoryPanel<ResultItem> history) throws Exception {
+    ResultItem 	result;
+    Evaluation 	eval;
     String	msg;
     Instances	data;
-    ResultItem	item;
     boolean	finalModel;
     Classifier	model;
 
@@ -188,8 +188,8 @@ public class CrossValidation
 
     data       = getOwner().getData().get(m_ComboBoxDatasets.getSelectedIndex()).getData();
     finalModel = m_CheckBoxFinalModel.isSelected() ;
-    result     = new Evaluation(data);
-    result.crossValidateModel(
+    eval       = new Evaluation(data);
+    eval.crossValidateModel(
       classifier, data, ((Number) m_SpinnerFolds.getValue()).intValue(),
       new Random(Integer.parseInt(m_TextSeed.getText())));
 
@@ -201,8 +201,8 @@ public class CrossValidation
     }
 
     // history
-    item = new ResultItem(result, model, new Instances(data, 0));
-    history.addEntry(item.getName(), item);
+    result = new ResultItem(eval, model, new Instances(data, 0));
+    history.addEntry(result.getName(), result);
 
     return result;
   }

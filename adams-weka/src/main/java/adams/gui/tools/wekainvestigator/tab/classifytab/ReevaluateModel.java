@@ -193,27 +193,27 @@ public class ReevaluateModel
   /**
    * Evaluates the classifier and returns the generated evaluation object.
    *
-   * @return		the evaluation
    * @param history	the history to add the result to
+   * @return		the generate history item
    * @throws Exception	if evaluation fails
    */
   @Override
-  public Evaluation evaluate(Classifier classifier, AbstractNamedHistoryPanel<ResultItem> history) throws Exception {
-    Evaluation	result;
+  public ResultItem evaluate(Classifier classifier, AbstractNamedHistoryPanel<ResultItem> history) throws Exception {
+    ResultItem 	result;
+    Evaluation 	eval;
     Instances	data;
-    ResultItem	item;
     String	msg;
 
     if ((msg = canEvaluate(classifier)) != null)
       throw new IllegalArgumentException("Cannot evaluate classifier!\n" + msg);
 
-    data   = getOwner().getData().get(m_ComboBoxDatasets.getSelectedIndex()).getData();
-    result = new Evaluation(data);
-    result.evaluateModel(m_Model, data);
+    data = getOwner().getData().get(m_ComboBoxDatasets.getSelectedIndex()).getData();
+    eval = new Evaluation(data);
+    eval.evaluateModel(m_Model, data);
 
     // history
-    item = new ResultItem(result, m_Model, m_Header);
-    history.addEntry(item.getName(), item);
+    result = new ResultItem(eval, m_Model, m_Header);
+    history.addEntry(result.getName(), result);
 
     return result;
   }
