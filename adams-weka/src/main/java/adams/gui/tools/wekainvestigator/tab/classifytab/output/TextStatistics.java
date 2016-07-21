@@ -18,12 +18,13 @@
  * Copyright (C) 2016 University of Waikato, Hamilton, NZ
  */
 
-package adams.gui.tools.wekainvestigator.tab.classifytab;
+package adams.gui.tools.wekainvestigator.tab.classifytab.output;
 
 import adams.core.Utils;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTextArea;
 import adams.gui.core.Fonts;
+import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
 
 /**
  * Generates basic text statistic.

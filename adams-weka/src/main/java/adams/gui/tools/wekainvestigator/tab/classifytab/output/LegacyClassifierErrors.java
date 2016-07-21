@@ -18,11 +18,12 @@
  * Copyright (C) 2016 University of Waikato, Hamilton, NZ
  */
 
-package adams.gui.tools.wekainvestigator.tab.classifytab;
+package adams.gui.tools.wekainvestigator.tab.classifytab.output;
 
 import adams.flow.core.Token;
 import adams.flow.sink.WekaClassifierErrors;
 import adams.gui.core.BaseScrollPane;
+import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
 
 import javax.swing.JPanel;
 

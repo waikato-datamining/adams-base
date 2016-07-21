@@ -27,12 +27,12 @@ import adams.gui.core.BaseSplitPane;
 import adams.gui.core.ConsolePanel;
 import adams.gui.goe.WekaGenericObjectEditorPanel;
 import adams.gui.tools.wekainvestigator.InvestigatorPanel;
-import adams.gui.tools.wekainvestigator.tab.classifytab.AbstractClassifierEvaluation;
-import adams.gui.tools.wekainvestigator.tab.classifytab.ClassifierErrors;
-import adams.gui.tools.wekainvestigator.tab.classifytab.LegacyClassifierErrors;
-import adams.gui.tools.wekainvestigator.tab.classifytab.ModelOutput;
+import adams.gui.tools.wekainvestigator.tab.classifytab.evaluation.AbstractClassifierEvaluation;
+import adams.gui.tools.wekainvestigator.tab.classifytab.output.ClassifierErrors;
+import adams.gui.tools.wekainvestigator.tab.classifytab.output.LegacyClassifierErrors;
+import adams.gui.tools.wekainvestigator.tab.classifytab.output.ModelOutput;
 import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
-import adams.gui.tools.wekainvestigator.tab.classifytab.TextStatistics;
+import adams.gui.tools.wekainvestigator.tab.classifytab.output.TextStatistics;
 import weka.classifiers.Classifier;
 import weka.classifiers.rules.ZeroR;
 

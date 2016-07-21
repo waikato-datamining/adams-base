@@ -14,35 +14,36 @@
  */
 
 /**
- * AbstractOutputGenerator.java
+ * ModelOutput.java
  * Copyright (C) 2016 University of Waikato, Hamilton, NZ
  */
 
-package adams.gui.tools.wekainvestigator.tab.classifytab;
+package adams.gui.tools.wekainvestigator.tab.classifytab.output;
 
-import adams.core.option.AbstractOptionHandler;
-
-import javax.swing.JComponent;
+import adams.gui.core.BaseScrollPane;
+import adams.gui.core.BaseTextArea;
+import adams.gui.core.Fonts;
+import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
 
 /**
- * Ancestor for output generators using t.
+ * Outputs the model if available.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public abstract class AbstractOutputGenerator
-  extends AbstractOptionHandler {
+public class ModelOutput
+  extends AbstractOutputGenerator {
 
-  private static final long serialVersionUID = -6176955975392722176L;
+  private static final long serialVersionUID = -6829245659118360739L;
 
   /**
-   * Adds the component as tab to the result item.
+   * Returns a string describing the object.
    *
-   * @param item	the result item to add to
-   * @param comp	the component to add
+   * @return 			a description suitable for displaying in the gui
    */
-  protected void addTab(ResultItem item, JComponent comp) {
-    item.getTabbedPane().addTab(getTitle(), comp);
+  @Override
+  public String globalInfo() {
+    return "Outputs the model if available.";
   }
 
   /**
@@ -50,7 +51,9 @@ public abstract class AbstractOutputGenerator
    *
    * @return		the title
    */
-  public abstract String getTitle();
+  public String getTitle() {
+    return "Model";
+  }
 
   /**
    * Generates output and adds it to the {@link ResultItem}.
@@ -58,5 +61,20 @@ public abstract class AbstractOutputGenerator
    * @param item	the item to add the output to
    * @return		null if output could be generated, otherwise error message
    */
-  public abstract String generateOutput(ResultItem item);
+  @Override
+  public String generateOutput(ResultItem item) {
+    BaseTextArea 	text;
+
+    if (!item.hasClassifier())
+      return "No model available!";
+
+
+    text = new BaseTextArea();
+    text.setTextFont(Fonts.getMonospacedFont());
+    text.setText(item.getClassifier().toString());
+    text.setCaretPosition(0);
+    addTab(item, new BaseScrollPane(text));
+
+    return null;
+  }
 }

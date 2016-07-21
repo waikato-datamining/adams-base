@@ -18,7 +18,7 @@
  * Copyright (C) 2016 University of Waikato, Hamilton, NZ
  */
 
-package adams.gui.tools.wekainvestigator.tab.classifytab;
+package adams.gui.tools.wekainvestigator.tab.classifytab.evaluation;
 
 import adams.core.ClassLister;
 import adams.core.Properties;
@@ -28,6 +28,7 @@ import adams.gui.core.AbstractNamedHistoryPanel;
 import adams.gui.tools.wekainvestigator.InvestigatorPanel;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
 import adams.gui.tools.wekainvestigator.tab.ClassifyTab;
+import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
 import weka.classifiers.Classifier;
 
 import javax.swing.ComboBoxModel;

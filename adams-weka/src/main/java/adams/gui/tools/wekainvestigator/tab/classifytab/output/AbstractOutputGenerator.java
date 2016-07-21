@@ -14,35 +14,36 @@
  */
 
 /**
- * ModelOutput.java
+ * AbstractOutputGenerator.java
  * Copyright (C) 2016 University of Waikato, Hamilton, NZ
  */
 
-package adams.gui.tools.wekainvestigator.tab.classifytab;
+package adams.gui.tools.wekainvestigator.tab.classifytab.output;
 
-import adams.gui.core.BaseScrollPane;
-import adams.gui.core.BaseTextArea;
-import adams.gui.core.Fonts;
+import adams.core.option.AbstractOptionHandler;
+import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
+
+import javax.swing.JComponent;
 
 /**
- * Outputs the model if available.
+ * Ancestor for output generators using t.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class ModelOutput
-  extends AbstractOutputGenerator {
+public abstract class AbstractOutputGenerator
+  extends AbstractOptionHandler {
 
-  private static final long serialVersionUID = -6829245659118360739L;
+  private static final long serialVersionUID = -6176955975392722176L;
 
   /**
-   * Returns a string describing the object.
+   * Adds the component as tab to the result item.
    *
-   * @return 			a description suitable for displaying in the gui
+   * @param item	the result item to add to
+   * @param comp	the component to add
    */
-  @Override
-  public String globalInfo() {
-    return "Outputs the model if available.";
+  protected void addTab(ResultItem item, JComponent comp) {
+    item.getTabbedPane().addTab(getTitle(), comp);
   }
 
   /**
@@ -50,9 +51,7 @@ public class ModelOutput
    *
    * @return		the title
    */
-  public String getTitle() {
-    return "Model";
-  }
+  public abstract String getTitle();
 
   /**
    * Generates output and adds it to the {@link ResultItem}.
@@ -60,20 +59,5 @@ public class ModelOutput
    * @param item	the item to add the output to
    * @return		null if output could be generated, otherwise error message
    */
-  @Override
-  public String generateOutput(ResultItem item) {
-    BaseTextArea 	text;
-
-    if (!item.hasClassifier())
-      return "No model available!";
-
-
-    text = new BaseTextArea();
-    text.setTextFont(Fonts.getMonospacedFont());
-    text.setText(item.getClassifier().toString());
-    text.setCaretPosition(0);
-    addTab(item, new BaseScrollPane(text));
-
-    return null;
-  }
+  public abstract String generateOutput(ResultItem item);
 }

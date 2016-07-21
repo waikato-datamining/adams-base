@@ -14,47 +14,46 @@
  */
 
 /**
- * CrossValidation.java
+ * TrainTestSplit.java
  * Copyright (C) 2016 University of Waikato, Hamilton, NZ
  */
 
-package adams.gui.tools.wekainvestigator.tab.classifytab;
+package adams.gui.tools.wekainvestigator.tab.classifytab.evaluation;
 
 import adams.core.Properties;
 import adams.core.Utils;
 import adams.core.option.OptionUtils;
+import adams.flow.container.WekaTrainTestSetContainer;
 import adams.gui.core.AbstractNamedHistoryPanel;
 import adams.gui.core.ParameterPanel;
 import adams.gui.tools.wekainvestigator.InvestigatorPanel;
+import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
+import weka.classifiers.RandomSplitGenerator;
 import weka.core.Capabilities;
 import weka.core.Instances;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.JSpinner;
 import javax.swing.JTextField;
-import javax.swing.SpinnerNumberModel;
-import javax.swing.event.ChangeEvent;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.util.List;
-import java.util.Random;
 
 /**
- * Performs cross-validation.
+ * Uses a (random) percentage split to generate train/test.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class CrossValidation
+public class TrainTestSplit
   extends AbstractClassifierEvaluation {
 
-  private static final long serialVersionUID = 1175400993991698944L;
+  private static final long serialVersionUID = -4460266467650893551L;
 
   /** the panel with the parameters. */
   protected ParameterPanel m_PanelParameters;
@@ -65,25 +64,25 @@ public class CrossValidation
   /** the datasets model. */
   protected DefaultComboBoxModel<String> m_ModelDatasets;
 
-  /** the number of folds. */
-  protected JSpinner m_SpinnerFolds;
+  /** the split percentage. */
+  protected JTextField m_TextPercentage;
+
+  /** whether to preserve the order. */
+  protected JCheckBox m_CheckBoxPreserveOrder;
 
   /** the seed value. */
   protected JTextField m_TextSeed;
-
-  /** whether to produce a final model. */
-  protected JCheckBox m_CheckBoxFinalModel;
 
   /**
    * Initializes the widgets.
    */
   @Override
   protected void initGUI() {
-    Properties 		props;
+    Properties	props;
 
     super.initGUI();
 
-    props = getProperties();
+    props = InvestigatorPanel.getProperties();
 
     m_PanelParameters = new ParameterPanel();
     m_PanelOptions.add(m_PanelParameters, BorderLayout.CENTER);
@@ -94,17 +93,34 @@ public class CrossValidation
     m_ComboBoxDatasets.addActionListener((ActionEvent e) -> update());
     m_PanelParameters.addParameter("Dataset", m_ComboBoxDatasets);
 
-    // folds
-    m_SpinnerFolds = new JSpinner();
-    ((SpinnerNumberModel) m_SpinnerFolds.getModel()).setMinimum(2);
-    ((SpinnerNumberModel) m_SpinnerFolds.getModel()).setStepSize(1);
-    m_SpinnerFolds.setValue(InvestigatorPanel.getProperties().getInteger("Classify.NumFolds", 10));
-    m_SpinnerFolds.setToolTipText("The number of folds to use (>= 2)");
-    m_SpinnerFolds.addChangeListener((ChangeEvent e) -> update());
-    m_PanelParameters.addParameter("Folds", m_SpinnerFolds);
+    // percentage
+    m_TextPercentage = new JTextField("" + props.getInteger("Classify.TrainPercentage", 1));
+    m_TextPercentage.setToolTipText("Percentage for train set (0 < x < 100)");
+    m_TextPercentage.getDocument().addDocumentListener(new DocumentListener() {
+      @Override
+      public void insertUpdate(DocumentEvent e) {
+	update();
+      }
+      @Override
+      public void removeUpdate(DocumentEvent e) {
+	update();
+      }
+      @Override
+      public void changedUpdate(DocumentEvent e) {
+	update();
+      }
+    });
+    m_PanelParameters.addParameter("Percentage", m_TextPercentage);
+
+    // preserve order?
+    m_CheckBoxPreserveOrder = new JCheckBox();
+    m_CheckBoxPreserveOrder.setSelected(props.getBoolean("Classify.PreserveOrder", false));
+    m_CheckBoxPreserveOrder.setToolTipText("No randomization is performed if checked");
+    m_CheckBoxPreserveOrder.addActionListener((ActionEvent e) -> update());
+    m_PanelParameters.addParameter("Preserve order", m_CheckBoxPreserveOrder);
 
     // seed
-    m_TextSeed = new JTextField("" + InvestigatorPanel.getProperties().getInteger("Classify.Seed", 1));
+    m_TextSeed = new JTextField("" + props.getInteger("Classify.Seed", 1));
     m_TextSeed.setToolTipText("The seed value for randomizing the data");
     m_TextSeed.getDocument().addDocumentListener(new DocumentListener() {
       @Override
@@ -121,13 +137,6 @@ public class CrossValidation
       }
     });
     m_PanelParameters.addParameter("Seed", m_TextSeed);
-
-    // final model?
-    m_CheckBoxFinalModel = new JCheckBox();
-    m_CheckBoxFinalModel.setSelected(props.getBoolean("Classify.CrossValidationFinalModel", true));
-    m_CheckBoxFinalModel.setToolTipText("Produce a final model using the full training data?");
-    m_CheckBoxFinalModel.addActionListener((ActionEvent e) -> update());
-    m_PanelParameters.addParameter("Final model", m_CheckBoxFinalModel);
   }
 
   /**
@@ -137,7 +146,7 @@ public class CrossValidation
    */
   @Override
   public String getName() {
-    return "Cross-validation";
+    return "Train/test split";
   }
 
   /**
@@ -147,13 +156,20 @@ public class CrossValidation
    */
   public String canEvaluate(Classifier classifier) {
     Instances		data;
-    Capabilities 	caps;
+    double		perc;
+    Capabilities	caps;
 
     if (m_ComboBoxDatasets.getSelectedIndex() == -1)
       return "No data available!";
 
     if (!Utils.isInteger(m_TextSeed.getText()))
       return "Seed value is not an integer!";
+
+    if (!Utils.isDouble(m_TextPercentage.getText()))
+      return "Percentage is not a number!";
+    perc = Utils.toDouble(m_TextPercentage.getText());
+    if ((perc <= 0) || (perc >= 100))
+      return "Percentage must satisfy 0 < x < 100!";
 
     data = getOwner().getData().get(m_ComboBoxDatasets.getSelectedIndex()).getData();
     caps = classifier.getCapabilities();
@@ -176,32 +192,33 @@ public class CrossValidation
    */
   @Override
   public ResultItem evaluate(Classifier classifier, AbstractNamedHistoryPanel<ResultItem> history) throws Exception {
-    ResultItem 	result;
-    Evaluation 	eval;
-    String	msg;
-    Instances	data;
-    boolean	finalModel;
-    Classifier	model;
+    ResultItem 			result;
+    Evaluation 			eval;
+    Instances			data;
+    Instances			train;
+    Instances			test;
+    RandomSplitGenerator	generator;
+    WekaTrainTestSetContainer	cont;
+    String			msg;
 
     if ((msg = canEvaluate(classifier)) != null)
       throw new IllegalArgumentException("Cannot evaluate classifier!\n" + msg);
 
-    data       = getOwner().getData().get(m_ComboBoxDatasets.getSelectedIndex()).getData();
-    finalModel = m_CheckBoxFinalModel.isSelected() ;
-    eval       = new Evaluation(data);
-    eval.crossValidateModel(
-      classifier, data, ((Number) m_SpinnerFolds.getValue()).intValue(),
-      new Random(Integer.parseInt(m_TextSeed.getText())));
-
-    // final model?
-    model = null;
-    if (finalModel) {
-      model = (Classifier) OptionUtils.shallowCopy(classifier);
-      model.buildClassifier(data);
-    }
+    data = getOwner().getData().get(m_ComboBoxDatasets.getSelectedIndex()).getData();
+    if (m_CheckBoxPreserveOrder.isSelected())
+      generator = new RandomSplitGenerator(data, Utils.toDouble(m_TextPercentage.getText()) / 100.0);
+    else
+      generator = new RandomSplitGenerator(data, Integer.parseInt(m_TextSeed.getText()), Utils.toDouble(m_TextPercentage.getText()) / 100.0);
+    cont  = generator.next();
+    train = (Instances) cont.getValue(WekaTrainTestSetContainer.VALUE_TRAIN);
+    test  = (Instances) cont.getValue(WekaTrainTestSetContainer.VALUE_TEST);
+    classifier = (Classifier) OptionUtils.shallowCopy(classifier);
+    classifier.buildClassifier(train);
+    eval = new Evaluation(train);
+    eval.evaluateModel(classifier, test);
 
     // history
-    return addToHistory(history, new ResultItem(eval, model, new Instances(data, 0)));
+    return addToHistory(history, new ResultItem(eval, classifier, new Instances(train, 0)));
   }
 
   /**
@@ -229,14 +246,5 @@ public class CrossValidation
     }
 
     getOwner().updateButtons();
-  }
-
-  /**
-   * Adds the result to the specified history list.
-   *
-   * @param history	the history to add the result to
-   */
-  public void addResult(AbstractNamedHistoryPanel<ResultItem> history) {
-
   }
 }
