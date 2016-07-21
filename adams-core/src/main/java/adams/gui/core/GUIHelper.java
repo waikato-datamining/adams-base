@@ -158,6 +158,9 @@ public class GUIHelper {
   /** the debugging level. */
   private final static Logger LOGGER = LoggingHelper.getConsoleLogger(GUIHelper.class);
 
+  /** whether anti-aliasing is enabled. */
+  public static boolean AntiAliasingEnabled = true;
+
   /**
    * Helper class that allows external callers to communicate with input
    * dialogs, enabling them to schedule closing of the dialog.
@@ -2345,7 +2348,7 @@ public class GUIHelper {
   public static List<Component> findAllComponents(Container parent, Class type, boolean recursive, boolean exact) {
     ArrayList<Component>	result;
     
-    result = new ArrayList<Component>();
+    result = new ArrayList<>();
     findComponents(parent, type, recursive, exact, result, false);
     
     return result;
@@ -2379,7 +2382,7 @@ public class GUIHelper {
    * @param enable	if true anti-aliasing gets enabled, otherwise disabled
    */
   public static void configureAntiAliasing(Graphics g, boolean enable) {
-    if (enable)
+    if (enable && AntiAliasingEnabled)
       ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
     else
       ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
