@@ -43,6 +43,10 @@ adams.flow.transformer.wekaclusterer.AbstractClustererPostProcessor=\
 adams.data.weka.classattribute.AbstractClassAttributeHeuristic=\
   adams.data.weka.classattribute
 
+# the data sources for the investigator
+adams.gui.tools.wekainvestigator.source.AbstractSource=\
+  adams.gui.tools.wekainvestigator.source
+
 # the tabs for the investigator
 adams.gui.tools.wekainvestigator.tab.AbstractInvestigatorTab=\
   adams.gui.tools.wekainvestigator.tab

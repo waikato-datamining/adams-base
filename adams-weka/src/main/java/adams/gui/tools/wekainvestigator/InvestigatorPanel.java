@@ -42,6 +42,7 @@ import adams.data.weka.classattribute.AbstractClassAttributeHeuristic;
 import adams.data.weka.classattribute.LastAttribute;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
 import adams.gui.tools.wekainvestigator.data.FileContainer;
+import adams.gui.tools.wekainvestigator.source.AbstractSource;
 import adams.gui.tools.wekainvestigator.tab.AbstractInvestigatorTab;
 import adams.gui.tools.wekainvestigator.tab.InvestigatorTabbedPane;
 import adams.gui.tools.wekainvestigator.tab.LogTab;
@@ -94,6 +95,9 @@ public class InvestigatorPanel
 
   /** the submenu for a new tab. */
   protected BaseMenu m_MenuFileNewTab;
+
+  /** the submenu for a sources. */
+  protected BaseMenu m_MenuFileSources;
 
   /** the action for closing a tab. */
   protected BaseAction m_ActionFileCloseTab;
@@ -265,6 +269,7 @@ public class InvestigatorPanel
     JMenuItem			menuitem;
     Class[]			classes;
     AbstractInvestigatorTab	tab;
+    AbstractSource		source;
 
     if (m_MenuBar == null) {
       result = new JMenuBar();
@@ -324,11 +329,23 @@ public class InvestigatorPanel
 	}
       });
 
-      // File/Open database
-      // TODO
-
-      // File/Generate
-      // TODO
+      // File/Sources
+      m_MenuFileSources = new BaseMenu("Sources");
+      m_MenuFileSources.setIcon(GUIHelper.getEmptyIcon());
+      menu.add(m_MenuFileSources);
+      classes = ClassLister.getSingleton().getClasses(AbstractSource.class);
+      for (final Class cls: classes) {
+	try {
+	  source   = (AbstractSource) cls.newInstance();
+	  source.setOwner(this);
+	  menuitem = new JMenuItem(source);
+	  m_MenuFileSources.add(menuitem);
+	}
+	catch (Exception e) {
+	  ConsolePanel.getSingleton().append("Failed to instantiate source class: " + cls.getName(), e);
+	}
+      }
+      m_MenuFileSources.sort();
 
       // File/Class attribute
       menu.add(m_ActionFileClassAttribute);
