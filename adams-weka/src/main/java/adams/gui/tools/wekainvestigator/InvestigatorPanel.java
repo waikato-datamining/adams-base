@@ -545,6 +545,15 @@ public class InvestigatorPanel
   }
 
   /**
+   * Returns the current class attribute heuristic.
+   *
+   * @return		the heuristic
+   */
+  public AbstractClassAttributeHeuristic getClassAttributeHeuristic() {
+    return m_ClassAttribute;
+  }
+
+  /**
    * Returns the properties that define the editor.
    *
    * @return		the properties

@@ -21,6 +21,7 @@
 package adams.gui.tools.wekainvestigator.data;
 
 import adams.core.io.PlaceholderFile;
+import adams.data.weka.classattribute.AbstractClassAttributeHeuristic;
 import weka.core.Instances;
 import weka.core.converters.AbstractFileLoader;
 import weka.core.converters.ConverterUtils.DataSource;
@@ -112,13 +113,20 @@ public class FileContainer
   /**
    * Reloads the data.
    *
+   * @param heuristic 	the heuristic for determining the class
    * @return		true if succesfully reloaded
    */
   @Override
-  protected boolean doReload() {
+  protected boolean doReload(AbstractClassAttributeHeuristic heuristic) {
+    int		index;
+
     try {
       m_Loader.setFile(m_Source.getAbsoluteFile());
       m_Data   = m_Loader.getDataSet();
+      if (m_Data.classIndex() == -1) {
+	index = heuristic.determineClassAttribute(m_Data);
+	m_Data.setClassIndex(index);
+      }
       return true;
     }
     catch (Exception e) {

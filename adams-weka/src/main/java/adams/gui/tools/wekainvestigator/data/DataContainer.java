@@ -20,6 +20,7 @@
 
 package adams.gui.tools.wekainvestigator.data;
 
+import adams.data.weka.classattribute.AbstractClassAttributeHeuristic;
 import weka.core.Instances;
 
 /**
@@ -54,9 +55,10 @@ public interface DataContainer {
   /**
    * Reloads the data.
    *
+   * @param heuristic 	the heuristic for determining the class
    * @return		true if succesfully reloaded
    */
-  public boolean reload();
+  public boolean reload(AbstractClassAttributeHeuristic heuristic);
 
   /**
    * Checks whether the data has been modified.
