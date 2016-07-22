@@ -21,14 +21,12 @@
 package adams.gui.tools.wekainvestigator.source;
 
 import adams.core.option.OptionUtils;
+import adams.gui.goe.GenericObjectEditorDialog;
+import adams.gui.goe.WekaGenericObjectEditorDialog;
 import adams.gui.tools.wekainvestigator.data.DataGeneratorContainer;
 import weka.datagenerators.classifiers.classification.LED24;
-import weka.gui.explorer.DataGeneratorPanel;
 
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import java.awt.BorderLayout;
-import java.awt.Dimension;
+import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
 
 /**
@@ -61,35 +59,30 @@ public class DataGenerator
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    final DataGeneratorPanel	generatorPanel;
-    final JDialog 		dialog;
-    final JButton 		generateButton;
+    WekaGenericObjectEditorDialog	dialog;
 
     if (m_Generator == null)
       m_Generator = new LED24();
 
-    generatorPanel = new DataGeneratorPanel();
-    dialog = new JDialog();
-    generateButton = new JButton("Generate");
-    generatorPanel.setGenerator(m_Generator);
-    generatorPanel.setPreferredSize(new Dimension(300,
-      (int) generatorPanel.getPreferredSize().getHeight()));
-    generateButton.setMnemonic('G');
-    generateButton.setToolTipText("Generates the dataset according the settings.");
-    generateButton.addActionListener((ActionEvent evt) -> {
-        generatorPanel.execute();
-        boolean generated = (generatorPanel.getInstances() != null);
-        if (generated) {
-	  m_Generator = generatorPanel.getGenerator();
-	  addData(new DataGeneratorContainer((weka.datagenerators.DataGenerator) OptionUtils.shallowCopy(m_Generator)));
-	}
-        dialog.dispose();
-    });
-    dialog.setTitle("DataGenerator");
-    dialog.getContentPane().add(generatorPanel, BorderLayout.CENTER);
-    dialog.getContentPane().add(generateButton, BorderLayout.EAST);
+    if (getOwner().getParentDialog() != null)
+      dialog = new WekaGenericObjectEditorDialog(getOwner().getParentDialog(), ModalityType.DOCUMENT_MODAL);
+    else
+      dialog = new WekaGenericObjectEditorDialog(getOwner().getParentFrame(), true);
+    dialog.setTitle("Data generator");
+    dialog.setEditor(new weka.gui.GenericObjectEditor(true));
+    dialog.getGOEEditor().setClassType(weka.datagenerators.DataGenerator.class);
+    dialog.setCurrent(m_Generator);
     dialog.pack();
     dialog.setLocationRelativeTo(getOwner());
     dialog.setVisible(true);
+    if (dialog.getResult() != GenericObjectEditorDialog.APPROVE_OPTION) {
+      dialog.dispose();
+      logMessage("Data generation cancelled!");
+      return;
+    }
+    m_Generator = (weka.datagenerators.DataGenerator) dialog.getCurrent();
+    dialog.dispose();
+
+    addData(new DataGeneratorContainer((weka.datagenerators.DataGenerator) OptionUtils.shallowCopy(m_Generator)));
   }
 }
