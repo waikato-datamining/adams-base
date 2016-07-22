@@ -61,6 +61,17 @@ public abstract class AbstractSource
   }
 
   /**
+   * Adds the data.
+   *
+   * @param cont	the data to add
+   */
+  public void addData(DataContainer cont) {
+    getOwner().updateClassAttribute(cont.getData());
+    getData().add(cont);
+    fireDataChange();
+  }
+
+  /**
    * Returns the currently loaded data.
    *
    * @return		the data

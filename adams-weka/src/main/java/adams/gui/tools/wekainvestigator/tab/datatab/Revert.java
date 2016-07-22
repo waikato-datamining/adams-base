@@ -57,7 +57,8 @@ public class Revert
     for (DataContainer cont: getSelectedData()) {
       if (cont.isModified() && cont.canReload()) {
         logMessage("Reverting dataset: " + cont.getData().relationName() + " [" + cont.getSourceFull() + "]");
-        if (cont.reload(getOwner().getOwner().getClassAttributeHeuristic())) {
+        if (cont.reload()) {
+	  getOwner().getOwner().updateClassAttribute(cont.getData());
 	  modified = true;
 	  logMessage("Successfully reverted!");
 	}

@@ -330,7 +330,7 @@ public class InvestigatorPanel
       });
 
       // File/Sources
-      m_MenuFileSources = new BaseMenu("Sources");
+      m_MenuFileSources = new BaseMenu("Other sources");
       m_MenuFileSources.setIcon(GUIHelper.getEmptyIcon());
       menu.add(m_MenuFileSources);
       classes = ClassLister.getSingleton().getClasses(AbstractSource.class);
@@ -473,7 +473,7 @@ public class InvestigatorPanel
    * @param data	the data to update
    * @return		the (potentially) updated data
    */
-  protected Instances updateClassAttribute(Instances data) {
+  public Instances updateClassAttribute(Instances data) {
     if (data.classIndex() == -1)
       data.setClassIndex(m_ClassAttribute.determineClassAttribute(data));
     return data;
@@ -559,15 +559,6 @@ public class InvestigatorPanel
    */
   public void showStatus(String msg) {
     m_StatusBar.showStatus(msg);
-  }
-
-  /**
-   * Returns the current class attribute heuristic.
-   *
-   * @return		the heuristic
-   */
-  public AbstractClassAttributeHeuristic getClassAttributeHeuristic() {
-    return m_ClassAttribute;
   }
 
   /**

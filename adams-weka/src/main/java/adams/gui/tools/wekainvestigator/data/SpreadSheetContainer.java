@@ -24,7 +24,6 @@ import adams.core.io.PlaceholderFile;
 import adams.data.conversion.SpreadSheetToWekaInstances;
 import adams.data.io.input.SpreadSheetReader;
 import adams.data.spreadsheet.SpreadSheet;
-import adams.data.weka.classattribute.AbstractClassAttributeHeuristic;
 import weka.core.Instances;
 
 import java.io.File;
@@ -119,12 +118,10 @@ public class SpreadSheetContainer
   /**
    * Reloads the data.
    *
-   * @param heuristic 	the heuristic for determining the class
-   * @return		true if succesfully reloaded
+   * @return		true if successfully reloaded
    */
   @Override
-  protected boolean doReload(AbstractClassAttributeHeuristic heuristic) {
-    int				index;
+  protected boolean doReload() {
     SpreadSheet 		sheet;
     SpreadSheetToWekaInstances 	conv;
     String			msg;
@@ -137,10 +134,6 @@ public class SpreadSheetContainer
       if (msg != null)
         throw new IllegalArgumentException("Failed to convert spreadsheet!\n" + msg);
       m_Data = (Instances) conv.getOutput();
-      if (m_Data.classIndex() == -1) {
-	index = heuristic.determineClassAttribute(m_Data);
-	m_Data.setClassIndex(index);
-      }
       return true;
     }
     catch (Exception e) {

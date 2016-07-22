@@ -21,7 +21,6 @@
 package adams.gui.tools.wekainvestigator.data;
 
 import adams.core.logging.LoggingObject;
-import adams.data.weka.classattribute.AbstractClassAttributeHeuristic;
 import weka.core.Instances;
 
 /**
@@ -102,25 +101,23 @@ public abstract class AbstractDataContainer
   /**
    * Reloads the data.
    *
-   * @param heuristic 	the heuristic for determining the class
-   * @return		true if succesfully reloaded
+   * @return		true if successfully reloaded
    */
-  protected abstract boolean doReload(AbstractClassAttributeHeuristic heuristic);
+  protected abstract boolean doReload();
 
   /**
    * Reloads the data.
    *
-   * @param heuristic 	the heuristic for determining the class
-   * @return		true if succesfully reloaded
+   * @return		true if successfully reloaded
    */
   @Override
-  public boolean reload(AbstractClassAttributeHeuristic heuristic) {
+  public boolean reload() {
     boolean	result;
 
     result = false;
 
     if (canReload()) {
-      result = doReload(heuristic);
+      result = doReload();
       if (result)
 	setModified(false);
     }

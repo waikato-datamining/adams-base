@@ -45,7 +45,7 @@ public class SpreadSheet
    */
   public SpreadSheet() {
     super();
-    setName("SpreadSheet");
+    setName("SpreadSheet...");
     setIcon("spreadsheet.png");
   }
 
@@ -59,7 +59,6 @@ public class SpreadSheet
     int					retVal;
     SpreadSheetReader			reader;
     adams.data.spreadsheet.SpreadSheet	sheet;
-    SpreadSheetContainer		cont;
 
     if (m_FileChooser == null)
       m_FileChooser = new SpreadSheetFileChooser();
@@ -75,8 +74,6 @@ public class SpreadSheet
       return;
     }
 
-    cont = new SpreadSheetContainer(reader, m_FileChooser.getSelectedFile());
-    getData().add(cont);
-    fireDataChange();
+    addData(new SpreadSheetContainer(reader, m_FileChooser.getSelectedFile()));
   }
 }
