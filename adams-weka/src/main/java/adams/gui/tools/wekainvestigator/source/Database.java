@@ -20,7 +20,6 @@
 
 package adams.gui.tools.wekainvestigator.source;
 
-import adams.gui.chooser.SpreadSheetFileChooser;
 import adams.gui.tools.wekainvestigator.data.DatabaseContainer;
 import weka.gui.sql.SqlViewerDialog;
 
@@ -37,9 +36,6 @@ public class Database
   extends AbstractSource {
 
   private static final long serialVersionUID = 5646388990155938153L;
-
-  /** the filechooser. */
-  protected SpreadSheetFileChooser m_FileChooser;
 
   /**
    * Instantiates the action.
