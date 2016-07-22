@@ -22,6 +22,7 @@ package adams.gui.tools.wekainvestigator.tab;
 
 import adams.core.logging.LoggingLevel;
 import adams.gui.core.ConsolePanel;
+import adams.gui.core.GUIHelper;
 import adams.gui.tools.wekainvestigator.tab.datatab.AbstractDataTabAction;
 import adams.gui.tools.wekainvestigator.tab.datatab.Export;
 import adams.gui.tools.wekainvestigator.viewer.ArffSortedTableModel;
@@ -89,7 +90,7 @@ public class DataTab
   protected void initGUI() {
     super.initGUI();
 
-    m_ButtonRemove = new JideButton("Remove");
+    m_ButtonRemove = new JideButton("Remove", GUIHelper.getIcon("delete.gif"));
     m_ButtonRemove.setButtonStyle(JideButton.TOOLBOX_STYLE);
     m_ButtonRemove.addActionListener((ActionEvent e) -> removeData(m_Table.getSelectedRows()));
     m_Table.addToButtonsPanel(m_ButtonRemove);
