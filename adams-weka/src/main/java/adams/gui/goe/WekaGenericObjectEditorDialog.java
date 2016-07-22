@@ -20,6 +20,12 @@
 
 package adams.gui.goe;
 
+import adams.env.Environment;
+import adams.gui.core.BaseDialog;
+import adams.gui.core.GUIHelper;
+import weka.gui.GenericObjectEditor.GOEPanel;
+
+import javax.swing.JFileChooser;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dialog;
@@ -27,13 +33,6 @@ import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyEditor;
-
-import javax.swing.JFileChooser;
-
-import weka.gui.GenericObjectEditor.GOEPanel;
-import adams.env.Environment;
-import adams.gui.core.BaseDialog;
-import adams.gui.core.GUIHelper;
 
 /**
  * Displays a GenericObjectEditor.
@@ -163,7 +162,7 @@ public class WekaGenericObjectEditorDialog
   protected void initialize() {
     super.initialize();
 
-    m_Editor  = new weka.gui.GenericObjectEditor();
+    m_Editor  = new weka.gui.GenericObjectEditor(true);
     m_Current = null;
   }
 
@@ -216,7 +215,7 @@ public class WekaGenericObjectEditorDialog
    * @return		true if editor is a GenericObjectEditor one
    */
   public boolean isGOEEditor() {
-    return (m_Editor instanceof GenericObjectEditor);
+    return (m_Editor instanceof weka.gui.GenericObjectEditor);
   }
 
   /**
@@ -224,9 +223,9 @@ public class WekaGenericObjectEditorDialog
    *
    * @return		the GOE editor in use, or null if other editor used
    */
-  public GenericObjectEditor getGOEEditor() {
-    if (m_Editor instanceof GenericObjectEditor)
-      return (GenericObjectEditor) m_Editor;
+  public weka.gui.GenericObjectEditor getGOEEditor() {
+    if (m_Editor instanceof weka.gui.GenericObjectEditor)
+      return (weka.gui.GenericObjectEditor) m_Editor;
     else
       return null;
   }
@@ -270,42 +269,6 @@ public class WekaGenericObjectEditorDialog
   }
 
   /**
-   * Sets the proposed classes based on the provided objects (in case the
-   * editor is a GenericObjectEditor).
-   *
-   * @param value	the proposed objects
-   * @see		#setProposedClasses(Class[])
-   */
-  public void setProposedClasses(Object[] value) {
-    if (getGOEEditor() != null)
-      getGOEEditor().setProposedClasses(value);
-  }
-
-  /**
-   * Sets the proposed classes (in case the editor is a GenericObjectEditor).
-   * This call needs to happen before calling setValue(Object).
-   *
-   * @param value	the proposed classes
-   */
-  public void setProposedClasses(Class[] value) {
-    if (getGOEEditor() != null)
-      getGOEEditor().setProposedClasses(value);
-  }
-
-  /**
-   * Returns the proposed classes (in case the editor is a GenericObjectEditor).
-   * This call needs to happen before calling setValue(Object).
-   *
-   * @return		the proposed classes
-   */
-  public Class[] getProposedClasses() {
-    if (getGOEEditor() != null)
-      return getGOEEditor().getProposedClasses();
-    else
-      return new Class[0];
-  }
-
-  /**
    * Returns whether the dialog got cancelled or approved.
    *
    * @return		the result
@@ -333,7 +296,7 @@ public class WekaGenericObjectEditorDialog
    * @param e		the event
    */
   public void actionPerformed(ActionEvent e) {
-    if (e.getActionCommand().equals(GenericObjectEditor.ACTION_CMD_OK)) {
+    if (e.getActionCommand().equalsIgnoreCase("OK")) {
       m_Current = m_Editor.getValue();
       m_Result  = APPROVE_OPTION;
       setVisible(false);
