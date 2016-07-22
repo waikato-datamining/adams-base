@@ -63,6 +63,7 @@ public class Rename
       return;
     }
     cont.getData().setRelationName(newName);
+    cont.setModified(true);
     fireDataChange();
   }
 
