@@ -76,7 +76,7 @@ fi
 
 REPO="$BASEDIR"/lib
 RESOURCES="$BASEDIR"/resources
-CLASSPATH=$CLASSPATH_PREFIX:"$REPO/java-cup-11b-2015.03.26.jar":"$RESOURCES":"$REPO/*"
+CLASSPATH="$REPO/java-cup-11b-2015.03.26.jar":"$RESOURCES":"$REPO/*"
 AGENT="$REPO/sizeofag-1.0.0.jar"
 
 # For Cygwin, switch paths to Windows format before running java
