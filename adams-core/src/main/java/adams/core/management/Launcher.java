@@ -408,7 +408,9 @@ public class Launcher {
     dirs   = new ArrayList<>();
 
     for (String part : cpath) {
-      file = new File(part);
+      if (part.trim().isEmpty())
+	continue;
+      file = new File(part.trim());
       if (!file.isDirectory()) {
 	path = file.getParentFile().getAbsolutePath();
 	if (!jars.containsKey(path))
