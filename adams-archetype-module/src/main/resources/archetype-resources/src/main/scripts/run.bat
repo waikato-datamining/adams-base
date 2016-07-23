@@ -16,7 +16,7 @@
 @REM
 
 @REM ----------------------------------------------------------------------------
-@REM Copyright (C) 2011-2015 University of Waikato, Hamilton, NZ
+@REM Copyright (C) 2011-2016 University of Waikato, Hamilton, NZ
 @REM ----------------------------------------------------------------------------
 
 @echo off
@@ -31,6 +31,7 @@ set MAIN=adams.gui.Main
 set JVM=
 set CPA=
 set OPTION=
+set COLLAPSE=-collapse
 set BASEDIR=%~dp0\..
 :Loop
   if "%~1"=="" goto AssembleCmd
@@ -62,6 +63,10 @@ set BASEDIR=%~dp0\..
     set OPTION=
     goto next
   )
+  if "%OPTION%"=="-nocollapse" (
+    set COLLAPSE=" "
+    goto next
+  )
   if "%OPTION%"=="-jvm" (
     set JVM=%JVM% -jvm %~1
     set OPTION=
@@ -86,14 +91,15 @@ if not "%JAVACMD%"=="" set JCMD=%JAVACMD%
 
 set REPO=%BASEDIR%\lib
 set RESOURCES=%BASEDIR%\resources
-set CLASSPATH="%REPO%\java-cup-11b-2015.03.26.jar";"%RESOURCES%";"%REPO%\*"
+set PRIORITY="-priority %REPO%\java-cup-11b-2015.03.26.jar"
+set CLASSPATH="%RESOURCES%";"%REPO%\*"
 set AGENT=%REPO%\sizeofag-1.0.0.jar
 goto endInit
 
 @REM Reaching here means variables are defined and arguments have been captured
 :endInit
 
-%JCMD% %JAVA_OPTS% -classpath %CLASSPATH_PREFIX%;%CLASSPATH% -Dbasedir="%BASEDIR%" adams.core.management.Launcher -memory %MEMORY% -javaagent %AGENT% %JVM% %CPA% -main %MAIN% -doc-dir "%BASEDIR%\docs" %CMD_LINE_ARGS%
+%JCMD% %JAVA_OPTS% -classpath %CLASSPATH_PREFIX%;%CLASSPATH% -Dbasedir="%BASEDIR%" adams.core.management.Launcher -memory %MEMORY% -javaagent %AGENT% %JVM% %CPA% %PRIORITY% %COLLAPSE% -main %MAIN% -doc-dir "%BASEDIR%\docs" %CMD_LINE_ARGS%
 if ERRORLEVEL 1 goto error
 goto end
 

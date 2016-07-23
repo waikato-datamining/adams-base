@@ -18,7 +18,7 @@
 #   Copyright (c) 2001-2002 The Apache Software Foundation.  All rights
 #   reserved.
 
-#   Copyright (C) 2011-2015 University of Waikato, Hamilton, NZ
+#   Copyright (C) 2011-2016 University of Waikato, Hamilton, NZ
 
 BASEDIR=`dirname $0`/..
 BASEDIR=`(cd "$BASEDIR"; pwd)`
@@ -76,7 +76,7 @@ fi
 
 REPO="$BASEDIR"/lib
 RESOURCES="$BASEDIR"/resources
-CLASSPATH="$REPO/java-cup-11b-2015.03.26.jar":"$RESOURCES":"$REPO/*"
+CLASSPATH="$RESOURCES":"$REPO/*"
 AGENT="$REPO/sizeofag-1.0.0.jar"
 
 # For Cygwin, switch paths to Windows format before running java
@@ -96,9 +96,11 @@ JVM=
 CPA=
 ARGS=
 OPTION=
+PRIORITY="-priority $REPO/java-cup-11b-2015.03.26.jar"
+COLLAPSE="-collapse"
 for ARG in "$@"
 do
-  if [ "$ARG" = "-memory" ] || [ "$ARG" = "-main" ] || [ "$ARG" = "-jvm" ] || [ "$ARG" = "-cpa" ]
+  if [ "$ARG" = "-memory" ] || [ "$ARG" = "-main" ] || [ "$ARG" = "-jvm" ] || [ "$ARG" = "-cpa" ] || [ "$ARG" = "-priority" ]
   then
   	OPTION=$ARG
   	continue
@@ -114,6 +116,10 @@ do
     MAIN=$ARG
     OPTION=""
     continue
+  elif [ "$OPTION" = "-nocollapse" ]
+  then
+    COLLAPSE=""
+    continue
   elif [ "$OPTION" = "-jvm" ]
   then
     JVM="$JVM -jvm \"$ARG\""
@@ -122,6 +128,11 @@ do
   elif [ "$OPTION" = "-cpa" ]
   then
     CPA="-cpa \"$ARG\""
+    OPTION=""
+    continue
+  elif [ "$OPTION" = "-priority" ]
+  then
+    CPA="-priority \"$ARG\""
     OPTION=""
     continue
   fi
@@ -138,6 +149,8 @@ done
   -javaagent "$AGENT" \
   $JVM \
   $CPA \
+  $PRIORITY \
+  $COLLAPSE \
   -main $MAIN \
   -doc-dir "$BASEDIR/docs" \
   $ARGS
