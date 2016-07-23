@@ -15,7 +15,7 @@
 
 /**
  * Launcher.java
- * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.management;
 
@@ -28,10 +28,11 @@ import adams.gui.core.GUIHelper;
 
 import java.awt.GraphicsEnvironment;
 import java.io.File;
-import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Launches a new JVM process with the specified memory
@@ -83,6 +84,12 @@ public class Launcher {
   /** optional classpath augmentations. */
   protected List<String> m_ClassPathAugmentations;
 
+  /** optional priority jars. */
+  protected List<String> m_PriorityJars;
+
+  /** whether to collapse the classpath. */
+  protected boolean m_CollapseClassPath;
+
   /** the arguments for the process. */
   protected String[] m_Arguments;
 
@@ -101,7 +108,7 @@ public class Launcher {
   /** whether to suppress error dialog. */
   protected boolean m_SuppressErrorDialog;
 
-  /* the output printer to use. */
+  /** the output printer to use. */
   protected Class m_OutputPrinter;
 
   /** for stdout. */
@@ -122,10 +129,12 @@ public class Launcher {
     m_Memory                   = "";
     m_MainClass                = "";
     m_JavaAgentJar             = "";
-    m_JVMOptions               = new ArrayList<String>();
+    m_JVMOptions               = new ArrayList<>();
     m_Arguments                = new String[0];
     m_Runtime                  = Runtime.getRuntime();
-    m_ClassPathAugmentations   = new ArrayList<String>();
+    m_ClassPathAugmentations   = new ArrayList<>();
+    m_PriorityJars             = new ArrayList<>();
+    m_CollapseClassPath        = false;
     m_DebugLevel               = 0;
     m_IgnoreEnvironmentOptions = false;
     m_SuppressErrorDialog      = false;
@@ -284,6 +293,15 @@ public class Launcher {
   }
 
   /**
+   * Adds the priority jar.
+   *
+   * @param value	the option
+   */
+  public void addPriorityJar(String value) {
+    m_PriorityJars.add(value);
+  }
+
+  /**
    * Adds the augmentations that the classpath augmenter returns.
    *
    * @param augmenter	the classname+options of the augmenter
@@ -291,6 +309,16 @@ public class Launcher {
    */
   public void addClassPathAugmentations(ClassPathAugmenter augmenter) {
     m_ClassPathAugmentations.addAll(Arrays.asList(augmenter.getClassPathAugmentation()));
+  }
+
+  /**
+   * Sets whether to collapse the classpath (using '*' below dirs instead of
+   * explicit jar names).
+   *
+   * @param value	true if to collapse
+   */
+  public void collapseClassPath(boolean value) {
+    m_CollapseClassPath = value;
   }
 
   /**
@@ -367,6 +395,37 @@ public class Launcher {
   public void setConsoleObject(LoggingObject owner) {
     m_ConsoleObject = owner;
   }
+
+  protected List<String> collapseClassPath(List<String> cpath) {
+    List<String>		result;
+    Map<String,List<String>> 	jars;
+    List<String>		dirs;
+    File			file;
+    String			path;
+
+    result = new ArrayList<>();
+    jars   = new HashMap<>();
+    dirs   = new ArrayList<>();
+
+    for (String part : cpath) {
+      file = new File(part);
+      if (!file.isDirectory()) {
+	path = file.getParentFile().getAbsolutePath();
+	if (!jars.containsKey(path))
+	  jars.put(path, new ArrayList<>());
+	jars.get(path).add(file.getName());
+      }
+      else {
+	dirs.add(part);
+      }
+    }
+
+    result.addAll(dirs);
+    for (String part: jars.keySet())
+      result.add(part + File.separator + "*");
+
+    return result;
+  }
   
   /**
    * Assembles the classpath.
@@ -374,15 +433,17 @@ public class Launcher {
    * @return		the full classpath
    */
   protected String getClassPath() {
-    StringBuilder	result;
+    String		result;
+    List<String>	cpath;
     String		sep;
     String		os;
     File		file;
     String[]		parts;
     String[]		jars;
+    int			i;
 
-    result = new StringBuilder(System.getProperty("java.class.path"));
-    sep    = System.getProperty("path.separator");
+    cpath = new ArrayList<>();
+    sep   = System.getProperty("path.separator");
 
     // add platform-specific path (if available)
     if (OS.isMac())
@@ -393,6 +454,7 @@ public class Launcher {
       os = "linux";
     os += OS.getBitness();
     parts = System.getProperty("java.class.path").split(sep);
+    cpath.addAll(Arrays.asList(parts));
     for (String part: parts) {
       // platform specific sub-directory present?
       file = new File(part);
@@ -400,29 +462,32 @@ public class Launcher {
 	file = file.getParentFile();
       file = new File(file.getAbsolutePath() + File.separator + os);
       if (file.exists() && file.isDirectory()) {
-	jars = file.list(new FilenameFilter() {
-	  @Override
-	  public boolean accept(File dir, String name) {
-	    return name.endsWith(".jar");
-	  }
+	jars = file.list((File dir, String name) -> {
+	  return name.endsWith(".jar");
 	});
 	for (String jar: jars) {
-	  if (result.length() > 0)
-	    result.append(sep);
-	  result.append(file.getAbsolutePath() + File.separator + jar);
+	  cpath.add(file.getAbsolutePath() + File.separator + jar);
 	}
 	break;
       }
     }
 
     // add augmentations
-    for (String augmentation: m_ClassPathAugmentations) {
-      if (result.length() > 0)
-	result.append(sep);
-      result.append(augmentation);
-    }
+    for (String augmentation: m_ClassPathAugmentations)
+      cpath.add(augmentation);
 
-    return result.toString();
+    // collapse?
+    if (m_CollapseClassPath)
+      cpath = collapseClassPath(cpath);
+
+    for (i = 0; i < m_PriorityJars.size(); i++)
+      cpath.add(i, m_PriorityJars.get(i));
+
+    result = Utils.flatten(cpath, sep);
+    if (m_DebugLevel > 1)
+      System.err.println("Classpath:\n" + result);
+
+    return result;
   }
 
   /**
@@ -469,7 +534,7 @@ public class Launcher {
       e.printStackTrace();
     }
 
-    cmd = new ArrayList<String>();
+    cmd = new ArrayList<>();
     cmd.add(Java.getJavaExecutable());
     cmd.add("-Xmx" + m_Memory);
     cmd.addAll(m_JVMOptions);
@@ -580,12 +645,15 @@ public class Launcher {
 
     result = null;
 
-    options = new ArrayList<String>(Arrays.asList(args));
+    options = new ArrayList<>(Arrays.asList(args));
 
     // debug
     value = OptionUtils.removeOption(options, "-debug");
     if (value != null)
       result = launcher.setDebugLevel(value);
+
+    // collapse
+    launcher.collapseClassPath(OptionUtils.removeFlag(options, "-collapse"));
 
     // memory
     value = OptionUtils.removeOption(options, "-memory");
@@ -620,6 +688,12 @@ public class Launcher {
     if (result == null) {
       while ((value = OptionUtils.removeOption(options, "-cpa")) != null)
 	launcher.addClassPathAugmentations(value);
+    }
+
+    // priority jars
+    if (result == null) {
+      while ((value = OptionUtils.removeOption(options, "-priority")) != null)
+	launcher.addPriorityJar(value);
     }
 
     if (result == null)
@@ -658,6 +732,11 @@ public class Launcher {
       System.out.println("[-cpa <classname>]");
       System.out.println("\tOptional classpath augmenters (classname + options).");
       System.out.println("\tExample: -cpa adams.core.management.SystemClassPathAugmenter");
+      System.out.println("[-priority <jar>]");
+      System.out.println("\tOptional jar (with path) that should be added at start of classpath.");
+      System.out.println("\tExample: -priority ./lib/activation-1.1.jar");
+      System.out.println("[-collapse");
+      System.out.println("\tOptional directive to collapse the classpath, using '*' below a directory.");
       System.out.println("-...");
       System.out.println("\tAny other option will get passed on to the main class.");
       return;
