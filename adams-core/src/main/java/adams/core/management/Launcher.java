@@ -87,6 +87,9 @@ public class Launcher {
   /** optional priority jars. */
   protected List<String> m_PriorityJars;
 
+  /** optional environment variables. */
+  protected List<String> m_EnvVars;
+
   /** whether to collapse the classpath. */
   protected boolean m_CollapseClassPath;
 
@@ -134,6 +137,9 @@ public class Launcher {
     m_Runtime                  = Runtime.getRuntime();
     m_ClassPathAugmentations   = new ArrayList<>();
     m_PriorityJars             = new ArrayList<>();
+    m_EnvVars                  = new ArrayList<>();
+    for (String key: System.getenv().keySet())
+      m_EnvVars.add(key + "=" + System.getenv(key));
     m_CollapseClassPath        = false;
     m_DebugLevel               = 0;
     m_IgnoreEnvironmentOptions = false;
@@ -299,6 +305,17 @@ public class Launcher {
    */
   public void addPriorityJar(String value) {
     m_PriorityJars.add(value);
+  }
+
+  /**
+   * Adds the environmental variable key-value pair (key=value).
+   *
+   * @param value	the option
+   */
+  public void addEnvVar(String value) {
+    if (value.startsWith("\"") && value.endsWith("\""))
+      value = value.substring(1, value.length() - 1);
+    m_EnvVars.add(value);
   }
 
   /**
@@ -564,8 +581,11 @@ public class Launcher {
     try {
       if (m_DebugLevel > 1)
 	System.out.println("Generated command-line: " + Utils.flatten(cmd, " "));
-      
-      m_Process = m_Runtime.exec(cmd.toArray(new String[cmd.size()]), null, new File(System.getProperty("basedir", ".")));
+
+      m_Process = m_Runtime.exec(
+	cmd.toArray(new String[cmd.size()]),
+	m_EnvVars.toArray(new String[m_EnvVars.size()]),
+	new File(System.getProperty("basedir", ".")));
       m_StdOut  = new OutputProcessStream(m_Process, m_OutputPrinter, true);
       m_StdErr  = new OutputProcessStream(m_Process, m_OutputPrinter, false);
       if (m_ConsoleObject != null) {
@@ -638,7 +658,7 @@ public class Launcher {
    * Configures the launcher.
    *
    * @param args	the commandline arguments to use for launching
-   * @param launcher
+   * @param launcher	the launcher to configure
    */
   protected static String configure(String[] args, Launcher launcher) {
     String		result;
@@ -698,6 +718,12 @@ public class Launcher {
 	launcher.addPriorityJar(value);
     }
 
+    // environment variable
+    if (result == null) {
+      while ((value = OptionUtils.removeOption(options, "-env")) != null)
+	launcher.addEnvVar(value);
+    }
+
     if (result == null)
       result = launcher.setArguments(options.toArray(new String[options.size()]));
 
@@ -737,6 +763,9 @@ public class Launcher {
       System.out.println("[-priority <jar>]");
       System.out.println("\tOptional jar (with path) that should be added at start of classpath.");
       System.out.println("\tExample: -priority ./lib/activation-1.1.jar");
+      System.out.println("[-env <jar>]");
+      System.out.println("\tOptional environment variable key-value pair.");
+      System.out.println("\tExample: -key weka.packageManager.loadPackages=false");
       System.out.println("[-collapse");
       System.out.println("\tOptional directive to collapse the classpath, using '*' below a directory.");
       System.out.println("-...");
