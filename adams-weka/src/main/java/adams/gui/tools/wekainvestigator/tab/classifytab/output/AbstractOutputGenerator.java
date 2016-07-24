@@ -21,6 +21,8 @@
 package adams.gui.tools.wekainvestigator.tab.classifytab.output;
 
 import adams.core.option.AbstractOptionHandler;
+import adams.gui.core.ButtonTabComponent;
+import adams.gui.core.GUIHelper;
 import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
 
 import javax.swing.JComponent;
@@ -43,7 +45,11 @@ public abstract class AbstractOutputGenerator
    * @param comp	the component to add
    */
   protected void addTab(ResultItem item, JComponent comp) {
+    ButtonTabComponent  button;
+
     item.getTabbedPane().addTab(getTitle(), comp);
+    button = (ButtonTabComponent) item.getTabbedPane().getTabComponentAt(item.getTabbedPane().getTabCount() - 1);
+    button.setIcon(GUIHelper.getIcon("menu.gif"));
   }
 
   /**
