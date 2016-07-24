@@ -31,6 +31,8 @@ set MAIN=adams.gui.Main
 set JVM=
 set CPA=
 set OPTION=
+set ENVVARS=
+set PRIORITY="-priority %REPO%\java-cup-11b-2015.03.26.jar"
 set COLLAPSE=-collapse
 set BASEDIR=%~dp0\..
 :Loop
@@ -49,6 +51,14 @@ set BASEDIR=%~dp0\..
     goto next
   )
   if "%~1"=="-cpa" (
+    set OPTION=%~1
+    goto next
+  )
+  if "%~1"=="-priority" (
+    set OPTION=%~1
+    goto next
+  )
+  if "%~1"=="-env" (
     set OPTION=%~1
     goto next
   )
@@ -73,7 +83,17 @@ set BASEDIR=%~dp0\..
     goto next
   )
   if "%OPTION%"=="-cpa" (
-    set CPA=-cpa %~1
+    set CPA=%CPA% -cpa %~1
+    set OPTION=
+    goto next
+  )
+  if "%OPTION%"=="-priority" (
+    set PRIORITY=%PRIORITY% -priority %~1
+    set OPTION=
+    goto next
+  )
+  if "%OPTION%"=="-env" (
+    set ENVVARS=%ENVVARS% -env %~1
     set OPTION=
     goto next
   )
@@ -91,7 +111,6 @@ if not "%JAVACMD%"=="" set JCMD=%JAVACMD%
 
 set REPO=%BASEDIR%\lib
 set RESOURCES=%BASEDIR%\resources
-set PRIORITY="-priority %REPO%\java-cup-11b-2015.03.26.jar"
 set CLASSPATH="%RESOURCES%";"%REPO%\*"
 set AGENT=%REPO%\sizeofag-1.0.0.jar
 goto endInit
@@ -99,7 +118,7 @@ goto endInit
 @REM Reaching here means variables are defined and arguments have been captured
 :endInit
 
-%JCMD% %JAVA_OPTS% -classpath %CLASSPATH_PREFIX%;%CLASSPATH% -Dbasedir="%BASEDIR%" adams.core.management.Launcher -memory %MEMORY% -javaagent %AGENT% %JVM% %CPA% %PRIORITY% %COLLAPSE% -main %MAIN% -doc-dir "%BASEDIR%\docs" %CMD_LINE_ARGS%
+%JCMD% %JAVA_OPTS% -classpath %CLASSPATH_PREFIX%;%CLASSPATH% -Dbasedir="%BASEDIR%" adams.core.management.Launcher -memory %MEMORY% -javaagent %AGENT% %JVM% %CPA% %PRIORITY% %ENVVARS% %COLLAPSE% -main %MAIN% -doc-dir "%BASEDIR%\docs" %CMD_LINE_ARGS%
 if ERRORLEVEL 1 goto error
 goto end
 

@@ -94,13 +94,14 @@ MEMORY=512m
 MAIN=adams.gui.Main
 JVM=
 CPA=
+ENVVARS=
 ARGS=
 OPTION=
 PRIORITY="-priority $REPO/java-cup-11b-2015.03.26.jar"
 COLLAPSE="-collapse"
 for ARG in "$@"
 do
-  if [ "$ARG" = "-memory" ] || [ "$ARG" = "-main" ] || [ "$ARG" = "-jvm" ] || [ "$ARG" = "-cpa" ] || [ "$ARG" = "-priority" ]
+  if [ "$ARG" = "-memory" ] || [ "$ARG" = "-main" ] || [ "$ARG" = "-jvm" ] || [ "$ARG" = "-cpa" ] || [ "$ARG" = "-priority" ] || [ "$ARG" = "-env" ]
   then
   	OPTION=$ARG
   	continue
@@ -132,7 +133,12 @@ do
     continue
   elif [ "$OPTION" = "-priority" ]
   then
-    CPA="-priority \"$ARG\""
+    PRIORITY="-priority \"$ARG\""
+    OPTION=""
+    continue
+  elif [ "$OPTION" = "-env" ]
+  then
+    ENVVARS="-env \"$ARG\""
     OPTION=""
     continue
   fi
@@ -150,6 +156,7 @@ done
   $JVM \
   $CPA \
   $PRIORITY \
+  $ENVVARS \
   $COLLAPSE \
   -main $MAIN \
   -doc-dir "$BASEDIR/docs" \
