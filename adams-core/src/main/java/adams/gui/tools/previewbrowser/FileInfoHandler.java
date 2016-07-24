@@ -19,6 +19,7 @@
  */
 package adams.gui.tools.previewbrowser;
 
+import adams.core.ByteFormat;
 import adams.core.DateUtils;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
@@ -91,12 +92,12 @@ public class FileInfoHandler
     data   = new Object[][]{
       {"Name", file.getName()},
       {"Path", file.getParent()},
-      {"Size", new DecimalFormat("###,###").format(file.length()) + " bytes"},
+      {"Size", ByteFormat.toBestFitBytes(file.length(), 1) + " (" + new DecimalFormat("###,###").format(file.length()) + " bytes)"},
       {"Hidden", file.isHidden()},
       {"Executable", file.canExecute()},
       {"Readable", file.canRead()},
       {"Writeable", file.canWrite()},
-      {"Last modified", DateUtils.getTimestampFormatterMsecs().format(new Date(file.lastModified()))},
+      {"Last modified", DateUtils.getTimestampFormatter().format(new Date(file.lastModified()))},
     };
     model  = new KeyValuePairTableModel(data);
     table  = new SortableAndSearchableTable(model);
