@@ -14,50 +14,44 @@
  */
 
 /**
- * AbstractOutputGenerator.java
+ * OutputTabbedPane.java
  * Copyright (C) 2016 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab.classifytab.output;
 
-import adams.core.option.AbstractOptionHandler;
-import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
+import adams.gui.core.ButtonTabComponent;
+import adams.gui.core.DragAndDropTabbedPane;
+import adams.gui.core.GUIHelper;
 
 import javax.swing.JComponent;
 
 /**
- * Ancestor for output generators using t.
+ * Tabbed pane for the output generators.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public abstract class AbstractOutputGenerator
-  extends AbstractOptionHandler {
+public class OutputTabbedPane
+  extends DragAndDropTabbedPane {
 
-  private static final long serialVersionUID = -6176955975392722176L;
+  private static final long serialVersionUID = -7694010290845155428L;
 
   /**
    * Adds the component as tab to the result item.
    *
-   * @param item	the result item to add to
+   * @param title	the title of the tab
    * @param comp	the component to add
+   * @return		the index of the new tab
    */
-  protected void addTab(ResultItem item, JComponent comp) {
-    item.getTabbedPane().newTab(getTitle(), comp);
+  public int newTab(String title, JComponent comp) {
+    ButtonTabComponent button;
+
+    addTab(title, comp);
+    button = (ButtonTabComponent) getTabComponentAt(getTabCount() - 1);
+    button.setIcon(GUIHelper.getIcon("menu.gif"));
+
+    return getTabCount() - 1;
   }
 
-  /**
-   * The title to use for the tab.
-   *
-   * @return		the title
-   */
-  public abstract String getTitle();
-
-  /**
-   * Generates output and adds it to the {@link ResultItem}.
-   *
-   * @param item	the item to add the output to
-   * @return		null if output could be generated, otherwise error message
-   */
-  public abstract String generateOutput(ResultItem item);
 }
