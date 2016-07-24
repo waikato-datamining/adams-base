@@ -579,8 +579,10 @@ public class Launcher {
     }
 
     try {
-      if (m_DebugLevel > 1)
-	System.out.println("Generated command-line: " + Utils.flatten(cmd, " "));
+      if (m_DebugLevel > 1) {
+	System.out.println("\nGenerated command-line:\n" + Utils.flatten(cmd, "\n"));
+	System.out.println("\nEnvironment variables:\n" + Utils.flatten(m_EnvVars, "\n"));
+      }
 
       m_Process = m_Runtime.exec(
 	cmd.toArray(new String[cmd.size()]),
@@ -665,14 +667,12 @@ public class Launcher {
     String		value;
     List<String>	options;
 
-    result = null;
-
     options = new ArrayList<>(Arrays.asList(args));
 
     // debug
     value = OptionUtils.removeOption(options, "-debug");
     if (value != null)
-      result = launcher.setDebugLevel(value);
+      launcher.setDebugLevel(value);
 
     // collapse
     launcher.collapseClassPath(OptionUtils.removeFlag(options, "-collapse"));
@@ -738,6 +738,7 @@ public class Launcher {
   public static void main(String[] args) throws Exception {
     Launcher 	launcher;
     String 	error;
+    String	debug;
 
     if (OptionUtils.helpRequested(args)) {
       System.out.println("Options:");
@@ -756,15 +757,19 @@ public class Launcher {
       System.out.println("\tExample: -javaagent /some/where/sizeofag-1.0.0.jar).");
       System.out.println("[-jvm <option>]");
       System.out.println("\tOptional arguments for the JVM.");
+      System.out.println("\tCan be supplied multiple times.");
       System.out.println("\tExample: -jvm -javaagent:sizeofag.jar");
       System.out.println("[-cpa <classname>]");
       System.out.println("\tOptional classpath augmenters (classname + options).");
+      System.out.println("\tCan be supplied multiple times.");
       System.out.println("\tExample: -cpa adams.core.management.SystemClassPathAugmenter");
       System.out.println("[-priority <jar>]");
       System.out.println("\tOptional jar (with path) that should be added at start of classpath.");
+      System.out.println("\tCan be supplied multiple times.");
       System.out.println("\tExample: -priority ./lib/activation-1.1.jar");
       System.out.println("[-env <jar>]");
       System.out.println("\tOptional environment variable key-value pair.");
+      System.out.println("\tCan be supplied multiple times.");
       System.out.println("\tExample: -key weka.packageManager.loadPackages=false");
       System.out.println("[-collapse");
       System.out.println("\tOptional directive to collapse the classpath, using '*' below a directory.");
@@ -772,6 +777,11 @@ public class Launcher {
       System.out.println("\tAny other option will get passed on to the main class.");
       return;
     }
+
+    // output commandline options
+    debug = OptionUtils.getOption(args, "-debug");
+    if ((debug != null) && Utils.isInteger(debug) && (Integer.parseInt(debug) > 1))
+      System.out.println(Utils.flatten(args, "\n"));
 
     Environment.setEnvironmentClass(Environment.class);
     launcher = new Launcher();
