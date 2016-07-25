@@ -23,7 +23,6 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 /**
  * Sets the zoom level of the flow.
@@ -93,11 +92,9 @@ public class ViewZoom
       final int zoom = zooms[i];
       menuitem = new JMenuItem(zoom + "%");
       menuitem.setAccelerator(KeyStroke.getKeyStroke(shortcuts[i]));
-      menuitem.addActionListener(new ActionListener() {
-	@Override
-	public void actionPerformed(ActionEvent e) {
+      menuitem.addActionListener((ActionEvent e) -> {
+	if (m_State.hasCurrentPanel())
 	  m_State.getCurrentPanel().setZoom(zoom / 100.0);
-	}
       });
       result.add(menuitem);
     }

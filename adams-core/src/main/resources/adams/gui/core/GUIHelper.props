@@ -78,6 +78,10 @@ ScreenBorder.Left=0
 ScreenBorder.Bottom=50
 ScreenBorder.Right=0
 
+# The scale factor for higher resolution displays
+# (1.0 = 100%)
+DisplayScaleFactor=1.0
+
 # Dimensions and location
 # - pack the window
 # <classname of component>.pack=true|false

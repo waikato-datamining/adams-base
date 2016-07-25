@@ -15,7 +15,7 @@
 
 /*
  * Fonts.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
@@ -123,7 +123,12 @@ public class Fonts {
    * @return		the default font
    */
   public static Font getDefaultFont(String key) {
-    return (Font) UIManager.get(key + ".font");
+    Font	result;
+
+    result = (Font) UIManager.get(key + ".font");
+    result = result.deriveFont((float) GUIHelper.scale(result.getSize()));
+
+    return result;
   }
 
   /**
@@ -136,9 +141,14 @@ public class Fonts {
    * @return		the value
    */
   public static Font getFont(String key, Font defValue) {
+    Font	result;
+
     initializeProperties();
 
-    return m_Properties.getFont(key, defValue);
+    result = m_Properties.getFont(key, defValue);
+    result = result.deriveFont((float) GUIHelper.scale(result.getSize()));
+
+    return result;
   }
 
   /**
@@ -147,7 +157,7 @@ public class Fonts {
    * @return		the font
    */
   public static Font getMonospacedFont() {
-    return getFont("Monospaced", new Font("monospaced", Font.PLAIN, 12));
+    return getFont("Monospaced", new Font("monospaced", Font.PLAIN, GUIHelper.scale(12)));
   }
 
   /**
@@ -166,7 +176,7 @@ public class Fonts {
    * @return		the font
    */
   public static Font getSansFont() {
-    return getFont("Sans", new Font("helvetiva", Font.PLAIN, 12));
+    return getFont("Sans", new Font("helvetiva", Font.PLAIN, GUIHelper.scale(12)));
   }
 
   /**
@@ -176,7 +186,7 @@ public class Fonts {
    * @return		the font
    */
   public static Font getSansFont(int size) {
-    return getSansFont().deriveFont(size);
+    return getSansFont().deriveFont((float) GUIHelper.scale(size));
   }
 
   /**

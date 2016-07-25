@@ -67,7 +67,6 @@ import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -102,6 +101,9 @@ public class GUIHelper {
   /** the mnemonic character indicator. */
   public final static char MNEMONIC_INDICATOR = '_';
 
+  /** the allowed mnemonics. */
+  public final static String ALLOWED_MNEMONICS = "abdefghijklnpqrstuvwxyz0123456789";
+
   /** the approve option. */
   public final static int APPROVE_OPTION = ApprovalDialog.APPROVE_OPTION;
 
@@ -113,38 +115,6 @@ public class GUIHelper {
 
   /** the properties. */
   protected static Properties m_Properties;
-
-  /** the supported font settings. */
-  public static String[] FONTS = new String[]{
-    "Font.Button",
-    "Font.CheckBox",
-    "Font.CheckBoxMenuItem",
-    "Font.ComboBox",
-    "Font.Dialog",
-    "Font.EditorPane",
-    "Font.FileChooser",
-    "Font.FormattedTextField",
-    "Font.Frame",
-    "Font.InternalFrame",
-    "Font.Label",
-    "Font.List",
-    "Font.Menu",
-    "Font.MenuBar",
-    "Font.MenuItem",
-    "Font.Optionpane",
-    "Font.PasswordField",
-    "Font.PopupMenu",
-    "Font.RadioButton",
-    "Font.RadioButtonMenuItem",
-    "Font.Spinner",
-    "Font.TabbedPane",
-    "Font.TextArea",
-    "Font.TextField",
-    "Font.TextPane",
-    "Font.ToggleButton",
-    "Font.ToolBar",
-    "Font.Tree",
-  };
 
   /** the mappings for replacing keystrokes. */
   protected static HashMap<String,String> m_KeystrokeReplacements;
@@ -385,11 +355,11 @@ public class GUIHelper {
           ((Window) window).pack();
       }
 
-      width = m_Properties.getInteger(c.getClass().getName() + ".width", window.getWidth());
+      width = scale(m_Properties.getInteger(c.getClass().getName() + ".width", window.getWidth()));
       if (width == -1)
 	width = window.getGraphicsConfiguration().getBounds().width;
 
-      height = m_Properties.getInteger(c.getClass().getName() + ".height", window.getHeight());
+      height = scale(m_Properties.getInteger(c.getClass().getName() + ".height", window.getHeight()));
       if (height == -1)
 	height = window.getGraphicsConfiguration().getBounds().height;
 
@@ -474,7 +444,7 @@ public class GUIHelper {
 
     // custom location
     if (c != null) {
-      left = m_Properties.getInteger(c.getClass().getName() + ".left", window.getX());
+      left = scale(m_Properties.getInteger(c.getClass().getName() + ".left", window.getX()));
       left = calcLeftPosition(window, left);
     }
     else {
@@ -482,7 +452,7 @@ public class GUIHelper {
     }
 
     if (c != null) {
-      top = m_Properties.getInteger(c.getClass().getName() + ".top", window.getY());
+      top = scale(m_Properties.getInteger(c.getClass().getName() + ".top", window.getY()));
       top = calcTopPosition(window, top);
     }
     else {
@@ -601,10 +571,10 @@ public class GUIHelper {
     initializeProperties();
 
     bounds  = gc.getBounds();
-    top     = m_Properties.getInteger("ScreenBorder.Top", 0);
-    left    = m_Properties.getInteger("ScreenBorder.Left", 0);
-    bottom  = m_Properties.getInteger("ScreenBorder.Bottom", 0);
-    right   = m_Properties.getInteger("ScreenBorder.Right", 0);
+    top     = scale(m_Properties.getInteger("ScreenBorder.Top", 0));
+    left    = scale(m_Properties.getInteger("ScreenBorder.Left", 0));
+    bottom  = scale(m_Properties.getInteger("ScreenBorder.Bottom", 0));
+    right   = scale(m_Properties.getInteger("ScreenBorder.Right", 0));
     height  = bounds.height - top - bottom;
     width   = bounds.width - left - right;
     top     += bounds.y;
@@ -895,7 +865,7 @@ public class GUIHelper {
       return OptionUtils.forCommandLine(OptionHandler.class, m_Properties.getProperty(key, OptionUtils.getCommandLine(defValue)));
     }
     catch (Exception e) {
-      e.printStackTrace();
+      LOGGER.log(Level.SEVERE, "Failed to get option handler for key: " + key, e);
     }
     
     return null;
@@ -1175,7 +1145,6 @@ public class GUIHelper {
    */
   public static char[] getMnemonics(String[] labels) {
     char[]					result;
-    String      				allowed;
     String[]					strLabels;
     Hashtable<Character,HashSet<Integer>>	charIndices;
     int						i;
@@ -1186,9 +1155,6 @@ public class GUIHelper {
     int						numLabels;
 
     result = new char[labels.length];
-
-    // a-z and 0-9 minus (O)K, (C)ancel and (M)ore
-    allowed = "abdefghijklnpqrstuvwxyz0123456789";
 
     // determine letters and numbers per label
     strLabels = new String[labels.length];
@@ -1202,15 +1168,15 @@ public class GUIHelper {
     }
 
     // determine counts of characters across the labels
-    charIndices = new Hashtable<Character,HashSet<Integer>>();
-    for (i = 0; i < allowed.length(); i++) {
-      ch = allowed.charAt(i);
+    charIndices = new Hashtable<>();
+    for (i = 0; i < ALLOWED_MNEMONICS.length(); i++) {
+      ch = ALLOWED_MNEMONICS.charAt(i);
       for (n = 0; n < strLabels.length; n++) {
 	if (strLabels[n] == null)
 	  continue;
 	if (strLabels[n].indexOf(ch) > -1) {
 	  if (!charIndices.containsKey(ch))
-	    charIndices.put(ch, new HashSet<Integer>());
+	    charIndices.put(ch, new HashSet<>());
 	  charIndices.get(ch).add(n);
 	}
       }
@@ -1218,7 +1184,7 @@ public class GUIHelper {
 
     // set the mnemonics for the labels which are the most unique
     i                = 0;
-    processedIndices = new HashSet<Integer>();
+    processedIndices = new HashSet<>();
     do {
       i++;
       enm = charIndices.keys();
@@ -1887,12 +1853,9 @@ public class GUIHelper {
     initialFocus = null;
     for (String option: options) {
       final JButton button = new JButton(option);
-      button.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-          result.append(button.getText());
-          dialog.setVisible(false);
-        }
+      button.addActionListener((ActionEvent e) -> {
+	result.append(button.getText());
+	dialog.setVisible(false);
       });
       if (option.equals(initial))
         initialFocus = button;
@@ -2167,7 +2130,7 @@ public class GUIHelper {
   public static Component findFirstComponent(Container parent, Class type, boolean recursive, boolean exact) {
     ArrayList<Component>	result;
     
-    result = new ArrayList<Component>();
+    result = new ArrayList<>();
     findComponents(parent, type, recursive, exact, result, true);
     
     if (result.size() == 0)
@@ -2312,36 +2275,14 @@ public class GUIHelper {
   }
 
   /**
-   * Initializes all the fonts.
-   *
-   * @see 		#FONTS
-   */
-  public static void initFonts() {
-    String	value;
-    Font	fontObj;
-    String	property;
-
-    initializeProperties();
-
-    for (String font: FONTS) {
-      value = getString(font, "");
-      if (value.trim().isEmpty())
-	continue;
-      fontObj = getFont(font, null);
-      property = font.substring("Font.".length()) + ".font";
-      UIManager.put(property, fontObj);
-    }
-  }
-
-  /**
    * Returns the default dimensions for a dialog.
    *
    * @return		the default
    */
   public static Dimension getDefaultDialogDimension() {
-    return new Dimension(
+    return scale(new Dimension(
       getInteger("DefaultDialog.Width", 800),
-      getInteger("DefaultDialog.Height", 600));
+      getInteger("DefaultDialog.Height", 600)));
   }
 
   /**
@@ -2350,9 +2291,9 @@ public class GUIHelper {
    * @return		the default
    */
   public static Dimension getDefaultSmallDialogDimension() {
-    return new Dimension(
+    return scale(new Dimension(
       getInteger("DefaultSmallDialog.Width", 600),
-      getInteger("DefaultSmallDialog.Height", 400));
+      getInteger("DefaultSmallDialog.Height", 400)));
   }
 
   /**
@@ -2361,9 +2302,9 @@ public class GUIHelper {
    * @return		the default
    */
   public static Dimension getDefaultTinyDialogDimension() {
-    return new Dimension(
+    return scale(new Dimension(
       getInteger("DefaultTinyDialog.Width", 400),
-      getInteger("DefaultTinyDialog.Height", 300));
+      getInteger("DefaultTinyDialog.Height", 300)));
   }
 
   /**
@@ -2372,9 +2313,9 @@ public class GUIHelper {
    * @return		the default
    */
   public static Dimension getDefaultLargeDialogDimension() {
-    return new Dimension(
+    return scale(new Dimension(
       getInteger("DefaultLargeDialog.Width", 1000),
-      getInteger("DefaultLargeDialog.Height", 800));
+      getInteger("DefaultLargeDialog.Height", 800)));
   }
 
   /**
@@ -2396,5 +2337,47 @@ public class GUIHelper {
    */
   public static Dimension makeWider(Dimension size, double percent) {
     return new Dimension((int) (size.width * (1 + percent)), size.height);
+  }
+
+  /**
+   * Returns the scale factor for the display.
+   *
+   * @return		the scale factor
+   */
+  public static double getDisplayScaleFactor() {
+    return getDouble("DisplayScaleFactor", 1.0);
+  }
+
+  /**
+   * Applies the global scale factor to the size.
+   *
+   * @param size	the size to scale
+   * @return		the scaled size
+   */
+  public static int scale(int size) {
+    return (int) (getDisplayScaleFactor() * size);
+  }
+
+  /**
+   * Applies the global scale factor to the size.
+   *
+   * @param size	the size to scale
+   * @return		the scaled size
+   */
+  public static double scale(double size) {
+    return getDisplayScaleFactor() * size;
+  }
+
+  /**
+   * Applies the global scale factor to the size.
+   *
+   * @param size	the size to scale
+   * @return		the scaled size
+   */
+  public static Dimension scale(Dimension size) {
+    double	scale;
+
+    scale = getDisplayScaleFactor();
+    return new Dimension((int) (size.width * scale), (int) (size.height * scale));
   }
 }

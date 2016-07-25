@@ -1845,8 +1845,10 @@ public class Tree
    * @param value	the scale factor (1.0 is actual size)
    */
   public void setScaleFactor(double value) {
+    value = GUIHelper.scale(value);
     if (value != ((Renderer) getCellRenderer()).getScaleFactor()) {
-      getRootNode().invalidateRendering();
+      if (getRootNode() != null)
+	getRootNode().invalidateRendering();
       setCellRenderer(new Renderer(value));
     }
   }
@@ -1857,7 +1859,7 @@ public class Tree
    * @return		the scale factor (1.0 is actual size)
    */
   public double getScaleFactor() {
-    return ((Renderer) getCellRenderer()).getScaleFactor();
+    return ((Renderer) getCellRenderer()).getScaleFactor() / GUIHelper.getDisplayScaleFactor();
   }
 
   /**
