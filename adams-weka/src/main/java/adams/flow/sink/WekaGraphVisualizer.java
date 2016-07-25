@@ -15,7 +15,7 @@
 
 /**
  * WekaGraphVisualizer.java
- * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.sink;
 
@@ -286,7 +286,7 @@ public class WekaGraphVisualizer
    * @return		the generated panel
    */
   @Override
-  public DisplayPanel createDisplayPanel(Token token) {
+  public AbstractDisplayPanel createDisplayPanel(Token token) {
     AbstractDisplayPanel	result;
 
     result = new AbstractComponentDisplayPanel(getClass().getSimpleName()) {
