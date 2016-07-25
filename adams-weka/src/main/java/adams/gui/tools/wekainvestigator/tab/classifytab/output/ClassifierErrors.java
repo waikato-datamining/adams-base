@@ -24,7 +24,7 @@ import adams.flow.core.Token;
 import adams.flow.sink.ActualVsPredictedPlot;
 import adams.flow.sink.ActualVsPredictedPlot.LimitType;
 import adams.flow.transformer.WekaPredictionsToSpreadSheet;
-import adams.gui.core.BaseScrollPane;
+import adams.gui.tools.wekainvestigator.output.ComponentContentPanel;
 import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
 
 import javax.swing.JPanel;
@@ -239,7 +239,7 @@ public class ClassifierErrors
       "The type of limit to impose on the axes; NONE just uses the range "
 	+ "determined from the data; ACTUAL uses the min/max from the actual "
 	+ "column for both axes; SPECIFIED uses the specified limits or, if "
-        + "a value is 'infinity' then the corresponding value from the "
+	+ "a value is 'infinity' then the corresponding value from the "
 	+ "determine range.";
   }
 
@@ -278,10 +278,7 @@ public class ClassifierErrors
     sink.setLimit(m_Limit);
     panel = sink.createDisplayPanel(token);
 
-    if (sink.displayPanelRequiresScrollPane())
-      addTab(item, new BaseScrollPane(panel));
-    else
-      addTab(item, panel);
+    addTab(item, new ComponentContentPanel(panel, sink.displayPanelRequiresScrollPane()));
 
     return null;
   }

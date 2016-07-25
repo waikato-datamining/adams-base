@@ -21,9 +21,9 @@
 package adams.gui.tools.wekainvestigator.tab.classifytab.output;
 
 import adams.core.Utils;
-import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTextArea;
 import adams.gui.core.Fonts;
+import adams.gui.tools.wekainvestigator.output.TextualContentPanel;
 import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
 
 /**
@@ -212,7 +212,7 @@ public class TextStatistics
     text.setTextFont(Fonts.getMonospacedFont());
     text.setText(buffer.toString());
     text.setCaretPosition(0);
-    addTab(item, new BaseScrollPane(text));
+    addTab(item, new TextualContentPanel(text, true));
 
     return null;
   }

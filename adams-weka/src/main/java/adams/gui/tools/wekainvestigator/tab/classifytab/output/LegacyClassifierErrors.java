@@ -22,7 +22,7 @@ package adams.gui.tools.wekainvestigator.tab.classifytab.output;
 
 import adams.flow.core.Token;
 import adams.flow.sink.WekaClassifierErrors;
-import adams.gui.core.BaseScrollPane;
+import adams.gui.tools.wekainvestigator.output.ComponentContentPanel;
 import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
 
 import javax.swing.JPanel;
@@ -71,10 +71,7 @@ public class LegacyClassifierErrors
     sink  = new WekaClassifierErrors();
     panel = sink.createDisplayPanel(new Token(item.getEvaluation()));
 
-    if (sink.displayPanelRequiresScrollPane())
-      addTab(item, new BaseScrollPane(panel));
-    else
-      addTab(item, panel);
+    addTab(item, new ComponentContentPanel(panel, sink.displayPanelRequiresScrollPane()));
 
     return null;
   }
