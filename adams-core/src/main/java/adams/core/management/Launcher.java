@@ -313,8 +313,6 @@ public class Launcher {
    * @param value	the option
    */
   public void addEnvVar(String value) {
-    if (value.startsWith("\"") && value.endsWith("\""))
-      value = value.substring(1, value.length() - 1);
     m_EnvVars.add(value);
   }
 
@@ -731,6 +729,20 @@ public class Launcher {
   }
 
   /**
+   * Removes unnecessary double quotes.
+   *
+   * @param args	the arguments to clean
+   */
+  protected static void cleanOptions(String[] args) {
+    int		i;
+
+    for (i = 0; i < args.length; i++) {
+      if (args[i].startsWith("\"") && args[i].endsWith("\""))
+	args[i] = args[i].substring(1, args[i].length() - 1);
+    }
+  }
+
+  /**
    * Executes the class from the command-line.
    *
    * @param args	the command-line arguments
@@ -739,6 +751,8 @@ public class Launcher {
     Launcher 	launcher;
     String 	error;
     String	debug;
+
+    cleanOptions(args);
 
     if (OptionUtils.helpRequested(args)) {
       System.out.println("Options:");
