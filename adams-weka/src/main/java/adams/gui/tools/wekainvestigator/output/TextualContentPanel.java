@@ -38,7 +38,7 @@ import java.io.File;
  * @version $Revision$
  */
 public class TextualContentPanel
-  extends AbstractBasePanelWithPopupMenu<TextFileChooser> {
+  extends AbstractOutputPanelWithPopupMenu<TextFileChooser> {
 
   private static final long serialVersionUID = 8183731075946484533L;
 

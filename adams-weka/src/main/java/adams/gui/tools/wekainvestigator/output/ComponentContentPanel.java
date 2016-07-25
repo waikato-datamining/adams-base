@@ -37,7 +37,7 @@ import java.io.File;
  * @version $Revision$
  */
 public class ComponentContentPanel
-  extends AbstractBasePanelWithPopupMenu<JComponentWriterFileChooser> {
+  extends AbstractOutputPanelWithPopupMenu<JComponentWriterFileChooser> {
 
   private static final long serialVersionUID = 8183731075946484533L;
 

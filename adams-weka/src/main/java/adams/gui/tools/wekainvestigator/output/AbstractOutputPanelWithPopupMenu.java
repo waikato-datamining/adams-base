@@ -37,7 +37,7 @@ import java.io.File;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public abstract class AbstractBasePanelWithPopupMenu<T extends BaseFileChooser>
+public abstract class AbstractOutputPanelWithPopupMenu<T extends BaseFileChooser>
   extends BasePanel
   implements PopupMenuProvider {
 
@@ -47,7 +47,7 @@ public abstract class AbstractBasePanelWithPopupMenu<T extends BaseFileChooser>
   protected T m_FileChooser;
 
   /** the optional popup menu customizer. */
-  protected PopupMenuCustomizer<AbstractBasePanelWithPopupMenu<T>> m_PopupMenuCustomizer;
+  protected PopupMenuCustomizer<AbstractOutputPanelWithPopupMenu<T>> m_PopupMenuCustomizer;
 
   /**
    * Initializes the members.
@@ -96,7 +96,7 @@ public abstract class AbstractBasePanelWithPopupMenu<T extends BaseFileChooser>
    *
    * @param value	the customizer, can be null
    */
-  public void setPopupMenuCustomizer(PopupMenuCustomizer<AbstractBasePanelWithPopupMenu<T>> value) {
+  public void setPopupMenuCustomizer(PopupMenuCustomizer<AbstractOutputPanelWithPopupMenu<T>> value) {
     m_PopupMenuCustomizer = value;
   }
 
@@ -105,7 +105,7 @@ public abstract class AbstractBasePanelWithPopupMenu<T extends BaseFileChooser>
    *
    * @return		the customizer, null if none set
    */
-  public PopupMenuCustomizer<AbstractBasePanelWithPopupMenu<T>> getPopupMenuCustomizer() {
+  public PopupMenuCustomizer<AbstractOutputPanelWithPopupMenu<T>> getPopupMenuCustomizer() {
     return m_PopupMenuCustomizer;
   }
 
