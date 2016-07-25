@@ -30,7 +30,7 @@
  */
 
 /**
- * Copyright (C) 2015 University of Waikato, Hamilton, NZ.
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton, NZ.
  */
 
 package adams.gui.core;
@@ -52,6 +52,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseListener;
 
 /**
  * Component to be used as tabComponent;
@@ -105,6 +106,28 @@ public class ButtonTabComponent extends JPanel {
 
   public Icon getIcon() {
     return m_Label.getIcon();
+  }
+
+  /**
+   * Adds the listener.
+   *
+   * @param l		the listener to add
+   */
+  @Override
+  public synchronized void addMouseListener(MouseListener l) {
+    super.addMouseListener(l);
+    m_Label.addMouseListener(l);
+  }
+
+  /**
+   * Removes the listener.
+   *
+   * @param l		the listener to remove
+   */
+  @Override
+  public synchronized void removeMouseListener(MouseListener l) {
+    super.removeMouseListener(l);
+    m_Label.removeMouseListener(l);
   }
 
   protected class TabButton
