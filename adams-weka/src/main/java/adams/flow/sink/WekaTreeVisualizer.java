@@ -15,29 +15,28 @@
 
 /**
  * WekaTreeVisualizer.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.sink;
 
-import java.awt.BorderLayout;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.Reader;
-import java.io.StringReader;
-
-import javax.swing.JComponent;
-
+import adams.flow.container.WekaModelContainer;
+import adams.flow.core.Token;
+import adams.gui.core.BasePanel;
+import adams.gui.core.GUIHelper;
 import weka.core.Drawable;
 import weka.gui.treevisualizer.Node;
 import weka.gui.treevisualizer.NodePlace;
 import weka.gui.treevisualizer.PlaceNode2;
 import weka.gui.treevisualizer.TreeBuild;
 import weka.gui.treevisualizer.TreeVisualizer;
-import adams.flow.container.WekaModelContainer;
-import adams.flow.core.Token;
-import adams.gui.core.BasePanel;
-import adams.gui.core.GUIHelper;
+
+import javax.swing.JComponent;
+import java.awt.BorderLayout;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.Reader;
+import java.io.StringReader;
 
 /**
  <!-- globalinfo-start -->
@@ -280,7 +279,7 @@ public class WekaTreeVisualizer
    * @return		the generated panel
    */
   @Override
-  public DisplayPanel createDisplayPanel(Token token) {
+  public AbstractDisplayPanel createDisplayPanel(Token token) {
     AbstractDisplayPanel	result;
 
     result = new AbstractComponentDisplayPanel(getClass().getSimpleName()) {
