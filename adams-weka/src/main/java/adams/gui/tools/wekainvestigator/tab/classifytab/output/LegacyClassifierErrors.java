@@ -58,6 +58,16 @@ public class LegacyClassifierErrors
   }
 
   /**
+   * Checks whether output can be generated from this item.
+   *
+   * @param item	the item to check
+   * @return		true if output can be generated
+   */
+  public boolean canGenerateOutput(ResultItem item) {
+    return item.hasEvaluation();
+  }
+
+  /**
    * Generates output and adds it to the {@link ResultItem}.
    *
    * @param item	the item to add the output to

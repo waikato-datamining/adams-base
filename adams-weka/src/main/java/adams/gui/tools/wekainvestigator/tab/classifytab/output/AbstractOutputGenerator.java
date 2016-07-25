@@ -54,6 +54,14 @@ public abstract class AbstractOutputGenerator
   public abstract String getTitle();
 
   /**
+   * Checks whether output can be generated from this item.
+   *
+   * @param item	the item to check
+   * @return		true if output can be generated
+   */
+  public abstract boolean canGenerateOutput(ResultItem item);
+
+  /**
    * Generates output and adds it to the {@link ResultItem}.
    *
    * @param item	the item to add the output to

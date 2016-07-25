@@ -20,12 +20,20 @@
 
 package adams.gui.tools.wekainvestigator.tab;
 
+import adams.core.ClassLister;
 import adams.core.Properties;
+import adams.core.SerializationHelper;
 import adams.core.option.OptionUtils;
+import adams.gui.chooser.BaseFileChooser;
 import adams.gui.core.AbstractNamedHistoryPanel;
+import adams.gui.core.BaseMenu;
+import adams.gui.core.BasePopupMenu;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.ConsolePanel;
+import adams.gui.core.ExtensionFileFilter;
+import adams.gui.core.GUIHelper;
 import adams.gui.goe.GenericArrayEditorDialog;
+import adams.gui.goe.GenericObjectEditorDialog;
 import adams.gui.goe.WekaGenericObjectEditorPanel;
 import adams.gui.tools.wekainvestigator.InvestigatorPanel;
 import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
@@ -40,12 +48,15 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.SwingWorker;
 import java.awt.BorderLayout;
 import java.awt.Dialog.ModalityType;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -72,6 +83,9 @@ public class ClassifyTab
     /** the owner. */
     protected ClassifyTab m_Owner;
 
+    /** the file chooser for models. */
+    protected BaseFileChooser m_ModelFileChooser;
+
     /**
      * Initializes the history.
      *
@@ -82,6 +96,21 @@ public class ClassifyTab
       m_Owner = owner;
       setAllowRemove(true);
       setAllowRename(false);
+    }
+
+    /**
+     * Initializes the members.
+     */
+    @Override
+    protected void initialize() {
+      ExtensionFileFilter	filter;
+
+      super.initialize();
+
+      filter             = ExtensionFileFilter.getModelFileFilter();
+      m_ModelFileChooser = new BaseFileChooser();
+      m_ModelFileChooser.addChoosableFileFilter(filter);
+      m_ModelFileChooser.setFileFilter(filter);
     }
 
     /**
@@ -100,6 +129,147 @@ public class ClassifyTab
       m_Owner.getPanelRight().revalidate();
       m_Owner.getPanelRight().doLayout();
       m_Owner.getPanelRight().repaint();
+    }
+
+    /**
+     * Saves the model to a file.
+     *
+     * @param item	the result item to use
+     */
+    protected void saveModel(ResultItem item) {
+      int	retVal;
+
+      retVal = m_ModelFileChooser.showSaveDialog(this);
+      if (retVal != BaseFileChooser.APPROVE_OPTION)
+	return;
+
+      try {
+	if (item.hasHeader())
+	  SerializationHelper.writeAll(
+	    m_ModelFileChooser.getSelectedFile().getAbsolutePath(),
+	    new Object[]{item.getClassifier(), item.getHeader()});
+	else
+	  SerializationHelper.write(
+	    m_ModelFileChooser.getSelectedFile().getAbsolutePath(),
+	    item.getClassifier());
+      }
+      catch (Exception e) {
+	GUIHelper.showErrorMessage(
+	  this, "Failed to save model to: " + m_ModelFileChooser.getSelectedFile(), e);
+      }
+    }
+
+    /**
+     * Regenerates the output.
+     *
+     * @param item	the result item to use
+     */
+    protected void regenerateOutput(final ResultItem item) {
+      SwingWorker	worker;
+
+      worker = new SwingWorker() {
+	@Override
+	protected Object doInBackground() throws Exception {
+	  item.getTabbedPane().removeAll();
+	  for (int i = 0; i < m_Owner.getOutputGenerators().length; i++) {
+	    try {
+	      m_Owner.getOutputGenerators()[i].generateOutput(item);
+	    }
+	    catch (Exception e) {
+	      m_Owner.logError("Failed to generate output with " + m_Owner.getOutputGenerators()[i].toCommandLine(), e, "Classifier output generation");
+	    }
+	  }
+	  return null;
+	}
+      };
+      worker.execute();
+    }
+
+    /**
+     * Prompts the user with a GOE for configuring the output generator and
+     * then generates the output.
+     *
+     * @param generator		the generator to use customize
+     * @param item		the result item to use
+     */
+    protected void generateOutput(AbstractOutputGenerator generator, ResultItem item) {
+      GenericObjectEditorDialog		dialog;
+      final AbstractOutputGenerator 	current;
+      SwingWorker			worker;
+
+      if (getParentDialog() != null)
+	dialog = new GenericObjectEditorDialog(getParentDialog(), ModalityType.DOCUMENT_MODAL);
+      else
+	dialog = new GenericObjectEditorDialog(getParentFrame(), true);
+      dialog.setDefaultCloseOperation(GenericArrayEditorDialog.DISPOSE_ON_CLOSE);
+      dialog.setTitle("Configure output");
+      dialog.getGOEEditor().setCanChangeClassInDialog(false);
+      dialog.getGOEEditor().setClassType(AbstractOutputGenerator.class);
+      dialog.setCurrent(generator);
+      dialog.pack();
+      dialog.setLocationRelativeTo(getParent());
+      dialog.setVisible(true);
+      if (dialog.getResult() != GenericObjectEditorDialog.APPROVE_OPTION)
+	return;
+
+      current = (AbstractOutputGenerator) dialog.getCurrent();
+      worker = new SwingWorker() {
+	@Override
+	protected Object doInBackground() throws Exception {
+	  current.generateOutput(item);
+	  return null;
+	}
+      };
+      worker.execute();
+    }
+
+    /**
+     * Generates the right-click menu for the JList.
+     *
+     * @param e		the event that triggered the popup
+     * @return		the generated menu
+     * @see		#showPopup(MouseEvent)
+     */
+    protected BasePopupMenu createPopup(MouseEvent e) {
+      BasePopupMenu		result;
+      JMenuItem			menuitem;
+      BaseMenu 			submenu;
+      final int[]		indices;
+      Class[]			classes;
+
+      result  = super.createPopup(e);
+      indices = getSelectedIndices();
+
+      result.addSeparator();
+
+      menuitem = new JMenuItem("Save model...");
+      menuitem.setEnabled((indices.length == 1) && getEntry(indices[0]).hasClassifier());
+      menuitem.addActionListener((ActionEvent ae) -> saveModel(getEntry(indices[0])));
+      result.add(menuitem);
+
+      menuitem = new JMenuItem("Regenerate output" + (m_Owner.getOutputGenerators().length > 1 ? "s" : ""));
+      menuitem.addActionListener((ActionEvent ae) -> regenerateOutput(getEntry(indices[0])));
+      result.add(menuitem);
+
+      submenu = new BaseMenu("Additional output");
+      classes = ClassLister.getSingleton().getClasses(AbstractOutputGenerator.class);
+      for (Class cls: classes) {
+	try {
+	  final AbstractOutputGenerator generator = (AbstractOutputGenerator) cls.newInstance();
+	  menuitem = new JMenuItem(generator.getTitle());
+	  menuitem.setEnabled(generator.canGenerateOutput(getEntry(indices[0])));
+	  menuitem.addActionListener((ActionEvent ae) -> generateOutput(generator, getEntry(indices[0])));
+	  submenu.add(menuitem);
+	}
+	catch (Exception ex) {
+	  ConsolePanel.getSingleton().append(
+	    Level.SEVERE, "Failed to instantiate output generator: " + cls.getName(), ex);
+	}
+      }
+      submenu.sort();
+      result.add(submenu);
+
+      return result;
     }
   }
 
@@ -132,9 +302,6 @@ public class ClassifyTab
 
   /** the current classifier. */
   protected Classifier m_CurrentClassifier;
-
-  /** the panel with output generators. */
-  protected JPanel m_PanelOutputGenerators;
 
   /** the button for editing the output generators. */
   protected JButton m_ButtonOutputGenerators;
@@ -449,5 +616,14 @@ public class ClassifyTab
    */
   public JPanel getPanelRight() {
     return m_PanelRight;
+  }
+
+  /**
+   * Returns the current output generators.
+   *
+   * @return		the generators
+   */
+  public AbstractOutputGenerator[] getOutputGenerators() {
+    return m_OutputGenerators;
   }
 }
