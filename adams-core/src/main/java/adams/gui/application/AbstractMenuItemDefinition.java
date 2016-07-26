@@ -23,6 +23,7 @@ package adams.gui.application;
 
 import adams.core.ClassLister;
 import adams.core.Utils;
+import adams.core.logging.Logger;
 import adams.core.option.OptionUtils;
 import adams.gui.core.GUIHelper;
 
@@ -32,7 +33,6 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
-import java.util.logging.Logger;
 
 /**
  * Abstract ancestor for definining menu items in the ApplicationFrame menu.

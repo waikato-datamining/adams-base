@@ -20,6 +20,7 @@
 
 package adams.gui.core;
 
+import adams.core.logging.Logger;
 import adams.core.logging.LoggingHelper;
 import adams.core.logging.LoggingSupporter;
 import adams.core.management.OS;
@@ -30,7 +31,6 @@ import adams.env.Environment;
 import javax.swing.JFrame;
 import java.awt.GraphicsConfiguration;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * A frame that loads the size and location from the props file automatically.

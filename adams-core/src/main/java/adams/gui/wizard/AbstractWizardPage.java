@@ -20,6 +20,7 @@
 package adams.gui.wizard;
 
 import adams.core.Properties;
+import adams.core.logging.Logger;
 import adams.core.logging.LoggingSupporter;
 import adams.gui.chooser.BaseFileChooser;
 import adams.gui.core.BasePanel;
@@ -39,7 +40,6 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Ancestor for wizard pages.

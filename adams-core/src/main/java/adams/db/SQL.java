@@ -23,6 +23,7 @@ package adams.db;
 
 import adams.core.Utils;
 import adams.core.base.BaseRegExp;
+import adams.core.logging.Logger;
 import adams.core.logging.LoggingHelper;
 import adams.core.logging.LoggingObject;
 
@@ -35,7 +36,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Basic SQL support.

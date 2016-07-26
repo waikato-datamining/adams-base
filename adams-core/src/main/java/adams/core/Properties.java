@@ -24,6 +24,7 @@ import adams.core.base.BasePassword;
 import adams.core.base.BaseRegExp;
 import adams.core.io.FileUtils;
 import adams.core.io.TempUtils;
+import adams.core.logging.Logger;
 import adams.core.logging.LoggingHelper;
 import adams.core.management.OS;
 import adams.env.Environment;
@@ -50,7 +51,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.Vector;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 /**

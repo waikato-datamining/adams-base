@@ -22,6 +22,7 @@ package adams.core.option;
 
 import adams.core.Utils;
 import adams.core.Variables;
+import adams.core.logging.Logger;
 import adams.event.VariableChangeEvent;
 import adams.event.VariableChangeListener;
 
@@ -30,7 +31,6 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * The ancestor of all option classes that take an argument.

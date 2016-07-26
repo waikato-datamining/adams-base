@@ -21,6 +21,7 @@ package adams.gui.flow.tree;
 
 import adams.core.Properties;
 import adams.core.Utils;
+import adams.core.logging.Logger;
 import adams.core.logging.LoggingHelper;
 import adams.env.ActorTemplateSuggestionDefinition;
 import adams.env.Environment;
@@ -30,7 +31,6 @@ import adams.flow.template.AbstractActorTemplate;
 import java.util.Enumeration;
 import java.util.Vector;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Class for suggesting actor templates when editing a flow, depending on

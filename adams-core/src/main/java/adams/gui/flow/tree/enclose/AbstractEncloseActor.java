@@ -21,6 +21,7 @@
 package adams.gui.flow.tree.enclose;
 
 import adams.core.ClassLister;
+import adams.core.logging.Logger;
 import adams.core.logging.LoggingHelper;
 import adams.core.option.AbstractOptionHandler;
 import adams.gui.core.MenuItemComparator;
@@ -31,7 +32,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Ancestor for classes that can enclose actors somehow.

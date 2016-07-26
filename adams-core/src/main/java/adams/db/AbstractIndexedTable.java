@@ -22,6 +22,7 @@
 package adams.db;
 
 import adams.core.ClassLister;
+import adams.core.logging.Logger;
 import adams.core.logging.LoggingHelper;
 import adams.db.indices.Index;
 import adams.db.indices.IndexColumn;
@@ -36,7 +37,6 @@ import java.sql.SQLException;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Class to implement the features of a database table.

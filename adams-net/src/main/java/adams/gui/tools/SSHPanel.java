@@ -22,6 +22,7 @@ package adams.gui.tools;
 
 import adams.core.License;
 import adams.core.annotation.MixedCopyright;
+import adams.core.logging.Logger;
 import adams.core.logging.LoggingHelper;
 import adams.core.logging.LoggingSupporter;
 import adams.core.net.SSHAuthenticationType;
@@ -35,7 +36,6 @@ import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelShell;
 import com.jcraft.jsch.JSch;
-import com.jcraft.jsch.Logger;
 import com.jcraft.jsch.Session;
 
 import javax.swing.BorderFactory;
@@ -152,7 +152,7 @@ public class SSHPanel
   protected int m_CommandIndex;
 
   /** the logger in use. */
-  protected java.util.logging.Logger m_Logger;
+  protected Logger m_Logger;
 
   /** the attributeset for commands. */
   protected SimpleAttributeSet m_AttributeSetCmd;
@@ -468,7 +468,7 @@ public class SSHPanel
       else if (canConnect()) {
 	msg = "connect";
 	jsch = new JSch();
-        jsch.setLogger(new Logger() {
+        jsch.setLogger(new com.jcraft.jsch.Logger() {
           @Override
           public boolean isEnabled(int level) {
             return true;
@@ -662,7 +662,7 @@ public class SSHPanel
    *
    * @return		the logger
    */
-  public synchronized java.util.logging.Logger getLogger() {
+  public synchronized adams.core.logging.Logger getLogger() {
     if (m_Logger == null) {
       m_Logger = LoggingHelper.getLogger(getClass());
       m_Logger.setLevel(Level.FINE);

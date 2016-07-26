@@ -25,6 +25,7 @@ import adams.core.ClassLocator;
 import adams.core.Utils;
 import adams.core.Variables;
 import adams.core.VariablesHandler;
+import adams.core.logging.Logger;
 import adams.core.logging.LoggingHelper;
 import adams.core.option.AbstractArgumentOption;
 import adams.core.option.AbstractOption;
@@ -74,7 +75,6 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Helper class for actors.

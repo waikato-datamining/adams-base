@@ -15,15 +15,14 @@
 
 /*
  * Child.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package adams.gui.application;
 
-import java.util.logging.Logger;
-
 import adams.core.CleanUpHandler;
+import adams.core.logging.Logger;
 
 /**
  * The interface for the child frames/windows.

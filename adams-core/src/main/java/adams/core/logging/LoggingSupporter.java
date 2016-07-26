@@ -15,12 +15,11 @@
 
 /**
  * LoggingSupporter.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.logging;
 
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Interface for classes that support logging.

@@ -28,9 +28,7 @@ import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.logging.Handler;
 import java.util.logging.Level;
-import java.util.logging.LogManager;
 import java.util.logging.LogRecord;
-import java.util.logging.Logger;
 
 /**
  * Helper class for logging related stuff.
@@ -243,7 +241,7 @@ public class LoggingHelper {
     HashSet<LoggingListener>	listeners;
     
     old       = m_DefaultHandler;
-    listeners = new HashSet<LoggingListener>();
+    listeners = new HashSet<>();
     if (old instanceof AbstractLogHandler)
       listeners.addAll(((AbstractLogHandler) old).loggingListeners());
     m_DefaultHandler = value;
@@ -358,8 +356,6 @@ public class LoggingHelper {
       result.append(lines[i]);
     }
 
-    lines = null;
-    
     return result;
   }
 }

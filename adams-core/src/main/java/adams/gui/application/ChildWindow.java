@@ -23,6 +23,7 @@ package adams.gui.application;
 
 import adams.core.ClassLocator;
 import adams.core.CleanUpHandler;
+import adams.core.logging.Logger;
 import adams.db.DatabaseConnectionHandler;
 import adams.gui.core.BaseWindow;
 import adams.gui.core.GUIHelper;
@@ -33,7 +34,6 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.logging.Logger;
 
 /**
  * Specialized JWindow class.

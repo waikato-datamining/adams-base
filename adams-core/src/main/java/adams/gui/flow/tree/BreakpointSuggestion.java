@@ -22,6 +22,7 @@ package adams.gui.flow.tree;
 import adams.core.ClassLocator;
 import adams.core.Properties;
 import adams.core.Utils;
+import adams.core.logging.Logger;
 import adams.core.logging.LoggingHelper;
 import adams.env.BreakpointSuggestionDefinition;
 import adams.env.Environment;
@@ -34,7 +35,6 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Class for suggesting breakpoints when editing a flow, depending on the context.

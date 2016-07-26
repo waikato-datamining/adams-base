@@ -22,6 +22,7 @@ package adams.data.utils;
 import adams.core.TechnicalInformation;
 import adams.core.TechnicalInformation.Field;
 import adams.core.TechnicalInformation.Type;
+import adams.core.logging.Logger;
 import adams.core.logging.LoggingHelper;
 import adams.gui.core.Point2DComparator;
 
@@ -29,7 +30,6 @@ import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.logging.Logger;
 
 /**
  * A helper class for LOWESS.

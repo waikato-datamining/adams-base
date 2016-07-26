@@ -15,7 +15,7 @@
 
 /*
  * ConsoleObject.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.logging;
@@ -25,7 +25,6 @@ import adams.core.SizeOfHandler;
 
 import java.io.Serializable;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * A basic object with logging support.

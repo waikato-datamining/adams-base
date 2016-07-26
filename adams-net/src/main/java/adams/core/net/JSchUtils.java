@@ -23,9 +23,9 @@ package adams.core.net;
 
 import adams.core.License;
 import adams.core.annotation.MixedCopyright;
+import adams.core.logging.Logger;
 import adams.core.logging.LoggingHelper;
 import com.jcraft.jsch.JSch;
-import com.jcraft.jsch.Logger;
 import com.jcraft.jsch.Session;
 
 import java.io.File;
@@ -44,7 +44,7 @@ import java.io.File;
 public class JSchUtils {
 
   /** for logging purposes. */
-  private final static java.util.logging.Logger LOGGER = LoggingHelper.getConsoleLogger(JSchUtils.class);
+  private final static Logger LOGGER = LoggingHelper.getConsoleLogger(JSchUtils.class);
 
   /**
    * Instantiates a new JSch object.
@@ -57,7 +57,7 @@ public class JSchUtils {
     JSch 	result;
 
     result = new JSch();
-    result.setLogger(new Logger() {
+    result.setLogger(new com.jcraft.jsch.Logger() {
       @Override
       public boolean isEnabled(int level) {
 	return true;

@@ -21,6 +21,7 @@
 package adams.gui.flow.tree.actorswap;
 
 import adams.core.ClassLister;
+import adams.core.logging.Logger;
 import adams.core.logging.LoggingHelper;
 import adams.core.option.AbstractOptionHandler;
 import adams.flow.core.Actor;
@@ -29,7 +30,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Ancestor for classes the return potential swaps for an actor.

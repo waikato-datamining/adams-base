@@ -23,6 +23,7 @@ import adams.core.ClassLocator;
 import adams.core.Properties;
 import adams.core.Utils;
 import adams.core.io.FileUtils;
+import adams.core.logging.Logger;
 import adams.core.logging.LoggingHelper;
 import adams.env.ActorSuggestionDefinition;
 import adams.env.Environment;
@@ -36,7 +37,6 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Class for suggesting actors when editing a flow, depending on the context.

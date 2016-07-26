@@ -23,13 +23,13 @@ package adams.data.io;
 import adams.core.ClassLister;
 import adams.core.io.FileFormatHandler;
 import adams.core.io.FileUtils;
+import adams.core.logging.Logger;
 import adams.core.logging.LoggingHelper;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Helper class for {@link FileFormatHandler}.

@@ -26,6 +26,7 @@ import adams.core.CloneHandler;
 import adams.core.CustomDisplayStringProvider;
 import adams.core.Utils;
 import adams.core.io.PlaceholderFile;
+import adams.core.logging.Logger;
 import adams.core.logging.LoggingHelper;
 import adams.core.option.AbstractCommandLineHandler;
 import adams.core.option.OptionHandler;
@@ -85,7 +86,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * A PropertyEditor for objects.

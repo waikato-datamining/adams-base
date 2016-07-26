@@ -15,12 +15,13 @@
 
 /**
  * WizardPane.java
- * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.wizard;
 
 import adams.core.Properties;
 import adams.core.base.BasePassword;
+import adams.core.logging.Logger;
 import adams.core.logging.LoggingHelper;
 import adams.core.logging.LoggingSupporter;
 import adams.data.io.input.CsvSpreadSheetReader;
@@ -52,7 +53,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Similar to a {@link BaseTabbedPane}, but with the names of the pages

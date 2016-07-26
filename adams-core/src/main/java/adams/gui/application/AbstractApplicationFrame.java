@@ -24,6 +24,7 @@ package adams.gui.application;
 import adams.core.base.BaseString;
 import adams.core.io.PlaceholderDirectory;
 import adams.core.logging.ConsolePanelHandler;
+import adams.core.logging.Logger;
 import adams.core.logging.LoggingHelper;
 import adams.core.logging.LoggingLevel;
 import adams.core.management.Launcher;
@@ -73,7 +74,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Abstract frame class for applications.
@@ -200,7 +200,7 @@ public abstract class AbstractApplicationFrame
     m_DbConn.addChangeListener(this);
 
     m_ScriptingLogPanel     = new ScriptingLogPanel();
-    m_Children              = new HashSet<Child>();
+    m_Children              = new HashSet<>();
 
     m_AppMenu               = null;
     m_RemoteScriptingEngine = null;

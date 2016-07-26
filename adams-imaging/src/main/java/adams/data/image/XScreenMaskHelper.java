@@ -19,8 +19,9 @@
  */
 package adams.data.image;
 
+import adams.core.logging.Logger;
+
 import java.awt.image.BufferedImage;
-import java.util.logging.Logger;
 
 /**
  * Helper class for masking out colors (like green screening).

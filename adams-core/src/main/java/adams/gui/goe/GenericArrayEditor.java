@@ -24,6 +24,7 @@ package adams.gui.goe;
 import adams.core.ClassLocator;
 import adams.core.CustomDisplayStringProvider;
 import adams.core.Utils;
+import adams.core.logging.Logger;
 import adams.core.logging.LoggingHelper;
 import adams.core.option.AbstractCommandLineHandler;
 import adams.core.option.AbstractOptionProducer;
@@ -69,7 +70,6 @@ import java.beans.PropertyEditor;
 import java.beans.PropertyEditorManager;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
-import java.util.logging.Logger;
 
 /**
  * A PropertyEditor for arrays of objects that themselves have

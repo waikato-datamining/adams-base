@@ -23,6 +23,7 @@ package adams.gui.core;
 import adams.core.ClassLocator;
 import adams.core.Properties;
 import adams.core.Utils;
+import adams.core.logging.Logger;
 import adams.core.logging.LoggingHelper;
 import adams.core.net.HtmlUtils;
 import adams.core.option.OptionHandler;
@@ -82,7 +83,6 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * A little helper class for GUI related stuff.

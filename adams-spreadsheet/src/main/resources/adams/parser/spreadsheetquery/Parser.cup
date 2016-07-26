@@ -36,7 +36,6 @@ import java_cup.runtime.*;
 
 import java.io.*;
 import java.util.*;
-import java.util.logging.*;
 
 import adams.core.*;
 import adams.core.base.*;

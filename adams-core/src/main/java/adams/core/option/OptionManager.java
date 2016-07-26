@@ -25,6 +25,7 @@ import adams.core.EnumWithCustomDisplay;
 import adams.core.Variables;
 import adams.core.VariablesHandler;
 import adams.core.base.BaseObject;
+import adams.core.logging.Logger;
 import adams.flow.core.Actor;
 
 import java.beans.BeanInfo;
@@ -36,7 +37,6 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.logging.Logger;
 
 /**
  * Class for managing option definitions.

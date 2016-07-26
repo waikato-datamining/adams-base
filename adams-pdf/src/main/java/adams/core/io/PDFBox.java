@@ -20,6 +20,7 @@
 
 package adams.core.io;
 
+import adams.core.logging.Logger;
 import adams.core.logging.LoggingHelper;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.printing.PDFPageable;
@@ -27,7 +28,6 @@ import org.apache.pdfbox.printing.PDFPageable;
 import java.awt.print.PrinterJob;
 import java.io.File;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Helper class for PDFBox library.

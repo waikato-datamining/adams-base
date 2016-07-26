@@ -6,16 +6,30 @@
 
 package adams.parser.spreadsheetquery;
 
-import java.util.*;
-import java.util.logging.*;
-import adams.core.*;
-import adams.core.base.*;
-import adams.core.logging.*;
-import adams.data.spreadsheet.*;
+import adams.core.DateValueSupporter;
+import adams.core.base.BaseDate;
+import adams.core.base.BaseDateTime;
+import adams.core.base.BaseRegExp;
+import adams.core.base.BaseTime;
+import adams.core.logging.Logger;
+import adams.core.logging.LoggingHelper;
 import adams.data.spreadsheet.Cell.ContentType;
-import adams.data.spreadsheet.rowfinder.*;
-import adams.flow.control.*;
+import adams.data.spreadsheet.SpreadSheet;
+import adams.data.spreadsheet.SpreadSheetColumnIndex;
+import adams.data.spreadsheet.SpreadSheetColumnRange;
+import adams.data.spreadsheet.rowfinder.ByDateValue;
+import adams.data.spreadsheet.rowfinder.ByNumericValue;
+import adams.data.spreadsheet.rowfinder.ByStringComparison;
+import adams.data.spreadsheet.rowfinder.ByValue;
+import adams.data.spreadsheet.rowfinder.IsNumeric;
+import adams.data.spreadsheet.rowfinder.MissingValue;
+import adams.data.spreadsheet.rowfinder.MultiRowFinder;
+import adams.data.spreadsheet.rowfinder.RowFinder;
+import adams.flow.control.SubProcess;
 import adams.flow.transformer.SpreadSheetAggregate.Aggregate;
+
+import java.util.Date;
+import java.util.HashMap;
 
 /** CUP v0.11a beta 20060608 generated parser.
   * @version Mon May 18 09:24:28 NZST 2015
