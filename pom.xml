@@ -81,9 +81,9 @@
     <jodd.version>3.5.2</jodd.version>
     <boofcv.version>0.18</boofcv.version>
     <openimaj.version>1.3.1</openimaj.version>
-    <nd4j.version>0.4-rc3.9</nd4j.version>
-    <dl4j.version>0.4-rc3.9</dl4j.version>
-    <canova.version>0.0.0.15</canova.version>
+    <nd4j.version>0.4.0</nd4j.version>
+    <dl4j.version>0.4.0</dl4j.version>
+    <canova.version>0.0.0.17</canova.version>
     <jackson.version>2.5.1</jackson.version>
   </properties>
 
