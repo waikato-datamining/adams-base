@@ -1113,6 +1113,8 @@ The following transformers are available:
 	which key matches a supplied regular expression.
 	\item \textit{PropertiesFileReader} -- reads the specific properties file 
 	and forwards a properties object.
+	\item \textit{PropertiesToVariables} -- turns the key-value pairs into
+	 variables and their associated values.
 	\item \textit{SetPropertyValue} -- sets the value of a specified property.
 \end{tight_itemize}
 The following sinks are available:
@@ -1175,6 +1177,8 @@ The following transformers are available:
 	\item \textit{GetMapKeys} -- returns all keys from the key.
 	\item \textit{GetMapValue} -- extracts a value associated with the
 	specified key from a \textit{java.util.Map} object.
+	\item \textit{MapToVariables} -- turns the key-value pairs of a
+	\textit{java.util.Map} into variables with their associated values.
 	\item \textit{SetMapValue} -- sets the value of a \textit{java.util.Map}
 	object (either specified value or obtained from a callable actor).
 	\item \textit{YamlFileReader} -- reads the specific YAML file and forwards
