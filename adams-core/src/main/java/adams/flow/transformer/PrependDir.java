@@ -15,22 +15,32 @@
 
 /*
  * PrependDir.java
- * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
-import java.io.File;
-
 import adams.core.ClassCrossReference;
 import adams.core.QuickInfoHelper;
 import adams.core.io.FileUtils;
+import adams.core.io.ForwardSlashSupporter;
 import adams.core.io.PlaceholderFile;
 import adams.flow.core.Token;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  <!-- globalinfo-start -->
- * Appends the prefix to the file&#47;directory being passed through.
+ * Prepends the prefix to the file&#47;directory being passed through.<br>
+ *  By default, the appropriate separator (forward slash or backslash) gets inserted between the file&#47;directory and prefix. This can be turned off.<br>
+ * <br>
+ * <br>
+ * See also:<br>
+ * adams.flow.transformer.BaseName<br>
+ * adams.flow.transformer.DirName<br>
+ * adams.flow.transformer.FileExtension
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -50,40 +60,57 @@ import adams.flow.core.Token;
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- *
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- *
+ * 
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
- * &nbsp;&nbsp;&nbsp;default: PrependPath
+ * &nbsp;&nbsp;&nbsp;default: PrependDir
  * </pre>
- *
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * 
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default:
+ * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- *
- * <pre>-skip (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
+ * 
+ * <pre>-skip &lt;boolean&gt; (property: skip)
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
  * &nbsp;&nbsp;&nbsp;as it is.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
- * <pre>-stop-flow-on-error (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * 
+ * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this 
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical 
+ * &nbsp;&nbsp;&nbsp;actors.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
  * <pre>-prefix &lt;java.lang.String&gt; (property: prefix)
  * &nbsp;&nbsp;&nbsp;The prefix to append to the file&#47;directory.
- * &nbsp;&nbsp;&nbsp;default:
+ * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- *
+ * 
+ * <pre>-no-separator &lt;boolean&gt; (property: noSeparator)
+ * &nbsp;&nbsp;&nbsp;If enabled, no separator (forward slash or backslash) gets inserted between 
+ * &nbsp;&nbsp;&nbsp;prefix and file&#47;directory.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-use-forward-slashes &lt;boolean&gt; (property: useForwardSlashes)
+ * &nbsp;&nbsp;&nbsp;If enabled and receiving string(s) as input, forward slashes are used in 
+ * &nbsp;&nbsp;&nbsp;the output (but the '\\' prefix of UNC paths is not converted).
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -91,7 +118,7 @@ import adams.flow.core.Token;
  */
 public class PrependDir
   extends AbstractTransformer
-  implements ClassCrossReference {
+  implements ClassCrossReference, ForwardSlashSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = 1960630826702728371L;
@@ -101,6 +128,9 @@ public class PrependDir
 
   /** whether to avoid adding a separator between file/dir and prefix. */
   protected boolean m_NoSeparator;
+
+  /** whether to output forward slashes. */
+  protected boolean m_UseForwardSlashes;
 
   /**
    * Returns a string describing the object.
@@ -139,6 +169,10 @@ public class PrependDir
     m_OptionManager.add(
 	    "no-separator", "noSeparator",
 	    false);
+
+    m_OptionManager.add(
+	    "use-forward-slashes", "useForwardSlashes",
+	    false);
   }
 
   /**
@@ -148,7 +182,17 @@ public class PrependDir
    */
   @Override
   public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "prefix", m_Prefix);
+    String		result;
+    List<String> 	options;
+
+    result = QuickInfoHelper.toString(this, "prefix", (m_Prefix.isEmpty() ? "-none-" : m_Prefix), "prefix: ");
+
+    options = new ArrayList<>();
+    QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "noSeparator", m_NoSeparator, "no separator"));
+    QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "useForwardSlashes", m_UseForwardSlashes, "forward slashes"));
+    result += QuickInfoHelper.flatten(options);
+
+    return result;
   }
 
   /**
@@ -212,6 +256,37 @@ public class PrependDir
   }
 
   /**
+   * Sets whether to use forward slashes in the output.
+   *
+   * @param value	if true then use forward slashes
+   */
+  public void setUseForwardSlashes(boolean value) {
+    m_UseForwardSlashes = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to use forward slashes in the output.
+   *
+   * @return		true if forward slashes are used
+   */
+  public boolean getUseForwardSlashes() {
+    return m_UseForwardSlashes;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String useForwardSlashesTipText() {
+    return
+	"If enabled and receiving string(s) as input, forward slashes are used in the output (but "
+	+ "the '\\\\' prefix of UNC paths is not converted).";
+  }
+
+  /**
    * Returns the class that the consumer accepts.
    *
    * @return		<!-- flow-accepts-start -->java.lang.String.class, java.lang.String[].class, java.io.File.class, java.io.File[].class<!-- flow-accepts-end -->
@@ -260,6 +335,10 @@ public class PrependDir
     }
 
     if (string) {
+      if (m_UseForwardSlashes) {
+        for (i = 0; i < strings.length; i++)
+          strings[i] = FileUtils.useForwardSlashes(strings[i]);
+      }
       if (array)
 	m_OutputToken = new Token(strings);
       else

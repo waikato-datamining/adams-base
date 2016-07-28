@@ -15,41 +15,46 @@
 
 /**
  * FileToString.java
- * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
 
 import adams.core.io.FileUtils;
+import adams.core.io.ForwardSlashSupporter;
 
 import java.io.File;
 
 /**
  <!-- globalinfo-start -->
- * Turns a String into a File object.
+ * Turns a File object into a String.
  * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- *
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- *
- * <pre>-placeholderfile (property: createPlaceholderFileObjects)
- * &nbsp;&nbsp;&nbsp;If enabled, PlaceholderFile objects instead of simple File objects are created.
+ * 
+ * <pre>-absolute &lt;boolean&gt; (property: absolutePath)
+ * &nbsp;&nbsp;&nbsp;If enabled, absolute paths are generated.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
+ * <pre>-use-forward-slashes &lt;boolean&gt; (property: useForwardSlashes)
+ * &nbsp;&nbsp;&nbsp;If enabled, forward slashes are used in the output (but the '\\' prefix 
+ * &nbsp;&nbsp;&nbsp;of UNC paths is not converted).
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
 public class FileToString
-  extends AbstractConversionToString {
+  extends AbstractConversionToString
+  implements ForwardSlashSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = 8828591710515484463L;
