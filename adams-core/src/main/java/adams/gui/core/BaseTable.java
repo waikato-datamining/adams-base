@@ -20,6 +20,7 @@
 
 package adams.gui.core;
 
+import adams.core.Range;
 import adams.data.io.output.SpreadSheetWriter;
 import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.Row;
@@ -550,5 +551,22 @@ public class BaseTable
     }
 
     return result;
+  }
+
+  /**
+   * Inverts the selected rows.
+   */
+  public void invertRowSelection() {
+    Range	range;
+    int[] 	indices;
+
+    range = new Range();
+    range.setMax(getRowCount());
+    range.setIndices(getSelectedRows());
+    range.setInverted(true);
+    indices = range.getIntIndices();
+    clearSelection();
+    for (int index : indices)
+      addRowSelectionInterval(index, index);
   }
 }
