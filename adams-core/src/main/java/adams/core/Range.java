@@ -15,7 +15,7 @@
 
 /**
  * Range.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.core;
 
@@ -668,7 +668,7 @@ public class Range
     if (errors.length() > 0)
       errors.delete(0, errors.length());
 
-    result = new ArrayList<SubRange>();
+    result = new ArrayList<>();
     if (m_Max == -1)
       return result;
 
@@ -701,6 +701,7 @@ public class Range
 
   /**
    * Returns the sub-ranges, initializes them if necessary.
+   * NB: Does not check for inverted flag!
    *
    * @return		the sub-ranges
    */
@@ -767,6 +768,7 @@ public class Range
    * Turns the range into a list of from-to segements. The indices are 0-based.
    * In case a subrange consists only of a single index, the second one is the
    * same.
+   * NB: Does not check for inverted flag!
    *
    * @return		the segments
    */
