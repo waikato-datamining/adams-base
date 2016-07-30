@@ -15,13 +15,13 @@
 
 /**
  * SearchParameters.java
- * Copyright (C) 2010-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
 
-import java.util.regex.Pattern;
-
 import adams.core.Utils;
+
+import java.util.regex.Pattern;
 
 /**
  * A container for search parameters.
@@ -145,7 +145,7 @@ public class SearchParameters {
     if (m_RegExp)
       return m_Pattern.matcher(s).matches();
     else
-      return (s.toLowerCase().indexOf(m_SearchString) > -1);
+      return s.toLowerCase().contains(m_SearchString);
   }
 
   /**
@@ -156,12 +156,7 @@ public class SearchParameters {
    * @return		true if the search is the same integer
    */
   public boolean matches(Integer i) {
-    if (m_Integer == null)
-      return false;
-    else if (i == null)
-      return false;
-    else
-      return (m_Integer.intValue() == i.intValue());
+    return (m_Integer != null) && (i != null) && (m_Integer.equals(i));
   }
 
   /**
@@ -172,12 +167,7 @@ public class SearchParameters {
    * @return		true if the search is the same double
    */
   public boolean matches(Double d) {
-    if (m_Double == null)
-      return false;
-    else if (d == null)
-      return false;
-    else
-      return (m_Double.doubleValue() == d.doubleValue());
+    return (m_Double != null) && (d != null) && (m_Double.equals(d));
   }
 
   /**

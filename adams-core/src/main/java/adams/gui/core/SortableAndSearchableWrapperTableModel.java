@@ -15,18 +15,13 @@
 
 /*
  * SortableAndSearchableWrapperTableModel.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
 
+import adams.core.ClassLocator;
 import gnu.trove.list.array.TIntArrayList;
-
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.util.ArrayList;
-import java.util.Collections;
 
 import javax.swing.JTable;
 import javax.swing.event.TableModelEvent;
@@ -35,8 +30,11 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
-
-import adams.core.ClassLocator;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * Wraps around any table model and makes them automatically sortable and
@@ -722,20 +720,27 @@ public class SortableAndSearchableWrapperTableModel
     boolean	result;
     Object	value;
     int		i;
+    Number	number;
 
     result = false;
 
     for (i = 0; i < getColumnCount(); i++) {
-      if (isColumnNumeric(i))
-	continue;
-
       value = getUnsortedModel().getValueAt(row, i);
+      if (value == null)
+        continue;
 
-      if (value != null) {
-	result = params.matches(value.toString());
-	if (result)
-	  break;
+      if (isColumnNumeric(i)) {
+	number = (Number) value;
+        if (params.isInteger())
+	  result = params.matches(number.intValue());
+        else
+	  result = params.matches(number.doubleValue());
       }
+      else {
+	result = params.matches(value.toString());
+      }
+      if (result)
+	break;
     }
 
     return result;
