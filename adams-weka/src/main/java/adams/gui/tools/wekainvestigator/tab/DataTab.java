@@ -23,14 +23,18 @@ package adams.gui.tools.wekainvestigator.tab;
 import adams.core.logging.LoggingLevel;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.SearchPanel;
+import adams.gui.core.SearchPanel.LayoutType;
+import adams.gui.event.SearchEvent;
 import adams.gui.tools.wekainvestigator.tab.datatab.AbstractDataTabAction;
 import adams.gui.tools.wekainvestigator.tab.datatab.Export;
-import adams.gui.tools.wekainvestigator.viewer.ArffSortedTableModel;
-import adams.gui.tools.wekainvestigator.viewer.ArffTable;
+import adams.gui.tools.wekainvestigator.viewer.InstancesTable;
+import adams.gui.tools.wekainvestigator.viewer.InstancesTableModel;
 import com.googlecode.jfilechooserbookmarks.gui.BaseScrollPane;
 import com.jidesoft.swing.JideButton;
 import com.jidesoft.swing.JideSplitButton;
 
+import javax.swing.JPanel;
 import javax.swing.ListSelectionModel;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -167,20 +171,36 @@ public class DataTab
    * Displays the data.
    */
   protected void displayData() {
-    ArffTable			table;
+    JPanel			panel;
+    SearchPanel			search;
+    InstancesTable		table;
     int				index;
-    ArffSortedTableModel	model;
+    InstancesTableModel 	model;
 
     if (m_Table.getSelectedRow() > -1) {
+      panel = new JPanel(new BorderLayout());
+      // table
+      // TODO cache tables?
       index = m_Table.getActualRow(m_Table.getSelectedRow());
-      model = new ArffSortedTableModel(getData().get(index).getData());
-      table = new ArffTable(model);
+      model = new InstancesTableModel(getData().get(index).getData());
+      table = new InstancesTable(model);
+      panel.add(new BaseScrollPane(table), BorderLayout.CENTER);
+      // search
+      search = new SearchPanel(LayoutType.HORIZONTAL, true);
+      search.addSearchListener((SearchEvent e) -> {
+	if (e.getParameters().getSearchString().isEmpty())
+	  table.search(null, false);
+	else
+	  table.search(e.getParameters().getSearchString(), e.getParameters().isRegExp());
+      });
+      panel.add(search, BorderLayout.SOUTH);
       m_PanelData.removeAll();
-      m_PanelData.add(new BaseScrollPane(table), BorderLayout.CENTER);
+      m_PanelData.add(panel, BorderLayout.CENTER);
       if (m_SplitPane.isBottomComponentHidden()) {
 	m_SplitPane.setDividerLocation(m_DefaultDataTableHeight);
 	m_SplitPane.setBottomComponentHidden(false);
       }
+      table.setOptimalColumnWidth();
     }
     else {
       m_PanelData.removeAll();

@@ -14,13 +14,14 @@
  */
 
 /*
- * ArffTableCellRenderer.java
- * Copyright (C) 2005-2012 University of Waikato, Hamilton, New Zealand
+ * AttributeValueCellRenderer.java
+ * Copyright (C) 2005-2016 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package adams.gui.tools.wekainvestigator.viewer;
 
+import adams.gui.core.SortableAndSearchableTable;
 import weka.core.Attribute;
 
 import javax.swing.JTable;
@@ -38,28 +39,26 @@ import java.awt.Component;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision: 8034 $ 
  */
-
-public class ArffTableCellRenderer 
+public class AttributeValueCellRenderer
   extends DefaultTableCellRenderer {
   
   /** for serialization */
   static final long serialVersionUID = 9195794493301191171L;
   
   /** the color for missing values */
-  private Color           missingColor;
+  private Color m_MissingColor;
   /** the color for selected missing values */
-  private Color           missingColorSelected;
+  private Color m_MissingColorSelected;
   /** the color for highlighted values */
-  private Color           highlightColor;
+  private Color m_HighlightColor;
   /** the color for selected highlighted values */
-  private Color           highlightColorSelected;
+  private Color m_HighlightColorSelected;
   
   /**
    * initializes the Renderer with a standard color
    */
-  public ArffTableCellRenderer() {
-    this( new Color(223, 223, 223), 
-        new Color(192, 192, 192) );
+  public AttributeValueCellRenderer() {
+    this(new Color(223, 223, 223), new Color(192, 192, 192));
   }
   
   /**
@@ -68,12 +67,8 @@ public class ArffTableCellRenderer
    * @param missingColor		the color for missing values
    * @param missingColorSelected	the color selected missing values
    */
-  public ArffTableCellRenderer( Color missingColor, 
-      Color missingColorSelected ) {
-    this( missingColor,
-        missingColorSelected,
-        Color.RED,
-        Color.RED.darker() );
+  public AttributeValueCellRenderer(Color missingColor, Color missingColorSelected) {
+    this(missingColor, missingColorSelected, Color.RED, Color.RED.darker());
   }
   
   /**
@@ -84,16 +79,16 @@ public class ArffTableCellRenderer
    * @param highlightColor		the color for highlighted values
    * @param highlightColorSelected	the color selected highlighted values
    */
-  public ArffTableCellRenderer( Color missingColor, 
-      Color missingColorSelected,
-      Color highlightColor,
-      Color highlightColorSelected ) {
+  public AttributeValueCellRenderer(Color missingColor,
+                                    Color missingColorSelected,
+                                    Color highlightColor,
+                                    Color highlightColorSelected) {
     super();
     
-    this.missingColor           = missingColor;
-    this.missingColorSelected   = missingColorSelected;
-    this.highlightColor         = highlightColor;
-    this.highlightColorSelected = highlightColorSelected;
+    this.m_MissingColor = missingColor;
+    this.m_MissingColorSelected = missingColorSelected;
+    this.m_HighlightColor = highlightColor;
+    this.m_HighlightColorSelected = highlightColorSelected;
   }
   
   /**
@@ -111,50 +106,56 @@ public class ArffTableCellRenderer
   public Component getTableCellRendererComponent(
       JTable table, Object value, boolean isSelected, 
       boolean hasFocus, int row, int column ) {
-    ArffSortedTableModel model;
-    Component                  result;
-    String                     searchString;
-    boolean                    found;
+
+    SortableAndSearchableTable	stable;
+    InstancesTableModel 	model;
+    Component			result;
+    String			searchString;
+    boolean			found;
 
     result = super.getTableCellRendererComponent(
         table, value, isSelected, hasFocus, row, column);
 
     // search
-    if (table instanceof ArffTable)
-      searchString = ((ArffTable) table).getSearchString();
-    else
-      searchString = null;
-    if ( (searchString != null) && (!searchString.equals("")) )
-      found = (searchString.equals(value.toString()));
-    else
-      found = false;
+    searchString = null;
+    stable       = null;
+    if (table instanceof SortableAndSearchableTable)
+      stable = (SortableAndSearchableTable) table;
+    if (stable != null)
+      searchString = stable.getSeachString();
+    found = ((searchString != null) && !searchString.isEmpty()) && searchString.equals(value.toString());
 
-    if (table.getModel() instanceof ArffSortedTableModel) {
-      model = (ArffSortedTableModel) table.getModel();
+    model = null;
+    if (table instanceof SortableAndSearchableTable) {
+      if (((SortableAndSearchableTable) table).getUnsortedModel() instanceof InstancesTableModel)
+        model = (InstancesTableModel) ((SortableAndSearchableTable) table).getUnsortedModel();
+    }
+
+    if (model != null) {
       // normal cell
       if (row >= 0) {
         if (model.isMissingAt(row, column)) {
           setToolTipText("missing");
           if (found) {
             if (isSelected)
-              result.setBackground(highlightColorSelected);
+              result.setBackground(m_HighlightColorSelected);
             else
-              result.setBackground(highlightColor);
+              result.setBackground(m_HighlightColor);
           }
           else {
             if (isSelected)
-              result.setBackground(missingColorSelected);
+              result.setBackground(m_MissingColorSelected);
             else
-              result.setBackground(missingColor);
+              result.setBackground(m_MissingColor);
           }
         }
         else {
           setToolTipText(null);
           if (found) {
             if (isSelected)
-              result.setBackground(highlightColorSelected);
+              result.setBackground(m_HighlightColorSelected);
             else
-              result.setBackground(highlightColor);
+              result.setBackground(m_HighlightColor);
           }
           else {
             if (isSelected)
