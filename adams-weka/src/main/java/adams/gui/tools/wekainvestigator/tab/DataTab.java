@@ -183,7 +183,9 @@ public class DataTab
       // TODO cache tables?
       index = m_Table.getActualRow(m_Table.getSelectedRow());
       model = new InstancesTableModel(getData().get(index).getData());
+      model.setShowAttributeIndex(true);
       table = new InstancesTable(model);
+      table.setUndoEnabled(true);
       panel.add(new BaseScrollPane(table), BorderLayout.CENTER);
       // search
       search = new SearchPanel(LayoutType.HORIZONTAL, true);

@@ -21,10 +21,14 @@
 package adams.gui.tools.wekainvestigator.viewer;
 
 import adams.core.Range;
+import adams.gui.chooser.WekaFileChooser;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.SortableAndSearchableTable;
 import adams.gui.dialog.ApprovalDialog;
+import weka.core.Instance;
 import weka.core.Instances;
+import weka.core.Undoable;
+import weka.core.converters.AbstractFileSaver;
 
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -32,6 +36,7 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
+import java.io.File;
 
 /**
  * Table for displaying Instances objects.
@@ -40,12 +45,16 @@ import java.awt.event.MouseEvent;
  * @version $Revision$
  */
 public class InstancesTable
-  extends SortableAndSearchableTable {
+  extends SortableAndSearchableTable
+  implements Undoable {
 
   private static final long serialVersionUID = -1408763296714340976L;
 
   /** the renderer to use. */
-  protected AttributeValueCellRenderer m_Renderer = new AttributeValueCellRenderer();
+  protected AttributeValueCellRenderer m_Renderer;
+
+  /** the filechooser for exporting data. */
+  protected WekaFileChooser m_FileChooser;
 
   /**
    * Initializes the table with the data.
@@ -63,6 +72,17 @@ public class InstancesTable
    */
   public InstancesTable(InstancesTableModel model) {
     super(model);
+  }
+
+  /**
+   * Initializes the widget.
+   */
+  @Override
+  protected void initGUI() {
+    super.initGUI();
+
+    m_FileChooser = new WekaFileChooser();
+    m_Renderer    = new AttributeValueCellRenderer();
     setAutoResizeMode(SortableAndSearchableTable.AUTO_RESIZE_OFF);
     addHeaderPopupMenuListener((MouseEvent e) -> showHeaderPopup(e));
     addCellPopupMenuListener((MouseEvent e) -> showCellPopup(e));
@@ -75,24 +95,106 @@ public class InstancesTable
    */
   @Override
   public synchronized void setModel(TableModel model) {
-    int		i;
-
-    if (model instanceof InstancesTableModel) {
+    if (model instanceof InstancesTableModel)
       super.setModel(model);
-    }
-    else {
+    else
       throw new IllegalArgumentException(
 	"Model must be derived from " + InstancesTableModel.class.getName() + ", provided: " + model.getClass().getName());
-    }
   }
 
   /**
-   * Returns the underlying data.
+   * returns whether undo support is enabled
    *
-   * @return		the data
+   * @return true if undo support is enabled
+   */
+  @Override
+  public boolean isUndoEnabled() {
+    return ((InstancesTableModel) getUnsortedModel()).isUndoEnabled();
+  }
+
+  /**
+   * sets whether undo support is enabled
+   *
+   * @param enabled whether to enable/disable undo support
+   */
+  @Override
+  public void setUndoEnabled(boolean enabled) {
+    ((InstancesTableModel) getUnsortedModel()).setUndoEnabled(enabled);
+  }
+
+  /**
+   * removes the undo history
+   */
+  @Override
+  public void clearUndo() {
+    ((InstancesTableModel) getUnsortedModel()).clearUndo();
+  }
+
+  /**
+   * returns whether an undo is possible, i.e. whether there are any undo points
+   * saved so far
+   *
+   * @return returns TRUE if there is an undo possible
+   */
+  @Override
+  public boolean canUndo() {
+    return ((InstancesTableModel) getUnsortedModel()).canUndo();
+  }
+
+  /**
+   * undoes the last action
+   */
+  @Override
+  public void undo() {
+    ((InstancesTableModel) getModel()).undo();
+    setOptimalColumnWidth();
+  }
+
+  /**
+   * adds an undo point to the undo history, if the undo support is enabled
+   *
+   * @see #isUndoEnabled()
+   * @see #setUndoEnabled(boolean)
+   */
+  @Override
+  public void addUndoPoint() {
+    ((InstancesTableModel) getModel()).addUndoPoint();
+  }
+
+  /**
+   * returns whether the model is read-only
+   *
+   * @return true if model is read-only
+   */
+  public boolean isReadOnly() {
+    return ((InstancesTableModel) getUnsortedModel()).isReadOnly();
+  }
+
+  /**
+   * sets whether the model is read-only
+   *
+   * @param value if true the model is set to read-only
+   */
+  public void setReadOnly(boolean value) {
+    ((InstancesTableModel) getUnsortedModel()).setReadOnly(value);
+  }
+
+  /**
+   * sets the data
+   *
+   * @param data the data to use
+   */
+  public void setInstances(Instances data) {
+    ((InstancesTableModel) getUnsortedModel()).setInstances(data);
+  }
+
+  /**
+   * returns the data
+   *
+   * @return the current data
    */
   public Instances getInstances() {
-    return ((InstancesTableModel) getModel()).getInstances();
+    return ((InstancesTableModel) getUnsortedModel()).getInstances();
   }
 
   /**
@@ -113,31 +215,39 @@ public class InstancesTable
    * @param e		the event
    */
   protected void showHeaderPopup(MouseEvent e) {
-    JPopupMenu	menu;
-    JMenuItem	menuitem;
-    final int	col;
+    JPopupMenu			menu;
+    JMenuItem			menuitem;
+    final int			col;
+    final InstancesTableModel	instModel;
 
-    menu = new JPopupMenu();
-    col  = tableHeader.columnAtPoint(e.getPoint());
+    menu      = new JPopupMenu();
+    col       = tableHeader.columnAtPoint(e.getPoint());
+    instModel = (InstancesTableModel) getUnsortedModel();
 
-    menuitem = new JMenuItem("Rename...");
+    if (instModel.isUndoEnabled()) {
+      menuitem = new JMenuItem("Undo", GUIHelper.getIcon("undo.gif"));
+      menuitem.setEnabled(canUndo());
+      menuitem.addActionListener((ActionEvent ae) -> instModel.undo());
+      menu.add(menuitem);
+      menu.addSeparator();
+    }
+
+    menuitem = new JMenuItem("Rename...", GUIHelper.getEmptyIcon());
     menuitem.addActionListener((ActionEvent ae) -> {
       String newName = GUIHelper.showInputDialog(
 	InstancesTable.this, "Please enter new name", getInstances().attribute(col).name());
       if (newName != null)
-	((InstancesTableModel) getUnsortedModel()).renameAttributeAt(col, newName);
+	instModel.renameAttributeAt(col, newName);
     });
     menu.add(menuitem);
 
-    menuitem = new JMenuItem("Delete");
+    menuitem = new JMenuItem("Delete", GUIHelper.getIcon("delete.gif"));
     menuitem.addActionListener((ActionEvent ae) -> {
       int retVal = GUIHelper.showConfirmMessage(InstancesTable.this, "Delete attribute '" + getInstances().attribute(col).name() + "'?");
       if (retVal == ApprovalDialog.APPROVE_OPTION)
-	((InstancesTableModel) getUnsortedModel()).deleteAttributeAt(col);
+	instModel.deleteAttributeAt(col);
     });
     menu.add(menuitem);
-
-    // TODO undo
 
     menu.show(this, e.getX(), e.getY());
   }
@@ -148,38 +258,79 @@ public class InstancesTable
    * @param e		the event
    */
   protected void showCellPopup(MouseEvent e) {
-    JPopupMenu	menu;
-    JMenuItem	menuitem;
-    final int	col;
-    final int	row;
-    final int[]	selRows;
+    JPopupMenu			menu;
+    JMenuItem			menuitem;
+    final int			col;
+    final int			row;
+    final int[]			selRows;
+    final InstancesTableModel	instModel;
+    final Range 		range;
 
-    menu    = new JPopupMenu();
-    col     = tableHeader.columnAtPoint(e.getPoint());
-    row     = rowAtPoint(e.getPoint());
-    selRows = getSelectedRows();
+    menu      = new JPopupMenu();
+    col       = tableHeader.columnAtPoint(e.getPoint());
+    row       = rowAtPoint(e.getPoint());
+    selRows   = getSelectedRows();
+    instModel = (InstancesTableModel) getUnsortedModel();
+    range = new Range();
+    range.setMax(getRowCount());
+    range.setIndices(selRows);
 
-    menuitem = new JMenuItem("Delete");
+    if (instModel.isUndoEnabled()) {
+      menuitem = new JMenuItem("Undo", GUIHelper.getIcon("undo.gif"));
+      menuitem.setEnabled(canUndo());
+      menuitem.addActionListener((ActionEvent ae) -> instModel.undo());
+      menu.add(menuitem);
+    }
+
+    menuitem = new JMenuItem("Invert selection", GUIHelper.getEmptyIcon());
+    menuitem.addActionListener((ActionEvent ae) -> invertRowSelection());
+    menu.add(menuitem);
+
+    menu.addSeparator();
+
+    menuitem = new JMenuItem("Delete", GUIHelper.getIcon("delete.gif"));
+    menuitem.setEnabled(selRows.length > 0);
     menuitem.addActionListener((ActionEvent ae) -> {
-      Range range = new Range();
-      range.setMax(getRowCount());
-      range.setIndices(selRows);
       String msg = "Delete row";
       if (selRows.length > 1)
 	msg += "s";
       msg += " " + range.getRange() + "?";
       int retVal = GUIHelper.showConfirmMessage(InstancesTable.this, msg);
-      if (retVal == ApprovalDialog.APPROVE_OPTION) {
+      if (retVal != ApprovalDialog.APPROVE_OPTION)
+	return;
 	int[] actRows = new int[selRows.length];
-	for (int i = 0; i < selRows.length; i++)
-	  actRows[i] = getActualRow(selRows[i]);
-	((InstancesTableModel) getUnsortedModel()).deleteInstances(actRows);
+      for (int i = 0; i < selRows.length; i++)
+	actRows[i] = getActualRow(selRows[i]);
+      instModel.deleteInstances(actRows);
+    });
+    menu.add(menuitem);
+
+    menuitem = new JMenuItem("Export...", GUIHelper.getIcon("save.gif"));
+    menuitem.setEnabled(selRows.length > 0);
+    menuitem.addActionListener((ActionEvent ae) -> {
+      int retVal = m_FileChooser.showSaveDialog(InstancesTable.this);
+      if (retVal != WekaFileChooser.APPROVE_OPTION)
+	return;
+      AbstractFileSaver saver = m_FileChooser.getWriter();
+      File file = m_FileChooser.getSelectedFile();
+      Instances original = getInstances();
+      Instances data = new Instances(original, 0);
+      for (int i = 0; i < selRows.length; i++)
+	data.add((Instance) original.instance(getActualRow(selRows[i])).copy());
+      try {
+	saver.setFile(file);
+	saver.setInstances(data);
+	saver.writeBatch();
+      }
+      catch (Exception ex) {
+	GUIHelper.showErrorMessage(
+	  InstancesTable.this, "Failed to export data to: " + file, ex);
       }
     });
     menu.add(menuitem);
 
-    // TODO undo
-
     menu.show(this, e.getX(), e.getY());
   }
+
+
 }

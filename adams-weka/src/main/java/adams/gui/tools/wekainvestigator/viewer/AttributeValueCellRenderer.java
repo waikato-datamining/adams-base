@@ -46,14 +46,11 @@ public class AttributeValueCellRenderer
   static final long serialVersionUID = 9195794493301191171L;
   
   /** the color for missing values */
-  private Color m_MissingColor;
+  protected Color m_MissingColor;
+
   /** the color for selected missing values */
-  private Color m_MissingColorSelected;
-  /** the color for highlighted values */
-  private Color m_HighlightColor;
-  /** the color for selected highlighted values */
-  private Color m_HighlightColorSelected;
-  
+  protected Color m_MissingColorSelected;
+
   /**
    * initializes the Renderer with a standard color
    */
@@ -68,27 +65,9 @@ public class AttributeValueCellRenderer
    * @param missingColorSelected	the color selected missing values
    */
   public AttributeValueCellRenderer(Color missingColor, Color missingColorSelected) {
-    this(missingColor, missingColorSelected, Color.RED, Color.RED.darker());
-  }
-  
-  /**
-   * initializes the Renderer with the given colors
-   * 
-   * @param missingColor		the color for missing values
-   * @param missingColorSelected	the color selected missing values
-   * @param highlightColor		the color for highlighted values
-   * @param highlightColorSelected	the color selected highlighted values
-   */
-  public AttributeValueCellRenderer(Color missingColor,
-                                    Color missingColorSelected,
-                                    Color highlightColor,
-                                    Color highlightColorSelected) {
     super();
-    
-    this.m_MissingColor = missingColor;
-    this.m_MissingColorSelected = missingColorSelected;
-    this.m_HighlightColor = highlightColor;
-    this.m_HighlightColorSelected = highlightColorSelected;
+    m_MissingColor         = missingColor;
+    m_MissingColorSelected = missingColorSelected;
   }
   
   /**
@@ -107,25 +86,10 @@ public class AttributeValueCellRenderer
       JTable table, Object value, boolean isSelected, 
       boolean hasFocus, int row, int column ) {
 
-    SortableAndSearchableTable	stable;
-    InstancesTableModel 	model;
-    Component			result;
-    String			searchString;
-    boolean			found;
-
-    result = super.getTableCellRendererComponent(
+    Component result = super.getTableCellRendererComponent(
         table, value, isSelected, hasFocus, row, column);
 
-    // search
-    searchString = null;
-    stable       = null;
-    if (table instanceof SortableAndSearchableTable)
-      stable = (SortableAndSearchableTable) table;
-    if (stable != null)
-      searchString = stable.getSeachString();
-    found = ((searchString != null) && !searchString.isEmpty()) && searchString.equals(value.toString());
-
-    model = null;
+    InstancesTableModel model = null;
     if (table instanceof SortableAndSearchableTable) {
       if (((SortableAndSearchableTable) table).getUnsortedModel() instanceof InstancesTableModel)
         model = (InstancesTableModel) ((SortableAndSearchableTable) table).getUnsortedModel();
@@ -135,34 +99,18 @@ public class AttributeValueCellRenderer
       // normal cell
       if (row >= 0) {
         if (model.isMissingAt(row, column)) {
-          setToolTipText("missing");
-          if (found) {
-            if (isSelected)
-              result.setBackground(m_HighlightColorSelected);
-            else
-              result.setBackground(m_HighlightColor);
-          }
-          else {
-            if (isSelected)
-              result.setBackground(m_MissingColorSelected);
-            else
-              result.setBackground(m_MissingColor);
-          }
+	  setToolTipText("missing");
+	  if (isSelected)
+	    result.setBackground(m_MissingColorSelected);
+	  else
+	    result.setBackground(m_MissingColor);
         }
         else {
           setToolTipText(null);
-          if (found) {
-            if (isSelected)
-              result.setBackground(m_HighlightColorSelected);
-            else
-              result.setBackground(m_HighlightColor);
-          }
-          else {
-            if (isSelected)
-              result.setBackground(table.getSelectionBackground());
-            else
-              result.setBackground(Color.WHITE);
-          }
+	  if (isSelected)
+	    result.setBackground(table.getSelectionBackground());
+	  else
+	    result.setBackground(Color.WHITE);
         }
         
         // alignment

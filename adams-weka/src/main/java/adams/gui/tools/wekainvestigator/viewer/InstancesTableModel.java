@@ -95,15 +95,15 @@ public class InstancesTableModel
   private InstancesTableModel() {
     super();
 
-    m_Listeners = new HashSet<>();
-    m_Data = null;
+    m_Listeners           = new HashSet<>();
+    m_Data                = null;
     m_NotificationEnabled = true;
-    m_UndoList = new ArrayList<>();
-    m_IgnoreChanges = false;
-    m_UndoEnabled = true;
-    m_ReadOnly = false;
-    m_ShowAttributeIndex = false;
-    m_Cache = new Hashtable<>();
+    m_UndoList            = new ArrayList<>();
+    m_IgnoreChanges       = false;
+    m_UndoEnabled         = true;
+    m_ReadOnly            = false;
+    m_ShowAttributeIndex  = false;
+    m_Cache               = new Hashtable<>();
   }
 
   /**
