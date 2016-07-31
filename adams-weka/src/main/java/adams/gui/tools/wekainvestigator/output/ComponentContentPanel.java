@@ -55,11 +55,10 @@ public class ComponentContentPanel
 
     m_Component = comp;
 
-    setLayout(new BorderLayout());
     if (useScrollPane)
-      add(new BaseScrollPane(m_Component), BorderLayout.CENTER);
+      getContentPanel().add(new BaseScrollPane(m_Component), BorderLayout.CENTER);
     else
-      add(m_Component, BorderLayout.CENTER);
+      getContentPanel().add(m_Component, BorderLayout.CENTER);
   }
 
   /**

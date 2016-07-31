@@ -21,6 +21,7 @@
 package adams.gui.tools.wekainvestigator.tab.classifytab.output;
 
 import adams.core.option.AbstractOptionHandler;
+import adams.gui.tools.wekainvestigator.output.AbstractOutputPanelWithPopupMenu;
 import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
 
 import javax.swing.JComponent;
@@ -44,6 +45,8 @@ public abstract class AbstractOutputGenerator
    */
   protected void addTab(ResultItem item, JComponent comp) {
     item.getTabbedPane().newTab(getTitle(), comp);
+    if (comp instanceof AbstractOutputPanelWithPopupMenu)
+      ((AbstractOutputPanelWithPopupMenu) comp).setFrameTitle(getTitle());
   }
 
   /**
