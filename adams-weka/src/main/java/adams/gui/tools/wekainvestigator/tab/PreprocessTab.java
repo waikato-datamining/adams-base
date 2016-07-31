@@ -84,7 +84,7 @@ public class PreprocessTab
    * @see                ListSelectionModel
    */
   protected int getDataTableListSelectionMode() {
-    return ListSelectionModel.SINGLE_SELECTION;
+    return ListSelectionModel.MULTIPLE_INTERVAL_SELECTION;
   }
 
   /**
