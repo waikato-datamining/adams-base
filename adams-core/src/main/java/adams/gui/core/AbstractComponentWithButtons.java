@@ -15,17 +15,17 @@
 
 /**
  * AbstractComponentWithButtons.java
- * Copyright (C) 2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
-
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.FlowLayout;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.FlowLayout;
+import java.awt.event.KeyListener;
 
 /**
  * Ancestor for components that have associated buttons.
@@ -115,8 +115,27 @@ public abstract class AbstractComponentWithButtons<T extends Component>
   }
 
   /**
-   * Whether to display the information JLabel or not.
+   * Adds the key listener to the component.
    *
+   * @param l		the listener to add
+   */
+  public void addKeyListener(KeyListener l) {
+    m_Component.addKeyListener(l);
+  }
+
+  /**
+   * Removes the key listener from the component.
+   *
+   * @param l		the listener to remove
+   */
+  public void removeKeyListener(KeyListener l) {
+    m_Component.removeKeyListener(l);
+  }
+
+  /**
+   * Whether to display the information JLabel or not.
+   *    public synchronized void addKeyListener(KeyListener l) {
+
    * @param value	if true then the information is being displayed
    */
   public void setInfoVisible(boolean value) {
