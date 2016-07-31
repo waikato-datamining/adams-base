@@ -19,7 +19,21 @@ DefaultDataTableHeight=150
 # and no class attribute is present
 ClassAttributeHeuristic=adams.data.weka.classattribute.LastAttribute
 
+# the default filter
+# (superclass: weka.filters.Filter)
+Preprocess.Filter=weka.filters.AllFilter
+
+# Whether to replace the original datasets with the filtered ones
+# or add them as new ones
+# (true|false)
+Preprocess.ReplaceDatasets=true
+
+# Whether to perform batch-filtering when filtering multiple datasets at the same time
+# (true|false)
+Preprocess.BatchFilter=true
+
 # the default classifier
+# (superclass: weka.classifiers.Classifier)
 Classify.Classifier=weka.classifiers.rules.ZeroR
 
 # the width of the left-hand side of the classification panel

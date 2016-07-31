@@ -168,6 +168,34 @@ public abstract class AbstractInvestigatorTabWithDataTable
   }
 
   /**
+   * Returns the selected rows.
+   *
+   * @return		the rows
+   */
+  protected int[] getSelectedRows() {
+    return m_Table.getSelectedRows();
+  }
+
+  /**
+   * Returns the actual selected rows.
+   *
+   * @return		the rows
+   */
+  protected int[] getActualSelectedRows() {
+    int[] 	result;
+    int[]	rows;
+    int		i;
+
+    rows = m_Table.getSelectedRows();
+    result = new int[rows.length];
+    for (i = 0; i < result.length; i++)
+      result[i] = m_Table.getActualRow(rows[i]);
+    Arrays.sort(result);
+
+    return result;
+  }
+
+  /**
    * Removes the selected rows, removes all if rows are null.
    *
    * @param rows	the rows to remove, null for all
