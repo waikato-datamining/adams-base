@@ -21,7 +21,6 @@
 package adams.gui.tools.wekainvestigator.data;
 
 import adams.core.io.PlaceholderFile;
-import weka.core.Instances;
 import weka.core.converters.AbstractFileLoader;
 import weka.core.converters.ConverterUtils.DataSource;
 
@@ -125,16 +124,5 @@ public class FileContainer
       getLogger().log(Level.SEVERE, "Failed to reload: " + m_Source, e);
       return false;
     }
-  }
-
-  /**
-   * Sets the data.
-   *
-   * @param value	the data to use
-   */
-  public void setData(Instances value) {
-    super.setData(value);
-    m_Source = null;
-    m_Loader = null;
   }
 }

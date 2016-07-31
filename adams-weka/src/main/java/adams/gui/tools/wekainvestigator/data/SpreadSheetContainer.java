@@ -141,15 +141,4 @@ public class SpreadSheetContainer
       return false;
     }
   }
-
-  /**
-   * Sets the data.
-   *
-   * @param value	the data to use
-   */
-  public void setData(Instances value) {
-    super.setData(value);
-    m_Source = null;
-    m_Reader = null;
-  }
 }

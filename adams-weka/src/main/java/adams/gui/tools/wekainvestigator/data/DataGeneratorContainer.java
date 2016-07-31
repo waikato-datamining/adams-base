@@ -21,7 +21,6 @@
 package adams.gui.tools.wekainvestigator.data;
 
 import adams.core.option.OptionUtils;
-import weka.core.Instances;
 import weka.datagenerators.DataGenerator;
 
 import java.util.logging.Level;
@@ -108,15 +107,5 @@ public class DataGeneratorContainer
       getLogger().log(Level.SEVERE, "Failed to regenerate data: " + OptionUtils.getCommandLine(m_Generator), e);
       return false;
     }
-  }
-
-  /**
-   * Sets the data.
-   *
-   * @param value	the data to use
-   */
-  public void setData(Instances value) {
-    super.setData(value);
-    m_Generator = null;
   }
 }

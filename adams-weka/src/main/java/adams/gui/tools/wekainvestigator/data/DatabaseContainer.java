@@ -20,7 +20,6 @@
 
 package adams.gui.tools.wekainvestigator.data;
 
-import weka.core.Instances;
 import weka.experiment.InstanceQuery;
 
 import java.util.logging.Level;
@@ -132,18 +131,5 @@ public class DatabaseContainer
       getLogger().log(Level.SEVERE, "Failed to reload from database: " + m_URL, e);
       return false;
     }
-  }
-
-  /**
-   * Sets the data.
-   *
-   * @param value	the data to use
-   */
-  public void setData(Instances value) {
-    super.setData(value);
-    m_URL      = null;
-    m_User     = null;
-    m_Password = null;
-    m_Query    = null;
   }
 }
