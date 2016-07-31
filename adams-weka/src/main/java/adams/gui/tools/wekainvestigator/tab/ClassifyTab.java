@@ -468,11 +468,11 @@ public class ClassifyTab
     buttonsAll.add(m_PanelExecutionButtons);
 
     m_ButtonStart = new JButton("Start");
-    m_ButtonStart.addActionListener((ActionEvent e) -> startEvaluation());
+    m_ButtonStart.addActionListener((ActionEvent e) -> startExecution());
     m_PanelExecutionButtons.add(m_ButtonStart);
 
     m_ButtonStop = new JButton("Stop");
-    m_ButtonStop.addActionListener((ActionEvent e) -> stopEvaluation());
+    m_ButtonStop.addActionListener((ActionEvent e) -> stopExecution());
     m_PanelExecutionButtons.add(m_ButtonStop);
 
     // history
@@ -544,7 +544,7 @@ public class ClassifyTab
   /**
    * Starts the evaluation.
    */
-  protected void startEvaluation() {
+  protected void startExecution() {
     if (m_Worker != null)
       return;
 
@@ -580,7 +580,7 @@ public class ClassifyTab
   /**
    * Stops the evaluation.
    */
-  protected void stopEvaluation() {
+  protected void stopExecution() {
     if (m_Worker == null)
       return;
 
