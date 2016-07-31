@@ -39,7 +39,6 @@ import javax.swing.ListSelectionModel;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -211,31 +210,5 @@ public class DataTab
     invalidate();
     revalidate();
     doLayout();
-  }
-
-  /**
-   * Removes the selected rows, removes all if rows are null.
-   *
-   * @param rows	the rows to remove, null for all
-   */
-  protected void removeData(int[] rows) {
-    int[]	actRows;
-    int		i;
-
-    if (rows == null) {
-      getData().clear();
-      fireDataChange();
-    }
-    else {
-      actRows = new int[rows.length];
-      for (i = 0; i < actRows.length; i++)
-	actRows[i] = m_Table.getActualRow(rows[i]);
-      Arrays.sort(actRows);
-      for (i = actRows.length - 1; i >= 0; i--) {
-	logMessage("Removing: " + getData().get(i).getSourceFull());
-	getData().remove(actRows[i]);
-      }
-      fireDataChange();
-    }
   }
 }

@@ -33,7 +33,10 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Ancestor for tabs that have the data table on top.
@@ -91,6 +94,16 @@ public abstract class AbstractInvestigatorTabWithDataTable
     m_Table.setAutoResizeMode(BaseTable.AUTO_RESIZE_OFF);
     m_Table.setSelectionMode(getDataTableListSelectionMode());
     m_Table.getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> dataTableSelectionChanged());
+    m_Table.addKeyListener(new KeyAdapter() {
+      @Override
+      public void keyPressed(KeyEvent e) {
+	if (e.getKeyCode() == KeyEvent.VK_DELETE) {
+	  removeData(m_Table.getSelectedRows());
+	  e.consume();
+	}
+	super.keyPressed(e);
+      }
+    });
     m_SplitPane.setTopComponent(new BaseScrollPane(m_Table));
     m_SplitPane.setTopComponentHidden(false);
 
@@ -152,5 +165,34 @@ public abstract class AbstractInvestigatorTabWithDataTable
    */
   public void tableChanged(TableModelEvent e) {
     fireDataChange();
+  }
+
+  /**
+   * Removes the selected rows, removes all if rows are null.
+   *
+   * @param rows	the rows to remove, null for all
+   */
+  protected void removeData(int[] rows) {
+    int[]	actRows;
+    int		i;
+
+    if (hasReadOnlyTable())
+      return;
+
+    if (rows == null) {
+      getData().clear();
+      fireDataChange();
+    }
+    else {
+      actRows = new int[rows.length];
+      for (i = 0; i < actRows.length; i++)
+	actRows[i] = m_Table.getActualRow(rows[i]);
+      Arrays.sort(actRows);
+      for (i = actRows.length - 1; i >= 0; i--) {
+	logMessage("Removing: " + getData().get(i).getSourceFull());
+	getData().remove(actRows[i]);
+      }
+      fireDataChange();
+    }
   }
 }
