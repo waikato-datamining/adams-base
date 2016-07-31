@@ -6,6 +6,7 @@
 # (comma-separated list of classnames)
 DefaultTabs=\
   adams.gui.tools.wekainvestigator.tab.DataTab,\
+  adams.gui.tools.wekainvestigator.tab.PreprocessTab,\
   adams.gui.tools.wekainvestigator.tab.ClassifyTab,\
   adams.gui.tools.wekainvestigator.tab.MatrixTab,\
   adams.gui.tools.wekainvestigator.tab.LogTab
