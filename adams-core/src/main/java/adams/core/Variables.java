@@ -15,9 +15,15 @@
 
 /**
  * Variables.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.core;
+
+import adams.core.base.BaseRegExp;
+import adams.core.logging.LoggingObject;
+import adams.event.VariableChangeEvent;
+import adams.event.VariableChangeEvent.Type;
+import adams.event.VariableChangeListener;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -26,12 +32,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
-
-import adams.core.base.BaseRegExp;
-import adams.core.logging.LoggingObject;
-import adams.event.VariableChangeEvent;
-import adams.event.VariableChangeEvent.Type;
-import adams.event.VariableChangeListener;
 
 /**
  * A container for storing variables and their values. Values are
@@ -304,6 +304,16 @@ public class Variables
    */
   public int size() {
     return m_Variables.size();
+  }
+
+  /**
+   * Checks whether the listener is in the internal list.
+   *
+   * @param l		the listener to check
+   * @return		true if already in the list
+   */
+  public boolean hasVariableChangeListener(VariableChangeListener l) {
+    return m_VariableChangeListeners.contains(l);
   }
 
   /**
