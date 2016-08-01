@@ -285,7 +285,8 @@ public class BaseTabbedPane
    */
   public void insertTab(String title, Icon icon, Component component, String tip, int index) {
     super.insertTab(title, icon, component, tip, index);
-    setTabComponentAt(index, new ButtonTabComponent(this));
+    if (m_ShowCloseTabButton)
+      setTabComponentAt(index, new ButtonTabComponent(this));
   }
 
   /**
