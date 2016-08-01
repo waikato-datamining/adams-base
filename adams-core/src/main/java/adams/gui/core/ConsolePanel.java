@@ -15,7 +15,7 @@
 
 /**
  * ConsolePanel.java
- * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
 
@@ -36,7 +36,6 @@ import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.JTextComponent;
 import javax.swing.text.SimpleAttributeSet;
@@ -45,7 +44,6 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -139,23 +137,17 @@ public class ConsolePanel
 
       m_ButtonEnabledDisable = new JButton("Disable");
       m_ButtonEnabledDisable.setMnemonic('a');
-      m_ButtonEnabledDisable.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          m_OutputEnabled = !m_OutputEnabled;
-          if (m_OutputEnabled)
-            m_ButtonEnabledDisable.setText("Disable");
-          else
-            m_ButtonEnabledDisable.setText("Enable");
-        }
+      m_ButtonEnabledDisable.addActionListener((ActionEvent e) -> {
+	m_OutputEnabled = !m_OutputEnabled;
+	if (m_OutputEnabled)
+	  m_ButtonEnabledDisable.setText("Disable");
+	else
+	  m_ButtonEnabledDisable.setText("Enable");
       });
       panel.add(m_ButtonEnabledDisable);
 
       m_SpinnerMaxLines = new JSpinner();
-      m_SpinnerMaxLines.addChangeListener(new ChangeListener() {
-        public void stateChanged(ChangeEvent e) {
-          trimOutput();
-        }
-      });
+      m_SpinnerMaxLines.addChangeListener((ChangeEvent e) -> trimOutput());
       model = (SpinnerNumberModel) m_SpinnerMaxLines.getModel();
       model.setMinimum(1);
       model.setMaximum(10000000);
@@ -165,11 +157,7 @@ public class ConsolePanel
 
       m_ButtonClear = new JButton("Clear", GUIHelper.getIcon("new.gif"));
       m_ButtonClear.setMnemonic('l');
-      m_ButtonClear.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          m_TextArea.clear();
-        }
-      });
+      m_ButtonClear.addActionListener((ActionEvent e) -> m_TextArea.clear());
       panel.add(m_ButtonClear);
     }
 
@@ -280,10 +268,10 @@ public class ConsolePanel
 	m_TextArea.setCaretPositionLast();
       }
     }
-    
+
     /**
      * Returns the content of the text area.
-     * 
+     *
      * @return		the currently displayed text
      */
     public String getContent() {
@@ -306,31 +294,31 @@ public class ConsolePanel
 
   /**
    * For letting {@link PrintStream} objects print to the {@link ConsolePanel}.
-   * 
+   *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
    * @version $Revision$
    */
   public static class ConsolePanelOutputStream
     extends OutputStream {
-    
+
     /** the level to use. */
     protected LoggingLevel m_Level;
-    
+
     /** the current buffer. */
     protected StringBuilder m_Buffer;
-    
+
     /**
      * Initializes the output stream.
-     * 
+     *
      * @param level 	the logging level
      */
     public ConsolePanelOutputStream(LoggingLevel level) {
       super();
-      
+
       m_Level  = level;
       m_Buffer = new StringBuilder();
     }
-    
+
     /**
      * Writes the specified byte to this output stream. The general
      * contract for <code>write</code> is that one byte is written
@@ -346,17 +334,17 @@ public class ConsolePanel
     @Override
     public void write(int b) throws IOException {
       char	c;
-      
+
       c = (char) b;
       m_Buffer.append(c);
-      
+
       if (c == '\n') {
 	getSingleton().append(m_Level, m_Buffer.toString());
 	m_Buffer.delete(0, m_Buffer.length());
       }
     }
   }
-  
+
   /** the singleton. */
   protected static ConsolePanel m_Singleton;
 
@@ -387,9 +375,6 @@ public class ConsolePanel
   /** the clear all item. */
   protected JMenuItem m_MenuItemClearAll;
 
-  /** the line wrap item. */
-  protected JMenuItem m_MenuItemLineWrap;
-
   /** the find item. */
   protected JMenuItem m_MenuItemFind;
 
@@ -398,22 +383,22 @@ public class ConsolePanel
 
   /** the listeners. */
   protected HashSet<ConsolePanelListener> m_Listeners;
-  
+
   /**
    * Initializes the panel.
    */
   protected ConsolePanel() {
     super();
   }
-  
+
   /**
    * Initializes the members.
    */
   @Override
   protected void initialize() {
     super.initialize();
-    
-    m_Listeners = new HashSet<ConsolePanelListener>();
+
+    m_Listeners = new HashSet<>();
   }
 
   /**
@@ -460,11 +445,9 @@ public class ConsolePanel
       menuitem.setMnemonic('l');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed N"));
       menuitem.setIcon(GUIHelper.getIcon("new.gif"));
-      menuitem.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  if (getCurrentPanel() != null)
-	    getCurrentPanel().clear();
-	}
+      menuitem.addActionListener((ActionEvent e) -> {
+	if (getCurrentPanel() != null)
+	  getCurrentPanel().clear();
       });
       m_MenuItemClear = menuitem;
 
@@ -474,11 +457,9 @@ public class ConsolePanel
       menuitem.setMnemonic('a');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl shift pressed N"));
       menuitem.setIcon(GUIHelper.getEmptyIcon());
-      menuitem.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  for (int i = 0; i < m_TabbedPane.getTabCount(); i++)
-	    ((OutputPanel) m_TabbedPane.getComponent(i)).clear();
-	}
+      menuitem.addActionListener((ActionEvent e) -> {
+	for (int i = 0; i < m_TabbedPane.getTabCount(); i++)
+	  ((OutputPanel) m_TabbedPane.getComponentAt(i)).clear();
       });
       m_MenuItemClearAll = menuitem;
 
@@ -488,11 +469,9 @@ public class ConsolePanel
       menuitem.setMnemonic('S');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl shift pressed S"));
       menuitem.setIcon(GUIHelper.getIcon("save.gif"));
-      menuitem.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  if (getCurrentPanel() != null)
-	    getCurrentPanel().saveAs();
-	}
+      menuitem.addActionListener((ActionEvent e) -> {
+	if (getCurrentPanel() != null)
+	  getCurrentPanel().saveAs();
       });
       m_MenuItemSaveAs = menuitem;
 
@@ -507,11 +486,7 @@ public class ConsolePanel
       menuitem.setMnemonic('C');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed Q"));
       menuitem.setIcon(GUIHelper.getIcon("exit.png"));
-      menuitem.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  closeParent();
-	}
-      });
+      menuitem.addActionListener((ActionEvent e) -> closeParent());
       m_MenuItemExit = menuitem;
 
       // Edit
@@ -525,11 +500,9 @@ public class ConsolePanel
       menuitem.setMnemonic('C');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed C"));
       menuitem.setIcon(GUIHelper.getIcon("copy.gif"));
-      menuitem.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  if (getCurrentPanel() != null)
-	    getCurrentPanel().copy();
-	}
+      menuitem.addActionListener((ActionEvent e) -> {
+	if (getCurrentPanel() != null)
+	  getCurrentPanel().copy();
       });
       m_MenuItemCopy = menuitem;
 
@@ -540,11 +513,9 @@ public class ConsolePanel
       menuitem.setMnemonic('L');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed L"));
       menuitem.setIcon(GUIHelper.getEmptyIcon());
-      menuitem.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  if (getCurrentPanel() != null)
-	    getCurrentPanel().setLineWrap(!getCurrentPanel().getLineWrap());
-	}
+      menuitem.addActionListener((ActionEvent e) -> {
+	if (getCurrentPanel() != null)
+	  getCurrentPanel().setLineWrap(!getCurrentPanel().getLineWrap());
       });
       m_MenuItemFind = menuitem;
 
@@ -555,11 +526,9 @@ public class ConsolePanel
       menuitem.setMnemonic('F');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed F"));
       menuitem.setIcon(GUIHelper.getIcon("find.gif"));
-      menuitem.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  if (getCurrentPanel() != null)
-	    getCurrentPanel().find();
-	}
+      menuitem.addActionListener((ActionEvent e) -> {
+	if (getCurrentPanel() != null)
+	  getCurrentPanel().find();
       });
       m_MenuItemFind = menuitem;
 
@@ -569,11 +538,9 @@ public class ConsolePanel
       menuitem.setMnemonic('N');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl shift pressed F"));
       menuitem.setIcon(GUIHelper.getEmptyIcon());
-      menuitem.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  if (getCurrentPanel() != null)
-	    getCurrentPanel().findNext();
-	}
+      menuitem.addActionListener((ActionEvent e) -> {
+	if (getCurrentPanel() != null)
+	  getCurrentPanel().findNext();
       });
       m_MenuItemFindNext = menuitem;
 
@@ -617,7 +584,7 @@ public class ConsolePanel
 
   /**
    * Adds the listener.
-   * 
+   *
    * @param l		the listener to add
    */
   public void addListener(ConsolePanelListener l) {
@@ -628,7 +595,7 @@ public class ConsolePanel
 
   /**
    * Removes the listener.
-   * 
+   *
    * @param l		the listener to remove
    */
   public void removeListener(ConsolePanelListener l) {
@@ -636,19 +603,19 @@ public class ConsolePanel
       m_Listeners.remove(l);
     }
   }
-  
+
   /**
    * Notifies the listeners.
-   * 
+   *
    * @param level	the logging level of output the string represents
    * @param msg		the message to append
    */
   protected void notifyListeners(LoggingLevel level, String msg) {
     ConsolePanelEvent	e;
-    
+
     if (m_Listeners.size() == 0)
       return;
-    
+
     e = new ConsolePanelEvent(this, level, msg);
     try {
       synchronized(m_Listeners) {
@@ -715,7 +682,7 @@ public class ConsolePanel
   @Override
   public boolean hasSendToItem(Class[] cls) {
     return    (SendToActionUtils.isAvailable(new Class[]{String.class, JTextComponent.class}, cls))
-           && (getCurrentPanel().getContent().length() > 0);
+      && (getCurrentPanel().getContent().length() > 0);
   }
 
   /**
