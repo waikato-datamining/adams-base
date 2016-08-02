@@ -501,7 +501,7 @@ public abstract class AbstractRecentItemsHandler<M, T>
     Iterator<RecentItemListener<M,T>>	iter;
     RecentItemEvent<M,T>		e;
 
-    e    = new RecentItemEvent<M,T>(this, item);
+    e    = new RecentItemEvent<>(this, item);
     iter = m_Listeners.iterator();
     while (iter.hasNext())
       iter.next().recentItemAdded(e);
@@ -516,7 +516,7 @@ public abstract class AbstractRecentItemsHandler<M, T>
     Iterator<RecentItemListener<M,T>>	iter;
     RecentItemEvent<M,T>		e;
 
-    e    = new RecentItemEvent<M,T>(this, item);
+    e    = new RecentItemEvent<>(this, item);
     iter = m_Listeners.iterator();
     while (iter.hasNext())
       iter.next().recentItemSelected(e);
