@@ -28,6 +28,7 @@ import adams.gui.visualization.container.AbstractContainerManager;
 import adams.gui.visualization.container.ColorContainer;
 import adams.gui.visualization.container.VisibilityContainerManager;
 
+import java.awt.Color;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -73,6 +74,7 @@ public abstract class AbstractFilterScriptlet
     List<DataContainer> 	runOutputC;
     AbstractContainerManager	manager;
     adams.data.filter.Filter 	actualScheme;
+    List<Color>			colors;
 
     manager = getDataContainerPanel().getContainerManager();
 
@@ -81,9 +83,13 @@ public abstract class AbstractFilterScriptlet
 
     // get data that is to be filtered
     runInput = new ArrayList<>();
+    colors   = new ArrayList<>();
     for (i = 0; i < manager.count(); i++) {
-      if (((VisibilityContainerManager) manager).isVisible(i))
+      if (((VisibilityContainerManager) manager).isVisible(i)) {
 	runInput.add((DataContainer) manager.get(i).getPayload());
+	if (manager.get(i) instanceof ColorContainer)
+	  colors.add(((ColorContainer) manager.get(i)).getColor());
+      }
     }
 
     // run filter
@@ -97,8 +103,8 @@ public abstract class AbstractFilterScriptlet
     showStatus("Filtering...");
 
     // pass through filter
-    actualScheme = runScheme.shallowCopy(true);
-    runOutputC   = new ArrayList<>();
+    actualScheme   = runScheme.shallowCopy(true);
+    runOutputC     = new ArrayList<>();
     if (actualScheme instanceof BatchFilter) {
       runInputA  = Array.newInstance(runInput.get(0).getClass(), runInput.size());
       for (i = 0; i < runInput.size(); i++)
@@ -106,23 +112,19 @@ public abstract class AbstractFilterScriptlet
       runOutputA = ((BatchFilter) actualScheme).batchFilter((DataContainer[]) (runInputA));
       runOutput  = new ArrayList<>();
       runOutput.addAll(Arrays.asList(runOutputA));
+      colors.clear();
     }
     else {
       runOutput = AbstractFilter.filter(actualScheme, runInput);
       // transfer color
-      if (!overlay && (runOutput.size() == runInput.size())) {
-        for (i = 0; i < runOutput.size(); i++) {
-          if (runOutput.get(i) instanceof ColorContainer)
-            ((ColorContainer) runOutput.get(i)).setColor(((ColorContainer) runInput.get(i)).getColor());
-        }
-      }
+      if (overlay || (runOutput.size() != runInput.size()))
+	colors.clear();
     }
     for (i = 0; i < runOutput.size(); i++)
       runOutputC.add(runOutput.get(i));
 
-
     // update containers
-    updateDataContainers(runOutputC, overlay);
+    updateDataContainers(runOutputC, overlay, (colors.size() > 0) ? colors : null);
 
     runScheme.destroy();
     actualScheme.destroy();
