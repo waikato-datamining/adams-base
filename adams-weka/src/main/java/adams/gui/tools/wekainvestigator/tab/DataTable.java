@@ -21,7 +21,7 @@
 package adams.gui.tools.wekainvestigator.tab;
 
 import adams.core.StringCompare;
-import adams.gui.core.SortableAndSearchableTable;
+import adams.gui.core.BaseTable;
 import adams.gui.core.SortableAndSearchableWrapperTableModel;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
 
@@ -41,7 +41,7 @@ import java.util.List;
  * @version $Revision$
  */
 public class DataTable
-  extends SortableAndSearchableTable {
+  extends BaseTable {
 
   private static final long serialVersionUID = -2329794525513037246L;
 
@@ -88,15 +88,14 @@ public class DataTable
     DataTableModel	dmodel;
 
     result = null;
-    actRow = getActualRow(row);
     if (column == 3) {
-      if (!m_ClassAttributeEditors.containsKey(actRow)) {
+      if (!m_ClassAttributeEditors.containsKey(row)) {
 	model = getModel();
 	if (model instanceof SortableAndSearchableWrapperTableModel)
 	  dmodel = (DataTableModel) ((SortableAndSearchableWrapperTableModel) model).getUnsortedModel();
 	else
 	  dmodel = (DataTableModel) model;
-	cont = dmodel.getData().get(actRow);
+	cont = dmodel.getData().get(row);
 	atts = new ArrayList<>();
 	atts.add("");  // no class
 	for (i = 0; i < cont.getData().numAttributes(); i++)
@@ -104,10 +103,10 @@ public class DataTable
 	Collections.sort(atts, new StringCompare());
 	combobox = new JComboBox<>(atts.toArray(new String[atts.size()]));
 	result   = new DefaultCellEditor(combobox);
-	m_ClassAttributeEditors.put(actRow, result);
+	m_ClassAttributeEditors.put(row, result);
       }
       else {
-	result = m_ClassAttributeEditors.get(actRow);
+	result = m_ClassAttributeEditors.get(row);
       }
     }
 

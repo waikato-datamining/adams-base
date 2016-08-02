@@ -86,7 +86,7 @@ public class MatrixTab
     MatrixPanel		panel;
 
     if (m_Table.getSelectedRow() > -1) {
-      index = m_Table.getActualRow(m_Table.getSelectedRow());
+      index = m_Table.getSelectedRow();
       panel = new MatrixPanel();
       panel.setInstances(getData().get(index).getData());
       m_PanelData.removeAll();

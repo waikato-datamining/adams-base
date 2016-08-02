@@ -26,6 +26,7 @@ import adams.gui.core.GUIHelper;
 import adams.gui.core.SearchPanel;
 import adams.gui.core.SearchPanel.LayoutType;
 import adams.gui.event.SearchEvent;
+import adams.gui.tools.wekainvestigator.data.DataContainer;
 import adams.gui.tools.wekainvestigator.tab.datatab.AbstractDataTabAction;
 import adams.gui.tools.wekainvestigator.tab.datatab.Export;
 import adams.gui.tools.wekainvestigator.viewer.InstancesTable;
@@ -36,7 +37,9 @@ import com.jidesoft.swing.JideSplitButton;
 
 import javax.swing.JPanel;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 import java.awt.BorderLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
@@ -57,6 +60,12 @@ public class DataTab
 
   /** the action button. */
   protected JideSplitButton m_ButtonAction;
+
+  /** the up button. */
+  protected JideButton m_ButtonUp;
+
+  /** the down button. */
+  protected JideButton m_ButtonDown;
 
   /** the available actions. */
   protected List<AbstractDataTabAction> m_Actions;
@@ -91,6 +100,8 @@ public class DataTab
    */
   @Override
   protected void initGUI() {
+    JPanel	panel;
+
     super.initGUI();
 
     m_ButtonRemove = new JideButton("Remove", GUIHelper.getIcon("delete.gif"));
@@ -109,6 +120,26 @@ public class DataTab
 	m_ButtonAction.add(action);
     }
     m_Table.addToButtonsPanel(m_ButtonAction);
+
+    panel = new JPanel(new GridLayout(1, 2));
+    m_ButtonUp = new JideButton(GUIHelper.getIcon("arrow_up.gif"));
+    m_ButtonUp.setButtonStyle(JideButton.TOOLBOX_STYLE);
+    m_ButtonUp.addActionListener((ActionEvent e) -> moveUp());
+    m_ButtonDown = new JideButton(GUIHelper.getIcon("arrow_down.gif"));
+    m_ButtonDown.setButtonStyle(JideButton.TOOLBOX_STYLE);
+    m_ButtonDown.addActionListener((ActionEvent e) -> moveDown());
+    panel.add(m_ButtonUp);
+    panel.add(m_ButtonDown);
+    m_Table.addToButtonsPanel(panel);
+  }
+
+  /**
+   * finishes the initialization.
+   */
+  @Override
+  protected void finishInit() {
+    super.finishInit();
+    updateButtons();
   }
 
   /**
@@ -164,6 +195,62 @@ public class DataTab
     m_ButtonRemove.setEnabled(m_Table.getSelectedRowCount() > 0);
     for (AbstractDataTabAction action: m_Actions)
       action.update();
+    m_ButtonUp.setEnabled(canMoveUp());
+    m_ButtonDown.setEnabled(canMoveDown());
+  }
+
+  /**
+   * Checks whether we can move the data item up.
+   */
+  protected boolean canMoveUp() {
+    return (m_Table.getSelectedRowCount() == 1)
+      && (m_Table.getSelectedRow() > 0);
+  }
+
+  /**
+   * Moves the data item up.
+   */
+  protected void moveUp() {
+    DataContainer	cont;
+    int			index;
+
+    index = m_Table.getSelectedRow();
+    cont = getData().remove(index);
+    getData().add(index - 1, cont);
+
+    fireDataChange();
+
+    SwingUtilities.invokeLater(() -> {
+      m_Table.getSelectionModel().clearSelection();
+      m_Table.getSelectionModel().addSelectionInterval(index - 1, index - 1);
+    });
+  }
+
+  /**
+   * Checks whether we can move the data item down.
+   */
+  protected boolean canMoveDown() {
+    return (m_Table.getSelectedRowCount() == 1)
+      && (m_Table.getSelectedRow() < m_Table.getRowCount() - 1);
+  }
+
+  /**
+   * Moves the data item down.
+   */
+  protected void moveDown() {
+    DataContainer	cont;
+    int			index;
+
+    index = m_Table.getSelectedRow();
+    cont = getData().remove(index);
+    getData().add(index + 1, cont);
+
+    fireDataChange();
+
+    SwingUtilities.invokeLater(() -> {
+      m_Table.getSelectionModel().clearSelection();
+      m_Table.getSelectionModel().addSelectionInterval(index + 1, index + 1);
+    });
   }
 
   /**
@@ -180,7 +267,7 @@ public class DataTab
       panel = new JPanel(new BorderLayout());
       // table
       // TODO cache tables?
-      index = m_Table.getActualRow(m_Table.getSelectedRow());
+      index = m_Table.getSelectedRow();
       model = new InstancesTableModel(getData().get(index).getData());
       model.setShowAttributeIndex(true);
       table = new InstancesTable(model);

@@ -20,7 +20,7 @@
 
 package adams.gui.tools.wekainvestigator.tab;
 
-import adams.gui.core.SortableAndSearchableTableWithButtons;
+import adams.gui.core.BaseTableWithButtons;
 
 import javax.swing.event.ListSelectionEvent;
 import java.util.ArrayList;
@@ -32,7 +32,7 @@ import java.util.ArrayList;
  * @version $Revision$
  */
 public class DataTableWithButtons
-  extends SortableAndSearchableTableWithButtons<DataTable> {
+  extends BaseTableWithButtons {
 
   private static final long serialVersionUID = -4226940020931531155L;
 

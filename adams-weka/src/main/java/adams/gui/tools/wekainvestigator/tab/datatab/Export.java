@@ -79,7 +79,7 @@ public class Export
     AbstractFileSaver 	saver;
 
     conts = getSelectedData();
-    rows  = getActualSelectedRows();
+    rows  = getSelectedRows();
     for (i = 0; i < conts.length; i++) {
       data   = conts[i];
       m_FileChooser.setDialogTitle("Exporting " + (i+1) + "/" + (rows.length) + ": " + data.getData().relationName());

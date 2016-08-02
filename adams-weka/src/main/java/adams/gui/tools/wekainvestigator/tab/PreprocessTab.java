@@ -150,7 +150,7 @@ public class PreprocessTab
     m_CurrentFilter = (Filter) m_PanelGOE.getCurrent();
     batch           = m_CheckBoxBatchFilter.isSelected();
     replace         = m_CheckBoxReplace.isSelected();
-    indices         = getActualSelectedRows();
+    indices         = getSelectedRows();
 
     m_Worker = new Thread(() -> {
       for (int i = 0; i < indices.length; i++) {

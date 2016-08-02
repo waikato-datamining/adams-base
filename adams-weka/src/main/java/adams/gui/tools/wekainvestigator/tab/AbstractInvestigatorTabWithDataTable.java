@@ -22,15 +22,14 @@ package adams.gui.tools.wekainvestigator.tab;
 
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.BaseTable;
-import adams.gui.core.SortableAndSearchableTableWithButtons;
+import adams.gui.core.BaseTableWithButtons;
 import adams.gui.tools.wekainvestigator.InvestigatorPanel;
 import com.googlecode.jfilechooserbookmarks.gui.BaseScrollPane;
+import gnu.trove.list.array.TIntArrayList;
 
 import javax.swing.JPanel;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.KeyAdapter;
@@ -45,8 +44,7 @@ import java.util.Arrays;
  * @version $Revision$
  */
 public abstract class AbstractInvestigatorTabWithDataTable
-  extends AbstractInvestigatorTab
-  implements TableModelListener {
+  extends AbstractInvestigatorTab {
 
   private static final long serialVersionUID = -94945456385486233L;
 
@@ -65,6 +63,9 @@ public abstract class AbstractInvestigatorTabWithDataTable
   /** the default data table height. */
   protected int m_DefaultDataTableHeight;
 
+  /** the last number of datasets. */
+  protected int m_LastNumDatasets;
+
   /**
    * Initializes the members.
    */
@@ -73,6 +74,7 @@ public abstract class AbstractInvestigatorTabWithDataTable
     super.initialize();
 
     m_DefaultDataTableHeight = InvestigatorPanel.getProperties().getInteger("DefaultDataTableHeight", 150);
+    m_LastNumDatasets        = 0;
   }
 
   /**
@@ -137,7 +139,7 @@ public abstract class AbstractInvestigatorTabWithDataTable
    *
    * @return		the table
    */
-  public SortableAndSearchableTableWithButtons getTable() {
+  public BaseTableWithButtons getTable() {
     return m_Table;
   }
 
@@ -146,25 +148,26 @@ public abstract class AbstractInvestigatorTabWithDataTable
    */
   @Override
   public void dataChanged() {
-    m_Model.removeTableModelListener(this);
+    TIntArrayList	widths;
+    int			i;
+
+    widths = new TIntArrayList();
+    for (i = 0; i < m_Table.getColumnModel().getColumnCount(); i++)
+      widths.add(m_Table.getColumnModel().getColumn(i).getWidth());
     m_Model = new DataTableModel(getData(), hasReadOnlyTable());
-    m_Model.addTableModelListener(this);
     m_Table.setModel(m_Model);
-    m_Table.setOptimalColumnWidth();
+    if (m_LastNumDatasets != getData().size()) {
+      m_Table.setOptimalColumnWidth();
+    }
+    else {
+      for (i = 0; i < m_Table.getColumnModel().getColumnCount(); i++)
+	m_Table.getColumnModel().getColumn(i).setWidth(widths.get(i));
+    }
+    m_LastNumDatasets = getData().size();
     if (m_Table.getSelectedRow() == -1) {
       if (m_Model.getRowCount() > 0)
 	m_Table.getComponent().setRowSelectionInterval(0, 0);
     }
-  }
-
-  /**
-   * This fine grain notification tells listeners the exact range
-   * of cells, rows, or columns that changed.
-   *
-   * @see	#fireDataChange()
-   */
-  public void tableChanged(TableModelEvent e) {
-    fireDataChange();
   }
 
   /**
@@ -177,31 +180,11 @@ public abstract class AbstractInvestigatorTabWithDataTable
   }
 
   /**
-   * Returns the actual selected rows.
-   *
-   * @return		the rows
-   */
-  protected int[] getActualSelectedRows() {
-    int[] 	result;
-    int[]	rows;
-    int		i;
-
-    rows = m_Table.getSelectedRows();
-    result = new int[rows.length];
-    for (i = 0; i < result.length; i++)
-      result[i] = m_Table.getActualRow(rows[i]);
-    Arrays.sort(result);
-
-    return result;
-  }
-
-  /**
    * Removes the selected rows, removes all if rows are null.
    *
    * @param rows	the rows to remove, null for all
    */
   protected void removeData(int[] rows) {
-    int[]	actRows;
     int		i;
 
     if (hasReadOnlyTable())
@@ -212,13 +195,10 @@ public abstract class AbstractInvestigatorTabWithDataTable
       fireDataChange();
     }
     else {
-      actRows = new int[rows.length];
-      for (i = 0; i < actRows.length; i++)
-	actRows[i] = m_Table.getActualRow(rows[i]);
-      Arrays.sort(actRows);
-      for (i = actRows.length - 1; i >= 0; i--) {
+      Arrays.sort(rows);
+      for (i = rows.length - 1; i >= 0; i--) {
 	logMessage("Removing: " + getData().get(i).getSourceFull());
-	getData().remove(actRows[i]);
+	getData().remove(rows[i]);
       }
       fireDataChange();
     }

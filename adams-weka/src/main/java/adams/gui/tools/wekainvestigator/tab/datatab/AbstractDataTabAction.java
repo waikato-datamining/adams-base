@@ -23,7 +23,7 @@ package adams.gui.tools.wekainvestigator.tab.datatab;
 import adams.core.ClassLister;
 import adams.core.StatusMessageHandler;
 import adams.gui.action.AbstractBaseAction;
-import adams.gui.core.SortableAndSearchableTableWithButtons;
+import adams.gui.core.BaseTableWithButtons;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
 import adams.gui.tools.wekainvestigator.tab.DataTab;
 
@@ -67,7 +67,7 @@ public abstract class AbstractDataTabAction
    *
    * @return    the table
    */
-  public SortableAndSearchableTableWithButtons getTable() {
+  public BaseTableWithButtons getTable() {
     return m_Owner.getTable();
   }
 
@@ -76,17 +76,8 @@ public abstract class AbstractDataTabAction
    *
    * @return		the selected data
    */
-  protected int[] getActualSelectedRows() {
-    int[]		result;
-    int[]		rows;
-    int			i;
-
-    rows   = getTable().getSelectedRows();
-    result = new int[rows.length];
-    for (i = 0; i < rows.length; i++)
-      result[i] = getTable().getActualRow(rows[i]);
-
-    return result;
+  protected int[] getSelectedRows() {
+    return getTable().getSelectedRows();
   }
 
   /**
@@ -99,7 +90,7 @@ public abstract class AbstractDataTabAction
     int[]		rows;
     int			i;
 
-    rows = getActualSelectedRows();
+    rows = getSelectedRows();
     result = new DataContainer[rows.length];
     for (i = 0; i < rows.length; i++)
       result[i] = getData().get(rows[i]);
