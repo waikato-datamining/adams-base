@@ -1,0 +1,15 @@
+# Project: adams
+# Date: 2016-08-03 11:18:03
+# User: fracpete
+# Charset: UTF-8
+adams.flow.control.Flow -annotation "Shows how to copy a callable transformer (using it as a template)." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.standalone.CallableActors
+  adams.flow.transformer.MathExpression -expression "X / @{factor}"
+ adams.flow.source.ForLoop
+ adams.flow.control.SubProcess
+  adams.flow.transformer.SetVariable -var-name factor -var-value 10
+  adams.flow.transformer.CopyCallableTransformer -callable MathExpression
+ adams.flow.control.SubProcess -name SubProcess-1
+  adams.flow.transformer.SetVariable -var-name factor -var-value 0.2
+  adams.flow.transformer.CopyCallableTransformer -callable MathExpression
+ adams.flow.sink.Display -writer adams.data.io.output.NullWriter

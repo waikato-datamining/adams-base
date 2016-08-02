@@ -89,23 +89,18 @@ public class CopyCallableSource
   }
 
   /**
-   * Tries to find the callable actor referenced by its name.
-   * Makes sure that the actor produces output.
+   * Performs checks on the callable actor.
    *
-   * @return		the callable actor or null if not found
+   * @param actor	the actor to check
+   * @return		null if OK, otherwise error message
    */
-  @Override
-  protected Actor findCallableActor() {
-    Actor	result;
+  protected String checkCallableActor(Actor actor) {
+    String	result;
 
-    result = super.findCallableActor();
+    result = null;
 
-    if (result != null) {
-      if (!ActorUtils.isSource(result)) {
-	getLogger().severe("Callable actor '" + result.getFullName() + "' is not a source" + (m_CallableActor == null ? "!" : m_CallableActor.getClass().getName()));
-	result = null;
-      }
-    }
+    if (!ActorUtils.isSource(actor))
+      result = "Callable actor '" + m_CallableName + "' is not a source!";
 
     return result;
   }
@@ -116,25 +111,7 @@ public class CopyCallableSource
    * @return		depends on the callable actor
    */
   public Class[] generates() {
-    if (m_CallableActor != null)
-      return ((OutputProducer) m_CallableActor).generates();
-    else
-      return new Class[]{Unknown.class};
-  }
-
-  /**
-   * Executes the callable actor. Derived classes might need to override this
-   * method to ensure atomicity.
-   *
-   * @return		null if no error, otherwise error message
-   */
-  @Override
-  protected String executeCallableActor() {
-    String	result;
-
-    result = m_CallableActor.execute();
-
-    return result;
+    return new Class[]{Unknown.class};
   }
 
   /**
@@ -143,7 +120,7 @@ public class CopyCallableSource
    * @return		the generated token
    */
   public Token output() {
-    return ((OutputProducer) m_CallableActor).output();
+    return null;
   }
 
   /**
@@ -153,6 +130,6 @@ public class CopyCallableSource
    * @return		true if there is pending output
    */
   public boolean hasPendingOutput() {
-    return ((OutputProducer) m_CallableActor).hasPendingOutput();
+    return false;
   }
 }

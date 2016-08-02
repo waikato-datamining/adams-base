@@ -85,38 +85,18 @@ public class CopyCallableStandalone
   }
 
   /**
-   * Tries to find the callable actor referenced by its name.
-   * Makes sure that the actor produces output.
+   * Performs checks on the callable actor.
    *
-   * @return		the callable actor or null if not found
+   * @param actor	the actor to check
+   * @return		null if OK, otherwise error message
    */
-  @Override
-  protected Actor findCallableActor() {
-    Actor	result;
-
-    result = super.findCallableActor();
-
-    if (result != null) {
-      if (!ActorUtils.isStandalone(result)) {
-	getLogger().severe("Callable actor '" + result.getFullName() + "' is not a standalone" + (m_CallableActor == null ? "!" : m_CallableActor.getClass().getName()));
-	result = null;
-      }
-    }
-
-    return result;
-  }
-
-  /**
-   * Executes the callable actor. Derived classes might need to override this
-   * method to ensure atomicity.
-   *
-   * @return		null if no error, otherwise error message
-   */
-  @Override
-  protected String executeCallableActor() {
+  protected String checkCallableActor(Actor actor) {
     String	result;
 
-    result = m_CallableActor.execute();
+    result = null;
+
+    if (!ActorUtils.isStandalone(actor))
+      result = "Callable actor '" + m_CallableName + "' is not a standalone!";
 
     return result;
   }

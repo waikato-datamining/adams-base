@@ -28,8 +28,6 @@ import adams.flow.core.OutputProducer;
 import adams.flow.core.Token;
 import adams.flow.core.Unknown;
 
-import java.util.Hashtable;
-
 /**
  <!-- globalinfo-start -->
  * Feeds tokens into the copy of a callable transformer and broadcasts the generated output tokens.
@@ -81,12 +79,6 @@ public class CopyCallableTransformer
   /** for serialization. */
   private static final long serialVersionUID = -4898610818562897692L;
 
-  /** the key for storing the current input token in the backup. */
-  public final static String BACKUP_INPUT = "input";
-
-  /** the token that is to be fed into the callable transformer. */
-  protected transient Token m_InputToken;
-
   /**
    * Returns a string describing the object.
    *
@@ -98,66 +90,20 @@ public class CopyCallableTransformer
   }
 
   /**
-   * Tries to find the callable actor referenced by its callable name.
-   * Makes sure that the actor produces output.
+   * Performs checks on the callable actor.
    *
-   * @return		the callable actor or null if not found
+   * @param actor	the actor to check
+   * @return		null if OK, otherwise error message
    */
-  @Override
-  protected Actor findCallableActor() {
-    Actor	result;
+  protected String checkCallableActor(Actor actor) {
+    String	result;
 
-    result = super.findCallableActor();
+    result = null;
 
-    if (result != null) {
-      if (!ActorUtils.isTransformer(result)) {
-	getLogger().severe("Callable actor '" + result.getFullName() + "' is not a transformer" + (m_CallableActor == null ? "!" : m_CallableActor.getClass().getName()));
-	result = null;
-      }
-    }
+    if (!ActorUtils.isTransformer(actor))
+      result = "Callable actor '" + m_CallableName + "' is not a transformer!";
 
     return result;
-  }
-
-  /**
-   * Backs up the current state of the actor before update the variables.
-   *
-   * @return		the backup
-   */
-  @Override
-  protected Hashtable<String,Object> backupState() {
-    Hashtable<String,Object>	result;
-
-    result = super.backupState();
-
-    result.put(BACKUP_INPUT, m_InputToken);
-
-    return result;
-  }
-
-  /**
-   * Restores the state of the actor before the variables got updated.
-   *
-   * @param state	the backup of the state to restore from
-   */
-  @Override
-  protected void restoreState(Hashtable<String,Object> state) {
-    if (state.containsKey(BACKUP_INPUT)) {
-      m_InputToken = (Token) state.get(BACKUP_INPUT);
-      state.remove(BACKUP_INPUT);
-    }
-
-    super.restoreState(state);
-  }
-
-  /**
-   * Resets the scheme.
-   */
-  @Override
-  protected void reset() {
-    super.reset();
-
-    m_InputToken  = null;
   }
 
   /**
@@ -166,10 +112,7 @@ public class CopyCallableTransformer
    * @return		the Class of objects that can be processed
    */
   public Class[] accepts() {
-    if (m_CallableActor != null)
-      return ((InputConsumer) m_CallableActor).accepts();
-    else
-      return new Class[]{Unknown.class};
+    return new Class[]{Unknown.class};
   }
 
   /**
@@ -178,7 +121,6 @@ public class CopyCallableTransformer
    * @param token	the token to accept and process
    */
   public void input(Token token) {
-    m_InputToken  = token;
   }
 
   /**
@@ -187,7 +129,7 @@ public class CopyCallableTransformer
    * @return		true if input token present
    */
   public boolean hasInput() {
-    return (m_InputToken != null);
+    return false;
   }
 
   /**
@@ -196,7 +138,7 @@ public class CopyCallableTransformer
    * @return		the input token, null if none present
    */
   public Token currentInput() {
-    return m_InputToken;
+    return null;
   }
 
   /**
@@ -205,27 +147,7 @@ public class CopyCallableTransformer
    * @return		depends on the callable actor
    */
   public Class[] generates() {
-    if (m_CallableActor != null)
-      return ((OutputProducer) m_CallableActor).generates();
-    else
-      return new Class[]{Unknown.class};
-  }
-
-  /**
-   * Executes the callable actor. Derived classes might need to override this
-   * method to ensure atomicity.
-   *
-   * @return		null if no error, otherwise error message
-   */
-  @Override
-  protected String executeCallableActor() {
-    String	result;
-
-    if (m_InputToken != null)
-      ((InputConsumer) m_CallableActor).input(m_InputToken);
-    result = m_CallableActor.execute();
-
-    return result;
+    return new Class[]{Unknown.class};
   }
 
   /**
@@ -234,8 +156,7 @@ public class CopyCallableTransformer
    * @return		the generated token
    */
   public Token output() {
-    m_InputToken = null;
-    return ((OutputProducer) m_CallableActor).output();
+    return null;
   }
 
   /**
@@ -245,6 +166,6 @@ public class CopyCallableTransformer
    * @return		true if there is pending output
    */
   public boolean hasPendingOutput() {
-    return ((OutputProducer) m_CallableActor).hasPendingOutput();
+    return false;
   }
 }

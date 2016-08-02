@@ -20,9 +20,7 @@
 package adams.flow.core;
 
 import adams.core.QuickInfoHelper;
-import adams.core.Variables;
-
-import java.util.HashSet;
+import adams.flow.control.FlowStructureModifier;
 
 /**
  * Ancestor for actors that use a copy of a callable actor.
@@ -32,16 +30,13 @@ import java.util.HashSet;
  */
 public abstract class AbstractCopyCallableActor
   extends AbstractActor
-  implements CallableActorUser, InternalActorHandler {
+  implements FlowStructureModifier {
 
   /** for serialization. */
   private static final long serialVersionUID = -7860206690560690212L;
 
   /** the callable name. */
   protected CallableActorReference m_CallableName;
-
-  /** the callable actor. */
-  protected Actor m_CallableActor;
 
   /** the helper class. */
   protected CallableActorHelper m_Helper;
@@ -54,8 +49,8 @@ public abstract class AbstractCopyCallableActor
     super.defineOptions();
 
     m_OptionManager.add(
-	    "callable", "callableName",
-	    new CallableActorReference("unknown"));
+      "callable", "callableName",
+      new CallableActorReference("unknown"));
   }
 
   /**
@@ -117,36 +112,6 @@ public abstract class AbstractCopyCallableActor
   }
 
   /**
-   * Checks whether a reference to the callable actor is currently available.
-   *
-   * @return		true if a reference is available
-   * @see		#getCallableActor()
-   */
-  public boolean hasCallableActor() {
-    return (m_CallableActor != null);
-  }
-
-  /**
-   * Returns the currently set callable actor.
-   *
-   * @return		the actor, can be null
-   */
-  @Override
-  public Actor getCallableActor() {
-    return m_CallableActor;
-  }
-
-  /**
-   * Returns the internal actor.
-   *
-   * @return		the actor, null if not available
-   */
-  @Override
-  public Actor getInternalActor() {
-    return m_CallableActor;
-  }
-
-  /**
    * Returns whether the actor is modifying the structure.
    *
    * @return		true if the actor is modifying the structure
@@ -156,18 +121,51 @@ public abstract class AbstractCopyCallableActor
   }
 
   /**
-   * Updates the Variables instance in use.
-   * <br><br>
-   * Use with caution!
+   * Performs checks on the callable actor.
    *
-   * @param value	the instance to use
+   * @param actor	the actor to check
+   * @return		null if OK, otherwise error message
    */
-  @Override
-  protected void forceVariables(Variables value) {
-    super.forceVariables(value);
+  protected abstract String checkCallableActor(Actor actor);
 
-    if (m_CallableActor != null)
-      m_CallableActor.setVariables(value);
+  /**
+   * Configures the callable actor.
+   *
+   * @return		null if OK, otherwise error message
+   */
+  protected String setUpCallableActor() {
+    String		result;
+    Actor 		actor;
+
+    actor = findCallableActor();
+    if (actor == null) {
+      result = "Couldn't find callable actor '" + getCallableName() + "'!";
+    }
+    else {
+      result = checkCallableActor(actor);
+      if (result == null) {
+      }
+      actor = actor.shallowCopy();
+      actor.setParent(getParent());
+      actor.setVariables(getVariables());
+      result = actor.setUp();
+      if (result == null) {
+	if (actor.getName().equals(actor.getDefaultName()))
+	  actor.setName(getName());
+	actor.setVariables(getVariables());
+	((ActorHandler) getParent()).set(index(), actor);
+	result = actor.setUp();
+	if (getErrorHandler() != this)
+	  ActorUtils.updateErrorHandler(actor, getErrorHandler(), isLoggingEnabled());
+	// make sure we've got the current state of the variables
+	if (result == null)
+	  actor.getOptionManager().updateVariableValues(true);
+	setParent(null);
+	cleanUp();
+      }
+    }
+
+    return result;
   }
 
   /**
@@ -177,42 +175,15 @@ public abstract class AbstractCopyCallableActor
    */
   @Override
   public String setUp() {
-    String		result;
-    HashSet<String>	variables;
+    String	result;
 
     result = super.setUp();
 
-    if (result == null) {
-      m_CallableActor = findCallableActor();
-      if (m_CallableActor == null) {
-        result = "Couldn't find callable actor '" + getCallableName() + "'!";
-      }
-      else {
-	m_CallableActor = m_CallableActor.shallowCopy();
-	m_CallableActor.setParent(getParent());
-	m_CallableActor.setVariables(getVariables());
-	result        = m_CallableActor.setUp();
-	if (result == null) {
-	  variables = findVariables(m_CallableActor);
-	  m_DetectedVariables.addAll(variables);
-	  if (m_DetectedVariables.size() > 0)
-	    getVariables().addVariableChangeListener(this);
-	  if (getErrorHandler() != this)
-	    ActorUtils.updateErrorHandler(m_CallableActor, getErrorHandler(), isLoggingEnabled());
-	}
-      }
-    }
+    if (result == null)
+      result = setUpCallableActor();
 
     return result;
   }
-
-  /**
-   * Executes the callable actor. Derived classes might need to override this
-   * method to ensure atomicity.
-   *
-   * @return		null if no error, otherwise error message
-   */
-  protected abstract String executeCallableActor();
 
   /**
    * Executes the flow item.
@@ -221,62 +192,6 @@ public abstract class AbstractCopyCallableActor
    */
   @Override
   protected String doExecute() {
-    String	result;
-
-    result = null;
-
-    if (!m_CallableActor.getSkip() && !m_CallableActor.isStopped())
-      result = executeCallableActor();
-
-    return result;
-  }
-
-  /**
-   * Returns whether the actor has finished.
-   *
-   * @return		true if finished
-   */
-  @Override
-  public boolean isFinished() {
-    if (m_CallableActor == null)
-      return true;
-    else
-      return m_CallableActor.isFinished();
-  }
-
-  /**
-   * Stops the execution. No message set.
-   */
-  @Override
-  public void stopExecution() {
-    if (m_CallableActor != null)
-      m_CallableActor.stopExecution();
-
-    super.stopExecution();
-  }
-
-  /**
-   * Cleans up after the execution has finished. Graphical output is left
-   * untouched.
-   */
-  @Override
-  public void wrapUp() {
-    if (m_CallableActor != null)
-      m_CallableActor.wrapUp();
-
-    super.wrapUp();
-  }
-
-  /**
-   * Cleans up after the execution has finished.
-   */
-  @Override
-  public void cleanUp() {
-    super.cleanUp();
-
-    if (m_CallableActor != null) {
-      m_CallableActor.cleanUp();
-      m_CallableActor = null;
-    }
+    return null;
   }
 }
