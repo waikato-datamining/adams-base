@@ -93,7 +93,33 @@ public abstract class AbstractWorkspaceListPanel<T extends AbstractWorkspacePane
       }
     });
   }
-  
+
+    /**
+     * Removes all entries and payloads.
+     */
+    public void clear() {
+      for (AbstractWorkspacePanel item: m_Entries.values())
+        item.cleanUp();
+      super.clear();
+    }
+
+    /**
+     * Removes the specified entry.
+     *
+     * @param name	the name of the entry
+     * @return		the entry that was stored under this name or null if
+     * 			no entry was stored with this name
+     */
+    public T removeEntry(String name) {
+      T	result;
+
+      result = super.removeEntry(name);
+      if (result != null)
+        result.cleanUp();
+
+      return result;
+    }
+
   /**
    * Displays the specified entry.
    *

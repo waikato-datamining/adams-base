@@ -19,6 +19,7 @@
  */
 package adams.gui.workspace;
 
+import adams.core.CleanUpHandler;
 import adams.core.Utils;
 import adams.gui.core.BasePanel;
 import adams.gui.core.GUIHelper;
@@ -35,7 +36,7 @@ import javax.swing.JMenuBar;
  */
 public abstract class AbstractWorkspacePanel
   extends BasePanel
-  implements MenuBarProvider {
+  implements MenuBarProvider, CleanUpHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = 7314544066929763500L;
@@ -178,4 +179,13 @@ public abstract class AbstractWorkspacePanel
    * @param title	the title for the dialog
    */
   public abstract void logError(String msg, String title);
+
+  /**
+   * Cleans up data structures, frees up memory.
+   * <br>
+   * Default implementation does nothing.
+   */
+  public void cleanUp() {
+
+  }
 }

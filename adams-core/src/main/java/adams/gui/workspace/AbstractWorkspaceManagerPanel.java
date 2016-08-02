@@ -19,6 +19,7 @@
  */
 package adams.gui.workspace;
 
+import adams.core.CleanUpHandler;
 import adams.gui.core.BasePanel;
 import adams.gui.core.GUIHelper;
 
@@ -38,7 +39,8 @@ import java.awt.event.ActionEvent;
  * @param <T> the type of workspace panel to handle
  */
 public abstract class AbstractWorkspaceManagerPanel<T extends AbstractWorkspacePanel>
-  extends BasePanel {
+  extends BasePanel
+  implements CleanUpHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = -20320489406680254L;
@@ -247,5 +249,12 @@ public abstract class AbstractWorkspaceManagerPanel<T extends AbstractWorkspaceP
    */
   public AbstractWorkspaceListPanel getEntryPanel() {
     return m_History;
+  }
+
+  /**
+   * Cleans up data structures, frees up memory.
+   */
+  public void cleanUp() {
+    m_History.clear();
   }
 }
