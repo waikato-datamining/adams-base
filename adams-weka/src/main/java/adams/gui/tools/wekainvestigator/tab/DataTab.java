@@ -218,8 +218,6 @@ public class DataTab
     cont = getData().remove(index);
     getData().add(index - 1, cont);
 
-    fireDataChange();
-
     SwingUtilities.invokeLater(() -> {
       m_Table.getSelectionModel().clearSelection();
       m_Table.getSelectionModel().addSelectionInterval(index - 1, index - 1);
@@ -244,8 +242,6 @@ public class DataTab
     index = m_Table.getSelectedRow();
     cont = getData().remove(index);
     getData().add(index + 1, cont);
-
-    fireDataChange();
 
     SwingUtilities.invokeLater(() -> {
       m_Table.getSelectionModel().clearSelection();

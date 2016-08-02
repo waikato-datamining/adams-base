@@ -29,6 +29,7 @@ import gnu.trove.list.array.TIntArrayList;
 
 import javax.swing.JPanel;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -148,7 +149,7 @@ public abstract class AbstractInvestigatorTabWithDataTable
    */
   @Override
   public void dataChanged() {
-    TIntArrayList	widths;
+    final TIntArrayList	widths;
     int			i;
 
     widths = new TIntArrayList();
@@ -160,8 +161,12 @@ public abstract class AbstractInvestigatorTabWithDataTable
       m_Table.setOptimalColumnWidth();
     }
     else {
-      for (i = 0; i < m_Table.getColumnModel().getColumnCount(); i++)
-	m_Table.getColumnModel().getColumn(i).setWidth(widths.get(i));
+      SwingUtilities.invokeLater(() -> {
+	for (int n = 0; n < m_Table.getColumnModel().getColumnCount(); n++)
+	  m_Table.getColumnModel().getColumn(n).setPreferredWidth(widths.get(n));
+	m_Table.getComponent().doLayout();
+	m_Table.getComponent().getTableHeader().repaint();
+      });
     }
     m_LastNumDatasets = getData().size();
     if (m_Table.getSelectedRow() == -1) {
