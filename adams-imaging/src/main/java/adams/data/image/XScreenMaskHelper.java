@@ -15,11 +15,12 @@
 
 /**
  * XScreenMaskHelper.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.image;
 
 import adams.core.logging.Logger;
+import adams.data.statistics.StatUtils;
 
 import java.awt.image.BufferedImage;
 
@@ -164,6 +165,22 @@ public class XScreenMaskHelper {
   }
 
   /**
+   * Finds the threshold in the normalized histogram.
+   *
+   * @param histogram	the histogram to process
+   * @param limit	the limit to use
+   * @return		the index in the histogram
+   */
+  protected static int findThreshold(int[] histogram, int limit) {
+    int threshold = histogram.length / 2;
+    if (histogram[threshold] <= limit)
+      for (; threshold < 256 && histogram[threshold] <= limit; threshold++) ;
+    else
+      for (; threshold > 0 && histogram[threshold] > limit; threshold--) ;
+    return threshold;
+  }
+
+  /**
    * Determine an optimal threshold value.
    * A normalized histogram is calculated, assuming two peaks, the threshold begins in the middle, walking right until
    * it hits the right peak, or left until it is walks off the peak.
@@ -192,16 +209,19 @@ public class XScreenMaskHelper {
       histogram[i] = Math.round((histogram[i] - min) * ratio);
 
     // Determine threshold
-    int threshold = histogram.length / 2;
-    if (histogram[threshold] <= 1)
-      for (; threshold < 256 && histogram[threshold] <= 1; threshold++) ;
-    else
-      for (; threshold > 0 && histogram[threshold] > 1; threshold--) ;
+    int threshold = findThreshold(histogram, 1);
 
+    // skewed threshold?
+    if ((threshold < 10) || (threshold > 245)) {
+      int limit = (int) (StatUtils.median(histogram) / 4);
+      if (log != null)
+	log.warning("Skewed threshold index (" + threshold + ") found, retrying with new limit: " + limit);
+      threshold = findThreshold(histogram, limit);
+    }
 
     // Log threshold
     if (log != null)
-      log.info("Threshold: " + threshold);
+      log.info("Threshold index: " + threshold);
 
     return threshold;
   }
