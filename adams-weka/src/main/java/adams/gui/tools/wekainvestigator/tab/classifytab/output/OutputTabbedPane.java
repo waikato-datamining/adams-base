@@ -20,6 +20,8 @@
 
 package adams.gui.tools.wekainvestigator.tab.classifytab.output;
 
+import adams.core.CleanUpHandler;
+import adams.gui.core.BaseScrollPane;
 import adams.gui.core.ButtonTabComponent;
 import adams.gui.core.DragAndDropTabbedPane;
 import adams.gui.core.GUIHelper;
@@ -40,7 +42,8 @@ import java.awt.event.MouseEvent;
  * @version $Revision$
  */
 public class OutputTabbedPane
-  extends DragAndDropTabbedPane {
+  extends DragAndDropTabbedPane
+  implements CleanUpHandler {
 
   private static final long serialVersionUID = -7694010290845155428L;
 
@@ -103,4 +106,29 @@ public class OutputTabbedPane
     return getTabCount() - 1;
   }
 
+  /**
+   * Removes the tab.
+   *
+   * @param index	the index of the tab to remove
+   */
+  @Override
+  public void removeTabAt(int index) {
+    Component comp;
+
+    comp = getComponentAt(index);
+
+    super.removeTabAt(index);
+
+    if (comp instanceof BaseScrollPane)
+      comp = ((BaseScrollPane) comp).getViewport().getView();
+    if (comp instanceof CleanUpHandler)
+      ((CleanUpHandler) comp).cleanUp();
+  }
+
+  /**
+   * Cleans up data structures, frees up memory.
+   */
+  public void cleanUp() {
+    removeAll();
+  }
 }

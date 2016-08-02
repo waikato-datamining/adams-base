@@ -20,6 +20,7 @@
 
 package adams.gui.tools.wekainvestigator.tab.classifytab;
 
+import adams.core.CleanUpHandler;
 import adams.core.DateUtils;
 import adams.core.logging.LoggingObject;
 import adams.gui.tools.wekainvestigator.tab.classifytab.output.OutputTabbedPane;
@@ -37,7 +38,8 @@ import java.util.Date;
  * @version $Revision$
  */
 public class ResultItem
-  extends LoggingObject {
+  extends LoggingObject
+  implements CleanUpHandler {
 
   private static final long serialVersionUID = -3409493446200539772L;
 
@@ -171,5 +173,12 @@ public class ResultItem
     result += ", evaluation=" + hasEvaluation() + ", classifier=" + hasClassifier() + ", header=" + hasHeader();
 
     return result;
+  }
+
+  /**
+   * Cleans up data structures, frees up memory.
+   */
+  public void cleanUp() {
+    m_TabbedPane.cleanUp();
   }
 }

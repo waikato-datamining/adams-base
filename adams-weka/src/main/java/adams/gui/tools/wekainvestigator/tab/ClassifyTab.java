@@ -114,6 +114,32 @@ public class ClassifyTab
     }
 
     /**
+     * Removes all entries and payloads.
+     */
+    public void clear() {
+      for (ResultItem item: m_Entries.values())
+        item.cleanUp();
+      super.clear();
+    }
+
+    /**
+     * Removes the specified entry.
+     *
+     * @param name	the name of the entry
+     * @return		the entry that was stored under this name or null if
+     * 			no entry was stored with this name
+     */
+    public ResultItem removeEntry(String name) {
+      ResultItem	result;
+
+      result = super.removeEntry(name);
+      if (result != null)
+	result.cleanUp();
+
+      return result;
+    }
+
+    /**
      * Displays the specified entry.
      *
      * @param name	the name of the entry, can be null to empty display
@@ -122,8 +148,8 @@ public class ClassifyTab
     protected void updateEntry(String name) {
       m_Owner.getPanelRight().removeAll();
       if (name != null) {
-	if (hasEntry(name))
-	  m_Owner.getPanelRight().add(getEntry(name).getTabbedPane());
+        if (hasEntry(name))
+          m_Owner.getPanelRight().add(getEntry(name).getTabbedPane());
       }
       m_Owner.getPanelRight().invalidate();
       m_Owner.getPanelRight().revalidate();
@@ -141,21 +167,21 @@ public class ClassifyTab
 
       retVal = m_ModelFileChooser.showSaveDialog(this);
       if (retVal != BaseFileChooser.APPROVE_OPTION)
-	return;
+        return;
 
       try {
-	if (item.hasHeader())
-	  SerializationHelper.writeAll(
-	    m_ModelFileChooser.getSelectedFile().getAbsolutePath(),
-	    new Object[]{item.getClassifier(), item.getHeader()});
-	else
-	  SerializationHelper.write(
-	    m_ModelFileChooser.getSelectedFile().getAbsolutePath(),
-	    item.getClassifier());
+        if (item.hasHeader())
+          SerializationHelper.writeAll(
+            m_ModelFileChooser.getSelectedFile().getAbsolutePath(),
+            new Object[]{item.getClassifier(), item.getHeader()});
+        else
+          SerializationHelper.write(
+            m_ModelFileChooser.getSelectedFile().getAbsolutePath(),
+            item.getClassifier());
       }
       catch (Exception e) {
-	GUIHelper.showErrorMessage(
-	  this, "Failed to save model to: " + m_ModelFileChooser.getSelectedFile(), e);
+        GUIHelper.showErrorMessage(
+          this, "Failed to save model to: " + m_ModelFileChooser.getSelectedFile(), e);
       }
     }
 
@@ -168,19 +194,19 @@ public class ClassifyTab
       SwingWorker	worker;
 
       worker = new SwingWorker() {
-	@Override
-	protected Object doInBackground() throws Exception {
-	  item.getTabbedPane().removeAll();
-	  for (int i = 0; i < m_Owner.getOutputGenerators().length; i++) {
-	    try {
-	      m_Owner.getOutputGenerators()[i].generateOutput(item);
-	    }
-	    catch (Exception e) {
-	      m_Owner.logError("Failed to generate output with " + m_Owner.getOutputGenerators()[i].toCommandLine(), e, "Classifier output generation");
-	    }
-	  }
-	  return null;
-	}
+        @Override
+        protected Object doInBackground() throws Exception {
+          item.getTabbedPane().removeAll();
+          for (int i = 0; i < m_Owner.getOutputGenerators().length; i++) {
+            try {
+              m_Owner.getOutputGenerators()[i].generateOutput(item);
+            }
+            catch (Exception e) {
+              m_Owner.logError("Failed to generate output with " + m_Owner.getOutputGenerators()[i].toCommandLine(), e, "Classifier output generation");
+            }
+          }
+          return null;
+        }
       };
       worker.execute();
     }
@@ -198,9 +224,9 @@ public class ClassifyTab
       SwingWorker			worker;
 
       if (getParentDialog() != null)
-	dialog = new GenericObjectEditorDialog(getParentDialog(), ModalityType.DOCUMENT_MODAL);
+        dialog = new GenericObjectEditorDialog(getParentDialog(), ModalityType.DOCUMENT_MODAL);
       else
-	dialog = new GenericObjectEditorDialog(getParentFrame(), true);
+        dialog = new GenericObjectEditorDialog(getParentFrame(), true);
       dialog.setDefaultCloseOperation(GenericArrayEditorDialog.DISPOSE_ON_CLOSE);
       dialog.setTitle("Configure output");
       dialog.getGOEEditor().setCanChangeClassInDialog(false);
@@ -210,15 +236,15 @@ public class ClassifyTab
       dialog.setLocationRelativeTo(getParent());
       dialog.setVisible(true);
       if (dialog.getResult() != GenericObjectEditorDialog.APPROVE_OPTION)
-	return;
+        return;
 
       current = (AbstractOutputGenerator) dialog.getCurrent();
       worker = new SwingWorker() {
-	@Override
-	protected Object doInBackground() throws Exception {
-	  current.generateOutput(item);
-	  return null;
-	}
+        @Override
+        protected Object doInBackground() throws Exception {
+          current.generateOutput(item);
+          return null;
+        }
       };
       worker.execute();
     }
@@ -254,17 +280,17 @@ public class ClassifyTab
       submenu = new BaseMenu("Additional output");
       classes = ClassLister.getSingleton().getClasses(AbstractOutputGenerator.class);
       for (Class cls: classes) {
-	try {
-	  final AbstractOutputGenerator generator = (AbstractOutputGenerator) cls.newInstance();
-	  menuitem = new JMenuItem(generator.getTitle());
-	  menuitem.setEnabled(generator.canGenerateOutput(getEntry(indices[0])));
-	  menuitem.addActionListener((ActionEvent ae) -> generateOutput(generator, getEntry(indices[0])));
-	  submenu.add(menuitem);
-	}
-	catch (Exception ex) {
-	  ConsolePanel.getSingleton().append(
-	    Level.SEVERE, "Failed to instantiate output generator: " + cls.getName(), ex);
-	}
+        try {
+          final AbstractOutputGenerator generator = (AbstractOutputGenerator) cls.newInstance();
+          menuitem = new JMenuItem(generator.getTitle());
+          menuitem.setEnabled(generator.canGenerateOutput(getEntry(indices[0])));
+          menuitem.addActionListener((ActionEvent ae) -> generateOutput(generator, getEntry(indices[0])));
+          submenu.add(menuitem);
+        }
+        catch (Exception ex) {
+          ConsolePanel.getSingleton().append(
+            Level.SEVERE, "Failed to instantiate output generator: " + cls.getName(), ex);
+        }
       }
       submenu.sort();
       result.add(submenu);
@@ -345,25 +371,25 @@ public class ClassifyTab
 
     try {
       cmds = OptionUtils.splitOptions(
-	props.getProperty("Classify.DefaultOutputGenerators", TextStatistics.class.getName()));
+        props.getProperty("Classify.DefaultOutputGenerators", TextStatistics.class.getName()));
     }
     catch (Exception e) {
       ConsolePanel.getSingleton().append(
-	Level.SEVERE,
-	"Failed to parse output generators:\n" + props.getProperty("Classify.DefaultOutputGenerators"), e);
+        Level.SEVERE,
+        "Failed to parse output generators:\n" + props.getProperty("Classify.DefaultOutputGenerators"), e);
       cmds = new String[]{TextStatistics.class.getName()};
     }
 
     generators = new ArrayList<>();
     for (i = 0; i < cmds.length; i++) {
       try {
-	generator = (AbstractOutputGenerator) OptionUtils.forAnyCommandLine(AbstractOutputGenerator.class, cmds[i]);
-	generators.add(generator);
+        generator = (AbstractOutputGenerator) OptionUtils.forAnyCommandLine(AbstractOutputGenerator.class, cmds[i]);
+        generators.add(generator);
       }
       catch (Exception e) {
-	ConsolePanel.getSingleton().append(
-	  Level.SEVERE,
-	  "Failed to instantiate output generator:\n" + cmds[i], e);
+        ConsolePanel.getSingleton().append(
+          Level.SEVERE,
+          "Failed to instantiate output generator:\n" + cmds[i], e);
       }
     }
     m_OutputGenerators = generators.toArray(new AbstractOutputGenerator[generators.size()]);
@@ -391,9 +417,9 @@ public class ClassifyTab
 
     try {
       cls = (Classifier) OptionUtils.forAnyCommandLine(
-	Classifier.class,
-	InvestigatorPanel.getProperties().getProperty(
-	  "Classify.Classifier", ZeroR.class.getName()));
+        Classifier.class,
+        InvestigatorPanel.getProperties().getProperty(
+          "Classify.Classifier", ZeroR.class.getName()));
     }
     catch (Exception e) {
       cls = new ZeroR();
@@ -423,18 +449,18 @@ public class ClassifyTab
     classes            = AbstractClassifierEvaluation.getEvaluations();
     for (Class c: classes) {
       try {
-	eval = (AbstractClassifierEvaluation) c.newInstance();
-	eval.setOwner(this);
-	m_ModelEvaluations.addElement(eval);
+        eval = (AbstractClassifierEvaluation) c.newInstance();
+        eval.setOwner(this);
+        m_ModelEvaluations.addElement(eval);
       }
       catch (Exception e) {
-	ConsolePanel.getSingleton().append(Level.SEVERE, "Failed to instantiate classifier evaluation: " + c.getName(), e);
+        ConsolePanel.getSingleton().append(Level.SEVERE, "Failed to instantiate classifier evaluation: " + c.getName(), e);
       }
     }
     m_ComboBoxEvaluations = new JComboBox<>(m_ModelEvaluations);
     m_ComboBoxEvaluations.addActionListener((ActionEvent e) -> {
       if (m_ComboBoxEvaluations.getSelectedIndex() == -1)
-	return;
+        return;
       m_CurrentEvaluation = (AbstractClassifierEvaluation) m_ComboBoxEvaluations.getSelectedItem();
       m_PanelEvaluationSetup.removeAll();
       m_PanelEvaluationSetup.add(m_CurrentEvaluation.getPanel());
@@ -553,22 +579,22 @@ public class ClassifyTab
       logMessage("Starting evaluation '" + m_CurrentEvaluation.getName() + "' using: " + OptionUtils.getCommandLine(m_CurrentClassifier));
       ResultItem item;
       try {
-	item = m_CurrentEvaluation.evaluate(m_CurrentClassifier, m_History);
-	logMessage("Finished evaluation '" + m_CurrentEvaluation.getName() + "' using: " + OptionUtils.getCommandLine(m_CurrentClassifier));
+        item = m_CurrentEvaluation.evaluate(m_CurrentClassifier, m_History);
+        logMessage("Finished evaluation '" + m_CurrentEvaluation.getName() + "' using: " + OptionUtils.getCommandLine(m_CurrentClassifier));
       }
       catch (Exception e) {
-	logError("Failed to evaluate classifier", e, "Classifier evaluation");
-	item = null;
+        logError("Failed to evaluate classifier", e, "Classifier evaluation");
+        item = null;
       }
       if (item != null) {
-	for (int i = 0; i < m_OutputGenerators.length; i++) {
-	  try {
-	    m_OutputGenerators[i].generateOutput(item);
-	  }
-	  catch (Exception e) {
-	    logError("Failed to generate output with " + m_OutputGenerators[i].toCommandLine(), e, "Classifier output generation");
-	  }
-	}
+        for (int i = 0; i < m_OutputGenerators.length; i++) {
+          try {
+            m_OutputGenerators[i].generateOutput(item);
+          }
+          catch (Exception e) {
+            logError("Failed to generate output with " + m_OutputGenerators[i].toCommandLine(), e, "Classifier output generation");
+          }
+        }
       }
       m_Worker = null;
       updateButtons();
@@ -625,5 +651,13 @@ public class ClassifyTab
    */
   public AbstractOutputGenerator[] getOutputGenerators() {
     return m_OutputGenerators;
+  }
+
+  /**
+   * Cleans up data structures, frees up memory.
+   */
+  public void cleanUp() {
+    super.cleanUp();
+    m_History.clear();
   }
 }

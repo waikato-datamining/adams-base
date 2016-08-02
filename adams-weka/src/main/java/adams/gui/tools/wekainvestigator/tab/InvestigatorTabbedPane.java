@@ -20,10 +20,13 @@
 
 package adams.gui.tools.wekainvestigator.tab;
 
+import adams.core.CleanUpHandler;
 import adams.gui.core.ButtonTabComponent;
 import adams.gui.core.DragAndDropTabbedPane;
 import adams.gui.core.GUIHelper;
 import adams.gui.tools.wekainvestigator.InvestigatorPanel;
+
+import java.awt.Component;
 
 /**
  * Tabbed pane for managing the tabs of the Investigator.
@@ -32,7 +35,8 @@ import adams.gui.tools.wekainvestigator.InvestigatorPanel;
  * @version $Revision$
  */
 public class InvestigatorTabbedPane
-  extends DragAndDropTabbedPane {
+  extends DragAndDropTabbedPane
+  implements CleanUpHandler {
 
   private static final long serialVersionUID = -8555377473460866456L;
 
@@ -76,5 +80,29 @@ public class InvestigatorTabbedPane
     // icon
     button = (ButtonTabComponent) getTabComponentAt(getTabCount() - 1);
     button.setIcon((tab.getTabIcon() == null) ? null : GUIHelper.getIcon(tab.getTabIcon()));
+  }
+
+  /**
+   * Removes the tab.
+   *
+   * @param index	the index of the tab to remove
+   */
+  @Override
+  public void removeTabAt(int index) {
+    Component comp;
+
+    comp = getComponentAt(index);
+
+    super.removeTabAt(index);
+
+    if (comp instanceof CleanUpHandler)
+      ((CleanUpHandler) comp).cleanUp();
+  }
+
+  /**
+   * Cleans up data structures, frees up memory.
+   */
+  public void cleanUp() {
+    removeAll();
   }
 }

@@ -27,6 +27,8 @@ import adams.gui.workspace.AbstractWorkspaceListPanel;
 import adams.gui.workspace.AbstractWorkspaceManagerPanel;
 
 import java.awt.BorderLayout;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 /**
  * Manages multiple sessions of the Investigator.
@@ -71,8 +73,15 @@ public class InvestigatorManagerPanel
 
   public static void main(String[] args) throws Exception {
     Environment.setEnvironmentClass(Environment.class);
-    InvestigatorManagerPanel panel = new InvestigatorManagerPanel();
+    final InvestigatorManagerPanel panel = new InvestigatorManagerPanel();
     BaseFrame frame = new BaseFrame("Investigator");
+    frame.addWindowListener(new WindowAdapter() {
+      @Override
+      public void windowClosed(WindowEvent e) {
+        super.windowClosed(e);
+        panel.cleanUp();
+      }
+    });
     frame.setDefaultCloseOperation(BaseFrame.EXIT_ON_CLOSE);
     frame.getContentPane().setLayout(new BorderLayout());
     frame.getContentPane().add(panel, BorderLayout.CENTER);

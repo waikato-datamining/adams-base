@@ -21,6 +21,7 @@
 package adams.gui.tools.wekainvestigator;
 
 import adams.core.ClassLister;
+import adams.core.CleanUpHandler;
 import adams.core.Properties;
 import adams.core.StatusMessageHandler;
 import adams.core.Utils;
@@ -71,7 +72,7 @@ import java.util.logging.Level;
  */
 public class InvestigatorPanel
   extends AbstractWorkspacePanel
-  implements StatusMessageHandler {
+  implements StatusMessageHandler, CleanUpHandler {
 
   private static final long serialVersionUID = 7442747356297265526L;
 
@@ -559,6 +560,15 @@ public class InvestigatorPanel
    */
   public void showStatus(String msg) {
     m_StatusBar.showStatus(msg);
+  }
+
+  /**
+   * Cleans up data structures, frees up memory.
+   */
+  public void cleanUp() {
+    super.cleanUp();
+    m_Data.clear();
+    m_TabbedPane.cleanUp();
   }
 
   /**

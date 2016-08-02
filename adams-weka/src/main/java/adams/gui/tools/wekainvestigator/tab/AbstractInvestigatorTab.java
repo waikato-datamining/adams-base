@@ -20,6 +20,7 @@
 
 package adams.gui.tools.wekainvestigator.tab;
 
+import adams.core.CleanUpHandler;
 import adams.core.StatusMessageHandler;
 import adams.gui.core.BasePanel;
 import adams.gui.tools.wekainvestigator.InvestigatorPanel;
@@ -35,7 +36,7 @@ import java.util.List;
  */
 public abstract class AbstractInvestigatorTab
   extends BasePanel
-  implements StatusMessageHandler {
+  implements StatusMessageHandler, CleanUpHandler {
 
   private static final long serialVersionUID = 1860821657853747908L;
 
@@ -137,5 +138,13 @@ public abstract class AbstractInvestigatorTab
    */
   public void showStatus(String msg) {
     getOwner().showStatus(msg);
+  }
+
+  /**
+   * Cleans up data structures, frees up memory.
+   * <br>
+   * Default implementation does nothing.
+   */
+  public void cleanUp() {
   }
 }

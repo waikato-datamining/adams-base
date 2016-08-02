@@ -20,6 +20,7 @@
 
 package adams.gui.tools.wekainvestigator.output;
 
+import adams.core.CleanUpHandler;
 import adams.gui.chooser.BaseFileChooser;
 import adams.gui.core.BaseFrame;
 import adams.gui.core.BasePanel;
@@ -46,7 +47,7 @@ import java.io.File;
  */
 public abstract class AbstractOutputPanelWithPopupMenu<T extends BaseFileChooser>
   extends BasePanel
-  implements PopupMenuProvider {
+  implements PopupMenuProvider, CleanUpHandler {
 
   private static final long serialVersionUID = -2818808520522758309L;
 
@@ -266,5 +267,13 @@ public abstract class AbstractOutputPanelWithPopupMenu<T extends BaseFileChooser
    */
   public String getFrameTitle() {
     return m_FrameTitle;
+  }
+
+  /**
+   * Cleans up data structures, frees up memory.
+   */
+  public void cleanUp() {
+    if (isDetached())
+      reattach();
   }
 }
