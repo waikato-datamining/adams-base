@@ -15,7 +15,7 @@
 
 /*
  * ChangeCanvasSize.java
- * Copyright (C) 2014-2105 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.image.transformer;
@@ -268,7 +268,7 @@ public class ChangeCanvasSize
     Graphics			g;
 
     result = new BufferedImageContainer[1];
-    result[0] = new BufferedImageContainer();
+    result[0] = (BufferedImageContainer) img.getHeader();
 
     corners = ImageAnchorHelper.calculateCorners(
       m_CanvasWidth, (int) m_CanvasHeight,
