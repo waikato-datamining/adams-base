@@ -28,7 +28,7 @@ import adams.flow.core.Token;
 import adams.flow.sink.PDFCloseDocument;
 import adams.flow.transformer.PDFAppendDocument;
 import adams.flow.transformer.pdfproclet.PDFGenerator;
-import adams.flow.transformer.pdfproclet.PageOrientation;
+import adams.data.PageOrientation;
 import adams.flow.transformer.pdfproclet.PageSize;
 
 /**

@@ -27,7 +27,7 @@ import adams.core.io.PlaceholderFile;
 import adams.flow.core.Token;
 import adams.flow.transformer.pdfproclet.Image;
 import adams.flow.transformer.pdfproclet.PDFGenerator;
-import adams.flow.transformer.pdfproclet.PageOrientation;
+import adams.data.PageOrientation;
 import adams.flow.transformer.pdfproclet.PageSize;
 import adams.flow.transformer.pdfproclet.PdfProclet;
 import adams.flow.transformer.pdfproclet.PlainText;

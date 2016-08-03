@@ -22,6 +22,7 @@ package adams.flow.transformer.pdfproclet;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
 import adams.core.io.TempUtils;
+import adams.data.PageOrientation;
 import adams.env.Environment;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Rectangle;

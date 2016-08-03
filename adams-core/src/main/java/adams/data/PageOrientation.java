@@ -18,7 +18,7 @@
  * Copyright (C) 2016 University of Waikato, Hamilton, NZ
  */
 
-package adams.flow.transformer.pdfproclet;
+package adams.data;
 
 /**
  * The orientation in the document.
