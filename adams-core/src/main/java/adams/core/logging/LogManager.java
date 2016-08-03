@@ -20,19 +20,16 @@
 
 package adams.core.logging;
 
-import adams.core.LRUCache;
-
 import java.util.Enumeration;
 import java.util.Vector;
 
 /**
  * Simple LogManager that avoids the memory leak that the
- * java.util.logging.LogManager has by only keeping an LRU cache of loggers
- * rather than all of them.
+ * {@link java.util.logging.LogManager} has by not keeping any references to any
+ * {@link Logger} objects.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
- * @see LRUCache
  */
 public class LogManager {
 
@@ -62,10 +59,7 @@ public class LogManager {
    * @return		the logger names
    */
   public Enumeration<String> getLoggerNames() {
-    Vector<String> 	result;
-
-    result = new Vector<>();
-    return result.elements();
+    return new Vector<String>().elements();
   }
 
   /**
