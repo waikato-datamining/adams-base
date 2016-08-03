@@ -26,6 +26,7 @@ import javax.media.jai.JAI;
 import javax.media.jai.operator.TransposeDescriptor;
 import javax.media.jai.operator.TransposeType;
 
+import adams.data.FlipDirection;
 import adams.data.image.BufferedImageContainer;
 
 /**
@@ -58,17 +59,6 @@ public class Flip
   /** for serialization. */
   private static final long serialVersionUID = 2959486760492196174L;
 
-  /** 
-   * The direction to flip.
-   *
-   * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
-   */
-  public enum FlipDirection {
-    HORIZONTAL,
-    VERTICAL
-  }
-  
   /** the flip direction. */
   protected FlipDirection m_Direction;
 
