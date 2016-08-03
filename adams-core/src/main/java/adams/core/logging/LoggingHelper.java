@@ -321,6 +321,9 @@ public class LoggingHelper {
    * <p>
    * The <tt>Handler</tt>  is responsible for formatting the message, when and
    * if necessary.  The formatting should include localization.
+   * <p>
+   * "{}" placeholders in the message get replaced with the objects from
+   * {@link LogRecord#getParameters()}.
    *
    * @param  record  description of the log event. A null record is
    *                 silently ignored and is not published
@@ -335,6 +338,10 @@ public class LoggingHelper {
     String		prefix;
 
     msg = record.getMessage() + "\n";
+    if (record.getParameters() != null) {
+      for (Object obj: record.getParameters())
+        msg = msg.replace("{}", obj.toString());
+    }
     if (record.getThrown() != null)
       msg += Utils.throwableToString(record.getThrown()) + "\n";
 
