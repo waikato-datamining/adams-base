@@ -15,7 +15,7 @@
 
 /*
  * Rotate.java
- * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.jai.transformer;
@@ -161,12 +161,9 @@ public class Rotate
    * @param value	the angle (0-360)
    */
   public void setAngle(double value) {
-    if ((value >= 0.0) && (value <= 360.0)) {
+    if (getOptionManager().isValid("angle", value)) {
       m_Angle = value;
       reset();
-    }
-    else {
-      getLogger().severe("Angle has to fulfill 0 <= x <= 360, provided: " + value);
     }
   }
 
@@ -195,12 +192,9 @@ public class Rotate
    * @param value	the origin of X
    */
   public void setOriginX(int value) {
-    if (value >= -3) {
+    if (getOptionManager().isValid("originX", value)) {
       m_OriginX = value;
       reset();
-    }
-    else {
-      getLogger().severe("Origin X has to fulfill -3 <= x, provided: " + value);
     }
   }
 
@@ -229,12 +223,9 @@ public class Rotate
    * @param value	the origin of Y
    */
   public void setOriginY(int value) {
-    if (value >= -3) {
+    if (getOptionManager().isValid("originY", value)) {
       m_OriginY = value;
       reset();
-    }
-    else {
-      getLogger().severe("Origin Y has to fulfill -3 <= x, provided: " + value);
     }
   }
 
