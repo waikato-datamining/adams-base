@@ -23,6 +23,7 @@ package adams.scripting.command.gui;
 import adams.core.base.AbstractBaseString;
 import adams.core.base.BaseString;
 import adams.flow.control.Flow;
+import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.AbstractBasicMenuItemDefinition;
 import adams.gui.application.AdditionalParameterHandler;
 import adams.gui.menu.TextEditor;
@@ -176,7 +177,8 @@ public class MenuItem
 	m_MenuItem.setOwner(((Flow) m_FlowContext.getRoot()).getApplicationFrame());
     }
     else if (m_ApplicationContext != null) {
-      m_MenuItem.setOwner(m_ApplicationContext);
+      if (m_ApplicationContext instanceof AbstractApplicationFrame)
+      m_MenuItem.setOwner((AbstractApplicationFrame) m_ApplicationContext);
     }
 
     // additional parameters?

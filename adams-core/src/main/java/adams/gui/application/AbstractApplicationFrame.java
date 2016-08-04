@@ -84,7 +84,7 @@ import java.util.logging.Level;
 public abstract class AbstractApplicationFrame
   extends AbstractFrameWithOptionHandling
   implements DatabaseConnectionHandler, DatabaseConnectionChangeListener,
-             RestartableApplication {
+             RestartableApplication, ApplicationContext {
 
   /** for serialization. */
   private static final long serialVersionUID = -5800519559483605870L;

@@ -26,6 +26,7 @@ import adams.core.logging.LoggingObject;
 import adams.core.management.OS;
 import adams.core.option.OptionUtils;
 import adams.gui.application.AbstractApplicationFrame;
+import adams.terminal.application.AbstractTerminalApplication;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -81,8 +82,11 @@ public abstract class AbstractEnvironment
   /** the key - definition relation. */
   protected Hashtable<String,AbstractPropertiesDefinition> m_Definitions;
 
-  /** the main application. */
+  /** the main GUI application. */
   protected AbstractApplicationFrame m_ApplicationFrame;
+
+  /** the main terminal application. */
+  protected AbstractTerminalApplication m_ApplicationTerminal;
 
   /**
    * Initializes the object.
@@ -504,7 +508,7 @@ public abstract class AbstractEnvironment
   }
 
   /**
-   * Sets the main application frame (which was started from commandline).
+   * Sets the main GUI application frame (which was started from commandline).
    *
    * @param value	the frame
    */
@@ -513,12 +517,30 @@ public abstract class AbstractEnvironment
   }
 
   /**
-   * Returns the main application.
+   * Returns the main GUI application.
    *
    * @return		the frame, null if not set
    */
   public AbstractApplicationFrame getApplicationFrame() {
     return m_ApplicationFrame;
+  }
+
+  /**
+   * Sets the main terminal application frame (which was started from commandline).
+   *
+   * @param value	the frame
+   */
+  public void setApplicationTerminal(AbstractTerminalApplication value) {
+    m_ApplicationTerminal = value;
+  }
+
+  /**
+   * Returns the main terminal application.
+   *
+   * @return		the frame, null if not set
+   */
+  public AbstractTerminalApplication getApplicationTerminal() {
+    return m_ApplicationTerminal;
   }
 
   /**

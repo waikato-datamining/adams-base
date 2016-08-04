@@ -25,7 +25,7 @@ import adams.core.Stoppable;
 import adams.core.option.OptionHandler;
 import adams.flow.core.Actor;
 import adams.flow.core.FlowContextHandler;
-import adams.gui.application.AbstractApplicationFrame;
+import adams.gui.application.ApplicationContext;
 import adams.multiprocess.CallableWithResult;
 import adams.scripting.permissionhandler.PermissionHandler;
 import adams.scripting.requesthandler.RequestHandler;
@@ -45,14 +45,14 @@ public interface RemoteScriptingEngine
    *
    * @param value	the context
    */
-  public void setApplicationContext(AbstractApplicationFrame value);
+  public void setApplicationContext(ApplicationContext value);
 
   /**
    * Returns the application context.
    *
    * @return		the context, null if none set
    */
-  public AbstractApplicationFrame getApplicationContext();
+  public ApplicationContext getApplicationContext();
 
   /**
    * Sets the flow context.

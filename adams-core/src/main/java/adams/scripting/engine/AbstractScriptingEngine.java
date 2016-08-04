@@ -31,7 +31,7 @@ import adams.core.option.ArrayConsumer;
 import adams.core.option.OptionUtils;
 import adams.env.Environment;
 import adams.flow.core.Actor;
-import adams.gui.application.AbstractApplicationFrame;
+import adams.gui.application.ApplicationContext;
 import adams.gui.scripting.ScriptingEngine;
 import adams.multiprocess.CallableWithResult;
 import adams.scripting.permissionhandler.AllowAll;
@@ -52,7 +52,7 @@ public abstract class AbstractScriptingEngine
   private static final long serialVersionUID = -3763240773922918567L;
 
   /** the application context. */
-  protected AbstractApplicationFrame m_ApplicationContext;
+  protected ApplicationContext m_ApplicationContext;
 
   /** the flow context. */
   protected Actor m_FlowContext;
@@ -254,7 +254,7 @@ public abstract class AbstractScriptingEngine
    *
    * @param value	the context
    */
-  public void setApplicationContext(AbstractApplicationFrame value) {
+  public void setApplicationContext(ApplicationContext value) {
     m_ApplicationContext = value;
   }
 
@@ -263,7 +263,7 @@ public abstract class AbstractScriptingEngine
    *
    * @return		the context, null if none set
    */
-  public AbstractApplicationFrame getApplicationContext() {
+  public ApplicationContext getApplicationContext() {
     return m_ApplicationContext;
   }
 

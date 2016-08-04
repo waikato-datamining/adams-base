@@ -25,7 +25,7 @@ import adams.core.Utils;
 import adams.core.io.GzipUtils;
 import adams.core.option.AbstractOptionHandler;
 import adams.core.option.OptionUtils;
-import adams.gui.application.AbstractApplicationFrame;
+import adams.gui.application.ApplicationContext;
 import adams.scripting.engine.RemoteScriptingEngine;
 import adams.scripting.requesthandler.RequestHandler;
 
@@ -42,7 +42,7 @@ public abstract class AbstractCommand
   private static final long serialVersionUID = 4357645457118740255L;
 
   /** the application context. */
-  protected AbstractApplicationFrame m_ApplicationContext;
+  protected ApplicationContext m_ApplicationContext;
 
   /** whether the command is a request or response. */
   protected boolean m_Request;
@@ -63,7 +63,7 @@ public abstract class AbstractCommand
    *
    * @param value	the context
    */
-  public void setApplicationContext(AbstractApplicationFrame value) {
+  public void setApplicationContext(ApplicationContext value) {
     m_ApplicationContext = value;
   }
 
@@ -72,7 +72,7 @@ public abstract class AbstractCommand
    *
    * @return		the context, null if none set
    */
-  public AbstractApplicationFrame getApplicationContext() {
+  public ApplicationContext getApplicationContext() {
     return m_ApplicationContext;
   }
 
