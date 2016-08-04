@@ -358,7 +358,6 @@ public abstract class AbstractTerminalApplication
 	System.out.print("\n" + OptionUtils.list(application));
 	LoggingHelper.outputHandlerOption();
 	ScriptingEngine.stopAllEngines();
-	application = null;
       }
       else {
 	logFile = new File(Environment.getInstance().getDefaultHome() + File.separator + "console.log");
