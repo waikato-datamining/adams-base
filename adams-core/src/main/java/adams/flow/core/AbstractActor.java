@@ -314,7 +314,7 @@ public abstract class AbstractActor
    * @return		true if GUI components are suppressed
    */
   public boolean isHeadless() {
-    if (getRoot() != null)
+    if ((getRoot() != null) && !(getRoot() == this))
       return getRoot().isHeadless();
     else
       return GraphicsEnvironment.isHeadless();
