@@ -29,8 +29,7 @@ import adams.data.report.DataType;
 import adams.data.report.Field;
 import adams.data.report.Report;
 import adams.flow.core.Token;
-import adams.flow.transformer.locateobjects.AbstractObjectLocator;
-import adams.flow.transformer.locateobjects.LocatedObjects;
+import adams.flow.transformer.locateobjects.*;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.BasePanel;
 import adams.gui.event.ImagePanelLeftClickEvent;
@@ -785,18 +784,20 @@ public class ImageAnnotator
     cont = (AbstractImageContainer) m_InputToken.getPayload();
 
     // locate objects
-    locate = new LocateObjects();
-    locate.setLocator(m_Locator);
-    locate.setGenerateReport(true);
-    locate.input(new Token(cont));
-    msg = locate.execute();
-    if (msg != null) {
+    if (!(m_Locator instanceof adams.flow.transformer.locateobjects.PassThrough)) {
+      locate = new LocateObjects();
+      locate.setLocator(m_Locator);
+      locate.setGenerateReport(true);
+      locate.input(new Token(cont));
+      msg = locate.execute();
+      if (msg != null) {
+	locate.cleanUp();
+	getLogger().severe(msg);
+	return false;
+      }
+      cont = (AbstractImageContainer) locate.output().getPayload();
       locate.cleanUp();
-      getLogger().severe(msg);
-      return false;
     }
-    cont = (AbstractImageContainer) locate.output().getPayload();
-    locate.cleanUp();
 
     // annotate
     ((AnnotatorPanel) m_Panel).setCurrentImage(cont);
