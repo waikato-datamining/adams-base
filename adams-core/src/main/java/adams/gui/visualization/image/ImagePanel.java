@@ -15,7 +15,7 @@
 
 /**
  * ImagePanel.java
- * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.image;
 
@@ -51,6 +51,8 @@ import adams.gui.core.SearchPanel;
 import adams.gui.core.SearchPanel.LayoutType;
 import adams.gui.core.Undo;
 import adams.gui.core.UndoPanel;
+import adams.gui.event.ImagePanelLeftClickEvent;
+import adams.gui.event.ImagePanelLeftClickListener;
 import adams.gui.event.ImagePanelSelectionEvent;
 import adams.gui.event.ImagePanelSelectionListener;
 import adams.gui.event.SearchEvent;
@@ -89,6 +91,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.Vector;
 
 /**
@@ -139,7 +142,7 @@ public class ImagePanel
 
     /** the image overlays. */
     protected HashSet<ImageOverlay> m_ImageOverlays;
-    
+
     /** whether to use a custom popup menu provider. */
     protected CustomPopupMenuProvider m_CustomPopupMenuProvider;
 
@@ -162,10 +165,13 @@ public class ImagePanel
     protected Point m_SelectionBottomRight;
 
     /** the selection listeners. */
-    protected HashSet<ImagePanelSelectionListener> m_SelectionListeners;
+    protected Set<ImagePanelSelectionListener> m_SelectionListeners;
+
+    /** the left-click listeners. */
+    protected Set<ImagePanelLeftClickListener> m_LeftClickListeners;
 
     /** additional paintlets to execute. */
-    protected HashSet<Paintlet> m_Paintlets;
+    protected Set<Paintlet> m_Paintlets;
 
     /**
      * Initializes the panel.
@@ -187,14 +193,15 @@ public class ImagePanel
 
       m_CurrentImage            = null;
       m_Scale                   = 1.0;
-      m_ImageOverlays           = new HashSet<ImageOverlay>();
+      m_ImageOverlays           = new HashSet<>();
       m_CustomPopupMenuProvider = null;
       m_Selecting               = false;
       m_Dragged                 = false;
       m_SelectionBoxColor       = Color.GRAY;
       m_SelectionEnabled        = false;
-      m_SelectionListeners      = new HashSet<ImagePanelSelectionListener>();
-      m_Paintlets = new HashSet<Paintlet>();
+      m_SelectionListeners      = new HashSet<>();
+      m_LeftClickListeners      = new HashSet<>();
+      m_Paintlets = new HashSet<>();
     }
 
     /**
@@ -252,7 +259,7 @@ public class ImagePanel
 	    }
 	  }
 	}
-	      
+
 	// start selection
 	@Override
 	public void mouseMoved(MouseEvent e) {
@@ -277,8 +284,8 @@ public class ImagePanel
 	  if (e.getButton() == MouseEvent.BUTTON1) {
 	    // get bottom/right coordinates for selection
 	    if (m_Selecting && m_Dragged) {
-	      m_Selecting            = false;
-	      m_Dragged              = false;
+	      m_Selecting = false;
+	      m_Dragged   = false;
 	      m_SelectionBottomRight = e.getPoint();
 	      if (m_SelectionTopLeft.getX() > m_SelectionBottomRight.getX())
 		notifySelectionListeners(m_SelectionBottomRight, m_SelectionTopLeft, e.getModifiersEx());
@@ -286,13 +293,15 @@ public class ImagePanel
 		notifySelectionListeners(m_SelectionTopLeft, m_SelectionBottomRight, e.getModifiersEx());
 	    }
 	  }
-
-	  m_Selecting = false;
 	}
-	
-	// popups/reset zoom
+
+	// left-click/popups/reset zoom
 	@Override
 	public void mouseClicked(MouseEvent e) {
+	  if (MouseUtils.isLeftClick(e)) {
+	    notifyLeftClickListeners(e.getPoint(), e.getModifiersEx());
+	    e.consume();
+	  }
 	  if (MouseUtils.isMiddleClick(e)) {
 	    setScale(1.0);
 	    updateStatus();
@@ -309,16 +318,16 @@ public class ImagePanel
       });
 
       addMouseWheelListener(new MouseWheelListener() {
-        public void mouseWheelMoved(MouseWheelEvent e) {
-          int rotation = e.getWheelRotation();
-          double scale = getScale();
-          if (rotation < 0)
-            scale = scale * Math.pow(1.2, -rotation);
-          else
-            scale = scale / Math.pow(1.2, rotation);
-          getOwner().setScale(scale);
-          updateStatus();
-        }
+	public void mouseWheelMoved(MouseWheelEvent e) {
+	  int rotation = e.getWheelRotation();
+	  double scale = getScale();
+	  if (rotation < 0)
+	    scale = scale * Math.pow(1.2, -rotation);
+	  else
+	    scale = scale / Math.pow(1.2, rotation);
+	  getOwner().setScale(scale);
+	  updateStatus();
+	}
       });
 
       m_PrintMouseListener = new PrintMouseListener(this);
@@ -331,7 +340,7 @@ public class ImagePanel
      */
     public void addPaintlet(Paintlet p) {
       synchronized(m_Paintlets) {
-        m_Paintlets.add(p);
+	m_Paintlets.add(p);
       }
     }
 
@@ -342,7 +351,7 @@ public class ImagePanel
      */
     public void removePaintlet(Paintlet p) {
       synchronized(m_Paintlets) {
-        m_Paintlets.remove(p);
+	m_Paintlets.remove(p);
       }
     }
 
@@ -353,7 +362,7 @@ public class ImagePanel
      */
     public Iterator<Paintlet> paintlets() {
       synchronized(m_Paintlets) {
-        return m_Paintlets.iterator();
+	return m_Paintlets.iterator();
       }
     }
 
@@ -372,14 +381,14 @@ public class ImagePanel
      * Turns the mouse position into pixel location. 
      * Limits the pixel position to the size of the image, i.e., no negative
      * pixel locations or ones that exceed the image size are generated.
-     * 
+     *
      * @param mousePos	the mouse position
      * @return		the pixel location
      */
     public Point mouseToPixelLocation(Point mousePos) {
       int	x;
       int	y;
-      
+
       x = (int) (mousePos.getX() / m_Scale);
       if (x < 0)
 	x = 0;
@@ -393,10 +402,10 @@ public class ImagePanel
 	if (y > m_CurrentImage.getHeight())
 	  y = m_CurrentImage.getHeight();
       }
-      
+
       return new Point(x, y);
     }
-    
+
     /**
      * Updates the status bar.
      *
@@ -435,84 +444,84 @@ public class ImagePanel
       menu = null;
       if (m_CustomPopupMenuProvider != null)
 	menu = m_CustomPopupMenuProvider.getCustomPopupMenu(e);
-	
+
       if (menu == null) {
 	menu = new BasePopupMenu();
 
-        // undo/redo
-        if (getOwner().isUndoSupported() & getOwner().getUndo().isEnabled()) {
+	// undo/redo
+	if (getOwner().isUndoSupported() & getOwner().getUndo().isEnabled()) {
 	  undo = getOwner().getUndo();
-          menuitem = new JMenuItem("Undo" + (undo.canUndo() ? (" - " + undo.peekUndoComment()) : ""), GUIHelper.getIcon("undo.gif"));
-          menuitem.setEnabled(undo.canUndo());
+	  menuitem = new JMenuItem("Undo" + (undo.canUndo() ? (" - " + undo.peekUndoComment()) : ""), GUIHelper.getIcon("undo.gif"));
+	  menuitem.setEnabled(undo.canUndo());
 	  menuitem.addActionListener((ActionEvent ae) -> getOwner().getUndo().undo());
-          menu.add(menuitem);
+	  menu.add(menuitem);
 
-          menuitem = new JMenuItem("Redo" + (undo.canRedo() ? (" - " + undo.peekRedoComment()) : ""), GUIHelper.getIcon("redo.gif"));
-          menuitem.setEnabled(undo.canRedo());
-          menuitem.addActionListener((ActionEvent ae) -> getOwner().getUndo().redo());
-          menu.add(menuitem);
+	  menuitem = new JMenuItem("Redo" + (undo.canRedo() ? (" - " + undo.peekRedoComment()) : ""), GUIHelper.getIcon("redo.gif"));
+	  menuitem.setEnabled(undo.canRedo());
+	  menuitem.addActionListener((ActionEvent ae) -> getOwner().getUndo().redo());
+	  menu.add(menuitem);
 
 	  menu.addSeparator();
-        }
+	}
 
-        // copy
+	// copy
 	menuitem = new JMenuItem("Copy", GUIHelper.getIcon("copy.gif"));
 	menuitem.setEnabled(getCurrentImage() != null);
 	menuitem.addActionListener((ActionEvent ae) -> ClipboardHelper.copyToClipboard(getCurrentImage()));
 	menu.add(menuitem);
 
-        // export
+	// export
 	menuitem = new JMenuItem("Export...", GUIHelper.getIcon("save.gif"));
 	menuitem.setEnabled(getCurrentImage() != null);
 	menuitem.addActionListener((ActionEvent ae) -> export());
 	menu.addSeparator();
 	menu.add(menuitem);
 
-        // save report
+	// save report
 	menuitem = new JMenuItem("Save report...", GUIHelper.getEmptyIcon());
 	menuitem.setEnabled(getCurrentImage() != null);
 	menuitem.addActionListener((ActionEvent ae) -> saveReport());
-        menu.add(menuitem);
+	menu.add(menuitem);
 
 	menu.addSeparator();
 
-        // show side pane
-        menuitem = new JCheckBoxMenuItem("Show side pane", GUIHelper.getIcon("properties.gif"));
-        menuitem.setSelected(!getOwner().getSplitPane().isRightComponentHidden());
-        menuitem.addActionListener((ActionEvent ae) ->
+	// show side pane
+	menuitem = new JCheckBoxMenuItem("Show side pane", GUIHelper.getIcon("properties.gif"));
+	menuitem.setSelected(!getOwner().getSplitPane().isRightComponentHidden());
+	menuitem.addActionListener((ActionEvent ae) ->
 	  getOwner().getSplitPane().setRightComponentHidden(
 	    !getOwner().getSplitPane().isRightComponentHidden()));
-        menu.add(menuitem);
+	menu.add(menuitem);
 
-        // zoom
+	// zoom
 	submenu = new JMenu("Zoom");
 	submenu.setIcon(GUIHelper.getIcon("glasses.gif"));
 	menu.add(submenu);
-        zooms = new int[]{
-          -100,
-          25,
-          50,
-          66,
-          75,
-          100,
-          150,
-          200,
-          400,
-          800};
-        for (i = 0; i < zooms.length; i++) {
-          final int fZoom = zooms[i];
-          if (zooms[i] == -100)
-            menuitem = new JMenuItem("Best fit");
-          else
-            menuitem = new JMenuItem(zooms[i] + "%");
-          submenu.add(menuitem);
-          menuitem.addActionListener((ActionEvent ae) -> {
-            if (getOwner() != null)
-              getOwner().setScale((double) fZoom / 100);
-            else
-              setScale((double) fZoom / 100);
-          });
-        }
+	zooms = new int[]{
+	  -100,
+	  25,
+	  50,
+	  66,
+	  75,
+	  100,
+	  150,
+	  200,
+	  400,
+	  800};
+	for (i = 0; i < zooms.length; i++) {
+	  final int fZoom = zooms[i];
+	  if (zooms[i] == -100)
+	    menuitem = new JMenuItem("Best fit");
+	  else
+	    menuitem = new JMenuItem(zooms[i] + "%");
+	  submenu.add(menuitem);
+	  menuitem.addActionListener((ActionEvent ae) -> {
+	    if (getOwner() != null)
+	      getOwner().setScale((double) fZoom / 100);
+	    else
+	      setScale((double) fZoom / 100);
+	  });
+	}
       }
 
       menu.showAbsolute(this, e);
@@ -562,7 +571,7 @@ public class ImagePanel
     public BufferedImage getCurrentImage() {
       return m_CurrentImage;
     }
-    
+
     /**
      * Sets the scaling factor (0-16).
      *
@@ -592,7 +601,7 @@ public class ImagePanel
 	update();
       }
     }
-    
+
     /**
      * Updates the image.
      */
@@ -603,6 +612,10 @@ public class ImagePanel
       }
       synchronized(m_SelectionListeners) {
 	for (ImagePanelSelectionListener l: m_SelectionListeners)
+	  l.imageChanged(this);
+      }
+      synchronized(m_LeftClickListeners) {
+	for (ImagePanelLeftClickListener l: m_LeftClickListeners)
 	  l.imageChanged(this);
       }
       getOwner().invalidate();
@@ -645,16 +658,16 @@ public class ImagePanel
       DefaultReportFileChooser	filechooser;
       int				retVal;
       AbstractReportWriter	writer;
-      
+
       filechooser = new DefaultReportFileChooser();
       retVal = filechooser.showSaveDialog(this);
       if (retVal != DefaultReportFileChooser.APPROVE_OPTION)
-        return;
+	return;
       writer = filechooser.getWriter();
       writer.setOutput(filechooser.getSelectedPlaceholderFile());
       if (!writer.write(getOwner().getAllProperties()))
-        GUIHelper.showErrorMessage(
-  	  this, "Failed to save report to:\n" + filechooser.getSelectedPlaceholderFile());
+	GUIHelper.showErrorMessage(
+	  this, "Failed to save report to:\n" + filechooser.getSelectedPlaceholderFile());
     }
 
     /**
@@ -689,9 +702,9 @@ public class ImagePanel
      */
     public void removeImageOverlays(Class cls) {
       List<ImageOverlay>	remove;
-      
+
       synchronized (m_ImageOverlays) {
-	remove = new ArrayList<ImageOverlay>();
+	remove = new ArrayList<>();
 	for (ImageOverlay io: m_ImageOverlays) {
 	  if (ClassLocator.isSubclass(cls, io.getClass()))
 	    remove.add(io);
@@ -703,25 +716,25 @@ public class ImagePanel
 
     /**
      * Returns an iterator over all the image overlays.
-     * 
+     *
      * @return		iterator on image overlays
      */
     public synchronized Iterator<ImageOverlay> imageOverlays() {
       return m_ImageOverlays.iterator();
     }
-    
+
     /**
      * Sets the custom popup menu provider.
-     * 
+     *
      * @param value	the provider, use null to remove
      */
     public void setCustomPopupMenuProvider(CustomPopupMenuProvider value) {
       m_CustomPopupMenuProvider = value;
     }
-    
+
     /**
      * Returns the custom popup menu provider.
-     * 
+     *
      * @return		the provider, null if none set
      */
     public CustomPopupMenuProvider getCustomPopupMenuProvider() {
@@ -741,26 +754,26 @@ public class ImagePanel
       int	tmp;
 
       if (m_Selecting && m_Dragged) {
-        g.setColor(m_SelectionBoxColor);
+	g.setColor(m_SelectionBoxColor);
 
-        topX    = (int) mouseToPixelLocation(m_SelectionTopLeft).getX();
-        topY    = (int) mouseToPixelLocation(m_SelectionTopLeft).getY();
-        bottomX = (int) mouseToPixelLocation(m_SelectionBottomRight).getX();
-        bottomY = (int) mouseToPixelLocation(m_SelectionBottomRight).getY();
+	topX    = (int) mouseToPixelLocation(m_SelectionTopLeft).getX();
+	topY    = (int) mouseToPixelLocation(m_SelectionTopLeft).getY();
+	bottomX = (int) mouseToPixelLocation(m_SelectionBottomRight).getX();
+	bottomY = (int) mouseToPixelLocation(m_SelectionBottomRight).getY();
 
-        // swap necessary?
-        if (topX > bottomX) {
-          tmp     = topX;
-          topX    = bottomX;
-          bottomX = tmp;
-        }
-        if (topY > bottomY) {
-          tmp     = topY;
-          topY    = bottomY;
-          bottomY = tmp;
-        }
+	// swap necessary?
+	if (topX > bottomX) {
+	  tmp     = topX;
+	  topX    = bottomX;
+	  bottomX = tmp;
+	}
+	if (topY > bottomY) {
+	  tmp     = topY;
+	  topY    = bottomY;
+	  bottomY = tmp;
+	}
 
-        g.drawRect(
+	g.drawRect(
 	  topX,
 	  topY,
 	  (bottomX - topX + 1),
@@ -783,14 +796,14 @@ public class ImagePanel
 
       if (m_CurrentImage != null) {
 	((Graphics2D) g).scale(m_Scale, m_Scale);
-        g.drawImage(m_CurrentImage, 0, 0, getOwner().getBackgroundColor(), null);
+	g.drawImage(m_CurrentImage, 0, 0, getOwner().getBackgroundColor(), null);
 
-        // overlays
-        synchronized (m_ImageOverlays) {
-          overlays = m_ImageOverlays.toArray(new ImageOverlay[m_ImageOverlays.size()]);
-        }
-        for (ImageOverlay overlay: overlays)
-          overlay.paintOverlay(this, g);
+	// overlays
+	synchronized (m_ImageOverlays) {
+	  overlays = m_ImageOverlays.toArray(new ImageOverlay[m_ImageOverlays.size()]);
+	}
+	for (ImageOverlay overlay: overlays)
+	  overlay.paintOverlay(this, g);
 
 	// paintlets
 	synchronized (m_Paintlets) {
@@ -799,7 +812,7 @@ public class ImagePanel
 	for (Paintlet p: paintlets)
 	  p.paint(g);
 
-        paintSelectionBox(g);
+	paintSelectionBox(g);
       }
     }
 
@@ -811,7 +824,7 @@ public class ImagePanel
     public void setSelectionBoxColor(Color value) {
       m_SelectionBoxColor = value;
       if (m_Selecting)
-        repaint();
+	repaint();
     }
 
     /**
@@ -882,6 +895,47 @@ public class ImagePanel
 	  iter.next().selected(e);
       }
     }
+
+    /**
+     * Adds the given listener to the internal list of left-click listeners.
+     *
+     * @param l		the listener to add
+     */
+    public void addLeftClickListener(ImagePanelLeftClickListener l) {
+      synchronized(m_LeftClickListeners) {
+	m_LeftClickListeners.add(l);
+      }
+    }
+
+    /**
+     * Removes the given listener from the internal list of left-click listeners.
+     *
+     * @param l		the listener to remove
+     */
+    public void removeLeftClickListener(ImagePanelLeftClickListener l) {
+      synchronized(m_LeftClickListeners) {
+	m_LeftClickListeners.remove(l);
+      }
+    }
+
+    /**
+     * Notifies all left-click listeners.
+     *
+     * @param position		the position of the click
+     * @param modifiersEx	the extended modifiers
+     * @see			MouseEvent#getModifiersEx()
+     */
+    public void notifyLeftClickListeners(Point position, int modifiersEx) {
+      Iterator<ImagePanelLeftClickListener>	iter;
+      ImagePanelLeftClickEvent e;
+
+      synchronized(m_LeftClickListeners) {
+	e    = new ImagePanelLeftClickEvent(getOwner(), position, modifiersEx);
+	iter = m_LeftClickListeners.iterator();
+	while (iter.hasNext())
+	  iter.next().clicked(e);
+      }
+    }
   }
 
   /** the current filename. */
@@ -898,7 +952,7 @@ public class ImagePanel
 
   /** the tabbed pane (props/log). */
   protected BaseTabbedPaneWithTabHiding m_SideSplitPane;
-  
+
   /** the panel with the properties. */
   protected BasePanel m_PanelProperties;
 
@@ -910,10 +964,10 @@ public class ImagePanel
 
   /** the scrollpane for the properties. */
   protected BaseScrollPane m_ScrollPaneProperties;
-  
+
   /** the search panel for searching in the properties. */
   protected SearchPanel m_PanelSearchProperties;
-  
+
   /** for displaying image and properties. */
   protected BaseSplitPane m_MainSplitPane;
 
@@ -922,10 +976,10 @@ public class ImagePanel
 
   /** whether the image was modified. */
   protected boolean m_Modified;
-  
+
   /** the image properties. */
   protected Report m_ImageProperties;
-  
+
   /** the additional properties to display. */
   protected Report m_AdditionalProperties;
 
@@ -934,16 +988,16 @@ public class ImagePanel
 
   /** list of dependent dialogs to clean up. */
   protected List<Dialog> m_DependentDialogs;
-  
+
   /** list of dependent flows to clean up. */
   protected List<Flow> m_DependentFlows;
 
   /** the scale that the user chose. */
   protected double m_Scale;
-  
+
   /** for determining readers and writers. */
   protected ImageFileChooser m_FileChooser;
-  
+
   /**
    * Initializes the panel.
    */
@@ -993,7 +1047,7 @@ public class ImagePanel
     m_SideSplitPane = new BaseTabbedPaneWithTabHiding();
     m_MainSplitPane.setRightComponent(m_SideSplitPane);
     m_MainSplitPane.setRightComponentHidden(true);
-    
+
     m_PanelProperties = new BasePanel(new BorderLayout());
     m_PanelProperties.setMinimumSize(new Dimension(200, 0));
     m_SideSplitPane.addTab(TAB_PROPERTIES, m_PanelProperties);
@@ -1005,7 +1059,7 @@ public class ImagePanel
     m_TableProperties.sort(0);
     m_ScrollPaneProperties = new BaseScrollPane(m_TableProperties);
     m_PanelProperties.add(m_ScrollPaneProperties, BorderLayout.CENTER);
-    
+
     m_PanelSearchProperties = new SearchPanel(LayoutType.HORIZONTAL, false);
     m_PanelSearchProperties.addSearchListener(new SearchListener() {
       @Override
@@ -1175,17 +1229,17 @@ public class ImagePanel
 
   /**
    * Calculates the actual scale.
-   * 
+   *
    * @param scale	the scale to use as basis
    * @return		the actual scale to use
    */
-  protected double calcActualScale(double scale) {
+  public double calcActualScale(double scale) {
     double	result;
     double	scaleW;
     double	scaleH;
     int		width;
     int		height;
-    
+
     result = scale;
     if ((result == -1) && (getCurrentImage() != null)) {
       width  = m_ScrollPane.getWidth()  - 20;
@@ -1194,19 +1248,19 @@ public class ImagePanel
       scaleH = (double) height / (double) getCurrentImage().getHeight();
       result = Math.min(scaleW, scaleH);
     }
-    
+
     return result;
   }
-  
+
   /**
    * Paints the component. Also determines best fit scales.
-   * 
+   *
    * @param g		the graphics context
    */
   @Override
   protected void paintComponent(Graphics g) {
     double	actual;
-    
+
     actual = calcActualScale(m_Scale);
     if (actual != m_PaintPanel.getScale())
       m_PaintPanel.setScale(actual);
@@ -1253,7 +1307,7 @@ public class ImagePanel
 
   /**
    * Returns the underlying table for the properties.
-   * 
+   *
    * @return		the table
    */
   public ReportFactory.Table getPropertiesTable() {
@@ -1262,22 +1316,22 @@ public class ImagePanel
 
   /**
    * Returns the underlying table for the properties.
-   * 
+   *
    * @return		the table
    */
   public BaseScrollPane getPropertiesScrollPane() {
     return m_ScrollPaneProperties;
   }
-  
+
   /**
    * Appends the message to the log.
-   * 
+   *
    * @param msg		the message to append
    */
   public void log(String msg) {
     m_PanelLog.append(msg);
   }
-  
+
   /**
    * Removes the image.
    */
@@ -1296,7 +1350,7 @@ public class ImagePanel
   /**
    * Adds the dialog to the list of dialogs to be closed when the panel gets
    * cleared or removed.
-   * 
+   *
    * @param dlg		the dialog to add
    */
   public void addDependentDialog(Dialog dlg) {
@@ -1304,7 +1358,7 @@ public class ImagePanel
       m_DependentDialogs.add(dlg);
     }
   }
-  
+
   /**
    * Removes all dependent dialogs.
    */
@@ -1321,7 +1375,7 @@ public class ImagePanel
   /**
    * Adds the flow to the list of flows to be cleaned up when the panel gets
    * cleared or removed.
-   * 
+   *
    * @param flow	the flow to add
    */
   public void addDependentFlow(Flow flow) {
@@ -1329,7 +1383,7 @@ public class ImagePanel
       m_DependentFlows.add(flow);
     }
   }
-  
+
   /**
    * Removes all dependent flows.
    */
@@ -1341,7 +1395,7 @@ public class ImagePanel
       m_DependentFlows.clear();
     }
   }
-  
+
   /**
    * Opens the file with the specified image reader.
    *
@@ -1490,7 +1544,7 @@ public class ImagePanel
   public void saveReport() {
     m_PaintPanel.saveReport();
   }
-  
+
   /**
    * Displays a message.
    *
@@ -1571,7 +1625,7 @@ public class ImagePanel
 
   /**
    * Updates the properties of the image.
-   * 
+   *
    * @param props	additional properties, null to skip
    */
   protected void updateImageProperties(Report props) {
@@ -1590,16 +1644,16 @@ public class ImagePanel
       report.setNumericValue("Width", image.getWidth());
       report.setNumericValue("Height", image.getHeight());
     }
-    
+
     m_ImageProperties = report;
-    
+
     displayProperties();
   }
-  
+
   /**
    * Displays the image and (optional) additional properties.
    */
-  protected void displayProperties() {
+  public void displayProperties() {
     SwingUtilities.invokeLater(() -> {
       if (m_TableProperties != null)
 	m_TableProperties.getModel().removeTableModelListener(this);
@@ -1632,7 +1686,7 @@ public class ImagePanel
   /**
    * Updates the current report: removes all the fields that are no longer
    * present in the modified report, updates all modified fields.
-   * 
+   *
    * @param modified	the updated report
    * @param current	the report to update (ie remove fields from)
    * @return		true if report changed
@@ -1640,7 +1694,7 @@ public class ImagePanel
   protected boolean updateProperties(Report modified, Report current) {
     boolean		result;
     List<AbstractField>	fields;
-    
+
     result = false;
 
     if (current != null) {
@@ -1658,47 +1712,47 @@ public class ImagePanel
 	}
       }
     }
-    
+
     return result;
   }
-  
+
   /**
    * Sets the additional properties.
-   * 
+   *
    * @param value	the properties, null to unset
    */
   public void setAdditionalProperties(Report value) {
     m_AdditionalProperties = value;
     displayProperties();
   }
-  
+
   /**
    * Returns the additional properties.
-   * 
+   *
    * @return		the properties, null if none set
    */
   public Report getAdditionalProperties() {
     return m_AdditionalProperties;
   }
-  
+
   /**
    * Returns the image properties by themselves.
-   * 
+   *
    * @return		the properties
    */
   public Report getImageProperties() {
     return m_ImageProperties;
   }
-  
+
   /**
    * Returns the all the properties (image and additional combined).
-   * 
+   *
    * @return		the properties
    */
   public Report getAllProperties() {
     return m_ModelProperties.getReport();
   }
-  
+
   /**
    * An undo event, like add or remove, has occurred.
    *
@@ -1788,7 +1842,7 @@ public class ImagePanel
 
   /**
    * Returns an iterator over all the image overlays.
-   * 
+   *
    * @return		iterator on image overlays
    */
   public Iterator<ImageOverlay> imageOverlays() {
@@ -1797,16 +1851,16 @@ public class ImagePanel
 
   /**
    * Sets the custom popup menu provider.
-   * 
+   *
    * @param value	the provider, use null to remove
    */
   public void setCustomPopupMenuProvider(CustomPopupMenuProvider value) {
     m_PaintPanel.setCustomPopupMenuProvider(value);
   }
-  
+
   /**
    * Returns the custom popup menu provider.
-   * 
+   *
    * @return		the provider, null if none set
    */
   public CustomPopupMenuProvider getCustomPopupMenuProvider() {
@@ -1817,7 +1871,7 @@ public class ImagePanel
    * Turns the mouse position into pixel location.
    * Limits the pixel position to the size of the image, i.e., no negative
    * pixel locations or ones that exceed the image size are generated.
-   * 
+   *
    * @param mousePos	the mouse position
    * @return		the pixel location
    */
@@ -1841,6 +1895,24 @@ public class ImagePanel
    */
   public void removeSelectionListener(ImagePanelSelectionListener l) {
     m_PaintPanel.removeSelectionListener(l);
+  }
+
+  /**
+   * Adds the given listener to the internal list of left-click listeners.
+   *
+   * @param l		the listener to add
+   */
+  public void addLeftClickListener(ImagePanelLeftClickListener l) {
+    m_PaintPanel.addLeftClickListener(l);
+  }
+
+  /**
+   * Removes the given listener from the internal list of left-click listeners.
+   *
+   * @param l		the listener to remove
+   */
+  public void removeLeftClickListener(ImagePanelLeftClickListener l) {
+    m_PaintPanel.removeLeftClickListener(l);
   }
 
   /**

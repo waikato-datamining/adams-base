@@ -15,7 +15,7 @@
 
 /*
  * ImageViewer.java
- * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -30,6 +30,7 @@ import adams.gui.core.BasePanel;
 import adams.gui.visualization.image.ImageOverlay;
 import adams.gui.visualization.image.ImagePanel;
 import adams.gui.visualization.image.NullOverlay;
+import adams.gui.visualization.image.leftclick.AbstractLeftClickProcessor;
 import adams.gui.visualization.image.selection.AbstractSelectionProcessor;
 import adams.gui.visualization.image.selection.NullProcessor;
 
@@ -53,7 +54,7 @@ import java.io.File;
  * &nbsp;&nbsp;&nbsp;java.lang.String<br>
  * &nbsp;&nbsp;&nbsp;java.io.File<br>
  * &nbsp;&nbsp;&nbsp;java.awt.image.BufferedImage<br>
- * &nbsp;&nbsp;&nbsp;adams.data.image.AbstractImage<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.image.AbstractImageContainer<br>
  * <br><br>
  <!-- flow-summary-end -->
  *
@@ -68,7 +69,7 @@ import java.io.File;
  * &nbsp;&nbsp;&nbsp;default: ImageViewer
  * </pre>
  * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
@@ -80,14 +81,27 @@ import java.io.File;
  * </pre>
  * 
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this 
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical 
+ * &nbsp;&nbsp;&nbsp;actors.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
  * <pre>-short-title &lt;boolean&gt; (property: shortTitle)
  * &nbsp;&nbsp;&nbsp;If enabled uses just the name for the title instead of the actor's full 
  * &nbsp;&nbsp;&nbsp;name.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-display-in-editor &lt;boolean&gt; (property: displayInEditor)
+ * &nbsp;&nbsp;&nbsp;If enabled displays the panel in a tab in the flow editor rather than in 
+ * &nbsp;&nbsp;&nbsp;a separate frame.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
@@ -148,6 +162,11 @@ import java.io.File;
  * <pre>-selection-processor &lt;adams.gui.visualization.image.selection.AbstractSelectionProcessor&gt; (property: selectionProcessor)
  * &nbsp;&nbsp;&nbsp;The selection processor to use.
  * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.image.selection.NullProcessor
+ * </pre>
+ * 
+ * <pre>-left-click-processor &lt;adams.gui.visualization.image.leftclick.AbstractLeftClickProcessor&gt; (property: leftClickProcessor)
+ * &nbsp;&nbsp;&nbsp;The left-click processor to use.
+ * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.image.leftclick.NullProcessor
  * </pre>
  * 
  * <pre>-selection-box-color &lt;java.awt.Color&gt; (property: selectionBoxColor)
@@ -244,6 +263,8 @@ public class ImageViewer
 	m_ImagePanel.setSelectionEnabled(true);
 	m_ImagePanel.setSelectionBoxColor(m_Owner.getSelectionBoxColor());
       }
+      if (!(m_Owner.getLeftClickProcessor() instanceof adams.gui.visualization.image.leftclick.NullProcessor))
+	m_ImagePanel.addLeftClickListener(m_Owner.getLeftClickProcessor().shallowCopy(true));
       if (!(m_Owner.getImageOverlay() instanceof NullOverlay)) {
 	if (m_Owner.getImageOverlay() instanceof ShallowCopySupporter)
 	  m_ImagePanel.addImageOverlay((ImageOverlay) ((ShallowCopySupporter) m_Owner.getImageOverlay()).shallowCopy(true));
@@ -319,7 +340,10 @@ public class ImageViewer
 
   /** the selection processor to apply. */
   protected AbstractSelectionProcessor m_SelectionProcessor;
-  
+
+  /** the click processor to apply. */
+  protected AbstractLeftClickProcessor m_LeftClickProcessor;
+
   /** the color for the selection box. */
   protected Color m_SelectionBoxColor;
 
@@ -362,6 +386,10 @@ public class ImageViewer
     m_OptionManager.add(
 	    "selection-processor", "selectionProcessor",
 	    new NullProcessor());
+
+    m_OptionManager.add(
+	    "left-click-processor", "leftClickProcessor",
+	    new adams.gui.visualization.image.leftclick.NullProcessor());
 
     m_OptionManager.add(
 	    "selection-box-color", "selectionBoxColor",
@@ -552,6 +580,35 @@ public class ImageViewer
   }
 
   /**
+   * Sets the left-click processor to use.
+   *
+   * @param value 	the processor
+   */
+  public void setLeftClickProcessor(AbstractLeftClickProcessor value) {
+    m_LeftClickProcessor = value;
+    reset();
+  }
+
+  /**
+   * Returns the left-click processor in use.
+   *
+   * @return 		the processor
+   */
+  public AbstractLeftClickProcessor getLeftClickProcessor() {
+    return m_LeftClickProcessor;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String leftClickProcessorTipText() {
+    return "The left-click processor to use.";
+  }
+
+  /**
    * Sets the color for the selection box.
    *
    * @param value 	the color
@@ -636,7 +693,7 @@ public class ImageViewer
   /**
    * Returns the class that the consumer accepts.
    *
-   * @return		<!-- flow-accepts-start -->java.lang.String.class, java.io.File.class, java.awt.image.BufferedImage.class, adams.data.image.AbstractImage.class<!-- flow-accepts-end -->
+   * @return		<!-- flow-accepts-start -->java.lang.String.class, java.io.File.class, java.awt.image.BufferedImage.class, adams.data.image.AbstractImageContainer.class<!-- flow-accepts-end -->
    */
   public Class[] accepts() {
     return new Class[]{String.class, File.class, BufferedImage.class, AbstractImageContainer.class};
@@ -673,6 +730,8 @@ public class ImageViewer
       m_ImagePanel.setSelectionEnabled(true);
       m_ImagePanel.setSelectionBoxColor(m_SelectionBoxColor);
     }
+    if (!(m_LeftClickProcessor instanceof adams.gui.visualization.image.leftclick.NullProcessor))
+      m_ImagePanel.addLeftClickListener(m_LeftClickProcessor.shallowCopy(true));
     if (!(m_ImageOverlay instanceof NullOverlay)) {
       if (m_ImageOverlay instanceof ShallowCopySupporter)
 	m_ImagePanel.addImageOverlay((ImageOverlay) ((ShallowCopySupporter) m_ImageOverlay).shallowCopy(true));

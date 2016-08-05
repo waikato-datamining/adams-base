@@ -1,0 +1,9 @@
+# Project: adams
+# Date: 2016-08-05 13:43:39
+# User: fracpete
+# Charset: UTF-8
+adams.flow.control.Flow -annotation "Shows how to interactively label objects in an image." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/particles.jpg
+ adams.flow.transformer.ImageReader -reader adams.data.io.input.JAIImageReader
+ adams.flow.transformer.ImageAnnotator -stop-if-canceled true -locator adams.flow.transformer.locateobjects.BinaryContours -label pink -label blue -overlay adams.gui.visualization.image.ObjectLocationsOverlayFromReport -zoom -1.0
+ adams.flow.sink.ImageViewer -writer adams.gui.print.NullWriter -zoom -1.0 -show-properties true -selection-processor adams.gui.visualization.image.selection.NullProcessor -left-click-processor adams.gui.visualization.image.leftclick.NullProcessor -image-overlay adams.gui.visualization.image.ObjectLocationsOverlayFromReport
