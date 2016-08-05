@@ -329,7 +329,7 @@ public class ImageAnnotator
      */
     protected void resetLabels() {
       m_CurrentImage.setReport(m_ReportBackup.getClone());
-      m_PanelImage.setCurrentImage(m_CurrentImage);
+      m_PanelImage.setCurrentImage(m_CurrentImage, m_PanelImage.getScale());
       updateObjects();
     }
 
