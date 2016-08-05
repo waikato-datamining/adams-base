@@ -552,15 +552,12 @@ public class ImagePanel
      * @param scale 	the scale to use
      */
     public void setCurrentImage(BufferedImage value, double scale) {
-      SwingUtilities.invokeLater(() -> {
-	m_CurrentImage         = value;
-	m_SelectionTopLeft     = null;
-	m_SelectionBottomRight = null;
-	m_Dragged              = false;
-	m_Selecting            = false;
-	setScale(scale);
-	repaint();
-      });
+      m_CurrentImage         = value;
+      m_SelectionTopLeft     = null;
+      m_SelectionBottomRight = null;
+      m_Dragged              = false;
+      m_Selecting            = false;
+      setScale(scale);
     }
 
     /**
@@ -573,7 +570,7 @@ public class ImagePanel
     }
 
     /**
-     * Sets the scaling factor (0-16).
+     * Sets the scaling factor.
      *
      * @param value	the scaling factor
      */
@@ -581,31 +578,33 @@ public class ImagePanel
       int	width;
       int	height;
 
-      if ((value > 0) && (value <= 16)) {
-	m_Scale = value;
-	if (m_CurrentImage != null) {
-	  width  = (int) ((double) m_CurrentImage.getWidth() * m_Scale);
-	  height = (int) ((double) m_CurrentImage.getHeight() * m_Scale);
-	}
-	else {
-	  width  = 320;
-	  height = 200;
-	}
-	setSize(new Dimension(width, height));
-	setMinimumSize(new Dimension(width, height));
-	setPreferredSize(new Dimension(width, height));
-	getOwner().getScrollPane().getHorizontalScrollBar().setUnitIncrement(width / 25);
-	getOwner().getScrollPane().getHorizontalScrollBar().setBlockIncrement(width / 10);
-	getOwner().getScrollPane().getVerticalScrollBar().setUnitIncrement(height / 25);
-	getOwner().getScrollPane().getVerticalScrollBar().setBlockIncrement(height / 10);
-	update();
+      m_Scale = value;
+      if (m_CurrentImage != null) {
+	width  = (int) ((double) m_CurrentImage.getWidth() * m_Scale);
+	height = (int) ((double) m_CurrentImage.getHeight() * m_Scale);
       }
+      else {
+	width  = 320;
+	height = 200;
+      }
+      setSize(new Dimension(width, height));
+      setMinimumSize(new Dimension(width, height));
+      setPreferredSize(new Dimension(width, height));
+      getOwner().getScrollPane().getHorizontalScrollBar().setUnitIncrement(width / 25);
+      getOwner().getScrollPane().getHorizontalScrollBar().setBlockIncrement(width / 10);
+      getOwner().getScrollPane().getVerticalScrollBar().setUnitIncrement(height / 25);
+      getOwner().getScrollPane().getVerticalScrollBar().setBlockIncrement(height / 10);
+      SwingUtilities.invokeLater(() -> update());
     }
 
     /**
      * Updates the image.
      */
     public void update() {
+      getOwner().invalidate();
+      getOwner().validate();
+      repaint();
+
       synchronized(m_ImageOverlays) {
 	for (ImageOverlay overlay: m_ImageOverlays)
 	  overlay.imageChanged(this);
@@ -618,9 +617,6 @@ public class ImagePanel
 	for (ImagePanelLeftClickListener l: m_LeftClickListeners)
 	  l.imageChanged(this);
       }
-      getOwner().invalidate();
-      getOwner().validate();
-      repaint();
     }
 
     /**
