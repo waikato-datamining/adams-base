@@ -15,15 +15,13 @@
 
 /*
  * AbstractOutlierDetector.java
- * Copyright (C) 2010-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.outlier;
 
 import adams.core.ClassLister;
-import adams.core.CleanUpHandler;
 import adams.core.Performance;
-import adams.core.ShallowCopySupporter;
 import adams.core.option.AbstractOptionConsumer;
 import adams.core.option.AbstractOptionHandler;
 import adams.core.option.ArrayConsumer;
@@ -53,7 +51,7 @@ import java.util.List;
  */
 public abstract class AbstractOutlierDetector<T extends DataContainer>
   extends AbstractOptionHandler
-  implements Comparable, CleanUpHandler, ShallowCopySupporter<AbstractOutlierDetector> {
+  implements OutlierDetector<T> {
 
   /** for serialization. */
   private static final long serialVersionUID = 1238310227471192973L;
@@ -375,9 +373,9 @@ public abstract class AbstractOutlierDetector<T extends DataContainer>
     List<DataContainer>			dataList;
     List<AbstractOutlierDetector>	detectorList;
 
-    dataList     = new ArrayList<DataContainer>();
+    dataList     = new ArrayList<>();
     dataList.add(data);
-    detectorList = new ArrayList<AbstractOutlierDetector>();
+    detectorList = new ArrayList<>();
     detectorList.add(detector);
     detected     = detect(detectorList, dataList);
     result       = detected.get(0).get(0);
@@ -402,9 +400,9 @@ public abstract class AbstractOutlierDetector<T extends DataContainer>
     List<DataContainer>			dataList;
     List<AbstractOutlierDetector>	detectorList;
 
-    dataList     = new ArrayList<DataContainer>();
+    dataList     = new ArrayList<>();
     dataList.addAll(data);
-    detectorList = new ArrayList<AbstractOutlierDetector>();
+    detectorList = new ArrayList<>();
     detectorList.add(detector);
     detected     = detect(detectorList, dataList);
     result       = detected.get(0);
@@ -430,12 +428,12 @@ public abstract class AbstractOutlierDetector<T extends DataContainer>
     List<AbstractOutlierDetector>	detectorList;
     int					i;
 
-    dataList     = new ArrayList<DataContainer>();
+    dataList     = new ArrayList<>();
     dataList.add(data);
-    detectorList = new ArrayList<AbstractOutlierDetector>();
+    detectorList = new ArrayList<>();
     detectorList.addAll(detector);
     detected     = detect(detectorList, dataList);
-    result       = new ArrayList<List<String>>();
+    result       = new ArrayList<>();
     for (i = 0; i < detected.size(); i++)
       result.add(detected.get(i).get(0));
 
@@ -464,11 +462,11 @@ public abstract class AbstractOutlierDetector<T extends DataContainer>
     int				i;
     int				n;
 
-    result = new ArrayList<List<List<String>>>();
+    result = new ArrayList<>();
 
     if (Performance.getMultiProcessingEnabled()) {
-      runner = new LocalJobRunner<DetectorJob>();
-      jobs   = new JobList<DetectorJob>();
+      runner = new LocalJobRunner<>();
+      jobs   = new JobList<>();
 
       // fill job list
       for (n = 0; n < detector.size(); n++) {
@@ -485,7 +483,7 @@ public abstract class AbstractOutlierDetector<T extends DataContainer>
       subresult = null;
       for (i = 0; i < jobs.size(); i++) {
 	if (i % data.size() == 0) {
-	  subresult = new ArrayList<List<String>>();
+	  subresult = new ArrayList<>();
 	  result.add(subresult);
 	}
 	job = jobs.get(i);
@@ -493,13 +491,13 @@ public abstract class AbstractOutlierDetector<T extends DataContainer>
 	if (job.getResult() != null)
 	  subresult.add(job.getResult());
 	else
-	  subresult.add(new ArrayList<String>());
+	  subresult.add(new ArrayList<>());
 	job.cleanUp();
       }
     }
     else {
       for (n = 0; n < detector.size(); n++) {
-	subresult = new ArrayList<List<String>>();
+	subresult = new ArrayList<>();
 	result.add(subresult);
 	for (i = 0; i < data.size(); i++) {
 	  threadDetector = detector.get(n).shallowCopy(true);

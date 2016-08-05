@@ -20,14 +20,15 @@
 
 package adams.data.filter;
 
-import java.util.List;
-
 import adams.data.NotesHandler;
 import adams.data.container.DataContainer;
 import adams.data.outlier.AbstractOutlierDetector;
+import adams.data.outlier.TrainableOutlierDetector;
 import adams.db.AbstractDatabaseConnection;
 import adams.db.DatabaseConnection;
 import adams.db.DatabaseConnectionHandler;
+
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -62,7 +63,8 @@ import adams.db.DatabaseConnectionHandler;
  * @param <T> the type of data to pass through the filter
  */
 public class OutlierDetector<T extends DataContainer>
-  extends AbstractDatabaseConnectionFilter<T> {
+  extends AbstractDatabaseConnectionFilter<T>
+  implements TrainableBatchFilter<T> {
 
   /** for serialization. */
   private static final long serialVersionUID = -7381879273745030342L;
@@ -191,15 +193,13 @@ public class OutlierDetector<T extends DataContainer>
    */
   @Override
   protected T processData(T data) {
-    T				result;
-    AbstractOutlierDetector 	detector;
-    List<String>		detection;
-    int				i;
-    NotesHandler		handler;
+    T			result;
+    List<String>	detection;
+    int			i;
+    NotesHandler	handler;
 
-    detector = m_OutlierDetector.shallowCopy(true);
-    detection = detector.detect(data);
-    detector.destroy();
+    detection = m_OutlierDetector.detect(data);
+    m_OutlierDetector.cleanUp();
 
     getLogger().info("Data: " + data + ", detection size: " + detection.size());
     result = (T) data.getClone();
@@ -215,5 +215,54 @@ public class OutlierDetector<T extends DataContainer>
     }
 
     return result;
+  }
+
+  /**
+   * Resets the filter, i.e., flags it as "not trained".
+   *
+   * @see		#isTrained()
+   */
+  @Override
+  public void resetFilter() {
+    if (m_OutlierDetector instanceof TrainableOutlierDetector)
+      ((TrainableOutlierDetector) m_OutlierDetector).resetDetector();
+  }
+
+  /**
+   * Trains the filter with the specified data.
+   */
+  @Override
+  public void trainFilter(T[] data) {
+    if (m_OutlierDetector instanceof TrainableOutlierDetector)
+      ((TrainableOutlierDetector) m_OutlierDetector).trainDetector(data);
+  }
+
+  /**
+   * Returns whether the filter has been trained already and is ready to use.
+   *
+   * @return		true if already trained
+   */
+  @Override
+  public boolean isTrained() {
+    if (m_OutlierDetector instanceof TrainableOutlierDetector)
+      return ((TrainableOutlierDetector) m_OutlierDetector).isTrained();
+    else
+      return true;
+  }
+
+  /**
+   * Batch filters the data.
+   *
+   * @param data	the data to filter
+   * @return		the filtered data
+   */
+  @Override
+  public T[] batchFilter(T[] data) {
+    int		i;
+
+    for (i = 0; i < data.length; i++)
+      data[i] = filter(data[i]);
+
+    return data;
   }
 }

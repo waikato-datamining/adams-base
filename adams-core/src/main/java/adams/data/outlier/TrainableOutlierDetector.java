@@ -14,38 +14,38 @@
  */
 
 /**
- * TrainableBatchFilter.java
+ * TrainableOutlierDetector.java
  * Copyright (C) 2016 University of Waikato, Hamilton, NZ
  */
 
-package adams.data.filter;
+package adams.data.outlier;
 
 import adams.data.container.DataContainer;
 
 /**
- * Interface for trainable batch filters.
+ * Interface for trainable outlier detectors.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  * @param <T> the type of data
  */
-public interface TrainableBatchFilter<T extends DataContainer>
-  extends BatchFilter<T> {
+public interface TrainableOutlierDetector<T extends DataContainer>
+  extends OutlierDetector<T> {
 
   /**
-   * Resets the filter, i.e., flags it as "not trained".
+   * Resets the detector, i.e., flags it as "not trained".
    *
    * @see		#isTrained()
    */
-  public void resetFilter();
+  public void resetDetector();
 
   /**
-   * Trains the filter with the specified data.
+   * Trains the detector with the specified data.
    */
-  public void trainFilter(T[] data);
+  public void trainDetector(T[] data);
 
   /**
-   * Returns whether the filter has been trained already and is ready to use.
+   * Returns whether the detector has been trained already and is ready to use.
    *
    * @return		true if already trained
    */
