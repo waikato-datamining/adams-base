@@ -144,12 +144,7 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;(default is the full name of the actor)
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- * 
- * <pre>-locator &lt;adams.flow.transformer.locateobjects.AbstractObjectLocator&gt; (property: locator)
- * &nbsp;&nbsp;&nbsp;The algorithm for locating the objects.
- * &nbsp;&nbsp;&nbsp;default: adams.flow.transformer.locateobjects.PassThrough
- * </pre>
- * 
+ *
  * <pre>-prefix &lt;java.lang.String&gt; (property: prefix)
  * &nbsp;&nbsp;&nbsp;The report field prefix to use for the located objects.
  * &nbsp;&nbsp;&nbsp;default: Object.
@@ -441,9 +436,6 @@ public class ImageAnnotator
     }
   }
 
-  /** the algorithm to use. */
-  protected AbstractObjectLocator m_Locator;
-
   /** the prefix to use in the report. */
   protected String m_Prefix;
 
@@ -482,10 +474,6 @@ public class ImageAnnotator
     super.defineOptions();
 
     m_OptionManager.add(
-      "locator", "locator",
-      new adams.flow.transformer.locateobjects.PassThrough());
-
-    m_OptionManager.add(
       "prefix", "prefix",
       "Object.");
 
@@ -504,35 +492,6 @@ public class ImageAnnotator
     m_OptionManager.add(
       "zoom", "zoom",
       100.0, -1.0, 1600.0);
-  }
-
-  /**
-   * Sets the scheme for locating the objects.
-   *
-   * @param value 	the scheme
-   */
-  public void setLocator(AbstractObjectLocator value) {
-    m_Locator = value;
-    reset();
-  }
-
-  /**
-   * Returns the scheme to use for locating the objects.
-   *
-   * @return 		the scheme
-   */
-  public AbstractObjectLocator getLocator() {
-    return m_Locator;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String locatorTipText() {
-    return "The algorithm for locating the objects.";
   }
 
   /**
@@ -695,7 +654,6 @@ public class ImageAnnotator
     String	result;
 
     result = super.getQuickInfo();
-    result += QuickInfoHelper.toString(this, "locator", m_Locator, ", locator: ");
     result += QuickInfoHelper.toString(this, "overlay", m_Overlay, ", overlay: ");
     result += QuickInfoHelper.toString(this, "labels", m_Labels, ", labels: ");
 
@@ -776,28 +734,10 @@ public class ImageAnnotator
   @Override
   public boolean doInteract() {
     AbstractImageContainer	cont;
-    LocateObjects		locate;
-    String			msg;
 
     m_Accepted = false;
 
     cont = (AbstractImageContainer) m_InputToken.getPayload();
-
-    // locate objects
-    if (!(m_Locator instanceof adams.flow.transformer.locateobjects.PassThrough)) {
-      locate = new LocateObjects();
-      locate.setLocator(m_Locator);
-      locate.setGenerateReport(true);
-      locate.input(new Token(cont));
-      msg = locate.execute();
-      if (msg != null) {
-	locate.cleanUp();
-	getLogger().severe(msg);
-	return false;
-      }
-      cont = (AbstractImageContainer) locate.output().getPayload();
-      locate.cleanUp();
-    }
 
     // annotate
     ((AnnotatorPanel) m_Panel).setCurrentImage(cont);
