@@ -27,7 +27,7 @@ package adams.flow.core;
  * @version $Revision$
  */
 public interface TimedActor
-  extends Actor, CallableActorUser {
+  extends Actor, CallableActorUser, OptionalCallableActor {
 
   /**
    * Sets the name of the callable actor to use.
@@ -50,28 +50,6 @@ public interface TimedActor
    * 			displaying in the GUI or for listing the options.
    */
   public String callableNameTipText();
-
-  /**
-   * Sets whether the callable actor is optional.
-   *
-   * @param value 	true if optional
-   */
-  public void setOptional(boolean value);
-
-  /**
-   * Returns whether the callable actor is optional.
-   *
-   * @return 		true if optional
-   */
-  public boolean getOptional();
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String optionalTipText();
 
   /**
    * Checks whether a reference to the callable actor is currently available.

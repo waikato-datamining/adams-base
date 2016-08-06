@@ -34,6 +34,7 @@ import adams.flow.core.CallableActorHelper;
 import adams.flow.core.CallableActorReference;
 import adams.flow.core.CallableActorUser;
 import adams.flow.core.InputConsumer;
+import adams.flow.core.OptionalCallableActor;
 import adams.flow.core.PauseStateHandler;
 import adams.flow.core.PauseStateManager;
 import adams.flow.core.Token;
@@ -124,7 +125,8 @@ import java.util.Hashtable;
  */
 public class WekaGeneticAlgorithm
   extends AbstractTransformer
-  implements FitnessChangeListener, CallableActorUser, FlowPauseStateListener, Pausable {
+  implements FitnessChangeListener, CallableActorUser, OptionalCallableActor,
+             FlowPauseStateListener, Pausable {
 
   /** for serialization. */
   private static final long serialVersionUID = 5071747277597147724L;
