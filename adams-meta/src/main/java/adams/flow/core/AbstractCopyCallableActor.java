@@ -30,7 +30,7 @@ import adams.flow.control.FlowStructureModifier;
  */
 public abstract class AbstractCopyCallableActor
   extends AbstractActor
-  implements FlowStructureModifier {
+  implements FlowStructureModifier, OptionalCallableActor {
 
   /** for serialization. */
   private static final long serialVersionUID = -7860206690560690212L;
@@ -40,6 +40,9 @@ public abstract class AbstractCopyCallableActor
 
   /** the helper class. */
   protected CallableActorHelper m_Helper;
+
+  /** whether the callable actor is optional. */
+  protected boolean m_Optional;
 
   /**
    * Adds options to the internal list of options.
@@ -51,6 +54,10 @@ public abstract class AbstractCopyCallableActor
     m_OptionManager.add(
       "callable", "callableName",
       new CallableActorReference("unknown"));
+
+    m_OptionManager.add(
+      "optional", "optional",
+      false);
   }
 
   /**
@@ -93,13 +100,49 @@ public abstract class AbstractCopyCallableActor
   }
 
   /**
+   * Sets whether the callable actor is optional.
+   *
+   * @param value 	true if optional
+   */
+  public void setOptional(boolean value) {
+    m_Optional = value;
+    reset();
+  }
+
+  /**
+   * Returns whether the callable actor is optional.
+   *
+   * @return 		true if optional
+   */
+  public boolean getOptional() {
+    return m_Optional;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String optionalTipText() {
+    return
+	"If enabled, then the callable actor is optional, ie no error is "
+	+ "raised if not found, merely ignored.";
+  }
+
+  /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
    */
   @Override
   public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "callableName", m_CallableName);
+    String	result;
+
+    result  = QuickInfoHelper.toString(this, "callableName", m_CallableName);
+    result += QuickInfoHelper.toString(this, "optional", m_Optional, "optional", ", ");
+
+    return result;
   }
 
   /**
@@ -129,6 +172,13 @@ public abstract class AbstractCopyCallableActor
   protected abstract String checkCallableActor(Actor actor);
 
   /**
+   * Returns the default actor if the callable actor is optional and not found.
+   *
+   * @return		the default
+   */
+  protected abstract Actor getDefaultActor();
+
+  /**
    * Configures the callable actor.
    *
    * @return		null if OK, otherwise error message
@@ -137,31 +187,35 @@ public abstract class AbstractCopyCallableActor
     String		result;
     Actor 		actor;
 
-    actor = findCallableActor();
+    result = null;
+    actor  = findCallableActor();
     if (actor == null) {
-      result = "Couldn't find callable actor '" + getCallableName() + "'!";
+      if (!getOptional())
+	result = "Couldn't find callable actor '" + getCallableName() + "'!";
+      else
+	actor = getDefaultActor();
     }
-    else {
+    if (actor != null) {
       result = checkCallableActor(actor);
       if (result == null) {
-      }
-      actor = actor.shallowCopy();
-      actor.setParent(getParent());
-      actor.setVariables(getVariables());
-      result = actor.setUp();
-      if (result == null) {
-	if (actor.getName().equals(actor.getDefaultName()))
-	  actor.setName(getName());
+	actor = actor.shallowCopy();
+	actor.setParent(getParent());
 	actor.setVariables(getVariables());
-	((ActorHandler) getParent()).set(index(), actor);
 	result = actor.setUp();
-	if (getErrorHandler() != this)
-	  ActorUtils.updateErrorHandler(actor, getErrorHandler(), isLoggingEnabled());
-	// make sure we've got the current state of the variables
-	if (result == null)
-	  actor.getOptionManager().updateVariableValues(true);
-	setParent(null);
-	cleanUp();
+	if (result == null) {
+	  if (actor.getName().equals(actor.getDefaultName()))
+	    actor.setName(getName());
+	  actor.setVariables(getVariables());
+	  ((ActorHandler) getParent()).set(index(), actor);
+	  result = actor.setUp();
+	  if (getErrorHandler() != this)
+	    ActorUtils.updateErrorHandler(actor, getErrorHandler(), isLoggingEnabled());
+	  // make sure we've got the current state of the variables
+	  if (result == null)
+	    actor.getOptionManager().updateVariableValues(true);
+	  setParent(null);
+	  cleanUp();
+	}
       }
     }
 

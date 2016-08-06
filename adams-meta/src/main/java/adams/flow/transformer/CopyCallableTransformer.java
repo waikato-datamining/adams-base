@@ -107,6 +107,15 @@ public class CopyCallableTransformer
   }
 
   /**
+   * Returns the default actor if the callable actor is optional and not found.
+   *
+   * @return		the default
+   */
+  protected Actor getDefaultActor() {
+    return new adams.flow.transformer.PassThrough();
+  }
+
+  /**
    * Returns the class that the consumer accepts.
    *
    * @return		the Class of objects that can be processed

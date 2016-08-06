@@ -106,6 +106,15 @@ public class CopyCallableSource
   }
 
   /**
+   * Returns the default actor if the callable actor is optional and not found.
+   *
+   * @return		the default
+   */
+  protected Actor getDefaultActor() {
+    return new adams.flow.source.Null();
+  }
+
+  /**
    * Returns the class of objects that it generates.
    *
    * @return		depends on the callable actor

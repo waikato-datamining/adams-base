@@ -100,4 +100,13 @@ public class CopyCallableStandalone
 
     return result;
   }
+
+  /**
+   * Returns the default actor if the callable actor is optional and not found.
+   *
+   * @return		the default
+   */
+  protected Actor getDefaultActor() {
+    return new adams.flow.standalone.Null();
+  }
 }
