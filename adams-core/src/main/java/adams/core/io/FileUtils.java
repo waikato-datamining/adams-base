@@ -436,11 +436,10 @@ public class FileUtils {
    * @throws IOException	if copying/moving fails
    */
   public static boolean copyOrMove(File sourceLocation, File targetLocation, boolean move, boolean atomic) throws IOException {
-    String[] 			children;
-    int 			i;
-    Path			source;
-    Path 			target;
-    StandardCopyOption[]	options;
+    String[] 		children;
+    int 		i;
+    Path		source;
+    Path 		target;
 
     if (sourceLocation.isDirectory()) {
       if (!targetLocation.exists()) {
