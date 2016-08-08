@@ -36,6 +36,12 @@ import java.io.File;
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  * 
+ * <pre>-min-size &lt;long&gt; (property: minSize)
+ * &nbsp;&nbsp;&nbsp;The minimum size that the file must have; below is considered in use.
+ * &nbsp;&nbsp;&nbsp;default: 1
+ * &nbsp;&nbsp;&nbsp;minimum: 1
+ * </pre>
+ * 
  * <pre>-interval &lt;int&gt; (property: interval)
  * &nbsp;&nbsp;&nbsp;The wait interval in msec between before&#47;after file size checks.
  * &nbsp;&nbsp;&nbsp;default: 100
@@ -51,6 +57,9 @@ public class FileSizeChange
   extends AbstractFileUseCheck {
 
   private static final long serialVersionUID = -3766862011655514895L;
+
+  /** the minimum file size. */
+  protected long m_MinSize;
 
   /** the interval in msec to wait. */
   protected int m_Interval;
@@ -75,8 +84,41 @@ public class FileSizeChange
     super.defineOptions();
 
     m_OptionManager.add(
+      "min-size", "minSize",
+      1L, 1L, null);
+
+    m_OptionManager.add(
       "interval", "interval",
       100, 1, null);
+  }
+
+  /**
+   * Sets the minimum file size in bytes.
+   *
+   * @param value	the size
+   */
+  public void setMinSize(long value) {
+    m_MinSize = value;
+    reset();
+  }
+
+  /**
+   * Returns the wait interval in msec.
+   *
+   * @return		the size
+   */
+  public long getMinSize() {
+    return m_MinSize;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String minSizeTipText() {
+    return "The minimum size that the file must have; below is considered in use.";
   }
 
   /**
@@ -126,6 +168,6 @@ public class FileSizeChange
     fileTest   = new File(file.getAbsolutePath());
     sizeAfter  = fileTest.length();
 
-    return (sizeBefore != sizeAfter);
+    return (sizeBefore != sizeAfter) || (sizeBefore < m_MinSize) || (sizeAfter < m_MinSize);
   }
 }
