@@ -181,7 +181,7 @@ public class DataTab
   }
 
   /**
-   * Gets called when the used changes the selection.
+   * Gets called when the user changes the selection.
    */
   protected void dataTableSelectionChanged() {
     updateButtons();

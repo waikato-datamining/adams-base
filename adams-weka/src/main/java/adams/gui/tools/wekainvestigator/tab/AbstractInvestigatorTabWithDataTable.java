@@ -131,7 +131,7 @@ public abstract class AbstractInvestigatorTabWithDataTable
   protected abstract int getDataTableListSelectionMode();
 
   /**
-   * Gets called when the used changes the selection.
+   * Gets called when the user changes the selection.
    */
   protected abstract void dataTableSelectionChanged();
 

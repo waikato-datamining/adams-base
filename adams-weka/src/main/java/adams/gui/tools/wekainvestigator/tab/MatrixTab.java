@@ -78,7 +78,7 @@ public class MatrixTab
   }
 
   /**
-   * Gets called when the used changes the selection.
+   * Gets called when the user changes the selection.
    */
   @Override
   protected void dataTableSelectionChanged() {
