@@ -436,7 +436,16 @@ public class AttributeSelectionPanel extends JPanel {
   }
 
   /**
-   * Gets an array containing the indices of all selected attributes.
+   * Gets an array containing the indices of all selected rows.
+   *
+   * @return the array of selected indices.
+   */
+  public int[] getSelectedRows() {
+    return m_Table.getSelectedRows();
+  }
+
+  /**
+   * Gets an array containing the indices of all selected (ie checked) attributes.
    *
    * @return the array of selected indices.
    */
@@ -446,7 +455,7 @@ public class AttributeSelectionPanel extends JPanel {
   }
 
   /**
-   * Set the selected attributes in the widget. Note that setInstances() must
+   * Set the selected (ie checked) attributes in the widget. Note that setInstances() must
    * have been called first.
    *
    * @param selected an array of boolean indicating which attributes are to have
