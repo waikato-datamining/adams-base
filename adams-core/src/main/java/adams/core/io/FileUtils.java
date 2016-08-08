@@ -1210,6 +1210,8 @@ public class FileUtils {
     Process 		plsof;
     BufferedReader 	reader;
     String 		line;
+    long		lenBefore;
+    long		lenAfter;
 
     result = false;
 
@@ -1226,8 +1228,11 @@ public class FileUtils {
       }
     }
     else {
-      plsof  = null;
-      reader = null;
+      plsof     = null;
+      reader    = null;
+      // lsof does not seem to get updated regularly
+      // so we check length of file before/after as well
+      lenBefore = file.length();
       try {
 	plsof  = new ProcessBuilder(new String[]{"lsof", "|", "grep", file.getAbsolutePath()}).start();
 	reader = new BufferedReader(new InputStreamReader(plsof.getInputStream()));
@@ -1246,6 +1251,11 @@ public class FileUtils {
 	FileUtils.closeQuietly(reader);
 	if (plsof != null)
 	  plsof.destroy();
+      }
+      // has file length changed in the meantime?
+      if (!result) {
+	lenAfter = file.length();
+	result   = (lenBefore != lenAfter);
       }
     }
 
