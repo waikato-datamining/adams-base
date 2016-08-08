@@ -75,7 +75,7 @@ public class ApplicationMenu
 
   /** stores classnames that aren't available. */
   protected static HashSet<String> m_UnavailableMenuItems;
-  
+
   /** the parent application frame. */
   protected AbstractApplicationFrame m_Owner;
 
@@ -101,7 +101,7 @@ public class ApplicationMenu
 
     if (m_UnavailableMenuItems == null)
       m_UnavailableMenuItems = new HashSet<String>();
-    
+
     m_Owner       = owner;
     m_Setup       = null;
     m_UserMode    = UserMode.BASIC;
@@ -391,26 +391,34 @@ public class ApplicationMenu
         if (!def.isAvailable())
           continue;
 	menuitem = def.getMenuItem();
-	added    = false;
+	if (menuitem == null)
+	  continue;
+	added = false;
 	for (i = 0; i < menus.length; i++) {
-	  if (menus[i].getText().equals(def.getCategory())) {
-	    added = true;
-	    menus[i].setVisible(true);
-	    // check for "Exit", "Restart" or "Close" (these are always last!)
-	    if (menus[i].getMenuComponentCount() > 0) {
-	      indexLast = determineItemIndex(new String[]{"restart.*", "exit", "close"}, menus[i]);
-	      if (indexLast != -1) {
-		menus[i].insertSeparator(indexLast);
-		menus[i].insert(menuitem, indexLast);
-		continue;
-	      }
-	    }
-	    if (!separators[i] && menus[i].getMenuComponentCount() > 0) {
-	      menus[i].addSeparator();
-	      separators[i] = true;
-	    }
-	    menus[i].add(menuitem);
-	  }
+          try {
+            if (menus[i].getText().equals(def.getCategory())) {
+              added = true;
+              menus[i].setVisible(true);
+              // check for "Exit", "Restart" or "Close" (these are always last!)
+              if (menus[i].getMenuComponentCount() > 0) {
+                indexLast = determineItemIndex(new String[]{"restart.*", "exit", "close"}, menus[i]);
+                if (indexLast != -1) {
+                  menus[i].insertSeparator(indexLast);
+                  menus[i].insert(menuitem, indexLast);
+                  continue;
+                }
+              }
+              if (!separators[i] && menus[i].getMenuComponentCount() > 0) {
+                menus[i].addSeparator();
+                separators[i] = true;
+              }
+              menus[i].add(menuitem);
+            }
+          }
+          catch (Exception e) {
+            System.err.println("Failed to add menuitem from " + def.getClass().getName());
+            e.printStackTrace();
+          }
 	}
 	// add new menu
 	if (!added) {
@@ -492,41 +500,41 @@ public class ApplicationMenu
 
     return result;
   }
-  
+
   /**
    * Checks whether the class is unavailable (ie not found in classpath),
    * based on previous menu generation.
-   * 
+   *
    * @param cls		the class to check
    * @return		true if unavailable
    */
   public boolean isUnavailable(Class cls) {
     return isUnavailable(cls.getName());
   }
-  
+
   /**
    * Checks whether the class is unavailable (ie not found in classpath),
    * based on previous menu generation.
-   * 
+   *
    * @param classname	the name to check
    * @return		true if unavailable
    */
   public boolean isUnavailable(String classname) {
     return m_UnavailableMenuItems.contains(classname);
   }
-  
+
   /**
    * Marks this class as unavailable.
-   * 
+   *
    * @param cls		the class to mark as unavailable
    */
   public void setUnavailable(Class cls) {
     setUnavailable(cls.getName());
   }
-  
+
   /**
    * Marks this class as unavailable.
-   * 
+   *
    * @param classname	the name to mark as unavailable
    */
   public void setUnavailable(String classname) {
