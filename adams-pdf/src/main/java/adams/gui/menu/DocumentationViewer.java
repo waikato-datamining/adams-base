@@ -36,7 +36,6 @@ import adams.gui.visualization.pdf.PDFViewerPanel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -49,7 +48,7 @@ import java.util.List;
  * @version $Revision$
  * @see AbstractApplicationFrame#setDocumentationDirectories(PlaceholderDirectory[])
  */
-public class Documentation
+public class DocumentationViewer
   extends AbstractBasicMenuItemDefinition {
 
   /** for serialization. */
@@ -60,7 +59,7 @@ public class Documentation
    *
    * @param owner	the owning application
    */
-  public Documentation(AbstractApplicationFrame owner) {
+  public DocumentationViewer(AbstractApplicationFrame owner) {
     super(owner);
   }
 
@@ -71,7 +70,7 @@ public class Documentation
    */
   @Override
   public String getTitle() {
-    return "Documentation";
+    return "Documentation viewer";
   }
 
   /**
@@ -105,7 +104,7 @@ public class Documentation
     JMenuItem		menuitem;
     DirectoryLister	lister;
 
-    files = new ArrayList<File>();
+    files = new ArrayList<>();
     for (PlaceholderDirectory dir: m_Owner.getDocumentationDirectories()) {
       lister = new DirectoryLister();
       lister.setWatchDir(dir);
@@ -132,12 +131,10 @@ public class Documentation
 
     for (final File file: files) {
       menuitem = new JMenuItem(FileUtils.replaceExtension(file, "").getName());
-      menuitem.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  PDFViewerPanel panel = new PDFViewerPanel();
-	  createChildFrame(panel, GUIHelper.getDefaultDialogDimension());
-	  panel.load(file);
-	}
+      menuitem.addActionListener((ActionEvent e) -> {
+        PDFViewerPanel panel = new PDFViewerPanel();
+        createChildFrame(panel, GUIHelper.getDefaultDialogDimension());
+        panel.load(file);
       });
       result.add(menuitem);
     }
