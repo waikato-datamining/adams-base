@@ -22,21 +22,29 @@ package adams.gui.tools.wekainvestigator.tab;
 
 import adams.core.Properties;
 import adams.core.option.OptionUtils;
+import adams.gui.core.GUIHelper;
 import adams.gui.goe.WekaGenericObjectEditorPanel;
 import adams.gui.tools.wekainvestigator.InvestigatorPanel;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
 import adams.gui.tools.wekainvestigator.data.MemoryContainer;
+import adams.gui.tools.wekainvestigator.tab.preprocesstab.AttributeSelectionPanel;
+import adams.gui.tools.wekainvestigator.tab.preprocesstab.AttributeSummaryPanel;
+import adams.gui.tools.wekainvestigator.tab.preprocesstab.AttributeVisualizationPanel;
+import adams.gui.tools.wekainvestigator.tab.preprocesstab.InstancesSummaryPanel;
 import weka.core.Instances;
 import weka.filters.AllFilter;
 import weka.filters.Filter;
+import weka.filters.unsupervised.attribute.Remove;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 
 /**
@@ -56,6 +64,9 @@ public class PreprocessTab
   /** the panel for the filter and the buttons. */
   protected JPanel m_PanelTop;
 
+  /** the panel for the preprocess panels. */
+  protected JPanel m_PanelMain;
+
   /** the checkbox to replace the datasets. */
   protected JCheckBox m_CheckBoxReplace;
 
@@ -67,6 +78,21 @@ public class PreprocessTab
 
   /** the button for stop the filtering. */
   protected JButton m_ButtonStop;
+
+  /** the instances summary panel. */
+  protected InstancesSummaryPanel m_PanelInstSummary;
+
+  /** the attribute selection panel. */
+  protected AttributeSelectionPanel m_PanelAttSelection;
+
+  /** the attribute summary panel. */
+  protected AttributeSummaryPanel m_PanelAttSummary;
+
+  /** the attribute visualization panel. */
+  protected AttributeVisualizationPanel m_PanelAttVisualization;
+
+  /** button for removing checked attributes. */
+  protected JButton m_ButtonRemoveChecked;
 
   /** whether the evaluation is currently running. */
   protected Thread m_Worker;
@@ -92,15 +118,15 @@ public class PreprocessTab
     Properties 		props;
     Filter		filter;
     JPanel		panel;
+    JPanel		panel2;
 
     super.initGUI();
 
     props = InvestigatorPanel.getProperties();
 
-    m_SplitPane.setBottomComponentHidden(false);
-
+    // top
     m_PanelTop = new JPanel(new BorderLayout());
-    m_PanelTop.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+    m_PanelTop.setBorder(BorderFactory.createTitledBorder("Filter"));
     m_PanelData.add(m_PanelTop, BorderLayout.NORTH);
 
     try {
@@ -113,8 +139,10 @@ public class PreprocessTab
       filter = new AllFilter();
     }
     m_PanelGOE = new WekaGenericObjectEditorPanel(Filter.class, filter, true);
-    m_PanelGOE.setPrefix("Filter");
-    m_PanelTop.add(m_PanelGOE, BorderLayout.CENTER);
+    panel = new JPanel(new BorderLayout());
+    panel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+    panel.add(m_PanelGOE, BorderLayout.CENTER);
+    m_PanelTop.add(panel, BorderLayout.CENTER);
 
     panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     m_PanelTop.add(panel, BorderLayout.SOUTH);
@@ -134,6 +162,56 @@ public class PreprocessTab
     m_ButtonStop  = new JButton("Stop");
     m_ButtonStart.addActionListener((ActionEvent e) -> stopExecution());
     panel.add(m_ButtonStop);
+
+    // main
+    m_PanelMain = new JPanel(new GridLayout(1, 2));
+    m_PanelMain.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+    m_PanelData.add(m_PanelMain, BorderLayout.CENTER);
+
+    // main-left
+    panel = new JPanel(new BorderLayout());
+    m_PanelMain.add(panel);
+
+    m_PanelInstSummary = new InstancesSummaryPanel();
+    m_PanelInstSummary.setBorder(BorderFactory.createTitledBorder("Dataset summary"));
+    panel.add(m_PanelInstSummary, BorderLayout.NORTH);
+
+    panel2 = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+    panel.add(panel2, BorderLayout.SOUTH);
+    m_ButtonRemoveChecked = new JButton("Remove checked", GUIHelper.getIcon("delete.gif"));
+    m_ButtonRemoveChecked.addActionListener((ActionEvent e) -> removeCheckedAttributes());
+    panel2.add(m_ButtonRemoveChecked);
+
+    m_PanelAttSelection = new AttributeSelectionPanel();
+    m_PanelAttSelection.setBorder(BorderFactory.createTitledBorder("Attributes"));
+    m_PanelAttSelection.getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> {
+      int[] indices = m_PanelAttSelection.getSelectedRows();
+      if (indices.length == 1) {
+	m_PanelAttSummary.setAttribute(indices[0]);
+	m_PanelAttVisualization.setAttribute(indices[0]);
+      }
+      else {
+	// TODO unset?
+      }
+    });
+    panel.add(m_PanelAttSelection, BorderLayout.CENTER);
+
+    // main-right
+    panel = new JPanel(new GridLayout(2, 1));
+    m_PanelMain.add(panel);
+
+    m_PanelAttSummary = new AttributeSummaryPanel();
+    m_PanelAttSummary.setBorder(BorderFactory.createTitledBorder("Attribute summary"));
+    panel.add(m_PanelAttSummary);
+
+    m_PanelAttVisualization = new AttributeVisualizationPanel();
+    panel2 = new JPanel(new BorderLayout());
+    panel2.setBorder(BorderFactory.createTitledBorder("Attribute visualization"));
+    panel2.add(m_PanelAttVisualization);
+    panel.add(panel2);
+
+    m_SplitPane.setBottomComponentHidden(false);
+    m_SplitPane.setDividerLocation(m_DefaultDataTableHeight);
   }
 
   /**
@@ -241,7 +319,7 @@ public class PreprocessTab
   }
 
   /**
-   * Gets called when the used changes the selection.
+   * Gets called when the user changes the selection.
    */
   protected void dataTableSelectionChanged() {
     displayData();
@@ -252,6 +330,49 @@ public class PreprocessTab
    * Displays the data.
    */
   protected void displayData() {
-    // TODO
+    DataContainer	cont;
+
+    if (getSelectedRows().length == 1) {
+      cont = getData().get(getSelectedRows()[0]);
+      m_PanelInstSummary.setInstances(cont.getData());
+      m_PanelAttSelection.setInstances(cont.getData());
+      m_PanelAttSummary.setInstances(cont.getData());
+      m_PanelAttVisualization.setInstances(cont.getData());
+    }
+    else {
+      // TODO unset dataset?
+    }
+  }
+
+  /**
+   * Removes the check attributes.
+   */
+  protected void removeCheckedAttributes() {
+    int[]		indices;
+    Remove		remove;
+    int			index;
+    DataContainer	cont;
+    Instances		filtered;
+
+    if (getSelectedRows().length != 1)
+      return;
+    index = getSelectedRows()[0];
+    cont  = getData().get(index);
+
+    indices = m_PanelAttSelection.getSelectedAttributes();
+    if (indices.length == 0)
+      return;
+
+    remove = new Remove();
+    remove.setAttributeIndicesArray(indices);
+    try {
+      remove.setInputFormat(cont.getData());
+      filtered = Filter.useFilter(cont.getData(), remove);
+      cont.setData(filtered);
+      fireDataChange();
+    }
+    catch (Exception e) {
+      GUIHelper.showErrorMessage(this, "Failed to remove checked attributes!", e);
+    }
   }
 }
