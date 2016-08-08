@@ -15,11 +15,13 @@
 
 /**
  * FileSystemSearch.java
- * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.source;
 
 import adams.core.QuickInfoHelper;
+import adams.core.io.FileUtils;
+import adams.core.io.ForwardSlashSupporter;
 import adams.flow.source.filesystemsearch.AbstractFileSystemSearchlet;
 import adams.flow.source.filesystemsearch.FileSearch;
 
@@ -49,7 +51,7 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default: FileSystemSearch
  * </pre>
  * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
@@ -61,8 +63,15 @@ import java.util.List;
  * </pre>
  * 
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this 
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical 
+ * &nbsp;&nbsp;&nbsp;actors.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
@@ -76,20 +85,30 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default: adams.flow.source.filesystemsearch.FileSearch
  * </pre>
  * 
+ * <pre>-use-forward-slashes &lt;boolean&gt; (property: useForwardSlashes)
+ * &nbsp;&nbsp;&nbsp;If enabled, forward slashes are used in the output (but the '\\' prefix 
+ * &nbsp;&nbsp;&nbsp;of UNC paths is not converted).
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
 public class FileSystemSearch
-  extends AbstractArrayProvider {
+  extends AbstractArrayProvider
+  implements ForwardSlashSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = -1389714133778925327L;
   
   /** the search algorithm to use. */
   protected AbstractFileSystemSearchlet m_Search;
-  
+
+  /** whether to output forward slashes. */
+  protected boolean m_UseForwardSlashes;
+
   /**
    * Returns a string describing the object.
    *
@@ -112,6 +131,10 @@ public class FileSystemSearch
     m_OptionManager.add(
 	    "search", "search",
 	    new FileSearch());
+
+    m_OptionManager.add(
+	    "use-forward-slashes", "useForwardSlashes",
+	    false);
   }
 
   /**
@@ -165,6 +188,37 @@ public class FileSystemSearch
   }
 
   /**
+   * Sets whether to use forward slashes in the output.
+   *
+   * @param value	if true then use forward slashes
+   */
+  public void setUseForwardSlashes(boolean value) {
+    m_UseForwardSlashes = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to use forward slashes in the output.
+   *
+   * @return		true if forward slashes are used
+   */
+  public boolean getUseForwardSlashes() {
+    return m_UseForwardSlashes;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String useForwardSlashesTipText() {
+    return
+	"If enabled, forward slashes are used in the output (but "
+	+ "the '\\\\' prefix of UNC paths is not converted).";
+  }
+
+  /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
@@ -175,6 +229,7 @@ public class FileSystemSearch
 
     result  = QuickInfoHelper.toString(this, "search", m_Search);
     result += QuickInfoHelper.toString(this, "outputArray", (m_OutputArray ? "as array" : "one by one"), ", ");
+    result += QuickInfoHelper.toString(this, "useForwardSlashes", (m_UseForwardSlashes ? "forward slashes" : "platform-specific slashes"), ", ");
 
     return result;
   }
@@ -194,7 +249,11 @@ public class FileSystemSearch
     m_Queue.clear();
     try {
       items = m_Search.search();
-      m_Queue.addAll(items);
+      for (String item: items) {
+        if (m_UseForwardSlashes)
+          item = FileUtils.useForwardSlashes(item);
+        m_Queue.add(item);
+      }
     }
     catch (Exception e) {
       result = handleException("Failed to perform search!", e);

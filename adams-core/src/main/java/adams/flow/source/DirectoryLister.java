@@ -19,16 +19,18 @@
  */
 
 package adams.flow.source;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import adams.core.QuickInfoHelper;
 import adams.core.base.BaseDateTime;
 import adams.core.base.BaseRegExp;
 import adams.core.io.DirectoryLister.Sorting;
+import adams.core.io.FileUtils;
+import adams.core.io.ForwardSlashSupporter;
 import adams.core.io.PlaceholderDirectory;
 import adams.core.logging.LoggingLevel;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -45,122 +47,141 @@ import adams.core.logging.LoggingLevel;
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- *
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- *
+ * 
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: DirectoryLister
  * </pre>
- *
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * 
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default:
+ * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- *
- * <pre>-skip (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
+ * 
+ * <pre>-skip &lt;boolean&gt; (property: skip)
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
  * &nbsp;&nbsp;&nbsp;as it is.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
- * <pre>-stop-flow-on-error (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * 
+ * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this 
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical 
+ * &nbsp;&nbsp;&nbsp;actors.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
- * <pre>-output-array (property: outputArray)
+ * 
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-output-array &lt;boolean&gt; (property: outputArray)
  * &nbsp;&nbsp;&nbsp;Whether to output the files as array or as single strings.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-dir &lt;adams.core.io.PlaceholderDirectory&gt; (property: watchDir)
  * &nbsp;&nbsp;&nbsp;The directory to watch for files&#47;directories.
- * &nbsp;&nbsp;&nbsp;default: .
+ * &nbsp;&nbsp;&nbsp;default: ${CWD}
  * </pre>
- *
- * <pre>-list-dirs (property: listDirs)
+ * 
+ * <pre>-list-dirs &lt;boolean&gt; (property: listDirs)
  * &nbsp;&nbsp;&nbsp;Whether to include directories in the output.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
- * <pre>-list-files (property: listFiles)
+ * 
+ * <pre>-list-files &lt;boolean&gt; (property: listFiles)
  * &nbsp;&nbsp;&nbsp;Whether to include files in the output.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-max-items &lt;int&gt; (property: maxItems)
  * &nbsp;&nbsp;&nbsp;The maximum number of items (files&#47;dirs) to return (&lt;= 0 is unlimited).
  * &nbsp;&nbsp;&nbsp;default: -1
  * </pre>
- *
+ * 
  * <pre>-regexp &lt;adams.core.base.BaseRegExp&gt; (property: regExp)
- * &nbsp;&nbsp;&nbsp;The regular expression that the files&#47;dirs must match (empty string matches
+ * &nbsp;&nbsp;&nbsp;The regular expression that the files&#47;dirs must match (empty string matches 
  * &nbsp;&nbsp;&nbsp;all).
- * &nbsp;&nbsp;&nbsp;default:
+ * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- *
+ * 
  * <pre>-sorting &lt;NO_SORTING|SORT_BY_NAME|SORT_BY_LAST_MODIFIED&gt; (property: sorting)
  * &nbsp;&nbsp;&nbsp;The type of sorting to perform.
  * &nbsp;&nbsp;&nbsp;default: NO_SORTING
  * </pre>
- *
- * <pre>-descending (property: sortDescending)
+ * 
+ * <pre>-descending &lt;boolean&gt; (property: sortDescending)
  * &nbsp;&nbsp;&nbsp;If set to true, the files are sorted in descending manner.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
- * <pre>-recursive (property: recursive)
+ * 
+ * <pre>-recursive &lt;boolean&gt; (property: recursive)
  * &nbsp;&nbsp;&nbsp;Whether to search recursively or not.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-max-depth &lt;int&gt; (property: maxDepth)
- * &nbsp;&nbsp;&nbsp;The maximum depth to search in recursive mode (1 = only watch directory,
+ * &nbsp;&nbsp;&nbsp;The maximum depth to search in recursive mode (1 = only watch directory, 
  * &nbsp;&nbsp;&nbsp;-1 = infinite).
  * &nbsp;&nbsp;&nbsp;default: -1
  * </pre>
- *
+ * 
  * <pre>-stop-file &lt;java.lang.String&gt; (property: stopFile)
  * &nbsp;&nbsp;&nbsp;The name of the file, that finishes the watching.
  * &nbsp;&nbsp;&nbsp;default: STOP.txt
  * </pre>
- *
+ * 
  * <pre>-wait &lt;int&gt; (property: wait)
- * &nbsp;&nbsp;&nbsp;The number of seconds to wait before polling the directory again if no elements
+ * &nbsp;&nbsp;&nbsp;The number of seconds to wait before polling the directory again if no elements 
  * &nbsp;&nbsp;&nbsp;were retrieved; a value of -1 indicates that polling happens only once.
  * &nbsp;&nbsp;&nbsp;default: -1
  * </pre>
- *
- * <pre>-always-wait (property: alwaysWait)
- * &nbsp;&nbsp;&nbsp;If set to true, then the waiting period is enforced between polls, even
+ * 
+ * <pre>-always-wait &lt;boolean&gt; (property: alwaysWait)
+ * &nbsp;&nbsp;&nbsp;If set to true, then the waiting period is enforced between polls, even 
  * &nbsp;&nbsp;&nbsp;if there are files&#47;dirs that could get processed.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
- * <pre>-skip-locked (property: skipLockedFiles)
- * &nbsp;&nbsp;&nbsp;If set to true, locked files are skipped. Depends on the underlying OS how
- * &nbsp;&nbsp;&nbsp;this is implemented. Under Linux, a JVM would have to lock the file explicitly
- * &nbsp;&nbsp;&nbsp;via java.nio.channels.FileChannel.lock(). Simply opening it for writing
+ * 
+ * <pre>-skip-locked &lt;boolean&gt; (property: skipLockedFiles)
+ * &nbsp;&nbsp;&nbsp;If set to true, locked files are skipped. Depends on the underlying OS how 
+ * &nbsp;&nbsp;&nbsp;this is implemented. Under Linux, a JVM would have to lock the file explicitly 
+ * &nbsp;&nbsp;&nbsp;via java.nio.channels.FileChannel.lock(). Simply opening it for writing 
  * &nbsp;&nbsp;&nbsp;does not lock the file.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
- * <pre>-min-age &lt;adams.core.base.BaseDateTime&gt; (property: minFileAge)
- * &nbsp;&nbsp;&nbsp;The minimum file age that the files have to have.
+ * 
+ * <pre>-min-timestamp &lt;adams.core.base.BaseDateTime&gt; (property: minFileTimestamp)
+ * &nbsp;&nbsp;&nbsp;The minimum file timestamp that the files can have.
  * &nbsp;&nbsp;&nbsp;default: -INF
  * </pre>
- *
- * <pre>-max-age &lt;adams.core.base.BaseDateTime&gt; (property: maxFileAge)
- * &nbsp;&nbsp;&nbsp;The maximum file age that the files have to have.
+ * 
+ * <pre>-max-timestamp &lt;adams.core.base.BaseDateTime&gt; (property: maxFileTimestamp)
+ * &nbsp;&nbsp;&nbsp;The maximum file timestamp that the files can have.
  * &nbsp;&nbsp;&nbsp;default: +INF
  * </pre>
- *
+ * 
+ * <pre>-use-forward-slashes &lt;boolean&gt; (property: useForwardSlashes)
+ * &nbsp;&nbsp;&nbsp;If enabled, forward slashes are used in the output (but the '\\' prefix 
+ * &nbsp;&nbsp;&nbsp;of UNC paths is not converted).
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
 public class DirectoryLister
-  extends AbstractArrayProvider {
+  extends AbstractArrayProvider
+  implements ForwardSlashSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = -5015637337437403790L;
@@ -176,6 +197,9 @@ public class DirectoryLister
 
   /** whether a pause before the next polling is required. */
   protected boolean m_PauseRequired;
+
+  /** whether to output forward slashes. */
+  protected boolean m_UseForwardSlashes;
 
   /**
    * Returns a string describing the object.
@@ -253,6 +277,10 @@ public class DirectoryLister
     m_OptionManager.add(
 	    "max-timestamp", "maxFileTimestamp",
 	    new BaseDateTime(BaseDateTime.INF_FUTURE));
+
+    m_OptionManager.add(
+	    "use-forward-slashes", "useForwardSlashes",
+	    false);
   }
 
   /**
@@ -290,6 +318,7 @@ public class DirectoryLister
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "maxItems", (getMaxItems() > 0 ? getMaxItems() : null), "max="));
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "wait", (getWait() > 0 ? getWait() : null), "polling="));
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "outputArray", getOutputArray(), "array"));
+    QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "useForwardSlashes", m_UseForwardSlashes, "forward slashes"));
     result += QuickInfoHelper.flatten(options);
 
     return result;
@@ -819,6 +848,37 @@ public class DirectoryLister
   }
 
   /**
+   * Sets whether to use forward slashes in the output.
+   *
+   * @param value	if true then use forward slashes
+   */
+  public void setUseForwardSlashes(boolean value) {
+    m_UseForwardSlashes = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to use forward slashes in the output.
+   *
+   * @return		true if forward slashes are used
+   */
+  public boolean getUseForwardSlashes() {
+    return m_UseForwardSlashes;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String useForwardSlashesTipText() {
+    return
+	"If enabled, forward slashes are used in the output (but "
+	+ "the '\\\\' prefix of UNC paths is not converted).";
+  }
+
+  /**
    * Returns the based class of the items.
    *
    * @return		the class
@@ -876,7 +936,11 @@ public class DirectoryLister
     }
 
     try {
-      m_Queue.addAll(Arrays.asList(m_Lister.list()));
+      for (String item: m_Lister.list()) {
+        if (m_UseForwardSlashes)
+          item = FileUtils.useForwardSlashes(item);
+        m_Queue.add(item);
+      }
     }
     catch (Exception e) {
       result = handleException("Failed to list/add items:", e);
