@@ -20,6 +20,10 @@ java.util.Comparator=\
 adams.core.io.AbstractFilenameGenerator=\
   adams.core.io
 
+# the file use checks
+adams.core.io.fileuse.AbstractFileUseCheck=\
+  adams.core.io.fileuse
+
 # the classpath augmenters
 adams.core.management.ClassPathAugmenter=\
   adams.core.management

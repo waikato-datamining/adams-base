@@ -15,15 +15,16 @@
 
 /**
  * FileExists.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.condition.bool;
 
 import adams.core.QuickInfoHelper;
 import adams.core.io.AbstractFilenameGenerator;
-import adams.core.io.FileUtils;
 import adams.core.io.NullFilenameGenerator;
 import adams.core.io.PlaceholderFile;
+import adams.core.io.fileuse.AbstractFileUseCheck;
+import adams.core.io.fileuse.Default;
 import adams.flow.core.Actor;
 import adams.flow.core.Token;
 import adams.flow.core.Unknown;
@@ -52,6 +53,11 @@ import adams.flow.core.Unknown;
  * &nbsp;&nbsp;&nbsp;default: adams.core.io.NullFilenameGenerator
  * </pre>
  * 
+ * <pre>-check &lt;adams.core.io.fileuse.AbstractFileUseCheck&gt; (property: check)
+ * &nbsp;&nbsp;&nbsp;The check scheme to use.
+ * &nbsp;&nbsp;&nbsp;default: adams.core.io.fileuse.Default
+ * </pre>
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -68,7 +74,10 @@ public class FileInUse
 
   /** the filename generator. */
   protected AbstractFilenameGenerator m_Generator;
-  
+
+  /** the check scheme to use. */
+  protected AbstractFileUseCheck m_Check;
+
   /**
    * Returns a string describing the object.
    *
@@ -91,12 +100,16 @@ public class FileInUse
     super.defineOptions();
 
     m_OptionManager.add(
-	    "file", "file",
-	    new PlaceholderFile("."));
+      "file", "file",
+      new PlaceholderFile("."));
 
     m_OptionManager.add(
-	    "generator", "generator",
-	    new NullFilenameGenerator());
+      "generator", "generator",
+      new NullFilenameGenerator());
+
+    m_OptionManager.add(
+      "check", "check",
+      new Default());
   }
 
   /**
@@ -158,6 +171,35 @@ public class FileInUse
   }
 
   /**
+   * Sets the 'in use' check scheme.
+   *
+   * @param value	the check scheme
+   */
+  public void setCheck(AbstractFileUseCheck value) {
+    m_Check = value;
+    reset();
+  }
+
+  /**
+   * Returns the 'in use' check scheme.
+   *
+   * @return		the check scheme
+   */
+  public AbstractFileUseCheck getCheck() {
+    return m_Check;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String checkTipText() {
+    return "The check scheme to use.";
+  }
+
+  /**
    * Returns the quick info string to be displayed in the flow editor.
    *
    * @return		the info or null if no info to be displayed
@@ -168,7 +210,8 @@ public class FileInUse
     
     result  = QuickInfoHelper.toString(this, "file", m_File, "file: ");
     result += QuickInfoHelper.toString(this, "generator", m_Generator, ", generator: ");
-    
+    result += QuickInfoHelper.toString(this, "check", m_Check, ", check: ");
+
     return result;
   }
 
@@ -222,7 +265,7 @@ public class FileInUse
       file = m_File;
 
     if (file.exists() && !file.isDirectory())
-      result = FileUtils.isOpen(file);
+      result = m_Check.isInUse(file);
 
     return result;
   }
