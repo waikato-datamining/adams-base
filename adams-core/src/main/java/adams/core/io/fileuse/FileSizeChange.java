@@ -26,7 +26,7 @@ import java.io.File;
 
 /**
  <!-- globalinfo-start -->
- * Checks the file size before and after the specified wait interval. If the size differ, then the file is considered to be in use.
+ * Checks the file size before and after the specified wait interval. If the sizes differ, then the file is considered to be in use.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -64,7 +64,7 @@ public class FileSizeChange
   public String globalInfo() {
     return
       "Checks the file size before and after the specified wait interval. "
-        + "If the size differ, then the file is considered to be in use.";
+        + "If the sizes differ, then the file is considered to be in use.";
   }
 
   /**
