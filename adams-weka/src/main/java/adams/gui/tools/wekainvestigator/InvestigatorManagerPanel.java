@@ -71,6 +71,12 @@ public class InvestigatorManagerPanel
     return new InvestigatorWorkspaceList();
   }
 
+  /**
+   * Just for testing.
+   *
+   * @param args	ignored
+   * @throws Exception
+   */
   public static void main(String[] args) throws Exception {
     Environment.setEnvironmentClass(Environment.class);
     final InvestigatorManagerPanel panel = new InvestigatorManagerPanel();

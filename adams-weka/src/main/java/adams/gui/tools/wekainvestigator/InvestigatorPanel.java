@@ -502,6 +502,29 @@ public class InvestigatorPanel
   }
 
   /**
+   * Lets user select a dataset.
+   */
+  public void openFile(File file) {
+    FileContainer	cont;
+    AbstractFileLoader  loader;
+
+    logMessage("Loading: " + file);
+    loader = m_FileChooser.getReaderForFile(file);
+    if (loader == null) {
+      logError("Failed to determine loader for: " + file, "Error loading");
+      return;
+    }
+
+    cont = new FileContainer(loader, file);
+    updateClassAttribute(cont.getData());
+    m_Data.add(cont);
+    if (m_RecentFilesHandler != null)
+      m_RecentFilesHandler.addRecentItem(file);
+    logMessage("Loaded: " + file);
+    fireDataChange();
+  }
+
+  /**
    * For opening a recently used file.
    *
    * @param e		the event
