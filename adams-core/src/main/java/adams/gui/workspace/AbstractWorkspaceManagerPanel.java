@@ -243,6 +243,15 @@ public abstract class AbstractWorkspaceManagerPanel<T extends AbstractWorkspaceP
   }
 
   /**
+   * Returns the currently selected panel, if any.
+   *
+   * @return		the panel, null if none available
+   */
+  public T getCurrentPanel() {
+    return m_History.getEntry(m_History.getSelectedEntry());
+  }
+
+  /**
    * Returns the panel with the workspace entries.
    * 
    * @return		the panel entries
