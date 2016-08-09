@@ -15,7 +15,7 @@
 
 /*
  * PlaceholderManagementPanel.java
- * Copyright (C) 2009-2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.tools;
@@ -28,6 +28,7 @@ import adams.env.PlaceholdersDefinition;
 import adams.gui.chooser.BaseDirectoryChooser;
 import adams.gui.core.AbstractBaseTableModel;
 import adams.gui.core.BasePanel;
+import adams.gui.core.BaseTabbedPane;
 import adams.gui.core.BaseTable;
 import adams.gui.core.BaseTableWithButtons;
 import adams.gui.core.GUIHelper;
@@ -44,14 +45,10 @@ import javax.swing.JMenuItem;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
@@ -98,33 +95,43 @@ public class PlaceholderManagementPanel
 
     /**
      * Initializes the model with the global placeholders.
+     *
+     * @param system	whether to display system ones or user-defined ones
      */
-    public PlaceholderTableModel() {
-      this(Placeholders.getSingleton().toProperties());
+    public PlaceholderTableModel(boolean system) {
+      this(Placeholders.getSingleton().toProperties(), system);
     }
 
     /**
      * Initializes the model with the specified properties.
      *
      * @param props	the properties to display
+     * @param system	whether to display system ones or user-defined ones
      */
-    public PlaceholderTableModel(Properties props) {
+    public PlaceholderTableModel(Properties props, boolean system) {
       super();
 
-      m_Modified     = false;
-      m_Keys         = new Vector<String>();
-      m_Values = new Hashtable<String,String>();
+      m_Modified = false;
+      m_Keys     = new Vector<>();
+      m_Values   = new Hashtable<>();
       Enumeration<String> enm = (Enumeration<String>) props.propertyNames();
       while (enm.hasMoreElements()) {
 	String key = enm.nextElement();
-	if (    key.equals(Placeholders.CWD)
-	     || key.equals(Placeholders.PROJECT)
-	     || key.equals(Placeholders.TMP)
-	     || key.equals(Placeholders.HOME) )
-	  continue;
-
-	m_Keys.add(key);
-	m_Values.put(key, props.getProperty(key));
+	boolean add;
+	if (system)
+	  add = (    key.equals(Placeholders.CWD)
+	          || key.equals(Placeholders.PROJECT)
+   	          || key.equals(Placeholders.TMP)
+	          || key.equals(Placeholders.HOME) );
+	else
+	  add = !(    key.equals(Placeholders.CWD)
+	           || key.equals(Placeholders.PROJECT)
+	           || key.equals(Placeholders.TMP)
+	           || key.equals(Placeholders.HOME) );
+	if (add) {
+	  m_Keys.add(key);
+	  m_Values.put(key, props.getProperty(key));
+	}
       }
       Collections.sort(m_Keys);
     }
@@ -397,6 +404,9 @@ public class PlaceholderManagementPanel
     }
   }
 
+  /** the tabbed pane. */
+  protected BaseTabbedPane m_TabbedPane;
+
   /** the underlying table model. */
   protected PlaceholderTableModel m_Model;
 
@@ -440,65 +450,70 @@ public class PlaceholderManagementPanel
    */
   @Override
   protected void initGUI() {
+    PlaceholderTableModel	modelSystem;
+    BaseTableWithButtons	tableSystem;
+
     super.initGUI();
 
     setLayout(new BorderLayout());
 
-    // table
-    m_Model = new PlaceholderTableModel();
-    m_Model.addTableModelListener(new TableModelListener() {
-      public void tableChanged(TableModelEvent e) {
-	update();
-      }
-    });
+    m_TabbedPane = new BaseTabbedPane();
+    add(m_TabbedPane, BorderLayout.CENTER);
+
+    // user
+    m_Model = new PlaceholderTableModel(false);
+    m_Model.addTableModelListener((TableModelEvent e) -> update());
     m_Table = new BaseTableWithButtons(m_Model);
     m_Table.getColumnModel().getColumn(1).setCellEditor(new PlaceholderTableCellEditor(m_Table.getComponent(), m_Model, m_DirChooser));
     m_Table.getSelectionModel().setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
     m_Table.setInfoVisible(true);
     m_Table.setAutoResizeMode(BaseTable.AUTO_RESIZE_OFF);
     m_Table.setOptimalColumnWidth();
-    m_Table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-      public void valueChanged(ListSelectionEvent e) {
-	updateButtons();
-      }
-    });
-    m_Table.getModel().addTableModelListener(new TableModelListener() {
-      @Override
-      public void tableChanged(TableModelEvent e) {
-	m_Table.setOptimalColumnWidth();
-      }
-    });
-    add(m_Table, BorderLayout.CENTER);
+    m_Table.getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> updateButtons());
+    m_Table.getModel().addTableModelListener((TableModelEvent e) -> m_Table.setOptimalColumnWidth());
+    m_TabbedPane.addTab("User", m_Table);
 
     // buttons
     m_ButtonAdd = new JButton("Add...");
     m_ButtonAdd.setMnemonic('A');
-    m_ButtonAdd.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	String key = GUIHelper.showInputDialog(PlaceholderManagementPanel.this, "Please add new placeholder");
-	if (key == null)
-	  return;
+    m_ButtonAdd.addActionListener((ActionEvent e) -> {
+      String key = GUIHelper.showInputDialog(PlaceholderManagementPanel.this, "Please add new placeholder");
+      if (key == null)
+	return;
 
-	int retVal = m_DirChooser.showOpenDialog(PlaceholderManagementPanel.this);
-	if (retVal != BaseDirectoryChooser.APPROVE_OPTION)
-	  return;
+      int retVal = m_DirChooser.showOpenDialog(PlaceholderManagementPanel.this);
+      if (retVal != BaseDirectoryChooser.APPROVE_OPTION)
+	return;
 
-	m_Model.add(key, m_DirChooser.getSelectedFile().getAbsolutePath());
-      }
+      m_Model.add(key, m_DirChooser.getSelectedFile().getAbsolutePath());
     });
     m_Table.addToButtonsPanel(m_ButtonAdd);
 
     m_ButtonRemove = new JButton("Remove");
     m_ButtonRemove.setMnemonic('R');
-    m_ButtonRemove.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	int[] indices = m_Table.getSelectedRows();
-	for (int i = indices.length - 1; i >= 0; i--)
-	  m_Model.remove(indices[i]);
-      }
+    m_ButtonRemove.addActionListener((ActionEvent e) -> {
+      int[] indices = m_Table.getSelectedRows();
+      for (int i = indices.length - 1; i >= 0; i--)
+	m_Model.remove(indices[i]);
     });
     m_Table.addToButtonsPanel(m_ButtonRemove);
 
+    // system
+    modelSystem = new PlaceholderTableModel(true);
+    tableSystem = new BaseTableWithButtons(modelSystem);
+    tableSystem.getSelectionModel().setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+    tableSystem.setInfoVisible(true);
+    tableSystem.setAutoResizeMode(BaseTable.AUTO_RESIZE_OFF);
+    tableSystem.setOptimalColumnWidth();
+    m_TabbedPane.addTab("System", tableSystem);
+  }
+
+  /**
+   * Finishes the initialization.
+   */
+  @Override
+  protected void finishInit() {
+    super.finishInit();
     update();
   }
 
@@ -541,11 +556,7 @@ public class PlaceholderManagementPanel
       menu = new JMenu("File");
       result.add(menu);
       menu.setMnemonic('F');
-      menu.addChangeListener(new ChangeListener() {
-	public void stateChanged(ChangeEvent e) {
-	  updateMenu();
-	}
-      });
+      menu.addChangeListener((ChangeEvent e) -> updateMenu());
 
       // File/Save
       menuitem = new JMenuItem("Save");
@@ -553,11 +564,7 @@ public class PlaceholderManagementPanel
       menuitem.setMnemonic('S');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed S"));
       menuitem.setIcon(GUIHelper.getIcon("save.gif"));
-      menuitem.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  save();
-	}
-      });
+      menuitem.addActionListener((ActionEvent e) -> save());
       m_MenuItemSave = menuitem;
 
       // File/Revert
@@ -565,11 +572,7 @@ public class PlaceholderManagementPanel
       menu.add(menuitem);
       menuitem.setMnemonic('R');
       menuitem.setIcon(GUIHelper.getIcon("revert.png"));
-      menuitem.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  revert();
-	}
-      });
+      menuitem.addActionListener((ActionEvent e) -> revert());
       m_MenuItemRevert = menuitem;
 
       // File/Close
@@ -579,11 +582,7 @@ public class PlaceholderManagementPanel
       menuitem.setMnemonic('C');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed Q"));
       menuitem.setIcon(GUIHelper.getIcon("exit.png"));
-      menuitem.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  close();
-	}
-      });
+      menuitem.addActionListener((ActionEvent e) -> close());
       m_MenuItemClose = menuitem;
 
       // update menu
@@ -709,7 +708,7 @@ public class PlaceholderManagementPanel
    * Ignored if custom placeholders.
    */
   protected void revert() {
-    m_Model = new PlaceholderTableModel();
+    m_Model = new PlaceholderTableModel(false);
     m_Table.setModel(m_Model);
 
     update();
