@@ -15,7 +15,7 @@
 
 /**
  * ReplaceFileExtension.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
 
@@ -23,7 +23,7 @@ import adams.core.io.FileUtils;
 
 /**
  <!-- globalinfo-start -->
- * Interpretes the string as file name and replaces its extension with the provided one. If no extension is given, it simply removes it.
+ * Interprets the string as file name and replaces its extension with the provided one. If no extension is given, it simply removes it.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -65,7 +65,7 @@ public class ReplaceFileExtension
   @Override
   public String globalInfo() {
     return 
-	"Interpretes the string as file name and replaces its extension with "
+	"Interprets the string as file name and replaces its extension with "
 	+ "the provided one. If no extension is given, it simply removes it.";
   }
 
