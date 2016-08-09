@@ -54,10 +54,12 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.Vector;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Panel for managing the placeholders.
@@ -84,14 +86,17 @@ public class PlaceholderManagementPanel
     /** for serialization. */
     private static final long serialVersionUID = -7703129343528534771L;
 
+    /** whether the model is readonly. */
+    protected boolean m_ReadOnly;
+
     /** whether the values got modified. */
     protected boolean m_Modified;
 
     /** the key - actual value relation. */
-    protected Hashtable<String,String> m_Values;
+    protected Map<String,String> m_Values;
 
     /** the sorted list of keys. */
-    protected Vector<String> m_Keys;
+    protected List<String> m_Keys;
 
     /**
      * Initializes the model with the global placeholders.
@@ -112,8 +117,9 @@ public class PlaceholderManagementPanel
       super();
 
       m_Modified = false;
-      m_Keys     = new Vector<>();
-      m_Values   = new Hashtable<>();
+      m_ReadOnly = system;
+      m_Keys     = new ArrayList<>();
+      m_Values   = new HashMap<>();
       Enumeration<String> enm = (Enumeration<String>) props.propertyNames();
       while (enm.hasMoreElements()) {
 	String key = enm.nextElement();
@@ -211,7 +217,7 @@ public class PlaceholderManagementPanel
      */
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-      return true;
+      return !m_ReadOnly;
     }
 
     /**
@@ -253,6 +259,9 @@ public class PlaceholderManagementPanel
      * @param value	the modified state
      */
     public void setModified(boolean value) {
+      if (m_ReadOnly)
+	return;
+
       m_Modified = value;
     }
 
@@ -271,6 +280,9 @@ public class PlaceholderManagementPanel
      * @param rowIndex	the row to remove
      */
     public void remove(int rowIndex) {
+      if (m_ReadOnly)
+	return;
+
       m_Values.remove(m_Keys.get(rowIndex));
       m_Keys.remove(rowIndex);
 
@@ -286,6 +298,9 @@ public class PlaceholderManagementPanel
      * @param value	the corresponding value
      */
     public void add(String key, String value) {
+      if (m_ReadOnly)
+	return;
+
       key = key.toUpperCase();
       if (m_Keys.contains(key))
 	return;
@@ -305,17 +320,12 @@ public class PlaceholderManagementPanel
      * @return		the generated properties
      */
     public Properties getProperties() {
-      Properties		result;
-      Enumeration<String>	enm;
-      String			key;
+      Properties	result;
 
       result = new Properties();
 
-      enm = m_Values.keys();
-      while (enm.hasMoreElements()) {
-	key = enm.nextElement();
+      for (String key: m_Values.keySet())
 	result.setProperty(key, m_Values.get(key));
-      }
 
       return result;
     }
@@ -326,17 +336,13 @@ public class PlaceholderManagementPanel
      * @return		the generated array
      */
     public BaseString[] getArray() {
-      BaseString[]		result;
-      Enumeration<String>	enm;
-      String			key;
-      int			i;
+      BaseString[]	result;
+      int		i;
 
       result = new BaseString[m_Values.size()];
 
-      enm = m_Values.keys();
-      i   = 0;
-      while (enm.hasMoreElements()) {
-	key = enm.nextElement();
+      i = 0;
+      for (String key: m_Values.keySet()) {
 	result[i] = new BaseString(key + Placeholders.SEPARATOR + m_Values.get(key));
 	i++;
       }
@@ -471,6 +477,7 @@ public class PlaceholderManagementPanel
     m_Table.setOptimalColumnWidth();
     m_Table.getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> updateButtons());
     m_Table.getModel().addTableModelListener((TableModelEvent e) -> m_Table.setOptimalColumnWidth());
+    m_Table.setShowSimpleCellPopupMenu(true);
     m_TabbedPane.addTab("User", m_Table);
 
     // buttons
@@ -505,6 +512,7 @@ public class PlaceholderManagementPanel
     tableSystem.setInfoVisible(true);
     tableSystem.setAutoResizeMode(BaseTable.AUTO_RESIZE_OFF);
     tableSystem.setOptimalColumnWidth();
+    tableSystem.setShowSimpleCellPopupMenu(true);
     m_TabbedPane.addTab("System", tableSystem);
   }
 
