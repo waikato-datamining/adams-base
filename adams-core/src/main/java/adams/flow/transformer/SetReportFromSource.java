@@ -28,6 +28,7 @@ import adams.flow.core.CallableActorHelper;
 import adams.flow.core.CallableActorReference;
 import adams.flow.core.Compatibility;
 import adams.flow.core.OutputProducer;
+import adams.flow.core.ReportUpdateType;
 import adams.flow.core.Token;
 import adams.flow.core.Unknown;
 
@@ -42,7 +43,7 @@ import adams.flow.core.Unknown;
  * - accepts:<br>
  * &nbsp;&nbsp;&nbsp;adams.data.report.MutableReportHandler<br>
  * - generates:<br>
- * &nbsp;&nbsp;&nbsp;Unknown<br>
+ * &nbsp;&nbsp;&nbsp;adams.flow.core.Unknown<br>
  * <br><br>
  <!-- flow-summary-end -->
  *
@@ -57,7 +58,7 @@ import adams.flow.core.Unknown;
  * &nbsp;&nbsp;&nbsp;default: SetReportFromSource
  * </pre>
  * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
@@ -69,14 +70,26 @@ import adams.flow.core.Unknown;
  * </pre>
  * 
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this 
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical 
+ * &nbsp;&nbsp;&nbsp;actors.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
  * <pre>-report &lt;adams.flow.core.CallableActorReference&gt; (property: report)
  * &nbsp;&nbsp;&nbsp;The callable source to obtain the report from.
  * &nbsp;&nbsp;&nbsp;default: unknown
+ * </pre>
+ * 
+ * <pre>-update-type &lt;REPLACE|MERGE_CURRENT_WITH_OTHER|MERGE_OTHER_WITH_CURRENT&gt; (property: updateType)
+ * &nbsp;&nbsp;&nbsp;Determines how to update the report.
+ * &nbsp;&nbsp;&nbsp;default: REPLACE
  * </pre>
  * 
  <!-- options-end -->
@@ -95,6 +108,9 @@ public class SetReportFromSource
 
   /** the helper class. */
   protected CallableActorHelper m_Helper;
+
+  /** how to update. */
+  protected ReportUpdateType m_UpdateType;
 
   /**
    * Returns a string describing the object.
@@ -118,6 +134,10 @@ public class SetReportFromSource
     m_OptionManager.add(
 	    "report", "report",
 	    new CallableActorReference("unknown"));
+
+    m_OptionManager.add(
+	    "update-type", "updateType",
+	    ReportUpdateType.REPLACE);
   }
   
   /**
@@ -160,13 +180,47 @@ public class SetReportFromSource
   }
 
   /**
+   * Sets the report update type.
+   *
+   * @param value	the update type
+   */
+  public void setUpdateType(ReportUpdateType value) {
+    m_UpdateType = value;
+    reset();
+  }
+
+  /**
+   * Returns the report update type.
+   *
+   * @return		the update type
+   */
+  public ReportUpdateType getUpdateType() {
+    return m_UpdateType;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String updateTypeTipText() {
+    return "Determines how to update the report.";
+  }
+
+  /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
    */
   @Override
   public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "report", m_Report);
+    String	result;
+
+    result  = QuickInfoHelper.toString(this, "report", m_Report);
+    result += QuickInfoHelper.toString(this, "updateType", m_UpdateType, ", update: ");
+
+    return result;
   }
 
   /**
@@ -231,6 +285,7 @@ public class SetReportFromSource
     Actor			source;
     Compatibility		comp;
     Token			token;
+    Report			other;
 
     result  = null;
 
@@ -260,7 +315,21 @@ public class SetReportFromSource
     }
     
     if (result == null) {
-      handler.setReport((Report) token.getPayload());
+      other = (Report) token.getPayload();
+      switch (m_UpdateType) {
+        case REPLACE:
+          handler.setReport(other);
+          break;
+	case MERGE_CURRENT_WITH_OTHER:
+	  handler.getReport().mergeWith(other);
+	  break;
+	case MERGE_OTHER_WITH_CURRENT:
+	  other.mergeWith(handler.getReport());
+	  handler.setReport(other);
+	  break;
+	default:
+	  throw new IllegalStateException("Unhandled update type: " + m_UpdateType);
+      }
       m_OutputToken = new Token(handler);
     }
     

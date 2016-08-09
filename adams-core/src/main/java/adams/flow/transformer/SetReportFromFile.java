@@ -15,7 +15,7 @@
 
 /*
  * SetReportFromFile.java
- * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -26,6 +26,7 @@ import adams.data.io.input.AbstractReportReader;
 import adams.data.io.input.DefaultSimpleReportReader;
 import adams.data.report.MutableReportHandler;
 import adams.data.report.Report;
+import adams.flow.core.ReportUpdateType;
 import adams.flow.core.Token;
 import adams.flow.core.Unknown;
 
@@ -42,18 +43,14 @@ import java.util.List;
  * - accepts:<br>
  * &nbsp;&nbsp;&nbsp;adams.data.report.MutableReportHandler<br>
  * - generates:<br>
- * &nbsp;&nbsp;&nbsp;Unknown<br>
+ * &nbsp;&nbsp;&nbsp;adams.flow.core.Unknown<br>
  * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- * 
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  * 
  * <pre>-name &lt;java.lang.String&gt; (property: name)
@@ -61,19 +58,28 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default: SetReportFromFile
  * </pre>
  * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
- * <pre>-skip (property: skip)
+ * <pre>-skip &lt;boolean&gt; (property: skip)
  * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
  * &nbsp;&nbsp;&nbsp;as it is.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-stop-flow-on-error (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this 
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical 
+ * &nbsp;&nbsp;&nbsp;actors.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
  * <pre>-report-file &lt;adams.core.io.PlaceholderFile&gt; (property: reportFile)
@@ -84,6 +90,11 @@ import java.util.List;
  * <pre>-reader &lt;adams.data.io.input.AbstractReportReader&gt; (property: reader)
  * &nbsp;&nbsp;&nbsp;The reader to use for loading the report.
  * &nbsp;&nbsp;&nbsp;default: adams.data.io.input.DefaultSimpleReportReader
+ * </pre>
+ * 
+ * <pre>-update-type &lt;REPLACE|MERGE_CURRENT_WITH_OTHER|MERGE_OTHER_WITH_CURRENT&gt; (property: updateType)
+ * &nbsp;&nbsp;&nbsp;Determines how to update the report.
+ * &nbsp;&nbsp;&nbsp;default: REPLACE
  * </pre>
  * 
  <!-- options-end -->
@@ -102,7 +113,10 @@ public class SetReportFromFile
 
   /** the report loader to use. */
   protected AbstractReportReader m_Reader;
-  
+
+  /** how to update. */
+  protected ReportUpdateType m_UpdateType;
+
   /**
    * Returns a string describing the object.
    *
@@ -129,6 +143,10 @@ public class SetReportFromFile
     m_OptionManager.add(
 	    "reader", "reader",
 	    getDefaultReader());
+
+    m_OptionManager.add(
+	    "update-type", "updateType",
+	    ReportUpdateType.REPLACE);
   }
 
   /**
@@ -199,6 +217,35 @@ public class SetReportFromFile
   }
 
   /**
+   * Sets the report update type.
+   *
+   * @param value	the update type
+   */
+  public void setUpdateType(ReportUpdateType value) {
+    m_UpdateType = value;
+    reset();
+  }
+
+  /**
+   * Returns the report update type.
+   *
+   * @return		the update type
+   */
+  public ReportUpdateType getUpdateType() {
+    return m_UpdateType;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String updateTypeTipText() {
+    return "Determines how to update the report.";
+  }
+
+  /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
@@ -209,7 +256,8 @@ public class SetReportFromFile
     
     result  = QuickInfoHelper.toString(this, "reportFile", m_ReportFile);
     result += QuickInfoHelper.toString(this, "reader", m_Reader, " with ");
-    
+    result += QuickInfoHelper.toString(this, "updateType", m_UpdateType, ", update: ");
+
     return result;
   }
 
@@ -264,6 +312,7 @@ public class SetReportFromFile
     String			result;
     MutableReportHandler	handler;
     List			reports;
+    Report			other;
 
     result  = null;
 
@@ -273,7 +322,21 @@ public class SetReportFromFile
     if (reports.size() > 0) {
       if (reports.size() > 1)
 	getLogger().severe("WARNING: report file '" + m_ReportFile + "' contains more than one report, using only first report!");
-      handler.setReport((Report) reports.get(0));
+      other = (Report) reports.get(0);
+      switch (m_UpdateType) {
+        case REPLACE:
+          handler.setReport(other);
+          break;
+	case MERGE_CURRENT_WITH_OTHER:
+	  handler.getReport().mergeWith(other);
+	  break;
+	case MERGE_OTHER_WITH_CURRENT:
+	  other.mergeWith(handler.getReport());
+	  handler.setReport(other);
+	  break;
+	default:
+	  throw new IllegalStateException("Unhandled update type: " + m_UpdateType);
+      }
     }
     else {
       result = "Not able to extract a report from file '" + m_ReportFile + "'!";
