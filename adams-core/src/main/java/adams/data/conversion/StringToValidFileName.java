@@ -15,11 +15,12 @@
 
 /**
  * StringToValidFileName.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
 
 import adams.core.io.FileUtils;
+import adams.core.io.ForwardSlashSupporter;
 
 /**
  <!-- globalinfo-start -->
@@ -39,16 +40,26 @@ import adams.core.io.FileUtils;
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
+ * <pre>-use-forward-slashes &lt;boolean&gt; (property: useForwardSlashes)
+ * &nbsp;&nbsp;&nbsp;If enabled, forward slashes are used in the output (but the '\\' prefix 
+ * &nbsp;&nbsp;&nbsp;of UNC paths is not converted).
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
 public class StringToValidFileName
-  extends AbstractValidateString {
+  extends AbstractValidateString
+  implements ForwardSlashSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = 5528425779551772381L;
+
+  /** whether to output forward slashes. */
+  protected boolean m_UseForwardSlashes;
 
   /**
    * Returns a string describing the object.
@@ -59,7 +70,50 @@ public class StringToValidFileName
   public String globalInfo() {
     return "Turns any string into a valid file name.";
   }
-  
+
+  /**
+   * Adds options to the internal list of options.
+   */
+  @Override
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+	    "use-forward-slashes", "useForwardSlashes",
+	    false);
+  }
+
+  /**
+   * Sets whether to use forward slashes in the output.
+   *
+   * @param value	if true then use forward slashes
+   */
+  public void setUseForwardSlashes(boolean value) {
+    m_UseForwardSlashes = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to use forward slashes in the output.
+   *
+   * @return		true if forward slashes are used
+   */
+  public boolean getUseForwardSlashes() {
+    return m_UseForwardSlashes;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String useForwardSlashesTipText() {
+    return
+	"If enabled, forward slashes are used in the output (but "
+	+ "the '\\\\' prefix of UNC paths is not converted).";
+  }
+
   /**
    * Performs the actual validation.
    * 
@@ -68,6 +122,13 @@ public class StringToValidFileName
    */
   @Override
   protected String process(String input, String replace) throws Exception {
-    return FileUtils.createFilename(input, replace);
+    String	result;
+
+    result = FileUtils.createFilename(input, replace);
+
+    if (m_UseForwardSlashes)
+      result = FileUtils.useForwardSlashes(result);
+
+    return result;
   }
 }
