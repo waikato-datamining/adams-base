@@ -433,6 +433,10 @@ adams.flow.transformer.splitfile.AbstractFileSplitter=\
 adams.genetic.AbstractGeneticAlgorithm=\
   adams.genetic
 
+# the providers for initial gene setups
+adams.genetic.initialsetups.AbstractInitialSetupsProvider=\
+  adams.genetic.initialsetups
+
 # the stopping criteria
 adams.genetic.stopping.AbstractStoppingCriterion=\
   adams.genetic.stopping

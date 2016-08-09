@@ -35,6 +35,8 @@ import adams.core.option.OptionUtils;
 import adams.env.Environment;
 import adams.event.FitnessChangeEvent;
 import adams.event.FitnessChangeListener;
+import adams.genetic.initialsetups.AbstractInitialSetupsProvider;
+import adams.genetic.initialsetups.EmptyInitialSetupsProvider;
 import adams.genetic.stopping.AbstractStoppingCriterion;
 import adams.genetic.stopping.MaxIterations;
 import adams.multiprocess.AbstractJob;
@@ -43,8 +45,8 @@ import adams.multiprocess.JobWithOwner;
 import java.util.BitSet;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Random;
-import java.util.Vector;
 import java.util.logging.Level;
 
 /**
@@ -262,6 +264,9 @@ public abstract class AbstractGeneticAlgorithm
   /** the seed value. */
   protected long m_Seed;
 
+  /** the initial setups provider. */
+  protected AbstractInitialSetupsProvider m_InitialSetupsProvider;
+
   /** the initial weights. */
   protected String m_InitialWeights;
 
@@ -305,7 +310,7 @@ public abstract class AbstractGeneticAlgorithm
     m_NumGenes               = 0;  // must be set by the algorithm itself, e.g., in preRun()
     m_BestRange              = new Range();
     m_Paused                 = false;
-    m_FitnessChangeListeners = new HashSet<FitnessChangeListener>();
+    m_FitnessChangeListeners = new HashSet<>();
     m_LastNotificationTime   = null;
     m_BestFitness            = Double.NEGATIVE_INFINITY;
     m_BestSetup              = null;
@@ -346,6 +351,10 @@ public abstract class AbstractGeneticAlgorithm
     m_OptionManager.add(
       "seed", "seed",
       1L);
+
+    m_OptionManager.add(
+      "initial-setups-provider", "initialSetupsProvider",
+      getDefaultInitialSetupsProvider());
 
     m_OptionManager.add(
       "initial-weights", "initialWeights",
@@ -466,6 +475,44 @@ public abstract class AbstractGeneticAlgorithm
    */
   public String seedTipText() {
     return "The seed value for the random number generator.";
+  }
+
+  /**
+   * Returns the default initial setups provider.
+   *
+   * @return		the default
+   */
+  protected AbstractInitialSetupsProvider getDefaultInitialSetupsProvider() {
+    return new EmptyInitialSetupsProvider<>();
+  }
+
+  /**
+   * Sets the initial setups provider to use.
+   *
+   * @param value	the provider
+   */
+  public void setInitialSetupsProvider(AbstractInitialSetupsProvider value) {
+    m_InitialSetupsProvider = value;
+    reset();
+  }
+
+  /**
+   * Returns the initial setups provider to use.
+   *
+   * @return		the provider
+   */
+  public AbstractInitialSetupsProvider getInitialSetupsProvider() {
+    return m_InitialSetupsProvider;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String initialSetupsProviderTipText() {
+    return "The initial setups provider to use.";
   }
 
   /**
@@ -701,7 +748,7 @@ public abstract class AbstractGeneticAlgorithm
    * @param genes	the number of genes
    */
   protected void init(int ch, int genes) {
-    Vector<int[]> 	setups;
+    List<int[]> 	setups;
     int 		weightIndex;
     int			i;
     int			j;
@@ -1139,7 +1186,14 @@ public abstract class AbstractGeneticAlgorithm
     }
   }
 
-  public abstract Vector<int[]> getInitialSetups();
+  /**
+   * Provides the initial gene setup.
+   *
+   * @return	the genes (0s and 1s)
+   */
+  public List<int[]> getInitialSetups() {
+    return m_InitialSetupsProvider.getInitialSetups(this);
+  }
 
   /**
    * Returns a shallow copy of itself, i.e., based on the commandline options.

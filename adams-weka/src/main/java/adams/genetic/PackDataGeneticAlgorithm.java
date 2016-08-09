@@ -15,16 +15,17 @@
 
 /*
  * PackDataGeneticAlgorithm.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.genetic;
 
+import adams.genetic.initialsetups.AbstractInitialSetupsProvider;
+import adams.genetic.initialsetups.PackDataInitialSetupsProvider;
 import adams.optimise.genetic.PackData;
 import adams.optimise.genetic.PackDataDef;
 
-import java.util.Vector;
-
+import java.util.List;
 
 /**
  * ???
@@ -37,33 +38,46 @@ public abstract class PackDataGeneticAlgorithm
 
   /** suid.*/
   private static final long serialVersionUID = 4301615908806659455L;
+
   protected PackDataDef m_pdd;
 
-  protected void printBits(int[] bits) {
-    for (int i=0;i<bits.length;i++) {
-      System.out.print(bits[i]);
-    }
-    System.out.println();
+  /**
+   * Returns the default initial setups provider.
+   *
+   * @return		the default
+   */
+  protected AbstractInitialSetupsProvider getDefaultInitialSetupsProvider() {
+    return new PackDataInitialSetupsProvider<>();
   }
 
+  /**
+   * Outputs the bits with the logger - logging needs to be enabled.
+   *
+   * @param bits	the bits to output
+   */
+  public void printBits(int[] bits) {
+    if (!isLoggingEnabled())
+      return;
+    StringBuilder bitStr = new StringBuilder();
+    for (int bit: bits)
+      bitStr.append(bit);
+    getLogger().info(bitStr.toString());
+  }
+
+  /**
+   * Outputs the bits with the logger - logging needs to be enabled.
+   *
+   * @param bits	the bits to output
+   */
   protected void print(double[] bits) {
-    for (int i=0;i<bits.length;i++) {
-      System.out.print(i+":"+bits[i]+" ");
-    }
-    System.out.println();
+    if (!isLoggingEnabled())
+      return;
+    StringBuilder bitStr = new StringBuilder();
+    for (int i=0;i<bits.length;i++)
+      bitStr.append(i+":"+bits[i]+" ");
+    getLogger().info(bitStr.toString());
   }
 
-  @Override
-  public Vector<int[]> getInitialSetups() {
-    // TODO Auto-generated method stub
-    Vector<int[]> ret=new Vector<int[]>();
-    Vector<PackData> vpd=getDataSetups();
-    for (PackData pd:vpd) {
-      ret.add(pd.getBits());
-      printBits(pd.getBits());
-    }
-    return(ret);
-  }
   public void init(int ch) {
     m_pdd=getDataDef();
     init(ch,m_pdd.size());
@@ -71,5 +85,5 @@ public abstract class PackDataGeneticAlgorithm
 
   public abstract PackDataDef getDataDef();
 
-  public abstract Vector<PackData> getDataSetups();
+  public abstract List<PackData> getDataSetups();
 }
