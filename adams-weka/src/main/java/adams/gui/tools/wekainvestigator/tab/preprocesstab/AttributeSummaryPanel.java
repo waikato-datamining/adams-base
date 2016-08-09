@@ -74,6 +74,7 @@ public class AttributeSummaryPanel extends JPanel {
 
   /** Displays other stats in a table */
   protected JTable m_StatsTable = new JTable() {
+
     /** for serialization */
     private static final long serialVersionUID = 7165142874670048578L;
 
@@ -214,18 +215,20 @@ public class AttributeSummaryPanel extends JPanel {
   /**
    * Tells the panel to use a new set of instances.
    *
-   * @param inst a set of Instances
+   * @param inst a set of Instances, null to unset
    */
   public void setInstances(Instances inst) {
-
     m_Instances = inst;
-    m_AttributeStats = new AttributeStats[inst.numAttributes()];
+    m_AttributeStats = new AttributeStats[(inst != null) ? inst.numAttributes() : 0];
     m_AttributeNameLab.setText(NO_SOURCE);
     m_AttributeTypeLab.setText(NO_SOURCE);
     m_MissingLab.setText(NO_SOURCE);
     m_UniqueLab.setText(NO_SOURCE);
     m_DistinctLab.setText(NO_SOURCE);
     m_StatsTable.setModel(new DefaultTableModel());
+
+    if (m_Instances == null)
+      return;
 
     m_allEqualWeights = true;
     if (m_Instances.numInstances() == 0) {

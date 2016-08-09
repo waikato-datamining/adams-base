@@ -86,7 +86,6 @@ public class AttributeSelectionPanel extends JPanel {
      * @param instances the initial set of Instances
      */
     public AttributeTableModel(Instances instances) {
-
       setInstances(instances);
     }
 
@@ -96,9 +95,8 @@ public class AttributeSelectionPanel extends JPanel {
      * @param instances the new set of Instances.
      */
     public void setInstances(Instances instances) {
-
       m_Instances = instances;
-      m_Selected = new boolean[m_Instances.numAttributes()];
+      m_Selected = new boolean[(m_Instances != null) ? m_Instances.numAttributes() : 0];
     }
 
     /**
@@ -108,7 +106,6 @@ public class AttributeSelectionPanel extends JPanel {
      */
     @Override
     public int getRowCount() {
-
       return m_Selected.length;
     }
 
@@ -119,7 +116,6 @@ public class AttributeSelectionPanel extends JPanel {
      */
     @Override
     public int getColumnCount() {
-
       return 3;
     }
 
@@ -132,12 +128,11 @@ public class AttributeSelectionPanel extends JPanel {
      */
     @Override
     public Object getValueAt(int row, int column) {
-
       switch (column) {
         case 0:
-          return new Integer(row + 1);
+          return (row + 1);
         case 1:
-          return new Boolean(m_Selected[row]);
+          return m_Selected[row];
         case 2:
           return m_Instances.attribute(row).name();
         default:
@@ -153,14 +148,13 @@ public class AttributeSelectionPanel extends JPanel {
      */
     @Override
     public String getColumnName(int column) {
-
       switch (column) {
         case 0:
-          return new String("No.");
+          return "No.";
         case 1:
-          return new String("");
+          return "";
         case 2:
-          return new String("Name");
+          return "Name";
         default:
           return null;
       }
@@ -175,9 +169,8 @@ public class AttributeSelectionPanel extends JPanel {
      */
     @Override
     public void setValueAt(Object value, int row, int col) {
-
       if (col == 1) {
-        m_Selected[row] = ((Boolean) value).booleanValue();
+        m_Selected[row] = (Boolean) value;
         fireTableRowsUpdated(0, m_Selected.length);
       }
     }
@@ -202,11 +195,7 @@ public class AttributeSelectionPanel extends JPanel {
      */
     @Override
     public boolean isCellEditable(int row, int col) {
-
-      if (col == 1) {
-        return true;
-      }
-      return false;
+      return (col == 1);
     }
 
     /**
@@ -215,13 +204,11 @@ public class AttributeSelectionPanel extends JPanel {
      * @return the array of selected indices.
      */
     public int[] getSelectedAttributes() {
-
       int[] r1 = new int[getRowCount()];
       int selCount = 0;
       for (int i = 0; i < getRowCount(); i++) {
-        if (m_Selected[i]) {
+        if (m_Selected[i])
           r1[selCount++] = i;
-        }
       }
       int[] result = new int[selCount];
       System.arraycopy(r1, 0, result, 0, selCount);
@@ -232,10 +219,8 @@ public class AttributeSelectionPanel extends JPanel {
      * Sets the state of all attributes to selected.
      */
     public void includeAll() {
-
-      for (int i = 0; i < m_Selected.length; i++) {
+      for (int i = 0; i < m_Selected.length; i++)
         m_Selected[i] = true;
-      }
       fireTableRowsUpdated(0, m_Selected.length);
     }
 
@@ -243,10 +228,8 @@ public class AttributeSelectionPanel extends JPanel {
      * Deselects all attributes.
      */
     public void removeAll() {
-
-      for (int i = 0; i < m_Selected.length; i++) {
+      for (int i = 0; i < m_Selected.length; i++)
         m_Selected[i] = false;
-      }
       fireTableRowsUpdated(0, m_Selected.length);
     }
 
@@ -254,10 +237,8 @@ public class AttributeSelectionPanel extends JPanel {
      * Inverts the selected status of each attribute.
      */
     public void invert() {
-
-      for (int i = 0; i < m_Selected.length; i++) {
+      for (int i = 0; i < m_Selected.length; i++)
         m_Selected[i] = !m_Selected[i];
-      }
       fireTableRowsUpdated(0, m_Selected.length);
     }
 
@@ -268,22 +249,17 @@ public class AttributeSelectionPanel extends JPanel {
      * @param pattern a perl reg. expression
      */
     public void pattern(String pattern) {
-      for (int i = 0; i < m_Selected.length; i++) {
-        m_Selected[i] = Pattern.matches(pattern, m_Instances.attribute(i)
-          .name());
-      }
+      for (int i = 0; i < m_Selected.length; i++)
+        m_Selected[i] = Pattern.matches(pattern, m_Instances.attribute(i).name());
       fireTableRowsUpdated(0, m_Selected.length);
     }
 
     public void setSelectedAttributes(boolean[] selected) throws Exception {
-      if (selected.length != m_Selected.length) {
+      if (selected.length != m_Selected.length)
         throw new Exception("Supplied array does not have the same number "
           + "of elements as there are attributes!");
-      }
-
-      for (int i = 0; i < selected.length; i++) {
+      for (int i = 0; i < selected.length; i++)
         m_Selected[i] = selected[i];
-      }
       fireTableRowsUpdated(0, m_Selected.length);
     }
   }
@@ -414,7 +390,6 @@ public class AttributeSelectionPanel extends JPanel {
    * @param newInstances the new set of instances
    */
   public void setInstances(Instances newInstances) {
-
     if (m_Model == null) {
       m_Model = new AttributeTableModel(newInstances);
       m_Table.setModel(m_Model);
@@ -422,7 +397,8 @@ public class AttributeSelectionPanel extends JPanel {
       tcm.getColumn(0).setMaxWidth(60);
       tcm.getColumn(1).setMaxWidth(tcm.getColumn(1).getMinWidth());
       tcm.getColumn(2).setMinWidth(100);
-    } else {
+    }
+    else {
       m_Model.setInstances(newInstances);
       m_Table.clearSelection();
     }
@@ -450,7 +426,6 @@ public class AttributeSelectionPanel extends JPanel {
    * @return the array of selected indices.
    */
   public int[] getSelectedAttributes() {
-
     return (m_Model == null) ? null : m_Model.getSelectedAttributes();
   }
 
@@ -484,7 +459,6 @@ public class AttributeSelectionPanel extends JPanel {
    * @return a value of type 'ListSelectionModel'
    */
   public ListSelectionModel getSelectionModel() {
-
     return m_Table.getSelectionModel();
   }
 
@@ -494,7 +468,6 @@ public class AttributeSelectionPanel extends JPanel {
    * @param args must contain the name of an arff file to load.
    */
   public static void main(String[] args) {
-
     try {
       if (args.length == 0) {
         throw new Exception("supply the name of an arff file");
@@ -522,4 +495,4 @@ public class AttributeSelectionPanel extends JPanel {
     }
   }
 
-} // AttributeSelectionPanel
+}

@@ -338,9 +338,14 @@ public class PreprocessTab
       m_PanelAttSelection.setInstances(cont.getData());
       m_PanelAttSummary.setInstances(cont.getData());
       m_PanelAttVisualization.setInstances(cont.getData());
+      m_ButtonRemoveChecked.setEnabled(true);
     }
     else {
-      // TODO unset dataset?
+      m_PanelInstSummary.setInstances(null);
+      m_PanelAttSelection.setInstances(null);
+      m_PanelAttSummary.setInstances(null);
+      m_PanelAttVisualization.setInstances(null);
+      m_ButtonRemoveChecked.setEnabled(false);
     }
   }
 

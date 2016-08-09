@@ -182,19 +182,28 @@ public class InstancesSummaryPanel extends JPanel {
   /**
    * Tells the panel to use a new set of instances.
    *
-   * @param inst a set of Instances
+   * @param inst a set of Instances, null to unset
    */
   public void setInstances(Instances inst) {
     m_Instances = inst;
-    m_RelationNameLab.setText(m_Instances.relationName());
-    m_RelationNameLab.setToolTipText(m_Instances.relationName());
-    m_NumInstancesLab.setText(""
-      + ((m_showZeroInstancesAsUnknown && m_Instances.numInstances() == 0) ? "?"
-      : "" + m_Instances.numInstances()));
-    m_NumAttributesLab.setText("" + m_Instances.numAttributes());
-    m_sumOfWeightsLab.setText(""
-      + ((m_showZeroInstancesAsUnknown && m_Instances.numInstances() == 0) ? "?"
-      : "" + Utils.doubleToString(m_Instances.sumOfWeights(), 3)));
+    if (m_Instances == null) {
+      m_RelationNameLab.setText("");
+      m_RelationNameLab.setToolTipText("");
+      m_NumInstancesLab.setText("");
+      m_NumAttributesLab.setText("");
+      m_sumOfWeightsLab.setText("");
+    }
+    else {
+      m_RelationNameLab.setText(m_Instances.relationName());
+      m_RelationNameLab.setToolTipText(m_Instances.relationName());
+      m_NumInstancesLab.setText(""
+        + ((m_showZeroInstancesAsUnknown && m_Instances.numInstances() == 0) ? "?"
+        : "" + m_Instances.numInstances()));
+      m_NumAttributesLab.setText("" + m_Instances.numAttributes());
+      m_sumOfWeightsLab.setText(""
+        + ((m_showZeroInstancesAsUnknown && m_Instances.numInstances() == 0) ? "?"
+        : "" + Utils.doubleToString(m_Instances.sumOfWeights(), 3)));
+    }
   }
 
   /**
