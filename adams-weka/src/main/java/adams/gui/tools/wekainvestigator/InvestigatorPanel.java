@@ -26,6 +26,8 @@ import adams.core.Properties;
 import adams.core.StatusMessageHandler;
 import adams.core.Utils;
 import adams.core.option.OptionUtils;
+import adams.data.weka.classattribute.AbstractClassAttributeHeuristic;
+import adams.data.weka.classattribute.LastAttribute;
 import adams.env.Environment;
 import adams.env.WekaInvestigatorDefinition;
 import adams.gui.action.AbstractBaseAction;
@@ -35,12 +37,11 @@ import adams.gui.core.BaseMenu;
 import adams.gui.core.BaseStatusBar;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.GUIHelper;
-import adams.gui.core.RecentFilesHandler;
+import adams.gui.core.RecentFilesHandlerWithCommandline;
+import adams.gui.core.RecentFilesHandlerWithCommandline.Setup;
 import adams.gui.event.RecentItemEvent;
 import adams.gui.event.RecentItemListener;
 import adams.gui.goe.GenericObjectEditorDialog;
-import adams.data.weka.classattribute.AbstractClassAttributeHeuristic;
-import adams.data.weka.classattribute.LastAttribute;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
 import adams.gui.tools.wekainvestigator.data.FileContainer;
 import adams.gui.tools.wekainvestigator.source.AbstractSource;
@@ -50,7 +51,6 @@ import adams.gui.tools.wekainvestigator.tab.LogTab;
 import adams.gui.workspace.AbstractWorkspacePanel;
 import weka.core.Instances;
 import weka.core.converters.AbstractFileLoader;
-import weka.core.converters.ConverterUtils;
 
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -125,7 +125,7 @@ public class InvestigatorPanel
   protected WekaFileChooser m_FileChooser;
 
   /** the recent files handler. */
-  protected RecentFilesHandler<JMenu> m_RecentFilesHandler;
+  protected RecentFilesHandlerWithCommandline<JMenu> m_RecentFilesHandler;
 
   /** the heuristic for selecting the class attribute. */
   protected AbstractClassAttributeHeuristic m_ClassAttribute;
@@ -320,12 +320,12 @@ public class InvestigatorPanel
       // File/Recent files
       submenu = new JMenu("Open recent");
       menu.add(submenu);
-      m_RecentFilesHandler = new RecentFilesHandler<>(SESSION_FILE, 10, submenu);
-      m_RecentFilesHandler.addRecentItemListener(new RecentItemListener<JMenu,File>() {
-	public void recentItemAdded(RecentItemEvent<JMenu,File> e) {
+      m_RecentFilesHandler = new RecentFilesHandlerWithCommandline<>(SESSION_FILE, 10, submenu);
+      m_RecentFilesHandler.addRecentItemListener(new RecentItemListener<JMenu,Setup>() {
+	public void recentItemAdded(RecentItemEvent<JMenu,Setup> e) {
 	  // ignored
 	}
-	public void recentItemSelected(RecentItemEvent<JMenu,File> e) {
+	public void recentItemSelected(RecentItemEvent<JMenu,Setup> e) {
 	  openRecent(e);
 	}
       });
@@ -486,17 +486,19 @@ public class InvestigatorPanel
   public void openFile() {
     int			retVal;
     FileContainer	cont;
+    AbstractFileLoader	loader;
 
     retVal = m_FileChooser.showOpenDialog(this);
     if (retVal != WekaFileChooser.APPROVE_OPTION)
       return;
 
     logMessage("Loading: " + m_FileChooser.getSelectedFile());
-    cont = new FileContainer(m_FileChooser.getReader(), m_FileChooser.getSelectedFile());
+    loader = m_FileChooser.getReader();
+    cont   = new FileContainer(loader, m_FileChooser.getSelectedFile());
     updateClassAttribute(cont.getData());
     m_Data.add(cont);
     if (m_RecentFilesHandler != null)
-      m_RecentFilesHandler.addRecentItem(m_FileChooser.getSelectedFile());
+      m_RecentFilesHandler.addRecentItem(new Setup(m_FileChooser.getSelectedFile(), loader));
     logMessage("Loaded: " + m_FileChooser.getSelectedFile());
     fireDataChange();
   }
@@ -519,7 +521,7 @@ public class InvestigatorPanel
     updateClassAttribute(cont.getData());
     m_Data.add(cont);
     if (m_RecentFilesHandler != null)
-      m_RecentFilesHandler.addRecentItem(file);
+      m_RecentFilesHandler.addRecentItem(new Setup(file, loader));
     logMessage("Loaded: " + file);
     fireDataChange();
   }
@@ -529,11 +531,11 @@ public class InvestigatorPanel
    *
    * @param e		the event
    */
-  public void openRecent(RecentItemEvent<JMenu,File> e) {
+  public void openRecent(RecentItemEvent<JMenu,Setup> e) {
     AbstractFileLoader 	loader;
     FileContainer	cont;
 
-    loader = ConverterUtils.getLoaderForFile(e.getItem());
+    loader = (AbstractFileLoader) e.getItem().getHandler();
     if (loader == null) {
       logError("Failed to determine file loader for the following file:\n" + e.getItem(), "Error reloading data");
       return;
@@ -541,11 +543,11 @@ public class InvestigatorPanel
 
     try {
       logMessage("Loading: " + e.getItem());
-      loader.setFile(e.getItem());
-      cont = new FileContainer(loader, e.getItem());
+      loader.setFile(e.getItem().getFile());
+      cont = new FileContainer(loader, e.getItem().getFile());
       updateClassAttribute(cont.getData());
       m_Data.add(cont);
-      m_FileChooser.setCurrentDirectory(e.getItem().getParentFile());
+      m_FileChooser.setCurrentDirectory(e.getItem().getFile().getParentFile());
       logMessage("Loaded: " + e.getItem());
       fireDataChange();
     }
