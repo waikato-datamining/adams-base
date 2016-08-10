@@ -22,7 +22,7 @@ package adams.data.io.input;
 import adams.core.MessageCollection;
 import adams.core.Utils;
 import adams.core.base.BaseCharset;
-import adams.core.io.FileEncodingSupporter;
+import adams.core.io.EncodingSupporter;
 import adams.core.io.FileUtils;
 import adams.core.option.NestedConsumer;
 import adams.core.option.NestedProducer;
@@ -44,7 +44,7 @@ import java.util.List;
  */
 public class DefaultFlowReader
   extends AbstractFlowReader
-  implements FileEncodingSupporter {
+  implements EncodingSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = 4618819455357416453L;

@@ -22,7 +22,7 @@ package adams.core.option;
 import adams.core.DateFormat;
 import adams.core.Utils;
 import adams.core.base.BaseCharset;
-import adams.core.io.FileEncodingSupporter;
+import adams.core.io.EncodingSupporter;
 import adams.core.management.Java;
 import adams.core.option.NestedFormatHelper.Line;
 import adams.env.Environment;
@@ -41,7 +41,7 @@ import java.util.List;
  */
 public class NestedProducer
   extends AbstractRecursiveOptionProducer<List,List>
-  implements BlacklistedOptionProducer, FileEncodingSupporter {
+  implements BlacklistedOptionProducer, EncodingSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = 7096746086060792830L;

@@ -25,7 +25,7 @@ import adams.core.MultiAttemptWithWaitSupporter;
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
 import adams.core.base.BaseCharset;
-import adams.core.io.FileEncodingSupporter;
+import adams.core.io.EncodingSupporter;
 import adams.core.io.FileUtils;
 import adams.flow.core.Unknown;
 
@@ -121,7 +121,7 @@ import java.util.List;
  */
 public class DumpFile
   extends AbstractAppendableFileWriter 
-  implements FileEncodingSupporter, MultiAttemptWithWaitSupporter, BufferSupporter {
+  implements EncodingSupporter, MultiAttemptWithWaitSupporter, BufferSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = -366362262032858011L;

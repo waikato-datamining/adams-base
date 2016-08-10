@@ -23,7 +23,7 @@ import adams.core.AdditionalInformationHandler;
 import adams.core.ClassLister;
 import adams.core.Utils;
 import adams.core.base.BaseCharset;
-import adams.core.io.FileEncodingSupporter;
+import adams.core.io.EncodingSupporter;
 import adams.core.io.FileFormatHandler;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
@@ -51,7 +51,7 @@ import java.util.zip.GZIPInputStream;
  */
 public abstract class AbstractSpreadSheetReader
   extends AbstractOptionHandler 
-  implements SpreadSheetReader, FileEncodingSupporter, FileFormatHandler,
+  implements SpreadSheetReader, EncodingSupporter, FileFormatHandler,
              SpreadSheetTypeHandler, AdditionalInformationHandler {
 
   /** for serialization. */

@@ -20,7 +20,7 @@
 package adams.core.option;
 
 import JSci.maths.wavelet.IllegalScalingException;
-import adams.core.io.FileEncodingSupporter;
+import adams.core.io.EncodingSupporter;
 import adams.core.io.FileUtils;
 import adams.core.logging.LoggingLevel;
 import adams.core.logging.LoggingObject;
@@ -446,8 +446,8 @@ public abstract class AbstractOptionProducer<O,I>
     Charset		charset;
 
     charset = null;
-    if (this instanceof FileEncodingSupporter)
-      charset = ((FileEncodingSupporter) this).getEncoding().charsetValue();
+    if (this instanceof EncodingSupporter)
+      charset = ((EncodingSupporter) this).getEncoding().charsetValue();
     if (charset == null)
       charset = CharsetHelper.getSingleton().getCharset();
 

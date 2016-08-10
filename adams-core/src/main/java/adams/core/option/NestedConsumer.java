@@ -22,7 +22,7 @@ package adams.core.option;
 import adams.core.Utils;
 import adams.core.Variables;
 import adams.core.base.BaseCharset;
-import adams.core.io.FileEncodingSupporter;
+import adams.core.io.EncodingSupporter;
 import adams.core.option.NestedFormatHelper.Line;
 import gnu.trove.list.array.TIntArrayList;
 
@@ -41,7 +41,7 @@ import java.util.logging.Level;
  */
 public class NestedConsumer
   extends AbstractRecursiveOptionConsumer<List,List>
-  implements FileEncodingSupporter {
+  implements EncodingSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = 3076988578982973033L;

@@ -23,7 +23,7 @@ import adams.core.AdditionalInformationHandler;
 import adams.core.ClassLister;
 import adams.core.Utils;
 import adams.core.base.BaseCharset;
-import adams.core.io.FileEncodingSupporter;
+import adams.core.io.EncodingSupporter;
 import adams.core.io.FileUtils;
 import adams.core.option.AbstractOptionHandler;
 import adams.data.spreadsheet.SpreadSheet;
@@ -45,7 +45,7 @@ import java.util.zip.GZIPOutputStream;
  */
 public abstract class AbstractSpreadSheetWriter
   extends AbstractOptionHandler
-  implements SpreadSheetWriter, FileEncodingSupporter, AdditionalInformationHandler {
+  implements SpreadSheetWriter, EncodingSupporter, AdditionalInformationHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = -3547064795252689769L;

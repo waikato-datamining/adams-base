@@ -14,20 +14,20 @@
  */
 
 /**
- * FileEncodingSupporter.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * EncodingSupporter.java
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.io;
 
 import adams.core.base.BaseCharset;
 
 /**
- * For classes that support file encoding.
+ * For classes that support encoding.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public interface FileEncodingSupporter {
+public interface EncodingSupporter {
   
   /**
    * Sets the encoding to use.

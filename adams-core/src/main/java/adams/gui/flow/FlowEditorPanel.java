@@ -22,7 +22,7 @@ package adams.gui.flow;
 
 import adams.core.Properties;
 import adams.core.StatusMessageHandler;
-import adams.core.io.FileEncodingSupporter;
+import adams.core.io.EncodingSupporter;
 import adams.core.io.FilenameProposer;
 import adams.core.io.PlaceholderFile;
 import adams.core.option.OptionUtils;
@@ -1422,8 +1422,8 @@ public class FlowEditorPanel
       writer = m_FileChooser.getWriterForFile(panel.getCurrentFile());
       if (reader != null) {
 	// transfer encoding?
-	if ((writer instanceof FileEncodingSupporter) && (reader instanceof FileEncodingSupporter))
-	  ((FileEncodingSupporter) writer).setEncoding(((FileEncodingSupporter) reader).getEncoding());
+	if ((writer instanceof EncodingSupporter) && (reader instanceof EncodingSupporter))
+	  ((EncodingSupporter) writer).setEncoding(((EncodingSupporter) reader).getEncoding());
       }
     }
     panel.save(writer, panel.getCurrentFile());

@@ -22,7 +22,7 @@ package adams.core.option;
 import JSci.maths.wavelet.IllegalScalingException;
 import adams.core.Utils;
 import adams.core.annotation.DeprecatedClass;
-import adams.core.io.FileEncodingSupporter;
+import adams.core.io.EncodingSupporter;
 import adams.core.io.FileUtils;
 import adams.core.logging.LoggingLevel;
 import adams.core.logging.LoggingObject;
@@ -462,7 +462,7 @@ public abstract class AbstractOptionConsumer<C,V>
 
   /**
    * Returns the charset to use. Checks whether consumer implements
-   * {@link FileEncodingSupporter}.
+   * {@link EncodingSupporter}.
    *
    * @return		the character set
    */
@@ -471,8 +471,8 @@ public abstract class AbstractOptionConsumer<C,V>
 
     result = null;
 
-    if (this instanceof FileEncodingSupporter)
-      result = ((FileEncodingSupporter) this).getEncoding().charsetValue();
+    if (this instanceof EncodingSupporter)
+      result = ((EncodingSupporter) this).getEncoding().charsetValue();
     if (result == null)
       result = CharsetHelper.getSingleton().getCharset();
 

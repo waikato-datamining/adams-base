@@ -20,7 +20,7 @@
 package adams.data.io.output;
 
 import adams.core.base.BaseCharset;
-import adams.core.io.FileEncodingSupporter;
+import adams.core.io.EncodingSupporter;
 
 /**
  * Ancestor of text writers that use an encoding.
@@ -30,7 +30,7 @@ import adams.core.io.FileEncodingSupporter;
  */
 public abstract class AbstractTextWriterWithEncoding
   extends AbstractTextWriter
-  implements FileEncodingSupporter {
+  implements EncodingSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = 3705953355163169249L;
