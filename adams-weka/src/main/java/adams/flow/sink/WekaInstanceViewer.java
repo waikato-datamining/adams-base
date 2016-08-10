@@ -471,7 +471,7 @@ public class WekaInstanceViewer
     manager.startUpdate();
     manager.add(cont);
 
-    m_Updater.update((InstancePanel) getPanel(), cont);
+    m_Updater.update(m_InstancePanel, cont);
   }
 
   /**
