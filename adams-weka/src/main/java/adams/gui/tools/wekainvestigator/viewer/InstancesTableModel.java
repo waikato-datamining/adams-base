@@ -92,7 +92,7 @@ public class InstancesTableModel
   /**
    * performs some initialization
    */
-  private InstancesTableModel() {
+  public InstancesTableModel() {
     super();
 
     m_Listeners           = new HashSet<>();
