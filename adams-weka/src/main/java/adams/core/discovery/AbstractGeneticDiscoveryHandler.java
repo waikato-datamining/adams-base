@@ -103,7 +103,8 @@ public abstract class AbstractGeneticDiscoveryHandler
    * Default implementation does nothing.
    *
    * @param owner	the owning algorithm
+   * @param cont	the property container to update
    */
-  public void performInitialization(AbstractGeneticAlgorithm owner) {
+  public void performInitialization(AbstractGeneticAlgorithm owner, PropertyContainer cont) {
   }
 }

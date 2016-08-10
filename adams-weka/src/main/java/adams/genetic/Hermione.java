@@ -532,10 +532,10 @@ public class Hermione
     if (getCurrentIteration() == 1) {
       int pos = 0;
       for (AbstractGeneticDiscoveryHandler ag:cp) {
-	if (ag.requiresInitialization())
-	  ag.performInitialization(this);
 	List<PropertyPath.PropertyContainer> lpc=ag.getContainers();
 	for (PropertyPath.PropertyContainer pc:lpc) {
+	  if (ag.requiresInitialization())
+	    ag.performInitialization(this, pc);
 	  String sa = ag.pack(pc);
 	  int[] newWeights = stringToIntArray(sa);
 	  setBitsForPosition(weights, m_start, m_numbits, pos, newWeights);
