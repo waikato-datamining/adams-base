@@ -15,7 +15,7 @@
 
 /*
  * WekaInstancesDisplay.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -24,10 +24,14 @@ import adams.core.DateUtils;
 import adams.flow.core.Token;
 import adams.gui.core.BasePanel;
 import adams.gui.core.ExtensionFileFilter;
+import adams.gui.core.SearchPanel;
+import adams.gui.core.SearchPanel.LayoutType;
+import adams.gui.event.SearchEvent;
 import adams.gui.sendto.SendToActionUtils;
-import weka.core.Attribute;
+import adams.gui.tools.wekainvestigator.viewer.InstancesTable;
+import adams.gui.tools.wekainvestigator.viewer.InstancesTableModel;
+import com.googlecode.jfilechooserbookmarks.gui.BaseScrollPane;
 import weka.core.Instances;
-import weka.gui.arffviewer.ArffPanel;
 
 import javax.swing.JTable;
 import java.awt.BorderLayout;
@@ -117,8 +121,8 @@ public class WekaInstancesDisplay
   /** for serialization. */
   private static final long serialVersionUID = 6791882185628220997L;
 
-  /** the panel with the instances. */
-  protected ArffPanel m_ArffPanel;
+  /** the table with the instances. */
+  protected InstancesTable m_Table;
 
   /**
    * Returns a string describing the object.
@@ -151,21 +155,12 @@ public class WekaInstancesDisplay
   }
 
   /**
-   * Creates an empty dummy dataset.
-   *
-   * @return		the dummy dataset
-   */
-  protected Instances createDummyDataset() {
-    return new Instances("Empty", new ArrayList<Attribute>(), 0);
-  }
-
-  /**
    * Clears the content of the panel.
    */
   @Override
   public void clearPanel() {
-    if (m_ArffPanel != null)
-      m_ArffPanel.setInstances(createDummyDataset());
+    if (m_Table != null)
+      m_Table.setInstances(null);
   }
 
   /**
@@ -176,10 +171,15 @@ public class WekaInstancesDisplay
   @Override
   protected BasePanel newPanel() {
     BasePanel	result;
+    SearchPanel	searchPanel;
 
     result      = new BasePanel(new BorderLayout());
-    m_ArffPanel = new ArffPanel(createDummyDataset());
-    result.add(m_ArffPanel, BorderLayout.CENTER);
+    m_Table = new InstancesTable(new InstancesTableModel());
+    result.add(new BaseScrollPane(m_Table), BorderLayout.CENTER);
+    searchPanel = new SearchPanel(LayoutType.HORIZONTAL, true);
+    searchPanel.addSearchListener((SearchEvent e) ->
+      m_Table.search(e.getParameters().getSearchString(), e.getParameters().isRegExp()));
+    result.add(searchPanel, BorderLayout.SOUTH);
 
     return result;
   }
@@ -201,7 +201,7 @@ public class WekaInstancesDisplay
    */
   @Override
   protected void display(Token token) {
-    m_ArffPanel.setInstances((Instances) token.getPayload());
+    m_Table.setInstances((Instances) token.getPayload());
   }
 
   /**
@@ -235,8 +235,8 @@ public class WekaInstancesDisplay
   protected void cleanUpGUI() {
     super.cleanUpGUI();
 
-    if (m_ArffPanel != null)
-      m_ArffPanel.setInstances(createDummyDataset());
+    if (m_Table != null)
+	m_Table.setInstances(null);
   }
 
   /**
@@ -254,8 +254,8 @@ public class WekaInstancesDisplay
    * @return		the text, null if none available
    */
   public String supplyText() {
-    if (m_ArffPanel != null)
-      return m_ArffPanel.getInstances().toString();
+    if (m_Table != null)
+      return m_Table.getInstances().toString();
     else
       return null;
   }
@@ -271,17 +271,20 @@ public class WekaInstancesDisplay
 
     result = new AbstractTextDisplayPanel(getClass().getSimpleName()) {
       private static final long serialVersionUID = 7384093089760722339L;
-      protected ArffPanel m_ArffPanel;
+      protected InstancesTable m_Table;
       @Override
       protected void initGUI() {
 	super.initGUI();
 	setLayout(new BorderLayout());
-	m_ArffPanel = new ArffPanel(new Instances("Dummy", new ArrayList<Attribute>(), 0));
-	add(m_ArffPanel, BorderLayout.CENTER);
+	m_Table = new InstancesTable(new InstancesTableModel());
+	add(new BaseScrollPane(m_Table), BorderLayout.CENTER);
+	SearchPanel searchPanel = new SearchPanel(LayoutType.HORIZONTAL, true);
+	searchPanel.addSearchListener((SearchEvent e) ->
+	  m_Table.search(e.getParameters().getSearchString(), e.getParameters().isRegExp()));
       }
       @Override
       public void display(Token token) {
-	m_ArffPanel.setInstances((Instances) token.getPayload());
+	m_Table.setInstances((Instances) token.getPayload());
       }
       @Override
       public ExtensionFileFilter getCustomTextFileFilter() {
@@ -289,7 +292,7 @@ public class WekaInstancesDisplay
       }
       @Override
       public String supplyText() {
-	return m_ArffPanel.getInstances().toString();
+	return m_Table.getInstances().toString();
       }
       @Override
       public void clearPanel() {
@@ -322,7 +325,7 @@ public class WekaInstancesDisplay
   public Class[] getSendToClasses() {
     List<Class> 	result;
     
-    result = new ArrayList<Class>(Arrays.asList(super.getSendToClasses()));
+    result = new ArrayList<>(Arrays.asList(super.getSendToClasses()));
     if (!result.contains(JTable.class))
       result.add(JTable.class);
     
@@ -342,7 +345,7 @@ public class WekaInstancesDisplay
     result = null;
 
     if (SendToActionUtils.isAvailable(JTable.class, cls)) {
-      result = m_ArffPanel.getTable();
+      result = m_Table;
     }
     else {
       result = super.getSendToItem(cls);
