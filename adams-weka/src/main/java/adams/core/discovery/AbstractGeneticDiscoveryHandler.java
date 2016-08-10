@@ -22,6 +22,7 @@ package adams.core.discovery;
 
 import adams.core.discovery.PropertyPath.PropertyContainer;
 import adams.core.option.OptionUtils;
+import adams.genetic.AbstractGeneticAlgorithm;
 
 /**
  * Ancestor for genetic algorithm related discovery handlers.
@@ -83,5 +84,26 @@ public abstract class AbstractGeneticDiscoveryHandler
     doUnpack(cont, bits);
     if (isLoggingEnabled())
       getLogger().info(bits + "\n--> " + OptionUtils.getCommandLine(cont.getObject()));
+  }
+
+  /**
+   * Returns whether the handler requires an initialization.
+   * <br>
+   * Default implementation returns false.
+   *
+   * @return		true if necessary
+   */
+  public boolean requiresInitialization() {
+    return false;
+  }
+
+  /**
+   * Gets called for performing the initialization.
+   * <br>
+   * Default implementation does nothing.
+   *
+   * @param owner	the owning algorithm
+   */
+  public void performInitialization(AbstractGeneticAlgorithm owner) {
   }
 }

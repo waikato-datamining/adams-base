@@ -199,13 +199,13 @@ public class Hermione
      * Calculates the new fitness.
      */
     @Override
-    public void calcNewFitness(){
+    public void calcNewFitness() {
       try {
 	getLogger().fine((new StringBuilder("calc for:")).append(weightsToString()).toString());
 
 	// was measure already calculated for this attribute setup?
 	Double cc = getOwner().getResult(weightsToString());
-	if (cc != null){
+	if (cc != null) {
 	  getLogger().info((new StringBuilder("Already present: ")).append(Double.toString(cc.doubleValue())).toString());
 	  m_Fitness = cc;
 	  return;
@@ -226,7 +226,7 @@ public class Hermione
 
 	getOwner().addResult(weightsToString(), m_Fitness);
       }
-      catch(Exception e){
+      catch(Exception e) {
 	getLogger().log(Level.SEVERE, "Error: ", e);
 	m_Fitness = null;
       }
@@ -351,7 +351,7 @@ public class Hermione
    * @param p
    * @param c
    */
-  protected void setupParamsAndClassifier(AbstractGeneticDiscoveryHandler[] p, Classifier c){
+  protected void setupParamsAndClassifier(AbstractGeneticDiscoveryHandler[] p, Classifier c) {
     m_ActualHandlers = new AbstractGeneticDiscoveryHandler[p.length];
     for (int i = 0; i < p.length; i++)
       m_ActualHandlers[i] = (AbstractGeneticDiscoveryHandler) p[i].shallowCopy();
@@ -368,46 +368,86 @@ public class Hermione
   }
 
   /**
+   * Converts the bit string into an int array.
+   *
+   * @param a		the string to convert
+   * @return		the bit array
+   */
+  public int[] stringToIntArray(String a) {
+    int[]	result;
+    int		i;
+
+    result = new int[a.length()];
+    for (i = 0; i < result.length; i++) {
+      if (a.charAt(i) == '0')
+	result[i] = 0;
+      else
+	result[i] = 1;
+    }
+
+    return result;
+  }
+
+  /**
    * Int array of bits to string
    * @param ia
    * @return
    */
-  public String intAtoStringA(int[] ia){
-    String ret = new String();
-    for (int i=0;i<ia.length;i++){
-      ret+=""+ia[i];
-    }
-    return(ret);
+  public String intArrayToString(int[] ia) {
+    String ret = "";
+    for (int i=0;i<ia.length;i++)
+      ret += "" + ia[i];
+    return ret;
   }
 
   /**
-   * get bit array for parameter at pos
-   * @param w
-   * @param spoints
-   * @param numbits
-   * @param pos
-   * @return
+   * Updates the bits.
+   *
+   * @param weights	the overall weights
+   * @param starts	the starting points
+   * @param numbits	the number of bits
+   * @param pos		the position
+   * @param newWeights	the new weights to set
    */
-  public int[] getBitsForPosition(int[] w,List<Integer> spoints, List<Integer> numbits,int pos){
+  public void setBitsForPosition(int[] weights, List<Integer> starts, List<Integer> numbits, int pos, int[] newWeights) {
+    initializeHandlersIfRequired();
+    int c = 0;
+    for (int i = starts.get(pos); i < starts.get(pos) + numbits.get(pos); i++) {
+      weights[i] = newWeights[c];
+      c++;
+    }
+  }
+
+  /**
+   * get bit array for parameter at pos.
+   *
+   * @param weights	the overall weights
+   * @param starts	the starting points
+   * @param numbits	the number of bits
+   * @param pos		the position
+   * @return		the weights subset
+   */
+  public int[] getBitsForPosition(int[] weights, List<Integer> starts, List<Integer> numbits, int pos) {
     initializeHandlersIfRequired();
     int[] ret=new int[numbits.get(pos)];
     int c=0;
-    for (int i=spoints.get(pos);i<spoints.get(pos)+numbits.get(pos);i++) {
-      ret[c++]=w[i];
+    for (int i= starts.get(pos);i< starts.get(pos)+numbits.get(pos);i++) {
+      ret[c++]= weights[i];
     }
     return(ret);
   }
 
   /**
    * Get List containing number of bits used for params
-   * @return
+   *
+   * @return		the list of number of bits
    */
-  public List<Integer> getNumBitsForAll(){
+  public List<Integer> getNumBitsForAll() {
     initializeHandlersIfRequired();
     ArrayList<Integer> al=new ArrayList<>();
-    for (AbstractGeneticDiscoveryHandler ag: m_ActualHandlers){
+    for (AbstractGeneticDiscoveryHandler ag: m_ActualHandlers) {
       List<PropertyPath.PropertyContainer> lpc=ag.getContainers();
-      for (PropertyPath.PropertyContainer pc:lpc){
+      for (PropertyPath.PropertyContainer pc:lpc) {
 	al.add(ag.getNumBits());
       }
     }
@@ -417,15 +457,16 @@ public class Hermione
 
   /**
    * Get List of start positions in bit string
-   * @return
+   *
+   * @return		the starting positions
    */
-  public List<Integer> getStartPoints(){
+  public List<Integer> getStartPoints() {
     initializeHandlersIfRequired();
     ArrayList<Integer> al=new ArrayList<>();
     int count=0;
-    for (AbstractGeneticDiscoveryHandler ag: m_ActualHandlers){
+    for (AbstractGeneticDiscoveryHandler ag: m_ActualHandlers) {
       List<PropertyPath.PropertyContainer> lpc=ag.getContainers();
-      for (PropertyPath.PropertyContainer pc:lpc){
+      for (PropertyPath.PropertyContainer pc:lpc) {
 	al.add(count);
 	count+=ag.getNumBits();
       }
@@ -436,14 +477,15 @@ public class Hermione
 
   /**
    * Get total number of bits for params
-   * @return
+   *
+   * @return		the total number of bits
    */
-  public int getNumBits(){
+  public int getNumBits() {
     initializeHandlersIfRequired();
     int count=0;
-    for (AbstractGeneticDiscoveryHandler ag: m_ActualHandlers){
+    for (AbstractGeneticDiscoveryHandler ag: m_ActualHandlers) {
       List<PropertyPath.PropertyContainer> lpc=ag.getContainers();
-      for (PropertyPath.PropertyContainer pc:lpc){
+      for (PropertyPath.PropertyContainer pc:lpc) {
 	count+=ag.getNumBits();
       }
     }
@@ -452,48 +494,67 @@ public class Hermione
 
   /**
    * Generate the classifier from current bit array
-   * @param weights
-   * @return
+   *
+   * @param weights	the bit array
+   * @return		the classifier
    */
-  public Classifier generateClassifier(int weights[]){
+  public Classifier generateClassifier(int weights[]) {
     initializeHandlersIfRequired();
+
     // foreach handler, pack according to bits in weights
-    if (m_numbits==null){
+    if (m_numbits==null)
       m_numbits=getNumBitsForAll();
-    }
-    if (m_start==null){
+    if (m_start==null)
       m_start=getStartPoints();
-    }
 
     if (isLoggingEnabled()) {
       StringBuilder w = new StringBuilder();
-      for (int i = 0; i < weights.length; i++) {
+      for (int i = 0; i < weights.length; i++)
 	w.append(weights[i]);
-      }
       getLogger().info("Weights: " + w);
     }
+
     DefaultPropertyDiscovery d = new DefaultPropertyDiscovery();
     AbstractGeneticDiscoveryHandler cp[] = new AbstractGeneticDiscoveryHandler[m_ActualHandlers.length];
-    for (int i=0;i<cp.length;i++){
+    for (int i=0;i<cp.length;i++)
       cp[i]=(AbstractGeneticDiscoveryHandler) m_ActualHandlers[i].shallowCopy();
-    }
-    Classifier c= null;
-    try {
-      c = (Classifier) OptionUtils.shallowCopy(getClassifier());
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-    d.discover(cp, c);
-    int pos=0;
-    for (AbstractGeneticDiscoveryHandler ag:cp){
-      List<PropertyPath.PropertyContainer> lpc=ag.getContainers();
 
-      for (PropertyPath.PropertyContainer pc:lpc){
-	String sa=intAtoStringA(getBitsForPosition(weights,m_start,m_numbits,pos));
+    Classifier result;
+    result = (Classifier) OptionUtils.shallowCopy(getClassifier());
+    if (result == null) {
+      getLogger().severe("Failed to copy classifier!");
+      return null;
+    }
+    d.discover(cp, result);
+
+    // first time? check for handlers that require initialization
+    // and potentially alter the weights
+    if (getCurrentIteration() == 1) {
+      int pos = 0;
+      for (AbstractGeneticDiscoveryHandler ag:cp) {
+	if (ag.requiresInitialization())
+	  ag.performInitialization(this);
+	List<PropertyPath.PropertyContainer> lpc=ag.getContainers();
+	for (PropertyPath.PropertyContainer pc:lpc) {
+	  String sa = ag.pack(pc);
+	  int[] newWeights = stringToIntArray(sa);
+	  setBitsForPosition(weights, m_start, m_numbits, pos, newWeights);
+	  pos++;
+	}
+      }
+    }
+
+    // apply weights
+    int pos=0;
+    for (AbstractGeneticDiscoveryHandler ag:cp) {
+      List<PropertyPath.PropertyContainer> lpc=ag.getContainers();
+      for (PropertyPath.PropertyContainer pc:lpc) {
+	String sa= intArrayToString(getBitsForPosition(weights, m_start, m_numbits, pos));
 	ag.unpack(pc, sa);
 	pos++;
       }
     }
-    return c;
+
+    return result;
   }
 }
