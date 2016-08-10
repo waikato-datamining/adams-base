@@ -1,0 +1,7 @@
+# Project: adams
+# Date: 2016-08-10 12:51:41
+# User: fracpete
+# Charset: UTF-8
+adams.flow.control.Flow -annotation "Displays data receive on the specified port.\\n\\nUse the following flow to send data:\\nadams-net-send_via_socket.flow" -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.source.Socket -output-string true
+ adams.flow.sink.Display -writer adams.data.io.output.NullWriter

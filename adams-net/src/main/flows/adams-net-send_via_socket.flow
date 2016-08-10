@@ -1,0 +1,9 @@
+# Project: adams
+# Date: 2016-08-10 12:52:19
+# User: fracpete
+# Charset: UTF-8
+adams.flow.control.Flow -annotation "Sends data to the specified host/port.\\n\\nStart the following flow first:\\nadams-net-receive_via_socket.flow" -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.source.ForLoop -upper 100
+ adams.flow.transformer.Convert -conversion adams.data.conversion.AnyToString
+ adams.flow.transformer.StringInsert -after true -value \\n
+ adams.flow.sink.Socket
