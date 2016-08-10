@@ -264,6 +264,6 @@ public abstract class AbstractWorkspaceManagerPanel<T extends AbstractWorkspaceP
    * Cleans up data structures, frees up memory.
    */
   public void cleanUp() {
-    m_History.clear();
+    m_History.clear(false);
   }
 }

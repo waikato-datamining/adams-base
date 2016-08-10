@@ -609,16 +609,26 @@ public abstract class AbstractNamedHistoryPanel<T>
     else
       return m_ListModel;
   }
-  
+
   /**
    * Removes all entries and payloads.
    */
   public void clear() {
+    clear(true);
+  }
+
+  /**
+   * Removes all entries and payloads.
+   *
+   * @param update	if true, then {@link #updateEntry(String)} is called
+   */
+  public void clear(boolean update) {
     m_Entries.clear();
     m_Payloads.clear();
     m_ListModel.clear();
     m_ListModelFiltered = null;
-    updateEntry(null);
+    if (update)
+      updateEntry(null);
   }
 
   /**
