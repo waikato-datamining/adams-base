@@ -185,7 +185,7 @@ public class InstancesTable
    * @param data the data to use
    */
   public void setInstances(Instances data) {
-    ((InstancesTableModel) getUnsortedModel()).setInstances(data);
+    setModel(new InstancesTableModel(data));
   }
 
   /**
