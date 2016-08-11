@@ -40,8 +40,8 @@ import adams.flow.control.Flow;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorUtils;
 import adams.gui.application.AbstractInitialization;
+import adams.gui.core.GUIHelper;
 
-import java.awt.GraphicsEnvironment;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -235,6 +235,7 @@ public class FlowRunner
    */
   public void setHeadless(boolean value) {
     m_Headless = value;
+    GUIHelper.setHeadless(value);
     reset();
   }
 
@@ -417,7 +418,7 @@ public class FlowRunner
 
     // file has precedence over directory
     if (!m_Input.isDirectory()) {
-      errors = new ArrayList<String>();
+      errors = new ArrayList<>();
       m_Actor = ActorUtils.read(m_Input.getAbsolutePath(), errors);
       if (!errors.isEmpty()) {
 	result = "Failed to load actor from '" + m_Input + "'!\n" + Utils.flatten(errors, "\n");
@@ -458,7 +459,7 @@ public class FlowRunner
     try {
       // initialize actor
       if (m_Actor instanceof Flow)
-        ((Flow) m_Actor).setHeadless(isHeadless() || GraphicsEnvironment.isHeadless());
+        ((Flow) m_Actor).setHeadless(isHeadless() || GUIHelper.isHeadless());
       if (isLoggingEnabled() && m_Actor.isHeadless())
 	getLogger().info("Running in headless mode");
 

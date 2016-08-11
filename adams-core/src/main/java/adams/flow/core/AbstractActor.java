@@ -43,9 +43,9 @@ import adams.flow.control.ScopeHandler;
 import adams.flow.control.StorageHandler;
 import adams.flow.execution.DefaultFlowExecutionListeningSupporter;
 import adams.flow.execution.FlowExecutionListeningSupporter;
+import adams.gui.core.GUIHelper;
 
 import java.awt.Component;
-import java.awt.GraphicsEnvironment;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -317,7 +317,7 @@ public abstract class AbstractActor
     if ((getRoot() != null) && !(getRoot() == this))
       return getRoot().isHeadless();
     else
-      return GraphicsEnvironment.isHeadless();
+      return GUIHelper.isHeadless();
   }
 
   /**

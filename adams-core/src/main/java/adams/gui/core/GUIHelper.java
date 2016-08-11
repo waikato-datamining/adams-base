@@ -64,6 +64,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Window;
@@ -124,6 +125,9 @@ public class GUIHelper {
 
   /** whether anti-aliasing is enabled. */
   public static boolean AntiAliasingEnabled = true;
+
+  /** whether we are running in headless mode. */
+  public static Boolean HeadlessMode = null;
 
   /**
    * Helper class that allows external callers to communicate with input
@@ -2379,5 +2383,23 @@ public class GUIHelper {
 
     scale = getDisplayScaleFactor();
     return new Dimension((int) (size.width * scale), (int) (size.height * scale));
+  }
+
+  /**
+   * Returns whether we are running in headless mode.
+   *
+   * @return		true if in headless mode
+   */
+  public static boolean isHeadless() {
+    return GraphicsEnvironment.isHeadless() || ((HeadlessMode != null) && HeadlessMode);
+  }
+
+  /**
+   * Sets the headless mode.
+   *
+   * @param value	true if in headless mode
+   */
+  public static void setHeadless(boolean value) {
+    HeadlessMode = value;
   }
 }

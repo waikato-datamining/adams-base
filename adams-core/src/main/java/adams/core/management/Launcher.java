@@ -26,7 +26,6 @@ import adams.core.option.OptionUtils;
 import adams.env.Environment;
 import adams.gui.core.GUIHelper;
 
-import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -639,7 +638,7 @@ public class Launcher {
 	    + "options used for starting process:\n\n"
 	    + Utils.flatten(cmd, "\n");
 	System.err.println(msg);
-	if (!m_SuppressErrorDialog && !GraphicsEnvironment.isHeadless())
+	if (!m_SuppressErrorDialog && !GUIHelper.isHeadless())
 	  GUIHelper.showErrorMessage(
 	      null, msg, "Application exited unexpected!");
       }

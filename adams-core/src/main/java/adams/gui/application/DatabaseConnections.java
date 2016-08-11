@@ -19,9 +19,8 @@
  */
 package adams.gui.application;
 
+import adams.gui.core.GUIHelper;
 import adams.gui.dialog.DatabaseConnectionsPanel;
-
-import java.awt.GraphicsEnvironment;
 
 /**
  * Initializes the database connections.
@@ -53,7 +52,7 @@ public class DatabaseConnections
    */
   @Override
   public boolean initialize(final AbstractApplicationFrame parent) {
-    if (!GraphicsEnvironment.isHeadless())
+    if (!GUIHelper.isHeadless())
       new DatabaseConnectionsPanel();
     else
       System.err.println(getClass().getName() + ": Headless environment, skipping init!");
