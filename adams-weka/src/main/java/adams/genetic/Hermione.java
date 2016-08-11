@@ -403,17 +403,22 @@ public class Hermione
   /**
    * Updates the bits.
    *
+   * @param chromosome	the chromosome this is for
    * @param weights	the overall weights
    * @param starts	the starting points
    * @param numbits	the number of bits
    * @param pos		the position
    * @param newWeights	the new weights to set
    */
-  public void setBitsForPosition(int[] weights, List<Integer> starts, List<Integer> numbits, int pos, int[] newWeights) {
+  public void setBitsForPosition(int chromosome, int[] weights, List<Integer> starts, List<Integer> numbits, int pos, int[] newWeights) {
     initializeHandlersIfRequired();
     int c = 0;
     for (int i = starts.get(pos); i < starts.get(pos) + numbits.get(pos); i++) {
       weights[i] = newWeights[c];
+      if (newWeights[c] == 1)
+	m_Genes[chromosome].set(c);
+      else
+	m_Genes[chromosome].clear(c);
       c++;
     }
   }
@@ -539,8 +544,7 @@ public class Hermione
 	    ag.performInitialization(this, pc);
 	  String sa = ag.pack(pc);
 	  int[] newWeights = stringToIntArray(sa);
-	  setBitsForPosition(weights, m_start, m_numbits, pos, newWeights);
-	  // TODO update gene in chromosome
+	  setBitsForPosition(chromosome, weights, m_start, m_numbits, pos, newWeights);
 	  pos++;
 	}
       }
