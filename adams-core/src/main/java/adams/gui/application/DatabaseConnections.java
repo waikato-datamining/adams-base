@@ -15,11 +15,13 @@
 
 /**
  * DatabaseConnections.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.application;
 
 import adams.gui.dialog.DatabaseConnectionsPanel;
+
+import java.awt.GraphicsEnvironment;
 
 /**
  * Initializes the database connections.
@@ -51,7 +53,10 @@ public class DatabaseConnections
    */
   @Override
   public boolean initialize(final AbstractApplicationFrame parent) {
-    new DatabaseConnectionsPanel();
+    if (!GraphicsEnvironment.isHeadless())
+      new DatabaseConnectionsPanel();
+    else
+      System.err.println(getClass().getName() + ": Headless environment, skipping init!");
     return true;
   }
 }
