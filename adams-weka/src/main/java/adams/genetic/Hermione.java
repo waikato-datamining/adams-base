@@ -214,7 +214,7 @@ public class Hermione
 	Instances newInstances = new Instances(getInstances());
 
 	// evaluate classifier
-	Classifier newClassifier = getOwner().generateClassifier(m_Weights);
+	Classifier newClassifier = getOwner().generateClassifier(m_Chromosome, m_Weights);
 	m_Fitness = evaluateClassifier(newClassifier, newInstances);
 
 	// process fitness
@@ -495,10 +495,11 @@ public class Hermione
   /**
    * Generate the classifier from current bit array
    *
+   * @param chromosome	the chromosome index
    * @param weights	the bit array
    * @return		the classifier
    */
-  public Classifier generateClassifier(int weights[]) {
+  public Classifier generateClassifier(int chromosome, int weights[]) {
     initializeHandlersIfRequired();
 
     // foreach handler, pack according to bits in weights
@@ -511,7 +512,7 @@ public class Hermione
       StringBuilder w = new StringBuilder();
       for (int i = 0; i < weights.length; i++)
 	w.append(weights[i]);
-      getLogger().info("Weights: " + w);
+      getLogger().info("Chromosome: " + chromosome + ", " + "Weights: " + w);
     }
 
     DefaultPropertyDiscovery d = new DefaultPropertyDiscovery();
@@ -539,6 +540,7 @@ public class Hermione
 	  String sa = ag.pack(pc);
 	  int[] newWeights = stringToIntArray(sa);
 	  setBitsForPosition(weights, m_start, m_numbits, pos, newWeights);
+	  // TODO update gene in chromosome
 	  pos++;
 	}
       }
