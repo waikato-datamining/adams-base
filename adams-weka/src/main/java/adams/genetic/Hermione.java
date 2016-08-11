@@ -307,13 +307,13 @@ public class Hermione
   /**
    * Creates a new Job instance.
    *
-   * @param num		the number of chromosomes
+   * @param chromosome		the number of chromosomes
    * @param w		the initial weights
    * @return		the instance
    * @param data	the data to use
    */
-  protected HermioneJob newJob(int num, int[] w, Instances data) {
-    return new HermioneJob(this, num, w, data);
+  protected HermioneJob newJob(int chromosome, int[] w, Instances data) {
+    return new HermioneJob(this, chromosome, w, data);
   }
 
   /**

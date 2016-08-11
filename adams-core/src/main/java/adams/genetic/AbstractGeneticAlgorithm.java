@@ -62,6 +62,7 @@ public abstract class AbstractGeneticAlgorithm
 
   /** for serialization. */
   private static final long serialVersionUID = 2823734145266194843L;
+
   /**
    * A job class specific to genetic algorithms.
    *
@@ -84,22 +85,22 @@ public abstract class AbstractGeneticAlgorithm
     /** the current fitness. */
     protected Double m_Fitness;
 
-    /** the number of chromosomes. */
-    protected int m_ChromNum;
+    /** the chromosome index. */
+    protected int m_Chromosome;
 
     /**
      * Initializes the job.
      *
      * @param g		the algorithm object this job belongs to
-     * @param num	the number of chromsomes
+     * @param chromosome the chromsome index
      * @param w		the initial weights
      */
-    public GeneticAlgorithmJob(T g, int num, int[] w) {
+    public GeneticAlgorithmJob(T g, int chromosome, int[] w) {
       super();
 
       m_Weights  = w;
       m_Genetic  = g;
-      m_ChromNum = num;
+      m_Chromosome = chromosome;
       m_Fitness  = null;
     }
 
@@ -122,12 +123,12 @@ public abstract class AbstractGeneticAlgorithm
     }
 
     /**
-     * Returns the number of chromosomes.
+     * Returns the chromosome index.
      *
-     * @return		the number of chromosomes
+     * @return		the index
      */
-    public int getNumChrom() {
-      return m_ChromNum;
+    public int getChromosome() {
+      return m_Chromosome;
     }
 
     /**
@@ -227,7 +228,7 @@ public abstract class AbstractGeneticAlgorithm
     public String toString() {
       return
           m_Genetic.getClass().getName()
-        + ",#chrom=" + m_ChromNum
+        + ",#chrom=" + m_Chromosome
         + ",fitness=" + m_Fitness
         + ",weights=" + weightsToString();
     }

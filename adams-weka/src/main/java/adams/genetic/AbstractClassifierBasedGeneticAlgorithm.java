@@ -42,7 +42,6 @@ import java.io.FileWriter;
 import java.io.Writer;
 import java.util.Hashtable;
 import java.util.Random;
-import java.util.Vector;
 
 /**
  * Ancestor for genetic algorithms that evaluate classifiers.
@@ -84,12 +83,12 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
      * Initializes the job.
      *
      * @param g   	the algorithm object this job belongs to
-     * @param num 	the number of chromsomes
+     * @param chromosome the chromsome index
      * @param w   	the initial weights
      * @param data	the data to use
      */
-    public ClassifierBasedGeneticAlgorithmJob(T g, int num, int[] w, Instances data) {
-      super(g, num, w);
+    public ClassifierBasedGeneticAlgorithmJob(T g, int chromosome, int[] w, Instances data) {
+      super(g, chromosome, w);
 
       m_Measure = g.getMeasure();
       m_Data    = data;
@@ -832,20 +831,15 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
     m_StoredResults.clear();
   }
 
-  @Override
-  public Vector<int[]> getInitialSetups() {
-    return new Vector<int[]>();
-  }
-
   /**
    * Creates a new Job instance.
    *
-   * @param num		the number of chromosomes
+   * @param chromosome	the chromosome index
    * @param w		the initial weights
    * @return		the instance
    * @param data	the data to use
    */
-  protected abstract ClassifierBasedGeneticAlgorithmJob newJob(int num, int[] w, Instances data);
+  protected abstract ClassifierBasedGeneticAlgorithmJob newJob(int chromosome, int[] w, Instances data);
 
   /**
    * Calculates the fitness of the population.
@@ -861,13 +855,13 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
     int 						weight;
 
     if (m_JobRunnerSetup == null)
-      runner = new LocalJobRunner<ClassifierBasedGeneticAlgorithmJob>();
+      runner = new LocalJobRunner<>();
     else
       runner = m_JobRunnerSetup.newInstance();
     if (runner instanceof ThreadLimiter)
       ((ThreadLimiter) runner).setNumThreads(getNumThreads());
     runner.setFlowContext(getFlowContext());
-    jobs   = new JobList<ClassifierBasedGeneticAlgorithmJob>();
+    jobs   = new JobList<>();
     for (i = 0; i < getNumChrom(); i++) {
       weights = new int[getNumGenes()];
       for (int j = 0; j < getNumGenes(); j++)  {
@@ -889,9 +883,9 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
       job = runner.getJobs().get(i);
       // success? If not, just add the header of the original data
       if (job.getFitness() == null)
-        m_Fitness[job.getNumChrom()] = Double.NEGATIVE_INFINITY;
+        m_Fitness[job.getChromosome()] = Double.NEGATIVE_INFINITY;
       else
-        m_Fitness[job.getNumChrom()] = job.getFitness();
+        m_Fitness[job.getChromosome()] = job.getFitness();
       job.cleanUp();
     }
     runner.cleanUp();

@@ -272,13 +272,13 @@ public class DarkLord
   /**
    * Creates a new Job instance.
    *
-   * @param num		the number of chromosomes
+   * @param chromosome		the number of chromosomes
    * @param w		the initial weights
    * @return		the instance
    * @param data	the data to use
    */
-  protected DarkLordJob newJob(int num, int[] w, Instances data) {
-    return new DarkLordJob(this, num, w, data);
+  protected DarkLordJob newJob(int chromosome, int[] w, Instances data) {
+    return new DarkLordJob(this, chromosome, w, data);
   }
 
   /**
