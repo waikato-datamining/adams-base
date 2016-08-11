@@ -15,11 +15,12 @@
 
 /*
  * Placeholders.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core;
 
+import adams.core.option.OptionUtils;
 import adams.env.Environment;
 import adams.env.PlaceholdersDefinition;
 
@@ -154,7 +155,7 @@ public class Placeholders {
    */
   public boolean isValid(String s) {
     s = doExpand(s);
-    return (s.indexOf(PLACEHOLDER_START) == -1);
+    return (!s.contains(PLACEHOLDER_START));
   }
 
   /**
@@ -167,7 +168,7 @@ public class Placeholders {
     String	result;
     
     result = doExpand(s);
-    if (result.indexOf(PLACEHOLDER_START) > -1)
+    if (result.contains(PLACEHOLDER_START))
       System.err.println("Failed to fully expand '" + s + "': " + result);
     
     return result;
@@ -373,5 +374,32 @@ public class Placeholders {
    */
   public static synchronized String collapseStr(String s) {
     return getSingleton().collapse(s);
+  }
+
+  /**
+   * For outputting placeholders.
+   *
+   * @param args	the commandline arguments: [-env <environment class>]
+   */
+  public static void main(String[] args) {
+    // set Environment class
+    String env = OptionUtils.getOption(args, "-env");
+    if (env == null)
+      env = Environment.class.getName();
+    Class envClass;
+    try {
+      envClass = Class.forName(env);
+    }
+    catch (Exception e) {
+      envClass = Environment.class;
+    }
+    Environment.setEnvironmentClass(envClass);
+
+    // output placeholders
+    Enumeration<String> enm = getSingleton().placeholders();
+    while (enm.hasMoreElements()) {
+      String placeholder = PLACEHOLDER_START + enm.nextElement() + PLACEHOLDER_END;
+      System.out.println(placeholder + " -> " + getSingleton().expand(placeholder));
+    }
   }
 }
