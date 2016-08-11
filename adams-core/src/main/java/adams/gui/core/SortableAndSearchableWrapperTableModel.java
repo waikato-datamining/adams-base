@@ -369,7 +369,7 @@ public class SortableAndSearchableWrapperTableModel
     if (isInitialized()) {
       if (m_DisplayIndices != null)
 	result = m_SortedIndices[m_DisplayIndices.get(visibleRow)];
-      else
+      else if (visibleRow < m_SortedIndices.length)
 	result = m_SortedIndices[visibleRow];
     }
 
@@ -487,8 +487,10 @@ public class SortableAndSearchableWrapperTableModel
   public Object getValueAt(int rowIndex, int columnIndex) {
     if (!isInitialized())
       return null;
-    else
+    else if (rowIndex < getRowCount() && (getActualRow(rowIndex) != -1))
       return getUnsortedModel().getValueAt(getActualRow(rowIndex), columnIndex);
+    else
+      return null;
   }
 
   /**
