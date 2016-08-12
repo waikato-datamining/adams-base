@@ -14,9 +14,10 @@
  */
 
 /**
- * SqlUtils.java
- * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
+ * DefaultTypeMapper.java
+ * Copyright (C) 2016 University of Waikato, Hamilton, NZ
  */
+
 package adams.data.spreadsheet.sql;
 
 import adams.data.spreadsheet.Cell.ContentType;
@@ -24,21 +25,39 @@ import adams.data.spreadsheet.Cell.ContentType;
 import java.sql.Types;
 
 /**
- * Helper class for SQL related functionality for spreadsheets.
- * 
- * @author  fracpete (fracpete at waikato dot ac dot nz)
+ <!-- globalinfo-start -->
+ <!-- globalinfo-end -->
+ *
+ <!-- options-start -->
+ <!-- options-end -->
+ *
+ * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class SqlUtils {
+public class DefaultTypeMapper
+  extends AbstractTypeMapper {
+
+  private static final long serialVersionUID = -4158991121487239476L;
+
+  /**
+   * Returns a string describing the object.
+   *
+   * @return 			a description suitable for displaying in the gui
+   */
+  @Override
+  public String globalInfo() {
+    return "Default type mapper, works with MySQL.";
+  }
 
   /**
    * Determines the {@link ContentType} from the SQL column type.
    * See {@link Types}.
-   * 
+   *
    * @param colType	the SQL column type to interpret
    * @return		the type, default is {@link ContentType#STRING}
    */
-  public static ContentType sqlTypeToContentType(int colType) {
+  @Override
+  public ContentType sqlTypeToContentType(int colType) {
     switch (colType) {
       case Types.TIME:
 	return ContentType.TIME;
@@ -58,15 +77,16 @@ public class SqlUtils {
 	return ContentType.STRING;
     }
   }
-  
+
   /**
    * Returns the SQL type corresponding to the cell content type.
-   * 
+   *
    * @param contentType	the type to convert
    * @return		the associated SQL type
    * @see		Types
    */
-  public static int contentTypeToSqlType(ContentType contentType) {
+  @Override
+  public int contentTypeToSqlType(ContentType contentType) {
     switch (contentType) {
       case DATE:
 	return Types.DATE;

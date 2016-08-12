@@ -26,6 +26,8 @@ import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.DenseDataRow;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
+import adams.data.spreadsheet.sql.AbstractTypeMapper;
+import adams.data.spreadsheet.sql.DefaultTypeMapper;
 import adams.data.spreadsheet.sql.Reader;
 import adams.flow.core.Token;
 
@@ -213,6 +215,9 @@ public abstract class AbstractDatabaseMetaData
     "usesLocalFiles",
   };
 
+  /** the type mapper to use. */
+  protected AbstractTypeMapper m_TypeMapper;
+
   /** the type of meta-data to return. */
   protected MetaDataType m_MetaDataType;
 
@@ -240,12 +245,45 @@ public abstract class AbstractDatabaseMetaData
     super.defineOptions();
 
     m_OptionManager.add(
-	    "meta-data-type", "metaDataType",
-	    MetaDataType.BASIC);
+      "type-mapper", "typeMapper",
+      new DefaultTypeMapper());
 
     m_OptionManager.add(
-	    "table", "table",
-	    "");
+      "meta-data-type", "metaDataType",
+      MetaDataType.BASIC);
+
+    m_OptionManager.add(
+      "table", "table",
+      "");
+  }
+
+  /**
+   * Sets the type mapper to use.
+   *
+   * @param value	the mapper
+   */
+  public void setTypeMapper(AbstractTypeMapper value) {
+    m_TypeMapper = value;
+    reset();
+  }
+
+  /**
+   * Returns the type mapper in use.
+   *
+   * @return		the mapper
+   */
+  public AbstractTypeMapper  getTypeMapper() {
+    return m_TypeMapper;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String typeMapperTipText() {
+    return "The type mapper to use for mapping spreadsheet and SQL types.";
   }
 
   /**
@@ -434,7 +472,7 @@ public abstract class AbstractDatabaseMetaData
       sheet = null;
       try {
 	metadata = m_DatabaseConnection.getConnection(false).getMetaData();
-	reader   = new Reader(DenseDataRow.class);
+	reader   = new Reader(m_TypeMapper, DenseDataRow.class);
 	switch (m_MetaDataType) {
 	  case BASIC:
 	    sheet = new DefaultSpreadSheet();

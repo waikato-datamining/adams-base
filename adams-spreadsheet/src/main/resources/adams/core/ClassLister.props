@@ -35,6 +35,10 @@ adams.data.spreadsheet.rowstatistic.AbstractRowStatistic=\
 adams.data.spreadsheet.rowscore.AbstractRowScore=\
   adams.data.spreadsheet.rowscore
 
+# the type mappers
+adams.data.spreadsheet.sql.AbstractTypeMapper=\
+  adams.data.spreadsheet.sql
+
 # data conversion schemes for spreadsheets
 adams.data.conversion.AbstractSpreadSheetConversion=\
   adams.data.conversion

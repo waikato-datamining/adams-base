@@ -26,6 +26,8 @@ import adams.data.spreadsheet.Cell.ContentType;
 import adams.data.spreadsheet.ColumnNameConversion;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
+import adams.data.spreadsheet.sql.AbstractTypeMapper;
+import adams.data.spreadsheet.sql.DefaultTypeMapper;
 import adams.data.spreadsheet.sql.Writer;
 import adams.db.SQL;
 import adams.flow.core.ActorUtils;
@@ -49,29 +51,29 @@ import adams.flow.core.ActorUtils;
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- * 
+ *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: SpreadSheetDbWriter
  * </pre>
- * 
+ *
  * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- * 
+ *
  * <pre>-skip &lt;boolean&gt; (property: skip)
  * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
  * &nbsp;&nbsp;&nbsp;as it is.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
  * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
  * &nbsp;&nbsp;&nbsp; useful for critical actors.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-silent &lt;boolean&gt; (property: silent)
  * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
  * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
@@ -108,7 +110,7 @@ import adams.flow.core.ActorUtils;
  * &nbsp;&nbsp;&nbsp;default: 1
  * &nbsp;&nbsp;&nbsp;minimum: 1
  * </pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -120,9 +122,12 @@ public class SpreadSheetDbWriter
 
   /** for serialization. */
   private static final long serialVersionUID = 393925191813730213L;
-  
+
   /** the database connection. */
   protected adams.db.AbstractDatabaseConnection m_DatabaseConnection;
+
+  /** the type mapper to use. */
+  protected AbstractTypeMapper m_TypeMapper;
 
   /** the table to write the data to. */
   protected String m_Table;
@@ -132,16 +137,16 @@ public class SpreadSheetDbWriter
 
   /** the maximum length for column names. */
   protected int m_MaxColumnLength;
-  
+
   /** the column names (shortened, disambiguated). */
   protected String[] m_ColumnNames;
-  
+
   /** the column name conversion. */
   protected ColumnNameConversion m_ColumnNameConversion;
-  
+
   /** the SQL type for string columns. */
   protected String m_StringColumnSQL;
-  
+
   /** the maximum length for strings. */
   protected int m_MaxStringLength;
 
@@ -150,7 +155,7 @@ public class SpreadSheetDbWriter
 
   /** the writer for writing the data to the database. */
   protected Writer m_Writer;
-  
+
   /**
    * Returns a string describing the object.
    *
@@ -169,24 +174,28 @@ public class SpreadSheetDbWriter
     super.defineOptions();
 
     m_OptionManager.add(
-	    "table", "table",
-	    "blah");
+      "type-mapper", "typeMapper",
+      new DefaultTypeMapper());
 
     m_OptionManager.add(
-	    "column-name-conversion", "columnNameConversion",
-	    ColumnNameConversion.UPPER_CASE);
+      "table", "table",
+      "blah");
 
     m_OptionManager.add(
-	    "max-string-length", "maxStringLength",
-	    50, 1, null);
+      "column-name-conversion", "columnNameConversion",
+      ColumnNameConversion.UPPER_CASE);
 
     m_OptionManager.add(
-	    "string-column-sql", "stringColumnSQL",
-	    "VARCHAR(" +  Writer.PLACEHOLDER_MAX + ")");
+      "max-string-length", "maxStringLength",
+      50, 1, null);
 
     m_OptionManager.add(
-	    "batch-size", "batchSize",
-	    1, 1, null);
+      "string-column-sql", "stringColumnSQL",
+      "VARCHAR(" +  Writer.PLACEHOLDER_MAX + ")");
+
+    m_OptionManager.add(
+      "batch-size", "batchSize",
+      1, 1, null);
   }
 
   /**
@@ -215,6 +224,35 @@ public class SpreadSheetDbWriter
     result += QuickInfoHelper.toString(this, "batchSize", m_BatchSize, ", batch: ");
 
     return result;
+  }
+
+  /**
+   * Sets the type mapper to use.
+   *
+   * @param value	the mapper
+   */
+  public void setTypeMapper(AbstractTypeMapper value) {
+    m_TypeMapper = value;
+    reset();
+  }
+
+  /**
+   * Returns the type mapper in use.
+   *
+   * @return		the mapper
+   */
+  public AbstractTypeMapper  getTypeMapper() {
+    return m_TypeMapper;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String typeMapperTipText() {
+    return "The type mapper to use for mapping spreadsheet and SQL types.";
   }
 
   /**
@@ -303,8 +341,8 @@ public class SpreadSheetDbWriter
    * 			displaying in the GUI or for listing the options.
    */
   public String maxStringLengthTipText() {
-    return 
-	"The maximum length for strings to enforce; can be used "
+    return
+      "The maximum length for strings to enforce; can be used "
 	+ "as " + Writer.PLACEHOLDER_MAX + " in the 'stringColumnsSQL' property.";
   }
 
@@ -334,8 +372,8 @@ public class SpreadSheetDbWriter
    * 			displaying in the GUI or for listing the options.
    */
   public String stringColumnSQLTipText() {
-    return 
-	"The SQL type to use for STRING columns in the CREATE statement; "
+    return
+      "The SQL type to use for STRING columns in the CREATE statement; "
 	+ "you can use the " + Writer.PLACEHOLDER_MAX + " placeholder to tie the type "
 	+ "to the 'naxStringLength' property; see also: http://en.wikipedia.org/wiki/SQL";
   }
@@ -372,7 +410,7 @@ public class SpreadSheetDbWriter
   @Override
   public String batchSizeTipText() {
     return
-	"The size of the batch when inserting the data; can help improve speed of data import.";
+      "The size of the batch when inserting the data; can help improve speed of data import.";
   }
 
   /**
@@ -391,9 +429,9 @@ public class SpreadSheetDbWriter
    */
   protected adams.db.AbstractDatabaseConnection getDatabaseConnection() {
     return ActorUtils.getDatabaseConnection(
-	  this,
-	  adams.flow.standalone.DatabaseConnection.class,
-	  adams.db.DatabaseConnection.getSingleton());
+      this,
+      adams.flow.standalone.DatabaseConnection.class,
+      adams.db.DatabaseConnection.getSingleton());
   }
 
   /**
@@ -424,11 +462,12 @@ public class SpreadSheetDbWriter
     }
     sql = new SQL(m_DatabaseConnection);
     sql.setDebug(isLoggingEnabled());
-    
+
     m_Writer = null;
     try {
       m_Writer = new Writer(
 	sheet,
+	m_TypeMapper,
 	m_Table,
 	sql.getMaxColumnNameLength(),
 	m_ColumnNameConversion,
@@ -441,7 +480,7 @@ public class SpreadSheetDbWriter
       m_Writer = null;
       result = handleException("Failed to determine max column name length", e);
     }
-    
+
     if (m_Writer != null) {
       if (!sql.tableExists(m_Table))
 	result = m_Writer.createTable(sql);
@@ -459,10 +498,10 @@ public class SpreadSheetDbWriter
   public void stopExecution() {
     if (m_Writer != null)
       m_Writer.stopExecution();
-    
+
     super.stopExecution();
   }
-  
+
   /**
    * Cleans up after the execution has finished. Graphical output is left
    * untouched.

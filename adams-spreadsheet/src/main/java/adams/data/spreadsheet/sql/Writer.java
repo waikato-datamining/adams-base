@@ -51,6 +51,9 @@ public class Writer
   /** the placeholder for the maximum length for string values. */
   public final static String PLACEHOLDER_MAX = "@MAX";
 
+  /** the type mapper to use. */
+  protected AbstractTypeMapper m_TypeMapper;
+
   /** the underlying spreadm_Sheet. */
   protected SpreadSheet m_Sheet;
 
@@ -85,16 +88,18 @@ public class Writer
    * Initializes the object.
    *
    * @param sheet	the underlying spreadm_Sheet
+   * @param typeMapper  the type mapper to use
    * @param table	the table name
    * @param maxCol	the maximum length for column names
    * @param colName	the conversion for column names
    * @param stringCol	the SQL type for string columns
    * @param maxStr	the maximum length for strings (get truncated)
    */
-  public Writer(SpreadSheet sheet, String table, int maxCol, ColumnNameConversion colName, String stringCol, int maxStr, int batchSize) {
+  public Writer(SpreadSheet sheet, AbstractTypeMapper typeMapper, String table, int maxCol, ColumnNameConversion colName, String stringCol, int maxStr, int batchSize) {
     super();
 
     m_Sheet                = sheet;
+    m_TypeMapper           = typeMapper;
     m_Table                = table;
     m_MaxColumnLength      = maxCol;
     m_ColumnNameConversion = colName;
@@ -169,6 +174,15 @@ public class Writer
    */
   public void setLoggingLevel(LoggingLevel value) {
     m_LoggingLevel = value;
+  }
+
+  /**
+   * Returns the type mapper in use.
+   *
+   * @return		the type mapper
+   */
+  public AbstractTypeMapper getTypeMapper() {
+    return m_TypeMapper;
   }
 
   /**
@@ -424,7 +438,7 @@ public class Writer
 	  for (i = 0; i < m_Sheet.getColumnCount(); i++) {
 	    cell = row.getCell(i);
 	    if ((cell == null) || cell.isMissing()) {
-	      type = SqlUtils.contentTypeToSqlType(m_ContentTypes[i]);
+	      type = m_TypeMapper.contentTypeToSqlType(m_ContentTypes[i]);
 	      stmt.setNull(i + 1, type);
 	    }
 	    else {

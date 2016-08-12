@@ -29,6 +29,8 @@ import adams.data.spreadsheet.Cell.ContentType;
 import adams.data.spreadsheet.ColumnNameConversion;
 import adams.data.spreadsheet.DataRow;
 import adams.data.spreadsheet.SpreadSheet;
+import adams.data.spreadsheet.sql.AbstractTypeMapper;
+import adams.data.spreadsheet.sql.DefaultTypeMapper;
 
 import java.io.Writer;
 import java.util.logging.Level;
@@ -106,6 +108,9 @@ public class SqlDumpSpreadSheetWriter
   /** for serialization. */
   private static final long serialVersionUID = -3643934248575351045L;
 
+  /** the type mapper to use. */
+  protected AbstractTypeMapper m_TypeMapper;
+
   /** whether to append spreadsheets. */
   protected boolean m_Appending;
 
@@ -160,36 +165,40 @@ public class SqlDumpSpreadSheetWriter
     super.defineOptions();
 
     m_OptionManager.add(
-	    "appending", "appending",
-	    false);
+      "type-mapper", "typeMapper",
+      new DefaultTypeMapper());
 
     m_OptionManager.add(
-	    "keep-existing", "keepExisting",
-	    false);
+      "appending", "appending",
+      false);
 
     m_OptionManager.add(
-	    "table", "table",
-	    "blah");
+      "keep-existing", "keepExisting",
+      false);
 
     m_OptionManager.add(
-	    "column-name-conversion", "columnNameConversion",
-	    ColumnNameConversion.UPPER_CASE);
+      "table", "table",
+      "blah");
 
     m_OptionManager.add(
-	    "max-string-length", "maxStringLength",
-	    50, 1, null);
+      "column-name-conversion", "columnNameConversion",
+      ColumnNameConversion.UPPER_CASE);
 
     m_OptionManager.add(
-	    "string-column-sql", "stringColumnSQL",
-	    "VARCHAR(" + adams.data.spreadsheet.sql.Writer.PLACEHOLDER_MAX + ")");
+      "max-string-length", "maxStringLength",
+      50, 1, null);
 
     m_OptionManager.add(
-	    "add-create-table", "addCreateTable",
-	    false);
+      "string-column-sql", "stringColumnSQL",
+      "VARCHAR(" + adams.data.spreadsheet.sql.Writer.PLACEHOLDER_MAX + ")");
 
     m_OptionManager.add(
-	    "use-backslashes", "useBackslashes",
-	    false);
+      "add-create-table", "addCreateTable",
+      false);
+
+    m_OptionManager.add(
+      "use-backslashes", "useBackslashes",
+      false);
   }
 
   /**
@@ -256,6 +265,35 @@ public class SqlDumpSpreadSheetWriter
     if (m_Header == null)
       return m_KeepExisting;
     return (m_Header.equalsHeader(sheet) == null);
+  }
+
+  /**
+   * Sets the type mapper to use.
+   *
+   * @param value	the mapper
+   */
+  public void setTypeMapper(AbstractTypeMapper value) {
+    m_TypeMapper = value;
+    reset();
+  }
+
+  /**
+   * Returns the type mapper in use.
+   *
+   * @return		the mapper
+   */
+  public AbstractTypeMapper  getTypeMapper() {
+    return m_TypeMapper;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String typeMapperTipText() {
+    return "The type mapper to use for mapping spreadsheet and SQL types.";
   }
 
   /**
@@ -605,7 +643,7 @@ public class SqlDumpSpreadSheetWriter
 	  writer.write("-- " + content.getComments().get(i) + newline);
 	writer.write(newline);
 
-	wrter         = new adams.data.spreadsheet.sql.Writer(content, m_Table, 255, m_ColumnNameConversion, m_StringColumnSQL, m_MaxStringLength, 1);
+	wrter         = new adams.data.spreadsheet.sql.Writer(content, m_TypeMapper, m_Table, 255, m_ColumnNameConversion, m_StringColumnSQL, m_MaxStringLength, 1);
 	m_Types       = wrter.getContentTypes();
 	m_ColumnNames = wrter.getColumnNames();
 

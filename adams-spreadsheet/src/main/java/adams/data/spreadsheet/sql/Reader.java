@@ -49,6 +49,9 @@ public class Reader
   /** the row class to use. */
   protected Class m_RowClass;
 
+  /** the type mapper to use. */
+  protected AbstractTypeMapper m_TypeMapper;
+
   /** indicates whether the reading has finished. */
   protected boolean m_Finished;
 
@@ -66,14 +69,16 @@ public class Reader
    *
    * @param rowClass	the class for the rows in the spreadsheet,
    * 			e.g. {@link DenseDataRow}
+   * @param typeMapper	the type mapper to use
    */
-  public Reader(Class rowClass) {
+  public Reader(AbstractTypeMapper typeMapper, Class rowClass) {
     if (rowClass == null)
       throw new IllegalArgumentException("No row class specified!");
 
-    m_RowClass = rowClass;
-    m_Header   = null;
-    m_Type     = new int[0];
+    m_TypeMapper = typeMapper;
+    m_RowClass   = rowClass;
+    m_Header     = null;
+    m_Type       = new int[0];
   }
 
   /**
@@ -116,6 +121,15 @@ public class Reader
    */
   public Class getRowClass() {
     return m_RowClass;
+  }
+
+  /**
+   * Returns the type mapper in use.
+   *
+   * @return		the type mapper
+   */
+  public AbstractTypeMapper getTypeMapper() {
+    return m_TypeMapper;
   }
 
   /**
@@ -167,7 +181,7 @@ public class Reader
     while (!m_Finished && !m_Stopped) {
       row = result.addRow();
       for (i = 1; i <= result.getColumnCount(); i++) {
-	type = SqlUtils.sqlTypeToContentType(m_Type[i - 1]);
+	type = m_TypeMapper.sqlTypeToContentType(m_Type[i - 1]);
 	switch (type) {
 	  case TIME:
 	    row.addCell(i - 1).setContentAs(rs.getTime(i).toString(), type);

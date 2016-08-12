@@ -25,6 +25,8 @@ import adams.data.spreadsheet.DataRow;
 import adams.data.spreadsheet.DataRowTypeHandler;
 import adams.data.spreadsheet.DenseDataRow;
 import adams.data.spreadsheet.SpreadSheet;
+import adams.data.spreadsheet.sql.AbstractTypeMapper;
+import adams.data.spreadsheet.sql.DefaultTypeMapper;
 import adams.data.spreadsheet.sql.Reader;
 import adams.db.SQL;
 import adams.db.SQLStatement;
@@ -44,7 +46,10 @@ public abstract class AbstractSpreadSheetDbReader
 
   /** for serialization. */
   private static final long serialVersionUID = 494594301273926225L;
-  
+
+  /** the type mapper to use. */
+  protected AbstractTypeMapper m_TypeMapper;
+
   /** the SQL query to execute. */
   protected SQLStatement m_Query;
 
@@ -87,6 +92,10 @@ public abstract class AbstractSpreadSheetDbReader
     super.defineOptions();
 
     m_OptionManager.add(
+      "type-mapper", "typeMapper",
+      new DefaultTypeMapper());
+
+    m_OptionManager.add(
       "query", "query",
       new SQLStatement("select * from blah"));
 
@@ -127,6 +136,35 @@ public abstract class AbstractSpreadSheetDbReader
       result += value;
 
     return result;
+  }
+
+  /**
+   * Sets the type mapper to use.
+   *
+   * @param value	the mapper
+   */
+  public void setTypeMapper(AbstractTypeMapper value) {
+    m_TypeMapper = value;
+    reset();
+  }
+
+  /**
+   * Returns the type mapper in use.
+   *
+   * @return		the mapper
+   */
+  public AbstractTypeMapper  getTypeMapper() {
+    return m_TypeMapper;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String typeMapperTipText() {
+    return "The type mapper to use for mapping spreadsheet and SQL types.";
   }
 
   /**
@@ -258,7 +296,7 @@ public abstract class AbstractSpreadSheetDbReader
     try {
       sql      = new SQL(m_DatabaseConnection);
       sql.setDebug(isLoggingEnabled());
-      m_Reader = new Reader(m_DataRowType.getClass());
+      m_Reader = new Reader(m_TypeMapper, m_DataRowType.getClass());
       m_Reader.setLoggingLevel(getLoggingLevel());
       if (isLoggingEnabled())
 	getLogger().info("Query: " + query);
