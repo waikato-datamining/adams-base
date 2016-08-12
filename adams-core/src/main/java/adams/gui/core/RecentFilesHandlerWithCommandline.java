@@ -15,16 +15,16 @@
 
 /**
  * RecentFilesHandlerWithCommandline.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
-
-import java.io.File;
-import java.util.HashSet;
 
 import adams.core.io.FileUtils;
 import adams.core.option.OptionUtils;
 import adams.gui.core.RecentFilesHandlerWithCommandline.Setup;
+
+import java.io.File;
+import java.util.HashSet;
 
 /**
  * Recent files handler that stores a commandline alongside the file.
@@ -79,7 +79,7 @@ public class RecentFilesHandlerWithCommandline<M>
       m_File = new File(parts[0]);
       
       try {
-	m_Handler = OptionUtils.forCommandLine(Object.class, parts[1]);
+	m_Handler = OptionUtils.forAnyCommandLine(Object.class, parts[1]);
       }
       catch (Exception e) {
 	return;
