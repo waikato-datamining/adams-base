@@ -19,7 +19,16 @@
       <directory>${project.build.scriptSourceDirectory}</directory>
       <outputDirectory>/bin</outputDirectory>
     </fileSet>
-    
+
+    <fileSet>
+      <directory>${project.build.directory}/scripts</directory>
+      <outputDirectory>/bin</outputDirectory>
+      <includes>
+        <include>*.sh</include>
+        <include>*.bat</include>
+      </includes>
+    </fileSet>
+
     <fileSet>
       <directory>${project.basedir}/src/main/assembly/config</directory>
       <outputDirectory>/</outputDirectory>
@@ -83,6 +92,7 @@
       <useProjectArtifact>true</useProjectArtifact>
       <excludes>
         <exclude>de.jflex:jflex:*</exclude>
+        <exclude>*:scripts</exclude>
         <exclude>*:android-arm</exclude>
         <exclude>*:android-x86</exclude>
         <exclude>*:linux-x86</exclude>

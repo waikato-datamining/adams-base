@@ -318,6 +318,14 @@
       <type>test-jar</type>
     </dependency>
 
+    <!-- scripts -->
+    <dependency>
+      <groupId>nz.ac.waikato.cms.adams</groupId>
+      <artifactId>adams-scripts</artifactId>
+      <version>${project.version}</version>
+      <classifier>scripts</classifier>
+    </dependency>
+
     <!-- spreadsheet -->
     <dependency>
       <groupId>nz.ac.waikato.cms.adams</groupId>

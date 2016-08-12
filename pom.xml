@@ -49,6 +49,7 @@
     <module>adams-net</module>
     <module>adams-odf</module>
     <module>adams-pdf</module>
+    <module>adams-scripts</module>
     <module>adams-spreadsheet</module>
     <module>adams-timeseries</module>
     <module>adams-visualstats</module>
@@ -345,6 +346,20 @@
                 <classifier>flows</classifier>
                 <failOnMissingClassifierArtifact>false</failOnMissingClassifierArtifact>
                 <outputDirectory>${project.build.directory}/flows</outputDirectory>
+                <includeGroupIds>${project.groupId}</includeGroupIds>
+              </configuration>
+            </execution>
+            <!-- get all scripts jars -->
+            <execution>
+              <id>scripts</id>
+              <phase>prepare-package</phase>
+              <goals>
+                <goal>unpack-dependencies</goal>
+              </goals>
+              <configuration>
+                <classifier>scripts</classifier>
+                <failOnMissingClassifierArtifact>false</failOnMissingClassifierArtifact>
+                <outputDirectory>${project.build.directory}/scripts</outputDirectory>
                 <includeGroupIds>${project.groupId}</includeGroupIds>
               </configuration>
             </execution>
