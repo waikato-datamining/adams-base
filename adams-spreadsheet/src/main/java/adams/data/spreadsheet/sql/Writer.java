@@ -285,31 +285,9 @@ public class Writer
     for (i = 0; i < m_Sheet.getColumnCount(); i++) {
       if (i > 0)
 	result.append(", ");
-      switch (m_ContentTypes[i]) {
-	case LONG:
-	  result.append(m_ColumnNames[i]).append(" INTEGER");
-	  break;
-	case DOUBLE:
-	  result.append(m_ColumnNames[i]).append(" DOUBLE PRECISION");
-	  break;
-	case DATE:
-	  result.append(m_ColumnNames[i]).append(" DATE");
-	  break;
-	case DATETIME:
-	case DATETIMEMSEC:
-	  result.append(m_ColumnNames[i]).append(" TIMESTAMP");
-	  break;
-	case TIME:
-	case TIMEMSEC:
-	  result.append(m_ColumnNames[i]).append(" TIME");
-	  break;
-	case BOOLEAN:
-	  result.append(m_ColumnNames[i]).append(" BOOLEAN");
-	  break;
-	default:
-	  result.append(m_ColumnNames[i]).append(" ").append(stringType);
-	  break;
-      }
+      result.append(m_ColumnNames[i]);
+      result.append(" ");
+      result.append(m_TypeMapper.contentTypeToSqlCreateType(m_ContentTypes[i], stringType));
     }
     result.append(");");
 

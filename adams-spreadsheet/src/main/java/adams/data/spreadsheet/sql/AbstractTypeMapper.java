@@ -53,4 +53,13 @@ public abstract class AbstractTypeMapper
    * @see		Types
    */
   public abstract int contentTypeToSqlType(ContentType contentType);
+
+  /**
+   * Returns the column type used for create table statements.
+   *
+   * @param contentType the type to get the type for
+   * @param stringType  the default string type
+   * @return		the associated create string
+   */
+  public abstract String contentTypeToSqlCreateType(ContentType contentType, String stringType);
 }
