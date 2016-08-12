@@ -152,7 +152,7 @@ public class PreprocessTab
     panel.add(m_CheckBoxReplace);
 
     m_CheckBoxBatchFilter = new JCheckBox("Batch filter");
-    m_CheckBoxBatchFilter.setSelected(props.getBoolean("Preprocess.BatchFilter", true));
+    m_CheckBoxBatchFilter.setSelected(props.getBoolean("Preprocess.BatchFilter", false));
     panel.add(m_CheckBoxBatchFilter);
 
     m_ButtonStart = new JButton("Start");

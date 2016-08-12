@@ -30,7 +30,7 @@ Preprocess.ReplaceDatasets=true
 
 # Whether to perform batch-filtering when filtering multiple datasets at the same time
 # (true|false)
-Preprocess.BatchFilter=true
+Preprocess.BatchFilter=false
 
 # the default classifier
 # (superclass: weka.classifiers.Classifier)
