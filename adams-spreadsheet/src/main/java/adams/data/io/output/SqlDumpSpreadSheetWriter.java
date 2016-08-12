@@ -29,7 +29,6 @@ import adams.data.spreadsheet.Cell.ContentType;
 import adams.data.spreadsheet.ColumnNameConversion;
 import adams.data.spreadsheet.DataRow;
 import adams.data.spreadsheet.SpreadSheet;
-import adams.data.spreadsheet.SqlUtils;
 
 import java.io.Writer;
 import java.util.logging.Level;
@@ -182,7 +181,7 @@ public class SqlDumpSpreadSheetWriter
 
     m_OptionManager.add(
 	    "string-column-sql", "stringColumnSQL",
-	    "VARCHAR(" + SqlUtils.Writer.PLACEHOLDER_MAX + ")");
+	    "VARCHAR(" + adams.data.spreadsheet.sql.Writer.PLACEHOLDER_MAX + ")");
 
     m_OptionManager.add(
 	    "add-create-table", "addCreateTable",
@@ -415,7 +414,7 @@ public class SqlDumpSpreadSheetWriter
   public String maxStringLengthTipText() {
     return
 	"The maximum length for strings to enforce; can be used "
-	+ "as " + SqlUtils.Writer.PLACEHOLDER_MAX + " in the 'stringColumnsSQL' property.";
+	+ "as " + adams.data.spreadsheet.sql.Writer.PLACEHOLDER_MAX + " in the 'stringColumnsSQL' property.";
   }
 
   /**
@@ -446,7 +445,7 @@ public class SqlDumpSpreadSheetWriter
   public String stringColumnSQLTipText() {
     return
 	"The SQL type to use for STRING columns in the CREATE statement; "
-	+ "you can use the " + SqlUtils.Writer.PLACEHOLDER_MAX + " placeholder to tie the type "
+	+ "you can use the " + adams.data.spreadsheet.sql.Writer.PLACEHOLDER_MAX + " placeholder to tie the type "
 	+ "to the 'naxStringLength' property; see also: http://en.wikipedia.org/wiki/SQL";
   }
 
@@ -585,7 +584,7 @@ public class SqlDumpSpreadSheetWriter
     int			i;
     boolean		first;
     Cell		cell;
-    SqlUtils.Writer	wrter;
+    adams.data.spreadsheet.sql.Writer wrter;
     DateFormat		dformat;
     DateFormat		dtformat;
     DateFormat		dtmformat;
@@ -606,7 +605,7 @@ public class SqlDumpSpreadSheetWriter
 	  writer.write("-- " + content.getComments().get(i) + newline);
 	writer.write(newline);
 
-	wrter         = new SqlUtils.Writer(content, m_Table, 255, m_ColumnNameConversion, m_StringColumnSQL, m_MaxStringLength, 1);
+	wrter         = new adams.data.spreadsheet.sql.Writer(content, m_Table, 255, m_ColumnNameConversion, m_StringColumnSQL, m_MaxStringLength, 1);
 	m_Types       = wrter.getContentTypes();
 	m_ColumnNames = wrter.getColumnNames();
 

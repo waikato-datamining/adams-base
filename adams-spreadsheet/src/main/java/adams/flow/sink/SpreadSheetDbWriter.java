@@ -26,7 +26,7 @@ import adams.data.spreadsheet.Cell.ContentType;
 import adams.data.spreadsheet.ColumnNameConversion;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
-import adams.data.spreadsheet.SqlUtils.Writer;
+import adams.data.spreadsheet.sql.Writer;
 import adams.db.SQL;
 import adams.flow.core.ActorUtils;
 

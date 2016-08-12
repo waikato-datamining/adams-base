@@ -21,12 +21,11 @@ package adams.flow.source;
 
 import adams.core.QuickInfoHelper;
 import adams.core.Shortening;
-import adams.core.Utils;
 import adams.data.spreadsheet.DataRow;
 import adams.data.spreadsheet.DataRowTypeHandler;
 import adams.data.spreadsheet.DenseDataRow;
 import adams.data.spreadsheet.SpreadSheet;
-import adams.data.spreadsheet.SqlUtils.Reader;
+import adams.data.spreadsheet.sql.Reader;
 import adams.db.SQL;
 import adams.db.SQLStatement;
 import adams.flow.core.Token;
