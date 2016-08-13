@@ -107,7 +107,7 @@ public abstract class AbstractInvestigatorTab
    * @param msg		the log message
    */
   public void logMessage(String msg) {
-    getOwner().logMessage(msg);
+    getOwner().logMessage("[" + getTitle() + "] " + msg);
   }
 
   /**
@@ -118,7 +118,7 @@ public abstract class AbstractInvestigatorTab
    * @param title	the title for the dialog
    */
   public void logError(String msg, Throwable t, String title) {
-    getOwner().logError(msg, t, title);
+    getOwner().logError("[" + getTitle() + "] " + msg, t, title);
   }
 
   /**
@@ -128,7 +128,7 @@ public abstract class AbstractInvestigatorTab
    * @param title	the title for the dialog
    */
   public void logError(String msg, String title) {
-    getOwner().logError(msg, title);
+    getOwner().logError("[" + getTitle() + "] " + msg, title);
   }
 
   /**
@@ -137,7 +137,7 @@ public abstract class AbstractInvestigatorTab
    * @param msg		the message to display
    */
   public void showStatus(String msg) {
-    getOwner().showStatus(msg);
+    getOwner().showStatus("[" + getTitle() + "] " + msg);
   }
 
   /**
