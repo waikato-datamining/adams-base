@@ -28,7 +28,8 @@ import weka.core.Instances;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public interface DataContainer {
+public interface DataContainer
+  extends Comparable<DataContainer> {
 
   /**
    * Returns the full version of the source of the data item.

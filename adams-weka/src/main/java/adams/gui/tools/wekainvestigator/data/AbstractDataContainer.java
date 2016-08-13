@@ -126,6 +126,30 @@ public abstract class AbstractDataContainer
   }
 
   /**
+   * Compares this container with the specified one.
+   *
+   * @param o		the container to compare with
+   * @return		less than, equal to or greater than 0 if the container's
+   * 			{@link #getSourceShort()} is smaller, equal to or greater
+   * 			then the provided one
+   */
+  public int compareTo(DataContainer o) {
+    return getSourceFull().compareTo(o.getSourceFull());
+  }
+
+  /**
+   * Checks whether the specified object is the same.
+   *
+   * @param obj		the object to check
+   * @return		true if the same, i.e., the same {@link #getSourceFull()}
+   * @see		#compareTo(DataContainer)
+   */
+  @Override
+  public boolean equals(Object obj) {
+    return (obj instanceof DataContainer) && (compareTo((DataContainer) obj) == 0);
+  }
+
+  /**
    * Returns a short description of the container.
    *
    * @return		the description
