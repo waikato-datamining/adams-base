@@ -21,14 +21,14 @@
 
 package adams.gui.tools.wekainvestigator.tab.preprocesstab;
 
+import adams.gui.core.BaseTable;
+import adams.gui.core.GUIHelper;
 import weka.core.Instances;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumnModel;
@@ -277,7 +277,7 @@ public class AttributeSelectionPanel extends JPanel {
   protected JButton m_Pattern = new JButton("Pattern");
 
   /** The table displaying attribute names and selection status */
-  protected JTable m_Table = new JTable();
+  protected BaseTable m_Table = new BaseTable();
 
   /** The table model containing attribute names and selection status */
   protected AttributeTableModel m_Model;
@@ -333,17 +333,18 @@ public class AttributeSelectionPanel extends JPanel {
     m_Pattern.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        String pattern = JOptionPane.showInputDialog(m_Pattern.getParent(),
-          "Enter a Perl regular expression", m_PatternRegEx);
+        String pattern = GUIHelper.showInputDialog(m_Pattern.getParent(),
+	  "Enter a Perl regular expression", m_PatternRegEx);
         if (pattern != null) {
           try {
             Pattern.compile(pattern);
             m_PatternRegEx = pattern;
             m_Model.pattern(pattern);
-          } catch (Exception ex) {
-            JOptionPane.showMessageDialog(m_Pattern.getParent(), "'" + pattern
-                + "' is not a valid Perl regular expression!\n" + "Error: " + ex,
-              "Error in Pattern...", JOptionPane.ERROR_MESSAGE);
+          }
+	  catch (Exception ex) {
+            GUIHelper.showErrorMessage(m_Pattern.getParent(), "'" + pattern
+		+ "' is not a valid Perl regular expression!", ex,
+	      "Error in Pattern...");
           }
         }
       }
@@ -442,6 +443,15 @@ public class AttributeSelectionPanel extends JPanel {
     if (m_Model != null) {
       m_Model.setSelectedAttributes(selected);
     }
+  }
+
+  /**
+   * Returns the table.
+   *
+   * @return		the table
+   */
+  public BaseTable getTable() {
+    return m_Table;
   }
 
   /**
