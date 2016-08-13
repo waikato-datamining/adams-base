@@ -338,6 +338,8 @@ public class AttributeSummaryPanel extends JPanel {
    * @param index the index of the attribute
    */
   protected void setHeader(int index) {
+    if (m_Instances == null)
+      return;
 
     Attribute att = m_Instances.attribute(index);
     m_AttributeNameLab.setText(att.name());
