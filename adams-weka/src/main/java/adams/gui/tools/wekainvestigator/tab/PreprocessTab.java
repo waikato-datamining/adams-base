@@ -233,12 +233,12 @@ public class PreprocessTab
     m_Worker = new Thread(() -> {
       for (int i = 0; i < indices.length; i++) {
 	DataContainer cont = getData().get(indices[i]);
-	logMessage("Starting filtering " + (i+1) + "/" + indices.length + " '" + cont.getSourceShort() + "' using: " + OptionUtils.getCommandLine(m_CurrentFilter));
+	logMessage("Starting filtering " + (i+1) + "/" + indices.length + " '" + cont.getSourceShort() + "' using " + OptionUtils.getCommandLine(m_CurrentFilter));
 	try {
 	  if ((!batch && (i == 0)) || batch)
 	    m_CurrentFilter.setInputFormat(cont.getData());
 	  Instances filtered = Filter.useFilter(cont.getData(), m_CurrentFilter);
-	  logMessage("Finished filtering " + (i+1) + "/" + indices.length + " '" + cont.getSourceShort() + "' using: " + OptionUtils.getCommandLine(m_CurrentFilter));
+	  logMessage("Finished filtering " + (i+1) + "/" + indices.length + " '" + cont.getSourceShort() + "' using " + OptionUtils.getCommandLine(m_CurrentFilter));
 	  if (replace) {
 	    cont.setData(filtered);
 	  }
@@ -268,7 +268,7 @@ public class PreprocessTab
       return;
 
     m_Worker.stop();
-    logMessage("Stopped filtering using: " + OptionUtils.getCommandLine(m_CurrentFilter));
+    logMessage("Stopped filtering using " + OptionUtils.getCommandLine(m_CurrentFilter));
     updateButtons();
   }
 
