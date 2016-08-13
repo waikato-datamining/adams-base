@@ -42,6 +42,7 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -73,6 +74,9 @@ public class PreprocessTab
 
   /** the checkbox for batch-filtering. */
   protected JCheckBox m_CheckBoxBatchFilter;
+
+  /** the whether to keep the relation name. */
+  protected JCheckBox m_CheckBoxKeepName;
 
   /** the button for starting the filtering. */
   protected JButton m_ButtonStart;
@@ -152,15 +156,21 @@ public class PreprocessTab
     m_CheckBoxReplace.setSelected(props.getBoolean("Preprocess.ReplaceDatasets", true));
     panel.add(m_CheckBoxReplace);
 
+    m_CheckBoxKeepName = new JCheckBox("Keep name");
+    m_CheckBoxKeepName.setSelected(props.getBoolean("Preprocess.KeepName", true));
+    panel.add(m_CheckBoxKeepName);
+
     m_CheckBoxBatchFilter = new JCheckBox("Batch filter");
     m_CheckBoxBatchFilter.setSelected(props.getBoolean("Preprocess.BatchFilter", false));
     panel.add(m_CheckBoxBatchFilter);
 
     m_ButtonStart = new JButton("Start");
+    m_ButtonStart.setEnabled(false);
     m_ButtonStart.addActionListener((ActionEvent e) -> startExecution());
     panel.add(m_ButtonStart);
 
     m_ButtonStop  = new JButton("Stop");
+    m_ButtonStop.setEnabled(false);
     m_ButtonStart.addActionListener((ActionEvent e) -> stopExecution());
     panel.add(m_ButtonStop);
 
@@ -222,6 +232,7 @@ public class PreprocessTab
     final int[] 	indices;
     final boolean	batch;
     final boolean 	replace;
+    final boolean	keep;
 
     if (m_Worker != null)
       return;
@@ -229,6 +240,7 @@ public class PreprocessTab
     m_CurrentFilter = (Filter) m_PanelGOE.getCurrent();
     batch           = m_CheckBoxBatchFilter.isSelected();
     replace         = m_CheckBoxReplace.isSelected();
+    keep            = m_CheckBoxKeepName.isSelected();
     indices         = getSelectedRows();
 
     m_Worker = new Thread(() -> {
@@ -236,9 +248,12 @@ public class PreprocessTab
 	DataContainer cont = getData().get(indices[i]);
 	logMessage("Starting filtering " + (i+1) + "/" + indices.length + " '" + cont.getSourceShort() + "' using " + OptionUtils.getCommandLine(m_CurrentFilter));
 	try {
+	  String oldName = cont.getData().relationName();
 	  if ((!batch && (i == 0)) || batch)
 	    m_CurrentFilter.setInputFormat(cont.getData());
 	  Instances filtered = Filter.useFilter(cont.getData(), m_CurrentFilter);
+	  if (keep)
+	    filtered.setRelationName(oldName);
 	  logMessage("Finished filtering " + (i+1) + "/" + indices.length + " '" + cont.getSourceShort() + "' using " + OptionUtils.getCommandLine(m_CurrentFilter));
 	  if (replace) {
 	    cont.setData(filtered);
@@ -321,6 +336,16 @@ public class PreprocessTab
   }
 
   /**
+   * Notifies all the tabs that the data has changed.
+   *
+   * @param e		the event to send
+   */
+  public void fireDataChange(WekaInvestigatorDataEvent e) {
+    super.fireDataChange(e);
+    displayData();
+  }
+
+  /**
    * Gets called when the user changes the selection.
    */
   protected void dataTableSelectionChanged() {
@@ -377,6 +402,10 @@ public class PreprocessTab
       filtered = Filter.useFilter(cont.getData(), remove);
       cont.setData(filtered);
       fireDataChange(new WekaInvestigatorDataEvent(getOwner(), WekaInvestigatorDataEvent.ROWS_MODIFIED, getSelectedRows()[0]));
+      SwingUtilities.invokeLater(() -> {
+	if (m_PanelAttSelection.getTable().getRowCount() > 0)
+	  m_PanelAttSelection.getTable().getSelectionModel().addSelectionInterval(0, 0);
+      });
     }
     catch (Exception e) {
       GUIHelper.showErrorMessage(this, "Failed to remove checked attributes!", e);

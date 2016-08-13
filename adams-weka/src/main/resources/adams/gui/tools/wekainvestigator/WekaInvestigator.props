@@ -28,6 +28,10 @@ Preprocess.Filter=weka.filters.AllFilter
 # (true|false)
 Preprocess.ReplaceDatasets=true
 
+# Whether to keep the relation name (filters usually update them)
+# (true|false)
+Preprocess.KeepName=true
+
 # Whether to perform batch-filtering when filtering multiple datasets at the same time
 # (true|false)
 Preprocess.BatchFilter=false
