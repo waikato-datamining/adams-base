@@ -213,7 +213,9 @@ public class TrainTestSplit
     train = (Instances) cont.getValue(WekaTrainTestSetContainer.VALUE_TRAIN);
     test  = (Instances) cont.getValue(WekaTrainTestSetContainer.VALUE_TEST);
     classifier = (Classifier) OptionUtils.shallowCopy(classifier);
+    getOwner().logMessage("Using " + m_TextPercentage.getText() + "% of '" + train.relationName() + "' to train " + OptionUtils.getCommandLine(classifier));
     classifier.buildClassifier(train);
+    getOwner().logMessage("Using remainder from '" + test.relationName() + "' to evaluate " + OptionUtils.getCommandLine(classifier));
     eval = new Evaluation(train);
     eval.evaluateModel(classifier, test);
 

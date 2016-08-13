@@ -23,11 +23,13 @@ package adams.gui.tools.wekainvestigator.tab.classifytab.evaluation;
 import adams.core.Properties;
 import adams.core.Utils;
 import adams.core.option.OptionUtils;
+import adams.flow.container.WekaTrainTestSetContainer;
 import adams.gui.core.AbstractNamedHistoryPanel;
 import adams.gui.core.ParameterPanel;
 import adams.gui.tools.wekainvestigator.InvestigatorPanel;
 import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
 import weka.classifiers.Classifier;
+import weka.classifiers.CrossValidationFoldGenerator;
 import weka.classifiers.Evaluation;
 import weka.core.Capabilities;
 import weka.core.Instances;
@@ -44,7 +46,6 @@ import javax.swing.event.DocumentListener;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.util.List;
-import java.util.Random;
 
 /**
  * Performs cross-validation.
@@ -177,26 +178,45 @@ public class CrossValidation
    */
   @Override
   public ResultItem evaluate(Classifier classifier, AbstractNamedHistoryPanel<ResultItem> history) throws Exception {
-    ResultItem 	result;
-    Evaluation 	eval;
-    String	msg;
-    Instances	data;
-    boolean	finalModel;
-    Classifier	model;
+    Evaluation 				eval;
+    String				msg;
+    Instances				data;
+    boolean				finalModel;
+    Classifier				cls;
+    Classifier				model;
+    CrossValidationFoldGenerator	generator;
+    WekaTrainTestSetContainer 		cont;
+    int					folds;
+    int					current;
+    Instances				train;
+    Instances				test;
 
     if ((msg = canEvaluate(classifier)) != null)
       throw new IllegalArgumentException("Cannot evaluate classifier!\n" + msg);
 
     data       = getOwner().getData().get(m_ComboBoxDatasets.getSelectedIndex()).getData();
-    finalModel = m_CheckBoxFinalModel.isSelected() ;
-    eval       = new Evaluation(data);
-    eval.crossValidateModel(
-      classifier, data, ((Number) m_SpinnerFolds.getValue()).intValue(),
-      new Random(Integer.parseInt(m_TextSeed.getText())));
+    finalModel = m_CheckBoxFinalModel.isSelected();
+    folds      = Integer.parseInt(m_TextSeed.getText());
+    generator  = new CrossValidationFoldGenerator(
+      data, ((Number) m_SpinnerFolds.getValue()).intValue(), folds, true);
+    eval    = new Evaluation(data);
+    current = 0;
+    while (generator.hasNext()) {
+      current++;
+      getOwner().logMessage("Fold " + current + "/" + folds + ": '" + data.relationName() + "' using " + OptionUtils.getCommandLine(classifier));
+      cont  = generator.next();
+      train = (Instances) cont.getValue(WekaTrainTestSetContainer.VALUE_TRAIN);
+      test  = (Instances) cont.getValue(WekaTrainTestSetContainer.VALUE_TEST);
+      cls   = (Classifier) OptionUtils.shallowCopy(classifier);
+      cls.buildClassifier(train);
+      eval.setPriors(train);
+      eval.evaluateModel(cls, test);
+    }
 
     // final model?
     model = null;
     if (finalModel) {
+      getOwner().logMessage("Building final model on '" + data.relationName() + "' using " + OptionUtils.getCommandLine(classifier));
       model = (Classifier) OptionUtils.shallowCopy(classifier);
       model.buildClassifier(data);
     }

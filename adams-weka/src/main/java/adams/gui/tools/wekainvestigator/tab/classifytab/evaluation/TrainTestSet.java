@@ -151,7 +151,9 @@ public class TrainTestSet
     train = getOwner().getData().get(m_ComboBoxTrain.getSelectedIndex()).getData();
     test  = getOwner().getData().get(m_ComboBoxTest.getSelectedIndex()).getData();
     classifier = (Classifier) OptionUtils.shallowCopy(classifier);
+    getOwner().logMessage("Using '" + train.relationName() + "' to train " + OptionUtils.getCommandLine(classifier));
     classifier.buildClassifier(train);
+    getOwner().logMessage("Using '" + test.relationName() + "' to evaluate " + OptionUtils.getCommandLine(classifier));
     eval = new Evaluation(train);
     eval.evaluateModel(classifier, test);
 

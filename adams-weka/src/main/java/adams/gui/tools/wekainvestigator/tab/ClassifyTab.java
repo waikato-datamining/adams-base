@@ -29,6 +29,7 @@ import adams.gui.core.AbstractNamedHistoryPanel;
 import adams.gui.core.BaseMenu;
 import adams.gui.core.BasePopupMenu;
 import adams.gui.core.BaseSplitPane;
+import adams.gui.core.BaseStatusBar;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.ExtensionFileFilter;
 import adams.gui.core.GUIHelper;
@@ -344,6 +345,9 @@ public class ClassifyTab
   /** the history. */
   protected HistoryPanel m_History;
 
+  /** the status bar. */
+  protected BaseStatusBar m_StatusBar;
+
   /** whether the evaluation is currently running. */
   protected Thread m_Worker;
 
@@ -504,6 +508,10 @@ public class ClassifyTab
     // history
     m_History = new HistoryPanel(this);
     m_PanelLeft.add(m_History, BorderLayout.CENTER);
+
+    // status bar
+    m_StatusBar = new BaseStatusBar();
+    add(m_StatusBar, BorderLayout.SOUTH);
   }
 
   /**
@@ -624,6 +632,49 @@ public class ClassifyTab
     cls = (Classifier) m_PanelGOE.getCurrent();
     m_ButtonStart.setEnabled((m_Worker == null) && (m_CurrentEvaluation != null) && (m_CurrentEvaluation.canEvaluate(cls) == null));
     m_ButtonStop.setEnabled(m_Worker != null);
+  }
+
+  /**
+   * Logs the message.
+   *
+   * @param msg		the log message
+   */
+  public void logMessage(String msg) {
+    super.logMessage(msg);
+    m_StatusBar.showStatus(msg);
+  }
+
+  /**
+   * Logs the exception and also displays an error dialog.
+   *
+   * @param msg		the log message
+   * @param t		the exception
+   * @param title	the title for the dialog
+   */
+  public void logError(String msg, Throwable t, String title) {
+    super.logError(msg, t, title);
+    m_StatusBar.showStatus(msg);
+  }
+
+  /**
+   * Logs the error message and also displays an error dialog.
+   *
+   * @param msg		the error message
+   * @param title	the title for the dialog
+   */
+  public void logError(String msg, String title) {
+    super.logError(msg, title);
+    m_StatusBar.showStatus(msg);
+  }
+
+  /**
+   * Displays a message.
+   *
+   * @param msg		the message to display
+   */
+  public void showStatus(String msg) {
+    super.showStatus(msg);
+    m_StatusBar.showStatus(msg);
   }
 
   /**
