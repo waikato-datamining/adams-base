@@ -32,7 +32,7 @@ import java.util.List;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class DataTableModel
+public class DataTableModel  // TODO MoveableTableModel
   extends AbstractBaseTableModel {
 
   private static final long serialVersionUID = 8586181476263855804L;

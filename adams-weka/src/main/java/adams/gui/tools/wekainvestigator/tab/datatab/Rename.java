@@ -21,6 +21,7 @@
 package adams.gui.tools.wekainvestigator.tab.datatab;
 
 import adams.gui.core.GUIHelper;
+import adams.gui.event.WekaInvestigatorDataEvent;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
 
 import java.awt.event.ActionEvent;
@@ -64,7 +65,7 @@ public class Rename
     }
     cont.getData().setRelationName(newName);
     cont.setModified(true);
-    fireDataChange();
+    fireDataChange(new WekaInvestigatorDataEvent(getOwner().getOwner(), WekaInvestigatorDataEvent.ROWS_MODIFIED, getSelectedRows()[0]));
   }
 
   /**

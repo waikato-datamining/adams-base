@@ -22,6 +22,7 @@ package adams.gui.tools.wekainvestigator.source;
 
 import adams.core.StatusMessageHandler;
 import adams.gui.action.AbstractBaseAction;
+import adams.gui.event.WekaInvestigatorDataEvent;
 import adams.gui.tools.wekainvestigator.InvestigatorPanel;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
 
@@ -84,7 +85,9 @@ public abstract class AbstractSource
    * Notifies all the tabs that the data has changed.
    */
   public void fireDataChange() {
-    getOwner().fireDataChange();
+    getOwner().fireDataChange(
+      new WekaInvestigatorDataEvent(
+        getOwner(), WekaInvestigatorDataEvent.ROWS_MODIFIED, getData().indexOf(this)));
   }
 
   /**

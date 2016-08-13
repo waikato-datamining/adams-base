@@ -23,6 +23,7 @@ package adams.gui.tools.wekainvestigator.tab.datatab;
 import adams.flow.core.Actor;
 import adams.flow.core.Token;
 import adams.flow.transformer.WekaInstancesMerge;
+import adams.gui.event.WekaInvestigatorDataEvent;
 import adams.gui.goe.GenericObjectEditorDialog;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
 import adams.gui.tools.wekainvestigator.data.MemoryContainer;
@@ -110,7 +111,7 @@ public class Merge
 	token = merge.output();
 	cont = new MemoryContainer((Instances) token.getPayload());
 	getData().add(cont);
-	fireDataChange();
+	fireDataChange(new WekaInvestigatorDataEvent(getOwner().getOwner(), WekaInvestigatorDataEvent.ROWS_ADDED, getData().size() - 1));
       }
     }
     merge.destroy();

@@ -32,6 +32,13 @@ public interface DataContainer
   extends Comparable<DataContainer> {
 
   /**
+   * Returns the container ID.
+   *
+   * @return		the ID
+   */
+  public int getID();
+
+  /**
    * Returns the full version of the source of the data item.
    *
    * @return		the source

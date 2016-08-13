@@ -22,6 +22,7 @@ package adams.gui.tools.wekainvestigator.tab.datatab;
 
 import adams.core.io.PlaceholderFile;
 import adams.gui.chooser.WekaFileChooser;
+import adams.gui.event.WekaInvestigatorDataEvent;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
 import adams.gui.tools.wekainvestigator.data.FileContainer;
 import weka.core.converters.AbstractFileSaver;
@@ -95,13 +96,13 @@ public class Export
 	logMessage("Exported: " + m_FileChooser.getSelectedFile());
 	cont = new FileContainer(m_FileChooser.getReaderForFile(m_FileChooser.getSelectedFile()), m_FileChooser.getSelectedFile());
 	getData().set(rows[i], cont);
+        fireDataChange(new WekaInvestigatorDataEvent(getOwner().getOwner(), WekaInvestigatorDataEvent.ROWS_MODIFIED, rows[i]));
       }
       catch (Exception ex) {
 	logError("Failed to export: " + m_FileChooser.getSelectedFile() + "\n", ex, "Export");
 	break;
       }
     }
-    fireDataChange();
   }
 
   /**

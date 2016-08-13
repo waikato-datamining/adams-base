@@ -26,6 +26,7 @@ import adams.gui.core.BaseTextAreaWithButtons;
 import adams.gui.core.ExtensionFileFilter;
 import adams.gui.core.Fonts;
 import adams.gui.core.GUIHelper;
+import adams.gui.event.WekaInvestigatorDataEvent;
 import adams.gui.tools.wekainvestigator.InvestigatorPanel;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 import com.googlecode.jfilechooserbookmarks.gui.BaseScrollPane;
@@ -195,8 +196,9 @@ public class LogTab
 
   /**
    * Notifies the tab that the data changed.
+   *
+   * @param e		the event
    */
-  @Override
-  public void dataChanged() {
+  public void dataChanged(WekaInvestigatorDataEvent e) {
   }
 }

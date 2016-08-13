@@ -33,6 +33,7 @@ import adams.gui.core.BaseStatusBar;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.ExtensionFileFilter;
 import adams.gui.core.GUIHelper;
+import adams.gui.event.WekaInvestigatorDataEvent;
 import adams.gui.goe.GenericArrayEditorDialog;
 import adams.gui.goe.GenericObjectEditorDialog;
 import adams.gui.goe.WekaGenericObjectEditorPanel;
@@ -545,9 +546,10 @@ public class ClassifyTab
 
   /**
    * Notifies the tab that the data changed.
+   *
+   * @param e		the event
    */
-  @Override
-  public void dataChanged() {
+  public void dataChanged(WekaInvestigatorDataEvent e) {
     if (m_CurrentEvaluation != null)
       m_CurrentEvaluation.update();
     updateButtons();

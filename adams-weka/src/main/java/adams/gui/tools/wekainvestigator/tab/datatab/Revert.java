@@ -20,6 +20,7 @@
 
 package adams.gui.tools.wekainvestigator.tab.datatab;
 
+import adams.gui.event.WekaInvestigatorDataEvent;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
 
 import java.awt.event.ActionEvent;
@@ -51,25 +52,19 @@ public class Revert
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    boolean	modified;
-
-    modified = false;
     for (DataContainer cont: getSelectedData()) {
       if (cont.isModified() && cont.canReload()) {
         logMessage("Reverting dataset: " + cont.getData().relationName() + " [" + cont.getSourceFull() + "]");
         if (cont.reload()) {
 	  getOwner().getOwner().updateClassAttribute(cont.getData());
-	  modified = true;
 	  logMessage("Successfully reverted!");
+          fireDataChange(new WekaInvestigatorDataEvent(getOwner().getOwner(), WekaInvestigatorDataEvent.ROWS_MODIFIED, getData().indexOf(cont)));
 	}
         else {
 	  logMessage("Failed to revert!");
 	}
       }
     }
-
-    if (modified)
-      fireDataChange();
   }
 
   /**

@@ -23,6 +23,7 @@ package adams.gui.tools.wekainvestigator.tab;
 import adams.core.Properties;
 import adams.core.option.OptionUtils;
 import adams.gui.core.GUIHelper;
+import adams.gui.event.WekaInvestigatorDataEvent;
 import adams.gui.goe.WekaGenericObjectEditorPanel;
 import adams.gui.tools.wekainvestigator.InvestigatorPanel;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
@@ -241,12 +242,13 @@ public class PreprocessTab
 	  logMessage("Finished filtering " + (i+1) + "/" + indices.length + " '" + cont.getSourceShort() + "' using " + OptionUtils.getCommandLine(m_CurrentFilter));
 	  if (replace) {
 	    cont.setData(filtered);
+	    fireDataChange(new WekaInvestigatorDataEvent(getOwner(), WekaInvestigatorDataEvent.ROWS_MODIFIED, indices[i]));
 	  }
 	  else {
 	    cont = new MemoryContainer(filtered);
 	    getData().add(cont);
+	    fireDataChange(new WekaInvestigatorDataEvent(getOwner(), WekaInvestigatorDataEvent.ROWS_ADDED, getData().size() - 1));
 	  }
-	  fireDataChange();
 	}
 	catch (Exception e) {
 	  logError("Failed to filter data" + (i+1) + "/" + indices.length, e, "Filter");
@@ -374,7 +376,7 @@ public class PreprocessTab
       remove.setInputFormat(cont.getData());
       filtered = Filter.useFilter(cont.getData(), remove);
       cont.setData(filtered);
-      fireDataChange();
+      fireDataChange(new WekaInvestigatorDataEvent(getOwner(), WekaInvestigatorDataEvent.ROWS_MODIFIED, getSelectedRows()[0]));
     }
     catch (Exception e) {
       GUIHelper.showErrorMessage(this, "Failed to remove checked attributes!", e);

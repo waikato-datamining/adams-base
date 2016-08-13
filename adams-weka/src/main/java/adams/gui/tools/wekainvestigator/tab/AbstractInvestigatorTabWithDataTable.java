@@ -20,16 +20,16 @@
 
 package adams.gui.tools.wekainvestigator.tab;
 
+import adams.core.Range;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.BaseTable;
 import adams.gui.core.BaseTableWithButtons;
+import adams.gui.event.WekaInvestigatorDataEvent;
 import adams.gui.tools.wekainvestigator.InvestigatorPanel;
 import com.googlecode.jfilechooserbookmarks.gui.BaseScrollPane;
-import gnu.trove.list.array.TIntArrayList;
 
 import javax.swing.JPanel;
 import javax.swing.ListSelectionModel;
-import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -64,9 +64,6 @@ public abstract class AbstractInvestigatorTabWithDataTable
   /** the default data table height. */
   protected int m_DefaultDataTableHeight;
 
-  /** the last number of datasets. */
-  protected int m_LastNumDatasets;
-
   /**
    * Initializes the members.
    */
@@ -75,7 +72,6 @@ public abstract class AbstractInvestigatorTabWithDataTable
     super.initialize();
 
     m_DefaultDataTableHeight = InvestigatorPanel.getProperties().getInteger("DefaultDataTableHeight", 150);
-    m_LastNumDatasets        = 0;
   }
 
   /**
@@ -146,32 +142,34 @@ public abstract class AbstractInvestigatorTabWithDataTable
 
   /**
    * Notifies the tab that the data changed.
+   *
+   * @param e		the event
    */
-  @Override
-  public void dataChanged() {
-    final TIntArrayList	widths;
-    int			i;
+  public void dataChanged(WekaInvestigatorDataEvent e) {
+    Range 		range;
+    int[][]		segs;
 
-    widths = new TIntArrayList();
-    for (i = 0; i < m_Table.getColumnModel().getColumnCount(); i++)
-      widths.add(m_Table.getColumnModel().getColumn(i).getWidth());
-    m_Model = new DataTableModel(getData(), hasReadOnlyTable());
-    m_Table.setModel(m_Model);
-    if (m_LastNumDatasets != getData().size()) {
-      m_Table.setOptimalColumnWidth();
+    segs = new int[0][];
+    if (e.getRows() != null) {
+      range = new Range();
+      range.setIndices(e.getRows());
+      segs = range.getIntSegments();
     }
-    else {
-      SwingUtilities.invokeLater(() -> {
-	for (int n = 0; n < m_Table.getColumnModel().getColumnCount(); n++)
-	  m_Table.getColumnModel().getColumn(n).setPreferredWidth(widths.get(n));
-	m_Table.getComponent().doLayout();
-	m_Table.getComponent().getTableHeader().repaint();
-      });
-    }
-    m_LastNumDatasets = getData().size();
-    if (m_Table.getSelectedRow() == -1) {
-      if (m_Model.getRowCount() > 0)
-	m_Table.getComponent().setRowSelectionInterval(0, 0);
+    switch (e.getType()) {
+      case WekaInvestigatorDataEvent.ROWS_DELETED:
+	for (int[] seg: segs)
+	  m_Model.fireTableRowsDeleted(seg[0], seg[1]);
+	m_Table.repaint();
+        break;
+      case WekaInvestigatorDataEvent.ROWS_MODIFIED:
+	for (int[] seg: segs)
+	  m_Model.fireTableRowsUpdated(seg[0], seg[1]);
+	m_Table.repaint();
+        break;
+      default:
+	m_Model = new DataTableModel(getOwner().getData(), hasReadOnlyTable());
+	m_Table.setModel(m_Model);
+	m_Table.setOptimalColumnWidth();
     }
   }
 
@@ -197,7 +195,7 @@ public abstract class AbstractInvestigatorTabWithDataTable
 
     if (rows == null) {
       getData().clear();
-      fireDataChange();
+      fireDataChange(new WekaInvestigatorDataEvent(getOwner()));
     }
     else {
       Arrays.sort(rows);
@@ -205,7 +203,7 @@ public abstract class AbstractInvestigatorTabWithDataTable
 	logMessage("Removing: " + getData().get(i).getSourceFull());
 	getData().remove(rows[i]);
       }
-      fireDataChange();
+      fireDataChange(new WekaInvestigatorDataEvent(getOwner(), WekaInvestigatorDataEvent.ROWS_DELETED, rows));
     }
   }
 }

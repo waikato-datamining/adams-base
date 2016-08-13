@@ -35,6 +35,12 @@ public abstract class AbstractDataContainer
 
   private static final long serialVersionUID = 6267905940957451551L;
 
+  /** the ID counter. */
+  protected static int m_IDCounter;
+
+  /** the ID of the container. */
+  protected int m_ID;
+
   /** the underlying data. */
   protected Instances m_Data;
 
@@ -45,6 +51,7 @@ public abstract class AbstractDataContainer
    * Initializes the container with no data.
    */
   public AbstractDataContainer() {
+    m_ID       = nextID();
     m_Data     = null;
     m_Modified = false;
   }
@@ -78,6 +85,15 @@ public abstract class AbstractDataContainer
   @Override
   public Instances getData() {
     return m_Data;
+  }
+
+  /**
+   * Returns the container ID.
+   *
+   * @return		the ID
+   */
+  public int getID() {
+    return m_ID;
   }
 
   /**
@@ -142,11 +158,11 @@ public abstract class AbstractDataContainer
    *
    * @param obj		the object to check
    * @return		true if the same, i.e., the same {@link #getSourceFull()}
-   * @see		#compareTo(DataContainer)
+   * @see		#getID()
    */
   @Override
   public boolean equals(Object obj) {
-    return (obj instanceof DataContainer) && (compareTo((DataContainer) obj) == 0);
+    return (obj instanceof DataContainer) && (getID() == ((DataContainer) obj).getID());
   }
 
   /**
@@ -157,5 +173,14 @@ public abstract class AbstractDataContainer
   @Override
   public String toString() {
     return getData().relationName() + " [" + getSourceFull() + "]";
+  }
+
+  /**
+   * Returns the next container ID.
+   *
+   * @return		the next ID
+   */
+  protected static synchronized int nextID() {
+    return m_IDCounter++;
   }
 }

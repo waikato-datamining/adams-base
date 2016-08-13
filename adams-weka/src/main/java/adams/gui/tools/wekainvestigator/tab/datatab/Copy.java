@@ -21,6 +21,7 @@
 package adams.gui.tools.wekainvestigator.tab.datatab;
 
 import adams.gui.core.GUIHelper;
+import adams.gui.event.WekaInvestigatorDataEvent;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
 import adams.gui.tools.wekainvestigator.data.MemoryContainer;
 import weka.core.Instances;
@@ -68,7 +69,7 @@ public class Copy
     newCont = new MemoryContainer(new Instances(cont.getData()));
     newCont.getData().setRelationName(newName);
     getData().add(newCont);
-    fireDataChange();
+    fireDataChange(new WekaInvestigatorDataEvent(getOwner().getOwner(), WekaInvestigatorDataEvent.ROWS_ADDED, getData().size() - 1));
   }
 
   /**

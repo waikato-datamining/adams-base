@@ -22,6 +22,7 @@ package adams.gui.tools.wekainvestigator.tab.datatab;
 
 import adams.flow.core.Token;
 import adams.flow.transformer.WekaInstancesAppend;
+import adams.gui.event.WekaInvestigatorDataEvent;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
 import adams.gui.tools.wekainvestigator.data.MemoryContainer;
 import weka.core.Instances;
@@ -87,7 +88,7 @@ public class Append
 	token = append.output();
 	cont = new MemoryContainer((Instances) token.getPayload());
 	getData().add(cont);
-	fireDataChange();
+	fireDataChange(new WekaInvestigatorDataEvent(getOwner().getOwner(), WekaInvestigatorDataEvent.ROWS_ADDED, getData().size() - 1));
       }
     }
     append.destroy();

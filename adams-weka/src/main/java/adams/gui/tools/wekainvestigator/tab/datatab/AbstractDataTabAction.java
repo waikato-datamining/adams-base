@@ -24,6 +24,7 @@ import adams.core.ClassLister;
 import adams.core.StatusMessageHandler;
 import adams.gui.action.AbstractBaseAction;
 import adams.gui.core.BaseTableWithButtons;
+import adams.gui.event.WekaInvestigatorDataEvent;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
 import adams.gui.tools.wekainvestigator.tab.DataTab;
 
@@ -114,9 +115,11 @@ public abstract class AbstractDataTabAction
 
   /**
    * Notifies all the tabs that the data has changed.
+   *
+   * @param e		the event to send
    */
-  public void fireDataChange() {
-    getOwner().fireDataChange();
+  public void fireDataChange(WekaInvestigatorDataEvent e) {
+    getOwner().fireDataChange(e);
   }
 
   /**

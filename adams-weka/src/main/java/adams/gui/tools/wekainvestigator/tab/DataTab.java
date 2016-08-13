@@ -26,6 +26,7 @@ import adams.gui.core.GUIHelper;
 import adams.gui.core.SearchPanel;
 import adams.gui.core.SearchPanel.LayoutType;
 import adams.gui.event.SearchEvent;
+import adams.gui.event.WekaInvestigatorDataEvent;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
 import adams.gui.tools.wekainvestigator.tab.datatab.AbstractDataTabAction;
 import adams.gui.tools.wekainvestigator.tab.datatab.Export;
@@ -178,6 +179,17 @@ public class DataTab
    */
   protected int getDataTableListSelectionMode() {
     return ListSelectionModel.MULTIPLE_INTERVAL_SELECTION;
+  }
+
+  /**
+   * Notifies the tab that the data changed.
+   *
+   * @param e		the event
+   */
+  public void dataChanged(WekaInvestigatorDataEvent e) {
+    super.dataChanged(e);
+    if (m_SplitPane.isBottomComponentHidden() && (m_Table.getRowCount() > 0))
+      displayData();
   }
 
   /**

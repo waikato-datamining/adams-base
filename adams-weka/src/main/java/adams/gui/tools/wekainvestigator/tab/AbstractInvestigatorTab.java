@@ -23,6 +23,8 @@ package adams.gui.tools.wekainvestigator.tab;
 import adams.core.CleanUpHandler;
 import adams.core.StatusMessageHandler;
 import adams.gui.core.BasePanel;
+import adams.gui.event.WekaInvestigatorDataEvent;
+import adams.gui.event.WekaInvestigatorDataListener;
 import adams.gui.tools.wekainvestigator.InvestigatorPanel;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
 
@@ -36,7 +38,7 @@ import java.util.List;
  */
 public abstract class AbstractInvestigatorTab
   extends BasePanel
-  implements StatusMessageHandler, CleanUpHandler {
+  implements WekaInvestigatorDataListener, StatusMessageHandler, CleanUpHandler {
 
   private static final long serialVersionUID = 1860821657853747908L;
 
@@ -50,7 +52,7 @@ public abstract class AbstractInvestigatorTab
    */
   public void setOwner(InvestigatorPanel value) {
     m_Owner = value;
-    dataChanged();
+    dataChanged(new WekaInvestigatorDataEvent(m_Owner));
   }
 
   /**
@@ -91,14 +93,18 @@ public abstract class AbstractInvestigatorTab
 
   /**
    * Notifies the tab that the data changed.
+   *
+   * @param e		the event
    */
-  public abstract void dataChanged();
+  public abstract void dataChanged(WekaInvestigatorDataEvent e);
 
   /**
    * Notifies all the tabs that the data has changed.
+   *
+   * @param e		the event to send
    */
-  public void fireDataChange() {
-    getOwner().fireDataChange();
+  public void fireDataChange(WekaInvestigatorDataEvent e) {
+    getOwner().fireDataChange(e);
   }
 
   /**
