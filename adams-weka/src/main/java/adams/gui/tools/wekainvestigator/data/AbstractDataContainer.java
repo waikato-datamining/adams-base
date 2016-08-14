@@ -150,7 +150,13 @@ public abstract class AbstractDataContainer
    * 			then the provided one
    */
   public int compareTo(DataContainer o) {
-    return getSourceFull().compareTo(o.getSourceFull());
+    int		result;
+
+    result = getSourceFull().compareTo(o.getSourceFull());
+    if (result == 0)
+      result = new Integer(getID()).compareTo(o.getID());
+
+    return result;
   }
 
   /**
