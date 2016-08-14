@@ -285,6 +285,7 @@ public class BaseTable
     int[][]	segs;
 
     range = new Range();
+    range.setMax(getRowCount());
     range.setIndices(rows);
     segs = range.getIntSegments();
     getSelectionModel().clearSelection();
