@@ -15,13 +15,12 @@
 
 /*
  * BaseTableWithButtons.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
 
-import java.awt.Point;
-import java.awt.event.MouseEvent;
+import adams.gui.event.RemoveItemsListener;
 
 import javax.swing.JList;
 import javax.swing.ListSelectionModel;
@@ -31,8 +30,8 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
-
-import adams.gui.event.RemoveItemsListener;
+import java.awt.Point;
+import java.awt.event.MouseEvent;
 
 /**
  * Graphical component that consists of a BaseTable with buttons on the
@@ -324,7 +323,6 @@ public class BaseTableWithButtons
    * @return  the index of the row that <code>point</code> lies in,
    *          or -1 if the result is not in the range
    *          [0, <code>getRowCount()</code>-1]
-   * @see     #getRowModel()
    */
   public int rowAtPoint(Point point) {
     return m_Component.rowAtPoint(point);
@@ -356,6 +354,24 @@ public class BaseTableWithButtons
    */
   public int[] getSelectedRows() {
     return m_Component.getSelectedRows();
+  }
+
+  /**
+   * Sets the selected row (clears all others).
+   *
+   * @param row		the row to select
+   */
+  public void setSelectedRow(int row) {
+    m_Component.setSelectedRow(row);
+  }
+
+  /**
+   * Sets the selected rows (clears all others).
+   *
+   * @param rows	the rows to select
+   */
+  public void setSelectedRows(int[] rows) {
+    m_Component.setSelectedRows(rows);
   }
 
   /**
@@ -444,7 +460,6 @@ public class BaseTableWithButtons
    *
    * @return  the number of columns in the table
    * @see #getRowCount
-   * @see #removeColumn
    */
   public int getColumnCount() {
     return m_Component.getColumnCount();

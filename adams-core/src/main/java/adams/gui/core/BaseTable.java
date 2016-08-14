@@ -267,6 +267,32 @@ public class BaseTable
   }
 
   /**
+   * Sets the selected row (clears all others).
+   *
+   * @param row		the row to select
+   */
+  public void setSelectedRow(int row) {
+    setSelectedRows(new int[]{row});
+  }
+
+  /**
+   * Sets the selected rows (clears all others).
+   *
+   * @param rows	the rows to select
+   */
+  public void setSelectedRows(int[] rows) {
+    Range	range;
+    int[][]	segs;
+
+    range = new Range();
+    range.setIndices(rows);
+    segs = range.getIntSegments();
+    getSelectionModel().clearSelection();
+    for (int[] seg: segs)
+      getSelectionModel().addSelectionInterval(seg[0], seg[1]);
+  }
+
+  /**
    * Sets the optimal column width for all columns. AutoResize must be set
    * to BaseTable.AUTO_RESIZE_OFF.
    */
