@@ -404,7 +404,7 @@ public class PreprocessTab
       fireDataChange(new WekaInvestigatorDataEvent(getOwner(), WekaInvestigatorDataEvent.ROWS_MODIFIED, getSelectedRows()[0]));
       SwingUtilities.invokeLater(() -> {
 	if (m_PanelAttSelection.getTable().getRowCount() > 0)
-	  m_PanelAttSelection.getTable().getSelectionModel().addSelectionInterval(0, 0);
+	  m_PanelAttSelection.getTable().setSelectedRow(0);
       });
     }
     catch (Exception e) {

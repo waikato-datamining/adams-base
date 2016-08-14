@@ -20,10 +20,11 @@
 
 package adams.gui.tools.wekainvestigator.tab;
 
-import adams.gui.core.AbstractBaseTableModel;
+import adams.gui.core.AbstractMoveableTableModel;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
 import weka.core.Attribute;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -32,8 +33,8 @@ import java.util.List;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class DataTableModel  // TODO MoveableTableModel
-  extends AbstractBaseTableModel {
+public class DataTableModel
+  extends AbstractMoveableTableModel {
 
   private static final long serialVersionUID = 8586181476263855804L;
 
@@ -233,5 +234,16 @@ public class DataTableModel  // TODO MoveableTableModel
    */
   public List<DataContainer> getData() {
     return m_Data;
+  }
+
+  /**
+   * Swaps the two rows.
+   *
+   * @param firstIndex	the index of the first row
+   * @param secondIndex	the index of the second row
+   */
+  @Override
+  protected void swap(int firstIndex, int secondIndex) {
+    Collections.swap(m_Data, firstIndex, secondIndex);
   }
 }

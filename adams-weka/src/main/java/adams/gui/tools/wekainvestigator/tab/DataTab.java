@@ -27,7 +27,6 @@ import adams.gui.core.SearchPanel;
 import adams.gui.core.SearchPanel.LayoutType;
 import adams.gui.event.SearchEvent;
 import adams.gui.event.WekaInvestigatorDataEvent;
-import adams.gui.tools.wekainvestigator.data.DataContainer;
 import adams.gui.tools.wekainvestigator.tab.datatab.AbstractDataTabAction;
 import adams.gui.tools.wekainvestigator.tab.datatab.Export;
 import adams.gui.tools.wekainvestigator.viewer.InstancesTable;
@@ -125,10 +124,16 @@ public class DataTab
     panel = new JPanel(new GridLayout(1, 2));
     m_ButtonUp = new JideButton(GUIHelper.getIcon("arrow_up.gif"));
     m_ButtonUp.setButtonStyle(JideButton.TOOLBOX_STYLE);
-    m_ButtonUp.addActionListener((ActionEvent e) -> moveUp());
+    m_ButtonUp.addActionListener((ActionEvent e) -> {
+      final int indices[] = m_Model.moveUp(getSelectedRows());
+      SwingUtilities.invokeLater(() -> m_Table.setSelectedRows(indices));
+    });
     m_ButtonDown = new JideButton(GUIHelper.getIcon("arrow_down.gif"));
     m_ButtonDown.setButtonStyle(JideButton.TOOLBOX_STYLE);
-    m_ButtonDown.addActionListener((ActionEvent e) -> moveDown());
+    m_ButtonDown.addActionListener((ActionEvent e) -> {
+      final int[] indices = m_Model.moveDown(getSelectedRows());
+      SwingUtilities.invokeLater(() -> m_Table.setSelectedRows(indices));
+    });
     panel.add(m_ButtonUp);
     panel.add(m_ButtonDown);
     m_Table.addToButtonsPanel(panel);
@@ -207,58 +212,8 @@ public class DataTab
     m_ButtonRemove.setEnabled(m_Table.getSelectedRowCount() > 0);
     for (AbstractDataTabAction action: m_Actions)
       action.update();
-    m_ButtonUp.setEnabled(canMoveUp());
-    m_ButtonDown.setEnabled(canMoveDown());
-  }
-
-  /**
-   * Checks whether we can move the data item up.
-   */
-  protected boolean canMoveUp() {
-    return (m_Table.getSelectedRowCount() == 1)
-      && (m_Table.getSelectedRow() > 0);
-  }
-
-  /**
-   * Moves the data item up.
-   */
-  protected void moveUp() {
-    DataContainer	cont;
-    int			index;
-
-    index = m_Table.getSelectedRow();
-    cont = getData().remove(index);
-    getData().add(index - 1, cont);
-
-    SwingUtilities.invokeLater(() -> {
-      m_Table.getSelectionModel().clearSelection();
-      m_Table.getSelectionModel().addSelectionInterval(index - 1, index - 1);
-    });
-  }
-
-  /**
-   * Checks whether we can move the data item down.
-   */
-  protected boolean canMoveDown() {
-    return (m_Table.getSelectedRowCount() == 1)
-      && (m_Table.getSelectedRow() < m_Table.getRowCount() - 1);
-  }
-
-  /**
-   * Moves the data item down.
-   */
-  protected void moveDown() {
-    DataContainer	cont;
-    int			index;
-
-    index = m_Table.getSelectedRow();
-    cont = getData().remove(index);
-    getData().add(index + 1, cont);
-
-    SwingUtilities.invokeLater(() -> {
-      m_Table.getSelectionModel().clearSelection();
-      m_Table.getSelectionModel().addSelectionInterval(index + 1, index + 1);
-    });
+    m_ButtonUp.setEnabled(m_Model.canMoveUp(getSelectedRows()));
+    m_ButtonDown.setEnabled(m_Model.canMoveDown(getSelectedRows()));
   }
 
   /**
