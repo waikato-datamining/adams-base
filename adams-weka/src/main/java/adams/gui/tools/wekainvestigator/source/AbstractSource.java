@@ -87,7 +87,7 @@ public abstract class AbstractSource
   public void fireDataChange() {
     getOwner().fireDataChange(
       new WekaInvestigatorDataEvent(
-        getOwner(), WekaInvestigatorDataEvent.ROWS_MODIFIED, getData().indexOf(this)));
+        getOwner(), WekaInvestigatorDataEvent.ROWS_ADDED, getData().indexOf(this)));
   }
 
   /**
