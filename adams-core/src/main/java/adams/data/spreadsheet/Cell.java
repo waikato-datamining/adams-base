@@ -40,27 +40,76 @@ public interface Cell
   /** the type of content. */
   public enum ContentType {
     /** missing value. */
-    MISSING,
+    MISSING("M"),
     /** string. */
-    STRING,
+    STRING("S"),
     /** boolean */
-    BOOLEAN,
+    BOOLEAN("B"),
     /** integer. */
-    LONG,
-    /** integer. */
-    DOUBLE,
+    LONG("I"),
+    /** float. */
+    DOUBLE("F"),
     /** date. */
-    DATE,
+    DATE("D"),
     /** date+time. */
-    DATETIME,
+    DATETIME("DT"),
     /** date+time with msec. */
-    DATETIMEMSEC,
+    DATETIMEMSEC("DTM"),
     /** time. */
-    TIME,
+    TIME("T"),
     /** time with msec. */
-    TIMEMSEC,
+    TIMEMSEC("TM"),
     /** object (needs custom handler, must implement Comparable). */
-    OBJECT
+    OBJECT("O");
+
+    /** the ID of the type. */
+    private String m_ID;
+
+    /**
+     * Initializes the enum.
+     *
+     * @param id	the ID
+     */
+    private ContentType(String id) {
+      m_ID = id;
+    }
+
+    /**
+     * Returns the ID of the enum.
+     *
+     * @return		the ID
+     */
+    public String getID() {
+      return m_ID;
+    }
+
+    /**
+     * Parses the given string and returns the associated enum.
+     *
+     * @param s		the string to parse
+     * @return		the enum or null if failed to parse
+     */
+    public ContentType parse(String s) {
+      ContentType	result;
+
+      try {
+	result = valueOf(s);
+      }
+      catch (Exception e) {
+	result = null;
+      }
+
+      if (result == null) {
+	for (ContentType ct: values()) {
+	  if (ct.getID().equalsIgnoreCase(s)) {
+	    result = ct;
+	    break;
+	  }
+	}
+      }
+
+      return result;
+    }
   }
 
   /** the prefix for a formula. */
