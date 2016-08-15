@@ -22,6 +22,7 @@ package adams.data.spreadsheet;
 
 import adams.core.DateTime;
 import adams.core.DateTimeMsec;
+import adams.core.EnumWithCustomParsing;
 import adams.core.Time;
 import adams.core.TimeMsec;
 
@@ -38,7 +39,9 @@ public interface Cell
   extends Serializable {
 
   /** the type of content. */
-  public enum ContentType {
+  public enum ContentType
+    implements EnumWithCustomParsing<ContentType> {
+
     /** missing value. */
     MISSING("M"),
     /** string. */

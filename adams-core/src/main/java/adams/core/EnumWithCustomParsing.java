@@ -13,34 +13,26 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*
- * EnumWithCustomDisplay.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+/**
+ * EnumWithCustomParsing.java
+ * Copyright (C) 2016 University of Waikato, Hamilton, NZ
  */
 
 package adams.core;
 
 /**
- * For Enum classes that require a custom display string.
+ * Interface for enums that have a custom parse method.
  *
- * @author  fracpete (fracpete at waikato dot ac dot nz)
+ * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
- * @param <T> the type of enum
  */
-public interface EnumWithCustomDisplay<T extends Enum>
-  extends EnumWithCustomParsing<T> {
+public interface EnumWithCustomParsing<T extends Enum> {
 
   /**
-   * Returns the display string.
+   * Parses the given string and returns the associated enum.
    *
-   * @return		the display string
+   * @param s		the string to parse
+   * @return		the enum or null if not found
    */
-  public String toDisplay();
-
-  /**
-   * Returns the raw enum string.
-   *
-   * @return		the raw enum string
-   */
-  public String toRaw();
+  public T parse(String s);
 }
