@@ -968,22 +968,29 @@ public abstract class AbstractGeneticAlgorithm
   public abstract void calcFitness();
 
   /**
-   * Sets a fitness and keep it if better. Also notifies the fitness change
-   * listeners if setup.
+   * Checks whether the fitness is better.
+   *
+   * @param fitness	the new fitness
+   * @return		true if the new fitness is better
+   */
+  public synchronized boolean isBetterFitness(double fitness) {
+    return (fitness > m_BestFitness);
+  }
+
+  /**
+   * Sets a fitness and keep it if better.
    *
    * @param fitness	the new fitness
    * @param setup	the new setup
    * @param weights	the new weights
    * @return		true if the new fitness was better
-   * @see		#m_FitnessChangeListeners
-   * @see		#m_NotificationInterval
    */
-  protected synchronized boolean setNewFitness(double fitness, Object setup, int[] weights) {
+  public synchronized boolean setNewFitness(double fitness, Object setup, int[] weights) {
     boolean 	result;
 
     result = false;
 
-    if (fitness > m_BestFitness) {
+    if (isBetterFitness(fitness)) {
       m_BestFitness = fitness;
       m_BestSetup   = setup;
       m_BestWeights = weights.clone();
