@@ -46,12 +46,6 @@ public class DoubleCell
   /** for serialization. */
   private static final long serialVersionUID = -3912508808391288142L;
 
-  /** the prefix for a formula. */
-  public final static String PREFIX_FORMULA = "=";
-
-  /** display string in case of an error in a formula. */
-  public final static String FORMULA_ERROR = "#ERROR#";
-
   /** the row this cell belongs to. */
   protected Row m_Owner;
 
