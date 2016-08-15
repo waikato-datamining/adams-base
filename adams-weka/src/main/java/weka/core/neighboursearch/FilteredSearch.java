@@ -308,7 +308,6 @@ public class FilteredSearch
     }
 
     super.setOptions(options);
-    super.setOptions(options);
   }
 
   
