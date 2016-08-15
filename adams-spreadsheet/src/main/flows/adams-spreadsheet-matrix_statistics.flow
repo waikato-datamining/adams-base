@@ -1,0 +1,15 @@
+# Project: adams
+# Date: 2016-08-15 16:04:38
+# User: fracpete
+# Charset: UTF-8
+adams.flow.control.Flow -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.standalone.CallableActors
+  adams.flow.sink.DisplayPanelManager -width 740 -provider "adams.flow.sink.SpreadSheetDisplay -writer adams.data.io.output.NullWriter" -entry-name-variable name
+ adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/bolts.csv
+ adams.flow.transformer.SpreadSheetFileReader -reader "adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.DefaultSpreadSheet"
+ adams.flow.control.Tee -name input
+  adams.flow.transformer.SetVariable -var-name name -var-value input
+  adams.flow.sink.CallableSink -callable DisplayPanelManager
+ adams.flow.transformer.SpreadSheetMatrixStatistic -statistic "adams.data.spreadsheet.matrixstatistic.MultiMatrixStatistic -statistic adams.data.spreadsheet.matrixstatistic.Max -statistic adams.data.spreadsheet.matrixstatistic.Mean -statistic adams.data.spreadsheet.matrixstatistic.Median -statistic adams.data.spreadsheet.matrixstatistic.Min -statistic adams.data.spreadsheet.matrixstatistic.Missing -statistic adams.data.spreadsheet.matrixstatistic.StandardDeviation"
+ adams.flow.transformer.SetVariable -var-name name -var-value statistics
+ adams.flow.sink.CallableSink -callable DisplayPanelManager

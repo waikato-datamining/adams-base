@@ -31,6 +31,10 @@ adams.data.spreadsheet.colstatistic.AbstractColumnStatistic=\
 adams.data.spreadsheet.rowstatistic.AbstractRowStatistic=\
   adams.data.spreadsheet.rowstatistic
 
+# the matrix statistic generators
+adams.data.spreadsheet.matrixstatistic.AbstractMatrixStatistic=\
+  adams.data.spreadsheet.matrixstatistic
+
 # The row score algorithms
 adams.data.spreadsheet.rowscore.AbstractRowScore=\
   adams.data.spreadsheet.rowscore
