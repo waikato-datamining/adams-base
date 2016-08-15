@@ -229,7 +229,7 @@ public class DarkLord
 
 	// evaluate classifier
 	Classifier newClassifier = (Classifier) OptionUtils.shallowCopy(getOwner().getClassifier());
-	m_Fitness = evaluateClassifier(newClassifier, newInstances);
+	m_Fitness = evaluateClassifier(newClassifier, newInstances, getFolds(), getSeed());
 
         // process fitness
         if (getOwner().setNewFitness(m_Fitness, newClassifier, m_Weights)) {

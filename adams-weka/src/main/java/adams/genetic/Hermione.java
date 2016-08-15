@@ -215,7 +215,7 @@ public class Hermione
 
 	// evaluate classifier
 	Classifier newClassifier = getOwner().generateClassifier(m_Chromosome, m_Weights);
-	m_Fitness = evaluateClassifier(newClassifier, newInstances);
+	m_Fitness = evaluateClassifier(newClassifier, newInstances, getFolds(), getSeed());
 
 	// process fitness
 	if (getOwner().setNewFitness(m_Fitness, newClassifier, m_Weights)) {

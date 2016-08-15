@@ -156,18 +156,16 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
      *
      * @param cls		the classifier to evaluate
      * @param data		the data to use for evaluation
+     * @param folds		the number of folds to use
+     * @param seed		the seed for the randomization
      * @return			the metric
      * @throws Exception	if the evaluation fails
      */
-    protected double evaluateClassifier(Classifier cls, Instances data) throws Exception {
+    protected double evaluateClassifier(Classifier cls, Instances data, int folds, int seed) throws Exception {
       Evaluation 	evaluation;
 
       evaluation = new Evaluation(data);
-      evaluation.crossValidateModel(
-	cls,
-	data,
-	getFolds(),
-	new Random(getSeed()));
+      evaluation.crossValidateModel(cls, data, folds, new Random(seed));
 
       return getMeasure().extract(evaluation, true);
     }
