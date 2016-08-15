@@ -66,6 +66,11 @@ import java.util.logging.Level;
  * &nbsp;&nbsp;&nbsp;default: 1
  * </pre>
  * 
+ * <pre>-initial-setups-provider &lt;adams.genetic.initialsetups.AbstractInitialSetupsProvider&gt; (property: initialSetupsProvider)
+ * &nbsp;&nbsp;&nbsp;The initial setups provider to use.
+ * &nbsp;&nbsp;&nbsp;default: adams.genetic.initialsetups.EmptyInitialSetupsProvider
+ * </pre>
+ * 
  * <pre>-initial-weights &lt;java.lang.String&gt; (property: initialWeights)
  * &nbsp;&nbsp;&nbsp;The initial weights to use, rather than random ones (string of 0s and 1s
  * &nbsp;&nbsp;&nbsp;).
@@ -98,7 +103,7 @@ import java.util.logging.Level;
  * <pre>-class &lt;adams.data.weka.WekaAttributeIndex&gt; (property: classIndex)
  * &nbsp;&nbsp;&nbsp;The class index of the dataset, in case no class attribute is set.
  * &nbsp;&nbsp;&nbsp;default: last
- * &nbsp;&nbsp;&nbsp;example: An index is a number starting with 1; apart from attribute names (case-sensitive), the following placeholders can be used as well: first, second, third, last_2, last_1, last
+ * &nbsp;&nbsp;&nbsp;example: An index is a number starting with 1; apart from attribute names (case-sensitive), the following placeholders can be used as well: first, second, third, last_2, last_1, last; numeric indices can be enforced by preceding them with '#' (eg '#12'); attribute names can be surrounded by double quotes.
  * </pre>
  * 
  * <pre>-folds &lt;int&gt; (property: folds)
@@ -129,7 +134,7 @@ import java.util.logging.Level;
  * 
  * <pre>-output-type &lt;NONE|SETUP|DATA|ALL&gt; (property: outputType)
  * &nbsp;&nbsp;&nbsp;The type of output to generate.
- * &nbsp;&nbsp;&nbsp;default: ALL
+ * &nbsp;&nbsp;&nbsp;default: SETUP
  * </pre>
  * 
  * <pre>-output-prefix-type &lt;NONE|RELATION|SUPPLIED&gt; (property: outputPrefixType)
@@ -140,6 +145,23 @@ import java.util.logging.Level;
  * <pre>-supplied-prefix &lt;java.lang.String&gt; (property: suppliedPrefix)
  * &nbsp;&nbsp;&nbsp;The prefix to use in case of SUPPLIED.
  * &nbsp;&nbsp;&nbsp;default: 
+ * </pre>
+ * 
+ * <pre>-use-second-evaluation &lt;boolean&gt; (property: useSecondEvaluation)
+ * &nbsp;&nbsp;&nbsp;If enabled, a second evaluation is performed using the separate folds and 
+ * &nbsp;&nbsp;&nbsp;seed.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-second-folds &lt;int&gt; (property: secondFolds)
+ * &nbsp;&nbsp;&nbsp;The number of folds to use in cross-validation (second evaluation).
+ * &nbsp;&nbsp;&nbsp;default: 10
+ * &nbsp;&nbsp;&nbsp;minimum: 2
+ * </pre>
+ * 
+ * <pre>-second-cv-seed &lt;int&gt; (property: secondCrossValidationSeed)
+ * &nbsp;&nbsp;&nbsp;The seed value for cross-validation (second evaluation).
+ * &nbsp;&nbsp;&nbsp;default: 42
  * </pre>
  * 
  * <pre>-handler &lt;adams.core.discovery.AbstractGeneticDiscoveryHandler&gt; [-handler ...] (property: handlers)
@@ -154,7 +176,7 @@ import java.util.logging.Level;
  * @version $Revision: 4322 $
  */
 public class Hermione
-  extends AbstractClassifierBasedGeneticAlgorithm {
+  extends AbstractClassifierBasedGeneticAlgorithmWithSecondEvaluation {
 
   private static final long serialVersionUID = -4982024446995877986L;
 
@@ -178,7 +200,7 @@ public class Hermione
    * @version $Revision: 4322 $
    */
   public static class HermioneJob
-    extends ClassifierBasedGeneticAlgorithmJob<Hermione> {
+    extends ClassifierBasedGeneticAlgorithmWithSecondEvaluationJob<Hermione> {
 
     /** for serialization. */
     private static final long serialVersionUID = 8259167463381721274L;
@@ -200,35 +222,67 @@ public class Hermione
      */
     @Override
     public void calcNewFitness() {
-      try {
-	getLogger().fine((new StringBuilder("calc for:")).append(weightsToString()).toString());
+      boolean		canAdd;
+      Double 		measure;
+      String		weightsStr;
+      Instances 	newInstances;
+      Classifier 	newClassifier;
+      Classifier 	newSecondClassifier;
 
+      weightsStr = weightsToString();
+      if (isLoggingEnabled())
+	getLogger().fine((new StringBuilder("calc for: ")).append(weightsStr).toString());
+
+      try {
 	// was measure already calculated for this attribute setup?
-	Double cc = getOwner().getResult(weightsToString());
-	if (cc != null) {
-	  getLogger().info((new StringBuilder("Already present: ")).append(Double.toString(cc.doubleValue())).toString());
-	  m_Fitness = cc;
+	measure = getOwner().getResult(weightsStr);
+	if (measure != null) {
+	  if (isLoggingEnabled())
+	    getLogger().info("Already present: " + measure);
+	  m_Fitness = measure;
 	  return;
 	}
 
-	Instances newInstances = new Instances(getInstances());
+	newInstances = new Instances(getInstances());
 
 	// evaluate classifier
-	Classifier newClassifier = getOwner().generateClassifier(m_Chromosome, m_Weights);
-	m_Fitness = evaluateClassifier(newClassifier, newInstances, getFolds(), getSeed());
+	newClassifier = getOwner().generateClassifier(m_Chromosome, m_Weights);
+	m_Fitness     = evaluateClassifier(newClassifier, newInstances, getFolds(), getSeed());
 
 	// process fitness
-	if (getOwner().setNewFitness(m_Fitness, newClassifier, m_Weights)) {
-	  generateOutput(m_Fitness, newInstances, newClassifier, m_Weights);
-	  // notify the listeners
-	  getOwner().notifyFitnessChangeListeners(getMeasure().adjust(m_Fitness), newClassifier, m_Weights);
+	if (getOwner().isBetterFitness(m_Fitness)) {
+	  canAdd = true;
+
+	  // second evaluation?
+	  if (getUseSecondEvaluation()) {
+	    newSecondClassifier = getOwner().generateClassifier(m_Chromosome, m_Weights);
+	    m_SecondFitness = evaluateClassifier(newSecondClassifier , newInstances, getSecondFolds(), getSecondSeed());
+	    canAdd = getOwner().isSecondBetterFitness(m_SecondFitness);
+	    if (getOwner().setSecondNewFitness(m_SecondFitness, newSecondClassifier, m_Weights)) {
+	      if (isLoggingEnabled())
+		getLogger().info("Second evaluation is also better: " + m_SecondFitness);
+	    }
+	    else {
+	      if (isLoggingEnabled())
+		getLogger().info("Second evaluation is not better: " + m_SecondFitness);
+	    }
+	    getOwner().addSecondResult(weightsStr, m_SecondFitness);
+	  }
+
+	  if (canAdd && getOwner().setNewFitness(m_Fitness, newClassifier, m_Weights)) {
+	    generateOutput(m_Fitness, newInstances, newClassifier, m_Weights);
+	    // notify the listeners
+	    getOwner().notifyFitnessChangeListeners(getMeasure().adjust(m_Fitness), newClassifier, m_Weights);
+	  }
 	}
 
-	getOwner().addResult(weightsToString(), m_Fitness);
+	getOwner().addResult(weightsStr, m_Fitness);
       }
       catch(Exception e) {
 	getLogger().log(Level.SEVERE, "Error: ", e);
 	m_Fitness = null;
+	if (getUseSecondEvaluation())
+	  m_SecondFitness = null;
       }
     }
   }
