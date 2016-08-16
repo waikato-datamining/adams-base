@@ -1,0 +1,58 @@
+1:S:duration	2:S:wage-increase-first-year	3:S:wage-increase-second-year	4:S:wage-increase-third-year	5:S:cost-of-living-adjustment	6:S:working-hours	7:S:pension	8:S:standby-pay	9:S:shift-differential	10:S:education-allowance	11:S:statutory-holidays	12:S:vacation	13:S:longterm-disability-assistance	14:S:contribution-to-dental-plan	15:S:bereavement-assistance	16:S:contribution-to-health-plan	17:S:class
+1:F:1.0	2:F:5.0	6:F:40.0	9:F:2.0	11:F:11.0	12:S:average	15:S:yes	17:S:good
+1:F:2.0	2:F:4.5	3:F:5.8	6:F:35.0	7:S:ret_allw	10:S:yes	11:F:11.0	12:S:below_average	14:S:full	16:S:full	17:S:good
+6:F:38.0	7:S:empl_contr	9:F:5.0	11:F:11.0	12:S:generous	13:S:yes	14:S:half	15:S:yes	16:S:half	17:S:good
+1:F:3.0	2:F:3.7	3:F:4.0	4:F:5.0	5:S:tc	10:S:yes	15:S:yes	17:S:good
+1:F:3.0	2:F:4.5	3:F:4.5	4:F:5.0	6:F:40.0	11:F:12.0	12:S:average	14:S:half	15:S:yes	16:S:half	17:S:good
+1:F:2.0	2:F:2.0	3:F:2.5	6:F:35.0	9:F:6.0	10:S:yes	11:F:12.0	12:S:average	17:S:good
+1:F:3.0	2:F:4.0	3:F:5.0	4:F:5.0	5:S:tc	7:S:empl_contr	11:F:12.0	12:S:generous	13:S:yes	14:S:none	15:S:yes	16:S:half	17:S:good
+1:F:3.0	2:F:6.9	3:F:4.8	4:F:2.3	6:F:40.0	9:F:3.0	11:F:12.0	12:S:below_average	17:S:good
+1:F:2.0	2:F:3.0	3:F:7.0	6:F:38.0	8:F:12.0	9:F:25.0	10:S:yes	11:F:11.0	12:S:below_average	13:S:yes	14:S:half	15:S:yes	17:S:good
+1:F:1.0	2:F:5.7	5:S:none	6:F:40.0	7:S:empl_contr	9:F:4.0	11:F:11.0	12:S:generous	13:S:yes	14:S:full	17:S:good
+1:F:3.0	2:F:3.5	3:F:4.0	4:F:4.6	5:S:none	6:F:36.0	9:F:3.0	11:F:13.0	12:S:generous	15:S:yes	16:S:full	17:S:good
+1:F:2.0	2:F:6.4	3:F:6.4	6:F:38.0	9:F:4.0	11:F:15.0	14:S:full	17:S:good
+1:F:2.0	2:F:3.5	3:F:4.0	5:S:none	6:F:40.0	9:F:2.0	10:S:no	11:F:10.0	12:S:below_average	13:S:no	14:S:half	16:S:half	17:S:bad
+1:F:3.0	2:F:3.5	3:F:4.0	4:F:5.1	5:S:tcf	6:F:37.0	9:F:4.0	11:F:13.0	12:S:generous	14:S:full	15:S:yes	16:S:full	17:S:good
+1:F:1.0	2:F:3.0	5:S:none	6:F:36.0	9:F:10.0	10:S:no	11:F:11.0	12:S:generous	17:S:good
+1:F:2.0	2:F:4.5	3:F:4.0	5:S:none	6:F:37.0	7:S:empl_contr	11:F:11.0	12:S:average	14:S:full	15:S:yes	17:S:good
+1:F:1.0	2:F:2.8	6:F:35.0	9:F:2.0	11:F:12.0	12:S:below_average	17:S:good
+1:F:1.0	2:F:2.1	5:S:tc	6:F:40.0	7:S:ret_allw	8:F:2.0	9:F:3.0	10:S:no	11:F:9.0	12:S:below_average	13:S:yes	14:S:half	16:S:none	17:S:bad
+1:F:1.0	2:F:2.0	5:S:none	6:F:38.0	7:S:none	10:S:yes	11:F:11.0	12:S:average	13:S:no	14:S:none	15:S:no	16:S:none	17:S:bad
+1:F:2.0	2:F:4.0	3:F:5.0	5:S:tcf	6:F:35.0	8:F:13.0	9:F:5.0	11:F:15.0	12:S:generous	17:S:good
+1:F:2.0	2:F:4.3	3:F:4.4	6:F:38.0	9:F:4.0	11:F:12.0	12:S:generous	14:S:full	16:S:full	17:S:good
+1:F:2.0	2:F:2.5	3:F:3.0	6:F:40.0	7:S:none	11:F:11.0	12:S:below_average	17:S:bad
+1:F:3.0	2:F:3.5	3:F:4.0	4:F:4.6	5:S:tcf	6:F:27.0	17:S:good
+1:F:2.0	2:F:4.5	3:F:4.0	6:F:40.0	9:F:4.0	11:F:10.0	12:S:generous	14:S:half	16:S:full	17:S:good
+1:F:1.0	2:F:6.0	6:F:38.0	8:F:8.0	9:F:3.0	11:F:9.0	12:S:generous	17:S:good
+1:F:3.0	2:F:2.0	3:F:2.0	4:F:2.0	5:S:none	6:F:40.0	7:S:none	11:F:10.0	12:S:below_average	14:S:half	15:S:yes	16:S:full	17:S:bad
+1:F:2.0	2:F:4.5	3:F:4.5	5:S:tcf	10:S:yes	11:F:10.0	12:S:below_average	13:S:yes	14:S:none	16:S:half	17:S:good
+1:F:2.0	2:F:3.0	3:F:3.0	5:S:none	6:F:33.0	10:S:yes	11:F:12.0	12:S:generous	15:S:yes	16:S:full	17:S:good
+1:F:2.0	2:F:5.0	3:F:4.0	5:S:none	6:F:37.0	9:F:5.0	10:S:no	11:F:11.0	12:S:below_average	13:S:yes	14:S:full	15:S:yes	16:S:full	17:S:good
+1:F:3.0	2:F:2.0	3:F:2.5	6:F:35.0	7:S:none	11:F:10.0	12:S:average	15:S:yes	16:S:full	17:S:bad
+1:F:3.0	2:F:4.5	3:F:4.5	4:F:5.0	5:S:none	6:F:40.0	10:S:no	11:F:11.0	12:S:average	14:S:half	17:S:good
+1:F:3.0	2:F:3.0	3:F:2.0	4:F:2.5	5:S:tc	6:F:40.0	7:S:none	9:F:5.0	10:S:no	11:F:10.0	12:S:below_average	13:S:yes	14:S:half	15:S:yes	16:S:full	17:S:bad
+1:F:2.0	2:F:2.5	3:F:2.5	6:F:38.0	7:S:empl_contr	11:F:10.0	12:S:average	17:S:bad
+1:F:2.0	2:F:4.0	3:F:5.0	5:S:none	6:F:40.0	7:S:none	9:F:3.0	10:S:no	11:F:10.0	12:S:below_average	13:S:no	14:S:none	16:S:none	17:S:bad
+1:F:3.0	2:F:2.0	3:F:2.5	4:F:2.1	5:S:tc	6:F:40.0	7:S:none	8:F:2.0	9:F:1.0	10:S:no	11:F:10.0	12:S:below_average	13:S:no	14:S:half	15:S:yes	16:S:full	17:S:bad
+1:F:2.0	2:F:2.0	3:F:2.0	5:S:none	6:F:40.0	7:S:none	10:S:no	11:F:11.0	12:S:average	13:S:yes	14:S:none	15:S:yes	16:S:full	17:S:bad
+1:F:1.0	2:F:2.0	5:S:tc	6:F:40.0	7:S:ret_allw	8:F:4.0	9:F:0.0	10:S:no	11:F:11.0	12:S:generous	13:S:no	14:S:none	15:S:no	16:S:none	17:S:bad
+1:F:1.0	2:F:2.8	5:S:none	6:F:38.0	7:S:empl_contr	8:F:2.0	9:F:3.0	10:S:no	11:F:9.0	12:S:below_average	13:S:yes	14:S:half	16:S:none	17:S:bad
+1:F:3.0	2:F:2.0	3:F:2.5	4:F:2.0	6:F:37.0	7:S:empl_contr	11:F:10.0	12:S:average	15:S:yes	16:S:none	17:S:bad
+1:F:2.0	2:F:4.5	3:F:4.0	5:S:none	6:F:40.0	9:F:4.0	11:F:12.0	12:S:average	13:S:yes	14:S:full	15:S:yes	16:S:half	17:S:good
+1:F:1.0	2:F:4.0	5:S:none	7:S:none	10:S:yes	11:F:11.0	12:S:average	13:S:no	14:S:none	15:S:no	16:S:none	17:S:bad
+1:F:2.0	2:F:2.0	3:F:3.0	5:S:none	6:F:38.0	7:S:empl_contr	10:S:yes	11:F:12.0	12:S:generous	13:S:yes	14:S:none	15:S:yes	16:S:full	17:S:bad
+1:F:2.0	2:F:2.5	3:F:2.5	5:S:tc	6:F:39.0	7:S:empl_contr	11:F:12.0	12:S:average	15:S:yes	17:S:bad
+1:F:2.0	2:F:2.5	3:F:3.0	5:S:tcf	6:F:40.0	7:S:none	11:F:11.0	12:S:below_average	15:S:yes	17:S:bad
+1:F:2.0	2:F:4.0	3:F:4.0	5:S:none	6:F:40.0	7:S:none	9:F:3.0	11:F:10.0	12:S:below_average	13:S:no	14:S:none	16:S:none	17:S:bad
+1:F:2.0	2:F:4.5	3:F:4.0	6:F:40.0	9:F:2.0	10:S:no	11:F:10.0	12:S:below_average	13:S:no	14:S:half	16:S:half	17:S:bad
+1:F:2.0	2:F:4.5	3:F:4.0	5:S:none	6:F:40.0	9:F:5.0	11:F:11.0	12:S:average	14:S:full	15:S:yes	16:S:full	17:S:good
+1:F:2.0	2:F:4.6	3:F:4.6	5:S:tcf	6:F:38.0	13:S:yes	14:S:half	16:S:half	17:S:good
+1:F:2.0	2:F:5.0	3:F:4.5	5:S:none	6:F:38.0	8:F:14.0	9:F:5.0	11:F:11.0	12:S:below_average	13:S:yes	16:S:full	17:S:good
+1:F:2.0	2:F:5.7	3:F:4.5	5:S:none	6:F:40.0	7:S:ret_allw	11:F:11.0	12:S:average	13:S:yes	14:S:full	15:S:yes	16:S:full	17:S:good
+1:F:2.0	2:F:7.0	3:F:5.3	11:F:11.0	13:S:yes	14:S:full	17:S:good
+1:F:3.0	2:F:2.0	3:F:3.0	5:S:tcf	7:S:empl_contr	10:S:yes	13:S:yes	14:S:half	15:S:yes	17:S:good
+1:F:3.0	2:F:3.5	3:F:4.0	4:F:4.5	5:S:tcf	6:F:35.0	11:F:13.0	12:S:generous	15:S:yes	16:S:full	17:S:good
+1:F:3.0	2:F:4.0	3:F:3.5	5:S:none	6:F:40.0	7:S:empl_contr	9:F:6.0	11:F:11.0	12:S:average	13:S:yes	14:S:full	16:S:full	17:S:good
+1:F:3.0	2:F:5.0	3:F:4.4	5:S:none	6:F:38.0	7:S:empl_contr	8:F:10.0	9:F:6.0	11:F:11.0	12:S:generous	13:S:yes	16:S:full	17:S:good
+1:F:3.0	2:F:5.0	3:F:5.0	4:F:5.0	6:F:40.0	11:F:12.0	12:S:average	14:S:half	15:S:yes	16:S:half	17:S:good
+1:F:3.0	2:F:6.0	3:F:6.0	4:F:4.0	6:F:35.0	9:F:14.0	11:F:9.0	12:S:generous	13:S:yes	14:S:full	15:S:yes	16:S:full	17:S:good
