@@ -15,19 +15,19 @@
 
 /*
  * ConnectionParameters.java
- * Copyright (C) 2011-2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package adams.db;
 
-import java.io.Serializable;
-import java.util.Enumeration;
-import java.util.Vector;
-
 import adams.core.CloneHandler;
 import adams.core.base.BasePassword;
 import adams.core.logging.LoggingLevel;
+
+import java.io.Serializable;
+import java.util.Enumeration;
+import java.util.Vector;
 
 /**
  * Container class for connection information.
@@ -82,12 +82,6 @@ public class ConnectionParameters
 
   /**
    * Initializes the container.
-   *
-   * @param url		the JDBC URL
-   * @param user	the database user
-   * @param password	the database password
-   * @param debugLevel	the debug level
-   * @param connect	whether to connect on startup
    */
   public ConnectionParameters() {
     super();
@@ -168,7 +162,7 @@ public class ConnectionParameters
   public Enumeration<String> parameters() {
     Vector<String>	result;
 
-    result = new Vector<String>();
+    result = new Vector<>();
 
     result.add(PARAM_CLASS);
     result.add(PARAM_URL);
@@ -210,7 +204,7 @@ public class ConnectionParameters
    * Returns the parameter for the specified key.
    *
    * @param key		the key of the parameter to retrieve
-   * @return		the associated value
+   * @param value	the associated value
    */
   public void setParameter(String key, String value) {
     if (key.equals(PARAM_CLASS))
@@ -320,7 +314,7 @@ public class ConnectionParameters
    */
   @Override
   public int hashCode() {
-    return new String(m_URL + "\t" + m_User + "\t" + m_Password).hashCode();
+    return (m_URL + "\t" + m_User + "\t" + m_Password).hashCode();
   }
 
   /**
