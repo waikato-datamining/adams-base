@@ -35,7 +35,6 @@ import adams.env.AbstractEnvironment;
 import adams.event.DatabaseConnectionChangeEvent;
 import adams.event.DatabaseConnectionChangeEvent.EventType;
 import adams.event.DatabaseConnectionChangeListener;
-import com.mysql.jdbc.CommunicationsException;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -62,15 +61,6 @@ public abstract class AbstractDatabaseConnection
   /** for serialization. */
   private static final long serialVersionUID = -3625820307854172417L;
 
-  /** the constant for no error. */
-  public final static int NO_ERROR = 0;
-
-  /** the constant for a malformed connection. */
-  public final static int MALFORMED_CONNECTION = 1;
-
-  /** the constant for a failed connection. */
-  public final static int CONNECTION_FAIL = 2;
-
   /** the prefix in the props file for connections. */
   public final static String PREFIX_CONNECTION = "connection";
 
@@ -80,7 +70,7 @@ public abstract class AbstractDatabaseConnection
   /** keeping track of environment instances. */
   protected static HashMap<Class, AbstractEnvironment> m_Environments;
   static {
-    m_Environments = new HashMap<Class, AbstractEnvironment>();
+    m_Environments = new HashMap<>();
   }
 
   /** for managing the available options. */
@@ -180,7 +170,7 @@ public abstract class AbstractDatabaseConnection
     Drivers.getSingleton();
 
     m_Connection            = null;
-    m_FailedConnectAttempts = new Hashtable<String,Integer>();
+    m_FailedConnectAttempts = new Hashtable<>();
     m_ConnectionOK          = false;
     m_LastConnectionError   = "";
     m_Owner                 = null;
@@ -1007,10 +997,6 @@ public abstract class AbstractDatabaseConnection
 	else
 	  m_Connection = DriverManager.getConnection(m_URL,m_User,m_Password.getValue());
       }
-      catch (CommunicationsException e) {
-	m_Connection          = null;
-	m_LastConnectionError = e.toString();
-      }
       catch(Exception e) {
 	m_Connection          = null;
 	m_LastConnectionError = e.toString();
@@ -1109,7 +1095,7 @@ public abstract class AbstractDatabaseConnection
    * @return		the connections
    */
   public List<ConnectionParameters> getConnections() {
-    List<ConnectionParameters>	result;
+    List<ConnectionParameters>		result;
     ConnectionParameters		conn;
     Properties				props;
     int					count;
@@ -1118,7 +1104,7 @@ public abstract class AbstractDatabaseConnection
     String				key;
     String				prefix;
 
-    result = new ArrayList<ConnectionParameters>();
+    result = new ArrayList<>();
 
     // default one
     result.add(getDefaultConnection());
@@ -1156,7 +1142,7 @@ public abstract class AbstractDatabaseConnection
     int				i;
     Enumeration<String>		params;
     String			param;
-    Object			obj;
+    String 			value;
 
     // insert connection as most recent
     connections = getConnections();
@@ -1173,17 +1159,8 @@ public abstract class AbstractDatabaseConnection
       params = connections.get(i).parameters();
       while (params.hasMoreElements()) {
 	param = params.nextElement();
-	obj   = connections.get(i).getParameter(param);
-	if (obj instanceof String)
-	  props.setProperty(PREFIX_CONNECTION  + "." + i + "." + param, (String) obj);
-	else if (obj instanceof Integer)
-	  props.setInteger(PREFIX_CONNECTION  + "." + i + "." + param, (Integer) obj);
-	else if (obj instanceof Double)
-	  props.setDouble(PREFIX_CONNECTION  + "." + i + "." + param, (Double) obj);
-	else if (obj instanceof Boolean)
-	  props.setBoolean(PREFIX_CONNECTION  + "." + i + "." + param, (Boolean) obj);
-	else
-	  props.setProperty(PREFIX_CONNECTION  + "." + i + "." + param, "" + obj);
+	value = connections.get(i).getParameter(param);
+        props.setProperty(PREFIX_CONNECTION  + "." + i + "." + param, value);
       }
     }
 
@@ -1340,7 +1317,7 @@ public abstract class AbstractDatabaseConnection
    */
   @Override
   public int hashCode() {
-    return new String(getURL() + "\t" + getUser()).hashCode();
+    return (getURL() + "\t" + getUser()).hashCode();
   }
 
   /**
@@ -1360,17 +1337,7 @@ public abstract class AbstractDatabaseConnection
       result.m_ConnectionOK        = m_ConnectionOK;
       result.m_LastConnectionError = m_LastConnectionError;
     }
-    /*
-    if (isConnected()) {
-      try {
-	result.connect();
-      }
-      catch (Exception e) {
-	getLogger().severe("Failed to re-connect cloned database connection:");
-	getSystemErr().printStackTrace(e);
-      }
-    }
-    */
+
     result.getChangeListeners().addAll(getChangeListeners());
     if (getOwner() != null)
       getOwner().add(result);
