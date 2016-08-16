@@ -235,17 +235,21 @@ public class InstancesTable
     menuitem = new JMenuItem("Rename...", GUIHelper.getEmptyIcon());
     menuitem.addActionListener((ActionEvent ae) -> {
       String newName = GUIHelper.showInputDialog(
-	InstancesTable.this, "Please enter new name", getInstances().attribute(col).name());
-      if (newName != null)
+	InstancesTable.this, "Please enter new name", getInstances().attribute(col - 1).name());
+      if (newName != null) {
 	instModel.renameAttributeAt(col, newName);
+	setOptimalColumnWidth();
+      }
     });
     menu.add(menuitem);
 
     menuitem = new JMenuItem("Delete", GUIHelper.getIcon("delete.gif"));
     menuitem.addActionListener((ActionEvent ae) -> {
-      int retVal = GUIHelper.showConfirmMessage(InstancesTable.this, "Delete attribute '" + getInstances().attribute(col).name() + "'?");
-      if (retVal == ApprovalDialog.APPROVE_OPTION)
+      int retVal = GUIHelper.showConfirmMessage(InstancesTable.this, "Delete attribute '" + getInstances().attribute(col - 1).name() + "'?");
+      if (retVal == ApprovalDialog.APPROVE_OPTION) {
 	instModel.deleteAttributeAt(col);
+	setOptimalColumnWidth();
+      }
     });
     menu.add(menuitem);
 
@@ -260,15 +264,11 @@ public class InstancesTable
   protected void showCellPopup(MouseEvent e) {
     JPopupMenu			menu;
     JMenuItem			menuitem;
-    final int			col;
-    final int			row;
     final int[]			selRows;
     final InstancesTableModel	instModel;
     final Range 		range;
 
     menu      = new JPopupMenu();
-    col       = tableHeader.columnAtPoint(e.getPoint());
-    row       = rowAtPoint(e.getPoint());
     selRows   = getSelectedRows();
     instModel = (InstancesTableModel) getUnsortedModel();
     range = new Range();
