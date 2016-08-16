@@ -53,6 +53,7 @@ import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.SwingWorker;
+import javax.swing.event.ChangeEvent;
 import java.awt.BorderLayout;
 import java.awt.Dialog.ModalityType;
 import java.awt.FlowLayout;
@@ -431,6 +432,7 @@ public class ClassifyTab
     }
     m_PanelGOE = new WekaGenericObjectEditorPanel(Classifier.class, cls, true);
     m_PanelGOE.setPrefix("Classifier");
+    m_PanelGOE.addChangeListener((ChangeEvent e) -> updateButtons());
     panel = new JPanel(new BorderLayout());
     panel.add(m_PanelGOE, BorderLayout.CENTER);
     panel.setBorder(BorderFactory.createTitledBorder(""));
