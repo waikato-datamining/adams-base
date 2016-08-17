@@ -15,9 +15,11 @@
 
 /**
  * Fonts.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.application;
+
+import adams.gui.core.GUIHelper;
 
 /**
  * Initializes the fonts.
@@ -50,7 +52,8 @@ public class Fonts
    */
   @Override
   public boolean initialize(AbstractApplicationFrame parent) {
-    adams.gui.core.Fonts.initFonts();
+    if (!GUIHelper.isHeadless())
+      adams.gui.core.Fonts.initFonts();
     return true;
   }
 }
