@@ -75,10 +75,10 @@ public class JpegIsComplete
 
     try {
       buffer = new byte[2];
-      raf = new RandomAccessFile(file, "r");
+      raf = new RandomAccessFile(file.getAbsolutePath(), "r");
       raf.seek(file.length() - 2);
       raf.read(buffer, 0, 2);
-      result = !(((int) buffer[0] == 0xFF) && ((int) buffer[1] == 0xD9));
+      result = !((buffer[0] == -1) && (buffer[1] == -39));  // FF and D9
     }
     catch (Exception e) {
       if (isLoggingEnabled())
