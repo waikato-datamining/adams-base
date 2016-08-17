@@ -111,7 +111,9 @@ public class FlowFileChooser
     Object		 		converter;
     ExtensionFileFilterWithClass 	filter;
 
-    if (m_ReaderFileFilters != null)
+    if (reader && (m_ReaderFileFilters != null))
+      return;
+    if (!reader && (m_WriterFileFilters != null))
       return;
 
     if (reader)
