@@ -102,7 +102,7 @@ public class FlowFileChooser
    * @param reader	if true then the reader filters are initialized
    * @param classnames	the classnames of the converters
    */
-  protected static void initFilters(boolean reader, String[] classnames) {
+  protected static synchronized void initFilters(boolean reader, String[] classnames) {
     int					i;
     String 				classname;
     Class 				cls;
@@ -111,13 +111,16 @@ public class FlowFileChooser
     Object		 		converter;
     ExtensionFileFilterWithClass 	filter;
 
+    if (m_ReaderFileFilters != null)
+      return;
+
     if (reader)
-      m_ReaderFileFilters = new ArrayList<ExtensionFileFilterWithClass>();
+      m_ReaderFileFilters = new ArrayList<>();
     else
-      m_WriterFileFilters  = new ArrayList<ExtensionFileFilterWithClass>();
+      m_WriterFileFilters  = new ArrayList<>();
 
     for (i = 0; i < classnames.length; i++) {
-      classname = (String) classnames[i];
+      classname = classnames[i];
 
       // get data from converter
       try {
@@ -227,9 +230,31 @@ public class FlowFileChooser
    * @return		the reader, null if none found
    */
   public FlowReader getReaderForFile(File file) {
+    return readerForFile(file);
+  }
+
+  /**
+   * Returns the writer for the specified file.
+   *
+   * @param file	the file to determine a reader for
+   * @return		the writer, null if none found
+   */
+  public FlowWriter getWriterForFile(File file) {
+    return writerForFile(file);
+  }
+
+  /**
+   * Returns the reader for the specified file.
+   *
+   * @param file	the file to determine a reader for
+   * @return		the reader, null if none found
+   */
+  public static FlowReader readerForFile(File file) {
     FlowReader	result;
 
     result = null;
+
+    initFilters(true, AbstractFlowReader.getReaders());
 
     for (ExtensionFileFilterWithClass filter: m_ReaderFileFilters) {
       if (filter.accept(file)) {
@@ -251,10 +276,12 @@ public class FlowFileChooser
    * @param file	the file to determine a reader for
    * @return		the writer, null if none found
    */
-  public FlowWriter getWriterForFile(File file) {
+  public static FlowWriter writerForFile(File file) {
     FlowWriter	result;
 
     result = null;
+
+    initFilters(false, AbstractFlowWriter.getWriters());
 
     for (ExtensionFileFilterWithClass filter: m_WriterFileFilters) {
       if (filter.accept(file)) {

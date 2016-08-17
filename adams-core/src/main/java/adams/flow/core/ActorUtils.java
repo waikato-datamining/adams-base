@@ -117,9 +117,6 @@ public class ActorUtils {
   /** the debugging level. */
   private final static Logger LOGGER = LoggingHelper.getConsoleLogger(ActorUtils.class);
 
-  /** the chooser for determining the file formats. */
-  protected static FlowFileChooser m_Chooser;
-
   /**
    * Enumerates all children of the given actor (depth-first search).
    *
@@ -572,17 +569,6 @@ public class ActorUtils {
   }
 
   /**
-   * Returns the filechooser instance to use.
-   *
-   * @return		the chooser
-   */
-  protected synchronized static FlowFileChooser getFileChooser() {
-    if (m_Chooser == null)
-      m_Chooser = new FlowFileChooser();
-    return m_Chooser;
-  }
-
-  /**
    * Writes the actor to a file.
    *
    * @param filename	the file to write to
@@ -593,7 +579,7 @@ public class ActorUtils {
     boolean		result;
     FlowWriter 		writer;
 
-    writer = getFileChooser().getWriterForFile(new File(filename));
+    writer = FlowFileChooser.writerForFile(new File(filename));
     if (writer == null)
       writer = new DefaultFlowWriter();
     result = writer.write(TreeHelper.buildTree(actor), filename);
@@ -634,7 +620,7 @@ public class ActorUtils {
     Actor		result;
     FlowReader 		reader;
 
-    reader = getFileChooser().getReaderForFile(new File(filename));
+    reader = FlowFileChooser.readerForFile(new File(filename));
     if (reader == null)
       reader = new DefaultFlowReader();
     result = reader.readActor(filename);
