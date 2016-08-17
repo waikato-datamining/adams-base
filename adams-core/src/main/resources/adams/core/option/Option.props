@@ -261,6 +261,11 @@ adams.core.Range=true
 adams.core.Range#toString=adams.gui.goe.RangeEditor#toString
 adams.core.Range#valueOf=adams.gui.goe.RangeEditor#valueOf
 
+# ConfigurableEnumeration/Item objects
+adams.core.ConfigurableEnumeration$Item=true
+adams.core.ConfigurableEnumeration$Item#toString=adams.gui.goe.ConfigurableEnumerationItemEditor#toString
+adams.core.ConfigurableEnumeration$Item#valueOf=adams.gui.goe.ConfigurableEnumerationItemEditor#valueOf
+
 # CallableActorReference objects
 adams.flow.core.CallableActorReference=true
 adams.flow.core.CallableActorReference#toString=adams.gui.goe.CallableActorReferenceEditor#toString
