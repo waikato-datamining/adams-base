@@ -28,8 +28,8 @@ import adams.gui.core.SearchPanel;
 import adams.gui.core.SearchPanel.LayoutType;
 import adams.gui.event.SearchEvent;
 import adams.gui.sendto.SendToActionUtils;
-import adams.gui.tools.wekainvestigator.viewer.InstancesTable;
-import adams.gui.tools.wekainvestigator.viewer.InstancesTableModel;
+import adams.gui.visualization.instances.InstancesTable;
+import adams.gui.visualization.instances.InstancesTableModel;
 import com.googlecode.jfilechooserbookmarks.gui.BaseScrollPane;
 import weka.core.Instances;
 

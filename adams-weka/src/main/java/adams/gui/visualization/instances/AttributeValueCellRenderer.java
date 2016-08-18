@@ -19,7 +19,7 @@
  *
  */
 
-package adams.gui.tools.wekainvestigator.viewer;
+package adams.gui.visualization.instances;
 
 import adams.gui.core.SortableAndSearchableTable;
 import weka.core.Attribute;

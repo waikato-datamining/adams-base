@@ -18,7 +18,7 @@
  * Copyright (C) 2016 University of Waikato, Hamilton, NZ
  */
 
-package adams.gui.tools.wekainvestigator.viewer;
+package adams.gui.visualization.instances;
 
 import adams.core.Range;
 import adams.gui.chooser.WekaFileChooser;
