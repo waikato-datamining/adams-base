@@ -113,6 +113,12 @@ public abstract class AbstractInvestigatorTabWithDataTable
     m_SplitPane.setBottomComponentHidden(true);
   }
 
+  @Override
+  protected void finishInit() {
+    super.finishInit();
+    m_SplitPane.setDividerLocation(m_DefaultDataTableHeight + 20);
+  }
+
   /**
    * Returns whether a readonly table is used.
    *

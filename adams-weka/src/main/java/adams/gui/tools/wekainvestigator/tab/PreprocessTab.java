@@ -56,7 +56,7 @@ import java.awt.event.ActionEvent;
  * @version $Revision$
  */
 public class PreprocessTab
-  extends AbstractInvestigatorTabWithDataTable {
+  extends AbstractInvestigatorTabWithEditableDataTable {
 
   private static final long serialVersionUID = -94945456385486233L;
 
@@ -293,6 +293,7 @@ public class PreprocessTab
    * Updates the buttons.
    */
   public void updateButtons() {
+    super.updateButtons();
     m_ButtonStart.setEnabled((m_Worker == null) && (getSelectedRows().length > 0));
     m_ButtonStop.setEnabled(m_Worker != null);
   }
@@ -314,15 +315,6 @@ public class PreprocessTab
    */
   public String getTabIcon() {
     return "filter.png";
-  }
-
-  /**
-   * Returns whether a readonly table is used.
-   *
-   * @return		true if readonly
-   */
-  protected boolean hasReadOnlyTable() {
-    return false;
   }
 
   /**
@@ -349,8 +341,8 @@ public class PreprocessTab
    * Gets called when the user changes the selection.
    */
   protected void dataTableSelectionChanged() {
+    super.dataTableSelectionChanged();
     displayData();
-    updateButtons();
   }
 
   /**
