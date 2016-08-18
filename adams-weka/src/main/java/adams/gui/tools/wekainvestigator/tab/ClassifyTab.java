@@ -202,7 +202,8 @@ public class ClassifyTab
           item.getTabbedPane().removeAll();
           for (int i = 0; i < m_Owner.getOutputGenerators().length; i++) {
             try {
-              m_Owner.getOutputGenerators()[i].generateOutput(item);
+	      if (m_Owner.getOutputGenerators()[i].canGenerateOutput(item))
+		m_Owner.getOutputGenerators()[i].generateOutput(item);
             }
             catch (Exception e) {
               m_Owner.logError("Failed to generate output with " + m_Owner.getOutputGenerators()[i].toCommandLine(), e, "Classifier output generation");
@@ -435,7 +436,7 @@ public class ClassifyTab
     m_PanelGOE.addChangeListener((ChangeEvent e) -> updateButtons());
     panel = new JPanel(new BorderLayout());
     panel.add(m_PanelGOE, BorderLayout.CENTER);
-    panel.setBorder(BorderFactory.createTitledBorder(""));
+    panel.setBorder(BorderFactory.createEmptyBorder(5, 0, 10, 0));
     add(panel, BorderLayout.NORTH);
 
     m_SplitPane = new BaseSplitPane(BaseSplitPane.HORIZONTAL_SPLIT);
