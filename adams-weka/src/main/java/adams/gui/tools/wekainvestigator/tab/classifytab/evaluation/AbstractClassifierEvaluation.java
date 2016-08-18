@@ -215,22 +215,17 @@ public abstract class AbstractClassifierEvaluation
    * @return			true if changed
    */
   protected boolean hasDataChanged(List<String> newDatasets, ComboBoxModel<String> currentModel) {
-    boolean	result;
     int		i;
     Set<String>	setDatasets;
     Set<String>	setModel;
 
-    result = (newDatasets.size() != currentModel.getSize());
+    setDatasets = new HashSet<>(newDatasets);
+    setModel    = new HashSet<>();
+    for (i = 0; i < currentModel.getSize(); i++)
+      setModel.add(currentModel.getElementAt(i));
 
-    if (!result) {
-      setDatasets = new HashSet<>(newDatasets);
-      setModel    = new HashSet<>();
-      for (i = 0; i < currentModel.getSize(); i++)
-	setModel.add(currentModel.getElementAt(i));
-      result = setDatasets.containsAll(setModel) && setModel.containsAll(setDatasets);
-    }
-
-    return result;
+    return (setDatasets.size() != setModel.size())
+      || !(setDatasets.containsAll(setModel) && setModel.containsAll(setDatasets));
   }
 
   /**
