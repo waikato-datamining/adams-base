@@ -79,12 +79,18 @@ public class JpegIsComplete
     raf = null;
     try {
       buffer = new byte[2];
-      raf = new RandomAccessFile(file.getAbsolutePath(), "r");
-      raf.seek(file.length() - 2);
-      raf.read(buffer, 0, 2);
-      result = !((buffer[0] == -1) && (buffer[1] == -39));  // FF and D9
-      if (isLoggingEnabled())
-	getLogger().info("Last two bytes: " + Utils.toHex(buffer[0]) + Utils.toHex(buffer[1]) + " -> " + result);
+      raf    = new RandomAccessFile(file.getAbsolutePath(), "r");
+      if (file.length() > 2) {
+	raf.seek(file.length() - 2);
+	raf.read(buffer, 0, 2);
+	result = !((buffer[0] == -1) && (buffer[1] == -39));  // FF and D9
+	if (isLoggingEnabled())
+	  getLogger().info("Last two bytes: " + Utils.toHex(buffer[0]) + Utils.toHex(buffer[1]) + " -> " + result);
+      }
+      else {
+	// too small, must currently being written
+	result = true;
+      }
     }
     catch (Exception e) {
       if (isLoggingEnabled())
