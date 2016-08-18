@@ -18,7 +18,7 @@
  * Copyright (C) 2016 University of Waikato, Hamilton, NZ
  */
 
-package adams.gui.tools.wekainvestigator.tab;
+package adams.gui.tools.wekainvestigator.datatable;
 
 import adams.core.StringCompare;
 import adams.gui.core.BaseTable;

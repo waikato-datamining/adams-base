@@ -18,7 +18,7 @@
  * Copyright (C) 2016 University of Waikato, Hamilton, NZ
  */
 
-package adams.gui.tools.wekainvestigator.tab.datatab;
+package adams.gui.tools.wekainvestigator.datatable.action;
 
 import adams.core.io.PlaceholderFile;
 import adams.gui.chooser.WekaFileChooser;
@@ -38,7 +38,7 @@ import java.io.File;
  * @version $Revision$
  */
 public class Export
-  extends AbstractDataTabAction {
+  extends AbstractEditableDataTableAction {
 
   private static final long serialVersionUID = -8374323161691034031L;
 

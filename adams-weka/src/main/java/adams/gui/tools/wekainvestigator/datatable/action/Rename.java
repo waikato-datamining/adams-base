@@ -14,38 +14,36 @@
  */
 
 /**
- * Copy.java
+ * Rename.java
  * Copyright (C) 2016 University of Waikato, Hamilton, NZ
  */
 
-package adams.gui.tools.wekainvestigator.tab.datatab;
+package adams.gui.tools.wekainvestigator.datatable.action;
 
 import adams.gui.core.GUIHelper;
 import adams.gui.event.WekaInvestigatorDataEvent;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
-import adams.gui.tools.wekainvestigator.data.MemoryContainer;
-import weka.core.Instances;
 
 import java.awt.event.ActionEvent;
 
 /**
- * Copies the selected dataset.
+ * Renames the selected dataset.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class Copy
-  extends AbstractDataTabAction {
+public class Rename
+  extends AbstractEditableDataTableAction {
 
   private static final long serialVersionUID = -8374323161691034031L;
 
   /**
    * Instantiates the action.
    */
-  public Copy() {
+  public Rename() {
     super();
-    setName("Copy");
-    setIcon("copy.gif");
+    setName("Rename");
+    setIcon("question.png");
   }
 
   /**
@@ -57,19 +55,17 @@ public class Copy
   protected void doActionPerformed(ActionEvent e) {
     DataContainer 	cont;
     String  		newName;
-    MemoryContainer	newCont;
 
     cont = getSelectedData()[0];
-    logMessage("Copying dataset: " + cont.getData().relationName() + " [" + cont.getSourceFull() + "]");
-    newName = GUIHelper.showInputDialog(getOwner(), "Please enter new relation name: ", "Copy of " + cont.getData().relationName());
+    logMessage("Renaming dataset: " + cont.getData().relationName() + " [" + cont.getSourceFull() + "]");
+    newName = GUIHelper.showInputDialog(getOwner(), "Please enter new relation name: ", cont.getData().relationName());
     if (newName == null) {
-      logMessage("Copying cancelled!");
+      logMessage("Renaming cancelled!");
       return;
     }
-    newCont = new MemoryContainer(new Instances(cont.getData()));
-    newCont.getData().setRelationName(newName);
-    getData().add(newCont);
-    fireDataChange(new WekaInvestigatorDataEvent(getOwner().getOwner(), WekaInvestigatorDataEvent.ROWS_ADDED, getData().size() - 1));
+    cont.getData().setRelationName(newName);
+    cont.setModified(true);
+    fireDataChange(new WekaInvestigatorDataEvent(getOwner().getOwner(), WekaInvestigatorDataEvent.ROWS_MODIFIED, getSelectedRows()[0]));
   }
 
   /**

@@ -14,40 +14,43 @@
  */
 
 /**
- * Append.java
+ * Merge.java
  * Copyright (C) 2016 University of Waikato, Hamilton, NZ
  */
 
-package adams.gui.tools.wekainvestigator.tab.datatab;
+package adams.gui.tools.wekainvestigator.datatable.action;
 
+import adams.flow.core.Actor;
 import adams.flow.core.Token;
-import adams.flow.transformer.WekaInstancesAppend;
+import adams.flow.transformer.WekaInstancesMerge;
 import adams.gui.event.WekaInvestigatorDataEvent;
+import adams.gui.goe.GenericObjectEditorDialog;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
 import adams.gui.tools.wekainvestigator.data.MemoryContainer;
 import weka.core.Instances;
 
+import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
 
 /**
- * Appends the selected datasets into single dataset (one-after-the-other).
+ * Merges the selected datasets (side-by-side).
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
- * @see Merge
+ * @see Append
  */
-public class Append
-  extends AbstractDataTabAction {
+public class Merge
+  extends AbstractEditableDataTableAction {
 
   private static final long serialVersionUID = -8374323161691034031L;
 
   /**
    * Instantiates the action.
    */
-  public Append() {
+  public Merge() {
     super();
-    setName("Append");
-    setIcon("append.png");
+    setName("Merge");
+    setIcon("merge.png");
   }
 
   /**
@@ -57,13 +60,34 @@ public class Append
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    DataContainer[]	conts;
-    Instances[]		data;
-    int			i;
-    Token 		token;
-    WekaInstancesAppend append;
-    String		msg;
-    MemoryContainer	cont;
+    WekaInstancesMerge 		merge;
+    GenericObjectEditorDialog	dialog;
+    DataContainer[]		conts;
+    Instances[]			data;
+    int				i;
+    Token 			token;
+    String			msg;
+    MemoryContainer		cont;
+
+    merge = new WekaInstancesMerge();
+    if (getOwner().getParentDialog() != null)
+      dialog = new GenericObjectEditorDialog(getOwner().getParentDialog(), ModalityType.DOCUMENT_MODAL);
+    else
+      dialog = new GenericObjectEditorDialog(getOwner().getParentFrame(), true);
+    dialog.setTitle("Configure merge");
+    dialog.getGOEEditor().setCanChangeClassInDialog(false);
+    dialog.getGOEEditor().setClassType(Actor.class);
+    dialog.setCurrent(merge);
+    dialog.pack();
+    dialog.setLocationRelativeTo(getOwner());
+    dialog.setVisible(true);
+    if (dialog.getResult() != GenericObjectEditorDialog.APPROVE_OPTION) {
+      dialog.dispose();
+      logMessage("Merge cancelled!");
+      return;
+    }
+    merge = (WekaInstancesMerge) dialog.getCurrent();
+    dialog.dispose();
 
     // collect data
     conts = getSelectedData();
@@ -75,28 +99,27 @@ public class Append
       data[i] = conts[i].getData();
       msg += conts[i].getData().relationName();
     }
-    logMessage("Appending: " + msg);
+    logMessage("Merging: " + msg);
 
     // transform
-    token  = new Token(data);
-    append = new WekaInstancesAppend();
-    msg    = append.setUp();
+    token = new Token(data);
+    msg   = merge.setUp();
     if (msg == null) {
-      append.input(token);
-      msg = append.execute();
+      merge.input(token);
+      msg = merge.execute();
       if (msg == null) {
-	token = append.output();
+	token = merge.output();
 	cont = new MemoryContainer((Instances) token.getPayload());
 	getData().add(cont);
 	fireDataChange(new WekaInvestigatorDataEvent(getOwner().getOwner(), WekaInvestigatorDataEvent.ROWS_ADDED, getData().size() - 1));
       }
     }
-    append.destroy();
+    merge.destroy();
 
     if (msg != null)
-      logError(msg, "Failed to append datasets");
+      logError(msg, "Failed to merge datasets");
     else
-      logMessage("Appended datasets successfully!");
+      logMessage("Merge successful!");
   }
 
   /**

@@ -14,11 +14,11 @@
  */
 
 /**
- * AbstractDataTabAction.java
+ * AbstractEditableDataTableAction.java
  * Copyright (C) 2016 University of Waikato, Hamilton, NZ
  */
 
-package adams.gui.tools.wekainvestigator.tab.datatab;
+package adams.gui.tools.wekainvestigator.datatable.action;
 
 import adams.core.ClassLister;
 import adams.core.StatusMessageHandler;
@@ -26,31 +26,32 @@ import adams.gui.action.AbstractBaseAction;
 import adams.gui.core.BaseTableWithButtons;
 import adams.gui.event.WekaInvestigatorDataEvent;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
-import adams.gui.tools.wekainvestigator.tab.DataTab;
+import adams.gui.tools.wekainvestigator.tab.AbstractInvestigatorTabWithEditableDataTable;
 
 import java.util.List;
 
 /**
- * Ancestor for actions on the data displayed in the {@link DataTab}.
+ * Ancestor for actions on the data displayed on a tab using a
+ * {@link AbstractInvestigatorTabWithEditableDataTable}.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public abstract class AbstractDataTabAction
+public abstract class AbstractEditableDataTableAction
   extends AbstractBaseAction
   implements StatusMessageHandler {
 
   private static final long serialVersionUID = -3555111594280198534L;
 
   /** the owner. */
-  protected DataTab m_Owner;
+  protected AbstractInvestigatorTabWithEditableDataTable m_Owner;
 
   /**
    * Sets the owner.
    *
    * @param value	the owner
    */
-  public void setOwner(DataTab value) {
+  public void setOwner(AbstractInvestigatorTabWithEditableDataTable value) {
     m_Owner = value;
   }
 
@@ -59,7 +60,7 @@ public abstract class AbstractDataTabAction
    *
    * @return		the owner, null if none set
    */
-  public DataTab getOwner() {
+  public AbstractInvestigatorTabWithEditableDataTable getOwner() {
     return m_Owner;
   }
 
@@ -169,6 +170,6 @@ public abstract class AbstractDataTabAction
    * @return		the action classnames
    */
   public static Class[] getActions() {
-    return ClassLister.getSingleton().getClasses(AbstractDataTabAction.class);
+    return ClassLister.getSingleton().getClasses(AbstractEditableDataTableAction.class);
   }
 }

@@ -60,8 +60,8 @@ adams.gui.tools.wekainvestigator.tab.classifytab.output.AbstractOutputGenerator=
   adams.gui.tools.wekainvestigator.tab.classifytab.output
 
 # the actions for the data tab of the investigator
-adams.gui.tools.wekainvestigator.tab.datatab.AbstractDataTabAction=\
-  adams.gui.tools.wekainvestigator.tab.datatab
+adams.gui.tools.wekainvestigator.datatable.action.AbstractEditableDataTableAction=\
+  adams.gui.tools.wekainvestigator.datatable.action
 
 # the paintlets for the instance panel
 adams.gui.visualization.instance.AbstractInstancePaintlet=\

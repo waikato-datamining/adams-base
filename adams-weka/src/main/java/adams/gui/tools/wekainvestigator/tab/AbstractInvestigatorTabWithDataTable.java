@@ -26,6 +26,8 @@ import adams.gui.core.BaseTable;
 import adams.gui.core.BaseTableWithButtons;
 import adams.gui.event.WekaInvestigatorDataEvent;
 import adams.gui.tools.wekainvestigator.InvestigatorPanel;
+import adams.gui.tools.wekainvestigator.datatable.DataTableModel;
+import adams.gui.tools.wekainvestigator.datatable.DataTableWithButtons;
 import com.googlecode.jfilechooserbookmarks.gui.BaseScrollPane;
 
 import javax.swing.JPanel;

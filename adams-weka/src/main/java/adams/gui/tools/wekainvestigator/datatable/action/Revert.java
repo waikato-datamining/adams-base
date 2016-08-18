@@ -14,36 +14,35 @@
  */
 
 /**
- * Compatibility.java
+ * Revert.java
  * Copyright (C) 2016 University of Waikato, Hamilton, NZ
  */
 
-package adams.gui.tools.wekainvestigator.tab.datatab;
+package adams.gui.tools.wekainvestigator.datatable.action;
 
-import adams.core.Utils;
-import adams.gui.core.GUIHelper;
+import adams.gui.event.WekaInvestigatorDataEvent;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
 
 import java.awt.event.ActionEvent;
 
 /**
- * Checks the compatibility of the selected datasets.
+ * Reverts the selected dataset (if possible).
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class Compatibility
-  extends AbstractDataTabAction {
+public class Revert
+  extends AbstractEditableDataTableAction {
 
   private static final long serialVersionUID = -8374323161691034031L;
 
   /**
    * Instantiates the action.
    */
-  public Compatibility() {
+  public Revert() {
     super();
-    setName("Compatibility");
-    setIcon("validate.png");
+    setName("Revert");
+    setIcon("revert.png");
   }
 
   /**
@@ -53,24 +52,19 @@ public class Compatibility
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    StringBuilder	result;
-    DataContainer[]	conts;
-    int			i;
-    int			n;
-    String		msg;
-
-    result = new StringBuilder();
-    conts  = getSelectedData();
-    for (i = 0; i < conts.length - 1; i++) {
-      for (n = i + 1; n < conts.length; n++) {
-	msg = conts[i].getData().equalHeadersMsg(conts[n].getData());
-	result.append(
-	    "--> " + conts[i].getData().relationName() + " [" + conts[i].getSourceFull() + "]\n"
-	    + "and " + conts[n].getData().relationName() + " [" + conts[n].getSourceFull() + "]\n"
-	    + Utils.indent((msg == null) ? "match" : msg, 4) + "\n");
+    for (DataContainer cont: getSelectedData()) {
+      if (cont.isModified() && cont.canReload()) {
+        logMessage("Reverting dataset: " + cont.getData().relationName() + " [" + cont.getSourceFull() + "]");
+        if (cont.reload()) {
+	  getOwner().getOwner().updateClassAttribute(cont.getData());
+	  logMessage("Successfully reverted!");
+          fireDataChange(new WekaInvestigatorDataEvent(getOwner().getOwner(), WekaInvestigatorDataEvent.ROWS_MODIFIED, getData().indexOf(cont)));
+	}
+        else {
+	  logMessage("Failed to revert!");
+	}
       }
     }
-    GUIHelper.showInformationMessage(getOwner(), result.toString(), "Compatibility");
   }
 
   /**
@@ -78,6 +72,6 @@ public class Compatibility
    */
   @Override
   public void update() {
-    setEnabled(getTable().getSelectedRowCount() > 1);
+    setEnabled(getTable().getSelectedRowCount() > 0);
   }
 }

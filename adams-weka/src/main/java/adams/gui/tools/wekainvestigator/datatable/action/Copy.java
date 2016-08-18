@@ -14,35 +14,38 @@
  */
 
 /**
- * Revert.java
+ * Copy.java
  * Copyright (C) 2016 University of Waikato, Hamilton, NZ
  */
 
-package adams.gui.tools.wekainvestigator.tab.datatab;
+package adams.gui.tools.wekainvestigator.datatable.action;
 
+import adams.gui.core.GUIHelper;
 import adams.gui.event.WekaInvestigatorDataEvent;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
+import adams.gui.tools.wekainvestigator.data.MemoryContainer;
+import weka.core.Instances;
 
 import java.awt.event.ActionEvent;
 
 /**
- * Reverts the selected dataset (if possible).
+ * Copies the selected dataset.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class Revert
-  extends AbstractDataTabAction {
+public class Copy
+  extends AbstractEditableDataTableAction {
 
   private static final long serialVersionUID = -8374323161691034031L;
 
   /**
    * Instantiates the action.
    */
-  public Revert() {
+  public Copy() {
     super();
-    setName("Revert");
-    setIcon("revert.png");
+    setName("Copy");
+    setIcon("copy.gif");
   }
 
   /**
@@ -52,19 +55,21 @@ public class Revert
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    for (DataContainer cont: getSelectedData()) {
-      if (cont.isModified() && cont.canReload()) {
-        logMessage("Reverting dataset: " + cont.getData().relationName() + " [" + cont.getSourceFull() + "]");
-        if (cont.reload()) {
-	  getOwner().getOwner().updateClassAttribute(cont.getData());
-	  logMessage("Successfully reverted!");
-          fireDataChange(new WekaInvestigatorDataEvent(getOwner().getOwner(), WekaInvestigatorDataEvent.ROWS_MODIFIED, getData().indexOf(cont)));
-	}
-        else {
-	  logMessage("Failed to revert!");
-	}
-      }
+    DataContainer 	cont;
+    String  		newName;
+    MemoryContainer	newCont;
+
+    cont = getSelectedData()[0];
+    logMessage("Copying dataset: " + cont.getData().relationName() + " [" + cont.getSourceFull() + "]");
+    newName = GUIHelper.showInputDialog(getOwner(), "Please enter new relation name: ", "Copy of " + cont.getData().relationName());
+    if (newName == null) {
+      logMessage("Copying cancelled!");
+      return;
     }
+    newCont = new MemoryContainer(new Instances(cont.getData()));
+    newCont.getData().setRelationName(newName);
+    getData().add(newCont);
+    fireDataChange(new WekaInvestigatorDataEvent(getOwner().getOwner(), WekaInvestigatorDataEvent.ROWS_ADDED, getData().size() - 1));
   }
 
   /**
@@ -72,6 +77,6 @@ public class Revert
    */
   @Override
   public void update() {
-    setEnabled(getTable().getSelectedRowCount() > 0);
+    setEnabled(getTable().getSelectedRowCount() == 1);
   }
 }
