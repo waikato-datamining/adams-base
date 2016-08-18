@@ -186,6 +186,7 @@ public class CrossValidation
     Classifier				model;
     CrossValidationFoldGenerator	generator;
     WekaTrainTestSetContainer 		cont;
+    int					seed;
     int					folds;
     int					current;
     Instances				train;
@@ -196,11 +197,11 @@ public class CrossValidation
 
     data       = getOwner().getData().get(m_ComboBoxDatasets.getSelectedIndex()).getData();
     finalModel = m_CheckBoxFinalModel.isSelected();
-    folds      = Integer.parseInt(m_TextSeed.getText());
-    generator  = new CrossValidationFoldGenerator(
-      data, ((Number) m_SpinnerFolds.getValue()).intValue(), folds, true);
-    eval    = new Evaluation(data);
-    current = 0;
+    seed       = Integer.parseInt(m_TextSeed.getText());
+    folds      = ((Number) m_SpinnerFolds.getValue()).intValue();
+    generator  = new CrossValidationFoldGenerator(data, folds, seed, true);
+    eval       = new Evaluation(data);
+    current    = 0;
     while (generator.hasNext()) {
       current++;
       getOwner().logMessage("Fold " + current + "/" + folds + ": '" + data.relationName() + "' using " + OptionUtils.getCommandLine(classifier));
