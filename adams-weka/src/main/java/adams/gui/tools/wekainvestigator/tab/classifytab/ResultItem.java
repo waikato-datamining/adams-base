@@ -73,7 +73,7 @@ public class ResultItem
    * @return		the name
    */
   protected String createName() {
-    return DateUtils.getTimeFormatterMsecs().format(m_Timestamp) + " - " + m_Classifier.getClass().getSimpleName();
+    return DateUtils.getTimeFormatterMsecs().format(m_Timestamp) + " - " + (hasClassifier() ? m_Classifier.getClass().getSimpleName() : "???");
   }
 
   /**
