@@ -79,7 +79,6 @@ public class DataTable
   @Override
   public TableCellEditor getCellEditor(int row, int column) {
     TableCellEditor	result;
-    int			actRow;
     DataContainer 	cont;
     List<String>	atts;
     int			i;
