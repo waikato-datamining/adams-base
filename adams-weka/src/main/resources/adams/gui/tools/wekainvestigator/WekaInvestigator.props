@@ -8,6 +8,7 @@ DefaultTabs=\
   adams.gui.tools.wekainvestigator.tab.DataTab,\
   adams.gui.tools.wekainvestigator.tab.PreprocessTab,\
   adams.gui.tools.wekainvestigator.tab.ClassifyTab,\
+  adams.gui.tools.wekainvestigator.tab.ClusterTab,\
   adams.gui.tools.wekainvestigator.tab.MatrixTab,\
   adams.gui.tools.wekainvestigator.tab.LogTab
 
@@ -69,3 +70,38 @@ Classify.PreserveOrder=false
 Classify.DefaultOutputGenerators=\
   adams.gui.tools.wekainvestigator.tab.classifytab.output.TextStatistics \
   adams.gui.tools.wekainvestigator.tab.classifytab.output.ModelOutput
+
+# the default clusterer
+# (superclass: weka.clusterers.Clusterer)
+Cluster.Clusterer=weka.clusterers.rules.ZeroR
+
+# the width of the left-hand side of the classification panel
+# (integer)
+Cluster.LeftPanelWidth=275
+
+# the number of folds for cross-validation
+# (integer; 2-n)
+Cluster.NumFolds=10
+
+# whether to produce a final model for cross-validation
+# (true|false)
+Cluster.CrossValidationFinalModel=true
+
+# the random seed
+# (integer)
+Cluster.Seed=1
+
+# the percentage split
+# (double; 0-100)
+Cluster.TrainPercentage=66
+
+# wether to preserve order (for random split)
+# (true|false)
+Cluster.PreserveOrder=false
+
+# the default output generators to use
+# (blank-separated list of "classname + options")
+Cluster.DefaultOutputGenerators=\
+  adams.gui.tools.wekainvestigator.tab.clustertab.output.TextStatistics \
+  adams.gui.tools.wekainvestigator.tab.clustertab.output.ModelOutput \
+  adams.gui.tools.wekainvestigator.tab.clustertab.output.Supplementary

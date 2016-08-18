@@ -51,6 +51,10 @@ adams.gui.tools.wekainvestigator.source.AbstractSource=\
 adams.gui.tools.wekainvestigator.tab.AbstractInvestigatorTab=\
   adams.gui.tools.wekainvestigator.tab
 
+# the actions for the data tab of the investigator
+adams.gui.tools.wekainvestigator.datatable.action.AbstractEditableDataTableAction=\
+  adams.gui.tools.wekainvestigator.datatable.action
+
 # the classifier evaluations
 adams.gui.tools.wekainvestigator.tab.classifytab.evaluation.AbstractClassifierEvaluation=\
   adams.gui.tools.wekainvestigator.tab.classifytab.evaluation
@@ -59,9 +63,13 @@ adams.gui.tools.wekainvestigator.tab.classifytab.evaluation.AbstractClassifierEv
 adams.gui.tools.wekainvestigator.tab.classifytab.output.AbstractOutputGenerator=\
   adams.gui.tools.wekainvestigator.tab.classifytab.output
 
-# the actions for the data tab of the investigator
-adams.gui.tools.wekainvestigator.datatable.action.AbstractEditableDataTableAction=\
-  adams.gui.tools.wekainvestigator.datatable.action
+# the clusterer evaluations
+adams.gui.tools.wekainvestigator.tab.clustertab.evaluation.AbstractClustererEvaluation=\
+  adams.gui.tools.wekainvestigator.tab.clustertab.evaluation
+
+# the output generators
+adams.gui.tools.wekainvestigator.tab.clustertab.output.AbstractOutputGenerator=\
+  adams.gui.tools.wekainvestigator.tab.clustertab.output
 
 # the paintlets for the instance panel
 adams.gui.visualization.instance.AbstractInstancePaintlet=\
