@@ -351,7 +351,7 @@ public class PreprocessTab
   protected void displayData() {
     DataContainer	cont;
 
-    if (getSelectedRows().length == 1) {
+    if ((getData().size() > 0) && (getSelectedRows().length == 1)) {
       cont = getData().get(getSelectedRows()[0]);
       m_PanelInstSummary.setInstances(cont.getData());
       m_PanelAttSelection.setInstances(cont.getData());
@@ -366,6 +366,8 @@ public class PreprocessTab
       m_PanelAttVisualization.setInstances(null);
       m_ButtonRemoveChecked.setEnabled(false);
     }
+
+    repaint();
   }
 
   /**

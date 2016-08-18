@@ -79,8 +79,7 @@ public class DataTab
    */
   public void dataChanged(WekaInvestigatorDataEvent e) {
     super.dataChanged(e);
-    if (m_SplitPane.isBottomComponentHidden() && (m_Table.getRowCount() > 0))
-      displayData();
+    displayData();
   }
 
   /**
@@ -101,7 +100,7 @@ public class DataTab
     int				index;
     InstancesTableModel 	model;
 
-    if (m_Table.getSelectedRow() > -1) {
+    if ((m_Table.getRowCount() > 0) && (m_Table.getSelectedRow() > -1)) {
       panel = new JPanel(new BorderLayout());
       // table
       // TODO cache tables?
