@@ -29,6 +29,7 @@ import adams.core.management.OS;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -1186,6 +1187,22 @@ public class FileUtils {
       }
       try {
 	writer.close();
+      }
+      catch (Exception e) {
+	// ignored
+      }
+    }
+  }
+
+  /**
+   * Closes the closeable object, if possible, suppressing any exception.
+   *
+   * @param closeable	the closeable object to close
+   */
+  public static void closeQuietly(Closeable closeable) {
+    if (closeable != null) {
+      try {
+	closeable.close();
       }
       catch (Exception e) {
 	// ignored
