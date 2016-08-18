@@ -192,7 +192,6 @@ public class TrainTestSplit
    */
   @Override
   public ResultItem evaluate(Classifier classifier, AbstractNamedHistoryPanel<ResultItem> history) throws Exception {
-    ResultItem 			result;
     Evaluation 			eval;
     Instances			data;
     Instances			train;

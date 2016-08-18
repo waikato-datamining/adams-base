@@ -139,7 +139,6 @@ public class TrainTestSet
    */
   @Override
   public ResultItem evaluate(Classifier classifier, AbstractNamedHistoryPanel<ResultItem> history) throws Exception {
-    ResultItem 	result;
     Evaluation 	eval;
     Instances	train;
     Instances	test;
