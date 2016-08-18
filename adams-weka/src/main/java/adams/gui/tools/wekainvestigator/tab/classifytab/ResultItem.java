@@ -20,15 +20,11 @@
 
 package adams.gui.tools.wekainvestigator.tab.classifytab;
 
-import adams.core.CleanUpHandler;
 import adams.core.DateUtils;
-import adams.core.logging.LoggingObject;
-import adams.gui.tools.wekainvestigator.tab.classifytab.output.OutputTabbedPane;
+import adams.gui.tools.wekainvestigator.output.AbstractResultItem;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
 import weka.core.Instances;
-
-import java.util.Date;
 
 /**
  * Container for an evaluation, model, training set header. Used in the
@@ -38,28 +34,15 @@ import java.util.Date;
  * @version $Revision$
  */
 public class ResultItem
-  extends LoggingObject
-  implements CleanUpHandler {
+  extends AbstractResultItem {
 
   private static final long serialVersionUID = -3409493446200539772L;
-
-  /** the timestamp. */
-  protected Date m_Timestamp;
-
-  /** the name of the item. */
-  protected String m_Name;
 
   /** the evaluation object. */
   protected Evaluation m_Evaluation;
 
   /** the model. */
   protected Classifier m_Classifier;
-
-  /** the header. */
-  protected Instances m_Header;
-
-  /** the tabbed pane with the generated output. */
-  protected OutputTabbedPane m_TabbedPane;
 
   /**
    * Initializes the item with no evaluation.
@@ -79,23 +62,18 @@ public class ResultItem
    * @param header	the header of the training set, can be null
    */
   public ResultItem(Evaluation evaluation, Classifier classifier, Instances header) {
+    super(header);
     m_Evaluation = evaluation;
     m_Classifier = classifier;
-    m_Header     = header;
-    m_TabbedPane = new OutputTabbedPane();
-    m_TabbedPane.setShowCloseTabButton(true);
-    m_TabbedPane.setCloseTabsWithMiddelMouseButton(true);
-    m_Timestamp  = new Date();
-    m_Name       = DateUtils.getTimeFormatterMsecs().format(m_Timestamp) + " - " + classifier.getClass().getSimpleName();
   }
 
   /**
-   * Returns the name of the item.
+   * Creates the name from the members.
    *
    * @return		the name
    */
-  public String getName() {
-    return m_Name;
+  protected String createName() {
+    return DateUtils.getTimeFormatterMsecs().format(m_Timestamp) + " - " + m_Classifier.getClass().getSimpleName();
   }
 
   /**
@@ -135,33 +113,6 @@ public class ResultItem
   }
 
   /**
-   * Returns whether an training set header is present.
-   * 
-   * @return		true if available
-   */
-  public boolean hasHeader() {
-    return (m_Header != null);
-  }
-
-  /**
-   * Returns the stored training set header.
-   * 
-   * @return		the header, null if not present
-   */
-  public Instances getHeader() {
-    return m_Header;
-  }
-
-  /**
-   * The tabbed pane for the results.
-   *
-   * @return		the tabbed pane
-   */
-  public OutputTabbedPane getTabbedPane() {
-    return m_TabbedPane;
-  }
-
-  /**
    * Returns a short description of the container.
    *
    * @return		the description
@@ -173,12 +124,5 @@ public class ResultItem
     result += ", evaluation=" + hasEvaluation() + ", classifier=" + hasClassifier() + ", header=" + hasHeader();
 
     return result;
-  }
-
-  /**
-   * Cleans up data structures, frees up memory.
-   */
-  public void cleanUp() {
-    m_TabbedPane.cleanUp();
   }
 }

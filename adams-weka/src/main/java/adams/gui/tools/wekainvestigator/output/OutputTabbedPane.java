@@ -18,7 +18,7 @@
  * Copyright (C) 2016 University of Waikato, Hamilton, NZ
  */
 
-package adams.gui.tools.wekainvestigator.tab.classifytab.output;
+package adams.gui.tools.wekainvestigator.output;
 
 import adams.core.CleanUpHandler;
 import adams.gui.core.BaseScrollPane;
@@ -36,7 +36,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 /**
- * Tabbed pane for the output generators.
+ * Tabbed pane for the output.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$

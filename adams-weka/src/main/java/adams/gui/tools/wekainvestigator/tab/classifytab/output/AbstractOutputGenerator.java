@@ -20,11 +20,7 @@
 
 package adams.gui.tools.wekainvestigator.tab.classifytab.output;
 
-import adams.core.option.AbstractOptionHandler;
-import adams.gui.tools.wekainvestigator.output.AbstractOutputPanelWithPopupMenu;
 import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
-
-import javax.swing.JComponent;
 
 /**
  * Ancestor for output generators using t.
@@ -33,42 +29,8 @@ import javax.swing.JComponent;
  * @version $Revision$
  */
 public abstract class AbstractOutputGenerator
-  extends AbstractOptionHandler {
+  extends adams.gui.tools.wekainvestigator.output.AbstractOutputGenerator<ResultItem> {
 
   private static final long serialVersionUID = -6176955975392722176L;
 
-  /**
-   * Adds the component as tab to the result item.
-   *
-   * @param item	the result item to add to
-   * @param comp	the component to add
-   */
-  protected void addTab(ResultItem item, JComponent comp) {
-    item.getTabbedPane().newTab(getTitle(), comp);
-    if (comp instanceof AbstractOutputPanelWithPopupMenu)
-      ((AbstractOutputPanelWithPopupMenu) comp).setFrameTitle(getTitle());
-  }
-
-  /**
-   * The title to use for the tab.
-   *
-   * @return		the title
-   */
-  public abstract String getTitle();
-
-  /**
-   * Checks whether output can be generated from this item.
-   *
-   * @param item	the item to check
-   * @return		true if output can be generated
-   */
-  public abstract boolean canGenerateOutput(ResultItem item);
-
-  /**
-   * Generates output and adds it to the {@link ResultItem}.
-   *
-   * @param item	the item to add the output to
-   * @return		null if output could be generated, otherwise error message
-   */
-  public abstract String generateOutput(ResultItem item);
 }
