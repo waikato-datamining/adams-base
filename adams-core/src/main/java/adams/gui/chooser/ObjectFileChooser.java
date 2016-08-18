@@ -15,7 +15,7 @@
 
 /**
  * ObjectFileChooser.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.chooser;
 
@@ -220,10 +220,15 @@ public class ObjectFileChooser
     Object		 		converter;
     ExtensionFileFilterWithClass 	filter;
 
+    if (reader && (m_ReaderFileFilters != null))
+      return;
+    if (!reader && (m_WriterFileFilters != null))
+      return;
+
     if (reader)
-      m_ReaderFileFilters = new ArrayList<ExtensionFileFilterWithClass>();
+      m_ReaderFileFilters = new ArrayList<>();
     else
-      m_WriterFileFilters  = new ArrayList<ExtensionFileFilterWithClass>();
+      m_WriterFileFilters  = new ArrayList<>();
 
     for (i = 0; i < classnames.length; i++) {
       classname = classnames[i];
@@ -300,9 +305,51 @@ public class ObjectFileChooser
    * @return		the reader, null if none found
    */
   public AbstractObjectReader getReaderForFile(File file) {
+    return readerForFile(file);
+  }
+
+  /**
+   * Returns the writer for the specified file.
+   *
+   * @param file	the file to determine a reader for
+   * @return		the writer, null if none found
+   */
+  public AbstractObjectWriter getWriterForFile(File file) {
+    return writerForFile(file);
+  }
+
+  /**
+   * Returns the reader superclass for the GOE.
+   *
+   * @return		the reader class
+   */
+  @Override
+  protected Class getReaderClass() {
+    return AbstractObjectReader.class;
+  }
+
+  /**
+   * Returns the writer superclass for the GOE.
+   *
+   * @return		the writer class
+   */
+  @Override
+  protected Class getWriterClass() {
+    return AbstractObjectWriter.class;
+  }
+
+  /**
+   * Returns the reader for the specified file.
+   *
+   * @param file	the file to determine a reader for
+   * @return		the reader, null if none found
+   */
+  public static AbstractObjectReader readerForFile(File file) {
     AbstractObjectReader	result;
 
     result = null;
+
+    initFilters(true, AbstractObjectReader.getReaders());
 
     for (ExtensionFileFilterWithClass filter: m_ReaderFileFilters) {
       if (filter.accept(file)) {
@@ -324,10 +371,12 @@ public class ObjectFileChooser
    * @param file	the file to determine a reader for
    * @return		the writer, null if none found
    */
-  public AbstractObjectWriter getWriterForFile(File file) {
+  public static AbstractObjectWriter writerForFile(File file) {
     AbstractObjectWriter	result;
 
     result = null;
+
+    initFilters(false, AbstractObjectWriter.getWriters());
 
     for (ExtensionFileFilterWithClass filter: m_WriterFileFilters) {
       if (filter.accept(file)) {
@@ -341,25 +390,5 @@ public class ObjectFileChooser
     }
 
     return result;
-  }
-
-  /**
-   * Returns the reader superclass for the GOE.
-   *
-   * @return		the reader class
-   */
-  @Override
-  protected Class getReaderClass() {
-    return AbstractObjectReader.class;
-  }
-
-  /**
-   * Returns the writer superclass for the GOE.
-   *
-   * @return		the writer class
-   */
-  @Override
-  protected Class getWriterClass() {
-    return AbstractObjectWriter.class;
   }
 }

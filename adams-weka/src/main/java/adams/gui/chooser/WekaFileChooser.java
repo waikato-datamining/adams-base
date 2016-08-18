@@ -15,7 +15,7 @@
 
 /*
  * WekaFileChooser.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.chooser;
@@ -116,10 +116,15 @@ public class WekaFileChooser
     Object		 		converter;
     ExtensionFileFilterWithClass 	filter;
 
+    if (reader && (m_ReaderFileFilters != null))
+      return;
+    if (!reader && (m_WriterFileFilters != null))
+      return;
+
     if (reader)
-      m_ReaderFileFilters = new ArrayList<ExtensionFileFilterWithClass>();
+      m_ReaderFileFilters = new ArrayList<>();
     else
-      m_WriterFileFilters  = new ArrayList<ExtensionFileFilterWithClass>();
+      m_WriterFileFilters  = new ArrayList<>();
 
     for (i = 0; i < classnames.size(); i++) {
       classname = classnames.get(i);
@@ -232,9 +237,36 @@ public class WekaFileChooser
    * @return		the reader, null if none found
    */
   public AbstractFileLoader getReaderForFile(File file) {
+    return readerForFile(file);
+  }
+
+  /**
+   * Returns the writer for the specified file.
+   *
+   * @param file	the file to determine a reader for
+   * @return		the writer, null if none found
+   */
+  public AbstractFileSaver getWriterForFile(File file) {
+    return writerForFile(file);
+  }
+
+  /**
+   * Returns the reader for the specified file.
+   *
+   * @param file	the file to determine a reader for
+   * @return		the reader, null if none found
+   */
+  public static AbstractFileLoader readerForFile(File file) {
     AbstractFileLoader	result;
 
     result = null;
+
+    try {
+      initFilters(true, GenericObjectEditor.getClassnames(AbstractFileLoader.class.getName()));
+    }
+    catch (Exception e) {
+      handleException("Failed to initialize Weka loader/saver filters!", e);
+    }
 
     for (ExtensionFileFilterWithClass filter: m_ReaderFileFilters) {
       if (filter.accept(file)) {
@@ -256,10 +288,17 @@ public class WekaFileChooser
    * @param file	the file to determine a reader for
    * @return		the writer, null if none found
    */
-  public AbstractFileSaver getWriterForFile(File file) {
+  public static AbstractFileSaver writerForFile(File file) {
     AbstractFileSaver	result;
 
     result = null;
+
+    try {
+      initFilters(false, GenericObjectEditor.getClassnames(AbstractFileSaver.class.getName()));
+    }
+    catch (Exception e) {
+      handleException("Failed to initialize Weka loader/saver filters!", e);
+    }
 
     for (ExtensionFileFilterWithClass filter: m_WriterFileFilters) {
       if (filter.accept(file)) {

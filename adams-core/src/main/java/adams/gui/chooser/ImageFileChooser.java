@@ -15,7 +15,7 @@
 
 /**
  * ImageFileChooser.java
- * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.chooser;
 
@@ -279,10 +279,15 @@ public class ImageFileChooser
     Object		 		converter;
     ExtensionFileFilterWithClass 	filter;
 
+    if (reader && (m_ReaderFileFilters != null))
+      return;
+    if (!reader && (m_WriterFileFilters != null))
+      return;
+
     if (reader)
-      m_ReaderFileFilters = new ArrayList<ExtensionFileFilterWithClass>();
+      m_ReaderFileFilters = new ArrayList<>();
     else
-      m_WriterFileFilters  = new ArrayList<ExtensionFileFilterWithClass>();
+      m_WriterFileFilters  = new ArrayList<>();
 
     for (i = 0; i < classnames.length; i++) {
       classname = (String) classnames[i];
@@ -359,9 +364,51 @@ public class ImageFileChooser
    * @return		the reader, null if none found
    */
   public AbstractImageReader getReaderForFile(File file) {
+    return readerForFile(file);
+  }
+
+  /**
+   * Returns the writer for the specified file.
+   *
+   * @param file	the file to determine a reader for
+   * @return		the writer, null if none found
+   */
+  public AbstractImageWriter getWriterForFile(File file) {
+    return writerForFile(file);
+  }
+
+  /**
+   * Returns the reader superclass for the GOE.
+   *
+   * @return		the reader class
+   */
+  @Override
+  protected Class getReaderClass() {
+    return AbstractImageReader.class;
+  }
+
+  /**
+   * Returns the writer superclass for the GOE.
+   *
+   * @return		the writer class
+   */
+  @Override
+  protected Class getWriterClass() {
+    return AbstractImageWriter.class;
+  }
+
+  /**
+   * Returns the reader for the specified file.
+   *
+   * @param file	the file to determine a reader for
+   * @return		the reader, null if none found
+   */
+  public static AbstractImageReader readerForFile(File file) {
     AbstractImageReader	result;
 
     result = null;
+
+    initFilters(true, AbstractImageReader.getReaders());
 
     for (ExtensionFileFilterWithClass filter: m_ReaderFileFilters) {
       if (filter.accept(file)) {
@@ -383,10 +430,12 @@ public class ImageFileChooser
    * @param file	the file to determine a reader for
    * @return		the writer, null if none found
    */
-  public AbstractImageWriter getWriterForFile(File file) {
+  public static AbstractImageWriter writerForFile(File file) {
     AbstractImageWriter	result;
 
     result = null;
+
+    initFilters(false, AbstractImageWriter.getWriters());
 
     for (ExtensionFileFilterWithClass filter: m_WriterFileFilters) {
       if (filter.accept(file)) {
@@ -400,25 +449,5 @@ public class ImageFileChooser
     }
 
     return result;
-  }
-
-  /**
-   * Returns the reader superclass for the GOE.
-   *
-   * @return		the reader class
-   */
-  @Override
-  protected Class getReaderClass() {
-    return AbstractImageReader.class;
-  }
-
-  /**
-   * Returns the writer superclass for the GOE.
-   *
-   * @return		the writer class
-   */
-  @Override
-  protected Class getWriterClass() {
-    return AbstractImageWriter.class;
   }
 }

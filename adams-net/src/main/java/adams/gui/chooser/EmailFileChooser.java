@@ -113,10 +113,15 @@ public class EmailFileChooser
     Object		 		converter;
     ExtensionFileFilterWithClass 	filter;
 
+    if (reader && (m_ReaderFileFilters != null))
+      return;
+    if (!reader && (m_WriterFileFilters != null))
+      return;
+
     if (reader)
-      m_ReaderFileFilters = new ArrayList<ExtensionFileFilterWithClass>();
+      m_ReaderFileFilters = new ArrayList<>();
     else
-      m_WriterFileFilters  = new ArrayList<ExtensionFileFilterWithClass>();
+      m_WriterFileFilters  = new ArrayList<>();
 
     for (i = 0; i < classnames.length; i++) {
       classname = (String) classnames[i];
@@ -355,9 +360,31 @@ public class EmailFileChooser
    * @return		the reader, null if none found
    */
   public EmailFileReader getReaderForFile(File file) {
+    return readerForFile(file);
+  }
+
+  /**
+   * Returns the writer for the specified file.
+   *
+   * @param file	the file to determine a reader for
+   * @return		the writer, null if none found
+   */
+  public EmailFileWriter getWriterForFile(File file) {
+    return writerForFile(file);
+  }
+
+  /**
+   * Returns the reader for the specified file.
+   *
+   * @param file	the file to determine a reader for
+   * @return		the reader, null if none found
+   */
+  public static EmailFileReader readerForFile(File file) {
     EmailFileReader	result;
 
     result = null;
+
+    initFilters(true, ClassLister.getSingleton().getClassnames(EmailFileReader.class));
 
     for (ExtensionFileFilterWithClass filter: m_ReaderFileFilters) {
       if (filter.accept(file)) {
@@ -379,10 +406,12 @@ public class EmailFileChooser
    * @param file	the file to determine a reader for
    * @return		the writer, null if none found
    */
-  public EmailFileWriter getWriterForFile(File file) {
+  public static EmailFileWriter writerForFile(File file) {
     EmailFileWriter	result;
 
     result = null;
+
+    initFilters(false, ClassLister.getSingleton().getClassnames(EmailFileWriter.class));
 
     for (ExtensionFileFilterWithClass filter: m_WriterFileFilters) {
       if (filter.accept(file)) {

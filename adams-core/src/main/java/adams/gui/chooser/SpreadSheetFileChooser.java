@@ -15,7 +15,7 @@
 
 /*
  * SpreadSheetFileChooser.java
- * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.chooser;
@@ -111,10 +111,15 @@ public class SpreadSheetFileChooser
     Object		 		converter;
     ExtensionFileFilterWithClass 	filter;
 
+    if (reader && (m_ReaderFileFilters != null))
+      return;
+    if (!reader && (m_WriterFileFilters != null))
+      return;
+
     if (reader)
-      m_ReaderFileFilters = new ArrayList<ExtensionFileFilterWithClass>();
+      m_ReaderFileFilters = new ArrayList<>();
     else
-      m_WriterFileFilters  = new ArrayList<ExtensionFileFilterWithClass>();
+      m_WriterFileFilters  = new ArrayList<>();
 
     for (i = 0; i < classnames.length; i++) {
       classname = (String) classnames[i];
@@ -227,9 +232,31 @@ public class SpreadSheetFileChooser
    * @return		the reader, null if none found
    */
   public SpreadSheetReader getReaderForFile(File file) {
+    return readerForFile(file);
+  }
+
+  /**
+   * Returns the writer for the specified file.
+   *
+   * @param file	the file to determine a reader for
+   * @return		the writer, null if none found
+   */
+  public SpreadSheetWriter getWriterForFile(File file) {
+    return writerForFile(file);
+  }
+
+  /**
+   * Returns the reader for the specified file.
+   *
+   * @param file	the file to determine a reader for
+   * @return		the reader, null if none found
+   */
+  public static SpreadSheetReader readerForFile(File file) {
     SpreadSheetReader	result;
 
     result = null;
+
+    initFilters(true, AbstractSpreadSheetReader.getReaders());
 
     for (ExtensionFileFilterWithClass filter: m_ReaderFileFilters) {
       if (filter.accept(file)) {
@@ -251,10 +278,12 @@ public class SpreadSheetFileChooser
    * @param file	the file to determine a reader for
    * @return		the writer, null if none found
    */
-  public SpreadSheetWriter getWriterForFile(File file) {
+  public static SpreadSheetWriter writerForFile(File file) {
     SpreadSheetWriter	result;
 
     result = null;
+
+    initFilters(false, AbstractSpreadSheetWriter.getWriters());
 
     for (ExtensionFileFilterWithClass filter: m_WriterFileFilters) {
       if (filter.accept(file)) {
