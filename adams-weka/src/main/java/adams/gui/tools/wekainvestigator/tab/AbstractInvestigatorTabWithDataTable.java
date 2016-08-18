@@ -34,6 +34,8 @@ import com.googlecode.jfilechooserbookmarks.gui.BaseScrollPane;
 import javax.swing.JPanel;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -49,7 +51,8 @@ import java.util.Arrays;
  * @version $Revision$
  */
 public abstract class AbstractInvestigatorTabWithDataTable
-  extends AbstractInvestigatorTab {
+  extends AbstractInvestigatorTab
+  implements TableModelListener {
 
   private static final long serialVersionUID = -94945456385486233L;
 
@@ -92,6 +95,7 @@ public abstract class AbstractInvestigatorTabWithDataTable
     add(m_SplitPane, BorderLayout.CENTER);
 
     m_Model = new DataTableModel(new ArrayList<>(), hasReadOnlyTable());
+    m_Model.addTableModelListener(this);
     m_Table = new DataTableWithButtons(m_Model);
     m_Table.setPreferredSize(new Dimension(200, m_DefaultDataTableHeight));
     m_Table.setAutoResizeMode(BaseTable.AUTO_RESIZE_OFF);
@@ -174,14 +178,16 @@ public abstract class AbstractInvestigatorTabWithDataTable
 	for (int[] seg: segs)
 	  m_Model.fireTableRowsDeleted(seg[0], seg[1]);
 	m_Table.repaint();
-        break;
+	break;
       case WekaInvestigatorDataEvent.ROWS_MODIFIED:
 	for (int[] seg: segs)
 	  m_Model.fireTableRowsUpdated(seg[0], seg[1]);
 	m_Table.repaint();
-        break;
+	break;
       default:
+	m_Model.removeTableModelListener(this);
 	m_Model = new DataTableModel(getOwner().getData(), hasReadOnlyTable());
+	m_Model.addTableModelListener(this);
 	m_Table.setModel(m_Model);
 	m_Table.setOptimalColumnWidth();
     }
@@ -239,5 +245,35 @@ public abstract class AbstractInvestigatorTabWithDataTable
     rename = new Rename();
     rename.setOwner((AbstractInvestigatorTabWithEditableDataTable) this);
     rename.actionPerformed(new ActionEvent(this, 1, ""));
+  }
+
+  /**
+   * This fine grain notification tells listeners the exact range
+   * of cells, rows, or columns that changed.
+   *
+   * @see	#fireDataChange(WekaInvestigatorDataEvent)
+   */
+  public void tableChanged(TableModelEvent e) {
+    Range	range;
+
+    switch (e.getType()) {
+      case TableModelEvent.DELETE:
+	range = new Range((e.getFirstRow() + 1) + "-" + (e.getLastRow()));
+	range.setMax(e.getLastRow() + 1);
+	fireDataChange(new WekaInvestigatorDataEvent(getOwner(), WekaInvestigatorDataEvent.ROWS_DELETED, range.getIntIndices()));
+	break;
+      case TableModelEvent.INSERT:
+	range = new Range((e.getFirstRow() + 1) + "-" + (e.getLastRow()));
+	range.setMax(e.getLastRow() + 1);
+	fireDataChange(new WekaInvestigatorDataEvent(getOwner(), WekaInvestigatorDataEvent.ROWS_ADDED, range.getIntIndices()));
+	break;
+      case TableModelEvent.UPDATE:
+	range = new Range((e.getFirstRow() + 1) + "-" + (e.getLastRow()));
+	range.setMax(e.getLastRow() + 1);
+	fireDataChange(new WekaInvestigatorDataEvent(getOwner(), WekaInvestigatorDataEvent.ROWS_MODIFIED, range.getIntIndices()));
+	break;
+      default:
+	fireDataChange(new WekaInvestigatorDataEvent(getOwner(), WekaInvestigatorDataEvent.TABLE_CHANGED, null));
+    }
   }
 }
