@@ -20,6 +20,8 @@
 
 package adams.core.io.fileuse;
 
+import adams.core.Utils;
+
 import java.io.File;
 import java.io.RandomAccessFile;
 import java.util.logging.Level;
@@ -79,6 +81,8 @@ public class JpegIsComplete
       raf.seek(file.length() - 2);
       raf.read(buffer, 0, 2);
       result = !((buffer[0] == -1) && (buffer[1] == -39));  // FF and D9
+      if (isLoggingEnabled())
+	getLogger().info("Last two bytes: " + Utils.toHex(buffer[0]) + Utils.toHex(buffer[1]) + " -> " + result);
     }
     catch (Exception e) {
       if (isLoggingEnabled())
