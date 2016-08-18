@@ -379,6 +379,8 @@ public class PreprocessTab
     int			index;
     DataContainer	cont;
     Instances		filtered;
+    boolean		keep;
+    String 		oldName;
 
     if (getSelectedRows().length != 1)
       return;
@@ -389,11 +391,15 @@ public class PreprocessTab
     if (indices.length == 0)
       return;
 
-    remove = new Remove();
+    keep    = m_CheckBoxKeepName.isSelected();
+    oldName = cont.getData().relationName();
+    remove  = new Remove();
     remove.setAttributeIndicesArray(indices);
     try {
       remove.setInputFormat(cont.getData());
       filtered = Filter.useFilter(cont.getData(), remove);
+      if (keep)
+	filtered.setRelationName(oldName);
       cont.setData(filtered);
       fireDataChange(new WekaInvestigatorDataEvent(getOwner(), WekaInvestigatorDataEvent.ROWS_MODIFIED, getSelectedRows()[0]));
       SwingUtilities.invokeLater(() -> {
