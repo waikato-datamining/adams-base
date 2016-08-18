@@ -28,6 +28,7 @@ import adams.gui.event.WekaInvestigatorDataEvent;
 import adams.gui.tools.wekainvestigator.InvestigatorPanel;
 import adams.gui.tools.wekainvestigator.datatable.DataTableModel;
 import adams.gui.tools.wekainvestigator.datatable.DataTableWithButtons;
+import adams.gui.tools.wekainvestigator.datatable.action.Rename;
 import com.googlecode.jfilechooserbookmarks.gui.BaseScrollPane;
 
 import javax.swing.JPanel;
@@ -35,6 +36,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
@@ -100,6 +102,10 @@ public abstract class AbstractInvestigatorTabWithDataTable
       public void keyPressed(KeyEvent e) {
 	if (e.getKeyCode() == KeyEvent.VK_DELETE) {
 	  removeData(m_Table.getSelectedRows());
+	  e.consume();
+	}
+	else if (e.getKeyCode() == KeyEvent.VK_F2) {
+	  renameData(m_Table.getSelectedRows());
 	  e.consume();
 	}
 	super.keyPressed(e);
@@ -213,5 +219,25 @@ public abstract class AbstractInvestigatorTabWithDataTable
       }
       fireDataChange(new WekaInvestigatorDataEvent(getOwner(), WekaInvestigatorDataEvent.ROWS_DELETED, rows));
     }
+  }
+
+  /**
+   * Renames the selected row, does nothing if 0 or more than 1 selected.
+   *
+   * @param rows	the row to rename
+   */
+  protected void renameData(int[] rows) {
+    Rename	rename;
+
+    if (hasReadOnlyTable())
+      return;
+    if (!(this instanceof AbstractInvestigatorTabWithEditableDataTable))
+      return;
+    if (rows.length != 1)
+      return;
+
+    rename = new Rename();
+    rename.setOwner((AbstractInvestigatorTabWithEditableDataTable) this);
+    rename.actionPerformed(new ActionEvent(this, 1, ""));
   }
 }
