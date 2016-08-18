@@ -21,6 +21,7 @@
 package adams.core.io.fileuse;
 
 import adams.core.Utils;
+import adams.core.io.FileUtils;
 
 import java.io.File;
 import java.io.RandomAccessFile;
@@ -75,6 +76,7 @@ public class JpegIsComplete
     RandomAccessFile	raf;
     byte[]		buffer;
 
+    raf = null;
     try {
       buffer = new byte[2];
       raf = new RandomAccessFile(file.getAbsolutePath(), "r");
@@ -88,6 +90,9 @@ public class JpegIsComplete
       if (isLoggingEnabled())
 	getLogger().log(Level.SEVERE, "Failed to extract bytes from: " + file, e);
       result = true;
+    }
+    finally {
+      FileUtils.closeQuietly(raf);
     }
 
     return result;
