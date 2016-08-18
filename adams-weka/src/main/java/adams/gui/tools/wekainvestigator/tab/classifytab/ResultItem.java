@@ -120,7 +120,7 @@ public class ResultItem
   public String toString() {
     String	result;
 
-    result = m_Name;
+    result = getName();
     result += ", evaluation=" + hasEvaluation() + ", classifier=" + hasClassifier() + ", header=" + hasHeader();
 
     return result;
