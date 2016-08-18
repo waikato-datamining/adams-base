@@ -505,11 +505,11 @@ comma-separated list which represents the value of the property.
 Here is an example for the conversion schemes that can be used with the
 \textit{Convert} transformer:
 \begin{verbatim}
-  adams.data.conversion.AbstractConversion=\
+  adams.data.conversion.Conversion=\
     adams.data.conversion
 \end{verbatim}
-The superclass in this case is
-\texttt{adams.data.conversion.AbstractConversion} and only one package is listed
+The superclass in this case is the
+\texttt{adams.data.conversion.Conversion} interface and only one package is listed
 for exploration, \texttt{adams.data.conversion}.
 
 Instead of adding new keys and packages to this central properties file,
@@ -527,16 +527,16 @@ merge keys across multiple properties files.
 Coming back to the previous example of the conversion schemes, module
 \textit{funky-module}, package \texttt{org.funky.conversion} contains
 additional conversion schemes. These are all derived from
-\texttt{AbstractConversion}. In that case, the \texttt{ClassLister.props} file
-would contain the following entry:
+\texttt{AbstractConversion}, which implements the \texttt{Conversion} interface.
+In that case, the \texttt{ClassLister.props} file would contain the following entry:
 \begin{verbatim}
-  adams.data.conversion.AbstractConversion=\
+  adams.data.conversion.Conversion=\
     org.funky.conversion
 \end{verbatim}
 When starting up, ADAMS will merge the two props files and the key
 will look like this, listing both packages:
 \begin{verbatim}
-  adams.data.conversion.AbstractConversion=\
+  adams.data.conversion.Conversion=\
     adams.data.conversion,\
     org.funky.conversion
 \end{verbatim}
@@ -566,14 +566,14 @@ the \textit{key} being the superclass and the \textit{value} a comma-separated
 list of patterns. In the following an example that excludes a specified data
 conversion class called \texttt{SuperExperimentalConversion} from being listed:
 \begin{verbatim}
-  adams.data.conversion.AbstractConversion=\
+  adams.data.conversion.Conversion=\
     org\.funky\.conversion\.SuperExperimentalConversion
 \end{verbatim}
 If you want to exclude all conversions of the \texttt{og.funk.conversion}
 package that contain the word \textit{Experimental}, then use the following
 pattern:
 \begin{verbatim}
-  adams.data.conversion.AbstractConversion=\
+  adams.data.conversion.Conversion=\
     org\.funky\.conversion\..*Experimental.*
 \end{verbatim}
 
