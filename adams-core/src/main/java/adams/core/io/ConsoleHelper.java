@@ -186,7 +186,7 @@ public class ConsoleHelper {
       if (initial.equals(options[i]))
 	initialIndex = i;
     }
-    fullMsg.append("\nChoice [1-" + options.length + "]");
+    fullMsg.append("\nChoice (1-" + options.length + ")");
     if (initialIndex > -1)
       fullMsg.append(" (default: " + (initialIndex + 1) + ")");
     fullMsg.append(": ");
