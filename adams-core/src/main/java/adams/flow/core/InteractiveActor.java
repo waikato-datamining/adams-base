@@ -15,7 +15,7 @@
 
 /**
  * InteractiveActor.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.core;
 
@@ -53,7 +53,7 @@ public interface InteractiveActor
   /**
    * Sets the custom message to use when stopping the flow.
    *
-   * @param 		the stop message
+   * @param value	the stop message
    */
   public void setCustomStopMessage(String value);
 
