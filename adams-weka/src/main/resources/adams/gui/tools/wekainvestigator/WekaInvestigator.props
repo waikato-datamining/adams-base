@@ -73,7 +73,7 @@ Classify.DefaultOutputGenerators=\
 
 # the default clusterer
 # (superclass: weka.clusterers.Clusterer)
-Cluster.Clusterer=weka.clusterers.rules.ZeroR
+Cluster.Clusterer=weka.clusterers.SimpleKMeans
 
 # the width of the left-hand side of the cluster panel
 # (integer)
