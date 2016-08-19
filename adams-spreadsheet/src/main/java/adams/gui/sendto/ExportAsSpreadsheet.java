@@ -20,11 +20,10 @@
 package adams.gui.sendto;
 
 import adams.data.io.output.SpreadSheetWriter;
-import adams.data.spreadsheet.DefaultSpreadSheet;
-import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetSupporter;
 import adams.gui.chooser.SpreadSheetFileChooser;
+import adams.gui.core.JTableHelper;
 import adams.gui.core.SortableTableModel;
 import adams.gui.core.SpreadSheetTable;
 import adams.gui.core.SpreadSheetTableModel;
@@ -92,11 +91,7 @@ public class ExportAsSpreadsheet
     File			file;
     SpreadSheetWriter		writer;
     String			msg;
-    int				i;
-    int				n;
     JTable			table;
-    Row				row;
-    Object			value;
 
     result = null;
 
@@ -112,28 +107,12 @@ public class ExportAsSpreadsheet
     }
     else if (o instanceof JTable) {
       table = (JTable) o;
-      if (table.getModel() instanceof SpreadSheetTableModel) {
+      if (table.getModel() instanceof SpreadSheetTableModel)
 	sheet = ((SpreadSheetTableModel) table.getModel()).toSpreadSheet();
-      }
-      else if (table.getModel() instanceof SortableTableModel) {
-	if (((SortableTableModel) table.getModel()) instanceof SpreadSheetTableModel)
-	  sheet = ((SpreadSheetTableModel) ((SortableTableModel) table.getModel()).getUnsortedModel()).toSpreadSheet();
-      }
-      if (sheet == null) {
-	sheet = new DefaultSpreadSheet();
-	// header
-	row = sheet.getHeaderRow();
-	for (i = 0; i < table.getColumnCount(); i++)
-	  row.addCell("" + i).setContent(table.getColumnName(i));
-	for (n = 0; n < table.getRowCount(); n++) {
-	  row = sheet.addRow("" + n);
-	  for (i = 0; i < table.getColumnCount(); i++) {
-	    value = table.getValueAt(n, i);
-	    if (value != null)
-	      row.addCell("" + i).setContent(value.toString());
-	  }
-	}
-      }
+      else if (table.getModel() instanceof SortableTableModel)
+	sheet = JTableHelper.toSpreadSheet(((SortableTableModel) table.getModel()).getUnsortedModel());
+      else
+        sheet = JTableHelper.toSpreadSheet(table);
     }
 
     if (sheet != null) {
