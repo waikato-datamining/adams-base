@@ -1079,7 +1079,7 @@ public class PropertiesParameterPanel
 	      }
 	      array = Array.newInstance(getArrayClass(key), parts.length);
 	      for (i = 0; i < parts.length; i++)
-		Array.set(array, i, OptionUtils.forAnyCommandLine(getArrayClass(key), parts[i]));
+		Array.set(array, i, OptionUtils.forAnyCommandLine(getArrayClass(key), parts[i].trim()));
 	      chooserPanel.setCurrent(array);
             }
             catch (Exception e) {
