@@ -15,19 +15,19 @@
 
 /*
  * ConfirmationDialog.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.swing.JOptionPane;
-
 import adams.core.QuickInfoHelper;
+import adams.core.io.ConsoleHelper;
 import adams.flow.core.Token;
 import adams.flow.core.Unknown;
+
+import javax.swing.JOptionPane;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -121,6 +121,12 @@ public class ConfirmationDialog
   /** for serialization. */
   private static final long serialVersionUID = 8200691218381875131L;
 
+  public static final String YES_OPTION = "Yes";
+
+  public static final String NO_OPTION = "No";
+
+  public static final String CANCEL_OPTION = "Cancel";
+
   /** the message for the user. */
   protected String m_Message;
 
@@ -188,7 +194,7 @@ public class ConfirmationDialog
 
     result = QuickInfoHelper.toString(this, "message", m_Message);
 
-    options = new ArrayList<String>();
+    options = new ArrayList<>();
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "useCustomTokens", m_UseCustomTokens, "using custom tokens"));
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "stopFlowIfCanceled", m_StopFlowIfCanceled, "stops flow if canceled"));
     result += QuickInfoHelper.flatten(options);
@@ -372,6 +378,45 @@ public class ConfirmationDialog
       }
       else {
 	if (retVal == JOptionPane.YES_OPTION)
+	  m_OutputToken = m_InputToken;
+      }
+    }
+
+    return !canceled;
+  }
+
+  /**
+   * Returns whether headless interaction is supported.
+   *
+   * @return		true if interaction in headless environment is possible
+   */
+  public boolean supportsHeadlessInteraction() {
+    return true;
+  }
+
+  /**
+   * Performs the interaction with the user in a headless environment.
+   *
+   * @return		true if successfully interacted
+   */
+  public boolean doInteractHeadless() {
+    boolean	canceled;
+    String	value;
+
+    m_OutputToken = null;
+
+    value    = ConsoleHelper.selectOption(m_Message, new String[]{YES_OPTION, NO_OPTION, CANCEL_OPTION});
+    canceled = value.equals(CANCEL_OPTION);
+
+    if (!canceled) {
+      if (m_UseCustomTokens) {
+	if (value.equals(YES_OPTION))
+	  m_OutputToken = new Token(m_YesToken);
+	else if (value.equals(NO_OPTION))
+	  m_OutputToken = new Token(m_NoToken);
+      }
+      else {
+	if (value.equals(YES_OPTION))
 	  m_OutputToken = m_InputToken;
       }
     }
