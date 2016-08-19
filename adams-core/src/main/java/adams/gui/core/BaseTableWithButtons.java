@@ -20,6 +20,8 @@
 
 package adams.gui.core;
 
+import adams.data.spreadsheet.SpreadSheet;
+import adams.data.spreadsheet.SpreadSheetSupporter;
 import adams.gui.event.RemoveItemsListener;
 
 import javax.swing.JList;
@@ -41,7 +43,8 @@ import java.awt.event.MouseEvent;
  * @version $Revision$
  */
 public class BaseTableWithButtons
-  extends AbstractDoubleClickableComponentWithButtons<BaseTable> {
+  extends AbstractDoubleClickableComponentWithButtons<BaseTable>
+  implements SpreadSheetSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = 1935542795448084154L;
@@ -647,5 +650,14 @@ public class BaseTableWithButtons
    */
   public boolean getShowSimpleCellPopupMenu() {
     return m_Component.getShowSimpleCellPopupMenu();
+  }
+
+  /**
+   * Returns the content as spreadsheet.
+   *
+   * @return		the content
+   */
+  public SpreadSheet toSpreadSheet() {
+    return m_Component.toSpreadSheet();
   }
 }
