@@ -505,6 +505,24 @@ public class FTPConnection
   }
 
   /**
+   * Returns whether headless interaction is supported.
+   *
+   * @return		true if interaction in headless environment is possible
+   */
+  public boolean supportsHeadlessInteraction() {
+    return false;
+  }
+
+  /**
+   * Performs the interaction with the user in a headless environment.
+   *
+   * @return		true if successfully interacted
+   */
+  public boolean doInteractHeadless() {
+    return true;
+  }
+
+  /**
    * Returns the FTP client object.
    *
    * @return		the FTP client, null if failed to connect
@@ -535,6 +553,17 @@ public class FTPConnection
     if (m_PromptForPassword && (m_Password.getValue().length() == 0)) {
       if (!isHeadless()) {
 	if (!doInteract()) {
+	  if (m_StopFlowIfCanceled) {
+	    if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
+	      stopExecution("Flow canceled: " + getFullName());
+	    else
+	      stopExecution(m_CustomStopMessage);
+	    result = getStopMessage();
+	  }
+	}
+      }
+      else if (supportsHeadlessInteraction()) {
+	if (!doInteractHeadless()) {
 	  if (m_StopFlowIfCanceled) {
 	    if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
 	      stopExecution("Flow canceled: " + getFullName());

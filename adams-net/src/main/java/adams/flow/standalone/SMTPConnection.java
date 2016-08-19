@@ -15,7 +15,7 @@
 
 /*
  * SMTPConnection.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.standalone;
@@ -629,6 +629,24 @@ public class SMTPConnection
   }
 
   /**
+   * Returns whether headless interaction is supported.
+   *
+   * @return		true if interaction in headless environment is possible
+   */
+  public boolean supportsHeadlessInteraction() {
+    return false;
+  }
+
+  /**
+   * Performs the interaction with the user in a headless environment.
+   *
+   * @return		true if successfully interacted
+   */
+  public boolean doInteractHeadless() {
+    return true;
+  }
+
+  /**
    * Initializes the SMTP session with the specified parameters.
    *
    * @param sendEmail	the object to initialize
@@ -662,6 +680,17 @@ public class SMTPConnection
     if (m_RequiresAuthentication && m_PromptForPassword && (m_Password.getValue().length() == 0)) {
       if (!isHeadless()) {
 	if (!doInteract()) {
+	  if (m_StopFlowIfCanceled) {
+	    if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
+	      stopExecution("Flow canceled: " + getFullName());
+	    else
+	      stopExecution(m_CustomStopMessage);
+	    result = getStopMessage();
+	  }
+	}
+      }
+      else if (supportsHeadlessInteraction()) {
+	if (!doInteractHeadless()) {
 	  if (m_StopFlowIfCanceled) {
 	    if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
 	      stopExecution("Flow canceled: " + getFullName());

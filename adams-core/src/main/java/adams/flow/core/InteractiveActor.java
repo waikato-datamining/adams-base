@@ -78,4 +78,18 @@ public interface InteractiveActor
    * @return		true if successfully interacted
    */
   public boolean doInteract();
+
+  /**
+   * Returns whether headless interaction is supported.
+   *
+   * @return		true if interaction in headless environment is possible
+   */
+  public boolean supportsHeadlessInteraction();
+
+  /**
+   * Performs the interaction with the user in a headless environment.
+   *
+   * @return		true if successfully interacted
+   */
+  public boolean doInteractHeadless();
 }

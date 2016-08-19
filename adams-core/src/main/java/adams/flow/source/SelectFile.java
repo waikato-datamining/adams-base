@@ -15,7 +15,7 @@
 
 /*
  * SelectFile.java
- * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
@@ -551,6 +551,24 @@ public class SelectFile
   }
 
   /**
+   * Returns whether headless interaction is supported.
+   *
+   * @return		true if interaction in headless environment is possible
+   */
+  public boolean supportsHeadlessInteraction() {
+    return false;
+  }
+
+  /**
+   * Performs the interaction with the user in a headless environment.
+   *
+   * @return		true if successfully interacted
+   */
+  public boolean doInteractHeadless() {
+    return true;
+  }
+
+  /**
    * Executes the flow item.
    *
    * @return		null if everything is fine, otherwise error message
@@ -559,6 +577,16 @@ public class SelectFile
   protected String doExecute() {
     if (!isHeadless()) {
       if (!doInteract()) {
+	if (m_StopFlowIfCanceled) {
+	  if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
+	    stopExecution("Flow canceled: " + getFullName());
+	  else
+	    stopExecution(m_CustomStopMessage);
+	}
+      }
+    }
+    else if (supportsHeadlessInteraction()) {
+      if (!doInteractHeadless()) {
 	if (m_StopFlowIfCanceled) {
 	  if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
 	    stopExecution("Flow canceled: " + getFullName());
