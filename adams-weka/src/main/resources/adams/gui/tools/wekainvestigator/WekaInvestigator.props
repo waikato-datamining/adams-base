@@ -75,7 +75,7 @@ Classify.DefaultOutputGenerators=\
 # (superclass: weka.clusterers.Clusterer)
 Cluster.Clusterer=weka.clusterers.rules.ZeroR
 
-# the width of the left-hand side of the classification panel
+# the width of the left-hand side of the cluster panel
 # (integer)
 Cluster.LeftPanelWidth=275
 
