@@ -149,6 +149,17 @@ public class ConsoleHelper {
    *
    * @param msg		the message to output before reading the input
    * @param options	the options to choose from
+   * @return		the selected option, null if cancelled or failed to read input
+   */
+  public static String selectOption(String msg, String[] options) {
+    return selectOption(msg, options, null);
+  }
+
+  /**
+   * Lets the user select from a number of choices.
+   *
+   * @param msg		the message to output before reading the input
+   * @param options	the options to choose from
    * @param initial	the initial selection (selected if just hitting enter), null or empty string to ignore
    * @return		the selected option, null if cancelled or failed to read input
    */
