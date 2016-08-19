@@ -46,7 +46,7 @@ public class ConsoleHelper {
     BufferedReader	breader;
 
     inreader = new InputStreamReader(System.in);
-    breader = new BufferedReader(inreader);
+    breader  = new BufferedReader(inreader);
 
     try {
       return breader.readLine();
@@ -54,6 +54,52 @@ public class ConsoleHelper {
     catch (Exception e) {
       return null;
     }
+  }
+
+  /**
+   * Reads all lines from stdin (till null encountered, i.e. "Ctrl+D").
+   *
+   * @return		the line, null if failed to read
+   */
+  protected static String readAll() {
+    StringBuilder	result;
+    String		line;
+    InputStreamReader	inreader;
+    BufferedReader	breader;
+
+    result   = new StringBuilder();
+    inreader = new InputStreamReader(System.in);
+    breader  = new BufferedReader(inreader);
+
+    try {
+      while ((line = breader.readLine()) != null) {
+	if (result.length() > 0)
+	  result.append("\n");
+	result.append(line);
+      }
+      return result.toString();
+    }
+    catch (Exception e) {
+      return null;
+    }
+  }
+
+  /**
+   * Lets the user enter a multi-line value.
+   *
+   * @param msg		the message to output before reading the input
+   * @return		the entered value, null if cancelled or failed to read input
+   */
+  public static String enterMultiLineValue(String msg) {
+    String	result;
+
+    if (msg.isEmpty())
+      msg = "Please enter a value:";
+    msg += "\n(Press <Ctrl+D> to finalize input)";
+    System.out.println(msg);
+    result = readAll();
+
+    return result;
   }
 
   /**
