@@ -21,9 +21,11 @@
 
 package adams.gui.core;
 
-import java.awt.Component;
-import java.awt.Point;
-import java.awt.Rectangle;
+import adams.core.License;
+import adams.core.annotation.MixedCopyright;
+import adams.data.spreadsheet.DefaultSpreadSheet;
+import adams.data.spreadsheet.Row;
+import adams.data.spreadsheet.SpreadSheet;
 
 import javax.swing.JTable;
 import javax.swing.JViewport;
@@ -33,9 +35,9 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
-
-import adams.core.License;
-import adams.core.annotation.MixedCopyright;
+import java.awt.Component;
+import java.awt.Point;
+import java.awt.Rectangle;
 
 /**
  * A helper class for JTable, e.g. calculating the optimal colwidth.
@@ -320,5 +322,45 @@ public class JTableHelper {
 
     // Scroll the area into view
     viewport.scrollRectToVisible(rect);
+  }
+
+  /**
+   * Turns a table into a spreadsheet.
+   *
+   * @param table	the table to convert
+   * @return		the generated spreadsheet
+   */
+  public static SpreadSheet toSpreadSheet(JTable table) {
+    return toSpreadSheet(table.getModel());
+  }
+
+  /**
+   * Turns a table model into a spreadsheet.
+   *
+   * @param model	the table model to convert
+   * @return		the generated spreadsheet
+   */
+  public static SpreadSheet toSpreadSheet(TableModel model) {
+    SpreadSheet 	result;
+    Row			row;
+    int			i;
+    int			n;
+    Object		value;
+
+    result = new DefaultSpreadSheet();
+    // header
+    row = result.getHeaderRow();
+    for (i = 0; i < model.getColumnCount(); i++)
+      row.addCell("" + i).setContent(model.getColumnName(i));
+    for (n = 0; n < model.getRowCount(); n++) {
+      row = result.addRow("" + n);
+      for (i = 0; i < model.getColumnCount(); i++) {
+        value = model.getValueAt(n, i);
+        if (value != null)
+          row.addCell("" + i).setContent(value.toString());
+      }
+    }
+
+    return result;
   }
 }
