@@ -23,6 +23,7 @@ package adams.flow.standalone;
 import adams.core.Placeholders;
 import adams.core.QuickInfoHelper;
 import adams.core.base.BasePassword;
+import adams.core.io.ConsoleHelper;
 import adams.db.datatype.AbstractDataTypeSetup;
 import adams.db.datatype.DummySetup;
 import adams.flow.core.OptionalPasswordPrompt;
@@ -372,7 +373,7 @@ public abstract class AbstractDatabaseConnection
    * @return		true if interaction in headless environment is possible
    */
   public boolean supportsHeadlessInteraction() {
-    return false;
+    return true;
   }
 
   /**
@@ -381,7 +382,17 @@ public abstract class AbstractDatabaseConnection
    * @return		true if successfully interacted
    */
   public boolean doInteractHeadless() {
-    return true;
+    boolean		result;
+    BasePassword	password;
+
+    result   = false;
+    password = ConsoleHelper.enterPassword("Please enter password (" + getName() + "):");
+    if (password != null) {
+      result           = true;
+      m_ActualPassword = password;
+    }
+
+    return result;
   }
 
   /**

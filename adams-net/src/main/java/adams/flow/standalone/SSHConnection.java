@@ -29,6 +29,7 @@ import adams.core.TechnicalInformation.Type;
 import adams.core.TechnicalInformationHandler;
 import adams.core.annotation.MixedCopyright;
 import adams.core.base.BasePassword;
+import adams.core.io.ConsoleHelper;
 import adams.core.io.PlaceholderFile;
 import adams.core.net.SSHAuthenticationType;
 import adams.core.net.JSchUtils;
@@ -864,7 +865,7 @@ public class SSHConnection
    * @return		true if interaction in headless environment is possible
    */
   public boolean supportsHeadlessInteraction() {
-    return false;
+    return true;
   }
 
   /**
@@ -873,7 +874,17 @@ public class SSHConnection
    * @return		true if successfully interacted
    */
   public boolean doInteractHeadless() {
-    return true;
+    boolean		result;
+    BasePassword	password;
+
+    result   = false;
+    password = ConsoleHelper.enterPassword("Please enter password (" + getName() + "):");
+    if (password != null) {
+      result           = true;
+      m_ActualPassword = password;
+    }
+
+    return result;
   }
 
   /**

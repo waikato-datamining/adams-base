@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 
+import adams.core.io.ConsoleHelper;
 import org.apache.commons.net.ProtocolCommandEvent;
 import org.apache.commons.net.ProtocolCommandListener;
 import org.apache.commons.net.ftp.FTPClient;
@@ -510,7 +511,7 @@ public class FTPConnection
    * @return		true if interaction in headless environment is possible
    */
   public boolean supportsHeadlessInteraction() {
-    return false;
+    return true;
   }
 
   /**
@@ -519,7 +520,17 @@ public class FTPConnection
    * @return		true if successfully interacted
    */
   public boolean doInteractHeadless() {
-    return true;
+    boolean		result;
+    BasePassword	password;
+
+    result   = false;
+    password = ConsoleHelper.enterPassword("Please enter password (" + getName() + "):");
+    if (password != null) {
+      result           = true;
+      m_ActualPassword = password;
+    }
+
+    return result;
   }
 
   /**
