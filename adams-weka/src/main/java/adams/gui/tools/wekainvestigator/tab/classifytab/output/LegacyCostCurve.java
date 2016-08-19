@@ -110,7 +110,7 @@ public class LegacyCostCurve
    * @return		true if output can be generated
    */
   public boolean canGenerateOutput(ResultItem item) {
-    return item.hasEvaluation() && item.getEvaluation().getHeader().classAttribute().isNominal();
+    return item.hasEvaluation() && (item.getEvaluation().predictions() != null) && item.getEvaluation().getHeader().classAttribute().isNominal();
   }
 
   /**

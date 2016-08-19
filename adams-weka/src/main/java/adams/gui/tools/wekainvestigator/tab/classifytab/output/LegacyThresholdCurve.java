@@ -25,7 +25,6 @@ import adams.data.weka.WekaLabelRange;
 import adams.flow.core.Token;
 import adams.flow.sink.WekaThresholdCurve;
 import adams.flow.sink.WekaThresholdCurve.AttributeName;
-import adams.gui.core.GUIHelper;
 import adams.gui.tools.wekainvestigator.output.ComponentContentPanel;
 import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
 
@@ -184,7 +183,7 @@ public class LegacyThresholdCurve
    * @return		true if output can be generated
    */
   public boolean canGenerateOutput(ResultItem item) {
-    return item.hasEvaluation() && item.getEvaluation().getHeader().classAttribute().isNominal();
+    return item.hasEvaluation() && (item.getEvaluation().predictions() != null) && item.getEvaluation().getHeader().classAttribute().isNominal();
   }
 
   /**

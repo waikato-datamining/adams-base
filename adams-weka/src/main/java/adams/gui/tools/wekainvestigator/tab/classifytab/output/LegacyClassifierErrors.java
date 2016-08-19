@@ -64,7 +64,7 @@ public class LegacyClassifierErrors
    * @return		true if output can be generated
    */
   public boolean canGenerateOutput(ResultItem item) {
-    return item.hasEvaluation();
+    return item.hasEvaluation() && (item.getEvaluation().predictions() != null);
   }
 
   /**
