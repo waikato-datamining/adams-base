@@ -78,7 +78,7 @@ public abstract class AbstractInvestigatorTabWithDataTable
   protected void initialize() {
     super.initialize();
 
-    m_DefaultDataTableHeight = InvestigatorPanel.getProperties().getInteger("DefaultDataTableHeight", 150);
+    m_DefaultDataTableHeight = InvestigatorPanel.getProperties().getInteger("General.DefaultDataTableHeight", 150);
   }
 
   /**

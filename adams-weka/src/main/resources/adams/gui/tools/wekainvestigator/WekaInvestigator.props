@@ -4,7 +4,7 @@
 
 # the tabs to display by default
 # (comma-separated list of classnames)
-DefaultTabs=\
+General.DefaultTabs=\
   adams.gui.tools.wekainvestigator.tab.DataTab,\
   adams.gui.tools.wekainvestigator.tab.PreprocessTab,\
   adams.gui.tools.wekainvestigator.tab.ClassifyTab,\
@@ -14,11 +14,11 @@ DefaultTabs=\
 
 # the default height for the data table for tabs that display one
 # (integer)
-DefaultDataTableHeight=150
+General.DefaultDataTableHeight=150
 
 # the heuristic for selecting the class attribute when loading data
 # and no class attribute is present
-ClassAttributeHeuristic=adams.data.weka.classattribute.LastAttribute
+General.ClassAttributeHeuristic=adams.data.weka.classattribute.LastAttribute
 
 # the default filter
 # (superclass: weka.filters.Filter)

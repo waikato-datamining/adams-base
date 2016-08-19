@@ -146,7 +146,7 @@ public class InvestigatorPanel
     m_FileChooser        = new WekaFileChooser();
     m_RecentFilesHandler = null;
 
-    cmdline = getProperties().getProperty("ClassAttributeHeuristic", OptionUtils.getCommandLine(new LastAttribute()));
+    cmdline = getProperties().getProperty("General.ClassAttributeHeuristic", OptionUtils.getCommandLine(new LastAttribute()));
     try {
       m_ClassAttribute = (AbstractClassAttributeHeuristic) OptionUtils.forAnyCommandLine(
         AbstractClassAttributeHeuristic.class, cmdline);
@@ -172,7 +172,7 @@ public class InvestigatorPanel
     m_TabbedPane = new InvestigatorTabbedPane(this);
     add(m_TabbedPane, BorderLayout.CENTER);
 
-    classes = getProperties().getProperty("DefaultTabs", LogTab.class.getName()).split(",");
+    classes = getProperties().getProperty("General.DefaultTabs", LogTab.class.getName()).split(",");
     for (String cls: classes) {
       try {
 	tab = (AbstractInvestigatorTab) Class.forName(cls).newInstance();
