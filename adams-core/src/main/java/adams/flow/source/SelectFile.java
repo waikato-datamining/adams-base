@@ -22,6 +22,7 @@ package adams.flow.source;
 
 import adams.core.QuickInfoHelper;
 import adams.core.base.BaseString;
+import adams.core.io.ConsoleHelper;
 import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
 import adams.flow.core.AutomatableInteractiveActor;
@@ -556,7 +557,7 @@ public class SelectFile
    * @return		true if interaction in headless environment is possible
    */
   public boolean supportsHeadlessInteraction() {
-    return false;
+    return true;
   }
 
   /**
@@ -565,7 +566,37 @@ public class SelectFile
    * @return		true if successfully interacted
    */
   public boolean doInteractHeadless() {
-    return true;
+    boolean		result;
+    String[]		files;
+    PlaceholderFile	filePh;
+
+    result = false;
+
+    m_Queue.clear();
+
+    if (m_NonInteractive) {
+      for (File file: m_InitialFiles) {
+	if (m_AbsoluteFileNames)
+	  m_Queue.add(file.getAbsolutePath());
+	else
+	  m_Queue.add(new PlaceholderFile(file).toString());
+      }
+      return true;
+    }
+
+    files = ConsoleHelper.enterMultipleValues(m_FileChooserTitle);
+    if (files != null) {
+      result = true;
+      for (String fileStr : files) {
+	filePh = new PlaceholderFile(fileStr);
+	if (m_AbsoluteFileNames)
+	  m_Queue.add(filePh.getAbsolutePath());
+	else
+	  m_Queue.add(filePh.toString());
+      }
+    }
+
+    return result;
   }
 
   /**

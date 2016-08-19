@@ -15,13 +15,14 @@
 
 /*
  * SelectCharset.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
 
 import adams.core.QuickInfoHelper;
 import adams.core.base.BaseCharset;
+import adams.core.io.ConsoleHelper;
 import adams.core.management.CharsetHelper;
 import adams.flow.core.AutomatableInteractiveActor;
 import adams.flow.core.Token;
@@ -248,7 +249,6 @@ public class SelectCharset
   @Override
   public boolean doInteract() {
     boolean	result;
-    int		retVal;
     String	charset;
 
     if (m_NonInteractive) {
@@ -264,6 +264,39 @@ public class SelectCharset
       CharsetHelper.getIDs(),
       getName());
     if (charset != null) {
+      result        = true;
+      m_OutputToken = new Token(charset);
+    }
+
+    return result;
+  }
+
+  /**
+   * Returns whether headless interaction is supported.
+   *
+   * @return		true if interaction in headless environment is possible
+   */
+  public boolean supportsHeadlessInteraction() {
+    return true;
+  }
+
+  /**
+   * Performs the interaction with the user in a headless environment.
+   *
+   * @return		true if successfully interacted
+   */
+  public boolean doInteractHeadless() {
+    boolean	result;
+    String	charset;
+
+    if (m_NonInteractive) {
+      m_OutputToken = new Token(m_InitialCharset.getValue());
+      return true;
+    }
+
+    result  = false;
+    charset = ConsoleHelper.enterValue("Please select character set:", m_InitialCharset.getValue());
+    if ((charset != null) && !charset.isEmpty() && new BaseCharset().isValid(charset)) {
       result        = true;
       m_OutputToken = new Token(charset);
     }

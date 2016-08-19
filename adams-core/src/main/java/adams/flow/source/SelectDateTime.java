@@ -15,20 +15,19 @@
 
 /*
  * SelectDateTime.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
 
-import java.awt.BorderLayout;
-import java.awt.Dialog.ModalityType;
-import java.util.Date;
-
+import adams.core.DateFormat;
+import adams.core.DateUtils;
 import adams.core.QuickInfoHelper;
 import adams.core.base.BaseDate;
 import adams.core.base.BaseDateTime;
 import adams.core.base.BaseObject;
 import adams.core.base.BaseTime;
+import adams.core.io.ConsoleHelper;
 import adams.flow.core.AutomatableInteractiveActor;
 import adams.flow.core.Token;
 import adams.gui.chooser.DatePanel;
@@ -37,6 +36,10 @@ import adams.gui.chooser.DateTimePanel;
 import adams.gui.chooser.TimePanel;
 import adams.gui.core.BasePanel;
 import adams.gui.dialog.ApprovalDialog;
+
+import java.awt.BorderLayout;
+import java.awt.Dialog.ModalityType;
+import java.util.Date;
 
 /**
  <!-- globalinfo-start -->
@@ -394,6 +397,58 @@ public class SelectDateTime
     }
 
     return false;
+  }
+
+  /**
+   * Returns whether headless interaction is supported.
+   *
+   * @return		true if interaction in headless environment is possible
+   */
+  public boolean supportsHeadlessInteraction() {
+    return true;
+  }
+
+  /**
+   * Performs the interaction with the user in a headless environment.
+   *
+   * @return		true if successfully interacted
+   */
+  public boolean doInteractHeadless() {
+    boolean	result;
+    String 	msg;
+    DateFormat 	formatter;
+    String	value;
+
+    if (m_NonInteractive) {
+      m_OutputToken = createToken(null);
+      return true;
+    }
+
+    switch (m_Type) {
+      case DATE_AND_TIME:
+	msg       = "date and time";
+	formatter = DateUtils.getTimestampFormatter();
+	break;
+      case DATE:
+	msg       = "date";
+	formatter = DateUtils.getDateFormatter();
+	break;
+      case TIME:
+	msg       = "time";
+	formatter = DateUtils.getTimeFormatter();
+	break;
+      default:
+	throw new IllegalStateException("Unhandled type: " + m_Type);
+    }
+    msg    = "Select " + msg + " (format: " + formatter.toPattern() + "):";
+    value  = ConsoleHelper.enterValue(msg);
+    result = false;
+    if ((value != null) && formatter.parse(value) != null) {
+      result        = true;
+      m_OutputToken = createToken(formatter.parse(value));
+    }
+
+    return result;
   }
 
   /**

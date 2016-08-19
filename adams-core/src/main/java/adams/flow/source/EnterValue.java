@@ -15,7 +15,7 @@
 
 /*
  * EnterValue.java
- * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
@@ -23,6 +23,7 @@ package adams.flow.source;
 import adams.core.QuickInfoHelper;
 import adams.core.base.BaseObject;
 import adams.core.base.BaseString;
+import adams.core.io.ConsoleHelper;
 import adams.flow.core.AutomatableInteractiveActor;
 import adams.flow.core.Token;
 import adams.gui.core.GUIHelper;
@@ -381,9 +382,9 @@ public class EnterValue
    */
   @Override
   public boolean doInteract() {
-    String	                  value;
-    String	                  msg;
-    String	                  initial;
+    String	value;
+    String	msg;
+    String	initial;
 
     msg     = m_Message;
     msg     = getVariables().expand(msg);
@@ -410,6 +411,46 @@ public class EnterValue
       m_OutputToken = new Token(value);
 
     m_Comm = null;
+
+    return ((value != null) && (value.length() > 0));
+  }
+
+  /**
+   * Returns whether headless interaction is supported.
+   *
+   * @return		true if interaction in headless environment is possible
+   */
+  public boolean supportsHeadlessInteraction() {
+    return true;
+  }
+
+  /**
+   * Performs the interaction with the user in a headless environment.
+   *
+   * @return		true if successfully interacted
+   */
+  public boolean doInteractHeadless() {
+    String	value;
+    String	msg;
+    String	initial;
+
+    msg     = m_Message;
+    msg     = getVariables().expand(msg);
+    initial = m_InitialValue;
+    initial = getVariables().expand(initial);
+
+    if (m_NonInteractive) {
+      m_OutputToken = new Token(initial);
+      return true;
+    }
+
+    if (m_SelectionValues.length > 0)
+      value = ConsoleHelper.selectOption(msg, BaseObject.toStringArray(m_SelectionValues), initial);
+    else
+      value = ConsoleHelper.enterValue(msg, initial);
+
+    if ((value != null) && (value.length() > 0))
+      m_OutputToken = new Token(value);
 
     return ((value != null) && (value.length() > 0));
   }

@@ -15,12 +15,13 @@
 
 /*
  * WekaSelectDataset.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
 
 import adams.core.QuickInfoHelper;
+import adams.core.io.ConsoleHelper;
 import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
 import adams.flow.core.AutomatableInteractiveActor;
@@ -458,7 +459,7 @@ public class WekaSelectDataset
    * @return		true if interaction in headless environment is possible
    */
   public boolean supportsHeadlessInteraction() {
-    return false;
+    return true;
   }
 
   /**
@@ -467,7 +468,30 @@ public class WekaSelectDataset
    * @return		true if successfully interacted
    */
   public boolean doInteractHeadless() {
-    return true;
+    boolean		result;
+    String[]		files;
+    PlaceholderFile	filePh;
+
+    result = false;
+
+    m_Queue.clear();
+
+    if (m_NonInteractive) {
+      for (File file: m_InitialFiles)
+	m_Queue.add(file.getAbsolutePath());
+      return true;
+    }
+
+    files = ConsoleHelper.enterMultipleValues(m_FileChooserTitle);
+    if (files != null) {
+      result = true;
+      for (String fileStr : files) {
+	filePh = new PlaceholderFile(fileStr);
+	m_Queue.add(filePh.getAbsolutePath());
+      }
+    }
+
+    return result;
   }
 
   /**

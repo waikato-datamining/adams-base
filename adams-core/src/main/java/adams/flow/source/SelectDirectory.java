@@ -15,20 +15,21 @@
 
 /*
  * SelectDirectory.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
 import adams.core.QuickInfoHelper;
+import adams.core.io.ConsoleHelper;
 import adams.core.io.PlaceholderDirectory;
 import adams.flow.core.AutomatableInteractiveActor;
 import adams.flow.core.Token;
 import adams.gui.chooser.BaseDirectoryChooser;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -353,6 +354,49 @@ public class SelectDirectory
 	m_OutputToken = new Token(file.getAbsolutePath());
       else
 	m_OutputToken = new Token(file.toString());
+    }
+
+    return result;
+  }
+
+  /**
+   * Returns whether headless interaction is supported.
+   *
+   * @return		true if interaction in headless environment is possible
+   */
+  public boolean supportsHeadlessInteraction() {
+    return true;
+  }
+
+  /**
+   * Performs the interaction with the user in a headless environment.
+   *
+   * @return		true if successfully interacted
+   */
+  public boolean doInteractHeadless() {
+    boolean			result;
+    String 			dirStr;
+    PlaceholderDirectory	dir;
+
+    if (m_NonInteractive) {
+      if (m_AbsoluteDirectoryName)
+	m_OutputToken = new Token(m_InitialDirectory.getAbsolutePath());
+      else
+	m_OutputToken = new Token(m_InitialDirectory.toString());
+      return true;
+    }
+
+    result = false;
+    dirStr = ConsoleHelper.enterValue(m_DirectoryChooserTitle, m_InitialDirectory.toString());
+    if ((dirStr != null) && !dirStr.isEmpty()) {
+      dir    = new PlaceholderDirectory(dirStr);
+      result = dir.isDirectory();
+      if (result) {
+	if (m_AbsoluteDirectoryName)
+	  m_OutputToken = new Token(dir.getAbsolutePath());
+	else
+	  m_OutputToken = new Token(dir.toString());
+      }
     }
 
     return result;
