@@ -15,12 +15,13 @@
 
 /*
  * PasteFromClipboard.java
- * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
 
 import adams.core.QuickInfoHelper;
+import adams.core.io.ConsoleHelper;
 import adams.flow.core.Token;
 import adams.gui.clipboard.AbstractClipboardData;
 
@@ -117,7 +118,8 @@ public class PasteFromClipboard
   @Override
   public String globalInfo() {
     return
-        "Pops up a dialog, prompting the user to accept content from clipboard.";
+        "Pops up a dialog, prompting the user to accept content from clipboard.\n"
+	  + "In headless mode, only strings can be pasted, of course.";
   }
 
   /**
@@ -237,14 +239,37 @@ public class PasteFromClipboard
   public boolean doInteract() {
     int		retVal;
 
-    if (isHeadless())
-      return true;
-	  
     retVal = JOptionPane.showConfirmDialog(getParentComponent(), m_Message, getName(), JOptionPane.OK_CANCEL_OPTION);
     if ((retVal == JOptionPane.OK_OPTION) && (m_ClipboardData.canPaste()))
       m_OutputToken = m_ClipboardData.pasteAsToken();
 
     return (retVal == JOptionPane.OK_OPTION);
+  }
+
+  /**
+   * Returns whether headless interaction is supported.
+   *
+   * @return		true if interaction in headless environment is possible
+   */
+  public boolean supportsHeadlessInteraction() {
+    return true;
+  }
+
+  /**
+   * Performs the interaction with the user in a headless environment.
+   *
+   * @return		true if successfully interacted
+   */
+  public boolean doInteractHeadless() {
+    String	content;
+
+    content = ConsoleHelper.enterMultiLineValue("Please paste content:");
+    if (content == null)
+      return false;
+
+    m_OutputToken = new Token(content);
+
+    return true;
   }
 
   /**
