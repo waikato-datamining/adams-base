@@ -218,6 +218,11 @@ public abstract class AbstractActor
       }
     }
 
+    if (this instanceof InteractiveActor) {
+      result.append("\n\nInteractive actor information:");
+      result.append("\n- supports interaction in headless mode: " + ((InteractiveActor) this).supportsHeadlessInteraction());
+    }
+
     return result.toString();
   }
 
