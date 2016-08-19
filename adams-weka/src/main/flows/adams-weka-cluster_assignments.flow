@@ -1,0 +1,28 @@
+# Project: adams
+# Date: 2016-08-19 20:01:44
+# User: fracpete
+# Charset: UTF-8
+adams.flow.control.Flow -annotation "Builds a SimpleKMeans clusterer on a training set\\nand evaluates it against a test set, outputting the\\ncluster assignments on the test set." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.standalone.CallableActors
+  adams.flow.source.SequenceSource -name train
+   adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/anneal_train.arff
+   adams.flow.transformer.WekaFileReader -loader weka.core.converters.ArffLoader
+   adams.flow.transformer.WekaFilter -filter "weka.filters.unsupervised.attribute.Remove -R last"
+  adams.flow.source.SequenceSource -name test
+   adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/anneal_test.arff
+   adams.flow.transformer.WekaFileReader -loader weka.core.converters.ArffLoader
+   adams.flow.transformer.WekaFilter -filter "weka.filters.unsupervised.attribute.Remove -R last"
+   adams.flow.control.Tee -name "put spreadsheet in storage"
+    adams.flow.transformer.Convert -conversion "adams.data.conversion.WekaInstancesToSpreadSheet -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.DefaultSpreadSheet"
+    adams.flow.transformer.SetStorageValue -storage-name test
+  adams.flow.source.WekaClustererSetup -clusterer "weka.clusterers.SimpleKMeans -init 0 -max-candidates 100 -periodic-pruning 10000 -min-density 2.0 -t1 -1.25 -t2 -1.0 -N 2 -A \"weka.core.EuclideanDistance -R first-last\" -I 500 -num-slots 1 -S 10"
+ adams.flow.source.Start
+ adams.flow.control.Trigger -name evaluate
+  adams.flow.source.MakeContainer -callable-actor train -callable-actor test -value-name Train -value-name Test -container-class adams.flow.container.WekaTrainTestSetContainer
+  adams.flow.transformer.WekaTrainTestSetClustererEvaluator -output-model true
+  adams.flow.transformer.WekaClusterAssignments
+  adams.flow.transformer.SetStorageValue -storage-name assignments
+ adams.flow.control.Trigger -name "combine and display assignments"
+  adams.flow.source.StorageValuesArray -storage-name test -storage-name assignments
+  adams.flow.transformer.SpreadSheetMerge
+  adams.flow.sink.SpreadSheetDisplay -writer adams.data.io.output.NullWriter
