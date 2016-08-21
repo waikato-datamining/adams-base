@@ -28,6 +28,10 @@ adams.core.io.fileuse.AbstractFileUseCheck=\
 adams.core.management.ClassPathAugmenter=\
   adams.core.management
 
+# handlers for object instantiations
+adams.core.objectinstance.AbstractObjectInstanceHandler=\
+  adams.core.objectinstance
+
 # the option producers
 adams.core.option.OptionProducer=\
   adams.core.option
@@ -516,10 +520,6 @@ adams.gui.goe.AbstractGenericObjectEditorHandler=\
 # the editor registration schemes
 adams.gui.goe.AbstractEditorRegistration=\
   adams.gui.goe
-
-# handlers for object instantiations
-adams.gui.goe.objectinstance.AbstractObjectInstanceHandler=\
-  adams.gui.goe.objectinstance
 
 # the menu items for the application menu
 adams.gui.application.AbstractMenuItemDefinition=\

@@ -22,16 +22,12 @@
 package adams.gui.goe;
 
 import adams.core.ClassLister;
-import adams.core.CloneHandler;
 import adams.core.CustomDisplayStringProvider;
 import adams.core.ObjectCopyHelper;
-import adams.core.ObjectCopyHelper.CopyType;
-import adams.core.Utils;
 import adams.core.io.PlaceholderFile;
 import adams.core.logging.Logger;
 import adams.core.logging.LoggingHelper;
 import adams.core.option.AbstractCommandLineHandler;
-import adams.core.option.OptionUtils;
 import adams.data.io.input.AbstractObjectReader;
 import adams.data.io.output.AbstractObjectWriter;
 import adams.gui.chooser.ObjectFileChooser;
@@ -43,7 +39,6 @@ import adams.gui.core.dotnotationtree.AbstractItemFilter;
 import adams.gui.goe.Favorites.FavoriteSelectionEvent;
 import adams.gui.goe.classtree.ClassTree;
 import adams.gui.goe.classtree.StrictClassTreeFilter;
-import adams.gui.goe.objectinstance.AbstractObjectInstanceHandler;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
@@ -80,7 +75,6 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.beans.PropertyEditor;
 import java.io.File;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -403,7 +397,7 @@ public class GenericObjectEditor
 	  return;
 	// update property sheet
 	try {
-	  setValue(newInstance("" + m_ComboBoxClassname.getSelectedItem()));
+	  setValue(ObjectCopyHelper.newInstance("" + m_ComboBoxClassname.getSelectedItem()));
 	}
 	catch (Exception ex) {
 	  ex.printStackTrace();
@@ -955,7 +949,7 @@ public class GenericObjectEditor
 	if (defaultValue == null)
 	  throw new IllegalStateException("No classes available!");
 	else
-	  m_DefaultValue = newInstance(defaultValue);
+	  m_DefaultValue = ObjectCopyHelper.newInstance(defaultValue);
       }
       catch (Exception e) {
 	LOGGER.log(Level.SEVERE, "Problem loading the first class: " + defaultValue, e);
@@ -1343,7 +1337,7 @@ public class GenericObjectEditor
       if ((m_Object != null) && m_Object.getClass().getName().equals(className))
 	return;
 
-      setValue(newInstance(className));
+      setValue(ObjectCopyHelper.newInstance(className));
       if (m_EditorComponent != null)
 	m_EditorComponent.updateChildPropertySheet();
     }
@@ -1419,31 +1413,4 @@ public class GenericObjectEditor
     m_Support.firePropertyChange("", null, null);
   }
 
-  /**
-   * Creates a new instance of the given class.
-   *
-   * @param cls		the class to create an instance from
-   * @return		the object, null if failed
-   * @throws Exception	if instantiation fails
-   */
-  public static Object newInstance(String cls) throws Exception {
-    return newInstance(Class.forName(cls));
-  }
-
-  /**
-   * Creates a new instance of the given class.
-   *
-   * @param cls		the class to create an instance from
-   * @return		the object, null if failed
-   * @throws Exception	if instantiation fails
-   */
-  public static Object newInstance(Class cls) throws Exception {
-    AbstractObjectInstanceHandler	instHandler;
-
-    instHandler = AbstractObjectInstanceHandler.getHandler(cls);
-    if (instHandler != null)
-      return instHandler.newInstance(cls);
-    else
-      return cls.newInstance();
-  }
 }

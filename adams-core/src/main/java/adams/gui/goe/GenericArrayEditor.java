@@ -583,7 +583,7 @@ public class GenericArrayEditor
 	  }
 	  else {
 	    try {
-	      editor.setValue(GenericObjectEditor.newInstance(elementClass));
+	      editor.setValue(ObjectCopyHelper.newInstance(elementClass));
 	    }
 	    catch(Exception ex) {
 	      m_ElementEditor = null;

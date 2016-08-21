@@ -17,7 +17,7 @@
  * AbstractObjectInstanceHandler.java
  * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
  */
-package adams.gui.goe.objectinstance;
+package adams.core.objectinstance;
 
 import adams.core.ClassLister;
 import adams.gui.goe.DefaultGenericObjectEditorHandler;

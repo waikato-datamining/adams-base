@@ -24,8 +24,7 @@ import adams.core.logging.Logger;
 import adams.core.logging.LoggingHelper;
 import adams.core.option.OptionHandler;
 import adams.core.option.OptionUtils;
-import adams.gui.goe.GenericObjectEditor;
-import adams.gui.goe.objectinstance.AbstractObjectInstanceHandler;
+import adams.core.objectinstance.AbstractObjectInstanceHandler;
 
 import java.io.Serializable;
 import java.lang.reflect.Array;
@@ -75,7 +74,7 @@ public class ObjectCopyHelper {
     }
     else {
       try {
-        GenericObjectEditor.newInstance(source.getClass());
+        newInstance(source.getClass());
         return CopyType.NEWINSTANCE;
       }
       catch (Exception e) {
@@ -91,13 +90,25 @@ public class ObjectCopyHelper {
    *
    * @param source 	the object to copy
    * @return 		a copy of the source object
-   * @see		#copyObjects(Object[])
+   * @see		#copyObjects(CopyType, Object[])
    */
   public static Object copyObject(Object source) {
+    return copyObject(null, source);
+  }
+
+  /**
+   * Makes a copy of an object.
+   *
+   * @param type	the copy type to use, null to automatically determine
+   * @param source 	the object to copy
+   * @return 		a copy of the source object
+   * @see		#copyObjects(CopyType, Object[])
+   */
+  public static Object copyObject(CopyType type, Object source) {
     if (source == null)
       return null;
 
-    return copyObjects(new Object[]{source})[0];
+    return copyObjects(type, new Object[]{source})[0];
   }
 
   /**
@@ -105,24 +116,38 @@ public class ObjectCopyHelper {
    *
    * @param source 	the objects to copy
    * @return 		a copy of the source objects
+   * @see		#copyObjects(CopyType, Object[])
+   */
+  public static Object[] copyObjects(Object[] source) {
+    return copyObjects(null, source);
+  }
+
+  /**
+   * Makes a copy of the objects.
+   *
+   * @param type	the copy type to use, null to automatically determine
+   * @param source 	the objects to copy
+   * @return 		a copy of the source objects
    * @see		OptionUtils#shallowCopy
    * @see		CloneHandler#getClone()
    * @see		Utils#deepCopy(Object)
+   * @see		AbstractObjectInstanceHandler#getHandler(Class)
    * @see		CopyType
    */
-  public static Object[] copyObjects(Object[] source) {
+  public static Object[] copyObjects(CopyType type, Object[] source) {
     Object[] 				result;
-    CopyType				type;
     int					i;
     Class				cls;
-    AbstractObjectInstanceHandler instHandler;
+    AbstractObjectInstanceHandler 	instHandler;
 
     if (source == null)
       return null;
     if (source.length == 0)
       return new Object[0];
 
-    type   = copyType(source[0]);
+    if (type == null)
+      type = copyType(source[0]);
+
     result = (Object[]) Array.newInstance(source[0].getClass(), source.length);
     switch (type) {
       case OPTIONHANDLER:
@@ -161,5 +186,33 @@ public class ObjectCopyHelper {
     }
 
     return result;
+  }
+
+  /**
+   * Creates a new instance of the given class.
+   *
+   * @param cls		the class to create an instance from
+   * @return		the object, null if failed
+   * @throws Exception	if instantiation fails
+   */
+  public static Object newInstance(String cls) throws Exception {
+    return newInstance(Class.forName(cls));
+  }
+
+  /**
+   * Creates a new instance of the given class.
+   *
+   * @param cls		the class to create an instance from
+   * @return		the object, null if failed
+   * @throws Exception	if instantiation fails
+   */
+  public static Object newInstance(Class cls) throws Exception {
+    AbstractObjectInstanceHandler	instHandler;
+
+    instHandler = AbstractObjectInstanceHandler.getHandler(cls);
+    if (instHandler != null)
+      return instHandler.newInstance(cls);
+    else
+      return cls.newInstance();
   }
 }

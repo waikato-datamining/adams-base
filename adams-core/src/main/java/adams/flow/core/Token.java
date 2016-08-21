@@ -15,14 +15,14 @@
 
 /*
  * Token.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.core;
 
 
 import adams.core.CloneHandler;
-import adams.core.Utils;
+import adams.core.ObjectCopyHelper;
 import adams.flow.provenance.Provenance;
 import adams.flow.provenance.ProvenanceContainer;
 import adams.flow.provenance.ProvenanceInformation;
@@ -163,22 +163,18 @@ public class Token
   }
 
   /**
-   * Returns a clone of itself. Returns a deep copy of the payload if that is
-   * serializable.
+   * Returns a clone of itself.
    *
    * @return		the clone
+   * @see		ObjectCopyHelper#copyObject(Object)
    */
   public Token getClone() {
     Token	result;
 
     result = new Token();
 
-    if (!isNull() && (m_Payload instanceof CloneHandler))
-      result.setPayload(((CloneHandler) m_Payload).getClone());
-    else if (!isNull() && (m_Payload instanceof Serializable))
-      result.setPayload(Utils.deepCopy(m_Payload));
-    else
-      result.setPayload(m_Payload);
+    if (!isNull())
+      result.setPayload(ObjectCopyHelper.copyObject(m_Payload));
 
     if (Provenance.getSingleton().isEnabled() && (m_Provenance != null))
       result.setProvenance(m_Provenance.getClone());

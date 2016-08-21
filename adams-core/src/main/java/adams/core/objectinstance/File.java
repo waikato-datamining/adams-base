@@ -18,7 +18,7 @@
  * Copyright (C) 2015 University of Waikato, Hamilton, NZ
  */
 
-package adams.gui.goe.objectinstance;
+package adams.core.objectinstance;
 
 /**
  * Instantiates File objects.
