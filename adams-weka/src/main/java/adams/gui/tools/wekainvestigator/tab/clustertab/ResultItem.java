@@ -86,7 +86,7 @@ public class ResultItem
    * @param clusterer	the model, can be null
    * @param header	the header of the training set, can be null
    */
-  protected ResultItem(ClusterEvaluation evaluation, Object supplementary, Clusterer clusterer, Instances header) {
+  public ResultItem(ClusterEvaluation evaluation, Object supplementary, Clusterer clusterer, Instances header) {
     super(header);
     m_Clusterer     = clusterer;
     m_Supplementary = supplementary;
