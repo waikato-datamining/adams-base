@@ -2035,6 +2035,55 @@ registry for \textit{running flows}. This can be achieved in two ways:
   in the \textit{adams/flow/control/Flow.props} file to \textit{true}.
 \end{tight_itemize}
 
+\section{Linux servers}
+ADAMS can be run in a headless environment, i.e., without graphical user
+interface. Installing workflows that process data on a Linux server, e.g.,
+Ubuntu, is fairly easy:
+\begin{tight_itemize}
+  \item Create non-privileged user \texttt{adams} and add other users like
+  yourself to that user's group in \texttt{/etc/group}.
+  \item Add your public RSA key\footnote{Best practice is to create a new
+  RSA key pair for this server/application, in case the server gets compromised
+  and you need to regenerate the key. The implications of replacing such a
+  key-pair are then fairly limited.} to \texttt{/home/adams/.ssh/authorized\_keys}.
+  \item Download, extract and copy an Oracle JDK to \texttt{/opt/jdk}
+  \item Download, extract and copy ADAMS to \texttt{/opt/adams}
+  \item If your flow is processing files, create the directory structure
+  (see Figure \ref{example_dir_layout_data_processing} for an example).
+  \item Make sure that all files and directories are owned by the \texttt{adams}
+  user (using \texttt{chown}) and that the permissions for the \texttt{adams}
+  group are set correctly as well (using \texttt{chmod}).
+  \item Create the script that will execute your flow, e.g.,
+  \texttt{/usr/local/bin/myflow.sh} which executes the flow called
+  \texttt{myflow.flow}:
+    {\scriptsize
+    \begin{verbatim}
+unset DISPLAY
+cd /opt/adams
+/opt/jdk/bin/java -cp "./lib/*" adams.flow.FlowRunner -headless -input ./flows/myflow.flow &
+    \end{verbatim}}
+  \item Assume the identity of the \texttt{adams} user, e.g., by using
+  \texttt{sudo su - adams} and add the following cronjob, using \texttt{crontab -e},
+  which will execute your flow at startup time:
+    \begin{verbatim}
+    @reboot /usr/local/bin/myflow.sh
+    \end{verbatim}
+\end{tight_itemize}
+
+\begin{figure}[htb]
+\dirtree{%
+ .1 /.
+ .2 opt.
+ .3 data.
+ .4 incoming \DTcomment{\textrm{for receiving data}}.
+ .4 processing \DTcomment{\textrm{currently being processed}}.
+ .4 processed \DTcomment{\textrm{successfully processed}}.
+ .4 failed \DTcomment{\textrm{failed to process for some reason}}.
+}
+  \caption{Example directory layout for data processing.}
+  \label{example_dir_layout_data_processing}
+\end{figure}
+
 
 %%%%%%%%%
 % Tools %
