@@ -705,7 +705,7 @@ public class Utils {
       return s;
     }
   }
-  
+
   /**
    * Creates a deep copy of the given object (must be serializable!). Returns
    * null in case of an error.
@@ -714,6 +714,18 @@ public class Utils {
    * @return		the deep copy
    */
   public static Object deepCopy(Object o) {
+    return deepCopy(o, false);
+  }
+
+  /**
+   * Creates a deep copy of the given object (must be serializable!). Returns
+   * null in case of an error.
+   *
+   * @param o		the object to copy
+   * @param silent	whether to suppress error output
+   * @return		the deep copy
+   */
+  public static Object deepCopy(Object o, boolean silent) {
     Object		result;
     SerializedObject	so;
 
@@ -722,8 +734,10 @@ public class Utils {
       result = so.getObject();
     }
     catch (Exception e) {
-      System.err.println("Failed to serialize " + o.getClass().getName() + ":");
-      e.printStackTrace();
+      if (!silent) {
+        System.err.println("Failed to serialize " + o.getClass().getName() + ":");
+        e.printStackTrace();
+      }
       result = null;
     }
 
