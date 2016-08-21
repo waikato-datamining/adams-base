@@ -327,7 +327,7 @@ public class ClassesToClusters
     matrix = toMatrixString(numClusters, counts, clusterTotals, new Instances(data, 0));
 
     // history
-    return addToHistory(history, new ResultItem(eval, matrix, clusterer, new Instances(train, 0)));
+    return addToHistory(history, new ResultItem(eval, "Classes to clusters", matrix, clusterer, new Instances(train, 0)));
   }
 
   /**

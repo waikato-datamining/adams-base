@@ -44,8 +44,11 @@ public class ResultItem
   /** the model. */
   protected Clusterer m_Clusterer;
 
+  /** the supplementary name. */
+  protected String m_SupplementaryName;
+
   /** supplementary data. */
-  protected Object m_Supplementary;
+  protected Object m_SupplementaryData;
 
   /**
    * Initializes the item with no evaluation.
@@ -65,32 +68,33 @@ public class ResultItem
    * @param header	the header of the training set, can be null
    */
   public ResultItem(ClusterEvaluation evaluation, Clusterer clusterer, Instances header) {
-    this(evaluation, null, clusterer, header);
+    this(evaluation, null, null, clusterer, header);
   }
 
   /**
    * Initializes the item.
    *
-   * @param supplementary	the supplementary data, can be null
+   * @param supplementaryData	the supplementary data, can be null
    * @param clusterer	the model, can be null
    * @param header	the header of the training set, can be null
    */
-  public ResultItem(Object supplementary, Clusterer clusterer, Instances header) {
-    this(null, supplementary, clusterer, header);
+  public ResultItem(String supplementaryName, Object supplementaryData, Clusterer clusterer, Instances header) {
+    this(null, supplementaryName, supplementaryData, clusterer, header);
   }
 
   /**
    * Initializes the item.
    *
-   * @param supplementary	the supplementary data, can be null
+   * @param supplementaryData	the supplementary data, can be null
    * @param clusterer	the model, can be null
    * @param header	the header of the training set, can be null
    */
-  public ResultItem(ClusterEvaluation evaluation, Object supplementary, Clusterer clusterer, Instances header) {
+  public ResultItem(ClusterEvaluation evaluation, String supplementaryName, Object supplementaryData, Clusterer clusterer, Instances header) {
     super(header);
-    m_Clusterer     = clusterer;
-    m_Supplementary = supplementary;
-    m_Evaluation    = evaluation;
+    m_Clusterer         = clusterer;
+    m_SupplementaryName = supplementaryName;
+    m_SupplementaryData = supplementaryData;
+    m_Evaluation        = evaluation;
   }
 
   /**
@@ -139,12 +143,30 @@ public class ResultItem
   }
 
   /**
+   * Returns whether a name for the Supplementary object is present.
+   * 
+   * @return		true if available
+   */
+  public boolean hasSupplementaryName() {
+    return (m_SupplementaryName != null);
+  }
+
+  /**
+   * Returns the stored Supplementary name.
+   * 
+   * @return		the model, null if not present
+   */
+  public String getSupplementaryName() {
+    return m_SupplementaryName;
+  }
+
+  /**
    * Returns whether an Supplementary object is present.
    * 
    * @return		true if available
    */
-  public boolean hasSupplementary() {
-    return (m_Supplementary != null);
+  public boolean hasSupplementaryData() {
+    return (m_SupplementaryData != null);
   }
 
   /**
@@ -152,8 +174,8 @@ public class ResultItem
    * 
    * @return		the model, null if not present
    */
-  public Object getSupplementary() {
-    return m_Supplementary;
+  public Object getSupplementaryData() {
+    return m_SupplementaryData;
   }
 
   /**

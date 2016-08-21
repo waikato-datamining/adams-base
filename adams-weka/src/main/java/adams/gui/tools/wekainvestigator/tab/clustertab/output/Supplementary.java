@@ -36,6 +36,9 @@ public class Supplementary
 
   private static final long serialVersionUID = -6829245659118360739L;
 
+  /** the title. */
+  protected String m_Title;
+
   /**
    * Returns a string describing the object.
    *
@@ -47,12 +50,22 @@ public class Supplementary
   }
 
   /**
+   * Initializes the members.
+   */
+  @Override
+  protected void initialize() {
+    super.initialize();
+
+    m_Title = "Supplementary";
+  }
+
+  /**
    * The title to use for the tab.
    *
    * @return		the title
    */
   public String getTitle() {
-    return "Supplementary";
+    return m_Title;
   }
 
   /**
@@ -62,7 +75,7 @@ public class Supplementary
    * @return		true if output can be generated
    */
   public boolean canGenerateOutput(ResultItem item) {
-    return item.hasSupplementary();
+    return item.hasSupplementaryData();
   }
 
   /**
@@ -75,12 +88,15 @@ public class Supplementary
   public String generateOutput(ResultItem item) {
     BaseTextArea 	text;
 
-    if (!item.hasSupplementary())
+    if (!item.hasSupplementaryData())
       return "No supplementary data available!";
+
+    if (item.hasSupplementaryName())
+      m_Title = item.getSupplementaryName();
 
     text = new BaseTextArea();
     text.setTextFont(Fonts.getMonospacedFont());
-    text.setText(item.getSupplementary().toString());
+    text.setText(item.getSupplementaryData().toString());
     text.setCaretPosition(0);
     addTab(item, new TextualContentPanel(text, true));
 
