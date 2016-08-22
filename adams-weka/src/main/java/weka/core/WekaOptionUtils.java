@@ -20,6 +20,8 @@
 
 package weka.core;
 
+import adams.core.Index;
+import adams.core.base.BaseObject;
 import adams.core.option.AbstractCommandLineHandler;
 import adams.core.option.OptionUtils;
 
@@ -315,6 +317,137 @@ public class WekaOptionUtils {
       return defValue;
     else
       return (adams.core.option.OptionHandler) OptionUtils.forAnyCommandLine(adams.core.option.OptionHandler.class, value);
+  }
+
+  /**
+   * Parses an enum option, uses default if option is missing.
+   *
+   * @param options       the option array to use
+   * @param option        the option to look for in the options array (no leading dash)
+   * @param defValue      the default value
+   * @return              the parsed value (or default value if option not present)
+   * @throws Exception    if parsing of value fails
+   */
+  public static Enum parse(String[] options, char option, Enum defValue) throws Exception {
+    return parse(options, "" + option, defValue);
+  }
+
+  /**
+   * Parses an enum option, uses default if option is missing.
+   *
+   * @param options       the option array to use
+   * @param option        the option to look for in the options array (no leading dash)
+   * @param defValue      the default value
+   * @return              the parsed value (or default value if option not present)
+   * @throws Exception    if parsing of value fails
+   */
+  public static Enum parse(String[] options, String option, Enum defValue) throws Exception {
+    Object 	result;
+    String	value;
+
+    if (Utils.getOptionPos(option, options) == -1)
+      return defValue;
+
+    value = Utils.getOption(option, options);
+    result = EnumHelper.valueFromString(defValue.getDeclaringClass().getName(), value);
+    if (result == null)
+      return defValue;
+
+    return (Enum) result;
+  }
+
+  /**
+   * Parses an Index option, uses default if option is missing.
+   *
+   * @param options       the option array to use
+   * @param option        the option to look for in the options array (no leading dash)
+   * @param defValue      the default value
+   * @return              the parsed value (or default value if option not present)
+   * @throws Exception    if parsing of value fails
+   */
+  public static Index parse(String[] options, char option, Index defValue) throws Exception {
+    return parse(options, "" + option, defValue);
+  }
+
+  /**
+   * Parses a Index option, uses default if option is missing.
+   *
+   * @param options       the option array to use
+   * @param option        the option to look for in the options array (no leading dash)
+   * @param defValue      the default value
+   * @return              the parsed value (or default value if option not present)
+   * @throws Exception    if parsing of value fails
+   */
+  public static Index parse(String[] options, String option, Index defValue) throws Exception {
+    String value = Utils.getOption(option, options);
+    if (value.isEmpty())
+      return defValue;
+    else
+      return new Index(value);
+  }
+
+  /**
+   * Parses a Range option, uses default if option is missing.
+   *
+   * @param options       the option array to use
+   * @param option        the option to look for in the options array (no leading dash)
+   * @param defValue      the default value
+   * @return              the parsed value (or default value if option not present)
+   * @throws Exception    if parsing of value fails
+   */
+  public static adams.core.Range parse(String[] options, char option, adams.core.Range defValue) throws Exception {
+    return parse(options, "" + option, defValue);
+  }
+
+  /**
+   * Parses a Range option, uses default if option is missing.
+   *
+   * @param options       the option array to use
+   * @param option        the option to look for in the options array (no leading dash)
+   * @param defValue      the default value
+   * @return              the parsed value (or default value if option not present)
+   * @throws Exception    if parsing of value fails
+   */
+  public static adams.core.Range parse(String[] options, String option, adams.core.Range defValue) throws Exception {
+    String value = Utils.getOption(option, options);
+    if (value.isEmpty())
+      return defValue;
+    else
+      return new adams.core.Range(value);
+  }
+
+  /**
+   * Parses a BaseObject option, uses default if option is missing.
+   *
+   * @param options       the option array to use
+   * @param option        the option to look for in the options array (no leading dash)
+   * @param defValue      the default value
+   * @return              the parsed value (or default value if option not present)
+   * @throws Exception    if parsing of value fails
+   */
+  public static BaseObject parse(String[] options, char option, BaseObject defValue) throws Exception {
+    return parse(options, "" + option, defValue);
+  }
+
+  /**
+   * Parses a BaseObject option, uses default if option is missing.
+   *
+   * @param options       the option array to use
+   * @param option        the option to look for in the options array (no leading dash)
+   * @param defValue      the default value
+   * @return              the parsed value (or default value if option not present)
+   * @throws Exception    if parsing of value fails
+   */
+  public static BaseObject parse(String[] options, String option, BaseObject defValue) throws Exception {
+    String value = Utils.getOption(option, options);
+    if (value.isEmpty()) {
+      return defValue;
+    }
+    else {
+      BaseObject result = defValue.getClone();
+      result.setValue(value);
+      return result;
+    }
   }
 
   /**
@@ -641,6 +774,29 @@ public class WekaOptionUtils {
         options.add("" + element);
       }
     }
+  }
+
+  /**
+   * Adds the enum value to the options.
+   *
+   * @param options   the current list of options to extend
+   * @param option    the option (without the leading dash)
+   * @param value     the current value
+   */
+  public static void add(List<String> options, char option, Enum value) {
+    add(options, "" + option, value);
+  }
+
+  /**
+   * Adds the enum value to the options.
+   *
+   * @param options   the current list of options to extend
+   * @param option    the option (without the leading dash)
+   * @param value     the current value
+   */
+  public static void add(List<String> options, String option, Enum value) {
+    options.add("-" + option);
+    options.add("" + value);
   }
 
   /**
