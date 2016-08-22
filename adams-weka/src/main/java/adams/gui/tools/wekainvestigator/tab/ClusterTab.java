@@ -382,12 +382,12 @@ public class ClusterTab
 
     try {
       cmds = OptionUtils.splitOptions(
-        props.getProperty("Cluster.DefaultOutputGenerators", TextStatistics.class.getName()));
+        props.getProperty("Cluster.OutputGenerators", TextStatistics.class.getName()));
     }
     catch (Exception e) {
       ConsolePanel.getSingleton().append(
         Level.SEVERE,
-        "Failed to parse output generators:\n" + props.getProperty("Cluster.DefaultOutputGenerators"), e);
+        "Failed to parse output generators:\n" + props.getProperty("Cluster.OutputGenerators"), e);
       cmds = new String[]{TextStatistics.class.getName()};
     }
 
@@ -527,9 +527,24 @@ public class ClusterTab
    */
   @Override
   protected void finishInit() {
+    Properties		props;
+    String		evalDefault;
+    int			evalIndex;
+    int			i;
+
     super.finishInit();
 
-    m_ComboBoxEvaluations.setSelectedIndex(0);
+    props = InvestigatorPanel.getProperties();
+
+    evalDefault = props.getProperty("Cluster.Evaluation", "");
+    evalIndex   = 0;
+    for (i = 0; i < m_ModelEvaluations.getSize(); i++) {
+      if (m_ModelEvaluations.getElementAt(i).getClass().getName().equals(evalDefault)) {
+	evalIndex = i;
+	break;
+      }
+    }
+    m_ComboBoxEvaluations.setSelectedIndex(evalIndex);
   }
 
   /**

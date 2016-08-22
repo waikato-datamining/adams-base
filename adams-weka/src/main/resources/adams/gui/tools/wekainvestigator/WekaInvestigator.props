@@ -41,6 +41,10 @@ Preprocess.BatchFilter=false
 # (superclass: weka.classifiers.Classifier)
 Classify.Classifier=weka.classifiers.rules.ZeroR
 
+# the default evaluation to use
+# (superclass: adams.gui.tools.wekainvestigator.tab.classifytab.evaluation.AbstractClassifierEvaluation)
+Classify.Evaluation=adams.gui.tools.wekainvestigator.tab.classifytab.evaluation.CrossValidation
+
 # the width of the left-hand side of the classification panel
 # (integer)
 Classify.LeftPanelWidth=275
@@ -67,13 +71,17 @@ Classify.PreserveOrder=false
 
 # the default output generators to use
 # (blank-separated list of "classname + options")
-Classify.DefaultOutputGenerators=\
+Classify.OutputGenerators=\
   adams.gui.tools.wekainvestigator.tab.classifytab.output.TextStatistics \
   adams.gui.tools.wekainvestigator.tab.classifytab.output.ModelOutput
 
 # the default clusterer
 # (superclass: weka.clusterers.Clusterer)
 Cluster.Clusterer=weka.clusterers.SimpleKMeans
+
+# the default cluster evaluation to use
+# (superclass: adams.gui.tools.wekainvestigator.tab.clustertab.evaluation.AbstractClustererEvaluation)
+Cluster.Evaluation=adams.gui.tools.wekainvestigator.tab.clustertab.evaluation.TrainTestSet
 
 # the width of the left-hand side of the cluster panel
 # (integer)
@@ -101,7 +109,7 @@ Cluster.PreserveOrder=false
 
 # the default output generators to use
 # (blank-separated list of "classname + options")
-Cluster.DefaultOutputGenerators=\
+Cluster.OutputGenerators=\
   adams.gui.tools.wekainvestigator.tab.clustertab.output.TextStatistics \
   adams.gui.tools.wekainvestigator.tab.clustertab.output.ModelOutput \
   adams.gui.tools.wekainvestigator.tab.clustertab.output.Supplementary
