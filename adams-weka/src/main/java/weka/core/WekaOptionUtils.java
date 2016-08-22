@@ -742,6 +742,75 @@ public class WekaOptionUtils {
   }
 
   /**
+   * Adds the Index to the options.
+   *
+   * @param options   the current list of options to extend
+   * @param option    the option (without the leading dash)
+   * @param value     the current value
+   */
+  public static void add(List<String> options, char option, Index value) {
+    add(options, "" + option, value);
+  }
+
+  /**
+   * Adds the Index to the options.
+   *
+   * @param options   the current list of options to extend
+   * @param option    the option (without the leading dash)
+   * @param value     the current value
+   */
+  public static void add(List<String> options, String option, Index value) {
+    options.add("-" + option);
+    options.add(value.getIndex());
+  }
+
+  /**
+   * Adds the adams.core.Range to the options.
+   *
+   * @param options   the current list of options to extend
+   * @param option    the option (without the leading dash)
+   * @param value     the current value
+   */
+  public static void add(List<String> options, char option, adams.core.Range value) {
+    add(options, "" + option, value);
+  }
+
+  /**
+   * Adds the adams.core.Range to the options.
+   *
+   * @param options   the current list of options to extend
+   * @param option    the option (without the leading dash)
+   * @param value     the current value
+   */
+  public static void add(List<String> options, String option, adams.core.Range value) {
+    options.add("-" + option);
+    options.add(value.getRange());
+  }
+
+  /**
+   * Adds the BaseObject to the options.
+   *
+   * @param options   the current list of options to extend
+   * @param option    the option (without the leading dash)
+   * @param value     the current value
+   */
+  public static void add(List<String> options, char option, BaseObject value) {
+    add(options, "" + option, value);
+  }
+
+  /**
+   * Adds the BaseObject to the options.
+   *
+   * @param options   the current list of options to extend
+   * @param option    the option (without the leading dash)
+   * @param value     the current value
+   */
+  public static void add(List<String> options, String option, BaseObject value) {
+    options.add("-" + option);
+    options.add(value.getValue());
+  }
+
+  /**
    * Adds the array to the options.
    *
    * @param options   the current list of options to extend
