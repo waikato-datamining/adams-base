@@ -59,6 +59,17 @@ public class TrainTestSet
   protected DefaultComboBoxModel<String> m_ModelDatasets;
 
   /**
+   * Returns a string describing the object.
+   *
+   * @return 			a description suitable for displaying in the gui
+   */
+  public String globalInfo() {
+    return
+      "Builds the clusterer on the selected training set and evaluates it "
+	+ "against the selected test set.";
+  }
+
+  /**
    * Initializes the widgets.
    */
   @Override

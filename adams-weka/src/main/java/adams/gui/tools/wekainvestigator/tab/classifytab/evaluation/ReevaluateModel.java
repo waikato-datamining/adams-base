@@ -69,6 +69,15 @@ public class ReevaluateModel
   protected Instances m_Header;
 
   /**
+   * Returns a string describing the object.
+   *
+   * @return 			a description suitable for displaying in the gui
+   */
+  public String globalInfo() {
+    return "Re-evaluates a serialized model on a test set.";
+  }
+
+  /**
    * Initializes the members.
    */
   @Override

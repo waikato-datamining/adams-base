@@ -74,6 +74,17 @@ public class TrainTestSplit
   protected JTextField m_TextSeed;
 
   /**
+   * Returns a string describing the object.
+   *
+   * @return 			a description suitable for displaying in the gui
+   */
+  public String globalInfo() {
+    return
+      "Generates train/test sets from the selected dataset using the specified "
+	+ "split percentage and builds/evaluates the clusterer accordingly.";
+  }
+
+  /**
    * Initializes the widgets.
    */
   @Override

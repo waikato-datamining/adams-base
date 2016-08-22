@@ -78,6 +78,15 @@ public class CrossValidation
   protected JCheckBox m_CheckBoxFinalModel;
 
   /**
+   * Returns a string describing the object.
+   *
+   * @return 			a description suitable for displaying in the gui
+   */
+  public String globalInfo() {
+    return "Cross-validates the clusterer on the selected dataset.";
+  }
+
+  /**
    * Initializes the widgets.
    */
   @Override

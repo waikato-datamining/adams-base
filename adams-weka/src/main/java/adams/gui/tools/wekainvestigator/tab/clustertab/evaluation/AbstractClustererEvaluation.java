@@ -21,6 +21,7 @@
 package adams.gui.tools.wekainvestigator.tab.clustertab.evaluation;
 
 import adams.core.ClassLister;
+import adams.core.GlobalInfoSupporter;
 import adams.core.Properties;
 import adams.core.StatusMessageHandler;
 import adams.core.logging.LoggingObject;
@@ -47,7 +48,7 @@ import java.util.Set;
  */
 public abstract class AbstractClustererEvaluation
   extends LoggingObject
-  implements StatusMessageHandler {
+  implements StatusMessageHandler, GlobalInfoSupporter {
 
   private static final long serialVersionUID = -5847790432092994409L;
 

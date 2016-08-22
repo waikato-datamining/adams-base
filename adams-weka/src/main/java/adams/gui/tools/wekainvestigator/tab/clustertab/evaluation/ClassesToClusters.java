@@ -70,6 +70,17 @@ public class ClassesToClusters
   protected DefaultComboBoxModel<String> m_ModelClass;
 
   /**
+   * Returns a string describing the object.
+   *
+   * @return 			a description suitable for displaying in the gui
+   */
+  public String globalInfo() {
+    return
+      "Performs a classes-to-clusters mapping, after the clusterer got trained "
+	+ "on the selected training set and evaluated against the specified test set.";
+  }
+
+  /**
    * Initializes the widgets.
    */
   @Override
