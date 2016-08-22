@@ -15,11 +15,12 @@
 
 /*
  * AbstractOptionHandler.java
- * Copyright (C) 2009-2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.option;
 
+import adams.core.GlobalInfoSupporter;
 import adams.core.logging.CustomLoggingLevelObject;
 import adams.core.logging.LoggingLevel;
 
@@ -31,7 +32,7 @@ import adams.core.logging.LoggingLevel;
  */
 public abstract class AbstractOptionHandler
   extends CustomLoggingLevelObject
-  implements OptionHandler {
+  implements OptionHandler, GlobalInfoSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = -4086279255884465893L;
