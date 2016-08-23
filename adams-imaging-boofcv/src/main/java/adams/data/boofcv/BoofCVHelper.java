@@ -29,6 +29,8 @@ import boofcv.struct.image.ImageSingleBand;
 import boofcv.struct.image.ImageUInt8;
 
 import java.awt.image.BufferedImage;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Helper class for BoofCV operations.
@@ -168,6 +170,25 @@ public class BoofCVHelper {
       result.setNotes(notes);
     }
     
+    return result;
+  }
+
+  /**
+   * Converts an image to greyscale and checks if it is binary or not.
+   * @param img the image to covert
+   * @return True if the image is a binary image, false if not.
+   */
+  public static boolean isBinary(BoofCVImageContainer img) {
+    boolean result = true;
+    ImageUInt8 greyscale = (ImageUInt8) toBoofCVImage(img, BoofCVImageType.UNSIGNED_INT_8);
+    Set<Byte> values = new HashSet<>();
+    for(byte pixel : greyscale.getData()) {
+      values.add(pixel);
+      if(values.size() > 2) {
+	result = false;
+	break;
+      }
+    }
     return result;
   }
 }
