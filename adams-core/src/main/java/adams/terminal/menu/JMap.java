@@ -25,6 +25,7 @@ import adams.core.management.ProcessUtils;
 import adams.terminal.application.AbstractTerminalApplication;
 import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
+import com.googlecode.lanterna.gui2.dialogs.TextInputDialog;
 
 /**
  * Runs jmap and displays the result.
@@ -64,7 +65,13 @@ public class JMap
     String	options;
     String 	output;
 
-    options = adams.core.management.JMap.getDefaultOptions();
+    options = TextInputDialog.showDialog(
+      context, getTitle(),
+      "Enter the options for " + adams.core.management.JMap.EXECUTABLE + ":",
+      adams.core.management.JMap.getDefaultOptions());
+    if (options == null)
+      return;
+
     output = adams.core.management.JMap.execute(options, ProcessUtils.getVirtualMachinePID());
 
     MessageDialog.showMessageDialog(context, getTitle(), output);
