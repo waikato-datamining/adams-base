@@ -87,6 +87,7 @@ public class FlowRunner
     if ((retVal == null) || (retVal == MessageDialogButton.No))
       return;
 
+    ((Flow) flow).setHeadless(true);
     msg = flow.setUp();
     if (msg != null) {
       MessageDialog.showMessageDialog(context, getTitle(),
