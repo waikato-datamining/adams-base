@@ -133,7 +133,7 @@ public class ManageInteractiveActors
 	  if (option.getProperty().equals("nonInteractive")) {
 	    Method method = option.getDescriptor().getWriteMethod();
 	    try {
-	      method.invoke(option.getOptionHandler(), m_Enable);
+	      method.invoke(option.getOptionHandler(), !m_Enable);
 	      m_Modified = true;
 	    }
 	    catch (Exception e) {
