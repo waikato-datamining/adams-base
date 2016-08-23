@@ -19,6 +19,7 @@
  */
 package adams.gui.application;
 
+import adams.core.ClassLister;
 import adams.core.Properties;
 import adams.core.logging.LoggingObject;
 import adams.gui.core.GUIHelper;
@@ -100,7 +101,7 @@ public class ApplicationMenu
     super();
 
     if (m_UnavailableMenuItems == null)
-      m_UnavailableMenuItems = new HashSet<String>();
+      m_UnavailableMenuItems = new HashSet<>();
 
     m_Owner       = owner;
     m_Setup       = null;
@@ -248,7 +249,7 @@ public class ApplicationMenu
     // create the menus
     props            = getProperties();
     autoDiscovery    = props.getBoolean(LAYOUT_AUTOMATICDISCOVERY, false);
-    additional       = new HashSet<String>(Arrays.asList(AbstractBasicMenuItemDefinition.getMenuItemDefinitions()));
+    additional       = new HashSet<>(Arrays.asList(ClassLister.getSingleton().getClassnames(AbstractBasicMenuItemDefinition.class)));
     items            = props.getProperty(LAYOUT_MENUBAR, "").split(",");
     mnemonics        = GUIHelper.getMnemonics(items);
     menus            = new JMenu[items.length];
