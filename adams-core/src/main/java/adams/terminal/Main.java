@@ -20,12 +20,15 @@
 
 package adams.terminal;
 
+import adams.core.logging.ConsolePanelHandler;
 import adams.db.AbstractDatabaseConnection;
 import adams.db.DatabaseConnection;
 import adams.env.Environment;
 import adams.terminal.application.AbstractTerminalApplication;
 import adams.terminal.application.ApplicationMenu;
 import com.googlecode.lanterna.gui2.BasicWindow;
+
+import java.util.logging.Handler;
 
 /**
  * Main ADAMS application - terminal-based.
@@ -78,6 +81,16 @@ public class Main
    */
   protected AbstractDatabaseConnection getDefaultDatabaseConnection() {
     return DatabaseConnection.getSingleton();
+  }
+
+  /**
+   * Returns the log handler to use.
+   *
+   * @return		the handler
+   */
+  protected Handler createLogHandler() {
+    // TODO
+    return new ConsolePanelHandler();
   }
 
   /**

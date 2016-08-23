@@ -18,49 +18,17 @@
  * Copyright (C) 2016 University of Waikato, Hamilton, NZ
  */
 
-package adams.core.io;
+package adams.core.io.console;
 
 import adams.core.base.BasePassword;
-import adams.core.io.console.Basic;
-import adams.core.io.console.Console;
-import adams.core.io.console.Lanterna;
-import com.googlecode.lanterna.gui2.MultiWindowTextGUI;
 
 /**
- * Helper for input in a terminal.
- * By default, it uses System.out and System.in for interaction. By providing
- * a lanterna context via {@link #useLanterna(MultiWindowTextGUI)}, it is
- * possible to make use of lanterna.
+ * Interface for classes that allow the user to interact in the terminal.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class ConsoleHelper {
-
-  /** the actual helper. */
-  protected static Console m_Helper;
-  static {
-    useBasic();
-  }
-
-  /**
-   * Switches to the basic helper.
-   *
-   * @see Basic
-   */
-  public static void useBasic() {
-    m_Helper = new Basic();
-  }
-
-  /**
-   * Switches to the lanterna helper.
-   *
-   * @param context	the lanterna context
-   * @see		Lanterna
-   */
-  public static void useLanterna(MultiWindowTextGUI context) {
-    m_Helper = new Lanterna(context);
-  }
+public interface Console {
 
   /**
    * Lets the user enter a multi-line value.
@@ -68,9 +36,7 @@ public class ConsoleHelper {
    * @param msg		the message to output before reading the input
    * @return		the entered value, null if cancelled or failed to read input
    */
-  public static String enterMultiLineValue(String msg) {
-    return m_Helper.enterMultiLineValue(msg);
-  }
+  public String enterMultiLineValue(String msg);
 
   /**
    * Lets the user enter a value.
@@ -78,9 +44,7 @@ public class ConsoleHelper {
    * @param msg		the message to output before reading the input
    * @return		the entered value, null if cancelled or failed to read input
    */
-  public static String enterValue(String msg) {
-    return m_Helper.enterValue(msg);
-  }
+  public String enterValue(String msg);
 
   /**
    * Lets the user enter a value.
@@ -89,9 +53,7 @@ public class ConsoleHelper {
    * @param initial	the initial value, ignored if empty or null
    * @return		the entered value, null if cancelled or failed to read input
    */
-  public static String enterValue(String msg, String initial) {
-    return m_Helper.enterValue(msg, initial);
-  }
+  public String enterValue(String msg, String initial);
 
   /**
    * Lets the user enter multiple values. Empty string terminates the loop.
@@ -99,9 +61,7 @@ public class ConsoleHelper {
    * @param msg		the message to output before reading the input
    * @return		the entered value, null if cancelled or failed to read input
    */
-  public static String[] enterMultipleValues(String msg) {
-    return m_Helper.enterMultipleValues(msg);
-  }
+  public String[] enterMultipleValues(String msg);
 
   /**
    * Lets the user enter a password.
@@ -109,9 +69,7 @@ public class ConsoleHelper {
    * @param msg		the message to output before reading the input
    * @return		the entered value, null if cancelled or failed to read input
    */
-  public static BasePassword enterPassword(String msg) {
-    return m_Helper.enterPassword(msg);
-  }
+  public BasePassword enterPassword(String msg);
 
   /**
    * Lets the user select from a number of choices.
@@ -120,9 +78,7 @@ public class ConsoleHelper {
    * @param options	the options to choose from
    * @return		the selected option, null if cancelled or failed to read input
    */
-  public static String selectOption(String msg, String[] options) {
-    return m_Helper.selectOption(msg, options);
-  }
+  public String selectOption(String msg, String[] options);
 
   /**
    * Lets the user select from a number of choices.
@@ -132,7 +88,5 @@ public class ConsoleHelper {
    * @param initial	the initial selection (selected if just hitting enter), null or empty string to ignore
    * @return		the selected option, null if cancelled or failed to read input
    */
-  public static String selectOption(String msg, String[] options, String initial) {
-    return m_Helper.selectOption(msg, options, initial);
-  }
+  public String selectOption(String msg, String[] options, String initial);
 }

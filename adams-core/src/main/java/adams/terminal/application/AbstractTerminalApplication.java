@@ -20,8 +20,7 @@
 
 package adams.terminal.application;
 
-import adams.core.logging.ConsolePanelHandler;
-import adams.core.logging.FileHandler;
+import adams.core.io.ConsoleHelper;
 import adams.core.logging.LoggingHelper;
 import adams.core.logging.LoggingLevel;
 import adams.core.management.ProcessUtils;
@@ -50,7 +49,7 @@ import com.googlecode.lanterna.screen.TerminalScreen;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 import com.googlecode.lanterna.terminal.Terminal;
 
-import java.io.File;
+import java.util.logging.Handler;
 import java.util.logging.Level;
 
 /**
@@ -92,9 +91,8 @@ public abstract class AbstractTerminalApplication
    */
   protected AbstractTerminalApplication() {
     super();
-    initialize();
     initTerminal();
-    finishInit();
+    finishTerminal();
   }
 
   /**
@@ -126,15 +124,22 @@ public abstract class AbstractTerminalApplication
   }
 
   /**
+   * Returns the log handler to use.
+   *
+   * @return		the handler
+   */
+  protected abstract Handler createLogHandler();
+
+  /**
    * Finishes the initialization.
    */
-  protected void finishInit() {
+  protected void finishTerminal() {
     RemoteScriptingEngine 	engine;
 
-    super.finishInit();
-
     AbstractInitialization.initAll();
-    LoggingHelper.setDefaultHandler(new ConsolePanelHandler());
+
+    ConsoleHelper.useLanterna(m_GUI);
+    LoggingHelper.setDefaultHandler(createLogHandler());
 
     if (!m_RemoteScriptingEngineCmdLine.isEmpty()) {
       try {
@@ -345,8 +350,6 @@ public abstract class AbstractTerminalApplication
    */
   public static void runApplication(Class env, Class app, String[] options) {
     AbstractTerminalApplication application;
-    FileHandler			handler;
-    File			logFile;
 
     Environment.setEnvironmentClass(env);
     LoggingHelper.useHandlerFromOptions(options);
@@ -360,10 +363,6 @@ public abstract class AbstractTerminalApplication
 	ScriptingEngine.stopAllEngines();
       }
       else {
-	logFile = new File(Environment.getInstance().getDefaultHome() + File.separator + "console.log");
-	handler = new FileHandler();
-	handler.setLogFile(logFile);
-	LoggingHelper.setDefaultHandler(handler);
 	application = forName(app.getName(), options);
 	Environment.getInstance().setApplicationTerminal(application);
 	if (application.getDatabaseConnection().isConnected())
