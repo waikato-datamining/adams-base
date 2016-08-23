@@ -23,12 +23,12 @@ import adams.core.ClassLister;
 import adams.core.logging.LoggingObject;
 import adams.terminal.menu.AbstractMenuItemDefinition;
 import adams.terminal.menu.ProgramExit;
-import com.googlecode.lanterna.gui2.ActionListBox;
 import com.googlecode.lanterna.gui2.Button;
 import com.googlecode.lanterna.gui2.Direction;
 import com.googlecode.lanterna.gui2.LinearLayout;
 import com.googlecode.lanterna.gui2.Panel;
 import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
+import com.googlecode.lanterna.gui2.dialogs.ActionListDialogBuilder;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -87,8 +87,8 @@ public class ApplicationMenu
     Map<String,List<AbstractMenuItemDefinition>> 	menus;
     List<AbstractMenuItemDefinition>			menuitems;
     List<String>					categories;
-    ActionListBox					actionsProgram;
-    ActionListBox					actionsHelp;
+    ActionListDialogBuilder 				actionsProgram;
+    ActionListDialogBuilder				actionsHelp;
 
     result = new Panel();
     result.setLayoutManager(new LinearLayout(Direction.HORIZONTAL));
@@ -114,18 +114,19 @@ public class ApplicationMenu
     // build menu
     // first menu is "Program"
     menuitems      = menus.get(AbstractMenuItemDefinition.CATEGORY_PROGRAM);
-    actionsProgram = new ActionListBox();
+    actionsProgram = new ActionListDialogBuilder();
+    actionsProgram.setTitle(AbstractMenuItemDefinition.CATEGORY_PROGRAM);
     for (AbstractMenuItemDefinition def: menuitems) {
       // Exit is always last
       if (def.getClass() == ProgramExit.class)
 	continue;
-      actionsProgram.addItem(def.getTitle(), def.getRunnable(context));
+      actionsProgram.addAction(def.getTitle(), def.getRunnable(context));
     }
     definition = new ProgramExit();
     definition.setOwner(getOwner());
-    actionsProgram.addItem(definition.getTitle(), definition.getRunnable(context));
+    actionsProgram.addAction(definition.getTitle(), definition.getRunnable(context));
     result.addComponent(new Button(AbstractMenuItemDefinition.CATEGORY_PROGRAM, () -> {
-      actionsProgram.addTo(result);
+      actionsProgram.build().showDialog(context);
     }));
 
     // other categories
@@ -134,21 +135,23 @@ public class ApplicationMenu
     categories.remove(AbstractMenuItemDefinition.CATEGORY_HELP);
     for (String category : categories) {
       menuitems = menus.get(category);
-      final ActionListBox actions = new ActionListBox();
+      final ActionListDialogBuilder actions = new ActionListDialogBuilder();
+      actions.setTitle(category);
       for (AbstractMenuItemDefinition def: menuitems)
-	actions.addItem(def.getTitle(), def.getRunnable(context));
+	actions.addAction(def.getTitle(), def.getRunnable(context));
       result.addComponent(new Button(category, () -> {
-	actions.addTo(result);
+	actions.build().showDialog(context);
       }));
     }
 
     // last menu is "Help"
     menuitems   = menus.get(AbstractMenuItemDefinition.CATEGORY_HELP);
-    actionsHelp = new ActionListBox();
+    actionsHelp = new ActionListDialogBuilder();
+    actionsHelp.setTitle(AbstractMenuItemDefinition.CATEGORY_HELP);
     for (AbstractMenuItemDefinition def: menuitems)
-      actionsHelp.addItem(def.getTitle(), def.getRunnable(context));
+      actionsHelp.addAction(def.getTitle(), def.getRunnable(context));
     result.addComponent(new Button(AbstractMenuItemDefinition.CATEGORY_HELP, () -> {
-      actionsHelp.addTo(result);
+      actionsHelp.build().showDialog(context);
     }));
 
     return result;
