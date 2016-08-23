@@ -21,7 +21,6 @@
 
 package adams.gui.application;
 
-import adams.core.ClassLister;
 import adams.core.Utils;
 import adams.core.logging.Logger;
 import adams.core.option.OptionUtils;
@@ -288,15 +287,6 @@ public abstract class AbstractMenuItemDefinition
    */
   protected Logger getLogger() {
     return getOwner().getLogger();
-  }
-
-  /**
-   * Returns a list with classnames of codelets.
-   *
-   * @return		the codelet classnames
-   */
-  public static String[] getMenuItemDefinitions() {
-    return ClassLister.getSingleton().getClassnames(AbstractMenuItemDefinition.class);
   }
 
   /**
