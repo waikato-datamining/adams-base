@@ -24,10 +24,8 @@ import adams.db.AbstractDatabaseConnection;
 import adams.db.DatabaseConnection;
 import adams.env.Environment;
 import adams.terminal.application.AbstractTerminalApplication;
+import adams.terminal.application.ApplicationMenu;
 import com.googlecode.lanterna.gui2.BasicWindow;
-import com.googlecode.lanterna.gui2.Button;
-import com.googlecode.lanterna.gui2.GridLayout;
-import com.googlecode.lanterna.gui2.Panel;
 
 /**
  * Main ADAMS application - terminal-based.
@@ -55,21 +53,13 @@ public class Main
    */
   @Override
   protected void initTerminal() {
-    Panel 	panel;
-    Button	button;
+    ApplicationMenu   	menu;
 
     super.initTerminal();
 
-    // Create panel to hold components
-    panel = new Panel();
-    panel.setLayoutManager(new GridLayout(1));
-
-    button = new Button("Exit", () -> stop()).addTo(panel);
-    panel.addComponent(button);
-
-    // Create window to hold the panel
+    menu         = new ApplicationMenu(this);
     m_MainWindow = new BasicWindow();
-    m_MainWindow.setComponent(panel);
+    m_MainWindow.setComponent(menu.getMenuBar(m_GUI));
   }
 
   /**

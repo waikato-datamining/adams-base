@@ -696,6 +696,10 @@ adams.scripting.requesthandler.RequestHandler=\
 adams.scripting.responsehandler.ResponseHandler=\
   adams.scripting.responsehandler
 
+# the menu items for terminal applications
+adams.terminal.menu.AbstractMenuItemDefinition=\
+  adams.terminal.menu
+
 # the tools
 adams.tools.AbstractTool=\
   adams.tools
