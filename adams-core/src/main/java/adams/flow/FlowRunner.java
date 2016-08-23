@@ -39,6 +39,7 @@ import adams.env.Environment;
 import adams.flow.control.Flow;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorUtils;
+import adams.flow.processor.ManageInteractiveActors;
 import adams.gui.application.AbstractInitialization;
 import adams.gui.core.GUIHelper;
 
@@ -56,8 +57,6 @@ import java.util.logging.Level;
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- * 
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
@@ -69,8 +68,14 @@ import java.util.logging.Level;
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
- * <pre>-headless (property: headless)
+ * <pre>-headless &lt;boolean&gt; (property: headless)
  * &nbsp;&nbsp;&nbsp;If set to true, the actor is run in headless mode without GUI components.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-non-interactive &lt;boolean&gt; (property: nonInteractive)
+ * &nbsp;&nbsp;&nbsp;If set to true, interactive actors suppress their interaction with the user.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
  * <pre>-input &lt;adams.core.io.PlaceholderFile&gt; (property: input)
@@ -84,14 +89,16 @@ import java.util.logging.Level;
  * &nbsp;&nbsp;&nbsp;default: .*\\\\.(flow|flow.gz)
  * </pre>
  * 
- * <pre>-clean-up (property: cleanUp)
+ * <pre>-clean-up &lt;boolean&gt; (property: cleanUp)
  * &nbsp;&nbsp;&nbsp;If set to true, then a clean up is performed after execution, removing any 
  * &nbsp;&nbsp;&nbsp;graphical output as well.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-no-execute (property: noExecute)
+ * <pre>-no-execute &lt;boolean&gt; (property: noExecute)
  * &nbsp;&nbsp;&nbsp;If set to true, then flow execution is suppressed; flow is only loaded, 
  * &nbsp;&nbsp;&nbsp;set up and wrapped up.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
  <!-- options-end -->
@@ -111,12 +118,15 @@ public class FlowRunner
 
   /** the flow file/dir with flows to execute. */
   protected PlaceholderFile m_Input;
-  
+
   /** regular expression for including flows when traversing a directory. */
   protected BaseRegExp m_Include;
 
   /** whether the execution is to be headless, i.e., no GUI components. */
   protected boolean m_Headless;
+
+  /** whether the use non-interactive execution. */
+  protected boolean m_NonInteractive;
 
   /** the directory to use as the project's home directory. */
   protected String m_Home;
@@ -144,8 +154,8 @@ public class FlowRunner
    */
   @Override
   public String globalInfo() {
-    return 
-	"Executes flows from command-line.\n"
+    return
+      "Executes flows from command-line.\n"
 	+ "It is also possible to traverse a directory and execute all flows within "
 	+ "that match a regular expression.\n"
 	+ "Using the 'no-execute' option, you can suppress the flow execution, but "
@@ -160,28 +170,32 @@ public class FlowRunner
     super.defineOptions();
 
     m_OptionManager.add(
-	    "home", "home",
-	    "");
+      "home", "home",
+      "");
 
     m_OptionManager.add(
-	    "headless", "headless",
-	    false);
+      "headless", "headless",
+      false);
 
     m_OptionManager.add(
-	    "input", "input",
-	    new PlaceholderFile("."));
+      "non-interactive", "nonInteractive",
+      false);
 
     m_OptionManager.add(
-	    "include", "include",
-	    new BaseRegExp(".*\\.(" + Actor.FILE_EXTENSION + "|" + Actor.FILE_EXTENSION_GZ + ")"));
+      "input", "input",
+      new PlaceholderFile("."));
 
     m_OptionManager.add(
-	    "clean-up", "cleanUp",
-	    false);
+      "include", "include",
+      new BaseRegExp(".*\\.(" + Actor.FILE_EXTENSION + "|" + Actor.FILE_EXTENSION_GZ + ")"));
 
     m_OptionManager.add(
-	    "no-execute", "noExecute",
-	    false);
+      "clean-up", "cleanUp",
+      false);
+
+    m_OptionManager.add(
+      "no-execute", "noExecute",
+      false);
   }
 
   /**
@@ -259,6 +273,35 @@ public class FlowRunner
   }
 
   /**
+   * Sets whether to run the flow without interaction with the user.
+   *
+   * @param value	if true then interactive actors get suppressed
+   */
+  public void setNonInteractive(boolean value) {
+    m_NonInteractive = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to run the flow without interaction with the user.
+   *
+   * @return		true if interactive actors get suppressed
+   */
+  public boolean isNonInteractive() {
+    return m_NonInteractive;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String nonInteractiveTipText() {
+    return "If set to true, interactive actors suppress their interaction with the user.";
+  }
+
+  /**
    * Sets the file (or directory with flows) to load the actor from.
    *
    * @param value 	the file/dir
@@ -315,8 +358,8 @@ public class FlowRunner
    * 			displaying in the GUI or for listing the options.
    */
   public String includeTipText() {
-    return 
-	"The regular expression for including flows when traversing a "
+    return
+      "The regular expression for including flows when traversing a "
 	+ "directory rather than just executing a single flow.";
   }
 
@@ -349,8 +392,8 @@ public class FlowRunner
    */
   public String cleanUpTipText() {
     return
-        "If set to true, then a clean up is performed after execution, "
-      + "removing any graphical output as well.";
+      "If set to true, then a clean up is performed after execution, "
+	+ "removing any graphical output as well.";
   }
 
   /**
@@ -380,7 +423,7 @@ public class FlowRunner
    */
   public String noExecuteTipText() {
     return
-        "If set to true, then flow execution is suppressed; flow is only "
+      "If set to true, then flow execution is suppressed; flow is only "
 	+ "loaded, set up and wrapped up.";
   }
 
@@ -399,10 +442,11 @@ public class FlowRunner
    * @return		the error if one occurred, otherwise null (= everything OK)
    */
   public String execute() {
-    String		result;
-    List<String>	errors;
-    DirectoryLister	lister;
-    String[]		flows;
+    String			result;
+    List<String>		errors;
+    DirectoryLister		lister;
+    String[]			flows;
+    ManageInteractiveActors	procInteractive;
 
     result              = null;
     m_InterruptedByUser = false;
@@ -451,7 +495,20 @@ public class FlowRunner
       }
       return result;
     }
-    
+
+    // non-interactive?
+    if (m_NonInteractive) {
+      procInteractive = new ManageInteractiveActors();
+      procInteractive.setEnable(false);
+      procInteractive.process(m_Actor);
+      if (procInteractive.isModified()) {
+	m_Actor.destroy();
+	m_Actor = procInteractive.getModifiedActor();
+	if (isLoggingEnabled())
+	  getLogger().info("Disabled interactive actors");
+      }
+    }
+
     m_LastActor = m_Actor;
     if (isLoggingEnabled())
       getLogger().fine("Actor command-line: " + m_Actor.toCommandLine());
@@ -459,7 +516,7 @@ public class FlowRunner
     try {
       // initialize actor
       if (m_Actor instanceof Flow)
-        ((Flow) m_Actor).setHeadless(isHeadless() || GUIHelper.isHeadless());
+	((Flow) m_Actor).setHeadless(isHeadless() || GUIHelper.isHeadless());
       if (isLoggingEnabled() && m_Actor.isHeadless())
 	getLogger().info("Running in headless mode");
 
@@ -536,10 +593,7 @@ public class FlowRunner
    */
   @Override
   public boolean isPaused() {
-    if ((m_Actor != null) && (m_Actor instanceof Pausable))
-      return ((Pausable) m_Actor).isPaused();
-    else
-      return false;
+    return ((m_Actor != null) && (m_Actor instanceof Pausable)) && ((Pausable) m_Actor).isPaused();
   }
 
   /**
