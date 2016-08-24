@@ -80,7 +80,7 @@ public class DefaultFlowReader
    */
   @Override
   public String[] getFormatExtensions() {
-    return new String[]{"flow", "flow.gz"};
+    return new String[]{"flow"};
   }
 
   /**
