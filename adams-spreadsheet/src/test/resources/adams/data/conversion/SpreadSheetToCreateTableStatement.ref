@@ -1,0 +1,11 @@
+--> out-0.txt
+CREATE TABLE newtable (
+  emp_no int(11),
+  birth_date date,
+  first_name varchar(14),
+  last_name varchar(16),
+  gender varchar(1),
+  hire_date date,
+  INDEX newtable_idx_emp_no (emp_no)
+);
+

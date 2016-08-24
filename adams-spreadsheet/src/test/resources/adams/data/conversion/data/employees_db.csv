@@ -1,0 +1,7 @@
+name,type,index
+emp_no,int(11),true
+birth_date,date,
+first_name,varchar(14),
+last_name,varchar(16),
+gender,varchar(1),
+hire_date,date,
