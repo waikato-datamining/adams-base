@@ -21,22 +21,12 @@
 package adams.core.io.console;
 
 import adams.core.base.BasePassword;
-import com.googlecode.lanterna.TerminalSize;
-import com.googlecode.lanterna.gui2.Button;
-import com.googlecode.lanterna.gui2.ComboBox;
-import com.googlecode.lanterna.gui2.EmptySpace;
-import com.googlecode.lanterna.gui2.GridLayout;
-import com.googlecode.lanterna.gui2.Label;
-import com.googlecode.lanterna.gui2.LocalizedString;
+import adams.terminal.dialog.OptionDialog;
 import com.googlecode.lanterna.gui2.MultiWindowTextGUI;
-import com.googlecode.lanterna.gui2.Panel;
 import com.googlecode.lanterna.gui2.TextBox;
-import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
-import com.googlecode.lanterna.gui2.dialogs.DialogWindow;
 import com.googlecode.lanterna.gui2.dialogs.TextInputDialog;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -53,90 +43,6 @@ public class Lanterna
 
   /** the text box for logging output. */
   protected TextBox m_TextBoxLog;
-
-  public static class OptionDialog
-    extends DialogWindow {
-
-    /** the combobox with the options. */
-    protected ComboBox<String> comboBox;
-
-    /** the chosen option. */
-    protected String result;
-
-    /**
-     * Default constructor, takes a title for the dialog and runs code shared for dialogs
-     *
-     * @param title Title of the window
-     * @param description the description to display
-     * @param options the options to display in a combobox
-     */
-    protected OptionDialog(String title, String description, String[] options, String initial) {
-      super(title);
-      comboBox = new ComboBox<>(Arrays.asList(options));
-      Panel buttonPanel = new Panel();
-      buttonPanel.setLayoutManager(new GridLayout(2).setHorizontalSpacing(1));
-      buttonPanel.addComponent(new Button(LocalizedString.OK.toString(), () -> onOK())
-	.setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.CENTER, GridLayout.Alignment.CENTER, true, false)));
-      buttonPanel.addComponent(new Button(LocalizedString.Cancel.toString(), () -> onCancel()));
-
-      Panel mainPanel = new Panel();
-      mainPanel.setLayoutManager(
-	new GridLayout(1)
-	  .setLeftMarginSize(1)
-	  .setRightMarginSize(1));
-      if(description != null) {
-	mainPanel.addComponent(new Label(description));
-      }
-      mainPanel.addComponent(new EmptySpace(TerminalSize.ONE));
-      comboBox.setLayoutData(
-	GridLayout.createLayoutData(
-	  GridLayout.Alignment.FILL,
-	  GridLayout.Alignment.CENTER,
-	  true,
-	  false))
-	.addTo(mainPanel);
-      mainPanel.addComponent(new EmptySpace(TerminalSize.ONE));
-      buttonPanel.setLayoutData(
-	GridLayout.createLayoutData(
-	  GridLayout.Alignment.END,
-	  GridLayout.Alignment.CENTER,
-	  false,
-	  false))
-	.addTo(mainPanel);
-      setComponent(mainPanel);
-    }
-
-    protected void onOK() {
-      String text = comboBox.getText();
-      result = text;
-      close();
-    }
-
-    protected void onCancel() {
-      close();
-    }
-
-    @Override
-    public String showDialog(WindowBasedTextGUI textGUI) {
-      result = null;
-      super.showDialog(textGUI);
-      return result;
-    }
-
-    /**
-     * Shortcut for quickly showing a {@code OptionDialog}.
-     *
-     * @param textGUI GUI to show the dialog on
-     * @param title Title of the dialog
-     * @param description Description of the dialog
-     * @param initial the initial selection
-     * @return The option the user selected, or {@code null} if the dialog was cancelled
-     */
-    public static String showDialog(WindowBasedTextGUI textGUI, String title, String description, String[] options, String initial) {
-      OptionDialog dialog = new OptionDialog(title, description, options, initial);
-      return dialog.showDialog(textGUI);
-    }
-  }
 
   /**
    * Initializes the console helper.
