@@ -27,10 +27,17 @@ import adams.db.DatabaseConnection;
 import adams.env.Environment;
 import adams.terminal.application.AbstractTerminalApplication;
 import adams.terminal.application.ApplicationMenu;
+import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.BasicWindow;
+import com.googlecode.lanterna.gui2.BorderLayout;
+import com.googlecode.lanterna.gui2.BorderLayout.Location;
 import com.googlecode.lanterna.gui2.Borders;
+import com.googlecode.lanterna.gui2.EmptySpace;
 import com.googlecode.lanterna.gui2.Panel;
+import com.googlecode.lanterna.gui2.TextBox;
+import com.googlecode.lanterna.gui2.Window;
 
+import java.util.Arrays;
 import java.util.logging.Handler;
 import java.util.logging.LogRecord;
 
@@ -54,6 +61,13 @@ public class Main
   public static class LogHandler
     extends AbstractLogHandler {
 
+    /** the owner. */
+    protected Main m_Owner;
+
+    public LogHandler(Main owner) {
+      m_Owner = owner;
+    }
+
     /**
      * Publish a <tt>LogRecord</tt>.
      * <p>
@@ -68,12 +82,18 @@ public class Main
      */
     @Override
     protected void doPublish(LogRecord record) {
-      System.out.println(LoggingHelper.assembleMessage(record).toString());
+      m_Owner.appendLog(LoggingHelper.assembleMessage(record).toString());
     }
   }
 
+  /** the main panel. */
+  protected Panel m_PanelMain;
+
   /** the menu bar. */
   protected Panel m_MenuBar;
+
+  /** the textbox for the logging. */
+  protected TextBox m_TextBoxLog;
 
   /**
    * Returns a string describing the object.
@@ -91,12 +111,26 @@ public class Main
   @Override
   protected void initTerminal() {
     ApplicationMenu   	menu;
+    Panel		panel;
 
     super.initTerminal();
 
+    m_MainWindow = new BasicWindow();
+    m_MainWindow.setHints(Arrays.asList(Window.Hint.FULL_SCREEN));
+
+    m_PanelMain  = new Panel(new BorderLayout());
+
     menu         = new ApplicationMenu(this);
     m_MenuBar    = menu.getMenuBar(m_GUI);
-    m_MainWindow = new BasicWindow();
+    m_PanelMain.addComponent(m_MenuBar, Location.TOP);
+
+    panel = new Panel(new BorderLayout());
+    m_PanelMain.addComponent(panel, Location.CENTER);
+
+    panel.addComponent(new EmptySpace(), Location.TOP);
+
+    m_TextBoxLog = new TextBox(new TerminalSize(40, 10));
+    panel.addComponent(m_TextBoxLog.withBorder(Borders.singleLine("Log")), Location.CENTER);
   }
 
   /**
@@ -115,7 +149,7 @@ public class Main
    */
   protected void setTitle(String value) {
     if (m_MenuBar != null)
-      m_MainWindow.setComponent(m_MenuBar.withBorder(Borders.singleLine(value)));
+      m_MainWindow.setComponent(m_PanelMain.withBorder(Borders.singleLine(value)));
   }
 
   /**
@@ -128,12 +162,31 @@ public class Main
   }
 
   /**
+   * Returns the textbox to be used for logging.
+   *
+   * @return		the textbox, null if not available
+   */
+  protected TextBox getLogTextBox() {
+    return m_TextBoxLog;
+  }
+
+  /**
    * Returns the log handler to use.
    *
    * @return		the handler
    */
   protected Handler createLogHandler() {
-    return new LogHandler();
+    return new LogHandler(this);
+  }
+
+  /**
+   * Appends the log message.
+   *
+   * @param msg		the log message
+   */
+  public void appendLog(String msg) {
+    m_TextBoxLog.addLine(msg);
+    m_TextBoxLog.setCaretPosition(m_TextBoxLog.getLineCount(), 0);
   }
 
   /**

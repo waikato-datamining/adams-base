@@ -44,6 +44,7 @@ import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.gui2.DefaultWindowManager;
 import com.googlecode.lanterna.gui2.EmptySpace;
 import com.googlecode.lanterna.gui2.MultiWindowTextGUI;
+import com.googlecode.lanterna.gui2.TextBox;
 import com.googlecode.lanterna.gui2.Window;
 import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.screen.TerminalScreen;
@@ -128,6 +129,17 @@ public abstract class AbstractTerminalApplication
   }
 
   /**
+   * Returns the textbox to be used for logging.
+   * <br>
+   * Default implementation just returns null.
+   *
+   * @return		the textbox, null if not available
+   */
+  protected TextBox getLogTextBox() {
+    return null;
+  }
+
+  /**
    * Returns the log handler to use.
    *
    * @return		the handler
@@ -142,7 +154,7 @@ public abstract class AbstractTerminalApplication
 
     AbstractInitialization.initAll();
 
-    ConsoleHelper.useLanterna(m_GUI);
+    ConsoleHelper.useLanterna(m_GUI, getLogTextBox());
     LoggingHelper.setDefaultHandler(createLogHandler());
 
     if (!m_RemoteScriptingEngineCmdLine.isEmpty()) {
