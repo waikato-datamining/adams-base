@@ -21,6 +21,7 @@
 package adams.flow.sink;
 
 import adams.core.DateUtils;
+import adams.core.io.ConsoleHelper;
 import adams.flow.core.Token;
 import adams.gui.core.BasePanel;
 import adams.gui.core.ExtensionFileFilter;
@@ -218,8 +219,8 @@ public class WekaInstancesDisplay
     result = null;
     
     if (isHeadless()) {
-      System.out.println("\n--> " + DateUtils.getTimestampFormatterMsecs().format(new Date()) + "\n");
-      System.out.println(m_InputToken.getPayload());
+      ConsoleHelper.printlnOut("\n--> " + DateUtils.getTimestampFormatterMsecs().format(new Date()) + "\n");
+      ConsoleHelper.printlnOut("" + m_InputToken.getPayload());
     }
     else {
       result = super.doExecute();

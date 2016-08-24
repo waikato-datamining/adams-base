@@ -26,6 +26,7 @@ import adams.core.QuickInfoHelper;
 import adams.core.Utils;
 import adams.core.Variables;
 import adams.core.VariablesHandler;
+import adams.core.io.ConsoleHelper;
 import adams.core.io.FlowFile;
 import adams.data.id.RuntimeIDGenerator;
 import adams.db.LogEntry;
@@ -1081,19 +1082,19 @@ public class Flow
     
     if (m_Headless) {
       start = new Date();
-      System.out.println();
-      System.out.println("--> Start: " + DateUtils.getTimestampFormatterMsecs().format(start));
-      System.out.println();
+      ConsoleHelper.printlnOut("");
+      ConsoleHelper.printlnOut("--> Start: " + DateUtils.getTimestampFormatterMsecs().format(start));
+      ConsoleHelper.printlnOut("");
     }
 
     result = super.doExecute();
 
     if (m_Headless) {
       finish = new Date();
-      System.out.println();
-      System.out.println("--> Finish: " + DateUtils.getTimestampFormatterMsecs().format(finish));
-      System.out.println("--> Duration: " + DateUtils.msecToString(DateUtils.difference(start, finish)) + "\n");
-      System.out.println();
+      ConsoleHelper.printlnOut("");
+      ConsoleHelper.printlnOut("--> Finish: " + DateUtils.getTimestampFormatterMsecs().format(finish));
+      ConsoleHelper.printlnOut("--> Duration: " + DateUtils.msecToString(DateUtils.difference(start, finish)) + "\n");
+      ConsoleHelper.printlnOut("");
     }
 
     // do we execute an actor?

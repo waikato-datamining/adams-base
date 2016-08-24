@@ -22,6 +22,7 @@ package adams.flow.sink;
 
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
+import adams.core.io.ConsoleHelper;
 
 /**
  <!-- globalinfo-start -->
@@ -172,7 +173,7 @@ public class Console
 	str.append(m_Prefix);
       str.append(m_InputToken.getPayload().toString());
       getLogger().info(str.toString());
-      System.out.println(str.toString());
+      ConsoleHelper.printlnOut(str.toString());
     }
     catch (Exception e) {
       result = handleException("Failed append/output token", e);

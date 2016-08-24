@@ -22,6 +22,7 @@ package adams.flow.sink;
 
 import adams.core.DateUtils;
 import adams.core.QuickInfoHelper;
+import adams.core.io.ConsoleHelper;
 import adams.data.io.output.NullWriter;
 import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.SpreadSheet;
@@ -846,8 +847,8 @@ public class SpreadSheetDisplay
     result = null;
 
     if (isHeadless()) {
-      System.out.println("\n--> " + DateUtils.getTimestampFormatterMsecs().format(new Date()) + "\n");
-      System.out.println(m_InputToken.getPayload());
+      ConsoleHelper.printlnOut("\n--> " + DateUtils.getTimestampFormatterMsecs().format(new Date()) + "\n");
+      ConsoleHelper.printlnOut("" + m_InputToken.getPayload());
     }
     else {
       result = super.doExecute();

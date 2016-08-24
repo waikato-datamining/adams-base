@@ -20,15 +20,8 @@
 
 package adams.flow.sink;
 
-import java.awt.BorderLayout;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-
-import javax.swing.JTable;
-
 import adams.core.DateUtils;
+import adams.core.io.ConsoleHelper;
 import adams.data.io.output.NullWriter;
 import adams.flow.container.AbstractContainer;
 import adams.flow.core.Token;
@@ -38,6 +31,13 @@ import adams.gui.core.ExtensionFileFilter;
 import adams.gui.core.SpreadSheetTable;
 import adams.gui.core.SpreadSheetTableModel;
 import adams.gui.sendto.SendToActionUtils;
+
+import javax.swing.JTable;
+import java.awt.BorderLayout;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -288,8 +288,8 @@ public class ContainerDisplay
     result = null;
     
     if (isHeadless()) {
-      System.out.println("\n--> " + DateUtils.getTimestampFormatterMsecs().format(new Date()) + "\n");
-      System.out.println(m_InputToken.getPayload());
+      ConsoleHelper.printlnOut("\n--> " + DateUtils.getTimestampFormatterMsecs().format(new Date()) + "\n");
+      ConsoleHelper.printlnOut("" + m_InputToken.getPayload());
     }
     else {
       result = super.doExecute();

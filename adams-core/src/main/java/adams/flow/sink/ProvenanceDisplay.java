@@ -20,17 +20,17 @@
 
 package adams.flow.sink;
 
-import java.awt.BorderLayout;
-import java.util.Date;
-
-import javax.swing.JComponent;
-
 import adams.core.DateUtils;
+import adams.core.io.ConsoleHelper;
 import adams.flow.core.Token;
 import adams.flow.core.Unknown;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.flow.provenance.ProvenanceTree;
+
+import javax.swing.JComponent;
+import java.awt.BorderLayout;
+import java.util.Date;
 
 /**
  <!-- globalinfo-start -->
@@ -276,8 +276,8 @@ public class ProvenanceDisplay
     result = null;
     
     if (isHeadless()) {
-      System.out.println("\n--> " + DateUtils.getTimestampFormatterMsecs().format(new Date()) + "\n");
-      System.out.println(new ProvenanceTree(m_InputToken.getProvenance()).toPlainText());
+      ConsoleHelper.printlnOut("\n--> " + DateUtils.getTimestampFormatterMsecs().format(new Date()) + "\n");
+      ConsoleHelper.printlnOut(new ProvenanceTree(m_InputToken.getProvenance()).toPlainText());
     }
     else {
       result = super.doExecute();
