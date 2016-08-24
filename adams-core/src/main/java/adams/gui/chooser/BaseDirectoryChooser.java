@@ -15,7 +15,7 @@
 
 /*
  * BaseDirectoryChooser.java
- * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.chooser;
@@ -25,19 +25,16 @@ import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
 import adams.env.Environment;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.OneTouchPanel;
+import adams.gui.core.OneTouchPanel.Location;
 import com.jidesoft.swing.FolderChooser;
 
 import javax.swing.BorderFactory;
-import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JPanel;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileSystemView;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 
 /**
@@ -55,8 +52,8 @@ public class BaseDirectoryChooser
   /** the bookmarks. */
   protected FileChooserBookmarksPanel m_PanelBookmarks;
 
-  /** the button for showing/hiding the bookmarks. */
-  protected JButton m_ButtonBookmarks;
+  /** the panel for showing/hiding the bookmarks. */
+  protected OneTouchPanel m_OneTouchPanel;
 
   /**
    * Creates a BaseDirectoryChooser pointing to the user's home directory.
@@ -149,35 +146,16 @@ public class BaseDirectoryChooser
    * @return		the panel or null if none available
    */
   protected JComponent createAccessoryPanel() {
-    JPanel	result;
-    JPanel	panel;
-    
-    result = new JPanel(new BorderLayout());
-    
-    m_ButtonBookmarks = new JButton(GUIHelper.getIcon("arrow-head-up.png"));
-    m_ButtonBookmarks.setBorder(BorderFactory.createEmptyBorder());
-    m_ButtonBookmarks.setPreferredSize(new Dimension(18, 18));
-    m_ButtonBookmarks.setBorderPainted(false);
-    m_ButtonBookmarks.setContentAreaFilled(false);
-    m_ButtonBookmarks.setFocusPainted(false);
-    m_ButtonBookmarks.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	showBookmarks(!m_PanelBookmarks.isVisible());
-      }
-    });
-    
-    panel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-    panel.add(m_ButtonBookmarks);
-    result.add(panel, BorderLayout.NORTH);
-    
     m_PanelBookmarks = new FileChooserBookmarksPanel();
     m_PanelBookmarks.setOwner(this);
-    m_PanelBookmarks.setBorder(BorderFactory.createEmptyBorder(2, 5, 0, 0));
-    
-    result.add(m_PanelBookmarks, BorderLayout.CENTER);
-    
-    return result;
+
+    m_OneTouchPanel = new OneTouchPanel(Location.TOP);
+    m_OneTouchPanel.getContentPanel().add(m_PanelBookmarks, BorderLayout.CENTER);
+    m_OneTouchPanel.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
+    m_OneTouchPanel.setToolTipVisible("Click to hide bookmarks");
+    m_OneTouchPanel.setToolTipHidden("Click to show bookmarks");
+
+    return m_OneTouchPanel;
   }
 
   /**
@@ -186,11 +164,7 @@ public class BaseDirectoryChooser
    * @param value	true if to show bookmarks
    */
   protected void showBookmarks(boolean value) {
-    m_PanelBookmarks.setVisible(value);
-    if (m_PanelBookmarks.isVisible())
-      m_ButtonBookmarks.setIcon(GUIHelper.getIcon("arrow-head-up.png"));
-    else
-      m_ButtonBookmarks.setIcon(GUIHelper.getIcon("arrow-head-down.png"));
+    m_OneTouchPanel.setContentVisible(value);
   }
   
   /**
