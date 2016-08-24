@@ -52,6 +52,8 @@ import java.util.Set;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 /**
  * Enhanced java.util.Properties class.
@@ -559,8 +561,11 @@ public class Properties
       clear();
       file = new File(filename);
       if (file.exists()) {
-	fis    = new FileInputStream(filename);
-	stream = new BufferedInputStream(fis);
+	fis = new FileInputStream(filename);
+        if (filename.endsWith(".gz"))
+          stream = new BufferedInputStream(new GZIPInputStream(fis));
+        else
+          stream = new BufferedInputStream(fis);
 	load(stream);
       }
       else {
@@ -607,8 +612,11 @@ public class Properties
     fos    = null;
     stream = null;
     try {
-      fos    = new FileOutputStream(filename);
-      stream = new BufferedOutputStream(fos);
+      fos = new FileOutputStream(filename);
+      if (filename.endsWith(".gz"))
+	stream = new BufferedOutputStream(new GZIPOutputStream(fos));
+      else
+	stream = new BufferedOutputStream(fos);
       collapse().store(stream, comment);
       stream.flush();
     }

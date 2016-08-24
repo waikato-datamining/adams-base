@@ -15,13 +15,11 @@
 
 /*
  * PropertiesFileWriter.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.util.Properties;
 
 /**
@@ -120,22 +118,19 @@ public class PropertiesFileWriter
    */
   @Override
   protected String doExecute() {
-    String		result;
-    Properties		props;
-    BufferedWriter	writer;
+    String			result;
+    Properties			props;
+    adams.core.Properties	aProps;
 
     result = null;
 
     props = (Properties) m_InputToken.getPayload();
-    try {
-      writer = new BufferedWriter(new FileWriter(m_OutputFile.getAbsoluteFile()));
-      props.store(writer, null);
-      writer.flush();
-      writer.close();
-    }
-    catch (Exception e) {
-      result = handleException("Failed to store properties in: " + m_OutputFile, e);
-    }
+    if (props instanceof adams.core.Properties)
+      aProps = (adams.core.Properties) props;
+    else
+      aProps = new adams.core.Properties(props);
+    if (!aProps.save(m_OutputFile.getAbsolutePath()))
+      result = "Failed to write properties object to: " + m_OutputFile;
 
     return result;
   }
