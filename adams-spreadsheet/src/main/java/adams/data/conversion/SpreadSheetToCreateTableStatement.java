@@ -301,17 +301,17 @@ public class SpreadSheetToCreateTableStatement
       result.append(" ").append(row.getCell(colType).getContent());
       if (colIndex > -1) {
 	if (row.hasCell(colIndex) && !row.getCell(colIndex).isMissing()) {
-	  index.append(",\n");
-	  index.append("  ").append("INDEX ");
+	  index.append("CREATE INDEX ");
 	  index.append(m_TableName.toLowerCase()).append("_idx_").append(row.getCell(colName).getContent().toLowerCase());
-	  index.append(" (").append(row.getCell(colName).getContent()).append(")");
+	  index.append(" ON ").append(m_TableName);
+	  index.append(" (").append(row.getCell(colName).getContent()).append(");\n");
 	}
       }
       first = false;
     }
-    if (index.length() > 0)
-      result.append(index.toString());
     result.append("\n);");
+    if (index.length() > 0)
+      result.append("\n").append(index.toString());
 
     return result;
   }

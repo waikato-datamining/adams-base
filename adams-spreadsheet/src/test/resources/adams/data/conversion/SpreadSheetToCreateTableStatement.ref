@@ -5,7 +5,8 @@ CREATE TABLE newtable (
   first_name varchar(14),
   last_name varchar(16),
   gender varchar(1),
-  hire_date date,
-  INDEX newtable_idx_emp_no (emp_no)
+  hire_date date
 );
+CREATE INDEX newtable_idx_emp_no ON newtable (emp_no);
+
 
