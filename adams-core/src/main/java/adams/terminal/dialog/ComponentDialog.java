@@ -30,9 +30,10 @@ import com.googlecode.lanterna.gui2.LocalizedString;
 import com.googlecode.lanterna.gui2.Panel;
 import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
 import com.googlecode.lanterna.gui2.dialogs.DialogWindow;
+import com.googlecode.lanterna.gui2.dialogs.MessageDialogButton;
 
 /**
- * Dialog for displaying a component. Only has an OK button.
+ * Dialog for displaying a component.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
@@ -42,6 +43,9 @@ public class ComponentDialog
 
   /** the component to display. */
   protected Component component;
+
+  /** the button that was selected. */
+  protected MessageDialogButton result;
 
   /**
    * Default constructor, takes a title for the dialog and runs code shared for dialogs
@@ -55,6 +59,7 @@ public class ComponentDialog
     buttonPanel.setLayoutManager(new GridLayout(2).setHorizontalSpacing(1));
     buttonPanel.addComponent(new Button(LocalizedString.OK.toString(), () -> onOK())
       .setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.CENTER, GridLayout.Alignment.CENTER, true, false)));
+    buttonPanel.addComponent(new Button(LocalizedString.Cancel.toString(), () -> onCancel()));
 
     Panel mainPanel = new Panel();
     mainPanel.setLayoutManager(
@@ -84,7 +89,35 @@ public class ComponentDialog
   }
 
   protected void onOK() {
+    result = MessageDialogButton.OK;
     close();
+  }
+
+  protected void onCancel() {
+    result = MessageDialogButton.Cancel;
+    close();
+  }
+
+  /**
+   * Shows the dialog.
+   *
+   * @param textGUI	the context
+   * @return		the button that was selected
+   */
+  @Override
+  public MessageDialogButton showDialog(WindowBasedTextGUI textGUI) {
+    result = MessageDialogButton.Cancel;
+    super.showDialog(textGUI);
+    return result;
+  }
+
+  /**
+   * Returns the button that was selected.
+   *
+   * @return		the button
+   */
+  public MessageDialogButton getResult() {
+    return result;
   }
 
   /**
@@ -94,9 +127,10 @@ public class ComponentDialog
    * @param title       Title of the dialog
    * @param description Description of the dialog
    * @param component	the component
+   * @return		the button that was selected
    */
-  public static void showDialog(WindowBasedTextGUI textGUI, String title, String description, Component component) {
+  public static MessageDialogButton showDialog(WindowBasedTextGUI textGUI, String title, String description, Component component) {
     ComponentDialog dialog = new ComponentDialog(title, description, component);
-    dialog.showDialog(textGUI);
+    return dialog.showDialog(textGUI);
   }
 }
