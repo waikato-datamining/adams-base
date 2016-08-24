@@ -1,0 +1,3 @@
+#!/bin/sh
+
+`dirname $0`/launcher.sh -main adams.terminal.Main -memory 512m
