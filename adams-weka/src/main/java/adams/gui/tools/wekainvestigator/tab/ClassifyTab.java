@@ -432,8 +432,9 @@ public class ClassifyTab
       cls = new ZeroR();
     }
     m_PanelGOE = new WekaGenericObjectEditorPanel(Classifier.class, cls, true);
-    m_PanelGOE.setPrefix("Classifier");
+    m_PanelGOE.setPrefix("Classifier ");
     m_PanelGOE.addChangeListener((ChangeEvent e) -> updateButtons());
+    m_PanelGOE.moveChooseButton(true);
     panel = new JPanel(new BorderLayout());
     panel.add(m_PanelGOE, BorderLayout.CENTER);
     panel.setBorder(BorderFactory.createEmptyBorder(5, 0, 10, 0));

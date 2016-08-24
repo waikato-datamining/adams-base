@@ -436,7 +436,8 @@ public class ClusterTab
       cls = new SimpleKMeans();
     }
     m_PanelGOE = new WekaGenericObjectEditorPanel(Clusterer.class, cls, true);
-    m_PanelGOE.setPrefix("Clusterer");
+    m_PanelGOE.setPrefix("Clusterer ");
+    m_PanelGOE.moveChooseButton(true);
     m_PanelGOE.addChangeListener((ChangeEvent e) -> updateButtons());
     panel = new JPanel(new BorderLayout());
     panel.add(m_PanelGOE, BorderLayout.CENTER);

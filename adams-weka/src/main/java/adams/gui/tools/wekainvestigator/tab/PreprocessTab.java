@@ -144,13 +144,24 @@ public class PreprocessTab
       filter = new AllFilter();
     }
     m_PanelGOE = new WekaGenericObjectEditorPanel(Filter.class, filter, true);
+    m_PanelGOE.moveChooseButton(true);
     panel = new JPanel(new BorderLayout());
     panel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
     panel.add(m_PanelGOE, BorderLayout.CENTER);
     m_PanelTop.add(panel, BorderLayout.CENTER);
 
-    panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+    panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     m_PanelTop.add(panel, BorderLayout.SOUTH);
+
+    m_ButtonStart = new JButton("Start");
+    m_ButtonStart.setEnabled(false);
+    m_ButtonStart.addActionListener((ActionEvent e) -> startExecution());
+    panel.add(m_ButtonStart);
+
+    m_ButtonStop  = new JButton("Stop");
+    m_ButtonStop.setEnabled(false);
+    m_ButtonStart.addActionListener((ActionEvent e) -> stopExecution());
+    panel.add(m_ButtonStop);
 
     m_CheckBoxReplace = new JCheckBox("Replace datasets");
     m_CheckBoxReplace.setSelected(props.getBoolean("Preprocess.ReplaceDatasets", true));
@@ -163,16 +174,6 @@ public class PreprocessTab
     m_CheckBoxBatchFilter = new JCheckBox("Batch filter");
     m_CheckBoxBatchFilter.setSelected(props.getBoolean("Preprocess.BatchFilter", false));
     panel.add(m_CheckBoxBatchFilter);
-
-    m_ButtonStart = new JButton("Start");
-    m_ButtonStart.setEnabled(false);
-    m_ButtonStart.addActionListener((ActionEvent e) -> startExecution());
-    panel.add(m_ButtonStart);
-
-    m_ButtonStop  = new JButton("Stop");
-    m_ButtonStop.setEnabled(false);
-    m_ButtonStart.addActionListener((ActionEvent e) -> stopExecution());
-    panel.add(m_ButtonStop);
 
     // main
     m_PanelMain = new JPanel(new GridLayout(1, 2));
