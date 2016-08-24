@@ -30,6 +30,7 @@ import com.googlecode.lanterna.gui2.Label;
 import com.googlecode.lanterna.gui2.LocalizedString;
 import com.googlecode.lanterna.gui2.MultiWindowTextGUI;
 import com.googlecode.lanterna.gui2.Panel;
+import com.googlecode.lanterna.gui2.TextBox;
 import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
 import com.googlecode.lanterna.gui2.dialogs.DialogWindow;
 import com.googlecode.lanterna.gui2.dialogs.TextInputDialog;
@@ -48,7 +49,10 @@ public class Lanterna
   implements Console {
 
   /** the lanterna context. */
-  protected static MultiWindowTextGUI m_Context;
+  protected MultiWindowTextGUI m_Context;
+
+  /** the text box for logging output. */
+  protected TextBox m_TextBoxLog;
 
   public static class OptionDialog
     extends DialogWindow {
@@ -138,12 +142,14 @@ public class Lanterna
    * Initializes the console helper.
    *
    * @param context	the lanterna context
+   * @param textBoxLog	the textbox to use for logging output, can be null
    */
-  public Lanterna(MultiWindowTextGUI context) {
+  public Lanterna(MultiWindowTextGUI context, TextBox textBoxLog) {
     if (context == null)
       throw new IllegalArgumentException("Lanterna context cannot be null!");
 
-    m_Context = context;
+    m_Context    = context;
+    m_TextBoxLog = textBoxLog;
   }
 
   /**
@@ -259,5 +265,35 @@ public class Lanterna
       msg = "Please select an option:";
 
     return OptionDialog.showDialog(m_Context, "Select option", msg, options, initial);
+  }
+
+  /**
+   * Outputs the message.
+   *
+   * @param msg		the message to output
+   */
+  public void printlnOut(String msg) {
+    if (m_TextBoxLog != null) {
+      m_TextBoxLog.addLine(msg);
+      m_TextBoxLog.setCaretPosition(m_TextBoxLog.getLineCount(), 0);
+    }
+    else {
+      System.out.println(msg);
+    }
+  }
+
+  /**
+   * Outputs the error message.
+   *
+   * @param msg		the error message to output
+   */
+  public void printlnErr(String msg) {
+    if (m_TextBoxLog != null) {
+      m_TextBoxLog.addLine(msg);
+      m_TextBoxLog.setCaretPosition(m_TextBoxLog.getLineCount(), 0);
+    }
+    else {
+      System.err.println(msg);
+    }
   }
 }

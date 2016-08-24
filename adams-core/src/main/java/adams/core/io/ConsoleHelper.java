@@ -25,6 +25,7 @@ import adams.core.io.console.Basic;
 import adams.core.io.console.Console;
 import adams.core.io.console.Lanterna;
 import com.googlecode.lanterna.gui2.MultiWindowTextGUI;
+import com.googlecode.lanterna.gui2.TextBox;
 
 /**
  * Helper for input in a terminal.
@@ -56,10 +57,11 @@ public class ConsoleHelper {
    * Switches to the lanterna helper.
    *
    * @param context	the lanterna context
+   * @param textBoxLog	the textbox to use for logging output, can be null
    * @see		Lanterna
    */
-  public static void useLanterna(MultiWindowTextGUI context) {
-    m_Helper = new Lanterna(context);
+  public static void useLanterna(MultiWindowTextGUI context, TextBox textBoxLog) {
+    m_Helper = new Lanterna(context, textBoxLog);
   }
 
   /**
@@ -134,5 +136,23 @@ public class ConsoleHelper {
    */
   public static String selectOption(String msg, String[] options, String initial) {
     return m_Helper.selectOption(msg, options, initial);
+  }
+
+  /**
+   * Outputs the message.
+   *
+   * @param msg		the message to output
+   */
+  public static void printlnOut(String msg) {
+    m_Helper.printlnOut(msg);
+  }
+
+  /**
+   * Outputs the error message.
+   *
+   * @param msg		the error message to output
+   */
+  public static void printlnErr(String msg) {
+    m_Helper.printlnErr(msg);
   }
 }

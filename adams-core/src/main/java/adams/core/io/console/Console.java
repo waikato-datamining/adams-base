@@ -89,4 +89,18 @@ public interface Console {
    * @return		the selected option, null if cancelled or failed to read input
    */
   public String selectOption(String msg, String[] options, String initial);
+
+  /**
+   * Outputs the message.
+   *
+   * @param msg		the message to output
+   */
+  public void printlnOut(String msg);
+
+  /**
+   * Outputs the error message.
+   *
+   * @param msg		the error message to output
+   */
+  public void printlnErr(String msg);
 }

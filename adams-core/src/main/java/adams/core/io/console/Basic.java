@@ -252,4 +252,22 @@ public class Basic
 
     return result;
   }
+
+  /**
+   * Outputs the message.
+   *
+   * @param msg		the message to output
+   */
+  public void printlnOut(String msg) {
+    System.out.println(msg);
+  }
+
+  /**
+   * Outputs the error message.
+   *
+   * @param msg		the error message to output
+   */
+  public void printlnErr(String msg) {
+    System.err.println(msg);
+  }
 }
