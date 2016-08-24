@@ -20,15 +20,19 @@
 
 package adams.terminal;
 
-import adams.core.logging.ConsolePanelHandler;
+import adams.core.logging.AbstractLogHandler;
+import adams.core.logging.LoggingHelper;
 import adams.db.AbstractDatabaseConnection;
 import adams.db.DatabaseConnection;
 import adams.env.Environment;
 import adams.terminal.application.AbstractTerminalApplication;
 import adams.terminal.application.ApplicationMenu;
 import com.googlecode.lanterna.gui2.BasicWindow;
+import com.googlecode.lanterna.gui2.Borders;
+import com.googlecode.lanterna.gui2.Panel;
 
 import java.util.logging.Handler;
+import java.util.logging.LogRecord;
 
 /**
  * Main ADAMS application - terminal-based.
@@ -40,6 +44,36 @@ public class Main
   extends AbstractTerminalApplication {
 
   private static final long serialVersionUID = -6680605754144851435L;
+
+  /**
+   * The log handler for the application.
+   *
+   * @author FracPete (fracpete at waikato dot ac dot nz)
+   * @version $Revision$
+   */
+  public static class LogHandler
+    extends AbstractLogHandler {
+
+    /**
+     * Publish a <tt>LogRecord</tt>.
+     * <p>
+     * The logging request was made initially to a <tt>Logger</tt> object,
+     * which initialized the <tt>LogRecord</tt> and forwarded it here.
+     * <p>
+     * The <tt>Handler</tt>  is responsible for formatting the message, when and
+     * if necessary.  The formatting should include localization.
+     *
+     * @param  record  description of the log event. A null record is
+     *                 silently ignored and is not published
+     */
+    @Override
+    protected void doPublish(LogRecord record) {
+      System.out.println(LoggingHelper.assembleMessage(record).toString());
+    }
+  }
+
+  /** the menu bar. */
+  protected Panel m_MenuBar;
 
   /**
    * Returns a string describing the object.
@@ -61,8 +95,8 @@ public class Main
     super.initTerminal();
 
     menu         = new ApplicationMenu(this);
+    m_MenuBar    = menu.getMenuBar(m_GUI);
     m_MainWindow = new BasicWindow();
-    m_MainWindow.setComponent(menu.getMenuBar(m_GUI));
   }
 
   /**
@@ -72,6 +106,16 @@ public class Main
    */
   protected String getDefaultApplicationTitle() {
     return "ADAMS";
+  }
+
+  /**
+   * Sets the title to use.
+   *
+   * @param value	the title
+   */
+  protected void setTitle(String value) {
+    if (m_MenuBar != null)
+      m_MainWindow.setComponent(m_MenuBar.withBorder(Borders.singleLine(value)));
   }
 
   /**
@@ -89,8 +133,7 @@ public class Main
    * @return		the handler
    */
   protected Handler createLogHandler() {
-    // TODO
-    return new ConsolePanelHandler();
+    return new LogHandler();
   }
 
   /**

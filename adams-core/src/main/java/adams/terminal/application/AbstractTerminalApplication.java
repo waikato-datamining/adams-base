@@ -24,6 +24,7 @@ import adams.core.io.ConsoleHelper;
 import adams.core.logging.LoggingHelper;
 import adams.core.logging.LoggingLevel;
 import adams.core.management.ProcessUtils;
+import adams.core.net.InternetHelper;
 import adams.core.option.AbstractOptionConsumer;
 import adams.core.option.AbstractOptionHandler;
 import adams.core.option.ArrayConsumer;
@@ -67,6 +68,9 @@ public abstract class AbstractTerminalApplication
 
   /** the global database connection. */
   protected AbstractDatabaseConnection m_DbConn;
+
+  /** the title of the application. */
+  protected String m_ApplicationTitle;
 
   /** the terminal in use. */
   protected Terminal m_Terminal;
@@ -162,8 +166,10 @@ public abstract class AbstractTerminalApplication
    * Starts the application.
    */
   public void start() {
-    if (m_MainWindow != null)
+    if (m_MainWindow != null) {
+      createTitle("");
       m_GUI.addWindowAndWait(m_MainWindow);
+    }
   }
 
   /**
@@ -235,6 +241,10 @@ public abstract class AbstractTerminalApplication
     m_OptionManager.add(
 	"remote-scripting-engine-cmdline", "remoteScriptingEngineCmdLine",
 	"");
+
+    m_OptionManager.add(
+	"title", "applicationTitle",
+	getDefaultApplicationTitle());
   }
 
   /**
@@ -304,6 +314,65 @@ public abstract class AbstractTerminalApplication
    */
   public RemoteScriptingEngine getRemoteScriptingEngine() {
     return m_RemoteScriptingEngine;
+  }
+
+  /**
+   * Returns the currently set application title.
+   *
+   * @return		the current title
+   */
+  public String getApplicationTitle() {
+    return m_ApplicationTitle;
+  }
+
+  /**
+   * Sets the application title to use.
+   *
+   * @param value	the title to use
+   */
+  public void setApplicationTitle(String value) {
+    m_ApplicationTitle = value;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String applicationTitleTipText() {
+    return "The title for the application.";
+  }
+
+  /**
+   * Sets the title to use.
+   *
+   * @param value	the title
+   */
+  protected abstract void setTitle(String value);
+
+  /**
+   * creates and displays the title.
+   *
+   * @param title 	the additional part of the title
+   */
+  public void createTitle(String title) {
+    String	newTitle;
+    String	name;
+
+    newTitle = getApplicationTitle();
+    name     = InternetHelper.getLocalHostName();
+    if (name != null)
+      newTitle += "@" + name;
+
+    if (!title.isEmpty()) {
+      if (title.length() > 50)
+	newTitle += " - " + title.substring(0, 50) + "...";
+      else
+	newTitle += " - " + title;
+    }
+
+    setTitle(newTitle);
   }
 
   /**
