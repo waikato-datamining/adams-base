@@ -256,7 +256,7 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
       File 		file;
       Properties 	props;
 
-      file  = createFileName(fitness, data, "props");
+      file  = createFileName(fitness, data, "props.gz");
       props = assembleSetup(fitness, cls, weights);
       if (!props.save(file.getAbsolutePath()))
 	getLogger().warning("Failed to write setup to '" + file + "'!");
