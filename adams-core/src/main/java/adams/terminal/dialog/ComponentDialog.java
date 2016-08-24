@@ -32,6 +32,9 @@ import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
 import com.googlecode.lanterna.gui2.dialogs.DialogWindow;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialogButton;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 /**
  * Dialog for displaying a component.
  *
@@ -51,9 +54,22 @@ public class ComponentDialog
    * Default constructor, takes a title for the dialog and runs code shared for dialogs
    *
    * @param title       Title of the window
+   * @param description	the optional description, can be null
    * @param component   the component to display
    */
-  protected ComponentDialog(String title, String description, Component component) {
+  public ComponentDialog(String title, String description, Component component) {
+    this(title, description, component, new ArrayList<>());
+  }
+
+  /**
+   * Default constructor, takes a title for the dialog and runs code shared for dialogs
+   *
+   * @param title       Title of the window
+   * @param description	the optional description, can be null
+   * @param component   the component to display
+   * @param hints	the window hints
+   */
+  public ComponentDialog(String title, String description, Component component, Collection<Hint> hints) {
     super(title);
     Panel buttonPanel = new Panel();
     buttonPanel.setLayoutManager(new GridLayout(2).setHorizontalSpacing(1));
@@ -69,6 +85,7 @@ public class ComponentDialog
     if (description != null) {
       mainPanel.addComponent(new Label(description));
     }
+    setHints(hints);
     mainPanel.addComponent(new EmptySpace(TerminalSize.ONE));
     component.setLayoutData(
       GridLayout.createLayoutData(
@@ -130,7 +147,21 @@ public class ComponentDialog
    * @return		the button that was selected
    */
   public static MessageDialogButton showDialog(WindowBasedTextGUI textGUI, String title, String description, Component component) {
-    ComponentDialog dialog = new ComponentDialog(title, description, component);
+    return showDialog(textGUI, title, description, component, new ArrayList<>());
+  }
+
+  /**
+   * Shortcut for quickly showing a {@code OptionDialog}.
+   *
+   * @param textGUI     GUI to show the dialog on
+   * @param title       Title of the dialog
+   * @param description Description of the dialog
+   * @param component	the component
+   * @param hints	the window hints
+   * @return		the button that was selected
+   */
+  public static MessageDialogButton showDialog(WindowBasedTextGUI textGUI, String title, String description, Component component, Collection<Hint> hints) {
+    ComponentDialog dialog = new ComponentDialog(title, description, component, hints);
     return dialog.showDialog(textGUI);
   }
 }

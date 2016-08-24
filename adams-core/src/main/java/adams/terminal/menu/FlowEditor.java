@@ -22,10 +22,12 @@ package adams.terminal.menu;
 
 import adams.core.Utils;
 import adams.core.io.FileUtils;
+import adams.core.io.PlaceholderFile;
 import adams.core.option.NestedConsumer;
 import adams.terminal.dialog.ComponentDialog;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.TextBox;
+import com.googlecode.lanterna.gui2.Window.Hint;
 import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
 import com.googlecode.lanterna.gui2.dialogs.FileDialog;
 import com.googlecode.lanterna.gui2.dialogs.FileDialogBuilder;
@@ -33,6 +35,7 @@ import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialogButton;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -103,6 +106,7 @@ public class FlowEditor
     if (file == null)
       return;
 
+    file  = new PlaceholderFile(file);
     lines = FileUtils.loadFromFile(file);
     if (lines == null) {
       MessageDialog.showMessageDialog(context, "Error loading flow", "Failed to load flow:\n" + file, MessageDialogButton.OK);
@@ -111,7 +115,7 @@ public class FlowEditor
 
     textBox = new TextBox(new TerminalSize(30, 10));
     textBox.setText(Utils.flatten(lines, "\n"));
-    retVal = ComponentDialog.showDialog(context, "Flow editor", "Flow:\n" + file, textBox);
+    retVal = ComponentDialog.showDialog(context, "Flow editor", "Flow:\n" + file, textBox, Arrays.asList(Hint.CENTERED));
     if (retVal == MessageDialogButton.OK) {
       flow = textBox.getText();
       if (!isValid(flow)) {

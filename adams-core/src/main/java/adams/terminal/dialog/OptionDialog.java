@@ -31,7 +31,9 @@ import com.googlecode.lanterna.gui2.Panel;
 import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
 import com.googlecode.lanterna.gui2.dialogs.DialogWindow;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 
 /**
  * Dialog for displaying a combobox with options.
@@ -54,8 +56,22 @@ public class OptionDialog
    * @param title       Title of the window
    * @param description the description to display
    * @param options     the options to display in a combobox
+   * @param initial	the initial value
    */
-  protected OptionDialog(String title, String description, String[] options, String initial) {
+  public OptionDialog(String title, String description, String[] options, String initial) {
+    this(title, description, options, initial, new ArrayList<>());
+  }
+
+  /**
+   * Default constructor, takes a title for the dialog and runs code shared for dialogs
+   *
+   * @param title       Title of the window
+   * @param description the description to display
+   * @param options     the options to display in a combobox
+   * @param initial	the initial value
+   * @param hints	the window hints
+   */
+  public OptionDialog(String title, String description, String[] options, String initial, Collection<Hint> hints) {
     super(title);
     comboBox = new ComboBox<>(Arrays.asList(options));
     Panel buttonPanel = new Panel();
@@ -72,6 +88,7 @@ public class OptionDialog
     if (description != null) {
       mainPanel.addComponent(new Label(description));
     }
+    setHints(hints);
     mainPanel.addComponent(new EmptySpace(TerminalSize.ONE));
     comboBox.setLayoutData(
       GridLayout.createLayoutData(
@@ -118,6 +135,20 @@ public class OptionDialog
    * @return The option the user selected, or {@code null} if the dialog was cancelled
    */
   public static String showDialog(WindowBasedTextGUI textGUI, String title, String description, String[] options, String initial) {
+    return showDialog(textGUI, title, description, options, initial, new ArrayList<>());
+  }
+
+  /**
+   * Shortcut for quickly showing a {@code OptionDialog}.
+   *
+   * @param textGUI     GUI to show the dialog on
+   * @param title       Title of the dialog
+   * @param description Description of the dialog
+   * @param initial     the initial selection
+   * @param hints	the window hints
+   * @return The option the user selected, or {@code null} if the dialog was cancelled
+   */
+  public static String showDialog(WindowBasedTextGUI textGUI, String title, String description, String[] options, String initial, Collection<Hint> hints) {
     OptionDialog dialog = new OptionDialog(title, description, options, initial);
     return dialog.showDialog(textGUI);
   }
