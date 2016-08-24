@@ -88,6 +88,9 @@ public abstract class AbstractChooserPanel<T>
   /** the text field. */
   protected JTextField m_TextSelection;
 
+  /** the panel for the prefix. */
+  protected JPanel m_PanelPrefix;
+
   /** the prefix label. */
   protected JLabel m_LabelPrefix;
 
@@ -127,7 +130,7 @@ public abstract class AbstractChooserPanel<T>
     super.initialize();
 
     m_Self                 = this;
-    m_ChangeListeners      = new HashSet<ChangeListener>();
+    m_ChangeListeners      = new HashSet<>();
     m_Editable             = true;
     m_InlineEditingEnabled = false;
   }
@@ -137,16 +140,16 @@ public abstract class AbstractChooserPanel<T>
    */
   @Override
   protected void initGUI() {
-    JPanel	panel;
+    super.initGUI();
 
     setLayout(new BorderLayout());
 
-    panel               = new JPanel(new BorderLayout());
+    m_PanelPrefix = new JPanel(new BorderLayout());
     m_LabelPrefix       = new JLabel("");
     m_LabelPrefixSpacer = new JLabel("");
-    panel.add(m_LabelPrefix, BorderLayout.CENTER);
-    panel.add(m_LabelPrefixSpacer, BorderLayout.EAST);
-    add(panel, BorderLayout.WEST);
+    m_PanelPrefix.add(m_LabelPrefix, BorderLayout.CENTER);
+    m_PanelPrefix.add(m_LabelPrefixSpacer, BorderLayout.EAST);
+    add(m_PanelPrefix, BorderLayout.WEST);
 
     m_TextSelection = new JTextField(getSelectionColumns());
     m_TextSelection.setText(getDefaultString());
@@ -592,6 +595,19 @@ public abstract class AbstractChooserPanel<T>
    */
   public PopupMenuCustomizer getPopupMenuCustomizer() {
     return m_PopupMenuCustomizer;
+  }
+
+  /**
+   * Moves the "..." button to either the left or right.
+   *
+   * @param left	if true the button gets moved to the left, otherwise
+   *                    to the right
+   */
+  public void moveChooseButton(boolean left) {
+    if (left)
+      m_PanelPrefix.add(m_PanelButtons, BorderLayout.EAST);
+    else
+      add(m_PanelButtons, BorderLayout.EAST);
   }
 
   /**
