@@ -468,7 +468,7 @@ public class Writer
 	  if (m_BatchSize == 1)
 	    result = Utils.handleException(this, "Failed to insert data: " + row + "\nusing: " + stmt, e);
 	  else
-	    result = Utils.handleException(this, "Failed to insert batch (last successful batch insert at row " + (lastInsert + 1) + ")!", e);
+	    result = Utils.handleException(this, "Failed to insert batch (last successful batch insert at row " + lastInsert + ")!", e);
 	  break;
 	}
 	if (count % 1000 == 0) {
