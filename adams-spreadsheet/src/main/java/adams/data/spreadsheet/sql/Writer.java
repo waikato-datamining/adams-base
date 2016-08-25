@@ -374,12 +374,13 @@ public class Writer
   public String writeData(SQL sql) {
     String		result;
     StringBuilder	query;
-    PreparedStatement stmt;
-    int		i;
-    Cell cell;
-    int		type;
-    int		count;
+    PreparedStatement 	stmt;
+    int			i;
+    Cell 		cell;
+    int			type;
+    int			count;
     String		str;
+    int			lastInsert;
 
     result = null;
 
@@ -406,8 +407,9 @@ public class Writer
     }
 
     if ((result == null) && (stmt != null)) {
-      m_Stopped = false;
-      count     = 0;
+      m_Stopped  = false;
+      count      = 0;
+      lastInsert = count;
       for (Row row: m_Sheet.rows()) {
 	if (m_Stopped)
 	  break;
@@ -454,14 +456,19 @@ public class Writer
 	    stmt.addBatch();
 	    if ((count % m_BatchSize == 0) || (count == m_Sheet.getRowCount())) {
 	      stmt.executeBatch();
+	      lastInsert = count;
 	    }
 	  }
 	  else {
 	    stmt.execute();
+	    lastInsert = count;
 	  }
 	}
 	catch (Exception e) {
-	  result = Utils.handleException(this, "Failed to insert data: " + row + "\nusing: " + stmt, e);
+	  if (m_BatchSize == 1)
+	    result = Utils.handleException(this, "Failed to insert data: " + row + "\nusing: " + stmt, e);
+	  else
+	    result = Utils.handleException(this, "Failed to insert batch (last successful batch insert at row " + (lastInsert + 1) + ")!", e);
 	  break;
 	}
 	if (count % 1000 == 0) {
