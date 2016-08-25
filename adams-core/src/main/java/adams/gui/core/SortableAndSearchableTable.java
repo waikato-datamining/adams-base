@@ -20,12 +20,11 @@
 
 package adams.gui.core;
 
-import java.util.Hashtable;
-import java.util.Vector;
-
 import javax.swing.ListSelectionModel;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
+import java.util.Hashtable;
+import java.util.Vector;
 
 /**
  * A specialized JTable that allows double-clicking on header for resizing to
@@ -177,7 +176,7 @@ public class SortableAndSearchableTable
    *
    * @param value	if true then optimal column widths are used
    */
-  public void setUseOptimalColumnWidhts(boolean value) {
+  public void setUseOptimalColumnWidths(boolean value) {
     m_UseOptimalColumnWidths = value;
     if (m_UseOptimalColumnWidths) {
       setAutoResizeMode(AUTO_RESIZE_OFF);

@@ -231,7 +231,7 @@ public class SpreadSheetDisplay
       m_TableModel = new SpreadSheetTableModel(new DefaultSpreadSheet());
       m_TableModel.setReadOnly(m_Owner.getReadOnly());
       m_Table      = new SpreadSheetTable(m_TableModel);
-      m_Table.setUseOptimalColumnWidhts(m_Owner.getOptimalColumnWidth());
+      m_Table.setUseOptimalColumnWidths(m_Owner.getOptimalColumnWidth());
       add(new BaseScrollPane(m_Table), BorderLayout.CENTER);
       JPanel panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
       SpreadSheetColumnComboBox columnCombo = new SpreadSheetColumnComboBox(m_Table);
@@ -753,7 +753,7 @@ public class SpreadSheetDisplay
     m_TableModel = new SpreadSheetTableModel(new DefaultSpreadSheet());
     m_TableModel.setReadOnly(m_ReadOnly);
     m_Table      = new SpreadSheetTable(m_TableModel);
-    m_Table.setUseOptimalColumnWidhts(m_OptimalColumnWidth);
+    m_Table.setUseOptimalColumnWidths(m_OptimalColumnWidth);
     result.add(new BaseScrollPane(m_Table), BorderLayout.CENTER);
 
     panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
@@ -948,7 +948,7 @@ public class SpreadSheetDisplay
   @Override
   public void wrapUp() {
     if ((m_Table != null) && !m_OptimalColumnWidth)
-      m_Table.setUseOptimalColumnWidhts(true);
+      m_Table.setUseOptimalColumnWidths(true);
 
     super.wrapUp();
   }
