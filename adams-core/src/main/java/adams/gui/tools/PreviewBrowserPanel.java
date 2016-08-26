@@ -19,7 +19,6 @@
  */
 package adams.gui.tools;
 
-import adams.core.CleanUpHandler;
 import adams.core.Properties;
 import adams.core.Utils;
 import adams.core.base.BaseRegExp;
@@ -55,11 +54,9 @@ import adams.gui.event.SearchEvent;
 import adams.gui.sendto.SendToActionSupporter;
 import adams.gui.sendto.SendToActionUtils;
 import adams.gui.tools.previewbrowser.AbstractArchiveHandler;
-import adams.gui.tools.previewbrowser.AbstractContentHandler;
-import adams.gui.tools.previewbrowser.CreatingPreviewPanel;
-import adams.gui.tools.previewbrowser.MultipleFileContentHandler;
 import adams.gui.tools.previewbrowser.NoPreviewAvailablePanel;
-import adams.gui.tools.previewbrowser.PreviewPanel;
+import adams.gui.tools.previewbrowser.PreviewDisplay;
+import adams.gui.tools.previewbrowser.PropertiesManager;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
 import javax.swing.BorderFactory;
@@ -72,10 +69,8 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
-import javax.swing.SwingWorker;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ListSelectionEvent;
 import java.awt.BorderLayout;
@@ -137,21 +132,9 @@ public class PreviewBrowserPanel
       return o1.getName().toLowerCase().compareTo(o2.getName().toLowerCase());
     }
   }
-  
-  /** the name of the props file. */
-  public final static String FILENAME = "PreviewBrowser.props";
 
   /** the file to store the recent directories. */
   public final static String SESSION_FILE = "PreviewBrowserSession.props";
-
-  /** the prefix for the preferred content handler keys in the props file. */
-  public final static String PREFIX_PREFERRED_CONTENT_HANDLER = "PreferredContentHandler-";
-
-  /** the prefix for the preferred archive handler keys in the props file. */
-  public final static String PREFIX_PREFERRED_ARCHIVE_HANDLER = "PreferredArchiveHandler-";
-
-  /** the properties. */
-  protected static Properties m_Properties;
 
   /** the split pane in use. */
   protected BaseSplitPane m_SplitPane;
@@ -190,22 +173,7 @@ public class PreviewBrowserPanel
   protected SearchPanel m_SearchArchiveFiles;
 
   /** the panel for the content display. */
-  protected BasePanel m_PanelContent;
-
-  /** the panel for the view. */
-  protected BasePanel m_PanelView;
-
-  /** the panel with the content handlers. */
-  protected BasePanel m_PanelContentHandlers;
-
-  /** the combobox with the content handlers (if more than one available). */
-  protected JComboBox m_ComboBoxContentHandlers;
-
-  /** the model of the combobox. */
-  protected DefaultComboBoxModel<String> m_ModelContentHandlers;
-
-  /** whether to ignore selections of the content handler combobox temporarily. */
-  protected boolean m_IgnoreContentHandlerChanges;
+  protected PreviewDisplay m_PanelContent;
 
   /** the panel with the archive handlers. */
   protected BasePanel m_PanelArchiveHandlers;
@@ -254,12 +222,11 @@ public class PreviewBrowserPanel
     super.initialize();
 
     m_ArchiveHandler              = null;
-    m_IgnoreContentHandlerChanges = false;
     m_IgnoreArchiveHandlerChanges = false;
     m_CurrentFiles                = null;
     m_RecentFilesHandler          = null;
     m_TitleGenerator              = new TitleGenerator("Preview browser", false);
-    m_FileChooser                 = new BaseFileChooser(getProperties().getPath("InitialDir", "%h"));
+    m_FileChooser                 = new BaseFileChooser(PropertiesManager.getProperties().getPath("InitialDir", "%h"));
   }
 
   /**
@@ -271,7 +238,7 @@ public class PreviewBrowserPanel
 
     super.initGUI();
 
-    props = getProperties();
+    props = PropertiesManager.getProperties();
 
     setLayout(new BorderLayout());
 
@@ -378,27 +345,8 @@ public class PreviewBrowserPanel
     m_PanelArchiveHandlers.add(m_ComboBoxArchiveHandlers);
 
     // content
-    m_PanelContent = new BasePanel(new BorderLayout());
+    m_PanelContent = new PreviewDisplay();
     m_SplitPane.setRightComponent(m_PanelContent);
-
-    m_PanelView = new BasePanel(new BorderLayout());
-    m_PanelContent.add(m_PanelView, BorderLayout.CENTER);
-
-    m_PanelContentHandlers = new BasePanel(new FlowLayout(FlowLayout.LEFT));
-    m_PanelContentHandlers.setVisible(false);
-    m_PanelContent.add(m_PanelContentHandlers, BorderLayout.SOUTH);
-
-    m_ModelContentHandlers    = new DefaultComboBoxModel<>();
-    m_ComboBoxContentHandlers = new JComboBox<>(m_ModelContentHandlers);
-    m_ComboBoxContentHandlers.addActionListener((ActionEvent e) -> {
-      if (m_IgnoreContentHandlerChanges)
-        return;
-      updatePreferredContentHandler();
-      if (m_CurrentFiles != null)
-        displayLocalContent(m_CurrentFiles, false);
-    });
-    m_PanelContentHandlers.add(new JLabel("Preferred handler"));
-    m_PanelContentHandlers.add(m_ComboBoxContentHandlers);
   }
 
   /**
@@ -428,13 +376,13 @@ public class PreviewBrowserPanel
     if (m_MenuItemShowHiddenFiles != null)
       showHidden = m_MenuItemShowHiddenFiles.isSelected();
     else
-      showHidden = getProperties().getBoolean("ShowHiddenFiles", false);
+      showHidden = PropertiesManager.getProperties().getBoolean("ShowHiddenFiles", false);
     if (m_MenuItemShowTempFiles != null)
       showTemp = m_MenuItemShowTempFiles.isSelected();
     else
-      showTemp = getProperties().getBoolean("ShowTempFiles", false);
+      showTemp = PropertiesManager.getProperties().getBoolean("ShowTempFiles", false);
     regExp = new BaseRegExp(BaseRegExp.MATCH_ALL);
-    exp    = getProperties().getProperty("TempFiles", ".*\\.bak|.*\\.backup|.*~");
+    exp    = PropertiesManager.getProperties().getProperty("TempFiles", ".*\\.bak|.*\\.backup|.*~");
     if (exp.length() > 0) {
       expList = Utils.split(exp, '|');
       exp = "";
@@ -494,28 +442,6 @@ public class PreviewBrowserPanel
   }
 
   /**
-   * Displays the given view in the content panel.
-   *
-   * @param panel	the view to display
-   */
-  protected void displayView(final JPanel panel) {
-    if (m_PanelView.getComponentCount() > 0) {
-      if (m_PanelView.getComponent(0) instanceof CleanUpHandler)
-        ((CleanUpHandler) m_PanelView.getComponent(0)).cleanUp();
-    }
-    m_PanelView.removeAll();
-    m_PanelView.add(panel, BorderLayout.CENTER);
-    m_SplitPane.validate();
-  }
-
-  /**
-   * Displays "Creating view...".
-   */
-  protected void displayCreatingView() {
-    displayView(new CreatingPreviewPanel());
-  }
-
-  /**
    * Displays a local file.
    */
   protected synchronized void displayLocalFile() {
@@ -542,7 +468,7 @@ public class PreviewBrowserPanel
       for (Class cls: handlers)
 	m_ModelArchiveHandlers.addElement(cls.getName());
       m_PanelArchiveHandlers.setVisible(m_ModelArchiveHandlers.getSize() > 1);
-      AbstractArchiveHandler preferred = getPreferredArchiveHandler(localFiles[0]);
+      AbstractArchiveHandler preferred = PropertiesManager.getPreferredArchiveHandler(localFiles[0]);
       // set preferred one
       m_ComboBoxArchiveHandlers.setSelectedIndex(0);
       if (preferred != null) {
@@ -572,9 +498,9 @@ public class PreviewBrowserPanel
 
     m_ModelArchiveFiles.clear();
     m_PaneBrowsing.setBottomComponentHidden(m_ArchiveHandler == null);
-    m_PanelView.removeAll();
+    m_PanelContent.clear();
     if (m_ArchiveHandler == null) {
-      displayLocalContent(localFiles, false);
+      m_PanelContent.display(localFiles, false);
     }
     else {
       m_CurrentFiles = null;
@@ -586,107 +512,7 @@ public class PreviewBrowserPanel
     m_ListArchiveFiles.search(m_ListArchiveFiles.getSeachString(), m_ListArchiveFiles.isRegExpSearch());
     // reset selection
     m_ListArchiveFiles.setSelectedIndices(new int[0]);
-    displayView(new NoPreviewAvailablePanel());
-  }
-
-  /**
-   * Creates a preview for the files.
-   * 
-   * @param localFiles	the files to create the preview for
-   * @return		the preview
-   */
-  protected JPanel createPreview(final File[] localFiles) {
-    JPanel 			result;
-    List<Class> 		handlers;
-    AbstractContentHandler 	preferred;
-    int				i;
-    AbstractContentHandler 	contentHandler;
-    Class 			cls;
-    int prefIndex;
-
-    result = new NoPreviewAvailablePanel();
-    if (AbstractContentHandler.hasHandler(localFiles[0])) {
-      handlers = AbstractContentHandler.getHandlersForFile(localFiles[0]);
-      // update combobox
-      m_IgnoreContentHandlerChanges = true;
-      m_ModelContentHandlers.removeAllElements();
-      for (Class handler: handlers)
-	m_ModelContentHandlers.addElement(handler.getName());
-      m_PanelContentHandlers.setVisible(m_ModelContentHandlers.getSize() > 1);
-      // set preferred one
-      preferred = getPreferredContentHandler(localFiles[0]);
-      prefIndex = -1;
-      if (preferred != null) {
-	for (i = 0; i < handlers.size(); i++) {
-	  if (preferred.getClass() == handlers.get(i)) {
-	    prefIndex = i;
-	    break;
-	  }
-	}
-      }
-      if ((prefIndex == -1) && (m_ModelContentHandlers.getSize() > 0))
-	prefIndex = 0;
-      m_ComboBoxContentHandlers.setSelectedIndex(prefIndex);
-      m_IgnoreContentHandlerChanges = false;
-      if (prefIndex == -1)
-	return null;
-      // get preferred handler
-      try {
-	cls            = Class.forName((String) m_ComboBoxContentHandlers.getSelectedItem());
-	contentHandler = (AbstractContentHandler) cls.newInstance();
-	if (contentHandler instanceof MultipleFileContentHandler)
-	  result = ((MultipleFileContentHandler) contentHandler).getPreview(localFiles);
-	else
-	  result = contentHandler.getPreview(localFiles[0]);
-      }
-      catch (Exception e) {
-	ConsolePanel.getSingleton().append(
-	  LoggingLevel.SEVERE,
-	  "Failed to obtain content handler for '" + Utils.arrayToString(localFiles) + "':",
-	  e);
-      }
-    }
-    
-    return result;
-  }
-  
-  /**
-   * Displays the content from the specified files.
-   *
-   * @param localFiles	the files to display
-   * @param wait	wait for worker thread to finish
-   */
-  protected void displayLocalContent(final File[] localFiles, boolean wait) {
-    SwingWorker 	worker;
-
-    if (localFiles.length < 1)
-      return;
-    
-    m_CurrentFiles = localFiles;
-
-    // notify user
-    displayCreatingView();
-
-    if (!wait) {
-      worker = new SwingWorker() {
-	JPanel contentPanel;
-	@Override
-	protected Object doInBackground() throws Exception {
-	  contentPanel = createPreview(localFiles);
-	  return null;
-	}
-	@Override
-	protected void done() {
-	  if (contentPanel != null)
-	    displayView(contentPanel);
-	  super.done();
-	}
-      };
-      worker.execute();
-    }
-    else {
-      displayView(createPreview(localFiles));
-    }
+    m_PanelContent.displayView(new NoPreviewAvailablePanel());
   }
 
   /**
@@ -701,7 +527,7 @@ public class PreviewBrowserPanel
       return;
 
     // notify user
-    displayCreatingView();
+    m_PanelContent.displayCreatingView();
 
     selFiles = m_ListArchiveFiles.getSelectedValues();
     tmpFiles = new File[selFiles.length];
@@ -722,117 +548,7 @@ public class PreviewBrowserPanel
 	  e);
       }
     }
-    displayLocalContent(tmpFiles, false);
-  }
-
-  /**
-   * Returns the preferrned content handler.
-   *
-   * @param file	the file to get the preferred handler for
-   * @return		the preferred handler
-   */
-  public static AbstractContentHandler getPreferredContentHandler(File file) {
-    AbstractContentHandler	result;
-    Properties			props;
-    String			ext;
-    String			handler;
-
-    result = null;
-
-    ext = FileUtils.getExtension(file);
-    if (ext == null)
-      return null;
-    ext = ext.toLowerCase();
-
-    props = getProperties();
-    if (props.hasKey(PREFIX_PREFERRED_CONTENT_HANDLER + ext)) {
-      handler = props.getProperty(PREFIX_PREFERRED_CONTENT_HANDLER + ext);
-      try {
-	result = (AbstractContentHandler) Class.forName(handler).newInstance();
-      }
-      catch (Exception e) {
-	ConsolePanel.getSingleton().append(
-	  LoggingLevel.SEVERE,
-	  "Failed to instantiate handler: " + handler,
-	  e);
-      }
-    }
-
-    return result;
-  }
-
-  /**
-   * Updates the preferred handler.
-   */
-  protected void updatePreferredContentHandler() {
-    String	ext;
-    String	handler;
-    Properties	props;
-    String	filename;
-
-    if (m_CurrentFiles == null)
-      return;
-
-    props = getProperties();
-    for (File file: m_CurrentFiles) {
-      ext = FileUtils.getExtension(file);
-      if (ext == null)
-	continue;
-      ext = ext.toLowerCase();
-
-      if (m_ComboBoxContentHandlers.getSelectedIndex() < 0)
-	handler = (String) m_ComboBoxContentHandlers.getItemAt(0);
-      else
-	handler = (String) m_ComboBoxContentHandlers.getSelectedItem();
-
-      // update props
-      if (handler != null)
-        props.setProperty(PREFIX_PREFERRED_CONTENT_HANDLER + ext, handler);
-    }
-
-    // save props
-    filename = Environment.getInstance().getHome() + File.separator + FILENAME;
-    if (!props.save(filename)) {
-      ConsolePanel.getSingleton().append(
-	LoggingLevel.SEVERE,
-	"Failed to save properties to '" + filename + "'!");
-    }
-  }
-
-  /**
-   * Returns the preferrned archive handler.
-   *
-   * @param file	the file to get the preferred handler for
-   * @return		the preferred handler
-   */
-  public static AbstractArchiveHandler getPreferredArchiveHandler(File file) {
-    AbstractArchiveHandler	result;
-    Properties			props;
-    String			ext;
-    String			handler;
-
-    result = null;
-
-    ext = FileUtils.getExtension(file);
-    if (ext == null)
-      return null;
-    ext = ext.toLowerCase();
-
-    props = getProperties();
-    if (props.hasKey(PREFIX_PREFERRED_ARCHIVE_HANDLER + ext)) {
-      handler = props.getProperty(PREFIX_PREFERRED_ARCHIVE_HANDLER + ext);
-      try {
-	result = (AbstractArchiveHandler) Class.forName(handler).newInstance();
-      }
-      catch (Exception e) {
-	ConsolePanel.getSingleton().append(
-	  LoggingLevel.SEVERE,
-	  "Failed to instantiate handler: " + handler,
-	  e);
-      }
-    }
-
-    return result;
+    m_PanelContent.display(tmpFiles, false);
   }
 
   /**
@@ -847,7 +563,7 @@ public class PreviewBrowserPanel
     if (m_CurrentFiles == null)
       return;
 
-    props = getProperties();
+    props = PropertiesManager.getProperties();
     for (File file: m_CurrentFiles) {
       ext = FileUtils.getExtension(file);
       if (ext == null)
@@ -860,7 +576,7 @@ public class PreviewBrowserPanel
 	handler = (String) m_ComboBoxArchiveHandlers.getSelectedItem();
 
       // update props
-      props.setProperty(PREFIX_PREFERRED_ARCHIVE_HANDLER + ext, handler);
+      props.setProperty(PropertiesManager.PREFIX_PREFERRED_ARCHIVE_HANDLER + ext, handler);
     }
 
     // save props
@@ -942,7 +658,7 @@ public class PreviewBrowserPanel
       submenu = new JMenu("Open recent");
       menu.add(submenu);
       m_RecentFilesHandler = new RecentFilesHandler<>(
-	  SESSION_FILE, getProperties().getInteger("MaxRecentDirs", 5), submenu);
+	  SESSION_FILE, PropertiesManager.getProperties().getInteger("MaxRecentDirs", 5), submenu);
       m_RecentFilesHandler.addRecentItemListener(new RecentItemListener<JMenu,File>() {
 	public void recentItemAdded(RecentItemEvent<JMenu,File> e) {
 	  // ignored
@@ -990,7 +706,7 @@ public class PreviewBrowserPanel
 
       // View/Show hidden files
       menuitem = new JCheckBoxMenuItem("Show hidden files");
-      menuitem.setSelected(getProperties().getBoolean("ShowHiddenFiles", false));
+      menuitem.setSelected(PropertiesManager.getProperties().getBoolean("ShowHiddenFiles", false));
       menu.add(menuitem);
       menuitem.setMnemonic('h');
       menuitem.addActionListener((ActionEvent e) -> refreshLocalFiles());
@@ -998,7 +714,7 @@ public class PreviewBrowserPanel
 
       // View/Show temp files
       menuitem = new JCheckBoxMenuItem("Show temporary files");
-      menuitem.setSelected(getProperties().getBoolean("ShowTempFiles", false));
+      menuitem.setSelected(PropertiesManager.getProperties().getBoolean("ShowTempFiles", false));
       menu.add(menuitem);
       menuitem.setMnemonic('t');
       menuitem.addActionListener((ActionEvent e) -> refreshLocalFiles());
@@ -1096,7 +812,7 @@ public class PreviewBrowserPanel
       m_PanelDir.fireCurrentValueChanged();
     });
     SwingUtilities.invokeLater(() -> m_ListLocalFiles.setSelectedValue(file.getName(), true));
-    SwingUtilities.invokeLater(() -> displayLocalContent(new File[]{file}, true));
+    SwingUtilities.invokeLater(() -> m_PanelContent.display(new File[]{file}, true));
   }
   
   /**
@@ -1116,7 +832,7 @@ public class PreviewBrowserPanel
    */
   public void clear() {
     m_CurrentFiles = new File[0];
-    displayView(new NoPreviewAvailablePanel());
+    m_PanelContent.displayView(new NoPreviewAvailablePanel());
   }
 
   /**
@@ -1194,27 +910,12 @@ public class PreviewBrowserPanel
       }
     }
     else if (SendToActionUtils.isAvailable(JComponent.class, cls)) {
-      if ((m_PanelView.getComponentCount() > 0) && (m_PanelView.getComponent(0) instanceof PreviewPanel))
-	result = ((PreviewPanel) m_PanelView.getComponent(0)).getContent();
-      else
-	result = m_PanelView;
+      result = m_PanelContent.getComponent();
     }
 
     return result;
   }
-  
-  /**
-   * Returns the properties that define the editor.
-   *
-   * @return		the properties
-   */
-  public static synchronized Properties getProperties() {
-    if (m_Properties == null)
-      m_Properties = Environment.getInstance().read(PreviewBrowserPanelDefinition.KEY);
 
-    return m_Properties;
-  }
-  
   /**
    * Sets whether the browsing panel is hidden or not.
    * 

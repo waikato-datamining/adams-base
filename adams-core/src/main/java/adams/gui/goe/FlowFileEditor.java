@@ -37,9 +37,11 @@ import adams.core.management.FileBrowser;
 import adams.core.management.Terminal;
 import adams.core.option.AbstractOption;
 import adams.gui.chooser.FlowFileChooser;
+import adams.gui.core.BaseDialog;
 import adams.gui.core.BasePanel;
 import adams.gui.core.GUIHelper;
 import adams.gui.dialog.PreviewBrowserDialog;
+import adams.gui.dialog.SimplePreviewBrowserDialog;
 import adams.gui.flow.FlowEditorDialog;
 import adams.gui.goe.PropertyPanel.PopupMenuCustomizer;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
@@ -265,47 +267,37 @@ public class FlowFileEditor
     menuitem = new JMenuItem("Open in preview browser...");
     menuitem.setIcon(GUIHelper.getIcon("previewbrowser.png"));
     menuitem.setEnabled(FileUtils.directoryExists(file));
-    menuitem.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        PreviewBrowserDialog dialog = new PreviewBrowserDialog();
-	if (file.isDirectory())
-	  dialog.open(new PlaceholderDirectory(file));
-	else
-	  dialog.open(file);
-        dialog.setLocationRelativeTo(dialog.getOwner());
-        dialog.setVisible(true);
+    menuitem.addActionListener((ActionEvent e) -> {
+      BaseDialog dialog;
+      if (file.isDirectory()) {
+	dialog = new PreviewBrowserDialog();
+	((PreviewBrowserDialog) dialog).open(new PlaceholderDirectory(file));
       }
+      else {
+	dialog = new SimplePreviewBrowserDialog();
+	((SimplePreviewBrowserDialog) dialog).open(file);
+      }
+      dialog.setLocationRelativeTo(dialog.getOwner());
+      dialog.setVisible(true);
     });
     menu.add(menuitem);
 
     menuitem = new JMenuItem("Open in file browser...");
     menuitem.setIcon(GUIHelper.getIcon("filebrowser.png"));
     menuitem.setEnabled(FileUtils.directoryExists(file));
-    menuitem.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        FileBrowser.launch(file);
-      }
-    });
+    menuitem.addActionListener((ActionEvent e) -> FileBrowser.launch(file));
     menu.add(menuitem);
 
     menuitem = new JMenuItem("Open in terminal...");
     menuitem.setIcon(GUIHelper.getIcon("terminal.png"));
     menuitem.setEnabled(FileUtils.directoryExists(file));
-    menuitem.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	Terminal.launch(file);
-      }
-    });
+    menuitem.addActionListener((ActionEvent e) -> Terminal.launch(file));
     menu.add(menuitem);
 
     menuitem = new JMenuItem("Copy (absolute path)");
     menuitem.setIcon(GUIHelper.getIcon("copy.gif"));
     menuitem.setEnabled(true);
-    menuitem.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	ClipboardHelper.copyToClipboard(file.getAbsolutePath());
-      }
-    });
+    menuitem.addActionListener((ActionEvent e) -> ClipboardHelper.copyToClipboard(file.getAbsolutePath()));
     menu.add(menuitem);
   }
 }

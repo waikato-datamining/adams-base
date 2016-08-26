@@ -19,7 +19,7 @@
  */
 package adams.env;
 
-import adams.gui.tools.PreviewBrowserPanel;
+import adams.gui.tools.previewbrowser.PropertiesManager;
 
 /**
  * Definition for the PreviewBrowserPanel props file.
@@ -51,7 +51,7 @@ public class PreviewBrowserPanelDefinition
    * @return		the key
    */
   public String getFile() {
-    return PreviewBrowserPanel.FILENAME;
+    return PropertiesManager.FILENAME;
   }
 
   /**

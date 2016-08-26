@@ -32,7 +32,7 @@ import adams.gui.core.FilePanel;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MenuBarProvider;
 import adams.gui.dialog.ApprovalDialog;
-import adams.gui.dialog.PreviewBrowserDialog;
+import adams.gui.dialog.SimplePreviewBrowserDialog;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -398,7 +398,7 @@ public class FileCommanderPanel
    * Views the selected file.
    */
   protected void view() {
-    PreviewBrowserDialog 	dialog;
+    SimplePreviewBrowserDialog	dialog;
 
     if (m_FilesActive == null)
       return;
@@ -406,10 +406,10 @@ public class FileCommanderPanel
       return;
 
     if (getParentDialog() != null)
-      dialog = new PreviewBrowserDialog(getParentDialog(), ModalityType.MODELESS);
+      dialog = new SimplePreviewBrowserDialog(getParentDialog(), ModalityType.MODELESS);
     else
-      dialog = new PreviewBrowserDialog(getParentFrame(), false);
-    dialog.setDefaultCloseOperation(PreviewBrowserDialog.DISPOSE_ON_CLOSE);
+      dialog = new SimplePreviewBrowserDialog(getParentFrame(), false);
+    dialog.setDefaultCloseOperation(SimplePreviewBrowserDialog.DISPOSE_ON_CLOSE);
     dialog.open(new PlaceholderFile(m_FilesActive.getSelectedFile()));
     dialog.setSize(GUIHelper.getDefaultDialogDimension());
     dialog.setLocationRelativeTo(this);

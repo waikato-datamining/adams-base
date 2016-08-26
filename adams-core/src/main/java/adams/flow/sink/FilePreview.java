@@ -28,13 +28,13 @@ import adams.core.option.OptionUtils;
 import adams.data.image.AbstractImageContainer;
 import adams.flow.core.Token;
 import adams.gui.core.BasePanel;
-import adams.gui.tools.PreviewBrowserPanel;
 import adams.gui.tools.previewbrowser.AbstractArchiveHandler;
 import adams.gui.tools.previewbrowser.AbstractContentHandler;
 import adams.gui.tools.previewbrowser.NoDataToPreviewPanel;
 import adams.gui.tools.previewbrowser.NoPreviewAvailablePanel;
 import adams.gui.tools.previewbrowser.PlainTextHandler;
 import adams.gui.tools.previewbrowser.PreviewPanel;
+import adams.gui.tools.previewbrowser.PropertiesManager;
 
 import javax.swing.JComponent;
 import javax.swing.JPanel;
@@ -218,7 +218,7 @@ public class FilePreview
 	  parent.add(m_PreviewPanel, BorderLayout.CENTER);
 	}
 	else {
-	  preview = PreviewBrowserPanel.getPreferredContentHandler(file);
+	  preview = PropertiesManager.getPreferredContentHandler(file);
 	  if (preview != null)
 	    m_PreviewPanel = new PreviewPanel(preview.getPreview(file));
 	}
@@ -453,7 +453,7 @@ public class FilePreview
 	parent.add(m_PreviewPanel, BorderLayout.CENTER);
       }
       else {
-	preview = PreviewBrowserPanel.getPreferredContentHandler(file);
+	preview = PropertiesManager.getPreferredContentHandler(file);
 	if (preview != null)
 	  m_PreviewPanel = new PreviewPanel(preview.getPreview(file));
       }
