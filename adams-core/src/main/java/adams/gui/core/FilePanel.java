@@ -88,6 +88,9 @@ public class FilePanel
     /** the modified date. */
     protected Date m_LastModified;
 
+    /** whether the file is hidden. */
+    protected boolean m_Hidden;
+
     /**
      * Initializes the wrapper.
      *
@@ -98,6 +101,7 @@ public class FilePanel
       m_Directory    = m_File.isDirectory();
       m_Length       = m_File.length();
       m_LastModified = new Date(m_File.lastModified());
+      m_Hidden       = m_File.isHidden();
     }
 
     /**
@@ -143,6 +147,15 @@ public class FilePanel
      */
     public Date getLastModified() {
       return m_LastModified;
+    }
+
+    /**
+     * Returns whether the file is hidden.
+     *
+     * @return		true if hidden
+     */
+    public boolean isHidden() {
+      return m_Hidden;
     }
 
     /**
@@ -481,6 +494,9 @@ public class FilePanel
   /** whether to allow multiple files to be selected. */
   protected boolean m_MultiSelection;
 
+  /** whether to show hidden files. */
+  protected boolean m_ShowHidden;
+
   /** for listing the content of the directory. */
   protected DirectoryLister m_Lister;
 
@@ -544,6 +560,7 @@ public class FilePanel
     super.initialize();
 
     m_IgnoreChanges = false;
+    m_ShowHidden    = false;
 
     m_Lister = new DirectoryLister();
     m_Lister.setRecursive(false);
@@ -801,6 +818,25 @@ public class FilePanel
   }
 
   /**
+   * Sets whether to show hidden files or not.
+   *
+   * @param value	true if to show
+   */
+  public void setShowHidden(boolean value) {
+    m_ShowHidden = value;
+    update();
+  }
+
+  /**
+   * Returns whether to show hidden files or not.
+   *
+   * @return		true if to show
+   */
+  public boolean isShowHidden() {
+    return m_ShowHidden;
+  }
+
+  /**
    * Sets whether to allow multi-selection.
    *
    * @param value	true if to allow
@@ -917,8 +953,12 @@ public class FilePanel
       protected List<FileWrapper> files = new ArrayList<>();
       @Override
       protected Object doInBackground() throws Exception {
-	for (String file: m_Lister.list())
-	  files.add(new FileWrapper(new File(file)));
+	for (String file: m_Lister.list()) {
+	  FileWrapper wrapper = new FileWrapper(new File(file));
+	  if (!m_ShowHidden && wrapper.isHidden())
+	    continue;
+	  files.add(wrapper);
+	}
 	Collections.sort(files, m_Comparator);
 	if (m_Lister.getWatchDir().getAbsoluteFile().getParentFile() != null)
 	  files.add(0, new FileWrapper(new File("..")));
@@ -1097,6 +1137,7 @@ public class FilePanel
     });
     details.startUpdate();
     details.setListDirs(true);
+    details.setShowHidden(false);
     if (args.length > 0)
       details.setCurrentDir(new PlaceholderDirectory(args[0]));
     BaseFrame frame = new BaseFrame("Files");
