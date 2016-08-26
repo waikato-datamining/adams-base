@@ -162,6 +162,7 @@ public class FileCommanderPanel
 
     m_FilesLeft = new FilePanel(true);
     m_FilesLeft.startUpdate();
+    m_FilesLeft.setSearchVisible(true);
     m_FilesLeft.setListDirs(true);
     m_FilesLeft.setMultiSelection(true);
     m_FilesLeft.finishUpdate();
@@ -185,6 +186,7 @@ public class FileCommanderPanel
 
     m_FilesRight = new FilePanel(true);
     m_FilesRight.startUpdate();
+    m_FilesRight.setSearchVisible(true);
     m_FilesRight.setListDirs(true);
     m_FilesRight.setMultiSelection(true);
     m_FilesRight.finishUpdate();
