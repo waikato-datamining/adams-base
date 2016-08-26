@@ -598,7 +598,7 @@ public class FilePanel
       @Override
       public void keyPressed(KeyEvent e) {
 	if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-	  File file = getSelectedFile();
+	  File file = getSelectedFile(false);
 	  if (file != null) {
 	    if (file.isDirectory()) {
 	      e.consume();
@@ -615,7 +615,7 @@ public class FilePanel
       @Override
       public void mouseClicked(MouseEvent e) {
 	if (MouseUtils.isDoubleClick(e)) {
-	  File file = getSelectedFile();
+	  File file = getSelectedFile(false);
 	  if (file != null) {
 	    if (file.isDirectory()) {
 	      e.consume();
@@ -869,9 +869,10 @@ public class FilePanel
   /**
    * Returns the currently selected file, if any.
    *
+   * @param skipDotDot	whether to skip the dot dot file
    * @return		the file, null if none selected
    */
-  public File getSelectedFile() {
+  protected File getSelectedFile(boolean skipDotDot) {
     FileWrapper		wrapper;
 
     wrapper = null;
@@ -884,10 +885,24 @@ public class FilePanel
 	wrapper = m_Files.get(m_List.getSelectedIndex());
     }
 
-    if (wrapper != null)
-      return wrapper.getFile();
-    else
+    if (wrapper != null) {
+      if (wrapper.getName().equals("..") && skipDotDot)
+	return null;
+      else
+	return wrapper.getFile();
+    }
+    else {
       return null;
+    }
+  }
+
+  /**
+   * Returns the currently selected file, if any.
+   *
+   * @return		the file, null if none selected
+   */
+  public File getSelectedFile() {
+    return getSelectedFile(true);
   }
 
   /**
@@ -903,12 +918,16 @@ public class FilePanel
     if (m_Table != null) {
       for (int index: m_Table.getSelectedRows()) {
 	wrapper = m_Files.get(m_Table.getActualRow(index));
+	if (wrapper.getName().equals(".."))
+	  continue;
 	result.add(wrapper.getFile());
       }
     }
     else if (m_List != null) {
       for (int index: m_List.getSelectedIndices()){
 	wrapper = m_Files.get(index);
+	if (wrapper.getName().equals(".."))
+	  continue;
 	result.add(wrapper.getFile());
       }
     }
