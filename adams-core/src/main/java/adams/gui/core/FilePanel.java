@@ -515,7 +515,7 @@ public class FilePanel
   protected boolean m_IgnoreChanges;
 
   /** the List for the non-detailed view. */
-  protected BaseList m_List;
+  protected SearchableBaseList m_List;
 
   /** the table for the detailed view. */
   protected SortableAndSearchableTable m_Table;
@@ -652,12 +652,18 @@ public class FilePanel
       add(m_PanelSearch, BorderLayout.SOUTH);
     }
     else {
-      m_List = new BaseList();
+      m_List = new SearchableBaseList();
       m_List.addListSelectionListener(this);
       m_List.addFocusListener(m_FocusAdapter);
       m_List.addKeyListener(m_KeyAdapter);
       m_List.addMouseListener(m_MouseAdapter);
       add(new BaseScrollPane(m_List), BorderLayout.CENTER);
+
+      m_PanelSearch = new SearchPanel(LayoutType.HORIZONTAL, false);
+      m_PanelSearch.setVisible(false);
+      m_PanelSearch.addSearchListener((SearchEvent e) ->
+	m_List.search(e.getParameters().getSearchString(), e.getParameters().isRegExp()));
+      add(m_PanelSearch, BorderLayout.SOUTH);
     }
   }
 
@@ -1039,11 +1045,13 @@ public class FilePanel
    * @param value	true if visible
    */
   public void setSearchVisible(boolean value) {
-    if (m_Table == null)
-      return;
     m_PanelSearch.setVisible(value);
-    if (!value)
-      m_Table.search(null, false);
+    if (!value) {
+      if (m_Table != null)
+	m_Table.search(null, false);
+      else
+	m_List.search(null, false);
+    }
   }
 
   /**
@@ -1175,6 +1183,7 @@ public class FilePanel
   public static void main(String[] args) {
     Environment.setEnvironmentClass(Environment.class);
     FilePanel simple = new FilePanel(false);
+    simple.setSearchVisible(true);
     simple.addFilesChangeListener((ChangeEvent e) -> {
       System.out.println("simple: files changed");
     });
@@ -1182,6 +1191,7 @@ public class FilePanel
       System.out.println("simple: selected files=" + simple.getSelectedFiles().length);
     });
     FilePanel details = new FilePanel(true);
+    details.setSearchVisible(true);
     details.addFilesChangeListener((ChangeEvent e) -> {
       System.out.println("details: files changed");
     });
