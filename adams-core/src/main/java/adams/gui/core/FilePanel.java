@@ -37,6 +37,12 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -496,11 +502,23 @@ public class FilePanel
   /** the table for the detailed view. */
   protected SortableAndSearchableTable m_Table;
 
+  /** the listeners for when the directory gets updated. */
+  protected Set<ChangeListener> m_DirectoryChangeListeners;
+
   /** the listeners for when the files get updated. */
   protected Set<ChangeListener> m_FilesChangeListeners;
 
   /** the listeners for when the selection changes. */
   protected Set<ChangeListener> m_SelectionChangeListeners;
+
+  /** the focus adapter. */
+  protected FocusAdapter m_FocusAdapter;
+
+  /** the key adapter. */
+  protected KeyAdapter m_KeyAdapter;
+
+  /** the mouse adapter. */
+  protected MouseAdapter m_MouseAdapter;
 
   /**
    * Initializes the panel.
@@ -535,6 +553,7 @@ public class FilePanel
 
     m_Files = new ArrayList<>();
 
+    m_DirectoryChangeListeners = new HashSet<>();
     m_FilesChangeListeners     = new HashSet<>();
     m_SelectionChangeListeners = new HashSet<>();
   }
@@ -551,15 +570,65 @@ public class FilePanel
 
     setLayout(new BorderLayout());
 
+    m_FocusAdapter = new FocusAdapter() {
+      @Override
+      public void focusGained(FocusEvent e) {
+	notifySelectionChangeListeners();
+      }
+    };
+
+    m_KeyAdapter = new KeyAdapter() {
+      @Override
+      public void keyPressed(KeyEvent e) {
+	if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+	  File file = getSelectedFile();
+	  if (file != null) {
+	    if (file.isDirectory()) {
+	      e.consume();
+	      setCurrentDir(new PlaceholderDirectory(file));
+	    }
+	  }
+	}
+	if (!e.isConsumed())
+	  super.keyPressed(e);
+      }
+    };
+
+    m_MouseAdapter = new MouseAdapter() {
+      @Override
+      public void mouseClicked(MouseEvent e) {
+	if (MouseUtils.isDoubleClick(e)) {
+	  File file = getSelectedFile();
+	  if (file != null) {
+	    if (file.isDirectory()) {
+	      e.consume();
+	      if (file.getName().equals(".."))
+		setCurrentDir(new PlaceholderDirectory(getCurrentDir().getParentFile()));
+	      else
+		setCurrentDir(new PlaceholderDirectory(file.getAbsoluteFile()));
+	    }
+	  }
+	}
+	if (!e.isConsumed())
+	  super.mouseClicked(e);
+      }
+    };
+
     if (m_ShowDetails) {
       m_Table = new SortableAndSearchableTable(new FileWrapperTableModel(new ArrayList<>(), false));
       m_Table.setUseOptimalColumnWidths(true);
       m_Table.getSelectionModel().addListSelectionListener(this);
+      m_Table.addFocusListener(m_FocusAdapter);
+      m_Table.addKeyListener(m_KeyAdapter);
+      m_Table.addMouseListener(m_MouseAdapter);
       add(new BaseScrollPane(m_Table), BorderLayout.CENTER);
     }
     else {
       m_List = new BaseList();
       m_List.addListSelectionListener(this);
+      m_List.addFocusListener(m_FocusAdapter);
+      m_List.addKeyListener(m_KeyAdapter);
+      m_List.addMouseListener(m_MouseAdapter);
       add(new BaseScrollPane(m_List), BorderLayout.CENTER);
     }
   }
@@ -586,6 +655,7 @@ public class FilePanel
   public void setCurrentDir(PlaceholderDirectory value) {
     m_Lister.setWatchDir(value);
     update();
+    notifyDirectoryChangeListeners();
   }
 
   /**
@@ -811,6 +881,16 @@ public class FilePanel
   }
 
   /**
+   * Clears the selection.
+   */
+  public void clearSelection() {
+    if (m_Table != null)
+      m_Table.clearSelection();
+    else
+      m_List.clearSelection();
+  }
+
+  /**
    * Allows the update of several parameters without triggering an update
    * each time.
    */
@@ -840,6 +920,8 @@ public class FilePanel
 	for (String file: m_Lister.list())
 	  files.add(new FileWrapper(new File(file)));
 	Collections.sort(files, m_Comparator);
+	if (m_Lister.getWatchDir().getAbsoluteFile().getParentFile() != null)
+	  files.add(0, new FileWrapper(new File("..")));
 	return null;
       }
       @Override
@@ -874,12 +956,50 @@ public class FilePanel
   }
 
   /**
+   * Updates the files (if not busy).
+   */
+  public void reload() {
+    update();
+  }
+
+  /**
    * Checks whether we're currently busy.
    *
    * @return		true if busy
    */
   public boolean isBusy() {
     return (m_Worker != null);
+  }
+
+  /**
+   * Adds the listener to the list of listeners that get notified when
+   * the directory changes.
+   *
+   * @param l		the listener to add
+   */
+  public void addDirectoryChangeListener(ChangeListener l) {
+    m_DirectoryChangeListeners.add(l);
+  }
+
+  /**
+   * Removes the listener from the list of listeners that get notified when
+   * the directory changes.
+   *
+   * @param l		the listener to add
+   */
+  public void removeDirectoryChangeListener(ChangeListener l) {
+    m_DirectoryChangeListeners.remove(l);
+  }
+
+  /**
+   * Notifies the listeners when the directory has changed.
+   */
+  protected synchronized void notifyDirectoryChangeListeners() {
+    ChangeEvent		e;
+
+    e = new ChangeEvent(this);
+    for (ChangeListener l: m_DirectoryChangeListeners)
+      l.stateChanged(e);
   }
 
   /**
@@ -951,8 +1071,6 @@ public class FilePanel
    */
   @Override
   public void valueChanged(ListSelectionEvent e) {
-    if (e.getValueIsAdjusting())
-      return;
     notifySelectionChangeListeners();
   }
 
@@ -965,7 +1083,7 @@ public class FilePanel
     Environment.setEnvironmentClass(Environment.class);
     FilePanel simple = new FilePanel(false);
     simple.addFilesChangeListener((ChangeEvent e) -> {
-	System.out.println("simple: files changed");
+      System.out.println("simple: files changed");
     });
     simple.addSelectionChangeListener((ChangeEvent e) -> {
       System.out.println("simple: selected files=" + simple.getSelectedFiles().length);
