@@ -19,14 +19,15 @@
  */
 package adams.gui.dialog;
 
-import java.awt.BorderLayout;
-import java.awt.Dialog;
-import java.awt.Frame;
-
 import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
 import adams.gui.core.BaseDialog;
+import adams.gui.core.GUIHelper;
 import adams.gui.tools.PreviewBrowserPanel;
+
+import java.awt.BorderLayout;
+import java.awt.Dialog;
+import java.awt.Frame;
 
 /**
  * Convenience dialog for the preview browser.
@@ -104,7 +105,7 @@ public class PreviewBrowserDialog
     getContentPane().setLayout(new BorderLayout());
     getContentPane().add(m_PanelPreview, BorderLayout.CENTER);
     setJMenuBar(m_PanelPreview.getMenuBar());
-    setSize(800, 800);
+    setSize(GUIHelper.getDefaultLargeDialogDimension());
   }
   
   /**
