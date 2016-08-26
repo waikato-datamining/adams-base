@@ -429,9 +429,15 @@ public class FileCommanderPanel
     if (files.length == 0)
       return;
 
-    retVal = GUIHelper.showConfirmMessage(
-      this, "Do you want to copy " + files.length + " file" + (files.length > 1 ? "s" : "")
-	+ " to " + m_FilesInactive.getCurrentDir() + "?");
+    if (files.length == 1)
+      retVal = GUIHelper.showConfirmMessage(
+	this, "Do you want to copy\n" + files[0]
+	  + "\nto\n" + m_FilesInactive.getCurrentDir() + "?");
+    else
+      retVal = GUIHelper.showConfirmMessage(
+	this, "Do you want to copy " + files.length + " file" + (files.length > 1 ? "s" : "")
+	  + "\nfrom\n" + m_FilesActive.getCurrentDir()
+	  + "\nto\n" + m_FilesInactive.getCurrentDir() + "?");
     if (retVal != ApprovalDialog.APPROVE_OPTION)
       return;
 
@@ -506,9 +512,14 @@ public class FileCommanderPanel
     if (files.length == 0)
       return;
 
-    retVal = GUIHelper.showConfirmMessage(
-      this, "Do you want to rename/move " + files.length + " file" + (files.length > 1 ? "s" : "")
-	+ " to " + m_FilesInactive.getCurrentDir() + "?");
+    if (files.length == 1)
+      retVal = GUIHelper.showConfirmMessage(
+	this, "Do you want to rename/move the following file?\n" + files[0]);
+    else
+      retVal = GUIHelper.showConfirmMessage(
+	this, "Do you want to rename/move " + files.length + " file" + (files.length > 1 ? "s" : "")
+	  + "\nfrom\n" + m_FilesActive.getCurrentDir()
+	  + "\nto\n" + m_FilesInactive.getCurrentDir() + "?");
     if (retVal != ApprovalDialog.APPROVE_OPTION)
       return;
 
@@ -601,7 +612,13 @@ public class FileCommanderPanel
     if (files.length == 0)
       return;
 
-    retVal = GUIHelper.showConfirmMessage(this, "Do you want to delete " + files.length + " file" + (files.length > 1 ? "s" : "") + "?");
+    if (files.length == 1)
+      retVal = GUIHelper.showConfirmMessage(
+	this, "Do you want to delete the following file?\n" + files[0]);
+    else
+      retVal = GUIHelper.showConfirmMessage(
+	this, "Do you want to delete " + files.length + " file" + (files.length > 1 ? "s" : "")
+	  + " from\n" + m_FilesActive.getCurrentDir() + "?");
     if (retVal != ApprovalDialog.APPROVE_OPTION)
       return;
 
