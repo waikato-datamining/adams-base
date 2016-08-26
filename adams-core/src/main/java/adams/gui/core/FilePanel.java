@@ -26,6 +26,8 @@ import adams.core.base.BaseRegExp;
 import adams.core.io.DirectoryLister;
 import adams.core.io.PlaceholderDirectory;
 import adams.env.Environment;
+import adams.gui.core.SearchPanel.LayoutType;
+import adams.gui.event.SearchEvent;
 import com.googlecode.jfilechooserbookmarks.gui.BaseScrollPane;
 
 import javax.swing.AbstractListModel;
@@ -417,7 +419,7 @@ public class FilePanel
 	case 0:
 	  return "File";
 	case 1:
-	  return "";  // DIR
+	  return "Dir";
 	case 2:
 	  return "Size";
 	case 3:
@@ -518,6 +520,9 @@ public class FilePanel
   /** the table for the detailed view. */
   protected SortableAndSearchableTable m_Table;
 
+  /** the search panel. */
+  protected SearchPanel m_PanelSearch;
+
   /** the listeners for when the directory gets updated. */
   protected Set<ChangeListener> m_DirectoryChangeListeners;
 
@@ -585,7 +590,7 @@ public class FilePanel
 
     super.initGUI();
 
-    setLayout(new BorderLayout());
+    setLayout(new BorderLayout(5, 5));
 
     m_FocusAdapter = new FocusAdapter() {
       @Override
@@ -639,6 +644,12 @@ public class FilePanel
       m_Table.addKeyListener(m_KeyAdapter);
       m_Table.addMouseListener(m_MouseAdapter);
       add(new BaseScrollPane(m_Table), BorderLayout.CENTER);
+
+      m_PanelSearch = new SearchPanel(LayoutType.HORIZONTAL, false);
+      m_PanelSearch.setVisible(false);
+      m_PanelSearch.addSearchListener((SearchEvent e) ->
+	m_Table.search(e.getParameters().getSearchString(), e.getParameters().isRegExp()));
+      add(m_PanelSearch, BorderLayout.SOUTH);
     }
     else {
       m_List = new BaseList();
@@ -1019,6 +1030,29 @@ public class FilePanel
    */
   public void reload() {
     update();
+  }
+
+  /**
+   * Sets the visibility state of the search box.
+   * NB: only available when details are shown using a table.
+   *
+   * @param value	true if visible
+   */
+  public void setSearchVisible(boolean value) {
+    if (m_Table == null)
+      return;
+    m_PanelSearch.setVisible(value);
+    if (!value)
+      m_Table.search(null, false);
+  }
+
+  /**
+   * Returns whether the search box is visible.
+   *
+   * @return		true of visible
+   */
+  public boolean isSearchVisible() {
+    return m_PanelSearch.isVisible();
   }
 
   /**
