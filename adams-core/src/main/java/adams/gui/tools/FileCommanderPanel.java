@@ -21,25 +21,34 @@
 package adams.gui.tools;
 
 import adams.core.MessageCollection;
+import adams.core.base.BaseRegExp;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
 import adams.gui.chooser.DirectoryChooserPanel;
 import adams.gui.core.BasePanel;
+import adams.gui.core.BaseStatusBar;
 import adams.gui.core.FilePanel;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.MenuBarProvider;
 import adams.gui.dialog.ApprovalDialog;
 import adams.gui.dialog.PreviewBrowserDialog;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.SwingWorker;
 import javax.swing.event.ChangeEvent;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dialog.ModalityType;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
 import java.io.File;
 
 /**
@@ -49,7 +58,8 @@ import java.io.File;
  * @version $Revision$
  */
 public class FileCommanderPanel
-  extends BasePanel {
+  extends BasePanel
+  implements MenuBarProvider {
 
   private static final long serialVersionUID = 3894304347424478383L;
 
@@ -101,8 +111,23 @@ public class FileCommanderPanel
   /** the button for quitting. */
   protected JButton m_ButtonQuit;
 
+  /** the statusbar. */
+  protected BaseStatusBar m_StatusBar;
+
+  /** the menubar. */
+  protected JMenuBar m_MenuBar;
+
+  /** whether left panel shows hidden files. */
+  protected JMenuItem m_MenuItemLeftShowHidden;
+
+  /** whether right panel shows hidden files. */
+  protected JMenuItem m_MenuItemRightShowHidden;
+
   /** whether to ignore changes. */
   protected boolean m_IgnoreChanges;
+
+  /** the worker thread. */
+  protected SwingWorker m_Worker;
 
   /**
    * Initializes the members.
@@ -114,6 +139,7 @@ public class FileCommanderPanel
     m_FilesActive   = null;
     m_FilesInactive = null;
     m_IgnoreChanges = false;
+    m_Worker        = null;
   }
 
   /**
@@ -248,15 +274,77 @@ public class FileCommanderPanel
    * Updates the state of the buttons.
    */
   protected void updateButtons() {
-    boolean	active;
+    boolean 	hasActive;
+    boolean	busy;
 
-    active = (m_FilesActive != null);
+    hasActive = (m_FilesActive != null);
+    busy      = isBusy();
 
-    m_ButtonView.setEnabled(active && (m_FilesActive.getSelectedFiles().length == 1));
-    m_ButtonCopy.setEnabled(active && (m_FilesActive.getSelectedFiles().length > 0));
-    m_ButtonRenameMove.setEnabled(active && (m_FilesActive.getSelectedFiles().length > 0));
-    m_ButtonMkDir.setEnabled(active);
-    m_ButtonDelete.setEnabled(active && (m_FilesActive.getSelectedFiles().length > 0));
+    m_ButtonView.setEnabled(!busy && hasActive && (m_FilesActive.getSelectedFiles().length == 1));
+    m_ButtonCopy.setEnabled(!busy && hasActive && (m_FilesActive.getSelectedFiles().length > 0));
+    m_ButtonRenameMove.setEnabled(!busy && hasActive && (m_FilesActive.getSelectedFiles().length > 0));
+    m_ButtonMkDir.setEnabled(!busy && hasActive);
+    m_ButtonDelete.setEnabled(!busy && hasActive && (m_FilesActive.getSelectedFiles().length > 0));
+    m_ButtonQuit.setEnabled(!busy);
+  }
+
+  /**
+   * Creates a menu bar (singleton per panel object). Can be used in frames.
+   *
+   * @return		the menu bar
+   */
+  public JMenuBar getMenuBar() {
+    JMenuBar	result;
+    JMenu	menu;
+    JMenuItem	menuitem;
+
+    if (m_MenuBar == null) {
+      result = new JMenuBar();
+
+      // left
+      menu = new JMenu("Left");
+      menu.setMnemonic('L');
+      result.add(menu);
+
+      menuitem = new JMenuItem("Filter...");
+      menuitem.addActionListener((ActionEvent e) -> setFilter(true));
+      menu.add(menuitem);
+
+      menuitem = new JCheckBoxMenuItem("Show hidden");
+      menuitem.addActionListener((ActionEvent e) -> m_FilesLeft.setShowHidden(m_MenuItemLeftShowHidden.isSelected()));
+      menu.add(menuitem);
+      m_MenuItemLeftShowHidden = menuitem;
+
+      // right
+      menu = new JMenu("Right");
+      menu.setMnemonic('R');
+      result.add(menu);
+
+      menuitem = new JMenuItem("Filter...");
+      menuitem.addActionListener((ActionEvent e) -> setFilter(false));
+      menu.add(menuitem);
+
+      menuitem = new JCheckBoxMenuItem("Show hidden");
+      menuitem.addActionListener((ActionEvent e) -> m_FilesRight.setShowHidden(m_MenuItemRightShowHidden.isSelected()));
+      menu.add(menuitem);
+      m_MenuItemRightShowHidden = menuitem;
+
+      m_MenuBar = result;
+    }
+    else {
+      result = m_MenuBar;
+    }
+
+    return result;
+  }
+
+  /**
+   * Returns whether we're currently busy.
+   *
+   * @return		true if busy
+   */
+  public boolean isBusy() {
+    return (m_Worker != null);
   }
 
   /**
@@ -326,7 +414,6 @@ public class FileCommanderPanel
     File[]		files;
     String		input;
     File		target;
-    MessageCollection	errors;
 
     if (m_FilesActive == null)
       return;
@@ -339,19 +426,35 @@ public class FileCommanderPanel
 	GUIHelper.showErrorMessage(this, "Source and target directory are the same, cannot copy files!");
 	return;
       }
-      target = m_FilesInactive.getCurrentDir();
-      errors = new MessageCollection();
-      for (File file: files) {
-	try {
-	  if (!FileUtils.copy(files[0], target))
-	    errors.add("Failed to copy " + file + " to " + target + "!");
+      m_Worker = new SwingWorker() {
+	protected MessageCollection errors = new MessageCollection();
+	@Override
+	protected Object doInBackground() throws Exception {
+	  File target = m_FilesInactive.getCurrentDir();
+	  for (int i = 0; i < files.length; i++) {
+	    File file = files[i];
+	    m_StatusBar.showStatus("Copying " + (i+1) + "/" + files.length + ": " + file);
+	    try {
+	      if (!FileUtils.copy(files[0], target))
+		errors.add("Failed to copy " + file + " to " + target + "!");
+	    }
+	    catch (Exception e) {
+	      errors.add("Failed to copy " + files[0] + " to " + target + "!", e);
+	    }
+	  }
+	  return null;
 	}
-	catch (Exception e) {
-	  errors.add("Failed to copy " + files[0] + " to " + target + "!", e);
+	@Override
+	protected void done() {
+	  super.done();
+	  m_Worker = null;
+	  updateButtons();
+	  if (!errors.isEmpty())
+	    GUIHelper.showErrorMessage(FileCommanderPanel.this, errors.toString());
+	  reload();
 	}
-      }
-      if (!errors.isEmpty())
-	GUIHelper.showErrorMessage(this, errors.toString());
+      };
+      m_Worker.execute();
     }
     else {
       input = GUIHelper.showInputDialog(this, "Please enter new file name", files[0].getName());
@@ -380,7 +483,6 @@ public class FileCommanderPanel
     File[]		files;
     String		input;
     File		target;
-    MessageCollection	errors;
 
     if (m_FilesActive == null)
       return;
@@ -393,19 +495,35 @@ public class FileCommanderPanel
 	GUIHelper.showErrorMessage(this, "Source and target directory are the same, cannot move files!");
 	return;
       }
-      target = m_FilesInactive.getCurrentDir();
-      errors = new MessageCollection();
-      for (File file: files) {
-	try {
-	  if (!FileUtils.move(file, target))
-	    errors.add("Failed to move " + file + " to " + target + "!");
+      m_Worker = new SwingWorker() {
+	protected MessageCollection errors = new MessageCollection();
+	@Override
+	protected Object doInBackground() throws Exception {
+	  File target = m_FilesInactive.getCurrentDir();
+	  for (int i = 0; i < files.length; i++) {
+	    File file = files[i];
+	    m_StatusBar.showStatus("Moving " + (i+1) + "/" + files.length + ": " + file);
+	    try {
+	      if (!FileUtils.move(file, target))
+		errors.add("Failed to move " + file + " to " + target + "!");
+	    }
+	    catch (Exception e) {
+	      errors.add("Failed to move " + file + " to " + target + "!", e);
+	    }
+	  }
+	  return null;
 	}
-	catch (Exception e) {
-	  errors.add("Failed to move " + file + " to " + target + "!", e);
+	@Override
+	protected void done() {
+	  super.done();
+	  m_Worker = null;
+	  updateButtons();
+	  if (!errors.isEmpty())
+	    GUIHelper.showErrorMessage(FileCommanderPanel.this, errors.toString());
+	  reload();
 	}
-      }
-      if (!errors.isEmpty())
-	GUIHelper.showErrorMessage(this, errors.toString());
+      };
+      m_Worker.execute();
     }
     else {
       input = GUIHelper.showInputDialog(this, "Please enter new name", files[0].getName());
@@ -453,7 +571,6 @@ public class FileCommanderPanel
   public void delete() {
     File[]		files;
     int			retVal;
-    MessageCollection	errors;
 
     if (m_FilesActive == null)
       return;
@@ -465,20 +582,35 @@ public class FileCommanderPanel
     if (retVal != ApprovalDialog.APPROVE_OPTION)
       return;
 
-    errors = new MessageCollection();
-    for (File file: files) {
-      try {
-	if (!file.delete())
-	  errors.add("Failed to delete: " + file);
+    m_Worker = new SwingWorker() {
+      protected MessageCollection errors = new MessageCollection();
+      @Override
+      protected Object doInBackground() throws Exception {
+	updateButtons();
+	for (int i = 0; i < files.length; i++) {
+	  File file = files[i];
+	  m_StatusBar.showStatus("Deleting " + (i+1) + "/" + files.length + ": " + file);
+	  try {
+	    if (!file.delete())
+	      errors.add("Failed to delete: " + file);
+	  }
+	  catch (Exception e) {
+	    errors.add("Failed to delete: " + file, e);
+	  }
+	}
+	return null;
       }
-      catch (Exception e) {
-	errors.add("Failed to delete: " + file, e);
+      @Override
+      protected void done() {
+	super.done();
+	m_Worker = null;
+	updateButtons();
+	if (!errors.isEmpty())
+	  GUIHelper.showErrorMessage(FileCommanderPanel.this, "Failed to delete file(s)!\n" + errors);
+	reload();
       }
-    }
-    if (!errors.isEmpty())
-      GUIHelper.showErrorMessage(this, "Failed to delete file(s)!\n" + errors);
-
-    reload();
+    };
+    m_Worker.execute();
   }
 
   /**
@@ -486,5 +618,34 @@ public class FileCommanderPanel
    */
   public void quit() {
     closeParent();
+  }
+
+  /**
+   * Prompts the user to enter a regular expression as filter.
+   *
+   * @param left	whether to apply it to the left or right panel
+   */
+  protected void setFilter(boolean left) {
+    BaseRegExp	regExp;
+    String	input;
+
+    if (left)
+      regExp = m_FilesLeft.getFilter();
+    else
+      regExp = m_FilesRight.getFilter();
+
+    input = GUIHelper.showInputDialog(this, "Please enter the filter (regular expression)", regExp.getValue());
+    if (input == null)
+      return;
+    if (!regExp.isValid(input)) {
+      GUIHelper.showErrorMessage(this, "Invalid regular expression:\n" + input);
+      return;
+    }
+
+    regExp.setValue(input);
+    if (left)
+      m_FilesLeft.setFilter(regExp);
+    else
+      m_FilesRight.setFilter(regExp);
   }
 }
