@@ -148,13 +148,17 @@ public class FileCommanderPanel
   @Override
   protected void initGUI() {
     JPanel	panel;
+    JPanel	panelAll;
 
     super.initGUI();
 
     setLayout(new BorderLayout());
 
+    panelAll = new JPanel(new BorderLayout());
+    add(panelAll, BorderLayout.CENTER);
+
     panel = new JPanel(new GridLayout(1, 2, 5, 5));
-    add(panel, BorderLayout.CENTER);
+    panelAll.add(panel, BorderLayout.CENTER);
 
     m_FilesLeft = new FilePanel(true);
     m_FilesLeft.startUpdate();
@@ -203,7 +207,7 @@ public class FileCommanderPanel
     panel.add(m_PanelRight);
 
     m_PanelButtons = new JPanel(new FlowLayout());
-    add(m_PanelButtons, BorderLayout.SOUTH);
+    panelAll.add(m_PanelButtons, BorderLayout.SOUTH);
 
     m_ButtonReload = new JButton("Reload");
     m_ButtonReload.addActionListener((ActionEvent) -> reload());
@@ -232,6 +236,9 @@ public class FileCommanderPanel
     m_ButtonQuit = new JButton("Quit");
     m_ButtonQuit.addActionListener((ActionEvent) -> quit());
     m_PanelButtons.add(m_ButtonQuit);
+
+    m_StatusBar = new BaseStatusBar();
+    add(m_StatusBar, BorderLayout.SOUTH);
   }
 
   /**
@@ -414,11 +421,18 @@ public class FileCommanderPanel
     File[]		files;
     String		input;
     File		target;
+    int			retVal;
 
     if (m_FilesActive == null)
       return;
     files = m_FilesActive.getSelectedFiles();
     if (files.length == 0)
+      return;
+
+    retVal = GUIHelper.showConfirmMessage(
+      this, "Do you want to copy " + files.length + " file" + (files.length > 1 ? "s" : "")
+	+ " to " + m_FilesInactive.getCurrentDir() + "?");
+    if (retVal != ApprovalDialog.APPROVE_OPTION)
       return;
 
     if (files.length > 1) {
@@ -435,7 +449,7 @@ public class FileCommanderPanel
 	    File file = files[i];
 	    m_StatusBar.showStatus("Copying " + (i+1) + "/" + files.length + ": " + file);
 	    try {
-	      if (!FileUtils.copy(files[0], target))
+	      if (!FileUtils.copy(file, target))
 		errors.add("Failed to copy " + file + " to " + target + "!");
 	    }
 	    catch (Exception e) {
@@ -448,6 +462,7 @@ public class FileCommanderPanel
 	protected void done() {
 	  super.done();
 	  m_Worker = null;
+	  m_StatusBar.showStatus("");
 	  updateButtons();
 	  if (!errors.isEmpty())
 	    GUIHelper.showErrorMessage(FileCommanderPanel.this, errors.toString());
@@ -483,11 +498,18 @@ public class FileCommanderPanel
     File[]		files;
     String		input;
     File		target;
+    int			retVal;
 
     if (m_FilesActive == null)
       return;
     files = m_FilesActive.getSelectedFiles();
     if (files.length == 0)
+      return;
+
+    retVal = GUIHelper.showConfirmMessage(
+      this, "Do you want to rename/move " + files.length + " file" + (files.length > 1 ? "s" : "")
+	+ " to " + m_FilesInactive.getCurrentDir() + "?");
+    if (retVal != ApprovalDialog.APPROVE_OPTION)
       return;
 
     if (files.length > 1) {
@@ -517,6 +539,7 @@ public class FileCommanderPanel
 	protected void done() {
 	  super.done();
 	  m_Worker = null;
+	  m_StatusBar.showStatus("");
 	  updateButtons();
 	  if (!errors.isEmpty())
 	    GUIHelper.showErrorMessage(FileCommanderPanel.this, errors.toString());
@@ -578,7 +601,7 @@ public class FileCommanderPanel
     if (files.length == 0)
       return;
 
-    retVal = GUIHelper.showConfirmMessage(this, "Do you want to delete " + files.length + " file" + (files.length > 0 ? "s" : "") + "?");
+    retVal = GUIHelper.showConfirmMessage(this, "Do you want to delete " + files.length + " file" + (files.length > 1 ? "s" : "") + "?");
     if (retVal != ApprovalDialog.APPROVE_OPTION)
       return;
 
@@ -591,7 +614,7 @@ public class FileCommanderPanel
 	  File file = files[i];
 	  m_StatusBar.showStatus("Deleting " + (i+1) + "/" + files.length + ": " + file);
 	  try {
-	    if (!file.delete())
+	    if (!FileUtils.delete(file))
 	      errors.add("Failed to delete: " + file);
 	  }
 	  catch (Exception e) {
@@ -604,6 +627,7 @@ public class FileCommanderPanel
       protected void done() {
 	super.done();
 	m_Worker = null;
+	m_StatusBar.showStatus("");
 	updateButtons();
 	if (!errors.isEmpty())
 	  GUIHelper.showErrorMessage(FileCommanderPanel.this, "Failed to delete file(s)!\n" + errors);
