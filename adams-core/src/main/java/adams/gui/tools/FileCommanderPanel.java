@@ -93,14 +93,17 @@ public class FileCommanderPanel
   /** the button for reloading the files. */
   protected JButton m_ButtonReload;
 
+  /** the button for renaming. */
+  protected JButton m_ButtonRename;
+
   /** the button for viewing the file. */
   protected JButton m_ButtonView;
 
   /** the button for copying the file. */
   protected JButton m_ButtonCopy;
 
-  /** the button for renaming/moving. */
-  protected JButton m_ButtonRenameMove;
+  /** the button for moving. */
+  protected JButton m_ButtonMove;
 
   /** the button for creating a directory. */
   protected JButton m_ButtonMkDir;
@@ -215,6 +218,10 @@ public class FileCommanderPanel
     m_ButtonReload.addActionListener((ActionEvent) -> reload());
     m_PanelButtons.add(m_ButtonReload);
 
+    m_ButtonRename = new JButton("Rename");
+    m_ButtonRename.addActionListener((ActionEvent) -> rename());
+    m_PanelButtons.add(m_ButtonRename);
+
     m_ButtonView = new JButton("View");
     m_ButtonView.addActionListener((ActionEvent) -> view());
     m_PanelButtons.add(m_ButtonView);
@@ -223,9 +230,9 @@ public class FileCommanderPanel
     m_ButtonCopy.addActionListener((ActionEvent) -> copy());
     m_PanelButtons.add(m_ButtonCopy);
 
-    m_ButtonRenameMove = new JButton("RenMov");
-    m_ButtonRenameMove.addActionListener((ActionEvent) -> renameMove());
-    m_PanelButtons.add(m_ButtonRenameMove);
+    m_ButtonMove = new JButton("Move");
+    m_ButtonMove.addActionListener((ActionEvent) -> move());
+    m_PanelButtons.add(m_ButtonMove);
 
     m_ButtonMkDir = new JButton("MkDir");
     m_ButtonMkDir.addActionListener((ActionEvent) -> mkdir());
@@ -285,15 +292,18 @@ public class FileCommanderPanel
   protected void updateButtons() {
     boolean 	hasActive;
     boolean	busy;
+    File[]	activeFiles;
 
-    hasActive = (m_FilesActive != null);
-    busy      = isBusy();
+    hasActive   = (m_FilesActive != null);
+    busy        = isBusy();
+    activeFiles = m_FilesActive.getSelectedFiles();
 
-    m_ButtonView.setEnabled(!busy && hasActive && (m_FilesActive.getSelectedFiles().length == 1));
-    m_ButtonCopy.setEnabled(!busy && hasActive && (m_FilesActive.getSelectedFiles().length > 0));
-    m_ButtonRenameMove.setEnabled(!busy && hasActive && (m_FilesActive.getSelectedFiles().length > 0));
+    m_ButtonRename.setEnabled(!busy && hasActive && (activeFiles.length == 1));
+    m_ButtonView.setEnabled(!busy && hasActive && (activeFiles.length == 1));
+    m_ButtonCopy.setEnabled(!busy && hasActive && (activeFiles.length > 0));
+    m_ButtonMove.setEnabled(!busy && hasActive && (activeFiles.length > 0));
     m_ButtonMkDir.setEnabled(!busy && hasActive);
-    m_ButtonDelete.setEnabled(!busy && hasActive && (m_FilesActive.getSelectedFiles().length > 0));
+    m_ButtonDelete.setEnabled(!busy && hasActive && (activeFiles.length > 0));
     m_ButtonQuit.setEnabled(!busy);
   }
 
@@ -499,10 +509,9 @@ public class FileCommanderPanel
   }
 
   /**
-   * Renames a single file or moves multiple selected files to the other
-   * directory.
+   * Renames a file.
    */
-  public void renameMove() {
+  public void rename() {
     File[]		files;
     String		input;
     File		target;
@@ -511,69 +520,87 @@ public class FileCommanderPanel
     if (m_FilesActive == null)
       return;
     files = m_FilesActive.getSelectedFiles();
+    if (files.length != 1)
+      return;
+
+    retVal = GUIHelper.showConfirmMessage(
+      this, "Do you want to rename the following file?\n" + files[0]);
+    if (retVal != ApprovalDialog.APPROVE_OPTION)
+      return;
+
+    input = GUIHelper.showInputDialog(this, "Please enter new name", files[0].getName());
+    if ((input == null) || input.equals(files[0].getName()))
+      return;
+    target = new PlaceholderFile(files[0].getParentFile().getAbsolutePath() + File.separator + input);
+    try {
+      if (!FileUtils.move(files[0], target))
+	GUIHelper.showErrorMessage(this, "Failed to rename " + files[0] + " to " + target + "!");
+    }
+    catch (Exception e) {
+      GUIHelper.showErrorMessage(this, "Failed to rename " + files[0] + " to " + target + "!", e);
+    }
+
+    reload();
+  }
+
+  /**
+   * Moves multiple selected files to the other directory.
+   */
+  public void move() {
+    File[]		files;
+    int			retVal;
+
+    if (m_FilesActive == null)
+      return;
+    files = m_FilesActive.getSelectedFiles();
     if (files.length == 0)
       return;
+    if (m_FilesActive.getCurrentDir().equals(m_FilesInactive.getCurrentDir())) {
+      GUIHelper.showErrorMessage(this, "Source and target directory are the same, cannot move files!");
+      return;
+    }
 
     if (files.length == 1)
       retVal = GUIHelper.showConfirmMessage(
-	this, "Do you want to rename/move the following file?\n" + files[0]);
+	this, "Do you want to move the following file?\n" + files[0]);
     else
       retVal = GUIHelper.showConfirmMessage(
-	this, "Do you want to rename/move " + files.length + " file" + (files.length > 1 ? "s" : "")
+	this, "Do you want to move " + files.length + " file" + (files.length > 1 ? "s" : "")
 	  + "\nfrom\n" + m_FilesActive.getCurrentDir()
 	  + "\nto\n" + m_FilesInactive.getCurrentDir() + "?");
     if (retVal != ApprovalDialog.APPROVE_OPTION)
       return;
 
-    if (files.length > 1) {
-      if (m_FilesActive.getCurrentDir().equals(m_FilesInactive.getCurrentDir())) {
-	GUIHelper.showErrorMessage(this, "Source and target directory are the same, cannot move files!");
-	return;
-      }
-      m_Worker = new SwingWorker() {
-	protected MessageCollection errors = new MessageCollection();
-	@Override
-	protected Object doInBackground() throws Exception {
-	  File target = m_FilesInactive.getCurrentDir();
-	  for (int i = 0; i < files.length; i++) {
-	    File file = files[i];
-	    m_StatusBar.showStatus("Moving " + (i+1) + "/" + files.length + ": " + file);
-	    try {
-	      if (!FileUtils.move(file, target))
-		errors.add("Failed to move " + file + " to " + target + "!");
-	    }
-	    catch (Exception e) {
-	      errors.add("Failed to move " + file + " to " + target + "!", e);
-	    }
+    m_Worker = new SwingWorker() {
+      protected MessageCollection errors = new MessageCollection();
+      @Override
+      protected Object doInBackground() throws Exception {
+	File target = m_FilesInactive.getCurrentDir();
+	for (int i = 0; i < files.length; i++) {
+	  File file = files[i];
+	  m_StatusBar.showStatus("Moving " + (i+1) + "/" + files.length + ": " + file);
+	  try {
+	    if (!FileUtils.move(file, target))
+	      errors.add("Failed to move " + file + " to " + target + "!");
 	  }
-	  return null;
+	  catch (Exception e) {
+	    errors.add("Failed to move " + file + " to " + target + "!", e);
+	  }
 	}
-	@Override
-	protected void done() {
-	  super.done();
-	  m_Worker = null;
-	  m_StatusBar.showStatus("");
-	  updateButtons();
-	  if (!errors.isEmpty())
-	    GUIHelper.showErrorMessage(FileCommanderPanel.this, errors.toString());
-	  reload();
-	}
-      };
-      m_Worker.execute();
-    }
-    else {
-      input = GUIHelper.showInputDialog(this, "Please enter new name", files[0].getName());
-      if ((input == null) || input.equals(files[0].getName()))
-	return;
-      target = new PlaceholderFile(files[0].getParentFile().getAbsolutePath() + File.separator + input);
-      try {
-	if (!FileUtils.move(files[0], target))
-	  GUIHelper.showErrorMessage(this, "Failed to move " + files[0] + " to " + target + "!");
+	return null;
       }
-      catch (Exception e) {
-	GUIHelper.showErrorMessage(this, "Failed to move " + files[0] + " to " + target + "!", e);
+      @Override
+      protected void done() {
+	super.done();
+	m_Worker = null;
+	m_StatusBar.showStatus("");
+	updateButtons();
+	if (!errors.isEmpty())
+	  GUIHelper.showErrorMessage(FileCommanderPanel.this, errors.toString());
+	reload();
       }
-    }
+    };
+    m_Worker.execute();
 
     reload();
   }
