@@ -719,6 +719,15 @@ public class ExperimenterPanel
   }
 
   /**
+   * Returns the analysis panel.
+   *
+   * @return		the panel
+   */
+  public AnalysisPanel getAnalysisPanel() {
+    return m_PanelAnalysis;
+  }
+
+  /**
    * Logs the message.
    * 
    * @param msg		the log message

@@ -89,6 +89,6 @@ public class RemoteExperimentRunner
   @Override
   protected void doRun() throws Exception {
     showStatus("Remote experiment running...");
-    ((RemoteExperiment) m_Exp).runExperiment();
+    m_Exp.runExperiment();
   }
 }

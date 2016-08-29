@@ -100,10 +100,12 @@ public class DefaultExperimentRunner
   /**
    * Hook method that gets executed after the experiment has finished
    * (successfully or not).
+   *
+   * @param success	whether successfully finished (neither error, nor aborted)
    */
   @Override
-  protected void postRun() {
-    super.postRun();
+  protected void postRun(boolean success) {
+    super.postRun(success);
     m_Owner.finishExecution();
     update();
     m_Running = false;
