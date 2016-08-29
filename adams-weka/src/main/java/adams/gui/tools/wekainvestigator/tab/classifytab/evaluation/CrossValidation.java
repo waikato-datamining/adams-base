@@ -26,7 +26,6 @@ import adams.core.option.OptionUtils;
 import adams.flow.container.WekaTrainTestSetContainer;
 import adams.gui.core.AbstractNamedHistoryPanel;
 import adams.gui.core.ParameterPanel;
-import adams.gui.tools.wekainvestigator.InvestigatorPanel;
 import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
 import weka.classifiers.Classifier;
 import weka.classifiers.CrossValidationFoldGenerator;
@@ -109,13 +108,13 @@ public class CrossValidation
     m_SpinnerFolds = new JSpinner();
     ((SpinnerNumberModel) m_SpinnerFolds.getModel()).setMinimum(2);
     ((SpinnerNumberModel) m_SpinnerFolds.getModel()).setStepSize(1);
-    m_SpinnerFolds.setValue(InvestigatorPanel.getProperties().getInteger("Classify.NumFolds", 10));
+    m_SpinnerFolds.setValue(props.getInteger("Classify.NumFolds", 10));
     m_SpinnerFolds.setToolTipText("The number of folds to use (>= 2)");
     m_SpinnerFolds.addChangeListener((ChangeEvent e) -> update());
     m_PanelParameters.addParameter("Folds", m_SpinnerFolds);
 
     // seed
-    m_TextSeed = new JTextField("" + InvestigatorPanel.getProperties().getInteger("Classify.Seed", 1));
+    m_TextSeed = new JTextField("" + props.getInteger("Classify.Seed", 1));
     m_TextSeed.setToolTipText("The seed value for randomizing the data");
     m_TextSeed.getDocument().addDocumentListener(new DocumentListener() {
       @Override
