@@ -20,10 +20,17 @@
 
 package adams.gui.tools.wekaexperimenter.analysis;
 
+import adams.core.io.FileUtils;
+import adams.gui.chooser.BaseFileChooser;
 import adams.gui.core.BaseTextAreaWithButtons;
+import adams.gui.core.ExtensionFileFilter;
 import adams.gui.core.Fonts;
+import adams.gui.core.GUIHelper;
+import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
+import javax.swing.JButton;
 import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
 
 /**
  * Displays the results in plain text.
@@ -39,6 +46,30 @@ public class PlainTextResultsPanel
 
   private static final long serialVersionUID = 3608852939358175057L;
 
+  /** the copy button. */
+  protected JButton m_ButtonCopy;
+
+  /** the save button. */
+  protected JButton m_ButtonSave;
+
+  /** the filechooser for saving the output. */
+  protected BaseFileChooser m_FileChooser;
+
+  /**
+   * Initializes the members.
+   */
+  @Override
+  protected void initialize() {
+    ExtensionFileFilter filter;
+
+    super.initialize();
+
+    filter        = ExtensionFileFilter.getTextFileFilter();
+    m_FileChooser = new BaseFileChooser();
+    m_FileChooser.addChoosableFileFilter(filter);
+    m_FileChooser.setFileFilter(filter);
+  }
+
   /**
    * Initializes the widgets.
    */
@@ -51,6 +82,25 @@ public class PlainTextResultsPanel
     m_TextAreaResults = new BaseTextAreaWithButtons();
     m_TextAreaResults.setTextFont(Fonts.getMonospacedFont());
     add(m_TextAreaResults, BorderLayout.CENTER);
+
+    m_ButtonCopy = new JButton("Copy", GUIHelper.getIcon("copy.gif"));
+    m_ButtonCopy.addActionListener((ActionEvent e) -> {
+      if (m_TextAreaResults.getSelectedText() != null)
+	ClipboardHelper.copyToClipboard(m_TextAreaResults.getSelectedText());
+      else
+	ClipboardHelper.copyToClipboard(m_TextAreaResults.getText());
+    });
+    m_TextAreaResults.addToButtonsPanel(m_ButtonCopy);
+
+    m_ButtonSave = new JButton("Save...", GUIHelper.getIcon("save.gif"));
+    m_ButtonSave.addActionListener((ActionEvent e) -> {
+      int retVal = m_FileChooser.showSaveDialog(PlainTextResultsPanel.this);
+      if (retVal != BaseFileChooser.APPROVE_OPTION)
+	return;
+      if (!FileUtils.writeToFile(m_FileChooser.getSelectedFile().getAbsolutePath(), m_TextAreaResults.getText(), false))
+	GUIHelper.showErrorMessage(PlainTextResultsPanel.this, "Failed to save output to:\n" + m_FileChooser.getSelectedFile());
+    });
+    m_TextAreaResults.addToButtonsPanel(m_ButtonSave);
   }
 
   /**

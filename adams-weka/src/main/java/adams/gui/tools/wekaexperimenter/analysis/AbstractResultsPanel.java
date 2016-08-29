@@ -20,6 +20,7 @@
 
 package adams.gui.tools.wekaexperimenter.analysis;
 
+import adams.core.CleanUpHandler;
 import adams.core.CloneHandler;
 import adams.gui.core.BasePanel;
 import weka.experiment.ResultMatrix;
@@ -32,7 +33,7 @@ import weka.experiment.ResultMatrix;
  */
 public abstract class AbstractResultsPanel
   extends BasePanel
-  implements CloneHandler<AbstractResultsPanel> {
+  implements CloneHandler<AbstractResultsPanel>, CleanUpHandler {
 
   private static final long serialVersionUID = -2760167038696560756L;
 
@@ -76,5 +77,13 @@ public abstract class AbstractResultsPanel
   @Override
   public String toString() {
     return getResultsName();
+  }
+
+  /**
+   * Cleans up data structures, frees up memory.
+   * <br>
+   * Default implementation does nothing.
+   */
+  public void cleanUp() {
   }
 }

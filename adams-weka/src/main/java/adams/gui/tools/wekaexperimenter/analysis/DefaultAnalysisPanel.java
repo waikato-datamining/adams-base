@@ -20,6 +20,10 @@
 package adams.gui.tools.wekaexperimenter.analysis;
 
 import adams.core.ClassLister;
+import adams.core.DateFormat;
+import adams.core.DateUtils;
+import adams.gui.core.AbstractNamedHistoryPanel;
+import adams.gui.core.BaseSplitPane;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.NumberTextField;
@@ -43,6 +47,7 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -74,6 +79,74 @@ public class DefaultAnalysisPanel
 
   public static final String KEY_SCHEME_VERSION_ID = "Key_Scheme_version_ID";
 
+  /**
+   * Customized history panel.
+   */
+  public static class HistoryPanel
+    extends AbstractNamedHistoryPanel<AbstractResultsPanel> {
+
+    private static final long serialVersionUID = 8740813441072965573L;
+
+    /** the owner. */
+    protected DefaultAnalysisPanel m_Owner;
+
+    /**
+     * Initializes the history.
+     *
+     * @param owner	the owning panel
+     */
+    public HistoryPanel(DefaultAnalysisPanel owner) {
+      super();
+      m_Owner = owner;
+      setAllowRemove(true);
+      setAllowRename(false);
+    }
+
+    /**
+     * Removes all entries and payloads.
+     */
+    public void clear() {
+      for (AbstractResultsPanel panel : m_Entries.values())
+        panel.cleanUp();
+      super.clear();
+    }
+
+    /**
+     * Removes the specified entry.
+     *
+     * @param name	the name of the entry
+     * @return		the entry that was stored under this name or null if
+     * 			no entry was stored with this name
+     */
+    public AbstractResultsPanel removeEntry(String name) {
+      AbstractResultsPanel	result;
+
+      result = super.removeEntry(name);
+      if (result != null)
+	result.cleanUp();
+
+      return result;
+    }
+
+    /**
+     * Displays the specified entry.
+     *
+     * @param name	the name of the entry, can be null to empty display
+     */
+    @Override
+    protected void updateEntry(String name) {
+      m_Owner.getPanelRight().removeAll();
+      if (name != null) {
+        if (hasEntry(name))
+          m_Owner.getPanelRight().add(getEntry(name));
+      }
+      m_Owner.getPanelRight().invalidate();
+      m_Owner.getPanelRight().revalidate();
+      m_Owner.getPanelRight().doLayout();
+      m_Owner.getPanelRight().repaint();
+    }
+  }
+
   /** the GOE for the tester. */
   protected WekaGenericObjectEditorPanel m_PanelTester;
 
@@ -98,6 +171,21 @@ public class DefaultAnalysisPanel
   /** the analyze button. */
   protected JButton m_ButtonAnalyze;
 
+  /** the split pane. */
+  protected BaseSplitPane m_SplitPane;
+
+  /** the panel on the left. */
+  protected JPanel m_PanelLeft;
+
+  /** the panel on the right. */
+  protected JPanel m_PanelRight;
+
+  /** the history. */
+  protected HistoryPanel m_History;
+
+  /** the formatter for the history entries. */
+  protected DateFormat m_Formatter;
+
   /**
    * Initializes the members.
    */
@@ -118,6 +206,8 @@ public class DefaultAnalysisPanel
 	ConsolePanel.getSingleton().append(Level.SEVERE, "Failed to instantiate results panel: " + cls.getName(), e);
       }
     }
+
+    m_Formatter  = DateUtils.getTimestampFormatter();
   }
 
   /**
@@ -159,13 +249,29 @@ public class DefaultAnalysisPanel
 	m_PanelsResults.toArray(new AbstractResultsPanel[m_PanelsResults.size()])));
     panelParams.addParameter("Results", m_ComboBoxResults);
 
+    // split pane
+    m_SplitPane = new BaseSplitPane(BaseSplitPane.HORIZONTAL_SPLIT);
+    m_SplitPane.setOneTouchExpandable(true);
+    m_SplitPane.setDividerLocation(200);  // TODO preferences
+    add(m_SplitPane, BorderLayout.CENTER);
+
+    m_PanelLeft = new JPanel(new BorderLayout());
+    m_SplitPane.setLeftComponent(m_PanelLeft);
+
+    m_PanelRight = new JPanel(new BorderLayout());
+    m_SplitPane.setRightComponent(m_PanelRight);
+
     // buttons
     panelButtons = new JPanel(new FlowLayout(FlowLayout.LEFT));
-    panelTop.add(panelButtons, BorderLayout.SOUTH);
+    m_PanelLeft.add(panelButtons, BorderLayout.NORTH);
 
     m_ButtonAnalyze = new JButton("Analyze");
     m_ButtonAnalyze.addActionListener((ActionEvent e) -> analyze());
     panelButtons.add(m_ButtonAnalyze);
+
+    // history
+    m_History = new HistoryPanel(this);
+    m_PanelLeft.add(m_History);
   }
 
   /**
@@ -176,6 +282,15 @@ public class DefaultAnalysisPanel
   @Override
   public String getAnalysisName() {
     return "Default";
+  }
+
+  /**
+   * Returns the panel on the right (for the analysis display).
+   *
+   * @return		the panel
+   */
+  public JPanel getPanelRight() {
+    return m_PanelRight;
   }
 
   /**
@@ -289,11 +404,13 @@ public class DefaultAnalysisPanel
    */
   protected void analyze() {
     Tester			tester;
+    ResultMatrix		matrix;
     AbstractResultsPanel	panel;
 
     if (m_Results == null)
       return;
 
+    matrix = getResultMatrix();
     tester = getTester();
     tester.setInstances(m_Results);
     tester.setSortColumn(-1);
@@ -311,9 +428,10 @@ public class DefaultAnalysisPanel
 	  + (getAttributeIndex(KEY_SCHEME_OPTIONS) + 1)
 	  + ","
 	  + (getAttributeIndex(KEY_SCHEME_VERSION_ID) + 1)));
-    tester.setResultMatrix(getResultMatrix());
+    tester.setResultMatrix(matrix);
     tester.setDisplayedResultsets(null);
     tester.setSignificanceLevel(Double.parseDouble(m_TextSignificance.getText()));
+    tester.setShowStdDevs(matrix.getShowStdDev());
     try {
       if (getAttributeIndex(PERCENT_CORRECT) > -1)
 	tester.multiResultsetFull(0, getAttributeIndex(PERCENT_CORRECT));
@@ -325,9 +443,9 @@ public class DefaultAnalysisPanel
       return;
     }
 
-    // TODO history
     panel = ((AbstractResultsPanel) m_ComboBoxResults.getSelectedItem()).getClone();
     panel.display(tester.getResultMatrix());
-    add(panel, BorderLayout.CENTER);
+    m_History.addEntry(m_Formatter.format(new Date()), panel);
+    m_History.setSelectedIndex(m_History.count() - 1);
   }
 }

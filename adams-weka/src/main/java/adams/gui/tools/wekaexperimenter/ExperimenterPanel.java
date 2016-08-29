@@ -221,6 +221,7 @@ public class ExperimenterPanel
       m_CurrentFile = file;
       update();
       logMessage("Loaded setup from " + file);
+      m_TabbedPane.setSelectedComponent(m_PanelSetup);
     }
     else {
       logError("Cannot handle experiment stored in " + file + "!\n" + msg, "Load experiment");
@@ -358,7 +359,7 @@ public class ExperimenterPanel
   public void openResults(File file, AbstractFileLoader loader) {
     Instances		results;
     String		msg;
-    
+
     logMessage("Loading results " + file + "...");
     if (loader == null)
       loader = m_FileChooserResults.getReaderForFile(file);
@@ -371,10 +372,13 @@ public class ExperimenterPanel
       loader.setFile(file);
       results = loader.getDataSet();
       msg     = m_PanelAnalysis.handlesResults(results);
-      if (msg == null)
+      if (msg == null) {
 	m_PanelAnalysis.setResults(results);
-      else
+	m_TabbedPane.setSelectedComponent(m_PanelAnalysis);
+      }
+      else {
 	logError("Cannot handle results from " + file + "\n" + msg, "Loading results");
+      }
     }
     catch (Exception e) {
       msg = "Failed to load results from " + file + "\n" + Utils.throwableToString(e);
@@ -490,6 +494,7 @@ public class ExperimenterPanel
       menu.add(submenu);
       m_RecentFilesHandlerSetups = new RecentFilesHandler<>(
 	  SESSION_FILE, "Setup-", ExperimenterPanel.getProperties().getInteger("SetupsMaxRecent", 5), submenu);
+      m_RecentFilesHandlerSetups.setAddShortcuts(true);
       m_RecentFilesHandlerSetups.addRecentItemListener(new RecentItemListener<JMenu,File>() {
 	public void recentItemAdded(RecentItemEvent<JMenu,File> e) {
 	  // ignored
@@ -570,6 +575,7 @@ public class ExperimenterPanel
       menu.add(submenu);
       m_RecentFilesHandlerResults = new RecentFilesHandlerWithCommandline<>(
 	  SESSION_FILE, "Results-", ExperimenterPanel.getProperties().getInteger("ResultsMaxRecent", 5), submenu);
+      m_RecentFilesHandlerResults.setAddShortcuts(false);
       m_RecentFilesHandlerResults.addRecentItemListener(new RecentItemListener<JMenu,Setup>() {
 	public void recentItemAdded(RecentItemEvent<JMenu,Setup> e) {
 	  // ignored
