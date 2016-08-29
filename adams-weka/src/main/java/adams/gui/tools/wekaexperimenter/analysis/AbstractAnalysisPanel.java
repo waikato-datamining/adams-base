@@ -19,6 +19,7 @@
  */
 package adams.gui.tools.wekaexperimenter.analysis;
 
+import adams.core.CloneHandler;
 import adams.gui.tools.wekaexperimenter.AbstractExperimenterPanel;
 import weka.core.Instances;
 import adams.core.ClassLister;
@@ -30,7 +31,8 @@ import adams.core.ClassLister;
  * @version $Revision$
  */
 public abstract class AbstractAnalysisPanel
-  extends AbstractExperimenterPanel {
+  extends AbstractExperimenterPanel
+  implements CloneHandler<AbstractAnalysisPanel> {
 
   /** for serialization. */
   private static final long serialVersionUID = 5592519317307855580L;
@@ -96,7 +98,14 @@ public abstract class AbstractAnalysisPanel
    */
   protected void update() {
   }
-  
+
+  /**
+   * Returns a clone of the object.
+   *
+   * @return		the clone
+   */
+  public abstract AbstractAnalysisPanel getClone();
+
   /**
    * Returns the name of the panel.
    * 

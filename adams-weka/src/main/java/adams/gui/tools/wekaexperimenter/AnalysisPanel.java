@@ -19,7 +19,7 @@
  */
 package adams.gui.tools.wekaexperimenter;
 
-import adams.core.Utils;
+import adams.core.ObjectCopyHelper;
 import adams.gui.tools.wekaexperimenter.analysis.AbstractAnalysisPanel;
 import adams.gui.tools.wekaexperimenter.analysis.DefaultAnalysisPanel;
 import weka.core.Instances;
@@ -138,7 +138,7 @@ public class AnalysisPanel
       results = m_PanelAnalysis.getResults();
       remove(m_PanelAnalysis);
     }
-    m_PanelAnalysis = (AbstractAnalysisPanel) Utils.deepCopy(panel);
+    m_PanelAnalysis = (AbstractAnalysisPanel) ObjectCopyHelper.copyObject(panel);
     add(m_PanelAnalysis, BorderLayout.CENTER);
     m_PanelAnalysis.setResults(results);
   }

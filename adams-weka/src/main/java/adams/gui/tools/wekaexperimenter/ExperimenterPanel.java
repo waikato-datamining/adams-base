@@ -23,10 +23,13 @@ import adams.core.Properties;
 import adams.core.Utils;
 import adams.core.logging.LoggingLevel;
 import adams.gui.chooser.BaseFileChooser;
+import adams.gui.chooser.WekaFileChooser;
 import adams.gui.core.BaseTabbedPane;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.RecentFilesHandler;
+import adams.gui.core.RecentFilesHandlerWithCommandline;
+import adams.gui.core.RecentFilesHandlerWithCommandline.Setup;
 import adams.gui.event.RecentItemEvent;
 import adams.gui.event.RecentItemListener;
 import adams.gui.tools.wekaexperimenter.runner.AbstractExperimentRunner;
@@ -34,10 +37,7 @@ import adams.gui.workspace.AbstractWorkspacePanelWithStatusBar;
 import weka.core.Instances;
 import weka.core.converters.AbstractFileLoader;
 import weka.core.converters.AbstractFileSaver;
-import weka.core.converters.ConverterUtils;
 import weka.experiment.Experiment;
-import weka.gui.AdamsHelper;
-import weka.gui.ConverterFileChooser;
 
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -74,7 +74,7 @@ public class ExperimenterPanel
   protected RecentFilesHandler<JMenu> m_RecentFilesHandlerSetups;
 
   /** the recent files handler for results. */
-  protected RecentFilesHandler<JMenu> m_RecentFilesHandlerResults;
+  protected RecentFilesHandlerWithCommandline<JMenu> m_RecentFilesHandlerResults;
 
   /** the "load recent" submenu. */
   protected JMenu m_MenuItemFileLoadRecent;
@@ -116,7 +116,7 @@ public class ExperimenterPanel
   protected Experiment m_Experiment;
   
   /** the filechooser for loading/saving results. */
-  protected ConverterFileChooser m_FileChooserResults;
+  protected WekaFileChooser m_FileChooserResults;
   
   /** the runner thread. */
   protected AbstractExperimentRunner m_Runner;
@@ -131,8 +131,7 @@ public class ExperimenterPanel
     m_RecentFilesHandlerSetups  = null;
     m_RecentFilesHandlerResults = null;
     m_Experiment                = null;
-    m_FileChooserResults        = new ConverterFileChooser();
-    AdamsHelper.updateFileChooserAccessory(m_FileChooserResults);
+    m_FileChooserResults        = new WekaFileChooser();
     m_Runner                    = null;
   }
 
@@ -194,7 +193,7 @@ public class ExperimenterPanel
     
     filechooser = m_PanelSetup.getExperimentIO().getFileChooser();
     retVal      = filechooser.showOpenDialog(this);
-    if (retVal != ConverterFileChooser.APPROVE_OPTION)
+    if (retVal != BaseFileChooser.APPROVE_OPTION)
       return;
 
     if (m_RecentFilesHandlerSetups != null)
@@ -333,12 +332,12 @@ public class ExperimenterPanel
     int 	retVal;
     
     retVal = m_FileChooserResults.showOpenDialog(this);
-    if (retVal != ConverterFileChooser.APPROVE_OPTION)
+    if (retVal != WekaFileChooser.APPROVE_OPTION)
       return;
 
     if (m_RecentFilesHandlerResults != null)
       m_RecentFilesHandlerSetups.addRecentItem(m_FileChooserResults.getSelectedFile());
-    openResults(m_FileChooserResults.getSelectedFile());
+    openResults(m_FileChooserResults.getSelectedFile(), m_FileChooserResults.getReader());
     update();
   }
   
@@ -347,8 +346,8 @@ public class ExperimenterPanel
    * 
    * @param e		the event
    */
-  public void openRecentResults(RecentItemEvent<JMenu,File> e) {
-    openResults(e.getItem());
+  public void openRecentResults(RecentItemEvent<JMenu,Setup> e) {
+    openResults(e.getItem().getFile(), (AbstractFileLoader) e.getItem().getHandler());
   }
 
   /**
@@ -356,13 +355,13 @@ public class ExperimenterPanel
    * 
    * @param file	the file to load the results from
    */
-  public void openResults(File file) {
-    AbstractFileLoader 	loader;
+  public void openResults(File file, AbstractFileLoader loader) {
     Instances		results;
     String		msg;
     
     logMessage("Loading results " + file + "...");
-    loader = ConverterUtils.getLoaderForFile(file);
+    if (loader == null)
+      loader = m_FileChooserResults.getReaderForFile(file);
     if (loader == null) {
       logError("Failed to determine file loader for the following file:\n" + file, "Loading results");
       return;
@@ -397,10 +396,10 @@ public class ExperimenterPanel
     int		retVal;
     
     retVal = m_FileChooserResults.showSaveDialog(this);
-    if (retVal != ConverterFileChooser.APPROVE_OPTION)
+    if (retVal != WekaFileChooser.APPROVE_OPTION)
       return;
     
-    saveResults(m_FileChooserResults.getSelectedFile(), m_FileChooserResults.getSaver());
+    saveResults(m_FileChooserResults.getSelectedFile(), m_FileChooserResults.getWriter());
   }
 
   /**
@@ -411,7 +410,7 @@ public class ExperimenterPanel
   public void saveResults(File file) {
     AbstractFileSaver	saver;
 
-    saver = ConverterUtils.getSaverForFile(file);
+    saver = m_FileChooserResults.getWriterForFile(file);
     if (saver == null)
       logError("Failed to determine file saver for " + file, "Saving results");
     else
@@ -430,8 +429,6 @@ public class ExperimenterPanel
       saver.setInstances(m_PanelAnalysis.getResults());
       saver.writeBatch();
       logMessage("Results saved to " + file);
-      if (m_RecentFilesHandlerResults != null)
-	m_RecentFilesHandlerResults.addRecentItem(file);
     }
     catch (Exception e) {
       logError("Failed to save results to " + file + "\n" + Utils.throwableToString(e), "Saving results");
@@ -615,13 +612,13 @@ public class ExperimenterPanel
       // Analysis/Recent files
       submenu = new JMenu("Open recent");
       menu.add(submenu);
-      m_RecentFilesHandlerResults = new RecentFilesHandler<JMenu>(
+      m_RecentFilesHandlerResults = new RecentFilesHandlerWithCommandline<>(
 	  SESSION_FILE, "Results-", ExperimenterPanel.getProperties().getInteger("ResultsMaxRecent", 5), submenu);
-      m_RecentFilesHandlerResults.addRecentItemListener(new RecentItemListener<JMenu,File>() {
-	public void recentItemAdded(RecentItemEvent<JMenu,File> e) {
+      m_RecentFilesHandlerResults.addRecentItemListener(new RecentItemListener<JMenu,Setup>() {
+	public void recentItemAdded(RecentItemEvent<JMenu,Setup> e) {
 	  // ignored
 	}
-	public void recentItemSelected(RecentItemEvent<JMenu,File> e) {
+	public void recentItemSelected(RecentItemEvent<JMenu,Setup> e) {
 	  openRecentResults(e);
 	}
       });

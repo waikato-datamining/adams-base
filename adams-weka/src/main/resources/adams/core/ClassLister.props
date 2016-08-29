@@ -119,6 +119,10 @@ adams.gui.tools.wekaexperimenter.AbstractSetupPanel=\
 adams.gui.tools.wekaexperimenter.analysis.AbstractAnalysisPanel=\
   adams.gui.tools.wekaexperimenter.analysis
 
+# the panels for displaying the results of an analysis
+adams.gui.tools.wekaexperimenter.analysis.AbstractResultsPanel=\
+  adams.gui.tools.wekaexperimenter.analysis
+
 # the handlers for the explorer panels
 weka.gui.explorer.AbstractExplorerPanelHandler=\
   weka.gui.explorer
