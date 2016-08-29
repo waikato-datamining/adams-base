@@ -89,6 +89,8 @@ public class LogTab
     m_TextLog = new BaseTextAreaWithButtons();
     m_TextLog.setTextFont(Fonts.getMonospacedFont());
     m_TextLog.setEditable(false);
+    m_TextLog.setLineWrap(true);
+    m_TextLog.setWrapStyleWord(true);
     add(new BaseScrollPane(m_TextLog), BorderLayout.CENTER);
 
     m_ButtonClear = new JButton("Clear", GUIHelper.getIcon("new.gif"));
