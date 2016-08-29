@@ -24,6 +24,7 @@ import adams.gui.core.BaseTextArea;
 import adams.gui.core.Fonts;
 import adams.gui.core.GUIHelper;
 
+import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
@@ -94,5 +95,14 @@ public class LogPanel
       m_TextArea.append(msg + "\n");
       m_TextArea.setCaretPosition(m_TextArea.getText().length());
     }
+  }
+
+  /**
+   * Returns the icon to use in the tabbed pane.
+   *
+   * @return		the icon
+   */
+  public Icon getTabIcon() {
+    return GUIHelper.getIcon("log.gif");
   }
 }

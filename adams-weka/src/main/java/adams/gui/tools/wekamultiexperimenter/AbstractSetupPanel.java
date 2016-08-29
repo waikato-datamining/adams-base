@@ -19,9 +19,12 @@
  */
 package adams.gui.tools.wekamultiexperimenter;
 
+import adams.core.ClassLister;
+import adams.gui.core.GUIHelper;
 import adams.gui.tools.wekamultiexperimenter.io.AbstractExperimentIO;
 import weka.experiment.Experiment;
-import adams.core.ClassLister;
+
+import javax.swing.Icon;
 
 /**
  * Ancestor for setup panels.
@@ -123,6 +126,15 @@ public abstract class AbstractSetupPanel<T extends Experiment>
    */
   public boolean isModified() {
     return m_Modified;
+  }
+
+  /**
+   * Returns the icon to use in the tabbed pane.
+   *
+   * @return		the icon
+   */
+  public Icon getTabIcon() {
+    return GUIHelper.getIcon("settings.png");
   }
   
   /**

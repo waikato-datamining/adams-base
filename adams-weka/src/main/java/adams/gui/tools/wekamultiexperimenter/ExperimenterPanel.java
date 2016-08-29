@@ -146,14 +146,17 @@ public class ExperimenterPanel
     m_PanelSetup = new BasicSetupPanel();
     m_PanelSetup.setOwner(this);
     m_TabbedPane.addTab("Setup", m_PanelSetup);
+    m_TabbedPane.setIconAt(m_TabbedPane.getTabCount() - 1, m_PanelSetup.getTabIcon());
     
     m_PanelAnalysis = new AnalysisPanel();
     m_PanelAnalysis.setOwner(this);
     m_TabbedPane.addTab("Analysis", m_PanelAnalysis);
-    
+    m_TabbedPane.setIconAt(m_TabbedPane.getTabCount() - 1, m_PanelAnalysis.getTabIcon());
+
     m_PanelLog = new LogPanel();
     m_PanelLog.setOwner(this);
     m_TabbedPane.addTab("Log", m_PanelLog);
+    m_TabbedPane.setIconAt(m_TabbedPane.getTabCount() - 1, m_PanelLog.getTabIcon());
   }
 
   /**
@@ -178,6 +181,7 @@ public class ExperimenterPanel
     
     setup.setOwner(this);
     m_TabbedPane.setComponentAt(0, setup);
+    m_TabbedPane.setIconAt(0, setup.getTabIcon());
     
     logMessage("New setup: " + current.getClass().getName());
   }
@@ -430,6 +434,7 @@ public class ExperimenterPanel
   protected void saveResults(File file, AbstractFileSaver saver) {
     try {
       logMessage("Saving results to " + file + "...");
+      saver.setFile(file);
       saver.setInstances(m_PanelAnalysis.getResults());
       saver.writeBatch();
       logMessage("Results saved to " + file);

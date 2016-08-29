@@ -20,10 +20,12 @@
 package adams.gui.tools.wekamultiexperimenter;
 
 import adams.core.ObjectCopyHelper;
+import adams.gui.core.GUIHelper;
 import adams.gui.tools.wekamultiexperimenter.analysis.AbstractAnalysisPanel;
 import adams.gui.tools.wekamultiexperimenter.analysis.DefaultAnalysisPanel;
 import weka.core.Instances;
 
+import javax.swing.Icon;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -185,5 +187,14 @@ public class AnalysisPanel
       return m_PanelAnalysis.getResults();
     else
       return null;
+  }
+
+  /**
+   * Returns the icon to use in the tabbed pane.
+   *
+   * @return		the icon
+   */
+  public Icon getTabIcon() {
+    return GUIHelper.getIcon("glasses.gif");
   }
 }
