@@ -73,12 +73,12 @@ public class WekaInvestigatorPreferencesPanel
     addPropertyType("Classify.Seed", PropertyType.INTEGER);
     addPropertyType("Classify.TrainPercentage", PropertyType.DOUBLE);
     addPropertyType("Classify.PreserveOrder", PropertyType.BOOLEAN);
-    addPropertyType("Classify.DefaultOutputGenerators", PropertyType.ARRAY_EDITOR);
-    setChooser("Classify.DefaultOutputGenerators", new GenericArrayEditorPanel(
+    addPropertyType("Classify.OutputGenerators", PropertyType.ARRAY_EDITOR);
+    setChooser("Classify.OutputGenerators", new GenericArrayEditorPanel(
       new adams.gui.tools.wekainvestigator.tab.classifytab.output.AbstractOutputGenerator[0]));
-    setArrayClass("Classify.DefaultOutputGenerators",
+    setArrayClass("Classify.OutputGenerators",
       adams.gui.tools.wekainvestigator.tab.classifytab.output.AbstractOutputGenerator.class);
-    setArraySeparator("Classify.DefaultOutputGenerators", " ");
+    setArraySeparator("Classify.OutputGenerators", " ");
 
     // clusterer
     addPropertyType("Cluster.Clusterer", PropertyType.OBJECT_EDITOR);
@@ -94,12 +94,32 @@ public class WekaInvestigatorPreferencesPanel
     addPropertyType("Cluster.Seed", PropertyType.INTEGER);
     addPropertyType("Cluster.TrainPercentage", PropertyType.DOUBLE);
     addPropertyType("Cluster.PreserveOrder", PropertyType.BOOLEAN);
-    addPropertyType("Cluster.DefaultOutputGenerators", PropertyType.ARRAY_EDITOR);
-    setChooser("Cluster.DefaultOutputGenerators", new GenericArrayEditorPanel(
+    addPropertyType("Cluster.OutputGenerators", PropertyType.ARRAY_EDITOR);
+    setChooser("Cluster.OutputGenerators", new GenericArrayEditorPanel(
       new adams.gui.tools.wekainvestigator.tab.clustertab.output.AbstractOutputGenerator[0]));
-    setArrayClass("Cluster.DefaultOutputGenerators",
+    setArrayClass("Cluster.OutputGenerators",
       adams.gui.tools.wekainvestigator.tab.clustertab.output.AbstractOutputGenerator.class);
-    setArraySeparator("Cluster.DefaultOutputGenerators", " ");
+    setArraySeparator("Cluster.OutputGenerators", " ");
+
+    // attribute selection
+    addPropertyType("AttributeSelection.Evaluator", PropertyType.OBJECT_EDITOR);
+    setChooser("AttributeSelection.Evaluator", new WekaGenericObjectEditorPanel(
+      weka.attributeSelection.ASEvaluation.class, new weka.attributeSelection.CfsSubsetEval(), true));
+    addPropertyType("AttributeSelection.Search", PropertyType.OBJECT_EDITOR);
+    setChooser("AttributeSelection.Search", new WekaGenericObjectEditorPanel(
+      weka.attributeSelection.ASSearch.class, new weka.attributeSelection.BestFirst(), true));
+    addPropertyType("AttributeSelection.Evaluation", PropertyType.OBJECT_EDITOR);
+    setChooser("AttributeSelection.Evaluation", new GenericObjectEditorPanel(
+      adams.gui.tools.wekainvestigator.tab.attseltab.evaluation.AbstractAttributeSelectionEvaluation.class,
+      new adams.gui.tools.wekainvestigator.tab.attseltab.evaluation.Train(), true));
+    addPropertyType("AttributeSelection.LeftPanelWidth", PropertyType.INTEGER);
+    addPropertyType("AttributeSelection.NumFolds", PropertyType.INTEGER);
+    addPropertyType("AttributeSelection.Seed", PropertyType.INTEGER);
+    setChooser("AttributeSelection.OutputGenerators", new GenericArrayEditorPanel(
+      new adams.gui.tools.wekainvestigator.tab.attseltab.output.AbstractOutputGenerator[0]));
+    setArrayClass("AttributeSelection.OutputGenerators",
+      adams.gui.tools.wekainvestigator.tab.attseltab.output.AbstractOutputGenerator.class);
+    setArraySeparator("AttributeSelection.OutputGenerators", " ");
 
     setPreferences(Environment.getInstance().read(WekaInvestigatorDefinition.KEY));
   }

@@ -113,3 +113,33 @@ Cluster.OutputGenerators=\
   adams.gui.tools.wekainvestigator.tab.clustertab.output.TextStatistics \
   adams.gui.tools.wekainvestigator.tab.clustertab.output.ModelOutput \
   adams.gui.tools.wekainvestigator.tab.clustertab.output.Supplementary
+
+# the default evaluator
+# (superclass: weka.weka.attributeSelection.ASEvaluation)
+AttributeSelection.Evaluator=weka.attributeSelection.CfsSubsetEval
+
+# the default search
+# (superclass: weka.attributeSelection.ASSearch)
+AttributeSelection.Search=weka.attributeSelection.BestFirst
+
+# the default attribute selection evaluation to use
+# (superclass: adams.gui.tools.wekainvestigator.tab.clustertab.evaluation.AbstractClustererEvaluation)
+AttributeSelection.Evaluation=adams.gui.tools.wekainvestigator.tab.attseltab.evaluation.Train
+
+# the width of the left-hand side of the cluster panel
+# (integer)
+AttributeSelection.LeftPanelWidth=275
+
+# the number of folds for cross-validation
+# (integer; 2-n)
+AttributeSelection.NumFolds=10
+
+# the random seed
+# (integer)
+AttributeSelection.Seed=1
+
+# the default output generators to use
+# (blank-separated list of "classname + options")
+AttributeSelection.OutputGenerators=\
+  adams.gui.tools.wekainvestigator.tab.attseltab.output.TextStatistics \
+  adams.gui.tools.wekainvestigator.tab.attseltab.output.ReducedData

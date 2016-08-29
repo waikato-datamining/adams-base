@@ -71,6 +71,14 @@ adams.gui.tools.wekainvestigator.tab.clustertab.evaluation.AbstractClustererEval
 adams.gui.tools.wekainvestigator.tab.clustertab.output.AbstractOutputGenerator=\
   adams.gui.tools.wekainvestigator.tab.clustertab.output
 
+# the attribute selection evaluations
+adams.gui.tools.wekainvestigator.tab.attseltab.evaluation.AbstractAttributeSelectionEvaluation=\
+  adams.gui.tools.wekainvestigator.tab.attseltab.evaluation
+
+# the output generators
+adams.gui.tools.wekainvestigator.tab.attseltab.output.AbstractOutputGenerator=\
+  adams.gui.tools.wekainvestigator.tab.attseltab.output
+
 # the paintlets for the instance panel
 adams.gui.visualization.instance.AbstractInstancePaintlet=\
   adams.gui.visualization.instance
