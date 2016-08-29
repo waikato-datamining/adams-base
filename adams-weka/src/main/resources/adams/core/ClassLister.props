@@ -108,20 +108,20 @@ weka.filters.StreamableFilter=\
   weka.filters.unsupervised.instance
 
 # the panels for specifying the experimenter output
-adams.gui.tools.wekaexperimenter.setup.AbstractOutputPanel=\
-  adams.gui.tools.wekaexperimenter.setup
+adams.gui.tools.wekamultiexperimenter.setup.AbstractOutputPanel=\
+  adams.gui.tools.wekamultiexperimenter.setup
 
 # the setup panels for the experimenter
-adams.gui.tools.wekaexperimenter.AbstractSetupPanel=\
-  adams.gui.tools.wekaexperimenter
+adams.gui.tools.wekamultiexperimenter.AbstractSetupPanel=\
+  adams.gui.tools.wekamultiexperimenter
 
 # the analysis panels for the experimenter
-adams.gui.tools.wekaexperimenter.analysis.AbstractAnalysisPanel=\
-  adams.gui.tools.wekaexperimenter.analysis
+adams.gui.tools.wekamultiexperimenter.analysis.AbstractAnalysisPanel=\
+  adams.gui.tools.wekamultiexperimenter.analysis
 
 # the panels for displaying the results of an analysis
-adams.gui.tools.wekaexperimenter.analysis.AbstractResultsPanel=\
-  adams.gui.tools.wekaexperimenter.analysis
+adams.gui.tools.wekamultiexperimenter.analysis.AbstractResultsPanel=\
+  adams.gui.tools.wekamultiexperimenter.analysis
 
 # the handlers for the explorer panels
 weka.gui.explorer.AbstractExplorerPanelHandler=\
