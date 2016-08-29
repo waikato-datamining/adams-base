@@ -593,8 +593,8 @@ public class ExperimenterPanel
       menuitem.setIcon(GUIHelper.getIcon("database.gif"));
       menuitem.addActionListener((ActionEvent e) -> openResultsDB());
 
-      // Analysis/Save
-      menuitem = new JMenuItem("Save...");
+      // Analysis/Save as
+      menuitem = new JMenuItem("Save as...");
       menu.addSeparator();
       menu.add(menuitem);
       menuitem.setMnemonic('S');
