@@ -65,7 +65,7 @@ import java.util.List;
 import java.util.logging.Level;
 
 /**
- * Tab for classification.
+ * Tab for clustering.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
