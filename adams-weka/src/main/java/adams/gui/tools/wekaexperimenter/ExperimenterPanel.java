@@ -43,10 +43,8 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 
 /**
@@ -62,10 +60,10 @@ public class ExperimenterPanel
   private static final long serialVersionUID = 7314544066929763500L;
 
   /** the file to store the recent files in. */
-  public final static String SESSION_FILE = "ExperimenterExtSession.props";
+  public final static String SESSION_FILE = "MultiExperimenterSession.props";
 
   /** the name of the props file with the general properties. */
-  public final static String FILENAME = "weka/gui/experiment/ext/ExperimenterExt.props";
+  public final static String FILENAME = "adams/gui/tools/wekaexperimenter/WekaExperimenter.props";
 
   /** the properties. */
   protected static Properties m_Properties;
@@ -454,11 +452,7 @@ public class ExperimenterPanel
       menu = new JMenu("File");
       result.add(menu);
       menu.setMnemonic('F');
-      menu.addChangeListener(new ChangeListener() {
-	public void stateChanged(ChangeEvent e) {
-	  updateMenu();
-	}
-      });
+      menu.addChangeListener((ChangeEvent e) -> updateMenu());
 
       // File/New
       submenu = new JMenu("New");
@@ -473,11 +467,7 @@ public class ExperimenterPanel
 	    menuitem.setIcon(GUIHelper.getIcon("new.gif"));
 	    menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed N"));
 	  }
-	  menuitem.addActionListener(new ActionListener() {
-	    public void actionPerformed(ActionEvent e) {
-	      newSetup(setup);
-	    }
-	  });
+	  menuitem.addActionListener((ActionEvent e) -> newSetup(setup));
 	  submenu.add(menuitem);
 	}
 	catch (Exception e) {
@@ -491,16 +481,12 @@ public class ExperimenterPanel
       menuitem.setMnemonic('o');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed O"));
       menuitem.setIcon(GUIHelper.getIcon("open.gif"));
-      menuitem.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  openSetup();
-	}
-      });
+      menuitem.addActionListener((ActionEvent e) -> openSetup());
 
       // File/Recent files
       submenu = new JMenu("Open recent");
       menu.add(submenu);
-      m_RecentFilesHandlerSetups = new RecentFilesHandler<JMenu>(
+      m_RecentFilesHandlerSetups = new RecentFilesHandler<>(
 	  SESSION_FILE, "Setup-", ExperimenterPanel.getProperties().getInteger("SetupsMaxRecent", 5), submenu);
       m_RecentFilesHandlerSetups.addRecentItemListener(new RecentItemListener<JMenu,File>() {
 	public void recentItemAdded(RecentItemEvent<JMenu,File> e) {
@@ -519,11 +505,7 @@ public class ExperimenterPanel
       menuitem.setMnemonic('S');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed S"));
       menuitem.setIcon(GUIHelper.getIcon("save.gif"));
-      menuitem.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  saveSetup();
-	}
-      });
+      menuitem.addActionListener((ActionEvent e) -> saveSetup());
       m_MenuItemFileSave = menuitem;
 
       // File/Save
@@ -532,11 +514,7 @@ public class ExperimenterPanel
       menuitem.setMnemonic('a');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl shift pressed S"));
       menuitem.setIcon(GUIHelper.getEmptyIcon());
-      menuitem.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  saveSetupAs();
-	}
-      });
+      menuitem.addActionListener((ActionEvent e) -> saveSetupAs());
       m_MenuItemFileSaveAs = menuitem;
 
       // File/Close
@@ -546,21 +524,13 @@ public class ExperimenterPanel
       menuitem.setMnemonic('C');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed Q"));
       menuitem.setIcon(GUIHelper.getIcon("exit.png"));
-      menuitem.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  close();
-	}
-      });
+      menuitem.addActionListener((ActionEvent e) -> close());
 
       // Execution
       menu = new JMenu("Execution");
       result.add(menu);
       menu.setMnemonic('E');
-      menu.addChangeListener(new ChangeListener() {
-	public void stateChanged(ChangeEvent e) {
-	  updateMenu();
-	}
-      });
+      menu.addChangeListener((ChangeEvent e) -> updateMenu());
 
       // Execution/Start
       menuitem = new JMenuItem("Start");
@@ -568,11 +538,7 @@ public class ExperimenterPanel
       menuitem.setMnemonic('S');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed R"));
       menuitem.setIcon(GUIHelper.getIcon("run.gif"));
-      menuitem.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  startExecution();
-	}
-      });
+      menuitem.addActionListener((ActionEvent e) -> startExecution());
       m_MenuItemExecutionStart = menuitem;
 
       // Execution/Start
@@ -581,33 +547,21 @@ public class ExperimenterPanel
       menuitem.setMnemonic('p');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed K"));
       menuitem.setIcon(GUIHelper.getIcon("stop_blue.gif"));
-      menuitem.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  stopExecution();
-	}
-      });
+      menuitem.addActionListener((ActionEvent e) -> stopExecution());
       m_MenuItemExecutionStop = menuitem;
 
       // Analysis
       menu = new JMenu("Analysis");
       result.add(menu);
       menu.setMnemonic('A');
-      menu.addChangeListener(new ChangeListener() {
-	public void stateChanged(ChangeEvent e) {
-	  updateMenu();
-	}
-      });
+      menu.addChangeListener((ChangeEvent e) -> updateMenu());
 
       // Analysis/Open
       menuitem = new JMenuItem("Open...");
       menu.add(menuitem);
       menuitem.setMnemonic('O');
       menuitem.setIcon(GUIHelper.getIcon("open.gif"));
-      menuitem.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  openResults();
-	}
-      });
+      menuitem.addActionListener((ActionEvent e) -> openResults());
 
       // Analysis/Recent files
       submenu = new JMenu("Open recent");
@@ -629,11 +583,7 @@ public class ExperimenterPanel
       menu.add(menuitem);
       menuitem.setMnemonic('D');
       menuitem.setIcon(GUIHelper.getIcon("database.gif"));
-      menuitem.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  openResultsDB();
-	}
-      });
+      menuitem.addActionListener((ActionEvent e) -> openResultsDB());
 
       // Analysis/Save
       menuitem = new JMenuItem("Save...");
@@ -641,11 +591,7 @@ public class ExperimenterPanel
       menu.add(menuitem);
       menuitem.setMnemonic('S');
       menuitem.setIcon(GUIHelper.getIcon("save.gif"));
-      menuitem.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  saveResults();
-	}
-      });
+      menuitem.addActionListener((ActionEvent e) -> saveResults());
       m_MenuItemResultsSave = menuitem;
 
       // update menu
