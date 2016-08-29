@@ -49,7 +49,7 @@ public class PlainTextResultsPanel
     setLayout(new BorderLayout());
 
     m_TextAreaResults = new BaseTextAreaWithButtons();
-    m_TextAreaResults.setFont(Fonts.getMonospacedFont());
+    m_TextAreaResults.setTextFont(Fonts.getMonospacedFont());
     add(m_TextAreaResults, BorderLayout.CENTER);
   }
 
@@ -69,7 +69,6 @@ public class PlainTextResultsPanel
     StringBuilder	results;
 
     results = new StringBuilder();
-    results.append(m_Matrix.toStringHeader());
     results.append(m_Matrix.toStringMatrix());
     results.append(m_Matrix.toStringKey());
 

@@ -273,7 +273,6 @@ public class DefaultAnalysisPanel
    */
   protected void analyze() {
     Tester			tester;
-    ResultMatrix		matrix;
     AbstractResultsPanel	panel;
 
     if (m_Results == null)
