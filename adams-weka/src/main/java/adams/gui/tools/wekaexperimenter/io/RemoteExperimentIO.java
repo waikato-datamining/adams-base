@@ -15,15 +15,18 @@
 
 /**
  * RemoteExperimentIO.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  */
-package adams.gui.tools.wekaexperimenter;
+package adams.gui.tools.wekaexperimenter.io;
+
+import adams.gui.tools.wekaexperimenter.ExperimenterPanel;
+import adams.gui.tools.wekaexperimenter.runner.AbstractExperimentRunner;
+import adams.gui.tools.wekaexperimenter.runner.RemoteExperimentRunner;
+import weka.experiment.Experiment;
+import weka.experiment.RemoteExperiment;
 
 import java.io.File;
 import java.util.logging.Level;
-
-import weka.experiment.Experiment;
-import weka.experiment.RemoteExperiment;
 
 /**
  * IO handler for remote experiments.

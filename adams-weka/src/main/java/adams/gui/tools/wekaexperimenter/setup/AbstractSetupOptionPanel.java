@@ -15,12 +15,13 @@
 
 /**
  * AbstractSetupOptionPanel.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  */
-package adams.gui.tools.wekaexperimenter;
+package adams.gui.tools.wekaexperimenter.setup;
 
 import adams.gui.core.BasePanel;
 import adams.gui.core.GUIHelper;
+import adams.gui.tools.wekaexperimenter.AbstractSetupPanel;
 
 /**
  * Ancestor for panels that get added to a {@link AbstractSetupPanel}.

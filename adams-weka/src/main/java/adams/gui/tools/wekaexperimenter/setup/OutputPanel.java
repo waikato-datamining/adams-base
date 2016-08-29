@@ -15,21 +15,21 @@
 
 /**
  * OutputPanel.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  */
-package adams.gui.tools.wekaexperimenter;
+package adams.gui.tools.wekaexperimenter.setup;
 
+import adams.gui.tools.wekaexperimenter.AbstractSetupPanel;
+import weka.experiment.ResultListener;
+
+import javax.swing.JComboBox;
+import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Arrays;
 import java.util.HashMap;
-
-import javax.swing.JComboBox;
-import javax.swing.JPanel;
-
-import weka.experiment.ResultListener;
 
 /**
  * Allows the user to select the output type, e.g., ARFF file or JDBC database.

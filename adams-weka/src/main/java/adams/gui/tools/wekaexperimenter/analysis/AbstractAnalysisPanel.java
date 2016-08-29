@@ -15,10 +15,11 @@
 
 /**
  * AbstractAnalysisPanel.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  */
-package adams.gui.tools.wekaexperimenter;
+package adams.gui.tools.wekaexperimenter.analysis;
 
+import adams.gui.tools.wekaexperimenter.AbstractExperimenterPanel;
 import weka.core.Instances;
 import adams.core.ClassLister;
 

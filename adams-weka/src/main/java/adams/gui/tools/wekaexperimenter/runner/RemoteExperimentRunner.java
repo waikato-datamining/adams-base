@@ -15,10 +15,11 @@
 
 /**
  * RemoteExperimentRunner.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  */
-package adams.gui.tools.wekaexperimenter;
+package adams.gui.tools.wekaexperimenter.runner;
 
+import adams.gui.tools.wekaexperimenter.ExperimenterPanel;
 import weka.experiment.RemoteExperiment;
 import weka.experiment.RemoteExperimentEvent;
 import weka.experiment.RemoteExperimentListener;

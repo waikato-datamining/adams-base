@@ -15,24 +15,17 @@
 
 /**
  * BasicSetupPanel.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.wekaexperimenter;
 
-import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.beans.IntrospectionException;
-import java.beans.PropertyDescriptor;
-import java.io.File;
-
-import javax.swing.JComboBox;
-import javax.swing.JSpinner;
-import javax.swing.JTextField;
-import javax.swing.SpinnerNumberModel;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
+import adams.gui.core.BaseTabbedPane;
+import adams.gui.core.ParameterPanel;
+import adams.gui.tools.wekaexperimenter.io.AbstractExperimentIO;
+import adams.gui.tools.wekaexperimenter.io.DefaultExperimentIO;
+import adams.gui.tools.wekaexperimenter.setup.ClassifierPanel;
+import adams.gui.tools.wekaexperimenter.setup.DatasetPanel;
+import adams.gui.tools.wekaexperimenter.setup.OutputPanel;
 import weka.classifiers.Classifier;
 import weka.experiment.ClassifierSplitEvaluator;
 import weka.experiment.CrossValidationResultProducer;
@@ -43,8 +36,19 @@ import weka.experiment.RegressionSplitEvaluator;
 import weka.experiment.RemoteExperiment;
 import weka.experiment.SplitEvaluator;
 import weka.gui.experiment.ExperimenterDefaults;
-import adams.gui.core.BaseTabbedPane;
-import adams.gui.core.ParameterPanel;
+
+import javax.swing.JComboBox;
+import javax.swing.JSpinner;
+import javax.swing.JTextField;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.beans.IntrospectionException;
+import java.beans.PropertyDescriptor;
+import java.io.File;
 
 /**
  * Basic interface for setting up an experiment.

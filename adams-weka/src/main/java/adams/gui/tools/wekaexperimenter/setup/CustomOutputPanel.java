@@ -14,38 +14,34 @@
  */
 
 /**
- * CsvOutputPanel.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * CustomOutputPanel.java
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  */
-package adams.gui.tools.wekaexperimenter;
+package adams.gui.tools.wekaexperimenter.setup;
 
-import java.awt.BorderLayout;
-import java.io.File;
+import adams.gui.core.ParameterPanel;
+import adams.gui.goe.WekaGenericObjectEditorPanel;
+import weka.experiment.InstancesResultListener;
+import weka.experiment.ResultListener;
 
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-
-import weka.experiment.CSVResultListener;
-import weka.experiment.ResultListener;
-import adams.core.io.PlaceholderFile;
-import adams.gui.chooser.FileChooserPanel;
-import adams.gui.core.ExtensionFileFilter;
-import adams.gui.core.ParameterPanel;
+import java.awt.BorderLayout;
 
 /**
- * Stores the results in a CSV file.
+ * Allows the user to configure any {@link ResultListener}.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class CsvOutputPanel
+public class CustomOutputPanel
   extends AbstractOutputPanel {
 
   /** for serialization. */
-  private static final long serialVersionUID = -221969681088761768L;
+  private static final long serialVersionUID = 6294601080342288801L;
   
-  /** the file chooser panel. */
-  protected FileChooserPanel m_PanelFile;
+  /** the GOE panel. */
+  protected WekaGenericObjectEditorPanel m_PanelGOE;
   
   /**
    * Initializes the widgets.
@@ -57,15 +53,14 @@ public class CsvOutputPanel
     super.initGUI();
     
     panel = new ParameterPanel();
-    m_PanelFile = new FileChooserPanel(new PlaceholderFile("${TMP}"));
-    m_PanelFile.addChoosableFileFilter(new ExtensionFileFilter("CSV file", "csv"));
-    m_PanelFile.addChangeListener(new ChangeListener() {
+    m_PanelGOE = new WekaGenericObjectEditorPanel(ResultListener.class, new InstancesResultListener(), true);
+    m_PanelGOE.addChangeListener(new ChangeListener() {
       @Override
       public void stateChanged(ChangeEvent e) {
 	m_Owner.setModified(true);
       }
     });
-    panel.addParameter("File", m_PanelFile);
+    panel.addParameter("Results", m_PanelGOE);
     add(panel, BorderLayout.CENTER);
   }
 
@@ -76,7 +71,7 @@ public class CsvOutputPanel
    */
   @Override
   public String getOutputName() {
-    return "CSV";
+    return "Custom";
   }
   
   /**
@@ -87,7 +82,7 @@ public class CsvOutputPanel
    */
   @Override
   public boolean handlesResultListener(ResultListener listener) {
-    return (listener.getClass() == CSVResultListener.class);
+    return true;
   }
 
   /**
@@ -97,7 +92,7 @@ public class CsvOutputPanel
    */
   @Override
   public void setResultListener(ResultListener value) {
-    m_PanelFile.setCurrent(((CSVResultListener) value).getOutputFile());
+    m_PanelGOE.setCurrent(value);
   }
 
   /**
@@ -107,14 +102,6 @@ public class CsvOutputPanel
    */
   @Override
   public ResultListener getResultListener() {
-    CSVResultListener	result;
-    File		file;
-    
-    result = new CSVResultListener();
-    file   = m_PanelFile.getCurrent();
-    if (!file.isDirectory())
-      result.setOutputFile(file.getAbsoluteFile());
-    
-    return result;
+    return (ResultListener) m_PanelGOE.getCurrent();
   }
 }

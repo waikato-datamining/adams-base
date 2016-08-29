@@ -15,7 +15,7 @@
 
 /**
  * ExperimenterPanel.java
- * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.wekaexperimenter;
 
@@ -29,6 +29,7 @@ import adams.gui.core.GUIHelper;
 import adams.gui.core.RecentFilesHandler;
 import adams.gui.event.RecentItemEvent;
 import adams.gui.event.RecentItemListener;
+import adams.gui.tools.wekaexperimenter.runner.AbstractExperimentRunner;
 import adams.gui.workspace.AbstractWorkspacePanelWithStatusBar;
 import weka.core.Instances;
 import weka.core.converters.AbstractFileLoader;

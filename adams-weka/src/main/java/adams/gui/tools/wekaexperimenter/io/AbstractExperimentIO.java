@@ -15,18 +15,20 @@
 
 /**
  * AbstractExperimentIO.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  */
-package adams.gui.tools.wekaexperimenter;
+package adams.gui.tools.wekaexperimenter.io;
 
-import java.io.File;
-
-import weka.core.xml.KOML;
-import weka.experiment.Experiment;
-import weka.gui.experiment.ExperimenterDefaults;
 import adams.core.logging.LoggingObject;
 import adams.gui.chooser.BaseFileChooser;
 import adams.gui.core.ExtensionFileFilter;
+import adams.gui.tools.wekaexperimenter.runner.AbstractExperimentRunner;
+import adams.gui.tools.wekaexperimenter.ExperimenterPanel;
+import weka.core.xml.KOML;
+import weka.experiment.Experiment;
+import weka.gui.experiment.ExperimenterDefaults;
+
+import java.io.File;
 
 /**
  * Ancestor for classes that handle loading/saving of experiments.

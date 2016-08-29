@@ -15,14 +15,16 @@
 
 /**
  * JdbcOutputPanel.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  */
-package adams.gui.tools.wekaexperimenter;
+package adams.gui.tools.wekaexperimenter.setup;
 
-import java.awt.BorderLayout;
-import java.awt.Dialog.ModalityType;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import adams.core.Constants;
+import adams.gui.core.ParameterPanel;
+import adams.gui.dialog.ApprovalDialog;
+import weka.experiment.DatabaseResultListener;
+import weka.experiment.DatabaseUtils;
+import weka.experiment.ResultListener;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -31,13 +33,10 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-
-import weka.experiment.DatabaseResultListener;
-import weka.experiment.DatabaseUtils;
-import weka.experiment.ResultListener;
-import adams.core.Constants;
-import adams.gui.core.ParameterPanel;
-import adams.gui.dialog.ApprovalDialog;
+import java.awt.BorderLayout;
+import java.awt.Dialog.ModalityType;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * Stores the results in a JDBC database.

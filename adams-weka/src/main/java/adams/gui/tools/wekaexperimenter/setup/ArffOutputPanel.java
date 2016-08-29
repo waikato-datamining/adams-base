@@ -15,22 +15,21 @@
 
 /**
  * ArffOutputPanel.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  */
-package adams.gui.tools.wekaexperimenter;
+package adams.gui.tools.wekaexperimenter.setup;
 
-import java.awt.BorderLayout;
-import java.io.File;
-
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
-import weka.experiment.InstancesResultListener;
-import weka.experiment.ResultListener;
 import adams.core.io.PlaceholderFile;
 import adams.gui.chooser.FileChooserPanel;
 import adams.gui.core.ExtensionFileFilter;
 import adams.gui.core.ParameterPanel;
+import weka.experiment.InstancesResultListener;
+import weka.experiment.ResultListener;
+
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import java.awt.BorderLayout;
+import java.io.File;
 
 /**
  * Stores the results in an ARFF file.

@@ -15,23 +15,24 @@
 
 /**
  * AnalysisPanel.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.wekaexperimenter;
 
+import adams.core.Utils;
+import adams.gui.tools.wekaexperimenter.analysis.AbstractAnalysisPanel;
+import adams.gui.tools.wekaexperimenter.analysis.DefaultAnalysisPanel;
+import weka.core.Instances;
+
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-
-import weka.core.Instances;
-import adams.core.Utils;
 
 /**
  * The analysis panel.
