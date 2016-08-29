@@ -253,13 +253,4 @@ public class CrossValidation
 
     getOwner().updateButtons();
   }
-
-  /**
-   * Adds the result to the specified history list.
-   *
-   * @param history	the history to add the result to
-   */
-  public void addResult(AbstractNamedHistoryPanel<ResultItem> history) {
-
-  }
 }
