@@ -58,6 +58,22 @@ public class DefaultAnalysisPanel
   /** for serialization. */
   private static final long serialVersionUID = 7850777725811230009L;
 
+  public static final String PERCENT_CORRECT = "Percent_correct";
+
+  public static final String CORRELATION_COEFFICIENT = "Correlation_coefficient";
+
+  public static final String KEY_RUN = "Key_Run";
+
+  public static final String KEY_FOLD = "Key_Fold";
+
+  public static final String KEY_DATASET = "Key_Dataset";
+
+  public static final String KEY_SCHEME = "Key_Scheme";
+
+  public static final String KEY_SCHEME_OPTIONS = "Key_Scheme_options";
+
+  public static final String KEY_SCHEME_VERSION_ID = "Key_Scheme_version_ID";
+
   /** the GOE for the tester. */
   protected WekaGenericObjectEditorPanel m_PanelTester;
 
@@ -243,9 +259,9 @@ public class DefaultAnalysisPanel
     if (oldValue != null)
       index = m_ModelMetric.getIndexOf(oldValue);
     if (index == -1)
-      index = m_ModelMetric.getIndexOf("Percent_correct");
+      index = m_ModelMetric.getIndexOf(PERCENT_CORRECT);
     if (index == -1)
-      index = m_ModelMetric.getIndexOf("Correlation_coefficient");
+      index = m_ModelMetric.getIndexOf(CORRELATION_COEFFICIENT);
     if (index > -1)
       m_ComboBoxMetric.setSelectedIndex(index);
   }
@@ -281,28 +297,28 @@ public class DefaultAnalysisPanel
     tester = getTester();
     tester.setInstances(m_Results);
     tester.setSortColumn(-1);
-    tester.setRunColumn(getAttributeIndex("Key_Run"));
-    tester.setFoldColumn(getAttributeIndex("Key_Fold"));
+    tester.setRunColumn(getAttributeIndex(KEY_RUN));
+    tester.setFoldColumn(getAttributeIndex(KEY_FOLD));
     tester.setDatasetKeyColumns(
       new Range(
 	""
-	  + (getAttributeIndex("Key_Dataset") + 1)));
+	  + (getAttributeIndex(KEY_DATASET) + 1)));
     tester.setResultsetKeyColumns(
       new Range(
 	""
-	  + (getAttributeIndex("Key_Scheme") + 1)
+	  + (getAttributeIndex(KEY_SCHEME) + 1)
 	  + ","
-	  + (getAttributeIndex("Key_Scheme_options") + 1)
+	  + (getAttributeIndex(KEY_SCHEME_OPTIONS) + 1)
 	  + ","
-	  + (getAttributeIndex("Key_Scheme_version_ID") + 1)));
+	  + (getAttributeIndex(KEY_SCHEME_VERSION_ID) + 1)));
     tester.setResultMatrix(getResultMatrix());
     tester.setDisplayedResultsets(null);
     tester.setSignificanceLevel(Double.parseDouble(m_TextSignificance.getText()));
     try {
-      if (getAttributeIndex("Percent_correct") > -1)
-	tester.multiResultsetFull(0, getAttributeIndex("Percent_correct"));
+      if (getAttributeIndex(PERCENT_CORRECT) > -1)
+	tester.multiResultsetFull(0, getAttributeIndex(PERCENT_CORRECT));
       else
-	tester.multiResultsetFull(0, getAttributeIndex("Correlation_coefficient"));
+	tester.multiResultsetFull(0, getAttributeIndex(CORRELATION_COEFFICIENT));
     }
     catch (Exception e) {
       GUIHelper.showErrorMessage(getOwner(), "Failed to analyze experiment!", e);
