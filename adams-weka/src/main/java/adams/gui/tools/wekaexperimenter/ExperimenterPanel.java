@@ -327,15 +327,17 @@ public class ExperimenterPanel
    * Loads the results from a file.
    */
   public void openResults() {
-    int 	retVal;
+    int 		retVal;
+    AbstractFileLoader	loader;
     
     retVal = m_FileChooserResults.showOpenDialog(this);
     if (retVal != WekaFileChooser.APPROVE_OPTION)
       return;
 
+    loader = m_FileChooserResults.getReader();
     if (m_RecentFilesHandlerResults != null)
-      m_RecentFilesHandlerSetups.addRecentItem(m_FileChooserResults.getSelectedFile());
-    openResults(m_FileChooserResults.getSelectedFile(), m_FileChooserResults.getReader());
+      m_RecentFilesHandlerResults.addRecentItem(new Setup(m_FileChooserResults.getSelectedFile(), loader));
+    openResults(m_FileChooserResults.getSelectedFile(), loader);
     update();
   }
   
