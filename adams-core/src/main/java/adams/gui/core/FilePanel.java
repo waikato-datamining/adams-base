@@ -51,6 +51,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.EventObject;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -490,6 +491,66 @@ public class FilePanel
     }
   }
 
+  /**
+   * Event for double clicks on files.
+   *
+   * @author FracPete (fracpete at waikato dot ac dot nz)
+   * @version $Revision$
+   */
+  public static class FileDoubleClickEvent
+    extends EventObject {
+
+    private static final long serialVersionUID = 6602862166542558303L;
+
+    /** the file that got double clicked. */
+    protected File m_File;
+
+    /**
+     * Initializes the event.
+     *
+     * @param source	the panel that triggered the event
+     * @param file	the file that got double clicked
+     */
+    public FileDoubleClickEvent(FilePanel source, File file) {
+      super(source);
+      m_File = file;
+    }
+
+    /**
+     * Returns the file panel that triggered the event.
+     *
+     * @return		the panel
+     */
+    public FilePanel getFilePanel() {
+      return (FilePanel) getSource();
+    }
+
+    /**
+     * Returns the file that got double-clicked.
+     *
+     * @return		the file
+     */
+    public File getFile() {
+      return m_File;
+    }
+  }
+
+  /**
+   * Interface for classes that listen to double clicks on files.
+   *
+   * @author FracPete (fracpete at waikato dot ac dot nz)
+   * @version $Revision$
+   */
+  public interface FileDoubleClickListener {
+
+    /**
+     * Gets called when a file got double-clicked.
+     *
+     * @param e		the event
+     */
+    public void fileDoubleClicked(FileDoubleClickEvent e);
+  }
+
   /** whether to show details on the files. */
   protected Boolean m_ShowDetails;
 
@@ -531,6 +592,9 @@ public class FilePanel
 
   /** the listeners for when the selection changes. */
   protected Set<ChangeListener> m_SelectionChangeListeners;
+
+  /** the double click listener for a file. */
+  protected Set<FileDoubleClickListener> m_FileDoubleClickListeners;
 
   /** the focus adapter. */
   protected FocusAdapter m_FocusAdapter;
@@ -578,6 +642,7 @@ public class FilePanel
     m_DirectoryChangeListeners = new HashSet<>();
     m_FilesChangeListeners     = new HashSet<>();
     m_SelectionChangeListeners = new HashSet<>();
+    m_FileDoubleClickListeners = new HashSet<>();
   }
 
   /**
@@ -629,6 +694,9 @@ public class FilePanel
 	      else
 		setCurrentDir(new PlaceholderDirectory(file.getAbsoluteFile()));
 	    }
+            else {
+              notifyFileDoubleClickListeners(new FileDoubleClickEvent(FilePanel.this, file));
+            }
 	  }
 	}
 	if (!e.isConsumed())
@@ -1173,6 +1241,34 @@ public class FilePanel
   @Override
   public void valueChanged(ListSelectionEvent e) {
     notifySelectionChangeListeners();
+  }
+
+  /**
+   * Adds the listener to the list of listeners that get notified when
+   * a file gets double-clicked.
+   *
+   * @param l		the listener to add
+   */
+  public void addFileDoubleClickListener(FileDoubleClickListener l) {
+    m_FileDoubleClickListeners.add(l);
+  }
+
+  /**
+   * Removes the listener from the list of listeners that get notified when
+   * a file gets double-clicked.
+   *
+   * @param l		the listener to add
+   */
+  public void removeFileDoubleClickListener(FileDoubleClickListener l) {
+    m_FileDoubleClickListeners.remove(l);
+  }
+
+  /**
+   * Notifies the listeners when a file got double-clicked.
+   */
+  protected synchronized void notifyFileDoubleClickListeners(FileDoubleClickEvent e) {
+    for (FileDoubleClickListener l: m_FileDoubleClickListeners)
+      l.fileDoubleClicked(e);
   }
 
   /**
