@@ -22,6 +22,7 @@ package adams.gui.tools.wekamultiexperimenter.analysis;
 import adams.core.ClassLister;
 import adams.core.DateFormat;
 import adams.core.DateUtils;
+import adams.gui.chooser.SelectOptionPanel;
 import adams.gui.core.AbstractNamedHistoryPanel;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.ConsolePanel;
@@ -41,6 +42,7 @@ import weka.experiment.Tester;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
@@ -156,6 +158,15 @@ public class DefaultAnalysisPanel
   /** the significance. */
   protected NumberTextField m_TextSignificance;
 
+  /** the resultset keys. */
+  protected SelectOptionPanel m_SelectRows;
+
+  /** the dataset keys. */
+  protected SelectOptionPanel m_SelectColumns;
+
+  /** for swapping rows/columns. */
+  protected JCheckBox m_CheckBoxSwapRowsColumns;
+
   /** the combobox with the metric to evaluate. */
   protected JComboBox<String> m_ComboBoxMetric;
 
@@ -240,6 +251,21 @@ public class DefaultAnalysisPanel
     m_TextSignificance.setCheckModel(new BoundedNumberCheckModel(Type.DOUBLE, 0.0, 1.0, 0.05));  // TODO preferences
     m_TextSignificance.setText("0.05");  // TODO preferences
     panelParams.addParameter("Significance level", m_TextSignificance);
+
+    m_SelectRows = new SelectOptionPanel();
+    m_SelectRows.setCurrent(new String[]{KEY_DATASET});
+    m_SelectRows.setMultiSelect(true);
+    m_SelectRows.setDialogTitle("Select row identifiers");
+    panelParams.addParameter("Rows", m_SelectRows);
+
+    m_SelectColumns = new SelectOptionPanel();
+    m_SelectColumns.setCurrent(new String[]{KEY_SCHEME, KEY_SCHEME_OPTIONS, KEY_SCHEME_VERSION_ID});
+    m_SelectColumns.setMultiSelect(true);
+    m_SelectColumns.setDialogTitle("Select column identifiers");
+    panelParams.addParameter("Columns", m_SelectColumns);
+
+    m_CheckBoxSwapRowsColumns = new JCheckBox();
+    panelParams.addParameter("Swap rows/columns", m_CheckBoxSwapRowsColumns);
 
     m_ComboBoxMetric = new JComboBox<>(m_ModelMetric);
     panelParams.addParameter("Metric", m_ComboBoxMetric);
@@ -362,12 +388,17 @@ public class DefaultAnalysisPanel
     DefaultComboBoxModel<String> 	metric;
     String				oldValue;
     int					index;
+    List<String>			names;
 
     m_ButtonAnalyze.setEnabled(m_Results != null);
 
     // update metric
     oldValue = (String) m_ComboBoxMetric.getSelectedItem();
     metric = new DefaultComboBoxModel<>();
+    if (m_Results != null) {
+      for (index = 0; index < m_Results.numAttributes(); index++)
+	metric.addElement(m_Results.attribute(index).name());
+    }
     m_ModelMetric = metric;
     m_ComboBoxMetric.setModel(m_ModelMetric);
     index = -1;
@@ -379,6 +410,14 @@ public class DefaultAnalysisPanel
       index = m_ModelMetric.getIndexOf(CORRELATION_COEFFICIENT);
     if (index > -1)
       m_ComboBoxMetric.setSelectedIndex(index);
+
+    names = new ArrayList<>();
+    if (m_Results != null) {
+      for (index = 0; index < m_Results.numAttributes(); index++)
+	names.add(m_Results.attribute(index).name());
+    }
+    m_SelectRows.setOptions(names.toArray(new String[names.size()]));
+    m_SelectColumns.setOptions(names.toArray(new String[names.size()]));
   }
 
   /**
@@ -400,9 +439,35 @@ public class DefaultAnalysisPanel
   }
 
   /**
+   * Turns the selected attributes into a range string.
+   *
+   * @param select	the panel with the selection
+   * @return		the range
+   */
+  protected String getRange(SelectOptionPanel select) {
+    StringBuilder	result;
+    String[]		options;
+    int			index;
+
+    result  = new StringBuilder();
+    options = select.getCurrent();
+    for (String option: options) {
+      if (result.length() > 0)
+	result.append(",");
+      index = getAttributeIndex(option);
+      if (index > -1)
+	result.append("" + (index+1));
+    }
+
+    return result.toString();
+  }
+
+  /**
    * Performs the analysis.
    */
   protected void analyze() {
+    String			metric;
+    int				index;
     Tester			tester;
     ResultMatrix		matrix;
     AbstractResultsPanel	panel;
@@ -416,27 +481,26 @@ public class DefaultAnalysisPanel
     tester.setSortColumn(-1);
     tester.setRunColumn(getAttributeIndex(KEY_RUN));
     tester.setFoldColumn(getAttributeIndex(KEY_FOLD));
-    tester.setDatasetKeyColumns(
-      new Range(
-	""
-	  + (getAttributeIndex(KEY_DATASET) + 1)));
-    tester.setResultsetKeyColumns(
-      new Range(
-	""
-	  + (getAttributeIndex(KEY_SCHEME) + 1)
-	  + ","
-	  + (getAttributeIndex(KEY_SCHEME_OPTIONS) + 1)
-	  + ","
-	  + (getAttributeIndex(KEY_SCHEME_VERSION_ID) + 1)));
+    if (m_CheckBoxSwapRowsColumns.isSelected()) {
+      tester.setDatasetKeyColumns(new Range(getRange(m_SelectColumns)));
+      tester.setResultsetKeyColumns(new Range(getRange(m_SelectRows)));
+    }
+    else {
+      tester.setDatasetKeyColumns(new Range(getRange(m_SelectRows)));
+      tester.setResultsetKeyColumns(new Range(getRange(m_SelectColumns)));
+    }
     tester.setResultMatrix(matrix);
     tester.setDisplayedResultsets(null);
     tester.setSignificanceLevel(Double.parseDouble(m_TextSignificance.getText()));
     tester.setShowStdDevs(matrix.getShowStdDev());
+    metric = "" + m_ComboBoxMetric.getSelectedItem();
+    index = getAttributeIndex(metric);
+    if (index == -1)
+      index = getAttributeIndex(PERCENT_CORRECT);
+    if (index == -1)
+      index = getAttributeIndex(CORRELATION_COEFFICIENT);
     try {
-      if (getAttributeIndex(PERCENT_CORRECT) > -1)
-	tester.multiResultsetFull(0, getAttributeIndex(PERCENT_CORRECT));
-      else
-	tester.multiResultsetFull(0, getAttributeIndex(CORRELATION_COEFFICIENT));
+      tester.multiResultsetFull(0, index);
     }
     catch (Exception e) {
       GUIHelper.showErrorMessage(getOwner(), "Failed to analyze experiment!", e);
