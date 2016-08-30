@@ -107,10 +107,10 @@ public class CrossValidation
 
     // folds
     m_SpinnerFolds = new JSpinner();
-    ((SpinnerNumberModel) m_SpinnerFolds.getModel()).setMinimum(2);
+    ((SpinnerNumberModel) m_SpinnerFolds.getModel()).setMinimum(-1);
     ((SpinnerNumberModel) m_SpinnerFolds.getModel()).setStepSize(1);
     m_SpinnerFolds.setValue(props.getInteger("Classify.NumFolds", 10));
-    m_SpinnerFolds.setToolTipText("The number of folds to use (>= 2)");
+    m_SpinnerFolds.setToolTipText("The number of folds to use (< 2 for LOO-CV)");
     m_SpinnerFolds.addChangeListener((ChangeEvent e) -> update());
     m_PanelParameters.addParameter("Folds", m_SpinnerFolds);
 
