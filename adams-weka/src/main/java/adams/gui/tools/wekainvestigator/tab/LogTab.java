@@ -29,7 +29,6 @@ import adams.gui.core.GUIHelper;
 import adams.gui.event.WekaInvestigatorDataEvent;
 import adams.gui.tools.wekainvestigator.InvestigatorPanel;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
-import com.googlecode.jfilechooserbookmarks.gui.BaseScrollPane;
 
 import javax.swing.JButton;
 import java.awt.BorderLayout;
@@ -91,7 +90,7 @@ public class LogTab
     m_TextLog.setEditable(false);
     m_TextLog.setLineWrap(true);
     m_TextLog.setWrapStyleWord(true);
-    add(new BaseScrollPane(m_TextLog), BorderLayout.CENTER);
+    add(m_TextLog, BorderLayout.CENTER);
 
     m_ButtonClear = new JButton("Clear", GUIHelper.getIcon("new.gif"));
     m_ButtonClear.addActionListener((ActionEvent e) -> m_Owner.clearLog());
