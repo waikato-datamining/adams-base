@@ -56,8 +56,8 @@ import java.io.File;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class BasicSetupPanel
-  extends AbstractSetupPanel {
+public class BasicWekaSetupPanel
+  extends AbstractWekaSetupPanel {
   
   /** for serialization. */
   private static final long serialVersionUID = -5412911620981798767L;
@@ -208,7 +208,7 @@ public class BasicSetupPanel
    */
   @Override
   public String getSetupName() {
-    return "Basic";
+    return "Basic Weka";
   }
 
   /**
@@ -217,7 +217,7 @@ public class BasicSetupPanel
    * @return		the handler
    */
   @Override
-  protected AbstractExperimentIO createExperimentIO() {
+  protected AbstractExperimentIO<Experiment> createExperimentIO() {
     return new DefaultExperimentIO();
   }
 

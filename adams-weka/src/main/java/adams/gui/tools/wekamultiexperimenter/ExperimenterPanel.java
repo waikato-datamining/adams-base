@@ -32,13 +32,12 @@ import adams.gui.core.RecentFilesHandlerWithCommandline;
 import adams.gui.core.RecentFilesHandlerWithCommandline.Setup;
 import adams.gui.event.RecentItemEvent;
 import adams.gui.event.RecentItemListener;
+import adams.gui.tools.wekamultiexperimenter.experiment.ExperimentWithCustomizableRelationNames;
 import adams.gui.tools.wekamultiexperimenter.runner.AbstractExperimentRunner;
 import adams.gui.workspace.AbstractWorkspacePanelWithStatusBar;
 import weka.core.Instances;
 import weka.core.converters.AbstractFileLoader;
 import weka.core.converters.AbstractFileSaver;
-import weka.experiment.Experiment;
-import weka.experiment.ExtExperiment;
 
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
@@ -119,7 +118,7 @@ public class ExperimenterPanel
   protected LogPanel m_PanelLog;
   
   /** the current experiment. */
-  protected Experiment m_Experiment;
+  protected Object m_Experiment;
   
   /** the filechooser for loading/saving results. */
   protected WekaFileChooser m_FileChooserResults;
@@ -151,7 +150,7 @@ public class ExperimenterPanel
     m_TabbedPane = new BaseTabbedPane();
     add(m_TabbedPane, BorderLayout.CENTER);
     
-    m_PanelSetup = new BasicSetupPanel();
+    m_PanelSetup = new BasicWekaSetupPanel();
     m_PanelSetup.setOwner(this);
     m_TabbedPane.addTab("Setup", m_PanelSetup);
     m_TabbedPane.setIconAt(m_TabbedPane.getTabCount() - 1, m_PanelSetup.getTabIcon());
@@ -186,7 +185,7 @@ public class ExperimenterPanel
     
     current = (AbstractSetupPanel) m_TabbedPane.getComponentAt(0);
     current.setOwner(null);
-    
+
     setup.setOwner(this);
     m_TabbedPane.setComponentAt(0, setup);
     m_TabbedPane.setIconAt(0, setup.getTabIcon());
@@ -220,7 +219,7 @@ public class ExperimenterPanel
    * @param file	the file to open
    */
   public void openSetup(File file) {
-    Experiment	exp;
+    Object	exp;
     String	msg;
     
     logMessage("Loading setup from " + file + "...");
@@ -270,7 +269,7 @@ public class ExperimenterPanel
   public void saveSetup(File file) {
     try {
       logMessage("Saving experiment to " + file);
-      Experiment.write(file.getAbsolutePath(), getExperiment());
+      m_PanelSetup.getExperimentIO().save(getExperiment(), file);
       m_PanelSetup.setModified(false);
       m_CurrentFile = file;
       if (m_RecentFilesHandlerSetups != null)
@@ -484,7 +483,7 @@ public class ExperimenterPanel
 	try {
 	  final AbstractSetupPanel setup = (AbstractSetupPanel) Class.forName(cls).newInstance();
 	  menuitem = new JMenuItem(setup.getSetupName());
-	  if (setup instanceof BasicSetupPanel) {
+	  if (setup instanceof BasicWekaSetupPanel) {
 	    menuitem.setIcon(GUIHelper.getIcon("new.gif"));
 	    menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed N"));
 	  }
@@ -670,8 +669,8 @@ public class ExperimenterPanel
     // Execution
     m_MenuItemExecutionStart.setEnabled(!isExecuting());
     m_MenuItemExecutionStop.setEnabled(isExecuting());
-    m_MenuItemUseFilename.setEnabled(getExperiment() instanceof ExtExperiment);
-    m_MenuItemPrefixDatasetsWithIndex.setEnabled(getExperiment() instanceof ExtExperiment);
+    m_MenuItemUseFilename.setEnabled(getExperiment() instanceof ExperimentWithCustomizableRelationNames);
+    m_MenuItemPrefixDatasetsWithIndex.setEnabled(getExperiment() instanceof ExperimentWithCustomizableRelationNames);
 
     // Analysis
     m_MenuItemResultsSave.setEnabled(m_PanelAnalysis.hasResults());
@@ -682,7 +681,7 @@ public class ExperimenterPanel
    * 
    * @return		the experiment
    */
-  public Experiment getExperiment() {
+  public Object getExperiment() {
     return m_PanelSetup.getExperiment();
   }
   
@@ -691,7 +690,7 @@ public class ExperimenterPanel
    * 
    * @param value	the experiment
    */
-  public void setExperiment(Experiment value) {
+  public void setExperiment(Object value) {
     m_PanelSetup.setExperiment(value);
   }
   
@@ -701,7 +700,7 @@ public class ExperimenterPanel
    * @param exp		the experiment to check
    * @return		true if can be handled
    */
-  public String handlesExperiment(Experiment exp) {
+  public String handlesExperiment(Object exp) {
     return m_PanelSetup.handlesExperiment(exp);
   }
 

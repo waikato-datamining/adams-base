@@ -21,12 +21,8 @@ package adams.gui.tools.wekamultiexperimenter.io;
 
 import adams.core.logging.LoggingObject;
 import adams.gui.chooser.BaseFileChooser;
-import adams.gui.core.ExtensionFileFilter;
-import adams.gui.tools.wekamultiexperimenter.runner.AbstractExperimentRunner;
 import adams.gui.tools.wekamultiexperimenter.ExperimenterPanel;
-import weka.core.xml.KOML;
-import weka.experiment.Experiment;
-import weka.gui.experiment.ExperimenterDefaults;
+import adams.gui.tools.wekamultiexperimenter.runner.AbstractExperimentRunner;
 
 import java.io.File;
 
@@ -37,7 +33,7 @@ import java.io.File;
  * @version $Revision$
  * @param <T> the type of experiment
  */
-public abstract class AbstractExperimentIO<T extends Experiment>
+public abstract class AbstractExperimentIO<T>
   extends LoggingObject {
 
   /** for serialization. */
@@ -51,44 +47,8 @@ public abstract class AbstractExperimentIO<T extends Experiment>
    * 
    * @return		the file chooser
    */
-  protected BaseFileChooser createFileChooser() {
-    BaseFileChooser	result;
-    ExtensionFileFilter	filter;
-    ExtensionFileFilter	preferred;
-    ExtensionFileFilter	xml;
-    
-    result    = new BaseFileChooser();
-    preferred = null;
-    
-    result.setAcceptAllFileFilterUsed(false);
-    result.setAutoAppendExtension(true);
-    
-    filter = new ExtensionFileFilter("Binary experiment", "exp");
-    result.addChoosableFileFilter(filter);
-    if (ExperimenterDefaults.getExtension().equals(filter.getExtensions()[0]))
-      preferred = filter;
+  protected abstract BaseFileChooser createFileChooser();
 
-    filter = new ExtensionFileFilter("XML experiment", "xml");
-    xml   = filter;
-    result.addChoosableFileFilter(filter);
-    if (ExperimenterDefaults.getExtension().equals(filter.getExtensions()[0]))
-      preferred = filter;
-
-    if (KOML.isPresent()) {
-      filter = new ExtensionFileFilter("KOML experiment", KOML.FILE_EXTENSION);
-      result.addChoosableFileFilter(filter);
-      if (ExperimenterDefaults.getExtension().equals(filter.getExtensions()[0]))
-	preferred = filter;
-    }
-
-    if (preferred != null)
-      result.setFileFilter(preferred);
-    else
-      result.setFileFilter(xml);
-    
-    return result;
-  }
-  
   /**
    * Returns the file chooser to use.
    * 

@@ -21,6 +21,7 @@ package adams.gui.tools.wekamultiexperimenter.runner;
 
 import adams.core.DateUtils;
 import adams.gui.tools.wekamultiexperimenter.ExperimenterPanel;
+import weka.experiment.Experiment;
 import weka.experiment.ExtExperiment;
 
 import java.io.File;
@@ -33,7 +34,7 @@ import java.util.Date;
  * @see weka.gui.experiment.RunPanel.ExperimentRunner
  */
 public class DefaultExperimentRunner
-  extends AbstractExperimentRunner {
+  extends AbstractWekaExperimentRunner<Experiment> {
   
   /** for serialization. */
   private static final long serialVersionUID = -5499408120296699079L;

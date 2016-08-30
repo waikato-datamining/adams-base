@@ -22,7 +22,6 @@ package adams.gui.tools.wekamultiexperimenter;
 import adams.core.ClassLister;
 import adams.gui.core.GUIHelper;
 import adams.gui.tools.wekamultiexperimenter.io.AbstractExperimentIO;
-import weka.experiment.Experiment;
 
 import javax.swing.Icon;
 
@@ -33,14 +32,14 @@ import javax.swing.Icon;
  * @version $Revision$
  * @param <T> the type of experiment to handle
  */
-public abstract class AbstractSetupPanel<T extends Experiment>
+public abstract class AbstractSetupPanel<T>
   extends AbstractExperimenterPanel {
 
   /** for serialization. */
   private static final long serialVersionUID = -7551590918482897687L;
 
   /** the handler for loading/saving experiments. */
-  protected AbstractExperimentIO m_ExperimentIO;
+  protected AbstractExperimentIO<T> m_ExperimentIO;
   
   /** whether the setup has been modified. */
   protected boolean m_Modified;
@@ -72,14 +71,14 @@ public abstract class AbstractSetupPanel<T extends Experiment>
    * 
    * @return		the handler
    */
-  protected abstract AbstractExperimentIO createExperimentIO();
+  protected abstract AbstractExperimentIO<T> createExperimentIO();
   
   /**
    * Returns the handler for the IO, i.e., loading/saving of experiments.
    * 
    * @return		the handler
    */
-  public AbstractExperimentIO getExperimentIO() {
+  public AbstractExperimentIO<T> getExperimentIO() {
     return m_ExperimentIO;
   }
   

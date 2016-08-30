@@ -36,7 +36,7 @@ import java.util.logging.Level;
  * @version $Revision$
  */
 public class DefaultExperimentIO
-  extends AbstractExperimentIO<Experiment> {
+  extends AbstractWekaExperimentIO<Experiment> {
 
   /** for serialization. */
   private static final long serialVersionUID = -7678768486122004558L;

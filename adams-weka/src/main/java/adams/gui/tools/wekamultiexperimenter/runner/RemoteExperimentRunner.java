@@ -20,6 +20,7 @@
 package adams.gui.tools.wekamultiexperimenter.runner;
 
 import adams.gui.tools.wekamultiexperimenter.ExperimenterPanel;
+import weka.experiment.Experiment;
 import weka.experiment.RemoteExperiment;
 import weka.experiment.RemoteExperimentEvent;
 import weka.experiment.RemoteExperimentListener;
@@ -31,7 +32,7 @@ import weka.experiment.RemoteExperimentListener;
  * @see weka.gui.experiment.RunPanel.ExperimentRunner
  */
 public class RemoteExperimentRunner
-  extends AbstractExperimentRunner {
+  extends AbstractWekaExperimentRunner<Experiment> {
 
   /** for serialization */
   private static final long serialVersionUID = -5591889874714150118L;

@@ -23,6 +23,7 @@ package weka.experiment;
 import adams.core.Utils;
 import adams.core.io.FileUtils;
 import adams.core.option.OptionUtils;
+import adams.gui.tools.wekamultiexperimenter.experiment.ExperimentWithCustomizableRelationNames;
 import weka.core.Instances;
 import weka.core.converters.AbstractFileLoader;
 import weka.core.converters.ConverterUtils;
@@ -37,7 +38,8 @@ import java.io.File;
  * @version $Revision$
  */
 public class ExtExperiment
-  extends Experiment {
+  extends Experiment
+  implements ExperimentWithCustomizableRelationNames {
 
   private static final long serialVersionUID = 6600722909231586798L;
 

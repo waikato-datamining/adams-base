@@ -20,17 +20,9 @@
 package adams.gui.tools.wekamultiexperimenter.runner;
 
 import adams.core.DateUtils;
-import adams.core.SerializedObject;
+import adams.core.Utils;
 import adams.gui.tools.wekamultiexperimenter.ExperimenterPanel;
-import weka.core.Instances;
-import weka.core.converters.AbstractFileLoader;
-import weka.core.converters.ConverterUtils;
-import weka.experiment.CSVResultListener;
-import weka.experiment.DatabaseResultListener;
-import weka.experiment.Experiment;
-import weka.experiment.InstanceQuery;
 
-import java.io.File;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -40,7 +32,7 @@ import java.util.Date;
  *
  * @see weka.gui.experiment.RunPanel.ExperimentRunner
  */
-public abstract class AbstractExperimentRunner
+public abstract class AbstractExperimentRunner<T>
   extends Thread
   implements Serializable {
 
@@ -54,7 +46,7 @@ public abstract class AbstractExperimentRunner
   protected ExperimenterPanel m_Owner;
 
   /** the copy of the experiment. */
-  protected Experiment m_Exp;
+  protected T m_Exp;
 
   /** whether the experiment is still running. */
   protected boolean m_Running;
@@ -72,13 +64,12 @@ public abstract class AbstractExperimentRunner
     super();
 
     m_Owner = owner;
-    Experiment exp = m_Owner.getExperiment();
+    T exp = (T) m_Owner.getExperiment();
     logMessage("--> START: " + DateUtils.getTimestampFormatter().format(new Date()));
     logMessage("Running experiment: " + exp.toString());
-    logMessage("Writing experiment copy");
-    SerializedObject so = new SerializedObject(exp);
-    logMessage("Reading experiment copy");
-    m_Exp = (Experiment) so.getObject();
+    m_Exp = (T) Utils.deepCopy(exp, false);
+    if (m_Exp == null)
+      throw new IllegalStateException("Failed to create copy of experiment!");
     logMessage("Made experiment copy");
   }
 
@@ -167,9 +158,7 @@ public abstract class AbstractExperimentRunner
    *
    * @throws Exception	fails due to some error
    */
-  protected void doInitialize() throws Exception {
-    m_Exp.initialize();
-  }
+  protected abstract void doInitialize() throws Exception;
 
   /**
    * Performs the actual running of the experiment.
@@ -179,76 +168,12 @@ public abstract class AbstractExperimentRunner
   protected abstract void doRun() throws Exception;
 
   /**
-   * Examines the supplied experiment to determine the results destination and
-   * attempts to load the results.
-   */
-  protected void loadResults() {
-    File 			resultFile;
-    DatabaseResultListener	dblistener;
-    InstanceQuery 		query;
-    String 			tableName;
-    Instances			data;
-    AbstractFileLoader		loader;
-
-    logMessage("Attempting to load results...");
-
-    data = null;
-    if ((m_Exp.getResultListener() instanceof CSVResultListener)) {
-      resultFile = ((CSVResultListener) m_Exp.getResultListener()).getOutputFile();
-      if ((resultFile == null)) {
-	logMessage("No result file");
-      }
-      else {
-	loader = ConverterUtils.getLoaderForFile(resultFile);
-	if (loader == null) {
-	  logMessage("Failed to determine loader for results file: " + resultFile);
-	}
-	else {
-	  try {
-	    loader.setFile(resultFile);
-	    data = loader.getDataSet();
-	  }
-	  catch (Exception e) {
-	    logError(e, "Problem reading result file");
-	  }
-	}
-      }
-    }
-    else if (m_Exp.getResultListener() instanceof DatabaseResultListener) {
-      dblistener = (DatabaseResultListener) m_Exp.getResultListener();
-      try {
-	query = new InstanceQuery();
-	query.setDatabaseURL(dblistener.getDatabaseURL());
-	query.setUsername(dblistener.getUsername());
-	query.setPassword(dblistener.getPassword());
-	query.connectToDatabase();
-	tableName = query.getResultsTableName(m_Exp.getResultProducer());
-	query.setQuery("SELECT * FROM " + tableName);
-	data = query.retrieveInstances();
-      }
-      catch (Exception ex) {
-	logError(ex, "Problem reading database");
-      }
-    }
-    else {
-      logMessage("Can't get results from experiment");
-    }
-
-    if (data != null) {
-      m_Owner.getAnalysisPanel().setResults(data);
-      logMessage("Successfully loaded results!");
-    }
-  }
-
-  /**
    * Hook method that gets executed after the experiment has finished
    * (successfully or not).
    *
    * @param success	whether successfully finished (neither error, nor aborted)
    */
   protected void postRun(boolean success) {
-    if (success)
-      loadResults();
   }
 
   /**
