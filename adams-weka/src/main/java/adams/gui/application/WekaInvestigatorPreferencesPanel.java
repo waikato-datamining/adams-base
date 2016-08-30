@@ -69,6 +69,7 @@ public class WekaInvestigatorPreferencesPanel
       new adams.gui.tools.wekainvestigator.tab.classifytab.evaluation.CrossValidation(), true));
     addPropertyType("Classify.LeftPanelWidth", PropertyType.INTEGER);
     addPropertyType("Classify.NumFolds", PropertyType.INTEGER);
+    addPropertyType("Classify.NumThreads", PropertyType.INTEGER);
     addPropertyType("Classify.CrossValidationFinalModel", PropertyType.BOOLEAN);
     addPropertyType("Classify.Seed", PropertyType.INTEGER);
     addPropertyType("Classify.TrainPercentage", PropertyType.DOUBLE);

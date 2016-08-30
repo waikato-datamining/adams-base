@@ -20,6 +20,7 @@
 
 package adams.multiprocess;
 
+import adams.core.StatusMessageHandler;
 import adams.core.option.OptionUtils;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
@@ -55,6 +56,9 @@ public class WekaCrossValidationJob
   /** the evaluation. */
   protected Evaluation m_Evaluation;
 
+  /** for outputting notifications. */
+  protected StatusMessageHandler m_StatusMessageHandler;
+
   /**
    * Initializes the job.
    *
@@ -65,6 +69,20 @@ public class WekaCrossValidationJob
    * @param discardPred	whether to discard the predictions
    */
   public WekaCrossValidationJob(Classifier classifier, Instances train, Instances test, int fold, boolean discardPred) {
+    this(classifier, train, test, fold, discardPred, null);
+  }
+
+  /**
+   * Initializes the job.
+   *
+   * @param classifier	the classifier to evaluate
+   * @param train	the training set
+   * @param test	the test set
+   * @param fold	the fold index
+   * @param discardPred	whether to discard the predictions
+   * @param handler	for displaying notifications, can be null
+   */
+  public WekaCrossValidationJob(Classifier classifier, Instances train, Instances test, int fold, boolean discardPred, StatusMessageHandler handler) {
     super();
 
     try {
@@ -74,10 +92,11 @@ public class WekaCrossValidationJob
       m_Classifier = null;
     }
 
-    m_Train              = train;
-    m_Test               = test;
-    m_Fold               = fold;
-    m_DiscardPredictions = discardPred;
+    m_Train                = train;
+    m_Test                 = test;
+    m_Fold                 = fold;
+    m_DiscardPredictions   = discardPred;
+    m_StatusMessageHandler = handler;
   }
 
   /**
@@ -117,6 +136,15 @@ public class WekaCrossValidationJob
   }
 
   /**
+   * Returns the status message handler.
+   *
+   * @return		the handler
+   */
+  public StatusMessageHandler getStatusMessageHandler() {
+    return m_StatusMessageHandler;
+  }
+
+  /**
    * Returns the generated evaluation object.
    *
    * @return		the evaluation, null if not available
@@ -143,10 +171,14 @@ public class WekaCrossValidationJob
    */
   @Override
   protected void process() throws Exception {
+    if (m_StatusMessageHandler != null)
+      m_StatusMessageHandler.showStatus("Fold " + (m_Fold+1) + " - start: '" + m_Train.relationName() + "' using " + OptionUtils.getCommandLine(m_Classifier));
     m_Classifier.buildClassifier(m_Train);
     m_Evaluation = new Evaluation(m_Train);
     m_Evaluation.setDiscardPredictions(m_DiscardPredictions);
     m_Evaluation.evaluateModel(m_Classifier, m_Test);
+    if (m_StatusMessageHandler != null)
+      m_StatusMessageHandler.showStatus("Fold " + (m_Fold+1) + " - end: '" + m_Train.relationName() + "' using " + OptionUtils.getCommandLine(m_Classifier));
   }
 
   /**

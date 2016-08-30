@@ -23,13 +23,11 @@ package adams.gui.tools.wekainvestigator.tab.classifytab.evaluation;
 import adams.core.Properties;
 import adams.core.Utils;
 import adams.core.option.OptionUtils;
-import adams.flow.container.WekaTrainTestSetContainer;
 import adams.gui.core.AbstractNamedHistoryPanel;
 import adams.gui.core.ParameterPanel;
 import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
+import adams.multiprocess.WekaCrossValidationExecution;
 import weka.classifiers.Classifier;
-import weka.classifiers.CrossValidationFoldGenerator;
-import weka.classifiers.Evaluation;
 import weka.core.Capabilities;
 import weka.core.Instances;
 
@@ -71,6 +69,9 @@ public class CrossValidation
 
   /** the seed value. */
   protected JTextField m_TextSeed;
+
+  /** the number of threads. */
+  protected JSpinner m_SpinnerThreads;
 
   /** whether to produce a final model. */
   protected JCheckBox m_CheckBoxFinalModel;
@@ -132,6 +133,15 @@ public class CrossValidation
     });
     m_PanelParameters.addParameter("Seed", m_TextSeed);
 
+    // threads
+    m_SpinnerThreads = new JSpinner();
+    ((SpinnerNumberModel) m_SpinnerThreads.getModel()).setMinimum(-1);
+    ((SpinnerNumberModel) m_SpinnerThreads.getModel()).setStepSize(1);
+    m_SpinnerThreads.setValue(props.getInteger("Classify.NumThreads", -1));
+    m_SpinnerThreads.setToolTipText("The number of threads to use (-1 for all cores)");
+    m_SpinnerThreads.addChangeListener((ChangeEvent e) -> update());
+    m_PanelParameters.addParameter("Threads", m_SpinnerThreads);
+
     // final model?
     m_CheckBoxFinalModel = new JCheckBox();
     m_CheckBoxFinalModel.setSelected(props.getBoolean("Classify.CrossValidationFinalModel", true));
@@ -186,19 +196,14 @@ public class CrossValidation
    */
   @Override
   public ResultItem evaluate(Classifier classifier, AbstractNamedHistoryPanel<ResultItem> history) throws Exception {
-    Evaluation 				eval;
+    WekaCrossValidationExecution	crossValidation;
     String				msg;
     Instances				data;
     boolean				finalModel;
-    Classifier				cls;
     Classifier				model;
-    CrossValidationFoldGenerator	generator;
-    WekaTrainTestSetContainer 		cont;
     int					seed;
     int					folds;
-    int					current;
-    Instances				train;
-    Instances				test;
+    int					threads;
 
     if ((msg = canEvaluate(classifier)) != null)
       throw new IllegalArgumentException("Cannot evaluate classifier!\n" + msg);
@@ -207,20 +212,17 @@ public class CrossValidation
     finalModel = m_CheckBoxFinalModel.isSelected();
     seed       = Integer.parseInt(m_TextSeed.getText());
     folds      = ((Number) m_SpinnerFolds.getValue()).intValue();
-    generator  = new CrossValidationFoldGenerator(data, folds, seed, true);
-    eval       = new Evaluation(data);
-    current    = 0;
-    while (generator.hasNext()) {
-      current++;
-      getOwner().logMessage("Fold " + current + "/" + folds + ": '" + data.relationName() + "' using " + OptionUtils.getCommandLine(classifier));
-      cont  = generator.next();
-      train = (Instances) cont.getValue(WekaTrainTestSetContainer.VALUE_TRAIN);
-      test  = (Instances) cont.getValue(WekaTrainTestSetContainer.VALUE_TEST);
-      cls   = (Classifier) OptionUtils.shallowCopy(classifier);
-      cls.buildClassifier(train);
-      eval.setPriors(train);
-      eval.evaluateModel(cls, test);
-    }
+    threads    = ((Number) m_SpinnerThreads.getValue()).intValue();
+    crossValidation = new WekaCrossValidationExecution();
+    crossValidation.setClassifier(classifier);
+    crossValidation.setData(data);
+    crossValidation.setFolds(folds);
+    crossValidation.setSeed(seed);
+    crossValidation.setNumThreads(threads);
+    crossValidation.setStatusMessageHandler(this);
+    msg = crossValidation.execute();
+    if (msg != null)
+      throw new Exception("Failed to cross-validate:\n" + msg);
 
     // final model?
     model = null;
@@ -231,7 +233,7 @@ public class CrossValidation
     }
 
     // history
-    return addToHistory(history, new ResultItem(eval, model, new Instances(data, 0)));
+    return addToHistory(history, new ResultItem(crossValidation.getEvaluation(), model, new Instances(data, 0)));
   }
 
   /**

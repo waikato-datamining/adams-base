@@ -53,6 +53,10 @@ Classify.LeftPanelWidth=275
 # (integer; 2-n)
 Classify.NumFolds=10
 
+# the number of threads for cross-validation
+# (integer; -1,1-n)
+Classify.NumThreads=-1
+
 # whether to produce a final model for cross-validation
 # (true|false)
 Classify.CrossValidationFinalModel=true
