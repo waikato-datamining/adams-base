@@ -143,6 +143,7 @@ public abstract class AbstractInvestigatorTab
    * @param msg		the message to display
    */
   public void showStatus(String msg) {
+    logMessage(msg);
     getOwner().showStatus("[" + getTitle() + "] " + msg);
   }
 
