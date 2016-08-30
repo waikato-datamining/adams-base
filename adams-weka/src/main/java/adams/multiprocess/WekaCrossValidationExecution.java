@@ -385,7 +385,6 @@ public class WekaCrossValidationExecution
 	eval       = new Evaluation(m_Data);
 	current    = 0;
 	while (generator.hasNext()) {
-	  current++;
 	  if (m_StatusMessageHandler != null)
 	    m_StatusMessageHandler.showStatus("Fold " + current + "/" + folds + ": '" + m_Data.relationName() + "' using " + OptionUtils.getCommandLine(m_Classifier));
 	  cont  = generator.next();
@@ -395,6 +394,7 @@ public class WekaCrossValidationExecution
 	  cls.buildClassifier(train);
 	  eval.setPriors(train);
 	  eval.evaluateModel(cls, test, m_Output);
+	  current++;
 	}
 	if (!isStopped())
 	  m_Evaluation = eval;

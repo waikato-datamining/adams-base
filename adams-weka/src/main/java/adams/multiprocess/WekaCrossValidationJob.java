@@ -172,13 +172,13 @@ public class WekaCrossValidationJob
   @Override
   protected void process() throws Exception {
     if (m_StatusMessageHandler != null)
-      m_StatusMessageHandler.showStatus("Fold " + (m_Fold+1) + " - start: '" + m_Train.relationName() + "' using " + OptionUtils.getCommandLine(m_Classifier));
+      m_StatusMessageHandler.showStatus("Fold " + m_Fold + " - start: '" + m_Train.relationName() + "' using " + OptionUtils.getCommandLine(m_Classifier));
     m_Classifier.buildClassifier(m_Train);
     m_Evaluation = new Evaluation(m_Train);
     m_Evaluation.setDiscardPredictions(m_DiscardPredictions);
     m_Evaluation.evaluateModel(m_Classifier, m_Test);
     if (m_StatusMessageHandler != null)
-      m_StatusMessageHandler.showStatus("Fold " + (m_Fold+1) + " - end: '" + m_Train.relationName() + "' using " + OptionUtils.getCommandLine(m_Classifier));
+      m_StatusMessageHandler.showStatus("Fold " + m_Fold + " - end: '" + m_Train.relationName() + "' using " + OptionUtils.getCommandLine(m_Classifier));
   }
 
   /**
