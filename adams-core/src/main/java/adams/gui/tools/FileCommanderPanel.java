@@ -29,6 +29,7 @@ import adams.gui.chooser.DirectoryChooserPanel;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseStatusBar;
 import adams.gui.core.FilePanel;
+import adams.gui.core.FilePanel.FileDoubleClickEvent;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MenuBarProvider;
 import adams.gui.dialog.ApprovalDialog;
@@ -175,6 +176,7 @@ public class FileCommanderPanel
       m_DirLeft.setCurrent(m_FilesLeft.getCurrentDir());
       m_IgnoreChanges = false;
     });
+    m_FilesLeft.addFileDoubleClickListener((FileDoubleClickEvent e) -> view(e.getFile()));
     m_DirLeft = new DirectoryChooserPanel();
     m_DirLeft.addChangeListener((ChangeEvent e) -> {
       if (m_IgnoreChanges)
@@ -199,6 +201,7 @@ public class FileCommanderPanel
       m_DirRight.setCurrent(m_FilesRight.getCurrentDir());
       m_IgnoreChanges = false;
     });
+    m_FilesRight.addFileDoubleClickListener((FileDoubleClickEvent e) -> view(e.getFile()));
     m_DirRight = new DirectoryChooserPanel();
     m_DirRight.addChangeListener((ChangeEvent e) -> {
       if (m_IgnoreChanges)
@@ -408,11 +411,20 @@ public class FileCommanderPanel
    * Views the selected file.
    */
   protected void view() {
-    SimplePreviewBrowserDialog	dialog;
-
     if (m_FilesActive == null)
       return;
-    if (m_FilesActive.getSelectedFile() == null)
+    view(m_FilesActive.getSelectedFile());
+  }
+
+  /**
+   * Views the file.
+   *
+   * @param file	the file to view, ignored if null
+   */
+  protected void view(File file) {
+    SimplePreviewBrowserDialog	dialog;
+
+    if (file == null)
       return;
 
     if (getParentDialog() != null)
