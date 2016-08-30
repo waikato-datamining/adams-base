@@ -383,6 +383,7 @@ public class WekaCrossValidationExecution
 	if (m_Output != null)
 	  m_Output.setHeader(m_Data);
 	eval       = new Evaluation(m_Data);
+	eval.setDiscardPredictions(m_DiscardPredictions);
 	current    = 0;
 	while (generator.hasNext()) {
 	  if (m_StatusMessageHandler != null)
@@ -424,6 +425,7 @@ public class WekaCrossValidationExecution
 	// aggregate data
 	if (!isStopped()) {
 	  evalAgg = new AggregateableEvaluation(m_Data);
+	  evalAgg.setDiscardPredictions(m_DiscardPredictions);
 	  m_Evaluations = new Evaluation[m_JobRunner.getJobs().size()];
 	  for (i = 0; i < m_JobRunner.getJobs().size(); i++) {
 	    job = (WekaCrossValidationJob) m_JobRunner.getJobs().get(i);
