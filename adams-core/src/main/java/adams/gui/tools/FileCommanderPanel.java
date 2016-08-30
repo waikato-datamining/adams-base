@@ -184,7 +184,7 @@ public class FileCommanderPanel
     });
     m_PanelLeft = new JPanel(new BorderLayout(5, 5));
     m_PanelLeft.add(m_FilesLeft, BorderLayout.CENTER);
-    m_PanelLeft.add(m_DirLeft, BorderLayout.SOUTH);
+    m_PanelLeft.add(m_DirLeft, BorderLayout.NORTH);
     panel.add(m_PanelLeft);
 
     m_FilesRight = new FilePanel(true);
@@ -208,7 +208,7 @@ public class FileCommanderPanel
     });
     m_PanelRight = new JPanel(new BorderLayout(5, 5));
     m_PanelRight.add(m_FilesRight, BorderLayout.CENTER);
-    m_PanelRight.add(m_DirRight, BorderLayout.SOUTH);
+    m_PanelRight.add(m_DirRight, BorderLayout.NORTH);
     panel.add(m_PanelRight);
 
     m_PanelButtons = new JPanel(new FlowLayout());
