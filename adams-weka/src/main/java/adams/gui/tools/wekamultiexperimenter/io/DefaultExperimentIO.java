@@ -19,9 +19,10 @@
  */
 package adams.gui.tools.wekamultiexperimenter.io;
 
+import adams.gui.tools.wekamultiexperimenter.ExperimenterPanel;
+import weka.experiment.ExtExperiment;
 import adams.gui.tools.wekamultiexperimenter.runner.AbstractExperimentRunner;
 import adams.gui.tools.wekamultiexperimenter.runner.DefaultExperimentRunner;
-import adams.gui.tools.wekamultiexperimenter.ExperimenterPanel;
 import weka.experiment.Experiment;
 import weka.experiment.RemoteExperiment;
 
@@ -47,7 +48,7 @@ public class DefaultExperimentIO
    */
   @Override
   public Experiment create() {
-    return new Experiment();
+    return new ExtExperiment();
   }
 
   /**
@@ -63,6 +64,8 @@ public class DefaultExperimentIO
       result = Experiment.read(file.getAbsolutePath());
       if (result instanceof RemoteExperiment)
 	result = ((RemoteExperiment) result).getBaseExperiment();
+      else
+        result = new ExtExperiment(result);
       return result;
     }
     catch (Exception e) {

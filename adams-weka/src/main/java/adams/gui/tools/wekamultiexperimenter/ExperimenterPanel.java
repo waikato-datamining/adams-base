@@ -38,7 +38,9 @@ import weka.core.Instances;
 import weka.core.converters.AbstractFileLoader;
 import weka.core.converters.AbstractFileSaver;
 import weka.experiment.Experiment;
+import weka.experiment.ExtExperiment;
 
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -88,6 +90,12 @@ public class ExperimenterPanel
 
   /** the stop menu item. */
   protected JMenuItem m_MenuItemExecutionStop;
+
+  /** the use filename menu item. */
+  protected JMenuItem m_MenuItemUseFilename;
+
+  /** the prefix datasets menu item. */
+  protected JMenuItem m_MenuItemPrefixDatasetsWithIndex;
 
   /** the "load recent" submenu. */
   protected JMenu m_MenuItemResultsLoadRecent;
@@ -182,8 +190,10 @@ public class ExperimenterPanel
     setup.setOwner(this);
     m_TabbedPane.setComponentAt(0, setup);
     m_TabbedPane.setIconAt(0, setup.getTabIcon());
-    
-    logMessage("New setup: " + current.getClass().getName());
+
+    m_PanelSetup = setup;
+
+    logMessage("New setup: " + m_PanelSetup.getClass().getName());
   }
 
   /**
@@ -562,6 +572,22 @@ public class ExperimenterPanel
       menuitem.addActionListener((ActionEvent e) -> stopExecution());
       m_MenuItemExecutionStop = menuitem;
 
+      menu.addSeparator();
+
+      // Execution/Use filename
+      menuitem = new JCheckBoxMenuItem("Use file name");
+      menu.add(menuitem);
+      menuitem.setMnemonic('f');
+      menuitem.setIcon(GUIHelper.getEmptyIcon());
+      m_MenuItemUseFilename = menuitem;
+
+      // Execution/Prefix datasets with index
+      menuitem = new JCheckBoxMenuItem("Prefix datasets with index");
+      menu.add(menuitem);
+      menuitem.setMnemonic('i');
+      menuitem.setIcon(GUIHelper.getEmptyIcon());
+      m_MenuItemPrefixDatasetsWithIndex = menuitem;
+
       // Analysis
       menu = new JMenu("Analysis");
       result.add(menu);
@@ -644,7 +670,9 @@ public class ExperimenterPanel
     // Execution
     m_MenuItemExecutionStart.setEnabled(!isExecuting());
     m_MenuItemExecutionStop.setEnabled(isExecuting());
-    
+    m_MenuItemUseFilename.setEnabled(getExperiment() instanceof ExtExperiment);
+    m_MenuItemPrefixDatasetsWithIndex.setEnabled(getExperiment() instanceof ExtExperiment);
+
     // Analysis
     m_MenuItemResultsSave.setEnabled(m_PanelAnalysis.hasResults());
   }
@@ -684,6 +712,24 @@ public class ExperimenterPanel
    */
   public AnalysisPanel getAnalysisPanel() {
     return m_PanelAnalysis;
+  }
+
+  /**
+   * Returns whether to use the filename as relation name.
+   *
+   * @return		true if to use filename
+   */
+  public boolean getUseFilename() {
+    return (m_MenuItemUseFilename != null) && m_MenuItemUseFilename.isSelected();
+  }
+
+  /**
+   * Returns whether to use the filename as relation name.
+   *
+   * @return		true if to use filename
+   */
+  public boolean getPrefixDatasetsWithIndex() {
+    return (m_MenuItemPrefixDatasetsWithIndex != null) && m_MenuItemPrefixDatasetsWithIndex.isSelected();
   }
 
   /**
