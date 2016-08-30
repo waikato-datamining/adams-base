@@ -17,7 +17,7 @@
  * JdbcOutputPanel.java
  * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  */
-package adams.gui.tools.wekamultiexperimenter.setup;
+package adams.gui.tools.wekamultiexperimenter.setup.weka;
 
 import adams.core.Constants;
 import adams.gui.core.ParameterPanel;

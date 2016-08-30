@@ -17,10 +17,11 @@
  * AbstractSetupPanel.java
  * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  */
-package adams.gui.tools.wekamultiexperimenter;
+package adams.gui.tools.wekamultiexperimenter.setup;
 
 import adams.core.ClassLister;
 import adams.gui.core.GUIHelper;
+import adams.gui.tools.wekamultiexperimenter.AbstractExperimenterPanel;
 import adams.gui.tools.wekamultiexperimenter.io.AbstractExperimentIO;
 
 import javax.swing.Icon;

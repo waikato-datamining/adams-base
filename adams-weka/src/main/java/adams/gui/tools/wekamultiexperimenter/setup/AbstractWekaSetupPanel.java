@@ -18,7 +18,7 @@
  * Copyright (C) 2016 University of Waikato, Hamilton, NZ
  */
 
-package adams.gui.tools.wekamultiexperimenter;
+package adams.gui.tools.wekamultiexperimenter.setup;
 
 import weka.experiment.Experiment;
 
@@ -31,4 +31,5 @@ import weka.experiment.Experiment;
 public abstract class AbstractWekaSetupPanel
   extends AbstractSetupPanel<Experiment> {
 
+  private static final long serialVersionUID = 8023889227903901226L;
 }

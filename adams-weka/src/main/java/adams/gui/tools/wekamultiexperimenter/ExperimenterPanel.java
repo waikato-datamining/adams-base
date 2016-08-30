@@ -34,6 +34,8 @@ import adams.gui.event.RecentItemEvent;
 import adams.gui.event.RecentItemListener;
 import adams.gui.tools.wekamultiexperimenter.experiment.ExperimentWithCustomizableRelationNames;
 import adams.gui.tools.wekamultiexperimenter.runner.AbstractExperimentRunner;
+import adams.gui.tools.wekamultiexperimenter.setup.AbstractSetupPanel;
+import adams.gui.tools.wekamultiexperimenter.setup.BasicWekaSetupPanel;
 import adams.gui.workspace.AbstractWorkspacePanelWithStatusBar;
 import weka.core.Instances;
 import weka.core.converters.AbstractFileLoader;
@@ -172,7 +174,7 @@ public class ExperimenterPanel
    * @return		the default title
    */
   protected String getDefaultTitle() {
-    return "Experimenter";
+    return "WEKA Multi-Experimenter";
   }
 
   /**

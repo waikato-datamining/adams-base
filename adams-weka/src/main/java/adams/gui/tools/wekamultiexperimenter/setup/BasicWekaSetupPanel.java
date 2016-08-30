@@ -14,18 +14,16 @@
  */
 
 /**
- * BasicSetupPanel.java
+ * BasicWekaSetupPanel.java
  * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  */
-package adams.gui.tools.wekamultiexperimenter;
+package adams.gui.tools.wekamultiexperimenter.setup;
 
 import adams.gui.core.BaseTabbedPane;
 import adams.gui.core.ParameterPanel;
 import adams.gui.tools.wekamultiexperimenter.io.AbstractExperimentIO;
 import adams.gui.tools.wekamultiexperimenter.io.DefaultExperimentIO;
-import adams.gui.tools.wekamultiexperimenter.setup.ClassifierPanel;
-import adams.gui.tools.wekamultiexperimenter.setup.DatasetPanel;
-import adams.gui.tools.wekamultiexperimenter.setup.OutputPanel;
+import adams.gui.tools.wekamultiexperimenter.setup.weka.OutputPanel;
 import weka.classifiers.Classifier;
 import weka.experiment.ClassifierSplitEvaluator;
 import weka.experiment.CrossValidationResultProducer;
@@ -51,7 +49,7 @@ import java.beans.PropertyDescriptor;
 import java.io.File;
 
 /**
- * Basic interface for setting up an experiment.
+ * Basic interface for setting up a Weka experiment.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$

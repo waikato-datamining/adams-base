@@ -21,7 +21,6 @@ package adams.gui.tools.wekamultiexperimenter.setup;
 
 import adams.gui.core.BasePanel;
 import adams.gui.core.GUIHelper;
-import adams.gui.tools.wekamultiexperimenter.AbstractSetupPanel;
 
 /**
  * Ancestor for panels that get added to a {@link AbstractSetupPanel}.

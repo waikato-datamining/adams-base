@@ -20,7 +20,7 @@ SetupsInitialOutput=ARFF
 
 # The preferred setup panel
 # derived from: weka.gui.experiment.ext.AbstractSetupPanel
-SetupsInitialPanel=weka.gui.experiment.ext.BasicSetupPanel
+SetupsInitialPanel=adams.gui.tools.wekamultiexperimenter.setup.BasicWekaSetupPanel
 
 # Initial directory for datasets
 # the following placeholders are recognized
@@ -45,4 +45,4 @@ ResultsMaxRecent=5
 
 # The preferred analysis panel
 # derived from: weka.gui.experiment.ext.AbstractAnalysisPanel
-ResultsInitialPanel=weka.gui.experiment.ext.DefaultAnalysisPanel
+ResultsInitialPanel=adams.gui.tools.wekamultiexperimenter.analysis.DefaultAnalysisPanel
