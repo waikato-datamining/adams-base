@@ -401,7 +401,7 @@ public class InvestigatorPanel
    * @param msg		the log message
    */
   @Override
-  public void logMessage(String msg) {
+  public synchronized void logMessage(String msg) {
     int		i;
 
     m_Log.append(msg);
