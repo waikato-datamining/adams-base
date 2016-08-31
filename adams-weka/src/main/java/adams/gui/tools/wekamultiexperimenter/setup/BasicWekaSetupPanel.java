@@ -22,7 +22,7 @@ package adams.gui.tools.wekamultiexperimenter.setup;
 import adams.gui.core.BaseTabbedPane;
 import adams.gui.core.ParameterPanel;
 import adams.gui.tools.wekamultiexperimenter.io.AbstractExperimentIO;
-import adams.gui.tools.wekamultiexperimenter.io.DefaultExperimentIO;
+import adams.gui.tools.wekamultiexperimenter.io.DefaultWekaExperimentIO;
 import adams.gui.tools.wekamultiexperimenter.setup.weka.OutputPanel;
 import weka.classifiers.Classifier;
 import weka.experiment.ClassifierSplitEvaluator;
@@ -196,7 +196,7 @@ public class BasicWekaSetupPanel
    */
   @Override
   protected AbstractExperimentIO<Experiment> createExperimentIO() {
-    return new DefaultExperimentIO();
+    return new DefaultWekaExperimentIO();
   }
 
   /**
