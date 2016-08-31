@@ -20,6 +20,7 @@
 
 package adams.gui.tools.wekainvestigator.datatable.action;
 
+import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
 import adams.gui.chooser.WekaFileChooser;
 import adams.gui.event.WekaInvestigatorDataEvent;
@@ -82,14 +83,14 @@ public class Export
     conts = getSelectedData();
     rows  = getSelectedRows();
     for (i = 0; i < conts.length; i++) {
-      data   = conts[i];
+      data = conts[i];
       m_FileChooser.setDialogTitle("Exporting " + (i+1) + "/" + (rows.length) + ": " + data.getData().relationName());
-      m_FileChooser.setSelectedFile(new PlaceholderFile(m_FileChooser.getCurrentDirectory().getAbsolutePath() + File.separator + data.getSourceShort()));
+      m_FileChooser.setSelectedFile(new PlaceholderFile(m_FileChooser.getCurrentDirectory().getAbsolutePath() + File.separator + FileUtils.createFilename(data.getData().relationName(), "_")));
       retVal = m_FileChooser.showSaveDialog(getOwner());
       if (retVal != WekaFileChooser.APPROVE_OPTION)
 	break;
       try {
-	logMessage("Exporting: " + data.getSourceFull());
+	logMessage("Exporting: " + data.getSource());
 	saver = m_FileChooser.getWriter();
 	saver.setFile(m_FileChooser.getSelectedFile());
 	DataSink.write(saver, data.getData());

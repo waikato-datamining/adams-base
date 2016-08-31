@@ -39,18 +39,11 @@ public interface DataContainer
   public int getID();
 
   /**
-   * Returns the full version of the source of the data item.
+   * Returns the source of the data item.
    *
    * @return		the source
    */
-  public String getSourceFull();
-
-  /**
-   * Returns the short version of the source of the data item.
-   *
-   * @return		the source
-   */
-  public String getSourceShort();
+  public String getSource();
 
   /**
    * Whether it is possible to reload this item.

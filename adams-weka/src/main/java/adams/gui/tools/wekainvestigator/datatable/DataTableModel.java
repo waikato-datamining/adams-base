@@ -89,7 +89,6 @@ public class DataTableModel
     result++;  // modified
     result++;  // relation
     result++;  // class
-    result++;  // source short
     result++;  // source
 
     return result;
@@ -113,9 +112,7 @@ public class DataTableModel
       case 3:
 	return "Class";
       case 4:
-	return "Source (short)";
-      case 5:
-	return "Source (full)";
+	return "Source";
       default:
 	return null;
     }
@@ -144,9 +141,7 @@ public class DataTableModel
       case 3:
 	return (cont.getData().classIndex() == -1) ? "<none>" : cont.getData().classAttribute().name();
       case 4:
-	return cont.getSourceShort();
-      case 5:
-	return cont.getSourceFull();
+	return cont.getSource();
       default:
 	return null;
     }

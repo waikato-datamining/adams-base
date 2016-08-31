@@ -54,7 +54,7 @@ public class Revert
   protected void doActionPerformed(ActionEvent e) {
     for (DataContainer cont: getSelectedData()) {
       if (cont.isModified() && cont.canReload()) {
-        logMessage("Reverting dataset: " + cont.getData().relationName() + " [" + cont.getSourceFull() + "]");
+        logMessage("Reverting dataset: " + cont.getData().relationName() + " [" + cont.getSource() + "]");
         if (cont.reload()) {
 	  getOwner().getOwner().updateClassAttribute(cont.getData());
 	  logMessage("Successfully reverted!");

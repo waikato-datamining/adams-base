@@ -65,8 +65,8 @@ public class Compatibility
       for (n = i + 1; n < conts.length; n++) {
 	msg = conts[i].getData().equalHeadersMsg(conts[n].getData());
 	result.append(
-	    "--> " + conts[i].getData().relationName() + " [" + conts[i].getSourceFull() + "]\n"
-	    + "and " + conts[n].getData().relationName() + " [" + conts[n].getSourceFull() + "]\n"
+	    "--> " + conts[i].getData().relationName() + " [" + conts[i].getSource() + "]\n"
+	    + "and " + conts[n].getData().relationName() + " [" + conts[n].getSource() + "]\n"
 	    + Utils.indent((msg == null) ? "match" : msg, 4) + "\n");
       }
     }

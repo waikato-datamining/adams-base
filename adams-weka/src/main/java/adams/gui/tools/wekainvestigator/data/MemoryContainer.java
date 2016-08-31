@@ -43,21 +43,12 @@ public class MemoryContainer
   }
 
   /**
-   * Returns a short version of the source of the data item.
-   *
-   * @return		the source
-   */
-  public String getSourceShort() {
-    return "<memory>";
-  }
-
-  /**
    * Returns the source of the data item.
    *
    * @return		the source
    */
   @Override
-  public String getSourceFull() {
+  public String getSource() {
     return "<memory>";
   }
 

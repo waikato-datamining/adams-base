@@ -57,7 +57,7 @@ public class Rename
     String  		newName;
 
     cont = getSelectedData()[0];
-    logMessage("Renaming dataset: " + cont.getData().relationName() + " [" + cont.getSourceFull() + "]");
+    logMessage("Renaming dataset: " + cont.getData().relationName() + " [" + cont.getSource() + "]");
     newName = GUIHelper.showInputDialog(getOwner(), "Please enter new relation name: ", cont.getData().relationName());
     if (newName == null) {
       logMessage("Renaming cancelled!");

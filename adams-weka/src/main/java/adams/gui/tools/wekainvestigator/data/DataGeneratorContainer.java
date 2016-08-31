@@ -57,24 +57,12 @@ public class DataGeneratorContainer
   }
 
   /**
-   * Returns a short version of the source of the data item.
-   *
-   * @return		the source
-   */
-  public String getSourceShort() {
-    if (m_Generator == null)
-      return "<unknown>";
-    else
-      return m_Generator.getClass().getSimpleName();
-  }
-
-  /**
    * Returns the source of the data item.
    *
    * @return		the source
    */
   @Override
-  public String getSourceFull() {
+  public String getSource() {
     if (m_Generator == null)
       return "<unknown>";
     else

@@ -152,7 +152,7 @@ public abstract class AbstractDataContainer
   public int compareTo(DataContainer o) {
     int		result;
 
-    result = getSourceFull().compareTo(o.getSourceFull());
+    result = getSource().compareTo(o.getSource());
     if (result == 0)
       result = new Integer(getID()).compareTo(o.getID());
 
@@ -163,7 +163,7 @@ public abstract class AbstractDataContainer
    * Checks whether the specified object is the same.
    *
    * @param obj		the object to check
-   * @return		true if the same, i.e., the same {@link #getSourceFull()}
+   * @return		true if the same, i.e., the same {@link #getSource()}
    * @see		#getID()
    */
   @Override
@@ -178,7 +178,7 @@ public abstract class AbstractDataContainer
    */
   @Override
   public String toString() {
-    return getData().relationName() + " [" + getSourceFull() + "]";
+    return getData().relationName() + " [" + getSource() + "]";
   }
 
   /**

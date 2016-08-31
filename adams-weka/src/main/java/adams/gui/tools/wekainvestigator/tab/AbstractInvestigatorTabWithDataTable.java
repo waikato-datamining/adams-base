@@ -220,7 +220,7 @@ public abstract class AbstractInvestigatorTabWithDataTable
     else {
       Arrays.sort(rows);
       for (i = rows.length - 1; i >= 0; i--) {
-	logMessage("Removing: " + getData().get(i).getSourceFull());
+	logMessage("Removing: " + getData().get(i).getSource());
 	getData().remove(rows[i]);
       }
       fireDataChange(new WekaInvestigatorDataEvent(getOwner(), WekaInvestigatorDataEvent.ROWS_DELETED, rows));

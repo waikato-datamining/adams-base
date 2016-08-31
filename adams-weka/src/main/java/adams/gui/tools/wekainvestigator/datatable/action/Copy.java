@@ -60,7 +60,7 @@ public class Copy
     MemoryContainer	newCont;
 
     cont = getSelectedData()[0];
-    logMessage("Copying dataset: " + cont.getData().relationName() + " [" + cont.getSourceFull() + "]");
+    logMessage("Copying dataset: " + cont.getData().relationName() + " [" + cont.getSource() + "]");
     newName = GUIHelper.showInputDialog(getOwner(), "Please enter new relation name: ", "Copy of " + cont.getData().relationName());
     if (newName == null) {
       logMessage("Copying cancelled!");

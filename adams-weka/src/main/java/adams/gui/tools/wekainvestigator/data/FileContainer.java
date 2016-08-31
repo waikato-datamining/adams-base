@@ -74,24 +74,12 @@ public class FileContainer
   }
 
   /**
-   * Returns a short version of the source of the data item.
-   *
-   * @return		the source
-   */
-  public String getSourceShort() {
-    if (m_Source == null)
-      return "<unknown>";
-    else
-      return m_Source.getName();
-  }
-
-  /**
    * Returns the source of the data item.
    *
    * @return		the source
    */
   @Override
-  public String getSourceFull() {
+  public String getSource() {
     if (m_Source == null)
       return "<unknown>";
     else
