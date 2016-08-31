@@ -21,6 +21,7 @@
 package adams.gui.tools.wekainvestigator.tab.attseltab;
 
 import adams.core.DateUtils;
+import adams.data.spreadsheet.MetaData;
 import adams.gui.tools.wekainvestigator.output.AbstractResultItem;
 import weka.attributeSelection.ASEvaluation;
 import weka.attributeSelection.ASSearch;
@@ -54,6 +55,9 @@ public class ResultItem
   /** the full dataset. */
   protected Instances m_Full;
 
+  /** the run information. */
+  protected MetaData m_RunInformation;
+
   /**
    * Initializes the item.
    *
@@ -61,9 +65,10 @@ public class ResultItem
    * @param evaluator	the evaluation algorithm
    * @param search	the search algorithm
    * @param full	the full dataset
+   * @param runInfo	the run information, can be null
    */
-  public ResultItem(AttributeSelection attsel, ASEvaluation evaluator, ASSearch search, Instances full) {
-    this(attsel, evaluator, search, -1, full, new Instances(full, 0));
+  public ResultItem(AttributeSelection attsel, ASEvaluation evaluator, ASSearch search, Instances full, MetaData runInfo) {
+    this(attsel, evaluator, search, -1, full, new Instances(full, 0), runInfo);
   }
 
   /**
@@ -74,9 +79,10 @@ public class ResultItem
    * @param search	the search algorithm
    * @param folds	the number of folds, ignored if < 2
    * @param header	the header of the training set, can be null
+   * @param runInfo	the run information, can be null
    */
-  public ResultItem(AttributeSelection attsel, ASEvaluation evaluator, ASSearch search, int folds, Instances header) {
-    this(attsel, evaluator, search, folds, null, header);
+  public ResultItem(AttributeSelection attsel, ASEvaluation evaluator, ASSearch search, int folds, Instances header, MetaData runInfo) {
+    this(attsel, evaluator, search, folds, null, header, runInfo);
   }
 
   /**
@@ -88,8 +94,9 @@ public class ResultItem
    * @param folds	the number of folds, ignored if < 2
    * @param full	the full datasetm, can be null in case of cross-validation
    * @param header	the header of the training set, can be null
+   * @param runInfo	the run information, can be null
    */
-  protected ResultItem(AttributeSelection attsel, ASEvaluation evaluator, ASSearch search, int folds, Instances full, Instances header) {
+  protected ResultItem(AttributeSelection attsel, ASEvaluation evaluator, ASSearch search, int folds, Instances full, Instances header, MetaData runInfo) {
     super(header);
 
     if (attsel == null)
@@ -104,6 +111,7 @@ public class ResultItem
     m_Evaluator          = evaluator;
     m_Folds              = folds;
     m_Full               = full;
+    m_RunInformation     = runInfo;
   }
 
   /**
@@ -179,6 +187,24 @@ public class ResultItem
   }
 
   /**
+   * Returns whether run information is present.
+   *
+   * @return		true if available
+   */
+  public boolean hasRunInformation() {
+    return (m_RunInformation != null);
+  }
+
+  /**
+   * Returns the stored run information.
+   *
+   * @return		the information, null if not present
+   */
+  public MetaData getRunInformation() {
+    return m_RunInformation;
+  }
+
+  /**
    * Returns a short description of the container.
    *
    * @return		the description
@@ -187,7 +213,10 @@ public class ResultItem
     String	result;
 
     result = getName();
-    result += ", CV=" + isCrossValidation() + ", full=" + hasFull() + ", header=" + hasHeader();
+    result += ", CV=" + isCrossValidation()
+      + ", full=" + hasFull()
+      + ", runInfo=" + hasRunInformation()
+      + ", header=" + hasHeader();
 
     return result;
   }

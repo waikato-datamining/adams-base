@@ -23,6 +23,7 @@ package adams.gui.tools.wekainvestigator.tab.attseltab.evaluation;
 import adams.core.Properties;
 import adams.core.Utils;
 import adams.core.option.OptionUtils;
+import adams.data.spreadsheet.MetaData;
 import adams.flow.container.WekaTrainTestSetContainer;
 import adams.gui.core.AbstractNamedHistoryPanel;
 import adams.gui.core.ParameterPanel;
@@ -45,7 +46,6 @@ import javax.swing.event.DocumentListener;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.util.List;
-import java.util.Random;
 
 /**
  * Performs cross-validation.
@@ -181,7 +181,6 @@ public class CrossValidation
     Instances				data;
     int					seed;
     int					folds;
-    Random 				rand;
     ASEvaluation			eval;
     ASSearch				srch;
     AttributeSelection			attsel;
@@ -189,16 +188,26 @@ public class CrossValidation
     WekaTrainTestSetContainer 		cont;
     int					current;
     Instances				train;
+    MetaData 				runInfo;
 
     if ((msg = canEvaluate(evaluator, search)) != null)
       throw new IllegalArgumentException("Cannot perform attribute selection!\n" + msg);
 
     data   = getOwner().getData().get(m_ComboBoxDatasets.getSelectedIndex()).getData();
     seed   = Integer.parseInt(m_TextSeed.getText());
-    rand   = new Random(seed);
     folds  = ((Number) m_SpinnerFolds.getValue()).intValue();
     eval   = (ASEvaluation) OptionUtils.shallowCopy(evaluator);
     srch   = (ASSearch) OptionUtils.shallowCopy(search);
+    runInfo    = new MetaData();
+    runInfo.add("Evaluator", OptionUtils.getCommandLine(evaluator));
+    runInfo.add("Search", OptionUtils.getCommandLine(search));
+    runInfo.add("Seed", seed);
+    runInfo.add("Folds", folds);
+    runInfo.add("Dataset", data.relationName());
+    runInfo.add("# Attributes", data.numAttributes());
+    runInfo.add("# Instances", data.numInstances());
+    if (data.classIndex() > -1)
+      runInfo.add("Class attribute", data.classAttribute().name());
 
     attsel = new AttributeSelection();
     attsel.setSearch(srch);
@@ -217,7 +226,7 @@ public class CrossValidation
     }
 
     // history
-    return addToHistory(history, new ResultItem(attsel, eval, srch, folds, new Instances(data, 0)));
+    return addToHistory(history, new ResultItem(attsel, eval, srch, folds, new Instances(data, 0), runInfo));
   }
 
   /**
