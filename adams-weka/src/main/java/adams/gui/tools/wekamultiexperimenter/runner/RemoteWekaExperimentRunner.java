@@ -14,7 +14,7 @@
  */
 
 /**
- * RemoteExperimentRunner.java
+ * RemoteWekaExperimentRunner.java
  * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.wekamultiexperimenter.runner;
@@ -31,7 +31,7 @@ import weka.experiment.RemoteExperimentListener;
  * 
  * @see weka.gui.experiment.RunPanel.ExperimentRunner
  */
-public class RemoteExperimentRunner
+public class RemoteWekaExperimentRunner
   extends AbstractWekaExperimentRunner<Experiment> {
 
   /** for serialization */
@@ -43,7 +43,7 @@ public class RemoteExperimentRunner
    * @param owner		the experimenter this runner belongs to
    * @throws Exception	if experiment is null or cannot be copied via serialization
    */
-  public RemoteExperimentRunner(ExperimenterPanel owner) throws Exception {
+  public RemoteWekaExperimentRunner(ExperimenterPanel owner) throws Exception {
     super(owner);
   }
 

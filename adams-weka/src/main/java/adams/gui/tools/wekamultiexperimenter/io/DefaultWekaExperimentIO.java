@@ -22,7 +22,7 @@ package adams.gui.tools.wekamultiexperimenter.io;
 import adams.gui.tools.wekamultiexperimenter.ExperimenterPanel;
 import weka.experiment.ExtExperiment;
 import adams.gui.tools.wekamultiexperimenter.runner.AbstractExperimentRunner;
-import adams.gui.tools.wekamultiexperimenter.runner.DefaultExperimentRunner;
+import adams.gui.tools.wekamultiexperimenter.runner.DefaultWekaExperimentRunner;
 import weka.experiment.Experiment;
 import weka.experiment.RemoteExperiment;
 
@@ -102,6 +102,6 @@ public class DefaultWekaExperimentIO
    */
   @Override
   public AbstractExperimentRunner createRunner(ExperimenterPanel owner) throws Exception {
-    return new DefaultExperimentRunner(owner);
+    return new DefaultWekaExperimentRunner(owner);
   }
 }

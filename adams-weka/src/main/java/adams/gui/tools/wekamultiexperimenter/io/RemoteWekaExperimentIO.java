@@ -21,7 +21,7 @@ package adams.gui.tools.wekamultiexperimenter.io;
 
 import adams.gui.tools.wekamultiexperimenter.ExperimenterPanel;
 import adams.gui.tools.wekamultiexperimenter.runner.AbstractExperimentRunner;
-import adams.gui.tools.wekamultiexperimenter.runner.RemoteExperimentRunner;
+import adams.gui.tools.wekamultiexperimenter.runner.RemoteWekaExperimentRunner;
 import weka.experiment.Experiment;
 import weka.experiment.RemoteExperiment;
 
@@ -108,6 +108,6 @@ public class RemoteWekaExperimentIO
    */
   @Override
   public AbstractExperimentRunner createRunner(ExperimenterPanel owner) throws Exception {
-    return new RemoteExperimentRunner(owner);
+    return new RemoteWekaExperimentRunner(owner);
   }
 }

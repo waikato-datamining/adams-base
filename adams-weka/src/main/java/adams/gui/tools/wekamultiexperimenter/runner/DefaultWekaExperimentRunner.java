@@ -14,7 +14,7 @@
  */
 
 /**
- * DefaultExperimentRunner.java
+ * DefaultWekaExperimentRunner.java
  * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.wekamultiexperimenter.runner;
@@ -33,7 +33,7 @@ import java.util.Date;
  * 
  * @see weka.gui.experiment.RunPanel.ExperimentRunner
  */
-public class DefaultExperimentRunner
+public class DefaultWekaExperimentRunner
   extends AbstractWekaExperimentRunner<Experiment> {
   
   /** for serialization. */
@@ -45,7 +45,7 @@ public class DefaultExperimentRunner
    * @param owner		the experimenter this runner belongs to
    * @throws Exception	if experiment is null or cannot be copied via serialization
    */
-  public DefaultExperimentRunner(ExperimenterPanel owner) throws Exception {
+  public DefaultWekaExperimentRunner(ExperimenterPanel owner) throws Exception {
     super(owner);
   }
 
