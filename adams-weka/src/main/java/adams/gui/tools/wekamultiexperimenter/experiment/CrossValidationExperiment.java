@@ -166,8 +166,10 @@ public class CrossValidationExperiment
     result = m_CrossValidation.execute();
 
     if (result == null) {
-      for (m_CurrentFold = 0; m_CurrentFold < m_Folds; m_CurrentFold++)
-	addMetrics(cls, data, m_CrossValidation.getEvaluations()[m_CurrentFold]);
+      for (m_CurrentFold = 0; m_CurrentFold < m_Folds; m_CurrentFold++) {
+        addMetrics(cls, data, m_CrossValidation.getEvaluations()[m_CurrentFold]);
+        addMetric("Key_Fold", m_CurrentFold);
+      }
     }
 
     return result;
