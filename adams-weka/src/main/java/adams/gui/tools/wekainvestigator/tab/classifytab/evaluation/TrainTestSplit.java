@@ -229,10 +229,10 @@ public class TrainTestSplit
     train   = (Instances) cont.getValue(WekaTrainTestSetContainer.VALUE_TRAIN);
     test    = (Instances) cont.getValue(WekaTrainTestSetContainer.VALUE_TEST);
     runInfo = new MetaData();
+    runInfo.add("Classifier", OptionUtils.getCommandLine(classifier));
     runInfo.add("Seed", seed);
     runInfo.add("Split percentage", perc);
     runInfo.add("Order preserved", m_CheckBoxPreserveOrder.isSelected());
-    runInfo.add("Classifier", OptionUtils.getCommandLine(classifier));
     runInfo.add("Dataset", data.relationName());
     runInfo.add("# Attributes", data.numAttributes());
     runInfo.add("# Instances (train)", train.numInstances());

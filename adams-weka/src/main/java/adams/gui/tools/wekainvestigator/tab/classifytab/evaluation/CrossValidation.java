@@ -216,10 +216,10 @@ public class CrossValidation
     folds      = ((Number) m_SpinnerFolds.getValue()).intValue();
     threads    = ((Number) m_SpinnerThreads.getValue()).intValue();
     runInfo    = new MetaData();
+    runInfo.add("Classifier", OptionUtils.getCommandLine(classifier));
     runInfo.add("Seed", seed);
     runInfo.add("Folds", folds);
     runInfo.add("Threads", threads);
-    runInfo.add("Classifier", OptionUtils.getCommandLine(classifier));
     runInfo.add("Dataset", data.relationName());
     runInfo.add("# Attributes", data.numAttributes());
     runInfo.add("# Instances", data.numInstances());
