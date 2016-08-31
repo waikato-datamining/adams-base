@@ -21,6 +21,7 @@
 package adams.gui.tools.wekainvestigator.tab.clustertab;
 
 import adams.core.DateUtils;
+import adams.data.spreadsheet.MetaData;
 import adams.gui.tools.wekainvestigator.output.AbstractResultItem;
 import weka.clusterers.ClusterEvaluation;
 import weka.clusterers.Clusterer;
@@ -50,15 +51,8 @@ public class ResultItem
   /** supplementary data. */
   protected Object m_SupplementaryData;
 
-  /**
-   * Initializes the item with no evaluation.
-   *
-   * @param clusterer	the model
-   * @param header	the header of the training set, can be null
-   */
-  public ResultItem(Clusterer clusterer, Instances header) {
-    this(null, clusterer, header);
-  }
+  /** the run information. */
+  protected MetaData m_RunInformation;
 
   /**
    * Initializes the item.
@@ -66,9 +60,10 @@ public class ResultItem
    * @param evaluation	the evaluation, can be null
    * @param clusterer	the model, can be null
    * @param header	the header of the training set, can be null
+   * @param runInfo	the run information, can be null
    */
-  public ResultItem(ClusterEvaluation evaluation, Clusterer clusterer, Instances header) {
-    this(evaluation, null, null, clusterer, header);
+  public ResultItem(ClusterEvaluation evaluation, Clusterer clusterer, Instances header, MetaData runInfo) {
+    this(evaluation, null, null, clusterer, header, runInfo);
   }
 
   /**
@@ -77,9 +72,10 @@ public class ResultItem
    * @param supplementaryData	the supplementary data, can be null
    * @param clusterer	the model, can be null
    * @param header	the header of the training set, can be null
+   * @param runInfo	the run information, can be null
    */
-  public ResultItem(String supplementaryName, Object supplementaryData, Clusterer clusterer, Instances header) {
-    this(null, supplementaryName, supplementaryData, clusterer, header);
+  public ResultItem(String supplementaryName, Object supplementaryData, Clusterer clusterer, Instances header, MetaData runInfo) {
+    this(null, supplementaryName, supplementaryData, clusterer, header, runInfo);
   }
 
   /**
@@ -88,13 +84,15 @@ public class ResultItem
    * @param supplementaryData	the supplementary data, can be null
    * @param clusterer	the model, can be null
    * @param header	the header of the training set, can be null
+   * @param runInfo	the run information, can be null
    */
-  public ResultItem(ClusterEvaluation evaluation, String supplementaryName, Object supplementaryData, Clusterer clusterer, Instances header) {
+  public ResultItem(ClusterEvaluation evaluation, String supplementaryName, Object supplementaryData, Clusterer clusterer, Instances header, MetaData runInfo) {
     super(header);
     m_Clusterer         = clusterer;
     m_SupplementaryName = supplementaryName;
     m_SupplementaryData = supplementaryData;
     m_Evaluation        = evaluation;
+    m_RunInformation    = runInfo;
   }
 
   /**
@@ -179,6 +177,24 @@ public class ResultItem
   }
 
   /**
+   * Returns whether run information is present.
+   *
+   * @return		true if available
+   */
+  public boolean hasRunInformation() {
+    return (m_RunInformation != null);
+  }
+
+  /**
+   * Returns the stored run information.
+   *
+   * @return		the information, null if not present
+   */
+  public MetaData getRunInformation() {
+    return m_RunInformation;
+  }
+
+  /**
    * Returns a short description of the container.
    *
    * @return		the description
@@ -187,7 +203,11 @@ public class ResultItem
     String	result;
 
     result = getName();
-    result += ", evaluation=" + hasEvaluation() + ", clusterer=" + hasClusterer() + ", header=" + hasHeader();
+    result += ", evaluation=" + hasEvaluation()
+      + ", clusterer=" + hasClusterer()
+      + ", supplementary=" + (hasSupplementaryName() && hasSupplementaryData())
+      + ", runInfo=" + hasRunInformation()
+      + ", header=" + hasHeader();
 
     return result;
   }

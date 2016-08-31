@@ -21,6 +21,7 @@
 package adams.gui.tools.wekainvestigator.tab.clustertab.evaluation;
 
 import adams.core.option.OptionUtils;
+import adams.data.spreadsheet.MetaData;
 import adams.gui.core.AbstractNamedHistoryPanel;
 import adams.gui.core.ParameterPanel;
 import adams.gui.tools.wekainvestigator.tab.clustertab.ResultItem;
@@ -154,12 +155,20 @@ public class TrainTestSet
     Instances		train;
     Instances		test;
     String		msg;
+    MetaData 		runInfo;
 
     if ((msg = canEvaluate(clusterer)) != null)
       throw new IllegalArgumentException("Cannot evaluate clusterer!\n" + msg);
 
-    train = getOwner().getData().get(m_ComboBoxTrain.getSelectedIndex()).getData();
-    test  = getOwner().getData().get(m_ComboBoxTest.getSelectedIndex()).getData();
+    train   = getOwner().getData().get(m_ComboBoxTrain.getSelectedIndex()).getData();
+    test    = getOwner().getData().get(m_ComboBoxTest.getSelectedIndex()).getData();
+    runInfo = new MetaData();
+    runInfo.add("Clusterer", OptionUtils.getCommandLine(clusterer));
+    runInfo.add("Train", train.relationName());
+    runInfo.add("# Attributes", train.numAttributes());
+    runInfo.add("# Instances (train)", train.numInstances());
+    runInfo.add("# Instances (test)", test.numInstances());
+
     clusterer = (Clusterer) OptionUtils.shallowCopy(clusterer);
     getOwner().logMessage("Using '" + train.relationName() + "' to train " + OptionUtils.getCommandLine(clusterer));
     clusterer.buildClusterer(train);
@@ -169,7 +178,7 @@ public class TrainTestSet
     eval.evaluateClusterer(test);
 
     // history
-    return addToHistory(history, new ResultItem(eval, clusterer, new Instances(train, 0)));
+    return addToHistory(history, new ResultItem(eval, clusterer, new Instances(train, 0), runInfo));
   }
 
   /**

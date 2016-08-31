@@ -23,6 +23,7 @@ package adams.gui.tools.wekainvestigator.tab.clustertab.evaluation;
 import adams.core.Properties;
 import adams.core.Utils;
 import adams.core.option.OptionUtils;
+import adams.data.spreadsheet.MetaData;
 import adams.gui.core.AbstractNamedHistoryPanel;
 import adams.gui.core.ParameterPanel;
 import adams.gui.tools.wekainvestigator.tab.clustertab.ResultItem;
@@ -196,6 +197,7 @@ public class CrossValidation
     int				folds;
     DensityBasedClusterer	density;
     Double			logLikeliHood;
+    MetaData			runInfo;
 
     if ((msg = canEvaluate(clusterer)) != null)
       throw new IllegalArgumentException("Cannot evaluate clusterer!\n" + msg);
@@ -212,6 +214,15 @@ public class CrossValidation
       density = new MakeDensityBasedClusterer();
       ((MakeDensityBasedClusterer) density).setClusterer(cls);
     }
+
+    runInfo = new MetaData();
+    runInfo.add("Clusterer", OptionUtils.getCommandLine(clusterer));
+    runInfo.add("Seed", seed);
+    runInfo.add("Folds", folds);
+    runInfo.add("Dataset", data.relationName());
+    runInfo.add("# Attributes", data.numAttributes());
+    runInfo.add("# Instances", data.numInstances());
+
     logLikeliHood = ClusterEvaluation.crossValidateModel(density, data, folds, new Random(seed));
 
     // final model?
@@ -223,7 +234,7 @@ public class CrossValidation
     }
 
     // history
-    return addToHistory(history, new ResultItem("Cross-validation", "Log-likelihood: " + logLikeliHood, model, new Instances(data, 0)));
+    return addToHistory(history, new ResultItem("Cross-validation", "Log-likelihood: " + logLikeliHood, model, new Instances(data, 0), runInfo));
   }
 
   /**

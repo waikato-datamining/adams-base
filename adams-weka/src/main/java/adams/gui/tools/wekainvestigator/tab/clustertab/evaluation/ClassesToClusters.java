@@ -21,6 +21,7 @@
 package adams.gui.tools.wekainvestigator.tab.clustertab.evaluation;
 
 import adams.core.option.OptionUtils;
+import adams.data.spreadsheet.MetaData;
 import adams.gui.core.AbstractNamedHistoryPanel;
 import adams.gui.core.ParameterPanel;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
@@ -296,6 +297,7 @@ public class ClassesToClusters
     double[] 			best;
     double[] 			current;
     String 			matrix;
+    MetaData 			runInfo;
 
     if ((msg = canEvaluate(clusterer)) != null)
       throw new IllegalArgumentException("Cannot evaluate clusterer!\n" + msg);
@@ -308,8 +310,16 @@ public class ClassesToClusters
     clusterer.buildClusterer(train);
 
     // test
-    data = getOwner().getData().get(m_ComboBoxTest.getSelectedIndex()).getData();
-    test = removeClassAttribute(data);
+    data    = getOwner().getData().get(m_ComboBoxTest.getSelectedIndex()).getData();
+    test    = removeClassAttribute(data);
+    runInfo = new MetaData();
+    runInfo.add("Clusterer", OptionUtils.getCommandLine(clusterer));
+    runInfo.add("Dataset", data.relationName());
+    runInfo.add("# Attributes", data.numAttributes());
+    runInfo.add("# Instances (train)", train.numInstances());
+    runInfo.add("# Instances (test)", test.numInstances());
+    runInfo.add("Class attribute", data.classAttribute().name());
+
     getOwner().logMessage("Testing clusterer on '" + data.relationName() + "' without class attribute using " + OptionUtils.getCommandLine(clusterer));
     eval = new ClusterEvaluation();
     eval.setClusterer(clusterer);
@@ -338,7 +348,7 @@ public class ClassesToClusters
     matrix = toMatrixString(numClusters, counts, clusterTotals, new Instances(data, 0));
 
     // history
-    return addToHistory(history, new ResultItem(eval, "Classes to clusters", matrix, clusterer, new Instances(train, 0)));
+    return addToHistory(history, new ResultItem(eval, "Classes to clusters", matrix, clusterer, new Instances(train, 0), runInfo));
   }
 
   /**
