@@ -23,6 +23,7 @@ package adams.gui.tools.wekainvestigator.tab.classifytab.evaluation;
 import adams.core.Properties;
 import adams.core.Utils;
 import adams.core.option.OptionUtils;
+import adams.data.spreadsheet.MetaData;
 import adams.gui.core.AbstractNamedHistoryPanel;
 import adams.gui.core.ParameterPanel;
 import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
@@ -204,6 +205,7 @@ public class CrossValidation
     int					seed;
     int					folds;
     int					threads;
+    MetaData 				runInfo;
 
     if ((msg = canEvaluate(classifier)) != null)
       throw new IllegalArgumentException("Cannot evaluate classifier!\n" + msg);
@@ -213,6 +215,15 @@ public class CrossValidation
     seed       = Integer.parseInt(m_TextSeed.getText());
     folds      = ((Number) m_SpinnerFolds.getValue()).intValue();
     threads    = ((Number) m_SpinnerThreads.getValue()).intValue();
+    runInfo    = new MetaData();
+    runInfo.add("Seed", seed);
+    runInfo.add("Folds", folds);
+    runInfo.add("Threads", threads);
+    runInfo.add("Classifier", OptionUtils.getCommandLine(classifier));
+    runInfo.add("Dataset", data.relationName());
+    runInfo.add("# Attributes", data.numAttributes());
+    runInfo.add("# Instances", data.numInstances());
+    runInfo.add("Class attribute", data.classAttribute().name());
     crossValidation = new WekaCrossValidationExecution();
     crossValidation.setClassifier(classifier);
     crossValidation.setData(data);
@@ -233,7 +244,7 @@ public class CrossValidation
     }
 
     // history
-    return addToHistory(history, new ResultItem(crossValidation.getEvaluation(), model, new Instances(data, 0)));
+    return addToHistory(history, new ResultItem(crossValidation.getEvaluation(), model, new Instances(data, 0), runInfo));
   }
 
   /**

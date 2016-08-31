@@ -21,10 +21,15 @@
 package adams.gui.tools.wekainvestigator.tab.classifytab.output;
 
 import adams.core.Utils;
+import adams.data.spreadsheet.Row;
+import adams.data.spreadsheet.SpreadSheet;
 import adams.gui.core.BaseTextArea;
 import adams.gui.core.Fonts;
 import adams.gui.tools.wekainvestigator.output.TextualContentPanel;
 import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Generates basic text statistic.
@@ -45,6 +50,9 @@ public class TextStatistics
 
   /** whether to print the class details as well. */
   protected boolean m_ClassDetails;
+
+  /** whether to print the run information as well. */
+  protected boolean m_RunInformation;
 
   /**
    * Returns a string describing the object.
@@ -73,6 +81,10 @@ public class TextStatistics
 
     m_OptionManager.add(
       "class-details", "classDetails",
+      false);
+
+    m_OptionManager.add(
+      "run-information", "runInformation",
       false);
   }
 
@@ -164,6 +176,35 @@ public class TextStatistics
   }
 
   /**
+   * Sets whether the run information is output as well.
+   *
+   * @param value	if true then the run information is output as well
+   */
+  public void setRunInformation(boolean value) {
+    m_RunInformation = value;
+    reset();
+  }
+
+  /**
+   * Returns whether the run information is output as well.
+   *
+   * @return		true if the run information is output as well
+   */
+  public boolean getRunInformation() {
+    return m_RunInformation;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String runInformationTipText() {
+    return "If set to true, then the run information is output as well.";
+  }
+
+  /**
    * The title to use for the tab.
    *
    * @return		the title
@@ -192,6 +233,11 @@ public class TextStatistics
   public String generateOutput(ResultItem item) {
     StringBuilder	buffer;
     BaseTextArea 	text;
+    SpreadSheet		meta;
+    List<String>	keys;
+    List<String>	values;
+    int			len;
+    int			i;
 
     buffer = new StringBuilder();
 
@@ -215,6 +261,30 @@ public class TextStatistics
       }
       catch (Exception e) {
 	return Utils.handleException(this, "Failed to generate class details: ", e);
+      }
+    }
+
+    // run information
+    if (m_RunInformation && item.hasRunInformation()) {
+      meta   = item.getRunInformation().toSpreadSheet();
+      keys   = new ArrayList<>();
+      values = new ArrayList<>();
+      len    = 0;
+      for (Row row: meta.rows()) {
+	keys.add(row.getCell(0).getContent());
+	values.add(row.getCell(1).getContent());
+	len = Math.max(len, keys.get(keys.size() - 1).length());
+      }
+      for (i = 0; i < keys.size(); i++) {
+	while (keys.get(i).length() < len)
+	  keys.set(i, keys.get(i) + ".");
+	keys.set(i, keys.get(i) + ": ");
+      }
+      buffer.append("\n\n" + "=== Run information ===\n\n");
+      for (i = 0; i < keys.size(); i++) {
+	buffer.append(keys.get(i));
+	buffer.append(values.get(i));
+	buffer.append("\n");
       }
     }
 

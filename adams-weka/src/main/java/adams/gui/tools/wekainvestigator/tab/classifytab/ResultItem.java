@@ -21,6 +21,7 @@
 package adams.gui.tools.wekainvestigator.tab.classifytab;
 
 import adams.core.DateUtils;
+import adams.data.spreadsheet.MetaData;
 import adams.gui.tools.wekainvestigator.output.AbstractResultItem;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
@@ -44,15 +45,8 @@ public class ResultItem
   /** the model. */
   protected Classifier m_Classifier;
 
-  /**
-   * Initializes the item with no evaluation.
-   *
-   * @param classifier	the model
-   * @param header	the header of the training set, can be null
-   */
-  public ResultItem(Classifier classifier, Instances header) {
-    this(null, classifier, header);
-  }
+  /** the run information. */
+  protected MetaData m_RunInformation;
 
   /**
    * Initializes the item.
@@ -62,9 +56,23 @@ public class ResultItem
    * @param header	the header of the training set, can be null
    */
   public ResultItem(Evaluation evaluation, Classifier classifier, Instances header) {
+    this(evaluation, classifier, header, null);
+  }
+
+  /**
+   * Initializes the item.
+   *
+   * @param evaluation	the evaluation, can be null
+   * @param classifier	the model, can be null
+   * @param header	the header of the training set, can be null
+   * @param runInfo	the meta-data for the run
+   */
+  public ResultItem(Evaluation evaluation, Classifier classifier, Instances header, MetaData runInfo) {
     super(header);
-    m_Evaluation = evaluation;
-    m_Classifier = classifier;
+
+    m_Evaluation     = evaluation;
+    m_Classifier     = classifier;
+    m_RunInformation = runInfo;
   }
 
   /**
@@ -113,6 +121,24 @@ public class ResultItem
   }
 
   /**
+   * Returns whether run information is present.
+   * 
+   * @return		true if available
+   */
+  public boolean hasRunInformation() {
+    return (m_RunInformation != null);
+  }
+
+  /**
+   * Returns the stored run information.
+   * 
+   * @return		the information, null if not present
+   */
+  public MetaData getRunInformation() {
+    return m_RunInformation;
+  }
+
+  /**
    * Returns a short description of the container.
    *
    * @return		the description
@@ -121,7 +147,10 @@ public class ResultItem
     String	result;
 
     result = getName();
-    result += ", evaluation=" + hasEvaluation() + ", classifier=" + hasClassifier() + ", header=" + hasHeader();
+    result += ", evaluation=" + hasEvaluation()
+      + ", classifier=" + hasClassifier()
+      + ", header=" + hasHeader()
+      + ", runInfo=" + hasRunInformation();
 
     return result;
   }
