@@ -186,7 +186,7 @@ public class BasicWekaSetupPanel
    */
   @Override
   public String getSetupName() {
-    return "Basic Weka";
+    return "Basic (Weka)";
   }
 
   /**

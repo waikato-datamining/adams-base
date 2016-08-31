@@ -20,7 +20,7 @@
 package adams.gui.tools.wekamultiexperimenter.runner;
 
 import adams.core.DateUtils;
-import adams.core.Utils;
+import adams.core.ObjectCopyHelper;
 import adams.gui.tools.wekamultiexperimenter.ExperimenterPanel;
 
 import java.io.Serializable;
@@ -67,7 +67,7 @@ public abstract class AbstractExperimentRunner<T>
     T exp = (T) m_Owner.getExperiment();
     logMessage("--> START: " + DateUtils.getTimestampFormatter().format(new Date()));
     logMessage("Running experiment: " + exp.toString());
-    m_Exp = (T) Utils.deepCopy(exp, false);
+    m_Exp = (T) ObjectCopyHelper.copyObject(exp);
     if (m_Exp == null)
       throw new IllegalStateException("Failed to create copy of experiment!");
     logMessage("Made experiment copy");
@@ -191,6 +191,7 @@ public abstract class AbstractExperimentRunner<T>
       doInitialize();
       showStatus("Running...");
       doRun();
+      showStatus("Finished!");
     }
     catch (Exception ex) {
       logError(ex, "Execution error");

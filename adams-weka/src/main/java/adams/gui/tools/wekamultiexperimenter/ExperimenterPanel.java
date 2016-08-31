@@ -49,6 +49,7 @@ import javax.swing.event.ChangeEvent;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.io.File;
+import java.util.logging.Level;
 
 /**
  * The Experimenter panel.
@@ -147,12 +148,26 @@ public class ExperimenterPanel
    */
   @Override
   protected void initGUI() {
+    Properties		props;
+    String		cname;
+
     super.initGUI();
-    
+
+    props = getProperties();
+
+    m_StatusBar.setMouseListenerActive(true);
+
     m_TabbedPane = new BaseTabbedPane();
     add(m_TabbedPane, BorderLayout.CENTER);
-    
-    m_PanelSetup = new BasicWekaSetupPanel();
+
+    try {
+      cname        = props.getProperty("SetupsInitialPanel", BasicWekaSetupPanel.class.getName());
+      m_PanelSetup = (AbstractSetupPanel) Class.forName(cname).newInstance();
+    }
+    catch (Exception e) {
+      ConsolePanel.getSingleton().append(Level.SEVERE, "Failed to instantiate setups panel: " + props.getProperty("SetupsInitialPanel"), e);
+      m_PanelSetup = new BasicWekaSetupPanel();
+    }
     m_PanelSetup.setOwner(this);
     m_TabbedPane.addTab("Setup", m_PanelSetup);
     m_TabbedPane.setIconAt(m_TabbedPane.getTabCount() - 1, m_PanelSetup.getTabIcon());

@@ -52,7 +52,9 @@ import weka.core.converters.ConverterUtils.DataSource;
 
 import java.io.File;
 import java.io.ObjectStreamClass;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.logging.Level;
 
 /**
@@ -91,6 +93,9 @@ public abstract class AbstractExperiment
   /** the number of runs. */
   protected int m_Runs;
 
+  /** the writer for the results. */
+  protected AbstractResultWriter m_ResultWriter;
+
   /** the current run. */
   protected transient int m_CurrentRun;
 
@@ -117,6 +122,10 @@ public abstract class AbstractExperiment
     super.defineOptions();
 
     m_OptionManager.add(
+      "result-writer", "resultWriter",
+      new FileResultWriter());
+
+    m_OptionManager.add(
       "classifier", "classifiers",
       new Classifier[0]);
 
@@ -141,12 +150,41 @@ public abstract class AbstractExperiment
       false);
 
     m_OptionManager.add(
-      "prefix-dataset-with-index", "prefixDatasetWithIndex",
+      "prefix-datasets-with-index", "prefixDatasetsWithIndex",
       false);
 
     m_OptionManager.add(
       "runs", "runs",
       10, 1, null);
+  }
+
+  /**
+   * Sets the result writer to use.
+   *
+   * @param value	the writer
+   */
+  public void setResultWriter(AbstractResultWriter value) {
+    m_ResultWriter = value;
+    reset();
+  }
+
+  /**
+   * Returns the result writer to use.
+   *
+   * @return		the writer
+   */
+  public AbstractResultWriter getResultWriter() {
+    return m_ResultWriter;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String resultWriterTipText() {
+    return "The writer to use for the results.";
   }
 
   /**
@@ -179,6 +217,20 @@ public abstract class AbstractExperiment
   }
 
   /**
+   * Adds a classifier.
+   *
+   * @param cls		the classifier to add
+   */
+  public void addClassifier(Classifier cls) {
+    List<Classifier> 	classifiers;
+
+    classifiers = new ArrayList<>(Arrays.asList(m_Classifiers));
+    classifiers.add(cls);
+
+    setClassifiers(classifiers.toArray(new Classifier[classifiers.size()]));
+  }
+
+  /**
    * Sets the datasets to use.
    *
    * @param value	the datasets
@@ -205,6 +257,20 @@ public abstract class AbstractExperiment
    */
   public String datasetsTipText() {
     return "The datasets to use";
+  }
+
+  /**
+   * Adds a dataset.
+   *
+   * @param file		the dataset to add
+   */
+  public void addDataset(PlaceholderFile file) {
+    List<PlaceholderFile> datasets;
+
+    datasets = new ArrayList<>(Arrays.asList(m_Datasets));
+    datasets.add(file);
+
+    setDatasets(datasets.toArray(new PlaceholderFile[datasets.size()]));
   }
 
   /**
@@ -379,6 +445,24 @@ public abstract class AbstractExperiment
    */
   public String runsTipText() {
     return "The number of runs to perform.";
+  }
+
+  /**
+   * Sets the status message handler to use.
+   *
+   * @param value	the handler, null to turn off
+   */
+  public void setStatusMessageHandler(StatusMessageHandler value) {
+    m_StatusMessageHandler = value;
+  }
+
+  /**
+   * Returns the current status message handler in use.
+   *
+   * @return		the handler, null if none set
+   */
+  public StatusMessageHandler getStatusMessageHandler() {
+    return m_StatusMessageHandler;
   }
 
   /**
@@ -588,6 +672,9 @@ public abstract class AbstractExperiment
     RowFinder		finder;
     int[]		rows;
 
+    if (m_Results.getRowCount() == 0)
+      return true;
+
     finder = configureRowFinder(cls, data);
     rows   = finder.findRows(m_Results);
 
@@ -604,6 +691,9 @@ public abstract class AbstractExperiment
     RowFinder		finder;
     int[]		rows;
     int			i;
+
+    if (m_Results.getRowCount() == 0)
+      return;
 
     finder = configureRowFinder(cls, data);
     rows   = finder.findRows(m_Results);
@@ -693,6 +783,23 @@ public abstract class AbstractExperiment
   protected abstract String evaluate(Classifier cls, Instances data);
 
   /**
+   * Outputs the progress.
+   *
+   * @param current	the current evaluation
+   * @param total	the total number of evaluations
+   * @param msg		the message
+   */
+  protected void progress(int current, int total, String msg) {
+    double	perc;
+    String	percStr;
+
+    perc    = ((double) current / (double) total) * 100.0;
+    percStr = "[" + Utils.doubleToString(perc, 1) + "%] ";
+
+    log(percStr + msg);
+  }
+
+  /**
    * Runs the actual experiment.
    *
    * @return		null if successful, otherwise error message
@@ -704,38 +811,35 @@ public abstract class AbstractExperiment
     Instances	data;
     int		total;
     int		current;
-    double	perc;
-    String	percStr;
 
     result  = null;
     total   = m_Runs * m_Datasets.length * m_Classifiers.length;
     current = 0;
 
     for (m_CurrentRun = 1; m_CurrentRun <= m_Runs; m_CurrentRun++) {
-      perc    = ((double) current / (double) total) * 100.0;
-      percStr = "[" + Utils.doubleToString(perc, 1) + "%] ";
-      log(percStr + "Run " + m_CurrentRun);
+      progress(current, total, "Run " + m_CurrentRun);
 
       if (m_DatasetsFirst) {
 	for (d = 0; d < m_Datasets.length; d++) {
 	  if (m_Stopped || (result != null))
 	    break;
-	  log(percStr + "Loading dataset #" + (d+1) + ": " + m_Datasets[d]);
+	  progress(current, total, "Loading dataset #" + (d + 1) + ": " + m_Datasets[d]);
 	  data = loadDataset(d);
 	  if (data == null)
 	    return "Failed to load dataset: " + m_Datasets[d];
 	  for (c = 0; c < m_Classifiers.length; c++) {
 	    if (m_Stopped || (result != null))
 	      break;
+	    current++;
 	    // results already present?
 	    if (!isRequired(m_Classifiers[c], data)) {
-	      log(percStr + "Classifier #" + (c+1) + " already present: " + OptionUtils.getCommandLine(m_Classifiers[c]));
+	      progress(current, total, "Classifier #" + (c + 1) + " already present: " + OptionUtils.getCommandLine(m_Classifiers[c]));
 	      continue;
 	    }
 	    // remove any incomplete evaluation
 	    removeIncomplete(m_Classifiers[c], data);
 	    // evaluate classifier
-	    log(percStr + "Evaluating classifier #" + (c+1) + ": " + OptionUtils.getCommandLine(m_Classifiers[c]));
+	    progress(current, total, "Evaluating classifier #" + (c + 1) + ": " + OptionUtils.getCommandLine(m_Classifiers[c]));
 	    result = evaluate(m_Classifiers[c], data);
 	  }
 	}
@@ -744,31 +848,34 @@ public abstract class AbstractExperiment
 	for (c = 0; c < m_Classifiers.length; c++) {
 	  if (m_Stopped || (result != null))
 	    break;
-	  log(percStr + "Evaluating classifier #" + (c+1) + ": " + OptionUtils.getCommandLine(m_Classifiers[c]));
+	  progress(current, total, "Evaluating classifier #" + (c + 1) + ": " + OptionUtils.getCommandLine(m_Classifiers[c]));
 	  for (d = 0; d < m_Datasets.length; d++) {
 	    if (m_Stopped || (result != null))
 	      break;
-	    log(percStr + "Loading dataset #" + (d + 1) + ": " + m_Datasets[d]);
+	    current++;
+	    progress(current, total, "Loading dataset #" + (d + 1) + ": " + m_Datasets[d]);
 	    data = loadDataset(d);
 	    if (data == null)
 	      return "Failed to load dataset: " + m_Datasets[d];
 	    // results already present?
 	    if (!isRequired(m_Classifiers[c], data)) {
-	      log(percStr + "Classifier #" + (c+1) + " already present: " + OptionUtils.getCommandLine(m_Classifiers[c]));
+	      progress(current, total, "Classifier #" + (c + 1) + " already present: " + OptionUtils.getCommandLine(m_Classifiers[c]));
 	      continue;
 	    }
 	    // remove any incomplete evaluation
 	    removeIncomplete(m_Classifiers[c], data);
 	    // evaluate classifier
-	    log(percStr + "Evaluating classifier #" + (c+1) + ": " + OptionUtils.getCommandLine(m_Classifiers[c]));
+	    progress(current, total, "Evaluating classifier #" + (c + 1) + ": " + OptionUtils.getCommandLine(m_Classifiers[c]));
 	    result = evaluate(m_Classifiers[c], data);
 	  }
 	}
       }
     }
 
-    if (m_Stopped)
+    if (m_Stopped) {
+      progress(current, total, "Experiment stopped!");
       return "Experiment stopped!";
+    }
 
     return result;
   }
