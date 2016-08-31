@@ -14,7 +14,7 @@
  */
 
 /**
- * AbstractResultWriter.java
+ * AbstractResultsHandler.java
  * Copyright (C) 2016 University of Waikato, Hamilton, NZ
  */
 
@@ -29,10 +29,17 @@ import adams.data.spreadsheet.SpreadSheet;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public abstract class AbstractResultWriter
+public abstract class AbstractResultsHandler
   extends AbstractOptionHandler {
 
   private static final long serialVersionUID = -8012929412471749484L;
+
+  /**
+   * Loads the results (if possible).
+   *
+   * @return		the results, null if failed to obtain (or not available)
+   */
+  public abstract SpreadSheet read();
 
   /**
    * Stores the results.
@@ -40,5 +47,5 @@ public abstract class AbstractResultWriter
    * @param results	the results to store
    * @return		null if successful, otherwise error message
    */
-  public abstract String store(SpreadSheet results);
+  public abstract String write(SpreadSheet results);
 }

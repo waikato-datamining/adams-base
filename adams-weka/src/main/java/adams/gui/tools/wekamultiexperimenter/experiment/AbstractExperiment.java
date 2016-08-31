@@ -93,8 +93,8 @@ public abstract class AbstractExperiment
   /** the number of runs. */
   protected int m_Runs;
 
-  /** the writer for the results. */
-  protected AbstractResultWriter m_ResultWriter;
+  /** the handler for the results. */
+  protected AbstractResultsHandler m_ResultsHandler;
 
   /** the current run. */
   protected transient int m_CurrentRun;
@@ -122,8 +122,8 @@ public abstract class AbstractExperiment
     super.defineOptions();
 
     m_OptionManager.add(
-      "result-writer", "resultWriter",
-      new FileResultWriter());
+      "results-handler", "resultsHandler",
+      new FileResultsHandler());
 
     m_OptionManager.add(
       "classifier", "classifiers",
@@ -159,22 +159,22 @@ public abstract class AbstractExperiment
   }
 
   /**
-   * Sets the result writer to use.
+   * Sets the results handler to use.
    *
-   * @param value	the writer
+   * @param value	the handler
    */
-  public void setResultWriter(AbstractResultWriter value) {
-    m_ResultWriter = value;
+  public void setResultsHandler(AbstractResultsHandler value) {
+    m_ResultsHandler = value;
     reset();
   }
 
   /**
-   * Returns the result writer to use.
+   * Returns the results handler to use.
    *
-   * @return		the writer
+   * @return		the handler
    */
-  public AbstractResultWriter getResultWriter() {
-    return m_ResultWriter;
+  public AbstractResultsHandler getResultsHandler() {
+    return m_ResultsHandler;
   }
 
   /**
@@ -184,7 +184,7 @@ public abstract class AbstractExperiment
    * 			displaying in the GUI or for listing the options.
    */
   public String resultWriterTipText() {
-    return "The writer to use for the results.";
+    return "The handler to use for the results (read/write).";
   }
 
   /**
@@ -542,7 +542,13 @@ public abstract class AbstractExperiment
    * @return		the results
    */
   protected SpreadSheet initResults() {
-    return new DefaultSpreadSheet();
+    SpreadSheet		result;
+
+    result = m_ResultsHandler.read();
+    if (result == null)
+      result = new DefaultSpreadSheet();
+
+    return result;
   }
 
   /**
@@ -886,6 +892,13 @@ public abstract class AbstractExperiment
    * @param success	true if successfully run
    */
   protected void postExecute(boolean success) {
+    String	msg;
+
+    if (m_Results.getRowCount() > 0) {
+      msg = m_ResultsHandler.write(m_Results);
+      if (msg != null)
+	log("Failed to store the results: " + msg);
+    }
   }
 
   /**

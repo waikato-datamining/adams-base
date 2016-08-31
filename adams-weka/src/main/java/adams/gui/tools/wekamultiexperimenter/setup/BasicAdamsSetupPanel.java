@@ -24,9 +24,9 @@ import adams.gui.core.BaseTabbedPane;
 import adams.gui.core.ParameterPanel;
 import adams.gui.goe.GenericObjectEditorPanel;
 import adams.gui.tools.wekamultiexperimenter.experiment.AbstractExperiment;
-import adams.gui.tools.wekamultiexperimenter.experiment.AbstractResultWriter;
+import adams.gui.tools.wekamultiexperimenter.experiment.AbstractResultsHandler;
 import adams.gui.tools.wekamultiexperimenter.experiment.CrossValidationExperiment;
-import adams.gui.tools.wekamultiexperimenter.experiment.FileResultWriter;
+import adams.gui.tools.wekamultiexperimenter.experiment.FileResultsHandler;
 import adams.gui.tools.wekamultiexperimenter.io.AbstractExperimentIO;
 import adams.gui.tools.wekamultiexperimenter.io.DefaultAdamsExperimentIO;
 import weka.experiment.ResultListener;
@@ -56,8 +56,8 @@ public class BasicAdamsSetupPanel
   /** for listing all the options. */
   protected ParameterPanel m_PanelParameters;
   
-  /** the panel for the output type. */
-  protected GenericObjectEditorPanel m_PanelOutput;
+  /** the panel for the results handler. */
+  protected GenericObjectEditorPanel m_PanelResultsHandler;
   
   /** the number of repetitions. */
   protected JSpinner m_SpinnerRepetitions;
@@ -92,8 +92,8 @@ public class BasicAdamsSetupPanel
     m_PanelParameters = new ParameterPanel();
     add(m_PanelParameters, BorderLayout.NORTH);
 
-    m_PanelOutput = new GenericObjectEditorPanel(AbstractResultWriter.class, new FileResultWriter(), true);
-    m_PanelParameters.addParameter("Output", m_PanelOutput);
+    m_PanelResultsHandler = new GenericObjectEditorPanel(AbstractResultsHandler.class, new FileResultsHandler(), true);
+    m_PanelParameters.addParameter("Results", m_PanelResultsHandler);
 
     m_SpinnerRepetitions = new JSpinner();
     ((SpinnerNumberModel) m_SpinnerRepetitions.getModel()).setMinimum(1);
@@ -204,7 +204,7 @@ public class BasicAdamsSetupPanel
       // TODO
     }
 
-    result.setResultWriter((AbstractResultWriter) m_PanelOutput.getCurrent());
+    result.setResultsHandler((AbstractResultsHandler) m_PanelResultsHandler.getCurrent());
     result.setRuns((Integer) m_SpinnerRepetitions.getValue());
     result.setDatasetsFirst(m_ComboBoxOrder.getSelectedIndex() <= 0);
     result.setClassifiers(m_PanelClassifiers.getClassifiers());
@@ -228,7 +228,7 @@ public class BasicAdamsSetupPanel
 	m_TextEvaluation.setText("" + ((CrossValidationExperiment) value).getFolds());
       }
       // TODO train/test splits
-      m_PanelOutput.setCurrent(value.getResultWriter());
+      m_PanelResultsHandler.setCurrent(value.getResultsHandler());
       m_SpinnerRepetitions.setValue(value.getRuns());
       m_ComboBoxOrder.setSelectedIndex(value.getDatasetsFirst() ? 0 : 1);
       m_PanelDatasets.setFiles(value.getDatasets());

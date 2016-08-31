@@ -22,6 +22,8 @@ package adams.gui.tools.wekamultiexperimenter.experiment;
 
 import adams.core.io.FileWriter;
 import adams.core.io.PlaceholderFile;
+import adams.data.io.input.ArffSpreadSheetReader;
+import adams.data.io.input.SpreadSheetReader;
 import adams.data.io.output.ArffSpreadSheetWriter;
 import adams.data.io.output.SpreadSheetWriter;
 import adams.data.spreadsheet.SpreadSheet;
@@ -32,14 +34,17 @@ import adams.data.spreadsheet.SpreadSheet;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class FileResultWriter
-  extends AbstractResultWriter
+public class FileResultsHandler
+  extends AbstractResultsHandler
   implements FileWriter {
 
   private static final long serialVersionUID = 2071016272406676626L;
 
   /** the output file. */
   protected PlaceholderFile m_OutputFile;
+
+  /** the spreadsheet reader to use. */
+  protected SpreadSheetReader m_Reader;
 
   /** the spreadsheet writer to use. */
   protected SpreadSheetWriter m_Writer;
@@ -51,7 +56,7 @@ public class FileResultWriter
    */
   @Override
   public String globalInfo() {
-    return "Stores the results in the specified file.";
+    return "Uses the specified file to store the results in and loads them as well if present.";
   }
 
   /**
@@ -64,6 +69,10 @@ public class FileResultWriter
     m_OptionManager.add(
       "output-file", "outputFile",
       new PlaceholderFile());
+
+    m_OptionManager.add(
+      "reader", "reader",
+      new ArffSpreadSheetReader());
 
     m_OptionManager.add(
       "writer", "writer",
@@ -99,7 +108,36 @@ public class FileResultWriter
    */
   @Override
   public String outputFileTipText() {
-    return "The file to write the output to.";
+    return "The file to for the results.";
+  }
+
+  /**
+   * Sets the spreadsheet reader to use.
+   *
+   * @param value	file
+   */
+  public void setReader(SpreadSheetReader value) {
+    m_Reader = value;
+    reset();
+  }
+
+  /**
+   * Returns the spreadsheet reader to use.
+   *
+   * @return	the reader
+   */
+  public SpreadSheetReader getReader() {
+    return m_Reader;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String readerTipText() {
+    return "The spreadsheet reader to use.";
   }
 
   /**
@@ -132,15 +170,30 @@ public class FileResultWriter
   }
 
   /**
+   * Loads the results (if possible).
+   *
+   * @return		the results, null if failed to obtain (or not available)
+   */
+  public SpreadSheet read() {
+    if (!m_OutputFile.exists())
+      return null;
+    if (m_OutputFile.isDirectory())
+      return null;
+
+    return m_Reader.read(m_OutputFile);
+  }
+
+  /**
    * Stores the results.
    *
    * @param results	the results to store
    * @return		null if successful, otherwise error message
    */
   @Override
-  public String store(SpreadSheet results) {
-    if (m_Writer == null)
-      return "Failed to determine spreadsheet writer for file: " + m_OutputFile;
+  public String write(SpreadSheet results) {
+    if (m_OutputFile.isDirectory())
+      return "Output file is pointing to a directory!";
+
     if (!m_Writer.write(results, m_OutputFile))
       return "Failed to write results to: " + m_OutputFile;
 

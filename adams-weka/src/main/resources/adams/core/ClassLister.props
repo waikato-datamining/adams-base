@@ -123,6 +123,10 @@ adams.gui.tools.wekamultiexperimenter.analysis.AbstractAnalysisPanel=\
 adams.gui.tools.wekamultiexperimenter.analysis.AbstractResultsPanel=\
   adams.gui.tools.wekamultiexperimenter.analysis
 
+# the handlers for experiment results
+adams.gui.tools.wekamultiexperimenter.experiment.AbstractResultsHandler=\
+  adams.gui.tools.wekamultiexperimenter.experiment
+
 # the handlers for the explorer panels
 weka.gui.explorer.AbstractExplorerPanelHandler=\
   weka.gui.explorer

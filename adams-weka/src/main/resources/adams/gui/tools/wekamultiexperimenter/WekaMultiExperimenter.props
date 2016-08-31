@@ -15,12 +15,9 @@ SetupsInitialDir=%h
 # The maximum of recent setups to keep track of
 SetupsMaxRecent=5
 
-# The preferred output format, default ones: ARFF|CSV|JDBC
-SetupsInitialOutput=ARFF
-
 # The preferred setup panel
 # derived from: weka.gui.experiment.ext.AbstractSetupPanel
-SetupsInitialPanel=adams.gui.tools.wekamultiexperimenter.setup.BasicWekaSetupPanel
+SetupsInitialPanel=adams.gui.tools.wekamultiexperimenter.setup.BasicAdamsSetupPanel
 
 # Initial directory for datasets
 # the following placeholders are recognized
