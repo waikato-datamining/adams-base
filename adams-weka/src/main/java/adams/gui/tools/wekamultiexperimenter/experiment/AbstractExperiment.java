@@ -20,15 +20,36 @@
 
 package adams.gui.tools.wekamultiexperimenter.experiment;
 
+import adams.core.Index;
 import adams.core.StatusMessageHandler;
 import adams.core.Stoppable;
 import adams.core.Utils;
+import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
 import adams.core.option.AbstractOptionHandler;
+import adams.core.option.OptionUtils;
+import adams.core.option.WekaCommandLineHandler;
 import adams.data.spreadsheet.DefaultSpreadSheet;
+import adams.data.spreadsheet.HeaderRow;
+import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
+import adams.data.spreadsheet.SpreadSheetColumnIndex;
+import adams.data.spreadsheet.rowfinder.ByNumericValue;
+import adams.data.spreadsheet.rowfinder.ByStringComparison;
+import adams.data.spreadsheet.rowfinder.MultiRowFinder;
+import adams.data.spreadsheet.rowfinder.MultiRowFinder.Combination;
+import adams.data.spreadsheet.rowfinder.RowFinder;
+import adams.data.weka.classattribute.AbstractClassAttributeHeuristic;
+import adams.data.weka.classattribute.LastAttribute;
+import adams.flow.core.EvaluationHelper;
+import adams.flow.core.EvaluationStatistic;
 import weka.classifiers.Classifier;
+import weka.classifiers.Evaluation;
+import weka.core.Instances;
+import weka.core.converters.ConverterUtils.DataSource;
 
+import java.io.File;
+import java.io.ObjectStreamClass;
 import java.util.logging.Level;
 
 /**
@@ -39,7 +60,7 @@ import java.util.logging.Level;
  */
 public abstract class AbstractExperiment
   extends AbstractOptionHandler
-  implements Stoppable {
+  implements Stoppable, ExperimentWithCustomizableRelationNames {
 
   private static final long serialVersionUID = -345521029095304309L;
 
@@ -49,17 +70,38 @@ public abstract class AbstractExperiment
   /** the datasets to evaluate. */
   protected PlaceholderFile[] m_Datasets;
 
+  /** whether to iterate datasets first. */
+  protected boolean m_DatasetsFirst;
+
+  /** how to determine the class attribute. */
+  protected AbstractClassAttributeHeuristic m_ClassAttribute;
+
+  /** the class label index for per-class stats. */
+  protected Index m_ClassLabelIndex;
+
+  /** whether to use the filename (w/o path) instead of relationname. */
+  protected boolean m_UseFilename;
+
+  /** whether to prefix the relation names with the index. */
+  protected boolean m_PrefixDatasetsWithIndex;
+
   /** the number of runs. */
   protected int m_Runs;
 
+  /** the current run. */
+  protected transient int m_CurrentRun;
+
   /** for notifications. */
-  protected StatusMessageHandler m_StatusMessageHandler;
+  protected transient StatusMessageHandler m_StatusMessageHandler;
 
   /** whether the experiment is running. */
-  protected boolean m_Running;
+  protected transient boolean m_Running;
 
   /** whether the experiment was stopped. */
-  protected boolean m_Stopped;
+  protected transient boolean m_Stopped;
+
+  /** for handling commandlines. */
+  protected transient WekaCommandLineHandler m_CommandLineHandler;
 
   /** the generated results. */
   protected SpreadSheet m_Results;
@@ -78,6 +120,26 @@ public abstract class AbstractExperiment
     m_OptionManager.add(
       "dataset", "datasets",
       new PlaceholderFile[0]);
+
+    m_OptionManager.add(
+      "datasets-first", "datasetsFirst",
+      false);
+
+    m_OptionManager.add(
+      "class-attribute", "classAttribute",
+      new LastAttribute());
+
+    m_OptionManager.add(
+      "class-label-index", "classLabelIndex",
+      new Index(Index.FIRST));
+
+    m_OptionManager.add(
+      "use-filename", "useFilename",
+      false);
+
+    m_OptionManager.add(
+      "prefix-dataset-with-index", "prefixDatasetWithIndex",
+      false);
 
     m_OptionManager.add(
       "runs", "runs",
@@ -143,6 +205,151 @@ public abstract class AbstractExperiment
   }
 
   /**
+   * Sets whether to iterate datasets first.
+   *
+   * @param value	true if to iterate datasets first
+   */
+  public void setDatasetsFirst(boolean value) {
+    m_DatasetsFirst = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to iterate datasets first.
+   *
+   * @return		true if to iterate datasets first
+   */
+  public boolean getDatasetsFirst() {
+    return m_DatasetsFirst;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String datasetsFirstsTipText() {
+    return "If enabled, datasets are iterated first.";
+  }
+
+  /**
+   * Sets the heuristic for determining the class attribute (if not explicitly set).
+   *
+   * @param value	the heuristic
+   */
+  public void setClassAttribute(AbstractClassAttributeHeuristic value) {
+    m_ClassAttribute = value;
+    reset();
+  }
+
+  /**
+   * Returns the heuristic for determining the class attribute (if not explicitly set).
+   *
+   * @return		the heuristic
+   */
+  public AbstractClassAttributeHeuristic getClassAttribute() {
+    return m_ClassAttribute;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String classAttributeTipText() {
+    return "The heuristic for determining the class attribute in the datasets (if not explicitly set).";
+  }
+
+  /**
+   * Sets the index of the class label to use when generating per-class statistics.
+   *
+   * @param value	the index
+   */
+  public void setClassLabelIndex(Index value) {
+    m_ClassLabelIndex = value;
+    reset();
+  }
+
+  /**
+   * Returns the index of the class label to use when generating per-class statistics.
+   *
+   * @return		the index
+   */
+  public Index getClassLabelIndex() {
+    return m_ClassLabelIndex;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String classLabelIndexTipText() {
+    return "The index of the class label to use when generating per-class statistics.";
+  }
+
+  /**
+   * Sets whether to use the filename (w/o path) instead of the relationname.
+   *
+   * @param value	true if to use filename
+   */
+  public void setUseFilename(boolean value) {
+    m_UseFilename = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to use the filename (w/o path) instead of the relationname.
+   *
+   * @return		true if to use the filename
+   */
+  public boolean getUseFilename() {
+    return m_UseFilename;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String useFilenameTipText() {
+    return "If enabled, uses the filename (w/o path) as the name.";
+  }
+
+  /**
+   * Sets whether to prefix the datasets with the index.
+   *
+   * @param value	true if to prefix
+   */
+  public void setPrefixDatasetsWithIndex(boolean value) {
+    m_PrefixDatasetsWithIndex = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to prefix the datasets with the index.
+   *
+   * @return		true if to prefix
+   */
+  public boolean getPrefixDatasetsWithIndex() {
+    return m_PrefixDatasetsWithIndex;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String prefixDatasetsWithIndexTipText() {
+    return "If enabled, prefixes the dataset name with the index.";
+  }
+
+  /**
    * Sets the number of runs.
    *
    * @param value	the runs
@@ -176,7 +383,7 @@ public abstract class AbstractExperiment
    *
    * @return		null if successful, otherwise error message
    */
-  protected String preRun() {
+  protected String preExecute() {
     return null;
   }
 
@@ -215,28 +422,310 @@ public abstract class AbstractExperiment
   }
 
   /**
+   * Initializes the results.
+   * <br>
+   * Default implementation just creates a new spreadsheet.
+   *
+   * @return		the results
+   */
+  protected SpreadSheet initResults() {
+    return new DefaultSpreadSheet();
+  }
+
+  /**
    * Initializes the experiment.
    */
-  protected String initRun() {
-    m_Stopped = false;
-    m_Running = true;
-    m_Results = new DefaultSpreadSheet();
+  protected String initExecute() {
+    m_Stopped            = false;
+    m_Running            = true;
+    m_CommandLineHandler = new WekaCommandLineHandler();
+    m_Results            = initResults();
+    if (m_Results == null)
+      return "Failed to initialize results!";
     return null;
   }
+
+  /**
+   * Loads the dataset.
+   *
+   * @param index	the index of the dataset to load
+   * @return		the dataset
+   */
+  protected Instances loadDataset(int index) {
+    Instances	result;
+    File	file;
+
+    file = m_Datasets[index];
+    try {
+      result = DataSource.read(file.getAbsolutePath());
+      if (result.classIndex() == -1)
+	result.setClassIndex(m_ClassAttribute.determineClassAttribute(result));
+      if (m_UseFilename)
+	result.setRelationName(FileUtils.replaceExtension(file, "").getName());
+      if (m_PrefixDatasetsWithIndex)
+	result.setRelationName((index+1) + ":" + result.relationName());
+    }
+    catch (Exception e) {
+      result = null;
+      getLogger().log(Level.SEVERE, "Failed to load dataset: " + file, e);
+    }
+
+    return result;
+  }
+
+  /**
+   * Configures the row finder that determines whether the classifier/dataset
+   * combination is still required.
+   *
+   * @param cls		the classifier to check
+   * @param data	the dataset to check
+   * @return		the row finder setup
+   */
+  protected RowFinder configureRowFinder(Classifier cls, Instances data) {
+    MultiRowFinder	result;
+    ByNumericValue	run;
+    ByStringComparison 	dataset;
+    ByStringComparison 	scheme;
+    ByStringComparison 	options;
+    ByStringComparison	version;
+
+    run = new ByNumericValue();
+    run.setAttributeIndex(new SpreadSheetColumnIndex("Key_Run"));
+    run.setMinimum(m_CurrentRun);
+    run.setMinimumIncluded(true);
+    run.setMaximum(m_CurrentRun);
+    run.setMaximumIncluded(true);
+
+    dataset = new ByStringComparison();
+    dataset.setAttributeIndex(new SpreadSheetColumnIndex("Key_Dataset"));
+    dataset.setMinimum(data.relationName());
+    dataset.setMinimumIncluded(true);
+    dataset.setMaximum(data.relationName());
+    dataset.setMaximumIncluded(true);
+
+    scheme = new ByStringComparison();
+    scheme.setAttributeIndex(new SpreadSheetColumnIndex("Key_Scheme"));
+    scheme.setMinimum(cls.getClass().getName());
+    scheme.setMinimumIncluded(true);
+    scheme.setMaximum(cls.getClass().getName());
+    scheme.setMaximumIncluded(true);
+
+    options = new ByStringComparison();
+    options.setAttributeIndex(new SpreadSheetColumnIndex("Key_Scheme_options"));
+    options.setMinimum(m_CommandLineHandler.joinOptions(m_CommandLineHandler.getOptions(cls)));
+    options.setMinimumIncluded(true);
+    options.setMaximum(m_CommandLineHandler.joinOptions(m_CommandLineHandler.getOptions(cls)));
+    options.setMaximumIncluded(true);
+
+    version = new ByStringComparison();
+    version.setAttributeIndex(new SpreadSheetColumnIndex("Key_Scheme_version_ID"));
+    version.setMinimum("" + ObjectStreamClass.lookup(cls.getClass()).getSerialVersionUID());
+    version.setMinimumIncluded(true);
+    version.setMaximum("" + ObjectStreamClass.lookup(cls.getClass()).getSerialVersionUID());
+    version.setMaximumIncluded(true);
+
+    result = new MultiRowFinder();
+    result.setCombination(Combination.INTERSECT);
+    result.setFinders(new RowFinder[]{
+      run,
+      dataset,
+      scheme,
+      options,
+      version,
+    });
+
+    return result;
+  }
+
+  /**
+   * Checks whether the number of rows located in the current results are
+   * complete.
+   *
+   * @param rows	the located results
+   * @return		true if complete
+   */
+  protected boolean isComplete(int[] rows) {
+    return (rows.length == m_Runs);
+  }
+
+  /**
+   * Checks whether the classifier/dataset combination is required.
+   *
+   * @param cls		the classifier to check
+   * @param data	the dataset to check
+   * @return		true if required
+   */
+  protected boolean isRequired(Classifier cls, Instances data) {
+    RowFinder		finder;
+    int[]		rows;
+
+    finder = configureRowFinder(cls, data);
+    rows   = finder.findRows(m_Results);
+
+    return !isComplete(rows);
+  }
+
+  /**
+   * Adds a new row in the results spreadsheet.
+   */
+  protected void newResults() {
+    m_Results.addRow();
+  }
+
+  /**
+   * Adds the metric to the results, automatically expands spreadsheet.
+   *
+   * @param name	the name
+   * @param value	the value
+   */
+  protected void addMetric(String name, Object value) {
+    HeaderRow	header;
+    Row		row;
+    int		index;
+
+    header = m_Results.getHeaderRow();
+    index  = header.indexOfContent(name);
+    // not present?
+    if (index == -1) {
+      m_Results.insertColumn(m_Results.getColumnCount(), name);
+      index = m_Results.getColumnCount() - 1;
+    }
+    row = m_Results.getRow(m_Results.getRowCount() - 1);
+    row.addCell(index).setNative(value);
+  }
+
+  /**
+   * Adds the metrics from the Evaluation object to the results.
+   *
+   * @param cls		the classifier to evaluate
+   * @param data	the dataset to evaluate on
+   * @param eval	the Evaluation object to add
+   */
+  protected void addMetrics(Classifier cls, Instances data, Evaluation eval) {
+    boolean	nominal;
+    String	metric;
+    int		classLabel;
+
+    newResults();
+
+    // general
+    addMetric("Key_Run", m_CurrentRun);
+    addMetric("Key_Dataset", data.relationName());
+    addMetric("Key_Scheme", cls.getClass().getName());
+    addMetric("Key_Scheme_options", m_CommandLineHandler.joinOptions(m_CommandLineHandler.getOptions(cls)));
+    addMetric("Key_Scheme_version_ID", ObjectStreamClass.lookup(cls.getClass()).getSerialVersionUID());
+
+    // evaluation
+    nominal = eval.getHeader().classAttribute().isNominal();
+    m_ClassLabelIndex.setMax(eval.getHeader().classAttribute().numValues());
+    classLabel = m_ClassLabelIndex.getIntIndex();
+    for (EvaluationStatistic stat: EvaluationStatistic.values()) {
+      if (stat.isOnlyNominal() && !nominal)
+	continue;
+      if (stat.isOnlyNumeric() && nominal)
+	continue;
+      metric = stat.toDisplayShort().replace(" ", "_");
+      try {
+	addMetric(metric, EvaluationHelper.getValue(eval, stat, classLabel));
+      }
+      catch (Exception e) {
+	getLogger().log(Level.SEVERE, "Failed to retrieve statistic: " + stat, e);
+      }
+    }
+  }
+
+  /**
+   * Evaluates the classifier on the dataset.
+   *
+   * @param cls		the classifier to evaluate
+   * @param data	the dataset to evaluate on
+   * @return		null if successful, otherwise error message
+   */
+  protected abstract String evaluate(Classifier cls, Instances data);
 
   /**
    * Runs the actual experiment.
    *
    * @return		null if successful, otherwise error message
    */
-  protected abstract String doRun();
+  protected String doExecute() {
+    String	result;
+    int		d;
+    int		c;
+    Instances	data;
+    int		total;
+    int		current;
+    double	perc;
+    String	percStr;
+
+    result  = null;
+    total   = m_Runs * m_Datasets.length * m_Classifiers.length;
+    current = 0;
+
+    for (m_CurrentRun = 1; m_CurrentRun <= m_Runs; m_CurrentRun++) {
+      perc    = ((double) current / (double) total) * 100.0;
+      percStr = "[" + Utils.doubleToString(perc, 1) + "%] ";
+      log(percStr + "Run " + m_CurrentRun);
+
+      if (m_DatasetsFirst) {
+	for (d = 0; d < m_Datasets.length; d++) {
+	  if (m_Stopped || (result != null))
+	    break;
+	  log(percStr + "Loading dataset #" + (d+1) + ": " + m_Datasets[d]);
+	  data = loadDataset(d);
+	  if (data == null)
+	    return "Failed to load dataset: " + m_Datasets[d];
+	  for (c = 0; c < m_Classifiers.length; c++) {
+	    if (m_Stopped || (result != null))
+	      break;
+	    // results already present?
+	    if (!isRequired(m_Classifiers[c], data)) {
+	      log(percStr + "Classifier #" + (c+1) + " already present: " + OptionUtils.getCommandLine(m_Classifiers[c]));
+	      continue;
+	    }
+	    // evaluate classifier
+	    log(percStr + "Evaluating classifier #" + (c+1) + ": " + OptionUtils.getCommandLine(m_Classifiers[c]));
+	    result = evaluate(m_Classifiers[c], data);
+	  }
+	}
+      }
+      else {
+	for (c = 0; c < m_Classifiers.length; c++) {
+	  if (m_Stopped || (result != null))
+	    break;
+	  log(percStr + "Evaluating classifier #" + (c+1) + ": " + OptionUtils.getCommandLine(m_Classifiers[c]));
+	  for (d = 0; d < m_Datasets.length; d++) {
+	    if (m_Stopped || (result != null))
+	      break;
+	    log(percStr + "Loading dataset #" + (d + 1) + ": " + m_Datasets[d]);
+	    data = loadDataset(d);
+	    if (data == null)
+	      return "Failed to load dataset: " + m_Datasets[d];
+	    // results already present?
+	    if (!isRequired(m_Classifiers[c], data)) {
+	      log(percStr + "Classifier #" + (c+1) + " already present: " + OptionUtils.getCommandLine(m_Classifiers[c]));
+	      continue;
+	    }
+	    // evaluate classifier
+	    log(percStr + "Evaluating classifier #" + (c+1) + ": " + OptionUtils.getCommandLine(m_Classifiers[c]));
+	    result = evaluate(m_Classifiers[c], data);
+	  }
+	}
+      }
+    }
+
+    if (m_Stopped)
+      return "Experiment stopped!";
+
+    return result;
+  }
 
   /**
    * Hook method just after the experiment was run.
    *
    * @param success	true if successfully run
    */
-  protected void postRun(boolean success) {
+  protected void postExecute(boolean success) {
   }
 
   /**
@@ -248,16 +737,16 @@ public abstract class AbstractExperiment
     String	result;
 
     log("Initializing...");
-    result = initRun();
+    result = initExecute();
     if (result == null) {
-      log("Pre-Run...");
-      result = preRun();
+      log("Pre-Execute...");
+      result = preExecute();
     }
     if (result == null) {
-      log("Run...");
-      result = doRun();
-      log("Post-Run...");
-      postRun((result == null) && !m_Stopped);
+      log("Execute...");
+      result = doExecute();
+      log("Post-Execute...");
+      postExecute((result == null) && !m_Stopped);
     }
 
     if (result != null)
