@@ -29,11 +29,13 @@ import adams.core.io.PlaceholderFile;
 import adams.core.option.AbstractOptionHandler;
 import adams.core.option.OptionUtils;
 import adams.core.option.WekaCommandLineHandler;
+import adams.data.conversion.SpreadSheetToWekaInstances;
 import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.HeaderRow;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetColumnIndex;
+import adams.data.spreadsheet.SpreadSheetSupporter;
 import adams.data.spreadsheet.rowfinder.ByNumericValue;
 import adams.data.spreadsheet.rowfinder.ByStringComparison;
 import adams.data.spreadsheet.rowfinder.MultiRowFinder;
@@ -50,6 +52,7 @@ import weka.core.converters.ConverterUtils.DataSource;
 
 import java.io.File;
 import java.io.ObjectStreamClass;
+import java.util.Arrays;
 import java.util.logging.Level;
 
 /**
@@ -60,7 +63,7 @@ import java.util.logging.Level;
  */
 public abstract class AbstractExperiment
   extends AbstractOptionHandler
-  implements Stoppable, ExperimentWithCustomizableRelationNames {
+  implements Stoppable, ExperimentWithCustomizableRelationNames, SpreadSheetSupporter {
 
   private static final long serialVersionUID = -345521029095304309L;
 
@@ -392,8 +395,34 @@ public abstract class AbstractExperiment
    *
    * @return		the results
    */
-  public SpreadSheet getResults() {
+  public SpreadSheet toSpreadSheet() {
     return m_Results;
+  }
+
+  /**
+   * Returns the collected results.
+   *
+   * @return		the results as Instances
+   */
+  public Instances toInstances() {
+    Instances			result;
+    SpreadSheetToWekaInstances	conv;
+    String			msg;
+
+    if (m_Results == null)
+      return null;
+
+    conv = new SpreadSheetToWekaInstances();
+    conv.setMaxLabels(m_Results.getRowCount() + 1);
+    conv.setInput(m_Results);
+    msg = conv.convert();
+    if (msg != null) {
+      getLogger().severe("Failed to convert results into Instances: " + msg);
+      return null;
+    }
+    result = (Instances) conv.getOutput();
+
+    return result;
   }
 
   /**
@@ -481,7 +510,7 @@ public abstract class AbstractExperiment
    * @param data	the dataset to check
    * @return		the row finder setup
    */
-  protected RowFinder configureRowFinder(Classifier cls, Instances data) {
+  protected MultiRowFinder configureRowFinder(Classifier cls, Instances data) {
     MultiRowFinder	result;
     ByNumericValue	run;
     ByStringComparison 	dataset;
@@ -563,6 +592,26 @@ public abstract class AbstractExperiment
     rows   = finder.findRows(m_Results);
 
     return !isComplete(rows);
+  }
+
+  /**
+   * Removes the incomplete rows of the classifier/dataset combination.
+   *
+   * @param cls		the classifier to check
+   * @param data	the dataset to check
+   */
+  protected void removeIncomplete(Classifier cls, Instances data) {
+    RowFinder		finder;
+    int[]		rows;
+    int			i;
+
+    finder = configureRowFinder(cls, data);
+    rows   = finder.findRows(m_Results);
+    if (rows.length > 0) {
+      Arrays.sort(rows);
+      for (i = rows.length - 1; i >= 0; i--)
+	m_Results.removeRow(rows[i]);
+    }
   }
 
   /**
@@ -683,6 +732,8 @@ public abstract class AbstractExperiment
 	      log(percStr + "Classifier #" + (c+1) + " already present: " + OptionUtils.getCommandLine(m_Classifiers[c]));
 	      continue;
 	    }
+	    // remove any incomplete evaluation
+	    removeIncomplete(m_Classifiers[c], data);
 	    // evaluate classifier
 	    log(percStr + "Evaluating classifier #" + (c+1) + ": " + OptionUtils.getCommandLine(m_Classifiers[c]));
 	    result = evaluate(m_Classifiers[c], data);
@@ -706,6 +757,8 @@ public abstract class AbstractExperiment
 	      log(percStr + "Classifier #" + (c+1) + " already present: " + OptionUtils.getCommandLine(m_Classifiers[c]));
 	      continue;
 	    }
+	    // remove any incomplete evaluation
+	    removeIncomplete(m_Classifiers[c], data);
 	    // evaluate classifier
 	    log(percStr + "Evaluating classifier #" + (c+1) + ": " + OptionUtils.getCommandLine(m_Classifiers[c]));
 	    result = evaluate(m_Classifiers[c], data);
