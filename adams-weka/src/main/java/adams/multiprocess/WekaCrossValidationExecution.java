@@ -66,6 +66,9 @@ public class WekaCrossValidationExecution
   /** the number of folds. */
   protected int m_Folds;
 
+  /** whether to separate folds. */
+  protected boolean m_SeparateFolds;
+
   /** the seed value. */
   protected long m_Seed;
 
@@ -193,6 +196,24 @@ public class WekaCrossValidationExecution
    */
   public int getFolds() {
     return m_Folds;
+  }
+
+  /**
+   * Sets whether to separate the folds, an Evaluation object per fold.
+   *
+   * @param value	true if to separate
+   */
+  public void setSeparateFolds(boolean value) {
+    m_SeparateFolds = value;
+  }
+
+  /**
+   * Returns whether to separate the folds, an Evaluation object per fold.
+   *
+   * @return		true if to separate
+   */
+  public boolean getSeparateFolds() {
+    return m_SeparateFolds;
   }
 
   /**
@@ -373,6 +394,10 @@ public class WekaCrossValidationExecution
 	m_ActualNumThreads = Math.min(m_NumThreads, folds);
       else
 	m_ActualNumThreads = 0;
+
+      // force separate Evaluation objects?
+      if ((m_ActualNumThreads == 0) && m_SeparateFolds)
+	m_ActualNumThreads = 1;
 
       if (!m_DiscardPredictions)
 	indices = CrossValidationHelper.crossValidationIndices(m_Data, folds, new Random(m_Seed));
