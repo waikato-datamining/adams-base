@@ -20,6 +20,8 @@
 package adams.data.spreadsheet;
 
 import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
 
 /**
  * A helper class for spreadsheet operations.
@@ -147,5 +149,36 @@ public class SpreadSheetHelper
     }
 
     return null;
+  }
+
+  /**
+   * Turns the map into a spreadsheet.
+   *
+   * @param map		the map to convert
+   * @param header	the header names, use null for default
+   * @return		the generated spreadsheet
+   */
+  public static SpreadSheet mapToSpreadSheet(Map map, String[] header) {
+    SpreadSheet		result;
+    Row			row;
+    List<String>	keys;
+
+    result = new DefaultSpreadSheet();
+
+    // header
+    if ((header == null) || (header.length != 2))
+      header = new String[]{"Key", "Value"};
+    row = result.getHeaderRow();
+    row.addCell("K").setContentAsString(header[0]);
+    row.addCell("V").setContentAsString(header[1]);
+
+    // data
+    for (Object key: map.keySet()) {
+      row = result.addRow();
+      row.addCell("K").setContentAsString("" + key);
+      row.addCell("V").setNative(map.get(key));
+    }
+
+    return result;
   }
 }
