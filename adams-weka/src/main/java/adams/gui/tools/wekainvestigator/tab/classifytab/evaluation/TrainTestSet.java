@@ -21,6 +21,7 @@
 package adams.gui.tools.wekainvestigator.tab.classifytab.evaluation;
 
 import adams.core.option.OptionUtils;
+import adams.data.spreadsheet.MetaData;
 import adams.gui.core.AbstractNamedHistoryPanel;
 import adams.gui.core.ParameterPanel;
 import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
@@ -154,12 +155,21 @@ public class TrainTestSet
     Instances	train;
     Instances	test;
     String	msg;
+    MetaData 	runInfo;
 
     if ((msg = canEvaluate(classifier)) != null)
       throw new IllegalArgumentException("Cannot evaluate classifier!\n" + msg);
 
-    train = getOwner().getData().get(m_ComboBoxTrain.getSelectedIndex()).getData();
-    test  = getOwner().getData().get(m_ComboBoxTest.getSelectedIndex()).getData();
+    train   = getOwner().getData().get(m_ComboBoxTrain.getSelectedIndex()).getData();
+    test    = getOwner().getData().get(m_ComboBoxTest.getSelectedIndex()).getData();
+    runInfo = new MetaData();
+    runInfo.add("Classifier", OptionUtils.getCommandLine(classifier));
+    runInfo.add("Train", train.relationName());
+    runInfo.add("# Attributes", train.numAttributes());
+    runInfo.add("# Instances (train)", train.numInstances());
+    runInfo.add("# Instances (test)", test.numInstances());
+    runInfo.add("Class attribute", train.classAttribute().name());
+
     classifier = (Classifier) OptionUtils.shallowCopy(classifier);
     getOwner().logMessage("Using '" + train.relationName() + "' to train " + OptionUtils.getCommandLine(classifier));
     classifier.buildClassifier(train);
@@ -168,7 +178,7 @@ public class TrainTestSet
     eval.evaluateModel(classifier, test);
 
     // history
-    return addToHistory(history, new ResultItem(eval, classifier, new Instances(train, 0)));
+    return addToHistory(history, new ResultItem(eval, classifier, new Instances(train, 0), runInfo));
   }
 
   /**

@@ -23,6 +23,7 @@ package adams.gui.tools.wekainvestigator.tab.classifytab.evaluation;
 import adams.core.Properties;
 import adams.core.Utils;
 import adams.core.option.OptionUtils;
+import adams.data.spreadsheet.MetaData;
 import adams.flow.container.WekaTrainTestSetContainer;
 import adams.gui.core.AbstractNamedHistoryPanel;
 import adams.gui.core.ParameterPanel;
@@ -204,24 +205,40 @@ public class TrainTestSplit
   @Override
   public ResultItem evaluate(Classifier classifier, AbstractNamedHistoryPanel<ResultItem> history) throws Exception {
     Evaluation 			eval;
+    double			perc;
+    int				seed;
     Instances			data;
     Instances			train;
     Instances			test;
     RandomSplitGenerator	generator;
     WekaTrainTestSetContainer	cont;
     String			msg;
+    MetaData 			runInfo;
 
     if ((msg = canEvaluate(classifier)) != null)
       throw new IllegalArgumentException("Cannot evaluate classifier!\n" + msg);
 
     data = getOwner().getData().get(m_ComboBoxDatasets.getSelectedIndex()).getData();
+    perc = Utils.toDouble(m_TextPercentage.getText()) / 100.0;
+    seed = Integer.parseInt(m_TextSeed.getText());
     if (m_CheckBoxPreserveOrder.isSelected())
-      generator = new RandomSplitGenerator(data, Utils.toDouble(m_TextPercentage.getText()) / 100.0);
+      generator = new RandomSplitGenerator(data, perc);
     else
-      generator = new RandomSplitGenerator(data, Integer.parseInt(m_TextSeed.getText()), Utils.toDouble(m_TextPercentage.getText()) / 100.0);
-    cont  = generator.next();
-    train = (Instances) cont.getValue(WekaTrainTestSetContainer.VALUE_TRAIN);
-    test  = (Instances) cont.getValue(WekaTrainTestSetContainer.VALUE_TEST);
+      generator = new RandomSplitGenerator(data, seed, perc);
+    cont    = generator.next();
+    train   = (Instances) cont.getValue(WekaTrainTestSetContainer.VALUE_TRAIN);
+    test    = (Instances) cont.getValue(WekaTrainTestSetContainer.VALUE_TEST);
+    runInfo = new MetaData();
+    runInfo.add("Seed", seed);
+    runInfo.add("Split percentage", perc);
+    runInfo.add("Order preserved", m_CheckBoxPreserveOrder.isSelected());
+    runInfo.add("Classifier", OptionUtils.getCommandLine(classifier));
+    runInfo.add("Dataset", data.relationName());
+    runInfo.add("# Attributes", data.numAttributes());
+    runInfo.add("# Instances (train)", train.numInstances());
+    runInfo.add("# Instances (test)", test.numInstances());
+    runInfo.add("Class attribute", data.classAttribute().name());
+
     classifier = (Classifier) OptionUtils.shallowCopy(classifier);
     getOwner().logMessage("Using " + m_TextPercentage.getText() + "% of '" + train.relationName() + "' to train " + OptionUtils.getCommandLine(classifier));
     classifier.buildClassifier(train);
@@ -230,7 +247,7 @@ public class TrainTestSplit
     eval.evaluateModel(classifier, test);
 
     // history
-    return addToHistory(history, new ResultItem(eval, classifier, new Instances(train, 0)));
+    return addToHistory(history, new ResultItem(eval, classifier, new Instances(train, 0), runInfo));
   }
 
   /**

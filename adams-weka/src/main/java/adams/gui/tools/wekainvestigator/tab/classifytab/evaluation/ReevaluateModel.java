@@ -21,6 +21,8 @@
 package adams.gui.tools.wekainvestigator.tab.classifytab.evaluation;
 
 import adams.core.SerializationHelper;
+import adams.core.option.OptionUtils;
+import adams.data.spreadsheet.MetaData;
 import adams.gui.chooser.FileChooserPanel;
 import adams.gui.core.AbstractNamedHistoryPanel;
 import adams.gui.core.ExtensionFileFilter;
@@ -212,16 +214,24 @@ public class ReevaluateModel
     Evaluation 	eval;
     Instances	data;
     String	msg;
+    MetaData 	runInfo;
 
     if ((msg = canEvaluate(classifier)) != null)
       throw new IllegalArgumentException("Cannot evaluate classifier!\n" + msg);
 
-    data = getOwner().getData().get(m_ComboBoxDatasets.getSelectedIndex()).getData();
+    data    = getOwner().getData().get(m_ComboBoxDatasets.getSelectedIndex()).getData();
+    runInfo = new MetaData();
+    runInfo.add("Classifier", OptionUtils.getCommandLine(classifier));
+    runInfo.add("Dataset", data.relationName());
+    runInfo.add("# Attributes", data.numAttributes());
+    runInfo.add("# Instances", data.numInstances());
+    runInfo.add("Class attribute", data.classAttribute().name());
+
     eval = new Evaluation(data);
     eval.evaluateModel(m_Model, data);
 
     // history
-    return addToHistory(history, new ResultItem(eval, m_Model, m_Header));
+    return addToHistory(history, new ResultItem(eval, m_Model, m_Header, runInfo));
   }
 
   /**
