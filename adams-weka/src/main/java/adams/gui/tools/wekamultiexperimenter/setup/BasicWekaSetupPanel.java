@@ -40,10 +40,8 @@ import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.io.File;
@@ -73,13 +71,13 @@ public class BasicWekaSetupPanel
   protected JComboBox m_ComboBoxClassificationRegression;
   
   /** the type of evaluation. */
-  protected JComboBox m_ComboBoxEvaluation;
+  protected JComboBox<String> m_ComboBoxEvaluation;
   
   /** the evaluation parameter. */
   protected JTextField m_TextEvaluation;
   
   /** how to traverse. */
-  protected JComboBox m_ComboBoxOrder;
+  protected JComboBox<String> m_ComboBoxOrder;
   
   /** the tabbed pane for datasets and classifiers. */
   protected BaseTabbedPane m_TabbedPane;
@@ -110,65 +108,47 @@ public class BasicWekaSetupPanel
     ((SpinnerNumberModel) m_SpinnerRepetitions.getModel()).setMinimum(1);
     ((SpinnerNumberModel) m_SpinnerRepetitions.getModel()).setStepSize(1);
     ((SpinnerNumberModel) m_SpinnerRepetitions.getModel()).setValue(ExperimenterDefaults.getRepetitions());
-    m_SpinnerRepetitions.addChangeListener(new ChangeListener() {
-      @Override
-      public void stateChanged(ChangeEvent e) {
-	setModified(true);
-      }
-    });
+    m_SpinnerRepetitions.addChangeListener((ChangeEvent e) -> setModified(true));
     m_PanelParameters.addParameter("Repetitions", m_SpinnerRepetitions);
     
-    m_ComboBoxClassificationRegression = new JComboBox(new String[]{
+    m_ComboBoxClassificationRegression = new JComboBox<>(new String[]{
 	"Classification",
 	"Regression"
     });
-    m_ComboBoxClassificationRegression.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	setModified(true);
-      }
-    });
+    m_ComboBoxClassificationRegression.addActionListener((ActionEvent e) -> setModified(true));
     m_PanelParameters.addParameter("Task", m_ComboBoxClassificationRegression);
     
-    m_ComboBoxEvaluation = new JComboBox(new String[]{
+    m_ComboBoxEvaluation = new JComboBox<>(new String[]{
 	"Cross-validation",
 	"Train/test split (randomized)",
 	"Train/test split (order preserved)",
     });
     m_ComboBoxEvaluation.setSelectedIndex(0);
     evalIndex = m_PanelParameters.addParameter("Evaluation", m_ComboBoxEvaluation);
-    m_ComboBoxEvaluation.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	setModified(true);
-	switch (m_ComboBoxEvaluation.getSelectedIndex()) {
-	  case -1:
-	  case 0:
-	    m_PanelParameters.getLabel(evalIndex+1).setText("Number of folds");
-	    break;
-	  case 1:
-	  case 2:
-	    m_PanelParameters.getLabel(evalIndex+1).setText("Split percentage");
-	    break;
-	  default:
-	    throw new IllegalStateException("Unhandled evaluation type: " + m_ComboBoxEvaluation.getSelectedItem());
-	}
+    m_ComboBoxEvaluation.addActionListener((ActionEvent e) -> {
+      setModified(true);
+      switch (m_ComboBoxEvaluation.getSelectedIndex()) {
+        case -1:
+        case 0:
+          m_PanelParameters.getLabel(evalIndex+1).setText("Number of folds");
+          break;
+        case 1:
+        case 2:
+          m_PanelParameters.getLabel(evalIndex+1).setText("Split percentage");
+          break;
+        default:
+          throw new IllegalStateException("Unhandled evaluation type: " + m_ComboBoxEvaluation.getSelectedItem());
       }
     });
     
     m_TextEvaluation = new JTextField(20);
     m_PanelParameters.addParameter("", m_TextEvaluation);
-    
-    m_ComboBoxOrder = new JComboBox(new String[]{
-	"Datasets -> Classifiers",
-	"Classifiers -> Datasets"
+
+    m_ComboBoxOrder = new JComboBox<>(new String[]{
+      "Datasets -> Classifiers",
+      "Classifiers -> Datasets"
     });
-    m_ComboBoxOrder.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	setModified(true);
-      }
-    });
+    m_ComboBoxOrder.addActionListener((ActionEvent e) -> setModified(true));
     m_PanelParameters.addParameter("Iteration", m_ComboBoxOrder);
     
     m_PanelDatasets = new DatasetPanel();
@@ -245,8 +225,6 @@ public class BasicWekaSetupPanel
     result.setAdvanceDataSetFirst(m_ComboBoxOrder.getSelectedIndex() <= 0);
 
     // classification/regression?
-    se             = null;
-    sec            = null;
     switch (m_ComboBoxClassificationRegression.getSelectedIndex()) {
       case 0:
 	se  = new ClassifierSplitEvaluator();
