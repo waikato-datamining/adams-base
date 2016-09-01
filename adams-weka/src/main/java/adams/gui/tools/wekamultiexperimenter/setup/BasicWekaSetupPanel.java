@@ -39,7 +39,6 @@ import javax.swing.JComboBox;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
-import javax.swing.event.ChangeEvent;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.beans.IntrospectionException;
@@ -108,14 +107,14 @@ public class BasicWekaSetupPanel
     ((SpinnerNumberModel) m_SpinnerRepetitions.getModel()).setMinimum(1);
     ((SpinnerNumberModel) m_SpinnerRepetitions.getModel()).setStepSize(1);
     ((SpinnerNumberModel) m_SpinnerRepetitions.getModel()).setValue(ExperimenterDefaults.getRepetitions());
-    m_SpinnerRepetitions.addChangeListener((ChangeEvent e) -> setModified(true));
+    m_SpinnerRepetitions.addChangeListener(new ModificationChangeListener());
     m_PanelParameters.addParameter("Repetitions", m_SpinnerRepetitions);
     
     m_ComboBoxClassificationRegression = new JComboBox<>(new String[]{
 	"Classification",
 	"Regression"
     });
-    m_ComboBoxClassificationRegression.addActionListener((ActionEvent e) -> setModified(true));
+    m_ComboBoxClassificationRegression.addActionListener(new ModificationActionListener());
     m_PanelParameters.addParameter("Task", m_ComboBoxClassificationRegression);
     
     m_ComboBoxEvaluation = new JComboBox<>(new String[]{
@@ -142,13 +141,14 @@ public class BasicWekaSetupPanel
     });
     
     m_TextEvaluation = new JTextField(20);
+    m_TextEvaluation.getDocument().addDocumentListener(new ModificationDocumentListener());
     m_PanelParameters.addParameter("", m_TextEvaluation);
 
     m_ComboBoxOrder = new JComboBox<>(new String[]{
       "Datasets -> Classifiers",
       "Classifiers -> Datasets"
     });
-    m_ComboBoxOrder.addActionListener((ActionEvent e) -> setModified(true));
+    m_ComboBoxOrder.addActionListener(new ModificationActionListener());
     m_PanelParameters.addParameter("Iteration", m_ComboBoxOrder);
     
     m_PanelDatasets = new DatasetPanel();
@@ -243,9 +243,10 @@ public class BasicWekaSetupPanel
       case -1:
       case 0:
 	cvrp = new CrossValidationResultProducer();
-	if (m_TextEvaluation.getText().length() == 0)
-	  throw new IllegalArgumentException("No folds provided!");
-	cvrp.setNumFolds(Integer.parseInt(m_TextEvaluation.getText()));
+	if (m_TextEvaluation.getText().isEmpty())
+	  cvrp.setNumFolds(10);
+	else
+	  cvrp.setNumFolds(new Double(m_TextEvaluation.getText()).intValue());
 	cvrp.setSplitEvaluator(se);
 	propertyPath = new PropertyNode[2];
 	try {
@@ -271,9 +272,10 @@ public class BasicWekaSetupPanel
       case 2:
 	rsrp = new RandomSplitResultProducer();
 	rsrp.setRandomizeData(m_ComboBoxEvaluation.getSelectedIndex() == 1);
-	if (m_TextEvaluation.getText().length() == 0)
-	  throw new IllegalArgumentException("No percentage provided!");
-	rsrp.setTrainPercent(Double.parseDouble(m_TextEvaluation.getText()));
+	if (m_TextEvaluation.getText().isEmpty())
+	  rsrp.setTrainPercent(66.0);
+	else
+	  rsrp.setTrainPercent(Double.parseDouble(m_TextEvaluation.getText()));
 	rsrp.setSplitEvaluator(se);
 	propertyPath = new PropertyNode[2];
 	try {

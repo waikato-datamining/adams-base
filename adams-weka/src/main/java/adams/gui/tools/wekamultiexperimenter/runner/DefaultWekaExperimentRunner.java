@@ -22,7 +22,6 @@ package adams.gui.tools.wekamultiexperimenter.runner;
 import adams.core.DateUtils;
 import adams.gui.tools.wekamultiexperimenter.ExperimenterPanel;
 import weka.experiment.Experiment;
-import weka.experiment.ExtExperiment;
 
 import java.io.File;
 import java.util.Date;
@@ -47,19 +46,6 @@ public class DefaultWekaExperimentRunner
    */
   public DefaultWekaExperimentRunner(ExperimenterPanel owner) throws Exception {
     super(owner);
-  }
-
-  /**
-   * Hook method that gets executed before the experiment gets initialized.
-   *
-   * @throws Exception	fails due to some error
-   */
-  protected void preRun() throws Exception {
-    super.preRun();
-    if (m_Exp instanceof ExtExperiment) {
-      ((ExtExperiment) m_Exp).setUseFilename(m_Owner.getUseFilename());
-      ((ExtExperiment) m_Exp).setPrefixDatasetsWithIndex(m_Owner.getPrefixDatasetsWithIndex());
-    }
   }
 
   /**

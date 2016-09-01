@@ -33,6 +33,7 @@ import adams.gui.core.RecentFilesHandlerWithCommandline.Setup;
 import adams.gui.event.RecentItemEvent;
 import adams.gui.event.RecentItemListener;
 import adams.gui.tools.wekamultiexperimenter.experiment.ExperimentWithCustomizableRelationNames;
+import adams.gui.tools.wekamultiexperimenter.experiment.ResettableExperiment;
 import adams.gui.tools.wekamultiexperimenter.runner.AbstractExperimentRunner;
 import adams.gui.tools.wekamultiexperimenter.setup.AbstractSetupPanel;
 import adams.gui.tools.wekamultiexperimenter.setup.BasicWekaSetupPanel;
@@ -87,6 +88,9 @@ public class ExperimenterPanel
   /** the save as menu item. */
   protected JMenuItem m_MenuItemFileSaveAs;
 
+  /** the reset menu item. */
+  protected JMenuItem m_MenuItemExecutionReset;
+
   /** the start menu item. */
   protected JMenuItem m_MenuItemExecutionStart;
 
@@ -119,10 +123,7 @@ public class ExperimenterPanel
 
   /** the log panel. */
   protected LogPanel m_PanelLog;
-  
-  /** the current experiment. */
-  protected Object m_Experiment;
-  
+
   /** the filechooser for loading/saving results. */
   protected WekaFileChooser m_FileChooserResults;
   
@@ -138,7 +139,6 @@ public class ExperimenterPanel
 
     m_RecentFilesHandlerSetups  = null;
     m_RecentFilesHandlerResults = null;
-    m_Experiment                = null;
     m_FileChooserResults        = new WekaFileChooser();
     m_Runner                    = null;
   }
@@ -246,7 +246,10 @@ public class ExperimenterPanel
     else
       msg = m_PanelSetup.handlesExperiment(exp);
     if (msg == null) {
+      m_PanelSetup.setIgnoreChanges(true);
       m_PanelSetup.setExperiment(exp);
+      updateMenuFromExperiment(exp);
+      m_PanelSetup.setIgnoreChanges(false);
       m_PanelSetup.setModified(false);
       m_CurrentFile = file;
       update();
@@ -284,9 +287,13 @@ public class ExperimenterPanel
    * Saves the experiment to the specified file.
    */
   public void saveSetup(File file) {
+    Object	exp;
+
     try {
       logMessage("Saving experiment to " + file);
-      m_PanelSetup.getExperimentIO().save(getExperiment(), file);
+      exp = getExperiment();
+      updateExperimentFromMenu(exp);
+      m_PanelSetup.getExperimentIO().save(exp, file);
       m_PanelSetup.setModified(false);
       m_CurrentFile = file;
       if (m_RecentFilesHandlerSetups != null)
@@ -322,12 +329,11 @@ public class ExperimenterPanel
   public boolean isExecuting() {
     return (m_Runner != null);
   }
-  
+
   /**
    * Starts the execution.
    */
   public void startExecution() {
-    
     try {
       m_Runner = m_PanelSetup.getExperimentIO().createRunner(this);
     }
@@ -590,11 +596,20 @@ public class ExperimenterPanel
 
       menu.addSeparator();
 
+      // Execution/Reset
+      menuitem = new JCheckBoxMenuItem("Reset");
+      menu.add(menuitem);
+      menuitem.setMnemonic('R');
+      menuitem.setIcon(GUIHelper.getEmptyIcon());
+      menuitem.addActionListener((ActionEvent e) -> m_PanelSetup.setModified(true));
+      m_MenuItemExecutionReset = menuitem;
+
       // Execution/Use filename
       menuitem = new JCheckBoxMenuItem("Use file name");
       menu.add(menuitem);
       menuitem.setMnemonic('f');
       menuitem.setIcon(GUIHelper.getEmptyIcon());
+      menuitem.addActionListener((ActionEvent e) -> m_PanelSetup.setModified(true));
       m_MenuItemUseFilename = menuitem;
 
       // Execution/Prefix datasets with index
@@ -602,6 +617,7 @@ public class ExperimenterPanel
       menu.add(menuitem);
       menuitem.setMnemonic('i');
       menuitem.setIcon(GUIHelper.getEmptyIcon());
+      menuitem.addActionListener((ActionEvent e) -> m_PanelSetup.setModified(true));
       m_MenuItemPrefixDatasetsWithIndex = menuitem;
 
       // Analysis
@@ -635,7 +651,8 @@ public class ExperimenterPanel
 
       // Analysis/Open DB
       menuitem = new JMenuItem("Open DB...");
-      menu.add(menuitem);
+      // TODO
+      // menu.add(menuitem);
       menuitem.setMnemonic('D');
       menuitem.setIcon(GUIHelper.getIcon("database.gif"));
       menuitem.addActionListener((ActionEvent e) -> openResultsDB());
@@ -682,8 +699,9 @@ public class ExperimenterPanel
 
     // File
     m_MenuItemFileSave.setEnabled(m_PanelSetup.isModified());
-    
+
     // Execution
+    m_MenuItemExecutionReset.setEnabled(!isExecuting() && (m_PanelSetup.getExperiment() instanceof ResettableExperiment));
     m_MenuItemExecutionStart.setEnabled(!isExecuting());
     m_MenuItemExecutionStop.setEnabled(isExecuting());
     m_MenuItemUseFilename.setEnabled(getExperiment() instanceof ExperimentWithCustomizableRelationNames);
@@ -691,6 +709,34 @@ public class ExperimenterPanel
 
     // Analysis
     m_MenuItemResultsSave.setEnabled(m_PanelAnalysis.hasResults());
+  }
+
+  /**
+   * Updates some menu items from the experiment.
+   *
+   * @param exp  	the experiment to use
+   */
+  protected void updateMenuFromExperiment(Object exp) {
+    if (exp instanceof ResettableExperiment)
+      m_MenuItemExecutionReset.setSelected(((ResettableExperiment) exp).getResetResults());
+    if (exp instanceof ExperimentWithCustomizableRelationNames) {
+      m_MenuItemUseFilename.setSelected(((ExperimentWithCustomizableRelationNames) exp).getUseFilename());
+      m_MenuItemPrefixDatasetsWithIndex.setSelected(((ExperimentWithCustomizableRelationNames) exp).getPrefixDatasetsWithIndex());
+    }
+  }
+
+  /**
+   * Updates the experiment using the state of some menu items.
+   *
+   * @param exp		the experiment to update
+   */
+  protected void updateExperimentFromMenu(Object exp) {
+    if (exp instanceof ResettableExperiment)
+      ((ResettableExperiment) exp).setResetResults(m_MenuItemExecutionReset.isSelected());
+    if (exp instanceof ExperimentWithCustomizableRelationNames) {
+      ((ExperimentWithCustomizableRelationNames) exp).setUseFilename(m_MenuItemUseFilename.isSelected());
+      ((ExperimentWithCustomizableRelationNames) exp).setPrefixDatasetsWithIndex(m_MenuItemPrefixDatasetsWithIndex.isSelected());
+    }
   }
 
   /**
@@ -728,6 +774,15 @@ public class ExperimenterPanel
    */
   public AnalysisPanel getAnalysisPanel() {
     return m_PanelAnalysis;
+  }
+
+  /**
+   * Returns whether to reset the results.
+   *
+   * @return		true if to reset the results
+   */
+  public boolean getResetResults() {
+    return (m_MenuItemExecutionReset != null) && m_MenuItemExecutionReset.isSelected();
   }
 
   /**

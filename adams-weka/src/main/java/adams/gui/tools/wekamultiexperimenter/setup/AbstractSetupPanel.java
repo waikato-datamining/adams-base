@@ -25,6 +25,12 @@ import adams.gui.tools.wekamultiexperimenter.AbstractExperimenterPanel;
 import adams.gui.tools.wekamultiexperimenter.io.AbstractExperimentIO;
 
 import javax.swing.Icon;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * Ancestor for setup panels.
@@ -38,6 +44,56 @@ public abstract class AbstractSetupPanel<T>
 
   /** for serialization. */
   private static final long serialVersionUID = -7551590918482897687L;
+
+  /**
+   * Document listener that just sets the modified flag.
+   *
+   * @author  fracpete (fracpete at waikato dot ac dot nz)
+   * @version $Revision$
+   */
+  public class ModificationDocumentListener
+    implements DocumentListener {
+    @Override
+    public void insertUpdate(DocumentEvent e) {
+      setModified(true);
+    }
+    @Override
+    public void removeUpdate(DocumentEvent e) {
+      setModified(true);
+    }
+    @Override
+    public void changedUpdate(DocumentEvent e) {
+      setModified(true);
+    }
+  }
+
+  /**
+   * Change listener that just sets the modified flag.
+   *
+   * @author  fracpete (fracpete at waikato dot ac dot nz)
+   * @version $Revision$
+   */
+  public class ModificationChangeListener
+    implements ChangeListener {
+    @Override
+    public void stateChanged(ChangeEvent e) {
+      setModified(true);
+    }
+  }
+
+  /**
+   * Action listener that just sets the modified flag.
+   *
+   * @author  fracpete (fracpete at waikato dot ac dot nz)
+   * @version $Revision$
+   */
+  public class ModificationActionListener
+    implements ActionListener {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+      setModified(true);
+    }
+  }
 
   /** the handler for loading/saving experiments. */
   protected AbstractExperimentIO<T> m_ExperimentIO;
@@ -89,7 +145,16 @@ public abstract class AbstractSetupPanel<T>
    * @return		the experiment
    */
   public abstract T getExperiment();
-  
+
+  /**
+   * Sets whether to ignore changes, ie don't set the modified flag.
+   *
+   * @param value	true if to ignore changes
+   */
+  public void setIgnoreChanges(boolean value) {
+    m_IgnoreChanges = value;
+  }
+
   /**
    * Sets the experiment to use.
    * 

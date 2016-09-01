@@ -36,7 +36,6 @@ import javax.swing.JComboBox;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
-import javax.swing.event.ChangeEvent;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.io.File;
@@ -93,13 +92,14 @@ public class BasicAdamsSetupPanel
     add(m_PanelParameters, BorderLayout.NORTH);
 
     m_PanelResultsHandler = new GenericObjectEditorPanel(AbstractResultsHandler.class, new FileResultsHandler(), true);
+    m_PanelResultsHandler.addChangeListener(new ModificationChangeListener());
     m_PanelParameters.addParameter("Results", m_PanelResultsHandler);
 
     m_SpinnerRepetitions = new JSpinner();
     ((SpinnerNumberModel) m_SpinnerRepetitions.getModel()).setMinimum(1);
     ((SpinnerNumberModel) m_SpinnerRepetitions.getModel()).setStepSize(1);
     ((SpinnerNumberModel) m_SpinnerRepetitions.getModel()).setValue(ExperimenterDefaults.getRepetitions());
-    m_SpinnerRepetitions.addChangeListener((ChangeEvent e) -> setModified(true));
+    m_SpinnerRepetitions.addChangeListener(new ModificationChangeListener());
     m_PanelParameters.addParameter("Repetitions", m_SpinnerRepetitions);
     
     m_ComboBoxEvaluation = new JComboBox<>(new String[]{
@@ -128,13 +128,14 @@ public class BasicAdamsSetupPanel
     // TODO threads
     
     m_TextEvaluation = new JTextField(20);
+    m_TextEvaluation.getDocument().addDocumentListener(new ModificationDocumentListener());
     m_PanelParameters.addParameter("", m_TextEvaluation);
 
     m_ComboBoxOrder = new JComboBox<>(new String[]{
       "Datasets -> Classifiers",
       "Classifiers -> Datasets"
     });
-    m_ComboBoxOrder.addActionListener((ActionEvent e) -> setModified(true));
+    m_ComboBoxOrder.addActionListener(new ModificationActionListener());
     m_PanelParameters.addParameter("Iteration", m_ComboBoxOrder);
     
     m_PanelDatasets = new DatasetPanel();
@@ -198,16 +199,25 @@ public class BasicAdamsSetupPanel
     switch (m_ComboBoxEvaluation.getSelectedIndex()) {
       case 0:
 	result = new CrossValidationExperiment();
-	((CrossValidationExperiment) result).setFolds(new Double(m_TextEvaluation.getText()).intValue());
+	if (!m_TextEvaluation.getText().isEmpty())
+	  ((CrossValidationExperiment) result).setFolds(new Double(m_TextEvaluation.getText()).intValue());
+	else
+	  ((CrossValidationExperiment) result).setFolds(10);
 	break;
       case 1:
 	result = new TrainTestSplitExperiment();
-	((TrainTestSplitExperiment) result).setPercentage(Double.parseDouble(m_TextEvaluation.getText()));
+	if (!m_TextEvaluation.getText().isEmpty())
+	  ((TrainTestSplitExperiment) result).setPercentage(Double.parseDouble(m_TextEvaluation.getText()));
+	else
+	  ((TrainTestSplitExperiment) result).setPercentage(66.0);
 	((TrainTestSplitExperiment) result).setPreserveOrder(false);
 	break;
       case 2:
 	result = new TrainTestSplitExperiment();
-	((TrainTestSplitExperiment) result).setPercentage(Double.parseDouble(m_TextEvaluation.getText()));
+	if (!m_TextEvaluation.getText().isEmpty())
+	  ((TrainTestSplitExperiment) result).setPercentage(Double.parseDouble(m_TextEvaluation.getText()));
+	else
+	  ((TrainTestSplitExperiment) result).setPercentage(66.0);
 	((TrainTestSplitExperiment) result).setPreserveOrder(true);
 	break;
       default:

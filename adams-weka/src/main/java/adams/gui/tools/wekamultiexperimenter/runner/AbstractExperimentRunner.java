@@ -22,6 +22,8 @@ package adams.gui.tools.wekamultiexperimenter.runner;
 import adams.core.DateUtils;
 import adams.core.ObjectCopyHelper;
 import adams.gui.tools.wekamultiexperimenter.ExperimenterPanel;
+import adams.gui.tools.wekamultiexperimenter.experiment.ExperimentWithCustomizableRelationNames;
+import adams.gui.tools.wekamultiexperimenter.experiment.ResettableExperiment;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -151,6 +153,12 @@ public abstract class AbstractExperimentRunner<T>
    * @throws Exception	fails due to some error
    */
   protected void preRun() throws Exception {
+    if (m_Exp instanceof ExperimentWithCustomizableRelationNames) {
+      ((ExperimentWithCustomizableRelationNames) m_Exp).setUseFilename(m_Owner.getUseFilename());
+      ((ExperimentWithCustomizableRelationNames) m_Exp).setPrefixDatasetsWithIndex(m_Owner.getPrefixDatasetsWithIndex());
+    }
+    if (m_Exp instanceof ResettableExperiment)
+      ((ResettableExperiment) m_Exp).setResetResults(m_Owner.getResetResults());
   }
 
   /**

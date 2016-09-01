@@ -65,9 +65,13 @@ import java.util.logging.Level;
  */
 public abstract class AbstractExperiment
   extends AbstractOptionHandler
-  implements Stoppable, ExperimentWithCustomizableRelationNames, SpreadSheetSupporter {
+  implements Stoppable, ExperimentWithCustomizableRelationNames,
+             ResettableExperiment, SpreadSheetSupporter {
 
   private static final long serialVersionUID = -345521029095304309L;
+
+  /** whether to reset the results before starting the experiment. */
+  protected boolean m_ResetResults;
 
   /** the classifiers to evaluate. */
   protected Classifier[] m_Classifiers;
@@ -122,6 +126,10 @@ public abstract class AbstractExperiment
     super.defineOptions();
 
     m_OptionManager.add(
+      "reset-results", "resetResults",
+      false);
+
+    m_OptionManager.add(
       "results-handler", "resultsHandler",
       new FileResultsHandler());
 
@@ -156,6 +164,35 @@ public abstract class AbstractExperiment
     m_OptionManager.add(
       "runs", "runs",
       10, 1, null);
+  }
+
+  /**
+   * Sets whether to clear the results before starting the experiment.
+   *
+   * @param value	true if to clear results
+   */
+  public void setResetResults(boolean value) {
+    m_ResetResults = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to clear the results before starting the experiment.
+   *
+   * @return		true if to clear results
+   */
+  public boolean getResetResults() {
+    return m_ResetResults;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String resetResultsTipText() {
+    return "If enabled, any pre-existing results get discarded before the experiment starts.";
   }
 
   /**
@@ -536,15 +573,17 @@ public abstract class AbstractExperiment
 
   /**
    * Initializes the results.
-   * <br>
-   * Default implementation just creates a new spreadsheet.
    *
    * @return		the results
    */
   protected SpreadSheet initResults() {
     SpreadSheet		result;
 
-    result = m_ResultsHandler.read();
+    result = null;
+
+    if (m_ResetResults)
+      result = m_ResultsHandler.read();
+
     if (result == null)
       result = new DefaultSpreadSheet();
 
