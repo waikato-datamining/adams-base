@@ -27,9 +27,9 @@ import adams.gui.tools.wekamultiexperimenter.experiment.AbstractExperiment;
 import adams.gui.tools.wekamultiexperimenter.experiment.AbstractResultsHandler;
 import adams.gui.tools.wekamultiexperimenter.experiment.CrossValidationExperiment;
 import adams.gui.tools.wekamultiexperimenter.experiment.FileResultsHandler;
+import adams.gui.tools.wekamultiexperimenter.experiment.TrainTestSplitExperiment;
 import adams.gui.tools.wekamultiexperimenter.io.AbstractExperimentIO;
 import adams.gui.tools.wekamultiexperimenter.io.DefaultAdamsExperimentIO;
-import weka.experiment.ResultListener;
 import weka.gui.experiment.ExperimenterDefaults;
 
 import javax.swing.JComboBox;
@@ -192,7 +192,6 @@ public class BasicAdamsSetupPanel
   @Override
   public AbstractExperiment getExperiment() {
     AbstractExperiment		result;
-    ResultListener		listener;
 
     result = getExperimentIO().create();
 
@@ -201,7 +200,18 @@ public class BasicAdamsSetupPanel
 	result = new CrossValidationExperiment();
 	((CrossValidationExperiment) result).setFolds(Integer.parseInt(m_TextEvaluation.getText()));
 	break;
-      // TODO
+      case 1:
+	result = new TrainTestSplitExperiment();
+	((TrainTestSplitExperiment) result).setPercentage(Double.parseDouble(m_TextEvaluation.getText()));
+	((TrainTestSplitExperiment) result).setPreserveOrder(false);
+	break;
+      case 2:
+	result = new TrainTestSplitExperiment();
+	((TrainTestSplitExperiment) result).setPercentage(Double.parseDouble(m_TextEvaluation.getText()));
+	((TrainTestSplitExperiment) result).setPreserveOrder(true);
+	break;
+      default:
+	logMessage("Unhandled evaluation type: " + m_ComboBoxEvaluation.getSelectedItem());
     }
 
     result.setResultsHandler((AbstractResultsHandler) m_PanelResultsHandler.getCurrent());
@@ -227,7 +237,16 @@ public class BasicAdamsSetupPanel
 	m_ComboBoxEvaluation.setSelectedIndex(0);
 	m_TextEvaluation.setText("" + ((CrossValidationExperiment) value).getFolds());
       }
-      // TODO train/test splits
+      else if (value instanceof TrainTestSplitExperiment) {
+	if (((TrainTestSplitExperiment) value).getPreserveOrder())
+	  m_ComboBoxEvaluation.setSelectedIndex(2);
+	else
+	  m_ComboBoxEvaluation.setSelectedIndex(1);
+	m_TextEvaluation.setText("" + ((TrainTestSplitExperiment) value).getPercentage());
+      }
+      else {
+	logMessage("Unhandled experiment type: " + value.getClass().getName());
+      }
       m_PanelResultsHandler.setCurrent(value.getResultsHandler());
       m_SpinnerRepetitions.setValue(value.getRuns());
       m_ComboBoxOrder.setSelectedIndex(value.getDatasetsFirst() ? 0 : 1);
@@ -249,7 +268,8 @@ public class BasicAdamsSetupPanel
   public String handlesExperiment(AbstractExperiment exp) {
     if (exp instanceof CrossValidationExperiment)
       return null;
-    // TODO train/test splits
+    if (exp instanceof TrainTestSplitExperiment)
+      return null;
     return "Unsupported experiment type: " + exp.getClass().getName();
   }
 }
