@@ -198,7 +198,7 @@ public class BasicAdamsSetupPanel
     switch (m_ComboBoxEvaluation.getSelectedIndex()) {
       case 0:
 	result = new CrossValidationExperiment();
-	((CrossValidationExperiment) result).setFolds(Integer.parseInt(m_TextEvaluation.getText()));
+	((CrossValidationExperiment) result).setFolds(new Double(m_TextEvaluation.getText()).intValue());
 	break;
       case 1:
 	result = new TrainTestSplitExperiment();
