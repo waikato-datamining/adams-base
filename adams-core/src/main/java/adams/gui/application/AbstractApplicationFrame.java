@@ -89,18 +89,6 @@ public abstract class AbstractApplicationFrame
   /** for serialization. */
   private static final long serialVersionUID = -5800519559483605870L;
 
-  /** the props file key for the menu bar. */
-  public final static String LAYOUT_MENUBAR = "MenuBar";
-
-  /** the props file key prefix for the menus. */
-  public final static String LAYOUT_MENU_PREFIX = "Menu.";
-
-  /** the props file key for the windows menu. */
-  public final static String LAYOUT_MENU_WINDOWS = "Windows";
-
-  /** the separator between classname and shortcut. */
-  public final static String LAYOUT_SHORTCUT_SEPARATOR = "#";
-
   /** the frame itself. */
   protected AbstractApplicationFrame m_Self;
 
@@ -559,7 +547,7 @@ public abstract class AbstractApplicationFrame
 
     // close all children
     iter = getWindowList();
-    list = new ArrayList<Child>();
+    list = new ArrayList<>();
     while (iter.hasNext())
       list.add(iter.next());
     for (i = 0; i < list.size(); i++) {
@@ -837,10 +825,10 @@ public abstract class AbstractApplicationFrame
 
     conns = DatabaseManager.getActiveConnectionObjects();
     if (conns.size() > 0) {
-      connsStr = new HashSet<String>();
+      connsStr = new HashSet<>();
       for (AbstractDatabaseConnection conn: conns)
 	connsStr.add(conn.toStringShort());
-      connsList = new ArrayList<String>(connsStr);
+      connsList = new ArrayList<>(connsStr);
       Collections.sort(connsList);
       newTitle += " " + connsList;
     }
