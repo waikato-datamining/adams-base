@@ -20,7 +20,6 @@
 package adams.gui.core;
 
 import adams.core.Utils;
-import adams.core.logging.Logger;
 import adams.core.logging.LoggingHelper;
 import adams.core.logging.LoggingLevel;
 import adams.gui.event.ConsolePanelEvent;
@@ -64,13 +63,6 @@ public class ConsolePanel
 
   /** for serialization. */
   private static final long serialVersionUID = -2339480199106797838L;
-
-  /** the logger to use. */
-  protected static Logger LOGGER;
-  static {
-    LOGGER = LoggingHelper.getLogger(ConsolePanel.class);
-    LOGGER.setLevel(Level.INFO);
-  }
 
   /**
    * Represents a single panel for a specific type of output.
@@ -667,8 +659,6 @@ public class ConsolePanel
     m_PanelAll.append(level, msg);
     if (LoggingHelper.isAtMost(level.getLevel(), Level.WARNING))
       m_PanelError.append(level, msg);
-
-    LOGGER.log(level.getLevel(), msg);
 
     notifyListeners(level, msg);
   }
