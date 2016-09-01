@@ -20,6 +20,8 @@
 package adams.gui.tools.wekamultiexperimenter.setup;
 
 import adams.gui.core.BaseTabbedPane;
+import adams.gui.core.NumberTextField;
+import adams.gui.core.NumberTextField.Type;
 import adams.gui.core.ParameterPanel;
 import adams.gui.tools.wekamultiexperimenter.io.AbstractExperimentIO;
 import adams.gui.tools.wekamultiexperimenter.io.DefaultWekaExperimentIO;
@@ -36,9 +38,6 @@ import weka.experiment.SplitEvaluator;
 import weka.gui.experiment.ExperimenterDefaults;
 
 import javax.swing.JComboBox;
-import javax.swing.JSpinner;
-import javax.swing.JTextField;
-import javax.swing.SpinnerNumberModel;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.beans.IntrospectionException;
@@ -64,7 +63,7 @@ public class BasicWekaSetupPanel
   protected OutputPanel m_PanelOutput;
   
   /** the number of repetitions. */
-  protected JSpinner m_SpinnerRepetitions;
+  protected NumberTextField m_TextRepetitions;
   
   /** classification or regression. */
   protected JComboBox m_ComboBoxClassificationRegression;
@@ -73,7 +72,7 @@ public class BasicWekaSetupPanel
   protected JComboBox<String> m_ComboBoxEvaluation;
   
   /** the evaluation parameter. */
-  protected JTextField m_TextEvaluation;
+  protected NumberTextField m_TextEvaluation;
   
   /** how to traverse. */
   protected JComboBox<String> m_ComboBoxOrder;
@@ -103,12 +102,10 @@ public class BasicWekaSetupPanel
     m_PanelOutput.setOwner(this);
     m_PanelParameters.addParameter("Output", m_PanelOutput);
 
-    m_SpinnerRepetitions = new JSpinner();
-    ((SpinnerNumberModel) m_SpinnerRepetitions.getModel()).setMinimum(1);
-    ((SpinnerNumberModel) m_SpinnerRepetitions.getModel()).setStepSize(1);
-    ((SpinnerNumberModel) m_SpinnerRepetitions.getModel()).setValue(ExperimenterDefaults.getRepetitions());
-    m_SpinnerRepetitions.addChangeListener(new ModificationChangeListener());
-    m_PanelParameters.addParameter("Repetitions", m_SpinnerRepetitions);
+    m_TextRepetitions = new NumberTextField(Type.INTEGER);
+    m_TextRepetitions.setValue(ExperimenterDefaults.getRepetitions());
+    m_TextRepetitions.getDocument().addDocumentListener(new ModificationDocumentListener());
+    m_PanelParameters.addParameter("Repetitions", m_TextRepetitions);
     
     m_ComboBoxClassificationRegression = new JComboBox<>(new String[]{
 	"Classification",
@@ -140,7 +137,7 @@ public class BasicWekaSetupPanel
       }
     });
     
-    m_TextEvaluation = new JTextField(20);
+    m_TextEvaluation = new NumberTextField(Type.DOUBLE);
     m_TextEvaluation.getDocument().addDocumentListener(new ModificationDocumentListener());
     m_PanelParameters.addParameter("", m_TextEvaluation);
 
@@ -170,10 +167,10 @@ public class BasicWekaSetupPanel
   protected void finishInit() {
     super.finishInit();
     
-    m_SpinnerRepetitions.setValue(10);
+    m_TextRepetitions.setValue(10);
     m_ComboBoxClassificationRegression.setSelectedIndex(0);
     m_ComboBoxEvaluation.setSelectedIndex(0);
-    m_TextEvaluation.setText("10");
+    m_TextEvaluation.setValue(10);
     m_ComboBoxOrder.setSelectedIndex(0);
 
     setModified(false);
@@ -221,7 +218,7 @@ public class BasicWekaSetupPanel
     result.setPropertyArray(new Classifier[0]);
     result.setUsePropertyIterator(true);
     result.setRunLower(1);
-    result.setRunUpper((Integer) m_SpinnerRepetitions.getValue());
+    result.setRunUpper(m_TextRepetitions.getValue().intValue());
     result.setAdvanceDataSetFirst(m_ComboBoxOrder.getSelectedIndex() <= 0);
 
     // classification/regression?
@@ -243,10 +240,7 @@ public class BasicWekaSetupPanel
       case -1:
       case 0:
 	cvrp = new CrossValidationResultProducer();
-	if (m_TextEvaluation.getText().isEmpty())
-	  cvrp.setNumFolds(10);
-	else
-	  cvrp.setNumFolds(new Double(m_TextEvaluation.getText()).intValue());
+        cvrp.setNumFolds(m_TextEvaluation.getValue(10).intValue());
 	cvrp.setSplitEvaluator(se);
 	propertyPath = new PropertyNode[2];
 	try {
@@ -272,10 +266,7 @@ public class BasicWekaSetupPanel
       case 2:
 	rsrp = new RandomSplitResultProducer();
 	rsrp.setRandomizeData(m_ComboBoxEvaluation.getSelectedIndex() == 1);
-	if (m_TextEvaluation.getText().isEmpty())
-	  rsrp.setTrainPercent(66.0);
-	else
-	  rsrp.setTrainPercent(Double.parseDouble(m_TextEvaluation.getText()));
+        rsrp.setTrainPercent(m_TextEvaluation.getValue(66.0).doubleValue());
 	rsrp.setSplitEvaluator(se);
 	propertyPath = new PropertyNode[2];
 	try {
@@ -327,13 +318,13 @@ public class BasicWekaSetupPanel
     
     if (handlesExperiment(value) == null) {
       m_PanelOutput.setResultListener(value.getResultListener());
-      m_SpinnerRepetitions.setValue(value.getRunUpper());
+      m_TextRepetitions.setValue(value.getRunUpper());
       m_ComboBoxOrder.setSelectedIndex(value.getAdvanceDataSetFirst() ? 0 : 1);
 
       if (value.getResultProducer() instanceof CrossValidationResultProducer) {
 	cvrp = (CrossValidationResultProducer) value.getResultProducer();
 	m_ComboBoxEvaluation.setSelectedIndex(0);
-	m_TextEvaluation.setText("" + cvrp.getNumFolds());
+	m_TextEvaluation.setValue(cvrp.getNumFolds());
 	if (cvrp.getSplitEvaluator() instanceof ClassifierSplitEvaluator)
 	  m_ComboBoxClassificationRegression.setSelectedIndex(0);
 	else if (cvrp.getSplitEvaluator() instanceof RegressionSplitEvaluator)
@@ -345,7 +336,7 @@ public class BasicWekaSetupPanel
 	  m_ComboBoxEvaluation.setSelectedIndex(1);
 	else
 	  m_ComboBoxEvaluation.setSelectedIndex(2);
-	m_TextEvaluation.setText("" + rsrp.getTrainPercent());
+	m_TextEvaluation.setValue(rsrp.getTrainPercent());
 	if (rsrp.getSplitEvaluator() instanceof ClassifierSplitEvaluator)
 	  m_ComboBoxClassificationRegression.setSelectedIndex(0);
 	else if (rsrp.getSplitEvaluator() instanceof RegressionSplitEvaluator)

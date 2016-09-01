@@ -275,7 +275,7 @@ public class DefaultAnalysisPanel
     siglevel = props.getDouble("Results.SignificanceLevel", 0.05);
     m_TextSignificance = new NumberTextField(Type.DOUBLE);
     m_TextSignificance.setCheckModel(new BoundedNumberCheckModel(Type.DOUBLE, 0.0, 1.0, siglevel));
-    m_TextSignificance.setText("" + siglevel);
+    m_TextSignificance.setValue(siglevel);
     panelParams.addParameter("Significance level", m_TextSignificance);
 
     // rows
@@ -522,7 +522,7 @@ public class DefaultAnalysisPanel
     }
     tester.setResultMatrix(matrix);
     tester.setDisplayedResultsets(null);
-    tester.setSignificanceLevel(Double.parseDouble(m_TextSignificance.getText()));
+    tester.setSignificanceLevel(m_TextSignificance.getValue(0.05).doubleValue());
     tester.setShowStdDevs(matrix.getShowStdDev());
     metric = "" + m_ComboBoxMetric.getSelectedItem();
     index = getAttributeIndex(metric);

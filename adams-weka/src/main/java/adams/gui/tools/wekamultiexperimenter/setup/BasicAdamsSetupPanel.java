@@ -21,6 +21,8 @@ package adams.gui.tools.wekamultiexperimenter.setup;
 
 import adams.core.io.PlaceholderFile;
 import adams.gui.core.BaseTabbedPane;
+import adams.gui.core.NumberTextField;
+import adams.gui.core.NumberTextField.Type;
 import adams.gui.core.ParameterPanel;
 import adams.gui.goe.GenericObjectEditorPanel;
 import adams.gui.tools.wekamultiexperimenter.experiment.AbstractExperiment;
@@ -33,9 +35,6 @@ import adams.gui.tools.wekamultiexperimenter.io.DefaultAdamsExperimentIO;
 import weka.gui.experiment.ExperimenterDefaults;
 
 import javax.swing.JComboBox;
-import javax.swing.JSpinner;
-import javax.swing.JTextField;
-import javax.swing.SpinnerNumberModel;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.io.File;
@@ -59,16 +58,16 @@ public class BasicAdamsSetupPanel
   protected GenericObjectEditorPanel m_PanelResultsHandler;
   
   /** the number of repetitions. */
-  protected JSpinner m_SpinnerRepetitions;
+  protected NumberTextField m_TextRepetitions;
   
   /** the number of threads. */
-  protected JSpinner m_SpinnerNumThreads;
+  protected NumberTextField m_TextNumThreads;
 
   /** the type of evaluation. */
   protected JComboBox<String> m_ComboBoxEvaluation;
   
   /** the evaluation parameter. */
-  protected JTextField m_TextEvaluation;
+  protected NumberTextField m_TextEvaluation;
 
   /** the tabbed pane for datasets and classifiers. */
   protected BaseTabbedPane m_TabbedPane;
@@ -95,12 +94,10 @@ public class BasicAdamsSetupPanel
     m_PanelResultsHandler.addChangeListener(new ModificationChangeListener());
     m_PanelParameters.addParameter("Results", m_PanelResultsHandler);
 
-    m_SpinnerRepetitions = new JSpinner();
-    ((SpinnerNumberModel) m_SpinnerRepetitions.getModel()).setMinimum(1);
-    ((SpinnerNumberModel) m_SpinnerRepetitions.getModel()).setStepSize(1);
-    ((SpinnerNumberModel) m_SpinnerRepetitions.getModel()).setValue(ExperimenterDefaults.getRepetitions());
-    m_SpinnerRepetitions.addChangeListener(new ModificationChangeListener());
-    m_PanelParameters.addParameter("Repetitions", m_SpinnerRepetitions);
+    m_TextRepetitions = new NumberTextField(Type.INTEGER);
+    m_TextRepetitions.setValue(ExperimenterDefaults.getRepetitions());
+    m_TextRepetitions.getDocument().addDocumentListener(new ModificationDocumentListener());
+    m_PanelParameters.addParameter("Repetitions", m_TextRepetitions);
     
     m_ComboBoxEvaluation = new JComboBox<>(new String[]{
 	"Cross-validation",
@@ -127,17 +124,15 @@ public class BasicAdamsSetupPanel
       }
     });
     
-    m_TextEvaluation = new JTextField(20);
+    m_TextEvaluation = new NumberTextField(Type.DOUBLE);
     m_TextEvaluation.getDocument().addDocumentListener(new ModificationDocumentListener());
     m_PanelParameters.addParameter("", m_TextEvaluation);
 
-    m_SpinnerNumThreads = new JSpinner();
-    ((SpinnerNumberModel) m_SpinnerNumThreads.getModel()).setMinimum(-1);
-    ((SpinnerNumberModel) m_SpinnerNumThreads.getModel()).setStepSize(1);
-    ((SpinnerNumberModel) m_SpinnerNumThreads.getModel()).setValue(-1);
-    m_SpinnerNumThreads.addChangeListener(new ModificationChangeListener());
-    m_SpinnerNumThreads.setToolTipText("The number of cores/cpus to use (<1 for all available ones)");
-    m_PanelParameters.addParameter("# Threads", m_SpinnerNumThreads);
+    m_TextNumThreads = new NumberTextField(Type.INTEGER);
+    m_TextNumThreads.setValue(-1);
+    m_TextNumThreads.getDocument().addDocumentListener(new ModificationDocumentListener());
+    m_TextNumThreads.setToolTipText("The number of cores/cpus to use (<1 for all available ones)");
+    m_PanelParameters.addParameter("# Threads", m_TextNumThreads);
     
     m_PanelDatasets = new DatasetPanel();
     m_PanelDatasets.setOwner(this);
@@ -158,9 +153,9 @@ public class BasicAdamsSetupPanel
   protected void finishInit() {
     super.finishInit();
     
-    m_SpinnerRepetitions.setValue(10);
+    m_TextRepetitions.setValue(10);
     m_ComboBoxEvaluation.setSelectedIndex(0);
-    m_TextEvaluation.setText("10");
+    m_TextEvaluation.setValue(10);
 
     setModified(false);
   }
@@ -199,25 +194,16 @@ public class BasicAdamsSetupPanel
     switch (m_ComboBoxEvaluation.getSelectedIndex()) {
       case 0:
 	result = new CrossValidationExperiment();
-	if (!m_TextEvaluation.getText().isEmpty())
-	  ((CrossValidationExperiment) result).setFolds(new Double(m_TextEvaluation.getText()).intValue());
-	else
-	  ((CrossValidationExperiment) result).setFolds(10);
+	((CrossValidationExperiment) result).setFolds(m_TextEvaluation.getValue(10).intValue());
 	break;
       case 1:
 	result = new TrainTestSplitExperiment();
-	if (!m_TextEvaluation.getText().isEmpty())
-	  ((TrainTestSplitExperiment) result).setPercentage(Double.parseDouble(m_TextEvaluation.getText()));
-	else
-	  ((TrainTestSplitExperiment) result).setPercentage(66.0);
+	((TrainTestSplitExperiment) result).setPercentage(m_TextEvaluation.getValue(66.0).doubleValue());
 	((TrainTestSplitExperiment) result).setPreserveOrder(false);
 	break;
       case 2:
 	result = new TrainTestSplitExperiment();
-	if (!m_TextEvaluation.getText().isEmpty())
-	  ((TrainTestSplitExperiment) result).setPercentage(Double.parseDouble(m_TextEvaluation.getText()));
-	else
-	  ((TrainTestSplitExperiment) result).setPercentage(66.0);
+	((TrainTestSplitExperiment) result).setPercentage(m_TextEvaluation.getValue(66.0).doubleValue());
 	((TrainTestSplitExperiment) result).setPreserveOrder(true);
 	break;
       default:
@@ -225,8 +211,8 @@ public class BasicAdamsSetupPanel
     }
 
     result.setResultsHandler((AbstractResultsHandler) m_PanelResultsHandler.getCurrent());
-    result.setRuns((Integer) m_SpinnerRepetitions.getValue());
-    result.setNumThreads((Integer) m_SpinnerNumThreads.getValue());
+    result.setRuns(m_TextRepetitions.getValue().intValue());
+    result.setNumThreads(m_TextNumThreads.getValue().intValue());
     result.setClassifiers(m_PanelClassifiers.getClassifiers());
 
     for (File file: m_PanelDatasets.getFiles())
@@ -245,20 +231,20 @@ public class BasicAdamsSetupPanel
     if (handlesExperiment(value) == null) {
       if (value instanceof CrossValidationExperiment) {
 	m_ComboBoxEvaluation.setSelectedIndex(0);
-	m_TextEvaluation.setText("" + ((CrossValidationExperiment) value).getFolds());
+	m_TextEvaluation.setValue(((CrossValidationExperiment) value).getFolds());
       }
       else if (value instanceof TrainTestSplitExperiment) {
 	if (((TrainTestSplitExperiment) value).getPreserveOrder())
 	  m_ComboBoxEvaluation.setSelectedIndex(2);
 	else
 	  m_ComboBoxEvaluation.setSelectedIndex(1);
-	m_TextEvaluation.setText("" + ((TrainTestSplitExperiment) value).getPercentage());
+	m_TextEvaluation.setValue(((TrainTestSplitExperiment) value).getPercentage());
       }
       else {
 	logMessage("Unhandled experiment type: " + value.getClass().getName());
       }
       m_PanelResultsHandler.setCurrent(value.getResultsHandler());
-      m_SpinnerRepetitions.setValue(value.getRuns());
+      m_TextRepetitions.setValue(value.getRuns());
       m_PanelDatasets.setFiles(value.getDatasets());
       m_PanelClassifiers.setClassifiers(value.getClassifiers());
     }
