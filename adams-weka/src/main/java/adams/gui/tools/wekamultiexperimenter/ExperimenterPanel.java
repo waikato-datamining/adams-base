@@ -489,6 +489,7 @@ public class ExperimenterPanel
     JMenu		submenu;
     JMenuItem		menuitem;
     String[]		classes;
+    String		defSetup;
 
     if (m_MenuBar == null) {
       result = new JMenuBar();
@@ -504,11 +505,12 @@ public class ExperimenterPanel
       menu.add(submenu);
       submenu.setMnemonic('N');
       classes = AbstractSetupPanel.getPanels();
+      defSetup = getProperties().getProperty("Setups.InitialPaneldefSetup", BasicWekaSetupPanel.class.getName());
       for (String cls: classes) {
 	try {
 	  final AbstractSetupPanel setup = (AbstractSetupPanel) Class.forName(cls).newInstance();
 	  menuitem = new JMenuItem(setup.getSetupName());
-	  if (setup instanceof BasicWekaSetupPanel) {
+	  if (setup.getClass().getName().equals(defSetup)) {
 	    menuitem.setIcon(GUIHelper.getIcon("new.gif"));
 	    menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed N"));
 	  }
