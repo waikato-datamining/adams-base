@@ -758,7 +758,7 @@ public abstract class AbstractExperiment
     addMetric("Key_Dataset", data.relationName());
     addMetric("Key_Scheme", cls.getClass().getName());
     addMetric("Key_Scheme_options", m_CommandLineHandler.joinOptions(m_CommandLineHandler.getOptions(cls)));
-    addMetric("Key_Scheme_version_ID", ObjectStreamClass.lookup(cls.getClass()).getSerialVersionUID());
+    addMetric("Key_Scheme_version_ID", "" + ObjectStreamClass.lookup(cls.getClass()).getSerialVersionUID());
 
     // evaluation
     nominal = eval.getHeader().classAttribute().isNominal();
