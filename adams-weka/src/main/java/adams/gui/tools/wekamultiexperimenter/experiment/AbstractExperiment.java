@@ -27,6 +27,7 @@ import adams.core.ThreadLimiter;
 import adams.core.Utils;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
+import adams.core.management.ProcessUtils;
 import adams.core.option.AbstractOptionHandler;
 import adams.core.option.OptionUtils;
 import adams.core.option.WekaCommandLineHandler;
@@ -36,6 +37,7 @@ import adams.data.spreadsheet.HeaderRow;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetColumnIndex;
+import adams.data.spreadsheet.SpreadSheetHelper;
 import adams.data.spreadsheet.SpreadSheetSupporter;
 import adams.data.spreadsheet.rowfinder.ByNumericValue;
 import adams.data.spreadsheet.rowfinder.ByStringComparison;
@@ -56,6 +58,9 @@ import java.io.ObjectStreamClass;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
 /**
@@ -67,9 +72,137 @@ import java.util.logging.Level;
 public abstract class AbstractExperiment
   extends AbstractOptionHandler
   implements Stoppable, ExperimentWithCustomizableRelationNames,
-             ResettableExperiment, SpreadSheetSupporter, ThreadLimiter {
+  ResettableExperiment, SpreadSheetSupporter, ThreadLimiter {
 
   private static final long serialVersionUID = -345521029095304309L;
+
+  /**
+   * For evaluating a single classifier/dataset combination.
+   *
+   * @param <T> the type of experiment
+   * @author FracPete (fracpete at waikato dot ac dot nz)
+   * @version $Revision$
+   */
+  public static abstract class AbstractRun<T extends AbstractExperiment>
+    implements Runnable {
+
+    /** the owner. */
+    protected T m_Owner;
+
+    /** the run. */
+    protected int m_Run;
+
+    /** the classifier. */
+    protected Classifier m_Classifier;
+
+    /** the dataset. */
+    protected Instances m_Data;
+
+    /** the class label index. */
+    protected Index m_ClassLabelIndex;
+
+    /** the generated results. */
+    protected SpreadSheet m_Results;
+
+    /**
+     * Initializes the run.
+     *
+     * @param owner		the owning experiment
+     * @param run		the current run
+     * @param classifier	the classifier to evaluate
+     * @param data		the data to use for evaluation
+     */
+    public AbstractRun(T owner, int run, Classifier classifier, Instances data) {
+      m_Owner           = owner;
+      m_Run             = run;
+      m_Classifier      = classifier;
+      m_Data            = data;
+      m_ClassLabelIndex = m_Owner.getClassLabelIndex().getClone();
+      m_ClassLabelIndex.setMax(m_Data.classAttribute().numValues());
+      m_Results         = new DefaultSpreadSheet();
+    }
+
+    /**
+     * Adds the metric to the results, automatically expands spreadsheet.
+     *
+     * @param results	the results to add the metrics to
+     * @param name	the name
+     * @param value	the value
+     */
+    protected void addMetric(SpreadSheet results, String name, Object value) {
+      HeaderRow	header;
+      Row		row;
+      int		index;
+
+      header = results.getHeaderRow();
+      index  = header.indexOfContent(name);
+      // not present?
+      if (index == -1) {
+	results.insertColumn(results.getColumnCount(), name);
+	index = results.getColumnCount() - 1;
+      }
+      row = results.getRow(results.getRowCount() - 1);
+      row.addCell(index).setNative(value);
+    }
+
+    /**
+     * Adds the metrics from the Evaluation object to the results.
+     *
+     * @param results	the results to add the metrics to
+     * @param currentRun	the current run
+     * @param cls		the classifier to evaluate
+     * @param data	the dataset to evaluate on
+     * @param eval	the Evaluation object to add
+     */
+    protected void addMetrics(SpreadSheet results, int currentRun, Classifier cls, Instances data, Evaluation eval) {
+      boolean			nominal;
+      String			metric;
+      int				classLabel;
+      WekaCommandLineHandler 	cmdlineHandler;
+
+      results.addRow();
+
+      cmdlineHandler = new WekaCommandLineHandler();
+
+      // general
+      addMetric(results, "Key_Run", currentRun);
+      addMetric(results, "Key_Dataset", data.relationName());
+      addMetric(results, "Key_Scheme", cls.getClass().getName());
+      addMetric(results, "Key_Scheme_options", cmdlineHandler.joinOptions(cmdlineHandler.getOptions(cls)));
+      addMetric(results, "Key_Scheme_version_ID", "" + ObjectStreamClass.lookup(cls.getClass()).getSerialVersionUID());
+
+      // evaluation
+      nominal = eval.getHeader().classAttribute().isNominal();
+      m_ClassLabelIndex.setMax(eval.getHeader().classAttribute().numValues());
+      classLabel = m_ClassLabelIndex.getIntIndex();
+      for (EvaluationStatistic stat: EvaluationStatistic.values()) {
+	if (stat.isOnlyNominal() && !nominal)
+	  continue;
+	if (stat.isOnlyNumeric() && nominal)
+	  continue;
+	metric = stat.toDisplayShort().replace(" ", "_");
+	try {
+	  addMetric(results, metric, EvaluationHelper.getValue(eval, stat, classLabel));
+	}
+	catch (Exception e) {
+	  m_Owner.getLogger().log(Level.SEVERE, "Failed to retrieve statistic: " + stat, e);
+	}
+      }
+    }
+
+    /**
+     * Performs the evaluation.
+     */
+    protected abstract void evaluate();
+
+    /**
+     * Performs the evaluation.
+     */
+    public void run() {
+      evaluate();
+      m_Owner.appendResults(m_Results);
+    }
+  }
 
   /** the number of threads to use for parallel execution. */
   protected int m_NumThreads;
@@ -82,9 +215,6 @@ public abstract class AbstractExperiment
 
   /** the datasets to evaluate. */
   protected PlaceholderFile[] m_Datasets;
-
-  /** whether to iterate datasets first. */
-  protected boolean m_DatasetsFirst;
 
   /** how to determine the class attribute. */
   protected AbstractClassAttributeHeuristic m_ClassAttribute;
@@ -104,9 +234,6 @@ public abstract class AbstractExperiment
   /** the handler for the results. */
   protected AbstractResultsHandler m_ResultsHandler;
 
-  /** the current run. */
-  protected transient int m_CurrentRun;
-
   /** for notifications. */
   protected transient StatusMessageHandler m_StatusMessageHandler;
 
@@ -121,6 +248,12 @@ public abstract class AbstractExperiment
 
   /** the generated results. */
   protected SpreadSheet m_Results;
+
+  /** the results generated by the evaluations. */
+  protected List<SpreadSheet> m_Generated;
+
+  /** Pool of threads to train models with */
+  protected transient ThreadPoolExecutor m_ExecutorPool;
 
   /**
    * Adds options to the internal list of options.
@@ -148,10 +281,6 @@ public abstract class AbstractExperiment
     m_OptionManager.add(
       "dataset", "datasets",
       new PlaceholderFile[0]);
-
-    m_OptionManager.add(
-      "datasets-first", "datasetsFirst",
-      false);
 
     m_OptionManager.add(
       "class-attribute", "classAttribute",
@@ -345,35 +474,6 @@ public abstract class AbstractExperiment
     datasets.add(file);
 
     setDatasets(datasets.toArray(new PlaceholderFile[datasets.size()]));
-  }
-
-  /**
-   * Sets whether to iterate datasets first.
-   *
-   * @param value	true if to iterate datasets first
-   */
-  public void setDatasetsFirst(boolean value) {
-    m_DatasetsFirst = value;
-    reset();
-  }
-
-  /**
-   * Returns whether to iterate datasets first.
-   *
-   * @return		true if to iterate datasets first
-   */
-  public boolean getDatasetsFirst() {
-    return m_DatasetsFirst;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String datasetsFirstsTipText() {
-    return "If enabled, datasets are iterated first.";
   }
 
   /**
@@ -618,7 +718,7 @@ public abstract class AbstractExperiment
 
     result = null;
 
-    if (m_ResetResults)
+    if (!m_ResetResults)
       result = m_ResultsHandler.read();
 
     if (result == null)
@@ -631,12 +731,24 @@ public abstract class AbstractExperiment
    * Initializes the experiment.
    */
   protected String initExecute() {
+    int 		actNumThreads;
+
     m_Stopped            = false;
     m_Running            = true;
     m_CommandLineHandler = new WekaCommandLineHandler();
     m_Results            = initResults();
+    m_Generated          = new ArrayList<>();
     if (m_Results == null)
       return "Failed to initialize results!";
+
+    if (m_NumThreads < 1)
+      actNumThreads = ProcessUtils.getAvailableProcessors();
+    else
+      actNumThreads = Math.min(m_NumThreads, ProcessUtils.getAvailableProcessors());
+    m_ExecutorPool = new ThreadPoolExecutor(
+      actNumThreads, actNumThreads,
+      120, TimeUnit.SECONDS, new LinkedBlockingQueue<>());
+
     return null;
   }
 
@@ -672,11 +784,12 @@ public abstract class AbstractExperiment
    * Configures the row finder that determines whether the classifier/dataset
    * combination is still required.
    *
+   * @param currentRun	the current run
    * @param cls		the classifier to check
    * @param data	the dataset to check
    * @return		the row finder setup
    */
-  protected MultiRowFinder configureRowFinder(Classifier cls, Instances data) {
+  protected MultiRowFinder configureRowFinder(int currentRun, Classifier cls, Instances data) {
     MultiRowFinder	result;
     ByNumericValue	run;
     ByStringComparison 	dataset;
@@ -686,9 +799,9 @@ public abstract class AbstractExperiment
 
     run = new ByNumericValue();
     run.setAttributeIndex(new SpreadSheetColumnIndex("Key_Run"));
-    run.setMinimum(m_CurrentRun);
+    run.setMinimum(currentRun);
     run.setMinimumIncluded(true);
-    run.setMaximum(m_CurrentRun);
+    run.setMaximum(currentRun);
     run.setMaximumIncluded(true);
 
     dataset = new ByStringComparison();
@@ -740,25 +853,26 @@ public abstract class AbstractExperiment
    * @return		true if complete
    */
   protected boolean isComplete(int[] rows) {
-    return (rows.length == m_Runs);
+    return (rows.length == 1);
   }
 
   /**
    * Checks whether the classifier/dataset combination is required.
    *
+   * @param currentRun	the current run
    * @param cls		the classifier to check
    * @param data	the dataset to check
    * @return		true if required
    */
-  protected boolean isRequired(Classifier cls, Instances data) {
+  protected synchronized boolean isRequired(int currentRun, Classifier cls, Instances data) {
     RowFinder		finder;
     int[]		rows;
 
     if (m_Results.getRowCount() == 0)
       return true;
 
-    finder = configureRowFinder(cls, data);
-    rows   = finder.findRows(m_Results);
+    finder = configureRowFinder(currentRun, cls, data);
+    rows = finder.findRows(m_Results);
 
     return !isComplete(rows);
   }
@@ -766,10 +880,11 @@ public abstract class AbstractExperiment
   /**
    * Removes the incomplete rows of the classifier/dataset combination.
    *
+   * @param currentRun	the current run
    * @param cls		the classifier to check
    * @param data	the dataset to check
    */
-  protected void removeIncomplete(Classifier cls, Instances data) {
+  protected synchronized void removeIncomplete(int currentRun, Classifier cls, Instances data) {
     RowFinder		finder;
     int[]		rows;
     int			i;
@@ -777,8 +892,8 @@ public abstract class AbstractExperiment
     if (m_Results.getRowCount() == 0)
       return;
 
-    finder = configureRowFinder(cls, data);
-    rows   = finder.findRows(m_Results);
+    finder = configureRowFinder(currentRun, cls, data);
+    rows = finder.findRows(m_Results);
     if (rows.length > 0) {
       Arrays.sort(rows);
       for (i = rows.length - 1; i >= 0; i--)
@@ -787,99 +902,23 @@ public abstract class AbstractExperiment
   }
 
   /**
-   * Adds a new row in the results spreadsheet.
+   * Adds the results to the existing ones.
+   *
+   * @param results	the results to add
    */
-  protected void newResults() {
-    m_Results.addRow();
+  public synchronized void appendResults(SpreadSheet results) {
+    m_Generated.add(results);
   }
 
   /**
-   * Adds the metric to the results, automatically expands spreadsheet.
+   * Creates a runnabel to evaluate the classifier on the dataset.
    *
-   * @param name	the name
-   * @param value	the value
-   */
-  protected void addMetric(String name, Object value) {
-    HeaderRow	header;
-    Row		row;
-    int		index;
-
-    header = m_Results.getHeaderRow();
-    index  = header.indexOfContent(name);
-    // not present?
-    if (index == -1) {
-      m_Results.insertColumn(m_Results.getColumnCount(), name);
-      index = m_Results.getColumnCount() - 1;
-    }
-    row = m_Results.getRow(m_Results.getRowCount() - 1);
-    row.addCell(index).setNative(value);
-  }
-
-  /**
-   * Adds the metrics from the Evaluation object to the results.
-   *
+   * @param currentRun	the current run
    * @param cls		the classifier to evaluate
    * @param data	the dataset to evaluate on
-   * @param eval	the Evaluation object to add
+   * @return		the runnable
    */
-  protected void addMetrics(Classifier cls, Instances data, Evaluation eval) {
-    boolean	nominal;
-    String	metric;
-    int		classLabel;
-
-    newResults();
-
-    // general
-    addMetric("Key_Run", m_CurrentRun);
-    addMetric("Key_Dataset", data.relationName());
-    addMetric("Key_Scheme", cls.getClass().getName());
-    addMetric("Key_Scheme_options", m_CommandLineHandler.joinOptions(m_CommandLineHandler.getOptions(cls)));
-    addMetric("Key_Scheme_version_ID", "" + ObjectStreamClass.lookup(cls.getClass()).getSerialVersionUID());
-
-    // evaluation
-    nominal = eval.getHeader().classAttribute().isNominal();
-    m_ClassLabelIndex.setMax(eval.getHeader().classAttribute().numValues());
-    classLabel = m_ClassLabelIndex.getIntIndex();
-    for (EvaluationStatistic stat: EvaluationStatistic.values()) {
-      if (stat.isOnlyNominal() && !nominal)
-	continue;
-      if (stat.isOnlyNumeric() && nominal)
-	continue;
-      metric = stat.toDisplayShort().replace(" ", "_");
-      try {
-	addMetric(metric, EvaluationHelper.getValue(eval, stat, classLabel));
-      }
-      catch (Exception e) {
-	getLogger().log(Level.SEVERE, "Failed to retrieve statistic: " + stat, e);
-      }
-    }
-  }
-
-  /**
-   * Evaluates the classifier on the dataset.
-   *
-   * @param cls		the classifier to evaluate
-   * @param data	the dataset to evaluate on
-   * @return		null if successful, otherwise error message
-   */
-  protected abstract String evaluate(Classifier cls, Instances data);
-
-  /**
-   * Outputs the progress.
-   *
-   * @param current	the current evaluation
-   * @param total	the total number of evaluations
-   * @param msg		the message
-   */
-  protected void progress(int current, int total, String msg) {
-    double	perc;
-    String	percStr;
-
-    perc    = ((double) current / (double) total) * 100.0;
-    percStr = "[" + Utils.doubleToString(perc, 1) + "%] ";
-
-    log(percStr + msg);
-  }
+  protected abstract AbstractRun<? extends AbstractExperiment> evaluate(int currentRun, Classifier cls, Instances data);
 
   /**
    * Runs the actual experiment.
@@ -887,79 +926,50 @@ public abstract class AbstractExperiment
    * @return		null if successful, otherwise error message
    */
   protected String doExecute() {
-    String	result;
+    int currentRun;
     int		d;
     int		c;
     Instances	data;
-    int		total;
-    int		current;
 
-    result  = null;
-    total   = m_Runs * m_Datasets.length * m_Classifiers.length;
-    current = 0;
+    for (d = 0; d < m_Datasets.length; d++) {
+      if (m_Stopped)
+	break;
+      log("Loading dataset #" + (d + 1) + ": " + m_Datasets[d]);
+      data = loadDataset(d);
+      if (data == null)
+	return "Failed to load dataset: " + m_Datasets[d];
 
-    for (m_CurrentRun = 1; m_CurrentRun <= m_Runs; m_CurrentRun++) {
-      progress(current, total, "Run " + m_CurrentRun);
-
-      if (m_DatasetsFirst) {
-	for (d = 0; d < m_Datasets.length; d++) {
-	  if (m_Stopped || (result != null))
-	    break;
-	  progress(current, total, "Loading dataset #" + (d + 1) + ": " + m_Datasets[d]);
-	  data = loadDataset(d);
-	  if (data == null)
-	    return "Failed to load dataset: " + m_Datasets[d];
-	  for (c = 0; c < m_Classifiers.length; c++) {
-	    if (m_Stopped || (result != null))
-	      break;
-	    current++;
-	    // results already present?
-	    if (!isRequired(m_Classifiers[c], data)) {
-	      progress(current, total, "Classifier #" + (c + 1) + " already present: " + OptionUtils.getCommandLine(m_Classifiers[c]));
-	      continue;
-	    }
-	    // remove any incomplete evaluation
-	    removeIncomplete(m_Classifiers[c], data);
-	    // evaluate classifier
-	    progress(current, total, "Evaluating classifier #" + (c + 1) + ": " + OptionUtils.getCommandLine(m_Classifiers[c]));
-	    result = evaluate(m_Classifiers[c], data);
-	  }
-	}
-      }
-      else {
+      for (currentRun = 1; currentRun <= m_Runs; currentRun++) {
+	if (m_Stopped)
+	  break;
 	for (c = 0; c < m_Classifiers.length; c++) {
-	  if (m_Stopped || (result != null))
+	  if (m_Stopped)
 	    break;
-	  progress(current, total, "Evaluating classifier #" + (c + 1) + ": " + OptionUtils.getCommandLine(m_Classifiers[c]));
-	  for (d = 0; d < m_Datasets.length; d++) {
-	    if (m_Stopped || (result != null))
-	      break;
-	    current++;
-	    progress(current, total, "Loading dataset #" + (d + 1) + ": " + m_Datasets[d]);
-	    data = loadDataset(d);
-	    if (data == null)
-	      return "Failed to load dataset: " + m_Datasets[d];
-	    // results already present?
-	    if (!isRequired(m_Classifiers[c], data)) {
-	      progress(current, total, "Classifier #" + (c + 1) + " already present: " + OptionUtils.getCommandLine(m_Classifiers[c]));
-	      continue;
-	    }
-	    // remove any incomplete evaluation
-	    removeIncomplete(m_Classifiers[c], data);
-	    // evaluate classifier
-	    progress(current, total, "Evaluating classifier #" + (c + 1) + ": " + OptionUtils.getCommandLine(m_Classifiers[c]));
-	    result = evaluate(m_Classifiers[c], data);
+	  // results already present?
+	  if (!isRequired(currentRun, m_Classifiers[c], data)) {
+	    log("Run " + currentRun + ": " + data.relationName() + " on " + OptionUtils.getCommandLine(m_Classifiers[c]) + " already present!");
+	    continue;
 	  }
+	  // make sure no partial results
+	  removeIncomplete(currentRun, m_Classifiers[c], data);
+	  // start job
+	  m_ExecutorPool.submit(evaluate(currentRun, m_Classifiers[c], data));
 	}
       }
+    }
+
+    log("Waiting for jobs to finish...");
+    m_ExecutorPool.shutdown();
+    while (!m_ExecutorPool.isTerminated()) {
+      Utils.wait(this, 1000, 50);
     }
 
     if (m_Stopped) {
-      progress(current, total, "Experiment stopped!");
+      log("Experiment stopped!");
       return "Experiment stopped!";
     }
 
-    return result;
+    return null;
   }
 
   /**
@@ -969,6 +979,14 @@ public abstract class AbstractExperiment
    */
   protected void postExecute(boolean success) {
     String	msg;
+    int		i;
+
+    for (i = 0; i < m_Generated.size(); i++) {
+      if (m_Results.getRowCount() == 0)
+	m_Results = m_Generated.get(i);
+      else
+	SpreadSheetHelper.append(m_Results, m_Generated.get(i), true);
+    }
 
     if (m_Results.getRowCount() > 0) {
       msg = m_ResultsHandler.write(m_Results);
@@ -1010,5 +1028,7 @@ public abstract class AbstractExperiment
   @Override
   public void stopExecution() {
     m_Stopped = true;
+    if (m_ExecutorPool != null)
+      m_ExecutorPool.shutdown();
   }
 }

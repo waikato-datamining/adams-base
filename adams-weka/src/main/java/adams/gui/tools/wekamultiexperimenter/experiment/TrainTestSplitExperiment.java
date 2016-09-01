@@ -22,6 +22,8 @@ package adams.gui.tools.wekamultiexperimenter.experiment;
 
 import adams.core.Utils;
 import adams.core.option.OptionUtils;
+import adams.data.spreadsheet.DefaultSpreadSheet;
+import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.container.WekaTrainTestSetContainer;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
@@ -39,6 +41,59 @@ public class TrainTestSplitExperiment
 
   private static final long serialVersionUID = -4147644361063132314L;
 
+  public static class TrainTestSplitRun
+    extends AbstractRun<TrainTestSplitExperiment> {
+
+    /**
+     * Initializes the run.
+     *
+     * @param owner      the owning experiment
+     * @param run        the current run
+     * @param classifier the classifier to evaluate
+     * @param data       the data to use for evaluation
+     */
+    public TrainTestSplitRun(TrainTestSplitExperiment owner, int run, Classifier classifier, Instances data) {
+      super(owner, run, classifier, data);
+    }
+
+    /**
+     * Performs the evaluation.
+     */
+    @Override
+    protected void evaluate() {
+      RandomSplitGenerator	generator;
+      WekaTrainTestSetContainer	cont;
+      Instances			train;
+      Instances			test;
+      Classifier		classifier;
+      Evaluation 		eval;
+      SpreadSheet 		results;
+
+      m_Owner.log("Run " + m_Run + " [start]: " + m_Data.relationName() + " on " + OptionUtils.getCommandLine(m_Classifier));
+
+      if (!m_Owner.getPreserveOrder())
+	generator = new RandomSplitGenerator(m_Data, m_Run, m_Owner.getPercentage() / 100.0);
+      else
+	generator = new RandomSplitGenerator(m_Data, m_Owner.getPercentage());
+      cont  = generator.next();
+      train = (Instances) cont.getValue(WekaTrainTestSetContainer.VALUE_TRAIN);
+      test  = (Instances) cont.getValue(WekaTrainTestSetContainer.VALUE_TEST);
+      try {
+	classifier = (Classifier) OptionUtils.shallowCopy(m_Classifier);
+	classifier.buildClassifier(train);
+	eval       = new Evaluation(train);
+	eval.evaluateModel(classifier, test);
+	results = new DefaultSpreadSheet();
+	addMetrics(results, m_Run, m_Classifier, m_Data, eval);
+      }
+      catch (Exception e) {
+	Utils.handleException(m_Owner, "Failed to evaluate classifier on train/test split!", e);
+      }
+
+      m_Owner.log("Run " + m_Run + " [end]: " + m_Data.relationName() + " on " + OptionUtils.getCommandLine(m_Classifier));
+    }
+  }
+
   /** the split percentage. */
   protected double m_Percentage;
 
@@ -54,7 +109,7 @@ public class TrainTestSplitExperiment
   public String globalInfo() {
     return
       "Performs train-test splits for each classifier/dataset combination.\n"
-        + "Order can be preserved in the datasets.";
+	+ "Order can be preserved in the datasets.";
   }
 
   /**
@@ -134,40 +189,13 @@ public class TrainTestSplitExperiment
   /**
    * Evaluates the classifier on the dataset.
    *
+   * @param currentRun	the current run
    * @param cls		the classifier to evaluate
    * @param data	the dataset to evaluate on
    * @return		null if successful, otherwise error message
    */
   @Override
-  protected String evaluate(Classifier cls, Instances data) {
-    String			result;
-    RandomSplitGenerator	generator;
-    WekaTrainTestSetContainer	cont;
-    Instances			train;
-    Instances			test;
-    Classifier			classifier;
-    Evaluation 			eval;
-
-    result = null;
-
-    if (!m_PreserveOrder)
-      generator = new RandomSplitGenerator(data, m_CurrentRun, m_Percentage / 100.0);
-    else
-      generator = new RandomSplitGenerator(data, m_Percentage);
-    cont  = generator.next();
-    train = (Instances) cont.getValue(WekaTrainTestSetContainer.VALUE_TRAIN);
-    test  = (Instances) cont.getValue(WekaTrainTestSetContainer.VALUE_TEST);
-    try {
-      classifier = (Classifier) OptionUtils.shallowCopy(cls);
-      classifier.buildClassifier(train);
-      eval       = new Evaluation(train);
-      eval.evaluateModel(classifier, test);
-      addMetrics(cls, data, eval);
-    }
-    catch (Exception e) {
-      result = Utils.handleException(this, "Failed to evaluate classifier on train/test split!", e);
-    }
-
-    return result;
+  protected synchronized TrainTestSplitRun evaluate(int currentRun, Classifier cls, Instances data) {
+    return new TrainTestSplitRun(this, currentRun, cls, data);
   }
 }

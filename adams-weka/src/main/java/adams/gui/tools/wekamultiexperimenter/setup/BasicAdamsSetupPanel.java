@@ -69,10 +69,7 @@ public class BasicAdamsSetupPanel
   
   /** the evaluation parameter. */
   protected JTextField m_TextEvaluation;
-  
-  /** how to traverse. */
-  protected JComboBox<String> m_ComboBoxOrder;
-  
+
   /** the tabbed pane for datasets and classifiers. */
   protected BaseTabbedPane m_TabbedPane;
   
@@ -134,13 +131,6 @@ public class BasicAdamsSetupPanel
     m_TextEvaluation.getDocument().addDocumentListener(new ModificationDocumentListener());
     m_PanelParameters.addParameter("", m_TextEvaluation);
 
-    m_ComboBoxOrder = new JComboBox<>(new String[]{
-      "Datasets -> Classifiers",
-      "Classifiers -> Datasets"
-    });
-    m_ComboBoxOrder.addActionListener(new ModificationActionListener());
-    m_PanelParameters.addParameter("Iteration", m_ComboBoxOrder);
-
     m_SpinnerNumThreads = new JSpinner();
     ((SpinnerNumberModel) m_SpinnerNumThreads.getModel()).setMinimum(-1);
     ((SpinnerNumberModel) m_SpinnerNumThreads.getModel()).setStepSize(1);
@@ -171,7 +161,6 @@ public class BasicAdamsSetupPanel
     m_SpinnerRepetitions.setValue(10);
     m_ComboBoxEvaluation.setSelectedIndex(0);
     m_TextEvaluation.setText("10");
-    m_ComboBoxOrder.setSelectedIndex(0);
 
     setModified(false);
   }
@@ -238,7 +227,6 @@ public class BasicAdamsSetupPanel
     result.setResultsHandler((AbstractResultsHandler) m_PanelResultsHandler.getCurrent());
     result.setRuns((Integer) m_SpinnerRepetitions.getValue());
     result.setNumThreads((Integer) m_SpinnerNumThreads.getValue());
-    result.setDatasetsFirst(m_ComboBoxOrder.getSelectedIndex() <= 0);
     result.setClassifiers(m_PanelClassifiers.getClassifiers());
 
     for (File file: m_PanelDatasets.getFiles())
@@ -271,7 +259,6 @@ public class BasicAdamsSetupPanel
       }
       m_PanelResultsHandler.setCurrent(value.getResultsHandler());
       m_SpinnerRepetitions.setValue(value.getRuns());
-      m_ComboBoxOrder.setSelectedIndex(value.getDatasetsFirst() ? 0 : 1);
       m_PanelDatasets.setFiles(value.getDatasets());
       m_PanelClassifiers.setClassifiers(value.getClassifiers());
     }

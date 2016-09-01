@@ -20,6 +20,9 @@
 
 package adams.gui.tools.wekamultiexperimenter.experiment;
 
+import adams.core.option.OptionUtils;
+import adams.data.spreadsheet.DefaultSpreadSheet;
+import adams.data.spreadsheet.SpreadSheet;
 import adams.multiprocess.WekaCrossValidationExecution;
 import weka.classifiers.Classifier;
 import weka.core.Instances;
@@ -35,14 +38,62 @@ public class CrossValidationExperiment
 
   private static final long serialVersionUID = -4147644361063132314L;
 
+  /**
+   * Performs cross-validation on the classifier/data combination.
+   *
+   */
+  public static class CrossValidationRun
+    extends AbstractRun<CrossValidationExperiment> {
+
+    /**
+     * Initializes the run.
+     *
+     * @param owner      the owning experiment
+     * @param run        the current run
+     * @param classifier the classifier to evaluate
+     * @param data       the data to use for evaluation
+     */
+    public CrossValidationRun(CrossValidationExperiment owner, int run, Classifier classifier, Instances data) {
+      super(owner, run, classifier, data);
+    }
+
+    /**
+     * Performs the cross-validation.
+     */
+    @Override
+    protected void evaluate() {
+      WekaCrossValidationExecution 	cv;
+      String				result;
+      SpreadSheet 			results;
+      int 				fold;
+
+      m_Owner.log("Run " + m_Run + " [start]: " + m_Data.relationName() + " on " + OptionUtils.getCommandLine(m_Classifier));
+
+      cv = new WekaCrossValidationExecution();
+      cv.setClassifier(m_Classifier);
+      cv.setData(m_Data);
+      cv.setFolds(m_Owner.getFolds());
+      cv.setSeed(m_Run);
+      cv.setDiscardPredictions(true);
+      cv.setNumThreads(1);
+      cv.setSeparateFolds(true);
+      result = cv.execute();
+
+      if (result == null) {
+	results = new DefaultSpreadSheet();
+	for (fold = 0; fold < m_Owner.getFolds(); fold++) {
+	  addMetrics(results, m_Run, m_Classifier, m_Data, cv.getEvaluations()[fold]);
+	  addMetric(results, "Key_Fold", fold);
+	}
+	m_Owner.appendResults(results);
+      }
+
+      m_Owner.log("Run " + m_Run + " [end]: " + m_Data.relationName() + " on " + OptionUtils.getCommandLine(m_Classifier));
+    }
+  }
+
   /** the number of folds. */
   protected int m_Folds;
-
-  /** the current fold. */
-  protected transient int m_CurrentFold;
-
-  /** for performing cross-validation. */
-  protected transient WekaCrossValidationExecution m_CrossValidation;
 
   /**
    * Returns a string describing the object.
@@ -103,47 +154,19 @@ public class CrossValidationExperiment
    * @return		true if complete
    */
   protected boolean isComplete(int[] rows) {
-    return (rows.length == m_Runs * m_Folds);
+    return (rows.length == m_Folds);
   }
 
   /**
    * Evaluates the classifier on the dataset.
    *
+   * @param currentRun	the current run
    * @param cls		the classifier to evaluate
    * @param data	the dataset to evaluate on
    * @return		null if successful, otherwise error message
    */
   @Override
-  protected String evaluate(Classifier cls, Instances data) {
-    String	result;
-
-    m_CrossValidation = new WekaCrossValidationExecution();
-    m_CrossValidation.setClassifier(cls);
-    m_CrossValidation.setData(data);
-    m_CrossValidation.setFolds(m_Folds);
-    m_CrossValidation.setSeed(m_CurrentRun);
-    m_CrossValidation.setDiscardPredictions(true);
-    m_CrossValidation.setNumThreads(1);
-    m_CrossValidation.setSeparateFolds(true);
-    result = m_CrossValidation.execute();
-
-    if (result == null) {
-      for (m_CurrentFold = 0; m_CurrentFold < m_Folds; m_CurrentFold++) {
-        addMetrics(cls, data, m_CrossValidation.getEvaluations()[m_CurrentFold]);
-        addMetric("Key_Fold", m_CurrentFold);
-      }
-    }
-
-    return result;
-  }
-
-  /**
-   * Stops the execution.
-   */
-  @Override
-  public void stopExecution() {
-    super.stopExecution();
-    if (m_CrossValidation != null)
-      m_CrossValidation.stopExecution();
+  protected CrossValidationRun evaluate(int currentRun, Classifier cls, Instances data) {
+    return new CrossValidationRun(this, currentRun, cls, data);
   }
 }
