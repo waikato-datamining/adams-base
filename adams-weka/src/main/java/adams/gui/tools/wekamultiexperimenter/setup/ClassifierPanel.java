@@ -21,6 +21,7 @@ package adams.gui.tools.wekamultiexperimenter.setup;
 
 import adams.core.option.OptionUtils;
 import adams.gui.core.BaseListWithButtons;
+import adams.gui.core.ConsolePanel;
 import adams.gui.goe.WekaGenericObjectEditorPanel;
 import weka.classifiers.Classifier;
 import weka.classifiers.rules.ZeroR;
@@ -29,11 +30,10 @@ import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.Arrays;
+import java.util.logging.Level;
 
 /**
  * Panel for listing datasets.
@@ -81,7 +81,7 @@ public class ClassifierPanel
   protected void initialize() {
     super.initialize();
     
-    m_Model = new DefaultListModel<String>();
+    m_Model = new DefaultListModel<>();
   }
   
   /**
@@ -98,74 +98,56 @@ public class ClassifierPanel
     add(m_List, BorderLayout.CENTER);
     
     m_ButtonAdd = new JButton("Add");
-    m_ButtonAdd.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	m_Model.addElement(OptionUtils.getCommandLine(m_PanelGOE.getCurrent()));
-	modified();
-	update();
-      }
+    m_ButtonAdd.addActionListener((ActionEvent e) -> {
+      m_Model.addElement(OptionUtils.getCommandLine(m_PanelGOE.getCurrent()));
+      modified();
+      update();
     });
     
     m_ButtonEdit = new JButton("Edit");
-    m_ButtonEdit.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	try {
-	  m_PanelGOE.setCurrent((Classifier) OptionUtils.forAnyCommandLine(Classifier.class, (String) m_List.getSelectedValue()));
-	  m_PanelGOE.choose();
-	  m_Model.setElementAt(OptionUtils.getCommandLine(m_PanelGOE.getCurrent()), m_List.getSelectedIndex());
-	  modified();
-	}
-	catch (Exception ex) {
-	  System.err.println("Failed to instantiate classifier: " + m_List.getSelectedValue());
-	  ex.printStackTrace();
-	}
-	update();
+    m_ButtonEdit.addActionListener((ActionEvent e) -> {
+      try {
+        m_PanelGOE.setCurrent(OptionUtils.forAnyCommandLine(Classifier.class, (String) m_List.getSelectedValue()));
+        m_PanelGOE.choose();
+        m_Model.setElementAt(OptionUtils.getCommandLine(m_PanelGOE.getCurrent()), m_List.getSelectedIndex());
+        modified();
       }
+      catch (Exception ex) {
+        System.err.println("Failed to instantiate classifier: " + m_List.getSelectedValue());
+        ex.printStackTrace();
+      }
+      update();
     });
     
     m_ButtonRemove = new JButton("Remove");
-    m_ButtonRemove.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	int[] indices = m_List.getSelectedIndices();
-	Arrays.sort(indices);
-	for (int i = indices.length - 1; i >= 0; i--)
-	  m_Model.remove(indices[i]);
-	modified();
-	update();
-      }
+    m_ButtonRemove.addActionListener((ActionEvent e) -> {
+      int[] indices = m_List.getSelectedIndices();
+      Arrays.sort(indices);
+      for (int i = indices.length - 1; i >= 0; i--)
+        m_Model.remove(indices[i]);
+      modified();
+      update();
     });
 
     m_ButtonRemoveAll = new JButton("Remove all");
-    m_ButtonRemoveAll.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	m_Model.clear();
-	modified();
-	update();
-      }
+    m_ButtonRemoveAll.addActionListener((ActionEvent e) -> {
+      m_Model.clear();
+      modified();
+      update();
     });
 
     m_ButtonUp = new JButton("Up");
-    m_ButtonUp.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	m_List.moveUp();
-	modified();
-	update();
-      }
+    m_ButtonUp.addActionListener((ActionEvent e) -> {
+      m_List.moveUp();
+      modified();
+      update();
     });
 
     m_ButtonDown = new JButton("Down");
-    m_ButtonDown.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	m_List.moveDown();
-	modified();
-	update();
-      }
+    m_ButtonDown.addActionListener((ActionEvent e) -> {
+      m_List.moveDown();
+      modified();
+      update();
     });
 
     m_List.addToButtonsPanel(m_ButtonAdd);
@@ -177,12 +159,7 @@ public class ClassifierPanel
     m_List.addToButtonsPanel(m_ButtonDown);
     m_List.setDoubleClickButton(m_ButtonEdit);
     
-    m_List.addListSelectionListener(new ListSelectionListener() {
-      @Override
-      public void valueChanged(ListSelectionEvent e) {
-	update();
-      }
-    });
+    m_List.addListSelectionListener((ListSelectionEvent e) -> update());
   }
   
   /**
@@ -237,8 +214,7 @@ public class ClassifierPanel
 	result[i] = (Classifier) OptionUtils.forAnyCommandLine(Classifier.class, m_Model.getElementAt(i));
       }
       catch (Exception e) {
-	System.err.println("Failed to instantiate classifier: " + m_Model.getElementAt(i));
-	e.printStackTrace();
+        ConsolePanel.getSingleton().append(Level.SEVERE, "Failed to instantiate classifier: " + m_Model.getElementAt(i), e);
 	result[i] = new ZeroR();
       }
     }
