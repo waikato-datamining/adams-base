@@ -15,7 +15,7 @@
 
 /**
  * NumberTextField.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
 
@@ -387,5 +387,29 @@ public class NumberTextField
     else
       throw new IllegalArgumentException(
 	  "Only " + NumberCheckModel.class.getName() + " models are allowed!");
+  }
+
+  /**
+   * Sets the current value.
+   *
+   * @param value	the value to use
+   */
+  public void setValue(Number value) {
+    if (value == null)
+      setText("");
+    else
+      setText(value.toString());
+  }
+
+  /**
+   * Returns the current value.
+   *
+   * @return		the current value
+   */
+  public Number getValue() {
+    if (getText().isEmpty())
+      return Double.NaN;
+    else
+      return Double.parseDouble(getText());
   }
 }
