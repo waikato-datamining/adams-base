@@ -828,6 +828,16 @@ public class ExperimenterPanel
   }
 
   /**
+   * Displays a message.
+   *
+   * @param msg		the message to display
+   */
+  public void showStatus(String msg) {
+    super.showStatus(msg);
+    logMessage(msg);
+  }
+
+  /**
    * Returns the properties that define the editor.
    *
    * @return		the properties
