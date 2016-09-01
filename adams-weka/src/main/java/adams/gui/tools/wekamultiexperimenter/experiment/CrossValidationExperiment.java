@@ -20,7 +20,6 @@
 
 package adams.gui.tools.wekamultiexperimenter.experiment;
 
-import adams.core.ThreadLimiter;
 import adams.multiprocess.WekaCrossValidationExecution;
 import weka.classifiers.Classifier;
 import weka.core.Instances;
@@ -32,16 +31,12 @@ import weka.core.Instances;
  * @version $Revision$
  */
 public class CrossValidationExperiment
-  extends AbstractExperiment
-  implements ThreadLimiter {
+  extends AbstractExperiment {
 
   private static final long serialVersionUID = -4147644361063132314L;
 
   /** the number of folds. */
   protected int m_Folds;
-
-  /** the number of threads to use for parallel execution. */
-  protected int m_NumThreads;
 
   /** the current fold. */
   protected transient int m_CurrentFold;
@@ -69,10 +64,6 @@ public class CrossValidationExperiment
     m_OptionManager.add(
       "folds", "folds",
       10, -1, null);
-
-    m_OptionManager.add(
-      "num-threads", "numThreads",
-      1, -1, null);
   }
 
   /**
@@ -105,35 +96,6 @@ public class CrossValidationExperiment
   }
 
   /**
-   * Sets the number of threads to use for cross-validation.
-   *
-   * @param value 	the number of threads: -1 = # of CPUs/cores; 0/1 = sequential execution
-   */
-  public void setNumThreads(int value) {
-    m_NumThreads = value;
-    reset();
-  }
-
-  /**
-   * Returns the number of threads to use for cross-validation.
-   *
-   * @return 		the number of threads: -1 = # of CPUs/cores; 0/1 = sequential execution
-   */
-  public int getNumThreads() {
-    return m_NumThreads;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String numThreadsTipText() {
-    return "The number of threads to use for cross-validation -1 = number of CPUs/cores; 0 or 1 = sequential execution.";
-  }
-
-  /**
    * Checks whether the number of rows located in the current results are
    * complete.
    *
@@ -161,7 +123,7 @@ public class CrossValidationExperiment
     m_CrossValidation.setFolds(m_Folds);
     m_CrossValidation.setSeed(m_CurrentRun);
     m_CrossValidation.setDiscardPredictions(true);
-    m_CrossValidation.setNumThreads(m_NumThreads);
+    m_CrossValidation.setNumThreads(1);
     m_CrossValidation.setSeparateFolds(true);
     result = m_CrossValidation.execute();
 

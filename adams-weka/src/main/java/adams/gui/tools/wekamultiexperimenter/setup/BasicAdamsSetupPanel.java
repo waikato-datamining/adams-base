@@ -60,6 +60,9 @@ public class BasicAdamsSetupPanel
   
   /** the number of repetitions. */
   protected JSpinner m_SpinnerRepetitions;
+  
+  /** the number of threads. */
+  protected JSpinner m_SpinnerNumThreads;
 
   /** the type of evaluation. */
   protected JComboBox<String> m_ComboBoxEvaluation;
@@ -115,17 +118,17 @@ public class BasicAdamsSetupPanel
         case -1:
         case 0:
           m_PanelParameters.getLabel(evalIndex+1).setText("Number of folds");
+	  m_PanelParameters.setToolTipText(evalIndex+1, "Use <2 for LOO-CV", true, true);
           break;
         case 1:
         case 2:
           m_PanelParameters.getLabel(evalIndex+1).setText("Split percentage");
+	  m_PanelParameters.setToolTipText(evalIndex+1, "A percentage between 0 and 100", true, true);
           break;
         default:
           throw new IllegalStateException("Unhandled evaluation type: " + m_ComboBoxEvaluation.getSelectedItem());
       }
     });
-
-    // TODO threads
     
     m_TextEvaluation = new JTextField(20);
     m_TextEvaluation.getDocument().addDocumentListener(new ModificationDocumentListener());
@@ -137,6 +140,14 @@ public class BasicAdamsSetupPanel
     });
     m_ComboBoxOrder.addActionListener(new ModificationActionListener());
     m_PanelParameters.addParameter("Iteration", m_ComboBoxOrder);
+
+    m_SpinnerNumThreads = new JSpinner();
+    ((SpinnerNumberModel) m_SpinnerNumThreads.getModel()).setMinimum(-1);
+    ((SpinnerNumberModel) m_SpinnerNumThreads.getModel()).setStepSize(1);
+    ((SpinnerNumberModel) m_SpinnerNumThreads.getModel()).setValue(-1);
+    m_SpinnerNumThreads.addChangeListener(new ModificationChangeListener());
+    m_SpinnerNumThreads.setToolTipText("The number of cores/cpus to use (<1 for all available ones)");
+    m_PanelParameters.addParameter("# Threads", m_SpinnerNumThreads);
     
     m_PanelDatasets = new DatasetPanel();
     m_PanelDatasets.setOwner(this);
@@ -226,6 +237,7 @@ public class BasicAdamsSetupPanel
 
     result.setResultsHandler((AbstractResultsHandler) m_PanelResultsHandler.getCurrent());
     result.setRuns((Integer) m_SpinnerRepetitions.getValue());
+    result.setNumThreads((Integer) m_SpinnerNumThreads.getValue());
     result.setDatasetsFirst(m_ComboBoxOrder.getSelectedIndex() <= 0);
     result.setClassifiers(m_PanelClassifiers.getClassifiers());
 

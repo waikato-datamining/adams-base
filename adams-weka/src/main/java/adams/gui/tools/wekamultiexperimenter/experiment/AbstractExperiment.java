@@ -23,6 +23,7 @@ package adams.gui.tools.wekamultiexperimenter.experiment;
 import adams.core.Index;
 import adams.core.StatusMessageHandler;
 import adams.core.Stoppable;
+import adams.core.ThreadLimiter;
 import adams.core.Utils;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
@@ -66,9 +67,12 @@ import java.util.logging.Level;
 public abstract class AbstractExperiment
   extends AbstractOptionHandler
   implements Stoppable, ExperimentWithCustomizableRelationNames,
-             ResettableExperiment, SpreadSheetSupporter {
+             ResettableExperiment, SpreadSheetSupporter, ThreadLimiter {
 
   private static final long serialVersionUID = -345521029095304309L;
+
+  /** the number of threads to use for parallel execution. */
+  protected int m_NumThreads;
 
   /** whether to reset the results before starting the experiment. */
   protected boolean m_ResetResults;
@@ -126,6 +130,10 @@ public abstract class AbstractExperiment
     super.defineOptions();
 
     m_OptionManager.add(
+      "num-threads", "numThreads",
+      1, -1, null);
+
+    m_OptionManager.add(
       "reset-results", "resetResults",
       false);
 
@@ -164,6 +172,35 @@ public abstract class AbstractExperiment
     m_OptionManager.add(
       "runs", "runs",
       10, 1, null);
+  }
+
+  /**
+   * Sets the number of threads to use for cross-validation.
+   *
+   * @param value 	the number of threads: -1 = # of CPUs/cores; 0/1 = sequential execution
+   */
+  public void setNumThreads(int value) {
+    m_NumThreads = value;
+    reset();
+  }
+
+  /**
+   * Returns the number of threads to use for cross-validation.
+   *
+   * @return 		the number of threads: -1 = # of CPUs/cores; 0/1 = sequential execution
+   */
+  public int getNumThreads() {
+    return m_NumThreads;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String numThreadsTipText() {
+    return "The number of threads to use for cross-validation -1 = number of CPUs/cores; 0 or 1 = sequential execution.";
   }
 
   /**
