@@ -404,11 +404,21 @@ public class NumberTextField
   /**
    * Returns the current value.
    *
-   * @return		the current value
+   * @return		the current value, {@link Double#NaN} if empty
    */
   public Number getValue() {
+    return getValue(Double.NaN);
+  }
+
+  /**
+   * Returns the current value.
+   *
+   * @param defValue	the default value to return in case the text is empty
+   * @return		the current value
+   */
+  public Number getValue(Number defValue) {
     if (getText().isEmpty())
-      return Double.NaN;
+      return defValue;
     else
       return Double.parseDouble(getText());
   }
