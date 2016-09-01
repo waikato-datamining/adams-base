@@ -139,8 +139,10 @@ public class ExperimenterPanel
 
     m_RecentFilesHandlerSetups  = null;
     m_RecentFilesHandlerResults = null;
-    m_FileChooserResults        = new WekaFileChooser();
     m_Runner                    = null;
+    m_FileChooserResults        = new WekaFileChooser();
+    m_FileChooserResults.setCurrentDirectory(
+      new File(getProperties().getPath("Results.InitialDir", "%c")));
   }
 
   /**
@@ -161,7 +163,7 @@ public class ExperimenterPanel
     add(m_TabbedPane, BorderLayout.CENTER);
 
     try {
-      cname        = props.getProperty("SetupsInitialPanel", BasicWekaSetupPanel.class.getName());
+      cname        = props.getProperty("Setups.InitialPanel", BasicWekaSetupPanel.class.getName());
       m_PanelSetup = (AbstractSetupPanel) Class.forName(cname).newInstance();
     }
     catch (Exception e) {
@@ -530,7 +532,7 @@ public class ExperimenterPanel
       submenu = new JMenu("Open recent");
       menu.add(submenu);
       m_RecentFilesHandlerSetups = new RecentFilesHandler<>(
-	  SESSION_FILE, "Setup-", ExperimenterPanel.getProperties().getInteger("SetupsMaxRecent", 5), submenu);
+	  SESSION_FILE, "Setup-", ExperimenterPanel.getProperties().getInteger("Setups.MaxRecent", 5), submenu);
       m_RecentFilesHandlerSetups.setAddShortcuts(true);
       m_RecentFilesHandlerSetups.addRecentItemListener(new RecentItemListener<JMenu,File>() {
 	public void recentItemAdded(RecentItemEvent<JMenu,File> e) {
@@ -637,7 +639,7 @@ public class ExperimenterPanel
       submenu = new JMenu("Open recent");
       menu.add(submenu);
       m_RecentFilesHandlerResults = new RecentFilesHandlerWithCommandline<>(
-	  SESSION_FILE, "Results-", ExperimenterPanel.getProperties().getInteger("ResultsMaxRecent", 5), submenu);
+	  SESSION_FILE, "Results-", ExperimenterPanel.getProperties().getInteger("Results.MaxRecent", 5), submenu);
       m_RecentFilesHandlerResults.setAddShortcuts(false);
       m_RecentFilesHandlerResults.addRecentItemListener(new RecentItemListener<JMenu,Setup>() {
 	public void recentItemAdded(RecentItemEvent<JMenu,Setup> e) {

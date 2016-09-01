@@ -10,14 +10,14 @@
 #   %p - the project's home directory
 #   %c - the current directory
 #   %% - gets replaced by a single percentage sign
-SetupsInitialDir=%h
+Setups.InitialDir=%c
 
 # The maximum of recent setups to keep track of
-SetupsMaxRecent=5
+Setups.MaxRecent=5
 
 # The preferred setup panel
-# derived from: weka.gui.experiment.ext.AbstractSetupPanel
-SetupsInitialPanel=adams.gui.tools.wekamultiexperimenter.setup.BasicAdamsSetupPanel
+# derived from: adams.gui.tools.wekamultiexperimenter.setup.AbstractSetupPanel
+Setups.InitialPanel=adams.gui.tools.wekamultiexperimenter.setup.BasicAdamsSetupPanel
 
 # Initial directory for datasets
 # the following placeholders are recognized
@@ -26,7 +26,7 @@ SetupsInitialPanel=adams.gui.tools.wekamultiexperimenter.setup.BasicAdamsSetupPa
 #   %p - the project's home directory
 #   %c - the current directory
 #   %% - gets replaced by a single percentage sign
-DatasetsInitialDir=%h
+Datasets.InitialDir=%c
 
 # Initial directory for results
 # the following placeholders are recognized
@@ -35,11 +35,23 @@ DatasetsInitialDir=%h
 #   %p - the project's home directory
 #   %c - the current directory
 #   %% - gets replaced by a single percentage sign
-ResultsInitialDir=%h
+Results.InitialDir=%c
 
 # The maximum of recent results to keep track of
-ResultsMaxRecent=5
+Results.MaxRecent=5
 
 # The preferred analysis panel
-# derived from: weka.gui.experiment.ext.AbstractAnalysisPanel
-ResultsInitialPanel=adams.gui.tools.wekamultiexperimenter.analysis.DefaultAnalysisPanel
+# derived from: adams.gui.tools.wekamultiexperimenter.analysis.AbstractAnalysisPanel
+Results.InitialPanel=adams.gui.tools.wekamultiexperimenter.analysis.DefaultAnalysisPanel
+
+# The tester class to use for analyzing the results
+# derived from: weka.experiment.Tester
+Results.Tester=weka.experiment.PairedCorrectedTTester
+
+# The default result matrix to use.
+# derived from: weka.experiment.ResultMatrix
+Results.ResultMatrix=weka.experiment.ResultMatrixPlainText
+
+# The significance level for the tests
+# (0.0-1.0)
+Results.SignificanceLevel=0.05

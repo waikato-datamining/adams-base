@@ -21,9 +21,12 @@ package adams.gui.tools.wekamultiexperimenter.io;
 
 import adams.gui.chooser.BaseFileChooser;
 import adams.gui.core.ExtensionFileFilter;
+import adams.gui.tools.wekamultiexperimenter.ExperimenterPanel;
 import weka.core.xml.KOML;
 import weka.experiment.Experiment;
 import weka.gui.experiment.ExperimenterDefaults;
+
+import java.io.File;
 
 /**
  * Ancestor for classes that handle loading/saving of experiments.
@@ -49,7 +52,10 @@ public abstract class AbstractWekaExperimentIO<T extends Experiment>
     ExtensionFileFilter	preferred;
     ExtensionFileFilter	xml;
     
-    result    = new BaseFileChooser();
+    result = new BaseFileChooser();
+    result.setCurrentDirectory(
+      new File(ExperimenterPanel.getProperties().getPath("Setups.InitialDir", "%c")));
+
     preferred = null;
     
     result.setAcceptAllFileFilterUsed(false);

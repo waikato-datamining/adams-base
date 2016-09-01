@@ -20,19 +20,16 @@
 package adams.gui.tools.wekamultiexperimenter.setup;
 
 import adams.core.io.PlaceholderFile;
+import adams.gui.chooser.WekaFileChooser;
 import adams.gui.core.BaseListWithButtons;
 import adams.gui.tools.wekamultiexperimenter.ExperimenterPanel;
-import weka.gui.AdamsHelper;
-import weka.gui.ConverterFileChooser;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.Arrays;
 
@@ -49,7 +46,7 @@ public class DatasetPanel
   private static final long serialVersionUID = -832431512063524253L;
 
   /** the file chooser for selecting files. */
-  protected ConverterFileChooser m_FileChooser;
+  protected WekaFileChooser m_FileChooser;
   
   /** the button for adding files. */
   protected JButton m_ButtonAdd;
@@ -79,10 +76,11 @@ public class DatasetPanel
   protected void initialize() {
     super.initialize();
     
-    m_FileChooser = new ConverterFileChooser();
-    AdamsHelper.updateFileChooserAccessory(m_FileChooser);
+    m_FileChooser = new WekaFileChooser();
     m_FileChooser.setMultiSelectionEnabled(true);
-    m_Model = new DefaultListModel<File>();
+    m_FileChooser.setCurrentDirectory(
+      new File(ExperimenterPanel.getProperties().getPath("Datasets.InitialDir", "%c")));
+    m_Model = new DefaultListModel<>();
   }
   
   /**
@@ -96,59 +94,44 @@ public class DatasetPanel
     add(m_List, BorderLayout.CENTER);
     
     m_ButtonAdd = new JButton("Add...");
-    m_ButtonAdd.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	int retVal = m_FileChooser.showOpenDialog(DatasetPanel.this);
-	if (retVal != ConverterFileChooser.APPROVE_OPTION)
-	  return;
-	if (m_FileChooser.getSelectedFiles().length == 0)
-	  return;
-	for (File file: m_FileChooser.getSelectedFiles())
-	  m_Model.addElement(file);
-	modified();
-      }
+    m_ButtonAdd.addActionListener((ActionEvent e) -> {
+      int retVal = m_FileChooser.showOpenDialog(DatasetPanel.this);
+      if (retVal != WekaFileChooser.APPROVE_OPTION)
+        return;
+      if (m_FileChooser.getSelectedFiles().length == 0)
+        return;
+      for (File file: m_FileChooser.getSelectedFiles())
+        m_Model.addElement(file);
+      modified();
     });
     
     m_ButtonRemove = new JButton("Remove");
-    m_ButtonRemove.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	int[] indices = m_List.getSelectedIndices();
-	if (indices.length == 0)
-	  return;
-	Arrays.sort(indices);
-	for (int i = indices.length; i >= 0; i--)
-	  m_Model.remove(indices[i]);
-	modified();
-      }
+    m_ButtonRemove.addActionListener((ActionEvent e) -> {
+      int[] indices = m_List.getSelectedIndices();
+      if (indices.length == 0)
+        return;
+      Arrays.sort(indices);
+      for (int i = indices.length; i >= 0; i--)
+        m_Model.remove(indices[i]);
+      modified();
     });
 
     m_ButtonRemoveAll = new JButton("Remove all");
-    m_ButtonRemoveAll.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	m_Model.clear();
-	modified();
-      }
+    m_ButtonRemoveAll.addActionListener((ActionEvent e) -> {
+      m_Model.clear();
+      modified();
     });
 
     m_ButtonUp = new JButton("Up");
-    m_ButtonUp.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	m_List.moveUp();
-	modified();
-      }
+    m_ButtonUp.addActionListener((ActionEvent e) -> {
+      m_List.moveUp();
+      modified();
     });
 
     m_ButtonDown = new JButton("Down");
-    m_ButtonDown.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	m_List.moveDown();
-	modified();
-      }
+    m_ButtonDown.addActionListener((ActionEvent e) -> {
+      m_List.moveDown();
+      modified();
     });
 
     m_List.addToButtonsPanel(m_ButtonAdd);
@@ -158,14 +141,11 @@ public class DatasetPanel
     m_List.addToButtonsPanel(m_ButtonUp);
     m_List.addToButtonsPanel(m_ButtonDown);
     
-    m_List.addListSelectionListener(new ListSelectionListener() {
-      @Override
-      public void valueChanged(ListSelectionEvent e) {
-	m_ButtonRemove.setEnabled(m_List.getSelectedIndices().length > 0);
-	m_ButtonRemoveAll.setEnabled(m_Model.getSize() > 0);
-	m_ButtonUp.setEnabled(m_List.canMoveUp());
-	m_ButtonDown.setEnabled(m_List.canMoveDown());
-      }
+    m_List.addListSelectionListener((ListSelectionEvent e) -> {
+      m_ButtonRemove.setEnabled(m_List.getSelectedIndices().length > 0);
+      m_ButtonRemoveAll.setEnabled(m_Model.getSize() > 0);
+      m_ButtonUp.setEnabled(m_List.canMoveUp());
+      m_ButtonDown.setEnabled(m_List.canMoveDown());
     });
   }
   

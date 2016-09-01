@@ -22,6 +22,7 @@ package adams.gui.tools.wekamultiexperimenter.analysis;
 import adams.core.ClassLister;
 import adams.core.DateFormat;
 import adams.core.DateUtils;
+import adams.core.Properties;
 import adams.gui.chooser.SelectOptionPanel;
 import adams.gui.core.AbstractNamedHistoryPanel;
 import adams.gui.core.BaseSplitPane;
@@ -32,6 +33,7 @@ import adams.gui.core.NumberTextField.BoundedNumberCheckModel;
 import adams.gui.core.NumberTextField.Type;
 import adams.gui.core.ParameterPanel;
 import adams.gui.goe.WekaGenericObjectEditorPanel;
+import adams.gui.tools.wekamultiexperimenter.ExperimenterPanel;
 import weka.core.Attribute;
 import weka.core.Instances;
 import weka.core.Range;
@@ -229,8 +231,14 @@ public class DefaultAnalysisPanel
     JPanel		panelTop;
     ParameterPanel 	panelParams;
     JPanel		panelButtons;
+    Properties		props;
+    Tester		tester;
+    ResultMatrix	matrix;
+    double		siglevel;
 
     super.initGUI();
+
+    props = ExperimenterPanel.getProperties();
 
     setLayout(new BorderLayout());
 
@@ -241,35 +249,58 @@ public class DefaultAnalysisPanel
     panelParams = new ParameterPanel();
     panelTop.add(panelParams, BorderLayout.CENTER);
 
-    m_PanelTester = new WekaGenericObjectEditorPanel(Tester.class, new PairedCorrectedTTester(), true);  // TODO preferences
+    // tester
+    try {
+      tester = (Tester) Class.forName(props.getProperty("Results.Tester", PairedCorrectedTTester.class.getName())).newInstance();
+    }
+    catch (Exception e) {
+      ConsolePanel.getSingleton().append(Level.SEVERE, "Failed to instantiate tester: " + props.getProperty("Results.Tester"), e);
+      tester = new PairedCorrectedTTester();
+    }
+    m_PanelTester = new WekaGenericObjectEditorPanel(Tester.class, tester, true);
     panelParams.addParameter("Tester", m_PanelTester);
 
-    m_PanelMatrix = new WekaGenericObjectEditorPanel(ResultMatrix.class, new ResultMatrixPlainText(), true);  // TODO preferences
+    // matrix
+    try {
+      matrix = (ResultMatrix) Class.forName(props.getProperty("Results.ResultMatrix", ResultMatrixPlainText.class.getName())).newInstance();
+    }
+    catch (Exception e) {
+      ConsolePanel.getSingleton().append(Level.SEVERE, "Failed to instantiate matrix: " + props.getProperty("Results.ResultMatrix"), e);
+      matrix = new ResultMatrixPlainText();
+    }
+    m_PanelMatrix = new WekaGenericObjectEditorPanel(ResultMatrix.class, matrix, true);
     panelParams.addParameter("Output", m_PanelMatrix);
 
+    // significance
+    siglevel = props.getDouble("Results.SignificanceLevel", 0.05);
     m_TextSignificance = new NumberTextField(Type.DOUBLE);
-    m_TextSignificance.setCheckModel(new BoundedNumberCheckModel(Type.DOUBLE, 0.0, 1.0, 0.05));  // TODO preferences
-    m_TextSignificance.setText("0.05");  // TODO preferences
+    m_TextSignificance.setCheckModel(new BoundedNumberCheckModel(Type.DOUBLE, 0.0, 1.0, siglevel));
+    m_TextSignificance.setText("" + siglevel);
     panelParams.addParameter("Significance level", m_TextSignificance);
 
+    // rows
     m_SelectRows = new SelectOptionPanel();
     m_SelectRows.setCurrent(new String[]{KEY_DATASET});
     m_SelectRows.setMultiSelect(true);
     m_SelectRows.setDialogTitle("Select row identifiers");
     panelParams.addParameter("Rows", m_SelectRows);
 
+    // columns
     m_SelectColumns = new SelectOptionPanel();
     m_SelectColumns.setCurrent(new String[]{KEY_SCHEME, KEY_SCHEME_OPTIONS, KEY_SCHEME_VERSION_ID});
     m_SelectColumns.setMultiSelect(true);
     m_SelectColumns.setDialogTitle("Select column identifiers");
     panelParams.addParameter("Columns", m_SelectColumns);
 
+    // swap
     m_CheckBoxSwapRowsColumns = new JCheckBox();
     panelParams.addParameter("Swap rows/columns", m_CheckBoxSwapRowsColumns);
 
+    // metric
     m_ComboBoxMetric = new JComboBox<>(m_ModelMetric);
     panelParams.addParameter("Metric", m_ComboBoxMetric);
 
+    // results
     m_ComboBoxResults = new JComboBox<>(
       new DefaultComboBoxModel<>(
 	m_PanelsResults.toArray(new AbstractResultsPanel[m_PanelsResults.size()])));
