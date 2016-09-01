@@ -218,7 +218,7 @@ public class DefaultAnalysisPanel
       }
     }
 
-    m_Formatter  = DateUtils.getTimestampFormatter();
+    m_Formatter  = DateUtils.getTimeFormatter();
   }
 
   /**
@@ -509,7 +509,7 @@ public class DefaultAnalysisPanel
 
     panel = ((AbstractResultsPanel) m_ComboBoxResults.getSelectedItem()).getClone();
     panel.display(tester.getResultMatrix());
-    m_History.addEntry(m_Formatter.format(new Date()), panel);
+    m_History.addEntry(m_Formatter.format(new Date()) + " - " + metric.replace("_", " "), panel);
     m_History.setSelectedIndex(m_History.count() - 1);
   }
 }
