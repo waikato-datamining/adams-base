@@ -59,7 +59,7 @@ public class NestedCommandlineReader
    */
   @Override
   public String getFormatDescription() {
-    return "Commandline Object (nested format)";
+    return "Nested Commandline Object";
   }
 
   /**
