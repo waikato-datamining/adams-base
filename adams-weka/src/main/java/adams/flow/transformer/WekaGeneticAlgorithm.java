@@ -22,7 +22,6 @@ package adams.flow.transformer;
 
 import adams.core.Pausable;
 import adams.core.QuickInfoHelper;
-import adams.core.Utils;
 import adams.event.FitnessChangeEvent;
 import adams.event.FitnessChangeListener;
 import adams.event.FlowPauseStateEvent;
@@ -544,16 +543,13 @@ public class WekaGeneticAlgorithm
    */
   @Override
   public void stopExecution() {
-    if (m_ActualAlgorithm != null) {
-      m_ActualAlgorithm.stopExecution();
-      while (m_ActualAlgorithm.isRunning()) {
-	Utils.wait(this, 1000, 100);
-      }
-      m_ActualAlgorithm.removeFitnessChangeListener(this);
-    }
     if (m_PauseStateManager != null) {
       if (m_PauseStateManager.isPaused())
 	m_PauseStateManager.resume(this);
+    }
+    if (m_ActualAlgorithm != null) {
+      m_ActualAlgorithm.removeFitnessChangeListener(this);
+      m_ActualAlgorithm.stopExecution();
     }
     super.stopExecution();
   }
