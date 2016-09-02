@@ -343,6 +343,9 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
   /** the flow context. */
   protected Actor m_FlowContext;
 
+  /** the job runner in use. */
+  protected JobRunner<ClassifierBasedGeneticAlgorithmJob> m_JobRunner;
+
   /**
    * Adds options to the internal list of options.
    */
@@ -844,7 +847,6 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
    */
   @Override
   public void calcFitness() {
-    JobRunner<ClassifierBasedGeneticAlgorithmJob> 	runner;
     JobList<ClassifierBasedGeneticAlgorithmJob> 	jobs;
     ClassifierBasedGeneticAlgorithmJob 			job;
     int 						i;
@@ -853,12 +855,12 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
     int 						weight;
 
     if (m_JobRunnerSetup == null)
-      runner = new LocalJobRunner<>();
+      m_JobRunner = new LocalJobRunner<>();
     else
-      runner = m_JobRunnerSetup.newInstance();
-    if (runner instanceof ThreadLimiter)
-      ((ThreadLimiter) runner).setNumThreads(getNumThreads());
-    runner.setFlowContext(getFlowContext());
+      m_JobRunner = m_JobRunnerSetup.newInstance();
+    if (m_JobRunner instanceof ThreadLimiter)
+      ((ThreadLimiter) m_JobRunner).setNumThreads(getNumThreads());
+    m_JobRunner.setFlowContext(getFlowContext());
     jobs   = new JobList<>();
     for (i = 0; i < getNumChrom(); i++) {
       weights = new int[getNumGenes()];
@@ -873,20 +875,23 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
       }
       jobs.add(newJob(i, weights, m_Instances));
     }
-    runner.add(jobs);
-    runner.start();
-    runner.stop();
+    m_JobRunner.add(jobs);
+    m_JobRunner.start();
+    m_JobRunner.stop();
 
-    for (i = 0; i < runner.getJobs().size(); i++) {
-      job = runner.getJobs().get(i);
+    for (i = 0; i < m_JobRunner.getJobs().size(); i++) {
+      job = m_JobRunner.getJobs().get(i);
       // success? If not, just add the header of the original data
-      if (job.getFitness() == null)
+      if ((job.getFitness() == null) || m_Stopped)
         m_Fitness[job.getChromosome()] = Double.NEGATIVE_INFINITY;
       else
         m_Fitness[job.getChromosome()] = job.getFitness();
       job.cleanUp();
     }
-    runner.cleanUp();
+    m_JobRunner.cleanUp();
+    m_JobRunner.stop();
+
+    m_JobRunner = null;
   }
 
   /**
@@ -912,6 +917,16 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
 
     // clear cache
     clearResults();
+  }
+
+  /**
+   * Stops the execution of the algorithm.
+   */
+  @Override
+  public void stopExecution() {
+    super.stopExecution();
+    if (m_JobRunner != null)
+      m_JobRunner.terminate();
   }
 
   /**
