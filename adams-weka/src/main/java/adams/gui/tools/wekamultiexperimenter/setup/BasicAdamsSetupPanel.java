@@ -20,6 +20,8 @@
 package adams.gui.tools.wekamultiexperimenter.setup;
 
 import adams.core.io.PlaceholderFile;
+import adams.data.weka.classattribute.AbstractClassAttributeHeuristic;
+import adams.data.weka.classattribute.LastAttribute;
 import adams.gui.core.BaseTabbedPane;
 import adams.gui.core.NumberTextField;
 import adams.gui.core.NumberTextField.Type;
@@ -56,7 +58,10 @@ public class BasicAdamsSetupPanel
   
   /** the panel for the results handler. */
   protected GenericObjectEditorPanel m_PanelResultsHandler;
-  
+
+  /** the panel for the class attribute heuristic. */
+  protected GenericObjectEditorPanel m_PanelClassAttribute;
+
   /** the number of repetitions. */
   protected NumberTextField m_TextRepetitions;
   
@@ -93,6 +98,10 @@ public class BasicAdamsSetupPanel
     m_PanelResultsHandler = new GenericObjectEditorPanel(AbstractResultsHandler.class, new FileResultsHandler(), true);
     m_PanelResultsHandler.addChangeListener(new ModificationChangeListener());
     m_PanelParameters.addParameter("Results", m_PanelResultsHandler);
+
+    m_PanelClassAttribute = new GenericObjectEditorPanel(AbstractClassAttributeHeuristic.class, new LastAttribute(), true);
+    m_PanelClassAttribute.addChangeListener(new ModificationChangeListener());
+    m_PanelParameters.addParameter("Class attribute", m_PanelClassAttribute);
 
     m_TextRepetitions = new NumberTextField(Type.INTEGER);
     m_TextRepetitions.setValue(ExperimenterDefaults.getRepetitions());
@@ -211,6 +220,7 @@ public class BasicAdamsSetupPanel
     }
 
     result.setResultsHandler((AbstractResultsHandler) m_PanelResultsHandler.getCurrent());
+    result.setClassAttribute((AbstractClassAttributeHeuristic) m_PanelClassAttribute.getCurrent());
     result.setRuns(m_TextRepetitions.getValue().intValue());
     result.setNumThreads(m_TextNumThreads.getValue().intValue());
     result.setClassifiers(m_PanelClassifiers.getClassifiers());
