@@ -505,7 +505,7 @@ public class ExperimenterPanel
       menu.add(submenu);
       submenu.setMnemonic('N');
       classes = AbstractSetupPanel.getPanels();
-      defSetup = getProperties().getProperty("Setups.InitialPaneldefSetup", BasicWekaSetupPanel.class.getName());
+      defSetup = getProperties().getProperty("Setups.InitialPanel", BasicWekaSetupPanel.class.getName());
       for (String cls: classes) {
 	try {
 	  final AbstractSetupPanel setup = (AbstractSetupPanel) Class.forName(cls).newInstance();
