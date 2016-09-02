@@ -531,7 +531,7 @@ public class BaseFileChooser
     if (!result) {
       filename = file.getAbsolutePath().toLowerCase();
       for (i = 0; i < extensions.length; i++) {
-	if (filename.endsWith("." + extensions[i].toLowerCase())) {
+	if (filename.toLowerCase().endsWith("." + extensions[i].toLowerCase())) {
 	  result = true;
 	  break;
 	}
