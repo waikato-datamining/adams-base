@@ -37,7 +37,9 @@ import adams.gui.tools.wekamultiexperimenter.io.DefaultAdamsExperimentIO;
 import weka.gui.experiment.ExperimenterDefaults;
 
 import javax.swing.JComboBox;
+import javax.swing.JPanel;
 import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.io.File;
 
@@ -89,11 +91,15 @@ public class BasicAdamsSetupPanel
   @Override
   protected void initGUI() {
     final int		evalIndex;
+    JPanel		panel;
     
     super.initGUI();
-    
+
+    panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    add(panel, BorderLayout.NORTH);
+
     m_PanelParameters = new ParameterPanel();
-    add(m_PanelParameters, BorderLayout.NORTH);
+    panel.add(m_PanelParameters);
 
     m_PanelResultsHandler = new GenericObjectEditorPanel(AbstractResultsHandler.class, new FileResultsHandler(), true);
     m_PanelResultsHandler.addChangeListener(new ModificationChangeListener());

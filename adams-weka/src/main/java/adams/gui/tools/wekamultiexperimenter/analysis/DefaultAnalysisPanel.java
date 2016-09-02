@@ -242,7 +242,7 @@ public class DefaultAnalysisPanel
 
     setLayout(new BorderLayout());
 
-    panelTop = new JPanel(new BorderLayout());
+    panelTop = new JPanel(new FlowLayout(FlowLayout.LEFT));
     add(panelTop, BorderLayout.NORTH);
 
     // parameters

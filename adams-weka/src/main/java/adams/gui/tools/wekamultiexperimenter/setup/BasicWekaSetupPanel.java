@@ -38,7 +38,9 @@ import weka.experiment.SplitEvaluator;
 import weka.gui.experiment.ExperimenterDefaults;
 
 import javax.swing.JComboBox;
+import javax.swing.JPanel;
 import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
@@ -92,11 +94,15 @@ public class BasicWekaSetupPanel
   @Override
   protected void initGUI() {
     final int		evalIndex;
+    JPanel		panel;
     
     super.initGUI();
-    
+
+    panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    add(panel, BorderLayout.NORTH);
+
     m_PanelParameters = new ParameterPanel();
-    add(m_PanelParameters, BorderLayout.NORTH);
+    panel.add(m_PanelParameters);
 
     m_PanelOutput = new OutputPanel();
     m_PanelOutput.setOwner(this);
