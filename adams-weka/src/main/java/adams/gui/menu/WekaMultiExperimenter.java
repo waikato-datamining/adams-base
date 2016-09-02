@@ -89,6 +89,6 @@ public class WekaMultiExperimenter
    */
   @Override
   public UserMode getUserMode() {
-    return UserMode.DEVELOPER;
+    return UserMode.BASIC;
   }
 }
