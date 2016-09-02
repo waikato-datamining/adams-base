@@ -254,6 +254,7 @@ public class BasicAdamsSetupPanel
 	logMessage("Unhandled experiment type: " + value.getClass().getName());
       }
       m_PanelResultsHandler.setCurrent(value.getResultsHandler());
+      m_PanelClassAttribute.setCurrent(value.getClassAttribute());
       m_TextRepetitions.setValue(value.getRuns());
       m_PanelDatasets.setFiles(value.getDatasets());
       m_PanelClassifiers.setClassifiers(value.getClassifiers());
