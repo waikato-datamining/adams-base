@@ -15,7 +15,7 @@
 
 /**
  * AbstractJobRunner.java
- * Copyright (C) 2015 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton, NZ
  */
 
 package adams.multiprocess;
@@ -166,13 +166,15 @@ public abstract class AbstractJobRunner<T extends Job>
   public void stop() {
     String	msg;
 
-    msg = preStop();
-    if (msg != null)
-      getLogger().severe("preStop failed: " + msg);
+    if (m_Running) {
+      msg = preStop();
+      if (msg != null)
+        getLogger().severe("preStop failed: " + msg);
 
-    msg = doStop();
-    if (msg != null)
-      getLogger().severe("doStop failed: " + msg);
+      msg = doStop();
+      if (msg != null)
+        getLogger().severe("doStop failed: " + msg);
+    }
 
     msg = postStop();
     if (msg != null)
