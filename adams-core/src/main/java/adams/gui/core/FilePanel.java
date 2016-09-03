@@ -47,6 +47,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.Serializable;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -94,6 +95,9 @@ public class FilePanel
     /** whether the file is hidden. */
     protected boolean m_Hidden;
 
+    /** whether the file is a link. */
+    protected boolean m_Link;
+
     /**
      * Initializes the wrapper.
      *
@@ -105,6 +109,7 @@ public class FilePanel
       m_Length       = m_File.length();
       m_LastModified = new Date(m_File.lastModified());
       m_Hidden       = m_File.isHidden();
+      m_Link         = Files.isSymbolicLink(m_File.toPath());
     }
 
     /**
@@ -114,6 +119,25 @@ public class FilePanel
      */
     public File getFile() {
       return m_File;
+    }
+
+    /**
+     * Returns the actual target (if possible) in case of a link.
+     *
+     * @return		the actual file
+     */
+    public File getActualFile() {
+      if (isLink()) {
+	try {
+	  return Files.readSymbolicLink(m_File.toPath()).toFile();
+	}
+	catch (Exception e) {
+	  return m_File;
+	}
+      }
+      else {
+	return m_File;
+      }
     }
 
     /**
@@ -159,6 +183,15 @@ public class FilePanel
      */
     public boolean isHidden() {
       return m_Hidden;
+    }
+
+    /**
+     * Returns whether the file represents a link.
+     *
+     * @return		true if link
+     */
+    public boolean isLink() {
+      return m_Link;
     }
 
     /**
@@ -476,6 +509,8 @@ public class FilePanel
 	case 1:
 	  if (wrapper.isDirectory())
 	    return "DIR";
+          else if (wrapper.isLink())
+            return "LNK";
 	  else
 	    return null;
 	case 2:
@@ -685,8 +720,9 @@ public class FilePanel
       @Override
       public void mouseClicked(MouseEvent e) {
 	if (MouseUtils.isDoubleClick(e)) {
-	  File file = getSelectedFile(false);
-	  if (file != null) {
+	  FileWrapper wrapper = getSelectedWrapper(false);
+	  if (wrapper != null) {
+	    File file = wrapper.getActualFile();
 	    if (file.isDirectory()) {
 	      e.consume();
 	      if (file.getName().equals(".."))
@@ -694,7 +730,7 @@ public class FilePanel
 	      else
 		setCurrentDir(new PlaceholderDirectory(file.getAbsoluteFile()));
 	    }
-            else {
+	    else {
               notifyFileDoubleClickListeners(new FileDoubleClickEvent(FilePanel.this, file));
             }
 	  }
@@ -952,12 +988,12 @@ public class FilePanel
   }
 
   /**
-   * Returns the currently selected file, if any.
+   * Returns the currently selected file wrapper, if any.
    *
    * @param skipDotDot	whether to skip the dot dot file
-   * @return		the file, null if none selected
+   * @return		the file wrapper, null if none selected
    */
-  protected File getSelectedFile(boolean skipDotDot) {
+  protected FileWrapper getSelectedWrapper(boolean skipDotDot) {
     FileWrapper		wrapper;
 
     wrapper = null;
@@ -974,11 +1010,27 @@ public class FilePanel
       if (wrapper.getName().equals("..") && skipDotDot)
 	return null;
       else
-	return wrapper.getFile();
+	return wrapper;
     }
     else {
       return null;
     }
+  }
+
+  /**
+   * Returns the currently selected file, if any.
+   *
+   * @param skipDotDot	whether to skip the dot dot file
+   * @return		the file, null if none selected
+   */
+  protected File getSelectedFile(boolean skipDotDot) {
+    FileWrapper		wrapper;
+
+    wrapper = getSelectedWrapper(skipDotDot);
+    if (wrapper != null)
+      return wrapper.getFile();
+    else
+      return null;
   }
 
   /**
