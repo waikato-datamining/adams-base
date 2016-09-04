@@ -111,7 +111,7 @@ public class DatasetPanel
       if (indices.length == 0)
         return;
       Arrays.sort(indices);
-      for (int i = indices.length; i >= 0; i--)
+      for (int i = indices.length - 1; i >= 0; i--)
         m_Model.remove(indices[i]);
       modified();
     });
