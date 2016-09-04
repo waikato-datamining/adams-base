@@ -29,6 +29,8 @@ import weka.core.Instances;
 
 /**
  * Performs cross-validation.
+ * If only one dataset and one classifier specified, cross-validation is
+ * multi-threaded (in case experiment is multi-threaded).
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
@@ -66,8 +68,12 @@ public class CrossValidationExperiment
       String				result;
       SpreadSheet 			results;
       int 				fold;
+      boolean				simple;
 
       m_Owner.log("Run " + m_Run + " [start]: " + m_Data.relationName() + " on " + OptionUtils.getCommandLine(m_Classifier));
+
+      simple = (m_Owner.getDatasets().length == 1)
+	&& (m_Owner.getClassifiers().length == 1);
 
       cv = new WekaCrossValidationExecution();
       cv.setClassifier(m_Classifier);
@@ -75,7 +81,7 @@ public class CrossValidationExperiment
       cv.setFolds(m_Owner.getFolds());
       cv.setSeed(m_Run);
       cv.setDiscardPredictions(true);
-      cv.setNumThreads(1);
+      cv.setNumThreads(simple ? m_Owner.getNumThreads() : 1);
       cv.setSeparateFolds(true);
       result = cv.execute();
 
