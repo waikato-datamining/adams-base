@@ -125,7 +125,7 @@ public class Train
    * @throws Exception	if evaluation fails
    */
   @Override
-  public ResultItem evaluate(ASEvaluation evaluator, ASSearch search, AbstractNamedHistoryPanel<ResultItem> history) throws Exception {
+  protected ResultItem doEvaluate(ASEvaluation evaluator, ASSearch search, AbstractNamedHistoryPanel<ResultItem> history) throws Exception {
     String		msg;
     Instances		data;
     ASEvaluation	eval;

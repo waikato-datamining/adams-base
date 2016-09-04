@@ -187,7 +187,7 @@ public class CrossValidation
    * @throws Exception	if evaluation fails
    */
   @Override
-  public ResultItem evaluate(Clusterer clusterer, AbstractNamedHistoryPanel<ResultItem> history) throws Exception {
+  protected ResultItem doEvaluate(Clusterer clusterer, AbstractNamedHistoryPanel<ResultItem> history) throws Exception {
     String			msg;
     Instances			data;
     boolean			finalModel;

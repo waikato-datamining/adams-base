@@ -210,7 +210,7 @@ public class ReevaluateModel
    * @throws Exception	if evaluation fails
    */
   @Override
-  public ResultItem evaluate(Classifier classifier, AbstractNamedHistoryPanel<ResultItem> history) throws Exception {
+  protected ResultItem doEvaluate(Classifier classifier, AbstractNamedHistoryPanel<ResultItem> history) throws Exception {
     Evaluation 	eval;
     Instances	data;
     String	msg;

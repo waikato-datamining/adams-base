@@ -30,6 +30,7 @@ import adams.gui.tools.wekainvestigator.InvestigatorPanel;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
 import adams.gui.tools.wekainvestigator.tab.AttributeSelectionTab;
 import adams.gui.tools.wekainvestigator.tab.attseltab.ResultItem;
+import org.apache.commons.lang.time.StopWatch;
 import weka.attributeSelection.ASEvaluation;
 import weka.attributeSelection.ASSearch;
 
@@ -129,7 +130,28 @@ public abstract class AbstractAttributeSelectionEvaluation
    * @return		the generate history item
    * @throws Exception	if evaluation fails
    */
-  public abstract ResultItem evaluate(ASEvaluation evaluator, ASSearch search, AbstractNamedHistoryPanel<ResultItem> history) throws Exception;
+  protected abstract ResultItem doEvaluate(ASEvaluation evaluator, ASSearch search, AbstractNamedHistoryPanel<ResultItem> history) throws Exception;
+
+  /**
+   * Performs attribute selections and returns the generated evaluation object.
+   *
+   * @param history	the history to add the result to
+   * @return		the generate history item
+   * @throws Exception	if evaluation fails
+   */
+  public ResultItem evaluate(ASEvaluation evaluator, ASSearch search, AbstractNamedHistoryPanel<ResultItem> history) throws Exception {
+    ResultItem 	result;
+    StopWatch 	watch;
+
+    watch = new StopWatch();
+    watch.start();
+    result = doEvaluate(evaluator, search, history);
+    watch.stop();
+    if (result.hasRunInformation())
+      result.getRunInformation().add("Total time", (watch.getTime() / 1000.0) + "s");
+
+    return result;
+  }
 
   /**
    * Adds the item to the history and selects it.

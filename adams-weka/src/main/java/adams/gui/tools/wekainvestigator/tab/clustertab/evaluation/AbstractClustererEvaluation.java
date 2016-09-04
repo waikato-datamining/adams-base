@@ -30,6 +30,7 @@ import adams.gui.tools.wekainvestigator.InvestigatorPanel;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
 import adams.gui.tools.wekainvestigator.tab.ClusterTab;
 import adams.gui.tools.wekainvestigator.tab.clustertab.ResultItem;
+import org.apache.commons.lang.time.StopWatch;
 import weka.clusterers.Clusterer;
 
 import javax.swing.ComboBoxModel;
@@ -128,7 +129,28 @@ public abstract class AbstractClustererEvaluation
    * @return		the generate history item
    * @throws Exception	if evaluation fails
    */
-  public abstract ResultItem evaluate(Clusterer clusterer, AbstractNamedHistoryPanel<ResultItem> history) throws Exception;
+  protected abstract ResultItem doEvaluate(Clusterer clusterer, AbstractNamedHistoryPanel<ResultItem> history) throws Exception;
+
+  /**
+   * Evaluates the clusterer and returns the generated evaluation object.
+   *
+   * @param history	the history to add the result to
+   * @return		the generate history item
+   * @throws Exception	if evaluation fails
+   */
+  public ResultItem evaluate(Clusterer clusterer, AbstractNamedHistoryPanel<ResultItem> history) throws Exception {
+    ResultItem result;
+    StopWatch   watch;
+
+    watch = new StopWatch();
+    watch.start();
+    result = doEvaluate(clusterer, history);
+    watch.stop();
+    if (result.hasRunInformation())
+      result.getRunInformation().add("Total time", (watch.getTime() / 1000.0) + "s");
+
+    return result;
+  }
 
   /**
    * Adds the item to the history and selects it.

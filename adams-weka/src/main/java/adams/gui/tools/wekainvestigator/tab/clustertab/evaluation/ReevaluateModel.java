@@ -210,7 +210,7 @@ public class ReevaluateModel
    * @throws Exception	if evaluation fails
    */
   @Override
-  public ResultItem evaluate(Clusterer clusterer, AbstractNamedHistoryPanel<ResultItem> history) throws Exception {
+  protected ResultItem doEvaluate(Clusterer clusterer, AbstractNamedHistoryPanel<ResultItem> history) throws Exception {
     ClusterEvaluation 	eval;
     Instances		data;
     String		msg;
