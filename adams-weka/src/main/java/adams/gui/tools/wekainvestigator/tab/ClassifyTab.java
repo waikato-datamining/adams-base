@@ -42,6 +42,7 @@ import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
 import adams.gui.tools.wekainvestigator.tab.classifytab.evaluation.AbstractClassifierEvaluation;
 import adams.gui.tools.wekainvestigator.tab.classifytab.output.AbstractOutputGenerator;
 import adams.gui.tools.wekainvestigator.tab.classifytab.output.TextStatistics;
+import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 import weka.classifiers.Classifier;
 import weka.classifiers.rules.ZeroR;
 
@@ -271,6 +272,14 @@ public class ClassifyTab
       indices = getSelectedIndices();
 
       result.addSeparator();
+
+      menuitem = new JMenuItem("Copy setup");
+      menuitem.setEnabled((indices.length == 1) && getEntry(indices[0]).hasClassifier());
+      menuitem.addActionListener((ActionEvent ae) -> {
+        String setup = OptionUtils.getCommandLine(getEntry(indices[0]).getClassifier());
+        ClipboardHelper.copyToClipboard(setup);
+      });
+      result.add(menuitem);
 
       menuitem = new JMenuItem("Save model...");
       menuitem.setEnabled((indices.length == 1) && getEntry(indices[0]).hasClassifier());

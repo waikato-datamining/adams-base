@@ -41,6 +41,7 @@ import adams.gui.tools.wekainvestigator.tab.attseltab.ResultItem;
 import adams.gui.tools.wekainvestigator.tab.attseltab.evaluation.AbstractAttributeSelectionEvaluation;
 import adams.gui.tools.wekainvestigator.tab.attseltab.output.AbstractOutputGenerator;
 import adams.gui.tools.wekainvestigator.tab.attseltab.output.TextStatistics;
+import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 import weka.attributeSelection.ASEvaluation;
 import weka.attributeSelection.ASSearch;
 import weka.attributeSelection.BestFirst;
@@ -314,6 +315,22 @@ public class AttributeSelectionTab
       indices = getSelectedIndices();
 
       result.addSeparator();
+
+      menuitem = new JMenuItem("Copy evaluator");
+      menuitem.setEnabled((indices.length == 1));
+      menuitem.addActionListener((ActionEvent ae) -> {
+        String setup = OptionUtils.getCommandLine(getEntry(indices[0]).getEvaluator());
+        ClipboardHelper.copyToClipboard(setup);
+      });
+      result.add(menuitem);
+
+      menuitem = new JMenuItem("Copy search");
+      menuitem.setEnabled((indices.length == 1));
+      menuitem.addActionListener((ActionEvent ae) -> {
+        String setup = OptionUtils.getCommandLine(getEntry(indices[0]).getSearch());
+        ClipboardHelper.copyToClipboard(setup);
+      });
+      result.add(menuitem);
 
       menuitem = new JMenuItem("Save reduced data...");
       menuitem.setEnabled((indices.length == 1) && !getEntry(indices[0]).isCrossValidation() && getEntry(indices[0]).hasFull());

@@ -42,6 +42,7 @@ import adams.gui.tools.wekainvestigator.tab.clustertab.output.TextStatistics;
 import adams.gui.tools.wekainvestigator.tab.clustertab.ResultItem;
 import adams.gui.tools.wekainvestigator.tab.clustertab.evaluation.AbstractClustererEvaluation;
 import adams.gui.tools.wekainvestigator.tab.clustertab.output.AbstractOutputGenerator;
+import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 import weka.clusterers.Clusterer;
 import weka.clusterers.SimpleKMeans;
 
@@ -275,6 +276,14 @@ public class ClusterTab
       indices = getSelectedIndices();
 
       result.addSeparator();
+
+      menuitem = new JMenuItem("Copy setup");
+      menuitem.setEnabled((indices.length == 1) && getEntry(indices[0]).hasClusterer());
+      menuitem.addActionListener((ActionEvent ae) -> {
+        String setup = OptionUtils.getCommandLine(getEntry(indices[0]).getClusterer());
+        ClipboardHelper.copyToClipboard(setup);
+      });
+      result.add(menuitem);
 
       menuitem = new JMenuItem("Save model...");
       menuitem.setEnabled((indices.length == 1) && getEntry(indices[0]).hasClusterer());
