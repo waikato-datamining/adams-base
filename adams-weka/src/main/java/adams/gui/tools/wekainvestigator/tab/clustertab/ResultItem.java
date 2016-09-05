@@ -42,8 +42,11 @@ public class ResultItem
   /** the evaluation object. */
   protected ClusterEvaluation m_Evaluation;
 
+  /** the template. */
+  protected Clusterer m_Template;
+
   /** the model. */
-  protected Clusterer m_Clusterer;
+  protected Clusterer m_Model;
 
   /** the supplementary name. */
   protected String m_SupplementaryName;
@@ -58,37 +61,44 @@ public class ResultItem
    * Initializes the item.
    *
    * @param evaluation	the evaluation, can be null
-   * @param clusterer	the model, can be null
+   * @param template	the template
+   * @param model	the model, can be null
    * @param header	the header of the training set, can be null
    * @param runInfo	the run information, can be null
    */
-  public ResultItem(ClusterEvaluation evaluation, Clusterer clusterer, Instances header, MetaData runInfo) {
-    this(evaluation, null, null, clusterer, header, runInfo);
+  public ResultItem(ClusterEvaluation evaluation, Clusterer template, Clusterer model, Instances header, MetaData runInfo) {
+    this(evaluation, null, null, template, model, header, runInfo);
   }
 
   /**
    * Initializes the item.
    *
+   * @param supplementaryName	the name for the supplementary data, can be null
    * @param supplementaryData	the supplementary data, can be null
-   * @param clusterer	the model, can be null
+   * @param template	the template
+   * @param model	the model, can be null
    * @param header	the header of the training set, can be null
    * @param runInfo	the run information, can be null
    */
-  public ResultItem(String supplementaryName, Object supplementaryData, Clusterer clusterer, Instances header, MetaData runInfo) {
-    this(null, supplementaryName, supplementaryData, clusterer, header, runInfo);
+  public ResultItem(String supplementaryName, Object supplementaryData, Clusterer template, Clusterer model, Instances header, MetaData runInfo) {
+    this(null, supplementaryName, supplementaryData, template, model, header, runInfo);
   }
 
   /**
    * Initializes the item.
    *
+   * @param evaluation		the evaluation, can be null
+   * @param supplementaryName	the name for the supplementary data, can be null
    * @param supplementaryData	the supplementary data, can be null
-   * @param clusterer	the model, can be null
+   * @param template	the template
+   * @param model	the model, can be null
    * @param header	the header of the training set, can be null
    * @param runInfo	the run information, can be null
    */
-  public ResultItem(ClusterEvaluation evaluation, String supplementaryName, Object supplementaryData, Clusterer clusterer, Instances header, MetaData runInfo) {
+  public ResultItem(ClusterEvaluation evaluation, String supplementaryName, Object supplementaryData, Clusterer template, Clusterer model, Instances header, MetaData runInfo) {
     super(header);
-    m_Clusterer         = clusterer;
+    m_Model             = model;
+    m_Template          = template;
     m_SupplementaryName = supplementaryName;
     m_SupplementaryData = supplementaryData;
     m_Evaluation        = evaluation;
@@ -101,7 +111,7 @@ public class ResultItem
    * @return		the name
    */
   protected String createName() {
-    return DateUtils.getTimeFormatterMsecs().format(m_Timestamp) + " - " + (hasClusterer() ? m_Clusterer.getClass().getSimpleName() : "???");
+    return DateUtils.getTimeFormatterMsecs().format(m_Timestamp) + " - " + m_Template.getClass().getSimpleName();
   }
 
   /**
@@ -123,21 +133,30 @@ public class ResultItem
   }
 
   /**
-   * Returns whether an Clusterer object is present.
-   * 
-   * @return		true if available
+   * Returns the stored template object.
+   *
+   * @return		the template, null if not present
    */
-  public boolean hasClusterer() {
-    return (m_Clusterer != null);
+  public Clusterer getTemplate() {
+    return m_Template;
   }
 
   /**
-   * Returns the stored Clusterer object.
+   * Returns whether an model object is present.
+   * 
+   * @return		true if available
+   */
+  public boolean hasModel() {
+    return (m_Model != null);
+  }
+
+  /**
+   * Returns the stored model object.
    * 
    * @return		the model, null if not present
    */
-  public Clusterer getClusterer() {
-    return m_Clusterer;
+  public Clusterer getModel() {
+    return m_Model;
   }
 
   /**
@@ -204,7 +223,8 @@ public class ResultItem
 
     result = getName();
     result += ", evaluation=" + hasEvaluation()
-      + ", clusterer=" + hasClusterer()
+      + ", template=" + getTemplate().getClass().getName()
+      + ", model=" + hasModel()
       + ", supplementary=" + (hasSupplementaryName() && hasSupplementaryData())
       + ", runInfo=" + hasRunInformation()
       + ", header=" + hasHeader();

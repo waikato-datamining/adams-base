@@ -42,8 +42,11 @@ public class ResultItem
   /** the evaluation object. */
   protected Evaluation m_Evaluation;
 
+  /** the template. */
+  protected Classifier m_Template;
+
   /** the model. */
-  protected Classifier m_Classifier;
+  protected Classifier m_Model;
 
   /** the run information. */
   protected MetaData m_RunInformation;
@@ -52,26 +55,31 @@ public class ResultItem
    * Initializes the item.
    *
    * @param evaluation	the evaluation, can be null
-   * @param classifier	the model, can be null
+   * @param template	the template
+   * @param model	the model, can be null
    * @param header	the header of the training set, can be null
    */
-  public ResultItem(Evaluation evaluation, Classifier classifier, Instances header) {
-    this(evaluation, classifier, header, null);
+  public ResultItem(Evaluation evaluation, Classifier template, Classifier model, Instances header) {
+    this(evaluation, template, model, header, null);
   }
 
   /**
    * Initializes the item.
    *
    * @param evaluation	the evaluation, can be null
-   * @param classifier	the model, can be null
+   * @param model	the model, can be null
    * @param header	the header of the training set, can be null
    * @param runInfo	the meta-data for the run
    */
-  public ResultItem(Evaluation evaluation, Classifier classifier, Instances header, MetaData runInfo) {
+  public ResultItem(Evaluation evaluation, Classifier template, Classifier model, Instances header, MetaData runInfo) {
     super(header);
 
+    if (template == null)
+      throw new IllegalArgumentException("Template classifier cannot be null!");
+
     m_Evaluation     = evaluation;
-    m_Classifier     = classifier;
+    m_Template       = template;
+    m_Model          = model;
     m_RunInformation = runInfo;
   }
 
@@ -81,7 +89,7 @@ public class ResultItem
    * @return		the name
    */
   protected String createName() {
-    return DateUtils.getTimeFormatterMsecs().format(m_Timestamp) + " - " + (hasClassifier() ? m_Classifier.getClass().getSimpleName() : "???");
+    return DateUtils.getTimeFormatterMsecs().format(m_Timestamp) + " - " + m_Template.getClass().getSimpleName();
   }
 
   /**
@@ -103,21 +111,30 @@ public class ResultItem
   }
 
   /**
-   * Returns whether an Classifier object is present.
+   * Returns the stored template object.
    * 
-   * @return		true if available
+   * @return		the template
    */
-  public boolean hasClassifier() {
-    return (m_Classifier != null);
+  public Classifier getTemplate() {
+    return m_Template;
   }
 
   /**
-   * Returns the stored Classifier object.
+   * Returns whether an model object is present.
+   * 
+   * @return		true if available
+   */
+  public boolean hasModel() {
+    return (m_Model != null);
+  }
+
+  /**
+   * Returns the stored model object.
    * 
    * @return		the model, null if not present
    */
-  public Classifier getClassifier() {
-    return m_Classifier;
+  public Classifier getModel() {
+    return m_Model;
   }
 
   /**
@@ -148,7 +165,8 @@ public class ResultItem
 
     result = getName();
     result += ", evaluation=" + hasEvaluation()
-      + ", classifier=" + hasClassifier()
+      + ", template=" + getTemplate().getClass().getName()
+      + ", model=" + hasModel()
       + ", header=" + hasHeader()
       + ", runInfo=" + hasRunInformation();
 

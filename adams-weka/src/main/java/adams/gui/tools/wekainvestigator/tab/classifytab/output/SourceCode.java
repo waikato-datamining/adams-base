@@ -108,7 +108,7 @@ public class SourceCode
    * @return		true if output can be generated
    */
   public boolean canGenerateOutput(ResultItem item) {
-    return item.hasClassifier() && (item.getClassifier() instanceof Sourcable);
+    return item.hasModel() && (item.getModel() instanceof Sourcable);
   }
 
   /**
@@ -121,15 +121,15 @@ public class SourceCode
   public String generateOutput(ResultItem item) {
     BaseTextArea 	text;
 
-    if (!item.hasClassifier())
+    if (!item.hasModel())
       return "No model available!";
-    if (!(item.getClassifier() instanceof Sourcable))
+    if (!(item.getModel() instanceof Sourcable))
       return "Classifier does not implement " + Sourcable.class.getName() + "!";
 
     text = new BaseTextArea();
     text.setTextFont(Fonts.getMonospacedFont());
     try {
-      text.setText(((Sourcable) item.getClassifier()).toSource(m_Classname));
+      text.setText(((Sourcable) item.getModel()).toSource(m_Classname));
     }
     catch (Exception e) {
       return Utils.handleException(this, "Failed to generate source code!", e);

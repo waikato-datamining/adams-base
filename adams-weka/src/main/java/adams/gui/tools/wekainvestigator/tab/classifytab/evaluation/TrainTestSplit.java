@@ -205,6 +205,7 @@ public class TrainTestSplit
   @Override
   protected ResultItem doEvaluate(Classifier classifier, AbstractNamedHistoryPanel<ResultItem> history) throws Exception {
     Evaluation 			eval;
+    Classifier 			model;
     double			perc;
     int				seed;
     Instances			data;
@@ -239,15 +240,15 @@ public class TrainTestSplit
     runInfo.add("# Instances (test)", test.numInstances());
     runInfo.add("Class attribute", data.classAttribute().name());
 
-    classifier = (Classifier) OptionUtils.shallowCopy(classifier);
+    model = (Classifier) OptionUtils.shallowCopy(classifier);
     getOwner().logMessage("Using " + m_TextPercentage.getText() + "% of '" + train.relationName() + "' to train " + OptionUtils.getCommandLine(classifier));
-    classifier.buildClassifier(train);
+    model.buildClassifier(train);
     getOwner().logMessage("Using remainder from '" + test.relationName() + "' to evaluate " + OptionUtils.getCommandLine(classifier));
     eval = new Evaluation(train);
-    eval.evaluateModel(classifier, test);
+    eval.evaluateModel(model, test);
 
     // history
-    return addToHistory(history, new ResultItem(eval, classifier, new Instances(train, 0), runInfo));
+    return addToHistory(history, new ResultItem(eval, classifier, model, new Instances(train, 0), runInfo));
   }
 
   /**

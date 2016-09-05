@@ -62,7 +62,7 @@ public class ModelOutput
    * @return		true if output can be generated
    */
   public boolean canGenerateOutput(ResultItem item) {
-    return item.hasClassifier();
+    return item.hasModel();
   }
 
   /**
@@ -75,12 +75,12 @@ public class ModelOutput
   public String generateOutput(ResultItem item) {
     BaseTextArea 	text;
 
-    if (!item.hasClassifier())
+    if (!item.hasModel())
       return "No model available!";
 
     text = new BaseTextArea();
     text.setTextFont(Fonts.getMonospacedFont());
-    text.setText(item.getClassifier().toString());
+    text.setText(item.getModel().toString());
     text.setCaretPosition(0);
     addTab(item, new TextualContentPanel(text, true));
 

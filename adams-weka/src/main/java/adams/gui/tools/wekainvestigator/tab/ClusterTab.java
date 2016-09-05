@@ -169,7 +169,7 @@ public class ClusterTab
     protected void saveModel(ResultItem item) {
       int	retVal;
 
-      if (!item.hasClusterer()) {
+      if (!item.hasModel()) {
         GUIHelper.showErrorMessage(null, "No clusterer available!");
         return;
       }
@@ -182,11 +182,11 @@ public class ClusterTab
         if (item.hasHeader())
           SerializationHelper.writeAll(
             m_ModelFileChooser.getSelectedFile().getAbsolutePath(),
-            new Object[]{item.getClusterer(), item.getHeader()});
+            new Object[]{item.getModel(), item.getHeader()});
         else
           SerializationHelper.write(
             m_ModelFileChooser.getSelectedFile().getAbsolutePath(),
-            item.getClusterer());
+            item.getModel());
       }
       catch (Exception e) {
         GUIHelper.showErrorMessage(
@@ -278,15 +278,15 @@ public class ClusterTab
       result.addSeparator();
 
       menuitem = new JMenuItem("Copy setup");
-      menuitem.setEnabled((indices.length == 1) && getEntry(indices[0]).hasClusterer());
+      menuitem.setEnabled((indices.length == 1));
       menuitem.addActionListener((ActionEvent ae) -> {
-        String setup = OptionUtils.getCommandLine(getEntry(indices[0]).getClusterer());
+        String setup = OptionUtils.getCommandLine(getEntry(indices[0]).getTemplate());
         ClipboardHelper.copyToClipboard(setup);
       });
       result.add(menuitem);
 
       menuitem = new JMenuItem("Save model...");
-      menuitem.setEnabled((indices.length == 1) && getEntry(indices[0]).hasClusterer());
+      menuitem.setEnabled((indices.length == 1) && getEntry(indices[0]).hasModel());
       menuitem.addActionListener((ActionEvent ae) -> saveModel(getEntry(indices[0])));
       result.add(menuitem);
 

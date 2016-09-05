@@ -65,7 +65,7 @@ public class LegacyGraphVisualizer
    * @return		true if output can be generated
    */
   public boolean canGenerateOutput(ResultItem item) {
-    return item.hasClassifier() && (item.getClassifier() instanceof Drawable);
+    return item.hasModel() && (item.getModel() instanceof Drawable);
   }
 
   /**
@@ -80,7 +80,7 @@ public class LegacyGraphVisualizer
     JPanel 		panel;
 
     sink  = new WekaGraphVisualizer();
-    panel = sink.createDisplayPanel(new Token(item.getClassifier()));
+    panel = sink.createDisplayPanel(new Token(item.getModel()));
 
     addTab(item, new ComponentContentPanel(panel, sink.displayPanelRequiresScrollPane()));
 

@@ -234,7 +234,7 @@ public class CrossValidation
     }
 
     // history
-    return addToHistory(history, new ResultItem("Cross-validation", "Log-likelihood: " + logLikeliHood, model, new Instances(data, 0), runInfo));
+    return addToHistory(history, new ResultItem("Cross-validation", "Log-likelihood: " + logLikeliHood, clusterer, model, new Instances(data, 0), runInfo));
   }
 
   /**

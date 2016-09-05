@@ -216,12 +216,14 @@ public class ReevaluateModel
     String	msg;
     MetaData 	runInfo;
 
+    classifier = (Classifier) OptionUtils.shallowCopy(m_Model);
+
     if ((msg = canEvaluate(classifier)) != null)
       throw new IllegalArgumentException("Cannot evaluate classifier!\n" + msg);
 
     data    = getOwner().getData().get(m_ComboBoxDatasets.getSelectedIndex()).getData();
     runInfo = new MetaData();
-    runInfo.add("Classifier", OptionUtils.getCommandLine(classifier));
+    runInfo.add("Classifier", OptionUtils.getCommandLine(m_Model));
     runInfo.add("Dataset", data.relationName());
     runInfo.add("# Attributes", data.numAttributes());
     runInfo.add("# Instances", data.numInstances());
@@ -231,7 +233,7 @@ public class ReevaluateModel
     eval.evaluateModel(m_Model, data);
 
     // history
-    return addToHistory(history, new ResultItem(eval, m_Model, m_Header, runInfo));
+    return addToHistory(history, new ResultItem(eval, classifier, m_Model, m_Header, runInfo));
   }
 
   /**

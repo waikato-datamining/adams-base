@@ -65,7 +65,7 @@ public class LegacyTreeVisualizer
    * @return		true if output can be generated
    */
   public boolean canGenerateOutput(ResultItem item) {
-    return item.hasClusterer() && (item.getClusterer() instanceof Drawable);
+    return item.hasModel() && (item.getModel() instanceof Drawable);
   }
 
   /**
@@ -80,7 +80,7 @@ public class LegacyTreeVisualizer
     JPanel 		panel;
 
     sink  = new WekaTreeVisualizer();
-    panel = sink.createDisplayPanel(new Token(item.getClusterer()));
+    panel = sink.createDisplayPanel(new Token(item.getModel()));
 
     addTab(item, new ComponentContentPanel(panel, sink.displayPanelRequiresScrollPane()));
 

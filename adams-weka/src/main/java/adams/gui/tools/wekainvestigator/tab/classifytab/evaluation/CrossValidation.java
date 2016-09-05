@@ -244,7 +244,7 @@ public class CrossValidation
     }
 
     // history
-    return addToHistory(history, new ResultItem(crossValidation.getEvaluation(), model, new Instances(data, 0), runInfo));
+    return addToHistory(history, new ResultItem(crossValidation.getEvaluation(), classifier, model, new Instances(data, 0), runInfo));
   }
 
   /**

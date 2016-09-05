@@ -177,11 +177,11 @@ public class ClassifyTab
         if (item.hasHeader())
           SerializationHelper.writeAll(
             m_ModelFileChooser.getSelectedFile().getAbsolutePath(),
-            new Object[]{item.getClassifier(), item.getHeader()});
+            new Object[]{item.getModel(), item.getHeader()});
         else
           SerializationHelper.write(
             m_ModelFileChooser.getSelectedFile().getAbsolutePath(),
-            item.getClassifier());
+            item.getModel());
       }
       catch (Exception e) {
         GUIHelper.showErrorMessage(
@@ -274,15 +274,15 @@ public class ClassifyTab
       result.addSeparator();
 
       menuitem = new JMenuItem("Copy setup");
-      menuitem.setEnabled((indices.length == 1) && getEntry(indices[0]).hasClassifier());
+      menuitem.setEnabled((indices.length == 1));
       menuitem.addActionListener((ActionEvent ae) -> {
-        String setup = OptionUtils.getCommandLine(getEntry(indices[0]).getClassifier());
+        String setup = OptionUtils.getCommandLine(getEntry(indices[0]).getTemplate());
         ClipboardHelper.copyToClipboard(setup);
       });
       result.add(menuitem);
 
       menuitem = new JMenuItem("Save model...");
-      menuitem.setEnabled((indices.length == 1) && getEntry(indices[0]).hasClassifier());
+      menuitem.setEnabled((indices.length == 1) && getEntry(indices[0]).hasModel());
       menuitem.addActionListener((ActionEvent ae) -> saveModel(getEntry(indices[0])));
       result.add(menuitem);
 

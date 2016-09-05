@@ -216,6 +216,8 @@ public class ReevaluateModel
     String		msg;
     MetaData 		runInfo;
 
+    clusterer = (Clusterer) OptionUtils.shallowCopy(m_Model);
+
     if ((msg = canEvaluate(clusterer)) != null)
       throw new IllegalArgumentException("Cannot evaluate clusterer!\n" + msg);
 
@@ -231,7 +233,7 @@ public class ReevaluateModel
     eval.evaluateClusterer(data);
 
     // history
-    return addToHistory(history, new ResultItem(eval, m_Model, m_Header, runInfo));
+    return addToHistory(history, new ResultItem(eval, clusterer, m_Model, m_Header, runInfo));
   }
 
   /**

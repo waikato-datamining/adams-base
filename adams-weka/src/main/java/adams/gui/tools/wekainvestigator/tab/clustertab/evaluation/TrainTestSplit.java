@@ -205,6 +205,7 @@ public class TrainTestSplit
   @Override
   protected ResultItem doEvaluate(Clusterer clusterer, AbstractNamedHistoryPanel<ResultItem> history) throws Exception {
     ClusterEvaluation 		eval;
+    Clusterer			model;
     double			perc;
     int				seed;
     Instances			data;
@@ -238,16 +239,16 @@ public class TrainTestSplit
     runInfo.add("# Instances (train)", train.numInstances());
     runInfo.add("# Instances (test)", test.numInstances());
 
-    clusterer = (Clusterer) OptionUtils.shallowCopy(clusterer);
+    model = (Clusterer) OptionUtils.shallowCopy(clusterer);
     getOwner().logMessage("Using " + m_TextPercentage.getText() + "% of '" + train.relationName() + "' to train " + OptionUtils.getCommandLine(clusterer));
-    clusterer.buildClusterer(train);
+    model.buildClusterer(train);
     getOwner().logMessage("Using remainder from '" + test.relationName() + "' to evaluate " + OptionUtils.getCommandLine(clusterer));
     eval = new ClusterEvaluation();
-    eval.setClusterer(clusterer);
+    eval.setClusterer(model);
     eval.evaluateClusterer(test);
 
     // history
-    return addToHistory(history, new ResultItem(eval, clusterer, new Instances(train, 0), runInfo));
+    return addToHistory(history, new ResultItem(eval, clusterer, model, new Instances(train, 0), runInfo));
   }
 
   /**

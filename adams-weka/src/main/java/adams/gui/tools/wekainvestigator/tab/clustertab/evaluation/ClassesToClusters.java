@@ -284,6 +284,7 @@ public class ClassesToClusters
   @Override
   protected ResultItem doEvaluate(Clusterer clusterer, AbstractNamedHistoryPanel<ResultItem> history) throws Exception {
     ClusterEvaluation 		eval;
+    Clusterer			model;
     Instances			data;
     Instances			train;
     Instances			test;
@@ -305,9 +306,9 @@ public class ClassesToClusters
     // train
     data  = getOwner().getData().get(m_ComboBoxTrain.getSelectedIndex()).getData();
     train = removeClassAttribute(data);
-    clusterer = (Clusterer) OptionUtils.shallowCopy(clusterer);
+    model = (Clusterer) OptionUtils.shallowCopy(clusterer);
     getOwner().logMessage("Building clusterer on '" + data.relationName() + "' without class attribute using " + OptionUtils.getCommandLine(clusterer));
-    clusterer.buildClusterer(train);
+    model.buildClusterer(train);
 
     // test
     data    = getOwner().getData().get(m_ComboBoxTest.getSelectedIndex()).getData();
@@ -322,12 +323,12 @@ public class ClassesToClusters
 
     getOwner().logMessage("Testing clusterer on '" + data.relationName() + "' without class attribute using " + OptionUtils.getCommandLine(clusterer));
     eval = new ClusterEvaluation();
-    eval.setClusterer(clusterer);
+    eval.setClusterer(model);
     eval.evaluateClusterer(test);
 
     // classes to clusters
     getOwner().logMessage("Determining classes to clusters mapping on '" + data.relationName() + "' for " + OptionUtils.getCommandLine(clusterer));
-    numClusters   = clusterer.numberOfClusters();
+    numClusters   = model.numberOfClusters();
     counts        = new int[numClusters][numClasses()];
     clusterTotals = new int[numClusters];
     best          = new double[numClusters + 1];
@@ -348,7 +349,7 @@ public class ClassesToClusters
     matrix = toMatrixString(numClusters, counts, clusterTotals, new Instances(data, 0));
 
     // history
-    return addToHistory(history, new ResultItem(eval, "Classes to clusters", matrix, clusterer, new Instances(train, 0), runInfo));
+    return addToHistory(history, new ResultItem(eval, "Classes to clusters", matrix, clusterer, model, new Instances(train, 0), runInfo));
   }
 
   /**

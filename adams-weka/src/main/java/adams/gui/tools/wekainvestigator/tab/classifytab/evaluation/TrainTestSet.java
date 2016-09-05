@@ -152,6 +152,7 @@ public class TrainTestSet
   @Override
   protected ResultItem doEvaluate(Classifier classifier, AbstractNamedHistoryPanel<ResultItem> history) throws Exception {
     Evaluation 	eval;
+    Classifier  model;
     Instances	train;
     Instances	test;
     String	msg;
@@ -170,15 +171,15 @@ public class TrainTestSet
     runInfo.add("# Instances (test)", test.numInstances());
     runInfo.add("Class attribute", train.classAttribute().name());
 
-    classifier = (Classifier) OptionUtils.shallowCopy(classifier);
+    model = (Classifier) OptionUtils.shallowCopy(classifier);
     getOwner().logMessage("Using '" + train.relationName() + "' to train " + OptionUtils.getCommandLine(classifier));
-    classifier.buildClassifier(train);
+    model.buildClassifier(train);
     getOwner().logMessage("Using '" + test.relationName() + "' to evaluate " + OptionUtils.getCommandLine(classifier));
     eval = new Evaluation(train);
-    eval.evaluateModel(classifier, test);
+    eval.evaluateModel(model, test);
 
     // history
-    return addToHistory(history, new ResultItem(eval, classifier, new Instances(train, 0), runInfo));
+    return addToHistory(history, new ResultItem(eval, classifier, model, new Instances(train, 0), runInfo));
   }
 
   /**
