@@ -28,6 +28,7 @@ import adams.gui.tools.wekamultiexperimenter.experiment.AbstractExperiment;
 
 /**
  * Writes ADAMS experiments in nested format.
+ * Does not store the results.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
@@ -44,7 +45,7 @@ public class NestedAdamsExperimentWriter
    */
   @Override
   public String globalInfo() {
-    return "Writes ADAMS Experiments in nested format.";
+    return "Writes ADAMS Experiments in nested format.\nDoes not store the results.";
   }
 
   /**

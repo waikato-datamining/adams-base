@@ -27,7 +27,7 @@ import adams.data.io.input.JsonAdamsExperimentReader;
 import adams.gui.tools.wekamultiexperimenter.experiment.AbstractExperiment;
 
 /**
- * Writes ADAMS experiments in JSON format.
+ * Writes ADAMS experiments in JSON format. Does not store the results.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
@@ -44,7 +44,7 @@ public class JsonAdamsExperimentWriter
    */
   @Override
   public String globalInfo() {
-    return "Writes ADAMS Experiments in JSON format.";
+    return "Writes ADAMS Experiments in JSON format.\nDoes not store the results.";
   }
 
   /**
