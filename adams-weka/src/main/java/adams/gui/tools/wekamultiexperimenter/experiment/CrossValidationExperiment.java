@@ -20,8 +20,6 @@
 
 package adams.gui.tools.wekamultiexperimenter.experiment;
 
-import adams.core.Shortening;
-import adams.core.option.OptionUtils;
 import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.multiprocess.WekaCrossValidationExecution;
@@ -45,8 +43,13 @@ public class CrossValidationExperiment
    * Performs cross-validation on the classifier/data combination.
    *
    */
-  public static class CrossValidationRun
-    extends AbstractRun<CrossValidationExperiment> {
+  public static class CrossValidationExperimentJob
+    extends AbstractExperimentJob<CrossValidationExperiment> {
+
+    private static final long serialVersionUID = -4979824848864995696L;
+
+    /** for executing the cross-validation. */
+    protected WekaCrossValidationExecution m_CrossValidation;
 
     /**
      * Initializes the run.
@@ -56,7 +59,7 @@ public class CrossValidationExperiment
      * @param classifier the classifier to evaluate
      * @param data       the data to use for evaluation
      */
-    public CrossValidationRun(CrossValidationExperiment owner, int run, Classifier classifier, Instances data) {
+    public CrossValidationExperimentJob(CrossValidationExperiment owner, int run, Classifier classifier, Instances data) {
       super(owner, run, classifier, data);
     }
 
@@ -65,38 +68,48 @@ public class CrossValidationExperiment
      */
     @Override
     protected void evaluate() {
-      WekaCrossValidationExecution 	cv;
       String				result;
       SpreadSheet 			results;
       int 				fold;
       boolean				simple;
 
-      m_Owner.log("Run " + m_Run + " [start]: " + m_Data.relationName() + " on " + Shortening.shortenEnd(OptionUtils.getCommandLine(m_Classifier), 100));
+      m_Owner.log("Run " + m_Run + " [start]: " + m_Data.relationName() + " on " + shortenCommandLine(m_Classifier));
 
       simple = (m_Owner.getDatasets().length == 1)
 	&& (m_Owner.getClassifiers().length == 1);
 
-      cv = new WekaCrossValidationExecution();
-      cv.setClassifier(m_Classifier);
-      cv.setData(m_Data);
-      cv.setFolds(m_Owner.getFolds());
-      cv.setSeed(m_Run);
-      cv.setDiscardPredictions(true);
-      cv.setNumThreads(simple ? m_Owner.getNumThreads() : 1);
-      cv.setSeparateFolds(true);
-      cv.setStatusMessageHandler(m_Owner.getStatusMessageHandler());
-      result = cv.execute();
+      m_CrossValidation = new WekaCrossValidationExecution();
+      m_CrossValidation.setClassifier(m_Classifier);
+      m_CrossValidation.setData(m_Data);
+      m_CrossValidation.setFolds(m_Owner.getFolds());
+      m_CrossValidation.setSeed(m_Run);
+      m_CrossValidation.setDiscardPredictions(true);
+      m_CrossValidation.setNumThreads(simple ? m_Owner.getNumThreads() : 1);
+      m_CrossValidation.setSeparateFolds(true);
+      m_CrossValidation.setStatusMessageHandler(m_Owner.getStatusMessageHandler());
+      m_CrossValidation.setWaitForJobs(false);
+      result = m_CrossValidation.execute();
 
       if (result == null) {
 	results = new DefaultSpreadSheet();
 	for (fold = 0; fold < m_Owner.getFolds(); fold++) {
-	  addMetrics(results, m_Run, m_Classifier, m_Data, cv.getEvaluations()[fold]);
+	  addMetrics(results, m_Run, m_Classifier, m_Data, m_CrossValidation.getEvaluations()[fold]);
 	  addMetric(results, "Key_Fold", fold);
 	}
 	m_Owner.appendResults(results);
       }
 
-      m_Owner.log("Run " + m_Run + " [end]: " + m_Data.relationName() + " on " + Shortening.shortenEnd(OptionUtils.getCommandLine(m_Classifier), 100));
+      m_Owner.log("Run " + m_Run + " [end]: " + m_Data.relationName() + " on " + shortenCommandLine(m_Classifier));
+    }
+
+    /**
+     * Stops the execution.
+     */
+    @Override
+    public void stopExecution() {
+      super.stopExecution();
+      if (m_CrossValidation != null)
+	m_CrossValidation.stopExecution();
     }
   }
 
@@ -174,7 +187,7 @@ public class CrossValidationExperiment
    * @return		null if successful, otherwise error message
    */
   @Override
-  protected CrossValidationRun evaluate(int currentRun, Classifier cls, Instances data) {
-    return new CrossValidationRun(this, currentRun, cls, data);
+  protected CrossValidationExperimentJob evaluate(int currentRun, Classifier cls, Instances data) {
+    return new CrossValidationExperimentJob(this, currentRun, cls, data);
   }
 }

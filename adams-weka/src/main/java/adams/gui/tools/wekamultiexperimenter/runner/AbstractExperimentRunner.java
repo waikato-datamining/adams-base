@@ -81,6 +81,7 @@ public abstract class AbstractExperimentRunner<T>
   public void abortExperiment() {
     m_Running = false;
     m_Aborted = true;
+    logMessage("Aborting experiment!");
   }
 
   /**

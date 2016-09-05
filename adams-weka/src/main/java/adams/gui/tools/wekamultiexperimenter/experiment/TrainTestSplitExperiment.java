@@ -20,7 +20,6 @@
 
 package adams.gui.tools.wekamultiexperimenter.experiment;
 
-import adams.core.Shortening;
 import adams.core.Utils;
 import adams.core.option.OptionUtils;
 import adams.data.spreadsheet.DefaultSpreadSheet;
@@ -42,8 +41,10 @@ public class TrainTestSplitExperiment
 
   private static final long serialVersionUID = -4147644361063132314L;
 
-  public static class TrainTestSplitRun
-    extends AbstractRun<TrainTestSplitExperiment> {
+  public static class TrainTestSplitExperimentJob
+    extends AbstractExperimentJob<TrainTestSplitExperiment> {
+
+    private static final long serialVersionUID = 4735723305880372881L;
 
     /**
      * Initializes the run.
@@ -53,7 +54,7 @@ public class TrainTestSplitExperiment
      * @param classifier the classifier to evaluate
      * @param data       the data to use for evaluation
      */
-    public TrainTestSplitRun(TrainTestSplitExperiment owner, int run, Classifier classifier, Instances data) {
+    public TrainTestSplitExperimentJob(TrainTestSplitExperiment owner, int run, Classifier classifier, Instances data) {
       super(owner, run, classifier, data);
     }
 
@@ -70,7 +71,7 @@ public class TrainTestSplitExperiment
       Evaluation 		eval;
       SpreadSheet 		results;
 
-      m_Owner.log("Run " + m_Run + " [start]: " + m_Data.relationName() + " on " + Shortening.shortenEnd(OptionUtils.getCommandLine(m_Classifier), 100));
+      m_Owner.log("Run " + m_Run + " [start]: " + m_Data.relationName() + " on " + shortenCommandLine(m_Classifier));
 
       if (!m_Owner.getPreserveOrder())
 	generator = new RandomSplitGenerator(m_Data, m_Run, m_Owner.getPercentage() / 100.0);
@@ -91,7 +92,7 @@ public class TrainTestSplitExperiment
 	Utils.handleException(m_Owner, "Failed to evaluate classifier on train/test split!", e);
       }
 
-      m_Owner.log("Run " + m_Run + " [end]: " + m_Data.relationName() + " on " + Shortening.shortenEnd(OptionUtils.getCommandLine(m_Classifier), 100));
+      m_Owner.log("Run " + m_Run + " [end]: " + m_Data.relationName() + " on " + shortenCommandLine(m_Classifier));
     }
   }
 
@@ -196,7 +197,7 @@ public class TrainTestSplitExperiment
    * @return		null if successful, otherwise error message
    */
   @Override
-  protected synchronized TrainTestSplitRun evaluate(int currentRun, Classifier cls, Instances data) {
-    return new TrainTestSplitRun(this, currentRun, cls, data);
+  protected synchronized TrainTestSplitExperimentJob evaluate(int currentRun, Classifier cls, Instances data) {
+    return new TrainTestSplitExperimentJob(this, currentRun, cls, data);
   }
 }

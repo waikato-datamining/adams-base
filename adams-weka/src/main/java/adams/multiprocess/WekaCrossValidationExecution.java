@@ -102,6 +102,24 @@ public class WekaCrossValidationExecution
   /** for outputting notifications. */
   protected StatusMessageHandler m_StatusMessageHandler;
 
+  /** whether to wait for jobs to finish when stopping. */
+  protected boolean m_WaitForJobs;
+
+  /**
+   * Initializes the execution.
+   */
+  public WekaCrossValidationExecution() {
+    super();
+
+    m_Classifier           = null;
+    m_Data                 = null;
+    m_Output               = null;
+    m_JobRunner            = null;
+    m_JobRunnerSetup       = null;
+    m_StatusMessageHandler = null;
+    m_WaitForJobs          = true;
+  }
+
   /**
    * Sets the JobRunnerSetup.
    *
@@ -118,6 +136,24 @@ public class WekaCrossValidationExecution
    */
   public JobRunnerSetup getJobRunnerSetup() {
     return m_JobRunnerSetup;
+  }
+
+  /**
+   * Sets whether to wait for jobs to finish when terminating.
+   *
+   * @param value	true if to wait
+   */
+  public void setWaitForJobs(boolean value) {
+    m_WaitForJobs = value;
+  }
+
+  /**
+   * Returns whether to wait for jobs to finish when terminating.
+   *
+   * @return		the JobRunnerSetup, null if none available
+   */
+  public boolean getWaitForJobs() {
+    return m_WaitForJobs;
   }
 
   /**
@@ -411,6 +447,8 @@ public class WekaCrossValidationExecution
 	eval.setDiscardPredictions(m_DiscardPredictions);
 	current    = 0;
 	while (generator.hasNext()) {
+          if (isStopped())
+            break;
 	  if (m_StatusMessageHandler != null)
 	    m_StatusMessageHandler.showStatus("Fold " + current + "/" + folds + ": '" + m_Data.relationName() + "' using " + OptionUtils.getCommandLine(m_Classifier));
 	  cont  = generator.next();
@@ -496,7 +534,8 @@ public class WekaCrossValidationExecution
    * Stops the execution.
    */
   public void stopExecution() {
+    getLogger().severe("Execution stopped");
     if (m_JobRunner != null)
-      m_JobRunner.terminate();
+      m_JobRunner.terminate(m_WaitForJobs);
   }
 }
