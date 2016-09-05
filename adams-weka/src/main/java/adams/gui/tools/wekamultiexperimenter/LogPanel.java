@@ -15,7 +15,7 @@
 
 /**
  * LogPanel.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.wekamultiexperimenter;
 
@@ -61,6 +61,8 @@ public class LogPanel
     
     m_TextArea = new BaseTextArea();
     m_TextArea.setFont(Fonts.getMonospacedFont());
+    m_TextArea.setLineWrap(true);
+    m_TextArea.setWrapStyleWord(true);
     add(new BaseScrollPane(m_TextArea));
     
     panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
