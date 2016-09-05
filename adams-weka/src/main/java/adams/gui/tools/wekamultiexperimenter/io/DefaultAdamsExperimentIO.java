@@ -20,9 +20,9 @@
 package adams.gui.tools.wekamultiexperimenter.io;
 
 import adams.core.io.PlaceholderFile;
-import adams.data.io.input.AbstractObjectReader;
-import adams.data.io.output.AbstractObjectWriter;
-import adams.gui.chooser.ObjectFileChooser;
+import adams.data.io.input.AbstractAdamsExperimentReader;
+import adams.data.io.output.AbstractAdamsExperimentWriter;
+import adams.gui.chooser.AdamsExperimentFileChooser;
 import adams.gui.tools.wekamultiexperimenter.ExperimenterPanel;
 import adams.gui.tools.wekamultiexperimenter.experiment.AbstractExperiment;
 import adams.gui.tools.wekamultiexperimenter.experiment.CrossValidationExperiment;
@@ -62,16 +62,16 @@ public class DefaultAdamsExperimentIO
    */
   @Override
   public AbstractExperiment load(File file) {
-    AbstractExperiment		result;
-    ObjectFileChooser   	chooser;
-    AbstractObjectReader	reader;
+    AbstractExperiment			result;
+    AdamsExperimentFileChooser  	chooser;
+    AbstractAdamsExperimentReader 	reader;
 
-    chooser = (ObjectFileChooser) getFileChooser();
+    chooser = (AdamsExperimentFileChooser) getFileChooser();
     try {
       reader = chooser.getReaderForFile(file);
       if (reader == null)
 	throw new Exception("No reader found for: " + file);
-      result = (AbstractExperiment) reader.read(new PlaceholderFile(file));
+      result = reader.read(new PlaceholderFile(file));
       return result;
     }
     catch (Exception e) {
@@ -89,11 +89,11 @@ public class DefaultAdamsExperimentIO
    */
   @Override
   public boolean save(AbstractExperiment exp, File file) {
-    ObjectFileChooser   	chooser;
-    AbstractObjectWriter	writer;
-    String			msg;
+    AdamsExperimentFileChooser		chooser;
+    AbstractAdamsExperimentWriter 	writer;
+    String				msg;
 
-    chooser = (ObjectFileChooser) getFileChooser();
+    chooser = (AdamsExperimentFileChooser) getFileChooser();
     try {
       writer = chooser.getWriterForFile(file);
       if (writer == null)
