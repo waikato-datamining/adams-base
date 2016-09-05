@@ -970,6 +970,7 @@ public abstract class AbstractExperiment
 	  while (m_ExecutorPool.getActiveCount() >= m_ExecutorPool.getMaximumPoolSize()) {
 	    Utils.wait(this, 100, 20);
 	  }
+	  log("Submitting run " + currentRun + ": " + data.relationName() + " on " + Shortening.shortenEnd(OptionUtils.getCommandLine(m_Classifiers[c]), 100));
 	  m_ExecutorPool.submit(evaluate(currentRun, m_Classifiers[c], data));
 	}
       }
