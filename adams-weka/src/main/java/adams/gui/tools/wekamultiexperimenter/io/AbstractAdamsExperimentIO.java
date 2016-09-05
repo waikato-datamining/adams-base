@@ -19,8 +19,8 @@
  */
 package adams.gui.tools.wekamultiexperimenter.io;
 
+import adams.gui.chooser.AdamsExperimentFileChooser;
 import adams.gui.chooser.BaseFileChooser;
-import adams.gui.chooser.ObjectFileChooser;
 import adams.gui.tools.wekamultiexperimenter.ExperimenterPanel;
 import adams.gui.tools.wekamultiexperimenter.experiment.AbstractExperiment;
 
@@ -45,9 +45,9 @@ public abstract class AbstractAdamsExperimentIO<T extends AbstractExperiment>
    * @return		the file chooser
    */
   protected BaseFileChooser createFileChooser() {
-    ObjectFileChooser	result;
+    AdamsExperimentFileChooser result;
 
-    result = new ObjectFileChooser();
+    result = new AdamsExperimentFileChooser();
     result.setCurrentDirectory(
       new File(ExperimenterPanel.getProperties().getPath("Setups.InitialDir", "%c")));
 

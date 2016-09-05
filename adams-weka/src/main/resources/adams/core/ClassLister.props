@@ -19,6 +19,14 @@ adams.genetic.AbstractClassifierBasedGeneticAlgorithm=\
 adams.data.instances.AbstractInstanceGenerator=\
   adams.data.instances
 
+# the ADAMS Experiment readers
+adams.data.io.input.AbstractAdamsExperimentReader=\
+  adams.data.io.input
+
+# the ADAMS Experiment writers
+adams.data.io.output.AbstractAdamsExperimentWriter=\
+  adams.data.io.output
+
 # Instance evaluators
 adams.data.weka.evaluator.AbstractInstanceEvaluator=\
   adams.data.weka.evaluator
