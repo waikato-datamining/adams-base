@@ -301,11 +301,12 @@ public class ScpJobRunner
     /**
      * Performing actual terminate up.
      *
+     * @param wait	whether to wait for the jobs to finish
      * @return		null if successful, otherwise error message
      */
     @Override
-    protected String doTerminate() {
-      m_ActualJobRunner.terminate();
+    protected String doTerminate(boolean wait) {
+      m_ActualJobRunner.terminate(wait);
       return null;
     }
 
@@ -863,11 +864,14 @@ public class ScpJobRunner
   /**
    * Has no influence on the actual execution of the remote jobs, only when
    * jobs are run locally (as fallback).
+   *
+   * @param wait	whether to wait for the jobs to finish
+   * @return		null if successful, otherwise error message
    */
   @Override
-  public String doTerminate() {
+  protected String doTerminate(boolean wait) {
     if (m_RunLocally && (m_ActualJobRunner != null))
-      m_ActualJobRunner.terminate();
+      m_ActualJobRunner.terminate(wait);
     return null;
   }
 
