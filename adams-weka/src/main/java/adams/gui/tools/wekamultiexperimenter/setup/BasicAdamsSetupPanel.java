@@ -19,10 +19,13 @@
  */
 package adams.gui.tools.wekamultiexperimenter.setup;
 
+import adams.core.base.BaseText;
 import adams.core.io.PlaceholderFile;
 import adams.data.weka.classattribute.AbstractClassAttributeHeuristic;
 import adams.data.weka.classattribute.LastAttribute;
 import adams.gui.core.BaseTabbedPane;
+import adams.gui.core.BaseTextArea;
+import adams.gui.core.Fonts;
 import adams.gui.core.NumberTextField;
 import adams.gui.core.NumberTextField.Type;
 import adams.gui.core.ParameterPanel;
@@ -34,6 +37,9 @@ import adams.gui.tools.wekamultiexperimenter.experiment.FileResultsHandler;
 import adams.gui.tools.wekamultiexperimenter.experiment.TrainTestSplitExperiment;
 import adams.gui.tools.wekamultiexperimenter.io.AbstractExperimentIO;
 import adams.gui.tools.wekamultiexperimenter.io.DefaultAdamsExperimentIO;
+import adams.multiprocess.JobRunner;
+import adams.multiprocess.LocalJobRunner;
+import com.googlecode.jfilechooserbookmarks.gui.BaseScrollPane;
 import weka.gui.experiment.ExperimenterDefaults;
 
 import javax.swing.JComboBox;
@@ -66,15 +72,18 @@ public class BasicAdamsSetupPanel
 
   /** the number of repetitions. */
   protected NumberTextField m_TextRepetitions;
-  
-  /** the number of threads. */
-  protected NumberTextField m_TextNumThreads;
 
   /** the type of evaluation. */
   protected JComboBox<String> m_ComboBoxEvaluation;
   
   /** the evaluation parameter. */
   protected NumberTextField m_TextEvaluation;
+
+  /** the JobRunner setup. */
+  protected GenericObjectEditorPanel m_PanelJobRunner;
+
+  /** the notes. */
+  protected BaseTextArea m_TextNotes;
 
   /** the tabbed pane for datasets and classifiers. */
   protected BaseTabbedPane m_TabbedPane;
@@ -143,21 +152,25 @@ public class BasicAdamsSetupPanel
     m_TextEvaluation.getDocument().addDocumentListener(new ModificationDocumentListener());
     m_PanelParameters.addParameter("", m_TextEvaluation);
 
-    m_TextNumThreads = new NumberTextField(Type.INTEGER);
-    m_TextNumThreads.setValue(-1);
-    m_TextNumThreads.getDocument().addDocumentListener(new ModificationDocumentListener());
-    m_TextNumThreads.setToolTipText("The number of cores/cpus to use (<1 for all available ones)");
-    m_PanelParameters.addParameter("# Threads", m_TextNumThreads);
-    
+    m_PanelJobRunner = new GenericObjectEditorPanel(JobRunner.class, new LocalJobRunner(), true);
+    m_PanelJobRunner.addChangeListener(new ModificationChangeListener());
+    m_PanelParameters.addParameter("Job runner", m_PanelJobRunner);
+
     m_PanelDatasets = new DatasetPanel();
     m_PanelDatasets.setOwner(this);
 
     m_PanelClassifiers = new ClassifierPanel();
     m_PanelClassifiers.setOwner(this);
 
+    m_TextNotes = new BaseTextArea();
+    m_TextNotes.setTextFont(Fonts.getMonospacedFont());
+    m_TextNotes.setLineWrap(true);
+    m_TextNotes.setWrapStyleWord(true);
+
     m_TabbedPane       = new BaseTabbedPane();
     m_TabbedPane.addTab("Datasets", m_PanelDatasets);
     m_TabbedPane.addTab("Classifiers", m_PanelClassifiers);
+    m_TabbedPane.addTab("Notes", new BaseScrollPane(m_TextNotes));
     add(m_TabbedPane, BorderLayout.CENTER);
   }
   
@@ -228,8 +241,9 @@ public class BasicAdamsSetupPanel
     result.setResultsHandler((AbstractResultsHandler) m_PanelResultsHandler.getCurrent());
     result.setClassAttribute((AbstractClassAttributeHeuristic) m_PanelClassAttribute.getCurrent());
     result.setRuns(m_TextRepetitions.getValue().intValue());
-    result.setNumThreads(m_TextNumThreads.getValue().intValue());
+    result.setJobRunner((JobRunner) m_PanelJobRunner.getCurrent());
     result.setClassifiers(m_PanelClassifiers.getClassifiers());
+    result.setNotes(new BaseText(m_TextNotes.getText()));
 
     for (File file: m_PanelDatasets.getFiles())
       result.addDataset(new PlaceholderFile(file));
@@ -262,8 +276,10 @@ public class BasicAdamsSetupPanel
       m_PanelResultsHandler.setCurrent(value.getResultsHandler());
       m_PanelClassAttribute.setCurrent(value.getClassAttribute());
       m_TextRepetitions.setValue(value.getRuns());
+      m_PanelJobRunner.setCurrent(value.getJobRunner());
       m_PanelDatasets.setFiles(value.getDatasets());
       m_PanelClassifiers.setClassifiers(value.getClassifiers());
+      m_TextNotes.setText(value.getNotes().getValue());
     }
     else {
       throw new IllegalArgumentException("Cannot handle experiment: " + value.getClass().getName());

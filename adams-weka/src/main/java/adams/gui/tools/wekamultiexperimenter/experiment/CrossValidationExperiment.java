@@ -20,6 +20,7 @@
 
 package adams.gui.tools.wekamultiexperimenter.experiment;
 
+import adams.core.ThreadLimiter;
 import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.multiprocess.WekaCrossValidationExecution;
@@ -84,7 +85,9 @@ public class CrossValidationExperiment
       m_CrossValidation.setFolds(m_Owner.getFolds());
       m_CrossValidation.setSeed(m_Run);
       m_CrossValidation.setDiscardPredictions(true);
-      m_CrossValidation.setNumThreads(simple ? m_Owner.getNumThreads() : 1);
+      m_CrossValidation.setNumThreads(1);
+      if (simple && (m_Owner.getJobRunner() instanceof ThreadLimiter))
+	m_CrossValidation.setNumThreads(((ThreadLimiter) m_Owner.getJobRunner()).getNumThreads());
       m_CrossValidation.setSeparateFolds(true);
       m_CrossValidation.setStatusMessageHandler(m_Owner.getStatusMessageHandler());
       m_CrossValidation.setWaitForJobs(false);
