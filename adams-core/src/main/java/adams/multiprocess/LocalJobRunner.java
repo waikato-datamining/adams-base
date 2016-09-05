@@ -334,11 +334,12 @@ public class LocalJobRunner<T extends Job>
   }
 
   /**
-   * Stops the execution immediately.
+   * Performing actual terminate up.
    *
+   * @param wait	whether to wait for the jobs to finish
    * @return		null if successful, otherwise error message
    */
-  protected String doTerminate() {
+  protected String doTerminate(boolean wait) {
     if (m_Executor == null)
       return null;
 
@@ -353,7 +354,8 @@ public class LocalJobRunner<T extends Job>
       // ignored
     }
 
-    waitForComplete();
+    if (wait)
+      waitForComplete();
 
     return null;
   }

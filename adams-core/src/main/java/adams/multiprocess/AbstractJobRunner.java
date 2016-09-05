@@ -195,9 +195,10 @@ public abstract class AbstractJobRunner<T extends Job>
   /**
    * Performing actual terminate up.
    *
+   * @param wait	whether to wait for the jobs to finish
    * @return		null if successful, otherwise error message
    */
-  protected abstract String doTerminate();
+  protected abstract String doTerminate(boolean wait);
 
   /**
    * After actual terminate up.
@@ -211,16 +212,25 @@ public abstract class AbstractJobRunner<T extends Job>
   }
 
   /**
-   * Stops the execution immediately.
+   * Stops the execution immediately. Waits for the jobs to finish.
    */
   public void terminate() {
+    terminate(true);
+  }
+
+  /**
+   * Stops the execution immediately.
+   *
+   * @param wait	whether to wait for the jobs to finish
+   */
+  public void terminate(boolean wait) {
     String	msg;
 
     msg = preTerminate();
     if (msg != null)
       getLogger().severe("preTerminate failed: " + msg);
 
-    msg = doTerminate();
+    msg = doTerminate(wait);
     if (msg != null)
       getLogger().severe("doTerminate failed: " + msg);
 

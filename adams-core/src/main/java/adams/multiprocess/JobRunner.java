@@ -88,9 +88,16 @@ public interface JobRunner<T extends Job>
   public void stop();
 
   /**
-   * Stops the execution immediately.
+   * Stops the execution immediately. Waits for the jobs to finish.
    */
   public void terminate();
+
+  /**
+   * Stops the execution immediately.
+   *
+   * @param wait	whether to wait for the jobs to finish
+   */
+  public void terminate(boolean wait);
 
   /**
    * Job is complete, so check for more to add..

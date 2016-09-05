@@ -336,10 +336,11 @@ public class SerializingJobRunner
   /**
    * Has no influence on the actual execution of the jobs.
    *
+   * @param wait	whether to wait for the jobs to finish
    * @return		always null
    */
   @Override
-  protected String doTerminate() {
+  protected String doTerminate(boolean wait) {
     return null;
   }
 
