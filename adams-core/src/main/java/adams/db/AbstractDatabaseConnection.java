@@ -986,7 +986,7 @@ public abstract class AbstractDatabaseConnection
       // have we already exceeded the number of attempts?
       if (getFailedConnectAttempt(m_URL, m_User, m_Password) >= getMaxConnectAttempts()) {
 	m_ConnectionOK = false;
-	m_LastConnectionError = "Maximum number of connection attempts reached: URL=" + m_URL + ", user=" + m_User + ", pw=" + m_Password;
+	m_LastConnectionError = "Maximum number of connection attempts reached: URL=" + m_URL + ", user=" + m_User + ", pw=" + m_Password.getMaskedValue();
 	getLogger().severe(m_LastConnectionError);
 	return false;
       }
@@ -1007,7 +1007,7 @@ public abstract class AbstractDatabaseConnection
 	    "Cannot connect: " + m_LastConnectionError + "\n"
 		+ "- URL: " + m_URL + "\n"
 		+ "- user: " + m_User + "\n"
-		+ "- pw: " + m_Password.stringValue() + "\n");
+		+ "- pw: " + m_Password.getMaskedValue() + "\n");
 	incFailedConnectAttempt(m_URL, m_User, m_Password);
 	return false;
       }
