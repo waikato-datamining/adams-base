@@ -813,6 +813,7 @@ public class ExperimenterPanel
    * @param msg		the log message
    */
   public void logMessage(String msg) {
+    m_StatusBar.showStatus(msg);
     m_PanelLog.append(msg);
   }
 
@@ -823,6 +824,7 @@ public class ExperimenterPanel
    * @param title	the title for the dialog
    */
   public void logError(String msg, String title) {
+    m_StatusBar.showStatus(msg);
     m_PanelLog.append(msg);
     GUIHelper.showErrorMessage(this,
 	msg,
@@ -835,7 +837,6 @@ public class ExperimenterPanel
    * @param msg		the message to display
    */
   public void showStatus(String msg) {
-    super.showStatus(msg);
     logMessage(msg);
   }
 
