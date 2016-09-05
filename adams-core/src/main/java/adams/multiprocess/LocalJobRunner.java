@@ -21,6 +21,7 @@
 package adams.multiprocess;
 
 import adams.core.Performance;
+import adams.core.Stoppable;
 import adams.core.ThreadLimiter;
 import adams.core.management.ProcessUtils;
 import adams.event.JobCompleteEvent;
@@ -88,7 +89,7 @@ public class LocalJobRunner<T extends Job>
 
     m_Jobs                 = new ArrayList<>();
     m_Queue                = new ArrayList<>();
-    m_JobCompleteListeners = new HashSet<JobCompleteListener>();
+    m_JobCompleteListeners = new HashSet<>();
     addJobCompleteListener(JobCompleteManager.getSingleton());
   }
 
@@ -343,6 +344,10 @@ public class LocalJobRunner<T extends Job>
       return null;
 
     try {
+      for (Job j: m_Jobs) {
+	if (j instanceof Stoppable)
+	  ((Stoppable) j).stopExecution();
+      }
       if (m_Executor.isPaused())
 	m_Executor.resumeExecution();
       m_Executor.shutdownNow();
