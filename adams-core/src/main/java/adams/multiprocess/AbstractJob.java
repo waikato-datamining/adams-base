@@ -51,6 +51,9 @@ public abstract class AbstractJob
   /** whether an error occurred in the execution. */
   protected String m_ExecutionError;
 
+  /** whether the job has been stopped. */
+  protected boolean m_Stopped;
+
   /**
    * Job constructor.
    */
@@ -61,6 +64,7 @@ public abstract class AbstractJob
     m_Complete            = false;
     m_JobCompleteListener = null;
     m_ExecutionError      = null;
+    m_Stopped             = false;
   }
 
   /**
@@ -160,11 +164,20 @@ public abstract class AbstractJob
     boolean		success;
     String		addInfo;
 
+    success = true;
+
+    if (m_Stopped) {
+      m_ExecutionError = "Job stopped!";
+      success          = false;
+    }
+
     // pre-check
-    m_ExecutionError = preProcessCheck();
-    success          = (m_ExecutionError == null);
-    if (!success)
-      m_ExecutionError = "'pre-check' failed: " + m_ExecutionError;
+    if (success) {
+      m_ExecutionError = preProcessCheck();
+      success = (m_ExecutionError == null);
+      if (!success)
+	m_ExecutionError = "'pre-check' failed: " + m_ExecutionError;
+    }
 
     // process data
     if (success) {
@@ -221,6 +234,22 @@ public abstract class AbstractJob
    * Removes dependencies and job parameters.
    */
   public void cleanUp() {
+  }
+
+  /**
+   * Stops the execution.
+   */
+  public void stopExecution() {
+    m_Stopped = true;
+  }
+
+  /**
+   * Whether the execution has been stopped.
+   *
+   * @return		true if stopped
+   */
+  public boolean isStopped() {
+    return m_Stopped;
   }
 
   /**

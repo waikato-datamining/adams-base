@@ -15,13 +15,14 @@
 
 /*
  * Job.java
- * Copyright (C) 2008-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2016 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package adams.multiprocess;
 
 import adams.core.CleanUpHandler;
+import adams.core.StoppableWithFeedback;
 import adams.core.logging.LoggingSupporter;
 import adams.event.JobCompleteListener;
 
@@ -34,7 +35,7 @@ import java.io.Serializable;
  * @version $Revision: 11631 $
  */
 public interface Job
-  extends Serializable, LoggingSupporter, CleanUpHandler {
+  extends Serializable, LoggingSupporter, StoppableWithFeedback, CleanUpHandler {
 
   /**
    * Returns the job info/identifier.
