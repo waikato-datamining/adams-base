@@ -1041,14 +1041,14 @@ public abstract class AbstractExperiment
   public String execute() {
     String	result;
 
-    log("Initializing...");
+    log("Init-Execute...");
     result = initExecute();
     if (result == null) {
       log("Pre-Execute...");
       result = preExecute();
     }
     if (result == null) {
-      log("Execute...");
+      log("Do-Execute...");
       result = doExecute();
       log("Post-Execute...");
       postExecute((result == null) && !m_Stopped);
