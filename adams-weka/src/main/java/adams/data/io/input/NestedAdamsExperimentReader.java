@@ -20,6 +20,8 @@
 
 package adams.data.io.input;
 
+import adams.core.base.BaseCharset;
+import adams.core.io.EncodingSupporter;
 import adams.core.io.PlaceholderFile;
 import adams.core.option.NestedConsumer;
 import adams.data.io.output.AbstractAdamsExperimentWriter;
@@ -35,9 +37,13 @@ import java.util.logging.Level;
  * @version $Revision$
  */
 public class NestedAdamsExperimentReader
-  extends AbstractAdamsExperimentReader {
+  extends AbstractAdamsExperimentReader
+  implements EncodingSupporter {
 
   private static final long serialVersionUID = 7175000296488786947L;
+
+  /** the encoding to use. */
+  protected BaseCharset m_Encoding;
 
   /**
    * Returns a string describing the object.
@@ -81,6 +87,47 @@ public class NestedAdamsExperimentReader
   }
 
   /**
+   * Adds options to the internal list of options.
+   */
+  @Override
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+      "encoding", "encoding",
+      new BaseCharset());
+  }
+
+  /**
+   * Sets the encoding to use.
+   *
+   * @param value	the encoding, e.g. "UTF-8" or "UTF-16", empty string for default
+   */
+  public void setEncoding(BaseCharset value) {
+    m_Encoding = value;
+    reset();
+  }
+
+  /**
+   * Returns the encoding to use.
+   *
+   * @return		the encoding, e.g. "UTF-8" or "UTF-16", empty string for default
+   */
+  public BaseCharset getEncoding() {
+    return m_Encoding;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String encodingTipText() {
+    return "The type of encoding to use when reading the file, use empty string for default.";
+  }
+
+  /**
    * Performs the actual reading of the experiment file.
    *
    * @param file	the file to read
@@ -88,8 +135,12 @@ public class NestedAdamsExperimentReader
    */
   @Override
   protected AbstractExperiment doRead(PlaceholderFile file) {
+    NestedConsumer	consumer;
+
+    consumer = new NestedConsumer();
+    consumer.setEncoding(m_Encoding);
     try {
-      return (AbstractExperiment) new NestedConsumer().fromFile(file);
+      return (AbstractExperiment) consumer.fromFile(file);
     }
     catch (Exception e) {
       getLogger().log(Level.SEVERE, "Failed to load experiment from: " + file, e);
