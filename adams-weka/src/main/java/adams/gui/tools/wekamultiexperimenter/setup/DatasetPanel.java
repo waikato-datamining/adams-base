@@ -50,7 +50,10 @@ public class DatasetPanel
   
   /** the button for adding files. */
   protected JButton m_ButtonAdd;
-  
+
+  /** the button for changing files. */
+  protected JButton m_ButtonEdit;
+
   /** the button for removing files. */
   protected JButton m_ButtonRemove;
   
@@ -104,7 +107,21 @@ public class DatasetPanel
         m_Model.addElement(file);
       modified();
     });
-    
+
+    m_ButtonEdit = new JButton("Edit...");
+    m_ButtonEdit.addActionListener((ActionEvent e) -> {
+      int index = m_List.getSelectedIndex();
+      File current = m_Model.get(index);
+      m_FileChooser.setSelectedFile(current);
+      int retVal = m_FileChooser.showOpenDialog(DatasetPanel.this);
+      if (retVal != WekaFileChooser.APPROVE_OPTION)
+        return;
+      if (m_FileChooser.getSelectedFiles().length != 1)
+        return;
+      m_Model.set(index, m_FileChooser.getSelectedFile());
+      modified();
+    });
+
     m_ButtonRemove = new JButton("Remove");
     m_ButtonRemove.addActionListener((ActionEvent e) -> {
       int[] indices = m_List.getSelectedIndices();
@@ -135,18 +152,15 @@ public class DatasetPanel
     });
 
     m_List.addToButtonsPanel(m_ButtonAdd);
+    m_List.addToButtonsPanel(m_ButtonEdit);
     m_List.addToButtonsPanel(m_ButtonRemove);
     m_List.addToButtonsPanel(m_ButtonRemoveAll);
     m_List.addToButtonsPanel(new JLabel(""));
     m_List.addToButtonsPanel(m_ButtonUp);
     m_List.addToButtonsPanel(m_ButtonDown);
-    
-    m_List.addListSelectionListener((ListSelectionEvent e) -> {
-      m_ButtonRemove.setEnabled(m_List.getSelectedIndices().length > 0);
-      m_ButtonRemoveAll.setEnabled(m_Model.getSize() > 0);
-      m_ButtonUp.setEnabled(m_List.canMoveUp());
-      m_ButtonDown.setEnabled(m_List.canMoveDown());
-    });
+
+    m_List.setDoubleClickButton(m_ButtonEdit);
+    m_List.addListSelectionListener((ListSelectionEvent e) -> update());
   }
   
   /**
@@ -200,8 +214,14 @@ public class DatasetPanel
    */
   @Override
   protected void update() {
+    int[]	indices;
+
     super.update();
-    m_ButtonRemove.setEnabled(m_List.getSelectedIndices().length > 0);
+
+    indices = m_List.getSelectedIndices();
+
+    m_ButtonEdit.setEnabled(indices.length == 1);
+    m_ButtonRemove.setEnabled(indices.length > 0);
     m_ButtonRemoveAll.setEnabled(m_Model.getSize() > 0);
     m_ButtonUp.setEnabled(m_List.canMoveUp());
     m_ButtonDown.setEnabled(m_List.canMoveDown());
