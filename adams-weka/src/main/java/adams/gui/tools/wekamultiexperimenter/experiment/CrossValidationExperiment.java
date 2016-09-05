@@ -20,6 +20,7 @@
 
 package adams.gui.tools.wekamultiexperimenter.experiment;
 
+import adams.core.Shortening;
 import adams.core.option.OptionUtils;
 import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.SpreadSheet;
@@ -70,7 +71,7 @@ public class CrossValidationExperiment
       int 				fold;
       boolean				simple;
 
-      m_Owner.log("Run " + m_Run + " [start]: " + m_Data.relationName() + " on " + OptionUtils.getCommandLine(m_Classifier));
+      m_Owner.log("Run " + m_Run + " [start]: " + m_Data.relationName() + " on " + Shortening.shortenEnd(OptionUtils.getCommandLine(m_Classifier), 100));
 
       simple = (m_Owner.getDatasets().length == 1)
 	&& (m_Owner.getClassifiers().length == 1);
@@ -83,6 +84,7 @@ public class CrossValidationExperiment
       cv.setDiscardPredictions(true);
       cv.setNumThreads(simple ? m_Owner.getNumThreads() : 1);
       cv.setSeparateFolds(true);
+      cv.setStatusMessageHandler(m_Owner.getStatusMessageHandler());
       result = cv.execute();
 
       if (result == null) {
@@ -94,7 +96,7 @@ public class CrossValidationExperiment
 	m_Owner.appendResults(results);
       }
 
-      m_Owner.log("Run " + m_Run + " [end]: " + m_Data.relationName() + " on " + OptionUtils.getCommandLine(m_Classifier));
+      m_Owner.log("Run " + m_Run + " [end]: " + m_Data.relationName() + " on " + Shortening.shortenEnd(OptionUtils.getCommandLine(m_Classifier), 100));
     }
   }
 

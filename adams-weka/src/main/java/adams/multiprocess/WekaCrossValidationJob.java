@@ -20,7 +20,9 @@
 
 package adams.multiprocess;
 
+import adams.core.Shortening;
 import adams.core.StatusMessageHandler;
+import adams.core.Utils;
 import adams.core.option.OptionUtils;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
@@ -172,13 +174,27 @@ public class WekaCrossValidationJob
   @Override
   protected void process() throws Exception {
     if (m_StatusMessageHandler != null)
-      m_StatusMessageHandler.showStatus("Fold " + m_Fold + " - start: '" + m_Train.relationName() + "' using " + OptionUtils.getCommandLine(m_Classifier));
-    m_Classifier.buildClassifier(m_Train);
-    m_Evaluation = new Evaluation(m_Train);
-    m_Evaluation.setDiscardPredictions(m_DiscardPredictions);
-    m_Evaluation.evaluateModel(m_Classifier, m_Test);
+      m_StatusMessageHandler.showStatus(
+	"Fold " + m_Fold + " - start: '" + m_Train.relationName() + "' using "
+	  + Shortening.shortenEnd(OptionUtils.getCommandLine(m_Classifier), 100));
+    try {
+      m_Classifier.buildClassifier(m_Train);
+      m_Evaluation = new Evaluation(m_Train);
+      m_Evaluation.setDiscardPredictions(m_DiscardPredictions);
+      m_Evaluation.evaluateModel(m_Classifier, m_Test);
+    }
+    catch (Exception e) {
+      if (m_StatusMessageHandler != null)
+	m_StatusMessageHandler.showStatus(
+	  "Fold " + m_Fold + " - error: '" + m_Train.relationName() + "' using "
+	    + Shortening.shortenEnd(OptionUtils.getCommandLine(m_Classifier), 100) + "\n"
+	    + Utils.throwableToString(e));
+      throw(e);
+    }
     if (m_StatusMessageHandler != null)
-      m_StatusMessageHandler.showStatus("Fold " + m_Fold + " - end: '" + m_Train.relationName() + "' using " + OptionUtils.getCommandLine(m_Classifier));
+      m_StatusMessageHandler.showStatus(
+	"Fold " + m_Fold + " - end: '" + m_Train.relationName() + "' using "
+	  + Shortening.shortenEnd(OptionUtils.getCommandLine(m_Classifier), 100));
   }
 
   /**

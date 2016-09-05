@@ -21,8 +21,9 @@
 package adams.gui.tools.wekamultiexperimenter.experiment;
 
 import adams.core.Index;
+import adams.core.Shortening;
 import adams.core.StatusMessageHandler;
-import adams.core.Stoppable;
+import adams.core.StoppableWithFeedback;
 import adams.core.ThreadLimiter;
 import adams.core.Utils;
 import adams.core.io.FileUtils;
@@ -71,7 +72,7 @@ import java.util.logging.Level;
  */
 public abstract class AbstractExperiment
   extends AbstractOptionHandler
-  implements Stoppable, ExperimentWithCustomizableRelationNames,
+  implements StoppableWithFeedback, ExperimentWithCustomizableRelationNames,
   ResettableExperiment, SpreadSheetSupporter, ThreadLimiter {
 
   private static final long serialVersionUID = -345521029095304309L;
@@ -199,8 +200,21 @@ public abstract class AbstractExperiment
      * Performs the evaluation.
      */
     public void run() {
-      evaluate();
-      m_Owner.appendResults(m_Results);
+      if (m_Owner.isStopped())
+	return;
+
+      try {
+        evaluate();
+        m_Owner.appendResults(m_Results);
+      }
+      catch (Exception e) {
+        m_Owner.log(
+          "Failed to evaluate: "
+            + "run=" + m_Run
+            + ", dataset=" + m_Data.relationName()
+            + ", classifier=" + Shortening.shortenEnd(OptionUtils.getCommandLine(m_Classifier), 100),
+	    e);
+      }
     }
   }
 
@@ -947,12 +961,15 @@ public abstract class AbstractExperiment
 	    break;
 	  // results already present?
 	  if (!isRequired(currentRun, m_Classifiers[c], data)) {
-	    log("Run " + currentRun + ": " + data.relationName() + " on " + OptionUtils.getCommandLine(m_Classifiers[c]) + " already present!");
+	    log("Run " + currentRun + ": " + data.relationName() + " on " + Shortening.shortenEnd(OptionUtils.getCommandLine(m_Classifiers[c]), 100) + " already present!");
 	    continue;
 	  }
 	  // make sure no partial results
 	  removeIncomplete(currentRun, m_Classifiers[c], data);
 	  // start job
+	  while (m_ExecutorPool.getActiveCount() >= m_ExecutorPool.getMaximumPoolSize()) {
+	    Utils.wait(this, 100, 20);
+	  }
 	  m_ExecutorPool.submit(evaluate(currentRun, m_Classifiers[c], data));
 	}
       }
@@ -1029,6 +1046,15 @@ public abstract class AbstractExperiment
   public void stopExecution() {
     m_Stopped = true;
     if (m_ExecutorPool != null)
-      m_ExecutorPool.shutdown();
+      m_ExecutorPool.shutdownNow();
+  }
+
+  /**
+   * Returns whether the experiment has been stopped.
+   *
+   * @return		true if stopped
+   */
+  public boolean isStopped() {
+    return m_Stopped;
   }
 }

@@ -41,39 +41,4 @@ public class AdamsExperimentRunner<T extends AbstractExperiment>
   public AdamsExperimentRunner(ExperimenterPanel owner) throws Exception {
     super(owner);
   }
-
-  /**
-   * Initializes the experiment.
-   *
-   * @throws Exception	fails due to some error
-   */
-  protected void doInitialize() throws Exception {
-    m_Exp.setStatusMessageHandler(m_Owner);
-  }
-
-  /**
-   * Performs the actual running of the experiment.
-   *
-   * @throws Exception	fails due to some error
-   */
-  @Override
-  protected void doRun() throws Exception {
-    String	result;
-
-    result = m_Exp.execute();
-    if (result != null)
-      throw new Exception(result);
-  }
-
-  /**
-   * Hook method that gets executed after the experiment has finished
-   * (successfully or not).
-   *
-   * @param success	whether successfully finished (neither error, nor aborted)
-   */
-  @Override
-  protected void postRun(boolean success) {
-    super.postRun(success);
-    m_Exp.setStatusMessageHandler(null);
-  }
 }

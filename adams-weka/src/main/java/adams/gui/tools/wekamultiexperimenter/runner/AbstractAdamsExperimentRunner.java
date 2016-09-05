@@ -47,6 +47,15 @@ public abstract class AbstractAdamsExperimentRunner<T extends AbstractExperiment
   }
 
   /**
+   * Initializes the experiment.
+   *
+   * @throws Exception	fails due to some error
+   */
+  protected void doInitialize() throws Exception {
+    m_Exp.setStatusMessageHandler(m_Owner);
+  }
+
+  /**
    * Examines the supplied experiment to determine the results destination and
    * attempts to load the results.
    */
@@ -64,6 +73,20 @@ public abstract class AbstractAdamsExperimentRunner<T extends AbstractExperiment
   }
 
   /**
+   * Performs the actual running of the experiment.
+   *
+   * @throws Exception	fails due to some error
+   */
+  @Override
+  protected void doRun() throws Exception {
+    String	result;
+
+    result = m_Exp.execute();
+    if (result != null)
+      throw new Exception(result);
+  }
+
+  /**
    * Hook method that gets executed after the experiment has finished
    * (successfully or not).
    *
@@ -77,5 +100,14 @@ public abstract class AbstractAdamsExperimentRunner<T extends AbstractExperiment
     m_Running = false;
     logMessage("Done!");
     logMessage("--> END: " + DateUtils.getTimestampFormatter().format(new Date()));
+    m_Exp.setStatusMessageHandler(null);
+  }
+
+  /**
+   * Aborts the experiment.
+   */
+  public void abortExperiment() {
+    super.abortExperiment();
+    m_Exp.stopExecution();
   }
 }

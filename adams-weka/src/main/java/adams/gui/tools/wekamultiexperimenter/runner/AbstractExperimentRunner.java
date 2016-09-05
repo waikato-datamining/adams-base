@@ -68,7 +68,7 @@ public abstract class AbstractExperimentRunner<T>
     m_Owner = owner;
     T exp = (T) m_Owner.getExperiment();
     logMessage("--> START: " + DateUtils.getTimestampFormatter().format(new Date()));
-    logMessage("Running experiment: " + exp.toString());
+    logMessage("Running experiment: " + exp.getClass().getName());
     m_Exp = (T) ObjectCopyHelper.copyObject(exp);
     if (m_Exp == null)
       throw new IllegalStateException("Failed to create copy of experiment!");

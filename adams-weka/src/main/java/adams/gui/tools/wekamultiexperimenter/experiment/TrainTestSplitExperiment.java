@@ -20,6 +20,7 @@
 
 package adams.gui.tools.wekamultiexperimenter.experiment;
 
+import adams.core.Shortening;
 import adams.core.Utils;
 import adams.core.option.OptionUtils;
 import adams.data.spreadsheet.DefaultSpreadSheet;
@@ -69,7 +70,7 @@ public class TrainTestSplitExperiment
       Evaluation 		eval;
       SpreadSheet 		results;
 
-      m_Owner.log("Run " + m_Run + " [start]: " + m_Data.relationName() + " on " + OptionUtils.getCommandLine(m_Classifier));
+      m_Owner.log("Run " + m_Run + " [start]: " + m_Data.relationName() + " on " + Shortening.shortenEnd(OptionUtils.getCommandLine(m_Classifier), 100));
 
       if (!m_Owner.getPreserveOrder())
 	generator = new RandomSplitGenerator(m_Data, m_Run, m_Owner.getPercentage() / 100.0);
@@ -90,7 +91,7 @@ public class TrainTestSplitExperiment
 	Utils.handleException(m_Owner, "Failed to evaluate classifier on train/test split!", e);
       }
 
-      m_Owner.log("Run " + m_Run + " [end]: " + m_Data.relationName() + " on " + OptionUtils.getCommandLine(m_Classifier));
+      m_Owner.log("Run " + m_Run + " [end]: " + m_Data.relationName() + " on " + Shortening.shortenEnd(OptionUtils.getCommandLine(m_Classifier), 100));
     }
   }
 
