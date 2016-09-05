@@ -167,8 +167,9 @@ public abstract class AbstractJob
     success = true;
 
     if (m_Stopped) {
-      m_ExecutionError = "Job stopped!";
-      success          = false;
+      m_ExecutionError = "Job stopped - skipping execution!";
+      getLogger().severe(m_ExecutionError);
+      success = false;
     }
 
     // pre-check
@@ -241,6 +242,7 @@ public abstract class AbstractJob
    */
   public void stopExecution() {
     m_Stopped = true;
+    getLogger().severe("Execution stopped");
   }
 
   /**
