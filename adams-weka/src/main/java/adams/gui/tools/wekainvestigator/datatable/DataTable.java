@@ -27,8 +27,12 @@ import adams.gui.tools.wekainvestigator.data.DataContainer;
 
 import javax.swing.DefaultCellEditor;
 import javax.swing.JComboBox;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableModel;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -67,6 +71,13 @@ public class DataTable
     super.initGUI();
 
     m_ClassAttributeEditors = new HashMap<>();
+    addHeaderPopupMenuListener((MouseEvent e) -> {
+      JPopupMenu menu = new JPopupMenu();
+      JMenuItem menuitem = new JMenuItem("Optimal width");
+      menuitem.addActionListener((ActionEvent ae) -> setOptimalColumnWidth());
+      menu.add(menuitem);
+      menu.show(getTableHeader(), e.getX(), e.getY());
+    });
   }
 
   /**
