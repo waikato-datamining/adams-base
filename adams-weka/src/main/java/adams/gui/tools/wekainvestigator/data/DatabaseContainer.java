@@ -20,6 +20,7 @@
 
 package adams.gui.tools.wekainvestigator.data;
 
+import weka.core.Instances;
 import weka.experiment.InstanceQuery;
 
 import java.util.logging.Level;
@@ -119,5 +120,35 @@ public class DatabaseContainer
       getLogger().log(Level.SEVERE, "Failed to reload from database: " + m_URL, e);
       return false;
     }
+  }
+
+  /**
+   * Returns the data to store in the undo.
+   *
+   * @return		the undo point
+   */
+  protected Object[] getUndoData() {
+    return new Object[]{
+      m_Data,
+      m_Modified,
+      m_URL,
+      m_User,
+      m_Password,
+      m_Query
+    };
+  }
+
+  /**
+   * Restores the data from the undo point.
+   *
+   * @param data	the undo point
+   */
+  protected void applyUndoData(Object[] data) {
+    m_Data     = (Instances) data[0];
+    m_Modified = (Boolean) data[1];
+    m_URL      = (String) data[2];
+    m_User     = (String) data[3];
+    m_Password = (String) data[4];
+    m_Query    = (String) data[5];
   }
 }

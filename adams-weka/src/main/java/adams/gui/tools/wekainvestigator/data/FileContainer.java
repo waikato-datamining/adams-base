@@ -21,6 +21,7 @@
 package adams.gui.tools.wekainvestigator.data;
 
 import adams.core.io.PlaceholderFile;
+import weka.core.Instances;
 import weka.core.converters.AbstractFileLoader;
 import weka.core.converters.ConverterUtils.DataSource;
 
@@ -112,5 +113,31 @@ public class FileContainer
       getLogger().log(Level.SEVERE, "Failed to reload: " + m_Source, e);
       return false;
     }
+  }
+
+  /**
+   * Returns the data to store in the undo.
+   *
+   * @return		the undo point
+   */
+  protected Object[] getUndoData() {
+    return new Object[]{
+      m_Data,
+      m_Modified,
+      m_Loader,
+      m_Source
+    };
+  }
+
+  /**
+   * Restores the data from the undo point.
+   *
+   * @param data	the undo point
+   */
+  protected void applyUndoData(Object[] data) {
+    m_Data     = (Instances) data[0];
+    m_Modified = (Boolean) data[1];
+    m_Loader   = (AbstractFileLoader) data[2];
+    m_Source   = (File) data[3];
   }
 }

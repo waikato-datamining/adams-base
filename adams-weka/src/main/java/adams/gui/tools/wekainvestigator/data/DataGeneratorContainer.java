@@ -21,6 +21,7 @@
 package adams.gui.tools.wekainvestigator.data;
 
 import adams.core.option.OptionUtils;
+import weka.core.Instances;
 import weka.datagenerators.DataGenerator;
 
 import java.util.logging.Level;
@@ -95,5 +96,29 @@ public class DataGeneratorContainer
       getLogger().log(Level.SEVERE, "Failed to regenerate data: " + OptionUtils.getCommandLine(m_Generator), e);
       return false;
     }
+  }
+
+  /**
+   * Returns the data to store in the undo.
+   *
+   * @return		the undo point
+   */
+  protected Object[] getUndoData() {
+    return new Object[]{
+      m_Data,
+      m_Modified,
+      m_Generator
+    };
+  }
+
+  /**
+   * Restores the data from the undo point.
+   *
+   * @param data	the undo point
+   */
+  protected void applyUndoData(Object[] data) {
+    m_Data      = (Instances) data[0];
+    m_Modified  = (Boolean) data[1];
+    m_Generator = (DataGenerator) data[2];
   }
 }

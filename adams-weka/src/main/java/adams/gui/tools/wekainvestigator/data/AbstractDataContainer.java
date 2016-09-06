@@ -21,6 +21,10 @@
 package adams.gui.tools.wekainvestigator.data;
 
 import adams.core.logging.LoggingObject;
+import adams.gui.core.Undo;
+import adams.gui.event.UndoEvent;
+import adams.gui.event.UndoEvent.UndoType;
+import adams.gui.event.UndoListener;
 import weka.core.Instances;
 
 /**
@@ -31,7 +35,7 @@ import weka.core.Instances;
  */
 public abstract class AbstractDataContainer
   extends LoggingObject
-  implements DataContainer {
+  implements DataContainer, UndoListener {
 
   private static final long serialVersionUID = 6267905940957451551L;
 
@@ -47,6 +51,9 @@ public abstract class AbstractDataContainer
   /** whether the data has been modified. */
   protected boolean m_Modified;
 
+  /** the undo manager. */
+  protected Undo m_Undo;
+
   /**
    * Initializes the container with no data.
    */
@@ -54,6 +61,8 @@ public abstract class AbstractDataContainer
     m_ID       = nextID();
     m_Data     = null;
     m_Modified = false;
+    m_Undo     = new Undo(Object.class, true);
+    m_Undo.addUndoListener(this);
   }
 
   /**
@@ -72,8 +81,11 @@ public abstract class AbstractDataContainer
    * @param value	the data to use
    */
   public void setData(Instances value) {
-    if (m_Data != null)
+    if (m_Data != null) {
+      if (isUndoSupported())
+	getUndo().addUndo(getUndoData(), "updated data");
       setModified(true);
+    }
     m_Data = value;
   }
 
@@ -134,11 +146,79 @@ public abstract class AbstractDataContainer
 
     if (canReload()) {
       result = doReload();
-      if (result)
+      if (result) {
 	setModified(false);
+	if (isUndoSupported())
+	  getUndo().clear();
+      }
     }
 
     return result;
+  }
+
+  /**
+   * Sets the undo manager to use, can be null if no undo-support wanted.
+   *
+   * @param value	the undo manager to use
+   */
+  public void setUndo(Undo value) {
+    if (m_Undo != null)
+      m_Undo.removeUndoListener(this);
+
+    m_Undo = value;
+
+    if (m_Undo != null)
+      m_Undo.addUndoListener(this);
+  }
+
+  /**
+   * Returns the current undo manager, can be null.
+   *
+   * @return		the undo manager, if any
+   */
+  public Undo getUndo() {
+    return m_Undo;
+  }
+
+  /**
+   * Returns whether an Undo manager is currently available.
+   *
+   * @return		true if an undo manager is set
+   */
+  public boolean isUndoSupported() {
+    return (m_Undo != null) && m_Undo.isEnabled();
+  }
+
+  /**
+   * An undo event, like add or remove, has occurred.
+   *
+   * @param e		the trigger event
+   */
+  public void undoOccurred(UndoEvent e) {
+    if (e.getType() == UndoType.UNDO)
+      applyUndoData((Object[]) e.getUndoPoint().getData());
+  }
+
+  /**
+   * Returns the data to store in the undo.
+   *
+   * @return		the undo point
+   */
+  protected Object[] getUndoData() {
+    return new Object[]{
+      m_Data,
+      m_Modified
+    };
+  }
+
+  /**
+   * Restores the data from the undo point.
+   *
+   * @param data	the undo point
+   */
+  protected void applyUndoData(Object[] data) {
+    m_Data     = (Instances) data[0];
+    m_Modified = (Boolean) data[1];
   }
 
   /**
@@ -146,7 +226,7 @@ public abstract class AbstractDataContainer
    *
    * @param o		the container to compare with
    * @return		less than, equal to or greater than 0 if the container's
-   * 			{@link #getSourceShort()} is smaller, equal to or greater
+   * 			{@link #getSource()} and {@link #getID()} is smaller, equal to or greater
    * 			then the provided one
    */
   public int compareTo(DataContainer o) {

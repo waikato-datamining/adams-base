@@ -26,10 +26,13 @@ import adams.gui.core.BaseTable;
 import adams.gui.core.BaseTableWithButtons;
 import adams.gui.event.WekaInvestigatorDataEvent;
 import adams.gui.tools.wekainvestigator.InvestigatorPanel;
+import adams.gui.tools.wekainvestigator.data.DataContainer;
 import adams.gui.tools.wekainvestigator.datatable.DataTableModel;
 import adams.gui.tools.wekainvestigator.datatable.DataTableWithButtons;
 import adams.gui.tools.wekainvestigator.datatable.action.Rename;
 import com.googlecode.jfilechooserbookmarks.gui.BaseScrollPane;
+import gnu.trove.list.TIntList;
+import gnu.trove.list.array.TIntArrayList;
 
 import javax.swing.JPanel;
 import javax.swing.ListSelectionModel;
@@ -245,6 +248,32 @@ public abstract class AbstractInvestigatorTabWithDataTable
     rename = new Rename();
     rename.setOwner((AbstractInvestigatorTabWithEditableDataTable) this);
     rename.actionPerformed(new ActionEvent(this, 1, ""));
+  }
+
+  /**
+   * Performs undo on the selected rows.
+   *
+   * @param rows	the rows to undo
+   */
+  protected void undo(int[] rows) {
+    int 		i;
+    DataContainer 	cont;
+    TIntList		updated;
+
+    if (hasReadOnlyTable())
+      return;
+
+    updated = new TIntArrayList();
+    for (i = 0; i < rows.length; i++) {
+      cont = getData().get(rows[i]);
+      if (cont.isUndoSupported() && cont.getUndo().canUndo()) {
+	cont.getUndo().undo();
+	updated.add(rows[i]);
+      }
+    }
+
+    if (updated.size() > 0)
+      fireDataChange(new WekaInvestigatorDataEvent(getOwner(), WekaInvestigatorDataEvent.ROWS_MODIFIED, updated.toArray()));
   }
 
   /**

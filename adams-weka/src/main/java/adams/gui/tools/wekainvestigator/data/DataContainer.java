@@ -20,6 +20,7 @@
 
 package adams.gui.tools.wekainvestigator.data;
 
+import adams.gui.core.UndoHandler;
 import weka.core.Instances;
 
 /**
@@ -29,7 +30,7 @@ import weka.core.Instances;
  * @version $Revision$
  */
 public interface DataContainer
-  extends Comparable<DataContainer> {
+  extends Comparable<DataContainer>, UndoHandler {
 
   /**
    * Returns the container ID.

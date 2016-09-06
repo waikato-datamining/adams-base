@@ -23,6 +23,8 @@ package adams.gui.tools.wekainvestigator.tab;
 import adams.core.logging.LoggingLevel;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.GUIHelper;
+import adams.gui.event.WekaInvestigatorDataEvent;
+import adams.gui.tools.wekainvestigator.data.DataContainer;
 import adams.gui.tools.wekainvestigator.datatable.action.AbstractEditableDataTableAction;
 import adams.gui.tools.wekainvestigator.datatable.action.Export;
 import com.jidesoft.swing.JideButton;
@@ -57,6 +59,9 @@ public abstract class AbstractInvestigatorTabWithEditableDataTable
 
   /** the down button. */
   protected JideButton m_ButtonDown;
+
+  /** the button for undoing changes. */
+  protected JideButton m_ButtonUndo;
 
   /** the available actions. */
   protected List<AbstractEditableDataTableAction> m_Actions;
@@ -128,6 +133,11 @@ public abstract class AbstractInvestigatorTabWithEditableDataTable
     panel.add(m_ButtonUp);
     panel.add(m_ButtonDown);
     m_Table.addToButtonsPanel(panel);
+
+    m_ButtonUndo = new JideButton("Undo", GUIHelper.getIcon("undo.gif"));
+    m_ButtonUndo.setButtonStyle(JideButton.TOOLBOX_STYLE);
+    m_ButtonUndo.addActionListener((ActionEvent e) -> undo(m_Table.getSelectedRows()));
+    m_Table.addToButtonsPanel(m_ButtonUndo);
   }
 
   /**
@@ -149,6 +159,16 @@ public abstract class AbstractInvestigatorTabWithEditableDataTable
   }
 
   /**
+   * Notifies the tab that the data changed.
+   *
+   * @param e		the event
+   */
+  public void dataChanged(WekaInvestigatorDataEvent e) {
+    super.dataChanged(e);
+    updateButtons();
+  }
+
+  /**
    * Gets called when the user changes the selection.
    */
   protected void dataTableSelectionChanged() {
@@ -159,10 +179,24 @@ public abstract class AbstractInvestigatorTabWithEditableDataTable
    * Updates the state of the buttons.
    */
   protected void updateButtons() {
+    int[] 	rows;
+    boolean 	enabled;
+
     m_ButtonRemove.setEnabled(m_Table.getSelectedRowCount() > 0);
     for (AbstractEditableDataTableAction action: m_Actions)
       action.update();
     m_ButtonUp.setEnabled(m_Model.canMoveUp(getSelectedRows()));
     m_ButtonDown.setEnabled(m_Model.canMoveDown(getSelectedRows()));
+
+    rows = m_Table.getSelectedRows();
+    enabled = false;
+    for (int row: rows) {
+      DataContainer cont = getData().get(row);
+      if (cont.isUndoSupported() && cont.getUndo().canUndo()) {
+	enabled = true;
+	break;
+      }
+    }
+    m_ButtonUndo.setEnabled(enabled);
   }
 }
