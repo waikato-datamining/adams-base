@@ -58,7 +58,6 @@ import adams.gui.flow.menu.EditCleanUpFlow;
 import adams.gui.flow.menu.EditDiff;
 import adams.gui.flow.menu.EditEnableUndo;
 import adams.gui.flow.menu.EditFind;
-import adams.gui.flow.menu.EditFindNext;
 import adams.gui.flow.menu.EditIgnoreNameChanges;
 import adams.gui.flow.menu.EditInteractiveActors;
 import adams.gui.flow.menu.EditListTODOs;
@@ -248,9 +247,6 @@ public class FlowEditorPanel
 
   /** the find action. */
   protected FlowEditorAction m_ActionEditFind;
-
-  /** the find next action. */
-  protected FlowEditorAction m_ActionEditFindNext;
 
   /** the locate actor action. */
   protected FlowEditorAction m_ActionEditLocateActor;
@@ -568,11 +564,6 @@ public class FlowEditorPanel
     // Edit/Find
     action = new EditFind();
     m_ActionEditFind = action;
-    m_MenuItems.add(action);
-
-    // Edit/Find next
-    action = new EditFindNext();
-    m_ActionEditFindNext = action;
     m_MenuItems.add(action);
 
     // Edit/Locate actor
@@ -980,7 +971,6 @@ public class FlowEditorPanel
       menu.add(m_ActionEditDiff);
       menu.addSeparator();
       menu.add(m_ActionEditFind);
-      menu.add(m_ActionEditFindNext);
       menu.add(m_ActionEditLocateActor);
       menu.add(m_ActionEditLocateVariable);
       menu.add(m_ActionEditLocateStorageName);

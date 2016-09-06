@@ -32,6 +32,7 @@ import adams.flow.core.ActorPath;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.FixedNameActorHandler;
 import adams.flow.core.MutableActorHandler;
+import adams.flow.processor.FindText;
 import adams.flow.template.AbstractActorTemplate;
 import adams.gui.core.BasePopupMenu;
 import adams.gui.core.BaseTreeNode;
@@ -68,7 +69,6 @@ import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -119,9 +119,6 @@ public class Tree
 
   /** the file this actor is based on (if at all). */
   protected File m_File;
-
-  /** the node found in the last search. */
-  protected Node m_LastSearchNode;
 
   /** the last search string used. */
   protected String m_LastSearchString;
@@ -246,7 +243,6 @@ public class Tree
     m_Modified                    = false;
     m_ActorChangeListeners        = new HashSet<>();
     m_LastSearchString            = "";
-    m_LastSearchNode              = null;
     m_ShowQuickInfo               = true;
     m_ShowAnnotations             = true;
     m_ShowInputOutput             = false;
@@ -1605,65 +1601,6 @@ public class Tree
   }
 
   /**
-   * Searches for a node which is matches the "search" string. The search
-   * string can be interpreted as regular expression as well.
-   * A starting point (i.e., subtree) in the tree can be given as well.
-   *
-   * @param subtree	the starting point (= subtree) of the search, uses
-   * 			the root node if null
-   * @param last	the node returned from the last search, if not null
-   * 			then a "find next" search is performed
-   * @param search	the search string
-   * @param isRegExp	whether the search string is a regular expression
-   * @return		the path of the first matching node, otherwise null
-   * 			if no match found
-   */
-  public Node find(Node subtree, Node last, String search, boolean isRegExp) {
-    Node	result;
-    Node	current;
-    Enumeration	enm;
-
-    result = null;
-
-    if (!isRegExp)
-      search = search.toLowerCase();
-
-    // search whole tree?
-    if (subtree == null)
-      subtree = getRootNode();
-
-    enm = subtree.preorderEnumeration();
-
-    // start from a specific node? -> skip nodes before this one
-    if (last != null) {
-      while (enm.hasMoreElements()) {
-	current = (Node) enm.nextElement();
-	if (current == last)
-	  break;
-      }
-    }
-
-    // perform search
-    while (enm.hasMoreElements()) {
-      current = (Node) enm.nextElement();
-      if (isRegExp) {
-	if (current.getActor().getName().toLowerCase().matches(search)) {
-	  result = current;
-	  break;
-	}
-      }
-      else {
-	if (current.getActor().getName().toLowerCase().contains(search)) {
-	  result = current;
-	  break;
-	}
-      }
-    }
-
-    return result;
-  }
-
-  /**
    * Tries to find the node in the tree and returns the path to it.
    *
    * @param node	the node to look for
@@ -1677,53 +1614,16 @@ public class Tree
    * Searches for actor names in the tree.
    */
   public void find() {
-    String	search;
-    TreePath	path;
-    Node	node;
+    FindText	proc;
+    String	input;
 
-    path = getSelectionPath();
-    if (path != null)
-      node = TreeHelper.pathToNode(path);
-    else
-      node = null;
-
-    search = GUIHelper.showInputDialog(
-	GUIHelper.getParentComponent(this),
-	"Please enter the search string ("
-	+ ((node == null) ? ("whole flow") : ("below '" + node.getActor().getName()) + "'") + "):",
-	getLastSearchString());
-    if (search == null)
+    input = GUIHelper.showInputDialog(getParent(), "Find the following text (case-insensitive):", m_LastSearchString);
+    if (input == null)
       return;
-
-    setLastSearchString(search);
-    setLastSearchNode(find(node, null, getLastSearchString(), false));
-    if (getLastSearchNode() == null) {
-      GUIHelper.showErrorMessage(
-	  m_Self, "Search string '" + getLastSearchString() + "' not found!");
-    }
-    else {
-      path = getPath(getLastSearchNode());
-      setSelectionPath(path);
-      scrollPathToVisible(path);
-    }
-  }
-
-  /**
-   * Searches for the next actor in the tree.
-   */
-  public void findNext() {
-    TreePath	path;
-
-    setLastSearchNode(find(null, getLastSearchNode(), getLastSearchString(), false));
-    if (getLastSearchNode() == null) {
-      GUIHelper.showErrorMessage(
-	  m_Self, "Search string '" + getLastSearchString() + "' not found!");
-    }
-    else {
-      path = getPath(getLastSearchNode());
-      setSelectionPath(path);
-      scrollPathToVisible(path);
-    }
+    setLastSearchString(input);
+    proc = new FindText();
+    proc.setFind(input);
+    getOperations().processActor(null, proc);
   }
 
   /**
@@ -1742,26 +1642,6 @@ public class Tree
    */
   public String getLastSearchString() {
     return m_LastSearchString;
-  }
-
-  /**
-   * Sets the node that was found in the last search.
-   *
-   * @param value	the node, can be null if no search performed yet or
-   * 			last search unsuccessful
-   */
-  public void setLastSearchNode(Node value) {
-    m_LastSearchNode = value;
-  }
-
-  /**
-   * Returns the node that was found in the last search.
-   *
-   * @return		the node, can be null if no search performed yet or
-   * 			last search unsuccessful
-   */
-  public Node getLastSearchNode() {
-    return m_LastSearchNode;
   }
 
   /**

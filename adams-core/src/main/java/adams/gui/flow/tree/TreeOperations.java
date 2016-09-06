@@ -822,6 +822,29 @@ public class TreeOperations
   }
 
   /**
+   * Returns the dialog for processing actors.
+   *
+   * @param title	the title for the dialog, null for default
+   * @return		the dialog
+   */
+  public GenericObjectEditorDialog getProcessActorsDialog(String title) {
+    if (m_DialogProcessActors == null) {
+      if (getOwner().getParentDialog() != null)
+        m_DialogProcessActors = new GenericObjectEditorDialog(getOwner().getParentDialog());
+      else
+        m_DialogProcessActors = new GenericObjectEditorDialog(getOwner().getParentFrame());
+      m_DialogProcessActors.setModalityType(ModalityType.DOCUMENT_MODAL);
+      m_DialogProcessActors.getGOEEditor().setCanChangeClassInDialog(true);
+      m_DialogProcessActors.getGOEEditor().setClassType(AbstractActorProcessor.class);
+      m_DialogProcessActors.setCurrent(new RemoveDisabledActors());
+    }
+    if (title == null)
+      title = "Process actors";
+    m_DialogProcessActors.setTitle(title);
+    return m_DialogProcessActors;
+  }
+
+  /**
    * Processes the specified actor with a user-specified actor processor
    * (prompts user with GOE dialog).
    * NB: The options of the specified actor will get processed.
@@ -857,6 +880,7 @@ public class TreeOperations
     final ErrorMessagePanel		fErrorPanel;
     final BaseTabbedPane 		tabbedPane;
     List<String>			exp;
+    GenericObjectEditorDialog		procDialog;
 
     // selected actor or full flow?
     flow = getOwner().getActor();
@@ -875,24 +899,14 @@ public class TreeOperations
 
     // prompt for processor?
     if (processor == null) {
-      if (m_DialogProcessActors == null) {
-	if (getOwner().getParentDialog() != null)
-	  m_DialogProcessActors = new GenericObjectEditorDialog(getOwner().getParentDialog());
-	else
-	  m_DialogProcessActors = new GenericObjectEditorDialog(getOwner().getParentFrame());
-	m_DialogProcessActors.setTitle("Process actors");
-	m_DialogProcessActors.setModalityType(ModalityType.DOCUMENT_MODAL);
-	m_DialogProcessActors.getGOEEditor().setCanChangeClassInDialog(true);
-	m_DialogProcessActors.getGOEEditor().setClassType(AbstractActorProcessor.class);
-	m_DialogProcessActors.setCurrent(new RemoveDisabledActors());
-      }
-      m_DialogProcessActors.setLocationRelativeTo(GUIHelper.getParentComponent(getOwner()));
-      m_DialogProcessActors.setVisible(true);
+      procDialog = getProcessActorsDialog(null);
+      procDialog.setLocationRelativeTo(GUIHelper.getParentComponent(getOwner()));
+      procDialog.setVisible(true);
 
-      if (m_DialogProcessActors.getResult() != GenericObjectEditorDialog.APPROVE_OPTION)
+      if (procDialog.getResult() != GenericObjectEditorDialog.APPROVE_OPTION)
 	return false;
 
-      processor = (AbstractActorProcessor) m_DialogProcessActors.getCurrent();
+      processor = (AbstractActorProcessor) procDialog.getCurrent();
     }
 
     // process
