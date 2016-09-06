@@ -191,15 +191,22 @@ public class Undo {
     super();
 
     m_UndoClass        = undoClass;
-    m_OnDisk           = onDisk && ClassLocator.hasInterface(Serializable.class, undoClass);
-    m_UndoList         = new ArrayList<UndoPoint>();
-    m_RedoList         = new ArrayList<UndoPoint>();
-    m_Listeners        = new HashSet<UndoListener>();
+    m_UndoList         = new ArrayList<>();
+    m_RedoList         = new ArrayList<>();
+    m_Listeners        = new HashSet<>();
     m_Enabled          = true;
     m_Working          = false;
     m_MaxUndo          = DEFAULT_MAX_UNDO;
     m_ShorteningType   = ShorteningType.MIDDLE;
     m_MaxCommentLength = COMMENT_MAX_LENGTH;
+    m_OnDisk           = false;
+
+    if (onDisk) {
+      if (undoClass.isArray())
+        m_OnDisk = ClassLocator.hasInterface(Serializable.class, undoClass.getComponentType());
+      else
+        m_OnDisk = ClassLocator.hasInterface(Serializable.class, undoClass);
+    }
   }
 
   /**
