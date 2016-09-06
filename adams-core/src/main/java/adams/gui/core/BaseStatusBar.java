@@ -41,7 +41,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 /**
- * A bar for displaying a status message.
+ * A bar for displaying status messages (left and right).
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
@@ -97,7 +97,7 @@ public class BaseStatusBar
   public final static String DEFAULT_TITLE = "Status";
 
   /** a label for displaying a status. */
-  protected JLabel m_LabelStatus;
+  protected JLabel m_LabelStatusLeft;
 
   /** a mouse listener for displaying the message in a dialog. */
   protected MouseListener m_MouseListener;
@@ -114,8 +114,14 @@ public class BaseStatusBar
   /** the default dimension for displaying the status. */
   protected Dimension m_DialogSize;
   
-  /** the current status. */
-  protected String m_Status;
+  /** the current status (left). */
+  protected String m_StatusLeft;
+
+  /** the current status (right). */
+  protected String m_StatusRight;
+
+  /** the label for the right status. */
+  protected JLabel m_LabelStatusRight;
 
   /**
    * Initializes the members.
@@ -129,7 +135,8 @@ public class BaseStatusBar
     m_StatusProcessor     = null;
     m_DialogSize          = new Dimension(400, 300);
     m_PopupMenuCustomizer = null;
-    m_Status              = EMPTY_STATUS;
+    m_StatusLeft          = EMPTY_STATUS;
+    m_StatusRight         = EMPTY_STATUS;
   }
 
   /**
@@ -143,84 +150,165 @@ public class BaseStatusBar
 
     setLayout(new BorderLayout());
     setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
-    panel         = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-    m_LabelStatus = new JLabel(EMPTY_STATUS);
-    panel.add(m_LabelStatus, BorderLayout.WEST);
+    panel             = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+    m_LabelStatusLeft = new JLabel(EMPTY_STATUS);
+    panel.add(m_LabelStatusLeft, BorderLayout.WEST);
     add(panel, BorderLayout.WEST);
+
+    panel              = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+    m_LabelStatusRight = new JLabel("");
+    panel.add(m_LabelStatusRight);
+    add(panel, BorderLayout.EAST);
+  }
+
+  /**
+   * Removes any status message currently being displayed (left only).
+   */
+  protected void clearStatus() {
+    clearStatus(true);
   }
 
   /**
    * Removes any status message currently being displayed.
+   *
+   * @param left	whether to clear left or right
    */
-  protected void clearStatus() {
-    m_Status = EMPTY_STATUS;
-    m_LabelStatus.setText(EMPTY_STATUS);
+  protected void clearStatus(boolean left) {
+    if (left) {
+      m_StatusLeft = EMPTY_STATUS;
+      m_LabelStatusLeft.setText(EMPTY_STATUS);
+    }
+    else {
+      m_StatusRight = EMPTY_STATUS;
+      m_LabelStatusRight.setText(EMPTY_STATUS);
+    }
+  }
+
+  /**
+   * Returns whether a status is currently being displayed (left).
+   *
+   * @return		true if a status message is being displayed
+   */
+  public boolean hasStatus() {
+    return hasStatus(true);
   }
 
   /**
    * Returns whether a status is currently being displayed.
    *
+   * @param left	whether to query left or right status
    * @return		true if a status message is being displayed
    */
-  public boolean hasStatus() {
-    return !m_Status.equals(EMPTY_STATUS);
+  public boolean hasStatus(boolean left) {
+    if (left)
+      return !m_StatusLeft.equals(EMPTY_STATUS);
+    else
+      return !m_StatusRight.equals(EMPTY_STATUS);
+  }
+
+  /**
+   * Displays a message (left).
+   *
+   * @param msg		the message to display
+   */
+  public void setStatus(final String msg) {
+    setStatus(true, msg);
   }
 
   /**
    * Displays a message.
    *
+   * @param left	whether to update left or right status
    * @param msg		the message to display
    */
-  public void setStatus(final String msg) {
-    Runnable	run;
-
-    m_Status = msg;
-    run = new Runnable() {
-      public void run() {
+  public void setStatus(final boolean left, final String msg) {
+    if (left) {
+      m_StatusLeft = msg;
+      SwingUtilities.invokeLater(() -> {
 	if ((msg == null) || (msg.length() == 0))
-	  clearStatus();
+	  clearStatus(true);
 	else
-	  m_LabelStatus.setText(msg.replace("\r\n", "|").replace("\n", "|"));
-      }
-    };
-    SwingUtilities.invokeLater(run);
+	  m_LabelStatusLeft.setText(msg.replace("\r\n", "|").replace("\n", "|"));
+      });
+    }
+    else {
+      m_StatusRight = msg;
+      SwingUtilities.invokeLater(() -> {
+	if ((msg == null) || (msg.length() == 0))
+	  clearStatus(false);
+	else
+	  m_LabelStatusRight.setText(msg.replace("\r\n", "|").replace("\n", "|"));
+      });
+    }
+  }
+
+  /**
+   * Returns the currently displayed status (left).
+   *
+   * @return		the status, null if none displayed
+   */
+  public String getStatus() {
+    return getStatus(true);
   }
 
   /**
    * Returns the currently displayed status.
    *
+   * @param left	whether to query left or right status
    * @return		the status, null if none displayed
    */
-  public String getStatus() {
+  public String getStatus(boolean left) {
     String	result;
 
     result = null;
 
-    if (!m_Status.equals(EMPTY_STATUS))
-      result = m_Status;
+    if (left) {
+      if (!m_StatusLeft.equals(EMPTY_STATUS))
+	result = m_StatusLeft;
+    }
+    else {
+      if (!m_StatusRight.equals(EMPTY_STATUS))
+	result = m_StatusRight;
+    }
 
     return result;
   }
 
   /**
-   * Displays a message. Just an alias for setStatus(String)
+   * Displays a message (left). Just an alias for setStatus(String).
    *
    * @param msg		the message to display
    * @see		#setStatus(String)
    */
   public void showStatus(String msg) {
-    setStatus(msg);
+    setStatus(true, msg);
+  }
+
+  /**
+   * Displays a message. Just an alias for setStatus(boolean, String)
+   *
+   * @param left	whether to update left or right status
+   * @param msg		the message to display
+   * @see		#setStatus(boolean, String)
+   */
+  public void showStatus(boolean left, String msg) {
+    setStatus(left, msg);
   }
 
   /**
    * Displays the status in a dialog.
+   *
+   * @param left	whether to display left or right status
    */
-  protected void displayStatus() {
+  protected void displayStatus(boolean left) {
     String 	status;
     Component 	parent;
     TextDialog	dialog;
 
-    status = m_Status;
+    if (left)
+      status = m_StatusLeft;
+    else
+      status = m_StatusRight;
     if (m_StatusProcessor != null)
       status = m_StatusProcessor.process(status);
 
@@ -247,7 +335,7 @@ public class BaseStatusBar
    */
   @Override
   public void addMouseListener(MouseListener l) {
-    m_LabelStatus.addMouseListener(l);
+    m_LabelStatusLeft.addMouseListener(l);
   }
 
   /**
@@ -257,11 +345,11 @@ public class BaseStatusBar
    */
   @Override
   public void removeMouseListener(MouseListener l) {
-    m_LabelStatus.removeMouseListener(l);
+    m_LabelStatusLeft.removeMouseListener(l);
   }
 
   /**
-   * Sets whether to turn mouse listener on.
+   * Sets whether to turn mouse listener on (left only).
    *
    * @param value	if true then the mouse listener is active
    */
@@ -271,14 +359,14 @@ public class BaseStatusBar
 	m_MouseListener = new MouseAdapter() {
 	  @Override
 	  public void mouseClicked(MouseEvent e) {
-	    if (MouseUtils.isDoubleClick(e) && (m_Status.length() > 0)) {
+	    if (MouseUtils.isDoubleClick(e) && (m_StatusLeft.length() > 0)) {
 	      e.consume();
-	      displayStatus();
+	      displayStatus(true);
 	    }
 	    else if (MouseUtils.isRightClick(e)) {
 	      e.consume();
 	      BasePopupMenu menu = getPopup();
-	      menu.showAbsolute(m_LabelStatus, e);
+	      menu.showAbsolute(m_LabelStatusLeft, e);
 	    }
 	    else {
 	      super.mouseClicked(e);
@@ -303,7 +391,7 @@ public class BaseStatusBar
   }
 
   /**
-   * Returns the popup menu for the status.
+   * Returns the popup menu for the status (left only).
    *
    * @return		the popup menu
    */
@@ -314,14 +402,14 @@ public class BaseStatusBar
     result = new BasePopupMenu();
 
     menuitem = new JMenuItem("Show status", GUIHelper.getIcon("editor.gif"));
-    menuitem.setEnabled(m_Status.length() > 0);
-    menuitem.addActionListener((ActionEvent e) -> displayStatus());
+    menuitem.setEnabled(m_StatusLeft.length() > 0);
+    menuitem.addActionListener((ActionEvent e) -> displayStatus(true));
     result.add(menuitem);
 
     result.addSeparator();
 
     menuitem = new JMenuItem("Clear status", GUIHelper.getIcon("new.gif"));
-    menuitem.setEnabled(m_Status.length() > 0);
+    menuitem.setEnabled(m_StatusLeft.length() > 0);
     menuitem.addActionListener((ActionEvent e) ->clearStatus());
     result.add(menuitem);
     
