@@ -127,7 +127,7 @@ public abstract class AbstractActorListingProcessor
    */
   @Override
   protected boolean isSortedList() {
-    return true;
+    return false;
   }
 
   /**
