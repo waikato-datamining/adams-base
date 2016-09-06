@@ -77,7 +77,17 @@ public class SelectOptionPanel
    * @param value	the options
    */
   public void setOptions(String[] value) {
+    String[]		current;
+    List<String>	present;
+
+    current   = getCurrent();
     m_Options = value;
+    present   = new ArrayList<>();
+    for (String c: current) {
+      if (Arrays.binarySearch(m_Options, c) > -1)
+	present.add(c);
+    }
+    setCurrent(present.toArray(new String[present.size()]));
   }
 
   /**
@@ -87,6 +97,75 @@ public class SelectOptionPanel
    */
   public String[] getOptions() {
     return m_Options;
+  }
+
+  /**
+   * Selects the option specified by the index.
+   *
+   * @param value	the index to select
+   */
+  public void setCurrentIndex(int value) {
+    if (value < 0)
+      setCurrent(new String[0]);
+    else if (value < m_Options.length)
+      setCurrent(new String[]{m_Options[value]});
+  }
+
+  /**
+   * Returns the index of the currently selected option.
+   *
+   * @return		the index, -1 if none selected
+   */
+  public int getCurrentIndex() {
+    int[]	indices;
+
+    indices = getCurrentIndices();
+    if (indices.length == 0)
+      return -1;
+    else
+      return indices[0];
+  }
+
+  /**
+   * Selects the options specified by the indices.
+   *
+   * @param value	the indices to select
+   */
+  public void setCurrentIndices(int[] value) {
+    List<String>	current;
+
+    if (value.length == 0) {
+      setCurrent(new String[0]);
+    }
+    else {
+      current = new ArrayList<>();
+      for (int index: value) {
+	if ((index >= 0) && (index < m_Options.length))
+	  current.add(m_Options[index]);
+      }
+      setCurrent(current.toArray(new String[current.size()]));
+    }
+  }
+
+  /**
+   * Returns the indices of the currently selected options.
+   *
+   * @return		the indices
+   */
+  public int[] getCurrentIndices() {
+    TIntList	result;
+    String[]	current;
+    int		index;
+
+    result = new TIntArrayList();
+    current = getCurrent();
+
+    for (String c: current) {
+      index = Arrays.binarySearch(m_Options, c);
+      result.add(index);
+    }
+
+    return result.toArray();
   }
 
   /**
