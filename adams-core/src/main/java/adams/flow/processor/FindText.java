@@ -119,7 +119,7 @@ public class FindText
    * @return		the title
    */
   public String getTitle() {
-    return "Find '" + m_Find + "'";
+    return "Locations for '" + m_Find + "'";
   }
 
   /**
