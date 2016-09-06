@@ -52,6 +52,7 @@ import adams.gui.core.RecentFilesHandlerWithCommandline.Setup;
 import adams.gui.core.TabIconSupporter;
 import adams.gui.core.TitleGenerator;
 import adams.gui.core.Undo.UndoPoint;
+import adams.gui.core.UndoHandlerWithQuickAccess;
 import adams.gui.core.UndoPanel;
 import adams.gui.dialog.ApprovalDialog;
 import adams.gui.event.ActorChangeEvent;
@@ -87,7 +88,7 @@ import java.util.List;
 public class FlowPanel
   extends UndoPanel
   implements StatusMessageHandler, SendToActionSupporter, FlowTreeHandler,
-             TabIconSupporter, FlowWorkerHandler {
+             TabIconSupporter, FlowWorkerHandler, UndoHandlerWithQuickAccess {
 
   /** for serialization. */
   private static final long serialVersionUID = -3579084888256133873L;
@@ -1069,9 +1070,19 @@ public class FlowPanel
   public void addUndoPoint(String statusMsg, String undoComment) {
     if (isUndoSupported() && getUndo().isEnabled()) {
       showStatus(statusMsg);
-      getUndo().addUndo(getTree().getState(), undoComment);
+      addUndoPoint(undoComment);
       showStatus("");
     }
+  }
+
+  /**
+   * Adds an undo point with the given comment.
+   *
+   * @param comment	the comment for the undo point
+   */
+  public void addUndoPoint(String comment) {
+    if (isUndoSupported() && getUndo().isEnabled())
+      getUndo().addUndo(getTree().getState(), comment);
   }
 
   /**

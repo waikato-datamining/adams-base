@@ -60,6 +60,7 @@ import adams.gui.core.RecentFilesHandlerWithCommandline.Setup;
 import adams.gui.core.SearchPanel;
 import adams.gui.core.SearchPanel.LayoutType;
 import adams.gui.core.Undo.UndoPoint;
+import adams.gui.core.UndoHandlerWithQuickAccess;
 import adams.gui.core.UndoPanel;
 import adams.gui.dialog.SQLStatementDialog;
 import adams.gui.event.DataChangeEvent;
@@ -136,7 +137,8 @@ public class TimeseriesExplorer
              ContainerListManager<TimeseriesContainerManager>,
              DataChangeListener, ScriptingEngineHandler, CleanUpHandler,
              FilterListener<Timeseries>, SendToActionSupporter,
-             DatabaseConnectionHandler, DatabaseConnectionChangeListener {
+             DatabaseConnectionHandler, DatabaseConnectionChangeListener,
+             UndoHandlerWithQuickAccess {
 
   /** for serialization. */
   private static final long serialVersionUID = 3953271131937711340L;
@@ -1113,6 +1115,16 @@ public class TimeseriesExplorer
       }
     };
     worker.execute();
+  }
+
+  /**
+   * Adds an undo point with the given comment.
+   *
+   * @param comment	the comment for the undo point
+   */
+  public void addUndoPoint(String comment) {
+    if (isUndoSupported() && getUndo().isEnabled())
+      m_Undo.addUndo(getContainerManager().getAll(), comment, true);
   }
 
   /**

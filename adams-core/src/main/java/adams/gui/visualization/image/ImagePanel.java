@@ -50,6 +50,7 @@ import adams.gui.core.MouseUtils;
 import adams.gui.core.SearchPanel;
 import adams.gui.core.SearchPanel.LayoutType;
 import adams.gui.core.Undo;
+import adams.gui.core.UndoHandlerWithQuickAccess;
 import adams.gui.core.UndoPanel;
 import adams.gui.event.ImagePanelLeftClickEvent;
 import adams.gui.event.ImagePanelLeftClickListener;
@@ -105,7 +106,8 @@ import java.util.Vector;
  */
 public class ImagePanel
   extends UndoPanel
-  implements StatusMessageHandler, TableModelListener, CleanUpHandler {
+  implements StatusMessageHandler, TableModelListener, CleanUpHandler,
+             UndoHandlerWithQuickAccess {
 
   /** for serialization. */
   private static final long serialVersionUID = -3102446345758890249L;
@@ -1116,9 +1118,19 @@ public class ImagePanel
   public void addUndoPoint(String statusMsg, String undoComment) {
     if (isUndoSupported() && getUndo().isEnabled()) {
       showStatus(statusMsg);
-      getUndo().addUndo(getState(), undoComment);
+      addUndoPoint(undoComment);
       showStatus("");
     }
+  }
+
+  /**
+   * Adds an undo point with the given comment.
+   *
+   * @param comment	the comment for the undo point
+   */
+  public void addUndoPoint(String comment) {
+    if (isUndoSupported() && getUndo().isEnabled())
+      getUndo().addUndo(getState(), comment);
   }
 
   /**
