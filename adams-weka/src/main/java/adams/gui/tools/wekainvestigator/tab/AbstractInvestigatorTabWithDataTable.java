@@ -219,11 +219,11 @@ public abstract class AbstractInvestigatorTabWithDataTable
     if (hasReadOnlyTable())
       return;
 
+    list = new ArrayList<>();
     if (rows == null) {
-      list = new ArrayList<>(getData());
+      list.addAll(getData());
       getData().clear();
-      for (DataContainer c: list)
-	c.cleanUp();
+      m_Model.fireTableDataChanged();
       fireDataChange(new WekaInvestigatorDataEvent(getOwner()));
     }
     else {
@@ -231,10 +231,13 @@ public abstract class AbstractInvestigatorTabWithDataTable
       for (i = rows.length - 1; i >= 0; i--) {
 	logMessage("Removing: " + getData().get(i).getSource());
 	cont = getData().remove(rows[i]);
-	cont.cleanUp();
+	list.add(cont);
       }
+      m_Model.fireTableDataChanged();
       fireDataChange(new WekaInvestigatorDataEvent(getOwner(), WekaInvestigatorDataEvent.ROWS_DELETED, rows));
     }
+    for (DataContainer c: list)
+      c.cleanUp();
   }
 
   /**
