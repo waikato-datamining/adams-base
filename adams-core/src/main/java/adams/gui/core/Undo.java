@@ -21,6 +21,7 @@
 package adams.gui.core;
 
 import adams.core.ClassLocator;
+import adams.core.CleanUpHandler;
 import adams.core.CloneHandler;
 import adams.core.Shortening;
 import adams.core.ShorteningType;
@@ -49,7 +50,8 @@ import java.util.List;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class Undo {
+public class Undo
+  implements CleanUpHandler {
 
   /**
    * Represents a single undo point, i.e., data and comment.
@@ -732,5 +734,13 @@ public class Undo {
    */
   protected String shortenComment(String s) {
     return Shortening.shorten(s, m_MaxCommentLength, m_ShorteningType);
+  }
+
+  /**
+   * Cleans up data structures, frees up memory.
+   */
+  public void cleanUp() {
+    clear();
+    m_Listeners.clear();
   }
 }
