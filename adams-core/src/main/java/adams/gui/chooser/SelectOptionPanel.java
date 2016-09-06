@@ -58,6 +58,9 @@ public class SelectOptionPanel
 
   /** the available options. */
   protected String[] m_Options;
+  
+  /** whether to use lenient mode. */
+  protected boolean m_Lenient;
 
   /**
    * Initializes the members.
@@ -69,6 +72,29 @@ public class SelectOptionPanel
     m_Options     = new String[0];
     m_MultiSelect = false;
     m_DialogTitle = "Select option";
+    m_Lenient     = false;
+  }
+
+  /**
+   * Returns the index of the the option in the provided array.
+   *
+   * @param options	the options to locate the search string
+   * @param option	the option to search for
+   * @return		the index, -1 if not found in options
+   */
+  protected int indexOf(String[] options, String option) {
+    int		result;
+    int		i;
+
+    result = -1;
+    for (i = 0; i < options.length; i++) {
+      if (options[i].equals(option)) {
+	result = i;
+	break;
+      }
+    }
+
+    return result;
   }
 
   /**
@@ -82,12 +108,15 @@ public class SelectOptionPanel
 
     current   = getCurrent();
     m_Options = value;
-    present   = new ArrayList<>();
-    for (String c: current) {
-      if (Arrays.binarySearch(m_Options, c) > -1)
-	present.add(c);
+
+    if (!m_Lenient) {
+      present = new ArrayList<>();
+      for (String c : current) {
+	if (indexOf(m_Options, c) > -1)
+	  present.add(c);
+      }
+      setCurrent(present.toArray(new String[present.size()]));
     }
-    setCurrent(present.toArray(new String[present.size()]));
   }
 
   /**
@@ -161,7 +190,7 @@ public class SelectOptionPanel
     current = getCurrent();
 
     for (String c: current) {
-      index = Arrays.binarySearch(m_Options, c);
+      index = indexOf(m_Options, c);
       result.add(index);
     }
 
@@ -202,6 +231,26 @@ public class SelectOptionPanel
    */
   public boolean isMultiSelect() {
     return m_MultiSelect;
+  }
+
+  /**
+   * Sets whether to make setting of options lenient.
+   * If set, doesn't remove current ones if not present in available options.
+   *
+   * @param value	true if lenient
+   */
+  public void setLenient(boolean value) {
+    m_Lenient = value;
+  }
+
+  /**
+   * Returns whether multiple options can be selected.
+   * If set, doesn't remove current ones if not present in available options.
+   *
+   * @return		true if lenient
+   */
+  public boolean isLenient() {
+    return m_Lenient;
   }
 
   /**
@@ -258,9 +307,8 @@ public class SelectOptionPanel
     for (i = 0; i < m_Options.length; i++) {
       model.addElement(m_Options[i]);
       if (current.contains(m_Options[i])) {
-        selected.add(i);
-        if (!isMultiSelect())
-          break;
+	if (isMultiSelect() || (!isMultiSelect() && (selected.size() == 0)))
+	  selected.add(i);
       }
     }
     list = new BaseList(model);
