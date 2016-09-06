@@ -24,6 +24,7 @@ import adams.core.Range;
 import adams.gui.chooser.WekaFileChooser;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.SortableAndSearchableTable;
+import adams.gui.core.UndoHandlerWithQuickAccess;
 import adams.gui.dialog.ApprovalDialog;
 import weka.core.Instance;
 import weka.core.Instances;
@@ -40,6 +41,8 @@ import java.io.File;
 
 /**
  * Table for displaying Instances objects.
+ * Supports simple undo by default, but can make use of a
+ * {@link UndoHandlerWithQuickAccess} as well.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
@@ -100,6 +103,24 @@ public class InstancesTable
     else
       throw new IllegalArgumentException(
 	"Model must be derived from " + InstancesTableModel.class.getName() + ", provided: " + model.getClass().getName());
+  }
+
+  /**
+   * Sets the undo handler to use.
+   *
+   * @param value	the handler, null if to turn off
+   */
+  public void setUndoHandler(UndoHandlerWithQuickAccess value) {
+    ((InstancesTableModel) getUnsortedModel()).setUndoHandler(value);
+  }
+
+  /**
+   * Returns the undo handler in use.
+   *
+   * @return		the handler, null if none set
+   */
+  public UndoHandlerWithQuickAccess getUndoHandler() {
+    return ((InstancesTableModel) getUnsortedModel()).getUndoHandler();
   }
 
   /**

@@ -23,6 +23,7 @@ package adams.gui.visualization.instances;
 
 import adams.core.SerializationHelper;
 import adams.gui.core.ConsolePanel;
+import adams.gui.core.UndoHandlerWithQuickAccess;
 import weka.core.Attribute;
 import weka.core.DenseInstance;
 import weka.core.Instance;
@@ -36,7 +37,6 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import java.io.File;
-import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -46,8 +46,9 @@ import java.util.List;
 import java.util.logging.Level;
 
 /**
- * The model for the Arff-Viewer.
- *
+ * The model for the Instances.
+ * Supports simple undo by default, but can make use of a
+ * {@link UndoHandlerWithQuickAccess} as well.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision: 12708 $
@@ -67,6 +68,9 @@ public class InstancesTableModel
 
   /** whether notification is enabled */
   protected boolean m_NotificationEnabled;
+
+  /** optional undo handler. */
+  protected UndoHandlerWithQuickAccess m_UndoHandler;
 
   /** whether undo is active */
   protected boolean m_UndoEnabled;
@@ -98,6 +102,7 @@ public class InstancesTableModel
     m_Listeners           = new HashSet<>();
     m_Data                = null;
     m_NotificationEnabled = true;
+    m_UndoHandler         = null;
     m_UndoList            = new ArrayList<>();
     m_IgnoreChanges       = false;
     m_UndoEnabled         = true;
@@ -135,13 +140,43 @@ public class InstancesTableModel
   }
 
   /**
+   * Sets the undo handler to use.
+   *
+   * @param value	the handler, null if to turn off
+   */
+  public void setUndoHandler(UndoHandlerWithQuickAccess value) {
+    m_UndoHandler = value;
+  }
+
+  /**
+   * Returns the undo handler in use.
+   *
+   * @return		the handler, null if none set
+   */
+  public UndoHandlerWithQuickAccess getUndoHandler() {
+    return m_UndoHandler;
+  }
+
+  /**
+   * Returns whether to use the undo handler.
+   *
+   * @return		the undo handler
+   */
+  protected boolean useUndoHandler() {
+    return (m_UndoHandler != null) && m_UndoHandler.isUndoSupported() && m_UndoHandler.getUndo().isEnabled();
+  }
+
+  /**
    * returns whether undo support is enabled
    *
    * @return true if undo support is enabled
    */
   @Override
   public boolean isUndoEnabled() {
-    return m_UndoEnabled;
+    if (m_UndoHandler != null)
+      return m_UndoHandler.isUndoSupported() && m_UndoHandler.getUndo().isEnabled();
+    else
+      return m_UndoEnabled;
   }
 
   /**
@@ -151,6 +186,8 @@ public class InstancesTableModel
    */
   @Override
   public void setUndoEnabled(boolean enabled) {
+    if ((m_UndoHandler != null) && m_UndoHandler.isUndoSupported())
+      m_UndoHandler.getUndo().setEnabled(enabled);
     m_UndoEnabled = enabled;
   }
 
@@ -904,7 +941,11 @@ public class InstancesTableModel
    */
   @Override
   public void clearUndo() {
-    m_UndoList = new ArrayList<>();
+    if ((m_UndoHandler != null) && m_UndoHandler.isUndoSupported())
+      m_UndoHandler.getUndo().clear();
+    for (File file: m_UndoList)
+      file.delete();
+    m_UndoList.clear();
   }
 
   /**
@@ -915,7 +956,10 @@ public class InstancesTableModel
    */
   @Override
   public boolean canUndo() {
-    return !m_UndoList.isEmpty();
+    if (useUndoHandler())
+      return m_UndoHandler.getUndo().canUndo();
+    else
+      return !m_UndoList.isEmpty();
   }
 
   /**
@@ -923,27 +967,30 @@ public class InstancesTableModel
    */
   @Override
   public void undo() {
-    File tempFile;
-    Instances inst;
-    ObjectInputStream ooi;
+    File 		tempFile;
+    Instances 		inst;
 
     if (canUndo()) {
-      // load file
-      tempFile = m_UndoList.get(m_UndoList.size() - 1);
-      try {
-	inst = (Instances) SerializationHelper.read(tempFile.getAbsolutePath());
-	// set instances
-	setInstances(inst);
-	notifyListener(new TableModelEvent(this, TableModelEvent.HEADER_ROW));
-	notifyListener(new TableModelEvent(this));
+      if (useUndoHandler()) {
+	m_UndoHandler.undo();
       }
-      catch (Exception e) {
-	ConsolePanel.getSingleton().append(Level.SEVERE, "Failed to perform undo!", e);
-      }
-      tempFile.delete();
+      else {
+	// load file
+	tempFile = m_UndoList.get(m_UndoList.size() - 1);
+	try {
+	  inst = (Instances) SerializationHelper.read(tempFile.getAbsolutePath());
+	  setInstances(inst);
+	  notifyListener(new TableModelEvent(this, TableModelEvent.HEADER_ROW));
+	  notifyListener(new TableModelEvent(this));
+	}
+	catch (Exception e) {
+	  ConsolePanel.getSingleton().append(Level.SEVERE, "Failed to perform undo!", e);
+	}
+	tempFile.delete();
 
-      // remove from undo
-      m_UndoList.remove(m_UndoList.size() - 1);
+	// remove from undo
+	m_UndoList.remove(m_UndoList.size() - 1);
+      }
     }
   }
 
@@ -955,7 +1002,7 @@ public class InstancesTableModel
    */
   @Override
   public void addUndoPoint() {
-    File tempFile;
+    File 	tempFile;
 
     // undo support currently on?
     if (!isUndoEnabled()) {
@@ -963,16 +1010,21 @@ public class InstancesTableModel
     }
 
     if (getInstances() != null) {
-      try {
-	// temp. filename
-	tempFile = File.createTempFile("instances", null);
-	tempFile.deleteOnExit();
-	SerializationHelper.write(tempFile.getAbsolutePath(), getInstances());
-	// add to undo list
-	m_UndoList.add(tempFile);
+      if (useUndoHandler()) {
+        m_UndoHandler.addUndoPoint("undo");
       }
-      catch (Exception e) {
-	ConsolePanel.getSingleton().append(Level.SEVERE, "Failed to serialize undo point!", e);
+      else {
+        try {
+          // temp. filename
+          tempFile = File.createTempFile("instances", null);
+          tempFile.deleteOnExit();
+          SerializationHelper.write(tempFile.getAbsolutePath(), getInstances());
+          // add to undo list
+          m_UndoList.add(tempFile);
+        }
+        catch (Exception e) {
+          ConsolePanel.getSingleton().append(Level.SEVERE, "Failed to serialize undo point!", e);
+        }
       }
     }
   }
