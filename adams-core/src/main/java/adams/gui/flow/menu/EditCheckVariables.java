@@ -19,16 +19,16 @@
  */
 package adams.gui.flow.menu;
 
+import adams.flow.processor.CheckVariableUsage;
+import adams.gui.core.BaseDialog;
+import adams.gui.core.GUIHelper;
+
+import javax.swing.JButton;
+import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
-import javax.swing.JButton;
-import javax.swing.JPanel;
-
-import adams.flow.processor.CheckVariableUsage;
-import adams.gui.core.BaseDialog;
 
 /**
  * Checks the variable usage.
@@ -83,7 +83,7 @@ public class EditCheckVariables
       panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
       panel.add(button);
       dialog.getContentPane().add(panel, BorderLayout.SOUTH);
-      dialog.pack();
+      dialog.setSize(GUIHelper.getDefaultSmallDialogDimension());
       dialog.setLocationRelativeTo(m_State);
       dialog.setVisible(true);
     }

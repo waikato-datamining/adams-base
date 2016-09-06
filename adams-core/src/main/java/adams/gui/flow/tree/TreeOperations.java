@@ -988,8 +988,7 @@ public class TreeOperations
 	}
 	if (comp instanceof MenuBarProvider)
 	  dialog.setJMenuBar(((MenuBarProvider) comp).getMenuBar());
-	dialog.pack();
-        dialog.setSize(Math.max(600, dialog.getWidth()), Math.max(400, dialog.getHeight()));
+	dialog.setSize(GUIHelper.getDefaultSmallDialogDimension());
 	dialog.setLocationRelativeTo(GUIHelper.getParentComponent(getOwner()));
 	dialog.setVisible(true);
 	errorPanel = null;
