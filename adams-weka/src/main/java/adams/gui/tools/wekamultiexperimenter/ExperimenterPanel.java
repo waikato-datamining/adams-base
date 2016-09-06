@@ -262,7 +262,7 @@ public class ExperimenterPanel
       logError("Cannot handle experiment stored in " + file + "!\n" + msg, "Load experiment");
     }
   }
-  
+
   /**
    * For opening a recently used experiment file.
    * 
@@ -413,6 +413,7 @@ public class ExperimenterPanel
       if (msg == null) {
 	m_PanelAnalysis.setResults(results);
 	m_TabbedPane.setSelectedComponent(m_PanelAnalysis);
+	logMessage("Loaded results from " + file);
       }
       else {
 	logError("Cannot handle results from " + file + "\n" + msg, "Loading results");
@@ -837,7 +838,8 @@ public class ExperimenterPanel
    * @param msg		the message to display
    */
   public void showStatus(String msg) {
-    logMessage(msg);
+    if (!msg.isEmpty())
+      logMessage(msg);
   }
 
   /**
