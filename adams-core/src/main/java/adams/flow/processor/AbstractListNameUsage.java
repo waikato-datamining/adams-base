@@ -20,21 +20,7 @@
 package adams.flow.processor;
 
 import adams.core.option.AbstractOption;
-import adams.core.option.OptionHandler;
 import adams.core.option.OptionTraversalPath;
-import adams.flow.control.Flow;
-import adams.flow.core.Actor;
-import adams.gui.core.BaseListWithButtons;
-import adams.gui.core.GUIHelper;
-import adams.gui.flow.FlowPanel;
-import adams.gui.flow.tree.Tree;
-import com.github.fracpete.jclipboardhelper.ClipboardHelper;
-
-import javax.swing.DefaultListModel;
-import javax.swing.JButton;
-import javax.swing.event.ListSelectionEvent;
-import java.awt.Component;
-import java.awt.event.ActionEvent;
 
 /**
  * Ancestor for processors that locate usages of a certain name.
@@ -44,24 +30,13 @@ import java.awt.event.ActionEvent;
  * @param <T> the type of
  */
 public abstract class AbstractListNameUsage<T>
-  extends AbstractListingProcessor {
+  extends AbstractActorListingProcessor {
 
   /** for serialization. */
   private static final long serialVersionUID = 7133896476260133469L;
 
   /** the name to look for. */
   protected String m_Name;
-
-  /** the current actor being processed. */
-  protected transient Actor m_Current;
-  
-  /**
-   * Returns a string describing the object.
-   *
-   * @return 		a description suitable for displaying in the gui
-   */
-  @Override
-  public abstract String globalInfo();
 
   /**
    * Adds options to the internal list of options.
@@ -111,52 +86,6 @@ public abstract class AbstractListNameUsage<T>
   protected abstract boolean isNameMatch(Object obj);
 
   /**
-   * Tries to locate the enclosing actor.
-   *
-   * @param owner	the option handler
-   * @param path	the traversal path so far
-   * @return		the actor, null if failed to locate
-   */
-  protected Actor findEnclosingActor(OptionHandler owner, OptionTraversalPath path, int index) {
-    if (path.getObject(index) instanceof Actor)
-      return (Actor) path.getObject(index);
-    if (index > 0)
-      return findEnclosingActor(owner, path, index - 1);
-    return null;
-  }
-
-  /**
-   * Tries to locate the enclosing actor.
-   *
-   * @param owner	the option handler
-   * @param path	the traversal path so far
-   * @return		the actor, null if failed to locate
-   */
-  protected Actor findEnclosingActor(OptionHandler owner, OptionTraversalPath path) {
-    if (owner instanceof Actor)
-      return (Actor) owner;
-    else
-      return findEnclosingActor(owner, path, path.size() - 1);
-  }
-
-  /**
-   * Creates a location string used in the list.
-   *
-   * @param owner	the option handler
-   * @param obj		the object where the name was located
-   * @return		the generated location string
-   */
-  protected String createLocation(OptionHandler owner, Object obj, OptionTraversalPath path) {
-    Actor	actor;
-
-    actor = findEnclosingActor(owner, path);
-    if (actor != null)
-      return actor.getFullName();
-    else
-      return owner.getClass().getName();
-  }
-
-  /**
    * Checks whether the object is valid and should be added to the list.
    *
    * @param option	the current option
@@ -166,121 +95,5 @@ public abstract class AbstractListNameUsage<T>
    */
   protected boolean isValid(AbstractOption option, Object obj, OptionTraversalPath path) {
     return isNameMatch(obj);
-  }
-
-  /**
-   * Returns the string representation of the object that is added to the list.
-   *
-   * @param option	the current option
-   * @param obj		the object to turn into a string
-   * @return		the string representation, null if to ignore the item
-   */
-  @Override
-  protected String objectToString(AbstractOption option, Object obj, OptionTraversalPath path) {
-    return createLocation(option.getOptionHandler(), obj, path);
-  }
-
-  /**
-   * Performs the actual processing.
-   *
-   * @param actor	the actor to process (is a copy of original for
-   * 			processors implementing ModifyingProcessor)
-   * @see		ModifyingProcessor
-   */
-  protected void processActor(Actor actor) {
-    m_Current = actor;
-    super.processActor(actor);
-  }
-  
-
-  /**
-   * Returns whether the list should be sorted.
-   *
-   * @return		true if the list should get sorted
-   */
-  @Override
-  protected boolean isSortedList() {
-    return true;
-  }
-
-  /**
-   * Returns whether the list should not contain any duplicates.
-   *
-   * @return		true if the list contains no duplicates
-   */
-  @Override
-  protected boolean isUniqueList() {
-    return true;
-  }
-
-  /**
-   * Returns the graphical output that was generated.
-   *
-   * @return		the graphical output
-   */
-  @Override
-  public Component getGraphicalOutput() {
-    final BaseListWithButtons	result;
-    DefaultListModel<String>	model;
-    final JButton		buttonCopy;
-    final JButton		buttonJumpTo;
-    final Flow			flow;
-
-    if (m_Current instanceof Flow)
-      flow = (Flow) m_Current;
-    else if ((m_Current != null) && (m_Current.getRoot() instanceof Flow))
-      flow = (Flow) m_Current.getRoot();
-    else
-      flow = null;
-
-    result = new BaseListWithButtons();
-    model = new DefaultListModel<>();
-    for (String item: m_List)
-      model.addElement(item);
-    result.setModel(model);
-
-    buttonCopy = new JButton("Copy");
-    buttonCopy.setEnabled(false);
-    buttonCopy.addActionListener((ActionEvent e) -> {
-      Object[] values = result.getSelectedValues();
-      StringBuilder content = new StringBuilder();
-      for (Object value: values) {
-        if (content.length() > 0)
-          content.append("\n");
-        content.append("" + value);
-      }
-      ClipboardHelper.copyToClipboard(content.toString());
-    });
-    result.addToButtonsPanel(buttonCopy);
-
-    if ((flow != null) && (flow.getParentComponent() != null)) {
-      buttonJumpTo = new JButton("Jump to");
-      buttonJumpTo.setEnabled(false);
-      buttonJumpTo.addActionListener((ActionEvent e) -> {
-        if (result.getSelectedIndex() > -1) {
-          if (flow.getParentComponent() instanceof FlowPanel) {
-            ((FlowPanel) flow.getParentComponent()).getTree().locateAndDisplay(
-              "" + result.getSelectedValue());
-          }
-          else if (flow.getParentComponent() instanceof Tree) {
-            ((Tree) flow.getParentComponent()).locateAndDisplay(
-              "" + result.getSelectedValue());
-          }
-        }
-      });
-      result.addToButtonsPanel(buttonJumpTo);
-      result.setDoubleClickButton(buttonJumpTo);
-    }
-    else {
-      buttonJumpTo = null;
-    }
-
-    result.addListSelectionListener((ListSelectionEvent e) -> {
-      buttonCopy.setEnabled(result.getSelectedIndices().length > 0);
-      if (buttonJumpTo != null)
-        buttonJumpTo.setEnabled(result.getSelectedIndices().length == 1);
-    });
-
-    return result;
   }
 }
