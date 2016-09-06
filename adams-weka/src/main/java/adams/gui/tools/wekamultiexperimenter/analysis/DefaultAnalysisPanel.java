@@ -35,6 +35,7 @@ import adams.gui.core.ParameterPanel;
 import adams.gui.goe.WekaGenericObjectEditorPanel;
 import adams.gui.tools.wekamultiexperimenter.ExperimenterPanel;
 import weka.core.Attribute;
+import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.Range;
 import weka.experiment.PairedCorrectedTTester;
@@ -47,12 +48,15 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
+import javax.swing.event.ChangeEvent;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 
 /**
@@ -97,7 +101,7 @@ public class DefaultAnalysisPanel
     /**
      * Initializes the history.
      *
-     * @param owner	the owning panel
+     * @param owner the owning panel
      */
     public HistoryPanel(DefaultAnalysisPanel owner) {
       super();
@@ -111,19 +115,19 @@ public class DefaultAnalysisPanel
      */
     public void clear() {
       for (AbstractResultsPanel panel : m_Entries.values())
-        panel.cleanUp();
+	panel.cleanUp();
       super.clear();
     }
 
     /**
      * Removes the specified entry.
      *
-     * @param name	the name of the entry
-     * @return		the entry that was stored under this name or null if
-     * 			no entry was stored with this name
+     * @param name the name of the entry
+     * @return the entry that was stored under this name or null if
+     * no entry was stored with this name
      */
     public AbstractResultsPanel removeEntry(String name) {
-      AbstractResultsPanel	result;
+      AbstractResultsPanel result;
 
       result = super.removeEntry(name);
       if (result != null)
@@ -135,14 +139,14 @@ public class DefaultAnalysisPanel
     /**
      * Displays the specified entry.
      *
-     * @param name	the name of the entry, can be null to empty display
+     * @param name the name of the entry, can be null to empty display
      */
     @Override
     protected void updateEntry(String name) {
       m_Owner.getPanelRight().removeAll();
       if (name != null) {
-        if (hasEntry(name))
-          m_Owner.getPanelRight().add(getEntry(name));
+	if (hasEntry(name))
+	  m_Owner.getPanelRight().add(getEntry(name));
       }
       m_Owner.getPanelRight().invalidate();
       m_Owner.getPanelRight().revalidate();
@@ -168,6 +172,9 @@ public class DefaultAnalysisPanel
 
   /** for swapping rows/columns. */
   protected JCheckBox m_CheckBoxSwapRowsColumns;
+
+  /** the comparison base. */
+  protected SelectOptionPanel m_SelectComparisonBase;
 
   /** the combobox with the metric to evaluate. */
   protected JComboBox<String> m_ComboBoxMetric;
@@ -204,13 +211,13 @@ public class DefaultAnalysisPanel
    */
   @Override
   protected void initialize() {
-    AbstractResultsPanel	panel;
+    AbstractResultsPanel panel;
 
     super.initialize();
 
-    m_ModelMetric   = new DefaultComboBoxModel<>();
+    m_ModelMetric = new DefaultComboBoxModel<>();
     m_PanelsResults = new ArrayList<>();
-    for (Class cls: ClassLister.getSingleton().getClasses(AbstractResultsPanel.class)) {
+    for (Class cls : ClassLister.getSingleton().getClasses(AbstractResultsPanel.class)) {
       try {
 	panel = (AbstractResultsPanel) cls.newInstance();
 	m_PanelsResults.add(panel);
@@ -220,7 +227,7 @@ public class DefaultAnalysisPanel
       }
     }
 
-    m_Formatter  = DateUtils.getTimeFormatter();
+    m_Formatter = DateUtils.getTimeFormatter();
   }
 
   /**
@@ -228,13 +235,13 @@ public class DefaultAnalysisPanel
    */
   @Override
   protected void initGUI() {
-    JPanel		panelTop;
-    ParameterPanel 	panelParams;
-    JPanel		panelButtons;
-    Properties		props;
-    Tester		tester;
-    ResultMatrix	matrix;
-    double		siglevel;
+    JPanel panelTop;
+    ParameterPanel panelParams;
+    JPanel panelButtons;
+    Properties props;
+    Tester tester;
+    ResultMatrix matrix;
+    double siglevel;
 
     super.initGUI();
 
@@ -282,19 +289,33 @@ public class DefaultAnalysisPanel
     m_SelectRows = new SelectOptionPanel();
     m_SelectRows.setCurrent(new String[]{KEY_DATASET});
     m_SelectRows.setMultiSelect(true);
+    m_SelectRows.setLenient(true);
     m_SelectRows.setDialogTitle("Select row identifiers");
+    m_SelectRows.addChangeListener((ChangeEvent e) -> updateComparisonBase());
     panelParams.addParameter("Rows", m_SelectRows);
 
     // columns
     m_SelectColumns = new SelectOptionPanel();
     m_SelectColumns.setCurrent(new String[]{KEY_SCHEME, KEY_SCHEME_OPTIONS, KEY_SCHEME_VERSION_ID});
     m_SelectColumns.setMultiSelect(true);
+    m_SelectColumns.setLenient(true);
     m_SelectColumns.setDialogTitle("Select column identifiers");
+    m_SelectColumns.addChangeListener((ChangeEvent e) -> updateComparisonBase());
     panelParams.addParameter("Columns", m_SelectColumns);
 
     // swap
     m_CheckBoxSwapRowsColumns = new JCheckBox();
+    m_CheckBoxSwapRowsColumns.addActionListener((ActionEvent e) -> updateComparisonBase());
     panelParams.addParameter("Swap rows/columns", m_CheckBoxSwapRowsColumns);
+
+    // comparison base
+    m_SelectComparisonBase = new SelectOptionPanel();
+    m_SelectComparisonBase.setCurrent(new String[0]);
+    m_SelectComparisonBase.setMultiSelect(false);
+    m_SelectComparisonBase.setLenient(true);
+    m_SelectComparisonBase.setDialogTitle("Select the base to compare against");
+    m_SelectComparisonBase.addChangeListener((ChangeEvent e) -> updateButtons());
+    panelParams.addParameter("Comparison base", m_SelectComparisonBase);
 
     // metric
     m_ComboBoxMetric = new JComboBox<>(m_ModelMetric);
@@ -334,7 +355,7 @@ public class DefaultAnalysisPanel
   /**
    * Returns the name to display in the GUI.
    *
-   * @return		the name
+   * @return the name
    */
   @Override
   public String getAnalysisName() {
@@ -344,7 +365,7 @@ public class DefaultAnalysisPanel
   /**
    * Returns the panel on the right (for the analysis display).
    *
-   * @return		the panel
+   * @return the panel
    */
   public JPanel getPanelRight() {
     return m_PanelRight;
@@ -353,7 +374,7 @@ public class DefaultAnalysisPanel
   /**
    * Sets the matrix to use.
    *
-   * @param value	the matrix
+   * @param value the matrix
    */
   public void setResultMatrix(ResultMatrix value) {
     m_PanelMatrix.setCurrent(value);
@@ -362,7 +383,7 @@ public class DefaultAnalysisPanel
   /**
    * Returns the result matrix.
    *
-   * @return		the matrix
+   * @return the matrix
    */
   public ResultMatrix getResultMatrix() {
     return (ResultMatrix) m_PanelMatrix.getCurrent();
@@ -371,7 +392,7 @@ public class DefaultAnalysisPanel
   /**
    * Sets the tester to use.
    *
-   * @param value	the tester
+   * @param value the tester
    */
   public void setTester(Tester value) {
     m_PanelTester.setCurrent(value);
@@ -380,7 +401,7 @@ public class DefaultAnalysisPanel
   /**
    * Returns the tester.
    *
-   * @return		the tester
+   * @return the tester
    */
   public Tester getTester() {
     return (Tester) m_PanelTester.getCurrent();
@@ -389,8 +410,8 @@ public class DefaultAnalysisPanel
   /**
    * Checks whether the results can be handled at all.
    *
-   * @param results	the results to check
-   * @return		null if can handle, otherwise error message
+   * @param results the results to check
+   * @return null if can handle, otherwise error message
    */
   @Override
   public String handlesResults(Instances results) {
@@ -400,10 +421,10 @@ public class DefaultAnalysisPanel
   /**
    * Returns a clone of the object.
    *
-   * @return		the clone
+   * @return the clone
    */
   public DefaultAnalysisPanel getClone() {
-    DefaultAnalysisPanel	result;
+    DefaultAnalysisPanel result;
 
     result = new DefaultAnalysisPanel();
     result.setResultMatrix(getResultMatrix());
@@ -416,12 +437,10 @@ public class DefaultAnalysisPanel
    * Updates the GUI.
    */
   protected void update() {
-    DefaultComboBoxModel<String> 	metric;
-    String				oldValue;
-    int					index;
-    List<String>			names;
-
-    m_ButtonAnalyze.setEnabled(m_Results != null);
+    DefaultComboBoxModel<String> metric;
+    String oldValue;
+    int index;
+    List<String> names;
 
     // update metric
     oldValue = (String) m_ComboBoxMetric.getSelectedItem();
@@ -449,6 +468,15 @@ public class DefaultAnalysisPanel
     }
     m_SelectRows.setOptions(names.toArray(new String[names.size()]));
     m_SelectColumns.setOptions(names.toArray(new String[names.size()]));
+    updateComparisonBase();
+    updateButtons();
+  }
+
+  /**
+   * Updates the buttons.
+   */
+  protected void updateButtons() {
+    m_ButtonAnalyze.setEnabled((m_Results != null) && (m_SelectComparisonBase.getCurrentIndex() > -1));
   }
 
   /**
@@ -477,20 +505,76 @@ public class DefaultAnalysisPanel
    */
   protected String getRange(SelectOptionPanel select) {
     StringBuilder	result;
-    String[]		options;
-    int			index;
+    int[]		options;
 
     result  = new StringBuilder();
-    options = select.getCurrent();
-    for (String option: options) {
+    options = select.getCurrentIndices();
+    for (int option: options) {
       if (result.length() > 0)
 	result.append(",");
-      index = getAttributeIndex(option);
-      if (index > -1)
-	result.append("" + (index+1));
+      result.append("" + (option+1));
     }
 
     return result.toString();
+  }
+
+  /**
+   * Updates the base of comparison.
+   */
+  protected void updateComparisonBase() {
+    boolean 		swapped;
+    List<String> 	options;
+    int[] 		atts;
+    Set<String> 	unique;
+    StringBuilder 	combined;
+    String		key;
+    int			i;
+    int			n;
+    Instance		inst;
+
+    if (m_Results == null) {
+      m_SelectComparisonBase.setOptions(new String[0]);
+      return;
+    }
+
+    swapped = m_CheckBoxSwapRowsColumns.isSelected();
+    if (swapped)
+      atts = m_SelectRows.getCurrentIndices();
+    else
+      atts = m_SelectColumns.getCurrentIndices();
+
+    unique  = new HashSet<>();
+    options = new ArrayList<>();
+    for (i = 0; i < m_Results.numInstances(); i++) {
+      inst     = m_Results.instance(i);
+      combined = new StringBuilder();
+      for (n = 0; n < atts.length; n++) {
+	if (n > 0)
+	  combined.append(" ");
+	if (inst.isMissing(atts[n])) {
+	  combined.append("?");
+	}
+	else {
+	  switch (m_Results.attribute(atts[n]).type()) {
+	    case Attribute.NUMERIC:
+	      combined.append("" + inst.value(atts[n]));
+	      break;
+	    default:
+	      combined.append(inst.stringValue(atts[n]));
+	      break;
+	  }
+	}
+      }
+      key = combined.toString();
+      if (unique.contains(key))
+	continue;
+      options.add(key);
+      unique.add(key);
+    }
+
+    m_SelectComparisonBase.setOptions(options.toArray(new String[options.size()]));
+    if (m_SelectComparisonBase.getCurrentIndex() == -1)
+      m_SelectComparisonBase.setCurrentIndex(0);
   }
 
   /**
@@ -531,7 +615,7 @@ public class DefaultAnalysisPanel
     if (index == -1)
       index = getAttributeIndex(CORRELATION_COEFFICIENT);
     try {
-      tester.multiResultsetFull(0, index);
+      tester.multiResultsetFull(m_SelectComparisonBase.getCurrentIndex(), index);
     }
     catch (Exception e) {
       GUIHelper.showErrorMessage(getOwner(), "Failed to analyze experiment!", e);
