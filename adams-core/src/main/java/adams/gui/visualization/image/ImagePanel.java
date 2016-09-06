@@ -1992,5 +1992,7 @@ public class ImagePanel
   public void cleanUp() {
     removeDependentDialogs();
     removeDependentFlows();
+    if (m_Undo != null)
+      m_Undo.cleanUp();
   }
 }
