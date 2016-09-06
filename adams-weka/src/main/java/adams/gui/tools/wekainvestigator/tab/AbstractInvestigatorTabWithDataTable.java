@@ -46,6 +46,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Ancestor for tabs that have the data table on top.
@@ -211,20 +212,26 @@ public abstract class AbstractInvestigatorTabWithDataTable
    * @param rows	the rows to remove, null for all
    */
   protected void removeData(int[] rows) {
-    int		i;
+    int			i;
+    DataContainer	cont;
+    List<DataContainer>	list;
 
     if (hasReadOnlyTable())
       return;
 
     if (rows == null) {
+      list = new ArrayList<>(getData());
       getData().clear();
+      for (DataContainer c: list)
+	c.cleanUp();
       fireDataChange(new WekaInvestigatorDataEvent(getOwner()));
     }
     else {
       Arrays.sort(rows);
       for (i = rows.length - 1; i >= 0; i--) {
 	logMessage("Removing: " + getData().get(i).getSource());
-	getData().remove(rows[i]);
+	cont = getData().remove(rows[i]);
+	cont.cleanUp();
       }
       fireDataChange(new WekaInvestigatorDataEvent(getOwner(), WekaInvestigatorDataEvent.ROWS_DELETED, rows));
     }

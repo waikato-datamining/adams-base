@@ -63,6 +63,7 @@ public class Rename
       logMessage("Renaming cancelled!");
       return;
     }
+    cont.addUndoPoint("renaming");
     cont.getData().setRelationName(newName);
     cont.setModified(true);
     fireDataChange(new WekaInvestigatorDataEvent(getOwner().getOwner(), WekaInvestigatorDataEvent.ROWS_MODIFIED, getSelectedRows()[0]));

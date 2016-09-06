@@ -23,6 +23,7 @@ package adams.gui.tools.wekainvestigator.data;
 import weka.core.Instances;
 import weka.experiment.InstanceQuery;
 
+import java.io.Serializable;
 import java.util.logging.Level;
 
 /**
@@ -127,8 +128,8 @@ public class DatabaseContainer
    *
    * @return		the undo point
    */
-  protected Object[] getUndoData() {
-    return new Object[]{
+  protected Serializable[] getUndoData() {
+    return new Serializable[]{
       m_Data,
       m_Modified,
       m_URL,
@@ -143,12 +144,23 @@ public class DatabaseContainer
    *
    * @param data	the undo point
    */
-  protected void applyUndoData(Object[] data) {
+  protected void applyUndoData(Serializable[] data) {
     m_Data     = (Instances) data[0];
     m_Modified = (Boolean) data[1];
     m_URL      = (String) data[2];
     m_User     = (String) data[3];
     m_Password = (String) data[4];
     m_Query    = (String) data[5];
+  }
+
+  /**
+   * Cleans up data structures, frees up memory.
+   */
+  public void cleanUp() {
+    super.cleanUp();
+    m_URL      = null;
+    m_User     = null;
+    m_Password = null;
+    m_Query    = null;
   }
 }

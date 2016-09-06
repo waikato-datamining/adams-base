@@ -24,6 +24,7 @@ import adams.core.option.OptionUtils;
 import weka.core.Instances;
 import weka.datagenerators.DataGenerator;
 
+import java.io.Serializable;
 import java.util.logging.Level;
 
 /**
@@ -103,8 +104,8 @@ public class DataGeneratorContainer
    *
    * @return		the undo point
    */
-  protected Object[] getUndoData() {
-    return new Object[]{
+  protected Serializable[] getUndoData() {
+    return new Serializable[]{
       m_Data,
       m_Modified,
       m_Generator
@@ -116,9 +117,17 @@ public class DataGeneratorContainer
    *
    * @param data	the undo point
    */
-  protected void applyUndoData(Object[] data) {
+  protected void applyUndoData(Serializable[] data) {
     m_Data      = (Instances) data[0];
     m_Modified  = (Boolean) data[1];
     m_Generator = (DataGenerator) data[2];
+  }
+
+  /**
+   * Cleans up data structures, frees up memory.
+   */
+  public void cleanUp() {
+    super.cleanUp();
+    m_Generator = null;
   }
 }

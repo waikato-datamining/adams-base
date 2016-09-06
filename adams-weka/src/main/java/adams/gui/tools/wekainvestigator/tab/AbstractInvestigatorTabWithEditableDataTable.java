@@ -23,6 +23,8 @@ package adams.gui.tools.wekainvestigator.tab;
 import adams.core.logging.LoggingLevel;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.GUIHelper;
+import adams.gui.event.UndoEvent;
+import adams.gui.event.UndoListener;
 import adams.gui.event.WekaInvestigatorDataEvent;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
 import adams.gui.tools.wekainvestigator.datatable.action.AbstractEditableDataTableAction;
@@ -44,7 +46,8 @@ import java.util.List;
  * @version $Revision$
  */
 public abstract class AbstractInvestigatorTabWithEditableDataTable
-  extends AbstractInvestigatorTabWithDataTable {
+  extends AbstractInvestigatorTabWithDataTable
+  implements UndoListener {
 
   private static final long serialVersionUID = -94945456385486233L;
 
@@ -105,6 +108,11 @@ public abstract class AbstractInvestigatorTabWithEditableDataTable
     m_ButtonRemove.addActionListener((ActionEvent e) -> removeData(m_Table.getSelectedRows()));
     m_Table.addToButtonsPanel(m_ButtonRemove);
 
+    m_ButtonUndo = new JideButton("Undo", GUIHelper.getIcon("undo.gif"));
+    m_ButtonUndo.setButtonStyle(JideButton.TOOLBOX_STYLE);
+    m_ButtonUndo.addActionListener((ActionEvent e) -> undo(m_Table.getSelectedRows()));
+    m_Table.addToButtonsPanel(m_ButtonUndo);
+
     m_ButtonAction = new JideSplitButton();
     m_ButtonAction.setAlwaysDropdown(false);
     m_ButtonAction.setButtonEnabled(true);
@@ -133,11 +141,6 @@ public abstract class AbstractInvestigatorTabWithEditableDataTable
     panel.add(m_ButtonUp);
     panel.add(m_ButtonDown);
     m_Table.addToButtonsPanel(panel);
-
-    m_ButtonUndo = new JideButton("Undo", GUIHelper.getIcon("undo.gif"));
-    m_ButtonUndo.setButtonStyle(JideButton.TOOLBOX_STYLE);
-    m_ButtonUndo.addActionListener((ActionEvent e) -> undo(m_Table.getSelectedRows()));
-    m_Table.addToButtonsPanel(m_ButtonUndo);
   }
 
   /**
@@ -165,6 +168,8 @@ public abstract class AbstractInvestigatorTabWithEditableDataTable
    */
   public void dataChanged(WekaInvestigatorDataEvent e) {
     super.dataChanged(e);
+    for (DataContainer cont: getData())
+    cont.getUndo().addUndoListener(this);
     updateButtons();
   }
 
@@ -198,5 +203,14 @@ public abstract class AbstractInvestigatorTabWithEditableDataTable
       }
     }
     m_ButtonUndo.setEnabled(enabled);
+  }
+
+  /**
+   * An undo event, like add or remove, has occurred.
+   *
+   * @param e		the trigger event
+   */
+  public void undoOccurred(UndoEvent e) {
+    updateButtons();
   }
 }

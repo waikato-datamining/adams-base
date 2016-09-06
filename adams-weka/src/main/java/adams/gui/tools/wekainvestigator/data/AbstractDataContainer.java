@@ -22,10 +22,13 @@ package adams.gui.tools.wekainvestigator.data;
 
 import adams.core.logging.LoggingObject;
 import adams.gui.core.Undo;
+import adams.gui.core.Undo.UndoPoint;
 import adams.gui.event.UndoEvent;
 import adams.gui.event.UndoEvent.UndoType;
 import adams.gui.event.UndoListener;
 import weka.core.Instances;
+
+import java.io.Serializable;
 
 /**
  * Ancestor for data containers.
@@ -61,7 +64,7 @@ public abstract class AbstractDataContainer
     m_ID       = nextID();
     m_Data     = null;
     m_Modified = false;
-    m_Undo     = new Undo(Object.class, true);
+    m_Undo     = new Undo(Serializable[].class, true);
     m_Undo.addUndoListener(this);
   }
 
@@ -82,8 +85,7 @@ public abstract class AbstractDataContainer
    */
   public void setData(Instances value) {
     if (m_Data != null) {
-      if (isUndoSupported())
-	getUndo().addUndo(getUndoData(), "updated data");
+      addUndoPoint("updated data");
       setModified(true);
     }
     m_Data = value;
@@ -196,7 +198,46 @@ public abstract class AbstractDataContainer
    */
   public void undoOccurred(UndoEvent e) {
     if (e.getType() == UndoType.UNDO)
-      applyUndoData((Object[]) e.getUndoPoint().getData());
+      applyUndoData((Serializable[]) e.getUndoPoint().getData());
+  }
+
+  /**
+   * Performs an undo if possible.
+   */
+  public void undo() {
+    UndoPoint 	point;
+
+    if (!isUndoSupported() || !getUndo().canUndo())
+      return;
+
+    m_Undo.addRedo(getUndoData(), m_Undo.peekUndoComment());
+    point = m_Undo.undo();
+    applyUndoData((Serializable[]) point.getData());
+  }
+
+  /**
+   * Performs a redo if possible.
+   */
+  public void redo() {
+    UndoPoint 	point;
+
+    if (!isUndoSupported() || !getUndo().canUndo())
+      return;
+
+    m_Undo.addUndo(getUndoData(), m_Undo.peekRedoComment(), true);
+
+    point = m_Undo.redo();
+    applyUndoData((Serializable[]) point.getData());
+  }
+
+  /**
+   * Adds an undo point with the given comment.
+   *
+   * @param comment	the comment for the undo point
+   */
+  public void addUndoPoint(String comment) {
+    if (isUndoSupported() && m_Undo.isEnabled())
+      getUndo().addUndo(getUndoData(), comment);
   }
 
   /**
@@ -204,8 +245,8 @@ public abstract class AbstractDataContainer
    *
    * @return		the undo point
    */
-  protected Object[] getUndoData() {
-    return new Object[]{
+  protected Serializable[] getUndoData() {
+    return new Serializable[]{
       m_Data,
       m_Modified
     };
@@ -216,7 +257,7 @@ public abstract class AbstractDataContainer
    *
    * @param data	the undo point
    */
-  protected void applyUndoData(Object[] data) {
+  protected void applyUndoData(Serializable[] data) {
     m_Data     = (Instances) data[0];
     m_Modified = (Boolean) data[1];
   }
@@ -259,6 +300,15 @@ public abstract class AbstractDataContainer
   @Override
   public String toString() {
     return getData().relationName() + " [" + getSource() + "]";
+  }
+
+  /**
+   * Cleans up data structures, frees up memory.
+   */
+  public void cleanUp() {
+    m_Data = null;
+    if (m_Undo != null)
+      m_Undo.cleanUp();
   }
 
   /**

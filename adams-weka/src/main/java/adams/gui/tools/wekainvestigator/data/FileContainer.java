@@ -26,6 +26,7 @@ import weka.core.converters.AbstractFileLoader;
 import weka.core.converters.ConverterUtils.DataSource;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.logging.Level;
 
 /**
@@ -120,8 +121,8 @@ public class FileContainer
    *
    * @return		the undo point
    */
-  protected Object[] getUndoData() {
-    return new Object[]{
+  protected Serializable[] getUndoData() {
+    return new Serializable[]{
       m_Data,
       m_Modified,
       m_Loader,
@@ -134,10 +135,19 @@ public class FileContainer
    *
    * @param data	the undo point
    */
-  protected void applyUndoData(Object[] data) {
+  protected void applyUndoData(Serializable[] data) {
     m_Data     = (Instances) data[0];
     m_Modified = (Boolean) data[1];
     m_Loader   = (AbstractFileLoader) data[2];
     m_Source   = (File) data[3];
+  }
+
+  /**
+   * Cleans up data structures, frees up memory.
+   */
+  public void cleanUp() {
+    super.cleanUp();
+    m_Loader = null;
+    m_Source = null;
   }
 }

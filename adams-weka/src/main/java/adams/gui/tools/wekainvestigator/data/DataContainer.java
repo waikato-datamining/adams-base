@@ -20,7 +20,8 @@
 
 package adams.gui.tools.wekainvestigator.data;
 
-import adams.gui.core.UndoHandler;
+import adams.core.CleanUpHandler;
+import adams.gui.core.UndoHandlerWithQuickAccess;
 import weka.core.Instances;
 
 /**
@@ -30,7 +31,7 @@ import weka.core.Instances;
  * @version $Revision$
  */
 public interface DataContainer
-  extends Comparable<DataContainer>, UndoHandler {
+  extends Comparable<DataContainer>, UndoHandlerWithQuickAccess, CleanUpHandler {
 
   /**
    * Returns the container ID.

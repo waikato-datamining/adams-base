@@ -106,6 +106,7 @@ public class DataTab
       // TODO cache tables?
       index = m_Table.getSelectedRow();
       model = new InstancesTableModel(getData().get(index).getData());
+      model.setUndoHandler(getData().get(index));
       model.setShowAttributeIndex(true);
       table = new InstancesTable(model);
       table.setUndoEnabled(true);
