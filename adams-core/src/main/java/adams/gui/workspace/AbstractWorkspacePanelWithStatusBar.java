@@ -19,7 +19,7 @@
  */
 package adams.gui.workspace;
 
-import adams.core.StatusMessageHandler;
+import adams.core.StatusMessageHandlerExt;
 import adams.gui.core.BaseStatusBar;
 
 import java.awt.BorderLayout;
@@ -33,7 +33,7 @@ import java.awt.BorderLayout;
  */
 public abstract class AbstractWorkspacePanelWithStatusBar
   extends AbstractWorkspacePanel
-  implements StatusMessageHandler {
+  implements StatusMessageHandlerExt {
 
   /** for serialization. */
   private static final long serialVersionUID = 7314544066929763500L;
@@ -58,6 +58,16 @@ public abstract class AbstractWorkspacePanelWithStatusBar
    * @param msg		the message to display
    */
   public void showStatus(String msg) {
-    m_StatusBar.showStatus(msg);
+    m_StatusBar.showStatus(true, msg);
+  }
+
+  /**
+   * Displays a message.
+   *
+   * @param left	whether to show the message on the left or right
+   * @param msg		the message to display
+   */
+  public void showStatus(boolean left, String msg) {
+    m_StatusBar.showStatus(left, msg);
   }
 }
