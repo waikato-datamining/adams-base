@@ -46,6 +46,7 @@ import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -129,7 +130,7 @@ public class ExperimenterPanel
   
   /** the runner thread. */
   protected AbstractExperimentRunner m_Runner;
-  
+
   /**
    * For initializing members.
    */
@@ -152,6 +153,7 @@ public class ExperimenterPanel
   protected void initGUI() {
     Properties		props;
     String		cname;
+    JPanel		panel;
 
     super.initGUI();
 
@@ -840,6 +842,15 @@ public class ExperimenterPanel
   public void showStatus(String msg) {
     if (!msg.isEmpty())
       logMessage(msg);
+  }
+
+  /**
+   * Displays a progresss message.
+   *
+   * @param msg		the message to display
+   */
+  public void showProgress(String msg) {
+    m_StatusBar.showStatus(false, msg);
   }
 
   /**

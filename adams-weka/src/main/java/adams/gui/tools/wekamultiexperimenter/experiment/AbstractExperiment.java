@@ -23,6 +23,7 @@ package adams.gui.tools.wekamultiexperimenter.experiment;
 import adams.core.Index;
 import adams.core.Shortening;
 import adams.core.StatusMessageHandler;
+import adams.core.StatusMessageHandlerExt;
 import adams.core.StoppableWithFeedback;
 import adams.core.Utils;
 import adams.core.base.BaseText;
@@ -216,6 +217,7 @@ public abstract class AbstractExperiment
     protected void process() throws Exception {
       evaluate();
       m_Owner.appendResults(m_Results);
+      m_Owner.incProgress();
     }
 
     /**
@@ -292,6 +294,12 @@ public abstract class AbstractExperiment
 
   /** JobRunner for the classifier/dataset combinations. */
   protected transient JobRunner m_ActualJobRunner;
+
+  /** the counter for finished jobs. */
+  protected int m_JobCounter;
+
+  /** the total number of jobs. */
+  protected int m_JobTotal;
 
   /**
    * Adds options to the internal list of options.
@@ -964,6 +972,50 @@ public abstract class AbstractExperiment
   }
 
   /**
+   * Updates the progress of the experiment.
+   */
+  protected void showProgress() {
+    double	perc;
+    String	percStr;
+
+    if (m_StatusMessageHandler != null) {
+      perc = (double) m_JobCounter / (double) m_JobTotal * 100.0;
+      percStr = Utils.doubleToString(perc, 1) + "%";
+      if (m_StatusMessageHandler instanceof StatusMessageHandlerExt)
+	((StatusMessageHandlerExt) m_StatusMessageHandler).showStatus(false, percStr);
+      else
+	m_StatusMessageHandler.showStatus(percStr);
+    }
+  }
+
+  /**
+   * Clears the progress of the experiment.
+   */
+  protected void clearProgress() {
+    if (m_StatusMessageHandler instanceof StatusMessageHandlerExt)
+      ((StatusMessageHandlerExt) m_StatusMessageHandler).showStatus(false, null);
+    else
+      m_StatusMessageHandler.showStatus(null);
+  }
+
+  /**
+   * Initializes progress.
+   */
+  public void initProgress() {
+    m_JobCounter = 0;
+    m_JobTotal   = m_Datasets.length * m_Classifiers.length * m_Runs;
+    clearProgress();
+  }
+
+  /**
+   * Increments and updates the progress.
+   */
+  public void incProgress() {
+    m_JobCounter++;
+    showProgress();
+  }
+
+  /**
    * Adds the results to the existing ones.
    *
    * @param results	the results to add
@@ -993,6 +1045,7 @@ public abstract class AbstractExperiment
     int		c;
     Instances	data;
 
+    initProgress();
     m_ActualJobRunner.start();
 
     for (d = 0; d < m_Datasets.length; d++) {
@@ -1028,6 +1081,8 @@ public abstract class AbstractExperiment
       Utils.wait(this, 1000, 50);
     }
     m_ActualJobRunner = null;
+
+    clearProgress();
 
     if (m_Stopped) {
       log("Experiment stopped!");
