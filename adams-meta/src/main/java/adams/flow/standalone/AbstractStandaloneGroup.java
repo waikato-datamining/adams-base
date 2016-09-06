@@ -54,6 +54,7 @@ public abstract class AbstractStandaloneGroup<T extends Actor>
     super.initialize();
     
     m_Actors = getDefaultActors();
+    updateParent();
   }
   
   /**
@@ -81,6 +82,17 @@ public abstract class AbstractStandaloneGroup<T extends Actor>
   @Override
   public ActorHandlerInfo getActorHandlerInfo() {
     return new ActorHandlerInfo(true, false, ActorExecution.UNDEFINED, false, getActorFilter());
+  }
+
+  /**
+   * Sets the parent of this actor, e.g., the group it belongs to.
+   *
+   * @param value	the new parent
+   */
+  @Override
+  public void setParent(Actor value) {
+    super.setParent(value);
+    updateParent();
   }
 
   /**
