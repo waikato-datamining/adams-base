@@ -23,6 +23,7 @@ package adams.gui.tools.filecommander;
 import adams.core.io.GzipUtils;
 import adams.gui.core.GUIHelper;
 
+import javax.swing.SwingWorker;
 import java.awt.event.ActionEvent;
 import java.io.File;
 
@@ -52,15 +53,24 @@ public class Gzip
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    File 	file;
-    String	msg;
+    SwingWorker	worker;
 
-    file = getOwner().getActive().getSelectedFile();
-    msg     = GzipUtils.compress(file, 1024);
-    if (msg != null)
-      GUIHelper.showErrorMessage(getOwner(), "Failed to compress the following file using GZIP:\n" + file + "\n" + msg);
-    else
-      getOwner().getActive().reload();
+    worker = new SwingWorker() {
+      @Override
+      protected Object doInBackground() throws Exception {
+	File file = getOwner().getActive().getSelectedFile();
+	String msg = GzipUtils.compress(file, 1024);
+	if (msg != null) {
+	  GUIHelper.showErrorMessage(getOwner(), "Failed to compress the following file using GZIP:\n" + file + "\n" + msg);
+	}
+	else {
+	  getOwner().getActive().reload();
+	  showStatus("Compressed " + file + " using GZIP");
+	}
+	return null;
+      }
+    };
+    worker.execute();
   }
 
   /**

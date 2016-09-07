@@ -24,6 +24,7 @@ import adams.core.io.PlaceholderFile;
 import adams.core.io.ZipUtils;
 import adams.gui.core.GUIHelper;
 
+import javax.swing.SwingWorker;
 import java.awt.event.ActionEvent;
 import java.io.File;
 
@@ -53,24 +54,31 @@ public class Zip
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    String		zip;
-    PlaceholderFile	zipFile;
-    String		regExp;
-    File[]		files;
-    String		msg;
+    final String	zip;
+    SwingWorker		worker;
 
     zip = GUIHelper.showInputDialog(getOwner(), "Please enter the name for the ZIP file", "compressed.zip");
     if (zip == null)
       return;
 
-    files   = getOwner().getActive().getSelectedFiles();
-    zipFile = new PlaceholderFile(getOwner().getActive().getCurrentDir() + "/" + zip);
-    regExp  = getOwner().getActive().getCurrentDir().getAbsolutePath().replace("/", ".").replace("\\", ".");
-    msg     = ZipUtils.compress(zipFile, files, regExp, 1024);
-    if (msg != null)
-      GUIHelper.showErrorMessage(getOwner(), "Failed to create ZIP file:\n" + zipFile + "\n" + msg);
-    else
-      getOwner().getActive().reload();
+    worker = new SwingWorker() {
+      @Override
+      protected Object doInBackground() throws Exception {
+	File[] files = getOwner().getActive().getSelectedFiles();
+	PlaceholderFile zipFile = new PlaceholderFile(getOwner().getActive().getCurrentDir() + "/" + zip);
+	String regExp = getOwner().getActive().getCurrentDir().getAbsolutePath().replace("/", ".").replace("\\", ".");
+	String msg = ZipUtils.compress(zipFile, files, regExp, 1024);
+	if (msg != null) {
+	  GUIHelper.showErrorMessage(getOwner(), "Failed to create ZIP file:\n" + zipFile + "\n" + msg);
+	}
+	else {
+	  getOwner().getActive().reload();
+	  showStatus("Created ZIP file: " + zipFile);
+	}
+	return null;
+      }
+    };
+    worker.execute();
   }
 
   /**
