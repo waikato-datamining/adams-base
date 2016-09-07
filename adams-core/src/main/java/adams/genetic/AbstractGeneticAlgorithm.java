@@ -1087,16 +1087,12 @@ public abstract class AbstractGeneticAlgorithm
 	    StringBuilder info = new StringBuilder();
 	    for (cx = 0; cx < getNumChrom(); cx++) {
 	      info.append(" Fitness for chromosome ");
-	      if (cx != -1) {
-		for (po = 0; po < getNumGenes(); po++) {
-		  if (getGene(cx,po)) {
-		    info.append("1");
-		  }
-		  else{
-		    info.append("0");
-		  }
-		}
-	      }
+              for (po = 0; po < getNumGenes(); po++) {
+                if (getGene(cx, po))
+                  info.append("1");
+                else
+                  info.append("0");
+              }
 	      info.append("--->" + getFitness()[cx]);
 	      getLogger().info(info.toString());
 	    }
