@@ -20,15 +20,15 @@
 
 package adams.swarm;
 
-import adams.core.logging.LoggingLevel;
 import adams.env.Environment;
-import adams.swarm.stopping.MaxTrainTime;
 import org.jblas.DoubleMatrix;
 
 /**
- * Concrete example for Cat Swarm Optimizations (CSO): Rastrigin problem
+ <!-- globalinfo-start -->
+ <!-- globalinfo-end -->
  *
- * See <a href="https://en.wikipedia.org/wiki/Rastrigin_function" target="_blank">here</a>
+ <!-- options-start -->
+ <!-- options-end -->
  *
  * @author Mike Mayo (mmayo at waikato dot ac dot nz) - original code
  * @author FracPete (fracpete at waikato dot ac dot nz)
@@ -200,18 +200,12 @@ public class RastriginProblem
     return result;
   }
 
-  /*
+  /**
    * Launcher method
    * -- load and set parameters and then call run()
    *
    */
-  public static void main(String[] args){
-    Environment.setEnvironmentClass(Environment.class);
-    MaxTrainTime maxTime = new MaxTrainTime();
-    maxTime.setMaxTrainTime(3);
-    RastriginProblem problem = new RastriginProblem();
-    problem.setLoggingLevel(LoggingLevel.INFO);
-    problem.setStopping(maxTime);
-    problem.execute();
+  public static void main(String[] args) {
+    runSwarm(Environment.class, RastriginProblem.class, args);
   }
 }

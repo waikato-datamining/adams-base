@@ -27,8 +27,11 @@ import adams.core.TechnicalInformation.Type;
 import adams.core.TechnicalInformationHandler;
 import adams.core.logging.LoggingHelper;
 import adams.core.option.AbstractOptionHandler;
+import adams.core.option.ArrayConsumer;
 import adams.core.option.OptionUtils;
+import adams.env.Environment;
 import adams.swarm.stopping.AbstractStoppingCriterion;
+import adams.swarm.stopping.MaxTrainTime;
 import gnu.trove.list.TIntList;
 import gnu.trove.list.array.TIntArrayList;
 import org.jblas.DoubleMatrix;
@@ -98,11 +101,15 @@ public abstract class AbstractCatSwarmOptimization
 
     m_OptionManager.add(
       "seed", "seed",
-      42);
+      42L);
 
     m_OptionManager.add(
       "eval-parallel", "evalParallel",
       false);
+
+    m_OptionManager.add(
+      "stopping", "stopping",
+      new MaxTrainTime());
   }
 
   /**
@@ -533,5 +540,45 @@ public abstract class AbstractCatSwarmOptimization
 
     // Done
     return best;
+  }
+
+  /**
+   * Runs the swarm from commandline.
+   *
+   * @param env		the environment class to use
+   * @param swarm	the flow class to execute
+   * @param args	the commandline arguments, use -help to display all
+   */
+  public static void runSwarm(Class env, Class swarm, String[] args) {
+    AbstractCatSwarmOptimization 	swarmInst;
+    DoubleMatrix			result;
+
+    Environment.setEnvironmentClass(env);
+    Environment.setHome(OptionUtils.getOption(args, "-home"));
+    LoggingHelper.useHandlerFromOptions(args);
+
+    try {
+      if (OptionUtils.helpRequested(args)) {
+	System.out.println("Help requested...\n");
+	swarmInst = (AbstractCatSwarmOptimization) OptionUtils.forName(AbstractCatSwarmOptimization.class, swarm.getName(), new String[0]);
+	System.out.print("\n" + OptionUtils.list(swarmInst));
+	LoggingHelper.outputHandlerOption();
+      }
+      else {
+	swarmInst = (AbstractCatSwarmOptimization) OptionUtils.forName(AbstractCatSwarmOptimization.class, swarm.getName(), new String[0]);
+	ArrayConsumer.setOptions(swarmInst, args);
+	result = swarmInst.execute();
+	if (result != null) {
+	  System.out.println(result);
+	}
+	else {
+	  System.err.println("Failed!");
+	  System.exit(1);
+	}
+      }
+    }
+    catch (Exception e) {
+      e.printStackTrace();
+    }
   }
 }
