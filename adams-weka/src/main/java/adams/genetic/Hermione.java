@@ -221,11 +221,13 @@ public class Hermione
     /**
      * Assembles the data for the textual setup output.
      *
-     * @param fitness	the current fitness
-     * @param cls	the current classifier
-     * @return		the data
+     * @param fitness		the current fitness
+     * @param cls		the current classifier
+     * @param chromosome	the chromosome responsible
+     * @param weights		the weights
+     * @return			the data
      */
-    protected Properties assembleSetup(double fitness, Classifier cls, int[] weights) {
+    protected Properties assembleSetup(double fitness, Classifier cls, int chromosome, int[] weights) {
       Properties 				result;
       int 					pos;
       List<Integer> 				numbits;
@@ -235,7 +237,7 @@ public class Hermione
       List<PropertyPath.PropertyContainer> 	lpc;
       String 					sa;
 
-      result = super.assembleSetup(fitness, cls, weights);
+      result = super.assembleSetup(fitness, cls, chromosome, weights);
 
       // store individual weights
       pos      = 0;
@@ -300,7 +302,7 @@ public class Hermione
 	    newSecondClassifier = getOwner().generateClassifier(m_Chromosome, m_Weights);
 	    m_SecondFitness = evaluateClassifier(newSecondClassifier , newInstances, getSecondFolds(), getSecondSeed());
 	    canAdd = getOwner().isSecondBetterFitness(m_SecondFitness);
-	    if (getOwner().setSecondNewFitness(m_SecondFitness, newSecondClassifier, m_Weights)) {
+	    if (getOwner().setSecondNewFitness(m_SecondFitness, newSecondClassifier, m_Chromosome, m_Weights)) {
 	      if (isLoggingEnabled())
 		getLogger().info("Second evaluation is also better: " + m_SecondFitness);
 	    }
@@ -311,8 +313,8 @@ public class Hermione
 	    getOwner().addSecondResult(weightsStr, m_SecondFitness);
 	  }
 
-	  if (canAdd && getOwner().setNewFitness(m_Fitness, newClassifier, m_Weights)) {
-	    generateOutput(m_Fitness, newInstances, newClassifier, m_Weights);
+	  if (canAdd && getOwner().setNewFitness(m_Fitness, newClassifier, m_Chromosome, m_Weights)) {
+	    generateOutput(m_Fitness, newInstances, newClassifier, m_Chromosome, m_Weights);
 	    // notify the listeners
 	    getOwner().notifyFitnessChangeListeners(getMeasure().adjust(m_Fitness), newClassifier, m_Weights);
 	  }

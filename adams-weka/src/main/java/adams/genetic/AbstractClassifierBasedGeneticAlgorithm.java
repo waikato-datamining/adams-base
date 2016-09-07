@@ -226,11 +226,13 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
     /**
      * Assembles the data for the textual setup output.
      *
-     * @param fitness	the current fitness
-     * @param cls	the current classifier
-     * @return		the data
+     * @param fitness		the current fitness
+     * @param cls		the current classifier
+     * @param chromosome	the chromosome responsible
+     * @param weights		the weights
+     * @return			the data
      */
-    protected Properties assembleSetup(double fitness, Classifier cls, int[] weights) {
+    protected Properties assembleSetup(double fitness, Classifier cls, int chromosome, int[] weights) {
       Properties result;
 
       result = new Properties();
@@ -238,6 +240,7 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
       result.setProperty("Measure", "" + getMeasure());
       result.setDouble("Fitness", fitness);
       result.setProperty("Setup", OptionUtils.getCommandLine(cls));
+      result.setInteger("Chromosome", chromosome);
       result.setProperty("Weights", weightsToString(weights));
 
       return result;
@@ -249,15 +252,16 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
      * @param fitness		the current measure/fitness
      * @param data		the dataset
      * @param cls		the current classifier setup
+     * @param chromosome	the chromosome responsible
      * @param weights		the current weights/bits
      * @throws Exception	if saving the file fails
      */
-    protected void outputSetup(double fitness, Instances data, Classifier cls, int[] weights) throws Exception {
+    protected void outputSetup(double fitness, Instances data, Classifier cls, int chromosome, int[] weights) throws Exception {
       File 		file;
       Properties 	props;
 
       file  = createFileName(fitness, data, "props.gz");
-      props = assembleSetup(fitness, cls, weights);
+      props = assembleSetup(fitness, cls, chromosome, weights);
       if (!props.save(file.getAbsolutePath()))
 	getLogger().warning("Failed to write setup to '" + file + "'!");
     }
@@ -268,22 +272,23 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
      * @param fitness		the current fitness
      * @param data		the dataset
      * @param cls		the current classifier
+     * @param chromosome	the chromosome responsible
      * @param weights		the current weights/bits
      * @throws Exception	if output fails
      */
-    protected void generateOutput(double fitness, Instances data, Classifier cls, int[] weights) throws Exception {
+    protected void generateOutput(double fitness, Instances data, Classifier cls, int chromosome, int[] weights) throws Exception {
       switch (getOwner().getOutputType()) {
 	case NONE:
 	  break;
 	case SETUP:
-	  outputSetup(fitness, data, cls, weights);
+	  outputSetup(fitness, data, cls, chromosome, weights);
 	  break;
 	case DATA:
 	  outputDataset(fitness, data);
 	  break;
 	case ALL:
 	  outputDataset(fitness, data);
-	  outputSetup(fitness, data, cls, weights);
+	  outputSetup(fitness, data, cls, chromosome, weights);
 	  break;
 	default:
 	  throw new IllegalStateException("Unhandled output type: " + getOwner().getOutputType());

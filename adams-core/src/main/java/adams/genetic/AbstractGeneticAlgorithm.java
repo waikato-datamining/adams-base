@@ -982,10 +982,11 @@ public abstract class AbstractGeneticAlgorithm
    *
    * @param fitness	the new fitness
    * @param setup	the new setup
+   * @param chromosome	the chromosome responsible
    * @param weights	the new weights
    * @return		true if the new fitness was better
    */
-  public synchronized boolean setNewFitness(double fitness, Object setup, int[] weights) {
+  public synchronized boolean setNewFitness(double fitness, Object setup, int chromosome, int[] weights) {
     boolean 	result;
 
     result = false;

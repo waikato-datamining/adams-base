@@ -182,15 +182,16 @@ public class DarkLord
     /**
      * Assembles the data for the textual setup output.
      *
-     * @param fitness	the current fitness
-     * @param cls	the current classifier
-     * @param weights	the current weights
-     * @return		the data
+     * @param fitness		the current fitness
+     * @param cls		the current classifier
+     * @param chromosome	the chromosome responsible
+     * @param weights		the current weights
+     * @return			the data
      */
-    protected Properties assembleSetup(double fitness, Classifier cls, int[] weights) {
+    protected Properties assembleSetup(double fitness, Classifier cls, int chromosome, int[] weights) {
       Properties	result;
 
-      result = super.assembleSetup(fitness, cls, weights);
+      result = super.assembleSetup(fitness, cls, chromosome, weights);
       result.setProperty("Mask", getMaskAsString());
 
       return result;
@@ -232,8 +233,8 @@ public class DarkLord
 	m_Fitness = evaluateClassifier(newClassifier, newInstances, getFolds(), getSeed());
 
         // process fitness
-        if (getOwner().setNewFitness(m_Fitness, newClassifier, m_Weights)) {
-	  generateOutput(m_Fitness, newInstances, newClassifier, m_Weights);
+        if (getOwner().setNewFitness(m_Fitness, newClassifier, m_Chromosome, m_Weights)) {
+	  generateOutput(m_Fitness, newInstances, newClassifier, m_Chromosome, m_Weights);
           // notify the listeners
           getOwner().notifyFitnessChangeListeners(getMeasure().adjust(m_Fitness), newClassifier, m_Weights);
 	}
