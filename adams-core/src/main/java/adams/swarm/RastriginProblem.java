@@ -179,7 +179,9 @@ public class RastriginProblem
    */
   @Override
   public DoubleMatrix randomParticle() {
-    DoubleMatrix particle = DoubleMatrix.rand(1, m_ProbDimensions);
+    DoubleMatrix particle = new DoubleMatrix(1, m_ProbDimensions);
+    for(int i = 0; i < m_ProbDimensions; ++i)
+      particle.data[i] = m_Random.nextDouble();
     particle.muli(m_ProbMaxValue - m_ProbMinValue);
     particle.addi(m_ProbMinValue);
     return particle;
