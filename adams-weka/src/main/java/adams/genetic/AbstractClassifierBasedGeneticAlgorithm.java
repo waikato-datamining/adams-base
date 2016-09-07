@@ -853,6 +853,7 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
     int 						k;
     int[] 						weights;
     int 						weight;
+    StringBuilder					weightStr;
 
     if (m_JobRunnerSetup == null)
       m_JobRunner = new LocalJobRunner<>();
@@ -863,7 +864,8 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
     m_JobRunner.setFlowContext(getFlowContext());
     jobs   = new JobList<>();
     for (i = 0; i < getNumChrom(); i++) {
-      weights = new int[getNumGenes()];
+      weights   = new int[getNumGenes()];
+      weightStr = new StringBuilder();
       for (int j = 0; j < getNumGenes(); j++)  {
         weight = 0;
         for (k = 0; k < getBitsPerGene(); k++){
@@ -872,7 +874,10 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
             weight += 1;
         }
         weights[j] = weight;
+	weightStr.append("" + weight);
       }
+      if (isLoggingEnabled())
+	getLogger().info("[" + m_CurrentIteration + "] before job: Chromosome " + i + " " + weightStr.toString());
       jobs.add(newJob(i, weights, m_Instances));
     }
     m_JobRunner.add(jobs);
