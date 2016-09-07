@@ -545,6 +545,10 @@ adams.gui.scripting.AbstractScriptlet=\
 adams.gui.sendto.AbstractSendToAction=\
   adams.gui.sendto
 
+# the action plugins for the FileCommander
+adams.gui.tools.filecommander.AbstractFileCommanderAction=\
+  adams.gui.tools.filecommander
+
 # the archive handlers for the preview browser
 adams.gui.tools.previewbrowser.AbstractArchiveHandler=\
   adams.gui.tools.previewbrowser

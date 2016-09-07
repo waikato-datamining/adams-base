@@ -21,22 +21,27 @@
 package adams.gui.tools;
 
 import adams.core.MessageCollection;
+import adams.core.StatusMessageHandlerExt;
 import adams.core.base.BaseRegExp;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
+import adams.core.logging.LoggingLevel;
 import adams.gui.chooser.DirectoryChooserPanel;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseStatusBar;
+import adams.gui.core.ConsolePanel;
 import adams.gui.core.FilePanel;
 import adams.gui.core.FilePanel.FileDoubleClickEvent;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MenuBarProvider;
 import adams.gui.dialog.ApprovalDialog;
 import adams.gui.dialog.SimplePreviewBrowserDialog;
+import adams.gui.tools.filecommander.AbstractFileCommanderAction;
+import com.jidesoft.swing.JideButton;
+import com.jidesoft.swing.JideSplitButton;
 
 import javax.swing.BorderFactory;
-import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -51,6 +56,8 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * File manager with two-pane interface, similar to the Midnight Commander.
@@ -60,7 +67,7 @@ import java.io.File;
  */
 public class FileCommanderPanel
   extends BasePanel
-  implements MenuBarProvider {
+  implements MenuBarProvider, StatusMessageHandlerExt {
 
   private static final long serialVersionUID = 3894304347424478383L;
 
@@ -92,28 +99,31 @@ public class FileCommanderPanel
   protected JPanel m_PanelButtons;
 
   /** the button for reloading the files. */
-  protected JButton m_ButtonReload;
+  protected JideButton m_ButtonReload;
 
   /** the button for renaming. */
-  protected JButton m_ButtonRename;
+  protected JideButton m_ButtonRename;
 
   /** the button for viewing the file. */
-  protected JButton m_ButtonView;
+  protected JideButton m_ButtonView;
 
   /** the button for copying the file. */
-  protected JButton m_ButtonCopy;
+  protected JideButton m_ButtonCopy;
 
   /** the button for moving. */
-  protected JButton m_ButtonMove;
+  protected JideButton m_ButtonMove;
 
   /** the button for creating a directory. */
-  protected JButton m_ButtonMkDir;
+  protected JideButton m_ButtonMkDir;
 
   /** the button for deleting. */
-  protected JButton m_ButtonDelete;
+  protected JideButton m_ButtonDelete;
+
+  /** the action button. */
+  protected JideSplitButton m_ButtonAction;
 
   /** the button for quitting. */
-  protected JButton m_ButtonQuit;
+  protected JideButton m_ButtonQuit;
 
   /** the statusbar. */
   protected BaseStatusBar m_StatusBar;
@@ -133,17 +143,35 @@ public class FileCommanderPanel
   /** the worker thread. */
   protected SwingWorker m_Worker;
 
+  /** the available actions. */
+  protected List<AbstractFileCommanderAction> m_Actions;
+
   /**
    * Initializes the members.
    */
   @Override
   protected void initialize() {
+    Class[]			classes;
+    AbstractFileCommanderAction action;
+
     super.initialize();
 
-    m_FilesActive   = null;
-    m_FilesInactive = null;
-    m_IgnoreChanges = false;
-    m_Worker        = null;
+    m_FilesActive    = null;
+    m_FilesInactive  = null;
+    m_IgnoreChanges  = false;
+    m_Worker         = null;
+    m_Actions        = new ArrayList<>();
+    classes          = AbstractFileCommanderAction.getActions();
+    for (Class cls: classes) {
+      try {
+	action = (AbstractFileCommanderAction) cls.newInstance();
+	action.setOwner(this);
+	m_Actions.add(action);
+      }
+      catch (Exception e) {
+	ConsolePanel.getSingleton().append(LoggingLevel.SEVERE, "Failed to instantiate action: " + cls.getName(), e);
+      }
+    }
   }
 
   /**
@@ -153,6 +181,7 @@ public class FileCommanderPanel
   protected void initGUI() {
     JPanel	panel;
     JPanel	panelAll;
+    boolean	first;
 
     super.initGUI();
 
@@ -217,35 +246,59 @@ public class FileCommanderPanel
     m_PanelButtons = new JPanel(new FlowLayout());
     panelAll.add(m_PanelButtons, BorderLayout.SOUTH);
 
-    m_ButtonReload = new JButton("Reload");
+    m_ButtonReload = new JideButton("Reload");
+    m_ButtonReload.setButtonStyle(JideButton.TOOLBOX_STYLE);
     m_ButtonReload.addActionListener((ActionEvent) -> reload());
     m_PanelButtons.add(m_ButtonReload);
 
-    m_ButtonRename = new JButton("Rename");
+    m_ButtonRename = new JideButton("Rename");
+    m_ButtonRename.setButtonStyle(JideButton.TOOLBOX_STYLE);
     m_ButtonRename.addActionListener((ActionEvent) -> rename());
     m_PanelButtons.add(m_ButtonRename);
 
-    m_ButtonView = new JButton("View");
+    m_ButtonView = new JideButton("View");
+    m_ButtonView.setButtonStyle(JideButton.TOOLBOX_STYLE);
     m_ButtonView.addActionListener((ActionEvent) -> view());
     m_PanelButtons.add(m_ButtonView);
 
-    m_ButtonCopy = new JButton("Copy");
+    m_ButtonCopy = new JideButton("Copy");
+    m_ButtonCopy.setButtonStyle(JideButton.TOOLBOX_STYLE);
     m_ButtonCopy.addActionListener((ActionEvent) -> copy());
     m_PanelButtons.add(m_ButtonCopy);
 
-    m_ButtonMove = new JButton("Move");
+    m_ButtonMove = new JideButton("Move");
+    m_ButtonMove.setButtonStyle(JideButton.TOOLBOX_STYLE);
     m_ButtonMove.addActionListener((ActionEvent) -> move());
     m_PanelButtons.add(m_ButtonMove);
 
-    m_ButtonMkDir = new JButton("MkDir");
+    m_ButtonMkDir = new JideButton("MkDir");
+    m_ButtonMkDir.setButtonStyle(JideButton.TOOLBOX_STYLE);
     m_ButtonMkDir.addActionListener((ActionEvent) -> mkdir());
     m_PanelButtons.add(m_ButtonMkDir);
 
-    m_ButtonDelete = new JButton("Delete");
+    m_ButtonDelete = new JideButton("Delete");
+    m_ButtonDelete.setButtonStyle(JideButton.TOOLBOX_STYLE);
     m_ButtonDelete.addActionListener((ActionEvent) -> delete());
     m_PanelButtons.add(m_ButtonDelete);
 
-    m_ButtonQuit = new JButton("Quit");
+    if (m_Actions.size() > 0) {
+      m_ButtonAction = new JideSplitButton();
+      m_ButtonAction.setAlwaysDropdown(false);
+      m_ButtonAction.setButtonEnabled(true);
+      m_ButtonAction.setButtonStyle(JideSplitButton.TOOLBOX_STYLE);
+      first = true;
+      for (AbstractFileCommanderAction action: m_Actions) {
+	if (first)
+	  m_ButtonAction.setAction(action);
+	else
+	  m_ButtonAction.add(action);
+	first = false;
+      }
+      m_PanelButtons.add(m_ButtonAction);
+    }
+
+    m_ButtonQuit = new JideButton("Quit");
+    m_ButtonQuit.setButtonStyle(JideButton.TOOLBOX_STYLE);
     m_ButtonQuit.addActionListener((ActionEvent) -> quit());
     m_PanelButtons.add(m_ButtonQuit);
 
@@ -308,6 +361,8 @@ public class FileCommanderPanel
     m_ButtonMkDir.setEnabled(!busy && hasActive);
     m_ButtonDelete.setEnabled(!busy && hasActive && (activeFiles.length > 0));
     m_ButtonQuit.setEnabled(!busy);
+    for (AbstractFileCommanderAction action: m_Actions)
+      action.update();
   }
 
   /**
@@ -729,5 +784,42 @@ public class FileCommanderPanel
       m_FilesLeft.setFilter(regExp);
     else
       m_FilesRight.setFilter(regExp);
+  }
+
+  /**
+   * Returns the currently active panel.
+   *
+   * @return		the active panel
+   */
+  public FilePanel getActive() {
+    return m_FilesActive;
+  }
+
+  /**
+   * Returns the currently inactive panel.
+   *
+   * @return		the inactive panel
+   */
+  public FilePanel getInactive() {
+    return m_FilesInactive;
+  }
+
+  /**
+   * Displays a message.
+   *
+   * @param msg		the message to display
+   */
+  public void showStatus(String msg) {
+    m_StatusBar.showStatus(msg);
+  }
+
+  /**
+   * Displays a message.
+   *
+   * @param left	whether to show the message on the left or right
+   * @param msg		the message to display
+   */
+  public void showStatus(boolean left, String msg) {
+    m_StatusBar.showStatus(left, msg);
   }
 }
