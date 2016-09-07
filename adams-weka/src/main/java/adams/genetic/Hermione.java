@@ -429,8 +429,8 @@ public class Hermione
    * Initializes the handlers.
    */
   protected void initializeHandlers() {
-    setupParamsAndClassifier(m_Handlers, m_Classifier);
     m_HandlersInitialized = true;
+    setupParamsAndClassifier(m_Handlers, m_Classifier);
     init(20, getNumBits() * m_BitsPerGene);
   }
 
@@ -456,6 +456,22 @@ public class Hermione
     DefaultPropertyDiscovery d = new DefaultPropertyDiscovery();
     d.setLoggingLevel(getLoggingLevel());
     d.discover(m_ActualHandlers, c);
+
+    int pos = 0;
+    int[] dummyWeights = new int[getNumBits()];
+    for (AbstractGeneticDiscoveryHandler ag:p) {
+      List<PropertyPath.PropertyContainer> lpc=ag.getContainers();
+      for (PropertyPath.PropertyContainer pc:lpc) {
+	if (ag.requiresInitialization())
+	  ag.performInitialization(this, pc);
+	String sa = ag.pack(pc);
+	int[] newWeights = stringToIntArray(sa);
+	for (int i = 0; i < m_NumChrom; i++)
+	  setBitsForPosition(i, dummyWeights, m_start, m_numbits, pos, newWeights);
+	pos++;
+      }
+    }
+
     if (isLoggingEnabled()) {
       for (int i = 0; i < m_ActualHandlers.length; i++) {
 	getLogger().info((i+1) + ". " + OptionUtils.getCommandLine(m_ActualHandlers[i]));
@@ -509,7 +525,6 @@ public class Hermione
    * @param newWeights	the new weights to set
    */
   public void setBitsForPosition(int chromosome, int[] weights, List<Integer> starts, List<Integer> numbits, int pos, int[] newWeights) {
-    initializeHandlersIfRequired();
     int c = 0;
     for (int i = starts.get(pos); i < starts.get(pos) + numbits.get(pos); i++) {
       weights[i] = newWeights[c];
@@ -630,30 +645,6 @@ public class Hermione
       return null;
     }
     d.discover(cp, result);
-
-    // first time? check for handlers that require initialization
-    // and potentially alter the weights
-    if (getCurrentIteration() == 1) {
-      int pos = 0;
-      for (AbstractGeneticDiscoveryHandler ag:cp) {
-	List<PropertyPath.PropertyContainer> lpc=ag.getContainers();
-	for (PropertyPath.PropertyContainer pc:lpc) {
-	  if (ag.requiresInitialization())
-	    ag.performInitialization(this, pc);
-	  String sa = ag.pack(pc);
-	  int[] newWeights = stringToIntArray(sa);
-	  setBitsForPosition(chromosome, weights, m_start, m_numbits, pos, newWeights);
-	  pos++;
-	}
-      }
-
-      if (isLoggingEnabled()) {
-        StringBuilder w = new StringBuilder();
-        for (int i = 0; i < weights.length; i++)
-          w.append(weights[i]);
-        getLogger().info("[generateClassifier - after pack] Chromosome: " + chromosome + ", " + "Weights: " + w);
-      }
-    }
 
     // apply weights
     int pos=0;
