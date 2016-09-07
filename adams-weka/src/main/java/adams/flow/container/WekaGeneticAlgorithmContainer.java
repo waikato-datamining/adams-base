@@ -20,7 +20,7 @@
 
 package adams.flow.container;
 
-import adams.genetic.Measure;
+import adams.opt.genetic.Measure;
 import weka.classifiers.Classifier;
 
 import java.util.ArrayList;

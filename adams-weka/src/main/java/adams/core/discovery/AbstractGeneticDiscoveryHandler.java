@@ -22,7 +22,7 @@ package adams.core.discovery;
 
 import adams.core.discovery.PropertyPath.PropertyContainer;
 import adams.core.option.OptionUtils;
-import adams.genetic.AbstractGeneticAlgorithm;
+import adams.opt.genetic.AbstractGeneticAlgorithm;
 
 /**
  * Ancestor for genetic algorithm related discovery handlers.

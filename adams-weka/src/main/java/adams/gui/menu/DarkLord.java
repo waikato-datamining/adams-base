@@ -21,7 +21,7 @@
 
 package adams.gui.menu;
 
-import adams.genetic.AbstractClassifierBasedGeneticAlgorithm;
+import adams.opt.genetic.AbstractClassifierBasedGeneticAlgorithm;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.wizard.StartPage;
 
@@ -87,6 +87,6 @@ public class DarkLord
    * @return		the setup
    */
   protected AbstractClassifierBasedGeneticAlgorithm getSetup() {
-    return new adams.genetic.DarkLord();
+    return new adams.opt.genetic.DarkLord();
   }
 }

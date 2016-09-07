@@ -434,16 +434,16 @@ adams.flow.transformer.splitfile.AbstractFileSplitter=\
   adams.flow.transformer.splitfile
 
 # the genetic algorithms
-adams.genetic.AbstractGeneticAlgorithm=\
-  adams.genetic
+adams.opt.genetic.AbstractGeneticAlgorithm=\
+  adams.opt.genetic
 
 # the providers for initial gene setups
-adams.genetic.initialsetups.AbstractInitialSetupsProvider=\
-  adams.genetic.initialsetups
+adams.opt.genetic.initialsetups.AbstractInitialSetupsProvider=\
+  adams.opt.genetic.initialsetups
 
 # the stopping criteria
-adams.genetic.stopping.AbstractStoppingCriterion=\
-  adams.genetic.stopping
+adams.opt.genetic.stopping.AbstractStoppingCriterion=\
+  adams.opt.genetic.stopping
 
 # the flow tabs
 adams.gui.flow.tab.AbstractEditorTab=\
@@ -653,12 +653,12 @@ adams.multiprocess.JobRunner=\
   adams.multiprocess
 
 # the optimization schemes
-adams.optimise.AbstractOptimiser=\
-  adams.optimise
+adams.opt.optimise.AbstractOptimiser=\
+  adams.opt.optimise
 
 # the fitness functions
-adams.optimise.FitnessFunction=\
-  adams.optimise
+adams.opt.optimise.FitnessFunction=\
+  adams.opt.optimise
 
 # the parser functions
 adams.parser.plugin.ParserFunction=\
@@ -701,12 +701,12 @@ adams.scripting.responsehandler.ResponseHandler=\
   adams.scripting.responsehandler
 
 # the CSO optimization algorithms
-adams.swarm.AbstractCatSwarmOptimization=\
-  adams.swarm
+adams.opt.swarm.AbstractCatSwarmOptimization=\
+  adams.opt.swarm
 
 # the CSO optimization algorithms
-adams.swarm.stopping.AbstractStoppingCriterion=\
-  adams.swarm.stopping
+adams.opt.swarm.stopping.AbstractStoppingCriterion=\
+  adams.opt.swarm.stopping
 
 # the menu items for terminal applications
 adams.terminal.menu.AbstractMenuItemDefinition=\

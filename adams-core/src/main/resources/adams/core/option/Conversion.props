@@ -19,11 +19,15 @@ Rename-valuedefinition=adams.flow.source.ValueDefinition-adams.flow.source.value
 Rename-goevaluedefinition=adams.flow.source.GOEValueDefinition-adams.flow.source.valuedefinition.GOEValueDefinition
 
 # Lists the keys that contain partial classname renaming.
-PartialRename=
+PartialRename=\
+  PartialRename-adams-genetic,\
+  PartialRename-adams-optimise
 
 # general format for partial classname renaming (no regular expression, but case-sensitive):
 # <key>=<find>\t<replace>
 #Rename-singleton=.singleton.\t.standalone.
+PartialRename-adams-optimise=adams.optimise.\tadams.opt.optimise.
+PartialRename-adams-genetic=adams.genetic.\tadams.opt.genetic.
 
 # List the keys that contain renaming of options (ie "-blah" into "-bloerk")
 RenameOption=

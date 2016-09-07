@@ -20,7 +20,7 @@
 
 package adams.event;
 
-import adams.genetic.AbstractGeneticAlgorithm;
+import adams.opt.genetic.AbstractGeneticAlgorithm;
 
 import java.util.EventObject;
 
@@ -67,8 +67,8 @@ public class FitnessChangeEvent
    * 
    * @return		the genetic algorithm
    */
-  public adams.genetic.AbstractGeneticAlgorithm getGeneticAlgorithm() {
-    return (adams.genetic.AbstractGeneticAlgorithm) getSource();
+  public adams.opt.genetic.AbstractGeneticAlgorithm getGeneticAlgorithm() {
+    return (adams.opt.genetic.AbstractGeneticAlgorithm) getSource();
   }
   
   /**

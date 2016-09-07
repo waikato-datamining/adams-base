@@ -38,9 +38,9 @@ import adams.flow.core.PauseStateHandler;
 import adams.flow.core.PauseStateManager;
 import adams.flow.core.Token;
 import adams.flow.standalone.JobRunnerSetup;
-import adams.genetic.AbstractClassifierBasedGeneticAlgorithm;
-import adams.genetic.AbstractGeneticAlgorithm.GeneticAlgorithmJob;
-import adams.genetic.DarkLord;
+import adams.opt.genetic.AbstractClassifierBasedGeneticAlgorithm;
+import adams.opt.genetic.AbstractGeneticAlgorithm.GeneticAlgorithmJob;
+import adams.opt.genetic.DarkLord;
 import weka.classifiers.Classifier;
 import weka.core.Instances;
 

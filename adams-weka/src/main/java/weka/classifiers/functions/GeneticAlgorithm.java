@@ -20,8 +20,8 @@
 package weka.classifiers.functions;
 
 import adams.core.option.OptionUtils;
-import adams.genetic.AbstractClassifierBasedGeneticAlgorithm;
-import adams.genetic.Hermione;
+import adams.opt.genetic.AbstractClassifierBasedGeneticAlgorithm;
+import adams.opt.genetic.Hermione;
 import weka.classifiers.AbstractClassifier;
 import weka.classifiers.Classifier;
 import weka.core.Capabilities;

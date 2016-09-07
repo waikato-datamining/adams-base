@@ -21,9 +21,8 @@
 package adams.core.discovery;
 
 import adams.core.discovery.PropertyPath.PropertyContainer;
-import adams.genetic.AbstractGeneticAlgorithm;
-import adams.genetic.Hermione;
-import com.sun.org.apache.bcel.internal.generic.Select;
+import adams.opt.genetic.AbstractGeneticAlgorithm;
+import adams.opt.genetic.Hermione;
 import weka.core.SelectedTag;
 import weka.core.matrix.Matrix;
 import weka.filters.Filter;
