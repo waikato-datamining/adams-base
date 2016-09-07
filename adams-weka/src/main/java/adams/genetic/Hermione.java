@@ -613,7 +613,7 @@ public class Hermione
       StringBuilder w = new StringBuilder();
       for (int i = 0; i < weights.length; i++)
 	w.append(weights[i]);
-      getLogger().info("Chromosome: " + chromosome + ", " + "Weights: " + w);
+      getLogger().info("[generateClassifier] Chromosome: " + chromosome + ", " + "Weights: " + w);
     }
 
     DefaultPropertyDiscovery d = new DefaultPropertyDiscovery();
@@ -643,6 +643,13 @@ public class Hermione
 	  setBitsForPosition(chromosome, weights, m_start, m_numbits, pos, newWeights);
 	  pos++;
 	}
+      }
+
+      if (isLoggingEnabled()) {
+        StringBuilder w = new StringBuilder();
+        for (int i = 0; i < weights.length; i++)
+          w.append(weights[i]);
+        getLogger().info("[generateClassifier - after pack] Chromosome: " + chromosome + ", " + "Weights: " + w);
       }
     }
 
