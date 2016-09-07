@@ -33,62 +33,64 @@ import java.util.stream.IntStream;
  * @author Mike Mayo (mmayo at waikato dot ac dot nz)
  * @version $Revision$
  */
-abstract public class CSO {
+public abstract class CSO {
 
   /*
    * Algorithm parameters
    *
    */
-  public int    csoSwarmSize    = 1000;
-  public double csoPhi          = 0.1;
-  public long   csoSeed         = 42;
-  public long   csoRunTime      = 3;
-  public boolean csoEvalParallel= false;
-  public boolean debug          = false;
+  protected int m_CsoSwarmSize = 1000;
+  protected  double m_CsoPhi = 0.1;
+  protected long m_CsoSeed = 42;
+  protected long m_CsoRunTime = 3;
+  protected boolean m_CsoEvalParallel = false;
+  protected boolean m_Debug = false;
 
-  /*
+  /**
    * Time when CSO starts running
    */
-  long startTime;
+  protected long startTime;
 
-  /*
+  /**
    * Matrices to store the swarm positions,
    * velocities, and fitnesses
    *
    */
-  DoubleMatrix swarm,vel,fit;
+  protected DoubleMatrix m_Swarm;
+  protected DoubleMatrix m_Velocities;
+  protected DoubleMatrix m_Fitnesses;
 
-  /*
+  /**
    * Counter for the number of iterations
    *
    */
-  int iterationCounter          = 0;
+  protected int m_IterationCounter = 0;
 
-  /*
+  /**
    * Problem-specific random particle generator
    * -- should return a one dimensional matrix of fixed length
    *
    */
-  abstract public DoubleMatrix randomParticle();
+  public abstract DoubleMatrix randomParticle();
 
-  /*
+  /**
    * Problem-specific fitness function
    * -- expects a one-dimensional matrix
    * -- returns a non-negative value where lower is better
    * -- should be implemented for different problems
    */
-  abstract public double particleFitness(DoubleMatrix particle);
+  public abstract double particleFitness(DoubleMatrix particle);
 
-  /*
+  /**
    * Termination condition
    * -- override for different termination conditions
    *
    */
   public boolean terminate(){
-    return System.currentTimeMillis()-startTime>csoRunTime*1000;
+    return System.currentTimeMillis()-startTime> m_CsoRunTime *1000;
   }
 
-  /*
+  /**
    * Stringifier
    * -- extend this method to add additional problem-specific
    *    information
@@ -97,52 +99,54 @@ abstract public class CSO {
   public String toString(){
     String result;
     result  = this.getClass().getName();
-    result += "\ncsoSwarmSize    = "+csoSwarmSize;
-    result += "\ncsoPhi          = "+csoPhi;
-    result += "\ncsoSeed         = "+csoSeed;
-    result += "\ncsoRunTime      = "+csoRunTime;
-    result += "\ncsoEvalParallel = "+csoEvalParallel;
+    result += "\ncsoSwarmSize    = "+ m_CsoSwarmSize;
+    result += "\ncsoPhi          = "+ m_CsoPhi;
+    result += "\ncsoSeed         = "+ m_CsoSeed;
+    result += "\ncsoRunTime      = "+ m_CsoRunTime;
+    result += "\ncsoEvalParallel = "+ m_CsoEvalParallel;
     return result;
   }
 
-  /*
+  /**
    * Method to get the best particle in the swarm
    *
    */
   public DoubleMatrix getBest(){
-    int indexBest=fit.rowArgmins()[0];
-    return swarm.getRow(indexBest);
+    int indexBest= m_Fitnesses.rowArgmins()[0];
+    return m_Swarm.getRow(indexBest);
   }
 
-  /*
+  /**
    * Methods to get information about the swarm as a string
    * -- extend to add additional statistics
    *
    */
-  public String reportStringHeader(){ return "iteration\tbest\tmean"; }
+  public String reportStringHeader() {
+    return "iteration\tbest\tmean";
+  }
+
   public String reportString(){
-    int indexBest=fit.rowArgmins()[0];
-    String result = iterationCounter+"\t"+fit.get(0,indexBest)
-      +"\t"+fit.mean();
-    if (debug){
-      result += "\nswarm: "+swarm;
-      result += "\nvel:   "+vel;
-      result += "\nfit:   "+fit;
+    int indexBest= m_Fitnesses.rowArgmins()[0];
+    String result = m_IterationCounter +"\t"+ m_Fitnesses.get(0,indexBest)
+      +"\t"+ m_Fitnesses.mean();
+    if (m_Debug){
+      result += "\nswarm: "+ m_Swarm;
+      result += "\nvel:   "+ m_Velocities;
+      result += "\nfit:   "+ m_Fitnesses;
     }
     return result;
   }
 
-  /*
+  /**
    * Helper method to run the competitions, used by run()
    *
    */
-  void runCompetitions(int[] swarmIndices,
-		       int[] winners, int[] losers){
-    for (int i=0;i<csoSwarmSize;i+=2){
-      int    particle1Index = swarmIndices[i],
-	particle2Index = swarmIndices[i+1];
-      double particle1Fit   = fit.get(0,particle1Index),
-	particle2Fit   = fit.get(0,particle2Index);
+  protected void runCompetitions(int[] swarmIndices, int[] winners, int[] losers){
+    for (int i=0;i< m_CsoSwarmSize;i+=2){
+      int particle1Index = swarmIndices[i];
+      int particle2Index = swarmIndices[i+1];
+      double particle1Fit = m_Fitnesses.get(0,particle1Index);
+      double particle2Fit = m_Fitnesses.get(0,particle2Index);
       if (particle1Fit<particle2Fit) {
 	winners[i/2] = particle1Index;
 	losers[i/2]  = particle2Index;
@@ -153,14 +157,14 @@ abstract public class CSO {
     }
   }
 
-  /*
+  /**
    * Helper method to update the velocities of losers
    * in the competition, used by run()
    *
    */
-  void updateLoserVelocities(int[] winners, int[] losers){
-    DoubleMatrix mean=swarm.columnMeans();
-    for (int i=0;i<csoSwarmSize/2;i++) {
+  protected void updateLoserVelocities(int[] winners, int[] losers){
+    DoubleMatrix mean= m_Swarm.columnMeans();
+    for (int i=0;i< m_CsoSwarmSize /2;i++) {
       // Generate three random constants
       double r1 = Random.nextDouble(),
 	r2 = Random.nextDouble(),
@@ -168,12 +172,12 @@ abstract public class CSO {
       // Get the difference between the winner and loser,
       // the swarm mean, and the difference between mean
       // and loser
-      DoubleMatrix winner     = swarm.getRow(winners[i]),
-	loser      = swarm.getRow(losers[i]),
+      DoubleMatrix winner     = m_Swarm.getRow(winners[i]),
+	loser      = m_Swarm.getRow(losers[i]),
 	diffWinner = winner.sub(loser),
 	diffMean   = mean.sub(loser);
       // Get the loser's current velocity
-      DoubleMatrix loserVel = vel.getRow(losers[i]);
+      DoubleMatrix loserVel = m_Velocities.getRow(losers[i]);
       // Scale the loser's velocity by r1
       loserVel.muli(r1);
       // Add a component of the difference with the winner
@@ -185,50 +189,54 @@ abstract public class CSO {
       diffMean.muli(r3);
       loserVel.addi(diffMean);
       // Update the velocity of the loser
-      vel.putRow(losers[i],loserVel);
+      m_Velocities.putRow(losers[i],loserVel);
     }
   }
 
 
-  /*
+  /**
    * Helper method to update the positions of the losers
    * in the competition, used by run()
    *
    */
-  void updateLoserPositions(int[] losers){
+  protected void updateLoserPositions(int[] losers){
     for (int i=0;i<losers.length;i++) {
-      DoubleMatrix loser=swarm.getRow(losers[i]);
-      loser.addi(vel.getRow(losers[i]));
-      swarm.putRow(losers[i],loser);
+      DoubleMatrix loser= m_Swarm.getRow(losers[i]);
+      loser.addi(m_Velocities.getRow(losers[i]));
+      m_Swarm.putRow(losers[i],loser);
     }
   }
 
-  /*
+  /**
    * Helper methods to evaluate all or part of the swarm,
    * either in serial or parallel, used by run()
    *
    */
-  void evalSwarm(int[] indices){
+  protected void evalSwarm(int[] indices) {
     IntStream indicesStream=Arrays.stream(indices);
-    if (csoEvalParallel)
+    if (m_CsoEvalParallel)
       indicesStream=indicesStream.parallel();
     indicesStream.forEach((index)->{
-      fit.put(0,index,particleFitness(swarm.getRow(index)));
+      m_Fitnesses.put(0,index,particleFitness(m_Swarm.getRow(index)));
     });
   }
-  void evalSwarm(){
-    int[] indices=new int[csoSwarmSize];
+
+  /**
+   * Evalutaes the swarm.
+   */
+  protected void evalSwarm() {
+    int[] indices=new int[m_CsoSwarmSize];
     for (int i=0;i<indices.length; i++)
       indices[i]=i;
     evalSwarm(indices);
   }
 
-  /*
+  /**
    * Helper method to shuffle the elements of an integer
    * array randomly, returning a shuffled copy. Used by run().
    *
    */
-  int[] shuffle(int[] arr){
+  protected int[] shuffle(int[] arr){
     int[] shuffled=new int[arr.length];
     ArrayList<Integer> arrList=new ArrayList<Integer>(arr.length);
     for (int i=0;i<arr.length;i++)
@@ -241,7 +249,7 @@ abstract public class CSO {
     return shuffled;
   }
 
-  /*
+  /**
    * Run method
    * -- performs the main loop of CSO
    * -- returns best solution found
@@ -251,21 +259,21 @@ abstract public class CSO {
     // Report
     System.out.println(this);
     // Set the seed
-    Random.seed(csoSeed);
+    Random.seed(m_CsoSeed);
     // Record start time
     startTime=System.currentTimeMillis();
     // Create the initial swarm
-    swarm=randomParticle();
-    for (int i=1;i<csoSwarmSize;i++)
-      swarm=DoubleMatrix.concatVertically(swarm,randomParticle());
+    m_Swarm =randomParticle();
+    for (int i=1;i< m_CsoSwarmSize;i++)
+      m_Swarm =DoubleMatrix.concatVertically(m_Swarm,randomParticle());
     // Create an vector of fitness values
-    fit=DoubleMatrix.zeros(1,csoSwarmSize);
+    m_Fitnesses =DoubleMatrix.zeros(1, m_CsoSwarmSize);
     // Create the initial velocity vectors
-    vel=DoubleMatrix.zeros(csoSwarmSize,swarm.columns);
+    m_Velocities =DoubleMatrix.zeros(m_CsoSwarmSize, m_Swarm.columns);
     // Create an array list of indices which will be repeatedly
     // shuffled each iteration so that competitions can be run
-    int[] swarmIndices=new int[csoSwarmSize];
-    for (int i=0;i<csoSwarmSize;i++)
+    int[] swarmIndices=new int[m_CsoSwarmSize];
+    for (int i=0;i< m_CsoSwarmSize;i++)
       swarmIndices[i]=i;
     // Print out the report header
     System.out.println(reportStringHeader());
@@ -277,14 +285,14 @@ abstract public class CSO {
       System.out.println(reportString());
       // Shuffle the swarm indices for the competitions
       swarmIndices=shuffle(swarmIndices);
-      if (debug)
+      if (m_Debug)
 	System.out.println("swarmIndices="+Arrays.toString(swarmIndices));
       // We use an arrays of integers to store the winners and losers
-      int[] winners  = new int[csoSwarmSize/2],
-	losers   = new int[csoSwarmSize/2];
+      int[] winners  = new int[m_CsoSwarmSize /2],
+	losers   = new int[m_CsoSwarmSize /2];
       // Run the competitions
       runCompetitions(swarmIndices,winners,losers);
-      if (debug) {
+      if (m_Debug) {
 	System.out.println("winners="+Arrays.toString(winners));
 	System.out.println("losers="+Arrays.toString(losers));
       }
@@ -295,7 +303,7 @@ abstract public class CSO {
       // Re-evaluate the losers
       evalSwarm(losers);
       // Increment iteration counter
-      iterationCounter++;
+      m_IterationCounter++;
     }
     // Report on final swarm
     System.out.println(reportString());
@@ -306,6 +314,4 @@ abstract public class CSO {
     // Done
     return best;
   }
-
-
 }

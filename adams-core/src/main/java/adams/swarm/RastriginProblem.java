@@ -20,6 +20,7 @@
 
 package adams.swarm;
 
+import adams.env.Environment;
 import org.jblas.DoubleMatrix;
 
 /**
@@ -36,9 +37,9 @@ public class RastriginProblem extends CSO {
    * Problem-Specific Parameters
    *
    */
-  public int    probDimensions          = 30;
-  public double probMaxValue            = 5.12;
-  public double probMinValue            = -5.12;
+  protected int probDimensions = 30;
+  protected double probMaxValue = 5.12;
+  protected double probMinValue = -5.12;
 
 
   /*
@@ -87,6 +88,7 @@ public class RastriginProblem extends CSO {
    *
    */
   public static void main(String[] args){
+    Environment.setEnvironmentClass(Environment.class);
     new RastriginProblem().run();
   }
 }
