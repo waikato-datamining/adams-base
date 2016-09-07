@@ -14,17 +14,20 @@
  */
 
 /**
- * CSO.java
+ * AbstractCatSwarmOptimization.java
  * Copyright (C) 2016 University of Waikato, Hamilton, NZ
  */
 
 package adams.opt.cso;
 
+import adams.core.Pausable;
 import adams.core.Randomizable;
+import adams.core.StoppableWithFeedback;
 import adams.core.TechnicalInformation;
 import adams.core.TechnicalInformation.Field;
 import adams.core.TechnicalInformation.Type;
 import adams.core.TechnicalInformationHandler;
+import adams.core.Utils;
 import adams.core.logging.LoggingHelper;
 import adams.core.option.AbstractOptionHandler;
 import adams.core.option.ArrayConsumer;
@@ -50,7 +53,7 @@ import java.util.stream.IntStream;
  */
 public abstract class AbstractCatSwarmOptimization
   extends AbstractOptionHandler
-  implements Randomizable, TechnicalInformationHandler {
+  implements Randomizable, StoppableWithFeedback, Pausable, TechnicalInformationHandler {
 
   private static final long serialVersionUID = 6351368598598576158L;
 
@@ -83,6 +86,12 @@ public abstract class AbstractCatSwarmOptimization
 
   /** Counter for the number of iterations */
   protected int m_IterationCounter;
+
+  /** whether execution has been stopped. */
+  protected boolean m_Stopped;
+
+  /** whether execution has been paused. */
+  protected boolean m_Paused;
 
   /**
    * Adds options to the internal list of options.
@@ -471,29 +480,35 @@ public abstract class AbstractCatSwarmOptimization
   }
 
   /**
-   * Run method
-   * -- performs the main loop of CSO
-   * -- returns best solution found
-   *
+   * Gets executed before the actual run starts.
    */
-  public DoubleMatrix execute() {
-    // init
-    m_IterationCounter = 0;
+  protected void preRun() {
     getLogger().info(this.toString());
-    m_Random = new Random(m_Seed);
+
+    m_IterationCounter = 0;
+    m_Stopped          = false;
+    m_Paused           = false;
+    m_Random           = new Random(m_Seed);
     m_Stopping.start();
 
     // Create the initial swarm
     m_Positions = randomParticle();
     for (int i = 1; i < m_SwarmSize; i++)
-      m_Positions =DoubleMatrix.concatVertically(m_Positions,randomParticle());
+      m_Positions = DoubleMatrix.concatVertically(m_Positions,randomParticle());
 
     // Create an vector of fitness values
     m_Fitnesses = DoubleMatrix.zeros(1, m_SwarmSize);
 
     // Create the initial velocity vectors
     m_Velocities = DoubleMatrix.zeros(m_SwarmSize, m_Positions.columns);
+  }
 
+  /**
+   * Performs the actual optimization.
+   *
+   * @return		the best result
+   */
+  protected DoubleMatrix doRun() {
     // Create an array list of indices which will be repeatedly
     // shuffled each iteration so that competitions can be run
     int[] swarmIndices = new int[m_SwarmSize];
@@ -507,7 +522,17 @@ public abstract class AbstractCatSwarmOptimization
     evalSwarm();
 
     // Iterate
-    while (!m_Stopping.checkStopping(this)) {
+    while (!m_Stopping.checkStopping(this) && !m_Stopped) {
+      if (isPaused() && !isStopped()) {
+	Utils.wait(this, this, 1000, 100);
+	continue;
+      }
+
+      if (isStopped()) {
+	getLogger().severe("Interrupted!");
+	break;
+      }
+
       // Report
       getLogger().info(reportString());
 
@@ -540,16 +565,80 @@ public abstract class AbstractCatSwarmOptimization
       m_IterationCounter++;
     }
 
+    return getBest();
+  }
+
+  /**
+   * Gets called after the optimization finishes.
+   *
+   * @param best	the best result, if any
+   * @return		the (potentially) updated best result
+   */
+  protected DoubleMatrix postRun(DoubleMatrix best) {
     // Report on final swarm
     getLogger().info(reportString());
 
     // Report best solution
-    DoubleMatrix best=getBest();
     getLogger().info("best particle:\n" + best);
     getLogger().info("best fitness:\n" + particleFitness(best));
 
-    // Done
     return best;
+  }
+
+  /**
+   * Run method
+   * -- performs the main loop of CSO
+   * -- returns best solution found
+   *
+   */
+  public DoubleMatrix run() {
+    DoubleMatrix	result;
+
+    preRun();
+
+    result = doRun();
+
+    return postRun(result);
+  }
+
+  /**
+   * Stops the execution.
+   */
+  public void stopExecution() {
+    m_Stopped = true;
+    m_Paused  = false;
+  }
+
+  /**
+   * Whether the execution has been stopped.
+   *
+   * @return		true if stopped
+   */
+  public boolean isStopped() {
+    return m_Stopped;
+  }
+
+  /**
+   * Pauses the execution.
+   */
+  public void pauseExecution() {
+    m_Paused = true;
+  }
+
+  /**
+   * Returns whether the object is currently paused.
+   *
+   * @return		true if object is paused
+   */
+  public boolean isPaused() {
+    return m_Paused;
+  }
+
+  /**
+   * Resumes the execution.
+   */
+  public void resumeExecution() {
+    m_Paused = false;
   }
 
   /**
@@ -577,7 +666,7 @@ public abstract class AbstractCatSwarmOptimization
       else {
 	swarmInst = (AbstractCatSwarmOptimization) OptionUtils.forName(AbstractCatSwarmOptimization.class, swarm.getName(), new String[0]);
 	ArrayConsumer.setOptions(swarmInst, args);
-	result = swarmInst.execute();
+	result = swarmInst.run();
 	if (result != null) {
 	  System.out.println(result);
 	}
