@@ -1086,7 +1086,7 @@ public abstract class AbstractGeneticAlgorithm
 	    getLogger().info("Generation " + String.valueOf(m_CurrentIteration));
 	    StringBuilder info = new StringBuilder();
 	    for (cx = 0; cx < getNumChrom(); cx++) {
-	      info.append(" Fitness for chromosome ");
+	      info.append(" Fitness for chromosome: " + cx + " ");
               for (po = 0; po < getNumGenes(); po++) {
                 if (getGene(cx, po))
                   info.append("1");
