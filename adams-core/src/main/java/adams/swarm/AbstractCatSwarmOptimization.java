@@ -339,6 +339,16 @@ public abstract class AbstractCatSwarmOptimization
     return "iteration\tbest\tmean";
   }
 
+  /**
+   * Returns the current fitness.
+   *
+   * @return		the fitness
+   */
+  public double getCurrentFitness() {
+    int indexBest= m_Fitnesses.rowArgmins()[0];
+    return m_Fitnesses.get(0,indexBest);
+  }
+
   public String reportString() {
     int indexBest= m_Fitnesses.rowArgmins()[0];
     StringBuilder result = new StringBuilder(
