@@ -63,9 +63,25 @@ adams.gui.tools.wekainvestigator.tab.AbstractInvestigatorTab=\
 adams.gui.tools.wekainvestigator.datatable.action.AbstractEditableDataTableAction=\
   adams.gui.tools.wekainvestigator.datatable.action
 
+# the attribute selection evaluations
+adams.gui.tools.wekainvestigator.tab.attseltab.evaluation.AbstractAttributeSelectionEvaluation=\
+  adams.gui.tools.wekainvestigator.tab.attseltab.evaluation
+
+# the menu items for the attribute selection history popup menu
+adams.gui.tools.wekainvestigator.tab.attseltab.history.AbstractHistoryPopupMenuItem=\
+  adams.gui.tools.wekainvestigator.tab.attseltab.history
+
+# the output generators
+adams.gui.tools.wekainvestigator.tab.attseltab.output.AbstractOutputGenerator=\
+  adams.gui.tools.wekainvestigator.tab.attseltab.output
+
 # the classifier evaluations
 adams.gui.tools.wekainvestigator.tab.classifytab.evaluation.AbstractClassifierEvaluation=\
   adams.gui.tools.wekainvestigator.tab.classifytab.evaluation
+
+# the menu items for the classify history popup menu
+adams.gui.tools.wekainvestigator.tab.classifytab.history.AbstractHistoryPopupMenuItem=\
+  adams.gui.tools.wekainvestigator.tab.classifytab.history
 
 # the output generators
 adams.gui.tools.wekainvestigator.tab.classifytab.output.AbstractOutputGenerator=\
@@ -75,17 +91,13 @@ adams.gui.tools.wekainvestigator.tab.classifytab.output.AbstractOutputGenerator=
 adams.gui.tools.wekainvestigator.tab.clustertab.evaluation.AbstractClustererEvaluation=\
   adams.gui.tools.wekainvestigator.tab.clustertab.evaluation
 
+# the menu items for the clusterer history popup menu
+adams.gui.tools.wekainvestigator.tab.clustertab.history.AbstractHistoryPopupMenuItem=\
+  adams.gui.tools.wekainvestigator.tab.clustertab.history
+
 # the output generators
 adams.gui.tools.wekainvestigator.tab.clustertab.output.AbstractOutputGenerator=\
   adams.gui.tools.wekainvestigator.tab.clustertab.output
-
-# the attribute selection evaluations
-adams.gui.tools.wekainvestigator.tab.attseltab.evaluation.AbstractAttributeSelectionEvaluation=\
-  adams.gui.tools.wekainvestigator.tab.attseltab.evaluation
-
-# the output generators
-adams.gui.tools.wekainvestigator.tab.attseltab.output.AbstractOutputGenerator=\
-  adams.gui.tools.wekainvestigator.tab.attseltab.output
 
 # the paintlets for the instance panel
 adams.gui.visualization.instance.AbstractInstancePaintlet=\

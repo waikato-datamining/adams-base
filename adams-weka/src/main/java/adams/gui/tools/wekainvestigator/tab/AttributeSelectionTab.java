@@ -37,6 +37,7 @@ import adams.gui.goe.GenericObjectEditorDialog;
 import adams.gui.goe.WekaGenericObjectEditorPanel;
 import adams.gui.tools.wekainvestigator.InvestigatorPanel;
 import adams.gui.tools.wekainvestigator.data.MemoryContainer;
+import adams.gui.tools.wekainvestigator.history.AbstractHistoryPopupMenuItem;
 import adams.gui.tools.wekainvestigator.tab.attseltab.ResultItem;
 import adams.gui.tools.wekainvestigator.tab.attseltab.evaluation.AbstractAttributeSelectionEvaluation;
 import adams.gui.tools.wekainvestigator.tab.attseltab.output.AbstractOutputGenerator;
@@ -363,6 +364,10 @@ public class AttributeSelectionTab
       }
       submenu.sort();
       result.add(submenu);
+
+      AbstractHistoryPopupMenuItem.updatePopupMenu(
+	this, indices, result,
+	adams.gui.tools.wekainvestigator.tab.attseltab.history.AbstractHistoryPopupMenuItem.class);
 
       return result;
     }

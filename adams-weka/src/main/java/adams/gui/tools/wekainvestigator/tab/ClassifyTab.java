@@ -38,6 +38,7 @@ import adams.gui.goe.GenericArrayEditorDialog;
 import adams.gui.goe.GenericObjectEditorDialog;
 import adams.gui.goe.WekaGenericObjectEditorPanel;
 import adams.gui.tools.wekainvestigator.InvestigatorPanel;
+import adams.gui.tools.wekainvestigator.history.AbstractHistoryPopupMenuItem;
 import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
 import adams.gui.tools.wekainvestigator.tab.classifytab.evaluation.AbstractClassifierEvaluation;
 import adams.gui.tools.wekainvestigator.tab.classifytab.output.AbstractOutputGenerator;
@@ -307,6 +308,10 @@ public class ClassifyTab
       }
       submenu.sort();
       result.add(submenu);
+
+      AbstractHistoryPopupMenuItem.updatePopupMenu(
+	this, indices, result,
+	adams.gui.tools.wekainvestigator.tab.classifytab.history.AbstractHistoryPopupMenuItem.class);
 
       return result;
     }

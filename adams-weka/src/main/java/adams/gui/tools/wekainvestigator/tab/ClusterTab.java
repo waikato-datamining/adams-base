@@ -38,6 +38,7 @@ import adams.gui.goe.GenericArrayEditorDialog;
 import adams.gui.goe.GenericObjectEditorDialog;
 import adams.gui.goe.WekaGenericObjectEditorPanel;
 import adams.gui.tools.wekainvestigator.InvestigatorPanel;
+import adams.gui.tools.wekainvestigator.history.AbstractHistoryPopupMenuItem;
 import adams.gui.tools.wekainvestigator.tab.clustertab.output.TextStatistics;
 import adams.gui.tools.wekainvestigator.tab.clustertab.ResultItem;
 import adams.gui.tools.wekainvestigator.tab.clustertab.evaluation.AbstractClustererEvaluation;
@@ -311,6 +312,10 @@ public class ClusterTab
       }
       submenu.sort();
       result.add(submenu);
+
+      AbstractHistoryPopupMenuItem.updatePopupMenu(
+        this, indices, result,
+        adams.gui.tools.wekainvestigator.tab.clustertab.history.AbstractHistoryPopupMenuItem.class);
 
       return result;
     }
