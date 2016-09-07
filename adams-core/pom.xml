@@ -278,6 +278,12 @@
       <artifactId>lanterna</artifactId>
       <version>3.0.0-beta3</version>
     </dependency>
+
+    <dependency>
+      <groupId>org.jblas</groupId>
+      <artifactId>jblas</artifactId>
+      <version>1.2.4</version>
+    </dependency>
   </dependencies>
 
   <build>
