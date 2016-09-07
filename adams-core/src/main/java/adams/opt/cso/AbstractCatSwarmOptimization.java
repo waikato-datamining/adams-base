@@ -18,7 +18,7 @@
  * Copyright (C) 2016 University of Waikato, Hamilton, NZ
  */
 
-package adams.opt.swarm;
+package adams.opt.cso;
 
 import adams.core.Randomizable;
 import adams.core.TechnicalInformation;
@@ -30,8 +30,8 @@ import adams.core.option.AbstractOptionHandler;
 import adams.core.option.ArrayConsumer;
 import adams.core.option.OptionUtils;
 import adams.env.Environment;
-import adams.opt.swarm.stopping.AbstractStoppingCriterion;
-import adams.opt.swarm.stopping.MaxTrainTime;
+import adams.opt.cso.stopping.AbstractStoppingCriterion;
+import adams.opt.cso.stopping.MaxTrainTime;
 import gnu.trove.list.TIntList;
 import gnu.trove.list.array.TIntArrayList;
 import org.jblas.DoubleMatrix;

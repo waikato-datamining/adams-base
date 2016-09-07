@@ -701,12 +701,12 @@ adams.scripting.responsehandler.ResponseHandler=\
   adams.scripting.responsehandler
 
 # the CSO optimization algorithms
-adams.opt.swarm.AbstractCatSwarmOptimization=\
-  adams.opt.swarm
+adams.opt.cso.AbstractCatSwarmOptimization=\
+  adams.opt.cso
 
 # the CSO optimization algorithms
-adams.opt.swarm.stopping.AbstractStoppingCriterion=\
-  adams.opt.swarm.stopping
+adams.opt.cso.stopping.AbstractStoppingCriterion=\
+  adams.opt.cso.stopping
 
 # the menu items for terminal applications
 adams.terminal.menu.AbstractMenuItemDefinition=\

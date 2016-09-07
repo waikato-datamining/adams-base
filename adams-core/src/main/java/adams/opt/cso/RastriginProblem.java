@@ -18,7 +18,7 @@
  * Copyright (C) 2016 University of Waikato, Hamilton, NZ
  */
 
-package adams.opt.swarm;
+package adams.opt.cso;
 
 import adams.env.Environment;
 import org.jblas.DoubleMatrix;

@@ -18,9 +18,9 @@
  * Copyright (C) 2016 University of Waikato, Hamilton, NZ
  */
 
-package adams.opt.swarm.stopping;
+package adams.opt.cso.stopping;
 
-import adams.opt.swarm.AbstractCatSwarmOptimization;
+import adams.opt.cso.AbstractCatSwarmOptimization;
 
 /**
  <!-- globalinfo-start -->
