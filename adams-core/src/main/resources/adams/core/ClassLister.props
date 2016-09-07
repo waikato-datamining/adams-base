@@ -700,6 +700,14 @@ adams.scripting.requesthandler.RequestHandler=\
 adams.scripting.responsehandler.ResponseHandler=\
   adams.scripting.responsehandler
 
+# the CSO optimization algorithms
+adams.swarm.AbstractCatSwarmOptimization=\
+  adams.swarm
+
+# the CSO optimization algorithms
+adams.swarm.stopping.AbstractStoppingCriterion=\
+  adams.swarm.stopping
+
 # the menu items for terminal applications
 adams.terminal.menu.AbstractMenuItemDefinition=\
   adams.terminal.menu
