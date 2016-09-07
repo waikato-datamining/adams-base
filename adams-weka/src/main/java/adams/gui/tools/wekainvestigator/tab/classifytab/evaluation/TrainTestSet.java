@@ -20,6 +20,7 @@
 
 package adams.gui.tools.wekainvestigator.tab.classifytab.evaluation;
 
+import adams.core.Properties;
 import adams.core.option.OptionUtils;
 import adams.data.spreadsheet.MetaData;
 import adams.gui.core.AbstractNamedHistoryPanel;
@@ -31,6 +32,7 @@ import weka.core.Capabilities;
 import weka.core.Instances;
 
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -59,6 +61,9 @@ public class TrainTestSet
   /** the datasets model. */
   protected DefaultComboBoxModel<String> m_ModelDatasets;
 
+  /** whether to discard the predictions. */
+  protected JCheckBox m_CheckBoxDiscardPredictions;
+
   /**
    * Returns a string describing the object.
    *
@@ -75,7 +80,11 @@ public class TrainTestSet
    */
   @Override
   protected void initGUI() {
+    Properties		props;
+
     super.initGUI();
+
+    props = getProperties();
 
     m_PanelParameters = new ParameterPanel();
     m_PanelOptions.add(m_PanelParameters, BorderLayout.CENTER);
@@ -91,6 +100,13 @@ public class TrainTestSet
     m_ComboBoxTest = new JComboBox<>(m_ModelDatasets);
     m_ComboBoxTest.addActionListener((ActionEvent e) -> update());
     m_PanelParameters.addParameter("Test", m_ComboBoxTest);
+
+    // discard predictions?
+    m_CheckBoxDiscardPredictions = new JCheckBox();
+    m_CheckBoxDiscardPredictions.setSelected(props.getBoolean("Classify.DiscardPredictions", false));
+    m_CheckBoxDiscardPredictions.setToolTipText("Save memory by discarding predictions?");
+    m_CheckBoxDiscardPredictions.addActionListener((ActionEvent e) -> update());
+    m_PanelParameters.addParameter("Discard predictions", m_CheckBoxDiscardPredictions);
   }
 
   /**
@@ -155,6 +171,7 @@ public class TrainTestSet
     Classifier  model;
     Instances	train;
     Instances	test;
+    boolean	discard;
     String	msg;
     MetaData 	runInfo;
 
@@ -163,6 +180,7 @@ public class TrainTestSet
 
     train   = getOwner().getData().get(m_ComboBoxTrain.getSelectedIndex()).getData();
     test    = getOwner().getData().get(m_ComboBoxTest.getSelectedIndex()).getData();
+    discard = m_CheckBoxDiscardPredictions.isSelected();
     runInfo = new MetaData();
     runInfo.add("Classifier", OptionUtils.getCommandLine(classifier));
     runInfo.add("Train", train.relationName());
@@ -170,12 +188,14 @@ public class TrainTestSet
     runInfo.add("# Instances (train)", train.numInstances());
     runInfo.add("# Instances (test)", test.numInstances());
     runInfo.add("Class attribute", train.classAttribute().name());
+    runInfo.add("Discard predictions", discard);
 
     model = (Classifier) OptionUtils.shallowCopy(classifier);
     getOwner().logMessage("Using '" + train.relationName() + "' to train " + OptionUtils.getCommandLine(classifier));
     model.buildClassifier(train);
     getOwner().logMessage("Using '" + test.relationName() + "' to evaluate " + OptionUtils.getCommandLine(classifier));
     eval = new Evaluation(train);
+    eval.setDiscardPredictions(discard);
     eval.evaluateModel(model, test);
 
     // history

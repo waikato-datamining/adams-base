@@ -74,6 +74,9 @@ public class TrainTestSplit
   /** the seed value. */
   protected JTextField m_TextSeed;
 
+  /** whether to discard the predictions. */
+  protected JCheckBox m_CheckBoxDiscardPredictions;
+
   /**
    * Returns a string describing the object.
    *
@@ -149,6 +152,13 @@ public class TrainTestSplit
       }
     });
     m_PanelParameters.addParameter("Seed", m_TextSeed);
+
+    // discard predictions?
+    m_CheckBoxDiscardPredictions = new JCheckBox();
+    m_CheckBoxDiscardPredictions.setSelected(props.getBoolean("Classify.DiscardPredictions", false));
+    m_CheckBoxDiscardPredictions.setToolTipText("Save memory by discarding predictions?");
+    m_CheckBoxDiscardPredictions.addActionListener((ActionEvent e) -> update());
+    m_PanelParameters.addParameter("Discard predictions", m_CheckBoxDiscardPredictions);
   }
 
   /**
@@ -208,6 +218,7 @@ public class TrainTestSplit
     Classifier 			model;
     double			perc;
     int				seed;
+    boolean			discard;
     Instances			data;
     Instances			train;
     Instances			test;
@@ -219,9 +230,10 @@ public class TrainTestSplit
     if ((msg = canEvaluate(classifier)) != null)
       throw new IllegalArgumentException("Cannot evaluate classifier!\n" + msg);
 
-    data = getOwner().getData().get(m_ComboBoxDatasets.getSelectedIndex()).getData();
-    perc = Utils.toDouble(m_TextPercentage.getText()) / 100.0;
-    seed = Integer.parseInt(m_TextSeed.getText());
+    data    = getOwner().getData().get(m_ComboBoxDatasets.getSelectedIndex()).getData();
+    perc    = Utils.toDouble(m_TextPercentage.getText()) / 100.0;
+    seed    = Integer.parseInt(m_TextSeed.getText());
+    discard = m_CheckBoxDiscardPredictions.isSelected();
     if (m_CheckBoxPreserveOrder.isSelected())
       generator = new RandomSplitGenerator(data, perc);
     else
@@ -239,12 +251,14 @@ public class TrainTestSplit
     runInfo.add("# Instances (train)", train.numInstances());
     runInfo.add("# Instances (test)", test.numInstances());
     runInfo.add("Class attribute", data.classAttribute().name());
+    runInfo.add("Discard predictions", discard);
 
     model = (Classifier) OptionUtils.shallowCopy(classifier);
     getOwner().logMessage("Using " + m_TextPercentage.getText() + "% of '" + train.relationName() + "' to train " + OptionUtils.getCommandLine(classifier));
     model.buildClassifier(train);
     getOwner().logMessage("Using remainder from '" + test.relationName() + "' to evaluate " + OptionUtils.getCommandLine(classifier));
     eval = new Evaluation(train);
+    eval.setDiscardPredictions(discard);
     eval.evaluateModel(model, test);
 
     // history

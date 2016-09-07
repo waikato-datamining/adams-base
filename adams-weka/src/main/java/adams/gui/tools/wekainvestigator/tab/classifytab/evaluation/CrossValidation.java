@@ -74,6 +74,9 @@ public class CrossValidation
   /** the number of threads. */
   protected JSpinner m_SpinnerThreads;
 
+  /** whether to discard the predictions. */
+  protected JCheckBox m_CheckBoxDiscardPredictions;
+
   /** whether to produce a final model. */
   protected JCheckBox m_CheckBoxFinalModel;
 
@@ -143,6 +146,13 @@ public class CrossValidation
     m_SpinnerThreads.addChangeListener((ChangeEvent e) -> update());
     m_PanelParameters.addParameter("Threads", m_SpinnerThreads);
 
+    // discard predictions?
+    m_CheckBoxDiscardPredictions = new JCheckBox();
+    m_CheckBoxDiscardPredictions.setSelected(props.getBoolean("Classify.DiscardPredictions", false));
+    m_CheckBoxDiscardPredictions.setToolTipText("Save memory by discarding predictions?");
+    m_CheckBoxDiscardPredictions.addActionListener((ActionEvent e) -> update());
+    m_PanelParameters.addParameter("Discard predictions", m_CheckBoxDiscardPredictions);
+
     // final model?
     m_CheckBoxFinalModel = new JCheckBox();
     m_CheckBoxFinalModel.setSelected(props.getBoolean("Classify.CrossValidationFinalModel", true));
@@ -201,6 +211,7 @@ public class CrossValidation
     String				msg;
     Instances				data;
     boolean				finalModel;
+    boolean				discard;
     Classifier				model;
     int					seed;
     int					folds;
@@ -212,6 +223,7 @@ public class CrossValidation
 
     data       = getOwner().getData().get(m_ComboBoxDatasets.getSelectedIndex()).getData();
     finalModel = m_CheckBoxFinalModel.isSelected();
+    discard    = m_CheckBoxDiscardPredictions.isSelected();
     seed       = Integer.parseInt(m_TextSeed.getText());
     folds      = ((Number) m_SpinnerFolds.getValue()).intValue();
     threads    = ((Number) m_SpinnerThreads.getValue()).intValue();
@@ -224,12 +236,14 @@ public class CrossValidation
     runInfo.add("# Attributes", data.numAttributes());
     runInfo.add("# Instances", data.numInstances());
     runInfo.add("Class attribute", data.classAttribute().name());
+    runInfo.add("Discard predictions", discard);
     crossValidation = new WekaCrossValidationExecution();
     crossValidation.setClassifier(classifier);
     crossValidation.setData(data);
     crossValidation.setFolds(folds);
     crossValidation.setSeed(seed);
     crossValidation.setNumThreads(threads);
+    crossValidation.setDiscardPredictions(discard);
     crossValidation.setStatusMessageHandler(this);
     msg = crossValidation.execute();
     if (msg != null)

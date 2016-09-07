@@ -74,6 +74,7 @@ public class WekaInvestigatorPreferencesPanel
     addPropertyType("Classify.Seed", PropertyType.INTEGER);
     addPropertyType("Classify.TrainPercentage", PropertyType.DOUBLE);
     addPropertyType("Classify.PreserveOrder", PropertyType.BOOLEAN);
+    addPropertyType("Classify.DiscardPredictions", PropertyType.BOOLEAN);
     addPropertyType("Classify.OutputGenerators", PropertyType.ARRAY_EDITOR);
     setChooser("Classify.OutputGenerators", new GenericArrayEditorPanel(
       new adams.gui.tools.wekainvestigator.tab.classifytab.output.AbstractOutputGenerator[0]));

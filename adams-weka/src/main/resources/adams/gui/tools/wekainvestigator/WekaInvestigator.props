@@ -57,6 +57,10 @@ Classify.NumFolds=10
 # (integer; -1,1-n)
 Classify.NumThreads=-1
 
+# whether to discard predictions
+# (true|false)
+Classify.DiscardPredictions=false
+
 # whether to produce a final model for cross-validation
 # (true|false)
 Classify.CrossValidationFinalModel=true

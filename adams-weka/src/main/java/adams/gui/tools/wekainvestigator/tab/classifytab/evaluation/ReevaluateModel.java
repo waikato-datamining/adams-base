@@ -20,6 +20,7 @@
 
 package adams.gui.tools.wekainvestigator.tab.classifytab.evaluation;
 
+import adams.core.Properties;
 import adams.core.SerializationHelper;
 import adams.core.option.OptionUtils;
 import adams.data.spreadsheet.MetaData;
@@ -34,6 +35,7 @@ import weka.core.Capabilities;
 import weka.core.Instances;
 
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.event.ChangeEvent;
 import java.awt.BorderLayout;
@@ -60,6 +62,9 @@ public class ReevaluateModel
 
   /** the datasets model. */
   protected DefaultComboBoxModel<String> m_ModelDatasets;
+
+  /** whether to discard the predictions. */
+  protected JCheckBox m_CheckBoxDiscardPredictions;
 
   /** the serialized model. */
   protected FileChooserPanel m_PanelModel;
@@ -96,8 +101,11 @@ public class ReevaluateModel
   @Override
   protected void initGUI() {
     ExtensionFileFilter filter;
+    Properties		props;
 
     super.initGUI();
+
+    props = getProperties();
 
     m_PanelParameters = new ParameterPanel();
     m_PanelOptions.add(m_PanelParameters, BorderLayout.CENTER);
@@ -116,6 +124,13 @@ public class ReevaluateModel
     m_PanelModel.setAcceptAllFileFilterUsed(true);
     m_PanelModel.addChangeListener((ChangeEvent e) -> loadModel());
     m_PanelParameters.addParameter("Model", m_PanelModel);
+
+    // discard predictions?
+    m_CheckBoxDiscardPredictions = new JCheckBox();
+    m_CheckBoxDiscardPredictions.setSelected(props.getBoolean("Classify.DiscardPredictions", false));
+    m_CheckBoxDiscardPredictions.setToolTipText("Save memory by discarding predictions?");
+    m_CheckBoxDiscardPredictions.addActionListener((ActionEvent e) -> update());
+    m_PanelParameters.addParameter("Discard predictions", m_CheckBoxDiscardPredictions);
   }
 
   /**
@@ -213,6 +228,7 @@ public class ReevaluateModel
   protected ResultItem doEvaluate(Classifier classifier, AbstractNamedHistoryPanel<ResultItem> history) throws Exception {
     Evaluation 	eval;
     Instances	data;
+    boolean	discard;
     String	msg;
     MetaData 	runInfo;
 
@@ -222,14 +238,17 @@ public class ReevaluateModel
       throw new IllegalArgumentException("Cannot evaluate classifier!\n" + msg);
 
     data    = getOwner().getData().get(m_ComboBoxDatasets.getSelectedIndex()).getData();
+    discard = m_CheckBoxDiscardPredictions.isSelected();
     runInfo = new MetaData();
     runInfo.add("Classifier", OptionUtils.getCommandLine(m_Model));
     runInfo.add("Dataset", data.relationName());
     runInfo.add("# Attributes", data.numAttributes());
     runInfo.add("# Instances", data.numInstances());
     runInfo.add("Class attribute", data.classAttribute().name());
+    runInfo.add("Discard predictions", discard);
 
     eval = new Evaluation(data);
+    eval.setDiscardPredictions(discard);
     eval.evaluateModel(m_Model, data);
 
     // history
