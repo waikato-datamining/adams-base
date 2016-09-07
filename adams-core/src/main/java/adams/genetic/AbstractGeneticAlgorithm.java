@@ -1042,13 +1042,33 @@ public abstract class AbstractGeneticAlgorithm
   }
 
   /**
+   * Outputs the chromosomes (bits and fitness).
+   */
+  protected void logChromosomes() {
+    StringBuilder	info;
+    int			cx;
+    int			po;
+
+    for (cx = 0; cx < getNumChrom(); cx++) {
+      info = new StringBuilder();
+      info.append("Fitness for chromosome: " + cx + " ");
+      for (po = 0; po < getNumGenes(); po++) {
+        if (getGene(cx, po))
+          info.append("1");
+        else
+          info.append("0");
+      }
+      info.append("--->" + getFitness()[cx]);
+      getLogger().info(info.toString());
+    }
+  }
+
+  /**
    * Runs the genetic algorithm.
    *
    * @return		true if successfully finished, false when interrupted
    */
   public boolean run() {
-    int		cx;
-    int 	po;
     boolean	result;
 
     result = true;
@@ -1077,29 +1097,31 @@ public abstract class AbstractGeneticAlgorithm
 
 	  m_CurrentIteration++;
 	  if (m_CurrentIteration % 100 == 0)
-	    getLogger().info("Iteration " + m_CurrentIteration);
+	    getLogger().info("[" + m_CurrentIteration + "] Iteration");
 
 	  calcFitness();
-	  sort();
-
 	  if (isLoggingEnabled()) {
-	    getLogger().info("Generation " + String.valueOf(m_CurrentIteration));
-	    StringBuilder info = new StringBuilder();
-	    for (cx = 0; cx < getNumChrom(); cx++) {
-	      info.append(" Fitness for chromosome: " + cx + " ");
-              for (po = 0; po < getNumGenes(); po++) {
-                if (getGene(cx, po))
-                  info.append("1");
-                else
-                  info.append("0");
-              }
-	      info.append("--->" + getFitness()[cx]);
-	      getLogger().info(info.toString());
-	    }
+	    getLogger().info("[" + String.valueOf(m_CurrentIteration) + "] After calc fitness");
+            logChromosomes();
+	  }
+
+	  sort();
+	  if (isLoggingEnabled()) {
+	    getLogger().info("[" + String.valueOf(m_CurrentIteration) + "] After sort");
+            logChromosomes();
 	  }
 
 	  doCrossovers();
+	  if (isLoggingEnabled()) {
+	    getLogger().info("[" + String.valueOf(m_CurrentIteration) + "] After crossovers");
+            logChromosomes();
+	  }
+
 	  doMutations2();
+	  if (isLoggingEnabled()) {
+	    getLogger().info("[" + String.valueOf(m_CurrentIteration) + "] After mutations");
+            logChromosomes();
+	  }
 
 	  if (isStopped()) {
 	    getLogger().severe("Interrupted!");
