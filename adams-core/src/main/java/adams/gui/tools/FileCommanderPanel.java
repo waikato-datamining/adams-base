@@ -38,6 +38,7 @@ import adams.gui.core.MenuBarProvider;
 import adams.gui.dialog.ApprovalDialog;
 import adams.gui.dialog.SimplePreviewBrowserDialog;
 import adams.gui.tools.filecommander.AbstractFileCommanderAction;
+import adams.gui.tools.filecommander.Actions;
 import com.jidesoft.swing.JideButton;
 import com.jidesoft.swing.JideSplitButton;
 
@@ -181,7 +182,6 @@ public class FileCommanderPanel
   protected void initGUI() {
     JPanel	panel;
     JPanel	panelAll;
-    boolean	first;
 
     super.initGUI();
 
@@ -281,18 +281,18 @@ public class FileCommanderPanel
     m_ButtonDelete.addActionListener((ActionEvent) -> delete());
     m_PanelButtons.add(m_ButtonDelete);
 
-    if (m_Actions.size() > 0) {
+    // only show actions button if actual actions present
+    // discounting the dummy "Actions" action
+    if (m_Actions.size() > 1) {
       m_ButtonAction = new JideSplitButton();
       m_ButtonAction.setAlwaysDropdown(false);
       m_ButtonAction.setButtonEnabled(true);
       m_ButtonAction.setButtonStyle(JideSplitButton.TOOLBOX_STYLE);
-      first = true;
       for (AbstractFileCommanderAction action: m_Actions) {
-	if (first)
+	if (action.getClass() == Actions.class)
 	  m_ButtonAction.setAction(action);
 	else
 	  m_ButtonAction.add(action);
-	first = false;
       }
       m_PanelButtons.add(m_ButtonAction);
     }
