@@ -427,9 +427,10 @@ public class SpreadSheetTable
   }
 
   /**
-   * Shows a popup menu for the cells.
+   * Creates a popup menu for the cells.
    *
    * @param e		the event that triggered the menu
+   * @return		the menu
    */
   protected BasePopupMenu createCellPopupMenu(final MouseEvent e) {
     BasePopupMenu	menu;
