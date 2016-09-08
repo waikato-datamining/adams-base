@@ -202,18 +202,21 @@ public class DataTableModel
 
     switch (columnIndex) {
       case 1: // modified
+        cont.addUndoPoint("setting modified flag");
 	cont.setModified((Boolean) aValue);
 	fireTableRowsUpdated(rowIndex, rowIndex);
 	break;
       case 3:  // class
 	name = "" + aValue;
 	if (name.isEmpty()) {
+          cont.addUndoPoint("Unsetting class");
 	  cont.getData().setClassIndex(-1);
 	  fireTableRowsUpdated(rowIndex, rowIndex);
 	}
 	else {
 	  att = cont.getData().attribute(name);
 	  if (att != null) {
+            cont.addUndoPoint("Setting class");
 	    cont.getData().setClassIndex(att.index());
 	    fireTableRowsUpdated(rowIndex, rowIndex);
 	  }
