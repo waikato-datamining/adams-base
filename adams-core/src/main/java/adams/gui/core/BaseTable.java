@@ -468,6 +468,19 @@ public class BaseTable
    * @param e		the trigger event
    */
   protected void showSimpleCellPopupMenu(MouseEvent e) {
+    BasePopupMenu menu;
+
+    menu = createSimpleCellPopupMenu(e);
+    menu.showAbsolute(this, e);
+  }
+
+  /**
+   * Creates a simple cell popup menu.
+   *
+   * @param e		the trigger event
+   * @return		the popup menu
+   */
+  protected BasePopupMenu createSimpleCellPopupMenu(MouseEvent e) {
     BasePopupMenu	menu;
     JMenuItem		menuitem;
     final int		row;
@@ -475,7 +488,7 @@ public class BaseTable
 
     menu = new BasePopupMenu();
     row  = rowAtPoint(e.getPoint());
-    col = columnAtPoint(e.getPoint());
+    col  = columnAtPoint(e.getPoint());
 
     menuitem = new JMenuItem("Copy cell", GUIHelper.getIcon("copy_cell.gif"));
     menuitem.addActionListener((ActionEvent ae) -> {
@@ -539,7 +552,7 @@ public class BaseTable
     });
     menu.add(menuitem);
 
-    menu.showAbsolute(this, e);
+    return menu;
   }
 
   /**
