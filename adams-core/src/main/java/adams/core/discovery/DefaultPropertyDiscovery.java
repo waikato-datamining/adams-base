@@ -15,12 +15,13 @@
 
 /**
  * DefaultPropertyDiscovery.java
- * Copyright (C) 2015 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton, NZ
  */
 
 package adams.core.discovery;
 
 import adams.core.Utils;
+import adams.core.base.BaseRegExp;
 import adams.core.discovery.IntrospectionHelper.IntrospectionContainer;
 import adams.core.discovery.PropertyPath.Path;
 import adams.core.discovery.PropertyPath.PropertyContainer;
@@ -63,6 +64,7 @@ public class DefaultPropertyDiscovery
     Object			child;
     int				i;
     int				len;
+    Path			newPath;
 
     if (isLoggingEnabled())
       getLogger().info("discover: " + path.toString());
@@ -91,15 +93,17 @@ public class DefaultPropertyDiscovery
           len = Array.getLength(child);
           for (i = 0; i < len; i++) {
 	    for (AbstractDiscoveryHandler handler : handlers) {
-	      if (handler.handles(Array.get(child, i)))
-		handler.addContainer(new PropertyContainer(path.append(prop.getDisplayName() + "[" + i + "]"), prop, Array.get(child, i)));
+	      newPath = path.append(prop.getDisplayName() + "[" + i + "]");
+	      if (handler.handles(newPath, Array.get(child, i)))
+		handler.addContainer(new PropertyContainer(newPath, prop, Array.get(child, i)));
 	    }
 	  }
 	}
 	else {
 	  for (AbstractDiscoveryHandler handler : handlers) {
-	    if (handler.handles(child))
-	      handler.addContainer(new PropertyContainer(path.append(prop.getDisplayName()), prop, child));
+	    newPath = path.append(prop.getDisplayName());
+	    if (handler.handles(newPath, child))
+	      handler.addContainer(new PropertyContainer(newPath, prop, child));
 	  }
 	}
 	// recurse
@@ -126,10 +130,13 @@ public class DefaultPropertyDiscovery
    */
   @Override
   public void discover(AbstractDiscoveryHandler[] handlers, Object obj) {
+    Path	newPath;
+
     // check current object
     for (AbstractDiscoveryHandler handler : handlers) {
-      if (handler.handles(obj))
-	handler.addContainer(new PropertyContainer(new Path(Path.CURRENT_OBJECT), null, obj));
+      newPath = new Path(Path.CURRENT_OBJECT);
+      if (handler.handles(newPath, obj))
+	handler.addContainer(new PropertyContainer(newPath, null, obj));
     }
     // check object's properties
     discover(handlers, obj, new Path());
@@ -155,15 +162,25 @@ public class DefaultPropertyDiscovery
     }
     flow.add(new Display());
 
-    AbstractDiscoveryHandler[] handlers = new AbstractDiscoveryHandler[]{
-      new Actor()
-    };
+    Actor[] handlers = new Actor[1];
+    handlers[0] = new Actor();
 
     DefaultPropertyDiscovery d = new DefaultPropertyDiscovery();
     d.setLoggingLevel(LoggingLevel.FINE);
     d.discover(handlers, flow);
 
     for (AbstractDiscoveryHandler handler: handlers)
-      System.out.println(handler + "\n");
+      System.out.println(handler.toCommandLine() + "\n" + handler + "\n");
+
+    handlers = new Actor[1];
+    handlers[0] = new Actor();
+    handlers[0].setRegExp(new BaseRegExp(".*actors\\[1\\]$"));
+
+    d = new DefaultPropertyDiscovery();
+    d.setLoggingLevel(LoggingLevel.FINE);
+    d.discover(handlers, flow);
+
+    for (AbstractDiscoveryHandler handler: handlers)
+      System.out.println(handler.toCommandLine() + "\n" + handler + "\n");
   }
 }

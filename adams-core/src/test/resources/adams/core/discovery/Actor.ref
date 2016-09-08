@@ -8,3 +8,8 @@ actors[2].actors[0]
 actors[2].actors[1]
 
 
+--> out-1.txt
+actors[1]
+actors[2].actors[1]
+
+

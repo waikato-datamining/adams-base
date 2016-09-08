@@ -20,6 +20,7 @@
 
 package adams.core.discovery;
 
+import adams.core.base.BaseRegExp;
 import adams.env.Environment;
 import adams.flow.control.Flow;
 import adams.flow.control.Tee;
@@ -67,7 +68,7 @@ public class ActorTest
     }
     flow.add(new Display());
 
-    return new Object[]{flow};
+    return new Object[]{flow, flow};
   }
 
   /**
@@ -77,9 +78,14 @@ public class ActorTest
    */
   @Override
   protected AbstractDiscoveryHandler[] getRegressionSetups() {
-    return new AbstractDiscoveryHandler[]{
-      new Actor()
-    };
+    Actor[] result;
+
+    result = new Actor[2];
+    result[0] = new Actor();
+    result[1] = new Actor();
+    result[1].setRegExp(new BaseRegExp(".*actors\\[1\\]$"));
+
+    return result;
   }
 
   /**
