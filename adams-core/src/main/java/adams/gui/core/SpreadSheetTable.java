@@ -420,6 +420,18 @@ public class SpreadSheetTable
    * @param e		the event that triggered the menu
    */
   protected void showCellPopupMenu(final MouseEvent e) {
+    BasePopupMenu   menu;
+
+    menu = createCellPopupMenu(e);
+    menu.showAbsolute(this, e);
+  }
+
+  /**
+   * Shows a popup menu for the cells.
+   *
+   * @param e		the event that triggered the menu
+   */
+  protected BasePopupMenu createCellPopupMenu(final MouseEvent e) {
     BasePopupMenu	menu;
     JMenuItem		menuitem;
     JMenu		submenu;
@@ -530,7 +542,7 @@ public class SpreadSheetTable
     if (m_CellPopupMenuCustomizer != null)
       m_CellPopupMenuCustomizer.customizePopupMenu(e, menu);
 
-    menu.showAbsolute(this, e);
+    return menu;
   }
 
   /**
