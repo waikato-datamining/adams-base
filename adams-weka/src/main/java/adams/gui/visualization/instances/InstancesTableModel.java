@@ -811,32 +811,36 @@ public class InstancesTableModel
   }
 
   /**
-   * sets the value in the cell at columnIndex and rowIndex to aValue. but only
-   * the value and the value can be changed
+   * Sets the value in the cell at columnIndex and rowIndex to aValue. but only
+   * the value and the value can be changed. Ignores operation if value hasn't
+   * changed.
    *
    * @param aValue the new value
    * @param rowIndex the row index
    * @param columnIndex the column index
    * @param notify whether to notify the listeners
    */
-  public void setValueAt(Object aValue, int rowIndex, int columnIndex,
-			 boolean notify) {
-    int type;
-    int index;
-    String tmp;
-    Instance inst;
-    Attribute att;
-    Object oldValue;
+  public void setValueAt(Object aValue, int rowIndex, int columnIndex, boolean notify) {
+    int 	type;
+    int 	index;
+    String 	tmp;
+    Instance 	inst;
+    Attribute 	att;
+    Object 	oldValue;
+    boolean	different;
 
-    if (!m_IgnoreChanges) {
+    oldValue  = getValueAt(rowIndex, columnIndex);
+    different = !("" + oldValue).equals("" + aValue);
+    if (!different)
+      return;
+
+    if (!m_IgnoreChanges)
       addUndoPoint();
-    }
 
-    oldValue = getValueAt(rowIndex, columnIndex);
-    type = getType(rowIndex, columnIndex);
+    type  = getType(rowIndex, columnIndex);
     index = columnIndex - 1;
-    inst = m_Data.instance(rowIndex);
-    att = inst.attribute(index);
+    inst  = m_Data.instance(rowIndex);
+    att   = inst.attribute(index);
 
     // missing?
     if (aValue == null) {
@@ -889,7 +893,7 @@ public class InstancesTableModel
     }
 
     // notify only if the value has changed!
-    if (notify && (!("" + oldValue).equals("" + aValue)))
+    if (notify)
       notifyListener(new TableModelEvent(this, rowIndex, columnIndex));
   }
 
