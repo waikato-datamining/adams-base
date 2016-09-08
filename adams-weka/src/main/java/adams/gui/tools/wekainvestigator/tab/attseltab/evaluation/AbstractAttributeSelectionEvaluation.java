@@ -224,8 +224,10 @@ public abstract class AbstractAttributeSelectionEvaluation
       oldDataset = oldDataset.replaceAll("^[0-9]+: ", "");
     for (i = 0; i < getOwner().getData().size(); i++) {
       data = getOwner().getData().get(i);
-      if ((oldDataset != null) && data.getData().relationName().equals(oldDataset))
+      if ((oldDataset != null) && data.getData().relationName().equals(oldDataset)) {
 	result = i;
+	break;
+      }
     }
 
     return result;

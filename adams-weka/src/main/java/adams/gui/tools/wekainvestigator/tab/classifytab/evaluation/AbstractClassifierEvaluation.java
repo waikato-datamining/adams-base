@@ -223,8 +223,10 @@ public abstract class AbstractClassifierEvaluation
       oldDataset = oldDataset.replaceAll("^[0-9]+: ", "");
     for (i = 0; i < getOwner().getData().size(); i++) {
       data = getOwner().getData().get(i);
-      if ((oldDataset != null) && data.getData().relationName().equals(oldDataset))
-	result = i;
+      if ((oldDataset != null) && data.getData().relationName().equals(oldDataset)) {
+        result = i;
+        break;
+      }
     }
 
     return result;
