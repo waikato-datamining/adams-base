@@ -14,13 +14,14 @@
  */
 
 /**
- * AbstractGeneticDoubleDiscoveryHandler.java
+ * AbstractGeneticIntegerDiscoveryHandler.java
  * Copyright (C) 2015 University of Waikato, Hamilton, NZ
  */
 
-package adams.core.discovery;
+package adams.core.discovery.genetic;
 
 import adams.core.Utils;
+import adams.core.discovery.PropertyPath.PropertyContainer;
 import adams.data.statistics.StatUtils;
 
 /**
@@ -29,7 +30,7 @@ import adams.data.statistics.StatUtils;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public abstract class AbstractGeneticDoubleDiscoveryHandler
+public abstract class AbstractGeneticIntegerDiscoveryHandler
   extends AbstractGeneticDiscoveryHandler {
 
   private static final long serialVersionUID = -5442076178374142588L;
@@ -38,13 +39,13 @@ public abstract class AbstractGeneticDoubleDiscoveryHandler
   protected NumericValueType m_Type;
 
   /** the minimum. */
-  protected double m_Minimum;
+  protected int m_Minimum;
 
   /** the maximum. */
-  protected double m_Maximum;
+  protected int m_Maximum;
 
   /** the list of values. */
-  protected double[] m_List;
+  protected int[] m_List;
 
   /**
    * Adds options to the internal list of options.
@@ -113,14 +114,14 @@ public abstract class AbstractGeneticDoubleDiscoveryHandler
    *
    * @return		the default
    */
-  protected abstract double getDefaultMinimum();
+  protected abstract int getDefaultMinimum();
 
   /**
    * Sets the minimum.
    *
    * @param value	the minimum
    */
-  public void setMinimum(double value) {
+  public void setMinimum(int value) {
     if (getOptionManager().isValid("minimum", value)) {
       m_Minimum = value;
       reset();
@@ -132,7 +133,7 @@ public abstract class AbstractGeneticDoubleDiscoveryHandler
    *
    * @return		the minimum
    */
-  public double getMinimum() {
+  public int getMinimum() {
     return m_Minimum;
   }
 
@@ -151,14 +152,14 @@ public abstract class AbstractGeneticDoubleDiscoveryHandler
    *
    * @return		the default
    */
-  protected abstract double getDefaultMaximum();
+  protected abstract int getDefaultMaximum();
 
   /**
    * Sets the maximum.
    *
    * @param value	the maximum
    */
-  public void setMaximum(double value) {
+  public void setMaximum(int value) {
     if (getOptionManager().isValid("maximum", value)) {
       m_Maximum = value;
       reset();
@@ -170,7 +171,7 @@ public abstract class AbstractGeneticDoubleDiscoveryHandler
    *
    * @return		the maximum
    */
-  public double getMaximum() {
+  public int getMaximum() {
     return m_Maximum;
   }
 
@@ -199,13 +200,13 @@ public abstract class AbstractGeneticDoubleDiscoveryHandler
   public void setList(String value) {
     String[]	parts;
     int		i;
-    double[]	list;
+    int[]	list;
 
     parts = value.replaceAll("  ", " ").split(" ");
-    list  = new double[parts.length];
+    list  = new int[parts.length];
     for (i = 0; i < parts.length; i++) {
       try {
-	list[i] = Double.parseDouble(parts[i]);
+	list[i] = Integer.parseInt(parts[i]);
       }
       catch (Exception e) {
 	getLogger().warning("Failed to parse '" + parts[i] + "' from list: " + value);
@@ -234,5 +235,100 @@ public abstract class AbstractGeneticDoubleDiscoveryHandler
    */
   public String listTipText() {
     return "The list to values to use.";
+  }
+
+  /**
+   * Calculates the number of bits.
+   *
+   * @return		the number of bits
+   */
+  protected int calcNumBits(){
+    int range = getMaximum() - getMinimum();
+    return (int) (Math.floor(Utils.log2(range)) + 1);
+  }
+
+  /**
+   * Returns the number of required bits.
+   *
+   * @return		the number of bits
+   */
+  public int getNumBits() {
+    return calcNumBits();
+  }
+
+  /**
+   * Returns the integer value from the property container.
+   *
+   * @param cont	the container
+   * @return		the value
+   */
+  protected abstract int getValue(PropertyContainer cont);
+
+  /**
+   * Returns the packed bits for the genetic algorithm.
+   *
+   * @param cont	the container to obtain the value from to turn into a string
+   * @return		the bits
+   */
+  @Override
+  protected String doPack(PropertyContainer cont) {
+    int		value;
+    int		index;
+    int		i;
+
+    value = getValue(cont);
+
+    switch (m_Type) {
+      case RANGE:
+	return GeneticHelper.intToBits(value, getMinimum(), getMaximum(), calcNumBits());
+
+      case LIST:
+	index = 0;
+	for (i = 0; i < m_List.length; i++) {
+	  if (m_List[i] == value) {
+	    index = i;
+	    break;
+	  }
+	}
+	return GeneticHelper.intToBits(index, 0, m_List.length, calcNumBits());
+
+      default:
+	throw new IllegalStateException("Unhandled numeric value type: " + m_Type);
+    }
+  }
+
+  /**
+   * Sets the integer value in the property container.
+   *
+   * @param cont	the container
+   * @param value	the value to set
+   */
+  protected abstract void setValue(PropertyContainer cont, int value);
+
+  /**
+   * Unpacks and applies the bits from the genetic algorithm.
+   *
+   * @param cont	the container to set the value for created from the string
+   * @param bits	the bits to use
+   */
+  @Override
+  protected void doUnpack(PropertyContainer cont, String bits) {
+    int 	index;
+
+    switch (m_Type) {
+      case RANGE:
+	setValue(cont, GeneticHelper.bitsToInt(bits, getMinimum(), getMaximum()));
+	break;
+
+      case LIST:
+	index = GeneticHelper.bitsToInt(bits, 0, m_List.length);
+	index = Math.max(0, index);
+	index = Math.min(m_List.length - 1, index);
+	setValue(cont, m_List[index]);
+	break;
+
+      default:
+	throw new IllegalStateException("Unhandled numeric value type: " + m_Type);
+    }
   }
 }

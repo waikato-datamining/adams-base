@@ -20,7 +20,7 @@
 package weka.filters.supervised.attribute;
 
 import adams.core.Utils;
-import adams.core.discovery.GeneticHelper;
+import adams.core.discovery.genetic.GeneticHelper;
 import weka.core.Instances;
 import weka.core.WekaOptionUtils;
 import weka.core.matrix.Matrix;

@@ -18,8 +18,9 @@
  * Copyright (C) 2015 University of Waikato, Hamilton, NZ
  */
 
-package adams.core.discovery;
+package adams.core.discovery.genetic;
 
+import adams.core.discovery.AbstractDiscoveryHandler;
 import adams.core.discovery.PropertyPath.PropertyContainer;
 import adams.core.option.OptionUtils;
 import adams.opt.genetic.AbstractGeneticAlgorithm;

@@ -8,8 +8,8 @@
 # Version: $Revision$
 
 # the genetic object discovery handlers
-adams.core.discovery.AbstractGeneticDiscoveryHandler=\
-  adams.core.discovery
+adams.core.discovery.genetic.AbstractGeneticDiscoveryHandler=\
+  adams.core.discovery.genetic
 
 # the genetic algorithms for classifiers
 adams.opt.genetic.AbstractClassifierBasedGeneticAlgorithm=\

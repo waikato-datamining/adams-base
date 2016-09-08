@@ -21,7 +21,7 @@
 package adams.opt.genetic;
 
 import adams.core.Properties;
-import adams.core.discovery.AbstractGeneticDiscoveryHandler;
+import adams.core.discovery.genetic.AbstractGeneticDiscoveryHandler;
 import adams.core.discovery.DefaultPropertyDiscovery;
 import adams.core.discovery.PropertyPath;
 import adams.core.discovery.PropertyPath.PropertyContainer;

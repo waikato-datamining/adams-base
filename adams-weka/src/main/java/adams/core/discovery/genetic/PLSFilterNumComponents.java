@@ -14,25 +14,26 @@
  */
 
 /**
- * GPDGamma.java
+ * PLSFilterNumComponents.java
  * Copyright (C) 2015 University of Waikato, Hamilton, NZ
  */
 
-package adams.core.discovery;
+package adams.core.discovery.genetic;
 
 import adams.core.discovery.PropertyPath.PropertyContainer;
-import weka.classifiers.functions.GPD;
+import weka.filters.supervised.attribute.PLSFilter;
 
 /**
- * GPD gamma handler.
+ * SavitzkyGolay numPoints handler.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class GPDGamma
-  extends AbstractGeneticDoubleDiscoveryHandlerResolution {
+public class PLSFilterNumComponents
+  extends AbstractGeneticIntegerDiscoveryHandler {
 
-  private static final long serialVersionUID = 9168998412950337023L;
+
+  private static final long serialVersionUID = 6077250097532777489L;
 
   /**
    * Returns a string describing the object.
@@ -41,17 +42,7 @@ public class GPDGamma
    */
   @Override
   public String globalInfo() {
-    return "Handles the gamma parameter of the GPD.";
-  }
-
-  /**
-   * Returns the default splits.
-   *
-   * @return		the default
-   */
-  @Override
-  protected int getDefaultSplits() {
-    return 4;
+    return "Handles the numPoints parameter of the PLSFilter filter.";
   }
 
   /**
@@ -60,8 +51,8 @@ public class GPDGamma
    * @return		the default
    */
   @Override
-  protected double getDefaultMinimum() {
-    return 0.01;
+  protected int getDefaultMinimum() {
+    return 5;
   }
 
   /**
@@ -70,8 +61,8 @@ public class GPDGamma
    * @return		the default
    */
   @Override
-  protected double getDefaultMaximum() {
-    return 0.04;
+  protected int getDefaultMaximum() {
+    return 30;
   }
 
   /**
@@ -80,27 +71,27 @@ public class GPDGamma
    * @return		the default
    */
   protected String getDefaultList() {
-    return "0.01 0.02 0.03 0.04";
+    return "5 10 15";
   }
 
   /**
-   * Returns the double value from the property container.
+   * Returns the integer value from the property container.
    *
    * @param cont	the container
    * @return		the value
    */
-  protected double getValue(PropertyContainer cont) {
-    return ((GPD) cont.getObject()).getGamma();
+  protected int getValue(PropertyContainer cont) {
+    return ((PLSFilter) cont.getObject()).getNumComponents();
   }
 
   /**
-   * Sets the double value in the property container.
+   * Sets the integer value in the property container.
    *
    * @param cont	the container
    * @param value	the value to set
    */
-  protected void setValue(PropertyContainer cont, double value) {
-    ((GPD) cont.getObject()).setGamma(value);
+  protected void setValue(PropertyContainer cont, int value) {
+    ((PLSFilter) cont.getObject()).setNumComponents(value);
   }
 
   /**
@@ -111,6 +102,6 @@ public class GPDGamma
    */
   @Override
   protected boolean handles(Object obj) {
-    return (obj instanceof GPD);
+    return (obj instanceof PLSFilter);
   }
 }

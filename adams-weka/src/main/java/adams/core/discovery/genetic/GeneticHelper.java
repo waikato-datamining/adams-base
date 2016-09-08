@@ -18,7 +18,7 @@
  * Copyright (C) 2015 University of Waikato, Hamilton, NZ
  */
 
-package adams.core.discovery;
+package adams.core.discovery.genetic;
 
 import weka.core.matrix.Matrix;
 

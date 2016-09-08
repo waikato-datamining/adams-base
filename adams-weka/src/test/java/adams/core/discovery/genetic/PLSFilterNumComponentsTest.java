@@ -14,28 +14,31 @@
  */
 
 /**
- * GPDNoiseTest.java
+ * PLSFilterNumComponentsTest.java
  * Copyright (C) 2015 University of Waikato, Hamilton, NZ
  */
 
-package adams.core.discovery;
+package adams.core.discovery.genetic;
 
+import adams.core.discovery.AbstractDiscoveryHandler;
+import adams.core.discovery.PropertyDiscovery;
 import adams.core.discovery.PropertyPath.PropertyContainer;
 import adams.env.Environment;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import weka.classifiers.functions.GPD;
+import weka.classifiers.functions.PLSClassifier;
 import weka.classifiers.meta.FilteredClassifier;
 import weka.filters.AllFilter;
+import weka.filters.supervised.attribute.PLSFilter;
 
 /**
- * Tests the GPDNoise discovery handler. Use the following to run from command-line:<br>
- * adams.core.discovery.GPDNoiseTest
+ * Tests the PLSFilterNumComponents discovery handler. Use the following to run from command-line:<br>
+ * adams.core.discovery.PLSFilterNumComponentsTest
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class GPDNoiseTest
+public class PLSFilterNumComponentsTest
   extends AbstractGeneticDiscoveryHandlerTestCase {
 
   /**
@@ -43,7 +46,7 @@ public class GPDNoiseTest
    *
    * @param name the name of the test
    */
-  public GPDNoiseTest(String name) {
+  public PLSFilterNumComponentsTest(String name) {
     super(name);
   }
 
@@ -55,7 +58,7 @@ public class GPDNoiseTest
    */
   @Override
   protected AbstractGeneticDiscoveryHandler getPackUnpackHandler() {
-    return new GPDNoise();
+    return new PLSFilterNumComponents();
   }
 
   /**
@@ -67,7 +70,7 @@ public class GPDNoiseTest
   @Override
   protected PropertyContainer getPackUnpackContainer() {
     AbstractGeneticDiscoveryHandler	handler;
-    PropertyDiscovery			discovery;
+    PropertyDiscovery discovery;
 
     handler = getPackUnpackHandler();
     discovery = getDiscovery();
@@ -87,14 +90,14 @@ public class GPDNoiseTest
     FilteredClassifier 	outer;
 
     inner = new FilteredClassifier();
-    inner.setClassifier(new GPD());
+    inner.setClassifier(new PLSClassifier());
     inner.setFilter(new AllFilter());
 
     outer = new FilteredClassifier();
     outer.setClassifier(inner);
     outer.setFilter(new AllFilter());
 
-    return new Object[]{outer, new GPD()};
+    return new Object[]{outer, inner, new PLSFilter()};
   }
 
   /**
@@ -105,8 +108,9 @@ public class GPDNoiseTest
   @Override
   protected AbstractDiscoveryHandler[] getRegressionSetups() {
     return new AbstractDiscoveryHandler[] {
-      new GPDNoise(),
-      new GPDNoise(),
+      new PLSFilterNumComponents(),
+      new PLSFilterNumComponents(),
+      new PLSFilterNumComponents(),
     };
   }
 
@@ -116,7 +120,7 @@ public class GPDNoiseTest
    * @return		the suite
    */
   public static Test suite() {
-    return new TestSuite(GPDNoiseTest.class);
+    return new TestSuite(PLSFilterNumComponentsTest.class);
   }
 
   /**

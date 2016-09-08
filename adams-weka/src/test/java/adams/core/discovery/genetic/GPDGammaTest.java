@@ -14,12 +14,14 @@
  */
 
 /**
- * GenericDoubleResolutionTest.java
+ * GPDGammaTest.java
  * Copyright (C) 2015 University of Waikato, Hamilton, NZ
  */
 
-package adams.core.discovery;
+package adams.core.discovery.genetic;
 
+import adams.core.discovery.AbstractDiscoveryHandler;
+import adams.core.discovery.PropertyDiscovery;
 import adams.core.discovery.PropertyPath.PropertyContainer;
 import adams.env.Environment;
 import junit.framework.Test;
@@ -29,13 +31,13 @@ import weka.classifiers.meta.FilteredClassifier;
 import weka.filters.AllFilter;
 
 /**
- * Tests the GenericDoubleResolution discovery handler. Use the following to run from command-line:<br>
- * adams.core.discovery.GenericDoubleResolutionTest
+ * Tests the GPDGamma discovery handler. Use the following to run from command-line:<br>
+ * adams.core.discovery.GPDGammaTest
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class GenericDoubleResolutionTest
+public class GPDGammaTest
   extends AbstractGeneticDiscoveryHandlerTestCase {
 
   /**
@@ -43,7 +45,7 @@ public class GenericDoubleResolutionTest
    *
    * @param name the name of the test
    */
-  public GenericDoubleResolutionTest(String name) {
+  public GPDGammaTest(String name) {
     super(name);
   }
 
@@ -55,7 +57,7 @@ public class GenericDoubleResolutionTest
    */
   @Override
   protected AbstractGeneticDiscoveryHandler getPackUnpackHandler() {
-    return new GenericDoubleResolution();
+    return new GPDGamma();
   }
 
   /**
@@ -67,7 +69,7 @@ public class GenericDoubleResolutionTest
   @Override
   protected PropertyContainer getPackUnpackContainer() {
     AbstractGeneticDiscoveryHandler	handler;
-    PropertyDiscovery			discovery;
+    PropertyDiscovery discovery;
 
     handler = getPackUnpackHandler();
     discovery = getDiscovery();
@@ -105,8 +107,8 @@ public class GenericDoubleResolutionTest
   @Override
   protected AbstractDiscoveryHandler[] getRegressionSetups() {
     return new AbstractDiscoveryHandler[] {
-      new GenericDoubleResolution(),
-      new GenericDoubleResolution(),
+      new GPDGamma(),
+      new GPDGamma(),
     };
   }
 
@@ -116,7 +118,7 @@ public class GenericDoubleResolutionTest
    * @return		the suite
    */
   public static Test suite() {
-    return new TestSuite(GenericDoubleResolutionTest.class);
+    return new TestSuite(GPDGammaTest.class);
   }
 
   /**

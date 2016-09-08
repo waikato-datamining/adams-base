@@ -18,8 +18,10 @@
  * Copyright (C) 2015 University of Waikato, Hamilton, NZ
  */
 
-package adams.core.discovery;
+package adams.core.discovery.genetic;
 
+import adams.core.discovery.AbstractDiscoveryHandler;
+import adams.core.discovery.PropertyDiscovery;
 import adams.core.discovery.PropertyPath.PropertyContainer;
 import adams.env.Environment;
 import junit.framework.Test;
@@ -67,7 +69,7 @@ public class SavitzkyGolay2NumPointsTest
   @Override
   protected PropertyContainer getPackUnpackContainer() {
     AbstractGeneticDiscoveryHandler	handler;
-    PropertyDiscovery			discovery;
+    PropertyDiscovery discovery;
 
     handler = getPackUnpackHandler();
     discovery = getDiscovery();

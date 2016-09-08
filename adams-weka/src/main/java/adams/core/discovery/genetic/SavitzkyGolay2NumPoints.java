@@ -14,23 +14,23 @@
  */
 
 /**
- * GPDNoise.java
+ * SavitzkyGolay2NumPoints.java
  * Copyright (C) 2015 University of Waikato, Hamilton, NZ
  */
 
-package adams.core.discovery;
+package adams.core.discovery.genetic;
 
 import adams.core.discovery.PropertyPath.PropertyContainer;
-import weka.classifiers.functions.GPD;
+import weka.filters.unsupervised.attribute.SavitzkyGolay2;
 
 /**
- * GPD noise handler.
+ * SavitzkyGolay numPoints handler.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class GPDNoise
-  extends AbstractGeneticDoubleDiscoveryHandlerResolution {
+public class SavitzkyGolay2NumPoints
+  extends AbstractGeneticIntegerDiscoveryHandler {
 
   private static final long serialVersionUID = 9168998412950337023L;
 
@@ -41,17 +41,7 @@ public class GPDNoise
    */
   @Override
   public String globalInfo() {
-    return "Handles the noise parameter of the GPD.";
-  }
-
-  /**
-   * Returns the default splits.
-   *
-   * @return		the default
-   */
-  @Override
-  protected int getDefaultSplits() {
-    return 4;
+    return "Handles the numPoints parameter of the SavitzkyGolay2 filter.";
   }
 
   /**
@@ -60,8 +50,8 @@ public class GPDNoise
    * @return		the default
    */
   @Override
-  protected double getDefaultMinimum() {
-    return 0.01;
+  protected int getDefaultMinimum() {
+    return 1;
   }
 
   /**
@@ -70,8 +60,8 @@ public class GPDNoise
    * @return		the default
    */
   @Override
-  protected double getDefaultMaximum() {
-    return 0.04;
+  protected int getDefaultMaximum() {
+    return 7;
   }
 
   /**
@@ -80,27 +70,27 @@ public class GPDNoise
    * @return		the default
    */
   protected String getDefaultList() {
-    return "0.01 0.02 0.03 0.04";
+    return "1 3 5 7";
   }
 
   /**
-   * Returns the double value from the property container.
+   * Returns the integer value from the property container.
    *
    * @param cont	the container
    * @return		the value
    */
-  protected double getValue(PropertyContainer cont) {
-    return ((GPD) cont.getObject()).getNoise();
+  protected int getValue(PropertyContainer cont) {
+    return ((SavitzkyGolay2) cont.getObject()).getNumPoints();
   }
 
   /**
-   * Sets the double value in the property container.
+   * Sets the integer value in the property container.
    *
    * @param cont	the container
    * @param value	the value to set
    */
-  protected void setValue(PropertyContainer cont, double value) {
-    ((GPD) cont.getObject()).setNoise(value);
+  protected void setValue(PropertyContainer cont, int value) {
+    ((SavitzkyGolay2) cont.getObject()).setNumPoints(value);
   }
 
   /**
@@ -111,6 +101,6 @@ public class GPDNoise
    */
   @Override
   protected boolean handles(Object obj) {
-    return (obj instanceof GPD);
+    return (obj instanceof SavitzkyGolay2);
   }
 }

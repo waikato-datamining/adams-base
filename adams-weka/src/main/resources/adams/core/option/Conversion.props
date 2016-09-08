@@ -6,8 +6,22 @@
 # Lists the keys that contain classname mappings.
 # This is used to ensure a minimal backwards compatibility, in case classes
 # get renamed.
-Rename=
+Rename=\
+  Rename-GenericDoubleResolution,\
+  Rename-GenericInteger,\
+  Rename-GPDGamma,\
+  Rename-GPDNoise,\
+  Rename-PLSFilterNumComponents,\
+  Rename-SavitzkyGolay2NumPoints,\
+  Rename-SIMPLSWeightsMatrix
 
 # general format for classname mappings ("rename"):
 # <key>=<old classname>-<new classname>
 #Rename-sink_filewriter=adams.flow.sink.FileWriter-adams.flow.sink.WekaFileWriter
+Rename-GenericDoubleResolution=adams.core.discovery.GenericDoubleResolution-adams.core.discovery.genetic.GenericDoubleResolution
+Rename-GenericInteger=adams.core.discovery.GenericInteger-adams.core.discovery.genetic.GenericInteger
+Rename-GPDGamma=adams.core.discovery.GPDGamma-adams.core.discovery.genetic.GPDGamma
+Rename-GPDNoise=adams.core.discovery.GPDNoise-adams.core.discovery.genetic.GPDNoise
+Rename-PLSFilterNumComponents=adams.core.discovery.PLSFilterNumComponents-adams.core.discovery.genetic.PLSFilterNumComponents
+Rename-SavitzkyGolay2NumPoints=adams.core.discovery.SavitzkyGolay2NumPoints-adams.core.discovery.genetic.SavitzkyGolay2NumPoints
+Rename-SIMPLSWeightsMatrix=adams.core.discovery.SIMPLSWeightsMatrix-adams.core.discovery.genetic.SIMPLSWeightsMatrix

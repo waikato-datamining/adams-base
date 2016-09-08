@@ -14,12 +14,14 @@
  */
 
 /**
- * PLSFilterNumComponentsTest.java
+ * GenericIntegerTest.java
  * Copyright (C) 2015 University of Waikato, Hamilton, NZ
  */
 
-package adams.core.discovery;
+package adams.core.discovery.genetic;
 
+import adams.core.discovery.AbstractDiscoveryHandler;
+import adams.core.discovery.PropertyDiscovery;
 import adams.core.discovery.PropertyPath.PropertyContainer;
 import adams.env.Environment;
 import junit.framework.Test;
@@ -30,13 +32,13 @@ import weka.filters.AllFilter;
 import weka.filters.supervised.attribute.PLSFilter;
 
 /**
- * Tests the PLSFilterNumComponents discovery handler. Use the following to run from command-line:<br>
- * adams.core.discovery.PLSFilterNumComponentsTest
+ * Tests the GenericInteger discovery handler. Use the following to run from command-line:<br>
+ * adams.core.discovery.GenericIntegerTest
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class PLSFilterNumComponentsTest
+public class GenericIntegerTest
   extends AbstractGeneticDiscoveryHandlerTestCase {
 
   /**
@@ -44,7 +46,7 @@ public class PLSFilterNumComponentsTest
    *
    * @param name the name of the test
    */
-  public PLSFilterNumComponentsTest(String name) {
+  public GenericIntegerTest(String name) {
     super(name);
   }
 
@@ -56,7 +58,7 @@ public class PLSFilterNumComponentsTest
    */
   @Override
   protected AbstractGeneticDiscoveryHandler getPackUnpackHandler() {
-    return new PLSFilterNumComponents();
+    return new GenericInteger();
   }
 
   /**
@@ -68,7 +70,7 @@ public class PLSFilterNumComponentsTest
   @Override
   protected PropertyContainer getPackUnpackContainer() {
     AbstractGeneticDiscoveryHandler	handler;
-    PropertyDiscovery			discovery;
+    PropertyDiscovery discovery;
 
     handler = getPackUnpackHandler();
     discovery = getDiscovery();
@@ -106,9 +108,9 @@ public class PLSFilterNumComponentsTest
   @Override
   protected AbstractDiscoveryHandler[] getRegressionSetups() {
     return new AbstractDiscoveryHandler[] {
-      new PLSFilterNumComponents(),
-      new PLSFilterNumComponents(),
-      new PLSFilterNumComponents(),
+      new GenericInteger(),
+      new GenericInteger(),
+      new GenericInteger(),
     };
   }
 
@@ -118,7 +120,7 @@ public class PLSFilterNumComponentsTest
    * @return		the suite
    */
   public static Test suite() {
-    return new TestSuite(PLSFilterNumComponentsTest.class);
+    return new TestSuite(GenericIntegerTest.class);
   }
 
   /**

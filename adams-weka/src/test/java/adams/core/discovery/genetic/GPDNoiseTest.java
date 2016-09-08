@@ -14,29 +14,30 @@
  */
 
 /**
- * GenericIntegerTest.java
+ * GPDNoiseTest.java
  * Copyright (C) 2015 University of Waikato, Hamilton, NZ
  */
 
-package adams.core.discovery;
+package adams.core.discovery.genetic;
 
+import adams.core.discovery.AbstractDiscoveryHandler;
+import adams.core.discovery.PropertyDiscovery;
 import adams.core.discovery.PropertyPath.PropertyContainer;
 import adams.env.Environment;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import weka.classifiers.functions.PLSClassifier;
+import weka.classifiers.functions.GPD;
 import weka.classifiers.meta.FilteredClassifier;
 import weka.filters.AllFilter;
-import weka.filters.supervised.attribute.PLSFilter;
 
 /**
- * Tests the GenericInteger discovery handler. Use the following to run from command-line:<br>
- * adams.core.discovery.GenericIntegerTest
+ * Tests the GPDNoise discovery handler. Use the following to run from command-line:<br>
+ * adams.core.discovery.GPDNoiseTest
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class GenericIntegerTest
+public class GPDNoiseTest
   extends AbstractGeneticDiscoveryHandlerTestCase {
 
   /**
@@ -44,7 +45,7 @@ public class GenericIntegerTest
    *
    * @param name the name of the test
    */
-  public GenericIntegerTest(String name) {
+  public GPDNoiseTest(String name) {
     super(name);
   }
 
@@ -56,7 +57,7 @@ public class GenericIntegerTest
    */
   @Override
   protected AbstractGeneticDiscoveryHandler getPackUnpackHandler() {
-    return new GenericInteger();
+    return new GPDNoise();
   }
 
   /**
@@ -68,7 +69,7 @@ public class GenericIntegerTest
   @Override
   protected PropertyContainer getPackUnpackContainer() {
     AbstractGeneticDiscoveryHandler	handler;
-    PropertyDiscovery			discovery;
+    PropertyDiscovery discovery;
 
     handler = getPackUnpackHandler();
     discovery = getDiscovery();
@@ -88,14 +89,14 @@ public class GenericIntegerTest
     FilteredClassifier 	outer;
 
     inner = new FilteredClassifier();
-    inner.setClassifier(new PLSClassifier());
+    inner.setClassifier(new GPD());
     inner.setFilter(new AllFilter());
 
     outer = new FilteredClassifier();
     outer.setClassifier(inner);
     outer.setFilter(new AllFilter());
 
-    return new Object[]{outer, inner, new PLSFilter()};
+    return new Object[]{outer, new GPD()};
   }
 
   /**
@@ -106,9 +107,8 @@ public class GenericIntegerTest
   @Override
   protected AbstractDiscoveryHandler[] getRegressionSetups() {
     return new AbstractDiscoveryHandler[] {
-      new GenericInteger(),
-      new GenericInteger(),
-      new GenericInteger(),
+      new GPDNoise(),
+      new GPDNoise(),
     };
   }
 
@@ -118,7 +118,7 @@ public class GenericIntegerTest
    * @return		the suite
    */
   public static Test suite() {
-    return new TestSuite(GenericIntegerTest.class);
+    return new TestSuite(GPDNoiseTest.class);
   }
 
   /**

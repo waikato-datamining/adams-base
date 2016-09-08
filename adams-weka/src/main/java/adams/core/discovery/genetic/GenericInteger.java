@@ -14,30 +14,31 @@
  */
 
 /**
- * GenericDoubleResolution.java
+ * GenericInteger.java
  * Copyright (C) 2015 University of Waikato, Hamilton, NZ
  */
 
-package adams.core.discovery;
+package adams.core.discovery.genetic;
 
 import adams.core.ClassLocator;
 import adams.core.base.BaseClassname;
+import adams.core.discovery.IntrospectionHelper;
 import adams.core.discovery.IntrospectionHelper.IntrospectionContainer;
 import adams.core.discovery.PropertyPath.PropertyContainer;
-import weka.classifiers.functions.GPD;
+import weka.filters.supervised.attribute.PLSFilter;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
 import java.util.logging.Level;
 
 /**
- * Generic handler for double properties (using resolution).
+ * Generic handler for integer properties.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class GenericDoubleResolution
-  extends AbstractGeneticDoubleDiscoveryHandlerResolution {
+public class GenericInteger
+  extends AbstractGeneticIntegerDiscoveryHandler {
 
   private static final long serialVersionUID = 9168998412950337023L;
 
@@ -60,7 +61,7 @@ public class GenericDoubleResolution
    */
   @Override
   public String globalInfo() {
-    return "Generic handler for double properties (using resolution).";
+    return "Generic handler for integer properties.";
   }
 
   /**
@@ -88,23 +89,13 @@ public class GenericDoubleResolution
   }
 
   /**
-   * Returns the default splits.
-   *
-   * @return		the default
-   */
-  @Override
-  protected int getDefaultSplits() {
-    return 4;
-  }
-
-  /**
    * Returns the default minimum.
    *
    * @return		the default
    */
   @Override
-  protected double getDefaultMinimum() {
-    return 0.01;
+  protected int getDefaultMinimum() {
+    return 5;
   }
 
   /**
@@ -113,8 +104,8 @@ public class GenericDoubleResolution
    * @return		the default
    */
   @Override
-  protected double getDefaultMaximum() {
-    return 0.04;
+  protected int getDefaultMaximum() {
+    return 30;
   }
 
   /**
@@ -123,7 +114,7 @@ public class GenericDoubleResolution
    * @return		the default
    */
   protected String getDefaultList() {
-    return "0.01 0.02 0.03 0.04";
+    return "5 10 15";
   }
 
   /**
@@ -132,7 +123,7 @@ public class GenericDoubleResolution
    * @return		the default
    */
   protected BaseClassname getDefaultClassname() {
-    return new BaseClassname(GPD.class);
+    return new BaseClassname(PLSFilter.class);
   }
 
   /**
@@ -170,7 +161,7 @@ public class GenericDoubleResolution
    * @return		the default
    */
   protected String getDefaultProperty() {
-    return "gamma";
+    return "numComponents";
   }
 
   /**
@@ -251,21 +242,21 @@ public class GenericDoubleResolution
    * @param cont	the container
    * @return		the value
    */
-  protected double getValue(PropertyContainer cont) {
-    Double		result;
+  protected int getValue(PropertyContainer cont) {
+    Integer		result;
     PropertyDescriptor	pd;
     Method		method;
 
     pd     = getPropertyDescriptor();
     method = pd.getReadMethod();
     try {
-      result = (Double) method.invoke(cont.getObject());
+      result = (Integer) method.invoke(cont.getObject());
       if (result == null)
 	throw new IllegalStateException("Property '" + m_Property + "' of class '" + m_Classname + "' returned null!");
     }
     catch (Exception e) {
       getLogger().log(Level.SEVERE, "Failed to get value from property '" + m_Property + "' of class '" + m_Classname + "'!", e);
-      result = Double.NaN;
+      result = Integer.MAX_VALUE;
     }
 
     return result;
@@ -277,7 +268,7 @@ public class GenericDoubleResolution
    * @param cont	the container
    * @param value	the value to set
    */
-  protected void setValue(PropertyContainer cont, double value) {
+  protected void setValue(PropertyContainer cont, int value) {
     PropertyDescriptor	pd;
     Method		method;
 
