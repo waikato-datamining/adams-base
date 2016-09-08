@@ -19,19 +19,27 @@
  */
 package adams.gui.tools.wekamultiexperimenter.setup;
 
+import adams.core.Utils;
 import adams.core.option.OptionUtils;
 import adams.gui.core.BaseListWithButtons;
 import adams.gui.core.ConsolePanel;
+import adams.gui.core.GUIHelper;
+import adams.gui.core.MouseUtils;
 import adams.gui.goe.WekaGenericObjectEditorPanel;
+import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 import weka.classifiers.Classifier;
 import weka.classifiers.rules.ZeroR;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 import javax.swing.event.ListSelectionEvent;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.Arrays;
 import java.util.logging.Level;
 
@@ -160,6 +168,18 @@ public class ClassifierPanel
     m_List.setDoubleClickButton(m_ButtonEdit);
     
     m_List.addListSelectionListener((ListSelectionEvent e) -> update());
+
+    m_List.getComponent().addMouseListener(new MouseAdapter() {
+      @Override
+      public void mouseClicked(MouseEvent e) {
+        if (MouseUtils.isRightClick(e)) {
+          showListPopup(e);
+          e.consume();
+        }
+        if (!e.isConsumed())
+          super.mouseClicked(e);
+      }
+    });
   }
   
   /**
@@ -182,6 +202,43 @@ public class ClassifierPanel
     m_ButtonRemoveAll.setEnabled(m_Model.getSize() > 0);
     m_ButtonUp.setEnabled(m_List.canMoveUp());
     m_ButtonDown.setEnabled(m_List.canMoveDown());
+  }
+
+  /**
+   * Displays the popup for the list.
+   *
+   * @param e		the mouse event
+   */
+  protected void showListPopup(MouseEvent e) {
+    JPopupMenu	menu;
+    JMenuItem	menuitem;
+
+    menu = new JPopupMenu();
+
+    menuitem = new JMenuItem("Copy");
+    menuitem.setEnabled(m_List.getSelectedIndices().length == 1);
+    menuitem.addActionListener((ActionEvent ae) ->
+      ClipboardHelper.copyToClipboard(m_Model.get(m_List.getSelectedIndex())));
+    menu.add(menuitem);
+
+    menuitem = new JMenuItem("Replace with...");
+    menuitem.setEnabled(m_List.getSelectedIndices().length == 1);
+    menuitem.addActionListener((ActionEvent ae) -> {
+      String input = GUIHelper.showInputDialog(ClassifierPanel.this, "Please enter classifier setup");
+      if (input == null)
+	return;
+      try {
+	OptionUtils.forAnyCommandLine(Classifier.class, input);
+	m_Model.set(m_List.getSelectedIndex(), input);
+      }
+      catch (Exception ex) {
+	GUIHelper.showErrorMessage(
+	  ClassifierPanel.this, "Not a valid classifier setup!\n" + Utils.throwableToString(ex));
+      }
+    });
+    menu.add(menuitem);
+
+    menu.show(m_List, e.getX(), e.getY());
   }
   
   /**
