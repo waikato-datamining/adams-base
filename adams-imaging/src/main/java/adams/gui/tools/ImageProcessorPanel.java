@@ -127,7 +127,7 @@ public class ImageProcessorPanel
     setLayout(new BorderLayout());
     
     m_TabbedPane = new ImageProcessorTabbedPane(this);
-    m_TabbedPane.setCloseTabsWithMiddelMouseButton(true);
+    m_TabbedPane.setCloseTabsWithMiddleMouseButton(true);
     m_TabbedPane.addChangeListener(new ChangeListener() {
       public void stateChanged(ChangeEvent e) {
 	update();

@@ -53,7 +53,7 @@ public class InvestigatorTabbedPane
 
     m_Owner = owner;
 
-    setCloseTabsWithMiddelMouseButton(true);
+    setCloseTabsWithMiddleMouseButton(true);
     setShowCloseTabButton(true);
   }
 

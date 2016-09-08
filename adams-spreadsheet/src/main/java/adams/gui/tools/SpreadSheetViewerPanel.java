@@ -255,7 +255,7 @@ public class SpreadSheetViewerPanel
     add(m_SplitPane, BorderLayout.CENTER);
     
     m_TabbedPane = new TabbedPane(this);
-    m_TabbedPane.setCloseTabsWithMiddelMouseButton(true);
+    m_TabbedPane.setCloseTabsWithMiddleMouseButton(true);
     m_SplitPane.setLeftComponent(m_TabbedPane);
     
     m_ViewerTabs = new ViewerTabManager(this);

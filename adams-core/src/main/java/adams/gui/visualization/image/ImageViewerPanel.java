@@ -211,7 +211,7 @@ public class ImageViewerPanel
     setLayout(new BorderLayout());
 
     m_TabbedPane = new ImageTabbedPane(this);
-    m_TabbedPane.setCloseTabsWithMiddelMouseButton(true);
+    m_TabbedPane.setCloseTabsWithMiddleMouseButton(true);
     m_TabbedPane.addChangeListener(new ChangeListener() {
       public void stateChanged(ChangeEvent e) {
 	if (getCurrentPanel() != null)

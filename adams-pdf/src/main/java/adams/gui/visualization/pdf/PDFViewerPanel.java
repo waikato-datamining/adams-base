@@ -156,7 +156,7 @@ public class PDFViewerPanel
     setLayout(new BorderLayout());
 
     m_TabbedPane = new TabbedPane();
-    m_TabbedPane.setCloseTabsWithMiddelMouseButton(true);
+    m_TabbedPane.setCloseTabsWithMiddleMouseButton(true);
     add(m_TabbedPane, BorderLayout.CENTER);
   }
 

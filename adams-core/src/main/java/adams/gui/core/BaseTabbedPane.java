@@ -197,7 +197,7 @@ public class BaseTabbedPane
    * @param value	if true then users can close tabs with the middle mouse button
    * @see		#canCloseTabWithMiddleMouseButton(int)
    */
-  public void setCloseTabsWithMiddelMouseButton(boolean value) {
+  public void setCloseTabsWithMiddleMouseButton(boolean value) {
     m_CloseTabsWithMiddleMouseButton = value;
   }
 

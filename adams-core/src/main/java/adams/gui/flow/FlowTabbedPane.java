@@ -63,7 +63,7 @@ public class FlowTabbedPane
 
     m_Owner = owner;
 
-    setCloseTabsWithMiddelMouseButton(true);
+    setCloseTabsWithMiddleMouseButton(true);
     setShowCloseTabButton(true);
     setMiddleMouseButtonCloseApprover((BaseTabbedPane source) -> {
       boolean	result = checkForModified();

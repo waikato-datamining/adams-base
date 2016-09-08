@@ -59,7 +59,7 @@ public abstract class AbstractResultItem
     m_Header     = header;
     m_TabbedPane = new OutputTabbedPane();
     m_TabbedPane.setShowCloseTabButton(true);
-    m_TabbedPane.setCloseTabsWithMiddelMouseButton(true);
+    m_TabbedPane.setCloseTabsWithMiddleMouseButton(false);
     m_Timestamp  = new Date();
     m_Name       = null;
   }

@@ -94,7 +94,7 @@ public class ViewerTabManager
 
     setPreferredSize(new Dimension(300, 0));
     
-    setCloseTabsWithMiddelMouseButton(false);
+    setCloseTabsWithMiddleMouseButton(false);
 
     tabs      = AbstractViewerTab.getTabs();
     m_TabList = new ArrayList<AbstractViewerTab>();

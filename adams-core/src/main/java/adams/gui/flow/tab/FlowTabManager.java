@@ -124,7 +124,7 @@ public class FlowTabManager
 
     super.initialize();
 
-    setCloseTabsWithMiddelMouseButton(false);
+    setCloseTabsWithMiddleMouseButton(false);
 
     tabs      = AbstractEditorTab.getTabs();
     m_TabList = new ArrayList<>();
