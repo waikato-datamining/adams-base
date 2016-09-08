@@ -22,6 +22,7 @@ package adams.gui.visualization.instances;
 
 import adams.core.Range;
 import adams.gui.chooser.WekaFileChooser;
+import adams.gui.core.BasePopupMenu;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.SortableAndSearchableTable;
 import adams.gui.core.UndoHandlerWithQuickAccess;
@@ -283,13 +284,25 @@ public class InstancesTable
    * @param e		the event
    */
   protected void showCellPopup(MouseEvent e) {
-    JPopupMenu			menu;
+    BasePopupMenu 	menu;
+
+    menu = createCellPopup(e);
+    menu.show(this, e.getX(), e.getY());
+  }
+
+  /**
+   * Shows a popup menu for the cells.
+   *
+   * @param e		the event
+   */
+  protected BasePopupMenu createCellPopup(MouseEvent e) {
+    BasePopupMenu 		menu;
     JMenuItem			menuitem;
     final int[]			selRows;
     final InstancesTableModel	instModel;
     final Range 		range;
 
-    menu      = new JPopupMenu();
+    menu      = new BasePopupMenu();
     selRows   = getSelectedRows();
     instModel = (InstancesTableModel) getUnsortedModel();
     range = new Range();
@@ -350,8 +363,6 @@ public class InstancesTable
     });
     menu.add(menuitem);
 
-    menu.show(this, e.getX(), e.getY());
+    return menu;
   }
-
-
 }
