@@ -42,7 +42,6 @@ import org.jblas.DoubleMatrix;
 import java.util.Arrays;
 import java.util.Random;
 import java.util.logging.Level;
-import java.util.stream.IntStream;
 
 /**
  * Ancestor for Cat Swarm Optimizations (CSO).
@@ -65,9 +64,6 @@ public abstract class AbstractCatSwarmOptimization
 
   /** the seed value. */
   protected long m_Seed;
-
-  /** whether to evaluate in parallel. */
-  protected boolean m_EvalParallel;
 
   /** the stopping criterion. */
   protected AbstractStoppingCriterion m_Stopping;
@@ -111,10 +107,6 @@ public abstract class AbstractCatSwarmOptimization
     m_OptionManager.add(
       "seed", "seed",
       42L);
-
-    m_OptionManager.add(
-      "eval-parallel", "evalParallel",
-      false);
 
     m_OptionManager.add(
       "stopping", "stopping",
@@ -239,35 +231,6 @@ public abstract class AbstractCatSwarmOptimization
   }
 
   /**
-   * Sets whether to evaluate in parallel.
-   *
-   * @param value	true if in parallel
-   */
-  public void setEvalParallel(boolean value) {
-    m_EvalParallel = value;
-    reset();
-  }
-
-  /**
-   * Returns  whether to evaluate in parallel.
-   *
-   * @return		true if in parallel
-   */
-  public boolean getEvalParallel() {
-    return m_EvalParallel;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String evalParallelTipText() {
-    return "The size of the swarm.";
-  }
-
-  /**
    * Sets the stopping criterion.
    *
    * @param value	the criterion
@@ -304,14 +267,6 @@ public abstract class AbstractCatSwarmOptimization
   public abstract DoubleMatrix randomParticle();
 
   /**
-   * Problem-specific fitness function
-   * -- expects a one-dimensional matrix
-   * -- returns a non-negative value where lower is better
-   * -- should be implemented for different problems
-   */
-  public abstract double particleFitness(DoubleMatrix particle);
-
-  /**
    * Returns the current iteration.
    *
    * @return		the iteration
@@ -331,11 +286,19 @@ public abstract class AbstractCatSwarmOptimization
   }
 
   /**
+   * Method to get the index of the best particle in the swarm
+   *
+   */
+  public int getBestIndex() {
+    return m_Fitnesses.rowArgmins()[0];
+  }
+
+  /**
    * Method to get the best particle in the swarm
    *
    */
   public DoubleMatrix getBest() {
-    int indexBest= m_Fitnesses.rowArgmins()[0];
+    int indexBest = getBestIndex();
     return m_Positions.getRow(indexBest);
   }
 
@@ -445,18 +408,20 @@ public abstract class AbstractCatSwarmOptimization
   }
 
   /**
-   * Helper methods to evaluate all or part of the swarm,
-   * either in serial or parallel, used by run()
+   * Updates the fitness of the specified swarm member.
+   *
+   * @param index	the index of the member
+   * @param fitness	the calculated fitness
+   */
+  public void updateFitness(int index, double fitness) {
+    m_Fitnesses.put(0, index, fitness);
+  }
+
+  /**
+   * Helper methods to evaluate all or part of the swarm.
    *
    */
-  protected void evalSwarm(int[] indices) {
-    IntStream indicesStream=Arrays.stream(indices);
-    if (m_EvalParallel)
-      indicesStream=indicesStream.parallel();
-    indicesStream.forEach((index)->{
-      m_Fitnesses.put(0,index,particleFitness(m_Positions.getRow(index)));
-    });
-  }
+  protected abstract void evalSwarm(int[] indices);
 
   /**
    * Evalutaes the swarm.
@@ -571,16 +536,17 @@ public abstract class AbstractCatSwarmOptimization
   /**
    * Gets called after the optimization finishes.
    *
+   * @param index	the index of the best result, if any
    * @param best	the best result, if any
    * @return		the (potentially) updated best result
    */
-  protected DoubleMatrix postRun(DoubleMatrix best) {
+  protected DoubleMatrix postRun(int index, DoubleMatrix best) {
     // Report on final swarm
     getLogger().info(reportString());
 
     // Report best solution
     getLogger().info("best particle:\n" + best);
-    getLogger().info("best fitness:\n" + particleFitness(best));
+    getLogger().info("best fitness:\n" + m_Fitnesses.get(index));
 
     return best;
   }
@@ -593,12 +559,16 @@ public abstract class AbstractCatSwarmOptimization
    */
   public DoubleMatrix run() {
     DoubleMatrix	result;
+    int			index;
 
     preRun();
 
     result = doRun();
+    index  = -1;
+    if (result != null)
+      index = getBestIndex();
 
-    return postRun(result);
+    return postRun(index, result);
   }
 
   /**

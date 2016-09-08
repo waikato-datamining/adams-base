@@ -14,7 +14,7 @@
  */
 
 /**
- * RastriginProblem.java
+ * RastriginProblemSimple.java
  * Copyright (C) 2016 University of Waikato, Hamilton, NZ
  */
 
@@ -25,17 +25,71 @@ import org.jblas.DoubleMatrix;
 
 /**
  <!-- globalinfo-start -->
+ * Rastrigin problem<br>
+ * <br>
+ * For more information see:<br>
+ * https:&#47;&#47;en.wikipedia.org&#47;wiki&#47;Rastrigin_function
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
+ * </pre>
+ * 
+ * <pre>-swarm-size &lt;int&gt; (property: swarmSize)
+ * &nbsp;&nbsp;&nbsp;The size of the swarm.
+ * &nbsp;&nbsp;&nbsp;default: 1000
+ * &nbsp;&nbsp;&nbsp;minimum: 1
+ * </pre>
+ * 
+ * <pre>-phi &lt;double&gt; (property: phi)
+ * &nbsp;&nbsp;&nbsp;The phi parameter.
+ * &nbsp;&nbsp;&nbsp;default: 0.1
+ * &nbsp;&nbsp;&nbsp;minimum: 0.0
+ * &nbsp;&nbsp;&nbsp;maximum: 1.0
+ * </pre>
+ * 
+ * <pre>-seed &lt;long&gt; (property: seed)
+ * &nbsp;&nbsp;&nbsp;The seed value for randomization.
+ * &nbsp;&nbsp;&nbsp;default: 42
+ * </pre>
+ * 
+ * <pre>-stopping &lt;adams.opt.cso.stopping.AbstractStoppingCriterion&gt; (property: stopping)
+ * &nbsp;&nbsp;&nbsp;The criterion for stopping.
+ * &nbsp;&nbsp;&nbsp;default: adams.opt.cso.stopping.MaxTrainTime
+ * </pre>
+ * 
+ * <pre>-eval-parallel &lt;boolean&gt; (property: evalParallel)
+ * &nbsp;&nbsp;&nbsp;If enabled, the evaluation happens in parallel.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-prob-dimensions &lt;int&gt; (property: probDimensions)
+ * &nbsp;&nbsp;&nbsp;The problem dimensions.
+ * &nbsp;&nbsp;&nbsp;default: 30
+ * &nbsp;&nbsp;&nbsp;minimum: 1
+ * </pre>
+ * 
+ * <pre>-prob-min-value &lt;double&gt; (property: probMinValue)
+ * &nbsp;&nbsp;&nbsp;The minimum value for the problem.
+ * &nbsp;&nbsp;&nbsp;default: -5.12
+ * </pre>
+ * 
+ * <pre>-prob-max-value &lt;double&gt; (property: probMaxValue)
+ * &nbsp;&nbsp;&nbsp;The maximum value for the problem.
+ * &nbsp;&nbsp;&nbsp;default: 5.12
+ * </pre>
+ * 
  <!-- options-end -->
  *
  * @author Mike Mayo (mmayo at waikato dot ac dot nz) - original code
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class RastriginProblem
-  extends AbstractCatSwarmOptimization {
+public class RastriginProblemSimple
+  extends AbstractSimpleCatSwarmOptimization {
 
   private static final long serialVersionUID = 770726498906964673L;
 
@@ -208,6 +262,6 @@ public class RastriginProblem
    *
    */
   public static void main(String[] args) {
-    runSwarm(Environment.class, RastriginProblem.class, args);
+    runSwarm(Environment.class, RastriginProblemSimple.class, args);
   }
 }
