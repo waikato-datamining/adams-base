@@ -15,7 +15,7 @@
 
 /*
  * RegExpTest.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -26,6 +26,7 @@ import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.AbstractBasicMenuItemDefinition;
 import adams.gui.application.UserMode;
 import adams.gui.core.BasePanel;
+import adams.gui.core.BaseTabbedPane;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.ParameterPanel;
 import adams.gui.core.RegExpTextField;
@@ -37,7 +38,6 @@ import javax.swing.JTextField;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 /**
  * Only for testing the regular expressions.
@@ -72,77 +72,114 @@ public class RegExpTest
    */
   public void launch() {
     final BasePanel 		panel;
+    BasePanel			panelTab;
+    BaseTabbedPane		tabbedPane;
     JPanel			panelButtons;
+    JPanel			panelButtonsAll;
     ParameterPanel		panelParams;
-    final JTextField		fieldInput;
-    final RegExpTextField	fieldFind;
-    final JTextField		fieldReplace;
-    final JCheckBox 		checkboxLowerCase;
-    final JCheckBox 		checkboxAll;
-    final JTextField		fieldOutput;
+    final JTextField 		fieldReplaceInput;
+    final RegExpTextField 	fieldReplaceFind;
+    final JTextField 		fieldReplaceReplace;
+    final JCheckBox 		checkboxReplaceLowerCase;
+    final JCheckBox 		checkboxReplaceAll;
+    final JTextField 		fieldReplaceOutput;
+    final JTextField 		fieldMatchInput;
+    final RegExpTextField fieldMatchExp;
+    final JCheckBox 		checkboxMatchLowerCase;
+    final JTextField 		fieldMatchOutput;
     JButton			buttonTest;
     JButton			buttonClose;
 
     panel = new BasePanel(new BorderLayout());
 
+    tabbedPane = new BaseTabbedPane();
+    panel.add(tabbedPane, BorderLayout.CENTER);
+
+    panelButtonsAll = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+    buttonClose = new JButton("Close");
+    buttonClose.setMnemonic('l');
+    buttonClose.addActionListener((ActionEvent e) -> panel.closeParent());
+    panelButtonsAll.add(buttonClose);
+    panel.add(panelButtonsAll, BorderLayout.SOUTH);
+
+    // replace
+    panelTab = new BasePanel(new BorderLayout());
+    tabbedPane.addTab("Replace", panelTab);
+
     panelParams = new ParameterPanel();
-    fieldInput = new JTextField(30);
-    panelParams.addParameter("Input", fieldInput);
-    fieldFind = new RegExpTextField();
-    panelParams.addParameter("Find", fieldFind);
-    fieldReplace = new JTextField();
-    panelParams.addParameter("Replace", fieldReplace);
-    checkboxLowerCase = new JCheckBox();
-    panelParams.addParameter("Use lower case", checkboxLowerCase);
-    checkboxAll = new JCheckBox();
-    checkboxAll.setSelected(true);
-    panelParams.addParameter("Replace all", checkboxAll);
-    fieldOutput = new JTextField(30);
-    panelParams.addParameter("Output", fieldOutput);
-    panel.add(panelParams, BorderLayout.CENTER);
+    fieldReplaceInput = new JTextField(30);
+    panelParams.addParameter("Input", fieldReplaceInput);
+    fieldReplaceFind = new RegExpTextField();
+    panelParams.addParameter("Find", fieldReplaceFind);
+    fieldReplaceReplace = new JTextField();
+    panelParams.addParameter("Replace", fieldReplaceReplace);
+    checkboxReplaceLowerCase = new JCheckBox();
+    panelParams.addParameter("Use lower case", checkboxReplaceLowerCase);
+    checkboxReplaceAll = new JCheckBox();
+    checkboxReplaceAll.setSelected(true);
+    panelParams.addParameter("Replace all", checkboxReplaceAll);
+    fieldReplaceOutput = new JTextField(30);
+    panelParams.addParameter("Output", fieldReplaceOutput);
+    panelTab.add(panelParams, BorderLayout.CENTER);
 
     panelButtons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     buttonTest = new JButton("Test");
     buttonTest.setMnemonic('T');
-    buttonTest.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	String input = fieldInput.getText();
-        if (checkboxLowerCase.isSelected())
-          input = input.toLowerCase();
-	BaseRegExp regexp = fieldFind.getRegExp();
-	String replace = fieldReplace.getText();
-	String output = null;
-	try {
-	  if (checkboxAll.isSelected())
-	    output = input.replaceAll(regexp.getValue(), replace);
-	  else
-	    output = input.replaceFirst(regexp.getValue(), replace);
-	  fieldOutput.setText(output);
-	}
-	catch (Exception ex) {
-	  fieldOutput.setText("");
-	  GUIHelper.showErrorMessage(
-	    null,
-	    "Failed to apply regular expression:\n"
-	      + regexp + "\n"
-	      + "to input:\n"
-	      + input,
-	    "RegExpTest");
-	}
+    buttonTest.addActionListener((ActionEvent e) -> {
+      String input = fieldReplaceInput.getText();
+      if (checkboxReplaceLowerCase.isSelected())
+	input = input.toLowerCase();
+      BaseRegExp regexp = fieldReplaceFind.getRegExp();
+      String replace = fieldReplaceReplace.getText();
+      String output = null;
+      try {
+	if (checkboxReplaceAll.isSelected())
+	  output = input.replaceAll(regexp.getValue(), replace);
+	else
+	  output = input.replaceFirst(regexp.getValue(), replace);
+	fieldReplaceOutput.setText(output);
+      }
+      catch (Exception ex) {
+	fieldReplaceOutput.setText("");
+	GUIHelper.showErrorMessage(
+	  null,
+	  "Failed to apply regular expression:\n"
+	    + regexp + "\n"
+	    + "to input:\n"
+	    + input,
+	  "RegExpTest");
       }
     });
     panelButtons.add(buttonTest);
-    buttonClose = new JButton("Close");
-    buttonClose.setMnemonic('l');
-    buttonClose.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	panel.closeParent();
-      }
+    panelTab.add(panelButtons, BorderLayout.SOUTH);
+
+    // match
+    panelTab = new BasePanel(new BorderLayout());
+    tabbedPane.addTab("Match", panelTab);
+
+    panelParams = new ParameterPanel();
+    fieldMatchInput = new JTextField(30);
+    panelParams.addParameter("Input", fieldMatchInput);
+    fieldMatchExp = new RegExpTextField();
+    panelParams.addParameter("Expression", fieldMatchExp);
+    checkboxMatchLowerCase = new JCheckBox();
+    panelParams.addParameter("Use lower case", checkboxMatchLowerCase);
+    fieldMatchOutput = new JTextField(30);
+    panelParams.addParameter("Matches?", fieldMatchOutput);
+    panelTab.add(panelParams, BorderLayout.CENTER);
+
+    panelButtons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+    buttonTest = new JButton("Test");
+    buttonTest.setMnemonic('T');
+    buttonTest.addActionListener((ActionEvent e) -> {
+      String input = fieldMatchInput.getText();
+      if (checkboxMatchLowerCase.isSelected())
+	input = input.toLowerCase();
+      BaseRegExp regexp = fieldMatchExp.getRegExp();
+      fieldMatchOutput.setText(regexp.isMatch(input) ? "yes" : "no");
     });
-    panelButtons.add(buttonClose);
-    panel.add(panelButtons, BorderLayout.SOUTH);
+    panelButtons.add(buttonTest);
+    panelTab.add(panelButtons, BorderLayout.SOUTH);
 
     createChildFrame(panel);
   }
