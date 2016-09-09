@@ -20,10 +20,12 @@
 
 package adams.gui.chooser;
 
-import java.io.File;
-
 import adams.core.Placeholders;
 import adams.core.io.PlaceholderFile;
+import adams.core.io.lister.DirectoryLister;
+import adams.core.io.lister.LocalDirectoryLister;
+
+import java.io.File;
 
 /**
  * A panel that contains a text field with the current directory and a
@@ -33,7 +35,7 @@ import adams.core.io.PlaceholderFile;
  * @version $Revision$
  */
 public class DirectoryChooserPanel
-  extends AbstractChooserPanel<File> {
+  extends AbstractChooserPanelWithDirectoryListerSupport<File> {
 
   /** for serialization. */
   private static final long serialVersionUID = 6235369491956122980L;
@@ -139,6 +141,29 @@ public class DirectoryChooserPanel
 
     result = super.setCurrent(new PlaceholderFile(value));
     m_DirectoryChooser.setSelectedFile(getCurrent().getAbsoluteFile());
+
+    return result;
+  }
+
+  /**
+   * Returns the type of chooser (description).
+   *
+   * @return		the type
+   */
+  public String getChooserType() {
+    return "Local";
+  }
+
+  /**
+   * Returns the directory lister.
+   *
+   * @return		the lister
+   */
+  public DirectoryLister getDirectoryLister() {
+    LocalDirectoryLister	result;
+
+    result = new LocalDirectoryLister();
+    result.setWatchDir(getCurrentDirectory());
 
     return result;
   }
