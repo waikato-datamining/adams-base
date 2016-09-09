@@ -107,6 +107,26 @@ adams.gui.visualization.instance.AbstractInstancePaintlet=\
 adams.gui.visualization.instance.AbstractInstancePanelUpdater=\
   adams.gui.visualization.instance
 
+# the column plotters for the InstancesTable
+adams.gui.visualization.instances.instancestable.PlotColumn=\
+  adams.gui.visualization.instances.instancestable
+
+# the row plotters for the InstancesTable
+adams.gui.visualization.instances.instancestable.PlotRow=\
+  adams.gui.visualization.instances.instancestable
+
+# the column processsors for the InstancesTable
+adams.gui.visualization.instances.instancestable.ProcessColumn=\
+  adams.gui.visualization.instances.instancestable
+
+# the row processors for the InstancesTable
+adams.gui.visualization.instances.instancestable.ProcessRow=\
+  adams.gui.visualization.instances.instancestable
+
+# the cell processsors for the InstancesTable
+adams.gui.visualization.instances.instancestable.ProcessCell=\
+  adams.gui.visualization.instances.instancestable
+
 # WEKA file loaders
 weka.core.converters.AbstractFileLoader=\
   weka.core.converters
