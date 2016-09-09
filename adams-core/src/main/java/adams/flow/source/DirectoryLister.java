@@ -973,7 +973,7 @@ public class DirectoryLister
   @Override
   public void stopExecution() {
     if (m_Lister != null)
-      m_Lister.stop();
+      m_Lister.stopExecution();
 
     super.stopExecution();
   }
