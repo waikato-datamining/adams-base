@@ -285,14 +285,6 @@ public abstract class AbstractDirectoryLister
   }
 
   /**
-   * Returns the list of files/directories in the watched directory. In case
-   * the execution gets stopped, this method returns a 0-length array.
-   *
-   * @return		 the list of absolute file/directory names
-   */
-  public abstract String[] list();
-
-  /**
    * A string representation of the object.
    *
    * @return		the string representation

@@ -22,7 +22,7 @@ package adams.gui.core;
 
 import adams.core.DateFormat;
 import adams.core.DateUtils;
-import adams.core.io.FileWrapper;
+import adams.core.io.FileObject;
 
 import java.util.List;
 
@@ -38,7 +38,7 @@ public class FileWrapperTableModel
   private static final long serialVersionUID = -4874766549376555318L;
 
   /** the files. */
-  protected List<FileWrapper> m_Files;
+  protected List<FileObject> m_Files;
 
   /** whether to show parent dirs. */
   protected boolean m_ShowParentDirs;
@@ -52,7 +52,7 @@ public class FileWrapperTableModel
    * @param files		the files
    * @param showParentDirs	true if to show parent dirs
    */
-  public FileWrapperTableModel(List<FileWrapper> files, boolean showParentDirs) {
+  public FileWrapperTableModel(List<FileObject> files, boolean showParentDirs) {
     m_Files          = files;
     m_ShowParentDirs = showParentDirs;
     m_DateFormat     = DateUtils.getTimestampFormatter();
@@ -149,7 +149,7 @@ public class FileWrapperTableModel
    */
   @Override
   public Object getValueAt(int rowIndex, int columnIndex) {
-    FileWrapper	wrapper;
+    FileObject wrapper;
 
     if (rowIndex >= m_Files.size())
       return null;

@@ -14,7 +14,7 @@
  */
 
 /**
- * FileWrapper.java
+ * FileObject.java
  * Copyright (C) 2016 University of Waikato, Hamilton, NZ
  */
 
@@ -25,12 +25,13 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * Interface for wrappers around files to avoid costly API calls by caching values.
+ * Interface for wrappers around files to avoid costly API calls by caching
+ * values also abstracting file representation.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public interface FileWrapper
+public interface FileObject
   extends Serializable {
 
   /**

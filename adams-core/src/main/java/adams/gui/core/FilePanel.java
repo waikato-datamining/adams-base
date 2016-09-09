@@ -21,8 +21,8 @@
 package adams.gui.core;
 
 import adams.core.base.BaseRegExp;
-import adams.core.io.FileWrapper;
-import adams.core.io.FileWrapperComparator;
+import adams.core.io.FileObject;
+import adams.core.io.FileObjectComparator;
 import adams.core.io.PlaceholderDirectory;
 import adams.core.io.lister.DirectoryLister;
 import adams.core.io.lister.LocalDirectoryLister;
@@ -138,10 +138,10 @@ public class FilePanel
   protected DirectoryLister m_Lister;
 
   /** the comparator. */
-  protected FileWrapperComparator m_Comparator;
+  protected FileObjectComparator m_Comparator;
 
   /** the currently listed files. */
-  protected List<FileWrapper> m_Files;
+  protected List<FileObject> m_Files;
 
   /** the currently running swingworker. */
   protected SwingWorker m_Worker;
@@ -219,7 +219,7 @@ public class FilePanel
     m_Lister.setRecursive(false);
     m_Lister.setMaxItems(-1);
 
-    m_Comparator = new FileWrapperComparator(false, true, false);
+    m_Comparator = new FileObjectComparator(false, true, false);
 
     m_Files = new ArrayList<>();
 
@@ -269,7 +269,7 @@ public class FilePanel
       @Override
       public void mouseClicked(MouseEvent e) {
 	if (MouseUtils.isDoubleClick(e)) {
-	  FileWrapper wrapper = getSelectedWrapper(false);
+	  FileObject wrapper = getSelectedWrapper(false);
 	  if (wrapper != null) {
 	    File file = wrapper.getActualFile();
 	    if (file.isDirectory()) {
@@ -436,7 +436,7 @@ public class FilePanel
    * @param value	true if case-sensitive
    */
   public void setCaseSensitive(boolean value) {
-    m_Comparator = new FileWrapperComparator(value, m_Comparator.isListDirsFirst(), m_Comparator.isIncludeParentDirs());
+    m_Comparator = new FileObjectComparator(value, m_Comparator.isListDirsFirst(), m_Comparator.isIncludeParentDirs());
     update();
   }
 
@@ -455,7 +455,7 @@ public class FilePanel
    * @param value	true if to list directories first
    */
   public void setListDirsFirst(boolean value) {
-    m_Comparator = new FileWrapperComparator(m_Comparator.isCaseSensitive(), value, m_Comparator.isIncludeParentDirs());
+    m_Comparator = new FileObjectComparator(m_Comparator.isCaseSensitive(), value, m_Comparator.isIncludeParentDirs());
     update();
   }
 
@@ -474,7 +474,7 @@ public class FilePanel
    * @param value	true if to include parent directories
    */
   public void setIncludeParentDirs(boolean value) {
-    m_Comparator = new FileWrapperComparator(m_Comparator.isCaseSensitive(), m_Comparator.isListDirsFirst(), value);
+    m_Comparator = new FileObjectComparator(m_Comparator.isCaseSensitive(), m_Comparator.isListDirsFirst(), value);
     update();
   }
 
@@ -542,8 +542,8 @@ public class FilePanel
    * @param skipDotDot	whether to skip the dot dot file
    * @return		the file wrapper, null if none selected
    */
-  protected FileWrapper getSelectedWrapper(boolean skipDotDot) {
-    FileWrapper		wrapper;
+  protected FileObject getSelectedWrapper(boolean skipDotDot) {
+    FileObject wrapper;
 
     wrapper = null;
     if (m_Table != null) {
@@ -573,7 +573,7 @@ public class FilePanel
    * @return		the file, null if none selected
    */
   protected File getSelectedFile(boolean skipDotDot) {
-    FileWrapper		wrapper;
+    FileObject wrapper;
 
     wrapper = getSelectedWrapper(skipDotDot);
     if (wrapper != null)
@@ -598,7 +598,7 @@ public class FilePanel
    */
   public File[] getSelectedFiles() {
     List<File>		result;
-    FileWrapper		wrapper;
+    FileObject wrapper;
 
     result = new ArrayList<>();
     if (m_Table != null) {
@@ -655,10 +655,10 @@ public class FilePanel
       return;
 
     m_Worker = new SwingWorker() {
-      protected List<FileWrapper> files = new ArrayList<>();
+      protected List<FileObject> files = new ArrayList<>();
       @Override
       protected Object doInBackground() throws Exception {
-	for (FileWrapper wrapper: m_Lister.listWrappers()) {
+	for (FileObject wrapper: m_Lister.listObjects()) {
 	  if (!m_ShowHidden && wrapper.isHidden())
 	    continue;
 	  files.add(wrapper);

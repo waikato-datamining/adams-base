@@ -22,7 +22,7 @@ package adams.core.io.lister;
 
 import adams.core.StoppableWithFeedback;
 import adams.core.base.BaseRegExp;
-import adams.core.io.FileWrapper;
+import adams.core.io.FileObject;
 import adams.core.logging.LoggingLevelHandler;
 import adams.core.logging.LoggingSupporter;
 
@@ -176,7 +176,7 @@ public interface DirectoryLister
    * @param dir		the directory name
    * @return		the new wrapper
    */
-  public FileWrapper newDirectory(String dir);
+  public FileObject newDirectory(String dir);
 
   /**
    * Returns the list of files/directories in the watched directory. In case
@@ -192,5 +192,5 @@ public interface DirectoryLister
    *
    * @return		 the list of file/directory wrappers
    */
-  public FileWrapper[] listWrappers();
+  public FileObject[] listObjects();
 }

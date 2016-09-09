@@ -30,8 +30,8 @@ import java.util.Date;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class LocalFileWrapper
-  implements FileWrapper {
+public class LocalFileObject
+  implements FileObject {
 
   private static final long serialVersionUID = -9056432057204433829L;
 
@@ -58,7 +58,7 @@ public class LocalFileWrapper
    *
    * @param file	the file to wrap
    */
-  public LocalFileWrapper(File file) {
+  public LocalFileObject(File file) {
     m_File         = file;
     m_Directory    = m_File.isDirectory();
     m_Length       = m_File.length();

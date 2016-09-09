@@ -20,10 +20,10 @@
 
 package adams.core.io.lister;
 
-import adams.core.io.FileWrapper;
+import adams.core.io.FileObject;
 
 /**
- * A helper class for sorting files.
+ * A helper class for sorting file objects.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision: 13700 $
@@ -31,8 +31,8 @@ import adams.core.io.FileWrapper;
 public class SortContainer
   implements Comparable<SortContainer> {
 
-  /** the file to be sorted. */
-  protected FileWrapper m_File;
+  /** the file object to be sorted. */
+  protected FileObject m_File;
 
   /** used for sorting. */
   protected Comparable m_Sort;
@@ -40,10 +40,10 @@ public class SortContainer
   /**
    * Initializes the sort container.
    *
-   * @param file	the file to sort
+   * @param file	the file object to sort
    * @param sorting	the type of sorting to perform
    */
-  public SortContainer(FileWrapper file, Sorting sorting) {
+  public SortContainer(FileObject file, Sorting sorting) {
     super();
 
     m_File = file;
@@ -63,7 +63,7 @@ public class SortContainer
    *
    * @return		the stored file
    */
-  public FileWrapper getFile() {
+  public FileObject getFile() {
     return m_File;
   }
 

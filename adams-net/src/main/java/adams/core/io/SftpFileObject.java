@@ -31,8 +31,8 @@ import java.util.Date;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class SftpFileWrapper
-  implements FileWrapper {
+public class SftpFileObject
+  implements FileObject {
 
   private static final long serialVersionUID = -1391761454087211261L;
 
@@ -55,7 +55,7 @@ public class SftpFileWrapper
    * @param name	the file/dir to wrap
    * @param dir		whether it is a directory
    */
-  public SftpFileWrapper(File parentDir, String name, boolean dir) {
+  public SftpFileObject(File parentDir, String name, boolean dir) {
     this(parentDir, null, name, dir);
   }
 
@@ -65,7 +65,7 @@ public class SftpFileWrapper
    * @param parentDir	the parent directory
    * @param entry	the file to wrap
    */
-  public SftpFileWrapper(File parentDir, LsEntry entry) {
+  public SftpFileObject(File parentDir, LsEntry entry) {
     this(parentDir, entry, null, null);
   }
 
@@ -77,7 +77,7 @@ public class SftpFileWrapper
    * @param name	the file/dir to wrap
    * @param dir		whether it is a directory
    */
-  protected SftpFileWrapper(File parentDir, LsEntry entry, String name, Boolean dir) {
+  protected SftpFileObject(File parentDir, LsEntry entry, String name, Boolean dir) {
     m_ParentDir = parentDir;
     m_Entry     = entry;
     m_Name      = name;

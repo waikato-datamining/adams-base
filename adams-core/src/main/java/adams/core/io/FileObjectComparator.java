@@ -14,7 +14,7 @@
  */
 
 /**
- * FileWrapperComparator.java
+ * FileObjectComparator.java
  * Copyright (C) 2016 University of Waikato, Hamilton, NZ
  */
 
@@ -24,13 +24,13 @@ import java.io.Serializable;
 import java.util.Comparator;
 
 /**
- * Comparator for {@link FileWrapper} objects.
+ * Comparator for {@link FileObject} objects.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class FileWrapperComparator
-  implements Serializable, Comparator<FileWrapper> {
+public class FileObjectComparator
+  implements Serializable, Comparator<FileObject> {
 
   private static final long serialVersionUID = -4630678890271018588L;
 
@@ -51,7 +51,7 @@ public class FileWrapperComparator
    *                          them in with files
    * @param includeParentDirs	whether to include parent directories in the comparison
    */
-  public FileWrapperComparator(boolean caseSensitive, boolean listDirsFirst, boolean includeParentDirs) {
+  public FileObjectComparator(boolean caseSensitive, boolean listDirsFirst, boolean includeParentDirs) {
     m_CaseSensitive     = caseSensitive;
     m_ListDirsFirst     = listDirsFirst;
     m_IncludeParentDirs = includeParentDirs;
@@ -94,7 +94,7 @@ public class FileWrapperComparator
    * 			second one.
    */
   @Override
-  public int compare(FileWrapper o1, FileWrapper o2) {
+  public int compare(FileObject o1, FileObject o2) {
     int	result;
     String	s1;
     String	s2;

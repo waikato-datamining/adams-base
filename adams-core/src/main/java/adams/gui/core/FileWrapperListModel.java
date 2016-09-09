@@ -20,7 +20,7 @@
 
 package adams.gui.core;
 
-import adams.core.io.FileWrapper;
+import adams.core.io.FileObject;
 
 import javax.swing.AbstractListModel;
 import java.util.List;
@@ -37,7 +37,7 @@ public class FileWrapperListModel
   private static final long serialVersionUID = -5631974196097641601L;
 
   /** the files. */
-  protected List<FileWrapper> m_Files;
+  protected List<FileObject> m_Files;
 
   /** whether to show parent dirs. */
   protected boolean m_ShowParentDirs;
@@ -48,7 +48,7 @@ public class FileWrapperListModel
    * @param files		the files to display
    * @param showParentDirs	true if to show parent dirs
    */
-  public FileWrapperListModel(List<FileWrapper> files, boolean showParentDirs) {
+  public FileWrapperListModel(List<FileObject> files, boolean showParentDirs) {
     m_Files          = files;
     m_ShowParentDirs = showParentDirs;
   }
@@ -71,7 +71,7 @@ public class FileWrapperListModel
    */
   @Override
   public String getElementAt(int index) {
-    FileWrapper	wrapper;
+    FileObject wrapper;
 
     wrapper = m_Files.get(index);
 

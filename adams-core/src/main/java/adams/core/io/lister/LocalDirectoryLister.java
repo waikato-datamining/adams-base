@@ -22,8 +22,8 @@ package adams.core.io.lister;
 
 import adams.core.base.BaseDateTime;
 import adams.core.io.FileUtils;
-import adams.core.io.FileWrapper;
-import adams.core.io.LocalFileWrapper;
+import adams.core.io.FileObject;
+import adams.core.io.LocalFileObject;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -202,8 +202,8 @@ public class LocalDirectoryLister
    * @param dir		the directory name
    * @return		the new wrapper
    */
-  public LocalFileWrapper newDirectory(String dir) {
-    return new LocalFileWrapper(new File(m_WatchDir.getAbsolutePath() + File.separator + dir));
+  public LocalFileObject newDirectory(String dir) {
+    return new LocalFileObject(new File(m_WatchDir.getAbsolutePath() + File.separator + dir));
   }
 
   /**
@@ -284,7 +284,7 @@ public class LocalDirectoryLister
 	    continue;
 	  }
 
-	  files.add(new SortContainer(new LocalFileWrapper(currFiles[i]), m_Sorting));
+	  files.add(new SortContainer(new LocalFileObject(currFiles[i]), m_Sorting));
 	}
       }
       else {
@@ -308,7 +308,7 @@ public class LocalDirectoryLister
 	    continue;
 	  }
 
-	  files.add(new SortContainer(new LocalFileWrapper(currFiles[i]), m_Sorting));
+	  files.add(new SortContainer(new LocalFileObject(currFiles[i]), m_Sorting));
 	}
       }
     }
@@ -392,15 +392,15 @@ public class LocalDirectoryLister
    *
    * @return		 the list of file/directory wrappers
    */
-  public FileWrapper[] listWrappers() {
-    FileWrapper[]	result;
+  public FileObject[] listObjects() {
+    FileObject[]	result;
     String[]		files;
     int			i;
 
     files = list();
-    result = new FileWrapper[files.length];
+    result = new FileObject[files.length];
     for (i = 0; i < files.length; i++)
-      result[i] = new LocalFileWrapper(new File(files[i]));
+      result[i] = new LocalFileObject(new File(files[i]));
 
     return result;
   }

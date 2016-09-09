@@ -22,9 +22,9 @@ package adams.core.io.lister;
 
 import adams.core.Utils;
 import adams.core.base.BasePassword;
-import adams.core.io.FileWrapper;
+import adams.core.io.FileObject;
 import adams.core.io.PlaceholderFile;
-import adams.core.io.SftpFileWrapper;
+import adams.core.io.SftpFileObject;
 import adams.core.net.JSchUtils;
 import adams.core.net.SSHAuthenticationType;
 import adams.core.net.SSHSessionProvider;
@@ -343,8 +343,8 @@ public class SftpDirectoryLister
    * @param dir		the directory name
    * @return		the new wrapper
    */
-  public SftpFileWrapper newDirectory(String dir) {
-    return new SftpFileWrapper(new File(m_WatchDir.getAbsolutePath()), dir, true);
+  public SftpFileObject newDirectory(String dir) {
+    return new SftpFileObject(new File(m_WatchDir.getAbsolutePath()), dir, true);
   }
 
   /**
@@ -398,7 +398,7 @@ public class SftpDirectoryLister
 	  if (!m_RegExp.isEmpty() && !m_RegExp.isMatch(entry.getFilename()))
 	    continue;
 
-	  files.add(new SortContainer(new SftpFileWrapper(new File(current), entry), m_Sorting));
+	  files.add(new SortContainer(new SftpFileObject(new File(current), entry), m_Sorting));
 	}
       }
       else {
@@ -407,7 +407,7 @@ public class SftpDirectoryLister
 	  if (!m_RegExp.isEmpty() && !m_RegExp.isMatch(entry.getFilename()))
 	    continue;
 
-	  files.add(new SortContainer(new SftpFileWrapper(new File(current), entry), m_Sorting));
+	  files.add(new SortContainer(new SftpFileObject(new File(current), entry), m_Sorting));
 	}
       }
     }
@@ -421,8 +421,8 @@ public class SftpDirectoryLister
    * @return		the list of absolute file/directory names
    * @throws Exception	if listing fails
    */
-  public List<SftpFileWrapper> search(ChannelSftp channel) throws Exception {
-    List<SftpFileWrapper>	result;
+  public List<SftpFileObject> search(ChannelSftp channel) throws Exception {
+    List<SftpFileObject>	result;
     List<SortContainer>		list;
     SortContainer		cont;
     int				i;
@@ -461,7 +461,7 @@ public class SftpDirectoryLister
 	if (getDebug())
 	  getLogger().info("before matching");
 	for (i = 0; i < list.size(); i++) {
-	  result.add((SftpFileWrapper) list.get(i).getFile());
+	  result.add((SftpFileObject) list.get(i).getFile());
 
 	  // maximum reached?
 	  if (m_MaxItems > 0) {
@@ -495,10 +495,10 @@ public class SftpDirectoryLister
   @Override
   public String[] list() {
     String[]		result;
-    FileWrapper[]	wrappers;
+    FileObject[]	wrappers;
     int			i;
 
-    wrappers = listWrappers();
+    wrappers = listObjects();
     result   = new String[wrappers.length];
     for (i = 0; i < wrappers.length; i++)
       result[i] = wrappers[i].toString();
@@ -512,8 +512,8 @@ public class SftpDirectoryLister
    *
    * @return		 the list of file/directory wrappers
    */
-  public SftpFileWrapper[] listWrappers() {
-    List<SftpFileWrapper> 	result;
+  public SftpFileObject[] listObjects() {
+    List<SftpFileObject> 	result;
     ChannelSftp 		channel;
 
     result    = new ArrayList<>();
@@ -540,6 +540,6 @@ public class SftpDirectoryLister
     }
     disconnect();
 
-    return result.toArray(new SftpFileWrapper[result.size()]);
+    return result.toArray(new SftpFileObject[result.size()]);
   }
 }
