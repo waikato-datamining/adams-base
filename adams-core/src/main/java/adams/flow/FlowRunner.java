@@ -25,8 +25,8 @@ import adams.core.Stoppable;
 import adams.core.Utils;
 import adams.core.VariablesHandler;
 import adams.core.base.BaseRegExp;
-import adams.core.io.DirectoryLister;
-import adams.core.io.DirectoryLister.Sorting;
+import adams.core.io.lister.LocalDirectoryLister;
+import adams.core.io.lister.Sorting;
 import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
 import adams.core.logging.LoggingHelper;
@@ -444,7 +444,7 @@ public class FlowRunner
   public String execute() {
     String			result;
     List<String>		errors;
-    DirectoryLister		lister;
+    LocalDirectoryLister lister;
     String[]			flows;
     ManageInteractiveActors	procInteractive;
 
@@ -474,7 +474,7 @@ public class FlowRunner
       }
     }
     else {
-      lister = new DirectoryLister();
+      lister = new LocalDirectoryLister();
       lister.setListFiles(true);
       lister.setListDirs(false);
       lister.setSorting(Sorting.SORT_BY_NAME);

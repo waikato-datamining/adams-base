@@ -20,6 +20,7 @@
 
 package adams.flow.source;
 
+import adams.core.io.lister.Sorting;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import adams.core.base.BaseText;
@@ -145,7 +146,7 @@ public class StorageValuesArrayTest
       directorylister9.setRegExp((adams.core.base.BaseRegExp) argOption.valueOf("diff.*\\.txt"));
 
       argOption = (AbstractArgumentOption) directorylister9.getOptionManager().findByProperty("sorting");
-      directorylister9.setSorting((adams.core.io.DirectoryLister.Sorting) argOption.valueOf("SORT_BY_NAME"));
+      directorylister9.setSorting((Sorting) argOption.valueOf("SORT_BY_NAME"));
 
       abstractactor8[0] = directorylister9;
 

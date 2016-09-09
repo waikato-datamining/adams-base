@@ -23,7 +23,8 @@ package adams.flow.source;
 import adams.core.QuickInfoHelper;
 import adams.core.base.BaseDateTime;
 import adams.core.base.BaseRegExp;
-import adams.core.io.DirectoryLister.Sorting;
+import adams.core.io.lister.LocalDirectoryLister;
+import adams.core.io.lister.Sorting;
 import adams.core.io.FileUtils;
 import adams.core.io.ForwardSlashSupporter;
 import adams.core.io.PlaceholderDirectory;
@@ -187,7 +188,7 @@ public class DirectoryLister
   private static final long serialVersionUID = -5015637337437403790L;
 
   /** for listing the contents. */
-  protected adams.core.io.DirectoryLister m_Lister;
+  protected LocalDirectoryLister m_Lister;
 
   /** the number of seconds to wait between polls without no entries. */
   protected int m_Wait;
@@ -331,7 +332,7 @@ public class DirectoryLister
   protected void initialize() {
     super.initialize();
 
-    m_Lister = new adams.core.io.DirectoryLister();
+    m_Lister = new LocalDirectoryLister();
   }
 
   /**
@@ -388,7 +389,7 @@ public class DirectoryLister
    * Sets the maximum number of items to return.
    *
    * @param value	the maximum number
-   * @see		adams.core.io.DirectoryLister#setMaxItems(int)
+   * @see		LocalDirectoryLister#setMaxItems(int)
    */
   public void setMaxItems(int value) {
     m_Lister.setMaxItems(value);
@@ -399,7 +400,7 @@ public class DirectoryLister
    * Returns the maximum number of items to return.
    *
    * @return		the maximum number
-   * @see		adams.core.io.DirectoryLister#getMaxItems()
+   * @see		LocalDirectoryLister#getMaxItems()
    */
   public int getMaxItems() {
     return m_Lister.getMaxItems();
@@ -430,7 +431,7 @@ public class DirectoryLister
    * Sets the regular expression for the files/dirs.
    *
    * @param value	the regular expression
-   * @see		adams.core.io.DirectoryLister#setRegExp(String)
+   * @see		LocalDirectoryLister#setRegExp(String)
    */
   public void setRegExp(BaseRegExp value) {
     m_Lister.setRegExp(value);
@@ -441,7 +442,7 @@ public class DirectoryLister
    * Returns the regular expression for the files/dirs.
    *
    * @return		the regular expression
-   * @see		adams.core.io.DirectoryLister#getRegExp()
+   * @see		LocalDirectoryLister#getRegExp()
    */
   public BaseRegExp getRegExp() {
     return m_Lister.getRegExp();
@@ -461,7 +462,7 @@ public class DirectoryLister
    * Sets the name of the stop file.
    *
    * @param value	the regular expression
-   * @see		adams.core.io.DirectoryLister#setStopFile(String)
+   * @see		LocalDirectoryLister#setStopFile(String)
    */
   public void setStopFile(String value) {
     m_Lister.setStopFile(value);
@@ -472,7 +473,7 @@ public class DirectoryLister
    * Returns the name of the stop file.
    *
    * @return		the name
-   * @see		adams.core.io.DirectoryLister#getStopFile()
+   * @see		LocalDirectoryLister#getStopFile()
    */
   public String getStopFile() {
     return m_Lister.getStopFile();
@@ -492,7 +493,7 @@ public class DirectoryLister
    * Sets whether to list directories.
    *
    * @param value	true if directories are to be listed
-   * @see		adams.core.io.DirectoryLister#setListDirs(boolean)
+   * @see		LocalDirectoryLister#setListDirs(boolean)
    */
   public void setListDirs(boolean value) {
     m_Lister.setListDirs(value);
@@ -503,7 +504,7 @@ public class DirectoryLister
    * Returns whether directories are listed.
    *
    * @return		true if directories are listed
-   * @see		adams.core.io.DirectoryLister#getListDirs()
+   * @see		LocalDirectoryLister#getListDirs()
    */
   public boolean getListDirs() {
     return m_Lister.getListDirs();
@@ -523,7 +524,7 @@ public class DirectoryLister
    * Sets whether to list files.
    *
    * @param value	true if files are to be listed
-   * @see		adams.core.io.DirectoryLister#setListFiles(boolean)
+   * @see		LocalDirectoryLister#setListFiles(boolean)
    */
   public void setListFiles(boolean value) {
     m_Lister.setListFiles(value);
@@ -534,7 +535,7 @@ public class DirectoryLister
    * Returns whether directories are listed.
    *
    * @return		true if directories are listed
-   * @see		adams.core.io.DirectoryLister#getListFiles()
+   * @see		LocalDirectoryLister#getListFiles()
    */
   public boolean getListFiles() {
     return m_Lister.getListFiles();
@@ -554,7 +555,7 @@ public class DirectoryLister
    * Sets the type of sorting to perform.
    *
    * @param value	the type of sorting
-   * @see		adams.core.io.DirectoryLister#setSorting(Sorting)
+   * @see		LocalDirectoryLister#setSorting(Sorting)
    */
   public void setSorting(Sorting value) {
     m_Lister.setSorting(value);
@@ -565,7 +566,7 @@ public class DirectoryLister
    * Returns the type of sorting to perform.
    *
    * @return		the type of sorting
-   * @see		adams.core.io.DirectoryLister#getSorting()
+   * @see		LocalDirectoryLister#getSorting()
    */
   public Sorting getSorting() {
     return m_Lister.getSorting();
@@ -585,7 +586,7 @@ public class DirectoryLister
    * Sets whether to sort descendingly.
    *
    * @param value	true if sorting in descending order
-   * @see		adams.core.io.DirectoryLister#setSortDescending(boolean)
+   * @see		LocalDirectoryLister#setSortDescending(boolean)
    */
   public void setSortDescending(boolean value) {
     m_Lister.setSortDescending(value);
@@ -596,7 +597,7 @@ public class DirectoryLister
    * Returns whether to sort descendingly.
    *
    * @return		true if sorting in descending order
-   * @see		adams.core.io.DirectoryLister#getSortDescending()
+   * @see		LocalDirectoryLister#getSortDescending()
    */
   public boolean getSortDescending() {
     return m_Lister.getSortDescending();
@@ -687,7 +688,7 @@ public class DirectoryLister
    * Sets whether to search recursively.
    *
    * @param value	true if search is recursively
-   * @see		adams.core.io.DirectoryLister#setRecursive(boolean)
+   * @see		LocalDirectoryLister#setRecursive(boolean)
    */
   public void setRecursive(boolean value) {
     m_Lister.setRecursive(value);
@@ -698,7 +699,7 @@ public class DirectoryLister
    * Returns whether search is recursively.
    *
    * @return		true if search is recursively
-   * @see		adams.core.io.DirectoryLister#getRecursive()
+   * @see		LocalDirectoryLister#getRecursive()
    */
   public boolean getRecursive() {
     return m_Lister.getRecursive();
@@ -754,7 +755,7 @@ public class DirectoryLister
    * since simply opening it for writing does not lock it.
    *
    * @param value	if true then locked files are skipped
-   * @see		adams.core.io.DirectoryLister#setSkipLockedFiles(boolean)
+   * @see		LocalDirectoryLister#setSkipLockedFiles(boolean)
    */
   public void setSkipLockedFiles(boolean value) {
     m_Lister.setSkipLockedFiles(value);
@@ -765,7 +766,7 @@ public class DirectoryLister
    * Returns whether to skip locked files.
    *
    * @return		true if locked files are skipped
-   * @see		adams.core.io.DirectoryLister#getSkipLockedFiles()
+   * @see		LocalDirectoryLister#getSkipLockedFiles()
    */
   public boolean getSkipLockedFiles() {
     return m_Lister.getSkipLockedFiles();
@@ -789,7 +790,7 @@ public class DirectoryLister
    * Sets the minimum file timestamp that the files have to have.
    *
    * @param value	the minimum file timestamp
-   * @see		adams.core.io.DirectoryLister#setMinFileTimestamp(BaseDateTime)
+   * @see		LocalDirectoryLister#setMinFileTimestamp(BaseDateTime)
    */
   public void setMinFileTimestamp(BaseDateTime value) {
     m_Lister.setMinFileTimestamp(value);
@@ -800,7 +801,7 @@ public class DirectoryLister
    * Returns the minimum file timestamp that the files have to have.
    *
    * @return		the minimum file timestamp
-   * @see		adams.core.io.DirectoryLister#getMinFileTimestamp()
+   * @see		LocalDirectoryLister#getMinFileTimestamp()
    */
   public BaseDateTime getMinFileTimestamp() {
     return m_Lister.getMinFileTimestamp();
@@ -820,7 +821,7 @@ public class DirectoryLister
    * Sets the maximum file timestamp that the files have to have.
    *
    * @param value	the maximum file timestamp
-   * @see		adams.core.io.DirectoryLister#setMaxFileTimestamp(BaseDateTime)
+   * @see		LocalDirectoryLister#setMaxFileTimestamp(BaseDateTime)
    */
   public void setMaxFileTimestamp(BaseDateTime value) {
     m_Lister.setMaxFileTimestamp(value);
@@ -831,7 +832,7 @@ public class DirectoryLister
    * Returns the maximum file timestamp that the files have to have.
    *
    * @return		the maximum file timestamp
-   * @see		adams.core.io.DirectoryLister#getMaxFileTimestamp()
+   * @see		LocalDirectoryLister#getMaxFileTimestamp()
    */
   public BaseDateTime getMaxFileTimestamp() {
     return m_Lister.getMaxFileTimestamp();

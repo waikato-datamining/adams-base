@@ -22,7 +22,7 @@
 package adams.gui.menu;
 
 import adams.core.base.BaseRegExp;
-import adams.core.io.DirectoryLister;
+import adams.core.io.lister.LocalDirectoryLister;
 import adams.core.io.FileComparator;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderDirectory;
@@ -102,11 +102,11 @@ public class DocumentationViewer
     List<File>		files;
     String[]		docs;
     JMenuItem		menuitem;
-    DirectoryLister	lister;
+    LocalDirectoryLister lister;
 
     files = new ArrayList<>();
     for (PlaceholderDirectory dir: m_Owner.getDocumentationDirectories()) {
-      lister = new DirectoryLister();
+      lister = new LocalDirectoryLister();
       lister.setWatchDir(dir);
       lister.setListDirs(false);
       lister.setListFiles(true);

@@ -21,7 +21,7 @@ package adams.flow.condition.bool;
 
 import adams.core.QuickInfoHelper;
 import adams.core.base.BaseRegExp;
-import adams.core.io.DirectoryLister;
+import adams.core.io.lister.LocalDirectoryLister;
 import adams.core.io.PlaceholderDirectory;
 import adams.flow.core.Actor;
 import adams.flow.core.Token;
@@ -208,10 +208,10 @@ public class DirectoriesMatch
    */
   @Override
   protected boolean doEvaluate(Actor owner, Token token) {
-    DirectoryLister	lister;
+    LocalDirectoryLister lister;
     String[]		list;
     
-    lister = new DirectoryLister();
+    lister = new LocalDirectoryLister();
     lister.setWatchDir(m_Directory);
     lister.setRegExp(m_RegExp);
     lister.setListFiles(false);

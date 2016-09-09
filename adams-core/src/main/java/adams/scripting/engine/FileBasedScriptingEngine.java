@@ -22,7 +22,7 @@ package adams.scripting.engine;
 
 import adams.core.MessageCollection;
 import adams.core.Utils;
-import adams.core.io.DirectoryLister;
+import adams.core.io.lister.LocalDirectoryLister;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderDirectory;
 import adams.multiprocess.PausableFixedThreadPoolExecutor;
@@ -359,7 +359,7 @@ public class FileBasedScriptingEngine
   @Override
   public String execute() {
     String		result;
-    DirectoryLister	lister;
+    LocalDirectoryLister lister;
     String[]		files;
     File		afile;
     boolean		success;
@@ -381,7 +381,7 @@ public class FileBasedScriptingEngine
 
     // start up job queue
     m_Executor = new PausableFixedThreadPoolExecutor(m_MaxConcurrentJobs);
-    lister     = new DirectoryLister();
+    lister     = new LocalDirectoryLister();
     lister.setListFiles(true);
     lister.setListDirs(false);
     lister.setWatchDir(m_Incoming);

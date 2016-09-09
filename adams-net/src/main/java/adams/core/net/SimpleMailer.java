@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import adams.core.base.BaseRegExp;
-import adams.core.io.DirectoryLister;
+import adams.core.io.lister.LocalDirectoryLister;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
@@ -294,9 +294,9 @@ public class SimpleMailer {
    * @return		the files that matched
    */
   protected String[] list() {
-    DirectoryLister	lister;
+    LocalDirectoryLister lister;
     
-    lister = new DirectoryLister();
+    lister = new LocalDirectoryLister();
     lister.setDebug(getDebugLevel() > 1);
     lister.setWatchDir(m_WatchDir);
     lister.setListFiles(true);

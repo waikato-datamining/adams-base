@@ -19,6 +19,7 @@
  */
 package adams.flow.source.filesystemsearch;
 
+import adams.core.io.lister.LocalDirectoryLister;
 import adams.core.logging.LoggingLevel;
 
 import java.util.ArrayList;
@@ -26,7 +27,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Ancestor for search algorithms that use {@link adams.core.io.DirectoryLister}
+ * Ancestor for search algorithms that use {@link LocalDirectoryLister}
  * under the hood.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -39,7 +40,7 @@ public abstract class AbstractDirectoryListerBasedSearchlet
   private static final long serialVersionUID = -240436041323613527L;
   
   /** for listing the contents. */
-  protected adams.core.io.DirectoryLister m_Lister;
+  protected LocalDirectoryLister m_Lister;
 
   /**
    * Initializes the members.
@@ -48,7 +49,7 @@ public abstract class AbstractDirectoryListerBasedSearchlet
   protected void initialize() {
     super.initialize();
 
-    m_Lister = new adams.core.io.DirectoryLister();
+    m_Lister = new LocalDirectoryLister();
   }
 
   /**

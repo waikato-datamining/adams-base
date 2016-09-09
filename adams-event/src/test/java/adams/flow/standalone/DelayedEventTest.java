@@ -20,6 +20,7 @@
 
 package adams.flow.standalone;
 
+import adams.core.io.lister.Sorting;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import adams.core.option.AbstractArgumentOption;
@@ -87,7 +88,7 @@ public class DelayedEventTest
       tmp7.setListFiles(true);
 
       argOption = (AbstractArgumentOption) tmp7.getOptionManager().findByProperty("sorting");
-      tmp7.setSorting((adams.core.io.DirectoryLister.Sorting) argOption.valueOf("SORT_BY_NAME"));
+      tmp7.setSorting((Sorting) argOption.valueOf("SORT_BY_NAME"));
 
       tmp6[0] = tmp7;
       adams.flow.sink.Display tmp10 = new adams.flow.sink.Display();

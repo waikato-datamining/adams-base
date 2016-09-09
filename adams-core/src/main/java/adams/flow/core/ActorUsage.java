@@ -21,7 +21,7 @@ package adams.flow.core;
 
 import adams.core.ClassLister;
 import adams.core.base.BaseRegExp;
-import adams.core.io.DirectoryLister;
+import adams.core.io.lister.LocalDirectoryLister;
 import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
 import adams.core.option.AbstractOptionHandler;
@@ -312,7 +312,7 @@ public class ActorUsage
    */
   protected List<String> locateFlows() {
     List<String>	result;
-    DirectoryLister	lister;
+    LocalDirectoryLister lister;
     int			i;
     
     result = new ArrayList<String>();
@@ -320,7 +320,7 @@ public class ActorUsage
     for (i = 0; i < m_Directories.length; i++) {
       if (isLoggingEnabled())
 	getLogger().info("Traversing '" + m_Directories[i] + "' (recursive=" + m_Recursive + ")...");
-      lister = new DirectoryLister();
+      lister = new LocalDirectoryLister();
       lister.setListFiles(true);
       lister.setRegExp(new BaseRegExp(".*\\.flow"));
       lister.setRecursive(m_Recursive);

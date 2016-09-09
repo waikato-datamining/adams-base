@@ -14,14 +14,16 @@
  */
 
 /*
- * DirectoryLister.java
+ * LocalDirectoryLister.java
  * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
-package adams.core.io;
+package adams.core.io.lister;
 
 import adams.core.base.BaseDateTime;
 import adams.core.base.BaseRegExp;
+import adams.core.io.FileUtils;
+import adams.core.io.PlaceholderDirectory;
 import adams.core.logging.CustomLoggingLevelObject;
 
 import java.io.File;
@@ -38,128 +40,11 @@ import java.util.logging.Level;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class DirectoryLister
+public class LocalDirectoryLister
   extends CustomLoggingLevelObject {
 
   /** for serialization. */
   private static final long serialVersionUID = -1846677500660003814L;
-
-  /**
-   * The type of sorting.
-   *
-   * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
-   */
-  public enum Sorting {
-    /** no sorting. */
-    NO_SORTING,
-    /** sort by name. */
-    SORT_BY_NAME,
-    /** sort by last mod. */
-    SORT_BY_LAST_MODIFIED
-  }
-
-  /**
-   * A helper class for sorting files.
-   *
-   * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
-   */
-  public static class SortContainer
-    implements Comparable<SortContainer> {
-
-    /** the file to be sorted. */
-    protected File m_File;
-
-    /** used for sorting. */
-    protected Comparable m_Sort;
-
-    /**
-     * Initializes the sort container.
-     *
-     * @param file	the file to sort
-     * @param sorting	the type of sorting to perform
-     */
-    public SortContainer(File file, Sorting sorting) {
-      super();
-
-      m_File = file;
-
-      if (sorting == Sorting.NO_SORTING)
-	m_Sort = null;
-      else if (sorting == Sorting.SORT_BY_NAME)
-	m_Sort = file.getAbsolutePath();
-      else if (sorting == Sorting.SORT_BY_LAST_MODIFIED)
-	m_Sort = new Long(file.lastModified());
-      else
-	throw new IllegalArgumentException("Unhandled sorting: " + sorting);
-    }
-
-    /**
-     * Returns the stored file.
-     *
-     * @return		the stored file
-     */
-    public File getFile() {
-      return m_File;
-    }
-
-    /**
-     * Compares this container with the specified container for order. Returns a
-     * negative integer, zero, or a positive integer as this container is less
-     * than, equal to, or greater than the specified container.
-     *
-     * @param   o the subrange to be compared.
-     * @return  a negative integer, zero, or a positive integer as this object
-     *		is less than, equal to, or greater than the specified object.
-     */
-    @Override
-    public int compareTo(SortContainer o) {
-      // no sorting?
-      if (m_Sort == null)
-	return 0;
-      // some kind of sorting
-      else
-	return m_Sort.compareTo(o.m_Sort);
-    }
-
-    /**
-     * Indicates whether some other object is "equal to" this one.
-     *
-     * @param obj		the reference object with which to compare.
-     * @return		true if this object is the same as the obj argument;
-     * 			false otherwise.
-     */
-    @Override
-    public boolean equals(Object obj) {
-      if (!(obj instanceof SortContainer))
-	return false;
-      else
-	return (compareTo((SortContainer) obj) == 0);
-    }
-
-    /**
-     * Hashcode so can be used as hashtable key. Returns the hashcode of the
-     * file.
-     *
-     * @return		the hashcode
-     */
-    @Override
-    public int hashCode() {
-      return m_File.hashCode();
-    }
-
-    /**
-     * Returns a string representation of the file and the object used for
-     * sorting.
-     *
-     * @return		the representation
-     */
-    @Override
-    public String toString() {
-      return "file=" + m_File.toString() + ", sorting=" + m_Sort;
-    }
-  }
 
   /** the directory to watch. */
   protected PlaceholderDirectory m_WatchDir;
@@ -209,7 +94,7 @@ public class DirectoryLister
   /**
    * Initializes the object.
    */
-  public DirectoryLister() {
+  public LocalDirectoryLister() {
     super();
 
     m_WatchDir            = new PlaceholderDirectory(".");
@@ -740,7 +625,7 @@ public class DirectoryLister
    * @throws Exception	if something goes wrong
    */
   public static void main(String[] args) throws Exception {
-    DirectoryLister lister = new DirectoryLister();
+    LocalDirectoryLister lister = new LocalDirectoryLister();
     //lister.setListDirs(true);
     //lister.setListFiles(false);
     //lister.setRegExp(".svn");

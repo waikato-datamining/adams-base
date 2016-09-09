@@ -20,6 +20,7 @@
 
 package adams.flow.sink;
 
+import adams.core.io.lister.Sorting;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import adams.core.option.AbstractArgumentOption;
@@ -81,7 +82,7 @@ public class StringTreeTest
       directorylister2.setListFiles(true);
 
       argOption = (AbstractArgumentOption) directorylister2.getOptionManager().findByProperty("sorting");
-      directorylister2.setSorting((adams.core.io.DirectoryLister.Sorting) argOption.valueOf("SORT_BY_NAME"));
+      directorylister2.setSorting((Sorting) argOption.valueOf("SORT_BY_NAME"));
       directorylister2.setRecursive(true);
 
       argOption = (AbstractArgumentOption) directorylister2.getOptionManager().findByProperty("maxDepth");

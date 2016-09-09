@@ -24,7 +24,8 @@ import java.util.List;
 
 import adams.core.QuickInfoHelper;
 import adams.core.base.BaseRegExp;
-import adams.core.io.DirectoryLister.Sorting;
+import adams.core.io.lister.LocalDirectoryLister;
+import adams.core.io.lister.Sorting;
 import adams.core.io.PlaceholderDirectory;
 
 /**
@@ -148,7 +149,7 @@ public class DirectorySearch
    * Sets the directory to search.
    *
    * @param value	the directory
-   * @see		adams.core.io.DirectoryLister#setWatchDir(PlaceholderDirectory)
+   * @see		LocalDirectoryLister#setWatchDir(PlaceholderDirectory)
    */
   public void setDirectory(PlaceholderDirectory value) {
     m_Lister.setWatchDir(value);
@@ -158,7 +159,7 @@ public class DirectorySearch
    * Returns the directory to search.
    *
    * @return		the directory.
-   * @see		adams.core.io.DirectoryLister#getWatchDir()
+   * @see		LocalDirectoryLister#getWatchDir()
    */
   public PlaceholderDirectory getDirectory() {
     return m_Lister.getWatchDir();
@@ -178,7 +179,7 @@ public class DirectorySearch
    * Sets the maximum number of items to return.
    *
    * @param value	the maximum number
-   * @see		adams.core.io.DirectoryLister#setMaxItems(int)
+   * @see		LocalDirectoryLister#setMaxItems(int)
    */
   public void setMaxItems(int value) {
     m_Lister.setMaxItems(value);
@@ -189,7 +190,7 @@ public class DirectorySearch
    * Returns the maximum number of items to return.
    *
    * @return		the maximum number
-   * @see		adams.core.io.DirectoryLister#getMaxItems()
+   * @see		LocalDirectoryLister#getMaxItems()
    */
   public int getMaxItems() {
     return m_Lister.getMaxItems();
@@ -209,7 +210,7 @@ public class DirectorySearch
    * Sets the regular expression for the files/dirs.
    *
    * @param value	the regular expression
-   * @see		adams.core.io.DirectoryLister#setRegExp(String)
+   * @see		LocalDirectoryLister#setRegExp(String)
    */
   public void setRegExp(BaseRegExp value) {
     m_Lister.setRegExp(value);
@@ -220,7 +221,7 @@ public class DirectorySearch
    * Returns the regular expression for the files/dirs.
    *
    * @return		the regular expression
-   * @see		adams.core.io.DirectoryLister#getRegExp()
+   * @see		LocalDirectoryLister#getRegExp()
    */
   public BaseRegExp getRegExp() {
     return m_Lister.getRegExp();
@@ -240,7 +241,7 @@ public class DirectorySearch
    * Sets the type of sorting to perform.
    *
    * @param value	the type of sorting
-   * @see		adams.core.io.DirectoryLister#setSorting(Sorting)
+   * @see		LocalDirectoryLister#setSorting(Sorting)
    */
   public void setSorting(Sorting value) {
     m_Lister.setSorting(value);
@@ -251,7 +252,7 @@ public class DirectorySearch
    * Returns the type of sorting to perform.
    *
    * @return		the type of sorting
-   * @see		adams.core.io.DirectoryLister#getSorting()
+   * @see		LocalDirectoryLister#getSorting()
    */
   public Sorting getSorting() {
     return m_Lister.getSorting();
@@ -271,7 +272,7 @@ public class DirectorySearch
    * Sets whether to sort descendingly.
    *
    * @param value	true if sorting in descending order
-   * @see		adams.core.io.DirectoryLister#setSortDescending(boolean)
+   * @see		LocalDirectoryLister#setSortDescending(boolean)
    */
   public void setSortDescending(boolean value) {
     m_Lister.setSortDescending(value);
@@ -282,7 +283,7 @@ public class DirectorySearch
    * Returns whether to sort descendingly.
    *
    * @return		true if sorting in descending order
-   * @see		adams.core.io.DirectoryLister#getSortDescending()
+   * @see		LocalDirectoryLister#getSortDescending()
    */
   public boolean getSortDescending() {
     return m_Lister.getSortDescending();
@@ -302,7 +303,7 @@ public class DirectorySearch
    * Sets whether to search recursively.
    *
    * @param value	true if search is recursively
-   * @see		adams.core.io.DirectoryLister#setRecursive(boolean)
+   * @see		LocalDirectoryLister#setRecursive(boolean)
    */
   public void setRecursive(boolean value) {
     m_Lister.setRecursive(value);
@@ -313,7 +314,7 @@ public class DirectorySearch
    * Returns whether search is recursively.
    *
    * @return		true if search is recursively
-   * @see		adams.core.io.DirectoryLister#getRecursive()
+   * @see		LocalDirectoryLister#getRecursive()
    */
   public boolean getRecursive() {
     return m_Lister.getRecursive();

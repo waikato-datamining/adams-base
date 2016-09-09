@@ -26,7 +26,7 @@ import java.util.List;
 
 import adams.core.QuickInfoHelper;
 import adams.core.base.BaseRegExp;
-import adams.core.io.DirectoryLister;
+import adams.core.io.lister.LocalDirectoryLister;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderDirectory;
 import adams.core.logging.LoggingLevel;
@@ -104,7 +104,7 @@ public class DeleteFile
   private static final long serialVersionUID = 4670761846363281951L;
 
   /** for listing the contents. */
-  protected DirectoryLister m_Lister;
+  protected LocalDirectoryLister m_Lister;
 
   /**
    * Returns a string describing the object.
@@ -152,7 +152,7 @@ public class DeleteFile
   protected void initialize() {
     super.initialize();
 
-    m_Lister = new DirectoryLister();
+    m_Lister = new LocalDirectoryLister();
     m_Lister.setListFiles(true);
   }
 
@@ -219,7 +219,7 @@ public class DeleteFile
    * Sets the regular expression for the files/dirs.
    *
    * @param value	the regular expression
-   * @see		DirectoryLister#setRegExp(String)
+   * @see		LocalDirectoryLister#setRegExp(String)
    */
   public void setRegExp(BaseRegExp value) {
     m_Lister.setRegExp(value);
@@ -230,7 +230,7 @@ public class DeleteFile
    * Returns the regular expression for the files/dirs.
    *
    * @return		the regular expression
-   * @see		DirectoryLister#getRegExp()
+   * @see		LocalDirectoryLister#getRegExp()
    */
   public BaseRegExp getRegExp() {
     return m_Lister.getRegExp();
@@ -250,7 +250,7 @@ public class DeleteFile
    * Sets whether to search recursively.
    *
    * @param value	true if search is recursively
-   * @see		DirectoryLister#setRecursive(boolean)
+   * @see		LocalDirectoryLister#setRecursive(boolean)
    */
   public void setRecursive(boolean value) {
     m_Lister.setRecursive(value);
@@ -261,7 +261,7 @@ public class DeleteFile
    * Returns whether search is recursively.
    *
    * @return		true if search is recursively
-   * @see		DirectoryLister#getRecursive()
+   * @see		LocalDirectoryLister#getRecursive()
    */
   public boolean getRecursive() {
     return m_Lister.getRecursive();

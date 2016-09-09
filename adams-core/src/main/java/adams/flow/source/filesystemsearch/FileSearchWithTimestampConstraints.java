@@ -20,6 +20,7 @@
 package adams.flow.source.filesystemsearch;
 
 import adams.core.base.BaseDateTime;
+import adams.core.io.lister.LocalDirectoryLister;
 
 /**
  <!-- globalinfo-start -->
@@ -125,7 +126,7 @@ public class FileSearchWithTimestampConstraints
    * Sets the minimum 'last modified'  timestamp that the files have to have.
    *
    * @param value	the minimum timestamp
-   * @see		adams.core.io.DirectoryLister#setMinFileTimestamp(BaseDateTime)
+   * @see		LocalDirectoryLister#setMinFileTimestamp(BaseDateTime)
    */
   public void setMinTimestamp(BaseDateTime value) {
     m_Lister.setMinFileTimestamp(value);
@@ -136,7 +137,7 @@ public class FileSearchWithTimestampConstraints
    * Returns the minimum 'last modified'  timestamp that the files have to have.
    *
    * @return		the minimum timestamp
-   * @see		adams.core.io.DirectoryLister#getMinFileTimestamp()
+   * @see		LocalDirectoryLister#getMinFileTimestamp()
    */
   public BaseDateTime getMinTimestamp() {
     return m_Lister.getMinFileTimestamp();
@@ -156,7 +157,7 @@ public class FileSearchWithTimestampConstraints
    * Sets the maximum 'last modified'  timestamp that the files have to have.
    *
    * @param value	the maximum timestamp
-   * @see		adams.core.io.DirectoryLister#setMaxFileTimestamp(BaseDateTime)
+   * @see		LocalDirectoryLister#setMaxFileTimestamp(BaseDateTime)
    */
   public void setMaxTimestamp(BaseDateTime value) {
     m_Lister.setMaxFileTimestamp(value);
@@ -167,7 +168,7 @@ public class FileSearchWithTimestampConstraints
    * Returns the maximum file timestamp that the files have to have.
    *
    * @return		the maximum timestamp
-   * @see		adams.core.io.DirectoryLister#getMaxFileTimestamp()
+   * @see		LocalDirectoryLister#getMaxFileTimestamp()
    */
   public BaseDateTime getMaxTimestamp() {
     return m_Lister.getMaxFileTimestamp();

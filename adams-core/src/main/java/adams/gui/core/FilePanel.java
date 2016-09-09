@@ -23,7 +23,7 @@ package adams.gui.core;
 import adams.core.DateFormat;
 import adams.core.DateUtils;
 import adams.core.base.BaseRegExp;
-import adams.core.io.DirectoryLister;
+import adams.core.io.lister.LocalDirectoryLister;
 import adams.core.io.PlaceholderDirectory;
 import adams.env.Environment;
 import adams.gui.core.SearchPanel.LayoutType;
@@ -596,7 +596,7 @@ public class FilePanel
   protected boolean m_ShowHidden;
 
   /** for listing the content of the directory. */
-  protected DirectoryLister m_Lister;
+  protected LocalDirectoryLister m_Lister;
 
   /** the comparator. */
   protected FileWrapperComparator m_Comparator;
@@ -666,7 +666,7 @@ public class FilePanel
     m_IgnoreChanges = false;
     m_ShowHidden    = false;
 
-    m_Lister = new DirectoryLister();
+    m_Lister = new LocalDirectoryLister();
     m_Lister.setRecursive(false);
     m_Lister.setMaxItems(-1);
 

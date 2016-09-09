@@ -23,7 +23,7 @@ package adams.flow.transformer;
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
 import adams.core.base.BaseRegExp;
-import adams.core.io.DirectoryLister;
+import adams.core.io.lister.LocalDirectoryLister;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
@@ -479,7 +479,7 @@ public class TesseractOCR
     File		file;
     String[]		cmd;
     ProcessResult	proc;
-    DirectoryLister	lister;
+    LocalDirectoryLister lister;
     String[]		files;
     StringBuilder	content;
     boolean		first;
@@ -509,7 +509,7 @@ public class TesseractOCR
 
     if (result == null) {
       // delete all files that match the output base
-      lister = new DirectoryLister();
+      lister = new LocalDirectoryLister();
       lister.setWatchDir(new PlaceholderDirectory(m_OutputBase.getParentFile()));
       lister.setRegExp(new BaseRegExp(m_OutputBase.getName() + ".*"));
       lister.setListFiles(true);
