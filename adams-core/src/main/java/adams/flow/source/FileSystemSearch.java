@@ -261,4 +261,15 @@ public class FileSystemSearch
     
     return result;
   }
+
+  /**
+   * Stops the execution. No message set.
+   */
+  @Override
+  public void stopExecution() {
+    if (m_Search != null)
+      m_Search.stopExecution();
+
+    super.stopExecution();
+  }
 }

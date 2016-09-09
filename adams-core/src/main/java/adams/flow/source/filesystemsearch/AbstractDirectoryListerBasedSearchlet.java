@@ -78,4 +78,12 @@ public abstract class AbstractDirectoryListerBasedSearchlet
     
     return result;
   }
+
+  /**
+   * Stops the execution.
+   */
+  public void stopExecution() {
+    m_Stopped = true;
+    m_Lister.stopExecution();
+  }
 }

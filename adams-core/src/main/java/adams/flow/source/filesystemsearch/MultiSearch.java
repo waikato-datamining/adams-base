@@ -15,7 +15,7 @@
 
 /**
  * MultiSearch.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.source.filesystemsearch;
 
@@ -33,12 +33,12 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- * 
+ *
  * <pre>-search &lt;adams.flow.source.filesystemsearch.AbstractFileSystemSearchlet&gt; [-search ...] (property: searches)
  * &nbsp;&nbsp;&nbsp;The search algorithms to execute.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -49,14 +49,14 @@ public class MultiSearch
 
   /** for serialization. */
   private static final long serialVersionUID = -3189597528629633942L;
-  
+
   /** the search algorithms to execute. */
   protected AbstractFileSystemSearchlet[] m_Searches;
-  
+
   /**
    * Returns a string describing the object.
    *
-   * @return 			a description suitable for displaying in the gui
+   * @return a description suitable for displaying in the gui
    */
   @Override
   public String globalInfo() {
@@ -71,14 +71,14 @@ public class MultiSearch
     super.defineOptions();
 
     m_OptionManager.add(
-	    "search", "searches",
-	    new AbstractFileSystemSearchlet[0]);
+      "search", "searches",
+      new AbstractFileSystemSearchlet[0]);
   }
 
   /**
    * Sets the search algorithms to use.
    *
-   * @param value	the algorithms
+   * @param value the algorithms
    */
   public void setSearches(AbstractFileSystemSearchlet[] value) {
     m_Searches = value;
@@ -88,7 +88,7 @@ public class MultiSearch
   /**
    * Returns the search algorithms in use.
    *
-   * @return		the algorithms
+   * @return the algorithms
    */
   public AbstractFileSystemSearchlet[] getSearches() {
     return m_Searches;
@@ -97,47 +97,60 @@ public class MultiSearch
   /**
    * Returns the tip text for this property.
    *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
+   * @return tip text for this property suitable for
+   * displaying in the GUI or for listing the options.
    */
   public String searchesTipText() {
     return "The search algorithms to execute.";
   }
-  
+
   /**
    * Performs a setup check before search.
-   * 
-   * @throws Exception	if checks failed
+   *
+   * @throws Exception if checks failed
    */
   @Override
   protected void check() throws Exception {
     super.check();
-    
+
     if (m_Searches.length == 0)
       throw new IllegalStateException("At least one search algorithm must be supplied!");
   }
 
   /**
    * Performs the actual search.
-   * 
-   * @return		the search result
-   * @throws Exception	if search failed
+   *
+   * @throws Exception if search failed
+   * @return the search result
    */
   @Override
   protected List<String> doSearch() throws Exception {
-    List<String>	result;
-    int			i;
-    
-    result = new ArrayList<String>();
+    List<String> result;
+    int i;
+
+    result = new ArrayList<>();
     for (i = 0; i < m_Searches.length; i++) {
       try {
 	result.addAll(m_Searches[i].search());
       }
       catch (Exception e) {
-	throw new Exception("Failed to execute search #" + (i+1), e);
+	throw new Exception("Failed to execute search #" + (i + 1), e);
       }
     }
-    
+
     return result;
+  }
+
+  /**
+   * Stops the execution.
+   */
+  public void stopExecution() {
+    int i;
+
+    m_Stopped = true;
+
+    for (i = 0; i < m_Searches.length; i++) {
+      m_Searches[i].stopExecution();
+    }
   }
 }

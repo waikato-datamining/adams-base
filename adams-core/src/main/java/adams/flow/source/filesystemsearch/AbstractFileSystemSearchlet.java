@@ -15,16 +15,17 @@
 
 /**
  * AbstractFileSystemSearchlet.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.source.filesystemsearch;
 
-import java.util.List;
-
 import adams.core.QuickInfoSupporter;
 import adams.core.ShallowCopySupporter;
+import adams.core.Stoppable;
 import adams.core.option.AbstractOptionHandler;
 import adams.core.option.OptionUtils;
+
+import java.util.List;
 
 /**
  * Ancestor for file-system search algorithms.
@@ -34,11 +35,15 @@ import adams.core.option.OptionUtils;
  */
 public abstract class AbstractFileSystemSearchlet
   extends AbstractOptionHandler
-  implements ShallowCopySupporter<AbstractFileSystemSearchlet>, QuickInfoSupporter {
+  implements ShallowCopySupporter<AbstractFileSystemSearchlet>,
+             QuickInfoSupporter, Stoppable {
 
   /** for serialization. */
   private static final long serialVersionUID = 5019667028030872568L;
-  
+
+  /** whether search was stopped. */
+  protected boolean m_Stopped;
+
   /**
    * Returns a quick info about the object, which can be displayed in the GUI.
    * <br><br>
@@ -75,9 +80,15 @@ public abstract class AbstractFileSystemSearchlet
    * @throws Exception	if checks or search failed
    */
   public List<String> search() throws Exception {
+    m_Stopped = false;
     check();
     return doSearch();
   }
+
+  /**
+   * Stops the execution.
+   */
+  public abstract void stopExecution();
 
   /**
    * Returns a shallow copy of itself, i.e., based on the commandline options.
