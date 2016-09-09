@@ -23,10 +23,9 @@ package adams.gui.core;
 import adams.core.base.BaseRegExp;
 import adams.core.io.FileWrapper;
 import adams.core.io.FileWrapperComparator;
-import adams.core.io.LocalFileWrapper;
+import adams.core.io.PlaceholderDirectory;
 import adams.core.io.lister.DirectoryLister;
 import adams.core.io.lister.LocalDirectoryLister;
-import adams.core.io.PlaceholderDirectory;
 import adams.env.Environment;
 import adams.gui.core.SearchPanel.LayoutType;
 import adams.gui.event.SearchEvent;
@@ -340,7 +339,7 @@ public class FilePanel
    *
    * @param value	the directory
    */
-  public void setCurrentDir(PlaceholderDirectory value) {
+  public void setCurrentDir(File value) {
     m_Lister.setWatchDir(value);
     update();
     notifyDirectoryChangeListeners();
@@ -351,7 +350,7 @@ public class FilePanel
    *
    * @return		the directory
    */
-  public PlaceholderDirectory getCurrentDir() {
+  public File getCurrentDir() {
     return m_Lister.getWatchDir();
   }
 
@@ -659,15 +658,14 @@ public class FilePanel
       protected List<FileWrapper> files = new ArrayList<>();
       @Override
       protected Object doInBackground() throws Exception {
-	for (String file: m_Lister.list()) {
-	  FileWrapper wrapper = new LocalFileWrapper(new File(file));
+	for (FileWrapper wrapper: m_Lister.listWrappers()) {
 	  if (!m_ShowHidden && wrapper.isHidden())
 	    continue;
 	  files.add(wrapper);
 	}
 	Collections.sort(files, m_Comparator);
-	if (m_Lister.getWatchDir().getAbsoluteFile().getParentFile() != null)
-	  files.add(0, new LocalFileWrapper(new File("..")));
+	if (m_Lister.hasParentDirectory())
+	  files.add(0, m_Lister.newDirectory(".."));
 	return null;
       }
       @Override

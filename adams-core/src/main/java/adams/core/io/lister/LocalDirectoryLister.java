@@ -22,6 +22,8 @@ package adams.core.io.lister;
 
 import adams.core.base.BaseDateTime;
 import adams.core.io.FileUtils;
+import adams.core.io.FileWrapper;
+import adams.core.io.LocalFileWrapper;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -183,6 +185,25 @@ public class LocalDirectoryLister
     }
 
     return result;
+  }
+
+  /**
+   * Returns whether the watch directory has a parent directory.
+   *
+   * @return		true if parent directory available
+   */
+  public boolean hasParentDirectory() {
+    return (m_WatchDir.getAbsoluteFile().getParentFile() != null);
+  }
+
+  /**
+   * Returns a new directory relative to the watch directory.
+   *
+   * @param dir		the directory name
+   * @return		the new wrapper
+   */
+  public LocalFileWrapper newDirectory(String dir) {
+    return new LocalFileWrapper(new File(m_WatchDir.getAbsolutePath() + File.separator + dir));
   }
 
   /**
@@ -363,6 +384,25 @@ public class LocalDirectoryLister
       result.clear();
 
     return result.toArray(new String[result.size()]);
+  }
+
+  /**
+   * Returns the list of files/directories in the watched directory. In case
+   * the execution gets stopped, this method returns a 0-length array.
+   *
+   * @return		 the list of file/directory wrappers
+   */
+  public FileWrapper[] listWrappers() {
+    FileWrapper[]	result;
+    String[]		files;
+    int			i;
+
+    files = list();
+    result = new FileWrapper[files.length];
+    for (i = 0; i < files.length; i++)
+      result[i] = new LocalFileWrapper(new File(files[i]));
+
+    return result;
   }
 
   /**

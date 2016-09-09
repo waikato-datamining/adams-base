@@ -15,15 +15,14 @@
 
 /**
  * DirectorySearchWithCustomSort.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.source.filesystemsearch;
 
 import adams.core.QuickInfoHelper;
 import adams.core.base.BaseRegExp;
-import adams.core.io.lister.LocalDirectoryLister;
-import adams.core.io.lister.Sorting;
 import adams.core.io.PlaceholderDirectory;
+import adams.core.io.lister.Sorting;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -240,7 +239,6 @@ public class DirectorySearchWithCustomSort
    * Sets the directory to search.
    *
    * @param value	the directory
-   * @see		LocalDirectoryLister#setWatchDir(adams.core.io.PlaceholderDirectory)
    */
   public void setDirectory(PlaceholderDirectory value) {
     m_Lister.setWatchDir(value);
@@ -250,10 +248,9 @@ public class DirectorySearchWithCustomSort
    * Returns the directory to search.
    *
    * @return		the directory.
-   * @see		LocalDirectoryLister#getWatchDir()
    */
   public PlaceholderDirectory getDirectory() {
-    return m_Lister.getWatchDir();
+    return new PlaceholderDirectory(m_Lister.getWatchDir());
   }
 
   /**
@@ -270,7 +267,6 @@ public class DirectorySearchWithCustomSort
    * Sets the maximum number of items to return.
    *
    * @param value	the maximum number
-   * @see		LocalDirectoryLister#setMaxItems(int)
    */
   public void setMaxItems(int value) {
     m_Lister.setMaxItems(value);
@@ -281,7 +277,6 @@ public class DirectorySearchWithCustomSort
    * Returns the maximum number of items to return.
    *
    * @return		the maximum number
-   * @see		LocalDirectoryLister#getMaxItems()
    */
   public int getMaxItems() {
     return m_Lister.getMaxItems();
@@ -301,7 +296,6 @@ public class DirectorySearchWithCustomSort
    * Sets the regular expression for the files/dirs.
    *
    * @param value	the regular expression
-   * @see		LocalDirectoryLister#setRegExp(adams.core.base.BaseRegExp)
    */
   public void setRegExp(BaseRegExp value) {
     m_Lister.setRegExp(value);
@@ -312,7 +306,6 @@ public class DirectorySearchWithCustomSort
    * Returns the regular expression for the files/dirs.
    *
    * @return		the regular expression
-   * @see		LocalDirectoryLister#getRegExp()
    */
   public BaseRegExp getRegExp() {
     return m_Lister.getRegExp();
@@ -390,7 +383,6 @@ public class DirectorySearchWithCustomSort
    * Sets the type of sorting to perform.
    *
    * @param value	the type of sorting
-   * @see		LocalDirectoryLister#setSorting(Sorting)
    */
   public void setSorting(Sorting value) {
     m_Lister.setSorting(value);
@@ -401,7 +393,6 @@ public class DirectorySearchWithCustomSort
    * Returns the type of sorting to perform.
    *
    * @return		the type of sorting
-   * @see		LocalDirectoryLister#getSorting()
    */
   public Sorting getSorting() {
     return m_Lister.getSorting();
@@ -450,7 +441,6 @@ public class DirectorySearchWithCustomSort
    * Sets whether to search recursively.
    *
    * @param value	true if search is recursively
-   * @see		LocalDirectoryLister#setRecursive(boolean)
    */
   public void setRecursive(boolean value) {
     m_Lister.setRecursive(value);
@@ -461,7 +451,6 @@ public class DirectorySearchWithCustomSort
    * Returns whether search is recursively.
    *
    * @return		true if search is recursively
-   * @see		LocalDirectoryLister#getRecursive()
    */
   public boolean getRecursive() {
     return m_Lister.getRecursive();
@@ -525,7 +514,7 @@ public class DirectorySearchWithCustomSort
     result += QuickInfoHelper.toString(this, "sortReplace", getSortReplace(), ", replace: ");
 
     // further options
-    options = new ArrayList<String>();
+    options = new ArrayList<>();
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "sortDescending", getSortDescending(), "descending"));
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "recursive", getRecursive(), "recursive"));
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "maxItems", (getMaxItems() > 0 ? getMaxItems() : null), "max="));

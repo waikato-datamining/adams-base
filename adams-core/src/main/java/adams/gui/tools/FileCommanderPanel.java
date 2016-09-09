@@ -430,7 +430,7 @@ public class FileCommanderPanel
    * @param dir		the directory to use
    * @param left	if true the left panel gets updated
    */
-  public void setDirectory(PlaceholderDirectory dir, boolean left) {
+  public void setDirectory(File dir, boolean left) {
     if (left) {
       m_FilesLeft.setCurrentDir(dir);
       m_DirLeft.setCurrent(dir);
@@ -447,7 +447,7 @@ public class FileCommanderPanel
    * @param left	if true the directory of the left panel is retrieved
    * @return		the current directory
    */
-  public PlaceholderDirectory getDirectory(boolean left) {
+  public File getDirectory(boolean left) {
     if (left)
       return m_FilesLeft.getCurrentDir();
     else
@@ -676,9 +676,9 @@ public class FileCommanderPanel
    * Creates a new directory.
    */
   public void mkdir() {
-    String			input;
-    PlaceholderDirectory	dir;
-    PlaceholderDirectory	dirNew;
+    String	input;
+    File	dir;
+    File	dirNew;
 
     if (m_FilesActive == null)
       return;

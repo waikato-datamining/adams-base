@@ -202,7 +202,7 @@ public class DeleteFile
    * @return		the directory.
    */
   public PlaceholderDirectory getDirectory() {
-    return m_Lister.getWatchDir();
+    return new PlaceholderDirectory(m_Lister.getWatchDir());
   }
 
   /**

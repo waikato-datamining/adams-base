@@ -24,6 +24,7 @@ import adams.core.base.BaseRegExp;
 import adams.core.io.PlaceholderDirectory;
 import adams.core.logging.CustomLoggingLevelObject;
 
+import java.io.File;
 import java.util.logging.Level;
 
 /**
@@ -40,7 +41,7 @@ public abstract class AbstractDirectoryLister
   private static final long serialVersionUID = -1846677500660003814L;
 
   /** the directory to watch. */
-  protected PlaceholderDirectory m_WatchDir;
+  protected File m_WatchDir;
 
   /** whether to list directories. */
   protected boolean m_ListDirs;
@@ -110,7 +111,7 @@ public abstract class AbstractDirectoryLister
    *
    * @param value 	the directory
    */
-  public void setWatchDir(PlaceholderDirectory value) {
+  public void setWatchDir(File value) {
     m_WatchDir = value;
   }
 
@@ -119,7 +120,7 @@ public abstract class AbstractDirectoryLister
    *
    * @return 		the directory
    */
-  public PlaceholderDirectory getWatchDir() {
+  public File getWatchDir() {
     return m_WatchDir;
   }
 

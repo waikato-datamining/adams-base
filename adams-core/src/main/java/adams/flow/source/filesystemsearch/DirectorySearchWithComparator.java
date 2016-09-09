@@ -158,7 +158,6 @@ public class DirectorySearchWithComparator
    * Sets the directory to search.
    *
    * @param value	the directory
-   * @see		LocalDirectoryLister#setWatchDir(PlaceholderDirectory)
    */
   public void setDirectory(PlaceholderDirectory value) {
     m_Lister.setWatchDir(value);
@@ -168,10 +167,9 @@ public class DirectorySearchWithComparator
    * Returns the directory to search.
    *
    * @return		the directory.
-   * @see		LocalDirectoryLister#getWatchDir()
    */
   public PlaceholderDirectory getDirectory() {
-    return m_Lister.getWatchDir();
+    return new PlaceholderDirectory(m_Lister.getWatchDir());
   }
 
   /**
@@ -188,7 +186,6 @@ public class DirectorySearchWithComparator
    * Sets the regular expression for the files/dirs.
    *
    * @param value	the regular expression
-   * @see		LocalDirectoryLister#setRegExp(BaseRegExp)
    */
   public void setRegExp(BaseRegExp value) {
     m_Lister.setRegExp(value);
@@ -219,7 +216,6 @@ public class DirectorySearchWithComparator
    * Sets the maximum number of items to return.
    *
    * @param value	the maximum number
-   * @see		LocalDirectoryLister#setMaxItems(int)
    */
   public void setMaxItems(int value) {
     m_Lister.setMaxItems(value);
@@ -230,7 +226,6 @@ public class DirectorySearchWithComparator
    * Returns the maximum number of items to return.
    *
    * @return		the maximum number
-   * @see		LocalDirectoryLister#getMaxItems()
    */
   public int getMaxItems() {
     return m_Lister.getMaxItems();
@@ -308,7 +303,6 @@ public class DirectorySearchWithComparator
    * Sets whether to search recursively.
    *
    * @param value	true if search is recursively
-   * @see		LocalDirectoryLister#setRecursive(boolean)
    */
   public void setRecursive(boolean value) {
     m_Lister.setRecursive(value);
@@ -319,7 +313,6 @@ public class DirectorySearchWithComparator
    * Returns whether search is recursively.
    *
    * @return		true if search is recursively
-   * @see		LocalDirectoryLister#getRecursive()
    */
   public boolean getRecursive() {
     return m_Lister.getRecursive();
@@ -382,7 +375,7 @@ public class DirectorySearchWithComparator
     result += QuickInfoHelper.toString(this, "comparator", getComparator(), ", comparator: ");
 
     // further options
-    options = new ArrayList<String>();
+    options = new ArrayList<>();
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "sortDescending", getSortDescending(), "descending"));
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "recursive", getRecursive(), "recursive"));
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "maxItems", (getMaxItems() > 0 ? getMaxItems() : null), "max="));

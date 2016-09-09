@@ -372,7 +372,7 @@ public class DirectoryLister
    * @return		the incoming directory.
    */
   public PlaceholderDirectory getWatchDir() {
-    return m_Lister.getWatchDir();
+    return new PlaceholderDirectory(m_Lister.getWatchDir());
   }
 
   /**
@@ -389,7 +389,6 @@ public class DirectoryLister
    * Sets the maximum number of items to return.
    *
    * @param value	the maximum number
-   * @see		LocalDirectoryLister#setMaxItems(int)
    */
   public void setMaxItems(int value) {
     m_Lister.setMaxItems(value);
@@ -400,7 +399,6 @@ public class DirectoryLister
    * Returns the maximum number of items to return.
    *
    * @return		the maximum number
-   * @see		LocalDirectoryLister#getMaxItems()
    */
   public int getMaxItems() {
     return m_Lister.getMaxItems();
@@ -431,7 +429,6 @@ public class DirectoryLister
    * Sets the regular expression for the files/dirs.
    *
    * @param value	the regular expression
-   * @see		LocalDirectoryLister#setRegExp(String)
    */
   public void setRegExp(BaseRegExp value) {
     m_Lister.setRegExp(value);
@@ -442,7 +439,6 @@ public class DirectoryLister
    * Returns the regular expression for the files/dirs.
    *
    * @return		the regular expression
-   * @see		LocalDirectoryLister#getRegExp()
    */
   public BaseRegExp getRegExp() {
     return m_Lister.getRegExp();
@@ -462,7 +458,6 @@ public class DirectoryLister
    * Sets the name of the stop file.
    *
    * @param value	the regular expression
-   * @see		LocalDirectoryLister#setStopFile(String)
    */
   public void setStopFile(String value) {
     m_Lister.setStopFile(value);
@@ -473,7 +468,6 @@ public class DirectoryLister
    * Returns the name of the stop file.
    *
    * @return		the name
-   * @see		LocalDirectoryLister#getStopFile()
    */
   public String getStopFile() {
     return m_Lister.getStopFile();
@@ -493,7 +487,6 @@ public class DirectoryLister
    * Sets whether to list directories.
    *
    * @param value	true if directories are to be listed
-   * @see		LocalDirectoryLister#setListDirs(boolean)
    */
   public void setListDirs(boolean value) {
     m_Lister.setListDirs(value);
@@ -504,7 +497,6 @@ public class DirectoryLister
    * Returns whether directories are listed.
    *
    * @return		true if directories are listed
-   * @see		LocalDirectoryLister#getListDirs()
    */
   public boolean getListDirs() {
     return m_Lister.getListDirs();
@@ -524,7 +516,6 @@ public class DirectoryLister
    * Sets whether to list files.
    *
    * @param value	true if files are to be listed
-   * @see		LocalDirectoryLister#setListFiles(boolean)
    */
   public void setListFiles(boolean value) {
     m_Lister.setListFiles(value);
@@ -535,7 +526,6 @@ public class DirectoryLister
    * Returns whether directories are listed.
    *
    * @return		true if directories are listed
-   * @see		LocalDirectoryLister#getListFiles()
    */
   public boolean getListFiles() {
     return m_Lister.getListFiles();
@@ -555,7 +545,6 @@ public class DirectoryLister
    * Sets the type of sorting to perform.
    *
    * @param value	the type of sorting
-   * @see		LocalDirectoryLister#setSorting(Sorting)
    */
   public void setSorting(Sorting value) {
     m_Lister.setSorting(value);
@@ -566,7 +555,6 @@ public class DirectoryLister
    * Returns the type of sorting to perform.
    *
    * @return		the type of sorting
-   * @see		LocalDirectoryLister#getSorting()
    */
   public Sorting getSorting() {
     return m_Lister.getSorting();
@@ -586,7 +574,6 @@ public class DirectoryLister
    * Sets whether to sort descendingly.
    *
    * @param value	true if sorting in descending order
-   * @see		LocalDirectoryLister#setSortDescending(boolean)
    */
   public void setSortDescending(boolean value) {
     m_Lister.setSortDescending(value);
@@ -597,7 +584,6 @@ public class DirectoryLister
    * Returns whether to sort descendingly.
    *
    * @return		true if sorting in descending order
-   * @see		LocalDirectoryLister#getSortDescending()
    */
   public boolean getSortDescending() {
     return m_Lister.getSortDescending();
@@ -688,7 +674,6 @@ public class DirectoryLister
    * Sets whether to search recursively.
    *
    * @param value	true if search is recursively
-   * @see		LocalDirectoryLister#setRecursive(boolean)
    */
   public void setRecursive(boolean value) {
     m_Lister.setRecursive(value);
@@ -699,7 +684,6 @@ public class DirectoryLister
    * Returns whether search is recursively.
    *
    * @return		true if search is recursively
-   * @see		LocalDirectoryLister#getRecursive()
    */
   public boolean getRecursive() {
     return m_Lister.getRecursive();
@@ -755,7 +739,6 @@ public class DirectoryLister
    * since simply opening it for writing does not lock it.
    *
    * @param value	if true then locked files are skipped
-   * @see		LocalDirectoryLister#setSkipLockedFiles(boolean)
    */
   public void setSkipLockedFiles(boolean value) {
     m_Lister.setSkipLockedFiles(value);
@@ -766,7 +749,6 @@ public class DirectoryLister
    * Returns whether to skip locked files.
    *
    * @return		true if locked files are skipped
-   * @see		LocalDirectoryLister#getSkipLockedFiles()
    */
   public boolean getSkipLockedFiles() {
     return m_Lister.getSkipLockedFiles();
@@ -790,7 +772,6 @@ public class DirectoryLister
    * Sets the minimum file timestamp that the files have to have.
    *
    * @param value	the minimum file timestamp
-   * @see		LocalDirectoryLister#setMinFileTimestamp(BaseDateTime)
    */
   public void setMinFileTimestamp(BaseDateTime value) {
     m_Lister.setMinFileTimestamp(value);
@@ -801,7 +782,6 @@ public class DirectoryLister
    * Returns the minimum file timestamp that the files have to have.
    *
    * @return		the minimum file timestamp
-   * @see		LocalDirectoryLister#getMinFileTimestamp()
    */
   public BaseDateTime getMinFileTimestamp() {
     return m_Lister.getMinFileTimestamp();
@@ -821,7 +801,6 @@ public class DirectoryLister
    * Sets the maximum file timestamp that the files have to have.
    *
    * @param value	the maximum file timestamp
-   * @see		LocalDirectoryLister#setMaxFileTimestamp(BaseDateTime)
    */
   public void setMaxFileTimestamp(BaseDateTime value) {
     m_Lister.setMaxFileTimestamp(value);
@@ -832,7 +811,6 @@ public class DirectoryLister
    * Returns the maximum file timestamp that the files have to have.
    *
    * @return		the maximum file timestamp
-   * @see		LocalDirectoryLister#getMaxFileTimestamp()
    */
   public BaseDateTime getMaxFileTimestamp() {
     return m_Lister.getMaxFileTimestamp();

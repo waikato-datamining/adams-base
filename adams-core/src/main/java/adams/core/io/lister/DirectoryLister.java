@@ -22,9 +22,11 @@ package adams.core.io.lister;
 
 import adams.core.StoppableWithFeedback;
 import adams.core.base.BaseRegExp;
-import adams.core.io.PlaceholderDirectory;
+import adams.core.io.FileWrapper;
 import adams.core.logging.LoggingLevelHandler;
 import adams.core.logging.LoggingSupporter;
+
+import java.io.File;
 
 /**
  * Interface for directory listers.
@@ -40,14 +42,14 @@ public interface DirectoryLister
    *
    * @param value 	the directory
    */
-  public void setWatchDir(PlaceholderDirectory value);
+  public void setWatchDir(File value);
 
   /**
    * Returns the directory to watch.
    *
    * @return 		the directory
    */
-  public PlaceholderDirectory getWatchDir();
+  public File getWatchDir();
 
   /**
    * Sets whether to list directories or not.
@@ -162,10 +164,33 @@ public interface DirectoryLister
   public int getMaxDepth();
 
   /**
+   * Returns whether the watch directory has a parent directory.
+   *
+   * @return		true if parent directory available
+   */
+  public boolean hasParentDirectory();
+
+  /**
+   * Returns a new directory relative to the watch directory.
+   *
+   * @param dir		the directory name
+   * @return		the new wrapper
+   */
+  public FileWrapper newDirectory(String dir);
+
+  /**
    * Returns the list of files/directories in the watched directory. In case
    * the execution gets stopped, this method returns a 0-length array.
    *
    * @return		 the list of absolute file/directory names
    */
   public String[] list();
+
+  /**
+   * Returns the list of files/directories in the watched directory. In case
+   * the execution gets stopped, this method returns a 0-length array.
+   *
+   * @return		 the list of file/directory wrappers
+   */
+  public FileWrapper[] listWrappers();
 }
