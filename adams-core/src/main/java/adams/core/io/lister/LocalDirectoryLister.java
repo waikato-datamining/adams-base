@@ -321,7 +321,26 @@ public class LocalDirectoryLister
    * @return		 the list of absolute file/directory names
    */
   public String[] list() {
-    List<String>		result;
+    String[]		result;
+    FileObject[]	files;
+    int			i;
+
+    files  = listObjects();
+    result = new String[files.length];
+    for (i = 0; i < files.length; i++)
+      result[i] = files[i].getFile().getAbsolutePath();
+
+    return result;
+  }
+
+  /**
+   * Returns the list of files/directories in the watched directory. In case
+   * the execution gets stopped, this method returns a 0-length array.
+   *
+   * @return		 the list of file/directory wrappers
+   */
+  public FileObject[] listObjects() {
+    List<FileObject>		result;
     List<SortContainer>		list;
     SortContainer		cont;
     int				i;
@@ -361,7 +380,7 @@ public class LocalDirectoryLister
 	if (getDebug())
 	  getLogger().info("before matching");
 	for (i = 0; i < list.size(); i++) {
-	  result.add(list.get(i).getFile().getFile().getAbsolutePath());
+	  result.add(list.get(i).getFile());
 
 	  // maximum reached?
 	  if (m_MaxItems > 0) {
@@ -383,26 +402,7 @@ public class LocalDirectoryLister
     if (m_Stopped)
       result.clear();
 
-    return result.toArray(new String[result.size()]);
-  }
-
-  /**
-   * Returns the list of files/directories in the watched directory. In case
-   * the execution gets stopped, this method returns a 0-length array.
-   *
-   * @return		 the list of file/directory wrappers
-   */
-  public FileObject[] listObjects() {
-    FileObject[]	result;
-    String[]		files;
-    int			i;
-
-    files = list();
-    result = new FileObject[files.length];
-    for (i = 0; i < files.length; i++)
-      result[i] = new LocalFileObject(new File(files[i]));
-
-    return result;
+    return result.toArray(new FileObject[result.size()]);
   }
 
   /**
