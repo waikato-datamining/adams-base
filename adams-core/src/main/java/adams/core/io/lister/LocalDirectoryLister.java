@@ -284,7 +284,7 @@ public class LocalDirectoryLister
 	    continue;
 	  }
 
-	  files.add(new SortContainer(currFiles[i], m_Sorting));
+	  files.add(new SortContainer(new LocalFileWrapper(currFiles[i]), m_Sorting));
 	}
       }
       else {
@@ -308,7 +308,7 @@ public class LocalDirectoryLister
 	    continue;
 	  }
 
-	  files.add(new SortContainer(currFiles[i], m_Sorting));
+	  files.add(new SortContainer(new LocalFileWrapper(currFiles[i]), m_Sorting));
 	}
       }
     }
@@ -361,7 +361,7 @@ public class LocalDirectoryLister
 	if (getDebug())
 	  getLogger().info("before matching");
 	for (i = 0; i < list.size(); i++) {
-	  result.add(list.get(i).getFile().getAbsolutePath());
+	  result.add(list.get(i).getFile().getFile().getAbsolutePath());
 
 	  // maximum reached?
 	  if (m_MaxItems > 0) {

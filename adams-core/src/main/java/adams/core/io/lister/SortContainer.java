@@ -20,7 +20,7 @@
 
 package adams.core.io.lister;
 
-import java.io.File;
+import adams.core.io.FileWrapper;
 
 /**
  * A helper class for sorting files.
@@ -32,7 +32,7 @@ public class SortContainer
   implements Comparable<SortContainer> {
 
   /** the file to be sorted. */
-  protected File m_File;
+  protected FileWrapper m_File;
 
   /** used for sorting. */
   protected Comparable m_Sort;
@@ -43,7 +43,7 @@ public class SortContainer
    * @param file	the file to sort
    * @param sorting	the type of sorting to perform
    */
-  public SortContainer(File file, Sorting sorting) {
+  public SortContainer(FileWrapper file, Sorting sorting) {
     super();
 
     m_File = file;
@@ -51,9 +51,9 @@ public class SortContainer
     if (sorting == Sorting.NO_SORTING)
       m_Sort = null;
     else if (sorting == Sorting.SORT_BY_NAME)
-      m_Sort = file.getAbsolutePath();
+      m_Sort = file.getActualFile().getAbsolutePath();
     else if (sorting == Sorting.SORT_BY_LAST_MODIFIED)
-      m_Sort = new Long(file.lastModified());
+      m_Sort = file.getLastModified().getTime();
     else
       throw new IllegalArgumentException("Unhandled sorting: " + sorting);
   }
@@ -63,7 +63,7 @@ public class SortContainer
    *
    * @return		the stored file
    */
-  public File getFile() {
+  public FileWrapper getFile() {
     return m_File;
   }
 
