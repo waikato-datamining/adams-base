@@ -21,24 +21,37 @@
 package adams.gui.visualization.instances;
 
 import adams.core.Range;
+import adams.data.statistics.ArrayHistogram;
+import adams.flow.control.Flow;
+import adams.flow.control.StorageName;
+import adams.flow.core.Actor;
+import adams.flow.source.StorageValue;
+import adams.flow.transformer.ArrayToSequence;
+import adams.flow.transformer.MakePlotContainer;
 import adams.gui.chooser.WekaFileChooser;
 import adams.gui.core.BasePopupMenu;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.SortableAndSearchableTable;
 import adams.gui.core.UndoHandlerWithQuickAccess;
 import adams.gui.dialog.ApprovalDialog;
+import adams.gui.goe.GenericObjectEditorDialog;
+import adams.gui.visualization.statistics.HistogramFactory;
+import gnu.trove.list.array.TDoubleArrayList;
 import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.Undoable;
 import weka.core.converters.AbstractFileSaver;
 
 import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
+import javax.swing.SwingWorker;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
+import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Table for displaying Instances objects.
@@ -59,6 +72,12 @@ public class InstancesTable
 
   /** the filechooser for exporting data. */
   protected WekaFileChooser m_FileChooser;
+
+  /** the last plot in use. */
+  protected adams.flow.sink.SimplePlot m_LastPlot;
+
+  /** the last histogram in use. */
+  protected ArrayHistogram m_LastHistogram;
 
   /**
    * Initializes the table with the data.
@@ -232,17 +251,156 @@ public class InstancesTable
   }
 
   /**
+   * Plots the specified column.
+   *
+   * @param col		the column to plot
+   */
+  protected void plotColumn(int col) {
+    final List<Double> 		list;
+    GenericObjectEditorDialog 	setup;
+    int				i;
+    final String		title;
+    SwingWorker 		worker;
+    Instances			data;
+    Instance			inst;
+
+    // let user customize plot
+    if (GUIHelper.getParentDialog(this) != null)
+      setup = new GenericObjectEditorDialog(GUIHelper.getParentDialog(this), ModalityType.DOCUMENT_MODAL);
+    else
+      setup = new GenericObjectEditorDialog(GUIHelper.getParentFrame(this), true);
+    setup.setDefaultCloseOperation(GenericObjectEditorDialog.DISPOSE_ON_CLOSE);
+    setup.getGOEEditor().setClassType(Actor.class);
+    setup.getGOEEditor().setCanChangeClassInDialog(false);
+    if (m_LastPlot == null)
+      m_LastPlot = new adams.flow.sink.SimplePlot();
+    setup.setCurrent(m_LastPlot);
+    setup.setLocationRelativeTo(GUIHelper.getParentComponent(this));
+    setup.setVisible(true);
+    if (setup.getResult() != GenericObjectEditorDialog.APPROVE_OPTION)
+      return;
+    m_LastPlot = (adams.flow.sink.SimplePlot) setup.getCurrent();
+
+    // get data from spreadsheet
+    list = new ArrayList<>();
+    data = getInstances();
+    for (i = 0; i < data.numInstances(); i++) {
+      inst = data.instance(i);
+      if (!inst.isMissing(col))
+	list.add(inst.value(col));
+    }
+
+    // generate plot
+    title = "Attribute #" + (col + 1) + "/" + data.attribute(col).name();
+    worker = new SwingWorker() {
+      @Override
+      protected Object doInBackground() throws Exception {
+	Flow flow = new Flow();
+
+	StorageValue sv = new StorageValue();
+	sv.setStorageName(new StorageName("values"));
+	flow.add(sv);
+
+	ArrayToSequence a2s = new ArrayToSequence();
+	flow.add(a2s);
+
+	MakePlotContainer mpc = new MakePlotContainer();
+	mpc.setPlotName(title);
+	flow.add(mpc);
+
+	adams.flow.sink.SimplePlot plot = (adams.flow.sink.SimplePlot) m_LastPlot.shallowCopy();
+	plot.setShortTitle(true);
+	plot.setName(title);
+        plot.setX(-2);
+        plot.setY(-2);
+	flow.add(plot);
+
+	flow.setUp();
+	flow.getStorage().put(new StorageName("values"), list.toArray(new Double[list.size()]));
+	flow.execute();
+	flow.wrapUp();
+	return null;
+      }
+    };
+    worker.execute();
+  }
+
+  /**
+   * Displays a histogram for the specified column.
+   *
+   * @param col		the column
+   */
+  protected void histogram(int col) {
+    TDoubleArrayList 			list;
+    HistogramFactory.SetupDialog	setup;
+    HistogramFactory.Dialog		dialog;
+    int					i;
+    Instances				data;
+    Instance				inst;
+
+    // let user customize histogram
+    if (GUIHelper.getParentDialog(this) != null)
+      setup = HistogramFactory.getSetupDialog(GUIHelper.getParentDialog(this), ModalityType.DOCUMENT_MODAL);
+    else
+      setup = HistogramFactory.getSetupDialog(GUIHelper.getParentFrame(this), true);
+    setup.setDefaultCloseOperation(HistogramFactory.SetupDialog.DISPOSE_ON_CLOSE);
+    if (m_LastHistogram == null)
+      m_LastHistogram = new ArrayHistogram();
+    setup.setCurrent(m_LastHistogram);
+    setup.setLocationRelativeTo(GUIHelper.getParentComponent(this));
+    setup.setVisible(true);
+    if (setup.getResult() != GenericObjectEditorDialog.APPROVE_OPTION)
+      return;
+    m_LastHistogram = (ArrayHistogram) setup.getCurrent();
+
+    // get data from spreadsheet
+    list = new TDoubleArrayList();
+    data = getInstances();
+    for (i = 0; i < data.numInstances(); i++) {
+      inst = data.instance(i);
+      if (!inst.isMissing(col))
+	list.add(inst.value(col));
+    }
+
+    // calculate histogram
+    m_LastHistogram.clear();
+
+    // display histogram
+    if (GUIHelper.getParentDialog(this) != null)
+      dialog = HistogramFactory.getDialog(GUIHelper.getParentDialog(this), ModalityType.MODELESS);
+    else
+      dialog = HistogramFactory.getDialog(GUIHelper.getParentFrame(this), false);
+    dialog.setDefaultCloseOperation(HistogramFactory.Dialog.DISPOSE_ON_CLOSE);
+    dialog.add(m_LastHistogram, list.toArray(), "Attribute #" + (col + 1) + "/" + data.attribute(col).name());
+    dialog.setLocationRelativeTo(GUIHelper.getParentComponent(this));
+    dialog.setVisible(true);
+  }
+
+  /**
    * Shows a popup menu for the header.
    *
    * @param e		the event
    */
   protected void showHeaderPopup(MouseEvent e) {
-    JPopupMenu			menu;
+    BasePopupMenu		menu;
+
+    menu = createHeaderPopup(e);
+    menu.showAbsolute(getTableHeader(), e);
+  }
+
+  /**
+   * Shows a popup menu for the header.
+   *
+   * @param e		the event
+   * @return		the menu
+   */
+  protected BasePopupMenu createHeaderPopup(MouseEvent e) {
+    BasePopupMenu		menu;
     JMenuItem			menuitem;
     final int			col;
     final InstancesTableModel	instModel;
 
-    menu      = new JPopupMenu();
+    menu      = new BasePopupMenu();
     col       = tableHeader.columnAtPoint(e.getPoint());
     instModel = (InstancesTableModel) getUnsortedModel();
 
@@ -275,7 +433,19 @@ public class InstancesTable
     });
     menu.add(menuitem);
 
-    menu.show(this, e.getX(), e.getY());
+    menu.addSeparator();
+
+    menuitem = new JMenuItem("Plot attribute...", GUIHelper.getIcon("plot.gif"));
+    menuitem.setEnabled(getInstances().attribute(col - 1).isNumeric());
+    menuitem.addActionListener((ActionEvent ae) -> plotColumn(col - 1));
+    menu.add(menuitem);
+
+    menuitem = new JMenuItem("Histogram...", GUIHelper.getIcon("histogram.png"));
+    menuitem.setEnabled(getInstances().attribute(col - 1).isNumeric());
+    menuitem.addActionListener((ActionEvent ae) -> histogram(col - 1));
+    menu.add(menuitem);
+
+    return menu;
   }
 
   /**
@@ -287,7 +457,7 @@ public class InstancesTable
     BasePopupMenu 	menu;
 
     menu = createCellPopup(e);
-    menu.show(this, e.getX(), e.getY());
+    menu.showAbsolute(this, e);
   }
 
   /**
