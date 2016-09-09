@@ -31,7 +31,6 @@ import adams.flow.transformer.MakePlotContainer;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.SpreadSheetTable;
 import adams.gui.goe.GenericObjectEditorDialog;
-import adams.gui.visualization.statistics.HistogramFactory;
 
 import javax.swing.SwingWorker;
 import java.awt.Dialog.ModalityType;
@@ -111,7 +110,7 @@ public class SimplePlot
       setup = new GenericObjectEditorDialog(GUIHelper.getParentDialog(table), ModalityType.DOCUMENT_MODAL);
     else
       setup = new GenericObjectEditorDialog(GUIHelper.getParentFrame(table), true);
-    setup.setDefaultCloseOperation(HistogramFactory.SetupDialog.DISPOSE_ON_CLOSE);
+    setup.setDefaultCloseOperation(GenericObjectEditorDialog.DISPOSE_ON_CLOSE);
     setup.getGOEEditor().setClassType(Actor.class);
     setup.getGOEEditor().setCanChangeClassInDialog(false);
     last = (adams.flow.sink.SimplePlot) table.getLastSetup(getClass(), true, !isColumn);
@@ -126,7 +125,7 @@ public class SimplePlot
     table.addLastSetup(getClass(), true, !isColumn, last);
 
     // get data from spreadsheet
-    list = new ArrayList<Double>();
+    list = new ArrayList<>();
     if (isColumn) {
       for (i = 0; i < sheet.getRowCount(); i++) {
 	if (sheet.hasCell(i, index) && sheet.getCell(i, index).isNumeric())
