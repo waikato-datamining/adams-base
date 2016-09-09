@@ -20,9 +20,11 @@
 
 package adams.gui.core;
 
-import adams.core.DateFormat;
-import adams.core.DateUtils;
 import adams.core.base.BaseRegExp;
+import adams.core.io.FileWrapper;
+import adams.core.io.FileWrapperComparator;
+import adams.core.io.LocalFileWrapper;
+import adams.core.io.lister.DirectoryLister;
 import adams.core.io.lister.LocalDirectoryLister;
 import adams.core.io.PlaceholderDirectory;
 import adams.env.Environment;
@@ -30,7 +32,6 @@ import adams.gui.core.SearchPanel.LayoutType;
 import adams.gui.event.SearchEvent;
 import com.googlecode.jfilechooserbookmarks.gui.BaseScrollPane;
 
-import javax.swing.AbstractListModel;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingWorker;
 import javax.swing.event.ChangeEvent;
@@ -46,12 +47,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
-import java.io.Serializable;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
 import java.util.EventObject;
 import java.util.HashSet;
 import java.util.List;
@@ -68,463 +65,6 @@ public class FilePanel
   implements ListSelectionListener {
 
   private static final long serialVersionUID = -3704016792074293012L;
-
-  /**
-   * Wraps a file and avoids costly API calls by caching values.
-   *
-   * @author FracPete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
-   */
-  public static class FileWrapper
-    implements Serializable {
-
-    private static final long serialVersionUID = -9056432057204433829L;
-
-    /** the wrapped file. */
-    protected File m_File;
-
-    /** the length. */
-    protected long m_Length;
-
-    /** whether a directory. */
-    protected boolean m_Directory;
-
-    /** the modified date. */
-    protected Date m_LastModified;
-
-    /** whether the file is hidden. */
-    protected boolean m_Hidden;
-
-    /** whether the file is a link. */
-    protected boolean m_Link;
-
-    /**
-     * Initializes the wrapper.
-     *
-     * @param file	the file to wrap
-     */
-    public FileWrapper(File file) {
-      m_File         = file;
-      m_Directory    = m_File.isDirectory();
-      m_Length       = m_File.length();
-      m_LastModified = new Date(m_File.lastModified());
-      m_Hidden       = m_File.isHidden();
-      m_Link         = Files.isSymbolicLink(m_File.toPath());
-    }
-
-    /**
-     * Returns the wrapped file.
-     *
-     * @return		the file
-     */
-    public File getFile() {
-      return m_File;
-    }
-
-    /**
-     * Returns the actual target (if possible) in case of a link.
-     *
-     * @return		the actual file
-     */
-    public File getActualFile() {
-      if (isLink()) {
-	try {
-	  return Files.readSymbolicLink(m_File.toPath()).toFile();
-	}
-	catch (Exception e) {
-	  return m_File;
-	}
-      }
-      else {
-	return m_File;
-      }
-    }
-
-    /**
-     * Returns the file name.
-     *
-     * @return		the name
-     */
-    public String getName() {
-      return m_File.getName();
-    }
-
-    /**
-     * Returns the size of the file.
-     *
-     * @return		the size
-     */
-    public long getLength() {
-      return m_Length;
-    }
-
-    /**
-     * Returns whether the file represents a directory.
-     *
-     * @return		true if directory
-     */
-    public boolean isDirectory() {
-      return m_Directory;
-    }
-
-    /**
-     * Returns the date when the file was last modified.
-     *
-     * @return		date when last modified
-     */
-    public Date getLastModified() {
-      return m_LastModified;
-    }
-
-    /**
-     * Returns whether the file is hidden.
-     *
-     * @return		true if hidden
-     */
-    public boolean isHidden() {
-      return m_Hidden;
-    }
-
-    /**
-     * Returns whether the file represents a link.
-     *
-     * @return		true if link
-     */
-    public boolean isLink() {
-      return m_Link;
-    }
-
-    /**
-     * Returns just the file's string representation.
-     *
-     * @return		the string representation
-     */
-    @Override
-    public String toString() {
-      return m_File.toString();
-    }
-  }
-
-  /**
-   * Comparator for {@link adams.gui.core.FilePanel.FileWrapper} objects.
-   *
-   * @author FracPete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
-   */
-  public static class FileWrapperComparator
-    implements Serializable, Comparator<FileWrapper> {
-
-    private static final long serialVersionUID = -4630678890271018588L;
-
-    /** whether to perform case-sensitive comparisons. */
-    protected boolean m_CaseSensitive;
-
-    /** whether to list directoris first. */
-    protected boolean m_ListDirsFirst;
-
-    /** whether to include parent directories in sorting. */
-    protected boolean m_IncludeParentDirs;
-
-    /**
-     * Initializes the comparator.
-     *
-     * @param caseSensitive	true if to perform case-sensitive comparisons
-     * @param listDirsFirst	whether to list directories first or to mix
-     *                          them in with files
-     * @param includeParentDirs	whether to include parent directories in the comparison
-     */
-    public FileWrapperComparator(boolean caseSensitive, boolean listDirsFirst, boolean includeParentDirs) {
-      m_CaseSensitive     = caseSensitive;
-      m_ListDirsFirst     = listDirsFirst;
-      m_IncludeParentDirs = includeParentDirs;
-    }
-
-    /**
-     * Returns whether comparison is case-sensitive.
-     *
-     * @return		true if case-sensitive
-     */
-    public boolean isCaseSensitive() {
-      return m_CaseSensitive;
-    }
-
-    /**
-     * Returns whether to list directories first.
-     *
-     * @return		true if to list dirs first
-     */
-    public boolean isListDirsFirst() {
-      return m_ListDirsFirst;
-    }
-
-    /**
-     * Returns whether to include parent directories in the comparison.
-     *
-     * @return		true if included
-     */
-    public boolean isIncludeParentDirs() {
-      return m_IncludeParentDirs;
-    }
-
-    /**
-     * Compares the two file wrappers.
-     *
-     * @param o1	the first wrapper
-     * @param o2	the second wrapper
-     * @return		less than, equal to or greater than zero if the first
-     * 			wrapper is less than, equal to or greater than the
-     * 			second one.
-     */
-    @Override
-    public int compare(FileWrapper o1, FileWrapper o2) {
-      int	result;
-      String	s1;
-      String	s2;
-
-      // set up comparison
-      if (m_IncludeParentDirs) {
-	s1 = o1.getFile().getAbsolutePath();
-	s2 = o2.getFile().getAbsolutePath();
-      }
-      else {
-	s1 = o1.getName();
-	s2 = o2.getName();
-      }
-      if (!m_CaseSensitive) {
-	s1 = s1.toLowerCase();
-	s2 = s2.toLowerCase();
-      }
-
-      // compare
-      if (m_ListDirsFirst) {
-	if (o1.isDirectory() && o2.isDirectory())
-	  result = s1.compareTo(s2);
-	else if (!o1.isDirectory() && !o2.isDirectory())
-	  result = s1.compareTo(s2);
-	else if (o1.isDirectory())
-	  result = -1;
-	else
-	  result = 1;
-      }
-      else {
-	result = s1.compareTo(s2);
-      }
-
-      return result;
-    }
-  }
-
-  /**
-   * List model for showing the files.
-   *
-   * @author FracPete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
-   */
-  public static class FileWrapperListModel
-    extends AbstractListModel<String> {
-
-    private static final long serialVersionUID = -5631974196097641601L;
-
-    /** the files. */
-    protected List<FileWrapper> m_Files;
-
-    /** whether to show parent dirs. */
-    protected boolean m_ShowParentDirs;
-
-    /**
-     * Initializes the model.
-     *
-     * @param files		the files to display
-     * @param showParentDirs	true if to show parent dirs
-     */
-    public FileWrapperListModel(List<FileWrapper> files, boolean showParentDirs) {
-      m_Files          = files;
-      m_ShowParentDirs = showParentDirs;
-    }
-
-    /**
-     * Returns the number of files/elements.
-     *
-     * @return		the number of elements
-     */
-    @Override
-    public int getSize() {
-      return m_Files.size();
-    }
-
-    /**
-     * Returns the element at the specified position.
-     *
-     * @param index	the index
-     * @return		the element
-     */
-    @Override
-    public String getElementAt(int index) {
-      FileWrapper	wrapper;
-
-      wrapper = m_Files.get(index);
-
-      if (m_ShowParentDirs)
-	return wrapper.getFile().getAbsolutePath();
-      else
-	return wrapper.getName();
-    }
-  }
-
-  /**
-   * The model for the table.
-   *
-   * @author FracPete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
-   */
-  public static class FileWrapperTableModel
-    extends AbstractBaseTableModel {
-
-    private static final long serialVersionUID = -4874766549376555318L;
-
-    /** the files. */
-    protected List<FileWrapper> m_Files;
-
-    /** whether to show parent dirs. */
-    protected boolean m_ShowParentDirs;
-
-    /** the date formatter. */
-    protected DateFormat m_DateFormat;
-
-    /**
-     * Initializes the model.
-     *
-     * @param files		the files
-     * @param showParentDirs	true if to show parent dirs
-     */
-    public FileWrapperTableModel(List<FileWrapper> files, boolean showParentDirs) {
-      m_Files          = files;
-      m_ShowParentDirs = showParentDirs;
-      m_DateFormat     = DateUtils.getTimestampFormatter();
-    }
-
-    /**
-     * Returns whether to show the parent directories.
-     *
-     * @return		true if to show
-     */
-    public boolean getShowParentDirs() {
-      return m_ShowParentDirs;
-    }
-
-    /**
-     * Returns the number of files/rows.
-     *
-     * @return		the number of rows
-     */
-    @Override
-    public int getRowCount() {
-      return m_Files.size();
-    }
-
-    /**
-     * Returns the number of columns.
-     *
-     * @return		the number of columns
-     */
-    @Override
-    public int getColumnCount() {
-      int	result;
-
-      result = 0;
-
-      result++;  // file
-      result++;  // DIR
-      result++;  // size
-      result++;  // last mod
-
-      return result;
-    }
-
-    /**
-     * Returns the name of the column.
-     *
-     * @param column	the index of the column
-     * @return		the name, null if not available
-     */
-    @Override
-    public String getColumnName(int column) {
-      switch (column) {
-	case 0:
-	  return "File";
-	case 1:
-	  return "Dir";
-	case 2:
-	  return "Size";
-	case 3:
-	  return "Date modified";
-	default:
-	  return null;
-      }
-    }
-
-    /**
-     * Returns the class of the column.
-     *
-     * @param columnIndex	the index of the column
-     * @return			the class, null if not available
-     */
-    @Override
-    public Class<?> getColumnClass(int columnIndex) {
-      switch (columnIndex) {
-	case 0:
-	  return String.class;
-	case 1:
-	  return String.class;
-	case 2:
-	  return Long.class;
-	case 3:
-	  return String.class;
-	default:
-	  return null;
-      }
-    }
-
-    /**
-     * Returns the value at the specified location.
-     *
-     * @param rowIndex		the row
-     * @param columnIndex	the column
-     * @return			the value, null if not available
-     */
-    @Override
-    public Object getValueAt(int rowIndex, int columnIndex) {
-      FileWrapper	wrapper;
-
-      if (rowIndex >= m_Files.size())
-	return null;
-
-      wrapper = m_Files.get(rowIndex);
-      switch (columnIndex) {
-	case 0:
-	  if (m_ShowParentDirs)
-	    return wrapper.getFile().getAbsolutePath();
-	  else
-	    return wrapper.getName();
-	case 1:
-	  if (wrapper.isDirectory())
-	    return "DIR";
-          else if (wrapper.isLink())
-            return "LNK";
-	  else
-	    return null;
-	case 2:
-	  if (wrapper.isDirectory())
-	    return null;
-	  else
-	    return wrapper.getLength();
-	case 3:
-	  return m_DateFormat.format(wrapper.getLastModified());
-	default:
-	  return null;
-      }
-    }
-  }
 
   /**
    * Event for double clicks on files.
@@ -596,7 +136,7 @@ public class FilePanel
   protected boolean m_ShowHidden;
 
   /** for listing the content of the directory. */
-  protected LocalDirectoryLister m_Lister;
+  protected DirectoryLister m_Lister;
 
   /** the comparator. */
   protected FileWrapperComparator m_Comparator;
@@ -646,8 +186,18 @@ public class FilePanel
    * @param showDetails		whether to show details like DIR and size
    */
   public FilePanel(boolean showDetails) {
+    this(showDetails, new LocalDirectoryLister());
+  }
+
+  /**
+   * Initializes the panel.
+   *
+   * @param showDetails		whether to show details like DIR and size
+   */
+  public FilePanel(boolean showDetails, DirectoryLister lister) {
     super();
     m_ShowDetails = showDetails;
+    m_Lister      = lister;
     initialize();
     initGUI();
     finishInit();
@@ -1110,14 +660,14 @@ public class FilePanel
       @Override
       protected Object doInBackground() throws Exception {
 	for (String file: m_Lister.list()) {
-	  FileWrapper wrapper = new FileWrapper(new File(file));
+	  FileWrapper wrapper = new LocalFileWrapper(new File(file));
 	  if (!m_ShowHidden && wrapper.isHidden())
 	    continue;
 	  files.add(wrapper);
 	}
 	Collections.sort(files, m_Comparator);
 	if (m_Lister.getWatchDir().getAbsoluteFile().getParentFile() != null)
-	  files.add(0, new FileWrapper(new File("..")));
+	  files.add(0, new LocalFileWrapper(new File("..")));
 	return null;
       }
       @Override
