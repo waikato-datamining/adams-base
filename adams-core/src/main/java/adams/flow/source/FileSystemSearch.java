@@ -248,6 +248,7 @@ public class FileSystemSearch
     
     m_Queue.clear();
     try {
+      m_Search.setFlowContext(this);
       items = m_Search.search();
       for (String item: items) {
         if (m_UseForwardSlashes)

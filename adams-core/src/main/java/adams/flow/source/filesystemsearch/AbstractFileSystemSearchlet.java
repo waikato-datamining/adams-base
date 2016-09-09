@@ -24,6 +24,8 @@ import adams.core.ShallowCopySupporter;
 import adams.core.Stoppable;
 import adams.core.option.AbstractOptionHandler;
 import adams.core.option.OptionUtils;
+import adams.flow.core.Actor;
+import adams.flow.core.FlowContextHandler;
 
 import java.util.List;
 
@@ -36,13 +38,16 @@ import java.util.List;
 public abstract class AbstractFileSystemSearchlet
   extends AbstractOptionHandler
   implements ShallowCopySupporter<AbstractFileSystemSearchlet>,
-             QuickInfoSupporter, Stoppable {
+             QuickInfoSupporter, Stoppable, FlowContextHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = 5019667028030872568L;
 
   /** whether search was stopped. */
   protected boolean m_Stopped;
+
+  /** the flow context. */
+  protected Actor m_FlowContext;
 
   /**
    * Returns a quick info about the object, which can be displayed in the GUI.
@@ -53,6 +58,24 @@ public abstract class AbstractFileSystemSearchlet
    */
   public String getQuickInfo() {
     return null;
+  }
+
+  /**
+   * Sets the flow context.
+   *
+   * @param value	the actor
+   */
+  public void setFlowContext(Actor value) {
+    m_FlowContext = value;
+  }
+
+  /**
+   * Returns the flow context, if any.
+   *
+   * @return		the actor, null if none available
+   */
+  public Actor getFlowContext() {
+    return m_FlowContext;
   }
 
   /**
