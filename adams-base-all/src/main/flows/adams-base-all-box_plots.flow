@@ -1,9 +1,0 @@
-# Project: adams
-# Date: 2016-05-04 15:55:59
-# User: fracpete
-# Charset: UTF-8
-adams.flow.control.Flow -annotation "The flow loads the UCI dataset \\\"waveform-5000\\\"\\nand displays all the 40 numeric attributes in \\nbox plots, side by side, with the same axis for\\nbetter comparison." -flow-execution-listener adams.flow.execution.NullListener
- adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/waveform-5000.arff
- adams.flow.transformer.WekaFileReader -loader weka.core.converters.ArffLoader
- adams.flow.transformer.Convert -conversion "adams.data.conversion.WekaInstancesToSpreadSheet -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.DefaultSpreadSheet"
- adams.flow.sink.BoxPlot -width 1300 -height 750 -writer adams.gui.print.NullWriter -height-plot 150 -num-horizontal 10 -same-axis true -attributes 1-40

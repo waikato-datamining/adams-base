@@ -1,3 +1,0 @@
-#!/bin/sh
-
-java -cp "`dirname $0`/../lib/*" -Xmx512m adams.terminal.Main -memory 512m
