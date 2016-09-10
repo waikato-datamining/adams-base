@@ -29,9 +29,6 @@
     <!-- core module -->
     <module>adams-core</module>
 
-    <!-- meta-modules -->
-    <module>adams-base-all</module>
-
     <!-- dependent modules -->
     <module>adams-access</module>
     <module>adams-compress</module>
