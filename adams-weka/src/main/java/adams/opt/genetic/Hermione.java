@@ -398,16 +398,22 @@ public class Hermione
   }
 
   /**
-   * Setup classifier and genetic discovery. Attach classifier to g d
-   * @param c
+   * Some more initializations.
    */
-  protected void setupParamsAndClassifier(Classifier c) {
+  @Override
+  protected void preRun() {
+    super.preRun();
+
     AbstractGeneticDiscoveryHandler[] handlers = new AbstractGeneticDiscoveryHandler[m_Handlers.length];
     for (int i = 0; i < m_Handlers.length; i++)
       handlers[i] = (AbstractGeneticDiscoveryHandler) m_Handlers[i].shallowCopy();
     DefaultPropertyDiscovery discovery = new DefaultPropertyDiscovery();
-    discovery.setLoggingLevel(getLoggingLevel());
-    discovery.discover(handlers, c);
+    discovery.discover(handlers, OptionUtils.shallowCopy(m_Classifier));
+
+    m_numbits = getNumBitsForAll(handlers);
+    m_start   = getStartPoints(handlers);
+
+    init(m_NumChrom, getNumBits(handlers) * m_BitsPerGene);
 
     int pos = 0;
     int[] dummyWeights = new int[getNumBits(handlers)];
@@ -431,26 +437,6 @@ public class Hermione
           getLogger().info("   " + cont.getPath());
       }
     }
-  }
-
-  /**
-   * Some more initializations.
-   */
-  @Override
-  protected void preRun() {
-    super.preRun();
-
-    AbstractGeneticDiscoveryHandler[] handlers = new AbstractGeneticDiscoveryHandler[m_Handlers.length];
-    for (int i = 0; i < m_Handlers.length; i++)
-      handlers[i] = (AbstractGeneticDiscoveryHandler) m_Handlers[i].shallowCopy();
-    DefaultPropertyDiscovery discovery = new DefaultPropertyDiscovery();
-    discovery.discover(handlers, OptionUtils.shallowCopy(m_Classifier));
-
-    m_numbits = getNumBitsForAll(handlers);
-    m_start   = getStartPoints(handlers);
-
-    init(m_NumChrom, getNumBits(handlers) * m_BitsPerGene);
-    setupParamsAndClassifier(m_Classifier);
   }
 
   /**
