@@ -20,8 +20,6 @@
 
 package adams.core.discovery.genetic;
 
-import weka.core.matrix.Matrix;
-
 /**
  * Helper class for bit-string related operations.
  *
