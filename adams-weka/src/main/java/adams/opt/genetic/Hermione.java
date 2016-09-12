@@ -184,15 +184,9 @@ public class Hermione
   /** the handlers to use for discovery. */
   protected AbstractGeneticDiscoveryHandler[] m_Handlers;
 
-  /** the actual handlers to use for discovery. */
-  protected AbstractGeneticDiscoveryHandler[] m_ActualHandlers;
-
   protected List<Integer> m_numbits=null;
 
   protected List<Integer> m_start=null;
-
-  /** whether the handlers have been initialized. */
-  protected transient Boolean m_HandlersInitialized;
 
   /**
    * A job class specific to Hermione.
@@ -234,24 +228,24 @@ public class Hermione
       List<Integer> 				start;
       AbstractGeneticDiscoveryHandler[] 	handlers;
       DefaultPropertyDiscovery 			discovery;
-      List<PropertyPath.PropertyContainer> 	lpc;
+      List<PropertyPath.PropertyContainer> 	conts;
       String 					sa;
 
       result = super.assembleSetup(fitness, cls, chromosome, weights);
 
       // store individual weights
       pos      = 0;
-      numbits  = getOwner().getNumBitsForAll();
-      start    = getOwner().getStartPoints();
       handlers = new AbstractGeneticDiscoveryHandler[getOwner().getHandlers().length];
       for (int i = 0; i < getOwner().getHandlers().length; i++)
 	handlers[i] = (AbstractGeneticDiscoveryHandler) getOwner().getHandlers()[i].shallowCopy();
       discovery = new DefaultPropertyDiscovery();
       discovery.setLoggingLevel(getLoggingLevel());
       discovery.discover(handlers, cls);
-      for (AbstractGeneticDiscoveryHandler ag: handlers) {
-	lpc = ag.getContainers();
-	for (PropertyPath.PropertyContainer pc : lpc) {
+      numbits  = getOwner().getNumBitsForAll(handlers);
+      start    = getOwner().getStartPoints(handlers);
+      for (AbstractGeneticDiscoveryHandler handler : handlers) {
+	conts = handler.getContainers();
+	for (PropertyPath.PropertyContainer cont : conts) {
 	  sa = getOwner().intArrayToString(getOwner().getBitsForPosition(weights, start, numbits, pos));
 	  result.setProperty("Weights." + pos, sa);
 	  pos++;
@@ -342,17 +336,6 @@ public class Hermione
   }
 
   /**
-   * Initializes the members.
-   */
-  @Override
-  protected void initialize() {
-    super.initialize();
-
-    m_ActualHandlers     = new AbstractGeneticDiscoveryHandler[0];
-    m_HandlersInitialized = null;
-  }
-
-  /**
    * Adds options to the internal list of options.
    */
   @Override
@@ -415,23 +398,39 @@ public class Hermione
   }
 
   /**
-   * Initializes the handlers only if required.
-   *
-   * @see		#m_HandlersInitialized
-   * @see		#initializeHandlers()
+   * Setup classifier and genetic discovery. Attach classifier to g d
+   * @param c
    */
-  protected void initializeHandlersIfRequired() {
-    if ((m_HandlersInitialized == null) || !m_HandlersInitialized)
-      initializeHandlers();
-  }
+  protected void setupParamsAndClassifier(Classifier c) {
+    AbstractGeneticDiscoveryHandler[] handlers = new AbstractGeneticDiscoveryHandler[m_Handlers.length];
+    for (int i = 0; i < m_Handlers.length; i++)
+      handlers[i] = (AbstractGeneticDiscoveryHandler) m_Handlers[i].shallowCopy();
+    DefaultPropertyDiscovery discovery = new DefaultPropertyDiscovery();
+    discovery.setLoggingLevel(getLoggingLevel());
+    discovery.discover(handlers, c);
 
-  /**
-   * Initializes the handlers.
-   */
-  protected void initializeHandlers() {
-    m_HandlersInitialized = true;
-    setupParamsAndClassifier(m_Handlers, m_Classifier);
-    init(20, getNumBits() * m_BitsPerGene);
+    int pos = 0;
+    int[] dummyWeights = new int[getNumBits(handlers)];
+    for (AbstractGeneticDiscoveryHandler ag:handlers) {
+      List<PropertyPath.PropertyContainer> lpc=ag.getContainers();
+      for (PropertyPath.PropertyContainer pc:lpc) {
+        if (ag.requiresInitialization())
+          ag.performInitialization(this, pc);
+        String sa = ag.pack(pc);
+        int[] newWeights = stringToIntArray(sa);
+        for (int i = 0; i < m_NumChrom; i++)
+          setBitsForPosition(i, dummyWeights, m_start, m_numbits, pos, newWeights);
+        pos++;
+      }
+    }
+
+    if (isLoggingEnabled()) {
+      for (int i = 0; i < handlers.length; i++) {
+        getLogger().info((i+1) + ". " + OptionUtils.getCommandLine(handlers[i]));
+        for (PropertyContainer cont: handlers[i].getContainers())
+          getLogger().info("   " + cont.getPath());
+      }
+    }
   }
 
   /**
@@ -441,44 +440,17 @@ public class Hermione
   protected void preRun() {
     super.preRun();
 
-    initializeHandlers();
-  }
+    AbstractGeneticDiscoveryHandler[] handlers = new AbstractGeneticDiscoveryHandler[m_Handlers.length];
+    for (int i = 0; i < m_Handlers.length; i++)
+      handlers[i] = (AbstractGeneticDiscoveryHandler) m_Handlers[i].shallowCopy();
+    DefaultPropertyDiscovery discovery = new DefaultPropertyDiscovery();
+    discovery.discover(handlers, OptionUtils.shallowCopy(m_Classifier));
 
-  /**
-   * Setup classifier and genetic discovery. Attach classifier to g d
-   * @param p
-   * @param c
-   */
-  protected void setupParamsAndClassifier(AbstractGeneticDiscoveryHandler[] p, Classifier c) {
-    m_ActualHandlers = new AbstractGeneticDiscoveryHandler[p.length];
-    for (int i = 0; i < p.length; i++)
-      m_ActualHandlers[i] = (AbstractGeneticDiscoveryHandler) p[i].shallowCopy();
-    DefaultPropertyDiscovery d = new DefaultPropertyDiscovery();
-    d.setLoggingLevel(getLoggingLevel());
-    d.discover(m_ActualHandlers, c);
+    m_numbits = getNumBitsForAll(handlers);
+    m_start   = getStartPoints(handlers);
 
-    int pos = 0;
-    int[] dummyWeights = new int[getNumBits()];
-    for (AbstractGeneticDiscoveryHandler ag:p) {
-      List<PropertyPath.PropertyContainer> lpc=ag.getContainers();
-      for (PropertyPath.PropertyContainer pc:lpc) {
-	if (ag.requiresInitialization())
-	  ag.performInitialization(this, pc);
-	String sa = ag.pack(pc);
-	int[] newWeights = stringToIntArray(sa);
-	for (int i = 0; i < m_NumChrom; i++)
-	  setBitsForPosition(i, dummyWeights, m_start, m_numbits, pos, newWeights);
-	pos++;
-      }
-    }
-
-    if (isLoggingEnabled()) {
-      for (int i = 0; i < m_ActualHandlers.length; i++) {
-	getLogger().info((i+1) + ". " + OptionUtils.getCommandLine(m_ActualHandlers[i]));
-	for (PropertyContainer cont: m_ActualHandlers[i].getContainers())
-	  getLogger().info("   " + cont.getPath());
-      }
-    }
+    init(20, getNumBits(handlers) * m_BitsPerGene);  // TODO m_NumChrom??
+    setupParamsAndClassifier(m_Classifier);
   }
 
   /**
@@ -546,7 +518,6 @@ public class Hermione
    * @return		the weights subset
    */
   public int[] getBitsForPosition(int[] weights, List<Integer> starts, List<Integer> numbits, int pos) {
-    initializeHandlersIfRequired();
     int[] ret=new int[numbits.get(pos)];
     int c=0;
     for (int i= starts.get(pos);i< starts.get(pos)+numbits.get(pos);i++) {
@@ -560,13 +531,12 @@ public class Hermione
    *
    * @return		the list of number of bits
    */
-  public List<Integer> getNumBitsForAll() {
-    initializeHandlersIfRequired();
+  public List<Integer> getNumBitsForAll(AbstractGeneticDiscoveryHandler[] handlers) {
     ArrayList<Integer> al=new ArrayList<>();
-    for (AbstractGeneticDiscoveryHandler ag: m_ActualHandlers) {
-      List<PropertyPath.PropertyContainer> lpc=ag.getContainers();
-      for (PropertyPath.PropertyContainer pc:lpc) {
-	al.add(ag.getNumBits());
+    for (AbstractGeneticDiscoveryHandler handler : handlers) {
+      List<PropertyPath.PropertyContainer> conts = handler.getContainers();
+      for (PropertyPath.PropertyContainer cont : conts) {
+	al.add(handler.getNumBits());
       }
     }
 
@@ -578,15 +548,14 @@ public class Hermione
    *
    * @return		the starting positions
    */
-  public List<Integer> getStartPoints() {
-    initializeHandlersIfRequired();
+  public List<Integer> getStartPoints(AbstractGeneticDiscoveryHandler[] handlers) {
     ArrayList<Integer> al=new ArrayList<>();
     int count=0;
-    for (AbstractGeneticDiscoveryHandler ag: m_ActualHandlers) {
-      List<PropertyPath.PropertyContainer> lpc=ag.getContainers();
-      for (PropertyPath.PropertyContainer pc:lpc) {
+    for (AbstractGeneticDiscoveryHandler handler : handlers) {
+      List<PropertyPath.PropertyContainer> conts = handler.getContainers();
+      for (PropertyPath.PropertyContainer cont : conts) {
 	al.add(count);
-	count+=ag.getNumBits();
+	count += handler.getNumBits();
       }
     }
 
@@ -598,13 +567,12 @@ public class Hermione
    *
    * @return		the total number of bits
    */
-  public int getNumBits() {
-    initializeHandlersIfRequired();
+  public int getNumBits(AbstractGeneticDiscoveryHandler[] handlers) {
     int count=0;
-    for (AbstractGeneticDiscoveryHandler ag: m_ActualHandlers) {
-      List<PropertyPath.PropertyContainer> lpc=ag.getContainers();
-      for (PropertyPath.PropertyContainer pc:lpc) {
-	count+=ag.getNumBits();
+    for (AbstractGeneticDiscoveryHandler handler : handlers) {
+      List<PropertyPath.PropertyContainer> conts = handler.getContainers();
+      for (PropertyPath.PropertyContainer cont : conts) {
+	count += handler.getNumBits();
       }
     }
     return(count);
@@ -618,14 +586,6 @@ public class Hermione
    * @return		the classifier
    */
   public Classifier generateClassifier(int chromosome, int weights[]) {
-    initializeHandlersIfRequired();
-
-    // foreach handler, pack according to bits in weights
-    if (m_numbits==null)
-      m_numbits=getNumBitsForAll();
-    if (m_start==null)
-      m_start=getStartPoints();
-
     if (isLoggingEnabled()) {
       StringBuilder w = new StringBuilder();
       for (int i = 0; i < weights.length; i++)
@@ -633,10 +593,9 @@ public class Hermione
       getLogger().info("[generateClassifier] Chromosome: " + chromosome + ", " + "Weights: " + w);
     }
 
-    DefaultPropertyDiscovery d = new DefaultPropertyDiscovery();
-    AbstractGeneticDiscoveryHandler cp[] = new AbstractGeneticDiscoveryHandler[m_ActualHandlers.length];
-    for (int i=0;i<cp.length;i++)
-      cp[i]=(AbstractGeneticDiscoveryHandler) m_ActualHandlers[i].shallowCopy();
+    AbstractGeneticDiscoveryHandler handlers[] = new AbstractGeneticDiscoveryHandler[m_Handlers.length];
+    for (int i=0;i< handlers.length;i++)
+      handlers[i]=(AbstractGeneticDiscoveryHandler) m_Handlers[i].shallowCopy();
 
     Classifier result;
     result = (Classifier) OptionUtils.shallowCopy(getClassifier());
@@ -644,15 +603,16 @@ public class Hermione
       getLogger().severe("Failed to copy classifier!");
       return null;
     }
-    d.discover(cp, result);
+    DefaultPropertyDiscovery discovery = new DefaultPropertyDiscovery();
+    discovery.discover(handlers, result);
 
     // apply weights
     int pos=0;
-    for (AbstractGeneticDiscoveryHandler ag:cp) {
-      List<PropertyPath.PropertyContainer> lpc=ag.getContainers();
-      for (PropertyPath.PropertyContainer pc:lpc) {
-	String sa= intArrayToString(getBitsForPosition(weights, m_start, m_numbits, pos));
-	ag.unpack(pc, sa);
+    for (AbstractGeneticDiscoveryHandler ag: handlers) {
+      List<PropertyPath.PropertyContainer> conts =ag.getContainers();
+      for (PropertyPath.PropertyContainer cont : conts) {
+	String sa = intArrayToString(getBitsForPosition(weights, m_start, m_numbits, pos));
+	ag.unpack(cont, sa);
 	pos++;
       }
     }
