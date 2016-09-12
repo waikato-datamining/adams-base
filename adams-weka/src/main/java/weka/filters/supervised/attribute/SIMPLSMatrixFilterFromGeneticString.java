@@ -20,7 +20,7 @@
 package weka.filters.supervised.attribute;
 
 import adams.core.Utils;
-import adams.core.discovery.genetic.GeneticHelper;
+import adams.core.discovery.genetic.WekaGeneticHelper;
 import weka.core.Instances;
 import weka.core.WekaOptionUtils;
 import weka.core.matrix.Matrix;
@@ -211,7 +211,7 @@ public class SIMPLSMatrixFilterFromGeneticString
   }
 
   public void initialiseW(Instances ins) throws Exception{
-    m_SIMPLS_MATRIX_LOCAL= GeneticHelper.bitsToMatrix(m_BitString,m_Min,m_Max,calcNumBits(),m_Splits,m_Rows,m_Columns);
+    m_SIMPLS_MATRIX_LOCAL= WekaGeneticHelper.bitsToMatrix(m_BitString, m_Min, m_Max, calcNumBits(), m_Splits, m_Rows, m_Columns);
   }
 
   /**

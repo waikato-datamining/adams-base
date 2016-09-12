@@ -69,6 +69,10 @@ adams.core.scripting.AbstractScriptingHandler=\
 adams.core.discovery.AbstractDiscoveryHandler=\
   adams.core.discovery
 
+# the genetic object discovery handlers
+adams.core.discovery.genetic.AbstractGeneticDiscoveryHandler=\
+  adams.core.discovery.genetic
+
 # the autocorrelation algorithms
 adams.data.autocorrelation.AbstractAutoCorrelation=\
   adams.data.autocorrelation

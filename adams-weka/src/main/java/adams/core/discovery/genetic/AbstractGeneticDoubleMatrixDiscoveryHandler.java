@@ -283,7 +283,7 @@ public abstract class AbstractGeneticDoubleMatrixDiscoveryHandler
    */
   @Override
   protected String doPack(PropertyContainer cont) {
-    return GeneticHelper.matrixToBits(getValue(cont), getMinimum(), getMaximum(), calcNumBits(),getSplits(),getRows(),getColumns());
+    return WekaGeneticHelper.matrixToBits(getValue(cont), getMinimum(), getMaximum(), calcNumBits(), getSplits(), getRows(), getColumns());
   }
 
   /**
@@ -302,7 +302,7 @@ public abstract class AbstractGeneticDoubleMatrixDiscoveryHandler
    */
   @Override
   protected void doUnpack(PropertyContainer cont, String bits) {
-    setValue(cont, GeneticHelper.bitsToMatrix(bits, getMinimum(), getMaximum(), calcNumBits(), getSplits(), getRows(),getColumns()));
+    setValue(cont, WekaGeneticHelper.bitsToMatrix(bits, getMinimum(), getMaximum(), calcNumBits(), getSplits(), getRows(), getColumns()));
   }
 
   /**
