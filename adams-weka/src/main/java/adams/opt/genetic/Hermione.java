@@ -449,7 +449,7 @@ public class Hermione
     m_numbits = getNumBitsForAll(handlers);
     m_start   = getStartPoints(handlers);
 
-    init(20, getNumBits(handlers) * m_BitsPerGene);  // TODO m_NumChrom??
+    init(m_NumChrom, getNumBits(handlers) * m_BitsPerGene);
     setupParamsAndClassifier(m_Classifier);
   }
 
