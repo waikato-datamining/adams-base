@@ -69,6 +69,10 @@ adams.core.scripting.AbstractScriptingHandler=\
 adams.core.discovery.AbstractDiscoveryHandler=\
   adams.core.discovery
 
+# the cat swarm optimization (cso) object discovery handlers
+adams.core.discovery.cso.AbstractCatSwarmOptimizationDiscoveryHandler=\
+  adams.core.discovery.cso
+
 # the genetic object discovery handlers
 adams.core.discovery.genetic.AbstractGeneticDiscoveryHandler=\
   adams.core.discovery.genetic
