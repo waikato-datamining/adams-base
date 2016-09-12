@@ -214,6 +214,9 @@ public class MaxTrainTimeWithoutImprovement
       improvement = 0.0;
     }
 
+    if (isLoggingEnabled())
+      getLogger().info("Improvement: " + improvement);
+
     if (improvement >= m_MinimumImprovement) {
       record(genetic);
       return false;
