@@ -229,7 +229,7 @@ public class Hermione
       AbstractGeneticDiscoveryHandler[] 	handlers;
       DefaultPropertyDiscovery 			discovery;
       List<PropertyPath.PropertyContainer> 	conts;
-      String 					sa;
+      String					strArray;
 
       result = super.assembleSetup(fitness, cls, chromosome, weights);
 
@@ -246,8 +246,8 @@ public class Hermione
       for (AbstractGeneticDiscoveryHandler handler : handlers) {
 	conts = handler.getContainers();
 	for (PropertyPath.PropertyContainer cont : conts) {
-	  sa = getOwner().intArrayToString(getOwner().getBitsForPosition(weights, start, numbits, pos));
-	  result.setProperty("Weights." + pos, sa);
+	  strArray = getOwner().intArrayToString(getOwner().getBitsForPosition(weights, start, numbits, pos));
+	  result.setProperty("Weights." + pos, strArray);
 	  pos++;
 	}
       }
@@ -417,13 +417,13 @@ public class Hermione
 
     int pos = 0;
     int[] dummyWeights = new int[getNumBits(handlers)];
-    for (AbstractGeneticDiscoveryHandler ag:handlers) {
-      List<PropertyPath.PropertyContainer> lpc=ag.getContainers();
-      for (PropertyPath.PropertyContainer pc:lpc) {
-        if (ag.requiresInitialization())
-          ag.performInitialization(this, pc);
-        String sa = ag.pack(pc);
-        int[] newWeights = stringToIntArray(sa);
+    for (AbstractGeneticDiscoveryHandler handler : handlers) {
+      List<PropertyPath.PropertyContainer> conts = handler.getContainers();
+      for (PropertyPath.PropertyContainer cont : conts) {
+        if (handler.requiresInitialization())
+          handler.performInitialization(this, cont);
+        String strArray = handler.pack(cont);
+        int[] newWeights = stringToIntArray(strArray);
         for (int i = 0; i < m_NumChrom; i++)
           setBitsForPosition(i, dummyWeights, m_start, m_numbits, pos, newWeights);
         pos++;
@@ -442,16 +442,16 @@ public class Hermione
   /**
    * Converts the bit string into an int array.
    *
-   * @param a		the string to convert
+   * @param s		the string to convert
    * @return		the bit array
    */
-  public int[] stringToIntArray(String a) {
+  public int[] stringToIntArray(String s) {
     int[]	result;
     int		i;
 
-    result = new int[a.length()];
+    result = new int[s.length()];
     for (i = 0; i < result.length; i++) {
-      if (a.charAt(i) == '0')
+      if (s.charAt(i) == '0')
 	result[i] = 0;
       else
 	result[i] = 1;
@@ -461,15 +461,16 @@ public class Hermione
   }
 
   /**
-   * Int array of bits to string
-   * @param ia
-   * @return
+   * Int array of bits to string.
+   *
+   * @param ia		the int array
+   * @return		the generated bit string
    */
   public String intArrayToString(int[] ia) {
-    String ret = "";
-    for (int i=0;i<ia.length;i++)
-      ret += "" + ia[i];
-    return ret;
+    StringBuilder result = new StringBuilder();
+    for (int i = 0; i < ia.length; i++)
+      result.append("" + ia[i]);
+    return result.toString();
   }
 
   /**
@@ -594,11 +595,11 @@ public class Hermione
 
     // apply weights
     int pos=0;
-    for (AbstractGeneticDiscoveryHandler ag: handlers) {
-      List<PropertyPath.PropertyContainer> conts =ag.getContainers();
+    for (AbstractGeneticDiscoveryHandler handler : handlers) {
+      List<PropertyPath.PropertyContainer> conts = handler.getContainers();
       for (PropertyPath.PropertyContainer cont : conts) {
-	String sa = intArrayToString(getBitsForPosition(weights, m_start, m_numbits, pos));
-	ag.unpack(cont, sa);
+	String strArray = intArrayToString(getBitsForPosition(weights, m_start, m_numbits, pos));
+	handler.unpack(cont, strArray);
 	pos++;
       }
     }
