@@ -23,6 +23,7 @@ package adams.flow.source.valuedefinition;
 import adams.core.Utils;
 import adams.core.base.BaseClassname;
 import adams.core.base.BaseCommandLine;
+import adams.core.io.ConsoleHelper;
 import adams.gui.chooser.AbstractChooserPanel;
 import adams.gui.core.PropertiesParameterPanel;
 import adams.gui.core.PropertiesParameterPanel.PropertyType;
@@ -182,5 +183,19 @@ public abstract class AbstractGOEValueDefinition
       panel.setHelp(getName(), getHelp());
 
     return true;
+  }
+
+  /**
+   * Prompts the user to enter a value in headless mode and returns it.
+   *
+   * @return		the entered value, null if canceled
+   */
+  public String headlessInteraction() {
+    String	msg;
+
+    msg = "Please enter " + (getDisplay().trim().isEmpty() ? getName() : getDisplay())
+      + " (superclass: " + getSuperClass().getValue() + "): ";
+
+    return ConsoleHelper.enterValue(msg, getDefaultValueAsString());
   }
 }

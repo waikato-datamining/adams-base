@@ -20,6 +20,7 @@
 
 package adams.flow.source.valuedefinition;
 
+import adams.core.io.ConsoleHelper;
 import adams.flow.source.EnterManyValues;
 import adams.gui.core.PropertiesParameterPanel;
 import adams.gui.core.PropertiesParameterPanel.PropertyType;
@@ -149,5 +150,19 @@ public class ValueDefinition
     if (!getHelp().trim().isEmpty())
       panel.setHelp(getName(), getHelp());
     return true;
+  }
+
+  /**
+   * Prompts the user to enter a value in headless mode and returns it.
+   *
+   * @return		the entered value, null if canceled
+   */
+  public String headlessInteraction() {
+    String	msg;
+
+    msg = "Please enter " + (getDisplay().trim().isEmpty() ? getName() : getDisplay())
+      + " (type: " + getType() + "): ";
+
+    return ConsoleHelper.enterValue(msg, getDefaultValueAsString());
   }
 }

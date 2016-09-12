@@ -175,4 +175,11 @@ public abstract class AbstractValueDefinition
    * @return		true if successfully added
    */
   public abstract boolean addToPanel(PropertiesParameterPanel panel);
+
+  /**
+   * Prompts the user to enter a value in headless mode and returns it.
+   *
+   * @return		the entered value, null if canceled
+   */
+  public abstract String headlessInteraction();
 }

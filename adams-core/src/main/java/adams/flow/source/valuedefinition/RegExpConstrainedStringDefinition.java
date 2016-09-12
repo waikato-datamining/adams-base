@@ -21,6 +21,7 @@
 package adams.flow.source.valuedefinition;
 
 import adams.core.base.BaseRegExp;
+import adams.core.io.ConsoleHelper;
 import adams.gui.core.PropertiesParameterPanel;
 import adams.gui.core.PropertiesParameterPanel.PropertyType;
 
@@ -162,5 +163,25 @@ public class RegExpConstrainedStringDefinition
     if (!getHelp().trim().isEmpty())
       panel.setHelp(getName(), getHelp());
     return true;
+  }
+
+  /**
+   * Prompts the user to enter a value in headless mode and returns it.
+   *
+   * @return		the entered value, null if canceled
+   */
+  public String headlessInteraction() {
+    String	result;
+    String	msg;
+
+    msg = "Please enter " + (getDisplay().trim().isEmpty() ? getName() : getDisplay())
+      + " (type: " + getType() + "): ";
+
+    do {
+      result = ConsoleHelper.enterValue(msg, getDefaultValueAsString());
+    }
+    while ((result != null) && !m_RegExp.isMatch(result));
+
+    return result;
   }
 }

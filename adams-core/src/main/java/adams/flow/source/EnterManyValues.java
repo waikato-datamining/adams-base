@@ -580,19 +580,43 @@ public class EnterManyValues
   }
 
   /**
-   * Executes the flow item.
+   * Returns whether headless interaction is supported.
    *
-   * @return		null if everything is fine, otherwise error message
+   * @return		true if interaction in headless environment is possible
    */
-  @Override
-  protected String doExecute() {
-    if (isHeadless()) {
+  public boolean supportsHeadlessInteraction() {
+    return true;
+  }
+
+  /**
+   * Performs the interaction with the user in a headless environment.
+   *
+   * @return		true if successfully interacted
+   */
+  public boolean doInteractHeadless() {
+    boolean	result;
+    String	value;
+    Properties	props;
+
+    if (m_NonInteractive) {
       m_Queue.addAll(Arrays.asList(propertiesToOutputType(getDefaultProperties())));
-      return null;
+      return true;
     }
-    else {
-      return super.doExecute();
+
+    result = true;
+    props  = new Properties();
+    for (AbstractValueDefinition valueDef: m_Values) {
+      value = valueDef.headlessInteraction();
+      if (value == null) {
+	result = false;
+	break;
+      }
+      props.setProperty(valueDef.getName(), value);
     }
+    if (result)
+      m_Queue.addAll(Arrays.asList(propertiesToOutputType(props)));
+
+    return result;
   }
 
   /**
