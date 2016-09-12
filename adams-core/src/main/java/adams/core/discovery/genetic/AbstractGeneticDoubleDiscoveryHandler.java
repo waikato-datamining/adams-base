@@ -21,6 +21,7 @@
 package adams.core.discovery.genetic;
 
 import adams.core.Utils;
+import adams.core.discovery.NumericValueType;
 import adams.data.statistics.StatUtils;
 
 /**

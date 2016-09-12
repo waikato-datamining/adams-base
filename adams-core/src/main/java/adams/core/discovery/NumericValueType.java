@@ -18,7 +18,7 @@
  * Copyright (C) 2015 University of Waikato, Hamilton, NZ
  */
 
-package adams.core.discovery.genetic;
+package adams.core.discovery;
 
 /**
  * Determines how numeric values get generated.
