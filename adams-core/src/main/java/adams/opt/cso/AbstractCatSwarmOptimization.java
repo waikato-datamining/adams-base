@@ -333,7 +333,7 @@ public abstract class AbstractCatSwarmOptimization
    * @return		the fitness
    */
   public double getCurrentFitness() {
-    int indexBest= m_Fitnesses.rowArgmins()[0];
+    int indexBest = m_Fitnesses.rowArgmins()[0];
     return m_Fitnesses.get(0,indexBest);
   }
 
@@ -580,7 +580,7 @@ public abstract class AbstractCatSwarmOptimization
 
     // Report best solution
     getLogger().info("best particle:\n" + best);
-    getLogger().info("best fitness:\n" + m_Fitnesses.get(index));
+    getLogger().info("best fitness:\n" + getCurrentFitness());
 
     return best;
   }
