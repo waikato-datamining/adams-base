@@ -25,6 +25,7 @@ import java.awt.event.KeyEvent;
 import javax.swing.AbstractAction;
 import javax.swing.Icon;
 import javax.swing.KeyStroke;
+import javax.swing.SwingWorker;
 
 import adams.gui.core.GUIHelper;
 
@@ -40,6 +41,9 @@ public abstract class AbstractBaseAction
 
   /** for serialization. */
   private static final long serialVersionUID = -7695092075151409689L;
+
+  /** the key for the asynchronous flag. */
+  public final static String ASYNCHRONOUS = "asynchronous";
 
   /**
    * Defines an <code>Action</code> object with a default
@@ -244,13 +248,31 @@ public abstract class AbstractBaseAction
    * Returns the TipText in use for the action.
    *
    * @return		the tip text if available, otherwise null
-   * @see		#hasTipText()
+   * @see		#hasToolTipText()
    */
   public String getToolTipText() {
     if (hasToolTipText())
       return (String) getValue(SHORT_DESCRIPTION);
     else
       return null;
+  }
+
+  /**
+   * Sets whether to launch the menu item asynchronously using a swingworker.
+   *
+   * @param value	true if asynchronous
+   */
+  public void setAsynchronous(boolean value) {
+    putValue(ASYNCHRONOUS, value);
+  }
+
+  /**
+   * Returns whether to launch the menu item asynchronously using a swingworker.
+   *
+   * @return		true if asynchronous
+   */
+  public boolean isAsynchronous() {
+    return (getValue(ASYNCHRONOUS) != null) && (Boolean) getValue(ASYNCHRONOUS);
   }
 
   /**
@@ -287,9 +309,25 @@ public abstract class AbstractBaseAction
    */
   @Override
   public void actionPerformed(ActionEvent e) {
-    preActionPerformed(e);
-    doActionPerformed(e);
-    postActionPerformed(e);
+    SwingWorker		worker;
+
+    if (isAsynchronous()) {
+      worker = new SwingWorker() {
+	@Override
+	protected Object doInBackground() throws Exception {
+	  preActionPerformed(e);
+	  doActionPerformed(e);
+	  postActionPerformed(e);
+	  return null;
+	}
+      };
+      worker.execute();
+    }
+    else {
+      preActionPerformed(e);
+      doActionPerformed(e);
+      postActionPerformed(e);
+    }
   }
   
   /**

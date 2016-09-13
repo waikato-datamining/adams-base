@@ -155,7 +155,21 @@ public interface BaseAction
    * @see		#hasToolTipText()
    */
   public String getToolTipText();
-  
+
+  /**
+   * Sets whether to launch the menu item asynchronously using a swingworker.
+   *
+   * @param value	true if asynchronous
+   */
+  public void setAsynchronous(boolean value);
+
+  /**
+   * Returns whether to launch the menu item asynchronously using a swingworker.
+   *
+   * @return		true if asynchronous
+   */
+  public boolean isAsynchronous();
+
   /**
    * Cleans up data structures, frees up memory.
    */
