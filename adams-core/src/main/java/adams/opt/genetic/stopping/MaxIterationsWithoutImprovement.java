@@ -199,22 +199,25 @@ public class MaxIterationsWithoutImprovement
     }
 
     if (m_LastFitness != 0) {
+      if (isLoggingEnabled())
+	getLogger().info("(" + m_LastFitness + " - " + genetic.getCurrentFitness() + ") / " + m_LastFitness);
       improvement = Math.abs(m_LastFitness - genetic.getCurrentFitness()) / m_LastFitness;
+      if (isLoggingEnabled())
+	getLogger().info("--> Improvement: " + improvement);
     }
     else {
       getLogger().warning("Last fitness is 0. To avoid divByZero using 0 as improvement!");
       improvement = 0.0;
     }
 
-    if (isLoggingEnabled())
-      getLogger().info("Improvement: " + improvement);
-
-    if (improvement >= m_MinimumImprovement) {
+    if ((improvement >= m_MinimumImprovement) || (Double.isInfinite(m_LastFitness))) {
       record(genetic);
       return false;
     }
 
     m_NoImprovement++;
+    if (isLoggingEnabled())
+      getLogger().info("No improvement of at least " + m_MinimumImprovement + ": " + m_NoImprovement);
 
     return (m_NoImprovement > m_NumIterations);
   }
