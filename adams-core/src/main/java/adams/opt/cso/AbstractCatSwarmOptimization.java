@@ -20,19 +20,17 @@
 
 package adams.opt.cso;
 
-import adams.core.Pausable;
-import adams.core.Randomizable;
-import adams.core.StoppableWithFeedback;
 import adams.core.TechnicalInformation;
 import adams.core.TechnicalInformation.Field;
 import adams.core.TechnicalInformation.Type;
-import adams.core.TechnicalInformationHandler;
 import adams.core.Utils;
 import adams.core.logging.LoggingHelper;
 import adams.core.option.AbstractOptionHandler;
 import adams.core.option.ArrayConsumer;
 import adams.core.option.OptionUtils;
 import adams.env.Environment;
+import adams.event.CatSwarmOptimizationFitnessChangeEvent;
+import adams.event.CatSwarmOptimizationFitnessChangeListener;
 import adams.opt.cso.stopping.AbstractStoppingCriterion;
 import adams.opt.cso.stopping.MaxTrainTime;
 import gnu.trove.list.TIntList;
@@ -40,7 +38,9 @@ import gnu.trove.list.array.TIntArrayList;
 import org.jblas.DoubleMatrix;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Random;
+import java.util.Set;
 import java.util.logging.Level;
 
 /**
@@ -52,7 +52,7 @@ import java.util.logging.Level;
  */
 public abstract class AbstractCatSwarmOptimization
   extends AbstractOptionHandler
-  implements Randomizable, StoppableWithFeedback, Pausable, TechnicalInformationHandler {
+  implements CatSwarmOptimization {
 
   private static final long serialVersionUID = 6351368598598576158L;
 
@@ -89,6 +89,12 @@ public abstract class AbstractCatSwarmOptimization
   /** whether execution has been paused. */
   protected boolean m_Paused;
 
+  /** the listeners for fitness changes. */
+  protected Set<CatSwarmOptimizationFitnessChangeListener> m_FitnessChangeListeners;
+
+  /** the last best fitness. */
+  protected double m_LastFitness;
+
   /**
    * Adds options to the internal list of options.
    */
@@ -111,6 +117,16 @@ public abstract class AbstractCatSwarmOptimization
     m_OptionManager.add(
       "stopping", "stopping",
       new MaxTrainTime());
+  }
+
+  /**
+   * Initializes the members.
+   */
+  @Override
+  protected void initialize() {
+    super.initialize();
+
+    m_FitnessChangeListeners = new HashSet<>();
   }
 
   /**
@@ -451,6 +467,7 @@ public abstract class AbstractCatSwarmOptimization
     getLogger().info(this.toString());
 
     m_IterationCounter = 0;
+    m_LastFitness      = Double.POSITIVE_INFINITY;
     m_Stopped          = false;
     m_Paused           = false;
     m_Random           = new Random(m_Seed);
@@ -466,6 +483,17 @@ public abstract class AbstractCatSwarmOptimization
 
     // Create the initial velocity vectors
     m_Velocities = DoubleMatrix.zeros(m_SwarmSize, m_Positions.columns);
+  }
+
+  /**
+   * Hook method which gets called when the fitness changes.
+   *
+   * @param oldFitness		the old fitness
+   * @param newFitness		the new fitness
+   */
+  protected void fitnessChanged(double oldFitness, double newFitness) {
+    getLogger().info("Fitness improvement: " + oldFitness + " -> " + newFitness);
+    notifyFitnessChangeListeners(new CatSwarmOptimizationFitnessChangeEvent(this, newFitness, null));
   }
 
   /**
@@ -499,6 +527,12 @@ public abstract class AbstractCatSwarmOptimization
       }
 
       // Report
+      int best = getBestIndex();
+      if (m_LastFitness > m_Fitnesses.get(best)) {
+	double newFitness = m_Fitnesses.get(best);
+	fitnessChanged(m_LastFitness, newFitness);
+	m_LastFitness = newFitness;
+      }
       getLogger().info(reportString());
 
       // Shuffle the swarm indices for the competitions
@@ -609,6 +643,34 @@ public abstract class AbstractCatSwarmOptimization
    */
   public void resumeExecution() {
     m_Paused = false;
+  }
+
+  /**
+   * Adds the listener to the internal list.
+   *
+   * @param l		the listener to add
+   */
+  public void addFitnessChangeListener(CatSwarmOptimizationFitnessChangeListener l) {
+    m_FitnessChangeListeners.add(l);
+  }
+
+  /**
+   * Removes the listener from the internal list.
+   *
+   * @param l		the listener to remove
+   */
+  public void removeFitnessChangeListener(CatSwarmOptimizationFitnessChangeListener l) {
+    m_FitnessChangeListeners.remove(l);
+  }
+
+  /**
+   * Notifies all listeners that the fitness has changed.
+   *
+   * @param e		the event to send
+   */
+  protected void notifyFitnessChangeListeners(CatSwarmOptimizationFitnessChangeEvent e) {
+    for (CatSwarmOptimizationFitnessChangeListener l: m_FitnessChangeListeners)
+      l.fitnessChanged(e);
   }
 
   /**

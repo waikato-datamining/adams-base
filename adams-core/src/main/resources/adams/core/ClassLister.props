@@ -713,7 +713,7 @@ adams.scripting.responsehandler.ResponseHandler=\
   adams.scripting.responsehandler
 
 # the CSO optimization algorithms
-adams.opt.cso.AbstractCatSwarmOptimization=\
+adams.opt.cso.CatSwarmOptimization=\
   adams.opt.cso
 
 # the CSO optimization algorithms
