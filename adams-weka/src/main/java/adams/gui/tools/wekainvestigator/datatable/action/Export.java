@@ -97,6 +97,7 @@ public class Export
 	DataSink.write(saver, data.getData());
 	logMessage("Exported: " + m_FileChooser.getSelectedFile());
 	cont = new FileContainer(m_FileChooser.getReaderForFile(m_FileChooser.getSelectedFile()), m_FileChooser.getSelectedFile());
+	cont.getData().setClassIndex(data.getData().classIndex());
 	getData().set(rows[i], cont);
         fireDataChange(new WekaInvestigatorDataEvent(getOwner().getOwner(), WekaInvestigatorDataEvent.ROWS_MODIFIED, rows[i]));
       }
