@@ -14,8 +14,8 @@
  */
 
 /*
- * FitnessChangeEvent.java
- * Copyright (C) 2008-2015 University of Waikato, Hamilton, New Zealand
+ * GeneticFitnessChangeEvent.java
+ * Copyright (C) 2008-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.event;
@@ -31,7 +31,7 @@ import java.util.EventObject;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class FitnessChangeEvent
+public class GeneticFitnessChangeEvent
   extends EventObject {
 
   /** for serialization. */
@@ -54,7 +54,7 @@ public class FitnessChangeEvent
    * @param setup 	the setup
    * @param weights	the weights/bits
    */
-  public FitnessChangeEvent(AbstractGeneticAlgorithm source, double fitness, Object setup, int[] weights) {
+  public GeneticFitnessChangeEvent(AbstractGeneticAlgorithm source, double fitness, Object setup, int[] weights) {
     super(source);
     
     m_Fitness = fitness;

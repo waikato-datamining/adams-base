@@ -33,8 +33,8 @@ import adams.core.option.AbstractOptionHandler;
 import adams.core.option.ArrayConsumer;
 import adams.core.option.OptionUtils;
 import adams.env.Environment;
-import adams.event.FitnessChangeEvent;
-import adams.event.FitnessChangeListener;
+import adams.event.GeneticFitnessChangeEvent;
+import adams.event.GeneticFitnessChangeListener;
 import adams.opt.genetic.initialsetups.AbstractInitialSetupsProvider;
 import adams.opt.genetic.initialsetups.EmptyInitialSetupsProvider;
 import adams.opt.genetic.stopping.AbstractStoppingCriterion;
@@ -290,7 +290,7 @@ public abstract class AbstractGeneticAlgorithm
   protected Long m_LastNotificationTime;
 
   /** the fitness change listeners. */
-  protected HashSet<FitnessChangeListener> m_FitnessChangeListeners;
+  protected HashSet<GeneticFitnessChangeListener> m_FitnessChangeListeners;
 
   /** the best fitness so far. */
   protected double m_BestFitness;
@@ -1162,7 +1162,7 @@ public abstract class AbstractGeneticAlgorithm
    *
    * @param l		the listener to add
    */
-  public void addFitnessChangeListener(FitnessChangeListener l) {
+  public void addFitnessChangeListener(GeneticFitnessChangeListener l) {
     m_FitnessChangeListeners.add(l);
   }
 
@@ -1171,7 +1171,7 @@ public abstract class AbstractGeneticAlgorithm
    *
    * @param l		the listener to remove
    */
-  public void removeFitnessChangeListener(FitnessChangeListener l) {
+  public void removeFitnessChangeListener(GeneticFitnessChangeListener l) {
     m_FitnessChangeListeners.remove(l);
   }
 
@@ -1180,8 +1180,8 @@ public abstract class AbstractGeneticAlgorithm
    *
    * @param e		the event to send
    */
-  protected void notifyFitnessChangeListeners(FitnessChangeEvent e) {
-    Iterator<FitnessChangeListener> iter;
+  protected void notifyFitnessChangeListeners(GeneticFitnessChangeEvent e) {
+    Iterator<GeneticFitnessChangeListener> iter;
 
     iter = m_FitnessChangeListeners.iterator();
     while (iter.hasNext())
@@ -1208,7 +1208,7 @@ public abstract class AbstractGeneticAlgorithm
         && ((double) (currTime - m_LastNotificationTime) / 1000.0 >= m_NotificationInterval));
       if (notify) {
         m_LastNotificationTime = currTime;
-        notifyFitnessChangeListeners(new FitnessChangeEvent(this, fitness, setup, weights));
+        notifyFitnessChangeListeners(new GeneticFitnessChangeEvent(this, fitness, setup, weights));
       }
     }
   }

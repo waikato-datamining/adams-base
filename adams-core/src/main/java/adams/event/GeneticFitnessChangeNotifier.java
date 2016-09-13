@@ -28,7 +28,7 @@ package adams.event;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public interface FitnessChangeNotifier {
+public interface GeneticFitnessChangeNotifier {
 
   /**
    * Returns the best currently best fitness.
@@ -42,12 +42,12 @@ public interface FitnessChangeNotifier {
    * 
    * @param l		the listener to add
    */
-  public void addFitnessChangeListener(FitnessChangeListener l);
+  public void addFitnessChangeListener(GeneticFitnessChangeListener l);
 
   /**
    * Removes the given listener from its internal list of listeners.
    * 
    * @param l		the listener to remove
    */
-  public void removeFitnessChangeListener(FitnessChangeListener l);
+  public void removeFitnessChangeListener(GeneticFitnessChangeListener l);
 }

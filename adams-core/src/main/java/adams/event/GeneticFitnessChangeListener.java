@@ -28,12 +28,12 @@ package adams.event;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public interface FitnessChangeListener {
+public interface GeneticFitnessChangeListener {
 
   /**
    * Gets called when the fitness of the genetic algorithm changed.
    * 
    * @param e		the event
    */
-  public void fitnessChanged(FitnessChangeEvent e);
+  public void fitnessChanged(GeneticFitnessChangeEvent e);
 }

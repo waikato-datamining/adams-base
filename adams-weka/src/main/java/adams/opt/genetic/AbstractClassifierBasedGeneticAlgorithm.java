@@ -25,7 +25,7 @@ import adams.core.ThreadLimiter;
 import adams.core.io.PlaceholderDirectory;
 import adams.core.option.OptionUtils;
 import adams.data.weka.WekaAttributeIndex;
-import adams.event.FitnessChangeNotifier;
+import adams.event.GeneticFitnessChangeNotifier;
 import adams.flow.core.Actor;
 import adams.flow.standalone.JobRunnerSetup;
 import adams.multiprocess.JobList;
@@ -51,7 +51,7 @@ import java.util.Random;
  */
 public abstract class AbstractClassifierBasedGeneticAlgorithm
   extends AbstractGeneticAlgorithm
-  implements FitnessChangeNotifier {
+  implements GeneticFitnessChangeNotifier {
 
   private static final long serialVersionUID = 1615849384907266578L;
 

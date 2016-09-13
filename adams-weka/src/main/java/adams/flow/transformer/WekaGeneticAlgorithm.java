@@ -22,8 +22,8 @@ package adams.flow.transformer;
 
 import adams.core.Pausable;
 import adams.core.QuickInfoHelper;
-import adams.event.FitnessChangeEvent;
-import adams.event.FitnessChangeListener;
+import adams.event.GeneticFitnessChangeEvent;
+import adams.event.GeneticFitnessChangeListener;
 import adams.event.FlowPauseStateEvent;
 import adams.event.FlowPauseStateListener;
 import adams.flow.container.WekaGeneticAlgorithmContainer;
@@ -124,7 +124,7 @@ import java.util.Hashtable;
  */
 public class WekaGeneticAlgorithm
   extends AbstractTransformer
-  implements FitnessChangeListener, CallableActorUser, OptionalCallableActor,
+  implements GeneticFitnessChangeListener, CallableActorUser, OptionalCallableActor,
              FlowPauseStateListener, Pausable {
 
   /** for serialization. */
@@ -560,7 +560,7 @@ public class WekaGeneticAlgorithm
    * @param e		the event
    */
   @Override
-  public void fitnessChanged(FitnessChangeEvent e) {
+  public void fitnessChanged(GeneticFitnessChangeEvent e) {
     String				result;
     WekaGeneticAlgorithmContainer	cont;
 

@@ -29,8 +29,8 @@ import adams.core.option.OptionUtils;
 import adams.data.DecimalFormatString;
 import adams.data.sequence.XYSequence;
 import adams.data.sequence.XYSequencePointComparator.Comparison;
-import adams.event.FitnessChangeEvent;
-import adams.event.FitnessChangeListener;
+import adams.event.GeneticFitnessChangeEvent;
+import adams.event.GeneticFitnessChangeListener;
 import adams.flow.sink.sequenceplotter.SequencePlotPoint;
 import adams.flow.sink.sequenceplotter.SequencePlotSequence;
 import adams.flow.sink.sequenceplotter.SequencePlotterPanel;
@@ -90,7 +90,7 @@ public abstract class AbstractClassifierBasedGeneticAlgorithmWizard
    */
   public static class PerformancePlot
     extends SequencePlotterPanel
-    implements FitnessChangeListener {
+    implements GeneticFitnessChangeListener {
 
     private static final long serialVersionUID = -4899150268392572586L;
 
@@ -208,7 +208,7 @@ public abstract class AbstractClassifierBasedGeneticAlgorithmWizard
      * @param e                the event
      */
     @Override
-    public void fitnessChanged(FitnessChangeEvent e) {
+    public void fitnessChanged(GeneticFitnessChangeEvent e) {
       AbstractClassifierBasedGeneticAlgorithm	algorithm;
       String					plotName;
       SequencePlotPoint				point;
