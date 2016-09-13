@@ -26,6 +26,7 @@ import adams.core.StoppableWithFeedback;
 import adams.core.TechnicalInformationHandler;
 import adams.core.option.OptionHandler;
 import adams.event.CatSwarmOptimizationFitnessChangeListener;
+import adams.event.CatSwarmOptimizationFitnessChangeNotifier;
 import adams.opt.cso.stopping.AbstractStoppingCriterion;
 import org.jblas.DoubleMatrix;
 
@@ -37,7 +38,8 @@ import org.jblas.DoubleMatrix;
  * @version $Revision$
  */
 public interface CatSwarmOptimization
-  extends OptionHandler, Randomizable, StoppableWithFeedback, Pausable, TechnicalInformationHandler {
+  extends OptionHandler, Randomizable, StoppableWithFeedback, Pausable,
+          TechnicalInformationHandler, CatSwarmOptimizationFitnessChangeNotifier {
 
   /**
    * Sets the swarm size to use.
