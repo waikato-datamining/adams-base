@@ -53,6 +53,7 @@ public class Export
     super();
     setName("Export");
     setIcon("save.gif");
+    setAsynchronous(true);
   }
 
   /**
