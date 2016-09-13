@@ -11,6 +11,10 @@
 adams.opt.genetic.AbstractClassifierBasedGeneticAlgorithm=\
   adams.opt.genetic
 
+# the CSO optimization algorithms for classifiers
+adams.opt.cso.ClassifierBasedCatSwarmOptimization=\
+  adams.opt.cso
+
 # instance generators
 adams.data.instances.AbstractInstanceGenerator=\
   adams.data.instances
