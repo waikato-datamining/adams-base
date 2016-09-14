@@ -15,7 +15,7 @@
 
 /**
  * DiffPanel.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools;
 
@@ -26,6 +26,7 @@ import adams.gui.core.BasePanel;
 import adams.gui.core.ExtensionFileFilter;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MenuBarProvider;
+import adams.gui.core.MouseUtils;
 import adams.gui.core.ParameterPanel;
 import adams.gui.core.RecentFilesHandler;
 import adams.gui.dialog.ApprovalDialog;
@@ -43,7 +44,6 @@ import javax.swing.SwingWorker;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.BorderLayout;
-import java.awt.Cursor;
 import java.awt.Dialog;
 import java.awt.Dialog.ModalityType;
 import java.awt.FlowLayout;
@@ -559,7 +559,7 @@ public class DiffPanel
 	List<String>	left;
 	List<String>	right;
 
-	setCursor(new Cursor(Cursor.WAIT_CURSOR));
+        MouseUtils.setWaitCursor(DiffPanel.this);
 
 	if (m_ClipboardLeft != null) {
 	  left = m_ClipboardLeft;
@@ -567,7 +567,7 @@ public class DiffPanel
 	}
 	else {
 	  if (m_FileLeft.isDirectory())
-	    left = new ArrayList<String>();
+	    left = new ArrayList<>();
 	  else
 	    left = FileUtils.loadFromFile(m_FileLeft);
 	  m_PanelDiff.setLabelText(true,  m_FileLeft.toString());
@@ -579,7 +579,7 @@ public class DiffPanel
 	}
 	else {
 	  if (m_FileRight.isDirectory())
-	    right = new ArrayList<String>();
+	    right = new ArrayList<>();
 	  else
 	    right = FileUtils.loadFromFile(m_FileRight);
 	  m_PanelDiff.setLabelText(false,  m_FileRight.toString());
@@ -593,7 +593,7 @@ public class DiffPanel
 
       @Override
       protected void done() {
-	setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+        MouseUtils.setDefaultCursor(DiffPanel.this);
 	super.done();
       }
     };

@@ -36,6 +36,7 @@ import adams.gui.core.BasePanel;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MenuBarProvider;
+import adams.gui.core.MouseUtils;
 import adams.gui.core.RecentFilesHandlerWithCommandline;
 import adams.gui.core.RecentFilesHandlerWithCommandline.Setup;
 import adams.gui.core.SpreadSheetTable;
@@ -785,7 +786,7 @@ public class SpreadSheetViewerPanel
     worker = new SwingWorker() {
       @Override
       protected Object doInBackground() throws Exception {
-	setCursor(new Cursor(Cursor.WAIT_CURSOR));
+	MouseUtils.setWaitCursor(SpreadSheetViewerPanel.this);
 	// default reader
 	SpreadSheetReader sreader = reader;
 	if (reader == null)
@@ -828,7 +829,7 @@ public class SpreadSheetViewerPanel
       @Override
       protected void done() {
 	super.done();
-	setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+        MouseUtils.setDefaultCursor(SpreadSheetViewerPanel.this);
 	updateMenu();
       }
     };
@@ -931,7 +932,7 @@ public class SpreadSheetViewerPanel
     worker = new SwingWorker() {
       @Override
       protected Object doInBackground() throws Exception {
-	setCursor(new Cursor(Cursor.WAIT_CURSOR));
+	MouseUtils.setWaitCursor(SpreadSheetViewerPanel.this);
 	write(writer, file);
 	return null;
       }
@@ -939,7 +940,7 @@ public class SpreadSheetViewerPanel
       @Override
       protected void done() {
 	super.done();
-	setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+	MouseUtils.setDefaultCursor(SpreadSheetViewerPanel.this);
 	if (recent && (m_RecentFilesHandler != null) && (m_FileChooser.getWriter().getCorrespondingReader() != null))
 	  m_RecentFilesHandler.addRecentItem(new Setup(file, m_FileChooser.getWriter().getCorrespondingReader()));
       }
@@ -1064,7 +1065,7 @@ public class SpreadSheetViewerPanel
     worker = new SwingWorker() {
       @Override
       protected Object doInBackground() throws Exception {
-	setCursor(new Cursor(Cursor.WAIT_CURSOR));
+	MouseUtils.setWaitCursor(SpreadSheetViewerPanel.this);
 	try {
 	  List processed = ActorUtils.transform(filter, input);
 	  for (Object obj: processed) {
@@ -1084,7 +1085,7 @@ public class SpreadSheetViewerPanel
       @Override
       protected void done() {
 	super.done();
-	setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+	MouseUtils.setDefaultCursor(SpreadSheetViewerPanel.this);
 	updateMenu();
       }
     };
@@ -1102,7 +1103,7 @@ public class SpreadSheetViewerPanel
     worker = new SwingWorker() {
       @Override
       protected Object doInBackground() throws Exception {
-	setCursor(new Cursor(Cursor.WAIT_CURSOR));
+	MouseUtils.setWaitCursor(SpreadSheetViewerPanel.this);
 	SpreadSheetPanel panel = m_TabbedPane.getCurrentPanel();
 	if (panel == null)
 	  return null;
@@ -1124,7 +1125,7 @@ public class SpreadSheetViewerPanel
       @Override
       protected void done() {
 	super.done();
-	setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+	MouseUtils.setDefaultCursor(SpreadSheetViewerPanel.this);
 	updateMenu();
       }
     };

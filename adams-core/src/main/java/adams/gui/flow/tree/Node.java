@@ -36,10 +36,10 @@ import adams.flow.core.MutableActorHandler;
 import adams.flow.core.OutputProducer;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.LazyExpansionTreeNode;
+import adams.gui.core.MouseUtils;
 import com.github.fracpete.jclipboardhelper.TransferableString;
 import org.markdownj.MarkdownProcessor;
 
-import java.awt.Cursor;
 import java.awt.datatransfer.Transferable;
 import java.util.HashSet;
 import java.util.List;
@@ -806,10 +806,10 @@ public class Node
 
     if (hasOwner()) {
       if (getActor() instanceof ExternalActorHandler) {
-	getOwner().setCursor(new Cursor(Cursor.WAIT_CURSOR));
+        MouseUtils.setWaitCursor(getOwner());
 	actor = (ExternalActorHandler) getActor();
 	msg = actor.setUpExternalActor();
-	getOwner().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+        MouseUtils.setDefaultCursor(getOwner());
 	if (msg == null) {
 	  node = TreeHelper.buildTree(this, actor.getExternalActor(), true);
 	  node.setEditable(false, true);
