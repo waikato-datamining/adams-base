@@ -242,7 +242,13 @@ public class TextStatistics
     buffer = new StringBuilder();
 
     // summary
-    buffer.append(item.getEvaluation().toSummaryString(m_ComplexityStatistics));
+    try {
+      buffer.append(item.getEvaluation().toSummaryString(m_ComplexityStatistics));
+    }
+    catch (Exception e) {
+      buffer.append(item.getEvaluation().toSummaryString(false));
+      Utils.handleException(this, "Failed to generate summary statistics: ", e);
+    }
 
     // confusion matrix
     if (m_ConfusionMatrix) {
@@ -250,7 +256,7 @@ public class TextStatistics
 	buffer.append("\n\n" + item.getEvaluation().toMatrixString());
       }
       catch (Exception e) {
-	return Utils.handleException(this, "Failed to generate confusion matrix: ", e);
+	Utils.handleException(this, "Failed to generate confusion matrix: ", e);
       }
     }
 
@@ -260,7 +266,7 @@ public class TextStatistics
 	buffer.append("\n\n" + item.getEvaluation().toClassDetailsString());
       }
       catch (Exception e) {
-	return Utils.handleException(this, "Failed to generate class details: ", e);
+	Utils.handleException(this, "Failed to generate class details: ", e);
       }
     }
 
