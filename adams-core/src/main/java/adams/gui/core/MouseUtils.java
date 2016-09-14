@@ -15,11 +15,13 @@
 
 /*
  * MouseUtils.java
- * Copyright (C) 2009 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
 
+import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.event.MouseEvent;
 
 /**
@@ -103,5 +105,23 @@ public class MouseUtils {
    */
   public static boolean hasNoModifierKey(MouseEvent e) {
     return (!e.isAltDown() && !e.isShiftDown() && !e.isControlDown());
+  }
+
+  /**
+   * Sets the wait cursor for the specified component.
+   *
+   * @param comp	the component to update
+   */
+  public void setWaitCursor(Component comp) {
+    comp.setCursor(new Cursor(Cursor.WAIT_CURSOR));
+  }
+
+  /**
+   * Sets the default cursor for the specified component.
+   *
+   * @param comp	the component to update
+   */
+  public void setDefaultCursor(Component comp) {
+    comp.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
   }
 }
