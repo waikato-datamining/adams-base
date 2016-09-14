@@ -485,7 +485,9 @@ public class Hermione
    */
   public void setBitsForPosition(int chromosome, int[] weights, List<Integer> starts, List<Integer> numbits, int pos, int[] newWeights) {
     int c = 0;
-    for (int i = starts.get(pos); i < starts.get(pos) + numbits.get(pos); i++) {
+    if (newWeights.length != numbits.get(pos))
+      getLogger().warning("[setBitsForPosition] Number of expected bits differs from length of supplied weights: " + numbits.get(pos) + " != " + newWeights.length);
+    for (int i = starts.get(pos); i < starts.get(pos) + numbits.get(pos) && c < newWeights.length; i++) {
       weights[i] = newWeights[c];
       if (newWeights[c] == 1)
 	m_Genes[chromosome].set(c);
