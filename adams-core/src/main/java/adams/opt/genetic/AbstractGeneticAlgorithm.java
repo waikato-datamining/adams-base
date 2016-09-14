@@ -244,6 +244,9 @@ public abstract class AbstractGeneticAlgorithm
   /** number of chromosomes. */
   protected int m_NumChrom;
 
+  /** actual number of chromosomes. */
+  protected int m_ActualNumChrom;
+
   /** the stopping criterion. */
   protected AbstractStoppingCriterion m_StoppingCriterion;
 
@@ -758,13 +761,13 @@ public abstract class AbstractGeneticAlgorithm
 
     getLogger().info("#chrom=" + ch + ", #gene=" + genes);
 
-    m_NumChrom = ch;
-    m_NumGenes = genes;
-    m_Genes    = new BitSet[m_NumChrom];
+    m_ActualNumChrom = ch;
+    m_NumGenes       = genes;
+    m_Genes          = new BitSet[m_ActualNumChrom];
 
     setups      = getInitialSetups();
     weightIndex = 0;
-    for (i = 0; i < m_NumChrom; i++) {
+    for (i = 0; i < m_ActualNumChrom; i++) {
       m_Genes[i] = new BitSet(m_NumGenes);
 
       if (i < setups.size()) {
@@ -791,8 +794,8 @@ public abstract class AbstractGeneticAlgorithm
 
     }
 
-    m_Fitness = new double[m_NumChrom];
-    for (int f = 0; f < m_NumChrom; f++)
+    m_Fitness = new double[m_ActualNumChrom];
+    for (int f = 0; f < m_ActualNumChrom; f++)
       m_Fitness[f] = 0;
 
     sort();
@@ -850,8 +853,8 @@ public abstract class AbstractGeneticAlgorithm
    */
   public void sort() {
     BitSet btemp;
-    for (int c = 0; c < m_NumChrom; c++) {
-      for (int d = (m_NumChrom - 2); d >= c; d--) {
+    for (int c = 0; c < m_ActualNumChrom; c++) {
+      for (int d = (m_ActualNumChrom - 2); d >= c; d--) {
 	if (m_Fitness[d] < m_Fitness[d+1]) {
 	  btemp = m_Genes[d];
 	  double x = m_Fitness[d];
@@ -875,30 +878,30 @@ public abstract class AbstractGeneticAlgorithm
    * Performs cross-over.
    */
   public void doCrossovers()  {
-    for (int m = 0; m < m_NumChrom / 4; m++) {
-      copyGene(m + m_NumChrom*3/4, m);
+    for (int m = 0; m < m_ActualNumChrom / 4; m++) {
+      copyGene(m + m_ActualNumChrom*3/4, m);
       // copies first chromosome half over last half
     }
 
     // copy the 2 best genes so that their
     // genetic material is replicated frequently:
-    if (m_NumChrom > 4) {
+    if (m_ActualNumChrom > 4) {
       for (int i = 0; i < m_NumGenes; i++) {
-	setGene(m_NumChrom - 1, i, getGene(0, i));
+	setGene(m_ActualNumChrom - 1, i, getGene(0, i));
 	// Seems redundant but slightly different...
-	setGene(m_NumChrom - 2, i, getGene(0, i));
+	setGene(m_ActualNumChrom - 2, i, getGene(0, i));
 	// when compared with the CopyGene command.
-	setGene(m_NumChrom - 3, i, getGene(0, i));
+	setGene(m_ActualNumChrom - 3, i, getGene(0, i));
 	// Do one or the other.
-	setGene(m_NumChrom - 4, i, getGene(1, i));
-	setGene(m_NumChrom - 5, i, getGene(1, i));
+	setGene(m_ActualNumChrom - 4, i, getGene(1, i));
+	setGene(m_ActualNumChrom - 5, i, getGene(1, i));
       }
     }
 
-    int num = m_NumChrom / 4; //originally set to /4
+    int num = m_ActualNumChrom / 4; //originally set to /4
     for (int i = 0; i < num; i++) {
-      int c1 = 2 + (int)((m_NumChrom - 2) * m_Random.nextDouble() * 0.99);
-      int c2 = 2 + (int)((m_NumChrom - 2) * m_Random.nextDouble() * 0.99);
+      int c1 = 2 + (int)((m_ActualNumChrom - 2) * m_Random.nextDouble() * 0.99);
+      int c2 = 2 + (int)((m_ActualNumChrom - 2) * m_Random.nextDouble() * 0.99);
       // finds two different chromosomes
       if (c1 != c2) {
 	int locus = 2 + (int)((m_NumGenes - 3) * m_Random.nextDouble());
@@ -932,8 +935,8 @@ public abstract class AbstractGeneticAlgorithm
    * Performs mutations.
    */
   public void doMutations() {
-    for(int i = 0; i < m_NumChrom*0.5; i++) {
-      int c = 0 + (int)((m_NumChrom - 2) * m_Random.nextDouble() * 0.95); //0-->2
+    for(int i = 0; i < m_ActualNumChrom*0.5; i++) {
+      int c = 0 + (int)((m_ActualNumChrom - 2) * m_Random.nextDouble() * 0.95); //0-->2
       int g = (int)(m_NumGenes * m_Random.nextDouble() * 0.95);       //saves good genes
       if (getGene(c, g))
 	setGene(c, g, 0);
@@ -947,8 +950,8 @@ public abstract class AbstractGeneticAlgorithm
    * Performs mutations.
    */
   public void doMutations2() {
-    for(int i = 0; i < m_NumChrom*0.5; i++) {
-      int c = 2 + (int)((m_NumChrom - 2) * m_Random.nextDouble() * 0.99); //0-->2
+    for(int i = 0; i < m_ActualNumChrom*0.5; i++) {
+      int c = 2 + (int)((m_ActualNumChrom - 2) * m_Random.nextDouble() * 0.99); //0-->2
 
       double thresh=1.0/(double)m_NumGenes;
       for (int gn=0;gn<m_NumGenes;gn++) {

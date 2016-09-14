@@ -424,7 +424,7 @@ public class Hermione
           handler.performInitialization(this, cont);
         String strArray = handler.pack(cont);
         int[] newWeights = stringToIntArray(strArray);
-        for (int i = 0; i < m_NumChrom; i++)
+        for (int i = 0; i < m_ActualNumChrom; i++)
           setBitsForPosition(i, dummyWeights, m_start, m_numbits, pos, newWeights);
         pos++;
       }
