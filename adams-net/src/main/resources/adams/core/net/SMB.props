@@ -1,0 +1,7 @@
+# Properties file listing SMB related parameters.
+#
+# Author: FracPete (fracpete at waikato dot ac dot nz)
+# Version: $Revision$
+
+# The Wins Host (Ipv4)
+WinsHost=192.168.1.220

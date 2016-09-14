@@ -5,4 +5,5 @@
 
 Definitions=\
   adams.env.EmailDefinition,\
+  adams.env.SMBDefinition,\
   adams.env.SSLDefinition
