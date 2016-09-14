@@ -112,7 +112,7 @@ public class MouseUtils {
    *
    * @param comp	the component to update
    */
-  public void setWaitCursor(Component comp) {
+  public static void setWaitCursor(Component comp) {
     comp.setCursor(new Cursor(Cursor.WAIT_CURSOR));
   }
 
@@ -121,7 +121,7 @@ public class MouseUtils {
    *
    * @param comp	the component to update
    */
-  public void setDefaultCursor(Component comp) {
+  public static void setDefaultCursor(Component comp) {
     comp.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
   }
 }
