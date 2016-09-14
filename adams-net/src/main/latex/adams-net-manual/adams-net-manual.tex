@@ -243,6 +243,10 @@ to enter a password, in case you do not want to store the connection's password
 with the flow setup. The user has to enter the password through a dialog that
 pops up when the flow gets executed.
 
+There are also several \textit{searchlets} available for the
+\textit{FileSystemSearch} source actor that allow the listing of remote
+files.
+
 %%%%%%%
 % SSL %
 %%%%%%%
@@ -258,6 +262,32 @@ default settings.
   \caption{SSL preferences}
   \label{ssl_setup}
 \end{figure}
+
+%%%%%%%
+% SMB %
+%%%%%%%
+
+\chapter{SMB}
+What WINS server ADAMS uses for SMB (i.e., Windows shares), can be configured in the
+\textit{SMB} preferences. Figure \ref{smb_setup} shows a screenshot of the
+default settings.
+
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=10.0cm]{images/smb_setup.png}
+  \caption{SMB preferences}
+  \label{smb_setup}
+\end{figure}
+
+The following actors are available:
+\begin{tight_itemize}
+	\item \textit{SMBConnection} -- standalone actor that defines the server
+	connection (domain/user/password).
+\end{tight_itemize}
+
+There are also several \textit{searchlets} available for the
+\textit{FileSystemSearch} source actor that allow the listing of remote
+files.
 
 %%%%%%%%%%%%%%%%%%%
 % Remote commands %
