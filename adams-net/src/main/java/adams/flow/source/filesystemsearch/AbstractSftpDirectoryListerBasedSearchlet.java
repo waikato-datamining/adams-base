@@ -19,7 +19,6 @@
  */
 package adams.flow.source.filesystemsearch;
 
-import adams.core.io.lister.LocalDirectoryLister;
 import adams.core.io.lister.SftpDirectoryLister;
 import adams.core.logging.LoggingLevel;
 import adams.flow.core.ActorUtils;
@@ -30,7 +29,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Ancestor for search algorithms that use {@link LocalDirectoryLister}
+ * Ancestor for search algorithms that use {@link SftpDirectoryLister}
  * under the hood.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
