@@ -90,7 +90,7 @@ public interface ReportProvider<T extends Report, I>
    * @param conditions	the conditions that the conatiners must meet
    * @return		list of container IDs
    */
-  public List<String> getIDsOfReference(AbstractConditions conditions);
+  public List<String> getIDs(AbstractConditions conditions);
 
   /**
    * Return a list of columns of data containers that match the defined
@@ -100,7 +100,7 @@ public interface ReportProvider<T extends Report, I>
    * @param conditions	the conditions that the containers must meet
    * @return		list of columns (tab-separated)
    */
-  public List<String> getIDsOfReference(String[] columns, AbstractConditions conditions);
+  public List<String> getIDs(String[] columns, AbstractConditions conditions);
 
   /**
    * Return a list of database IDs of data containers that match the defined
@@ -109,5 +109,5 @@ public interface ReportProvider<T extends Report, I>
    * @param conditions	the conditions that the conatiners must meet
    * @return		list of database IDs
    */
-  public List<Integer> getDBIDsOfReference(AbstractConditions conditions);
+  public List<Integer> getDBIDs(AbstractConditions conditions);
 }
