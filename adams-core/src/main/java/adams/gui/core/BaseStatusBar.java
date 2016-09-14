@@ -164,7 +164,7 @@ public class BaseStatusBar
   /**
    * Removes any status message currently being displayed (left only).
    */
-  protected void clearStatus() {
+  public void clearStatus() {
     clearStatus(true);
   }
 
@@ -173,7 +173,7 @@ public class BaseStatusBar
    *
    * @param left	whether to clear left or right
    */
-  protected void clearStatus(boolean left) {
+  public void clearStatus(boolean left) {
     if (left) {
       m_StatusLeft = EMPTY_STATUS;
       m_LabelStatusLeft.setText(EMPTY_STATUS);
@@ -410,7 +410,7 @@ public class BaseStatusBar
 
     menuitem = new JMenuItem("Clear status", GUIHelper.getIcon("new.gif"));
     menuitem.setEnabled(m_StatusLeft.length() > 0);
-    menuitem.addActionListener((ActionEvent e) ->clearStatus());
+    menuitem.addActionListener((ActionEvent e) -> clearStatus());
     result.add(menuitem);
     
     if (m_PopupMenuCustomizer != null)
