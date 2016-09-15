@@ -39,7 +39,7 @@ import java.util.List;
  * @version $Revision$
  */
 public class LocalDirectoryLister
-  extends AbstractDirectoryLister {
+  extends AbstractRecursiveDirectoryLister {
 
   /** for serialization. */
   private static final long serialVersionUID = -1846677500660003814L;

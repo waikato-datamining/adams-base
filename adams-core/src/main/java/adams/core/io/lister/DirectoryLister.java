@@ -136,34 +136,6 @@ public interface DirectoryLister
   public BaseRegExp getRegExp();
 
   /**
-   * Sets whether to search recursively.
-   *
-   * @param value 	true if to search recursively
-   */
-  public void setRecursive(boolean value);
-
-  /**
-   * Returns whether to search recursively.
-   *
-   * @return 		true if search is recursively
-   */
-  public boolean getRecursive();
-
-  /**
-   * Sets the maximum depth to search (1 = only watch dir, -1 = infinite).
-   *
-   * @param value 	the maximum depth
-   */
-  public void setMaxDepth(int value);
-
-  /**
-   * Returns the maximum depth to search (1 = only watch dir, -1 = infinite).
-   *
-   * @return 		the maximum depth
-   */
-  public int getMaxDepth();
-
-  /**
    * Returns whether the watch directory has a parent directory.
    *
    * @return		true if parent directory available

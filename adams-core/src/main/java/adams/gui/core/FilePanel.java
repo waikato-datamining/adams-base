@@ -26,6 +26,7 @@ import adams.core.io.FileObjectComparator;
 import adams.core.io.PlaceholderDirectory;
 import adams.core.io.lister.DirectoryLister;
 import adams.core.io.lister.LocalDirectoryLister;
+import adams.core.io.lister.RecursiveDirectoryLister;
 import adams.env.Environment;
 import adams.gui.core.SearchPanel.LayoutType;
 import adams.gui.event.SearchEvent;
@@ -216,8 +217,8 @@ public class FilePanel
     m_ShowHidden    = false;
 
     m_Lister = new LocalDirectoryLister();
-    m_Lister.setRecursive(false);
     m_Lister.setMaxItems(-1);
+    ((RecursiveDirectoryLister) m_Lister).setRecursive(false);
 
     m_Comparator = new FileObjectComparator(false, true, false);
 
@@ -409,25 +410,6 @@ public class FilePanel
    */
   public BaseRegExp getFilter() {
     return m_Lister.getRegExp();
-  }
-
-  /**
-   * Sets whether to recursively list files.
-   *
-   * @param value	true if to list them recursively
-   */
-  public void setRecursive(boolean value) {
-    m_Lister.setRecursive(value);
-    update();
-  }
-
-  /**
-   * Returns whether the files are listed recursively.
-   *
-   * @return		true if to list recursively
-   */
-  public boolean isRecursive() {
-    return m_Lister.getRecursive();
   }
 
   /**

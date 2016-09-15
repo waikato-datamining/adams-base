@@ -61,12 +61,6 @@ public abstract class AbstractDirectoryLister
   /** the regular expression for the files/dirs to match. */
   protected BaseRegExp m_RegExp;
 
-  /** whether to look for files/dirs recursively. */
-  protected boolean m_Recursive;
-
-  /** the maximum depth to look recursively (0 = only watch dir, -1 = infinite). */
-  protected int m_MaxDepth;
-
   /** whether to stop the currently listing. */
   protected boolean m_Stopped;
 
@@ -84,8 +78,6 @@ public abstract class AbstractDirectoryLister
     m_MaxItems       = -1;
     m_RegExp         = new BaseRegExp("");
     m_Stopped        = false;
-    m_Recursive      = false;
-    m_MaxDepth       = -1;
   }
 
   /**
@@ -230,42 +222,6 @@ public abstract class AbstractDirectoryLister
    */
   public BaseRegExp getRegExp() {
     return m_RegExp;
-  }
-
-  /**
-   * Sets whether to search recursively.
-   *
-   * @param value 	true if to search recursively
-   */
-  public void setRecursive(boolean value) {
-    m_Recursive = value;
-  }
-
-  /**
-   * Returns whether to search recursively.
-   *
-   * @return 		true if search is recursively
-   */
-  public boolean getRecursive() {
-    return m_Recursive;
-  }
-
-  /**
-   * Sets the maximum depth to search (1 = only watch dir, -1 = infinite).
-   *
-   * @param value 	the maximum depth
-   */
-  public void setMaxDepth(int value) {
-    m_MaxDepth = value;
-  }
-
-  /**
-   * Returns the maximum depth to search (1 = only watch dir, -1 = infinite).
-   *
-   * @return 		the maximum depth
-   */
-  public int getMaxDepth() {
-    return m_MaxDepth;
   }
 
   /**

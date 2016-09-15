@@ -39,7 +39,7 @@ import java.util.logging.Level;
  * @version $Revision$
  */
 public class SmbDirectoryLister
-  extends AbstractDirectoryLister {
+  extends AbstractRecursiveDirectoryLister {
 
   private static final long serialVersionUID = 2687222234652386893L;
 

@@ -47,7 +47,7 @@ import java.util.Vector;
  * @version $Revision$
  */
 public class SftpDirectoryLister
-  extends AbstractDirectoryLister {
+  extends AbstractRecursiveDirectoryLister {
 
   private static final long serialVersionUID = 2687222234652386893L;
 
