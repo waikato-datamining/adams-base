@@ -344,7 +344,7 @@ public class SftpDirectoryLister
    * @return		the new wrapper
    */
   public SftpFileObject newDirectory(String dir) {
-    return new SftpFileObject(new File(m_WatchDir), dir, true);
+    return new SftpFileObject(new File(m_WatchDir), dir, true, m_Session);
   }
 
   /**
@@ -398,7 +398,7 @@ public class SftpDirectoryLister
 	  if (!m_RegExp.isEmpty() && !m_RegExp.isMatch(entry.getFilename()))
 	    continue;
 
-	  files.add(new SortContainer(new SftpFileObject(new File(current), entry), m_Sorting));
+	  files.add(new SortContainer(new SftpFileObject(new File(current), entry, m_Session), m_Sorting));
 	}
       }
       else {
@@ -407,7 +407,7 @@ public class SftpDirectoryLister
 	  if (!m_RegExp.isEmpty() && !m_RegExp.isMatch(entry.getFilename()))
 	    continue;
 
-	  files.add(new SortContainer(new SftpFileObject(new File(current), entry), m_Sorting));
+	  files.add(new SortContainer(new SftpFileObject(new File(current), entry, m_Session), m_Sorting));
 	}
       }
     }

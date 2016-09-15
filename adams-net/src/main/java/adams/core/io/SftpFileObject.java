@@ -21,6 +21,7 @@
 package adams.core.io;
 
 import com.jcraft.jsch.ChannelSftp.LsEntry;
+import com.jcraft.jsch.Session;
 
 import java.io.File;
 import java.util.Date;
@@ -36,6 +37,9 @@ public class SftpFileObject
 
   private static final long serialVersionUID = -1391761454087211261L;
 
+  /** the session. */
+  protected transient Session m_Session;
+
   /** the parent directory. */
   protected File m_ParentDir;
 
@@ -46,7 +50,7 @@ public class SftpFileObject
   protected Boolean m_Directory;
 
   /** the underlying file. */
-  protected LsEntry m_Entry;
+  protected transient LsEntry m_Entry;
 
   /**
    * Initializes the wrapper.
@@ -54,9 +58,10 @@ public class SftpFileObject
    * @param parentDir	the parent directory
    * @param name	the file/dir to wrap
    * @param dir		whether it is a directory
+   * @param session	the session
    */
-  public SftpFileObject(File parentDir, String name, boolean dir) {
-    this(parentDir, null, name, dir);
+  public SftpFileObject(File parentDir, String name, boolean dir, Session session) {
+    this(parentDir, null, name, dir, session);
   }
 
   /**
@@ -64,9 +69,10 @@ public class SftpFileObject
    *
    * @param parentDir	the parent directory
    * @param entry	the file to wrap
+   * @param session	the session
    */
-  public SftpFileObject(File parentDir, LsEntry entry) {
-    this(parentDir, entry, null, null);
+  public SftpFileObject(File parentDir, LsEntry entry, Session session) {
+    this(parentDir, entry, null, null, session);
   }
 
   /**
@@ -76,12 +82,23 @@ public class SftpFileObject
    * @param entry	the file to wrap
    * @param name	the file/dir to wrap
    * @param dir		whether it is a directory
+   * @param session	the session
    */
-  protected SftpFileObject(File parentDir, LsEntry entry, String name, Boolean dir) {
+  protected SftpFileObject(File parentDir, LsEntry entry, String name, Boolean dir, Session session) {
     m_ParentDir = parentDir;
     m_Entry     = entry;
     m_Name      = name;
     m_Directory = dir;
+    m_Session   = session;
+  }
+
+  /**
+   * Returns the session.
+   *
+   * @return		the session
+   */
+  public Session getSession() {
+    return m_Session;
   }
 
   /**
