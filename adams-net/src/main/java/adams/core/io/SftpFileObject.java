@@ -14,7 +14,7 @@
  */
 
 /**
- * SftpFileWrapper.java
+ * SftpFileObject.java
  * Copyright (C) 2016 University of Waikato, Hamilton, NZ
  */
 
