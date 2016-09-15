@@ -332,7 +332,7 @@ public class SmbDirectoryLister
     wrappers = listObjects();
     result   = new String[wrappers.length];
     for (i = 0; i < wrappers.length; i++)
-      result[i] = wrappers[i].toString();
+      result[i] = wrappers[i].getFile().toString();
 
     return result;
   }
