@@ -167,7 +167,7 @@ public class SmbDirectoryLister
   public SmbFileObject newDirectory(String dir) {
     String 	watch;
     try {
-      watch = m_WatchDir.toString();
+      watch = m_WatchDir;
       if (!watch.startsWith("/"))
 	watch = "/" + watch;
       if (!watch.endsWith("/"))
@@ -354,7 +354,7 @@ public class SmbDirectoryLister
       m_Authentication = new NtlmPasswordAuthentication(m_Domain, m_User, m_Password.getValue());
 
     try {
-      dir = m_WatchDir.toString();
+      dir = m_WatchDir;
       if (!dir.startsWith("/"))
 	dir = "/" + dir;
       if (!dir.endsWith("/"))
