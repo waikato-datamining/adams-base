@@ -14,7 +14,7 @@
  */
 
 /**
- * FileSearch.java
+ * LocalDirectorySearch.java
  * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.source.filesystemsearch;
@@ -29,7 +29,7 @@ import java.util.List;
 
 /**
  <!-- globalinfo-start -->
- * Searches only for files.
+ * Searches only for directories.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -40,17 +40,17 @@ import java.util.List;
  * </pre>
  * 
  * <pre>-directory &lt;adams.core.io.PlaceholderDirectory&gt; (property: directory)
- * &nbsp;&nbsp;&nbsp;The directory to search for files.
+ * &nbsp;&nbsp;&nbsp;The directory to search for directories.
  * &nbsp;&nbsp;&nbsp;default: ${CWD}
  * </pre>
  * 
  * <pre>-max-items &lt;int&gt; (property: maxItems)
- * &nbsp;&nbsp;&nbsp;The maximum number of files to return (&lt;= 0 is unlimited).
+ * &nbsp;&nbsp;&nbsp;The maximum number of dirs to return (&lt;= 0 is unlimited).
  * &nbsp;&nbsp;&nbsp;default: -1
  * </pre>
  * 
  * <pre>-regexp &lt;adams.core.base.BaseRegExp&gt; (property: regExp)
- * &nbsp;&nbsp;&nbsp;The regular expression that the files must match (empty string matches all
+ * &nbsp;&nbsp;&nbsp;The regular expression that the dirs must match (empty string matches all
  * &nbsp;&nbsp;&nbsp;).
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
@@ -61,7 +61,7 @@ import java.util.List;
  * </pre>
  * 
  * <pre>-descending &lt;boolean&gt; (property: sortDescending)
- * &nbsp;&nbsp;&nbsp;If set to true, the files are sorted in descending manner.
+ * &nbsp;&nbsp;&nbsp;If set to true, the directories are sorted in descending manner.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
@@ -71,8 +71,8 @@ import java.util.List;
  * </pre>
  * 
  * <pre>-max-depth &lt;int&gt; (property: maxDepth)
- * &nbsp;&nbsp;&nbsp;The maximum depth to search in recursive mode (1 = only watch directory, 
- * &nbsp;&nbsp;&nbsp;-1 = infinite).
+ * &nbsp;&nbsp;&nbsp;The maximum depth to search in recursive mode (1 = only search directory,
+ * &nbsp;&nbsp;&nbsp; -1 = infinite).
  * &nbsp;&nbsp;&nbsp;default: -1
  * </pre>
  * 
@@ -81,8 +81,8 @@ import java.util.List;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class FileSearch
-  extends AbstractDirectoryListerBasedSearchlet {
+public class LocalDirectorySearch
+  extends AbstractLocalDirectoryListerBasedSearchlet {
 
   /** for serialization. */
   private static final long serialVersionUID = 3229293554987103145L;
@@ -94,7 +94,7 @@ public class FileSearch
    */
   @Override
   public String globalInfo() {
-    return "Searches only for files.";
+    return "Searches only for directories.";
   }
 
   /**
@@ -140,8 +140,8 @@ public class FileSearch
   protected void initialize() {
     super.initialize();
 
-    m_Lister.setListDirs(false);
-    m_Lister.setListFiles(true);
+    m_Lister.setListDirs(true);
+    m_Lister.setListFiles(false);
   }
 
   /**
@@ -169,7 +169,7 @@ public class FileSearch
    * 			displaying in the GUI or for listing the options.
    */
   public String directoryTipText() {
-    return "The directory to search for files.";
+    return "The directory to search for directories.";
   }
 
   /**
@@ -198,7 +198,7 @@ public class FileSearch
    * 			displaying in the GUI or for listing the options.
    */
   public String maxItemsTipText() {
-    return "The maximum number of files to return (<= 0 is unlimited).";
+    return "The maximum number of dirs to return (<= 0 is unlimited).";
   }
 
   /**
@@ -227,7 +227,7 @@ public class FileSearch
    * 			displaying in the GUI or for listing the options.
    */
   public String regExpTipText() {
-    return "The regular expression that the files must match (empty string matches all).";
+    return "The regular expression that the dirs must match (empty string matches all).";
   }
 
   /**
@@ -285,7 +285,7 @@ public class FileSearch
    * 			displaying in the GUI or for listing the options.
    */
   public String sortDescendingTipText() {
-    return "If set to true, the files are sorted in descending manner.";
+    return "If set to true, the directories are sorted in descending manner.";
   }
 
   /**
@@ -346,7 +346,7 @@ public class FileSearch
    */
   public String maxDepthTipText() {
     return
-        "The maximum depth to search in recursive mode (1 = only watch "
+        "The maximum depth to search in recursive mode (1 = only search "
        + "directory, -1 = infinite).";
   }
 

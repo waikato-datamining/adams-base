@@ -33,7 +33,7 @@ import java.util.List;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public abstract class AbstractDirectoryListerBasedSearchlet
+public abstract class AbstractLocalDirectoryListerBasedSearchlet
   extends AbstractFileSystemSearchlet {
   
   /** for serialization. */

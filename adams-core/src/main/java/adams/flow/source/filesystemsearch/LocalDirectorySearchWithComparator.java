@@ -14,22 +14,26 @@
  */
 
 /**
- * DirectorySearch.java
- * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
+ * LocalDirectorySearchWithComparator.java
+ * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.source.filesystemsearch;
 
+import adams.core.DefaultCompare;
 import adams.core.QuickInfoHelper;
 import adams.core.base.BaseRegExp;
+import adams.core.io.lister.LocalDirectoryLister;
 import adams.core.io.PlaceholderDirectory;
-import adams.core.io.lister.Sorting;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
  <!-- globalinfo-start -->
- * Searches only for directories.
+ * Searches only for directories, but uses the comparator for sorting the directories.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -44,20 +48,20 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default: ${CWD}
  * </pre>
  * 
- * <pre>-max-items &lt;int&gt; (property: maxItems)
- * &nbsp;&nbsp;&nbsp;The maximum number of dirs to return (&lt;= 0 is unlimited).
- * &nbsp;&nbsp;&nbsp;default: -1
- * </pre>
- * 
  * <pre>-regexp &lt;adams.core.base.BaseRegExp&gt; (property: regExp)
  * &nbsp;&nbsp;&nbsp;The regular expression that the dirs must match (empty string matches all
  * &nbsp;&nbsp;&nbsp;).
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
- * <pre>-sorting &lt;NO_SORTING|SORT_BY_NAME|SORT_BY_LAST_MODIFIED&gt; (property: sorting)
- * &nbsp;&nbsp;&nbsp;The type of sorting to perform.
- * &nbsp;&nbsp;&nbsp;default: NO_SORTING
+ * <pre>-max-items &lt;int&gt; (property: maxItems)
+ * &nbsp;&nbsp;&nbsp;The maximum number of dirs to return (&lt;= 0 is unlimited).
+ * &nbsp;&nbsp;&nbsp;default: -1
+ * </pre>
+ * 
+ * <pre>-comparator &lt;java.util.Comparator&gt; (property: comparator)
+ * &nbsp;&nbsp;&nbsp;The comparator to use; must implement java.util.Comparator and java.io.Serializable
+ * &nbsp;&nbsp;&nbsp;default: adams.core.DefaultCompare
  * </pre>
  * 
  * <pre>-descending &lt;boolean&gt; (property: sortDescending)
@@ -81,11 +85,17 @@ import java.util.List;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class DirectorySearch
-  extends AbstractDirectoryListerBasedSearchlet {
+public class LocalDirectorySearchWithComparator
+  extends AbstractLocalDirectoryListerBasedSearchlet {
 
   /** for serialization. */
   private static final long serialVersionUID = 3229293554987103145L;
+
+  /** the comparator to use. */
+  protected Comparator m_Comparator;
+
+  /** whether to sort ascending or descending. */
+  protected boolean m_Descending;
 
   /**
    * Returns a string describing the object.
@@ -94,7 +104,7 @@ public class DirectorySearch
    */
   @Override
   public String globalInfo() {
-    return "Searches only for directories.";
+    return "Searches only for directories, but uses the comparator for sorting the directories.";
   }
 
   /**
@@ -105,32 +115,32 @@ public class DirectorySearch
     super.defineOptions();
 
     m_OptionManager.add(
-	    "directory", "directory",
-	    new PlaceholderDirectory("."));
+      "directory", "directory",
+      new PlaceholderDirectory("."));
 
     m_OptionManager.add(
-	    "max-items", "maxItems",
-	    -1);
+      "regexp", "regExp",
+      new BaseRegExp(""));
 
     m_OptionManager.add(
-	    "regexp", "regExp",
-	    new BaseRegExp(""));
+      "max-items", "maxItems",
+      -1);
 
     m_OptionManager.add(
-	    "sorting", "sorting",
-	    Sorting.NO_SORTING);
+      "comparator", "comparator",
+      new DefaultCompare());
 
     m_OptionManager.add(
-	    "descending", "sortDescending",
-	    false);
+      "descending", "sortDescending",
+      false);
 
     m_OptionManager.add(
-	    "recursive", "recursive",
-	    false);
+      "recursive", "recursive",
+      false);
 
     m_OptionManager.add(
-	    "max-depth", "maxDepth",
-	    -1);
+      "max-depth", "maxDepth",
+      -1);
   }
 
   /**
@@ -173,6 +183,36 @@ public class DirectorySearch
   }
 
   /**
+   * Sets the regular expression for the files/dirs.
+   *
+   * @param value	the regular expression
+   */
+  public void setRegExp(BaseRegExp value) {
+    m_Lister.setRegExp(value);
+    reset();
+  }
+
+  /**
+   * Returns the regular expression for the files/dirs.
+   *
+   * @return		the regular expression
+   * @see		LocalDirectoryLister#getRegExp()
+   */
+  public BaseRegExp getRegExp() {
+    return m_Lister.getRegExp();
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String regExpTipText() {
+    return "The regular expression that the dirs must match (empty string matches all).";
+  }
+
+  /**
    * Sets the maximum number of items to return.
    *
    * @param value	the maximum number
@@ -202,22 +242,22 @@ public class DirectorySearch
   }
 
   /**
-   * Sets the regular expression for the files/dirs.
+   * Sets the comparator to use.
    *
-   * @param value	the regular expression
+   * @param value	the comparator
    */
-  public void setRegExp(BaseRegExp value) {
-    m_Lister.setRegExp(value);
+  public void setComparator(Comparator value) {
+    m_Comparator = value;
     reset();
   }
 
   /**
-   * Returns the regular expression for the files/dirs.
+   * Returns the comparator to use.
    *
-   * @return		the regular expression
+   * @return		the comparator
    */
-  public BaseRegExp getRegExp() {
-    return m_Lister.getRegExp();
+  public Comparator getComparator() {
+    return m_Comparator;
   }
 
   /**
@@ -226,37 +266,8 @@ public class DirectorySearch
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String regExpTipText() {
-    return "The regular expression that the dirs must match (empty string matches all).";
-  }
-
-  /**
-   * Sets the type of sorting to perform.
-   *
-   * @param value	the type of sorting
-   */
-  public void setSorting(Sorting value) {
-    m_Lister.setSorting(value);
-    reset();
-  }
-
-  /**
-   * Returns the type of sorting to perform.
-   *
-   * @return		the type of sorting
-   */
-  public Sorting getSorting() {
-    return m_Lister.getSorting();
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String sortingTipText() {
-    return "The type of sorting to perform.";
+  public String comparatorTipText() {
+    return "The comparator to use; must implement " + Comparator.class.getName() + " and " + Serializable.class.getName();
   }
 
   /**
@@ -265,7 +276,7 @@ public class DirectorySearch
    * @param value	true if sorting in descending order
    */
   public void setSortDescending(boolean value) {
-    m_Lister.setSortDescending(value);
+    m_Descending = value;
     reset();
   }
 
@@ -275,7 +286,7 @@ public class DirectorySearch
    * @return		true if sorting in descending order
    */
   public boolean getSortDescending() {
-    return m_Lister.getSortDescending();
+    return m_Descending;
   }
 
   /**
@@ -360,15 +371,35 @@ public class DirectorySearch
     String		result;
     List<String>	options;
 
-    result = QuickInfoHelper.toString(this, "directory", getDirectory());
+    result  = QuickInfoHelper.toString(this, "directory", getDirectory());
+    result += QuickInfoHelper.toString(this, "comparator", getComparator(), ", comparator: ");
 
     // further options
     options = new ArrayList<>();
-    QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "sorting", getSorting()));
-    QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "sortDescending", (getSorting() != Sorting.NO_SORTING) && getSortDescending(), "descending"));
+    QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "sortDescending", getSortDescending(), "descending"));
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "recursive", getRecursive(), "recursive"));
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "maxItems", (getMaxItems() > 0 ? getMaxItems() : null), "max="));
     result += QuickInfoHelper.flatten(options);
+
+    return result;
+  }
+
+  /**
+   * Performs the actual search.
+   *
+   * @return		the search result
+   * @throws Exception	if search failed
+   */
+  @Override
+  protected List<String> doSearch() throws Exception {
+    List<String>	result;
+
+    result = super.doSearch();
+
+    // sort
+    Collections.sort(result, m_Comparator);
+    if (m_Descending)
+      Collections.reverse(result);
 
     return result;
   }

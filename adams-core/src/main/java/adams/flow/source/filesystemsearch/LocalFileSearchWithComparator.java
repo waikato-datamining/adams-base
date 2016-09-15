@@ -14,7 +14,7 @@
  */
 
 /**
- * FileSearchWithComparator.java
+ * LocalFileSearchWithComparator.java
  * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.source.filesystemsearch;
@@ -73,8 +73,8 @@ package adams.flow.source.filesystemsearch;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class FileSearchWithComparator
-  extends DirectorySearchWithComparator {
+public class LocalFileSearchWithComparator
+  extends LocalDirectorySearchWithComparator {
 
   /** for serialization. */
   private static final long serialVersionUID = 3229293554987103145L;

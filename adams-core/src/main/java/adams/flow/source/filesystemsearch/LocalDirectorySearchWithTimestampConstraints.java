@@ -14,7 +14,7 @@
  */
 
 /**
- * DirectorySearchWithTimestampConstraints.java
+ * LocalDirectorySearchWithTimestampConstraints.java
  * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.source.filesystemsearch;
@@ -87,8 +87,8 @@ import adams.core.io.lister.LocalDirectoryLister;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class DirectorySearchWithTimestampConstraints
-  extends DirectorySearch {
+public class LocalDirectorySearchWithTimestampConstraints
+  extends LocalDirectorySearch {
 
   /** for serialization. */
   private static final long serialVersionUID = 7165242885787887905L;

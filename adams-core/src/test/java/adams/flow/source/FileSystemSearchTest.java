@@ -23,6 +23,7 @@ package adams.flow.source;
 import adams.core.io.lister.Sorting;
 import adams.env.Environment;
 import adams.core.option.AbstractArgumentOption;
+import adams.flow.source.filesystemsearch.LocalFileSearch;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import adams.flow.core.Actor;
@@ -75,7 +76,7 @@ public class FileSystemSearchTest
       // Flow.FileSystemSearch
       adams.flow.source.FileSystemSearch filesystemsearch2 = new adams.flow.source.FileSystemSearch();
       argOption = (AbstractArgumentOption) filesystemsearch2.getOptionManager().findByProperty("search");
-      adams.flow.source.filesystemsearch.FileSearch filesearch4 = new adams.flow.source.filesystemsearch.FileSearch();
+      LocalFileSearch filesearch4 = new LocalFileSearch();
       argOption = (AbstractArgumentOption) filesearch4.getOptionManager().findByProperty("directory");
       filesearch4.setDirectory((adams.core.io.PlaceholderDirectory) argOption.valueOf("${TMP}"));
       argOption = (AbstractArgumentOption) filesearch4.getOptionManager().findByProperty("sorting");

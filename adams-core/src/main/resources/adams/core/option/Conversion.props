@@ -9,7 +9,15 @@
 Rename=\
   Rename-spreadsheet,\
   Rename-valuedefinition,\
-  Rename-goevaluedefinition
+  Rename-goevaluedefinition,\
+  Rename-directorysearch,\
+  Rename-directorysearchwithcomparator,\
+  Rename-directorysearchwithcustomsort,\
+  Rename-directorysearchwithtimestampconstraints,\
+  Rename-filesearch,\
+  Rename-filesearchwithcomparator,\
+  Rename-filesearchwithcustomsort,\
+  Rename-filesearchwithtimestampconstraints
 
 # general format for classname mappings ("rename"):
 # <key>=<old classname>-<new classname>
@@ -17,6 +25,14 @@ Rename=\
 Rename-spreadsheet=adams.data.spreadsheet.SpreadSheet-adams.data.spreadsheet.DefaultSpreadSheet
 Rename-valuedefinition=adams.flow.source.ValueDefinition-adams.flow.source.valuedefinition.ValueDefinition
 Rename-goevaluedefinition=adams.flow.source.GOEValueDefinition-adams.flow.source.valuedefinition.GOEValueDefinition
+Rename-directorysearch=adams.flow.source.filesystemsearch.DirectorySearch-adams.flow.source.filesystemsearch.LocalDirectorySearch
+Rename-directorysearchwithcomparator=adams.flow.source.filesystemsearch.DirectorySearchWithComparator-adams.flow.source.filesystemsearch.LocalDirectorySearchWithComparator
+Rename-directorysearchwithcustomsort=adams.flow.source.filesystemsearch.DirectorySearchWithCustomSort-adams.flow.source.filesystemsearch.LocalDirectorySearchWithCustomSort
+Rename-directorysearchwithtimestampconstraints=adams.flow.source.filesystemsearch.DirectorySearchWithTimestampConstraints-adams.flow.source.filesystemsearch.LocalDirectorySearchWithTimestampConstraints
+Rename-filesearch=adams.flow.source.filesystemsearch.FileSearch-adams.flow.source.filesystemsearch.LocalFileSearch
+Rename-filesearchwithcomparator=adams.flow.source.filesystemsearch.FileSearchWithComparator-adams.flow.source.filesystemsearch.LocalFileSearchWithComparator
+Rename-filesearchwithcustomsort=adams.flow.source.filesystemsearch.-adams.flow.source.filesystemsearch.LocalFileSearchWithCustomSort
+Rename-filesearchwithtimestampconstraints=adams.flow.source.filesystemsearch.FileSearchWithTimestampConstraints-adams.flow.source.filesystemsearch.LocalFileSearchWithTimestampConstraints
 
 # Lists the keys that contain partial classname renaming.
 PartialRename=\

@@ -14,7 +14,7 @@
  */
 
 /**
- * FileSearchWithCustomSort.java
+ * LocalFileSearchWithCustomSort.java
  * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.source.filesystemsearch;
@@ -80,8 +80,8 @@ package adams.flow.source.filesystemsearch;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class FileSearchWithCustomSort
-  extends DirectorySearchWithCustomSort {
+public class LocalFileSearchWithCustomSort
+  extends LocalDirectorySearchWithCustomSort {
 
   /** for serialization. */
   private static final long serialVersionUID = 3229293554987103145L;

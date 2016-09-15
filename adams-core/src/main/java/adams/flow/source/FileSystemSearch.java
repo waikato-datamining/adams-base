@@ -23,7 +23,7 @@ import adams.core.QuickInfoHelper;
 import adams.core.io.FileUtils;
 import adams.core.io.ForwardSlashSupporter;
 import adams.flow.source.filesystemsearch.AbstractFileSystemSearchlet;
-import adams.flow.source.filesystemsearch.FileSearch;
+import adams.flow.source.filesystemsearch.LocalFileSearch;
 
 import java.util.List;
 
@@ -130,7 +130,7 @@ public class FileSystemSearch
 
     m_OptionManager.add(
 	    "search", "search",
-	    new FileSearch());
+	    new LocalFileSearch());
 
     m_OptionManager.add(
 	    "use-forward-slashes", "useForwardSlashes",

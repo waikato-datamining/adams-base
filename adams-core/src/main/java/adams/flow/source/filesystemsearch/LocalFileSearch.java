@@ -14,8 +14,8 @@
  */
 
 /**
- * DirectorySearchWithCustomSort.java
- * Copyright (C) 2015-2016 University of Waikato, Hamilton, New Zealand
+ * LocalFileSearch.java
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.source.filesystemsearch;
 
@@ -24,14 +24,12 @@ import adams.core.base.BaseRegExp;
 import adams.core.io.PlaceholderDirectory;
 import adams.core.io.lister.Sorting;
 
-import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
  <!-- globalinfo-start -->
- * Searches only for directories, but uses a regular expression to reassemble the name and perform the sorting.
+ * Searches only for files.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -42,35 +40,28 @@ import java.util.List;
  * </pre>
  * 
  * <pre>-directory &lt;adams.core.io.PlaceholderDirectory&gt; (property: directory)
- * &nbsp;&nbsp;&nbsp;The directory to search for directories.
+ * &nbsp;&nbsp;&nbsp;The directory to search for files.
  * &nbsp;&nbsp;&nbsp;default: ${CWD}
  * </pre>
  * 
  * <pre>-max-items &lt;int&gt; (property: maxItems)
- * &nbsp;&nbsp;&nbsp;The maximum number of dirs to return (&lt;= 0 is unlimited).
+ * &nbsp;&nbsp;&nbsp;The maximum number of files to return (&lt;= 0 is unlimited).
  * &nbsp;&nbsp;&nbsp;default: -1
  * </pre>
  * 
  * <pre>-regexp &lt;adams.core.base.BaseRegExp&gt; (property: regExp)
- * &nbsp;&nbsp;&nbsp;The regular expression that the dirs must match (empty string matches all
+ * &nbsp;&nbsp;&nbsp;The regular expression that the files must match (empty string matches all
  * &nbsp;&nbsp;&nbsp;).
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
- * <pre>-sort-find &lt;adams.core.base.BaseRegExp&gt; (property: sortFind)
- * &nbsp;&nbsp;&nbsp;The regular expression that extracts groups to be used in reassembling the 
- * &nbsp;&nbsp;&nbsp;string for sorting.
- * &nbsp;&nbsp;&nbsp;default: ([\\\\s\\\\S]+)
- * </pre>
- * 
- * <pre>-sort-replace &lt;java.lang.String&gt; (property: sortReplace)
- * &nbsp;&nbsp;&nbsp;The reassmbly string making use of the groups extracted with the regular 
- * &nbsp;&nbsp;&nbsp;expression.
- * &nbsp;&nbsp;&nbsp;default: $0
+ * <pre>-sorting &lt;NO_SORTING|SORT_BY_NAME|SORT_BY_LAST_MODIFIED&gt; (property: sorting)
+ * &nbsp;&nbsp;&nbsp;The type of sorting to perform.
+ * &nbsp;&nbsp;&nbsp;default: NO_SORTING
  * </pre>
  * 
  * <pre>-descending &lt;boolean&gt; (property: sortDescending)
- * &nbsp;&nbsp;&nbsp;If set to true, the directories are sorted in descending manner.
+ * &nbsp;&nbsp;&nbsp;If set to true, the files are sorted in descending manner.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
@@ -80,8 +71,8 @@ import java.util.List;
  * </pre>
  * 
  * <pre>-max-depth &lt;int&gt; (property: maxDepth)
- * &nbsp;&nbsp;&nbsp;The maximum depth to search in recursive mode (1 = only search directory,
- * &nbsp;&nbsp;&nbsp; -1 = infinite).
+ * &nbsp;&nbsp;&nbsp;The maximum depth to search in recursive mode (1 = only watch directory, 
+ * &nbsp;&nbsp;&nbsp;-1 = infinite).
  * &nbsp;&nbsp;&nbsp;default: -1
  * </pre>
  * 
@@ -90,89 +81,11 @@ import java.util.List;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class DirectorySearchWithCustomSort
-  extends AbstractDirectoryListerBasedSearchlet {
+public class LocalFileSearch
+  extends AbstractLocalDirectoryListerBasedSearchlet {
 
   /** for serialization. */
   private static final long serialVersionUID = 3229293554987103145L;
-
-  /**
-   * Custom container for sorting the filenames.
-   *
-   * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
-   */
-  public static class SortContainer
-    implements Serializable, Comparable<SortContainer> {
-
-    private static final long serialVersionUID = 8905572097502057181L;
-
-    /** the original filename. */
-    protected String m_Original;
-
-    /** the reassembled filename used for comparison. */
-    protected String m_Comparison;
-
-    /**
-     * Initializes the container.
-     *
-     * @param original		the original filename
-     * @param comparison 	the reassembled filename used for comparison
-     */
-    public SortContainer(String original, String comparison) {
-      m_Original   = original;
-      m_Comparison = comparison;
-    }
-
-    /**
-     * Returns the original filename.
-     *
-     * @return		the filename
-     */
-    public String getOriginal() {
-      return m_Original;
-    }
-
-    /**
-     * Returns the filename used for comparison.
-     *
-     * @return		the filename
-     */
-    public String getComparison() {
-      return m_Comparison;
-    }
-
-    /**
-     * Compares this filename with the other one.
-     *
-     * @param o		the other container to compare with
-     * @return		less than zero is smaller, 0 if equal or greater than
-     * 			zero if larger
-     */
-    @Override
-    public int compareTo(SortContainer o) {
-      return getComparison().compareTo(o.getComparison());
-    }
-
-    /**
-     * Returns a short representation of the container.
-     *
-     * @return		the representation
-     */
-    @Override
-    public String toString() {
-      return "comp=" + m_Comparison + ", orig=" + m_Original;
-    }
-  }
-
-  /** the regular expression for finding the data to use for sorting (groups). */
-  protected BaseRegExp m_SortFind;
-
-  /** the string used for reassembling the groups extracted with the regular expression. */
-  protected String m_SortReplace;
-
-  /** whether to sort ascending or descending. */
-  protected boolean m_Descending;
 
   /**
    * Returns a string describing the object.
@@ -181,7 +94,7 @@ public class DirectorySearchWithCustomSort
    */
   @Override
   public String globalInfo() {
-    return "Searches only for directories, but uses a regular expression to reassemble the name and perform the sorting.";
+    return "Searches only for files.";
   }
 
   /**
@@ -192,8 +105,8 @@ public class DirectorySearchWithCustomSort
     super.defineOptions();
 
     m_OptionManager.add(
-      "directory", "directory",
-      new PlaceholderDirectory("."));
+	    "directory", "directory",
+	    new PlaceholderDirectory("."));
 
     m_OptionManager.add(
 	    "max-items", "maxItems",
@@ -204,12 +117,8 @@ public class DirectorySearchWithCustomSort
 	    new BaseRegExp(""));
 
     m_OptionManager.add(
-	    "sort-find", "sortFind",
-	    new BaseRegExp("([\\s\\S]+)"));
-
-    m_OptionManager.add(
-	    "sort-replace", "sortReplace",
-	    "$0");
+	    "sorting", "sorting",
+	    Sorting.NO_SORTING);
 
     m_OptionManager.add(
 	    "descending", "sortDescending",
@@ -231,8 +140,8 @@ public class DirectorySearchWithCustomSort
   protected void initialize() {
     super.initialize();
 
-    m_Lister.setListDirs(true);
-    m_Lister.setListFiles(false);
+    m_Lister.setListDirs(false);
+    m_Lister.setListFiles(true);
   }
 
   /**
@@ -260,7 +169,7 @@ public class DirectorySearchWithCustomSort
    * 			displaying in the GUI or for listing the options.
    */
   public String directoryTipText() {
-    return "The directory to search for directories.";
+    return "The directory to search for files.";
   }
 
   /**
@@ -289,7 +198,7 @@ public class DirectorySearchWithCustomSort
    * 			displaying in the GUI or for listing the options.
    */
   public String maxItemsTipText() {
-    return "The maximum number of dirs to return (<= 0 is unlimited).";
+    return "The maximum number of files to return (<= 0 is unlimited).";
   }
 
   /**
@@ -318,65 +227,7 @@ public class DirectorySearchWithCustomSort
    * 			displaying in the GUI or for listing the options.
    */
   public String regExpTipText() {
-    return "The regular expression that the dirs must match (empty string matches all).";
-  }
-
-  /**
-   * Sets the regular expression for extracting the groups.
-   *
-   * @param value	the regular expression
-   */
-  public void setSortFind(BaseRegExp value) {
-    m_SortFind = value;
-    reset();
-  }
-
-  /**
-   * Returns the regular expression for extracting the groups.
-   *
-   * @return		the regular expression
-   */
-  public BaseRegExp getSortFind() {
-    return m_SortFind;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String sortFindTipText() {
-    return "The regular expression that extracts groups to be used in reassembling the string for sorting.";
-  }
-
-  /**
-   * Sets the reassembly string for generating the sort string.
-   *
-   * @param value	the string
-   */
-  public void setSortReplace(String value) {
-    m_SortReplace = value;
-    reset();
-  }
-
-  /**
-   * Returns the reassembly string for generating the sort string.
-   *
-   * @return		the string
-   */
-  public String getSortReplace() {
-    return m_SortReplace;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String sortReplaceTipText() {
-    return "The reassmbly string making use of the groups extracted with the regular expression.";
+    return "The regular expression that the files must match (empty string matches all).";
   }
 
   /**
@@ -414,7 +265,7 @@ public class DirectorySearchWithCustomSort
    * @param value	true if sorting in descending order
    */
   public void setSortDescending(boolean value) {
-    m_Descending = value;
+    m_Lister.setSortDescending(value);
     reset();
   }
 
@@ -424,7 +275,7 @@ public class DirectorySearchWithCustomSort
    * @return		true if sorting in descending order
    */
   public boolean getSortDescending() {
-    return m_Descending;
+    return m_Lister.getSortDescending();
   }
 
   /**
@@ -434,7 +285,7 @@ public class DirectorySearchWithCustomSort
    * 			displaying in the GUI or for listing the options.
    */
   public String sortDescendingTipText() {
-    return "If set to true, the directories are sorted in descending manner.";
+    return "If set to true, the files are sorted in descending manner.";
   }
 
   /**
@@ -495,7 +346,7 @@ public class DirectorySearchWithCustomSort
    */
   public String maxDepthTipText() {
     return
-        "The maximum depth to search in recursive mode (1 = only search "
+        "The maximum depth to search in recursive mode (1 = only watch "
        + "directory, -1 = infinite).";
   }
 
@@ -509,47 +360,15 @@ public class DirectorySearchWithCustomSort
     String		result;
     List<String>	options;
 
-    result  = QuickInfoHelper.toString(this, "directory", getDirectory());
-    result += QuickInfoHelper.toString(this, "sortFind", getSortFind(), ", find: ");
-    result += QuickInfoHelper.toString(this, "sortReplace", getSortReplace(), ", replace: ");
+    result = QuickInfoHelper.toString(this, "directory", getDirectory());
 
     // further options
     options = new ArrayList<>();
-    QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "sortDescending", getSortDescending(), "descending"));
+    QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "sorting", getSorting()));
+    QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "sortDescending", (getSorting() != Sorting.NO_SORTING) && getSortDescending(), "descending"));
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "recursive", getRecursive(), "recursive"));
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "maxItems", (getMaxItems() > 0 ? getMaxItems() : null), "max="));
     result += QuickInfoHelper.flatten(options);
-
-    return result;
-  }
-
-  /**
-   * Performs the actual search.
-   *
-   * @return		the search result
-   * @throws Exception	if search failed
-   */
-  @Override
-  protected List<String> doSearch() throws Exception {
-    List<String>	result;
-    List<SortContainer>	sort;
-
-    result = super.doSearch();
-
-    // assemble sort containers
-    sort = new ArrayList<>();
-    for (String file: result)
-      sort.add(new SortContainer(file, file.replaceAll(m_SortFind.getValue(), m_SortReplace)));
-
-    // sort
-    Collections.sort(sort);
-    if (m_Descending)
-      Collections.reverse(sort);
-
-    // assemble result
-    result = new ArrayList<>();
-    for (SortContainer cont: sort)
-      result.add(cont.getOriginal());
 
     return result;
   }
