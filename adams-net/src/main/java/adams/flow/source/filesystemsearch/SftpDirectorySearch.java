@@ -150,7 +150,7 @@ public class SftpDirectorySearch
    * @param value	the directory
    */
   public void setDirectory(File value) {
-    m_Lister.setWatchDir(value);
+    m_Lister.setWatchDir(value.getAbsolutePath());
   }
 
   /**
@@ -159,7 +159,7 @@ public class SftpDirectorySearch
    * @return		the directory.
    */
   public File getDirectory() {
-    return m_Lister.getWatchDir();
+    return new File(m_Lister.getWatchDir());
   }
 
   /**

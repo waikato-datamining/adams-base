@@ -163,7 +163,7 @@ public class DirectoryChooserPanel
     LocalDirectoryLister	result;
 
     result = new LocalDirectoryLister();
-    result.setWatchDir(getCurrentDirectory());
+    result.setWatchDir(getCurrentDirectory().getAbsolutePath());
 
     return result;
   }

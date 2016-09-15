@@ -25,10 +25,9 @@ import adams.core.Stoppable;
 import adams.core.Utils;
 import adams.core.VariablesHandler;
 import adams.core.base.BaseRegExp;
+import adams.core.io.PlaceholderFile;
 import adams.core.io.lister.LocalDirectoryLister;
 import adams.core.io.lister.Sorting;
-import adams.core.io.PlaceholderDirectory;
-import adams.core.io.PlaceholderFile;
 import adams.core.logging.LoggingHelper;
 import adams.core.management.ProcessUtils;
 import adams.core.option.AbstractOptionConsumer;
@@ -478,7 +477,7 @@ public class FlowRunner
       lister.setListFiles(true);
       lister.setListDirs(false);
       lister.setSorting(Sorting.SORT_BY_NAME);
-      lister.setWatchDir(new PlaceholderDirectory(m_Input));
+      lister.setWatchDir(m_Input.getAbsolutePath());
       lister.setRegExp(m_Include);
       flows = lister.list();
       if (isLoggingEnabled())

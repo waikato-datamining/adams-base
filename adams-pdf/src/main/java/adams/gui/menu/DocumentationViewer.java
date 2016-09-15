@@ -107,7 +107,7 @@ public class DocumentationViewer
     files = new ArrayList<>();
     for (PlaceholderDirectory dir: m_Owner.getDocumentationDirectories()) {
       lister = new LocalDirectoryLister();
-      lister.setWatchDir(dir);
+      lister.setWatchDir(dir.getAbsolutePath());
       lister.setListDirs(false);
       lister.setListFiles(true);
       lister.setRecursive(true);

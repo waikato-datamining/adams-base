@@ -147,7 +147,7 @@ public class SftpDirectoryChooserPanel
     SftpDirectoryLister   result;
 
     result = new SftpDirectoryLister();
-    result.setWatchDir(getCurrentDirectory());
+    result.setWatchDir(getCurrentDirectory().getAbsolutePath());
 
     return result;
   }

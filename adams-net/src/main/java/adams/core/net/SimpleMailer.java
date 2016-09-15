@@ -19,20 +19,20 @@
  */
 package adams.core.net;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
 import adams.core.base.BaseRegExp;
-import adams.core.io.lister.LocalDirectoryLister;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
+import adams.core.io.lister.LocalDirectoryLister;
 import adams.core.option.OptionUtils;
 import adams.data.io.input.EmailFileReader;
 import adams.data.io.input.MultiEmailReader;
 import adams.data.io.input.PropertiesEmailFileReader;
 import adams.env.Environment;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Reads emails stored in files and sends them.
@@ -298,7 +298,7 @@ public class SimpleMailer {
     
     lister = new LocalDirectoryLister();
     lister.setDebug(getDebugLevel() > 1);
-    lister.setWatchDir(m_WatchDir);
+    lister.setWatchDir(m_WatchDir.getAbsolutePath());
     lister.setListFiles(true);
     lister.setRecursive(false);
     lister.setRegExp(m_RegExp);

@@ -26,6 +26,7 @@ import adams.core.io.SmbFileObject;
 import jcifs.smb.NtlmPasswordAuthentication;
 import jcifs.smb.SmbFile;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -154,7 +155,7 @@ public class SmbDirectoryLister
    * @return		true if parent directory available
    */
   public boolean hasParentDirectory() {
-    return (m_WatchDir.getAbsoluteFile().getParentFile() != null);
+    return (new File(m_WatchDir).getParentFile() != null);
   }
 
   /**

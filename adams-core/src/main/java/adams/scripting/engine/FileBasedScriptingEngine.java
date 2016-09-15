@@ -384,7 +384,7 @@ public class FileBasedScriptingEngine
     lister     = new LocalDirectoryLister();
     lister.setListFiles(true);
     lister.setListDirs(false);
-    lister.setWatchDir(m_Incoming);
+    lister.setWatchDir(m_Incoming.getAbsolutePath());
 
     while (!m_Stopped) {
       files = lister.list();

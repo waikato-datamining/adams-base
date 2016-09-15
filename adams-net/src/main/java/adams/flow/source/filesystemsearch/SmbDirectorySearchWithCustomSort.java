@@ -241,7 +241,7 @@ public class SmbDirectorySearchWithCustomSort
    * @param value	the directory
    */
   public void setDirectory(PlaceholderDirectory value) {
-    m_Lister.setWatchDir(value);
+    m_Lister.setWatchDir(value.getAbsolutePath());
   }
 
   /**

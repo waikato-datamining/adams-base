@@ -26,8 +26,6 @@ import adams.core.io.FileObject;
 import adams.core.logging.LoggingLevelHandler;
 import adams.core.logging.LoggingSupporter;
 
-import java.io.File;
-
 /**
  * Interface for directory listers.
  *
@@ -42,14 +40,14 @@ public interface DirectoryLister
    *
    * @param value 	the directory
    */
-  public void setWatchDir(File value);
+  public void setWatchDir(String value);
 
   /**
    * Returns the directory to watch.
    *
    * @return 		the directory
    */
-  public File getWatchDir();
+  public String getWatchDir();
 
   /**
    * Sets whether to list directories or not.

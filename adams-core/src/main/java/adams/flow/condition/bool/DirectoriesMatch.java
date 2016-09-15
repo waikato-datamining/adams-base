@@ -212,7 +212,7 @@ public class DirectoriesMatch
     String[]		list;
     
     lister = new LocalDirectoryLister();
-    lister.setWatchDir(m_Directory);
+    lister.setWatchDir(m_Directory.getAbsolutePath());
     lister.setRegExp(m_RegExp);
     lister.setListFiles(false);
     lister.setListDirs(true);

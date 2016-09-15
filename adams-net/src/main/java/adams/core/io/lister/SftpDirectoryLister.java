@@ -334,7 +334,7 @@ public class SftpDirectoryLister
    * @return		true if parent directory available
    */
   public boolean hasParentDirectory() {
-    return (m_WatchDir.getAbsoluteFile().getParentFile() != null);
+    return (new File(m_WatchDir).getParentFile() != null);
   }
 
   /**
@@ -344,7 +344,7 @@ public class SftpDirectoryLister
    * @return		the new wrapper
    */
   public SftpFileObject newDirectory(String dir) {
-    return new SftpFileObject(new File(m_WatchDir.getAbsolutePath()), dir, true);
+    return new SftpFileObject(new File(m_WatchDir), dir, true);
   }
 
   /**
@@ -437,7 +437,7 @@ public class SftpDirectoryLister
       if (getDebug())
 	getLogger().info("before search(...)");
       list = new ArrayList<>();
-      search(channel, m_WatchDir.getAbsolutePath(), list, m_MaxDepth);
+      search(channel, m_WatchDir, list, m_MaxDepth);
 
       // sort files ascendingly regarding lastModified
       if (getDebug())

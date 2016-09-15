@@ -324,7 +324,7 @@ public class ActorUsage
       lister.setListFiles(true);
       lister.setRegExp(new BaseRegExp(".*\\.flow"));
       lister.setRecursive(m_Recursive);
-      lister.setWatchDir(m_Directories[i]);
+      lister.setWatchDir(m_Directories[i].getAbsolutePath());
       result.addAll(Arrays.asList(lister.list()));
     }
     

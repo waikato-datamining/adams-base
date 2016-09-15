@@ -257,7 +257,7 @@ public class FilePanel
 	  if (file != null) {
 	    if (file.isDirectory()) {
 	      e.consume();
-	      setCurrentDir(new PlaceholderDirectory(file));
+	      setCurrentDir(file.getAbsolutePath());
 	    }
 	  }
 	}
@@ -276,9 +276,9 @@ public class FilePanel
 	    if (file.isDirectory()) {
 	      e.consume();
 	      if (file.getName().equals(".."))
-		setCurrentDir(new PlaceholderDirectory(getCurrentDir().getParentFile()));
+		setCurrentDir(new PlaceholderDirectory(getCurrentDir()).getParentFile().getAbsolutePath());
 	      else
-		setCurrentDir(new PlaceholderDirectory(file.getAbsoluteFile()));
+		setCurrentDir(file.getAbsolutePath());
 	    }
 	    else {
               notifyFileDoubleClickListeners(new FileDoubleClickEvent(FilePanel.this, file));
@@ -340,7 +340,7 @@ public class FilePanel
    *
    * @param value	the directory
    */
-  public void setCurrentDir(File value) {
+  public void setCurrentDir(String value) {
     m_Lister.setWatchDir(value);
     update();
     notifyDirectoryChangeListeners();
@@ -351,7 +351,7 @@ public class FilePanel
    *
    * @return		the directory
    */
-  public File getCurrentDir() {
+  public String getCurrentDir() {
     return m_Lister.getWatchDir();
   }
 
@@ -880,7 +880,7 @@ public class FilePanel
     details.setListDirs(true);
     details.setShowHidden(false);
     if (args.length > 0)
-      details.setCurrentDir(new PlaceholderDirectory(args[0]));
+      details.setCurrentDir(args[0]);
     BaseFrame frame = new BaseFrame("Files");
     frame.setDefaultCloseOperation(BaseFrame.EXIT_ON_CLOSE);
     frame.getContentPane().setLayout(new GridLayout(1, 2));

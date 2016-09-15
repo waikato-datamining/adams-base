@@ -20,16 +20,16 @@
 
 package adams.flow.standalone;
 
+import adams.core.QuickInfoHelper;
+import adams.core.base.BaseRegExp;
+import adams.core.io.FileUtils;
+import adams.core.io.PlaceholderDirectory;
+import adams.core.io.lister.LocalDirectoryLister;
+import adams.core.logging.LoggingLevel;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-
-import adams.core.QuickInfoHelper;
-import adams.core.base.BaseRegExp;
-import adams.core.io.lister.LocalDirectoryLister;
-import adams.core.io.FileUtils;
-import adams.core.io.PlaceholderDirectory;
-import adams.core.logging.LoggingLevel;
 
 /**
  <!-- globalinfo-start -->
@@ -192,7 +192,7 @@ public class DeleteFile
    * @param value	the directory
    */
   public void setDirectory(PlaceholderDirectory value) {
-    m_Lister.setWatchDir(value);
+    m_Lister.setWatchDir(value.getAbsolutePath());
     reset();
   }
 
@@ -219,7 +219,6 @@ public class DeleteFile
    * Sets the regular expression for the files/dirs.
    *
    * @param value	the regular expression
-   * @see		LocalDirectoryLister#setRegExp(String)
    */
   public void setRegExp(BaseRegExp value) {
     m_Lister.setRegExp(value);

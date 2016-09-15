@@ -66,7 +66,7 @@ public class Zip
       protected Object doInBackground() throws Exception {
 	File[] files = getOwner().getActive().getSelectedFiles();
 	PlaceholderFile zipFile = new PlaceholderFile(getOwner().getActive().getCurrentDir() + "/" + zip);
-	String regExp = getOwner().getActive().getCurrentDir().getAbsolutePath().replace("/", ".").replace("\\", ".");
+	String regExp = getOwner().getActive().getCurrentDir().replace("/", ".").replace("\\", ".");
 	String msg = ZipUtils.compress(zipFile, files, regExp, 1024);
 	if (msg != null) {
 	  GUIHelper.showErrorMessage(getOwner(), "Failed to create ZIP file:\n" + zipFile + "\n" + msg);

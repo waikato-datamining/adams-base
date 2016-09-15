@@ -362,7 +362,7 @@ public class DirectoryLister
    * @param value	the incoming directory
    */
   public void setWatchDir(PlaceholderDirectory value) {
-    m_Lister.setWatchDir(value);
+    m_Lister.setWatchDir(value.getAbsolutePath());
     reset();
   }
 

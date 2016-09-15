@@ -21,9 +21,10 @@
 package adams.core.io.lister;
 
 import adams.core.base.BaseDateTime;
-import adams.core.io.FileUtils;
 import adams.core.io.FileObject;
+import adams.core.io.FileUtils;
 import adams.core.io.LocalFileObject;
+import adams.core.io.PlaceholderFile;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -193,7 +194,7 @@ public class LocalDirectoryLister
    * @return		true if parent directory available
    */
   public boolean hasParentDirectory() {
-    return (m_WatchDir.getAbsoluteFile().getParentFile() != null);
+    return (new PlaceholderFile(m_WatchDir).getAbsoluteFile().getParentFile() != null);
   }
 
   /**
@@ -203,7 +204,7 @@ public class LocalDirectoryLister
    * @return		the new wrapper
    */
   public LocalFileObject newDirectory(String dir) {
-    return new LocalFileObject(new File(m_WatchDir.getAbsolutePath() + File.separator + dir));
+    return new LocalFileObject(new File(new PlaceholderFile(m_WatchDir).getAbsolutePath() + File.separator + dir));
   }
 
   /**
@@ -356,7 +357,7 @@ public class LocalDirectoryLister
       if (getDebug())
 	getLogger().info("before search(...)");
       list = new ArrayList<>();
-      search(new File(m_WatchDir.getAbsolutePath()), list, m_MaxDepth);
+      search(new File(new PlaceholderFile(m_WatchDir).getAbsolutePath()), list, m_MaxDepth);
 
       // sort files ascendingly regarding lastModified
       if (getDebug())

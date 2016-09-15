@@ -202,7 +202,7 @@ public class FileCommanderPanel
     m_FilesLeft.addSelectionChangeListener((ChangeEvent e) -> setActive(m_FilesLeft));
     m_FilesLeft.addDirectoryChangeListener((ChangeEvent e) -> {
       m_IgnoreChanges = true;
-      m_DirLeft.setCurrent(m_FilesLeft.getCurrentDir());
+      m_DirLeft.setCurrent(new PlaceholderFile(m_FilesLeft.getCurrentDir()));
       m_IgnoreChanges = false;
     });
     m_FilesLeft.addFileDoubleClickListener((FileDoubleClickEvent e) -> view(e.getFile()));
@@ -211,7 +211,7 @@ public class FileCommanderPanel
       if (m_IgnoreChanges)
 	return;
       setActive(m_FilesLeft);
-      m_FilesLeft.setCurrentDir(new PlaceholderDirectory(m_DirLeft.getCurrent()));
+      m_FilesLeft.setCurrentDir(m_DirLeft.getCurrent().getAbsolutePath());
     });
     m_PanelLeft = new JPanel(new BorderLayout(5, 5));
     m_PanelLeft.add(m_FilesLeft, BorderLayout.CENTER);
@@ -227,7 +227,7 @@ public class FileCommanderPanel
     m_FilesRight.addSelectionChangeListener((ChangeEvent e) -> setActive(m_FilesRight));
     m_FilesRight.addDirectoryChangeListener((ChangeEvent e) -> {
       m_IgnoreChanges = true;
-      m_DirRight.setCurrent(m_FilesRight.getCurrentDir());
+      m_DirRight.setCurrent(new PlaceholderFile(m_FilesRight.getCurrentDir()));
       m_IgnoreChanges = false;
     });
     m_FilesRight.addFileDoubleClickListener((FileDoubleClickEvent e) -> view(e.getFile()));
@@ -236,7 +236,7 @@ public class FileCommanderPanel
       if (m_IgnoreChanges)
 	return;
       setActive(m_FilesRight);
-      m_FilesRight.setCurrentDir(new PlaceholderDirectory(m_DirRight.getCurrent()));
+      m_FilesRight.setCurrentDir(m_DirRight.getCurrent().getAbsolutePath());
     });
     m_PanelRight = new JPanel(new BorderLayout(5, 5));
     m_PanelRight.add(m_FilesRight, BorderLayout.CENTER);
@@ -432,11 +432,11 @@ public class FileCommanderPanel
    */
   public void setDirectory(File dir, boolean left) {
     if (left) {
-      m_FilesLeft.setCurrentDir(dir);
+      m_FilesLeft.setCurrentDir(dir.getAbsolutePath());
       m_DirLeft.setCurrent(dir);
     }
     else {
-      m_FilesRight.setCurrentDir(dir);
+      m_FilesRight.setCurrentDir(dir.getAbsolutePath());
       m_DirRight.setCurrent(dir);
     }
   }
@@ -449,9 +449,9 @@ public class FileCommanderPanel
    */
   public File getDirectory(boolean left) {
     if (left)
-      return m_FilesLeft.getCurrentDir();
+      return new File(m_FilesLeft.getCurrentDir());
     else
-      return m_FilesRight.getCurrentDir();
+      return new File(m_FilesRight.getCurrentDir());
   }
 
   /**
@@ -529,7 +529,7 @@ public class FileCommanderPanel
 	protected MessageCollection errors = new MessageCollection();
 	@Override
 	protected Object doInBackground() throws Exception {
-	  File target = m_FilesInactive.getCurrentDir();
+	  File target = new PlaceholderFile(m_FilesInactive.getCurrentDir());
 	  for (int i = 0; i < files.length; i++) {
 	    File file = files[i];
 	    m_StatusBar.showStatus("Copying " + (i+1) + "/" + files.length + ": " + file);
@@ -642,7 +642,7 @@ public class FileCommanderPanel
       protected MessageCollection errors = new MessageCollection();
       @Override
       protected Object doInBackground() throws Exception {
-	File target = m_FilesInactive.getCurrentDir();
+	File target = new PlaceholderFile(m_FilesInactive.getCurrentDir());
 	for (int i = 0; i < files.length; i++) {
 	  File file = files[i];
 	  m_StatusBar.showStatus("Moving " + (i+1) + "/" + files.length + ": " + file);
@@ -677,7 +677,7 @@ public class FileCommanderPanel
    */
   public void mkdir() {
     String	input;
-    File	dir;
+    String	dir;
     File	dirNew;
 
     if (m_FilesActive == null)
@@ -688,7 +688,7 @@ public class FileCommanderPanel
     if (input == null)
       return;
 
-    dirNew = new PlaceholderDirectory(dir.getAbsolutePath() + File.separator + input);
+    dirNew = new PlaceholderDirectory(dir + File.separator + input);
     if (!dirNew.mkdir())
       GUIHelper.showErrorMessage(this, "Failed to create directory:\n" + dirNew);
     else
