@@ -15,7 +15,7 @@
 
 /*
  * SearchPanel.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
@@ -409,6 +409,8 @@ public class SearchPanel
     m_ButtonSearch.setText(GUIHelper.stripMnemonic(m_ButtonCaption));
     if (GUIHelper.hasMnemonic(m_ButtonCaption))
       m_ButtonSearch.setMnemonic(GUIHelper.getMnemonic(m_ButtonCaption));
+    else
+      m_ButtonSearch.setMnemonic(-1);
   }
 
   /**
