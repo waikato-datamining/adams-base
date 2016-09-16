@@ -188,7 +188,7 @@ public class FtpFileOperations
   }
 
   /**
-   * Renames a file.
+   * Renames a (remote) file.
    *
    * @param source	the source file (old)
    * @param target	the target file (new)
@@ -205,7 +205,7 @@ public class FtpFileOperations
   }
 
   /**
-   * Deletes a file.
+   * Deletes a (remote) file.
    *
    * @param file	the file to delete
    * @return		null if successful, otherwise error message
