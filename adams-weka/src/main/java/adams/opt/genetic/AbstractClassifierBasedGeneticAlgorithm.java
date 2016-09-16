@@ -23,6 +23,7 @@ package adams.opt.genetic;
 import adams.core.Properties;
 import adams.core.ThreadLimiter;
 import adams.core.io.PlaceholderDirectory;
+import adams.core.logging.LoggingHelper;
 import adams.core.option.OptionUtils;
 import adams.data.weka.WekaAttributeIndex;
 import adams.event.GeneticFitnessChangeNotifier;
@@ -42,6 +43,7 @@ import java.io.FileWriter;
 import java.io.Writer;
 import java.util.Hashtable;
 import java.util.Random;
+import java.util.logging.Level;
 
 /**
  * Ancestor for genetic algorithms that evaluate classifiers.
@@ -881,8 +883,8 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
         weights[j] = weight;
 	weightStr.append("" + weight);
       }
-      if (isLoggingEnabled())
-	getLogger().info("[" + m_CurrentIteration + "] before job: Chromosome " + i + " " + weightStr.toString());
+      if (LoggingHelper.isAtLeast(getLogger(), Level.FINE))
+	getLogger().fine("[" + m_CurrentIteration + "] before job: Chromosome " + i + " " + weightStr.toString());
       jobs.add(newJob(i, weights, m_Instances));
     }
     m_JobRunner.add(jobs);

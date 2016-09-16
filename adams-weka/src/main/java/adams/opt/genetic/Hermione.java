@@ -25,6 +25,7 @@ import adams.core.discovery.genetic.AbstractGeneticDiscoveryHandler;
 import adams.core.discovery.DefaultPropertyDiscovery;
 import adams.core.discovery.PropertyPath;
 import adams.core.discovery.PropertyPath.PropertyContainer;
+import adams.core.logging.LoggingHelper;
 import adams.core.option.OptionUtils;
 import weka.classifiers.Classifier;
 import weka.core.Instances;
@@ -575,11 +576,11 @@ public class Hermione
    * @return		the classifier
    */
   public Classifier generateClassifier(int chromosome, int weights[]) {
-    if (isLoggingEnabled()) {
+    if (LoggingHelper.isAtLeast(getLogger(), Level.FINE)) {
       StringBuilder w = new StringBuilder();
       for (int i = 0; i < weights.length; i++)
 	w.append(weights[i]);
-      getLogger().info("[generateClassifier] Chromosome: " + chromosome + ", " + "Weights: " + w);
+      getLogger().fine("[generateClassifier] Chromosome: " + chromosome + ", " + "Weights: " + w);
     }
 
     AbstractGeneticDiscoveryHandler handlers[] = new AbstractGeneticDiscoveryHandler[m_Handlers.length];

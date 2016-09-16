@@ -28,6 +28,7 @@ import adams.core.ShallowCopySupporter;
 import adams.core.StoppableWithFeedback;
 import adams.core.ThreadLimiter;
 import adams.core.Utils;
+import adams.core.logging.LoggingHelper;
 import adams.core.option.AbstractOptionConsumer;
 import adams.core.option.AbstractOptionHandler;
 import adams.core.option.ArrayConsumer;
@@ -1063,7 +1064,8 @@ public abstract class AbstractGeneticAlgorithm
           info.append("0");
       }
       info.append("--->" + getFitness()[cx]);
-      getLogger().info(info.toString());
+      if (LoggingHelper.isAtLeast(getLogger(), Level.FINE))
+	getLogger().fine(info.toString());
     }
   }
 
