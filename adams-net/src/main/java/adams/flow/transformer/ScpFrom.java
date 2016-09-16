@@ -15,7 +15,7 @@
 
 /*
  * ScpFrom.java
- * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -54,13 +54,9 @@ import java.io.File;
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- * 
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  * 
  * <pre>-name &lt;java.lang.String&gt; (property: name)
@@ -68,24 +64,33 @@ import java.io.File;
  * &nbsp;&nbsp;&nbsp;default: ScpFrom
  * </pre>
  * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
- * <pre>-skip (property: skip)
+ * <pre>-skip &lt;boolean&gt; (property: skip)
  * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
  * &nbsp;&nbsp;&nbsp;as it is.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-stop-flow-on-error (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this 
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical 
+ * &nbsp;&nbsp;&nbsp;actors.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
  * <pre>-remote-dir &lt;java.lang.String&gt; (property: remoteDir)
  * &nbsp;&nbsp;&nbsp;The remote directory to download the file from.
- * &nbsp;&nbsp;&nbsp;default: &#47;pub
+ * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
  * <pre>-output-dir &lt;adams.core.io.PlaceholderDirectory&gt; (property: outputDirectory)
@@ -155,7 +160,7 @@ public class ScpFrom
 
     m_OptionManager.add(
 	    "remote-dir", "remoteDir",
-	    "/pub");
+	    "");
 
     m_OptionManager.add(
 	    "output-dir", "outputDirectory",
@@ -286,7 +291,7 @@ public class ScpFrom
     File	localFile;
 
     file       = (String) m_InputToken.getPayload();
-    remoteFile = m_RemoteDir + "/" + file;
+    remoteFile = (m_RemoteDir.isEmpty() ? "" : (m_RemoteDir + "/")) + file;
     localFile  = new PlaceholderFile(m_OutputDirectory.getAbsolutePath() + File.separator + file);
     result     = Scp.copyFrom(this, m_Connection, remoteFile, localFile);
     if (result == null)
@@ -296,6 +301,4 @@ public class ScpFrom
 
     return result;
   }
-
-
 }
