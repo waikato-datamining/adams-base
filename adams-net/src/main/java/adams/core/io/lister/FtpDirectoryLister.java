@@ -32,6 +32,7 @@ import org.apache.commons.net.ftp.FTPReply;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -259,9 +260,9 @@ public class FtpDirectoryLister
    * @throws Exception	if listing fails
    */
   protected void search(FTPClient client, String current, List<SortContainer> files, int depth) throws Exception {
-    FTPFile[] 	currFiles;
-    int		i;
-    FTPFile 	entry;
+    List<FTPFile> 	currFiles;
+    int			i;
+    FTPFile 		entry;
 
     if (depth == 0)
       return;
@@ -270,18 +271,21 @@ public class FtpDirectoryLister
       getLogger().info("search: current=" + current + ", depth=" + depth);
 
     client.changeWorkingDirectory(current);
-    currFiles = client.listDirectories();
-    if (currFiles == null) {
+    currFiles = new ArrayList<>();
+    currFiles.addAll(Arrays.asList(client.listDirectories()));
+    if (m_ListFiles)
+      currFiles.addAll(Arrays.asList(client.listFiles()));
+    if (currFiles.size() == 0) {
       getLogger().severe("No files listed!");
       return;
     }
 
-    for (i = 0; i < currFiles.length; i++) {
+    for (i = 0; i < currFiles.size(); i++) {
       // do we have to stop?
       if (m_Stopped)
 	break;
 
-      entry = currFiles[i];
+      entry = currFiles.get(i);
 
       // directory?
       if (entry.isDirectory()) {
