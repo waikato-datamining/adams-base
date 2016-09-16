@@ -67,7 +67,7 @@ public class SmbFileObject
    */
   @Override
   public File getFile() {
-    return new File(m_File.getUncPath());
+    return new File(m_File.toString());
   }
 
   /**
