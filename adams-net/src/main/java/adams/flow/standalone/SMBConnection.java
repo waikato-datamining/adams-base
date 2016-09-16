@@ -23,6 +23,7 @@ package adams.flow.standalone;
 import adams.core.QuickInfoHelper;
 import adams.core.base.BasePassword;
 import adams.core.io.ConsoleHelper;
+import adams.core.net.SMBAuthenticationProvider;
 import adams.flow.core.OptionalPasswordPrompt;
 import adams.gui.dialog.PasswordDialog;
 import jcifs.smb.NtlmPasswordAuthentication;
@@ -47,7 +48,7 @@ import java.util.List;
  */
 public class SMBConnection
   extends AbstractStandalone
-  implements OptionalPasswordPrompt {
+  implements OptionalPasswordPrompt, SMBAuthenticationProvider {
 
   /** for serialization. */
   private static final long serialVersionUID = -1959430342987913960L;
@@ -372,22 +373,22 @@ public class SMBConnection
   }
 
   /**
-   * Returns the SMB session.
+   * Returns the SMB authentication.
    *
-   * @return		the SMB session, null if not connected
+   * @return		the SMB authentication, null if not connected
    */
-  public synchronized NtlmPasswordAuthentication getSession() {
+  public synchronized NtlmPasswordAuthentication getAuthentication() {
     if (m_Session == null)
-      m_Session = newSession();
+      m_Session = newAuthentication();
     return m_Session;
   }
 
   /**
-   * Returns a new SMB session.
+   * Returns a new SMB authentication.
    *
-   * @return		the SMB session, null if not connected
+   * @return		the SMB authentication
    */
-  public NtlmPasswordAuthentication newSession() {
+  public NtlmPasswordAuthentication newAuthentication() {
     return new NtlmPasswordAuthentication(m_Domain, m_User, m_ActualPassword.getValue());
   }
 
@@ -431,7 +432,7 @@ public class SMBConnection
     }
 
     if (result == null)
-      m_Session = newSession();
+      m_Session = newAuthentication();
 
     return result;
   }

@@ -23,6 +23,7 @@ package adams.core.io.lister;
 import adams.core.base.BasePassword;
 import adams.core.io.FileObject;
 import adams.core.io.SmbFileObject;
+import adams.core.net.SMBAuthenticationProvider;
 import jcifs.smb.NtlmPasswordAuthentication;
 import jcifs.smb.SmbFile;
 
@@ -56,8 +57,11 @@ public class SmbDirectoryLister
   /** the SMB password to use. */
   protected BasePassword m_Password;
 
+  /** the authentication provider to use. */
+  protected SMBAuthenticationProvider m_AuthenticationProvider;
+
   /** the authentication to use. */
-  protected NtlmPasswordAuthentication m_Authentication;
+  protected transient NtlmPasswordAuthentication m_Authentication;
 
   /**
    * Sets the host to connect to.
@@ -132,21 +136,21 @@ public class SmbDirectoryLister
   }
 
   /**
-   * Sets the authentication to use.
+   * Sets the authentication provider to use.
    *
-   * @param value	the authentication
+   * @param value	the provider
    */
-  public void setAuthenticationType(NtlmPasswordAuthentication value) {
-    m_Authentication = value;
+  public void setAuthenticationProvider(SMBAuthenticationProvider value) {
+    m_AuthenticationProvider = value;
   }
 
   /**
-   * Returns the authentication to use.
+   * Returns the authentication provider to use.
    *
-   * @return		the authentication
+   * @return		the provider
    */
-  public NtlmPasswordAuthentication getAuthentication() {
-    return m_Authentication;
+  public SMBAuthenticationProvider getAuthenticationProvider() {
+    return m_AuthenticationProvider;
   }
 
   /**
@@ -332,7 +336,7 @@ public class SmbDirectoryLister
     wrappers = listObjects();
     result   = new String[wrappers.length];
     for (i = 0; i < wrappers.length; i++)
-      result[i] = wrappers[i].getFile().toString();
+      result[i] = wrappers[i].toString();
 
     return result;
   }
@@ -350,8 +354,12 @@ public class SmbDirectoryLister
 
     result    = new ArrayList<>();
     m_Stopped = false;
-    if (m_Authentication == null)
-      m_Authentication = new NtlmPasswordAuthentication(m_Domain, m_User, m_Password.getValue());
+    if (m_Authentication == null) {
+      if (m_AuthenticationProvider != null)
+	m_Authentication = m_AuthenticationProvider.getAuthentication();
+      else
+	m_Authentication = new NtlmPasswordAuthentication(m_Domain, m_User, m_Password.getValue());
+    }
 
     try {
       dir = m_WatchDir;

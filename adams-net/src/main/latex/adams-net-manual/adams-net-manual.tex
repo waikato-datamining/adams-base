@@ -202,8 +202,6 @@ The following actors are available:
 	\item \textit{FTPDisconnect} -- transformer that closes an existing 
 	connection, to avoid too many open connections (simply passes through any 
 	token it receives).
-	\item \textit{FTPLister} -- lists the files and directories on a remote
-	server.
 	\item \textit{FTPGet} -- for obtaining a remote file via FTP.
 	\item \textit{FTPNoOp} -- sends a NOOP command to the server; useful when
 	trying to keep the connection alive.
@@ -213,6 +211,10 @@ The \textit{FTPConnection} standalone allows you to enter the password at
 runtime, if you do not want to store the password with the
 flow setup. At execution time, the user gets prompted with a dialog to enter
 a password to be used for the connection.
+
+There are also several \textit{searchlets} available for the
+\textit{FileSystemSearch} source actor that allow the listing of remote
+files.
 
 %%%%%%%
 % SSH %
@@ -283,6 +285,8 @@ The following actors are available:
 \begin{tight_itemize}
 	\item \textit{SMBConnection} -- standalone actor that defines the server
 	connection (domain/user/password).
+	\item \textit{SMBGet} -- for obtaining a remote file from a Windows host.
+	\item \textit{SMBSend} -- for sending a file to a remote Windows host.
 \end{tight_itemize}
 
 There are also several \textit{searchlets} available for the

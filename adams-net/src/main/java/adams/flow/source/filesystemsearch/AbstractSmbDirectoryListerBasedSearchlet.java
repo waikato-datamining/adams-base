@@ -123,7 +123,7 @@ public abstract class AbstractSmbDirectoryListerBasedSearchlet
     conn = (SMBConnection) ActorUtils.findClosestType(m_FlowContext, SMBConnection.class);
     if (conn == null)
       throw new IllegalStateException("No " + SMBConnection.class.getName() + " actor found!");
-    m_Lister.setAuthenticationType(conn.getSession());
+    m_Lister.setAuthenticationProvider(conn);
   }
 
   /**
