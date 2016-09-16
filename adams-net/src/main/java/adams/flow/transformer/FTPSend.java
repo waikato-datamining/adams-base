@@ -21,16 +21,14 @@
 package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
-import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
+import adams.core.io.fileoperations.FtpFileOperations;
+import adams.core.io.fileoperations.RemoteDirection;
 import adams.flow.core.ActorUtils;
-import adams.flow.core.Token;
 import adams.flow.standalone.FTPConnection;
 import org.apache.commons.net.ftp.FTPClient;
 
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 
 /**
  <!-- globalinfo-start -->
@@ -213,33 +211,16 @@ public class FTPSend
     String		filename;
     File		file;
     String		remotefile;
-    FileInputStream     fis;
-    BufferedInputStream	stream;
-
-    result = null;
+    FtpFileOperations   ops;
 
     filename   = (String) m_InputToken.getPayload();
     file       = new PlaceholderFile(filename);
     remotefile = m_RemoteDir + "/" + file.getName();
     client     = m_Connection.getFTPClient();
-    stream     = null;
-    fis        = null;
-    try {
-      if (isLoggingEnabled())
-	getLogger().info("Uploading " + file + " to " + remotefile);
-      fis    = new FileInputStream(file.getAbsoluteFile());
-      stream = new BufferedInputStream(fis);
-      client.storeFile(remotefile, stream);
-      m_OutputToken = new Token(filename);
-    }
-    catch (Exception e) {
-      result = handleException("Failed to upload file '" + file + "' to '" + remotefile + "': ", e);
-      m_OutputToken = null;
-    }
-    finally {
-      FileUtils.closeQuietly(stream);
-      FileUtils.closeQuietly(fis);
-    }
+    ops        = new FtpFileOperations();
+    ops.setDirection(RemoteDirection.LOCAL_TO_REMOTE);
+    ops.setClient(client);
+    result     = ops.copy(file.getAbsolutePath(), remotefile);
 
     return result;
   }

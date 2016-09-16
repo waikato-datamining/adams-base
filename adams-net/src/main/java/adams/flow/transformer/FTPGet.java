@@ -21,16 +21,14 @@
 package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
-import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderDirectory;
+import adams.core.io.fileoperations.FtpFileOperations;
+import adams.core.io.fileoperations.RemoteDirection;
 import adams.flow.core.ActorUtils;
-import adams.flow.core.Token;
 import adams.flow.standalone.FTPConnection;
 import org.apache.commons.net.ftp.FTPClient;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 
 /**
  <!-- globalinfo-start -->
@@ -258,38 +256,19 @@ public class FTPGet
   protected String doExecute() {
     String			result;
     FTPClient			client;
+    FtpFileOperations		ops;
     String			file;
     String			remotefile;
     String			outFile;
-    BufferedOutputStream	stream;
-    FileOutputStream		fos;
-
-    result = null;
 
     file       = (String) m_InputToken.getPayload();
     remotefile = (m_RemoteDir.isEmpty() ? "" : (m_RemoteDir + "/")) + file;
     outFile    = m_OutputDirectory.getAbsolutePath() + File.separator + file;
     client     = m_Connection.getFTPClient();
-    fos        = null;
-    stream     = null;
-    try {
-      if (isLoggingEnabled())
-	getLogger().info("Downloading " + remotefile);
-      fos    = new FileOutputStream(outFile);
-      stream = new BufferedOutputStream(fos);
-      client.retrieveFile(remotefile, stream);
-      stream.flush();
-      stream.close();
-      m_OutputToken = new Token(outFile);
-    }
-    catch (Exception e) {
-      result = handleException("Failed to download file '" + remotefile + "' to '" + outFile + "': ", e);
-      m_OutputToken = null;
-    }
-    finally {
-      FileUtils.closeQuietly(stream);
-      FileUtils.closeQuietly(fos);
-    }
+    ops        = new FtpFileOperations();
+    ops.setDirection(RemoteDirection.REMOTE_TO_LOCAL);
+    ops.setClient(client);
+    result     = ops.copy(remotefile, outFile);
 
     return result;
   }
