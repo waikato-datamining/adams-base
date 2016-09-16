@@ -21,7 +21,7 @@ package adams.flow.source.filesystemsearch;
 
 /**
  <!-- globalinfo-start -->
- * Searches only for files, but uses the comparator for sorting the files.
+ * Searches only for files, but uses the comparator for sorting the files (SFTP).
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -31,9 +31,9 @@ package adams.flow.source.filesystemsearch;
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  * 
- * <pre>-directory &lt;adams.core.io.PlaceholderDirectory&gt; (property: directory)
+ * <pre>-directory &lt;java.lang.String&gt; (property: directory)
  * &nbsp;&nbsp;&nbsp;The directory to search for directories.
- * &nbsp;&nbsp;&nbsp;default: ${CWD}
+ * &nbsp;&nbsp;&nbsp;default: &#47;
  * </pre>
  * 
  * <pre>-regexp &lt;adams.core.base.BaseRegExp&gt; (property: regExp)
@@ -86,7 +86,7 @@ public class SftpFileSearchWithComparator
    */
   @Override
   public String globalInfo() {
-    return "Searches only for files, but uses the comparator for sorting the files.";
+    return "Searches only for files, but uses the comparator for sorting the files (SFTP).";
   }
 
   /**

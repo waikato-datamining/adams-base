@@ -23,13 +23,12 @@ import adams.core.QuickInfoHelper;
 import adams.core.base.BaseRegExp;
 import adams.core.io.lister.Sorting;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  <!-- globalinfo-start -->
- * Searches only for directories.
+ * Searches only for directories (SFTP).
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -39,9 +38,9 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  * 
- * <pre>-directory &lt;java.io.File&gt; (property: directory)
+ * <pre>-directory &lt;java.lang.String&gt; (property: directory)
  * &nbsp;&nbsp;&nbsp;The directory to search for directories.
- * &nbsp;&nbsp;&nbsp;default: .
+ * &nbsp;&nbsp;&nbsp;default: &#47;
  * </pre>
  * 
  * <pre>-max-items &lt;int&gt; (property: maxItems)
@@ -94,7 +93,7 @@ public class SftpDirectorySearch
    */
   @Override
   public String globalInfo() {
-    return "Searches only for directories.";
+    return "Searches only for directories (SFTP).";
   }
 
   /**
@@ -106,7 +105,7 @@ public class SftpDirectorySearch
 
     m_OptionManager.add(
       "directory", "directory",
-      new File("."));
+      "/");
 
     m_OptionManager.add(
       "max-items", "maxItems",
@@ -149,8 +148,8 @@ public class SftpDirectorySearch
    *
    * @param value	the directory
    */
-  public void setDirectory(File value) {
-    m_Lister.setWatchDir(value.getAbsolutePath());
+  public void setDirectory(String value) {
+    m_Lister.setWatchDir(value);
   }
 
   /**
@@ -158,8 +157,8 @@ public class SftpDirectorySearch
    *
    * @return		the directory.
    */
-  public File getDirectory() {
-    return new File(m_Lister.getWatchDir());
+  public String getDirectory() {
+    return m_Lister.getWatchDir();
   }
 
   /**

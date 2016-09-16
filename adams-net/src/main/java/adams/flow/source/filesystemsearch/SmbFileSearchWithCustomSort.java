@@ -21,7 +21,7 @@ package adams.flow.source.filesystemsearch;
 
 /**
  <!-- globalinfo-start -->
- * Searches only for files, but uses a regular expression to reassemble the name and perform the sorting.
+ * Searches only for files, but uses a regular expression to reassemble the name and perform the sorting (SMB, Windows shares).
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -31,9 +31,14 @@ package adams.flow.source.filesystemsearch;
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  * 
- * <pre>-directory &lt;adams.core.io.PlaceholderDirectory&gt; (property: directory)
+ * <pre>-host &lt;java.lang.String&gt; (property: host)
+ * &nbsp;&nbsp;&nbsp;The host to connect to.
+ * &nbsp;&nbsp;&nbsp;default: 
+ * </pre>
+ * 
+ * <pre>-directory &lt;java.lang.String&gt; (property: directory)
  * &nbsp;&nbsp;&nbsp;The directory to search for directories.
- * &nbsp;&nbsp;&nbsp;default: ${CWD}
+ * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
  * <pre>-max-items &lt;int&gt; (property: maxItems)
@@ -93,7 +98,7 @@ public class SmbFileSearchWithCustomSort
    */
   @Override
   public String globalInfo() {
-    return "Searches only for files, but uses a regular expression to reassemble the name and perform the sorting.";
+    return "Searches only for files, but uses a regular expression to reassemble the name and perform the sorting (SMB, Windows shares).";
   }
 
   /**

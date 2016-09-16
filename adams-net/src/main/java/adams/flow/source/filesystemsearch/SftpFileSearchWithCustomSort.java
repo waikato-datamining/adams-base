@@ -21,7 +21,7 @@ package adams.flow.source.filesystemsearch;
 
 /**
  <!-- globalinfo-start -->
- * Searches only for files, but uses a regular expression to reassemble the name and perform the sorting.
+ * Searches only for files, but uses a regular expression to reassemble the name and perform the sorting (SFTP).
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -31,9 +31,9 @@ package adams.flow.source.filesystemsearch;
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  * 
- * <pre>-directory &lt;adams.core.io.PlaceholderDirectory&gt; (property: directory)
+ * <pre>-directory &lt;java.lang.String&gt; (property: directory)
  * &nbsp;&nbsp;&nbsp;The directory to search for directories.
- * &nbsp;&nbsp;&nbsp;default: ${CWD}
+ * &nbsp;&nbsp;&nbsp;default: &#47;
  * </pre>
  * 
  * <pre>-max-items &lt;int&gt; (property: maxItems)
@@ -93,7 +93,7 @@ public class SftpFileSearchWithCustomSort
    */
   @Override
   public String globalInfo() {
-    return "Searches only for files, but uses a regular expression to reassemble the name and perform the sorting.";
+    return "Searches only for files, but uses a regular expression to reassemble the name and perform the sorting (SFTP).";
   }
 
   /**

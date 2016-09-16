@@ -23,13 +23,12 @@ import adams.core.QuickInfoHelper;
 import adams.core.base.BaseRegExp;
 import adams.core.io.lister.Sorting;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  <!-- globalinfo-start -->
- * Searches only for files.
+ * Searches only for files (SMB, Windows shares).
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -39,9 +38,14 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  * 
- * <pre>-directory &lt;java.io.File&gt; (property: directory)
+ * <pre>-host &lt;java.lang.String&gt; (property: host)
+ * &nbsp;&nbsp;&nbsp;The host to connect to.
+ * &nbsp;&nbsp;&nbsp;default: 
+ * </pre>
+ * 
+ * <pre>-directory &lt;java.lang.String&gt; (property: directory)
  * &nbsp;&nbsp;&nbsp;The directory to search for files.
- * &nbsp;&nbsp;&nbsp;default: .
+ * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
  * <pre>-max-items &lt;int&gt; (property: maxItems)
@@ -94,7 +98,7 @@ public class SmbFileSearch
    */
   @Override
   public String globalInfo() {
-    return "Searches only for files.";
+    return "Searches only for files (SMB, Windows shares).";
   }
 
   /**
@@ -105,32 +109,32 @@ public class SmbFileSearch
     super.defineOptions();
 
     m_OptionManager.add(
-	    "directory", "directory",
-	    new File("."));
+      "directory", "directory",
+      "");
 
     m_OptionManager.add(
-	    "max-items", "maxItems",
-	    -1);
+      "max-items", "maxItems",
+      -1);
 
     m_OptionManager.add(
-	    "regexp", "regExp",
-	    new BaseRegExp(""));
+      "regexp", "regExp",
+      new BaseRegExp(""));
 
     m_OptionManager.add(
-	    "sorting", "sorting",
-	    Sorting.NO_SORTING);
+      "sorting", "sorting",
+      Sorting.NO_SORTING);
 
     m_OptionManager.add(
-	    "descending", "sortDescending",
-	    false);
+      "descending", "sortDescending",
+      false);
 
     m_OptionManager.add(
-	    "recursive", "recursive",
-	    false);
+      "recursive", "recursive",
+      false);
 
     m_OptionManager.add(
-	    "max-depth", "maxDepth",
-	    -1);
+      "max-depth", "maxDepth",
+      -1);
   }
 
   /**
@@ -149,8 +153,8 @@ public class SmbFileSearch
    *
    * @param value	the directory
    */
-  public void setDirectory(File value) {
-    m_Lister.setWatchDir(value.getAbsolutePath());
+  public void setDirectory(String value) {
+    m_Lister.setWatchDir(value);
   }
 
   /**
@@ -158,8 +162,8 @@ public class SmbFileSearch
    *
    * @return		the directory.
    */
-  public File getDirectory() {
-    return new File(m_Lister.getWatchDir());
+  public String getDirectory() {
+    return m_Lister.getWatchDir();
   }
 
   /**
@@ -346,8 +350,8 @@ public class SmbFileSearch
    */
   public String maxDepthTipText() {
     return
-        "The maximum depth to search in recursive mode (1 = only watch "
-       + "directory, -1 = infinite).";
+      "The maximum depth to search in recursive mode (1 = only watch "
+        + "directory, -1 = infinite).";
   }
 
   /**

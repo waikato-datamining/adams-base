@@ -21,7 +21,6 @@ package adams.flow.source.filesystemsearch;
 
 import adams.core.QuickInfoHelper;
 import adams.core.base.BaseRegExp;
-import adams.core.io.PlaceholderDirectory;
 import adams.core.io.lister.Sorting;
 
 import java.io.Serializable;
@@ -31,7 +30,7 @@ import java.util.List;
 
 /**
  <!-- globalinfo-start -->
- * Searches only for directories, but uses a regular expression to reassemble the name and perform the sorting.
+ * Searches only for directories, but uses a regular expression to reassemble the name and perform the sorting (FTP).
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -41,9 +40,9 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  * 
- * <pre>-directory &lt;adams.core.io.PlaceholderDirectory&gt; (property: directory)
+ * <pre>-directory &lt;java.lang.String&gt; (property: directory)
  * &nbsp;&nbsp;&nbsp;The directory to search for directories.
- * &nbsp;&nbsp;&nbsp;default: ${CWD}
+ * &nbsp;&nbsp;&nbsp;default: &#47;pub
  * </pre>
  * 
  * <pre>-max-items &lt;int&gt; (property: maxItems)
@@ -181,7 +180,7 @@ public class FtpDirectorySearchWithCustomSort
    */
   @Override
   public String globalInfo() {
-    return "Searches only for directories, but uses a regular expression to reassemble the name and perform the sorting.";
+    return "Searches only for directories, but uses a regular expression to reassemble the name and perform the sorting (FTP).";
   }
 
   /**
@@ -193,35 +192,35 @@ public class FtpDirectorySearchWithCustomSort
 
     m_OptionManager.add(
       "directory", "directory",
-      new PlaceholderDirectory("."));
+      "/pub");
 
     m_OptionManager.add(
-	    "max-items", "maxItems",
-	    -1);
+      "max-items", "maxItems",
+      -1);
 
     m_OptionManager.add(
-	    "regexp", "regExp",
-	    new BaseRegExp(""));
+      "regexp", "regExp",
+      new BaseRegExp(""));
 
     m_OptionManager.add(
-	    "sort-find", "sortFind",
-	    new BaseRegExp("([\\s\\S]+)"));
+      "sort-find", "sortFind",
+      new BaseRegExp("([\\s\\S]+)"));
 
     m_OptionManager.add(
-	    "sort-replace", "sortReplace",
-	    "$0");
+      "sort-replace", "sortReplace",
+      "$0");
 
     m_OptionManager.add(
-	    "descending", "sortDescending",
-	    false);
+      "descending", "sortDescending",
+      false);
 
     m_OptionManager.add(
-	    "recursive", "recursive",
-	    false);
+      "recursive", "recursive",
+      false);
 
     m_OptionManager.add(
-	    "max-depth", "maxDepth",
-	    -1);
+      "max-depth", "maxDepth",
+      -1);
   }
 
   /**
@@ -240,8 +239,8 @@ public class FtpDirectorySearchWithCustomSort
    *
    * @param value	the directory
    */
-  public void setDirectory(PlaceholderDirectory value) {
-    m_Lister.setWatchDir(value.getAbsolutePath());
+  public void setDirectory(String value) {
+    m_Lister.setWatchDir(value);
   }
 
   /**
@@ -249,8 +248,8 @@ public class FtpDirectorySearchWithCustomSort
    *
    * @return		the directory.
    */
-  public PlaceholderDirectory getDirectory() {
-    return new PlaceholderDirectory(m_Lister.getWatchDir());
+  public String getDirectory() {
+    return m_Lister.getWatchDir();
   }
 
   /**
@@ -495,8 +494,8 @@ public class FtpDirectorySearchWithCustomSort
    */
   public String maxDepthTipText() {
     return
-        "The maximum depth to search in recursive mode (1 = only search "
-       + "directory, -1 = infinite).";
+      "The maximum depth to search in recursive mode (1 = only search "
+        + "directory, -1 = infinite).";
   }
 
   /**

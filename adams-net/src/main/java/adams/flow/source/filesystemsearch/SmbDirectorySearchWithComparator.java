@@ -22,7 +22,6 @@ package adams.flow.source.filesystemsearch;
 import adams.core.DefaultCompare;
 import adams.core.QuickInfoHelper;
 import adams.core.base.BaseRegExp;
-import adams.core.io.PlaceholderDirectory;
 import adams.core.io.lister.LocalDirectoryLister;
 
 import java.io.Serializable;
@@ -33,7 +32,7 @@ import java.util.List;
 
 /**
  <!-- globalinfo-start -->
- * Searches only for directories, but uses the comparator for sorting the directories.
+ * Searches only for directories, but uses the comparator for sorting the directories (SMB, Windows shares).
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -43,9 +42,14 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  * 
- * <pre>-directory &lt;adams.core.io.PlaceholderDirectory&gt; (property: directory)
+ * <pre>-host &lt;java.lang.String&gt; (property: host)
+ * &nbsp;&nbsp;&nbsp;The host to connect to.
+ * &nbsp;&nbsp;&nbsp;default: 
+ * </pre>
+ * 
+ * <pre>-directory &lt;java.lang.String&gt; (property: directory)
  * &nbsp;&nbsp;&nbsp;The directory to search for directories.
- * &nbsp;&nbsp;&nbsp;default: ${CWD}
+ * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
  * <pre>-regexp &lt;adams.core.base.BaseRegExp&gt; (property: regExp)
@@ -104,7 +108,7 @@ public class SmbDirectorySearchWithComparator
    */
   @Override
   public String globalInfo() {
-    return "Searches only for directories, but uses the comparator for sorting the directories.";
+    return "Searches only for directories, but uses the comparator for sorting the directories (SMB, Windows shares).";
   }
 
   /**
@@ -116,7 +120,7 @@ public class SmbDirectorySearchWithComparator
 
     m_OptionManager.add(
       "directory", "directory",
-      new PlaceholderDirectory("."));
+      "");
 
     m_OptionManager.add(
       "regexp", "regExp",
@@ -159,8 +163,8 @@ public class SmbDirectorySearchWithComparator
    *
    * @param value	the directory
    */
-  public void setDirectory(PlaceholderDirectory value) {
-    m_Lister.setWatchDir(value.getAbsolutePath());
+  public void setDirectory(String value) {
+    m_Lister.setWatchDir(value);
   }
 
   /**
@@ -168,8 +172,8 @@ public class SmbDirectorySearchWithComparator
    *
    * @return		the directory.
    */
-  public PlaceholderDirectory getDirectory() {
-    return new PlaceholderDirectory(m_Lister.getWatchDir());
+  public String getDirectory() {
+    return m_Lister.getWatchDir();
   }
 
   /**
