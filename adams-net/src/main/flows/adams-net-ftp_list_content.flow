@@ -1,11 +1,11 @@
 # Project: adams
-# Date: 2016-02-15 14:41:57
+# Date: 2016-09-16 12:24:35
 # User: fracpete
 # Charset: UTF-8
 adams.flow.control.Flow -annotation "Shows how to list directory contents on the public \\nFreeBSD FTP server." -flow-execution-listener adams.flow.execution.NullListener
  adams.flow.standalone.FTPConnection -host ftp.freebsd.org -passive true
  adams.flow.source.Start
  adams.flow.control.Trigger -name "list content"
-  adams.flow.source.FTPLister -remote-dir /pub/FreeBSD -list-dirs true -list-files true -regexp .* -sorting SORT_BY_NAME
+  adams.flow.source.FileSystemSearch -search "adams.flow.source.filesystemsearch.MultiSearch -search \"adams.flow.source.filesystemsearch.FtpDirectorySearch -directory /pub/FreeBSD -sorting SORT_BY_NAME\" -search \"adams.flow.source.filesystemsearch.FtpFileSearch -directory /pub/FreeBSD -sorting SORT_BY_NAME\""
   adams.flow.sink.Display -writer adams.data.io.output.NullWriter
  adams.flow.transformer.FTPDisconnect
