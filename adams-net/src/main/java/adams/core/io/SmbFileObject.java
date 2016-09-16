@@ -63,17 +63,17 @@ public class SmbFileObject
   /**
    * Returns the wrapped file.
    *
-   * @return		the file
+   * @return		the file as UNC path
    */
   @Override
   public File getFile() {
-    return new File(m_File.toString());
+    return new File(m_File.getUncPath());
   }
 
   /**
    * Returns the actual target (if possible) in case of a link.
    *
-   * @return		the actual file
+   * @return		the actual file as UNC path
    */
   @Override
   public File getActualFile() {
@@ -185,7 +185,7 @@ public class SmbFileObject
   /**
    * Returns the long name.
    *
-   * @return		the long name
+   * @return		the long name, not UNC path!
    */
   public String toString() {
     return m_File.toString();
