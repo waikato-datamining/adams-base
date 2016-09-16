@@ -19,6 +19,8 @@
  */
 package adams.flow.source.filesystemsearch;
 
+import adams.flow.core.Actor;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -102,6 +104,18 @@ public class MultiSearch
    */
   public String searchesTipText() {
     return "The search algorithms to execute.";
+  }
+
+  /**
+   * Sets the flow context.
+   *
+   * @param value	the actor
+   */
+  @Override
+  public void setFlowContext(Actor value) {
+    super.setFlowContext(value);
+    for (AbstractFileSystemSearchlet search: m_Searches)
+      search.setFlowContext(value);
   }
 
   /**
