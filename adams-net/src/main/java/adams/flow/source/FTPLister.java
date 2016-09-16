@@ -15,7 +15,7 @@
 
 /*
  * FTPLister.java
- * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
@@ -108,6 +108,7 @@ import adams.flow.standalone.FTPConnection;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
+@Deprecated
 public class FTPLister
   extends AbstractArrayProvider {
 
@@ -157,7 +158,9 @@ public class FTPLister
    */
   @Override
   public String globalInfo() {
-    return "Returns the contents of a FTP directory (files/dirs).";
+    return "DEPRECATED\n"
+      + "Use " + FileSystemSearch.class.getName() + " in conjunction with FTP searchlets instead!\n\n"
+      + "Returns the contents of a FTP directory (files/dirs).";
   }
 
   /**
