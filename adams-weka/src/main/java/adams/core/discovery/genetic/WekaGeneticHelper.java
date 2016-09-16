@@ -20,6 +20,8 @@
 
 package adams.core.discovery.genetic;
 
+import adams.core.logging.Logger;
+import adams.core.logging.LoggingHelper;
 import weka.core.matrix.Matrix;
 
 /**
@@ -30,6 +32,8 @@ import weka.core.matrix.Matrix;
  */
 public class WekaGeneticHelper
   extends GeneticHelper {
+
+  private static Logger LOGGER = LoggingHelper.getLogger(adams.core.discovery.genetic.WekaGeneticHelper.class);
 
   /**
    * Convert weka Matrix into bit string
@@ -44,6 +48,11 @@ public class WekaGeneticHelper
    */
   public static String matrixToBits(Matrix ina, double min, double max, int numBits, int splits, int rows, int columns){
     StringBuilder buff = new StringBuilder();
+
+    if (rows != ina.getRowDimension())
+      LOGGER.warning("[matrixToBits] rows parameter differs from rows in matrix: " + rows + " != " + ina.getRowDimension());
+    if (columns != ina.getColumnDimension())
+      LOGGER.warning("[matrixToBits] columns parameter differs from columns in matrix: " + columns + " != " + ina.getColumnDimension());
 
     for (int row=0;row<ina.getRowDimension();row++){
       for (int column=0;column<ina.getColumnDimension();column++){
