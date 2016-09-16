@@ -1,1 +1,1 @@
-download from /pub to ${CWD}
+download from <incoming> to ${CWD}

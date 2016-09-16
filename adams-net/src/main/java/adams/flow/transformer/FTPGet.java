@@ -147,7 +147,7 @@ public class FTPGet
   public String getQuickInfo() {
     String	result;
 
-    result  = QuickInfoHelper.toString(this, "remoteDir", m_RemoteDir, "download from ");
+    result  = QuickInfoHelper.toString(this, "remoteDir", (m_RemoteDir.isEmpty() ? "<incoming>" : m_RemoteDir), "download from ");
     result += QuickInfoHelper.toString(this, "outputDirectory", m_OutputDirectory, " to ");
 
     return result;
