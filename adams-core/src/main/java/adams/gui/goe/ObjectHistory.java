@@ -15,23 +15,22 @@
 
 /*
  * ObjectHistory.java
- * Copyright (C) 2009-2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.goe;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
-
 import adams.core.AbstractHistory;
+import adams.core.ObjectCopyHelper;
 import adams.core.Utils;
 import adams.core.option.OptionUtils;
 import adams.gui.event.HistorySelectionEvent;
 import adams.gui.event.HistorySelectionListener;
+
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
+import java.awt.event.ActionEvent;
 
 /**
  * A helper class for maintaining a history of objects selected in the GOE.
@@ -55,7 +54,7 @@ public class ObjectHistory
    */
   @Override
   protected Object copy(Object obj) {
-    return Utils.deepCopy(obj);
+    return ObjectCopyHelper.copyObject(obj);
   }
 
   /**
@@ -95,7 +94,7 @@ public class ObjectHistory
    * @param current	the current object
    * @param listener	the listener to attach to the menu items' ActionListener
    */
-  public void customizePopupMenu(JPopupMenu menu, Object current, HistorySelectionListener listener) {
+  public void customizePopupMenu(JPopupMenu menu, Object current, final HistorySelectionListener listener) {
     JMenu		submenu;
     JMenuItem		item;
     int			i;
@@ -105,25 +104,17 @@ public class ObjectHistory
 
     // clear history
     item = new JMenuItem("Clear history");
-    item.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	m_History.clear();
-      }
-    });
+    item.addActionListener((ActionEvent e) -> m_History.clear());
     submenu.add(item);
 
     // current history
-    final HistorySelectionListener fListener = listener;
     for (i = 0; i < m_History.size(); i++) {
       if (i == 0)
 	submenu.addSeparator();
       final Object history = m_History.get(i);
       item = new JMenuItem(generateMenuItemCaption(history));
-      item.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  fListener.historySelected(new HistorySelectionEvent(fListener, history));
-	}
-      });
+      item.addActionListener((ActionEvent e)
+        -> listener.historySelected(new HistorySelectionEvent(listener, history)));
       submenu.add(item);
     }
   }
