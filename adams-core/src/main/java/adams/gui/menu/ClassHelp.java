@@ -44,7 +44,6 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -191,7 +190,6 @@ public class ClassHelp
     }
     m_ListClasses = new SearchableBaseList(classes.toArray(new String[classes.size()]));
     m_ListClasses.search(null, false);
-    m_ListClasses.setPreferredSize(new Dimension(400, 200));
     m_ListClasses.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     m_ListClasses.addListSelectionListener((ListSelectionEvent e) -> {
       String clsName = (String) m_ListClasses.getSelectedValue();
@@ -237,6 +235,9 @@ public class ClassHelp
     split.setBottomComponent(new BaseScrollPane(m_TextPaneHelp));
 
     createChildFrame(panel, GUIHelper.getDefaultDialogDimension());
+
+    split.setResizeWeight(1.0);
+    split.setDividerLocation(0.5);
   }
 
   /**
