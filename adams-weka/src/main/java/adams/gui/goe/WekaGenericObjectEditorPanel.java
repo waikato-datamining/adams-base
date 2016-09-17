@@ -15,7 +15,7 @@
 
 /*
  * WekaGenericObjectEditorPanel.java
- * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.goe;
@@ -26,15 +26,12 @@ import adams.gui.chooser.AbstractChooserPanel;
 import adams.gui.core.BasePopupMenu;
 import adams.gui.core.GUIHelper;
 import adams.gui.event.HistorySelectionEvent;
-import adams.gui.event.HistorySelectionListener;
 import weka.gui.GenericObjectEditor.GOEPanel;
 
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 /**
  * A panel that contains text field with the current setup of the object
@@ -56,7 +53,7 @@ public class WekaGenericObjectEditorPanel
   protected WekaGenericObjectEditorDialog m_Dialog;
 
   /** the history of used setups. */
-  protected ObjectHistory m_History;
+  protected PersistentObjectHistory m_History;
 
   /** the current object. */
   protected transient Object m_Current;
@@ -85,20 +82,18 @@ public class WekaGenericObjectEditorPanel
     
     m_Editor = new weka.gui.GenericObjectEditor(canChangeClassInDialog);
     m_Editor.setClassType(cls);
-    ((GOEPanel) m_Editor.getCustomEditor()).addOkListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	setCurrent(m_Editor.getValue());
-	m_History.add(m_Editor.getValue());
-	notifyChangeListeners(new ChangeEvent(m_Self));
-      }
+    ((GOEPanel) m_Editor.getCustomEditor()).addOkListener((ActionEvent e) -> {
+      setCurrent(m_Editor.getValue());
+      m_History.add(m_Editor.getValue());
+      notifyChangeListeners(new ChangeEvent(m_Self));
     });
-    ((GOEPanel) m_Editor.getCustomEditor()).addCancelListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	m_Editor.setValue(getCurrent());
-      }
-    });
+    ((GOEPanel) m_Editor.getCustomEditor()).addCancelListener((ActionEvent e)
+      -> m_Editor.setValue(getCurrent()));
 
     setCurrent(defValue);
+
+    m_History = new PersistentObjectHistory();
+    m_History.setSuperclass(cls);
   }
 
   /**
@@ -109,7 +104,6 @@ public class WekaGenericObjectEditorPanel
     super.initialize();
 
     m_Editor  = null;
-    m_History = new ObjectHistory();
     m_Current = null;
   }
 
@@ -201,30 +195,22 @@ public class WekaGenericObjectEditorPanel
     JMenuItem				item;
 
     menu = new WekaGenericObjectEditorPopupMenu(m_Editor, m_Self);
-    menu.addChangeListener(new ChangeListener() {
-      public void stateChanged(ChangeEvent e) {
-	setCurrent(m_Editor.getValue());
-	notifyChangeListeners(new ChangeEvent(m_Self));
-      }
+    menu.addChangeListener((ChangeEvent e) -> {
+      setCurrent(m_Editor.getValue());
+      notifyChangeListeners(new ChangeEvent(m_Self));
     });
 
     item = new JMenuItem("Edit...", GUIHelper.getIcon("properties.gif"));
-    item.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	choose();
-      }
-    });
+    item.addActionListener((ActionEvent e) -> choose());
     menu.insert(new JPopupMenu.Separator(), 0);
     menu.insert(item, 0);
 
     m_History.customizePopupMenu(
 	menu,
 	getCurrent(),
-	new HistorySelectionListener() {
-	  public void historySelected(HistorySelectionEvent e) {
+	(HistorySelectionEvent e) -> {
 	    setCurrent(e.getHistoryItem());
 	    notifyChangeListeners(new ChangeEvent(m_Self));
-	  }
 	});
 
     // customized menu?
