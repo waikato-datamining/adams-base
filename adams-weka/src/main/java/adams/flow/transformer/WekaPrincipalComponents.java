@@ -242,20 +242,19 @@ public class WekaPrincipalComponents
   protected SpreadSheet createSpreadSheet(ArrayList<ArrayList<Double>> in) {
     SpreadSheet result = new DefaultSpreadSheet();
     HeaderRow rw = result.getHeaderRow();
-    Cell c = rw.addCell(0);
+    Cell c = rw.addCell("" + 0);
     c.setContent("variable");
 
     for(int i = 0;i < in.size(); i++) {
-      String s = String.valueOf(i);
-      c= rw.addCell(s);
-      c.setContent(i +1);
+      c = rw.addCell("" + (i+1));
+      c.setContent(i + 1);
     }
 
     Row row;
     //add the first column, which will be just the number of the attribute
     for(int n = 0; n < m_NumAttributes; n++) {
       row = result.addRow();
-      Cell cell = row.addCell(0);
+      Cell cell = row.addCell("" + 0);
       cell.setContent(n%120 + 10);
     }
 
@@ -268,12 +267,12 @@ public class WekaPrincipalComponents
 	if(m_Kept.contains(n)) {
 	  int index = m_Kept.indexOf(n);
 	  double value = in.get(i).get(index);
-	  Cell cell = row.addCell(i+1);
+	  Cell cell = row.addCell("" + (i+1));
 	  cell.setContent(value);
 	}
 	//attribute wasn't kept, coefficient is 0
 	else {
-	  Cell cell = row.addCell(i+1);
+	  Cell cell = row.addCell("" + (i+1));
 	  cell.setContent(0);
 	}
 
