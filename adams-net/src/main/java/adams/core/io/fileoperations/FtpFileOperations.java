@@ -170,13 +170,7 @@ public class FtpFileOperations
 	  break;
 
 	case REMOTE_TO_LOCAL:
-	  try {
-	    if (!m_Client.deleteFile(source))
-	      result = "Failed to delete: " + source;
-	  }
-	  catch (Exception e) {
-	    result = Utils.handleException(this, "Failed to delete: " + source, e);
-	  }
+	  result = delete(source);
 	  break;
 
 	default:
