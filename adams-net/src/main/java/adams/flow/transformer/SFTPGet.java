@@ -29,10 +29,10 @@ import adams.core.TechnicalInformation.Type;
 import adams.core.TechnicalInformationHandler;
 import adams.core.annotation.MixedCopyright;
 import adams.core.io.PlaceholderDirectory;
+import adams.core.io.fileoperations.RemoteDirection;
+import adams.core.io.fileoperations.SftpFileOperations;
 import adams.flow.core.ActorUtils;
-import adams.flow.core.Token;
 import adams.flow.standalone.SSHConnection;
-import com.jcraft.jsch.ChannelSftp;
 
 import java.io.File;
 
@@ -296,32 +296,15 @@ public class SFTPGet
     String		file;
     String		remotefile;
     String		outFile;
-    ChannelSftp		channel;
-
-    result = null;
+    SftpFileOperations  ops;
 
     file       = (String) m_InputToken.getPayload();
     remotefile = (m_RemoteDir.isEmpty() ? "" : (m_RemoteDir + "/")) + file;
     outFile    = m_OutputDirectory.getAbsolutePath() + File.separator + file;
-    channel    = null;
-    try {
-      channel = (ChannelSftp) m_Connection.getSession().openChannel("sftp");
-      channel.connect();
-      if (isLoggingEnabled())
-	getLogger().info("Downloading " + remotefile);
-      channel.get(remotefile, outFile);
-      m_OutputToken = new Token(outFile);
-      channel.disconnect();
-    }
-    catch (Exception e) {
-      result = handleException("Failed to download file '" + remotefile + "' to '" + outFile + "': ", e);
-      m_OutputToken = null;
-    }
-    finally {
-      if (channel != null) {
-	channel.disconnect();
-      }
-    }
+    ops        = new SftpFileOperations();
+    ops.setProvider(m_Connection);
+    ops.setDirection(RemoteDirection.REMOTE_TO_LOCAL);
+    result     = ops.copy(remotefile, outFile);
 
     return result;
   }
