@@ -15,7 +15,7 @@
 
 /*
  * PlaceholderFile.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.io;
@@ -59,7 +59,7 @@ public class PlaceholderFile
    * @param   file	the file to use
    */
   public PlaceholderFile(File file) {
-    super(Placeholders.collapseStr(fixSeparator(file.getAbsolutePath())));
+    super(Placeholders.collapseStr(fixSeparator(file)));
   }
 
   /**
@@ -124,7 +124,7 @@ public class PlaceholderFile
    * @param   child   The child pathname string
    */
   public PlaceholderFile(File parent, String child) {
-    super(Placeholders.collapseStr(fixSeparator(parent.getPath())), child);
+    super(Placeholders.collapseStr(fixSeparator(parent)), child);
   }
 
   /**
@@ -876,6 +876,22 @@ public class PlaceholderFile
   }
 
   /**
+   * Fixes the separator in the given file, changing backslashes to forward
+   * slashes under Linux and vice versa under Windows.
+   *
+   * @param file	the path to process
+   * @return		the fixed path
+   */
+  protected static String fixSeparator(File file) {
+    try {
+      return fixSeparator(file.getCanonicalPath());
+    }
+    catch (Exception e) {
+      return fixSeparator(file.getAbsolutePath());
+    }
+  }
+
+  /**
    * Fixes the separator in the given string, changing backslashes to forward
    * slashes under Linux and vice versa under Windows.
    *
@@ -886,7 +902,7 @@ public class PlaceholderFile
     String	prefix;
 
     if (path == null)
-      return path;
+      return null;
     
     // UNC?
     prefix = "";
