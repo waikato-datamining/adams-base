@@ -29,6 +29,7 @@ import adams.core.io.lister.RecursiveDirectoryLister;
 import adams.env.Environment;
 import adams.gui.core.SearchPanel.LayoutType;
 import adams.gui.event.SearchEvent;
+import adams.gui.event.SearchListener;
 import com.googlecode.jfilechooserbookmarks.gui.BaseScrollPane;
 
 import javax.swing.ListSelectionModel;
@@ -893,6 +894,24 @@ public class FilePanel
   protected synchronized void notifyFileDoubleClickListeners(FileDoubleClickEvent e) {
     for (FileDoubleClickListener l: m_FileDoubleClickListeners)
       l.fileDoubleClicked(e);
+  }
+
+  /**
+   * Adds the specified search listener.
+   *
+   * @param l		the listener to add
+   */
+  public void addSearchListener(SearchListener l) {
+    m_PanelSearch.addSearchListener(l);
+  }
+
+  /**
+   * Removes the specified search listener.
+   *
+   * @param l		the listener to remove
+   */
+  public void removeSearchListener(SearchListener l) {
+    m_PanelSearch.removeSearchListener(l);
   }
 
   /**
