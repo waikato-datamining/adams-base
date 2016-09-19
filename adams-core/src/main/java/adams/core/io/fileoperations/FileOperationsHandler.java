@@ -14,40 +14,24 @@
  */
 
 /**
- * AbstractChooserPanelWithDirectoryListerSupport.java
+ * DirectoryListerHandler.java
  * Copyright (C) 2016 University of Waikato, Hamilton, NZ
  */
 
-package adams.gui.chooser;
-
-import adams.core.ClassLister;
-import adams.core.io.lister.DirectoryListerHandler;
+package adams.core.io.fileoperations;
 
 /**
- * Ancestor for chooser panels that handle directory listers.
+ * Interface for classes that return an instance of a {@link FileOperations}.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public abstract class AbstractChooserPanelWithDirectoryListerSupport<T>
-  extends AbstractChooserPanel<T>
-  implements DirectoryListerHandler {
-
-  private static final long serialVersionUID = 5317183406919541169L;
+public interface FileOperationsHandler {
 
   /**
-   * Returns the type of chooser (description).
+   * Returns the file operations.
    *
-   * @return		the type
+   * @return		the operations
    */
-  public abstract String getChooserType();
-
-  /**
-   * Returns the choosers classes.
-   *
-   * @return		the classes
-   */
-  public static Class[] getChoosers() {
-    return ClassLister.getSingleton().getClasses(AbstractChooserPanelWithDirectoryListerSupport.class);
-  }
+  public FileOperations getFileOperations();
 }

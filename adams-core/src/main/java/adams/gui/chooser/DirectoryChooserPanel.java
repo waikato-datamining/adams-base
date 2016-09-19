@@ -22,6 +22,8 @@ package adams.gui.chooser;
 
 import adams.core.Placeholders;
 import adams.core.io.PlaceholderFile;
+import adams.core.io.fileoperations.FileOperations;
+import adams.core.io.fileoperations.LocalFileOperations;
 import adams.core.io.lister.DirectoryLister;
 import adams.core.io.lister.LocalDirectoryLister;
 
@@ -35,7 +37,7 @@ import java.io.File;
  * @version $Revision$
  */
 public class DirectoryChooserPanel
-  extends AbstractChooserPanelWithDirectoryListerSupport<File> {
+  extends AbstractChooserPanelWithIOSupport<File> {
 
   /** for serialization. */
   private static final long serialVersionUID = 6235369491956122980L;
@@ -166,5 +168,15 @@ public class DirectoryChooserPanel
     result.setWatchDir(getCurrentDirectory().getAbsolutePath());
 
     return result;
+  }
+
+  /**
+   * Returns the file operations.
+   *
+   * @return		the operations
+   */
+  @Override
+  public FileOperations getFileOperations() {
+    return new LocalFileOperations();
   }
 }
