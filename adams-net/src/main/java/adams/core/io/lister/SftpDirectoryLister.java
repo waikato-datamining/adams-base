@@ -329,6 +329,15 @@ public class SftpDirectoryLister
   }
 
   /**
+   * Returns whether the directory lister operates locally or remotely.
+   *
+   * @return		true if local lister
+   */
+  public boolean isLocal() {
+    return false;
+  }
+
+  /**
    * Returns whether the watch directory has a parent directory.
    *
    * @return		true if parent directory available
