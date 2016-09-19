@@ -111,25 +111,32 @@ public class DirectoryChooserPanel
    * @return		the generated object
    */
   protected File fromString(String value) {
-    return new PlaceholderFile(value);
+    try {
+      return new PlaceholderFile(value).getCanonicalFile();
+    }
+    catch (Exception e) {
+      return new PlaceholderFile(value);
+    }
   }
 
   /**
-   * Sets the current directory to use for the file chooser.
+   * Sets the current directory.
    *
    * @param value	the current directory
+   * @see		#setCurrent(File)
    */
   public void setCurrentDirectory(String value) {
-    m_DirectoryChooser.setCurrentDirectory(new PlaceholderFile(value));
+    setCurrent(fromString(value));
   }
 
   /**
-   * Returns the current directory in use by the file chooser.
+   * Returns the current directory.
    *
    * @return		the current directory
+   * @see		#getCurrent()
    */
   public String getCurrentDirectory() {
-    return m_DirectoryChooser.getCurrentDirectory().getAbsolutePath();
+    return getCurrent().getAbsolutePath();
   }
 
   /**
