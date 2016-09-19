@@ -282,9 +282,7 @@ public class FtpDirectoryLister
 
     client.changeWorkingDirectory(current);
     currFiles = new ArrayList<>();
-    currFiles.addAll(Arrays.asList(client.listDirectories()));
-    if (m_ListFiles)
-      currFiles.addAll(Arrays.asList(client.listFiles()));
+    currFiles.addAll(Arrays.asList(client.listFiles()));
     if (currFiles.size() == 0) {
       getLogger().severe("No files listed!");
       return;
@@ -340,7 +338,6 @@ public class FtpDirectoryLister
     List<SortContainer>		list;
     SortContainer		cont;
     int				i;
-    FtpFileObject		fobject;
 
     result    = new ArrayList<>();
     m_Stopped = false;
@@ -376,10 +373,7 @@ public class FtpDirectoryLister
 	if (getDebug())
 	  getLogger().info("before matching");
 	for (i = 0; i < list.size(); i++) {
-	  fobject = (FtpFileObject) list.get(i).getFile();
-	  if (result.contains(fobject))
-	    continue;
-	  result.add(fobject);
+	  result.add((FtpFileObject) list.get(i).getFile());
 
 	  // maximum reached?
 	  if (m_MaxItems > 0) {
