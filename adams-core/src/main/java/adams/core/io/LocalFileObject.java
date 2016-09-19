@@ -167,4 +167,29 @@ public class LocalFileObject
   public String toString() {
     return m_File.toString();
   }
+
+  /**
+   * Returns whether this file object is the same as the provided one.
+   *
+   * @param o		the file object to compare against
+   * @return		less than zero, equal to zero, greater than zero if
+   * 			this file object is less than, equal to, or greater
+   * 			than the other file object
+   */
+  @Override
+  public int compareTo(FileObject o) {
+    return getFile().compareTo(o.getFile());
+  }
+
+  /**
+   * Checks whether this object is the same as the provided one.
+   *
+   * @param obj		the object to compare against
+   * @return		true if the same
+   * @see		#compareTo(FileObject)
+   */
+  @Override
+  public boolean equals(Object obj) {
+    return (obj instanceof FileObject) && (compareTo((FileObject) obj) == 0);
+  }
 }

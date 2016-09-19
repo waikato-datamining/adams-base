@@ -41,7 +41,7 @@ public class FtpFileObject
   protected FTPClient m_Client;
 
   /** the parent directory. */
-  protected File m_ParentDir;
+  protected String m_ParentDir;
 
   /** the underlying file. */
   protected transient FTPFile m_File;
@@ -53,7 +53,7 @@ public class FtpFileObject
    * @param file	the file/dir to wrap
    * @param client	the client
    */
-  public FtpFileObject(File parentDir, FTPFile file, FTPClient client) {
+  public FtpFileObject(String parentDir, FTPFile file, FTPClient client) {
     m_ParentDir = parentDir;
     m_File      = file;
     m_Client    = client;
@@ -73,7 +73,7 @@ public class FtpFileObject
    *
    * @return		the parent
    */
-  public File getParentDir() {
+  public String getParentDir() {
     return m_ParentDir;
   }
 
@@ -84,7 +84,10 @@ public class FtpFileObject
    */
   @Override
   public File getFile() {
-    return new File(m_ParentDir + "/" + m_File.getName());
+    if (m_File != null)
+      return new File(m_ParentDir + "/" + m_File.getName());
+    else
+      return new File(m_ParentDir);
   }
 
   /**
@@ -104,7 +107,10 @@ public class FtpFileObject
    */
   @Override
   public String getName() {
-    return m_File.getName();
+    if (m_File != null)
+      return m_File.getName();
+    else
+      return new File(m_ParentDir).getName();
   }
 
   /**
@@ -114,7 +120,10 @@ public class FtpFileObject
    */
   @Override
   public long getLength() {
-    return m_File.getSize();
+    if (m_File != null)
+      return m_File.getSize();
+    else
+      return -1;
   }
 
   /**
@@ -124,7 +133,10 @@ public class FtpFileObject
    */
   @Override
   public boolean isDirectory() {
-    return m_File.isDirectory();
+    if (m_File != null)
+      return m_File.isDirectory();
+    else
+      return true;
   }
 
   /**
@@ -134,7 +146,10 @@ public class FtpFileObject
    */
   @Override
   public Date getLastModified() {
-    return new Date(m_File.getTimestamp().getTimeInMillis());
+    if (m_File != null)
+      return new Date(m_File.getTimestamp().getTimeInMillis());
+    else
+      return new Date(0L);
   }
 
   /**
@@ -144,6 +159,8 @@ public class FtpFileObject
    */
   @Override
   public boolean isHidden() {
+    if (m_File == null)
+      return false;
     // bit hacky, assuming Linux FS
     return getName().startsWith(".") && !isDirectory();
   }
@@ -155,7 +172,10 @@ public class FtpFileObject
    */
   @Override
   public boolean isLink() {
-    return m_File.isSymbolicLink();
+    if (m_File != null)
+      return m_File.isSymbolicLink();
+    else
+      return false;
   }
 
   /**
@@ -175,5 +195,30 @@ public class FtpFileObject
    */
   public String toString() {
     return getFile().toString();
+  }
+
+  /**
+   * Returns whether this file object is the same as the provided one.
+   *
+   * @param o		the file object to compare against
+   * @return		less than zero, equal to zero, greater than zero if
+   * 			this file object is less than, equal to, or greater
+   * 			than the other file object
+   */
+  @Override
+  public int compareTo(FileObject o) {
+    return getFile().compareTo(o.getFile());
+  }
+
+  /**
+   * Checks whether this object is the same as the provided one.
+   *
+   * @param obj		the object to compare against
+   * @return		true if the same
+   * @see		#compareTo(FileObject)
+   */
+  @Override
+  public boolean equals(Object obj) {
+    return (obj instanceof FileObject) && (compareTo((FileObject) obj) == 0);
   }
 }

@@ -32,7 +32,7 @@ import java.util.Date;
  * @version $Revision$
  */
 public interface FileObject
-  extends Serializable {
+  extends Serializable, Comparable<FileObject> {
 
   /**
    * Returns the wrapped file.

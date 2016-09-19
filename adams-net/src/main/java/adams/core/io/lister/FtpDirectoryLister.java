@@ -255,7 +255,7 @@ public class FtpDirectoryLister
    * @return		the new wrapper
    */
   public FtpFileObject newDirectory(String dir) {
-    return new FtpFileObject(new File(m_WatchDir), null, m_Client);
+    return new FtpFileObject(m_WatchDir + "/" + dir, null, m_Client);
   }
 
   /**
@@ -272,6 +272,7 @@ public class FtpDirectoryLister
     List<FTPFile> 	currFiles;
     int			i;
     FTPFile 		entry;
+    SortContainer	cont;
 
     if (depth == 0)
       return;
@@ -311,7 +312,7 @@ public class FtpDirectoryLister
 	  if (!m_RegExp.isEmpty() && !m_RegExp.isMatch(entry.getName()))
 	    continue;
 
-	  files.add(new SortContainer(new FtpFileObject(new File(current), entry, m_Client), m_Sorting));
+	  files.add(new SortContainer(new FtpFileObject(current, entry, m_Client), m_Sorting));
 	}
       }
       else {
@@ -320,7 +321,7 @@ public class FtpDirectoryLister
 	  if (!m_RegExp.isEmpty() && !m_RegExp.isMatch(entry.getName()))
 	    continue;
 
-	  files.add(new SortContainer(new FtpFileObject(new File(current), entry, m_Client), m_Sorting));
+	  files.add(new SortContainer(new FtpFileObject(current, entry, m_Client), m_Sorting));
 	}
       }
     }
@@ -335,10 +336,11 @@ public class FtpDirectoryLister
    * @throws Exception	if listing fails
    */
   public List<FtpFileObject> search(FTPClient client) throws Exception {
-    List<FtpFileObject>	result;
+    List<FtpFileObject>		result;
     List<SortContainer>		list;
     SortContainer		cont;
     int				i;
+    FtpFileObject		fobject;
 
     result    = new ArrayList<>();
     m_Stopped = false;
@@ -374,7 +376,10 @@ public class FtpDirectoryLister
 	if (getDebug())
 	  getLogger().info("before matching");
 	for (i = 0; i < list.size(); i++) {
-	  result.add((FtpFileObject) list.get(i).getFile());
+	  fobject = (FtpFileObject) list.get(i).getFile();
+	  if (result.contains(fobject))
+	    continue;
+	  result.add(fobject);
 
 	  // maximum reached?
 	  if (m_MaxItems > 0) {
