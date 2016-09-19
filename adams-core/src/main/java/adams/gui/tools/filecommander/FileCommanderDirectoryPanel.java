@@ -97,7 +97,10 @@ public class FileCommanderDirectoryPanel
       if (m_IgnoreChanges)
 	return;
       setActive();
-      m_Files.setCurrentDir(m_Dir.getCurrentDirectory());
+      DirectoryLister lister = m_Dir.getDirectoryLister();
+      lister.setListDirs(true);
+      lister.setListFiles(true);
+      m_Files.setDirectoryLister(lister);
       notifyChooserChangeListeners();
     };
   }
