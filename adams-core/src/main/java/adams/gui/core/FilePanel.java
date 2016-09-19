@@ -252,11 +252,11 @@ public class FilePanel
       @Override
       public void keyPressed(KeyEvent e) {
 	if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-	  File file = getSelectedFile(false);
+	  FileObject file = getSelectedFileObject(false);
 	  if (file != null) {
 	    if (file.isDirectory()) {
 	      e.consume();
-	      setCurrentDir(file.getAbsolutePath());
+	      setCurrentDir(file.toString());
 	    }
 	  }
 	}
@@ -269,17 +269,14 @@ public class FilePanel
       @Override
       public void mouseClicked(MouseEvent e) {
 	if (MouseUtils.isDoubleClick(e)) {
-	  FileObject fileObj = getSelectedFileObject(false);
-	  if (fileObj != null) {
-	    if (fileObj.isDirectory()) {
+	  FileObject file = getSelectedFileObject(false);
+	  if (file != null) {
+	    if (file.isDirectory()) {
 	      e.consume();
-	      if (fileObj.getName().equals(".."))
-		setCurrentDir(m_Lister.newDirectory(getCurrentDir() + File.separator + "..").toString());
-	      else
-		setCurrentDir(fileObj.toString());
+	      setCurrentDir(file.toString());
 	    }
 	    else {
-              notifyFileDoubleClickListeners(new FileDoubleClickEvent(FilePanel.this, fileObj));
+              notifyFileDoubleClickListeners(new FileDoubleClickEvent(FilePanel.this, file));
             }
 	  }
 	}

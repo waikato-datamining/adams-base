@@ -97,7 +97,7 @@ public class FileCommanderDirectoryPanel
       if (m_IgnoreChanges)
 	return;
       setActive();
-      m_Files.setDirectoryLister(m_Dir.getDirectoryLister());
+      m_Files.setCurrentDir(m_Dir.getCurrentDirectory());
       notifyChooserChangeListeners();
     };
   }
@@ -179,12 +179,17 @@ public class FileCommanderDirectoryPanel
    * dependent widgets.
    */
   protected void updateChooser() {
+    DirectoryLister	lister;
+
     m_Dir.getParent().remove(m_Dir);
     m_Dir.removeChangeListener(m_DirChangeListener);
     m_Dir = (AbstractChooserPanelWithIOSupport) m_Choosers.getSelectedItem();
     m_Dir.addChangeListener(m_DirChangeListener);
     m_PanelChooser.add(m_Dir, BorderLayout.CENTER);
-    m_Files.setDirectoryLister(m_Dir.getDirectoryLister());
+    lister = m_Dir.getDirectoryLister();
+    lister.setListDirs(true);
+    lister.setListFiles(true);
+    m_Files.setDirectoryLister(lister);
     m_PanelChooser.invalidate();
     m_PanelChooser.validate();
     m_PanelChooser.doLayout();
