@@ -332,6 +332,15 @@ public class FilePanel
   }
 
   /**
+   * Returns whether the files are local or remote.
+   *
+   * @return		true if local
+   */
+  public boolean isLocal() {
+    return m_Lister.isLocal();
+  }
+
+  /**
    * Sets the directory lister to use.
    *
    * @param value	the lister
