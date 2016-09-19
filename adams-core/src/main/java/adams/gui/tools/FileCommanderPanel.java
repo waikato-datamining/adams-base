@@ -502,9 +502,11 @@ public class FileCommanderPanel
       input = GUIHelper.showInputDialog(this, "Please enter new file name", files[0].getName());
       if (input == null)
 	return;
-      if (m_FilesActive.getFilePanel().getCurrentDir().equals(m_FilesInactive.getFilePanel().getCurrentDir()) && input.equals(files[0].getName()))
+      if (m_FilesActive.getFilePanel().getCurrentDir().equals(m_FilesInactive.getFilePanel().getCurrentDir()) && input.equals(files[0].getName())) {
+	showStatus("Cannot copy file unto itself!");
 	return;
-      target = files[0].toString() + File.separator + ".." + File.separator + input;
+      }
+      target = m_FilesInactive.getFilePanel().getCurrentDir();
       try {
 	String msg = m_FileOperations.copy(files[0].toString(), target);
 	if (msg != null)
