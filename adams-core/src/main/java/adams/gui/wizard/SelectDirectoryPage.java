@@ -20,7 +20,6 @@
 package adams.gui.wizard;
 
 import adams.core.Properties;
-import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
 import adams.gui.chooser.DirectoryChooserPanel;
 
@@ -84,28 +83,6 @@ public class SelectDirectoryPage
       }
     });
     panel.add(m_PanelDir, BorderLayout.NORTH);
-  }
-
-  /**
-   * Sets the current directory to use for the directory chooser.
-   *
-   * @param value	the current directory
-   */
-  public void setCurrentDirectory(String value) {
-    PlaceholderDirectory  dir;
-
-    dir = new PlaceholderDirectory(value);
-    if (dir.exists() && dir.isDirectory())
-      m_PanelDir.setCurrentDirectory(value);
-  }
-
-  /**
-   * Returns the current directory in use by the directory chooser.
-   *
-   * @return		the current directory
-   */
-  public String getCurrentDirectory() {
-    return m_PanelDir.getCurrentDirectory();
   }
 
   /**
