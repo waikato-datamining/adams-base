@@ -34,6 +34,7 @@ import adams.gui.core.FilePanel;
 import adams.gui.core.FilePanel.FileDoubleClickEvent;
 import adams.gui.core.GUIHelper;
 import adams.gui.dialog.SimplePreviewBrowserDialog;
+import adams.gui.event.SearchEvent;
 import adams.gui.tools.FileCommanderPanel;
 
 import javax.swing.DefaultComboBoxModel;
@@ -125,6 +126,7 @@ public class FileCommanderDirectoryPanel
       m_IgnoreChanges = false;
     });
     m_Files.addFileDoubleClickListener((FileDoubleClickEvent e) -> view(e.getFile()));
+    m_Files.addSearchListener((SearchEvent e) -> setActive());
 
     m_Choosers = new JComboBox<>();
     addChooserPanels(m_Choosers);
