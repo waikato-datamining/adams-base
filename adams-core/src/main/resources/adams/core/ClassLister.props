@@ -481,8 +481,8 @@ adams.gui.application.Initialization=\
 adams.gui.application.PreferencesPanel=\
   adams.gui.application
 
-# the directory choosers that handle directory listers
-adams.gui.chooser.AbstractChooserPanelWithDirectoryListerSupport=\
+# the directory choosers that IO stuff
+adams.gui.chooser.AbstractChooserPanelWithIOSupport=\
   adams.gui.chooser
 
 # the clipboard data managers
