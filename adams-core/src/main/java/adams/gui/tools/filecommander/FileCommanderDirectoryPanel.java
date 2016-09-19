@@ -216,7 +216,7 @@ public class FileCommanderDirectoryPanel
    * Sets this panel active in the FileCommander.
    */
   public void setActive() {
-    m_Owner.setActive(getFilePanel());
+    m_Owner.setActive(this);
   }
 
   /**

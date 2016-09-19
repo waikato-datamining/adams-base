@@ -64,9 +64,9 @@ public class Zip
     worker = new SwingWorker() {
       @Override
       protected Object doInBackground() throws Exception {
-	File[] files = getOwner().getActive().getSelectedFiles();
-	PlaceholderFile zipFile = new PlaceholderFile(getOwner().getActive().getCurrentDir() + "/" + zip);
-	String regExp = getOwner().getActive().getCurrentDir().replace("/", ".").replace("\\", ".");
+	File[] files = getOwner().getActive().getFilePanel().getSelectedFiles();
+	PlaceholderFile zipFile = new PlaceholderFile(getOwner().getActive().getFilePanel().getCurrentDir() + "/" + zip);
+	String regExp = getOwner().getActive().getFilePanel().getCurrentDir().replace("/", ".").replace("\\", ".");
 	String msg = ZipUtils.compress(zipFile, files, regExp, 1024);
 	if (msg != null) {
 	  GUIHelper.showErrorMessage(getOwner(), "Failed to create ZIP file:\n" + zipFile + "\n" + msg);
@@ -86,6 +86,6 @@ public class Zip
    */
   @Override
   public void update() {
-    setEnabled(getOwner().getActive().getSelectedFiles().length > 0);
+    setEnabled(getOwner().getActive().getFilePanel().getSelectedFiles().length > 0);
   }
 }

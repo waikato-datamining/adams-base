@@ -58,7 +58,7 @@ public class Gzip
     worker = new SwingWorker() {
       @Override
       protected Object doInBackground() throws Exception {
-	File file = getOwner().getActive().getSelectedFile();
+	File file = getOwner().getActive().getFilePanel().getSelectedFile();
 	String msg = GzipUtils.compress(file, 1024);
 	if (msg != null) {
 	  GUIHelper.showErrorMessage(getOwner(), "Failed to compress the following file using GZIP:\n" + file + "\n" + msg);
@@ -80,7 +80,7 @@ public class Gzip
   public void update() {
     File[]	files;
 
-    files = getOwner().getActive().getSelectedFiles();
+    files = getOwner().getActive().getFilePanel().getSelectedFiles();
     setEnabled((files.length == 1) && files[0].isFile() && !files[0].getName().endsWith(GzipUtils.EXTENSION));
   }
 }

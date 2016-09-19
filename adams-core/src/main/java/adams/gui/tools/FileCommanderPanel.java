@@ -29,7 +29,6 @@ import adams.core.logging.LoggingLevel;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseStatusBar;
 import adams.gui.core.ConsolePanel;
-import adams.gui.core.FilePanel;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MenuBarProvider;
 import adams.gui.dialog.ApprovalDialog;
@@ -84,10 +83,10 @@ public class FileCommanderPanel
   protected ChangeListener m_DirRightChangeListener;
 
   /** the active panel. */
-  protected FilePanel m_FilesActive;
+  protected FileCommanderDirectoryPanel m_FilesActive;
 
   /** the inactive panel. */
-  protected FilePanel m_FilesInactive;
+  protected FileCommanderDirectoryPanel m_FilesInactive;
 
   /** the panel with the buttons. */
   protected JPanel m_PanelButtons;
@@ -169,13 +168,13 @@ public class FileCommanderPanel
     m_DirLeftChangeListener = (ChangeEvent e) -> {
       if (m_IgnoreChanges)
 	return;
-      setActive(m_PanelLeft.getFilePanel());
+      setActive(m_PanelLeft);
       m_PanelLeft.getFilePanel().setDirectoryLister(m_PanelLeft.getChooserPanel().getDirectoryLister());
     };
     m_DirRightChangeListener = (ChangeEvent e) -> {
       if (m_IgnoreChanges)
 	return;
-      setActive(m_PanelRight.getFilePanel());
+      setActive(m_PanelRight);
       m_PanelRight.getFilePanel().setDirectoryLister(m_PanelRight.getChooserPanel().getDirectoryLister());
     };
   }
@@ -279,7 +278,7 @@ public class FileCommanderPanel
   @Override
   protected void finishInit() {
     super.finishInit();
-    setActive(m_PanelLeft.getFilePanel());
+    setActive(m_PanelLeft);
     updateButtons();
   }
 
@@ -288,24 +287,15 @@ public class FileCommanderPanel
    *
    * @param active	the new active panel
    */
-  public void setActive(FilePanel active) {
-    JPanel	panelActive;
-    JPanel	panelInactive;
-
+  public void setActive(FileCommanderDirectoryPanel active) {
     m_FilesActive = active;
-    if (m_PanelLeft.getFilePanel() == active) {
-      m_FilesInactive = m_PanelRight.getFilePanel();
-      panelInactive   = m_PanelRight;
-      panelActive     = m_PanelLeft;
-    }
-    else {
-      m_FilesInactive = m_PanelLeft.getFilePanel();
-      panelInactive   = m_PanelLeft;
-      panelActive     = m_PanelRight;
-    }
-    m_FilesInactive.clearSelection();
-    panelActive.setBorder(BorderFactory.createLineBorder(Color.GRAY, 3));
-    panelInactive.setBorder(BorderFactory.createLineBorder(m_FilesActive.getBackground(), 3));
+    if (m_PanelLeft == active)
+      m_FilesInactive = m_PanelRight;
+    else
+      m_FilesInactive = m_PanelLeft;
+    m_FilesInactive.getFilePanel().clearSelection();
+    m_FilesActive.setBorder(BorderFactory.createLineBorder(Color.GRAY, 3));
+    m_FilesInactive.setBorder(BorderFactory.createLineBorder(m_FilesActive.getBackground(), 3));
     updateButtons();
   }
 
@@ -320,7 +310,7 @@ public class FileCommanderPanel
     hasActive   = (m_FilesActive != null);
     busy        = isBusy();
     if (hasActive)
-      activeFiles = m_FilesActive.getSelectedFiles();
+      activeFiles = m_FilesActive.getFilePanel().getSelectedFiles();
     else
       activeFiles = new File[0];
 
@@ -434,7 +424,7 @@ public class FileCommanderPanel
   protected void view() {
     if (m_FilesActive == null)
       return;
-    view(m_FilesActive.getSelectedFile());
+    view(m_FilesActive.getFilePanel().getSelectedFile());
   }
 
   /**
@@ -453,7 +443,7 @@ public class FileCommanderPanel
     else
       dialog = new SimplePreviewBrowserDialog(getParentFrame(), false);
     dialog.setDefaultCloseOperation(SimplePreviewBrowserDialog.DISPOSE_ON_CLOSE);
-    dialog.open(new PlaceholderFile(m_FilesActive.getSelectedFile()));
+    dialog.open(new PlaceholderFile(m_FilesActive.getFilePanel().getSelectedFile()));
     dialog.setSize(GUIHelper.getDefaultDialogDimension());
     dialog.setLocationRelativeTo(this);
     dialog.setVisible(true);
@@ -470,24 +460,24 @@ public class FileCommanderPanel
 
     if (m_FilesActive == null)
       return;
-    files = m_FilesActive.getSelectedFiles();
+    files = m_FilesActive.getFilePanel().getSelectedFiles();
     if (files.length == 0)
       return;
 
     if (files.length == 1)
       retVal = GUIHelper.showConfirmMessage(
 	this, "Do you want to copy\n" + files[0]
-	  + "\nto\n" + m_FilesInactive.getCurrentDir() + "?");
+	  + "\nto\n" + m_FilesInactive.getFilePanel().getCurrentDir() + "?");
     else
       retVal = GUIHelper.showConfirmMessage(
 	this, "Do you want to copy " + files.length + " file" + (files.length > 1 ? "s" : "")
-	  + "\nfrom\n" + m_FilesActive.getCurrentDir()
-	  + "\nto\n" + m_FilesInactive.getCurrentDir() + "?");
+	  + "\nfrom\n" + m_FilesActive.getFilePanel().getCurrentDir()
+	  + "\nto\n" + m_FilesInactive.getFilePanel().getCurrentDir() + "?");
     if (retVal != ApprovalDialog.APPROVE_OPTION)
       return;
 
     if (files.length > 1) {
-      if (m_FilesActive.getCurrentDir().equals(m_FilesInactive.getCurrentDir())) {
+      if (m_FilesActive.getFilePanel().getCurrentDir().equals(m_FilesInactive.getFilePanel().getCurrentDir())) {
 	GUIHelper.showErrorMessage(this, "Source and target directory are the same, cannot copy files!");
 	return;
       }
@@ -495,7 +485,7 @@ public class FileCommanderPanel
 	protected MessageCollection errors = new MessageCollection();
 	@Override
 	protected Object doInBackground() throws Exception {
-	  File target = new PlaceholderFile(m_FilesInactive.getCurrentDir());
+	  File target = new PlaceholderFile(m_FilesInactive.getFilePanel().getCurrentDir());
 	  for (int i = 0; i < files.length; i++) {
 	    File file = files[i];
 	    m_StatusBar.showStatus("Copying " + (i+1) + "/" + files.length + ": " + file);
@@ -526,7 +516,7 @@ public class FileCommanderPanel
       input = GUIHelper.showInputDialog(this, "Please enter new file name", files[0].getName());
       if (input == null)
 	return;
-      if (m_FilesActive.getCurrentDir().equals(m_FilesInactive.getCurrentDir()) && input.equals(files[0].getName()))
+      if (m_FilesActive.getFilePanel().getCurrentDir().equals(m_FilesInactive.getFilePanel().getCurrentDir()) && input.equals(files[0].getName()))
 	return;
       target = new PlaceholderFile(files[0].getParentFile().getAbsolutePath() + File.separator + input);
       try {
@@ -552,7 +542,7 @@ public class FileCommanderPanel
 
     if (m_FilesActive == null)
       return;
-    files = m_FilesActive.getSelectedFiles();
+    files = m_FilesActive.getFilePanel().getSelectedFiles();
     if (files.length != 1)
       return;
 
@@ -585,10 +575,10 @@ public class FileCommanderPanel
 
     if (m_FilesActive == null)
       return;
-    files = m_FilesActive.getSelectedFiles();
+    files = m_FilesActive.getFilePanel().getSelectedFiles();
     if (files.length == 0)
       return;
-    if (m_FilesActive.getCurrentDir().equals(m_FilesInactive.getCurrentDir())) {
+    if (m_FilesActive.getFilePanel().getCurrentDir().equals(m_FilesInactive.getFilePanel().getCurrentDir())) {
       GUIHelper.showErrorMessage(this, "Source and target directory are the same, cannot move files!");
       return;
     }
@@ -599,8 +589,8 @@ public class FileCommanderPanel
     else
       retVal = GUIHelper.showConfirmMessage(
 	this, "Do you want to move " + files.length + " file" + (files.length > 1 ? "s" : "")
-	  + "\nfrom\n" + m_FilesActive.getCurrentDir()
-	  + "\nto\n" + m_FilesInactive.getCurrentDir() + "?");
+	  + "\nfrom\n" + m_FilesActive.getFilePanel().getCurrentDir()
+	  + "\nto\n" + m_FilesInactive.getFilePanel().getCurrentDir() + "?");
     if (retVal != ApprovalDialog.APPROVE_OPTION)
       return;
 
@@ -608,7 +598,7 @@ public class FileCommanderPanel
       protected MessageCollection errors = new MessageCollection();
       @Override
       protected Object doInBackground() throws Exception {
-	File target = new PlaceholderFile(m_FilesInactive.getCurrentDir());
+	File target = new PlaceholderFile(m_FilesInactive.getFilePanel().getCurrentDir());
 	for (int i = 0; i < files.length; i++) {
 	  File file = files[i];
 	  m_StatusBar.showStatus("Moving " + (i+1) + "/" + files.length + ": " + file);
@@ -649,7 +639,7 @@ public class FileCommanderPanel
     if (m_FilesActive == null)
       return;
 
-    dir   = m_FilesActive.getCurrentDir();
+    dir   = m_FilesActive.getFilePanel().getCurrentDir();
     input = GUIHelper.showInputDialog(this, "Please enter name for new directory");
     if (input == null)
       return;
@@ -670,7 +660,7 @@ public class FileCommanderPanel
 
     if (m_FilesActive == null)
       return;
-    files = m_FilesActive.getSelectedFiles();
+    files = m_FilesActive.getFilePanel().getSelectedFiles();
     if (files.length == 0)
       return;
 
@@ -680,7 +670,7 @@ public class FileCommanderPanel
     else
       retVal = GUIHelper.showConfirmMessage(
 	this, "Do you want to delete " + files.length + " file" + (files.length > 1 ? "s" : "")
-	  + " from\n" + m_FilesActive.getCurrentDir() + "?");
+	  + " from\n" + m_FilesActive.getFilePanel().getCurrentDir() + "?");
     if (retVal != ApprovalDialog.APPROVE_OPTION)
       return;
 
@@ -740,7 +730,7 @@ public class FileCommanderPanel
    *
    * @return		the active panel
    */
-  public FilePanel getActive() {
+  public FileCommanderDirectoryPanel getActive() {
     return m_FilesActive;
   }
 
@@ -749,7 +739,7 @@ public class FileCommanderPanel
    *
    * @return		the inactive panel
    */
-  public FilePanel getInactive() {
+  public FileCommanderDirectoryPanel getInactive() {
     return m_FilesInactive;
   }
 
