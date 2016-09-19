@@ -204,7 +204,7 @@ public class LocalDirectoryLister
    * @return		the new wrapper
    */
   public LocalFileObject newDirectory(String dir) {
-    return new LocalFileObject(new File(new PlaceholderFile(m_WatchDir).getAbsolutePath() + File.separator + dir));
+    return new LocalFileObject(new File(new PlaceholderFile(m_WatchDir + File.separator + dir).getAbsolutePath()));
   }
 
   /**

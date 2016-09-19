@@ -23,7 +23,6 @@ package adams.gui.core;
 import adams.core.base.BaseRegExp;
 import adams.core.io.FileObject;
 import adams.core.io.FileObjectComparator;
-import adams.core.io.PlaceholderDirectory;
 import adams.core.io.lister.DirectoryLister;
 import adams.core.io.lister.LocalDirectoryLister;
 import adams.core.io.lister.RecursiveDirectoryLister;
@@ -78,7 +77,7 @@ public class FilePanel
     private static final long serialVersionUID = 6602862166542558303L;
 
     /** the file that got double clicked. */
-    protected File m_File;
+    protected FileObject m_File;
 
     /**
      * Initializes the event.
@@ -86,7 +85,7 @@ public class FilePanel
      * @param source	the panel that triggered the event
      * @param file	the file that got double clicked
      */
-    public FileDoubleClickEvent(FilePanel source, File file) {
+    public FileDoubleClickEvent(FilePanel source, FileObject file) {
       super(source);
       m_File = file;
     }
@@ -105,7 +104,7 @@ public class FilePanel
      *
      * @return		the file
      */
-    public File getFile() {
+    public FileObject getFile() {
       return m_File;
     }
   }
@@ -270,18 +269,17 @@ public class FilePanel
       @Override
       public void mouseClicked(MouseEvent e) {
 	if (MouseUtils.isDoubleClick(e)) {
-	  FileObject wrapper = getSelectedWrapper(false);
-	  if (wrapper != null) {
-	    File file = wrapper.getActualFile();
-	    if (file.isDirectory()) {
+	  FileObject fileObj = getSelectedFileObject(false);
+	  if (fileObj != null) {
+	    if (fileObj.isDirectory()) {
 	      e.consume();
-	      if (file.getName().equals(".."))
-		setCurrentDir(new PlaceholderDirectory(getCurrentDir()).getParentFile().getAbsolutePath());
+	      if (fileObj.getName().equals(".."))
+		setCurrentDir(m_Lister.newDirectory(getCurrentDir() + File.separator + "..").toString());
 	      else
-		setCurrentDir(file.getAbsolutePath());
+		setCurrentDir(fileObj.toString());
 	    }
 	    else {
-              notifyFileDoubleClickListeners(new FileDoubleClickEvent(FilePanel.this, file));
+              notifyFileDoubleClickListeners(new FileDoubleClickEvent(FilePanel.this, fileObj));
             }
 	  }
 	}
@@ -544,24 +542,24 @@ public class FilePanel
    * @param skipDotDot	whether to skip the dot dot file
    * @return		the file wrapper, null if none selected
    */
-  protected FileObject getSelectedWrapper(boolean skipDotDot) {
-    FileObject wrapper;
+  protected FileObject getSelectedFileObject(boolean skipDotDot) {
+    FileObject object;
 
-    wrapper = null;
+    object = null;
     if (m_Table != null) {
       if (m_Table.getSelectedRow() > -1)
-	wrapper = m_Files.get(m_Table.getActualRow(m_Table.getSelectedRow()));
+	object = m_Files.get(m_Table.getActualRow(m_Table.getSelectedRow()));
     }
     else if (m_List != null) {
       if (m_List.getSelectedIndex() > -1)
-	wrapper = m_Files.get(m_List.getSelectedIndex());
+	object = m_Files.get(m_List.getSelectedIndex());
     }
 
-    if (wrapper != null) {
-      if (wrapper.getName().equals("..") && skipDotDot)
+    if (object != null) {
+      if (object.getName().equals("..") && skipDotDot)
 	return null;
       else
-	return wrapper;
+	return object;
     }
     else {
       return null;
@@ -577,11 +575,20 @@ public class FilePanel
   protected File getSelectedFile(boolean skipDotDot) {
     FileObject wrapper;
 
-    wrapper = getSelectedWrapper(skipDotDot);
+    wrapper = getSelectedFileObject(skipDotDot);
     if (wrapper != null)
       return wrapper.getFile();
     else
       return null;
+  }
+
+  /**
+   * Returns the currently selected file object, if any.
+   *
+   * @return		the file object, null if none selected
+   */
+  public FileObject getSelectedFileObject() {
+    return getSelectedFileObject(true);
   }
 
   /**
@@ -594,33 +601,51 @@ public class FilePanel
   }
 
   /**
+   * Returns the currently selected file objects, if any.
+   *
+   * @return		the file objects
+   */
+  public FileObject[] getSelectedFileObjects() {
+    List<FileObject>	result;
+    FileObject 		object;
+
+    result = new ArrayList<>();
+    if (m_Table != null) {
+      for (int index: m_Table.getSelectedRows()) {
+	object = m_Files.get(m_Table.getActualRow(index));
+	if (object.getName().equals(".."))
+	  continue;
+	result.add(object);
+      }
+    }
+    else if (m_List != null) {
+      for (int index: m_List.getSelectedIndices()){
+	object = m_Files.get(index);
+	if (object.getName().equals(".."))
+	  continue;
+	result.add(object);
+      }
+    }
+
+    return result.toArray(new FileObject[result.size()]);
+  }
+
+  /**
    * Returns the currently selected files, if any.
    *
    * @return		the files
    */
   public File[] getSelectedFiles() {
-    List<File>		result;
-    FileObject wrapper;
+    File[]		result;
+    FileObject[]	objects;
+    int			i;
 
-    result = new ArrayList<>();
-    if (m_Table != null) {
-      for (int index: m_Table.getSelectedRows()) {
-	wrapper = m_Files.get(m_Table.getActualRow(index));
-	if (wrapper.getName().equals(".."))
-	  continue;
-	result.add(wrapper.getFile());
-      }
-    }
-    else if (m_List != null) {
-      for (int index: m_List.getSelectedIndices()){
-	wrapper = m_Files.get(index);
-	if (wrapper.getName().equals(".."))
-	  continue;
-	result.add(wrapper.getFile());
-      }
-    }
+    objects = getSelectedFileObjects();
+    result  = new File[objects.length];
+    for (i = 0; i < objects.length; i++)
+      result[i] = objects[i].getFile();
 
-    return result.toArray(new File[result.size()]);
+    return result;
   }
 
   /**

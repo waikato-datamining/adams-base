@@ -22,7 +22,10 @@ package adams.gui.tools.filecommander;
 
 import adams.core.ClassLister;
 import adams.core.base.BaseRegExp;
+import adams.core.io.FileObject;
 import adams.core.io.PlaceholderFile;
+import adams.core.io.fileoperations.FileOperations;
+import adams.core.io.lister.DirectoryLister;
 import adams.gui.chooser.AbstractChooserPanelWithIOSupport;
 import adams.gui.chooser.DirectoryChooserPanel;
 import adams.gui.core.BasePanel;
@@ -41,7 +44,8 @@ import javax.swing.event.ChangeListener;
 import java.awt.BorderLayout;
 import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
-import java.io.File;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.logging.Level;
 
 /**
@@ -76,6 +80,9 @@ public class FileCommanderDirectoryPanel
   /** whether to ignore changes. */
   protected boolean m_IgnoreChanges;
 
+  /** the chooser change listeners. */
+  protected Set<ChangeListener> m_ChooserChangeListeners;
+
   /**
    * Initializes the members.
    */
@@ -83,7 +90,16 @@ public class FileCommanderDirectoryPanel
   protected void initialize() {
     super.initialize();
 
-    m_IgnoreChanges = false;
+    m_IgnoreChanges          = false;
+    m_ChooserChangeListeners = new HashSet<>();
+
+    m_DirChangeListener = (ChangeEvent e) -> {
+      if (m_IgnoreChanges)
+	return;
+      setActive();
+      m_Files.setDirectoryLister(m_Dir.getDirectoryLister());
+      notifyChooserChangeListeners();
+    };
   }
 
   /**
@@ -116,6 +132,7 @@ public class FileCommanderDirectoryPanel
     m_Choosers.setVisible(m_Choosers.getItemCount() > 1);
 
     m_Dir = new DirectoryChooserPanel();
+    m_Dir.addChangeListener(m_DirChangeListener);
 
     m_PanelChooser = new JPanel(new BorderLayout(5, 5));
     m_PanelChooser.add(m_Choosers, BorderLayout.WEST);
@@ -192,27 +209,6 @@ public class FileCommanderDirectoryPanel
   }
 
   /**
-   * Sets the listener to use.
-   *
-   * @param value	the listener
-   */
-  public void setDirChangeListener(ChangeListener value) {
-    if (m_DirChangeListener != null)
-      m_Dir.removeChangeListener(m_DirChangeListener);
-    m_DirChangeListener = value;
-    m_Dir.addChangeListener(m_DirChangeListener);
-  }
-
-  /**
-   * Returns the current listener in use.
-   *
-   * @return		the listener, null if none set
-   */
-  public ChangeListener getDirChangeListener() {
-    return m_DirChangeListener;
-  }
-
-  /**
    * Sets this panel active in the FileCommander.
    */
   public void setActive() {
@@ -220,11 +216,18 @@ public class FileCommanderDirectoryPanel
   }
 
   /**
+   * Views the selected file.
+   */
+  public void view() {
+    view(m_Files.getSelectedFileObject());
+  }
+
+  /**
    * Views the file.
    *
    * @param file	the file to view, ignored if null
    */
-  public void view(File file) {
+  public void view(FileObject file) {
     SimplePreviewBrowserDialog dialog;
 
     if (file == null)
@@ -235,7 +238,8 @@ public class FileCommanderDirectoryPanel
     else
       dialog = new SimplePreviewBrowserDialog(getParentFrame(), false);
     dialog.setDefaultCloseOperation(SimplePreviewBrowserDialog.DISPOSE_ON_CLOSE);
-    dialog.open(new PlaceholderFile(m_Files.getSelectedFile()));
+    // TODO download remote file first
+    dialog.open(new PlaceholderFile(file.getFile()));
     dialog.setSize(GUIHelper.getDefaultDialogDimension());
     dialog.setLocationRelativeTo(this);
     dialog.setVisible(true);
@@ -304,5 +308,52 @@ public class FileCommanderDirectoryPanel
    */
   public AbstractChooserPanelWithIOSupport getChooserPanel() {
     return m_Dir;
+  }
+
+  /**
+   * Returns the directory lister.
+   *
+   * @return		the lister
+   */
+  public DirectoryLister getDirectoryLister() {
+    return m_Dir.getDirectoryLister();
+  }
+
+  /**
+   * Returns the file operations.
+   *
+   * @return		the operations
+   */
+  public FileOperations getFileOperations() {
+    return m_Dir.getFileOperations();
+  }
+
+  /**
+   * Adds the listener.
+   *
+   * @param l		the listener to add
+   */
+  public void addChooserChangeListeners(ChangeListener l) {
+    m_ChooserChangeListeners.add(l);
+  }
+
+  /**
+   * Removes the listener.
+   *
+   * @param l		the listener to remove
+   */
+  public void removeChooserChangeListeners(ChangeListener l) {
+    m_ChooserChangeListeners.remove(l);
+  }
+
+  /**
+   * Notifies all the listeners that the chooser has changed.
+   */
+  protected void notifyChooserChangeListeners() {
+    ChangeEvent 	e;
+
+    e = new ChangeEvent(this);
+    for (ChangeListener l: m_ChooserChangeListeners)
+      l.stateChanged(e);
   }
 }

@@ -22,9 +22,13 @@ package adams.gui.tools;
 
 import adams.core.MessageCollection;
 import adams.core.StatusMessageHandlerExt;
-import adams.core.io.FileUtils;
+import adams.core.io.FileObject;
 import adams.core.io.PlaceholderDirectory;
-import adams.core.io.PlaceholderFile;
+import adams.core.io.fileoperations.FileOperations;
+import adams.core.io.fileoperations.LocalFileOperations;
+import adams.core.io.fileoperations.RemoteDirection;
+import adams.core.io.fileoperations.RemoteFileOperations;
+import adams.core.io.fileoperations.RemoteToRemoteFileOperations;
 import adams.core.logging.LoggingLevel;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseStatusBar;
@@ -32,7 +36,6 @@ import adams.gui.core.ConsolePanel;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MenuBarProvider;
 import adams.gui.dialog.ApprovalDialog;
-import adams.gui.dialog.SimplePreviewBrowserDialog;
 import adams.gui.tools.filecommander.AbstractFileCommanderAction;
 import adams.gui.tools.filecommander.Actions;
 import adams.gui.tools.filecommander.FileCommanderDirectoryPanel;
@@ -47,10 +50,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.SwingWorker;
 import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dialog.ModalityType;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -73,14 +74,8 @@ public class FileCommanderPanel
   /** the left panel. */
   protected FileCommanderDirectoryPanel m_PanelLeft;
 
-  /** the change listener for the left dir. */
-  protected ChangeListener m_DirLeftChangeListener;
-
   /** the right panel. */
   protected FileCommanderDirectoryPanel m_PanelRight;
-
-  /** the change listener for the right dir. */
-  protected ChangeListener m_DirRightChangeListener;
 
   /** the active panel. */
   protected FileCommanderDirectoryPanel m_FilesActive;
@@ -130,14 +125,14 @@ public class FileCommanderPanel
   /** whether right panel shows hidden files. */
   protected JMenuItem m_MenuItemRightShowHidden;
 
-  /** whether to ignore changes. */
-  protected boolean m_IgnoreChanges;
-
   /** the worker thread. */
   protected SwingWorker m_Worker;
 
   /** the available actions. */
   protected List<AbstractFileCommanderAction> m_Actions;
+
+  /** the current file operations. */
+  protected FileOperations m_FileOperations;
 
   /**
    * Initializes the members.
@@ -151,8 +146,8 @@ public class FileCommanderPanel
 
     m_FilesActive    = null;
     m_FilesInactive  = null;
-    m_IgnoreChanges  = false;
     m_Worker         = null;
+    m_FileOperations = new LocalFileOperations();
     m_Actions        = new ArrayList<>();
     classes          = AbstractFileCommanderAction.getActions();
     for (Class cls: classes) {
@@ -165,18 +160,6 @@ public class FileCommanderPanel
 	ConsolePanel.getSingleton().append(LoggingLevel.SEVERE, "Failed to instantiate action: " + cls.getName(), e);
       }
     }
-    m_DirLeftChangeListener = (ChangeEvent e) -> {
-      if (m_IgnoreChanges)
-	return;
-      setActive(m_PanelLeft);
-      m_PanelLeft.getFilePanel().setDirectoryLister(m_PanelLeft.getChooserPanel().getDirectoryLister());
-    };
-    m_DirRightChangeListener = (ChangeEvent e) -> {
-      if (m_IgnoreChanges)
-	return;
-      setActive(m_PanelRight);
-      m_PanelRight.getFilePanel().setDirectoryLister(m_PanelRight.getChooserPanel().getDirectoryLister());
-    };
   }
 
   /**
@@ -200,15 +183,18 @@ public class FileCommanderPanel
     // left
     m_PanelLeft = new FileCommanderDirectoryPanel();
     m_PanelLeft.setOwner(this);
-    m_PanelLeft.setDirChangeListener(m_DirLeftChangeListener);
+    m_PanelLeft.addChooserChangeListeners((ChangeEvent e) ->
+      chooserChanged((FileCommanderDirectoryPanel) e.getSource()));
     panel.add(m_PanelLeft);
 
     // right
     m_PanelRight = new FileCommanderDirectoryPanel();
     m_PanelRight.setOwner(this);
-    m_PanelRight.setDirChangeListener(m_DirRightChangeListener);
+    m_PanelRight.addChooserChangeListeners((ChangeEvent e) ->
+      chooserChanged((FileCommanderDirectoryPanel) e.getSource()));
     panel.add(m_PanelRight);
 
+    // buttons
     m_PanelButtons = new JPanel(new FlowLayout());
     panelAll.add(m_PanelButtons, BorderLayout.SOUTH);
 
@@ -424,43 +410,21 @@ public class FileCommanderPanel
   protected void view() {
     if (m_FilesActive == null)
       return;
-    view(m_FilesActive.getFilePanel().getSelectedFile());
-  }
-
-  /**
-   * Views the file.
-   *
-   * @param file	the file to view, ignored if null
-   */
-  protected void view(File file) {
-    SimplePreviewBrowserDialog	dialog;
-
-    if (file == null)
-      return;
-
-    if (getParentDialog() != null)
-      dialog = new SimplePreviewBrowserDialog(getParentDialog(), ModalityType.MODELESS);
-    else
-      dialog = new SimplePreviewBrowserDialog(getParentFrame(), false);
-    dialog.setDefaultCloseOperation(SimplePreviewBrowserDialog.DISPOSE_ON_CLOSE);
-    dialog.open(new PlaceholderFile(m_FilesActive.getFilePanel().getSelectedFile()));
-    dialog.setSize(GUIHelper.getDefaultDialogDimension());
-    dialog.setLocationRelativeTo(this);
-    dialog.setVisible(true);
+    m_FilesActive.view();
   }
 
   /**
    * Copies the selected files to the other directory.
    */
   public void copy() {
-    File[]		files;
+    FileObject[]	files;
     String		input;
-    File		target;
+    String		target;
     int			retVal;
 
     if (m_FilesActive == null)
       return;
-    files = m_FilesActive.getFilePanel().getSelectedFiles();
+    files = m_FilesActive.getFilePanel().getSelectedFileObjects();
     if (files.length == 0)
       return;
 
@@ -485,13 +449,14 @@ public class FileCommanderPanel
 	protected MessageCollection errors = new MessageCollection();
 	@Override
 	protected Object doInBackground() throws Exception {
-	  File target = new PlaceholderFile(m_FilesInactive.getFilePanel().getCurrentDir());
+	  String target = m_FilesInactive.getFilePanel().getCurrentDir();
 	  for (int i = 0; i < files.length; i++) {
-	    File file = files[i];
+	    FileObject file = files[i];
 	    m_StatusBar.showStatus("Copying " + (i+1) + "/" + files.length + ": " + file);
 	    try {
-	      if (!FileUtils.copy(file, target))
-		errors.add("Failed to copy " + file + " to " + target + "!");
+	      String msg = m_FileOperations.copy(file.toString(), target);
+	      if (msg != null)
+		errors.add("Failed to copy " + file + " to " + target + ":\n" + msg);
 	    }
 	    catch (Exception e) {
 	      errors.add("Failed to copy " + files[0] + " to " + target + "!", e);
@@ -518,10 +483,11 @@ public class FileCommanderPanel
 	return;
       if (m_FilesActive.getFilePanel().getCurrentDir().equals(m_FilesInactive.getFilePanel().getCurrentDir()) && input.equals(files[0].getName()))
 	return;
-      target = new PlaceholderFile(files[0].getParentFile().getAbsolutePath() + File.separator + input);
+      target = files[0].toString() + File.separator + ".." + File.separator + input;
       try {
-	if (!FileUtils.copy(files[0], target))
-	  GUIHelper.showErrorMessage(this, "Failed to copy " + files[0] + " to " + target + "!");
+	String msg = m_FileOperations.copy(files[0].toString(), target);
+	if (msg != null)
+	  GUIHelper.showErrorMessage(this, "Failed to copy " + files[0] + " to " + target + ":\n" + msg);
       }
       catch (Exception e) {
 	GUIHelper.showErrorMessage(this, "Failed to copy " + files[0] + " to " + target + "!", e);
@@ -535,14 +501,15 @@ public class FileCommanderPanel
    * Renames a file.
    */
   public void rename() {
-    File[]		files;
+    FileObject[]	files;
     String		input;
-    File		target;
+    String		target;
     int			retVal;
+    String		msg;
 
     if (m_FilesActive == null)
       return;
-    files = m_FilesActive.getFilePanel().getSelectedFiles();
+    files = m_FilesActive.getFilePanel().getSelectedFileObjects();
     if (files.length != 1)
       return;
 
@@ -554,10 +521,11 @@ public class FileCommanderPanel
     input = GUIHelper.showInputDialog(this, "Please enter new name", files[0].getName());
     if ((input == null) || input.equals(files[0].getName()))
       return;
-    target = new PlaceholderFile(files[0].getParentFile().getAbsolutePath() + File.separator + input);
+    target = files[0].toString() + File.separator + ".." + File.separator + input;
     try {
-      if (!FileUtils.move(files[0], target))
-	GUIHelper.showErrorMessage(this, "Failed to rename " + files[0] + " to " + target + "!");
+      msg = m_FileOperations.move(files[0].toString(), target);
+      if (msg != null)
+	GUIHelper.showErrorMessage(this, "Failed to rename " + files[0] + " to " + target + ":\n" + msg);
     }
     catch (Exception e) {
       GUIHelper.showErrorMessage(this, "Failed to rename " + files[0] + " to " + target + "!", e);
@@ -570,12 +538,12 @@ public class FileCommanderPanel
    * Moves multiple selected files to the other directory.
    */
   public void move() {
-    File[]		files;
+    FileObject[]	files;
     int			retVal;
 
     if (m_FilesActive == null)
       return;
-    files = m_FilesActive.getFilePanel().getSelectedFiles();
+    files = m_FilesActive.getFilePanel().getSelectedFileObjects();
     if (files.length == 0)
       return;
     if (m_FilesActive.getFilePanel().getCurrentDir().equals(m_FilesInactive.getFilePanel().getCurrentDir())) {
@@ -598,13 +566,14 @@ public class FileCommanderPanel
       protected MessageCollection errors = new MessageCollection();
       @Override
       protected Object doInBackground() throws Exception {
-	File target = new PlaceholderFile(m_FilesInactive.getFilePanel().getCurrentDir());
+	String target = m_FilesInactive.getFilePanel().getCurrentDir();
 	for (int i = 0; i < files.length; i++) {
-	  File file = files[i];
+	  FileObject file = files[i];
 	  m_StatusBar.showStatus("Moving " + (i+1) + "/" + files.length + ": " + file);
 	  try {
-	    if (!FileUtils.move(file, target))
-	      errors.add("Failed to move " + file + " to " + target + "!");
+	    String msg = m_FileOperations.move(file.toString(), target);
+	    if (msg != null)
+	      errors.add("Failed to move " + file + " to " + target + ":\n" + msg);
 	  }
 	  catch (Exception e) {
 	    errors.add("Failed to move " + file + " to " + target + "!", e);
@@ -655,12 +624,12 @@ public class FileCommanderPanel
    * Deletes the selected files.
    */
   public void delete() {
-    File[]		files;
+    FileObject[]	files;
     int			retVal;
 
     if (m_FilesActive == null)
       return;
-    files = m_FilesActive.getFilePanel().getSelectedFiles();
+    files = m_FilesActive.getFilePanel().getSelectedFileObjects();
     if (files.length == 0)
       return;
 
@@ -680,11 +649,12 @@ public class FileCommanderPanel
       protected Object doInBackground() throws Exception {
 	updateButtons();
 	for (int i = 0; i < files.length; i++) {
-	  File file = files[i];
+	  FileObject file = files[i];
 	  m_StatusBar.showStatus("Deleting " + (i+1) + "/" + files.length + ": " + file);
 	  try {
-	    if (!FileUtils.delete(file))
-	      errors.add("Failed to delete: " + file);
+	    String msg = m_FileOperations.delete(file.toString());
+	    if (msg != null)
+	      errors.add("Failed to delete: " + file + "\n" + msg);
 	  }
 	  catch (Exception e) {
 	    errors.add("Failed to delete: " + file, e);
@@ -760,5 +730,36 @@ public class FileCommanderPanel
    */
   public void showStatus(boolean left, String msg) {
     m_StatusBar.showStatus(left, msg);
+  }
+
+  /**
+   * Gets called when a panel's chooser changes.
+   *
+   * @param source	the panel that triggered the event
+   */
+  protected void chooserChanged(FileCommanderDirectoryPanel source) {
+    FileOperations			active;
+    FileOperations			inactive;
+    RemoteToRemoteFileOperations	r2r;
+
+    active   = m_FilesActive.getFileOperations();
+    inactive = m_FilesInactive.getFileOperations();
+
+    if ((active instanceof RemoteFileOperations) && (inactive instanceof RemoteFileOperations)) {
+      r2r = new RemoteToRemoteFileOperations();
+      r2r.setSource((RemoteFileOperations) active);
+      r2r.setTarget((RemoteFileOperations) inactive);
+    }
+    else if (active instanceof RemoteFileOperations) {
+      m_FileOperations = active;
+      ((RemoteFileOperations) m_FileOperations).setDirection(RemoteDirection.REMOTE_TO_LOCAL);
+    }
+    else if (inactive instanceof RemoteFileOperations) {
+      m_FileOperations = inactive;
+      ((RemoteFileOperations) m_FileOperations).setDirection(RemoteDirection.LOCAL_TO_REMOTE);
+    }
+    else {
+      m_FileOperations = new LocalFileOperations();
+    }
   }
 }
