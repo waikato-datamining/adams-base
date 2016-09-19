@@ -36,7 +36,7 @@ import java.awt.Dialog.ModalityType;
  * @version $Revision$
  */
 public class SftpDirectoryChooserPanel
-  extends AbstractChooserPanelWithIOSupport<SftpRemoteDirectory> {
+  extends AbstractChooserPanelWithIOSupport<SftpRemoteDirectorySetup> {
 
   /** for serialization. */
   private static final long serialVersionUID = 6235369491956122980L;
@@ -46,7 +46,7 @@ public class SftpDirectoryChooserPanel
    */
   public SftpDirectoryChooserPanel() {
     super();
-    setCurrent(new SftpRemoteDirectory());
+    setCurrent(new SftpRemoteDirectorySetup());
   }
 
   /**
@@ -54,8 +54,8 @@ public class SftpDirectoryChooserPanel
    *
    * @return		the chosen object or null if none chosen
    */
-  protected SftpRemoteDirectory doChoose() {
-    SftpRemoteDirectory		current;
+  protected SftpRemoteDirectorySetup doChoose() {
+    SftpRemoteDirectorySetup current;
     GenericObjectEditorDialog	dialog;
 
     current = getCurrent();
@@ -65,7 +65,7 @@ public class SftpDirectoryChooserPanel
       dialog = new GenericObjectEditorDialog(getParentFrame(), true);
     dialog.setDefaultCloseOperation(GenericObjectEditorDialog.DISPOSE_ON_CLOSE);
     dialog.setTitle("Remote directory");
-    dialog.getGOEEditor().setClassType(SftpRemoteDirectory.class);
+    dialog.getGOEEditor().setClassType(SftpRemoteDirectorySetup.class);
     dialog.getGOEEditor().setCanChangeClassInDialog(false);
     dialog.setCurrent(current);
     dialog.setLocationRelativeTo(null);
@@ -73,7 +73,7 @@ public class SftpDirectoryChooserPanel
     if (dialog.getResult() != GenericObjectEditorDialog.APPROVE_OPTION)
       return null;
     else
-      return (SftpRemoteDirectory) dialog.getCurrent();
+      return (SftpRemoteDirectorySetup) dialog.getCurrent();
   }
 
   /**
@@ -82,7 +82,7 @@ public class SftpDirectoryChooserPanel
    * @param value	the value to convert
    * @return		the generated string
    */
-  protected String toString(SftpRemoteDirectory value) {
+  protected String toString(SftpRemoteDirectorySetup value) {
     return value.toCommandLine();
   }
 
@@ -92,12 +92,12 @@ public class SftpDirectoryChooserPanel
    * @param value	the string value to convert
    * @return		the generated object
    */
-  protected SftpRemoteDirectory fromString(String value) {
+  protected SftpRemoteDirectorySetup fromString(String value) {
     try {
-      return (SftpRemoteDirectory) OptionUtils.forAnyCommandLine(SftpRemoteDirectory.class, value);
+      return (SftpRemoteDirectorySetup) OptionUtils.forAnyCommandLine(SftpRemoteDirectorySetup.class, value);
     }
     catch (Exception e) {
-      return new SftpRemoteDirectory();
+      return new SftpRemoteDirectorySetup();
     }
   }
 
@@ -107,7 +107,7 @@ public class SftpDirectoryChooserPanel
    * @param value	the current directory
    */
   public void setCurrentDirectory(String value) {
-    SftpRemoteDirectory		current;
+    SftpRemoteDirectorySetup current;
 
     current = getCurrent();
     current.setRemoteDir(value);
@@ -140,7 +140,7 @@ public class SftpDirectoryChooserPanel
    */
   public DirectoryLister getDirectoryLister() {
     SftpDirectoryLister   	result;
-    SftpRemoteDirectory		current;
+    SftpRemoteDirectorySetup current;
 
     current = getCurrent();
     result = new SftpDirectoryLister();

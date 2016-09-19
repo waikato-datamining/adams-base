@@ -39,7 +39,7 @@ import java.io.File;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision: 14538 $
  */
-public class SftpRemoteDirectory
+public class SftpRemoteDirectorySetup
   extends AbstractOptionHandler
   implements SSHSessionProvider, CleanUpHandler {
 
