@@ -20,34 +20,28 @@
 
 package adams.gui.tools;
 
-import adams.core.ClassLister;
 import adams.core.MessageCollection;
 import adams.core.StatusMessageHandlerExt;
-import adams.core.base.BaseRegExp;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
 import adams.core.logging.LoggingLevel;
-import adams.gui.chooser.AbstractChooserPanelWithIOSupport;
-import adams.gui.chooser.DirectoryChooserPanel;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseStatusBar;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.FilePanel;
-import adams.gui.core.FilePanel.FileDoubleClickEvent;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MenuBarProvider;
 import adams.gui.dialog.ApprovalDialog;
 import adams.gui.dialog.SimplePreviewBrowserDialog;
 import adams.gui.tools.filecommander.AbstractFileCommanderAction;
 import adams.gui.tools.filecommander.Actions;
+import adams.gui.tools.filecommander.FileCommanderDirectoryPanel;
 import com.jidesoft.swing.JideButton;
 import com.jidesoft.swing.JideSplitButton;
 
 import javax.swing.BorderFactory;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JComboBox;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -64,7 +58,6 @@ import java.awt.event.ActionEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 
 /**
  * File manager with two-pane interface, similar to the Midnight Commander.
@@ -79,37 +72,13 @@ public class FileCommanderPanel
   private static final long serialVersionUID = 3894304347424478383L;
 
   /** the left panel. */
-  protected JPanel m_PanelLeft;
-
-  /** the left side. */
-  protected FilePanel m_FilesLeft;
-
-  /** the panel for the combox of choosers and current chooser. */
-  protected JPanel m_PanelChooserLeft;
-
-  /** the combobox with the available directory chooser panels. */
-  protected JComboBox<AbstractChooserPanelWithIOSupport> m_ChoosersLeft;
-
-  /** the left dir panel. */
-  protected AbstractChooserPanelWithIOSupport m_DirLeft;
+  protected FileCommanderDirectoryPanel m_PanelLeft;
 
   /** the change listener for the left dir. */
   protected ChangeListener m_DirLeftChangeListener;
 
   /** the right panel. */
-  protected JPanel m_PanelRight;
-
-  /** the right side. */
-  protected FilePanel m_FilesRight;
-
-  /** the panel for the combox of choosers and current chooser. */
-  protected JPanel m_PanelChooserRight;
-
-  /** the combobox with the available directory chooser panels. */
-  protected JComboBox<AbstractChooserPanelWithIOSupport> m_ChoosersRight;
-
-  /** the right dir panel. */
-  protected AbstractChooserPanelWithIOSupport m_DirRight;
+  protected FileCommanderDirectoryPanel m_PanelRight;
 
   /** the change listener for the right dir. */
   protected ChangeListener m_DirRightChangeListener;
@@ -200,14 +169,14 @@ public class FileCommanderPanel
     m_DirLeftChangeListener = (ChangeEvent e) -> {
       if (m_IgnoreChanges)
 	return;
-      setActive(m_FilesLeft);
-      m_FilesLeft.setDirectoryLister(m_DirLeft.getDirectoryLister());
+      setActive(m_PanelLeft.getFilePanel());
+      m_PanelLeft.getFilePanel().setDirectoryLister(m_PanelLeft.getChooserPanel().getDirectoryLister());
     };
     m_DirRightChangeListener = (ChangeEvent e) -> {
       if (m_IgnoreChanges)
 	return;
-      setActive(m_FilesRight);
-      m_FilesRight.setDirectoryLister(m_DirRight.getDirectoryLister());
+      setActive(m_PanelRight.getFilePanel());
+      m_PanelRight.getFilePanel().setDirectoryLister(m_PanelRight.getChooserPanel().getDirectoryLister());
     };
   }
 
@@ -230,74 +199,15 @@ public class FileCommanderPanel
     panelAll.add(panel, BorderLayout.CENTER);
 
     // left
-    m_FilesLeft = new FilePanel(true);
-    m_FilesLeft.startUpdate();
-    m_FilesLeft.setSearchVisible(true);
-    m_FilesLeft.setListDirs(true);
-    m_FilesLeft.setMultiSelection(true);
-    m_FilesLeft.finishUpdate();
-    m_FilesLeft.addSelectionChangeListener((ChangeEvent e) -> setActive(m_FilesLeft));
-    m_FilesLeft.addDirectoryChangeListener((ChangeEvent e) -> {
-      m_IgnoreChanges = true;
-      m_DirLeft.setCurrentDirectory(m_FilesLeft.getCurrentDir());
-      m_IgnoreChanges = false;
-    });
-    m_FilesLeft.addFileDoubleClickListener((FileDoubleClickEvent e) -> view(e.getFile()));
-
-    m_ChoosersLeft = new JComboBox<>();
-    addChooserPanels(m_ChoosersLeft);
-    m_ChoosersLeft.addActionListener((ActionEvent e) -> updateChooser(true));
-    m_ChoosersLeft.setVisible(m_ChoosersLeft.getItemCount() > 1);
-
-    m_DirLeft = new DirectoryChooserPanel();
-    m_DirLeft.addChangeListener((ChangeEvent e) -> {
-      if (m_IgnoreChanges)
-	return;
-      setActive(m_FilesLeft);
-      m_FilesLeft.setDirectoryLister(m_DirLeft.getDirectoryLister());
-    });
-
-    m_PanelChooserLeft = new JPanel(new BorderLayout(5, 5));
-    m_PanelChooserLeft.add(m_ChoosersLeft, BorderLayout.WEST);
-    m_PanelChooserLeft.add(m_DirLeft, BorderLayout.CENTER);
-    m_PanelLeft = new JPanel(new BorderLayout(5, 5));
-    m_PanelLeft.add(m_FilesLeft, BorderLayout.CENTER);
-    m_PanelLeft.add(m_PanelChooserLeft, BorderLayout.NORTH);
+    m_PanelLeft = new FileCommanderDirectoryPanel();
+    m_PanelLeft.setOwner(this);
+    m_PanelLeft.setDirChangeListener(m_DirLeftChangeListener);
     panel.add(m_PanelLeft);
 
     // right
-    m_FilesRight = new FilePanel(true);
-    m_FilesRight.startUpdate();
-    m_FilesRight.setSearchVisible(true);
-    m_FilesRight.setListDirs(true);
-    m_FilesRight.setMultiSelection(true);
-    m_FilesRight.finishUpdate();
-    m_FilesRight.addSelectionChangeListener((ChangeEvent e) -> setActive(m_FilesRight));
-    m_FilesRight.addDirectoryChangeListener((ChangeEvent e) -> {
-      m_IgnoreChanges = true;
-      m_DirRight.setCurrentDirectory(m_FilesRight.getCurrentDir());
-      m_IgnoreChanges = false;
-    });
-    m_FilesRight.addFileDoubleClickListener((FileDoubleClickEvent e) -> view(e.getFile()));
-
-    m_ChoosersRight = new JComboBox<>();
-    addChooserPanels(m_ChoosersRight);
-    m_ChoosersRight.addActionListener((ActionEvent e) -> updateChooser(false));
-    m_ChoosersRight.setVisible(m_ChoosersRight.getItemCount() > 1);
-
-    m_DirRight = new DirectoryChooserPanel();
-    m_DirRight.addChangeListener((ChangeEvent e) -> {
-      if (m_IgnoreChanges)
-	return;
-      setActive(m_FilesRight);
-      m_FilesRight.setDirectoryLister(m_DirRight.getDirectoryLister());
-    });
-    m_PanelChooserRight = new JPanel(new BorderLayout(5, 5));
-    m_PanelChooserRight.add(m_ChoosersRight, BorderLayout.WEST);
-    m_PanelChooserRight.add(m_DirRight, BorderLayout.CENTER);
-    m_PanelRight = new JPanel(new BorderLayout(5, 5));
-    m_PanelRight.add(m_FilesRight, BorderLayout.CENTER);
-    m_PanelRight.add(m_PanelChooserRight, BorderLayout.NORTH);
+    m_PanelRight = new FileCommanderDirectoryPanel();
+    m_PanelRight.setOwner(this);
+    m_PanelRight.setDirChangeListener(m_DirRightChangeListener);
     panel.add(m_PanelRight);
 
     m_PanelButtons = new JPanel(new FlowLayout());
@@ -369,70 +279,8 @@ public class FileCommanderPanel
   @Override
   protected void finishInit() {
     super.finishInit();
-    setActive(m_FilesLeft);
+    setActive(m_PanelLeft.getFilePanel());
     updateButtons();
-  }
-
-  /**
-   * Adds the choosers to the combobox.
-   *
-   * @param combobox	the combobox to fil
-   */
-  protected void addChooserPanels(JComboBox<AbstractChooserPanelWithIOSupport> combobox) {
-    AbstractChooserPanelWithIOSupport				chooser;
-    AbstractChooserPanelWithIOSupport				selected;
-    DefaultComboBoxModel<AbstractChooserPanelWithIOSupport>	model;
-
-    selected = null;
-    model    = new DefaultComboBoxModel<>();
-    for (Class cls : ClassLister.getSingleton().getClasses(AbstractChooserPanelWithIOSupport.class)) {
-      try {
-	chooser = (AbstractChooserPanelWithIOSupport) cls.newInstance();
-	model.addElement(chooser);
-	if (cls == DirectoryChooserPanel.class)
-	  selected = chooser;
-      }
-      catch (Exception e) {
-	ConsolePanel.getSingleton().append(Level.SEVERE, "Failed to instantiate: " + cls.getName(), e);
-      }
-    }
-
-    combobox.setModel(model);
-    if (selected == null)
-      combobox.setSelectedIndex(0);
-    else
-      combobox.setSelectedItem(selected);
-  }
-
-  /**
-   * Updates the chooser (using currently selected one in combobox) and
-   * dependent widgets.
-   *
-   * @param left	whether to update the left or right one
-   */
-  protected void updateChooser(boolean left) {
-    if (left) {
-      m_DirLeft.getParent().remove(m_DirLeft);
-      m_DirLeft.removeChangeListener(m_DirLeftChangeListener);
-      m_DirLeft = (AbstractChooserPanelWithIOSupport) m_ChoosersLeft.getSelectedItem();
-      m_DirLeft.addChangeListener(m_DirLeftChangeListener);
-      m_PanelChooserLeft.add(m_DirLeft, BorderLayout.CENTER);
-      m_FilesLeft.setDirectoryLister(m_DirLeft.getDirectoryLister());
-      m_PanelChooserLeft.invalidate();
-      m_PanelChooserLeft.validate();
-      m_PanelChooserLeft.doLayout();
-    }
-    else {
-      m_DirRight.getParent().remove(m_DirRight);
-      m_DirRight.removeChangeListener(m_DirRightChangeListener);
-      m_DirRight = (AbstractChooserPanelWithIOSupport) m_ChoosersRight.getSelectedItem();
-      m_DirRight.addChangeListener(m_DirRightChangeListener);
-      m_PanelChooserRight.add(m_DirRight, BorderLayout.CENTER);
-      m_FilesRight.setDirectoryLister(m_DirRight.getDirectoryLister());
-      m_PanelChooserRight.invalidate();
-      m_PanelChooserRight.validate();
-      m_PanelChooserRight.doLayout();
-    }
   }
 
   /**
@@ -440,18 +288,18 @@ public class FileCommanderPanel
    *
    * @param active	the new active panel
    */
-  protected void setActive(FilePanel active) {
+  public void setActive(FilePanel active) {
     JPanel	panelActive;
     JPanel	panelInactive;
 
     m_FilesActive = active;
-    if (m_FilesLeft == active) {
-      m_FilesInactive = m_FilesRight;
+    if (m_PanelLeft.getFilePanel() == active) {
+      m_FilesInactive = m_PanelRight.getFilePanel();
       panelInactive   = m_PanelRight;
       panelActive     = m_PanelLeft;
     }
     else {
-      m_FilesInactive = m_FilesLeft;
+      m_FilesInactive = m_PanelLeft.getFilePanel();
       panelInactive   = m_PanelLeft;
       panelActive     = m_PanelRight;
     }
@@ -471,7 +319,10 @@ public class FileCommanderPanel
 
     hasActive   = (m_FilesActive != null);
     busy        = isBusy();
-    activeFiles = m_FilesActive.getSelectedFiles();
+    if (hasActive)
+      activeFiles = m_FilesActive.getSelectedFiles();
+    else
+      activeFiles = new File[0];
 
     m_ButtonRename.setEnabled(!busy && hasActive && (activeFiles.length == 1));
     m_ButtonView.setEnabled(!busy && hasActive && (activeFiles.length == 1));
@@ -507,7 +358,7 @@ public class FileCommanderPanel
       menu.add(menuitem);
 
       menuitem = new JCheckBoxMenuItem("Show hidden");
-      menuitem.addActionListener((ActionEvent e) -> m_FilesLeft.setShowHidden(m_MenuItemLeftShowHidden.isSelected()));
+      menuitem.addActionListener((ActionEvent e) -> m_PanelLeft.getFilePanel().setShowHidden(m_MenuItemLeftShowHidden.isSelected()));
       menu.add(menuitem);
       m_MenuItemLeftShowHidden = menuitem;
 
@@ -521,7 +372,7 @@ public class FileCommanderPanel
       menu.add(menuitem);
 
       menuitem = new JCheckBoxMenuItem("Show hidden");
-      menuitem.addActionListener((ActionEvent e) -> m_FilesRight.setShowHidden(m_MenuItemRightShowHidden.isSelected()));
+      menuitem.addActionListener((ActionEvent e) -> m_PanelRight.getFilePanel().setShowHidden(m_MenuItemRightShowHidden.isSelected()));
       menu.add(menuitem);
       m_MenuItemRightShowHidden = menuitem;
 
@@ -550,14 +401,10 @@ public class FileCommanderPanel
    * @param left	if true the left panel gets updated
    */
   public void setDirectory(File dir, boolean left) {
-    if (left) {
-      m_FilesLeft.setCurrentDir(dir.getAbsolutePath());
-      m_DirLeft.setCurrentDirectory(dir.getAbsolutePath());
-    }
-    else {
-      m_FilesRight.setCurrentDir(dir.getAbsolutePath());
-      m_DirRight.setCurrentDirectory(dir.getAbsolutePath());
-    }
+    if (left)
+      m_PanelLeft.setDirectory(dir);
+    else
+      m_PanelRight.setDirectory(dir);
   }
 
   /**
@@ -568,17 +415,17 @@ public class FileCommanderPanel
    */
   public File getDirectory(boolean left) {
     if (left)
-      return new File(m_FilesLeft.getCurrentDir());
+      return m_PanelLeft.getDirectory();
     else
-      return new File(m_FilesRight.getCurrentDir());
+      return m_PanelRight.getDirectory();
   }
 
   /**
    * Reloads the files.
    */
   protected void reload() {
-    m_FilesLeft.reload();
-    m_FilesRight.reload();
+    m_PanelLeft.reload();
+    m_PanelRight.reload();
   }
 
   /**
@@ -882,27 +729,10 @@ public class FileCommanderPanel
    * @param left	whether to apply it to the left or right panel
    */
   protected void setFilter(boolean left) {
-    BaseRegExp	regExp;
-    String	input;
-
     if (left)
-      regExp = m_FilesLeft.getFilter();
+      m_PanelLeft.setFilter();
     else
-      regExp = m_FilesRight.getFilter();
-
-    input = GUIHelper.showInputDialog(this, "Please enter the filter (regular expression)", regExp.getValue());
-    if (input == null)
-      return;
-    if (!regExp.isValid(input)) {
-      GUIHelper.showErrorMessage(this, "Invalid regular expression:\n" + input);
-      return;
-    }
-
-    regExp.setValue(input);
-    if (left)
-      m_FilesLeft.setFilter(regExp);
-    else
-      m_FilesRight.setFilter(regExp);
+      m_PanelRight.setFilter();
   }
 
   /**
