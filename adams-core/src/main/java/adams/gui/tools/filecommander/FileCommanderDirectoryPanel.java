@@ -97,10 +97,7 @@ public class FileCommanderDirectoryPanel
       if (m_IgnoreChanges)
 	return;
       setActive();
-      DirectoryLister lister = m_Dir.getDirectoryLister();
-      lister.setListDirs(true);
-      lister.setListFiles(true);
-      m_Files.setDirectoryLister(lister);
+      updateDirectoryLister();
       notifyChooserChangeListeners();
     };
   }
@@ -182,20 +179,30 @@ public class FileCommanderDirectoryPanel
    * dependent widgets.
    */
   protected void updateChooser() {
-    DirectoryLister	lister;
-
     m_Dir.getParent().remove(m_Dir);
     m_Dir.removeChangeListener(m_DirChangeListener);
     m_Dir = (AbstractChooserPanelWithIOSupport) m_Choosers.getSelectedItem();
     m_Dir.addChangeListener(m_DirChangeListener);
     m_PanelChooser.add(m_Dir, BorderLayout.CENTER);
-    lister = m_Dir.getDirectoryLister();
-    lister.setListDirs(true);
-    lister.setListFiles(true);
-    m_Files.setDirectoryLister(lister);
+    updateDirectoryLister();
     m_PanelChooser.invalidate();
     m_PanelChooser.validate();
     m_PanelChooser.doLayout();
+  }
+
+  /**
+   * Updates the directory lister.
+   */
+  protected void updateDirectoryLister() {
+    DirectoryLister 	oldLister;
+    DirectoryLister 	newLister;
+
+    oldLister = m_Files.getDirectoryLister();
+    newLister = m_Dir.getDirectoryLister();
+    newLister.setListDirs(oldLister.getListDirs());
+    newLister.setListFiles(oldLister.getListFiles());
+    newLister.setRegExp(oldLister.getRegExp());
+    m_Files.setDirectoryLister(newLister);
   }
 
   /**
