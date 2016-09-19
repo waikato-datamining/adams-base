@@ -73,6 +73,21 @@ public class LocalDirectoryLister
   }
 
   /**
+   * Sets the directory to watch.
+   *
+   * @param value 	the directory
+   */
+  @Override
+  public void setWatchDir(String value) {
+    try {
+      super.setWatchDir(new PlaceholderFile(value).getCanonicalPath());
+    }
+    catch (Exception e) {
+      super.setWatchDir(value);
+    }
+  }
+
+  /**
    * Sets the name of the stop file which results in returning an empty list.
    *
    * @param value 	the name of the file
