@@ -336,6 +336,26 @@ public class FilePanel
   }
 
   /**
+   * Sets the directory lister to use.
+   *
+   * @param value	the lister
+   */
+  public void setDirectoryLister(DirectoryLister value) {
+    m_Lister = value;
+    update();
+    notifyDirectoryChangeListeners();
+  }
+
+  /**
+   * Returns the current directory lister.
+   *
+   * @return		the lister
+   */
+  public DirectoryLister getDirectoryLister() {
+    return m_Lister;
+  }
+
+  /**
    * Sets the directory to list.
    *
    * @param value	the directory

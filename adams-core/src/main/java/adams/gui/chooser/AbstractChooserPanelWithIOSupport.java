@@ -51,4 +51,28 @@ public abstract class AbstractChooserPanelWithIOSupport<T>
   public static Class[] getChoosers() {
     return ClassLister.getSingleton().getClasses(AbstractChooserPanelWithIOSupport.class);
   }
+
+  /**
+   * Returns the chooser type.
+   *
+   * @return		the type
+   */
+  @Override
+  public String toString() {
+    return getChooserType();
+  }
+
+  /**
+   * Sets the current directory to use for the file chooser.
+   *
+   * @param value	the current directory
+   */
+  public abstract void setCurrentDirectory(String value);
+
+  /**
+   * Returns the current directory in use by the file chooser.
+   *
+   * @return		the current directory
+   */
+  public abstract String getCurrentDirectory();
 }

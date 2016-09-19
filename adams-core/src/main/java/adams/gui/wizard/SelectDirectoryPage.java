@@ -15,11 +15,12 @@
 
 /**
  * SelectDirectoryPage.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.wizard;
 
 import adams.core.Properties;
+import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
 import adams.gui.chooser.DirectoryChooserPanel;
 
@@ -90,8 +91,11 @@ public class SelectDirectoryPage
    *
    * @param value	the current directory
    */
-  public void setCurrentDirectory(File value) {
-    if (value.exists() && value.isDirectory())
+  public void setCurrentDirectory(String value) {
+    PlaceholderDirectory  dir;
+
+    dir = new PlaceholderDirectory(value);
+    if (dir.exists() && dir.isDirectory())
       m_PanelDir.setCurrentDirectory(value);
   }
 
@@ -100,7 +104,7 @@ public class SelectDirectoryPage
    *
    * @return		the current directory
    */
-  public File getCurrentDirectory() {
+  public String getCurrentDirectory() {
     return m_PanelDir.getCurrentDirectory();
   }
 

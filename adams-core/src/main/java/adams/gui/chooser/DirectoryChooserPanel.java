@@ -119,7 +119,7 @@ public class DirectoryChooserPanel
    *
    * @param value	the current directory
    */
-  public void setCurrentDirectory(File value) {
+  public void setCurrentDirectory(String value) {
     m_DirectoryChooser.setCurrentDirectory(new PlaceholderFile(value));
   }
 
@@ -128,8 +128,8 @@ public class DirectoryChooserPanel
    *
    * @return		the current directory
    */
-  public File getCurrentDirectory() {
-    return m_DirectoryChooser.getCurrentDirectory();
+  public String getCurrentDirectory() {
+    return m_DirectoryChooser.getCurrentDirectory().getAbsolutePath();
   }
 
   /**
@@ -165,7 +165,7 @@ public class DirectoryChooserPanel
     LocalDirectoryLister	result;
 
     result = new LocalDirectoryLister();
-    result.setWatchDir(getCurrentDirectory().getAbsolutePath());
+    result.setWatchDir(getCurrentDirectory());
 
     return result;
   }
