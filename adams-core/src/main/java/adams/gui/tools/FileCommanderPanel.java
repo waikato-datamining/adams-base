@@ -23,7 +23,6 @@ package adams.gui.tools;
 import adams.core.MessageCollection;
 import adams.core.StatusMessageHandlerExt;
 import adams.core.io.FileObject;
-import adams.core.io.PlaceholderDirectory;
 import adams.core.io.fileoperations.FileOperations;
 import adams.core.io.fileoperations.LocalFileOperations;
 import adams.core.io.fileoperations.RemoteDirection;
@@ -603,7 +602,8 @@ public class FileCommanderPanel
   public void mkdir() {
     String	input;
     String	dir;
-    File	dirNew;
+    FileObject	dirNew;
+    String	msg;
 
     if (m_FilesActive == null)
       return;
@@ -613,9 +613,10 @@ public class FileCommanderPanel
     if (input == null)
       return;
 
-    dirNew = new PlaceholderDirectory(dir + File.separator + input);
-    if (!dirNew.mkdir())
-      GUIHelper.showErrorMessage(this, "Failed to create directory:\n" + dirNew);
+    dirNew = m_FilesActive.getDirectoryLister().newDirectory(dir + File.separator + input);
+    msg    = m_FileOperations.mkdir(dirNew.toString());
+    if (msg != null)
+      GUIHelper.showErrorMessage(this, "Failed to create directory: " + dirNew + "\n" + msg);
     else
       reload();
   }
