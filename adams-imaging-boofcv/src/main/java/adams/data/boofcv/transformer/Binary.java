@@ -22,9 +22,13 @@ package adams.data.boofcv.transformer;
 
 import adams.core.License;
 import adams.core.annotation.MixedCopyright;
+import adams.core.io.PlaceholderFile;
 import adams.data.boofcv.BoofCVHelper;
 import adams.data.boofcv.BoofCVImageContainer;
 import adams.data.boofcv.BoofCVImageType;
+import adams.data.io.input.BoofCVImageReader;
+import adams.data.io.output.BoofCVImageWriter;
+import adams.env.Environment;
 import boofcv.alg.filter.binary.BinaryImageOps;
 import boofcv.alg.filter.binary.GThresholdImageOps;
 import boofcv.alg.filter.binary.ThresholdImageOps;
