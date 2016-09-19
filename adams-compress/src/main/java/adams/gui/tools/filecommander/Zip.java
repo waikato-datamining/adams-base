@@ -86,6 +86,9 @@ public class Zip
    */
   @Override
   public void update() {
-    setEnabled(getOwner().getActive().getFilePanel().getSelectedFiles().length > 0);
+    boolean	local;
+
+    local = getOwner().getActive().getFilePanel().isLocal();
+    setEnabled(local && (getOwner().getActive().getFilePanel().getSelectedFiles().length > 0));
   }
 }

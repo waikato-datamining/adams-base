@@ -79,8 +79,10 @@ public class Gzip
   @Override
   public void update() {
     File[]	files;
+    boolean	local;
 
+    local = getOwner().getActive().getFilePanel().isLocal();
     files = getOwner().getActive().getFilePanel().getSelectedFiles();
-    setEnabled((files.length == 1) && files[0].isFile() && !files[0].getName().endsWith(GzipUtils.EXTENSION));
+    setEnabled(local && (files.length == 1) && files[0].isFile() && !files[0].getName().endsWith(GzipUtils.EXTENSION));
   }
 }
