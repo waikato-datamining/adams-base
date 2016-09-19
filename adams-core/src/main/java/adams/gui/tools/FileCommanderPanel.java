@@ -22,9 +22,11 @@ package adams.gui.tools;
 
 import adams.core.MessageCollection;
 import adams.core.StatusMessageHandlerExt;
+import adams.core.StoppableWithFeedback;
 import adams.core.io.FileObject;
 import adams.core.io.fileoperations.FileOperations;
 import adams.core.io.fileoperations.LocalFileOperations;
+import adams.core.io.fileoperations.Operation;
 import adams.core.io.fileoperations.RemoteDirection;
 import adams.core.io.fileoperations.RemoteFileOperations;
 import adams.core.io.fileoperations.RemoteToRemoteFileOperations;
@@ -66,7 +68,7 @@ import java.util.List;
  */
 public class FileCommanderPanel
   extends BasePanel
-  implements MenuBarProvider, StatusMessageHandlerExt {
+  implements MenuBarProvider, StatusMessageHandlerExt, StoppableWithFeedback {
 
   private static final long serialVersionUID = 3894304347424478383L;
 
@@ -109,6 +111,9 @@ public class FileCommanderPanel
   /** the action button. */
   protected JideSplitButton m_ButtonAction;
 
+  /** the button for stopping an operation. */
+  protected JideButton m_ButtonStop;
+
   /** the button for quitting. */
   protected JideButton m_ButtonQuit;
 
@@ -133,6 +138,9 @@ public class FileCommanderPanel
   /** the current file operations. */
   protected FileOperations m_FileOperations;
 
+  /** whether the operation was stopped by the user. */
+  protected boolean m_Stopped;
+
   /**
    * Initializes the members.
    */
@@ -146,6 +154,7 @@ public class FileCommanderPanel
     m_FilesActive    = null;
     m_FilesInactive  = null;
     m_Worker         = null;
+    m_Stopped        = false;
     m_FileOperations = new LocalFileOperations();
     m_Actions        = new ArrayList<>();
     classes          = AbstractFileCommanderAction.getActions();
@@ -248,6 +257,11 @@ public class FileCommanderPanel
       m_PanelButtons.add(m_ButtonAction);
     }
 
+    m_ButtonStop = new JideButton("Stop");
+    m_ButtonStop.setButtonStyle(JideButton.TOOLBOX_STYLE);
+    m_ButtonStop.addActionListener((ActionEvent) -> stopExecution());
+    m_PanelButtons.add(m_ButtonStop);
+
     m_ButtonQuit = new JideButton("Quit");
     m_ButtonQuit.setButtonStyle(JideButton.TOOLBOX_STYLE);
     m_ButtonQuit.addActionListener((ActionEvent) -> quit());
@@ -299,12 +313,13 @@ public class FileCommanderPanel
     else
       activeFiles = new File[0];
 
-    m_ButtonRename.setEnabled(!busy && hasActive && (activeFiles.length == 1));
+    m_ButtonRename.setEnabled(!busy && hasActive && (activeFiles.length == 1) && m_FileOperations.isSupported(Operation.RENAME));
     m_ButtonView.setEnabled(!busy && hasActive && (activeFiles.length == 1));
-    m_ButtonCopy.setEnabled(!busy && hasActive && (activeFiles.length > 0));
-    m_ButtonMove.setEnabled(!busy && hasActive && (activeFiles.length > 0));
-    m_ButtonMkDir.setEnabled(!busy && hasActive);
-    m_ButtonDelete.setEnabled(!busy && hasActive && (activeFiles.length > 0));
+    m_ButtonCopy.setEnabled(!busy && hasActive && (activeFiles.length > 0) && m_FileOperations.isSupported(Operation.COPY));
+    m_ButtonMove.setEnabled(!busy && hasActive && (activeFiles.length > 0) && m_FileOperations.isSupported(Operation.MOVE));
+    m_ButtonMkDir.setEnabled(!busy && hasActive && m_FileOperations.isSupported(Operation.MKDIR));
+    m_ButtonDelete.setEnabled(!busy && hasActive && (activeFiles.length > 0) && m_FileOperations.isSupported(Operation.DELETE));
+    m_ButtonStop.setEnabled(busy);
     m_ButtonQuit.setEnabled(!busy);
     for (AbstractFileCommanderAction action: m_Actions)
       action.update();
@@ -421,6 +436,8 @@ public class FileCommanderPanel
     String		target;
     int			retVal;
 
+    m_Stopped = false;
+
     if (m_FilesActive == null)
       return;
     files = m_FilesActive.getFilePanel().getSelectedFileObjects();
@@ -450,6 +467,8 @@ public class FileCommanderPanel
 	protected Object doInBackground() throws Exception {
 	  String target = m_FilesInactive.getFilePanel().getCurrentDir();
 	  for (int i = 0; i < files.length; i++) {
+	    if (m_Stopped)
+	      break;
 	    FileObject file = files[i];
 	    m_StatusBar.showStatus("Copying " + (i+1) + "/" + files.length + ": " + file);
 	    try {
@@ -467,7 +486,10 @@ public class FileCommanderPanel
 	protected void done() {
 	  super.done();
 	  m_Worker = null;
-	  m_StatusBar.showStatus("");
+	  if (m_Stopped)
+	    m_StatusBar.showStatus("User stopped copying files!");
+	  else
+	    m_StatusBar.showStatus("");
 	  updateButtons();
 	  if (!errors.isEmpty())
 	    GUIHelper.showErrorMessage(FileCommanderPanel.this, errors.toString());
@@ -506,6 +528,8 @@ public class FileCommanderPanel
     int			retVal;
     String		msg;
 
+    m_Stopped = false;
+
     if (m_FilesActive == null)
       return;
     files = m_FilesActive.getFilePanel().getSelectedFileObjects();
@@ -540,6 +564,8 @@ public class FileCommanderPanel
     FileObject[]	files;
     int			retVal;
 
+    m_Stopped = false;
+
     if (m_FilesActive == null)
       return;
     files = m_FilesActive.getFilePanel().getSelectedFileObjects();
@@ -567,6 +593,8 @@ public class FileCommanderPanel
       protected Object doInBackground() throws Exception {
 	String target = m_FilesInactive.getFilePanel().getCurrentDir();
 	for (int i = 0; i < files.length; i++) {
+	  if (m_Stopped)
+	    break;
 	  FileObject file = files[i];
 	  m_StatusBar.showStatus("Moving " + (i+1) + "/" + files.length + ": " + file);
 	  try {
@@ -584,7 +612,10 @@ public class FileCommanderPanel
       protected void done() {
 	super.done();
 	m_Worker = null;
-	m_StatusBar.showStatus("");
+	if (m_Stopped)
+	  m_StatusBar.showStatus("User stopped moving files!");
+	else
+	  m_StatusBar.showStatus("");
 	updateButtons();
 	if (!errors.isEmpty())
 	  GUIHelper.showErrorMessage(FileCommanderPanel.this, errors.toString());
@@ -604,6 +635,8 @@ public class FileCommanderPanel
     String	dir;
     FileObject	dirNew;
     String	msg;
+
+    m_Stopped = false;
 
     if (m_FilesActive == null)
       return;
@@ -628,6 +661,8 @@ public class FileCommanderPanel
     FileObject[]	files;
     int			retVal;
 
+    m_Stopped = false;
+
     if (m_FilesActive == null)
       return;
     files = m_FilesActive.getFilePanel().getSelectedFileObjects();
@@ -650,6 +685,8 @@ public class FileCommanderPanel
       protected Object doInBackground() throws Exception {
 	updateButtons();
 	for (int i = 0; i < files.length; i++) {
+	  if (m_Stopped)
+	    break;
 	  FileObject file = files[i];
 	  m_StatusBar.showStatus("Deleting " + (i+1) + "/" + files.length + ": " + file);
 	  try {
@@ -667,7 +704,10 @@ public class FileCommanderPanel
       protected void done() {
 	super.done();
 	m_Worker = null;
-	m_StatusBar.showStatus("");
+	if (m_Stopped)
+	  m_StatusBar.showStatus("User stopped deleting files!");
+	else
+	  m_StatusBar.showStatus("");
 	updateButtons();
 	if (!errors.isEmpty())
 	  GUIHelper.showErrorMessage(FileCommanderPanel.this, "Failed to delete file(s)!\n" + errors);
@@ -762,5 +802,23 @@ public class FileCommanderPanel
     else {
       m_FileOperations = new LocalFileOperations();
     }
+  }
+
+  /**
+   * Stops the execution.
+   */
+  @Override
+  public void stopExecution() {
+    m_Stopped = true;
+  }
+
+  /**
+   * Whether the execution has been stopped.
+   *
+   * @return		true if stopped
+   */
+  @Override
+  public boolean isStopped() {
+    return m_Stopped;
   }
 }
