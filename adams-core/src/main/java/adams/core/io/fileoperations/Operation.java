@@ -30,5 +30,6 @@ public enum Operation {
   COPY,
   MOVE,
   RENAME,
-  DELETE
+  DELETE,
+  MKDIR
 }

@@ -70,4 +70,12 @@ public interface FileOperations {
    * @return		null if successful, otherwise error message
    */
   public String delete(String file);
+
+  /**
+   * Creates the directory.
+   *
+   * @param dir		the directory to create
+   * @return		null if successful, otherwise error message
+   */
+  public String mkdir(String dir);
 }

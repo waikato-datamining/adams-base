@@ -48,6 +48,7 @@ public class LocalFileOperations
       case MOVE:
       case RENAME:
       case DELETE:
+      case MKDIR:
 	return true;
       default:
 	throw new IllegalStateException("Unhandled operation: " + op);
@@ -112,6 +113,21 @@ public class LocalFileOperations
   public String delete(String file) {
     if (!FileUtils.delete(file))
       return "Failed to delete file: " + file;
+    return null;
+  }
+
+  /**
+   * Creates the directory.
+   *
+   * @param dir		the directory to create
+   * @return		null if successful, otherwise error message
+   */
+  public String mkdir(String dir) {
+    PlaceholderFile	file;
+
+    file = new PlaceholderFile(dir);
+    if (!file.mkdirs())
+      return "Failed to create directory: " + dir;
     return null;
   }
 }

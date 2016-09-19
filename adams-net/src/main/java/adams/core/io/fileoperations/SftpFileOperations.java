@@ -70,6 +70,7 @@ public class SftpFileOperations
       case MOVE:
       case RENAME:
       case DELETE:
+      case MKDIR:
 	return true;
       default:
 	throw new IllegalStateException("Unhandled operation: " + op);
@@ -216,6 +217,35 @@ public class SftpFileOperations
     }
     catch (Exception e) {
       return Utils.handleException(this, "Failed to delete file: " + file, e);
+    }
+    finally {
+      if (channel != null) {
+	channel.disconnect();
+      }
+    }
+
+    return null;
+  }
+
+  /**
+   * Creates the directory.
+   *
+   * @param dir		the directory to create
+   * @return		null if successful, otherwise error message
+   */
+  public String mkdir(String dir) {
+    ChannelSftp 	channel;
+
+    channel = null;
+    try {
+      channel = (ChannelSftp) m_Provider.getSession().openChannel("sftp");
+      if (isLoggingEnabled())
+	getLogger().info("Creating directory " + dir);
+      channel.mkdir(dir);
+      channel.disconnect();
+    }
+    catch (Exception e) {
+      return Utils.handleException(this, "Failed to create directory: " + dir, e);
     }
     finally {
       if (channel != null) {

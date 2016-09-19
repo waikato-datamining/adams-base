@@ -73,6 +73,7 @@ public class FtpFileOperations
       case MOVE:
       case RENAME:
       case DELETE:
+      case MKDIR:
 	return true;
       default:
 	throw new IllegalStateException("Unhandled operation: " + op);
@@ -210,6 +211,22 @@ public class FtpFileOperations
     }
     catch (Exception e) {
       return Utils.handleException(this, "Failed to delete file: " + file, e);
+    }
+    return null;
+  }
+
+  /**
+   * Creates the directory.
+   *
+   * @param dir		the directory to create
+   * @return		null if successful, otherwise error message
+   */
+  public String mkdir(String dir) {
+    try {
+      m_Client.makeDirectory(dir);
+    }
+    catch (Exception e) {
+      return Utils.handleException(this, "Failed to create diretory: " + dir, e);
     }
     return null;
   }

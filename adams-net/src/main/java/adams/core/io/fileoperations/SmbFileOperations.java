@@ -71,6 +71,7 @@ public class SmbFileOperations
       case MOVE:
       case RENAME:
       case DELETE:
+      case MKDIR:
 	return true;
       default:
 	throw new IllegalStateException("Unhandled operation: " + op);
@@ -170,6 +171,26 @@ public class SmbFileOperations
     }
     catch (Exception e) {
       return Utils.handleException(this, "Failed to delete file: " + file, e);
+    }
+
+    return null;
+  }
+
+  /**
+   * Creates the directory.
+   *
+   * @param dir		the directory to create
+   * @return		null if successful, otherwise error message
+   */
+  public String mkdir(String dir) {
+    SmbFile 	smbfile;
+
+    try {
+      smbfile = new SmbFile(dir, m_Provider.getAuthentication());
+      smbfile.mkdirs();
+    }
+    catch (Exception e) {
+      return Utils.handleException(this, "Failed to create directory: " + dir, e);
     }
 
     return null;

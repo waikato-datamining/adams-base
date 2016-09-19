@@ -93,6 +93,7 @@ public class RemoteToRemoteFileOperations
 	return m_Source.isSupported(op) && m_Target.isSupported(op);
       case RENAME:
       case DELETE:
+      case MKDIR:
 	return m_Source.isSupported(op);
       default:
 	throw new IllegalStateException("Unhandled operation: " + op);
@@ -156,5 +157,15 @@ public class RemoteToRemoteFileOperations
    */
   public String delete(String file) {
     return m_Source.delete(file);
+  }
+
+  /**
+   * Creates the directory.
+   *
+   * @param dir		the directory to create
+   * @return		null if successful, otherwise error message
+   */
+  public String mkdir(String dir) {
+    return m_Source.mkdir(dir);
   }
 }
