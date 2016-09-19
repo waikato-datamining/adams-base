@@ -253,9 +253,9 @@ public class FileCommanderDirectoryPanel
    *
    * @param dir		the directory to use
    */
-  public void setDirectory(File dir) {
-    m_Files.setCurrentDir(dir.getAbsolutePath());
-    m_Dir.setCurrentDirectory(dir.getAbsolutePath());
+  public void setDirectory(String dir) {
+    m_Files.setCurrentDir(dir);
+    m_Dir.setCurrentDirectory(dir);
   }
 
   /**
@@ -263,8 +263,8 @@ public class FileCommanderDirectoryPanel
    *
    * @return		the current directory
    */
-  public File getDirectory() {
-    return new File(m_Files.getCurrentDir());
+  public String getDirectory() {
+    return m_Files.getCurrentDir();
   }
 
   /**

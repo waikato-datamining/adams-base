@@ -21,7 +21,6 @@
 
 package adams.gui.menu;
 
-import adams.core.io.PlaceholderDirectory;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.UserMode;
 import adams.gui.core.GUIHelper;
@@ -75,11 +74,11 @@ public class FileCommander
     FileCommanderPanel panel = new FileCommanderPanel();
     createChildFrame(panel, GUIHelper.getDefaultDialogDimension());
     if (m_Parameters.length > 0) {
-      panel.setDirectory(new PlaceholderDirectory(m_Parameters[0]), true);
+      panel.setDirectory(m_Parameters[0], true);
       if (m_Parameters.length > 1)
-        panel.setDirectory(new PlaceholderDirectory(m_Parameters[1]), false);
+        panel.setDirectory(m_Parameters[1], false);
       else
-        panel.setDirectory(new PlaceholderDirectory(m_Parameters[0]), false);
+        panel.setDirectory(m_Parameters[0], false);
     }
   }
 

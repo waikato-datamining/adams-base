@@ -390,7 +390,7 @@ public class FileCommanderPanel
    * @param dir		the directory to use
    * @param left	if true the left panel gets updated
    */
-  public void setDirectory(File dir, boolean left) {
+  public void setDirectory(String dir, boolean left) {
     if (left)
       m_PanelLeft.setDirectory(dir);
     else
@@ -403,7 +403,7 @@ public class FileCommanderPanel
    * @param left	if true the directory of the left panel is retrieved
    * @return		the current directory
    */
-  public File getDirectory(boolean left) {
+  public String getDirectory(boolean left) {
     if (left)
       return m_PanelLeft.getDirectory();
     else
