@@ -126,7 +126,12 @@ public class TempUtils {
 	  }
 	}
       }
-      m_TempDir = dir;
+      try {
+        m_TempDir = new File(dir).getCanonicalPath();
+      }
+      catch (Exception e) {
+        m_TempDir = dir;
+      }
     }
 
     return m_TempDir;
