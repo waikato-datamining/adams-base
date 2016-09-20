@@ -551,9 +551,9 @@ public class FileCommanderPanel
     input = GUIHelper.showInputDialog(this, "Please enter new name", files[0].getName());
     if ((input == null) || input.equals(files[0].getName()))
       return;
-    target = files[0].toString() + File.separator + ".." + File.separator + input;
+    target = m_FilesActive.getDirectory() + File.separator + input;
     try {
-      msg = m_FileOperations.move(files[0].toString(), target);
+      msg = m_FileOperations.rename(files[0].toString(), target);
       if (msg != null)
 	GUIHelper.showErrorMessage(this, "Failed to rename " + files[0] + " to " + target + ":\n" + msg);
     }
