@@ -292,9 +292,12 @@ public class FileCommanderPanel
       m_FilesInactive = m_PanelRight;
     else
       m_FilesInactive = m_PanelLeft;
+
     m_FilesInactive.getFilePanel().clearSelection();
     m_FilesActive.setBorder(BorderFactory.createLineBorder(Color.GRAY, 3));
     m_FilesInactive.setBorder(BorderFactory.createLineBorder(m_FilesActive.getBackground(), 3));
+
+    updateFileOperations();
     updateButtons();
   }
 
@@ -778,14 +781,12 @@ public class FileCommanderPanel
   }
 
   /**
-   * Gets called when a panel's chooser changes.
-   *
-   * @param source	the panel that triggered the event
+   * Updates the file operations object.
    */
-  protected void chooserChanged(FileCommanderDirectoryPanel source) {
+  protected void updateFileOperations() {
     FileOperations			active;
     FileOperations			inactive;
-    RemoteToRemoteFileOperations	r2r;
+    RemoteToRemoteFileOperations r2r;
 
     active   = m_FilesActive.getFileOperations();
     inactive = m_FilesInactive.getFileOperations();
@@ -806,6 +807,15 @@ public class FileCommanderPanel
     else {
       m_FileOperations = new LocalFileOperations();
     }
+  }
+
+  /**
+   * Gets called when a panel's chooser changes.
+   *
+   * @param source	the panel that triggered the event
+   */
+  protected void chooserChanged(FileCommanderDirectoryPanel source) {
+    updateFileOperations();
   }
 
   /**
