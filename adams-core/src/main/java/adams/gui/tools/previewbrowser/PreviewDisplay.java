@@ -28,12 +28,15 @@ import adams.core.logging.LoggingLevel;
 import adams.env.Environment;
 import adams.gui.core.BasePanel;
 import adams.gui.core.ConsolePanel;
+import adams.gui.core.GUIHelper;
+import adams.gui.core.SearchPanel;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -70,6 +73,9 @@ public class PreviewDisplay
   /** the currently selected files. */
   protected File[] m_CurrentFiles;
 
+  /** the last search panel that was encountered. */
+  protected SearchPanel m_LastSearch;
+
   /**
    * Initializes the members.
    */
@@ -103,6 +109,7 @@ public class PreviewDisplay
       if (m_IgnoreContentHandlerChanges)
 	return;
       updatePreferredContentHandler();
+      m_LastSearch = null;
       if (m_CurrentFiles != null)
 	display(m_CurrentFiles, false);
     });
@@ -116,6 +123,16 @@ public class PreviewDisplay
    * @param panel	the view to display
    */
   public void displayView(final JPanel panel) {
+    final SearchPanel		currentSearch;
+
+    // transfer search
+    currentSearch = (SearchPanel) GUIHelper.findFirstComponent(panel, SearchPanel.class, true, true);
+    if ((m_LastSearch != null) && (currentSearch != null)) {
+      currentSearch.setSearchText(m_LastSearch.getSearchText());
+      currentSearch.setRegularExpression(m_LastSearch.isRegularExpression());
+      SwingUtilities.invokeLater(() -> currentSearch.search());
+    }
+
     if (m_PanelView.getComponentCount() > 0) {
       if (m_PanelView.getComponent(0) instanceof CleanUpHandler)
 	((CleanUpHandler) m_PanelView.getComponent(0)).cleanUp();
@@ -123,6 +140,9 @@ public class PreviewDisplay
     m_PanelView.removeAll();
     m_PanelView.add(panel, BorderLayout.CENTER);
     getParent().validate();
+
+    if (currentSearch != null)
+      m_LastSearch = currentSearch;
   }
 
   /**
