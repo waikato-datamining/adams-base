@@ -35,13 +35,18 @@ public abstract class AbstractRemoteFileOperations
   /** the direction. */
   protected RemoteDirection m_Direction;
 
+  /** for local file operations. */
+  protected LocalFileOperations m_LocalOperations;
+
   /**
    * Initializes the members.
    */
   @Override
   protected void initialize() {
     super.initialize();
-    m_Direction = RemoteDirection.LOCAL_TO_REMOTE;
+
+    m_Direction       = RemoteDirection.LOCAL_TO_REMOTE;
+    m_LocalOperations = new LocalFileOperations();
   }
 
   /**
@@ -60,5 +65,113 @@ public abstract class AbstractRemoteFileOperations
    */
   public RemoteDirection getDirection() {
     return m_Direction;
+  }
+
+  /**
+   * Renames a local file.
+   *
+   * @param source	the source file (old)
+   * @param target	the target file (new)
+   * @return		null if successful, otherwise error message
+   */
+  protected String renameLocal(String source, String target) {
+    return m_LocalOperations.rename(source, target);
+  }
+
+  /**
+   * Renames a remote file.
+   *
+   * @param source	the source file (old)
+   * @param target	the target file (new)
+   * @return		null if successful, otherwise error message
+   */
+  protected abstract String renameRemote(String source, String target);
+
+  /**
+   * Renames a file.
+   *
+   * @param source	the source file (old)
+   * @param target	the target file (new)
+   * @return		null if successful, otherwise error message
+   */
+  public String rename(String source, String target) {
+    switch (m_Direction) {
+      case LOCAL_TO_REMOTE:
+        return renameLocal(source, target);
+      case REMOTE_TO_LOCAL:
+        return renameRemote(source, target);
+      default:
+	throw new IllegalStateException("Unhandled direction!");
+    }
+  }
+
+  /**
+   * Deletes a local file.
+   *
+   * @param file	the file to delete
+   * @return		null if successful, otherwise error message
+   */
+  protected String deleteLocal(String file) {
+    return m_LocalOperations.delete(file);
+  }
+
+  /**
+   * Deletes a remote file.
+   *
+   * @param file	the file to delete
+   * @return		null if successful, otherwise error message
+   */
+  protected abstract String deleteRemote(String file);
+
+  /**
+   * Deletes a file.
+   *
+   * @param file	the file to delete
+   * @return		null if successful, otherwise error message
+   */
+  public String delete(String file) {
+    switch (m_Direction) {
+      case LOCAL_TO_REMOTE:
+        return deleteLocal(file);
+      case REMOTE_TO_LOCAL:
+        return deleteRemote(file);
+      default:
+	throw new IllegalStateException("Unhandled direction!");
+    }
+  }
+
+  /**
+   * Creates the local directory.
+   *
+   * @param dir		the directory to create
+   * @return		null if successful, otherwise error message
+   */
+  protected String mkdirLocal(String dir) {
+    return m_LocalOperations.mkdir(dir);
+  }
+
+  /**
+   * Creates the remote directory.
+   *
+   * @param dir		the directory to create
+   * @return		null if successful, otherwise error message
+   */
+  protected abstract String mkdirRemote(String dir);
+
+  /**
+   * Creates the directory.
+   *
+   * @param dir		the directory to create
+   * @return		null if successful, otherwise error message
+   */
+  public String mkdir(String dir) {
+    switch (m_Direction) {
+      case LOCAL_TO_REMOTE:
+        return mkdirLocal(dir);
+      case REMOTE_TO_LOCAL:
+        return mkdirRemote(dir);
+      default:
+	throw new IllegalStateException("Unhandled direction!");
+    }
   }
 }

@@ -183,13 +183,13 @@ public class FtpFileOperations
   }
 
   /**
-   * Renames a (remote) file.
+   * Renames a remote file.
    *
    * @param source	the source file (old)
    * @param target	the target file (new)
    * @return		null if successful, otherwise error message
    */
-  public String rename(String source, String target) {
+  protected String renameRemote(String source, String target) {
     try {
       m_Client.rename(source, target);
     }
@@ -200,12 +200,12 @@ public class FtpFileOperations
   }
 
   /**
-   * Deletes a (remote) file.
+   * Deletes a remote file.
    *
    * @param file	the file to delete
    * @return		null if successful, otherwise error message
    */
-  public String delete(String file) {
+  protected String deleteRemote(String file) {
     try {
       m_Client.deleteFile(file);
     }
@@ -216,12 +216,12 @@ public class FtpFileOperations
   }
 
   /**
-   * Creates the directory.
+   * Creates the remote directory.
    *
    * @param dir		the directory to create
    * @return		null if successful, otherwise error message
    */
-  public String mkdir(String dir) {
+  protected String mkdirRemote(String dir) {
     try {
       m_Client.makeDirectory(dir);
     }

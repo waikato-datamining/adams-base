@@ -136,13 +136,13 @@ public class SmbFileOperations
   }
 
   /**
-   * Renames a (remote) file.
+   * Renames a remote file.
    *
    * @param source	the source file (old)
    * @param target	the target file (new)
    * @return		null if successful, otherwise error message
    */
-  public String rename(String source, String target) {
+  protected String renameRemote(String source, String target) {
     SmbFile	file;
 
     try {
@@ -157,12 +157,12 @@ public class SmbFileOperations
   }
 
   /**
-   * Deletes a (remote) file.
+   * Deletes a remote file.
    *
    * @param file	the file to delete
    * @return		null if successful, otherwise error message
    */
-  public String delete(String file) {
+  protected String deleteRemote(String file) {
     SmbFile 	smbfile;
 
     try {
@@ -177,12 +177,12 @@ public class SmbFileOperations
   }
 
   /**
-   * Creates the directory.
+   * Creates the remote directory.
    *
    * @param dir		the directory to create
    * @return		null if successful, otherwise error message
    */
-  public String mkdir(String dir) {
+  protected String mkdirRemote(String dir) {
     SmbFile 	smbfile;
 
     try {

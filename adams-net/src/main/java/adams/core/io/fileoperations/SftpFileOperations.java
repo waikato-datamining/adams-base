@@ -168,13 +168,13 @@ public class SftpFileOperations
   }
 
   /**
-   * Renames a (remote) file.
+   * Renames a remote file.
    *
    * @param source	the source file (old)
    * @param target	the target file (new)
    * @return		null if successful, otherwise error message
    */
-  public String rename(String source, String target) {
+  protected String renameRemote(String source, String target) {
     ChannelSftp 	channel;
 
     channel = null;
@@ -199,12 +199,12 @@ public class SftpFileOperations
   }
 
   /**
-   * Deletes a (remote) file.
+   * Deletes a remote file.
    *
    * @param file	the file to delete
    * @return		null if successful, otherwise error message
    */
-  public String delete(String file) {
+  protected String deleteRemote(String file) {
     ChannelSftp 	channel;
 
     channel = null;
@@ -228,12 +228,12 @@ public class SftpFileOperations
   }
 
   /**
-   * Creates the directory.
+   * Creates the remote directory.
    *
    * @param dir		the directory to create
    * @return		null if successful, otherwise error message
    */
-  public String mkdir(String dir) {
+  protected String mkdirRemote(String dir) {
     ChannelSftp 	channel;
 
     channel = null;
