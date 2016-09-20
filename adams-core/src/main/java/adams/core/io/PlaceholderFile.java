@@ -852,7 +852,7 @@ public class PlaceholderFile
     result = path;
 
     if (result.indexOf(Placeholders.PLACEHOLDER_START) > -1)
-      result = Placeholders.getSingleton().expand(getPath());
+      result = Placeholders.getSingleton().expand(path);
 
     return result;
   }
