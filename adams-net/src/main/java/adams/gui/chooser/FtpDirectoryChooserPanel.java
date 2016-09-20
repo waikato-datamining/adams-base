@@ -26,6 +26,7 @@ import adams.core.io.lister.DirectoryLister;
 import adams.core.io.lister.FtpDirectoryLister;
 import adams.core.option.OptionUtils;
 import adams.gui.goe.GenericObjectEditorDialog;
+import org.apache.commons.net.ftp.FTPClient;
 
 import java.awt.Dialog.ModalityType;
 
@@ -41,6 +42,9 @@ public class FtpDirectoryChooserPanel
   /** for serialization. */
   private static final long serialVersionUID = 6235369491956122980L;
 
+  /** the current client. */
+  protected FTPClient m_Client;
+
   /**
    * Initializes the panel with no file.
    */
@@ -50,15 +54,49 @@ public class FtpDirectoryChooserPanel
   }
 
   /**
+   * Initializes the members.
+   */
+  @Override
+  protected void initialize() {
+    super.initialize();
+    reset();
+  }
+
+  /**
+   * Resets members.
+   */
+  protected void reset() {
+    m_Client = null;
+  }
+
+  /**
+   * Sets the current value.
+   *
+   * @param value	the value to use, can be null
+   * @return		if successfully set
+   */
+  @Override
+  public boolean setCurrent(FtpRemoteDirectorySetup value) {
+    boolean	result;
+
+    result = super.setCurrent(value);
+    if (result)
+      reset();
+
+    return result;
+  }
+
+  /**
    * Performs the actual choosing of an object.
    *
    * @return		the chosen object or null if none chosen
    */
   protected FtpRemoteDirectorySetup doChoose() {
-    FtpRemoteDirectorySetup current;
+    FtpRemoteDirectorySetup 	currentSetup;
+    FtpRemoteDirectorySetup 	newSetup;
     GenericObjectEditorDialog	dialog;
 
-    current = getCurrent();
+    currentSetup = getCurrent();
     if (getParentDialog() != null)
       dialog = new GenericObjectEditorDialog(getParentDialog(), ModalityType.DOCUMENT_MODAL);
     else
@@ -67,13 +105,16 @@ public class FtpDirectoryChooserPanel
     dialog.setTitle("Remote directory");
     dialog.getGOEEditor().setClassType(FtpRemoteDirectorySetup.class);
     dialog.getGOEEditor().setCanChangeClassInDialog(false);
-    dialog.setCurrent(current);
+    dialog.setCurrent(currentSetup);
     dialog.setLocationRelativeTo(null);
     dialog.setVisible(true);
     if (dialog.getResult() != GenericObjectEditorDialog.APPROVE_OPTION)
       return null;
-    else
-      return (FtpRemoteDirectorySetup) dialog.getCurrent();
+    newSetup = (FtpRemoteDirectorySetup) dialog.getCurrent();
+    if (!newSetup.toCommandLine().equals(currentSetup.toCommandLine()))
+      reset();
+
+    return newSetup;
   }
 
   /**
@@ -134,6 +175,17 @@ public class FtpDirectoryChooserPanel
   }
 
   /**
+   * Returns the client to use.
+   *
+   * @return		the client
+   */
+  protected synchronized FTPClient getClient() {
+    if ((m_Client == null) || !m_Client.isConnected())
+      m_Client = getCurrent().getClient();
+    return m_Client;
+  }
+
+  /**
    * Returns the directory lister.
    *
    * @return		the lister
@@ -144,7 +196,7 @@ public class FtpDirectoryChooserPanel
 
     current = getCurrent();
     result = new FtpDirectoryLister();
-    result.setClient(current.getClient());
+    result.setClient(getClient());
     result.setWatchDir(current.getRemoteDir());
 
     return result;
@@ -160,7 +212,7 @@ public class FtpDirectoryChooserPanel
     FtpFileOperations	result;
 
     result = new FtpFileOperations();
-    result.setClient(getCurrent().getClient());
+    result.setClient(getClient());
 
     return result;
   }
