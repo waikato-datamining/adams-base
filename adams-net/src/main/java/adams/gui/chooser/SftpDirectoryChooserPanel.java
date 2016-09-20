@@ -24,6 +24,7 @@ import adams.core.io.fileoperations.FileOperations;
 import adams.core.io.fileoperations.SftpFileOperations;
 import adams.core.io.lister.DirectoryLister;
 import adams.core.io.lister.SftpDirectoryLister;
+import adams.core.net.SSHSessionProvider;
 import adams.core.option.OptionUtils;
 import adams.gui.goe.GenericObjectEditorDialog;
 
@@ -41,6 +42,9 @@ public class SftpDirectoryChooserPanel
   /** for serialization. */
   private static final long serialVersionUID = 6235369491956122980L;
 
+  /** the session provider. */
+  protected SSHSessionProvider m_Provider;
+
   /**
    * Initializes the panel with no file.
    */
@@ -50,15 +54,49 @@ public class SftpDirectoryChooserPanel
   }
 
   /**
+   * Initializes the members.
+   */
+  @Override
+  protected void initialize() {
+    super.initialize();
+    reset();
+  }
+
+  /**
+   * Resets some members.
+   */
+  protected void reset() {
+    m_Provider = null;
+  }
+
+  /**
+   * Sets the current value.
+   *
+   * @param value	the value to use, can be null
+   * @return		if successfully set
+   */
+  @Override
+  public boolean setCurrent(SftpRemoteDirectorySetup value) {
+    boolean	result;
+
+    result = super.setCurrent(value);
+    if (result)
+      reset();
+
+    return result;
+  }
+
+  /**
    * Performs the actual choosing of an object.
    *
    * @return		the chosen object or null if none chosen
    */
   protected SftpRemoteDirectorySetup doChoose() {
-    SftpRemoteDirectorySetup current;
+    SftpRemoteDirectorySetup 	currentSetup;
+    SftpRemoteDirectorySetup 	newSetup;
     GenericObjectEditorDialog	dialog;
 
-    current = getCurrent();
+    currentSetup = getCurrent();
     if (getParentDialog() != null)
       dialog = new GenericObjectEditorDialog(getParentDialog(), ModalityType.DOCUMENT_MODAL);
     else
@@ -67,13 +105,16 @@ public class SftpDirectoryChooserPanel
     dialog.setTitle("Remote directory");
     dialog.getGOEEditor().setClassType(SftpRemoteDirectorySetup.class);
     dialog.getGOEEditor().setCanChangeClassInDialog(false);
-    dialog.setCurrent(current);
+    dialog.setCurrent(currentSetup);
     dialog.setLocationRelativeTo(null);
     dialog.setVisible(true);
     if (dialog.getResult() != GenericObjectEditorDialog.APPROVE_OPTION)
       return null;
-    else
-      return (SftpRemoteDirectorySetup) dialog.getCurrent();
+    newSetup = (SftpRemoteDirectorySetup) dialog.getCurrent();
+    if (!newSetup.toCommandLine().equals(currentSetup.toCommandLine()))
+      reset();
+
+    return newSetup;
   }
 
   /**
@@ -133,6 +174,12 @@ public class SftpDirectoryChooserPanel
     return "SFTP";
   }
 
+  protected synchronized SSHSessionProvider getProvider() {
+    if ((m_Provider == null) || (m_Provider.getSession() == null))
+      m_Provider = getCurrent();
+    return m_Provider;
+  }
+
   /**
    * Returns the directory lister.
    *
@@ -140,12 +187,10 @@ public class SftpDirectoryChooserPanel
    */
   public DirectoryLister getDirectoryLister() {
     SftpDirectoryLister   	result;
-    SftpRemoteDirectorySetup current;
 
-    current = getCurrent();
     result = new SftpDirectoryLister();
-    result.setSessionProvider(current);
-    result.setWatchDir(current.getRemoteDir());
+    result.setSessionProvider(getProvider());
+    result.setWatchDir(getCurrentDirectory());
 
     return result;
   }
@@ -160,7 +205,7 @@ public class SftpDirectoryChooserPanel
     SftpFileOperations	result;
 
     result = new SftpFileOperations();
-    result.setProvider(getCurrent());
+    result.setProvider(getProvider());
 
     return result;
   }
