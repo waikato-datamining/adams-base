@@ -470,14 +470,15 @@ public class FileCommanderPanel
 	    if (m_Stopped)
 	      break;
 	    FileObject file = files[i];
+	    String targetFile = target + "/" + file.getName();
 	    m_StatusBar.showStatus("Copying " + (i+1) + "/" + files.length + ": " + file);
 	    try {
-	      String msg = m_FileOperations.copy(file.toString(), target);
+	      String msg = m_FileOperations.copy(file.toString(), targetFile);
 	      if (msg != null)
-		errors.add("Failed to copy " + file + " to " + target + ":\n" + msg);
+		errors.add("Failed to copy " + file + " to " + targetFile + ":\n" + msg);
 	    }
 	    catch (Exception e) {
-	      errors.add("Failed to copy " + files[0] + " to " + target + "!", e);
+	      errors.add("Failed to copy " + files[0] + " to " + targetFile + "!", e);
 	    }
 	  }
 	  return null;
@@ -507,13 +508,14 @@ public class FileCommanderPanel
 	return;
       }
       target = m_FilesInactive.getFilePanel().getCurrentDir();
+      String targetFile = target + "/" + input;
       try {
-	String msg = m_FileOperations.copy(files[0].toString(), target);
+	String msg = m_FileOperations.copy(files[0].toString(), targetFile);
 	if (msg != null)
-	  GUIHelper.showErrorMessage(this, "Failed to copy " + files[0] + " to " + target + ":\n" + msg);
+	  GUIHelper.showErrorMessage(this, "Failed to copy " + files[0] + " to " + targetFile + ":\n" + msg);
       }
       catch (Exception e) {
-	GUIHelper.showErrorMessage(this, "Failed to copy " + files[0] + " to " + target + "!", e);
+	GUIHelper.showErrorMessage(this, "Failed to copy " + files[0] + " to " + targetFile + "!", e);
       }
     }
 
