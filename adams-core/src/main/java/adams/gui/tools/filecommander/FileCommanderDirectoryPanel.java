@@ -23,8 +23,13 @@ package adams.gui.tools.filecommander;
 import adams.core.ClassLister;
 import adams.core.base.BaseRegExp;
 import adams.core.io.FileObject;
+import adams.core.io.FileUtils;
+import adams.core.io.LocalFileObject;
 import adams.core.io.PlaceholderFile;
+import adams.core.io.TempUtils;
 import adams.core.io.fileoperations.FileOperations;
+import adams.core.io.fileoperations.RemoteDirection;
+import adams.core.io.fileoperations.RemoteFileOperations;
 import adams.core.io.lister.DirectoryLister;
 import adams.gui.chooser.AbstractChooserPanelWithIOSupport;
 import adams.gui.chooser.DirectoryChooserPanel;
@@ -45,6 +50,9 @@ import javax.swing.event.ChangeListener;
 import java.awt.BorderLayout;
 import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Level;
@@ -245,17 +253,44 @@ public class FileCommanderDirectoryPanel
    * @param file	the file to view, ignored if null
    */
   public void view(FileObject file) {
-    SimplePreviewBrowserDialog dialog;
+    SimplePreviewBrowserDialog 	dialog;
+    File			tmpFile;
+    FileOperations		ops;
+    String			msg;
 
     if (file == null)
       return;
+
+    tmpFile = null;
+    if (!getFilePanel().isLocal()) {
+      tmpFile = TempUtils.createTempFile("fc", "." + FileUtils.getExtension(file.getName()));
+      ops     = getFileOperations();
+      ((RemoteFileOperations) ops).setDirection(RemoteDirection.REMOTE_TO_LOCAL);
+      msg = ops.copy(file.toString(), tmpFile.getAbsolutePath());
+      if (msg != null) {
+	GUIHelper.showErrorMessage(
+	  this, "Failed to download " + file + " to " + tmpFile + " for display:\n" + msg);
+	return;
+      }
+      file = new LocalFileObject(tmpFile);
+    }
 
     if (getParentDialog() != null)
       dialog = new SimplePreviewBrowserDialog(getParentDialog(), ModalityType.MODELESS);
     else
       dialog = new SimplePreviewBrowserDialog(getParentFrame(), false);
     dialog.setDefaultCloseOperation(SimplePreviewBrowserDialog.DISPOSE_ON_CLOSE);
-    // TODO download remote file first
+    // delete tmp file when closing dialog
+    if (tmpFile != null) {
+      final File fFile = tmpFile;
+      dialog.addWindowListener(new WindowAdapter() {
+	@Override
+	public void windowClosing(WindowEvent e) {
+	  super.windowClosing(e);
+	  fFile.delete();
+	}
+      });
+    }
     dialog.open(new PlaceholderFile(file.getFile()));
     dialog.setSize(GUIHelper.getDefaultDialogDimension());
     dialog.setLocationRelativeTo(this);
