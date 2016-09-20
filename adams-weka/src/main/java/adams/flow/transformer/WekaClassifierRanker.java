@@ -703,7 +703,7 @@ public class WekaClassifierRanker
 
     m_OptionManager.add(
       "num-threads", "numThreads",
-      -1, -1, null);
+      0);
   }
 
   /**
@@ -744,7 +744,7 @@ public class WekaClassifierRanker
     if (QuickInfoHelper.hasVariable(this, "folds") || (m_Folds < 2))
       result += QuickInfoHelper.toString(this, "test", m_Test, ", test data: ");
 
-    result += QuickInfoHelper.toString(this, "numThreads", (m_NumThreads < 1 ? "#cores" : m_NumThreads), ", threads: ");
+    result += QuickInfoHelper.toString(this, "numThreads", adams.core.Performance.getNumThreadsQuickInfo(m_NumThreads), ", ");
 
     return result;
   }

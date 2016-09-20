@@ -225,7 +225,7 @@ public class SpreadSheetInfoTest
       tmp13.setBranches(tmp14);
 
       argOption = (AbstractArgumentOption) tmp13.getOptionManager().findByProperty("numThreads");
-      tmp13.setNumThreads((Integer) argOption.valueOf("0"));
+      tmp13.setNumThreads((Integer) argOption.valueOf("1"));
 
       tmp1[4] = tmp13;
       flow.setActors(tmp1);

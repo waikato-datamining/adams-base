@@ -123,7 +123,7 @@ public class WekaRegexToRangeTest
     });
 
     Branch br = new Branch();
-    br.setNumThreads(0);
+    br.setNumThreads(1);
     br.setBranches(new Actor[]{
 	s1, s2
     });

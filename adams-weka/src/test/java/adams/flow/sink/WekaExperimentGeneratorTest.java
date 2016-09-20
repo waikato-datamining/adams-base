@@ -130,7 +130,7 @@ public class WekaExperimentGeneratorTest
     eg_rsop.setOutputFile(new TmpFile("dumpfile_rsop.xml"));
 
     Branch br = new Branch();
-    br.setNumThreads(0);
+    br.setNumThreads(1);
     br.setBranches(new Actor[]{
 	eg_cv,
 	eg_rsr,

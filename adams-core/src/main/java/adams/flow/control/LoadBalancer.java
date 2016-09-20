@@ -20,11 +20,11 @@
 
 package adams.flow.control;
 
+import adams.core.Performance;
 import adams.core.QuickInfoHelper;
 import adams.core.Variables;
 import adams.core.base.BaseAnnotation;
 import adams.core.logging.LoggingLevel;
-import adams.core.management.ProcessUtils;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorExecution;
 import adams.flow.core.ActorHandler;
@@ -447,7 +447,7 @@ public class LoadBalancer
 
     m_OptionManager.add(
 	    "num-threads", "numThreads",
-	    -1, -1, null);
+	    0);
 
     m_OptionManager.add(
 	    "use-local-vars", "useLocalVariables",
@@ -660,18 +660,7 @@ public class LoadBalancer
   public String getQuickInfo() {
     String	result;
 
-    if ((m_NumThreads == 0) || (m_NumThreads == 1)) {
-      result = "sequential";
-    }
-    else {
-      result = "parallel, threads: ";
-      if (m_NumThreads == -1)
-	result += "#cores";
-      else
-	result += m_NumThreads;
-    }
-
-    result  = QuickInfoHelper.toString(this, "numThreads", result);
+    result  = QuickInfoHelper.toString(this, "numThreads", Performance.getNumThreadsQuickInfo(m_NumThreads));
     result += QuickInfoHelper.toString(this, "useLocalVariables", m_UseLocalVariables, "local vars", ", ");
     result += QuickInfoHelper.toString(this, "useLocalStorage", m_UseLocalStorage, "local storage", ", ");
     if (m_UseLocalStorage || QuickInfoHelper.hasVariable(this, "useLocalStorage"))
@@ -886,15 +875,9 @@ public class LoadBalancer
     }
     
     if (result == null) {
-      if (m_NumThreads == -1)
-	m_ActualNumThreads = ProcessUtils.getAvailableProcessors();
-      else if (m_NumThreads > 1)
-	m_ActualNumThreads = m_NumThreads;
-      else
-	m_ActualNumThreads = 1;
-      
-      m_ThreadsSpawned = 0;
-      m_Executor       = new PausableFixedThreadPoolExecutor(m_ActualNumThreads);
+      m_ActualNumThreads = Performance.determineNumThreads(m_NumThreads);
+      m_ThreadsSpawned   = 0;
+      m_Executor         = new PausableFixedThreadPoolExecutor(m_ActualNumThreads);
     }
 
     return result;

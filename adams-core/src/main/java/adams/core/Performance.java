@@ -20,6 +20,7 @@
 
 package adams.core;
 
+import adams.core.management.ProcessUtils;
 import adams.env.Environment;
 import adams.env.PerformanceDefinition;
 
@@ -136,5 +137,64 @@ public class Performance {
     initialize();
 
     return m_Properties.getBoolean("multiProcessingEnabled", true);
+  }
+
+  /**
+   * Detetermines the actual number of threads to use:
+   * <ul>
+   *   <li>&gt; 0: specific number of threads to use</li>
+   *   <li>= 0: use all cores (eg 4 threads on 4 core machine)</li>
+   *   <li>&lt; 0: # of cores + X (eg -1 equals 3 threads on 4 core machine)</li>
+   * </ul>
+   * @param threads	the number of threads
+   * @return		the actual number of threads
+   * @see		#getMaxNumProcessors()
+   * @see		ProcessUtils#getAvailableProcessors()
+   */
+  public static int determineNumThreads(int threads) {
+    int		result;
+    int		max;
+
+    max = getMaxNumProcessors();
+    if (max < 1)
+      max = ProcessUtils.getAvailableProcessors();
+    if (threads > 0)
+      result = Math.min(threads, max);
+    else if (threads == 0)
+      result = max;
+    else
+      result = Math.max(1, max + threads);
+
+    return result;
+  }
+
+  /**
+   * Returns a help string explaining how "numThreads" works, to be used in
+   * the options/tiptext.
+   *
+   * @return		the help string
+   */
+  public static String getNumThreadsHelp() {
+    return
+      "The number of threads to use for parallel execution; "
+	+ "> 0: specific number of cores to use (capped by actual number of cores available, 1 = sequential execution); "
+	+ "= 0: number of cores; "
+	+ "< 0: number of free cores (eg -2 means 2 free cores; minimum of one core is used)";
+  }
+
+  /**
+   * Returns a quick info string, interpreting the number of threads.
+   *
+   * @param numThreads	the number of threads to turn into a quick info string
+   * @return		the quick info string
+   */
+  public static String getNumThreadsQuickInfo(int numThreads) {
+    if (numThreads == 1)
+      return "sequential";
+    if (numThreads == 0)
+      return "parallel, threads: #cores";
+    if (numThreads > 1)
+      return "parallel, threads: " + numThreads + " cores";
+    return "parallel, threads: #cores - " + Math.abs(numThreads);
   }
 }

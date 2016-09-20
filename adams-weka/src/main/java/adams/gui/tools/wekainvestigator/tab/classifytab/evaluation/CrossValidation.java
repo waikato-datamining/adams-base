@@ -20,6 +20,7 @@
 
 package adams.gui.tools.wekainvestigator.tab.classifytab.evaluation;
 
+import adams.core.Performance;
 import adams.core.Properties;
 import adams.core.Utils;
 import adams.core.option.OptionUtils;
@@ -139,10 +140,9 @@ public class CrossValidation
 
     // threads
     m_SpinnerThreads = new JSpinner();
-    ((SpinnerNumberModel) m_SpinnerThreads.getModel()).setMinimum(-1);
     ((SpinnerNumberModel) m_SpinnerThreads.getModel()).setStepSize(1);
     m_SpinnerThreads.setValue(props.getInteger("Classify.NumThreads", -1));
-    m_SpinnerThreads.setToolTipText("The number of threads to use (-1 for all cores)");
+    m_SpinnerThreads.setToolTipText(Performance.getNumThreadsHelp());
     m_SpinnerThreads.addChangeListener((ChangeEvent e) -> update());
     m_PanelParameters.addParameter("Threads", m_SpinnerThreads);
 

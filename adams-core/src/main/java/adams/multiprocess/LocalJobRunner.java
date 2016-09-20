@@ -15,14 +15,13 @@
 
 /*
  * JobRunner.java
- * Copyright (C) 2008-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.multiprocess;
 
 import adams.core.Performance;
 import adams.core.ThreadLimiter;
-import adams.core.management.ProcessUtils;
 import adams.event.JobCompleteEvent;
 import adams.event.JobCompleteListener;
 
@@ -111,13 +110,13 @@ public class LocalJobRunner<T extends Job>
 
     m_OptionManager.add(
       "num-threads", "numThreads",
-      -1, -1, null);
+      -1);
   }
 
   /**
    * Sets the number of threads to use.
    *
-   * @param value 	the number of threads: -1 = # of CPUs/cores
+   * @param value 	the number of threads
    */
   public void setNumThreads(int value) {
     m_NumThreads = value;
@@ -140,7 +139,7 @@ public class LocalJobRunner<T extends Job>
    * 			displaying in the GUI or for listing the options.
    */
   public String numThreadsTipText() {
-    return "The number of threads to use for executing the branches; -1 = number of CPUs/cores; 0 or 1 = sequential execution.";
+    return Performance.getNumThreadsHelp();
   }
 
   /**
@@ -288,11 +287,7 @@ public class LocalJobRunner<T extends Job>
       m_JobCompleteListeners = new HashSet<>();
 
     if (m_Executor == null) {
-      numThreads = m_NumThreads;
-      if (numThreads < 1)
-	numThreads = Performance.getMaxNumProcessors();
-      if ((numThreads < 1) || (numThreads > ProcessUtils.getAvailableProcessors()))
-	numThreads = ProcessUtils.getAvailableProcessors();
+      numThreads = Performance.determineNumThreads(m_NumThreads);
       m_Executor = new PausableFixedThreadPoolExecutor(numThreads);
     }
 

@@ -20,12 +20,12 @@
 
 package adams.multiprocess;
 
+import adams.core.Performance;
 import adams.core.StatusMessageHandler;
 import adams.core.Stoppable;
 import adams.core.ThreadLimiter;
 import adams.core.Utils;
 import adams.core.logging.CustomLoggingLevelObject;
-import adams.core.management.ProcessUtils;
 import adams.core.option.OptionUtils;
 import adams.flow.container.WekaTrainTestSetContainer;
 import adams.flow.standalone.JobRunnerSetup;
@@ -424,22 +424,13 @@ public class WekaCrossValidationExecution
       if (folds == -1)
 	folds = m_Data.numInstances();
 
-      if (m_NumThreads == -1)
-	m_ActualNumThreads = ProcessUtils.getAvailableProcessors();
-      else if (m_NumThreads > 1)
-	m_ActualNumThreads = Math.min(m_NumThreads, folds);
-      else
-	m_ActualNumThreads = 0;
-
-      // force separate Evaluation objects?
-      if ((m_ActualNumThreads == 0) && m_SeparateFolds)
-	m_ActualNumThreads = 1;
+      m_ActualNumThreads = Performance.determineNumThreads(m_NumThreads);
 
       if (!m_DiscardPredictions)
 	indices = CrossValidationHelper.crossValidationIndices(m_Data, folds, new Random(m_Seed));
 
       generator = new CrossValidationFoldGenerator(m_Data, folds, m_Seed, true);
-      if (m_ActualNumThreads == 0) {
+      if ((m_ActualNumThreads == 1) && !m_SeparateFolds) {
 	initOutputBuffer();
 	if (m_Output != null)
 	  m_Output.setHeader(m_Data);

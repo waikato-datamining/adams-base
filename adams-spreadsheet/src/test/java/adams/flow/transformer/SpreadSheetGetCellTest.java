@@ -143,7 +143,7 @@ public class SpreadSheetGetCellTest
     });
 
     Branch br = new Branch();
-    br.setNumThreads(0);
+    br.setNumThreads(1);
     br.setBranches(new Actor[]{
 	seq1,
 	seq2,

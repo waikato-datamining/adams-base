@@ -22,6 +22,7 @@ package adams.opt.genetic;
 
 import adams.core.ClassLister;
 import adams.core.Pausable;
+import adams.core.Performance;
 import adams.core.Randomizable;
 import adams.core.Range;
 import adams.core.ShallowCopySupporter;
@@ -343,7 +344,7 @@ public abstract class AbstractGeneticAlgorithm
 
     m_OptionManager.add(
       "num-threads", "numThreads",
-      -1, -1, null);
+      -1);
 
     m_OptionManager.add(
       "num-chrom", "numChrom",
@@ -384,10 +385,8 @@ public abstract class AbstractGeneticAlgorithm
    * @param value 	the number of threads: -1 = # of CPUs/cores
    */
   public void setNumThreads(int value) {
-    if (getOptionManager().isValid("numThreads", value)) {
-      m_NumThreads = value;
-      reset();
-    }
+    m_NumThreads = value;
+    reset();
   }
 
   /**
@@ -406,7 +405,7 @@ public abstract class AbstractGeneticAlgorithm
    * 			displaying in the GUI or for listing the options.
    */
   public String numThreadsTipText() {
-    return "The number of threads to use for executing the jobs; use -1 for all available cores.";
+    return Performance.getNumThreadsHelp();
   }
 
   /**

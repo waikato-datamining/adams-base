@@ -214,7 +214,7 @@ public class ArrayCombinationsTest
       tmp16.setBranches(tmp17);
 
       argOption = (AbstractArgumentOption) tmp16.getOptionManager().findByProperty("numThreads");
-      tmp16.setNumThreads((Integer) argOption.valueOf("0"));
+      tmp16.setNumThreads((Integer) argOption.valueOf("1"));
 
       tmp1[3] = tmp16;
       flow.setActors(tmp1);

@@ -20,7 +20,7 @@
 
 package weka.filters.supervised.instance;
 
-import adams.core.management.ProcessUtils;
+import adams.core.Performance;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetColumnIndex;
 import adams.flow.container.WekaTrainTestSetContainer;
@@ -426,14 +426,9 @@ public class RemoveOutliers
     int					i;
     LocalJobRunner 			jobRunner;
 
-    if (m_NumThreads == -1)
-      numThreads = ProcessUtils.getAvailableProcessors();
-    else if (m_NumThreads > 1)
-      numThreads = Math.min(m_NumThreads, folds);
-    else
-      numThreads = 0;
+    numThreads = Performance.determineNumThreads(m_NumThreads);
 
-    if (numThreads == 0) {
+    if (numThreads == 1) {
       eval = new Evaluation(data);
       eval.setDiscardPredictions(false);
       eval.crossValidateModel(m_Classifier, data, folds, new Random(m_Seed));
@@ -443,7 +438,7 @@ public class RemoveOutliers
       generator = new CrossValidationFoldGenerator(data, folds, m_Seed, true);
       jobRunner = new LocalJobRunner<WekaCrossValidationJob>();
       jobRunner.setNumThreads(m_NumThreads);
-      list = new JobList<WekaCrossValidationJob>();
+      list = new JobList<>();
       while (generator.hasNext()) {
 	cont = generator.next();
 	job = new WekaCrossValidationJob(

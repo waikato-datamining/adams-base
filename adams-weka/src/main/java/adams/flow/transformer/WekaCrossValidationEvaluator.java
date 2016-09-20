@@ -20,6 +20,7 @@
 
 package adams.flow.transformer;
 
+import adams.core.Performance;
 import adams.core.QuickInfoHelper;
 import adams.core.Randomizable;
 import adams.core.ThreadLimiter;
@@ -185,7 +186,7 @@ public class WekaCrossValidationEvaluator
 
     m_OptionManager.add(
 	    "num-threads", "numThreads",
-	    1, -1, null);
+	    1);
   }
 
   /**
@@ -196,27 +197,12 @@ public class WekaCrossValidationEvaluator
   @Override
   public String getQuickInfo() {
     String	result;
-    String	variable;
 
     result = super.getQuickInfo();
 
     result += QuickInfoHelper.toString(this, "folds", m_Folds, ", folds: ");
     result += QuickInfoHelper.toString(this, "seed", m_Seed, ", seed: ");
-
-    variable = QuickInfoHelper.getVariable(this, "numThreads");
-    if (variable != null) {
-      result += ", threads: " + variable;
-    }
-    else if ((m_NumThreads == 0) || (m_NumThreads == 1)) {
-      result += ", sequential";
-    }
-    else {
-      result += ", parallel/threads: ";
-      if (m_NumThreads == -1)
-	result += "#cores";
-      else
-	result += m_NumThreads;
-    }
+    result += QuickInfoHelper.toString(this, "numThreads", Performance.getNumThreadsQuickInfo(m_NumThreads), ", ");
 
     return result;
   }
@@ -336,7 +322,7 @@ public class WekaCrossValidationEvaluator
    * 			displaying in the GUI or for listing the options.
    */
   public String numThreadsTipText() {
-    return "The number of threads to use for cross-validation -1 = number of CPUs/cores; 0 or 1 = sequential execution.";
+    return Performance.getNumThreadsHelp();
   }
 
   /**

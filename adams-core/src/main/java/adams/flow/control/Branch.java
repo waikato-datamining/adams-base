@@ -20,9 +20,9 @@
 
 package adams.flow.control;
 
+import adams.core.Performance;
 import adams.core.QuickInfoHelper;
 import adams.core.ThreadLimiter;
-import adams.core.management.ProcessUtils;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorExecution;
 import adams.flow.core.ActorHandler;
@@ -181,7 +181,7 @@ public class Branch
 
     m_OptionManager.add(
 	    "num-threads", "numThreads",
-	    -1, -1, null);
+	    0);
   }
 
   /**
@@ -193,18 +193,7 @@ public class Branch
   public String getQuickInfo() {
     String	result;
 
-    if ((m_NumThreads == 0) || (m_NumThreads == 1)) {
-      result = "sequential";
-    }
-    else {
-      result = "parallel, threads: ";
-      if (m_NumThreads == -1)
-	result += "#cores";
-      else
-	result += m_NumThreads;
-    }
-
-    result  = QuickInfoHelper.toString(this, "numThreads", result);
+    result  = QuickInfoHelper.toString(this, "numThreads", Performance.getNumThreadsQuickInfo(m_NumThreads));
     result += QuickInfoHelper.toString(this, "finishBeforeStopping", m_FinishBeforeStopping, "atomic execution", ", ");
 
     return result;
@@ -282,13 +271,8 @@ public class Branch
    * @param value 	the number of threads: -1 = # of CPUs/cores; 0/1 = sequential execution
    */
   public void setNumThreads(int value) {
-    if (value >= -1) {
-      m_NumThreads = value;
-      reset();
-    }
-    else {
-      getLogger().warning("Number of threads must be >= -1, provided: " + value);
-    }
+    m_NumThreads = value;
+    reset();
   }
 
   /**
@@ -307,7 +291,7 @@ public class Branch
    * 			displaying in the GUI or for listing the options.
    */
   public String numThreadsTipText() {
-    return "The number of threads to use for executing the branches; -1 = number of CPUs/cores; 0 or 1 = sequential execution.";
+    return Performance.getNumThreadsHelp();
   }
 
   /**
@@ -350,18 +334,13 @@ public class Branch
     result = super.setUp();
 
     if (result == null) {
-      if (m_NumThreads == -1)
-	m_ActualNumThreads = ProcessUtils.getAvailableProcessors();
-      else if (m_NumThreads > 1)
-	m_ActualNumThreads = Math.min(m_NumThreads, size());
-      else
-	m_ActualNumThreads = 0;
+      m_ActualNumThreads = Performance.determineNumThreads(m_NumThreads);
 
       if (m_ActualNumThreads > 0)
 	m_HasGlobalTransformers = hasGlobalTransformers();
 
       if (m_CollectOutput)
-	m_CollectedOutput = new HashMap<Integer,Token>();
+	m_CollectedOutput = new HashMap<>();
     }
 
     return result;

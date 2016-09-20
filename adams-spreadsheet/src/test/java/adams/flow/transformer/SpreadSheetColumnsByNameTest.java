@@ -169,7 +169,7 @@ public class SpreadSheetColumnsByNameTest
       tmp7.setBranches(tmp8);
 
       argOption = (AbstractArgumentOption) tmp7.getOptionManager().findByProperty("numThreads");
-      tmp7.setNumThreads((Integer) argOption.valueOf("0"));
+      tmp7.setNumThreads((Integer) argOption.valueOf("1"));
 
       tmp1[2] = tmp7;
       flow.setActors(tmp1);
