@@ -83,14 +83,14 @@ public class LogTab
   protected void initGUI() {
     super.initGUI();
 
-    setLayout(new BorderLayout());
+    m_ContentPanel.setLayout(new BorderLayout());
 
     m_TextLog = new BaseTextAreaWithButtons();
     m_TextLog.setTextFont(Fonts.getMonospacedFont());
     m_TextLog.setEditable(false);
     m_TextLog.setLineWrap(true);
     m_TextLog.setWrapStyleWord(true);
-    add(m_TextLog, BorderLayout.CENTER);
+    m_ContentPanel.add(m_TextLog, BorderLayout.CENTER);
 
     m_ButtonClear = new JButton("Clear", GUIHelper.getIcon("new.gif"));
     m_ButtonClear.addActionListener((ActionEvent e) -> m_Owner.clearLog());

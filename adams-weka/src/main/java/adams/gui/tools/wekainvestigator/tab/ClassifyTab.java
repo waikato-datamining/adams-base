@@ -433,8 +433,8 @@ public class ClassifyTab
 
     props = InvestigatorPanel.getProperties();
 
-    setLayout(new BorderLayout());
-    setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+    m_ContentPanel.setLayout(new BorderLayout());
+    m_ContentPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
     try {
       cls = (Classifier) OptionUtils.forAnyCommandLine(
@@ -452,11 +452,11 @@ public class ClassifyTab
     panel = new JPanel(new BorderLayout());
     panel.add(m_PanelGOE, BorderLayout.CENTER);
     panel.setBorder(BorderFactory.createEmptyBorder(5, 0, 10, 0));
-    add(panel, BorderLayout.NORTH);
+    m_ContentPanel.add(panel, BorderLayout.NORTH);
 
     m_SplitPane = new BaseSplitPane(BaseSplitPane.HORIZONTAL_SPLIT);
     m_SplitPane.setOneTouchExpandable(true);
-    add(m_SplitPane, BorderLayout.CENTER);
+    m_ContentPanel.add(m_SplitPane, BorderLayout.CENTER);
     m_PanelLeft = new JPanel(new BorderLayout());
     m_SplitPane.setLeftComponent(m_PanelLeft);
     m_PanelRight = new JPanel(new BorderLayout());
@@ -530,7 +530,7 @@ public class ClassifyTab
 
     // status bar
     m_StatusBar = new BaseStatusBar();
-    add(m_StatusBar, BorderLayout.SOUTH);
+    m_ContentPanel.add(m_StatusBar, BorderLayout.SOUTH);
   }
 
   /**

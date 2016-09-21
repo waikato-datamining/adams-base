@@ -150,7 +150,7 @@ public class InstanceTab
     m_SplitPane = new BaseSplitPane(BaseSplitPane.HORIZONTAL_SPLIT);
     m_SplitPane.setDividerLocation(props.getInteger("Instance.LeftPanelWidth", 200));
     m_SplitPane.setOneTouchExpandable(true);
-    add(m_SplitPane, BorderLayout.CENTER);
+    m_ContentPanel.add(m_SplitPane, BorderLayout.CENTER);
 
     m_PanelLeft = new JPanel(new BorderLayout());
     m_PanelRight = new JPanel(new BorderLayout());

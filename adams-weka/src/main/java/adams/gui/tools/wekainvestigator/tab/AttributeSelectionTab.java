@@ -498,12 +498,12 @@ public class AttributeSelectionTab
 
     props = InvestigatorPanel.getProperties();
 
-    setLayout(new BorderLayout());
-    setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+    m_ContentPanel.setLayout(new BorderLayout());
+    m_ContentPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
     panelTop = new ParameterPanel();
     panelTop.setBorder(BorderFactory.createEmptyBorder(5, 0, 10, 0));
-    add(panelTop, BorderLayout.NORTH);
+    m_ContentPanel.add(panelTop, BorderLayout.NORTH);
 
     try {
       evaluator = (ASEvaluation) OptionUtils.forAnyCommandLine(
@@ -537,7 +537,7 @@ public class AttributeSelectionTab
 
     m_SplitPane = new BaseSplitPane(BaseSplitPane.HORIZONTAL_SPLIT);
     m_SplitPane.setOneTouchExpandable(true);
-    add(m_SplitPane, BorderLayout.CENTER);
+    m_ContentPanel.add(m_SplitPane, BorderLayout.CENTER);
     m_PanelLeft = new JPanel(new BorderLayout());
     m_SplitPane.setLeftComponent(m_PanelLeft);
     m_PanelRight = new JPanel(new BorderLayout());
@@ -611,7 +611,7 @@ public class AttributeSelectionTab
 
     // status bar
     m_StatusBar = new BaseStatusBar();
-    add(m_StatusBar, BorderLayout.SOUTH);
+    m_ContentPanel.add(m_StatusBar, BorderLayout.SOUTH);
   }
 
   /**

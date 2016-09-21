@@ -92,11 +92,11 @@ public abstract class AbstractInvestigatorTabWithDataTable
   protected void initGUI() {
     super.initGUI();
 
-    setLayout(new BorderLayout());
+    m_ContentPanel.setLayout(new BorderLayout());
 
     m_SplitPane = new BaseSplitPane(BaseSplitPane.VERTICAL_SPLIT);
     m_SplitPane.setOneTouchExpandable(true);
-    add(m_SplitPane, BorderLayout.CENTER);
+    m_ContentPanel.add(m_SplitPane, BorderLayout.CENTER);
 
     m_Model = new DataTableModel(new ArrayList<>(), hasReadOnlyTable());
     m_Model.addTableModelListener(this);
