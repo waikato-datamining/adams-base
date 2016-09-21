@@ -190,11 +190,11 @@ public class InstanceTab
     m_PanelParameters.addParameter("Range", m_TextAttributeRange);
 
     m_CheckBoxAntiAliasing = new JCheckBox();
-    m_CheckBoxAntiAliasing.setSelected(true);
+    m_CheckBoxAntiAliasing.setSelected(props.getBoolean("Instance.AntiAliasing", true));
     m_PanelParameters.addParameter("Use anti-aliasing", m_CheckBoxAntiAliasing);
 
     m_CheckBoxMarkers = new JCheckBox();
-    m_CheckBoxMarkers.setSelected(true);
+    m_CheckBoxMarkers.setSelected(props.getBoolean("Instance.Markers", true));
     m_PanelParameters.addParameter("Use makers", m_CheckBoxMarkers);
 
     // IDs

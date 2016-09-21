@@ -5,11 +5,11 @@
 # the tabs to display by default
 # (comma-separated list of classnames)
 General.DefaultTabs=\
-  adams.gui.tools.wekainvestigator.tab.DataTab,\
   adams.gui.tools.wekainvestigator.tab.PreprocessTab,\
   adams.gui.tools.wekainvestigator.tab.ClassifyTab,\
   adams.gui.tools.wekainvestigator.tab.ClusterTab,\
   adams.gui.tools.wekainvestigator.tab.MatrixTab,\
+  adams.gui.tools.wekainvestigator.tab.DataTab,\
   adams.gui.tools.wekainvestigator.tab.InstanceTab
 
 # the default height for the data table for tabs that display one
@@ -155,3 +155,11 @@ AttributeSelection.OutputGenerators=\
 # the width of the left-hand side of the instance panel
 # (integer)
 Instance.LeftPanelWidth=275
+
+# whether to use anti-aliasing in the instance panel
+# (true|false)
+Instance.AntiAliasing=true
+
+# whether to show markers in the instance panel
+# (true|false)
+Instance.Markers=true

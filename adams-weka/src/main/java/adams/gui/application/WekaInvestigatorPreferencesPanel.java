@@ -123,6 +123,11 @@ public class WekaInvestigatorPreferencesPanel
       adams.gui.tools.wekainvestigator.tab.attseltab.output.AbstractOutputGenerator.class);
     setArraySeparator("AttributeSelection.OutputGenerators", " ");
 
+    // instance
+    addPropertyType("Instance.LeftPanelWidth", PropertyType.INTEGER);
+    addPropertyType("Instance.AntiAliasing", PropertyType.BOOLEAN);
+    addPropertyType("Instance.Markers", PropertyType.BOOLEAN);
+
     setPreferences(Environment.getInstance().read(WekaInvestigatorDefinition.KEY));
   }
   
