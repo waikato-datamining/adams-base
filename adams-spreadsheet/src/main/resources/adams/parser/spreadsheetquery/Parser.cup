@@ -589,7 +589,7 @@ cond      ::=   COLUMN:c LT value:a
               | COLUMN:c IS NULL
                 {: 
                   MissingValue rf = new MissingValue();
-                  rf.setAttributeRange(new SpreadSheetColumnRange(SpreadSheetColumnRange.escapeColumnName(c)));
+                  rf.setAttributeRange(new SpreadSheetColumnRange(SpreadSheetColumnRange.escapeName(c)));
                   RESULT = parser.getHelper().applyRowFinder(rf, "is null");
                 :}
               | CELLTYPE LPAREN COLUMN:c RPAREN EQ STRING:type
@@ -663,7 +663,7 @@ cond      ::=   COLUMN:c LT value:a
                   }
                   else if (type.equals("missing")) {
                     MissingValue rf = new MissingValue();
-                    rf.setAttributeRange(new SpreadSheetColumnRange(SpreadSheetColumnRange.escapeColumnName(c)));
+                    rf.setAttributeRange(new SpreadSheetColumnRange(SpreadSheetColumnRange.escapeName(c)));
                     RESULT = parser.getHelper().applyRowFinder(rf, "celltype: " + type);
                   }
                   else {
@@ -717,6 +717,15 @@ agg       ::=   COUNT
                 {: 
                   parser.getHelper().addAggregate(Aggregate.COUNT, null); 
                   parser.getHelper().renameAggregate(Aggregate.COUNT, null, newc); 
+                :}
+              |  COUNT LPAREN COLUMN:c RPAREN
+                {:
+                  parser.getHelper().addAggregate(Aggregate.COUNT, c);
+                :}
+              |  COUNT LPAREN COLUMN:c RPAREN AS COLUMN:newc
+                {:
+                  parser.getHelper().addAggregate(Aggregate.COUNT, c);
+                  parser.getHelper().renameAggregate(Aggregate.COUNT, c, newc);
                 :}
               | MIN LPAREN COLUMN:c RPAREN
                 {: 

@@ -303,7 +303,7 @@ public class SpreadSheetQuery
 	  + "              | agg\n"
 	  + "              ;\n"
 	  + "\n"
-	  + "agg       ::=   COUNT [(*)] [AS COLUMN]\n"
+	  + "agg       ::=   COUNT [(*)|(COLUMN)] [AS COLUMN]\n"
 	  + "              | MIN ( COLUMN ) [AS COLUMN]\n"
 	  + "              | MAX ( COLUMN ) [AS COLUMN]\n"
 	  + "              | RANGE ( COLUMN ) [AS COLUMN] (= MIN - MAX)\n"

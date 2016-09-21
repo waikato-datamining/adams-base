@@ -15,7 +15,7 @@
 
 /**
  * ParserHelper.java
- * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.parser.spreadsheetquery;
 
@@ -269,7 +269,7 @@ public class ParserHelper
     if (!m_Aggregates.containsKey(agg))
       m_Aggregates.put(agg, new ArrayList<String>());
     
-    if (agg != Aggregate.COUNT) {
+    if (col != null) {
       col  = SpreadSheetColumnRange.escapeName(col);
       cols = m_Aggregates.get(agg);
       if (!cols.contains(col))
