@@ -15,10 +15,11 @@
 
 /**
  * AbstractHistoryPanel.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
 
+import adams.core.CleanUpHandler;
 import adams.gui.core.SearchPanel.LayoutType;
 import adams.gui.event.SearchEvent;
 import adams.gui.event.SearchListener;
@@ -46,6 +47,7 @@ import java.util.Enumeration;
 import java.util.EventObject;
 import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.Set;
 
 /**
  * Abstract ancestor for panels that store a history of objects, e.g., results
@@ -623,10 +625,26 @@ public abstract class AbstractNamedHistoryPanel<T>
    * @param update	if true, then {@link #updateEntry(String)} is called
    */
   public void clear(boolean update) {
-    m_Entries.clear();
-    m_Payloads.clear();
+    Set<String> 	keys;
+    Object		obj;
+
+    keys = m_Entries.keySet();
+    for (String key: keys) {
+      obj = m_Entries.remove(key);
+      if (obj instanceof CleanUpHandler)
+	((CleanUpHandler) obj).cleanUp();
+    }
+
+    keys = m_Payloads.keySet();
+    for (String key: keys) {
+      obj = m_Payloads.remove(key);
+      if (obj instanceof CleanUpHandler)
+	((CleanUpHandler) obj).cleanUp();
+    }
+
     m_ListModel.clear();
     m_ListModelFiltered = null;
+
     if (update)
       updateEntry(null);
   }
