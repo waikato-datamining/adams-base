@@ -20,6 +20,7 @@
 
 package adams.gui.tools.wekainvestigator.tab;
 
+import adams.gui.core.JTableHelper;
 import adams.gui.core.SearchPanel;
 import adams.gui.core.SearchPanel.LayoutType;
 import adams.gui.event.SearchEvent;
@@ -126,7 +127,7 @@ public class DataTab
 	m_SplitPane.setDividerLocation(m_DefaultDataTableHeight);
 	m_SplitPane.setBottomComponentHidden(false);
       }
-      table.setOptimalColumnWidth();
+      JTableHelper.setOptimalHeaderWidth(table);
     }
     else {
       m_PanelData.removeAll();
