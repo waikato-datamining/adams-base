@@ -10,7 +10,7 @@ General.DefaultTabs=\
   adams.gui.tools.wekainvestigator.tab.ClassifyTab,\
   adams.gui.tools.wekainvestigator.tab.ClusterTab,\
   adams.gui.tools.wekainvestigator.tab.MatrixTab,\
-  adams.gui.tools.wekainvestigator.tab.LogTab
+  adams.gui.tools.wekainvestigator.tab.InstanceTab
 
 # the default height for the data table for tabs that display one
 # (integer)
@@ -151,3 +151,7 @@ AttributeSelection.Seed=1
 AttributeSelection.OutputGenerators=\
   adams.gui.tools.wekainvestigator.tab.attseltab.output.TextStatistics \
   adams.gui.tools.wekainvestigator.tab.attseltab.output.ReducedData
+
+# the width of the left-hand side of the instance panel
+# (integer)
+Instance.LeftPanelWidth=275
