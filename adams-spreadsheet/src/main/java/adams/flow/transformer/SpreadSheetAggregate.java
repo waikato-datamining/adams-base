@@ -15,7 +15,7 @@
 
 /**
  * SpreadSheetAggregate.java
- * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
 
@@ -41,7 +41,8 @@ import java.util.List;
  * All numeric columns in the specified aggregrate range (excluding the key columns) get aggregated. For each of the specified aggregates a new column is generated.<br>
  * If no key column(s) provided, the complete spreadsheet is used for aggregation.<br>
  * Missing cells get ignored.<br>
- * Note: A single non-numeric cell make a column a non-numeric one!
+ * COUNT doesn't need any numeric columns.<br>
+ * Note: A single non-numeric cell makes a column a non-numeric one!
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -169,7 +170,8 @@ public class SpreadSheetAggregate
         + "new column is generated.\n"
         + "If no key column(s) provided, the complete spreadsheet is used for aggregation.\n"
         + "Missing cells get ignored.\n"
-	+ "Note: A single non-numeric cell make a column a non-numeric one!";
+	+ "COUNT doesn't need any numeric columns.\n"
+	+ "Note: A single non-numeric cell makes a column a non-numeric one!";
   }
 
   /**
@@ -314,7 +316,7 @@ public class SpreadSheetAggregate
     Number			max;
     Number			min;
     
-    result = new HashMap<Aggregate,Number>();
+    result = new HashMap<>();
     for (Aggregate agg: m_Aggregates)
       result.put(agg, Double.NaN);
     list = new ArrayList<>();
@@ -399,10 +401,12 @@ public class SpreadSheetAggregate
     Row				row;
     Row				rowNew;
     HashMap<Aggregate,Number>	aggs;
+    boolean			onlyCount;
     
     result     = null;
     input      = (SpreadSheet) m_InputToken.getPayload();
     aggregated = null;
+    onlyCount  = (m_Aggregates.length == 1) && (m_Aggregates[0] == Aggregate.COUNT) && m_AggregateColumns.isEmpty();
     
     // columns to use as key
     if (!m_KeyColumns.isEmpty()) {
@@ -441,14 +445,18 @@ public class SpreadSheetAggregate
       // header
       row = aggregated.getHeaderRow();
       for (int index : keys) {
-	row.addCell("" + index).setContent(
+	row.addCell("" + index).setContentAsString(
 	  input.getHeaderRow().getCell(index).getContent());
       }
       for (int index : agg) {
 	for (Aggregate a : m_Aggregates) {
-	  row.addCell("" + index + "-" + a).setContent(
+	  row.addCell("" + index + "-" + a).setContentAsString(
 	    input.getHeaderRow().getCell(index).getContent() + "-" + a);
 	}
+      }
+      if (onlyCount) {
+	row.addCell(Aggregate.COUNT.toString()).setContentAsString(
+	  Aggregate.COUNT.toString());
       }
 
       // data
@@ -478,6 +486,8 @@ public class SpreadSheetAggregate
 		  rowNew.addCell("" + index + "-" + a).setContent(aggs.get(a).doubleValue());
 	      }
 	    }
+	    if (onlyCount)
+	      rowNew.addCell(Aggregate.COUNT.toString()).setContent(subset.size());
 	  }
 	}
 	else {
@@ -502,6 +512,8 @@ public class SpreadSheetAggregate
 	      else
 		rowNew.addCell("" + index + "-" + a).setContent(aggs.get(a).doubleValue());
 	    }
+	    if (onlyCount)
+	      rowNew.addCell(Aggregate.COUNT.toString()).setContent(input.getRowCount());
 	  }
 	}
       }

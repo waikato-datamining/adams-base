@@ -143,16 +143,16 @@ public class ParserHelper
     m_Delete            = false;
     m_Update            = false;
     m_Aggregate         = false;
-    m_Columns           = new ArrayList<String>();
-    m_RenameColumns     = new HashMap<String,String>();
-    m_UpdateColumns     = new HashMap<String,Object>();
-    m_SortColumns       = new ArrayList<String>();
-    m_SortAsc           = new ArrayList<Boolean>();
-    m_RowFinders        = new ArrayList<RowFinder>();
+    m_Columns           = new ArrayList<>();
+    m_RenameColumns     = new HashMap<>();
+    m_UpdateColumns     = new HashMap<>();
+    m_SortColumns       = new ArrayList<>();
+    m_SortAsc           = new ArrayList<>();
+    m_RowFinders        = new ArrayList<>();
     m_Subsample         = null;
-    m_Aggregates        = new HashMap<Aggregate,List<String>>();
-    m_RenamedAggregates = new HashMap<String,String>();
-    m_GroupByColumns    = new ArrayList<String>();
+    m_Aggregates        = new HashMap<>();
+    m_RenamedAggregates = new HashMap<>();
+    m_GroupByColumns    = new ArrayList<>();
     m_SubProcess        = null;
     m_Rows              = null;
     m_LimitOffset       = 0;
@@ -267,7 +267,7 @@ public class ParserHelper
     List<String>	cols;
     
     if (!m_Aggregates.containsKey(agg))
-      m_Aggregates.put(agg, new ArrayList<String>());
+      m_Aggregates.put(agg, new ArrayList<>());
     
     if (col != null) {
       col  = SpreadSheetColumnRange.escapeName(col);
@@ -520,7 +520,7 @@ public class ParserHelper
       if (m_RenameColumns.size() > 0) {
 	Convert conv = new Convert();
 	MultiConversion multi = new MultiConversion();
-	List<Conversion> list = new ArrayList<Conversion>();
+	List<Conversion> list = new ArrayList<>();
 	for (String col: m_RenameColumns.keySet()) {
 	  RenameSpreadSheetColumn ren = new RenameSpreadSheetColumn();
 	  ren.setNoCopy(true);
@@ -580,10 +580,10 @@ public class ParserHelper
     else if (m_Aggregate) {
       sub.add(rowFilter);
       // create aggregate column range
-      HashSet<String> cols = new HashSet<String>();
+      HashSet<String> cols = new HashSet<>();
       for (Aggregate a: m_Aggregates.keySet())
 	cols.addAll(m_Aggregates.get(a));
-      List<String> all = new ArrayList<String>(cols);
+      List<String> all = new ArrayList<>(cols);
       Collections.sort(all);
       SpreadSheetColumnRange aggRange = new SpreadSheetColumnRange();
       aggRange.setRange(Utils.flatten(all, ","));
@@ -592,7 +592,7 @@ public class ParserHelper
       if (m_GroupByColumns.size() > 0)
 	keyRange.setRange(Utils.flatten(m_GroupByColumns, ","));
       // aggregates
-      List<Aggregate> aggs = new ArrayList<Aggregate>(m_Aggregates.keySet());
+      List<Aggregate> aggs = new ArrayList<>(m_Aggregates.keySet());
       Collections.sort(aggs);
       if (aggs.contains(Aggregate.COUNT)) {
 	aggs.remove(Aggregate.COUNT);
@@ -606,33 +606,35 @@ public class ParserHelper
       sub.add(agg);
       // delete columns
       List<String> remove;
-      for (Aggregate a: m_Aggregates.keySet()) {
-	if (a == Aggregate.COUNT) {
-	  remove = new ArrayList<String>(all);
-	  remove.remove(0);
-	  if (remove.size() > 0) {
-	    SpreadSheetColumnRange remRange = new SpreadSheetColumnRange();
-	    remRange.setRange(Utils.flatten(remove, ","));
-	    SpreadSheetRemoveColumn remCol = new SpreadSheetRemoveColumn();
-	    remCol.setPosition(remRange);
-	    sub.add(remCol);
+      if (!all.isEmpty()) {
+	for (Aggregate a : m_Aggregates.keySet()) {
+	  if (a == Aggregate.COUNT) {
+	    remove = new ArrayList<>(all);
+	    remove.remove(0);
+	    if (remove.size() > 0) {
+	      SpreadSheetColumnRange remRange = new SpreadSheetColumnRange();
+	      remRange.setRange(Utils.flatten(remove, ","));
+	      SpreadSheetRemoveColumn remCol = new SpreadSheetRemoveColumn();
+	      remCol.setPosition(remRange);
+	      sub.add(remCol);
+	    }
+	    Convert conv = new Convert();
+	    RenameSpreadSheetColumn ren = new RenameSpreadSheetColumn();
+	    ren.setColumn(new SpreadSheetColumnIndex("" + (m_GroupByColumns.size() + 1)));
+	    ren.setNewName(Aggregate.COUNT.toString());
+	    conv.setConversion(ren);
+	    sub.add(conv);
 	  }
-	  Convert conv = new Convert();
-	  RenameSpreadSheetColumn ren = new RenameSpreadSheetColumn();
-	  ren.setColumn(new SpreadSheetColumnIndex("" + (m_GroupByColumns.size() + 1)));
-	  ren.setNewName(Aggregate.COUNT.toString());
-	  conv.setConversion(ren);
-	  sub.add(conv);
-	}
-	else {
-	  remove = new ArrayList<String>(all);
-	  remove.removeAll(m_Aggregates.get(a));
-	  if (remove.size() > 0) {
-	    SpreadSheetColumnRange remRange = new SpreadSheetColumnRange();
-	    remRange.setRange(Utils.flatten(remove, ","));
-	    SpreadSheetRemoveColumn remCol = new SpreadSheetRemoveColumn();
-	    remCol.setPosition(remRange);
-	    sub.add(remCol);
+	  else {
+	    remove = new ArrayList<>(all);
+	    remove.removeAll(m_Aggregates.get(a));
+	    if (remove.size() > 0) {
+	      SpreadSheetColumnRange remRange = new SpreadSheetColumnRange();
+	      remRange.setRange(Utils.flatten(remove, ","));
+	      SpreadSheetRemoveColumn remCol = new SpreadSheetRemoveColumn();
+	      remCol.setPosition(remRange);
+	      sub.add(remCol);
+	    }
 	  }
 	}
       }
@@ -640,7 +642,7 @@ public class ParserHelper
       if (m_RenamedAggregates.size() > 0) {
 	Convert conv = new Convert();
 	MultiConversion multi = new MultiConversion();
-	List<Conversion> list = new ArrayList<Conversion>();
+	List<Conversion> list = new ArrayList<>();
 	for (String col: m_RenamedAggregates.keySet()) {
 	  RenameSpreadSheetColumn ren = new RenameSpreadSheetColumn();
 	  ren.setNoCopy(true);
