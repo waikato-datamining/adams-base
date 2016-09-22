@@ -15,7 +15,7 @@
 
 /*
  * CircleHitDetector.java
- * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.sequence;
@@ -96,24 +96,30 @@ public class CircleHitDetector
     Vector<XYSequencePoint>	result;
     AxisPanel			axisBottom;
     AxisPanel			axisLeft;
-    int				index;
+    int[]			indices;
     List<XYSequencePoint>	points;
     int				diameter;
+    double			wobble;
     boolean			logging;
 
     if (m_Owner == null)
       return null;
 
-    result     = new Vector<XYSequencePoint>();
+    result     = new Vector<>();
     axisBottom = m_Owner.getPlot().getAxis(Axis.BOTTOM);
     axisLeft   = m_Owner.getPlot().getAxis(Axis.LEFT);
     y          = axisLeft.posToValue(e.getY());
     x          = axisBottom.posToValue(e.getX());
-    if (m_Owner instanceof DiameterBasedPaintlet)
-      diameter = ((DiameterBasedPaintlet) m_Owner).getDiameter();
-    else
-      diameter = 1;
     logging    = isLoggingEnabled();
+    diameter   = 1;
+    if (m_Owner instanceof DiameterBasedPaintlet) {
+      diameter = ((DiameterBasedPaintlet) m_Owner).getDiameter();
+    }
+    else if (m_Owner instanceof MetaXYSequencePaintlet) {
+      if (((MetaXYSequencePaintlet) m_Owner).getPaintlet() instanceof DiameterBasedPaintlet)
+        diameter = ((DiameterBasedPaintlet) ((MetaXYSequencePaintlet) m_Owner).getPaintlet()).getDiameter();
+    }
+    wobble = Math.abs(axisBottom.posToValue(0) - axisBottom.posToValue(diameter));
 
     for (i = 0; i < m_Owner.getSequencePanel().getContainerManager().count(); i++) {
       if (!m_Owner.getSequencePanel().getContainerManager().get(i).isVisible())
@@ -126,28 +132,28 @@ public class CircleHitDetector
       if (logging)
 	getLogger().info("\n" + s.getID() + ":");
 
-      index = XYSequenceUtils.findClosestX(points, x);
-      if (index == -1)
-	continue;
-      sp = points.get(index);
+      indices = XYSequenceUtils.findClosestXs(points, x, wobble);
+      for (int index: indices) {
+	sp = points.get(index);
 
-      diffX     = sp.getX() - x;
-      diffPixel = Math.abs(axisBottom.valueToPos(diffX) - axisBottom.valueToPos(0));
-      if (logging)
-	getLogger().info("diff x=" + diffPixel);
-      if (diffPixel > m_MinimumPixelDifference + (diameter / 2))
-	continue;
-      diffY     = sp.getY() - y;
-      diffPixel = Math.abs(axisLeft.valueToPos(diffY) - axisLeft.valueToPos(0));
-      if (logging)
-	getLogger().info("diff y=" + diffPixel);
-      if (diffPixel > m_MinimumPixelDifference + (diameter / 2))
-	continue;
+	diffX = sp.getX() - x;
+	diffPixel = Math.abs(axisBottom.valueToPos(diffX) - axisBottom.valueToPos(0));
+	if (logging)
+	  getLogger().info("diff x=" + diffPixel);
+	if (diffPixel > m_MinimumPixelDifference + (diameter / 2))
+	  continue;
+	diffY = sp.getY() - y;
+	diffPixel = Math.abs(axisLeft.valueToPos(diffY) - axisLeft.valueToPos(0));
+	if (logging)
+	  getLogger().info("diff y=" + diffPixel);
+	if (diffPixel > m_MinimumPixelDifference + (diameter / 2))
+	  continue;
 
-      // add hit
-      if (logging)
-	getLogger().info("hit!");
-      result.add(sp);
+	// add hit
+	if (logging)
+	  getLogger().info("hit!");
+	result.add(sp);
+      }
     }
 
     if (result.size() > 0)
