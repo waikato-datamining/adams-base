@@ -335,6 +335,9 @@ public class InstanceTab
     datasets = generateDatasetList();
     index    = indexOfDataset((String) m_ComboBoxDatasets.getSelectedItem());
     if (hasDataChanged(datasets, m_ModelDatasets)) {
+      m_ModelIDs.clear();
+      m_ModelAttributes.removeAllElements();
+      m_PanelInstance.getSequenceManager().clear();
       m_ModelDatasets = new DefaultComboBoxModel<>(datasets.toArray(new String[datasets.size()]));
       m_ComboBoxDatasets.setModel(m_ModelDatasets);
       if ((index == -1) && (m_ModelDatasets.getSize() > 0))
@@ -355,7 +358,10 @@ public class InstanceTab
     Instances		data;
     int			i;
 
+    m_ModelAttributes.removeAllElements();
     if (m_ComboBoxDatasets.getSelectedIndex() == -1)
+      return;
+    if (m_ComboBoxDatasets.getSelectedIndex() > getData().size() - 1)
       return;
 
     oldID = (String) m_ComboBoxID.getSelectedItem();
@@ -385,7 +391,10 @@ public class InstanceTab
     int			i;
     weka.core.Instance	inst;
 
+    m_ModelIDs.clear();
     if (m_ComboBoxDatasets.getSelectedIndex() == -1)
+      return;
+    if (m_ComboBoxDatasets.getSelectedIndex() > getData().size() - 1)
       return;
 
     data    = getData().get(m_ComboBoxDatasets.getSelectedIndex()).getData();
