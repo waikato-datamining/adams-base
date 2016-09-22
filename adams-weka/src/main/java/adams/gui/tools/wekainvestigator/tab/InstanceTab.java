@@ -485,13 +485,19 @@ public class InstanceTab
       winst = data.instance(i);
 
       // ID selected?
-      if ((indexID > -1) && (ids != null)) {
-	if (numericID)
-	  id = winst.value(indexID);
-	else
-	  id = winst.stringValue(indexID);
-	if (!ids.contains(id))
-	  continue;
+      if (ids != null) {
+	if (indexID > -1) {
+	  if (numericID)
+	    id = winst.value(indexID);
+	  else
+	    id = winst.stringValue(indexID);
+	  if (!ids.contains(id))
+	    continue;
+	}
+	else {
+	  if (!ids.contains(i+1))
+	    continue;
+	}
       }
 
       ainst = new Instance();
