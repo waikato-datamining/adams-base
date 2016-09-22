@@ -39,7 +39,7 @@ public class CrossValidationHelper {
 
   /**
    * Returns the indices from the original dataset for tracing the predictions
-   * back to the original dataset.
+   * back to the original dataset (stratified).
    *
    * @param data	the original data
    * @param folds	the number of folds
@@ -47,6 +47,20 @@ public class CrossValidationHelper {
    * @return		the indices
    */
   public static int[] crossValidationIndices(Instances data, int folds, Random random) {
+    return crossValidationIndices(data, folds, random, true);
+  }
+
+  /**
+   * Returns the indices from the original dataset for tracing the predictions
+   * back to the original dataset.
+   *
+   * @param data	the original data
+   * @param folds	the number of folds
+   * @param random	the random number generator
+   * @param stratify	whether to stratify
+   * @return		the indices
+   */
+  public static int[] crossValidationIndices(Instances data, int folds, Random random, boolean stratify) {
     TIntArrayList 		result;
     ArrayList<Attribute>	atts;
     Instances			dataWithIndices;
@@ -76,7 +90,7 @@ public class CrossValidationHelper {
     // simulate cross-validation and record indices
     dataWithIndices = new Instances(dataWithIndices);
     dataWithIndices.randomize(random);
-    if (dataWithIndices.classAttribute().isNominal()) {
+    if (stratify && dataWithIndices.classAttribute().isNominal()) {
       dataWithIndices.stratify(folds);
     }
     for (i = 0; i < folds; i++) {
