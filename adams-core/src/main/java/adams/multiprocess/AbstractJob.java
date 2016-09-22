@@ -15,7 +15,7 @@
 
 /*
  * AbstractJob.java
- * Copyright (C) 2008-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2016 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -185,8 +185,8 @@ public abstract class AbstractJob
       try {
 	process();
       }
-      catch (Exception e) {
-	m_ExecutionError = "'process' failed with exception: " + Utils.throwableToString(e);
+      catch (Throwable t) {
+	m_ExecutionError = "'process' failed with exception: " + Utils.throwableToString(t);
 	success          = false;
       }
     }
