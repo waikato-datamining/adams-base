@@ -43,8 +43,14 @@ public class WekaTrainTestSetContainer
   /** the identifier for the training data. */
   public final static String VALUE_TRAIN = "Train";
 
+  /** the identifier for the original indices (train). */
+  public final static String VALUE_TRAIN_ORIGINALINDICES = "Train original indices";
+
   /** the identifier for the test data. */
   public final static String VALUE_TEST = "Test";
+
+  /** the identifier for the original indices (test). */
+  public final static String VALUE_TEST_ORIGINALINDICES = "Test original indices";
 
   /** the identifier for the random seed. */
   public final static String VALUE_SEED = "Seed";
@@ -95,6 +101,19 @@ public class WekaTrainTestSetContainer
    * @param foldCount	the fold count
    */
   public WekaTrainTestSetContainer(Instances train, Instances test, Long seed, Integer foldNumber, Integer foldCount) {
+    this(train, test, seed, foldNumber, foldCount, null, null);
+  }
+
+  /**
+   * Initializes the container.
+   *
+   * @param train	the training set
+   * @param test	the test data
+   * @param seed	the seed value, can be null
+   * @param foldNumber	the fold number
+   * @param foldCount	the fold count
+   */
+  public WekaTrainTestSetContainer(Instances train, Instances test, Long seed, Integer foldNumber, Integer foldCount, int[] trainOriginal, int[] testOriginal) {
     super();
 
     store(VALUE_TRAIN, train);
@@ -102,6 +121,8 @@ public class WekaTrainTestSetContainer
     store(VALUE_SEED, seed);
     store(VALUE_FOLD_NUMBER, foldNumber);
     store(VALUE_FOLD_COUNT, foldCount);
+    store(VALUE_TRAIN_ORIGINALINDICES, trainOriginal);
+    store(VALUE_TEST_ORIGINALINDICES, testOriginal);
   }
 
   /**
@@ -115,6 +136,8 @@ public class WekaTrainTestSetContainer
     addHelp(VALUE_SEED, "seed value; " + Long.class.getName());
     addHelp(VALUE_FOLD_NUMBER, "current fold (1-based); " + Integer.class.getName());
     addHelp(VALUE_FOLD_COUNT, "total number of folds; " + Integer.class.getName());
+    addHelp(VALUE_TRAIN_ORIGINALINDICES, "original indices (0-based, train); array of " + Integer.TYPE.getName());
+    addHelp(VALUE_TEST_ORIGINALINDICES, "original indices (0-based, test); array of " + Integer.TYPE.getName());
   }
 
   /**
@@ -126,13 +149,15 @@ public class WekaTrainTestSetContainer
   public Iterator<String> names() {
     List<String>	result;
 
-    result = new ArrayList<String>();
+    result = new ArrayList<>();
 
     result.add(VALUE_TRAIN);
     result.add(VALUE_TEST);
     result.add(VALUE_SEED);
     result.add(VALUE_FOLD_NUMBER);
     result.add(VALUE_FOLD_COUNT);
+    result.add(VALUE_TRAIN_ORIGINALINDICES);
+    result.add(VALUE_TEST_ORIGINALINDICES);
 
     return result.iterator();
   }
