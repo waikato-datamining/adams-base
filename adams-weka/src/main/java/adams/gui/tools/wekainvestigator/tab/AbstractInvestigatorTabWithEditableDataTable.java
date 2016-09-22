@@ -169,7 +169,7 @@ public abstract class AbstractInvestigatorTabWithEditableDataTable
   public void dataChanged(WekaInvestigatorDataEvent e) {
     super.dataChanged(e);
     for (DataContainer cont: getData())
-    cont.getUndo().addUndoListener(this);
+      cont.getUndo().addUndoListener(this);
     updateButtons();
   }
 
@@ -196,10 +196,12 @@ public abstract class AbstractInvestigatorTabWithEditableDataTable
     rows = m_Table.getSelectedRows();
     enabled = false;
     for (int row: rows) {
-      DataContainer cont = getData().get(row);
-      if (cont.isUndoSupported() && cont.getUndo().canUndo()) {
-	enabled = true;
-	break;
+      if (row < getData().size()) {
+        DataContainer cont = getData().get(row);
+        if (cont.isUndoSupported() && cont.getUndo().canUndo()) {
+          enabled = true;
+          break;
+        }
       }
     }
     m_ButtonUndo.setEnabled(enabled);
