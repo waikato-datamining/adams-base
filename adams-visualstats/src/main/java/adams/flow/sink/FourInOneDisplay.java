@@ -31,6 +31,9 @@ import adams.gui.visualization.stats.fourinone.VersusOrderOptions;
 import adams.gui.visualization.stats.histogram.HistogramOptions;
 import adams.gui.visualization.stats.probabilityplot.NormalPlotOptions;
 
+import javax.swing.JComponent;
+import java.awt.BorderLayout;
+
 /**
  <!-- globalinfo-start -->
  * Actor for displaying a four-in-one plot. Contains a histogram, a normal probability plot, vs fit plot and vs order plot
@@ -134,7 +137,8 @@ import adams.gui.visualization.stats.probabilityplot.NormalPlotOptions;
  * @version $Revision$
  */
 public class FourInOneDisplay
-  extends AbstractGraphicalDisplay{
+  extends AbstractGraphicalDisplay
+  implements DisplayPanelProvider {
 
   /** for serialization */
   private static final long serialVersionUID = -5847391335658516849L;
@@ -381,5 +385,62 @@ public class FourInOneDisplay
   @Override
   public String globalInfo() {
     return "Actor for displaying a four-in-one plot. Contains a histogram, a normal probability plot, vs fit plot and vs order plot";
+  }
+
+   /**
+   * Creates a new display panel for the token.
+   *
+   * @param token	the token to display in a new panel, can be null
+   * @return		the generated panel
+   */
+ @Override
+  public DisplayPanel createDisplayPanel(Token token) {
+    AbstractDisplayPanel	result;
+
+    result = new AbstractComponentDisplayPanel("4-in-1 plot") {
+      private static final long serialVersionUID = 4360182045245637304L;
+      protected FourInOne m_Plot;
+      @Override
+      protected void initGUI() {
+	super.initGUI();
+	m_Plot = new FourInOne();
+	add(m_Plot, BorderLayout.CENTER);
+      }
+      @Override
+      public void display(Token token) {
+	m_Plot.setData((SpreadSheet) token.getPayload());
+	m_Plot.setAct(new Index(m_Act));
+	m_Plot.setPred(new Index(m_pred));
+	m_Plot.setOptions(m_HistogramOptions, m_VersusFitOptions, m_VersusOrderOptions, m_NormalPlotOptions);
+	m_Plot.reset();
+      }
+      @Override
+      public void clearPanel() {
+	SpreadSheet temp = new DefaultSpreadSheet();
+	m_Plot.setData(temp);
+     }
+      @Override
+      public JComponent supplyComponent() {
+	return m_Plot;
+      }
+      @Override
+      public void cleanUp() {
+      }
+    };
+
+    if (token != null)
+      result.display(token);
+
+    return result;
+  }
+
+  /**
+   * Returns whether the created display panel requires a scroll pane or not.
+   *
+   * @return		true if the display panel requires a scroll pane
+   */
+  @Override
+  public boolean displayPanelRequiresScrollPane() {
+    return false;
   }
 }

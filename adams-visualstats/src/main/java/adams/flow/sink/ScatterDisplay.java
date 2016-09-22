@@ -31,6 +31,9 @@ import adams.gui.visualization.stats.paintlet.ScatterPaintletCircle;
 import adams.gui.visualization.stats.scatterplot.AbstractScatterPlotOverlay;
 import adams.gui.visualization.stats.scatterplot.ScatterPlot;
 
+import javax.swing.JComponent;
+import java.awt.BorderLayout;
+
 /**
  <!-- globalinfo-start -->
  * Actor for displaying a scatter plot
@@ -138,7 +141,8 @@ import adams.gui.visualization.stats.scatterplot.ScatterPlot;
  * @version $Revision$
  */
 public class ScatterDisplay
-extends AbstractGraphicalDisplay {
+  extends AbstractGraphicalDisplay
+  implements DisplayPanelProvider {
 
   /** for serialization */
   private static final long serialVersionUID = -1985415728904099274L;
@@ -182,33 +186,33 @@ extends AbstractGraphicalDisplay {
 
     //x attribute to display, chosen using a regular expression
     m_OptionManager.add(
-	"x-attribute-name", "xAttributeName",
-	new BaseRegExp(""));
+      "x-attribute-name", "xAttributeName",
+      new BaseRegExp(""));
 
     //y attribute to display, chosen using a regular expression
     m_OptionManager.add(
-	"y-attribute-name", "yAttributeName",
-	new BaseRegExp(""));
+      "y-attribute-name", "yAttributeName",
+      new BaseRegExp(""));
 
     //x attribute to display, chosen by stating an index
     m_OptionManager.add(
-	"x-attribute", "xAttribute",
-        "1");
+      "x-attribute", "xAttribute",
+      "1");
 
     //y attribte to display, chosen by stating an index
     m_OptionManager.add(
-	"y-attribute", "yAttribute",
-        "1");
+      "y-attribute", "yAttribute",
+      "1");
 
     //Overlays to display
     m_OptionManager.add(
-	"overlay", "overlays",
-	new AbstractScatterPlotOverlay[]{});
+      "overlay", "overlays",
+      new AbstractScatterPlotOverlay[]{});
 
     //paintlet to use for plotting
     m_OptionManager.add(
-	"paintlet", "paintlet",
-	new ScatterPaintletCircle());
+      "paintlet", "paintlet",
+      new ScatterPaintletCircle());
   }
 
   /**
@@ -294,7 +298,7 @@ extends AbstractGraphicalDisplay {
    */
   public String xAttributeNameTipText() {
     return "Attribute for x axis using regular expression used if set, " +
-    "otherwise the index is used";
+      "otherwise the index is used";
   }
 
   /**
@@ -319,7 +323,7 @@ extends AbstractGraphicalDisplay {
    */
   public String yAttributeNameTipText() {
     return "Attribute for y axis using regular expression used if set," +
-    "otherwise the index is used";
+      "otherwise the index is used";
   }
 
   /**
@@ -346,7 +350,7 @@ extends AbstractGraphicalDisplay {
    */
   public String xAttributeTipText() {
     return "Index of attribute to display on x axis, used only" +
-    "if regular expression not set";
+      "if regular expression not set";
   }
 
   /**
@@ -373,7 +377,7 @@ extends AbstractGraphicalDisplay {
    */
   public String yAttributeTipText() {
     return "index of attribute to display on y axis, used only if" +
-    "regular expression not set";
+      "regular expression not set";
   }
 
   @Override
@@ -406,5 +410,65 @@ extends AbstractGraphicalDisplay {
     m_ScatPlot.setOverlays(m_Overlays);
     m_ScatPlot.setPaintlet(m_Paintlet);
     m_ScatPlot.reset();
+  }
+
+  /**
+   * Creates a new display panel for the token.
+   *
+   * @param token	the token to display in a new panel, can be null
+   * @return		the generated panel
+   */
+  @Override
+  public DisplayPanel createDisplayPanel(Token token) {
+    AbstractDisplayPanel	result;
+
+    result = new AbstractComponentDisplayPanel("Histogram") {
+      private static final long serialVersionUID = 4360182045245637304L;
+      protected ScatterPlot m_ScatPlot;
+      @Override
+      protected void initGUI() {
+	super.initGUI();
+	m_ScatPlot = new ScatterPlot();
+	add(m_ScatPlot, BorderLayout.CENTER);
+      }
+      @Override
+      public void display(Token token) {
+	m_ScatPlot.setX_IndexReg(m_XAttributeName);
+	m_ScatPlot.setX_Ind(new Index(m_XAttribute));
+	m_ScatPlot.setY_IndexReg(m_YAttributeName);
+	m_ScatPlot.setY_Ind(new Index(m_YAttribute));
+	m_ScatPlot.setData((SpreadSheet) token.getPayload());
+	m_ScatPlot.setOverlays(m_Overlays);
+	m_ScatPlot.setPaintlet(m_Paintlet);
+	m_ScatPlot.reset();
+      }
+      @Override
+      public void clearPanel() {
+	SpreadSheet temp = new DefaultSpreadSheet();
+	m_ScatPlot.setData(temp);
+      }
+      @Override
+      public JComponent supplyComponent() {
+	return m_ScatPlot;
+      }
+      @Override
+      public void cleanUp() {
+      }
+    };
+
+    if (token != null)
+      result.display(token);
+
+    return result;
+  }
+
+  /**
+   * Returns whether the created display panel requires a scroll pane or not.
+   *
+   * @return		true if the display panel requires a scroll pane
+   */
+  @Override
+  public boolean displayPanelRequiresScrollPane() {
+    return false;
   }
 }

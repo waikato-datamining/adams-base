@@ -29,6 +29,9 @@ import adams.gui.visualization.stats.paintlet.ScatterPaintletCircle;
 import adams.gui.visualization.stats.scatterplot.AbstractScatterPlotOverlay;
 import adams.gui.visualization.stats.scatterplot.Matrix;
 
+import javax.swing.JComponent;
+import java.awt.BorderLayout;
+
 /**
  <!-- globalinfo-start -->
  * Actor for displaying a matrix of scatter plots
@@ -122,7 +125,8 @@ import adams.gui.visualization.stats.scatterplot.Matrix;
  * @version $Revision$
  */
 public class MatrixPlot
-  extends AbstractGraphicalDisplay {
+  extends AbstractGraphicalDisplay
+  implements DisplayPanelProvider {
 
   /** for serialization */
   private static final long serialVersionUID = -679565614211767555L;
@@ -152,22 +156,22 @@ public class MatrixPlot
 
     //size of each plot
     m_OptionManager.add(
-	"plot-size", "plotSize",
-	100);
+      "plot-size", "plotSize",
+      100);
 
     //overlays for each plot
     m_OptionManager.add(
-	"overlay", "overlays",
-	new AbstractScatterPlotOverlay[]{});
+      "overlay", "overlays",
+      new AbstractScatterPlotOverlay[]{});
 
     //paintlet for drawing each plot
     m_OptionManager.add(
-	"paintlet", "paintlet",
-	new ScatterPaintletCircle());
+      "paintlet", "paintlet",
+      new ScatterPaintletCircle());
 
     //percent of instances to work with
     m_OptionManager.add(
-	"percent", "percent", 100);
+      "percent", "percent", 100);
   }
 
   @Override
@@ -307,5 +311,63 @@ public class MatrixPlot
    */
   public String percentTipText() {
     return "percentage of sample for sub-sample";
+  }
+
+  /**
+   * Creates a new display panel for the token.
+   *
+   * @param token	the token to display in a new panel, can be null
+   * @return		the generated panel
+   */
+  @Override
+  public DisplayPanel createDisplayPanel(Token token) {
+    AbstractDisplayPanel	result;
+
+    result = new AbstractComponentDisplayPanel("MatrixPlot") {
+      private static final long serialVersionUID = 4360182045245637304L;
+      protected Matrix m_Plot;
+      @Override
+      protected void initGUI() {
+	super.initGUI();
+	m_Plot = new Matrix();
+	add(m_Plot, BorderLayout.CENTER);
+      }
+      @Override
+      public void display(Token token) {
+	m_Plot.setPlotSize(m_PlotSize);
+	m_Plot.setOverlays(m_Overlays);
+	m_Plot.setPaintlet(m_Paintlet);
+	m_Plot.setPercent(m_Percent);
+	m_Plot.setData((SpreadSheet) token.getPayload());
+	m_Plot.reset();
+      }
+      @Override
+      public void clearPanel() {
+	SpreadSheet temp = new DefaultSpreadSheet();
+	m_Plot.setData(temp);
+      }
+      @Override
+      public JComponent supplyComponent() {
+	return m_Plot;
+      }
+      @Override
+      public void cleanUp() {
+      }
+    };
+
+    if (token != null)
+      result.display(token);
+
+    return result;
+  }
+
+  /**
+   * Returns whether the created display panel requires a scroll pane or not.
+   *
+   * @return		true if the display panel requires a scroll pane
+   */
+  @Override
+  public boolean displayPanelRequiresScrollPane() {
+    return false;
   }
 }

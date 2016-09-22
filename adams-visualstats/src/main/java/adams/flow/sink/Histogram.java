@@ -25,6 +25,9 @@ import adams.flow.core.Token;
 import adams.gui.core.BasePanel;
 import adams.gui.visualization.stats.histogram.HistogramOptions;
 
+import javax.swing.JComponent;
+import java.awt.BorderLayout;
+
 /**
  <!-- globalinfo-start -->
  * Generates a histogram based on the incoming data.
@@ -113,7 +116,8 @@ import adams.gui.visualization.stats.histogram.HistogramOptions;
  * @version $Revision$
  */
 public class Histogram
-  extends AbstractGraphicalDisplay {
+  extends AbstractGraphicalDisplay
+  implements DisplayPanelProvider {
 
   /** for serialization. */
   private static final long serialVersionUID = 8145699633341614296L;
@@ -305,5 +309,70 @@ public class Histogram
     result.setOptions(m_Options);
     
     return result;
+  }
+
+  /**
+   * Creates a new display panel for the token.
+   *
+   * @param token	the token to display in a new panel, can be null
+   * @return		the generated panel
+   */
+  @Override
+  public DisplayPanel createDisplayPanel(Token token) {
+    AbstractDisplayPanel	result;
+
+    result = new AbstractComponentDisplayPanel("Histogram") {
+      private static final long serialVersionUID = 4360182045245637304L;
+      protected adams.gui.visualization.stats.histogram.Histogram m_Histogram;
+      @Override
+      protected void initGUI() {
+	super.initGUI();
+	m_Histogram = new adams.gui.visualization.stats.histogram.Histogram();
+	m_Histogram.setOptions(m_Options);
+	add(m_Histogram, BorderLayout.CENTER);
+      }
+      @Override
+      public void display(Token token) {
+	if (token.getPayload() instanceof SpreadSheet) {
+	  SpreadSheet data = (SpreadSheet) token.getPayload();
+	  m_Index.setMax(data.getColumnCount());
+	  m_Histogram.setData(data);
+	  m_Histogram.setIndex(m_Index.getIntIndex());
+	}
+	else {
+	  m_Histogram.setArray((Double[]) token.getPayload());
+	}
+	m_Histogram.setDataName(m_DataName);
+	m_Histogram.update();
+      }
+      @Override
+      public void clearPanel() {
+	m_Histogram.setData(null);
+	m_Histogram.setArray(null);
+	m_Histogram.update();
+      }
+      @Override
+      public JComponent supplyComponent() {
+	return m_Histogram;
+      }
+      @Override
+      public void cleanUp() {
+      }
+    };
+
+    if (token != null)
+      result.display(token);
+
+    return result;
+  }
+
+  /**
+   * Returns whether the created display panel requires a scroll pane or not.
+   *
+   * @return		true if the display panel requires a scroll pane
+   */
+  @Override
+  public boolean displayPanelRequiresScrollPane() {
+    return false;
   }
 }

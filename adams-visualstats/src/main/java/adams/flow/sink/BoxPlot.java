@@ -28,6 +28,8 @@ import adams.flow.core.Token;
 import adams.gui.core.BasePanel;
 import adams.gui.visualization.stats.boxplot.BoxPlotManager;
 
+import javax.swing.JComponent;
+import java.awt.BorderLayout;
 import java.awt.Color;
 
 /**
@@ -160,7 +162,8 @@ import java.awt.Color;
  * @version $Revision$
  */
 public class BoxPlot
-extends AbstractGraphicalDisplay {
+  extends AbstractGraphicalDisplay
+  implements DisplayPanelProvider {
 
   /** for serialization */
   private static final long serialVersionUID = -8553869138965368551L;
@@ -510,5 +513,68 @@ extends AbstractGraphicalDisplay {
    */
   public String sameAxisTipText() {
     return "Box plots have same axis";
+  }
+
+  /**
+   * Creates a new display panel for the token.
+   *
+   * @param token	the token to display in a new panel, can be null
+   * @return		the generated panel
+   */
+  @Override
+  public DisplayPanel createDisplayPanel(Token token) {
+    AbstractDisplayPanel	result;
+
+    result = new AbstractComponentDisplayPanel("BoxPlot") {
+      private static final long serialVersionUID = -5112946659280550587L;
+      protected BoxPlotManager m_BoxPlot;
+      @Override
+      protected void initGUI() {
+	super.initGUI();
+	m_BoxPlot = new BoxPlotManager();
+	add(m_BoxPlot, BorderLayout.CENTER);
+      }
+      @Override
+      public void display(Token token) {
+	m_BoxPlot.setBoxWidth(m_WidthPlot);
+	m_BoxPlot.setBoxHeight(m_HeightPlot);
+	m_BoxPlot.setAxisWidth(m_WidthAx);
+	m_BoxPlot.setNumHorizontal(m_NumHorizontal);
+	m_BoxPlot.setSameAxis(m_SameAxis);
+	m_BoxPlot.setRange(m_AttString);
+	m_BoxPlot.setData((SpreadSheet) token.getPayload());
+	m_BoxPlot.setFill(m_Fill);
+	m_BoxPlot.setColor(m_Color);
+	m_BoxPlot.reset();
+      }
+      @Override
+      public void clearPanel() {
+	SpreadSheet temp = new DefaultSpreadSheet();
+	m_BoxPlot.setData(temp);
+	m_BoxPlot.reset();
+      }
+      @Override
+      public JComponent supplyComponent() {
+	return m_BoxPlot;
+      }
+      @Override
+      public void cleanUp() {
+      }
+    };
+
+    if (token != null)
+      result.display(token);
+
+    return result;
+  }
+
+  /**
+   * Returns whether the created display panel requires a scroll pane or not.
+   *
+   * @return		true if the display panel requires a scroll pane
+   */
+  @Override
+  public boolean displayPanelRequiresScrollPane() {
+    return false;
   }
 }

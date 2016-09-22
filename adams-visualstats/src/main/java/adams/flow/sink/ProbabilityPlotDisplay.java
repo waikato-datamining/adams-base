@@ -30,6 +30,9 @@ import adams.gui.visualization.stats.paintlet.AbstractProbabilityPaintlet;
 import adams.gui.visualization.stats.paintlet.Normal;
 import adams.gui.visualization.stats.probabilityplot.ProbabilityPlot;
 
+import javax.swing.JComponent;
+import java.awt.BorderLayout;
+
 /**
  <!-- globalinfo-start -->
  * Actor for displaying a probability plot
@@ -127,7 +130,8 @@ import adams.gui.visualization.stats.probabilityplot.ProbabilityPlot;
  * @version $Revision$
  */
 public class ProbabilityPlotDisplay
-extends AbstractGraphicalDisplay{
+  extends AbstractGraphicalDisplay
+  implements DisplayPanelProvider {
 
   /** for serialization */
   private static final long serialVersionUID = -1500480091045045663L;
@@ -176,7 +180,6 @@ extends AbstractGraphicalDisplay{
     m_Plot.setRegressionLine(m_Regression);
     m_Plot.setAttReg(m_Att);
     m_Plot.setAttIndex(new Index(m_AttIndex));
-
   }
 
   @Override
@@ -185,24 +188,24 @@ extends AbstractGraphicalDisplay{
 
     //paintlet to use for regression
     m_OptionManager.add(
-	"regression", "regression",
-	new Normal());
+      "regression", "regression",
+      new Normal());
 
     //Display grid overlay
     m_OptionManager.add(
-	"grid", "grid", false);
+      "grid", "grid", false);
 
     //display a regression line overlay
     m_OptionManager.add(
-	"regression-line", "regressionLine", false);
+      "regression-line", "regressionLine", false);
 
     //Name of attribute
     m_OptionManager.add(
-	"attribute-name", "attributeName", new BaseRegExp(""));
+      "attribute-name", "attributeName", new BaseRegExp(""));
 
     //Index of attribute
     m_OptionManager.add(
-	"attribute", "attribute", "last");
+      "attribute", "attribute", "last");
   }
 
   /**
@@ -229,7 +232,7 @@ extends AbstractGraphicalDisplay{
    */
   public String attributeTipText() {
     return "Set the attribute to display using an index, used only if " +
-    "regular expression not set";
+      "regular expression not set";
   }
 
   /**
@@ -255,7 +258,7 @@ extends AbstractGraphicalDisplay{
    */
   public String attributeNameTipText() {
     return "Name of attribute to display, used if set," +
-    "otherwise the index is used";
+      "otherwise the index is used";
   }
 
 
@@ -347,5 +350,63 @@ extends AbstractGraphicalDisplay{
   @Override
   protected int getDefaultWidth() {
     return 1400;
+  }
+
+  /**
+   * Creates a new display panel for the token.
+   *
+   * @param token	the token to display in a new panel, can be null
+   * @return		the generated panel
+   */
+  @Override
+  public DisplayPanel createDisplayPanel(Token token) {
+    AbstractDisplayPanel	result;
+
+    result = new AbstractComponentDisplayPanel("Probability plot") {
+      private static final long serialVersionUID = 4360182045245637304L;
+      protected ProbabilityPlot m_Plot;
+      @Override
+      protected void initGUI() {
+	super.initGUI();
+	m_Plot = new ProbabilityPlot();
+	add(m_Plot, BorderLayout.CENTER);
+      }
+      @Override
+      public void display(Token token) {
+	m_Plot.setData((SpreadSheet) token.getPayload());
+	m_Plot.setRegression(m_Val);
+	m_Plot.setGrid(m_Grid);
+	m_Plot.setRegressionLine(m_Regression);
+	m_Plot.setAttReg(m_Att);
+	m_Plot.setAttIndex(new Index(m_AttIndex));
+      }
+      @Override
+      public void clearPanel() {
+	SpreadSheet temp = new DefaultSpreadSheet();
+	m_Plot.setData(temp);
+      }
+      @Override
+      public JComponent supplyComponent() {
+	return m_Plot;
+      }
+      @Override
+      public void cleanUp() {
+      }
+    };
+
+    if (token != null)
+      result.display(token);
+
+    return result;
+  }
+
+  /**
+   * Returns whether the created display panel requires a scroll pane or not.
+   *
+   * @return		true if the display panel requires a scroll pane
+   */
+  @Override
+  public boolean displayPanelRequiresScrollPane() {
+    return false;
   }
 }
