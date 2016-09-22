@@ -22,8 +22,10 @@ package adams.flow.sink;
 
 import adams.core.QuickInfoHelper;
 import adams.data.DecimalFormatString;
+import adams.data.spreadsheet.Cell;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetColumnIndex;
+import adams.data.spreadsheet.SpreadSheetColumnRange;
 import adams.data.spreadsheet.SpreadSheetHelper;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.Token;
@@ -33,6 +35,7 @@ import adams.flow.sink.sequenceplotter.SequencePlotContainerManager;
 import adams.flow.sink.sequenceplotter.SequencePlotPoint;
 import adams.flow.sink.sequenceplotter.SequencePlotSequence;
 import adams.flow.sink.sequenceplotter.SequencePlotterPanel;
+import adams.flow.sink.sequenceplotter.ViewDataClickAction;
 import adams.gui.core.BasePanel;
 import adams.gui.visualization.core.AxisPanelOptions;
 import adams.gui.visualization.core.DefaultColorProvider;
@@ -46,6 +49,7 @@ import adams.gui.visualization.sequence.StraightLineOverlayPaintlet;
 
 import javax.swing.JComponent;
 import java.awt.BorderLayout;
+import java.util.HashMap;
 
 /**
  <!-- globalinfo-start -->
@@ -65,117 +69,117 @@ import java.awt.BorderLayout;
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- * 
+ *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: ActualVsPredictedPlot
  * </pre>
- * 
+ *
  * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- * 
+ *
  * <pre>-skip &lt;boolean&gt; (property: skip)
  * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
  * &nbsp;&nbsp;&nbsp;as it is.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
  * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this 
  * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical 
  * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-silent &lt;boolean&gt; (property: silent)
  * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
  * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-short-title &lt;boolean&gt; (property: shortTitle)
  * &nbsp;&nbsp;&nbsp;If enabled uses just the name for the title instead of the actor's full 
  * &nbsp;&nbsp;&nbsp;name.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-display-in-editor &lt;boolean&gt; (property: displayInEditor)
  * &nbsp;&nbsp;&nbsp;If enabled displays the panel in a tab in the flow editor rather than in 
  * &nbsp;&nbsp;&nbsp;a separate frame.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-width &lt;int&gt; (property: width)
  * &nbsp;&nbsp;&nbsp;The width of the dialog.
  * &nbsp;&nbsp;&nbsp;default: 800
  * &nbsp;&nbsp;&nbsp;minimum: -1
  * </pre>
- * 
+ *
  * <pre>-height &lt;int&gt; (property: height)
  * &nbsp;&nbsp;&nbsp;The height of the dialog.
  * &nbsp;&nbsp;&nbsp;default: 350
  * &nbsp;&nbsp;&nbsp;minimum: -1
  * </pre>
- * 
+ *
  * <pre>-x &lt;int&gt; (property: x)
  * &nbsp;&nbsp;&nbsp;The X position of the dialog (&gt;=0: absolute, -1: left, -2: center, -3: right
  * &nbsp;&nbsp;&nbsp;).
  * &nbsp;&nbsp;&nbsp;default: -1
  * &nbsp;&nbsp;&nbsp;minimum: -3
  * </pre>
- * 
+ *
  * <pre>-y &lt;int&gt; (property: y)
  * &nbsp;&nbsp;&nbsp;The Y position of the dialog (&gt;=0: absolute, -1: top, -2: center, -3: bottom
  * &nbsp;&nbsp;&nbsp;).
  * &nbsp;&nbsp;&nbsp;default: -1
  * &nbsp;&nbsp;&nbsp;minimum: -3
  * </pre>
- * 
+ *
  * <pre>-writer &lt;adams.gui.print.JComponentWriter&gt; (property: writer)
  * &nbsp;&nbsp;&nbsp;The writer to use for generating the graphics output.
  * &nbsp;&nbsp;&nbsp;default: adams.gui.print.NullWriter
  * </pre>
- * 
+ *
  * <pre>-actual &lt;adams.data.spreadsheet.SpreadSheetColumnIndex&gt; (property: actual)
  * &nbsp;&nbsp;&nbsp;The column with the actual values.
  * &nbsp;&nbsp;&nbsp;default: Actual
  * &nbsp;&nbsp;&nbsp;example: An index is a number starting with 1; column names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last; numeric indices can be enforced by preceding them with '#' (eg '#12'); column names can be surrounded by double quotes.
  * </pre>
- * 
+ *
  * <pre>-actual-min &lt;double&gt; (property: actualMin)
  * &nbsp;&nbsp;&nbsp;The minimum to use for the display of the actual axis; use NaN for unlimited.
  * &nbsp;&nbsp;&nbsp;default: -Infinity
  * </pre>
- * 
+ *
  * <pre>-actual-max &lt;double&gt; (property: actualMax)
  * &nbsp;&nbsp;&nbsp;The maximum to use for the display of the actual axis; use NaN for unlimited.
  * &nbsp;&nbsp;&nbsp;default: Infinity
  * </pre>
- * 
+ *
  * <pre>-predicted &lt;adams.data.spreadsheet.SpreadSheetColumnIndex&gt; (property: predicted)
  * &nbsp;&nbsp;&nbsp;The column with the predicted values.
  * &nbsp;&nbsp;&nbsp;default: Predicted
  * &nbsp;&nbsp;&nbsp;example: An index is a number starting with 1; column names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last; numeric indices can be enforced by preceding them with '#' (eg '#12'); column names can be surrounded by double quotes.
  * </pre>
- * 
+ *
  * <pre>-predicted-min &lt;double&gt; (property: predictedMin)
  * &nbsp;&nbsp;&nbsp;The minimum to use for the display of the predicted axis; use NaN for unlimited.
  * &nbsp;&nbsp;&nbsp;default: -Infinity
  * </pre>
- * 
+ *
  * <pre>-predicted-max &lt;double&gt; (property: predictedMax)
  * &nbsp;&nbsp;&nbsp;The maximum to use for the display of the predicted axis; use NaN for unlimited.
  * &nbsp;&nbsp;&nbsp;default: Infinity
  * </pre>
- * 
+ *
  * <pre>-error &lt;adams.data.spreadsheet.SpreadSheetColumnIndex&gt; (property: error)
  * &nbsp;&nbsp;&nbsp;The column with the error values.
  * &nbsp;&nbsp;&nbsp;default: 
  * &nbsp;&nbsp;&nbsp;example: An index is a number starting with 1; column names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last; numeric indices can be enforced by preceding them with '#' (eg '#12'); column names can be surrounded by double quotes.
  * </pre>
- * 
+ *
  * <pre>-limit &lt;NONE|ACTUAL|SPECIFIED&gt; (property: limit)
  * &nbsp;&nbsp;&nbsp;The type of limit to impose on the axes; NONE just uses the range determined 
  * &nbsp;&nbsp;&nbsp;from the data; ACTUAL uses the min&#47;max from the actual column for both axes;
@@ -183,7 +187,7 @@ import java.awt.BorderLayout;
  * &nbsp;&nbsp;&nbsp;corresponding value from the determine range.
  * &nbsp;&nbsp;&nbsp;default: NONE
  * </pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
@@ -231,6 +235,9 @@ public class ActualVsPredictedPlot
   /** the maximum to use for the predicted values (pos inf = no restriction). */
   protected double m_PredictedMax;
 
+  /** the additional columns in the spreadsheet to add to the plot containers. */
+  protected SpreadSheetColumnRange m_Additional;
+
   /**
    * Returns a string describing the object.
    *
@@ -275,6 +282,10 @@ public class ActualVsPredictedPlot
     m_OptionManager.add(
       "error", "error",
       new SpreadSheetColumnIndex(""));
+
+    m_OptionManager.add(
+      "additional", "additional",
+      new SpreadSheetColumnRange(""));
 
     m_OptionManager.add(
       "limit", "limit",
@@ -486,7 +497,7 @@ public class ActualVsPredictedPlot
   /**
    * Returns the column with the error values.
    *
-   * @return		the range
+   * @return		the column
    */
   public SpreadSheetColumnIndex getError() {
     return m_Error;
@@ -500,6 +511,35 @@ public class ActualVsPredictedPlot
    */
   public String errorTipText() {
     return "The column with the error values.";
+  }
+
+  /**
+   * Sets the additional columns to add to the plot containers.
+   *
+   * @param value	the columns
+   */
+  public void setAdditional(SpreadSheetColumnRange value) {
+    m_Additional = value;
+    reset();
+  }
+
+  /**
+   * Returns the additional columns to add to the plot containers.
+   *
+   * @return		the columns
+   */
+  public SpreadSheetColumnRange getAdditional() {
+    return m_Additional;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String additionalTipText() {
+    return "The additional columns to add to the plot containers.";
   }
 
   /**
@@ -532,7 +572,7 @@ public class ActualVsPredictedPlot
       "The type of limit to impose on the axes; NONE just uses the range "
 	+ "determined from the data; ACTUAL uses the min/max from the actual "
 	+ "column for both axes; SPECIFIED uses the specified limits or, if "
-        + "a value is 'infinity' then the corresponding value from the "
+	+ "a value is 'infinity' then the corresponding value from the "
 	+ "determine range.";
   }
 
@@ -549,6 +589,7 @@ public class ActualVsPredictedPlot
     result += QuickInfoHelper.toString(this, "actual", m_Actual, ", actual: ");
     result += QuickInfoHelper.toString(this, "predicted", m_Predicted, ", predicted: ");
     result += QuickInfoHelper.toString(this, "error", (m_Error.isEmpty() ? "-none-" : m_Error), ", error: ");
+    result += QuickInfoHelper.toString(this, "additional", (m_Additional.isEmpty() ? "-none-" : m_Additional), ", additional: ");
     result += QuickInfoHelper.toString(this, "limit", m_Limit, ", limit: ");
 
     return result;
@@ -642,6 +683,7 @@ public class ActualVsPredictedPlot
     getDefaultAxisY().configure(result.getPlot(), Axis.LEFT);
     result.setColorProvider(new DefaultColorProvider());
     result.setSidePanelVisible(true);
+    result.setMouseClickAction(new ViewDataClickAction());
 
     return result;
   }
@@ -673,8 +715,12 @@ public class ActualVsPredictedPlot
     SequencePlotContainerManager	manager;
     SequencePlotContainer 		cont;
     SequencePlotSequence		seq;
+    SequencePlotPoint			point;
     int					i;
     String				id;
+    int[] 				additional;
+    Cell 				cell;
+    HashMap<String,Object>		meta;
 
     paintlet = (PaintletWithFixedXYRange) panel.getPaintlet();
     manager  = (SequencePlotContainerManager) panel.getContainerManager();
@@ -690,6 +736,13 @@ public class ActualVsPredictedPlot
       m_Error.setData(sheet);
       if (m_Error.getIntIndex() == -1)
 	throw new IllegalStateException("'Error' column not found: " + m_Error);
+    }
+
+    // additional columns
+    additional = new int[0];
+    if (!m_Additional.isEmpty()) {
+      m_Additional.setData(sheet);
+      additional = m_Additional.getIntIndices();
     }
 
     // create plot data
@@ -716,9 +769,23 @@ public class ActualVsPredictedPlot
       predMin = Math.min(predMin, pred[i]);
       predMax = Math.max(predMax, pred[i]);
       if (error == null)
-	seq.add(new SequencePlotPoint(id, act[i], pred[i]));
+	point = new SequencePlotPoint(id, act[i], pred[i]);
       else
-	seq.add(new SequencePlotPoint(id, act[i], pred[i], new Double[]{error[i]}, null));
+	point = new SequencePlotPoint(id, act[i], pred[i], new Double[]{error[i]}, null);
+      // meta-data
+      if (additional.length > 0) {
+	meta = new HashMap<>();
+	for (int index: additional) {
+	  if (sheet.hasCell(i, index)) {
+	    cell = sheet.getCell(i, index);
+	    if (!cell.isMissing())
+	      meta.put(sheet.getColumnName(index), cell.getNative());
+	  }
+	}
+	if (meta.size() > 0)
+	  point.setMetaData(meta);
+      }
+      seq.add(point);
     }
 
     // actual min/max
@@ -780,7 +847,7 @@ public class ActualVsPredictedPlot
       protected SequencePlotterPanel m_Panel;
       @Override
       protected void initGUI() {
-        super.initGUI();
+	super.initGUI();
 	m_Panel = new SequencePlotterPanel("act vs pred");
 	AbstractXYSequencePaintlet paintlet;
 	PaintletWithFixedXYRange fixedPaintlet;
@@ -798,6 +865,7 @@ public class ActualVsPredictedPlot
 	getDefaultAxisY().configure(m_Panel.getPlot(), Axis.LEFT);
 	m_Panel.setColorProvider(new DefaultColorProvider());
 	m_Panel.setSidePanelVisible(true);
+	m_Panel.setMouseClickAction(new ViewDataClickAction());
 	add(m_Panel, BorderLayout.CENTER);
       }
       @Override
