@@ -15,7 +15,7 @@
 
 /**
  * PaintletWithFixedYRange.java
- * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.sequence;
 
@@ -36,7 +36,7 @@ import java.awt.Graphics;
 public class PaintletWithFixedYRange
   extends AbstractXYSequencePaintlet
   implements adams.gui.visualization.core.PaintletWithFixedYRange,
-             FlowAwarePaintlet {
+             FlowAwarePaintlet, MetaXYSequencePaintlet {
 
   /** for serialization. */
   private static final long serialVersionUID = 354723429582771889L;
