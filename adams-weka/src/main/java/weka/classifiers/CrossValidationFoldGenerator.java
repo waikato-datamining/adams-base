@@ -238,6 +238,9 @@ public class CrossValidationFoldGenerator
 
     super.initialize();
 
+    if (m_Random == null)
+      m_Random = new Random(m_Seed);
+
     if (m_Stratify && m_Data.classAttribute().isNominal() && (m_NumFolds < m_Data.numInstances()))
       m_Data.stratify(m_NumFolds);
   }
