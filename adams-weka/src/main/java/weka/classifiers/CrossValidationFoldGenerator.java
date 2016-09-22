@@ -20,6 +20,8 @@
 package weka.classifiers;
 
 import adams.flow.container.WekaTrainTestSetContainer;
+import gnu.trove.list.TIntList;
+import gnu.trove.list.array.TIntArrayList;
 import weka.core.Instances;
 
 import java.util.NoSuchElementException;
@@ -63,6 +65,9 @@ public class CrossValidationFoldGenerator
 
   /** whether to randomize the data. */
   protected boolean m_Randomize;
+
+  /** the random number generator for the indices. */
+  protected Random m_RandomIndices;
 
   /**
    * Initializes the generator.
@@ -202,16 +207,124 @@ public class CrossValidationFoldGenerator
   }
 
   /**
+   * Generates the original indices.
+   *
+   * @return	the original indices
+   */
+  protected TIntList originalIndices() {
+    TIntList 	result;
+    TIntList 	dummy;
+
+    result = new TIntArrayList();
+    result.add(
+      CrossValidationHelper.crossValidationIndices(
+	m_Data, m_NumFolds, new Random(m_Seed),
+	m_Stratify && (m_NumFolds < m_Data.numInstances())));
+
+    // need to simulate initial randomization to get the right state
+    // of the RNG for the trainCV/testCV calls
+    dummy = new TIntArrayList(result);
+    randomize(dummy, m_RandomIndices);
+
+    return result;
+  }
+
+  /**
    * Initializes the iterator, randomizes the data if required.
    */
   @Override
   protected void initialize() {
+    m_RandomIndices = new Random(m_Seed);
+
     super.initialize();
 
-    if (m_Random == null)
-      m_Random = new Random(m_Seed);
     if (m_Stratify && m_Data.classAttribute().isNominal() && (m_NumFolds < m_Data.numInstances()))
       m_Data.stratify(m_NumFolds);
+  }
+
+  /**
+   * Creates the training set for one fold of a cross-validation on the dataset.
+   *
+   * @param numFolds the number of folds in the cross-validation. Must be
+   *          greater than 1.
+   * @param numFold 0 for the first fold, 1 for the second, ...
+   * @return the training set
+   * @throws IllegalArgumentException if the number of folds is less than 2 or
+   *           greater than the number of instances.
+   */
+  protected TIntList trainCV(int numFolds, int numFold) {
+    int numInstForFold, first, offset;
+    TIntList train;
+
+    if (numFolds < 2)
+      throw new IllegalArgumentException("Number of folds must be at least 2!");
+    if (numFolds > m_Data.numInstances())
+      throw new IllegalArgumentException("Can't have more folds than instances!");
+
+    numInstForFold = m_Data.numInstances() / numFolds;
+    if (numFold < m_Data.numInstances() % numFolds) {
+      numInstForFold++;
+      offset = numFold;
+    } else {
+      offset = m_Data.numInstances() % numFolds;
+    }
+    first = numFold * (m_Data.numInstances() / numFolds) + offset;
+    train = m_OriginalIndices.subList(0, first);
+    train.add(m_OriginalIndices.subList(
+      first + numInstForFold,
+      first + numInstForFold + m_Data.numInstances() - first - numInstForFold).toArray());
+
+    return train;
+  }
+
+  /**
+   * Creates the training set for one fold of a cross-validation on the dataset.
+   * The data is subsequently randomized based on the given random number
+   * generator.
+   *
+   * @param numFolds the number of folds in the cross-validation. Must be
+   *          greater than 1.
+   * @param numFold 0 for the first fold, 1 for the second, ...
+   * @param random the random number generator
+   * @return the training set
+   * @throws IllegalArgumentException if the number of folds is less than 2 or
+   *           greater than the number of instances.
+   */
+  protected TIntList trainCV(int numFolds, int numFold, Random random) {
+    TIntList train = trainCV(numFolds, numFold);
+    randomize(train, random);
+    return train;
+  }
+
+  /**
+   * Creates the test set for one fold of a cross-validation on the dataset.
+   *
+   * @param numFolds the number of folds in the cross-validation. Must be
+   *          greater than 1.
+   * @param numFold 0 for the first fold, 1 for the second, ...
+   * @return the test set as a set of weighted instances
+   * @throws IllegalArgumentException if the number of folds is less than 2 or
+   *           greater than the number of instances.
+   */
+  protected TIntList testCV(int numFolds, int numFold) {
+    int numInstForFold, first, offset;
+    TIntList test;
+
+    if (numFolds < 2)
+      throw new IllegalArgumentException("Number of folds must be at least 2!");
+    if (numFolds > m_Data.numInstances())
+      throw new IllegalArgumentException("Can't have more folds than instances!");
+
+    numInstForFold = m_Data.numInstances() / numFolds;
+    if (numFold < m_Data.numInstances() % numFolds) {
+      numInstForFold++;
+      offset = numFold;
+    } else {
+      offset = m_Data.numInstances() % numFolds;
+    }
+    first = numFold * (m_Data.numInstances() / numFolds) + offset;
+    test = m_OriginalIndices.subList(first, first + numInstForFold);
+    return test;
   }
 
   /**
@@ -237,7 +350,10 @@ public class CrossValidationFoldGenerator
     train.setRelationName(createRelationName(true));
     test.setRelationName(createRelationName(false));
 
-    result = new WekaTrainTestSetContainer(train, test, m_Seed, m_CurrentFold, m_NumFolds);
+    result = new WekaTrainTestSetContainer(
+      train, test, m_Seed, m_CurrentFold, m_NumFolds,
+      trainCV(m_NumFolds, m_CurrentFold - 1, m_RandomIndices).toArray(),
+      testCV(m_NumFolds, m_CurrentFold - 1).toArray());
     m_CurrentFold++;
 
     return result;

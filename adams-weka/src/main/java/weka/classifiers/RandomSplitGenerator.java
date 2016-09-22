@@ -122,7 +122,11 @@ public class RandomSplitGenerator
     trainSet  = new Instances(m_Data, 0, trainSize);
     testSet   = new Instances(m_Data, trainSize, testSize);
 
-    result = new WekaTrainTestSetContainer(trainSet, testSet, m_Seed);
+    result = new WekaTrainTestSetContainer(
+      trainSet, testSet, m_Seed,
+      null, null,
+      m_OriginalIndices.subList(0, trainSize).toArray(),
+      m_OriginalIndices.subList(trainSize, m_OriginalIndices.size()).toArray());
     
     return result;
   }
