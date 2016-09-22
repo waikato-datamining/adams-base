@@ -20,15 +20,17 @@
 
 package adams.data.sequence;
 
+import adams.data.container.DataContainerUtils;
+import adams.data.sequence.XYSequencePointComparator.Comparison;
+import gnu.trove.list.TIntList;
+import gnu.trove.list.array.TIntArrayList;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
-
-import adams.data.container.DataContainerUtils;
-import adams.data.sequence.XYSequencePointComparator.Comparison;
 
 /**
  * Utility class for XY sequences.
@@ -149,6 +151,57 @@ public class XYSequenceUtils
     }
 
     return result;
+  }
+
+  /**
+   * Returns the indices of m_Points closest to the given x value.
+   *
+   * @param points	the data to process
+   * @param x		the x value to get the closest index for
+   * @param wobble 	the wobble factor to allow left and right
+   * @return		the indices
+   */
+  public static int[] findClosestXs(List<XYSequencePoint> points, double x, double wobble) {
+    TIntList 		result;
+    int			index;
+    double		dist;
+    int			i;
+
+    if (points.size() == 0)
+      return new int[0];
+
+    index = findClosestX(points, x);
+    if (index == -1)
+      return new int[0];
+
+    result = new TIntArrayList();
+    result.add(index);
+
+    // search right
+    i = index;
+    while (i < points.size() - 1) {
+      i++;
+      dist = Math.abs(x - points.get(i).getX());
+      if (dist <= wobble)
+	result.add(i);
+      else
+	break;
+    }
+
+    // search left
+    i = index;
+    while (i > 0) {
+      i--;
+      dist = Math.abs(x - points.get(i).getX());
+      if (dist <= wobble)
+	result.add(i);
+      else
+	break;
+    }
+
+    result.sort();
+
+    return result.toArray();
   }
 
   /**
