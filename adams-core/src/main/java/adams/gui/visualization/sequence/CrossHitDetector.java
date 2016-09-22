@@ -15,7 +15,7 @@
 
 /*
  * CrossHitDetector.java
- * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.sequence;
@@ -151,17 +151,21 @@ public class CrossHitDetector
     if (m_Owner == null)
       return null;
 
-    result     = new Vector<XYSequencePoint>();
+    result     = new Vector<>();
     axisBottom = m_Owner.getPlot().getAxis(Axis.BOTTOM);
     axisLeft   = m_Owner.getPlot().getAxis(Axis.LEFT);
-    y          = axisLeft.posToValue((int) e.getY());
-    x          = axisBottom.posToValue((int) e.getX());
-    if (m_Owner instanceof DiameterBasedPaintlet)
-      diameter = ((DiameterBasedPaintlet) m_Owner).getDiameter();
-    else
-      diameter = 1;
-    diameterActual = Math.abs(axisBottom.posToValue(diameter));
+    y          = axisLeft.posToValue(e.getY());
+    x          = axisBottom.posToValue(e.getX());
     logging    = isLoggingEnabled();
+    diameter   = 1;
+    if (m_Owner instanceof DiameterBasedPaintlet) {
+      diameter = ((DiameterBasedPaintlet) m_Owner).getDiameter();
+    }
+    else if (m_Owner instanceof MetaXYSequencePaintlet) {
+      if (((MetaXYSequencePaintlet) m_Owner).getPaintlet() instanceof DiameterBasedPaintlet)
+        diameter = ((DiameterBasedPaintlet) ((MetaXYSequencePaintlet) m_Owner).getPaintlet()).getDiameter();
+    }
+    diameterActual = Math.abs(axisBottom.posToValue(diameter));
 
     for (i = 0; i < m_Owner.getSequencePanel().getContainerManager().count(); i++) {
       if (!m_Owner.getSequencePanel().getContainerManager().get(i).isVisible())
