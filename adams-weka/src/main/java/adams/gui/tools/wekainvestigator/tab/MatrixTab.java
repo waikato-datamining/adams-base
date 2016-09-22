@@ -20,6 +20,7 @@
 
 package adams.gui.tools.wekainvestigator.tab;
 
+import adams.gui.event.WekaInvestigatorDataEvent;
 import weka.gui.visualize.MatrixPanel;
 
 import javax.swing.ListSelectionModel;
@@ -77,6 +78,12 @@ public class MatrixTab
     return ListSelectionModel.SINGLE_SELECTION;
   }
 
+  @Override
+  public void dataChanged(WekaInvestigatorDataEvent e) {
+    super.dataChanged(e);
+    dataTableSelectionChanged();
+  }
+
   /**
    * Gets called when the user changes the selection.
    */
@@ -85,7 +92,7 @@ public class MatrixTab
     int			index;
     MatrixPanel		panel;
 
-    if (m_Table.getSelectedRow() > -1) {
+    if ((m_Table.getRowCount() > 0) && (m_Table.getSelectedRow() > -1)) {
       index = m_Table.getSelectedRow();
       panel = new MatrixPanel();
       panel.setInstances(getData().get(index).getData());
