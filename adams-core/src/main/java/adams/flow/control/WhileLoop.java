@@ -133,6 +133,7 @@ public class WhileLoop
     super.initialize();
 
     m_Actors = new Sequence();
+    m_Actors.setAllowStandalones(true);
     m_Actors.setAllowSource(true);
   }
 
