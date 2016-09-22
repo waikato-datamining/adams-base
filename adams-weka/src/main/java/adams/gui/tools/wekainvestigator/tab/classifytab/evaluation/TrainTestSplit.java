@@ -25,6 +25,7 @@ import adams.core.Utils;
 import adams.core.option.OptionUtils;
 import adams.data.spreadsheet.MetaData;
 import adams.flow.container.WekaTrainTestSetContainer;
+import adams.gui.chooser.SelectOptionPanel;
 import adams.gui.core.AbstractNamedHistoryPanel;
 import adams.gui.core.ParameterPanel;
 import adams.gui.tools.wekainvestigator.InvestigatorPanel;
@@ -73,6 +74,9 @@ public class TrainTestSplit
 
   /** the seed value. */
   protected JTextField m_TextSeed;
+
+  /** the additional attributes to store. */
+  protected SelectOptionPanel m_SelectAdditionalAttributes;
 
   /** whether to discard the predictions. */
   protected JCheckBox m_CheckBoxDiscardPredictions;
@@ -153,6 +157,15 @@ public class TrainTestSplit
     });
     m_PanelParameters.addParameter("Seed", m_TextSeed);
 
+    // additional attributes
+    m_SelectAdditionalAttributes = new SelectOptionPanel();
+    m_SelectAdditionalAttributes.setCurrent(new String[0]);
+    m_SelectAdditionalAttributes.setMultiSelect(true);
+    m_SelectAdditionalAttributes.setLenient(true);
+    m_SelectAdditionalAttributes.setDialogTitle("Select additional attributes");
+    m_SelectAdditionalAttributes.setToolTipText("Additional attributes to make available in plots");
+    m_PanelParameters.addParameter("Additional attributes", m_SelectAdditionalAttributes);
+
     // discard predictions?
     m_CheckBoxDiscardPredictions = new JCheckBox();
     m_CheckBoxDiscardPredictions.setSelected(props.getBoolean("Classify.DiscardPredictions", false));
@@ -226,6 +239,7 @@ public class TrainTestSplit
     WekaTrainTestSetContainer	cont;
     String			msg;
     MetaData 			runInfo;
+    int[] 			testOrig;
 
     if ((msg = canEvaluate(classifier)) != null)
       throw new IllegalArgumentException("Cannot evaluate classifier!\n" + msg);
@@ -238,10 +252,11 @@ public class TrainTestSplit
       generator = new RandomSplitGenerator(data, perc);
     else
       generator = new RandomSplitGenerator(data, seed, perc);
-    cont    = generator.next();
-    train   = (Instances) cont.getValue(WekaTrainTestSetContainer.VALUE_TRAIN);
-    test    = (Instances) cont.getValue(WekaTrainTestSetContainer.VALUE_TEST);
-    runInfo = new MetaData();
+    cont      = generator.next();
+    train     = (Instances) cont.getValue(WekaTrainTestSetContainer.VALUE_TRAIN);
+    test      = (Instances) cont.getValue(WekaTrainTestSetContainer.VALUE_TEST);
+    testOrig  = (int[]) cont.getValue(WekaTrainTestSetContainer.VALUE_TEST_ORIGINALINDICES);
+    runInfo   = new MetaData();
     runInfo.add("Classifier", OptionUtils.getCommandLine(classifier));
     runInfo.add("Seed", seed);
     runInfo.add("Split percentage", perc);
@@ -262,7 +277,10 @@ public class TrainTestSplit
     eval.evaluateModel(model, test);
 
     // history
-    return addToHistory(history, new ResultItem(eval, classifier, model, new Instances(train, 0), runInfo));
+    return addToHistory(
+      history,
+      new ResultItem(eval, classifier, model, new Instances(train, 0), runInfo,
+	testOrig, transferAdditionalAttributes(m_SelectAdditionalAttributes, test)));
   }
 
   /**

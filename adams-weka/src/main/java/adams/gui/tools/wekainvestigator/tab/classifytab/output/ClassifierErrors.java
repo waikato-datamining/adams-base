@@ -20,14 +20,21 @@
 
 package adams.gui.tools.wekainvestigator.tab.classifytab.output;
 
+import adams.core.Utils;
+import adams.data.spreadsheet.SpreadSheet;
+import adams.data.spreadsheet.SpreadSheetColumnRange;
+import adams.flow.container.WekaEvaluationContainer;
 import adams.flow.core.Token;
 import adams.flow.sink.ActualVsPredictedPlot;
 import adams.flow.sink.ActualVsPredictedPlot.LimitType;
+import adams.flow.transformer.SpreadSheetMerge;
 import adams.flow.transformer.WekaPredictionsToSpreadSheet;
 import adams.gui.tools.wekainvestigator.output.ComponentContentPanel;
 import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
 
 import javax.swing.JPanel;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Generates classifier errors plot.
@@ -273,12 +280,41 @@ public class ClassifierErrors
     ActualVsPredictedPlot 		sink;
     JPanel 				panel;
     WekaPredictionsToSpreadSheet	p2s;
+    WekaEvaluationContainer		cont;
     Token				token;
+    SpreadSheet				sheet;
+    SpreadSheetMerge			merge;
+    String				msg;
+    List<String>			additional;
+    int					i;
 
+    cont = new WekaEvaluationContainer(item.getEvaluation());
+    if (item.hasOriginalIndices())
+      cont.setValue(WekaEvaluationContainer.VALUE_ORIGINALINDICES, item.getOriginalIndices());
     p2s = new WekaPredictionsToSpreadSheet();
-    p2s.input(new Token(item.getEvaluation()));
+    p2s.input(new Token(cont));
     p2s.execute();
     token = p2s.output();
+
+    // add additional attributes
+    additional = null;
+    if (item.hasOriginalIndices() && item.hasAdditionalAttributes()) {
+      sheet = (SpreadSheet) token.getPayload();
+      merge = new SpreadSheetMerge();
+      token = new Token(new SpreadSheet[]{sheet, item.getAdditionalAttributes()});
+      merge.input(token);
+      msg = merge.execute();
+      if (msg != null) {
+	getLogger().severe("Failed to merge predictions and additional attributes!\n" + msg);
+	token = new Token(sheet);
+      }
+      else {
+	token = merge.output();
+      }
+      additional = new ArrayList<>();
+      for (i = 0; i < item.getAdditionalAttributes().getColumnCount(); i++)
+	additional.add(SpreadSheetColumnRange.escapeName(item.getAdditionalAttributes().getColumnName(i)));
+    }
 
     sink  = new ActualVsPredictedPlot();
     sink.setActualMin(m_ActualMin);
@@ -286,6 +322,8 @@ public class ClassifierErrors
     sink.setPredictedMin(m_PredictedMin);
     sink.setPredictedMax(m_PredictedMax);
     sink.setLimit(m_Limit);
+    if ((additional != null) && (additional.size() > 0))
+      sink.setAdditional(new SpreadSheetColumnRange(Utils.flatten(additional, ",")));
     panel = sink.createDisplayPanel(token);
 
     addTab(item, new ComponentContentPanel(panel, sink.displayPanelRequiresScrollPane()));

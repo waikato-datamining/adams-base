@@ -25,18 +25,31 @@ import adams.core.GlobalInfoSupporter;
 import adams.core.Properties;
 import adams.core.StatusMessageHandler;
 import adams.core.logging.LoggingObject;
+import adams.data.spreadsheet.DefaultSpreadSheet;
+import adams.data.spreadsheet.Row;
+import adams.data.spreadsheet.SpreadSheet;
+import adams.data.spreadsheet.SpreadSheetColumnIndex;
+import adams.data.spreadsheet.SpreadSheetView;
+import adams.flow.core.Token;
+import adams.flow.transformer.SpreadSheetInsertColumn;
+import adams.gui.chooser.SelectOptionPanel;
 import adams.gui.core.AbstractNamedHistoryPanel;
 import adams.gui.tools.wekainvestigator.InvestigatorPanel;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
 import adams.gui.tools.wekainvestigator.tab.ClassifyTab;
 import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
+import adams.ml.data.InstancesView;
+import gnu.trove.list.TIntList;
+import gnu.trove.list.array.TIntArrayList;
 import org.apache.commons.lang.time.StopWatch;
 import weka.classifiers.Classifier;
+import weka.core.Instances;
 
 import javax.swing.ComboBoxModel;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -251,6 +264,80 @@ public abstract class AbstractClassifierEvaluation
 
     return (setDatasets.size() != setModel.size())
       || !(setDatasets.containsAll(setModel) && setModel.containsAll(setDatasets));
+  }
+
+  /**
+   * Fills the panel for selection options with the attributes from the
+   * specified data container.
+   *
+   * @param select	the panel to fill
+   * @param index	the index, ignored if -1
+   */
+  protected void fillWithAttributeNames(SelectOptionPanel select, int index) {
+    Instances		data;
+    List<String>	atts;
+    int			i;
+
+    atts = new ArrayList<>();
+    if (index > -1) {
+      data = getOwner().getData().get(index).getData();
+      for (i = 0; i < data.numAttributes(); i++)
+	atts.add(data.attribute(i).name());
+      Collections.sort(atts);
+    }
+    select.setOptions(atts.toArray(new String[atts.size()]));
+  }
+
+  /**
+   * Transfers the additional attributes into a spreadsheet.
+   *
+   * @param select	the selected attributes
+   * @param data	the data to transfer
+   * @return		the spreadsheet, null if not attributes selected
+   */
+  protected SpreadSheet transferAdditionalAttributes(SelectOptionPanel select, Instances data) {
+    SpreadSheet			result;
+    InstancesView 		iview;
+    SpreadSheetView		sview;
+    String[]			atts;
+    TIntList			indices;
+    SpreadSheetInsertColumn	insert;
+    Token			token;
+    String			msg;
+    int				i;
+
+    if (select.getCurrent().length == 0)
+      return null;
+
+    atts    = select.getCurrent();
+    indices = new TIntArrayList();
+    for (String att: atts) {
+      if (data.attribute(att) != null)
+	indices.add(data.attribute(att).index());
+    }
+    iview = new InstancesView(data);
+    sview = new SpreadSheetView(iview, null, indices.toArray());
+    result = new DefaultSpreadSheet();
+    result.getHeaderRow().assign(sview.getHeaderRow());
+    for (Row row: sview.rows())
+      result.addRow().assign(row);
+    insert = new SpreadSheetInsertColumn();
+    insert.setHeader("Instance Index");
+    insert.setNoCopy(false);
+    insert.setPosition(new SpreadSheetColumnIndex("1"));
+    insert.setAfter(false);
+    insert.input(new Token(result));
+    msg = insert.execute();
+    if (msg != null) {
+      getLogger().severe("Failed to transfer additional attributes!\n" + msg);
+      return null;
+    }
+    token = insert.output();
+    result = (SpreadSheet) token.getPayload();
+    for (i = 0; i < result.getRowCount(); i++)
+      result.getRow(i).getCell(0).setContent(i+1);
+
+    return result;
   }
 
   /**

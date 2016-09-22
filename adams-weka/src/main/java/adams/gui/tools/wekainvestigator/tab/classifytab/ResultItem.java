@@ -22,6 +22,7 @@ package adams.gui.tools.wekainvestigator.tab.classifytab;
 
 import adams.core.DateUtils;
 import adams.data.spreadsheet.MetaData;
+import adams.data.spreadsheet.SpreadSheet;
 import adams.gui.tools.wekainvestigator.output.AbstractResultItem;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
@@ -51,6 +52,12 @@ public class ResultItem
   /** the run information. */
   protected MetaData m_RunInformation;
 
+  /** the original indices. */
+  protected int[] m_OriginalIndices;
+
+  /** additional attributes. */
+  protected SpreadSheet m_AdditionalAttributes;
+
   /**
    * Initializes the item.
    *
@@ -72,15 +79,31 @@ public class ResultItem
    * @param runInfo	the meta-data for the run
    */
   public ResultItem(Evaluation evaluation, Classifier template, Classifier model, Instances header, MetaData runInfo) {
+    this(evaluation, template, model, header, runInfo, null, null);
+  }
+
+  /**
+   * Initializes the item.
+   *
+   * @param evaluation	the evaluation, can be null
+   * @param model	the model, can be null
+   * @param header	the header of the training set, can be null
+   * @param runInfo	the meta-data for the run
+   * @param original	the original indices, can be null
+   * @param additional 	the additional attributes, can be null
+   */
+  public ResultItem(Evaluation evaluation, Classifier template, Classifier model, Instances header, MetaData runInfo, int[] original, SpreadSheet additional) {
     super(header);
 
     if (template == null)
       throw new IllegalArgumentException("Template classifier cannot be null!");
 
-    m_Evaluation     = evaluation;
-    m_Template       = template;
-    m_Model          = model;
-    m_RunInformation = runInfo;
+    m_Evaluation           = evaluation;
+    m_Template             = template;
+    m_Model                = model;
+    m_RunInformation       = runInfo;
+    m_OriginalIndices      = original;
+    m_AdditionalAttributes = additional;
   }
 
   /**
@@ -153,6 +176,42 @@ public class ResultItem
    */
   public MetaData getRunInformation() {
     return m_RunInformation;
+  }
+
+  /**
+   * Returns whether the original indices are present.
+   *
+   * @return		true if available
+   */
+  public boolean hasOriginalIndices() {
+    return (m_OriginalIndices != null);
+  }
+
+  /**
+   * Returns the stored original indices.
+   *
+   * @return		the indices, null if not present
+   */
+  public int[] getOriginalIndices() {
+    return m_OriginalIndices;
+  }
+
+  /**
+   * Returns whether additional attributes data is present.
+   *
+   * @return		true if available
+   */
+  public boolean hasAdditionalAttributes() {
+    return (m_AdditionalAttributes != null);
+  }
+
+  /**
+   * Returns the stored additional attributes data.
+   *
+   * @return		the data, null if not present
+   */
+  public SpreadSheet getAdditionalAttributes() {
+    return m_AdditionalAttributes;
   }
 
   /**

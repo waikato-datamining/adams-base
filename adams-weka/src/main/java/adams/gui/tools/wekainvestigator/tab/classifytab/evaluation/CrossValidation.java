@@ -25,6 +25,7 @@ import adams.core.Properties;
 import adams.core.Utils;
 import adams.core.option.OptionUtils;
 import adams.data.spreadsheet.MetaData;
+import adams.gui.chooser.SelectOptionPanel;
 import adams.gui.core.AbstractNamedHistoryPanel;
 import adams.gui.core.ParameterPanel;
 import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
@@ -74,6 +75,9 @@ public class CrossValidation
 
   /** the number of threads. */
   protected JSpinner m_SpinnerThreads;
+
+  /** the additional attributes to store. */
+  protected SelectOptionPanel m_SelectAdditionalAttributes;
 
   /** whether to discard the predictions. */
   protected JCheckBox m_CheckBoxDiscardPredictions;
@@ -152,6 +156,15 @@ public class CrossValidation
     m_CheckBoxDiscardPredictions.setToolTipText("Save memory by discarding predictions?");
     m_CheckBoxDiscardPredictions.addActionListener((ActionEvent e) -> update());
     m_PanelParameters.addParameter("Discard predictions", m_CheckBoxDiscardPredictions);
+
+    // additional attributes
+    m_SelectAdditionalAttributes = new SelectOptionPanel();
+    m_SelectAdditionalAttributes.setCurrent(new String[0]);
+    m_SelectAdditionalAttributes.setMultiSelect(true);
+    m_SelectAdditionalAttributes.setLenient(true);
+    m_SelectAdditionalAttributes.setDialogTitle("Select additional attributes");
+    m_SelectAdditionalAttributes.setToolTipText("Additional attributes to make available in plots");
+    m_PanelParameters.addParameter("Additional attributes", m_SelectAdditionalAttributes);
 
     // final model?
     m_CheckBoxFinalModel = new JCheckBox();
@@ -258,7 +271,11 @@ public class CrossValidation
     }
 
     // history
-    return addToHistory(history, new ResultItem(crossValidation.getEvaluation(), classifier, model, new Instances(data, 0), runInfo));
+    return addToHistory(
+      history, new ResultItem(crossValidation.getEvaluation(),
+	classifier, model, new Instances(data, 0), runInfo,
+	crossValidation.getOriginalIndices(),
+	transferAdditionalAttributes(m_SelectAdditionalAttributes, data)));
   }
 
   /**
@@ -284,6 +301,8 @@ public class CrossValidation
       else if (index > -1)
 	m_ComboBoxDatasets.setSelectedIndex(index);
     }
+
+    fillWithAttributeNames(m_SelectAdditionalAttributes, m_ComboBoxDatasets.getSelectedIndex());
 
     getOwner().updateButtons();
   }

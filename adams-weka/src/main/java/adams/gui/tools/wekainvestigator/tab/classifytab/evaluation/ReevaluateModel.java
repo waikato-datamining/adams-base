@@ -25,10 +25,13 @@ import adams.core.SerializationHelper;
 import adams.core.option.OptionUtils;
 import adams.data.spreadsheet.MetaData;
 import adams.gui.chooser.FileChooserPanel;
+import adams.gui.chooser.SelectOptionPanel;
 import adams.gui.core.AbstractNamedHistoryPanel;
 import adams.gui.core.ExtensionFileFilter;
 import adams.gui.core.ParameterPanel;
 import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
+import gnu.trove.list.TIntList;
+import gnu.trove.list.array.TIntArrayList;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
 import weka.core.Capabilities;
@@ -62,6 +65,9 @@ public class ReevaluateModel
 
   /** the datasets model. */
   protected DefaultComboBoxModel<String> m_ModelDatasets;
+
+  /** the additional attributes to store. */
+  protected SelectOptionPanel m_SelectAdditionalAttributes;
 
   /** whether to discard the predictions. */
   protected JCheckBox m_CheckBoxDiscardPredictions;
@@ -124,6 +130,15 @@ public class ReevaluateModel
     m_PanelModel.setAcceptAllFileFilterUsed(true);
     m_PanelModel.addChangeListener((ChangeEvent e) -> loadModel());
     m_PanelParameters.addParameter("Model", m_PanelModel);
+
+    // additional attributes
+    m_SelectAdditionalAttributes = new SelectOptionPanel();
+    m_SelectAdditionalAttributes.setCurrent(new String[0]);
+    m_SelectAdditionalAttributes.setMultiSelect(true);
+    m_SelectAdditionalAttributes.setLenient(true);
+    m_SelectAdditionalAttributes.setDialogTitle("Select additional attributes");
+    m_SelectAdditionalAttributes.setToolTipText("Additional attributes to make available in plots");
+    m_PanelParameters.addParameter("Additional attributes", m_SelectAdditionalAttributes);
 
     // discard predictions?
     m_CheckBoxDiscardPredictions = new JCheckBox();
@@ -231,6 +246,8 @@ public class ReevaluateModel
     boolean	discard;
     String	msg;
     MetaData 	runInfo;
+    TIntList 	original;
+    int		i;
 
     classifier = (Classifier) OptionUtils.shallowCopy(m_Model);
 
@@ -251,8 +268,15 @@ public class ReevaluateModel
     eval.setDiscardPredictions(discard);
     eval.evaluateModel(m_Model, data);
 
+    original = new TIntArrayList();
+    for (i = 0; i < data.numInstances(); i++)
+      original.add(i);
+
     // history
-    return addToHistory(history, new ResultItem(eval, classifier, m_Model, m_Header, runInfo));
+    return addToHistory(
+      history,
+      new ResultItem(eval, classifier, m_Model, m_Header, runInfo,
+	original.toArray(), transferAdditionalAttributes(m_SelectAdditionalAttributes, data)));
   }
 
   /**

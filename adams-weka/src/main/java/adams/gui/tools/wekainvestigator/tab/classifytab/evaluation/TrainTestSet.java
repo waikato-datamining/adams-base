@@ -23,9 +23,12 @@ package adams.gui.tools.wekainvestigator.tab.classifytab.evaluation;
 import adams.core.Properties;
 import adams.core.option.OptionUtils;
 import adams.data.spreadsheet.MetaData;
+import adams.gui.chooser.SelectOptionPanel;
 import adams.gui.core.AbstractNamedHistoryPanel;
 import adams.gui.core.ParameterPanel;
 import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
+import gnu.trove.list.TIntList;
+import gnu.trove.list.array.TIntArrayList;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
 import weka.core.Capabilities;
@@ -60,6 +63,9 @@ public class TrainTestSet
 
   /** the datasets model. */
   protected DefaultComboBoxModel<String> m_ModelDatasets;
+
+  /** the additional attributes to store. */
+  protected SelectOptionPanel m_SelectAdditionalAttributes;
 
   /** whether to discard the predictions. */
   protected JCheckBox m_CheckBoxDiscardPredictions;
@@ -100,6 +106,15 @@ public class TrainTestSet
     m_ComboBoxTest = new JComboBox<>(m_ModelDatasets);
     m_ComboBoxTest.addActionListener((ActionEvent e) -> update());
     m_PanelParameters.addParameter("Test", m_ComboBoxTest);
+
+    // additional attributes
+    m_SelectAdditionalAttributes = new SelectOptionPanel();
+    m_SelectAdditionalAttributes.setCurrent(new String[0]);
+    m_SelectAdditionalAttributes.setMultiSelect(true);
+    m_SelectAdditionalAttributes.setLenient(true);
+    m_SelectAdditionalAttributes.setDialogTitle("Select additional attributes");
+    m_SelectAdditionalAttributes.setToolTipText("Additional attributes to make available in plots");
+    m_PanelParameters.addParameter("Additional attributes", m_SelectAdditionalAttributes);
 
     // discard predictions?
     m_CheckBoxDiscardPredictions = new JCheckBox();
@@ -174,6 +189,8 @@ public class TrainTestSet
     boolean	discard;
     String	msg;
     MetaData 	runInfo;
+    TIntList	original;
+    int		i;
 
     if ((msg = canEvaluate(classifier)) != null)
       throw new IllegalArgumentException("Cannot evaluate classifier!\n" + msg);
@@ -198,8 +215,15 @@ public class TrainTestSet
     eval.setDiscardPredictions(discard);
     eval.evaluateModel(model, test);
 
+    original = new TIntArrayList();
+    for (i = 0; i < test.numInstances(); i++)
+      original.add(i);
+
     // history
-    return addToHistory(history, new ResultItem(eval, classifier, model, new Instances(train, 0), runInfo));
+    return addToHistory(
+      history,
+      new ResultItem(eval, classifier, model, new Instances(train, 0), runInfo,
+	original.toArray(), transferAdditionalAttributes(m_SelectAdditionalAttributes, test)));
   }
 
   /**
