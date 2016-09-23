@@ -45,27 +45,23 @@ import javax.swing.JSpinner;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
  * Class that displays box plots for a number of attributes
- * 
+ *
  * @author msf8
  * @version $Revision$
- * 
+ *
  */
 public class BoxPlotManager
   extends BasePanel
@@ -74,14 +70,17 @@ public class BoxPlotManager
   /** for serialization */
   private static final long serialVersionUID = -7912792208597490973L;
 
+  /** the split pane. */
+  protected BaseSplitPane m_SplitPane;
+
   /** attributes that can be chosen */
-  protected DefaultListModel m_Attributes;
+  protected DefaultListModel<String> m_ModelAvailableAttributes;
 
   /** attributes that have been chosen */
-  protected DefaultListModel m_Chosen;
+  protected DefaultListModel<String> m_ModelChosenAttributes;
 
   /** Panel for displaying box plots */
-  protected JPanel m_Centre;
+  protected JPanel m_PanelRight;
 
   /** Instances to be graphed */
   protected SpreadSheet m_Data;
@@ -111,49 +110,49 @@ public class BoxPlotManager
   protected boolean m_Fill;
 
   /** spinner to choose the width of each box plot */
-  protected JSpinner m_WidthSpin;
+  protected JSpinner m_SpinnerWidth;
 
   /** Spinner to choose the height of each box plot */
-  protected JSpinner m_HeightSpin;
+  protected JSpinner m_SpinnerHeight;
 
   /** spinner to choose the axis width of each box plot */
-  protected JSpinner m_AxisWidSpin;
+  protected JSpinner m_SpinnerAxisWid;
 
   /** select whether graphs have the same axis */
-  protected JCheckBox m_SameAxis;
+  protected JCheckBox m_CheckBoxSameAxis;
 
   /** Range of box plots to display initially */
   protected Range m_Range;
 
   /** Button to add selected attribute to chosen attributes list */
-  protected JButton m_Add;
+  protected JButton m_ButtonAdd;
 
   /** Button to add all attributes to chosen attributes list */
-  protected JButton m_AddAll;
+  protected JButton m_ButtonAddAll;
 
   /** Object that contains a list and a group of buttons for choosing attributes */
-  protected BaseListWithButtons m_AttributesDis;
+  protected BaseListWithButtons m_ListAvailableAttributes;
 
   /** Object that contains a list and a group of buttons for removing attributes */
-  protected BaseListWithButtons m_ChosenDis;
+  protected BaseListWithButtons m_ListChosenAttributes;
 
   /** Button to remove a selected attribute from chosen attributes list */
-  protected JButton m_Remove;
+  protected JButton m_ButtonRemove;
 
   /** Button to remove all attributes from the chosen attributes list */
-  protected JButton m_RemoveAll;
+  protected JButton m_ButtonRemoveAll;
 
   /** Object that contains a set of label and component objects, aids displaying */
   protected ParameterPanel m_PanelParams;
 
   /** Spinner for choosing the number of box plots to be displayed horizontally */
-  protected JSpinner m_GridSpin;
+  protected JSpinner m_SpinnerGrid;
 
   /** Check box to choose if boxes should b filled */
-  protected JCheckBox m_FillCheck;
+  protected JCheckBox m_CheckBoxFill;
 
   /** Button to choose color of boxes */
-  protected JButton m_Colorbutton;
+  protected JButton m_ButtonFillColor;
 
   @Override
   protected void initialize() {
@@ -161,19 +160,129 @@ public class BoxPlotManager
     m_Width = 200;
     m_Height = 200;
     m_AxisWidth = 60;
-    m_NumHorizontal = -1;
+    m_NumHorizontal = 3;
+    m_ModelAvailableAttributes = new DefaultListModel<>();
+    m_ModelChosenAttributes = new DefaultListModel<>();
   }
 
   /**
-   * Constructor
+   * Initializes the gui
    */
-  public BoxPlotManager() {
-    super(new BorderLayout());
+  @Override
+  protected void initGUI() {
+    super.initGUI();
+
+    setLayout(new BorderLayout());
+
+    // contains plot and options
+    m_SplitPane = new BaseSplitPane(BaseSplitPane.HORIZONTAL_SPLIT);
+    m_PanelRight = new JPanel(new BorderLayout());
+    m_SplitPane.setRightComponent(m_PanelRight);
+    add(m_SplitPane, BorderLayout.CENTER);
+    m_SplitPane.setResizeWeight(0.3);
+    m_SplitPane.setOneTouchExpandable(true);
+
+    // left panel for choosing attributes, sizes and axis scale
+    JPanel panelLeft = new JPanel(new BorderLayout());
+    m_SplitPane.setLeftComponent(panelLeft);
+
+    // north panel on left panel
+    JPanel top = new JPanel(new BorderLayout());
+    m_ListAvailableAttributes = new BaseListWithButtons();
+    m_ListAvailableAttributes.setPreferredSize(new Dimension(m_WidthLeft, 140));
+    m_ListAvailableAttributes.setModel(m_ModelAvailableAttributes);
+    top.add(m_ListAvailableAttributes, BorderLayout.NORTH);
+    m_ButtonAdd = new JButton("Add");
+    m_ButtonAdd.setMnemonic('A');
+    m_ButtonAdd.setEnabled(false);
+    // add listener for add button
+    m_ButtonAdd.addActionListener((ActionEvent e) -> addClicked());
+    m_ButtonAddAll = new JButton("Add all");
+    m_ButtonAddAll.setMnemonic('d');
+    // add listener for add all button
+    m_ButtonAddAll.addActionListener((ActionEvent e) -> addAllClicked());
+    m_ListAvailableAttributes.setBorder(BorderFactory.createTitledBorder("Attributes"));
+    m_ListAvailableAttributes.addListSelectionListener((ListSelectionEvent e) -> updateButtons());
+    m_ListAvailableAttributes.addToButtonsPanel(m_ButtonAdd);
+    m_ListAvailableAttributes.addToButtonsPanel(m_ButtonAddAll);
+
+    // South panel on left panel
+    JPanel bottom = new JPanel(new BorderLayout());
+    m_ListChosenAttributes = new BaseListWithButtons();
+    m_ListChosenAttributes.setPreferredSize(new Dimension(m_WidthLeft, 140));
+    m_ListChosenAttributes.setModel(m_ModelChosenAttributes);
+    bottom.add(m_ListChosenAttributes, BorderLayout.CENTER);
+    m_ButtonRemove = new JButton("Remove");
+    m_ButtonRemove.setMnemonic('R');
+    m_ButtonRemove.setEnabled(false);
+    // add listener for remove button
+    m_ButtonRemove.addActionListener((ActionEvent e) -> removeClicked());
+    m_ButtonRemoveAll = new JButton("Remove all");
+    m_ButtonRemoveAll.setMnemonic('m');
+    m_ButtonRemoveAll.setEnabled(false);
+    // add listener for remove all button
+    m_ButtonRemoveAll.addActionListener((ActionEvent e) -> removeAllClicked());
+    m_ListChosenAttributes.setBorder(BorderFactory.createTitledBorder("Chosen attributes"));
+    m_ListChosenAttributes.addListSelectionListener((ListSelectionEvent e) -> updateButtons());
+    m_ListChosenAttributes.addToButtonsPanel(m_ButtonRemoveAll);
+    m_ListChosenAttributes.addToButtonsPanel(m_ButtonRemove);
+
+    // middle panel
+    m_PanelParams = new ParameterPanel();
+    JPanel centre = new JPanel(new BorderLayout());
+    SpinnerModel spinHeight = new SpinnerNumberModel(m_Height, 50, 500, 2);
+    SpinnerModel spinWidth = new SpinnerNumberModel(m_Width, 50, 500, 2);
+    SpinnerModel spinAxis = new SpinnerNumberModel(m_AxisWidth, 20, 300, 2);
+    SpinnerModel spinGrid = new SpinnerNumberModel(m_NumHorizontal, -1, null, 1);
+    m_SpinnerWidth = new JSpinner(spinWidth);
+    m_SpinnerHeight = new JSpinner(spinHeight);
+    m_SpinnerAxisWid = new JSpinner(spinAxis);
+    m_SpinnerGrid = new JSpinner(spinGrid);
+    m_SpinnerWidth.addChangeListener((ChangeEvent e) -> spinWidthChange(e));
+    m_SpinnerHeight.addChangeListener((ChangeEvent e) -> spinHeightChange(e));
+    m_SpinnerAxisWid.addChangeListener((ChangeEvent e) -> spinAxisChange(e));
+    m_SpinnerGrid.addChangeListener((ChangeEvent e) -> spinHorizontalChange(e));
+    m_CheckBoxSameAxis = new JCheckBox();
+    m_CheckBoxSameAxis.addItemListener((ItemEvent e) -> sameAxisChange(e));
+
+    m_CheckBoxFill = new JCheckBox();
+    m_CheckBoxFill.addItemListener((ItemEvent e) -> fillChange(e));
+
+    m_ButtonFillColor = new JButton("Choose");
+    m_ButtonFillColor.addActionListener((ActionEvent e) -> colorChange());
+
+    m_PanelParams.addParameter("Width of plot", m_SpinnerWidth);
+    m_PanelParams.addParameter("Height of plot", m_SpinnerHeight);
+    m_PanelParams.addParameter("Width of axis", m_SpinnerAxisWid);
+    m_PanelParams.addParameter("Number in each row", m_SpinnerGrid);
+    m_PanelParams.addParameter("Use same axis", m_CheckBoxSameAxis);
+    m_PanelParams.addParameter("Fill box", m_CheckBoxFill);
+    m_PanelParams.addParameter("Fill color", m_ButtonFillColor);
+    centre.add(m_PanelParams, BorderLayout.CENTER);
+
+    // add panels to left panel
+    panelLeft.add(top, BorderLayout.NORTH);
+    JPanel panel2 = new JPanel(new BorderLayout());
+    panelLeft.add(panel2, BorderLayout.CENTER);
+    panel2.add(centre, BorderLayout.NORTH);
+    JPanel panel3 = new JPanel(new BorderLayout());
+    panel2.add(panel3, BorderLayout.CENTER);
+    panel3.add(bottom, BorderLayout.NORTH);
+  }
+
+  /**
+   * finishes the initialization.
+   */
+  @Override
+  protected void finishInit() {
+    super.finishInit();
+
+    updateButtons();
   }
 
   /**
    * sets the instances to be displayed
-   * 
+   *
    * @param inst
    *          Instances object for displaying
    */
@@ -187,191 +296,16 @@ public class BoxPlotManager
    * selected list objects
    */
   protected void updateButtons() {
-    m_Add.setEnabled(m_AttributesDis.getSelectedIndex() != -1);
-    m_AddAll.setEnabled(m_Attributes.size() != 0);
-    m_Remove.setEnabled(m_ChosenDis.getSelectedIndex() != -1);
-    m_RemoveAll.setEnabled(m_Chosen.size() != 0);
-  }
-
-  /**
-   * Initializes the gui
-   */
-  @Override
-  protected void initGUI() {
-    // contains plot and options
-    BaseSplitPane splitPane;
-    splitPane = new BaseSplitPane(BaseSplitPane.HORIZONTAL_SPLIT);
-    m_Centre = new JPanel(new BorderLayout());
-    splitPane.setRightComponent(m_Centre);
-    add(splitPane, BorderLayout.CENTER);
-    splitPane.setResizeWeight(0.3);
-    splitPane.setOneTouchExpandable(true);
-    m_Attributes = new DefaultListModel();
-    m_Chosen = new DefaultListModel();
-
-    // west panel for choosing attributes, sizes and axis scale
-    JPanel west = new JPanel(new BorderLayout());
-    west.setPreferredSize(new Dimension(m_WidthLeft, 1000));
-
-    // north panel on west panel
-    JPanel top = new JPanel(new BorderLayout());
-    m_AttributesDis = new BaseListWithButtons();
-    m_AttributesDis.setPreferredSize(new Dimension(m_WidthLeft, 140));
-    m_AttributesDis.setModel(m_Attributes);
-    top.add(m_AttributesDis, BorderLayout.NORTH);
-    m_Add = new JButton("Add");
-    m_Add.setMnemonic('A');
-    m_Add.setEnabled(false);
-    // add listener for add button
-    m_Add.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	addClicked();
-      }
-    });
-    m_AddAll = new JButton("Add all");
-    m_AddAll.setMnemonic('d');
-    // add listener for add all button
-    m_AddAll.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	addAllClicked();
-      }
-    });
-    m_AttributesDis.setBorder(BorderFactory.createTitledBorder("Attributes"));
-    m_AttributesDis.addListSelectionListener(new ListSelectionListener() {
-      public void valueChanged(ListSelectionEvent e) {
-	updateButtons();
-      }
-    });
-    m_Add.setPreferredSize(new Dimension(110, 30));
-    m_AddAll.setPreferredSize(new Dimension(110, 30));
-    m_AttributesDis.addToButtonsPanel(m_Add);
-    m_AttributesDis.addToButtonsPanel(m_AddAll);
-
-    // South panel on west panel
-    JPanel bottom = new JPanel(new BorderLayout());
-    m_ChosenDis = new BaseListWithButtons();
-    m_ChosenDis.setPreferredSize(new Dimension(m_WidthLeft, 140));
-    m_ChosenDis.setModel(m_Chosen);
-    bottom.add(m_ChosenDis, BorderLayout.CENTER);
-    m_Remove = new JButton("Remove");
-    m_Remove.setMnemonic('R');
-    m_Remove.setEnabled(false);
-    // add listener for remove button
-    m_Remove.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	removeClicked();
-      }
-    });
-    m_RemoveAll = new JButton("Remove all");
-    m_RemoveAll.setMnemonic('m');
-    m_RemoveAll.setEnabled(false);
-    // add listener for remove all button
-    m_RemoveAll.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	removeAllClicked();
-      }
-    });
-    m_ChosenDis.setBorder(BorderFactory.createTitledBorder("Chosen attributes"));
-    m_ChosenDis.addListSelectionListener(new ListSelectionListener() {
-      public void valueChanged(ListSelectionEvent e) {
-	updateButtons();
-      }
-    });
-    m_Remove.setPreferredSize(new Dimension(110, 30));
-    m_RemoveAll.setPreferredSize(new Dimension(110, 30));
-    m_ChosenDis.addToButtonsPanel(m_RemoveAll);
-    m_ChosenDis.addToButtonsPanel(m_Remove);
-
-    // middle panel
-    m_PanelParams = new ParameterPanel();
-    JPanel centre = new JPanel(new BorderLayout());
-    centre.setPreferredSize(new Dimension(m_WidthLeft, 350));
-    SpinnerModel spinHeight = new SpinnerNumberModel(m_Height, 50, 500, 2);
-    SpinnerModel spinWidth = new SpinnerNumberModel(m_Width, 50, 500, 2);
-    SpinnerModel spinAxis = new SpinnerNumberModel(m_AxisWidth, 20, 300, 2);
-    SpinnerModel spinGrid = new SpinnerNumberModel(m_NumHorizontal, -1, null, 1);
-    m_WidthSpin = new JSpinner(spinWidth);
-    m_HeightSpin = new JSpinner(spinHeight);
-    m_AxisWidSpin = new JSpinner(spinAxis);
-    m_GridSpin = new JSpinner(spinGrid);
-    m_WidthSpin.addChangeListener(new ChangeListener() {
-      public void stateChanged(ChangeEvent arg0) {
-	spinWidthChange(arg0);
-      }
-    });
-    m_HeightSpin.addChangeListener(new ChangeListener() {
-      public void stateChanged(ChangeEvent arg0) {
-	spinHeightChange(arg0);
-      }
-    });
-    m_AxisWidSpin.addChangeListener(new ChangeListener() {
-      public void stateChanged(ChangeEvent arg0) {
-	spinAxisChange(arg0);
-      }
-    });
-    m_GridSpin.addChangeListener(new ChangeListener() {
-      public void stateChanged(ChangeEvent e) {
-	spinHorizontalChange(e);
-      }
-    });
-    m_SameAxis = new JCheckBox();
-    m_SameAxis.addItemListener(new ItemListener() {
-      public void itemStateChanged(ItemEvent arg0) {
-	sameAxisChange(arg0);
-      }
-    });
-
-    m_FillCheck = new JCheckBox();
-    m_FillCheck.addItemListener(new ItemListener() {
-      public void itemStateChanged(ItemEvent e) {
-	fillChange(e);
-      }
-    });
-
-    m_Colorbutton = new JButton("color");
-    m_Colorbutton.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent arg0) {
-	colorChange();
-      }
-    });
-
-    m_PanelParams.addParameter("Width of plot", m_WidthSpin);
-    m_PanelParams.addParameter("Height of plot", m_HeightSpin);
-    m_PanelParams.addParameter("Width of axis", m_AxisWidSpin);
-    m_PanelParams.addParameter("Number in each row", m_GridSpin);
-    m_PanelParams.addParameter("Use same axis", m_SameAxis);
-    m_PanelParams.addParameter("Fill box", m_FillCheck);
-    m_PanelParams.addParameter("Change color", m_Colorbutton);
-    centre.add(m_PanelParams, BorderLayout.CENTER);
-
-    // add panels to west panel
-    west.add(top, BorderLayout.NORTH);
-    JPanel panel2 = new JPanel(new BorderLayout());
-    west.add(panel2, BorderLayout.CENTER);
-    panel2.add(centre, BorderLayout.NORTH);
-    JPanel panel3 = new JPanel(new BorderLayout());
-    panel2.add(panel3, BorderLayout.CENTER);
-    panel3.add(bottom, BorderLayout.NORTH);
-    // add west panel to main panel
-    splitPane.setLeftComponent(west);
-    
-    setPreferredSize(new Dimension(1000, 700));
-  }
-  
-  /**
-   * finishes the initialization.
-   */
-  @Override
-  protected void finishInit() {
-    super.finishInit();
-    
-    updateButtons();
+    m_ButtonAdd.setEnabled(m_ListAvailableAttributes.getSelectedIndex() != -1);
+    m_ButtonAddAll.setEnabled(m_ModelAvailableAttributes.size() != 0);
+    m_ButtonRemove.setEnabled(m_ListChosenAttributes.getSelectedIndex() != -1);
+    m_ButtonRemoveAll.setEnabled(m_ModelChosenAttributes.size() != 0);
   }
 
   /**
    * Fill boxes check box is changed
-   * 
-   * @param val
+   *
+   * @param val		the event
    */
   protected void fillChange(ItemEvent val) {
     m_Fill = ((JCheckBox) val.getSource()).isSelected();
@@ -383,7 +317,7 @@ public class BoxPlotManager
    */
   protected void colorChange() {
     Color newCol = JColorChooser.showDialog(BoxPlotManager.this,
-	"Choose box color", m_Color);
+      "Choose box color", m_Color);
     if (newCol != null) {
       m_Color = newCol;
     }
@@ -394,12 +328,12 @@ public class BoxPlotManager
    * Updates the state of gui components after options have been set
    */
   protected void updateGui() {
-    m_SameAxis.setSelected(m_AxisSame);
-    m_AxisWidSpin.setValue(m_AxisWidth);
-    m_HeightSpin.setValue(m_Height);
-    m_GridSpin.setValue(m_NumHorizontal);
-    m_WidthSpin.setValue(m_Width);
-    m_FillCheck.setSelected(m_Fill);
+    m_CheckBoxSameAxis.setSelected(m_AxisSame);
+    m_SpinnerAxisWid.setValue(m_AxisWidth);
+    m_SpinnerHeight.setValue(m_Height);
+    m_SpinnerGrid.setValue(m_NumHorizontal);
+    m_SpinnerWidth.setValue(m_Width);
+    m_CheckBoxFill.setSelected(m_Fill);
     if (m_Data != null)
       update();
     updateButtons();
@@ -410,11 +344,11 @@ public class BoxPlotManager
    * object
    */
   public void reset() {
-	  m_Chosen.removeAllElements();
-	  updateGui();
+    m_ModelChosenAttributes.removeAllElements();
+    updateGui();
     // add attributes to list, including class attribute
     for (int g = 0; g < m_Data.getColumnCount(); g++) {
-      m_Attributes.addElement(m_Data.getColumnName(g));
+      m_ModelAvailableAttributes.addElement(m_Data.getColumnName(g));
     }
     // If options have been set specifying the initial box plots to display
     // creates an arraylist of the indices of box attributes to display
@@ -428,11 +362,11 @@ public class BoxPlotManager
       }
       ArrayList<String> chosen = new ArrayList<>();
       for (int t: indices) {
-	chosen.add((String) m_Attributes.get(t));
+	chosen.add(m_ModelAvailableAttributes.get(t));
       }
       for (String s: chosen) {
-	m_Chosen.addElement(s);
-	m_Attributes.removeElement(s);
+	m_ModelChosenAttributes.addElement(s);
+	m_ModelAvailableAttributes.removeElement(s);
       }
     }
     update();
@@ -444,16 +378,16 @@ public class BoxPlotManager
    */
   protected void addClicked() {
     // if no attribute selected
-    if (m_AttributesDis.getSelectedIndex() == -1)
+    if (m_ListAvailableAttributes.getSelectedIndex() == -1)
       return;
-    int[] indices = m_AttributesDis.getSelectedIndices();
+    int[] indices = m_ListAvailableAttributes.getSelectedIndices();
     // takes from attributes list and puts in chosen list
     Arrays.sort(indices);
     for (int index: indices) {
-      m_Chosen.addElement(m_AttributesDis.getModel().getElementAt(index));
+      m_ModelChosenAttributes.addElement((String) m_ListAvailableAttributes.getModel().getElementAt(index));
     }
     for (int i = indices.length - 1; i >= 0; i--) {
-      m_Attributes.remove(indices[i]);
+      m_ModelAvailableAttributes.remove(indices[i]);
     }
     updateButtons();
     update();
@@ -464,16 +398,16 @@ public class BoxPlotManager
    */
   protected void removeClicked() {
     // if no attribute selected
-    if (m_ChosenDis.getSelectedIndex() == -1)
+    if (m_ListChosenAttributes.getSelectedIndex() == -1)
       return;
     // takes from chosen list, places in attributes list
-    int[] indices = m_ChosenDis.getSelectedIndices();
+    int[] indices = m_ListChosenAttributes.getSelectedIndices();
     Arrays.sort(indices);
     for (int index: indices) {
-      m_Attributes.addElement(m_ChosenDis.getModel().getElementAt(index));
+      m_ModelAvailableAttributes.addElement((String) m_ListChosenAttributes.getModel().getElementAt(index));
     }
     for (int i = indices.length - 1; i >= 0; i--) {
-      m_Chosen.remove(indices[i]);
+      m_ModelChosenAttributes.remove(indices[i]);
     }
     updateButtons();
     update();
@@ -483,10 +417,10 @@ public class BoxPlotManager
    * removes all attributes from the chosen attribute list
    */
   protected void removeAllClicked() {
-    m_Attributes.removeAllElements();
-    m_Chosen.removeAllElements();
+    m_ModelAvailableAttributes.removeAllElements();
+    m_ModelChosenAttributes.removeAllElements();
     for (int g = 0; g < m_Data.getColumnCount(); g++) {
-      m_Attributes.addElement(m_Data.getColumnName(g));
+      m_ModelAvailableAttributes.addElement(m_Data.getColumnName(g));
     }
     updateButtons();
     update();
@@ -496,10 +430,10 @@ public class BoxPlotManager
    * Displays box plots for all attributes
    */
   protected void addAllClicked() {
-    m_Attributes.removeAllElements();
-    m_Chosen.removeAllElements();
+    m_ModelAvailableAttributes.removeAllElements();
+    m_ModelChosenAttributes.removeAllElements();
     for (int g = 0; g < m_Data.getColumnCount(); g++) {
-      m_Chosen.addElement(m_Data.getColumnName(g));
+      m_ModelChosenAttributes.addElement(m_Data.getColumnName(g));
     }
     updateButtons();
     update();
@@ -507,7 +441,7 @@ public class BoxPlotManager
 
   /**
    * Changes the width of the box plots
-   * 
+   *
    * @param e
    *          The event that occurred
    */
@@ -520,7 +454,7 @@ public class BoxPlotManager
 
   /**
    * Changes the height of the box plots
-   * 
+   *
    * @param e
    *          The event that occurred
    */
@@ -533,7 +467,7 @@ public class BoxPlotManager
 
   /**
    * Changes the width of the left axis on each box plot
-   * 
+   *
    * @param e
    *          The event that occurred
    */
@@ -546,7 +480,7 @@ public class BoxPlotManager
 
   /**
    * Change the number of box plots to be displayed in each row
-   * 
+   *
    * @param e
    *          The event that occured
    */
@@ -559,7 +493,7 @@ public class BoxPlotManager
 
   /**
    * Sets the axis scale to be the same for each box plot
-   * 
+   *
    * @param e
    *          The event that occured
    */
@@ -572,7 +506,7 @@ public class BoxPlotManager
 
   /**
    * Set the width of each box plot
-   * 
+   *
    * @param val
    *          Width in pixels
    */
@@ -582,7 +516,7 @@ public class BoxPlotManager
 
   /**
    * Get the width of each box plot drawn
-   * 
+   *
    * @return Width in pixels
    */
   public int getBoxWidth() {
@@ -591,7 +525,7 @@ public class BoxPlotManager
 
   /**
    * Set the height of each box plot drawn
-   * 
+   *
    * @param val
    *          Height in pixels
    */
@@ -601,7 +535,7 @@ public class BoxPlotManager
 
   /**
    * Get the height of each box plot
-   * 
+   *
    * @return Height in pixels
    */
   public int getBoxHeight() {
@@ -610,7 +544,7 @@ public class BoxPlotManager
 
   /**
    * Set the width of the left axis for each box plot
-   * 
+   *
    * @param val
    *          Width in pixels
    */
@@ -620,7 +554,7 @@ public class BoxPlotManager
 
   /**
    * Get the width of the left axis for each boxplot
-   * 
+   *
    * @return Width in pixels
    */
   public int getAxisWidth() {
@@ -629,7 +563,7 @@ public class BoxPlotManager
 
   /**
    * Set the number of box plots to display on each row
-   * 
+   *
    * @param val
    *          number on each row
    */
@@ -639,7 +573,7 @@ public class BoxPlotManager
 
   /**
    * Get the number of box plots to display on each row
-   * 
+   *
    * @return Number in each row
    */
   public int getNumHorizontal() {
@@ -648,7 +582,7 @@ public class BoxPlotManager
 
   /**
    * Set whether each box plot should have the same axis scale
-   * 
+   *
    * @param val
    *          true if same axis
    */
@@ -658,7 +592,7 @@ public class BoxPlotManager
 
   /**
    * get whether the box plots should all use the same axis scale
-   * 
+   *
    * @return true if they use the same axis scale
    */
   public boolean getSameAxis() {
@@ -667,7 +601,7 @@ public class BoxPlotManager
 
   /**
    * Set the range of box plots to display initially
-   * 
+   *
    * @param val
    *          Range object containing range of attributes
    */
@@ -677,7 +611,7 @@ public class BoxPlotManager
 
   /**
    * Get the range of box plots to be displayed initially
-   * 
+   *
    * @return The range of box plots to display
    */
   public Range getRange() {
@@ -686,7 +620,7 @@ public class BoxPlotManager
 
   /**
    * Set whether the boxes should be filled with color
-   * 
+   *
    * @param val
    *          True if filled
    */
@@ -705,7 +639,7 @@ public class BoxPlotManager
 
   /**
    * Set the color to fill the boxes with
-   * 
+   *
    * @param val
    *          Color to fill
    */
@@ -726,7 +660,7 @@ public class BoxPlotManager
    * Update the display with box plots required
    */
   protected void update() {
-    int numGraphs = m_Chosen.size();
+    int numGraphs = m_ModelChosenAttributes.size();
     if (numGraphs != 0) {
       // grid for displaying the rows of box plots
       JPanel grid;
@@ -735,7 +669,7 @@ public class BoxPlotManager
       else
 	grid = new JPanel(new GridLayout(0, m_NumHorizontal));
       // remove existing boxplots
-      m_Centre.removeAll();
+      m_PanelRight.removeAll();
       // scroll pane for the display grid
       BaseScrollPane scrollPane;
       scrollPane = new BaseScrollPane(grid);
@@ -747,60 +681,60 @@ public class BoxPlotManager
       // if all graphs to be drawn with same axis
       //This has been changed to use max/min of attributes chosen, not all attributes.
       if (m_AxisSame) {
-    	  boolean contains;
-    	  String chosen;
-    	  String inst;
-    	  
-    	  for (int i = 0; i < m_Data.getColumnCount(); i++) {
-    		  contains = false;
-    		  for(int j = 0; j < m_Chosen.size(); j++) {
-    			  chosen = m_Chosen.get(j).toString();
-    			  inst = m_Data.getColumnName(i);
-    			  if(chosen.equals(inst)) {
-    				  contains = true;
-    				  break;
-    			  }
-    		  }
-    		  if(contains) {
-    		  double[] data = SpreadSheetUtils.getNumericColumn(m_Data, i);
-    		  double tempMax = StatUtils.max(data);
-    		  double tempMin = StatUtils.min(data);
-    		  if (max == null)
-    		    max = tempMax;
-    		  if (min == null)
-    		    min = tempMin;
-    		  if (tempMax > max)
-    		    max = tempMax;
-    		  if (tempMin < min)
-    		    min = tempMin;
-    		  }
-    		}
-    	  
-    	  //old version
+	boolean contains;
+	String chosen;
+	String inst;
+
+	for (int i = 0; i < m_Data.getColumnCount(); i++) {
+	  contains = false;
+	  for(int j = 0; j < m_ModelChosenAttributes.size(); j++) {
+	    chosen = m_ModelChosenAttributes.get(j);
+	    inst = m_Data.getColumnName(i);
+	    if(chosen.equals(inst)) {
+	      contains = true;
+	      break;
+	    }
+	  }
+	  if(contains) {
+	    double[] data = SpreadSheetUtils.getNumericColumn(m_Data, i);
+	    double tempMax = StatUtils.max(data);
+	    double tempMin = StatUtils.min(data);
+	    if (max == null)
+	      max = tempMax;
+	    if (min == null)
+	      min = tempMin;
+	    if (tempMax > max)
+	      max = tempMax;
+	    if (tempMin < min)
+	      min = tempMin;
+	  }
+	}
+
+	//old version
 	// finding max and min values
-//	for (int i = 0; i < m_Instances.getColumnCount(); i++) {
-//	  double[] data = m_Instances.attributeToDoubleArray(i);
-//	  double tempMax = StatUtils.max(data);
-//	  double tempMin = StatUtils.min(data);
-//	  if (max == null)
-//	    max = tempMax;
-//	  if (min == null)
-//	    min = tempMin;
-//	  if (tempMax > max)
-//	    max = tempMax;
-//	  if (tempMin < min)
-//	    min = tempMin;
-//	}
+	//	for (int i = 0; i < m_Instances.getColumnCount(); i++) {
+	//	  double[] data = m_Instances.attributeToDoubleArray(i);
+	//	  double tempMax = StatUtils.max(data);
+	//	  double tempMin = StatUtils.min(data);
+	//	  if (max == null)
+	//	    max = tempMax;
+	//	  if (min == null)
+	//	    min = tempMin;
+	//	  if (tempMax > max)
+	//	    max = tempMax;
+	//	  if (tempMin < min)
+	//	    min = tempMin;
+	//	}
       }
       // Jpanel with flowlayout for the scrollpane
       JPanel scrollHold = new JPanel();
       scrollHold.add(scrollPane);
       // scrollpane to hold the new panel if larger than the available area
       BaseScrollPane holdScroll = new BaseScrollPane(scrollHold);
-      m_Centre.add(holdScroll, BorderLayout.CENTER);
+      m_PanelRight.add(holdScroll, BorderLayout.CENTER);
       // displaying each of the graphs
-      for (int r = 0; r < m_Chosen.size(); r++) {
-	String toPlot = (String) m_Chosen.getElementAt(r);
+      for (int r = 0; r < m_ModelChosenAttributes.size(); r++) {
+	String toPlot = m_ModelChosenAttributes.getElementAt(r);
 	BoxPlotGraph graph = new BoxPlotGraph();
 	graph.pass(m_Data, toPlot);
 	graph.setPreferredSize(dim);
@@ -822,7 +756,7 @@ public class BoxPlotManager
       }
     }
     else
-      m_Centre.removeAll();
+      m_PanelRight.removeAll();
     repaint();
     revalidate();
   }

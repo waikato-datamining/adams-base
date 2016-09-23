@@ -238,40 +238,32 @@ public class BoxPlot
   public void defineOptions() {
     super.defineOptions();
 
-    //width of plot
     m_OptionManager.add(
 	"width-plot", "widthPlot",
 	200, 50,500);
 
-    //height of plot
     m_OptionManager.add(
 	"height-plot", "heightPlot",
 	200, 50, 500);
 
-    //Width of left axis
     m_OptionManager.add(
 	"width-ax", "widthAx",
 	50, 20, 100);
 
-    //number of box plots in each row
     m_OptionManager.add(
 	"num-horizontal", "numHorizontal",
-	-1,-1,null);
+	3,-1,null);
 
-    //Fill the box plots with color
     m_OptionManager.add(
 	"fill-box", "fillBox", true);
 
-    //Choose the color to fill the box plots
     m_OptionManager.add(
 	"color", "color", Color.RED);
 
-    //whether graphs have same axis scale
     m_OptionManager.add(
 	"same-axis", "sameAxis",
 	false);
 
-    //Range of attributes to be displayed initially
     m_OptionManager.add(
 	"attributes", "attributes",
 	new Range(Range.ALL));
