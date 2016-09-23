@@ -21,7 +21,9 @@
 package adams.gui.tools.wekainvestigator.tab.classifytab.output;
 
 import adams.data.spreadsheet.SpreadSheet;
+import adams.flow.container.WekaEvaluationContainer;
 import adams.flow.core.Token;
+import adams.flow.transformer.SpreadSheetMerge;
 import adams.flow.transformer.WekaPredictionsToSpreadSheet;
 import adams.gui.core.SpreadSheetTable;
 import adams.gui.tools.wekainvestigator.output.TableContentPanel;
@@ -268,20 +270,43 @@ public class Predictions
    */
   @Override
   public String generateOutput(ResultItem item) {
-    WekaPredictionsToSpreadSheet conv;
+    WekaPredictionsToSpreadSheet 	conv;
+    WekaEvaluationContainer 		cont;
     Token				token;
     SpreadSheet				sheet;
     SpreadSheetTable			table;
+    SpreadSheetMerge			merge;
+    String				msg;
 
+    cont = new WekaEvaluationContainer(item.getEvaluation());
+    if (item.hasOriginalIndices())
+      cont.setValue(WekaEvaluationContainer.VALUE_ORIGINALINDICES, item.getOriginalIndices());
     conv = new WekaPredictionsToSpreadSheet();
     conv.setAddLabelIndex(m_AddLabelIndex);
     conv.setShowDistribution(m_ShowDistribution);
     conv.setShowProbability(m_ShowProbability);
     conv.setShowError(m_ShowError);
     conv.setShowWeight(m_ShowWeight);
-    conv.input(new Token(item.getEvaluation()));
+    conv.input(new Token(cont));
     conv.execute();
     token = conv.output();
+
+    // add additional attributes
+    if (item.hasOriginalIndices() && item.hasAdditionalAttributes()) {
+      sheet = (SpreadSheet) token.getPayload();
+      merge = new SpreadSheetMerge();
+      token = new Token(new SpreadSheet[]{sheet, item.getAdditionalAttributes()});
+      merge.input(token);
+      msg = merge.execute();
+      if (msg != null) {
+	getLogger().severe("Failed to merge predictions and additional attributes!\n" + msg);
+	token = new Token(sheet);
+      }
+      else {
+	token = merge.output();
+      }
+    }
+
     sheet = (SpreadSheet) token.getPayload();
     table = new SpreadSheetTable(sheet);
 
