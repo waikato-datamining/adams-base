@@ -15,22 +15,19 @@
 
 /*
  * HistogramFactory.java
- * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.statistics;
 
-import java.awt.BorderLayout;
-import java.awt.Dialog.ModalityType;
-import java.awt.Dimension;
-
-import adams.data.sequence.XYSequence;
 import adams.data.sequence.XYSequencePoint;
 import adams.data.sequence.XYSequencePointComparator.Comparison;
 import adams.data.statistics.AbstractArrayStatistic;
 import adams.data.statistics.AbstractArrayStatistic.StatisticContainer;
 import adams.data.statistics.ArrayHistogram;
 import adams.data.statistics.StatUtils;
+import adams.flow.sink.sequenceplotter.SequencePlotPoint;
+import adams.flow.sink.sequenceplotter.SequencePlotSequence;
 import adams.flow.sink.sequenceplotter.SequencePlotterPanel;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.BasePanel;
@@ -38,10 +35,15 @@ import adams.gui.core.BaseTabbedPane;
 import adams.gui.goe.GenericObjectEditorDialog;
 import adams.gui.visualization.core.TranslucentColorProvider;
 import adams.gui.visualization.core.axis.FancyTickGenerator;
+import adams.gui.visualization.core.axis.SimpleFixedLabelTickGenerator;
 import adams.gui.visualization.core.plot.Axis;
 import adams.gui.visualization.sequence.BarPaintlet;
 import adams.gui.visualization.sequence.XYSequenceContainer;
 import adams.gui.visualization.sequence.XYSequenceContainerManager;
+
+import java.awt.BorderLayout;
+import java.awt.Dialog.ModalityType;
+import java.awt.Dimension;
 
 /**
  * A factory for histogram related objects.
@@ -84,8 +86,8 @@ public class HistogramFactory {
       m_PlotPanel = new SequencePlotterPanel("Histogram");
       m_PlotPanel.setColorProvider(new TranslucentColorProvider());
       m_PlotPanel.setPaintlet(paintlet);
-      m_PlotPanel.getPlot().getAxis(Axis.BOTTOM).setTickGenerator(new FancyTickGenerator());
-      m_PlotPanel.getPlot().getAxis(Axis.BOTTOM).setNumberFormat("0");
+      m_PlotPanel.getPlot().getAxis(Axis.BOTTOM).setTickGenerator(new SimpleFixedLabelTickGenerator());
+      m_PlotPanel.getPlot().getAxis(Axis.BOTTOM).setNumberFormat("");
       m_PlotPanel.getPlot().getAxis(Axis.LEFT).setTickGenerator(new FancyTickGenerator());
       m_PlotPanel.getPlot().getAxis(Axis.LEFT).setNumberFormat("0.0");
       add(m_PlotPanel, BorderLayout.CENTER);
@@ -118,7 +120,9 @@ public class HistogramFactory {
       int				i;
       XYSequenceContainerManager	manager;
       XYSequenceContainer		seqcont;
-      XYSequence			seq;
+      SequencePlotSequence		seq;
+      XYSequencePoint			point;
+      double				x;
 
       // generate the histogram data
       histogram = (ArrayHistogram) hist.shallowCopy(true);
@@ -129,11 +133,17 @@ public class HistogramFactory {
       numBins = (Integer) cont.getMetaData(ArrayHistogram.METADATA_NUMBINS);
       manager = m_PlotPanel.getContainerManager();
       manager.startUpdate();
-      seq = new XYSequence();
+      seq = new SequencePlotSequence();
       seq.setID((manager.count()+1) + ": " + numBins + " bins");
       seq.setComparison(Comparison.X);
-      for (i = 0; i < numBins; i++)
-	seq.add(new XYSequencePoint((double) i, (Double) cont.getCell(0, i)));
+      for (i = 0; i < numBins; i++) {
+	if (histogram.getDisplayRanges())
+	  x = seq.putMappingX(cont.getHeader(i));
+	else
+	  x = seq.putMappingX("" + (i+1));
+	point = new SequencePlotPoint("" + seq.size(), x, (Double) cont.getCell(0, i));
+	seq.add(point);
+      }
       seqcont = manager.newContainer(seq);
       manager.add(seqcont);
       manager.finishUpdate();
