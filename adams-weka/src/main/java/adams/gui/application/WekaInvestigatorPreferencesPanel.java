@@ -19,6 +19,7 @@
  */
 package adams.gui.application;
 
+import adams.core.io.FileUtils;
 import adams.data.weka.classattribute.LastAttribute;
 import adams.env.Environment;
 import adams.env.WekaInvestigatorDefinition;
@@ -162,5 +163,34 @@ public class WekaInvestigatorPreferencesPanel
       return null;
     else
       return "Failed to save Weka Investigator setup!";
+  }
+
+  /**
+   * Returns whether the panel supports resetting the options.
+   *
+   * @return		true if supported
+   */
+  public boolean canReset() {
+    String	props;
+
+    props = Environment.getInstance().getCustomPropertiesFilename(WekaInvestigatorDefinition.KEY);
+    return (props != null) && FileUtils.fileExists(props);
+  }
+
+  /**
+   * Resets the settings to their default.
+   *
+   * @return		null if successfully reset, otherwise error message
+   */
+  public String reset() {
+    String	props;
+
+    props = Environment.getInstance().getCustomPropertiesFilename(WekaInvestigatorDefinition.KEY);
+    if ((props != null) && FileUtils.fileExists(props)) {
+      if (!FileUtils.delete(props))
+	return "Failed to remove custom Weka Investigator properties: " + props;
+    }
+
+    return null;
   }
 }

@@ -15,16 +15,15 @@
 
 /**
  * TimeZoneSettingsPanel.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.application;
 
-import java.awt.BorderLayout;
-
-import javax.swing.JComboBox;
-
 import adams.core.management.TimeZoneHelper;
 import adams.gui.core.ParameterPanel;
+
+import javax.swing.JComboBox;
+import java.awt.BorderLayout;
 
 /**
  * Panel for configuring the timezone settings.
@@ -42,7 +41,7 @@ public class TimeZoneSettingsPanel
   protected ParameterPanel m_PanelParameters;
 
   /** the combobox with all the timezones. */
-  protected JComboBox m_ComboBoxTimeZones;
+  protected JComboBox<String> m_ComboBoxTimeZones;
 
   /**
    * Initializes the widgets.
@@ -57,7 +56,7 @@ public class TimeZoneSettingsPanel
     m_PanelParameters = new ParameterPanel();
     add(m_PanelParameters, BorderLayout.NORTH);
 
-    m_ComboBoxTimeZones = new JComboBox(TimeZoneHelper.getIDs());
+    m_ComboBoxTimeZones = new JComboBox<>(TimeZoneHelper.getIDs());
     m_PanelParameters.addParameter("_Time zone", m_ComboBoxTimeZones);
 
     // display values
@@ -122,5 +121,33 @@ public class TimeZoneSettingsPanel
       return null;
     else
       return "Failed to save time zone setup!";
+  }
+
+  /**
+   * Returns whether the panel supports resetting the options.
+   *
+   * @return		true if supported
+   */
+  public boolean canReset() {
+    return true;
+  }
+
+  /**
+   * Resets the settings to their default.
+   *
+   * @return		null if successfully reset, otherwise error message
+   */
+  public String reset() {
+    boolean		result;
+    TimeZoneHelper helper;
+
+    helper = TimeZoneHelper.getSingleton();
+    helper.setTimezone(TimeZoneHelper.DEFAULT_TIMEZONE);
+    result = helper.save();
+
+    if (result)
+      return null;
+    else
+      return "Failed to reset time zone setup!";
   }
 }

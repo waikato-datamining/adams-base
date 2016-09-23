@@ -19,6 +19,7 @@
  */
 package adams.gui.application;
 
+import adams.core.io.FileUtils;
 import adams.env.Environment;
 import adams.gui.core.PropertiesParameterPanel.PropertyType;
 
@@ -94,5 +95,34 @@ public class FontsPreferencesPanel
       return null;
     else
       return "Failed to save fonts setup!";
+  }
+
+  /**
+   * Returns whether the panel supports resetting the options.
+   *
+   * @return		true if supported
+   */
+  public boolean canReset() {
+    String	props;
+
+    props = Environment.getInstance().createPropertiesFilename(new File(adams.gui.core.Fonts.FILENAME).getName());
+    return FileUtils.fileExists(props);
+  }
+
+  /**
+   * Resets the settings to their default.
+   *
+   * @return		null if successfully reset, otherwise error message
+   */
+  public String reset() {
+    String	props;
+
+    props = Environment.getInstance().createPropertiesFilename(new File(adams.gui.core.Fonts.FILENAME).getName());
+    if (FileUtils.fileExists(props)) {
+      if (!FileUtils.delete(props))
+        return "Failed to remove custom fonts properties: " + props;
+    }
+
+    return null;
   }
 }

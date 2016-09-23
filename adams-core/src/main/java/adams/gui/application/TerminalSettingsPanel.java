@@ -19,8 +19,12 @@
  */
 package adams.gui.application;
 
+import adams.core.io.FileUtils;
 import adams.core.management.Terminal;
+import adams.env.Environment;
 import adams.gui.core.PropertiesParameterPanel.PropertyType;
+
+import java.io.File;
 
 /**
  * Panel for configuring the terminal settings.
@@ -89,5 +93,34 @@ public class TerminalSettingsPanel
       return null;
     else
       return "Failed to save terminal setup!";
+  }
+
+  /**
+   * Returns whether the panel supports resetting the options.
+   *
+   * @return		true if supported
+   */
+  public boolean canReset() {
+    String	props;
+
+    props = Environment.getInstance().createPropertiesFilename(new File(Terminal.FILENAME).getName());
+    return FileUtils.fileExists(props);
+  }
+
+  /**
+   * Resets the settings to their default.
+   *
+   * @return		null if successfully reset, otherwise error message
+   */
+  public String reset() {
+    String	props;
+
+    props = Environment.getInstance().createPropertiesFilename(new File(Terminal.FILENAME).getName());
+    if (FileUtils.fileExists(props)) {
+      if (!FileUtils.delete(props))
+        return "Failed to remove custom terminal properties: " + props;
+    }
+
+    return null;
   }
 }

@@ -14,27 +14,31 @@
  */
 
 /**
- * SetupManagerPanel.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * PreferencesManagerPanel.java
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.application;
 
-import java.awt.BorderLayout;
-import java.util.ArrayList;
-import java.util.Collections;
-
-import javax.swing.BorderFactory;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-
+import adams.core.logging.LoggingLevel;
 import adams.gui.core.BaseMultiPagePane;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
+import adams.gui.core.ConsolePanel;
 import adams.gui.core.GUIHelper;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * Panel that combines all the preference panels.
- * 
+ *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
@@ -49,71 +53,121 @@ public class PreferencesManagerPanel
 
   /** the setup panels. */
   protected ArrayList<PreferencesPanel> m_Panels;
-  
+
   /**
    * Initializes the widgets.
    */
   @Override
   protected void initialize() {
     super.initialize();
-    
-    m_Panels = new ArrayList<PreferencesPanel>();
+
+    m_Panels = new ArrayList<>();
   }
-  
+
   /**
    * Initializes the widgets.
    */
   @Override
   protected void initGUI() {
     String[]	classes;
-    JPanel	wrapper;
-    
+    JPanel 	panelButtons;
+    JPanel	panelPage;
+
     super.initGUI();
-    
+
     setLayout(new BorderLayout());
     setBorder(BorderFactory.createEmptyBorder(5, 5, 0, 5));
-    
+
     m_MultiPagePanel = new BaseMultiPagePane();
     add(m_MultiPagePanel, BorderLayout.CENTER);
-    
+
     classes = AbstractPreferencesPanel.getPanels();
     for (String cls: classes) {
       try {
 	m_Panels.add((PreferencesPanel) Class.forName(cls).newInstance());
       }
       catch (Exception e) {
-	System.err.println("Failed to instantiate preferences panel: " + cls);
-	e.printStackTrace();
+	ConsolePanel.getSingleton().append(LoggingLevel.SEVERE, "Failed to instantiate preferences panel: " + cls, e);
       }
     }
-    
+
     Collections.sort(m_Panels);
     for (PreferencesPanel panel: m_Panels) {
-      if (panel.requiresWrapper()) {
-	wrapper = new JPanel(new BorderLayout());
-	wrapper.add(new BaseScrollPane((JComponent) panel), BorderLayout.NORTH);
-	m_MultiPagePanel.addPage(panel.getTitle(), wrapper);
-      }
-      else {
-	m_MultiPagePanel.addPage(panel.getTitle(), (JComponent) panel);
-      }
+      panelPage = new JPanel(new BorderLayout());
+      panelButtons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+      panelPage.add(panelButtons, BorderLayout.SOUTH);
+      final JButton buttonReset = new JButton("Default");
+      buttonReset.setEnabled(panel.canReset());
+      buttonReset.addActionListener((ActionEvent e) -> {
+	String msg = panel.reset();
+	if (msg != null)
+	  GUIHelper.showErrorMessage(
+	    PreferencesManagerPanel.this,
+	    "Failed to reset preferences for " + panel.getTitle() + ":\n" + msg);
+	else
+	  showRestartNotification();
+	buttonReset.setEnabled(panel.canReset());
+      });
+      panelButtons.add(buttonReset);
+      final JButton buttonApply = new JButton("Apply");
+      buttonApply.addActionListener((ActionEvent e) -> {
+	String msg = panel.activate();
+	if (msg != null)
+	  GUIHelper.showErrorMessage(
+	    PreferencesManagerPanel.this,
+	    "Failed to activate preferences for " + panel.getTitle() + ":\n" + msg);
+	else
+	  showRestartNotification();
+	buttonReset.setEnabled(panel.canReset());
+      });
+      panelButtons.add(buttonApply);
+      if (panel.requiresWrapper())
+	panelPage.add(new BaseScrollPane((JComponent) panel), BorderLayout.CENTER);
+      else
+	panelPage.add((JComponent) panel, BorderLayout.CENTER);
+      m_MultiPagePanel.addPage(panel.getTitle(), panelPage);
     }
   }
-  
+
   /**
    * Activates all the settings.
    */
   public void activate() {
     String	msg;
-    
+
     for (PreferencesPanel panel: m_Panels) {
       msg = panel.activate();
       if (msg != null)
-	GUIHelper.showErrorMessage(this, msg);
+	GUIHelper.showErrorMessage(
+	  this, "Failed to activate preferences for " + panel.getTitle() + ":\n" + msg);
     }
-    
+
+    showRestartNotification();
+  }
+
+  /**
+   * Resets all the settings.
+   */
+  public void reset() {
+    String	msg;
+
+    for (PreferencesPanel panel: m_Panels) {
+      msg = panel.reset();
+      if (msg != null)
+	GUIHelper.showErrorMessage(
+	  this, "Failed to reset preferences for " + panel.getTitle() + ":\n" + msg);
+    }
+
+    showRestartNotification();
+  }
+
+  /**
+   * Shows a dialog telling the user to restart the applications for the
+   * changes to take effect.
+   */
+  protected void showRestartNotification() {
     GUIHelper.showInformationMessage(
-	this, 
-	"For the changes to take effect, you need to restart the application now.");
+      this,
+      "For the changes to take effect, you need to restart the application now.");
   }
 }

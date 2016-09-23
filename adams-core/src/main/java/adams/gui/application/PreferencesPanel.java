@@ -50,4 +50,18 @@ public interface PreferencesPanel
    * @return		null if successfully activated, otherwise error message
    */
   public abstract String activate();
+
+  /**
+   * Returns whether the panel supports resetting the options.
+   *
+   * @return		true if supported
+   */
+  public boolean canReset();
+
+  /**
+   * Resets the settings to their default.
+   *
+   * @return		null if successfully reset, otherwise error message
+   */
+  public String reset();
 }

@@ -15,7 +15,7 @@
 
 /**
  * CharsetSettingsPanel.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.application;
 
@@ -41,7 +41,7 @@ public class CharsetSettingsPanel
   protected ParameterPanel m_PanelParameters;
 
   /** the combobox with all the charsets. */
-  protected JComboBox m_ComboBoxCharsets;
+  protected JComboBox<String> m_ComboBoxCharsets;
 
   /**
    * Initializes the widgets.
@@ -56,7 +56,7 @@ public class CharsetSettingsPanel
     m_PanelParameters = new ParameterPanel();
     add(m_PanelParameters, BorderLayout.NORTH);
 
-    m_ComboBoxCharsets = new JComboBox(CharsetHelper.getIDs());
+    m_ComboBoxCharsets = new JComboBox<>(CharsetHelper.getIDs());
     m_PanelParameters.addParameter("_Charset", m_ComboBoxCharsets);
 
     // display values
@@ -120,5 +120,33 @@ public class CharsetSettingsPanel
       return null;
     else
       return "Failed to save charset setup!";
+  }
+
+  /**
+   * Returns whether the panel supports resetting the options.
+   *
+   * @return		true if supported
+   */
+  public boolean canReset() {
+    return true;
+  }
+
+  /**
+   * Resets the settings to their default.
+   *
+   * @return		null if successfully reset, otherwise error message
+   */
+  public String reset() {
+    boolean		result;
+    CharsetHelper	helper;
+
+    helper = CharsetHelper.getSingleton();
+    helper.setCharset(CharsetHelper.CHARSET_DEFAULT);
+    result = helper.save();
+
+    if (result)
+      return null;
+    else
+      return "Failed to reset charset setup!";
   }
 }

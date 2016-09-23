@@ -33,7 +33,6 @@ import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 /**
  * For managing the system-wide preferences.
@@ -80,29 +79,34 @@ public class Preferences
   public void launch() {
     final PreferencesManagerPanel prefs = new PreferencesManagerPanel();
     final ChildFrame frame = createChildFrame(prefs, GUIHelper.getDefaultDialogDimension());
-    JPanel panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-    prefs.add(panel, BorderLayout.SOUTH);
-    JButton ok = new JButton("OK");
-    ok.setMnemonic('O');
-    ok.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	prefs.activate();
-	frame.setVisible(false);
-	frame.dispose();
-      }
+    JPanel panelButtons = new JPanel(new BorderLayout());
+    prefs.add(panelButtons, BorderLayout.SOUTH);
+    // left
+    JPanel panelLeft = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    panelButtons.add(panelLeft, BorderLayout.WEST);
+    JButton buttonReset = new JButton("Reset all");
+    buttonReset.addActionListener((ActionEvent e) -> {
+      prefs.reset();
+      frame.setVisible(false);
+      frame.dispose();
     });
-    panel.add(ok);
-    JButton cancel = new JButton("Cancel");
-    cancel.setMnemonic('C');
-    cancel.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	frame.setVisible(false);
-	frame.dispose();
-      }
+    panelLeft.add(buttonReset);
+    // right
+    JPanel panelRight = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+    panelButtons.add(panelRight, BorderLayout.EAST);
+    JButton buttonApply = new JButton("Apply all");
+    buttonApply.addActionListener((ActionEvent e) -> {
+      prefs.activate();
+      frame.setVisible(false);
+      frame.dispose();
     });
-    panel.add(cancel);
+    panelRight.add(buttonApply);
+    JButton buttonCancel = new JButton("Close");
+    buttonCancel.addActionListener((ActionEvent e) -> {
+      frame.setVisible(false);
+      frame.dispose();
+    });
+    panelRight.add(buttonCancel);
   }
 
   /**

@@ -15,15 +15,19 @@
 
 /**
  * ProxyPanel.java
- * Copyright (C) 2010-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.application;
 
-import java.awt.BorderLayout;
-import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.net.Proxy;
+import adams.core.Constants;
+import adams.core.Utils;
+import adams.core.base.BasePassword;
+import adams.core.io.FileUtils;
+import adams.core.net.ProxyHelper;
+import adams.env.Environment;
+import adams.env.ProxyDefinition;
+import adams.gui.core.BasePanel;
+import adams.gui.core.ParameterPanel;
 
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
@@ -33,14 +37,10 @@ import javax.swing.JPasswordField;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
-import adams.core.Constants;
-import adams.core.Utils;
-import adams.core.base.BasePassword;
-import adams.core.net.ProxyHelper;
-import adams.gui.core.BasePanel;
-import adams.gui.core.ParameterPanel;
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.net.Proxy;
 
 /**
  * Panel for configuring the proxy settings.
@@ -122,19 +122,17 @@ public class ProxySettingsPanel
     add(m_PanelType, BorderLayout.NORTH);
 
     m_ComboBoxType = new JComboBox(Proxy.Type.values());
-    m_ComboBoxType.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	// http/ftp
-	m_PanelHttpFtp.setEnabled(m_ComboBoxType.getSelectedItem().equals(Proxy.Type.HTTP));
-	boolean sel = m_CheckBoxHttpFtpAuthentication.isSelected();
-	m_CheckBoxHttpFtpAuthentication.setSelected(!sel);
-	m_CheckBoxHttpFtpAuthentication.setSelected(sel);
-	// socks
-	m_PanelSocks.setEnabled(m_ComboBoxType.getSelectedItem().equals(Proxy.Type.SOCKS));
-	sel = m_CheckBoxSocksAuthentication.isSelected();
-	m_CheckBoxSocksAuthentication.setSelected(!sel);
-	m_CheckBoxSocksAuthentication.setSelected(sel);
-      }
+    m_ComboBoxType.addActionListener((ActionEvent e) -> {
+      // http/ftp
+      m_PanelHttpFtp.setEnabled(m_ComboBoxType.getSelectedItem().equals(Proxy.Type.HTTP));
+      boolean sel = m_CheckBoxHttpFtpAuthentication.isSelected();
+      m_CheckBoxHttpFtpAuthentication.setSelected(!sel);
+      m_CheckBoxHttpFtpAuthentication.setSelected(sel);
+      // socks
+      m_PanelSocks.setEnabled(m_ComboBoxType.getSelectedItem().equals(Proxy.Type.SOCKS));
+      sel = m_CheckBoxSocksAuthentication.isSelected();
+      m_CheckBoxSocksAuthentication.setSelected(!sel);
+      m_CheckBoxSocksAuthentication.setSelected(sel);
     });
     label = new JLabel("Connection");
     label.setLabelFor(m_ComboBoxType);
@@ -156,12 +154,10 @@ public class ProxySettingsPanel
     m_PanelHttpFtp.addParameter("No pro_xy for", m_TextHttpFtpNoProxy);
 
     m_CheckBoxHttpFtpAuthentication = new JCheckBox();
-    m_CheckBoxHttpFtpAuthentication.addChangeListener(new ChangeListener() {
-      public void stateChanged(ChangeEvent e) {
-	m_TextHttpFtpUser.setEnabled(m_CheckBoxHttpFtpAuthentication.isSelected() && m_PanelHttpFtp.isEnabled());
-	m_TextHttpFtpPassword.setEnabled(m_CheckBoxHttpFtpAuthentication.isSelected() && m_PanelHttpFtp.isEnabled());
-	m_CheckBoxShowHttpFtpPassword.setEnabled(m_CheckBoxHttpFtpAuthentication.isSelected() && m_PanelHttpFtp.isEnabled());
-      }
+    m_CheckBoxHttpFtpAuthentication.addChangeListener((ChangeEvent e) -> {
+      m_TextHttpFtpUser.setEnabled(m_CheckBoxHttpFtpAuthentication.isSelected() && m_PanelHttpFtp.isEnabled());
+      m_TextHttpFtpPassword.setEnabled(m_CheckBoxHttpFtpAuthentication.isSelected() && m_PanelHttpFtp.isEnabled());
+      m_CheckBoxShowHttpFtpPassword.setEnabled(m_CheckBoxHttpFtpAuthentication.isSelected() && m_PanelHttpFtp.isEnabled());
     });
     m_PanelHttpFtp.addParameter("Requires _authentication", m_CheckBoxHttpFtpAuthentication);
 
@@ -176,13 +172,11 @@ public class ProxySettingsPanel
 
     m_CheckBoxShowHttpFtpPassword = new JCheckBox();
     m_CheckBoxShowHttpFtpPassword.setSelected(false);
-    m_CheckBoxShowHttpFtpPassword.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	if (m_CheckBoxShowHttpFtpPassword.isSelected())
-	  m_TextHttpFtpPassword.setEchoChar((char) 0);
-	else
-	  m_TextHttpFtpPassword.setEchoChar(Constants.PASSWORD_CHAR);
-      }
+    m_CheckBoxShowHttpFtpPassword.addActionListener((ActionEvent e) -> {
+      if (m_CheckBoxShowHttpFtpPassword.isSelected())
+        m_TextHttpFtpPassword.setEchoChar((char) 0);
+      else
+        m_TextHttpFtpPassword.setEchoChar(Constants.PASSWORD_CHAR);
     });
     m_PanelHttpFtp.addParameter("Sho_w Password", m_CheckBoxShowHttpFtpPassword);
 
@@ -198,12 +192,10 @@ public class ProxySettingsPanel
     m_PanelSocks.addParameter("Port", m_SpinnerSocksPort);
 
     m_CheckBoxSocksAuthentication = new JCheckBox();
-    m_CheckBoxSocksAuthentication.addChangeListener(new ChangeListener() {
-      public void stateChanged(ChangeEvent e) {
-	m_TextSocksUser.setEnabled(m_CheckBoxSocksAuthentication.isSelected() && m_PanelSocks.isEnabled());
-	m_TextSocksPassword.setEnabled(m_CheckBoxSocksAuthentication.isSelected() && m_PanelSocks.isEnabled());
-	m_CheckBoxShowSocksPassword.setEnabled(m_CheckBoxSocksAuthentication.isSelected() && m_PanelSocks.isEnabled());
-      }
+    m_CheckBoxSocksAuthentication.addChangeListener((ChangeEvent e) -> {
+      m_TextSocksUser.setEnabled(m_CheckBoxSocksAuthentication.isSelected() && m_PanelSocks.isEnabled());
+      m_TextSocksPassword.setEnabled(m_CheckBoxSocksAuthentication.isSelected() && m_PanelSocks.isEnabled());
+      m_CheckBoxShowSocksPassword.setEnabled(m_CheckBoxSocksAuthentication.isSelected() && m_PanelSocks.isEnabled());
     });
     m_PanelSocks.addParameter("Requires _authentication", m_CheckBoxSocksAuthentication);
 
@@ -218,13 +210,11 @@ public class ProxySettingsPanel
 
     m_CheckBoxShowSocksPassword = new JCheckBox();
     m_CheckBoxShowSocksPassword.setSelected(false);
-    m_CheckBoxShowSocksPassword.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	if (m_CheckBoxShowSocksPassword.isSelected())
-	  m_TextSocksPassword.setEchoChar((char) 0);
-	else
-	  m_TextSocksPassword.setEchoChar(Constants.PASSWORD_CHAR);
-      }
+    m_CheckBoxShowSocksPassword.addActionListener((ActionEvent e) -> {
+      if (m_CheckBoxShowSocksPassword.isSelected())
+        m_TextSocksPassword.setEchoChar((char) 0);
+      else
+        m_TextSocksPassword.setEchoChar(Constants.PASSWORD_CHAR);
     });
     m_PanelSocks.addParameter("Sho_w Password", m_CheckBoxShowSocksPassword);
 
@@ -320,5 +310,34 @@ public class ProxySettingsPanel
       return null;
     else
       return "Failed to save proxy setup!";
+  }
+
+  /**
+   * Returns whether the panel supports resetting the options.
+   *
+   * @return		true if supported
+   */
+  public boolean canReset() {
+    String	props;
+
+    props = Environment.getInstance().getCustomPropertiesFilename(ProxyDefinition.KEY);
+    return (props != null) && FileUtils.fileExists(props);
+  }
+
+  /**
+   * Resets the settings to their default.
+   *
+   * @return		null if successfully reset, otherwise error message
+   */
+  public String reset() {
+    String	props;
+
+    props = Environment.getInstance().getCustomPropertiesFilename(ProxyDefinition.KEY);
+    if ((props != null) && FileUtils.fileExists(props)) {
+      if (!FileUtils.delete(props))
+	return "Failed to remove custom proxy properties: " + props;
+    }
+
+    return null;
   }
 }

@@ -24,7 +24,10 @@ import adams.core.Properties;
 import adams.core.Utils;
 import adams.core.base.BasePassword;
 import adams.core.base.BaseText;
+import adams.core.io.FileUtils;
 import adams.core.net.EmailHelper;
+import adams.env.EmailDefinition;
+import adams.env.Environment;
 import adams.gui.chooser.BaseTextChooserPanel;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.ParameterPanel;
@@ -37,7 +40,6 @@ import javax.swing.SpinnerNumberModel;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 /**
  * Panel for configuring the system-wide Email settings.
@@ -150,13 +152,11 @@ public class EmailSetupPanel
 
     m_CheckBoxShowPassword = new JCheckBox();
     m_CheckBoxShowPassword.setSelected(false);
-    m_CheckBoxShowPassword.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	if (m_CheckBoxShowPassword.isSelected())
-	  m_TextSmtpPassword.setEchoChar((char) 0);
-	else
-	  m_TextSmtpPassword.setEchoChar(Constants.PASSWORD_CHAR);
-      }
+    m_CheckBoxShowPassword.addActionListener((ActionEvent e) -> {
+      if (m_CheckBoxShowPassword.isSelected())
+        m_TextSmtpPassword.setEchoChar((char) 0);
+      else
+        m_TextSmtpPassword.setEchoChar(Constants.PASSWORD_CHAR);
     });
     m_PanelParameters.addParameter("Sho_w Password", m_CheckBoxShowPassword);
 
@@ -236,5 +236,34 @@ public class EmailSetupPanel
       return null;
     else
       return "Failed to save email setup to " + EmailHelper.FILENAME + "!";
+  }
+
+  /**
+   * Returns whether the panel supports resetting the options.
+   *
+   * @return		true if supported
+   */
+  public boolean canReset() {
+    String	props;
+
+    props = Environment.getInstance().getCustomPropertiesFilename(EmailDefinition.KEY);
+    return (props != null) && FileUtils.fileExists(props);
+  }
+
+  /**
+   * Resets the settings to their default.
+   *
+   * @return		null if successfully reset, otherwise error message
+   */
+  public String reset() {
+    String	props;
+
+    props = Environment.getInstance().getCustomPropertiesFilename(EmailDefinition.KEY);
+    if ((props != null) && FileUtils.fileExists(props)) {
+      if (!FileUtils.delete(props))
+	return "Failed to remove custom email properties: " + props;
+    }
+
+    return null;
   }
 }

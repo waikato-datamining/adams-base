@@ -15,7 +15,7 @@
 
 /**
  * AbstractPreferencePanel.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.application;
 
@@ -55,6 +55,28 @@ public abstract class AbstractPreferencesPanel
    * @return		null if successfully activated, otherwise error message
    */
   public abstract String activate();
+
+  /**
+   * Returns whether the panel supports resetting the options.
+   * <br>
+   * Default implementation returns false.
+   *
+   * @return		true if supported
+   */
+  public boolean canReset() {
+    return false;
+  }
+
+  /**
+   * Resets the settings to their default.
+   * <br>
+   * Default implementation does nothing.
+   *
+   * @return		null if successfully reset, otherwise error message
+   */
+  public String reset() {
+    return null;
+  }
 
   /**
    * Uses the title to compare the panels.

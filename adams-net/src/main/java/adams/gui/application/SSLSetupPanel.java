@@ -15,13 +15,16 @@
 
 /**
  * SSLSetupPanel.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.application;
 
 import adams.core.Properties;
+import adams.core.io.FileUtils;
 import adams.core.net.SSLHelper;
 import adams.core.option.OptionUtils;
+import adams.env.Environment;
+import adams.env.SSLDefinition;
 import adams.gui.core.ParameterPanel;
 import adams.gui.goe.GenericObjectEditorPanel;
 
@@ -121,5 +124,34 @@ public class SSLSetupPanel
       return null;
     else
       return "Failed to save SSL setup to " + SSLHelper.FILENAME + "!";
+  }
+
+  /**
+   * Returns whether the panel supports resetting the options.
+   *
+   * @return		true if supported
+   */
+  public boolean canReset() {
+    String	props;
+
+    props = Environment.getInstance().getCustomPropertiesFilename(SSLDefinition.KEY);
+    return (props != null) && FileUtils.fileExists(props);
+  }
+
+  /**
+   * Resets the settings to their default.
+   *
+   * @return		null if successfully reset, otherwise error message
+   */
+  public String reset() {
+    String	props;
+
+    props = Environment.getInstance().getCustomPropertiesFilename(SSLDefinition.KEY);
+    if ((props != null) && FileUtils.fileExists(props)) {
+      if (!FileUtils.delete(props))
+	return "Failed to remove custom SSL properties: " + props;
+    }
+
+    return null;
   }
 }

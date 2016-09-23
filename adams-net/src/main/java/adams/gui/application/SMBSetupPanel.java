@@ -21,7 +21,10 @@ package adams.gui.application;
 
 import adams.core.Properties;
 import adams.core.base.BaseHostname;
+import adams.core.io.FileUtils;
 import adams.core.net.SMBHelper;
+import adams.env.Environment;
+import adams.env.SMBDefinition;
 import adams.gui.core.BaseObjectTextField;
 import adams.gui.core.ParameterPanel;
 
@@ -110,5 +113,34 @@ public class SMBSetupPanel
       return null;
     else
       return "Failed to save SMB setup to " + SMBHelper.FILENAME + "!";
+  }
+
+  /**
+   * Returns whether the panel supports resetting the options.
+   *
+   * @return		true if supported
+   */
+  public boolean canReset() {
+    String	props;
+
+    props = Environment.getInstance().getCustomPropertiesFilename(SMBDefinition.KEY);
+    return (props != null) && FileUtils.fileExists(props);
+  }
+
+  /**
+   * Resets the settings to their default.
+   *
+   * @return		null if successfully reset, otherwise error message
+   */
+  public String reset() {
+    String	props;
+
+    props = Environment.getInstance().getCustomPropertiesFilename(SMBDefinition.KEY);
+    if ((props != null) && FileUtils.fileExists(props)) {
+      if (!FileUtils.delete(props))
+	return "Failed to remove custom SMB properties: " + props;
+    }
+
+    return null;
   }
 }

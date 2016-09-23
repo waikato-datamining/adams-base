@@ -15,16 +15,15 @@
 
 /**
  * LocaleSettingsPanel.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.application;
 
-import java.awt.BorderLayout;
-
-import javax.swing.JComboBox;
-
 import adams.core.management.LocaleHelper;
 import adams.gui.core.ParameterPanel;
+
+import javax.swing.JComboBox;
+import java.awt.BorderLayout;
 
 /**
  * Panel for configuring the locale settings.
@@ -42,7 +41,7 @@ public class LocaleSettingsPanel
   protected ParameterPanel m_PanelParameters;
 
   /** the combobox with all the locales. */
-  protected JComboBox m_ComboBoxLocales;
+  protected JComboBox<String> m_ComboBoxLocales;
 
   /**
    * Initializes the widgets.
@@ -57,7 +56,7 @@ public class LocaleSettingsPanel
     m_PanelParameters = new ParameterPanel();
     add(m_PanelParameters, BorderLayout.NORTH);
 
-    m_ComboBoxLocales = new JComboBox(LocaleHelper.getIDs());
+    m_ComboBoxLocales = new JComboBox<>(LocaleHelper.getIDs());
     m_PanelParameters.addParameter("_Locale", m_ComboBoxLocales);
 
     // display values
@@ -122,5 +121,33 @@ public class LocaleSettingsPanel
       return null;
     else
       return "Failed to save locale setup!";
+  }
+
+  /**
+   * Returns whether the panel supports resetting the options.
+   *
+   * @return		true if supported
+   */
+  public boolean canReset() {
+    return true;
+  }
+
+  /**
+   * Resets the settings to their default.
+   *
+   * @return		null if successfully reset, otherwise error message
+   */
+  public String reset() {
+    boolean		result;
+    LocaleHelper 	helper;
+
+    helper = LocaleHelper.getSingleton();
+    helper.setLocale(LocaleHelper.LOCALE_DEFAULT);
+    result = helper.save();
+
+    if (result)
+      return null;
+    else
+      return "Failed to reset locale setup!";
   }
 }
