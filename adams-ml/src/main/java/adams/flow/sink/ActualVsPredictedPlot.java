@@ -22,6 +22,7 @@ package adams.flow.sink;
 
 import adams.core.QuickInfoHelper;
 import adams.data.DecimalFormatString;
+import adams.data.sequence.XYSequencePointComparator.Comparison;
 import adams.data.spreadsheet.Cell;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetColumnIndex;
@@ -755,6 +756,7 @@ public class ActualVsPredictedPlot
     if (!m_Error.isEmpty())
       error = SpreadSheetHelper.getNumericColumn(sheet, m_Error.getIntIndex());
     seq     = new SequencePlotSequence();
+    seq.setComparison(Comparison.X_AND_Y);
     actMin  = Double.POSITIVE_INFINITY;
     actMax  = Double.NEGATIVE_INFINITY;
     predMin = Double.POSITIVE_INFINITY;
