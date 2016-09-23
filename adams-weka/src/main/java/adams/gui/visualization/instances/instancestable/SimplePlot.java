@@ -20,6 +20,7 @@
 
 package adams.gui.visualization.instances.instancestable;
 
+import adams.core.Utils;
 import adams.core.option.AbstractOptionHandler;
 import adams.flow.control.Flow;
 import adams.flow.control.StorageName;
@@ -36,7 +37,9 @@ import weka.core.Instances;
 import javax.swing.SwingWorker;
 import java.awt.Dialog.ModalityType;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Allows to perform a simple plot of a column or row.
@@ -49,6 +52,9 @@ public class SimplePlot
   implements PlotColumn, PlotRow {
 
   private static final long serialVersionUID = -5624002368001818142L;
+
+  /** the maximum of data points to plot. */
+  public final static int MAX_POINTS = 1000;
 
   /**
    * Returns a string describing the object.
@@ -100,12 +106,28 @@ public class SimplePlot
    */
   protected void plot(final InstancesTable table, final Instances data, final boolean isColumn, int index) {
     final List<Double> 		list;
+    List<Double> 		tmp;
     GenericObjectEditorDialog 	setup;
     int				i;
     final String		title;
     SwingWorker 		worker;
     adams.flow.sink.SimplePlot	last;
     Instance			inst;
+    int				numPoints;
+    String			newPoints;
+
+    numPoints = isColumn ? data.numInstances() : data.numAttributes();
+    if (numPoints > MAX_POINTS) {
+      newPoints = GUIHelper.showInputDialog(null, "More than " + MAX_POINTS + " data points to plot - enter sample size:", "" + numPoints);
+      if (newPoints == null)
+	return;
+      if (!Utils.isInteger(newPoints))
+	return;
+      numPoints = Integer.parseInt(newPoints);
+    }
+    else {
+      numPoints = -1;
+    }
 
     // let user customize plot
     if (GUIHelper.getParentDialog(table) != null)
@@ -127,20 +149,28 @@ public class SimplePlot
     table.addLastSetup(getClass(), true, !isColumn, last);
 
     // get data from instances
-    list = new ArrayList<>();
+    tmp = new ArrayList<>();
     if (isColumn) {
       for (i = 0; i < data.numInstances(); i++) {
 	inst = data.instance(i);
 	if (!inst.isMissing(index) && data.attribute(index).isNumeric())
-	  list.add(inst.value(index));
+	  tmp.add(inst.value(index));
       }
     }
     else {
       inst = data.instance(index);
       for (i = 0; i < data.numAttributes(); i++) {
 	if (!inst.isMissing(i) && data.attribute(i).isNumeric())
-	  list.add(inst.value(i));
+	  tmp.add(inst.value(i));
       }
+    }
+
+    if (numPoints > -1) {
+      Collections.shuffle(tmp, new Random(1));
+      list = tmp.subList(0, numPoints);
+    }
+    else {
+      list = tmp;
     }
 
     // generate plot

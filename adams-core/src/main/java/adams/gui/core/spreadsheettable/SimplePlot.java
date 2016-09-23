@@ -20,6 +20,7 @@
 
 package adams.gui.core.spreadsheettable;
 
+import adams.core.Utils;
 import adams.core.option.AbstractOptionHandler;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.control.Flow;
@@ -35,7 +36,9 @@ import adams.gui.goe.GenericObjectEditorDialog;
 import javax.swing.SwingWorker;
 import java.awt.Dialog.ModalityType;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Allows to perform a simple plot of a column or row.
@@ -48,6 +51,9 @@ public class SimplePlot
   implements PlotColumn, PlotRow {
 
   private static final long serialVersionUID = -5624002368001818142L;
+
+  /** the maximum of data points to plot. */
+  public final static int MAX_POINTS = 1000;
 
   /**
    * Returns a string describing the object.
@@ -99,11 +105,27 @@ public class SimplePlot
    */
   protected void plot(final SpreadSheetTable table, final SpreadSheet sheet, final boolean isColumn, int index) {
     final List<Double> 		list;
+    List<Double> 		tmp;
     GenericObjectEditorDialog 	setup;
     int				i;
     final String		title;
     SwingWorker 		worker;
     adams.flow.sink.SimplePlot	last;
+    int				numPoints;
+    String			newPoints;
+
+    numPoints = isColumn ? sheet.getRowCount() : sheet.getColumnCount();
+    if (numPoints > MAX_POINTS) {
+      newPoints = GUIHelper.showInputDialog(null, "More than " + MAX_POINTS + " data points to plot - enter sample size:", "" + numPoints);
+      if (newPoints == null)
+	return;
+      if (!Utils.isInteger(newPoints))
+	return;
+      numPoints = Integer.parseInt(newPoints);
+    }
+    else {
+      numPoints = -1;
+    }
 
     // let user customize plot
     if (GUIHelper.getParentDialog(table) != null)
@@ -125,18 +147,26 @@ public class SimplePlot
     table.addLastSetup(getClass(), true, !isColumn, last);
 
     // get data from spreadsheet
-    list = new ArrayList<>();
+    tmp = new ArrayList<>();
     if (isColumn) {
       for (i = 0; i < sheet.getRowCount(); i++) {
 	if (sheet.hasCell(i, index) && sheet.getCell(i, index).isNumeric())
-	  list.add(sheet.getCell(i, index).toDouble());
+	  tmp.add(sheet.getCell(i, index).toDouble());
       }
     }
     else {
       for (i = 0; i < sheet.getColumnCount(); i++) {
 	if (sheet.hasCell(index, i) && sheet.getCell(index, i).isNumeric())
-	  list.add(sheet.getCell(index, i).toDouble());
+	  tmp.add(sheet.getCell(index, i).toDouble());
       }
+    }
+
+    if (numPoints > -1) {
+      Collections.shuffle(tmp, new Random(1));
+      list = tmp.subList(0, numPoints);
+    }
+    else {
+      list = tmp;
     }
 
     // generate plot
