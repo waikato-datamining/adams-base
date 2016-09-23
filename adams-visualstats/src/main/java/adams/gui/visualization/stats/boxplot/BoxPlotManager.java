@@ -695,6 +695,15 @@ public class BoxPlotManager
   }
 
   /**
+   * Returns whether the boxes should be filled with color.
+   *
+   * @return		true if filled
+   */
+  public boolean getFill() {
+    return m_Fill;
+  }
+
+  /**
    * Set the color to fill the boxes with
    * 
    * @param val
@@ -702,6 +711,15 @@ public class BoxPlotManager
    */
   public void setColor(Color val) {
     m_Color = val;
+  }
+
+  /**
+   * Returns the color to fill the boxes with.
+   *
+   * @return		the fill color
+   */
+  public Color getColor() {
+    return m_Color;
   }
 
   /**
