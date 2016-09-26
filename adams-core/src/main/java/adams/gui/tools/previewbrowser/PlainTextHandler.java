@@ -19,10 +19,13 @@
  */
 package adams.gui.tools.previewbrowser;
 
-import java.io.File;
-
 import adams.core.Utils;
+import adams.core.io.FileUtils;
 import adams.gui.core.TextEditorPanel;
+
+import javax.swing.JPanel;
+import java.io.File;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -80,12 +83,19 @@ public class PlainTextHandler
    */
   @Override
   protected PreviewPanel createPreview(File file) {
-    TextEditorPanel	panel;
+    JPanel 		panel;
+    List<String> 	lines;
 
-    panel = new TextEditorPanel();
-    panel.open(file);
-    panel.setEditable(false);
-
-    return new PreviewPanel(panel, panel.getTextArea());
+    lines = FileUtils.loadFromFile(file);
+    if (lines == null) {
+      panel = new FailedToCreatePreviewPanel();
+      return new PreviewPanel(panel, panel);
+    }
+    else {
+      panel = new TextEditorPanel();
+      ((TextEditorPanel) panel).setContent(Utils.flatten(lines, "\n"));
+      ((TextEditorPanel) panel).setEditable(false);
+      return new PreviewPanel(panel, ((TextEditorPanel) panel).getTextArea());
+    }
   }
 }
