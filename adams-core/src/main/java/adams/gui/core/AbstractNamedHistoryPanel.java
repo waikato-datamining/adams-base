@@ -628,14 +628,14 @@ public abstract class AbstractNamedHistoryPanel<T>
     Set<String> 	keys;
     Object		obj;
 
-    keys = m_Entries.keySet();
+    keys = new HashSet<>(m_Entries.keySet());
     for (String key: keys) {
       obj = m_Entries.remove(key);
       if (obj instanceof CleanUpHandler)
 	((CleanUpHandler) obj).cleanUp();
     }
 
-    keys = m_Payloads.keySet();
+    keys = new HashSet<>(m_Payloads.keySet());
     for (String key: keys) {
       obj = m_Payloads.remove(key);
       if (obj instanceof CleanUpHandler)
