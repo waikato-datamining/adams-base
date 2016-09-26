@@ -162,7 +162,21 @@ public class LocatedObject
    * @return		the rectangle
    */
   public Rectangle getRectangle() {
-    return new Rectangle(getX(), getY(), getWidth(), getHeight());
+    return getRectangle(1.0);
+  }
+
+  /**
+   * Returns the object as rectangle.
+   *
+   * @param scale	the scale factor, 1.0 for 100%
+   * @return		the rectangle
+   */
+  public Rectangle getRectangle(double scale) {
+    return new Rectangle(
+      (int) (getX() * scale),
+      (int) (getY() * scale),
+      (int) (getWidth() * scale),
+      (int) (getHeight() * scale));
   }
 
   /**
