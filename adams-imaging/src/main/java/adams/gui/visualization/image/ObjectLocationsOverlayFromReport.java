@@ -19,15 +19,13 @@
  */
 package adams.gui.visualization.image;
 
-import adams.data.report.AbstractField;
 import adams.data.report.Report;
+import adams.flow.transformer.locateobjects.LocatedObject;
 import adams.flow.transformer.locateobjects.LocatedObjects;
 import adams.gui.visualization.image.ImagePanel.PaintPanel;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
@@ -193,41 +191,15 @@ public class ObjectLocationsOverlayFromReport
    * @param report	the report to inspect
    */
   protected void determineLocations(Report report) {
-    List<AbstractField>	fields;
-    String		current;
-    int			x;
-    int			y;
-    int			width;
-    int			height;
-    Rectangle		rect;
+    LocatedObjects	located;
 
     if (m_Locations != null)
       return;
 
-    fields = report.getFields();
-    
-    m_Locations = new ArrayList<Rectangle>();
-    for (AbstractField field: fields) {
-      if (field.getName().startsWith(m_Prefix)) {
-	try {
-	  current = field.getName().substring(0, field.getName().lastIndexOf('.'));
-	  if (    report.hasValue(current + LocatedObjects.KEY_X) 
-	       && report.hasValue(current + LocatedObjects.KEY_Y) 
-	       && report.hasValue(current + LocatedObjects.KEY_WIDTH) 
-	       && report.hasValue(current + LocatedObjects.KEY_HEIGHT) ) {
-	    x      = report.getDoubleValue(current + LocatedObjects.KEY_X).intValue();
-	    y      = report.getDoubleValue(current + LocatedObjects.KEY_Y).intValue();
-	    width  = report.getDoubleValue(current + LocatedObjects.KEY_WIDTH).intValue();
-	    height = report.getDoubleValue(current + LocatedObjects.KEY_HEIGHT).intValue();
-	    rect   = new Rectangle(new Point(x, y), new Dimension(width, height));
-	    m_Locations.add(rect);
-	  }
-	}
-	catch (Exception e) {
-	  // ignored
-	}
-      }
-    }
+    m_Locations = new ArrayList<>();
+    located     = LocatedObjects.fromReport(report, m_Prefix);
+    for (LocatedObject object: located)
+      m_Locations.add(object.getRectangle());
   }
 
   /**

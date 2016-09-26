@@ -59,6 +59,9 @@ public class LocatedObjects
   /** the key for the overall count. */
   public final static String KEY_COUNT = "count";
 
+  /** the key for the index of a group. */
+  public final static String KEY_INDEX = "index";
+
   /**
    * Turns the located objects into a report.
    * Usinga prefix like "Object." will result in the following report entries
@@ -149,6 +152,7 @@ public class LocatedObjects
     for (String group: groups.keySet()) {
       // meta-data
       meta = new HashMap<>();
+      meta.put(KEY_INDEX, group.substring(prefix.length()));
       for (AbstractField field: groups.get(group)) {
 	if (field.getName().endsWith(KEY_X))
 	  continue;

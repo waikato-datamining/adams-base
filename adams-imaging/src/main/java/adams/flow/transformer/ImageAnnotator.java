@@ -24,12 +24,12 @@ import adams.core.QuickInfoHelper;
 import adams.core.base.BaseString;
 import adams.core.option.OptionUtils;
 import adams.data.image.AbstractImageContainer;
-import adams.data.report.AbstractField;
 import adams.data.report.DataType;
 import adams.data.report.Field;
 import adams.data.report.Report;
 import adams.flow.core.Token;
-import adams.flow.transformer.locateobjects.*;
+import adams.flow.transformer.locateobjects.LocatedObject;
+import adams.flow.transformer.locateobjects.LocatedObjects;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.BasePanel;
 import adams.gui.event.ImagePanelLeftClickEvent;
@@ -352,39 +352,22 @@ public class ImageAnnotator
      */
     protected void updateObjects() {
       Report			report;
-      AbstractField		fieldX;
-      AbstractField		fieldY;
-      AbstractField		fieldW;
-      AbstractField		fieldH;
-      String			index;
       LocatedObjectContainer 	cont;
       double			actual;
+      LocatedObjects		located;
 
       m_Objects.clear();
       if (m_CurrentImage == null)
 	return;
 
       report = m_CurrentImage.getReport();
+      located = LocatedObjects.fromReport(report, m_Prefix);
       actual = m_PanelImage.calcActualScale(m_PanelImage.getScale());
-      for (AbstractField field: report.getFields()) {
-	if (field.getName().startsWith(m_Prefix) && field.getName().endsWith(LocatedObjects.KEY_X)) {
-	  index  = field.getName().substring(m_Prefix.length(), field.getName().length() - LocatedObjects.KEY_X.length());
-	  fieldX = field;
-	  fieldY = new Field(m_Prefix + index + LocatedObjects.KEY_Y, DataType.NUMERIC);
-	  fieldW = new Field(m_Prefix + index + LocatedObjects.KEY_WIDTH, DataType.NUMERIC);
-	  fieldH = new Field(m_Prefix + index + LocatedObjects.KEY_HEIGHT, DataType.NUMERIC);
-	  if (report.hasValue(fieldX) && report.hasValue(fieldY) && report.hasValue(fieldW) && report.hasValue(fieldH)) {
-	    cont           = new LocatedObjectContainer();
-	    cont.index     = index;
-	    cont.rectangle = new Rectangle(
-	      (int) (report.getDoubleValue(fieldX).intValue() * actual),
-	      (int) (report.getDoubleValue(fieldY).intValue() * actual),
-	      (int) (report.getDoubleValue(fieldW).intValue() * actual),
-	      (int) (report.getDoubleValue(fieldH).intValue() * actual)
-	    );
-	    m_Objects.add(cont);
-	  }
-	}
+      for (LocatedObject obj: located) {
+	cont = new LocatedObjectContainer();
+	cont.rectangle = obj.getRectangle(actual);
+	cont.index     = "" + obj.getMetaData().get(LocatedObjects.KEY_INDEX);
+	m_Objects.add(cont);
       }
     }
 
