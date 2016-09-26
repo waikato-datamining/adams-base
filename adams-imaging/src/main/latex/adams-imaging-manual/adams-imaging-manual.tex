@@ -76,8 +76,6 @@ The following actors are available:
 	\texttt{BufferedImageContainer} into an \texttt{weka.core.Instance} object to
 	be used in WEKA. The attaced meta-data in form of a report can be added to the
 	output object as well.
-	\item \texttt{transformer.ImageAnnotator} -- allows the user to interactively
-	 annotate objects (i.e., attach labels) that were located in an image.
 	\item \texttt{transformer.ImageReader} -- reads an image file using the
 	specified image reader.
 \end{tight_itemize}
@@ -164,7 +162,7 @@ generators that work on \textit{BufferedImageContainer} objects:
 The following conversions are available to convert from one
 format into another:
 \begin{tight_itemize}
-	\item \textit{ColorToHex} -- turns a Color object into its hexa-decimal
+	\item \textit{ColorToHex} -- turns a Color into its hexa-decimal
 	notation.
 	\item \textit{HexToColor} -- turns a color in hexa-decimal notation back
 	into a Color object.
@@ -296,6 +294,8 @@ The imaging module offers some more actors that have not been introduced yet.
 	\item \textit{Draw} -- Performs draw operations on images, like setting
 	pixels, drawing lines, rectangles, ovals, text, images\footnote{adams-imaging-draw.flow}
 	and even barcodes (e.g., EAN and QRCode)\footnote{adams-imaging-barcode.flow}.
+	\item \texttt{transformer.ImageAnnotator} -- allows the user to interactively
+	 annotate objects (i.e., attach labels) that were located in an image.
 	\item \textit{ImageInfo} -- Allows you to obtain \textit{width} and
 	\textit{height} information from an image.
 	\item \textit{ImageHistogram} -- sink that displays the histogram of an image
@@ -306,6 +306,9 @@ The imaging module offers some more actors that have not been introduced yet.
 	\item \textit{ImageSharpness} -- determines whether image is in focus or not.
 	\item \textit{LocateObjects} -- provides a framework for algorithms that
 	locate objects in images.
+	\item \texttt{transformer.MergeObjectLocations} -- merges objects locations
+	in the current image container with the ones obtained from a report
+	available from storage.
 \end{tight_itemize}
 
 
