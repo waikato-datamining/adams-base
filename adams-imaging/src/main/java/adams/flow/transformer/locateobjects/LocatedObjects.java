@@ -19,11 +19,15 @@
  */
 package adams.flow.transformer.locateobjects;
 
+import adams.data.report.AbstractField;
 import adams.data.report.DataType;
 import adams.data.report.Field;
 import adams.data.report.Report;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Container for located objects.
@@ -104,6 +108,78 @@ public class LocatedObjects
     field = new Field(prefix + KEY_COUNT, DataType.NUMERIC);
     result.addField(field);
     result.setValue(field, size());
+
+    return result;
+  }
+
+  /**
+   * Retrieves all objects from the report.
+   *
+   * @param report	the report to process
+   * @param prefix	the prefix to look for
+   * @return		the objects found
+   */
+  public static LocatedObjects fromReport(Report report, String prefix) {
+    LocatedObjects  			result;
+    LocatedObject			obj;
+    String				current;
+    List<AbstractField> 		fields;
+    Map<String,List<AbstractField>> 	groups;
+    Map<String,Object>			meta;
+    int					x;
+    int					y;
+    int					width;
+    int					height;
+
+    result = new LocatedObjects();
+    fields = report.getFields();
+
+    // group fields
+    groups = new HashMap<>();
+    for (AbstractField field: fields) {
+      if (field.getName().startsWith(prefix)) {
+	current = field.getName().substring(0, field.getName().lastIndexOf('.'));
+	if (!groups.containsKey(current))
+	  groups.put(current, new ArrayList<>());
+	groups.get(current).add(field);
+      }
+    }
+
+    // process grouped fields
+    for (String group: groups.keySet()) {
+      // meta-data
+      meta = new HashMap<>();
+      for (AbstractField field: groups.get(group)) {
+	if (field.getName().endsWith(KEY_X))
+	  continue;
+	if (field.getName().endsWith(KEY_Y))
+	  continue;
+	if (field.getName().endsWith(KEY_WIDTH))
+	  continue;
+	if (field.getName().endsWith(KEY_HEIGHT))
+	  continue;
+	meta.put(
+	  field.getName().substring(field.getName().lastIndexOf('.') + 1),
+	  report.getValue(field));
+      }
+      // location
+      try {
+	if ( report.hasValue(group + KEY_X)
+	  && report.hasValue(group + KEY_Y)
+	  && report.hasValue(group + KEY_WIDTH)
+	  && report.hasValue(group + KEY_HEIGHT) ) {
+	  x      = report.getDoubleValue(group + KEY_X).intValue();
+	  y      = report.getDoubleValue(group + KEY_Y).intValue();
+	  width  = report.getDoubleValue(group + KEY_WIDTH).intValue();
+	  height = report.getDoubleValue(group + KEY_HEIGHT).intValue();
+	  obj    = new LocatedObject(null, x, y, width, height, (meta.size() > 0) ? meta : null);
+	  result.add(obj);
+	}
+      }
+      catch (Exception e) {
+	// ignored
+      }
+    }
 
     return result;
   }
