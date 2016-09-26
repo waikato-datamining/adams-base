@@ -15,14 +15,16 @@
 
 /**
  * LocatedObject.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer.locateobjects;
 
 import adams.core.base.QuadrilateralLocation;
 
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.Serializable;
+import java.util.Map;
 
 /**
  * Container for located objects.
@@ -36,7 +38,7 @@ public class LocatedObject
   /** for serialization. */
   private static final long serialVersionUID = 8662599273386642371L;
 
-  /** the cut-out object. */
+  /** the cut-out object, if available. */
   protected BufferedImage m_Image;
   
   /** the x of the top-left corner in the original image. */
@@ -50,28 +52,46 @@ public class LocatedObject
   
   /** the height of the actual object sub-image. */
   protected int m_Height;
-  
+
+  /** additional meta-data. */
+  protected Map<String,Object> m_MetaData;
+
   /**
    * Initializes the container.
-   * 
-   * @param image	the object image
+   *
+   * @param image	the object image, can be null
    * @param x		the x of the top-left corner in the original image
    * @param y		the y of the top-left corner in the original image
    * @param width	the width of the object sub-image
    * @param height	the height of the object sub-image
    */
   public LocatedObject(BufferedImage image, int x, int y, int width, int height) {
-    m_Image  = image;
-    m_X      = x;
-    m_Y      = y;
-    m_Width  = width;
-    m_Height = height;
+    this(image, x, y, width, height, null);
+  }
+
+  /**
+   * Initializes the container.
+   * 
+   * @param image	the object image, can be null
+   * @param x		the x of the top-left corner in the original image
+   * @param y		the y of the top-left corner in the original image
+   * @param width	the width of the object sub-image
+   * @param height	the height of the object sub-image
+   * @param metaData	optional meta-data, can be null
+   */
+  public LocatedObject(BufferedImage image, int x, int y, int width, int height, Map<String,Object> metaData) {
+    m_Image    = image;
+    m_X        = x;
+    m_Y        = y;
+    m_Width    = width;
+    m_Height   = height;
+    m_MetaData = metaData;
   }
   
   /**
    * Returns the image.
    * 
-   * @return		the image
+   * @return		the image, null if not available
    */
   public BufferedImage getImage() {
     return m_Image;
@@ -114,6 +134,15 @@ public class LocatedObject
   }
 
   /**
+   * Returns the meta-data of the object, if any.
+   *
+   * @return		the meta-data, null if not available
+   */
+  public Map<String,Object> getMetaData() {
+    return m_MetaData;
+  }
+
+  /**
    * Returns the quadrilateral location.
    *
    * @return 		the location
@@ -128,12 +157,58 @@ public class LocatedObject
   }
 
   /**
-   * Returns a short decription of the container.
+   * Returns the object as rectangle.
+   *
+   * @return		the rectangle
+   */
+  public Rectangle getRectangle() {
+    return new Rectangle(getX(), getY(), getWidth(), getHeight());
+  }
+
+  /**
+   * Returns whether the this and the other object overlap.
+   *
+   * @param other	the object object to use
+   * @return		true if they overlap
+   */
+  public boolean overlap(LocatedObject other) {
+    int		thisLeft;
+    int		thisRight;
+    int		thisTop;
+    int		thisBottom;
+    int		otherLeft;
+    int		otherRight;
+    int		otherTop;
+    int		otherBottom;
+    boolean	noOverlap;
+    
+    thisLeft    = this.getX();
+    thisRight   = this.getX() + this.getWidth() - 1;
+    thisTop     = this.getY();
+    thisBottom  = this.getY() + this.getHeight() - 1;
+    otherLeft   = other.getX();
+    otherRight  = other.getX() + other.getWidth() - 1;
+    otherTop    = other.getY();
+    otherBottom = other.getY() + other.getHeight() - 1;
+
+    noOverlap = ((thisLeft < otherRight)
+      && (thisRight > otherLeft)
+      && (thisTop < otherBottom)
+      && (thisBottom > otherTop));
+
+    return !noOverlap;
+  }
+
+  /**
+   * Returns a short description of the container.
    * 
    * @return		the description
    */
   @Override
   public String toString() {
-    return "@" + m_Image.hashCode() + ", x=" + m_X + ", y=" + m_Y + ", w=" + m_Width + ", h=" + m_Height;
+    if (m_Image != null)
+      return "@" + m_Image.hashCode() + ", x=" + m_X + ", y=" + m_Y + ", w=" + m_Width + ", h=" + m_Height;
+    else
+      return "x=" + m_X + ", y=" + m_Y + ", w=" + m_Width + ", h=" + m_Height;
   }
 }
