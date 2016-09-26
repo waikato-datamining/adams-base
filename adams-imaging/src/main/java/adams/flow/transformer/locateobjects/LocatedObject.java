@@ -24,6 +24,7 @@ import adams.core.base.QuadrilateralLocation;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -85,7 +86,7 @@ public class LocatedObject
     m_Y        = y;
     m_Width    = width;
     m_Height   = height;
-    m_MetaData = metaData;
+    m_MetaData = (metaData == null) ? new HashMap<>() : metaData;
   }
   
   /**
@@ -136,7 +137,7 @@ public class LocatedObject
   /**
    * Returns the meta-data of the object, if any.
    *
-   * @return		the meta-data, null if not available
+   * @return		the meta-data
    */
   public Map<String,Object> getMetaData() {
     return m_MetaData;
