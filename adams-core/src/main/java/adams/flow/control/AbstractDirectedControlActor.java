@@ -139,6 +139,8 @@ public abstract class AbstractDirectedControlActor
     result = super.setUp();
 
     if (result == null) {
+      if ((m_PauseStateManager != null) && (m_Director != null))
+	m_PauseStateManager.removeListener(m_Director);
       m_Director = newDirector();
       m_Director.setControlActor(this);
       m_Director.setLoggingLevel(getLoggingLevel());
