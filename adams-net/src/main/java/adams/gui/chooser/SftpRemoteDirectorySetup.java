@@ -20,7 +20,6 @@
 
 package adams.gui.chooser;
 
-import adams.core.CleanUpHandler;
 import adams.core.Utils;
 import adams.core.base.BasePassword;
 import adams.core.io.PlaceholderFile;
@@ -41,7 +40,7 @@ import java.io.File;
  */
 public class SftpRemoteDirectorySetup
   extends AbstractOptionHandler
-  implements SSHSessionProvider, CleanUpHandler {
+  implements SSHSessionProvider, RemoteDirectorySetup {
 
   private static final long serialVersionUID = -8429471751146663032L;
 
@@ -512,5 +511,15 @@ public class SftpRemoteDirectorySetup
       }
     }
     m_Session = null;
+  }
+
+  /**
+   * Returns whether the setup needs to be configured by the user or whether
+   * it can be used straight away.
+   *
+   * @return		true if user needs to configure first
+   */
+  public boolean requiresInitialization() {
+    return true;
   }
 }

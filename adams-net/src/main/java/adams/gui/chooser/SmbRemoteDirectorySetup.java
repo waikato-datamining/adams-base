@@ -20,7 +20,6 @@
 
 package adams.gui.chooser;
 
-import adams.core.CleanUpHandler;
 import adams.core.base.BasePassword;
 import adams.core.net.SMBAuthenticationProvider;
 import adams.core.option.AbstractOptionHandler;
@@ -34,7 +33,7 @@ import jcifs.smb.NtlmPasswordAuthentication;
  */
 public class SmbRemoteDirectorySetup
   extends AbstractOptionHandler
-  implements SMBAuthenticationProvider, CleanUpHandler {
+  implements SMBAuthenticationProvider, RemoteDirectorySetup {
 
   private static final long serialVersionUID = -8429471751146663032L;
 
@@ -264,5 +263,15 @@ public class SmbRemoteDirectorySetup
    */
   public void cleanUp() {
     m_Session = null;
+  }
+
+  /**
+   * Returns whether the setup needs to be configured by the user or whether
+   * it can be used straight away.
+   *
+   * @return		true if user needs to configure first
+   */
+  public boolean requiresInitialization() {
+    return true;
   }
 }

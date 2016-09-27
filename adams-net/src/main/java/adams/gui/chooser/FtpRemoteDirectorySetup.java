@@ -20,7 +20,6 @@
 
 package adams.gui.chooser;
 
-import adams.core.CleanUpHandler;
 import adams.core.Utils;
 import adams.core.base.BasePassword;
 import adams.core.option.AbstractOptionHandler;
@@ -39,7 +38,7 @@ import java.util.logging.Level;
  */
 public class FtpRemoteDirectorySetup
   extends AbstractOptionHandler
-  implements CleanUpHandler, ProtocolCommandListener {
+  implements RemoteDirectorySetup, ProtocolCommandListener {
 
   private static final long serialVersionUID = -8429471751146663032L;
 
@@ -370,5 +369,15 @@ public class FtpRemoteDirectorySetup
       getLogger().info("reply received: " + event.getMessage() + "/" + event.getReplyCode());
     else if (event.getReplyCode() >= 400)
       getLogger().severe("reply received: " + event.getMessage() + "/" + event.getReplyCode());
+  }
+
+  /**
+   * Returns whether the setup needs to be configured by the user or whether
+   * it can be used straight away.
+   *
+   * @return		true if user needs to configure first
+   */
+  public boolean requiresInitialization() {
+    return true;
   }
 }

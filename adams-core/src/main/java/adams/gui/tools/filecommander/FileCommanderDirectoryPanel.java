@@ -33,6 +33,7 @@ import adams.core.io.fileoperations.RemoteFileOperations;
 import adams.core.io.lister.DirectoryLister;
 import adams.gui.chooser.AbstractChooserPanelWithIOSupport;
 import adams.gui.chooser.DirectoryChooserPanel;
+import adams.gui.chooser.RemoteDirectorySetup;
 import adams.gui.core.BasePanel;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.FilePanel;
@@ -189,11 +190,18 @@ public class FileCommanderDirectoryPanel
    * dependent widgets.
    */
   protected void updateChooser() {
+    Object	obj;
+
     m_Dir.getParent().remove(m_Dir);
     m_Dir.removeChangeListener(m_DirChangeListener);
     m_Dir = (AbstractChooserPanelWithIOSupport) m_Choosers.getSelectedItem();
     m_Dir.addChangeListener(m_DirChangeListener);
     m_PanelChooser.add(m_Dir, BorderLayout.CENTER);
+    obj = m_Dir.getCurrent();
+    if (obj instanceof RemoteDirectorySetup) {
+      if (((RemoteDirectorySetup) obj).requiresInitialization())
+	m_Dir.choose();
+    }
     updateDirectoryLister();
     m_PanelChooser.invalidate();
     m_PanelChooser.validate();
