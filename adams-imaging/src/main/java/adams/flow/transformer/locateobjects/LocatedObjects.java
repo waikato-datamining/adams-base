@@ -152,6 +152,8 @@ public class LocatedObjects
     for (String group: groups.keySet()) {
       // meta-data
       meta = new HashMap<>();
+      if (group.length() <= prefix.length())
+	continue;
       meta.put(KEY_INDEX, group.substring(prefix.length()));
       for (AbstractField field: groups.get(group)) {
 	if (field.getName().endsWith(KEY_X))
