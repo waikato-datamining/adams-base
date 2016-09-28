@@ -113,7 +113,8 @@ public abstract class AbstractInvestigatorTab
    * @param msg		the log message
    */
   public void logMessage(String msg) {
-    getOwner().logMessage("[" + getTitle() + "] " + msg);
+    if (!msg.isEmpty())
+      getOwner().logMessage("[" + getTitle() + "] " + msg);
   }
 
   /**
