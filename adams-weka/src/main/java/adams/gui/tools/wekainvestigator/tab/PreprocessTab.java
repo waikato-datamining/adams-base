@@ -297,6 +297,7 @@ public class PreprocessTab
     super.updateButtons();
     m_ButtonStart.setEnabled((m_Worker == null) && (getSelectedRows().length > 0));
     m_ButtonStop.setEnabled(m_Worker != null);
+    m_ButtonRemoveChecked.setEnabled((m_Worker == null));
   }
 
   /**
@@ -376,12 +377,9 @@ public class PreprocessTab
    */
   protected void removeCheckedAttributes() {
     int[]		indices;
-    Remove		remove;
     int			index;
     DataContainer	cont;
-    Instances		filtered;
-    boolean		keep;
-    String 		oldName;
+    Runnable		run;
 
     if (getSelectedRows().length != 1)
       return;
@@ -392,24 +390,33 @@ public class PreprocessTab
     if (indices.length == 0)
       return;
 
-    keep    = m_CheckBoxKeepName.isSelected();
-    oldName = cont.getData().relationName();
-    remove  = new Remove();
-    remove.setAttributeIndicesArray(indices);
-    try {
-      remove.setInputFormat(cont.getData());
-      filtered = Filter.useFilter(cont.getData(), remove);
-      if (keep)
-	filtered.setRelationName(oldName);
-      cont.setData(filtered);
-      fireDataChange(new WekaInvestigatorDataEvent(getOwner(), WekaInvestigatorDataEvent.ROWS_MODIFIED, getSelectedRows()[0]));
-      SwingUtilities.invokeLater(() -> {
-	if (m_PanelAttSelection.getTable().getRowCount() > 0)
-	  m_PanelAttSelection.getTable().setSelectedRow(0);
-      });
-    }
-    catch (Exception e) {
-      GUIHelper.showErrorMessage(this, "Failed to remove checked attributes!", e);
-    }
+    run = () -> {
+      showStatus("Removing checked attributes...");
+      boolean keep = m_CheckBoxKeepName.isSelected();
+      String oldName = cont.getData().relationName();
+      Remove remove = new Remove();
+      remove.setAttributeIndicesArray(indices);
+      try {
+	remove.setInputFormat(cont.getData());
+	Instances filtered = Filter.useFilter(cont.getData(), remove);
+	if (keep)
+	  filtered.setRelationName(oldName);
+	cont.setData(filtered);
+	fireDataChange(new WekaInvestigatorDataEvent(getOwner(), WekaInvestigatorDataEvent.ROWS_MODIFIED, getSelectedRows()[0]));
+	SwingUtilities.invokeLater(() -> {
+	  if (m_PanelAttSelection.getTable().getRowCount() > 0)
+	    m_PanelAttSelection.getTable().setSelectedRow(0);
+	});
+      }
+      catch (Throwable e) {
+	GUIHelper.showErrorMessage(PreprocessTab.this, "Failed to remove checked attributes!", e);
+      }
+      m_Worker = null;
+      showStatus("");
+      updateButtons();
+    };
+    m_Worker = new Thread(run);
+    updateButtons();
+    m_Worker.start();
   }
 }
