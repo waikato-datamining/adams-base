@@ -124,7 +124,7 @@ public class RandomSplitGenerator
     testSize  = m_Data.numInstances() - trainSize;
     trainRows = m_OriginalIndices.subList(0, trainSize).toArray();
     testRows  = m_OriginalIndices.subList(trainSize, m_OriginalIndices.size()).toArray();
-    if (m_CreateView) {
+    if (m_UseViews) {
       trainSet = new InstancesView(m_Data, trainRows);
       testSet  = new InstancesView(m_Data, testRows);
     }

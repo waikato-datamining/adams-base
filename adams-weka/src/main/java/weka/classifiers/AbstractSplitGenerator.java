@@ -43,8 +43,8 @@ public abstract class AbstractSplitGenerator
   /** the seed value. */
   protected long m_Seed;
 
-  /** whether to create views. */
-  protected boolean m_CreateView;
+  /** whether to use views. */
+  protected boolean m_UseViews;
 
   /** the random number generator. */
   protected Random m_Random;
@@ -92,22 +92,22 @@ public abstract class AbstractSplitGenerator
   }
 
   /**
-   * Sets whether to create views only.
+   * Sets whether to uses views only.
    *
-   * @param value	true if to create views
+   * @param value	true if to uses views
    */
-  public void setCreateView(boolean value) {
-    m_CreateView  = value;
+  public void setUseViews(boolean value) {
+    m_UseViews = value;
     m_Initialized = false;
   }
 
   /**
-   * Returns whether to create views.
+   * Returns whether to use views.
    *
-   * @return		true if to create views
+   * @return		true if to uses views
    */
-  public boolean getCreateView() {
-    return m_CreateView;
+  public boolean getUseViews() {
+    return m_UseViews;
   }
 
   /**
@@ -189,7 +189,7 @@ public abstract class AbstractSplitGenerator
 
     if (canRandomize()) {
       m_Random = new Random(m_Seed);
-      if (!m_CreateView)
+      if (!m_UseViews)
 	m_Data.randomize(m_Random);
     }
   }

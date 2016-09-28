@@ -78,6 +78,9 @@ public class TrainTestSplit
   /** the additional attributes to store. */
   protected SelectOptionPanel m_SelectAdditionalAttributes;
 
+  /** whether to use views. */
+  protected JCheckBox m_CheckBoxUseViews;
+
   /** whether to discard the predictions. */
   protected JCheckBox m_CheckBoxDiscardPredictions;
 
@@ -166,6 +169,13 @@ public class TrainTestSplit
     m_SelectAdditionalAttributes.setToolTipText("Additional attributes to make available in plots");
     m_PanelParameters.addParameter("Additional attributes", m_SelectAdditionalAttributes);
 
+    // use views?
+    m_CheckBoxUseViews = new JCheckBox();
+    m_CheckBoxUseViews.setSelected(props.getBoolean("Classify.UseViews", false));
+    m_CheckBoxUseViews.setToolTipText("Save memory by using views instead of creating copies of datasets?");
+    m_CheckBoxUseViews.addActionListener((ActionEvent e) -> update());
+    m_PanelParameters.addParameter("Use views", m_CheckBoxUseViews);
+
     // discard predictions?
     m_CheckBoxDiscardPredictions = new JCheckBox();
     m_CheckBoxDiscardPredictions.setSelected(props.getBoolean("Classify.DiscardPredictions", false));
@@ -231,6 +241,7 @@ public class TrainTestSplit
     Classifier 			model;
     double			perc;
     int				seed;
+    boolean		  	views;
     boolean			discard;
     Instances			data;
     Instances			train;
@@ -247,11 +258,13 @@ public class TrainTestSplit
     data    = getOwner().getData().get(m_ComboBoxDatasets.getSelectedIndex()).getData();
     perc    = Utils.toDouble(m_TextPercentage.getText()) / 100.0;
     seed    = Integer.parseInt(m_TextSeed.getText());
+    views   = m_CheckBoxUseViews.isSelected();
     discard = m_CheckBoxDiscardPredictions.isSelected();
     if (m_CheckBoxPreserveOrder.isSelected())
       generator = new RandomSplitGenerator(data, perc);
     else
       generator = new RandomSplitGenerator(data, seed, perc);
+    generator.setUseViews(views);
     cont      = generator.next();
     train     = (Instances) cont.getValue(WekaTrainTestSetContainer.VALUE_TRAIN);
     test      = (Instances) cont.getValue(WekaTrainTestSetContainer.VALUE_TEST);
@@ -267,6 +280,7 @@ public class TrainTestSplit
     runInfo.add("# Instances (test)", test.numInstances());
     runInfo.add("Class attribute", data.classAttribute().name());
     runInfo.add("Discard predictions", discard);
+    runInfo.add("Use views", views);
 
     model = (Classifier) OptionUtils.shallowCopy(classifier);
     getOwner().logMessage("Using " + m_TextPercentage.getText() + "% of '" + train.relationName() + "' to train " + OptionUtils.getCommandLine(classifier));

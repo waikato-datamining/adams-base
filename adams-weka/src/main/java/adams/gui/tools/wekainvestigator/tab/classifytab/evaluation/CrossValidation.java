@@ -79,9 +79,12 @@ public class CrossValidation
   /** the additional attributes to store. */
   protected SelectOptionPanel m_SelectAdditionalAttributes;
 
+  /** whether to use views. */
+  protected JCheckBox m_CheckBoxUseViews;
+
   /** whether to discard the predictions. */
   protected JCheckBox m_CheckBoxDiscardPredictions;
-
+  
   /** whether to produce a final model. */
   protected JCheckBox m_CheckBoxFinalModel;
 
@@ -149,6 +152,13 @@ public class CrossValidation
     m_SpinnerThreads.setToolTipText(Performance.getNumThreadsHelp());
     m_SpinnerThreads.addChangeListener((ChangeEvent e) -> update());
     m_PanelParameters.addParameter("Threads", m_SpinnerThreads);
+
+    // use views?
+    m_CheckBoxUseViews = new JCheckBox();
+    m_CheckBoxUseViews.setSelected(props.getBoolean("Classify.UseViews", false));
+    m_CheckBoxUseViews.setToolTipText("Save memory by using views instead of creating copies of datasets?");
+    m_CheckBoxUseViews.addActionListener((ActionEvent e) -> update());
+    m_PanelParameters.addParameter("Use views", m_CheckBoxUseViews);
 
     // discard predictions?
     m_CheckBoxDiscardPredictions = new JCheckBox();
@@ -224,6 +234,7 @@ public class CrossValidation
     String				msg;
     Instances				data;
     boolean				finalModel;
+    boolean				views;
     boolean				discard;
     Classifier				model;
     int					seed;
@@ -236,6 +247,7 @@ public class CrossValidation
 
     data       = getOwner().getData().get(m_ComboBoxDatasets.getSelectedIndex()).getData();
     finalModel = m_CheckBoxFinalModel.isSelected();
+    views      = m_CheckBoxUseViews.isSelected();
     discard    = m_CheckBoxDiscardPredictions.isSelected();
     seed       = Integer.parseInt(m_TextSeed.getText());
     folds      = ((Number) m_SpinnerFolds.getValue()).intValue();
@@ -249,6 +261,7 @@ public class CrossValidation
     runInfo.add("# Attributes", data.numAttributes());
     runInfo.add("# Instances", data.numInstances());
     runInfo.add("Class attribute", data.classAttribute().name());
+    runInfo.add("Use views", views);
     runInfo.add("Discard predictions", discard);
     crossValidation = new WekaCrossValidationExecution();
     crossValidation.setClassifier(classifier);
@@ -256,6 +269,7 @@ public class CrossValidation
     crossValidation.setFolds(folds);
     crossValidation.setSeed(seed);
     crossValidation.setNumThreads(threads);
+    crossValidation.setUseViews(views);
     crossValidation.setDiscardPredictions(discard);
     crossValidation.setStatusMessageHandler(this);
     msg = crossValidation.execute();

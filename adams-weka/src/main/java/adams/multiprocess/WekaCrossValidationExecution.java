@@ -72,6 +72,9 @@ public class WekaCrossValidationExecution
   /** the seed value. */
   protected long m_Seed;
 
+  /** whether to use views. */
+  protected boolean m_UseViews;
+
   /** whether to discard predictions. */
   protected boolean m_DiscardPredictions;
 
@@ -271,6 +274,26 @@ public class WekaCrossValidationExecution
   }
 
   /**
+   * Sets whether to use views instead of dataset copies, in order to
+   * conserve memory.
+   *
+   * @param value	true if to use views
+   */
+  public void setUseViews(boolean value) {
+    m_UseViews = value;
+  }
+
+  /**
+   * Returns whether to use views instead of dataset copies, in order to
+   * conserve memory.
+   *
+   * @return		true if using views
+   */
+  public boolean getUseViews() {
+    return m_UseViews;
+  }
+
+  /**
    * Sets whether to discard the predictions instead of collecting them
    * for future use, in order to conserve memory.
    *
@@ -430,6 +453,7 @@ public class WekaCrossValidationExecution
 	indices = CrossValidationHelper.crossValidationIndices(m_Data, folds, new Random(m_Seed));
 
       generator = new CrossValidationFoldGenerator(m_Data, folds, m_Seed, true);
+      generator.setUseViews(m_UseViews);
       if ((m_ActualNumThreads == 1) && !m_SeparateFolds) {
 	initOutputBuffer();
 	if (m_Output != null)

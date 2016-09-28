@@ -57,6 +57,10 @@ Classify.NumFolds=10
 # (integer; -1,1-n)
 Classify.NumThreads=-1
 
+# whether to use views instead of copies of datasets
+# (true|false)
+Classify.UseViews=false
+
 # whether to discard predictions
 # (true|false)
 Classify.DiscardPredictions=false

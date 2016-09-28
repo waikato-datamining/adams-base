@@ -242,7 +242,7 @@ public class CrossValidationFoldGenerator
     if (m_Random == null)
       m_Random = new Random(m_Seed);
 
-    if (!m_CreateView) {
+    if (!m_UseViews) {
       if (m_Stratify && m_Data.classAttribute().isNominal() && (m_NumFolds < m_Data.numInstances()))
 	m_Data.stratify(m_NumFolds);
     }
@@ -354,7 +354,7 @@ public class CrossValidationFoldGenerator
     testRows  = testCV(m_NumFolds, m_CurrentFold - 1).toArray();
 
     // generate fold pair
-    if (m_CreateView) {
+    if (m_UseViews) {
       train = new InstancesView(m_Data, trainRows);
       test = new InstancesView(m_Data, testRows);
     }
