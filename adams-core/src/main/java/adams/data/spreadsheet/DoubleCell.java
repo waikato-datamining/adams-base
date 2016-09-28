@@ -61,6 +61,9 @@ public class DoubleCell
   /** whether the content is numeric. */
   protected ContentType m_ContentType;
 
+  /** whether a cell calculation is currently happening. */
+  protected boolean m_Calculating;
+
   /**
    * Constructor.
    *
@@ -69,9 +72,10 @@ public class DoubleCell
   public DoubleCell(Row owner) {
     super();
 
-    m_Owner   = owner;
-    m_Formula = null;
-    m_Object  = null;
+    m_Owner       = owner;
+    m_Formula     = null;
+    m_Object      = null;
+    m_Calculating = false;
     if (m_Owner != null)
       setContentAsString("");
     else
@@ -1140,8 +1144,14 @@ public class DoubleCell
     if (!isFormula())
       return;
 
+    if (m_Calculating) {
+      setContentAsString(FORMULA_ERROR);
+      return;
+    }
+
     // parse formula
-    eval = null;
+    m_Calculating = true;
+    eval          = null;
     try {
       eval = SpreadSheetFormula.evaluate(getFormula(), new HashMap(), getSpreadSheet());
       if ((eval instanceof Double) && (Double.isNaN((Double) eval)))
@@ -1152,6 +1162,8 @@ public class DoubleCell
       t.printStackTrace();
       eval = FORMULA_ERROR;
     }
+
+    m_Calculating = false;
 
     if (eval != null) {
       if (eval instanceof Double)
