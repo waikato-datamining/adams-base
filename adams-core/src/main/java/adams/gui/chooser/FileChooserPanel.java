@@ -15,15 +15,20 @@
 
 /*
  * FileChooserPanel.java
- * Copyright (C) 2008-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.chooser;
 
+import adams.core.PlaceholderFileHistory;
 import adams.core.Placeholders;
 import adams.core.io.PlaceholderFile;
+import adams.env.Environment;
+import adams.gui.core.BasePopupMenu;
+import adams.gui.event.HistorySelectionEvent;
 
 import javax.swing.JFileChooser;
+import javax.swing.event.ChangeEvent;
 import javax.swing.filechooser.FileFilter;
 import java.io.File;
 
@@ -45,6 +50,9 @@ public class FileChooserPanel
 
   /** whether to use the open or save dialog. */
   protected boolean m_UseSaveDialog;
+
+  /** the history of dirs. */
+  protected PlaceholderFileHistory m_History;
 
   /**
    * Initializes the panel with no file.
@@ -82,6 +90,10 @@ public class FileChooserPanel
 
     m_FileChooser   = new BaseFileChooser();
     m_UseSaveDialog = false;
+    m_History       = new PlaceholderFileHistory();
+    m_History.setHistoryFile(
+      new PlaceholderFile(
+	Environment.getInstance().getHome() + File.separator + getClass().getName() + ".txt"));
   }
 
   /**
@@ -94,16 +106,22 @@ public class FileChooserPanel
     m_FileChooser.setSelectedFile(getCurrent());
 
     if (m_UseSaveDialog) {
-      if (m_FileChooser.showSaveDialog(m_Self) == BaseFileChooser.APPROVE_OPTION)
-	return m_FileChooser.getSelectedFile();
-      else
-	return null;
+      if (m_FileChooser.showSaveDialog(m_Self) == BaseFileChooser.APPROVE_OPTION) {
+	m_History.add(new PlaceholderFile(m_FileChooser.getSelectedFile()));
+        return m_FileChooser.getSelectedFile();
+      }
+      else {
+        return null;
+      }
     }
     else {
-      if (m_FileChooser.showOpenDialog(m_Self) == BaseFileChooser.APPROVE_OPTION)
-	return m_FileChooser.getSelectedFile();
-      else
-	return null;
+      if (m_FileChooser.showOpenDialog(m_Self) == BaseFileChooser.APPROVE_OPTION) {
+	m_History.add(new PlaceholderFile(m_FileChooser.getSelectedFile()));
+        return m_FileChooser.getSelectedFile();
+      }
+      else {
+        return null;
+      }
     }
   }
 
@@ -343,5 +361,29 @@ public class FileChooserPanel
    */
   public boolean getUseSaveDialog() {
     return m_UseSaveDialog;
+  }
+
+  /**
+   * Returns a popup menu when right-clicking on the edit field.
+   *
+   * @return		the menu, null if non available
+   */
+  @Override
+  protected BasePopupMenu getPopupMenu() {
+    BasePopupMenu	result;
+
+    result = super.getPopupMenu();
+
+    result.addSeparator();
+
+    m_History.customizePopupMenu(
+      result,
+      getCurrent(),
+      (HistorySelectionEvent e) -> {
+	setCurrent((File) e.getHistoryItem());
+	notifyChangeListeners(new ChangeEvent(m_Self));
+      });
+
+    return result;
   }
 }

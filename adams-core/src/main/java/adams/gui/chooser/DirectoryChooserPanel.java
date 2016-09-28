@@ -15,18 +15,24 @@
 
 /*
  * DirectoryChooserPanel.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.chooser;
 
+import adams.core.PlaceholderDirectoryHistory;
 import adams.core.Placeholders;
+import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
 import adams.core.io.fileoperations.FileOperations;
 import adams.core.io.fileoperations.LocalFileOperations;
 import adams.core.io.lister.DirectoryLister;
 import adams.core.io.lister.LocalDirectoryLister;
+import adams.env.Environment;
+import adams.gui.core.BasePopupMenu;
+import adams.gui.event.HistorySelectionEvent;
 
+import javax.swing.event.ChangeEvent;
 import java.io.File;
 
 /**
@@ -44,6 +50,9 @@ public class DirectoryChooserPanel
 
   /** the JFileChooser for selecting a file. */
   protected BaseDirectoryChooser m_DirectoryChooser;
+
+  /** the history of dirs. */
+  protected PlaceholderDirectoryHistory m_History;
 
   /**
    * Initializes the panel with no file.
@@ -79,6 +88,10 @@ public class DirectoryChooserPanel
     super.initialize();
 
     m_DirectoryChooser = new BaseDirectoryChooser();
+    m_History          = new PlaceholderDirectoryHistory();
+    m_History.setHistoryFile(
+      new PlaceholderFile(
+	Environment.getInstance().getHome() + File.separator + getClass().getName() + ".txt"));
   }
 
   /**
@@ -88,10 +101,13 @@ public class DirectoryChooserPanel
    */
   protected File doChoose() {
     m_DirectoryChooser.setSelectedFile(getCurrent());
-    if (m_DirectoryChooser.showOpenDialog(m_Self) == BaseDirectoryChooser.APPROVE_OPTION)
+    if (m_DirectoryChooser.showOpenDialog(m_Self) == BaseDirectoryChooser.APPROVE_OPTION) {
+      m_History.add(new PlaceholderDirectory(m_DirectoryChooser.getSelectedFile()));
       return m_DirectoryChooser.getSelectedFile();
-    else
+    }
+    else {
       return null;
+    }
   }
 
   /**
@@ -185,5 +201,29 @@ public class DirectoryChooserPanel
   @Override
   public FileOperations getFileOperations() {
     return new LocalFileOperations();
+  }
+
+  /**
+   * Returns a popup menu when right-clicking on the edit field.
+   *
+   * @return		the menu, null if non available
+   */
+  @Override
+  protected BasePopupMenu getPopupMenu() {
+    BasePopupMenu	result;
+
+    result = super.getPopupMenu();
+
+    result.addSeparator();
+
+    m_History.customizePopupMenu(
+      result,
+      getCurrent(),
+      (HistorySelectionEvent e) -> {
+	setCurrent((File) e.getHistoryItem());
+	notifyChangeListeners(new ChangeEvent(m_Self));
+      });
+
+    return result;
   }
 }
