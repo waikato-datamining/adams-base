@@ -15,7 +15,7 @@
 
 /**
  * RandomSplitGenerator.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  */
 package weka.classifiers;
 
@@ -49,11 +49,14 @@ public class RandomSplitGenerator
    * 
    * @param data	the dataset to split
    * @param seed	the seed value to use for randomization
-   * @param percentage	the percentage of the training set
+   * @param percentage	the percentage of the training set (0-1)
    */
   public RandomSplitGenerator(Instances data, long seed, double percentage) {
     super(data, seed);
-    
+
+    if ((percentage <= 0) || (percentage >= 1))
+      throw new IllegalArgumentException("Percentage must satisfy 0 < x < 1, provided: " + percentage);
+
     m_Percentage    = percentage;
     m_PreserveOrder = false;
   }
@@ -62,11 +65,14 @@ public class RandomSplitGenerator
    * Initializes the generator. Preserves the order.
    * 
    * @param data	the dataset to split
-   * @param percentage	the percentage of the training set
+   * @param percentage	the percentage of the training set (0-1)
    */
   public RandomSplitGenerator(Instances data, double percentage) {
     super(data, -1L);
     
+    if ((percentage <= 0) || (percentage >= 1))
+      throw new IllegalArgumentException("Percentage must satisfy 0 < x < 1, provided: " + percentage);
+
     m_Percentage    = percentage;
     m_PreserveOrder = true;
   }
