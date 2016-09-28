@@ -27,6 +27,7 @@ import adams.core.ThreadLimiter;
 import adams.core.Utils;
 import adams.core.logging.CustomLoggingLevelObject;
 import adams.core.option.OptionUtils;
+import adams.data.weka.InstancesViewSupporter;
 import adams.flow.container.WekaTrainTestSetContainer;
 import adams.flow.standalone.JobRunnerSetup;
 import weka.classifiers.AggregateableEvaluation;
@@ -47,7 +48,7 @@ import java.util.Random;
  */
 public class WekaCrossValidationExecution
   extends CustomLoggingLevelObject
-  implements Stoppable {
+  implements Stoppable, InstancesViewSupporter {
 
   private static final long serialVersionUID = 2021758441076652982L;
 

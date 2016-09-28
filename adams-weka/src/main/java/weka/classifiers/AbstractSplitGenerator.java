@@ -15,9 +15,10 @@
 
 /**
  * AbstractSplitGenerator.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  */
 package weka.classifiers;
+import adams.data.weka.InstancesViewSupporter;
 import adams.flow.container.WekaTrainTestSetContainer;
 import gnu.trove.list.TIntList;
 import gnu.trove.list.array.TIntArrayList;
@@ -35,7 +36,7 @@ import java.util.Random;
  * @version $Revision$
  */
 public abstract class AbstractSplitGenerator
-  implements Serializable, Iterator<WekaTrainTestSetContainer> {
+  implements Serializable, Iterator<WekaTrainTestSetContainer>, InstancesViewSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = -8387205583429213079L;

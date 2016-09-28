@@ -25,6 +25,7 @@ import adams.core.QuickInfoHelper;
 import adams.core.Randomizable;
 import adams.core.ThreadLimiter;
 import adams.core.option.OptionUtils;
+import adams.data.weka.InstancesViewSupporter;
 import adams.flow.container.WekaEvaluationContainer;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.Token;
@@ -52,7 +53,7 @@ import weka.core.Instances;
  * &nbsp;&nbsp;&nbsp;adams.flow.container.WekaEvaluationContainer<br>
  * <br><br>
  * Container information:<br>
- * - adams.flow.container.WekaEvaluationContainer: Evaluation, Model, Prediction output
+ * - adams.flow.container.WekaEvaluationContainer: Evaluation, Model, Prediction output, Original indices
  * <br><br>
  <!-- flow-summary-end -->
  *
@@ -79,13 +80,15 @@ import weka.core.Instances;
  * </pre>
  * 
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this 
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical 
+ * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
  * <pre>-silent &lt;boolean&gt; (property: silent)
- * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console.
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
@@ -124,10 +127,17 @@ import weka.core.Instances;
  * </pre>
  * 
  * <pre>-num-threads &lt;int&gt; (property: numThreads)
- * &nbsp;&nbsp;&nbsp;The number of threads to use for cross-validation; -1 = number of
- * &nbsp;&nbsp;&nbsp;CPUs&#47;cores; 0 or 1 = sequential execution.
+ * &nbsp;&nbsp;&nbsp;The number of threads to use for parallel execution; &gt; 0: specific number 
+ * &nbsp;&nbsp;&nbsp;of cores to use (capped by actual number of cores available, 1 = sequential 
+ * &nbsp;&nbsp;&nbsp;execution); = 0: number of cores; &lt; 0: number of free cores (eg -2 means 
+ * &nbsp;&nbsp;&nbsp;2 free cores; minimum of one core is used)
  * &nbsp;&nbsp;&nbsp;default: 1
- * &nbsp;&nbsp;&nbsp;minimum: -1
+ * </pre>
+ * 
+ * <pre>-use-views &lt;boolean&gt; (property: useViews)
+ * &nbsp;&nbsp;&nbsp;If enabled, views of the dataset are being used instead of actual copies,
+ * &nbsp;&nbsp;&nbsp; to conserve memory.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
  <!-- options-end -->
@@ -137,7 +147,7 @@ import weka.core.Instances;
  */
 public class WekaCrossValidationEvaluator
   extends AbstractCallableWekaClassifierEvaluator
-  implements Randomizable, ProvenanceSupporter, ThreadLimiter {
+  implements Randomizable, ProvenanceSupporter, ThreadLimiter, InstancesViewSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = -3019442578354930841L;
@@ -150,6 +160,9 @@ public class WekaCrossValidationEvaluator
 
   /** the number of threads to use for parallel execution. */
   protected int m_NumThreads;
+
+  /** whether to use views. */
+  protected boolean m_UseViews;
 
   /** for performing cross-validation. */
   protected WekaCrossValidationExecution m_CrossValidation;
@@ -177,16 +190,20 @@ public class WekaCrossValidationEvaluator
     super.defineOptions();
 
     m_OptionManager.add(
-	    "seed", "seed",
-	    1L);
+      "seed", "seed",
+      1L);
 
     m_OptionManager.add(
-	    "folds", "folds",
-	    10, -1, null);
+      "folds", "folds",
+      10, -1, null);
 
     m_OptionManager.add(
-	    "num-threads", "numThreads",
-	    1);
+      "num-threads", "numThreads",
+      1);
+
+    m_OptionManager.add(
+      "use-views", "useViews",
+      false);
   }
 
   /**
@@ -197,12 +214,16 @@ public class WekaCrossValidationEvaluator
   @Override
   public String getQuickInfo() {
     String	result;
+    String	value;
 
     result = super.getQuickInfo();
 
     result += QuickInfoHelper.toString(this, "folds", m_Folds, ", folds: ");
     result += QuickInfoHelper.toString(this, "seed", m_Seed, ", seed: ");
     result += QuickInfoHelper.toString(this, "numThreads", Performance.getNumThreadsQuickInfo(m_NumThreads), ", ");
+    value  = QuickInfoHelper.toString(this, "useViews", m_UseViews, ", using views");
+    if (value != null)
+      result += value;
 
     return result;
   }
@@ -326,6 +347,37 @@ public class WekaCrossValidationEvaluator
   }
 
   /**
+   * Sets whether to use views instead of dataset copies, in order to
+   * conserve memory.
+   *
+   * @param value	true if to use views
+   */
+  public void setUseViews(boolean value) {
+    m_UseViews = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to use views instead of dataset copies, in order to
+   * conserve memory.
+   *
+   * @return		true if using views
+   */
+  public boolean getUseViews() {
+    return m_UseViews;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String useViewsTipText() {
+    return "If enabled, views of the dataset are being used instead of actual copies, to conserve memory.";
+  }
+
+  /**
    * Returns the class that the consumer accepts.
    *
    * @return		<!-- flow-accepts-start -->weka.core.Instances.class<!-- flow-accepts-end -->
@@ -376,6 +428,7 @@ public class WekaCrossValidationEvaluator
       m_CrossValidation.setData(data);
       m_CrossValidation.setFolds(m_Folds);
       m_CrossValidation.setSeed(m_Seed);
+      m_CrossValidation.setUseViews(m_UseViews);
       m_CrossValidation.setDiscardPredictions(m_DiscardPredictions);
       m_CrossValidation.setNumThreads(m_NumThreads);
       m_CrossValidation.setOutput(m_Output);
