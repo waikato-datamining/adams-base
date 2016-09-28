@@ -57,6 +57,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
 import javax.swing.event.ChangeEvent;
 import java.awt.BorderLayout;
 import java.awt.Dialog.ModalityType;
@@ -513,8 +514,8 @@ public class InvestigatorPanel
    * Lets user select a dataset.
    */
   public void openFile(File file) {
-    final FileContainer	cont;
     AbstractFileLoader  loader;
+    SwingWorker 	worker;
 
     logMessage("Loading: " + file);
     loader = m_FileChooser.getReaderForFile(file);
@@ -523,15 +524,23 @@ public class InvestigatorPanel
       return;
     }
 
-    cont = new FileContainer(loader, file);
-    updateClassAttribute(cont.getData());
-    SwingUtilities.invokeLater(() -> {
-      m_Data.add(cont);
-      if (m_RecentFilesHandler != null)
-	m_RecentFilesHandler.addRecentItem(new Setup(file, loader));
-      logMessage("Loaded: " + file);
-      fireDataChange(new WekaInvestigatorDataEvent(this, WekaInvestigatorDataEvent.ROWS_ADDED, m_Data.size() - 1));
-    });
+    worker = new SwingWorker() {
+      @Override
+      protected Object doInBackground() throws Exception {
+	final FileContainer cont = new FileContainer(loader, file);
+	updateClassAttribute(cont.getData());
+	SwingUtilities.invokeLater(() -> {
+	  m_Data.add(cont);
+	  if (m_RecentFilesHandler != null)
+	    m_RecentFilesHandler.addRecentItem(new Setup(file, loader));
+	  logMessage("Loaded: " + file);
+	  fireDataChange(new WekaInvestigatorDataEvent(
+	    InvestigatorPanel.this, WekaInvestigatorDataEvent.ROWS_ADDED, m_Data.size() - 1));
+	});
+	return null;
+      }
+    };
+    worker.execute();
   }
 
   /**
@@ -541,7 +550,7 @@ public class InvestigatorPanel
    */
   public void openRecent(RecentItemEvent<JMenu,Setup> e) {
     AbstractFileLoader 	loader;
-    final FileContainer	cont;
+    SwingWorker 	worker;
 
     loader = (AbstractFileLoader) e.getItem().getHandler();
     if (loader == null) {
@@ -549,21 +558,29 @@ public class InvestigatorPanel
       return;
     }
 
-    try {
-      logMessage("Loading: " + e.getItem());
-      loader.setFile(e.getItem().getFile());
-      cont = new FileContainer(loader, e.getItem().getFile());
-      updateClassAttribute(cont.getData());
-      SwingUtilities.invokeLater(() -> {
-	m_Data.add(cont);
-	m_FileChooser.setCurrentDirectory(e.getItem().getFile().getParentFile());
-	logMessage("Loaded: " + e.getItem());
-	fireDataChange(new WekaInvestigatorDataEvent(this, WekaInvestigatorDataEvent.ROWS_ADDED, m_Data.size() - 1));
-      });
-    }
-    catch (Exception ex) {
-      logError("Failed to load file:\n" + e.getItem() + "\n" + Utils.throwableToString(ex), "Error reloading data");
-    }
+    worker = new SwingWorker() {
+      @Override
+      protected Object doInBackground() throws Exception {
+	try {
+	  logMessage("Loading: " + e.getItem());
+	  loader.setFile(e.getItem().getFile());
+	  final FileContainer cont = new FileContainer(loader, e.getItem().getFile());
+	  updateClassAttribute(cont.getData());
+	  SwingUtilities.invokeLater(() -> {
+	    m_Data.add(cont);
+	    m_FileChooser.setCurrentDirectory(e.getItem().getFile().getParentFile());
+	    logMessage("Loaded: " + e.getItem());
+	    fireDataChange(new WekaInvestigatorDataEvent(
+	      InvestigatorPanel.this, WekaInvestigatorDataEvent.ROWS_ADDED, m_Data.size() - 1));
+	  });
+	}
+	catch (Exception ex) {
+	  logError("Failed to load file:\n" + e.getItem() + "\n" + Utils.throwableToString(ex), "Error reloading data");
+	}
+	return null;
+      }
+    };
+    worker.execute();
   }
 
   /**
