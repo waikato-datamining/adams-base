@@ -290,17 +290,29 @@ public class InstanceTab
    * @return			true if changed
    */
   protected boolean hasDataChanged(List<String> newDatasets, ComboBoxModel<String> currentModel) {
+    boolean	result;
     int		i;
     Set<String> setDatasets;
     Set<String>	setModel;
+    int		index;
 
     setDatasets = new HashSet<>(newDatasets);
     setModel    = new HashSet<>();
     for (i = 0; i < currentModel.getSize(); i++)
       setModel.add(currentModel.getElementAt(i));
 
-    return (setDatasets.size() != setModel.size())
+    result = (setDatasets.size() != setModel.size())
       || !(setDatasets.containsAll(setModel) && setModel.containsAll(setDatasets));
+
+    if (!result) {
+      index = indexOfDataset((String) m_ComboBoxDatasets.getSelectedItem());
+      if (index > -1) {
+	if (getData().get(index).getData().numAttributes() != m_ComboBoxID.getModel().getSize() - 1)
+	  result = true;
+      }
+    }
+
+    return result;
   }
 
   /**
