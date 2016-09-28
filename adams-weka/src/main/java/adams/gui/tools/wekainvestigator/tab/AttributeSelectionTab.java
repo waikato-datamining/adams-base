@@ -742,6 +742,15 @@ public class AttributeSelectionTab
   }
 
   /**
+   * Returns whether the tab is busy.
+   *
+   * @return		true if busy
+   */
+  public boolean isBusy() {
+    return (m_Worker != null);
+  }
+
+  /**
    * Updates the buttons.
    */
   public void updateButtons() {
@@ -750,8 +759,8 @@ public class AttributeSelectionTab
 
     eval   = (ASEvaluation) m_PanelEvaluator.getCurrent();
     search = (ASSearch) m_PanelSearch.getCurrent();
-    m_ButtonStart.setEnabled((m_Worker == null) && (m_CurrentEvaluation != null) && (m_CurrentEvaluation.canEvaluate(eval, search) == null));
-    m_ButtonStop.setEnabled(m_Worker != null);
+    m_ButtonStart.setEnabled(!isBusy() && (m_CurrentEvaluation != null) && (m_CurrentEvaluation.canEvaluate(eval, search) == null));
+    m_ButtonStop.setEnabled(isBusy());
   }
 
   /**

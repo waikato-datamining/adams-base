@@ -113,6 +113,6 @@ public class Export
    */
   @Override
   public void update() {
-    setEnabled(getTable().getSelectedRowCount() > 0);
+    setEnabled(!isBusy() && getTable().getSelectedRowCount() > 0);
   }
 }

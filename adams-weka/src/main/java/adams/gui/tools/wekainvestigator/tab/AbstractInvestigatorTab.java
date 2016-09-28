@@ -92,6 +92,17 @@ public abstract class AbstractInvestigatorTab
   }
 
   /**
+   * Returns whether the tab is busy.
+   * <br>
+   * Default implementation returns false.
+   *
+   * @return		true if busy
+   */
+  public boolean isBusy() {
+    return false;
+  }
+
+  /**
    * Notifies the tab that the data changed.
    *
    * @param e		the event

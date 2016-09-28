@@ -165,6 +165,15 @@ public abstract class AbstractEditableDataTableAction
   }
 
   /**
+   * Returns whether the tab is busy.
+   *
+   * @return		true if busy
+   */
+  public boolean isBusy() {
+    return m_Owner.isBusy();
+  }
+
+  /**
    * Returns the available actions.
    *
    * @return		the action classnames

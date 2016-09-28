@@ -43,6 +43,7 @@ public class Revert
     super();
     setName("Revert");
     setIcon("revert.png");
+    setAsynchronous(true);
   }
 
   /**
@@ -72,6 +73,6 @@ public class Revert
    */
   @Override
   public void update() {
-    setEnabled(getTable().getSelectedRowCount() > 0);
+    setEnabled(!isBusy() && getTable().getSelectedRowCount() > 0);
   }
 }

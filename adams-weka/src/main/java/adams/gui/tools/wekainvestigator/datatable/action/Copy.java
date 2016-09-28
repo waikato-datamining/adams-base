@@ -46,6 +46,7 @@ public class Copy
     super();
     setName("Copy");
     setIcon("copy.gif");
+    setAsynchronous(true);
   }
 
   /**
@@ -77,6 +78,6 @@ public class Copy
    */
   @Override
   public void update() {
-    setEnabled(getTable().getSelectedRowCount() == 1);
+    setEnabled(!isBusy() && getTable().getSelectedRowCount() == 1);
   }
 }

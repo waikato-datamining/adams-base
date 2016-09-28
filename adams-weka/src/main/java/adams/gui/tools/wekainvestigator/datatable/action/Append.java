@@ -48,6 +48,7 @@ public class Append
     super();
     setName("Append");
     setIcon("append.png");
+    setAsynchronous(true);
   }
 
   /**
@@ -104,6 +105,6 @@ public class Append
    */
   @Override
   public void update() {
-    setEnabled(getTable().getSelectedRowCount() > 1);
+    setEnabled(!isBusy() && getTable().getSelectedRowCount() > 1);
   }
 }

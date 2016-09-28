@@ -187,11 +187,11 @@ public abstract class AbstractInvestigatorTabWithEditableDataTable
     int[] 	rows;
     boolean 	enabled;
 
-    m_ButtonRemove.setEnabled(m_Table.getSelectedRowCount() > 0);
+    m_ButtonRemove.setEnabled(!isBusy() && m_Table.getSelectedRowCount() > 0);
     for (AbstractEditableDataTableAction action: m_Actions)
       action.update();
-    m_ButtonUp.setEnabled(m_Model.canMoveUp(getSelectedRows()));
-    m_ButtonDown.setEnabled(m_Model.canMoveDown(getSelectedRows()));
+    m_ButtonUp.setEnabled(!isBusy() && m_Model.canMoveUp(getSelectedRows()));
+    m_ButtonDown.setEnabled(!isBusy() && m_Model.canMoveDown(getSelectedRows()));
 
     rows = m_Table.getSelectedRows();
     enabled = false;
@@ -204,7 +204,7 @@ public abstract class AbstractInvestigatorTabWithEditableDataTable
         }
       }
     }
-    m_ButtonUndo.setEnabled(enabled);
+    m_ButtonUndo.setEnabled(!isBusy() && enabled);
   }
 
   /**

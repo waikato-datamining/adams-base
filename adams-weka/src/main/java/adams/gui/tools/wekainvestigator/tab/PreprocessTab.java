@@ -291,13 +291,22 @@ public class PreprocessTab
   }
 
   /**
+   * Returns whether the tab is busy.
+   *
+   * @return		true if busy
+   */
+  public boolean isBusy() {
+    return (m_Worker != null);
+  }
+
+  /**
    * Updates the buttons.
    */
   public void updateButtons() {
     super.updateButtons();
-    m_ButtonStart.setEnabled((m_Worker == null) && (getSelectedRows().length > 0));
-    m_ButtonStop.setEnabled(m_Worker != null);
-    m_ButtonRemoveChecked.setEnabled((m_Worker == null));
+    m_ButtonStart.setEnabled(!isBusy() && (getSelectedRows().length > 0));
+    m_ButtonStop.setEnabled(isBusy());
+    m_ButtonRemoveChecked.setEnabled(!isBusy() && (getSelectedRows().length == 1));
   }
 
   /**

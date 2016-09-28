@@ -659,14 +659,23 @@ public class ClassifyTab
   }
 
   /**
+   * Returns whether the tab is busy.
+   *
+   * @return		true if busy
+   */
+  public boolean isBusy() {
+    return (m_Worker != null);
+  }
+
+  /**
    * Updates the buttons.
    */
   public void updateButtons() {
     Classifier cls;
 
     cls = (Classifier) m_PanelGOE.getCurrent();
-    m_ButtonStart.setEnabled((m_Worker == null) && (m_CurrentEvaluation != null) && (m_CurrentEvaluation.canEvaluate(cls) == null));
-    m_ButtonStop.setEnabled(m_Worker != null);
+    m_ButtonStart.setEnabled(!isBusy() && (m_CurrentEvaluation != null) && (m_CurrentEvaluation.canEvaluate(cls) == null));
+    m_ButtonStop.setEnabled(isBusy());
   }
 
   /**

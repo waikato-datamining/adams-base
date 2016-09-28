@@ -51,6 +51,7 @@ public class Merge
     super();
     setName("Merge");
     setIcon("merge.png");
+    setAsynchronous(true);
   }
 
   /**
@@ -127,6 +128,6 @@ public class Merge
    */
   @Override
   public void update() {
-    setEnabled(getTable().getSelectedRowCount() > 1);
+    setEnabled(!isBusy() && getTable().getSelectedRowCount() > 1);
   }
 }
