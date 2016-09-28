@@ -173,8 +173,6 @@ public class DataTableModel
   public boolean isCellEditable(int rowIndex, int columnIndex) {
     if (m_ReadOnly)
       return false;
-    if (columnIndex == 1)
-      return true;
     if (columnIndex == 3)
       return true;
     return false;
@@ -201,11 +199,6 @@ public class DataTableModel
     cont = m_Data.get(rowIndex);
 
     switch (columnIndex) {
-      case 1: // modified
-        cont.addUndoPoint("setting modified flag");
-	cont.setModified((Boolean) aValue);
-	fireTableRowsUpdated(rowIndex, rowIndex);
-	break;
       case 3:  // class
 	name = "" + aValue;
 	if (name.isEmpty()) {
