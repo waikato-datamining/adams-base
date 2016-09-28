@@ -23,6 +23,7 @@ import adams.flow.container.WekaTrainTestSetContainer;
 import gnu.trove.list.TIntList;
 import gnu.trove.list.array.TIntArrayList;
 import weka.core.Instances;
+import weka.core.InstancesView;
 
 import java.util.NoSuchElementException;
 import java.util.Random;
@@ -241,8 +242,10 @@ public class CrossValidationFoldGenerator
     if (m_Random == null)
       m_Random = new Random(m_Seed);
 
-    if (m_Stratify && m_Data.classAttribute().isNominal() && (m_NumFolds < m_Data.numInstances()))
-      m_Data.stratify(m_NumFolds);
+    if (!m_CreateView) {
+      if (m_Stratify && m_Data.classAttribute().isNominal() && (m_NumFolds < m_Data.numInstances()))
+	m_Data.stratify(m_NumFolds);
+    }
   }
 
   /**
@@ -341,22 +344,31 @@ public class CrossValidationFoldGenerator
     WekaTrainTestSetContainer	result;
     Instances 			train;
     Instances 			test;
+    int[]			trainRows;
+    int[]			testRows;
 
     if (m_CurrentFold > m_NumFolds)
       throw new NoSuchElementException("No more folds available!");
-    
+
+    trainRows = trainCV(m_NumFolds, m_CurrentFold - 1, m_RandomIndices).toArray();
+    testRows  = testCV(m_NumFolds, m_CurrentFold - 1).toArray();
+
     // generate fold pair
-    train = m_Data.trainCV(m_NumFolds, m_CurrentFold - 1, m_Random);
-    test  = m_Data.testCV(m_NumFolds, m_CurrentFold - 1);
+    if (m_CreateView) {
+      train = new InstancesView(m_Data, trainRows);
+      test = new InstancesView(m_Data, testRows);
+    }
+    else {
+      train = m_Data.trainCV(m_NumFolds, m_CurrentFold - 1, m_Random);
+      test  = m_Data.testCV(m_NumFolds, m_CurrentFold - 1);
+    }
 
     // rename datasets
     train.setRelationName(createRelationName(true));
     test.setRelationName(createRelationName(false));
 
     result = new WekaTrainTestSetContainer(
-      train, test, m_Seed, m_CurrentFold, m_NumFolds,
-      trainCV(m_NumFolds, m_CurrentFold - 1, m_RandomIndices).toArray(),
-      testCV(m_NumFolds, m_CurrentFold - 1).toArray());
+      train, test, m_Seed, m_CurrentFold, m_NumFolds, trainRows, testRows);
     m_CurrentFold++;
 
     return result;

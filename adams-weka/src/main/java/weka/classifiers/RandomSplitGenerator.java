@@ -21,6 +21,7 @@ package weka.classifiers;
 
 import weka.core.Instances;
 import adams.flow.container.WekaTrainTestSetContainer;
+import weka.core.InstancesView;
 
 /**
  * Generates random splits of datasets.
@@ -114,19 +115,26 @@ public class RandomSplitGenerator
     Instances			testSet;
     int 			trainSize;
     int 			testSize;
+    int[]			trainRows;
+    int[]			testRows;
     
     m_Generated = true;
 
     trainSize = (int) Math.round((double) m_Data.numInstances() * m_Percentage);
     testSize  = m_Data.numInstances() - trainSize;
-    trainSet  = new Instances(m_Data, 0, trainSize);
-    testSet   = new Instances(m_Data, trainSize, testSize);
+    trainRows = m_OriginalIndices.subList(0, trainSize).toArray();
+    testRows  = m_OriginalIndices.subList(trainSize, m_OriginalIndices.size()).toArray();
+    if (m_CreateView) {
+      trainSet = new InstancesView(m_Data, trainRows);
+      testSet  = new InstancesView(m_Data, testRows);
+    }
+    else {
+      trainSet = new Instances(m_Data, 0, trainSize);
+      testSet  = new Instances(m_Data, trainSize, testSize);
+    }
 
     result = new WekaTrainTestSetContainer(
-      trainSet, testSet, m_Seed,
-      null, null,
-      m_OriginalIndices.subList(0, trainSize).toArray(),
-      m_OriginalIndices.subList(trainSize, m_OriginalIndices.size()).toArray());
+      trainSet, testSet, m_Seed, null, null, trainRows, testRows);
     
     return result;
   }
