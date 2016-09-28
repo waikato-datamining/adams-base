@@ -388,6 +388,7 @@ public class InstancesView
    * are sorted based on the attribute label ordering specified in the header.
    *
    * @param attIndex the attribute's index (index starts with 0)
+   * @throws NotImplementedException
    */
   protected void sortBasedOnNominalAttribute(int attIndex) {
     throw new NotImplementedException();
@@ -401,6 +402,7 @@ public class InstancesView
    * the dataset.
    *
    * @param attIndex the attribute's index (index starts with 0)
+   * @throws NotImplementedException
    */
   public void sort(int attIndex) {
     throw new NotImplementedException();
@@ -414,6 +416,7 @@ public class InstancesView
    * the dataset.
    *
    * @param attIndex the attribute's index (index starts with 0)
+   * @throws NotImplementedException
    */
   public void stableSort(int attIndex) {
     throw new NotImplementedException();
@@ -466,6 +469,7 @@ public class InstancesView
    * Help function needed for stratification of set.
    *
    * @param numFolds the number of folds for the stratification
+   * @throws NotImplementedException
    */
   protected void stratStep(int numFolds) {
     throw new NotImplementedException();
