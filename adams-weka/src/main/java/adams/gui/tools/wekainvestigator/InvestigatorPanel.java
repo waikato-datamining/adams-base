@@ -185,6 +185,7 @@ public class InvestigatorPanel
     }
 
     m_StatusBar = new BaseStatusBar();
+    m_StatusBar.setMouseListenerActive(true);
     add(m_StatusBar, BorderLayout.SOUTH);
 
     initActions();
