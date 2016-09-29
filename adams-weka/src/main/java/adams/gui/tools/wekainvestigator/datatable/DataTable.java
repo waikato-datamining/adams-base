@@ -35,7 +35,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -48,9 +47,6 @@ public class DataTable
   extends BaseTable {
 
   private static final long serialVersionUID = -2329794525513037246L;
-
-  /** the cell editors for the class attribute. */
-  protected HashMap<Integer,TableCellEditor> m_ClassAttributeEditors;
 
   /**
    * Constructs a <code>DataTable</code> that is initialized with
@@ -70,7 +66,6 @@ public class DataTable
   protected void initGUI() {
     super.initGUI();
 
-    m_ClassAttributeEditors = new HashMap<>();
     addHeaderPopupMenuListener((MouseEvent e) -> {
       JPopupMenu menu = new JPopupMenu();
       JMenuItem menuitem = new JMenuItem("Optimal width");
@@ -99,25 +94,19 @@ public class DataTable
 
     result = null;
     if (column == 3) {
-      if (!m_ClassAttributeEditors.containsKey(row)) {
-	model = getModel();
-	if (model instanceof SortableAndSearchableWrapperTableModel)
-	  dmodel = (DataTableModel) ((SortableAndSearchableWrapperTableModel) model).getUnsortedModel();
-	else
-	  dmodel = (DataTableModel) model;
-	cont = dmodel.getData().get(row);
-	atts = new ArrayList<>();
-	atts.add("");  // no class
-	for (i = 0; i < cont.getData().numAttributes(); i++)
-	  atts.add(cont.getData().attribute(i).name());
-	Collections.sort(atts, new StringCompare());
-	combobox = new JComboBox<>(atts.toArray(new String[atts.size()]));
-	result   = new DefaultCellEditor(combobox);
-	m_ClassAttributeEditors.put(row, result);
-      }
-      else {
-	result = m_ClassAttributeEditors.get(row);
-      }
+      model = getModel();
+      if (model instanceof SortableAndSearchableWrapperTableModel)
+        dmodel = (DataTableModel) ((SortableAndSearchableWrapperTableModel) model).getUnsortedModel();
+      else
+        dmodel = (DataTableModel) model;
+      cont = dmodel.getData().get(row);
+      atts = new ArrayList<>();
+      atts.add("");  // no class
+      for (i = 0; i < cont.getData().numAttributes(); i++)
+        atts.add(cont.getData().attribute(i).name());
+      Collections.sort(atts, new StringCompare());
+      combobox = new JComboBox<>(atts.toArray(new String[atts.size()]));
+      result   = new DefaultCellEditor(combobox);
     }
 
     // get default
