@@ -81,6 +81,7 @@ public class Export
     int			retVal;
     PlaceholderFile 	suggested;
     AbstractFileSaver 	saver;
+    File		file;
 
     conts = getSelectedData();
     rows  = getSelectedRows();
@@ -97,11 +98,16 @@ public class Export
       if (retVal != WekaFileChooser.APPROVE_OPTION)
 	break;
       try {
-	logMessage("Exporting: " + data.getSource());
+	file = m_FileChooser.getSelectedFile();
+	logMessage("Exporting " + data.getSource() + " to " + file);
+	if (file.exists()) {
+	  if (!file.delete())
+	    logMessage("Failed to delete existing file: " + file);
+	}
 	saver = m_FileChooser.getWriter();
-	saver.setFile(m_FileChooser.getSelectedFile());
+	saver.setFile(file);
 	DataSink.write(saver, data.getData());
-	logMessage("Exported: " + m_FileChooser.getSelectedFile());
+	logMessage("Exported " + data.getSource() + " to " + file);
 	cont = new FileContainer(m_FileChooser.getReaderForFile(m_FileChooser.getSelectedFile()), m_FileChooser.getSelectedFile());
 	cont.getData().setClassIndex(data.getData().classIndex());
 	getData().set(rows[i], cont);
