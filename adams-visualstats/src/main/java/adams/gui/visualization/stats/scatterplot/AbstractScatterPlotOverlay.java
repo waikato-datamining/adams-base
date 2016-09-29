@@ -75,7 +75,7 @@ public abstract class AbstractScatterPlotOverlay
    * @return		the default
    */
   protected float getDefaultThickness() {
-    return 5.0f;
+    return 2.0f;
   }
 
   /**
