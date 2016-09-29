@@ -35,7 +35,6 @@ import adams.gui.visualization.stats.paintlet.ScatterPaintletCircle;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
-import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -179,20 +178,18 @@ public class ScatterPlot
     super.initGUI();
     setLayout(new BorderLayout());
 
-    //plot panel for displaying data
-    m_Plot = new ScatterPlotPanel();
-    m_Plot.addPaintListener(this);
-
-    ParameterPanel optionPanel = new ParameterPanel();
     BaseSplitPane splitPane;
     splitPane = new BaseSplitPane(BaseSplitPane.VERTICAL_SPLIT);
-    splitPane.setBottomComponent(m_Plot);
-    JPanel hold = new JPanel(new BorderLayout());
-    hold.add(optionPanel, BorderLayout.NORTH);
-    splitPane.setTopComponent(hold);
     splitPane.setResizeWeight(1.0);
     splitPane.setOneTouchExpandable(true);
     add(splitPane, BorderLayout.CENTER);
+
+    ParameterPanel optionPanel = new ParameterPanel();
+    splitPane.setTopComponent(optionPanel);
+
+    m_Plot = new ScatterPlotPanel();
+    m_Plot.addPaintListener(this);
+    splitPane.setBottomComponent(m_Plot);
 
     m_ModelX = new DefaultComboBoxModel<>();
     m_ModelY = new DefaultComboBoxModel<>();
