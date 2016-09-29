@@ -270,8 +270,8 @@ public class PrincipalComponentsTab
     for (i = 0; i < getOwner().getData().size(); i++) {
       data = getOwner().getData().get(i);
       if ((oldDataset != null) && data.getData().relationName().equals(oldDataset)) {
-        result = i;
-        break;
+	result = i;
+	break;
       }
     }
 
@@ -381,7 +381,8 @@ public class PrincipalComponentsTab
       data = null;
 
     m_ButtonStart.setEnabled(
-      (data != null)
+      !isBusy()
+	&& (data != null)
 	&& !rangeStr.isEmpty()
 	&& Range.isValid(rangeStr, data.numAttributes()));
     m_ButtonStop.setEnabled(isBusy());
@@ -396,7 +397,8 @@ public class PrincipalComponentsTab
     run = () -> {
       try {
 	DataContainer cont = getData().get(m_ComboBoxDatasets.getSelectedIndex());
-	Instances data = cont.getData();
+	Instances data = new Instances(cont.getData());
+	data.setClassIndex(-1);
 	Range range = new Range(m_TextAttributeRange.getText());
 	if (!range.isAllRange()) {
 	  logMessage("Filtering attribute range: " + m_TextAttributeRange.getText());
@@ -434,6 +436,7 @@ public class PrincipalComponentsTab
 
     m_Worker = new Thread(run);
     m_Worker.start();
+    updateButtons();
   }
 
   /**
