@@ -22,20 +22,28 @@ package adams.flow.transformer;
 
 import adams.core.License;
 import adams.core.QuickInfoHelper;
+import adams.core.Range;
 import adams.core.annotation.MixedCopyright;
 import adams.data.conversion.WekaInstancesToSpreadSheet;
 import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.core.Token;
+import gnu.trove.list.TIntList;
+import gnu.trove.list.array.TIntArrayList;
+import weka.core.Capabilities;
 import weka.core.Instances;
+import weka.filters.AllFilter;
+import weka.filters.Filter;
+import weka.filters.unsupervised.attribute.PartitionedMultiFilter;
 import weka.filters.unsupervised.attribute.PublicPrincipalComponents;
 
 import java.util.ArrayList;
 
 /**
  <!-- globalinfo-start -->
- * Performs principal components analysis on the incoming data and outputs the loadings and the transformed data as spreadsheet array.
+ * Performs principal components analysis on the incoming data and outputs the loadings and the transformed data as spreadsheet array.<br>
+ * Automatically filters out attributes that cannot be handled by PCA.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -128,6 +136,12 @@ public class WekaPrincipalComponents
   /** the maximum number of attribute names to use. */
   protected int m_MaxAttributeNames;
 
+  /** the supported attributes. */
+  protected TIntList m_Supported;
+
+  /** the unsupported attributes. */
+  protected TIntList m_Unsupported;
+
   /** the indices of the kept attributes. */
   protected ArrayList<Integer> m_Kept;
 
@@ -143,7 +157,8 @@ public class WekaPrincipalComponents
   public String globalInfo() {
     return
       "Performs principal components analysis on the incoming data and outputs "
-	+ "the loadings and the transformed data as spreadsheet array.";
+	+ "the loadings and the transformed data as spreadsheet array.\n"
+	+ "Automatically filters out attributes that cannot be handled by PCA.";
   }
 
   /**
@@ -345,27 +360,40 @@ public class WekaPrincipalComponents
     String 				result;
     Instances 				input;
     int					i;
+    Capabilities 			caps;
     PublicPrincipalComponents 		pca;
+    PartitionedMultiFilter		part;
+    Range 				rangeUnsupported;
+    Range 				rangeSupported;
     ArrayList<ArrayList<Double>> 	coeff;
     SpreadSheet 			loadings;
     Instances				filtered;
     SpreadSheet				transformed;
     WekaInstancesToSpreadSheet		conv;
+    String				colName;
 
     result = null;
-    input = (Instances)m_InputToken.getPayload();
-    m_NumAttributes = input.numAttributes();
-    if (input.classIndex() > -1)
-      m_NumAttributes--;
+    input = (Instances) m_InputToken.getPayload();
+
+    // check for unsupported attributes
+    caps        = new PublicPrincipalComponents().getCapabilities();
+    m_Supported = new TIntArrayList();
+    m_Unsupported = new TIntArrayList();
+    for (i = 0; i < input.numAttributes(); i++) {
+      if (caps.test(input.attribute(i)))
+	m_Supported.add(i);
+      else
+	m_Unsupported.add(i);
+    }
+
+    m_NumAttributes = m_Supported.size();
 
     // the principal components will delete the attributes without any distinct values.
     // this checks which instances will be kept.
     m_Kept = new ArrayList<>();
-    for (i = 0; i < input.numAttributes(); i++) {
-      if (input.classIndex() == i)
-	continue;
-      if (input.numDistinctValues(i) > 1)
-	m_Kept.add(i);
+    for (i = 0; i < m_Supported.size(); i++) {
+      if (input.numDistinctValues(m_Supported.get(i)) > 1)
+	m_Kept.add(m_Supported.get(i));
     }
 
     // build a model using the PublicPrincipalComponents
@@ -373,8 +401,29 @@ public class WekaPrincipalComponents
     pca.setMaximumAttributes(m_MaxAttributes);
     pca.setVarianceCovered(m_CoverVariance);
     pca.setMaximumAttributeNames(m_MaxAttributeNames);
+    part = null;
+    if (m_Unsupported.size() > 0) {
+      rangeUnsupported = new Range();
+      rangeUnsupported.setMax(input.numAttributes());
+      rangeUnsupported.setIndices(m_Unsupported.toArray());
+      rangeSupported = new Range();
+      rangeSupported.setMax(input.numAttributes());
+      rangeSupported.setIndices(m_Supported.toArray());
+      part = new PartitionedMultiFilter();
+      part.setFilters(new Filter[]{
+	new AllFilter(),
+	pca
+      });
+      part.setRanges(new weka.core.Range[]{
+	new weka.core.Range(rangeUnsupported.getRange()),
+	new weka.core.Range(rangeSupported.getRange()),
+      });
+    }
     try {
-      pca.setInputFormat(input);
+      if (part != null)
+	part.setInputFormat(input);
+      else
+	pca.setInputFormat(input);
     }
     catch(Exception e) {
       result = handleException("Failed to set input format", e);
@@ -383,7 +432,10 @@ public class WekaPrincipalComponents
     transformed = null;
     if (result == null) {
       try {
-	filtered = weka.filters.Filter.useFilter(input, pca);
+	if (part != null)
+	  filtered = weka.filters.Filter.useFilter(input, part);
+	else
+	  filtered = weka.filters.Filter.useFilter(input, pca);
       }
       catch (Exception e) {
 	result   = handleException("Failed to apply filter", e);
@@ -393,8 +445,17 @@ public class WekaPrincipalComponents
 	conv = new WekaInstancesToSpreadSheet();
 	conv.setInput(filtered);
 	result = conv.convert();
-	if (result == null)
+	if (result == null) {
 	  transformed = (SpreadSheet) conv.getOutput();
+	  // shorten column names again
+	  if (part != null) {
+	    for (i = 0; i < transformed.getColumnCount(); i++) {
+	      colName = transformed.getColumnName(i);
+	      colName = colName.replaceFirst("filtered-[0-9]*-", "");
+	      transformed.getHeaderRow().getCell(i).setContentAsString(colName);
+	    }
+	  }
+	}
       }
     }
 
