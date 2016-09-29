@@ -349,7 +349,7 @@ public class ProbabilityPlotDisplay
 
   @Override
   protected int getDefaultWidth() {
-    return 1400;
+    return 800;
   }
 
   /**

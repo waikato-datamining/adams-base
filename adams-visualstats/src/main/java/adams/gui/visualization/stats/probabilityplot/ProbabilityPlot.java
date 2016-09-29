@@ -44,7 +44,6 @@ import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
@@ -72,10 +71,10 @@ public class ProbabilityPlot
   protected GenericObjectEditorPanel m_PanelRegression;
 
   /**Paintlet for plotting the data using a regression */
-  protected AbstractProbabilityPaintlet m_val;
+  protected AbstractProbabilityPaintlet m_Paintlet;
 
   /**Default paintlet for the GOE */
-  protected AbstractProbabilityPaintlet m_def;
+  protected AbstractProbabilityPaintlet m_DefaultPaintlet;
 
   /**Index of attribute in the instances */
   protected int m_IntIndex;
@@ -87,19 +86,19 @@ public class ProbabilityPlot
   protected ParameterPanel m_OptionPanel;
 
   /** Check box for line overlay */
-  protected JCheckBox line;
+  protected JCheckBox m_CheckBoxLine;
 
   /** Check box for grid overlay */
-  protected JCheckBox grid;
+  protected JCheckBox m_CheckBoxGrid;
 
   /** Whether to display the grid */
   protected boolean m_Grid;
 
   /**Label showing the mean of the dataset */
-  protected JLabel m_Mean;
+  protected JLabel m_LabelMean;
 
   /** Label showing the std deviation of the dataset */
-  protected JLabel m_Std;
+  protected JLabel m_LabelStd;
 
   /** Regular expression for choosing the attribute to plot */
   protected BaseRegExp m_AttReg;
@@ -112,10 +111,55 @@ public class ProbabilityPlot
    */
   @Override
   protected void initGUI() {
+    JPanel 	panel;
+    JPanel	panel2;
+    JPanel 	panelKey;
+
     super.initGUI();
 
     setLayout(new BorderLayout());
 
+    BaseSplitPane splitPane = new BaseSplitPane(BaseSplitPane.VERTICAL_SPLIT);
+    splitPane.setOneTouchExpandable(true);
+    add(splitPane, BorderLayout.CENTER);
+
+    // options
+    m_OptionPanel = new ParameterPanel();
+
+    m_CheckBoxLine = new JCheckBox();
+    if(m_Paintlet != null)
+      m_CheckBoxLine.setEnabled(m_Paintlet.hasFitLine());
+
+    m_CheckBoxGrid = new JCheckBox();
+    m_CheckBoxLine.setSelected(false);
+    m_CheckBoxGrid.setSelected(false);
+    if(m_Paintlet == null)
+      m_DefaultPaintlet = new Normal();
+    else
+      m_DefaultPaintlet = m_Paintlet;
+    m_PanelRegression = new GenericObjectEditorPanel(AbstractProbabilityPaintlet.class, m_DefaultPaintlet, true);
+    m_PanelRegression.addChangeListener((ChangeEvent e) -> {
+      changeRegression();
+      changeGrid();
+    });
+    m_CheckBoxGrid.addActionListener((ActionEvent arg0) -> {
+      m_Grid = ((JCheckBox)(arg0.getSource())).isSelected();
+      changeGrid();
+    });
+    m_CheckBoxLine.addItemListener((ItemEvent arg0) -> {
+      m_Line = ((JCheckBox)(arg0.getSource())).isSelected();
+      if(m_Paintlet.hasFitLine())
+	changeLine();
+    });
+    m_OptionPanel.addParameter("Regression", m_PanelRegression);
+    m_OptionPanel.addParameter("display grid", m_CheckBoxGrid);
+    m_OptionPanel.addParameter("display best fit line", m_CheckBoxLine);
+
+    panel = new JPanel(new BorderLayout());
+    panel.add(m_OptionPanel, BorderLayout.CENTER);
+    splitPane.setTopComponent(panel);
+
+    // plot/key
     m_Plot = new ProbabilityPlotPanel();
     m_Plot.getAxis(Axis.LEFT).setTickGenerator(new FancyTickGenerator());
     m_Plot.getAxis(Axis.LEFT).setNthValueToShow(1);
@@ -125,58 +169,23 @@ public class ProbabilityPlot
     m_Plot.getAxis(Axis.BOTTOM).setNumberFormat("#.##");
     m_Plot.addPaintListener(this);
 
-    m_OptionPanel = new ParameterPanel();
-    BaseSplitPane split = new BaseSplitPane(BaseSplitPane.HORIZONTAL_SPLIT);
-    JPanel middle = new JPanel(new BorderLayout());
-    middle.add(m_Plot, BorderLayout.CENTER);
-    JPanel key = new JPanel();
-    key.setLayout(new BoxLayout(key, BoxLayout.Y_AXIS));
-    m_Mean = new JLabel("");
-    m_Std = new JLabel("");
-    key.add(m_Mean);
-    key.add(m_Std);
-    key.setBackground(Color.WHITE);
-    key.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-    JPanel east = new JPanel(new BorderLayout());
-    east.add(key, BorderLayout.NORTH);
-    middle.add(east, BorderLayout.EAST);
-    split.setLeftComponent(middle);
-    JPanel hold = new JPanel(new BorderLayout());
-    hold.add(m_OptionPanel, BorderLayout.NORTH);
-    split.setRightComponent(hold);
-    hold.setPreferredSize(new Dimension(600,0));
-    split.setOneTouchExpandable(true);
-    split.setResizeWeight(1);
-    this.add(split, BorderLayout.CENTER);
+    panelKey = new JPanel();
+    panelKey.setLayout(new BoxLayout(panelKey, BoxLayout.Y_AXIS));
+    m_LabelMean = new JLabel("");
+    m_LabelStd = new JLabel("");
+    panelKey.add(m_LabelMean);
+    panelKey.add(m_LabelStd);
+    panelKey.setBackground(Color.WHITE);
+    panelKey.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 
-    line = new JCheckBox();
-    if(m_val != null)
-      line.setEnabled(m_val.hasFitLine());
+    panel2 = new JPanel(new BorderLayout());
+    panel2.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
+    panel2.add(panelKey, BorderLayout.NORTH);
 
-    grid = new JCheckBox();
-    line.setSelected(false);
-    grid.setSelected(false);
-    if(m_val == null)
-      m_def = new Normal();
-    else
-      m_def = m_val;
-    m_PanelRegression = new GenericObjectEditorPanel(AbstractProbabilityPaintlet.class, m_def, true);
-    m_PanelRegression.addChangeListener((ChangeEvent e) -> {
-      changeRegression();
-      changeGrid();
-    });
-    grid.addActionListener((ActionEvent arg0) -> {
-      m_Grid = ((JCheckBox)(arg0.getSource())).isSelected();
-      changeGrid();
-    });
-    line.addItemListener((ItemEvent arg0) -> {
-      m_Line = ((JCheckBox)(arg0.getSource())).isSelected();
-      if(m_val.hasFitLine())
-	changeLine();
-    });
-    m_OptionPanel.addParameter("Regression", m_PanelRegression);
-    m_OptionPanel.addParameter("display grid", grid);
-    m_OptionPanel.addParameter("display best fit line", line);
+    panel = new JPanel(new BorderLayout());
+    panel.add(m_Plot, BorderLayout.CENTER);
+    panel.add(panel2, BorderLayout.EAST);
+    splitPane.setBottomComponent(panel);
   }
 
   /**
@@ -205,16 +214,16 @@ public class ProbabilityPlot
 
       DecimalFormat df = new DecimalFormat("#.##");
       //labels showing statistics
-      m_Mean.setText("Mean: " + df.format(StatUtils.mean(SpreadSheetUtils.getNumericColumn(m_Data, m_IntIndex))));
-      m_Std.setText("Std dev: " + df.format(StatUtils.stddev(SpreadSheetUtils.getNumericColumn(m_Data, m_IntIndex), false)));
+      m_LabelMean.setText("Mean: " + df.format(StatUtils.mean(SpreadSheetUtils.getNumericColumn(m_Data, m_IntIndex))));
+      m_LabelStd.setText("Std dev: " + df.format(StatUtils.stddev(SpreadSheetUtils.getNumericColumn(m_Data, m_IntIndex), false)));
 
-      m_val.setIndex(m_IntIndex);
-      m_val.setData(m_Data);
-      m_val.configureAxes();
-      m_val.calculateDimensions();
-      line.setEnabled(m_val.hasFitLine());
-      if(m_val.hasFitLine())
-	m_val.setLine(m_Line);
+      m_Paintlet.setIndex(m_IntIndex);
+      m_Paintlet.setData(m_Data);
+      m_Paintlet.configureAxes();
+      m_Paintlet.calculateDimensions();
+      m_CheckBoxLine.setEnabled(m_Paintlet.hasFitLine());
+      if(m_Paintlet.hasFitLine())
+	m_Paintlet.setLine(m_Line);
     }
   }
 
@@ -252,15 +261,15 @@ public class ProbabilityPlot
    * Called when the regression to plot changes
    */
   protected void changeRegression() {
-    removePaintlet(m_val);
-    m_val = (AbstractProbabilityPaintlet)m_PanelRegression.getCurrent();
-    m_val.setPanel(this);
-    m_val.configureAxes();
-    m_val.setIndex(m_IntIndex);
-    m_val.setData(m_Data);
-    line.setEnabled(m_val.hasFitLine());
-    if(m_val.hasFitLine()) {
-      m_val.setLine(m_Line);
+    removePaintlet(m_Paintlet);
+    m_Paintlet = (AbstractProbabilityPaintlet)m_PanelRegression.getCurrent();
+    m_Paintlet.setPanel(this);
+    m_Paintlet.configureAxes();
+    m_Paintlet.setIndex(m_IntIndex);
+    m_Paintlet.setData(m_Data);
+    m_CheckBoxLine.setEnabled(m_Paintlet.hasFitLine());
+    if(m_Paintlet.hasFitLine()) {
+      m_Paintlet.setLine(m_Line);
     }
     update();
   }
@@ -292,7 +301,7 @@ public class ProbabilityPlot
    * the regression line overlay
    */
   protected void changeLine() {
-    m_val.setLine(m_Line);
+    m_Paintlet.setLine(m_Line);
     update();
   }
 
@@ -303,7 +312,7 @@ public class ProbabilityPlot
    */
   public void setGrid(boolean val) {
     m_Grid = val;
-    grid.setSelected(val);
+    m_CheckBoxGrid.setSelected(val);
     changeGrid();
   }
 
@@ -323,7 +332,7 @@ public class ProbabilityPlot
    */
   public void setRegressionLine(boolean val) {
     m_Line = val;
-    line.setSelected(val);
+    m_CheckBoxLine.setSelected(val);
     update();
   }
 
