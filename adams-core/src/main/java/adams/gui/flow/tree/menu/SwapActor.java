@@ -64,6 +64,9 @@ public class SwapActor
     List<Actor>		suggestions;
     Actor		current;
 
+    if (m_State.selNode == null)
+      return null;
+
     current     = m_State.selNode.getActor();
     suggestions = AbstractActorSwapSuggestion.suggestAll(current);
     menuitems   = new ArrayList<>();

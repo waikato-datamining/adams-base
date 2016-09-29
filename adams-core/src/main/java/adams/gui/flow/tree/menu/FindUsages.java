@@ -15,7 +15,7 @@
 
 /**
  * FindUsages.java
- * Copyright (C) 2015 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton, NZ
  */
 package adams.gui.flow.tree.menu;
 
@@ -255,6 +255,9 @@ public class FindUsages
     List<String>	vars;
     List<String>	items;
     int			count;
+
+    if (m_State.selNode == null)
+      return null;
 
     result = new JMenu(getName());
     if (getIcon() != null)
