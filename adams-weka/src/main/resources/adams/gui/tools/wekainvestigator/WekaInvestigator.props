@@ -111,6 +111,10 @@ Cluster.CrossValidationFinalModel=true
 # (integer)
 Cluster.Seed=1
 
+# whether to use views instead of copies of datasets
+# (true|false)
+Cluster.UseViews=false
+
 # the percentage split
 # (double; 0-100)
 Cluster.TrainPercentage=66

@@ -71,6 +71,7 @@ public class WekaInvestigatorPreferencesPanel
     addPropertyType("Classify.LeftPanelWidth", PropertyType.INTEGER);
     addPropertyType("Classify.NumFolds", PropertyType.INTEGER);
     addPropertyType("Classify.NumThreads", PropertyType.INTEGER);
+    addPropertyType("Classify.UseViews", PropertyType.BOOLEAN);
     addPropertyType("Classify.CrossValidationFinalModel", PropertyType.BOOLEAN);
     addPropertyType("Classify.Seed", PropertyType.INTEGER);
     addPropertyType("Classify.TrainPercentage", PropertyType.DOUBLE);
@@ -95,6 +96,7 @@ public class WekaInvestigatorPreferencesPanel
     addPropertyType("Cluster.NumFolds", PropertyType.INTEGER);
     addPropertyType("Cluster.CrossValidationFinalModel", PropertyType.BOOLEAN);
     addPropertyType("Cluster.Seed", PropertyType.INTEGER);
+    addPropertyType("Cluster.UseViews", PropertyType.BOOLEAN);
     addPropertyType("Cluster.TrainPercentage", PropertyType.DOUBLE);
     addPropertyType("Cluster.PreserveOrder", PropertyType.BOOLEAN);
     addPropertyType("Cluster.OutputGenerators", PropertyType.ARRAY_EDITOR);
