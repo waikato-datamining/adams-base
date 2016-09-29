@@ -127,8 +127,9 @@ extends PaintablePanel{
   }
 
   /**
-   * Set the instances to plot
-   * @param data		instances to plot
+   * Set the data to plot.
+   *
+   * @param data	data to plot
    */
   public void setData(SpreadSheet data) {
     m_Data = data;
@@ -136,11 +137,30 @@ extends PaintablePanel{
   }
 
   /**
-   * Set the index of the residuals attribute in the instances
-   * @param val			Residuals attribute index
+   * Returns the plot data.
+   *
+   * @return		the data
+   */
+  public SpreadSheet getData() {
+    return m_Data;
+  }
+
+  /**
+   * Set the index of the residuals column in the spreadsheet.
+   *
+   * @param val		Residuals column index
    */
   public void setIndex(int val) {
     m_Index = val;
     update();
+  }
+
+  /**
+   * Returns the index of the residuals column in the spreadsheet.
+   *
+   * @return		the column
+   */
+  public int getIndex() {
+    return m_Index;
   }
 }

@@ -402,10 +402,10 @@ public class ScatterDisplay
    */
   @Override
   protected void display(Token token) {
-    m_ScatPlot.setX_IndexReg(m_XAttributeName);
-    m_ScatPlot.setX_Ind(new Index(m_XAttribute));
-    m_ScatPlot.setY_IndexReg(m_YAttributeName);
-    m_ScatPlot.setY_Ind(new Index(m_YAttribute));
+    m_ScatPlot.setXRegExp(m_XAttributeName);
+    m_ScatPlot.setXIndex(new Index(m_XAttribute));
+    m_ScatPlot.setYRegExp(m_YAttributeName);
+    m_ScatPlot.setYIndex(new Index(m_YAttribute));
     m_ScatPlot.setData((SpreadSheet) token.getPayload());
     m_ScatPlot.setOverlays(m_Overlays);
     m_ScatPlot.setPaintlet(m_Paintlet);
@@ -433,10 +433,10 @@ public class ScatterDisplay
       }
       @Override
       public void display(Token token) {
-	m_ScatPlot.setX_IndexReg(m_XAttributeName);
-	m_ScatPlot.setX_Ind(new Index(m_XAttribute));
-	m_ScatPlot.setY_IndexReg(m_YAttributeName);
-	m_ScatPlot.setY_Ind(new Index(m_YAttribute));
+	m_ScatPlot.setXRegExp(m_XAttributeName);
+	m_ScatPlot.setXIndex(new Index(m_XAttribute));
+	m_ScatPlot.setYRegExp(m_YAttributeName);
+	m_ScatPlot.setYIndex(new Index(m_YAttribute));
 	m_ScatPlot.setData((SpreadSheet) token.getPayload());
 	m_ScatPlot.setOverlays(m_Overlays);
 	m_ScatPlot.setPaintlet(m_Paintlet);

@@ -208,16 +208,16 @@ public class PrincipalComponentsTab
     m_PanelRight.add(m_TabbedPanePlots, BorderLayout.CENTER);
 
     m_PanelLoadings = new ScatterPlot();
-    m_PanelLoadings.setX_IndexReg(new BaseRegExp("Loadings-1"));
-    m_PanelLoadings.setY_IndexReg(new BaseRegExp("Loadings-2"));
+    m_PanelLoadings.setXRegExp(new BaseRegExp("Loadings-1"));
+    m_PanelLoadings.setYRegExp(new BaseRegExp("Loadings-2"));
     m_PanelLoadings.setOverlays(new AbstractScatterPlotOverlay[]{
       new Coordinates()
     });
     m_TabbedPanePlots.addTab("Loadings", m_PanelLoadings);
 
     m_PanelScores = new ScatterPlot();
-    m_PanelScores.setX_Ind(new Index("1"));
-    m_PanelScores.setY_Ind(new Index("2"));
+    m_PanelScores.setXIndex(new Index("1"));
+    m_PanelScores.setYIndex(new Index("2"));
     m_PanelScores.setOverlays(new AbstractScatterPlotOverlay[]{
       new Coordinates()
     });

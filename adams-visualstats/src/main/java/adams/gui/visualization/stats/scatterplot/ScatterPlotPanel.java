@@ -35,7 +35,7 @@ import adams.gui.visualization.core.plot.Axis;
  * @version $Revision$
  */
 public class ScatterPlotPanel
-extends PlotPanel{
+  extends PlotPanel{
 
   /** for serialization */
   private static final long serialVersionUID = 107298737463861170L;
@@ -59,11 +59,21 @@ extends PlotPanel{
   }
 
   /**
-   * set the instances for the scatter plot panel
-   * @param inst			Instances to be plotted
+   * set the data for the scatter plot panel.
+   *
+   * @param value	data to be plotted
    */
-  protected void setData(SpreadSheet inst) {
-    m_Data = inst;
+  public void setData(SpreadSheet value) {
+    m_Data = value;
+  }
+
+  /**
+   * Returns the data for the plot.
+   *
+   * @return		the data
+   */
+  public SpreadSheet getData() {
+    return m_Data;
   }
 
   /**
@@ -101,8 +111,9 @@ extends PlotPanel{
   }
 
   /**
-   * Set index of x attribute
-   * @param val			index of x attribute
+   * Set index of x attribute.
+   *
+   * @param val		index of x attribute
    */
   public void setX(int val) {
     m_XIndex = val;
@@ -110,11 +121,30 @@ extends PlotPanel{
   }
 
   /**
-   * set the index of the y attribute
-   * @param val			index of y attribute
+   * Returns the index of the X attribute.
+   *
+   * @return		the index
+   */
+  public int getX() {
+    return m_XIndex;
+  }
+
+  /**
+   * set the index of the y attribute.
+   *
+   * @param val		index of y attribute
    */
   public void setY(int val) {
     m_YIndex = val;
     reset();
+  }
+
+  /**
+   * Returns the index of the Y attribute.
+   *
+   * @return		the index
+   */
+  public int getY() {
+    return m_YIndex;
   }
 }

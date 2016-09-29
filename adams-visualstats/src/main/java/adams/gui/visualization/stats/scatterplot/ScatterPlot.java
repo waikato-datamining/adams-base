@@ -232,7 +232,7 @@ public class ScatterPlot
    * Get the index object for choosing the attribute to display
    * @return		chosen index
    */
-  public Index getX_Ind() {
+  public Index getXIndex() {
     return m_XInd;
   }
 
@@ -240,7 +240,7 @@ public class ScatterPlot
    * Set the x attribute index
    * @param val		chosen index
    */
-  public void setX_Ind(Index val) {
+  public void setXIndex(Index val) {
     m_XInd = val;
   }
 
@@ -248,7 +248,7 @@ public class ScatterPlot
    * Get the index object for choosing the y attribute
    * @return		chosen index
    */
-  public Index getY_Ind() {
+  public Index getYIndex() {
     return m_YInd;
   }
 
@@ -256,7 +256,7 @@ public class ScatterPlot
    * Set the index for the y attribute
    * @param val		chosen y index
    */
-  public void setY_Ind(Index val) {
+  public void setYIndex(Index val) {
     m_YInd = val;
   }
 
@@ -264,7 +264,7 @@ public class ScatterPlot
    * Set the regular expression to use when determining the x attribute
    * @param val		regular expression for choosing x attribute
    */
-  public void setX_IndexReg(BaseRegExp val) {
+  public void setXRegExp(BaseRegExp val) {
     m_XIndexReg = val;
   }
 
@@ -272,7 +272,7 @@ public class ScatterPlot
    * Gets the regular expression used when determining the x attribute
    * @return		regular expression for choosing x attribute
    */
-  public BaseRegExp getX_IndexReg() {
+  public BaseRegExp getXRegExp() {
     return m_XIndexReg;
   }
 
@@ -280,7 +280,7 @@ public class ScatterPlot
    * Set the regular expression to use when determining the y attribute
    * @param val		regular expression for choosing y attribute
    */
-  public void setY_IndexReg(BaseRegExp val) {
+  public void setYRegExp(BaseRegExp val) {
     m_YIndexReg = val;
   }
 
@@ -288,7 +288,7 @@ public class ScatterPlot
    * Gets the regular expression used when determining the y attribute
    * @return		regular expression for choosing y attribute
    */
-  public BaseRegExp getY_IndexReg() {
+  public BaseRegExp getYRegExp() {
     return m_YIndexReg;
   }
 

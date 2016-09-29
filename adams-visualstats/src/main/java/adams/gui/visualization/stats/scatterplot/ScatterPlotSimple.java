@@ -20,13 +20,13 @@
 
 package adams.gui.visualization.stats.scatterplot;
 
+import adams.gui.visualization.core.axis.Visibility;
+import adams.gui.visualization.core.plot.Axis;
+
 import java.awt.BorderLayout;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
-
-import adams.gui.visualization.core.axis.Visibility;
-import adams.gui.visualization.core.plot.Axis;
 
 /**
  * Class for displaying a single scatterplotpanel only, used in the matrix.
@@ -95,7 +95,7 @@ extends AbstractScatterPlot{
       for(int i = 0; i < m_overs.size(); i++) {
 	removePaintlet(m_overs.get(i).getPaintlet());
       }
-      m_overs = new ArrayList<AbstractScatterPlotOverlay>();
+      m_overs = new ArrayList<>();
     }
   }
 
@@ -105,7 +105,7 @@ extends AbstractScatterPlot{
    */
   protected void addOverlay(AbstractScatterPlotOverlay val) {
     if(m_overs == null)
-      m_overs = new ArrayList<AbstractScatterPlotOverlay>();
+      m_overs = new ArrayList<>();
     m_overs.add(val);
   }
 }

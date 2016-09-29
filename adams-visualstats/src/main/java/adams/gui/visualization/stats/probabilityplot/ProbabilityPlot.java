@@ -42,15 +42,12 @@ import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.text.DecimalFormat;
 
 /**
@@ -60,7 +57,7 @@ import java.text.DecimalFormat;
  * @version $Revision$
  */
 public class ProbabilityPlot
-extends PaintablePanel{
+  extends PaintablePanel{
 
   /** for serialization */
   private static final long serialVersionUID = 5997080502859878659L;
@@ -116,7 +113,9 @@ extends PaintablePanel{
   @Override
   protected void initGUI() {
     super.initGUI();
+
     setLayout(new BorderLayout());
+
     m_Plot = new ProbabilityPlotPanel();
     m_Plot.getAxis(Axis.LEFT).setTickGenerator(new FancyTickGenerator());
     m_Plot.getAxis(Axis.LEFT).setNthValueToShow(1);
@@ -162,24 +161,18 @@ extends PaintablePanel{
     else
       m_def = m_val;
     m_PanelRegression = new GenericObjectEditorPanel(AbstractProbabilityPaintlet.class, m_def, true);
-    m_PanelRegression.addChangeListener(new ChangeListener() {
-      public void stateChanged(ChangeEvent e) {
-	changeRegression();
-	changeGrid();
-      }
+    m_PanelRegression.addChangeListener((ChangeEvent e) -> {
+      changeRegression();
+      changeGrid();
     });
-    grid.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent arg0) {
-	m_Grid = ((JCheckBox)(arg0.getSource())).isSelected();
-	changeGrid();
-      }
+    grid.addActionListener((ActionEvent arg0) -> {
+      m_Grid = ((JCheckBox)(arg0.getSource())).isSelected();
+      changeGrid();
     });
-    line.addItemListener(new ItemListener() {
-      public void itemStateChanged(ItemEvent arg0) {
-	m_Line = ((JCheckBox)(arg0.getSource())).isSelected();
-	if(m_val.hasFitLine())
-	  changeLine();
-      }
+    line.addItemListener((ItemEvent arg0) -> {
+      m_Line = ((JCheckBox)(arg0.getSource())).isSelected();
+      if(m_val.hasFitLine())
+	changeLine();
     });
     m_OptionPanel.addParameter("Regression", m_PanelRegression);
     m_OptionPanel.addParameter("display grid", grid);
@@ -205,8 +198,8 @@ extends PaintablePanel{
       int temp = -1;
       temp = IndexSet.getIndex(m_AttReg, m_Index, m_Data, temp);
       if(temp == -1) {
-        temp = 0;
-        System.err.println("changed to 0");
+	temp = 0;
+	System.err.println("changed to 0");
       }
       m_IntIndex = temp;
 
@@ -214,7 +207,7 @@ extends PaintablePanel{
       //labels showing statistics
       m_Mean.setText("Mean: " + df.format(StatUtils.mean(SpreadSheetUtils.getNumericColumn(m_Data, m_IntIndex))));
       m_Std.setText("Std dev: " + df.format(StatUtils.stddev(SpreadSheetUtils.getNumericColumn(m_Data, m_IntIndex), false)));
-      
+
       m_val.setIndex(m_IntIndex);
       m_val.setData(m_Data);
       m_val.configureAxes();
@@ -304,8 +297,9 @@ extends PaintablePanel{
   }
 
   /**
-   * Set whether the grid overlay is displayed
-   * @param val
+   * Set whether the grid overlay is displayed.
+   *
+   * @param val		true if to display
    */
   public void setGrid(boolean val) {
     m_Grid = val;
@@ -314,8 +308,18 @@ extends PaintablePanel{
   }
 
   /**
-   * Set whether the regression linear line is displayed
-   * @param val
+   * Returns whether the grid is displayed.
+   *
+   * @return		true if displayed
+   */
+  public boolean getGrid() {
+    return m_Grid;
+  }
+
+  /**
+   * Set whether the regression linear line is displayed.
+   *
+   * @param val		true if to display
    */
   public void setRegressionLine(boolean val) {
     m_Line = val;
@@ -324,8 +328,17 @@ extends PaintablePanel{
   }
 
   /**
+   * Returns whether the regression line is displayed.
+   *
+   * @return		true if displayed
+   */
+  public boolean getRegressionLine() {
+    return m_Line;
+  }
+
+  /**
    * Set the index to use to choose the attribute to display
-   * @param val			Index of attribute
+   * @param val		Index of attribute
    */
   public void setAttIndex(Index val) {
     m_Index = val;
@@ -333,11 +346,30 @@ extends PaintablePanel{
   }
 
   /**
-   * Set the regular expression for chossing the attribute to display
-   * @param val			Regular expression for name of attribute
+   * Returns the index of the attribute to display.
+   *
+   * @return		the index
    */
-  public void setAttReg(BaseRegExp val) {
+  public Index getAttIndex() {
+    return m_Index;
+  }
+
+  /**
+   * Set the regular expression for chossing the attribute to display.
+   *
+   * @param val		Regular expression for name of attribute
+   */
+  public void setAttRegExp(BaseRegExp val) {
     m_AttReg = val;
     update();
+  }
+
+  /**
+   * Returns the regular expression for choosing the attribute to display.
+   *
+   * @return		the expression
+   */
+  public BaseRegExp getAttRegExp() {
+    return m_AttReg;
   }
 }

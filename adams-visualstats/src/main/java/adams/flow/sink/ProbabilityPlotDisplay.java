@@ -178,7 +178,7 @@ public class ProbabilityPlotDisplay
     m_Plot.setRegression(m_Val);
     m_Plot.setGrid(m_Grid);
     m_Plot.setRegressionLine(m_Regression);
-    m_Plot.setAttReg(m_Att);
+    m_Plot.setAttRegExp(m_Att);
     m_Plot.setAttIndex(new Index(m_AttIndex));
   }
 
@@ -377,7 +377,7 @@ public class ProbabilityPlotDisplay
 	m_Plot.setRegression(m_Val);
 	m_Plot.setGrid(m_Grid);
 	m_Plot.setRegressionLine(m_Regression);
-	m_Plot.setAttReg(m_Att);
+	m_Plot.setAttRegExp(m_Att);
 	m_Plot.setAttIndex(new Index(m_AttIndex));
       }
       @Override
