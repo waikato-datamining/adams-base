@@ -385,10 +385,10 @@ public class WekaPrincipalComponents
     m_Supported = new TIntArrayList();
     m_Unsupported = new TIntArrayList();
     for (i = 0; i < input.numAttributes(); i++) {
-      if (caps.test(input.attribute(i)))
-	m_Supported.add(i);
-      else
+      if (!caps.test(input.attribute(i)) || (i == input.classIndex()))
 	m_Unsupported.add(i);
+      else
+	m_Supported.add(i);
     }
 
     m_NumAttributes = m_Supported.size();
