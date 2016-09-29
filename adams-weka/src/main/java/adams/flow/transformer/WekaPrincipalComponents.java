@@ -23,6 +23,7 @@ package adams.flow.transformer;
 import adams.core.License;
 import adams.core.QuickInfoHelper;
 import adams.core.annotation.MixedCopyright;
+import adams.data.conversion.WekaInstancesToSpreadSheet;
 import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
@@ -34,7 +35,7 @@ import java.util.ArrayList;
 
 /**
  <!-- globalinfo-start -->
- * Performs principal components analysis on the incoming data and outputs the loadsings as spreadsheet.
+ * Performs principal components analysis on the incoming data and outputs the loadings and the transformed data as spreadsheet array.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -43,7 +44,7 @@ import java.util.ArrayList;
  * - accepts:<br>
  * &nbsp;&nbsp;&nbsp;weka.core.Instances<br>
  * - generates:<br>
- * &nbsp;&nbsp;&nbsp;adams.data.spreadsheet.SpreadSheet<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.spreadsheet.SpreadSheet[]<br>
  * <br><br>
  <!-- flow-summary-end -->
  *
@@ -93,6 +94,12 @@ import java.util.ArrayList;
  * &nbsp;&nbsp;&nbsp;minimum: -1
  * </pre>
  * 
+ * <pre>-max-attribute-names &lt;int&gt; (property: maximumAttributeNames)
+ * &nbsp;&nbsp;&nbsp;The maximum number of attribute names to use.
+ * &nbsp;&nbsp;&nbsp;default: 5
+ * &nbsp;&nbsp;&nbsp;minimum: -1
+ * </pre>
+ * 
  <!-- options-end -->
  *
  * Actor that takes in an instances object containing TGA-MS data and outputs the coefficients from a principal components analysis
@@ -118,8 +125,13 @@ public class WekaPrincipalComponents
   /** the maximum number of attributes to keep. */
   protected int m_MaxAttributes;
 
+  /** the maximum number of attribute names to use. */
+  protected int m_MaxAttributeNames;
+
+  /** the indices of the kept attributes. */
   protected ArrayList<Integer> m_Kept;
 
+  /** the number of attributes in the data (excl class). */
   protected int m_NumAttributes;
 
   /**
@@ -131,7 +143,7 @@ public class WekaPrincipalComponents
   public String globalInfo() {
     return
       "Performs principal components analysis on the incoming data and outputs "
-	+ "the loadsings as spreadsheet.";
+	+ "the loadings and the transformed data as spreadsheet array.";
   }
 
   /**
@@ -148,6 +160,10 @@ public class WekaPrincipalComponents
     m_OptionManager.add(
       "max-attributes", "maximumAttributes",
       -1, -1, null);
+
+    m_OptionManager.add(
+      "max-attribute-names", "maximumAttributeNames",
+      5, -1, null);
   }
 
   /**
@@ -210,12 +226,42 @@ public class WekaPrincipalComponents
     return "The maximum number of PC attributes to retain.";
   }
 
+  /**
+   * Sets maximum number of attribute names.
+   *
+   * @param value 	the maximum number of attribute names
+   */
+  public void setMaximumAttributeNames(int value) {
+    m_MaxAttributeNames = value;
+    reset();
+  }
+
+  /**
+   * Gets maximum number of attribute names to use.
+   *
+   * @return 		the maximum number of attribute names
+   */
+  public int getMaximumAttributeNames() {
+    return m_MaxAttributeNames;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the explorer/experimenter gui
+   */
+  public String maximumAttributeNamesTipText() {
+    return "The maximum number of attribute names to use.";
+  }
+
   @Override
   public String getQuickInfo() {
     String	result;
 
     result  = QuickInfoHelper.toString(this, "varianceCovered", m_CoverVariance, "var: ");
     result += QuickInfoHelper.toString(this, "maxAttributes", m_MaxAttributes, ", max attr: ");
+    result += QuickInfoHelper.toString(this, "maxAttributeNames", m_MaxAttributeNames, ", max names: ");
 
     return result;
   }
@@ -237,7 +283,7 @@ public class WekaPrincipalComponents
    */
   @Override
   public Class[] generates() {
-    return new Class[]{SpreadSheet.class};
+    return new Class[]{SpreadSheet[].class};
   }
 
   /**
@@ -301,7 +347,10 @@ public class WekaPrincipalComponents
     int					i;
     PublicPrincipalComponents 		pca;
     ArrayList<ArrayList<Double>> 	coeff;
-    SpreadSheet 			sheet;
+    SpreadSheet 			loadings;
+    Instances				filtered;
+    SpreadSheet				transformed;
+    WekaInstancesToSpreadSheet		conv;
 
     result = null;
     input = (Instances)m_InputToken.getPayload();
@@ -309,8 +358,8 @@ public class WekaPrincipalComponents
     if (input.classIndex() > -1)
       m_NumAttributes--;
 
-    //the principal components will delete the attributes without any distinct values.
-    //this checks which instances will be kept.
+    // the principal components will delete the attributes without any distinct values.
+    // this checks which instances will be kept.
     m_Kept = new ArrayList<>();
     for (i = 0; i < input.numAttributes(); i++) {
       if (input.classIndex() == i)
@@ -319,10 +368,11 @@ public class WekaPrincipalComponents
 	m_Kept.add(i);
     }
 
-    //build a model using the PublicPrincipalComponents
+    // build a model using the PublicPrincipalComponents
     pca = new PublicPrincipalComponents();
     pca.setMaximumAttributes(m_MaxAttributes);
     pca.setVarianceCovered(m_CoverVariance);
+    pca.setMaximumAttributeNames(m_MaxAttributeNames);
     try {
       pca.setInputFormat(input);
     }
@@ -330,22 +380,32 @@ public class WekaPrincipalComponents
       result = handleException("Failed to set input format", e);
     }
 
+    transformed = null;
     if (result == null) {
       try {
-	weka.filters.Filter.useFilter(input, pca);
+	filtered = weka.filters.Filter.useFilter(input, pca);
       }
       catch (Exception e) {
-	result = handleException("Failed to apply filter", e);
+	result   = handleException("Failed to apply filter", e);
+	filtered = null;
+      }
+      if (filtered != null) {
+	conv = new WekaInstancesToSpreadSheet();
+	conv.setInput(filtered);
+	result = conv.convert();
+	if (result == null)
+	  transformed = (SpreadSheet) conv.getOutput();
       }
     }
 
     if (result == null) {
-      //get the coeffients from the filter
-      coeff = pca.getCoefficients();
-      sheet = createSpreadSheet(input, coeff);
+      // get the coefficients from the filter
+      coeff    = pca.getCoefficients();
+      loadings = createSpreadSheet(input, coeff);
+      loadings.setName("Loadings for " + input.relationName());
 
-      //output a spreadsheet with the coefficients
-      m_OutputToken = new Token(sheet);
+      // output spreadsheets with loadings/transformed data
+      m_OutputToken = new Token(new SpreadSheet[]{loadings, transformed});
     }
 
     return result;

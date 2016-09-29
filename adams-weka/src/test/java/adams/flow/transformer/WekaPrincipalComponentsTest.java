@@ -20,14 +20,15 @@
 
 package adams.flow.transformer;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import adams.core.Index;
 import adams.core.option.AbstractArgumentOption;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
 import adams.flow.core.Actor;
 import adams.test.TmpFile;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Test for WekaPrincipalComponents actor.
@@ -107,7 +108,7 @@ public class WekaPrincipalComponentsTest
     
     try {
       argOption = (AbstractArgumentOption) flow.getOptionManager().findByProperty("actors");
-      adams.flow.core.Actor[] actors1 = new adams.flow.core.Actor[5];
+      adams.flow.core.Actor[] actors1 = new adams.flow.core.Actor[6];
 
       // Flow.FileSupplier
       adams.flow.source.FileSupplier filesupplier2 = new adams.flow.source.FileSupplier();
@@ -133,11 +134,16 @@ public class WekaPrincipalComponentsTest
       adams.flow.transformer.WekaPrincipalComponents wekaprincipalcomponents8 = new adams.flow.transformer.WekaPrincipalComponents();
       actors1[3] = wekaprincipalcomponents8;
 
+      // retrieve loadings
+      GetArrayElement gae = new GetArrayElement();
+      gae.setIndex(new Index("1"));
+      actors1[4] = gae;
+
       // Flow.DumpFile
       adams.flow.sink.DumpFile dumpfile9 = new adams.flow.sink.DumpFile();
       argOption = (AbstractArgumentOption) dumpfile9.getOptionManager().findByProperty("outputFile");
       dumpfile9.setOutputFile((adams.core.io.PlaceholderFile) argOption.valueOf("${TMP}/dumpfile.csv"));
-      actors1[4] = dumpfile9;
+      actors1[5] = dumpfile9;
       flow.setActors(actors1);
 
       argOption = (AbstractArgumentOption) flow.getOptionManager().findByProperty("flowExecutionListener");
