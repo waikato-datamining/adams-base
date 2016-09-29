@@ -15,7 +15,7 @@
 
 /**
  * AbstractPropertiesSubMenuAction.java
- * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.action;
 
@@ -52,10 +52,12 @@ public abstract class AbstractPropertiesSubMenuAction<T, D extends Dialog>
     JMenuItem	result;
 
     result = createMenu();
-    if (getIcon() != null)
-      result.setIcon(getIcon());
-    else
-      result.setIcon(GUIHelper.getEmptyIcon());
+    if (result != null) {
+      if (getIcon() != null)
+        result.setIcon(getIcon());
+      else
+        result.setIcon(GUIHelper.getEmptyIcon());
+    }
 
     return result;
   }
