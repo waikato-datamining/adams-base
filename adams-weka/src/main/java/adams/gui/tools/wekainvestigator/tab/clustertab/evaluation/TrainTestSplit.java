@@ -74,6 +74,9 @@ public class TrainTestSplit
   /** the seed value. */
   protected JTextField m_TextSeed;
 
+  /** whether to use views. */
+  protected JCheckBox m_CheckBoxUseViews;
+
   /**
    * Returns a string describing the object.
    *
@@ -149,6 +152,13 @@ public class TrainTestSplit
       }
     });
     m_PanelParameters.addParameter("Seed", m_TextSeed);
+
+    // use views?
+    m_CheckBoxUseViews = new JCheckBox();
+    m_CheckBoxUseViews.setSelected(props.getBoolean("Classify.UseViews", false));
+    m_CheckBoxUseViews.setToolTipText("Save memory by using views instead of creating copies of datasets?");
+    m_CheckBoxUseViews.addActionListener((ActionEvent e) -> update());
+    m_PanelParameters.addParameter("Use views", m_CheckBoxUseViews);
   }
 
   /**
@@ -208,6 +218,7 @@ public class TrainTestSplit
     Clusterer			model;
     double			perc;
     int				seed;
+    boolean		  	views;
     Instances			data;
     Instances			train;
     Instances			test;
@@ -219,13 +230,15 @@ public class TrainTestSplit
     if ((msg = canEvaluate(clusterer)) != null)
       throw new IllegalArgumentException("Cannot evaluate clusterer!\n" + msg);
 
-    data = getOwner().getData().get(m_ComboBoxDatasets.getSelectedIndex()).getData();
-    perc = Utils.toDouble(m_TextPercentage.getText()) / 100.0;
-    seed = Integer.parseInt(m_TextSeed.getText());
+    data  = getOwner().getData().get(m_ComboBoxDatasets.getSelectedIndex()).getData();
+    perc  = Utils.toDouble(m_TextPercentage.getText()) / 100.0;
+    seed  = Integer.parseInt(m_TextSeed.getText());
+    views = m_CheckBoxUseViews.isSelected();
     if (m_CheckBoxPreserveOrder.isSelected())
       generator = new RandomSplitGenerator(data, perc);
     else
       generator = new RandomSplitGenerator(data, seed, perc);
+    generator.setUseViews(views);
     cont    = generator.next();
     train   = (Instances) cont.getValue(WekaTrainTestSetContainer.VALUE_TRAIN);
     test    = (Instances) cont.getValue(WekaTrainTestSetContainer.VALUE_TEST);
@@ -238,6 +251,7 @@ public class TrainTestSplit
     runInfo.add("# Attributes", data.numAttributes());
     runInfo.add("# Instances (train)", train.numInstances());
     runInfo.add("# Instances (test)", test.numInstances());
+    runInfo.add("Use views", views);
 
     model = (Clusterer) OptionUtils.shallowCopy(clusterer);
     getOwner().logMessage("Using " + m_TextPercentage.getText() + "% of '" + train.relationName() + "' to train " + OptionUtils.getCommandLine(clusterer));
