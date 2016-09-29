@@ -268,12 +268,12 @@ public class ScatterDisplay
 
   @Override
   protected int getDefaultWidth() {
-    return 1200;
+    return 800;
   }
 
   @Override
   protected int getDefaultHeight() {
-    return 500;
+    return 600;
   }
 
   /**
