@@ -185,11 +185,11 @@ public class ScatterPlot
 
     ParameterPanel optionPanel = new ParameterPanel();
     BaseSplitPane splitPane;
-    splitPane = new BaseSplitPane(BaseSplitPane.HORIZONTAL_SPLIT);
-    splitPane.setLeftComponent(m_Plot);
+    splitPane = new BaseSplitPane(BaseSplitPane.VERTICAL_SPLIT);
+    splitPane.setBottomComponent(m_Plot);
     JPanel hold = new JPanel(new BorderLayout());
     hold.add(optionPanel, BorderLayout.NORTH);
-    splitPane.setRightComponent(hold);
+    splitPane.setTopComponent(hold);
     splitPane.setResizeWeight(1.0);
     splitPane.setOneTouchExpandable(true);
     add(splitPane, BorderLayout.CENTER);
