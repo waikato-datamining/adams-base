@@ -34,7 +34,7 @@ import java.util.ArrayList;
 
 /**
  <!-- globalinfo-start -->
- * Actor that takes an instances object and carries out principal component analysis to build a model. The coefficients for the model are output in a spreadsheet
+ * Performs principal components analysis on the incoming data and outputs the loadsings as spreadsheet.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -52,40 +52,47 @@ import java.util.ArrayList;
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- *
+ * 
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: WekaPrincipalComponents
  * </pre>
- *
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * 
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- *
+ * 
  * <pre>-skip &lt;boolean&gt; (property: skip)
  * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
  * &nbsp;&nbsp;&nbsp;as it is.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this 
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical 
+ * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
  * <pre>-variance-covered &lt;double&gt; (property: varianceCovered)
  * &nbsp;&nbsp;&nbsp;Retain enough PC attributes to account for this proportion of variance.
  * &nbsp;&nbsp;&nbsp;default: 0.95
  * </pre>
- *
+ * 
  * <pre>-max-attributes &lt;int&gt; (property: maximumAttributes)
  * &nbsp;&nbsp;&nbsp;The maximum number of PC attributes to retain.
  * &nbsp;&nbsp;&nbsp;default: -1
  * &nbsp;&nbsp;&nbsp;minimum: -1
  * </pre>
- *
+ * 
  <!-- options-end -->
  *
  * Actor that takes in an instances object containing TGA-MS data and outputs the coefficients from a principal components analysis
