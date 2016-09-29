@@ -74,6 +74,7 @@ public abstract class AbstractDataContainer
    * @param data	the data to use
    */
   public AbstractDataContainer(Instances data) {
+    this();
     m_Data     = data;
     m_Modified = false;
   }
