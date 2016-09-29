@@ -171,3 +171,19 @@ Instance.AntiAliasing=true
 # whether to show markers in the instance panel
 # (true|false)
 Instance.Markers=true
+
+# the width of the left-hand side of the PCA panel
+# (integer)
+PrincipalComponents.LeftPanelWidth=275
+
+# the variance covered for the PCA panel
+# (double)
+PrincipalComponents.Variance=0.95
+
+# the number of attributes to keep in the PCA panel
+# (integer; -1 for automatic)
+PrincipalComponents.MaxAttributes=-1
+
+# the number of attribute names to use in the PCA panel
+# (integer)
+PrincipalComponents.MaxAttributeNames=5

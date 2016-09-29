@@ -131,6 +131,12 @@ public class WekaInvestigatorPreferencesPanel
     addPropertyType("Instance.AntiAliasing", PropertyType.BOOLEAN);
     addPropertyType("Instance.Markers", PropertyType.BOOLEAN);
 
+    // pca
+    addPropertyType("PrincipalComponents.LeftPanelWidth", PropertyType.INTEGER);
+    addPropertyType("PrincipalComponents.Variance", PropertyType.DOUBLE);
+    addPropertyType("PrincipalComponents.MaxAttributes", PropertyType.INTEGER);
+    addPropertyType("PrincipalComponents.MaxAttributeNames", PropertyType.INTEGER);
+
     setPreferences(Environment.getInstance().read(WekaInvestigatorDefinition.KEY));
   }
   

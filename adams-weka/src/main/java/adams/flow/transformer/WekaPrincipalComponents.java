@@ -337,8 +337,13 @@ public class WekaPrincipalComponents
 	//attribute was kept earlier
 	if (m_Kept.contains(n)) {
 	  int index = m_Kept.indexOf(n);
-	  double value = coeff.get(i).get(index);
-	  row.addCell("L" + (i+1)).setContent(value);
+	  if (index < coeff.get(i).size()) {
+	    double value = coeff.get(i).get(index);
+	    row.addCell("L" + (i + 1)).setContent(value);
+	  }
+	  else {
+	    row.addCell("L" + (i+1)).setContent(0);
+	  }
 	}
 	//attribute wasn't kept, coefficient is 0
 	else {

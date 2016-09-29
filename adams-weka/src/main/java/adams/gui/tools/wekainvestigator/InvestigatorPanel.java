@@ -408,8 +408,6 @@ public class InvestigatorPanel
     m_Log.append(msg);
     m_Log.append("\n");
 
-    m_StatusBar.showStatus(msg);
-
     for (i = 0; i < m_TabbedPane.getTabCount(); i++) {
       if (m_TabbedPane.getComponentAt(i) instanceof LogTab)
 	((LogTab) m_TabbedPane.getComponentAt(i)).append(msg);
@@ -425,6 +423,7 @@ public class InvestigatorPanel
   @Override
   public void logError(String msg, String title) {
     logMessage(msg);
+    m_StatusBar.showStatus(msg);
     GUIHelper.showErrorMessage(this, msg, title);
   }
 
