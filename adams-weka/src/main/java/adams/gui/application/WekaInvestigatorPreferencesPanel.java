@@ -137,6 +137,11 @@ public class WekaInvestigatorPreferencesPanel
     addPropertyType("PrincipalComponents.MaxAttributes", PropertyType.INTEGER);
     addPropertyType("PrincipalComponents.MaxAttributeNames", PropertyType.INTEGER);
 
+    // pls
+    addPropertyType("PartialLeastSquares.LeftPanelWidth", PropertyType.INTEGER);
+    addPropertyType("PartialLeastSquares.Algorithm", PropertyType.STRING);
+    addPropertyType("PartialLeastSquares.NumComponents", PropertyType.INTEGER);
+
     setPreferences(Environment.getInstance().read(WekaInvestigatorDefinition.KEY));
   }
   

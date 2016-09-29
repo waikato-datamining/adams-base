@@ -187,3 +187,15 @@ PrincipalComponents.MaxAttributes=-1
 # the number of attribute names to use in the PCA panel
 # (integer)
 PrincipalComponents.MaxAttributeNames=5
+
+# the width of the left-hand side of the PCA panel
+# (integer)
+PartialLeastSquares.LeftPanelWidth=275
+
+# the algorithm to use in PLS panel
+# (SIMPLS|PLS1)
+PartialLeastSquares.Algorithm=SIMPLS
+
+# the number of components to use in the PLS panel
+# (integer)
+PartialLeastSquares.NumComponents=20
