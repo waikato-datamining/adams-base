@@ -60,20 +60,68 @@ import adams.gui.visualization.stats.paintlet.DiagonalPaintlet;
  * @version $Revision$
  */
 public class Diagonal
-extends AbstractScatterPlotOverlay {
+  extends AbstractScatterPlotOverlay {
+
+  /** for serialization */
+  private static final long serialVersionUID = -1796683889341452636L;
+
   /** Whether an indicator should be displayed on the side of the plot showing where
    * the diagonal is and at what gradient
    */
   protected boolean m_Indicator;
 
-  /** for serialization */
-  private static final long serialVersionUID = -1796683889341452636L;
-
+  /**
+   * Returns a string describing the object.
+   *
+   * @return 			a description suitable for displaying in the gui
+   */
   public String globalInfo() {
     return "Display a diagonal line overlay";
   }
 
-  public void setUp() {
+  /**
+   * Adds options to the internal list of options.
+   */
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+      "indicator", "indicator",
+      true);
+  }
+
+  /**
+   * Set whether an indicator should be displayed.
+   *
+   * @param value			True if indicator displayed
+   */
+  public void setIndicator(boolean value) {
+    m_Indicator = value;
+    reset();
+  }
+
+  /**
+   * get whether an indicator should be displayed.
+   *
+   * @return			True if indicator displayed
+   */
+  public boolean getIndicator() {
+    return m_Indicator;
+  }
+
+  /**
+   * Tip text for the indicator property.
+   *
+   * @return			String describing the property
+   */
+  public String indicatorTipText() {
+    return "Display indicator lines on the axis to show what side diagonal on";
+  }
+
+   /**
+   * set up the overlay and its paintlet.
+   */
+ public void setUp() {
     m_Paintlet = new DiagonalPaintlet();
     m_Paintlet.parameters(m_Data, m_Parent.getX_Index(), m_Parent.getY_Index());
     m_Paintlet.setRepaintOnChange(true);
@@ -82,36 +130,5 @@ extends AbstractScatterPlotOverlay {
     m_Paintlet.setColor(m_Color);
     m_Paintlet.setPanel(m_Parent);
     m_Paintlet.calculate();
-  }
-
-  public void defineOptions() {
-    super.defineOptions();
-    //Whether indicator should be displayed
-    m_OptionManager.add(
-	"indicator", "indicator", true);
-  }
-
-  /**
-   * Set whether an indicator should be displayed
-   * @param val			True if indicator displayed
-   */
-  public void setIndicator(boolean val) {
-    m_Indicator = val;
-  }
-
-  /**
-   * get whether an indicator should be displayed
-   * @return			True if indicator displayed
-   */
-  public boolean getIndicator() {
-    return m_Indicator;
-  }
-
-  /**
-   * Tip text for the indicator property
-   * @return			String describing the property
-   */
-  public String indicatorTipText() {
-    return "Display indicator lines on the axis to show what side diagonal on";
   }
 }

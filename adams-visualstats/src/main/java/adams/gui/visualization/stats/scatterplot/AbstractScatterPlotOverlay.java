@@ -34,7 +34,10 @@ import java.awt.Color;
  * @version $Revision$
  */
 public abstract class AbstractScatterPlotOverlay
-extends AbstractOptionHandler {
+  extends AbstractOptionHandler {
+
+  /** for serialization */
+  private static final long serialVersionUID = 7526127735639196077L;
 
   /** parent scatter plot to plot data on */
   protected AbstractScatterPlot m_Parent;
@@ -51,35 +54,43 @@ extends AbstractOptionHandler {
   /**Color of the overlay */
   protected Color m_Color;
 
-  /** for serialization */
-  private static final long serialVersionUID = 7526127735639196077L;
-
-  /**Returns a string to display info on the overlay */
-  public String name() {
-    return this.toString();
-  }
-
+  /**
+   * Adds options to the internal list of options.
+   */
   public void defineOptions() {
     super.defineOptions();
-    //thickness of overlay line
+
     m_OptionManager.add(
-	"line-thickness", "thickness",
-	2.0f, 1.0f, 5.0f);
-    //color of overlay line
+      "line-thickness", "thickness",
+      getDefaultThickness(), 0.0f, null);
+
     m_OptionManager.add(
-	"color", "color", Color.BLUE);
+      "color", "color",
+      getDefaultColor());
   }
 
   /**
-   * Set the thickness of the overlay
-   * @param val			Thickness in pixels
+   * Returns the default thickness.
+   *
+   * @return		the default
    */
-  public void setThickness(float val) {
-    m_Thickness = val;
+  protected float getDefaultThickness() {
+    return 5.0f;
   }
 
   /**
-   * Get the thickness of the overlay
+   * Set the thickness of the overlay.
+   *
+   * @param value			Thickness in pixels
+   */
+  public void setThickness(float value) {
+    m_Thickness = value;
+    reset();
+  }
+
+  /**
+   * Get the thickness of the overlay.
+   *
    * @return			Thickness in pixels
    */
   public float getThickness() {
@@ -87,28 +98,70 @@ extends AbstractOptionHandler {
   }
 
   /**
-   * Return a tip text for the thickness property
+   * Return a tip text for the thickness property.
+   *
    * @return		Tip text string
    */
   public String thicknessTipText() {
     return "Thickness of the overlay line";
   }
 
-  /**set up the overlay and it's paintlet*/
+  /**
+   * Returns the default color.
+   *
+   * @return		the default
+   */
+  protected Color getDefaultColor() {
+    return Color.BLUE;
+  }
+
+  /**
+   * Set the color for this overlay.
+   *
+   * @param value			Color of overlay
+   */
+  public void setColor(Color value) {
+    m_Color = value;
+    if (m_Paintlet != null)
+      m_Paintlet.setColor(value);
+    reset();
+  }
+
+  /**
+   * Get the color for this overlay.
+   *
+   * @return		Color used for overlay
+   */
+  public Color getColor() {
+    return m_Color;
+  }
+
+  /**
+   * Tip text for the color property
+   * @return			String describing the property
+   */
+  public String colorTipText() {
+    return "Color of the overlay line";
+  }
+
+  /**
+   * set up the overlay and its paintlet.
+   */
   public abstract void setUp();
 
   /**
-   * Return the scatter plot parent the overlay is being drawn on
+   * Return the scatter plot parent the overlay is being drawn on.
+   *
    * @return		scatter plot
    */
-  protected AbstractScatterPlot getParent()
-  {
+  protected AbstractScatterPlot getParent() {
     return m_Parent;
   }
 
-  /**Set the scatterplot that this overlay is being drawn on */
-  public void setParent(AbstractScatterPlot val)
-  {
+  /**
+   * Set the scatterplot that this overlay is being drawn on.
+   */
+  public void setParent(AbstractScatterPlot val) {
     m_Parent = val;
   }
 
@@ -124,9 +177,15 @@ extends AbstractOptionHandler {
    * Get the paintlet that is doing the drawing
    * @return		paintlet doing the drawing
    */
-  public AbstractOverlayPaintlet getPaintlet()
-  {
+  public AbstractOverlayPaintlet getPaintlet() {
     return m_Paintlet;
+  }
+
+  /**
+   * Returns a string to display info on the overlay
+   */
+  public String name() {
+    return toString();
   }
 
   /**
@@ -145,32 +204,5 @@ extends AbstractOptionHandler {
    */
   public AbstractScatterPlotOverlay shallowCopy(boolean expand) {
     return (AbstractScatterPlotOverlay) OptionUtils.shallowCopy(this, expand);
-  }
-
-  /**
-   * Set the color for this overlay
-   * @param val			Color of overlay
-   */
-  public void setColor(Color val) {
-    m_Color = val;
-    if(m_Paintlet != null)
-      m_Paintlet.setColor(val);
-    reset();
-  }
-
-  /**
-   * Get the color for this overlay
-   * @return		Color used for overlay
-   */
-  public Color getColor() {
-    return m_Color;
-  }
-
-  /**
-   * Tip text for the color property
-   * @return			String describing the property
-   */
-  public String colorTipText() {
-    return "Color of the overlay line";
   }
 }

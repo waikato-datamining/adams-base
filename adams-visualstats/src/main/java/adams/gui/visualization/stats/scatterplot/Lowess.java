@@ -89,6 +89,11 @@ implements TechnicalInformationHandler{
   /** Size of window for calculating lowess */
   protected int m_WindowSize;
 
+  /**
+   * Returns a string describing the object.
+   *
+   * @return 			a description suitable for displaying in the gui
+   */
   @Override
   public String globalInfo() {
     return
@@ -96,6 +101,65 @@ implements TechnicalInformationHandler{
     + getTechnicalInformation().toString();
   }
 
+  /**
+   * Returns an instance of a TechnicalInformation object, containing
+   * detailed information about the technical background of this class,
+   * e.g., paper reference or book this class is based on.
+   *
+   * @return the technical information about this class
+   */
+  public TechnicalInformation getTechnicalInformation() {
+    TechnicalInformation result;
+    result = new TechnicalInformation(Type.MISC);
+    result.setValue(Field.AUTHOR, "WikiPedia");
+    result.setValue(Field.TITLE, "Local Regression");
+    result.setValue(Field.URL, "http://en.wikipedia.org/wiki/Lowess");
+    return result;
+  }
+
+  /**
+   * Adds options to the internal list of options.
+   */
+  @Override
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+      "window-size", "windowSize",
+      120, LOWESS.MIN_WINDOW_SIZE, null);
+  }
+
+  /**
+   * Set the size of the data window for the lowess fitting.
+   *
+   * @param value		Size of data window
+   */
+  public void setWindowSize(int value) {
+    m_WindowSize = value;
+    reset();
+  }
+
+  /**
+   * get the size of the data window.
+   *
+   * @return		size of the data window
+   */
+  public int getWindowSize() {
+    return m_WindowSize;
+  }
+
+  /**
+   * Returns a tip text for the data window size property.
+   *
+   * @return		String explaining the property
+   */
+  public String windowSizeTipText() {
+    return "Set the size of the data window for lowess fitting";
+  }
+
+  /**
+   * set up the overlay and its paintlet.
+   */
   @Override
   public void setUp() {
     m_Paintlet = new LowessPaintlet();
@@ -106,47 +170,5 @@ implements TechnicalInformationHandler{
     m_Paintlet.setColor(m_Color);
     m_Paintlet.setPanel(m_Parent);
     m_Paintlet.calculate();
-  }
-
-  @Override
-  public void defineOptions() {
-    super.defineOptions();
-    //Choose the size of the window of data points
-    m_OptionManager.add(
-	"window-size", "windowSize",
-	120, LOWESS.MIN_WINDOW_SIZE, null);
-  }
-
-  /**
-   * Set the size of the data window for the lowess fitting
-   * @param val		Size of data window
-   */
-  public void setWindowSize(int val) {
-    m_WindowSize = val;
-  }
-
-  /**
-   * get the size of the data window
-   * @return		size of the data window
-   */
-  public int getWindowSize() {
-    return m_WindowSize;
-  }
-
-  /**
-   * Returns a tip text for the data window size property
-   * @return		String explaining the property
-   */
-  public String windowSizeTipText() {
-    return "Set the size of the data window for lowess fitting";
-  }
-
-  public TechnicalInformation getTechnicalInformation() {
-    TechnicalInformation result;
-    result = new TechnicalInformation(Type.MISC);
-    result.setValue(Field.AUTHOR, "WikiPedia");
-    result.setValue(Field.TITLE, "Local Regression");
-    result.setValue(Field.URL, "http://en.wikipedia.org/wiki/Lowess");
-    return result;
   }
 }
