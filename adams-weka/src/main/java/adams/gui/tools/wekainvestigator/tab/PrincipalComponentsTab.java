@@ -249,7 +249,7 @@ public class PrincipalComponentsTab
    * @return		the icon name, null if not available
    */
   public String getTabIcon() {
-    return "pca.png";
+    return "scatterplot.gif";
   }
 
   /**
