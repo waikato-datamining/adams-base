@@ -19,10 +19,10 @@
  */
 package weka.filters.unsupervised.attribute;
 
-import java.util.ArrayList;
-
 import adams.core.License;
 import adams.core.annotation.ThirdPartyCopyright;
+
+import java.util.ArrayList;
 
 /**
  * Class that is identical to the Principal components class except it contains a public method to get the coefficients
@@ -48,13 +48,13 @@ public class PublicPrincipalComponents
    * @return		2D array containing the coefficients
    */
   public ArrayList<ArrayList<Double>> getCoefficients() {
-    ArrayList<ArrayList<Double>> toReturn = new ArrayList<ArrayList<Double>>();
-
-    double 		cumulative;
-    int 		i;
-    int 		j;
-    double 		coeff_value;
-    int			numAttsLowerBound;
+    ArrayList<ArrayList<Double>> 	result;
+    ArrayList<Double> 			onePC;
+    double 				cumulative;
+    int 				i;
+    int 				j;
+    double 				coeff_value;
+    int					numAttsLowerBound;
 
     if (m_Eigenvalues == null)
       return null;
@@ -68,24 +68,24 @@ public class PublicPrincipalComponents
       numAttsLowerBound = 0;
 
     //all the coefficients for a single principal component
-    ArrayList<Double> onePC;
+    result     = new ArrayList<>();
     cumulative = 0.0;
     //loop through each principle component
     for (i = m_NumAttribs - 1; i >= numAttsLowerBound; i--) {
-      onePC = new ArrayList<Double>();
+      onePC = new ArrayList<>();
 
-      for(j = 0; j < m_NumAttribs; j++) {	 
+      for (j = 0; j < m_NumAttribs; j++) {
 	coeff_value = m_Eigenvectors[j][m_SortedEigens[i]];
 	onePC.add(coeff_value);
       }
 
-      toReturn.add(onePC);
+      result.add(onePC);
       cumulative += m_Eigenvalues[m_SortedEigens[i]];
 
       if ((cumulative / m_SumOfEigenValues) >= m_CoverVariance)
 	break;
     }
 
-    return toReturn;
+    return result;
   }
 }
