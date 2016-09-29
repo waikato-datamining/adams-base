@@ -208,8 +208,8 @@ public class PrincipalComponentsTab
     m_PanelRight.add(m_TabbedPanePlots, BorderLayout.CENTER);
 
     m_PanelLoadings = new ScatterPlot();
-    m_PanelLoadings.setXRegExp(new BaseRegExp("Loadings-1"));
-    m_PanelLoadings.setYRegExp(new BaseRegExp("Loadings-2"));
+    m_PanelLoadings.setXRegExp(new BaseRegExp("Loading-1"));
+    m_PanelLoadings.setYRegExp(new BaseRegExp("Loading-2"));
     m_PanelLoadings.setOverlays(new AbstractScatterPlotOverlay[]{
       new Coordinates()
     });
