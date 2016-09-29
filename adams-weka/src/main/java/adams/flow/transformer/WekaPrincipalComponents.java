@@ -259,7 +259,7 @@ public class WekaPrincipalComponents
     row.addCell("A").setContent("Attribute");
 
     for (i = 0; i < coeff.size(); i++)
-      row.addCell("L" + (i+1)).setContent(i+1);
+      row.addCell("L" + (i+1)).setContent("Loading-" + (i+1));
 
     //add the first column, which will be just the number of the attribute
     for (n = 0; n < m_NumAttributes; n++) {
