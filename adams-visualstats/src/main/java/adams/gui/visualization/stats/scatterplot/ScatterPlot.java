@@ -37,10 +37,8 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
@@ -70,16 +68,16 @@ public class ScatterPlot
   protected Index m_YInd;
 
   /**For choosing attribute to display on x axis */
-  protected JComboBox m_AttY;
+  protected JComboBox<String> m_AttY;
 
   /**For choosing attribute to display on y axis */
-  protected JComboBox m_AttX;
+  protected JComboBox<String> m_AttX;
 
   /**Model for the comboBox choosing the x attribute to display */
-  protected DefaultComboBoxModel m_ComboBoxX;
+  protected DefaultComboBoxModel<String> m_ModelX;
 
   /**Model for the comboBox choosing the y attribute to display */
-  protected DefaultComboBoxModel m_ComboBoxY;
+  protected DefaultComboBoxModel<String> m_ModelY;
 
   /**for displaying a genericarrayEditor for choosing overlays */
   protected GenericArrayEditorPanel m_PanelOverlay;
@@ -113,10 +111,11 @@ public class ScatterPlot
    */
   public void reset() {
     //add the attributes to combo box models
-    for(int i =0; i< m_Data.getColumnCount(); i++)
-    {
-      m_ComboBoxX.addElement(m_Data.getColumnName(i));
-      m_ComboBoxY.addElement(m_Data.getColumnName(i));
+    m_ModelX.removeAllElements();
+    m_ModelY.removeAllElements();
+    for(int i =0; i< m_Data.getColumnCount(); i++) {
+      m_ModelX.addElement(m_Data.getColumnName(i));
+      m_ModelY.addElement(m_Data.getColumnName(i));
     }
     //set the indices for attribute positions
     int temp = -1;
@@ -194,12 +193,11 @@ public class ScatterPlot
     splitPane.setResizeWeight(1.0);
     splitPane.setOneTouchExpandable(true);
     add(splitPane, BorderLayout.CENTER);
-    hold.setPreferredSize(new Dimension(600,0));
 
-    m_ComboBoxX = new DefaultComboBoxModel();
-    m_ComboBoxY = new DefaultComboBoxModel();
-    m_AttY = new JComboBox(m_ComboBoxY);
-    m_AttX = new JComboBox(m_ComboBoxX);
+    m_ModelX = new DefaultComboBoxModel<>();
+    m_ModelY = new DefaultComboBoxModel<>();
+    m_AttY = new JComboBox<>(m_ModelY);
+    m_AttX = new JComboBox<>(m_ModelX);
 
     // Create and register listeners for the JComboBox's
     AttYListener listenY = new AttYListener(this);
@@ -214,20 +212,13 @@ public class ScatterPlot
     else
       m_Def = m_Val;
     m_PanelPaintlet = new GenericObjectEditorPanel(AbstractScatterPlotPaintlet.class, m_Def, true);
-    m_PanelPaintlet.addChangeListener(new ChangeListener() {
-      public void stateChanged(ChangeEvent e) {
-	changePaintlet();
-      }
-    });
+    m_PanelPaintlet.addChangeListener((ChangeEvent e) -> changePaintlet());
 
     //Choose the overlays
     m_Array = new AbstractScatterPlotOverlay[]{};
     m_Default = new AbstractScatterPlotOverlay[]{};
     m_PanelOverlay = new GenericArrayEditorPanel(m_Default);
-    m_PanelOverlay.addChangeListener(new ChangeListener() {
-      public void stateChanged(ChangeEvent e) {
-	changeOverlay();
-      }});
+    m_PanelOverlay.addChangeListener((ChangeEvent e) -> changeOverlay());
 
     m_Plot.setBorder(BorderFactory.createLineBorder(Color.black));
 
@@ -359,9 +350,8 @@ public class ScatterPlot
 	for(int t = 0; t< data.getColumnCount(); t++)
 	{
 	  if(data.getColumnName(t).equals(chose)) {
-	    for(int i = 0; i< m_Array.length; i++) {
+	    for(int i = 0; i< m_Array.length; i++)
 	      m_Array[i].getPaintlet().setCalculated(false);
-	    }
 	    m_YIndex = t;
 	    change();
 	    break;
@@ -425,7 +415,7 @@ public class ScatterPlot
     for(int i = 0; i< m_Array.length; i++) {
       if(m_Array[i].getPaintlet() != null) {
 	m_Array[i].getPaintlet().parameters(m_Data, m_XIndex, m_YIndex);
-	if(m_Array[i].getPaintlet().getCalculated() == false)
+	if(!m_Array[i].getPaintlet().getCalculated())
 	  m_Array[i].getPaintlet().calculate();
       }
     }
