@@ -79,14 +79,20 @@ public class Export
     DataContainer 	data;
     FileContainer 	cont;
     int			retVal;
+    PlaceholderFile 	suggested;
     AbstractFileSaver 	saver;
 
     conts = getSelectedData();
     rows  = getSelectedRows();
     for (i = 0; i < conts.length; i++) {
       data = conts[i];
+      if (data instanceof FileContainer)
+	suggested = new PlaceholderFile(data.getSource());
+      else
+        suggested = new PlaceholderFile(m_FileChooser.getCurrentDirectory().getAbsolutePath() + File.separator + FileUtils.createFilename(data.getData().relationName(), "_"));
       m_FileChooser.setDialogTitle("Exporting " + (i+1) + "/" + (rows.length) + ": " + data.getData().relationName());
-      m_FileChooser.setSelectedFile(new PlaceholderFile(m_FileChooser.getCurrentDirectory().getAbsolutePath() + File.separator + FileUtils.createFilename(data.getData().relationName(), "_")));
+      m_FileChooser.setCurrentDirectory(suggested.getParentFile());
+      m_FileChooser.setSelectedFile(suggested);
       retVal = m_FileChooser.showSaveDialog(getOwner());
       if (retVal != WekaFileChooser.APPROVE_OPTION)
 	break;
