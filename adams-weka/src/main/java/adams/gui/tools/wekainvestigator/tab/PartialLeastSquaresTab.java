@@ -26,8 +26,6 @@ import adams.core.Range;
 import adams.core.base.BaseRegExp;
 import adams.data.analysis.PLS;
 import adams.data.analysis.PLS.Algorithm;
-import adams.data.spreadsheet.DefaultSpreadSheet;
-import adams.data.spreadsheet.SpreadSheet;
 import adams.data.weka.WekaAttributeRange;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.BaseTabbedPane;
@@ -331,24 +329,10 @@ public class PartialLeastSquaresTab
   public void dataChanged(WekaInvestigatorDataEvent e) {
     List<String>	datasets;
     int			index;
-    SpreadSheet		empty;
 
     datasets = generateDatasetList();
     index    = indexOfDataset((String) m_ComboBoxDatasets.getSelectedItem());
     if (hasDataChanged(datasets, m_ModelDatasets)) {
-      // loadings
-      empty = new DefaultSpreadSheet();
-      empty.getHeaderRow().addCell("L-1").setContentAsString("Loading-1");
-      empty.getHeaderRow().addCell("L-2").setContentAsString("Loading-2");
-      m_PanelLoadings.setData(empty);
-      m_PanelLoadings.reset();
-      // scores
-      empty = new DefaultSpreadSheet();
-      empty.getHeaderRow().addCell("S-1").setContentAsString("Scores 1");
-      empty.getHeaderRow().addCell("S-2").setContentAsString("Scores 2");
-      m_PanelScores.setData(empty);
-      m_PanelScores.reset();
-      // datasets
       m_ModelDatasets = new DefaultComboBoxModel<>(datasets.toArray(new String[datasets.size()]));
       m_ComboBoxDatasets.setModel(m_ModelDatasets);
       if ((index == -1) && (m_ModelDatasets.getSize() > 0))
