@@ -24,10 +24,11 @@ import adams.core.Index;
 import adams.core.Properties;
 import adams.core.Range;
 import adams.core.base.BaseRegExp;
-import adams.data.conversion.WekaInstancesToSpreadSheet;
+import adams.data.analysis.PLS;
+import adams.data.analysis.PLS.Algorithm;
 import adams.data.spreadsheet.DefaultSpreadSheet;
-import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
+import adams.data.weka.WekaAttributeRange;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.BaseTabbedPane;
 import adams.gui.core.NumberTextField;
@@ -41,11 +42,6 @@ import adams.gui.visualization.stats.scatterplot.Coordinates;
 import adams.gui.visualization.stats.scatterplot.ScatterPlot;
 import adams.gui.visualization.stats.scatterplot.action.ViewDataClickAction;
 import weka.core.Instances;
-import weka.core.SelectedTag;
-import weka.core.matrix.Matrix;
-import weka.filters.Filter;
-import weka.filters.supervised.attribute.PLSFilterWithLoadings;
-import weka.filters.unsupervised.attribute.Remove;
 
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
@@ -75,8 +71,6 @@ public class PartialLeastSquaresTab
 
   private static final long serialVersionUID = -4106630131554796889L;
 
-  public static final String[] ALGORITHMS = new String[]{"SIMPLS", "PLS1"};
-
   /** the split pane. */
   protected BaseSplitPane m_SplitPane;
 
@@ -99,7 +93,7 @@ public class PartialLeastSquaresTab
   protected JTextField m_TextAttributeRange;
 
   /** the algorithm. */
-  protected JComboBox<String> m_ComboBoxAlgorithm;
+  protected JComboBox<Algorithm> m_ComboBoxAlgorithm;
 
   /** the number of components. */
   protected NumberTextField m_TextNumComponents;
@@ -182,8 +176,8 @@ public class PartialLeastSquaresTab
     });
     m_PanelParameters.addParameter("Range", m_TextAttributeRange);
 
-    m_ComboBoxAlgorithm = new JComboBox<>(ALGORITHMS);
-    m_ComboBoxAlgorithm.setSelectedItem(props.setProperty("PartialLeastSquares.Algorithm", "SIMPLS"));
+    m_ComboBoxAlgorithm = new JComboBox<>(Algorithm.values());
+    m_ComboBoxAlgorithm.setSelectedItem(Algorithm.valueOf(props.getProperty("PartialLeastSquares.Algorithm", "SIMPLS")));
     if (m_ComboBoxAlgorithm.getSelectedIndex() == -1)
       m_ComboBoxAlgorithm.setSelectedIndex(0);
     m_ComboBoxAlgorithm.addActionListener((ActionEvent e) -> {
@@ -408,63 +402,18 @@ public class PartialLeastSquaresTab
     run = () -> {
       try {
 	DataContainer cont = getData().get(m_ComboBoxDatasets.getSelectedIndex());
-	Instances data = cont.getData();
-	Range range = new Range(m_TextAttributeRange.getText());
-	if (!range.isAllRange()) {
-	  logMessage("Filtering attribute range: " + m_TextAttributeRange.getText());
-	  range.setMax(data.numAttributes());
-	  Remove remove = new Remove();
-	  remove.setAttributeIndicesArray(range.getIntIndices());
-	  remove.setInvertSelection(true);
-	  remove.setInputFormat(data);
-	  data = Filter.useFilter(data, remove);
-	}
-	logMessage("Performing PLS...");
-	PLSFilterWithLoadings pls = new PLSFilterWithLoadings();
-	String algorithm = (String) m_ComboBoxAlgorithm.getSelectedItem();
-	switch (algorithm) {
-	  case "SIMPLS":
-	    pls.setAlgorithm(new SelectedTag(PLSFilterWithLoadings.ALGORITHM_SIMPLS, PLSFilterWithLoadings.TAGS_ALGORITHM));
-	    break;
-	  case "PLS1":
-	    pls.setAlgorithm(new SelectedTag(PLSFilterWithLoadings.ALGORITHM_PLS1, PLSFilterWithLoadings.TAGS_ALGORITHM));
-	    break;
-	  default:
-	    throw new IllegalStateException("Unhandled algorithm: " + algorithm);
-	}
+	PLS pls = new PLS();
+	pls.setAttributeRange(new WekaAttributeRange(m_TextAttributeRange.getText()));
+	pls.setAlgorithm((Algorithm) m_ComboBoxAlgorithm.getSelectedItem());
 	pls.setNumComponents(m_TextNumComponents.getValue().intValue());
-	pls.setInputFormat(data);
-	data = Filter.useFilter(data, pls);
-	WekaInstancesToSpreadSheet conv = new WekaInstancesToSpreadSheet();
-	conv.setInput(data);
-	String msg = conv.convert();
+	String msg = pls.analyze(cont.getData());
 	if (msg != null) {
-	  logError(msg, "PLS error");
+	  logError(msg, "PLS Error");
 	}
 	else {
-	  SpreadSheet transformed = (SpreadSheet) conv.getOutput();
-	  Matrix matrix = null;
-	  switch (algorithm) {
-	    case "SIMPLS":
-	      matrix = pls.getSimplsW();
-	      break;
-	    case "PLS1":
-	      matrix = pls.getPLS1P();
-	      break;
-	    default:
-	      throw new IllegalStateException("Unhandled algorithm: " + algorithm);
-	  }
-	  SpreadSheet loadings = new DefaultSpreadSheet();
-	  for (int i = 0; i < matrix.getColumnDimension(); i++)
-	    loadings.getHeaderRow().addCell("L-" + (i + 1)).setContentAsString("Loading-" + (i + 1));
-	  for (int n = 0; n < matrix.getRowDimension(); n++) {
-	    Row row = loadings.addRow();
-	    for (int i = 0; i < matrix.getColumnDimension(); i++)
-	      row.addCell("L-" + (i + 1)).setContent(matrix.get(n, i));
-	  }
-	  m_PanelLoadings.setData(loadings);
+	  m_PanelLoadings.setData(pls.getLoadings());
 	  m_PanelLoadings.reset();
-	  m_PanelScores.setData(transformed);
+	  m_PanelScores.setData(pls.getScores());
 	  m_PanelScores.reset();
 	}
       }

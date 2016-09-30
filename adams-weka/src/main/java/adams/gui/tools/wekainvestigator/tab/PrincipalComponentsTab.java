@@ -24,10 +24,10 @@ import adams.core.Index;
 import adams.core.Properties;
 import adams.core.Range;
 import adams.core.base.BaseRegExp;
+import adams.data.analysis.PCA;
 import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.SpreadSheet;
-import adams.flow.core.Token;
-import adams.flow.transformer.WekaPrincipalComponents;
+import adams.data.weka.WekaAttributeRange;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.BaseTabbedPane;
 import adams.gui.core.NumberTextField;
@@ -41,8 +41,6 @@ import adams.gui.visualization.stats.scatterplot.Coordinates;
 import adams.gui.visualization.stats.scatterplot.ScatterPlot;
 import adams.gui.visualization.stats.scatterplot.action.ViewDataClickAction;
 import weka.core.Instances;
-import weka.filters.Filter;
-import weka.filters.unsupervised.attribute.Remove;
 
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
@@ -398,40 +396,21 @@ public class PrincipalComponentsTab
     Runnable	run;
 
     run = () -> {
-      try {
-	DataContainer cont = getData().get(m_ComboBoxDatasets.getSelectedIndex());
-	Instances data = new Instances(cont.getData());
-	data.setClassIndex(-1);
-	Range range = new Range(m_TextAttributeRange.getText());
-	if (!range.isAllRange()) {
-	  logMessage("Filtering attribute range: " + m_TextAttributeRange.getText());
-	  range.setMax(data.numAttributes());
-	  Remove remove = new Remove();
-	  remove.setAttributeIndicesArray(range.getIntIndices());
-	  remove.setInvertSelection(true);
-	  remove.setInputFormat(data);
-	  data = Filter.useFilter(data, remove);
-	}
-	logMessage("Performing PCA...");
-	WekaPrincipalComponents pca = new WekaPrincipalComponents();
-	pca.setVarianceCovered(m_TextVariance.getValue().doubleValue());
-	pca.setMaximumAttributes(m_TextMaxAttributes.getValue().intValue());
-	pca.setMaximumAttributeNames(m_TextMaxAttributeNames.getValue().intValue());
-	pca.input(new Token(data));
-	String msg = pca.execute();
-	if (msg != null) {
-	  logError(msg, "PCA error");
-	}
-	else {
-	  SpreadSheet[] sheets = (SpreadSheet[]) pca.output().getPayload();
-	  m_PanelLoadings.setData(sheets[0]);
-	  m_PanelLoadings.reset();
-	  m_PanelScores.setData(sheets[1]);
-	  m_PanelScores.reset();
-	}
+      DataContainer cont = getData().get(m_ComboBoxDatasets.getSelectedIndex());
+      PCA pca = new PCA();
+      pca.setAttributeRange(new WekaAttributeRange(m_TextAttributeRange.getText()));
+      pca.setVariance(m_TextVariance.getValue().doubleValue());
+      pca.setMaxAttributes(m_TextMaxAttributes.getValue().intValue());
+      pca.setMaxAttributeNames(m_TextMaxAttributeNames.getValue().intValue());
+      String result = pca.analyze(cont.getData());
+      if (result != null) {
+	logError(result, "PCA error");
       }
-      catch (Throwable t) {
-	logError("Failed to perform PCA!", t, "PCA error");
+      else {
+	m_PanelLoadings.setData(pca.getLoadings());
+	m_PanelLoadings.reset();
+	m_PanelScores.setData(pca.getScores());
+	m_PanelScores.reset();
       }
       m_Worker = null;
       updateButtons();
