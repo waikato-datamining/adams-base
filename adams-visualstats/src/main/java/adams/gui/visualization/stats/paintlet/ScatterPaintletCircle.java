@@ -73,7 +73,8 @@ import java.awt.Graphics2D;
  * @version $Revision$
  */
 public class ScatterPaintletCircle
-extends AbstractScatterPlotPaintlet {
+  extends AbstractScatterPlotPaintlet
+  implements SizeBasedPaintlet {
 
   /** for serialization	*/
   private static final long serialVersionUID = -4535962737391965432L;
@@ -81,27 +82,36 @@ extends AbstractScatterPlotPaintlet {
   /** Whether to fill data points */
   protected boolean m_Fill;
 
+  /** the fill color. */
   protected Color m_FillColor;
 
+  /**
+   * Returns a string describing the object.
+   *
+   * @return 			a description suitable for displaying in the gui
+   */
   public String globalInfo() {
     return "Paintlet for displaying points on the scatter point as circles.";
   }
 
-
+  /**
+   * Adds options to the internal list of options.
+   */
+  @Override
   public void defineOptions() {
     super.defineOptions();
-    //size of data points
-    m_OptionManager.add(
-	"size", "size",
-	5, 1, null);
-    //Whether to fill data points
-    m_OptionManager.add(
-	"fill-point", "fillPoint", false);
 
-    //Fill color for data point
     m_OptionManager.add(
-	"fill-color", "fillColor", Color.RED);
+      "size", "size",
+      5, 1, null);
 
+    m_OptionManager.add(
+      "fill-point", "fillPoint",
+      false);
+
+    m_OptionManager.add(
+      "fill-color", "fillColor",
+      Color.RED);
   }
 
   /**
@@ -110,6 +120,7 @@ extends AbstractScatterPlotPaintlet {
    */
   public void setFillColor(Color val) {
     m_FillColor = val;
+    memberChanged();
   }
 
   /**
@@ -176,11 +187,24 @@ extends AbstractScatterPlotPaintlet {
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-
   public String sizeTipText() {
     return "The size of each data point.";
   }
 
+  /**
+   * Returns a new instance of the hit detector to use.
+   *
+   * @return		the hit detector
+   */
+  @Override
+  public AbstractScatterPlotHitDetector newHitDetector() {
+    return new ScatterPlotCircleHitDetector(this);
+  }
+
+  /**
+   * draws the data on the graphics object
+   * @param g		Graphics object to draw on
+   */
   protected void drawData(Graphics g) {
     super.drawData(g);
     int posX;
@@ -192,10 +216,10 @@ extends AbstractScatterPlotPaintlet {
       //plot the points
       Graphics2D g2d = (Graphics2D)g;
       //if fill the data points
-      if(m_Fill) {
-	g2d.setColor(m_FillColor);
-	g2d.setStroke(new BasicStroke(0));
-	g2d.fillOval(posX-(int)(.5*m_Size), posY-(int)(.5*m_Size), m_Size, m_Size);
+      if (m_Fill) {
+        g2d.setColor(m_FillColor);
+        g2d.setStroke(new BasicStroke(0));
+        g2d.fillOval(posX-(int)(.5*m_Size), posY-(int)(.5*m_Size), m_Size, m_Size);
       }
       //outline of data point
       g2d.setStroke(new BasicStroke(m_StrokeThickness));

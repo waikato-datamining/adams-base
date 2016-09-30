@@ -50,12 +50,12 @@ extends AbstractScatterPlot{
       m_Plot.setX(m_XIndex);
       m_Plot.setY(m_YIndex);
       //set the data for the paintlet
-      if(m_Val != null) {
-	m_Val.setRepaintOnChange(false);
-	m_Val.setX_Index(m_XIndex);
-	m_Val.setY_Index(m_YIndex);
-	m_Val.setData(m_Data);
-	m_Val.setRepaintOnChange(true);
+      if(m_Paintlet != null) {
+	m_Paintlet.setRepaintOnChange(false);
+	m_Paintlet.setXIndex(m_XIndex);
+	m_Paintlet.setYIndex(m_YIndex);
+	m_Paintlet.setData(m_Data);
+	m_Paintlet.setRepaintOnChange(true);
       }
     }
   }

@@ -23,6 +23,10 @@ adams.flow.sink.controlchartplot.AbstractControlChartPaintlet=\
 adams.gui.visualization.stats.scatterplot.AbstractScatterPlotOverlay =\
   adams.gui.visualization.stats.scatterplot
 
+# the mouse click actions for the scatter plot
+adams.gui.visualization.stats.scatterplot.action.MouseClickAction=\
+  adams.gui.visualization.stats.scatterplot.action
+
 adams.gui.visualization.stats.paintlet.AbstractScatterPlotPaintlet =\
   adams.gui.visualization.stats.paintlet
 

@@ -27,6 +27,7 @@ import adams.gui.core.GUIHelper;
 import adams.gui.event.PaintEvent.PaintMoment;
 import adams.gui.visualization.core.AxisPanel;
 import adams.gui.visualization.core.plot.Axis;
+import adams.gui.visualization.core.plot.HitDetectorSupporter;
 
 import java.awt.Graphics;
 
@@ -38,7 +39,7 @@ import java.awt.Graphics;
  */
 public abstract class AbstractScatterPlotPaintlet
   extends AbstractColorPaintlet
-  implements AntiAliasingSupporter {
+  implements AntiAliasingSupporter, HitDetectorSupporter<AbstractScatterPlotHitDetector> {
 
   /** for serialization */
   private static final long serialVersionUID = 7191423312364530577L;
@@ -67,6 +68,9 @@ public abstract class AbstractScatterPlotPaintlet
   /** whether anti-aliasing is enabled. */
   protected boolean m_AntiAliasingEnabled;
 
+  /** the hit detector to use. */
+  protected AbstractScatterPlotHitDetector m_HitDetector;
+
   /**
    * Adds options to the internal list of options.
    */
@@ -75,8 +79,8 @@ public abstract class AbstractScatterPlotPaintlet
     super.defineOptions();
 
     m_OptionManager.add(
-	    "anti-aliasing-enabled", "antiAliasingEnabled",
-	    GUIHelper.getBoolean(getClass(), "antiAliasingEnabled", true));
+      "anti-aliasing-enabled", "antiAliasingEnabled",
+      GUIHelper.getBoolean(getClass(), "antiAliasingEnabled", true));
   }
 
   /**
@@ -86,8 +90,9 @@ public abstract class AbstractScatterPlotPaintlet
   protected void initialize() {
     super.initialize();
 
-    m_XIndex = 0;
-    m_YIndex = 0;
+    m_XIndex      = 0;
+    m_YIndex      = 0;
+    m_HitDetector = newHitDetector();
   }
 
   /**
@@ -167,34 +172,51 @@ public abstract class AbstractScatterPlotPaintlet
    * get index of chosen attribute for x axis
    * @return		chosen index
    */
-  public int getX_Index()
-  {
+  public int getXIndex() {
     return m_XIndex;
   }
+
   /**
    * Set the index of attribute for x axis
    * @param val		Index to set
    */
-  public void setX_Index(int val)
-  {
+  public void setXIndex(int val) {
     m_XIndex = val;
     memberChanged();
   }
+
   /**
    * Get index of chosen attribute for y axis
    * @return		chosen index
    */
-  public int getY_Index()
-  {
+  public int getYIndex() {
     return m_YIndex;
   }
+
   /**
    * Set the index of attribute for y axis
    * @param val		Index to set
    */
-  public void setY_Index(int val)
-  {
+  public void setYIndex(int val) {
     m_YIndex = val;
     memberChanged();
+  }
+
+  /**
+   * Returns a new instance of the hit detector to use.
+   *
+   * @return		the hit detector
+   */
+  public AbstractScatterPlotHitDetector newHitDetector() {
+    return null;
+  }
+
+  /**
+   * Returns the hit detector to use for this paintlet.
+   *
+   * @return		the detector
+   */
+  public AbstractScatterPlotHitDetector getHitDetector() {
+    return m_HitDetector;
   }
 }

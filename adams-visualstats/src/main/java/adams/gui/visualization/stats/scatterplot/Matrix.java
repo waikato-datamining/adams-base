@@ -255,8 +255,8 @@ extends BasePanel{
       m_ScatterPlots.get(j).setPaintlet(temp);
       temp.setPanel(m_ScatterPlots.get(j));
       //set the indices of each paintlet i.e. what attributes
-      temp.setX_Index(m_ScatterPlots.get(j).m_XIndex);
-      temp.setY_Index(m_ScatterPlots.get(j).m_YIndex);
+      temp.setXIndex(m_ScatterPlots.get(j).m_XIndex);
+      temp.setYIndex(m_ScatterPlots.get(j).m_YIndex);
       temp.setData(m_Data);
     }
     repaint();

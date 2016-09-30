@@ -31,6 +31,7 @@ import adams.gui.visualization.core.PlotPanel;
 import adams.gui.visualization.stats.core.IndexSet;
 import adams.gui.visualization.stats.paintlet.AbstractScatterPlotPaintlet;
 import adams.gui.visualization.stats.paintlet.ScatterPaintletCircle;
+import adams.gui.visualization.stats.scatterplot.action.MouseClickAction;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
@@ -41,6 +42,8 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 /**
  * create a paintable panel displaying a scatter plot
@@ -86,11 +89,17 @@ public class ScatterPlot
   protected GenericObjectEditorPanel m_PanelPaintlet;
 
   /**default object for the GAE */
-  protected AbstractScatterPlotOverlay[] m_Default;
+  protected AbstractScatterPlotOverlay[] m_DefaultOverlays;
 
   /**default paintlet for GOEpanel */
-  protected AbstractScatterPlotPaintlet m_Def;
+  protected AbstractScatterPlotPaintlet m_DefaultPaintlet;
 
+  /** the mouse click action. */
+  protected MouseClickAction m_MouseClickAction;
+
+  /**
+   * Initializes the members.
+   */
   protected void initialize() {
     super.initialize();
     m_XIndex = 0;
@@ -136,10 +145,10 @@ public class ScatterPlot
 
     m_AttY.setSelectedIndex(m_YIndex);
     m_AttX.setSelectedIndex(m_XIndex);
-    if(m_Array == null)
-      m_Array = new AbstractScatterPlotOverlay[]{};
-    m_Val.setPanel(this);
-    m_Val.setData(m_Data);
+    if(m_Overlays == null)
+      m_Overlays = new AbstractScatterPlotOverlay[]{};
+    m_Paintlet.setPanel(this);
+    m_Paintlet.setData(m_Data);
     change();
   }
 
@@ -149,12 +158,12 @@ public class ScatterPlot
   private void changeOverlay() {
     removeOverlays();
     int len = ((AbstractScatterPlotOverlay[]) m_PanelOverlay.getCurrent()).length;
-    m_Array = new AbstractScatterPlotOverlay[len];
+    m_Overlays = new AbstractScatterPlotOverlay[len];
     for(int i = 0; i < len; i++) {
-      m_Array[i] = ((AbstractScatterPlotOverlay[]) m_PanelOverlay.getCurrent())[i].shallowCopy(true);
+      m_Overlays[i] = ((AbstractScatterPlotOverlay[]) m_PanelOverlay.getCurrent())[i].shallowCopy(true);
     }
-    for(int i = 0; i< m_Array.length; i++) {
-      AbstractScatterPlotOverlay temp = m_Array[i];
+    for(int i = 0; i< m_Overlays.length; i++) {
+      AbstractScatterPlotOverlay temp = m_Overlays[i];
       temp.inst(m_Data);
       temp.setParent(this);
       temp.setUp();
@@ -166,12 +175,12 @@ public class ScatterPlot
    * Called when the paintlet used has been changed
    */
   private void changePaintlet() {
-    removePaintlet(m_Val);
-    m_Val = (AbstractScatterPlotPaintlet)m_PanelPaintlet.getCurrent();
-    m_Val.setPanel(this);
-    m_Val.setY_Index(m_YIndex);
-    m_Val.setX_Index(m_XIndex);
-    m_Val.setData(m_Data);
+    removePaintlet(m_Paintlet);
+    m_Paintlet = (AbstractScatterPlotPaintlet)m_PanelPaintlet.getCurrent();
+    m_Paintlet.setPanel(this);
+    m_Paintlet.setYIndex(m_YIndex);
+    m_Paintlet.setXIndex(m_XIndex);
+    m_Paintlet.setData(m_Data);
     change();
   }
 
@@ -193,6 +202,15 @@ public class ScatterPlot
 
     m_Plot = new ScatterPlotPanel();
     m_Plot.addPaintListener(this);
+    m_Plot.setTipTextCustomizer(this);
+    m_Plot.setBorder(BorderFactory.createLineBorder(Color.black));
+    m_Plot.addMouseClickListener(new MouseAdapter() {
+      @Override
+      public void mouseClicked(MouseEvent e) {
+	if (m_MouseClickAction != null)
+	  m_MouseClickAction.mouseClickOccurred(ScatterPlot.this, e);
+      }
+    });
     panel = new JPanel(new BorderLayout());
     panel.add(m_Plot, BorderLayout.CENTER);
     splitPane.setBottomComponent(panel);
@@ -208,22 +226,20 @@ public class ScatterPlot
     AttXListener listenX = new AttXListener(this);
     m_AttX.addItemListener(listenX);
 
-    if(m_Val == null) {
-      m_Def = new ScatterPaintletCircle();
-      m_Val = new ScatterPaintletCircle();
+    if(m_Paintlet == null) {
+      m_DefaultPaintlet = new ScatterPaintletCircle();
+      m_Paintlet = new ScatterPaintletCircle();
     }
     else
-      m_Def = m_Val;
-    m_PanelPaintlet = new GenericObjectEditorPanel(AbstractScatterPlotPaintlet.class, m_Def, true);
+      m_DefaultPaintlet = m_Paintlet;
+    m_PanelPaintlet = new GenericObjectEditorPanel(AbstractScatterPlotPaintlet.class, m_DefaultPaintlet, true);
     m_PanelPaintlet.addChangeListener((ChangeEvent e) -> changePaintlet());
 
     //Choose the overlays
-    m_Array = new AbstractScatterPlotOverlay[]{};
-    m_Default = new AbstractScatterPlotOverlay[]{};
-    m_PanelOverlay = new GenericArrayEditorPanel(m_Default);
+    m_Overlays = new AbstractScatterPlotOverlay[]{};
+    m_DefaultOverlays = new AbstractScatterPlotOverlay[]{};
+    m_PanelOverlay = new GenericArrayEditorPanel(m_DefaultOverlays);
     m_PanelOverlay.addChangeListener((ChangeEvent e) -> changeOverlay());
-
-    m_Plot.setBorder(BorderFactory.createLineBorder(Color.black));
 
     optionPanel.addParameter("Y attribute", m_AttY);
     optionPanel.addParameter("X attribute", m_AttX);
@@ -315,7 +331,7 @@ public class ScatterPlot
    * @return		Array containing overlays to apply to the scatter plot
    */
   public AbstractScatterPlotOverlay[] getOverlays() {
-    return m_Array;
+    return m_Overlays;
   }
 
   /**
@@ -323,7 +339,7 @@ public class ScatterPlot
    * @return		Paintlet used
    */
   public AbstractScatterPlotPaintlet getPaintlet() {
-    return m_Val;
+    return m_Paintlet;
   }
 
   /**
@@ -353,8 +369,8 @@ public class ScatterPlot
 	for(int t = 0; t< data.getColumnCount(); t++)
 	{
 	  if(data.getColumnName(t).equals(chose)) {
-	    for(int i = 0; i< m_Array.length; i++)
-	      m_Array[i].getPaintlet().setCalculated(false);
+	    for(int i = 0; i< m_Overlays.length; i++)
+	      m_Overlays[i].getPaintlet().setCalculated(false);
 	    m_YIndex = t;
 	    change();
 	    break;
@@ -384,8 +400,8 @@ public class ScatterPlot
 	for(int t = 0; t< data.getColumnCount(); t++)
 	{
 	  if(data.getColumnName(t).equals(chose)) {
-	    for(int i = 0; i< m_Array.length; i++) {
-	      m_Array[i].getPaintlet().setCalculated(false);
+	    for(int i = 0; i< m_Overlays.length; i++) {
+	      m_Overlays[i].getPaintlet().setCalculated(false);
 	    }
 	    m_XIndex = t;
 	    change();
@@ -405,9 +421,9 @@ public class ScatterPlot
     m_Plot.setX(m_XIndex);
     m_Plot.setY(m_YIndex);
     m_Plot.reset();
-    m_Val.setX_Index(m_XIndex);
-    m_Val.setY_Index(m_YIndex);
-    m_Val.setData(m_Data);
+    m_Paintlet.setXIndex(m_XIndex);
+    m_Paintlet.setYIndex(m_YIndex);
+    m_Paintlet.setData(m_Data);
     update();
   }
 
@@ -415,12 +431,30 @@ public class ScatterPlot
    * Updates the overlays, calculates each
    */
   public void prepareUpdate() {
-    for(int i = 0; i< m_Array.length; i++) {
-      if(m_Array[i].getPaintlet() != null) {
-	m_Array[i].getPaintlet().parameters(m_Data, m_XIndex, m_YIndex);
-	if(!m_Array[i].getPaintlet().getCalculated())
-	  m_Array[i].getPaintlet().calculate();
+    for(int i = 0; i< m_Overlays.length; i++) {
+      if(m_Overlays[i].getPaintlet() != null) {
+	m_Overlays[i].getPaintlet().parameters(m_Data, m_XIndex, m_YIndex);
+	if(!m_Overlays[i].getPaintlet().getCalculated())
+	  m_Overlays[i].getPaintlet().calculate();
       }
     }
+  }
+
+  /**
+   * Sets the mouse click action to use.
+   *
+   * @param value	the action
+   */
+  public void setMouseClickAction(MouseClickAction value) {
+    m_MouseClickAction = value;
+  }
+
+  /**
+   * Returns the mouse click action in use.
+   *
+   * @return		the action, null if non set
+   */
+  public MouseClickAction getMouseClickAction() {
+    return m_MouseClickAction;
   }
 }

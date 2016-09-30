@@ -23,9 +23,15 @@ package adams.gui.visualization.stats.scatterplot;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.gui.visualization.core.PaintablePanel;
 import adams.gui.visualization.core.PlotPanel;
+import adams.gui.visualization.core.plot.AbstractHitDetector;
+import adams.gui.visualization.core.plot.HitDetectorSupporter;
+import adams.gui.visualization.core.plot.TipTextCustomizer;
 import adams.gui.visualization.stats.paintlet.AbstractScatterPlotPaintlet;
 
 import java.awt.Graphics;
+import java.awt.Point;
+import java.awt.event.MouseEvent;
+import java.util.Date;
 
 /**
  * Abstract class for displaying a single scatterplotpanel on a paintable panel.
@@ -34,7 +40,8 @@ import java.awt.Graphics;
  * @version $Revision$
  */
 public abstract class AbstractScatterPlot
-extends PaintablePanel{
+  extends PaintablePanel
+  implements TipTextCustomizer {
 
   /** for serialization */
   private static final long serialVersionUID = -3526702766287841051L;
@@ -52,10 +59,10 @@ extends PaintablePanel{
   protected  int m_YIndex = 0;
 
   /**Paintlet to display the data points on the scatter plot */
-  protected AbstractScatterPlotPaintlet m_Val;
+  protected AbstractScatterPlotPaintlet m_Paintlet;
 
   /** Array of overlay options */
-  protected AbstractScatterPlotOverlay[] m_Array;
+  protected AbstractScatterPlotOverlay[] m_Overlays;
 
   public PlotPanel getPlot() {
     return m_Plot;
@@ -66,8 +73,8 @@ extends PaintablePanel{
    * @param val			Paintlet for plotting
    */
   public void setPaintlet(AbstractScatterPlotPaintlet val) {
-    removePaintlet(m_Val);
-    m_Val = val;
+    removePaintlet(m_Paintlet);
+    m_Paintlet = val;
   }
 
   protected boolean canPaint(Graphics g) {
@@ -114,14 +121,13 @@ extends PaintablePanel{
    * do the drawing as well as resetting the array
    */
   public void removeOverlays() {
-    if(m_Array != null) {
-      for(int i = 0; i< m_Array.length; i++) {
-	removePaintlet(m_Array[i].getPaintlet());
+    if(m_Overlays != null) {
+      for(int i = 0; i< m_Overlays.length; i++) {
+	removePaintlet(m_Overlays[i].getPaintlet());
       }
-      m_Array = null;
+      m_Overlays = null;
     }
   }
-
 
   /**
    * Set the index of the attribute to be displayed on
@@ -141,5 +147,45 @@ extends PaintablePanel{
   public void setY(int y) {
     m_YIndex = y;
     update();
+  }
+
+  /**
+   * Processes the given tip text. Among the current mouse position, the
+   * panel that initiated the call are also provided.
+   *
+   * @param panel	the content panel that initiated this call
+   * @param mouse	the mouse position
+   * @param tiptext	the tiptext so far
+   * @return		the processed tiptext
+   */
+  public String processTipText(PlotPanel panel, Point mouse, String tiptext) {
+    String			result;
+    MouseEvent 			event;
+    String			hit;
+    AbstractHitDetector 	detector;
+
+    result = tiptext;
+    event  = new MouseEvent(
+      getPlot().getContent(),
+      MouseEvent.MOUSE_MOVED,
+      new Date().getTime(),
+      0,
+      (int) mouse.getX(),
+      (int) mouse.getY(),
+      0,
+      false);
+
+    detector = ((HitDetectorSupporter) m_Paintlet).getHitDetector();
+    if (detector != null) {
+      hit = (String) detector.detect(event);
+      if (hit != null) {
+	if (result == null)
+	  result = hit;
+	else
+	  result = " (" + hit + ")";
+      }
+    }
+
+    return result;
   }
 }
