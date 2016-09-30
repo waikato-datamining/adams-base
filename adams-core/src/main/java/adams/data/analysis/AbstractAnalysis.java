@@ -22,7 +22,6 @@ package adams.data.analysis;
 
 import adams.core.Utils;
 import adams.core.option.AbstractOptionHandler;
-import weka.core.Instances;
 
 /**
  * Ancestor for data analysis classes.
@@ -30,7 +29,7 @@ import weka.core.Instances;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public abstract class AbstractAnalysis
+public abstract class AbstractAnalysis<T>
   extends AbstractOptionHandler {
 
   private static final long serialVersionUID = -5262468901500523353L;
@@ -40,7 +39,7 @@ public abstract class AbstractAnalysis
    *
    * @param data	the data to check
    */
-  protected void check(Instances data) {
+  protected void check(T data) {
     if (data == null)
       throw new IllegalStateException("No data provided!");
   }
@@ -52,7 +51,7 @@ public abstract class AbstractAnalysis
    * @return		null if successful, otherwise error message
    * @throws Exception	if analysis fails
    */
-  protected abstract String doAnalyze(Instances data) throws Exception;
+  protected abstract String doAnalyze(T data) throws Exception;
 
   /**
    * Performs the data analysis.
@@ -60,7 +59,7 @@ public abstract class AbstractAnalysis
    * @param data	the data to analyze
    * @return		null if successful, otherwise error message
    */
-  public String analyze(Instances data) {
+  public String analyze(T data) {
     check(data);
     try {
       return doAnalyze(data);

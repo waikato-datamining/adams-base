@@ -24,7 +24,7 @@ import adams.core.Index;
 import adams.core.Properties;
 import adams.core.Range;
 import adams.core.base.BaseRegExp;
-import adams.data.analysis.PCA;
+import adams.data.instancesanalysis.PCA;
 import adams.data.weka.WekaAttributeRange;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.BaseTabbedPane;

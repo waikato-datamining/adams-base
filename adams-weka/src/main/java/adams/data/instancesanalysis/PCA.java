@@ -18,7 +18,7 @@
  * Copyright (C) 2016 University of Waikato, Hamilton, NZ
  */
 
-package adams.data.analysis;
+package adams.data.instancesanalysis;
 
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.weka.WekaAttributeRange;
@@ -35,7 +35,7 @@ import weka.filters.unsupervised.attribute.Remove;
  * @version $Revision$
  */
 public class PCA
-  extends AbstractAnalysis {
+  extends AbstractInstancesAnalysis {
 
   private static final long serialVersionUID = 7150143741822676345L;
 

@@ -18,7 +18,7 @@
  * Copyright (C) 2016 University of Waikato, Hamilton, NZ
  */
 
-package adams.data.analysis;
+package adams.data.instancesanalysis;
 
 import adams.data.conversion.WekaInstancesToSpreadSheet;
 import adams.data.spreadsheet.DefaultSpreadSheet;
@@ -38,7 +38,7 @@ import weka.filters.supervised.attribute.PLSFilterWithLoadings;
  * @version $Revision$
  */
 public class PLS
-  extends AbstractAnalysis {
+  extends AbstractInstancesAnalysis {
 
   private static final long serialVersionUID = 7150143741822676345L;
 
