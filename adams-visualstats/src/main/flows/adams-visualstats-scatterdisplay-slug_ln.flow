@@ -1,8 +1,8 @@
 # Project: adams
-# Date: 2016-05-04 16:34:33
+# Date: 2016-09-30 13:16:04
 # User: fracpete
 # Charset: UTF-8
 adams.flow.control.Flow -annotation "Lods the predictions from a cross-validated LinearRegression on the \\\"slug\\\" (log-transformed)\\ndataset and displays the class (actual vs predicted) as scatter plot." -flow-execution-listener adams.flow.execution.NullListener
  adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/slug-ln_pred.csv
  adams.flow.transformer.SpreadSheetFileReader -reader "adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.DefaultSpreadSheet"
- adams.flow.sink.ScatterDisplay -writer adams.gui.print.NullWriter -y-attribute 2 -overlay "adams.gui.visualization.stats.scatterplot.Diagonal -color #ff0000" -overlay adams.gui.visualization.stats.scatterplot.Lowess -paintlet adams.gui.visualization.stats.paintlet.ScatterPaintletCircle
+ adams.flow.sink.ScatterDisplay -writer adams.gui.print.NullWriter -y-attribute 2 -overlay "adams.gui.visualization.stats.scatterplot.Diagonal -color #ff0000" -overlay adams.gui.visualization.stats.scatterplot.Lowess -paintlet adams.gui.visualization.stats.paintlet.ScatterPaintletCircle -mouse-click-action "adams.gui.visualization.stats.scatterplot.action.ViewDataClickAction -hit-detector adams.gui.visualization.stats.paintlet.ScatterPlotCircleHitDetector"
