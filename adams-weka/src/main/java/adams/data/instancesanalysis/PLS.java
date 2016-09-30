@@ -234,6 +234,9 @@ public class PLS
     m_Loadings = null;
     m_Scores   = null;
 
+    data = new Instances(data);
+    data.deleteWithMissingClass();
+
     pls = new PLSFilterWithLoadings();
     switch (m_Algorithm) {
       case SIMPLS:
