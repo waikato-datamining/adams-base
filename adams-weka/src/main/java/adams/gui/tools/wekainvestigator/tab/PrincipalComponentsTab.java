@@ -39,6 +39,7 @@ import adams.gui.tools.wekainvestigator.data.DataContainer;
 import adams.gui.visualization.stats.scatterplot.AbstractScatterPlotOverlay;
 import adams.gui.visualization.stats.scatterplot.Coordinates;
 import adams.gui.visualization.stats.scatterplot.ScatterPlot;
+import adams.gui.visualization.stats.scatterplot.action.ViewDataClickAction;
 import weka.core.Instances;
 import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.Remove;
@@ -210,6 +211,7 @@ public class PrincipalComponentsTab
     m_PanelLoadings = new ScatterPlot();
     m_PanelLoadings.setXRegExp(new BaseRegExp("Loading-1"));
     m_PanelLoadings.setYRegExp(new BaseRegExp("Loading-2"));
+    m_PanelLoadings.setMouseClickAction(new ViewDataClickAction());
     m_PanelLoadings.setOverlays(new AbstractScatterPlotOverlay[]{
       new Coordinates()
     });
@@ -218,6 +220,7 @@ public class PrincipalComponentsTab
     m_PanelScores = new ScatterPlot();
     m_PanelScores.setXIndex(new Index("1"));
     m_PanelScores.setYIndex(new Index("2"));
+    m_PanelScores.setMouseClickAction(new ViewDataClickAction());
     m_PanelScores.setOverlays(new AbstractScatterPlotOverlay[]{
       new Coordinates()
     });
