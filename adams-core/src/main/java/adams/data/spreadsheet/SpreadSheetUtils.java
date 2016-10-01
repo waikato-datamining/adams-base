@@ -24,7 +24,10 @@ import gnu.trove.list.array.TDoubleArrayList;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Helper class for spreadsheet related functionality.
@@ -323,5 +326,43 @@ public class SpreadSheetUtils {
     }
 
     return result.toArray();
+  }
+
+  /**
+   * Returns the content of a column as array.
+   *
+   * @param sheet	the sheet to use
+   * @param col		the index of the column
+   * @param unique	whether to return only unique values
+   * @param sort	whether to sort the values
+   * @return		the data, elements are NaN if missing (if not looking for unique values)
+   */
+  public static String[] getColumn(SpreadSheet sheet, int col, boolean unique, boolean sort) {
+    List<String> 	result;
+    Set<String> 	uniqueItems;
+
+    result = new ArrayList<>();
+
+    if (unique) {
+      uniqueItems = new HashSet<>();
+      for (Row row : sheet.rows()) {
+	if (row.hasCell(col) && !row.getCell(col).isMissing())
+	  uniqueItems.add(row.getCell(col).getContent());
+      }
+      result.addAll(uniqueItems);
+    }
+    else {
+      for (Row row : sheet.rows()) {
+	if (row.hasCell(col) && !row.getCell(col).isMissing())
+	  result.add(row.getCell(col).getContent());
+	else
+	  result.add("" + Double.NaN);
+      }
+    }
+
+    if (sort)
+      Collections.sort(result);
+
+    return result.toArray(new String[result.size()]);
   }
 }

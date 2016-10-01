@@ -15,25 +15,25 @@
 
 /*
  * SpreadSheetInfo.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
+
+import adams.core.Index;
+import adams.core.QuickInfoHelper;
+import adams.data.spreadsheet.Cell;
+import adams.data.spreadsheet.Cell.ContentType;
+import adams.data.spreadsheet.SpreadSheet;
+import adams.data.spreadsheet.SpreadSheetColumnIndex;
+import adams.data.spreadsheet.SpreadSheetUtils;
+import adams.flow.core.DataInfoActor;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-
-import adams.core.Index;
-import adams.core.QuickInfoHelper;
-import adams.data.spreadsheet.Cell;
-import adams.data.spreadsheet.Cell.ContentType;
-import adams.data.spreadsheet.Row;
-import adams.data.spreadsheet.SpreadSheet;
-import adams.data.spreadsheet.SpreadSheetColumnIndex;
-import adams.flow.core.DataInfoActor;
 
 /**
  <!-- globalinfo-start -->
@@ -447,16 +447,8 @@ public class SpreadSheetInfo
 	
       case CELL_VALUES:
 	index = m_ColumnIndex.getIntIndex();
-	if (index != -1) {
-	  unique = new HashSet<String>();
-	  for (Row row: sheet.rows()) {
-	    if (row.hasCell(index) && !row.getCell(index).isMissing())
-	      unique.add(row.getCell(index).getContent());
-	  }
-	  m_Queue.addAll(unique);
-	  if (m_Sort)
-	    Collections.sort(m_Queue);
-	}
+	if (index != -1)
+          m_Queue.addAll(Arrays.asList(SpreadSheetUtils.getColumn(sheet, index, true, m_Sort)));
 	break;
 
       default:
