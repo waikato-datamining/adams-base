@@ -15,24 +15,10 @@
 
 /*
  * PlotPanel.java
- * Copyright (C) 2008-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.core;
-
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Vector;
-
-import javax.swing.JComponent;
-import javax.swing.JPanel;
 
 import adams.gui.event.PaintEvent;
 import adams.gui.event.PaintEvent.PaintMoment;
@@ -48,6 +34,21 @@ import adams.gui.visualization.core.plot.AbstractHitDetector;
 import adams.gui.visualization.core.plot.Axis;
 import adams.gui.visualization.core.plot.ContentPanel;
 import adams.gui.visualization.core.plot.TipTextCustomizer;
+
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 /**
  * A panel that contains a drawing (= content) area with (usually) two axes.
@@ -93,16 +94,16 @@ public class PlotPanel
   protected JPanel m_CornerBottomRight;
 
   /** the paint listeners. */
-  protected HashSet<PaintListener> m_PaintListeners;
+  protected Set<PaintListener> m_PaintListeners;
 
   /** the mouse click listeners. */
-  protected HashSet<MouseListener> m_MouseClickListeners;
+  protected Set<MouseListener> m_MouseClickListeners;
 
   /** the vector with the axes that make up the values in the tooltip. */
-  protected Vector<Axis> m_ToolTipAxes;
+  protected List<Axis> m_ToolTipAxes;
 
   /** whether debug mode is on. */
-  protected boolean m_Debug;
+  protected Boolean m_Debug;
 
   /** the color for the grid. */
   protected Color m_GridColor;
@@ -127,17 +128,22 @@ public class PlotPanel
    */
   public PlotPanel(boolean debug) {
     super();
+    m_Debug = debug;
+    initialize();
+    initGUI();
+  }
 
-    m_Debug               = debug;
+  /**
+   * Initializes the members.
+   */
+  protected void initialize() {
     m_AxisWidth           = 40;
-    m_PaintListeners      = new HashSet<PaintListener>();
-    m_MouseClickListeners = new HashSet<MouseListener>();
-    m_ToolTipAxes         = new Vector<Axis>();
+    m_PaintListeners      = new HashSet<>();
+    m_MouseClickListeners = new HashSet<>();
+    m_ToolTipAxes         = new ArrayList<>();
     m_GridColor           = new Color(235, 235, 235);
     m_BackgroundColor     = Color.WHITE;
     m_ForegroundColor     = Color.BLACK;
-
-    initGUI();
   }
 
   /**
@@ -191,6 +197,9 @@ public class PlotPanel
      *      _________
      *     |____B____|
      */
+
+    if (m_Debug == null)
+      return;
 
     setLayout(new BorderLayout());
 
@@ -670,11 +679,9 @@ public class PlotPanel
   }
 
   /**
-   * Notifies all paint listeners.
+   * Notifies all mouse click listeners.
    *
-   * @param g		the graphics context of the paint update
-   * @param moment	the paint moment, indicating which paintlets are to
-   * 			be executed
+   * @param e		the event
    */
   public void notifyMouseClickListeners(MouseEvent e) {
     Iterator<MouseListener>	iter;
