@@ -133,6 +133,12 @@ import java.awt.BorderLayout;
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
+ * <pre>-color-attribute-name &lt;adams.core.base.BaseRegExp&gt; (property: colorAttributeName)
+ * &nbsp;&nbsp;&nbsp;Attribute for the colors using regular expression used if set,otherwise 
+ * &nbsp;&nbsp;&nbsp;the index is used
+ * &nbsp;&nbsp;&nbsp;default: 
+ * </pre>
+ * 
  * <pre>-x-attribute &lt;java.lang.String&gt; (property: xAttribute)
  * &nbsp;&nbsp;&nbsp;Index of attribute to display on x axis, used onlyif regular expression 
  * &nbsp;&nbsp;&nbsp;not set
@@ -145,6 +151,12 @@ import java.awt.BorderLayout;
  * &nbsp;&nbsp;&nbsp;default: 1
  * </pre>
  * 
+ * <pre>-color-attribute &lt;java.lang.String&gt; (property: colorAttribute)
+ * &nbsp;&nbsp;&nbsp;index of optional attribute to use for coloring, used only ifregular expression 
+ * &nbsp;&nbsp;&nbsp;not set, ignored if empty
+ * &nbsp;&nbsp;&nbsp;default: 
+ * </pre>
+ * 
  * <pre>-overlay &lt;adams.gui.visualization.stats.scatterplot.AbstractScatterPlotOverlay&gt; [-overlay ...] (property: overlays)
  * &nbsp;&nbsp;&nbsp;add overlays to the scatterplot
  * &nbsp;&nbsp;&nbsp;default: 
@@ -152,7 +164,7 @@ import java.awt.BorderLayout;
  * 
  * <pre>-paintlet &lt;adams.gui.visualization.stats.paintlet.AbstractScatterPlotPaintlet&gt; (property: paintlet)
  * &nbsp;&nbsp;&nbsp;Paintlet for plotting data
- * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.stats.paintlet.ScatterPaintletCircle
+ * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.stats.paintlet.ScatterPaintletCircle -color-provider adams.gui.visualization.core.DefaultColorProvider
  * </pre>
  * 
  * <pre>-mouse-click-action &lt;adams.gui.visualization.stats.scatterplot.action.MouseClickAction&gt; (property: mouseClickAction)
@@ -179,11 +191,17 @@ public class ScatterDisplay
   /**String for setting y attribute using regular expression */
   protected BaseRegExp m_YAttributeName;
 
+  /**String for setting color attribute using regular expression */
+  protected BaseRegExp m_ColorAttributeName;
+
   /** the 0-based index of the X attribute. */
   protected String m_XAttribute;
 
-  /** the 0-based index of the Y attribute. */
+  /** the 1-based index of the Y attribute. */
   protected String m_YAttribute;
+
+  /** the 1-based index of the color attribute. */
+  protected String m_ColorAttribute;
 
   /** scatter panel to display using the actor */
   protected ScatterPlot m_ScatterPlot;
@@ -223,12 +241,20 @@ public class ScatterDisplay
       new BaseRegExp(""));
 
     m_OptionManager.add(
+      "color-attribute-name", "colorAttributeName",
+      new BaseRegExp(""));
+
+    m_OptionManager.add(
       "x-attribute", "xAttribute",
       "1");
 
     m_OptionManager.add(
       "y-attribute", "yAttribute",
       "1");
+
+    m_OptionManager.add(
+      "color-attribute", "colorAttribute",
+      "");
 
     m_OptionManager.add(
       "overlay", "overlays",
@@ -365,6 +391,34 @@ public class ScatterDisplay
   }
 
   /**
+   * Set the color attribute on the scatter plot using a regular expression.
+   *
+   * @param val		regular expression for color attribute
+   */
+  public void setColorAttributeName(BaseRegExp val) {
+    m_ColorAttributeName = val;
+    reset();
+  }
+  /**
+   * Returns the attribute to be uses for determining the colors.
+   *
+   * @return		regular expression for choosing attribute
+   */
+  public BaseRegExp getColorAttributeName() {
+    return m_ColorAttributeName;
+  }
+
+  /**
+   * Tip text to display for y attribute regular expression.
+   *
+   * @return		String to display
+   */
+  public String colorAttributeNameTipText() {
+    return "Attribute for the colors using regular expression used if set," +
+      "otherwise the index is used";
+  }
+
+  /**
    * Sets the index of the attribute to display on x axis
    * @param val		1-based index of attribute for x axis
    */
@@ -416,6 +470,34 @@ public class ScatterDisplay
   public String yAttributeTipText() {
     return "index of attribute to display on y axis, used only if" +
       "regular expression not set";
+  }
+
+  /**
+   * Set the attribute to use for coloring the plot (optional).
+   *
+   * @param val		1-based index of attribute
+   */
+  public void setColorAttribute(String val) {
+    m_ColorAttribute = val;
+    reset();
+  }
+
+  /**
+   * Get the index of the attribute displayed on the y axis
+   * @return		The 1-based index of the attribute on the y axis
+   */
+  public String getColorAttribute() {
+    return m_ColorAttribute;
+  }
+
+  /**
+   * Returns the tip text setting the color attribute using an index.
+   *
+   * @return         1-based index for attribute
+   */
+  public String colorAttributeTipText() {
+    return "index of optional attribute to use for coloring, used only if" +
+      "regular expression not set, ignored if empty";
   }
 
   /**
@@ -488,7 +570,9 @@ public class ScatterDisplay
     m_ScatterPlot.setXRegExp(m_XAttributeName);
     m_ScatterPlot.setXIndex(new Index(m_XAttribute));
     m_ScatterPlot.setYRegExp(m_YAttributeName);
+    m_ScatterPlot.setColorRegExp(m_ColorAttributeName);
     m_ScatterPlot.setYIndex(new Index(m_YAttribute));
+    m_ScatterPlot.setColorIndex(new Index(m_ColorAttribute));
     m_ScatterPlot.setData((SpreadSheet) token.getPayload());
     m_ScatterPlot.setOverlays(m_Overlays);
     m_ScatterPlot.setPaintlet(m_Paintlet);
@@ -508,33 +592,35 @@ public class ScatterDisplay
 
     result = new AbstractComponentDisplayPanel("Histogram") {
       private static final long serialVersionUID = 4360182045245637304L;
-      protected ScatterPlot m_ScatPlot;
+      protected ScatterPlot m_ScatterPlot;
       @Override
       protected void initGUI() {
 	super.initGUI();
-	m_ScatPlot = new ScatterPlot();
-	add(m_ScatPlot, BorderLayout.CENTER);
+	m_ScatterPlot = new ScatterPlot();
+	add(m_ScatterPlot, BorderLayout.CENTER);
       }
       @Override
       public void display(Token token) {
-	m_ScatPlot.setXRegExp(m_XAttributeName);
-	m_ScatPlot.setXIndex(new Index(m_XAttribute));
-	m_ScatPlot.setYRegExp(m_YAttributeName);
-	m_ScatPlot.setYIndex(new Index(m_YAttribute));
-	m_ScatPlot.setData((SpreadSheet) token.getPayload());
-	m_ScatPlot.setOverlays(m_Overlays);
-	m_ScatPlot.setPaintlet(m_Paintlet);
-        m_ScatPlot.setMouseClickAction((MouseClickAction) OptionUtils.shallowCopy(m_MouseClickAction));
-	m_ScatPlot.reset();
+	m_ScatterPlot.setXRegExp(m_XAttributeName);
+	m_ScatterPlot.setXIndex(new Index(m_XAttribute));
+	m_ScatterPlot.setYRegExp(m_YAttributeName);
+	m_ScatterPlot.setColorRegExp(m_ColorAttributeName);
+	m_ScatterPlot.setYIndex(new Index(m_YAttribute));
+	m_ScatterPlot.setColorIndex(new Index(m_ColorAttribute));
+	m_ScatterPlot.setData((SpreadSheet) token.getPayload());
+	m_ScatterPlot.setOverlays(m_Overlays);
+	m_ScatterPlot.setPaintlet(m_Paintlet);
+        m_ScatterPlot.setMouseClickAction((MouseClickAction) OptionUtils.shallowCopy(m_MouseClickAction));
+	m_ScatterPlot.reset();
       }
       @Override
       public void clearPanel() {
 	SpreadSheet temp = new DefaultSpreadSheet();
-	m_ScatPlot.setData(temp);
+	m_ScatterPlot.setData(temp);
       }
       @Override
       public JComponent supplyComponent() {
-	return m_ScatPlot;
+	return m_ScatterPlot;
       }
       @Override
       public void cleanUp() {
