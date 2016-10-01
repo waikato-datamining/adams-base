@@ -300,7 +300,7 @@ public class InvestigatorPanel
 	  menuitem.addActionListener((ActionEvent e) -> {
 	    try {
 	      AbstractInvestigatorTab tabNew = (AbstractInvestigatorTab) cls.newInstance();
-	      m_TabbedPane.addTab(tabNew);
+	      m_TabbedPane.addTab(tabNew, true);
 	    }
 	    catch (Exception ex) {
 	      ConsolePanel.getSingleton().append("Failed to instantiate tab class: " + cls.getName(), ex);

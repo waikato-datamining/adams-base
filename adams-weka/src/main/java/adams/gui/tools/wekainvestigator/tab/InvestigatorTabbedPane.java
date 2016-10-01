@@ -72,6 +72,16 @@ public class InvestigatorTabbedPane
    * @param tab		the tab to add
    */
   public void addTab(final AbstractInvestigatorTab tab) {
+    addTab(tab, false);
+  }
+
+  /**
+   * Adds the tab.
+   *
+   * @param tab		the tab to add
+   * @param show	whether to make this tab visible
+   */
+  public void addTab(final AbstractInvestigatorTab tab, boolean show) {
     final ButtonTabComponent	button;
 
     tab.setOwner(getOwner());
@@ -81,6 +91,9 @@ public class InvestigatorTabbedPane
     // icon
     button = (ButtonTabComponent) getTabComponentAt(getTabCount() - 1);
     button.setIcon((tab.getTabIcon() == null) ? null : GUIHelper.getIcon(tab.getTabIcon()));
+
+    if (show)
+      setSelectedIndex(getTabCount() - 1);
   }
 
   /**
