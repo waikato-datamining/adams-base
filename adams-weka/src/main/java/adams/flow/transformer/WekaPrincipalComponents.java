@@ -390,6 +390,7 @@ public class WekaPrincipalComponents
       else
 	m_Supported.add(i);
     }
+    input.setClassIndex(-1);
 
     m_NumAttributes = m_Supported.size();
 
@@ -416,12 +417,12 @@ public class WekaPrincipalComponents
       rangeSupported.setIndices(m_Supported.toArray());
       part = new PartitionedMultiFilter();
       part.setFilters(new Filter[]{
+	pca,
 	new AllFilter(),
-	pca
       });
       part.setRanges(new weka.core.Range[]{
-	new weka.core.Range(rangeUnsupported.getRange()),
 	new weka.core.Range(rangeSupported.getRange()),
+	new weka.core.Range(rangeUnsupported.getRange()),
       });
     }
     try {
