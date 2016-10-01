@@ -20,13 +20,24 @@
 
 package adams.data.instancesanalysis;
 
+import adams.core.Range;
+import adams.core.Utils;
+import adams.data.conversion.WekaInstancesToSpreadSheet;
+import adams.data.spreadsheet.DefaultSpreadSheet;
+import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.weka.WekaAttributeRange;
-import adams.flow.core.Token;
-import adams.flow.transformer.WekaPrincipalComponents;
+import gnu.trove.list.TIntList;
+import gnu.trove.list.array.TIntArrayList;
+import weka.core.Capabilities;
 import weka.core.Instances;
+import weka.filters.AllFilter;
 import weka.filters.Filter;
+import weka.filters.unsupervised.attribute.PartitionedMultiFilter;
+import weka.filters.unsupervised.attribute.PublicPrincipalComponents;
 import weka.filters.unsupervised.attribute.Remove;
+
+import java.util.ArrayList;
 
 /**
  * Performs principal components analysis and allows access to loadings and scores.
@@ -56,6 +67,18 @@ public class PCA
 
   /** the scores. */
   protected SpreadSheet m_Scores;
+
+  /** the supported attributes. */
+  protected TIntList m_Supported;
+
+  /** the unsupported attributes. */
+  protected TIntList m_Unsupported;
+
+  /** the indices of the kept attributes. */
+  protected ArrayList<Integer> m_Kept;
+
+  /** the number of attributes in the data (excl class). */
+  protected int m_NumAttributes;
 
   /**
    * Returns a string describing the object.
@@ -98,8 +121,12 @@ public class PCA
   protected void reset() {
     super.reset();
 
-    m_Loadings = null;
-    m_Scores   = null;
+    m_Loadings      = null;
+    m_Scores        = null;
+    m_Supported     = null;
+    m_Unsupported   = null;
+    m_Kept          = null;
+    m_NumAttributes = 0;
   }
 
   /**
@@ -239,6 +266,60 @@ public class PCA
   }
 
   /**
+   * Create a spreadsheet to output from the coefficients 2D array
+   *
+   * @param data	the underlying dataset
+   * @param coeff 	The coefficients from the principal components analysis
+   * @return		A spreadsheet containing the components
+   */
+  protected SpreadSheet createSpreadSheet(Instances data, ArrayList<ArrayList<Double>> coeff) {
+    SpreadSheet result;
+    Row row;
+    int		i;
+    int		n;
+
+    result = new DefaultSpreadSheet();
+    row = result.getHeaderRow();
+    row.addCell("I").setContent("Index");
+    row.addCell("A").setContent("Attribute");
+
+    for (i = 0; i < coeff.size(); i++)
+      row.addCell("L" + (i+1)).setContent("Loading-" + (i+1));
+
+    //add the first column, which will be just the number of the attribute
+    for (n = 0; n < m_NumAttributes; n++) {
+      row = result.addRow();
+      row.addCell("I").setContent(n+1);
+      row.addCell("A").setContent(data.attribute(n).name());
+    }
+
+    //each arraylist is a single column
+    for (i = 0; i< coeff.size() ; i++) {
+      for (n = 0; n < m_NumAttributes; n++) {
+	row = result.getRow(n);
+
+	//attribute was kept earlier
+	if (m_Kept.contains(n)) {
+	  int index = m_Kept.indexOf(n);
+	  if (index < coeff.get(i).size()) {
+	    double value = coeff.get(i).get(index);
+	    row.addCell("L" + (i + 1)).setContent(value);
+	  }
+	  else {
+	    row.addCell("L" + (i+1)).setContent(0);
+	  }
+	}
+	//attribute wasn't kept, coefficient is 0
+	else {
+	  row.addCell("L" + (i+1)).setContent(0);
+	}
+      }
+    }
+
+    return result;
+  }
+
+  /**
    * Performs the actual analysis.
    *
    * @param data	the data to analyze
@@ -247,11 +328,19 @@ public class PCA
    */
   @Override
   protected String doAnalyze(Instances data) throws Exception {
-    String			result;
-    Remove 			remove;
-    WekaPrincipalComponents 	pca;
-    String 			msg;
-    SpreadSheet[] 		sheets;
+    String				result;
+    Remove 				remove;
+    PublicPrincipalComponents 		pca;
+    int					i;
+    Capabilities 			caps;
+    PartitionedMultiFilter 		part;
+    Range 				rangeUnsupported;
+    Range 				rangeSupported;
+    ArrayList<ArrayList<Double>> 	coeff;
+    Instances				filtered;
+    SpreadSheet				transformed;
+    WekaInstancesToSpreadSheet 		conv;
+    String				colName;
 
     result     = null;
     m_Loadings = null;
@@ -268,19 +357,98 @@ public class PCA
     }
     if (isLoggingEnabled())
       getLogger().info("Performing PCA...");
-    pca = new WekaPrincipalComponents();
-    pca.setVarianceCovered(m_Variance);
-    pca.setMaximumAttributes(m_MaxAttributes);
-    pca.setMaximumAttributeNames(m_MaxAttributeNames);
-    pca.input(new Token(data));
-    msg = pca.execute();
-    if (msg != null) {
-      result = "PCA error: " + msg;
+
+    // check for unsupported attributes
+    caps        = new PublicPrincipalComponents().getCapabilities();
+    m_Supported = new TIntArrayList();
+    m_Unsupported = new TIntArrayList();
+    for (i = 0; i < data.numAttributes(); i++) {
+      if (!caps.test(data.attribute(i)) || (i == data.classIndex()))
+	m_Unsupported.add(i);
+      else
+	m_Supported.add(i);
     }
-    else {
-      sheets     = (SpreadSheet[]) pca.output().getPayload();
-      m_Loadings = sheets[0];
-      m_Scores   = sheets[1];
+    data.setClassIndex(-1);
+
+    m_NumAttributes = m_Supported.size();
+
+    // the principal components will delete the attributes without any distinct values.
+    // this checks which instances will be kept.
+    m_Kept = new ArrayList<>();
+    for (i = 0; i < m_Supported.size(); i++) {
+      if (data.numDistinctValues(m_Supported.get(i)) > 1)
+	m_Kept.add(m_Supported.get(i));
+    }
+
+    // build a model using the PublicPrincipalComponents
+    pca = new PublicPrincipalComponents();
+    pca.setMaximumAttributes(m_MaxAttributes);
+    pca.setVarianceCovered(m_Variance);
+    pca.setMaximumAttributeNames(m_MaxAttributeNames);
+    part = null;
+    if (m_Unsupported.size() > 0) {
+      rangeUnsupported = new Range();
+      rangeUnsupported.setMax(data.numAttributes());
+      rangeUnsupported.setIndices(m_Unsupported.toArray());
+      rangeSupported = new Range();
+      rangeSupported.setMax(data.numAttributes());
+      rangeSupported.setIndices(m_Supported.toArray());
+      part = new PartitionedMultiFilter();
+      part.setFilters(new Filter[]{
+	pca,
+	new AllFilter(),
+      });
+      part.setRanges(new weka.core.Range[]{
+	new weka.core.Range(rangeSupported.getRange()),
+	new weka.core.Range(rangeUnsupported.getRange()),
+      });
+    }
+    try {
+      if (part != null)
+	part.setInputFormat(data);
+      else
+	pca.setInputFormat(data);
+    }
+    catch(Exception e) {
+      result = Utils.handleException(this, "Failed to set data format", e);
+    }
+
+    transformed = null;
+    if (result == null) {
+      try {
+	if (part != null)
+	  filtered = weka.filters.Filter.useFilter(data, part);
+	else
+	  filtered = weka.filters.Filter.useFilter(data, pca);
+      }
+      catch (Exception e) {
+	result   = Utils.handleException(this, "Failed to apply filter", e);
+	filtered = null;
+      }
+      if (filtered != null) {
+	conv = new WekaInstancesToSpreadSheet();
+	conv.setInput(filtered);
+	result = conv.convert();
+	if (result == null) {
+	  transformed = (SpreadSheet) conv.getOutput();
+	  // shorten column names again
+	  if (part != null) {
+	    for (i = 0; i < transformed.getColumnCount(); i++) {
+	      colName = transformed.getColumnName(i);
+	      colName = colName.replaceFirst("filtered-[0-9]*-", "");
+	      transformed.getHeaderRow().getCell(i).setContentAsString(colName);
+	    }
+	  }
+	}
+      }
+    }
+
+    if (result == null) {
+      // get the coefficients from the filter
+      m_Scores   = transformed;
+      coeff      = pca.getCoefficients();
+      m_Loadings = createSpreadSheet(data, coeff);
+      m_Loadings.setName("Loadings for " + data.relationName());
     }
 
     return result;

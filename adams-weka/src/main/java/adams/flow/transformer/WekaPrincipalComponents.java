@@ -22,23 +22,11 @@ package adams.flow.transformer;
 
 import adams.core.License;
 import adams.core.QuickInfoHelper;
-import adams.core.Range;
 import adams.core.annotation.MixedCopyright;
-import adams.data.conversion.WekaInstancesToSpreadSheet;
-import adams.data.spreadsheet.DefaultSpreadSheet;
-import adams.data.spreadsheet.Row;
+import adams.data.instancesanalysis.PCA;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.core.Token;
-import gnu.trove.list.TIntList;
-import gnu.trove.list.array.TIntArrayList;
-import weka.core.Capabilities;
 import weka.core.Instances;
-import weka.filters.AllFilter;
-import weka.filters.Filter;
-import weka.filters.unsupervised.attribute.PartitionedMultiFilter;
-import weka.filters.unsupervised.attribute.PublicPrincipalComponents;
-
-import java.util.ArrayList;
 
 /**
  <!-- globalinfo-start -->
@@ -135,18 +123,6 @@ public class WekaPrincipalComponents
 
   /** the maximum number of attribute names to use. */
   protected int m_MaxAttributeNames;
-
-  /** the supported attributes. */
-  protected TIntList m_Supported;
-
-  /** the unsupported attributes. */
-  protected TIntList m_Unsupported;
-
-  /** the indices of the kept attributes. */
-  protected ArrayList<Integer> m_Kept;
-
-  /** the number of attributes in the data (excl class). */
-  protected int m_NumAttributes;
 
   /**
    * Returns a string describing the object.
@@ -302,178 +278,25 @@ public class WekaPrincipalComponents
   }
 
   /**
-   * Create a spreadsheet to output from the coefficients 2D array
-   *
-   * @param input	the underlying dataset
-   * @param coeff 	The coefficients from the principal components analysis
-   * @return		A spreadsheet containing the components
-   */
-  protected SpreadSheet createSpreadSheet(Instances input, ArrayList<ArrayList<Double>> coeff) {
-    SpreadSheet result;
-    Row 	row;
-    int		i;
-    int		n;
-
-    result = new DefaultSpreadSheet();
-    row = result.getHeaderRow();
-    row.addCell("I").setContent("Index");
-    row.addCell("A").setContent("Attribute");
-
-    for (i = 0; i < coeff.size(); i++)
-      row.addCell("L" + (i+1)).setContent("Loading-" + (i+1));
-
-    //add the first column, which will be just the number of the attribute
-    for (n = 0; n < m_NumAttributes; n++) {
-      row = result.addRow();
-      row.addCell("I").setContent(n+1);
-      row.addCell("A").setContent(input.attribute(n).name());
-    }
-
-    //each arraylist is a single column
-    for (i = 0; i< coeff.size() ; i++) {
-      for (n = 0; n < m_NumAttributes; n++) {
-	row = result.getRow(n);
-
-	//attribute was kept earlier
-	if (m_Kept.contains(n)) {
-	  int index = m_Kept.indexOf(n);
-	  if (index < coeff.get(i).size()) {
-	    double value = coeff.get(i).get(index);
-	    row.addCell("L" + (i + 1)).setContent(value);
-	  }
-	  else {
-	    row.addCell("L" + (i+1)).setContent(0);
-	  }
-	}
-	//attribute wasn't kept, coefficient is 0
-	else {
-	  row.addCell("L" + (i+1)).setContent(0);
-	}
-      }
-    }
-
-    return result;
-  }
-
-  /**
    * Executes the flow item.
    *
    * @return		null if everything is fine, otherwise error message
    */
   @Override
   protected String doExecute()  {
-    String 				result;
-    Instances 				input;
-    int					i;
-    Capabilities 			caps;
-    PublicPrincipalComponents 		pca;
-    PartitionedMultiFilter		part;
-    Range 				rangeUnsupported;
-    Range 				rangeSupported;
-    ArrayList<ArrayList<Double>> 	coeff;
-    SpreadSheet 			loadings;
-    Instances				filtered;
-    SpreadSheet				transformed;
-    WekaInstancesToSpreadSheet		conv;
-    String				colName;
+    String 	result;
+    Instances 	input;
+    PCA		pca;
 
-    result = null;
     input = (Instances) m_InputToken.getPayload();
+    pca   = new PCA();
+    pca.setVariance(m_CoverVariance);
+    pca.setMaxAttributes(m_MaxAttributes);
+    pca.setMaxAttributeNames(m_MaxAttributeNames);
+    result = pca.analyze(input);
 
-    // check for unsupported attributes
-    caps        = new PublicPrincipalComponents().getCapabilities();
-    m_Supported = new TIntArrayList();
-    m_Unsupported = new TIntArrayList();
-    for (i = 0; i < input.numAttributes(); i++) {
-      if (!caps.test(input.attribute(i)) || (i == input.classIndex()))
-	m_Unsupported.add(i);
-      else
-	m_Supported.add(i);
-    }
-    input.setClassIndex(-1);
-
-    m_NumAttributes = m_Supported.size();
-
-    // the principal components will delete the attributes without any distinct values.
-    // this checks which instances will be kept.
-    m_Kept = new ArrayList<>();
-    for (i = 0; i < m_Supported.size(); i++) {
-      if (input.numDistinctValues(m_Supported.get(i)) > 1)
-	m_Kept.add(m_Supported.get(i));
-    }
-
-    // build a model using the PublicPrincipalComponents
-    pca = new PublicPrincipalComponents();
-    pca.setMaximumAttributes(m_MaxAttributes);
-    pca.setVarianceCovered(m_CoverVariance);
-    pca.setMaximumAttributeNames(m_MaxAttributeNames);
-    part = null;
-    if (m_Unsupported.size() > 0) {
-      rangeUnsupported = new Range();
-      rangeUnsupported.setMax(input.numAttributes());
-      rangeUnsupported.setIndices(m_Unsupported.toArray());
-      rangeSupported = new Range();
-      rangeSupported.setMax(input.numAttributes());
-      rangeSupported.setIndices(m_Supported.toArray());
-      part = new PartitionedMultiFilter();
-      part.setFilters(new Filter[]{
-	pca,
-	new AllFilter(),
-      });
-      part.setRanges(new weka.core.Range[]{
-	new weka.core.Range(rangeSupported.getRange()),
-	new weka.core.Range(rangeUnsupported.getRange()),
-      });
-    }
-    try {
-      if (part != null)
-	part.setInputFormat(input);
-      else
-	pca.setInputFormat(input);
-    }
-    catch(Exception e) {
-      result = handleException("Failed to set input format", e);
-    }
-
-    transformed = null;
-    if (result == null) {
-      try {
-	if (part != null)
-	  filtered = weka.filters.Filter.useFilter(input, part);
-	else
-	  filtered = weka.filters.Filter.useFilter(input, pca);
-      }
-      catch (Exception e) {
-	result   = handleException("Failed to apply filter", e);
-	filtered = null;
-      }
-      if (filtered != null) {
-	conv = new WekaInstancesToSpreadSheet();
-	conv.setInput(filtered);
-	result = conv.convert();
-	if (result == null) {
-	  transformed = (SpreadSheet) conv.getOutput();
-	  // shorten column names again
-	  if (part != null) {
-	    for (i = 0; i < transformed.getColumnCount(); i++) {
-	      colName = transformed.getColumnName(i);
-	      colName = colName.replaceFirst("filtered-[0-9]*-", "");
-	      transformed.getHeaderRow().getCell(i).setContentAsString(colName);
-	    }
-	  }
-	}
-      }
-    }
-
-    if (result == null) {
-      // get the coefficients from the filter
-      coeff    = pca.getCoefficients();
-      loadings = createSpreadSheet(input, coeff);
-      loadings.setName("Loadings for " + input.relationName());
-
-      // output spreadsheets with loadings/transformed data
-      m_OutputToken = new Token(new SpreadSheet[]{loadings, transformed});
-    }
+    if (result == null)
+      m_OutputToken = new Token(new SpreadSheet[]{pca.getLoadings(), pca.getScores()});
 
     return result;
   }
