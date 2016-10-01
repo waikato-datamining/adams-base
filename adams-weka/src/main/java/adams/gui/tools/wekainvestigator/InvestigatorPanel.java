@@ -30,6 +30,7 @@ import adams.data.weka.classattribute.AbstractClassAttributeHeuristic;
 import adams.data.weka.classattribute.LastAttribute;
 import adams.env.Environment;
 import adams.env.WekaInvestigatorDefinition;
+import adams.env.WekaInvestigatorShortcutsDefinition;
 import adams.gui.action.AbstractBaseAction;
 import adams.gui.action.BaseAction;
 import adams.gui.chooser.WekaFileChooser;
@@ -85,8 +86,14 @@ public class InvestigatorPanel
   /** the name of the props file. */
   public final static String FILENAME = "WekaInvestigator.props";
 
+  /** the name of the shortcut props file. */
+  public final static String FILENAME_SHORTCUTS = "WekaInvestigatorShortcuts.props";
+
   /** the properties. */
   protected static Properties m_Properties;
+
+  /** the shortcut properties. */
+  protected static Properties m_ShortcutProperties;
 
   /** the tabbed pane for the tabs. */
   protected InvestigatorTabbedPane m_TabbedPane;
@@ -297,6 +304,9 @@ public class InvestigatorPanel
 	    menuitem.setIcon(GUIHelper.getEmptyIcon());
 	  else
 	    menuitem.setIcon(GUIHelper.getIcon(tab.getTabIcon()));
+          // shortcut?
+          if (getShortcutProperties().hasKey("Tab-" + cls.getName()))
+	    menuitem.setAccelerator(GUIHelper.getKeyStroke(getShortcutProperties().getProperty("Tab-" + cls.getName())));
 	  menuitem.addActionListener((ActionEvent e) -> {
 	    try {
 	      AbstractInvestigatorTab tabNew = (AbstractInvestigatorTab) cls.newInstance();
@@ -624,7 +634,7 @@ public class InvestigatorPanel
   }
 
   /**
-   * Returns the properties that define the editor.
+   * Returns the properties that define the investigator.
    *
    * @return		the properties
    */
@@ -633,5 +643,17 @@ public class InvestigatorPanel
       m_Properties = Environment.getInstance().read(WekaInvestigatorDefinition.KEY);
 
     return m_Properties;
+  }
+
+  /**
+   * Returns the properties that define the shortcuts.
+   *
+   * @return		the properties
+   */
+  public static synchronized Properties getShortcutProperties() {
+    if (m_ShortcutProperties == null)
+      m_ShortcutProperties = Environment.getInstance().read(WekaInvestigatorShortcutsDefinition.KEY);
+
+    return m_ShortcutProperties;
   }
 }

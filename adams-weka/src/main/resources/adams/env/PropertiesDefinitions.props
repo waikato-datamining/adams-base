@@ -6,4 +6,5 @@
 Definitions=\
   adams.env.InstanceCompareDefinition,\
   adams.env.InstanceExplorerDefinition,\
-  adams.env.WekaInvestigatorDefinition
+  adams.env.WekaInvestigatorDefinition,\
+  adams.env.WekaInvestigatorShortcutsDefinition

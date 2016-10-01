@@ -1,0 +1,17 @@
+# Shortcut configuration for the Weka Investigator.
+#
+# Author: FracPete (fracpete at waikato dot ac dot nz)
+
+# tab shortcuts
+# (format: Tab-<classname>=<shortcut>)
+Tab-adams.gui.tools.wekainvestigator.tab.AttributeSelectionTab=ctrl shift T
+Tab-adams.gui.tools.wekainvestigator.tab.BoxPlotTab=meta shift B
+Tab-adams.gui.tools.wekainvestigator.tab.ClassifyTab=meta shift C
+Tab-adams.gui.tools.wekainvestigator.tab.ClusterTab=meta shift L
+Tab-adams.gui.tools.wekainvestigator.tab.DataTab=meta shift D
+Tab-adams.gui.tools.wekainvestigator.tab.InstanceTab=meta shift I
+Tab-adams.gui.tools.wekainvestigator.tab.LogTab=meta shift O
+Tab-adams.gui.tools.wekainvestigator.tab.MatrixTab=meta shift M
+Tab-adams.gui.tools.wekainvestigator.tab.PartialLeastSquaresTab=meta shift R
+Tab-adams.gui.tools.wekainvestigator.tab.PreprocessTab=meta shift P
+Tab-adams.gui.tools.wekainvestigator.tab.PrincipalComponentsTab=meta shift N
