@@ -257,7 +257,6 @@ public class PCA
     m_Loadings = null;
     m_Scores   = null;
 
-    data.setClassIndex(-1);
     if (!m_AttributeRange.isAllRange()) {
       if (isLoggingEnabled())
 	getLogger().info("Filtering attribute range: " + m_AttributeRange.getRange());
