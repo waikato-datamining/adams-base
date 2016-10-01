@@ -86,6 +86,7 @@ public abstract class AbstractColorPaintlet
    */
   public void setData(SpreadSheet val) {
     m_Data = val;
+    reset();
   }
 
   /**

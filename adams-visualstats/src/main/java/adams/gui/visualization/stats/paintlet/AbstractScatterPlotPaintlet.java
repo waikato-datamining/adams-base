@@ -96,6 +96,17 @@ public abstract class AbstractScatterPlotPaintlet
   }
 
   /**
+   * Resets the scheme.
+   */
+  @Override
+  protected void reset() {
+    super.reset();
+
+    m_XData = null;
+    m_YData = null;
+  }
+
+  /**
    * Sets whether to use anti-aliasing.
    *
    * @param value	if true then anti-aliasing is used
@@ -160,8 +171,10 @@ public abstract class AbstractScatterPlotPaintlet
       GUIHelper.configureAntiAliasing(g, m_AntiAliasingEnabled);
 
       //arrays of data to be plotted
-      m_XData = SpreadSheetUtils.getNumericColumn(m_Data, m_XIndex);
-      m_YData = SpreadSheetUtils.getNumericColumn(m_Data, m_YIndex);
+      if (m_XData == null) {
+	m_XData = SpreadSheetUtils.getNumericColumn(m_Data, m_XIndex);
+	m_YData = SpreadSheetUtils.getNumericColumn(m_Data, m_YIndex);
+      }
 
       m_AxisBottom = getPanel().getPlot().getAxis(Axis.BOTTOM);
       m_AxisLeft = getPanel().getPlot().getAxis(Axis.LEFT);
