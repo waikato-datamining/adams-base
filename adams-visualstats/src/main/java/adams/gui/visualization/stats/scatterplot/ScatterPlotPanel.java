@@ -41,14 +41,28 @@ public class ScatterPlotPanel
   private static final long serialVersionUID = 107298737463861170L;
 
   /** Instances to be plotted */
-  private SpreadSheet m_Data;
+  protected SpreadSheet m_Data;
 
   /** index of attribute for x axis */
-  private int m_XIndex = 0;
+  protected int m_XIndex;
 
   /** index of attribute for y axis */
-  private int m_YIndex = 0;
+  protected int m_YIndex;
 
+  /**
+   * Initializes the members.
+   */
+  @Override
+  protected void initialize() {
+    super.initialize();
+
+    m_XIndex = 0;
+    m_YIndex = 0;
+  }
+
+  /**
+   * Initializes the widgets.
+   */
   @Override
   protected void initGUI() {
     super.initGUI();
@@ -81,12 +95,12 @@ public class ScatterPlotPanel
    * called by the calling class when all the fields have been set
    */
   public void reset() {
-    double[] m_DataX = SpreadSheetUtils.getNumericColumn(m_Data, m_XIndex);
-    double[] m_DataY = SpreadSheetUtils.getNumericColumn(m_Data, m_YIndex);
-    double xMin = StatUtils.min(m_DataX);
-    double xMax = StatUtils.max(m_DataX);
-    double yMin = StatUtils.min(m_DataY);
-    double yMax = StatUtils.max(m_DataY);
+    double[] dataX = SpreadSheetUtils.getNumericColumn(m_Data, m_XIndex);
+    double[] dataY = SpreadSheetUtils.getNumericColumn(m_Data, m_YIndex);
+    double xMin = StatUtils.min(dataX);
+    double xMax = StatUtils.max(dataX);
+    double yMin = StatUtils.min(dataY);
+    double yMax = StatUtils.max(dataY);
 
     m_AxisLeft.setMinimum(yMin);
     m_AxisLeft.setMaximum(yMax);

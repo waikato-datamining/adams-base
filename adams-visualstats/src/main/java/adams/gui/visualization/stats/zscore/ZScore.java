@@ -31,7 +31,7 @@ import adams.gui.visualization.core.PaintablePanel;
 import adams.gui.visualization.core.PlotPanel;
 import adams.gui.visualization.core.PopupMenuCustomizer;
 import adams.gui.visualization.core.plot.TipTextCustomizer;
-import adams.gui.visualization.stats.core.IndexSet;
+import adams.gui.visualization.stats.core.IndexHelper;
 import adams.gui.visualization.stats.paintlet.AbstractZScorePaintlet;
 import adams.gui.visualization.stats.paintlet.ZScoreCircle;
 
@@ -188,7 +188,7 @@ public class ZScore
     }
 
     int temp = -1;
-    temp = IndexSet.getIndex(m_AttReg, m_Indx, m_Data, temp);
+    temp = IndexHelper.getIndex(m_AttReg, m_Indx, m_Data, temp);
     if(temp == -1) {
       temp = 0;
       System.err.println("changed to 0");

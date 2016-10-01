@@ -15,7 +15,7 @@
 
 /*
  * ScatterPaintletCircle.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.stats.paintlet;
@@ -217,13 +217,13 @@ public class ScatterPaintletCircle
       Graphics2D g2d = (Graphics2D)g;
       //if fill the data points
       if (m_Fill) {
-        g2d.setColor(m_FillColor);
+        g2d.setColor(getActualColor(i, m_FillColor));
         g2d.setStroke(new BasicStroke(0));
         g2d.fillOval(posX-(int)(.5*m_Size), posY-(int)(.5*m_Size), m_Size, m_Size);
       }
       //outline of data point
       g2d.setStroke(new BasicStroke(m_StrokeThickness));
-      g2d.setColor(m_Color);
+      g2d.setColor(m_Fill ? m_Color : getActualColor(i, m_Color));
       g2d.drawOval(posX-(int)(.5*m_Size), posY-(int)(.5*m_Size), m_Size, m_Size);
     }
   }

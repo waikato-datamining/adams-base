@@ -32,7 +32,7 @@ import adams.gui.visualization.core.PaintablePanel;
 import adams.gui.visualization.core.PlotPanel;
 import adams.gui.visualization.core.axis.FancyTickGenerator;
 import adams.gui.visualization.core.plot.Axis;
-import adams.gui.visualization.stats.core.IndexSet;
+import adams.gui.visualization.stats.core.IndexHelper;
 import adams.gui.visualization.stats.paintlet.AbstractProbabilityPaintlet;
 import adams.gui.visualization.stats.paintlet.Normal;
 
@@ -205,7 +205,7 @@ public class ProbabilityPlot
   public void prepareUpdate() {
     if ((m_Data != null) && (m_AttReg != null) && (m_Index != null)) {
       int temp = -1;
-      temp = IndexSet.getIndex(m_AttReg, m_Index, m_Data, temp);
+      temp = IndexHelper.getIndex(m_AttReg, m_Index, m_Data, temp);
       if(temp == -1) {
 	temp = 0;
 	System.err.println("changed to 0");

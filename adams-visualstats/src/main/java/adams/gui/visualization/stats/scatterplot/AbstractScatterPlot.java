@@ -53,10 +53,10 @@ public abstract class AbstractScatterPlot
   protected SpreadSheet m_Data;
 
   /**Index of attribute to be displayed on x axis */
-  protected int m_XIndex = 0;
+  protected int m_XIntIndex;
 
   /**Index of attribute to be displayed on y axis */
-  protected  int m_YIndex = 0;
+  protected  int m_YIntIndex;
 
   /**Paintlet to display the data points on the scatter plot */
   protected AbstractScatterPlotPaintlet m_Paintlet;
@@ -64,6 +64,21 @@ public abstract class AbstractScatterPlot
   /** Array of overlay options */
   protected AbstractScatterPlotOverlay[] m_Overlays;
 
+  /**
+   * Initializes the members.
+   */
+  @Override
+  protected void initialize() {
+    super.initialize();
+    m_XIntIndex = 0;
+    m_YIntIndex = 0;
+  }
+
+  /**
+   * Returns the plot.
+   *
+   * @return		the plot
+   */
   public PlotPanel getPlot() {
     return m_Plot;
   }
@@ -78,10 +93,7 @@ public abstract class AbstractScatterPlot
   }
 
   protected boolean canPaint(Graphics g) {
-    if(m_Plot != null && m_Data != null)
-      return true;
-    else
-      return false;
+    return (m_Plot != null && m_Data != null);
   }
 
   /**
@@ -104,16 +116,16 @@ public abstract class AbstractScatterPlot
    * gets the index of the x attribute
    * @return		index of x attribute
    */
-  public int getX_Index() {
-    return m_XIndex;
+  public int getXIntIndex() {
+    return m_XIntIndex;
   }
 
   /**
    * Sets the index of the y attribute
    * @return		index of y attribute
    */
-  public int getY_Index() {
-    return m_YIndex;
+  public int getYIntIndex() {
+    return m_YIntIndex;
   }
 
   /**
@@ -122,9 +134,8 @@ public abstract class AbstractScatterPlot
    */
   public void removeOverlays() {
     if(m_Overlays != null) {
-      for(int i = 0; i< m_Overlays.length; i++) {
+      for(int i = 0; i< m_Overlays.length; i++)
 	removePaintlet(m_Overlays[i].getPaintlet());
-      }
       m_Overlays = null;
     }
   }
@@ -132,20 +143,20 @@ public abstract class AbstractScatterPlot
   /**
    * Set the index of the attribute to be displayed on
    * the x axis
-   * @param x		0-based index of attribute
+   * @param value		0-based index of attribute
    */
-  public void setX(int x) {
-    m_XIndex = x;
+  public void setXIntIndex(int value) {
+    m_XIntIndex = value;
     update();
   }
 
   /**
    * Set the index of the attribute to be displayed on
    * the y axis
-   * @param y		0-based index of attribute
+   * @param value		0-based index of attribute
    */
-  public void setY(int y) {
-    m_YIndex = y;
+  public void setYIntIndex(int value) {
+    m_YIntIndex = value;
     update();
   }
 

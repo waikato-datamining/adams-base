@@ -28,7 +28,7 @@ import adams.gui.core.ParameterPanel;
 import adams.gui.goe.GenericArrayEditorPanel;
 import adams.gui.goe.GenericObjectEditorPanel;
 import adams.gui.visualization.core.PlotPanel;
-import adams.gui.visualization.stats.core.IndexSet;
+import adams.gui.visualization.stats.core.IndexHelper;
 import adams.gui.visualization.stats.paintlet.AbstractScatterPlotPaintlet;
 import adams.gui.visualization.stats.paintlet.ScatterPaintletCircle;
 import adams.gui.visualization.stats.scatterplot.action.MouseClickAction;
@@ -58,29 +58,137 @@ public class ScatterPlot
   /** for serialization */
   private static final long serialVersionUID = -7798200657432959204L;
 
+  /**
+   * Listener for when the y attribute JComboBox selection changes.
+   *
+   * @author msf8
+   */
+  protected class AttYListener implements ItemListener {
+
+    protected ScatterPlot m_parent;
+
+    public AttYListener(ScatterPlot parent) {
+      m_parent = parent;
+    }
+
+    public void itemStateChanged(ItemEvent e) {
+      SpreadSheet data = m_parent.getData();
+      if (e.getStateChange() == ItemEvent.SELECTED) {
+	String chose = (String) e.getItem();
+	//finds position of attribute
+	for (int t = 0; t < data.getColumnCount(); t++) {
+	  if (data.getColumnName(t).equals(chose)) {
+	    for (int i = 0; i< m_Overlays.length; i++)
+	      m_Overlays[i].getPaintlet().setCalculated(false);
+	    m_YIntIndex = t;
+	    change();
+	    break;
+	  }
+	}
+      }
+    }
+  }
+
+  /**
+   * Listener for when the x attribute JComboBox selection changes.
+   *
+   * @author msf8
+   */
+  protected class AttXListener implements ItemListener {
+
+    protected ScatterPlot m_parent;
+
+    public AttXListener(ScatterPlot parent) {
+      m_parent = parent;
+    }
+
+    public void itemStateChanged(ItemEvent e) {
+      SpreadSheet data = m_parent.getData();
+      if (e.getStateChange() == ItemEvent.SELECTED) {
+	String chose = (String) e.getItem();
+	//finds position of attribute
+	for (int t = 0; t< data.getColumnCount(); t++) {
+	  if (data.getColumnName(t).equals(chose)) {
+	    for (int i = 0; i < m_Overlays.length; i++)
+	      m_Overlays[i].getPaintlet().setCalculated(false);
+	    m_XIntIndex = t;
+	    change();
+	    break;
+	  }
+	}
+      }
+    }
+  }
+
+  /**
+   * Listener for when the color attribute JComboBox selection changes
+   * @author fracpete
+   */
+  protected class AttColorListener implements ItemListener {
+
+    protected ScatterPlot m_parent;
+
+    public AttColorListener(ScatterPlot parent) {
+      m_parent = parent;
+    }
+
+    public void itemStateChanged(ItemEvent e) {
+      SpreadSheet data = m_parent.getData();
+      if (e.getStateChange() == ItemEvent.SELECTED) {
+	m_ColorIntIndex = -1;
+	String chose = (String) e.getItem();
+	//finds position of attribute
+	for (int t = 0; t < data.getColumnCount(); t++) {
+	  if (data.getColumnName(t).equals(chose)) {
+	    for (int i = 0; i < m_Overlays.length; i++)
+	      m_Overlays[i].getPaintlet().setCalculated(false);
+	    m_ColorIntIndex = t;
+	    break;
+	  }
+	}
+	change();
+      }
+    }
+  }
+
   /**Regular expression given as an option to choose x attribute */
   protected BaseRegExp m_XIndexReg;
 
   /**Index object given as an option to choose x object */
-  protected Index m_XInd;
+  protected Index m_XIndex;
 
   /**regular expression given as an option to choose y attribute */
   protected BaseRegExp m_YIndexReg;
 
   /**Index given as an option to choose y attribute */
-  protected Index m_YInd;
+  protected Index m_YIndex;
+
+  /**regular expression given as an option to choose color attribute */
+  protected BaseRegExp m_ColorIndexReg;
+
+  /**Index given as an option to choose color attribute */
+  protected Index m_ColorIndex;
+
+  /** the index of the color attribute. */
+  protected int m_ColorIntIndex;
 
   /**For choosing attribute to display on x axis */
-  protected JComboBox<String> m_AttY;
+  protected JComboBox<String> m_ComboBoxY;
 
   /**For choosing attribute to display on y axis */
-  protected JComboBox<String> m_AttX;
+  protected JComboBox<String> m_ComboBoxX;
+
+  /**For choosing attribute to use for color. */
+  protected JComboBox<String> m_ComboBoxColor;
 
   /**Model for the comboBox choosing the x attribute to display */
   protected DefaultComboBoxModel<String> m_ModelX;
 
   /**Model for the comboBox choosing the y attribute to display */
   protected DefaultComboBoxModel<String> m_ModelY;
+
+  /**Model for the comboBox choosing the color attribute to display */
+  protected DefaultComboBoxModel<String> m_ModelColor;
 
   /**for displaying a genericarrayEditor for choosing overlays */
   protected GenericArrayEditorPanel m_PanelOverlay;
@@ -102,14 +210,25 @@ public class ScatterPlot
    */
   protected void initialize() {
     super.initialize();
-    m_XIndex = 0;
-    m_YIndex = 0;
-    m_XIndexReg = new BaseRegExp();
-    m_YIndexReg = new BaseRegExp();
-    m_XInd = new Index();
-    m_YInd = new Index();
+    m_XIntIndex     = 0;
+    m_YIntIndex     = 0;
+    m_ColorIntIndex = -1;
+    m_XIndexReg     = new BaseRegExp("");
+    m_YIndexReg     = new BaseRegExp("");
+    m_ColorIndexReg = new BaseRegExp("");
+    m_XIndex        = new Index("");
+    m_YIndex        = new Index("");
+    m_ColorIndex    = new Index("");
+    m_ModelX        = new DefaultComboBoxModel<>();
+    m_ModelY        = new DefaultComboBoxModel<>();
+    m_ModelColor    = new DefaultComboBoxModel<>();
   }
 
+  /**
+   * Returns the plot.
+   *
+   * @return		the plot
+   */
   public PlotPanel getPlot() {
     return m_Plot;
   }
@@ -122,30 +241,32 @@ public class ScatterPlot
     //add the attributes to combo box models
     m_ModelX.removeAllElements();
     m_ModelY.removeAllElements();
-    for(int i =0; i< m_Data.getColumnCount(); i++) {
+    m_ModelColor.removeAllElements();
+    m_ModelColor.addElement("");
+    for (int i = 0; i< m_Data.getColumnCount(); i++) {
       m_ModelX.addElement(m_Data.getColumnName(i));
       m_ModelY.addElement(m_Data.getColumnName(i));
+      m_ModelColor.addElement(m_Data.getColumnName(i));
     }
+
     //set the indices for attribute positions
-    int temp = -1;
-    temp = IndexSet.getIndex(m_XIndexReg, m_XInd, m_Data, temp);
-    if(temp == -1) {
+    int temp;
+    temp = IndexHelper.getIndex(m_XIndexReg, m_XIndex, m_Data, -1);
+    if (temp == -1)
       temp = 0;
-      System.err.println("changed to 0");
-    }
-    m_XIndex = temp;
+    m_XIntIndex = temp;
 
-    temp = -1;
-    temp = IndexSet.getIndex(m_YIndexReg, m_YInd, m_Data, temp);
-    if(temp == -1) {
+    temp = IndexHelper.getIndex(m_YIndexReg, m_YIndex, m_Data, -1);
+    if (temp == -1)
       temp = 0;
-      System.err.println("changed to 0");
-    }
-    m_YIndex = temp;
+    m_YIntIndex = temp;
 
-    m_AttY.setSelectedIndex(m_YIndex);
-    m_AttX.setSelectedIndex(m_XIndex);
-    if(m_Overlays == null)
+    m_ColorIntIndex = IndexHelper.getIndex(m_ColorIndexReg, m_ColorIndex, m_Data, -1);
+
+    m_ComboBoxY.setSelectedIndex(m_YIntIndex);
+    m_ComboBoxX.setSelectedIndex(m_XIntIndex);
+    m_ComboBoxColor.setSelectedIndex(m_ColorIntIndex + 1);
+    if (m_Overlays == null)
       m_Overlays = new AbstractScatterPlotOverlay[]{};
     m_Paintlet.setPanel(this);
     m_Paintlet.setData(m_Data);
@@ -155,14 +276,14 @@ public class ScatterPlot
   /**
    * called when new overlays have been chosen
    */
-  private void changeOverlay() {
+  protected void changeOverlay() {
     removeOverlays();
     int len = ((AbstractScatterPlotOverlay[]) m_PanelOverlay.getCurrent()).length;
     m_Overlays = new AbstractScatterPlotOverlay[len];
-    for(int i = 0; i < len; i++) {
+    for (int i = 0; i < len; i++) {
       m_Overlays[i] = ((AbstractScatterPlotOverlay[]) m_PanelOverlay.getCurrent())[i].shallowCopy(true);
     }
-    for(int i = 0; i< m_Overlays.length; i++) {
+    for (int i = 0; i< m_Overlays.length; i++) {
       AbstractScatterPlotOverlay temp = m_Overlays[i];
       temp.inst(m_Data);
       temp.setParent(this);
@@ -174,16 +295,20 @@ public class ScatterPlot
   /**
    * Called when the paintlet used has been changed
    */
-  private void changePaintlet() {
+  protected void changePaintlet() {
     removePaintlet(m_Paintlet);
     m_Paintlet = (AbstractScatterPlotPaintlet)m_PanelPaintlet.getCurrent();
     m_Paintlet.setPanel(this);
-    m_Paintlet.setYIndex(m_YIndex);
-    m_Paintlet.setXIndex(m_XIndex);
+    m_Paintlet.setYIndex(m_YIntIndex);
+    m_Paintlet.setXIndex(m_XIntIndex);
+    m_Paintlet.setColorIndex(m_ColorIntIndex);
     m_Paintlet.setData(m_Data);
     change();
   }
 
+  /**
+   * Initializes the widgets.
+   */
   protected void initGUI() {
     JPanel	panel;
 
@@ -215,18 +340,19 @@ public class ScatterPlot
     panel.add(m_Plot, BorderLayout.CENTER);
     splitPane.setBottomComponent(panel);
 
-    m_ModelX = new DefaultComboBoxModel<>();
-    m_ModelY = new DefaultComboBoxModel<>();
-    m_AttY = new JComboBox<>(m_ModelY);
-    m_AttX = new JComboBox<>(m_ModelX);
+    m_ComboBoxY     = new JComboBox<>(m_ModelY);
+    m_ComboBoxX     = new JComboBox<>(m_ModelX);
+    m_ComboBoxColor = new JComboBox<>(m_ModelColor);
 
     // Create and register listeners for the JComboBox's
     AttYListener listenY = new AttYListener(this);
-    m_AttY.addItemListener(listenY);
+    m_ComboBoxY.addItemListener(listenY);
     AttXListener listenX = new AttXListener(this);
-    m_AttX.addItemListener(listenX);
+    m_ComboBoxX.addItemListener(listenX);
+    AttColorListener listenColor = new AttColorListener(this);
+    m_ComboBoxColor.addItemListener(listenColor);
 
-    if(m_Paintlet == null) {
+    if (m_Paintlet == null) {
       m_DefaultPaintlet = new ScatterPaintletCircle();
       m_Paintlet = new ScatterPaintletCircle();
     }
@@ -241,46 +367,34 @@ public class ScatterPlot
     m_PanelOverlay = new GenericArrayEditorPanel(m_DefaultOverlays);
     m_PanelOverlay.addChangeListener((ChangeEvent e) -> changeOverlay());
 
-    optionPanel.addParameter("Y attribute", m_AttY);
-    optionPanel.addParameter("X attribute", m_AttX);
+    optionPanel.addParameter("Y attribute", m_ComboBoxY);
+    optionPanel.addParameter("X attribute", m_ComboBoxX);
+    optionPanel.addParameter("Color attribute", m_ComboBoxColor);
     optionPanel.addParameter("Overlays", m_PanelOverlay);
     optionPanel.addParameter("Paintlet", m_PanelPaintlet);
   }
 
   /**
-   * Get the index object for choosing the attribute to display
+   * Get the index object for choosing the attribute to display.
+   *
    * @return		chosen index
    */
   public Index getXIndex() {
-    return m_XInd;
+    return m_XIndex;
   }
 
   /**
-   * Set the x attribute index
+   * Set the x attribute index.
+   *
    * @param val		chosen index
    */
   public void setXIndex(Index val) {
-    m_XInd = val;
+    m_XIndex = val;
   }
 
   /**
-   * Get the index object for choosing the y attribute
-   * @return		chosen index
-   */
-  public Index getYIndex() {
-    return m_YInd;
-  }
-
-  /**
-   * Set the index for the y attribute
-   * @param val		chosen y index
-   */
-  public void setYIndex(Index val) {
-    m_YInd = val;
-  }
-
-  /**
-   * Set the regular expression to use when determining the x attribute
+   * Set the regular expression to use when determining the x attribute.
+   *
    * @param val		regular expression for choosing x attribute
    */
   public void setXRegExp(BaseRegExp val) {
@@ -288,7 +402,8 @@ public class ScatterPlot
   }
 
   /**
-   * Gets the regular expression used when determining the x attribute
+   * Gets the regular expression used when determining the x attribute.
+   *
    * @return		regular expression for choosing x attribute
    */
   public BaseRegExp getXRegExp() {
@@ -296,7 +411,26 @@ public class ScatterPlot
   }
 
   /**
-   * Set the regular expression to use when determining the y attribute
+   * Get the index object for choosing the y attribute.
+   *
+   * @return		chosen index
+   */
+  public Index getYIndex() {
+    return m_YIndex;
+  }
+
+  /**
+   * Set the index for the y attribute.
+   *
+   * @param val		chosen y index
+   */
+  public void setYIndex(Index val) {
+    m_YIndex = val;
+  }
+
+  /**
+   * Set the regular expression to use when determining the y attribute.
+   *
    * @param val		regular expression for choosing y attribute
    */
   public void setYRegExp(BaseRegExp val) {
@@ -304,11 +438,48 @@ public class ScatterPlot
   }
 
   /**
-   * Gets the regular expression used when determining the y attribute
+   * Gets the regular expression used when determining the y attribute.
+   *
    * @return		regular expression for choosing y attribute
    */
   public BaseRegExp getYRegExp() {
     return m_YIndexReg;
+  }
+
+  /**
+   * Get the index object for choosing the color attribute.
+   *
+   * @return		chosen index
+   */
+  public Index getColorIndex() {
+    return m_ColorIndex;
+  }
+
+  /**
+   * Set the index for the color attribute.
+   *
+   * @param val		chosen color index
+   */
+  public void setColorIndex(Index val) {
+    m_ColorIndex = val;
+  }
+
+  /**
+   * Set the regular expression to use when determining the color attribute.
+   *
+   * @param val		regular expression for choosing color attribute
+   */
+  public void setColorRegExp(BaseRegExp val) {
+    m_ColorIndexReg = val;
+  }
+
+  /**
+   * Gets the regular expression used when determining the color attribute.
+   *
+   * @return		regular expression for choosing color attribute
+   */
+  public BaseRegExp getColorRegExp() {
+    return m_ColorIndexReg;
   }
 
   /**
@@ -352,77 +523,17 @@ public class ScatterPlot
   }
 
   /**
-   * Listener for when the y attribute JComboBox selection changes
-   * @author msf8
-   */
-  protected class AttYListener implements ItemListener {
-    ScatterPlot m_parent;
-    public AttYListener(ScatterPlot parent) {
-      m_parent = parent;
-    }
-    public void itemStateChanged(ItemEvent arg0) {
-      SpreadSheet data = m_parent.getData();
-      int ind = m_parent.getY_Index();
-      if(arg0.getStateChange() == ItemEvent.SELECTED) {
-	String chose = (String)arg0.getItem();
-	//finds position of attribute
-	for(int t = 0; t< data.getColumnCount(); t++)
-	{
-	  if(data.getColumnName(t).equals(chose)) {
-	    for(int i = 0; i< m_Overlays.length; i++)
-	      m_Overlays[i].getPaintlet().setCalculated(false);
-	    m_YIndex = t;
-	    change();
-	    break;
-	  }
-	}
-      }
-    }
-  }
-
-  /**
-   * Listener for when the x attribute JComboBox selection changes
-   * @author msf8
-   *
-   */
-  protected class AttXListener implements ItemListener {
-
-    ScatterPlot m_parent;
-    public AttXListener(ScatterPlot parent) {
-      m_parent = parent;
-    }
-
-    public void itemStateChanged(ItemEvent arg0) {
-      SpreadSheet data = m_parent.getData();
-      if(arg0.getStateChange() == ItemEvent.SELECTED) {
-	String chose = (String)arg0.getItem();
-	//finds position of attribute
-	for(int t = 0; t< data.getColumnCount(); t++)
-	{
-	  if(data.getColumnName(t).equals(chose)) {
-	    for(int i = 0; i< m_Overlays.length; i++) {
-	      m_Overlays[i].getPaintlet().setCalculated(false);
-	    }
-	    m_XIndex = t;
-	    change();
-	    break;
-	  }
-	}
-      }
-    }
-  }
-
-  /**
    * called when a field has changed, updates all paintlets etc
    */
   public void change() {
-    if(m_Data != null)
+    if (m_Data != null)
       m_Plot.setData(m_Data);
-    m_Plot.setX(m_XIndex);
-    m_Plot.setY(m_YIndex);
+    m_Plot.setX(m_XIntIndex);
+    m_Plot.setY(m_YIntIndex);
     m_Plot.reset();
-    m_Paintlet.setXIndex(m_XIndex);
-    m_Paintlet.setYIndex(m_YIndex);
+    m_Paintlet.setXIndex(m_XIntIndex);
+    m_Paintlet.setYIndex(m_YIntIndex);
+    m_Paintlet.setColorIndex(m_ColorIntIndex);
     m_Paintlet.setData(m_Data);
     update();
   }
@@ -431,10 +542,10 @@ public class ScatterPlot
    * Updates the overlays, calculates each
    */
   public void prepareUpdate() {
-    for(int i = 0; i< m_Overlays.length; i++) {
-      if(m_Overlays[i].getPaintlet() != null) {
-	m_Overlays[i].getPaintlet().parameters(m_Data, m_XIndex, m_YIndex);
-	if(!m_Overlays[i].getPaintlet().getCalculated())
+    for (int i = 0; i< m_Overlays.length; i++) {
+      if (m_Overlays[i].getPaintlet() != null) {
+	m_Overlays[i].getPaintlet().parameters(m_Data, m_XIntIndex, m_YIntIndex);
+	if (!m_Overlays[i].getPaintlet().getCalculated())
 	  m_Overlays[i].getPaintlet().calculate();
       }
     }

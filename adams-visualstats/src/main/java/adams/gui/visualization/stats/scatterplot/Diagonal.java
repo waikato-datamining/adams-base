@@ -123,7 +123,7 @@ public class Diagonal
    */
  public void setUp() {
     m_Paintlet = new DiagonalPaintlet();
-    m_Paintlet.parameters(m_Data, m_Parent.getX_Index(), m_Parent.getY_Index());
+    m_Paintlet.parameters(m_Data, m_Parent.getXIntIndex(), m_Parent.getYIntIndex());
     m_Paintlet.setRepaintOnChange(true);
     m_Paintlet.setStrokeThickness(m_Thickness);
     m_Paintlet.setIndicator(m_Indicator);

@@ -25,11 +25,16 @@ import adams.data.spreadsheet.SpreadSheetUtils;
 import adams.gui.core.AntiAliasingSupporter;
 import adams.gui.core.GUIHelper;
 import adams.gui.event.PaintEvent.PaintMoment;
+import adams.gui.visualization.core.AbstractColorProvider;
 import adams.gui.visualization.core.AxisPanel;
+import adams.gui.visualization.core.DefaultColorProvider;
 import adams.gui.visualization.core.plot.Axis;
 import adams.gui.visualization.core.plot.HitDetectorSupporter;
 
+import java.awt.Color;
 import java.awt.Graphics;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Abstract class for creating scatterplot paintlets.
@@ -50,6 +55,9 @@ public abstract class AbstractScatterPlotPaintlet
   /**Index of attribute for y axis */
   protected int m_YIndex;
 
+  /** the index of the categorical attriute for the coloring. */
+  protected int m_ColorIndex;
+
   /** size of the plot points */
   protected int m_Size;
 
@@ -58,6 +66,15 @@ public abstract class AbstractScatterPlotPaintlet
 
   /**Data to display on the y axis */
   protected double[] m_YData;
+
+  /** the values of the coloring axis. */
+  protected String[] m_ColorData;
+
+  /** the value - color association. */
+  protected Map<String,Color> m_ColorMapping;
+
+  /** the color provider for the coloring. */
+  protected AbstractColorProvider m_ColorProvider;
 
   /** y axis of plot */
   protected AxisPanel m_AxisLeft;
@@ -81,6 +98,10 @@ public abstract class AbstractScatterPlotPaintlet
     m_OptionManager.add(
       "anti-aliasing-enabled", "antiAliasingEnabled",
       GUIHelper.getBoolean(getClass(), "antiAliasingEnabled", true));
+
+    m_OptionManager.add(
+      "color-provider", "colorProvider",
+      new DefaultColorProvider());
   }
 
   /**
@@ -92,6 +113,7 @@ public abstract class AbstractScatterPlotPaintlet
 
     m_XIndex      = 0;
     m_YIndex      = 0;
+    m_ColorIndex  = -1;
     m_HitDetector = newHitDetector();
   }
 
@@ -102,8 +124,10 @@ public abstract class AbstractScatterPlotPaintlet
   protected void reset() {
     super.reset();
 
-    m_XData = null;
-    m_YData = null;
+    m_XData        = null;
+    m_YData        = null;
+    m_ColorData    = null;
+    m_ColorMapping = null;
   }
 
   /**
@@ -135,6 +159,35 @@ public abstract class AbstractScatterPlotPaintlet
     return "If enabled, uses anti-aliasing for drawing lines.";
   }
 
+  /**
+   * Sets the color provider to use when using a column for the plot colors.
+   *
+   * @param value	the provider
+   */
+  public void setColorProvider(AbstractColorProvider value) {
+    m_ColorProvider = value;
+    memberChanged();
+  }
+
+  /**
+   * Returns the color provider to use when using a column for the plot colors.
+   *
+   * @return		the provider
+   */
+  public AbstractColorProvider getColorProvider() {
+    return m_ColorProvider;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String colorProviderTipText() {
+    return "The color provider to use when using a column for the plot colors.";
+  }
+
   @Override
   public PaintMoment getPaintMoment() {
     return PaintMoment.PAINT;
@@ -161,10 +214,27 @@ public abstract class AbstractScatterPlotPaintlet
   }
 
   /**
+   * Returns the actual color to use. Uses the provided default color if
+   * no color mapping active.
+   *
+   * @param index	the row index
+   * @param defColor	the default color
+   * @return
+   */
+  protected Color getActualColor(int index, Color defColor) {
+    if (m_ColorMapping == null)
+      return defColor;
+    else
+      return m_ColorMapping.get(m_ColorData[index]);
+  }
+
+  /**
    * draws the data on the graphics object
    * @param g		Graphics object to draw on
    */
   protected void drawData(Graphics g) {
+    String[]	unique;
+
     if(m_Data != null) {
       g.setColor(m_Color);
 
@@ -174,6 +244,14 @@ public abstract class AbstractScatterPlotPaintlet
       if (m_XData == null) {
 	m_XData = SpreadSheetUtils.getNumericColumn(m_Data, m_XIndex);
 	m_YData = SpreadSheetUtils.getNumericColumn(m_Data, m_YIndex);
+	if (m_ColorIndex > -1) {
+	  m_ColorData    = SpreadSheetUtils.getColumn(m_Data, m_ColorIndex, false, false);
+	  unique         = SpreadSheetUtils.getColumn(m_Data, m_ColorIndex, true, true);
+	  m_ColorMapping = new HashMap<>();
+	  m_ColorProvider.resetColors();
+	  for (String value: unique)
+	    m_ColorMapping.put(value, m_ColorProvider.next());
+	}
       }
 
       m_AxisBottom = getPanel().getPlot().getAxis(Axis.BOTTOM);
@@ -212,6 +290,25 @@ public abstract class AbstractScatterPlotPaintlet
    */
   public void setYIndex(int val) {
     m_YIndex = val;
+    memberChanged();
+  }
+
+  /**
+   * Get index of chosen attribute for color.
+   *
+   * @return		chosen index
+   */
+  public int getColorIndex() {
+    return m_ColorIndex;
+  }
+
+  /**
+   * Set the index of attribute for color.
+   *
+   * @param val		Index to set
+   */
+  public void setColorIndex(int val) {
+    m_ColorIndex = val;
     memberChanged();
   }
 

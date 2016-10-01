@@ -31,7 +31,7 @@ import adams.data.spreadsheet.SpreadSheet;
  * @author msf8
  * @version $Revision$
  */
-public class IndexSet {
+public class IndexHelper {
 
   /**
    * Returns the position of the desired attribute.
@@ -45,7 +45,7 @@ public class IndexSet {
   public static int getIndex(BaseRegExp reg, Index ind, SpreadSheet inst, int index) {
     //Sets the index. First check's if a regular expression has been set
     // if not, uses the index.
-    if(!reg.isEmpty()) {
+    if (!reg.isEmpty()) {
       for(int i = 0; i< inst.getColumnCount(); i++) {
 	String name = inst.getColumnName(i);
 	if(reg.isMatch(name)) {

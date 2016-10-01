@@ -47,13 +47,14 @@ extends AbstractScatterPlot{
     if(m_Data != null){
       //set the data for the scatterplot
       m_Plot.setData(m_Data);
-      m_Plot.setX(m_XIndex);
-      m_Plot.setY(m_YIndex);
+      m_Plot.setX(m_XIntIndex);
+      m_Plot.setY(m_YIntIndex);
       //set the data for the paintlet
       if(m_Paintlet != null) {
 	m_Paintlet.setRepaintOnChange(false);
-	m_Paintlet.setXIndex(m_XIndex);
-	m_Paintlet.setYIndex(m_YIndex);
+	m_Paintlet.setXIndex(m_XIntIndex);
+	m_Paintlet.setYIndex(m_YIntIndex);
+        m_Paintlet.setColorIndex(-1);
 	m_Paintlet.setData(m_Data);
 	m_Paintlet.setRepaintOnChange(true);
       }
