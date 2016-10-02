@@ -272,7 +272,7 @@ public class PCA
    * @param coeff 	The coefficients from the principal components analysis
    * @return		A spreadsheet containing the components
    */
-  protected SpreadSheet createSpreadSheet(Instances data, ArrayList<ArrayList<Double>> coeff) {
+  protected SpreadSheet extractLoadings(Instances data, ArrayList<ArrayList<Double>> coeff) {
     SpreadSheet result;
     Row row;
     int		i;
@@ -280,13 +280,12 @@ public class PCA
 
     result = new DefaultSpreadSheet();
     row = result.getHeaderRow();
+    for (i = 0; i < coeff.size(); i++)
+      row.addCell("L" + (i+1)).setContent("Loading-" + (i+1));
     row.addCell("I").setContent("Index");
     row.addCell("A").setContent("Attribute");
 
-    for (i = 0; i < coeff.size(); i++)
-      row.addCell("L" + (i+1)).setContent("Loading-" + (i+1));
-
-    //add the first column, which will be just the number of the attribute
+    // add the index/attribute name column
     for (n = 0; n < m_NumAttributes; n++) {
       row = result.addRow();
       row.addCell("I").setContent(n+1);
@@ -447,7 +446,7 @@ public class PCA
       // get the coefficients from the filter
       m_Scores   = transformed;
       coeff      = pca.getCoefficients();
-      m_Loadings = createSpreadSheet(data, coeff);
+      m_Loadings = extractLoadings(data, coeff);
       m_Loadings.setName("Loadings for " + data.relationName());
     }
 
