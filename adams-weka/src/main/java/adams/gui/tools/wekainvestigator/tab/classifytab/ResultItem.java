@@ -21,6 +21,7 @@
 package adams.gui.tools.wekainvestigator.tab.classifytab;
 
 import adams.core.DateUtils;
+import adams.core.Shortening;
 import adams.data.spreadsheet.MetaData;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.gui.tools.wekainvestigator.output.AbstractResultItem;
@@ -112,7 +113,16 @@ public class ResultItem
    * @return		the name
    */
   protected String createName() {
-    return DateUtils.getTimeFormatterMsecs().format(m_Timestamp) + " - " + m_Template.getClass().getSimpleName();
+    String	result;
+
+    result = DateUtils.getTimeFormatterMsecs().format(m_Timestamp)
+      + " - "
+      + m_Template.getClass().getSimpleName();
+
+    if (hasHeader())
+      result += " - " + Shortening.shortenEnd(m_Header.relationName(), MAX_RELATIONNAME_LENGTH);
+
+    return result;
   }
 
   /**

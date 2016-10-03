@@ -21,6 +21,7 @@
 package adams.gui.tools.wekainvestigator.tab.attseltab;
 
 import adams.core.DateUtils;
+import adams.core.Shortening;
 import adams.data.spreadsheet.MetaData;
 import adams.gui.tools.wekainvestigator.output.AbstractResultItem;
 import weka.attributeSelection.ASEvaluation;
@@ -120,7 +121,11 @@ public class ResultItem
    * @return		the name
    */
   protected String createName() {
-    return DateUtils.getTimeFormatterMsecs().format(m_Timestamp) + " - " + m_Search.getClass().getSimpleName()  + "/" + m_Evaluator.getClass().getSimpleName();
+    return DateUtils.getTimeFormatterMsecs().format(m_Timestamp)
+      + " - "
+      + m_Search.getClass().getSimpleName()  + "/" + m_Evaluator.getClass().getSimpleName()
+      + " - "
+      + Shortening.shortenEnd(m_Full.relationName(), MAX_RELATIONNAME_LENGTH);
   }
 
   /**
