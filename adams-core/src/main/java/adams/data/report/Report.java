@@ -30,6 +30,10 @@ import adams.core.logging.LoggingLevel;
 import adams.core.logging.LoggingObject;
 import adams.core.option.AbstractOption;
 import adams.data.id.MutableDatabaseIDHandler;
+import adams.data.spreadsheet.DefaultSpreadSheet;
+import adams.data.spreadsheet.Row;
+import adams.data.spreadsheet.SpreadSheet;
+import adams.data.spreadsheet.SpreadSheetSupporter;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -48,7 +52,7 @@ import java.util.List;
 public class Report
   extends LoggingObject
   implements Serializable, CloneHandler<Report>, Comparable, Mergeable<Report>,
-             MutableDatabaseIDHandler {
+             MutableDatabaseIDHandler, SpreadSheetSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = -8377544506571885570L;
@@ -843,6 +847,37 @@ public class Report
     for (i = 0; i < fields.size(); i++) {
       result.setProperty(fields.get(i).toString(), getValue(fields.get(i)).toString());
       result.setProperty(fields.get(i).toString() + DATATYPE_SUFFIX, fields.get(i).getDataType().toString());
+    }
+
+    return result;
+  }
+
+  /**
+   * Returns the content as spreadsheet.
+   *
+   * @return		the content
+   */
+  public SpreadSheet toSpreadSheet() {
+    SpreadSheet 	result;
+    Row			row;
+    List<AbstractField>	fields;
+    int			i;
+
+    result = new DefaultSpreadSheet();
+
+    // header
+    row = result.getHeaderRow();
+    row.addCell("N").setContentAsString("Name");
+    row.addCell("T").setContentAsString("Type");
+    row.addCell("V").setContentAsString("Value");
+
+    // data
+    fields = getFields();
+    for (i = 0; i < fields.size(); i++) {
+      row = result.addRow();
+      row.addCell("N").setContentAsString(fields.get(i).getName());
+      row.addCell("T").setContentAsString(fields.get(i).getDataType().toString());
+      row.addCell("V").setNative(getValue(fields.get(i)));
     }
 
     return result;
