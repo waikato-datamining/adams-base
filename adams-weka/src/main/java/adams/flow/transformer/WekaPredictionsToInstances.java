@@ -75,13 +75,15 @@ import java.util.ArrayList;
  * </pre>
  * 
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this 
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical 
+ * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
  * <pre>-silent &lt;boolean&gt; (property: silent)
- * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console.
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
@@ -93,6 +95,11 @@ import java.util.ArrayList;
  * <pre>-error &lt;boolean&gt; (property: showError)
  * &nbsp;&nbsp;&nbsp;If set to true, then the error will be displayed as well.
  * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-absolute-error &lt;boolean&gt; (property: useAbsoluteError)
+ * &nbsp;&nbsp;&nbsp;If set to true, then the error will be absolute (no direction).
+ * &nbsp;&nbsp;&nbsp;default: true
  * </pre>
  * 
  * <pre>-probability &lt;boolean&gt; (property: showProbability)
@@ -181,10 +188,10 @@ public class WekaPredictionsToInstances
 
     if (predictions != null) {
       // create header
-      atts = new ArrayList<Attribute>();
+      atts = new ArrayList<>();
       // actual
       if (nominal && m_AddLabelIndex) {
-	values = new ArrayList<String>();
+	values = new ArrayList<>();
 	for (i = 0; i < header.classAttribute().numValues(); i++)
 	  values.add((i+1) + ":" + header.classAttribute().value(i));
 	atts.add(new Attribute("Actual", values));
@@ -194,7 +201,7 @@ public class WekaPredictionsToInstances
       }
       // predicted
       if (nominal && m_AddLabelIndex) {
-	values = new ArrayList<String>();
+	values = new ArrayList<>();
 	for (i = 0; i < header.classAttribute().numValues(); i++)
 	  values.add((i+1) + ":" + header.classAttribute().value(i));
 	atts.add(new Attribute("Predicted", values));
@@ -207,7 +214,7 @@ public class WekaPredictionsToInstances
       if (m_ShowError) {
 	indexErr = atts.size();
 	if (nominal) {
-	  values = new ArrayList<String>();
+	  values = new ArrayList<>();
 	  values.add("n");
 	  values.add("y");
 	  atts.add(new Attribute("Error", values));
@@ -251,10 +258,15 @@ public class WekaPredictionsToInstances
 	vals[1] = pred.predicted();
 	// error
 	if (m_ShowError) {
-	  if (nominal)
-	    vals[indexErr] = ((pred.actual() != pred.predicted()) ? 1.0 : 0.0);
-	  else
-	    vals[indexErr] = Math.abs(pred.actual() - pred.predicted());
+	  if (nominal) {
+            vals[indexErr] = ((pred.actual() != pred.predicted()) ? 1.0 : 0.0);
+          }
+	  else {
+            if (m_UseAbsoluteError)
+              vals[indexErr] = Math.abs(pred.actual() - pred.predicted());
+            else
+              vals[indexErr] = pred.actual() - pred.predicted();
+          }
 	}
 	// probability
 	if (m_ShowProbability && nominal) {

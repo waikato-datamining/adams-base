@@ -76,13 +76,15 @@ import java.util.ArrayList;
  * </pre>
  * 
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this 
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical 
+ * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
  * <pre>-silent &lt;boolean&gt; (property: silent)
- * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console.
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
@@ -94,6 +96,11 @@ import java.util.ArrayList;
  * <pre>-error &lt;boolean&gt; (property: showError)
  * &nbsp;&nbsp;&nbsp;If set to true, then the error will be displayed as well.
  * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-absolute-error &lt;boolean&gt; (property: useAbsoluteError)
+ * &nbsp;&nbsp;&nbsp;If set to true, then the error will be absolute (no direction).
+ * &nbsp;&nbsp;&nbsp;default: true
  * </pre>
  * 
  * <pre>-probability &lt;boolean&gt; (property: showProbability)
@@ -223,10 +230,15 @@ public class WekaPredictionsToSpreadSheet
 	row.addCell(1).setContent(pred.predicted());
 	// error
 	if (m_ShowError) {
-	  if (nominal)
-	    row.addCell(indexErr).setContent((pred.actual() != pred.predicted() ? "y" : "n"));
-	  else
-	    row.addCell(indexErr).setContent(Math.abs(pred.actual() - pred.predicted()));
+	  if (nominal) {
+            row.addCell(indexErr).setContent((pred.actual() != pred.predicted() ? "y" : "n"));
+          }
+	  else {
+            if (m_UseAbsoluteError)
+              row.addCell(indexErr).setContent(Math.abs(pred.actual() - pred.predicted()));
+            else
+              row.addCell(indexErr).setContent(pred.actual() - pred.predicted());
+          }
 	}
 	// probability
 	if (m_ShowProbability && nominal) {

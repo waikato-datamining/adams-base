@@ -46,6 +46,9 @@ public abstract class AbstractWekaPredictionsTransformer
   /** whether to add an error colunm. */
   protected boolean m_ShowError;
 
+  /** whether to use absolute errors. */
+  protected boolean m_UseAbsoluteError;
+
   /** whether to output the probability of the prediction (only nominal classes). */
   protected boolean m_ShowProbability;
 
@@ -74,6 +77,10 @@ public abstract class AbstractWekaPredictionsTransformer
 	    false);
 
     m_OptionManager.add(
+	    "absolute-error", "useAbsoluteError",
+	    true);
+
+    m_OptionManager.add(
 	    "probability", "showProbability",
 	    false);
 
@@ -100,9 +107,10 @@ public abstract class AbstractWekaPredictionsTransformer
     String		result;
     List<String> 	options;
 
-    options = new ArrayList<String>();
+    options = new ArrayList<>();
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "addLabelIndex", m_AddLabelIndex, "label-index"));
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "showError", m_ShowError, "error"));
+    QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "useAbsoluteError", m_UseAbsoluteError, "absolute error"));
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "showProbability", m_ShowProbability, "probability"));
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "showDistribution", m_ShowDistribution, "distribution"));
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "showWeight", m_ShowWeight, "weight"));
@@ -168,6 +176,35 @@ public abstract class AbstractWekaPredictionsTransformer
    */
   public String showErrorTipText() {
     return "If set to true, then the error will be displayed as well.";
+  }
+
+  /**
+   * Sets whether to use an absolute error (ie no direction).
+   *
+   * @param value	true if to use absolute error
+   */
+  public void setUseAbsoluteError(boolean value) {
+    m_UseAbsoluteError = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to use an absolute error (ie no direction).
+   *
+   * @return		true if to use absolute error
+   */
+  public boolean getUseAbsoluteError() {
+    return m_UseAbsoluteError;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String useAbsoluteErrorTipText() {
+    return "If set to true, then the error will be absolute (no direction).";
   }
 
   /**
