@@ -51,6 +51,9 @@ public abstract class AbstractInvestigatorTabWithEditableDataTable
 
   private static final long serialVersionUID = -94945456385486233L;
 
+  /** the button for activating a dataset. */
+  protected JideButton m_ButtonActivate;
+
   /** the button for removing a dataset. */
   protected JideButton m_ButtonRemove;
 
@@ -102,6 +105,11 @@ public abstract class AbstractInvestigatorTabWithEditableDataTable
     JPanel	panel;
 
     super.initGUI();
+
+    m_ButtonActivate = new JideButton("Activate", GUIHelper.getIcon("location.png"));
+    m_ButtonActivate.setButtonStyle(JideButton.TOOLBOX_STYLE);
+    m_ButtonActivate.addActionListener((ActionEvent e) -> activate(m_Table.getSelectedRow()));
+    m_Table.addToButtonsPanel(m_ButtonActivate);
 
     m_ButtonRemove = new JideButton("Remove", GUIHelper.getIcon("delete.gif"));
     m_ButtonRemove.setButtonStyle(JideButton.TOOLBOX_STYLE);
@@ -187,6 +195,7 @@ public abstract class AbstractInvestigatorTabWithEditableDataTable
     int[] 	rows;
     boolean 	enabled;
 
+    m_ButtonActivate.setEnabled(!isBusy() && m_Table.getSelectedRowCount() == 1);
     m_ButtonRemove.setEnabled(!isBusy() && m_Table.getSelectedRowCount() > 0);
     for (AbstractEditableDataTableAction action: m_Actions)
       action.update();

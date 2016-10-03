@@ -323,4 +323,13 @@ public class TrainTestSplit
 
     getOwner().updateButtons();
   }
+
+  /**
+   * Activates the specified dataset.
+   *
+   * @param index	the index of the dataset
+   */
+  public void activate(int index) {
+    m_ComboBoxDatasets.setSelectedIndex(index);
+  }
 }

@@ -664,8 +664,12 @@ public class AttributeSelectionTab
    * @param e		the event
    */
   public void dataChanged(WekaInvestigatorDataEvent e) {
-    if (m_CurrentEvaluation != null)
-      m_CurrentEvaluation.update();
+    if (m_CurrentEvaluation != null) {
+      if (e.getType() == WekaInvestigatorDataEvent.ROW_ACTIVATED)
+        m_CurrentEvaluation.activate(e.getRows()[0]);
+      else
+        m_CurrentEvaluation.update();
+    }
     updateButtons();
   }
 

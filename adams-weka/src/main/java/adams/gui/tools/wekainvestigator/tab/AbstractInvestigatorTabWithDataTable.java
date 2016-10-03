@@ -36,6 +36,7 @@ import gnu.trove.list.array.TIntArrayList;
 
 import javax.swing.JPanel;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingWorker;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
@@ -188,6 +189,12 @@ public abstract class AbstractInvestigatorTabWithDataTable
 	  m_Model.fireTableRowsUpdated(seg[0], seg[1]);
 	m_Table.repaint();
 	break;
+      case WekaInvestigatorDataEvent.ROW_ACTIVATED:
+	if (m_Table.getSelectedRow() != -1) {
+	  if ((e.getRows() != null) && (e.getRows().length > 0))
+	    m_Table.setSelectedRow(e.getRows()[0]);
+	}
+	break;
       default:
 	m_Model.removeTableModelListener(this);
 	m_Model = new DataTableModel(getOwner().getData(), hasReadOnlyTable());
@@ -204,6 +211,28 @@ public abstract class AbstractInvestigatorTabWithDataTable
    */
   protected int[] getSelectedRows() {
     return m_Table.getSelectedRows();
+  }
+
+  /**
+   * Activates the selected dataset.
+   *
+   * @param row		the row of the dataset to activate
+   */
+  protected void activate(int row) {
+    SwingWorker 	worker;
+
+    worker = new SwingWorker() {
+      @Override
+      protected Object doInBackground() throws Exception {
+	fireDataChange(
+	  new WekaInvestigatorDataEvent(
+	    getOwner(),
+	    WekaInvestigatorDataEvent.ROW_ACTIVATED,
+	    row));
+	return null;
+      }
+    };
+    worker.execute();
   }
 
   /**

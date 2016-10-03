@@ -330,6 +330,11 @@ public class PrincipalComponentsTab
     List<String>	datasets;
     int			index;
 
+    if (e.getType() == WekaInvestigatorDataEvent.ROW_ACTIVATED) {
+      m_ComboBoxDatasets.setSelectedIndex(e.getRows()[0]);
+      return;
+    }
+
     datasets = generateDatasetList();
     index    = indexOfDataset((String) m_ComboBoxDatasets.getSelectedItem());
     if (hasDataChanged(datasets, m_ModelDatasets)) {

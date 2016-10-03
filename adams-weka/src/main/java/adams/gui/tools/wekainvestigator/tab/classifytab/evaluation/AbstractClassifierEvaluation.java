@@ -192,6 +192,13 @@ public abstract class AbstractClassifierEvaluation
   public abstract void update();
 
   /**
+   * Activates the specified dataset.
+   *
+   * @param index	the index of the dataset
+   */
+  public abstract void activate(int index);
+
+  /**
    * Displays a message.
    *
    * @param msg		the message to display

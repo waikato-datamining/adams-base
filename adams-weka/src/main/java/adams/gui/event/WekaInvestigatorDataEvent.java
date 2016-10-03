@@ -47,6 +47,9 @@ public class WekaInvestigatorDataEvent
   /** rows got modified. */
   public final static int ROWS_MODIFIED = 4;
 
+  /** row got activated. */
+  public final static int ROW_ACTIVATED = 5;
+
   /** the event type. */
   protected int m_Type;
 
