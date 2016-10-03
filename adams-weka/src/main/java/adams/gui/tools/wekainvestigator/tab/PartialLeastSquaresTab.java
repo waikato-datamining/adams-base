@@ -436,7 +436,7 @@ public class PartialLeastSquaresTab
 	  SpreadSheet loadings = pls.getLoadings();
 	  m_PanelLoadings.setData(loadings);
 	  m_PanelLoadings.reset();
-          // loadings
+          // loadings (weights)
           XYSequenceContainerManager manager = m_PanelWeights.getContainerManager();
 	  double min = Double.POSITIVE_INFINITY;
 	  double max = Double.NEGATIVE_INFINITY;
