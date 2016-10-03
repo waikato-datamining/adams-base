@@ -30,6 +30,7 @@ import weka.core.SelectedTag;
 import weka.core.matrix.Matrix;
 import weka.filters.Filter;
 import weka.filters.supervised.attribute.PLSFilterWithLoadings;
+import weka.filters.unsupervised.attribute.Remove;
 
 /**
  * Performs partial least squares analysis and allows access to loadings and scores.
@@ -222,6 +223,7 @@ public class PLS
   @Override
   protected String doAnalyze(Instances data) throws  Exception {
     String 			result;
+    Remove 			remove;
     PLSFilterWithLoadings 	pls;
     WekaInstancesToSpreadSheet 	conv;
     SpreadSheet 		transformed;
@@ -236,6 +238,18 @@ public class PLS
 
     data = new Instances(data);
     data.deleteWithMissingClass();
+
+    if (!m_AttributeRange.isAllRange()) {
+      if (isLoggingEnabled())
+	getLogger().info("Filtering attribute range: " + m_AttributeRange.getRange());
+      remove = new Remove();
+      remove.setAttributeIndicesArray(m_AttributeRange.getIntIndices());
+      remove.setInvertSelection(true);
+      remove.setInputFormat(data);
+      data = Filter.useFilter(data, remove);
+    }
+    if (isLoggingEnabled())
+      getLogger().info("Performing PLS...");
 
     pls = new PLSFilterWithLoadings();
     switch (m_Algorithm) {
