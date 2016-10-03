@@ -1,0 +1,14 @@
+# Project: adams
+# Date: 2016-10-03 15:42:53
+# User: fracpete
+# Charset: UTF-8
+adams.flow.control.Flow -annotation "This flow shows how to fill a lookup table manually." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.standalone.LookUpInit
+ adams.flow.source.Start
+ adams.flow.control.Trigger -name fill
+  adams.flow.source.StringConstants -string a=hello -string b=world -string "c=something completely different"
+  adams.flow.transformer.StringSplit -expression =
+  adams.flow.transformer.LookUpAdd
+ adams.flow.control.Trigger -name output
+  adams.flow.source.LookUpTable
+  adams.flow.sink.SpreadSheetDisplay -writer adams.data.io.output.NullWriter

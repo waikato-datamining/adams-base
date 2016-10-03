@@ -76,6 +76,12 @@ a column or a range of columns as a parameter. In addition to the usual
 (case-insensitive). This makes an actor less error-prone, in case the order 
 of the columns may change.
 
+The following standalones are available:
+\begin{tight_itemize}
+	\item \textit{LookUpInit} -- Initializes an empty lookup table in
+	storage, which needs populating using the \textit{LookUpAdd}
+	transformer.\footnote{adams-spreadsheet-lookup2.flow}
+\end{tight_itemize}
 The following sources are available:
 \begin{tight_itemize}
 	\item \textit{DatabaseMetaData} -- outputs spreadsheets with information
@@ -84,9 +90,9 @@ The following sources are available:
 	pre-defined columns.
 	\item \textit{SpreadSheetDbReader} -- turns results from SQL queries into
 	spreadsheet objects.\footnote{adams-spreadsheet-database\_access.flow}
-	\item \textit{LookUp} -- Outputs a value from a stored lookup table, 
+	\item \textit{LookUp} -- Outputs a value from a stored lookup table,
 	identified by a user-supplied key.\footnote{adams-spreadsheet-lookup.flow}
-	\item \textit{LookUpTable} -- Outputs a stored lookup table as 
+	\item \textit{LookUpTable} -- Outputs a stored lookup table as
 	spreadsheet.\footnote{adams-spreadsheet-lookup.flow}
 \end{tight_itemize}
 The following transformers are available:
