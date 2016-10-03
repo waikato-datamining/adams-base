@@ -104,17 +104,8 @@ public class InvestigatorPanel
   /** the menu bar. */
   protected JMenuBar m_MenuBar;
 
-  /** the submenu for a new tab. */
-  protected BaseMenu m_MenuFileNewTab;
-
   /** the submenu for a sources. */
   protected BaseMenu m_MenuFileSources;
-
-  /** the action for closing a tab. */
-  protected BaseAction m_ActionFileCloseTab;
-
-  /** the action for closing all tabs. */
-  protected BaseAction m_ActionFileCloseAllTabs;
 
   /** the action for closing the investigator. */
   protected BaseAction m_ActionFileClose;
@@ -124,6 +115,15 @@ public class InvestigatorPanel
 
   /** the action for selecting the class attribute heuristic. */
   protected BaseAction m_ActionFileClassAttribute;
+
+  /** the submenu for a new tab. */
+  protected BaseMenu m_MenuTabNewTab;
+
+  /** the action for closing a tab. */
+  protected BaseAction m_ActionTabCloseTab;
+
+  /** the action for closing all tabs. */
+  protected BaseAction m_ActionTabCloseAllTabs;
 
   /** the log. */
   protected StringBuilder m_Log;
@@ -203,7 +203,7 @@ public class InvestigatorPanel
    */
   protected void initActions() {
     // tabs
-    m_ActionFileCloseTab = new AbstractBaseAction() {
+    m_ActionTabCloseTab = new AbstractBaseAction() {
       private static final long serialVersionUID = 1028160012672649573L;
       @Override
       protected void doActionPerformed(ActionEvent e) {
@@ -213,10 +213,10 @@ public class InvestigatorPanel
 	updateMenu();
       }
     };
-    m_ActionFileCloseTab.setName("Close tab");
-    m_ActionFileCloseTab.setIcon(GUIHelper.getEmptyIcon());
+    m_ActionTabCloseTab.setName("Close tab");
+    m_ActionTabCloseTab.setIcon(GUIHelper.getIcon("close_tab_focused.gif"));
 
-    m_ActionFileCloseAllTabs = new AbstractBaseAction() {
+    m_ActionTabCloseAllTabs = new AbstractBaseAction() {
       private static final long serialVersionUID = 2162739410818834253L;
       @Override
       protected void doActionPerformed(ActionEvent e) {
@@ -224,8 +224,8 @@ public class InvestigatorPanel
 	updateMenu();
       }
     };
-    m_ActionFileCloseAllTabs.setName("Close all tabs");
-    m_ActionFileCloseAllTabs.setIcon(GUIHelper.getEmptyIcon());
+    m_ActionTabCloseAllTabs.setName("Close all tabs");
+    m_ActionTabCloseAllTabs.setIcon(GUIHelper.getEmptyIcon());
 
     m_ActionFileClose = new AbstractBaseAction() {
       private static final long serialVersionUID = -1104246458353845500L;
@@ -264,8 +264,8 @@ public class InvestigatorPanel
    * Updates the actions.
    */
   protected void updateActions() {
-    m_ActionFileCloseTab.setEnabled(m_TabbedPane.getTabCount() > 0);
-    m_ActionFileCloseAllTabs.setEnabled(m_TabbedPane.getTabCount() > 0);
+    m_ActionTabCloseTab.setEnabled(m_TabbedPane.getTabCount() > 0);
+    m_ActionTabCloseAllTabs.setEnabled(m_TabbedPane.getTabCount() > 0);
   }
 
   /**
@@ -288,45 +288,9 @@ public class InvestigatorPanel
 
       // File
       menu = new JMenu("File");
+      menu.setMnemonic('F');
       menu.addChangeListener((ChangeEvent e) -> updateMenu());
       result.add(menu);
-
-      // File/New tab
-      m_MenuFileNewTab = new BaseMenu("New tab");
-      m_MenuFileNewTab.setIcon(GUIHelper.getIcon("new.gif"));
-      menu.add(m_MenuFileNewTab);
-      classes = ClassLister.getSingleton().getClasses(AbstractInvestigatorTab.class);
-      for (final Class cls: classes) {
-	try {
-	  tab      = (AbstractInvestigatorTab) cls.newInstance();
-	  menuitem = new JMenuItem(tab.getTitle());
-	  if (tab.getTabIcon() == null)
-	    menuitem.setIcon(GUIHelper.getEmptyIcon());
-	  else
-	    menuitem.setIcon(GUIHelper.getIcon(tab.getTabIcon()));
-          // shortcut?
-          if (getShortcutProperties().hasKey("Tab-" + cls.getName()))
-	    menuitem.setAccelerator(GUIHelper.getKeyStroke(getShortcutProperties().getProperty("Tab-" + cls.getName())));
-	  menuitem.addActionListener((ActionEvent e) -> {
-	    try {
-	      AbstractInvestigatorTab tabNew = (AbstractInvestigatorTab) cls.newInstance();
-	      m_TabbedPane.addTab(tabNew, true);
-	    }
-	    catch (Exception ex) {
-	      ConsolePanel.getSingleton().append("Failed to instantiate tab class: " + cls.getName(), ex);
-	    }
-	  });
-	  m_MenuFileNewTab.add(menuitem);
-	}
-	catch (Exception e) {
-	  ConsolePanel.getSingleton().append("Failed to instantiate tab class: " + cls.getName(), e);
-	}
-      }
-      m_MenuFileNewTab.sort();
-      menu.add(m_ActionFileCloseTab);
-      menu.add(m_ActionFileCloseAllTabs);
-
-      menu.addSeparator();
 
       // File/Open file
       menu.add(m_ActionFileOpen);
@@ -370,6 +334,47 @@ public class InvestigatorPanel
       // File/Close
       menu.add(m_ActionFileClose);
 
+      // Tab
+      menu = new JMenu("Tab");
+      menu.setMnemonic('T');
+      menu.addChangeListener((ChangeEvent e) -> updateMenu());
+      result.add(menu);
+
+      // Tab/New tab
+      m_MenuTabNewTab = new BaseMenu("New tab");
+      m_MenuTabNewTab.setIcon(GUIHelper.getIcon("new.gif"));
+      menu.add(m_MenuTabNewTab);
+      classes = ClassLister.getSingleton().getClasses(AbstractInvestigatorTab.class);
+      for (final Class cls: classes) {
+	try {
+	  tab      = (AbstractInvestigatorTab) cls.newInstance();
+	  menuitem = new JMenuItem(tab.getTitle());
+	  if (tab.getTabIcon() == null)
+	    menuitem.setIcon(GUIHelper.getEmptyIcon());
+	  else
+	    menuitem.setIcon(GUIHelper.getIcon(tab.getTabIcon()));
+          // shortcut?
+          if (getShortcutProperties().hasKey("Tab-" + cls.getName()))
+	    menuitem.setAccelerator(GUIHelper.getKeyStroke(getShortcutProperties().getProperty("Tab-" + cls.getName())));
+	  menuitem.addActionListener((ActionEvent e) -> {
+	    try {
+	      AbstractInvestigatorTab tabNew = (AbstractInvestigatorTab) cls.newInstance();
+	      m_TabbedPane.addTab(tabNew, true);
+	    }
+	    catch (Exception ex) {
+	      ConsolePanel.getSingleton().append("Failed to instantiate tab class: " + cls.getName(), ex);
+	    }
+	  });
+	  m_MenuTabNewTab.add(menuitem);
+	}
+	catch (Exception e) {
+	  ConsolePanel.getSingleton().append("Failed to instantiate tab class: " + cls.getName(), e);
+	}
+      }
+      m_MenuTabNewTab.sort();
+      menu.addSeparator();
+      menu.add(m_ActionTabCloseTab);
+      menu.add(m_ActionTabCloseAllTabs);
 
       m_MenuBar = result;
     }
