@@ -26,7 +26,13 @@ import adams.core.Range;
 import adams.core.base.BaseRegExp;
 import adams.data.instancesanalysis.PLS;
 import adams.data.instancesanalysis.PLS.Algorithm;
+import adams.data.sequence.XYSequence;
+import adams.data.sequence.XYSequencePoint;
+import adams.data.sequence.XYSequencePointComparator.Comparison;
+import adams.data.spreadsheet.Row;
+import adams.data.spreadsheet.SpreadSheet;
 import adams.data.weka.WekaAttributeRange;
+import adams.flow.sink.sequenceplotter.SequencePlotterPanel;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.BaseTabbedPane;
 import adams.gui.core.NumberTextField;
@@ -35,6 +41,12 @@ import adams.gui.core.ParameterPanel;
 import adams.gui.event.WekaInvestigatorDataEvent;
 import adams.gui.tools.wekainvestigator.InvestigatorPanel;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
+import adams.gui.visualization.core.AxisPanel;
+import adams.gui.visualization.core.axis.FancyTickGenerator;
+import adams.gui.visualization.core.plot.Axis;
+import adams.gui.visualization.sequence.LinePaintlet;
+import adams.gui.visualization.sequence.XYSequenceContainer;
+import adams.gui.visualization.sequence.XYSequenceContainerManager;
 import adams.gui.visualization.stats.scatterplot.AbstractScatterPlotOverlay;
 import adams.gui.visualization.stats.scatterplot.Coordinates;
 import adams.gui.visualization.stats.scatterplot.ScatterPlot;
@@ -111,6 +123,9 @@ public class PartialLeastSquaresTab
   /** the scores plot. */
   protected ScatterPlot m_PanelScores;
 
+  /** the plot of the loadings. */
+  protected SequencePlotterPanel m_PanelWeights;
+
   /** whether the evaluation is currently running. */
   protected Thread m_Worker;
 
@@ -121,7 +136,7 @@ public class PartialLeastSquaresTab
   protected void initialize() {
     super.initialize();
 
-    m_ModelDatasets   = new DefaultComboBoxModel<>();
+    m_ModelDatasets = new DefaultComboBoxModel<>();
   }
 
   /**
@@ -129,9 +144,11 @@ public class PartialLeastSquaresTab
    */
   @Override
   protected void initGUI() {
-    Properties 	props;
-    JPanel	panelOptions;
-    JPanel	panelButtons;
+    Properties 		props;
+    JPanel		panelOptions;
+    JPanel		panelButtons;
+    AxisPanel		axis;
+    FancyTickGenerator	tick;
 
     super.initGUI();
 
@@ -212,6 +229,26 @@ public class PartialLeastSquaresTab
       new Coordinates()
     });
     m_TabbedPanePlots.addTab("Loadings", m_PanelLoadings);
+
+    m_PanelWeights = new SequencePlotterPanel("Weights");
+    m_PanelWeights.setPaintlet(new LinePaintlet());
+    // x
+    axis = m_PanelWeights.getPlot().getAxis(Axis.BOTTOM);
+    axis.setAxisName("attribute");
+    axis.setNumberFormat("0");
+    tick = new FancyTickGenerator();
+    tick.setNumTicks(40);
+    axis.setTickGenerator(tick);
+    axis.setNthValueToShow(4);
+    // y
+    axis = m_PanelWeights.getPlot().getAxis(Axis.LEFT);
+    axis.setAxisName("weight");
+    axis.setNumberFormat("0.000");
+    tick = new FancyTickGenerator();
+    tick.setNumTicks(20);
+    axis.setTickGenerator(tick);
+    axis.setNthValueToShow(2);
+    m_TabbedPanePlots.addTab("Weights", m_PanelWeights);
 
     m_PanelScores = new ScatterPlot();
     m_PanelScores.setXIndex(new Index("1"));
@@ -385,18 +422,43 @@ public class PartialLeastSquaresTab
 
     run = () -> {
       try {
-	DataContainer cont = getData().get(m_ComboBoxDatasets.getSelectedIndex());
+	DataContainer datacont = getData().get(m_ComboBoxDatasets.getSelectedIndex());
 	PLS pls = new PLS();
 	pls.setAttributeRange(new WekaAttributeRange(m_TextAttributeRange.getText()));
 	pls.setAlgorithm((Algorithm) m_ComboBoxAlgorithm.getSelectedItem());
 	pls.setNumComponents(m_TextNumComponents.getValue().intValue());
-	String msg = pls.analyze(cont.getData());
+	String msg = pls.analyze(datacont.getData());
 	if (msg != null) {
 	  logError(msg, "PLS Error");
 	}
 	else {
-	  m_PanelLoadings.setData(pls.getLoadings());
+          // loadings (scatter)
+	  SpreadSheet loadings = pls.getLoadings();
+	  m_PanelLoadings.setData(loadings);
 	  m_PanelLoadings.reset();
+          // loadings
+          XYSequenceContainerManager manager = m_PanelWeights.getContainerManager();
+	  double min = Double.POSITIVE_INFINITY;
+	  double max = Double.NEGATIVE_INFINITY;
+          manager.clear();
+          manager.startUpdate();
+	  for (int c = 0; c < loadings.getColumnCount(); c++) {
+	    XYSequence seq = new XYSequence();
+	    seq.setComparison(Comparison.X_AND_Y);
+	    seq.setID(loadings.getColumnName(c));
+	    XYSequenceContainer cont = manager.newContainer(seq);
+	    manager.add(cont);
+	    for (int r = 0; r < loadings.getRowCount(); r++) {
+	      Row row = loadings.getRow(r);
+	      double value = row.getCell(c).toDouble();
+	      min = Math.min(min, value);
+	      max = Math.max(max, value);
+	      XYSequencePoint point = new XYSequencePoint("" + seq.size(), seq.size(), value);
+	      seq.add(point);
+	    }
+	  }
+          manager.finishUpdate();
+          // scores (scatter)
 	  m_PanelScores.setData(pls.getScores());
 	  m_PanelScores.reset();
 	}
