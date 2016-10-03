@@ -34,6 +34,15 @@ import java.util.HashMap;
 public class LookUpHelper {
 
   /**
+   * Returns an empty new lookup table.
+   *
+   * @return		the empty table
+   */
+  public static HashMap<String,Object> newTable() {
+    return new HashMap<>();
+  }
+
+  /**
    * Generates a lookup table from the given file. Uses empty string as 
    * missing value.
    * 
@@ -101,7 +110,7 @@ public class LookUpHelper {
     }
 
     // create lookup table
-    result = new HashMap<String,Object>();
+    result = newTable();
     for (Row row: sheet.rows()) {
       if (!row.hasCell(keyCol) || row.getCell(keyCol).isMissing())
 	continue;
