@@ -46,6 +46,9 @@ public class FourInOnePlot
 
   private static final long serialVersionUID = -6829245659118360739L;
 
+  /** whether to use absolute errors. */
+  protected boolean m_UseAbsoluteError;
+
   /**options for the normal plot */
   protected NormalPlotOptions m_NormalPlotOptions;
 
@@ -76,6 +79,10 @@ public class FourInOnePlot
     super.defineOptions();
 
     m_OptionManager.add(
+      "absolute-error", "useAbsoluteError",
+      false);
+
+    m_OptionManager.add(
       "normal-plot-options", "normalPlotOptions",
       new NormalPlotOptions());
 
@@ -93,16 +100,47 @@ public class FourInOnePlot
   }
 
   /**
-   * Set the options for the histogram
-   * @param val			Histogramoptions object containing the options
+   * Sets whether to use an absolute error (ie no direction).
+   *
+   * @param value	true if to use absolute error
    */
-  public void setHistogramOptions(HistogramOptions val) {
-    m_HistogramOptions = val;
+  public void setUseAbsoluteError(boolean value) {
+    m_UseAbsoluteError = value;
     reset();
   }
 
   /**
-   * Get the options for the histogram
+   * Returns whether to use an absolute error (ie no direction).
+   *
+   * @return		true if to use absolute error
+   */
+  public boolean getUseAbsoluteError() {
+    return m_UseAbsoluteError;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String useAbsoluteErrorTipText() {
+    return "If set to true, then the error will be absolute (no direction).";
+  }
+
+  /**
+   * Set the options for the histogram.
+   *
+   * @param value			Histogramoptions object containing the options
+   */
+  public void setHistogramOptions(HistogramOptions value) {
+    m_HistogramOptions = value;
+    reset();
+  }
+
+  /**
+   * Get the options for the histogram.
+   *
    * @return			Histogramoptions object containing the options for the histogram
    */
   public HistogramOptions getHistogramOptions() {
@@ -110,7 +148,8 @@ public class FourInOnePlot
   }
 
   /**
-   * Tip text for the histogram options property
+   * Tip text for the histogram options property.
+   *
    * @return			String describing the property
    */
   public String histogramOptionsTipText() {
@@ -118,16 +157,18 @@ public class FourInOnePlot
   }
 
   /**
-   * Set the options for the vs order plot
-   * @param val			Versusorderoptions object containing the options
+   * Set the options for the vs order plot.
+   *
+   * @param value			Versusorderoptions object containing the options
    */
-  public void setVersusOrderOptions(VersusOrderOptions val) {
-    m_VersusOrderOptions = val;
+  public void setVersusOrderOptions(VersusOrderOptions value) {
+    m_VersusOrderOptions = value;
     reset();
   }
 
   /**
-   * Get the options for the vsorder plot
+   * Get the options for the vsorder plot.
+   *
    * @return				Versusorder object containing the options
    */
   public VersusOrderOptions getVersusOrderOptions() {
@@ -135,7 +176,8 @@ public class FourInOnePlot
   }
 
   /**
-   * Tip text for the vsorder options property
+   * Tip text for the vsorder options property.
+   *
    * @return				String describing the property
    */
   public String versusOrderOptionsTipText() {
@@ -143,16 +185,18 @@ public class FourInOnePlot
   }
 
   /**
-   * Set the options for the vsfit plot
-   * @param val			Vsfiroptions object containing the options
+   * Set the options for the vsfit plot.
+   *
+   * @param value			Vsfiroptions object containing the options
    */
-  public void setVersusFitOptions(VersusFitOptions val) {
-    m_VersusFitOptions = val;
+  public void setVersusFitOptions(VersusFitOptions value) {
+    m_VersusFitOptions = value;
     reset();
   }
 
   /**
-   * Get the options for the vsfit plot
+   * Get the options for the vsfit plot.
+   *
    * @return			vsfitoptions object containing the options
    */
   public VersusFitOptions getVersusFitOptions() {
@@ -160,7 +204,8 @@ public class FourInOnePlot
   }
 
   /**
-   * Tip text for the vs fit options property
+   * Tip text for the vs fit options property.
+   *
    * @return			String describing the property
    */
   public String versusFitOptionsTipText() {
@@ -168,16 +213,18 @@ public class FourInOnePlot
   }
 
   /**
-   * Set the options for the normal plot
-   * @param val			Normalplotoptions object containing the options
+   * Set the options for the normal plot.
+   *
+   * @param value			Normalplotoptions object containing the options
    */
-  public void setNormalPlotOptions(NormalPlotOptions val) {
-    m_NormalPlotOptions = val;
+  public void setNormalPlotOptions(NormalPlotOptions value) {
+    m_NormalPlotOptions = value;
     reset();
   }
 
   /**
-   * get the options for the normal plot
+   * get the options for the normal plot.
+   *
    * @return			Normalplotoptions object containing the options
    */
   public NormalPlotOptions getNormalPlotOptions() {
@@ -185,7 +232,8 @@ public class FourInOnePlot
   }
 
   /**
-   * tip text for the normalplot options property
+   * tip text for the normalplot options property.
+   *
    * @return			String describing the property
    */
   public String normalPlotOptionsTipText() {
@@ -232,6 +280,7 @@ public class FourInOnePlot
 
     p2s = new WekaPredictionsToSpreadSheet();
     p2s.setShowError(true);
+    p2s.setUseAbsoluteError(m_UseAbsoluteError);
     p2s.input(new Token(item.getEvaluation()));
     p2s.execute();
     token = p2s.output();
