@@ -15,15 +15,15 @@
 
 /*
  * AbstractField.java
- * Copyright (C) 2009-2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.report;
 
-import java.io.Serializable;
-
 import adams.core.CloneHandler;
 import adams.core.Utils;
+
+import java.io.Serializable;
 
 /**
  * A single report field identifier.
@@ -407,7 +407,7 @@ public abstract class AbstractField
    * @param dtype	the data type of the field
    * @return		the new field
    */
-  protected abstract AbstractField newField(String name, DataType dtype);
+  public abstract AbstractField newField(String name, DataType dtype);
 
   /**
    * Replaces the prefix of a Field and returns a new Field object. The Field

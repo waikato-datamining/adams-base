@@ -15,7 +15,7 @@
 
 /*
  * Field.java
- * Copyright (C) 2009-2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.report;
@@ -77,7 +77,7 @@ public class Field
    * @param dtype	the data type of the field
    * @return		the new field
    */
-  protected AbstractField newField(String name, DataType dtype) {
+  public AbstractField newField(String name, DataType dtype) {
     return new Field(name, dtype);
   }
 
