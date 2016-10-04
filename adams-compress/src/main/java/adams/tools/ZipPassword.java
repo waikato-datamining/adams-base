@@ -21,18 +21,29 @@
 package adams.tools;
 
 import adams.core.BruteForcePasswordGenerator;
+import adams.core.Performance;
+import adams.core.ThreadLimiter;
+import adams.core.Utils;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
 import adams.core.io.TempUtils;
+import adams.core.logging.LoggingHelper;
 import adams.env.Environment;
+import adams.flow.core.RunnableWithLogging;
+import adams.multiprocess.PausableFixedThreadPoolExecutor;
 import net.lingala.zip4j.core.ZipFile;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 
 /**
  <!-- globalinfo-start -->
- * Attempts to determine the password of a password protected ZIP file.
+ * Attempts to determine the password of a password protected ZIP file.<br>
+ * If no dictionary file has been provided, a brute force attack is carried out.<br>
+ * The brute force attack can be run in parallel, default is two threads.<br>
+ * The dictionary approach also tests lower&#47;upper case version of the passwords and the reverse of them.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -41,45 +52,155 @@ import java.util.logging.Level;
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- *
+ * 
  * <pre>-zip &lt;adams.core.io.PlaceholderFile&gt; (property: zip)
  * &nbsp;&nbsp;&nbsp;The ZIP file to process.
  * &nbsp;&nbsp;&nbsp;default: ${CWD}
  * </pre>
- *
+ * 
  * <pre>-dictionary &lt;adams.core.io.PlaceholderFile&gt; (property: dictionary)
  * &nbsp;&nbsp;&nbsp;The dictionary file to process.
  * &nbsp;&nbsp;&nbsp;default: ${CWD}
  * </pre>
- *
+ * 
  * <pre>-chars &lt;java.lang.String&gt; (property: characters)
  * &nbsp;&nbsp;&nbsp;The characters to use for brute force attack.
  * &nbsp;&nbsp;&nbsp;default: abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,;:\'\"-_!&#64;#$%^&amp;*()[]{}
  * </pre>
- *
+ * 
  * <pre>-max-length &lt;int&gt; (property: maxLength)
  * &nbsp;&nbsp;&nbsp;The maximum length for password strings when performing brute force attack.
  * &nbsp;&nbsp;&nbsp;default: 10
  * &nbsp;&nbsp;&nbsp;minimum: 1
  * </pre>
- *
+ * 
+ * <pre>-start &lt;java.lang.String&gt; (property: start)
+ * &nbsp;&nbsp;&nbsp;The starting password for the brute force attack.
+ * &nbsp;&nbsp;&nbsp;default: 
+ * </pre>
+ * 
+ * <pre>-num-threads &lt;int&gt; (property: numThreads)
+ * &nbsp;&nbsp;&nbsp;The number of threads to use for parallel execution; &gt; 0: specific number 
+ * &nbsp;&nbsp;&nbsp;of cores to use (capped by actual number of cores available, 1 = sequential 
+ * &nbsp;&nbsp;&nbsp;execution); = 0: number of cores; &lt; 0: number of free cores (eg -2 means 
+ * &nbsp;&nbsp;&nbsp;2 free cores; minimum of one core is used)
+ * &nbsp;&nbsp;&nbsp;default: 2
+ * </pre>
+ * 
  * <pre>-password &lt;adams.core.io.PlaceholderFile&gt; (property: password)
  * &nbsp;&nbsp;&nbsp;The file to store the password in (if one found).
  * &nbsp;&nbsp;&nbsp;default: ${CWD}
  * </pre>
- *
+ * 
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
 public class ZipPassword
-  extends AbstractTool {
+  extends AbstractTool
+  implements ThreadLimiter {
 
   private static final long serialVersionUID = 3018437869824414157L;
 
   /** the default characters. */
   public final static String DEFAULT_CHARS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,;:'\"-_!@#$%^&*()[]{}";
+
+  /**
+   *
+   */
+  public static class BruteForceJob
+    extends RunnableWithLogging {
+
+    private static final long serialVersionUID = -4788228040850442732L;
+
+    /** the owner. */
+    protected ZipPassword m_Owner;
+
+    /** the ID. */
+    protected int m_ID;
+
+    /** the password generator to use. */
+    protected BruteForcePasswordGenerator m_Generator;
+
+    /** the number of passwords to skip. */
+    protected int m_Skip;
+
+    /** the zip file. */
+    protected File m_Zip;
+
+    /**
+     * Initializes the brute force job.
+     *
+     * @param owner 	the owner
+     * @param id 	the ID of the job
+     * @param generator	the configured password geenrator to use
+     * @param skip	the number of passwords to skip when testing
+     * @param zip	the file to test
+     */
+    public BruteForceJob(ZipPassword owner, int id, BruteForcePasswordGenerator generator, int skip, File zip) {
+      super();
+      m_Owner     = owner;
+      m_ID        = id;
+      m_Generator = generator;
+      m_Skip      = skip;
+      m_Zip       = zip;
+      m_Logger    = null;
+    }
+
+    /**
+     * Initializes the logger.
+     */
+    protected void configureLogger() {
+      m_Logger = LoggingHelper.getLogger(getClass() + "-" + m_ID);
+      m_Logger.setLevel(m_LoggingLevel.getLevel());
+    }
+
+    /**
+     * Performs the actual execution.
+     */
+    @Override
+    protected void doRun() {
+      ZipFile	zipfile;
+      int	count;
+      String	password;
+      String	tmpDir;
+      int	i;
+
+      try {
+	zipfile = new ZipFile(m_Zip.getAbsolutePath());
+	if (!zipfile.isEncrypted()) {
+	  getLogger().warning("ZIP file is not encrypted: " + m_Zip);
+	  m_Owner.outputPassword(null);
+	  return;
+	}
+	count  = 0;
+	tmpDir = TempUtils.getTempDirectoryStr();
+	while (!m_Stopped && m_Generator.hasNext()) {
+	  count++;
+	  password = m_Generator.next();
+	  try {
+	    zipfile.setPassword(password);
+	    zipfile.extractAll(tmpDir);
+	    m_Owner.outputPassword(password);
+	    return;
+	  }
+	  catch (Exception e) {
+	    // ignored
+	  }
+	  if (count % 10000 == 0) {
+	    getLogger().info(password);
+	    count = 0;
+	  }
+	  for (i = 0; i < m_Skip; i++)
+	    m_Generator.next();
+	}
+      }
+      catch (Exception e) {
+	getLogger().log(Level.SEVERE, "Error processing ZIP file: " + m_Zip, e);
+      }
+    }
+  }
 
   /** the zip file to use. */
   protected PlaceholderFile m_Zip;
@@ -96,8 +217,20 @@ public class ZipPassword
   /** the starting password. */
   protected String m_Start;
 
+  /** the number of threads to use for parallel execution. */
+  protected int m_NumThreads;
+
   /** the file to store the determined password in (if successful). */
   protected PlaceholderFile m_Password;
+
+  /** whether the search has terminated. */
+  protected boolean m_Finished;
+
+  /** the executor service to use for parallel execution. */
+  protected PausableFixedThreadPoolExecutor m_Executor;
+
+  /** the brute force jobs. */
+  protected List<BruteForceJob> m_Jobs;
 
   /**
    * Returns a string describing the object.
@@ -108,7 +241,10 @@ public class ZipPassword
   public String globalInfo() {
     return
       "Attempts to determine the password of a password protected ZIP file.\n"
-        + "If no dictionary file has been provided, a brute force attack is carried out.";
+	+ "If no dictionary file has been provided, a brute force attack is carried out.\n"
+	+ "The brute force attack can be run in parallel, default is two threads.\n"
+	+ "The dictionary approach also tests lower/upper case version of the "
+	+ "passwords and the reverse of them.";
   }
 
   /**
@@ -137,6 +273,10 @@ public class ZipPassword
     m_OptionManager.add(
       "start", "start",
       "");
+
+    m_OptionManager.add(
+      "num-threads", "numThreads",
+      2);
 
     m_OptionManager.add(
       "password", "password",
@@ -291,6 +431,35 @@ public class ZipPassword
   }
 
   /**
+   * Sets the number of threads to use for executing the branches.
+   *
+   * @param value 	the number of threads: -1 = # of CPUs/cores; 0/1 = sequential execution
+   */
+  public void setNumThreads(int value) {
+    m_NumThreads = value;
+    reset();
+  }
+
+  /**
+   * Returns the number of threads to use for executing the branches.
+   *
+   * @return 		the number of threads: -1 = # of CPUs/cores; 0/1 = sequential execution
+   */
+  public int getNumThreads() {
+    return m_NumThreads;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String numThreadsTipText() {
+    return Performance.getNumThreadsHelp();
+  }
+
+  /**
    * Sets the file for outputting the password.
    *
    * @param value	the password file
@@ -334,91 +503,114 @@ public class ZipPassword
 
   /**
    * Performs brute force attack.
-   *
-   * @return		the password or null if unsuccessful
    */
-  protected String doRunBruteForce() {
+  protected void doRunBruteForce() {
     BruteForcePasswordGenerator generator;
-    ZipFile 			zipfile;
-    String			tmpDir;
-    String			password;
-    int				count;
+    int				numThreads;
+    int				i;
+    int				n;
+    BruteForceJob		job;
 
-    generator = new BruteForcePasswordGenerator(m_Characters, m_MaxLength, m_Start.isEmpty() ? null : m_Start);
-    tmpDir    = TempUtils.getTempDirectoryStr();
-
-    try {
-      zipfile = new ZipFile(m_Zip.getAbsolutePath());
-      if (!zipfile.isEncrypted()) {
-        getLogger().warning("ZIP file is not encrypted: " + m_Zip);
-        return null;
-      }
-      count = 0;
-      while (generator.hasNext()) {
-	count++;
-	password = generator.next();
-        try {
-          zipfile.setPassword(password);
-          zipfile.extractAll(tmpDir);
-          return password;
-        }
-        catch (Exception e) {
-          // ignored
-        }
-        if (count % 10000 == 0) {
-          getLogger().info(password);
-          count = 0;
-        }
-      }
-    }
-    catch (Exception e) {
-      getLogger().log(Level.SEVERE, "Error processing ZIP file: " + m_Zip, e);
+    numThreads = Performance.determineNumThreads(m_NumThreads);
+    m_Executor = new PausableFixedThreadPoolExecutor(numThreads);
+    m_Jobs     = new ArrayList<>();
+    for (i = 0; i < numThreads; i++) {
+      generator = new BruteForcePasswordGenerator(m_Characters, m_MaxLength, m_Start.isEmpty() ? null : m_Start);
+      // offset generators
+      for (n = 0; n < i; n++)
+	generator.next();
+      job = new BruteForceJob(this, i, generator, numThreads - 1, m_Zip);
+      job.setLoggingLevel(getLoggingLevel());
+      m_Jobs.add(job);
     }
 
-    return null;
+    for (BruteForceJob j: m_Jobs)
+      m_Executor.submit(j);
+
+    while (!m_Stopped && !m_Executor.isTerminated()) {
+      Utils.wait(this, this, 1000, 1000);
+    }
   }
 
   /**
    * Uses dictionary for attak.
-   *
-   * @return		the password or null if unsuccessful
    */
-  protected String doRunDictionary() {
+  protected void doRunDictionary() {
     ZipFile 		zipfile;
     List<String> 	passwords;
+    String[]		variations;
     int			count;
     String		tmpDir;
 
     try {
       zipfile   = new ZipFile(m_Zip.getAbsolutePath());
       if (!zipfile.isEncrypted()) {
-        getLogger().warning("ZIP file is not encrypted: " + m_Zip);
-        return null;
+	getLogger().warning("ZIP file is not encrypted: " + m_Zip);
+	outputPassword(null);
+	return;
       }
-      tmpDir    = TempUtils.getTempDirectoryStr();
-      passwords = FileUtils.loadFromFile(m_Dictionary);
-      count     = 0;
-      for (String pw : passwords) {
-        count++;
-        try {
-          zipfile.setPassword(pw);
-          zipfile.extractAll(tmpDir);
-          return pw;
-        }
-        catch (Exception e) {
-          // ignored
-        }
-        if (count % 10000 == 0) {
-          getLogger().info(pw);
-          count = 0;
-        }
+      tmpDir     = TempUtils.getTempDirectoryStr();
+      passwords  = FileUtils.loadFromFile(m_Dictionary);
+      getLogger().info("");
+      variations = new String[6];
+      count      = 0;
+      for (String password : passwords) {
+	if (m_Stopped) {
+	  getLogger().severe("Interrupted!");
+	  outputPassword(null);
+	  return;
+	}
+	count++;
+	variations[0] = password;
+	variations[1] = variations[0].toLowerCase();
+	variations[2] = variations[0].toUpperCase();
+	variations[3] = new StringBuilder(password).reverse().toString();
+	variations[4] = variations[3].toLowerCase();
+	variations[5] = variations[3].toUpperCase();
+	for (String variation: variations) {
+	  try {
+	    zipfile.setPassword(variation);
+	    zipfile.extractAll(tmpDir);
+	    outputPassword(variation);
+	    return;
+	  }
+	  catch (Exception e) {
+	    // ignored
+	  }
+	}
+	if (count % 10000 == 0) {
+	  getLogger().info(password);
+	  count = 0;
+	}
       }
     }
     catch (Exception e) {
       getLogger().log(Level.SEVERE, "Error accessing ZIP file: " + m_Zip, e);
     }
+  }
 
-    return null;
+  /**
+   * Outputs the password.
+   *
+   * @param password	the password, null if failed to determine
+   */
+  protected synchronized void outputPassword(String password) {
+    if (m_Finished)
+      return;
+
+    m_Finished = true;
+
+    stopExecution();
+
+    if (password == null) {
+      getLogger().severe("Failed to determine password!");
+    }
+    else {
+      if (m_Password.isDirectory())
+	System.out.println(password);
+      else
+	FileUtils.writeToFile(m_Password.getAbsolutePath(), password, false);
+    }
   }
 
   /**
@@ -426,21 +618,31 @@ public class ZipPassword
    */
   @Override
   protected void doRun() {
-    String	password;
-
+    m_Finished = false;
     if (!m_Dictionary.exists() || m_Dictionary.isDirectory())
-      password = doRunBruteForce();
+      doRunBruteForce();
     else
-      password = doRunDictionary();
+      doRunDictionary();
+  }
 
-    if (password == null) {
-      getLogger().severe("Failed to determine password!");
-    }
-    else {
-      if (m_Password.isDirectory())
-        System.out.println(password);
-      else
-        FileUtils.writeToFile(m_Password.getAbsolutePath(), password, false);
+  /**
+   * Stops the execution.
+   */
+  @Override
+  public void stopExecution() {
+    super.stopExecution();
+    if (m_Executor != null) {
+      for (BruteForceJob job: m_Jobs)
+	job.stopExecution();
+      try {
+	if (m_Executor.isPaused())
+	  m_Executor.resumeExecution();
+	m_Executor.shutdown();
+      }
+      catch (Exception e) {
+	// ignored
+      }
+      m_Executor = null;
     }
   }
 
