@@ -57,6 +57,9 @@ public class BruteForcePasswordGenerator
   /** the next password. */
   protected String m_Next;
 
+  /** whether the next password has already been generated. */
+  protected boolean m_NextGenerated;
+
   /**
    * Initializes the generator.
    *
@@ -95,6 +98,7 @@ public class BruteForcePasswordGenerator
       }
     }
     m_Counter[0]--;
+    m_NextGenerated = false;
   }
 
   /**
@@ -103,7 +107,10 @@ public class BruteForcePasswordGenerator
    * @return		true if another password available
    */
   public boolean hasNext() {
-    m_Next = doNext();
+    if (!m_NextGenerated) {
+      m_Next = doNext();
+      m_NextGenerated = true;
+    }
     return (m_Next != null);
   }
 
@@ -113,7 +120,16 @@ public class BruteForcePasswordGenerator
    * @return		the next password, null if no more available
    */
   public String next() {
-    return m_Next;
+    String	result;
+
+    if (!m_NextGenerated)
+      m_Next = doNext();
+
+    result          = m_Next;
+    m_NextGenerated = false;
+    m_Next          = null;
+
+    return result;
   }
 
   /**
