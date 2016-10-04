@@ -20,6 +20,7 @@
 
 package adams.gui.tools.wekainvestigator.tab.clustertab.history;
 
+import adams.gui.tools.wekainvestigator.tab.ClusterTab;
 import adams.gui.tools.wekainvestigator.tab.ClusterTab.HistoryPanel;
 
 /**
@@ -29,6 +30,6 @@ import adams.gui.tools.wekainvestigator.tab.ClusterTab.HistoryPanel;
  * @version $Revision$
  */
 public abstract class AbstractHistoryPopupMenuItem
-  extends adams.gui.tools.wekainvestigator.history.AbstractHistoryPopupMenuItem<HistoryPanel> {
+  extends adams.gui.tools.wekainvestigator.history.AbstractHistoryPopupMenuItem<HistoryPanel, ClusterTab> {
 
 }

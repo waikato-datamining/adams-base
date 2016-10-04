@@ -23,6 +23,7 @@ package adams.gui.tools.wekainvestigator.history;
 import adams.core.ClassLister;
 import adams.gui.core.AbstractNamedHistoryPanel;
 import adams.gui.core.ConsolePanel;
+import adams.gui.tools.wekainvestigator.tab.AbstractInvestigatorTab;
 
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -37,7 +38,28 @@ import java.util.logging.Level;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public abstract class AbstractHistoryPopupMenuItem<T extends AbstractNamedHistoryPanel> {
+public abstract class AbstractHistoryPopupMenuItem<H extends AbstractNamedHistoryPanel, T extends AbstractInvestigatorTab> {
+
+  /** the owner. */
+  protected T m_Owner;
+
+  /**
+   * Sets the owner.
+   *
+   * @param value	the owner
+   */
+  public void setOwner(T value) {
+    m_Owner = value;
+  }
+
+  /**
+   * Returns the owner.
+   *
+   * @return		the owner
+   */
+  public T getOwner() {
+    return m_Owner;
+  }
 
   /**
    * The category for grouping menu items.
@@ -60,7 +82,7 @@ public abstract class AbstractHistoryPopupMenuItem<T extends AbstractNamedHistor
    * @param indices	the selected indices
    * @return		the menu item, null if failed to generate
    */
-  public abstract JMenuItem createMenuItem(T history, int[] indices);
+  public abstract JMenuItem createMenuItem(H history, int[] indices);
 
   /**
    * Updates the menu for the specified superclass of menu items.
@@ -70,7 +92,7 @@ public abstract class AbstractHistoryPopupMenuItem<T extends AbstractNamedHistor
    * @param menu	the menu to update
    * @param superclass	the superclass for the menu items
    */
-  public static void updatePopupMenu(AbstractNamedHistoryPanel history, int[] indices, JPopupMenu menu, Class superclass) {
+  public static void updatePopupMenu(AbstractNamedHistoryPanel history, AbstractInvestigatorTab owner, int[] indices, JPopupMenu menu, Class superclass) {
     Class[]				classes;
     List<AbstractHistoryPopupMenuItem>	menuitems;
     String				category;
@@ -95,6 +117,7 @@ public abstract class AbstractHistoryPopupMenuItem<T extends AbstractNamedHistor
     for (AbstractHistoryPopupMenuItem menuitem: menuitems) {
       if (!menuitem.getCategory().equals(category))
 	menu.addSeparator();
+      menuitem.setOwner(owner);
       category = menuitem.getCategory();
       item     = menuitem.createMenuItem(history, indices);
       if (item != null)

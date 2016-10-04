@@ -366,7 +366,7 @@ public class AttributeSelectionTab
       result.add(submenu);
 
       AbstractHistoryPopupMenuItem.updatePopupMenu(
-	this, indices, result,
+	this, m_Owner, indices, result,
 	adams.gui.tools.wekainvestigator.tab.attseltab.history.AbstractHistoryPopupMenuItem.class);
 
       return result;
@@ -715,17 +715,8 @@ public class AttributeSelectionTab
 	logError("Failed to perform attribute selection", e, "Attribute selection");
 	item = null;
       }
-      if (item != null) {
-	for (int i = 0; i < m_OutputGenerators.length; i++) {
-	  try {
-	    if (m_OutputGenerators[i].canGenerateOutput(item))
-	      m_OutputGenerators[i].generateOutput(item);
-	  }
-	  catch (Exception e) {
-	    logError("Failed to generate output with " + m_OutputGenerators[i].toCommandLine(), e, "Clusterer output generation");
-	  }
-	}
-      }
+      if (item != null)
+	generateOutput(item);
       m_Worker = null;
       updateButtons();
     });
@@ -743,6 +734,23 @@ public class AttributeSelectionTab
     m_Worker.stop();
     logMessage("Stopped evaluation '" + m_CurrentEvaluation.getName() + "' using: " + OptionUtils.getCommandLine(m_CurrentEvaluator));
     updateButtons();
+  }
+
+  /**
+   * Generates the output from the item.
+   *
+   * @param item	the item to process
+   */
+  public void generateOutput(ResultItem item) {
+    for (int i = 0; i < m_OutputGenerators.length; i++) {
+      try {
+	if (m_OutputGenerators[i].canGenerateOutput(item))
+	  m_OutputGenerators[i].generateOutput(item);
+      }
+      catch (Exception e) {
+	logError("Failed to generate output with " + m_OutputGenerators[i].toCommandLine(), e, "Attribute selection output generation");
+      }
+    }
   }
 
   /**

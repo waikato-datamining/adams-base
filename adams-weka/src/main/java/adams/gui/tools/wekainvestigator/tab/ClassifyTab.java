@@ -310,7 +310,7 @@ public class ClassifyTab
       result.add(submenu);
 
       AbstractHistoryPopupMenuItem.updatePopupMenu(
-	this, indices, result,
+	this, m_Owner, indices, result,
 	adams.gui.tools.wekainvestigator.tab.classifytab.history.AbstractHistoryPopupMenuItem.class);
 
       return result;
@@ -633,16 +633,8 @@ public class ClassifyTab
         logError("Failed to evaluate classifier", e, "Classifier evaluation");
         item = null;
       }
-      if (item != null) {
-        for (int i = 0; i < m_OutputGenerators.length; i++) {
-          try {
-            m_OutputGenerators[i].generateOutput(item);
-          }
-          catch (Exception e) {
-            logError("Failed to generate output with " + m_OutputGenerators[i].toCommandLine(), e, "Classifier output generation");
-          }
-        }
-      }
+      if (item != null)
+        generateOutput(item);
       m_Worker = null;
       updateButtons();
     });
@@ -660,6 +652,22 @@ public class ClassifyTab
     m_Worker.stop();
     logMessage("Stopped evaluation '" + m_CurrentEvaluation.getName() + "' using: " + OptionUtils.getCommandLine(m_CurrentClassifier));
     updateButtons();
+  }
+
+  /**
+   * Generates the output from the item.
+   *
+   * @param item	the item to process
+   */
+  public void generateOutput(ResultItem item) {
+    for (int i = 0; i < m_OutputGenerators.length; i++) {
+      try {
+	m_OutputGenerators[i].generateOutput(item);
+      }
+      catch (Exception e) {
+	logError("Failed to generate output with " + m_OutputGenerators[i].toCommandLine(), e, "Classifier output generation");
+      }
+    }
   }
 
   /**
