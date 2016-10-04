@@ -130,7 +130,7 @@ public class PrefixField
    * @param dtype	the data type of the field
    * @return		the new field
    */
-  protected AbstractField newField(String name, DataType dtype) {
+  public AbstractField newField(String name, DataType dtype) {
     return new PrefixField(name, dtype);
   }
 
