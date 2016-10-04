@@ -15,7 +15,7 @@
 
 /*
  * Tool.java
- * Copyright (C) 2008-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2016 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -24,10 +24,14 @@ package adams.tools;
 import adams.core.ClassLister;
 import adams.core.CleanUpHandler;
 import adams.core.StoppableWithFeedback;
+import adams.core.logging.LoggingHelper;
+import adams.core.management.ProcessUtils;
 import adams.core.option.AbstractOptionConsumer;
 import adams.core.option.AbstractOptionHandler;
 import adams.core.option.ArrayConsumer;
 import adams.core.option.OptionUtils;
+import adams.env.Environment;
+import adams.gui.scripting.ScriptingEngine;
 
 
 /**
@@ -185,5 +189,37 @@ public abstract class AbstractTool
    */
   public static AbstractTool forCommandLine(String cmdline) {
     return (AbstractTool) AbstractOptionConsumer.fromString(ArrayConsumer.class, cmdline);
+  }
+
+  /**
+   * Runs the tool from the commandline.
+   *
+   * @param env		the environment class to use
+   * @param tool	the tool class
+   * @param options	the commandline options
+   */
+  public static void runTool(Class env, Class tool, String[] options) {
+    AbstractTool  instance;
+
+    Environment.setEnvironmentClass(env);
+    LoggingHelper.useHandlerFromOptions(options);
+
+    try {
+      if (OptionUtils.helpRequested(options)) {
+	System.out.println("Help requested...\n");
+	instance = forName(tool.getName(), new String[0]);
+	System.out.print("\n" + OptionUtils.list(instance));
+	LoggingHelper.outputHandlerOption();
+	ScriptingEngine.stopAllEngines();
+      }
+      else {
+	instance = forName(tool.getName(), options);
+	instance.getLogger().info("PID: " + ProcessUtils.getVirtualMachinePID());
+	instance.run();
+      }
+    }
+    catch (Exception e) {
+      e.printStackTrace();
+    }
   }
 }
