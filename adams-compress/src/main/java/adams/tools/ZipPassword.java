@@ -107,7 +107,10 @@ public class ZipPassword
   public final static String DEFAULT_CHARS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,;:'\"-_!@#$%^&*()[]{}";
 
   /**
+   * Job for performing brute force attack in paralle.
    *
+   * @author FracPete (fracpete at waikato dot ac dot nz)
+   * @version $Revision$
    */
   public static class BruteForceJob
     extends RunnableWithLogging {
@@ -653,8 +656,6 @@ public class ZipPassword
    * @throws Exception	if anything goes wrong
    */
   public static void main(String[] args) throws Exception {
-    Environment.setEnvironmentClass(Environment.class);
-    ZipPassword tool = (ZipPassword) forName(ZipPassword.class.getName(), args);
-    tool.run();
+    runTool(Environment.class, ZipPassword.class, args);
   }
 }
