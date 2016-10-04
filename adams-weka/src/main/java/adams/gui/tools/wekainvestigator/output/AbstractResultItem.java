@@ -39,7 +39,7 @@ public abstract class AbstractResultItem
   private static final long serialVersionUID = -3409493446200539772L;
 
   /** the maximum length for the relationname when assembling the name. */
-  public final static int MAX_RELATIONNAME_LENGTH = 20;
+  public final static int MAX_RELATIONNAME_LENGTH = 30;
 
   /** the timestamp. */
   protected Date m_Timestamp;
