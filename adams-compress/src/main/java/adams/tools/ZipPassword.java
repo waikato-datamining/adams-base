@@ -23,9 +23,11 @@ package adams.tools;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
 import adams.core.io.TempUtils;
+import adams.core.logging.CustomLoggingLevelObject;
 import adams.env.Environment;
 import net.lingala.zip4j.core.ZipFile;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -40,33 +42,33 @@ import java.util.logging.Level;
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- * 
+ *
  * <pre>-zip &lt;adams.core.io.PlaceholderFile&gt; (property: zip)
  * &nbsp;&nbsp;&nbsp;The ZIP file to process.
  * &nbsp;&nbsp;&nbsp;default: ${CWD}
  * </pre>
- * 
+ *
  * <pre>-dictionary &lt;adams.core.io.PlaceholderFile&gt; (property: dictionary)
  * &nbsp;&nbsp;&nbsp;The dictionary file to process.
  * &nbsp;&nbsp;&nbsp;default: ${CWD}
  * </pre>
- * 
+ *
  * <pre>-chars &lt;java.lang.String&gt; (property: characters)
  * &nbsp;&nbsp;&nbsp;The characters to use for brute force attack.
  * &nbsp;&nbsp;&nbsp;default: abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,;:\'\"-_!&#64;#$%^&amp;*()[]{}
  * </pre>
- * 
+ *
  * <pre>-max-length &lt;int&gt; (property: maxLength)
  * &nbsp;&nbsp;&nbsp;The maximum length for password strings when performing brute force attack.
  * &nbsp;&nbsp;&nbsp;default: 10
  * &nbsp;&nbsp;&nbsp;minimum: 1
  * </pre>
- * 
+ *
  * <pre>-password &lt;adams.core.io.PlaceholderFile&gt; (property: password)
  * &nbsp;&nbsp;&nbsp;The file to store the password in (if one found).
  * &nbsp;&nbsp;&nbsp;default: ${CWD}
  * </pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
@@ -76,6 +78,106 @@ public class ZipPassword
   extends AbstractTool {
 
   private static final long serialVersionUID = 3018437869824414157L;
+
+  /**
+   * Generates passwords for a brute force attack.
+   *
+   * @author FracPete (fracpete at waikato dot ac dot nz)
+   * @version $Revision$
+   */
+  public static class BruteForceGenerator
+    extends CustomLoggingLevelObject
+    implements Iterator<String> {
+
+    private static final long serialVersionUID = 504757773896722990L;
+
+    /** the maximum length for passwords to test. */
+    protected int m_MaxLength;
+
+    /** counter for generating the passwords. */
+    protected int[] m_Counter;
+
+    /** the characters to use in the attack. */
+    protected char[] m_Chars;
+
+    /** the maximum number of characters. */
+    protected int m_Max;
+
+    /** the buffer for the password. */
+    protected char[] m_Password;
+
+    /** the current number of characters in the password. */
+    protected int m_NumChars;
+
+    /** the next password. */
+    protected String m_Next;
+
+    /**
+     * Initializes the generator.
+     *
+     * @param chars		the characters to use for each position
+     * @param maxLength		the maximum length of the password
+     */
+    public BruteForceGenerator(String chars, int maxLength) {
+      m_MaxLength  = maxLength;
+      m_Counter    = new int[m_MaxLength];
+      m_Counter[0] = -1;
+      m_Chars      = chars.toCharArray();
+      m_Max        = m_Chars.length;
+      m_Password   = new char[m_Counter.length];
+      m_NumChars   = 1;
+      m_Next       = null;
+    }
+
+    /**
+     * Checks whether there is another password available.
+     *
+     * @return		true if another password available
+     */
+    public boolean hasNext() {
+      m_Next = doNext();
+      return (m_Next != null);
+    }
+
+    /**
+     * Returns the next password.
+     *
+     * @return		the next password, null if no more available
+     */
+    public String next() {
+      return m_Next;
+    }
+
+    /**
+     * Generates the next password.
+     *
+     * @return		the next password, null if no more available
+     */
+    protected String doNext() {
+      int	i;
+      int 	index;
+
+      index = 0;
+      while (index < m_Counter.length) {
+        m_Counter[index]++;
+        if (m_Counter[index] == m_Max) {
+          m_Counter[index] = 0;
+          index++;
+          m_NumChars = Math.max(m_NumChars, index + 1);
+          if (m_NumChars > m_Counter.length)
+            return null;
+        }
+        else {
+          break;
+        }
+      }
+
+      for (i = 0; i < m_NumChars; i++)
+        m_Password[i] = m_Chars[m_Counter[i]];
+
+      return new String(m_Password).trim();
+    }
+  }
 
   /** the default characters. */
   public final static String DEFAULT_CHARS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,;:'\"-_!@#$%^&*()[]{}";
@@ -104,7 +206,7 @@ public class ZipPassword
   public String globalInfo() {
     return
       "Attempts to determine the password of a password protected ZIP file.\n"
-      + "If no dictionary file has been provided, a brute force attack is carried out.";
+        + "If no dictionary file has been provided, a brute force attack is carried out.";
   }
 
   /**
@@ -301,60 +403,34 @@ public class ZipPassword
    * @return		the password or null if unsuccessful
    */
   protected String doRunBruteForce() {
-    ZipFile 	zipfile;
-    int[] 	counter;
-    char[] 	chars;
-    int 	max;
-    char[] 	pw;
-    int 	index;
-    int 	numChars;
-    int 	count;
-    int		i;
-    String	tmpDir;
+    BruteForceGenerator		generator;
+    ZipFile 			zipfile;
+    String			tmpDir;
+    String			password;
+    int				count;
 
     try {
-      zipfile    = new ZipFile(m_Zip.getAbsolutePath());
+      zipfile = new ZipFile(m_Zip.getAbsolutePath());
       if (!zipfile.isEncrypted()) {
         getLogger().warning("ZIP file is not encrypted: " + m_Zip);
-	return null;
+        return null;
       }
-      tmpDir     = TempUtils.getTempDirectoryStr();
-      counter    = new int[m_MaxLength];
-      counter[0] = -1;
-      chars      = m_Characters.toCharArray();
-      max        = chars.length;
-      pw         = new char[counter.length];
-      numChars   = 1;
-      count      = 0;
-      while (true) {
+      tmpDir    = TempUtils.getTempDirectoryStr();
+      generator = new BruteForceGenerator(m_Characters, m_MaxLength);
+      count     = 0;
+      while (generator.hasNext()) {
 	count++;
-	index = 0;
-	while (index < counter.length) {
-	  counter[index]++;
-	  if (counter[index] == max) {
-	    counter[index] = 0;
-	    index++;
-	    numChars = Math.max(numChars, index + 1);
-	    if (numChars > counter.length)
-	      return null;
-	  }
-	  else {
-	    break;
-	  }
-	}
-	for (i = 0; i < numChars; i++) {
-	  pw[i] = chars[counter[i]];
-	}
-	try {
-	  zipfile.setPassword(new String(pw).trim());
-	  zipfile.extractAll(tmpDir);
-	  return new String(pw).trim();
-	}
-	catch (Exception e) {
-	  // ignored
-	}
-	if (count % 10000 == 0) {
-          getLogger().info(new String(pw).trim());
+	password = generator.next();
+        try {
+          zipfile.setPassword(password);
+          zipfile.extractAll(tmpDir);
+          return password;
+        }
+        catch (Exception e) {
+          // ignored
+        }
+        if (count % 10000 == 0) {
+          getLogger().info(password);
           count = 0;
         }
       }
@@ -380,23 +456,23 @@ public class ZipPassword
     try {
       zipfile   = new ZipFile(m_Zip.getAbsolutePath());
       if (!zipfile.isEncrypted()) {
-	getLogger().warning("ZIP file is not encrypted: " + m_Zip);
-	return null;
+        getLogger().warning("ZIP file is not encrypted: " + m_Zip);
+        return null;
       }
       tmpDir    = TempUtils.getTempDirectoryStr();
       passwords = FileUtils.loadFromFile(m_Dictionary);
       count     = 0;
       for (String pw : passwords) {
-	count++;
-	try {
-	  zipfile.setPassword(pw);
-	  zipfile.extractAll(tmpDir);
-	  return pw;
-	}
-	catch (Exception e) {
-	  // ignored
-	}
-	if (count % 10000 == 0) {
+        count++;
+        try {
+          zipfile.setPassword(pw);
+          zipfile.extractAll(tmpDir);
+          return pw;
+        }
+        catch (Exception e) {
+          // ignored
+        }
+        if (count % 10000 == 0) {
           getLogger().info(pw);
           count = 0;
         }
@@ -426,9 +502,9 @@ public class ZipPassword
     }
     else {
       if (m_Password.isDirectory())
-	System.out.println(password);
+        System.out.println(password);
       else
-	FileUtils.writeToFile(m_Password.getAbsolutePath(), password, false);
+        FileUtils.writeToFile(m_Password.getAbsolutePath(), password, false);
     }
   }
 
