@@ -308,7 +308,7 @@ public class ZipPassword
     char[] 	pw;
     int 	index;
     int 	numChars;
-    long 	count;
+    int 	count;
     int		i;
     String	tmpDir;
 
@@ -353,8 +353,10 @@ public class ZipPassword
 	catch (Exception e) {
 	  // ignored
 	}
-	if (count % 10000 == 0)
-	  getLogger().info(count + " - " + new String(pw).trim());
+	if (count % 10000 == 0) {
+          getLogger().info(new String(pw).trim());
+          count = 0;
+        }
       }
     }
     catch (Exception e) {
@@ -394,8 +396,10 @@ public class ZipPassword
 	catch (Exception e) {
 	  // ignored
 	}
-	if (count % 10000 == 0)
-	  getLogger().info(count + " - " + pw);
+	if (count % 10000 == 0) {
+          getLogger().info(pw);
+          count = 0;
+        }
       }
     }
     catch (Exception e) {
