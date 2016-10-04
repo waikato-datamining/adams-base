@@ -313,12 +313,12 @@ public class ZipPassword
     String	tmpDir;
 
     try {
-      tmpDir     = TempUtils.getTempDirectoryStr();
       zipfile    = new ZipFile(m_Zip.getAbsolutePath());
       if (!zipfile.isEncrypted()) {
-	getLogger().warning("ZIP file is not encrypted: " + m_Zip);
+        getLogger().warning("ZIP file is not encrypted: " + m_Zip);
 	return null;
       }
+      tmpDir     = TempUtils.getTempDirectoryStr();
       counter    = new int[m_MaxLength];
       counter[0] = -1;
       chars      = m_Characters.toCharArray();
@@ -348,7 +348,7 @@ public class ZipPassword
 	try {
 	  zipfile.setPassword(new String(pw).trim());
 	  zipfile.extractAll(tmpDir);
-	  System.out.println(new String(pw).trim());
+	  return new String(pw).trim();
 	}
 	catch (Exception e) {
 	  // ignored
@@ -376,12 +376,12 @@ public class ZipPassword
     String		tmpDir;
 
     try {
-      tmpDir    = TempUtils.getTempDirectoryStr();
       zipfile   = new ZipFile(m_Zip.getAbsolutePath());
       if (!zipfile.isEncrypted()) {
 	getLogger().warning("ZIP file is not encrypted: " + m_Zip);
 	return null;
       }
+      tmpDir    = TempUtils.getTempDirectoryStr();
       passwords = FileUtils.loadFromFile(m_Dictionary);
       count     = 0;
       for (String pw : passwords) {
