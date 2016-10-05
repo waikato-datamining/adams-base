@@ -24,6 +24,7 @@ import adams.core.QuickInfoHelper;
 import adams.core.Utils;
 import adams.data.image.AbstractImageContainer;
 import adams.data.report.AbstractField;
+import adams.data.report.MutableReportHandler;
 import adams.data.report.Report;
 import adams.data.report.ReportHandler;
 import adams.flow.control.StorageName;
@@ -43,8 +44,12 @@ import adams.flow.transformer.locateobjects.LocatedObjects;
  * Input&#47;output:<br>
  * - accepts:<br>
  * &nbsp;&nbsp;&nbsp;adams.data.image.AbstractImageContainer<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.report.Report<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.report.ReportHandler<br>
  * - generates:<br>
  * &nbsp;&nbsp;&nbsp;adams.data.image.AbstractImageContainer<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.report.Report<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.report.ReportHandler<br>
  * <br><br>
  <!-- flow-summary-end -->
  *
@@ -98,6 +103,11 @@ import adams.flow.transformer.locateobjects.LocatedObjects;
  * &nbsp;&nbsp;&nbsp;default: SKIP
  * </pre>
  * 
+ * <pre>-no-overlap-action &lt;SKIP|KEEP&gt; (property: noOverlapAction)
+ * &nbsp;&nbsp;&nbsp;The action to take when an object has no overlaps at all.
+ * &nbsp;&nbsp;&nbsp;default: KEEP
+ * </pre>
+ * 
  * <pre>-check-type &lt;boolean&gt; (property: checkType)
  * &nbsp;&nbsp;&nbsp;If enabled, the type of the objects gets checked as well.
  * &nbsp;&nbsp;&nbsp;default: false
@@ -130,6 +140,17 @@ public class MergeObjectLocations
     KEEP,
   }
 
+  /**
+   * Determines what to do when an object has no overlaps.
+   *
+   * @author FracPete (fracpete at waikato dot ac dot nz)
+   * @version $Revision$
+   */
+  public enum NoOverlapAction {
+    SKIP,
+    KEEP,
+  }
+
   /** the storage item. */
   protected StorageName m_StorageName;
 
@@ -138,6 +159,9 @@ public class MergeObjectLocations
 
   /** what to do when two objects overlap. */
   protected OverlapAction m_OverlapAction;
+
+  /** what to do when an object has no overlaps. */
+  protected NoOverlapAction m_NoOverlapAction;
 
   /** whether to check the type (if a suffix provided). */
   protected boolean m_CheckType;
@@ -178,6 +202,10 @@ public class MergeObjectLocations
     m_OptionManager.add(
 	"overlap-action", "overlapAction",
 	OverlapAction.SKIP);
+
+    m_OptionManager.add(
+	"no-overlap-action", "noOverlapAction",
+	NoOverlapAction.KEEP);
 
     m_OptionManager.add(
 	"check-type", "checkType",
@@ -276,6 +304,35 @@ public class MergeObjectLocations
   }
 
   /**
+   * Sets the action to take when an object has no overlaps.
+   *
+   * @param value 	the action
+   */
+  public void setNoOverlapAction(NoOverlapAction value) {
+    m_NoOverlapAction = value;
+    reset();
+  }
+
+  /**
+   * Returns the action to take when an object has no overlaps.
+   *
+   * @return 		the action
+   */
+  public NoOverlapAction getNoOverlapAction() {
+    return m_NoOverlapAction;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String noOverlapActionTipText() {
+    return "The action to take when an object has no overlaps at all.";
+  }
+
+  /**
    * Sets whether to check the type as well.
    *
    * @param value 	true if to check
@@ -344,7 +401,8 @@ public class MergeObjectLocations
 
     result  = QuickInfoHelper.toString(this, "storageName", m_StorageName, "storage: ");
     result += QuickInfoHelper.toString(this, "prefix", m_Prefix, ", prefix: ");
-    result += QuickInfoHelper.toString(this, "overlapAction", m_OverlapAction, ", action: ");
+    result += QuickInfoHelper.toString(this, "overlapAction", m_OverlapAction, ", overlap: ");
+    result += QuickInfoHelper.toString(this, "noOverlapAction", m_NoOverlapAction, ", no-overlap: ");
     result += QuickInfoHelper.toString(this, "typeSuffix", m_TypeSuffix.isEmpty() ? "-ignored-" : m_TypeSuffix, ", type suffix: ");
 
     return result;
@@ -357,7 +415,7 @@ public class MergeObjectLocations
    */
   @Override
   public Class[] accepts() {
-    return new Class[]{AbstractImageContainer.class};
+    return new Class[]{AbstractImageContainer.class, Report.class, ReportHandler.class};
   }
 
   /**
@@ -367,7 +425,7 @@ public class MergeObjectLocations
    */
   @Override
   public Class[] generates() {
-    return new Class[]{AbstractImageContainer.class};
+    return new Class[]{AbstractImageContainer.class, Report.class, ReportHandler.class};
   }
 
   /**
@@ -387,32 +445,48 @@ public class MergeObjectLocations
     LocatedObjects		otherObjs;
     LocatedObjects		mergedObjs;
     boolean			add;
+    int				overlaps;
+    Object			output;
 
     result = null;
 
-    cont   = (AbstractImageContainer) m_InputToken.getPayload();
-    obj    = getStorageHandler().getStorage().get(m_StorageName);
+    output      = null;
+    thisReport  = null;
     otherReport = null;
-    if (obj == null)
-      result = "Failed to retrieve storage item: " + m_StorageName;
-    else {
-      if (obj instanceof Report)
-	otherReport = (Report) obj;
-      else if (obj instanceof ReportHandler)
-	otherReport = ((ReportHandler) obj).getReport();
-      else
-	result = "Unhandled type of storage item '" + m_StorageName + "': " + Utils.classToString(obj.getClass());
+
+    if (m_InputToken.getPayload() instanceof AbstractImageContainer)
+      thisReport = ((AbstractImageContainer) m_InputToken.getPayload()).getReport();
+    else if (m_InputToken.getPayload() instanceof Report)
+      thisReport = (Report) m_InputToken.getPayload();
+    else if (m_InputToken.getPayload() instanceof ReportHandler)
+      thisReport = ((ReportHandler) m_InputToken.getPayload()).getReport();
+    else
+      result = "Unsupported input class: " + Utils.classToString(m_InputToken.getPayload().getClass());
+
+    if (thisReport != null) {
+      obj = getStorageHandler().getStorage().get(m_StorageName);
+      if (obj == null)
+	result = "Failed to retrieve storage item: " + m_StorageName;
+      else {
+	if (obj instanceof Report)
+	  otherReport = (Report) obj;
+	else if (obj instanceof ReportHandler)
+	  otherReport = ((ReportHandler) obj).getReport();
+	else
+	  result = "Unhandled type of storage item '" + m_StorageName + "': " + Utils.classToString(obj.getClass());
+      }
     }
 
     if (otherReport != null) {
-      thisReport = cont.getReport();
       thisObjs   = LocatedObjects.fromReport(thisReport,  m_Prefix);
       otherObjs  = LocatedObjects.fromReport(otherReport, m_Prefix);
       mergedObjs = new LocatedObjects();
       for (LocatedObject thisObj: thisObjs) {
-	add = true;
+	add      = true;
+	overlaps = 0;
 	for (LocatedObject otherObj: otherObjs) {
 	  if (thisObj.overlap(otherObj)) {
+	    overlaps++;
 	    switch (m_OverlapAction) {
 	      case SKIP:
 		add = false;
@@ -422,6 +496,10 @@ public class MergeObjectLocations
 		  if (thisObj.getMetaData().containsKey(m_TypeSuffix) && otherObj.getMetaData().containsKey(m_TypeSuffix))
 		    add = thisObj.getMetaData().get(m_TypeSuffix).equals(otherObj.getMetaData().get(m_TypeSuffix));
 		}
+		if (add) {
+		  for (String key: otherObj.getMetaData().keySet())
+		    thisObj.getMetaData().putIfAbsent(key, otherObj.getMetaData().get(key));
+		}
 		break;
 	      default:
 		throw new IllegalStateException("Unhandled overlap action: " + m_OverlapAction);
@@ -429,6 +507,19 @@ public class MergeObjectLocations
 	  }
 	  if (!add)
 	    break;
+	}
+	// check for no overlaps
+	if (overlaps == 0) {
+	  switch (m_NoOverlapAction) {
+	    case SKIP:
+	      add = false;
+	      break;
+	    case KEEP:
+	      // nothing to do
+	      break;
+	    default:
+	      throw new IllegalStateException("Unhandled no-overlap action: " + m_NoOverlapAction);
+	  }
 	}
 	if (add)
 	  mergedObjs.add(thisObj);
@@ -439,20 +530,34 @@ public class MergeObjectLocations
 	newReport = thisReport.getClass().newInstance();
 	// transfer non-object fields
 	for (AbstractField field: thisReport.getFields()) {
-	  newReport.addField(field);
-	  newReport.setValue(field, thisReport.getValue(field));
+	  if (!field.getName().startsWith(m_Prefix)) {
+	    newReport.addField(field);
+	    newReport.setValue(field, thisReport.getValue(field));
+	  }
 	}
 	// store objects
 	newReport.mergeWith(mergedObjs.toReport(m_Prefix));
 	// update report
-	cont.setReport(newReport);
+	if (m_InputToken.getPayload() instanceof AbstractImageContainer) {
+	  output = m_InputToken.getPayload();
+	  ((AbstractImageContainer) output).setReport(newReport);
+	}
+	else if (m_InputToken.getPayload() instanceof MutableReportHandler) {
+	  output = m_InputToken.getPayload();
+	  ((MutableReportHandler) output).setReport(newReport);
+	}
+	else {
+	  output = newReport;
+	}
       }
       catch (Exception e) {
 	result = handleException("Failed to create new report with merged objects!", e);
+	output = null;
       }
     }
 
-    m_OutputToken = new Token(cont);
+    if (output != null)
+      m_OutputToken = new Token(output);
 
     return result;
   }
