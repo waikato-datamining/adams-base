@@ -181,6 +181,18 @@ public class LocatedObject
   }
 
   /**
+   * Checks whether a value is within the range (allowed to be on borders).
+   *
+   * @param value	the value to check
+   * @param min		the minimum
+   * @param max		the maximum
+   * @return		true if in range
+   */
+  protected boolean inRange(int value, int min, int max) {
+    return (value >= min) && (value <= max);
+  }
+
+  /**
    * Returns whether the this and the other object overlap.
    *
    * @param other	the object object to use
@@ -195,8 +207,9 @@ public class LocatedObject
     int		otherRight;
     int		otherTop;
     int		otherBottom;
-    boolean	noOverlap;
-    
+    boolean	xOverlap;
+    boolean	yOverlap;
+
     thisLeft    = this.getX();
     thisRight   = this.getX() + this.getWidth() - 1;
     thisTop     = this.getY();
@@ -206,12 +219,12 @@ public class LocatedObject
     otherTop    = other.getY();
     otherBottom = other.getY() + other.getHeight() - 1;
 
-    noOverlap = ((thisLeft < otherRight)
-      && (thisRight > otherLeft)
-      && (thisTop < otherBottom)
-      && (thisBottom > otherTop));
+    xOverlap = inRange(thisLeft, otherLeft, otherRight)
+      || inRange(otherLeft, thisLeft, thisRight);
+    yOverlap = inRange(thisTop, otherTop, otherBottom)
+      || inRange(otherTop, thisTop, thisBottom);
 
-    return !noOverlap;
+    return xOverlap && yOverlap;
   }
 
   /**
