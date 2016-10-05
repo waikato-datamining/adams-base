@@ -21,6 +21,7 @@ package adams.data.io.output;
 
 import adams.data.conversion.SpreadSheetToWekaInstances;
 import adams.data.spreadsheet.SpreadSheet;
+import adams.env.Environment;
 import weka.core.Instances;
 import weka.core.converters.AbstractFileSaver;
 
@@ -113,6 +114,10 @@ public abstract class AbstractWekaSpreadSheetWriter
       msg = convert.convert();
       if (msg == null) {
 	data = (Instances) convert.getOutput();
+        if (data.relationName().equals(Environment.getInstance().getProject())) {
+          if (content.hasName())
+            data.setRelationName(content.getName());
+        }
 	m_Saver.setInstances(data);
 	m_Saver.setDestination(out);
 	m_Saver.writeBatch();
