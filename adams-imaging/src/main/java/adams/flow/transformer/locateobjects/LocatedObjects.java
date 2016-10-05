@@ -104,7 +104,7 @@ public class LocatedObjects
 	  type = DataType.STRING;
 	else
 	  type = DataType.UNKNOWN;
-	field = new Field(prefix + countStr + key, type);
+	field = new Field(prefix + countStr + "." + key, type);
 	result.addField(field);
 	result.setValue(field, value);
       }
