@@ -224,6 +224,10 @@ public class PartialLeastSquaresTab
     m_PanelLoadings = new ScatterPlot();
     m_PanelLoadings.setXRegExp(new BaseRegExp(m_ComboBoxAlgorithm.getSelectedItem() + "_1"));
     m_PanelLoadings.setYRegExp(new BaseRegExp(m_ComboBoxAlgorithm.getSelectedItem() + "_2"));
+    m_PanelLoadings.getPlot().getAxis(Axis.LEFT).setTopMargin(0.01);
+    m_PanelLoadings.getPlot().getAxis(Axis.LEFT).setBottomMargin(0.01);
+    m_PanelLoadings.getPlot().getAxis(Axis.BOTTOM).setTopMargin(0.01);
+    m_PanelLoadings.getPlot().getAxis(Axis.BOTTOM).setBottomMargin(0.01);
     m_PanelLoadings.setMouseClickAction(new ViewDataClickAction());
     m_PanelLoadings.setOverlays(new AbstractScatterPlotOverlay[]{
       new Coordinates()
@@ -253,6 +257,10 @@ public class PartialLeastSquaresTab
     m_PanelScores = new ScatterPlot();
     m_PanelScores.setXIndex(new Index("1"));
     m_PanelScores.setYIndex(new Index("2"));
+    m_PanelScores.getPlot().getAxis(Axis.LEFT).setTopMargin(0.01);
+    m_PanelScores.getPlot().getAxis(Axis.LEFT).setBottomMargin(0.01);
+    m_PanelScores.getPlot().getAxis(Axis.BOTTOM).setTopMargin(0.01);
+    m_PanelScores.getPlot().getAxis(Axis.BOTTOM).setBottomMargin(0.01);
     m_PanelScores.setMouseClickAction(new ViewDataClickAction());
     m_PanelScores.setOverlays(new AbstractScatterPlotOverlay[]{
       new Coordinates()

@@ -34,6 +34,7 @@ import adams.gui.core.ParameterPanel;
 import adams.gui.event.WekaInvestigatorDataEvent;
 import adams.gui.tools.wekainvestigator.InvestigatorPanel;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
+import adams.gui.visualization.core.plot.Axis;
 import adams.gui.visualization.stats.scatterplot.AbstractScatterPlotOverlay;
 import adams.gui.visualization.stats.scatterplot.Coordinates;
 import adams.gui.visualization.stats.scatterplot.ScatterPlot;
@@ -207,6 +208,10 @@ public class PrincipalComponentsTab
     m_PanelLoadings = new ScatterPlot();
     m_PanelLoadings.setXRegExp(new BaseRegExp("Loading-1"));
     m_PanelLoadings.setYRegExp(new BaseRegExp("Loading-2"));
+    m_PanelLoadings.getPlot().getAxis(Axis.LEFT).setTopMargin(0.01);
+    m_PanelLoadings.getPlot().getAxis(Axis.LEFT).setBottomMargin(0.01);
+    m_PanelLoadings.getPlot().getAxis(Axis.BOTTOM).setTopMargin(0.01);
+    m_PanelLoadings.getPlot().getAxis(Axis.BOTTOM).setBottomMargin(0.01);
     m_PanelLoadings.setMouseClickAction(new ViewDataClickAction());
     m_PanelLoadings.setOverlays(new AbstractScatterPlotOverlay[]{
       new Coordinates()
@@ -216,6 +221,10 @@ public class PrincipalComponentsTab
     m_PanelScores = new ScatterPlot();
     m_PanelScores.setXIndex(new Index("1"));
     m_PanelScores.setYIndex(new Index("2"));
+    m_PanelScores.getPlot().getAxis(Axis.LEFT).setTopMargin(0.01);
+    m_PanelScores.getPlot().getAxis(Axis.LEFT).setBottomMargin(0.01);
+    m_PanelScores.getPlot().getAxis(Axis.BOTTOM).setTopMargin(0.01);
+    m_PanelScores.getPlot().getAxis(Axis.BOTTOM).setBottomMargin(0.01);
     m_PanelScores.setMouseClickAction(new ViewDataClickAction());
     m_PanelScores.setOverlays(new AbstractScatterPlotOverlay[]{
       new Coordinates()
