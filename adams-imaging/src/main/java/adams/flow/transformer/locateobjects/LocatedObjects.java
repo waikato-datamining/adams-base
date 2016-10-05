@@ -83,6 +83,8 @@ public class LocatedObjects
     String		countStr;
     Field		field;
     int			width;
+    DataType		type;
+    Object		value;
     
     result = new Report();
     
@@ -91,6 +93,21 @@ public class LocatedObjects
     for (LocatedObject obj: this) {
       count++;
       countStr = Utils.padLeft("" + count, '0', width);
+      // meta-data
+      for (String key: obj.getMetaData().keySet()) {
+	value = obj.getMetaData().get(key);
+	if (value instanceof Double)
+	  type = DataType.NUMERIC;
+	else if (value instanceof Boolean)
+	  type = DataType.BOOLEAN;
+	else if (value instanceof String)
+	  type = DataType.STRING;
+	else
+	  type = DataType.UNKNOWN;
+	field = new Field(prefix + countStr + key, type);
+	result.addField(field);
+	result.setValue(field, value);
+      }
       // x
       field = new Field(prefix + countStr + KEY_X, DataType.NUMERIC);
       result.addField(field);
