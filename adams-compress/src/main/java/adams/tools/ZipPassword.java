@@ -20,7 +20,7 @@
 
 package adams.tools;
 
-import adams.core.BruteForcePasswordGenerator;
+import adams.core.password.BruteForcePasswordGenerator;
 import adams.core.Performance;
 import adams.core.ThreadLimiter;
 import adams.core.Utils;
@@ -28,6 +28,8 @@ import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
 import adams.core.io.TempUtils;
 import adams.core.logging.LoggingHelper;
+import adams.core.password.DictionaryBasedGenerator;
+import adams.core.password.DictionaryBasedGenerator.Variation;
 import adams.env.Environment;
 import adams.flow.core.RunnableWithLogging;
 import adams.multiprocess.PausableFixedThreadPoolExecutor;
@@ -52,33 +54,33 @@ import java.util.logging.Level;
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- * 
+ *
  * <pre>-zip &lt;adams.core.io.PlaceholderFile&gt; (property: zip)
  * &nbsp;&nbsp;&nbsp;The ZIP file to process.
  * &nbsp;&nbsp;&nbsp;default: ${CWD}
  * </pre>
- * 
+ *
  * <pre>-dictionary &lt;adams.core.io.PlaceholderFile&gt; (property: dictionary)
  * &nbsp;&nbsp;&nbsp;The dictionary file to process.
  * &nbsp;&nbsp;&nbsp;default: ${CWD}
  * </pre>
- * 
+ *
  * <pre>-chars &lt;java.lang.String&gt; (property: characters)
  * &nbsp;&nbsp;&nbsp;The characters to use for brute force attack.
  * &nbsp;&nbsp;&nbsp;default: abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,;:\'\"-_!&#64;#$%^&amp;*()[]{}
  * </pre>
- * 
+ *
  * <pre>-max-length &lt;int&gt; (property: maxLength)
  * &nbsp;&nbsp;&nbsp;The maximum length for password strings when performing brute force attack.
  * &nbsp;&nbsp;&nbsp;default: 10
  * &nbsp;&nbsp;&nbsp;minimum: 1
  * </pre>
- * 
+ *
  * <pre>-start &lt;java.lang.String&gt; (property: start)
  * &nbsp;&nbsp;&nbsp;The starting password for the brute force attack.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- * 
+ *
  * <pre>-num-threads &lt;int&gt; (property: numThreads)
  * &nbsp;&nbsp;&nbsp;The number of threads to use for parallel execution; &gt; 0: specific number 
  * &nbsp;&nbsp;&nbsp;of cores to use (capped by actual number of cores available, 1 = sequential 
@@ -86,12 +88,12 @@ import java.util.logging.Level;
  * &nbsp;&nbsp;&nbsp;2 free cores; minimum of one core is used)
  * &nbsp;&nbsp;&nbsp;default: 2
  * </pre>
- * 
+ *
  * <pre>-password &lt;adams.core.io.PlaceholderFile&gt; (property: password)
  * &nbsp;&nbsp;&nbsp;The file to store the password in (if one found).
  * &nbsp;&nbsp;&nbsp;default: ${CWD}
  * </pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
@@ -539,11 +541,11 @@ public class ZipPassword
    * Uses dictionary for attak.
    */
   protected void doRunDictionary() {
-    ZipFile 		zipfile;
-    List<String> 	passwords;
-    String[]		variations;
-    int			count;
-    String		tmpDir;
+    ZipFile 			zipfile;
+    DictionaryBasedGenerator 	generator;
+    int				count;
+    String			tmpDir;
+    String			password;
 
     try {
       zipfile   = new ZipFile(m_Zip.getAbsolutePath());
@@ -552,34 +554,26 @@ public class ZipPassword
 	outputPassword(null);
 	return;
       }
+      generator = new DictionaryBasedGenerator(m_Dictionary, Variation.values());
       tmpDir     = TempUtils.getTempDirectoryStr();
-      passwords  = FileUtils.loadFromFile(m_Dictionary);
       getLogger().info("");
-      variations = new String[6];
       count      = 0;
-      for (String password : passwords) {
+      while (generator.hasNext()) {
 	if (m_Stopped) {
 	  getLogger().severe("Interrupted!");
 	  outputPassword(null);
 	  return;
 	}
 	count++;
-	variations[0] = password;
-	variations[1] = variations[0].toLowerCase();
-	variations[2] = variations[0].toUpperCase();
-	variations[3] = new StringBuilder(password).reverse().toString();
-	variations[4] = variations[3].toLowerCase();
-	variations[5] = variations[3].toUpperCase();
-	for (String variation: variations) {
-	  try {
-	    zipfile.setPassword(variation);
-	    zipfile.extractAll(tmpDir);
-	    outputPassword(variation);
-	    return;
-	  }
-	  catch (Exception e) {
-	    // ignored
-	  }
+	password = generator.next();
+	try {
+	  zipfile.setPassword(password);
+	  zipfile.extractAll(tmpDir);
+	  outputPassword(password);
+	  return;
+	}
+	catch (Exception e) {
+	  // ignored
 	}
 	if (count % 10000 == 0) {
 	  getLogger().info(password);

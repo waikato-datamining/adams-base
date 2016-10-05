@@ -18,11 +18,7 @@
  * Copyright (C) 2016 University of Waikato, Hamilton, NZ
  */
 
-package adams.core;
-
-import adams.core.logging.CustomLoggingLevelObject;
-
-import java.util.Iterator;
+package adams.core.password;
 
 /**
  * Generates passwords for a brute force attack.
@@ -31,8 +27,7 @@ import java.util.Iterator;
  * @version $Revision$
  */
 public class BruteForcePasswordGenerator
-  extends CustomLoggingLevelObject
-  implements Iterator<String> {
+  extends AbstractPasswordGenerator {
 
   private static final long serialVersionUID = 504757773896722990L;
 
