@@ -19,6 +19,7 @@
  */
 package adams.flow.transformer.locateobjects;
 
+import adams.core.Utils;
 import adams.data.report.AbstractField;
 import adams.data.report.DataType;
 import adams.data.report.Field;
@@ -79,31 +80,35 @@ public class LocatedObjects
   public Report toReport(String prefix) {
     Report		result;
     int			count;
+    String		countStr;
     Field		field;
+    int			width;
     
     result = new Report();
     
     count = 0;
+    width = ("" + size()).length();
     for (LocatedObject obj: this) {
       count++;
+      countStr = Utils.padLeft("" + count, '0', width);
       // x
-      field = new Field(prefix + count + KEY_X, DataType.NUMERIC);
+      field = new Field(prefix + countStr + KEY_X, DataType.NUMERIC);
       result.addField(field);
       result.setValue(field, obj.getX());
       // y
-      field = new Field(prefix + count + KEY_Y, DataType.NUMERIC);
+      field = new Field(prefix + countStr + KEY_Y, DataType.NUMERIC);
       result.addField(field);
       result.setValue(field, obj.getY());
       // width
-      field = new Field(prefix + count + KEY_WIDTH, DataType.NUMERIC);
+      field = new Field(prefix + countStr + KEY_WIDTH, DataType.NUMERIC);
       result.addField(field);
       result.setValue(field, obj.getWidth());
       // height
-      field = new Field(prefix + count + KEY_HEIGHT, DataType.NUMERIC);
+      field = new Field(prefix + countStr + KEY_HEIGHT, DataType.NUMERIC);
       result.addField(field);
       result.setValue(field, obj.getHeight());
       // location
-      field = new Field(prefix + count + KEY_LOCATION, DataType.STRING);
+      field = new Field(prefix + countStr + KEY_LOCATION, DataType.STRING);
       result.addField(field);
       result.setValue(field, obj.getLocation().getValue());
     }
