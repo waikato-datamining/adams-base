@@ -38,7 +38,9 @@ import java.awt.Dialog.ModalityType;
 import java.awt.FlowLayout;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  <!-- globalinfo-start -->
@@ -76,13 +78,15 @@ import java.util.List;
  * </pre>
  * 
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this 
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical 
+ * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
  * <pre>-silent &lt;boolean&gt; (property: silent)
- * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console.
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
@@ -102,13 +106,13 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default: Please enter values
  * </pre>
  * 
- * <pre>-value &lt;adams.flow.source.valuedefinition.ValueDefinition&gt; [-value ...] (property: values)
+ * <pre>-value &lt;adams.flow.source.valuedefinition.AbstractValueDefinition&gt; [-value ...] (property: values)
  * &nbsp;&nbsp;&nbsp;The value definitions that define the dialog prompting the user to enter 
  * &nbsp;&nbsp;&nbsp;the values.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
- * <pre>-output-type &lt;SPREADSHEET|KEY_VALUE_PAIRS|KEY_VALUE_PAIRS_ARRAY&gt; (property: outputType)
+ * <pre>-output-type &lt;SPREADSHEET|KEY_VALUE_PAIRS|KEY_VALUE_PAIRS_ARRAY|MAP&gt; (property: outputType)
  * &nbsp;&nbsp;&nbsp;How to output the entered data.
  * &nbsp;&nbsp;&nbsp;default: SPREADSHEET
  * </pre>
@@ -136,7 +140,8 @@ public class EnterManyValues
   public enum OutputType {
     SPREADSHEET,
     KEY_VALUE_PAIRS,
-    KEY_VALUE_PAIRS_ARRAY
+    KEY_VALUE_PAIRS_ARRAY,
+    MAP
   }
 
   /** the message for the user. */
@@ -358,6 +363,8 @@ public class EnterManyValues
 	return new Class[]{String[].class};
       case KEY_VALUE_PAIRS_ARRAY:
 	return new Class[]{String[][].class};
+      case MAP:
+	return new Class[]{Map.class};
       default:
 	throw new IllegalStateException("Unhandled output type: " + m_OutputType);
     }
@@ -458,6 +465,7 @@ public class EnterManyValues
     String[]		pair;
     String[][]		pairArray;
     int			i;
+    Map<String,Object>	map;
 
     switch (m_OutputType) {
       case SPREADSHEET:
@@ -486,6 +494,17 @@ public class EnterManyValues
 	  pairArray[i] = pair;
 	}
 	result[0] = new Token(pairArray);
+	break;
+
+      case MAP:
+	sheet = propertiesToSpreadSheet(props);
+	map   = new HashMap<>();
+	for (i = 0; i < sheet.getColumnCount(); i++) {
+	  map.put(
+	    sheet.getHeaderRow().getCell(i).getContent(),
+	    sheet.getRow(0).getCell(i).getNative());
+	}
+	result = new Token[]{new Token(map)};
 	break;
 
       default:
@@ -520,7 +539,7 @@ public class EnterManyValues
     // show dialog
     panel = new PropertiesParameterPanel();
     panel.setButtonPanelVisible(true);
-    order = new ArrayList<String>();
+    order = new ArrayList<>();
     for (AbstractValueDefinition val: m_Values) {
       order.add(val.getName());
       if (!val.addToPanel(panel)) {
