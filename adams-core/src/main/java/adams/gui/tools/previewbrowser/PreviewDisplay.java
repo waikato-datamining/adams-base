@@ -75,6 +75,9 @@ public class PreviewDisplay
   /** the last search panel that was encountered. */
   protected SearchPanel m_LastSearch;
 
+  /** whether a display is currently in progress. */
+  protected boolean m_DisplayInProgress;
+
   /**
    * Initializes the members.
    */
@@ -82,8 +85,9 @@ public class PreviewDisplay
   protected void initialize() {
     super.initialize();
 
-    m_CurrentFiles = new File[0];
+    m_CurrentFiles                = new File[0];
     m_IgnoreContentHandlerChanges = false;
+    m_DisplayInProgress           = false;
   }
 
   /**
@@ -221,10 +225,13 @@ public class PreviewDisplay
   public void display(final File[] localFiles, boolean wait) {
     SwingWorker worker;
 
+    if (m_DisplayInProgress)
+      return;
     if (localFiles.length < 1)
       return;
 
-    m_CurrentFiles = localFiles;
+    m_CurrentFiles      = localFiles;
+    m_DisplayInProgress = true;
 
     // notify user
     displayCreatingView();
@@ -241,6 +248,7 @@ public class PreviewDisplay
 	protected void done() {
 	  if (contentPanel != null)
 	    displayView(contentPanel);
+	  m_DisplayInProgress = false;
 	  super.done();
 	}
       };
@@ -248,6 +256,7 @@ public class PreviewDisplay
     }
     else {
       displayView(createPreview(localFiles));
+      m_DisplayInProgress = false;
     }
   }
 

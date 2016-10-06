@@ -509,11 +509,11 @@ public class PreviewBrowserPanel
       files = m_ArchiveHandler.getFiles();
       for (String file: files)
 	m_ModelArchiveFiles.addElement(file);
+      m_ListArchiveFiles.search(m_ListArchiveFiles.getSeachString(), m_ListArchiveFiles.isRegExpSearch());
+      // reset selection
+      m_ListArchiveFiles.setSelectedIndices(new int[0]);
+      m_PanelContent.displayView(new NoPreviewAvailablePanel());
     }
-    m_ListArchiveFiles.search(m_ListArchiveFiles.getSeachString(), m_ListArchiveFiles.isRegExpSearch());
-    // reset selection
-    m_ListArchiveFiles.setSelectedIndices(new int[0]);
-    m_PanelContent.displayView(new NoPreviewAvailablePanel());
   }
 
   /**
