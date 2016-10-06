@@ -147,10 +147,18 @@ public class GeneticHelper {
    * @return		the generated bit string
    */
   public static String doubleToBits(double in, double min, double max, int numBits, int splits){
+
+    if (in > max){
+      in=max;
+    }
+    if (in < min){
+      in=min;
+    }
     double sdist = (max - min) / ((double) splits - 1);
     double dist = in - min;
     double rat = dist / sdist;
     int split = (int) Math.round(rat);
+
 
     String bits = Integer.toBinaryString(split);
     while (bits.length() < numBits)
