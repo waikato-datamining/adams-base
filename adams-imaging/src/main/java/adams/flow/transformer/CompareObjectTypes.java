@@ -20,6 +20,7 @@
 
 package adams.flow.transformer;
 
+import adams.core.QuickInfoHelper;
 import adams.data.report.Report;
 import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.Row;
@@ -49,47 +50,47 @@ import adams.flow.transformer.locateobjects.LocatedObjects;
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- * 
+ *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: CompareObjectTypes
  * </pre>
- * 
+ *
  * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- * 
+ *
  * <pre>-skip &lt;boolean&gt; (property: skip)
  * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
  * &nbsp;&nbsp;&nbsp;as it is.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
  * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this 
  * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical 
  * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-silent &lt;boolean&gt; (property: silent)
  * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
  * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-prefix &lt;java.lang.String&gt; (property: prefix)
  * &nbsp;&nbsp;&nbsp;The report field prefix used in the report.
  * &nbsp;&nbsp;&nbsp;default: Object.
  * </pre>
- * 
+ *
  * <pre>-type-suffix &lt;java.lang.String&gt; (property: typeSuffix)
  * &nbsp;&nbsp;&nbsp;The report field suffix for the type used in the report (ignored if empty
  * &nbsp;&nbsp;&nbsp;).
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
@@ -106,6 +107,9 @@ public class CompareObjectTypes
   /** the object type suffix to use. */
   protected String m_TypeSuffix;
 
+  /** the minimum overlap ratio to use. */
+  protected double m_MinOverlapRatio;
+
   /**
    * Returns a string describing the object.
    *
@@ -115,7 +119,7 @@ public class CompareObjectTypes
   public String globalInfo() {
     return
       "Compares the object types between objects from the two reports.\n"
-      + "The first report is considered 'ground truth'.";
+	+ "The first report is considered 'ground truth'.";
   }
 
   /**
@@ -126,12 +130,16 @@ public class CompareObjectTypes
     super.defineOptions();
 
     m_OptionManager.add(
-	"prefix", "prefix",
-	"Object.");
+      "prefix", "prefix",
+      "Object.");
 
     m_OptionManager.add(
-	"type-suffix", "typeSuffix",
-	"");
+      "type-suffix", "typeSuffix",
+      "");
+
+    m_OptionManager.add(
+      "min-overlap-ratio", "minOverlapRatio",
+      0.0, 0.0, 1.0);
   }
 
   /**
@@ -193,6 +201,53 @@ public class CompareObjectTypes
   }
 
   /**
+   * Sets the minimum overlap ratio to use.
+   *
+   * @param value 	the minimum ratio
+   */
+  public void setMinOverlapRatio(double value) {
+    if (getOptionManager().isValid("minOverlapRatio", value)) {
+      m_MinOverlapRatio = value;
+      reset();
+    }
+  }
+
+  /**
+   * Returns the minimum overlap ratio to use.
+   *
+   * @return 		the minimum ratio
+   */
+  public double getMinOverlapRatio() {
+    return m_MinOverlapRatio;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String minOverlapRatioTipText() {
+    return "The minimum ratio that an overlap must have before being considered an actual overlap.";
+  }
+
+  /**
+   * Returns a quick info about the actor, which will be displayed in the GUI.
+   *
+   * @return		null if no info available, otherwise short string
+   */
+  @Override
+  public String getQuickInfo() {
+    String    result;
+
+    result  = QuickInfoHelper.toString(this, "prefix", m_Prefix, "prefix: ");
+    result += QuickInfoHelper.toString(this, "typeSuffix", m_TypeSuffix.isEmpty() ? "-ignored-" : m_TypeSuffix, ", type suffix: ");
+    result += QuickInfoHelper.toString(this, "minOverlapRatio", m_MinOverlapRatio, ", overlap ratio: ");
+
+    return result;
+  }
+
+  /**
    * Returns the class that the consumer accepts.
    *
    * @return		the Class of objects that can be processed
@@ -225,6 +280,9 @@ public class CompareObjectTypes
     Report		other;
     LocatedObjects	truthObjs;
     LocatedObjects	otherObjs;
+    LocatedObject	largestOverlapObj;
+    double		largestOverlap;
+    double		overlap;
     SpreadSheet		sheet;
     Row			row;
     String		suffix;
@@ -249,7 +307,7 @@ public class CompareObjectTypes
       if (m_TypeSuffix.startsWith("."))
 	suffix = m_TypeSuffix.substring(1);
       else
-        suffix = m_TypeSuffix;
+	suffix = m_TypeSuffix;
 
       sheet = new DefaultSpreadSheet();
 
@@ -282,18 +340,24 @@ public class CompareObjectTypes
 	row.addCell("OT").setMissing();
 	row.addCell("M").setMissing();
 
+	largestOverlapObj = null;
+	largestOverlap    = 0.0;
 	for (LocatedObject otherObj: otherObjs) {
-	  if (truthObj.overlap(otherObj)) {
-	    row.getCell("OX").setContent(otherObj.getX());
-	    row.getCell("OY").setContent(otherObj.getY());
-	    row.getCell("OW").setContent(otherObj.getWidth());
-	    row.getCell("OH").setContent(otherObj.getHeight());
-	    row.addCell("OT").setNative(otherObj.getMetaData().containsKey(suffix) ? otherObj.getMetaData().get(suffix) : SpreadSheet.MISSING_VALUE);
-	    row.getCell("M").setContent(
-	      !row.getCell("TT").isMissing()
-		&& (row.getCell("TT").getContent().equals(row.getCell("OT").getContent())));
-	    break;
+	  overlap = truthObj.overlapRatio(otherObj);
+	  if ((overlap > largestOverlap) && (overlap >= m_MinOverlapRatio)) {
+	    largestOverlap    = overlap;
+	    largestOverlapObj = otherObj;
 	  }
+	}
+	if (largestOverlapObj != null) {
+	  row.getCell("OX").setContent(largestOverlapObj.getX());
+	  row.getCell("OY").setContent(largestOverlapObj.getY());
+	  row.getCell("OW").setContent(largestOverlapObj.getWidth());
+	  row.getCell("OH").setContent(largestOverlapObj.getHeight());
+	  row.addCell("OT").setNative(largestOverlapObj.getMetaData().containsKey(suffix) ? largestOverlapObj.getMetaData().get(suffix) : SpreadSheet.MISSING_VALUE);
+	  row.getCell("M").setContent(
+	    !row.getCell("TT").isMissing()
+	      && (row.getCell("TT").getContent().equals(row.getCell("OT").getContent())));
 	}
       }
     }
