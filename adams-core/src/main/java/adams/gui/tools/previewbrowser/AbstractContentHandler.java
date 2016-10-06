@@ -19,17 +19,18 @@
  */
 package adams.gui.tools.previewbrowser;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.List;
-
-import javax.swing.JPanel;
-
+import adams.core.ClassCompare;
 import adams.core.ClassLister;
 import adams.core.io.FileUtils;
 import adams.core.option.AbstractOptionHandler;
+
+import javax.swing.JPanel;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.List;
 
 /**
  * Ancestor for all content handlers.
@@ -211,9 +212,9 @@ public abstract class AbstractContentHandler
       extension = extension.toLowerCase();
 
     if ((extension != null) && (getRelation().containsKey(extension)))
-      set = new HashSet<Class>(getRelation().get(extension));
+      set = new HashSet<>(getRelation().get(extension));
     else
-      set = new HashSet<Class>();
+      set = new HashSet<>();
 
     if (getRelation().containsKey(MATCH_ALL))
       set.addAll(getRelation().get(MATCH_ALL));
@@ -221,7 +222,9 @@ public abstract class AbstractContentHandler
     if (set.size() == 0)
       result = null;
     else
-      result = new ArrayList<Class>(set);
+      result = new ArrayList<>(set);
+
+    Collections.sort(result, new ClassCompare());
 
     return result;
   }

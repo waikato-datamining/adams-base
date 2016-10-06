@@ -21,11 +21,9 @@
 package adams.gui.tools.previewbrowser;
 
 import adams.core.CleanUpHandler;
-import adams.core.Properties;
 import adams.core.Utils;
 import adams.core.io.FileUtils;
 import adams.core.logging.LoggingLevel;
-import adams.env.Environment;
 import adams.gui.core.BasePanel;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.GUIHelper;
@@ -42,6 +40,7 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -189,25 +188,25 @@ public class PreviewDisplay
       }
       if ((prefIndex == -1) && (m_ModelContentHandlers.getSize() > 0))
 	prefIndex = 0;
-      m_ComboBoxContentHandlers.setSelectedIndex(prefIndex);
-      m_IgnoreContentHandlerChanges = false;
-      if (prefIndex == -1)
-	return null;
-      // get preferred handler
-      try {
-	cls            = Class.forName((String) m_ComboBoxContentHandlers.getSelectedItem());
-	contentHandler = (AbstractContentHandler) cls.newInstance();
-	if (contentHandler instanceof MultipleFileContentHandler)
-	  result = ((MultipleFileContentHandler) contentHandler).getPreview(localFiles);
-	else
-	  result = contentHandler.getPreview(localFiles[0]);
+      if (prefIndex > -1) {
+	m_ComboBoxContentHandlers.setSelectedIndex(prefIndex);
+	// get preferred handler
+	try {
+	  cls = Class.forName((String) m_ModelContentHandlers.getElementAt(prefIndex));
+	  contentHandler = (AbstractContentHandler) cls.newInstance();
+	  if (contentHandler instanceof MultipleFileContentHandler)
+	    result = ((MultipleFileContentHandler) contentHandler).getPreview(localFiles);
+	  else
+	    result = contentHandler.getPreview(localFiles[0]);
+	}
+	catch (Exception e) {
+	  ConsolePanel.getSingleton().append(
+	    LoggingLevel.SEVERE,
+	    "Failed to obtain content handler for '" + Utils.arrayToString(localFiles) + "':",
+	    e);
+	}
       }
-      catch (Exception e) {
-	ConsolePanel.getSingleton().append(
-	  LoggingLevel.SEVERE,
-	  "Failed to obtain content handler for '" + Utils.arrayToString(localFiles) + "':",
-	  e);
-      }
+      SwingUtilities.invokeLater(() -> m_IgnoreContentHandlerChanges = false);
     }
 
     return result;
@@ -256,38 +255,28 @@ public class PreviewDisplay
    * Updates the preferred handler.
    */
   protected void updatePreferredContentHandler() {
-    String	ext;
-    String	handler;
-    Properties props;
-    String	filename;
+    String		ext;
+    String		handler;
+    List<String>	exts;
 
     if (m_CurrentFiles == null)
       return;
 
-    props = PropertiesManager.getProperties();
+    if (m_ComboBoxContentHandlers.getSelectedIndex() < 0)
+      handler = (String) m_ComboBoxContentHandlers.getItemAt(0);
+    else
+      handler = (String) m_ComboBoxContentHandlers.getSelectedItem();
+
+    exts = new ArrayList<>();
     for (File file: m_CurrentFiles) {
       ext = FileUtils.getExtension(file);
       if (ext == null)
 	continue;
       ext = ext.toLowerCase();
-
-      if (m_ComboBoxContentHandlers.getSelectedIndex() < 0)
-	handler = (String) m_ComboBoxContentHandlers.getItemAt(0);
-      else
-	handler = (String) m_ComboBoxContentHandlers.getSelectedItem();
-
-      // update props
-      if (handler != null)
-	props.setProperty(PropertiesManager.PREFIX_PREFERRED_CONTENT_HANDLER + ext, handler);
+      exts.add(ext);
     }
 
-    // save props
-    filename = Environment.getInstance().getHome() + File.separator + PropertiesManager.FILENAME;
-    if (!props.save(filename)) {
-      ConsolePanel.getSingleton().append(
-	LoggingLevel.SEVERE,
-	"Failed to save properties to '" + filename + "'!");
-    }
+    PropertiesManager.updatePreferredContentHandler(exts.toArray(new String[exts.size()]), handler);
   }
 
   /**

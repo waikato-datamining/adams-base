@@ -50,12 +50,12 @@ public class PropertiesManager {
   protected static Properties m_Properties;
 
   /**
-   * Returns the preferrned content handler.
+   * Returns the preferred content handler.
    *
    * @param file	the file to get the preferred handler for
    * @return		the preferred handler
    */
-  public static AbstractContentHandler getPreferredContentHandler(File file) {
+  public static synchronized AbstractContentHandler getPreferredContentHandler(File file) {
     AbstractContentHandler	result;
     Properties			props;
     String			ext;
@@ -86,12 +86,33 @@ public class PropertiesManager {
   }
 
   /**
-   * Returns the preferrned archive handler.
+   * Updates the preferred content handler.
+   *
+   * @param ext		the extension to update
+   * @param handler	the preferred handler
+   * @return		true if successfully updated
+   */
+  public static synchronized boolean updatePreferredContentHandler(String[] ext, String handler) {
+    int		i;
+    Properties	props;
+
+    if (handler == null)
+      return false;
+
+    props = getProperties();
+    for (i = 0; i < ext.length; i++)
+      props.setProperty(PropertiesManager.PREFIX_PREFERRED_CONTENT_HANDLER + ext[i], handler);
+
+    return save("updating content handler");
+  }
+
+  /**
+   * Returns the preferred archive handler.
    *
    * @param file	the file to get the preferred handler for
    * @return		the preferred handler
    */
-  public static AbstractArchiveHandler getPreferredArchiveHandler(File file) {
+  public static synchronized AbstractArchiveHandler getPreferredArchiveHandler(File file) {
     AbstractArchiveHandler	result;
     Properties			props;
     String			ext;
@@ -116,6 +137,48 @@ public class PropertiesManager {
 	  "Failed to instantiate handler: " + handler,
 	  e);
       }
+    }
+
+    return result;
+  }
+
+  /**
+   * Updates the preferred archive handler.
+   *
+   * @param ext		the extension to update
+   * @param handler	the preferred handler
+   * @return		true if successfully updated
+   */
+  public static synchronized boolean updatePreferredArchiveHandler(String[] ext, String handler) {
+    int		i;
+    Properties	props;
+
+    if (handler == null)
+      return false;
+
+    props = getProperties();
+    for (i = 0; i < ext.length; i++)
+      props.setProperty(PropertiesManager.PREFIX_PREFERRED_ARCHIVE_HANDLER + ext[i], handler);
+
+    return save("updating archive handler");
+  }
+
+  /**
+   * Saves the properties.
+   *
+   * @param action	what triggered the save action
+   * @return		true if successful
+   */
+  protected static boolean save(String action) {
+    boolean	result;
+    String	filename;
+
+    filename = Environment.getInstance().getHome() + File.separator + PropertiesManager.FILENAME;
+    result   = getProperties().save(filename);
+    if (!result) {
+      ConsolePanel.getSingleton().append(
+	LoggingLevel.SEVERE,
+	"Failed to save properties to '" + filename + "' (" + action + ")!");
     }
 
     return result;

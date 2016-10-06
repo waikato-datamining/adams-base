@@ -28,8 +28,6 @@ import adams.core.io.PlaceholderFile;
 import adams.core.io.TempUtils;
 import adams.core.logging.LoggingLevel;
 import adams.core.management.FileBrowser;
-import adams.env.Environment;
-import adams.env.PreviewBrowserPanelDefinition;
 import adams.gui.application.ChildFrame;
 import adams.gui.application.ChildWindow;
 import adams.gui.chooser.AbstractChooserPanel;
@@ -555,37 +553,28 @@ public class PreviewBrowserPanel
    * Updates the preferred handler.
    */
   protected void updatePreferredArchiveHandler() {
-    String	ext;
-    String	handler;
-    Properties	props;
-    String	filename;
+    String		ext;
+    List<String>	exts;
+    String		handler;
 
     if (m_CurrentFiles == null)
       return;
 
-    props = PropertiesManager.getProperties();
+    if (m_ComboBoxArchiveHandlers.getSelectedIndex() < 0)
+      handler = (String) m_ComboBoxArchiveHandlers.getItemAt(0);
+    else
+      handler = (String) m_ComboBoxArchiveHandlers.getSelectedItem();
+
+    exts = new ArrayList<>();
     for (File file: m_CurrentFiles) {
       ext = FileUtils.getExtension(file);
       if (ext == null)
 	continue;
       ext = ext.toLowerCase();
-
-      if (m_ComboBoxArchiveHandlers.getSelectedIndex() < 0)
-	handler = (String) m_ComboBoxArchiveHandlers.getItemAt(0);
-      else
-	handler = (String) m_ComboBoxArchiveHandlers.getSelectedItem();
-
-      // update props
-      props.setProperty(PropertiesManager.PREFIX_PREFERRED_ARCHIVE_HANDLER + ext, handler);
+      exts.add(ext);
     }
 
-    // save props
-    filename = Environment.getInstance().getCustomPropertiesFilename(PreviewBrowserPanelDefinition.KEY);
-    if (!Environment.getInstance().write(PreviewBrowserPanelDefinition.KEY, props)) {
-      ConsolePanel.getSingleton().append(
-	LoggingLevel.SEVERE,
-	"Failed to save properties to '" + filename + "'!");
-    }
+    PropertiesManager.updatePreferredArchiveHandler(exts.toArray(new String[exts.size()]), handler);
   }
 
   /**
