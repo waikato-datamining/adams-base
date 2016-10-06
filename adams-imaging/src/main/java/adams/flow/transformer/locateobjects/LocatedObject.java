@@ -228,6 +228,37 @@ public class LocatedObject
   }
 
   /**
+   * Returns the overlapping rectangle.
+   *
+   * @param other	the object object to use
+   * @return		rectangle if they overlap, otherwise null
+   * @see		#overlap(LocatedObject)
+   */
+  public Rectangle overlapRectangle(LocatedObject other) {
+    if (!overlap(other))
+      return null;
+    else
+      return getRectangle().intersection(other.getRectangle());
+  }
+
+  /**
+   * Returns the overlap ratio (1 = full overlap, 0 = no overlap).
+   *
+   * @param other	the object object to use
+   * @return		rectangle if they overlap, otherwise null
+   * @see		#overlap(LocatedObject)
+   */
+  public double overlapRatio(LocatedObject other) {
+    Rectangle 	overlap;
+
+    overlap = overlapRectangle(other);
+    if (overlap == null)
+      return 0.0;
+    else
+      return (overlap.getWidth() * overlap.getHeight()) / (getWidth() * getHeight());
+  }
+
+  /**
    * Returns a short description of the container.
    * 
    * @return		the description
