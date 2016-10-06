@@ -370,7 +370,10 @@ public class PreviewBrowserPanel
     BaseRegExp		regExp;
     String[]		expList;
     String		exp;
-    
+
+    if (files == null)
+      return null;
+
     if (m_MenuItemShowHiddenFiles != null)
       showHidden = m_MenuItemShowHiddenFiles.isSelected();
     else
