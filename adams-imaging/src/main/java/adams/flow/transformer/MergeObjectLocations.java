@@ -58,67 +58,67 @@ import adams.flow.transformer.locateobjects.LocatedObjects;
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- * 
+ *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: MergeObjectLocations
  * </pre>
- * 
+ *
  * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- * 
+ *
  * <pre>-skip &lt;boolean&gt; (property: skip)
  * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
  * &nbsp;&nbsp;&nbsp;as it is.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
  * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this 
  * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical 
  * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-silent &lt;boolean&gt; (property: silent)
  * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
  * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-storage-name &lt;adams.flow.control.StorageName&gt; (property: storageName)
  * &nbsp;&nbsp;&nbsp;The name of the storage item to merge with (Report or ReportHandler).
  * &nbsp;&nbsp;&nbsp;default: storage
  * </pre>
- * 
+ *
  * <pre>-prefix &lt;java.lang.String&gt; (property: prefix)
  * &nbsp;&nbsp;&nbsp;The report field prefix used in the report.
  * &nbsp;&nbsp;&nbsp;default: Object.
  * </pre>
- * 
+ *
  * <pre>-overlap-action &lt;SKIP|KEEP&gt; (property: overlapAction)
  * &nbsp;&nbsp;&nbsp;The action to take when an object from this and the other report overlap.
  * &nbsp;&nbsp;&nbsp;default: SKIP
  * </pre>
- * 
+ *
  * <pre>-no-overlap-action &lt;SKIP|KEEP&gt; (property: noOverlapAction)
  * &nbsp;&nbsp;&nbsp;The action to take when an object has no overlaps at all.
  * &nbsp;&nbsp;&nbsp;default: KEEP
  * </pre>
- * 
+ *
  * <pre>-check-type &lt;boolean&gt; (property: checkType)
  * &nbsp;&nbsp;&nbsp;If enabled, the type of the objects gets checked as well.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-type-suffix &lt;java.lang.String&gt; (property: typeSuffix)
  * &nbsp;&nbsp;&nbsp;The report field suffix for the type used in the report (ignored if empty
  * &nbsp;&nbsp;&nbsp;).
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
@@ -169,6 +169,9 @@ public class MergeObjectLocations
   /** the suffix for the type. */
   protected String m_TypeSuffix;
 
+  /** the minimum overlap ratio to use. */
+  protected double m_MinOverlapRatio;
+
   /**
    * Returns a string describing the object.
    *
@@ -196,24 +199,28 @@ public class MergeObjectLocations
       new StorageName());
 
     m_OptionManager.add(
-	"prefix", "prefix",
-	"Object.");
+      "prefix", "prefix",
+      "Object.");
 
     m_OptionManager.add(
-	"overlap-action", "overlapAction",
-	OverlapAction.SKIP);
+      "overlap-action", "overlapAction",
+      OverlapAction.SKIP);
 
     m_OptionManager.add(
-	"no-overlap-action", "noOverlapAction",
-	NoOverlapAction.KEEP);
+      "no-overlap-action", "noOverlapAction",
+      NoOverlapAction.KEEP);
 
     m_OptionManager.add(
-	"check-type", "checkType",
-	false);
+      "check-type", "checkType",
+      false);
 
     m_OptionManager.add(
-	"type-suffix", "typeSuffix",
-	"");
+      "type-suffix", "typeSuffix",
+      "");
+
+    m_OptionManager.add(
+      "min-overlap-ratio", "minOverlapRatio",
+      0.0, 0.0, 1.0);
   }
 
   /**
@@ -391,6 +398,37 @@ public class MergeObjectLocations
   }
 
   /**
+   * Sets the minimum overlap ratio to use.
+   *
+   * @param value 	the minimum ratio
+   */
+  public void setMinOverlapRatio(double value) {
+    if (getOptionManager().isValid("minOverlapRatio", value)) {
+      m_MinOverlapRatio = value;
+      reset();
+    }
+  }
+
+  /**
+   * Returns the minimum overlap ratio to use.
+   *
+   * @return 		the minimum ratio
+   */
+  public double getMinOverlapRatio() {
+    return m_MinOverlapRatio;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String minOverlapRatioTipText() {
+    return "The minimum ratio that an overlap must have before being considered an actual overlap.";
+  }
+
+  /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
@@ -404,6 +442,7 @@ public class MergeObjectLocations
     result += QuickInfoHelper.toString(this, "overlapAction", m_OverlapAction, ", overlap: ");
     result += QuickInfoHelper.toString(this, "noOverlapAction", m_NoOverlapAction, ", no-overlap: ");
     result += QuickInfoHelper.toString(this, "typeSuffix", m_TypeSuffix.isEmpty() ? "-ignored-" : m_TypeSuffix, ", type suffix: ");
+    result += QuickInfoHelper.toString(this, "minOverlapRatio", m_MinOverlapRatio, ", overlap ratio: ");
 
     return result;
   }
@@ -436,7 +475,6 @@ public class MergeObjectLocations
   @Override
   protected String doExecute() {
     String			result;
-    AbstractImageContainer	cont;
     Object			obj;
     Report			newReport;
     Report			thisReport;
@@ -485,7 +523,7 @@ public class MergeObjectLocations
 	add      = true;
 	overlaps = 0;
 	for (LocatedObject otherObj: otherObjs) {
-	  if (thisObj.overlap(otherObj)) {
+	  if (thisObj.overlapRatio(otherObj) >= m_MinOverlapRatio) {
 	    overlaps++;
 	    switch (m_OverlapAction) {
 	      case SKIP:
