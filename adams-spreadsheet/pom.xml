@@ -124,6 +124,7 @@
           <mainClass>adams.parser.GenerateParser</mainClass>
           <workingDirectory>.</workingDirectory>
           <arguments>
+            <argument>${project.basedir}/src/main/resources/adams/parser/lookupupdate</argument>
             <argument>${project.basedir}/src/main/resources/adams/parser/spreadsheetquery</argument>
           </arguments>
         </configuration>

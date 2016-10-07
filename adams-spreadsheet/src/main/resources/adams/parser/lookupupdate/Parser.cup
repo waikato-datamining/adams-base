@@ -1,0 +1,205 @@
+/*
+ * STANDARD ML OF NEW JERSEY COPYRIGHT NOTICE, LICENSE AND DISCLAIMER.
+ *
+ * Copyright (c) 1989-1998 by Lucent Technologies
+ *
+ * Permission to use, copy, modify, and distribute this software and its
+ * documentation for any purpose and without fee is hereby granted, provided
+ * that the above copyright notice appear in all copies and that both the
+ * copyright notice and this permission notice and warranty disclaimer appear
+ * in supporting documentation, and that the name of Lucent Technologies, Bell
+ * Labs or any Lucent entity not be used in advertising or publicity pertaining
+ * to distribution of the software without specific, written prior permission.
+ *
+ * Lucent disclaims all warranties with regard to this software, including all
+ * implied warranties of merchantability and fitness. In no event shall Lucent
+ * be liable for any special, indirect or consequential damages or any damages
+ * whatsoever resulting from loss of use, data or profits, whether in an action
+ * of contract, negligence or other tortious action, arising out of or in
+ * connection with the use or performance of this software.
+ *
+ * Taken from this URL:
+ * http://www.smlnj.org/license.html
+ *
+ * This license is compatible with the GNU GPL (see section "Standard ML of New
+ * Jersey Copyright License"):
+ * http://www.gnu.org/licenses/license-list.html#StandardMLofNJ
+ */
+
+/*
+ * Copyright 1996-1999 by Scott Hudson, Frank Flannery, C. Scott Ananian
+ */
+
+package adams.parser.lookupupdate;
+
+import java_cup.runtime.*;
+
+import java.io.*;
+import java.util.*;
+
+import adams.core.*;
+import adams.core.base.*;
+import adams.core.logging.*;
+import adams.parser.ParserHelper;
+
+/**
+ * A parser for spreadsheet queries.
+ *
+ * @author FracPete (fracpete at waikato dot ac dot nz)
+ * @version $Revision$
+ */
+
+parser code {:
+  /** the logger. */
+  private final static Logger LOGGER = LoggingHelper.getConsoleLogger(Parser.class);
+  
+  /** key - value relation. */
+  protected HashMap m_Symbols = new HashMap();
+
+  /** updated key - value relation. */
+  protected HashMap m_Updated = new HashMap();
+
+  /** the helper. */
+  protected ParserHelper m_Helper = new ParserHelper();
+
+  /**
+   * Returns the logger.
+   *
+   * @return the variable-value relation
+   */
+  public Logger getLogger() {
+    return LOGGER;
+  }
+
+  /**
+   * Sets the variable - value relation to use.
+   *
+   * @param value the variable-value relation
+   */
+  public void setSymbols(HashMap value) {
+    m_Symbols = value;
+    m_Helper.setSymbols(value);
+  }
+
+  /**
+   * Returns the current variable - value relation in use.
+   *
+   * @return the variable-value relation
+   */
+  public HashMap getSymbols() {
+    return m_Symbols;
+  }
+
+  /**
+   * Returns the updated lookup items.
+   *
+   * @return the updated lookup items
+   */
+  public HashMap getUpdated() {
+    return m_Updated;
+  }
+
+  /**
+   * Returns the parser helper.
+   *
+   * @return the helper
+   */
+  public ParserHelper getHelper() {
+    return m_Helper;
+  }
+:}
+
+terminal IF, THEN, ELSE, END;
+terminal MINUS, UMINUS, PLUS, TIMES, DIVISION, EXPONENT, MODULO;
+terminal ASSIGNMENT, LPAREN, RPAREN;
+terminal TRUE, FALSE, LT, LE, GT, GE, EQ, NOT_EQ, NOT, AND, OR;
+terminal Double NUMBER;
+terminal Boolean BOOLEAN;
+terminal String VARIABLE;
+terminal String STRING;
+
+non terminal expr_list, expr_part, conditional, assignment;
+non terminal Object condition;
+
+precedence left AND, OR;
+precedence left LT, LE, GT, GE, EQ, NOT_EQ;
+precedence left PLUS, MINUS;
+precedence left TIMES, DIVISION, MODULO;
+precedence left EXPONENT;
+precedence left LPAREN, RPAREN;
+precedence left NOT, UMINUS;
+
+expr_list ::= expr_list expr_part | expr_part;
+
+expr_part ::= conditional | assignment;
+
+conditional ::=   IF condition THEN assignment END
+                | IF condition THEN assignment ELSE assignment END;
+
+assignment ::=   VARIABLE:v ASSIGNMENT NUMBER:n
+                 {:
+                   parser.getUpdated().put(v, n);
+                 :}
+               | VARIABLE:v ASSIGNMENT STRING:s
+                 {:
+                   parser.getUpdated().put(v, s);
+                 :}
+               ;
+
+condition ::=   LPAREN condition:c RPAREN
+                {: RESULT = c; :}
+              | NUMBER:n
+                {: RESULT = n; :}
+              | STRING:s
+                {: RESULT = s; :}
+              | BOOLEAN:b
+                {: RESULT = b; :}
+              | VARIABLE:v
+                {: if (parser.getSymbols().containsKey(v))
+                     RESULT = parser.getSymbols().get(v);
+                   else
+                     throw new IllegalStateException("Unknown symbol '" + v + "'!");
+                :}
+
+              | TRUE
+                {: RESULT = new Boolean(true); :}
+              | FALSE
+                {: RESULT = new Boolean(false); :}
+
+              | MINUS condition:c
+                {: RESULT = -parser.getHelper().toDouble(c); :}
+                %prec UMINUS
+
+              | condition:l LT condition:r
+                {: RESULT = new Boolean(parser.getHelper().compare(l, r) < 0); :}
+              | condition:l LE condition:r
+                {: RESULT = new Boolean(parser.getHelper().compare(l, r) <= 0); :}
+              | condition:l GT condition:r
+                {: RESULT = new Boolean(parser.getHelper().compare(l, r) > 0); :}
+              | condition:l GE condition:r
+                {: RESULT = new Boolean(parser.getHelper().compare(l, r) >= 0); :}
+              | condition:l EQ condition:r
+                {: RESULT = new Boolean(parser.getHelper().compare(l, r) == 0); :}
+              | condition:l NOT_EQ condition:r
+                {: RESULT = new Boolean(parser.getHelper().compare(l, r) != 0); :}
+
+              | NOT condition:b
+                {: RESULT = !parser.getHelper().toBoolean(b); :}
+              | condition:l AND condition:r
+                {: RESULT = parser.getHelper().toBoolean(l) && parser.getHelper().toBoolean(r); :}
+              | condition:l OR condition:r
+                {: RESULT = parser.getHelper().toBoolean(l) || parser.getHelper().toBoolean(r); :}
+
+              | condition:l PLUS condition:r
+                {: RESULT = new Double(parser.getHelper().toDouble(l) + parser.getHelper().toDouble(r)); :}
+              | condition:l MINUS condition:r
+                {: RESULT = new Double(parser.getHelper().toDouble(l) - parser.getHelper().toDouble(r)); :}
+              | condition:l TIMES condition:r
+                {: RESULT = new Double(parser.getHelper().toDouble(l) * parser.getHelper().toDouble(r)); :}
+              | condition:l DIVISION condition:r
+                {: RESULT = new Double(parser.getHelper().toDouble(l) / parser.getHelper().toDouble(r)); :}
+              | condition:l MODULO condition:r
+                {: RESULT = new Double(parser.getHelper().toDouble(l) % parser.getHelper().toDouble(r)); :}
+              | condition:b EXPONENT condition:e
+                {: RESULT = new Double(Math.pow(parser.getHelper().toDouble(b), parser.getHelper().toDouble(e))); :}
+              ;
