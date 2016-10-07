@@ -23,6 +23,7 @@ package adams.gui.tools.wekainvestigator.tab;
 import adams.core.ClassLister;
 import adams.core.Properties;
 import adams.core.SerializationHelper;
+import adams.core.Stoppable;
 import adams.core.option.OptionUtils;
 import adams.gui.chooser.BaseFileChooser;
 import adams.gui.core.AbstractNamedHistoryPanel;
@@ -368,6 +369,9 @@ public class ClassifyTab
   /** whether the evaluation is currently running. */
   protected Thread m_Worker;
 
+  /** whether the execution is in the process of stopping. */
+  protected boolean m_Stopping;
+
   /** the output generators to use. */
   protected AbstractOutputGenerator[] m_OutputGenerators;
 
@@ -389,6 +393,7 @@ public class ClassifyTab
     m_CurrentEvaluation = null;
     m_CurrentClassifier = null;
     m_Worker            = null;
+    m_Stopping          = false;
 
     try {
       cmds = OptionUtils.splitOptions(
@@ -646,12 +651,37 @@ public class ClassifyTab
    * Stops the evaluation.
    */
   protected void stopExecution() {
+    SwingWorker		worker;
+
     if (m_Worker == null)
       return;
 
-    m_Worker.stop();
-    logMessage("Stopped evaluation '" + m_CurrentEvaluation.getName() + "' using: " + OptionUtils.getCommandLine(m_CurrentClassifier));
-    updateButtons();
+    if (m_CurrentEvaluation instanceof Stoppable) {
+      logMessage("Stopping evaluation '" + m_CurrentEvaluation.getName() + "' using: " + OptionUtils.getCommandLine(m_CurrentClassifier));
+      worker = new SwingWorker() {
+	@Override
+	protected Object doInBackground() throws Exception {
+	  m_Stopping = true;
+	  updateButtons();
+	  ((Stoppable) m_CurrentEvaluation).stopExecution();
+	  return null;
+	}
+
+	@Override
+	protected void done() {
+	  super.done();
+	  m_Stopping = false;
+	  logMessage("Stopped evaluation '" + m_CurrentEvaluation.getName() + "' using: " + OptionUtils.getCommandLine(m_CurrentClassifier));
+	  updateButtons();
+	}
+      };
+      worker.execute();
+    }
+    else {
+      m_Worker.stop();
+      logMessage("Stopped evaluation '" + m_CurrentEvaluation.getName() + "' using: " + OptionUtils.getCommandLine(m_CurrentClassifier));
+      updateButtons();
+    }
   }
 
   /**
@@ -676,7 +706,7 @@ public class ClassifyTab
    * @return		true if busy
    */
   public boolean isBusy() {
-    return (m_Worker != null);
+    return (m_Worker != null) || m_Stopping;
   }
 
   /**
@@ -687,7 +717,7 @@ public class ClassifyTab
 
     cls = (Classifier) m_PanelGOE.getCurrent();
     m_ButtonStart.setEnabled(!isBusy() && (m_CurrentEvaluation != null) && (m_CurrentEvaluation.canEvaluate(cls) == null));
-    m_ButtonStop.setEnabled(isBusy());
+    m_ButtonStop.setEnabled(isBusy() && !m_Stopping);
   }
 
   /**

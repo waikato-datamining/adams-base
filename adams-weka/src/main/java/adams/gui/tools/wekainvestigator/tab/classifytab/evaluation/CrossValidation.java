@@ -22,6 +22,7 @@ package adams.gui.tools.wekainvestigator.tab.classifytab.evaluation;
 
 import adams.core.Performance;
 import adams.core.Properties;
+import adams.core.StoppableWithFeedback;
 import adams.core.Utils;
 import adams.core.option.OptionUtils;
 import adams.data.spreadsheet.MetaData;
@@ -54,7 +55,8 @@ import java.util.List;
  * @version $Revision$
  */
 public class CrossValidation
-  extends AbstractClassifierEvaluation {
+  extends AbstractClassifierEvaluation
+  implements StoppableWithFeedback {
 
   private static final long serialVersionUID = 1175400993991698944L;
 
@@ -88,6 +90,9 @@ public class CrossValidation
   /** whether to produce a final model. */
   protected JCheckBox m_CheckBoxFinalModel;
 
+  /** performs the actual evaluation. */
+  protected WekaCrossValidationExecution m_CrossValidation;
+
   /**
    * Returns a string describing the object.
    *
@@ -95,6 +100,16 @@ public class CrossValidation
    */
   public String globalInfo() {
     return "Performs cross-validation.";
+  }
+
+  /**
+   * Initializes the members.
+   */
+  @Override
+  protected void initialize() {
+    super.initialize();
+
+    m_CrossValidation = null;
   }
 
   /**
@@ -230,17 +245,17 @@ public class CrossValidation
    */
   @Override
   protected ResultItem doEvaluate(Classifier classifier, AbstractNamedHistoryPanel<ResultItem> history) throws Exception {
-    WekaCrossValidationExecution	crossValidation;
-    String				msg;
-    Instances				data;
-    boolean				finalModel;
-    boolean				views;
-    boolean				discard;
-    Classifier				model;
-    int					seed;
-    int					folds;
-    int					threads;
-    MetaData 				runInfo;
+    ResultItem		result;
+    String		msg;
+    Instances		data;
+    boolean		finalModel;
+    boolean		views;
+    boolean		discard;
+    Classifier		model;
+    int			seed;
+    int			folds;
+    int			threads;
+    MetaData 		runInfo;
 
     if ((msg = canEvaluate(classifier)) != null)
       throw new IllegalArgumentException("Cannot evaluate classifier!\n" + msg);
@@ -263,16 +278,16 @@ public class CrossValidation
     runInfo.add("Class attribute", data.classAttribute().name());
     runInfo.add("Use views", views);
     runInfo.add("Discard predictions", discard);
-    crossValidation = new WekaCrossValidationExecution();
-    crossValidation.setClassifier(classifier);
-    crossValidation.setData(data);
-    crossValidation.setFolds(folds);
-    crossValidation.setSeed(seed);
-    crossValidation.setNumThreads(threads);
-    crossValidation.setUseViews(views);
-    crossValidation.setDiscardPredictions(discard);
-    crossValidation.setStatusMessageHandler(this);
-    msg = crossValidation.execute();
+    m_CrossValidation = new WekaCrossValidationExecution();
+    m_CrossValidation.setClassifier(classifier);
+    m_CrossValidation.setData(data);
+    m_CrossValidation.setFolds(folds);
+    m_CrossValidation.setSeed(seed);
+    m_CrossValidation.setNumThreads(threads);
+    m_CrossValidation.setUseViews(views);
+    m_CrossValidation.setDiscardPredictions(discard);
+    m_CrossValidation.setStatusMessageHandler(this);
+    msg = m_CrossValidation.execute();
     if (msg != null)
       throw new Exception("Failed to cross-validate:\n" + msg);
 
@@ -285,11 +300,15 @@ public class CrossValidation
     }
 
     // history
-    return addToHistory(
-      history, new ResultItem(crossValidation.getEvaluation(),
+    result = addToHistory(
+      history, new ResultItem(m_CrossValidation.getEvaluation(),
 	classifier, model, new Instances(data, 0), runInfo,
-	crossValidation.getOriginalIndices(),
+	m_CrossValidation.getOriginalIndices(),
 	transferAdditionalAttributes(m_SelectAdditionalAttributes, data)));
+
+    m_CrossValidation = null;
+
+    return result;
   }
 
   /**
@@ -328,5 +347,24 @@ public class CrossValidation
    */
   public void activate(int index) {
     m_ComboBoxDatasets.setSelectedIndex(index);
+  }
+
+  /**
+   * Stops the execution.
+   */
+  @Override
+  public void stopExecution() {
+    if (m_CrossValidation != null)
+      m_CrossValidation.stopExecution();
+  }
+
+  /**
+   * Whether the execution has been stopped.
+   *
+   * @return		true if stopped
+   */
+  @Override
+  public boolean isStopped() {
+    return (m_CrossValidation != null) && m_CrossValidation.isStopped();
   }
 }
