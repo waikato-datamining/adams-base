@@ -70,117 +70,123 @@ import java.util.HashMap;
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- *
+ * 
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: ActualVsPredictedPlot
  * </pre>
- *
+ * 
  * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- *
+ * 
  * <pre>-skip &lt;boolean&gt; (property: skip)
  * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
  * &nbsp;&nbsp;&nbsp;as it is.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
  * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this 
  * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical 
  * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-silent &lt;boolean&gt; (property: silent)
  * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
  * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-short-title &lt;boolean&gt; (property: shortTitle)
  * &nbsp;&nbsp;&nbsp;If enabled uses just the name for the title instead of the actor's full 
  * &nbsp;&nbsp;&nbsp;name.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-display-in-editor &lt;boolean&gt; (property: displayInEditor)
  * &nbsp;&nbsp;&nbsp;If enabled displays the panel in a tab in the flow editor rather than in 
  * &nbsp;&nbsp;&nbsp;a separate frame.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-width &lt;int&gt; (property: width)
  * &nbsp;&nbsp;&nbsp;The width of the dialog.
  * &nbsp;&nbsp;&nbsp;default: 800
  * &nbsp;&nbsp;&nbsp;minimum: -1
  * </pre>
- *
+ * 
  * <pre>-height &lt;int&gt; (property: height)
  * &nbsp;&nbsp;&nbsp;The height of the dialog.
  * &nbsp;&nbsp;&nbsp;default: 350
  * &nbsp;&nbsp;&nbsp;minimum: -1
  * </pre>
- *
+ * 
  * <pre>-x &lt;int&gt; (property: x)
  * &nbsp;&nbsp;&nbsp;The X position of the dialog (&gt;=0: absolute, -1: left, -2: center, -3: right
  * &nbsp;&nbsp;&nbsp;).
  * &nbsp;&nbsp;&nbsp;default: -1
  * &nbsp;&nbsp;&nbsp;minimum: -3
  * </pre>
- *
+ * 
  * <pre>-y &lt;int&gt; (property: y)
  * &nbsp;&nbsp;&nbsp;The Y position of the dialog (&gt;=0: absolute, -1: top, -2: center, -3: bottom
  * &nbsp;&nbsp;&nbsp;).
  * &nbsp;&nbsp;&nbsp;default: -1
  * &nbsp;&nbsp;&nbsp;minimum: -3
  * </pre>
- *
+ * 
  * <pre>-writer &lt;adams.gui.print.JComponentWriter&gt; (property: writer)
  * &nbsp;&nbsp;&nbsp;The writer to use for generating the graphics output.
  * &nbsp;&nbsp;&nbsp;default: adams.gui.print.NullWriter
  * </pre>
- *
+ * 
  * <pre>-actual &lt;adams.data.spreadsheet.SpreadSheetColumnIndex&gt; (property: actual)
  * &nbsp;&nbsp;&nbsp;The column with the actual values.
  * &nbsp;&nbsp;&nbsp;default: Actual
  * &nbsp;&nbsp;&nbsp;example: An index is a number starting with 1; column names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last; numeric indices can be enforced by preceding them with '#' (eg '#12'); column names can be surrounded by double quotes.
  * </pre>
- *
+ * 
  * <pre>-actual-min &lt;double&gt; (property: actualMin)
  * &nbsp;&nbsp;&nbsp;The minimum to use for the display of the actual axis; use NaN for unlimited.
  * &nbsp;&nbsp;&nbsp;default: -Infinity
  * </pre>
- *
+ * 
  * <pre>-actual-max &lt;double&gt; (property: actualMax)
  * &nbsp;&nbsp;&nbsp;The maximum to use for the display of the actual axis; use NaN for unlimited.
  * &nbsp;&nbsp;&nbsp;default: Infinity
  * </pre>
- *
+ * 
  * <pre>-predicted &lt;adams.data.spreadsheet.SpreadSheetColumnIndex&gt; (property: predicted)
  * &nbsp;&nbsp;&nbsp;The column with the predicted values.
  * &nbsp;&nbsp;&nbsp;default: Predicted
  * &nbsp;&nbsp;&nbsp;example: An index is a number starting with 1; column names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last; numeric indices can be enforced by preceding them with '#' (eg '#12'); column names can be surrounded by double quotes.
  * </pre>
- *
+ * 
  * <pre>-predicted-min &lt;double&gt; (property: predictedMin)
  * &nbsp;&nbsp;&nbsp;The minimum to use for the display of the predicted axis; use NaN for unlimited.
  * &nbsp;&nbsp;&nbsp;default: -Infinity
  * </pre>
- *
+ * 
  * <pre>-predicted-max &lt;double&gt; (property: predictedMax)
  * &nbsp;&nbsp;&nbsp;The maximum to use for the display of the predicted axis; use NaN for unlimited.
  * &nbsp;&nbsp;&nbsp;default: Infinity
  * </pre>
- *
+ * 
  * <pre>-error &lt;adams.data.spreadsheet.SpreadSheetColumnIndex&gt; (property: error)
  * &nbsp;&nbsp;&nbsp;The column with the error values.
  * &nbsp;&nbsp;&nbsp;default: 
  * &nbsp;&nbsp;&nbsp;example: An index is a number starting with 1; column names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last; numeric indices can be enforced by preceding them with '#' (eg '#12'); column names can be surrounded by double quotes.
  * </pre>
- *
+ * 
+ * <pre>-additional &lt;adams.data.spreadsheet.SpreadSheetColumnRange&gt; (property: additional)
+ * &nbsp;&nbsp;&nbsp;The additional columns to add to the plot containers.
+ * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts the range '...'; column names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last; numeric indices can be enforced by preceding them with '#' (eg '#12'); column names can be surrounded by double quotes.
+ * </pre>
+ * 
  * <pre>-limit &lt;NONE|ACTUAL|SPECIFIED&gt; (property: limit)
  * &nbsp;&nbsp;&nbsp;The type of limit to impose on the axes; NONE just uses the range determined 
  * &nbsp;&nbsp;&nbsp;from the data; ACTUAL uses the min&#47;max from the actual column for both axes;
@@ -188,7 +194,13 @@ import java.util.HashMap;
  * &nbsp;&nbsp;&nbsp;corresponding value from the determine range.
  * &nbsp;&nbsp;&nbsp;default: NONE
  * </pre>
- *
+ * 
+ * <pre>-show-side-panel &lt;boolean&gt; (property: showSidePanel)
+ * &nbsp;&nbsp;&nbsp;If enabled, the side panel gets displayed which allows access to the underlying 
+ * &nbsp;&nbsp;&nbsp;data for the plot.
+ * &nbsp;&nbsp;&nbsp;default: true
+ * </pre>
+ * 
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
@@ -238,6 +250,9 @@ public class ActualVsPredictedPlot
 
   /** the additional columns in the spreadsheet to add to the plot containers. */
   protected SpreadSheetColumnRange m_Additional;
+
+  /** whether to show the side panel. */
+  protected boolean m_ShowSidePanel;
 
   /**
    * Returns a string describing the object.
@@ -291,6 +306,10 @@ public class ActualVsPredictedPlot
     m_OptionManager.add(
       "limit", "limit",
       LimitType.NONE);
+
+    m_OptionManager.add(
+      "show-side-panel", "showSidePanel",
+      true);
   }
 
   /**
@@ -578,6 +597,37 @@ public class ActualVsPredictedPlot
   }
 
   /**
+   * Sets whether to show the side panel.
+   *
+   * @param value	true if to show
+   */
+  public void setShowSidePanel(boolean value) {
+    m_ShowSidePanel = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to show the side panel.
+   *
+   * @return		the limit type
+   */
+  public boolean getShowSidePanel() {
+    return m_ShowSidePanel;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String showSidePanelTipText() {
+    return
+      "If enabled, the side panel gets displayed which allows access to the "
+	+ "underlying data for the plot.";
+  }
+
+  /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
@@ -683,7 +733,7 @@ public class ActualVsPredictedPlot
     getDefaultAxisX().configure(result.getPlot(), Axis.BOTTOM);
     getDefaultAxisY().configure(result.getPlot(), Axis.LEFT);
     result.setColorProvider(new DefaultColorProvider());
-    result.setSidePanelVisible(true);
+    result.setSidePanelVisible(m_ShowSidePanel);
     result.setMouseClickAction(new ViewDataClickAction());
 
     return result;
@@ -866,7 +916,7 @@ public class ActualVsPredictedPlot
 	getDefaultAxisX().configure(m_Panel.getPlot(), Axis.BOTTOM);
 	getDefaultAxisY().configure(m_Panel.getPlot(), Axis.LEFT);
 	m_Panel.setColorProvider(new DefaultColorProvider());
-	m_Panel.setSidePanelVisible(true);
+	m_Panel.setSidePanelVisible(m_ShowSidePanel);
 	m_Panel.setMouseClickAction(new ViewDataClickAction());
 	add(m_Panel, BorderLayout.CENTER);
       }
