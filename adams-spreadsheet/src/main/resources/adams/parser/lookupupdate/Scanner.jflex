@@ -66,6 +66,7 @@ import java.io.*;
 
   // symbols
   ":=" { return sf.newSymbol("Assignment", sym.ASSIGNMENT); }
+  ";" { return sf.newSymbol("Semi", sym.SEMI); }
 
   // operands
   "-" { return sf.newSymbol("Minus", sym.MINUS); }

@@ -19,13 +19,6 @@
  */
 package adams.parser;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-
 import adams.core.DateUtils;
 import adams.core.base.BaseDate;
 import adams.core.base.BaseDateTime;
@@ -35,6 +28,13 @@ import adams.parser.plugin.AbstractParserFunction;
 import adams.parser.plugin.AbstractParserProcedure;
 import adams.parser.plugin.ParserFunction;
 import adams.parser.plugin.ParserProcedure;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * Helper class for parsers.
@@ -244,7 +244,9 @@ public class ParserHelper
    * @return 		the comparison, NaN if failed to compare
    */
   public Double compare(Object o1, Object o2) {
-    if ((o1 instanceof Comparable) && (o2 instanceof Comparable))
+    if ((o1 instanceof Number) && (o2 instanceof Number))
+      return new Double(new Double(((Number) o1).doubleValue()).compareTo(((Number) o2).doubleValue()));
+    else if ((o1 instanceof Comparable) && (o2 instanceof Comparable))
       return new Double(((Comparable) o1).compareTo((Comparable) o2));
     else
       return Double.NaN;

@@ -31,3 +31,8 @@ adams.data.spreadsheet.SpreadSheetColumnRange#valueOf=adams.gui.goe.SpreadSheetC
 adams.parser.SpreadSheetQueryText=true
 adams.parser.SpreadSheetQueryText#toString=adams.gui.goe.AbstractSimpleScriptEditor#toString
 adams.parser.SpreadSheetQueryText#valueOf=adams.gui.goe.AbstractSimpleScriptEditor#valueOf
+
+# LookUpUpdateText objects
+adams.parser.LookUpUpdateText=true
+adams.parser.LookUpUpdateText#toString=adams.gui.goe.AbstractSimpleScriptEditor#toString
+adams.parser.LookUpUpdateText#valueOf=adams.gui.goe.AbstractSimpleScriptEditor#valueOf
