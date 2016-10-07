@@ -322,6 +322,7 @@ public class ClassifierErrors
     sink.setPredictedMin(m_PredictedMin);
     sink.setPredictedMax(m_PredictedMax);
     sink.setLimit(m_Limit);
+    sink.setShowSidePanel(false);
     if ((additional != null) && (additional.size() > 0))
       sink.setAdditional(new SpreadSheetColumnRange(Utils.flatten(additional, ",")));
     panel = sink.createDisplayPanel(token);
