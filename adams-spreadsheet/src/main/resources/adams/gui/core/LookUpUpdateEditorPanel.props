@@ -92,16 +92,9 @@ CaseSensitive=false
 
 # the keywords
 Keywords=\
-    <,\
-    <=,\
-    >,\
-    >=,\
-    =,\
-    <>,\
     not,\
     and,\
     or,\
-    *,\
     if,\
     then,\
     else,\
