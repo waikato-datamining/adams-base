@@ -236,10 +236,7 @@ expr ::=        LPAREN expr:c RPAREN
               | expr:l MINUS expr:r
                 {: RESULT = new Double(parser.getHelper().toNumber(l) - parser.getHelper().toNumber(r)); :}
               | expr:l TIMES expr:r
-                {: System.out.println(l);
-                   System.out.println(r);
-                   System.out.println(new Double(parser.getHelper().toNumber(l) * parser.getHelper().toNumber(r)));
-                RESULT = new Double(parser.getHelper().toNumber(l) * parser.getHelper().toNumber(r)); :}
+                {: RESULT = new Double(parser.getHelper().toNumber(l) * parser.getHelper().toNumber(r)); :}
               | expr:l DIVISION expr:r
                 {: RESULT = new Double(parser.getHelper().toNumber(l) / parser.getHelper().toNumber(r)); :}
               | expr:l MODULO expr:r
