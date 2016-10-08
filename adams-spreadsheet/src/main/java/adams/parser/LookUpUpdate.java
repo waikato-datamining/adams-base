@@ -545,7 +545,7 @@ public class LookUpUpdate
     parser      = new Parser(new Scanner(parserInput, sf), sf);
     parser.setSymbols(symbols);
     parser.parse();
-    updated = parser.getUpdated();
+    updated = parser.getSymbols();
     result  = sheet.getClone();
     for (Object key: updated.keySet()) {
       found  = false;

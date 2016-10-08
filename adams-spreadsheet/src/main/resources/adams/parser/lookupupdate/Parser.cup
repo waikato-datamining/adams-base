@@ -56,9 +56,6 @@ parser code {:
   /** key - value relation. */
   protected HashMap m_Symbols = new HashMap();
 
-  /** updated key - value relation. */
-  protected HashMap m_Updated = new HashMap();
-
   /** the if key - value relation. */
   protected HashMap m_If = new HashMap();
 
@@ -94,15 +91,6 @@ parser code {:
    */
   public HashMap getSymbols() {
     return m_Symbols;
-  }
-
-  /**
-   * Returns the updated lookup items.
-   *
-   * @return the updated lookup items
-   */
-  public HashMap getUpdated() {
-    return m_Updated;
   }
 
   /**
@@ -161,16 +149,16 @@ expr_part ::= conditional | assignment;
 conditional ::=   IF expr:c THEN if_assignments END
                   {:
                     if (parser.getHelper().toBoolean(c))
-                      parser.getUpdated().putAll(parser.getIf());
+                      parser.getSymbols().putAll(parser.getIf());
                     parser.getIf().clear();
                     parser.getElse().clear();
                   :}
                 | IF expr:c THEN if_assignments ELSE else_assignments END
                   {:
                     if (parser.getHelper().toBoolean(c))
-                      parser.getUpdated().putAll(parser.getIf());
+                      parser.getSymbols().putAll(parser.getIf());
                     else
-                      parser.getUpdated().putAll(parser.getElse());
+                      parser.getSymbols().putAll(parser.getElse());
                     parser.getIf().clear();
                     parser.getElse().clear();
                   :}
@@ -179,7 +167,7 @@ conditional ::=   IF expr:c THEN if_assignments END
 assignment ::=
                  VARIABLE:v ASSIGNMENT expr:e SEMI
                  {:
-                   parser.getUpdated().put(v, e);
+                   parser.getSymbols().put(v.toString(), e);
                  :}
                ;
 
@@ -187,7 +175,7 @@ if_assignments ::= if_assignments if_assignment | if_assignment;
 if_assignment ::=
                  VARIABLE:v ASSIGNMENT expr:e SEMI
                  {:
-                   parser.getIf().put(v, e);
+                   parser.getIf().put(v.toString(), e);
                  :}
                ;
 
@@ -195,7 +183,7 @@ else_assignments ::= else_assignments else_assignment | else_assignment;
 else_assignment ::=
                  VARIABLE:v ASSIGNMENT expr:e SEMI
                  {:
-                   parser.getElse().put(v, e);
+                   parser.getElse().put(v.toString(), e);
                  :}
                ;
 
@@ -208,10 +196,8 @@ expr ::=        LPAREN expr:c RPAREN
               | BOOLEAN:b
                 {: RESULT = b; :}
               | VARIABLE:v
-                {: if (parser.getUpdated().containsKey(v))
-                     RESULT = parser.getUpdated().get(v);
-                   else if (parser.getSymbols().containsKey(v))
-                     RESULT = parser.getSymbols().get(v);
+                {: if (parser.getSymbols().containsKey(v.toString()))
+                     RESULT = parser.getSymbols().get(v.toString());
                    else
                      throw new IllegalStateException("Unknown symbol '" + v + "'!");
                 :}
@@ -222,7 +208,7 @@ expr ::=        LPAREN expr:c RPAREN
                 {: RESULT = new Boolean(false); :}
 
               | MINUS expr:c
-                {: RESULT = -parser.getHelper().toDouble(c); :}
+                {: RESULT = -parser.getHelper().toNumber(c); :}
                 %prec UMINUS
 
               | expr:l LT expr:r
@@ -246,15 +232,18 @@ expr ::=        LPAREN expr:c RPAREN
                 {: RESULT = parser.getHelper().toBoolean(l) || parser.getHelper().toBoolean(r); :}
 
               | expr:l PLUS expr:r
-                {: RESULT = new Double(parser.getHelper().toDouble(l) + parser.getHelper().toDouble(r)); :}
+                {: RESULT = new Double(parser.getHelper().toNumber(l) + parser.getHelper().toNumber(r)); :}
               | expr:l MINUS expr:r
-                {: RESULT = new Double(parser.getHelper().toDouble(l) - parser.getHelper().toDouble(r)); :}
+                {: RESULT = new Double(parser.getHelper().toNumber(l) - parser.getHelper().toNumber(r)); :}
               | expr:l TIMES expr:r
-                {: RESULT = new Double(parser.getHelper().toDouble(l) * parser.getHelper().toDouble(r)); :}
+                {: System.out.println(l);
+                   System.out.println(r);
+                   System.out.println(new Double(parser.getHelper().toNumber(l) * parser.getHelper().toNumber(r)));
+                RESULT = new Double(parser.getHelper().toNumber(l) * parser.getHelper().toNumber(r)); :}
               | expr:l DIVISION expr:r
-                {: RESULT = new Double(parser.getHelper().toDouble(l) / parser.getHelper().toDouble(r)); :}
+                {: RESULT = new Double(parser.getHelper().toNumber(l) / parser.getHelper().toNumber(r)); :}
               | expr:l MODULO expr:r
-                {: RESULT = new Double(parser.getHelper().toDouble(l) % parser.getHelper().toDouble(r)); :}
+                {: RESULT = new Double(parser.getHelper().toNumber(l) % parser.getHelper().toNumber(r)); :}
               | expr:b EXPONENT expr:e
-                {: RESULT = new Double(Math.pow(parser.getHelper().toDouble(b), parser.getHelper().toDouble(e))); :}
+                {: RESULT = new Double(Math.pow(parser.getHelper().toNumber(b), parser.getHelper().toNumber(e))); :}
               ;

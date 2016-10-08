@@ -1,0 +1,15 @@
+# Project: adams
+# Date: 2016-10-08 13:47:03
+# User: fracpete
+# Charset: UTF-8
+adams.flow.control.Flow -annotation "Shows how to update a lookup table in form of a spreadsheet\\nusing simple rules (eg if-then-else)." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.standalone.CallableActors
+  adams.flow.sink.DisplayPanelManager -provider "adams.flow.sink.SpreadSheetDisplay -writer adams.data.io.output.NullWriter" -entry-name-variable entry
+ adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/lookup2.csv
+ adams.flow.transformer.SpreadSheetFileReader -reader "adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.DefaultSpreadSheet"
+ adams.flow.control.Tee -name original
+  adams.flow.transformer.SetVariable -var-name entry -var-value original
+  adams.flow.sink.CallableSink -callable DisplayPanelManager
+ adams.flow.transformer.LookUpUpdate -rules "if (C = 2)\\nthen\\n  B := A * C;\\n  E := \\\"updated\\\";\\nelse\\n  E := \\\"not updated\\\";\\nend"
+ adams.flow.transformer.SetVariable -var-name entry -var-value updated
+ adams.flow.sink.CallableSink -callable DisplayPanelManager

@@ -207,7 +207,7 @@ public class LookUpUpdate
   public String getQuickInfo() {
     String	result;
 
-    result  = QuickInfoHelper.toString(this, "keyColumn", m_KeyColumn, ", key: ");
+    result  = QuickInfoHelper.toString(this, "keyColumn", m_KeyColumn, "key: ");
     result += QuickInfoHelper.toString(this, "valueColumn", m_ValueColumn, ", value: ");
 
     return result;
