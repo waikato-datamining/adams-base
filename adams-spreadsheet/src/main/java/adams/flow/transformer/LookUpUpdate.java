@@ -30,6 +30,7 @@ import java.util.HashMap;
 /**
  <!-- globalinfo-start -->
  * Updates the lookup table (in form of a spreadsheet) that passes through using the specified rules.<br>
+ * The rules can contain variables.<br>
  * <br>
  * The rules use the following grammar:<br>
  * <br>
@@ -173,7 +174,8 @@ public class LookUpUpdate
   public String globalInfo() {
     return
       "Updates the lookup table (in form of a spreadsheet) that passes "
-        + "through using the specified rules.\n\n"
+        + "through using the specified rules.\n"
+	+ "The rules can contain variables.\n\n"
         + "The rules use the following grammar:\n\n"
         + new adams.parser.LookUpUpdate().getGrammar();
   }
@@ -307,17 +309,20 @@ public class LookUpUpdate
    */
   @Override
   protected String doExecute() {
-    String			result;
-    SpreadSheet			sheet;
+    String		result;
+    SpreadSheet		sheet;
+    String		rules;
 
     result = null;
 
+    rules  = getRules().getValue();
+    rules  = getVariables().expand(rules);
     sheet  = (SpreadSheet) m_InputToken.getPayload();
     m_KeyColumn.setData(sheet);
     m_ValueColumn.setData(sheet);
     try {
       sheet = adams.parser.LookUpUpdate.evaluate(
-	m_Rules.getValue(), new HashMap(), sheet, m_KeyColumn.getIntIndex(), m_ValueColumn.getIntIndex());
+	rules, new HashMap(), sheet, m_KeyColumn.getIntIndex(), m_ValueColumn.getIntIndex());
     }
     catch (Exception e) {
       result = handleException("Failed to update lookup table!", e);
