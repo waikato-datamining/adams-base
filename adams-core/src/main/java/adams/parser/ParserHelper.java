@@ -143,6 +143,19 @@ public class ParserHelper
    * Turns the object into a double.
    *
    * @param obj 	the object to convert
+   * @return 		the numeric value, NaN if not a number
+   */
+  public Double toNumber(Object obj) {
+    if (obj instanceof Number)
+      return ((Number) obj).doubleValue();
+    else
+      return Double.NaN;
+  }
+
+  /**
+   * Turns the object into a double.
+   *
+   * @param obj 	the object to convert
    * @return 		the numeric value, NaN if not a double
    */
   public Double toDouble(Object obj) {
