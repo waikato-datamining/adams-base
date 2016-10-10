@@ -20,6 +20,7 @@
 
 package adams.gui.tools.wekainvestigator.tab;
 
+import adams.core.MessageCollection;
 import adams.core.Properties;
 import adams.core.Range;
 import adams.data.instance.Instance;
@@ -60,6 +61,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -538,5 +540,49 @@ public class InstanceTab
       manager.add(cont);
     }
     manager.finishUpdate();
+  }
+
+  /**
+   * Returns the objects for serialization.
+   *
+   * @return		the mapping of the objects to serialize
+   */
+  protected Map<String,Object> doSerialize() {
+    Map<String,Object>	result;
+
+    result = super.doSerialize();
+    result.put("leftpanelwidth", m_SplitPane.getDividerLocation());
+    result.put("dataset", m_ComboBoxDatasets.getSelectedIndex());
+    result.put("id", m_ComboBoxID.getSelectedIndex());
+    result.put("attributes", m_TextAttributeRange.getText());
+    result.put("antialiasing", m_CheckBoxAntiAliasing.isSelected());
+    result.put("markers", m_CheckBoxMarkers.isSelected());
+    result.put("ids", m_ListIDs.getSelectedIndices());
+
+    return result;
+  }
+
+  /**
+   * Restores the objects.
+   *
+   * @param data	the data to restore
+   * @param errors	for storing errors
+   */
+  protected void doDeserialize(Map<String,Object> data, MessageCollection errors) {
+    super.doDeserialize(data, errors);
+    if (data.containsKey("leftpanelwidth"))
+      m_SplitPane.setDividerLocation((int) data.get("leftpanelwidth"));
+    if (data.containsKey("dataset"))
+      m_ComboBoxDatasets.setSelectedIndex((int) data.get("dataset"));
+    if (data.containsKey("id"))
+      m_ComboBoxID.setSelectedIndex((int) data.get("id"));
+    if (data.containsKey("attributes"))
+      m_TextAttributeRange.setText((String) data.get("attributes"));
+    if (data.containsKey("antialiasing"))
+      m_CheckBoxAntiAliasing.setSelected((Boolean) data.get("antialiasing"));
+    if (data.containsKey("markers"))
+      m_CheckBoxMarkers.setSelected((Boolean) data.get("markers"));
+    if (data.containsKey("ids"))
+      m_ListIDs.setSelectedIndices((int[]) data.get("ids"));
   }
 }
