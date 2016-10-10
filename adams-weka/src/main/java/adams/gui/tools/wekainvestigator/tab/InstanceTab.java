@@ -75,6 +75,20 @@ public class InstanceTab
 
   private static final long serialVersionUID = -4106630131554796889L;
 
+  public static final String KEY_LEFTPANELWIDTH = "leftpanelwidth";
+
+  public static final String KEY_DATASET = "dataset";
+
+  public static final String KEY_ID = "id";
+
+  public static final String KEY_RANGE = "range";
+
+  public static final String KEY_ANTIALIASING = "antialiasing";
+
+  public static final String KEY_MARKERS = "markers";
+
+  public static final String KEY_IDS = "ids";
+
   /** the split pane. */
   protected BaseSplitPane m_SplitPane;
 
@@ -551,13 +565,13 @@ public class InstanceTab
     Map<String,Object>	result;
 
     result = super.doSerialize();
-    result.put("leftpanelwidth", m_SplitPane.getDividerLocation());
-    result.put("dataset", m_ComboBoxDatasets.getSelectedIndex());
-    result.put("id", m_ComboBoxID.getSelectedIndex());
-    result.put("attributes", m_TextAttributeRange.getText());
-    result.put("antialiasing", m_CheckBoxAntiAliasing.isSelected());
-    result.put("markers", m_CheckBoxMarkers.isSelected());
-    result.put("ids", m_ListIDs.getSelectedIndices());
+    result.put(KEY_LEFTPANELWIDTH, m_SplitPane.getDividerLocation());
+    result.put(KEY_DATASET, m_ComboBoxDatasets.getSelectedIndex());
+    result.put(KEY_ID, m_ComboBoxID.getSelectedIndex());
+    result.put(KEY_RANGE, m_TextAttributeRange.getText());
+    result.put(KEY_ANTIALIASING, m_CheckBoxAntiAliasing.isSelected());
+    result.put(KEY_MARKERS, m_CheckBoxMarkers.isSelected());
+    result.put(KEY_IDS, m_ListIDs.getSelectedIndices());
 
     return result;
   }
@@ -570,19 +584,19 @@ public class InstanceTab
    */
   protected void doDeserialize(Map<String,Object> data, MessageCollection errors) {
     super.doDeserialize(data, errors);
-    if (data.containsKey("leftpanelwidth"))
-      m_SplitPane.setDividerLocation((int) data.get("leftpanelwidth"));
-    if (data.containsKey("dataset"))
-      m_ComboBoxDatasets.setSelectedIndex((int) data.get("dataset"));
-    if (data.containsKey("id"))
-      m_ComboBoxID.setSelectedIndex((int) data.get("id"));
-    if (data.containsKey("attributes"))
-      m_TextAttributeRange.setText((String) data.get("attributes"));
-    if (data.containsKey("antialiasing"))
-      m_CheckBoxAntiAliasing.setSelected((Boolean) data.get("antialiasing"));
-    if (data.containsKey("markers"))
-      m_CheckBoxMarkers.setSelected((Boolean) data.get("markers"));
-    if (data.containsKey("ids"))
-      m_ListIDs.setSelectedIndices((int[]) data.get("ids"));
+    if (data.containsKey(KEY_LEFTPANELWIDTH))
+      m_SplitPane.setDividerLocation((int) data.get(KEY_LEFTPANELWIDTH));
+    if (data.containsKey(KEY_DATASET))
+      m_ComboBoxDatasets.setSelectedIndex((int) data.get(KEY_DATASET));
+    if (data.containsKey(KEY_ID))
+      m_ComboBoxID.setSelectedIndex((int) data.get(KEY_ID));
+    if (data.containsKey(KEY_RANGE))
+      m_TextAttributeRange.setText((String) data.get(KEY_RANGE));
+    if (data.containsKey(KEY_ANTIALIASING))
+      m_CheckBoxAntiAliasing.setSelected((Boolean) data.get(KEY_ANTIALIASING));
+    if (data.containsKey(KEY_MARKERS))
+      m_CheckBoxMarkers.setSelected((Boolean) data.get(KEY_MARKERS));
+    if (data.containsKey(KEY_IDS))
+      m_ListIDs.setSelectedIndices((int[]) data.get(KEY_IDS));
   }
 }
