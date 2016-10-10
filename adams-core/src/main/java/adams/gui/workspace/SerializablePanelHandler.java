@@ -22,7 +22,7 @@ package adams.gui.workspace;
 import java.io.Serializable;
 
 /**
- * Ancestor for handlers for specific Explorer panels.
+ * Ancestor for handlers for specific panels.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
@@ -42,7 +42,7 @@ public abstract class SerializablePanelHandler<T extends AbstractWorkspacePanel>
   public abstract boolean handles(T panel);
 
   /**
-   * Generates a view of the explorer panel that can be serialized.
+   * Generates a view of the panel that can be serialized.
    * 
    * @param panel	the panel to serialize
    * @return		the data to serialize
