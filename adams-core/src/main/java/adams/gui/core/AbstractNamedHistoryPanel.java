@@ -20,6 +20,7 @@
 package adams.gui.core;
 
 import adams.core.CleanUpHandler;
+import adams.core.MessageCollection;
 import adams.gui.core.SearchPanel.LayoutType;
 import adams.gui.event.SearchEvent;
 import adams.gui.event.SearchListener;
@@ -1158,5 +1159,57 @@ public abstract class AbstractNamedHistoryPanel<T>
     }
     
     return result;
+  }
+
+  /**
+   * Returns the history.
+   *
+   * @return		the history
+   */
+  public Object serialize() {
+    Object[][]	result;
+    int		i;
+    int		selected;
+
+    selected = getSelectedIndex();
+    result   = new Object[count()][4];
+    for (i = 0; i < count(); i++) {
+      result[i][0] = getSelectedEntry();
+      result[i][1] = getEntry(i);
+      result[i][2] = getPayload(i);
+      result[i][3] = (i == selected);
+    }
+
+    return result;
+  }
+
+  /**
+   * Restores the history.
+   *
+   * @param data	the data to restore
+   * @param errors	for storing errors
+   */
+  public void deserialize(Object data, MessageCollection errors) {
+    Object[][]		items;
+    int			i;
+    int			selected;
+
+    clear();
+    try {
+      selected = -1;
+      items    = (Object[][]) data;
+      for (i = 0; i < items.length; i++) {
+	addEntry((String) items[i][0], (T) items[i][1]);
+	if (items[2] != null)
+	  setPayload((String) items[i][0], items[i][2]);
+	if ((Boolean) items[i][3])
+	  selected = i;
+      }
+      if (selected > -1)
+	setSelectedIndex(selected);
+    }
+    catch (Exception e) {
+      errors.add("Failed to deserialize history items!", e);
+    }
   }
 }
