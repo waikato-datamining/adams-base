@@ -114,8 +114,8 @@ public class TableContentPanel
     SpreadSheetFileChooser	result;
 
     result = new SpreadSheetFileChooser();
-    result.setAcceptAllFileFilterUsed(true);
-    result.setAutoAppendExtension(false);
+    result.setAcceptAllFileFilterUsed(false);
+    result.setAutoAppendExtension(true);
 
     return result;
   }
@@ -146,7 +146,7 @@ public class TableContentPanel
 
     if (result == null) {
       writer = m_FileChooser.getWriter();
-      if (writer.write(content, file))
+      if (!writer.write(content, file))
         result = "Failed to write data to: " + file;
     }
 
