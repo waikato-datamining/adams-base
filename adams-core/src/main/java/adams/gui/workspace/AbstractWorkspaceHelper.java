@@ -79,17 +79,17 @@ public abstract class AbstractWorkspaceHelper<P extends AbstractWorkspacePanel, 
   /**
    * Serializes the panel instance to the output stream.
    *
-   * @param expext	the explorer to serialize
-   * @param name	the name of the explorer
+   * @param panel	the panel to serialize
+   * @param name	the name of the panel
    * @param oos		the output stream
    * @throws Exception	if serialization fails
    */
-  protected abstract void serialize(P expext, String name, ObjectOutputStream oos) throws Exception;
+  protected abstract void serialize(P panel, String name, ObjectOutputStream oos) throws Exception;
 
   /**
-   * Saves the explorer session to the given file.
+   * Saves the panel session to the given file.
    *
-   * @param manager the explorer to save
+   * @param manager the panel to save
    * @param file     the file to save the workspace to
    * @throws Exception if saving fails
    */
@@ -115,10 +115,10 @@ public abstract class AbstractWorkspaceHelper<P extends AbstractWorkspacePanel, 
   }
 
   /**
-   * Deserializes an explorer instance from the input stream.
+   * Deserializes an panel instance from the input stream.
    *
    * @param ois		the input stream to read
-   * @return		the name (= 0) and the explorer instance (= 1)
+   * @return		the name (= 0) and the panel instance (= 1)
    * @throws Exception	if deserialization fails
    */
   protected abstract Object[] deserialize(ObjectInputStream ois) throws Exception;
@@ -134,21 +134,21 @@ public abstract class AbstractWorkspaceHelper<P extends AbstractWorkspacePanel, 
     ObjectInputStream 	ois;
     FileInputStream 	fis;
     int 		i;
-    P 			expext;
+    P 			panel;
     String 		name;
-    int 		expCount;
-    Object[]		exp;
+    int 		panelCount;
+    Object[] 		objs;
 
     fis = new FileInputStream(file);
     ois = new ObjectInputStream(new BufferedInputStream(fis));
 
     manager.getEntryPanel().clear();
-    expCount = (Integer) ois.readObject();
-    for (i = 0; i < expCount; i++) {
-      exp    = deserialize(ois);
-      name   = (String) exp[0];
-      expext = (P) exp[1];
-      manager.addPanel(expext, name);
+    panelCount = (Integer) ois.readObject();
+    for (i = 0; i < panelCount; i++) {
+      objs = deserialize(ois);
+      name   = (String) objs[0];
+      panel = (P) objs[1];
+      manager.addPanel(panel, name);
     }
 
     FileUtils.closeQuietly(ois);
@@ -163,7 +163,7 @@ public abstract class AbstractWorkspaceHelper<P extends AbstractWorkspacePanel, 
    * @throws Exception	if copying fails
    */
   public P copy(P panel) throws Exception {
-    Object[]			exp;
+    Object[] 			objs;
     ByteArrayOutputStream	bos;
     ObjectOutputStream		oos;
     byte[]			data;
@@ -177,9 +177,9 @@ public abstract class AbstractWorkspaceHelper<P extends AbstractWorkspacePanel, 
 
     bis = new ByteArrayInputStream(data);
     ois = new ObjectInputStream(bis);
-    exp = deserialize(ois);
+    objs = deserialize(ois);
 
-    return (P) exp[1];
+    return (P) objs[1];
   }
 
   /**
