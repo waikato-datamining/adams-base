@@ -92,6 +92,8 @@ public class AttributeSelectionTab
 
   public static final String KEY_EVALUATION_PREFIX = "evaluation.";
 
+  public static final String KEY_HISTORY = "history";
+
   /**
    * Customized history panel.
    */
@@ -876,6 +878,7 @@ public class AttributeSelectionTab
       eval = m_ModelEvaluations.getElementAt(i);
       result.put(KEY_EVALUATION_PREFIX + eval.getName(), eval.serialize());
     }
+    result.put(KEY_HISTORY, m_History.serialize());
 
     return result;
   }
@@ -921,6 +924,8 @@ public class AttributeSelectionTab
 	eval.deserialize(evaldata, errors);
       }
     }
+    if (data.containsKey(KEY_HISTORY))
+      m_History.deserialize(data.get(KEY_HISTORY), errors);
   }
 
   /**
