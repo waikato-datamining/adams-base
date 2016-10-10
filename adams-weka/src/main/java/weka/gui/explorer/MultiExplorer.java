@@ -15,7 +15,7 @@
 
 /**
  * MultiExplorer.java
- * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 package weka.gui.explorer;
 
@@ -41,25 +41,25 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 
 /**
  * Extended interface for the WEKA Explorer, allowing for an arbitrary
  * number of Explorer panels.
- * 
+ *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
 public class MultiExplorer
-  extends BasePanel {
+  extends BasePanel
+  implements HistoryEntrySelectionListener {
 
   /** for serialization. */
   private static final long serialVersionUID = -20320489406680254L;
 
   /** the default name for new panels. */
   public final static String DEFAULT_NAME = "Session";
-  
+
   /** the split pane for the components. */
   protected JSplitPane m_SplitPane;
 
@@ -71,13 +71,13 @@ public class MultiExplorer
 
   /** the history panel. */
   protected BasePanel m_PanelHistory;
-  
+
   /** the panel for the buttons. */
   protected BasePanel m_PanelButtons;
-  
+
   /** the button for adding a panel. */
   protected JButton m_ButtonAdd;
-  
+
   /** the button for copying a panel. */
   protected JButton m_ButtonCopy;
 
@@ -86,28 +86,28 @@ public class MultiExplorer
 
   /** the button for managing the workspaces. */
   protected JButton m_ButtonWorkspace;
-  
+
   /** the file chooser for the workspaces. */
   protected BaseFileChooser m_WorkspaceFileChooser;
-  
+
   @Override
   protected void initialize() {
     super.initialize();
-    
+
     m_WorkspaceFileChooser = WorkspaceHelper.newFileChooser();
   }
-  
+
   /**
    * For initializing the GUI.
    */
   @Override
   protected void initGUI() {
     int		height;
-    
+
     super.initGUI();
 
     setLayout(new BorderLayout());
-    
+
     m_SplitPane = new JSplitPane();
     add(m_SplitPane, BorderLayout.CENTER);
 
@@ -120,6 +120,7 @@ public class MultiExplorer
     m_History = new ExplorerEntryPanel();
     m_History.setPanel(m_PanelExplorer);
     m_History.setAllowRename(true);
+    m_History.addHistoryEntrySelectionListener(this);
     m_PanelHistory = new BasePanel(new BorderLayout());
     m_PanelHistory.setMinimumSize(new Dimension(100, 0));
     m_PanelHistory.add(m_History, BorderLayout.CENTER);
@@ -132,109 +133,80 @@ public class MultiExplorer
     height = m_ButtonAdd.getHeight();
     m_ButtonAdd.setSize(height, height);
     m_ButtonAdd.setToolTipText("Adds a new Explorer panel");
-    m_ButtonAdd.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	String initial = m_History.newEntryName(DEFAULT_NAME);
-	String name = GUIHelper.showInputDialog(
-	    MultiExplorer.this, 
-	    "Please enter the name for the Explorer panel:", 
-	    initial);
-	if (name == null)
-	  return;
-	addPanel(new ExplorerExt(), name);
-      }
+    m_ButtonAdd.addActionListener((ActionEvent e) -> {
+      String initial = m_History.newEntryName(DEFAULT_NAME);
+      String name = GUIHelper.showInputDialog(
+	MultiExplorer.this,
+	"Please enter the name for the Explorer panel:",
+	initial);
+      if (name == null)
+	return;
+      addPanel(new ExplorerExt(), name);
     });
     m_PanelButtons.add(m_ButtonAdd);
 
     m_ButtonCopy = new JButton(GUIHelper.getIcon("copy.gif"));
     m_ButtonCopy.setSize(height, height);
     m_ButtonCopy.setToolTipText("Creates a copy of the currently selected Explorer panel");
-    m_ButtonCopy.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	String name = "Copy of " + m_History.getSelectedEntry();
-	name = GUIHelper.showInputDialog(MultiExplorer.this, "Please enter new name:", name);
-	if (name == null)
-	  return;
-	ExplorerExt oldExplorer = m_History.getEntry(m_History.getSelectedIndex());
-        ExplorerExt newExplorer;
-	name = m_History.newEntryName(name);
-        try {
-          newExplorer = WorkspaceHelper.copy(oldExplorer, true);
-        }
-        catch (Exception ex) {
-          System.err.println("Failed to copy explorer instance, creating simple copy.");
-          ex.printStackTrace();
-          newExplorer = new ExplorerExt();
-	  if (oldExplorer.getPreprocessPanel().getInstances() != null)
-	    newExplorer.getPreprocessPanel().setInstances(oldExplorer.getPreprocessPanel().getInstances());
-        }
-	newExplorer.getFileChooser().setCurrentDirectory(oldExplorer.getFileChooser().getCurrentDirectory());
-	newExplorer.setCurrentFile(oldExplorer.getCurrentFile());
-        addPanel(newExplorer, name);
+    m_ButtonCopy.addActionListener((ActionEvent e) -> {
+      String name = "Copy of " + m_History.getSelectedEntry();
+      name = GUIHelper.showInputDialog(MultiExplorer.this, "Please enter new name:", name);
+      if (name == null)
+	return;
+      ExplorerExt oldExplorer = m_History.getEntry(m_History.getSelectedIndex());
+      ExplorerExt newExplorer;
+      name = m_History.newEntryName(name);
+      try {
+	newExplorer = WorkspaceHelper.copy(oldExplorer, true);
       }
+      catch (Exception ex) {
+	System.err.println("Failed to copy explorer instance, creating simple copy.");
+	ex.printStackTrace();
+	newExplorer = new ExplorerExt();
+	if (oldExplorer.getPreprocessPanel().getInstances() != null)
+	  newExplorer.getPreprocessPanel().setInstances(oldExplorer.getPreprocessPanel().getInstances());
+      }
+      newExplorer.getFileChooser().setCurrentDirectory(oldExplorer.getFileChooser().getCurrentDirectory());
+      newExplorer.setCurrentFile(oldExplorer.getCurrentFile());
+      addPanel(newExplorer, name);
     });
     m_PanelButtons.add(m_ButtonCopy);
 
     m_ButtonRemove = new JButton(GUIHelper.getIcon("remove.gif"));
     m_ButtonRemove.setSize(height, height);
     m_ButtonRemove.setToolTipText("Removes all selected Explorer panels");
-    m_ButtonRemove.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	int[] indices = m_History.getSelectedIndices();
-	for (int i = indices.length - 1; i >= 0; i--)
-	  removePanel(indices[i]);
-      }
+    m_ButtonRemove.addActionListener((ActionEvent e) -> {
+      int[] indices = m_History.getSelectedIndices();
+      for (int i = indices.length - 1; i >= 0; i--)
+	removePanel(indices[i]);
     });
     m_PanelButtons.add(m_ButtonRemove);
 
     m_ButtonWorkspace = new JButton(GUIHelper.getIcon("workspace.png"));
     m_ButtonWorkspace.setSize(height, height);
     m_ButtonWorkspace.setToolTipText("Loading/saving of workspaces");
-    m_ButtonWorkspace.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	JPopupMenu menu = new JPopupMenu();
-	JMenuItem menuitem;
-	
-	// load workspace
-	menuitem = new JMenuItem("Open...");
-	menuitem.addActionListener(new ActionListener() {
-	  @Override
-	  public void actionPerformed(ActionEvent e) {
-	    openWorkspace();
-	  }
-	});
-	menu.add(menuitem);
+    m_ButtonWorkspace.addActionListener((ActionEvent ae) -> {
+      JPopupMenu menu = new JPopupMenu();
+      JMenuItem menuitem;
 
-	// save workspace
-	menuitem = new JMenuItem("Save as...");
-	menuitem.addActionListener(new ActionListener() {
-	  @Override
-	  public void actionPerformed(ActionEvent e) {
-	    saveWorkspace();
-	  }
-	});
-	menu.add(menuitem);
-	
-	// show menu
-        menu.show(m_ButtonWorkspace, 0, m_ButtonWorkspace.getHeight());
-      }
+      // load workspace
+      menuitem = new JMenuItem("Open...");
+      menuitem.addActionListener((ActionEvent ae2) -> openWorkspace());
+      menu.add(menuitem);
+
+      // save workspace
+      menuitem = new JMenuItem("Save as...");
+      menuitem.addActionListener((ActionEvent ae2) -> saveWorkspace());
+      menu.add(menuitem);
+
+      // show menu
+      menu.show(m_ButtonWorkspace, 0, m_ButtonWorkspace.getHeight());
     });
     m_PanelButtons.add(m_ButtonWorkspace);
-    
+
     m_SplitPane.setOneTouchExpandable(true);
     m_SplitPane.setResizeWeight(0);
     m_SplitPane.setDividerLocation(250);
-    
-    m_History.addHistoryEntrySelectionListener(new HistoryEntrySelectionListener() {
-      @Override
-      public void historyEntrySelected(HistoryEntrySelectionEvent e) {
-	m_ButtonCopy.setEnabled(e.getNames().length == 1);
-      }
-    });
   }
 
   /**
@@ -242,34 +214,18 @@ public class MultiExplorer
    */
   @Override
   protected void finishInit() {
-    Runnable	run;
-    
     super.finishInit();
-    
-    run = new Runnable() {
-      @Override
-      public void run() {
-	addPanel(new ExplorerExt(), DEFAULT_NAME);
-      }
-    };
-    SwingUtilities.invokeLater(run);
+    SwingUtilities.invokeLater(() -> addPanel(new ExplorerExt(), DEFAULT_NAME));
   }
-  
+
   /**
    * Removes all panels.
    */
   public void clear() {
-    Runnable	run;
-    
-    run = new Runnable() {
-      @Override
-      public void run() {
-	m_History.clear();
-	m_PanelExplorer.removeAll();
-      }
-    };
-    
-    SwingUtilities.invokeLater(run);
+    SwingUtilities.invokeLater(() -> {
+      m_History.clear();
+      m_PanelExplorer.removeAll();
+    });
   }
 
   /**
@@ -289,7 +245,7 @@ public class MultiExplorer
   public ExplorerEntryPanel getHistory() {
     return m_History;
   }
-  
+
   /**
    * Adds the given explorer panel.
    *
@@ -300,83 +256,76 @@ public class MultiExplorer
     m_History.addEntry(m_History.newEntryName(name), panel);
     m_History.setSelectedIndex(count() - 1);
   }
-  
+
   /**
    * Removes the panel with the given name.
-   * 
+   *
    * @param name	the name of the panel to remove
    * @return		true if successfully removed
    */
   public synchronized boolean removePanel(String name) {
     boolean	result;
     int		index;
-    
-    result = false;
+
     if (!m_History.hasEntry(name))
-      return result;
+      return false;
+
     index  = m_History.indexOfEntry(name);
     result = (m_History.removeEntry(name) != null);
-    
+
     if (m_History.count() > 0) {
       if (m_History.count() <= index)
 	index--;
       m_History.updateEntry(m_History.getEntryName(index));
     }
-    
+
     return result;
   }
-  
+
   /**
    * Removes the panel at the specified index.
-   * 
+   *
    * @param index	the index of the panel to remove
    * @return		true if successfully removed
    */
   public synchronized boolean removePanel(int index) {
     return removePanel(m_History.getEntryName(index));
   }
-  
+
   /**
    * Returns the panel with the specified name.
-   * 
+   *
    * @param name	the name of the panel to retrieve
    * @return		the panel, null if not found
    */
   public ExplorerExt getPanel(String name) {
     return m_History.getEntry(name);
   }
-  
+
   /**
    * Loads the specified file in a new panel.
-   * 
+   *
    * @param file	the file to load
    */
   public void load(File file) {
     load(new File[]{file});
   }
-  
+
   /**
    * Loads the specified files in new panels.
-   * 
+   *
    * @param files	the files to load
    */
   public void load(File[] files) {
     String	name;
-    Runnable	run;
-    
+
     for (final File file: files) {
       name = file.getName();
       if (name.lastIndexOf('.') > -1)
 	name = name.substring(0, name.lastIndexOf('.'));
       final ExplorerExt panel = new ExplorerExt();
       addPanel(panel, name);
-      run = new Runnable() {
-	@Override
-	public void run() {
-	  panel.open(file);
-	}
-      };
-      SwingUtilities.invokeLater(run);
+      SwingUtilities.invokeLater(() -> panel.open(file));
     }
   }
 
@@ -386,29 +335,29 @@ public class MultiExplorer
   protected void openWorkspace() {
     int	 	retVal;
     File 		file;
-    
+
     retVal = m_WorkspaceFileChooser.showOpenDialog(MultiExplorer.this);
     if (retVal != BaseFileChooser.APPROVE_OPTION)
       return;
-    
+
     file = m_WorkspaceFileChooser.getSelectedFile();
     try {
       WorkspaceHelper.read(file, this);
     }
     catch (Exception e) {
       GUIHelper.showErrorMessage(
-	  this, 
-	  "Failed to open workspace '" + file + "'!\n" + Utils.throwableToString(e));
+	this,
+	"Failed to open workspace '" + file + "'!\n" + Utils.throwableToString(e));
     }
   }
-  
+
   /**
    * Saves the current workspace.
    */
   public void saveWorkspace() {
     int		 	retVal;
     File 		file;
-    
+
     retVal = m_WorkspaceFileChooser.showSaveDialog(MultiExplorer.this);
     if (retVal != BaseFileChooser.APPROVE_OPTION)
       return;
@@ -419,18 +368,37 @@ public class MultiExplorer
     }
     catch (Exception e) {
       GUIHelper.showErrorMessage(
-	  this, 
-	  "Failed to save workspace to '" + file + "'!\n" + Utils.throwableToString(e));
+	this,
+	"Failed to save workspace to '" + file + "'!\n" + Utils.throwableToString(e));
     }
   }
-  
+
   /**
    * Returns the panel with the explorer panel entries.
-   * 
+   *
    * @return		the panel entries
    */
   public ExplorerEntryPanel getEntryPanel() {
     return m_History;
+  }
+
+  /**
+   * Gets called whenever a history entry gets selected.
+   *
+   * @param e		the event
+   */
+  @Override
+  public void historyEntrySelected(HistoryEntrySelectionEvent e) {
+    updateButtons();
+  }
+
+  /**
+   * Updates the enabled state of the buttons.
+   */
+  protected void updateButtons() {
+    m_ButtonAdd.setEnabled(true);
+    m_ButtonRemove.setEnabled(m_History.getSelectedIndex() > -1);
+    m_ButtonCopy.setEnabled(m_History.getSelectedIndices().length == 1);
   }
 
   /**
@@ -444,12 +412,12 @@ public class MultiExplorer
 
   /**
    * Runs an explorer instance. Also interpretes the "-env classname" parameter.
-   * 
+   *
    * @param args	the command-line arguments
    */
   public static void runExplorer(String[] args) {
     // configure environment
-    String env = "";
+    String env;
     try {
       env = weka.core.Utils.getOption("env", args);
     }
@@ -466,7 +434,7 @@ public class MultiExplorer
       e.printStackTrace();
       Environment.setEnvironmentClass(Environment.class);
     }
-    
+
     Logger.log(Level.INFO, "Logging started");
     LookAndFeel.setLookAndFeel();
     // make sure that packages are loaded and the GenericPropertiesCreator
@@ -485,38 +453,38 @@ public class MultiExplorer
       frame.setVisible(true);
 
       Thread memMonitor = new Thread() {
-        @Override
-        public void run() {
-          while (true) {
-            if (m_Memory.isOutOfMemory()) {
-              // clean up
-              frame.dispose();
-              m_Explorer = null;
-              System.gc();
+	@Override
+	public void run() {
+	  while (true) {
+	    if (m_Memory.isOutOfMemory()) {
+	      // clean up
+	      frame.dispose();
+	      m_Explorer = null;
+	      System.gc();
 
-              // display error
-              System.err.println("\ndisplayed message:");
-              m_Memory.showOutOfMemory();
-              System.err.println("\nexiting");
-              System.exit(-1);
-            }
-          }
-        }
+	      // display error
+	      System.err.println("\ndisplayed message:");
+	      m_Memory.showOutOfMemory();
+	      System.err.println("\nexiting");
+	      System.exit(-1);
+	    }
+	  }
+	}
       };
 
       memMonitor.setPriority(Thread.MAX_PRIORITY);
       memMonitor.start();
-    } 
+    }
     catch (Exception ex) {
       Logger.log(Level.SEVERE, Utils.throwableToString(ex));
       System.err.println("An Exception occurred: ");
       ex.printStackTrace();
     }
   }
-  
+
   /**
    * Starts the explorer environment.
-   * 
+   *
    * @param args	the command-line arguments: [-env classname] [initial dataset]
    */
   public static void main(String[] args) {
