@@ -21,6 +21,7 @@
 package adams.gui.tools.wekainvestigator.tab;
 
 import adams.core.Index;
+import adams.core.MessageCollection;
 import adams.core.Properties;
 import adams.core.Range;
 import adams.core.base.BaseRegExp;
@@ -55,6 +56,7 @@ import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -68,6 +70,18 @@ public class PrincipalComponentsTab
   extends AbstractInvestigatorTab {
 
   private static final long serialVersionUID = -4106630131554796889L;
+
+  public static final String KEY_LEFTPANELWIDTH = "leftpanelwidth";
+
+  public static final String KEY_DATASET = "dataset";
+
+  public static final String KEY_RANGE = "range";
+
+  public static final String KEY_VARIANCE = "variance";
+
+  public static final String KEY_MAXATTRIBUTES = "maxattributes";
+
+  public static final String KEY_MAXATTRIBUTENAMES = "maxattributenames";
 
   /** the split pane. */
   protected BaseSplitPane m_SplitPane;
@@ -429,5 +443,46 @@ public class PrincipalComponentsTab
     m_Worker.stop();
     logMessage("Stopped PCA visualization");
     updateButtons();
+  }
+
+  /**
+   * Returns the objects for serialization.
+   *
+   * @return		the mapping of the objects to serialize
+   */
+  protected Map<String,Object> doSerialize() {
+    Map<String,Object>	result;
+
+    result = super.doSerialize();
+    result.put(KEY_LEFTPANELWIDTH, m_SplitPane.getDividerLocation());
+    result.put(KEY_DATASET, m_ComboBoxDatasets.getSelectedIndex());
+    result.put(KEY_RANGE, m_TextAttributeRange.getText());
+    result.put(KEY_VARIANCE, m_TextVariance.getValue().doubleValue());
+    result.put(KEY_MAXATTRIBUTES, m_TextMaxAttributes.getValue().intValue());
+    result.put(KEY_MAXATTRIBUTENAMES, m_TextMaxAttributeNames.getValue().intValue());
+
+    return result;
+  }
+
+  /**
+   * Restores the objects.
+   *
+   * @param data	the data to restore
+   * @param errors	for storing errors
+   */
+  protected void doDeserialize(Map<String,Object> data, MessageCollection errors) {
+    super.doDeserialize(data, errors);
+    if (data.containsKey(KEY_LEFTPANELWIDTH))
+      m_SplitPane.setDividerLocation((int) data.get(KEY_LEFTPANELWIDTH));
+    if (data.containsKey(KEY_DATASET))
+      m_ComboBoxDatasets.setSelectedIndex((int) data.get(KEY_DATASET));
+    if (data.containsKey(KEY_RANGE))
+      m_TextAttributeRange.setText((String) data.get(KEY_RANGE));
+    if (data.containsKey(KEY_VARIANCE))
+      m_TextVariance.setValue((double) data.get(KEY_VARIANCE));
+    if (data.containsKey(KEY_MAXATTRIBUTES))
+      m_TextMaxAttributes.setValue((int) data.get(KEY_MAXATTRIBUTES));
+    if (data.containsKey(KEY_MAXATTRIBUTENAMES))
+      m_TextMaxAttributeNames.setValue((int) data.get(KEY_MAXATTRIBUTENAMES));
   }
 }
