@@ -23,8 +23,6 @@ package adams.gui.tools.wekainvestigator;
 import adams.env.Environment;
 import adams.gui.core.BaseFrame;
 import adams.gui.core.GUIHelper;
-import adams.gui.tools.wekainvestigator.workspace.InvestigatorPanelHandler;
-import adams.gui.tools.wekainvestigator.workspace.InvestigatorWorkspaceHelper;
 import adams.gui.workspace.AbstractSerializableWorkspaceManagerPanel;
 import adams.gui.workspace.AbstractWorkspaceHelper;
 import adams.gui.workspace.AbstractWorkspaceListPanel;
