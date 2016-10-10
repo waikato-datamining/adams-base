@@ -489,6 +489,15 @@ public class InvestigatorPanel
   }
 
   /**
+   * Returns the underlying tabbed pane.
+   *
+   * @return		the tabbed pane
+   */
+  public InvestigatorTabbedPane getTabbedPane() {
+    return m_TabbedPane;
+  }
+
+  /**
    * Updates the class attribute, if not set.
    *
    * @param data	the data to update
