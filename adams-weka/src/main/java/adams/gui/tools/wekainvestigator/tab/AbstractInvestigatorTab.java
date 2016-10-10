@@ -28,7 +28,9 @@ import adams.gui.event.WekaInvestigatorDataListener;
 import adams.gui.tools.wekainvestigator.InvestigatorPanel;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Ancestor for tabs in the Investigator.
@@ -119,12 +121,37 @@ public abstract class AbstractInvestigatorTab
   }
 
   /**
+   * Returns the objects for serialization.
+   * <br>
+   * Default implementation returns an empty map.
+   *
+   * @return		the mapping of the objects to serialize
+   */
+  protected Map<String,Object> doSerialize() {
+    return new HashMap<>();
+  }
+
+  /**
    * Generates a view of the tab that can be serialized.
    *
    * @return		the data to serialize
    */
   public Object serialize() {
-    return null;
+    Map<String,Object>	data;
+
+    data = doSerialize();
+
+    return (data.size() == 0) ? null : data;
+  }
+
+  /**
+   * Restores the objects.
+   * <br>
+   * Default implementation does nothing.
+   *
+   * @param data	the data to restore
+   */
+  protected void doDeserialize(Map<String,Object> data) {
   }
 
   /**
@@ -133,7 +160,8 @@ public abstract class AbstractInvestigatorTab
    * @param data	the serialized data to restore the tab with
    */
   public void deserialize(Object data) {
-    // does nothing
+    if (data instanceof Map)
+      doDeserialize((Map<String,Object>) data);
   }
 
   /**

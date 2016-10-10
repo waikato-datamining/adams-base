@@ -48,6 +48,7 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Ancestor for tabs that have the data table on top.
@@ -60,6 +61,8 @@ public abstract class AbstractInvestigatorTabWithDataTable
   implements TableModelListener {
 
   private static final long serialVersionUID = -94945456385486233L;
+
+  public static final String TABLE_SELECTEDROWS = "table.selectedrows";
 
   /** the table model. */
   protected DataTableModel m_Model;
@@ -343,5 +346,30 @@ public abstract class AbstractInvestigatorTabWithDataTable
       default:
 	fireDataChange(new WekaInvestigatorDataEvent(getOwner(), WekaInvestigatorDataEvent.TABLE_CHANGED, null));
     }
+  }
+
+  /**
+   * Returns the objects for serialization.
+   *
+   * @return		the mapping of the objects to serialize
+   */
+  protected Map<String,Object> doSerialize() {
+    Map<String,Object>	result;
+
+    result = super.doSerialize();
+    result.put(TABLE_SELECTEDROWS, m_Table.getSelectedRows());
+
+    return result;
+  }
+
+  /**
+   * Restores the objects.
+   *
+   * @param data	the data to restore
+   */
+  protected void doDeserialize(Map<String,Object> data) {
+    super.doDeserialize(data);
+    if (data.containsKey(TABLE_SELECTEDROWS))
+      m_Table.setSelectedRows((int[]) data.get(TABLE_SELECTEDROWS));
   }
 }
