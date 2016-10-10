@@ -20,6 +20,8 @@
 package adams.gui.workspace;
 
 import adams.core.CleanUpHandler;
+import adams.gui.core.AbstractNamedHistoryPanel.HistoryEntrySelectionEvent;
+import adams.gui.core.AbstractNamedHistoryPanel.HistoryEntrySelectionListener;
 import adams.gui.core.BasePanel;
 import adams.gui.core.GUIHelper;
 
@@ -33,14 +35,14 @@ import java.awt.event.ActionEvent;
 
 /**
  * Ancestor for workspace managers.
- * 
+ *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision: 8799 $
  * @param <T> the type of workspace panel to handle
  */
 public abstract class AbstractWorkspaceManagerPanel<T extends AbstractWorkspacePanel>
   extends BasePanel
-  implements CleanUpHandler {
+  implements CleanUpHandler, HistoryEntrySelectionListener {
 
   /** for serialization. */
   private static final long serialVersionUID = -20320489406680254L;
@@ -56,13 +58,13 @@ public abstract class AbstractWorkspaceManagerPanel<T extends AbstractWorkspaceP
 
   /** the history panel. */
   protected BasePanel m_PanelHistory;
-  
+
   /** the panel for the buttons. */
   protected BasePanel m_PanelButtons;
-  
+
   /** the button for adding a panel. */
   protected JButton m_ButtonAdd;
-  
+
   /** the button for removing a panel. */
   protected JButton m_ButtonRemove;
 
@@ -72,11 +74,11 @@ public abstract class AbstractWorkspaceManagerPanel<T extends AbstractWorkspaceP
   @Override
   protected void initGUI() {
     int		height;
-    
+
     super.initGUI();
 
     setLayout(new BorderLayout());
-    
+
     m_SplitPane = new JSplitPane();
     add(m_SplitPane, BorderLayout.CENTER);
 
@@ -89,6 +91,7 @@ public abstract class AbstractWorkspaceManagerPanel<T extends AbstractWorkspaceP
     m_History = newWorkspaceList();
     m_History.setPanel(m_PanelWorkspace);
     m_History.setAllowRename(true);
+    m_History.addHistoryEntrySelectionListener(this);
     m_PanelHistory = new BasePanel(new BorderLayout());
     m_PanelHistory.setMinimumSize(new Dimension(100, 0));
     m_PanelHistory.add(m_History, BorderLayout.CENTER);
@@ -104,11 +107,11 @@ public abstract class AbstractWorkspaceManagerPanel<T extends AbstractWorkspaceP
     m_ButtonAdd.addActionListener((ActionEvent e) -> {
       String initial = m_History.newEntryName(getDefaultWorkspaceName());
       String name = GUIHelper.showInputDialog(
-	AbstractWorkspaceManagerPanel.this,
-	"Please enter the name for the workspace:",
-	initial);
+        AbstractWorkspaceManagerPanel.this,
+        "Please enter the name for the workspace:",
+        initial);
       if (name == null)
-	return;
+        return;
       addPanel(newWorkspace(), name);
     });
     m_PanelButtons.add(m_ButtonAdd);
@@ -119,10 +122,10 @@ public abstract class AbstractWorkspaceManagerPanel<T extends AbstractWorkspaceP
     m_ButtonRemove.addActionListener((ActionEvent e) -> {
       int[] indices = m_History.getSelectedIndices();
       for (int i = indices.length - 1; i >= 0; i--)
-	removePanel(indices[i]);
+        removePanel(indices[i]);
     });
     m_PanelButtons.add(m_ButtonRemove);
-    
+
     m_SplitPane.setOneTouchExpandable(true);
     m_SplitPane.setResizeWeight(0);
     m_SplitPane.setDividerLocation(250);
@@ -185,7 +188,7 @@ public abstract class AbstractWorkspaceManagerPanel<T extends AbstractWorkspaceP
   public AbstractWorkspaceListPanel<T> getHistory() {
     return m_History;
   }
-  
+
   /**
    * Adds the given experimenter panel.
    *
@@ -196,45 +199,45 @@ public abstract class AbstractWorkspaceManagerPanel<T extends AbstractWorkspaceP
     m_History.addEntry(m_History.newEntryName(name), panel);
     m_History.setSelectedIndex(count() - 1);
   }
-  
+
   /**
    * Removes the panel with the given name.
-   * 
+   *
    * @param name	the name of the panel to remove
    * @return		true if successfully removed
    */
   public synchronized boolean removePanel(String name) {
     boolean	result;
     int		index;
-    
+
     if (!m_History.hasEntry(name))
       return false;
 
     index  = m_History.indexOfEntry(name);
     result = (m_History.removeEntry(name) != null);
-    
+
     if (m_History.count() > 0) {
       if (m_History.count() <= index)
-	index--;
+        index--;
       m_History.updateEntry(m_History.getEntryName(index));
     }
-    
+
     return result;
   }
-  
+
   /**
    * Removes the panel at the specified index.
-   * 
+   *
    * @param index	the index of the panel to remove
    * @return		true if successfully removed
    */
   public synchronized boolean removePanel(int index) {
     return removePanel(m_History.getEntryName(index));
   }
-  
+
   /**
    * Returns the panel with the specified name.
-   * 
+   *
    * @param name	the name of the panel to retrieve
    * @return		the panel, null if not found
    */
@@ -253,11 +256,28 @@ public abstract class AbstractWorkspaceManagerPanel<T extends AbstractWorkspaceP
 
   /**
    * Returns the panel with the workspace entries.
-   * 
+   *
    * @return		the panel entries
    */
   public AbstractWorkspaceListPanel getEntryPanel() {
     return m_History;
+  }
+
+  /**
+   * Gets called whenever a history entry gets selected.
+   *
+   * @param e		the event
+   */
+  public void historyEntrySelected(HistoryEntrySelectionEvent e) {
+    updateButtons();
+  }
+
+  /**
+   * Updates the buttons.
+   */
+  protected void updateButtons() {
+    m_ButtonAdd.setEnabled(true);
+    m_ButtonRemove.setEnabled(m_History.getSelectedIndex() > -1);
   }
 
   /**

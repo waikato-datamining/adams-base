@@ -157,4 +157,12 @@ public abstract class AbstractSerializableWorkspaceManagerPanel<P extends Abstra
 	  "Failed to save workspace to '" + file + "'!\n" + Utils.throwableToString(e));
     }
   }
+
+  /**
+   * Updates the buttons.
+   */
+  protected void updateButtons() {
+    super.updateButtons();
+    m_ButtonCopy.setEnabled(m_History.getSelectedIndex() > -1);
+  }
 }
