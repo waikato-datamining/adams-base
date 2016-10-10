@@ -120,6 +120,7 @@ public class InvestigatorManagerPanel
       panelNew = m_WorkspaceHelper.copy(panelOld);
       m_History.addEntry(nameNew, panelNew);
       m_History.setSelectedEntry(nameNew);
+      m_Counter++;
     }
     catch (Exception e) {
       GUIHelper.showErrorMessage(this, "Failed to copy workspace!", e);
