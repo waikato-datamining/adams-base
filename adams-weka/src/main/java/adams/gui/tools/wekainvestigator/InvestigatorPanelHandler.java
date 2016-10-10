@@ -20,6 +20,7 @@
 
 package adams.gui.tools.wekainvestigator;
 
+import adams.core.MessageCollection;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
 import adams.gui.tools.wekainvestigator.tab.AbstractInvestigatorTab;
 import adams.gui.workspace.SerializablePanelHandler;
@@ -92,9 +93,10 @@ public class InvestigatorPanelHandler
    *
    * @param panel	the panel to update
    * @param data	the serialized data to restore the panel with
+   * @param errors	for storing errors
    */
   @Override
-  public void deserialize(InvestigatorPanel panel, Object data) {
+  public void deserialize(InvestigatorPanel panel, Object data, MessageCollection errors) {
     Map<String,Object>			items;
     List<Object>			list;
     int					i;
@@ -116,11 +118,10 @@ public class InvestigatorPanelHandler
 	cls = Class.forName((String) list.get(i));
 	tab = (AbstractInvestigatorTab) cls.newInstance();
 	panel.getTabbedPane().addTab(tab, false);
-	tab.deserialize(list.get(i + 1));
+	tab.deserialize(list.get(i + 1), errors);
       }
       catch (Exception e) {
-	System.err.println("Failed to deserialize data (" + (i) + "-" + (i+2) + ")!");
-	e.printStackTrace();
+	errors.add("Failed to deserialize data (" + (i) + "-" + (i+2) + ")!", e);
       }
       i += 2;
     }

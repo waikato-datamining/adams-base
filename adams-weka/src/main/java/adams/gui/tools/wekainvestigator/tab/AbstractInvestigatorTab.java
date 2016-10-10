@@ -21,6 +21,7 @@
 package adams.gui.tools.wekainvestigator.tab;
 
 import adams.core.CleanUpHandler;
+import adams.core.MessageCollection;
 import adams.core.StatusMessageHandler;
 import adams.gui.core.DetachablePanel;
 import adams.gui.event.WekaInvestigatorDataEvent;
@@ -150,18 +151,20 @@ public abstract class AbstractInvestigatorTab
    * Default implementation does nothing.
    *
    * @param data	the data to restore
+   * @param errors	for storing errors
    */
-  protected void doDeserialize(Map<String,Object> data) {
+  protected void doDeserialize(Map<String,Object> data, MessageCollection errors) {
   }
 
   /**
    * Deserializes the data and configures the tab.
    *
    * @param data	the serialized data to restore the tab with
+   * @param errors	for storing errors
    */
-  public void deserialize(Object data) {
+  public void deserialize(Object data, MessageCollection errors) {
     if (data instanceof Map)
-      doDeserialize((Map<String,Object>) data);
+      doDeserialize((Map<String, Object>) data, errors);
   }
 
   /**

@@ -19,6 +19,7 @@
  */
 package adams.gui.workspace;
 
+import adams.core.MessageCollection;
 import adams.core.Utils;
 import adams.gui.chooser.BaseFileChooser;
 import adams.gui.core.GUIHelper;
@@ -118,16 +119,22 @@ public abstract class AbstractSerializableWorkspaceManagerPanel<P extends Abstra
    * Opens a workspace.
    */
   protected void openWorkspace() {
-    int	 	retVal;
+    int	 		retVal;
     File 		file;
+    MessageCollection	errors;
     
     retVal = m_WorkspaceFileChooser.showOpenDialog(this);
     if (retVal != BaseFileChooser.APPROVE_OPTION)
       return;
     
-    file = m_WorkspaceFileChooser.getSelectedFile();
+    file   = m_WorkspaceFileChooser.getSelectedFile();
+    errors = new MessageCollection();
     try {
-      m_WorkspaceHelper.read(file, this);
+      m_WorkspaceHelper.read(file, this, errors);
+      if (!errors.isEmpty())
+	GUIHelper.showErrorMessage(
+	  this,
+	  "Failed to open workspace '" + file + "'!\n" + errors);
     }
     catch (Exception e) {
       GUIHelper.showErrorMessage(

@@ -20,6 +20,7 @@
 
 package adams.gui.tools.wekainvestigator.tab;
 
+import adams.core.MessageCollection;
 import adams.core.Range;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.BaseTable;
@@ -62,7 +63,9 @@ public abstract class AbstractInvestigatorTabWithDataTable
 
   private static final long serialVersionUID = -94945456385486233L;
 
-  public static final String TABLE_SELECTEDROWS = "table.selectedrows";
+  public static final String KEY_DATATABLE_SELECTEDROWS = "datatable.selectedrows";
+
+  public static final String KEY_DATATABLE_HEIGHT = "datatable.height";
 
   /** the table model. */
   protected DataTableModel m_Model;
@@ -357,7 +360,8 @@ public abstract class AbstractInvestigatorTabWithDataTable
     Map<String,Object>	result;
 
     result = super.doSerialize();
-    result.put(TABLE_SELECTEDROWS, m_Table.getSelectedRows());
+    result.put(KEY_DATATABLE_SELECTEDROWS, m_Table.getSelectedRows());
+    result.put(KEY_DATATABLE_HEIGHT, m_SplitPane.getDividerLocation());
 
     return result;
   }
@@ -366,10 +370,13 @@ public abstract class AbstractInvestigatorTabWithDataTable
    * Restores the objects.
    *
    * @param data	the data to restore
+   * @param errors	for storing errors
    */
-  protected void doDeserialize(Map<String,Object> data) {
-    super.doDeserialize(data);
-    if (data.containsKey(TABLE_SELECTEDROWS))
-      m_Table.setSelectedRows((int[]) data.get(TABLE_SELECTEDROWS));
+  protected void doDeserialize(Map<String,Object> data, MessageCollection errors) {
+    super.doDeserialize(data, errors);
+    if (data.containsKey(KEY_DATATABLE_SELECTEDROWS))
+      m_Table.setSelectedRows((int[]) data.get(KEY_DATATABLE_SELECTEDROWS));
+    if (data.containsKey(KEY_DATATABLE_HEIGHT))
+      m_SplitPane.setDividerLocation((int) data.get(KEY_DATATABLE_HEIGHT));
   }
 }

@@ -20,6 +20,7 @@
 
 package adams.gui.tools.wekainvestigator;
 
+import adams.core.MessageCollection;
 import adams.env.Environment;
 import adams.gui.core.BaseFrame;
 import adams.gui.core.GUIHelper;
@@ -101,6 +102,7 @@ public class InvestigatorManagerPanel
     String 		nameNew;
     InvestigatorPanel	panelOld;
     InvestigatorPanel	panelNew;
+    MessageCollection	errors;
 
     nameOld = getHistory().getSelectedEntry();
     nameNew = GUIHelper.showInputDialog(this, "Please enter name for workspace", nameOld + " (" + (m_Counter+1) + ")");
@@ -116,11 +118,14 @@ public class InvestigatorManagerPanel
     }
 
     try {
+      errors   = new MessageCollection();
       panelOld = m_History.getEntry(nameOld);
-      panelNew = m_WorkspaceHelper.copy(panelOld);
+      panelNew = m_WorkspaceHelper.copy(panelOld, errors);
       m_History.addEntry(nameNew, panelNew);
       m_History.setSelectedEntry(nameNew);
       m_Counter++;
+      if (!errors.isEmpty())
+	GUIHelper.showErrorMessage(this, "Failed to copy workspace!\n" + errors);
     }
     catch (Exception e) {
       GUIHelper.showErrorMessage(this, "Failed to copy workspace!", e);

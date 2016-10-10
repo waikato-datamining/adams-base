@@ -20,6 +20,7 @@
 
 package adams.gui.tools.wekainvestigator;
 
+import adams.core.MessageCollection;
 import adams.gui.chooser.BaseFileChooser;
 import adams.gui.core.ExtensionFileFilter;
 import adams.gui.workspace.AbstractSerializableWorkspaceManagerPanel;
@@ -73,11 +74,12 @@ public class InvestigatorWorkspaceHelper
    * Deserializes an panel instance from the input stream.
    *
    * @param ois		the input stream to read
+   * @param errors	for storing errors
    * @return		the name (= 0) and the panel instance (= 1)
    * @throws Exception	if deserialization fails
    */
   @Override
-  protected Object[] deserialize(ObjectInputStream ois) throws Exception {
+  protected Object[] deserialize(ObjectInputStream ois, MessageCollection errors) throws Exception {
     Object[]			result;
     InvestigatorPanelHandler	handler;
 
@@ -89,7 +91,7 @@ public class InvestigatorWorkspaceHelper
 
     // panel
     result[1] = new InvestigatorPanel();
-    handler.deserialize((InvestigatorPanel) result[1], ois.readObject());
+    handler.deserialize((InvestigatorPanel) result[1], ois.readObject(), errors);
 
     return result;
   }

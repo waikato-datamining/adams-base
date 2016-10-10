@@ -20,6 +20,7 @@
 package adams.gui.workspace;
 
 import adams.core.ClassLocator;
+import adams.core.MessageCollection;
 import adams.core.io.FileUtils;
 import adams.gui.chooser.BaseFileChooser;
 
@@ -118,19 +119,21 @@ public abstract class AbstractWorkspaceHelper<P extends AbstractWorkspacePanel, 
    * Deserializes an panel instance from the input stream.
    *
    * @param ois		the input stream to read
+   * @param errors	for storing errors
    * @return		the name (= 0) and the panel instance (= 1)
    * @throws Exception	if deserialization fails
    */
-  protected abstract Object[] deserialize(ObjectInputStream ois) throws Exception;
+  protected abstract Object[] deserialize(ObjectInputStream ois, MessageCollection errors) throws Exception;
 
   /**
    * Reads the session and initializes the manager panel.
    *
    * @param file	the file to load the session from
    * @param manager	the manager panel to initialize with the session
+   * @param errors	for storing errors
    * @throws Exception 	if loading fails
    */
-  public void read(File file, M manager) throws Exception {
+  public void read(File file, M manager, MessageCollection errors) throws Exception {
     ObjectInputStream 	ois;
     FileInputStream 	fis;
     int 		i;
@@ -139,13 +142,14 @@ public abstract class AbstractWorkspaceHelper<P extends AbstractWorkspacePanel, 
     int 		panelCount;
     Object[] 		objs;
 
-    fis = new FileInputStream(file);
-    ois = new ObjectInputStream(new BufferedInputStream(fis));
+    errors = new MessageCollection();
+    fis    = new FileInputStream(file);
+    ois    = new ObjectInputStream(new BufferedInputStream(fis));
 
     manager.getEntryPanel().clear();
     panelCount = (Integer) ois.readObject();
     for (i = 0; i < panelCount; i++) {
-      objs = deserialize(ois);
+      objs = deserialize(ois, errors);
       name   = (String) objs[0];
       panel = (P) objs[1];
       manager.addPanel(panel, name);
@@ -159,10 +163,11 @@ public abstract class AbstractWorkspaceHelper<P extends AbstractWorkspacePanel, 
    * Copies a panel.
    *
    * @param panel	the panel to copy
+   * @param errors	for storing errors
    * @return		the copy
    * @throws Exception	if copying fails
    */
-  public P copy(P panel) throws Exception {
+  public P copy(P panel, MessageCollection errors) throws Exception {
     Object[] 			objs;
     ByteArrayOutputStream	bos;
     ObjectOutputStream		oos;
@@ -170,6 +175,7 @@ public abstract class AbstractWorkspaceHelper<P extends AbstractWorkspacePanel, 
     ByteArrayInputStream	bis;
     ObjectInputStream		ois;
 
+    errors = new MessageCollection();
     bos = new ByteArrayOutputStream();
     oos = new ObjectOutputStream(bos);
     serialize(panel, "dummy", oos);
@@ -177,7 +183,7 @@ public abstract class AbstractWorkspaceHelper<P extends AbstractWorkspacePanel, 
 
     bis = new ByteArrayInputStream(data);
     ois = new ObjectInputStream(bis);
-    objs = deserialize(ois);
+    objs = deserialize(ois, errors);
 
     return (P) objs[1];
   }

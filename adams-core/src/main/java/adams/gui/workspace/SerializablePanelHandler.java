@@ -19,6 +19,8 @@
  */
 package adams.gui.workspace;
 
+import adams.core.MessageCollection;
+
 import java.io.Serializable;
 
 /**
@@ -54,6 +56,7 @@ public abstract class SerializablePanelHandler<T extends AbstractWorkspacePanel>
    * 
    * @param panel	the panel to update
    * @param data	the serialized data to restore the panel with
+   * @param errors	for storing errors
    */
-  public abstract void deserialize(T panel, Object data);
+  public abstract void deserialize(T panel, Object data, MessageCollection errors);
 }

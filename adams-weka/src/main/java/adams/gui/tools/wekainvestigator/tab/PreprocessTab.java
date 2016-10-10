@@ -20,6 +20,7 @@
 
 package adams.gui.tools.wekainvestigator.tab;
 
+import adams.core.MessageCollection;
 import adams.core.Properties;
 import adams.core.option.OptionUtils;
 import adams.gui.core.GUIHelper;
@@ -48,6 +49,7 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
+import java.util.Map;
 
 /**
  * Preprocessing tab.
@@ -59,6 +61,14 @@ public class PreprocessTab
   extends AbstractInvestigatorTabWithEditableDataTable {
 
   private static final long serialVersionUID = -94945456385486233L;
+
+  public static final String KEY_FILTER = "filter";
+
+  public static final String KEY_BATCHFILTER = "batchfilter";
+
+  public static final String KEY_KEEPNAME = "keepname";
+
+  public static final String KEY_REPLACE = "replace";
 
   /** the GOe with the filter. */
   protected WekaGenericObjectEditorPanel m_PanelGOE;
@@ -427,5 +437,47 @@ public class PreprocessTab
     m_Worker = new Thread(run);
     updateButtons();
     m_Worker.start();
+  }
+
+  /**
+   * Returns the objects for serialization.
+   *
+   * @return		the mapping of the objects to serialize
+   */
+  protected Map<String,Object> doSerialize() {
+    Map<String,Object>	result;
+
+    result = super.doSerialize();
+    result.put(KEY_FILTER, OptionUtils.getCommandLine(m_PanelGOE.getCurrent()));
+    result.put(KEY_BATCHFILTER, m_CheckBoxBatchFilter.isSelected());
+    result.put(KEY_KEEPNAME, m_CheckBoxKeepName.isSelected());
+    result.put(KEY_REPLACE, m_CheckBoxReplace.isSelected());
+
+    return result;
+  }
+
+  /**
+   * Restores the objects.
+   *
+   * @param data	the data to restore
+   * @param errors	for storing errors
+   */
+  protected void doDeserialize(Map<String,Object> data, MessageCollection errors) {
+    super.doDeserialize(data, errors);
+    if (data.containsKey(KEY_FILTER)) {
+      try {
+        m_CurrentFilter = (Filter) OptionUtils.forAnyCommandLine(Filter.class, (String) data.get(KEY_FILTER));
+        m_PanelGOE.setCurrent(m_CurrentFilter);
+      }
+      catch (Exception e) {
+        errors.add("Failed to restore filter: " + data.get(KEY_FILTER), e);
+      }
+    }
+    if (data.containsKey(KEY_BATCHFILTER))
+      m_CheckBoxBatchFilter.setSelected((Boolean) data.get(KEY_BATCHFILTER));
+    if (data.containsKey(KEY_KEEPNAME))
+      m_CheckBoxKeepName.setSelected((Boolean) data.get(KEY_KEEPNAME));
+    if (data.containsKey(KEY_REPLACE))
+      m_CheckBoxReplace.setSelected((Boolean) data.get(KEY_REPLACE));
   }
 }
