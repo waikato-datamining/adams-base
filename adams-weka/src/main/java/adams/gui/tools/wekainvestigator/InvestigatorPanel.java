@@ -170,15 +170,26 @@ public class InvestigatorPanel
    */
   @Override
   protected void initGUI() {
-    String[]			classes;
-    AbstractInvestigatorTab	tab;
-
     super.initGUI();
 
     setLayout(new BorderLayout());
 
     m_TabbedPane = new InvestigatorTabbedPane(this);
     add(m_TabbedPane, BorderLayout.CENTER);
+
+    m_StatusBar = new BaseStatusBar();
+    m_StatusBar.setMouseListenerActive(true);
+    add(m_StatusBar, BorderLayout.SOUTH);
+
+    initActions();
+  }
+
+  /**
+   * Adds the default tabs.
+   */
+  public void addDefaultTabs() {
+    String[]			classes;
+    AbstractInvestigatorTab	tab;
 
     classes = getProperties().getProperty("General.DefaultTabs", LogTab.class.getName()).split(",");
     for (String cls: classes) {
@@ -190,12 +201,6 @@ public class InvestigatorPanel
 	ConsolePanel.getSingleton().append(Level.SEVERE, "Failed to instantiate investigator tab: ", e);
       }
     }
-
-    m_StatusBar = new BaseStatusBar();
-    m_StatusBar.setMouseListenerActive(true);
-    add(m_StatusBar, BorderLayout.SOUTH);
-
-    initActions();
   }
 
   /**

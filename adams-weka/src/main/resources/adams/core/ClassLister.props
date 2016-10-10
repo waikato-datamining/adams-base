@@ -99,6 +99,10 @@ adams.gui.tools.wekainvestigator.tab.clustertab.history.AbstractHistoryPopupMenu
 adams.gui.tools.wekainvestigator.tab.clustertab.output.AbstractOutputGenerator=\
   adams.gui.tools.wekainvestigator.tab.clustertab.output
 
+# the handlers for serializing/deserializing tabs
+adams.gui.tools.wekainvestigator.workspace.AbstractInvestigatorTabHandler=\
+  adams.gui.tools.wekainvestigator.workspace
+
 # the paintlets for the instance panel
 adams.gui.visualization.instance.AbstractInstancePaintlet=\
   adams.gui.visualization.instance

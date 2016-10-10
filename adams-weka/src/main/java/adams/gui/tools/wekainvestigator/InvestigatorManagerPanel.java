@@ -23,8 +23,11 @@ package adams.gui.tools.wekainvestigator;
 import adams.env.Environment;
 import adams.gui.core.BaseFrame;
 import adams.gui.core.GUIHelper;
+import adams.gui.tools.wekainvestigator.workspace.InvestigatorPanelHandler;
+import adams.gui.tools.wekainvestigator.workspace.InvestigatorWorkspaceHelper;
+import adams.gui.workspace.AbstractSerializableWorkspaceManagerPanel;
+import adams.gui.workspace.AbstractWorkspaceHelper;
 import adams.gui.workspace.AbstractWorkspaceListPanel;
-import adams.gui.workspace.AbstractWorkspaceManagerPanel;
 
 import java.awt.BorderLayout;
 import java.awt.event.WindowAdapter;
@@ -37,9 +40,22 @@ import java.awt.event.WindowEvent;
  * @version $Revision$
  */
 public class InvestigatorManagerPanel
-  extends AbstractWorkspaceManagerPanel<InvestigatorPanel> {
+  extends AbstractSerializableWorkspaceManagerPanel<InvestigatorPanel, InvestigatorPanelHandler> {
 
   private static final long serialVersionUID = -5959114946146695938L;
+
+  /** the session counter. */
+  protected int m_Counter;
+
+  /**
+   * Initializes the members.
+   */
+  @Override
+  protected void initialize() {
+    super.initialize();
+
+    m_Counter = 0;
+  }
 
   /**
    * The default name for a workspace.
@@ -58,7 +74,58 @@ public class InvestigatorManagerPanel
    */
   @Override
   protected InvestigatorPanel newWorkspace() {
-    return new InvestigatorPanel();
+    InvestigatorPanel	result;
+
+    result = new InvestigatorPanel();
+    result.addDefaultTabs();
+
+    m_Counter++;
+
+    return result;
+  }
+
+  /**
+   * Returns a new instance of the workspace helper to use.
+   *
+   * @return		the workspace helper
+   */
+  @Override
+  protected AbstractWorkspaceHelper<InvestigatorPanel, AbstractSerializableWorkspaceManagerPanel<InvestigatorPanel, InvestigatorPanelHandler>, InvestigatorPanelHandler> newWorkspaceHelper() {
+    return new InvestigatorWorkspaceHelper();
+  }
+
+  /**
+   * Copies a workspace.
+   */
+  @Override
+  protected void copyWorkspace() {
+    String 		nameOld;
+    String 		nameNew;
+    InvestigatorPanel	panelOld;
+    InvestigatorPanel	panelNew;
+
+    nameOld = getHistory().getSelectedEntry();
+    nameNew = GUIHelper.showInputDialog(this, "Please enter name for workspace", nameOld + " (" + (m_Counter+1) + ")");
+    if (nameNew == null)
+      return;
+    if (nameNew.equals(nameOld)) {
+      GUIHelper.showErrorMessage(this, "No new name for workspace supplied, aborting!");
+      return;
+    }
+    if (m_History.hasEntry(nameNew)) {
+      GUIHelper.showErrorMessage(this, "Workspace name already present, aborting!");
+      return;
+    }
+
+    try {
+      panelOld = m_History.getEntry(nameOld);
+      panelNew = m_WorkspaceHelper.copy(panelOld);
+      m_History.addEntry(nameNew, panelNew);
+      m_History.setSelectedEntry(nameNew);
+    }
+    catch (Exception e) {
+      GUIHelper.showErrorMessage(this, "Failed to copy workspace!", e);
+    }
   }
 
   /**
