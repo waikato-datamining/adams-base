@@ -20,6 +20,7 @@
 
 package adams.gui.tools.wekainvestigator.tab;
 
+import adams.core.MessageCollection;
 import adams.core.io.FileUtils;
 import adams.gui.chooser.BaseFileChooser;
 import adams.gui.core.BaseTextAreaWithButtons;
@@ -33,6 +34,7 @@ import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 import javax.swing.JButton;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
+import java.util.Map;
 
 /**
  * Just displays the log messages.
@@ -44,6 +46,8 @@ public class LogTab
   extends AbstractInvestigatorTab {
 
   private static final long serialVersionUID = -94945456385486233L;
+
+  public static final String KEY_LOG = "log";
 
   /** the text area for the log. */
   protected BaseTextAreaWithButtons m_TextLog;
@@ -201,5 +205,31 @@ public class LogTab
    * @param e		the event
    */
   public void dataChanged(WekaInvestigatorDataEvent e) {
+  }
+
+  /**
+   * Returns the objects for serialization.
+   *
+   * @return		the mapping of the objects to serialize
+   */
+  protected Map<String,Object> doSerialize() {
+    Map<String,Object>	result;
+
+    result = super.doSerialize();
+    result.put(KEY_LOG, m_TextLog.getText());
+
+    return result;
+  }
+
+  /**
+   * Restores the objects.
+   *
+   * @param data	the data to restore
+   * @param errors	for storing errors
+   */
+  protected void doDeserialize(Map<String,Object> data, MessageCollection errors) {
+    super.doDeserialize(data, errors);
+    if (data.containsKey(KEY_LOG))
+      m_TextLog.setText((String) data.get(KEY_LOG));
   }
 }
