@@ -119,6 +119,24 @@ public abstract class AbstractInvestigatorTab
   }
 
   /**
+   * Generates a view of the tab that can be serialized.
+   *
+   * @return		the data to serialize
+   */
+  public Object serialize() {
+    return null;
+  }
+
+  /**
+   * Deserializes the data and configures the tab.
+   *
+   * @param data	the serialized data to restore the tab with
+   */
+  public void deserialize(Object data) {
+    // does nothing
+  }
+
+  /**
    * Logs the message.
    *
    * @param msg		the log message

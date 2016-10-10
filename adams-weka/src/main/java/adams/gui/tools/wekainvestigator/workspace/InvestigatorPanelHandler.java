@@ -20,7 +20,6 @@
 
 package adams.gui.tools.wekainvestigator.workspace;
 
-import adams.core.ClassLister;
 import adams.gui.tools.wekainvestigator.InvestigatorPanel;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
 import adams.gui.tools.wekainvestigator.tab.AbstractInvestigatorTab;
@@ -45,35 +44,6 @@ public class InvestigatorPanelHandler
   public static final String KEY_DATA = "data";
 
   public static final String KEY_TABS = "tabs";
-
-  /** the handlers. */
-  protected AbstractInvestigatorTabHandler[] m_Handlers;
-
-  /**
-   * Initializes the handler.
-   */
-  public InvestigatorPanelHandler() {
-    Class[]					classes;
-    AbstractInvestigatorTabHandler		handler;
-    List<AbstractInvestigatorTabHandler>	handlers;
-
-    classes  = ClassLister.getSingleton().getClasses(AbstractInvestigatorTabHandler.class);
-    handlers = new ArrayList<>();
-    for (Class cls: classes) {
-      try {
-	handler = (AbstractInvestigatorTabHandler) cls.newInstance();
-	if (handler instanceof DummyTabHandler)
-	  continue;
-	handlers.add(handler);
-      }
-      catch (Exception e) {
-	System.err.println("Failed to instantiate tab handler: " + cls.getName());
-	e.printStackTrace();
-      }
-    }
-    handlers.add(new DummyTabHandler());
-    m_Handlers = handlers.toArray(new AbstractInvestigatorTabHandler[handlers.size()]);
-  }
 
   /**
    * Checks whether this handler can process the given panel.
@@ -110,14 +80,8 @@ public class InvestigatorPanelHandler
     list = new ArrayList<>();
     for (i = 0; i < panel.getTabbedPane().getTabCount(); i++) {
       tab = (AbstractInvestigatorTab) panel.getTabbedPane().getComponentAt(i);
-      for (AbstractInvestigatorTabHandler handler: m_Handlers) {
-	if (handler.handles(tab)) {
-	  list.add(tab.getClass().getName());
-	  list.add(handler.getClass().getName());
-	  list.add(handler.serialize(tab));
-	  break;
-	}
-      }
+      list.add(tab.getClass().getName());
+      list.add(tab.serialize());
     }
     result.put(KEY_TABS, list);
 
@@ -137,7 +101,6 @@ public class InvestigatorPanelHandler
     int					i;
     Class				cls;
     AbstractInvestigatorTab		tab;
-    AbstractInvestigatorTabHandler	handler;
 
     items = (Map<String,Object>) data;
 
@@ -154,17 +117,13 @@ public class InvestigatorPanelHandler
 	cls = Class.forName((String) list.get(i));
 	tab = (AbstractInvestigatorTab) cls.newInstance();
 	panel.getTabbedPane().addTab(tab, false);
-
-	cls     = Class.forName((String) list.get(i + 1));
-	handler = (AbstractInvestigatorTabHandler) cls.newInstance();
-
-	handler.deserialize(tab, list.get(i + 2));
+	tab.deserialize(list.get(i + 1));
       }
       catch (Exception e) {
 	System.err.println("Failed to deserialize data (" + (i) + "-" + (i+2) + ")!");
 	e.printStackTrace();
       }
-      i += 3;
+      i += 2;
     }
   }
 }
