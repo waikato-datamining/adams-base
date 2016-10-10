@@ -163,6 +163,6 @@ public abstract class AbstractSerializableWorkspaceManagerPanel<P extends Abstra
    */
   protected void updateButtons() {
     super.updateButtons();
-    m_ButtonCopy.setEnabled(m_History.getSelectedIndex() > -1);
+    m_ButtonCopy.setEnabled(m_History.getSelectedIndices().length == 1);
   }
 }
