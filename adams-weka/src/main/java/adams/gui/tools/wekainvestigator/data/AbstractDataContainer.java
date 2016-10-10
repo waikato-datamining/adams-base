@@ -55,7 +55,7 @@ public abstract class AbstractDataContainer
   protected boolean m_Modified;
 
   /** the undo manager. */
-  protected Undo m_Undo;
+  protected transient Undo m_Undo;
 
   /**
    * Initializes the container with no data.
@@ -64,8 +64,7 @@ public abstract class AbstractDataContainer
     m_ID       = nextID();
     m_Data     = null;
     m_Modified = false;
-    m_Undo     = new Undo(Serializable[].class, true);
-    m_Undo.addUndoListener(this);
+    m_Undo     = null;
   }
 
   /**
@@ -175,11 +174,15 @@ public abstract class AbstractDataContainer
   }
 
   /**
-   * Returns the current undo manager, can be null.
+   * Returns the current undo manager.
    *
-   * @return		the undo manager, if any
+   * @return		the undo manager
    */
-  public Undo getUndo() {
+  public synchronized Undo getUndo() {
+    if (m_Undo == null) {
+      m_Undo = new Undo(Serializable[].class, true);
+      m_Undo.addUndoListener(this);
+    }
     return m_Undo;
   }
 
@@ -189,7 +192,7 @@ public abstract class AbstractDataContainer
    * @return		true if an undo manager is set
    */
   public boolean isUndoSupported() {
-    return (m_Undo != null) && m_Undo.isEnabled();
+    return getUndo().isEnabled();
   }
 
   /**
@@ -211,8 +214,8 @@ public abstract class AbstractDataContainer
     if (!isUndoSupported() || !getUndo().canUndo())
       return;
 
-    m_Undo.addRedo(getUndoData(), m_Undo.peekUndoComment());
-    point = m_Undo.undo();
+    getUndo().addRedo(getUndoData(), getUndo().peekUndoComment());
+    point = getUndo().undo();
     applyUndoData((Serializable[]) point.getData());
   }
 
@@ -225,9 +228,9 @@ public abstract class AbstractDataContainer
     if (!isUndoSupported() || !getUndo().canUndo())
       return;
 
-    m_Undo.addUndo(getUndoData(), m_Undo.peekRedoComment(), true);
+    getUndo().addUndo(getUndoData(), getUndo().peekRedoComment(), true);
 
-    point = m_Undo.redo();
+    point = getUndo().redo();
     applyUndoData((Serializable[]) point.getData());
   }
 
@@ -237,7 +240,7 @@ public abstract class AbstractDataContainer
    * @param comment	the comment for the undo point
    */
   public void addUndoPoint(String comment) {
-    if (isUndoSupported() && m_Undo.isEnabled())
+    if (isUndoSupported() && getUndo().isEnabled())
       getUndo().addUndo(getUndoData(), comment);
   }
 
