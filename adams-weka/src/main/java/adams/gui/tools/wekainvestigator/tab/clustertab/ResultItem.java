@@ -28,6 +28,8 @@ import weka.clusterers.ClusterEvaluation;
 import weka.clusterers.Clusterer;
 import weka.core.Instances;
 
+import java.io.Serializable;
+
 /**
  * Container for an evaluation, model, training set header. Used in the
  * result history.
@@ -53,7 +55,7 @@ public class ResultItem
   protected String m_SupplementaryName;
 
   /** supplementary data. */
-  protected Object m_SupplementaryData;
+  protected Serializable m_SupplementaryData;
 
   /** the run information. */
   protected MetaData m_RunInformation;
@@ -81,7 +83,7 @@ public class ResultItem
    * @param header	the header of the training set, can be null
    * @param runInfo	the run information, can be null
    */
-  public ResultItem(String supplementaryName, Object supplementaryData, Clusterer template, Clusterer model, Instances header, MetaData runInfo) {
+  public ResultItem(String supplementaryName, Serializable supplementaryData, Clusterer template, Clusterer model, Instances header, MetaData runInfo) {
     this(null, supplementaryName, supplementaryData, template, model, header, runInfo);
   }
 
@@ -96,7 +98,7 @@ public class ResultItem
    * @param header	the header of the training set, can be null
    * @param runInfo	the run information, can be null
    */
-  public ResultItem(ClusterEvaluation evaluation, String supplementaryName, Object supplementaryData, Clusterer template, Clusterer model, Instances header, MetaData runInfo) {
+  public ResultItem(ClusterEvaluation evaluation, String supplementaryName, Serializable supplementaryData, Clusterer template, Clusterer model, Instances header, MetaData runInfo) {
     super(header);
     m_Model             = model;
     m_Template          = template;
