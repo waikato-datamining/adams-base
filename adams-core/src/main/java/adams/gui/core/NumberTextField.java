@@ -125,7 +125,7 @@ public class NumberTextField
       boolean	result;
 
       if (text.trim().length() == 0)
-	return false;
+	return true;
       
       try {
 	switch (m_Type) {
