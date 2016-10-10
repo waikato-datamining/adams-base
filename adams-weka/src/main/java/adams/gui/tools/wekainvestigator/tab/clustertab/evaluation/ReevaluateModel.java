@@ -20,7 +20,9 @@
 
 package adams.gui.tools.wekainvestigator.tab.clustertab.evaluation;
 
+import adams.core.MessageCollection;
 import adams.core.SerializationHelper;
+import adams.core.io.PlaceholderFile;
 import adams.core.option.OptionUtils;
 import adams.data.spreadsheet.MetaData;
 import adams.gui.chooser.FileChooserPanel;
@@ -40,6 +42,7 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Re-evaluates a serialized model.
@@ -51,6 +54,10 @@ public class ReevaluateModel
   extends AbstractClustererEvaluation {
 
   private static final long serialVersionUID = 1175400993991698944L;
+
+  public static final String KEY_DATASET = "dataset";
+
+  public static final String KEY_MODEL = "model";
 
   /** the panel with the parameters. */
   protected ParameterPanel m_PanelParameters;
@@ -270,5 +277,34 @@ public class ReevaluateModel
    */
   public void activate(int index) {
     m_ComboBoxDatasets.setSelectedIndex(index);
+  }
+
+  /**
+   * Returns the objects for serialization.
+   *
+   * @return		the mapping of the objects to serialize
+   */
+  public Map<String,Object> serialize() {
+    Map<String,Object>	result;
+
+    result = super.serialize();
+    result.put(KEY_DATASET, m_ComboBoxDatasets.getSelectedIndex());
+    result.put(KEY_MODEL, m_PanelModel.getCurrent().getAbsolutePath());
+
+    return result;
+  }
+
+  /**
+   * Restores the objects.
+   *
+   * @param data	the data to restore
+   * @param errors	for storing errors
+   */
+  public void deserialize(Map<String,Object> data, MessageCollection errors) {
+    super.deserialize(data, errors);
+    if (data.containsKey(KEY_DATASET))
+      m_ComboBoxDatasets.setSelectedIndex((int) data.get(KEY_DATASET));
+    if (data.containsKey(KEY_MODEL))
+      m_PanelModel.setCurrent(new PlaceholderFile((String)data.get(KEY_MODEL)));
   }
 }

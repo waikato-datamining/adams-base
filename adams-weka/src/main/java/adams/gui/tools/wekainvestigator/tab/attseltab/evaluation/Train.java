@@ -20,6 +20,7 @@
 
 package adams.gui.tools.wekainvestigator.tab.attseltab.evaluation;
 
+import adams.core.MessageCollection;
 import adams.core.option.OptionUtils;
 import adams.data.spreadsheet.MetaData;
 import adams.gui.core.AbstractNamedHistoryPanel;
@@ -36,6 +37,7 @@ import javax.swing.JComboBox;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Performs attribute selection on the train data.
@@ -47,6 +49,8 @@ public class Train
   extends AbstractAttributeSelectionEvaluation {
 
   private static final long serialVersionUID = 1175400993991698944L;
+
+  public static final String KEY_DATASET = "dataset";
 
   /** the panel with the parameters. */
   protected ParameterPanel m_PanelParameters;
@@ -191,5 +195,31 @@ public class Train
    */
   public void activate(int index) {
     m_ComboBoxDatasets.setSelectedIndex(index);
+  }
+
+  /**
+   * Returns the objects for serialization.
+   *
+   * @return		the mapping of the objects to serialize
+   */
+  public Map<String,Object> serialize() {
+    Map<String,Object>	result;
+
+    result = super.serialize();
+    result.put(KEY_DATASET, m_ComboBoxDatasets.getSelectedIndex());
+
+    return result;
+  }
+
+  /**
+   * Restores the objects.
+   *
+   * @param data	the data to restore
+   * @param errors	for storing errors
+   */
+  public void deserialize(Map<String,Object> data, MessageCollection errors) {
+    super.deserialize(data, errors);
+    if (data.containsKey(KEY_DATASET))
+      m_ComboBoxDatasets.setSelectedIndex((int) data.get(KEY_DATASET));
   }
 }

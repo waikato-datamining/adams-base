@@ -20,6 +20,7 @@
 
 package adams.gui.tools.wekainvestigator.tab.clustertab.evaluation;
 
+import adams.core.MessageCollection;
 import adams.core.option.OptionUtils;
 import adams.data.spreadsheet.MetaData;
 import adams.gui.core.AbstractNamedHistoryPanel;
@@ -35,6 +36,7 @@ import javax.swing.JComboBox;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Uses dedicated train/test sets.
@@ -227,5 +229,34 @@ public class TrainTestSet
    */
   public void activate(int index) {
     m_ComboBoxTrain.setSelectedIndex(index);
+  }
+
+  /**
+   * Returns the objects for serialization.
+   *
+   * @return		the mapping of the objects to serialize
+   */
+  public Map<String,Object> serialize() {
+    Map<String,Object>	result;
+
+    result = super.serialize();
+    result.put("train", m_ComboBoxTrain.getSelectedIndex());
+    result.put("test", m_ComboBoxTest.getSelectedIndex());
+
+    return result;
+  }
+
+  /**
+   * Restores the objects.
+   *
+   * @param data	the data to restore
+   * @param errors	for storing errors
+   */
+  public void deserialize(Map<String,Object> data, MessageCollection errors) {
+    super.deserialize(data, errors);
+    if (data.containsKey("train"))
+      m_ComboBoxTrain.setSelectedIndex((int) data.get("train"));
+    if (data.containsKey("test"))
+      m_ComboBoxTest.setSelectedIndex((int) data.get("test"));
   }
 }

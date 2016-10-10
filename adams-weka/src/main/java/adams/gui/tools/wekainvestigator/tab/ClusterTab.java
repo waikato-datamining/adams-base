@@ -21,6 +21,7 @@
 package adams.gui.tools.wekainvestigator.tab;
 
 import adams.core.ClassLister;
+import adams.core.MessageCollection;
 import adams.core.Properties;
 import adams.core.SerializationHelper;
 import adams.core.option.OptionUtils;
@@ -39,10 +40,10 @@ import adams.gui.goe.GenericObjectEditorDialog;
 import adams.gui.goe.WekaGenericObjectEditorPanel;
 import adams.gui.tools.wekainvestigator.InvestigatorPanel;
 import adams.gui.tools.wekainvestigator.history.AbstractHistoryPopupMenuItem;
-import adams.gui.tools.wekainvestigator.tab.clustertab.output.TextStatistics;
 import adams.gui.tools.wekainvestigator.tab.clustertab.ResultItem;
 import adams.gui.tools.wekainvestigator.tab.clustertab.evaluation.AbstractClustererEvaluation;
 import adams.gui.tools.wekainvestigator.tab.clustertab.output.AbstractOutputGenerator;
+import adams.gui.tools.wekainvestigator.tab.clustertab.output.TextStatistics;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 import weka.clusterers.Clusterer;
 import weka.clusterers.SimpleKMeans;
@@ -64,6 +65,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 
 /**
@@ -320,6 +322,14 @@ public class ClusterTab
       return result;
     }
   }
+
+  public static final String KEY_LEFTPANELWIDTH = "leftpanelwidth";
+
+  public static final String KEY_CLUSTERER = "clusterer";
+
+  public static final String KEY_EVALUATION = "evaluation";
+
+  public static final String KEY_EVALUATION_PREFIX = "evaluation.";
 
   /** the GOe with the clusterer. */
   protected WekaGenericObjectEditorPanel m_PanelGOE;
@@ -763,6 +773,62 @@ public class ClusterTab
    */
   public AbstractOutputGenerator[] getOutputGenerators() {
     return m_OutputGenerators;
+  }
+
+  /**
+   * Returns the objects for serialization.
+   *
+   * @return		the mapping of the objects to serialize
+   */
+  protected Map<String,Object> doSerialize() {
+    Map<String,Object>			result;
+    int					i;
+    AbstractClustererEvaluation 	eval;
+
+    result = super.doSerialize();
+    result.put(KEY_LEFTPANELWIDTH, m_SplitPane.getDividerLocation());
+    result.put(KEY_CLUSTERER, OptionUtils.getCommandLine(m_PanelGOE.getCurrent()));
+    result.put(KEY_EVALUATION, m_ComboBoxEvaluations.getSelectedIndex());
+    for (i = 0; i < m_ModelEvaluations.getSize(); i++) {
+      eval = m_ModelEvaluations.getElementAt(i);
+      result.put(KEY_EVALUATION_PREFIX + eval.getName(), eval.serialize());
+    }
+
+    return result;
+  }
+
+  /**
+   * Restores the objects.
+   *
+   * @param data	the data to restore
+   * @param errors	for storing errors
+   */
+  protected void doDeserialize(Map<String,Object> data, MessageCollection errors) {
+    Map<String,Object> 			evaldata;
+    int					i;
+    AbstractClustererEvaluation 	eval;
+
+    super.doDeserialize(data, errors);
+    if (data.containsKey(KEY_LEFTPANELWIDTH))
+      m_SplitPane.setDividerLocation((int) data.get(KEY_LEFTPANELWIDTH));
+    if (data.containsKey(KEY_CLUSTERER)) {
+      try {
+        m_CurrentClusterer = (Clusterer) OptionUtils.forAnyCommandLine(Clusterer.class, (String) data.get(KEY_CLUSTERER));
+        m_PanelGOE.setCurrent(m_CurrentClusterer);
+      }
+      catch (Exception e) {
+        errors.add("Failed to restore clusterer: " + data.get(KEY_CLUSTERER), e);
+      }
+    }
+    if (data.containsKey(KEY_EVALUATION))
+      m_ComboBoxEvaluations.setSelectedIndex((int) data.get(KEY_EVALUATION));
+    for (i = 0; i < m_ModelEvaluations.getSize(); i++) {
+      eval = m_ModelEvaluations.getElementAt(i);
+      if (data.containsKey(KEY_EVALUATION_PREFIX + eval.getName())) {
+	evaldata = (Map<String,Object>) data.get(KEY_EVALUATION_PREFIX + eval.getName());
+	eval.deserialize(evaldata, errors);
+      }
+    }
   }
 
   /**

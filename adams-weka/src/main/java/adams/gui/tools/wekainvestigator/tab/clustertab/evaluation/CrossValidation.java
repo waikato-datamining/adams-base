@@ -20,11 +20,14 @@
 
 package adams.gui.tools.wekainvestigator.tab.clustertab.evaluation;
 
+import adams.core.MessageCollection;
 import adams.core.Properties;
 import adams.core.Utils;
 import adams.core.option.OptionUtils;
 import adams.data.spreadsheet.MetaData;
 import adams.gui.core.AbstractNamedHistoryPanel;
+import adams.gui.core.NumberTextField;
+import adams.gui.core.NumberTextField.Type;
 import adams.gui.core.ParameterPanel;
 import adams.gui.tools.wekainvestigator.tab.clustertab.ResultItem;
 import weka.clusterers.ClusterEvaluation;
@@ -38,7 +41,6 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JSpinner;
-import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.DocumentEvent;
@@ -46,6 +48,7 @@ import javax.swing.event.DocumentListener;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 /**
@@ -58,6 +61,14 @@ public class CrossValidation
   extends AbstractClustererEvaluation {
 
   private static final long serialVersionUID = 1175400993991698944L;
+
+  public static final String KEY_DATASET = "dataset";
+
+  public static final String KEY_FOLDS = "folds";
+
+  public static final String KEY_SEED = "seed";
+
+  public static final String KEY_FINALMODEL = "finalmodel";
 
   /** the panel with the parameters. */
   protected ParameterPanel m_PanelParameters;
@@ -72,7 +83,7 @@ public class CrossValidation
   protected JSpinner m_SpinnerFolds;
 
   /** the seed value. */
-  protected JTextField m_TextSeed;
+  protected NumberTextField m_TextSeed;
 
   /** whether to produce a final model. */
   protected JCheckBox m_CheckBoxFinalModel;
@@ -116,7 +127,7 @@ public class CrossValidation
     m_PanelParameters.addParameter("Folds", m_SpinnerFolds);
 
     // seed
-    m_TextSeed = new JTextField("" + props.getInteger("Cluster.Seed", 1));
+    m_TextSeed = new NumberTextField(Type.INTEGER, "" + props.getInteger("Cluster.Seed", 1));
     m_TextSeed.setToolTipText("The seed value for randomizing the data");
     m_TextSeed.getDocument().addDocumentListener(new DocumentListener() {
       @Override
@@ -204,7 +215,7 @@ public class CrossValidation
 
     data       = getOwner().getData().get(m_ComboBoxDatasets.getSelectedIndex()).getData();
     finalModel = m_CheckBoxFinalModel.isSelected();
-    seed       = Integer.parseInt(m_TextSeed.getText());
+    seed       = m_TextSeed.getValue().intValue();
     folds      = ((Number) m_SpinnerFolds.getValue()).intValue();
     cls        = (Clusterer) OptionUtils.shallowCopy(clusterer);
     if (cls instanceof DensityBasedClusterer) {
@@ -271,5 +282,40 @@ public class CrossValidation
    */
   public void activate(int index) {
     m_ComboBoxDatasets.setSelectedIndex(index);
+  }
+
+  /**
+   * Returns the objects for serialization.
+   *
+   * @return		the mapping of the objects to serialize
+   */
+  public Map<String,Object> serialize() {
+    Map<String,Object>	result;
+
+    result = super.serialize();
+    result.put(KEY_DATASET, m_ComboBoxDatasets.getSelectedIndex());
+    result.put(KEY_FOLDS, m_SpinnerFolds.getValue());
+    result.put(KEY_SEED, m_TextSeed.getValue().intValue());
+    result.put(KEY_FINALMODEL, m_CheckBoxFinalModel.isSelected());
+
+    return result;
+  }
+
+  /**
+   * Restores the objects.
+   *
+   * @param data	the data to restore
+   * @param errors	for storing errors
+   */
+  public void deserialize(Map<String,Object> data, MessageCollection errors) {
+    super.deserialize(data, errors);
+    if (data.containsKey(KEY_DATASET))
+      m_ComboBoxDatasets.setSelectedIndex((int) data.get(KEY_DATASET));
+    if (data.containsKey(KEY_FOLDS))
+      m_SpinnerFolds.setValue(data.get(KEY_FOLDS));
+    if (data.containsKey(KEY_SEED))
+      m_TextSeed.setValue((int) data.get(KEY_SEED));
+    if (data.containsKey(KEY_FINALMODEL))
+      m_CheckBoxFinalModel.setSelected((Boolean) data.get(KEY_FINALMODEL));
   }
 }

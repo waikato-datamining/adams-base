@@ -20,12 +20,15 @@
 
 package adams.gui.tools.wekainvestigator.tab.attseltab.evaluation;
 
+import adams.core.MessageCollection;
 import adams.core.Properties;
 import adams.core.Utils;
 import adams.core.option.OptionUtils;
 import adams.data.spreadsheet.MetaData;
 import adams.flow.container.WekaTrainTestSetContainer;
 import adams.gui.core.AbstractNamedHistoryPanel;
+import adams.gui.core.NumberTextField;
+import adams.gui.core.NumberTextField.Type;
 import adams.gui.core.ParameterPanel;
 import adams.gui.tools.wekainvestigator.tab.attseltab.ResultItem;
 import weka.attributeSelection.ASEvaluation;
@@ -38,7 +41,6 @@ import weka.core.Instances;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JSpinner;
-import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.DocumentEvent;
@@ -46,6 +48,7 @@ import javax.swing.event.DocumentListener;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Performs cross-validation.
@@ -57,6 +60,12 @@ public class CrossValidation
   extends AbstractAttributeSelectionEvaluation {
 
   private static final long serialVersionUID = 1175400993991698944L;
+
+  public static final String KEY_DATASET = "dataset";
+
+  public static final String KEY_FOLDS = "folds";
+
+  public static final String KEY_SEED = "seed";
 
   /** the panel with the parameters. */
   protected ParameterPanel m_PanelParameters;
@@ -71,7 +80,7 @@ public class CrossValidation
   protected JSpinner m_SpinnerFolds;
 
   /** the seed value. */
-  protected JTextField m_TextSeed;
+  protected NumberTextField m_TextSeed;
 
   /**
    * Returns a string describing the object.
@@ -112,7 +121,7 @@ public class CrossValidation
     m_PanelParameters.addParameter("Folds", m_SpinnerFolds);
 
     // seed
-    m_TextSeed = new JTextField("" + props.getInteger("AttributeSelection.Seed", 1));
+    m_TextSeed = new NumberTextField(Type.INTEGER, "" + props.getInteger("AttributeSelection.Seed", 1));
     m_TextSeed.setToolTipText("The seed value for randomizing the data");
     m_TextSeed.getDocument().addDocumentListener(new DocumentListener() {
       @Override
@@ -194,7 +203,7 @@ public class CrossValidation
       throw new IllegalArgumentException("Cannot perform attribute selection!\n" + msg);
 
     data   = getOwner().getData().get(m_ComboBoxDatasets.getSelectedIndex()).getData();
-    seed   = Integer.parseInt(m_TextSeed.getText());
+    seed   = m_TextSeed.getValue().intValue();
     folds  = ((Number) m_SpinnerFolds.getValue()).intValue();
     eval   = (ASEvaluation) OptionUtils.shallowCopy(evaluator);
     srch   = (ASSearch) OptionUtils.shallowCopy(search);
@@ -263,5 +272,37 @@ public class CrossValidation
    */
   public void activate(int index) {
     m_ComboBoxDatasets.setSelectedIndex(index);
+  }
+
+  /**
+   * Returns the objects for serialization.
+   *
+   * @return		the mapping of the objects to serialize
+   */
+  public Map<String,Object> serialize() {
+    Map<String,Object>	result;
+
+    result = super.serialize();
+    result.put(KEY_DATASET, m_ComboBoxDatasets.getSelectedIndex());
+    result.put(KEY_FOLDS, m_SpinnerFolds.getValue());
+    result.put(KEY_SEED, m_TextSeed.getValue().intValue());
+
+    return result;
+  }
+
+  /**
+   * Restores the objects.
+   *
+   * @param data	the data to restore
+   * @param errors	for storing errors
+   */
+  public void deserialize(Map<String,Object> data, MessageCollection errors) {
+    super.deserialize(data, errors);
+    if (data.containsKey(KEY_DATASET))
+      m_ComboBoxDatasets.setSelectedIndex((int) data.get(KEY_DATASET));
+    if (data.containsKey(KEY_FOLDS))
+      m_SpinnerFolds.setValue(data.get(KEY_FOLDS));
+    if (data.containsKey(KEY_SEED))
+      m_TextSeed.setValue((int) data.get(KEY_SEED));
   }
 }

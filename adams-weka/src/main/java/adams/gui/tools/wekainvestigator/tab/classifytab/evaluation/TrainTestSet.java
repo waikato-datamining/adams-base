@@ -20,6 +20,7 @@
 
 package adams.gui.tools.wekainvestigator.tab.classifytab.evaluation;
 
+import adams.core.MessageCollection;
 import adams.core.Properties;
 import adams.core.option.OptionUtils;
 import adams.data.spreadsheet.MetaData;
@@ -40,6 +41,7 @@ import javax.swing.JComboBox;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Uses dedicated train/test sets.
@@ -51,6 +53,14 @@ public class TrainTestSet
   extends AbstractClassifierEvaluation {
 
   private static final long serialVersionUID = -4460266467650893551L;
+
+  public static final String KEY_TRAIN = "train";
+
+  public static final String KEY_TEST = "test";
+
+  public static final String KEY_ADDITIONAL = "additional";
+
+  public static final String KEY_DISCARDPREDICTIONS = "discardpredictions";
 
   /** the panel with the parameters. */
   protected ParameterPanel m_PanelParameters;
@@ -271,5 +281,40 @@ public class TrainTestSet
    */
   public void activate(int index) {
     m_ComboBoxTrain.setSelectedIndex(index);
+  }
+
+  /**
+   * Returns the objects for serialization.
+   *
+   * @return		the mapping of the objects to serialize
+   */
+  public Map<String,Object> serialize() {
+    Map<String,Object>	result;
+
+    result = super.serialize();
+    result.put(KEY_TRAIN, m_ComboBoxTrain.getSelectedIndex());
+    result.put(KEY_TEST, m_ComboBoxTest.getSelectedIndex());
+    result.put(KEY_ADDITIONAL, m_SelectAdditionalAttributes.getCurrent());
+    result.put(KEY_DISCARDPREDICTIONS, m_CheckBoxDiscardPredictions.isSelected());
+
+    return result;
+  }
+
+  /**
+   * Restores the objects.
+   *
+   * @param data	the data to restore
+   * @param errors	for storing errors
+   */
+  public void deserialize(Map<String,Object> data, MessageCollection errors) {
+    super.deserialize(data, errors);
+    if (data.containsKey(KEY_TRAIN))
+      m_ComboBoxTrain.setSelectedIndex((int) data.get(KEY_TRAIN));
+    if (data.containsKey(KEY_TEST))
+      m_ComboBoxTest.setSelectedIndex((int) data.get(KEY_TEST));
+    if (data.containsKey(KEY_ADDITIONAL))
+      m_SelectAdditionalAttributes.setCurrent((String[]) data.get(KEY_ADDITIONAL));
+    if (data.containsKey(KEY_DISCARDPREDICTIONS))
+      m_CheckBoxDiscardPredictions.setSelected((Boolean) data.get(KEY_DISCARDPREDICTIONS));
   }
 }

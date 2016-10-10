@@ -20,6 +20,7 @@
 
 package adams.gui.tools.wekainvestigator.tab.classifytab.evaluation;
 
+import adams.core.MessageCollection;
 import adams.core.Properties;
 import adams.core.Utils;
 import adams.core.option.OptionUtils;
@@ -27,6 +28,8 @@ import adams.data.spreadsheet.MetaData;
 import adams.flow.container.WekaTrainTestSetContainer;
 import adams.gui.chooser.SelectOptionPanel;
 import adams.gui.core.AbstractNamedHistoryPanel;
+import adams.gui.core.NumberTextField;
+import adams.gui.core.NumberTextField.Type;
 import adams.gui.core.ParameterPanel;
 import adams.gui.tools.wekainvestigator.InvestigatorPanel;
 import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
@@ -39,12 +42,12 @@ import weka.core.Instances;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Uses a (random) percentage split to generate train/test.
@@ -57,6 +60,20 @@ public class TrainTestSplit
 
   private static final long serialVersionUID = -4460266467650893551L;
 
+  public static final String KEY_DATASET = "dataset";
+
+  public static final String KEY_PERCENTAGE = "percentage";
+
+  public static final String KEY_SEED = "seed";
+
+  public static final String KEY_PRESERVEORDER = "preserveorder";
+
+  public static final String KEY_ADDITIONAL = "additional";
+
+  public static final String KEY_USEVIEWS = "useviews";
+
+  public static final String KEY_DISCARDPREDICTIONS = "discardpredictions";
+
   /** the panel with the parameters. */
   protected ParameterPanel m_PanelParameters;
 
@@ -67,13 +84,13 @@ public class TrainTestSplit
   protected DefaultComboBoxModel<String> m_ModelDatasets;
 
   /** the split percentage. */
-  protected JTextField m_TextPercentage;
+  protected NumberTextField m_TextPercentage;
 
   /** whether to preserve the order. */
   protected JCheckBox m_CheckBoxPreserveOrder;
 
   /** the seed value. */
-  protected JTextField m_TextSeed;
+  protected NumberTextField m_TextSeed;
 
   /** the additional attributes to store. */
   protected SelectOptionPanel m_SelectAdditionalAttributes;
@@ -116,7 +133,7 @@ public class TrainTestSplit
     m_PanelParameters.addParameter("Dataset", m_ComboBoxDatasets);
 
     // percentage
-    m_TextPercentage = new JTextField("" + props.getInteger("Classify.TrainPercentage", 1));
+    m_TextPercentage = new NumberTextField(Type.DOUBLE, "" + props.getDouble("Classify.TrainPercentage", 66.0));
     m_TextPercentage.setToolTipText("Percentage for train set (0 < x < 100)");
     m_TextPercentage.getDocument().addDocumentListener(new DocumentListener() {
       @Override
@@ -142,7 +159,7 @@ public class TrainTestSplit
     m_PanelParameters.addParameter("Preserve order", m_CheckBoxPreserveOrder);
 
     // seed
-    m_TextSeed = new JTextField("" + props.getInteger("Classify.Seed", 1));
+    m_TextSeed = new NumberTextField(Type.INTEGER, "" + props.getInteger("Classify.Seed", 1));
     m_TextSeed.setToolTipText("The seed value for randomizing the data");
     m_TextSeed.getDocument().addDocumentListener(new DocumentListener() {
       @Override
@@ -256,8 +273,8 @@ public class TrainTestSplit
       throw new IllegalArgumentException("Cannot evaluate classifier!\n" + msg);
 
     data    = getOwner().getData().get(m_ComboBoxDatasets.getSelectedIndex()).getData();
-    perc    = Utils.toDouble(m_TextPercentage.getText()) / 100.0;
-    seed    = Integer.parseInt(m_TextSeed.getText());
+    perc    = m_TextPercentage.getValue().doubleValue() / 100.0;
+    seed    = m_TextSeed.getValue().intValue();
     views   = m_CheckBoxUseViews.isSelected();
     discard = m_CheckBoxDiscardPredictions.isSelected();
     if (m_CheckBoxPreserveOrder.isSelected())
@@ -331,5 +348,49 @@ public class TrainTestSplit
    */
   public void activate(int index) {
     m_ComboBoxDatasets.setSelectedIndex(index);
+  }
+
+  /**
+   * Returns the objects for serialization.
+   *
+   * @return		the mapping of the objects to serialize
+   */
+  public Map<String,Object> serialize() {
+    Map<String,Object>	result;
+
+    result = super.serialize();
+    result.put(KEY_DATASET, m_ComboBoxDatasets.getSelectedIndex());
+    result.put(KEY_PERCENTAGE, m_TextPercentage.getValue().doubleValue());
+    result.put(KEY_SEED, m_TextSeed.getValue().intValue());
+    result.put(KEY_PRESERVEORDER, m_CheckBoxPreserveOrder.isSelected());
+    result.put(KEY_ADDITIONAL, m_SelectAdditionalAttributes.getCurrent());
+    result.put(KEY_USEVIEWS, m_CheckBoxUseViews.isSelected());
+    result.put(KEY_DISCARDPREDICTIONS, m_CheckBoxDiscardPredictions.isSelected());
+
+    return result;
+  }
+
+  /**
+   * Restores the objects.
+   *
+   * @param data	the data to restore
+   * @param errors	for storing errors
+   */
+  public void deserialize(Map<String,Object> data, MessageCollection errors) {
+    super.deserialize(data, errors);
+    if (data.containsKey(KEY_DATASET))
+      m_ComboBoxDatasets.setSelectedIndex((int) data.get(KEY_DATASET));
+    if (data.containsKey(KEY_PERCENTAGE))
+      m_TextPercentage.setValue((double) data.get(KEY_PERCENTAGE));
+    if (data.containsKey(KEY_SEED))
+      m_TextSeed.setValue((int) data.get(KEY_SEED));
+    if (data.containsKey(KEY_PRESERVEORDER))
+      m_CheckBoxPreserveOrder.setSelected((boolean) data.get(KEY_PRESERVEORDER));
+    if (data.containsKey(KEY_ADDITIONAL))
+      m_SelectAdditionalAttributes.setCurrent((String[]) data.get(KEY_ADDITIONAL));
+    if (data.containsKey(KEY_USEVIEWS))
+      m_CheckBoxUseViews.setSelected((Boolean) data.get(KEY_USEVIEWS));
+    if (data.containsKey(KEY_DISCARDPREDICTIONS))
+      m_CheckBoxDiscardPredictions.setSelected((Boolean) data.get(KEY_DISCARDPREDICTIONS));
   }
 }

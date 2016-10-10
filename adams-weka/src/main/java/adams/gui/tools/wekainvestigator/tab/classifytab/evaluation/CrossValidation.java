@@ -20,6 +20,7 @@
 
 package adams.gui.tools.wekainvestigator.tab.classifytab.evaluation;
 
+import adams.core.MessageCollection;
 import adams.core.Performance;
 import adams.core.Properties;
 import adams.core.StoppableWithFeedback;
@@ -28,6 +29,8 @@ import adams.core.option.OptionUtils;
 import adams.data.spreadsheet.MetaData;
 import adams.gui.chooser.SelectOptionPanel;
 import adams.gui.core.AbstractNamedHistoryPanel;
+import adams.gui.core.NumberTextField;
+import adams.gui.core.NumberTextField.Type;
 import adams.gui.core.ParameterPanel;
 import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
 import adams.multiprocess.WekaCrossValidationExecution;
@@ -39,7 +42,6 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JSpinner;
-import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.DocumentEvent;
@@ -47,6 +49,7 @@ import javax.swing.event.DocumentListener;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Performs cross-validation.
@@ -59,6 +62,22 @@ public class CrossValidation
   implements StoppableWithFeedback {
 
   private static final long serialVersionUID = 1175400993991698944L;
+
+  public static final String KEY_DATASET = "dataset";
+
+  public static final String KEY_FOLDS = "folds";
+
+  public static final String KEY_SEED = "seed";
+
+  public static final String KEY_THREADS = "threads";
+
+  public static final String KEY_ADDITIONAL = "additional";
+
+  public static final String KEY_USEVIEWS = "useviews";
+
+  public static final String KEY_DISCARDPREDICTIONS = "discardpredictions";
+
+  public static final String KEY_FINALMODEL = "finalmodel";
 
   /** the panel with the parameters. */
   protected ParameterPanel m_PanelParameters;
@@ -73,7 +92,7 @@ public class CrossValidation
   protected JSpinner m_SpinnerFolds;
 
   /** the seed value. */
-  protected JTextField m_TextSeed;
+  protected NumberTextField m_TextSeed;
 
   /** the number of threads. */
   protected JSpinner m_SpinnerThreads;
@@ -142,7 +161,7 @@ public class CrossValidation
     m_PanelParameters.addParameter("Folds", m_SpinnerFolds);
 
     // seed
-    m_TextSeed = new JTextField("" + props.getInteger("Classify.Seed", 1));
+    m_TextSeed = new NumberTextField(Type.INTEGER, "" + props.getInteger("Classify.Seed", 1));
     m_TextSeed.setToolTipText("The seed value for randomizing the data");
     m_TextSeed.getDocument().addDocumentListener(new DocumentListener() {
       @Override
@@ -264,7 +283,7 @@ public class CrossValidation
     finalModel = m_CheckBoxFinalModel.isSelected();
     views      = m_CheckBoxUseViews.isSelected();
     discard    = m_CheckBoxDiscardPredictions.isSelected();
-    seed       = Integer.parseInt(m_TextSeed.getText());
+    seed       = m_TextSeed.getValue().intValue();
     folds      = ((Number) m_SpinnerFolds.getValue()).intValue();
     threads    = ((Number) m_SpinnerThreads.getValue()).intValue();
     runInfo    = new MetaData();
@@ -366,5 +385,52 @@ public class CrossValidation
   @Override
   public boolean isStopped() {
     return (m_CrossValidation != null) && m_CrossValidation.isStopped();
+  }
+
+  /**
+   * Returns the objects for serialization.
+   *
+   * @return		the mapping of the objects to serialize
+   */
+  public Map<String,Object> serialize() {
+    Map<String,Object>	result;
+
+    result = super.serialize();
+    result.put(KEY_DATASET, m_ComboBoxDatasets.getSelectedIndex());
+    result.put(KEY_FOLDS, m_SpinnerFolds.getValue());
+    result.put(KEY_SEED, m_TextSeed.getValue().intValue());
+    result.put(KEY_THREADS, m_SpinnerThreads.getValue());
+    result.put(KEY_ADDITIONAL, m_SelectAdditionalAttributes.getCurrent());
+    result.put(KEY_USEVIEWS, m_CheckBoxUseViews.isSelected());
+    result.put(KEY_DISCARDPREDICTIONS, m_CheckBoxDiscardPredictions.isSelected());
+    result.put(KEY_FINALMODEL, m_CheckBoxFinalModel.isSelected());
+
+    return result;
+  }
+
+  /**
+   * Restores the objects.
+   *
+   * @param data	the data to restore
+   * @param errors	for storing errors
+   */
+  public void deserialize(Map<String,Object> data, MessageCollection errors) {
+    super.deserialize(data, errors);
+    if (data.containsKey(KEY_DATASET))
+      m_ComboBoxDatasets.setSelectedIndex((int) data.get(KEY_DATASET));
+    if (data.containsKey(KEY_FOLDS))
+      m_SpinnerFolds.setValue(data.get(KEY_FOLDS));
+    if (data.containsKey(KEY_SEED))
+      m_TextSeed.setValue((int) data.get(KEY_SEED));
+    if (data.containsKey(KEY_THREADS))
+      m_SpinnerThreads.setValue(data.get(KEY_THREADS));
+    if (data.containsKey(KEY_ADDITIONAL))
+      m_SelectAdditionalAttributes.setCurrent((String[]) data.get(KEY_ADDITIONAL));
+    if (data.containsKey(KEY_USEVIEWS))
+      m_CheckBoxUseViews.setSelected((Boolean) data.get(KEY_USEVIEWS));
+    if (data.containsKey(KEY_DISCARDPREDICTIONS))
+      m_CheckBoxDiscardPredictions.setSelected((Boolean) data.get(KEY_DISCARDPREDICTIONS));
+    if (data.containsKey(KEY_FINALMODEL))
+      m_CheckBoxFinalModel.setSelected((Boolean) data.get(KEY_FINALMODEL));
   }
 }

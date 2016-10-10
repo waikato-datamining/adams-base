@@ -21,6 +21,7 @@
 package adams.gui.tools.wekainvestigator.tab;
 
 import adams.core.ClassLister;
+import adams.core.MessageCollection;
 import adams.core.Properties;
 import adams.core.SerializationHelper;
 import adams.core.Stoppable;
@@ -65,6 +66,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 
 /**
@@ -317,6 +319,14 @@ public class ClassifyTab
       return result;
     }
   }
+
+  public static final String KEY_LEFTPANELWIDTH = "leftpanelwidth";
+
+  public static final String KEY_CLASSIFIER = "classifier";
+
+  public static final String KEY_EVALUATION = "evaluation";
+
+  public static final String KEY_EVALUATION_PREFIX = "evaluation.";
 
   /** the GOe with the classifier. */
   protected WekaGenericObjectEditorPanel m_PanelGOE;
@@ -788,6 +798,62 @@ public class ClassifyTab
    */
   public AbstractOutputGenerator[] getOutputGenerators() {
     return m_OutputGenerators;
+  }
+
+  /**
+   * Returns the objects for serialization.
+   *
+   * @return		the mapping of the objects to serialize
+   */
+  protected Map<String,Object> doSerialize() {
+    Map<String,Object>			result;
+    int					i;
+    AbstractClassifierEvaluation 	eval;
+
+    result = super.doSerialize();
+    result.put(KEY_LEFTPANELWIDTH, m_SplitPane.getDividerLocation());
+    result.put(KEY_CLASSIFIER, OptionUtils.getCommandLine(m_PanelGOE.getCurrent()));
+    result.put(KEY_EVALUATION, m_ComboBoxEvaluations.getSelectedIndex());
+    for (i = 0; i < m_ModelEvaluations.getSize(); i++) {
+      eval = m_ModelEvaluations.getElementAt(i);
+      result.put(KEY_EVALUATION_PREFIX + eval.getName(), eval.serialize());
+    }
+
+    return result;
+  }
+
+  /**
+   * Restores the objects.
+   *
+   * @param data	the data to restore
+   * @param errors	for storing errors
+   */
+  protected void doDeserialize(Map<String,Object> data, MessageCollection errors) {
+    Map<String,Object> 			evaldata;
+    int					i;
+    AbstractClassifierEvaluation 	eval;
+
+    super.doDeserialize(data, errors);
+    if (data.containsKey(KEY_LEFTPANELWIDTH))
+      m_SplitPane.setDividerLocation((int) data.get(KEY_LEFTPANELWIDTH));
+    if (data.containsKey(KEY_CLASSIFIER)) {
+      try {
+        m_CurrentClassifier = (Classifier) OptionUtils.forAnyCommandLine(Classifier.class, (String) data.get(KEY_CLASSIFIER));
+        m_PanelGOE.setCurrent(m_CurrentClassifier);
+      }
+      catch (Exception e) {
+        errors.add("Failed to restore classifier: " + data.get(KEY_CLASSIFIER), e);
+      }
+    }
+    if (data.containsKey(KEY_EVALUATION))
+      m_ComboBoxEvaluations.setSelectedIndex((int) data.get(KEY_EVALUATION));
+    for (i = 0; i < m_ModelEvaluations.getSize(); i++) {
+      eval = m_ModelEvaluations.getElementAt(i);
+      if (data.containsKey(KEY_EVALUATION_PREFIX + eval.getName())) {
+	evaldata = (Map<String,Object>) data.get(KEY_EVALUATION_PREFIX + eval.getName());
+	eval.deserialize(evaldata, errors);
+      }
+    }
   }
 
   /**

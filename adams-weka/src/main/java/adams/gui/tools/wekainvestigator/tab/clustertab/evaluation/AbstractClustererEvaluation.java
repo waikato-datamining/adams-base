@@ -22,6 +22,7 @@ package adams.gui.tools.wekainvestigator.tab.clustertab.evaluation;
 
 import adams.core.ClassLister;
 import adams.core.GlobalInfoSupporter;
+import adams.core.MessageCollection;
 import adams.core.Properties;
 import adams.core.StatusMessageHandler;
 import adams.core.logging.LoggingObject;
@@ -37,8 +38,10 @@ import javax.swing.ComboBoxModel;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -258,6 +261,28 @@ public abstract class AbstractClustererEvaluation
 
     return (setDatasets.size() != setModel.size())
       || !(setDatasets.containsAll(setModel) && setModel.containsAll(setDatasets));
+  }
+
+  /**
+   * Returns the objects for serialization.
+   *
+   * @return		the mapping of the objects to serialize
+   */
+  public Map<String,Object> serialize() {
+    Map<String,Object>	result;
+
+    result = new HashMap<>();
+
+    return result;
+  }
+
+  /**
+   * Restores the objects.
+   *
+   * @param data	the data to restore
+   * @param errors	for storing errors
+   */
+  public void deserialize(Map<String,Object> data, MessageCollection errors) {
   }
 
   /**

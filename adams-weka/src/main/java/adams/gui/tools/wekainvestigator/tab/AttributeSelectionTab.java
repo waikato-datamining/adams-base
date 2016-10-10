@@ -21,6 +21,7 @@
 package adams.gui.tools.wekainvestigator.tab;
 
 import adams.core.ClassLister;
+import adams.core.MessageCollection;
 import adams.core.Properties;
 import adams.core.option.OptionUtils;
 import adams.gui.chooser.WekaFileChooser;
@@ -69,6 +70,7 @@ import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 
 /**
@@ -81,6 +83,14 @@ public class AttributeSelectionTab
   extends AbstractInvestigatorTab {
 
   private static final long serialVersionUID = -4106630131554796889L;
+
+  public static final String KEY_SEARCH = "search";
+
+  public static final String KEY_EVALUATOR = "evaluator";
+
+  public static final String KEY_EVALUATION = "evaluation";
+
+  public static final String KEY_EVALUATION_PREFIX = "evaluation.";
 
   /**
    * Customized history panel.
@@ -372,6 +382,8 @@ public class AttributeSelectionTab
       return result;
     }
   }
+
+  public static final String KEY_LEFTPANELWIDTH = "leftpanelwidth";
 
   /** the GOe with the evaluator. */
   protected WekaGenericObjectEditorPanel m_PanelEvaluator;
@@ -843,6 +855,72 @@ public class AttributeSelectionTab
    */
   public AbstractOutputGenerator[] getOutputGenerators() {
     return m_OutputGenerators;
+  }
+
+  /**
+   * Returns the objects for serialization.
+   *
+   * @return		the mapping of the objects to serialize
+   */
+  protected Map<String,Object> doSerialize() {
+    Map<String,Object>				result;
+    int						i;
+    AbstractAttributeSelectionEvaluation 	eval;
+
+    result = super.doSerialize();
+    result.put(KEY_LEFTPANELWIDTH, m_SplitPane.getDividerLocation());
+    result.put(KEY_SEARCH, OptionUtils.getCommandLine(m_PanelSearch.getCurrent()));
+    result.put(KEY_EVALUATOR, OptionUtils.getCommandLine(m_PanelEvaluator.getCurrent()));
+    result.put(KEY_EVALUATION, m_ComboBoxEvaluations.getSelectedIndex());
+    for (i = 0; i < m_ModelEvaluations.getSize(); i++) {
+      eval = m_ModelEvaluations.getElementAt(i);
+      result.put(KEY_EVALUATION_PREFIX + eval.getName(), eval.serialize());
+    }
+
+    return result;
+  }
+
+  /**
+   * Restores the objects.
+   *
+   * @param data	the data to restore
+   * @param errors	for storing errors
+   */
+  protected void doDeserialize(Map<String,Object> data, MessageCollection errors) {
+    Map<String,Object> 				evaldata;
+    int						i;
+    AbstractAttributeSelectionEvaluation 	eval;
+
+    super.doDeserialize(data, errors);
+    if (data.containsKey(KEY_LEFTPANELWIDTH))
+      m_SplitPane.setDividerLocation((int) data.get(KEY_LEFTPANELWIDTH));
+    if (data.containsKey(KEY_SEARCH)) {
+      try {
+        m_CurrentSearch = (ASSearch) OptionUtils.forAnyCommandLine(ASSearch.class, (String) data.get(KEY_SEARCH));
+        m_PanelSearch.setCurrent(m_CurrentSearch);
+      }
+      catch (Exception e) {
+        errors.add("Failed to restore search: " + data.get(KEY_SEARCH), e);
+      }
+    }
+    if (data.containsKey(KEY_EVALUATOR)) {
+      try {
+        m_CurrentEvaluator = (ASEvaluation) OptionUtils.forAnyCommandLine(ASEvaluation.class, (String) data.get(KEY_EVALUATOR));
+        m_PanelEvaluator.setCurrent(m_CurrentEvaluator);
+      }
+      catch (Exception e) {
+        errors.add("Failed to restore evaluator: " + data.get(KEY_EVALUATOR), e);
+      }
+    }
+    if (data.containsKey(KEY_EVALUATION))
+      m_ComboBoxEvaluations.setSelectedIndex((int) data.get(KEY_EVALUATION));
+    for (i = 0; i < m_ModelEvaluations.getSize(); i++) {
+      eval = m_ModelEvaluations.getElementAt(i);
+      if (data.containsKey(KEY_EVALUATION_PREFIX + eval.getName())) {
+	evaldata = (Map<String,Object>) data.get(KEY_EVALUATION_PREFIX + eval.getName());
+	eval.deserialize(evaldata, errors);
+      }
+    }
   }
 
   /**
