@@ -51,7 +51,7 @@ public abstract class AbstractResultItem
   protected Instances m_Header;
 
   /** the tabbed pane with the generated output. */
-  protected OutputTabbedPane m_TabbedPane;
+  protected transient OutputTabbedPane m_TabbedPane;
 
   /**
    * Initializes the item.
@@ -59,12 +59,9 @@ public abstract class AbstractResultItem
    * @param header	the header of the training set, can be null
    */
   protected AbstractResultItem(Instances header) {
-    m_Header     = header;
-    m_TabbedPane = new OutputTabbedPane();
-    m_TabbedPane.setShowCloseTabButton(true);
-    m_TabbedPane.setCloseTabsWithMiddleMouseButton(false);
-    m_Timestamp  = new Date();
-    m_Name       = null;
+    m_Header    = header;
+    m_Timestamp = new Date();
+    m_Name      = null;
   }
 
   /**
@@ -108,7 +105,12 @@ public abstract class AbstractResultItem
    *
    * @return		the tabbed pane
    */
-  public OutputTabbedPane getTabbedPane() {
+  public synchronized OutputTabbedPane getTabbedPane() {
+    if (m_TabbedPane == null) {
+      m_TabbedPane = new OutputTabbedPane();
+      m_TabbedPane.setShowCloseTabButton(true);
+      m_TabbedPane.setCloseTabsWithMiddleMouseButton(false);
+    }
     return m_TabbedPane;
   }
 
@@ -123,6 +125,9 @@ public abstract class AbstractResultItem
    * Cleans up data structures, frees up memory.
    */
   public void cleanUp() {
-    m_TabbedPane.cleanUp();
+    if (m_TabbedPane != null) {
+      m_TabbedPane.cleanUp();
+      m_TabbedPane = null;
+    }
   }
 }
