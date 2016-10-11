@@ -1200,7 +1200,7 @@ public abstract class AbstractNamedHistoryPanel<T>
       items    = (Object[][]) data;
       for (i = 0; i < items.length; i++) {
 	addEntry((String) items[i][0], (T) items[i][1]);
-	if (items[2] != null)
+	if (items[i][2] != null)
 	  setPayload((String) items[i][0], items[i][2]);
 	if ((Boolean) items[i][3])
 	  selected = i;
