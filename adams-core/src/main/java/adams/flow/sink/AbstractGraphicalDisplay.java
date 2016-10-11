@@ -39,9 +39,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 /**
  * Ancestor for actors that display stuff.
@@ -186,6 +184,7 @@ public abstract class AbstractGraphicalDisplay
     JMenuBar	result;
     JMenu	menu;
     JMenuItem	menuitem;
+    String	custom;
 
     result = new JMenuBar();
 
@@ -193,11 +192,7 @@ public abstract class AbstractGraphicalDisplay
     menu = new JMenu("File");
     result.add(menu);
     menu.setMnemonic('F');
-    menu.addChangeListener(new ChangeListener() {
-      public void stateChanged(ChangeEvent e) {
-	updateMenu();
-      }
-    });
+    menu.addChangeListener((ChangeEvent e) -> updateMenu());
 
     // File/Clear
     if (supportsClear()) {
@@ -206,11 +201,7 @@ public abstract class AbstractGraphicalDisplay
       menuitem.setMnemonic('l');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed N"));
       menuitem.setIcon(GUIHelper.getIcon("new.gif"));
-      menuitem.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  clear();
-	}
-      });
+      menuitem.addActionListener((ActionEvent e) -> clear());
       m_MenuItemFileClear = menuitem;
     }
 
@@ -220,23 +211,17 @@ public abstract class AbstractGraphicalDisplay
     menuitem.setMnemonic('a');
     menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed S"));
     menuitem.setIcon(GUIHelper.getIcon("save.gif"));
-    menuitem.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	saveAs();
-      }
-    });
+    menuitem.addActionListener((ActionEvent e) -> saveAs());
     m_MenuItemFileSaveAs = menuitem;
 
     // File/Save Text As
     if (this instanceof TextSupplier) {
-      menuitem = new JMenuItem("Save text as...");
+      custom = ((TextSupplier) this).getCustomSupplyTextMenuItemCaption();
+      menuitem = new JMenuItem((custom == null) ? "Save text as..." : custom);
       menu.add(menuitem);
-      menuitem.setMnemonic('t');
-      menuitem.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          saveTextAs();
-        }
-      });
+      if (custom == null)
+	menuitem.setMnemonic('t');
+      menuitem.addActionListener((ActionEvent e) -> saveTextAs());
       m_MenuItemFileSaveTextAs = menuitem;
     }
 
@@ -251,11 +236,7 @@ public abstract class AbstractGraphicalDisplay
     menuitem.setMnemonic('C');
     menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed Q"));
     menuitem.setIcon(GUIHelper.getIcon("exit.png"));
-    menuitem.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	close();
-      }
-    });
+    menuitem.addActionListener((ActionEvent e) -> close());
     m_MenuItemFileClose = menuitem;
 
     return result;

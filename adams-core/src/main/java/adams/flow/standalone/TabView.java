@@ -230,6 +230,23 @@ public class TabView
   }
 
   /**
+   * Returns the text for the menu item.
+   *
+   * @return		the menu item text, null for default
+   */
+  public String getCustomSupplyTextMenuItemCaption() {
+    int		index;
+
+    index = m_TabbedPane.getSelectedIndex();
+    if (index > -1) {
+      if (m_Actors.get(index) instanceof TextSupplier)
+	return ((TextSupplier) m_Actors.get(index)).getCustomSupplyTextMenuItemCaption();
+    }
+
+    return null;
+  }
+
+  /**
    * Returns a custom file filter for the file chooser.
    * 
    * @return		the file filter, null if to use default one

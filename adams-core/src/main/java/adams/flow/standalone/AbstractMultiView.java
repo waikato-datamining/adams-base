@@ -68,23 +68,23 @@ public abstract class AbstractMultiView
 
   /** for serialization. */
   private static final long serialVersionUID = -4454052058077687116L;
-  
+
   /**
    * A wrapper for the actual actors.
-   * 
+   *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
    * @version $Revision$
    */
   public static class ViewWrapper
     extends AbstractDisplay
     implements InputConsumer, ComponentSupplier, TextSupplier, Flushable {
-    
+
     /** for serialization. */
     private static final long serialVersionUID = -1571827759359015717L;
-    
+
     /** the actor to wrap. */
     protected AbstractDisplay m_Wrapped;
-    
+
     /**
      * Returns a string describing the object.
      *
@@ -103,8 +103,8 @@ public abstract class AbstractMultiView
       super.defineOptions();
 
       m_OptionManager.add(
-  	    "wrapped", "wrapped",
-  	    new SequencePlotter());
+        "wrapped", "wrapped",
+        new SequencePlotter());
     }
 
     /**
@@ -149,14 +149,14 @@ public abstract class AbstractMultiView
 
     /**
      * Returns the class that the consumer accepts.
-     * 
+     *
      * @return		the Class of objects that can be processed
      */
     @Override
     public Class[] accepts() {
       return ((InputConsumer) m_Wrapped).accepts();
     }
-    
+
     /**
      * Updates the Variables instance in use, if different from current one.
      * <br><br>
@@ -169,7 +169,7 @@ public abstract class AbstractMultiView
       super.setVariables(value);
       m_Wrapped.setVariables(value);
     }
-    
+
     /**
      * Executes the flow item.
      *
@@ -180,29 +180,29 @@ public abstract class AbstractMultiView
       String	result;
 
       result = null;
-      
+
       if (m_Panel == null) {
-	result = m_Wrapped.execute();
-	if (result == null) {
-	  m_Panel = ((AbstractDisplay) m_Wrapped).getPanel();
-	  ((AbstractMultiView) getParent()).addPanel(m_Wrapped, m_Panel);
-	}
+        result = m_Wrapped.execute();
+        if (result == null) {
+          m_Panel = ((AbstractDisplay) m_Wrapped).getPanel();
+          ((AbstractMultiView) getParent()).addPanel(m_Wrapped, m_Panel);
+        }
       }
 
       if (result == null) {
-	m_Wrapped.input(m_InputToken);
-	result = m_Wrapped.execute();
+        m_Wrapped.input(m_InputToken);
+        result = m_Wrapped.execute();
       }
-      
+
       return result;
     }
-    
+
     /**
      * Stops the processing of tokens without stopping the flow.
      */
     public void flushExecution() {
       if (m_Wrapped instanceof ActorHandler)
-	((ActorHandler) m_Wrapped).flushExecution();
+        ((ActorHandler) m_Wrapped).flushExecution();
     }
 
     /**
@@ -211,11 +211,11 @@ public abstract class AbstractMultiView
     @Override
     public void wrapUp() {
       if (m_Wrapped != null)
-	m_Wrapped.wrapUp();
-      
+        m_Wrapped.wrapUp();
+
       super.wrapUp();
     }
-    
+
     /**
      * Cleans up after the execution has finished. Also removes graphical
      * components.
@@ -223,36 +223,50 @@ public abstract class AbstractMultiView
     @Override
     public void cleanUp() {
       if (m_Panel != null) {
-	m_Wrapped.clearPanel();
-	m_Wrapped.cleanUp();
-	m_Panel = null;
+        m_Wrapped.clearPanel();
+        m_Wrapped.cleanUp();
+        m_Panel = null;
       }
-      
+
       super.cleanUp();
     }
-    
+
     /**
      * Clears the panel.
      */
     @Override
     public void clearPanel() {
       if (m_Panel != null)
-	m_Wrapped.clearPanel();
+        m_Wrapped.clearPanel();
+    }
+
+    /**
+     * Returns the text for the menu item.
+     *
+     * @return		the menu item text, null for default
+     */
+    public String getCustomSupplyTextMenuItemCaption() {
+      if (getParent() instanceof AbstractMultiView)
+        ((AbstractMultiView) getParent()).makeVisible(this);
+      if (getParent() instanceof TextSupplier)
+        return ((TextSupplier) getParent()).getCustomSupplyTextMenuItemCaption();
+      else
+        return null;
     }
 
     /**
      * Returns a custom file filter for the file chooser.
-     * 
+     *
      * @return		the file filter, null if to use default one
      */
     @Override
     public ExtensionFileFilter getCustomTextFileFilter() {
       if (getParent() instanceof AbstractMultiView)
-	((AbstractMultiView) getParent()).makeVisible(this);
+        ((AbstractMultiView) getParent()).makeVisible(this);
       if (getParent() instanceof TextSupplier)
-	return ((TextSupplier) getParent()).getCustomTextFileFilter();
+        return ((TextSupplier) getParent()).getCustomTextFileFilter();
       else
-	return null;
+        return null;
     }
 
     /**
@@ -263,11 +277,11 @@ public abstract class AbstractMultiView
     @Override
     public String supplyText() {
       if (getParent() instanceof AbstractMultiView)
-	((AbstractMultiView) getParent()).makeVisible(this);
+        ((AbstractMultiView) getParent()).makeVisible(this);
       if (getParent() instanceof TextSupplier)
-	return ((TextSupplier) getParent()).supplyText();
+        return ((TextSupplier) getParent()).supplyText();
       else
-	return null;
+        return null;
     }
 
     /**
@@ -278,11 +292,11 @@ public abstract class AbstractMultiView
     @Override
     public JComponent supplyComponent() {
       if (getParent() instanceof AbstractMultiView)
-	((AbstractMultiView) getParent()).makeVisible(this);
+        ((AbstractMultiView) getParent()).makeVisible(this);
       if (getParent() instanceof ComponentSupplier)
-	return ((ComponentSupplier) getParent()).supplyComponent();
+        return ((ComponentSupplier) getParent()).supplyComponent();
       else
-	return null;
+        return null;
     }
 
     /**
@@ -306,10 +320,10 @@ public abstract class AbstractMultiView
       return null;
     }
   }
-  
+
   /** the underlying display actors. */
   protected List<Actor> m_Actors;
-  
+
   /** the panels in use. */
   protected List<ViewWrapper> m_Wrappers;
 
@@ -330,8 +344,8 @@ public abstract class AbstractMultiView
     super.defineOptions();
 
     m_OptionManager.add(
-	    "actor", "actors",
-	    new Actor[0]);
+      "actor", "actors",
+      new Actor[0]);
   }
 
   /**
@@ -340,7 +354,7 @@ public abstract class AbstractMultiView
   @Override
   protected void initialize() {
     super.initialize();
-    
+
     m_Actors   = new ArrayList<>();
     m_Wrappers = null;
   }
@@ -359,8 +373,8 @@ public abstract class AbstractMultiView
     for (i = 0; i < value.length; i++) {
       msg = check(value[i]);
       if (msg != null) {
-	getLogger().severe(msg);
-	return;
+        getLogger().severe(msg);
+        return;
       }
     }
 
@@ -388,10 +402,10 @@ public abstract class AbstractMultiView
    * 			displaying in the GUI or for listing the options.
    */
   public abstract String actorsTipText();
-  
+
   /**
    * Checks whether the actor is valid.
-   * 
+   *
    * @param actor	the actor to check
    * @return		null if OK, otherwise error message
    */
@@ -425,7 +439,7 @@ public abstract class AbstractMultiView
   @Override
   public void add(Actor actor) {
     String	msg;
-    
+
     msg = check(actor);
     if (msg == null)
       m_Actors.add(actor);
@@ -442,7 +456,7 @@ public abstract class AbstractMultiView
   @Override
   public void add(int index, Actor actor) {
     String	msg;
-    
+
     msg = check(actor);
     if (msg == null)
       m_Actors.add(index, actor);
@@ -479,7 +493,7 @@ public abstract class AbstractMultiView
   public ActorHandlerInfo getActorHandlerInfo() {
     return new ActorHandlerInfo(true, false, ActorExecution.PARALLEL, false, new Class[]{adams.flow.sink.AbstractDisplay.class});
   }
-  
+
   /**
    * Performs checks on the "sub-actors".
    *
@@ -489,15 +503,15 @@ public abstract class AbstractMultiView
   public String check() {
     String	result;
     int		i;
-    
+
     result = null;
-    
+
     for (i = 0; i < m_Actors.size(); i++) {
       result = check(m_Actors.get(i));
       if (result != null)
-	break;
+        break;
     }
-    
+
     return result;
   }
 
@@ -534,7 +548,7 @@ public abstract class AbstractMultiView
   @Override
   public void set(int index, Actor actor) {
     String	msg;
-    
+
     msg = check(actor);
     if (msg == null)
       m_Actors.set(index, actor);
@@ -552,16 +566,16 @@ public abstract class AbstractMultiView
   public int indexOf(String actor) {
     int		result;
     int		i;
-    
+
     result = -1;
-    
+
     for (i = 0; i < m_Actors.size(); i++) {
       if (m_Actors.get(i).getName().equals(actor)) {
-	result = i;
-	break;
+        result = i;
+        break;
       }
     }
-    
+
     return result;
   }
 
@@ -578,8 +592,8 @@ public abstract class AbstractMultiView
     result = null;
     for (i = 0; i < size(); i++) {
       if (!get(i).getSkip()) {
-	result = get(i);
-	break;
+        result = get(i);
+        break;
       }
     }
 
@@ -599,8 +613,8 @@ public abstract class AbstractMultiView
     result = null;
     for (i = size() - 1; i >= 0; i--) {
       if (!get(i).getSkip()) {
-	result = get(i);
-	break;
+        result = get(i);
+        break;
       }
     }
 
@@ -609,12 +623,12 @@ public abstract class AbstractMultiView
 
   /**
    * Ensures that the wrapper is visible.
-   * 
+   *
    * @param wrapper	the wrapper to make visible
    * @return		true if successful
    */
   public abstract boolean makeVisible(ViewWrapper wrapper);
-  
+
   /**
    * Clears the content of the panel.
    */
@@ -622,7 +636,7 @@ public abstract class AbstractMultiView
   public void clearPanel() {
     if (m_Wrappers != null) {
       for (ViewWrapper wrapper: m_Wrappers)
-	wrapper.clearPanel();
+        wrapper.clearPanel();
     }
   }
 
@@ -646,12 +660,12 @@ public abstract class AbstractMultiView
 
     result = new Runnable() {
       public void run() {
-	if (getCreateFrame() && !m_Frame.isVisible())
-	  m_Frame.setVisible(true);
-	synchronized(m_Self) {
-	  m_Self.notifyAll();
-	}
-	m_Updating = false;
+        if (getCreateFrame() && !m_Frame.isVisible())
+          m_Frame.setVisible(true);
+        synchronized(m_Self) {
+          m_Self.notifyAll();
+        }
+        m_Updating = false;
       }
     };
 
@@ -659,7 +673,7 @@ public abstract class AbstractMultiView
 
     return result;
   }
-  
+
   /**
    * Updates the Variables instance in use, if different from current one.
    * <br><br>
@@ -670,10 +684,10 @@ public abstract class AbstractMultiView
   @Override
   public synchronized void setVariables(Variables value) {
     super.setVariables(value);
-    
+
     if (m_Wrappers != null) {
       for (ViewWrapper wrapper: m_Wrappers)
-	wrapper.setVariables(value);
+        wrapper.setVariables(value);
     }
   }
 
@@ -688,33 +702,33 @@ public abstract class AbstractMultiView
   public String setUp() {
     String		result;
     ViewWrapper	wrapper;
-    
+
     result = super.setUp();
-    
+
     if (result == null)
       result = check();
-    
+
     if (result == null) {
       m_Wrappers = new ArrayList<ViewWrapper>();
       for (Actor actor: m_Actors) {
-	((AbstractDisplay) actor).setCreateFrame(false);
-	((AbstractDisplay) actor).setDisplayInEditor(false);
-	wrapper = new ViewWrapper();
-	wrapper.setParent(this);
-	wrapper.setName(actor.getName());
-	wrapper.setWrapped(actor);
-	result = wrapper.setUp();
-	if (result != null) {
-	  result = "Failed to wrap actor '" + actor.getName() + "': " + result;
-	  break;
-	}
-	m_Wrappers.add(wrapper);
+        ((AbstractDisplay) actor).setCreateFrame(false);
+        ((AbstractDisplay) actor).setDisplayInEditor(false);
+        wrapper = new ViewWrapper();
+        wrapper.setParent(this);
+        wrapper.setName(actor.getName());
+        wrapper.setWrapped(actor);
+        result = wrapper.setUp();
+        if (result != null) {
+          result = "Failed to wrap actor '" + actor.getName() + "': " + result;
+          break;
+        }
+        m_Wrappers.add(wrapper);
       }
     }
-    
+
     return result;
   }
-  
+
   /**
    * Executes the flow item.
    *
@@ -725,25 +739,25 @@ public abstract class AbstractMultiView
     // update variables
     for (ViewWrapper wrapper: m_Wrappers)
       wrapper.setVariables(getVariables());
-    
+
     return super.doExecute();
   }
-  
+
   /**
    * Replaces the current dummy panel with the actual panel.
-   * 
+   *
    * @param actor	the actor this panel is for
    * @param panel	the panel to replace the dummy one
    */
   public abstract void addPanel(Actor actor, BasePanel panel);
-  
+
   /**
    * Stops the processing of tokens without stopping the flow.
    */
   public void flushExecution() {
     if (m_Wrappers != null) {
       for (ViewWrapper wrapper: m_Wrappers) {
-	wrapper.flushExecution();
+        wrapper.flushExecution();
       }
     }
   }
@@ -755,9 +769,9 @@ public abstract class AbstractMultiView
   public void stopExecution() {
     if (m_Wrappers != null) {
       for (ViewWrapper wrapper: m_Wrappers)
-	wrapper.stopExecution();
+        wrapper.stopExecution();
     }
-    
+
     super.stopExecution();
   }
 
@@ -768,12 +782,12 @@ public abstract class AbstractMultiView
   public void wrapUp() {
     if (m_Wrappers != null) {
       for (ViewWrapper wrapper: m_Wrappers)
-	wrapper.wrapUp();
+        wrapper.wrapUp();
     }
-    
+
     super.wrapUp();
   }
-  
+
   /**
    * Cleans up after the execution has finished. Also removes graphical
    * components.
@@ -782,11 +796,11 @@ public abstract class AbstractMultiView
   public void cleanUp() {
     if (m_Wrappers != null) {
       for (ViewWrapper wrapper: m_Wrappers)
-	wrapper.cleanUp();
+        wrapper.cleanUp();
       m_Wrappers.clear();
       m_Wrappers = null;
     }
-    
+
     super.cleanUp();
   }
 
@@ -808,7 +822,7 @@ public abstract class AbstractMultiView
     menu.setMnemonic('F');
     menu.addChangeListener(new ChangeListener() {
       public void stateChanged(ChangeEvent e) {
-	updateMenu();
+        updateMenu();
       }
     });
 
@@ -824,7 +838,7 @@ public abstract class AbstractMultiView
     menuitem.setIcon(GUIHelper.getIcon("exit.png"));
     menuitem.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-	close();
+        close();
       }
     });
     m_MenuItemFileClose = menuitem;
@@ -869,29 +883,29 @@ public abstract class AbstractMultiView
   public Class[] getSendToClasses() {
     List<Class>		result;
     boolean		add;
-    
+
     result = new ArrayList<Class>();
-    
+
     if (this instanceof SpreadSheetSupporter) {
       add = !isExecuted() || (isExecuted() && (((SpreadSheetSupporter) this).toSpreadSheet() != null));
       if (add)
-	result.add(SpreadSheet.class);
+        result.add(SpreadSheet.class);
     }
-    
+
     if (this instanceof TextSupplier) {
       add = !isExecuted() || (isExecuted() && (((TextSupplier) this).supplyText() != null));
       if (add)
-	result.add(String.class);
+        result.add(String.class);
     }
-    
+
     if (this instanceof ComponentSupplier) {
       add = !isExecuted() || (isExecuted() && (((ComponentSupplier) this).supplyComponent() != null));
       if (add) {
-	result.add(PlaceholderFile.class);
-	result.add(JComponent.class);
+        result.add(PlaceholderFile.class);
+        result.add(JComponent.class);
       }
     }
-    
+
     return result.toArray(new Class[result.size()]);
   }
 
@@ -902,21 +916,21 @@ public abstract class AbstractMultiView
    * @return		true if an object is available for sending
    */
   public boolean hasSendToItem(Class[] cls) {
-    if (    (this instanceof TextSupplier) 
-	 && (((TextSupplier) this).supplyText() != null)
-	 && (SendToActionUtils.isAvailable(new Class[]{String.class}, cls)) )
+    if (    (this instanceof TextSupplier)
+      && (((TextSupplier) this).supplyText() != null)
+      && (SendToActionUtils.isAvailable(new Class[]{String.class}, cls)) )
       return true;
 
-    if (    (this instanceof ComponentSupplier) 
-	 && (((ComponentSupplier) this).supplyComponent() != null)
-	 && (SendToActionUtils.isAvailable(new Class[]{PlaceholderFile.class, JComponent.class}, cls)) )
+    if (    (this instanceof ComponentSupplier)
+      && (((ComponentSupplier) this).supplyComponent() != null)
+      && (SendToActionUtils.isAvailable(new Class[]{PlaceholderFile.class, JComponent.class}, cls)) )
       return true;
 
-    if (    (this instanceof SpreadSheetSupporter) 
-	 && (((SpreadSheetSupporter) this).toSpreadSheet() != null)
-	 && (SendToActionUtils.isAvailable(new Class[]{SpreadSheet.class}, cls)) )
+    if (    (this instanceof SpreadSheetSupporter)
+      && (((SpreadSheetSupporter) this).toSpreadSheet() != null)
+      && (SendToActionUtils.isAvailable(new Class[]{SpreadSheet.class}, cls)) )
       return true;
-    
+
     return false;
   }
 
@@ -942,22 +956,22 @@ public abstract class AbstractMultiView
     else if (this instanceof ComponentSupplier) {
       comp = ((ComponentSupplier) this).supplyComponent();
       if (SendToActionUtils.isAvailable(PlaceholderFile.class, cls)) {
-	if (comp != null) {
-	  result = SendToActionUtils.nextTmpFile("actor-" + getName(), "png");
-	  writer = new PNGWriter();
-	  writer.setFile((PlaceholderFile) result);
-	  writer.setComponent(comp);
-	  try {
-	    writer.generateOutput();
-	  }
-	  catch (Exception e) {
-	    handleException("Failed to write image to " + result + ":", e);
-	    result = null;
-	  }
-	}
+        if (comp != null) {
+          result = SendToActionUtils.nextTmpFile("actor-" + getName(), "png");
+          writer = new PNGWriter();
+          writer.setFile((PlaceholderFile) result);
+          writer.setComponent(comp);
+          try {
+            writer.generateOutput();
+          }
+          catch (Exception e) {
+            handleException("Failed to write image to " + result + ":", e);
+            result = null;
+          }
+        }
       }
       else if (SendToActionUtils.isAvailable(JComponent.class, cls)) {
-	result = comp;
+        result = comp;
       }
     }
 

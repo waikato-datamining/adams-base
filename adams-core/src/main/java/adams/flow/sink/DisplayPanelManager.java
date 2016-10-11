@@ -15,7 +15,7 @@
 
 /*
  * DisplayPanelManager.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -828,6 +828,18 @@ public class DisplayPanelManager
   public ExtensionFileFilter getCustomTextFileFilter() {
     if (m_PanelProvider instanceof TextSupplier)
       return ((TextSupplier) getSelectedPanel()).getCustomTextFileFilter();
+    else
+      return null;
+  }
+
+  /**
+   * Returns the text for the menu item.
+   *
+   * @return		the menu item text, null for default
+   */
+  public String getCustomSupplyTextMenuItemCaption() {
+    if (m_PanelProvider instanceof TextSupplier)
+      return ((TextSupplier) m_PanelProvider).getCustomSupplyTextMenuItemCaption();
     else
       return null;
   }

@@ -936,6 +936,15 @@ public class TextEditorPanel
   }
 
   /**
+   * Returns the text for the menu item.
+   *
+   * @return		the menu item text, null for default
+   */
+  public String getCustomSupplyTextMenuItemCaption() {
+    return null;
+  }
+
+  /**
    * Returns a custom file filter for the file chooser.
    *
    * @return		the file filter, null if to use default one

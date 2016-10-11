@@ -15,7 +15,7 @@
 
 /**
  * PropertiesDisplay.java
- * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.sink;
 
@@ -205,15 +205,20 @@ public class PropertiesDisplay
     result.add(new BaseScrollPane(m_Table), BorderLayout.CENTER);
 
     m_PanelSearch = new SearchPanel(LayoutType.HORIZONTAL, true);
-    m_PanelSearch.addSearchListener(new SearchListener() {
-      @Override
-      public void searchInitiated(SearchEvent e) {
-	m_Table.search(e.getParameters().getSearchString(), e.getParameters().isRegExp());
-      }
-    });
+    m_PanelSearch.addSearchListener((SearchEvent e) ->
+      m_Table.search(e.getParameters().getSearchString(), e.getParameters().isRegExp()));
     result.add(m_PanelSearch, BorderLayout.SOUTH);
     
     return result;
+  }
+
+  /**
+   * Returns the text for the menu item.
+   *
+   * @return		the menu item text, null for default
+   */
+  public String getCustomSupplyTextMenuItemCaption() {
+    return "Save properties as...";
   }
 
   /**
@@ -223,7 +228,7 @@ public class PropertiesDisplay
    */
   @Override
   public ExtensionFileFilter getCustomTextFileFilter() {
-    return new ExtensionFileFilter("XML", "xml");
+    return new ExtensionFileFilter("Properties", "props");
   }
 
   /**
@@ -238,7 +243,7 @@ public class PropertiesDisplay
     result = null;
     
     if (m_Model != null)
-      result = m_Model.getProperties().toStringSimple();
+      result = m_Model.getProperties().toString();
     
     return result;
   }

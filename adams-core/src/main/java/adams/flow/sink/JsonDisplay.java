@@ -15,17 +15,10 @@
 
 /**
  * JsonDisplay.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.sink;
 
-import java.awt.BorderLayout;
-
-import javax.swing.JComponent;
-
-import net.minidev.json.JSONAware;
-import net.minidev.json.JSONObject;
-import net.minidev.json.JSONValue;
 import adams.core.JsonSupporter;
 import adams.core.QuickInfoHelper;
 import adams.flow.core.Token;
@@ -34,6 +27,12 @@ import adams.gui.core.BaseScrollPane;
 import adams.gui.core.ExtensionFileFilter;
 import adams.gui.core.json.JsonTree;
 import adams.gui.core.json.JsonTreeWithPreview;
+import net.minidev.json.JSONAware;
+import net.minidev.json.JSONObject;
+import net.minidev.json.JSONValue;
+
+import javax.swing.JComponent;
+import java.awt.BorderLayout;
 
 /**
  <!-- globalinfo-start -->
@@ -346,6 +345,15 @@ public class JsonDisplay
     }
     
     return result;
+  }
+
+  /**
+   * Returns the text for the menu item.
+   *
+   * @return		the menu item text, null for default
+   */
+  public String getCustomSupplyTextMenuItemCaption() {
+    return "Save JSON as...";
   }
 
   /**

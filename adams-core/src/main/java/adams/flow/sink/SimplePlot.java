@@ -917,6 +917,15 @@ public class SimplePlot
   }
 
   /**
+   * Returns the text for the menu item.
+   *
+   * @return		the menu item text, null for default
+   */
+  public String getCustomSupplyTextMenuItemCaption() {
+    return "Save graph as...";
+  }
+
+  /**
    * Returns a custom file filter for the file chooser.
    *
    * @return		the file filter, null if to use default one

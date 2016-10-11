@@ -15,13 +15,13 @@
 
 /**
  * AbstractTextAndComponentDisplayPanel.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.sink;
 
-import javax.swing.JComponent;
-
 import adams.gui.core.ExtensionFileFilter;
+
+import javax.swing.JComponent;
 
 /**
  * Ancestor for panels that can be created from tokens and supply the
@@ -52,6 +52,15 @@ public abstract class AbstractTextAndComponentDisplayPanel
    * @return		the component, null if none available
    */
   public abstract JComponent supplyComponent();
+
+  /**
+   * Returns the text for the menu item.
+   *
+   * @return		the menu item text, null for default
+   */
+  public String getCustomSupplyTextMenuItemCaption() {
+    return null;
+  }
 
   /**
    * Returns a custom file filter for the file chooser.

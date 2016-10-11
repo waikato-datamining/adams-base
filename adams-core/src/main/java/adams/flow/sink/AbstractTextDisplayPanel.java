@@ -15,7 +15,7 @@
 
 /**
  * AbstractTextDisplayPanel.java
- * Copyright (C) 2010-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.sink;
 
@@ -43,6 +43,15 @@ public abstract class AbstractTextDisplayPanel
    */
   public AbstractTextDisplayPanel(String name) {
     super(name);
+  }
+
+  /**
+   * Returns the text for the menu item.
+   *
+   * @return		the menu item text, null for default
+   */
+  public String getCustomSupplyTextMenuItemCaption() {
+    return null;
   }
 
   /**

@@ -15,7 +15,7 @@
 
 /*
  * AbstractTextualDisplay.java
- * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -42,10 +42,8 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.Date;
 
 /**
@@ -260,11 +258,7 @@ public abstract class AbstractTextualDisplay
     // File
     result = new JMenu("File");
     result.setMnemonic('F');
-    result.addChangeListener(new ChangeListener() {
-      public void stateChanged(ChangeEvent e) {
-	updateMenu();
-      }
-    });
+    result.addChangeListener((ChangeEvent e) -> updateMenu());
 
     // File/Clear
     if (supportsClear()) {
@@ -273,11 +267,7 @@ public abstract class AbstractTextualDisplay
       menuitem.setMnemonic('l');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed N"));
       menuitem.setIcon(GUIHelper.getIcon("new.gif"));
-      menuitem.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  clear();
-	}
-      });
+      menuitem.addActionListener((ActionEvent e) -> clear());
       m_MenuItemFileClear = menuitem;
     }
 
@@ -287,11 +277,7 @@ public abstract class AbstractTextualDisplay
     menuitem.setMnemonic('a');
     menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed S"));
     menuitem.setIcon(GUIHelper.getIcon("save.gif"));
-    menuitem.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	saveAs();
-      }
-    });
+    menuitem.addActionListener((ActionEvent e) -> saveAs());
     m_MenuItemFileSaveAs = menuitem;
 
     // File/Send to
@@ -305,11 +291,7 @@ public abstract class AbstractTextualDisplay
     menuitem.setMnemonic('C');
     menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed Q"));
     menuitem.setIcon(GUIHelper.getIcon("exit.png"));
-    menuitem.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	close();
-      }
-    });
+    menuitem.addActionListener((ActionEvent e) -> close());
     m_MenuItemFileClose = menuitem;
 
     return result;
@@ -432,6 +414,15 @@ public abstract class AbstractTextualDisplay
    */
   protected void close() {
     m_Panel.closeParent();
+  }
+
+  /**
+   * Returns the text for the menu item.
+   *
+   * @return		the menu item text, null for default
+   */
+  public String getCustomSupplyTextMenuItemCaption() {
+    return null;
   }
 
   /**

@@ -15,14 +15,9 @@
 
 /**
  * DOMDisplay.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.sink;
-
-import java.awt.BorderLayout;
-import java.util.logging.Level;
-
-import org.w3c.dom.Node;
 
 import adams.core.QuickInfoHelper;
 import adams.data.conversion.DOMNodeToString;
@@ -30,6 +25,10 @@ import adams.flow.core.Token;
 import adams.gui.core.BasePanel;
 import adams.gui.core.ExtensionFileFilter;
 import adams.gui.core.dom.DOMTreeWithPreview;
+import org.w3c.dom.Node;
+
+import java.awt.BorderLayout;
+import java.util.logging.Level;
 
 /**
  <!-- globalinfo-start -->
@@ -338,6 +337,15 @@ public class DOMDisplay
     m_Tree.setPreviewVisible(m_Preview);
     m_Tree.setSplitterPosition(m_SplitterPosition);
     return m_Tree;
+  }
+
+  /**
+   * Returns the text for the menu item.
+   *
+   * @return		the menu item text, null for default
+   */
+  public String getCustomSupplyTextMenuItemCaption() {
+    return "Save XML as...";
   }
 
   /**
