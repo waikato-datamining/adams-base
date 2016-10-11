@@ -55,6 +55,17 @@ public class PersistentObjectHistory
   /** the superclass. */
   protected Class m_Superclass;
 
+  /** the history of commandlines - used for determining whether object has already been added. */
+  protected List<String> m_CommandLines;
+
+  /**
+   * Initializes members.
+   */
+  protected void initialize() {
+    super.initialize();
+    m_CommandLines = new ArrayList<>();
+  }
+
   /**
    * Sets the superclass to use.
    *
@@ -77,6 +88,28 @@ public class PersistentObjectHistory
   @Override
   protected Object copy(Object obj) {
     return ObjectCopyHelper.copyObject(obj);
+  }
+
+  /**
+   * Adds the object to the history.
+   *
+   * @param obj		the object to add
+   */
+  public synchronized void add(Object obj) {
+    String	cmdline;
+    int		index;
+
+    cmdline = OptionUtils.getCommandLine(obj);
+    index   = m_CommandLines.indexOf(cmdline);
+    if (index > -1) {
+      m_History.remove(index);
+      m_CommandLines.remove(index);
+    }
+    m_CommandLines.add(0, cmdline);
+    while (m_CommandLines.size() > MAX_HISTORY_COUNT)
+      m_CommandLines.remove(m_CommandLines.size() - 1);
+
+    super.add(obj);
   }
 
   /**
