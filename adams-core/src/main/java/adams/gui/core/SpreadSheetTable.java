@@ -295,12 +295,14 @@ public class SpreadSheetTable
     JMenuItem		menuitem;
     final boolean	asc;
     final int           row;
+    final int           actRow;
     final int           col;
     final int           actCol;
 
-    menu = new BasePopupMenu();
-    row  = rowAtPoint(e.getPoint());
-    col  = columnAtPoint(e.getPoint());
+    menu   = new BasePopupMenu();
+    row    = rowAtPoint(e.getPoint());
+    actRow = getActualRow(row);
+    col    = columnAtPoint(e.getPoint());
     if (getShowRowColumn())
       actCol = col - 1;
     else
@@ -406,7 +408,7 @@ public class SpreadSheetTable
     menuitem.addActionListener((ActionEvent ae) -> setOptimalColumnWidth());
     menu.add(menuitem);
 
-    SpreadSheetTablePopupMenuItemHelper.addToPopupMenu(this, menu, false, row, actCol);
+    SpreadSheetTablePopupMenuItemHelper.addToPopupMenu(this, menu, false, actRow, actCol);
 
     if (m_HeaderPopupMenuCustomizer != null)
       m_HeaderPopupMenuCustomizer.customizePopupMenu(e, menu);
@@ -437,16 +439,27 @@ public class SpreadSheetTable
     JMenuItem		menuitem;
     JMenu		submenu;
     final int   	row;
+    final int   	actRow;
     final int[]		rows;
+    final int[]		actRows;
     final int   	col;
+    final int   	actCol;
 
     menu = new BasePopupMenu();
     col  = columnAtPoint(e.getPoint());
-    row  = rowAtPoint(e.getPoint());
+    if (getShowRowColumn())
+      actCol = col - 1;
+    else
+      actCol = col;
+    row    = rowAtPoint(e.getPoint());
+    actRow = getActualRow(row);
     if (getSelectedRows().length == 0)
       rows = new int[]{row};
     else
       rows = getSelectedRows();
+    actRows = new int[rows.length];
+    for (int i = 0; i < rows.length; i++)
+      actRows[i] = getActualRow(rows[i]);
 
     if (getSelectedRowCount() > 1)
       menuitem = new JMenuItem("Copy rows");
@@ -476,7 +489,7 @@ public class SpreadSheetTable
     menuitem.addActionListener((ActionEvent ae) -> {
       SpreadSheet sheet = toSpreadSheet();
       boolean readOnly = isReadOnly();
-      sheet.insertRow(row);
+      sheet.insertRow(actRow);
       setModel(new SpreadSheetTableModel(sheet));
       setReadOnly(readOnly);
       setModified(true);
@@ -489,8 +502,8 @@ public class SpreadSheetTable
     menuitem.addActionListener((ActionEvent ae) -> {
       SpreadSheet sheet = toSpreadSheet();
       boolean readOnly = isReadOnly();
-      for (int i = rows.length - 1; i >= 0; i--)
-	sheet.removeRow(rows[i]);
+      for (int i = actRows.length - 1; i >= 0; i--)
+	sheet.removeRow(actRows[i]);
       setModel(new SpreadSheetTableModel(sheet));
       setReadOnly(readOnly);
       setModified(true);
@@ -516,7 +529,7 @@ public class SpreadSheetTable
     menuitem.addActionListener((ActionEvent ae) -> saveAs(TableRowRange.VISIBLE));
     submenu.add(menuitem);
 
-    SpreadSheetTablePopupMenuItemHelper.addToPopupMenu(this, menu, true, row, col);
+    SpreadSheetTablePopupMenuItemHelper.addToPopupMenu(this, menu, true, actRow, actCol);
 
     menu.addSeparator();
 
