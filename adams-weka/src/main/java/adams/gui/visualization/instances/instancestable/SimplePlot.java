@@ -28,6 +28,7 @@ import adams.flow.core.Actor;
 import adams.flow.source.StorageValue;
 import adams.flow.transformer.ArrayToSequence;
 import adams.flow.transformer.MakePlotContainer;
+import adams.gui.core.BaseFrame;
 import adams.gui.core.GUIHelper;
 import adams.gui.goe.GenericObjectEditorDialog;
 import adams.gui.visualization.instances.InstancesTable;
@@ -63,7 +64,7 @@ public class SimplePlot
    */
   @Override
   public String globalInfo() {
-    return "Allows to generate a histogram from a instances row or column";
+    return "Allows to generate a simple plot from a instances row or column";
   }
 
   /**
@@ -115,6 +116,9 @@ public class SimplePlot
     Instance			inst;
     int				numPoints;
     String			newPoints;
+    int				col;
+    int				row;
+    Object			value;
 
     numPoints = isColumn ? data.numInstances() : data.numAttributes();
     if (numPoints > MAX_POINTS) {
@@ -151,17 +155,19 @@ public class SimplePlot
     // get data from instances
     tmp = new ArrayList<>();
     if (isColumn) {
-      for (i = 0; i < data.numInstances(); i++) {
-	inst = data.instance(i);
-	if (!inst.isMissing(index) && data.attribute(index).isNumeric())
-	  tmp.add(inst.value(index));
+      col = index + 1;
+      for (i = 0; i < table.getRowCount(); i++) {
+	value = table.getValueAt(i, col);
+	if ((value != null) && (Utils.isDouble(value.toString())))
+	  tmp.add(Utils.toDouble(value.toString()));
       }
     }
     else {
-      inst = data.instance(index);
-      for (i = 0; i < data.numAttributes(); i++) {
-	if (!inst.isMissing(i) && data.attribute(i).isNumeric())
-	  tmp.add(inst.value(i));
+      row = index;
+      for (i = 0; i < table.getColumnCount(); i++) {
+	value = table.getValueAt(row, i);
+	if ((value != null) && (Utils.isDouble(value.toString())))
+	  tmp.add(Utils.toDouble(value.toString()));
       }
     }
 
@@ -183,6 +189,7 @@ public class SimplePlot
       @Override
       protected Object doInBackground() throws Exception {
 	Flow flow = new Flow();
+	flow.setDefaultCloseOperation(BaseFrame.DISPOSE_ON_CLOSE);
 
 	StorageValue sv = new StorageValue();
 	sv.setStorageName(new StorageName("values"));
@@ -198,6 +205,7 @@ public class SimplePlot
         Object last = table.getLastSetup(SimplePlot.this.getClass(), true, !isColumn);
 	adams.flow.sink.SimplePlot plot = (adams.flow.sink.SimplePlot) ((adams.flow.sink.SimplePlot) last).shallowCopy();
 	plot.setShortTitle(true);
+	plot.setShowSidePanel(false);
 	plot.setName(title);
         plot.setX(-2);
         plot.setY(-2);

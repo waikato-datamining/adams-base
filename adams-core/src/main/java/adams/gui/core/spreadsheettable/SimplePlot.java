@@ -29,6 +29,7 @@ import adams.flow.core.Actor;
 import adams.flow.source.StorageValue;
 import adams.flow.transformer.ArrayToSequence;
 import adams.flow.transformer.MakePlotContainer;
+import adams.gui.core.BaseFrame;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.SpreadSheetTable;
 import adams.gui.goe.GenericObjectEditorDialog;
@@ -113,6 +114,9 @@ public class SimplePlot
     adams.flow.sink.SimplePlot	last;
     int				numPoints;
     String			newPoints;
+    int				col;
+    int				row;
+    Object			value;
 
     numPoints = isColumn ? sheet.getRowCount() : sheet.getColumnCount();
     if (numPoints > MAX_POINTS) {
@@ -149,15 +153,24 @@ public class SimplePlot
     // get data from spreadsheet
     tmp = new ArrayList<>();
     if (isColumn) {
-      for (i = 0; i < sheet.getRowCount(); i++) {
-	if (sheet.hasCell(i, index) && sheet.getCell(i, index).isNumeric())
-	  tmp.add(sheet.getCell(i, index).toDouble());
+      col = index;
+      if (table.getShowRowColumn())
+	col++;
+      for (i = 0; i < table.getRowCount(); i++) {
+	value = table.getValueAt(i, col);
+	if ((value != null) && (Utils.isDouble(value.toString())))
+	  tmp.add(Utils.toDouble(value.toString()));
       }
     }
     else {
-      for (i = 0; i < sheet.getColumnCount(); i++) {
-	if (sheet.hasCell(index, i) && sheet.getCell(index, i).isNumeric())
-	  tmp.add(sheet.getCell(index, i).toDouble());
+      row = index;
+      col = 0;
+      if (table.getShowRowColumn())
+	col++;
+      for (i = col; i < table.getColumnCount(); i++) {
+	value = table.getValueAt(row, i);
+	if ((value != null) && (Utils.isDouble(value.toString())))
+	  tmp.add(Utils.toDouble(value.toString()));
       }
     }
 
@@ -179,6 +192,7 @@ public class SimplePlot
       @Override
       protected Object doInBackground() throws Exception {
 	Flow flow = new Flow();
+	flow.setDefaultCloseOperation(BaseFrame.DISPOSE_ON_CLOSE);
 
 	StorageValue sv = new StorageValue();
 	sv.setStorageName(new StorageName("values"));
@@ -194,6 +208,7 @@ public class SimplePlot
         Object last = table.getLastSetup(SimplePlot.this.getClass(), true, !isColumn);
 	adams.flow.sink.SimplePlot plot = (adams.flow.sink.SimplePlot) ((adams.flow.sink.SimplePlot) last).shallowCopy();
 	plot.setShortTitle(true);
+	plot.setShowSidePanel(false);
 	plot.setName(title);
         plot.setX(-2);
         plot.setY(-2);
