@@ -62,7 +62,7 @@ public class SimplePlot
    */
   @Override
   public String globalInfo() {
-    return "Allows to generate a histogram from a spreadsheet row or column";
+    return "Allows to generate a simple plot from a spreadsheet row or column";
   }
 
   /**
