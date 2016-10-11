@@ -19,6 +19,10 @@ General.DefaultDataTableHeight=150
 # and no class attribute is present
 General.ClassAttributeHeuristic=adams.data.weka.classattribute.LastAttribute
 
+# whether undo is enabled
+# (true|false)
+General.UndoEnabled=true
+
 # the default filter
 # (superclass: weka.filters.Filter)
 Preprocess.Filter=weka.filters.AllFilter

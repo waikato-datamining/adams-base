@@ -352,7 +352,7 @@ public class InvestigatorPanel
       // Edit/Undo enabled
       m_MenuItemEditUndoEnabled = new JCheckBoxMenuItem("Undo enabled");
       m_MenuItemEditUndoEnabled.setIcon(GUIHelper.getIcon("undo.gif"));
-      m_MenuItemEditUndoEnabled.setSelected(true);
+      m_MenuItemEditUndoEnabled.setSelected(getProperties().getBoolean("General.UndoEnabled", true));
       m_MenuItemEditUndoEnabled.addActionListener((ActionEvent e) -> toggleUndo());
       menu.add(m_MenuItemEditUndoEnabled);
 
