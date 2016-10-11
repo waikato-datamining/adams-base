@@ -20,6 +20,7 @@
 package adams.gui.workspace;
 
 import adams.core.MessageCollection;
+import adams.core.Utils;
 import adams.core.io.PlaceholderFile;
 import adams.data.io.input.AbstractObjectReader;
 import adams.data.io.output.AbstractObjectWriter;
@@ -118,7 +119,9 @@ public abstract class AbstractWorkspaceHelper<P extends AbstractWorkspacePanel, 
     P		result;
     Object	data;
 
-    data   = serialize(panel);
+    data = Utils.deepCopy(serialize(panel), true);
+    if (data == null)
+      throw new IllegalStateException("Failed to copy workspace!");
     result = manager.newWorkspace(false);
     deserialize(result, data, errors);
 
