@@ -15,7 +15,7 @@
 
 /*
  * SimplePlot.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -27,9 +27,11 @@ import adams.core.io.FileUtils;
 import adams.core.io.FileWriter;
 import adams.core.io.PlaceholderFile;
 import adams.data.DecimalFormatString;
+import adams.data.io.output.CsvSpreadSheetWriter;
 import adams.data.sequence.XYSequence;
 import adams.data.sequence.XYSequencePoint;
 import adams.data.sequence.XYSequencePointComparator.Comparison;
+import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.container.SequencePlotterContainer;
 import adams.flow.container.SequencePlotterContainer.ContentType;
 import adams.flow.core.ActorUtils;
@@ -42,6 +44,7 @@ import adams.flow.sink.sequenceplotter.SequencePlotSequence;
 import adams.flow.sink.sequenceplotter.SequencePlotterPanel;
 import adams.flow.sink.sequenceplotter.SimplePlotUpdater;
 import adams.gui.core.BasePanel;
+import adams.gui.core.ExtensionFileFilter;
 import adams.gui.visualization.core.AbstractColorProvider;
 import adams.gui.visualization.core.AxisPanelOptions;
 import adams.gui.visualization.core.DefaultColorProvider;
@@ -56,6 +59,7 @@ import adams.gui.visualization.sequence.XYSequencePaintlet;
 
 import javax.swing.JComponent;
 import java.awt.BorderLayout;
+import java.io.StringWriter;
 import java.util.HashMap;
 
 /**
@@ -82,132 +86,132 @@ import java.util.HashMap;
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- * 
+ *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: SimplePlot
  * </pre>
- * 
+ *
  * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- * 
+ *
  * <pre>-skip &lt;boolean&gt; (property: skip)
  * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
  * &nbsp;&nbsp;&nbsp;as it is.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
  * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
  * &nbsp;&nbsp;&nbsp; useful for critical actors.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-silent &lt;boolean&gt; (property: silent)
  * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-short-title &lt;boolean&gt; (property: shortTitle)
  * &nbsp;&nbsp;&nbsp;If enabled uses just the name for the title instead of the actor's full 
  * &nbsp;&nbsp;&nbsp;name.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-display-in-editor &lt;boolean&gt; (property: displayInEditor)
  * &nbsp;&nbsp;&nbsp;If enabled displays the panel in a tab in the flow editor rather than in 
  * &nbsp;&nbsp;&nbsp;a separate frame.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-width &lt;int&gt; (property: width)
  * &nbsp;&nbsp;&nbsp;The width of the dialog.
  * &nbsp;&nbsp;&nbsp;default: 800
  * &nbsp;&nbsp;&nbsp;minimum: -1
  * </pre>
- * 
+ *
  * <pre>-height &lt;int&gt; (property: height)
  * &nbsp;&nbsp;&nbsp;The height of the dialog.
  * &nbsp;&nbsp;&nbsp;default: 350
  * &nbsp;&nbsp;&nbsp;minimum: -1
  * </pre>
- * 
+ *
  * <pre>-x &lt;int&gt; (property: x)
  * &nbsp;&nbsp;&nbsp;The X position of the dialog (&gt;=0: absolute, -1: left, -2: center, -3: right
  * &nbsp;&nbsp;&nbsp;).
  * &nbsp;&nbsp;&nbsp;default: -1
  * &nbsp;&nbsp;&nbsp;minimum: -3
  * </pre>
- * 
+ *
  * <pre>-y &lt;int&gt; (property: y)
  * &nbsp;&nbsp;&nbsp;The Y position of the dialog (&gt;=0: absolute, -1: top, -2: center, -3: bottom
  * &nbsp;&nbsp;&nbsp;).
  * &nbsp;&nbsp;&nbsp;default: -1
  * &nbsp;&nbsp;&nbsp;minimum: -3
  * </pre>
- * 
+ *
  * <pre>-writer &lt;adams.gui.print.JComponentWriter&gt; (property: writer)
  * &nbsp;&nbsp;&nbsp;The writer to use for generating the graphics output.
  * &nbsp;&nbsp;&nbsp;default: adams.gui.print.NullWriter
  * </pre>
- * 
+ *
  * <pre>-paintlet &lt;adams.gui.visualization.sequence.XYSequencePaintlet&gt; (property: paintlet)
  * &nbsp;&nbsp;&nbsp;The paintlet to use for painting the data.
  * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.sequence.CirclePaintlet
  * </pre>
- * 
+ *
  * <pre>-overlay-paintlet &lt;adams.gui.visualization.sequence.XYSequencePaintlet&gt; (property: overlayPaintlet)
  * &nbsp;&nbsp;&nbsp;The paintlet to use for painting the overlay data (if any).
  * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.sequence.NullPaintlet
  * </pre>
- * 
+ *
  * <pre>-mouse-click-action &lt;adams.flow.sink.sequenceplotter.MouseClickAction&gt; (property: mouseClickAction)
  * &nbsp;&nbsp;&nbsp;The action to use for mouse clicks on the canvas.
  * &nbsp;&nbsp;&nbsp;default: adams.flow.sink.sequenceplotter.NullClickAction
  * </pre>
- * 
+ *
  * <pre>-color-provider &lt;adams.gui.visualization.core.AbstractColorProvider&gt; (property: colorProvider)
  * &nbsp;&nbsp;&nbsp;The color provider in use for generating the colors for the various plots.
  * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.core.DefaultColorProvider
  * </pre>
- * 
+ *
  * <pre>-title &lt;java.lang.String&gt; (property: title)
  * &nbsp;&nbsp;&nbsp;The title for the border around the plot.
  * &nbsp;&nbsp;&nbsp;default: Plot
  * </pre>
- * 
+ *
  * <pre>-axis-x &lt;adams.gui.visualization.core.AxisPanelOptions&gt; (property: axisX)
  * &nbsp;&nbsp;&nbsp;The setup for the X axis.
  * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.core.AxisPanelOptions -label x -tick-generator \"adams.gui.visualization.core.axis.FancyTickGenerator -num-ticks 20\" -nth-value 2 -width 40 -custom-format 0.0
  * </pre>
- * 
+ *
  * <pre>-axis-y &lt;adams.gui.visualization.core.AxisPanelOptions&gt; (property: axisY)
  * &nbsp;&nbsp;&nbsp;The setup for the Y axis.
  * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.core.AxisPanelOptions -label y -tick-generator adams.gui.visualization.core.axis.FancyTickGenerator -nth-value 2 -width 60 -custom-format 0.0
  * </pre>
- * 
+ *
  * <pre>-show-side-panel &lt;boolean&gt; (property: showSidePanel)
  * &nbsp;&nbsp;&nbsp;If enabled, the side panel with the plot names is visible.
  * &nbsp;&nbsp;&nbsp;default: true
  * </pre>
- * 
+ *
  * <pre>-output &lt;adams.core.io.PlaceholderFile&gt; (property: outputFile)
  * &nbsp;&nbsp;&nbsp;The file to write the plot containers to (in CSV format); does not store 
  * &nbsp;&nbsp;&nbsp;the meta-data, as it can change from container to container; ignored if 
  * &nbsp;&nbsp;&nbsp;pointing to a directory.
  * &nbsp;&nbsp;&nbsp;default: ${CWD}
  * </pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
 public class SimplePlot
-  extends AbstractGraphicalDisplay 
-  implements DisplayPanelProvider, FileWriter, ClassCrossReference {
+  extends AbstractGraphicalDisplay
+  implements DisplayPanelProvider, FileWriter, ClassCrossReference, TextSupplier {
 
   /** for serialization. */
   private static final long serialVersionUID = 3238389451500168650L;
@@ -241,7 +245,7 @@ public class SimplePlot
 
   /** the file to save the plot containers to. */
   protected PlaceholderFile m_OutputFile;
-  
+
   /** whether to use an output file. */
   protected Boolean m_UseOutputFile;
 
@@ -414,17 +418,17 @@ public class SimplePlot
 
   /**
    * Sets the mouse click action to use.
-   * 
+   *
    * @param value	the action
    */
   public void setMouseClickAction(MouseClickAction value) {
     m_MouseClickAction = value;
     reset();
   }
-  
+
   /**
    * Returns the current mouse click action in use.
-   * 
+   *
    * @return		the action
    */
   public MouseClickAction getMouseClickAction() {
@@ -673,8 +677,8 @@ public class SimplePlot
    * 			displaying in the GUI or for listing the options.
    */
   public String outputFileTipText() {
-    return 
-	"The file to write the plot containers to (in CSV format); does not "
+    return
+      "The file to write the plot containers to (in CSV format); does not "
 	+ "store the meta-data, as it can change from container to container; "
 	+ "ignored if pointing to a directory.";
   }
@@ -722,10 +726,10 @@ public class SimplePlot
   public Class[] accepts() {
     return new Class[]{SequencePlotterContainer.class};
   }
-  
+
   /**
    * Writes the plot container to the output file.
-   * 
+   *
    * @param name	the name of the plot
    * @param type	the type of plot
    * @param x		the X value
@@ -740,9 +744,9 @@ public class SimplePlot
     boolean		result;
     StringBuilder	line;
     int			decimals;
-    
+
     result = true;
-    
+
     // header?
     if (!m_OutputFile.exists()) {
       line = new StringBuilder();
@@ -769,7 +773,7 @@ public class SimplePlot
       line.append("Y-error-high");
       result = FileUtils.writeToFile(m_OutputFile.getAbsolutePath(), line.toString(), false);
     }
-    
+
     // data
     if (result) {
       decimals = 12;
@@ -822,7 +826,7 @@ public class SimplePlot
       }
       result = FileUtils.writeToFile(m_OutputFile.getAbsolutePath(), line.toString(), true);
     }
-    
+
     return result;
   }
 
@@ -848,7 +852,7 @@ public class SimplePlot
     Double[]			errorY;
     ContentType			type;
     HashMap<String,Object>	meta;
-    
+
 
     plotCont = (SequencePlotterContainer) token.getPayload();
     plotName = (String) plotCont.getValue(SequencePlotterContainer.VALUE_PLOTNAME);
@@ -873,7 +877,7 @@ public class SimplePlot
 	throw new IllegalStateException("Unhandled plot container content type: " + type);
     }
     manager.startUpdate();
-    
+
     // find or create new plot
     if (manager.indexOf(plotName) == -1) {
       seq  = new SequencePlotSequence();
@@ -913,6 +917,43 @@ public class SimplePlot
   }
 
   /**
+   * Returns a custom file filter for the file chooser.
+   *
+   * @return		the file filter, null if to use default one
+   */
+  public ExtensionFileFilter getCustomTextFileFilter() {
+    return new ExtensionFileFilter("CSV file", "csv");
+  }
+
+  /**
+   * Supplies the text. May get called even if actor hasn't been executed yet.
+   *
+   * @return		the text, null if none available
+   */
+  public String supplyText() {
+    XYSequenceContainerManager	manager;
+    SequencePlotSequence	seq;
+    SpreadSheet 		sheet;
+    CsvSpreadSheetWriter 	writer;
+    StringWriter 		swriter;
+
+    if (m_Panel == null)
+      return null;
+
+    manager = ((SequencePlotterPanel) m_Panel).getContainerManager();
+    if (manager.countVisible() == 0)
+      return null;
+
+    seq   = (SequencePlotSequence) manager.getVisible(0).getData();
+    sheet = seq.toSpreadSheet();
+    swriter = new StringWriter();
+    writer = new CsvSpreadSheetWriter();
+    writer.write(sheet, swriter);
+
+    return swriter.toString();
+  }
+
+  /**
    * Creates a new display panel for the token.
    *
    * @param token	the token to display in a new panel, can be null
@@ -921,25 +962,25 @@ public class SimplePlot
   @Override
   public AbstractDisplayPanel createDisplayPanel(Token token) {
     AbstractDisplayPanel	result;
-    
-    result = new AbstractComponentDisplayPanel(getClass().getSimpleName()) {
+
+    result = new AbstractTextAndComponentDisplayPanel(getClass().getSimpleName()) {
       private static final long serialVersionUID = 4356468458332186521L;
       protected SequencePlotterPanel m_Panel;
       protected AbstractPlotUpdater m_PlotUpdater;
       @Override
       protected void initGUI() {
-        super.initGUI();
+	super.initGUI();
 	m_PlotUpdater = new SimplePlotUpdater();
 	((SimplePlotUpdater) m_PlotUpdater).setUpdateInterval(-1);
 	m_Panel = new SequencePlotterPanel(getTitle());
-        m_Panel.setPaintlet(getPaintlet());
-        ActorUtils.updateFlowAwarePaintlet(m_Panel.getPaintlet(), SimplePlot.this);
-        m_Panel.setMouseClickAction(m_MouseClickAction);
+	m_Panel.setPaintlet(getPaintlet());
+	ActorUtils.updateFlowAwarePaintlet(m_Panel.getPaintlet(), SimplePlot.this);
+	m_Panel.setMouseClickAction(m_MouseClickAction);
 	m_Panel.setOverlayPaintlet(getOverlayPaintlet());
 	ActorUtils.updateFlowAwarePaintlet(m_Panel.getOverlayPaintlet(), SimplePlot.this);
-        m_AxisX.configure(m_Panel.getPlot(), Axis.BOTTOM);
-        m_AxisY.configure(m_Panel.getPlot(), Axis.LEFT);
-        m_Panel.setColorProvider(m_ColorProvider);
+	m_AxisX.configure(m_Panel.getPlot(), Axis.BOTTOM);
+	m_AxisY.configure(m_Panel.getPlot(), Axis.LEFT);
+	m_Panel.setColorProvider(m_ColorProvider);
 	m_Panel.setSidePanelVisible(m_ShowSidePanel);
 	add(m_Panel, BorderLayout.CENTER);
       }
@@ -1009,8 +1050,35 @@ public class SimplePlot
       public JComponent supplyComponent() {
 	return m_Panel;
       }
+      @Override
+      public ExtensionFileFilter getCustomTextFileFilter() {
+	return new ExtensionFileFilter("CSV file", "csv");
+      }
+      @Override
+      public String supplyText() {
+	XYSequenceContainerManager manager;
+	SequencePlotSequence seq;
+	SpreadSheet sheet;
+	CsvSpreadSheetWriter writer;
+	StringWriter swriter;
+
+	if (m_Panel == null)
+	  return null;
+
+	manager = m_Panel.getContainerManager();
+	if (manager.countVisible() == 0)
+	  return null;
+
+	seq   = (SequencePlotSequence) manager.getVisible(0).getData();
+	sheet = seq.toSpreadSheet();
+	swriter = new StringWriter();
+	writer = new CsvSpreadSheetWriter();
+	writer.write(sheet, swriter);
+
+	return swriter.toString();
+      }
     };
-    
+
     if (token != null)
       result.display(token);
 
