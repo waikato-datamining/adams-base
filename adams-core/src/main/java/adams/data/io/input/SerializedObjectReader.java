@@ -66,7 +66,7 @@ public class SerializedObjectReader
    */
   @Override
   public String[] getFormatExtensions() {
-    return new String[]{"model"};
+    return new String[]{"model", "ser"};
   }
 
   /**
