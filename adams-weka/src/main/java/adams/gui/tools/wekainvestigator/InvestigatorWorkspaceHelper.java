@@ -21,13 +21,15 @@
 package adams.gui.tools.wekainvestigator;
 
 import adams.core.MessageCollection;
-import adams.gui.chooser.BaseFileChooser;
-import adams.gui.core.ExtensionFileFilter;
+import adams.gui.tools.wekainvestigator.data.DataContainer;
+import adams.gui.tools.wekainvestigator.tab.AbstractInvestigatorTab;
 import adams.gui.workspace.AbstractSerializableWorkspaceManagerPanel;
 import adams.gui.workspace.AbstractWorkspaceHelper;
 
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Helper class for Weka Investigator workspaces.
@@ -36,82 +38,80 @@ import java.io.ObjectOutputStream;
  * @version $Revision$
  */
 public class InvestigatorWorkspaceHelper
-  extends AbstractWorkspaceHelper<InvestigatorPanel, AbstractSerializableWorkspaceManagerPanel<InvestigatorPanel, InvestigatorPanelHandler>, InvestigatorPanelHandler> {
+  extends AbstractWorkspaceHelper<InvestigatorPanel, AbstractSerializableWorkspaceManagerPanel<InvestigatorPanel>> {
+
+  public static final String KEY_DATA = "data";
+
+  public static final String KEY_TABS = "tabs";
 
   /**
-   * Returns all available handlers. If a default handler is available, this should be listed last.
-   *
-   * @throws Exception if instantiation of handlers fails
-   * @return the handlers
-   */
-  @Override
-  protected InvestigatorPanelHandler[] getHandlers() throws Exception {
-    return new InvestigatorPanelHandler[]{new InvestigatorPanelHandler()};
-  }
-
-  /**
-   * Serializes the panel instance to the output stream.
+   * Generates a view of the panel that can be serialized.
    *
    * @param panel	the panel to serialize
-   * @param name	the name of the panel
-   * @param oos		the output stream
-   * @throws Exception	if serialization fails
+   * @return		the data to serialize
    */
   @Override
-  protected void serialize(InvestigatorPanel panel, String name, ObjectOutputStream oos) throws Exception {
-    InvestigatorPanelHandler	handler;
+  public Object serialize(InvestigatorPanel panel) {
+    Map<String,Object> 		result;
+    List<Object> 		list;
+    int				i;
+    AbstractInvestigatorTab 	tab;
 
-    handler = new InvestigatorPanelHandler();
+    result = new HashMap<>();
 
-    // name
-    oos.writeUTF(name);
+    // data
+    list = new ArrayList<>();
+    list.addAll(panel.getData());
+    result.put(KEY_DATA, list);
 
-    // panel
-    oos.writeObject(handler.serialize(panel));
+    // tabs
+    list = new ArrayList<>();
+    for (i = 0; i < panel.getTabbedPane().getTabCount(); i++) {
+      tab = (AbstractInvestigatorTab) panel.getTabbedPane().getComponentAt(i);
+      list.add(tab.getClass().getName());
+      list.add(tab.serialize());
+    }
+    result.put(KEY_TABS, list);
+
+    return result;
   }
 
   /**
-   * Deserializes an panel instance from the input stream.
+   * Deserializes the data and configures the panel.
    *
-   * @param ois		the input stream to read
+   * @param panel	the panel to update
+   * @param data	the serialized data to restore the panel with
    * @param errors	for storing errors
-   * @return		the name (= 0) and the panel instance (= 1)
-   * @throws Exception	if deserialization fails
    */
   @Override
-  protected Object[] deserialize(ObjectInputStream ois, MessageCollection errors) throws Exception {
-    Object[]			result;
-    InvestigatorPanelHandler	handler;
+  public void deserialize(InvestigatorPanel panel, Object data, MessageCollection errors) {
+    Map<String,Object>			items;
+    List<Object>			list;
+    int					i;
+    Class				cls;
+    AbstractInvestigatorTab		tab;
 
-    result  = new Object[2];
-    handler = new InvestigatorPanelHandler();
+    items = (Map<String,Object>) data;
 
-    // name
-    result[0] = ois.readUTF();
+    // data
+    list = (List<Object>) items.get(KEY_DATA);
+    for (Object obj: list)
+      panel.getData().add((DataContainer) obj);
 
-    // panel
-    result[1] = new InvestigatorPanel();
-    handler.deserialize((InvestigatorPanel) result[1], ois.readObject(), errors);
-
-    return result;
-  }
-
-  /**
-   * Creates a filechooser for loading/saving workspaces.
-   *
-   * @return the filechooser
-   */
-  @Override
-  public BaseFileChooser newFileChooser() {
-    BaseFileChooser	result;
-    ExtensionFileFilter	filter;
-
-    result = new BaseFileChooser();
-    filter = new ExtensionFileFilter("Weka Investigator workspace", "wiws");
-    result.addChoosableFileFilter(filter);
-    result.setFileFilter(filter);
-    result.setAutoAppendExtension(true);
-
-    return result;
+    // tabs
+    list = (List<Object>) items.get(KEY_TABS);
+    i = 0;
+    while (i < list.size()) {
+      try {
+	cls = Class.forName((String) list.get(i));
+	tab = (AbstractInvestigatorTab) cls.newInstance();
+	panel.getTabbedPane().addTab(tab, false);
+	tab.deserialize(list.get(i + 1), errors);
+      }
+      catch (Exception e) {
+	errors.add("Failed to deserialize data (" + (i) + "-" + (i+2) + ")!", e);
+      }
+      i += 2;
+    }
   }
 }

@@ -21,7 +21,10 @@ package adams.gui.workspace;
 
 import adams.core.MessageCollection;
 import adams.core.Utils;
+import adams.data.io.input.AbstractObjectReader;
+import adams.data.io.output.AbstractObjectWriter;
 import adams.gui.chooser.BaseFileChooser;
+import adams.gui.chooser.SerializationFileChooser;
 import adams.gui.core.GUIHelper;
 
 import javax.swing.JButton;
@@ -36,7 +39,7 @@ import java.io.File;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public abstract class AbstractSerializableWorkspaceManagerPanel<P extends AbstractWorkspacePanel, S extends SerializablePanelHandler<P>>
+public abstract class AbstractSerializableWorkspaceManagerPanel<P extends AbstractWorkspacePanel>
   extends AbstractWorkspaceManagerPanel<P> {
 
   /** for serialization. */
@@ -49,10 +52,10 @@ public abstract class AbstractSerializableWorkspaceManagerPanel<P extends Abstra
   protected JButton m_ButtonWorkspace;
 
   /** the workspace helper. */
-  protected AbstractWorkspaceHelper<P, AbstractSerializableWorkspaceManagerPanel<P, S>, S> m_WorkspaceHelper;
+  protected AbstractWorkspaceHelper<P, AbstractSerializableWorkspaceManagerPanel<P>> m_WorkspaceHelper;
 
   /** the file chooser for the workspaces. */
-  protected BaseFileChooser m_WorkspaceFileChooser;
+  protected SerializationFileChooser m_WorkspaceFileChooser;
   
   @Override
   protected void initialize() {
@@ -108,7 +111,7 @@ public abstract class AbstractSerializableWorkspaceManagerPanel<P extends Abstra
    *
    * @return		the workspace helper
    */
-  protected abstract AbstractWorkspaceHelper<P, AbstractSerializableWorkspaceManagerPanel<P, S>, S> newWorkspaceHelper();
+  protected abstract AbstractWorkspaceHelper<P, AbstractSerializableWorkspaceManagerPanel<P>> newWorkspaceHelper();
 
   /**
    * Copies a workspace.
@@ -119,18 +122,20 @@ public abstract class AbstractSerializableWorkspaceManagerPanel<P extends Abstra
    * Opens a workspace.
    */
   protected void openWorkspace() {
-    int	 		retVal;
-    File 		file;
-    MessageCollection	errors;
+    int	 			retVal;
+    File 			file;
+    AbstractObjectReader	reader;
+    MessageCollection		errors;
     
     retVal = m_WorkspaceFileChooser.showOpenDialog(this);
     if (retVal != BaseFileChooser.APPROVE_OPTION)
       return;
     
     file   = m_WorkspaceFileChooser.getSelectedFile();
+    reader = m_WorkspaceFileChooser.getReader();
     errors = new MessageCollection();
     try {
-      m_WorkspaceHelper.read(file, this, errors);
+      m_WorkspaceHelper.read(file, reader, this, errors);
       if (!errors.isEmpty())
 	GUIHelper.showErrorMessage(
 	  this,
@@ -147,16 +152,18 @@ public abstract class AbstractSerializableWorkspaceManagerPanel<P extends Abstra
    * Saves the current workspace.
    */
   public void saveWorkspace() {
-    int		 	retVal;
-    File 		file;
+    int		 		retVal;
+    File 			file;
+    AbstractObjectWriter	writer;
     
     retVal = m_WorkspaceFileChooser.showSaveDialog(this);
     if (retVal != BaseFileChooser.APPROVE_OPTION)
       return;
 
-    file = m_WorkspaceFileChooser.getSelectedFile();
+    file   = m_WorkspaceFileChooser.getSelectedFile();
+    writer = m_WorkspaceFileChooser.getWriter();
     try {
-      m_WorkspaceHelper.write(this, file);
+      m_WorkspaceHelper.write(this, file, writer);
     }
     catch (Exception e) {
       GUIHelper.showErrorMessage(

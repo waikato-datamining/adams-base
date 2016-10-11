@@ -112,7 +112,7 @@ public abstract class AbstractWorkspaceManagerPanel<T extends AbstractWorkspaceP
         initial);
       if (name == null)
         return;
-      addPanel(newWorkspace(), name);
+      addPanel(newWorkspace(true), name);
     });
     m_PanelButtons.add(m_ButtonAdd);
 
@@ -137,7 +137,7 @@ public abstract class AbstractWorkspaceManagerPanel<T extends AbstractWorkspaceP
   @Override
   protected void finishInit() {
     super.finishInit();
-    SwingUtilities.invokeLater(() -> addPanel(newWorkspace(), getDefaultWorkspaceName()));
+    SwingUtilities.invokeLater(() -> addPanel(newWorkspace(true), getDefaultWorkspaceName()));
   }
 
   /**
@@ -150,9 +150,10 @@ public abstract class AbstractWorkspaceManagerPanel<T extends AbstractWorkspaceP
   /**
    * Returns a new workspace instance.
    *
+   * @param init	whether to initialize the workspace
    * @return		the workspace
    */
-  protected abstract T newWorkspace();
+  protected abstract T newWorkspace(boolean init);
 
   /**
    * Removes all panels.

@@ -58,10 +58,11 @@ public class MultiExperimenter
   /**
    * Returns a new workspace instance.
    *
+   * @param init	whether to initialize the workspace
    * @return		the workspace
    */
   @Override
-  protected ExperimenterPanel newWorkspace() {
+  protected ExperimenterPanel newWorkspace(boolean init) {
     return new ExperimenterPanel();
   }
 

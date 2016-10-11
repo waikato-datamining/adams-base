@@ -19,21 +19,13 @@
  */
 package adams.gui.workspace;
 
-import adams.core.ClassLocator;
 import adams.core.MessageCollection;
-import adams.core.io.FileUtils;
-import adams.gui.chooser.BaseFileChooser;
+import adams.core.io.PlaceholderFile;
+import adams.data.io.input.AbstractObjectReader;
+import adams.data.io.output.AbstractObjectWriter;
+import adams.gui.chooser.SerializationFileChooser;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.util.HashMap;
 
 /**
  * Helper class for loading/saving workspaces.
@@ -41,151 +33,96 @@ import java.util.HashMap;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public abstract class AbstractWorkspaceHelper<P extends AbstractWorkspacePanel, M extends AbstractWorkspaceManagerPanel<P>, H extends SerializablePanelHandler<P>> {
+public abstract class AbstractWorkspaceHelper<P extends AbstractWorkspacePanel, M extends AbstractWorkspaceManagerPanel<P>> {
 
   /**
-   * the additional associations between panels and handlers.
-   */
-  protected HashMap<Class, H> m_AdditionalHandlers;
-
-  /**
-   * Initializes the helper.
-   */
-  protected AbstractWorkspaceHelper() {
-    super();
-    m_AdditionalHandlers = new HashMap<>();
-  }
-
-  /**
-   * Registers an additional handler for a panel.
-   *
-   * @param panel the panel to register the handler for
-   * @param handler       the handler to register
-   */
-  public void registerAdditionalHandler(Class panel, H handler) {
-    if (!ClassLocator.isSubclass(AbstractWorkspacePanel.class, panel))
-      throw new IllegalArgumentException(
-	"Panel class '" + panel.getName() + "' does not implement '" + AbstractWorkspacePanel.class.getName() + "'!");
-    m_AdditionalHandlers.put(panel, handler);
-  }
-
-  /**
-   * Returns all available handlers. If a default handler is available, this should be listed last.
-   *
-   * @throws Exception if instantiation of handlers fails
-   * @return the handlers
-   */
-  protected abstract H[] getHandlers() throws Exception;
-
-  /**
-   * Serializes the panel instance to the output stream.
+   * Returns the object that represents the panel's serialized state.
    *
    * @param panel	the panel to serialize
-   * @param name	the name of the panel
-   * @param oos		the output stream
+   * @return		the object to serialize
    * @throws Exception	if serialization fails
    */
-  protected abstract void serialize(P panel, String name, ObjectOutputStream oos) throws Exception;
+  protected abstract Object serialize(P panel) throws Exception;
 
   /**
    * Saves the panel session to the given file.
    *
-   * @param manager the panel to save
-   * @param file     the file to save the workspace to
-   * @throws Exception if saving fails
+   * @param manager 	the panel to save
+   * @param file     	the file to save the workspace to
+   * @return		null if successful, otherwise error message
+   * @throws Exception 	if serialization/saving fails
    */
-  public void write(M manager, File file) throws Exception {
-    ObjectOutputStream 	oos;
-    FileOutputStream 	fos;
+  public String write(M manager, File file, AbstractObjectWriter writer) throws Exception {
     int 		i;
-    P 			panel;
-    String 		name;
+    Object[][]		data;
 
-    fos = new FileOutputStream(file);
-    oos = new ObjectOutputStream(new BufferedOutputStream(fos));
-
-    oos.writeObject(manager.getEntryPanel().count());
+    data = new Object[manager.getEntryPanel().count()][2];
     for (i = 0; i < manager.getEntryPanel().count(); i++) {
-      name = manager.getEntryPanel().getEntryName(i);
-      panel = (P) manager.getEntryPanel().getEntry(i);
-      serialize(panel, name, oos);
+      data[i][0] = manager.getEntryPanel().getEntryName(i);
+      data[i][1] = serialize((P) manager.getEntryPanel().getEntry(i));
     }
 
-    FileUtils.closeQuietly(oos);
-    FileUtils.closeQuietly(fos);
+    return writer.write(new PlaceholderFile(file), data);
   }
 
   /**
-   * Deserializes an panel instance from the input stream.
+   * Deserializes the data for the panel.
    *
-   * @param ois		the input stream to read
+   * @param panel	the panel to populate
+   * @param data	the data to deserialize
    * @param errors	for storing errors
-   * @return		the name (= 0) and the panel instance (= 1)
    * @throws Exception	if deserialization fails
    */
-  protected abstract Object[] deserialize(ObjectInputStream ois, MessageCollection errors) throws Exception;
+  protected abstract void deserialize(P panel, Object data, MessageCollection errors) throws Exception;
 
   /**
    * Reads the session and initializes the manager panel.
    *
    * @param file	the file to load the session from
+   * @param reader	the reader to use for loading the serialized file
    * @param manager	the manager panel to initialize with the session
    * @param errors	for storing errors
    * @throws Exception 	if loading fails
    */
-  public void read(File file, M manager, MessageCollection errors) throws Exception {
-    ObjectInputStream 	ois;
-    FileInputStream 	fis;
+  public void read(File file, AbstractObjectReader reader, M manager, MessageCollection errors) throws Exception {
     int 		i;
     P 			panel;
     String 		name;
-    int 		panelCount;
-    Object[] 		objs;
+    Object[][] 		data;
 
-    errors = new MessageCollection();
-    fis    = new FileInputStream(file);
-    ois    = new ObjectInputStream(new BufferedInputStream(fis));
-
-    manager.getEntryPanel().clear();
-    panelCount = (Integer) ois.readObject();
-    for (i = 0; i < panelCount; i++) {
-      objs = deserialize(ois, errors);
-      name   = (String) objs[0];
-      panel = (P) objs[1];
-      manager.addPanel(panel, name);
+    data = (Object[][]) reader.read(new PlaceholderFile(file));
+    if (data == null) {
+      errors.add("Failed to read data from: " + file);
+      return;
     }
 
-    FileUtils.closeQuietly(ois);
-    FileUtils.closeQuietly(fis);
+    manager.getEntryPanel().clear();
+    for (i = 0; i < data.length; i++) {
+      name  = (String) data[i][0];
+      panel = manager.newWorkspace(false);
+      deserialize(panel, data[i][1], errors);
+      manager.getEntryPanel().addEntry(name, panel);
+    }
   }
 
   /**
    * Copies a panel.
    *
+   * @param manager	the manager panel to use
    * @param panel	the panel to copy
    * @param errors	for storing errors
    * @return		the copy
    * @throws Exception	if copying fails
    */
-  public P copy(P panel, MessageCollection errors) throws Exception {
-    Object[] 			objs;
-    ByteArrayOutputStream	bos;
-    ObjectOutputStream		oos;
-    byte[]			data;
-    ByteArrayInputStream	bis;
-    ObjectInputStream		ois;
+  public P copy(M manager, P panel, MessageCollection errors) throws Exception {
+    P		result;
+    Object	data;
 
-    errors = new MessageCollection();
-    bos = new ByteArrayOutputStream();
-    oos = new ObjectOutputStream(bos);
-    serialize(panel, "dummy", oos);
-    data = bos.toByteArray();
+    data   = serialize(panel);
+    result = manager.newWorkspace(false);
+    deserialize(result, data, errors);
 
-    bis = new ByteArrayInputStream(data);
-    ois = new ObjectInputStream(bis);
-    objs = deserialize(ois, errors);
-
-    return (P) objs[1];
+    return result;
   }
 
   /**
@@ -193,5 +130,7 @@ public abstract class AbstractWorkspaceHelper<P extends AbstractWorkspacePanel, 
    *
    * @return the filechooser
    */
-  public abstract BaseFileChooser newFileChooser();
+  public SerializationFileChooser newFileChooser() {
+    return new SerializationFileChooser();
+  }
 }

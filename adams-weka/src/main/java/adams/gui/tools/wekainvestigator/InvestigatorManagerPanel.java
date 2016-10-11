@@ -25,7 +25,6 @@ import adams.env.Environment;
 import adams.gui.core.BaseFrame;
 import adams.gui.core.GUIHelper;
 import adams.gui.workspace.AbstractSerializableWorkspaceManagerPanel;
-import adams.gui.workspace.AbstractWorkspaceHelper;
 import adams.gui.workspace.AbstractWorkspaceListPanel;
 
 import java.awt.BorderLayout;
@@ -39,7 +38,7 @@ import java.awt.event.WindowEvent;
  * @version $Revision$
  */
 public class InvestigatorManagerPanel
-  extends AbstractSerializableWorkspaceManagerPanel<InvestigatorPanel, InvestigatorPanelHandler> {
+  extends AbstractSerializableWorkspaceManagerPanel<InvestigatorPanel> {
 
   private static final long serialVersionUID = -5959114946146695938L;
 
@@ -69,14 +68,16 @@ public class InvestigatorManagerPanel
   /**
    * Returns a new workspace instance.
    *
+   * @param init	whether to initialize the workspace
    * @return		the workspace
    */
   @Override
-  protected InvestigatorPanel newWorkspace() {
+  protected InvestigatorPanel newWorkspace(boolean init) {
     InvestigatorPanel	result;
 
     result = new InvestigatorPanel();
-    result.addDefaultTabs();
+    if (init)
+      result.addDefaultTabs();
 
     m_Counter++;
 
@@ -89,7 +90,7 @@ public class InvestigatorManagerPanel
    * @return		the workspace helper
    */
   @Override
-  protected AbstractWorkspaceHelper<InvestigatorPanel, AbstractSerializableWorkspaceManagerPanel<InvestigatorPanel, InvestigatorPanelHandler>, InvestigatorPanelHandler> newWorkspaceHelper() {
+  protected InvestigatorWorkspaceHelper newWorkspaceHelper() {
     return new InvestigatorWorkspaceHelper();
   }
 
@@ -120,7 +121,7 @@ public class InvestigatorManagerPanel
     try {
       errors   = new MessageCollection();
       panelOld = m_History.getEntry(nameOld);
-      panelNew = m_WorkspaceHelper.copy(panelOld, errors);
+      panelNew = m_WorkspaceHelper.copy(this, panelOld, errors);
       m_History.addEntry(nameNew, panelNew);
       m_History.setSelectedEntry(nameNew);
       m_Counter++;
