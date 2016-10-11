@@ -258,12 +258,14 @@ public class InstancesTable
     BasePopupMenu		menu;
     JMenuItem			menuitem;
     final int			row;
+    final int			actRow;
     final int			col;
     final int			actCol;
     final InstancesTableModel	instModel;
 
     menu      = new BasePopupMenu();
     row       = rowAtPoint(e.getPoint());
+    actRow    = getActualRow(row);
     col       = tableHeader.columnAtPoint(e.getPoint());
     actCol    = col - 1;
     instModel = (InstancesTableModel) getUnsortedModel();
@@ -297,7 +299,7 @@ public class InstancesTable
     });
     menu.add(menuitem);
 
-    InstancesTablePopupMenuItemHelper.addToPopupMenu(this, menu, false, row, actCol);
+    InstancesTablePopupMenuItemHelper.addToPopupMenu(this, menu, false, actRow, actCol);
 
     return menu;
   }
@@ -324,14 +326,18 @@ public class InstancesTable
     BasePopupMenu 		menu;
     JMenuItem			menuitem;
     final int			row;
+    final int			actRow;
     final int			col;
+    final int			actCol;
     final int[]			selRows;
     final InstancesTableModel	instModel;
     final Range 		range;
 
     menu      = new BasePopupMenu();
     col       = columnAtPoint(e.getPoint());
+    actCol    = col - 1;
     row       = rowAtPoint(e.getPoint());
+    actRow    = getActualRow(row);
     selRows   = getSelectedRows();
     instModel = (InstancesTableModel) getUnsortedModel();
     range = new Range();
@@ -392,7 +398,7 @@ public class InstancesTable
     });
     menu.add(menuitem);
 
-    InstancesTablePopupMenuItemHelper.addToPopupMenu(this, menu, true, row, col);
+    InstancesTablePopupMenuItemHelper.addToPopupMenu(this, menu, true, actRow, actCol);
 
     return menu;
   }
