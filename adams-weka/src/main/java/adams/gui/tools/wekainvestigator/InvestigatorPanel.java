@@ -54,6 +54,7 @@ import adams.gui.workspace.AbstractWorkspacePanel;
 import weka.core.Instances;
 import weka.core.converters.AbstractFileLoader;
 
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -109,6 +110,9 @@ public class InvestigatorPanel
 
   /** the action for closing the investigator. */
   protected BaseAction m_ActionFileClose;
+
+  /** the action for enabling/disabling undo. */
+  protected JCheckBoxMenuItem m_MenuItemEditUndoEnabled;
 
   /** the action for loading a dataset. */
   protected BaseAction m_ActionFileOpen;
@@ -339,6 +343,19 @@ public class InvestigatorPanel
       // File/Close
       menu.add(m_ActionFileClose);
 
+      // Edit
+      menu = new JMenu("Edit");
+      menu.setMnemonic('E');
+      menu.addChangeListener((ChangeEvent e) -> updateMenu());
+      result.add(menu);
+
+      // Edit/Undo enabled
+      m_MenuItemEditUndoEnabled = new JCheckBoxMenuItem("Undo enabled");
+      m_MenuItemEditUndoEnabled.setIcon(GUIHelper.getIcon("undo.gif"));
+      m_MenuItemEditUndoEnabled.setSelected(true);
+      m_MenuItemEditUndoEnabled.addActionListener((ActionEvent e) -> toggleUndo());
+      menu.add(m_MenuItemEditUndoEnabled);
+
       // Tab
       menu = new JMenu("Tab");
       menu.setMnemonic('T');
@@ -529,6 +546,7 @@ public class InvestigatorPanel
     logMessage("Loading: " + m_FileChooser.getSelectedFile());
     loader = m_FileChooser.getReader();
     cont   = new FileContainer(loader, m_FileChooser.getSelectedFile());
+    cont.getUndo().setEnabled(isUndoEnabled());
     updateClassAttribute(cont.getData());
     SwingUtilities.invokeLater(() -> {
       m_Data.add(cont);
@@ -557,6 +575,7 @@ public class InvestigatorPanel
       @Override
       protected Object doInBackground() throws Exception {
 	final FileContainer cont = new FileContainer(loader, file);
+	cont.getUndo().setEnabled(isUndoEnabled());
 	updateClassAttribute(cont.getData());
 	SwingUtilities.invokeLater(() -> {
 	  m_Data.add(cont);
@@ -632,6 +651,30 @@ public class InvestigatorPanel
     if (dialog.getResult() == GenericObjectEditorDialog.APPROVE_OPTION)
       m_ClassAttribute = (AbstractClassAttributeHeuristic) dialog.getCurrent();
     dialog.dispose();
+  }
+
+  /**
+   * Returns whether undo is enabled.
+   *
+   * @return		true if enabled
+   */
+  public boolean isUndoEnabled() {
+    return m_MenuItemEditUndoEnabled.isSelected();
+  }
+
+  /**
+   * Toggles the undo state.
+   */
+  protected void toggleUndo() {
+    WekaInvestigatorDataEvent 	event;
+
+    for (DataContainer cont: getData())
+      cont.getUndo().setEnabled(isUndoEnabled());
+
+    event = new WekaInvestigatorDataEvent(
+      this,
+      isUndoEnabled() ? WekaInvestigatorDataEvent.UNDO_ENABLED : WekaInvestigatorDataEvent.UNDO_DISABLED);
+    fireDataChange(event);
   }
 
   /**

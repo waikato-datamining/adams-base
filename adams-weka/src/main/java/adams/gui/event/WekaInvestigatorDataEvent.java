@@ -50,6 +50,12 @@ public class WekaInvestigatorDataEvent
   /** row got activated. */
   public final static int ROW_ACTIVATED = 5;
 
+  /** undo enabled. */
+  public final static int UNDO_ENABLED = 101;
+
+  /** undo disabled. */
+  public final static int UNDO_DISABLED = 102;
+
   /** the event type. */
   protected int m_Type;
 
@@ -69,6 +75,18 @@ public class WekaInvestigatorDataEvent
    * Constructor for specifying the type of change.
    *
    * @param source	the source panel
+   * @param type	the event type
+   */
+  public WekaInvestigatorDataEvent(InvestigatorPanel source, int type) {
+    this(source, type, null);
+  }
+
+  /**
+   * Constructor for specifying the type of change.
+   *
+   * @param source	the source panel
+   * @param type	the event type
+   * @param row 	the affected row
    */
   public WekaInvestigatorDataEvent(InvestigatorPanel source, int type, int row) {
     this(source, type, new int[]{row});
@@ -78,6 +96,8 @@ public class WekaInvestigatorDataEvent
    * Constructor for specifying the type of change.
    *
    * @param source	the source panel
+   * @param type	the event type
+   * @param row 	the affected rows
    */
   public WekaInvestigatorDataEvent(InvestigatorPanel source, int type, int[] rows) {
     super(source);

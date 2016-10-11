@@ -201,6 +201,10 @@ public abstract class AbstractInvestigatorTabWithDataTable
 	    m_Table.setSelectedRow(e.getRows()[0]);
 	}
 	break;
+      case WekaInvestigatorDataEvent.UNDO_ENABLED:
+      case WekaInvestigatorDataEvent.UNDO_DISABLED:
+	// do nothing
+	break;
       default:
 	m_Model.removeTableModelListener(this);
 	m_Model = new DataTableModel(getOwner().getData(), hasReadOnlyTable());
