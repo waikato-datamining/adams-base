@@ -84,6 +84,7 @@ public class LookUpUpdateTest
 	  {/** no symbols. */},	//  6
 	  {/** no symbols. */},	//  7
 	  {/** no symbols. */},	//  8
+	  {/** no symbols. */},	//  9
 	}
     };
   }
@@ -105,6 +106,7 @@ public class LookUpUpdateTest
 	  "if (C = 2) then C := A * B + 0.1; end D := 0.5; E := \"updated\";",		   //  6
 	  "all(\".*\") := 0.33;",		                                           //  7
 	  "C := -5;",			                                                   //  8
+	  "if (C = 2) then all(\".*\") := 0.12; else all(\".*\") := 0.78; end",		   //  9
 	}
     };
   }

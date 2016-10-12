@@ -186,6 +186,19 @@ if_assignment ::=
                  {:
                    parser.getIf().put(v.toString(), e);
                  :}
+
+               | ALL LPAREN STRING:s RPAREN ASSIGNMENT expr:e SEMI
+                 {:
+                    BaseRegExp regex = new BaseRegExp(s);
+                    for (Object key: parser.getSymbols().keySet()) {
+                      if (regex.isMatch(key.toString()))
+                        parser.getIf().put(key.toString(), e);
+                    }
+                    for (Object key: parser.getIf().keySet()) {
+                      if (regex.isMatch(key.toString()))
+                        parser.getIf().put(key.toString(), e);
+                    }
+                 :}
                ;
 
 else_assignments ::= else_assignments else_assignment | else_assignment;
@@ -193,6 +206,19 @@ else_assignment ::=
                  VARIABLE:v ASSIGNMENT expr:e SEMI
                  {:
                    parser.getElse().put(v.toString(), e);
+                 :}
+
+               | ALL LPAREN STRING:s RPAREN ASSIGNMENT expr:e SEMI
+                 {:
+                    BaseRegExp regex = new BaseRegExp(s);
+                    for (Object key: parser.getSymbols().keySet()) {
+                      if (regex.isMatch(key.toString()))
+                        parser.getElse().put(key.toString(), e);
+                    }
+                    for (Object key: parser.getElse().keySet()) {
+                      if (regex.isMatch(key.toString()))
+                        parser.getElse().put(key.toString(), e);
+                    }
                  :}
                ;
 
