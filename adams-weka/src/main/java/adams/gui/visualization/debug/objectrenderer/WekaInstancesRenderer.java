@@ -25,11 +25,10 @@ import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.gui.core.BaseScrollPane;
+import adams.gui.visualization.instances.InstancesTable;
 import weka.core.Attribute;
 import weka.core.Instance;
 import weka.core.Instances;
-import weka.gui.arffviewer.ArffSortedTableModel;
-import weka.gui.arffviewer.ArffTable;
 
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
@@ -68,7 +67,7 @@ public class WekaInstancesRenderer
   protected String doRender(Object obj, JPanel panel) {
     Instance 		inst;
     Instances 		data;
-    ArffTable		table;
+    InstancesTable 	table;
     BaseScrollPane	scrollPane;
     PlainTextRenderer	plain;
     SpreadSheet 	sheet;
@@ -96,7 +95,7 @@ public class WekaInstancesRenderer
 	sprenderer.render(sheet, panel);
       }
       else {
-        table = new ArffTable(new ArffSortedTableModel(data));
+        table = new InstancesTable(data);
         scrollPane = new BaseScrollPane(table);
         panel.add(scrollPane, BorderLayout.CENTER);
       }
@@ -106,7 +105,7 @@ public class WekaInstancesRenderer
       if (inst.dataset() != null) {
 	data = new Instances(inst.dataset(), 0);
 	data.add((Instance) inst.copy());
-	table      = new ArffTable(new ArffSortedTableModel(data));
+	table      = new InstancesTable(data);
 	scrollPane = new BaseScrollPane(table);
 	panel.add(scrollPane, BorderLayout.CENTER);
       }
