@@ -15,7 +15,7 @@
 
 /*
  * XSLT.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -200,7 +200,7 @@ public class XSLT
    */
   @Override
   public String getQuickInfo() {
-    if (QuickInfoHelper.hasVariable(this, "styleSheet") || !m_StyleSheet.isDirectory())
+    if (QuickInfoHelper.hasVariable(this, "styleSheet") || (m_StyleSheet.exists() && !m_StyleSheet.isDirectory()))
       return super.getQuickInfo();
     else
       return QuickInfoHelper.toString(this, "inline", Shortening.shortenEnd(m_Inline.stringValue(), 50));
@@ -245,10 +245,10 @@ public class XSLT
 
     try {
       dsource     = new DOMSource((Document) m_InputToken.getPayload());
-      if (m_StyleSheet.isDirectory())
-	stylesource = new StreamSource(new StringReader(m_Inline.getValue()));
-      else
+      if (m_StyleSheet.exists() && !m_StyleSheet.isDirectory())
 	stylesource = new StreamSource(m_StyleSheet.getAbsoluteFile());
+      else
+	stylesource = new StreamSource(new StringReader(m_Inline.getValue()));
       tFactory    = TransformerFactory.newInstance();
       transformer = tFactory.newTransformer(stylesource);
       ostream     = new ByteArrayOutputStream();
