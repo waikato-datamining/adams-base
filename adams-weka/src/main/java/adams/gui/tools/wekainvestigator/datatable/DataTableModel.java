@@ -24,6 +24,7 @@ import adams.gui.core.AbstractMoveableTableModel;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
 import weka.core.Attribute;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -52,7 +53,7 @@ public class DataTableModel
    */
   public DataTableModel(List<DataContainer> data, boolean readOnly) {
     super();
-    m_Data     = data;
+    m_Data     = new ArrayList<>(data);
     m_ReadOnly = readOnly;
   }
 
@@ -216,6 +217,27 @@ public class DataTableModel
 	}
 	break;
     }
+  }
+
+  /**
+   * Sets the underlying data and notifies listeners of change.
+   *
+   * @param value	the data to use
+   */
+  public void setData(List<DataContainer> value) {
+    setData(value, true);
+  }
+
+  /**
+   * Sets the underlying data.
+   *
+   * @param value	the data to use
+   * @param notify	whether to notify listeners that data has changed
+   */
+  public void setData(List<DataContainer> value, boolean notify) {
+    m_Data = new ArrayList<>(value);
+    if (notify)
+      fireTableDataChanged();
   }
 
   /**

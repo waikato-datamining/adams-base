@@ -178,6 +178,10 @@ public abstract class AbstractInvestigatorTabWithDataTable
     Range 		range;
     int[][]		segs;
 
+    m_Model.removeTableModelListener(this);
+    m_Model.setData(getData(), true);
+    m_Model.addTableModelListener(this);
+
     segs = new int[0][];
     if (e.getRows() != null) {
       range = new Range();
