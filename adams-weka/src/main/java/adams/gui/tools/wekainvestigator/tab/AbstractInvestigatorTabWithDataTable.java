@@ -175,29 +175,12 @@ public abstract class AbstractInvestigatorTabWithDataTable
    * @param e		the event
    */
   public void dataChanged(WekaInvestigatorDataEvent e) {
-    Range 		range;
-    int[][]		segs;
-
-    m_Model.removeTableModelListener(this);
-    m_Model.setData(getData(), true);
-    m_Model.addTableModelListener(this);
-
-    segs = new int[0][];
-    if (e.getRows() != null) {
-      range = new Range();
-      range.setIndices(e.getRows());
-      segs = range.getIntSegments();
-    }
     switch (e.getType()) {
       case WekaInvestigatorDataEvent.ROWS_DELETED:
-	for (int[] seg: segs)
-	  m_Model.fireTableRowsDeleted(seg[0], seg[1]);
-	m_Table.repaint();
-	break;
       case WekaInvestigatorDataEvent.ROWS_MODIFIED:
-	for (int[] seg: segs)
-	  m_Model.fireTableRowsUpdated(seg[0], seg[1]);
-	m_Table.repaint();
+	m_Model.removeTableModelListener(this);
+	m_Model.setData(getData(), true);
+	m_Model.addTableModelListener(this);
 	break;
       case WekaInvestigatorDataEvent.ROW_ACTIVATED:
 	if (m_Table.getSelectedRow() != -1) {
