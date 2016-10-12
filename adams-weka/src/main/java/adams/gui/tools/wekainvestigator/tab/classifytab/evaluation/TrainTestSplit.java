@@ -221,7 +221,7 @@ public class TrainTestSplit
     double		perc;
     Capabilities	caps;
 
-    if (m_ComboBoxDatasets.getSelectedIndex() == -1)
+    if (!isValidDataIndex(m_ComboBoxDatasets))
       return "No data available!";
 
     if (!Utils.isInteger(m_TextSeed.getText()))

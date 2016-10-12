@@ -21,28 +21,12 @@
 package adams.gui.tools.wekainvestigator.tab.clustertab.evaluation;
 
 import adams.core.ClassLister;
-import adams.core.GlobalInfoSupporter;
-import adams.core.MessageCollection;
-import adams.core.Properties;
-import adams.core.StatusMessageHandler;
-import adams.core.logging.LoggingObject;
 import adams.gui.core.AbstractNamedHistoryPanel;
-import adams.gui.tools.wekainvestigator.InvestigatorPanel;
-import adams.gui.tools.wekainvestigator.data.DataContainer;
+import adams.gui.tools.wekainvestigator.evaluation.AbstractEvaluation;
 import adams.gui.tools.wekainvestigator.tab.ClusterTab;
 import adams.gui.tools.wekainvestigator.tab.clustertab.ResultItem;
 import org.apache.commons.lang.time.StopWatch;
 import weka.clusterers.Clusterer;
-
-import javax.swing.ComboBoxModel;
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Ancestor for clusterer evaluation setups.
@@ -51,72 +35,9 @@ import java.util.Set;
  * @version $Revision$
  */
 public abstract class AbstractClustererEvaluation
-  extends LoggingObject
-  implements StatusMessageHandler, GlobalInfoSupporter {
+  extends AbstractEvaluation<ClusterTab, ResultItem> {
 
   private static final long serialVersionUID = -5847790432092994409L;
-
-  /** the owner. */
-  protected ClusterTab m_Owner;
-
-  /** the panel with the options. */
-  protected JPanel m_PanelOptions;
-
-  /**
-   * Constructor.
-   */
-  protected AbstractClustererEvaluation() {
-    initialize();
-    initGUI();
-  }
-
-  /**
-   * Initializes the members.
-   */
-  protected void initialize() {
-  }
-
-  /**
-   * Initializes the panel.
-   */
-  protected void initGUI() {
-    m_PanelOptions = new JPanel(new BorderLayout());
-  }
-
-  /**
-   * Sets the owner.
-   *
-   * @param value	the owning tab
-   */
-  public void setOwner(ClusterTab value) {
-    m_Owner = value;
-    update();
-  }
-
-  /**
-   * Returns the owner.
-   *
-   * @return		the owning tab, null if none set
-   */
-  public ClusterTab getOwner() {
-    return m_Owner;
-  }
-
-  /**
-   * Returns the name of the evaluation (displayed in combobox).
-   *
-   * @return		the name
-   */
-  public abstract String getName();
-
-  /**
-   * Returns a panel with options to display.
-   *
-   * @return		the panel
-   */
-  public JPanel getPanel() {
-    return m_PanelOptions;
-  }
 
   /**
    * Tests whether the clusterer can be evaluated.
@@ -153,145 +74,6 @@ public abstract class AbstractClustererEvaluation
       result.getRunInformation().add("Total time", (watch.getTime() / 1000.0) + "s");
 
     return result;
-  }
-
-  /**
-   * Adds the item to the history and selects it.
-   *
-   * @param item	the item to add
-   * @return		the item
-   */
-  protected ResultItem addToHistory(AbstractNamedHistoryPanel<ResultItem> history, ResultItem item) {
-    history.addEntry(item.getName(), item);
-    history.setSelectedIndex(history.count() - 1);
-    return item;
-  }
-
-  /**
-   * Returns just the name of the evaluation.
-   *
-   * @return		the evaluation
-   */
-  public String toString() {
-    return getName();
-  }
-
-  /**
-   * Updates the settings panel.
-   */
-  public abstract void update();
-
-  /**
-   * Activates the specified dataset.
-   *
-   * @param index	the index of the dataset
-   */
-  public abstract void activate(int index);
-
-  /**
-   * Displays a message.
-   *
-   * @param msg		the message to display
-   */
-  public void showStatus(String msg) {
-    m_Owner.showStatus(msg);
-  }
-
-  /**
-   * Generates the list of datasets for a combobox.
-   *
-   * @return		the list
-   */
-  protected List<String> generateDatasetList() {
-    List<String> 	result;
-    int			i;
-    DataContainer 	data;
-
-    result = new ArrayList<>();
-    for (i = 0; i < getOwner().getData().size(); i++) {
-      data = getOwner().getData().get(i);
-      result.add((i + 1) + ": " + data.getData().relationName());
-    }
-
-    return result;
-  }
-
-  /**
-   * Determines the index of the old dataset name in the current dataset list.
-   *
-   * @param oldDataset	the old dataset to look for
-   * @return		the index, -1 if not found
-   */
-  protected int indexOfDataset(String oldDataset) {
-    int 		result;
-    int			i;
-    DataContainer	data;
-
-    result = -1;
-
-    if (oldDataset != null)
-      oldDataset = oldDataset.replaceAll("^[0-9]+: ", "");
-    for (i = 0; i < getOwner().getData().size(); i++) {
-      data = getOwner().getData().get(i);
-      if ((oldDataset != null) && data.getData().relationName().equals(oldDataset)) {
-	result = i;
-	break;
-      }
-    }
-
-    return result;
-  }
-
-  /**
-   * Checks whether the data has changed and the model needs updating.
-   *
-   * @param newDatasets		the new list of datasets
-   * @param currentModel	the current model
-   * @return			true if changed
-   */
-  protected boolean hasDataChanged(List<String> newDatasets, ComboBoxModel<String> currentModel) {
-    int		i;
-    Set<String>	setDatasets;
-    Set<String>	setModel;
-
-    setDatasets = new HashSet<>(newDatasets);
-    setModel    = new HashSet<>();
-    for (i = 0; i < currentModel.getSize(); i++)
-      setModel.add(currentModel.getElementAt(i));
-
-    return (setDatasets.size() != setModel.size())
-      || !(setDatasets.containsAll(setModel) && setModel.containsAll(setDatasets));
-  }
-
-  /**
-   * Returns the objects for serialization.
-   *
-   * @return		the mapping of the objects to serialize
-   */
-  public Map<String,Object> serialize() {
-    Map<String,Object>	result;
-
-    result = new HashMap<>();
-
-    return result;
-  }
-
-  /**
-   * Restores the objects.
-   *
-   * @param data	the data to restore
-   * @param errors	for storing errors
-   */
-  public void deserialize(Map<String,Object> data, MessageCollection errors) {
-  }
-
-  /**
-   * Returns the properties that define the editor.
-   *
-   * @return		the properties
-   */
-  public static Properties getProperties() {
-    return InvestigatorPanel.getProperties();
   }
 
   /**

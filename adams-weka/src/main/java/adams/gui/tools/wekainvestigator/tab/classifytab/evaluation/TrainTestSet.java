@@ -154,9 +154,9 @@ public class TrainTestSet
     Instances 		test;
     Capabilities 	caps;
 
-    if (m_ComboBoxTrain.getSelectedIndex() == -1)
+    if (!isValidDataIndex(m_ComboBoxTrain))
       return "No train data available!";
-    if (m_ComboBoxTest.getSelectedIndex() == -1)
+    if (!isValidDataIndex(m_ComboBoxTest))
       return "No test data available!";
 
     caps  = classifier.getCapabilities();

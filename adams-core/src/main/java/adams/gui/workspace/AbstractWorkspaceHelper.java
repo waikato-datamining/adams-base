@@ -104,6 +104,8 @@ public abstract class AbstractWorkspaceHelper<P extends AbstractWorkspacePanel, 
       deserialize(panel, data[i][1], errors);
       manager.getEntryPanel().addEntry(name, panel);
     }
+    if (data.length > 0)
+      manager.getEntryPanel().setSelectedIndex(0);
   }
 
   /**

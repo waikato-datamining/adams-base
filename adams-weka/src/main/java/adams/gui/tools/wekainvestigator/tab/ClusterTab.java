@@ -599,12 +599,15 @@ public class ClusterTab
    * @param e		the event
    */
   public void dataChanged(WekaInvestigatorDataEvent e) {
-    if (m_CurrentEvaluation != null) {
+    int		i;
+
+    for (i = 0; i < m_ModelEvaluations.getSize(); i++) {
       if (e.getType() == WekaInvestigatorDataEvent.ROW_ACTIVATED)
-        m_CurrentEvaluation.activate(e.getRows()[0]);
+        m_ModelEvaluations.getElementAt(i).activate(e.getRows()[0]);
       else
-        m_CurrentEvaluation.update();
+        m_ModelEvaluations.getElementAt(i).update();
     }
+
     updateButtons();
   }
 

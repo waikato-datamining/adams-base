@@ -106,7 +106,7 @@ public class Train
     Instances		data;
     Capabilities 	caps;
 
-    if (m_ComboBoxDatasets.getSelectedIndex() == -1)
+    if (!isValidDataIndex(m_ComboBoxDatasets))
       return "No data available!";
 
     data = getOwner().getData().get(m_ComboBoxDatasets.getSelectedIndex()).getData();

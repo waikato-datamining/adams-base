@@ -178,7 +178,7 @@ public class ReevaluateModel
     File		file;
     Capabilities 	caps;
 
-    if (m_ComboBoxDatasets.getSelectedIndex() == -1)
+    if (!isValidDataIndex(m_ComboBoxDatasets))
       return "No data available!";
 
     file = m_PanelModel.getCurrent();

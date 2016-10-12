@@ -131,9 +131,9 @@ public class ClassesToClusters
     Instances 		test;
     Capabilities	caps;
 
-    if (m_ComboBoxTrain.getSelectedIndex() == -1)
+    if (!isValidDataIndex(m_ComboBoxTrain))
       return "No training data available!";
-    if (m_ComboBoxTest.getSelectedIndex() == -1)
+    if (!isValidDataIndex(m_ComboBoxTest))
       return "No test data available!";
 
     if (m_ComboBoxClass.getSelectedIndex() < 1)
