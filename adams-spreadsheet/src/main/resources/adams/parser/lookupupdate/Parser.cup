@@ -122,7 +122,7 @@ parser code {:
 :}
 
 terminal IF, THEN, ELSE, END;
-terminal MINUS, UMINUS, PLUS, TIMES, DIVISION, EXPONENT, MODULO;
+terminal MINUS, UMINUS, PLUS, TIMES, DIVISION, EXPONENT, MODULO, ALL;
 terminal ASSIGNMENT, SEMI, LPAREN, RPAREN;
 terminal TRUE, FALSE, LT, LE, GT, GE, EQ, NOT_EQ, NOT, AND, OR;
 terminal Double NUMBER;
@@ -137,7 +137,7 @@ non terminal Object expr;
 precedence left AND, OR;
 precedence left LT, LE, GT, GE, EQ, NOT_EQ;
 precedence left PLUS, MINUS;
-precedence left TIMES, DIVISION, MODULO;
+precedence left TIMES, DIVISION, MODULO, ALL;
 precedence left EXPONENT;
 precedence left LPAREN, RPAREN;
 precedence left NOT, UMINUS;
@@ -168,6 +168,15 @@ assignment ::=
                  VARIABLE:v ASSIGNMENT expr:e SEMI
                  {:
                    parser.getSymbols().put(v.toString(), e);
+                 :}
+
+               | ALL LPAREN STRING:s RPAREN ASSIGNMENT expr:e SEMI
+                 {:
+                    BaseRegExp regex = new BaseRegExp(s);
+                    for (Object key: parser.getSymbols().keySet()) {
+                      if (regex.isMatch(key.toString()))
+                        parser.getSymbols().put(key.toString(), e);
+                    }
                  :}
                ;
 

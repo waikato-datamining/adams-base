@@ -76,6 +76,9 @@ import java.io.*;
   "^" { return sf.newSymbol("Power", sym.EXPONENT); }
   "%" { return sf.newSymbol("Modulo", sym.MODULO); }
 
+  // functions
+  "all" { return sf.newSymbol("All", sym.ALL); }
+
   // boolean stuff
   "<" { return sf.newSymbol("Less than", sym.LT); }
   "<=" { return sf.newSymbol("Less or equal than", sym.LE); }
@@ -91,7 +94,7 @@ import java.io.*;
   "false" { return sf.newSymbol("False", sym.FALSE); }
 
   // numbers and variables
-  [0-9]*\.?[0-9]+(E(-)?[1-9][0-9]*)? { return sf.newSymbol("Number", sym.NUMBER, new Double(yytext())); }
+  "-"?[0-9]*\.?[0-9]+(E(-)?[1-9][0-9]*)? { return sf.newSymbol("Number", sym.NUMBER, new Double(yytext())); }
   [a-zA-Z0-9_\-]+ { return sf.newSymbol("Variable", sym.VARIABLE, new String(yytext())); }
   "["[^\]]+"]" { return sf.newSymbol("Variable", sym.VARIABLE, new String(yytext().replace("[", "").replace("]", ""))); }
 

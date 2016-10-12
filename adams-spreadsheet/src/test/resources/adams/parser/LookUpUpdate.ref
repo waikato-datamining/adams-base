@@ -32,4 +32,14 @@ C,3
 D,0.5
 E,updated
 
+'all(".*") := 0.33;: key,value
+A,0.33
+B,0.33
+C,0.33
+
+'C := -5;: key,value
+A,1
+B,2
+C,-5
+
 

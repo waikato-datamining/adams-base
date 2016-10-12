@@ -43,7 +43,8 @@ import java.util.HashMap;
  * <br>
  * assignments ::= assignments assignment | assignment<br>
  * assignment ::=<br>
- *                  VARIABLE := expr;<br>
+ *                 VARIABLE := expr;<br>
+ *               | all ( "regexp" ) := expr;<br>
  * <br>
  * expr ::=        ( expr )<br>
  *               | NUMBER<br>
@@ -73,6 +74,12 @@ import java.util.HashMap;
  *               | expr &#47; expr<br>
  *               | expr % expr<br>
  *               | expr ^ expr<br>
+ * <br>
+ * Notes:<br>
+ * - Variables are either all alphanumeric (e.g., "ABc12") or any character<br>
+ *   apart from "]" enclosed by "[" and "]" (e.g., "[Hello World]").<br>
+ * - The 'all' method applies the value to all the values in the lookup table<br>
+ *   that match the regular expression.<br>
  * <br><br>
  <!-- globalinfo-end -->
  *
