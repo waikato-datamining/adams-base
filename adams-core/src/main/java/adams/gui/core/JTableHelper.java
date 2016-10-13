@@ -300,7 +300,17 @@ public class JTableHelper {
    * @param col		the column index
    */
   public void setOptimalHeaderWidth(int col) {
-    setOptimalHeaderWidth(getJTable(), col);
+    setOptimalHeaderWidth(getJTable(), col, -1);
+  }
+
+  /**
+   * sets the optimal header width for the given column.
+   *
+   * @param col		the column index
+   * @param max         the column width limit, -1 for unlimited
+   */
+  public void setOptimalHeaderWidth(int col, int max) {
+    setOptimalHeaderWidth(getJTable(), col, max);
   }
 
   /**
@@ -310,10 +320,21 @@ public class JTableHelper {
    * @param col		the column index
    */
   public static void setOptimalHeaderWidth(final JTable table, final int col) {
+    setOptimalHeaderWidth(table, col, -1);
+  }
+
+  /**
+   * sets the optimal header width for the given column.
+   *
+   * @param table	the table to work on
+   * @param col		the column index
+   * @param max         the column width limit, -1 for unlimited
+   */
+  public static void setOptimalHeaderWidth(final JTable table, final int col, int max) {
     final int   width;
 
     if ( (col >= 0) && (col < table.getColumnModel().getColumnCount()) ) {
-      width = calcHeaderWidth(table, col);
+      width = calcHeaderWidth(table, col, max);
 
       if (width >= 0) {
         SwingUtilities.invokeLater(() -> {
