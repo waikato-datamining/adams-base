@@ -20,6 +20,7 @@
 
 package adams.gui.tools.wekainvestigator.tab.classifytab.output;
 
+import adams.core.Utils;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.container.WekaEvaluationContainer;
 import adams.flow.core.Token;
@@ -288,7 +289,12 @@ public class Predictions
     conv.setShowError(m_ShowError);
     conv.setShowWeight(m_ShowWeight);
     conv.input(new Token(cont));
-    conv.execute();
+    try {
+      conv.execute();
+    }
+    catch (Exception e) {
+      return Utils.handleException(this, "Failed to assemble predictions!", e);
+    }
     token = conv.output();
 
     // add additional attributes

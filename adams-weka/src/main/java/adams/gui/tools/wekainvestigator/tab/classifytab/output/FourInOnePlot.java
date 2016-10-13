@@ -20,6 +20,7 @@
 
 package adams.gui.tools.wekainvestigator.tab.classifytab.output;
 
+import adams.core.Utils;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.core.Token;
 import adams.flow.transformer.WekaPredictionsToSpreadSheet;
@@ -282,7 +283,12 @@ public class FourInOnePlot
     p2s.setShowError(true);
     p2s.setUseAbsoluteError(m_UseAbsoluteError);
     p2s.input(new Token(item.getEvaluation()));
-    p2s.execute();
+    try {
+      p2s.execute();
+    }
+    catch (Exception e) {
+      return Utils.handleException(this, "Failed to assemble predictions!", e);
+    }
     token = p2s.output();
     sheet = (SpreadSheet) token.getPayload();
 

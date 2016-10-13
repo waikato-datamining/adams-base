@@ -293,12 +293,17 @@ public class ClassifierErrors
       cont.setValue(WekaEvaluationContainer.VALUE_ORIGINALINDICES, item.getOriginalIndices());
     p2s = new WekaPredictionsToSpreadSheet();
     p2s.input(new Token(cont));
-    p2s.execute();
+    try {
+      p2s.execute();
+    }
+    catch (Exception e) {
+      return Utils.handleException(this, "Failed to assemble predictions!", e);
+    }
     token = p2s.output();
 
     // add additional attributes
     additional = null;
-    if (item.hasOriginalIndices() && item.hasAdditionalAttributes()) {
+    if (item.hasAdditionalAttributes()) {
       sheet = (SpreadSheet) token.getPayload();
       merge = new SpreadSheetMerge();
       token = new Token(new SpreadSheet[]{sheet, item.getAdditionalAttributes()});
