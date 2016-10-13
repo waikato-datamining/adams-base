@@ -22,6 +22,7 @@ package adams.gui.tools.wekainvestigator.tab.classifytab.evaluation;
 
 import adams.core.MessageCollection;
 import adams.core.Properties;
+import adams.core.Utils;
 import adams.core.option.OptionUtils;
 import adams.data.spreadsheet.MetaData;
 import adams.gui.chooser.SelectOptionPanel;
@@ -29,7 +30,6 @@ import adams.gui.core.AbstractNamedHistoryPanel;
 import adams.gui.core.ParameterPanel;
 import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
 import gnu.trove.list.TIntList;
-import gnu.trove.list.array.TIntArrayList;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
 import weka.core.Capabilities;
@@ -216,6 +216,8 @@ public class TrainTestSet
     runInfo.add("# Instances (test)", test.numInstances());
     runInfo.add("Class attribute", train.classAttribute().name());
     runInfo.add("Discard predictions", discard);
+    if (m_SelectAdditionalAttributes.getCurrent().length > 0)
+      runInfo.add("Additional attributes: ", Utils.flatten(m_SelectAdditionalAttributes.getCurrent(), ", "));
 
     model = (Classifier) OptionUtils.shallowCopy(classifier);
     getOwner().logMessage("Using '" + train.relationName() + "' to train " + OptionUtils.getCommandLine(classifier));
@@ -225,15 +227,11 @@ public class TrainTestSet
     eval.setDiscardPredictions(discard);
     eval.evaluateModel(model, test);
 
-    original = new TIntArrayList();
-    for (i = 0; i < test.numInstances(); i++)
-      original.add(i);
-
     // history
     return addToHistory(
       history,
       new ResultItem(eval, classifier, model, new Instances(train, 0), runInfo,
-	original.toArray(), transferAdditionalAttributes(m_SelectAdditionalAttributes, test)));
+	null, transferAdditionalAttributes(m_SelectAdditionalAttributes, test)));
   }
 
   /**
@@ -270,6 +268,8 @@ public class TrainTestSet
       else if (index > -1)
 	m_ComboBoxTest.setSelectedIndex(index);
     }
+
+    fillWithAttributeNames(m_SelectAdditionalAttributes, m_ComboBoxTest.getSelectedIndex());
 
     getOwner().updateButtons();
   }

@@ -298,6 +298,8 @@ public class TrainTestSplit
     runInfo.add("Class attribute", data.classAttribute().name());
     runInfo.add("Discard predictions", discard);
     runInfo.add("Use views", views);
+    if (m_SelectAdditionalAttributes.getCurrent().length > 0)
+      runInfo.add("Additional attributes: ", Utils.flatten(m_SelectAdditionalAttributes.getCurrent(), ", "));
 
     model = (Classifier) OptionUtils.shallowCopy(classifier);
     getOwner().logMessage("Using " + m_TextPercentage.getText() + "% of '" + train.relationName() + "' to train " + OptionUtils.getCommandLine(classifier));
@@ -311,7 +313,7 @@ public class TrainTestSplit
     return addToHistory(
       history,
       new ResultItem(eval, classifier, model, new Instances(train, 0), runInfo,
-	testOrig, transferAdditionalAttributes(m_SelectAdditionalAttributes, test)));
+	null, transferAdditionalAttributes(m_SelectAdditionalAttributes, test)));
   }
 
   /**
@@ -337,6 +339,8 @@ public class TrainTestSplit
       else if (index > -1)
 	m_ComboBoxDatasets.setSelectedIndex(index);
     }
+
+    fillWithAttributeNames(m_SelectAdditionalAttributes, m_ComboBoxDatasets.getSelectedIndex());
 
     getOwner().updateButtons();
   }

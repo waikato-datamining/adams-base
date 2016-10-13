@@ -23,6 +23,7 @@ package adams.gui.tools.wekainvestigator.tab.classifytab.evaluation;
 import adams.core.MessageCollection;
 import adams.core.Properties;
 import adams.core.SerializationHelper;
+import adams.core.Utils;
 import adams.core.io.PlaceholderFile;
 import adams.core.option.OptionUtils;
 import adams.data.spreadsheet.MetaData;
@@ -274,6 +275,8 @@ public class ReevaluateModel
     runInfo.add("# Instances", data.numInstances());
     runInfo.add("Class attribute", data.classAttribute().name());
     runInfo.add("Discard predictions", discard);
+    if (m_SelectAdditionalAttributes.getCurrent().length > 0)
+      runInfo.add("Additional attributes: ", Utils.flatten(m_SelectAdditionalAttributes.getCurrent(), ", "));
 
     eval = new Evaluation(data);
     eval.setDiscardPredictions(discard);
@@ -313,6 +316,8 @@ public class ReevaluateModel
       else if (index > -1)
 	m_ComboBoxDatasets.setSelectedIndex(index);
     }
+
+    fillWithAttributeNames(m_SelectAdditionalAttributes, m_ComboBoxDatasets.getSelectedIndex());
 
     getOwner().updateButtons();
   }
