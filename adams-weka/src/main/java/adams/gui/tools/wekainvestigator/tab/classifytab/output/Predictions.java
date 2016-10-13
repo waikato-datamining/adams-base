@@ -298,7 +298,7 @@ public class Predictions
     token = conv.output();
 
     // add additional attributes
-    if (item.hasOriginalIndices() && item.hasAdditionalAttributes()) {
+    if (item.hasAdditionalAttributes()) {
       sheet = (SpreadSheet) token.getPayload();
       merge = new SpreadSheetMerge();
       token = new Token(new SpreadSheet[]{sheet, item.getAdditionalAttributes()});
