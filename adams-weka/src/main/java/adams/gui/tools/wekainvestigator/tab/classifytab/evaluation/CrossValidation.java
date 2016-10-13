@@ -297,6 +297,8 @@ public class CrossValidation
     runInfo.add("Class attribute", data.classAttribute().name());
     runInfo.add("Use views", views);
     runInfo.add("Discard predictions", discard);
+    if (m_SelectAdditionalAttributes.getCurrent().length > 0)
+      runInfo.add("Additional attributes: ", Utils.flatten(m_SelectAdditionalAttributes.getCurrent(), ", "));
     m_CrossValidation = new WekaCrossValidationExecution();
     m_CrossValidation.setClassifier(classifier);
     m_CrossValidation.setData(data);
