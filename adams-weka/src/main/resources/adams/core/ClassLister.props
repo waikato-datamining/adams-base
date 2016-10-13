@@ -99,6 +99,10 @@ adams.gui.tools.wekainvestigator.tab.clustertab.history.AbstractHistoryPopupMenu
 adams.gui.tools.wekainvestigator.tab.clustertab.output.AbstractOutputGenerator=\
   adams.gui.tools.wekainvestigator.tab.clustertab.output
 
+# actions for the attribute selection panel
+adams.gui.tools.wekainvestigator.tab.preprocesstab.attributeselaction.AbstractSelectedAttributesAction=\
+  adams.gui.tools.wekainvestigator.tab.preprocesstab.attributeselaction
+
 # the paintlets for the instance panel
 adams.gui.visualization.instance.AbstractInstancePaintlet=\
   adams.gui.visualization.instance

@@ -22,7 +22,10 @@ package adams.gui.tools.wekainvestigator.tab;
 
 import adams.core.MessageCollection;
 import adams.core.Properties;
+import adams.core.Range;
+import adams.core.logging.LoggingLevel;
 import adams.core.option.OptionUtils;
+import adams.gui.core.ConsolePanel;
 import adams.gui.core.GUIHelper;
 import adams.gui.event.WekaInvestigatorDataEvent;
 import adams.gui.goe.WekaGenericObjectEditorPanel;
@@ -33,22 +36,28 @@ import adams.gui.tools.wekainvestigator.tab.preprocesstab.AttributeSelectionPane
 import adams.gui.tools.wekainvestigator.tab.preprocesstab.AttributeSummaryPanel;
 import adams.gui.tools.wekainvestigator.tab.preprocesstab.AttributeVisualizationPanel;
 import adams.gui.tools.wekainvestigator.tab.preprocesstab.InstancesSummaryPanel;
+import adams.gui.tools.wekainvestigator.tab.preprocesstab.attributeselaction.AbstractSelectedAttributesAction;
+import adams.gui.tools.wekainvestigator.tab.preprocesstab.attributeselaction.RemoveChecked;
+import com.github.fracpete.jclipboardhelper.ClipboardHelper;
+import com.jidesoft.swing.JideButton;
+import com.jidesoft.swing.JideSplitButton;
 import weka.core.Instances;
 import weka.filters.AllFilter;
 import weka.filters.Filter;
-import weka.filters.unsupervised.attribute.Remove;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
-import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -106,8 +115,14 @@ public class PreprocessTab
   /** the attribute visualization panel. */
   protected AttributeVisualizationPanel m_PanelAttVisualization;
 
+  /** the currently selected attributes. */
+  protected JTextField m_TextSelectedAttributes;
+
+  /** the button for copying the selected attributes range. */
+  protected JideButton m_ButtonSelectedAttributes;
+
   /** button for removing checked attributes. */
-  protected JButton m_ButtonRemoveChecked;
+  protected JideSplitButton m_ButtonSelectedAttributesAction;
 
   /** whether the evaluation is currently running. */
   protected Thread m_Worker;
@@ -115,14 +130,32 @@ public class PreprocessTab
   /** the current filter. */
   protected Filter m_CurrentFilter;
 
+  /** the available actions. */
+  protected List<AbstractSelectedAttributesAction> m_Actions;
+
   /**
    * Initializes the members.
    */
   @Override
   protected void initialize() {
+    Class[]				classes;
+    AbstractSelectedAttributesAction 	action;
+
     super.initialize();
 
-    m_Worker = null;
+    m_Worker  = null;
+    m_Actions = new ArrayList<>();
+    classes   = AbstractSelectedAttributesAction.getActions();
+    for (Class cls: classes) {
+      try {
+	action = (AbstractSelectedAttributesAction) cls.newInstance();
+	action.setOwner(this);
+	m_Actions.add(action);
+      }
+      catch (Exception e) {
+	ConsolePanel.getSingleton().append(LoggingLevel.SEVERE, "Failed to instantiate action: " + cls.getName(), e);
+      }
+    }
   }
 
   /**
@@ -134,6 +167,7 @@ public class PreprocessTab
     Filter		filter;
     JPanel		panel;
     JPanel		panel2;
+    JPanel		panelAtts;
 
     super.initGUI();
 
@@ -198,15 +232,37 @@ public class PreprocessTab
     m_PanelInstSummary.setBorder(BorderFactory.createTitledBorder("Dataset summary"));
     panel.add(m_PanelInstSummary, BorderLayout.NORTH);
 
+    panelAtts = new JPanel(new BorderLayout());
+    panel.add(panelAtts, BorderLayout.SOUTH);
+    m_TextSelectedAttributes = new JTextField(15);
+    m_TextSelectedAttributes.setEditable(false);
+    m_ButtonSelectedAttributes = new JideButton(GUIHelper.getIcon("copy.gif"));
+    m_ButtonSelectedAttributes.setButtonStyle(JideSplitButton.TOOLBOX_STYLE);
+    m_ButtonSelectedAttributes.setSize(m_TextSelectedAttributes.getHeight(), m_TextSelectedAttributes.getHeight());
+    m_ButtonSelectedAttributes.addActionListener((ActionEvent e) -> ClipboardHelper.copyToClipboard(m_TextSelectedAttributes.getText()));
+    panel2 = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    panel2.add(m_TextSelectedAttributes);
+    panel2.add(m_ButtonSelectedAttributes);
+    panelAtts.add(panel2, BorderLayout.WEST);
+
     panel2 = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-    panel.add(panel2, BorderLayout.SOUTH);
-    m_ButtonRemoveChecked = new JButton("Remove checked", GUIHelper.getIcon("delete.gif"));
-    m_ButtonRemoveChecked.addActionListener((ActionEvent e) -> removeCheckedAttributes());
-    panel2.add(m_ButtonRemoveChecked);
+    m_ButtonSelectedAttributesAction = new JideSplitButton();
+    m_ButtonSelectedAttributesAction.setAlwaysDropdown(false);
+    m_ButtonSelectedAttributesAction.setButtonEnabled(true);
+    m_ButtonSelectedAttributesAction.setButtonStyle(JideSplitButton.TOOLBOX_STYLE);
+    for (AbstractSelectedAttributesAction action: m_Actions) {
+      if (action instanceof RemoveChecked)
+	m_ButtonSelectedAttributesAction.setAction(action);
+      else
+	m_ButtonSelectedAttributesAction.add(action);
+    }
+    panel2.add(m_ButtonSelectedAttributesAction);
+    panelAtts.add(panel2, BorderLayout.EAST);
 
     m_PanelAttSelection = new AttributeSelectionPanel();
     m_PanelAttSelection.setBorder(BorderFactory.createTitledBorder("Attributes"));
     m_PanelAttSelection.getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> {
+      // update other panels
       int[] indices = m_PanelAttSelection.getSelectedRows();
       if (indices.length == 1) {
 	m_PanelAttSummary.setAttribute(indices[0]);
@@ -215,6 +271,17 @@ public class PreprocessTab
       else {
 	// TODO unset?
       }
+      // range
+      indices = m_PanelAttSelection.getSelectedAttributes();
+      if (indices.length == 0) {
+	m_TextSelectedAttributes.setText("");
+      }
+      else {
+	Range range = new Range();
+	range.setIndices(indices);
+	m_TextSelectedAttributes.setText(range.getRange());
+      }
+      m_ButtonSelectedAttributes.setEnabled(indices.length > 0);
     });
     panel.add(m_PanelAttSelection, BorderLayout.CENTER);
 
@@ -244,8 +311,9 @@ public class PreprocessTab
     final boolean	batch;
     final boolean 	replace;
     final boolean	keep;
+    Runnable		run;
 
-    if (m_Worker != null)
+    if (!canSubmitJob())
       return;
 
     m_CurrentFilter = (Filter) m_PanelGOE.getCurrent();
@@ -254,7 +322,7 @@ public class PreprocessTab
     keep            = m_CheckBoxKeepName.isSelected();
     indices         = getSelectedRows();
 
-    m_Worker = new Thread(() -> {
+    run = () -> {
       for (int i = 0; i < indices.length; i++) {
 	DataContainer cont = getData().get(indices[i]);
 	logMessage("Starting filtering " + (i+1) + "/" + indices.length + " '" + cont.getSource() + "' using " + OptionUtils.getCommandLine(m_CurrentFilter));
@@ -281,11 +349,9 @@ public class PreprocessTab
 	  break;
 	}
       }
-      m_Worker = null;
-      updateButtons();
-    });
-    m_Worker.start();
-    updateButtons();
+      clearJob();
+    };
+    submitJob(run);
   }
 
   /**
@@ -310,13 +376,47 @@ public class PreprocessTab
   }
 
   /**
+   * Returns whether a job can be submitted.
+   *
+   * @return		true if possible
+   */
+  public boolean canSubmitJob() {
+    return (m_Worker == null);
+  }
+
+  /**
+   * Submits the job.
+   *
+   * @param run		the job to submit
+   * @return		true if successfully submitted
+   */
+  public synchronized boolean submitJob(Runnable run) {
+    if (!canSubmitJob())
+      return false;
+
+    m_Worker = new Thread(run);
+    m_Worker.start();
+    updateButtons();
+    return true;
+  }
+
+  /**
+   * Clears the job, makes way for another one.
+   */
+  public void clearJob() {
+    m_Worker = null;
+    updateButtons();
+  }
+
+  /**
    * Updates the buttons.
    */
   public void updateButtons() {
     super.updateButtons();
     m_ButtonStart.setEnabled(!isBusy() && (getSelectedRows().length > 0));
     m_ButtonStop.setEnabled(isBusy());
-    m_ButtonRemoveChecked.setEnabled(!isBusy() && (getSelectedRows().length == 1));
+    m_ButtonSelectedAttributesAction.setEnabled(!isBusy() && (getSelectedRows().length == 1));
+    m_ButtonSelectedAttributes.setEnabled(m_TextSelectedAttributes.getText().length() > 0);
   }
 
   /**
@@ -378,65 +478,53 @@ public class PreprocessTab
       m_PanelAttSelection.setInstances(cont.getData());
       m_PanelAttSummary.setInstances(cont.getData());
       m_PanelAttVisualization.setInstances(cont.getData());
-      m_ButtonRemoveChecked.setEnabled(true);
+      m_ButtonSelectedAttributesAction.setEnabled(true);
     }
     else {
       m_PanelInstSummary.setInstances(null);
       m_PanelAttSelection.setInstances(null);
       m_PanelAttSummary.setInstances(null);
       m_PanelAttVisualization.setInstances(null);
-      m_ButtonRemoveChecked.setEnabled(false);
+      m_ButtonSelectedAttributesAction.setEnabled(false);
     }
 
     repaint();
   }
 
   /**
-   * Removes the check attributes.
+   * Returns the attribute selection panel.
+   *
+   * @return		the panel
    */
-  protected void removeCheckedAttributes() {
-    int[]		indices;
-    int			index;
-    DataContainer	cont;
-    Runnable		run;
+  public AttributeSelectionPanel getAttributeSelectionPanel() {
+    return m_PanelAttSelection;
+  }
 
-    if (getSelectedRows().length != 1)
-      return;
-    index = getSelectedRows()[0];
-    cont  = getData().get(index);
+  /**
+   * Returns the replace checkbox.
+   *
+   * @return		the checkbox
+   */
+  public JCheckBox getCheckBoxReplace() {
+    return m_CheckBoxReplace;
+  }
 
-    indices = m_PanelAttSelection.getSelectedAttributes();
-    if (indices.length == 0)
-      return;
+  /**
+   * Returns the batch filter checkbox.
+   *
+   * @return		the checkbox
+   */
+  public JCheckBox getCheckBoxBatchFilter() {
+    return m_CheckBoxBatchFilter;
+  }
 
-    run = () -> {
-      showStatus("Removing checked attributes...");
-      boolean keep = m_CheckBoxKeepName.isSelected();
-      String oldName = cont.getData().relationName();
-      Remove remove = new Remove();
-      remove.setAttributeIndicesArray(indices);
-      try {
-	remove.setInputFormat(cont.getData());
-	Instances filtered = Filter.useFilter(cont.getData(), remove);
-	if (keep)
-	  filtered.setRelationName(oldName);
-	cont.setData(filtered);
-	fireDataChange(new WekaInvestigatorDataEvent(getOwner(), WekaInvestigatorDataEvent.ROWS_MODIFIED, getSelectedRows()[0]));
-	SwingUtilities.invokeLater(() -> {
-	  if (m_PanelAttSelection.getTable().getRowCount() > 0)
-	    m_PanelAttSelection.getTable().setSelectedRow(0);
-	});
-      }
-      catch (Throwable e) {
-	GUIHelper.showErrorMessage(PreprocessTab.this, "Failed to remove checked attributes!", e);
-      }
-      m_Worker = null;
-      showStatus("");
-      updateButtons();
-    };
-    m_Worker = new Thread(run);
-    updateButtons();
-    m_Worker.start();
+  /**
+   * Returns the keep name checkbox.
+   *
+   * @return		the checkbox
+   */
+  public JCheckBox getCheckBoxKeepName() {
+    return m_CheckBoxKeepName;
   }
 
   /**
