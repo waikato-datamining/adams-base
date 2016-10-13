@@ -23,6 +23,8 @@ package adams.gui.core;
 
 import adams.core.License;
 import adams.core.annotation.MixedCopyright;
+import adams.core.logging.Logger;
+import adams.core.logging.LoggingHelper;
 import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
@@ -38,6 +40,7 @@ import javax.swing.table.TableModel;
 import java.awt.Component;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.util.logging.Level;
 
 /**
  * A helper class for JTable, e.g. calculating the optimal colwidth.
@@ -53,6 +56,9 @@ import java.awt.Rectangle;
     note = "org.fopps.ui.EnhancedTable"
 )
 public class JTableHelper {
+
+  /** for logging. */
+  protected static Logger LOGGER = LoggingHelper.getLogger(JTableHelper.class);
 
   /** the maximum number of rows to use for calculation. */
   public final static int MAX_ROWS = 100;
@@ -85,7 +91,18 @@ public class JTableHelper {
    * @return		the optimal width
    */
   public int calcColumnWidth(int col) {
-    return calcColumnWidth(getJTable(), col);
+    return calcColumnWidth(col, -1);
+  }
+
+  /**
+   * calcs the optimal column width of the given column.
+   *
+   * @param col		the column index
+   * @param max      the limit for the column width, -1 for unlimited
+   * @return		the optimal width
+   */
+  public int calcColumnWidth(int col, int max) {
+    return calcColumnWidth(getJTable(), col, max);
   }
 
   /**
@@ -101,6 +118,23 @@ public class JTableHelper {
    * @return         the width, -1 if error
    */
   public static int calcColumnWidth(JTable table, int col) {
+    return calcColumnWidth(table, col, - 1);
+  }
+
+  /**
+   * Calculates the optimal width for the column of the given table. The
+   * calculation is based on the preferred width of the header and cell
+   * renderer.
+   * <br>
+   * Taken from the newsgroup de.comp.lang.java with some modifications.<br>
+   * Taken from FOPPS/EnhancedTable - http://fopps.sourceforge.net/<br>
+   *
+   * @param table    the table to calculate the column width
+   * @param col      the column to calculate the widths
+   * @param max      the limit for the column width, -1 for unlimited
+   * @return         the width, -1 if error
+   */
+  public static int calcColumnWidth(JTable table, int col, int max) {
     int 	result;
     TableModel 	data;
     int 	rowCount;
@@ -108,7 +142,7 @@ public class JTableHelper {
     int		dec;
     Component 	c;
 
-    result = calcHeaderWidth(table, col);
+    result = calcHeaderWidth(table, col, max);
     if (result == -1)
       return result;
 
@@ -121,10 +155,14 @@ public class JTableHelper {
             table.getCellRenderer(row, col),
             row, col);
         result = Math.max(result, c.getPreferredSize().width + 10);
+	if (result >= max) {
+	  result = max;
+	  break;
+	}
       }
     }
     catch (Exception e) {
-      e.printStackTrace();
+      LOGGER.log(Level.SEVERE, "Failed to calculate column width!", e);
     }
 
     return result;
@@ -137,7 +175,18 @@ public class JTableHelper {
    * @return		the optimal width
    */
   public int calcHeaderWidth(int col) {
-    return calcHeaderWidth(getJTable(), col);
+    return calcHeaderWidth(getJTable(), col, -1);
+  }
+
+  /**
+   * calcs the optimal header width of the given column.
+   *
+   * @param col		the column index
+   * @param max      the limit for the column width, -1 for unlimited
+   * @return		the optimal width
+   */
+  public int calcHeaderWidth(int col, int max) {
+    return calcHeaderWidth(getJTable(), col, max);
   }
 
   /**
@@ -149,11 +198,24 @@ public class JTableHelper {
    * @return         the width, -1 if error
    */
   public static int calcHeaderWidth(JTable table, int col) {
+    return calcHeaderWidth(table, col, -1);
+  }
+
+  /**
+   * Calculates the optimal width for the header of the given table. The
+   * calculation is based on the preferred width of the header renderer.
+   *
+   * @param table    the table to calculate the column width
+   * @param col      the column to calculate the widths
+   * @param max      the limit for the column width, -1 for unlimited
+   * @return         the width, -1 if error
+   */
+  public static int calcHeaderWidth(JTable table, int col, int max) {
     if (table == null)
       return -1;
 
     if (col < 0 || col > table.getColumnCount()) {
-      System.out.println("invalid col " + col);
+      LOGGER.severe("calcHeaderWidth: invalid col " + col);
       return -1;
     }
 
@@ -173,6 +235,9 @@ public class JTableHelper {
           false, false, -1, col);
       width = c.getPreferredSize().width + 5;
     }
+
+    if (max > -1)
+      width = Math.min(width, max);
 
     return width;
   }
