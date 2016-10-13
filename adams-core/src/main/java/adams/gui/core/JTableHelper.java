@@ -146,6 +146,12 @@ public class JTableHelper {
     if (result == -1)
       return result;
 
+    // already reached maximum?
+    if (max > -1) {
+      if (result >= max)
+	return result;
+    }
+
     data     = table.getModel();
     rowCount = data.getRowCount();
     dec      = (int) Math.ceil((double) rowCount / (double) MAX_ROWS);
@@ -155,9 +161,11 @@ public class JTableHelper {
             table.getCellRenderer(row, col),
             row, col);
         result = Math.max(result, c.getPreferredSize().width + 10);
-	if (result >= max) {
-	  result = max;
-	  break;
+	if (max > -1) {
+	  if (result >= max) {
+	    result = max;
+	    break;
+	  }
 	}
       }
     }
