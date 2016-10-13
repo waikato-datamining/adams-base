@@ -98,5 +98,29 @@ Keywords=\
     if,\
     then,\
     else,\
-    end
+    end,\
+    abs,\
+    sqrt,\
+    cbrt,\
+    log,\
+    log10,\
+    exp,\
+    sin,\
+    sinh,\
+    cos,\
+    cosh,\
+    tan,\
+    tanh,\
+    atan,\
+    atan2,\
+    hypot,\
+    signum,\
+    rint,\
+    floor,\
+    pow,\
+    power,\
+    ceil,\
+    min,\
+    max
+
 
