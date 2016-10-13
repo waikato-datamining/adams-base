@@ -120,7 +120,7 @@ import java.io.*;
   // numbers and variables
   "-"?[0-9]*\.?[0-9]+(E(-)?[1-9][0-9]*)? { return sf.newSymbol("Number", sym.NUMBER, new Double(yytext())); }
   [a-zA-Z0-9_\-]+ { return sf.newSymbol("Variable", sym.VARIABLE, new String(yytext())); }
-  "["[^\]]+"]" { return sf.newSymbol("Variable", sym.VARIABLE, new String(yytext().replace("[", "").replace("]", ""))); }
+  "'"[^\']+"'" { return sf.newSymbol("Variable", sym.VARIABLE, new String(yytext().replace("[", "").replace("]", ""))); }
 
   // comment
   "//".* { /* ignore line comments. */ }

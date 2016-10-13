@@ -106,8 +106,8 @@ import java.util.logging.Level;
  *               | max ( expr1 , expr2 )<br>
  * <br>
  * Notes:<br>
- * - Variables are either all alphanumeric (e.g., "ABc12") or any character<br>
- *   apart from "]" enclosed by "[" and "]" (e.g., "[Hello World]").<br>
+ * - Variables are either all alphanumeric and -&#47;_ (e.g., "ABc_1-2") or any character<br>
+ *   apart from "'" enclosed by "'" and "'" (e.g., "'Hello World'").<br>
  * - The 'all' method applies the value to all the values in the lookup table<br>
  *   that match the regular expression.<br>
  * <br><br>
@@ -312,8 +312,8 @@ public class LookUpUpdate
 	+ "              | max ( expr1 , expr2 )\n"
 	+ "\n"
 	+ "Notes:\n"
-	+ "- Variables are either all alphanumeric (e.g., \"ABc12\") or any character\n"
-	+ "  apart from \"]\" enclosed by \"[\" and \"]\" (e.g., \"[Hello World]\").\n"
+	+ "- Variables are either all alphanumeric and -/_ (e.g., \"ABc_1-2\") or any character\n"
+	+ "  apart from \"'\" enclosed by \"'\" and \"'\" (e.g., \"'Hello World'\").\n"
 	+ "- The 'all' method applies the value to all the values in the lookup table\n"
         + "  that match the regular expression.\n"
       ;

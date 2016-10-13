@@ -99,8 +99,8 @@ import java.util.HashMap;
  *               | max ( expr1 , expr2 )<br>
  * <br>
  * Notes:<br>
- * - Variables are either all alphanumeric (e.g., "ABc12") or any character<br>
- *   apart from "]" enclosed by "[" and "]" (e.g., "[Hello World]").<br>
+ * - Variables are either all alphanumeric and -&#47;_ (e.g., "ABc_1-2") or any character<br>
+ *   apart from "'" enclosed by "'" and "'" (e.g., "'Hello World'").<br>
  * - The 'all' method applies the value to all the values in the lookup table<br>
  *   that match the regular expression.<br>
  * <br><br>
