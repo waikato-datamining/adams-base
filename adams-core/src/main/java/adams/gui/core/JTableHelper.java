@@ -300,7 +300,14 @@ public class JTableHelper {
    * sets the optimal column width for all columns.
    */
   public void setOptimalColumnWidth() {
-    setOptimalColumnWidth(getJTable());
+    setOptimalColumnWidthBounded(getJTable(), -1);
+  }
+
+  /**
+   * sets the optimal column width for all columns.
+   */
+  public void setOptimalColumnWidthBounded(int max) {
+    setOptimalColumnWidthBounded(getJTable(), max);
   }
 
   /**
@@ -309,10 +316,19 @@ public class JTableHelper {
    * @param table	the table to work on
    */
   public static void setOptimalColumnWidth(JTable table) {
+    setOptimalColumnWidthBounded(table, -1);
+  }
+
+  /**
+   * sets the optimal column width for alls column if the given table.
+   *
+   * @param table	the table to work on
+   */
+  public static void setOptimalColumnWidthBounded(JTable table, int max) {
     int		i;
 
     for (i = 0; i < table.getColumnModel().getColumnCount(); i++)
-      setOptimalColumnWidth(table, i);
+      setOptimalColumnWidthBounded(table, i, max);
   }
 
   /**
