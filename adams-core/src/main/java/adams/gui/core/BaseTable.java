@@ -303,6 +303,17 @@ public class BaseTable
   }
 
   /**
+   * Sets the optimal column width for all columns. AutoResize must be set
+   * to BaseTable.AUTO_RESIZE_OFF.
+   *
+   * @param max		the maximum width
+   */
+  public void setOptimalColumnWidthBounded(final int max) {
+    if (isVisible())
+      SwingUtilities.invokeLater(() -> getTableHelper().setOptimalColumnWidthBounded(max));
+  }
+
+  /**
    * Sets the optimal column width for the specified column. AutoResize must be set
    * to BaseTable.AUTO_RESIZE_OFF.
    *
@@ -311,6 +322,18 @@ public class BaseTable
   public void setOptimalColumnWidth(final int column) {
     if (isVisible())
       SwingUtilities.invokeLater(() -> getTableHelper().setOptimalColumnWidth(column));
+  }
+
+  /**
+   * Sets the optimal column width for the specified column. AutoResize must be set
+   * to BaseTable.AUTO_RESIZE_OFF.
+   *
+   * @param column	the column to resize
+   * @param max		the maximum width
+   */
+  public void setOptimalColumnWidthBounded(final int column, final int max) {
+    if (isVisible())
+      SwingUtilities.invokeLater(() -> getTableHelper().setOptimalColumnWidthBounded(column, max));
   }
 
   /**

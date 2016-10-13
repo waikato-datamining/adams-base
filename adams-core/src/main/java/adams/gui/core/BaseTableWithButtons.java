@@ -286,6 +286,16 @@ public class BaseTableWithButtons
   }
 
   /**
+   * Sets the optimal column width for all columns. AutoResize must be set
+   * to BaseTable.AUTO_RESIZE_OFF.
+   *
+   * @param max		the maximum width
+   */
+  public void setOptimalColumnWidthBounded(int max) {
+    m_Component.setOptimalColumnWidthBounded(max);
+  }
+
+  /**
    * Sets the optimal column width for the specified column. AutoResize must be set
    * to BaseTable.AUTO_RESIZE_OFF.
    *
@@ -293,6 +303,17 @@ public class BaseTableWithButtons
    */
   public void setOptimalColumnWidth(int column) {
     m_Component.setOptimalColumnWidth(column);
+  }
+
+  /**
+   * Sets the optimal column width for the specified column. AutoResize must be set
+   * to BaseTable.AUTO_RESIZE_OFF.
+   *
+   * @param column	the column to resize
+   * @param max		the maximum width
+   */
+  public void setOptimalColumnWidthBounded(int column, int max) {
+    m_Component.setOptimalColumnWidthBounded(column, max);
   }
 
   /**
