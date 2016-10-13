@@ -91,7 +91,7 @@ public class JTableHelper {
    * @return		the optimal width
    */
   public int calcColumnWidth(int col) {
-    return calcColumnWidth(col, -1);
+    return calcColumnWidthBounded(col, -1);
   }
 
   /**
@@ -101,8 +101,8 @@ public class JTableHelper {
    * @param max      the limit for the column width, -1 for unlimited
    * @return		the optimal width
    */
-  public int calcColumnWidth(int col, int max) {
-    return calcColumnWidth(getJTable(), col, max);
+  public int calcColumnWidthBounded(int col, int max) {
+    return calcColumnWidthBounded(getJTable(), col, max);
   }
 
   /**
@@ -118,7 +118,7 @@ public class JTableHelper {
    * @return         the width, -1 if error
    */
   public static int calcColumnWidth(JTable table, int col) {
-    return calcColumnWidth(table, col, - 1);
+    return calcColumnWidthBounded(table, col, -1);
   }
 
   /**
@@ -134,7 +134,7 @@ public class JTableHelper {
    * @param max      the limit for the column width, -1 for unlimited
    * @return         the width, -1 if error
    */
-  public static int calcColumnWidth(JTable table, int col, int max) {
+  public static int calcColumnWidthBounded(JTable table, int col, int max) {
     int 	result;
     TableModel 	data;
     int 	rowCount;
@@ -142,7 +142,7 @@ public class JTableHelper {
     int		dec;
     Component 	c;
 
-    result = calcHeaderWidth(table, col, max);
+    result = calcHeaderWidthBounded(table, col, max);
     if (result == -1)
       return result;
 
@@ -175,7 +175,7 @@ public class JTableHelper {
    * @return		the optimal width
    */
   public int calcHeaderWidth(int col) {
-    return calcHeaderWidth(getJTable(), col, -1);
+    return calcHeaderWidthBounded(getJTable(), col, -1);
   }
 
   /**
@@ -185,8 +185,8 @@ public class JTableHelper {
    * @param max      the limit for the column width, -1 for unlimited
    * @return		the optimal width
    */
-  public int calcHeaderWidth(int col, int max) {
-    return calcHeaderWidth(getJTable(), col, max);
+  public int calcHeaderWidthBounded(int col, int max) {
+    return calcHeaderWidthBounded(getJTable(), col, max);
   }
 
   /**
@@ -198,7 +198,7 @@ public class JTableHelper {
    * @return         the width, -1 if error
    */
   public static int calcHeaderWidth(JTable table, int col) {
-    return calcHeaderWidth(table, col, -1);
+    return calcHeaderWidthBounded(table, col, -1);
   }
 
   /**
@@ -210,7 +210,7 @@ public class JTableHelper {
    * @param max      the limit for the column width, -1 for unlimited
    * @return         the width, -1 if error
    */
-  public static int calcHeaderWidth(JTable table, int col, int max) {
+  public static int calcHeaderWidthBounded(JTable table, int col, int max) {
     if (table == null)
       return -1;
 
@@ -248,7 +248,17 @@ public class JTableHelper {
    * @param col		the column index
    */
   public void setOptimalColumnWidth(int col) {
-    setOptimalColumnWidth(getJTable(), col);
+    setOptimalColumnWidthBounded(getJTable(), col, -1);
+  }
+
+  /**
+   * sets the optimal column width for the given column.
+   *
+   * @param col		the column index
+   * @param max         the maximum column width, -1 for unlimited
+   */
+  public void setOptimalColumnWidthBounded(int col, int max) {
+    setOptimalColumnWidthBounded(getJTable(), col, max);
   }
 
   /**
@@ -257,11 +267,22 @@ public class JTableHelper {
    * @param table	the table to work on
    * @param col		the column index
    */
-  public static void setOptimalColumnWidth(final JTable table, final int col) {
+  public static void setOptimalColumnWidth(JTable table, int col) {
+    setOptimalHeaderWidthBounded(table, col, -1);
+  }
+
+  /**
+   * sets the optimal column width for the given column.
+   *
+   * @param table	the table to work on
+   * @param col		the column index
+   * @param max         the maximum column width, -1 for unlimited
+   */
+  public static void setOptimalColumnWidthBounded(final JTable table, final int col, int max) {
     final int	  width;
 
     if ( (col >= 0) && (col < table.getColumnModel().getColumnCount()) ) {
-      width = calcColumnWidth(table, col);
+      width = calcColumnWidthBounded(table, col, max);
 
       if (width >= 0) {
         SwingUtilities.invokeLater(() -> {
@@ -300,7 +321,7 @@ public class JTableHelper {
    * @param col		the column index
    */
   public void setOptimalHeaderWidth(int col) {
-    setOptimalHeaderWidth(getJTable(), col, -1);
+    setOptimalHeaderWidthBounded(getJTable(), col, -1);
   }
 
   /**
@@ -309,8 +330,8 @@ public class JTableHelper {
    * @param col		the column index
    * @param max         the column width limit, -1 for unlimited
    */
-  public void setOptimalHeaderWidth(int col, int max) {
-    setOptimalHeaderWidth(getJTable(), col, max);
+  public void setOptimalHeaderWidthBounded(int col, int max) {
+    setOptimalHeaderWidthBounded(getJTable(), col, max);
   }
 
   /**
@@ -320,7 +341,7 @@ public class JTableHelper {
    * @param col		the column index
    */
   public static void setOptimalHeaderWidth(final JTable table, final int col) {
-    setOptimalHeaderWidth(table, col, -1);
+    setOptimalHeaderWidthBounded(table, col, -1);
   }
 
   /**
@@ -330,11 +351,11 @@ public class JTableHelper {
    * @param col		the column index
    * @param max         the column width limit, -1 for unlimited
    */
-  public static void setOptimalHeaderWidth(final JTable table, final int col, int max) {
+  public static void setOptimalHeaderWidthBounded(final JTable table, final int col, int max) {
     final int   width;
 
     if ( (col >= 0) && (col < table.getColumnModel().getColumnCount()) ) {
-      width = calcHeaderWidth(table, col, max);
+      width = calcHeaderWidthBounded(table, col, max);
 
       if (width >= 0) {
         SwingUtilities.invokeLater(() -> {
