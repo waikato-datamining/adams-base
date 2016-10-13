@@ -171,17 +171,56 @@ public abstract class AbstractInvestigatorTabWithDataTable
   }
 
   /**
+   * Returns the data containers that are currently selected.
+   *
+   * @return		the selected containers
+   */
+  protected DataContainer[] backupSelection() {
+    List<DataContainer>		result;
+
+    result = new ArrayList<>();
+    for (int row: getSelectedRows())
+      result.add(m_Model.getData().get(row));
+
+    return result.toArray(new DataContainer[result.size()]);
+  }
+
+  /**
+   * Tries to restore the selection using the provided containers.
+   *
+   * @param conts	the containers to re-select, if possible
+   */
+  protected void restoreSelection(DataContainer[] conts) {
+    int newIndex;
+
+    m_Table.getSelectionModel().clearSelection();
+    for (DataContainer oldCont : conts) {
+      for (newIndex = 0; newIndex < m_Model.getData().size(); newIndex++) {
+	if (oldCont.equals(m_Model.getData().get(newIndex))) {
+	  m_Table.getSelectionModel().addSelectionInterval(newIndex, newIndex);
+	  break;
+	}
+      }
+    }
+  }
+
+  /**
    * Notifies the tab that the data changed.
    *
    * @param e		the event
    */
   public void dataChanged(WekaInvestigatorDataEvent e) {
+    DataContainer[]	backup;
+
+    backup = backupSelection();
+
     switch (e.getType()) {
       case WekaInvestigatorDataEvent.ROWS_DELETED:
       case WekaInvestigatorDataEvent.ROWS_MODIFIED:
 	m_Model.removeTableModelListener(this);
 	m_Model.setData(getData(), true);
 	m_Model.addTableModelListener(this);
+	restoreSelection(backup);
 	break;
       case WekaInvestigatorDataEvent.ROW_ACTIVATED:
 	if (m_Table.getSelectedRow() != -1) {
@@ -199,6 +238,7 @@ public abstract class AbstractInvestigatorTabWithDataTable
 	m_Model.addTableModelListener(this);
 	m_Table.setModel(m_Model);
 	m_Table.setOptimalColumnWidthBounded(DataTable.MAX_COLUMN_WIDTH);
+	restoreSelection(backup);
     }
   }
 
