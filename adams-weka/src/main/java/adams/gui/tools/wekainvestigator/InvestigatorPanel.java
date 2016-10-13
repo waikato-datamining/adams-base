@@ -155,8 +155,9 @@ public class InvestigatorPanel
 
     m_Log                = new StringBuilder();
     m_Data               = new ArrayList<>();
-    m_FileChooser        = new WekaFileChooser();
     m_RecentFilesHandler = null;
+    m_FileChooser        = new WekaFileChooser();
+    m_FileChooser.setMultiSelectionEnabled(true);
 
     cmdline = getProperties().getProperty("General.ClassAttributeHeuristic", OptionUtils.getCommandLine(new LastAttribute()));
     try {
@@ -535,26 +536,27 @@ public class InvestigatorPanel
    * Lets user select a dataset.
    */
   public void openFile() {
-    int			retVal;
-    final FileContainer	cont;
-    AbstractFileLoader	loader;
+    int				retVal;
+    final AbstractFileLoader	loader;
 
     retVal = m_FileChooser.showOpenDialog(this);
     if (retVal != WekaFileChooser.APPROVE_OPTION)
       return;
 
-    logMessage("Loading: " + m_FileChooser.getSelectedFile());
     loader = m_FileChooser.getReader();
-    cont   = new FileContainer(loader, m_FileChooser.getSelectedFile());
-    cont.getUndo().setEnabled(isUndoEnabled());
-    updateClassAttribute(cont.getData());
-    SwingUtilities.invokeLater(() -> {
-      m_Data.add(cont);
-      if (m_RecentFilesHandler != null)
-	m_RecentFilesHandler.addRecentItem(new Setup(m_FileChooser.getSelectedFile(), loader));
-      logMessage("Loaded: " + m_FileChooser.getSelectedFile());
-      fireDataChange(new WekaInvestigatorDataEvent(this, WekaInvestigatorDataEvent.ROWS_ADDED, m_Data.size() - 1));
-    });
+    for (final File file: m_FileChooser.getSelectedFiles()) {
+      logMessage("Loading: " + file);
+      final FileContainer cont = new FileContainer(loader, file);
+      cont.getUndo().setEnabled(isUndoEnabled());
+      updateClassAttribute(cont.getData());
+      SwingUtilities.invokeLater(() -> {
+	m_Data.add(cont);
+	if (m_RecentFilesHandler != null)
+	  m_RecentFilesHandler.addRecentItem(new Setup(file, loader));
+	logMessage("Loaded: " + file);
+	fireDataChange(new WekaInvestigatorDataEvent(this, WekaInvestigatorDataEvent.ROWS_ADDED, m_Data.size() - 1));
+      });
+    }
   }
 
   /**
