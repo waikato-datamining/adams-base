@@ -15,7 +15,7 @@
 
 /*
  * LookUpUpdate.java
- * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.parser;
@@ -81,6 +81,29 @@ import java.util.logging.Level;
  *               | expr &#47; expr<br>
  *               | expr % expr<br>
  *               | expr ^ expr<br>
+ * <br>
+ *               | abs ( expr )<br>
+ *               | sqrt ( expr )<br>
+ *               | cbrt ( expr )<br>
+ *               | log ( expr )<br>
+ *               | log10 ( expr )<br>
+ *               | exp ( expr )<br>
+ *               | sin ( expr )<br>
+ *               | sinh ( expr )<br>
+ *               | cos ( expr )<br>
+ *               | cosh ( expr )<br>
+ *               | tan ( expr )<br>
+ *               | tanh ( expr )<br>
+ *               | atan ( expr )<br>
+ *               | atan2 ( exprY , exprX )<br>
+ *               | hypot ( exprX , exprY )<br>
+ *               | signum ( expr )<br>
+ *               | rint ( expr )<br>
+ *               | floor ( expr )<br>
+ *               | pow[er] ( expr , expr )<br>
+ *               | ceil ( expr )<br>
+ *               | min ( expr1 , expr2 )<br>
+ *               | max ( expr1 , expr2 )<br>
  * <br>
  * Notes:<br>
  * - Variables are either all alphanumeric (e.g., "ABc12") or any character<br>
@@ -264,6 +287,29 @@ public class LookUpUpdate
 	+ "              | expr / expr\n"
 	+ "              | expr % expr\n"
 	+ "              | expr ^ expr\n"
+	+ "\n"
+	+ "              | abs ( expr )\n"
+	+ "              | sqrt ( expr )\n"
+	+ "              | cbrt ( expr )\n"
+	+ "              | log ( expr )\n"
+	+ "              | log10 ( expr )\n"
+	+ "              | exp ( expr )\n"
+	+ "              | sin ( expr )\n"
+	+ "              | sinh ( expr )\n"
+	+ "              | cos ( expr )\n"
+	+ "              | cosh ( expr )\n"
+	+ "              | tan ( expr )\n"
+	+ "              | tanh ( expr )\n"
+	+ "              | atan ( expr )\n"
+	+ "              | atan2 ( exprY , exprX )\n"
+	+ "              | hypot ( exprX , exprY )\n"
+	+ "              | signum ( expr )\n"
+	+ "              | rint ( expr )\n"
+	+ "              | floor ( expr )\n"
+	+ "              | pow[er] ( expr , expr )\n"
+	+ "              | ceil ( expr )\n"
+	+ "              | min ( expr1 , expr2 )\n"
+	+ "              | max ( expr1 , expr2 )\n"
 	+ "\n"
 	+ "Notes:\n"
 	+ "- Variables are either all alphanumeric (e.g., \"ABc12\") or any character\n"

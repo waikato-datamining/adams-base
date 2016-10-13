@@ -67,6 +67,7 @@ import java.io.*;
   // symbols
   ":=" { return sf.newSymbol("Assignment", sym.ASSIGNMENT); }
   ";" { return sf.newSymbol("Semi", sym.SEMI); }
+  "," { return sf.newSymbol("Comma", sym.COMMA); }
 
   // operands
   "-" { return sf.newSymbol("Minus", sym.MINUS); }
@@ -78,6 +79,29 @@ import java.io.*;
 
   // functions
   "all" { return sf.newSymbol("All", sym.ALL); }
+  "abs" { return sf.newSymbol("Abs", sym.ABS); }
+  "sqrt" { return sf.newSymbol("Sqrt", sym.SQRT); }
+  "cbrt" { return sf.newSymbol("Cbrt", sym.CBRT); }
+  "log" { return sf.newSymbol("Log", sym.LOG); }
+  "log10" { return sf.newSymbol("Log10", sym.LOG10); }
+  "exp" { return sf.newSymbol("Exp", sym.EXP); }
+  "sin" { return sf.newSymbol("Sin", sym.SIN); }
+  "sinh" { return sf.newSymbol("SinH", sym.SINH); }
+  "cos" { return sf.newSymbol("Cos", sym.COS); }
+  "cosh" { return sf.newSymbol("CosH", sym.COSH); }
+  "tan" { return sf.newSymbol("Tan", sym.TAN); }
+  "tanh" { return sf.newSymbol("TanH", sym.TANH); }
+  "atan" { return sf.newSymbol("Atan", sym.ATAN); }
+  "atan2" { return sf.newSymbol("Atan2", sym.ATAN2); }
+  "hypot" { return sf.newSymbol("Hypot", sym.HYPOT); }
+  "signum" { return sf.newSymbol("Signum", sym.SIGNUM); }
+  "rint" { return sf.newSymbol("Rint", sym.RINT); }
+  "floor" { return sf.newSymbol("Floor", sym.FLOOR); }
+  "power" { return sf.newSymbol("Pow", sym.POW); }
+  "pow" { return sf.newSymbol("Pow", sym.POW); }
+  "ceil" { return sf.newSymbol("Ceil", sym.CEIL); }
+  "min" { return sf.newSymbol("Min", sym.MIN); }
+  "max" { return sf.newSymbol("Max", sym.MAX); }
 
   // boolean stuff
   "<" { return sf.newSymbol("Less than", sym.LT); }

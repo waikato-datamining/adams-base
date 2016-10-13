@@ -75,6 +75,29 @@ import java.util.HashMap;
  *               | expr % expr<br>
  *               | expr ^ expr<br>
  * <br>
+ *               | abs ( expr )<br>
+ *               | sqrt ( expr )<br>
+ *               | cbrt ( expr )<br>
+ *               | log ( expr )<br>
+ *               | log10 ( expr )<br>
+ *               | exp ( expr )<br>
+ *               | sin ( expr )<br>
+ *               | sinh ( expr )<br>
+ *               | cos ( expr )<br>
+ *               | cosh ( expr )<br>
+ *               | tan ( expr )<br>
+ *               | tanh ( expr )<br>
+ *               | atan ( expr )<br>
+ *               | atan2 ( exprY , exprX )<br>
+ *               | hypot ( exprX , exprY )<br>
+ *               | signum ( expr )<br>
+ *               | rint ( expr )<br>
+ *               | floor ( expr )<br>
+ *               | pow[er] ( expr , expr )<br>
+ *               | ceil ( expr )<br>
+ *               | min ( expr1 , expr2 )<br>
+ *               | max ( expr1 , expr2 )<br>
+ * <br>
  * Notes:<br>
  * - Variables are either all alphanumeric (e.g., "ABc12") or any character<br>
  *   apart from "]" enclosed by "[" and "]" (e.g., "[Hello World]").<br>

@@ -122,8 +122,10 @@ parser code {:
 :}
 
 terminal IF, THEN, ELSE, END;
-terminal MINUS, UMINUS, PLUS, TIMES, DIVISION, EXPONENT, MODULO, ALL;
-terminal ASSIGNMENT, SEMI, LPAREN, RPAREN;
+terminal MINUS, UMINUS, PLUS, TIMES, DIVISION, EXPONENT, MODULO;
+terminal ALL, ABS, SQRT, LOG, EXP, SIN, COS, TAN, RINT, FLOOR, POW, CEIL, MIN, MAX;
+terminal CBRT, LOG10, COSH, SINH, TANH, ATAN, ATAN2, HYPOT, SIGNUM;
+terminal ASSIGNMENT, SEMI, COMMA, LPAREN, RPAREN;
 terminal TRUE, FALSE, LT, LE, GT, GE, EQ, NOT_EQ, NOT, AND, OR;
 terminal Double NUMBER;
 terminal Boolean BOOLEAN;
@@ -137,9 +139,10 @@ non terminal Object expr;
 precedence left AND, OR;
 precedence left LT, LE, GT, GE, EQ, NOT_EQ;
 precedence left PLUS, MINUS;
-precedence left TIMES, DIVISION, MODULO, ALL;
+precedence left TIMES, DIVISION, MODULO;
 precedence left EXPONENT;
 precedence left LPAREN, RPAREN;
+precedence left ALL, ABS, SQRT, LOG, EXP, SIN, COS, TAN, RINT, FLOOR, POW, CEIL, MIN, MAX;
 precedence left NOT, UMINUS;
 
 expr_list ::= expr_list expr_part | expr_part;
@@ -265,6 +268,51 @@ expr ::=        LPAREN expr:c RPAREN
                 {: RESULT = parser.getHelper().toBoolean(l) && parser.getHelper().toBoolean(r); :}
               | expr:l OR expr:r
                 {: RESULT = parser.getHelper().toBoolean(l) || parser.getHelper().toBoolean(r); :}
+
+              | ABS LPAREN expr:e RPAREN
+                {: RESULT = new Double(Math.abs(parser.getHelper().toDouble(e))); :}
+              | SQRT LPAREN expr:e RPAREN
+                {: RESULT = new Double(Math.sqrt(parser.getHelper().toDouble(e))); :}
+              | CBRT LPAREN expr:e RPAREN
+                {: RESULT = new Double(Math.cbrt(parser.getHelper().toDouble(e))); :}
+              | LOG LPAREN expr:e RPAREN
+                {: RESULT = new Double(Math.log(parser.getHelper().toDouble(e))); :}
+              | LOG10 LPAREN expr:e RPAREN
+                {: RESULT = new Double(Math.log10(parser.getHelper().toDouble(e))); :}
+              | EXP LPAREN expr:e RPAREN
+                {: RESULT = new Double(Math.exp(parser.getHelper().toDouble(e))); :}
+              | SIN LPAREN expr:e RPAREN
+                {: RESULT = new Double(Math.sin(parser.getHelper().toDouble(e))); :}
+              | SINH LPAREN expr:e RPAREN
+                {: RESULT = new Double(Math.sinh(parser.getHelper().toDouble(e))); :}
+              | COS LPAREN expr:e RPAREN
+                {: RESULT = new Double(Math.cos(parser.getHelper().toDouble(e))); :}
+              | COSH LPAREN expr:e RPAREN
+                {: RESULT = new Double(Math.cosh(parser.getHelper().toDouble(e))); :}
+              | TAN LPAREN expr:e RPAREN
+                {: RESULT = new Double(Math.tan(parser.getHelper().toDouble(e))); :}
+              | TANH LPAREN expr:e RPAREN
+                {: RESULT = new Double(Math.tanh(parser.getHelper().toDouble(e))); :}
+              | ATAN LPAREN expr:e RPAREN
+                {: RESULT = new Double(Math.atan(parser.getHelper().toDouble(e))); :}
+              | ATAN2 LPAREN expr:y COMMA expr:x RPAREN
+                {: RESULT = new Double(Math.atan2(parser.getHelper().toDouble(y), parser.getHelper().toDouble(x))); :}
+              | HYPOT LPAREN expr:x COMMA expr:y RPAREN
+                {: RESULT = new Double(Math.hypot(parser.getHelper().toDouble(x), parser.getHelper().toDouble(y))); :}
+              | SIGNUM LPAREN expr:e RPAREN
+                {: RESULT = new Double(Math.signum(parser.getHelper().toDouble(e))); :}
+              | RINT LPAREN expr:e RPAREN
+                {: RESULT = new Double(Math.rint(parser.getHelper().toDouble(e))); :}
+              | FLOOR LPAREN expr:e RPAREN
+                {: RESULT = new Double(Math.floor(parser.getHelper().toDouble(e))); :}
+              | POW LPAREN expr:b COMMA expr:e RPAREN
+                {: RESULT = new Double(Math.pow(parser.getHelper().toDouble(b), parser.getHelper().toDouble(e))); :}
+              | CEIL LPAREN expr:e RPAREN
+                {: RESULT = new Double(Math.ceil(parser.getHelper().toDouble(e))); :}
+              | MIN LPAREN expr:e1 COMMA expr:e2 RPAREN
+                {: RESULT = new Double(Math.min(parser.getHelper().toDouble(e1), parser.getHelper().toDouble(e2))); :}
+              | MAX LPAREN expr:e1 COMMA expr:e2 RPAREN
+                {: RESULT = new Double(Math.max(parser.getHelper().toDouble(e1), parser.getHelper().toDouble(e2))); :}
 
               | expr:l PLUS expr:r
                 {: RESULT = new Double(parser.getHelper().toNumber(l) + parser.getHelper().toNumber(r)); :}
