@@ -253,8 +253,12 @@ public class ClassifyTab
       worker = new SwingWorker() {
         @Override
         protected Object doInBackground() throws Exception {
-          current.generateOutput(item);
-          return null;
+          String msg = current.generateOutput(item);
+	  if (msg != null)
+	    m_Owner.logError(
+	      "Failed to generate output using: " + generator.toCommandLine() + "\n" + msg,
+	      "Error generating output");
+	  return null;
         }
       };
       worker.execute();
