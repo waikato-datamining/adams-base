@@ -48,6 +48,9 @@ public class DataTable
 
   private static final long serialVersionUID = -2329794525513037246L;
 
+  /** the maximum column width. */
+  public final static int MAX_COLUMN_WIDTH = 300;
+
   /**
    * Constructs a <code>DataTable</code> that is initialized with
    * <code>dm</code> as the data model, a default column model,
@@ -69,7 +72,7 @@ public class DataTable
     addHeaderPopupMenuListener((MouseEvent e) -> {
       JPopupMenu menu = new JPopupMenu();
       JMenuItem menuitem = new JMenuItem("Optimal width");
-      menuitem.addActionListener((ActionEvent ae) -> setOptimalColumnWidth());
+      menuitem.addActionListener((ActionEvent ae) -> setOptimalColumnWidthBounded(MAX_COLUMN_WIDTH));
       menu.add(menuitem);
       menu.show(getTableHeader(), e.getX(), e.getY());
     });

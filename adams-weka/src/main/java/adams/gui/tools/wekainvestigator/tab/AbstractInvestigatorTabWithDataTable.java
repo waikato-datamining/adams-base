@@ -28,6 +28,7 @@ import adams.gui.core.BaseTableWithButtons;
 import adams.gui.event.WekaInvestigatorDataEvent;
 import adams.gui.tools.wekainvestigator.InvestigatorPanel;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
+import adams.gui.tools.wekainvestigator.datatable.DataTable;
 import adams.gui.tools.wekainvestigator.datatable.DataTableModel;
 import adams.gui.tools.wekainvestigator.datatable.DataTableWithButtons;
 import adams.gui.tools.wekainvestigator.datatable.action.Rename;
@@ -197,7 +198,7 @@ public abstract class AbstractInvestigatorTabWithDataTable
 	m_Model = new DataTableModel(getOwner().getData(), hasReadOnlyTable());
 	m_Model.addTableModelListener(this);
 	m_Table.setModel(m_Model);
-	m_Table.setOptimalColumnWidth();
+	m_Table.setOptimalColumnWidthBounded(DataTable.MAX_COLUMN_WIDTH);
     }
   }
 
