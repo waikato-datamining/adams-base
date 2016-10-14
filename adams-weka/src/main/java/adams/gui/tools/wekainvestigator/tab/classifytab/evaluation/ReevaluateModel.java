@@ -260,6 +260,7 @@ public class ReevaluateModel
     MetaData 	runInfo;
     TIntList 	original;
     int		i;
+    int		interval;
 
     classifier = (Classifier) OptionUtils.shallowCopy(m_Model);
 
@@ -280,7 +281,13 @@ public class ReevaluateModel
 
     eval = new Evaluation(data);
     eval.setDiscardPredictions(discard);
-    eval.evaluateModel(m_Model, data);
+    interval = getTestingUpdateInterval();
+    for (i = 0; i < data.numInstances(); i++) {
+      eval.evaluateModelOnceAndRecordPrediction(m_Model, data.instance(i));
+      if ((i+1) % interval == 0)
+	getOwner().logMessage("Used " + (i+1) + "/" + data.numInstances() + " of '" + data.relationName() + "' to evaluate " + OptionUtils.getCommandLine(classifier));
+    }
+    getOwner().logMessage("Used " + data.numInstances() + " of '" + data.relationName() + "' to evaluate " + OptionUtils.getCommandLine(classifier));
 
     original = new TIntArrayList();
     for (i = 0; i < data.numInstances(); i++)

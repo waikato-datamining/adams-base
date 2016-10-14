@@ -267,7 +267,8 @@ public class TrainTestSplit
     WekaTrainTestSetContainer	cont;
     String			msg;
     MetaData 			runInfo;
-    int[] 			testOrig;
+    int				i;
+    int				interval;
 
     if ((msg = canEvaluate(classifier)) != null)
       throw new IllegalArgumentException("Cannot evaluate classifier!\n" + msg);
@@ -285,7 +286,6 @@ public class TrainTestSplit
     cont      = generator.next();
     train     = (Instances) cont.getValue(WekaTrainTestSetContainer.VALUE_TRAIN);
     test      = (Instances) cont.getValue(WekaTrainTestSetContainer.VALUE_TEST);
-    testOrig  = (int[]) cont.getValue(WekaTrainTestSetContainer.VALUE_TEST_ORIGINALINDICES);
     runInfo   = new MetaData();
     runInfo.add("Classifier", OptionUtils.getCommandLine(classifier));
     runInfo.add("Seed", seed);
@@ -307,7 +307,16 @@ public class TrainTestSplit
     getOwner().logMessage("Using remainder from '" + test.relationName() + "' to evaluate " + OptionUtils.getCommandLine(classifier));
     eval = new Evaluation(train);
     eval.setDiscardPredictions(discard);
-    eval.evaluateModel(model, test);
+
+    eval = new Evaluation(train);
+    eval.setDiscardPredictions(discard);
+    interval = getTestingUpdateInterval();
+    for (i = 0; i < test.numInstances(); i++) {
+      eval.evaluateModelOnceAndRecordPrediction(model, test.instance(i));
+      if ((i+1) % interval == 0)
+	getOwner().logMessage("Used " + (i+1) + "/" + test.numInstances() + " of '" + test.relationName() + "' to evaluate " + OptionUtils.getCommandLine(classifier));
+    }
+    getOwner().logMessage("Used " + test.numInstances() + " of '" + test.relationName() + "' to evaluate " + OptionUtils.getCommandLine(classifier));
 
     // history
     return addToHistory(

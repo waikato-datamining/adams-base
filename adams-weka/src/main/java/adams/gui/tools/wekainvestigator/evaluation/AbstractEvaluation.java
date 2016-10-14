@@ -117,6 +117,15 @@ public abstract class AbstractEvaluation<T extends AbstractInvestigatorTab, R ex
   }
 
   /**
+   * Returns the interval to use for outputting progress info during testing.
+   *
+   * @return		the interval
+   */
+  protected int getTestingUpdateInterval() {
+    return getProperties().getInteger("General.TestingUpdateInterval", 1000);
+  }
+
+  /**
    * Adds the item to the history and selects it.
    *
    * @param item	the item to add

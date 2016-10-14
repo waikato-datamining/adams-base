@@ -52,6 +52,7 @@ public class WekaInvestigatorPreferencesPanel
       adams.data.weka.classattribute.AbstractClassAttributeHeuristic.class,
       new LastAttribute(), true));
     addPropertyType("General.UndoEnabled", PropertyType.BOOLEAN);
+    addPropertyType("General.TestingUpdateInterval", PropertyType.INTEGER);
 
     // preprocessing
     addPropertyType("Preprocess.Filter", PropertyType.OBJECT_EDITOR);

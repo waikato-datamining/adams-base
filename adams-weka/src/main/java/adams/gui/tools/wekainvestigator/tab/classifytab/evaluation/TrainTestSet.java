@@ -29,7 +29,6 @@ import adams.gui.chooser.SelectOptionPanel;
 import adams.gui.core.AbstractNamedHistoryPanel;
 import adams.gui.core.ParameterPanel;
 import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
-import gnu.trove.list.TIntList;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
 import weka.core.Capabilities;
@@ -199,8 +198,8 @@ public class TrainTestSet
     boolean	discard;
     String	msg;
     MetaData 	runInfo;
-    TIntList	original;
     int		i;
+    int		interval;
 
     if ((msg = canEvaluate(classifier)) != null)
       throw new IllegalArgumentException("Cannot evaluate classifier!\n" + msg);
@@ -223,9 +222,16 @@ public class TrainTestSet
     getOwner().logMessage("Using '" + train.relationName() + "' to train " + OptionUtils.getCommandLine(classifier));
     model.buildClassifier(train);
     getOwner().logMessage("Using '" + test.relationName() + "' to evaluate " + OptionUtils.getCommandLine(classifier));
+
     eval = new Evaluation(train);
     eval.setDiscardPredictions(discard);
-    eval.evaluateModel(model, test);
+    interval = getTestingUpdateInterval();
+    for (i = 0; i < test.numInstances(); i++) {
+      eval.evaluateModelOnceAndRecordPrediction(model, test.instance(i));
+      if ((i+1) % interval == 0)
+	getOwner().logMessage("Used " + (i+1) + "/" + test.numInstances() + " of '" + test.relationName() + "' to evaluate " + OptionUtils.getCommandLine(classifier));
+    }
+    getOwner().logMessage("Used " + test.numInstances() + " of '" + test.relationName() + "' to evaluate " + OptionUtils.getCommandLine(classifier));
 
     // history
     return addToHistory(

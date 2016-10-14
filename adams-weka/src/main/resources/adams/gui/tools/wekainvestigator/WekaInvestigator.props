@@ -23,6 +23,10 @@ General.ClassAttributeHeuristic=adams.data.weka.classattribute.LastAttribute
 # (true|false)
 General.UndoEnabled=true
 
+# The interval, ie number of rows, to use during testing (eg train/test or
+# train/test split) for outputting progress information
+General.TestingUpdateInterval=1000
+
 # the default filter
 # (superclass: weka.filters.Filter)
 Preprocess.Filter=weka.filters.AllFilter
