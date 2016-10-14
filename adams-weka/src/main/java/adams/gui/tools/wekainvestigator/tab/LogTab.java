@@ -32,6 +32,7 @@ import adams.gui.tools.wekainvestigator.InvestigatorPanel;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.util.Map;
@@ -60,6 +61,9 @@ public class LogTab
 
   /** the button for saving the text. */
   protected JButton m_ButtonSave;
+
+  /** the checkbox for linewrap. */
+  protected JCheckBox m_CheckBoxLineWrap;
 
   /** the filechooser for saving the log. */
   protected BaseFileChooser m_FileChooser;
@@ -92,7 +96,7 @@ public class LogTab
     m_TextLog = new BaseTextAreaWithButtons();
     m_TextLog.setTextFont(Fonts.getMonospacedFont());
     m_TextLog.setEditable(false);
-    m_TextLog.setLineWrap(true);
+    m_TextLog.setLineWrap(false);
     m_TextLog.setWrapStyleWord(true);
     m_ContentPanel.add(m_TextLog, BorderLayout.CENTER);
 
@@ -123,6 +127,11 @@ public class LogTab
 	GUIHelper.showErrorMessage(LogTab.this, msg);
     });
     m_TextLog.addToButtonsPanel(m_ButtonSave);
+
+    m_CheckBoxLineWrap = new JCheckBox("Line wrap");
+    m_CheckBoxLineWrap.setSelected(false);
+    m_CheckBoxLineWrap.addActionListener((ActionEvent e) -> m_TextLog.setLineWrap(m_CheckBoxLineWrap.isSelected()));
+    m_TextLog.addToButtonsPanel(m_CheckBoxLineWrap);
   }
 
   /**
