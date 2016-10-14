@@ -69,7 +69,7 @@ public class SpreadSheetFileViewer
    */
   public void launch() {
     SpreadSheetViewerPanel panel = new SpreadSheetViewerPanel();
-    createChildFrame(panel, GUIHelper.getDefaultDialogDimension());
+    createChildFrame(panel, GUIHelper.getDefaultLargeDialogDimension());
     for (int i = 0; i < m_Parameters.length; i++)
       panel.load(new PlaceholderFile(m_Parameters[i]));
   }
