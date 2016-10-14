@@ -20,7 +20,7 @@
 package adams.gui.tools.spreadsheetviewer.menu;
 
 import adams.data.conversion.StringToSpreadSheet;
-import adams.data.io.input.CsvSpreadSheetReader;
+import adams.data.io.input.SimpleCsvSpreadSheetReader;
 import adams.data.io.input.SpreadSheetReader;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.gui.core.GUIHelper;
@@ -85,8 +85,11 @@ public class EditPasteAsNew
     StringToSpreadSheet		conv;
     String			msg;
 
-    if (m_LastReader == null)
-      m_LastReader = new CsvSpreadSheetReader();
+    if (m_LastReader == null) {
+      m_LastReader = new SimpleCsvSpreadSheetReader();
+      ((SimpleCsvSpreadSheetReader) m_LastReader).setNoHeader(true);
+      ((SimpleCsvSpreadSheetReader) m_LastReader).setSeparator("\\t");
+    }
 
     getDialog().setVisible(true);
     if (getDialog().getResult() != GenericObjectEditorDialog.APPROVE_OPTION)
