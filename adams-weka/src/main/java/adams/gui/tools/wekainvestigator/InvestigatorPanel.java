@@ -22,6 +22,8 @@ package adams.gui.tools.wekainvestigator;
 
 import adams.core.ClassLister;
 import adams.core.CleanUpHandler;
+import adams.core.DateFormat;
+import adams.core.DateUtils;
 import adams.core.Properties;
 import adams.core.StatusMessageHandler;
 import adams.core.Utils;
@@ -66,6 +68,7 @@ import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -144,6 +147,9 @@ public class InvestigatorPanel
   /** the heuristic for selecting the class attribute. */
   protected AbstractClassAttributeHeuristic m_ClassAttribute;
 
+  /** for timestamps in the statusbar. */
+  protected DateFormat m_StatusBarDateFormat;
+
   /**
    * Initializes the members.
    */
@@ -153,10 +159,11 @@ public class InvestigatorPanel
 
     super.initialize();
 
-    m_Log                = new StringBuilder();
-    m_Data               = new ArrayList<>();
-    m_RecentFilesHandler = null;
-    m_FileChooser        = new WekaFileChooser();
+    m_Log                 = new StringBuilder();
+    m_Data                = new ArrayList<>();
+    m_RecentFilesHandler  = null;
+    m_StatusBarDateFormat = DateUtils.getTimeFormatter();
+    m_FileChooser         = new WekaFileChooser();
     m_FileChooser.setMultiSelectionEnabled(true);
 
     cmdline = getProperties().getProperty("General.ClassAttributeHeuristic", OptionUtils.getCommandLine(new LastAttribute()));
@@ -436,6 +443,15 @@ public class InvestigatorPanel
   }
 
   /**
+   * Return the timestamp prefix for logs.
+   *
+   * @return		the prefix
+   */
+  protected String getTimestampPrefix() {
+    return "[" + m_StatusBarDateFormat.format(new Date()) + "] ";
+  }
+
+  /**
    * Logs the message.
    *
    * @param msg		the log message
@@ -443,13 +459,16 @@ public class InvestigatorPanel
   @Override
   public synchronized void logMessage(String msg) {
     int		i;
+    String	prefix;
 
-    m_Log.append(msg);
+    prefix = getTimestampPrefix();
+
+    m_Log.append(prefix + msg);
     m_Log.append("\n");
 
     for (i = 0; i < m_TabbedPane.getTabCount(); i++) {
       if (m_TabbedPane.getComponentAt(i) instanceof LogTab)
-	((LogTab) m_TabbedPane.getComponentAt(i)).append(msg);
+	((LogTab) m_TabbedPane.getComponentAt(i)).append(prefix + msg);
     }
   }
 
@@ -462,7 +481,7 @@ public class InvestigatorPanel
   @Override
   public void logError(String msg, String title) {
     logMessage(msg);
-    m_StatusBar.showStatus(msg);
+    showStatus(msg);
     GUIHelper.showErrorMessage(this, msg, title);
   }
 
@@ -685,7 +704,7 @@ public class InvestigatorPanel
    * @param msg		the message to display
    */
   public void showStatus(String msg) {
-    m_StatusBar.showStatus(msg);
+    m_StatusBar.showStatus(getTimestampPrefix() + msg);
   }
 
   /**
