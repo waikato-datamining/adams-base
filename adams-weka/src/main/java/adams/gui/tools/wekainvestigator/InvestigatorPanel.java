@@ -473,6 +473,16 @@ public class InvestigatorPanel
   }
 
   /**
+   * Logs the error message and shows it in the status bar.
+   *
+   * @param msg		the error message
+   */
+  public void logAndShowMessage(String msg) {
+    logMessage(msg);
+    showStatus(msg);
+  }
+
+  /**
    * Logs the error message and also displays an error dialog.
    *
    * @param msg		the error message
@@ -480,8 +490,7 @@ public class InvestigatorPanel
    */
   @Override
   public void logError(String msg, String title) {
-    logMessage(msg);
-    showStatus(msg);
+    logAndShowMessage(msg);
     GUIHelper.showErrorMessage(this, msg, title);
   }
 
@@ -564,7 +573,7 @@ public class InvestigatorPanel
 
     loader = m_FileChooser.getReader();
     for (final File file: m_FileChooser.getSelectedFiles()) {
-      logMessage("Loading: " + file);
+      logAndShowMessage("Loading: " + file);
       final FileContainer cont = new FileContainer(loader, file);
       cont.getUndo().setEnabled(isUndoEnabled());
       updateClassAttribute(cont.getData());
@@ -572,7 +581,7 @@ public class InvestigatorPanel
 	m_Data.add(cont);
 	if (m_RecentFilesHandler != null)
 	  m_RecentFilesHandler.addRecentItem(new Setup(file, loader));
-	logMessage("Loaded: " + file);
+	logAndShowMessage("Loaded: " + file);
 	fireDataChange(new WekaInvestigatorDataEvent(this, WekaInvestigatorDataEvent.ROWS_ADDED, m_Data.size() - 1));
       });
     }
@@ -585,7 +594,7 @@ public class InvestigatorPanel
     AbstractFileLoader  loader;
     SwingWorker 	worker;
 
-    logMessage("Loading: " + file);
+    logAndShowMessage("Loading: " + file);
     loader = m_FileChooser.getReaderForFile(file);
     if (loader == null) {
       logError("Failed to determine loader for: " + file, "Error loading");
@@ -602,7 +611,7 @@ public class InvestigatorPanel
 	  m_Data.add(cont);
 	  if (m_RecentFilesHandler != null)
 	    m_RecentFilesHandler.addRecentItem(new Setup(file, loader));
-	  logMessage("Loaded: " + file);
+	  logAndShowMessage("Loaded: " + file);
 	  fireDataChange(new WekaInvestigatorDataEvent(
 	    InvestigatorPanel.this, WekaInvestigatorDataEvent.ROWS_ADDED, m_Data.size() - 1));
 	});
@@ -631,14 +640,14 @@ public class InvestigatorPanel
       @Override
       protected Object doInBackground() throws Exception {
 	try {
-	  logMessage("Loading: " + e.getItem());
+	  logAndShowMessage("Loading: " + e.getItem());
 	  loader.setFile(e.getItem().getFile());
 	  final FileContainer cont = new FileContainer(loader, e.getItem().getFile());
 	  updateClassAttribute(cont.getData());
 	  SwingUtilities.invokeLater(() -> {
 	    m_Data.add(cont);
 	    m_FileChooser.setCurrentDirectory(e.getItem().getFile().getParentFile());
-	    logMessage("Loaded: " + e.getItem());
+	    logAndShowMessage("Loaded: " + e.getItem());
 	    fireDataChange(new WekaInvestigatorDataEvent(
 	      InvestigatorPanel.this, WekaInvestigatorDataEvent.ROWS_ADDED, m_Data.size() - 1));
 	  });
