@@ -43,7 +43,7 @@ public class Rename
   public Rename() {
     super();
     setName("Rename");
-    setIcon("question.png");
+    setIcon("rename.png");
   }
 
   /**
