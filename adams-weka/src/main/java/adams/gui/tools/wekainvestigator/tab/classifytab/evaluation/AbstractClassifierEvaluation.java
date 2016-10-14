@@ -106,10 +106,12 @@ public abstract class AbstractClassifierEvaluation
 
     atts = new ArrayList<>();
     if (index > -1) {
-      data = getOwner().getData().get(index).getData();
-      for (i = 0; i < data.numAttributes(); i++)
-	atts.add(data.attribute(i).name());
-      Collections.sort(atts);
+      if (index < getOwner().getData().size()) {
+	data = getOwner().getData().get(index).getData();
+	for (i = 0; i < data.numAttributes(); i++)
+	  atts.add(data.attribute(i).name());
+	Collections.sort(atts);
+      }
     }
     select.setOptions(atts.toArray(new String[atts.size()]));
   }
