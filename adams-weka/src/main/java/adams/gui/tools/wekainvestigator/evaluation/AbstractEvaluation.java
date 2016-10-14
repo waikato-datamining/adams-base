@@ -164,7 +164,7 @@ public abstract class AbstractEvaluation<T extends AbstractInvestigatorTab, R ex
    * @param msg		the message to display
    */
   public void showStatus(String msg) {
-    m_Owner.showStatus(msg);
+    m_Owner.logMessage(msg);
   }
 
   /**
