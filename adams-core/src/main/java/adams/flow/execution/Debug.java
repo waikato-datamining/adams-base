@@ -514,6 +514,8 @@ public class Debug
     DebugNestedProducer			producer;
     NestedConsumer			consumer;
     ListStructureModifyingActors	proc;
+    String				title;
+    int					index;
 
     m_ControlPanel = new ControlPanel();
     m_ControlPanel.setOwner(this);
@@ -532,9 +534,17 @@ public class Debug
 	  producer = new DebugNestedProducer();
 	  consumer.setInput(producer.produce(getOwner()));
 	  expanded = (Actor) consumer.consume();
-	  panelCopy = panel.getOwner().newPanel();
+	  title = "Debug: " + panel.getTitle();
+	  if (!panel.getOwner().hasPanel(title)) {
+	    panelCopy = panel.getOwner().newPanel();
+	  }
+	  else {
+	    index     = panel.getOwner().indexOfPanel(title);
+	    panelCopy = panel.getOwner().getPanelAt(index);
+	    panel.getOwner().setSelectedIndex(index);
+	  }
 	  panelCopy.setCurrentFlow(expanded);
-	  panelCopy.setTitle(panel.getTitle());
+	  panelCopy.setTitle(title);
 	  panelCopy.setTabIcon("run_debug.png");
 	  panelCopy.updateTitle();
 	  m_Owner.setParentComponent(panelCopy);
