@@ -1,1 +1,1 @@
-
+if not 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-' then replace

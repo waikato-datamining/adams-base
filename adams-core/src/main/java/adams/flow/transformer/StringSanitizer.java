@@ -15,11 +15,13 @@
 
 /*
  * StringSanitizer.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
+
+import adams.core.QuickInfoHelper;
 
 /**
  <!-- globalinfo-start -->
@@ -225,6 +227,29 @@ public class StringSanitizer
    */
   public String invertMatchingTipText() {
     return "If set to true, then 'acceptable' characters will become 'outlaws', ie, replaced or removed.";
+  }
+
+  /**
+   * Returns a quick info about the actor, which will be displayed in the GUI.
+   *
+   * @return		null if no info available, otherwise short string
+   */
+  @Override
+  public String getQuickInfo() {
+    String	result;
+
+    if (m_InvertMatching)
+      result = "if ";
+    else
+      result = "if not '";
+    result += QuickInfoHelper.toString(this, "acceptableChars", m_AcceptableChars);
+    result += "' then ";
+    if (m_ReplacementChar.isEmpty())
+      result += "replace";
+    else
+      result += "'" + QuickInfoHelper.toString(this, "replacementChar", m_ReplacementChar) + "'";
+
+    return result;
   }
 
   /**
