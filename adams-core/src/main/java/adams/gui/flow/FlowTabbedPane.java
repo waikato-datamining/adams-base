@@ -144,6 +144,40 @@ public class FlowTabbedPane
   }
 
   /**
+   * Returns the index of the panel with the specified title.
+   *
+   * @param title	the title to check
+   * @return		the panel, -1 if not found
+   */
+  public int indexOfPanel(String title) {
+    int		result;
+    int		i;
+    FlowPanel	panel;
+
+    result = -1;
+
+    for (i = 0; i < getPanelCount(); i++) {
+      panel = getPanelAt(i);
+      if (panel.getTitle().equals(title)) {
+	result = i;
+	break;
+      }
+    }
+
+    return result;
+  }
+
+  /**
+   * Returns whether a panel with the specified title exists.
+   *
+   * @param title	the title to look for
+   * @return		true if it exists
+   */
+  public boolean hasPanel(String title) {
+    return (indexOfPanel(title) > -1);
+  }
+
+  /**
    * Returns if a panel is available.
    *
    * @return		true if a panel available
