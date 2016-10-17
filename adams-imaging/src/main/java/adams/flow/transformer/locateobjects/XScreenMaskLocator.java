@@ -32,6 +32,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.logging.Level;
 
 /**
  <!-- globalinfo-start -->
@@ -426,8 +427,17 @@ public class XScreenMaskLocator extends AbstractObjectLocator {
         if (rect != null) {
           int left = (int) (Math.round(rect[0] / m_Scale) + offset.getX()), top = (int) (Math.round(rect[1] / m_Scale) + offset.getY());
           int width = (int) Math.round((rect[2] - rect[0] + 1) / m_Scale), height = (int) Math.round((rect[3] - rect[1] + 1) / m_Scale);
-          if (width >= m_MinSize && width <= m_MaxSize && height >= m_MinSize && height <= m_MaxSize)
-            objects.add(new LocatedObject(annotateOnly ? null : image.getSubimage(left, top, width, height), left, top, width, height));
+          if (width >= m_MinSize && width <= m_MaxSize && height >= m_MinSize && height <= m_MaxSize) {
+            try {
+              objects.add(new LocatedObject(annotateOnly ? null : image.getSubimage(left, top, width, height), left, top, width, height));
+            }
+            catch (Exception e) {
+              getLogger().log(
+                Level.SEVERE,
+                "Failed to create location using: "
+                  + "left=" + left + ", top=" + top + ", width=" + width + ", height=" + height, e);
+            }
+          }
         }
       }
     }
