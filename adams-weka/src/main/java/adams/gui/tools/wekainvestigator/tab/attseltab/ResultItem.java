@@ -93,7 +93,7 @@ public class ResultItem
    * @param evaluator	the evaluation algorithm
    * @param search	the search algorithm
    * @param folds	the number of folds, ignored if < 2
-   * @param full	the full datasetm, can be null in case of cross-validation
+   * @param full	the full dataset, can be null in case of cross-validation
    * @param header	the header of the training set, can be null
    * @param runInfo	the run information, can be null
    */
@@ -125,7 +125,7 @@ public class ResultItem
       + " - "
       + m_Search.getClass().getSimpleName()  + "/" + m_Evaluator.getClass().getSimpleName()
       + " - "
-      + Shortening.shortenEnd(m_Full.relationName(), MAX_RELATIONNAME_LENGTH);
+      + Shortening.shortenEnd(m_Header.relationName(), MAX_RELATIONNAME_LENGTH);
   }
 
   /**
