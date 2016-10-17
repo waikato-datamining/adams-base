@@ -436,7 +436,8 @@ public class XScreenMaskLocator extends AbstractObjectLocator {
                 Level.SEVERE,
                 "Failed to create location using: "
 		  + "imgwidth=" + image.getWidth() + ", imgheight=" + image.getHeight()
-                  + ", left=" + left + ", top=" + top + ", width=" + width + ", height=" + height, e);
+                  + ", left=" + left + ", top=" + top + ", width=" + width + ", height=" + height
+		  + ", scale=" + m_Scale, e);
             }
           }
         }
