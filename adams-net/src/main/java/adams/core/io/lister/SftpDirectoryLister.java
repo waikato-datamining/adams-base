@@ -23,6 +23,7 @@ package adams.core.io.lister;
 import adams.core.Utils;
 import adams.core.base.BasePassword;
 import adams.core.io.FileObject;
+import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
 import adams.core.io.SftpFileObject;
 import adams.core.net.JSchUtils;
@@ -83,6 +84,15 @@ public class SftpDirectoryLister
 
   /** the SSH session. */
   protected transient Session m_Session;
+
+  /**
+   * Sets the directory to watch.
+   *
+   * @param value 	the directory
+   */
+  public void setWatchDir(String value) {
+    super.setWatchDir(FileUtils.useForwardSlashes(value));
+  }
 
   /**
    * Sets the host to connect to.
