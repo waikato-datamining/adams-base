@@ -225,7 +225,7 @@ public class SftpFileObject
    * @return		the long name
    */
   public String toString() {
-    return getFile().toString();
+    return FileUtils.useForwardSlashes(getFile().toString());
   }
 
   /**
