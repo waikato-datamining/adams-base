@@ -178,16 +178,26 @@ public class SmbDirectoryLister
    * @return		the new wrapper
    */
   public SmbFileObject newDirectory(String dir) {
-    String 	watch;
+    return newDirectory(m_WatchDir, dir);
+  }
+
+  /**
+   * Returns a new directory relative to the watch directory.
+   *
+   * @param dir		the directory name
+   * @return		the new wrapper
+   */
+  public SmbFileObject newDirectory(String parent, String dir) {
+    String 	pdir;
     try {
-      watch = m_WatchDir;
-      if (!watch.startsWith("/"))
-	watch = "/" + watch;
-      if (!watch.endsWith("/"))
-	watch += "/";
+      pdir = parent;
+      if (!pdir.startsWith("/"))
+	pdir = "/" + pdir;
+      if (!pdir.endsWith("/"))
+	pdir += "/";
       if (!dir.endsWith("/"))
 	dir += dir;
-      return new SmbFileObject(new SmbFile("smb://" + m_Host + watch + dir));
+      return new SmbFileObject(new SmbFile("smb://" + m_Host + pdir + dir));
     }
     catch (Exception e) {
       return null;

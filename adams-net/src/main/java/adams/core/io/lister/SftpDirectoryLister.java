@@ -363,7 +363,18 @@ public class SftpDirectoryLister
    * @return		the new wrapper
    */
   public SftpFileObject newDirectory(String dir) {
-    return new SftpFileObject(new File(m_WatchDir), dir, true, m_Session);
+    return newDirectory(m_WatchDir, dir);
+  }
+
+  /**
+   * Returns a new directory generated from parent and sub-directory.
+   *
+   * @param parent	the parent directory
+   * @param dir		the directory name
+   * @return		the new wrapper
+   */
+  public SftpFileObject newDirectory(String parent, String dir) {
+    return new SftpFileObject(new File(parent), dir, true, m_Session);
   }
 
   /**

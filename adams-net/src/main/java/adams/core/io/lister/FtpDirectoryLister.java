@@ -255,7 +255,18 @@ public class FtpDirectoryLister
    * @return		the new wrapper
    */
   public FtpFileObject newDirectory(String dir) {
-    return new FtpFileObject(m_WatchDir + "/" + dir, null, m_Client);
+    return newDirectory(m_WatchDir, dir);
+  }
+
+  /**
+   * Returns a new directory generated from parent and sub-directory.
+   *
+   * @param parent	the parent directory
+   * @param dir		the directory name
+   * @return		the new wrapper
+   */
+  public FtpFileObject newDirectory(String parent, String dir) {
+    return new FtpFileObject(parent + "/" + dir, null, m_Client);
   }
 
   /**

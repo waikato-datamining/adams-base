@@ -228,7 +228,18 @@ public class LocalDirectoryLister
    * @return		the new wrapper
    */
   public LocalFileObject newDirectory(String dir) {
-    return new LocalFileObject(new File(new PlaceholderFile(m_WatchDir + File.separator + dir).getAbsolutePath()));
+    return newDirectory(m_WatchDir, dir);
+  }
+
+  /**
+   * Returns a new directory generated from parent and sub-directory.
+   *
+   * @param parent	the parent directory
+   * @param dir		the directory name
+   * @return		the new wrapper
+   */
+  public LocalFileObject newDirectory(String parent, String dir) {
+    return new LocalFileObject(new File(new PlaceholderFile(parent + File.separator + dir).getAbsolutePath()));
   }
 
   /**

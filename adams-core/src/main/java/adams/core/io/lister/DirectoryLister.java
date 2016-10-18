@@ -156,6 +156,15 @@ public interface DirectoryLister
   public FileObject newDirectory(String dir);
 
   /**
+   * Returns a new directory generated from parent and sub-directory.
+   *
+   * @param parent	the parent directory
+   * @param dir		the directory name
+   * @return		the new wrapper
+   */
+  public FileObject newDirectory(String parent, String dir);
+
+  /**
    * Returns the list of files/directories in the watched directory. In case
    * the execution gets stopped, this method returns a 0-length array.
    *

@@ -653,7 +653,7 @@ public class FileCommanderPanel
     if (input == null)
       return;
 
-    dirNew = m_FilesActive.getDirectoryLister().newDirectory(dir + File.separator + input);
+    dirNew = m_FilesActive.getDirectoryLister().newDirectory(dir, input);
     msg    = m_FileOperations.mkdir(dirNew.toString());
     if (msg != null)
       GUIHelper.showErrorMessage(this, "Failed to create directory: " + dirNew + "\n" + msg);
