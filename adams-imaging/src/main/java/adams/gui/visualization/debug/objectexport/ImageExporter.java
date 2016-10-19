@@ -15,14 +15,14 @@
 
 /**
  * ImageExporter.java
- * Copyright (C) 2015 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.debug.objectexport;
 
 import adams.core.ClassLocator;
-import adams.data.image.AbstractImageContainer;
 import adams.data.image.BufferedImageHelper;
+import adams.data.image.BufferedImageSupporter;
 import adams.data.io.output.JAIImageWriter;
 
 import java.awt.image.BufferedImage;
@@ -67,7 +67,7 @@ public class ImageExporter
   @Override
   public boolean handles(Class cls) {
     return (cls == BufferedImage.class)
-	|| (ClassLocator.isSubclass(AbstractImageContainer.class, cls));
+	|| (ClassLocator.hasInterface(BufferedImageSupporter.class, cls));
   }
 
   /**
@@ -81,8 +81,8 @@ public class ImageExporter
   protected String doExport(Object obj, File file) {
     BufferedImage	img;
 
-    if (obj instanceof AbstractImageContainer)
-      img = ((AbstractImageContainer) obj).toBufferedImage();
+    if (obj instanceof BufferedImageSupporter)
+      img = ((BufferedImageSupporter) obj).toBufferedImage();
     else
       img = (BufferedImage) obj;
 
