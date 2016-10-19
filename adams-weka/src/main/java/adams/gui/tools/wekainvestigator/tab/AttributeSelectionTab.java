@@ -381,6 +381,11 @@ public class AttributeSelectionTab
       submenu.sort();
       result.add(submenu);
 
+      menuitem = new JMenuItem("Export output...");
+      menuitem.setEnabled(getEntry(indices[0]).getTabbedPane().getTabCount() > 0);
+      menuitem.addActionListener((ActionEvent ae) -> getEntry(indices[0]).getTabbedPane().export());
+      result.add(menuitem);
+
       AbstractHistoryPopupMenuItem.updatePopupMenu(
 	this, m_Owner, indices, result,
 	adams.gui.tools.wekainvestigator.tab.attseltab.history.AbstractHistoryPopupMenuItem.class);

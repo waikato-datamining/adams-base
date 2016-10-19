@@ -27,11 +27,15 @@ import adams.gui.core.DragAndDropTabbedPane;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MouseUtils;
 import adams.gui.core.PopupMenuProvider;
+import adams.gui.goe.GenericObjectEditorDialog;
+import adams.gui.visualization.multiobjectexport.AbstractMultiObjectExport;
+import adams.gui.visualization.multiobjectexport.DirectoryExport;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JPopupMenu;
 import java.awt.Component;
+import java.awt.Dialog.ModalityType;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -46,6 +50,9 @@ public class OutputTabbedPane
   implements CleanUpHandler {
 
   private static final long serialVersionUID = -7694010290845155428L;
+
+  /** the last export scheme. */
+  protected AbstractMultiObjectExport m_LastExport;
 
   /**
    * Inserts a new tab for the given component, at the given index,
@@ -107,6 +114,22 @@ public class OutputTabbedPane
   }
 
   /**
+   * Returns the actual component at the position.
+   *
+   * @param index	the tab index
+   * @return		the component
+   */
+  protected Component getActualComponentAt(int index) {
+    Component 	result;
+
+    result = getComponentAt(index);
+    if (result instanceof BaseScrollPane)
+      result = ((BaseScrollPane) result).getViewport().getView();
+
+    return result;
+  }
+
+  /**
    * Removes the tab.
    *
    * @param index	the index of the tab to remove
@@ -115,14 +138,53 @@ public class OutputTabbedPane
   public void removeTabAt(int index) {
     Component comp;
 
-    comp = getComponentAt(index);
+    comp = getActualComponentAt(index);
 
     super.removeTabAt(index);
 
-    if (comp instanceof BaseScrollPane)
-      comp = ((BaseScrollPane) comp).getViewport().getView();
     if (comp instanceof CleanUpHandler)
       ((CleanUpHandler) comp).cleanUp();
+  }
+
+  /**
+   * Exports the components using a {@link AbstractMultiObjectExport}
+   * scheme.
+   */
+  public void export() {
+    GenericObjectEditorDialog	dialog;
+    String[]			names;
+    Object[]			objects;
+    int				i;
+    String			msg;
+
+    if (m_LastExport == null)
+      m_LastExport = new DirectoryExport();
+
+    if (GUIHelper.getParentDialog(this) != null)
+      dialog = new GenericObjectEditorDialog(GUIHelper.getParentDialog(this), ModalityType.DOCUMENT_MODAL);
+    else
+      dialog = new GenericObjectEditorDialog(GUIHelper.getParentFrame(this), true);
+    dialog.setDefaultCloseOperation(GenericObjectEditorDialog.DISPOSE_ON_CLOSE);
+    dialog.setTitle("Export output");
+    dialog.getGOEEditor().setClassType(AbstractMultiObjectExport.class);
+    dialog.setCurrent(m_LastExport);
+    dialog.pack();
+    dialog.setLocationRelativeTo(dialog.getParent());
+    dialog.setVisible(true);
+    if (dialog.getResult() != GenericObjectEditorDialog.APPROVE_OPTION)
+      return;
+
+    m_LastExport = (AbstractMultiObjectExport) dialog.getCurrent();
+    names        = new String[getTabCount()];
+    objects      = new Object[getTabCount()];
+    for (i = 0; i < getTabCount(); i++) {
+      names[i]   = getTitleAt(i);
+      objects[i] = getActualComponentAt(i);
+    }
+
+    msg = m_LastExport.export(names, objects);
+    if (msg != null)
+      GUIHelper.showErrorMessage(dialog.getParent(), "Failed to export outputs!\n" + msg);
   }
 
   /**
