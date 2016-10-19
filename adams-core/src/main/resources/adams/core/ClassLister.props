@@ -642,6 +642,10 @@ adams.gui.visualization.image.leftclick.AbstractLeftClickProcessor=\
 adams.gui.visualization.image.selection.AbstractSelectionProcessor=\
   adams.gui.visualization.image.selection
 
+# the schemes for exporting multiple objects
+adams.gui.visualization.multiobjectexport.AbstractMultiObjectExport=\
+  adams.gui.visualization.multiobjectexport
+
 # the actions for table popups
 adams.gui.visualization.report.reportfactory.AbstractTableAction=\
   adams.gui.visualization.report.reportfactory
