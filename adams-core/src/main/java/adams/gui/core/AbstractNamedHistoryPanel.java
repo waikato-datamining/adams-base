@@ -1174,7 +1174,7 @@ public abstract class AbstractNamedHistoryPanel<T>
     selected = getSelectedIndex();
     result   = new Object[count()][4];
     for (i = 0; i < count(); i++) {
-      result[i][0] = getSelectedEntry();
+      result[i][0] = getEntryName(i);
       result[i][1] = getEntry(i);
       result[i][2] = getPayload(i);
       result[i][3] = (i == selected);
