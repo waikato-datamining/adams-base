@@ -131,6 +131,29 @@ public class DirectoryExport
   }
 
   /**
+   * Checks the data.
+   *
+   * @param names	the names for the objects
+   * @param objects	the objects
+   * @return		null if successful, otherwise error message
+   */
+  @Override
+  protected String check(String[] names, Object[] objects) {
+    String	result;
+
+    result = super.check(names, objects);
+
+    if (result == null) {
+      if (!m_OutputDir.exists())
+	result = "Output directory does not exist: " + m_OutputDir;
+      else if (!m_OutputDir.isDirectory())
+	result = "Output directory is not a directory: " + m_OutputDir;
+    }
+
+    return result;
+  }
+
+  /**
    * Performs the actual export of the objects using the given names.
    *
    * @param names	the names for the objects
