@@ -20,6 +20,7 @@
 
 package adams.gui.tools.wekainvestigator.output;
 
+import adams.data.io.output.CsvSpreadSheetWriter;
 import adams.data.io.output.SpreadSheetWriter;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetSupporter;
@@ -27,12 +28,14 @@ import adams.gui.chooser.SpreadSheetFileChooser;
 import adams.gui.core.BaseTable;
 import adams.gui.core.BaseTableWithButtons;
 import adams.gui.core.JTableHelper;
+import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 import com.googlecode.jfilechooserbookmarks.gui.BaseScrollPane;
 
 import javax.swing.JComponent;
 import javax.swing.JTable;
 import java.awt.BorderLayout;
 import java.io.File;
+import java.io.StringWriter;
 
 /**
  * Panel for exporting the table as spreadsheet.
@@ -167,5 +170,33 @@ public class TableContentPanel
       result = null;
 
     return result;
+  }
+
+  /**
+   * Returns whether copying to the clipboard is supported.
+   *
+   * @return		true if copy to clipboard is supported
+   * @see		#copyToClipboard()
+   */
+  public boolean canCopyToClipboard() {
+    return true;
+  }
+
+  /**
+   * Copies the content to the clipboard.
+   *
+   * @see 		#canCopyToClipboard()
+   */
+  public void copyToClipboard() {
+    SpreadSheet			sheet;
+    CsvSpreadSheetWriter	writer;
+    StringWriter		swriter;
+
+    swriter = new StringWriter();
+    sheet   = toSpreadSheet();
+    writer  = new CsvSpreadSheetWriter();
+    writer.setSeparator("\\t");
+    writer.write(sheet, swriter);
+    ClipboardHelper.copyToClipboard(swriter.toString());
   }
 }

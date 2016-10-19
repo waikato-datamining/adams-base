@@ -25,6 +25,7 @@ import adams.core.io.FileUtils;
 import adams.gui.chooser.TextFileChooser;
 import adams.gui.core.BaseTextAreaWithButtons;
 import adams.gui.core.BaseTextPaneWithButtons;
+import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 import com.googlecode.jfilechooserbookmarks.gui.BaseScrollPane;
 
 import javax.swing.JComponent;
@@ -166,5 +167,24 @@ public class TextualContentPanel
       result = null;
 
     return result;
+  }
+
+  /**
+   * Returns whether copying to the clipboard is supported.
+   *
+   * @return		true if copy to clipboard is supported
+   * @see		#copyToClipboard()
+   */
+  public boolean canCopyToClipboard() {
+    return true;
+  }
+
+  /**
+   * Copies the content to the clipboard.
+   *
+   * @see 		#canCopyToClipboard()
+   */
+  public void copyToClipboard() {
+    ClipboardHelper.copyToClipboard(supplyText());
   }
 }

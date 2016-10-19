@@ -25,6 +25,7 @@ import adams.core.io.PlaceholderFile;
 import adams.data.image.BufferedImageSupporter;
 import adams.gui.print.JComponentWriter;
 import adams.gui.print.JComponentWriterFileChooser;
+import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 import com.googlecode.jfilechooserbookmarks.gui.BaseScrollPane;
 
 import javax.swing.JComponent;
@@ -127,5 +128,24 @@ public class ComponentContentPanel
     getComponent().printAll(g);
 
     return result;
+  }
+
+  /**
+   * Returns whether copying to the clipboard is supported.
+   *
+   * @return		true if copy to clipboard is supported
+   * @see		#copyToClipboard()
+   */
+  public boolean canCopyToClipboard() {
+    return true;
+  }
+
+  /**
+   * Copies the content to the clipboard.
+   *
+   * @see 		#canCopyToClipboard()
+   */
+  public void copyToClipboard() {
+    ClipboardHelper.copyToClipboard(toBufferedImage());
   }
 }

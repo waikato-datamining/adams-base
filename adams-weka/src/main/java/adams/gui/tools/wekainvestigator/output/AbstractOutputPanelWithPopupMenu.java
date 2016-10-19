@@ -96,10 +96,38 @@ public abstract class AbstractOutputPanelWithPopupMenu<T extends BaseFileChooser
 
     result = super.createPopupMenu();
 
+    if (canCopyToClipboard()) {
+      menuitem = new JMenuItem("Copy", GUIHelper.getIcon("copy.gif"));
+      menuitem.addActionListener((ActionEvent e) -> copyToClipboard());
+      result.add(menuitem);
+    }
+
     menuitem = new JMenuItem("Save...", GUIHelper.getIcon("save.gif"));
     menuitem.addActionListener((ActionEvent e) -> save());
     result.add(menuitem);
 
     return result;
+  }
+
+  /**
+   * Returns whether copying to the clipboard is supported.
+   * <br>
+   * Default implementation returns false.
+   *
+   * @return		true if copy to clipboard is supported
+   * @see		#copyToClipboard()
+   */
+  public boolean canCopyToClipboard() {
+    return false;
+  }
+
+  /**
+   * Copies the content to the clipboard.
+   * <br>
+   * Default implementation does nothing.
+   *
+   * @see 		#canCopyToClipboard()
+   */
+  public void copyToClipboard() {
   }
 }
