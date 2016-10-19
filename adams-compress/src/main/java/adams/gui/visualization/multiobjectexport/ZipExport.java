@@ -14,7 +14,7 @@
  */
 
 /**
- * ZipFileExport.java
+ * ZipExport.java
  * Copyright (C) 2016 University of Waikato, Hamilton, NZ
  */
 
@@ -39,7 +39,7 @@ import java.util.List;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class ZipFileExport
+public class ZipExport
   extends AbstractMultiObjectExportWithPreferredExtensions
   implements FileWriter {
 
