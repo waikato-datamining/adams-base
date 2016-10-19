@@ -15,13 +15,13 @@
 
 /**
  * ImageRenderer.java
- * Copyright (C) 2015 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.debug.objectrenderer;
 
 import adams.core.ClassLocator;
-import adams.data.image.AbstractImageContainer;
+import adams.data.image.BufferedImageSupporter;
 import adams.gui.visualization.image.ImagePanel;
 
 import javax.swing.JPanel;
@@ -48,7 +48,7 @@ public class ImageRenderer
   @Override
   public boolean handles(Class cls) {
     return
-         ClassLocator.isSubclass(AbstractImageContainer.class, cls)
+         ClassLocator.hasInterface(BufferedImageSupporter.class, cls)
       || ClassLocator.isSubclass(BufferedImage.class, cls);
   }
 
@@ -64,8 +64,8 @@ public class ImageRenderer
     ImagePanel		imagePanel;
 
     imagePanel = new ImagePanel();
-    if (obj instanceof AbstractImageContainer)
-      imagePanel.setCurrentImage(((AbstractImageContainer) obj));
+    if (obj instanceof BufferedImageSupporter)
+      imagePanel.setCurrentImage(((BufferedImageSupporter) obj).toBufferedImage());
     else
       imagePanel.setCurrentImage((BufferedImage) obj);
     panel.add(imagePanel, BorderLayout.CENTER);
