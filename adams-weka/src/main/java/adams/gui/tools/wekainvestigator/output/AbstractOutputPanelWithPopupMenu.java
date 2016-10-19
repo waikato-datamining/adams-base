@@ -84,6 +84,11 @@ public abstract class AbstractOutputPanelWithPopupMenu<T extends BaseFileChooser
       GUIHelper.showErrorMessage(this, "Failed to save content to: " + m_FileChooser.getSelectedFile() + "\n" + msg);
   }
 
+  /**
+   * Creates and returns the popup menu.
+   *
+   * @return		the menu
+   */
   @Override
   protected JPopupMenu createPopupMenu() {
     JPopupMenu		result;

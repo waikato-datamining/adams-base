@@ -178,6 +178,11 @@ public abstract class DetachablePanel
     return m_PopupMenuCustomizer;
   }
 
+  /**
+   * Creates and returns the popup menu.
+   *
+   * @return		the menu
+   */
   protected JPopupMenu createPopupMenu() {
     JPopupMenu		result;
     JMenuItem		menuitem;
