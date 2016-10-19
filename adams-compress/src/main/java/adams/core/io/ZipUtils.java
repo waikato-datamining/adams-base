@@ -72,7 +72,7 @@ public class ZipUtils {
    *
    * @param output	the output file to generate
    * @param files	the files to store in the zip file
-   * @param stripRegExp	the regular expression used to strip the file names
+   * @param stripRegExp	the regular expression used to strip the file names (only applied to the directory!)
    * @param bufferSize	the buffer size to use
    * @return		null if successful, otherwise error message
    */
