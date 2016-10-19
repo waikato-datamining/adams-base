@@ -15,12 +15,16 @@
 
 /**
  * DefaultObjectRenderer.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.debug.objecttree;
 
+import adams.core.TextSupporter;
+
 /**
- * Just uses the Object's toString() method.
+ * Just uses the Object's toString() method or if the object is an instance
+ * of {@link TextSupporter} then the text the the {@link TextSupporter#supplyText()}
+ * method returns.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
@@ -47,6 +51,9 @@ public class DefaultObjectRenderer
    */
   @Override
   protected String doRender(Object obj) {
-    return obj.toString();
+    if (obj instanceof TextSupporter)
+      return ((TextSupporter) obj).supplyText();
+    else
+      return obj.toString();
   }
 }
