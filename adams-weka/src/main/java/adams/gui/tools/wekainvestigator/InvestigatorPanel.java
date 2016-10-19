@@ -24,6 +24,7 @@ import adams.core.ClassLister;
 import adams.core.CleanUpHandler;
 import adams.core.DateFormat;
 import adams.core.DateUtils;
+import adams.core.MessageCollection;
 import adams.core.Properties;
 import adams.core.StatusMessageHandler;
 import adams.core.Utils;
@@ -126,6 +127,9 @@ public class InvestigatorPanel
   /** the submenu for a new tab. */
   protected BaseMenu m_MenuTabNewTab;
 
+  /** the action for copying a tab. */
+  protected BaseAction m_ActionTabCopyTab;
+
   /** the action for closing a tab. */
   protected BaseAction m_ActionTabCloseTab;
 
@@ -220,6 +224,33 @@ public class InvestigatorPanel
    */
   protected void initActions() {
     // tabs
+    m_ActionTabCopyTab = new AbstractBaseAction() {
+      private static final long serialVersionUID = 1028160012672649573L;
+      @Override
+      protected void doActionPerformed(ActionEvent e) {
+	int index = m_TabbedPane.getSelectedIndex();
+	if (index == -1)
+	  return;
+	AbstractInvestigatorTab tab = (AbstractInvestigatorTab) m_TabbedPane.getComponentAt(index);
+	AbstractInvestigatorTab tabNew;
+	MessageCollection errors = new MessageCollection();
+	try {
+	  tabNew = tab.getClass().newInstance();
+	  m_TabbedPane.addTab(tabNew);
+	  tabNew.deserialize(Utils.deepCopy(tab.serialize()), errors);
+	}
+	catch (Exception ex) {
+	  errors.add("Failed to copy tab!", ex);
+	}
+	if (!errors.isEmpty())
+	  GUIHelper.showErrorMessage(
+	    InvestigatorPanel.this, "Errors occurred when copying tab:\n" + errors);
+	updateMenu();
+      }
+    };
+    m_ActionTabCopyTab.setName("Copy tab");
+    m_ActionTabCopyTab.setIcon(GUIHelper.getIcon("copy.gif"));
+
     m_ActionTabCloseTab = new AbstractBaseAction() {
       private static final long serialVersionUID = 1028160012672649573L;
       @Override
@@ -281,6 +312,7 @@ public class InvestigatorPanel
    * Updates the actions.
    */
   protected void updateActions() {
+    m_ActionTabCopyTab.setEnabled(m_TabbedPane.getSelectedIndex() > -1);
     m_ActionTabCloseTab.setEnabled(m_TabbedPane.getTabCount() > 0);
     m_ActionTabCloseAllTabs.setEnabled(m_TabbedPane.getTabCount() > 0);
   }
@@ -402,6 +434,7 @@ public class InvestigatorPanel
 	}
       }
       m_MenuTabNewTab.sort();
+      menu.add(m_ActionTabCopyTab);
       menu.addSeparator();
       menu.add(m_ActionTabCloseTab);
       menu.add(m_ActionTabCloseAllTabs);
