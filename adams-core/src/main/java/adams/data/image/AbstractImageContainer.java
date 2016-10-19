@@ -15,7 +15,7 @@
 
 /**
  * AbstractImageContainer.java
- * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.image;
 
@@ -31,7 +31,8 @@ import java.awt.image.BufferedImage;
  * @param <T> the type of image to handle
  */
 public abstract class AbstractImageContainer<T>
-  extends AbstractSimpleContainer<T> {
+  extends AbstractSimpleContainer<T>
+  implements BufferedImageSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = 2095394708673239275L;
