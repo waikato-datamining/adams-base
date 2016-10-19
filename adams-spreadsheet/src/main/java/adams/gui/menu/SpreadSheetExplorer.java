@@ -68,7 +68,7 @@ public class SpreadSheetExplorer
    */
   public void launch() {
     adams.gui.visualization.spreadsheet.SpreadSheetExplorer panel = new adams.gui.visualization.spreadsheet.SpreadSheetExplorer();
-    createChildFrame(panel, GUIHelper.getDefaultDialogDimension());
+    createChildFrame(panel, GUIHelper.makeWider(GUIHelper.getDefaultDialogDimension()));
     for (int i = 0; i < m_Parameters.length; i++)
       panel.loadData(new PlaceholderFile(m_Parameters[i]));
   }
