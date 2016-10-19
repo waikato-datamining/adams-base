@@ -19,6 +19,7 @@
  */
 package adams.flow.sink;
 
+import adams.core.TextSupporter;
 import adams.gui.core.ExtensionFileFilter;
 
 /**
@@ -28,7 +29,8 @@ import adams.gui.core.ExtensionFileFilter;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public interface TextSupplier {
+public interface TextSupplier
+  extends TextSupporter {
 
   /**
    * Returns the text for the menu item.
