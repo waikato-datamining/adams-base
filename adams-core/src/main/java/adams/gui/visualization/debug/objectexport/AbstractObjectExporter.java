@@ -15,7 +15,7 @@
 
 /**
  * AbstractObjectExporter.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.debug.objectexport;
 
@@ -51,7 +51,7 @@ public abstract class AbstractObjectExporter
   protected static Class[] m_ExporterClasses;
 
   static {
-    m_Cache          = new Hashtable<Class,List<Class>>();
+    m_Cache          = new Hashtable<>();
     m_Exporters       = null;
     m_ExporterClasses = null;
   }
@@ -101,7 +101,7 @@ public abstract class AbstractObjectExporter
     List<AbstractObjectExporter>	result;
     int					i;
     
-    result = new ArrayList<AbstractObjectExporter>();
+    result = new ArrayList<>();
     for (i = 0; i < exporters.size(); i++) {
       try {
 	result.add((AbstractObjectExporter) exporters.get(i).newInstance());
@@ -133,9 +133,11 @@ public abstract class AbstractObjectExporter
       return instantiate(m_Cache.get(cls));
 
     // find suitable exporter
-    exporters = new ArrayList<Class>();
+    exporters = new ArrayList<>();
     for (i = 0; i < m_ExporterClasses.length; i++) {
       if (m_ExporterClasses[i] == PlainTextExporter.class)
+	continue;
+      if (m_ExporterClasses[i] == RenderedPlainTextExporter.class)
 	continue;
       try {
 	exporter = (AbstractObjectExporter) m_ExporterClasses[i].newInstance();
@@ -150,8 +152,10 @@ public abstract class AbstractObjectExporter
       }
     }
 
-    if (exporters.size() == 0)
+    if (exporters.size() == 0) {
       exporters.add(PlainTextExporter.class);
+      exporters.add(RenderedPlainTextExporter.class);
+    }
 
     // store in cache
     m_Cache.put(cls, exporters);
