@@ -22,6 +22,7 @@ package adams.gui.tools.wekainvestigator.output;
 
 import adams.data.io.output.SpreadSheetWriter;
 import adams.data.spreadsheet.SpreadSheet;
+import adams.data.spreadsheet.SpreadSheetSupporter;
 import adams.gui.chooser.SpreadSheetFileChooser;
 import adams.gui.core.BaseTable;
 import adams.gui.core.BaseTableWithButtons;
@@ -40,7 +41,8 @@ import java.io.File;
  * @version $Revision$
  */
 public class TableContentPanel
-  extends AbstractOutputPanelWithPopupMenu<SpreadSheetFileChooser> {
+  extends AbstractOutputPanelWithPopupMenu<SpreadSheetFileChooser>
+  implements SpreadSheetSupporter {
 
   private static final long serialVersionUID = 8183731075946484533L;
 
@@ -134,14 +136,8 @@ public class TableContentPanel
 
     result = null;
 
-    content = null;
-    if (m_Component instanceof BaseTable)
-      content = ((BaseTable) m_Component).toSpreadSheet();
-    else if (m_Component instanceof BaseTableWithButtons)
-      content = ((BaseTableWithButtons) m_Component).toSpreadSheet();
-    else if (m_Component instanceof JTable)
-      content = JTableHelper.toSpreadSheet((JTable) m_Component);
-    else
+    content = toSpreadSheet();
+    if (content == null)
       result = "Unhandled component: " + m_Component.getClass().getName();
 
     if (result == null) {
@@ -149,6 +145,26 @@ public class TableContentPanel
       if (!writer.write(content, file))
         result = "Failed to write data to: " + file;
     }
+
+    return result;
+  }
+
+  /**
+   * Returns the content as spreadsheet.
+   *
+   * @return		the content
+   */
+  public SpreadSheet toSpreadSheet() {
+    SpreadSheet result;
+
+    if (m_Component instanceof BaseTable)
+      result = ((BaseTable) m_Component).toSpreadSheet();
+    else if (m_Component instanceof BaseTableWithButtons)
+      result = ((BaseTableWithButtons) m_Component).toSpreadSheet();
+    else if (m_Component instanceof JTable)
+      result = JTableHelper.toSpreadSheet((JTable) m_Component);
+    else
+      result = null;
 
     return result;
   }

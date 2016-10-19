@@ -20,6 +20,7 @@
 
 package adams.gui.tools.wekainvestigator.output;
 
+import adams.core.TextSupporter;
 import adams.core.io.FileUtils;
 import adams.gui.chooser.TextFileChooser;
 import adams.gui.core.BaseTextAreaWithButtons;
@@ -38,7 +39,8 @@ import java.io.File;
  * @version $Revision$
  */
 public class TextualContentPanel
-  extends AbstractOutputPanelWithPopupMenu<TextFileChooser> {
+  extends AbstractOutputPanelWithPopupMenu<TextFileChooser>
+  implements TextSupporter {
 
   private static final long serialVersionUID = 8183731075946484533L;
 
@@ -132,14 +134,8 @@ public class TextualContentPanel
 
     result = null;
 
-    content = null;
-    if (m_Component instanceof JTextComponent)
-      content = ((JTextComponent) m_Component).getText();
-    else if (m_Component instanceof BaseTextAreaWithButtons)
-      content = ((BaseTextAreaWithButtons) m_Component).getText();
-    else if (m_Component instanceof BaseTextPaneWithButtons)
-      content = ((BaseTextPaneWithButtons) m_Component).getText();
-    else
+    content = supplyText();
+    if (content == null)
       result = "Unhandled component: " + m_Component.getClass().getName();
 
     if (result == null) {
@@ -147,6 +143,27 @@ public class TextualContentPanel
       if (msg != null)
 	result = msg;
     }
+
+    return result;
+  }
+
+  /**
+   * Supplies the text.
+   *
+   * @return		the text, null if none available
+   */
+  @Override
+  public String supplyText() {
+    String result;
+
+    if (m_Component instanceof JTextComponent)
+      result = ((JTextComponent) m_Component).getText();
+    else if (m_Component instanceof BaseTextAreaWithButtons)
+      result = ((BaseTextAreaWithButtons) m_Component).getText();
+    else if (m_Component instanceof BaseTextPaneWithButtons)
+      result = ((BaseTextPaneWithButtons) m_Component).getText();
+    else
+      result = null;
 
     return result;
   }

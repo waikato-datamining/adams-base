@@ -22,12 +22,15 @@ package adams.gui.tools.wekainvestigator.output;
 
 import adams.core.Utils;
 import adams.core.io.PlaceholderFile;
+import adams.data.image.BufferedImageSupporter;
 import adams.gui.print.JComponentWriter;
 import adams.gui.print.JComponentWriterFileChooser;
 import com.googlecode.jfilechooserbookmarks.gui.BaseScrollPane;
 
 import javax.swing.JComponent;
 import java.awt.BorderLayout;
+import java.awt.Graphics;
+import java.awt.image.BufferedImage;
 import java.io.File;
 
 /**
@@ -37,7 +40,8 @@ import java.io.File;
  * @version $Revision$
  */
 public class ComponentContentPanel
-  extends AbstractOutputPanelWithPopupMenu<JComponentWriterFileChooser> {
+  extends AbstractOutputPanelWithPopupMenu<JComponentWriterFileChooser>
+  implements BufferedImageSupporter {
 
   private static final long serialVersionUID = 8183731075946484533L;
 
@@ -102,6 +106,25 @@ public class ComponentContentPanel
     catch (Exception e) {
       result = Utils.handleException(null, "Failed to save content to: " + file, e);
     }
+
+    return result;
+  }
+
+  /**
+   * Returns a buffered image.
+   *
+   * @return		the buffered image
+   */
+  public BufferedImage toBufferedImage() {
+    BufferedImage	result;
+    Graphics g;
+
+    result = new BufferedImage(getComponent().getWidth(), getComponent().getHeight(), BufferedImage.TYPE_INT_RGB);
+    g = result.getGraphics();
+    g.setPaintMode();
+    g.setColor(getBackground());
+    g.fillRect(0, 0, getComponent().getWidth(), getComponent().getHeight());
+    getComponent().printAll(g);
 
     return result;
   }
