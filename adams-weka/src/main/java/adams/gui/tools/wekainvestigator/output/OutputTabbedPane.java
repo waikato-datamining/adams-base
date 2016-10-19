@@ -166,6 +166,7 @@ public class OutputTabbedPane
       dialog = new GenericObjectEditorDialog(GUIHelper.getParentFrame(this), true);
     dialog.setDefaultCloseOperation(GenericObjectEditorDialog.DISPOSE_ON_CLOSE);
     dialog.setTitle("Export output");
+    dialog.getGOEEditor().setCanChangeClassInDialog(true);
     dialog.getGOEEditor().setClassType(AbstractMultiObjectExport.class);
     dialog.setCurrent(m_LastExport);
     dialog.pack();
