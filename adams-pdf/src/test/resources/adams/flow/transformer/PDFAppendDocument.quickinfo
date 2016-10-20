@@ -1,1 +1,1 @@
-input: ${CWD}, processors: -none-
+type: FILE, input: ${CWD}, storage: storage, processors: -none-
