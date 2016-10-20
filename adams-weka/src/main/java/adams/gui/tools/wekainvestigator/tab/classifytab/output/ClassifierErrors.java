@@ -22,6 +22,7 @@ package adams.gui.tools.wekainvestigator.tab.classifytab.output;
 
 import adams.core.Utils;
 import adams.data.spreadsheet.SpreadSheet;
+import adams.data.spreadsheet.SpreadSheetColumnIndex;
 import adams.data.spreadsheet.SpreadSheetColumnRange;
 import adams.flow.container.WekaEvaluationContainer;
 import adams.flow.core.Token;
@@ -62,6 +63,12 @@ public class ClassifierErrors
   /** the maximum to use for the predicted values (pos inf = no restriction). */
   protected double m_PredictedMax;
 
+  /** the diameter of the cross. */
+  protected int m_Diameter;
+
+  /** whether to use the error for the cross-size. */
+  protected boolean m_UseError;
+
   /**
    * Returns a string describing the object.
    *
@@ -98,6 +105,14 @@ public class ClassifierErrors
     m_OptionManager.add(
       "limit", "limit",
       LimitType.NONE);
+
+    m_OptionManager.add(
+      "diameter", "diameter",
+      7, 1, null);
+
+    m_OptionManager.add(
+      "use-error", "useError",
+      false);
   }
 
   /**
@@ -251,6 +266,66 @@ public class ClassifierErrors
   }
 
   /**
+   * Sets the cross diameter.
+   *
+   * @param value	the diameter
+   */
+  public void setDiameter(int value) {
+    if (getOptionManager().isValid("diameter", value)) {
+      m_Diameter = value;
+      reset();
+    }
+  }
+
+  /**
+   * Returns the diameter of the cross.
+   *
+   * @return		the diameter
+   */
+  public int getDiameter() {
+    return m_Diameter;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String diameterTipText() {
+    return "The diameter of the cross in pixels (if no error data supplied).";
+  }
+
+  /**
+   * Sets whether to use the numeric error for the cross size.
+   *
+   * @param value	true if to use error
+   */
+  public void setUseError(boolean value) {
+    m_UseError = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to use the error for the cross size.
+   *
+   * @return		true if to use error
+   */
+  public boolean getUseError() {
+    return m_UseError;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String useErrorTipText() {
+    return "If enabled, the numeric error is used for the cross size.";
+  }
+
+  /**
    * The title to use for the tab.
    *
    * @return		the title
@@ -292,6 +367,8 @@ public class ClassifierErrors
     if (item.hasOriginalIndices())
       cont.setValue(WekaEvaluationContainer.VALUE_ORIGINALINDICES, item.getOriginalIndices());
     p2s = new WekaPredictionsToSpreadSheet();
+    if (m_UseError && item.getEvaluation().getHeader().classAttribute().isNumeric())
+      p2s.setShowError(true);
     p2s.input(new Token(cont));
     try {
       p2s.execute();
@@ -327,7 +404,10 @@ public class ClassifierErrors
     sink.setPredictedMin(m_PredictedMin);
     sink.setPredictedMax(m_PredictedMax);
     sink.setLimit(m_Limit);
+    sink.setDiameter(m_Diameter);
     sink.setShowSidePanel(false);
+    if (p2s.getShowError())
+      sink.setError(new SpreadSheetColumnIndex("Error"));
     if ((additional != null) && (additional.size() > 0))
       sink.setAdditional(new SpreadSheetColumnRange(Utils.flatten(additional, ",")));
     panel = sink.createDisplayPanel(token);
