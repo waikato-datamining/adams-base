@@ -512,7 +512,7 @@ public class XYSequencePanel
 
     menu.addSeparator();
 
-    item = new JMenuItem("Save visible sequences...", GUIHelper.getIcon("save.gif"));
+    item = new JMenuItem("Save visible sequences...", GUIHelper.getEmptyIcon());
     item.addActionListener((ActionEvent ae) -> saveVisibleSequences());
     menu.add(item);
 
