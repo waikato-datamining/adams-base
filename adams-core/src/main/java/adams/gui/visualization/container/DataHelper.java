@@ -43,20 +43,38 @@ public class DataHelper {
    * @return		the filtered data
    */
   public static SpreadSheet filter(SpreadSheet data, String xColName, double[] xRange, String yColName, double[] yRange) {
-    TIntList rows;
-    int 		xCol;
-    int 		yCol;
-    double		x;
-    double		y;
-    int			i;
-    Row row;
+    int 	xCol;
+    int 	yCol;
 
     if ((xRange == null) || (yRange == null))
       return data;
 
     xCol = data.getHeaderRow().indexOfContent(xColName);
     yCol = data.getHeaderRow().indexOfContent(yColName);
+
+    return filter(data, xCol, xRange, yCol, yRange);
+  }
+
+  /**
+   * Filters the data, using the specified ranges.
+   *
+   * @param data	the data to filter
+   * @param xRange	optional limits for X values
+   * @param yRange	optional limits for Y values
+   * @return		the filtered data
+   */
+  public static SpreadSheet filter(SpreadSheet data, int xCol, double[] xRange, int yCol, double[] yRange) {
+    TIntList 	rows;
+    double	x;
+    double	y;
+    int		i;
+    Row 	row;
+
+    if ((xRange == null) || (yRange == null))
+      return data;
     if ((xCol == -1) || (yCol == -1))
+      return data;
+    if ((xCol >= data.getColumnCount()) || (yCol >= data.getColumnCount()))
       return data;
 
     rows = new TIntArrayList();
