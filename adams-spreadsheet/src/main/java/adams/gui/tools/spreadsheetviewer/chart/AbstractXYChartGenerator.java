@@ -96,7 +96,7 @@ public abstract class AbstractXYChartGenerator
     String	result;
 
     result  = QuickInfoHelper.toString(this, "XColumn", (m_XColumn.isEmpty() ? "-none-" : m_XColumn), "x: ");
-    result += QuickInfoHelper.toString(this, "YColumn", (m_YColumns.isEmpty() ? "-none-" : m_YColumns), ", y: ");
+    result += QuickInfoHelper.toString(this, "YColumns", (m_YColumns.isEmpty() ? "-none-" : m_YColumns), ", y: ");
     result += QuickInfoHelper.toString(this, "colorProvider", m_ColorProvider, ", color: ");
 
     return result;
