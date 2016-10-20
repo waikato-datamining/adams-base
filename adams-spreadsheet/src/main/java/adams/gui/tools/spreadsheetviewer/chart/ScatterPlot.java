@@ -28,6 +28,8 @@ import adams.flow.transformer.SpreadSheetPlotGenerator;
 import adams.gui.visualization.sequence.AbstractXYSequencePaintlet;
 import adams.gui.visualization.sequence.CirclePaintlet;
 import adams.gui.visualization.sequence.CrossPaintlet;
+import adams.gui.visualization.sequence.NullPaintlet;
+import adams.gui.visualization.sequence.XYSequencePaintlet;
 
 /**
  <!-- globalinfo-start -->
@@ -94,6 +96,11 @@ import adams.gui.visualization.sequence.CrossPaintlet;
  * &nbsp;&nbsp;&nbsp;minimum: 1
  * </pre>
  * 
+ * <pre>-overlay-paintlet &lt;adams.gui.visualization.sequence.XYSequencePaintlet&gt; (property: overlayPaintlet)
+ * &nbsp;&nbsp;&nbsp;The paintlet to use for painting the overlay data (if any).
+ * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.sequence.NullPaintlet
+ * </pre>
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -119,6 +126,9 @@ public class ScatterPlot
   /** the diameter. */
   protected int m_Diameter;
 
+  /** the overlay paintlet to use for painting the overlays. */
+  protected XYSequencePaintlet m_OverlayPaintlet;
+
   /**
    * Returns a string describing the object.
    *
@@ -137,12 +147,16 @@ public class ScatterPlot
     super.defineOptions();
 
     m_OptionManager.add(
-	    "plot-type", "plotType",
-	    PlotType.CIRCLE);
+      "plot-type", "plotType",
+      PlotType.CIRCLE);
 
     m_OptionManager.add(
-	    "diameter", "diameter",
-	    7, 1, null);
+      "diameter", "diameter",
+      7, 1, null);
+
+    m_OptionManager.add(
+      "overlay-paintlet", "overlayPaintlet",
+      new NullPaintlet());
   }
 
   /**
@@ -222,9 +236,38 @@ public class ScatterPlot
   }
 
   /**
+   * Sets the overlay paintlet to use.
+   *
+   * @param value 	the paintlet
+   */
+  public void setOverlayPaintlet(XYSequencePaintlet value) {
+    m_OverlayPaintlet = value;
+    reset();
+  }
+
+  /**
+   * Returns the overlay paintlet to use.
+   *
+   * @return 		the paintlet
+   */
+  public XYSequencePaintlet getOverlayPaintlet() {
+    return m_OverlayPaintlet;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String overlayPaintletTipText() {
+    return "The paintlet to use for painting the overlay data (if any).";
+  }
+
+  /**
    * Adds the chart generation to the flow. The flow already contains 
    * forwarding of spreadsheet and selecting subset of rows.
-   * 
+   *
    * @param flow	the flow to extend
    * @param name	the name of the tab/sheet
    * @param sheet	the spreadsheet to generate the flow for
@@ -237,18 +280,19 @@ public class ScatterPlot
     AbstractXYSequencePaintlet	paintlet;
 
     super.addChartGeneration(flow, name, sheet);
-    
+
     pg = configureGenerator(sheet);
     flow.add(pg);
-    
+
     plotter = new SequencePlotter();
     if (name != null)
       plotter.setName(name);
     else
       plotter.setName("Scatter plot");
     plotter.setTitle(plotter.getName());
-    
+
     configureSequencePlotter(sheet, plotter);
+    plotter.setOverlayPaintlet((XYSequencePaintlet) m_OverlayPaintlet.shallowCopy());
 
     switch (m_PlotType) {
       case CIRCLE:
