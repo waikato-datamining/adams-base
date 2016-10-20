@@ -73,7 +73,7 @@ public class CrossPaintlet
   /** for serialization. */
   private static final long serialVersionUID = -8772546156227148237L;
 
-  /** the diameter of the circle. */
+  /** the diameter of the cross. */
   protected int m_Diameter;
 
   /** whether anti-aliasing is enabled. */
