@@ -15,15 +15,18 @@
 
 /*
  * ZScore.java
- * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.stats.zscore;
 
 import adams.core.Index;
 import adams.core.base.BaseRegExp;
+import adams.data.io.output.SpreadSheetWriter;
 import adams.data.spreadsheet.SpreadSheet;
+import adams.gui.chooser.SpreadSheetFileChooser;
 import adams.gui.core.BaseSplitPane;
+import adams.gui.core.GUIHelper;
 import adams.gui.core.ParameterPanel;
 import adams.gui.goe.GenericArrayEditorPanel;
 import adams.gui.goe.GenericObjectEditorPanel;
@@ -43,6 +46,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JColorChooser;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.event.ChangeEvent;
@@ -114,7 +118,7 @@ public class ZScore
   protected BaseRegExp m_AttReg;
 
   /** Index for choosing attribute */
-  protected Index m_Indx;
+  protected Index m_AttIndex;
 
   /**Hit detector for tip text and pop up menu */
   protected ZScoreHitDetector m_Detect;
@@ -125,13 +129,21 @@ public class ZScore
   /** the split pane. */
   protected BaseSplitPane m_SplitPane;
 
+  /** the file chooser for saving a specific sequence. */
+  protected SpreadSheetFileChooser m_FileChooser;
+
+  /**
+   * Initializes the members.
+   */
   @Override
   protected void initialize() {
     super.initialize();
-    m_Index = 0;
-    m_NumDialogs = 0;
-    m_AttReg = new BaseRegExp();
-    m_Indx = new Index();
+
+    m_Index       = 0;
+    m_NumDialogs  = 0;
+    m_AttReg      = new BaseRegExp();
+    m_AttIndex    = new Index();
+    m_FileChooser = null;
   }
 
   /**
@@ -150,18 +162,26 @@ public class ZScore
     return m_Data;
   }
 
+  /**
+   * Returns the plot panel of the panel, null if no panel present.
+   *
+   * @return		the plot panel
+   */
   @Override
   public PlotPanel getPlot() {
     return m_Plot;
   }
 
+  /**
+   * Prepares the update, i.e., calculations etc.
+   */
   @Override
   public void prepareUpdate() {
-    if(m_Data != null) {
-      for(int i = 0; i< m_Over.length; i++) {
-	if(m_Over[i].getPaintlet() != null) {
+    if (m_Data != null) {
+      for (int i = 0; i< m_Over.length; i++) {
+	if (m_Over[i].getPaintlet() != null) {
 	  m_Over[i].getPaintlet().parameters(m_Data, m_Index);
-	  if(m_Over[i].getPaintlet().getCalculated() == false) {
+	  if (!m_Over[i].getPaintlet().getCalculated()) {
 	    m_Over[i].getPaintlet().calculate();
 	  }
 	}
@@ -171,7 +191,7 @@ public class ZScore
 
   @Override
   protected boolean canPaint(Graphics g) {
-    if(m_Plot != null)
+    if (m_Plot != null)
       return true;
     else
       return false;
@@ -183,18 +203,18 @@ public class ZScore
    */
   public void reset() {
     //add the attributes to the combo box
-    for(int i = 0; i< m_Data.getColumnCount(); i++) {
+    for (int i = 0; i< m_Data.getColumnCount(); i++) {
       m_ComboBox.addElement(m_Data.getColumnName(i));
     }
 
     int temp = -1;
-    temp = IndexHelper.getIndex(m_AttReg, m_Indx, m_Data, temp);
-    if(temp == -1) {
+    temp = IndexHelper.getIndex(m_AttReg, m_AttIndex, m_Data, temp);
+    if (temp == -1) {
       temp = 0;
       System.err.println("changed to 0");
     }
 
-    if(m_Over == null) {
+    if (m_Over == null) {
       m_Over = new AbstractZScoreOverlay[]{};
     }
     m_Att.setSelectedIndex(m_Index);
@@ -210,10 +230,10 @@ public class ZScore
     removeOverlays();
     int len = ((AbstractZScoreOverlay[]) m_PanelOverlay.getCurrent()).length;
     m_Over = new AbstractZScoreOverlay[len];
-    for(int i = 0; i < len; i++) {
+    for (int i = 0; i < len; i++) {
       m_Over[i] = ((AbstractZScoreOverlay[]) m_PanelOverlay.getCurrent())[i].shallowCopy(true);
     }
-    for(int i = 0; i< m_Over.length; i++) {
+    for (int i = 0; i< m_Over.length; i++) {
       AbstractZScoreOverlay temp = m_Over[i];
       temp.setData(m_Data);
       temp.setParent(this);
@@ -228,9 +248,9 @@ public class ZScore
    * remove existing overlays and their paintlets
    */
   public void removeOverlays() {
-    if(m_Over != null) {
-      for(int i = 0; i< m_Over.length; i++) {
-	if(m_Over[i].getPaintlet() != null)
+    if (m_Over != null) {
+      for (int i = 0; i< m_Over.length; i++) {
+	if (m_Over[i].getPaintlet() != null)
 	  removePaintlet(m_Over[i].getPaintlet());
       }
       m_Over = null;
@@ -274,7 +294,7 @@ public class ZScore
     AttListener listen = new AttListener(this);
     m_Att.addItemListener(listen);
 
-    if(m_Val == null) {
+    if (m_Val == null) {
       m_Def = new ZScoreCircle();
       m_Val = new ZScoreCircle();
     }
@@ -345,7 +365,7 @@ public class ZScore
     public void itemStateChanged(ItemEvent e) {
       //need to change this to use the existing grid
       JCheckBox check = (JCheckBox)e.getSource();
-      if(check.isSelected()) {
+      if (check.isSelected()) {
 	m_Plot.getLeft().setShowGridLines(true);
 	m_Plot.getBottom().setShowGridLines(true);
 	m_Plot.setGridColor(Color.LIGHT_GRAY);
@@ -363,10 +383,10 @@ public class ZScore
    */
   private void changeKey() {
     //remove any existing buttons
-    if(m_Key != null)  {
+    if (m_Key != null)  {
       m_Key.removeAll();
       int len = m_Over.length;
-      for(int i = 0; i< len; i++) {
+      for (int i = 0; i< len; i++) {
 	JButton temp = new JButton(m_Over[i].shortName());
 	//make it not look like a button
 	temp.setBorder(null);
@@ -396,8 +416,8 @@ public class ZScore
       JButton push = (JButton)arg0.getSource();
       int index =0 ;
       //find position of overlay
-      for(int i = 0; i< m_Over.length; i++) {
-	if(m_Over[i].shortName().equals(push.getText())) {
+      for (int i = 0; i< m_Over.length; i++) {
+	if (m_Over[i].shortName().equals(push.getText())) {
 	  index = i;
 	  break;
 	}
@@ -405,7 +425,7 @@ public class ZScore
       //Color chosen
       Color newCol = JColorChooser.showDialog(ZScore.this, "Choose overlay color", m_Over[index].getColor());
       //If a color has been chosen
-      if(newCol != null) {
+      if (newCol != null) {
 	//change color of the overlay in the GAE and thus also the paintlet color
 	AbstractZScoreOverlay[] temp = (AbstractZScoreOverlay[])m_PanelOverlay.getCurrent();
 	temp[index].setColor(newCol);
@@ -430,13 +450,13 @@ public class ZScore
     }
     public void itemStateChanged(ItemEvent arg0) {
       SpreadSheet inst = m_parent.getData();
-      if(arg0.getStateChange() == ItemEvent.SELECTED) {
+      if (arg0.getStateChange() == ItemEvent.SELECTED) {
 	String chose =(String)arg0.getItem();
 	//Finds the position of the attribute chosen
-	for(int i = 0; i< inst.getColumnCount(); i++) {
-	  if(inst.getColumnName(i).equals(chose)) {
+	for (int i = 0; i< inst.getColumnCount(); i++) {
+	  if (inst.getColumnName(i).equals(chose)) {
 	    m_Index = i;
-	    for(int t = 0; t< m_Over.length; t++) {
+	    for (int t = 0; t< m_Over.length; t++) {
 	      m_Over[t].getPaintlet().setCalculated(false);
 	    }
 	    change();
@@ -451,7 +471,7 @@ public class ZScore
    * prepare for displaying
    */
   public void change() {
-    if(m_Data != null) {
+    if (m_Data != null) {
       m_Plot.setData(m_Data);
       m_Plot.setIndex(m_Index);
       m_Plot.reset();
@@ -509,7 +529,7 @@ public class ZScore
    * @param val			index for choosing attribute
    */
   public void setAttindex(Index val) {
-    m_Indx = val;
+    m_AttIndex = val;
   }
 
   public String processTipText(PlotPanel panel, Point mouse, String tiptext) {
@@ -530,14 +550,45 @@ public class ZScore
 
     hit = (String)m_Detect.detect(event);
     //if over a data point
-    if(hit != null)
+    if (hit != null)
       result += hit;
     //returns the string to display as a tip text, has data
     //point and value
     return result;
   }
 
+  /**
+   * Saves the data as spreadsheet.
+   */
+  protected void save() {
+    int			retVal;
+    SpreadSheetWriter 	writer;
+
+    if (m_FileChooser == null)
+      m_FileChooser = new SpreadSheetFileChooser();
+
+    retVal = m_FileChooser.showSaveDialog(this);
+    if (retVal != SpreadSheetFileChooser.APPROVE_OPTION)
+      return;
+
+    writer = m_FileChooser.getWriter();
+    if (!writer.write(m_Data, m_FileChooser.getSelectedFile()))
+      GUIHelper.showErrorMessage(
+	  this, "Failed to save data to file:\n" + m_FileChooser.getSelectedFile());
+  }
+
+  /**
+   * Optional customizing of the menu that is about to be popped up.
+   *
+   * @param e		The mouse event
+   * @param menu	The menu to customize.
+   */
   public void customizePopupMenu(MouseEvent e, JPopupMenu menu) {
+    JMenuItem menuitem;
+
+    menuitem = new JMenuItem("Save data...", GUIHelper.getEmptyIcon());
+    menuitem.addActionListener((ActionEvent ae) -> save());
+    menu.add(menuitem);
   }
 
   /**

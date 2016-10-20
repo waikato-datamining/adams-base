@@ -20,21 +20,29 @@
 
 package adams.gui.visualization.stats.histogram;
 
+import adams.data.io.output.SpreadSheetWriter;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetUtils;
 import adams.data.statistics.AbstractArrayStatistic.StatisticContainer;
 import adams.data.statistics.ArrayHistogram;
 import adams.data.statistics.ArrayHistogram.BinCalculation;
 import adams.data.statistics.StatUtils;
+import adams.gui.chooser.SpreadSheetFileChooser;
+import adams.gui.core.GUIHelper;
 import adams.gui.visualization.core.AxisPanel;
 import adams.gui.visualization.core.PaintablePanel;
 import adams.gui.visualization.core.PlotPanel;
+import adams.gui.visualization.core.PopupMenuCustomizer;
 import adams.gui.visualization.core.plot.Axis;
 import adams.gui.visualization.stats.histogram.HistogramOptions.BoxType;
 import adams.gui.visualization.stats.paintlet.HistogramPaintlet;
 
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 import java.awt.BorderLayout;
 import java.awt.Graphics;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseEvent;
 
 /**
  * Class that displays a histogram displaying the data provided.
@@ -43,7 +51,8 @@ import java.awt.Graphics;
  * @version $Revision$
  */
 public class Histogram
-  extends PaintablePanel{
+  extends PaintablePanel
+  implements PopupMenuCustomizer {
 
   /** for serialization */
   private static final long serialVersionUID = -4366437103496819542L;
@@ -78,6 +87,9 @@ public class Histogram
   /** the name of the x-axis. */
   protected String m_Name;
 
+  /** the file chooser for saving a specific sequence. */
+  protected SpreadSheetFileChooser m_FileChooser;
+
   /**
    * Initializes the members.
    */
@@ -91,6 +103,7 @@ public class Histogram
     m_DataName    = "";
     m_Index       = 0;
     m_Plotdata    = new double[0][2];
+    m_FileChooser = null;
   }
 
   /**
@@ -99,12 +112,16 @@ public class Histogram
   @Override
   protected void initGUI() {
     super.initGUI();
+
     setLayout(new BorderLayout());
+
     m_Plot = new HistogramPanel();
     m_Plot.addPaintListener(this);
+    m_Plot.setPopupMenuCustomizer(this);
+    add(m_Plot, BorderLayout.CENTER);
+
     m_Val = new HistogramPaintlet();
     m_Val.setPanel(this);
-    add(m_Plot, BorderLayout.CENTER);
   }
   
   /**
@@ -134,8 +151,8 @@ public class Histogram
    * @param value			Data for the histogram plot
    */
   public void setData(SpreadSheet value) {
-    m_Data = value;
-    m_Array     = null;
+    m_Data  = value;
+    m_Array = null;
     update();
   }
   
@@ -154,8 +171,8 @@ public class Histogram
    * @param value	the array
    */
   public void setArray(Double[] value) {
-    m_Array     = value;
-    m_Data = null;
+    m_Array = value;
+    m_Data  = null;
     update();
   }
   
@@ -314,5 +331,39 @@ public class Histogram
    */
   public double getBinWidth() {
     return m_BinWidth;
+  }
+
+  /**
+   * Saves the data as spreadsheet.
+   */
+  protected void save() {
+    int			retVal;
+    SpreadSheetWriter writer;
+
+    if (m_FileChooser == null)
+      m_FileChooser = new SpreadSheetFileChooser();
+
+    retVal = m_FileChooser.showSaveDialog(this);
+    if (retVal != SpreadSheetFileChooser.APPROVE_OPTION)
+      return;
+
+    writer = m_FileChooser.getWriter();
+    if (!writer.write(m_Data, m_FileChooser.getSelectedFile()))
+      GUIHelper.showErrorMessage(
+	this, "Failed to save data to file:\n" + m_FileChooser.getSelectedFile());
+  }
+
+  /**
+   * Optional customizing of the menu that is about to be popped up.
+   *
+   * @param e		The mouse event
+   * @param menu	The menu to customize.
+   */
+  public void customizePopupMenu(MouseEvent e, JPopupMenu menu) {
+    JMenuItem menuitem;
+
+    menuitem = new JMenuItem("Save data...", GUIHelper.getEmptyIcon());
+    menuitem.addActionListener((ActionEvent ae) -> save());
+    menu.add(menuitem);
   }
 }

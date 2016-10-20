@@ -22,14 +22,18 @@ package adams.gui.visualization.stats.probabilityplot;
 
 import adams.core.Index;
 import adams.core.base.BaseRegExp;
+import adams.data.io.output.SpreadSheetWriter;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetUtils;
 import adams.data.statistics.StatUtils;
+import adams.gui.chooser.SpreadSheetFileChooser;
 import adams.gui.core.BaseSplitPane;
+import adams.gui.core.GUIHelper;
 import adams.gui.core.ParameterPanel;
 import adams.gui.goe.GenericObjectEditorPanel;
 import adams.gui.visualization.core.PaintablePanel;
 import adams.gui.visualization.core.PlotPanel;
+import adams.gui.visualization.core.PopupMenuCustomizer;
 import adams.gui.visualization.core.axis.FancyTickGenerator;
 import adams.gui.visualization.core.plot.Axis;
 import adams.gui.visualization.stats.core.IndexHelper;
@@ -40,13 +44,16 @@ import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.event.ChangeEvent;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
+import java.awt.event.MouseEvent;
 import java.text.DecimalFormat;
 
 /**
@@ -56,7 +63,8 @@ import java.text.DecimalFormat;
  * @version $Revision$
  */
 public class ProbabilityPlot
-  extends PaintablePanel{
+  extends PaintablePanel
+  implements PopupMenuCustomizer {
 
   /** for serialization */
   private static final long serialVersionUID = 5997080502859878659L;
@@ -105,6 +113,19 @@ public class ProbabilityPlot
 
   /**Index for choosing the attribute to plot */
   protected Index m_Index;
+
+  /** the file chooser for saving a specific sequence. */
+  protected SpreadSheetFileChooser m_FileChooser;
+
+  /**
+   * Initializes the members.
+   */
+  @Override
+  protected void initialize() {
+    super.initialize();
+
+    m_FileChooser = null;
+  }
 
   /**
    * For initializing the GUI.
@@ -168,6 +189,7 @@ public class ProbabilityPlot
     m_Plot.getAxis(Axis.BOTTOM).setNthValueToShow(2);
     m_Plot.getAxis(Axis.BOTTOM).setNumberFormat("#.##");
     m_Plot.addPaintListener(this);
+    m_Plot.setPopupMenuCustomizer(this);
 
     panelKey = new JPanel();
     panelKey.setLayout(new BoxLayout(panelKey, BoxLayout.Y_AXIS));
@@ -380,5 +402,39 @@ public class ProbabilityPlot
    */
   public BaseRegExp getAttRegExp() {
     return m_AttReg;
+  }
+
+  /**
+   * Saves the data as spreadsheet.
+   */
+  protected void save() {
+    int			retVal;
+    SpreadSheetWriter writer;
+
+    if (m_FileChooser == null)
+      m_FileChooser = new SpreadSheetFileChooser();
+
+    retVal = m_FileChooser.showSaveDialog(this);
+    if (retVal != SpreadSheetFileChooser.APPROVE_OPTION)
+      return;
+
+    writer = m_FileChooser.getWriter();
+    if (!writer.write(m_Data, m_FileChooser.getSelectedFile()))
+      GUIHelper.showErrorMessage(
+        this, "Failed to save data to file:\n" + m_FileChooser.getSelectedFile());
+  }
+
+  /**
+   * Optional customizing of the menu that is about to be popped up.
+   *
+   * @param e		The mouse event
+   * @param menu	The menu to customize.
+   */
+  public void customizePopupMenu(MouseEvent e, JPopupMenu menu) {
+    JMenuItem menuitem;
+
+    menuitem = new JMenuItem("Save data...", GUIHelper.getEmptyIcon());
+    menuitem.addActionListener((ActionEvent ae) -> save());
+    menu.add(menuitem);
   }
 }

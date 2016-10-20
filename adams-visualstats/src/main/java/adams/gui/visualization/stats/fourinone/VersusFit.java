@@ -20,17 +20,25 @@
 
 package adams.gui.visualization.stats.fourinone;
 
+import adams.data.io.output.SpreadSheetWriter;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetUtils;
 import adams.data.statistics.StatUtils;
+import adams.gui.chooser.SpreadSheetFileChooser;
+import adams.gui.core.GUIHelper;
 import adams.gui.visualization.core.AxisPanel;
 import adams.gui.visualization.core.PaintablePanel;
 import adams.gui.visualization.core.PlotPanel;
+import adams.gui.visualization.core.PopupMenuCustomizer;
 import adams.gui.visualization.core.plot.Axis;
 import adams.gui.visualization.stats.paintlet.VsFitPaintlet;
 
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 import java.awt.BorderLayout;
 import java.awt.Graphics;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseEvent;
 
 /**
  * Class that displays a versus fit graph. Plotting the residuals on the
@@ -40,7 +48,8 @@ import java.awt.Graphics;
  * @version $Revision$
  */
 public class VersusFit
-extends PaintablePanel{
+  extends PaintablePanel
+  implements PopupMenuCustomizer {
 
   /** for serialization */
   private static final long serialVersionUID = 2542241196305925848L;
@@ -63,16 +72,33 @@ extends PaintablePanel{
   /** Index of the predicted attribute in the instances */
   protected int m_PredInd;
 
+  /** the file chooser for saving a specific sequence. */
+  protected SpreadSheetFileChooser m_FileChooser;
+
+  /**
+   * Initializes the members.
+   */
+  @Override
+  protected void initialize() {
+    super.initialize();
+
+    m_FileChooser = null;
+  }
+
   /**
    * For initializing the GUI.
    */
   @Override
   protected void initGUI() {
     super.initGUI();
+
     setLayout(new BorderLayout());
+
     m_Plot = new VersusFitPanel();
     m_Plot.addPaintListener(this);
+    m_Plot.setPopupMenuCustomizer(this);
     add(m_Plot, BorderLayout.CENTER);
+
     m_val = new VsFitPaintlet();
     m_val.setPanel(this);
   }
@@ -159,5 +185,39 @@ extends PaintablePanel{
   public void setIndices(int res, int pred) {
     m_Index = res;
     m_PredInd = pred;
+  }
+
+  /**
+   * Saves the data as spreadsheet.
+   */
+  protected void save() {
+    int			retVal;
+    SpreadSheetWriter writer;
+
+    if (m_FileChooser == null)
+      m_FileChooser = new SpreadSheetFileChooser();
+
+    retVal = m_FileChooser.showSaveDialog(this);
+    if (retVal != SpreadSheetFileChooser.APPROVE_OPTION)
+      return;
+
+    writer = m_FileChooser.getWriter();
+    if (!writer.write(m_Data, m_FileChooser.getSelectedFile()))
+      GUIHelper.showErrorMessage(
+	this, "Failed to save data to file:\n" + m_FileChooser.getSelectedFile());
+  }
+
+  /**
+   * Optional customizing of the menu that is about to be popped up.
+   *
+   * @param e		The mouse event
+   * @param menu	The menu to customize.
+   */
+  public void customizePopupMenu(MouseEvent e, JPopupMenu menu) {
+    JMenuItem menuitem;
+
+    menuitem = new JMenuItem("Save data...", GUIHelper.getEmptyIcon());
+    menuitem.addActionListener((ActionEvent ae) -> save());
+    menu.add(menuitem);
   }
 }

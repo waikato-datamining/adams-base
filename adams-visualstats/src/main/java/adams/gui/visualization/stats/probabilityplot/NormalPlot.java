@@ -20,14 +20,22 @@
 
 package adams.gui.visualization.stats.probabilityplot;
 
+import adams.data.io.output.SpreadSheetWriter;
 import adams.data.spreadsheet.SpreadSheet;
+import adams.gui.chooser.SpreadSheetFileChooser;
+import adams.gui.core.GUIHelper;
 import adams.gui.visualization.core.PaintablePanel;
 import adams.gui.visualization.core.PlotPanel;
+import adams.gui.visualization.core.PopupMenuCustomizer;
 import adams.gui.visualization.core.plot.Axis;
 import adams.gui.visualization.stats.paintlet.Normal;
 
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 import java.awt.BorderLayout;
 import java.awt.Graphics;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseEvent;
 
 /**
  * Probability plot that only displays the normal distribution,
@@ -37,7 +45,8 @@ import java.awt.Graphics;
  * @version $Revision$
  */
 public class NormalPlot
-extends PaintablePanel{
+  extends PaintablePanel
+  implements PopupMenuCustomizer {
 
   /** for serialization */
   private static final long serialVersionUID = 2806317665479264377L;
@@ -57,13 +66,20 @@ extends PaintablePanel{
   /** Index of the residuals attribute in the instances */
   protected int m_Index;
 
+  /** the file chooser for saving a specific sequence. */
+  protected SpreadSheetFileChooser m_FileChooser;
+
+  /**
+   * Initializes the members.
+   */
   @Override
   protected void initialize() {
     super.initialize();
     
     m_NormOptions = new NormalPlotOptions();
-    m_Data = null;
+    m_Data        = null;
     m_Index       = 0;
+    m_FileChooser = null;
   }
   
   /**
@@ -72,10 +88,14 @@ extends PaintablePanel{
   @Override
   protected void initGUI() {
     super.initGUI();
+
     setLayout(new BorderLayout());
+
     m_Plot = new ProbabilityPlotPanel();
     m_Plot.addPaintListener(this);
+    m_Plot.setPopupMenuCustomizer(this);
     add(m_Plot, BorderLayout.CENTER);
+
     m_Val = new Normal();
     m_Val.setPanel(this);
   }
@@ -162,5 +182,39 @@ extends PaintablePanel{
    */
   public int getIndex() {
     return m_Index;
+  }
+
+  /**
+   * Saves the data as spreadsheet.
+   */
+  protected void save() {
+    int			retVal;
+    SpreadSheetWriter writer;
+
+    if (m_FileChooser == null)
+      m_FileChooser = new SpreadSheetFileChooser();
+
+    retVal = m_FileChooser.showSaveDialog(this);
+    if (retVal != SpreadSheetFileChooser.APPROVE_OPTION)
+      return;
+
+    writer = m_FileChooser.getWriter();
+    if (!writer.write(m_Data, m_FileChooser.getSelectedFile()))
+      GUIHelper.showErrorMessage(
+        this, "Failed to save data to file:\n" + m_FileChooser.getSelectedFile());
+  }
+
+  /**
+   * Optional customizing of the menu that is about to be popped up.
+   *
+   * @param e		The mouse event
+   * @param menu	The menu to customize.
+   */
+  public void customizePopupMenu(MouseEvent e, JPopupMenu menu) {
+    JMenuItem menuitem;
+
+    menuitem = new JMenuItem("Save data...", GUIHelper.getEmptyIcon());
+    menuitem.addActionListener((ActionEvent ae) -> save());
+    menu.add(menuitem);
   }
 }
