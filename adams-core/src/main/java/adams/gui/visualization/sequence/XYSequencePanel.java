@@ -15,7 +15,7 @@
 
 /*
  * XYSequencePanel.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.sequence;
@@ -47,6 +47,7 @@ import adams.gui.visualization.container.AbstractContainerManager;
 import adams.gui.visualization.container.ContainerListPopupMenuSupplier;
 import adams.gui.visualization.container.ContainerTable;
 import adams.gui.visualization.container.DataContainerPanelWithSidePanel;
+import adams.gui.visualization.container.DataHelper;
 import adams.gui.visualization.core.AbstractColorProvider;
 import adams.gui.visualization.core.AbstractPaintlet;
 import adams.gui.visualization.core.CoordinatesPaintlet;
@@ -76,7 +77,6 @@ import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.ArrayList;
@@ -515,6 +515,10 @@ public class XYSequencePanel
     item = new JMenuItem("Save visible sequences...", GUIHelper.getIcon("save.gif"));
     item.addActionListener((ActionEvent ae) -> saveVisibleSequences());
     menu.add(item);
+
+    item = new JMenuItem("Save visible data points...", GUIHelper.getEmptyIcon());
+    item.addActionListener((ActionEvent ae) -> saveVisibleDataPoints());
+    menu.add(item);
   }
 
   /**
@@ -537,45 +541,34 @@ public class XYSequencePanel
       indices = table.getSelectedRows();
 
     item = new JMenuItem("Toggle visibility");
-    item.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
+    item.addActionListener((ActionEvent e) -> {
 	for (int i = 0; i < indices.length; i++) {
 	  XYSequenceContainer c = getContainerManager().get(indices[i]);
 	  c.setVisible(!c.isVisible());
 	}
-      }
     });
     result.add(item);
 
     item = new JMenuItem("Show all");
-    item.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
+    item.addActionListener((ActionEvent e) -> {
 	for (int i = 0; i < getContainerManager().count(); i++) {
 	  if (!getContainerManager().get(i).isVisible())
 	    getContainerManager().get(i).setVisible(true);
 	}
-      }
     });
     result.add(item);
 
     item = new JMenuItem("Hide all");
-    item.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
+    item.addActionListener((ActionEvent e) -> {
 	for (int i = 0; i < getContainerManager().count(); i++) {
 	  if (getContainerManager().get(i).isVisible())
 	    getContainerManager().get(i).setVisible(false);
 	}
-      }
     });
     result.add(item);
 
     item = new JMenuItem("Choose color...");
-    item.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
+    item.addActionListener((ActionEvent e) -> {
 	String msg = "Choose color";
 	XYSequenceContainer cont = null;
 	Color color = Color.BLUE;
@@ -592,7 +585,6 @@ public class XYSequencePanel
 	  return;
 	for (int i: indices)
 	  getContainerManager().get(i).setColor(c);
-      }
     });
     result.add(item);
 
@@ -600,21 +592,13 @@ public class XYSequencePanel
       result.addSeparator();
 
       item = new JMenuItem("Remove");
-      item.addActionListener(new ActionListener() {
-	@Override
-	public void actionPerformed(ActionEvent e) {
-	  m_SequenceContainerList.getTable().removeContainers(indices);
-	}
-      });
+      item.addActionListener((ActionEvent e) ->
+	m_SequenceContainerList.getTable().removeContainers(indices));
       result.add(item);
 
       item = new JMenuItem("Remove all");
-      item.addActionListener(new ActionListener() {
-	@Override
-	public void actionPerformed(ActionEvent e) {
-	  m_SequenceContainerList.getTable().removeAllContainers();
-	}
-      });
+      item.addActionListener((ActionEvent e) ->
+	m_SequenceContainerList.getTable().removeAllContainers());
       result.add(item);
     }
 
@@ -637,22 +621,14 @@ public class XYSequencePanel
 
     item = new JMenuItem("Save as...");
     item.setEnabled(indices.length == 1);
-    item.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	saveSequence(getContainerManager().get(indices[0]));
-      }
-    });
+    item.addActionListener((ActionEvent e) ->
+      saveSequence(getContainerManager().get(indices[0])));
     result.add(item);
 
     item = new JMenuItem("View as table");
     item.setEnabled(indices.length == 1);
-    item.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	viewSequence(getContainerManager().get(indices[0]));
-      }
-    });
+    item.addActionListener((ActionEvent e) ->
+      viewSequence(getContainerManager().get(indices[0])));
     result.add(item);
 
     return result;
@@ -685,8 +661,11 @@ public class XYSequencePanel
   /**
    * Saves all the visible sequences to a directory with a user-specified
    * spreadsheet writer.
+   *
+   * @param xRange	optional limits for X values
+   * @param yRange	optional limits for Y values
    */
-  protected void saveVisibleSequences() {
+  protected void saveVisible(double[] xRange, double[] yRange) {
     SpreadSheetWriter 	writer;
     String 		prefix;
     int 		i;
@@ -717,11 +696,11 @@ public class XYSequencePanel
       filename = getContainerManager().getVisible(0).getDisplayID() + "_and_" + (getContainerManager().countVisible() - 1) + "_more";
       filename = FileUtils.createFilename(filename, "");
       filename = m_ExportDialog.getDirectory().getAbsolutePath() + File.separator + filename + "." + ext[0];
-      data = new ArrayList<SpreadSheet>();
+      data = new ArrayList<>();
       for (i = 0; i < getContainerManager().count(); i++) {
 	cont = getContainerManager().get(i);
 	if (cont.isVisible())
-	  data.add(cont.getData().toSpreadSheet());
+	  data.add(DataHelper.filter(cont.getData().toSpreadSheet(), "X", xRange, "Y", yRange));
       }
       if (!((MultiSheetSpreadSheetWriter) writer).write(data.toArray(new SpreadSheet[data.size()]), filename))
 	GUIHelper.showErrorMessage(this, "Failed to write sequence data to '" + filename + "'!");
@@ -731,12 +710,36 @@ public class XYSequencePanel
       for (i = 0; i < getContainerManager().countVisible(); i++) {
 	seq      = getContainerManager().getVisible(i).getData();
 	filename = prefix + File.separator + seq.getID() + "." + ext[0];
-	if (!writer.write(seq.toSpreadSheet(), filename)) {
+	if (!writer.write(DataHelper.filter(seq.toSpreadSheet(), "X", xRange, "Y", yRange), filename)) {
 	  GUIHelper.showErrorMessage(this, "Failed to write sequence #" + (i+1) + " to '" + filename + "'!");
 	  break;
 	}
       }
     }
+  }
+
+  /**
+   * Saves all the visible sequences to a directory with a user-specified
+   * spreadsheet writer.
+   */
+  protected void saveVisibleSequences() {
+    saveVisible(null, null);
+  }
+
+  /**
+   * Saves all the visible data points to a directory with a user-specified
+   * spreadsheet writer.
+   */
+  protected void saveVisibleDataPoints() {
+    saveVisible(
+      new double[]{
+	m_PlotPanel.getAxis(Axis.BOTTOM).getActualMinimum(),
+	m_PlotPanel.getAxis(Axis.BOTTOM).getActualMaximum()
+      },
+      new double[]{
+	m_PlotPanel.getAxis(Axis.LEFT).getActualMinimum(),
+	m_PlotPanel.getAxis(Axis.LEFT).getActualMaximum()
+      });
   }
 
   /**
