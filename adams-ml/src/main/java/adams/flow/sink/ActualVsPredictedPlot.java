@@ -201,6 +201,12 @@ import java.util.HashMap;
  * &nbsp;&nbsp;&nbsp;default: true
  * </pre>
  * 
+ * <pre>-diameter &lt;int&gt; (property: diameter)
+ * &nbsp;&nbsp;&nbsp;The diameter of the cross in pixels (if no error data supplied).
+ * &nbsp;&nbsp;&nbsp;default: 7
+ * &nbsp;&nbsp;&nbsp;minimum: 1
+ * </pre>
+ * 
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
@@ -253,6 +259,9 @@ public class ActualVsPredictedPlot
 
   /** whether to show the side panel. */
   protected boolean m_ShowSidePanel;
+
+  /** the diameter of the cross. */
+  protected int m_Diameter;
 
   /**
    * Returns a string describing the object.
@@ -310,6 +319,10 @@ public class ActualVsPredictedPlot
     m_OptionManager.add(
       "show-side-panel", "showSidePanel",
       true);
+
+    m_OptionManager.add(
+      "diameter", "diameter",
+      7, 1, null);
   }
 
   /**
@@ -628,6 +641,37 @@ public class ActualVsPredictedPlot
   }
 
   /**
+   * Sets the cross diameter.
+   *
+   * @param value	the diameter
+   */
+  public void setDiameter(int value) {
+    if (getOptionManager().isValid("diameter", value)) {
+      m_Diameter = value;
+      reset();
+    }
+  }
+
+  /**
+   * Returns the diameter of the cross.
+   *
+   * @return		the diameter
+   */
+  public int getDiameter() {
+    return m_Diameter;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String diameterTipText() {
+    return "The diameter of the cross in pixels (if no error data supplied).";
+  }
+
+  /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
@@ -642,6 +686,7 @@ public class ActualVsPredictedPlot
     result += QuickInfoHelper.toString(this, "error", (m_Error.isEmpty() ? "-none-" : m_Error), ", error: ");
     result += QuickInfoHelper.toString(this, "additional", (m_Additional.isEmpty() ? "-none-" : m_Additional), ", additional: ");
     result += QuickInfoHelper.toString(this, "limit", m_Limit, ", limit: ");
+    result += QuickInfoHelper.toString(this, "diameter", m_Diameter, ", diameter: ");
 
     return result;
   }
@@ -720,10 +765,14 @@ public class ActualVsPredictedPlot
     PaintletWithFixedXYRange 	fixedPaintlet;
 
     result = new SequencePlotterPanel("act vs pred");
-    if (m_Error.isEmpty())
+    if (m_Error.isEmpty()) {
       paintlet = new CrossPaintlet();
-    else
+      ((CrossPaintlet) paintlet).setDiameter(m_Diameter);
+    }
+    else {
       paintlet = new ErrorCrossPaintlet();
+      ((ErrorCrossPaintlet) paintlet).setDiameter(m_Diameter);
+    }
     fixedPaintlet = new PaintletWithFixedXYRange();
     fixedPaintlet.setPaintlet(paintlet);
     result.setPaintlet(fixedPaintlet);
@@ -823,7 +872,7 @@ public class ActualVsPredictedPlot
       if (error == null)
 	point = new SequencePlotPoint(id, act[i], pred[i]);
       else
-	point = new SequencePlotPoint(id, act[i], pred[i], new Double[]{error[i]}, null);
+	point = new SequencePlotPoint(id, act[i], pred[i], null, new Double[]{error[i]});
       // meta-data
       if (additional.length > 0) {
 	meta = new HashMap<>();
@@ -903,10 +952,14 @@ public class ActualVsPredictedPlot
 	m_Panel = new SequencePlotterPanel("act vs pred");
 	AbstractXYSequencePaintlet paintlet;
 	PaintletWithFixedXYRange fixedPaintlet;
-	if (m_Error.isEmpty())
+	if (m_Error.isEmpty()) {
 	  paintlet = new CrossPaintlet();
-	else
+	  ((CrossPaintlet) paintlet).setDiameter(m_Diameter);
+	}
+	else {
 	  paintlet = new ErrorCrossPaintlet();
+	  ((ErrorCrossPaintlet) paintlet).setDiameter(m_Diameter);
+	}
 	fixedPaintlet = new PaintletWithFixedXYRange();
 	fixedPaintlet.setPaintlet(paintlet);
 	m_Panel.setPaintlet(fixedPaintlet);
