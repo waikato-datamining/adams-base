@@ -15,10 +15,11 @@
 
 /**
  * ScatterPlot.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.spreadsheetviewer.chart;
 
+import adams.core.QuickInfoHelper;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.control.Flow;
 import adams.flow.sink.SequencePlotter;
@@ -26,6 +27,7 @@ import adams.flow.sink.sequenceplotter.ViewDataClickAction;
 import adams.flow.transformer.SpreadSheetPlotGenerator;
 import adams.gui.visualization.sequence.AbstractXYSequencePaintlet;
 import adams.gui.visualization.sequence.CirclePaintlet;
+import adams.gui.visualization.sequence.CrossPaintlet;
 
 /**
  <!-- globalinfo-start -->
@@ -57,25 +59,39 @@ import adams.gui.visualization.sequence.CirclePaintlet;
  * </pre>
  * 
  * <pre>-x-column &lt;java.lang.String&gt; (property: XColumn)
- * &nbsp;&nbsp;&nbsp;The index of the column which values to use on the X axis; An index is a 
- * &nbsp;&nbsp;&nbsp;number starting with 1; apart from column names (case-sensitive), the following 
- * &nbsp;&nbsp;&nbsp;placeholders can be used as well: first, second, third, last_2, last_1, 
- * &nbsp;&nbsp;&nbsp;last
+ * &nbsp;&nbsp;&nbsp;The index of the (optional) column which values to use on the X axis; if 
+ * &nbsp;&nbsp;&nbsp;no column provided, the row index is used instead; An index is a number 
+ * &nbsp;&nbsp;&nbsp;starting with 1; column names (case-sensitive) as well as the following 
+ * &nbsp;&nbsp;&nbsp;placeholders can be used: first, second, third, last_2, last_1, last; numeric 
+ * &nbsp;&nbsp;&nbsp;indices can be enforced by preceding them with '#' (eg '#12'); column names 
+ * &nbsp;&nbsp;&nbsp;can be surrounded by double quotes.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
  * <pre>-y-columns &lt;java.lang.String&gt; (property: YColumns)
  * &nbsp;&nbsp;&nbsp;The range of columns to use on the Y axis; A range is a comma-separated 
  * &nbsp;&nbsp;&nbsp;list of single 1-based indices or sub-ranges of indices ('start-end'); '
- * &nbsp;&nbsp;&nbsp;inv(...)' inverts the range '...'; apart from column names (case-sensitive
- * &nbsp;&nbsp;&nbsp;), the following placeholders can be used as well: first, second, third, 
- * &nbsp;&nbsp;&nbsp;last_2, last_1, last
+ * &nbsp;&nbsp;&nbsp;inv(...)' inverts the range '...'; column names (case-sensitive) as well 
+ * &nbsp;&nbsp;&nbsp;as the following placeholders can be used: first, second, third, last_2, 
+ * &nbsp;&nbsp;&nbsp;last_1, last; numeric indices can be enforced by preceding them with '#' 
+ * &nbsp;&nbsp;&nbsp;(eg '#12'); column names can be surrounded by double quotes.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
  * <pre>-color-provider &lt;adams.gui.visualization.core.AbstractColorProvider&gt; (property: colorProvider)
  * &nbsp;&nbsp;&nbsp;The color provider to use.
  * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.core.DefaultColorProvider
+ * </pre>
+ * 
+ * <pre>-plot-type &lt;CIRCLE|CROSS&gt; (property: plotType)
+ * &nbsp;&nbsp;&nbsp;The plot type to use.
+ * &nbsp;&nbsp;&nbsp;default: CIRCLE
+ * </pre>
+ * 
+ * <pre>-diameter &lt;int&gt; (property: diameter)
+ * &nbsp;&nbsp;&nbsp;The diameter of the circle&#47;cross in pixels (if no error data supplied).
+ * &nbsp;&nbsp;&nbsp;default: 7
+ * &nbsp;&nbsp;&nbsp;minimum: 1
  * </pre>
  * 
  <!-- options-end -->
@@ -90,6 +106,20 @@ public class ScatterPlot
   private static final long serialVersionUID = -2088311829009151566L;
 
   /**
+   * The type of plot to use.
+   */
+  public enum PlotType {
+    CIRCLE,
+    CROSS
+  }
+
+  /** the plot type. */
+  protected PlotType m_PlotType;
+
+  /** the diameter. */
+  protected int m_Diameter;
+
+  /**
    * Returns a string describing the object.
    *
    * @return 			a description suitable for displaying in the gui
@@ -97,6 +127,98 @@ public class ScatterPlot
   @Override
   public String globalInfo() {
     return "Generates a scatter plot by plotting the X column against one or more Y columns.";
+  }
+
+  /**
+   * Adds options to the internal list of options.
+   */
+  @Override
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+	    "plot-type", "plotType",
+	    PlotType.CIRCLE);
+
+    m_OptionManager.add(
+	    "diameter", "diameter",
+	    7, 1, null);
+  }
+
+  /**
+   * Returns a quick info about the actor, which will be displayed in the GUI.
+   *
+   * @return		null if no info available, otherwise short string
+   */
+  @Override
+  public String getQuickInfo() {
+    String	result;
+
+    result  = super.getQuickInfo();
+    result += QuickInfoHelper.toString(this, "plotType", m_PlotType, ", type: ");
+    result += QuickInfoHelper.toString(this, "diameter", m_Diameter, ", diameter: ");
+
+    return result;
+  }
+
+  /**
+   * Sets the plot type.
+   *
+   * @param value	the type
+   */
+  public void setPlotType(PlotType value) {
+    m_PlotType = value;
+    reset();
+  }
+
+  /**
+   * Returns the plot type.
+   *
+   * @return		the type
+   */
+  public PlotType getPlotType() {
+    return m_PlotType;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String plotTypeTipText() {
+    return "The plot type to use.";
+  }
+
+  /**
+   * Sets the circle/cross diameter.
+   *
+   * @param value	the diameter
+   */
+  public void setDiameter(int value) {
+    if (getOptionManager().isValid("diameter", value)) {
+      m_Diameter = value;
+      reset();
+    }
+  }
+
+  /**
+   * Returns the diameter of the circle/cross.
+   *
+   * @return		the diameter
+   */
+  public int getDiameter() {
+    return m_Diameter;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String diameterTipText() {
+    return "The diameter of the circle/cross in pixels (if no error data supplied).";
   }
 
   /**
@@ -112,7 +234,7 @@ public class ScatterPlot
     SpreadSheetPlotGenerator	pg;
     SequencePlotter		plotter;
     ViewDataClickAction		action;
-    CirclePaintlet		paintlet;
+    AbstractXYSequencePaintlet	paintlet;
 
     super.addChartGeneration(flow, name, sheet);
     
@@ -127,12 +249,23 @@ public class ScatterPlot
     plotter.setTitle(plotter.getName());
     
     configureSequencePlotter(sheet, plotter);
-    
-    paintlet = new CirclePaintlet();
+
+    switch (m_PlotType) {
+      case CIRCLE:
+	paintlet = new CirclePaintlet();
+	((CirclePaintlet) paintlet).setDiameter(m_Diameter);
+	break;
+      case CROSS:
+	paintlet = new CrossPaintlet();
+	((CrossPaintlet) paintlet).setDiameter(m_Diameter);
+	break;
+      default:
+	throw new IllegalStateException("Unhandled plot type: " + m_PlotType);
+    }
     plotter.setPaintlet(paintlet);
 
     action = new ViewDataClickAction();
-    action.setHitDetector(((AbstractXYSequencePaintlet) paintlet).getHitDetector());
+    action.setHitDetector(paintlet.getHitDetector());
     plotter.setMouseClickAction(action);
 
     flow.add(plotter);
