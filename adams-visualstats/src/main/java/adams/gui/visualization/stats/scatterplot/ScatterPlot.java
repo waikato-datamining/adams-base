@@ -15,19 +15,25 @@
 
 /*
  * ScatterPlot.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.stats.scatterplot;
 
 import adams.core.Index;
 import adams.core.base.BaseRegExp;
+import adams.data.io.output.SpreadSheetWriter;
 import adams.data.spreadsheet.SpreadSheet;
+import adams.gui.chooser.SpreadSheetFileChooser;
 import adams.gui.core.BaseSplitPane;
+import adams.gui.core.GUIHelper;
 import adams.gui.core.ParameterPanel;
 import adams.gui.goe.GenericArrayEditorPanel;
 import adams.gui.goe.GenericObjectEditorPanel;
+import adams.gui.visualization.container.DataHelper;
 import adams.gui.visualization.core.PlotPanel;
+import adams.gui.visualization.core.PopupMenuCustomizer;
+import adams.gui.visualization.core.plot.Axis;
 import adams.gui.visualization.stats.core.IndexHelper;
 import adams.gui.visualization.stats.paintlet.AbstractScatterPlotPaintlet;
 import adams.gui.visualization.stats.paintlet.ScatterPaintletCircle;
@@ -36,10 +42,13 @@ import adams.gui.visualization.stats.scatterplot.action.MouseClickAction;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.event.ChangeEvent;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
@@ -53,7 +62,8 @@ import java.awt.event.MouseEvent;
  * @version $Revision$
  */
 public class ScatterPlot
-  extends AbstractScatterPlot {
+  extends AbstractScatterPlot
+  implements PopupMenuCustomizer  {
 
   /** for serialization */
   private static final long serialVersionUID = -7798200657432959204L;
@@ -205,6 +215,9 @@ public class ScatterPlot
   /** the mouse click action. */
   protected MouseClickAction m_MouseClickAction;
 
+  /** the file chooser for saving a specific sequence. */
+  protected SpreadSheetFileChooser m_FileChooser;
+
   /**
    * Initializes the members.
    */
@@ -222,6 +235,7 @@ public class ScatterPlot
     m_ModelX        = new DefaultComboBoxModel<>();
     m_ModelY        = new DefaultComboBoxModel<>();
     m_ModelColor    = new DefaultComboBoxModel<>();
+    m_FileChooser   = null;
   }
 
   /**
@@ -328,6 +342,7 @@ public class ScatterPlot
     m_Plot = new ScatterPlotPanel();
     m_Plot.addPaintListener(this);
     m_Plot.setTipTextCustomizer(this);
+    m_Plot.setPopupMenuCustomizer(this);
     m_Plot.setBorder(BorderFactory.createLineBorder(Color.black));
     m_Plot.addMouseClickListener(new MouseAdapter() {
       @Override
@@ -567,5 +582,79 @@ public class ScatterPlot
    */
   public MouseClickAction getMouseClickAction() {
     return m_MouseClickAction;
+  }
+
+  /**
+   * Saves the data as spreadsheet.
+   *
+   * @param xRange	the optional limits for X
+   * @param yRange	the optional limits for Y
+   */
+  protected void save(double[] xRange, double[] yRange) {
+    SpreadSheet		data;
+    int			retVal;
+    SpreadSheetWriter 	writer;
+
+    data = m_Data;
+    if ((xRange != null) && (yRange != null)) {
+      data = DataHelper.filter(
+	data,
+	"" + m_ComboBoxX.getSelectedItem(), xRange,
+	"" + m_ComboBoxY.getSelectedItem(), yRange);
+    }
+
+    if (m_FileChooser == null)
+      m_FileChooser = new SpreadSheetFileChooser();
+
+    retVal = m_FileChooser.showSaveDialog(this);
+    if (retVal != SpreadSheetFileChooser.APPROVE_OPTION)
+      return;
+
+    writer = m_FileChooser.getWriter();
+    if (!writer.write(data, m_FileChooser.getSelectedFile()))
+      GUIHelper.showErrorMessage(
+	  this, "Failed to save data to file:\n" + m_FileChooser.getSelectedFile());
+  }
+
+  /**
+   * Saves all data points to a spreadsheet.
+   */
+  protected void save() {
+    save(null, null);
+  }
+
+  /**
+   * Saves only the visible data points to a spreadsheet.
+   */
+  protected void saveVisible() {
+    save(
+      new double[]{
+	m_Plot.getAxis(Axis.BOTTOM).getActualMinimum(),
+	m_Plot.getAxis(Axis.BOTTOM).getActualMaximum(),
+      },
+      new double[]{
+	m_Plot.getAxis(Axis.LEFT).getActualMinimum(),
+	m_Plot.getAxis(Axis.LEFT).getActualMaximum(),
+      }
+    );
+  }
+
+  /**
+   * Optional customizing of the menu that is about to be popped up.
+   *
+   * @param e		The mouse event
+   * @param menu	The menu to customize.
+   */
+  @Override
+  public void customizePopupMenu(MouseEvent e, JPopupMenu menu) {
+    JMenuItem	menuitem;
+
+    menuitem = new JMenuItem("Save data...", GUIHelper.getEmptyIcon());
+    menuitem.addActionListener((ActionEvent ae) -> save());
+    menu.add(menuitem);
+
+    menuitem = new JMenuItem("Save visible data...", GUIHelper.getEmptyIcon());
+    menuitem.addActionListener((ActionEvent ae) -> saveVisible());
+    menu.add(menuitem);
   }
 }
