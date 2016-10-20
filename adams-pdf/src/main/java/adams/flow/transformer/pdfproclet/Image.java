@@ -20,7 +20,12 @@
 package adams.flow.transformer.pdfproclet;
 
 import adams.core.base.BaseString;
+import adams.data.image.BufferedImageContainer;
+import adams.data.image.BufferedImageHelper;
+import adams.data.image.BufferedImageSupporter;
 
+import java.awt.Color;
+import java.awt.image.BufferedImage;
 import java.io.File;
 
 /**
@@ -341,33 +346,81 @@ public class Image
    * The actual processing of the document.
    *
    * @param generator	the context
+   * @param img		the image to add
+   * @return		true if successfully added
+   * @throws Exception	if something goes wrong
+   */
+  protected boolean doProcess(PDFGenerator generator, BufferedImage img) throws Exception {
+    boolean			result;
+    float			scale;
+    com.itextpdf.text.Image	image;
+
+    image = com.itextpdf.text.Image.getInstance(img, Color.WHITE);
+    if (m_Rotation != 0) {
+      image.setRotationDegrees(m_Rotation);
+      image.rotate();
+    }
+    if (m_Scale > 0) {
+      scale = (float) m_Scale;
+      image.scaleToFit(
+	generator.getDocument().getPageSize().getWidth() * scale,
+	generator.getDocument().getPageSize().getHeight() * scale);
+    }
+    if (m_UseAbsolutePosition)
+      image.setAbsolutePosition(m_X, m_Y);
+    result = addElement(generator, image);
+
+    return result;
+  }
+
+  /**
+   * The actual processing of the document.
+   *
+   * @param generator	the context
    * @param file	the file to add
    * @return		true if successfully added
    * @throws Exception	if something goes wrong
    */
   protected boolean doProcess(PDFGenerator generator, File file) throws Exception {
-    boolean	result;
-    com.itextpdf.text.Image image;
-    float	scale;
+    boolean			result;
+    BufferedImageContainer 	cont;
 
     result = addFilename(generator, file);
     if (result) {
-      image = com.itextpdf.text.Image.getInstance(file.getAbsolutePath());
-      if (m_Rotation != 0) {
-	image.setRotationDegrees(m_Rotation);
-	image.rotate();
-      }
-      if (m_Scale > 0) {
-	scale = (float) m_Scale;
-	image.scaleToFit(
-	  generator.getDocument().getPageSize().getWidth() * scale,
-	  generator.getDocument().getPageSize().getHeight() * scale);
-      }
-      if (m_UseAbsolutePosition)
-	image.setAbsolutePosition(m_X, m_Y);
-      result = addElement(generator, image);
+      cont = BufferedImageHelper.read(file);
+      if (cont == null)
+	return false;
+      result = doProcess(generator, cont.toBufferedImage());
     }
 
     return result;
+  }
+
+  /**
+   * Whether the processor can handle this particular object.
+   *
+   * @param generator	the context
+   * @param obj		the object to check
+   * @return		true if the object can be handled
+   */
+  public boolean canProcess(PDFGenerator generator, Object obj) {
+    return (obj instanceof BufferedImage) || (obj instanceof BufferedImageSupporter);
+  }
+
+  /**
+   * The actual processing of the document.
+   *
+   * @param generator	the context
+   * @param obj		the object to add
+   * @return		true if successfully added
+   * @throws Exception	if something goes wrong
+   */
+  protected boolean doProcess(PDFGenerator generator, Object obj) throws Exception {
+    if (obj instanceof BufferedImage)
+      return doProcess(generator, (BufferedImage) obj);
+    else if (obj instanceof BufferedImageSupporter)
+      return doProcess(generator, ((BufferedImageSupporter) obj).toBufferedImage());
+    else
+      return false;
   }
 }

@@ -482,4 +482,71 @@ public class Headline
 
     return result;
   }
+
+  /**
+   * Whether the processor can handle this particular object.
+   *
+   * @param generator	the context
+   * @param obj		the object to check
+   * @return		true if the object can be handled
+   */
+  public boolean canProcess(PDFGenerator generator, Object obj) {
+    return true;
+  }
+
+  /**
+   * For pre-processing the document.
+   *
+   * @param generator	the context
+   * @param obj 	the object to add
+   * @return		true if successfully added
+   * @throws Exception	if something goes wrong
+   */
+  protected boolean preProcess(PDFGenerator generator, Object obj) throws Exception {
+    boolean	result;
+
+    result = super.preProcess(generator, obj);
+
+    if (result) {
+      if (m_PageBreakBefore)
+	result = generator.newPage();
+    }
+
+    return result;
+  }
+
+  /**
+   * The actual processing of the document.
+   *
+   * @param generator	the context
+   * @param obj 	the object to add
+   * @return		true if successfully added
+   * @throws Exception	if something goes wrong
+   */
+  protected boolean doProcess(PDFGenerator generator, Object obj) throws Exception {
+    return addElement(generator, new Paragraph(m_Headline.getValue(), m_FontHeadline.toFont(m_ColorHeadline)));
+  }
+
+  /**
+   * For post-processing the document.
+   *
+   * @param generator	the context
+   * @param obj 	the object to add
+   * @return		true if successfully added
+   * @throws Exception	if something goes wrong
+   */
+  protected boolean postProcess(PDFGenerator generator, Object obj) throws Exception {
+    boolean	result;
+
+    result = super.postProcess(generator, obj);
+
+    if (result) {
+      if (m_PageBreakAfter || (generator.getState().numCurrentFiles() == m_NumFilesPerPage)) {
+        result = generator.getDocument().newPage();
+        generator.getState().resetCurrentFiles();
+      }
+    }
+
+    return result;
+  }
 }

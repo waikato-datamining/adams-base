@@ -28,6 +28,8 @@ import com.itextpdf.text.pdf.ColumnText;
 
 import java.awt.Color;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -369,6 +371,35 @@ public class PlainText
    * The actual processing of the document.
    *
    * @param generator	the context
+   * @param paragraphs	the paragraphs to add
+   * @return		true if successfully added
+   * @throws Exception	if something goes wrong
+   */
+  protected boolean doProcess(PDFGenerator generator, List<String> paragraphs) throws Exception {
+    boolean		result;
+    ColumnText		ct;
+
+    result = true;
+
+    if (m_UseAbsolutePosition) {
+      ct = addColumnTextAt(generator, m_X, m_Y);
+      ct.addElement(new Paragraph(Utils.flatten(paragraphs, "\n"), m_FontContent.toFont(m_ColorContent)));
+      ct.go();
+      generator.getState().contentAdded();
+    }
+    else {
+      result = addElement(
+	generator,
+	new Paragraph(Utils.flatten(paragraphs, "\n"), m_FontContent.toFont(m_ColorContent)));
+    }
+
+    return result;
+  }
+
+  /**
+   * The actual processing of the document.
+   *
+   * @param generator	the context
    * @param file	the file to add
    * @return		true if successfully added
    * @throws Exception	if something goes wrong
@@ -377,24 +408,39 @@ public class PlainText
   protected boolean doProcess(PDFGenerator generator, File file) throws Exception {
     boolean		result;
     List<String>	paragraphs;
-    ColumnText		ct;
 
     result = addFilename(generator, file);
     if (result) {
       paragraphs = FileUtils.loadFromFile(file);
-      if (m_UseAbsolutePosition) {
-	ct = addColumnTextAt(generator, m_X, m_Y);
-	ct.addElement(new Paragraph(Utils.flatten(paragraphs, "\n"), m_FontContent.toFont(m_ColorContent)));
-	ct.go();
-	generator.getState().contentAdded();
-      }
-      else {
-	result = addElement(
-	  generator,
-	  new Paragraph(Utils.flatten(paragraphs, "\n"), m_FontContent.toFont(m_ColorContent)));
-      }
+      result     = doProcess(generator, paragraphs);
     }
 
     return result;
+  }
+
+  /**
+   * Whether the processor can handle this particular object.
+   *
+   * @param generator	the context
+   * @param obj		the object to check
+   * @return		true if the object can be handled
+   */
+  public boolean canProcess(PDFGenerator generator, Object obj) {
+    return true;
+  }
+
+  /**
+   * The actual processing of the document.
+   *
+   * @param generator	the context
+   * @param obj		the object to add
+   * @return		true if successfully added
+   * @throws Exception	if something goes wrong
+   */
+  protected boolean doProcess(PDFGenerator generator, Object obj) throws Exception {
+    List<String>	paragraphs;
+
+    paragraphs = new ArrayList<>(Arrays.asList(obj.toString().split("\n")));
+    return doProcess(generator, paragraphs);
   }
 }

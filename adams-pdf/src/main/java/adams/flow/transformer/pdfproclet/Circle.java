@@ -395,4 +395,27 @@ public class Circle
 
     return true;
   }
+
+  /**
+   * Whether the processor can handle this particular object.
+   *
+   * @param generator	the context
+   * @param obj		the object to check
+   * @return		true if the object can be handled
+   */
+  public boolean canProcess(PDFGenerator generator, Object obj) {
+    return true;
+  }
+
+  /**
+   * The actual processing of the document.
+   *
+   * @param generator	the context
+   * @param obj		the object to add
+   * @return		true if successfully added
+   * @throws Exception	if something goes wrong
+   */
+  protected boolean doProcess(PDFGenerator generator, Object obj) throws Exception {
+    return doProcess(generator, new File("."));
+  }
 }

@@ -26,6 +26,7 @@ import adams.data.io.input.CsvSpreadSheetReader;
 import adams.data.io.input.SpreadSheetReader;
 import adams.data.spreadsheet.Cell;
 import adams.data.spreadsheet.Row;
+import adams.data.spreadsheet.SpreadSheetSupporter;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.ColumnText;
@@ -748,14 +749,12 @@ public class SpreadSheet
    * The actual processing of the document.
    *
    * @param generator	the context
-   * @param file	the file to add
+   * @param sheet	the spreadsheet to add
    * @return		true if successfully added
    * @throws Exception	if something goes wrong
    */
-  @Override
-  protected boolean doProcess(PDFGenerator generator, File file) throws Exception {
+  protected boolean doProcess(PDFGenerator generator, adams.data.spreadsheet.SpreadSheet sheet) throws Exception {
     boolean		result;
-    adams.data.spreadsheet.SpreadSheet sheet;
     Row			row;
     Cell		cell;
     int			i;
@@ -767,10 +766,6 @@ public class SpreadSheet
     Paragraph		paraComments;
     ColumnText 		ct;
 
-    result = addFilename(generator, file);
-    if (!result)
-      return false;
-
     pattern = "#0";
     for (i = 0; i < m_NumDecimals; i++) {
       if (i == 0)
@@ -778,7 +773,6 @@ public class SpreadSheet
       pattern += "0";
     }
     format = new DecimalFormat(pattern);
-    sheet  = m_Reader.read(file.getAbsolutePath());
     result = (sheet != null);
     if (!result)
       return false;
@@ -843,5 +837,55 @@ public class SpreadSheet
     }
 
     return result;
+  }
+
+  /**
+   * The actual processing of the document.
+   *
+   * @param generator	the context
+   * @param file	the file to add
+   * @return		true if successfully added
+   * @throws Exception	if something goes wrong
+   */
+  @Override
+  protected boolean doProcess(PDFGenerator generator, File file) throws Exception {
+    boolean				result;
+    adams.data.spreadsheet.SpreadSheet 	sheet;
+
+    result = addFilename(generator, file);
+    if (!result)
+      return false;
+
+    sheet = m_Reader.read(file.getAbsolutePath());
+
+    return (sheet != null) && doProcess(generator, sheet);
+  }
+
+  /**
+   * Whether the processor can handle this particular object.
+   *
+   * @param generator	the context
+   * @param obj		the object to check
+   * @return		true if the object can be handled
+   */
+  public boolean canProcess(PDFGenerator generator, Object obj) {
+    return (obj instanceof adams.data.spreadsheet.SpreadSheet) || (obj instanceof SpreadSheetSupporter);
+  }
+
+  /**
+   * The actual processing of the document.
+   *
+   * @param generator	the context
+   * @param obj		the object to add
+   * @return		true if successfully added
+   * @throws Exception	if something goes wrong
+   */
+  protected boolean doProcess(PDFGenerator generator, Object obj) throws Exception {
+    if (obj instanceof adams.data.spreadsheet.SpreadSheet)
+      return doProcess(generator, (adams.data.spreadsheet.SpreadSheet) obj);
+    else if (obj instanceof SpreadSheetSupporter)
+      return doProcess(generator, ((SpreadSheetSupporter) obj).toSpreadSheet());
+    else
+      return false;
   }
 }

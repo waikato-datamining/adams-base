@@ -80,4 +80,22 @@ public interface PdfProclet
    * @return		true if successfully added
    */
   public boolean process(PDFGenerator generator, File file);
+
+  /**
+   * Whether the processor can handle this particular object.
+   *
+   * @param generator	the context
+   * @param obj		the object to check
+   * @return		true if the object can be handled
+   */
+  public boolean canProcess(PDFGenerator generator, Object obj);
+
+  /**
+   * Processes the given object.
+   *
+   * @param generator	the context
+   * @param obj		the object to process
+   * @return		true if successfully added
+   */
+  public boolean process(PDFGenerator generator, Object obj);
 }

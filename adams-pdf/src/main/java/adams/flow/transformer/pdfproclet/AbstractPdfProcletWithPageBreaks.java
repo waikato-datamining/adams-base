@@ -199,4 +199,48 @@ public abstract class AbstractPdfProcletWithPageBreaks
 
     return result;
   }
+
+  /**
+   * For pre-processing the document.
+   *
+   * @param generator	the context
+   * @param obj		the object to add
+   * @return		true if successfully added
+   * @throws Exception	if something goes wrong
+   */
+  protected boolean preProcess(PDFGenerator generator, Object obj) throws Exception {
+    boolean	result;
+
+    result = super.preProcess(generator, obj);
+
+    if (result) {
+      if (m_PageBreakBefore)
+        result = generator.newPage();
+    }
+
+    return result;
+  }
+
+  /**
+   * For post-processing the document.
+   *
+   * @param generator	the context
+   * @param obj		the object to add
+   * @return		true if successfully added
+   * @throws Exception	if something goes wrong
+   */
+  protected boolean postProcess(PDFGenerator generator, Object obj) throws Exception {
+    boolean	result;
+
+    result = super.postProcess(generator, obj);
+
+    if (result) {
+      if (m_PageBreakAfter || (generator.getState().numCurrentFiles() == m_NumFilesPerPage)) {
+        result = generator.getDocument().newPage();
+        generator.getState().resetCurrentFiles();
+      }
+    }
+
+    return result;
+  }
 }

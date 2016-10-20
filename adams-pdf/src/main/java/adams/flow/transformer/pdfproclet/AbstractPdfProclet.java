@@ -228,4 +228,83 @@ public abstract class AbstractPdfProclet
 
     return result;
   }
+
+  /**
+   * Whether the processor can handle this particular object.
+   *
+   * @param generator	the context
+   * @param obj		the object to check
+   * @return		true if the object can be handled
+   */
+  public abstract boolean canProcess(PDFGenerator generator, Object obj);
+
+  /**
+   * For pre-processing the document.
+   *
+   * @param generator	the context
+   * @param obj		the object to add
+   * @return		true if successfully added
+   * @throws Exception	if something goes wrong
+   */
+  protected boolean preProcess(PDFGenerator generator, Object obj) throws Exception {
+    return true;
+  }
+
+  /**
+   * The actual processing of the document.
+   *
+   * @param generator	the context
+   * @param obj		the object to add
+   * @return		true if successfully added
+   * @throws Exception	if something goes wrong
+   */
+  protected abstract boolean doProcess(PDFGenerator generator, Object obj) throws Exception;
+
+  /**
+   * For post-processing the document.
+   *
+   * @param generator	the context
+   * @param obj		the object to add
+   * @return		true if successfully added
+   * @throws Exception	if something goes wrong
+   */
+  protected boolean postProcess(PDFGenerator generator, Object obj) throws Exception {
+    return true;
+  }
+
+  /**
+   * Processes the given object.
+   *
+   * @param generator	the context
+   * @param obj		the object to process
+   * @return		true if successfully added
+   */
+  public boolean process(PDFGenerator generator, Object obj) {
+    boolean	result;
+
+    try {
+      if (isLoggingEnabled())
+	getLogger().info("preProcess: " + obj);
+      result = preProcess(generator, obj);
+
+      if (result) {
+	if (isLoggingEnabled())
+	  getLogger().info("doProcess: " + obj);
+	result = doProcess(generator, obj);
+      }
+
+      if (result) {
+	generator.getState().addFile();
+	if (isLoggingEnabled())
+	  getLogger().info("postProcess: " + obj);
+	result = postProcess(generator, obj);
+      }
+    }
+    catch (Exception e) {
+      result = false;
+      getLogger().log(Level.SEVERE, "Failed to add object '" + obj + "':", e);
+    }
+
+    return result;
+  }
 }
