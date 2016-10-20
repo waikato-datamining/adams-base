@@ -104,6 +104,9 @@ public class ScatterPlotCircleHitDetector
     if (m_Owner == null)
       return null;
 
+    if (m_Owner.getPlot() == null)
+      return null;
+
     result     = new TIntArrayList();
     axisBottom = m_Owner.getPlot().getAxis(Axis.BOTTOM);
     axisLeft   = m_Owner.getPlot().getAxis(Axis.LEFT);
