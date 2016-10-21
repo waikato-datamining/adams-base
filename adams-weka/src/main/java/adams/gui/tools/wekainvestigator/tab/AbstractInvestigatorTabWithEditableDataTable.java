@@ -28,7 +28,7 @@ import adams.gui.event.UndoListener;
 import adams.gui.event.WekaInvestigatorDataEvent;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
 import adams.gui.tools.wekainvestigator.datatable.action.AbstractEditableDataTableAction;
-import adams.gui.tools.wekainvestigator.datatable.action.Export;
+import adams.gui.tools.wekainvestigator.datatable.action.Save;
 import com.jidesoft.swing.JideButton;
 import com.jidesoft.swing.JideSplitButton;
 
@@ -126,7 +126,7 @@ public abstract class AbstractInvestigatorTabWithEditableDataTable
     m_ButtonAction.setButtonEnabled(true);
     m_ButtonAction.setButtonStyle(JideSplitButton.TOOLBOX_STYLE);
     for (AbstractEditableDataTableAction action: m_Actions) {
-      if (action instanceof Export)
+      if (action instanceof Save)
 	m_ButtonAction.setAction(action);
       else
 	m_ButtonAction.add(action);

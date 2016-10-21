@@ -14,7 +14,7 @@
  */
 
 /**
- * Export.java
+ * Save.java
  * Copyright (C) 2016 University of Waikato, Hamilton, NZ
  */
 
@@ -33,12 +33,12 @@ import java.awt.event.ActionEvent;
 import java.io.File;
 
 /**
- * Exports the selected data.
+ * Saves the selected data.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class Export
+public class Save
   extends AbstractEditableDataTableAction {
 
   private static final long serialVersionUID = -8374323161691034031L;
@@ -49,9 +49,9 @@ public class Export
   /**
    * Instantiates the action.
    */
-  public Export() {
+  public Save() {
     super();
-    setName("Export");
+    setName("Save");
     setIcon("save.gif");
     setAsynchronous(true);
   }
@@ -91,7 +91,7 @@ public class Export
 	suggested = new PlaceholderFile(data.getSource());
       else
         suggested = new PlaceholderFile(m_FileChooser.getCurrentDirectory().getAbsolutePath() + File.separator + FileUtils.createFilename(data.getData().relationName(), "_"));
-      m_FileChooser.setDialogTitle("Exporting " + (i+1) + "/" + (rows.length) + ": " + data.getData().relationName());
+      m_FileChooser.setDialogTitle("Saving " + (i+1) + "/" + (rows.length) + ": " + data.getData().relationName());
       m_FileChooser.setCurrentDirectory(suggested.getParentFile());
       m_FileChooser.setSelectedFile(suggested);
       retVal = m_FileChooser.showSaveDialog(getOwner());
@@ -107,14 +107,14 @@ public class Export
 	saver = m_FileChooser.getWriter();
 	saver.setFile(file);
 	DataSink.write(saver, data.getData());
-	logMessage("Exported " + data.getSource() + " to " + file);
+	logMessage("Saved " + data.getSource() + " to " + file);
 	cont = new FileContainer(m_FileChooser.getReaderForFile(m_FileChooser.getSelectedFile()), m_FileChooser.getSelectedFile());
 	cont.getData().setClassIndex(data.getData().classIndex());
 	getData().set(rows[i], cont);
         fireDataChange(new WekaInvestigatorDataEvent(getOwner().getOwner(), WekaInvestigatorDataEvent.ROWS_MODIFIED, rows[i]));
       }
       catch (Exception ex) {
-	logError("Failed to export: " + m_FileChooser.getSelectedFile() + "\n", ex, "Export");
+	logError("Failed to save: " + m_FileChooser.getSelectedFile() + "\n", ex, "Save");
 	break;
       }
     }
