@@ -29,6 +29,7 @@ import adams.gui.event.UndoListener;
 import weka.core.Instances;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * Ancestor for data containers.
@@ -57,14 +58,18 @@ public abstract class AbstractDataContainer
   /** the undo manager. */
   protected transient Undo m_Undo;
 
+  /** the timestamp the data was last updated. */
+  protected Date m_LastUpdated;
+
   /**
    * Initializes the container with no data.
    */
   public AbstractDataContainer() {
-    m_ID       = nextID();
-    m_Data     = null;
-    m_Modified = false;
-    m_Undo     = null;
+    m_ID          = nextID();
+    m_Data        = null;
+    m_Modified    = false;
+    m_Undo        = null;
+    m_LastUpdated = new Date();
   }
 
   /**
@@ -88,7 +93,8 @@ public abstract class AbstractDataContainer
       addUndoPoint("updated data");
       setModified(true);
     }
-    m_Data = value;
+    m_Data        = value;
+    m_LastUpdated = new Date();
   }
 
   /**
@@ -125,7 +131,8 @@ public abstract class AbstractDataContainer
    * @param value	true if modified
    */
   public void setModified(boolean value) {
-    m_Modified = value;
+    m_Modified    = value;
+    m_LastUpdated = new Date();
   }
 
   /**
@@ -262,8 +269,18 @@ public abstract class AbstractDataContainer
    * @param data	the undo point
    */
   protected void applyUndoData(Serializable[] data) {
-    m_Data     = (Instances) data[0];
-    m_Modified = (Boolean) data[1];
+    m_LastUpdated = new Date();
+    m_Data        = (Instances) data[0];
+    m_Modified    = (Boolean) data[1];
+  }
+
+  /**
+   * Returns the timestamp the data was last updated.
+   *
+   * @return		the timestamp
+   */
+  public Date lastUpdated() {
+    return m_LastUpdated;
   }
 
   /**

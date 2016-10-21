@@ -24,6 +24,8 @@ import adams.core.CleanUpHandler;
 import adams.gui.core.UndoHandlerWithQuickAccess;
 import weka.core.Instances;
 
+import java.util.Date;
+
 /**
  * Interface for data containers.
  *
@@ -88,4 +90,11 @@ public interface DataContainer
    * @return		the data
    */
   public Instances getData();
+
+  /**
+   * Returns the timestamp the data was last updated.
+   *
+   * @return		the timestamp
+   */
+  public Date lastUpdated();
 }
