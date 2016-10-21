@@ -25,6 +25,7 @@ import adams.gui.chooser.WekaFileChooser;
 import adams.gui.core.BasePopupMenu;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.SortableAndSearchableTable;
+import adams.gui.core.TableRowRange;
 import adams.gui.core.UndoHandlerWithQuickAccess;
 import adams.gui.dialog.ApprovalDialog;
 import adams.gui.visualization.instances.instancestable.InstancesTablePopupMenuItemHelper;
@@ -33,6 +34,7 @@ import weka.core.Instances;
 import weka.core.Undoable;
 import weka.core.converters.AbstractFileSaver;
 
+import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
@@ -325,6 +327,7 @@ public class InstancesTable
   protected BasePopupMenu createCellPopup(MouseEvent e) {
     BasePopupMenu 		menu;
     JMenuItem			menuitem;
+    JMenu			submenu;
     final int			row;
     final int			actRow;
     final int			col;
@@ -367,40 +370,88 @@ public class InstancesTable
       int retVal = GUIHelper.showConfirmMessage(InstancesTable.this, msg);
       if (retVal != ApprovalDialog.APPROVE_OPTION)
 	return;
-	int[] actRows = new int[selRows.length];
+      int[] actRows = new int[selRows.length];
       for (int i = 0; i < selRows.length; i++)
 	actRows[i] = getActualRow(selRows[i]);
       instModel.deleteInstances(actRows);
     });
     menu.add(menuitem);
 
-    menuitem = new JMenuItem("Export...", GUIHelper.getIcon("save.gif"));
-    menuitem.setEnabled(selRows.length > 0);
-    menuitem.addActionListener((ActionEvent ae) -> {
-      int retVal = m_FileChooser.showSaveDialog(InstancesTable.this);
-      if (retVal != WekaFileChooser.APPROVE_OPTION)
-	return;
-      AbstractFileSaver saver = m_FileChooser.getWriter();
-      File file = m_FileChooser.getSelectedFile();
-      Instances original = getInstances();
-      Instances data = new Instances(original, 0);
-      for (int i = 0; i < selRows.length; i++)
-	data.add((Instance) original.instance(getActualRow(selRows[i])).copy());
-      try {
-	saver.setFile(file);
-	saver.setInstances(data);
-	saver.writeBatch();
-      }
-      catch (Exception ex) {
-	GUIHelper.showErrorMessage(
-	  InstancesTable.this, "Failed to export data to: " + file, ex);
-      }
-    });
-    menu.add(menuitem);
+    menu.addSeparator();
+
+    submenu = new JMenu("Save");
+    submenu.setIcon(GUIHelper.getIcon("save.gif"));
+    menu.add(submenu);
+
+    menuitem = new JMenuItem("Save all...");
+    menuitem.addActionListener((ActionEvent ae) -> saveAs(TableRowRange.ALL));
+    submenu.add(menuitem);
+
+    menuitem = new JMenuItem("Save selected...");
+    menuitem.addActionListener((ActionEvent ae) -> saveAs(TableRowRange.SELECTED));
+    submenu.add(menuitem);
+
+    menuitem = new JMenuItem("Save visible...");
+    menuitem.addActionListener((ActionEvent ae) -> saveAs(TableRowRange.VISIBLE));
+    submenu.add(menuitem);
 
     InstancesTablePopupMenuItemHelper.addToPopupMenu(this, menu, true, actRow, actCol);
 
     return menu;
+  }
+
+  /**
+   * Exports the data.
+   *
+   * @param range	what data to export
+   */
+  protected void saveAs(TableRowRange range) {
+    int 		retVal;
+    AbstractFileSaver 	saver;
+    File 		file;
+    Instances 		original;
+    Instances 		data;
+    int[]		selRows;
+    int			i;
+
+    retVal = m_FileChooser.showSaveDialog(InstancesTable.this);
+    if (retVal != WekaFileChooser.APPROVE_OPTION)
+      return;
+
+    saver    = m_FileChooser.getWriter();
+    file     = m_FileChooser.getSelectedFile();
+    original = getInstances();
+    switch (range) {
+      case ALL:
+	data = original;
+	break;
+
+      case SELECTED:
+	data    = new Instances(original, 0);
+	selRows = getSelectedRows();
+	for (i = 0; i < selRows.length; i++)
+	  data.add((Instance) original.instance(getActualRow(selRows[i])).copy());
+	break;
+
+      case VISIBLE:
+	data = new Instances(original, 0);
+	for (i = 0; i < getRowCount(); i++)
+	  data.add((Instance) original.instance(getActualRow(i)).copy());
+	break;
+
+      default:
+	throw new IllegalStateException("Unhandled range type: " + range);
+    }
+
+    try {
+      saver.setFile(file);
+      saver.setInstances(data);
+      saver.writeBatch();
+    }
+    catch (Exception ex) {
+      GUIHelper.showErrorMessage(
+	InstancesTable.this, "Failed to save data (" + range + ") to: " + file, ex);
+    }
   }
 
   /**
