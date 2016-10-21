@@ -34,7 +34,9 @@ import javax.swing.JComponent;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileSystemView;
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.HeadlessException;
 import java.io.File;
 
 /**
@@ -355,6 +357,23 @@ public class BaseDirectoryChooser
       super.setCurrentDirectory(null);
     else
       super.setCurrentDirectory(new PlaceholderFile(dir).getAbsoluteFile());
+  }
+
+  /**
+   * Displays the dialog.
+   *
+   * @param   parent  the parent component of the dialog;
+   *			can be <code>null</code>
+   * @param   approveButtonText the text of the <code>ApproveButton</code>
+   * @return  the return state of the file chooser on popdown
+   * @throws HeadlessException 	if GraphicsEnvironment.isHeadless()
+   * 				returns true.
+   * @see java.awt.GraphicsEnvironment#isHeadless
+   */
+  @Override
+  public int showDialog(Component parent, String approveButtonText) throws HeadlessException {
+    m_PanelBookmarks.reload();
+    return super.showDialog(parent, approveButtonText);
   }
 
   /**
