@@ -542,7 +542,7 @@ public class BaseFileChooser
   }
 
   /**
-   * Dislpays the dialog.
+   * Displays the dialog.
    *
    * @param   parent  the parent component of the dialog;
    *			can be <code>null</code>
