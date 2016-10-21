@@ -20,11 +20,12 @@
 
 package adams.gui.tools.wekainvestigator.tab;
 
-import adams.gui.core.JTableHelper;
 import adams.gui.core.SearchPanel;
 import adams.gui.core.SearchPanel.LayoutType;
 import adams.gui.event.SearchEvent;
 import adams.gui.event.WekaInvestigatorDataEvent;
+import adams.gui.tools.wekainvestigator.InvestigatorPanel;
+import adams.gui.tools.wekainvestigator.data.DataContainer;
 import adams.gui.visualization.instances.InstancesTable;
 import adams.gui.visualization.instances.InstancesTableModel;
 import com.googlecode.jfilechooserbookmarks.gui.BaseScrollPane;
@@ -32,6 +33,11 @@ import com.googlecode.jfilechooserbookmarks.gui.BaseScrollPane;
 import javax.swing.JPanel;
 import javax.swing.ListSelectionModel;
 import java.awt.BorderLayout;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Lists the currently loaded datasets.
@@ -43,6 +49,52 @@ public class DataTab
   extends AbstractInvestigatorTabWithEditableDataTable {
 
   private static final long serialVersionUID = -94945456385486233L;
+
+  /** the cache for the tables. */
+  protected Map<DataContainer,InstancesTable> m_TableCache;
+
+  /** the cache for the last update cache. */
+  protected Map<DataContainer,Date> m_TimestampCache;
+
+  /** the default max column width. */
+  protected Integer m_MaxColWidth;
+
+  /** the currently displayed table. */
+  protected InstancesTable m_CurrentTable;
+
+  /** the search panel. */
+  protected SearchPanel m_PanelSearch;
+
+  /**
+   * Initializes the members.
+   */
+  @Override
+  protected void initialize() {
+    super.initialize();
+
+    m_TableCache     = new HashMap<>();
+    m_TimestampCache = new HashMap<>();
+    m_MaxColWidth    = null;
+    m_CurrentTable   = null;
+  }
+
+  /**
+   * Initializes the members.
+   */
+  @Override
+  protected void initGUI() {
+    super.initGUI();
+
+    m_PanelSearch = new SearchPanel(LayoutType.HORIZONTAL, true);
+    m_PanelSearch.addSearchListener((SearchEvent e) -> {
+      if (m_CurrentTable != null) {
+	if (e.getParameters().getSearchString().isEmpty())
+	  m_CurrentTable.search(null, false);
+	else
+	  m_CurrentTable.search(e.getParameters().getSearchString(), e.getParameters().isRegExp());
+      }
+    });
+  }
 
   /**
    * Returns the title of this table.
@@ -79,7 +131,32 @@ public class DataTab
    * @param e		the event
    */
   public void dataChanged(WekaInvestigatorDataEvent e) {
+    Set<DataContainer>	cached;
+    Set<DataContainer>	current;
+
     super.dataChanged(e);
+
+    // update cache
+    // 1. remove containers no longer present
+    cached  = new HashSet<>(m_TableCache.keySet());
+    current = new HashSet<>();
+    for (DataContainer cont: getOwner().getData())
+      current.add(cont);
+    cached.removeAll(current);
+    for (DataContainer cont: cached) {
+      m_TableCache.remove(cont);
+      m_TimestampCache.remove(cont);
+    }
+    // 2. remove containers that were modified
+    for (DataContainer cont: current) {
+      if (m_TimestampCache.containsKey(cont)) {
+	if (!cont.lastUpdated().equals(m_TimestampCache.get(cont))) {
+	  m_TableCache.remove(cont);
+	  m_TimestampCache.remove(cont);
+	}
+      }
+    }
+
     displayData();
   }
 
@@ -96,38 +173,44 @@ public class DataTab
    */
   protected void displayData() {
     JPanel			panel;
-    SearchPanel			search;
-    InstancesTable		table;
+    DataContainer		cont;
     int				index;
     InstancesTableModel 	model;
+    boolean			setOptimal;
+
+    if (m_MaxColWidth == null)
+      m_MaxColWidth = InvestigatorPanel.getProperties().getInteger("Data.MaxColWidth", 100);
 
     if ((m_Table.getRowCount() > 0) && (m_Table.getSelectedRow() > -1)) {
       panel = new JPanel(new BorderLayout());
-      // table
-      // TODO cache tables?
       index = m_Table.getSelectedRow();
-      model = new InstancesTableModel(getData().get(index).getData());
-      model.setUndoHandler(getData().get(index));
-      model.setShowAttributeIndex(true);
-      table = new InstancesTable(model);
-      table.setUndoEnabled(true);
-      panel.add(new BaseScrollPane(table), BorderLayout.CENTER);
+      cont  = getData().get(index);
+      // table
+      if (m_TableCache.containsKey(cont)) {
+	m_CurrentTable = m_TableCache.get(cont);
+	setOptimal     = false;
+      }
+      else {
+	model = new InstancesTableModel(cont.getData());
+	model.setUndoHandler(getData().get(index));
+	model.setShowAttributeIndex(true);
+	m_CurrentTable = new InstancesTable(model);
+	m_CurrentTable.setUndoEnabled(true);
+	m_TableCache.put(cont, m_CurrentTable);
+	m_TimestampCache.put(cont, new Date(cont.lastUpdated().getTime()));
+	setOptimal = true;
+      }
+      panel.add(new BaseScrollPane(m_CurrentTable), BorderLayout.CENTER);
       // search
-      search = new SearchPanel(LayoutType.HORIZONTAL, true);
-      search.addSearchListener((SearchEvent e) -> {
-	if (e.getParameters().getSearchString().isEmpty())
-	  table.search(null, false);
-	else
-	  table.search(e.getParameters().getSearchString(), e.getParameters().isRegExp());
-      });
-      panel.add(search, BorderLayout.SOUTH);
+      panel.add(m_PanelSearch, BorderLayout.SOUTH);
       m_PanelData.removeAll();
       m_PanelData.add(panel, BorderLayout.CENTER);
       if (m_SplitPane.isBottomComponentHidden()) {
 	m_SplitPane.setDividerLocation(m_DefaultDataTableHeight);
 	m_SplitPane.setBottomComponentHidden(false);
       }
-      JTableHelper.setOptimalHeaderWidth(table);
+      if (setOptimal)
+	m_CurrentTable.setOptimalColumnWidthBounded(m_MaxColWidth);
     }
     else {
       m_PanelData.removeAll();

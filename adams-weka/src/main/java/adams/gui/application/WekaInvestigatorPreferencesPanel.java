@@ -54,6 +54,9 @@ public class WekaInvestigatorPreferencesPanel
     addPropertyType("General.UndoEnabled", PropertyType.BOOLEAN);
     addPropertyType("General.TestingUpdateInterval", PropertyType.INTEGER);
 
+    // general
+    addPropertyType("Data.MaxColWidth", PropertyType.INTEGER);
+
     // preprocessing
     addPropertyType("Preprocess.Filter", PropertyType.OBJECT_EDITOR);
     setChooser("Preprocess.Filter", new WekaGenericObjectEditorPanel(

@@ -44,6 +44,10 @@ Preprocess.KeepName=true
 # (true|false)
 Preprocess.BatchFilter=false
 
+# The default maximum width for data columns.
+# (integer)
+Data.MaxColWidth=100
+
 # the default classifier
 # (superclass: weka.classifiers.Classifier)
 Classify.Classifier=weka.classifiers.rules.ZeroR
