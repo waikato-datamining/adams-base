@@ -51,6 +51,10 @@ adams.flow.transformer.draw.AbstractDrawOperation=\
 adams.flow.transformer.locateobjects.AbstractObjectLocator=\
   adams.flow.transformer.locateobjects
 
+# the moments used for feature generation
+adams.data.image.moments.AbstractBufferedMoment=\
+  adams.data.image.moments
+
 # the meta-data extractors
 adams.flow.transformer.metadata.AbstractMetaDataExtractor=\
   adams.flow.transformer.metadata
@@ -82,3 +86,5 @@ adams.data.barcode.decode.AbstractBarcodeDecoder=\
 # barcode encoders
 adams.data.barcode.encode.AbstractBarcodeEncoder=\
   adams.data.barcode.encode
+
+
