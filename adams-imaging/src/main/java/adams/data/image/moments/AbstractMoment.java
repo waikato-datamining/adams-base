@@ -21,7 +21,6 @@
 package adams.data.image.moments;
 
 import adams.core.option.AbstractOptionHandler;
-import sun.plugin.dom.exception.InvalidStateException;
 
 /**
  * Top level interface for moment classes
@@ -30,21 +29,23 @@ import sun.plugin.dom.exception.InvalidStateException;
  * @version $Revision$
  */
 public abstract class AbstractMoment<T> extends AbstractOptionHandler {
+
+  private static final long serialVersionUID = 6361679938889787199L;
+
   /**
    * Takes an image of type T and returns a boolean matrix that can be used for moments
-   * @param img
+   * @param img the image to convert
    * @return the boolean matrix representing the image
    */
   protected abstract boolean[][] imageToMatrix(T img);
 
-  public double calculate(T img) {
-    if (check(img))
-    	return doCalculate(imageToMatrix(img));
-    else
-      throw new InvalidStateException("Image is invalid");
-  }
-
   protected abstract boolean check(T img);
 
   protected abstract double doCalculate(boolean[][] img);
+
+  public double calculate(T img) {
+    if (!check(img))
+      throw new IllegalStateException("Image is invalid");
+    return doCalculate(imageToMatrix(img));
+  }
 }
