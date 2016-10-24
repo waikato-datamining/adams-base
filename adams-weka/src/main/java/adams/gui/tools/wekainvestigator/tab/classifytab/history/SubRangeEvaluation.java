@@ -24,7 +24,6 @@ import adams.core.logging.LoggingLevel;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.NumberTextField;
-import adams.gui.core.NumberTextField.BoundedNumberCheckModel;
 import adams.gui.core.NumberTextField.Type;
 import adams.gui.core.ParameterPanel;
 import adams.gui.dialog.ApprovalDialog;
@@ -101,12 +100,10 @@ public class SubRangeEvaluation
     params = new ParameterPanel();
     
     textMin = new NumberTextField(Type.DOUBLE);
-    textMin.setCheckModel(new BoundedNumberCheckModel(Type.DOUBLE, min, max));
     textMin.setValue(min);
     params.addParameter("Minimum", textMin);
     
     textMax = new NumberTextField(Type.DOUBLE);
-    textMax.setCheckModel(new BoundedNumberCheckModel(Type.DOUBLE, min, max));
     textMax.setValue(max);
     params.addParameter("Maximum", textMax);
 
