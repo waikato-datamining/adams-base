@@ -15,7 +15,7 @@
 
 /*
  * AxisPanel.java
- * Copyright (C) 2008-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.core;
@@ -27,6 +27,7 @@ import adams.gui.core.GUIHelper;
 import adams.gui.core.MouseUtils;
 import adams.gui.core.ParameterPanel;
 import adams.gui.dialog.ApprovalDialog;
+import adams.gui.goe.GenericObjectEditorDialog;
 import adams.gui.visualization.core.axis.AbsoluteAxisModel;
 import adams.gui.visualization.core.axis.AbstractAxisModel;
 import adams.gui.visualization.core.axis.Direction;
@@ -40,7 +41,6 @@ import adams.gui.visualization.core.axis.Visibility;
 import javax.swing.ButtonGroup;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
@@ -55,7 +55,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.font.TextLayout;
@@ -158,8 +157,8 @@ public class AxisPanel
     m_AxisNameCentered       = false;
     m_LengthTicks            = 6;
     m_PopupMenuCustomizer    = null;
-    m_ChangeListeners        = new HashSet<ChangeListener>();
-    m_NumberFormatOverride   = new Hashtable<Type,String>();
+    m_ChangeListeners        = new HashSet<>();
+    m_NumberFormatOverride   = new Hashtable<>();
     m_ShowGridLines          = false;
     m_Visibility             = Visibility.VISIBLE;
 
@@ -205,7 +204,7 @@ public class AxisPanel
     m_ShowGridLines          = other.getShowGridLines();
     m_Visibility             = other.getVisibility();
     try {
-      m_Model = (AbstractAxisModel) other.getAxisModel().getClass().newInstance();
+      m_Model = other.getAxisModel().getClass().newInstance();
     }
     catch (Exception e) {
       System.err.println("Failed to create instance of axis model:");
@@ -876,33 +875,33 @@ public class AxisPanel
       if (m_Type == t)
 	item.setSelected(true);
       item.setEnabled(t.canHandle(m_Model.getMinimum(), m_Model.getMaximum()));
-      item.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  m_Self.setType(type);
-	}
-      });
+      item.addActionListener((ActionEvent ae) -> m_Self.setType(type));
       if (item.isSelected() || item.isEnabled()) {
 	result.add(item);
 	group.add(item);
       }
     }
 
-    // format
     result.addSeparator();
+
+    // ticks
+    item = new JMenuItem("Ticks...");
+    item.addActionListener((ActionEvent ae) -> editTickGenerator());
+    result.add(item);
+
+    // format
     item = new JMenuItem("Format...");
-    item.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	String pattern = getNumberFormat();
-	pattern = GUIHelper.showInputDialog(
-	    GUIHelper.getParentComponent(m_Self),
-	    "Please enter format (empty format resets to default again):",
-	    pattern);
-	if (pattern != null) {
-	  if (pattern.length() == 0)
-	    removeNumberFormatOverride(getType());
-	  else
-	    addNumberFormatOverride(getType(), pattern);
-	}
+    item.addActionListener((ActionEvent ae) -> {
+      String pattern = getNumberFormat();
+      pattern = GUIHelper.showInputDialog(
+	GUIHelper.getParentComponent(m_Self),
+	"Please enter format (empty format resets to default again):",
+	pattern);
+      if (pattern != null) {
+	if (pattern.length() == 0)
+	  removeNumberFormatOverride(getType());
+	else
+	  addNumberFormatOverride(getType(), pattern);
       }
     });
     result.add(item);
@@ -910,42 +909,25 @@ public class AxisPanel
     // grid lines
     item = new JCheckBoxMenuItem("Grid lines");
     item.setSelected(getShowGridLines());
-    item.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	setShowGridLines(!getShowGridLines());
-      }
-    });
+    item.addActionListener((ActionEvent ae) -> setShowGridLines(!getShowGridLines()));
     result.add(item);
 
     if (m_Model instanceof FlippableAxisModel) {
       item = new JCheckBoxMenuItem("Flip");
       item.setSelected(((FlippableAxisModel) m_Model).isFlipped());
-      item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          ((FlippableAxisModel) m_Model).setFlipped(!((FlippableAxisModel) m_Model).isFlipped());
-        }
-      });
+      item.addActionListener((ActionEvent ae) ->
+	((FlippableAxisModel) m_Model).setFlipped(!((FlippableAxisModel) m_Model).isFlipped()));
       result.add(item);
     }
     
     // range
     item = new JMenuItem("Range...");
-    item.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	selectRange();
-      }
-    });
+    item.addActionListener((ActionEvent ae) -> selectRange());
     result.add(item);
     
     // reset range
     item = new JMenuItem("Reset range");
-    item.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	resetRange();
-      }
-    });
+    item.addActionListener((ActionEvent ae) -> resetRange());
     result.add(item);
     
     // customize it?
@@ -953,6 +935,29 @@ public class AxisPanel
       m_PopupMenuCustomizer.customizePopupMenu(e, result);
 
     return result;
+  }
+
+  /**
+   * Allows the user to edit the tick generator.
+   */
+  protected void editTickGenerator() {
+    GenericObjectEditorDialog	dialog;
+
+    if (getParentDialog() != null)
+      dialog = new GenericObjectEditorDialog(getParentDialog(), ModalityType.DOCUMENT_MODAL);
+    else
+      dialog = new GenericObjectEditorDialog(getParentFrame(), true);
+    dialog.setTitle("Ticks");
+    dialog.setDefaultCloseOperation(GenericObjectEditorDialog.DISPOSE_ON_CLOSE);
+    dialog.getGOEEditor().setCanChangeClassInDialog(true);
+    dialog.getGOEEditor().setClassType(TickGenerator.class);
+    dialog.setCurrent(getTickGenerator());
+    dialog.pack();
+    dialog.setLocationRelativeTo(dialog.getParent());
+    dialog.setVisible(true);
+    if (dialog.getResult() != GenericObjectEditorDialog.APPROVE_OPTION)
+      return;
+    setTickGenerator((TickGenerator) dialog.getCurrent());
   }
 
   /**
@@ -979,18 +984,12 @@ public class AxisPanel
   public void notifyChangeListeners() {
     Iterator<ChangeListener>	iter;
     final ChangeEvent		e;
-    Runnable			runnable;
 
     e    = new ChangeEvent(this);
     iter = m_ChangeListeners.iterator();
     while (iter.hasNext()) {
       final ChangeListener l = iter.next();
-      runnable = new Runnable() {
-	public void run() {
-	  l.stateChanged(e);
-	}
-      };
-      SwingUtilities.invokeLater(runnable);
+      SwingUtilities.invokeLater(() -> l.stateChanged(e));
     }
   }
 
