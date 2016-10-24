@@ -15,10 +15,20 @@
 
 /**
  * ParameterPanel.java
- * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
 
+import adams.gui.chooser.AbstractChooserPanel;
+
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSpinner;
+import javax.swing.JTextArea;
+import javax.swing.JTextPane;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -27,16 +37,6 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.swing.JCheckBox;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JSpinner;
-import javax.swing.JTextArea;
-import javax.swing.JTextPane;
-
-import adams.gui.chooser.AbstractChooserPanel;
 
 /**
  * A panel that lists one parameter (label and component or just
@@ -72,6 +72,9 @@ public class ParameterPanel
 
   /** the preferred dimensions for JSpinner components. */
   protected Dimension m_PreferredDimensionJSpinner;
+
+  /** the minimum dimensions for JComboBox components. */
+  protected Dimension m_MinDimensionJComboBox;
 
   /**
    * Initializes the panel.
@@ -123,10 +126,11 @@ public class ParameterPanel
   protected void initialize() {
     super.initialize();
 
-    m_CheckBoxes                 = new ArrayList<JCheckBox>();
-    m_Labels                     = new ArrayList<JLabel>();
-    m_Parameters                 = new ArrayList<Component>();
+    m_CheckBoxes                 = new ArrayList<>();
+    m_Labels                     = new ArrayList<>();
+    m_Parameters                 = new ArrayList<>();
     m_PreferredDimensionJSpinner = new Dimension(100, 20);
+    m_MinDimensionJComboBox      = new Dimension(50, 20);
   }
 
   /**
@@ -174,6 +178,25 @@ public class ParameterPanel
    */
   public Dimension getPreferredDimensionJSpinner() {
     return m_PreferredDimensionJSpinner;
+  }
+  
+  /**
+   * Sets the minimum dimension for JComboBox and derived classes.
+   *
+   * @param value	the minimum dimensions (do not use 0 for height!)
+   */
+  public void setMinDimensionJComboBox(Dimension value) {
+    m_MinDimensionJComboBox = (Dimension) value.clone();
+    update();
+  }
+
+  /**
+   * Returns the minimum dimension for JComboBox and derived classes.
+   *
+   * @return		the minimum dimensions
+   */
+  public Dimension getMinDimensionJComboBox() {
+    return m_MinDimensionJComboBox;
   }
 
   /**
@@ -267,7 +290,7 @@ public class ParameterPanel
     
     layout = new GridBagLayout();
     panel  = new JPanel(layout);
-    
+
     if (m_UseCheckBoxes) {
       con        = new GridBagConstraints();
       con.anchor = GridBagConstraints.WEST;
@@ -459,10 +482,7 @@ public class ParameterPanel
    * @return		true if checked
    */
   public boolean isChecked(int index) {
-    if (!m_UseCheckBoxes)
-      return false;
-    else 
-      return m_CheckBoxes.get(index).isSelected();
+    return m_UseCheckBoxes && m_CheckBoxes.get(index).isSelected();
   }
   
   /**
@@ -496,6 +516,23 @@ public class ParameterPanel
   }
 
   /**
+   * Fixes the dimensions for various components.
+   *
+   * @see	#m_PreferredDimensionJSpinner
+   * @see	#m_MinDimensionJComboBox
+   */
+  protected void fixDimensions() {
+    int			i;
+
+    for (i = 0; i < m_Parameters.size(); i++) {
+      if (m_Parameters.get(i) instanceof JSpinner)
+	m_Parameters.get(i).setPreferredSize((Dimension) m_PreferredDimensionJSpinner.clone());
+      if (m_Parameters.get(i) instanceof JComboBox)
+	m_Parameters.get(i).setMinimumSize((Dimension) m_MinDimensionJComboBox.clone());
+    }
+  }
+
+  /**
    * Updates the layout.
    */
   protected void update() {
@@ -509,11 +546,8 @@ public class ParameterPanel
     layout = new GridBagLayout();
     setLayout(layout);
 
-    // set preferred dimensions for JSpinners
-    for (i = 0; i < m_Parameters.size(); i++) {
-      if (m_Parameters.get(i) instanceof JSpinner)
-	((JSpinner) m_Parameters.get(i)).setPreferredSize((Dimension) m_PreferredDimensionJSpinner.clone());
-    }
+    // set min/preferred dimensions
+    fixDimensions();
 
     for (i = 0; i < m_Labels.size(); i++) {
       if (m_UseCheckBoxes) {
