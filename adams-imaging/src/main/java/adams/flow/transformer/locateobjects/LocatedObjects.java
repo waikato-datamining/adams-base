@@ -15,7 +15,7 @@
 
 /**
  * LocatedObjects.java
- * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer.locateobjects;
 
@@ -62,6 +62,22 @@ public class LocatedObjects
 
   /** the key for the index of a group. */
   public final static String KEY_INDEX = "index";
+
+  /**
+   * Initializes the list.
+   */
+  public LocatedObjects() {
+    super();
+  }
+
+  /**
+   * Initializes the list.
+   *
+   * @param objects	the list to initialize with
+   */
+  public LocatedObjects(LocatedObjects objects) {
+    super(objects);
+  }
 
   /**
    * Turns the located objects into a report.
