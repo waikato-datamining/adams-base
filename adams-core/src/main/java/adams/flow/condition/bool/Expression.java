@@ -15,7 +15,7 @@
 
 /**
  * Expression.java
- * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.condition.bool;
 
@@ -31,7 +31,7 @@ import java.util.HashMap;
 /**
  <!-- globalinfo-start -->
  * Evaluates to 'true' if the expression evaluates to 'true'.<br>
- * In case of integer or double tokens that arrive at the input, these can be accessed in the expression via 'X'; string tokens can be accessed via expression '"X"' (surrounding double quotes are required).<br>
+ * In case of java.lang.Number tokens that arrive at the input, these can be accessed in the expression via 'X'; string tokens can be accessed via expression '"X"' (surrounding double quotes are required).<br>
  * If the incoming token is either a Report or a ReportHandler, the contents of the report get added as values as well (boolean, numeric or string) and you can access them via their name instead of 'X'.<br>
  * <br>
  * The following grammar is used for evaluating the boolean expressions:<br>
@@ -198,7 +198,7 @@ public class Expression
   public String globalInfo() {
     return
         "Evaluates to 'true' if the expression evaluates to 'true'.\n"
-      + "In case of integer or double tokens that arrive at the input, these "
+      + "In case of java.lang.Number tokens that arrive at the input, these "
       + "can be accessed in the expression via 'X'; string tokens can be accessed "
       + "via expression '\"X\"' (surrounding double quotes are required).\n"
       + "If the incoming token is either a Report or a ReportHandler, the contents "
@@ -250,10 +250,8 @@ public class Expression
     hasString = (exp.indexOf("\"X\"") > -1);
     symbols   = new HashMap();
     if ((token != null) && (token.getPayload() != null)) {
-      if (token.getPayload() instanceof Integer)
-	symbols.put("X", ((Integer) token.getPayload()).doubleValue());
-      else if (token.getPayload() instanceof Double)
-	symbols.put("X", ((Double) token.getPayload()).doubleValue());
+      if (token.getPayload() instanceof Number)
+	symbols.put("X", ((Number) token.getPayload()).doubleValue());
       else if (token.getPayload().getClass().isArray())
 	symbols.put("X", token.getPayload());
       else if ((token.getPayload() instanceof String) && hasString)
