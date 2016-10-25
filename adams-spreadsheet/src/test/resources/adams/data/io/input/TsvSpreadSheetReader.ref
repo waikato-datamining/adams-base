@@ -1,0 +1,16 @@
+--> simple-out0.tsv
+Field,Type,Value,Hyphen-ated,"Com,ma",Under_score
+"'Parent ID'",N,1,1,A,a
+A1,N,266.226623,2,B,b
+A2,N,2.728273,3,C,c
+B2,N,61.166117,4,D,d
+C2,N,5.97,5,E,e
+D2,N,100.110011,6,F,f
+"'Dummy report'",B,false,7,G,g
+
+
+--> simple2-out1.tsv
+A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z
+1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26
+
+
