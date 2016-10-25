@@ -268,7 +268,7 @@ public class CsvSpreadSheetWriter
    */
   @Override
   public String globalInfo() {
-    return "Writes CSV files.";
+    return "Writes CSV (comma-separated values) files.";
   }
 
   /**
@@ -316,7 +316,7 @@ public class CsvSpreadSheetWriter
 
     m_OptionManager.add(
       "separator", "separator",
-      ",");
+      getDefaultSeparator());
 
     m_OptionManager.add(
       "new-line", "newLine",
@@ -668,6 +668,15 @@ public class CsvSpreadSheetWriter
     else {
       getLogger().severe("Only one character allowed (or two, in case of backquoted ones) for separator, provided: " + value);
     }
+  }
+
+  /**
+   * Returns the default separator.
+   *
+   * @return		the default
+   */
+  protected String getDefaultSeparator() {
+    return ",";
   }
 
   /**

@@ -225,7 +225,7 @@ public class SimpleCsvSpreadSheetReader
 
     m_OptionManager.add(
       "separator", "separator",
-      ",");
+      getDefaultSeparator());
 
     m_OptionManager.add(
       "trim", "trim",
@@ -280,6 +280,15 @@ public class SimpleCsvSpreadSheetReader
   @Override
   protected BaseRegExp getDefaultMissingValue() {
     return new BaseRegExp("");
+  }
+
+  /**
+   * Returns the default separator.
+   *
+   * @return		the default
+   */
+  protected String getDefaultSeparator() {
+    return ",";
   }
 
   /**
