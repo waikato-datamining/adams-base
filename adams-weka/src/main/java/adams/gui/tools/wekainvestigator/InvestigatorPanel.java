@@ -154,10 +154,10 @@ public class InvestigatorPanel
   protected RecentFilesHandlerWithCommandline<JMenu> m_RecentFilesHandler;
 
   /** the heuristic for selecting the class attribute. */
-  protected AbstractClassAttributeHeuristic m_ClassAttribute;
+  protected AbstractClassAttributeHeuristic m_ClassAttributeHeuristic;
 
   /** the heuristic for updating the relation name. */
-  protected AbstractRelationNameHeuristic m_RelationName;
+  protected AbstractRelationNameHeuristic m_RelationNameHeuristic;
 
   /** for timestamps in the statusbar. */
   protected DateFormat m_StatusBarDateFormat;
@@ -180,22 +180,22 @@ public class InvestigatorPanel
 
     cmdline = getProperties().getProperty("General.ClassAttributeHeuristic", OptionUtils.getCommandLine(new LastAttribute()));
     try {
-      m_ClassAttribute = (AbstractClassAttributeHeuristic) OptionUtils.forAnyCommandLine(
+      m_ClassAttributeHeuristic = (AbstractClassAttributeHeuristic) OptionUtils.forAnyCommandLine(
         AbstractClassAttributeHeuristic.class, cmdline);
     }
     catch (Exception e) {
       ConsolePanel.getSingleton().append(Level.SEVERE, "Failed to instantiate class attribute heuristic: " + cmdline, e);
-      m_ClassAttribute = new LastAttribute();
+      m_ClassAttributeHeuristic = new LastAttribute();
     }
 
     cmdline = getProperties().getProperty("General.RelationNameHeuristic", OptionUtils.getCommandLine(new NoChange()));
     try {
-      m_RelationName = (AbstractRelationNameHeuristic) OptionUtils.forAnyCommandLine(
+      m_RelationNameHeuristic = (AbstractRelationNameHeuristic) OptionUtils.forAnyCommandLine(
         AbstractRelationNameHeuristic.class, cmdline);
     }
     catch (Exception e) {
       ConsolePanel.getSingleton().append(Level.SEVERE, "Failed to instantiate class attribute heuristic: " + cmdline, e);
-      m_RelationName = new NoChange();
+      m_RelationNameHeuristic = new NoChange();
     }
   }
 
@@ -620,7 +620,7 @@ public class InvestigatorPanel
    */
   public Instances updateClassAttribute(Instances data) {
     if (data.classIndex() == -1)
-      data.setClassIndex(m_ClassAttribute.determineClassAttribute(data));
+      data.setClassIndex(m_ClassAttributeHeuristic.determineClassAttribute(data));
     return data;
   }
 
@@ -634,7 +634,7 @@ public class InvestigatorPanel
   public Instances updateRelationName(File file, Instances data) {
     String	newRelation;
 
-    newRelation = m_RelationName.determineRelationName(file, data);
+    newRelation = m_RelationNameHeuristic.determineRelationName(file, data);
     if (newRelation != null)
       data.setRelationName(newRelation);
 
@@ -758,13 +758,31 @@ public class InvestigatorPanel
     dialog.setTitle("Select class attribute heuristic");
     dialog.getGOEEditor().setClassType(AbstractClassAttributeHeuristic.class);
     dialog.getGOEEditor().setCanChangeClassInDialog(true);
-    dialog.setCurrent(m_ClassAttribute);
+    dialog.setCurrent(m_ClassAttributeHeuristic);
     dialog.pack();
     dialog.setLocationRelativeTo(this);
     dialog.setVisible(true);
     if (dialog.getResult() == GenericObjectEditorDialog.APPROVE_OPTION)
-      m_ClassAttribute = (AbstractClassAttributeHeuristic) dialog.getCurrent();
+      m_ClassAttributeHeuristic = (AbstractClassAttributeHeuristic) dialog.getCurrent();
     dialog.dispose();
+  }
+
+  /**
+   * Sets the class attribute heuristic.
+   * 
+   * @param value		the heuristic
+   */
+  public void setClassAttributeHeuristic(AbstractClassAttributeHeuristic value) {
+    m_ClassAttributeHeuristic = value;
+  }
+  
+  /**
+   * Returns the current class attribute heuristic.
+   * 
+   * @return		the heuristic
+   */
+  public AbstractClassAttributeHeuristic getClassAttributeHeuristic() {
+    return m_ClassAttributeHeuristic;
   }
 
   /**
@@ -780,15 +798,33 @@ public class InvestigatorPanel
     dialog.setTitle("Select relation name heuristic");
     dialog.getGOEEditor().setClassType(AbstractRelationNameHeuristic.class);
     dialog.getGOEEditor().setCanChangeClassInDialog(true);
-    dialog.setCurrent(m_RelationName);
+    dialog.setCurrent(m_RelationNameHeuristic);
     dialog.pack();
     dialog.setLocationRelativeTo(this);
     dialog.setVisible(true);
     if (dialog.getResult() == GenericObjectEditorDialog.APPROVE_OPTION)
-      m_RelationName = (AbstractRelationNameHeuristic) dialog.getCurrent();
+      m_RelationNameHeuristic = (AbstractRelationNameHeuristic) dialog.getCurrent();
     dialog.dispose();
   }
 
+  /**
+   * Sets the relation name heuristic.
+   * 
+   * @param value		the heuristic
+   */
+  public void setRelationNameHeuristic(AbstractRelationNameHeuristic value) {
+    m_RelationNameHeuristic = value;
+  }
+  
+  /**
+   * Returns the current relation name heuristic.
+   * 
+   * @return		the heuristic
+   */
+  public AbstractRelationNameHeuristic getRelationNameHeuristic() {
+    return m_RelationNameHeuristic;
+  }
+  
   /**
    * Returns whether undo is enabled.
    *
@@ -796,6 +832,17 @@ public class InvestigatorPanel
    */
   public boolean isUndoEnabled() {
     return m_MenuItemEditUndoEnabled.isSelected();
+  }
+
+  /**
+   * Sets the undo state.
+   *
+   * @param value	true if to enable
+   */
+  public void setUndoEnabled(boolean value) {
+    // make sure that the menu has been built
+    getMenuBar();
+    m_MenuItemEditUndoEnabled.setSelected(value);
   }
 
   /**

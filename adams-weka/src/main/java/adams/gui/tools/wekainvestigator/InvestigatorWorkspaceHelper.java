@@ -21,6 +21,8 @@
 package adams.gui.tools.wekainvestigator;
 
 import adams.core.MessageCollection;
+import adams.data.weka.classattribute.AbstractClassAttributeHeuristic;
+import adams.data.weka.relationname.AbstractRelationNameHeuristic;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
 import adams.gui.tools.wekainvestigator.tab.AbstractInvestigatorTab;
 import adams.gui.workspace.AbstractSerializableWorkspaceManagerPanel;
@@ -44,6 +46,12 @@ public class InvestigatorWorkspaceHelper
 
   public static final String KEY_TABS = "tabs";
 
+  public static final String KEY_CLASSATTRIBUTE = "class attribute";
+
+  public static final String KEY_RELATIONNAME  = "relation name";
+
+  public static final String KEY_UNDOENABLED = "undo enabled";
+
   /**
    * Generates a view of the panel that can be serialized.
    *
@@ -63,6 +71,11 @@ public class InvestigatorWorkspaceHelper
     list = new ArrayList<>();
     list.addAll(panel.getData());
     result.put(KEY_DATA, list);
+
+    // other
+    result.put(KEY_CLASSATTRIBUTE, panel.getClassAttributeHeuristic());
+    result.put(KEY_RELATIONNAME, panel.getRelationNameHeuristic());
+    result.put(KEY_UNDOENABLED, panel.isUndoEnabled());
 
     // tabs
     list = new ArrayList<>();
@@ -97,6 +110,14 @@ public class InvestigatorWorkspaceHelper
     list = (List<Object>) items.get(KEY_DATA);
     for (Object obj: list)
       panel.getData().add((DataContainer) obj);
+
+    // other
+    if (items.containsKey(KEY_CLASSATTRIBUTE))
+      panel.setClassAttributeHeuristic((AbstractClassAttributeHeuristic) items.get(KEY_CLASSATTRIBUTE));
+    if (items.containsKey(KEY_RELATIONNAME))
+      panel.setRelationNameHeuristic((AbstractRelationNameHeuristic) items.get(KEY_RELATIONNAME));
+    if (items.containsKey(KEY_UNDOENABLED))
+      panel.setUndoEnabled((Boolean) items.get(KEY_UNDOENABLED));
 
     // tabs
     list = (List<Object>) items.get(KEY_TABS);
