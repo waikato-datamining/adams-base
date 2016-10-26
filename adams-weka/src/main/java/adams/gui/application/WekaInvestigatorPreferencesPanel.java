@@ -21,6 +21,7 @@ package adams.gui.application;
 
 import adams.core.io.FileUtils;
 import adams.data.weka.classattribute.LastAttribute;
+import adams.data.weka.relationname.NoChange;
 import adams.env.Environment;
 import adams.env.WekaInvestigatorDefinition;
 import adams.gui.core.PropertiesParameterPanel.PropertyType;
@@ -51,6 +52,10 @@ public class WekaInvestigatorPreferencesPanel
     setChooser("General.ClassAttributeHeuristic", new GenericObjectEditorPanel(
       adams.data.weka.classattribute.AbstractClassAttributeHeuristic.class,
       new LastAttribute(), true));
+    addPropertyType("General.RelationNameHeuristic", PropertyType.OBJECT_EDITOR);
+    setChooser("General.RelationNameHeuristic", new GenericObjectEditorPanel(
+      adams.data.weka.relationname.AbstractRelationNameHeuristic.class,
+      new NoChange(), true));
     addPropertyType("General.UndoEnabled", PropertyType.BOOLEAN);
     addPropertyType("General.TestingUpdateInterval", PropertyType.INTEGER);
 

@@ -51,6 +51,10 @@ adams.flow.transformer.wekaclusterer.AbstractClustererPostProcessor=\
 adams.data.weka.classattribute.AbstractClassAttributeHeuristic=\
   adams.data.weka.classattribute
 
+# the heuristics for determining the relation name
+adams.data.weka.relationname.AbstractRelationNameHeuristic=\
+  adams.data.weka.relationname
+
 # the data sources for the investigator
 adams.gui.tools.wekainvestigator.source.AbstractSource=\
   adams.gui.tools.wekainvestigator.source

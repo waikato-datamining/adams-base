@@ -19,6 +19,9 @@ General.DefaultDataTableHeight=150
 # and no class attribute is present
 General.ClassAttributeHeuristic=adams.data.weka.classattribute.LastAttribute
 
+# the heuristic for updating the relation name of datasets
+General.RelationNameHeuristic=adams.data.weka.relationname.NoChange
+
 # whether undo is enabled
 # (true|false)
 General.UndoEnabled=true

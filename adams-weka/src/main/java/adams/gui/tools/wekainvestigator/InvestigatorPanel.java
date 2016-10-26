@@ -31,6 +31,8 @@ import adams.core.Utils;
 import adams.core.option.OptionUtils;
 import adams.data.weka.classattribute.AbstractClassAttributeHeuristic;
 import adams.data.weka.classattribute.LastAttribute;
+import adams.data.weka.relationname.AbstractRelationNameHeuristic;
+import adams.data.weka.relationname.NoChange;
 import adams.env.Environment;
 import adams.env.WekaInvestigatorDefinition;
 import adams.env.WekaInvestigatorShortcutsDefinition;
@@ -124,6 +126,9 @@ public class InvestigatorPanel
   /** the action for selecting the class attribute heuristic. */
   protected BaseAction m_ActionFileClassAttribute;
 
+  /** the action for selecting the relation name heuristic. */
+  protected BaseAction m_ActionFileRelationName;
+
   /** the submenu for a new tab. */
   protected BaseMenu m_MenuTabNewTab;
 
@@ -150,6 +155,9 @@ public class InvestigatorPanel
 
   /** the heuristic for selecting the class attribute. */
   protected AbstractClassAttributeHeuristic m_ClassAttribute;
+
+  /** the heuristic for updating the relation name. */
+  protected AbstractRelationNameHeuristic m_RelationName;
 
   /** for timestamps in the statusbar. */
   protected DateFormat m_StatusBarDateFormat;
@@ -178,6 +186,16 @@ public class InvestigatorPanel
     catch (Exception e) {
       ConsolePanel.getSingleton().append(Level.SEVERE, "Failed to instantiate class attribute heuristic: " + cmdline, e);
       m_ClassAttribute = new LastAttribute();
+    }
+
+    cmdline = getProperties().getProperty("General.RelationNameHeuristic", OptionUtils.getCommandLine(new NoChange()));
+    try {
+      m_RelationName = (AbstractRelationNameHeuristic) OptionUtils.forAnyCommandLine(
+        AbstractRelationNameHeuristic.class, cmdline);
+    }
+    catch (Exception e) {
+      ConsolePanel.getSingleton().append(Level.SEVERE, "Failed to instantiate class attribute heuristic: " + cmdline, e);
+      m_RelationName = new NoChange();
     }
   }
 
@@ -306,6 +324,16 @@ public class InvestigatorPanel
     };
     m_ActionFileClassAttribute.setName("Class attribute...");
     m_ActionFileClassAttribute.setIcon(GUIHelper.getEmptyIcon());
+
+    m_ActionFileRelationName = new AbstractBaseAction() {
+      private static final long serialVersionUID = -1104246458353845500L;
+      @Override
+      protected void doActionPerformed(ActionEvent e) {
+	chooseRelationNameHeuristic();
+      }
+    };
+    m_ActionFileRelationName.setName("Relation name...");
+    m_ActionFileRelationName.setIcon(GUIHelper.getEmptyIcon());
   }
 
   /**
@@ -377,6 +405,9 @@ public class InvestigatorPanel
 
       // File/Class attribute
       menu.add(m_ActionFileClassAttribute);
+
+      // File/Relation name
+      menu.add(m_ActionFileRelationName);
 
       menu.addSeparator();
 
@@ -594,6 +625,23 @@ public class InvestigatorPanel
   }
 
   /**
+   * Updates the relation name.
+   *
+   * @param file	the file the data was loaded from
+   * @param data	the data to update
+   * @return		the (potentially) updated data
+   */
+  public Instances updateRelationName(File file, Instances data) {
+    String	newRelation;
+
+    newRelation = m_RelationName.determineRelationName(file, data);
+    if (newRelation != null)
+      data.setRelationName(newRelation);
+
+    return data;
+  }
+
+  /**
    * Lets user select a dataset.
    */
   public void openFile() {
@@ -610,6 +658,7 @@ public class InvestigatorPanel
       final FileContainer cont = new FileContainer(loader, file);
       cont.getUndo().setEnabled(isUndoEnabled());
       updateClassAttribute(cont.getData());
+      updateRelationName(file, cont.getData());
       SwingUtilities.invokeLater(() -> {
 	m_Data.add(cont);
 	if (m_RecentFilesHandler != null)
@@ -640,6 +689,7 @@ public class InvestigatorPanel
 	final FileContainer cont = new FileContainer(loader, file);
 	cont.getUndo().setEnabled(isUndoEnabled());
 	updateClassAttribute(cont.getData());
+	updateRelationName(file, cont.getData());
 	SwingUtilities.invokeLater(() -> {
 	  m_Data.add(cont);
 	  if (m_RecentFilesHandler != null)
@@ -677,6 +727,7 @@ public class InvestigatorPanel
 	  loader.setFile(e.getItem().getFile());
 	  final FileContainer cont = new FileContainer(loader, e.getItem().getFile());
 	  updateClassAttribute(cont.getData());
+	  updateRelationName(e.getItem().getFile(), cont.getData());
 	  SwingUtilities.invokeLater(() -> {
 	    m_Data.add(cont);
 	    m_FileChooser.setCurrentDirectory(e.getItem().getFile().getParentFile());
@@ -713,6 +764,28 @@ public class InvestigatorPanel
     dialog.setVisible(true);
     if (dialog.getResult() == GenericObjectEditorDialog.APPROVE_OPTION)
       m_ClassAttribute = (AbstractClassAttributeHeuristic) dialog.getCurrent();
+    dialog.dispose();
+  }
+
+  /**
+   * Lets the user choose the relation name heuristic.
+   */
+  public void chooseRelationNameHeuristic() {
+    GenericObjectEditorDialog	dialog;
+
+    if (getParentDialog() != null)
+      dialog = new GenericObjectEditorDialog(getParentDialog(), ModalityType.DOCUMENT_MODAL);
+    else
+      dialog = new GenericObjectEditorDialog(getParentFrame(), true);
+    dialog.setTitle("Select relation name heuristic");
+    dialog.getGOEEditor().setClassType(AbstractRelationNameHeuristic.class);
+    dialog.getGOEEditor().setCanChangeClassInDialog(true);
+    dialog.setCurrent(m_RelationName);
+    dialog.pack();
+    dialog.setLocationRelativeTo(this);
+    dialog.setVisible(true);
+    if (dialog.getResult() == GenericObjectEditorDialog.APPROVE_OPTION)
+      m_RelationName = (AbstractRelationNameHeuristic) dialog.getCurrent();
     dialog.dispose();
   }
 
