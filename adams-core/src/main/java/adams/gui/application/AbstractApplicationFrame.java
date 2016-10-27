@@ -643,7 +643,7 @@ public abstract class AbstractApplicationFrame
     int 			screenWidth;
     ScriptingEngineHandler 	handler;
 
-    result = new ChildFrame(owner, title, icon);
+    result = new ChildFrame(owner, insertHostnamePrefix(title), icon);
 
     // layout
     result.setLayout(new BorderLayout());
@@ -718,7 +718,7 @@ public abstract class AbstractApplicationFrame
     int 			screenWidth;
     ScriptingEngineHandler 	handler;
 
-    result = new ChildWindow(owner, title, icon);
+    result = new ChildWindow(owner, insertHostnamePrefix(title), icon);
 
     // layout
     result.setLayout(new BorderLayout());
@@ -958,12 +958,14 @@ public abstract class AbstractApplicationFrame
     Iterator<Child>	iter;
     Child		current;
     boolean		found;
+    String 		hostTitle;
 
-    result = null;
-    iter   = getWindowList();
+    result    = null;
+    hostTitle = AbstractApplicationFrame.insertHostnamePrefix(title);
+    iter      = getWindowList();
     while (iter.hasNext()) {
       current = iter.next();
-      found   = current.getTitle().equals(title);
+      found   = current.getTitle().equals(title) || current.getTitle().equals(hostTitle);
 
       if (found) {
         result = current;
@@ -1055,6 +1057,9 @@ public abstract class AbstractApplicationFrame
     List<Image>		images;
     boolean		useEmpty;
     JMenu		submenu;
+    Child 		child;
+    String		prefix;
+    String 		title;
 
     // remove all existing entries
     m_MenuWindows.removeAll();
@@ -1082,10 +1087,14 @@ public abstract class AbstractApplicationFrame
     // windows
     startIndex = m_MenuWindows.getMenuComponentCount() - 1;
     iter       = getWindowList();
+    prefix     = getHostnamePrefix();
     m_MenuWindows.setVisible(iter.hasNext());
     while (iter.hasNext()) {
-      Child child = iter.next();
-      menuitem = new JMenuItem(child.getTitle());
+      child = iter.next();
+      title = child.getTitle();
+      if (title.startsWith(prefix))
+	title = title.substring(prefix.length());
+      menuitem = new JMenuItem(title);
       useEmpty = true;
       if (child instanceof Window) {
 	images = ((Window) child).getIconImages();
@@ -1241,6 +1250,41 @@ public abstract class AbstractApplicationFrame
   @Override
   public String toCommandLine() {
     return OptionUtils.getCommandLine(this);
+  }
+
+  /**
+   * Returns the hostname prefix for windows.
+   *
+   * @return		the prefix, null if not available
+   */
+  public static String getHostnamePrefix() {
+    String	name;
+
+    name = InternetHelper.getLocalHostName();
+    if (name == null)
+      return null;
+
+    return name + ":";
+  }
+
+  /**
+   * Injects the hostname, if possible, into the title for the window.
+   *
+   * @param title	the title to update
+   * @return		the updated title
+   */
+  public static String insertHostnamePrefix(String title) {
+    String 	result;
+    String	name;
+
+    result = title;
+    name   = getHostnamePrefix();
+    if (name != null) {
+      if (!result.startsWith(name))
+      result = name + result;
+    }
+
+    return result;
   }
 
   /**

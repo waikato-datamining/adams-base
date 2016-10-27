@@ -20,6 +20,8 @@
 
 package adams.gui.core;
 
+import adams.gui.application.AbstractApplicationFrame;
+
 import java.io.File;
 import java.io.Serializable;
 
@@ -166,7 +168,7 @@ public class TitleGenerator
   public String generate(File file, boolean modified) {
     String	result;
 
-    result = m_Title;
+    result = AbstractApplicationFrame.insertHostnamePrefix(m_Title);
 
     if (file != null) {
       file = new File(file.getAbsolutePath());

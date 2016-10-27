@@ -176,7 +176,7 @@ public class ChildFrame
    */
   @Override
   public void setTitle(String title) {
-    super.setTitle(title);
+    super.setTitle(AbstractApplicationFrame.insertHostnamePrefix(title));
     
     if (getParentFrame() != null) {
       if (isActive())

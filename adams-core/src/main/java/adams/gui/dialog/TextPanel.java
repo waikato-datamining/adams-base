@@ -19,25 +19,6 @@
  */
 package adams.gui.dialog;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
-
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.text.JTextComponent;
-
 import adams.gui.chooser.FontChooser;
 import adams.gui.core.BasePanel;
 import adams.gui.core.GUIHelper;
@@ -50,6 +31,22 @@ import adams.gui.event.RecentItemEvent;
 import adams.gui.event.RecentItemListener;
 import adams.gui.sendto.SendToActionSupporter;
 import adams.gui.sendto.SendToActionUtils;
+
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
+import javax.swing.event.ChangeEvent;
+import javax.swing.text.JTextComponent;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.io.File;
 
 /**
  * A simple text editor panel. By default, files cannot be loaded. This has
@@ -77,13 +74,13 @@ public class TextPanel
 
   /** the panel with optional info text. */
   protected JPanel m_PanelInfo;
-  
+
   /** the label with the option info text. */
   protected JLabel m_LabelInfo;
-  
+
   /** the new menu item. */
   protected JMenuItem m_MenuItemFileNew;
-  
+
   /** the open menu item. */
   protected JMenuItem m_MenuItemFileOpen;
 
@@ -163,13 +160,9 @@ public class TextPanel
     m_LabelInfo = new JLabel();
     m_PanelInfo.add(m_LabelInfo);
     add(m_PanelInfo, BorderLayout.NORTH);
-    
+
     m_TextPanel = new TextEditorPanel();
-    m_TextPanel.addChangeListener(new ChangeListener() {
-      public void stateChanged(ChangeEvent e) {
-	update();
-      }
-    });
+    m_TextPanel.addChangeListener((ChangeEvent e) -> update());
     add(m_TextPanel, BorderLayout.CENTER);
 
     setSize(600, 800);
@@ -196,7 +189,7 @@ public class TextPanel
 
   /**
    * Sets the base title to use for the title generator.
-   * 
+   *
    * @param value	the title to use
    * @see		#m_TitleGenerator
    */
@@ -204,20 +197,20 @@ public class TextPanel
     m_TitleGenerator.setTitle(value);
     update();
   }
-  
+
   /**
    * Returns the base title in use by the title generator.
-   * 
+   *
    * @return		the title in use
    * @see		#m_TitleGenerator
    */
   public String getTitle() {
     return m_TitleGenerator.getTitle();
   }
-  
+
   /**
    * Returns the title generator in use.
-   * 
+   *
    * @return		the generator
    */
   public TitleGenerator getTitleGenerator() {
@@ -226,22 +219,22 @@ public class TextPanel
 
   /**
    * Sets the customizer to use.
-   * 
+   *
    * @param value	the customizer, null to unset
    */
   public void setPopupMenuCustomizer(PopupMenuCustomizer<TextEditorPanel> value) {
     m_TextPanel.setPopupMenuCustomizer(value);
   }
-  
+
   /**
    * Returns the customizer in use.
-   * 
+   *
    * @return		the customizer, null if none set
    */
   public PopupMenuCustomizer<TextEditorPanel> getPopupMenuCustomizer() {
     return m_TextPanel.getPopupMenuCustomizer();
   }
-  
+
   /**
    * Sets the modified state.
    *
@@ -280,7 +273,7 @@ public class TextPanel
 
   /**
    * Sets the info text to display.
-   * 
+   *
    * @param value	the text, null or empty string to hide
    */
   public void setInfoText(String value) {
@@ -291,16 +284,16 @@ public class TextPanel
     m_LabelInfo.setText(value);
     m_PanelInfo.setVisible(value.length() > 0);
   }
-  
+
   /**
    * Returns the current info text.
-   * 
+   *
    * @return		the text
    */
   public String getInfoText() {
     return m_LabelInfo.getText();
   }
-  
+
   /**
    * Sets whether the text area is editable or not.
    *
@@ -397,9 +390,9 @@ public class TextPanel
   protected void addRecentItem() {
     if (m_RecentFilesHandler != null)
       m_RecentFilesHandler.addRecentItem(
-	  m_TextPanel.getCurrentFile().getAbsolutePath() + "\t" + m_TextPanel.getCurrentEncoding());
+	m_TextPanel.getCurrentFile().getAbsolutePath() + "\t" + m_TextPanel.getCurrentEncoding());
   }
-  
+
   /**
    * Creates a menu bar (singleton per panel object). Can be used in frames.
    *
@@ -417,22 +410,14 @@ public class TextPanel
       // File
       menu = new JMenu("File");
       menu.setMnemonic('F');
-      menu.addChangeListener(new ChangeListener() {
-	public void stateChanged(ChangeEvent e) {
-	  updateMenu();
-	}
-      });
+      menu.addChangeListener((ChangeEvent e) -> updateMenu());
       result.add(menu);
-      
+
       // File/New
       menuitem = new JMenuItem("New", GUIHelper.getIcon("new.gif"));
       menuitem.setMnemonic('N');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed N"));
-      menuitem.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  m_TextPanel.setContent("");
-	}
-      });
+      menuitem.addActionListener((ActionEvent e) -> m_TextPanel.setContent(""));
       menu.add(menuitem);
       m_MenuItemFileNew = menuitem;
 
@@ -441,11 +426,9 @@ public class TextPanel
 	menuitem = new JMenuItem("Open...", GUIHelper.getIcon("open.gif"));
 	menuitem.setMnemonic('O');
 	menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed O"));
-	menuitem.addActionListener(new ActionListener() {
-	  public void actionPerformed(ActionEvent e) {
-	    if (m_TextPanel.open())
-	      addRecentItem();
-	  }
+	menuitem.addActionListener((ActionEvent e) -> {
+	  if (m_TextPanel.open())
+	    addRecentItem();
 	});
 	menu.add(menuitem);
 	m_MenuItemFileOpen = menuitem;
@@ -453,8 +436,7 @@ public class TextPanel
 	// File/Recent files
 	submenu = new JMenu("Open recent");
 	menu.add(submenu);
-	m_RecentFilesHandler = new RecentFilesWithEncodingHandler<JMenu>(
-	    SESSION_FILE, 5, submenu);
+	m_RecentFilesHandler = new RecentFilesWithEncodingHandler<>(SESSION_FILE, 5, submenu);
 	m_RecentFilesHandler.addRecentItemListener(new RecentItemListener<JMenu,String>() {
 	  @Override
 	  public void recentItemAdded(RecentItemEvent<JMenu,String> e) {
@@ -471,11 +453,7 @@ public class TextPanel
 	menuitem = new JMenuItem("Save", GUIHelper.getIcon("save.gif"));
 	menuitem.setMnemonic('a');
 	menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed S"));
-	menuitem.addActionListener(new ActionListener() {
-	  public void actionPerformed(ActionEvent e) {
-	    m_TextPanel.save();
-	  }
-	});
+	menuitem.addActionListener((ActionEvent e) -> m_TextPanel.save());
 	menu.add(menuitem);
 	m_MenuItemFileSave = menuitem;
       }
@@ -486,11 +464,7 @@ public class TextPanel
 	menuitem.setIcon(GUIHelper.getIcon("save.gif"));
       menuitem.setMnemonic('a');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl shift pressed S"));
-      menuitem.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  m_TextPanel.saveAs();
-	}
-      });
+      menuitem.addActionListener((ActionEvent e) -> m_TextPanel.saveAs());
       menu.add(menuitem);
       m_MenuItemFileSaveAs = menuitem;
 
@@ -503,21 +477,13 @@ public class TextPanel
       menuitem = new JMenuItem("Close", GUIHelper.getIcon("exit.png"));
       menuitem.setMnemonic('C');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed Q"));
-      menuitem.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  close();
-	}
-      });
+      menuitem.addActionListener((ActionEvent e) -> close());
       menu.add(menuitem);
 
       // Edit
       menu = new JMenu("Edit");
       menu.setMnemonic('E');
-      menu.addChangeListener(new ChangeListener() {
-	public void stateChanged(ChangeEvent e) {
-	  updateMenu();
-	}
-      });
+      menu.addChangeListener((ChangeEvent e) -> updateMenu());
       result.add(menu);
 
       // Edit/Undo
@@ -526,11 +492,7 @@ public class TextPanel
       menuitem.setEnabled(m_TextPanel.canUndo());
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed Z"));
       menuitem.setIcon(GUIHelper.getIcon("undo.gif"));
-      menuitem.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  m_TextPanel.undo();
-	}
-      });
+      menuitem.addActionListener((ActionEvent e) -> m_TextPanel.undo());
       menu.add(menuitem);
       m_MenuItemEditUndo = menuitem;
 
@@ -539,11 +501,7 @@ public class TextPanel
       menuitem.setEnabled(m_TextPanel.canUndo());
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed Y"));
       menuitem.setIcon(GUIHelper.getIcon("redo.gif"));
-      menuitem.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  m_TextPanel.redo();
-	}
-      });
+      menuitem.addActionListener((ActionEvent e) -> m_TextPanel.redo());
       menu.add(menuitem);
       m_MenuItemEditRedo = menuitem;
 
@@ -551,11 +509,7 @@ public class TextPanel
       menuitem = new JMenuItem("Cut", GUIHelper.getIcon("cut.gif"));
       menuitem.setMnemonic('u');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed X"));
-      menuitem.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  m_TextPanel.cut();
-	}
-      });
+      menuitem.addActionListener((ActionEvent e) -> m_TextPanel.cut());
       menu.addSeparator();
       menu.add(menuitem);
       m_MenuItemEditCut = menuitem;
@@ -564,11 +518,7 @@ public class TextPanel
       menuitem = new JMenuItem("Copy", GUIHelper.getIcon("copy.gif"));
       menuitem.setMnemonic('C');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed C"));
-      menuitem.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  m_TextPanel.copy();
-	}
-      });
+      menuitem.addActionListener((ActionEvent e) -> m_TextPanel.copy());
       menu.add(menuitem);
       m_MenuItemEditCopy = menuitem;
 
@@ -576,11 +526,7 @@ public class TextPanel
       menuitem = new JMenuItem("Paste", GUIHelper.getIcon("paste.gif"));
       menuitem.setMnemonic('P');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed V"));
-      menuitem.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  m_TextPanel.paste();
-	}
-      });
+      menuitem.addActionListener((ActionEvent e) -> m_TextPanel.paste());
       menu.add(menuitem);
       m_MenuItemEditPaste = menuitem;
 
@@ -588,11 +534,7 @@ public class TextPanel
       menuitem = new JMenuItem("Select all", GUIHelper.getEmptyIcon());
       menuitem.setMnemonic('S');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed A"));
-      menuitem.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  m_TextPanel.selectAll();
-	}
-      });
+      menuitem.addActionListener((ActionEvent e) -> m_TextPanel.selectAll());
       menu.addSeparator();
       menu.add(menuitem);
       m_MenuItemEditSelectAll = menuitem;
@@ -601,11 +543,7 @@ public class TextPanel
       menuitem = new JMenuItem("Find", GUIHelper.getIcon("find.gif"));
       menuitem.setMnemonic('F');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed F"));
-      menuitem.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  m_TextPanel.find();
-	}
-      });
+      menuitem.addActionListener((ActionEvent e) -> m_TextPanel.find());
       menu.addSeparator();
       menu.add(menuitem);
       m_MenuItemEditFind = menuitem;
@@ -614,44 +552,34 @@ public class TextPanel
       menuitem = new JMenuItem("Find next", GUIHelper.getEmptyIcon());
       menuitem.setMnemonic('n');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl shift pressed F"));
-      menuitem.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  m_TextPanel.findNext();
-	}
-      });
+      menuitem.addActionListener((ActionEvent e) -> m_TextPanel.findNext());
       menu.add(menuitem);
       m_MenuItemEditFindNext = menuitem;
 
       // View
       menu = new JMenu("View");
       menu.setMnemonic('V');
-      menu.addChangeListener(new ChangeListener() {
-	public void stateChanged(ChangeEvent e) {
-	  updateMenu();
-	}
-      });
+      menu.addChangeListener((ChangeEvent e) -> updateMenu());
       result.add(menu);
 
       // View/Tab size
       menuitem = new JMenuItem("Tab size...");
       menuitem.setMnemonic('T');
       menuitem.setIcon(GUIHelper.getIcon("text_indent.png"));
-      menuitem.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  String size = GUIHelper.showInputDialog(
-	      TextPanel.this, "Please enter new tab size (> 0)", "" + m_TextPanel.getTabSize());
-	  if (size == null)
+      menuitem.addActionListener((ActionEvent e) -> {
+	String size = GUIHelper.showInputDialog(
+	  TextPanel.this, "Please enter new tab size (> 0)", "" + m_TextPanel.getTabSize());
+	if (size == null)
+	  return;
+	try {
+	  int value = Integer.parseInt(size);
+	  if (value <= 0)
 	    return;
-	  try {
-	    int value = Integer.parseInt(size);
-	    if (value <= 0)
-	      return;
-	  }
-	  catch (Exception ex) {
-	    // ignored
-	  }
-	  m_TextPanel.setTabSize(Integer.parseInt(size));
 	}
+	catch (Exception ex) {
+	  // ignored
+	}
+	m_TextPanel.setTabSize(Integer.parseInt(size));
       });
       menu.add(menuitem);
       m_MenuItemViewTabSize = menuitem;
@@ -660,19 +588,17 @@ public class TextPanel
       menuitem = new JMenuItem("Font...");
       menuitem.setMnemonic('f');
       menuitem.setIcon(GUIHelper.getIcon("font.png"));
-      menuitem.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  FontChooser dialog;
-	  if (getParentDialog() != null)
-	    dialog = new FontChooser(getParentDialog());
-	  else
-	    dialog = new FontChooser(getParentFrame());
-	  dialog.setCurrent(m_TextPanel.getTextFont());
-	  dialog.setLocationRelativeTo(TextPanel.this);
-	  dialog.setVisible(true);
-	  if (!dialog.getCurrent().equals(m_TextPanel.getTextFont()))
-	    m_TextPanel.setTextFont(dialog.getCurrent());
-	}
+      menuitem.addActionListener((ActionEvent e) -> {
+	FontChooser dialog;
+	if (getParentDialog() != null)
+	  dialog = new FontChooser(getParentDialog());
+	else
+	  dialog = new FontChooser(getParentFrame());
+	dialog.setCurrent(m_TextPanel.getTextFont());
+	dialog.setLocationRelativeTo(TextPanel.this);
+	dialog.setVisible(true);
+	if (!dialog.getCurrent().equals(m_TextPanel.getTextFont()))
+	  m_TextPanel.setTextFont(dialog.getCurrent());
       });
       menu.add(menuitem);
       m_MenuItemViewFont = menuitem;
@@ -682,15 +608,13 @@ public class TextPanel
       menuitem.setMnemonic('L');
       menuitem.setIcon(GUIHelper.getEmptyIcon());
       menuitem.setSelected(getLineWrap());
-      menuitem.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  m_TextPanel.setLineWrap(m_MenuItemViewLineWrap.isSelected());
-	}
-      });
+      menuitem.addActionListener((ActionEvent e) ->
+	  m_TextPanel.setLineWrap(m_MenuItemViewLineWrap.isSelected())
+      );
       menu.addSeparator();
       menu.add(menuitem);
       m_MenuItemViewLineWrap = (JCheckBoxMenuItem) menuitem;
-      
+
       m_MenuBar = result;
     }
     else {
@@ -710,58 +634,44 @@ public class TextPanel
 
   /**
    * Updates the title of the dialog.
-   *
-   * @see		#m_UpdateParentTitle
    */
   protected void updateTitle() {
-    Runnable	run;
-
     if (!m_TitleGenerator.isEnabled())
       return;
 
-    run = new Runnable() {
-      @Override
-      public void run() {
-	String title = m_TitleGenerator.generate(m_TextPanel.getCurrentFile(), m_TextPanel.isModified());
-	setParentTitle(title);
-      }
-    };
-    SwingUtilities.invokeLater(run);
+    SwingUtilities.invokeLater(() -> {
+      String title = m_TitleGenerator.generate(m_TextPanel.getCurrentFile(), m_TextPanel.isModified());
+      setParentTitle(title);
+    });
   }
 
   /**
    * Updates the state of the menu items.
    */
   protected void updateMenu() {
-    Runnable	run;
-
     if (m_MenuBar == null)
       return;
-    
-    run = new Runnable() {
-      @Override
-      public void run() {
-	boolean contentAvailable = (m_TextPanel.getContent().length() > 0);
-	m_MenuItemFileNew.setEnabled(isEditable() && contentAvailable);
-	// File
-	if (m_CanOpenFiles) {
-	  m_MenuItemFileOpen.setEnabled(isEditable() && true);
-	  m_MenuItemFileSave.setEnabled(contentAvailable && isModified());
-	}
-	m_MenuItemFileSaveAs.setEnabled(contentAvailable);
-	// Edit
-	m_MenuItemEditUndo.setEnabled(isEditable() && m_TextPanel.canUndo());
-	m_MenuItemEditRedo.setEnabled(isEditable() && m_TextPanel.canRedo());
-	m_MenuItemEditCut.setEnabled(isEditable() && m_TextPanel.canCut());
-	m_MenuItemEditCopy.setEnabled(m_TextPanel.canCopy());
-	m_MenuItemEditPaste.setEnabled(isEditable() && m_TextPanel.canPaste());
-	m_MenuItemEditFind.setEnabled(contentAvailable);
-	m_MenuItemEditFindNext.setEnabled(contentAvailable && (m_TextPanel.getLastFind() != null));
-	// View
-	m_MenuItemViewLineWrap.setSelected(getLineWrap());
+
+    SwingUtilities.invokeLater(() -> {
+      boolean contentAvailable = (m_TextPanel.getContent().length() > 0);
+      m_MenuItemFileNew.setEnabled(isEditable() && contentAvailable);
+      // File
+      if (m_CanOpenFiles) {
+	m_MenuItemFileOpen.setEnabled(isEditable());
+	m_MenuItemFileSave.setEnabled(contentAvailable && isModified());
       }
-    };
-    SwingUtilities.invokeLater(run);
+      m_MenuItemFileSaveAs.setEnabled(contentAvailable);
+      // Edit
+      m_MenuItemEditUndo.setEnabled(isEditable() && m_TextPanel.canUndo());
+      m_MenuItemEditRedo.setEnabled(isEditable() && m_TextPanel.canRedo());
+      m_MenuItemEditCut.setEnabled(isEditable() && m_TextPanel.canCut());
+      m_MenuItemEditCopy.setEnabled(m_TextPanel.canCopy());
+      m_MenuItemEditPaste.setEnabled(isEditable() && m_TextPanel.canPaste());
+      m_MenuItemEditFind.setEnabled(contentAvailable);
+      m_MenuItemEditFindNext.setEnabled(contentAvailable && (m_TextPanel.getLastFind() != null));
+      // View
+      m_MenuItemViewLineWrap.setSelected(getLineWrap());
+    });
   }
 
   /**
@@ -822,7 +732,7 @@ public class TextPanel
    */
   public boolean hasSendToItem(Class[] cls) {
     return    (SendToActionUtils.isAvailable(new Class[]{String.class, JTextComponent.class}, cls))
-           && (m_TextPanel.getContent().length() > 0);
+      && (m_TextPanel.getContent().length() > 0);
   }
 
   /**

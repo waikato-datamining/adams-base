@@ -484,7 +484,7 @@ public class InvestigatorPanel
    */
   @Override
   protected void updateTitle() {
-    setParentTitle(m_TitleGenerator.generate(getDefaultTitle()));
+    setParentTitle(m_TitleGenerator.generate((String) null));
   }
 
   /**
@@ -503,7 +503,7 @@ public class InvestigatorPanel
    */
   @Override
   protected String getDefaultTitle() {
-    return "Investigator";
+    return "WEKA Investigator";
   }
 
   /**
