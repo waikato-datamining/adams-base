@@ -64,7 +64,7 @@ import java.util.regex.Pattern;
  * @version $Revision$
  * @see #main(String[])
  */
-public class ClassLister 
+public class ClassLister
   extends ConsoleLoggingObject {
 
   /** for serialization. */
@@ -103,18 +103,64 @@ public class ClassLister
   }
 
   /**
+   * Adds a class hierarchy.
+   *
+   * @param superclass	the superclass
+   * @param packages	the packages
+   */
+  public void addHierarchy(String superclass, String[] packages) {
+    List<String> 	names;
+    List<Class>		classes;
+    Properties		blacklist;
+    String[]		patterns;
+    int			i;
+    Pattern		p;
+
+    blacklist  = Environment.getInstance().read(ClassListerBlacklistDefinition.KEY);
+    names      = ClassLocator.getSingleton().findNames(superclass, packages);
+    classes    = ClassLocator.getSingleton().findClasses(superclass, packages);
+    // remove blacklisted classes
+    if (blacklist.hasKey(superclass)) {
+      try {
+        patterns = blacklist.getProperty(superclass).replaceAll(" ", "").split(",");
+        for (String pattern: patterns) {
+          p = Pattern.compile(pattern);
+          // names
+          i = 0;
+          while (i < names.size()) {
+            if (p.matcher(names.get(i)).matches())
+              names.remove(i);
+            else
+              i++;
+          }
+          // classes
+          i = 0;
+          while (i < classes.size()) {
+            if (p.matcher(classes.get(i).getName()).matches())
+              classes.remove(i);
+            else
+              i++;
+          }
+        }
+      }
+      catch (Exception ex) {
+        getLogger().log(Level.SEVERE, "Failed to blacklist classes for superclass '" +  superclass + "':", ex);
+      }
+    }
+    // create class list
+    m_CacheNames.put(superclass, new HashSet<>(names));
+    m_ListNames.put(superclass, new ArrayList<>(names));
+    m_CacheClasses.put(superclass, new HashSet<>(classes));
+    m_ListClasses.put(superclass, new ArrayList<>(classes));
+  }
+
+  /**
    * loads the props file and interpretes it.
    */
   protected void initialize() {
-    Enumeration			enm;
-    String			superclass;
-    String[]			packages;
-    List<String> 		names;
-    List<Class>			classes;
-    Properties			blacklist;
-    String[]			patterns;
-    int				i;
-    Pattern			p;
+    Enumeration		enm;
+    String		superclass;
+    String[]		packages;
 
     try {
       m_Packages     = Environment.getInstance().read(ClassListerDefinition.KEY);
@@ -122,47 +168,12 @@ public class ClassLister
       m_ListNames    = new HashMap<>();
       m_CacheClasses = new HashMap<>();
       m_ListClasses  = new HashMap<>();
-      blacklist      = Environment.getInstance().read(ClassListerBlacklistDefinition.KEY);
 
       enm = m_Packages.propertyNames();
       while (enm.hasMoreElements()) {
-	superclass = (String) enm.nextElement();
-	packages   = m_Packages.getProperty(superclass).replaceAll(" ", "").split(",");
-	names      = ClassLocator.getSingleton().findNames(superclass, packages);
-	classes    = ClassLocator.getSingleton().findClasses(superclass, packages);
-	// remove blacklisted classes
-	if (blacklist.hasKey(superclass)) {
-	  try {
-	    patterns = blacklist.getProperty(superclass).replaceAll(" ", "").split(",");
-	    for (String pattern: patterns) {
-	      p = Pattern.compile(pattern);
-	      // names
-	      i = 0;
-	      while (i < names.size()) {
-		if (p.matcher(names.get(i)).matches())
-		  names.remove(i);
-		else
-		  i++;
-	      }
-	      // classes
-	      i = 0;
-	      while (i < classes.size()) {
-		if (p.matcher(classes.get(i).getName()).matches())
-		  classes.remove(i);
-		else
-		  i++;
-	      }
-	    }
-	  }
-	  catch (Exception ex) {
-	    getLogger().log(Level.SEVERE, "Failed to blacklist classes for superclass '" +  superclass + "':", ex);
-	  }
-	}
-	// create class list
-	m_CacheNames.put(superclass, new HashSet<>(names));
-	m_ListNames.put(superclass, new ArrayList<>(names));
-	m_CacheClasses.put(superclass, new HashSet<>(classes));
-	m_ListClasses.put(superclass, new ArrayList<>(classes));
+        superclass = (String) enm.nextElement();
+        packages   = m_Packages.getProperty(superclass).replaceAll(" ", "").split(",");
+        addHierarchy(superclass, packages);
       }
     }
     catch (Exception e) {
@@ -215,7 +226,7 @@ public class ClassLister
 
   /**
    * Returns the superclasses that the specified classes was listed under.
-   * 
+   *
    * @param cls		the class to look up its superclasses
    * @return		the superclass(es)
    */
@@ -225,40 +236,40 @@ public class ClassLister
 
   /**
    * Returns the superclasses that the specified classes was listed under.
-   * 
+   *
    * @param cls		the class to look up its superclasses
    * @return		the superclass(es)
    */
   public String[] getSuperclasses(String cls) {
     List<String>	result;
-    
+
     result = new ArrayList<>();
-    
+
     for (String superclass: m_CacheNames.keySet()) {
       if (m_CacheNames.get(superclass).contains(cls))
-	result.add(superclass);
+        result.add(superclass);
     }
-    
+
     if (result.size() > 1)
       Collections.sort(result);
-    
+
     return result.toArray(new String[result.size()]);
   }
 
   /**
    * Returns the all superclasses that define class hierarchies.
-   * 
+   *
    * @return		the superclasses
    */
   public String[] getSuperclasses() {
     List<String>	result;
-    
+
     result = new ArrayList<>(m_CacheNames.keySet());
     Collections.sort(result);
-    
+
     return result.toArray(new String[result.size()]);
   }
-  
+
   /**
    * Returns all the packages that were found for this superclass.
    *
@@ -331,7 +342,7 @@ public class ClassLister
 
   /**
    * Outputs a list of available conversions.
-   * 
+   *
    * @param args	the commandline options: [-env classname] [-super classname] [-match regexp]
    * @throws Exception	if invalid environment class or invalid regular expression
    */
@@ -349,16 +360,16 @@ public class ClassLister
       env = Environment.class.getName();
     Class cls = Class.forName(env);
     Environment.setEnvironmentClass(cls);
-    
+
     // match
     String match = OptionUtils.getOption(args, "-match");
     if (match == null)
       match = BaseRegExp.MATCH_ALL;
     BaseRegExp regexp = new BaseRegExp(match);
-    
+
     // allow empty class hierarchies?
     boolean allowEmpty = OptionUtils.hasFlag(args, "-allow-empty");
-    
+
     // superclass
     String[] superclasses;
     String sclass = OptionUtils.getOption(args, "-super");
@@ -366,18 +377,18 @@ public class ClassLister
       superclasses = getSingleton().getSuperclasses();
     else
       superclasses = new String[]{sclass};
-    
+
     // list them
     for (String superclass: superclasses) {
       cls = Class.forName(superclass);
       Class[] classes = getSingleton().getClasses(cls);
       if ((classes.length > 0) || allowEmpty) {
-	System.out.println("--> " + superclass);
-	for (Class c: classes) {
-	  if (regexp.isMatch(c.getName()))
-	    System.out.println(c.getName());
-	}
-	System.out.println();
+        System.out.println("--> " + superclass);
+        for (Class c: classes) {
+          if (regexp.isMatch(c.getName()))
+            System.out.println(c.getName());
+        }
+        System.out.println();
       }
     }
   }
