@@ -76,6 +76,26 @@ public class FileContainer
   }
 
   /**
+   * Uses the provided data, but also stores the reader/file for reloading it.
+   *
+   * @param loader	the loader to use
+   * @param source	the file to load
+   * @param data	the data to use
+   */
+  public FileContainer(AbstractFileLoader loader, File source, Instances data) {
+    super();
+    try {
+      loader.setFile(source.getAbsoluteFile());
+      m_Data   = data;
+      m_Source = source;
+      m_Loader = loader;
+    }
+    catch (Exception e) {
+      throw new IllegalArgumentException("Failed to load dataset: " + source, e);
+    }
+  }
+
+  /**
    * Returns the source of the data item.
    *
    * @return		the source
