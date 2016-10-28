@@ -25,7 +25,7 @@ import adams.gui.core.BaseListWithButtons;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MouseUtils;
-import adams.gui.goe.WekaGenericObjectEditorPanel;
+import adams.gui.goe.GenericObjectEditorPanel;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 import weka.classifiers.Classifier;
 import weka.classifiers.rules.ZeroR;
@@ -56,7 +56,7 @@ public class ClassifierPanel
   private static final long serialVersionUID = -832431512063524253L;
 
   /** the GOE for setting up classifiers. */
-  protected WekaGenericObjectEditorPanel m_PanelGOE;
+  protected GenericObjectEditorPanel m_PanelGOE;
   
   /** for listing the classifiers. */
   protected BaseListWithButtons m_List;
@@ -99,7 +99,7 @@ public class ClassifierPanel
   protected void initGUI() {
     super.initGUI();
     
-    m_PanelGOE = new WekaGenericObjectEditorPanel(Classifier.class, new ZeroR(), true);
+    m_PanelGOE = new GenericObjectEditorPanel(Classifier.class, new ZeroR(), true);
     add(m_PanelGOE, BorderLayout.NORTH);
     
     m_List = new BaseListWithButtons(m_Model);

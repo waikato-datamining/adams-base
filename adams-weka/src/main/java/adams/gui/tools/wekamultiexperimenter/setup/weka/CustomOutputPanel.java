@@ -20,7 +20,7 @@
 package adams.gui.tools.wekamultiexperimenter.setup.weka;
 
 import adams.gui.core.ParameterPanel;
-import adams.gui.goe.WekaGenericObjectEditorPanel;
+import adams.gui.goe.GenericObjectEditorPanel;
 import weka.experiment.InstancesResultListener;
 import weka.experiment.ResultListener;
 
@@ -41,7 +41,7 @@ public class CustomOutputPanel
   private static final long serialVersionUID = 6294601080342288801L;
   
   /** the GOE panel. */
-  protected WekaGenericObjectEditorPanel m_PanelGOE;
+  protected GenericObjectEditorPanel m_PanelGOE;
   
   /**
    * Initializes the widgets.
@@ -53,7 +53,7 @@ public class CustomOutputPanel
     super.initGUI();
     
     panel = new ParameterPanel();
-    m_PanelGOE = new WekaGenericObjectEditorPanel(ResultListener.class, new InstancesResultListener(), true);
+    m_PanelGOE = new GenericObjectEditorPanel(ResultListener.class, new InstancesResultListener(), true);
     m_PanelGOE.addChangeListener(new ChangeListener() {
       @Override
       public void stateChanged(ChangeEvent e) {

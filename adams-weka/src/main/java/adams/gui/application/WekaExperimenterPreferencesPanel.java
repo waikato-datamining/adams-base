@@ -19,14 +19,14 @@
  */
 package adams.gui.application;
 
-import java.io.File;
-
+import adams.core.Properties;
+import adams.gui.core.PropertiesParameterPanel.PropertyType;
+import adams.gui.goe.GenericObjectEditorPanel;
 import weka.core.Utils;
 import weka.core.WekaPackageManager;
 import weka.gui.experiment.ExperimenterDefaults;
-import adams.core.Properties;
-import adams.gui.core.PropertiesParameterPanel.PropertyType;
-import adams.gui.goe.WekaGenericObjectEditorPanel;
+
+import java.io.File;
 
 /**
  * Preferences for the WEKA Experimenter.
@@ -69,7 +69,7 @@ public class WekaExperimenterPreferencesPanel
     addPropertyType("MeanPrecision", PropertyType.INTEGER);
     addPropertyType("StdDevPrecision", PropertyType.INTEGER);
     addPropertyType("OutputFormat", PropertyType.OBJECT_EDITOR);
-    setChooser("OutputFormat", new WekaGenericObjectEditorPanel(weka.experiment.ResultMatrix.class, new weka.experiment.ResultMatrixPlainText(), true));
+    setChooser("OutputFormat", new GenericObjectEditorPanel(weka.experiment.ResultMatrix.class, new weka.experiment.ResultMatrixPlainText(), true));
     addPropertyType("RemoveFilterClassnames", PropertyType.BOOLEAN);
 
     try {

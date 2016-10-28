@@ -24,7 +24,7 @@ import adams.core.base.BaseClassname;
 import adams.core.base.BaseCommandLine;
 import adams.core.option.OptionUtils;
 import adams.gui.chooser.AbstractChooserPanel;
-import adams.gui.goe.WekaGenericObjectEditorPanel;
+import adams.gui.goe.GenericObjectEditorPanel;
 
 /**
  * Definition for generic WEKA GOE objects.
@@ -75,7 +75,7 @@ public class WekaGOEValueDefinition
    */
   @Override
   protected AbstractChooserPanel newChooserPanel() throws Exception {
-    return new WekaGenericObjectEditorPanel(
+    return new GenericObjectEditorPanel(
 	m_SuperClass.classValue(),
 	OptionUtils.forAnyCommandLine(m_SuperClass.classValue(), m_DefaultClass.getValue()),
 	true);

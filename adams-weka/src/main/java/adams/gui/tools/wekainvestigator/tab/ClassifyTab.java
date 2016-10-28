@@ -38,7 +38,7 @@ import adams.gui.core.GUIHelper;
 import adams.gui.event.WekaInvestigatorDataEvent;
 import adams.gui.goe.GenericArrayEditorDialog;
 import adams.gui.goe.GenericObjectEditorDialog;
-import adams.gui.goe.WekaGenericObjectEditorPanel;
+import adams.gui.goe.GenericObjectEditorPanel;
 import adams.gui.tools.wekainvestigator.InvestigatorPanel;
 import adams.gui.tools.wekainvestigator.history.AbstractHistoryPopupMenuItem;
 import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
@@ -340,7 +340,7 @@ public class ClassifyTab
   public static final String KEY_EVALUATION_PREFIX = "evaluation.";
 
   /** the GOe with the classifier. */
-  protected WekaGenericObjectEditorPanel m_PanelGOE;
+  protected GenericObjectEditorPanel m_PanelGOE;
 
   /** the split pane for left/right panels. */
   protected BaseSplitPane m_SplitPane;
@@ -471,7 +471,7 @@ public class ClassifyTab
     catch (Exception e) {
       cls = new ZeroR();
     }
-    m_PanelGOE = new WekaGenericObjectEditorPanel(Classifier.class, cls, true);
+    m_PanelGOE = new GenericObjectEditorPanel(Classifier.class, cls, true);
     m_PanelGOE.setPrefix("Classifier ");
     m_PanelGOE.addChangeListener((ChangeEvent e) -> updateButtons());
     m_PanelGOE.moveChooseButton(true);

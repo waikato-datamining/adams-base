@@ -30,7 +30,7 @@ import adams.gui.application.ChildFrame;
 import adams.gui.application.UserMode;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.PropertiesParameterPanel.PropertyType;
-import adams.gui.goe.WekaGenericObjectEditorPanel;
+import adams.gui.goe.GenericObjectEditorPanel;
 import adams.gui.wizard.AbstractWizardPage;
 import adams.gui.wizard.FinalPage;
 import adams.gui.wizard.PageCheck;
@@ -139,7 +139,7 @@ public class BatchFilterDatasets
 	+ "If no class attribute is to be set, simply empty the 'Class' property. "
 	+ "You can use 'first' and 'last' as well as 1-based indices.");
     paramsFilter.getParameterPanel().addPropertyType("Filter", PropertyType.OBJECT_EDITOR);
-    paramsFilter.getParameterPanel().setChooser("Filter", new WekaGenericObjectEditorPanel(weka.filters.Filter.class, filter, true));
+    paramsFilter.getParameterPanel().setChooser("Filter", new GenericObjectEditorPanel(weka.filters.Filter.class, filter, true));
     paramsFilter.getParameterPanel().addPropertyType("Class", PropertyType.STRING);
     paramsFilter.getParameterPanel().addPropertyType("Keep relation name", PropertyType.BOOLEAN);
     paramsFilter.getParameterPanel().setPropertyOrder(new String[]{"Filter", "Class", "Keep relation name"});

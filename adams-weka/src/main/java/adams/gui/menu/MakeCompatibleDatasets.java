@@ -82,7 +82,6 @@ import adams.gui.application.UserMode;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.PropertiesParameterPanel;
 import adams.gui.goe.GenericObjectEditorPanel;
-import adams.gui.goe.WekaGenericObjectEditorPanel;
 import adams.gui.wizard.AbstractWizardPage;
 import adams.gui.wizard.FinalPage;
 import adams.gui.wizard.PageCheck;
@@ -195,7 +194,7 @@ public class MakeCompatibleDatasets
     format.getParameterPanel().setLabel(CUSTOM_WEKA_FILE_LOADER, "Use custom Weka loader");
     format.getParameterPanel().addPropertyType(WEKA_FILE_LOADER, PropertiesParameterPanel.PropertyType.OBJECT_EDITOR);
     format.getParameterPanel().setLabel(WEKA_FILE_LOADER, "Weka loader");
-    format.getParameterPanel().setChooser(WEKA_FILE_LOADER, new WekaGenericObjectEditorPanel(weka.core.converters.AbstractFileLoader.class, new ArffLoader(), true));
+    format.getParameterPanel().setChooser(WEKA_FILE_LOADER, new GenericObjectEditorPanel(weka.core.converters.AbstractFileLoader.class, new ArffLoader(), true));
     format.getParameterPanel().addPropertyType(CUSTOM_ADAMS_READER, PropertiesParameterPanel.PropertyType.BOOLEAN);
     format.getParameterPanel().setLabel(CUSTOM_ADAMS_READER, "Use custom ADAMS reader");
     format.getParameterPanel().addPropertyType(ADAMS_READER, PropertiesParameterPanel.PropertyType.OBJECT_EDITOR);

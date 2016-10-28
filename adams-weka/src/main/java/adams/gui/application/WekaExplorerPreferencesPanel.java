@@ -19,14 +19,14 @@
  */
 package adams.gui.application;
 
-import java.io.File;
-
+import adams.core.Properties;
+import adams.gui.core.PropertiesParameterPanel.PropertyType;
+import adams.gui.goe.GenericObjectEditorPanel;
 import weka.core.Utils;
 import weka.core.WekaPackageManager;
 import weka.gui.explorer.ExplorerDefaults;
-import adams.core.Properties;
-import adams.gui.core.PropertiesParameterPanel.PropertyType;
-import adams.gui.goe.WekaGenericObjectEditorPanel;
+
+import java.io.File;
 
 /**
  * Preferences for the WEKA Explorer.
@@ -49,9 +49,9 @@ public class WekaExplorerPreferencesPanel
     addPropertyType("enableUndo", PropertyType.BOOLEAN);
     addPropertyType("undoDirectory", PropertyType.DIRECTORY_ABSOLUTE);
     addPropertyType("Filter", PropertyType.OBJECT_EDITOR);
-    setChooser("Filter", new WekaGenericObjectEditorPanel(weka.filters.Filter.class, new weka.filters.AllFilter(), true));
+    setChooser("Filter", new GenericObjectEditorPanel(weka.filters.Filter.class, new weka.filters.AllFilter(), true));
     addPropertyType("Classifier", PropertyType.OBJECT_EDITOR);
-    setChooser("Classifier", new WekaGenericObjectEditorPanel(weka.classifiers.Classifier.class, new weka.classifiers.rules.ZeroR(), true));
+    setChooser("Classifier", new GenericObjectEditorPanel(weka.classifiers.Classifier.class, new weka.classifiers.rules.ZeroR(), true));
     addPropertyType("ClassifierTestMode", PropertyType.LIST);
     setList("ClassifierTestMode", new String[]{"1", "2", "3", "4"});
     setHelp("ClassifierTestMode", "1 - cross-validation, 2 - percentage split, 3 - use training set, 4 - supplied test set");
@@ -73,18 +73,18 @@ public class WekaExplorerPreferencesPanel
     addPropertyType("ClassifierErrorsMinimumPlotSizeNumeric", PropertyType.INTEGER);
     addPropertyType("ClassifierErrorsMaximumPlotSizeNumeric", PropertyType.INTEGER);
     addPropertyType("Clusterer", PropertyType.OBJECT_EDITOR);
-    setChooser("Clusterer", new WekaGenericObjectEditorPanel(weka.clusterers.Clusterer.class, new weka.clusterers.SimpleKMeans(), true));
+    setChooser("Clusterer", new GenericObjectEditorPanel(weka.clusterers.Clusterer.class, new weka.clusterers.SimpleKMeans(), true));
     addPropertyType("ClustererTestMode", PropertyType.LIST);
     setList("ClustererTestMode", new String[]{"2", "3", "4", "5"});
     setHelp("ClustererTestMode", "2 - percentage split, 3 - use training set, 4 - supplied test set, 5 - classes to clusters evaluation");
     addPropertyType("ClustererStoreClustersForVis", PropertyType.BOOLEAN);
     addPropertyType("ClustererAssignmentsPlotInstances", PropertyType.STRING);
     addPropertyType("Associator", PropertyType.OBJECT_EDITOR);
-    setChooser("Associator", new WekaGenericObjectEditorPanel(weka.associations.Associator.class, new weka.associations.Apriori(), true));
+    setChooser("Associator", new GenericObjectEditorPanel(weka.associations.Associator.class, new weka.associations.Apriori(), true));
     addPropertyType("ASEvaluation", PropertyType.OBJECT_EDITOR);
-    setChooser("ASEvaluation", new WekaGenericObjectEditorPanel(weka.attributeSelection.ASEvaluation.class, new weka.attributeSelection.CfsSubsetEval(), true));
+    setChooser("ASEvaluation", new GenericObjectEditorPanel(weka.attributeSelection.ASEvaluation.class, new weka.attributeSelection.CfsSubsetEval(), true));
     addPropertyType("ASSearch", PropertyType.OBJECT_EDITOR);
-    setChooser("ASSearch", new WekaGenericObjectEditorPanel(weka.attributeSelection.ASSearch.class, new weka.attributeSelection.BestFirst(), true));
+    setChooser("ASSearch", new GenericObjectEditorPanel(weka.attributeSelection.ASSearch.class, new weka.attributeSelection.BestFirst(), true));
     addPropertyType("ASTestMode", PropertyType.LIST);
     setList("ASTestMode", new String[]{"0", "1"});
     setHelp("ASTestMode", "0 - use full training set, 1 - cross-validation");

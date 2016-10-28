@@ -28,7 +28,7 @@ import adams.core.option.OptionUtils;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.GUIHelper;
 import adams.gui.event.WekaInvestigatorDataEvent;
-import adams.gui.goe.WekaGenericObjectEditorPanel;
+import adams.gui.goe.GenericObjectEditorPanel;
 import adams.gui.tools.wekainvestigator.InvestigatorPanel;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
 import adams.gui.tools.wekainvestigator.data.MemoryContainer;
@@ -80,7 +80,7 @@ public class PreprocessTab
   public static final String KEY_REPLACE = "replace";
 
   /** the GOe with the filter. */
-  protected WekaGenericObjectEditorPanel m_PanelGOE;
+  protected GenericObjectEditorPanel m_PanelGOE;
 
   /** the panel for the filter and the buttons. */
   protected JPanel m_PanelTop;
@@ -187,7 +187,7 @@ public class PreprocessTab
     catch (Exception e) {
       filter = new AllFilter();
     }
-    m_PanelGOE = new WekaGenericObjectEditorPanel(Filter.class, filter, true);
+    m_PanelGOE = new GenericObjectEditorPanel(Filter.class, filter, true);
     m_PanelGOE.moveChooseButton(true);
     panel = new JPanel(new BorderLayout());
     panel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));

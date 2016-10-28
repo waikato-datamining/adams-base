@@ -35,7 +35,7 @@ import adams.gui.core.ParameterPanel;
 import adams.gui.event.WekaInvestigatorDataEvent;
 import adams.gui.goe.GenericArrayEditorDialog;
 import adams.gui.goe.GenericObjectEditorDialog;
-import adams.gui.goe.WekaGenericObjectEditorPanel;
+import adams.gui.goe.GenericObjectEditorPanel;
 import adams.gui.tools.wekainvestigator.InvestigatorPanel;
 import adams.gui.tools.wekainvestigator.data.MemoryContainer;
 import adams.gui.tools.wekainvestigator.history.AbstractHistoryPopupMenuItem;
@@ -397,10 +397,10 @@ public class AttributeSelectionTab
   public static final String KEY_LEFTPANELWIDTH = "leftpanelwidth";
 
   /** the GOe with the evaluator. */
-  protected WekaGenericObjectEditorPanel m_PanelEvaluator;
+  protected GenericObjectEditorPanel m_PanelEvaluator;
 
   /** the GOe with the search. */
-  protected WekaGenericObjectEditorPanel m_PanelSearch;
+  protected GenericObjectEditorPanel m_PanelSearch;
 
   /** the split pane for left/right panels. */
   protected BaseSplitPane m_SplitPane;
@@ -537,7 +537,7 @@ public class AttributeSelectionTab
     catch (Exception e) {
       evaluator = new CfsSubsetEval();
     }
-    m_PanelEvaluator = new WekaGenericObjectEditorPanel(ASEvaluation.class, evaluator, true);
+    m_PanelEvaluator = new GenericObjectEditorPanel(ASEvaluation.class, evaluator, true);
     m_PanelEvaluator.setPrefix("Evaluator");
     m_PanelEvaluator.moveChooseButton(true);
     m_PanelEvaluator.addChangeListener((ChangeEvent e) -> updateButtons());
@@ -552,7 +552,7 @@ public class AttributeSelectionTab
     catch (Exception e) {
       search = new BestFirst();
     }
-    m_PanelSearch = new WekaGenericObjectEditorPanel(ASSearch.class, search, true);
+    m_PanelSearch = new GenericObjectEditorPanel(ASSearch.class, search, true);
     m_PanelSearch.setPrefix("Search ");
     m_PanelSearch.moveChooseButton(true);
     m_PanelSearch.addChangeListener((ChangeEvent e) -> updateButtons());

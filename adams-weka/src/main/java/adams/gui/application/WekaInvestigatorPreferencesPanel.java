@@ -27,7 +27,6 @@ import adams.env.WekaInvestigatorDefinition;
 import adams.gui.core.PropertiesParameterPanel.PropertyType;
 import adams.gui.goe.GenericArrayEditorPanel;
 import adams.gui.goe.GenericObjectEditorPanel;
-import adams.gui.goe.WekaGenericObjectEditorPanel;
 
 /**
  * Preferences for the WEKA Investigator.
@@ -64,7 +63,7 @@ public class WekaInvestigatorPreferencesPanel
 
     // preprocessing
     addPropertyType("Preprocess.Filter", PropertyType.OBJECT_EDITOR);
-    setChooser("Preprocess.Filter", new WekaGenericObjectEditorPanel(
+    setChooser("Preprocess.Filter", new GenericObjectEditorPanel(
       weka.filters.Filter.class, new weka.filters.AllFilter(), true));
     addPropertyType("Preprocess.ReplaceDatasets", PropertyType.BOOLEAN);
     addPropertyType("Preprocess.KeepName", PropertyType.BOOLEAN);
@@ -72,7 +71,7 @@ public class WekaInvestigatorPreferencesPanel
 
     // classify
     addPropertyType("Classify.Classifier", PropertyType.OBJECT_EDITOR);
-    setChooser("Classify.Classifier", new WekaGenericObjectEditorPanel(
+    setChooser("Classify.Classifier", new GenericObjectEditorPanel(
       weka.classifiers.Classifier.class, new weka.classifiers.rules.ZeroR(), true));
     addPropertyType("Classify.Evaluation", PropertyType.OBJECT_EDITOR);
     setChooser("Classify.Evaluation", new GenericObjectEditorPanel(
@@ -96,7 +95,7 @@ public class WekaInvestigatorPreferencesPanel
 
     // clusterer
     addPropertyType("Cluster.Clusterer", PropertyType.OBJECT_EDITOR);
-    setChooser("Cluster.Clusterer", new WekaGenericObjectEditorPanel(
+    setChooser("Cluster.Clusterer", new GenericObjectEditorPanel(
       weka.clusterers.Clusterer.class, new weka.clusterers.SimpleKMeans(), true));
     addPropertyType("Cluster.Evaluation", PropertyType.OBJECT_EDITOR);
     setChooser("Cluster.Evaluation", new GenericObjectEditorPanel(
@@ -118,10 +117,10 @@ public class WekaInvestigatorPreferencesPanel
 
     // attribute selection
     addPropertyType("AttributeSelection.Evaluator", PropertyType.OBJECT_EDITOR);
-    setChooser("AttributeSelection.Evaluator", new WekaGenericObjectEditorPanel(
+    setChooser("AttributeSelection.Evaluator", new GenericObjectEditorPanel(
       weka.attributeSelection.ASEvaluation.class, new weka.attributeSelection.CfsSubsetEval(), true));
     addPropertyType("AttributeSelection.Search", PropertyType.OBJECT_EDITOR);
-    setChooser("AttributeSelection.Search", new WekaGenericObjectEditorPanel(
+    setChooser("AttributeSelection.Search", new GenericObjectEditorPanel(
       weka.attributeSelection.ASSearch.class, new weka.attributeSelection.BestFirst(), true));
     addPropertyType("AttributeSelection.Evaluation", PropertyType.OBJECT_EDITOR);
     setChooser("AttributeSelection.Evaluation", new GenericObjectEditorPanel(

@@ -22,7 +22,6 @@ package adams.gui.tools.wekainvestigator.source;
 
 import adams.core.option.OptionUtils;
 import adams.gui.goe.GenericObjectEditorDialog;
-import adams.gui.goe.WekaGenericObjectEditorDialog;
 import adams.gui.tools.wekainvestigator.data.DataGeneratorContainer;
 import weka.datagenerators.classifiers.classification.LED24;
 
@@ -59,15 +58,15 @@ public class DataGenerator
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    WekaGenericObjectEditorDialog	dialog;
+    GenericObjectEditorDialog	dialog;
 
     if (m_Generator == null)
       m_Generator = new LED24();
 
     if (getOwner().getParentDialog() != null)
-      dialog = new WekaGenericObjectEditorDialog(getOwner().getParentDialog(), ModalityType.DOCUMENT_MODAL);
+      dialog = new GenericObjectEditorDialog(getOwner().getParentDialog(), ModalityType.DOCUMENT_MODAL);
     else
-      dialog = new WekaGenericObjectEditorDialog(getOwner().getParentFrame(), true);
+      dialog = new GenericObjectEditorDialog(getOwner().getParentFrame(), true);
     dialog.setTitle("Data generator");
     dialog.setEditor(new weka.gui.GenericObjectEditor(true));
     dialog.getGOEEditor().setClassType(weka.datagenerators.DataGenerator.class);

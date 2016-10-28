@@ -37,7 +37,7 @@ import adams.gui.core.GUIHelper;
 import adams.gui.event.WekaInvestigatorDataEvent;
 import adams.gui.goe.GenericArrayEditorDialog;
 import adams.gui.goe.GenericObjectEditorDialog;
-import adams.gui.goe.WekaGenericObjectEditorPanel;
+import adams.gui.goe.GenericObjectEditorPanel;
 import adams.gui.tools.wekainvestigator.InvestigatorPanel;
 import adams.gui.tools.wekainvestigator.history.AbstractHistoryPopupMenuItem;
 import adams.gui.tools.wekainvestigator.tab.clustertab.ResultItem;
@@ -343,7 +343,7 @@ public class ClusterTab
   public static final String KEY_EVALUATION_PREFIX = "evaluation.";
 
   /** the GOe with the clusterer. */
-  protected WekaGenericObjectEditorPanel m_PanelGOE;
+  protected GenericObjectEditorPanel m_PanelGOE;
 
   /** the split pane for left/right panels. */
   protected BaseSplitPane m_SplitPane;
@@ -470,7 +470,7 @@ public class ClusterTab
     catch (Exception e) {
       cls = new SimpleKMeans();
     }
-    m_PanelGOE = new WekaGenericObjectEditorPanel(Clusterer.class, cls, true);
+    m_PanelGOE = new GenericObjectEditorPanel(Clusterer.class, cls, true);
     m_PanelGOE.setPrefix("Clusterer ");
     m_PanelGOE.moveChooseButton(true);
     m_PanelGOE.addChangeListener((ChangeEvent e) -> updateButtons());

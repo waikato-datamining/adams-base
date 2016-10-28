@@ -32,7 +32,7 @@ import adams.gui.core.NumberTextField;
 import adams.gui.core.NumberTextField.BoundedNumberCheckModel;
 import adams.gui.core.NumberTextField.Type;
 import adams.gui.core.ParameterPanel;
-import adams.gui.goe.WekaGenericObjectEditorPanel;
+import adams.gui.goe.GenericObjectEditorPanel;
 import adams.gui.tools.wekamultiexperimenter.ExperimenterPanel;
 import weka.core.Attribute;
 import weka.core.Instance;
@@ -156,10 +156,10 @@ public class DefaultAnalysisPanel
   }
 
   /** the GOE for the tester. */
-  protected WekaGenericObjectEditorPanel m_PanelTester;
+  protected GenericObjectEditorPanel m_PanelTester;
 
   /** the GOE for the result matrix. */
-  protected WekaGenericObjectEditorPanel m_PanelMatrix;
+  protected GenericObjectEditorPanel m_PanelMatrix;
 
   /** the significance. */
   protected NumberTextField m_TextSignificance;
@@ -264,7 +264,7 @@ public class DefaultAnalysisPanel
       ConsolePanel.getSingleton().append(Level.SEVERE, "Failed to instantiate tester: " + props.getProperty("Results.Tester"), e);
       tester = new PairedCorrectedTTester();
     }
-    m_PanelTester = new WekaGenericObjectEditorPanel(Tester.class, tester, true);
+    m_PanelTester = new GenericObjectEditorPanel(Tester.class, tester, true);
     panelParams.addParameter("Tester", m_PanelTester);
 
     // matrix
@@ -275,7 +275,7 @@ public class DefaultAnalysisPanel
       ConsolePanel.getSingleton().append(Level.SEVERE, "Failed to instantiate matrix: " + props.getProperty("Results.ResultMatrix"), e);
       matrix = new ResultMatrixPlainText();
     }
-    m_PanelMatrix = new WekaGenericObjectEditorPanel(ResultMatrix.class, matrix, true);
+    m_PanelMatrix = new GenericObjectEditorPanel(ResultMatrix.class, matrix, true);
     panelParams.addParameter("Output", m_PanelMatrix);
 
     // significance
