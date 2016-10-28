@@ -145,7 +145,7 @@ public class ReportFactory {
       if (m_Report != null)
 	m_Fields = m_Report.getFields();
       else
-	m_Fields = new ArrayList<AbstractField>();
+	m_Fields = new ArrayList<>();
       m_NumDecimals = -1;
     }
 
@@ -252,7 +252,20 @@ public class ReportFactory {
      * @return		true if the search matches this row
      */
     public boolean isSearchMatch(SearchParameters params, int row) {
-      return params.matches(m_Fields.get(row).getName());
+      boolean		result;
+      AbstractField	field;
+
+      result = params.matches(m_Fields.get(row).getName());
+
+      if (!result) {
+	field = m_Fields.get(row);
+	if (field.getDataType() == DataType.NUMERIC)
+	  result = params.matches(m_Report.getDoubleValue(field));
+	else
+	  result = params.matches(m_Report.getStringValue(field));
+      }
+
+      return result;
     }
     
     /**
@@ -788,7 +801,7 @@ public class ReportFactory {
     public synchronized void setData(List<C> data) {
       List<ReportContainer>	conts;
 
-      conts = new ArrayList<ReportContainer>();
+      conts = new ArrayList<>();
       if (data != null) {
 	for (C cont: data)
 	  conts.add(cont);
@@ -808,7 +821,7 @@ public class ReportFactory {
       List<ReportContainer>	conts;
       ReportContainer		rcont;
 
-      conts = new ArrayList<ReportContainer>();
+      conts = new ArrayList<>();
       if (data != null) {
 	for (Report report: data) {
 	  rcont = getContainerManager().newContainer(report);
@@ -829,7 +842,7 @@ public class ReportFactory {
       List<C>	result;
       int	i;
 
-      result = new ArrayList<C>();
+      result = new ArrayList<>();
       for (i = 0; i < getContainerManager().count(); i++)
 	result.add((C) getContainerManager().get(i));
 
@@ -870,11 +883,11 @@ public class ReportFactory {
      * @param e		the event that the spectrum panel sent
      */
     public void dataChanged(DataChangeEvent e) {
-      int[]		indices;
-      int		i;
+      int[]			indices;
+      int			i;
       AbstractContainer		cont;
-      ReportContainer	rcont;
-      Report		report;
+      ReportContainer		rcont;
+      Report			report;
       AbstractContainerManager	manager;
 
       indices = e.getIndices();
@@ -1025,14 +1038,8 @@ public class ReportFactory {
      * 			remove report from display
      */
     protected void selectTable(final int index) {
-      Runnable	runnable;
-
-      runnable = new Runnable() {
-	public void run() {
-	  m_ReportContainerList.getTable().getSelectionModel().addSelectionInterval(index, index);
-	}
-      };
-      SwingUtilities.invokeLater(runnable);
+      SwingUtilities.invokeLater(() ->
+	m_ReportContainerList.getTable().getSelectionModel().addSelectionInterval(index, index));
     }
 
     /**
@@ -1556,7 +1563,7 @@ public class ReportFactory {
     public synchronized void setCompounds(List<Field> value) {
       List<Field>	list;
 
-      list = new ArrayList<Field>();
+      list = new ArrayList<>();
       list.add(new Field());
       list.addAll(value);
       m_ComboBoxCompounds.setModel(new DefaultComboBoxModel(list.toArray(new Field[list.size()])));
@@ -1578,7 +1585,7 @@ public class ReportFactory {
       DefaultComboBoxModel	model;
       int			i;
 
-      result = new ArrayList<Field>();
+      result = new ArrayList<>();
       model  = (DefaultComboBoxModel) m_ComboBoxCompounds.getModel();
       for (i = 1; i < model.getSize(); i++)
 	result.add((Field) model.getElementAt(i));
@@ -1674,7 +1681,7 @@ public class ReportFactory {
       List<String>	result;
       int		i;
 
-      result = new ArrayList<String>();
+      result = new ArrayList<>();
 
       for (i = 0; i < m_ModelCompounds.getSize(); i++)
 	result.add((String) m_ModelCompounds.get(i));
