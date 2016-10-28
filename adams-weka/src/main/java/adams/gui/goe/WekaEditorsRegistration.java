@@ -41,6 +41,12 @@ public class WekaEditorsRegistration
   /** for serialization. */
   private static final long serialVersionUID = -2908979337117222215L;
 
+  /** property indicating whether to use the Weka editors instead of the Adams ones. */
+  public final static String PROPERTY_WEKAEDITORS = "adams.gui.wekaeditors";
+
+  /** whether to use the Weka editors. */
+  protected static boolean m_UseWekaEditors = Boolean.getBoolean(PROPERTY_WEKAEDITORS);
+
   /** whether registration already occurred. */
   protected static boolean m_Registered;
 
@@ -148,6 +154,15 @@ public class WekaEditorsRegistration
   }
 
   /**
+   * Returns whether Weka editors should be used.
+   *
+   * @return		true if to use Weka editors
+   */
+  public static boolean useWekaEditors() {
+    return m_UseWekaEditors;
+  }
+
+  /**
    * Performs the registration of the editors.
    *
    * @return		true if registration successful
@@ -155,9 +170,9 @@ public class WekaEditorsRegistration
   protected boolean doRegister() {
     weka.gui.GenericObjectEditor.determineClasses();
     weka.gui.GenericObjectEditor.registerEditors();
-    // TODO
-    //registerEditors(AccessibleGenericObjectEditor.getProperties());
-    //registerHierarchies(AccessibleGenericObjectEditor.getProperties());
+    if (!useWekaEditors())
+      registerEditors(AccessibleGenericObjectEditor.getProperties());
+    registerHierarchies(AccessibleGenericObjectEditor.getProperties());
     m_Registered = true;
     return true;
   }
