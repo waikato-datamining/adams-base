@@ -88,6 +88,7 @@ public class DataTableModel
     result = 0;
     result++;  // index
     result++;  // modified
+    result++;  // ID
     result++;  // relation
     result++;  // class
     result++;  // source
@@ -109,10 +110,12 @@ public class DataTableModel
       case 1:
 	return "Mod";
       case 2:
-	return "Relation";
+	return "ID";
       case 3:
-	return "Class";
+	return "Relation";
       case 4:
+	return "Class";
+      case 5:
 	return "Source";
       default:
 	return null;
@@ -138,10 +141,12 @@ public class DataTableModel
       case 1:
 	return cont.isModified();
       case 2:
-	return cont.getData().relationName();
+	return cont.getID();
       case 3:
-	return (cont.getData().classIndex() == -1) ? "<none>" : cont.getData().classAttribute().name();
+	return cont.getData().relationName();
       case 4:
+	return (cont.getData().classIndex() == -1) ? "<none>" : cont.getData().classAttribute().name();
+      case 5:
 	return cont.getSource();
       default:
 	return null;
@@ -160,6 +165,8 @@ public class DataTableModel
       return Integer.class;
     if (columnIndex == 1)
       return Boolean.class;
+    if (columnIndex == 2)
+      return Integer.class;
     return super.getColumnClass(columnIndex);
   }
 
@@ -174,7 +181,7 @@ public class DataTableModel
   public boolean isCellEditable(int rowIndex, int columnIndex) {
     if (m_ReadOnly)
       return false;
-    if (columnIndex == 3)
+    if (columnIndex == 4)
       return true;
     return false;
   }
@@ -200,7 +207,7 @@ public class DataTableModel
     cont = m_Data.get(rowIndex);
 
     switch (columnIndex) {
-      case 3:  // class
+      case 4:  // class
 	name = "" + aValue;
 	if (name.isEmpty()) {
           cont.addUndoPoint("Unsetting class");

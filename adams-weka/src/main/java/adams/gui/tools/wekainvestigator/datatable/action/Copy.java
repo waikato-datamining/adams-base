@@ -61,7 +61,7 @@ public class Copy
     MemoryContainer	newCont;
 
     cont = getSelectedData()[0];
-    logMessage("Copying dataset: " + cont.getData().relationName() + " [" + cont.getSource() + "]");
+    logMessage("Copying dataset: " + cont.getID() + "/" + cont.getData().relationName() + " [" + cont.getSource() + "]");
     newName = GUIHelper.showInputDialog(getOwner(), "Please enter new relation name: ", "Copy of " + cont.getData().relationName());
     if (newName == null) {
       logMessage("Copying cancelled!");
@@ -70,6 +70,7 @@ public class Copy
     newCont = new MemoryContainer(new Instances(cont.getData()));
     newCont.getData().setRelationName(newName);
     getData().add(newCont);
+    logMessage("Successfully copied " + cont.getID() + " to " + newCont.getID() + "!");
     fireDataChange(new WekaInvestigatorDataEvent(getOwner().getOwner(), WekaInvestigatorDataEvent.ROWS_ADDED, getData().size() - 1));
   }
 

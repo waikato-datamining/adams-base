@@ -82,6 +82,7 @@ public class Append
     token  = new Token(data);
     append = new WekaInstancesAppend();
     msg    = append.setUp();
+    cont   = null;
     if (msg == null) {
       append.input(token);
       msg = append.execute();
@@ -97,7 +98,7 @@ public class Append
     if (msg != null)
       logError(msg, "Failed to append datasets");
     else
-      logMessage("Appended datasets successfully!");
+      logMessage("Appended datasets successfully into " + cont.getID());
   }
 
   /**

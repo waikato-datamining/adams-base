@@ -60,7 +60,7 @@ public class Randomize
     long		seed;
 
     cont = getSelectedData()[0];
-    logMessage("Randomizing dataset: " + cont.getData().relationName() + " [" + cont.getSource() + "]");
+    logMessage("Randomizing dataset: " + cont.getID() + "/" + cont.getData().relationName() + " [" + cont.getSource() + "]");
     seedStr = GUIHelper.showInputDialog(getOwner(), "Please enter seed value for randomization: ", "1");
     if (seedStr == null) {
       logMessage("Randomization cancelled!");
@@ -74,6 +74,7 @@ public class Randomize
     cont.addUndoPoint("randomizing with seed " + seed);
     cont.getData().randomize(new Random(seed));
     cont.setModified(true);
+    logMessage("Successfully randomized " + cont.getID() + "!");
     fireDataChange(new WekaInvestigatorDataEvent(getOwner().getOwner(), WekaInvestigatorDataEvent.ROWS_MODIFIED, getSelectedRows()[0]));
   }
 

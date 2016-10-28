@@ -123,6 +123,7 @@ public class Split
     testCont.getData().setRelationName(cont.getData().relationName() + "-test");
     getData().add(trainCont);
     getData().add(testCont);
+    logMessage("Successfully split " + cont.getID() + " into " + trainCont.getID() + " and " + testCont.getID() + "!");
     fireDataChange(new WekaInvestigatorDataEvent(getOwner().getOwner(), WekaInvestigatorDataEvent.ROWS_ADDED, new int[]{getData().size() - 2, getData().size() - 1}));
   }
 

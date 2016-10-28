@@ -57,7 +57,7 @@ public class Rename
     String  		newName;
 
     cont = getSelectedData()[0];
-    logMessage("Renaming dataset: " + cont.getData().relationName() + " [" + cont.getSource() + "]");
+    logMessage("Renaming dataset: " + cont.getID() + "/" + cont.getData().relationName() + " [" + cont.getSource() + "]");
     newName = GUIHelper.showInputDialog(getOwner(), "Please enter new relation name: ", cont.getData().relationName());
     if (newName == null) {
       logMessage("Renaming cancelled!");
@@ -66,6 +66,7 @@ public class Rename
     cont.addUndoPoint("renaming");
     cont.getData().setRelationName(newName);
     cont.setModified(true);
+    logMessage("Successfully renamed " + cont.getID() + ": " + newName);
     fireDataChange(new WekaInvestigatorDataEvent(getOwner().getOwner(), WekaInvestigatorDataEvent.ROWS_MODIFIED, getSelectedRows()[0]));
   }
 

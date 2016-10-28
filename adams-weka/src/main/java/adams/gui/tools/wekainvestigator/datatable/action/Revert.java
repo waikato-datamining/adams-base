@@ -55,10 +55,10 @@ public class Revert
   protected void doActionPerformed(ActionEvent e) {
     for (DataContainer cont: getSelectedData()) {
       if (cont.isModified() && cont.canReload()) {
-        logMessage("Reverting dataset: " + cont.getData().relationName() + " [" + cont.getSource() + "]");
+        logMessage("Reverting dataset: " + cont.getID() + "/" + cont.getData().relationName() + " [" + cont.getSource() + "]");
         if (cont.reload()) {
 	  getOwner().getOwner().updateClassAttribute(cont.getData());
-	  logMessage("Successfully reverted!");
+	  logMessage("Successfully reverted " + cont.getID() + "!");
           fireDataChange(new WekaInvestigatorDataEvent(getOwner().getOwner(), WekaInvestigatorDataEvent.ROWS_MODIFIED, getData().indexOf(cont)));
 	}
         else {
