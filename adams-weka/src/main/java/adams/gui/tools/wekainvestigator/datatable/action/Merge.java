@@ -98,7 +98,7 @@ public class Merge
       if (i > 0)
 	msg += ", ";
       data[i] = conts[i].getData();
-      msg += conts[i].getData().relationName();
+      msg += conts[i].getID() + "/" + conts[i].getData().relationName();
     }
     logMessage("Merging: " + msg);
 
