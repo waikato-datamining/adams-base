@@ -20,6 +20,15 @@
 package adams.gui.goe;
 
 
+import adams.core.ClassLister;
+
+import java.beans.PropertyEditor;
+import java.beans.PropertyEditorManager;
+import java.util.HashSet;
+import java.util.Properties;
+import java.util.Set;
+import java.util.logging.Level;
+
 /**
  * Registers first the WEKA GenericObjectEditor editors and the ADAMS ones.
  *
@@ -36,12 +45,106 @@ public class WekaEditorsRegistration
   protected static boolean m_Registered;
 
   /**
+   * Subclass of {@link weka.gui.GenericObjectEditor} to get access to the
+   * class hierarchies.
+   *
+   * @author  fracpete (fracpete at waikato dot ac dot nz)
+   * @version $Revision$
+   */
+  public static class AccessibleGenericObjectEditor
+    extends weka.gui.GenericObjectEditor {
+
+    /**
+     * Returns the editor properties.
+     *
+     * @return		the properties.
+     */
+    public static Properties getProperties() {
+      return EDITOR_PROPERTIES;
+    }
+  }
+
+  /**
    * Returns whether registration already occurred.
    *
    * @return		true if registration already occurred
    */
   protected boolean hasRegistered() {
     return m_Registered;
+  }
+
+  /**
+   * Reregisters class hierarchies with ADAMS object editors.
+   *
+   * @param props	the Weka class hierarchies
+   */
+  protected void registerEditors(Properties props) {
+    Class		cls;
+    PropertyEditor	editor;
+    Class		newEditor;
+
+    for (Object key: props.keySet()) {
+      try {
+	cls       = Class.forName("" + key);
+	editor    = PropertyEditorManager.findEditor(cls);
+	newEditor = null;
+
+	// find replacement
+	if (editor instanceof weka.gui.GenericObjectEditor)
+	  newEditor = GenericObjectEditor.class;
+	else if (editor instanceof weka.gui.FileEditor)
+	  newEditor = FileEditor.class;
+	else if (editor instanceof weka.gui.ColorEditor)
+	  newEditor = ColorEditor.class;
+
+	// register new editor
+	if (newEditor != null) {
+	  Editors.registerCustomEditor(cls, newEditor);
+	  getLogger().info(
+	    "Registering " + cls.getName() + ": "
+	      + editor.getClass().getName() + " -> " + newEditor.getName());
+	}
+      }
+      catch (Exception e) {
+	getLogger().log(Level.SEVERE, "Failed to register editors: " + key, e);
+      }
+    }
+  }
+
+  /**
+   * Registers the class hierarchies with ADAMS.
+   *
+   * @param props	the Weka class hierarchies
+   */
+  protected void registerHierarchies(Properties props) {
+    String	superclass;
+    String[]	classes;
+    Class	cls;
+    Set<String> packages;
+
+    for (Object key: props.keySet()) {
+      superclass = "" + key;
+      classes    = props.getProperty(superclass).replaceAll(" ", "").split(",");
+      packages   = new HashSet<>();
+      for (String clsname: classes) {
+	if (clsname.trim().isEmpty())
+	  continue;
+	try {
+	  cls = Class.forName(clsname);
+	  packages.add(cls.getPackage().getName());
+	}
+	catch (ClassNotFoundException e) {
+	  getLogger().warning("Class not found: " + clsname);
+	}
+	catch (Exception e) {
+	  getLogger().log(Level.SEVERE, "Failed to register class hierarchy: " + key, e);
+	}
+      }
+      if (packages.size() > 0) {
+	ClassLister.getSingleton().addHierarchy(superclass, packages.toArray(new String[packages.size()]));
+	getLogger().info("Registering class hierarchy: " + key);
+      }
+    }
   }
 
   /**
@@ -52,6 +155,9 @@ public class WekaEditorsRegistration
   protected boolean doRegister() {
     weka.gui.GenericObjectEditor.determineClasses();
     weka.gui.GenericObjectEditor.registerEditors();
+    // TODO
+    //registerEditors(AccessibleGenericObjectEditor.getProperties());
+    //registerHierarchies(AccessibleGenericObjectEditor.getProperties());
     m_Registered = true;
     return true;
   }
