@@ -15,13 +15,16 @@
 
 /**
  * AbstractEditorRegistration.java
- * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.goe;
 
-import java.io.Serializable;
-
 import adams.core.ClassLister;
+import adams.core.logging.Logger;
+import adams.core.logging.LoggingHelper;
+
+import java.io.Serializable;
+import java.util.logging.Level;
 
 /**
  * Ancestor for classes that register GenericObjectEditor editors.
@@ -34,6 +37,23 @@ public abstract class AbstractEditorRegistration
 
   /** for serialization. */
   private static final long serialVersionUID = 4364270584642868600L;
+
+  /** the static logger. */
+  protected static Logger LOGGER = LoggingHelper.getLogger(AbstractEditorRegistration.class);
+
+  /** the logger in use. */
+  protected Logger m_Logger;
+
+  /**
+   * Returns the logger in use.
+   *
+   * @return		the logger
+   */
+  protected synchronized Logger getLogger() {
+    if (m_Logger == null)
+      m_Logger = LoggingHelper.getLogger(getClass());
+    return m_Logger;
+  }
 
   /**
    * Returns whether registration already occurred.
@@ -87,14 +107,13 @@ public abstract class AbstractEditorRegistration
 	  System.err.println("Failed to register editors successfully: " + classname);
       }
       catch (Throwable t) {
-	System.err.println("Failed to register editors: " + classname);
-	t.printStackTrace();
+	LOGGER.log(Level.SEVERE, "Failed to register editors: " + classname, t);
       }
     }
 
     // register ADAMS as last one
     registration = new AdamsEditorsRegistration();
     if (!registration.register())
-      System.err.println("Failed to register ADMAS editors successfully!");
+      LOGGER.severe("Failed to register ADMAS editors successfully!");
   }
 }
