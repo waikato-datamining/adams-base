@@ -21,6 +21,7 @@
 package adams.gui.tools;
 
 import adams.core.ClassLister;
+import adams.core.ClassLocator;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.BrowserHelper.DefaultHyperlinkListener;
@@ -41,6 +42,7 @@ import javax.swing.event.ListSelectionEvent;
 import java.awt.BorderLayout;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -130,7 +132,7 @@ public class ClassHelpPanel
     split = new BaseSplitPane(BaseSplitPane.VERTICAL_SPLIT);
     add(split, BorderLayout.CENTER);
 
-    classes = getClasses();
+    classes = getClasses(true);
     m_ListClasses = new SearchableBaseList(classes.toArray(new String[classes.size()]));
     m_ListClasses.search(null, false);
     m_ListClasses.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -156,17 +158,33 @@ public class ClassHelpPanel
   /**
    * Returns the list of classes to use.
    *
+   * @param all		whether to list all classes or only managed ones
    * @return		the class names
    */
-  protected List<String> getClasses() {
+  protected List<String> getClasses(boolean all) {
     List<String> 	classes;
     int			i;
     String		name;
+    Iterator<String>	iter;
 
     classes = new ArrayList<>();
-    for (String supercls: ClassLister.getSingleton().getSuperclasses()) {
-      for (Class cls: ClassLister.getSingleton().getClasses(supercls))
-	classes.add(cls.getName());
+    if (all) {
+      // all classes
+      iter = ClassLocator.getSingleton().getCache().packages();
+      while (iter.hasNext()) {
+	for (String cls: ClassLocator.getSingleton().getCache().getClassnames(iter.next())) {
+	  if (cls.contains("$"))
+	    continue;
+	  classes.add(cls);
+	}
+      }
+    }
+    else {
+      // only managed classes
+      for (String supercls : ClassLister.getSingleton().getSuperclasses()) {
+	for (Class cls : ClassLister.getSingleton().getClasses(supercls))
+	  classes.add(cls.getName());
+      }
     }
     Collections.sort(classes);
     i = 0;
