@@ -21,34 +21,11 @@
 
 package adams.gui.menu;
 
-import adams.core.ClassLister;
-import adams.core.option.HtmlHelpProducer;
-import adams.core.option.OptionHandler;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.AbstractBasicMenuItemDefinition;
 import adams.gui.application.UserMode;
-import adams.gui.core.BaseSplitPane;
-import adams.gui.core.BrowserHelper.DefaultHyperlinkListener;
-import adams.gui.core.ConsolePanel;
-import adams.gui.core.Fonts;
 import adams.gui.core.GUIHelper;
-import adams.gui.core.SearchableBaseList;
-import com.googlecode.jfilechooserbookmarks.gui.BaseScrollPane;
-
-import javax.swing.BorderFactory;
-import javax.swing.JEditorPane;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.ListSelectionModel;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.event.ListSelectionEvent;
-import java.awt.BorderLayout;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.logging.Level;
+import adams.gui.tools.ClassHelpPanel;
 
 /**
  * Displays help for any selected class.
@@ -62,18 +39,6 @@ public class ClassHelp
   /** for serialization. */
   private static final long serialVersionUID = -6548349613973153076L;
 
-  /** the search panel. */
-  protected JTextField m_TextSearch;
-
-  /** the flow editor for displaying flows. */
-  protected SearchableBaseList m_ListClasses;
-
-  /** for displaying the help. */
-  protected JEditorPane m_TextPaneHelp;
-
-  /** the help producer. */
-  protected HtmlHelpProducer m_HelpProducer;
-
   /**
    * Initializes the menu item.
    *
@@ -81,16 +46,6 @@ public class ClassHelp
    */
   public ClassHelp(AbstractApplicationFrame owner) {
     super(owner);
-  }
-
-  /**
-   * Initializes members.
-   */
-  @Override
-  protected void initialize() {
-    super.initialize();
-
-    m_HelpProducer = new HtmlHelpProducer();
   }
 
   /**
@@ -139,105 +94,7 @@ public class ClassHelp
    */
   @Override
   public void launch() {
-    JPanel		panel;
-    BaseSplitPane	split;
-    List<String>	classes;
-    int			i;
-    String		name;
-
-    panel = new JPanel(new BorderLayout(5, 5));
-    panel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-
-    m_TextSearch = new JTextField();
-    m_TextSearch.getDocument().addDocumentListener(new DocumentListener() {
-      protected void update() {
-	m_ListClasses.search(m_TextSearch.getText().length() == 0 ? null : m_TextSearch.getText(), false);
-      }
-      @Override
-      public void insertUpdate(DocumentEvent e) {
-	update();
-      }
-      @Override
-      public void removeUpdate(DocumentEvent e) {
-	update();
-      }
-      @Override
-      public void changedUpdate(DocumentEvent e) {
-	update();
-      }
-    });
-    panel.add(m_TextSearch, BorderLayout.NORTH);
-
-    split = new BaseSplitPane(BaseSplitPane.VERTICAL_SPLIT);
-    panel.add(split, BorderLayout.CENTER);
-
-    classes = new ArrayList<>();
-    for (String supercls: ClassLister.getSingleton().getSuperclasses()) {
-      for (Class cls: ClassLister.getSingleton().getClasses(supercls))
-	classes.add(cls.getName());
-    }
-    Collections.sort(classes);
-    i = 0;
-    name = "";
-    while (i < classes.size()) {
-      if (!name.equals(classes.get(i))) {
-	name = classes.get(i);
-	i++;
-      }
-      else {
-	classes.remove(i);
-      }
-    }
-    m_ListClasses = new SearchableBaseList(classes.toArray(new String[classes.size()]));
-    m_ListClasses.search(null, false);
-    m_ListClasses.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-    m_ListClasses.addListSelectionListener((ListSelectionEvent e) -> {
-      String clsName = (String) m_ListClasses.getSelectedValue();
-      if (clsName == null)
-	return;
-      try {
-	Class cls = Class.forName(clsName);
-	Object obj = cls.newInstance();
-	String help = null;
-	boolean html = false;
-	if (obj instanceof OptionHandler) {
-	  m_HelpProducer.produce((OptionHandler) obj);
-	  help = m_HelpProducer.toString();
-	  html = true;
-	}
-	else {
-	  try {
-	    Method method = cls.getMethod("globalInfo");
-	    help = (String) method.invoke(obj);
-	  }
-	  catch (Exception ex2) {
-	    help = "";
-	  }
-	}
-	if (html)
-	  m_TextPaneHelp.setContentType("text/html");
-	else
-	  m_TextPaneHelp.setContentType("text/plain");
-	m_TextPaneHelp.setText(help);
-	m_TextPaneHelp.setCaretPosition(0);
-      }
-      catch (Exception ex) {
-	ConsolePanel.getSingleton().append(Level.SEVERE, "Failed to instantiate class: " + clsName, ex);
-      }
-    });
-    split.setTopComponent(new BaseScrollPane(m_ListClasses));
-
-    m_TextPaneHelp = new JEditorPane();
-    m_TextPaneHelp.setEditable(false);
-    m_TextPaneHelp.setFont(Fonts.getMonospacedFont());
-    m_TextPaneHelp.setAutoscrolls(true);
-    m_TextPaneHelp.addHyperlinkListener(new DefaultHyperlinkListener());
-    split.setBottomComponent(new BaseScrollPane(m_TextPaneHelp));
-
-    createChildFrame(panel, GUIHelper.getDefaultDialogDimension());
-
-    split.setResizeWeight(1.0);
-    split.setDividerLocation(0.5);
+    createChildFrame(new ClassHelpPanel(), GUIHelper.getDefaultDialogDimension());
   }
 
   /**
