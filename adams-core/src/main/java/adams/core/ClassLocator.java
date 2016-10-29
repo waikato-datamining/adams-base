@@ -413,6 +413,15 @@ public class ClassLocator
   }
 
   /**
+   * Returns the class cache.
+   *
+   * @return		the cache
+   */
+  public ClassCache getCache() {
+    return m_Cache;
+  }
+
+  /**
    * Returns the singleton, instantiates it if necessary.
    * 
    * @return		the singleton
