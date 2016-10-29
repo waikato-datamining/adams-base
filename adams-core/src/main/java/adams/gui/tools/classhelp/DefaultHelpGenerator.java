@@ -14,7 +14,7 @@
  */
 
 /**
- * AdamsOptionHandlerHelpGenerator.java
+ * DefaultHelpGenerator.java
  * Copyright (C) 2016 University of Waikato, Hamilton, NZ
  */
 
