@@ -22,6 +22,8 @@ package adams.gui.tools.classhelp;
 
 import adams.gui.core.ConsolePanel;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.logging.Level;
 
@@ -64,23 +66,76 @@ public class DefaultHelpGenerator
    */
   @Override
   public String generateHelp(Class cls) {
-    Object	obj;
+    StringBuilder	result;
+    Object		obj;
+    Method 		meth;
+    String		info;
+    Constructor<?>[]	constructors;
+    Field[]		fields;
+    Method[]		methods;
+    Class<?>[]		classes;
+
+    result = new StringBuilder();
 
     try {
       obj = cls.newInstance();
       try {
-        Method method = cls.getMethod("globalInfo");
-        return (String) method.invoke(obj);
+        meth = cls.getMethod("globalInfo");
+        info = (String) meth.invoke(obj);
+	result.append("DESCRIPTION\n");
+	result.append(info);
+	result.append("\n");
       }
       catch (Exception ex2) {
-        return null;
+	// ignored
+      }
+
+      constructors = cls.getConstructors();
+      if (constructors.length > 0) {
+	result.append("\n");
+	result.append("CONSTRUCTORS\n");
+	for (Constructor cons : constructors) {
+	  result.append(cons.toGenericString());
+	  result.append("\n");
+	}
+      }
+
+      methods = cls.getDeclaredMethods();
+      if (methods.length > 0) {
+	result.append("\n");
+	result.append("METHODS\n");
+	for (Method method : methods) {
+	  result.append(method.toGenericString());
+	  result.append("\n");
+	}
+      }
+
+      fields = cls.getDeclaredFields();
+      if (fields.length > 0) {
+	result.append("\n");
+	result.append("FIELDS\n");
+	for (Field field : fields) {
+	  result.append(field.toGenericString());
+	  result.append("\n");
+	}
+      }
+
+      classes = cls.getDeclaredClasses();
+      if (classes.length > 0) {
+	result.append("\n");
+	result.append("CLASSES\n");
+	for (Class c : classes) {
+	  result.append(c.toGenericString());
+	  result.append("\n");
+	}
       }
     }
     catch (Exception ex) {
       ConsolePanel.getSingleton().append(
 	Level.SEVERE, getClass().getName() + ": Failed to instantiate class: " + cls.getName(), ex);
+      return null;
     }
 
-    return null;
+    return result.toString().trim();
   }
 }
