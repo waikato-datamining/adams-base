@@ -28,9 +28,6 @@ import adams.core.Utils;
 import adams.core.logging.Logger;
 import adams.core.logging.LoggingHelper;
 import adams.core.option.AbstractCommandLineHandler;
-import adams.core.option.AbstractOptionProducer;
-import adams.core.option.ArrayProducer;
-import adams.core.option.OptionHandler;
 import adams.gui.core.BaseListWithButtons;
 import adams.gui.core.BasePanel;
 import adams.gui.core.GUIHelper;
@@ -134,15 +131,8 @@ public class GenericArrayEditor
 	handlerGOE.setValue(e, value);
 
 	// do we have a simple string display?
-	String display = null;
-	if (e instanceof GenericObjectEditor) {
-	  if (value instanceof OptionHandler)
-	    display = AbstractOptionProducer.toString(ArrayProducer.class, (OptionHandler) value);
-	  else
-	    display = value.getClass().getName().replaceAll(".*\\.", "");
-	  display = display.trim();
-	}
-	else if (e instanceof CustomStringRepresentationHandler) {
+	String display;
+	if (e instanceof CustomStringRepresentationHandler) {
 	  display = ((CustomStringRepresentationHandler) e).toCustomStringRepresentation(value);
 	}
 	else {
@@ -221,10 +211,10 @@ public class GenericArrayEditor
   protected Class m_ElementClass;
 
   /** The defaultlistmodel holding our data. */
-  protected DefaultListModel m_ListModel;
+  protected DefaultListModel<Object> m_ListModel;
 
   /** The defaultlistmodel holding the backup of our data. */
-  protected DefaultListModel m_ListModelBackup;
+  protected DefaultListModel<Object> m_ListModelBackup;
 
   /** The property editor for the class we are editing. */
   protected PropertyEditor m_ElementEditor;
@@ -327,117 +317,72 @@ public class GenericArrayEditor
 
     m_ButtonAdd = new JButton(GUIHelper.getIcon("add.gif"));
     m_ButtonAdd.setToolTipText("Add the current item to the array");
-    m_ButtonAdd.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	addObject(m_ElementEditor.getValue());
-      }
-    });
+    m_ButtonAdd.addActionListener((ActionEvent e) -> addObject(m_ElementEditor.getValue()));
 
     m_ButtonAddMultiple = new JButton(GUIHelper.getIcon("add_multiple.gif"));
     m_ButtonAddMultiple.setToolTipText("Add multiple items to the array");
-    m_ButtonAddMultiple.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	addMultipleObjects();
-      }
-    });
+    m_ButtonAddMultiple.addActionListener((ActionEvent e) -> addMultipleObjects());
 
     m_ButtonCopy = new JButton(GUIHelper.getIcon("copy.gif"));
     m_ButtonCopy.setToolTipText("Copies the currently selected array item to the edit field");
-    m_ButtonCopy.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	m_ElementEditor.setValue(ObjectCopyHelper.copyObject(m_ElementList.getSelectedValue()));
-      }
-    });
+    m_ButtonCopy.addActionListener((ActionEvent e) -> m_ElementEditor.setValue(ObjectCopyHelper.copyObject(m_ElementList.getSelectedValue())));
 
     m_ButtonRemove = new JButton(GUIHelper.getIcon("delete.gif"));
     m_ButtonRemove.setToolTipText("Remove the selected array item(s)");
-    m_ButtonRemove.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	removeSelectedObjects();
-      }
-    });
+    m_ButtonRemove.addActionListener((ActionEvent e) -> removeSelectedObjects());
 
     m_ButtonRemoveAll = new JButton(GUIHelper.getIcon("delete_all.gif"));
     m_ButtonRemoveAll.setToolTipText("Remove all the array items");
-    m_ButtonRemoveAll.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	removeAllObjects();
-      }
-    });
+    m_ButtonRemoveAll.addActionListener((ActionEvent e) -> removeAllObjects());
 
     m_ButtonEdit = new JButton(GUIHelper.getIcon("properties.gif"));
     m_ButtonEdit.setToolTipText("Edit the selected array item");
-    m_ButtonEdit.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	editSelectedObject();
-      }
-    });
+    m_ButtonEdit.addActionListener((ActionEvent e) -> editSelectedObject());
 
     m_ButtonUp = new JButton(GUIHelper.getIcon("arrow_up.gif"));
     m_ButtonUp.setToolTipText("Move the selected item(s) one up");
-    m_ButtonUp.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	m_ElementList.moveUp();
-	m_Modified = true;
-	updateButtons();
-      }
+    m_ButtonUp.addActionListener((ActionEvent e) -> {
+      m_ElementList.moveUp();
+      m_Modified = true;
+      updateButtons();
     });
 
     m_ButtonDown = new JButton(GUIHelper.getIcon("arrow_down.gif"));
     m_ButtonDown.setToolTipText("Move the selected item(s) one down");
-    m_ButtonDown.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	m_ElementList.moveDown();
-	m_Modified = true;
-	updateButtons();
-      }
+    m_ButtonDown.addActionListener((ActionEvent e) -> {
+      m_ElementList.moveDown();
+      m_Modified = true;
+      updateButtons();
     });
 
     m_ButtonOK = new JButton("OK");
     m_ButtonOK.setMnemonic('O');
     m_ButtonOK.setToolTipText("Applies the changes and closes the dialog");
     m_ButtonOK.setEnabled(false);
-    m_ButtonOK.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	apply();
-	firePropertyChange();
-	close();
-      }
+    m_ButtonOK.addActionListener((ActionEvent e) -> {
+      apply();
+      firePropertyChange();
+      close();
     });
 
     m_ButtonCancel = new JButton("Cancel");
     m_ButtonCancel.setMnemonic('C');
     m_ButtonCancel.setToolTipText("Cancels the dialog");
-    m_ButtonCancel.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	restore();
-	updateButtons();
-	close();
-      }
+    m_ButtonCancel.addActionListener((ActionEvent e) -> {
+      restore();
+      updateButtons();
+      close();
     });
 
     m_ButtonRevert = new JButton(GUIHelper.getIcon("undo.gif"));
     m_ButtonRevert.setToolTipText("Reverts the changes");
-    m_ButtonRevert.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	restore();
-      }
-    });
+    m_ButtonRevert.addActionListener((ActionEvent e) -> restore());
 
     m_ElementList = new BaseListWithButtons();
     m_ElementList.setDoubleClickButton(m_ButtonEdit);
     m_ElementList.setInfoVisible(true);
-    m_ElementList.addListSelectionListener(new ListSelectionListener() {
-      public void valueChanged(ListSelectionEvent e) {
-	updateButtons();
-      }
-    });
-    m_ElementList.addRemoveItemsListener(new RemoveItemsListener() {
-      @Override
-      public void removeItems(RemoveItemsEvent e) {
-	removeSelectedObjects();
-      }
-    });
+    m_ElementList.addListSelectionListener((ListSelectionEvent e) -> updateButtons());
+    m_ElementList.addRemoveItemsListener((RemoveItemsEvent e) -> removeSelectedObjects());
   }
 
   /**
@@ -625,8 +570,8 @@ public class GenericArrayEditor
 	m_IsPrimitive   = primitive;
 
 	// Create the ListModel and populate it
-	m_ListModel       = new DefaultListModel();
-	m_ListModelBackup = new DefaultListModel();
+	m_ListModel       = new DefaultListModel<>();
+	m_ListModelBackup = new DefaultListModel<>();
 	m_ElementClass = elementClass;
 	for (i = 0; i < Array.getLength(o); i++) {
 	  if (primitive) {
@@ -989,15 +934,15 @@ public class GenericArrayEditor
    * @return		true if all objects were added successfully
    */
   public boolean addMultipleObjects(Object[] objects) {
-    boolean		result;
-    int 		selected;
-    int			i;
-    DefaultListModel	updated;
+    boolean			result;
+    int 			selected;
+    int				i;
+    DefaultListModel<Object>	updated;
 
     result   = true;
     objects  = ObjectCopyHelper.copyObjects(objects);
     selected = m_ElementList.getSelectedIndex();
-    updated  = new DefaultListModel();
+    updated  = new DefaultListModel<>();
     for (i = 0; i < m_ListModel.getSize(); i++)
       updated.addElement(m_ListModel.getElementAt(i));
     for (i = 0; i < objects.length; i++) {
@@ -1035,15 +980,15 @@ public class GenericArrayEditor
    * Removes all currently selected objects.
    */
   protected void removeSelectedObjects() {
-    int[] 		selected;
-    int 		i;
-    DefaultListModel	listModel;
-    TIntHashSet		selIndices;
+    int[] 			selected;
+    int 			i;
+    DefaultListModel<Object>	listModel;
+    TIntHashSet			selIndices;
 
     selected = m_ElementList.getSelectedIndices();
     if (selected != null) {
       selIndices = new TIntHashSet(selected);
-      listModel = new DefaultListModel();
+      listModel = new DefaultListModel<>();
       for (i = 0; i < m_ListModel.getSize(); i++) {
 	if (selIndices.contains(i))
 	  continue;
