@@ -647,26 +647,39 @@ public class InvestigatorPanel
   public void openFile() {
     int				retVal;
     final AbstractFileLoader	loader;
+    final File[]		files;
+    SwingWorker			worker;
 
     retVal = m_FileChooser.showOpenDialog(this);
     if (retVal != WekaFileChooser.APPROVE_OPTION)
       return;
 
     loader = m_FileChooser.getReader();
-    for (final File file: m_FileChooser.getSelectedFiles()) {
-      logAndShowMessage("Loading: " + file);
-      final FileContainer cont = new FileContainer(loader, file);
-      cont.getUndo().setEnabled(isUndoEnabled());
-      updateClassAttribute(cont.getData());
-      updateRelationName(file, cont.getData());
-      SwingUtilities.invokeLater(() -> {
-	m_Data.add(cont);
-	if (m_RecentFilesHandler != null)
-	  m_RecentFilesHandler.addRecentItem(new Setup(file, loader));
-	logAndShowMessage("Loaded: " + file);
-	fireDataChange(new WekaInvestigatorDataEvent(this, WekaInvestigatorDataEvent.ROWS_ADDED, m_Data.size() - 1));
-      });
-    }
+    files  = m_FileChooser.getSelectedFiles();
+
+    worker = new SwingWorker() {
+      @Override
+      protected Object doInBackground() throws Exception {
+	for (final File file: files) {
+	  logAndShowMessage("Loading: " + file);
+	  final FileContainer cont = new FileContainer(loader, file);
+	  cont.getUndo().setEnabled(isUndoEnabled());
+	  updateClassAttribute(cont.getData());
+	  updateRelationName(file, cont.getData());
+	  SwingUtilities.invokeLater(() -> {
+	    m_Data.add(cont);
+	    if (m_RecentFilesHandler != null)
+	      m_RecentFilesHandler.addRecentItem(new Setup(file, loader));
+	    logAndShowMessage("Loaded: " + file);
+	    fireDataChange(
+	      new WekaInvestigatorDataEvent(
+		InvestigatorPanel.this, WekaInvestigatorDataEvent.ROWS_ADDED, m_Data.size() - 1));
+	  });
+	}
+	return null;
+      }
+    };
+    worker.execute();
   }
 
   /**
