@@ -67,7 +67,7 @@ public class Moment extends AbstractBufferedImageFeatureGenerator {
     HeaderDefinition	result;
 
     result = new HeaderDefinition();
-    result.add(m_BufferedMoment.getClass().getSimpleName(), DataType.NUMERIC);
+    result.add(m_BufferedMoment.toCommandLine().replace(" ", "").replace(m_BufferedMoment.getClass().getPackage().getName() + ".", ""), DataType.NUMERIC);
 
     return result;
   }
