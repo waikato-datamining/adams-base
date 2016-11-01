@@ -362,6 +362,7 @@ public class PreprocessTab
       return;
 
     m_Worker.stop();
+    m_Worker = null;
     logMessage("Stopped filtering using " + OptionUtils.getCommandLine(m_CurrentFilter));
     updateButtons();
   }

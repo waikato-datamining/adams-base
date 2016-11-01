@@ -758,6 +758,7 @@ public class AttributeSelectionTab
       return;
 
     m_Worker.stop();
+    m_Worker = null;
     logMessage("Stopped evaluation '" + m_CurrentEvaluation.getName() + "' using: " + OptionUtils.getCommandLine(m_CurrentEvaluator));
     updateButtons();
   }
