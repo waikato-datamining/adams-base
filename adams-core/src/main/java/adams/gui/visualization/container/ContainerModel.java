@@ -368,23 +368,29 @@ public class ContainerModel<M extends AbstractContainerManager, C extends Abstra
    * @return			the value
    */
   public Object getValueAt(int rowIndex, int columnIndex) {
-    C 				cont;
+    C 		cont;
 
     if (m_Manager.isUpdating())
       return null;
 
-    if (rowIndex < m_Manager.countFiltered()) {
-      cont = (C) m_Manager.getFiltered(rowIndex);
-      if (cont == null)
-        return null;
-
-      if (columnIndex == getVisibilityColumn())
-        return ((VisibilityContainer) cont).isVisible();
-      else if (columnIndex == getDatabaseIDColumn())
-        return ((DatabaseContainer) cont).getDatabaseID();
-      else if (columnIndex == getDataColumn())
-        return m_Generator.getDisplay(cont);
+    cont = null;
+    if (m_Manager.isFiltered()) {
+      if (rowIndex < m_Manager.countFiltered())
+        cont = (C) m_Manager.getFiltered(rowIndex);
     }
+    else {
+      if (rowIndex < m_Manager.count())
+        cont = (C) m_Manager.get(rowIndex);
+    }
+    if (cont == null)
+      return null;
+
+    if (columnIndex == getVisibilityColumn())
+      return ((VisibilityContainer) cont).isVisible();
+    else if (columnIndex == getDatabaseIDColumn())
+      return ((DatabaseContainer) cont).getDatabaseID();
+    else if (columnIndex == getDataColumn())
+      return m_Generator.getDisplay(cont);
 
     return null;
   }
@@ -398,12 +404,20 @@ public class ContainerModel<M extends AbstractContainerManager, C extends Abstra
    */
   @Override
   public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-    if (rowIndex < m_Manager.countFiltered()) {
-      if (showVisibilityColumn()) {
-        if (columnIndex == 0) {
-          ((VisibilityContainer) m_Manager.getFiltered(rowIndex)).setVisible((Boolean) aValue);
-          // TODO update?
-        }
+    if (m_Manager.isFiltered()) {
+      if (rowIndex < m_Manager.countFiltered()) {
+	if (showVisibilityColumn()) {
+	  if (columnIndex == 0)
+	    ((VisibilityContainer) m_Manager.getFiltered(rowIndex)).setVisible((Boolean) aValue);
+	}
+      }
+    }
+    else {
+      if (rowIndex < m_Manager.count()) {
+	if (showVisibilityColumn()) {
+	  if (columnIndex == 0)
+	    ((VisibilityContainer) m_Manager.get(rowIndex)).setVisible((Boolean) aValue);
+	}
       }
     }
   }
