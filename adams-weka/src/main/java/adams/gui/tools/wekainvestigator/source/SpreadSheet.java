@@ -20,11 +20,14 @@
 
 package adams.gui.tools.wekainvestigator.source;
 
+import adams.core.Utils;
 import adams.data.io.input.SpreadSheetReader;
 import adams.gui.chooser.SpreadSheetFileChooser;
 import adams.gui.tools.wekainvestigator.data.SpreadSheetContainer;
+import adams.gui.tools.wekainvestigator.job.InvestigatorJob;
 
 import java.awt.event.ActionEvent;
+import java.io.File;
 
 /**
  * For loading ADAMS spreadsheets.
@@ -59,9 +62,13 @@ public class SpreadSheet
     int					retVal;
     SpreadSheetReader			reader;
     adams.data.spreadsheet.SpreadSheet	sheet;
+    final File[]			files;
+    InvestigatorJob			job;
 
-    if (m_FileChooser == null)
+    if (m_FileChooser == null) {
       m_FileChooser = new SpreadSheetFileChooser();
+      m_FileChooser.setMultiSelectionEnabled(true);
+    }
 
     retVal = m_FileChooser.showOpenDialog(m_Owner);
     if (retVal != SpreadSheetFileChooser.APPROVE_OPTION)
@@ -74,6 +81,14 @@ public class SpreadSheet
       return;
     }
 
-    addData(new SpreadSheetContainer(reader, m_FileChooser.getSelectedFile()));
+    files = m_FileChooser.getSelectedFiles();
+    job = new InvestigatorJob(getOwner(), "Loading file(s): " + Utils.arrayToString(files)) {
+      @Override
+      protected void doRun() {
+	for (File file: files)
+	  addData(new SpreadSheetContainer(reader, file));
+      }
+    };
+    getOwner().startExecution(job);
   }
 }

@@ -26,6 +26,7 @@ import adams.core.DateFormat;
 import adams.core.DateUtils;
 import adams.core.MessageCollection;
 import adams.core.Properties;
+import adams.core.Shortening;
 import adams.core.StatusMessageHandler;
 import adams.core.Utils;
 import adams.core.option.OptionUtils;
@@ -51,6 +52,7 @@ import adams.gui.event.WekaInvestigatorDataEvent;
 import adams.gui.goe.GenericObjectEditorDialog;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
 import adams.gui.tools.wekainvestigator.data.FileContainer;
+import adams.gui.tools.wekainvestigator.job.InvestigatorJob;
 import adams.gui.tools.wekainvestigator.source.AbstractSource;
 import adams.gui.tools.wekainvestigator.tab.AbstractInvestigatorTab;
 import adams.gui.tools.wekainvestigator.tab.InvestigatorTabbedPane;
@@ -64,7 +66,6 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.SwingUtilities;
-import javax.swing.SwingWorker;
 import javax.swing.event.ChangeEvent;
 import java.awt.BorderLayout;
 import java.awt.Dialog.ModalityType;
@@ -129,6 +130,9 @@ public class InvestigatorPanel
   /** the action for selecting the relation name heuristic. */
   protected BaseAction m_ActionFileRelationName;
 
+  /** the action for stopping a job. */
+  protected BaseAction m_ActionFileStopJob;
+
   /** the submenu for a new tab. */
   protected BaseMenu m_MenuTabNewTab;
 
@@ -162,6 +166,12 @@ public class InvestigatorPanel
   /** for timestamps in the statusbar. */
   protected DateFormat m_StatusBarDateFormat;
 
+  /** for executing operations (loading files etc). */
+  protected Thread m_Worker;
+
+  /** the title of the current job. */
+  protected String m_Job;
+
   /**
    * Initializes the members.
    */
@@ -174,6 +184,7 @@ public class InvestigatorPanel
     m_Log                 = new StringBuilder();
     m_Data                = new ArrayList<>();
     m_RecentFilesHandler  = null;
+    m_Worker              = null;
     m_StatusBarDateFormat = DateUtils.getTimeFormatter();
     m_FileChooser         = new WekaFileChooser();
     m_FileChooser.setMultiSelectionEnabled(true);
@@ -246,14 +257,12 @@ public class InvestigatorPanel
       private static final long serialVersionUID = 1028160012672649573L;
       @Override
       protected void doActionPerformed(ActionEvent e) {
-	SwingWorker worker = new SwingWorker() {
-	  @Override
-	  protected Object doInBackground() throws Exception {
+	InvestigatorJob job = new InvestigatorJob(InvestigatorPanel.this, "Copying tab") {
+	  protected void doRun() {
 	    int index = m_TabbedPane.getSelectedIndex();
 	    if (index == -1)
-	      return null;
+	      return;
 	    AbstractInvestigatorTab tab = (AbstractInvestigatorTab) m_TabbedPane.getComponentAt(index);
-	    logAndShowMessage("Copying tab: " + tab.getTitle());
 	    AbstractInvestigatorTab tabNew;
 	    MessageCollection errors = new MessageCollection();
 	    try {
@@ -267,13 +276,9 @@ public class InvestigatorPanel
 	    if (!errors.isEmpty())
 	      GUIHelper.showErrorMessage(
 		InvestigatorPanel.this, "Errors occurred when copying tab:\n" + errors);
-	    else
-	      logAndShowMessage("Copyied tab: " + tab.getTitle());
-	    updateMenu();
-	    return null;
 	  }
 	};
-	worker.execute();
+	startExecution(job);
       }
     };
     m_ActionTabCopyTab.setName("Copy tab");
@@ -344,12 +349,24 @@ public class InvestigatorPanel
     };
     m_ActionFileRelationName.setName("Relation name...");
     m_ActionFileRelationName.setIcon(GUIHelper.getEmptyIcon());
+
+    m_ActionFileStopJob = new AbstractBaseAction() {
+      private static final long serialVersionUID = 429814291989678829L;
+      @Override
+      protected void doActionPerformed(ActionEvent e) {
+	stopExecution();
+      }
+    };
+    m_ActionFileStopJob.setName("Stop job");
+    m_ActionFileStopJob.setIcon(GUIHelper.getIcon("stop.gif"));
+    m_ActionFileStopJob.setAccelerator("ctrl pressed K");
   }
 
   /**
    * Updates the actions.
    */
   protected void updateActions() {
+    m_ActionFileStopJob.setEnabled(isBusy());
     m_ActionTabCopyTab.setEnabled(m_TabbedPane.getSelectedIndex() > -1);
     m_ActionTabCloseTab.setEnabled(m_TabbedPane.getTabCount() > 0);
     m_ActionTabCloseAllTabs.setEnabled(m_TabbedPane.getTabCount() > 0);
@@ -418,6 +435,10 @@ public class InvestigatorPanel
 
       // File/Relation name
       menu.add(m_ActionFileRelationName);
+
+      // File/Stop job
+      menu.addSeparator();
+      menu.add(m_ActionFileStopJob);
 
       menu.addSeparator();
 
@@ -514,6 +535,56 @@ public class InvestigatorPanel
   @Override
   protected String getDefaultTitle() {
     return "WEKA Investigator";
+  }
+
+  /**
+   * Returns whether the tab is busy.
+   *
+   * @return		true if busy
+   */
+  public boolean isBusy() {
+    return (m_Worker != null);
+  }
+
+  /**
+   * Starts a job.
+   *
+   * @param job		the job to execute
+   */
+  public boolean startExecution(InvestigatorJob job) {
+    if (isBusy()) {
+      logAndShowMessage("Busy, cannot start '" + job.getTitle() + "'!");
+      return false;
+    }
+
+    m_Worker = new Thread(job);
+    m_Worker.start();
+    m_ActionFileStopJob.setName("Stop job: " + Shortening.shortenEnd(job.getTitle(), 40));
+    updateMenu();
+
+    return true;
+  }
+
+  /**
+   * Stops the evaluation.
+   */
+  public void stopExecution() {
+    if (m_Worker == null)
+      return;
+
+    m_Worker.stop();
+    logMessage("Stopped  '" + m_Job + "'!");
+    executionFinished();
+    updateMenu();
+  }
+
+  /**
+   * Gets called when a job finishes.
+   */
+  public void executionFinished() {
+    m_Worker = null;
+    m_ActionFileStopJob.setName("Stop job");
+    updateMenu();
   }
 
   /**
@@ -658,7 +729,7 @@ public class InvestigatorPanel
     int				retVal;
     final AbstractFileLoader	loader;
     final File[]		files;
-    SwingWorker			worker;
+    InvestigatorJob 		job;
 
     retVal = m_FileChooser.showOpenDialog(this);
     if (retVal != WekaFileChooser.APPROVE_OPTION)
@@ -667,9 +738,9 @@ public class InvestigatorPanel
     loader = m_FileChooser.getReader();
     files  = m_FileChooser.getSelectedFiles();
 
-    worker = new SwingWorker() {
+    job = new InvestigatorJob(this, "Loading: " + Utils.arrayToString(files)) {
       @Override
-      protected Object doInBackground() throws Exception {
+      protected void doRun() {
 	for (final File file: files) {
 	  logAndShowMessage("Loading: " + file);
 	  final FileContainer cont = new FileContainer(loader, file);
@@ -686,10 +757,9 @@ public class InvestigatorPanel
 		InvestigatorPanel.this, WekaInvestigatorDataEvent.ROWS_ADDED, m_Data.size() - 1));
 	  });
 	}
-	return null;
       }
     };
-    worker.execute();
+    startExecution(job);
   }
 
   /**
@@ -697,18 +767,17 @@ public class InvestigatorPanel
    */
   public void openFile(File file) {
     AbstractFileLoader  loader;
-    SwingWorker 	worker;
+    InvestigatorJob 	job;
 
-    logAndShowMessage("Loading: " + file);
     loader = m_FileChooser.getReaderForFile(file);
     if (loader == null) {
       logError("Failed to determine loader for: " + file, "Error loading");
       return;
     }
 
-    worker = new SwingWorker() {
+    job = new InvestigatorJob(this, "Loading: " + file) {
       @Override
-      protected Object doInBackground() throws Exception {
+      protected void doRun() {
 	final FileContainer cont = new FileContainer(loader, file);
 	cont.getUndo().setEnabled(isUndoEnabled());
 	updateClassAttribute(cont.getData());
@@ -721,10 +790,9 @@ public class InvestigatorPanel
 	  fireDataChange(new WekaInvestigatorDataEvent(
 	    InvestigatorPanel.this, WekaInvestigatorDataEvent.ROWS_ADDED, m_Data.size() - 1));
 	});
-	return null;
       }
     };
-    worker.execute();
+    startExecution(job);
   }
 
   /**
@@ -734,7 +802,7 @@ public class InvestigatorPanel
    */
   public void openRecent(RecentItemEvent<JMenu,Setup> e) {
     AbstractFileLoader 	loader;
-    SwingWorker 	worker;
+    InvestigatorJob 	job;
 
     loader = (AbstractFileLoader) e.getItem().getHandler();
     if (loader == null) {
@@ -742,11 +810,9 @@ public class InvestigatorPanel
       return;
     }
 
-    worker = new SwingWorker() {
-      @Override
-      protected Object doInBackground() throws Exception {
+    job = new InvestigatorJob(this, "Loading: " + e.getItem()) {
+      protected void doRun() {
 	try {
-	  logAndShowMessage("Loading: " + e.getItem());
 	  loader.setFile(e.getItem().getFile());
 	  final FileContainer cont = new FileContainer(loader, e.getItem().getFile());
 	  updateClassAttribute(cont.getData());
@@ -762,10 +828,9 @@ public class InvestigatorPanel
 	catch (Exception ex) {
 	  logError("Failed to load file:\n" + e.getItem() + "\n" + Utils.throwableToString(ex), "Error reloading data");
 	}
-	return null;
       }
     };
-    worker.execute();
+    startExecution(job);
   }
 
   /**

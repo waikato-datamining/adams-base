@@ -21,6 +21,7 @@
 package adams.gui.tools.wekainvestigator.source;
 
 import adams.gui.tools.wekainvestigator.data.DatabaseContainer;
+import adams.gui.tools.wekainvestigator.job.InvestigatorJob;
 import weka.gui.sql.SqlViewerDialog;
 
 import javax.swing.JOptionPane;
@@ -54,6 +55,7 @@ public class Database
   @Override
   protected void doActionPerformed(ActionEvent e) {
     SqlViewerDialog	dialog;
+    InvestigatorJob 	job;
 
     dialog = new SqlViewerDialog(null);
     dialog.setDefaultCloseOperation(SqlViewerDialog.DISPOSE_ON_CLOSE);
@@ -63,6 +65,12 @@ public class Database
     if (dialog.getReturnValue() != JOptionPane.OK_OPTION)
       return;
 
-    addData(new DatabaseContainer(dialog.getURL(), dialog.getUser(), dialog.getPassword(), dialog.getQuery()));
+    job = new InvestigatorJob(getOwner(), "Loading data from database") {
+      @Override
+      protected void doRun() {
+	addData(new DatabaseContainer(dialog.getURL(), dialog.getUser(), dialog.getPassword(), dialog.getQuery()));
+      }
+    };
+    getOwner().startExecution(job);
   }
 }

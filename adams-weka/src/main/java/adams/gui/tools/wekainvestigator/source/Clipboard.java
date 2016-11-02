@@ -30,6 +30,7 @@ import adams.data.io.input.SpreadSheetReader;
 import adams.gui.core.GUIHelper;
 import adams.gui.goe.GenericObjectEditorDialog;
 import adams.gui.tools.wekainvestigator.data.MemoryContainer;
+import adams.gui.tools.wekainvestigator.job.InvestigatorJob;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 import weka.core.Instances;
 
@@ -89,13 +90,8 @@ public class Clipboard
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    String			content;
     GenericObjectEditorDialog	dialog;
-    StringToSpreadSheet 	str2sheet;
-    SpreadSheetToWekaInstances	sheet2weka;
-    MultiConversion		multi;
-    String			msg;
-    Instances			data;
+    InvestigatorJob		job;
 
     if (!ClipboardHelper.canPasteStringFromClipboard()) {
       GUIHelper.showErrorMessage(getOwner(), "Clipboard empty!");
@@ -113,23 +109,29 @@ public class Clipboard
     if (dialog.getResult() != GenericObjectEditorDialog.APPROVE_OPTION)
       return;
 
-    m_LastReader = (SpreadSheetReader) (dialog.getCurrent());
-    str2sheet = new StringToSpreadSheet();
-    str2sheet.setReader(m_LastReader);
-    str2sheet.setInput(ClipboardHelper.pasteStringFromClipboard());
-    sheet2weka = new SpreadSheetToWekaInstances();
-    multi = new MultiConversion();
-    multi.setSubConversions(new Conversion[]{str2sheet, sheet2weka});
-    multi.setInput(ClipboardHelper.pasteStringFromClipboard());
-    msg  = multi.convert();
-    data = null;
-    if (msg == null)
-      data = (Instances) multi.getOutput();
-    else
-      GUIHelper.showErrorMessage(getOwner(), "Failed to parse clipboard content!\n" + msg);
-    multi.cleanUp();
+    job = new InvestigatorJob(getOwner(), "Loading clipboard data") {
+      @Override
+      protected void doRun() {
+	m_LastReader = (SpreadSheetReader) (dialog.getCurrent());
+	StringToSpreadSheet str2sheet = new StringToSpreadSheet();
+	str2sheet.setReader(m_LastReader);
+	str2sheet.setInput(ClipboardHelper.pasteStringFromClipboard());
+	SpreadSheetToWekaInstances sheet2weka = new SpreadSheetToWekaInstances();
+	MultiConversion multi = new MultiConversion();
+	multi.setSubConversions(new Conversion[]{str2sheet, sheet2weka});
+	multi.setInput(ClipboardHelper.pasteStringFromClipboard());
+	String msg  = multi.convert();
+	Instances data = null;
+	if (msg == null)
+	  data = (Instances) multi.getOutput();
+	else
+	  GUIHelper.showErrorMessage(getOwner(), "Failed to parse clipboard content!\n" + msg);
+	multi.cleanUp();
 
-    data.setRelationName("Clipboard - " + DateUtils.getTimestampFormatter().format(new Date()));
-    addData(new MemoryContainer(data));
+	data.setRelationName("Clipboard - " + DateUtils.getTimestampFormatter().format(new Date()));
+	addData(new MemoryContainer(data));
+      }
+    };
+    getOwner().startExecution(job);
   }
 }

@@ -23,6 +23,7 @@ package adams.gui.tools.wekainvestigator.source;
 import adams.core.option.OptionUtils;
 import adams.gui.goe.GenericObjectEditorDialog;
 import adams.gui.tools.wekainvestigator.data.DataGeneratorContainer;
+import adams.gui.tools.wekainvestigator.job.InvestigatorJob;
 import weka.datagenerators.classifiers.classification.LED24;
 
 import java.awt.Dialog.ModalityType;
@@ -59,6 +60,7 @@ public class DataGenerator
   @Override
   protected void doActionPerformed(ActionEvent e) {
     GenericObjectEditorDialog	dialog;
+    InvestigatorJob 		job;
 
     if (m_Generator == null)
       m_Generator = new LED24();
@@ -82,6 +84,12 @@ public class DataGenerator
     m_Generator = (weka.datagenerators.DataGenerator) dialog.getCurrent();
     dialog.dispose();
 
-    addData(new DataGeneratorContainer((weka.datagenerators.DataGenerator) OptionUtils.shallowCopy(m_Generator)));
+    job = new InvestigatorJob(getOwner(), "Generating data with " + dialog.getCurrent().getClass().getSimpleName()) {
+      @Override
+      protected void doRun() {
+	addData(new DataGeneratorContainer((weka.datagenerators.DataGenerator) OptionUtils.shallowCopy(m_Generator)));
+      }
+    };
+    getOwner().startExecution(job);
   }
 }
