@@ -401,6 +401,8 @@ public abstract class AbstractContainerManager<T extends AbstractContainer>
       result = m_UpdateList.remove(index);
     else
       result = m_List.remove(index);
+    if (isFiltered())
+      m_FilteredList.remove(index);
 
     notifyDataChangeListeners(new DataChangeEvent(this, Type.REMOVAL, index, result));
 
@@ -516,7 +518,7 @@ public abstract class AbstractContainerManager<T extends AbstractContainer>
    * @return		the container, null if index out of range
    */
   public T getFiltered(int index) {
-    if (m_FilteredList == null)
+    if ((m_FilteredList == null) || (index >= m_FilteredList.size()))
       return null;
     else
       return m_List.get(m_FilteredList.get(index));
