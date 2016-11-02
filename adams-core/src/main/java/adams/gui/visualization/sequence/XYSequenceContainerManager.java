@@ -24,7 +24,7 @@ import adams.data.sequence.XYSequence;
 import adams.gui.event.DataChangeEvent;
 import adams.gui.event.DataChangeEvent.Type;
 import adams.gui.event.DataChangeListener;
-import adams.gui.visualization.container.AbstractSearchableContainerManager;
+import adams.gui.visualization.container.AbstractContainerManager;
 import adams.gui.visualization.container.ColorContainerManager;
 import adams.gui.visualization.container.ContainerListManager;
 import adams.gui.visualization.container.NamedContainerManager;
@@ -44,7 +44,7 @@ import java.util.List;
  * @version $Revision$
  */
 public class XYSequenceContainerManager
-  extends AbstractSearchableContainerManager<XYSequenceContainer>
+  extends AbstractContainerManager<XYSequenceContainer>
   implements VisibilityContainerManager<XYSequenceContainer>, NamedContainerManager, ColorContainerManager {
 
   /** for serialization. */

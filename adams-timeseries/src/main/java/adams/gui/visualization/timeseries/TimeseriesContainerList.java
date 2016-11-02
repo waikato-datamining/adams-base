@@ -20,7 +20,7 @@
 
 package adams.gui.visualization.timeseries;
 
-import adams.gui.visualization.container.AbstractSearchableContainerList;
+import adams.gui.visualization.container.AbstractContainerList;
 import adams.gui.visualization.container.ContainerTable;
 
 /**
@@ -30,7 +30,7 @@ import adams.gui.visualization.container.ContainerTable;
  * @version $Revision$
  */
 public class TimeseriesContainerList<M extends TimeseriesContainerManager, C extends TimeseriesContainer>
-  extends AbstractSearchableContainerList<M, C> {
+  extends AbstractContainerList<M, C> {
 
   /** for serialization. */
   private static final long serialVersionUID = -1049275455980966385L;

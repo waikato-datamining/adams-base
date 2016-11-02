@@ -20,7 +20,7 @@
 
 package adams.gui.visualization.spreadsheet;
 
-import adams.gui.visualization.container.AbstractSearchableContainerList;
+import adams.gui.visualization.container.AbstractContainerList;
 
 /**
  * A panel that lists SpreadSheetRow objects in a JTable.
@@ -29,7 +29,7 @@ import adams.gui.visualization.container.AbstractSearchableContainerList;
  * @version $Revision: 12196 $
  */
 public class SpreadSheetRowContainerList
-  extends AbstractSearchableContainerList<SpreadSheetRowContainerManager,SpreadSheetRowContainer> {
+  extends AbstractContainerList<SpreadSheetRowContainerManager,SpreadSheetRowContainer> {
 
   /** for serialization. */
   private static final long serialVersionUID = 3265940348362833587L;

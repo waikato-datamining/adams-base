@@ -22,7 +22,7 @@ package adams.gui.visualization.timeseries;
 
 import adams.data.timeseries.Timeseries;
 import adams.db.AbstractDatabaseConnection;
-import adams.gui.visualization.container.AbstractSearchableContainerManager;
+import adams.gui.visualization.container.AbstractContainerManager;
 import adams.gui.visualization.container.ColorContainerManager;
 import adams.gui.visualization.container.DatabaseContainerManager;
 import adams.gui.visualization.container.NamedContainerManagerWithUniqueNames;
@@ -43,7 +43,7 @@ import java.util.List;
  * @version $Revision$
  */
 public class TimeseriesContainerManager<C extends TimeseriesContainer>
-  extends AbstractSearchableContainerManager<C>
+  extends AbstractContainerManager<C>
   implements VisibilityContainerManager<C>, 
              ColorContainerManager, 
              DatabaseContainerManager<C>, 

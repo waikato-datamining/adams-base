@@ -314,8 +314,8 @@ public class ContainerModel<M extends AbstractContainerManager, C extends Abstra
    */
   public int getRowCount() {
     if (m_Manager != null) {
-      if ((m_Manager instanceof SearchableContainerManager) && ((SearchableContainerManager) m_Manager).isFiltered())
-	return ((SearchableContainerManager) m_Manager).countFiltered();
+      if (m_Manager.isFiltered())
+	return m_Manager.countFiltered();
       else
 	return m_Manager.count();
     }
@@ -368,40 +368,22 @@ public class ContainerModel<M extends AbstractContainerManager, C extends Abstra
    * @return			the value
    */
   public Object getValueAt(int rowIndex, int columnIndex) {
-    SearchableContainerManager	smanager;
     C 				cont;
 
     if (m_Manager.isUpdating())
       return null;
 
-    if ((m_Manager instanceof SearchableContainerManager) && ((SearchableContainerManager) m_Manager).isFiltered()) {
-      smanager = (SearchableContainerManager) m_Manager;
-      if (rowIndex < smanager.countFiltered()) {
-	cont = (C) smanager.getFiltered(rowIndex);
-	if (cont == null)
-	  return null;
+    if (rowIndex < m_Manager.countFiltered()) {
+      cont = (C) m_Manager.getFiltered(rowIndex);
+      if (cont == null)
+        return null;
 
-	if (columnIndex == getVisibilityColumn())
-	  return ((VisibilityContainer) cont).isVisible();
-	else if (columnIndex == getDatabaseIDColumn())
-	  return ((DatabaseContainer) cont).getDatabaseID();
-	else if (columnIndex == getDataColumn())
-	  return m_Generator.getDisplay(cont);
-      }
-    }
-    else {
-      if (rowIndex < m_Manager.count()) {
-	cont = (C) getManager().get(rowIndex);
-	if (cont == null)
-	  return null;
-
-	if (columnIndex == getVisibilityColumn())
-	  return ((VisibilityContainer) cont).isVisible();
-	else if (columnIndex == getDatabaseIDColumn())
-	  return ((DatabaseContainer) cont).getDatabaseID();
-	else if (columnIndex == getDataColumn())
-	  return m_Generator.getDisplay(cont);
-      }
+      if (columnIndex == getVisibilityColumn())
+        return ((VisibilityContainer) cont).isVisible();
+      else if (columnIndex == getDatabaseIDColumn())
+        return ((DatabaseContainer) cont).getDatabaseID();
+      else if (columnIndex == getDataColumn())
+        return m_Generator.getDisplay(cont);
     }
 
     return null;
@@ -416,25 +398,12 @@ public class ContainerModel<M extends AbstractContainerManager, C extends Abstra
    */
   @Override
   public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-    SearchableContainerManager	smanager;
-
-    if ((m_Manager instanceof SearchableContainerManager) && ((SearchableContainerManager) m_Manager).isFiltered()) {
-      smanager = (SearchableContainerManager) m_Manager;
-      if (rowIndex < smanager.countFiltered()) {
-	if (showVisibilityColumn()) {
-	  if (columnIndex == 0) {
-	    ((VisibilityContainer) smanager.getFiltered(rowIndex)).setVisible((Boolean) aValue);
-	    // TODO update?
-	  }
-	}
-      }
-    }
-    else {
-      if (rowIndex < m_Manager.count()) {
-	if (showVisibilityColumn()) {
-	  if (columnIndex == 0)
-	    ((VisibilityContainerManager) getManager()).setVisible(rowIndex, (Boolean) aValue);
-	}
+    if (rowIndex < m_Manager.countFiltered()) {
+      if (showVisibilityColumn()) {
+        if (columnIndex == 0) {
+          ((VisibilityContainer) m_Manager.getFiltered(rowIndex)).setVisible((Boolean) aValue);
+          // TODO update?
+        }
       }
     }
   }
@@ -492,15 +461,10 @@ public class ContainerModel<M extends AbstractContainerManager, C extends Abstra
    * @return		the container
    */
   public C getContainerAt(int row) {
-    SearchableContainerManager	smanager;
-
-    if ((m_Manager instanceof SearchableContainerManager) && ((SearchableContainerManager) m_Manager).isFiltered()) {
-      smanager = (SearchableContainerManager) m_Manager;
-      return (C) smanager.getFiltered(row);
-    }
-    else {
+    if (m_Manager.isFiltered())
+      return (C) m_Manager.getFiltered(row);
+    else
       return (C) getManager().get(row);
-    }
   }
 
   /**

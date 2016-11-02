@@ -28,7 +28,6 @@ import adams.gui.visualization.container.AbstractContainerManager;
 import adams.gui.visualization.container.ColorContainerManager;
 import adams.gui.visualization.container.ContainerListManager;
 import adams.gui.visualization.container.NamedContainerManager;
-import adams.gui.visualization.container.SearchableContainerManager;
 import adams.gui.visualization.container.VisibilityContainerManager;
 import adams.gui.visualization.core.AbstractColorProvider;
 import adams.gui.visualization.core.DefaultColorProvider;
@@ -47,7 +46,7 @@ import java.util.List;
 public class InstanceContainerManager
   extends AbstractContainerManager<InstanceContainer>
   implements VisibilityContainerManager<InstanceContainer>, NamedContainerManager,
-             ColorContainerManager, SearchableContainerManager<InstanceContainer> {
+             ColorContainerManager {
 
   /** for serialization. */
   private static final long serialVersionUID = -4325235760470150191L;

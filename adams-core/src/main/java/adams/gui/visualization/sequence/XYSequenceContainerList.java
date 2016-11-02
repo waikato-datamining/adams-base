@@ -20,7 +20,7 @@
 
 package adams.gui.visualization.sequence;
 
-import adams.gui.visualization.container.AbstractSearchableContainerList;
+import adams.gui.visualization.container.AbstractContainerList;
 
 /**
  * Class encapsulating XY sequence specific classes.
@@ -29,7 +29,7 @@ import adams.gui.visualization.container.AbstractSearchableContainerList;
  * @version $Revision$
  */
 public class XYSequenceContainerList
-  extends AbstractSearchableContainerList<XYSequenceContainerManager, XYSequenceContainer> {
+  extends AbstractContainerList<XYSequenceContainerManager, XYSequenceContainer> {
 
   /** for serialization. */
   private static final long serialVersionUID = 407518609877099032L;

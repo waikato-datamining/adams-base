@@ -59,10 +59,8 @@ public class ContainerTableCellRenderer<M extends AbstractContainerManager, C ex
     M manager = ((ContainerModel<M,C>) table.getModel()).getManager();
     if (!manager.isUpdating() && (row < manager.count())) {
       C cont = null;
-      if (manager instanceof SearchableContainerManager) {
-        if (((SearchableContainerManager) manager).isFiltered())
-          cont = (C) ((SearchableContainerManager) manager).getFiltered(row);
-      }
+      if (manager.isFiltered())
+        cont = (C) manager.getFiltered(row);
       if (cont == null)
         cont = (C) manager.get(row);
       if (cont instanceof ColorContainer)

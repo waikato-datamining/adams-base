@@ -20,7 +20,7 @@
 
 package adams.gui.visualization.instance;
 
-import adams.gui.visualization.container.AbstractSearchableContainerList;
+import adams.gui.visualization.container.AbstractContainerList;
 
 /**
  * A panel that lists Instances in a JTable.
@@ -29,7 +29,7 @@ import adams.gui.visualization.container.AbstractSearchableContainerList;
  * @version $Revision$
  */
 public class InstanceContainerList
-  extends AbstractSearchableContainerList<InstanceContainerManager,InstanceContainer> {
+  extends AbstractContainerList<InstanceContainerManager,InstanceContainer> {
 
   /** for serialization. */
   private static final long serialVersionUID = 3265940348362833587L;

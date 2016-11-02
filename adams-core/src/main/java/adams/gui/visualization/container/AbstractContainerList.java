@@ -124,15 +124,14 @@ public class AbstractContainerList<M extends AbstractContainerManager, C extends
     add(new BaseScrollPane(m_Table), BorderLayout.CENTER);
     
     m_PanelSearch = new SearchPanel(LayoutType.HORIZONTAL, false, null, true, "");
-    m_PanelSearch.setVisible(getManager() instanceof SearchableContainerManager);
+    m_PanelSearch.setVisible(true);
     m_PanelSearch.addSearchListener((SearchEvent e) -> {
       if (!getAllowSearch())
         return;
-      SearchableContainerManager smanager = (SearchableContainerManager) getManager();
       if (e.getParameters().getSearchString() == null)
-        smanager.clearSearch();
+        getManager().clearSearch();
       else
-        smanager.search(e.getParameters().getSearchString(), e.getParameters().isRegExp());
+        getManager().search(e.getParameters().getSearchString(), e.getParameters().isRegExp());
     });
     add(m_PanelSearch, BorderLayout.SOUTH);
   }
@@ -495,17 +494,12 @@ public class AbstractContainerList<M extends AbstractContainerManager, C extends
   }
   
   /**
-   * Sets whether the entry list is searchable. Container manager must implement
-   * {@link SearchableContainerManager} interface to allow enabling of search
+   * Sets whether the entry list is searchable.
    * 
    * @param value	true if to make the list searchable
-   * @see		SearchableContainerManager
    */
   public void setAllowSearch(boolean value) {
-    if (getManager() instanceof SearchableContainerManager)
-      m_PanelSearch.setVisible(value);
-    else
-      m_PanelSearch.setVisible(false);
+    m_PanelSearch.setVisible(value);
   }
   
   /**
