@@ -15,7 +15,7 @@
 
 /**
  * AdamsCommandLineHandler.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
@@ -142,6 +142,7 @@ public class AdamsCommandLineHandler
     ArrayConsumer	consumer;
 
     consumer = new ArrayConsumer();
+    ((OptionHandler) obj).getOptionManager().setDefaults();
     consumer.consume((OptionHandler) obj, args);
     result = !consumer.hasErrors();
     consumer.cleanUp();
