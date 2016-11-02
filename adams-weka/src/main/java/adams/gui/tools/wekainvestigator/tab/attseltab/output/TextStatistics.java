@@ -21,15 +21,11 @@
 package adams.gui.tools.wekainvestigator.tab.attseltab.output;
 
 import adams.core.Utils;
-import adams.data.spreadsheet.Row;
-import adams.data.spreadsheet.SpreadSheet;
 import adams.gui.core.BaseTextArea;
 import adams.gui.core.Fonts;
+import adams.gui.tools.wekainvestigator.output.RunInformationHelper;
 import adams.gui.tools.wekainvestigator.output.TextualContentPanel;
 import adams.gui.tools.wekainvestigator.tab.attseltab.ResultItem;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Generates basic text statistic.
@@ -125,11 +121,6 @@ public class TextStatistics
   public String generateOutput(ResultItem item) {
     BaseTextArea 	text;
     StringBuilder	buffer;
-    SpreadSheet 	meta;
-    List<String> 	keys;
-    List<String>	values;
-    int			len;
-    int			i;
 
     buffer = new StringBuilder(item.getAttributeSelection().toResultsString());
     try {
@@ -142,26 +133,8 @@ public class TextStatistics
 
     // run information
     if (m_RunInformation && item.hasRunInformation()) {
-      meta   = item.getRunInformation().toSpreadSheet();
-      keys   = new ArrayList<>();
-      values = new ArrayList<>();
-      len    = 0;
-      for (Row row: meta.rows()) {
-	keys.add(row.getCell(0).getContent());
-	values.add(row.getCell(1).getContent());
-	len = Math.max(len, keys.get(keys.size() - 1).length());
-      }
-      for (i = 0; i < keys.size(); i++) {
-	while (keys.get(i).length() < len)
-	  keys.set(i, keys.get(i) + ".");
-	keys.set(i, keys.get(i) + ": ");
-      }
       buffer.append("\n\n" + "=== Run information ===\n\n");
-      for (i = 0; i < keys.size(); i++) {
-	buffer.append(keys.get(i));
-	buffer.append(values.get(i));
-	buffer.append("\n");
-      }
+      buffer.append(RunInformationHelper.toString(item.getRunInformation().toSpreadSheet()));
     }
 
     text = new BaseTextArea();
