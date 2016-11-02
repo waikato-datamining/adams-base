@@ -20,6 +20,7 @@
 
 package adams.gui.tools.wekainvestigator.tab;
 
+import adams.core.ListHelper;
 import adams.core.logging.LoggingLevel;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.GUIHelper;
@@ -33,7 +34,6 @@ import com.jidesoft.swing.JideButton;
 import com.jidesoft.swing.JideSplitButton;
 
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
@@ -137,14 +137,14 @@ public abstract class AbstractInvestigatorTabWithEditableDataTable
     m_ButtonUp = new JideButton(GUIHelper.getIcon("arrow_up.gif"));
     m_ButtonUp.setButtonStyle(JideButton.TOOLBOX_STYLE);
     m_ButtonUp.addActionListener((ActionEvent e) -> {
-      final int indices[] = m_Model.moveUp(getSelectedRows());
-      SwingUtilities.invokeLater(() -> m_Table.setSelectedRows(indices));
+      ListHelper.moveUp(getData(), getSelectedRows());
+      fireDataChange(new WekaInvestigatorDataEvent(getOwner(), WekaInvestigatorDataEvent.TABLE_CHANGED));
     });
     m_ButtonDown = new JideButton(GUIHelper.getIcon("arrow_down.gif"));
     m_ButtonDown.setButtonStyle(JideButton.TOOLBOX_STYLE);
     m_ButtonDown.addActionListener((ActionEvent e) -> {
-      final int[] indices = m_Model.moveDown(getSelectedRows());
-      SwingUtilities.invokeLater(() -> m_Table.setSelectedRows(indices));
+      ListHelper.moveDown(getData(), getSelectedRows());
+      fireDataChange(new WekaInvestigatorDataEvent(getOwner(), WekaInvestigatorDataEvent.TABLE_CHANGED));
     });
     panel.add(m_ButtonUp);
     panel.add(m_ButtonDown);
