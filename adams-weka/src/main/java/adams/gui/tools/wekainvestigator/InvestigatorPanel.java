@@ -170,7 +170,7 @@ public class InvestigatorPanel
   protected Thread m_Worker;
 
   /** the title of the current job. */
-  protected String m_Job;
+  protected InvestigatorJob m_Job;
 
   /**
    * Initializes the members.
@@ -185,6 +185,7 @@ public class InvestigatorPanel
     m_Data                = new ArrayList<>();
     m_RecentFilesHandler  = null;
     m_Worker              = null;
+    m_Job                 = null;
     m_StatusBarDateFormat = DateUtils.getTimeFormatter();
     m_FileChooser         = new WekaFileChooser();
     m_FileChooser.setMultiSelectionEnabled(true);
@@ -557,6 +558,7 @@ public class InvestigatorPanel
       return false;
     }
 
+    m_Job    = job;
     m_Worker = new Thread(job);
     m_Worker.start();
     m_ActionFileStopJob.setName("Stop: " + Shortening.shortenEnd(job.getTitle(), 40));
@@ -573,7 +575,7 @@ public class InvestigatorPanel
       return;
 
     m_Worker.stop();
-    logMessage("Stopped: " + m_Job);
+    logAndShowMessage("Stopped: " + m_Job.getTitle());
     executionFinished();
     updateMenu();
   }
@@ -583,6 +585,7 @@ public class InvestigatorPanel
    */
   public void executionFinished() {
     m_Worker = null;
+    m_Job    = null;
     m_ActionFileStopJob.setName("Stop job");
     updateMenu();
   }
