@@ -185,7 +185,7 @@ public class AbstractContainerList<M extends AbstractContainerManager, C extends
    *
    * @return		the container model, null if of different type
    */
-  protected ContainerModel<M,C> getContainerModel() {
+  public ContainerModel<M,C> getContainerModel() {
     if (m_Table.getModel() instanceof ContainerModel)
       return (ContainerModel<M,C>) m_Table.getModel();
     else
