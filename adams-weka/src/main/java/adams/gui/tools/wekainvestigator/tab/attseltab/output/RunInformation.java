@@ -20,12 +20,14 @@
 
 package adams.gui.tools.wekainvestigator.tab.attseltab.output;
 
-import adams.gui.core.SpreadSheetTable;
-import adams.gui.tools.wekainvestigator.output.TableContentPanel;
+import adams.gui.core.BaseTextArea;
+import adams.gui.core.Fonts;
+import adams.gui.tools.wekainvestigator.output.RunInformationHelper;
+import adams.gui.tools.wekainvestigator.output.TextualContentPanel;
 import adams.gui.tools.wekainvestigator.tab.attseltab.ResultItem;
 
 /**
- * Generates basic text statistic.
+ * Generates run information.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
@@ -72,13 +74,16 @@ public class RunInformation
    */
   @Override
   public String generateOutput(ResultItem item) {
-    SpreadSheetTable 	table;
+    BaseTextArea  text;
 
     if (!item.hasRunInformation())
       return "No run information available!";
 
-    table = new SpreadSheetTable(item.getRunInformation().toSpreadSheet());
-    addTab(item, new TableContentPanel(table, true));
+    text = new BaseTextArea();
+    text.setTextFont(Fonts.getMonospacedFont());
+    text.setText(RunInformationHelper.toString(item.getRunInformation().toSpreadSheet()));
+    text.setCaretPosition(0);
+    addTab(item, new TextualContentPanel(text, true));
 
     return null;
   }
