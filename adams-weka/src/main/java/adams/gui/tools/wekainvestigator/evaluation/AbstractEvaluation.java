@@ -180,7 +180,7 @@ public abstract class AbstractEvaluation<T extends AbstractInvestigatorTab, R ex
     result = new ArrayList<>();
     for (i = 0; i < getOwner().getData().size(); i++) {
       data = getOwner().getData().get(i);
-      result.add((i + 1) + ": " + data.getData().relationName());
+      result.add((i + 1) + ": " + data.getID() + "/" + data.getData().relationName());
     }
 
     return result;
