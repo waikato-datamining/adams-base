@@ -358,7 +358,7 @@ public class InvestigatorPanel
       }
     };
     m_ActionFileStopJob.setName("Stop job");
-    m_ActionFileStopJob.setIcon(GUIHelper.getIcon("stop.gif"));
+    m_ActionFileStopJob.setIcon(GUIHelper.getIcon("stop_red.gif"));
     m_ActionFileStopJob.setAccelerator("ctrl pressed K");
   }
 
@@ -553,13 +553,13 @@ public class InvestigatorPanel
    */
   public boolean startExecution(InvestigatorJob job) {
     if (isBusy()) {
-      logAndShowMessage("Busy, cannot start '" + job.getTitle() + "'!");
+      logAndShowMessage("Busy, cannot start: " + job.getTitle());
       return false;
     }
 
     m_Worker = new Thread(job);
     m_Worker.start();
-    m_ActionFileStopJob.setName("Stop job: " + Shortening.shortenEnd(job.getTitle(), 40));
+    m_ActionFileStopJob.setName("Stop: " + Shortening.shortenEnd(job.getTitle(), 40));
     updateMenu();
 
     return true;
@@ -573,7 +573,7 @@ public class InvestigatorPanel
       return;
 
     m_Worker.stop();
-    logMessage("Stopped  '" + m_Job + "'!");
+    logMessage("Stopped: " + m_Job);
     executionFinished();
     updateMenu();
   }
