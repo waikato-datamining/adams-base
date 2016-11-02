@@ -41,6 +41,7 @@ import adams.gui.goe.GenericObjectEditorDialog;
 import adams.gui.goe.GenericObjectEditorPanel;
 import adams.gui.tools.wekainvestigator.InvestigatorPanel;
 import adams.gui.tools.wekainvestigator.history.AbstractHistoryPopupMenuItem;
+import adams.gui.tools.wekainvestigator.job.InvestigatorTabJob;
 import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
 import adams.gui.tools.wekainvestigator.tab.classifytab.evaluation.AbstractClassifierEvaluation;
 import adams.gui.tools.wekainvestigator.tab.classifytab.output.AbstractOutputGenerator;
@@ -387,9 +388,6 @@ public class ClassifyTab
   /** the status bar. */
   protected BaseStatusBar m_StatusBar;
 
-  /** whether the evaluation is currently running. */
-  protected Thread m_Worker;
-
   /** whether the execution is in the process of stopping. */
   protected boolean m_Stopping;
 
@@ -397,7 +395,7 @@ public class ClassifyTab
   protected AbstractOutputGenerator[] m_OutputGenerators;
 
   /**
-   * Initializes the widgets.
+   * Initializes the members.
    */
   @Override
   protected void initialize() {
@@ -413,7 +411,6 @@ public class ClassifyTab
 
     m_CurrentEvaluation = null;
     m_CurrentClassifier = null;
-    m_Worker            = null;
     m_Stopping          = false;
 
     try {
@@ -644,37 +641,62 @@ public class ClassifyTab
   }
 
   /**
+   * Hook method that gets called after successfully starting a job.
+   *
+   * @param job		the job that got started
+   */
+  @Override
+  protected void postStartExecution(InvestigatorTabJob job) {
+    super.postStartExecution(job);
+    updateButtons();
+  }
+
+  /**
    * Starts the evaluation.
    */
   protected void startExecution() {
-    if (m_Worker != null)
-      return;
-
-    m_Worker = new Thread(() -> {
-      m_CurrentClassifier = (Classifier) m_PanelGOE.getCurrent();
-      logMessage("Starting evaluation '" + m_CurrentEvaluation.getName() + "' using: " + OptionUtils.getCommandLine(m_CurrentClassifier));
-      ResultItem item;
-      try {
-        item = m_CurrentEvaluation.evaluate(m_CurrentClassifier, m_History);
-        logMessage("Finished evaluation '" + m_CurrentEvaluation.getName() + "' using: " + OptionUtils.getCommandLine(m_CurrentClassifier));
+    m_CurrentClassifier = (Classifier) m_PanelGOE.getCurrent();
+    startExecution(new InvestigatorTabJob(this, "Starting evaluation '" + m_CurrentEvaluation.getName() + "' using: " + OptionUtils.getCommandLine(m_CurrentClassifier)) {
+      @Override
+      protected void doRun() {
+	ResultItem item;
+	try {
+	  item = m_CurrentEvaluation.evaluate(m_CurrentClassifier, m_History);
+	}
+	catch (Exception e) {
+	  logError("Failed to evaluate classifier", e, "Classifier evaluation");
+	  item = null;
+	}
+	if (item != null)
+	  generateOutput(item);
       }
-      catch (Exception e) {
-        logError("Failed to evaluate classifier", e, "Classifier evaluation");
-        item = null;
-      }
-      if (item != null)
-        generateOutput(item);
-      m_Worker = null;
-      updateButtons();
     });
-    m_Worker.start();
+  }
+
+  /**
+   * Hook method that gets called after finishing a job.
+   */
+  @Override
+  protected void postExecutionFinished() {
+    super.postExecutionFinished();
+    logMessage("Finished evaluation '" + m_CurrentEvaluation.getName() + "' using: " + OptionUtils.getCommandLine(m_CurrentClassifier));
+    updateButtons();
+  }
+
+  /**
+   * Hook method that gets called after stopping a job.
+   */
+  @Override
+  protected void postStopExecution() {
+    super.postStopExecution();
+    logMessage("Stopped evaluation '" + m_CurrentEvaluation.getName() + "' using: " + OptionUtils.getCommandLine(m_CurrentClassifier));
     updateButtons();
   }
 
   /**
    * Stops the evaluation.
    */
-  protected void stopExecution() {
+  public void stopExecution() {
     SwingWorker		worker;
 
     if (m_Worker == null)
@@ -702,10 +724,7 @@ public class ClassifyTab
       worker.execute();
     }
     else {
-      m_Worker.stop();
-      m_Worker = null;
-      logMessage("Stopped evaluation '" + m_CurrentEvaluation.getName() + "' using: " + OptionUtils.getCommandLine(m_CurrentClassifier));
-      updateButtons();
+      super.stopExecution();
     }
   }
 
@@ -731,17 +750,19 @@ public class ClassifyTab
    * @return		true if busy
    */
   public boolean isBusy() {
-    return (m_Worker != null) || m_Stopping;
+    return super.isBusy() || m_Stopping;
   }
 
   /**
    * Updates the buttons.
    */
   public void updateButtons() {
-    Classifier cls;
+    Classifier 	cls;
+    String	msg;
 
     cls = (Classifier) m_PanelGOE.getCurrent();
-    m_ButtonStart.setEnabled(!isBusy() && (m_CurrentEvaluation != null) && (m_CurrentEvaluation.canEvaluate(cls) == null));
+    msg = m_CurrentEvaluation.canEvaluate(cls);
+    m_ButtonStart.setEnabled(!isBusy() && (m_CurrentEvaluation != null) && (msg == null));
     m_ButtonStop.setEnabled(isBusy() && !m_Stopping);
   }
 

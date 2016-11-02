@@ -92,7 +92,7 @@ public class RemoveChecked
       catch (Throwable ex) {
 	GUIHelper.showErrorMessage(m_Owner, "Failed to remove checked attributes!", ex);
       }
-      m_Owner.clearJob();
+      m_Owner.executionFinished();
       showStatus("");
     };
     m_Owner.submitJob(run);
@@ -108,6 +108,6 @@ public class RemoveChecked
 	&& !isBusy()
         && (getSelectedRows().length == 1)
         && (getOwner().getAttributeSelectionPanel().getSelectedAttributes().length > 0)
-        && m_Owner.canSubmitJob());
+        && m_Owner.canStartExecution());
   }
 }

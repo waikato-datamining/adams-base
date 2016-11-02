@@ -40,6 +40,7 @@ import adams.gui.goe.GenericObjectEditorDialog;
 import adams.gui.goe.GenericObjectEditorPanel;
 import adams.gui.tools.wekainvestigator.InvestigatorPanel;
 import adams.gui.tools.wekainvestigator.history.AbstractHistoryPopupMenuItem;
+import adams.gui.tools.wekainvestigator.job.InvestigatorTabJob;
 import adams.gui.tools.wekainvestigator.tab.clustertab.ResultItem;
 import adams.gui.tools.wekainvestigator.tab.clustertab.evaluation.AbstractClustererEvaluation;
 import adams.gui.tools.wekainvestigator.tab.clustertab.output.AbstractOutputGenerator;
@@ -390,9 +391,6 @@ public class ClusterTab
   /** the status bar. */
   protected BaseStatusBar m_StatusBar;
 
-  /** whether the evaluation is currently running. */
-  protected Thread m_Worker;
-
   /** the output generators to use. */
   protected AbstractOutputGenerator[] m_OutputGenerators;
 
@@ -413,7 +411,6 @@ public class ClusterTab
 
     m_CurrentEvaluation = null;
     m_CurrentClusterer = null;
-    m_Worker            = null;
 
     try {
       cmds = OptionUtils.splitOptions(
@@ -646,40 +643,53 @@ public class ClusterTab
    * Starts the evaluation.
    */
   protected void startExecution() {
-    if (m_Worker != null)
-      return;
-
-    m_Worker = new Thread(() -> {
-      m_CurrentClusterer = (Clusterer) m_PanelGOE.getCurrent();
-      logMessage("Starting evaluation '" + m_CurrentEvaluation.getName() + "' using: " + OptionUtils.getCommandLine(m_CurrentClusterer));
-      ResultItem item;
-      try {
-        item = m_CurrentEvaluation.evaluate(m_CurrentClusterer, m_History);
-        logMessage("Finished evaluation '" + m_CurrentEvaluation.getName() + "' using: " + OptionUtils.getCommandLine(m_CurrentClusterer));
+    m_CurrentClusterer = (Clusterer) m_PanelGOE.getCurrent();
+    startExecution(new InvestigatorTabJob(this, "Starting evaluation '" + m_CurrentEvaluation.getName() + "' using: " + OptionUtils.getCommandLine(m_CurrentClusterer)) {
+      @Override
+      protected void doRun() {
+        ResultItem item;
+        try {
+          item = m_CurrentEvaluation.evaluate(m_CurrentClusterer, m_History);
+          logMessage("Finished evaluation '" + m_CurrentEvaluation.getName() + "' using: " + OptionUtils.getCommandLine(m_CurrentClusterer));
+        }
+        catch (Exception e) {
+          logError("Failed to evaluate clusterer", e, "Clusterer evaluation");
+          item = null;
+        }
+        if (item != null)
+          generateOutput(item);
       }
-      catch (Exception e) {
-        logError("Failed to evaluate clusterer", e, "Clusterer evaluation");
-        item = null;
-      }
-      if (item != null)
-        generateOutput(item);
-      m_Worker = null;
-      updateButtons();
     });
-    m_Worker.start();
+  }
+
+  /**
+   * Hook method that gets called after successfully starting a job.
+   *
+   * @param job		the job that got started
+   */
+  @Override
+  protected void postStartExecution(InvestigatorTabJob job) {
+    super.postStartExecution(job);
     updateButtons();
   }
 
   /**
-   * Stops the evaluation.
+   * Hook method that gets called after stopping a job.
    */
-  protected void stopExecution() {
-    if (m_Worker == null)
-      return;
-
-    m_Worker.stop();
-    m_Worker = null;
+  @Override
+  protected void postStopExecution() {
+    super.postStopExecution();
     logMessage("Stopped evaluation '" + m_CurrentEvaluation.getName() + "' using: " + OptionUtils.getCommandLine(m_CurrentClusterer));
+    updateButtons();
+  }
+
+  /**
+   * Hook method that gets called after finishing a job.
+   */
+  @Override
+  protected void postExecutionFinished() {
+    super.postExecutionFinished();
+    logMessage("Finished evaluation '" + m_CurrentEvaluation.getName() + "' using: " + OptionUtils.getCommandLine(m_CurrentClusterer));
     updateButtons();
   }
 
@@ -701,22 +711,15 @@ public class ClusterTab
   }
 
   /**
-   * Returns whether the tab is busy.
-   *
-   * @return		true if busy
-   */
-  public boolean isBusy() {
-    return (m_Worker != null);
-  }
-
-  /**
    * Updates the buttons.
    */
   public void updateButtons() {
-    Clusterer cls;
+    Clusterer 	cls;
+    String	msg;
 
     cls = (Clusterer) m_PanelGOE.getCurrent();
-    m_ButtonStart.setEnabled(!isBusy() && (m_CurrentEvaluation != null) && (m_CurrentEvaluation.canEvaluate(cls) == null));
+    msg = m_CurrentEvaluation.canEvaluate(cls);
+    m_ButtonStart.setEnabled(!isBusy() && (m_CurrentEvaluation != null) && (msg == null));
     m_ButtonStop.setEnabled(isBusy());
   }
 

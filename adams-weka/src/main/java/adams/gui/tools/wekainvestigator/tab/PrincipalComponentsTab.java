@@ -35,6 +35,7 @@ import adams.gui.core.ParameterPanel;
 import adams.gui.event.WekaInvestigatorDataEvent;
 import adams.gui.tools.wekainvestigator.InvestigatorPanel;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
+import adams.gui.tools.wekainvestigator.job.InvestigatorTabJob;
 import adams.gui.visualization.core.plot.Axis;
 import adams.gui.visualization.stats.scatterplot.AbstractScatterPlotOverlay;
 import adams.gui.visualization.stats.scatterplot.Coordinates;
@@ -127,9 +128,6 @@ public class PrincipalComponentsTab
 
   /** the scores plot. */
   protected ScatterPlot m_PanelScores;
-
-  /** whether the evaluation is currently running. */
-  protected Thread m_Worker;
 
   /**
    * Initializes the members.
@@ -405,43 +403,56 @@ public class PrincipalComponentsTab
    * Generates PCA visualization.
    */
   protected void startExecution() {
-    Runnable	run;
-
-    run = () -> {
-      DataContainer cont = getData().get(m_ComboBoxDatasets.getSelectedIndex());
-      PCA pca = new PCA();
-      pca.setAttributeRange(new WekaAttributeRange(m_TextAttributeRange.getText()));
-      pca.setVariance(m_TextVariance.getValue().doubleValue());
-      pca.setMaxAttributes(m_TextMaxAttributes.getValue().intValue());
-      pca.setMaxAttributeNames(m_TextMaxAttributeNames.getValue().intValue());
-      String result = pca.analyze(cont.getData());
-      if (result != null) {
-	logError(result, "PCA error");
+    startExecution(new InvestigatorTabJob(this, "PCA visualization") {
+      @Override
+      protected void doRun() {
+        DataContainer cont = getData().get(m_ComboBoxDatasets.getSelectedIndex());
+        PCA pca = new PCA();
+        pca.setAttributeRange(new WekaAttributeRange(m_TextAttributeRange.getText()));
+        pca.setVariance(m_TextVariance.getValue().doubleValue());
+        pca.setMaxAttributes(m_TextMaxAttributes.getValue().intValue());
+        pca.setMaxAttributeNames(m_TextMaxAttributeNames.getValue().intValue());
+        String result = pca.analyze(cont.getData());
+        if (result != null) {
+          logError(result, "PCA error");
+        }
+        else {
+          m_PanelLoadings.setData(pca.getLoadings());
+          m_PanelLoadings.reset();
+          m_PanelScores.setData(pca.getScores());
+          m_PanelScores.reset();
+        }
       }
-      else {
-	m_PanelLoadings.setData(pca.getLoadings());
-	m_PanelLoadings.reset();
-	m_PanelScores.setData(pca.getScores());
-	m_PanelScores.reset();
-      }
-      m_Worker = null;
-      updateButtons();
-    };
+    });
+  }
 
-    m_Worker = new Thread(run);
-    m_Worker.start();
+  /**
+   * Hook method that gets called after successfully starting a job.
+   *
+   * @param job		the job that got started
+   */
+  @Override
+  protected void postStartExecution(InvestigatorTabJob job) {
+    super.postStartExecution(job);
     updateButtons();
   }
 
   /**
-   * Stops the calculation.
+   * Hook method that gets called after stopping a job.
    */
-  protected void stopExecution() {
-    if (m_Worker == null)
-      return;
-
-    m_Worker.stop();
+  @Override
+  protected void postStopExecution() {
+    super.postStopExecution();
     logMessage("Stopped PCA visualization");
+    updateButtons();
+  }
+
+  /**
+   * Hook method that gets called after finishing a job.
+   */
+  @Override
+  protected void postExecutionFinished() {
+    super.postExecutionFinished();
     updateButtons();
   }
 

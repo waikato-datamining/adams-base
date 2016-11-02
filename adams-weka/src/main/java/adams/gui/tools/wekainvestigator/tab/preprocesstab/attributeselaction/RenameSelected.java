@@ -106,6 +106,6 @@ public class RenameSelected
 	&& !isBusy()
 	&& (getSelectedRows().length == 1)
 	&& (getOwner().getAttributeSelectionPanel().getSelectedRows().length == 1)
-	&& m_Owner.canSubmitJob());
+	&& m_Owner.canStartExecution());
   }
 }

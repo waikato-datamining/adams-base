@@ -42,6 +42,7 @@ import adams.gui.core.ParameterPanel;
 import adams.gui.event.WekaInvestigatorDataEvent;
 import adams.gui.tools.wekainvestigator.InvestigatorPanel;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
+import adams.gui.tools.wekainvestigator.job.InvestigatorTabJob;
 import adams.gui.visualization.core.AxisPanel;
 import adams.gui.visualization.core.axis.FancyTickGenerator;
 import adams.gui.visualization.core.plot.Axis;
@@ -137,9 +138,6 @@ public class PartialLeastSquaresTab
 
   /** the plot of the loadings. */
   protected SequencePlotterPanel m_PanelWeights;
-
-  /** whether the evaluation is currently running. */
-  protected Thread m_Worker;
 
   /**
    * Initializes the members.
@@ -443,72 +441,85 @@ public class PartialLeastSquaresTab
    * Generates PLS visualization.
    */
   protected void startExecution() {
-    Runnable	run;
-
-    run = () -> {
-      try {
-	DataContainer datacont = getData().get(m_ComboBoxDatasets.getSelectedIndex());
-	PLS pls = new PLS();
-	pls.setAttributeRange(new WekaAttributeRange(m_TextAttributeRange.getText()));
-	pls.setAlgorithm((Algorithm) m_ComboBoxAlgorithm.getSelectedItem());
-	pls.setNumComponents(m_TextNumComponents.getValue().intValue());
-	String msg = pls.analyze(datacont.getData());
-	if (msg != null) {
-	  logError(msg, "PLS Error");
-	}
-	else {
-          // loadings (scatter)
-	  SpreadSheet loadings = pls.getLoadings();
-	  m_PanelLoadings.setData(loadings);
-	  m_PanelLoadings.reset();
-          // loadings (weights)
-          XYSequenceContainerManager manager = m_PanelWeights.getContainerManager();
-	  double min = Double.POSITIVE_INFINITY;
-	  double max = Double.NEGATIVE_INFINITY;
-          manager.clear();
-          manager.startUpdate();
-	  for (int c = 0; c < loadings.getColumnCount(); c++) {
-	    XYSequence seq = new XYSequence();
-	    seq.setComparison(Comparison.X_AND_Y);
-	    seq.setID(loadings.getColumnName(c));
-	    XYSequenceContainer cont = manager.newContainer(seq);
-	    manager.add(cont);
-	    for (int r = 0; r < loadings.getRowCount(); r++) {
-	      Row row = loadings.getRow(r);
-	      double value = row.getCell(c).toDouble();
-	      min = Math.min(min, value);
-	      max = Math.max(max, value);
-	      XYSequencePoint point = new XYSequencePoint("" + seq.size(), seq.size(), value);
-	      seq.add(point);
-	    }
+    startExecution(new InvestigatorTabJob(this, "PLS visualization") {
+      @Override
+      protected void doRun() {
+	try {
+	  DataContainer datacont = getData().get(m_ComboBoxDatasets.getSelectedIndex());
+	  PLS pls = new PLS();
+	  pls.setAttributeRange(new WekaAttributeRange(m_TextAttributeRange.getText()));
+	  pls.setAlgorithm((Algorithm) m_ComboBoxAlgorithm.getSelectedItem());
+	  pls.setNumComponents(m_TextNumComponents.getValue().intValue());
+	  String msg = pls.analyze(datacont.getData());
+	  if (msg != null) {
+	    logError(msg, "PLS Error");
 	  }
-          manager.finishUpdate();
-          // scores (scatter)
-	  m_PanelScores.setData(pls.getScores());
-	  m_PanelScores.reset();
+	  else {
+	    // loadings (scatter)
+	    SpreadSheet loadings = pls.getLoadings();
+	    m_PanelLoadings.setData(loadings);
+	    m_PanelLoadings.reset();
+	    // loadings (weights)
+	    XYSequenceContainerManager manager = m_PanelWeights.getContainerManager();
+	    double min = Double.POSITIVE_INFINITY;
+	    double max = Double.NEGATIVE_INFINITY;
+	    manager.clear();
+	    manager.startUpdate();
+	    for (int c = 0; c < loadings.getColumnCount(); c++) {
+	      XYSequence seq = new XYSequence();
+	      seq.setComparison(Comparison.X_AND_Y);
+	      seq.setID(loadings.getColumnName(c));
+	      XYSequenceContainer cont = manager.newContainer(seq);
+	      manager.add(cont);
+	      for (int r = 0; r < loadings.getRowCount(); r++) {
+		Row row = loadings.getRow(r);
+		double value = row.getCell(c).toDouble();
+		min = Math.min(min, value);
+		max = Math.max(max, value);
+		XYSequencePoint point = new XYSequencePoint("" + seq.size(), seq.size(), value);
+		seq.add(point);
+	      }
+	    }
+	    manager.finishUpdate();
+	    // scores (scatter)
+	    m_PanelScores.setData(pls.getScores());
+	    m_PanelScores.reset();
+	  }
+	}
+	catch (Throwable t) {
+	  logError("Failed to perform PLS!", t, "PLS error");
 	}
       }
-      catch (Throwable t) {
-	logError("Failed to perform PLS!", t, "PLS error");
-      }
-      m_Worker = null;
-      updateButtons();
-    };
+    });
+  }
 
-    m_Worker = new Thread(run);
-    m_Worker.start();
+  /**
+   * Hook method that gets called after successfully starting a job.
+   *
+   * @param job		the job that got started
+   */
+  @Override
+  protected void postStartExecution(InvestigatorTabJob job) {
+    super.postStartExecution(job);
     updateButtons();
   }
 
   /**
-   * Stops the calculation.
+   * Hook method that gets called after stopping a job.
    */
-  protected void stopExecution() {
-    if (m_Worker == null)
-      return;
-
-    m_Worker.stop();
+  @Override
+  protected void postStopExecution() {
+    super.postStopExecution();
     logMessage("Stopped PLS visualization");
+    updateButtons();
+  }
+
+  /**
+   * Hook method that gets called after stopping a job.
+   */
+  @Override
+  protected void postExecutionFinished() {
+    super.postExecutionFinished();
     updateButtons();
   }
 

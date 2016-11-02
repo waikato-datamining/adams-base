@@ -39,6 +39,7 @@ import adams.gui.goe.GenericObjectEditorPanel;
 import adams.gui.tools.wekainvestigator.InvestigatorPanel;
 import adams.gui.tools.wekainvestigator.data.MemoryContainer;
 import adams.gui.tools.wekainvestigator.history.AbstractHistoryPopupMenuItem;
+import adams.gui.tools.wekainvestigator.job.InvestigatorTabJob;
 import adams.gui.tools.wekainvestigator.tab.attseltab.ResultItem;
 import adams.gui.tools.wekainvestigator.tab.attseltab.evaluation.AbstractAttributeSelectionEvaluation;
 import adams.gui.tools.wekainvestigator.tab.attseltab.output.AbstractOutputGenerator;
@@ -450,9 +451,6 @@ public class AttributeSelectionTab
   /** the status bar. */
   protected BaseStatusBar m_StatusBar;
 
-  /** whether the evaluation is currently running. */
-  protected Thread m_Worker;
-
   /** the output generators to use. */
   protected AbstractOutputGenerator[] m_OutputGenerators;
 
@@ -474,7 +472,6 @@ public class AttributeSelectionTab
     m_CurrentEvaluation = null;
     m_CurrentEvaluator  = null;
     m_CurrentSearch     = null;
-    m_Worker            = null;
 
     try {
       cmds = OptionUtils.splitOptions(
@@ -725,41 +722,53 @@ public class AttributeSelectionTab
    * Starts the evaluation.
    */
   protected void startExecution() {
-    if (m_Worker != null)
-      return;
-
-    m_Worker = new Thread(() -> {
-      m_CurrentEvaluator = (ASEvaluation) m_PanelEvaluator.getCurrent();
-      m_CurrentSearch    = (ASSearch) m_PanelSearch.getCurrent();
-      logMessage("Starting attribute selection '" + m_CurrentEvaluation.getName() + "' using: " + OptionUtils.getCommandLine(m_CurrentEvaluator));
-      ResultItem item;
-      try {
-	item = m_CurrentEvaluation.evaluate(m_CurrentEvaluator, m_CurrentSearch, m_History);
-	logMessage("Finished attribute selection '" + m_CurrentEvaluation.getName() + "' using: " + OptionUtils.getCommandLine(m_CurrentEvaluator));
+    m_CurrentEvaluator = (ASEvaluation) m_PanelEvaluator.getCurrent();
+    m_CurrentSearch    = (ASSearch) m_PanelSearch.getCurrent();
+    startExecution(new InvestigatorTabJob(this, "Starting attribute selection '" + m_CurrentEvaluation.getName() + "' using: " + OptionUtils.getCommandLine(m_CurrentEvaluator)) {
+      @Override
+      protected void doRun() {
+	ResultItem item;
+	try {
+	  item = m_CurrentEvaluation.evaluate(m_CurrentEvaluator, m_CurrentSearch, m_History);
+	}
+	catch (Exception e) {
+	  logError("Failed to perform attribute selection", e, "Attribute selection");
+	  item = null;
+	}
+	if (item != null)
+	  generateOutput(item);
       }
-      catch (Exception e) {
-	logError("Failed to perform attribute selection", e, "Attribute selection");
-	item = null;
-      }
-      if (item != null)
-	generateOutput(item);
-      m_Worker = null;
-      updateButtons();
     });
-    m_Worker.start();
+  }
+
+  /**
+   * Hook method that gets called after successfully starting a job.
+   *
+   * @param job		the job that got started
+   */
+  @Override
+  protected void postStartExecution(InvestigatorTabJob job) {
+    super.postStartExecution(job);
     updateButtons();
   }
 
   /**
-   * Stops the evaluation.
+   * Hook method that gets called after stopping a job.
    */
-  protected void stopExecution() {
-    if (m_Worker == null)
-      return;
-
-    m_Worker.stop();
-    m_Worker = null;
+  @Override
+  protected void postStopExecution() {
+    super.postStopExecution();
     logMessage("Stopped evaluation '" + m_CurrentEvaluation.getName() + "' using: " + OptionUtils.getCommandLine(m_CurrentEvaluator));
+    updateButtons();
+  }
+
+  /**
+   * Hook method that gets called after finishing a job.
+   */
+  @Override
+  protected void postExecutionFinished() {
+    super.postExecutionFinished();
+    logMessage("Finished attribute selection '" + m_CurrentEvaluation.getName() + "' using: " + OptionUtils.getCommandLine(m_CurrentEvaluator));
     updateButtons();
   }
 
@@ -781,24 +790,17 @@ public class AttributeSelectionTab
   }
 
   /**
-   * Returns whether the tab is busy.
-   *
-   * @return		true if busy
-   */
-  public boolean isBusy() {
-    return (m_Worker != null);
-  }
-
-  /**
    * Updates the buttons.
    */
   public void updateButtons() {
     ASEvaluation 	eval;
     ASSearch		search;
+    String		msg;
 
     eval   = (ASEvaluation) m_PanelEvaluator.getCurrent();
     search = (ASSearch) m_PanelSearch.getCurrent();
-    m_ButtonStart.setEnabled(!isBusy() && (m_CurrentEvaluation != null) && (m_CurrentEvaluation.canEvaluate(eval, search) == null));
+    msg    = m_CurrentEvaluation.canEvaluate(eval, search);
+    m_ButtonStart.setEnabled(!isBusy() && (m_CurrentEvaluation != null) && (msg == null));
     m_ButtonStop.setEnabled(isBusy());
   }
 

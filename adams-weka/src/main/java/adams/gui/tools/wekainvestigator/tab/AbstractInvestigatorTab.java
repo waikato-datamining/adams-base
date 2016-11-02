@@ -28,6 +28,7 @@ import adams.gui.event.WekaInvestigatorDataEvent;
 import adams.gui.event.WekaInvestigatorDataListener;
 import adams.gui.tools.wekainvestigator.InvestigatorPanel;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
+import adams.gui.tools.wekainvestigator.job.InvestigatorTabJob;
 
 import java.util.HashMap;
 import java.util.List;
@@ -47,6 +48,19 @@ public abstract class AbstractInvestigatorTab
 
   /** the owner. */
   protected InvestigatorPanel m_Owner;
+
+  /** whether the evaluation is currently running. */
+  protected Thread m_Worker;
+
+  /**
+   * Initializes the members.
+   */
+  @Override
+  protected void initialize() {
+    super.initialize();
+
+    m_Worker = null;
+  }
 
   /**
    * Sets the owner for this tab.
@@ -96,13 +110,78 @@ public abstract class AbstractInvestigatorTab
 
   /**
    * Returns whether the tab is busy.
-   * <br>
-   * Default implementation returns false.
    *
    * @return		true if busy
    */
   public boolean isBusy() {
-    return false;
+    return (m_Worker != null);
+  }
+
+  /**
+   * Returns whether a new job can be executed.
+   *
+   * @return		true if job can get executed
+   */
+  public boolean canStartExecution() {
+    return (m_Worker != null);
+  }
+
+  /**
+   * Hook method that gets called after successfully starting a job.
+   *
+   * @param job		the job that got started
+   */
+  protected void postStartExecution(InvestigatorTabJob job) {
+  }
+
+  /**
+   * Starts the job.
+   *
+   * @param job 	the job to execute
+   */
+  public boolean startExecution(InvestigatorTabJob job) {
+    if (canStartExecution()) {
+      logMessage("Busy, cannot start '" + job.getTitle() + "'!");
+      return false;
+    }
+
+    m_Worker = new Thread(job);
+    m_Worker.start();
+    postStartExecution(job);
+
+    return true;
+  }
+
+  /**
+   * Hook method that gets called after stopping a job.
+   */
+  protected void postStopExecution() {
+  }
+
+  /**
+   * Stops the evaluation.
+   */
+  public void stopExecution() {
+    if (m_Worker == null)
+      return;
+
+    m_Worker.stop();
+    m_Worker = null;
+    postStopExecution();
+  }
+
+  /**
+   * Hook method that gets called after finishing a job.
+   */
+  protected void postExecutionFinished() {
+  }
+
+  /**
+   * Gets called when a job finishes.
+   */
+  public void executionFinished() {
+    m_Worker = null;
+    postExecutionFinished();
   }
 
   /**

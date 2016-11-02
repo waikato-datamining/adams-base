@@ -32,6 +32,8 @@ import adams.gui.goe.GenericObjectEditorPanel;
 import adams.gui.tools.wekainvestigator.InvestigatorPanel;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
 import adams.gui.tools.wekainvestigator.data.MemoryContainer;
+import adams.gui.tools.wekainvestigator.job.InvestigatorTabJob;
+import adams.gui.tools.wekainvestigator.job.InvestigatorTabRunnableJob;
 import adams.gui.tools.wekainvestigator.tab.preprocesstab.AttributeSelectionPanel;
 import adams.gui.tools.wekainvestigator.tab.preprocesstab.AttributeSummaryPanel;
 import adams.gui.tools.wekainvestigator.tab.preprocesstab.AttributeVisualizationPanel;
@@ -307,82 +309,60 @@ public class PreprocessTab
    * Starts the filtering.
    */
   protected void startExecution() {
-    final int[] 	indices;
-    final boolean	batch;
-    final boolean 	replace;
-    final boolean	keep;
-    Runnable		run;
+    final int[] 		indices;
+    final boolean		batch;
+    final boolean 		replace;
+    final boolean		keep;
+    final InvestigatorPanel	owner;
 
-    if (!canSubmitJob())
+    if (!canStartExecution())
       return;
 
+    owner           = getOwner();
     m_CurrentFilter = (Filter) m_PanelGOE.getCurrent();
     batch           = m_CheckBoxBatchFilter.isSelected();
     replace         = m_CheckBoxReplace.isSelected();
     keep            = m_CheckBoxKeepName.isSelected();
     indices         = getSelectedRows();
 
-    run = () -> {
-      for (int i = 0; i < indices.length; i++) {
-	DataContainer cont = getData().get(indices[i]);
-	logMessage("Starting filtering " + (i+1) + "/" + indices.length + " '" + cont.getSource() + "' using " + OptionUtils.getCommandLine(m_CurrentFilter));
-	try {
-	  String oldName = cont.getData().relationName();
-	  if ((!batch && (i == 0)) || batch)
-	    m_CurrentFilter.setInputFormat(cont.getData());
-	  Instances filtered = Filter.useFilter(cont.getData(), m_CurrentFilter);
-	  if (keep)
-	    filtered.setRelationName(oldName);
-	  logMessage("Finished filtering " + (i+1) + "/" + indices.length + " '" + cont.getSource() + "' using " + OptionUtils.getCommandLine(m_CurrentFilter));
-	  if (replace) {
-	    cont.setData(filtered);
-	    fireDataChange(new WekaInvestigatorDataEvent(getOwner(), WekaInvestigatorDataEvent.ROWS_MODIFIED, indices[i]));
+    startExecution(new InvestigatorTabJob(this, "Filtering") {
+      @Override
+      protected void doRun() {
+	for (int i = 0; i < indices.length; i++) {
+	  DataContainer cont = getData().get(indices[i]);
+	  logMessage("Starting filtering " + (i+1) + "/" + indices.length + " '" + cont.getSource() + "' using " + OptionUtils.getCommandLine(m_CurrentFilter));
+	  try {
+	    String oldName = cont.getData().relationName();
+	    if ((!batch && (i == 0)) || batch)
+	      m_CurrentFilter.setInputFormat(cont.getData());
+	    Instances filtered = Filter.useFilter(cont.getData(), m_CurrentFilter);
+	    if (keep)
+	      filtered.setRelationName(oldName);
+	    logMessage("Finished filtering " + (i+1) + "/" + indices.length + " '" + cont.getSource() + "' using " + OptionUtils.getCommandLine(m_CurrentFilter));
+	    if (replace) {
+	      cont.setData(filtered);
+	      fireDataChange(new WekaInvestigatorDataEvent(owner, WekaInvestigatorDataEvent.ROWS_MODIFIED, indices[i]));
+	    }
+	    else {
+	      cont = new MemoryContainer(filtered);
+	      getData().add(cont);
+	      fireDataChange(new WekaInvestigatorDataEvent(owner, WekaInvestigatorDataEvent.ROWS_ADDED, getData().size() - 1));
+	    }
 	  }
-	  else {
-	    cont = new MemoryContainer(filtered);
-	    getData().add(cont);
-	    fireDataChange(new WekaInvestigatorDataEvent(getOwner(), WekaInvestigatorDataEvent.ROWS_ADDED, getData().size() - 1));
+	  catch (Exception e) {
+	    logError("Failed to filter data" + (i+1) + "/" + indices.length, e, "Filter");
+	    break;
 	  }
-	}
-	catch (Exception e) {
-	  logError("Failed to filter data" + (i+1) + "/" + indices.length, e, "Filter");
-	  break;
 	}
       }
-      clearJob();
-    };
-    submitJob(run);
+    });
   }
 
-  /**
-   * Stops the filtering.
-   */
-  protected void stopExecution() {
-    if (m_Worker == null)
-      return;
-
-    m_Worker.stop();
-    m_Worker = null;
+  @Override
+  protected void postStopExecution() {
+    super.postStopExecution();
     logMessage("Stopped filtering using " + OptionUtils.getCommandLine(m_CurrentFilter));
     updateButtons();
-  }
-
-  /**
-   * Returns whether the tab is busy.
-   *
-   * @return		true if busy
-   */
-  public boolean isBusy() {
-    return (m_Worker != null);
-  }
-
-  /**
-   * Returns whether a job can be submitted.
-   *
-   * @return		true if possible
-   */
-  public boolean canSubmitJob() {
-    return (m_Worker == null);
   }
 
   /**
@@ -392,21 +372,7 @@ public class PreprocessTab
    * @return		true if successfully submitted
    */
   public synchronized boolean submitJob(Runnable run) {
-    if (!canSubmitJob())
-      return false;
-
-    m_Worker = new Thread(run);
-    m_Worker.start();
-    updateButtons();
-    return true;
-  }
-
-  /**
-   * Clears the job, makes way for another one.
-   */
-  public void clearJob() {
-    m_Worker = null;
-    updateButtons();
+    return canStartExecution() && startExecution(new InvestigatorTabRunnableJob(this, run));
   }
 
   /**
