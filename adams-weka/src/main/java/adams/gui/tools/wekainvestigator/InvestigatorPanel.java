@@ -246,24 +246,34 @@ public class InvestigatorPanel
       private static final long serialVersionUID = 1028160012672649573L;
       @Override
       protected void doActionPerformed(ActionEvent e) {
-	int index = m_TabbedPane.getSelectedIndex();
-	if (index == -1)
-	  return;
-	AbstractInvestigatorTab tab = (AbstractInvestigatorTab) m_TabbedPane.getComponentAt(index);
-	AbstractInvestigatorTab tabNew;
-	MessageCollection errors = new MessageCollection();
-	try {
-	  tabNew = tab.getClass().newInstance();
-	  m_TabbedPane.addTab(tabNew);
-	  tabNew.deserialize(Utils.deepCopy(tab.serialize()), errors);
-	}
-	catch (Exception ex) {
-	  errors.add("Failed to copy tab!", ex);
-	}
-	if (!errors.isEmpty())
-	  GUIHelper.showErrorMessage(
-	    InvestigatorPanel.this, "Errors occurred when copying tab:\n" + errors);
-	updateMenu();
+	SwingWorker worker = new SwingWorker() {
+	  @Override
+	  protected Object doInBackground() throws Exception {
+	    int index = m_TabbedPane.getSelectedIndex();
+	    if (index == -1)
+	      return null;
+	    AbstractInvestigatorTab tab = (AbstractInvestigatorTab) m_TabbedPane.getComponentAt(index);
+	    logAndShowMessage("Copying tab: " + tab.getTitle());
+	    AbstractInvestigatorTab tabNew;
+	    MessageCollection errors = new MessageCollection();
+	    try {
+	      tabNew = tab.getClass().newInstance();
+	      m_TabbedPane.addTab(tabNew);
+	      tabNew.deserialize(Utils.deepCopy(tab.serialize()), errors);
+	    }
+	    catch (Exception ex) {
+	      errors.add("Failed to copy tab!", ex);
+	    }
+	    if (!errors.isEmpty())
+	      GUIHelper.showErrorMessage(
+		InvestigatorPanel.this, "Errors occurred when copying tab:\n" + errors);
+	    else
+	      logAndShowMessage("Copyied tab: " + tab.getTitle());
+	    updateMenu();
+	    return null;
+	  }
+	};
+	worker.execute();
       }
     };
     m_ActionTabCopyTab.setName("Copy tab");
