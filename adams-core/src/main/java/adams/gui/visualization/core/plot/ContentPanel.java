@@ -21,6 +21,9 @@
 package adams.gui.visualization.core.plot;
 
 import adams.core.io.PlaceholderFile;
+import adams.core.option.AbstractCommandLineHandler;
+import adams.core.option.OptionHandler;
+import adams.gui.core.BaseMenu;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BasePopupMenu;
 import adams.gui.core.GUIHelper;
@@ -32,10 +35,13 @@ import adams.gui.event.PlotPanelPanningListener;
 import adams.gui.event.PlotPanelZoomEvent;
 import adams.gui.event.PlotPanelZoomEvent.ZoomEventType;
 import adams.gui.event.PlotPanelZoomListener;
+import adams.gui.goe.GenericObjectEditorDialog;
 import adams.gui.print.JComponentWriter;
 import adams.gui.print.JComponentWriterFileChooser;
 import adams.gui.visualization.core.AxisPanel;
 import adams.gui.visualization.core.MouseMovementTracker;
+import adams.gui.visualization.core.Paintlet;
+import adams.gui.visualization.core.PaintletManager;
 import adams.gui.visualization.core.PlotPanel;
 import adams.gui.visualization.core.PopupMenuCustomizer;
 import adams.gui.visualization.core.axis.Tick;
@@ -46,6 +52,7 @@ import javax.swing.JMenuItem;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.Color;
+import java.awt.Dialog.ModalityType;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
@@ -53,7 +60,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
 import java.io.File;
 import java.text.DecimalFormat;
 import java.util.HashSet;
@@ -168,10 +174,10 @@ public class ContentPanel
     m_PopupMenuCustomizer   = null;
     m_Panning               = false;
     m_TipTextCustomizer     = null;
-    m_HitDetectors          = new HashSet<AbstractHitDetector>();
-    m_ZoomListeners         = new HashSet<PlotPanelZoomListener>();
-    m_PanningListeners      = new HashSet<PlotPanelPanningListener>();
-    m_MouseMovementTrackers = new HashSet<MouseMovementTracker>();
+    m_HitDetectors          = new HashSet<>();
+    m_ZoomListeners         = new HashSet<>();
+    m_PanningListeners      = new HashSet<>();
+    m_MouseMovementTrackers = new HashSet<>();
     m_ZoomingEnabled        = true;
     m_PanningEnabled        = true;
   }
@@ -199,7 +205,7 @@ public class ContentPanel
             }
           }
           // get start position of panning
-          else if (e.isShiftDown()) {
+          else {
             if (m_PanningEnabled) {
               m_Panning           = true;
               m_PanningStart      = e.getPoint();
@@ -232,8 +238,8 @@ public class ContentPanel
           }
           else if (m_Panning) {
             m_Panning  = false;
-            int deltaX = (int) e.getX() - (int) m_PanningStart.getX();
-            int deltaY = (int) m_PanningStart.getY() - (int) e.getY();
+            int deltaX = e.getX() - (int) m_PanningStart.getX();
+            int deltaY = (int) m_PanningStart.getY() - e.getY();
 
             // update pixel offset
             getOwner().getAxis(Axis.LEFT).setPixelOffset(m_LeftPixelOffset + deltaY);
@@ -280,8 +286,8 @@ public class ContentPanel
           repaint();
         }
         else if (m_Panning && e.isShiftDown()) {
-          int deltaX = (int) e.getX() - (int) m_PanningStart.getX();
-          int deltaY = (int) m_PanningStart.getY() - (int) e.getY();
+          int deltaX = e.getX() - (int) m_PanningStart.getX();
+          int deltaY = (int) m_PanningStart.getY() - e.getY();
 
           // update pixel offset
           getOwner().getAxis(Axis.LEFT).setPixelOffset(m_LeftPixelOffset + deltaY);
@@ -299,29 +305,26 @@ public class ContentPanel
         super.mouseMoved(e);
       }
     });
-    addMouseWheelListener(new MouseWheelListener() {
-      @Override
-      public void mouseWheelMoved(MouseWheelEvent e) {
-	if (e.getScrollType() == MouseWheelEvent.WHEEL_UNIT_SCROLL) {
-	  boolean zoomIn = (e.getWheelRotation() == -1);
-	  int amount = e.getScrollAmount();
-	  double factor;
-	  if (zoomIn)
-	    factor = Math.pow(1/1.1, amount);
-	  else
-	    factor = Math.pow(1.1, amount);
+    addMouseWheelListener((MouseWheelEvent e) -> {
+      if (e.getScrollType() == MouseWheelEvent.WHEEL_UNIT_SCROLL) {
+	boolean zoomIn = (e.getWheelRotation() == -1);
+	int amount = e.getScrollAmount();
+	double factor;
+	if (zoomIn)
+	  factor = Math.pow(1/1.1, amount);
+	else
+	  factor = Math.pow(1.1, amount);
 
-	  double width = (getOwner().getAxis(Axis.BOTTOM).getActualMaximum() - getOwner().getAxis(Axis.BOTTOM).getActualMinimum());
-	  double height = (getOwner().getAxis(Axis.LEFT).getActualMaximum() - getOwner().getAxis(Axis.LEFT).getActualMinimum());
-	  double widthNew = width * factor;
-	  double heightNew = height * factor;
-	  
-	  addZoom(
-	      getOwner().getAxis(Axis.LEFT).getActualMaximum() - (height - heightNew) / 2,
-	      getOwner().getAxis(Axis.BOTTOM).getActualMinimum() + (width - widthNew) / 2,
-	      getOwner().getAxis(Axis.LEFT).getActualMinimum() + (height - heightNew) / 2,
-	      getOwner().getAxis(Axis.BOTTOM).getActualMaximum() - (width - widthNew) / 2);
-	}
+	double width = (getOwner().getAxis(Axis.BOTTOM).getActualMaximum() - getOwner().getAxis(Axis.BOTTOM).getActualMinimum());
+	double height = (getOwner().getAxis(Axis.LEFT).getActualMaximum() - getOwner().getAxis(Axis.LEFT).getActualMinimum());
+	double widthNew = width * factor;
+	double heightNew = height * factor;
+
+	addZoom(
+	  getOwner().getAxis(Axis.LEFT).getActualMaximum() - (height - heightNew) / 2,
+	  getOwner().getAxis(Axis.BOTTOM).getActualMinimum() + (width - widthNew) / 2,
+	  getOwner().getAxis(Axis.LEFT).getActualMinimum() + (height - heightNew) / 2,
+	  getOwner().getAxis(Axis.BOTTOM).getActualMaximum() - (width - widthNew) / 2);
       }
     });
 
@@ -597,12 +600,13 @@ public class ContentPanel
   public BasePopupMenu getPopupMenu(MouseEvent e) {
     BasePopupMenu	result;
     JMenuItem		item;
+    BaseMenu		submenu;
+    Iterator<Paintlet>	paintlets;
 
     result = null;
 
     if (m_ZoomingEnabled) {
-      if (result == null)
-	result = new BasePopupMenu();
+      result = new BasePopupMenu();
 
       item = new JMenuItem("Zoom out", GUIHelper.getIcon("zoom_out.png"));
       item.setEnabled(getOwner().isZoomed());
@@ -646,8 +650,23 @@ public class ContentPanel
     result.add(item);
 
     // customize it?
-    if (m_PopupMenuCustomizer != null)
+    if (m_PopupMenuCustomizer != null) {
+      if (m_PopupMenuCustomizer instanceof PaintletManager) {
+	submenu   = new BaseMenu("Paintlets");
+	paintlets = ((PaintletManager) m_PopupMenuCustomizer).paintlets();
+	while (paintlets.hasNext()) {
+	  final Paintlet paintlet = paintlets.next();
+	  if (paintlet instanceof OptionHandler) {
+	    item = new JMenuItem(paintlet.getClass().getSimpleName());
+	    item.addActionListener((ActionEvent ae) -> editPaintlet(paintlet));
+	    submenu.add(item);
+	  }
+	}
+	submenu.sort();
+	result.add(submenu);
+      }
       m_PopupMenuCustomizer.customizePopupMenu(e, result);
+    }
 
     return result;
   }
@@ -782,6 +801,35 @@ public class ContentPanel
   public void printComponent(Graphics g) {
     super.printComponent(g);
     doPaint(g);
+  }
+
+  /**
+   * Allows the user to edit the paintlet. Only updates the options.
+   *
+   * @param paintlet	the paintlet to edit
+   */
+  protected void editPaintlet(Paintlet paintlet) {
+    GenericObjectEditorDialog	dialog;
+    AbstractCommandLineHandler	handler;
+    Paintlet			updated;
+
+    if (getParentDialog() != null)
+      dialog = new GenericObjectEditorDialog(getParentDialog(), ModalityType.DOCUMENT_MODAL);
+    else
+      dialog = new GenericObjectEditorDialog(getParentFrame(), true);
+    dialog.setTitle("Edit paintlet");
+    dialog.setDefaultCloseOperation(GenericObjectEditorDialog.DISPOSE_ON_CLOSE);
+    dialog.getGOEEditor().setClassType(Paintlet.class);
+    dialog.getGOEEditor().setCanChangeClassInDialog(false);
+    dialog.setCurrent(paintlet);
+    dialog.setLocationRelativeTo(dialog.getParent());
+    dialog.setVisible(true);
+    if (dialog.getResult() != GenericObjectEditorDialog.APPROVE_OPTION)
+      return;
+
+    updated = (Paintlet) dialog.getCurrent();
+    handler = AbstractCommandLineHandler.getHandler(paintlet);
+    handler.setOptions(paintlet, handler.getOptions(updated));
   }
 
   /**

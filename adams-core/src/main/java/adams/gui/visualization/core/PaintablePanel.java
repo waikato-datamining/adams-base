@@ -15,17 +15,11 @@
 
 /*
  * PaintablePanel.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.core;
 
-
-import java.awt.Graphics;
-import java.util.HashSet;
-import java.util.Iterator;
-
-import javax.swing.SwingUtilities;
 
 import adams.gui.core.BasePanel;
 import adams.gui.event.PaintEvent;
@@ -33,6 +27,11 @@ import adams.gui.event.PaintEvent.PaintMoment;
 import adams.gui.event.PaintListener;
 import adams.gui.visualization.core.axis.FixedLabelTickGenerator;
 import adams.gui.visualization.core.plot.Axis;
+
+import javax.swing.SwingUtilities;
+import java.awt.Graphics;
+import java.util.HashSet;
+import java.util.Iterator;
 
 /**
  * An abstract superclass for panels that paint "stuff", e.g., plots.
@@ -42,7 +41,7 @@ import adams.gui.visualization.core.plot.Axis;
  */
 public abstract class PaintablePanel
   extends BasePanel
-  implements PaintListener {
+  implements PaintListener, PaintletManager {
 
   /** for serialization. */
   private static final long serialVersionUID = -1394066820727332049L;
@@ -57,7 +56,7 @@ public abstract class PaintablePanel
   protected void initialize() {
     super.initialize();
 
-    m_Paintlets = new HashSet<Paintlet>();
+    m_Paintlets = new HashSet<>();
   }
 
   /**
@@ -136,15 +135,10 @@ public abstract class PaintablePanel
    * Performs the actual update.
    */
   protected void performUpdate() {
-    Runnable	run;
-
-    run = new Runnable() {
-      public void run() {
-	validate();
-	repaint();
-      }
-    };
-    SwingUtilities.invokeLater(run);
+    SwingUtilities.invokeLater(() -> {
+      validate();
+      repaint();
+    });
   }
 
   /**
