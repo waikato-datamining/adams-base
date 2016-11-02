@@ -160,20 +160,30 @@ public class TrainTestSet
 
     caps  = classifier.getCapabilities();
     train = getOwner().getData().get(m_ComboBoxTrain.getSelectedIndex()).getData();
-    if (!caps.test(train)) {
-      if (caps.getFailReason() != null)
-	return caps.getFailReason().getMessage();
-      else
-	return "Classifier cannot handle tain data!";
+    try {
+      if (!caps.test(train)) {
+	if (caps.getFailReason() != null)
+	  return caps.getFailReason().getMessage();
+	else
+	  return "Classifier cannot handle tain data!";
+      }
+    }
+    catch (Exception e) {
+      return "Classifier cannot handle data: " + e;
     }
 
     caps = classifier.getCapabilities();
     test = getOwner().getData().get(m_ComboBoxTest.getSelectedIndex()).getData();
-    if (!caps.test(test)) {
-      if (caps.getFailReason() != null)
-	return caps.getFailReason().getMessage();
-      else
-	return "Classifier cannot handle test data!";
+    try {
+      if (!caps.test(test)) {
+        if (caps.getFailReason() != null)
+          return caps.getFailReason().getMessage();
+        else
+          return "Classifier cannot handle test data!";
+      }
+    }
+    catch (Exception e) {
+      return "Classifier cannot handle data: " + e;
     }
 
     if (!train.equalHeaders(test))

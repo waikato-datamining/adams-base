@@ -235,11 +235,16 @@ public class TrainTestSplit
 
     data = getOwner().getData().get(m_ComboBoxDatasets.getSelectedIndex()).getData();
     caps = classifier.getCapabilities();
-    if (!caps.test(data)) {
-      if (caps.getFailReason() != null)
-	return caps.getFailReason().getMessage();
-      else
-	return "Classifier cannot handle data!";
+    try {
+      if (!caps.test(data)) {
+        if (caps.getFailReason() != null)
+          return caps.getFailReason().getMessage();
+        else
+          return "Classifier cannot handle data!";
+      }
+    }
+    catch (Exception e) {
+      return "Classifier cannot handle data: " + e;
     }
 
     return null;

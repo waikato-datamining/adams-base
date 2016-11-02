@@ -167,11 +167,16 @@ public class CrossValidation
 
     data = getOwner().getData().get(m_ComboBoxDatasets.getSelectedIndex()).getData();
     caps = evaluator.getCapabilities();
-    if (!caps.test(data)) {
-      if (caps.getFailReason() != null)
-	return caps.getFailReason().getMessage();
-      else
-	return "Evaluator cannot handle data!";
+    try {
+      if (!caps.test(data)) {
+        if (caps.getFailReason() != null)
+          return caps.getFailReason().getMessage();
+        else
+          return "Evaluator cannot handle data!";
+      }
+    }
+    catch (Exception e) {
+      return "Evaluator cannot handle data: " + e;
     }
 
     return null;

@@ -142,22 +142,32 @@ public class ClassesToClusters
     train = getOwner().getData().get(m_ComboBoxTrain.getSelectedIndex()).getData();
     if (train.classIndex() == -1) {
       caps = clusterer.getCapabilities();
-      if (!caps.test(train)) {
-	if (caps.getFailReason() != null)
-	  return caps.getFailReason().getMessage();
-	else
-	  return "Clusterer cannot handle training data!";
+      try {
+        if (!caps.test(train)) {
+          if (caps.getFailReason() != null)
+            return caps.getFailReason().getMessage();
+          else
+            return "Clusterer cannot handle training data!";
+        }
+      }
+      catch (Exception e) {
+        return "Clusterer cannot handle data: " + e;
       }
     }
 
     test = getOwner().getData().get(m_ComboBoxTest.getSelectedIndex()).getData();
     if (test.classIndex() == -1) {
       caps = clusterer.getCapabilities();
-      if (!caps.test(test)) {
-	if (caps.getFailReason() != null)
-	  return caps.getFailReason().getMessage();
-	else
-	  return "Clusterer cannot handle test data!";
+      try {
+        if (!caps.test(test)) {
+          if (caps.getFailReason() != null)
+            return caps.getFailReason().getMessage();
+          else
+            return "Clusterer cannot handle test data!";
+        }
+      }
+      catch (Exception e) {
+        return "Clusterer cannot handle data: " + e;
       }
     }
 

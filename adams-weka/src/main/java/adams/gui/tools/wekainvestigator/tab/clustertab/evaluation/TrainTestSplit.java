@@ -208,11 +208,16 @@ public class TrainTestSplit
 
     data = getOwner().getData().get(m_ComboBoxDatasets.getSelectedIndex()).getData();
     caps = clusterer.getCapabilities();
-    if (!caps.test(data)) {
-      if (caps.getFailReason() != null)
-	return caps.getFailReason().getMessage();
-      else
-	return "Clusterer cannot handle data!";
+    try {
+      if (!caps.test(data)) {
+        if (caps.getFailReason() != null)
+          return caps.getFailReason().getMessage();
+        else
+          return "Clusterer cannot handle data!";
+      }
+    }
+    catch (Exception e) {
+      return "Clusterer cannot handle data: " + e;
     }
 
     return null;
