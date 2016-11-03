@@ -86,9 +86,8 @@ public class DataTableModel
     int	result;
 
     result = 0;
-    result++;  // index
-    result++;  // modified
     result++;  // ID
+    result++;  // modified
     result++;  // relation
     result++;  // class
     result++;  // source
@@ -106,16 +105,14 @@ public class DataTableModel
   public String getColumnName(int column) {
     switch (column) {
       case 0:
-	return "Index";
+	return "ID";
       case 1:
 	return "Mod";
       case 2:
-	return "ID";
-      case 3:
 	return "Relation";
-      case 4:
+      case 3:
 	return "Class";
-      case 5:
+      case 4:
 	return "Source";
       default:
 	return null;
@@ -137,16 +134,14 @@ public class DataTableModel
 
     switch (columnIndex) {
       case 0:
-	return (rowIndex + 1);
+	return cont.getID();
       case 1:
 	return cont.isModified();
       case 2:
-	return cont.getID();
-      case 3:
 	return cont.getData().relationName();
-      case 4:
+      case 3:
 	return (cont.getData().classIndex() == -1) ? "<none>" : cont.getData().classAttribute().name();
-      case 5:
+      case 4:
 	return cont.getSource();
       default:
 	return null;
@@ -165,8 +160,6 @@ public class DataTableModel
       return Integer.class;
     if (columnIndex == 1)
       return Boolean.class;
-    if (columnIndex == 2)
-      return Integer.class;
     return super.getColumnClass(columnIndex);
   }
 
@@ -181,7 +174,7 @@ public class DataTableModel
   public boolean isCellEditable(int rowIndex, int columnIndex) {
     if (m_ReadOnly)
       return false;
-    if (columnIndex == 4)
+    if (columnIndex == 3)
       return true;
     return false;
   }
@@ -207,7 +200,7 @@ public class DataTableModel
     cont = m_Data.get(rowIndex);
 
     switch (columnIndex) {
-      case 4:  // class
+      case 3:  // class
 	name = "" + aValue;
 	if (name.isEmpty()) {
           cont.addUndoPoint("Unsetting class");

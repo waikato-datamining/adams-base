@@ -25,6 +25,7 @@ import adams.core.option.OptionUtils;
 import adams.data.spreadsheet.MetaData;
 import adams.gui.core.AbstractNamedHistoryPanel;
 import adams.gui.core.ParameterPanel;
+import adams.gui.tools.wekainvestigator.data.DataContainer;
 import adams.gui.tools.wekainvestigator.tab.clustertab.ResultItem;
 import weka.clusterers.ClusterEvaluation;
 import weka.clusterers.Clusterer;
@@ -165,6 +166,8 @@ public class TrainTestSet
   protected ResultItem doEvaluate(Clusterer clusterer, AbstractNamedHistoryPanel<ResultItem> history) throws Exception {
     ClusterEvaluation 	eval;
     Clusterer		model;
+    DataContainer 	trainCont;
+    DataContainer	testCont;
     Instances		train;
     Instances		test;
     String		msg;
@@ -173,11 +176,15 @@ public class TrainTestSet
     if ((msg = canEvaluate(clusterer)) != null)
       throw new IllegalArgumentException("Cannot evaluate clusterer!\n" + msg);
 
-    train   = getOwner().getData().get(m_ComboBoxTrain.getSelectedIndex()).getData();
-    test    = getOwner().getData().get(m_ComboBoxTest.getSelectedIndex()).getData();
-    runInfo = new MetaData();
+    trainCont = getOwner().getData().get(m_ComboBoxTrain.getSelectedIndex());
+    train     = trainCont.getData();
+    testCont  = getOwner().getData().get(m_ComboBoxTest.getSelectedIndex());
+    test      = testCont.getData();
+    runInfo   = new MetaData();
     runInfo.add("Clusterer", OptionUtils.getCommandLine(clusterer));
-    runInfo.add("Train", train.relationName());
+    runInfo.add("Train ID", trainCont.getID());
+    runInfo.add("Test ID", testCont.getID());
+    runInfo.add("Relation", train.relationName());
     runInfo.add("# Attributes", train.numAttributes());
     runInfo.add("# Instances (train)", train.numInstances());
     runInfo.add("# Instances (test)", test.numInstances());

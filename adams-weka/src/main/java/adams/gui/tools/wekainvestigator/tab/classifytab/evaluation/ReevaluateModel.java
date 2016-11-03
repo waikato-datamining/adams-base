@@ -32,6 +32,7 @@ import adams.gui.chooser.SelectOptionPanel;
 import adams.gui.core.AbstractNamedHistoryPanel;
 import adams.gui.core.ExtensionFileFilter;
 import adams.gui.core.ParameterPanel;
+import adams.gui.tools.wekainvestigator.data.DataContainer;
 import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
 import gnu.trove.list.TIntList;
 import gnu.trove.list.array.TIntArrayList;
@@ -258,25 +259,28 @@ public class ReevaluateModel
    */
   @Override
   protected ResultItem doEvaluate(Classifier classifier, AbstractNamedHistoryPanel<ResultItem> history) throws Exception {
-    Evaluation 	eval;
-    Instances	data;
-    boolean	discard;
-    String	msg;
-    MetaData 	runInfo;
-    TIntList 	original;
-    int		i;
-    int		interval;
+    Evaluation 		eval;
+    DataContainer 	dataCont;
+    Instances		data;
+    boolean		discard;
+    String		msg;
+    MetaData 		runInfo;
+    TIntList 		original;
+    int			i;
+    int			interval;
 
     classifier = (Classifier) OptionUtils.shallowCopy(m_Model);
 
     if ((msg = canEvaluate(classifier)) != null)
       throw new IllegalArgumentException("Cannot evaluate classifier!\n" + msg);
 
-    data    = getOwner().getData().get(m_ComboBoxDatasets.getSelectedIndex()).getData();
-    discard = m_CheckBoxDiscardPredictions.isSelected();
-    runInfo = new MetaData();
+    dataCont = getOwner().getData().get(m_ComboBoxDatasets.getSelectedIndex());
+    data     = dataCont.getData();
+    discard  = m_CheckBoxDiscardPredictions.isSelected();
+    runInfo  = new MetaData();
     runInfo.add("Classifier", OptionUtils.getCommandLine(m_Model));
-    runInfo.add("Dataset", data.relationName());
+    runInfo.add("Dataset ID", dataCont.getID());
+    runInfo.add("Relation", data.relationName());
     runInfo.add("# Attributes", data.numAttributes());
     runInfo.add("# Instances", data.numInstances());
     runInfo.add("Class attribute", data.classAttribute().name());
@@ -290,9 +294,9 @@ public class ReevaluateModel
     for (i = 0; i < data.numInstances(); i++) {
       eval.evaluateModelOnceAndRecordPrediction(m_Model, data.instance(i));
       if ((i+1) % interval == 0)
-	getOwner().logMessage("Used " + (i+1) + "/" + data.numInstances() + " of '" + data.relationName() + "' to evaluate " + OptionUtils.getCommandLine(classifier));
+	getOwner().logMessage("Used " + (i+1) + "/" + data.numInstances() + " of '" + dataCont.getID() + "/" + data.relationName() + "' to evaluate " + OptionUtils.getCommandLine(classifier));
     }
-    getOwner().logMessage("Used " + data.numInstances() + " of '" + data.relationName() + "' to evaluate " + OptionUtils.getCommandLine(classifier));
+    getOwner().logMessage("Used " + data.numInstances() + " of '" + dataCont.getID() + "/" + data.relationName() + "' to evaluate " + OptionUtils.getCommandLine(classifier));
 
     original = new TIntArrayList();
     for (i = 0; i < data.numInstances(); i++)

@@ -32,6 +32,7 @@ import adams.gui.core.AbstractNamedHistoryPanel;
 import adams.gui.core.NumberTextField;
 import adams.gui.core.NumberTextField.Type;
 import adams.gui.core.ParameterPanel;
+import adams.gui.tools.wekainvestigator.data.DataContainer;
 import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
 import adams.multiprocess.WekaCrossValidationExecution;
 import weka.classifiers.Classifier;
@@ -271,6 +272,7 @@ public class CrossValidation
   protected ResultItem doEvaluate(Classifier classifier, AbstractNamedHistoryPanel<ResultItem> history) throws Exception {
     ResultItem		result;
     String		msg;
+    DataContainer	dataCont;
     Instances		data;
     boolean		finalModel;
     boolean		views;
@@ -284,7 +286,8 @@ public class CrossValidation
     if ((msg = canEvaluate(classifier)) != null)
       throw new IllegalArgumentException("Cannot evaluate classifier!\n" + msg);
 
-    data       = getOwner().getData().get(m_ComboBoxDatasets.getSelectedIndex()).getData();
+    dataCont   = getOwner().getData().get(m_ComboBoxDatasets.getSelectedIndex());
+    data       = dataCont.getData();
     finalModel = m_CheckBoxFinalModel.isSelected();
     views      = m_CheckBoxUseViews.isSelected();
     discard    = m_CheckBoxDiscardPredictions.isSelected();
@@ -296,7 +299,8 @@ public class CrossValidation
     runInfo.add("Seed", seed);
     runInfo.add("Folds", folds);
     runInfo.add("Threads", threads);
-    runInfo.add("Dataset", data.relationName());
+    runInfo.add("Dataset ID", dataCont.getID());
+    runInfo.add("Relation", data.relationName());
     runInfo.add("# Attributes", data.numAttributes());
     runInfo.add("# Instances", data.numInstances());
     runInfo.add("Class attribute", data.classAttribute().name());

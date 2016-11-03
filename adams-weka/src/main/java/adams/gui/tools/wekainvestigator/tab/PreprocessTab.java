@@ -330,7 +330,7 @@ public class PreprocessTab
       protected void doRun() {
 	for (int i = 0; i < indices.length; i++) {
 	  DataContainer cont = getData().get(indices[i]);
-	  logMessage("Starting filtering " + (i+1) + "/" + indices.length + " '" + cont.getSource() + "' using " + OptionUtils.getCommandLine(m_CurrentFilter));
+	  logMessage("Starting filtering " + (i+1) + "/" + indices.length + " '" + cont.getID() + "/" + cont.getData().relationName() + "' using " + OptionUtils.getCommandLine(m_CurrentFilter));
 	  try {
 	    String oldName = cont.getData().relationName();
 	    if ((!batch && (i == 0)) || batch)
@@ -338,7 +338,7 @@ public class PreprocessTab
 	    Instances filtered = Filter.useFilter(cont.getData(), m_CurrentFilter);
 	    if (keep)
 	      filtered.setRelationName(oldName);
-	    logMessage("Finished filtering " + (i+1) + "/" + indices.length + " '" + cont.getSource() + "' using " + OptionUtils.getCommandLine(m_CurrentFilter));
+	    logMessage("Finished filtering " + (i+1) + "/" + indices.length + " '" + cont.getID() + "/" + cont.getData().relationName() + "' using " + OptionUtils.getCommandLine(m_CurrentFilter));
 	    if (replace) {
 	      cont.setData(filtered);
 	      fireDataChange(new WekaInvestigatorDataEvent(owner, WekaInvestigatorDataEvent.ROWS_MODIFIED, indices[i]));

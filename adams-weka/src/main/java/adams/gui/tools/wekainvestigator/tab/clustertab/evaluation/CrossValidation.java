@@ -29,6 +29,7 @@ import adams.gui.core.AbstractNamedHistoryPanel;
 import adams.gui.core.NumberTextField;
 import adams.gui.core.NumberTextField.Type;
 import adams.gui.core.ParameterPanel;
+import adams.gui.tools.wekainvestigator.data.DataContainer;
 import adams.gui.tools.wekainvestigator.tab.clustertab.ResultItem;
 import weka.clusterers.ClusterEvaluation;
 import weka.clusterers.Clusterer;
@@ -205,6 +206,7 @@ public class CrossValidation
   @Override
   protected ResultItem doEvaluate(Clusterer clusterer, AbstractNamedHistoryPanel<ResultItem> history) throws Exception {
     String			msg;
+    DataContainer 		dataCont;
     Instances			data;
     boolean			finalModel;
     Clusterer			cls;
@@ -218,7 +220,8 @@ public class CrossValidation
     if ((msg = canEvaluate(clusterer)) != null)
       throw new IllegalArgumentException("Cannot evaluate clusterer!\n" + msg);
 
-    data       = getOwner().getData().get(m_ComboBoxDatasets.getSelectedIndex()).getData();
+    dataCont   = getOwner().getData().get(m_ComboBoxDatasets.getSelectedIndex());
+    data       = dataCont.getData();
     finalModel = m_CheckBoxFinalModel.isSelected();
     seed       = m_TextSeed.getValue().intValue();
     folds      = ((Number) m_SpinnerFolds.getValue()).intValue();
@@ -235,7 +238,8 @@ public class CrossValidation
     runInfo.add("Clusterer", OptionUtils.getCommandLine(clusterer));
     runInfo.add("Seed", seed);
     runInfo.add("Folds", folds);
-    runInfo.add("Dataset", data.relationName());
+    runInfo.add("Dataset ID", dataCont.getID());
+    runInfo.add("Relation", data.relationName());
     runInfo.add("# Attributes", data.numAttributes());
     runInfo.add("# Instances", data.numInstances());
 

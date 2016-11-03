@@ -32,6 +32,7 @@ import adams.gui.core.NumberTextField;
 import adams.gui.core.NumberTextField.Type;
 import adams.gui.core.ParameterPanel;
 import adams.gui.tools.wekainvestigator.InvestigatorPanel;
+import adams.gui.tools.wekainvestigator.data.DataContainer;
 import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
@@ -265,6 +266,7 @@ public class TrainTestSplit
     int				seed;
     boolean		  	views;
     boolean			discard;
+    DataContainer 		dataCont;
     Instances			data;
     Instances			train;
     Instances			test;
@@ -278,11 +280,12 @@ public class TrainTestSplit
     if ((msg = canEvaluate(classifier)) != null)
       throw new IllegalArgumentException("Cannot evaluate classifier!\n" + msg);
 
-    data    = getOwner().getData().get(m_ComboBoxDatasets.getSelectedIndex()).getData();
-    perc    = m_TextPercentage.getValue().doubleValue() / 100.0;
-    seed    = m_TextSeed.getValue().intValue();
-    views   = m_CheckBoxUseViews.isSelected();
-    discard = m_CheckBoxDiscardPredictions.isSelected();
+    dataCont = getOwner().getData().get(m_ComboBoxDatasets.getSelectedIndex());
+    data     = dataCont.getData();
+    perc     = m_TextPercentage.getValue().doubleValue() / 100.0;
+    seed     = m_TextSeed.getValue().intValue();
+    views    = m_CheckBoxUseViews.isSelected();
+    discard  = m_CheckBoxDiscardPredictions.isSelected();
     if (m_CheckBoxPreserveOrder.isSelected())
       generator = new RandomSplitGenerator(data, perc);
     else
@@ -296,7 +299,8 @@ public class TrainTestSplit
     runInfo.add("Seed", seed);
     runInfo.add("Split percentage", perc);
     runInfo.add("Order preserved", m_CheckBoxPreserveOrder.isSelected());
-    runInfo.add("Dataset", data.relationName());
+    runInfo.add("Dataset ID", dataCont.getID());
+    runInfo.add("Relation", data.relationName());
     runInfo.add("# Attributes", data.numAttributes());
     runInfo.add("# Instances (train)", train.numInstances());
     runInfo.add("# Instances (test)", test.numInstances());
@@ -307,9 +311,9 @@ public class TrainTestSplit
       runInfo.add("Additional attributes: ", Utils.flatten(m_SelectAdditionalAttributes.getCurrent(), ", "));
 
     model = (Classifier) OptionUtils.shallowCopy(classifier);
-    getOwner().logMessage("Using " + m_TextPercentage.getText() + "% of '" + train.relationName() + "' to train " + OptionUtils.getCommandLine(classifier));
+    getOwner().logMessage("Using " + m_TextPercentage.getText() + "% of '" + dataCont.getID() + "/" + train.relationName() + "' to train " + OptionUtils.getCommandLine(classifier));
     model.buildClassifier(train);
-    getOwner().logMessage("Using remainder from '" + test.relationName() + "' to evaluate " + OptionUtils.getCommandLine(classifier));
+    getOwner().logMessage("Using remainder from '" + dataCont.getID() + "/" + test.relationName() + "' to evaluate " + OptionUtils.getCommandLine(classifier));
     eval = new Evaluation(train);
     eval.setDiscardPredictions(discard);
 

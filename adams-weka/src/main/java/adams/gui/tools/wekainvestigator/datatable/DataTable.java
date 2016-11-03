@@ -96,7 +96,7 @@ public class DataTable
     DataTableModel	dmodel;
 
     result = null;
-    if (column == 4) {
+    if (column == 3) {
       model = getModel();
       if (model instanceof SortableAndSearchableWrapperTableModel)
         dmodel = (DataTableModel) ((SortableAndSearchableWrapperTableModel) model).getUnsortedModel();

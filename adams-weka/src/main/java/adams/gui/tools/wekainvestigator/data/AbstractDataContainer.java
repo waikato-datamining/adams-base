@@ -338,6 +338,7 @@ public abstract class AbstractDataContainer
    * @return		the next ID
    */
   protected static synchronized int nextID() {
-    return m_IDCounter++;
+    m_IDCounter++;
+    return m_IDCounter;
   }
 }

@@ -31,6 +31,7 @@ import adams.gui.core.NumberTextField;
 import adams.gui.core.NumberTextField.Type;
 import adams.gui.core.ParameterPanel;
 import adams.gui.tools.wekainvestigator.InvestigatorPanel;
+import adams.gui.tools.wekainvestigator.data.DataContainer;
 import adams.gui.tools.wekainvestigator.tab.clustertab.ResultItem;
 import weka.classifiers.RandomSplitGenerator;
 import weka.clusterers.ClusterEvaluation;
@@ -237,6 +238,7 @@ public class TrainTestSplit
     double			perc;
     int				seed;
     boolean		  	views;
+    DataContainer		dataCont;
     Instances			data;
     Instances			train;
     Instances			test;
@@ -248,10 +250,11 @@ public class TrainTestSplit
     if ((msg = canEvaluate(clusterer)) != null)
       throw new IllegalArgumentException("Cannot evaluate clusterer!\n" + msg);
 
-    data  = getOwner().getData().get(m_ComboBoxDatasets.getSelectedIndex()).getData();
-    perc  = m_TextPercentage.getValue().doubleValue() / 100.0;
-    seed  = m_TextSeed.getValue().intValue();
-    views = m_CheckBoxUseViews.isSelected();
+    dataCont = getOwner().getData().get(m_ComboBoxDatasets.getSelectedIndex());
+    data     = dataCont.getData();
+    perc     = m_TextPercentage.getValue().doubleValue() / 100.0;
+    seed     = m_TextSeed.getValue().intValue();
+    views    = m_CheckBoxUseViews.isSelected();
     if (m_CheckBoxPreserveOrder.isSelected())
       generator = new RandomSplitGenerator(data, perc);
     else
@@ -265,7 +268,8 @@ public class TrainTestSplit
     runInfo.add("Seed", seed);
     runInfo.add("Split percentage", perc);
     runInfo.add("Order preserved", m_CheckBoxPreserveOrder.isSelected());
-    runInfo.add("Dataset", data.relationName());
+    runInfo.add("Dataset ID", dataCont.getID());
+    runInfo.add("Relation", data.relationName());
     runInfo.add("# Attributes", data.numAttributes());
     runInfo.add("# Instances (train)", train.numInstances());
     runInfo.add("# Instances (test)", test.numInstances());

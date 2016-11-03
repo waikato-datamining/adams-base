@@ -180,7 +180,7 @@ public abstract class AbstractEvaluation<T extends AbstractInvestigatorTab, R ex
     result = new ArrayList<>();
     for (i = 0; i < getOwner().getData().size(); i++) {
       data = getOwner().getData().get(i);
-      result.add((i + 1) + ": " + data.getID() + "/" + data.getData().relationName());
+      result.add(data.getID() + ": " + data.getData().relationName());
     }
 
     return result;
@@ -196,16 +196,40 @@ public abstract class AbstractEvaluation<T extends AbstractInvestigatorTab, R ex
     int 		result;
     int			i;
     DataContainer	data;
+    String		idStr;
+    int			id;
 
     result = -1;
 
-    if (oldDataset != null)
-      oldDataset = oldDataset.replaceAll("^[0-9]+: ", "");
-    for (i = 0; i < getOwner().getData().size(); i++) {
-      data = getOwner().getData().get(i);
-      if ((oldDataset != null) && data.getData().relationName().equals(oldDataset)) {
-	result = i;
-	break;
+    if (oldDataset != null) {
+      // get ID
+      idStr = oldDataset.replaceAll(":.*", "");
+      try {
+	id = Integer.parseInt(idStr);
+      }
+      catch (Exception e) {
+	id = -1;
+      }
+
+      // try ID
+      for (i = 0; i < getOwner().getData().size(); i++) {
+	data = getOwner().getData().get(i);
+	if (data.getID() == id) {
+	  result = i;
+	  break;
+	}
+      }
+
+      // try relationname
+      if (result == -1) {
+	oldDataset = oldDataset.replaceAll("^[0-9]+: ", "");
+	for (i = 0; i < getOwner().getData().size(); i++) {
+	  data = getOwner().getData().get(i);
+	  if (data.getData().relationName().equals(oldDataset)) {
+	    result = i;
+	    break;
+	  }
+	}
       }
     }
 

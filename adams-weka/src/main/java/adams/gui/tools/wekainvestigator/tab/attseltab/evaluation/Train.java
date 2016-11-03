@@ -25,6 +25,7 @@ import adams.core.option.OptionUtils;
 import adams.data.spreadsheet.MetaData;
 import adams.gui.core.AbstractNamedHistoryPanel;
 import adams.gui.core.ParameterPanel;
+import adams.gui.tools.wekainvestigator.data.DataContainer;
 import adams.gui.tools.wekainvestigator.tab.attseltab.ResultItem;
 import weka.attributeSelection.ASEvaluation;
 import weka.attributeSelection.ASSearch;
@@ -136,6 +137,7 @@ public class Train
   @Override
   protected ResultItem doEvaluate(ASEvaluation evaluator, ASSearch search, AbstractNamedHistoryPanel<ResultItem> history) throws Exception {
     String		msg;
+    DataContainer	dataCont;
     Instances		data;
     ASEvaluation	eval;
     ASSearch		srch;
@@ -145,13 +147,15 @@ public class Train
     if ((msg = canEvaluate(evaluator, search)) != null)
       throw new IllegalArgumentException("Cannot perform attribute selection!\n" + msg);
 
-    data    = getOwner().getData().get(m_ComboBoxDatasets.getSelectedIndex()).getData();
-    eval    = (ASEvaluation) OptionUtils.shallowCopy(evaluator);
-    srch    = (ASSearch) OptionUtils.shallowCopy(search);
-    runInfo = new MetaData();
+    dataCont = getOwner().getData().get(m_ComboBoxDatasets.getSelectedIndex());
+    data     = dataCont.getData();
+    eval     = (ASEvaluation) OptionUtils.shallowCopy(evaluator);
+    srch     = (ASSearch) OptionUtils.shallowCopy(search);
+    runInfo  = new MetaData();
     runInfo.add("Evaluator", OptionUtils.getCommandLine(evaluator));
     runInfo.add("Search", OptionUtils.getCommandLine(search));
-    runInfo.add("Dataset", data.relationName());
+    runInfo.add("Dataset ID", dataCont.getID());
+    runInfo.add("Relation", data.relationName());
     runInfo.add("# Attributes", data.numAttributes());
     runInfo.add("# Instances", data.numInstances());
     if (data.classIndex() > -1)

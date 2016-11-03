@@ -28,6 +28,7 @@ import adams.data.spreadsheet.MetaData;
 import adams.gui.chooser.SelectOptionPanel;
 import adams.gui.core.AbstractNamedHistoryPanel;
 import adams.gui.core.ParameterPanel;
+import adams.gui.tools.wekainvestigator.data.DataContainer;
 import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
@@ -201,25 +202,31 @@ public class TrainTestSet
    */
   @Override
   protected ResultItem doEvaluate(Classifier classifier, AbstractNamedHistoryPanel<ResultItem> history) throws Exception {
-    Evaluation 	eval;
-    Classifier  model;
-    Instances	train;
-    Instances	test;
-    boolean	discard;
-    String	msg;
-    MetaData 	runInfo;
-    int		i;
-    int		interval;
+    Evaluation 		eval;
+    Classifier  	model;
+    DataContainer 	trainCont;
+    DataContainer 	testCont;
+    Instances		train;
+    Instances		test;
+    boolean		discard;
+    String		msg;
+    MetaData 		runInfo;
+    int			i;
+    int			interval;
 
     if ((msg = canEvaluate(classifier)) != null)
       throw new IllegalArgumentException("Cannot evaluate classifier!\n" + msg);
 
-    train   = getOwner().getData().get(m_ComboBoxTrain.getSelectedIndex()).getData();
-    test    = getOwner().getData().get(m_ComboBoxTest.getSelectedIndex()).getData();
-    discard = m_CheckBoxDiscardPredictions.isSelected();
-    runInfo = new MetaData();
+    trainCont = getOwner().getData().get(m_ComboBoxTrain.getSelectedIndex());
+    testCont  = getOwner().getData().get(m_ComboBoxTest.getSelectedIndex());
+    train     = trainCont.getData();
+    test      = testCont.getData();
+    discard   = m_CheckBoxDiscardPredictions.isSelected();
+    runInfo   = new MetaData();
     runInfo.add("Classifier", OptionUtils.getCommandLine(classifier));
-    runInfo.add("Train", train.relationName());
+    runInfo.add("Train ID", trainCont.getID());
+    runInfo.add("Test ID", testCont.getID());
+    runInfo.add("Relation", train.relationName());
     runInfo.add("# Attributes", train.numAttributes());
     runInfo.add("# Instances (train)", train.numInstances());
     runInfo.add("# Instances (test)", test.numInstances());
@@ -229,9 +236,9 @@ public class TrainTestSet
       runInfo.add("Additional attributes: ", Utils.flatten(m_SelectAdditionalAttributes.getCurrent(), ", "));
 
     model = (Classifier) OptionUtils.shallowCopy(classifier);
-    getOwner().logMessage("Using '" + train.relationName() + "' to train " + OptionUtils.getCommandLine(classifier));
+    getOwner().logMessage("Using '" + trainCont.getID() + "/" + train.relationName() + "' to train " + OptionUtils.getCommandLine(classifier));
     model.buildClassifier(train);
-    getOwner().logMessage("Using '" + test.relationName() + "' to evaluate " + OptionUtils.getCommandLine(classifier));
+    getOwner().logMessage("Using '" + testCont.getID() + "/" + test.relationName() + "' to evaluate " + OptionUtils.getCommandLine(classifier));
 
     eval = new Evaluation(train);
     eval.setDiscardPredictions(discard);
@@ -239,9 +246,9 @@ public class TrainTestSet
     for (i = 0; i < test.numInstances(); i++) {
       eval.evaluateModelOnceAndRecordPrediction(model, test.instance(i));
       if ((i+1) % interval == 0)
-	getOwner().logMessage("Used " + (i+1) + "/" + test.numInstances() + " of '" + test.relationName() + "' to evaluate " + OptionUtils.getCommandLine(classifier));
+	getOwner().logMessage("Used " + (i+1) + "/" + test.numInstances() + " of '" + testCont.getID() + "/" + test.relationName() + "' to evaluate " + OptionUtils.getCommandLine(classifier));
     }
-    getOwner().logMessage("Used " + test.numInstances() + " of '" + test.relationName() + "' to evaluate " + OptionUtils.getCommandLine(classifier));
+    getOwner().logMessage("Used " + test.numInstances() + " of '" + testCont.getID() + "/" + test.relationName() + "' to evaluate " + OptionUtils.getCommandLine(classifier));
 
     // history
     return addToHistory(

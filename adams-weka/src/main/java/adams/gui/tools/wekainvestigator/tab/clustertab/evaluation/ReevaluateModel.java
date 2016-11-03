@@ -29,6 +29,7 @@ import adams.gui.chooser.FileChooserPanel;
 import adams.gui.core.AbstractNamedHistoryPanel;
 import adams.gui.core.ExtensionFileFilter;
 import adams.gui.core.ParameterPanel;
+import adams.gui.tools.wekainvestigator.data.DataContainer;
 import adams.gui.tools.wekainvestigator.tab.clustertab.ResultItem;
 import weka.clusterers.ClusterEvaluation;
 import weka.clusterers.Clusterer;
@@ -224,6 +225,7 @@ public class ReevaluateModel
   @Override
   protected ResultItem doEvaluate(Clusterer clusterer, AbstractNamedHistoryPanel<ResultItem> history) throws Exception {
     ClusterEvaluation 	eval;
+    DataContainer 	dataCont;
     Instances		data;
     String		msg;
     MetaData 		runInfo;
@@ -233,10 +235,12 @@ public class ReevaluateModel
     if ((msg = canEvaluate(clusterer)) != null)
       throw new IllegalArgumentException("Cannot evaluate clusterer!\n" + msg);
 
-    data    = getOwner().getData().get(m_ComboBoxDatasets.getSelectedIndex()).getData();
-    runInfo = new MetaData();
+    dataCont = getOwner().getData().get(m_ComboBoxDatasets.getSelectedIndex());
+    data     = dataCont.getData();
+    runInfo  = new MetaData();
     runInfo.add("Clusterer", OptionUtils.getCommandLine(clusterer));
-    runInfo.add("Dataset", data.relationName());
+    runInfo.add("Dataset ID", dataCont.getID());
+    runInfo.add("Relation", data.relationName());
     runInfo.add("# Attributes", data.numAttributes());
     runInfo.add("# Instances", data.numInstances());
 

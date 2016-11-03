@@ -297,6 +297,7 @@ public class ClassesToClusters
   protected ResultItem doEvaluate(Clusterer clusterer, AbstractNamedHistoryPanel<ResultItem> history) throws Exception {
     ClusterEvaluation 		eval;
     Clusterer			model;
+    DataContainer		dataCont;
     Instances			data;
     Instances			train;
     Instances			test;
@@ -316,9 +317,10 @@ public class ClassesToClusters
       throw new IllegalArgumentException("Cannot evaluate clusterer!\n" + msg);
 
     // train
-    data  = getOwner().getData().get(m_ComboBoxTrain.getSelectedIndex()).getData();
-    train = removeClassAttribute(data);
-    model = (Clusterer) OptionUtils.shallowCopy(clusterer);
+    dataCont = getOwner().getData().get(m_ComboBoxTrain.getSelectedIndex());
+    data     = dataCont.getData();
+    train    = removeClassAttribute(data);
+    model    = (Clusterer) OptionUtils.shallowCopy(clusterer);
     getOwner().logMessage("Building clusterer on '" + data.relationName() + "' without class attribute using " + OptionUtils.getCommandLine(clusterer));
     model.buildClusterer(train);
 
@@ -327,7 +329,8 @@ public class ClassesToClusters
     test    = removeClassAttribute(data);
     runInfo = new MetaData();
     runInfo.add("Clusterer", OptionUtils.getCommandLine(clusterer));
-    runInfo.add("Dataset", data.relationName());
+    runInfo.add("Dataset ID", dataCont.getID());
+    runInfo.add("Relation", data.relationName());
     runInfo.add("# Attributes", data.numAttributes());
     runInfo.add("# Instances (train)", train.numInstances());
     runInfo.add("# Instances (test)", test.numInstances());

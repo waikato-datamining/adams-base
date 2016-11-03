@@ -30,6 +30,7 @@ import adams.gui.core.AbstractNamedHistoryPanel;
 import adams.gui.core.NumberTextField;
 import adams.gui.core.NumberTextField.Type;
 import adams.gui.core.ParameterPanel;
+import adams.gui.tools.wekainvestigator.data.DataContainer;
 import adams.gui.tools.wekainvestigator.tab.attseltab.ResultItem;
 import weka.attributeSelection.ASEvaluation;
 import weka.attributeSelection.ASSearch;
@@ -192,6 +193,7 @@ public class CrossValidation
   @Override
   protected ResultItem doEvaluate(ASEvaluation evaluator, ASSearch search, AbstractNamedHistoryPanel<ResultItem> history) throws Exception {
     String				msg;
+    DataContainer			dataCont;
     Instances				data;
     int					seed;
     int					folds;
@@ -207,17 +209,19 @@ public class CrossValidation
     if ((msg = canEvaluate(evaluator, search)) != null)
       throw new IllegalArgumentException("Cannot perform attribute selection!\n" + msg);
 
-    data   = getOwner().getData().get(m_ComboBoxDatasets.getSelectedIndex()).getData();
-    seed   = m_TextSeed.getValue().intValue();
-    folds  = ((Number) m_SpinnerFolds.getValue()).intValue();
-    eval   = (ASEvaluation) OptionUtils.shallowCopy(evaluator);
-    srch   = (ASSearch) OptionUtils.shallowCopy(search);
+    dataCont = getOwner().getData().get(m_ComboBoxDatasets.getSelectedIndex());
+    data     = dataCont.getData();
+    seed     = m_TextSeed.getValue().intValue();
+    folds    = ((Number) m_SpinnerFolds.getValue()).intValue();
+    eval     = (ASEvaluation) OptionUtils.shallowCopy(evaluator);
+    srch     = (ASSearch) OptionUtils.shallowCopy(search);
     runInfo    = new MetaData();
     runInfo.add("Evaluator", OptionUtils.getCommandLine(evaluator));
     runInfo.add("Search", OptionUtils.getCommandLine(search));
     runInfo.add("Seed", seed);
     runInfo.add("Folds", folds);
-    runInfo.add("Dataset", data.relationName());
+    runInfo.add("Dataset ID", dataCont.getID());
+    runInfo.add("Relation", data.relationName());
     runInfo.add("# Attributes", data.numAttributes());
     runInfo.add("# Instances", data.numInstances());
     if (data.classIndex() > -1)
