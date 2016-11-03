@@ -140,7 +140,7 @@ public abstract class AbstractInvestigatorTab
    * @param job 	the job to execute
    */
   public boolean startExecution(InvestigatorTabJob job) {
-    if (canStartExecution()) {
+    if (!canStartExecution()) {
       logMessage("Busy, cannot start '" + job.getTitle() + "'!");
       return false;
     }
