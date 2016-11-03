@@ -32,6 +32,8 @@ import com.googlecode.jfilechooserbookmarks.gui.BaseScrollPane;
 
 import javax.swing.JPanel;
 import javax.swing.ListSelectionModel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.BorderLayout;
 import java.util.Date;
 import java.util.HashMap;
@@ -46,7 +48,8 @@ import java.util.Set;
  * @version $Revision$
  */
 public class DataTab
-  extends AbstractInvestigatorTabWithEditableDataTable {
+  extends AbstractInvestigatorTabWithEditableDataTable
+  implements ChangeListener {
 
   private static final long serialVersionUID = -94945456385486233L;
 
@@ -133,6 +136,7 @@ public class DataTab
   public void dataChanged(WekaInvestigatorDataEvent e) {
     Set<DataContainer>	cached;
     Set<DataContainer>	current;
+    InstancesTable	table;
 
     super.dataChanged(e);
 
@@ -144,14 +148,16 @@ public class DataTab
       current.add(cont);
     cached.removeAll(current);
     for (DataContainer cont: cached) {
-      m_TableCache.remove(cont);
+      table = m_TableCache.remove(cont);
+      table.removeChangeListener(this);
       m_TimestampCache.remove(cont);
     }
     // 2. remove containers that were modified
     for (DataContainer cont: current) {
       if (m_TimestampCache.containsKey(cont)) {
 	if (!cont.lastUpdated().equals(m_TimestampCache.get(cont))) {
-	  m_TableCache.remove(cont);
+	  table = m_TableCache.remove(cont);
+	  table.removeChangeListener(this);
 	  m_TimestampCache.remove(cont);
 	}
       }
@@ -196,6 +202,7 @@ public class DataTab
 	model.setShowAttributeIndex(true);
 	m_CurrentTable = new InstancesTable(model);
 	m_CurrentTable.setUndoEnabled(true);
+        m_CurrentTable.addChangeListener(this);
 	m_TableCache.put(cont, m_CurrentTable);
 	m_TimestampCache.put(cont, new Date(cont.lastUpdated().getTime()));
 	setOptimal = true;
@@ -219,5 +226,18 @@ public class DataTab
     invalidate();
     revalidate();
     doLayout();
+  }
+
+  /**
+   * Gets called when the data in the table changed.
+   *
+   * @param e		the event
+   */
+  @Override
+  public void stateChanged(ChangeEvent e) {
+    if (getSelectedRows().length > 0)
+      fireDataChange(new WekaInvestigatorDataEvent(getOwner(), WekaInvestigatorDataEvent.ROWS_MODIFIED, getSelectedRows()[0]));
+    else
+      fireDataChange(new WekaInvestigatorDataEvent(getOwner(), WekaInvestigatorDataEvent.TABLE_CHANGED));
   }
 }

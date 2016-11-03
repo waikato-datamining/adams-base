@@ -23,6 +23,8 @@ package adams.gui.tools.wekainvestigator.tab.preprocesstab;
 
 import adams.gui.core.BaseTable;
 import adams.gui.core.GUIHelper;
+import gnu.trove.list.TIntList;
+import gnu.trove.list.array.TIntArrayList;
 import weka.core.Instances;
 
 import javax.swing.BorderFactory;
@@ -37,7 +39,7 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.util.HashMap;
 import java.util.regex.Pattern;
 
 /**
@@ -78,7 +80,7 @@ public class AttributeSelectionPanel extends JPanel {
     protected Instances m_Instances;
 
     /** The flag for whether the instance will be included */
-    protected boolean[] m_Selected;
+    protected HashMap<String,Boolean> m_Selected;
 
     /**
      * Creates the tablemodel with the given set of instances.
@@ -96,7 +98,7 @@ public class AttributeSelectionPanel extends JPanel {
      */
     public void setInstances(Instances instances) {
       m_Instances = instances;
-      m_Selected = new boolean[(m_Instances != null) ? m_Instances.numAttributes() : 0];
+      m_Selected  = new HashMap<>();
     }
 
     /**
@@ -106,7 +108,10 @@ public class AttributeSelectionPanel extends JPanel {
      */
     @Override
     public int getRowCount() {
-      return m_Selected.length;
+      if (m_Instances == null)
+	return 0;
+      else
+	return m_Instances.numAttributes();
     }
 
     /**
@@ -128,11 +133,13 @@ public class AttributeSelectionPanel extends JPanel {
      */
     @Override
     public Object getValueAt(int row, int column) {
+      if (row >= m_Instances.numAttributes())
+        return null;
       switch (column) {
         case 0:
           return (row + 1);
         case 1:
-          return m_Selected[row];
+          return m_Selected.containsKey(m_Instances.attribute(row).name()) && m_Selected.get(m_Instances.attribute(row).name());
         case 2:
           return m_Instances.attribute(row).name();
         default:
@@ -170,8 +177,8 @@ public class AttributeSelectionPanel extends JPanel {
     @Override
     public void setValueAt(Object value, int row, int col) {
       if (col == 1) {
-        m_Selected[row] = (Boolean) value;
-        fireTableRowsUpdated(0, m_Selected.length);
+	m_Selected.put(m_Instances.attribute(row).name(), (Boolean) value);
+        fireTableRowsUpdated(0, getRowCount());
       }
     }
 
@@ -204,42 +211,59 @@ public class AttributeSelectionPanel extends JPanel {
      * @return the array of selected indices.
      */
     public int[] getSelectedAttributes() {
-      int[] r1 = new int[getRowCount()];
-      int selCount = 0;
-      for (int i = 0; i < getRowCount(); i++) {
-        if (m_Selected[i])
-          r1[selCount++] = i;
+      TIntList		result;
+      int		i;
+      String		name;
+
+      result = new TIntArrayList();
+      if (m_Instances != null) {
+	for (i = 0; i < m_Instances.numAttributes(); i++) {
+	  name = m_Instances.attribute(i).name();
+	  if (m_Selected.containsKey(name) && m_Selected.get(name))
+	    result.add(i);
+	}
       }
-      int[] result = new int[selCount];
-      System.arraycopy(r1, 0, result, 0, selCount);
-      return result;
+
+      return result.toArray();
     }
 
     /**
      * Sets the state of all attributes to selected.
      */
     public void includeAll() {
-      for (int i = 0; i < m_Selected.length; i++)
-        m_Selected[i] = true;
-      fireTableRowsUpdated(0, m_Selected.length);
+      if (m_Instances == null)
+	return;
+      for (int i = 0; i < m_Instances.numAttributes(); i++)
+        m_Selected.put(m_Instances.attribute(i).name(), true);
+      fireTableRowsUpdated(0, getRowCount());
     }
 
     /**
      * Deselects all attributes.
      */
     public void removeAll() {
-      for (int i = 0; i < m_Selected.length; i++)
-        m_Selected[i] = false;
-      fireTableRowsUpdated(0, m_Selected.length);
+      if (m_Instances == null)
+	return;
+      for (int i = 0; i < m_Instances.numAttributes(); i++)
+        m_Selected.put(m_Instances.attribute(i).name(), true);
+      fireTableRowsUpdated(0, getRowCount());
     }
 
     /**
      * Inverts the selected status of each attribute.
      */
     public void invert() {
-      for (int i = 0; i < m_Selected.length; i++)
-        m_Selected[i] = !m_Selected[i];
-      fireTableRowsUpdated(0, m_Selected.length);
+      boolean	current;
+      String	name;
+
+      if (m_Instances == null)
+	return;
+      for (int i = 0; i < m_Instances.numAttributes(); i++) {
+	name    = m_Instances.attribute(i).name();
+	current = m_Selected.containsKey(name) && m_Selected.get(name);
+	m_Selected.put(name, !current);
+      }
+      fireTableRowsUpdated(0, getRowCount());
     }
 
     /**
@@ -249,18 +273,26 @@ public class AttributeSelectionPanel extends JPanel {
      * @param pattern a perl reg. expression
      */
     public void pattern(String pattern) {
-      for (int i = 0; i < m_Selected.length; i++)
-        m_Selected[i] = Pattern.matches(pattern, m_Instances.attribute(i).name());
-      fireTableRowsUpdated(0, m_Selected.length);
+      String	name;
+
+      if (m_Instances == null)
+	return;
+      for (int i = 0; i < getRowCount(); i++) {
+	name = m_Instances.attribute(i).name();
+	m_Selected.put(name, Pattern.matches(pattern, name));
+      }
+      fireTableRowsUpdated(0, getRowCount());
     }
 
     public void setSelectedAttributes(boolean[] selected) throws Exception {
-      if (selected.length != m_Selected.length)
-        throw new Exception("Supplied array does not have the same number "
-          + "of elements as there are attributes!");
+      if (m_Instances == null)
+	return;
+      if (selected.length != getRowCount())
+        throw new Exception(
+	  "Supplied array does not have the same number of elements as there are attributes!");
       for (int i = 0; i < selected.length; i++)
-        m_Selected[i] = selected[i];
-      fireTableRowsUpdated(0, m_Selected.length);
+        m_Selected.put(m_Instances.attribute(i).name(), selected[i]);
+      fireTableRowsUpdated(0, getRowCount());
     }
   }
 
@@ -305,48 +337,29 @@ public class AttributeSelectionPanel extends JPanel {
 
     m_IncludeAll.setToolTipText("Selects all attributes");
     m_IncludeAll.setEnabled(false);
-    m_IncludeAll.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        m_Model.includeAll();
-      }
-    });
+    m_IncludeAll.addActionListener((ActionEvent e) -> m_Model.includeAll());
     m_RemoveAll.setToolTipText("Unselects all attributes");
     m_RemoveAll.setEnabled(false);
-    m_RemoveAll.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        m_Model.removeAll();
-      }
-    });
+    m_RemoveAll.addActionListener((ActionEvent e) -> m_Model.removeAll());
     m_Invert.setToolTipText("Inverts the current attribute selection");
     m_Invert.setEnabled(false);
-    m_Invert.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        m_Model.invert();
-      }
-    });
-    m_Pattern
-      .setToolTipText("Selects all attributes that match a reg. expression");
+    m_Invert.addActionListener((ActionEvent e) -> m_Model.invert());
+    m_Pattern.setToolTipText("Selects all attributes that match a reg. expression");
     m_Pattern.setEnabled(false);
-    m_Pattern.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        String pattern = GUIHelper.showInputDialog(m_Pattern.getParent(),
-	  "Enter a Perl regular expression", m_PatternRegEx);
-        if (pattern != null) {
-          try {
-            Pattern.compile(pattern);
-            m_PatternRegEx = pattern;
-            m_Model.pattern(pattern);
-          }
-	  catch (Exception ex) {
-            GUIHelper.showErrorMessage(m_Pattern.getParent(), "'" + pattern
-		+ "' is not a valid Perl regular expression!", ex,
-	      "Error in Pattern...");
-          }
-        }
+    m_Pattern.addActionListener((ActionEvent e) -> {
+      String patternStr = GUIHelper.showInputDialog(m_Pattern.getParent(),
+	"Enter a Perl regular expression", m_PatternRegEx);
+      if (patternStr != null) {
+	try {
+	  Pattern.compile(patternStr);
+	  m_PatternRegEx = patternStr;
+	  m_Model.pattern(patternStr);
+	}
+	catch (Exception ex) {
+	  GUIHelper.showErrorMessage(m_Pattern.getParent(), "'" + patternStr
+	      + "' is not a valid Perl regular expression!", ex,
+	    "Error in Pattern...");
+	}
       }
     });
     m_Table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -357,23 +370,18 @@ public class AttributeSelectionPanel extends JPanel {
     JPanel p1 = new JPanel();
     p1.setBorder(BorderFactory.createEmptyBorder(10, 5, 10, 5));
     p1.setLayout(new GridLayout(1, 4, 5, 5));
-    if (include) {
+    if (include)
       p1.add(m_IncludeAll);
-    }
-    if (remove) {
+    if (remove)
       p1.add(m_RemoveAll);
-    }
-    if (invert) {
+    if (invert)
       p1.add(m_Invert);
-    }
-    if (pattern) {
+    if (pattern)
       p1.add(m_Pattern);
-    }
 
     setLayout(new BorderLayout());
-    if (include || remove || invert || pattern) {
+    if (include || remove || invert || pattern)
       add(p1, BorderLayout.NORTH);
-    }
     add(new JScrollPane(m_Table), BorderLayout.CENTER);
   }
 
@@ -504,5 +512,4 @@ public class AttributeSelectionPanel extends JPanel {
       System.err.println(ex.getMessage());
     }
   }
-
 }

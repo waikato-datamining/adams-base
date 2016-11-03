@@ -434,6 +434,16 @@ public class PreprocessTab
   }
 
   /**
+   * Notifies the tab that the data changed.
+   *
+   * @param e		the event
+   */
+  public void dataChanged(WekaInvestigatorDataEvent e) {
+    super.dataChanged(e);
+    displayData();
+  }
+
+  /**
    * Displays the data.
    */
   protected void displayData() {
