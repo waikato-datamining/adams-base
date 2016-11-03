@@ -123,7 +123,7 @@ public abstract class AbstractInvestigatorTab
    * @return		true if job can get executed
    */
   public boolean canStartExecution() {
-    return (m_Worker != null);
+    return (m_Worker == null);
   }
 
   /**
