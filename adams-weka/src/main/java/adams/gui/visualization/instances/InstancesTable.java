@@ -36,12 +36,15 @@ import weka.core.converters.AbstractFileSaver;
 
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.HashMap;
+import java.util.HashSet;
 
 /**
  * Table for displaying Instances objects.
@@ -65,6 +68,9 @@ public class InstancesTable
 
   /** for keeping track of the setups being used (classname-{plot|process}-{column|row} - setup). */
   protected HashMap<String,Object> m_LastSetup;
+
+  /** the listeners for changes. */
+  protected HashSet<ChangeListener> m_ChangeListeners;
 
   /**
    * Initializes the table with the data.
@@ -91,9 +97,10 @@ public class InstancesTable
   protected void initGUI() {
     super.initGUI();
 
-    m_FileChooser = new WekaFileChooser();
-    m_Renderer    = new AttributeValueCellRenderer();
-    m_LastSetup   = new HashMap<>();
+    m_FileChooser     = new WekaFileChooser();
+    m_Renderer        = new AttributeValueCellRenderer();
+    m_LastSetup       = new HashMap<>();
+    m_ChangeListeners = new HashSet<>();
     setAutoResizeMode(SortableAndSearchableTable.AUTO_RESIZE_OFF);
     addHeaderPopupMenuListener((MouseEvent e) -> showHeaderPopup(e));
     addCellPopupMenuListener((MouseEvent e) -> showCellPopup(e));
@@ -177,6 +184,7 @@ public class InstancesTable
   public void undo() {
     ((InstancesTableModel) getModel()).undo();
     setOptimalColumnWidth();
+    notifyChangeListeners();
   }
 
   /**
@@ -287,6 +295,7 @@ public class InstancesTable
       if (newName != null) {
 	instModel.renameAttributeAt(col, newName);
 	setOptimalColumnWidth();
+	notifyChangeListeners();
       }
     });
     menu.add(menuitem);
@@ -297,6 +306,7 @@ public class InstancesTable
       if (retVal == ApprovalDialog.APPROVE_OPTION) {
 	instModel.deleteAttributeAt(col);
 	setOptimalColumnWidth();
+	notifyChangeListeners();
       }
     });
     menu.add(menuitem);
@@ -374,6 +384,7 @@ public class InstancesTable
       for (int i = 0; i < selRows.length; i++)
 	actRows[i] = getActualRow(selRows[i]);
       instModel.deleteInstances(actRows);
+      notifyChangeListeners();
     });
     menu.add(menuitem);
 
@@ -488,5 +499,36 @@ public class InstancesTable
    */
   public Object getLastSetup(Class cls, boolean plot, boolean row) {
     return m_LastSetup.get(createLastSetupKey(cls, plot, row));
+  }
+
+  /**
+   * Adds the listener to the pool of listeners that get notified when the data
+   * changes.
+   *
+   * @param l		the listener to add
+   */
+  public void addChangeListener(ChangeListener l) {
+    m_ChangeListeners.add(l);
+  }
+
+  /**
+   * Removes the listener from the pool of listeners that get notified when the data
+   * changes.
+   *
+   * @param l		the listener to remove
+   */
+  public void removeChangeListener(ChangeListener l) {
+    m_ChangeListeners.remove(l);
+  }
+
+  /**
+   * Notifies all the change listeners.
+   */
+  protected synchronized void notifyChangeListeners() {
+    ChangeEvent		e;
+
+    e = new ChangeEvent(this);
+    for (ChangeListener l: m_ChangeListeners)
+      l.stateChanged(e);
   }
 }
