@@ -111,7 +111,7 @@ public class Split
     }
 
     cont = getSelectedData()[0];
-    logMessage("Splitting dataset: " + cont.getData().relationName() + " [" + cont.getSource() + "]");
+    logMessage("Splitting dataset: " + cont.getID() + "/" + cont.getData().relationName() + " [" + cont.getSource() + "]");
     if (checkboxPreserveOrder.isSelected())
       generator = new RandomSplitGenerator(cont.getData(), percentage / 100.0);
     else
