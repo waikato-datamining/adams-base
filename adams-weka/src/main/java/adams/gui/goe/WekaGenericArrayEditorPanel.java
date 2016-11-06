@@ -113,7 +113,7 @@ public class WekaGenericArrayEditorPanel
     }
     if (hasValue())
       m_Dialog.getEditor().setValue(getCurrent());
-    m_Dialog.setLocationRelativeTo(WekaGenericArrayEditorPanel.this);
+    m_Dialog.setLocationRelativeTo(GUIHelper.getParentComponent(this));
     m_Dialog.setVisible(true);
     if (m_Dialog.getResult() == GenericArrayEditorDialog.APPROVE_OPTION)
       return m_Dialog.getEditor().getValue();

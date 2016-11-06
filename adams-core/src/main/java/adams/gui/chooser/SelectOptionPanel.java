@@ -23,6 +23,7 @@ package adams.gui.chooser;
 import adams.core.option.OptionUtils;
 import adams.gui.core.BaseList;
 import adams.gui.core.ConsolePanel;
+import adams.gui.core.GUIHelper;
 import adams.gui.dialog.ApprovalDialog;
 import com.googlecode.jfilechooserbookmarks.gui.BaseScrollPane;
 import gnu.trove.list.TIntList;
@@ -323,7 +324,7 @@ public class SelectOptionPanel
     dialog.setTitle(m_DialogTitle);
     dialog.getContentPane().add(new BaseScrollPane(list));
     dialog.pack();
-    dialog.setLocationRelativeTo(null);
+    dialog.setLocationRelativeTo(GUIHelper.getParentComponent(this));
     dialog.setVisible(true);
 
     if (dialog.getOption() != ApprovalDialog.APPROVE_OPTION)

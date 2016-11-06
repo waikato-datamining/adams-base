@@ -15,17 +15,18 @@
 
 /**
  * AbstractDateBasedChooserPanel.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.chooser;
+
+import adams.core.DateFormat;
+import adams.gui.core.BasePanel;
+import adams.gui.core.GUIHelper;
+import adams.gui.dialog.ApprovalDialog;
 
 import java.awt.BorderLayout;
 import java.awt.Dialog.ModalityType;
 import java.util.Date;
-
-import adams.core.DateFormat;
-import adams.gui.core.BasePanel;
-import adams.gui.dialog.ApprovalDialog;
 
 /**
  * Ancestor for chooser panels that use {@link Date} objects.
@@ -138,7 +139,7 @@ public abstract class AbstractDateBasedChooserPanel<T extends Date>
     panel = createPanel();
     dialog.getContentPane().add(panel, BorderLayout.CENTER);
     dialog.pack();
-    dialog.setLocationRelativeTo(this);
+    dialog.setLocationRelativeTo(GUIHelper.getParentComponent(this));
     dialog.setVisible(true);
     if (dialog.getOption() == ApprovalDialog.APPROVE_OPTION) {
       result = convert(((DateProvider) panel).getDate());

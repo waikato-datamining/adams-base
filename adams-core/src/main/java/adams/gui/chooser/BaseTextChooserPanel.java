@@ -22,6 +22,7 @@ package adams.gui.chooser;
 
 import adams.core.Utils;
 import adams.core.base.BaseText;
+import adams.gui.core.GUIHelper;
 import adams.gui.dialog.ApprovalDialog;
 import adams.gui.dialog.TextPanel;
 
@@ -131,7 +132,7 @@ public class BaseTextChooserPanel
     textPanel.setTitle(m_DialogTitle);
     dialog.getContentPane().add(textPanel, BorderLayout.CENTER);
     dialog.setSize(m_DialogSize);
-    dialog.setLocationRelativeTo(null);
+    dialog.setLocationRelativeTo(GUIHelper.getParentComponent(this));
     dialog.setVisible(true);
     if (dialog.getOption() == ApprovalDialog.APPROVE_OPTION)
       return new BaseText(textPanel.getContent());

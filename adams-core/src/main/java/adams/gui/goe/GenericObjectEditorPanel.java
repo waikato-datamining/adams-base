@@ -121,7 +121,7 @@ public class GenericObjectEditorPanel
       m_Editor.setValue(m_Current);
     if (m_Dialog == null)
       m_Dialog = GenericObjectEditorDialog.createDialog(this, m_Editor);
-    m_Dialog.setLocationRelativeTo(GenericObjectEditorPanel.this);
+    m_Dialog.setLocationRelativeTo(GUIHelper.getParentComponent(this));
     m_Dialog.setVisible(true);
     if (m_Dialog.getResult() == GenericObjectEditorDialog.APPROVE_OPTION)
       return m_Editor.getValue();

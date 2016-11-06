@@ -15,7 +15,7 @@
 
 /*
  * GenericArrayEditorPanel.java
- * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.goe;
@@ -98,24 +98,20 @@ public class GenericArrayEditorPanel
   protected Object doChoose() {
     if (m_Dialog == null) {
       m_Dialog = GenericArrayEditorDialog.createDialog(this, getCurrent());
-      m_Dialog.getEditor().addOkListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  if (isEditable()) {
-	    setCurrent(m_Dialog.getEditor().getValue());
-	    notifyChangeListeners(new ChangeEvent(m_Self));
-	  }
-	}
+      m_Dialog.getEditor().addOkListener((ActionEvent e) -> {
+        if (isEditable()) {
+          setCurrent(m_Dialog.getEditor().getValue());
+          notifyChangeListeners(new ChangeEvent(m_Self));
+        }
       });
-      m_Dialog.getEditor().addCancelListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  m_Dialog.getEditor().setValue(getCurrent());
-	  notifyChangeListeners(new ChangeEvent(m_Self));
-	}
+      m_Dialog.getEditor().addCancelListener((ActionEvent e) -> {
+        m_Dialog.getEditor().setValue(getCurrent());
+        notifyChangeListeners(new ChangeEvent(m_Self));
       });
     }
     if (hasValue())
       m_Dialog.getEditor().setValue(getCurrent());
-    m_Dialog.setLocationRelativeTo(GenericArrayEditorPanel.this);
+    m_Dialog.setLocationRelativeTo(GUIHelper.getParentComponent(this));
     m_Dialog.setVisible(true);
     if (m_Dialog.getResult() == GenericArrayEditorDialog.APPROVE_OPTION)
       return m_Dialog.getEditor().getValue();
@@ -145,14 +141,14 @@ public class GenericArrayEditorPanel
 
     if (m_Current != null) {
       if (Array.getLength(m_Current) <= m_MaxDisplayItems) {
-	for (i = 0; i < Array.getLength(m_Current); i++) {
-	  if (i > 0)
-	    display += ", ";
-	  display += Array.get(m_Current, i);
-	}
+        for (i = 0; i < Array.getLength(m_Current); i++) {
+          if (i > 0)
+            display += ", ";
+          display += Array.get(m_Current, i);
+        }
       }
       else {
-	display = Array.getLength(m_Current) + " " + m_Current.getClass().getComponentType().getName();
+        display = Array.getLength(m_Current) + " " + m_Current.getClass().getComponentType().getName();
       }
     }
 
@@ -227,7 +223,7 @@ public class GenericArrayEditorPanel
       item = new JMenuItem("Show...", GUIHelper.getIcon("properties.gif"));
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-	choose();
+        choose();
       }
     });
     menu.add(item);

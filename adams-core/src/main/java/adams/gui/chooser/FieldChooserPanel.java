@@ -25,6 +25,7 @@ import adams.data.report.DataType;
 import adams.data.report.Field;
 import adams.data.report.FieldType;
 import adams.data.report.FieldUtils;
+import adams.gui.core.GUIHelper;
 import adams.gui.selection.SelectFieldDialog;
 
 /**
@@ -82,7 +83,7 @@ public class FieldChooserPanel
   protected AbstractField doChoose() {
     if (hasValue())
       m_Dialog.setItem(getCurrent());
-    m_Dialog.setLocationRelativeTo(this);
+    m_Dialog.setLocationRelativeTo(GUIHelper.getParentComponent(this));
     m_Dialog.setVisible(true);
     if (m_Dialog.getOption() == SelectFieldDialog.APPROVE_OPTION)
       return m_Dialog.getItem();

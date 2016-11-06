@@ -25,6 +25,7 @@ import adams.core.io.fileoperations.FtpFileOperations;
 import adams.core.io.lister.DirectoryLister;
 import adams.core.io.lister.FtpDirectoryLister;
 import adams.core.option.OptionUtils;
+import adams.gui.core.GUIHelper;
 import adams.gui.goe.GenericObjectEditorDialog;
 import org.apache.commons.net.ftp.FTPClient;
 
@@ -106,7 +107,7 @@ public class FtpDirectoryChooserPanel
     dialog.getGOEEditor().setClassType(FtpRemoteDirectorySetup.class);
     dialog.getGOEEditor().setCanChangeClassInDialog(false);
     dialog.setCurrent(currentSetup);
-    dialog.setLocationRelativeTo(null);
+    dialog.setLocationRelativeTo(GUIHelper.getParentComponent(this));
     dialog.setVisible(true);
     if (dialog.getResult() != GenericObjectEditorDialog.APPROVE_OPTION)
       return null;
