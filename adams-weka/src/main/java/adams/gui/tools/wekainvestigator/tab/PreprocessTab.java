@@ -358,10 +358,33 @@ public class PreprocessTab
     });
   }
 
+  /**
+   * Hook method that gets called after successfully starting a job.
+   *
+   * @param job		the job that got started
+   */
+  @Override
+  protected void postStartExecution(InvestigatorTabJob job) {
+    super.postStartExecution(job);
+    updateButtons();
+  }
+
+  /**
+   * Hook method that gets called after stopping a job.
+   */
   @Override
   protected void postStopExecution() {
     super.postStopExecution();
     logMessage("Stopped filtering using " + OptionUtils.getCommandLine(m_CurrentFilter));
+    updateButtons();
+  }
+
+  /**
+   * Hook method that gets called after finishing a job.
+   */
+  @Override
+  protected void postExecutionFinished() {
+    super.postExecutionFinished();
     updateButtons();
   }
 
