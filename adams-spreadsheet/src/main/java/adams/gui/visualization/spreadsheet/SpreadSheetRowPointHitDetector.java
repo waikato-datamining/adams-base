@@ -166,7 +166,7 @@ public class SpreadSheetRowPointHitDetector
     double				diffX;
     int					diffPixel;
     int					i;
-    SpreadSheetRow			inst;
+    SpreadSheetRow 			row;
     SpreadSheetRowPoint 		rp;
     SpreadSheetRowPoint 		rp2;
     List<SpreadSheetRowPoint>		result;
@@ -189,15 +189,15 @@ public class SpreadSheetRowPointHitDetector
 	continue;
 
       // check for hit
-      inst    = m_Owner.getContainerManager().get(i).getData();
-      indices = findEnclosingAttributeIndices(inst, x);
+      row     = model.getContainerAt(i).getData();
+      indices = findEnclosingAttributeIndices(row, x);
 
       // do we have only one point available?
       if ((indices[0] < 0) || (indices[1] < 0)) {
-	index = findClosestAttributeIndex(inst, x);
-	rp = findSpreadSheetRowPoint(inst, index);
+	index = findClosestAttributeIndex(row, x);
+	rp = findSpreadSheetRowPoint(row, index);
 	if (rp == null) {
-	  getLogger().info("Failed to determine row point for attribute index #" + index + ": " + inst);
+	  getLogger().info("Failed to determine row point for attribute index #" + index + ": " + row);
 	  continue;
 	}
 
@@ -217,15 +217,15 @@ public class SpreadSheetRowPointHitDetector
 	result.add(rp);
       }
       else {
-	rp = findSpreadSheetRowPoint(inst, indices[0]);
+	rp = findSpreadSheetRowPoint(row, indices[0]);
 	if (rp == null) {
-	  getLogger().info("Failed to determine row point for attribute index #" + indices[0] + ": " + inst);
+	  getLogger().info("Failed to determine row point for attribute index #" + indices[0] + ": " + row);
 	  continue;
 	}
 
-	rp2 = findSpreadSheetRowPoint(inst, indices[1]);
+	rp2 = findSpreadSheetRowPoint(row, indices[1]);
 	if (rp2 == null) {
-	  getLogger().info("Failed to determine row point for attribute index #" + indices[1] + ": " + inst);
+	  getLogger().info("Failed to determine row point for attribute index #" + indices[1] + ": " + row);
 	  continue;
 	}
 

@@ -70,7 +70,6 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dialog.ModalityType;
@@ -78,7 +77,6 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.ArrayList;
@@ -225,20 +223,11 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
     m_TimeseriesContainerList.setAllowSearch(props.getBoolean("ContainerList.AllowSearch", false));
     m_TimeseriesContainerList.setPopupMenuSupplier(this);
     m_TimeseriesContainerList.setDisplayDatabaseID(true);
-    m_TimeseriesContainerList.addTableModelListener(new TableModelListener() {
-      @Override
-      public void tableChanged(TableModelEvent e) {
-	final ContainerTable table = m_TimeseriesContainerList.getTable();
-	if ((table.getRowCount() > 0) && (table.getSelectedRowCount() == 0)) {
-	  Runnable runnable = new Runnable() {
-	    @Override
-	    public void run() {
-	      table.getSelectionModel().addSelectionInterval(0, 0);
-	    }
-	  };
-	  SwingUtilities.invokeLater(runnable);
-	}
-      }
+    m_TimeseriesContainerList.addTableModelListener((TableModelEvent e) -> {
+        final ContainerTable table = m_TimeseriesContainerList.getTable();
+        if ((table.getRowCount() > 0) && (table.getSelectedRowCount() == 0)) {
+          SwingUtilities.invokeLater(() -> table.getSelectionModel().addSelectionInterval(0, 0));
+        }
     });
 
     m_SidePanel.setLayout(new BorderLayout(0, 0));
@@ -274,9 +263,9 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
 
     try {
       getContainerManager().setColorProvider(
-	(AbstractColorProvider) OptionUtils.forAnyCommandLine(
-	  AbstractColorProvider.class,
-	  props.getProperty("Plot.ColorProvider", DefaultColorProvider.class.getName())));
+        (AbstractColorProvider) OptionUtils.forAnyCommandLine(
+          AbstractColorProvider.class,
+          props.getProperty("Plot.ColorProvider", DefaultColorProvider.class.getName())));
     }
     catch (Exception e) {
       System.err.println(getClass().getName() + " - Failed to set the color provider:");
@@ -412,22 +401,22 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
 
     for (i = 0; i < getContainerManager().count(); i++) {
       if (m_AdjustToVisibleData) {
-	if (!getContainerManager().isVisible(i))
-	  continue;
+        if (!getContainerManager().isVisible(i))
+          continue;
       }
 
       points = getContainerManager().get(i).getData().toList();
       if (points.size() == 0)
-	continue;
+        continue;
 
       // determine min/max
       if (determineXRange) {
-	minX = Math.min(minX, points.get(0).getTimestamp().getTime());
-	maxX = Math.max(maxX, points.get(points.size() - 1).getTimestamp().getTime());
+        minX = Math.min(minX, points.get(0).getTimestamp().getTime());
+        maxX = Math.max(maxX, points.get(points.size() - 1).getTimestamp().getTime());
       }
       if (determineYRange) {
-	maxY = Math.max(maxY, getContainerManager().get(i).getData().getMaxValue().getValue());
-	minY = Math.min(minY, getContainerManager().get(i).getData().getMinValue().getValue());
+        maxY = Math.max(maxY, getContainerManager().get(i).getData().getMaxValue().getValue());
+        minY = Math.min(minY, getContainerManager().get(i).getData().getMinValue().getValue());
       }
     }
 
@@ -453,111 +442,116 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
    */
   @Override
   public BasePopupMenu getContainerListPopupMenu(final ContainerTable<M,C> table, final int row) {
-    BasePopupMenu	result;
-    JMenuItem		item;
-    final int[]		indices;
+    BasePopupMenu			result;
+    JMenuItem				item;
+    final int[]				indices;
+    final TimeseriesContainerModel	model;
+    final int				actRow;
+    final List<TimeseriesContainer> 	visibleConts;
 
     result = new BasePopupMenu();
+    model  = (TimeseriesContainerModel) getTimeseriesContainerList().getContainerModel();
 
     if (table.getSelectedRows().length == 0)
       indices = new int[]{row};
     else
       indices = table.getSelectedRows();
+    for (int i = 0; i < indices.length; i++) {
+      TimeseriesContainer cont = (TimeseriesContainer) model.getContainerAt(indices[i]);
+      indices[i] = ((TimeseriesContainerManager) getContainerManager()).indexOf(cont);
+    }
+    actRow = ((TimeseriesContainerManager) getContainerManager()).indexOf(model.getContainerAt(row));
+
+    visibleConts = new ArrayList<>();
+    for (int i = 0; i < model.getRowCount(); i++) {
+      if (((TimeseriesContainer) model.getContainerAt(i)).isVisible())
+	visibleConts.add((TimeseriesContainer) model.getContainerAt(i));
+    }
 
     item = new JMenuItem("Toggle visibility");
-    item.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	TIntArrayList visible = new TIntArrayList();
-	TIntArrayList invisible = new TIntArrayList();
-	for (int index: indices) {
-	  if (getContainerManager().get(index).isVisible())
-	    invisible.add(index);
-	  else
-	    visible.add(index);
-	}
-	Range range = new Range();
-	range.setMax(getContainerManager().count());
-	if (invisible.size() > 0) {
-	  range.setIndices(invisible.toArray());
-	  getScriptingEngine().add(
-	    TimeseriesPanel.this,
-	    Invisible.ACTION + " " + range.getRange());
-	}
-	if (visible.size() > 0) {
-	  range.setIndices(visible.toArray());
-	  getScriptingEngine().add(
-	    TimeseriesPanel.this,
-	    Visible.ACTION + " " + range.getRange());
-	}
+    item.addActionListener((ActionEvent e) -> {
+      TIntArrayList visible = new TIntArrayList();
+      TIntArrayList invisible = new TIntArrayList();
+      for (int i = 0; i < indices.length; i++) {
+	if (getContainerManager().isVisible(indices[i]))
+	  invisible.add(indices[i]);
+	else
+	  visible.add(indices[i]);
+      }
+      Range range = new Range();
+      range.setMax(getContainerManager().count());
+      if (invisible.size() > 0) {
+        range.setIndices(invisible.toArray());
+        getScriptingEngine().add(
+          TimeseriesPanel.this,
+          Invisible.ACTION + " " + range.getRange());
+      }
+      if (visible.size() > 0) {
+        range.setIndices(visible.toArray());
+        getScriptingEngine().add(
+          TimeseriesPanel.this,
+          Visible.ACTION + " " + range.getRange());
       }
     });
     result.add(item);
 
     item = new JMenuItem("Show all");
-    item.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	TIntArrayList list = new TIntArrayList();
-	for (int i = 0; i < getContainerManager().count(); i++) {
-	  if (!getContainerManager().get(i).isVisible())
-	    list.add(i);
-	}
-	if (list.size() > 0) {
-	  Range range = new Range();
-	  range.setMax(getContainerManager().count());
-	  range.setIndices(list.toArray());
-	  getScriptingEngine().add(
-	    TimeseriesPanel.this,
-	    Visible.ACTION + " " + range.getRange());
-	}
+    item.addActionListener((ActionEvent e) -> {
+      TIntArrayList list = new TIntArrayList();
+      for (int i = 0; i < model.getRowCount(); i++) {
+	int index = ((TimeseriesContainerManager) getContainerManager()).indexOf(model.getContainerAt(i));
+	if (!((TimeseriesContainer) model.getContainerAt(i)).isVisible())
+	  list.add(index);
+      }
+      if (list.size() > 0) {
+        Range range = new Range();
+        range.setMax(getContainerManager().count());
+        range.setIndices(list.toArray());
+        getScriptingEngine().add(
+          TimeseriesPanel.this,
+          Visible.ACTION + " " + range.getRange());
       }
     });
     result.add(item);
 
     item = new JMenuItem("Hide all");
-    item.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	TIntArrayList list = new TIntArrayList();
-	for (int i = 0; i < getContainerManager().count(); i++) {
-	  if (getContainerManager().get(i).isVisible())
-	    list.add(i);
-	}
-	if (list.size() > 0) {
-	  Range range = new Range();
-	  range.setMax(getContainerManager().count());
-	  range.setIndices(list.toArray());
-	  getScriptingEngine().add(
-	    TimeseriesPanel.this,
-	    Invisible.ACTION + " " + range.getRange());
-	}
+    item.addActionListener((ActionEvent e) -> {
+      TIntArrayList list = new TIntArrayList();
+      for (int i = 0; i < model.getRowCount(); i++) {
+	int index = ((TimeseriesContainerManager) getContainerManager()).indexOf(model.getContainerAt(i));
+	if (((TimeseriesContainer) model.getContainerAt(i)).isVisible())
+	  list.add(index);
+      }
+      if (list.size() > 0) {
+        Range range = new Range();
+        range.setMax(getContainerManager().count());
+        range.setIndices(list.toArray());
+        getScriptingEngine().add(
+          TimeseriesPanel.this,
+          Invisible.ACTION + " " + range.getRange());
       }
     });
     result.add(item);
 
     item = new JMenuItem("Choose color...");
-    item.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	Color c = null;
-	if (indices.length == 1) {
-	  c = JColorChooser.showDialog(
-	    table,
-	    "Choose color for " + getContainerManager().get(indices[0]).getData().getID(),
-	    getContainerManager().get(indices[0]).getColor());
-	}
-	else {
-	  c = JColorChooser.showDialog(
-	    table,
-	    "Choose color",
-	    getContainerManager().get(row).getColor());
-	}
-	if (c != null) {
-	  for (int index: indices)
-	    getContainerManager().get(index).setColor(c);
-	}
+    item.addActionListener((ActionEvent e) -> {
+      Color c = null;
+      if (indices.length == 1) {
+        c = JColorChooser.showDialog(
+          table,
+          "Choose color for " + getContainerManager().get(indices[0]).getData().getID(),
+          getContainerManager().get(indices[0]).getColor());
       }
+      else {
+        c = JColorChooser.showDialog(
+          table,
+          "Choose color",
+          getContainerManager().get(row).getColor());
+      }
+      if (c == null)
+	return;
+      for (int index: indices)
+	getContainerManager().get(index).setColor(c);
     });
     result.add(item);
 
@@ -565,21 +559,11 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
       result.addSeparator();
 
       item = new JMenuItem("Remove");
-      item.addActionListener(new ActionListener() {
-	@Override
-	public void actionPerformed(ActionEvent e) {
-	  m_TimeseriesContainerList.getTable().removeContainers(indices);
-	}
-      });
+      item.addActionListener((ActionEvent e) -> m_TimeseriesContainerList.getTable().removeContainers(indices));
       result.add(item);
 
       item = new JMenuItem("Remove all");
-      item.addActionListener(new ActionListener() {
-	@Override
-	public void actionPerformed(ActionEvent e) {
-	  m_TimeseriesContainerList.getTable().removeAllContainers();
-	}
-      });
+      item.addActionListener((ActionEvent e) -> m_TimeseriesContainerList.getTable().removeAllContainers());
       result.add(item);
     }
 
@@ -590,58 +574,34 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
     item.addActionListener((ActionEvent e) -> {
       StringBuilder id = new StringBuilder();
       for (int i = 0; i < indices.length; i++) {
-	if (id.length() > 0)
-	  id.append("\n");
-	id.append(getContainerManager().get(indices[i]).getDisplayID());
+        if (id.length() > 0)
+          id.append("\n");
+        id.append(getContainerManager().get(indices[i]).getDisplayID());
       }
       ClipboardHelper.copyToClipboard(id.toString());
     });
     result.add(item);
 
     item = new JMenuItem("Information");
-    item.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	List<InformativeStatistic> stats = new ArrayList<InformativeStatistic>();
-	for (int i = 0; i < indices.length; i++)
-	  stats.add(getContainerManager().get(indices[i]).getData().toStatistic());
-	showStatistics(stats);
-      }
+    item.addActionListener((ActionEvent e) -> {
+      List<InformativeStatistic> stats = new ArrayList<>();
+      for (TimeseriesContainer cont: visibleConts)
+	stats.add(cont.getData().toStatistic());
+      showStatistics(stats);
     });
     result.add(item);
 
     item = new JMenuItem("Raw data");
     item.setEnabled(indices.length == 1);
-    item.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	showRawData(getContainerManager().get(row));
-      }
-    });
+    item.addActionListener((ActionEvent e) -> showRawData(getContainerManager().get(actRow)));
     result.add(item);
 
     item = new JMenuItem("Reports");
-    item.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	List<TimeseriesContainer> data = new ArrayList<TimeseriesContainer>();
-	for (int i = 0; i < indices.length; i++)
-	  data.add(getContainerManager().get(indices[i]));
-	showReports(data);
-      }
-    });
+    item.addActionListener((ActionEvent e) -> showReports(visibleConts));
     result.add(item);
 
     item = new JMenuItem("Notes");
-    item.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	List<TimeseriesContainer> data = new ArrayList<TimeseriesContainer>();
-	for (int i = 0; i < indices.length; i++)
-	  data.add(getContainerManager().get(indices[i]));
-	showNotes(data);
-      }
-    });
+    item.addActionListener((ActionEvent e) -> showNotes(visibleConts));
     result.add(item);
 
     return result;
@@ -655,7 +615,16 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
    */
   @Override
   public void customizePopupMenu(MouseEvent e, JPopupMenu menu) {
-    JMenuItem	item;
+    JMenuItem				item;
+    final TimeseriesContainerModel	model;
+    final List<TimeseriesContainer> 	visibleConts;
+
+    model        = (TimeseriesContainerModel) getTimeseriesContainerList().getContainerModel();
+    visibleConts = new ArrayList<>();
+    for (int i = 0; i < model.getRowCount(); i++) {
+      if (((TimeseriesContainer) model.getContainerAt(i)).isVisible())
+	visibleConts.add((TimeseriesContainer) model.getContainerAt(i));
+    }
 
     menu.addSeparator();
 
@@ -663,9 +632,9 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
       item = new JMenuItem();
       item.setIcon(GUIHelper.getEmptyIcon());
       if (!((TimeseriesPaintlet) getTimeseriesPaintlet()).isMarkersDisabled())
-	item.setText("Disable markers");
+        item.setText("Disable markers");
       else
-	item.setText("Enable markers");
+        item.setText("Enable markers");
       item.addActionListener((ActionEvent ae) -> {
         ((TimeseriesPaintlet) getTimeseriesPaintlet()).setMarkersDisabled(
           !((TimeseriesPaintlet) getTimeseriesPaintlet()).isMarkersDisabled());
@@ -696,10 +665,10 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
 
     item = new JMenuItem("Series statistics", GUIHelper.getIcon("statistics.png"));
     item.addActionListener((ActionEvent ae) -> {
-      List<InformativeStatistic> stats = new ArrayList<InformativeStatistic>();
-      for (int i = 0; i < getContainerManager().count(); i++) {
-        if (getContainerManager().isVisible(i))
-          stats.add(getContainerManager().get(i).getData().toStatistic());
+      List<InformativeStatistic> stats = new ArrayList<>();
+      for (int i = 0; i < model.getRowCount(); i++) {
+        if (((TimeseriesContainer) model.getContainerAt(i)).isVisible())
+          stats.add(((TimeseriesContainer) model.getContainerAt(i)).getData().toStatistic());
       }
       showStatistics(stats);
     });
@@ -786,12 +755,12 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
     else
       dialog = ReportFactory.getDialog(getParentFrame(), false);
 
-    conts = new ArrayList<ReportContainer>();
+    conts = new ArrayList<>();
     for (TimeseriesContainer c: data) {
       if (c.getData().hasReport())
-	rc = new ReportContainer(null, c.getData());
+        rc = new ReportContainer(null, c.getData());
       else
-	rc = new ReportContainer(null, new Report());
+        rc = new ReportContainer(null, new Report());
       conts.add(rc);
     }
 
@@ -857,8 +826,7 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
   public void setAntiAliasingEnabled(boolean value) {
     if (m_TimeseriesPaintlet instanceof AntiAliasingSupporter) {
       ((AntiAliasingSupporter) m_TimeseriesPaintlet).setAntiAliasingEnabled(value);
-      if (m_PanelZoomOverview.getContainerPaintlet() instanceof AntiAliasingSupporter)
-	((AntiAliasingSupporter) m_PanelZoomOverview.getContainerPaintlet()).setAntiAliasingEnabled(value);
+      m_PanelZoomOverview.getContainerPaintlet().setAntiAliasingEnabled(value);
     }
   }
 
@@ -931,17 +899,20 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
     String[] 			ext;
     List<Timeseries> 		data;
     String 			prefix;
+    TimeseriesContainerModel	model;
 
     if (m_ExportDialog == null) {
       if (getParentDialog() != null)
-	m_ExportDialog = new TimeseriesExportDialog(getParentDialog(), ModalityType.DOCUMENT_MODAL);
+        m_ExportDialog = new TimeseriesExportDialog(getParentDialog(), ModalityType.DOCUMENT_MODAL);
       else
-	m_ExportDialog = new TimeseriesExportDialog(getParentFrame(), true);
+        m_ExportDialog = new TimeseriesExportDialog(getParentFrame(), true);
     }
     m_ExportDialog.setLocationRelativeTo(TimeseriesPanel.this);
     m_ExportDialog.setVisible(true);
     if (m_ExportDialog.getOption() != TimeseriesExportDialog.APPROVE_OPTION)
       return;
+
+    model = (TimeseriesContainerModel) getTimeseriesContainerList().getContainerModel();
 
     // write data
     writer = m_ExportDialog.getExport();
@@ -954,24 +925,28 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
       filename = FileUtils.createFilename(filename, "");
       filename = m_ExportDialog.getDirectory().getAbsolutePath() + File.separator + filename + "." + ext[0];
       writer.setOutput(new PlaceholderFile(filename));
-      data = new ArrayList<Timeseries>();
-      for (i = 0; i < getContainerManager().countVisible(); i++) {
-	cont = getContainerManager().getVisible(i);
+      data = new ArrayList<>();
+      for (i = 0; i < model.getRowCount(); i++) {
+	if (!((TimeseriesContainer) model.getContainerAt(i)).isVisible())
+	  continue;
+	cont = (TimeseriesContainer) model.getContainerAt(i);
 	data.add(cont.getData());
       }
       if (!writer.write(data))
-	GUIHelper.showErrorMessage(TimeseriesPanel.this, "Failed to write timeseries data to '" + filename + "'!");
+        GUIHelper.showErrorMessage(TimeseriesPanel.this, "Failed to write timeseries data to '" + filename + "'!");
     }
     else {
       prefix = m_ExportDialog.getDirectory().getAbsolutePath();
-      for (i = 0; i < getContainerManager().countVisible(); i++) {
-	cont = getContainerManager().getVisible(i);
-	filename = prefix + File.separator + FileUtils.createFilename(cont.getDisplayID(), "") + "." + ext[0];
-	writer.setOutput(new PlaceholderFile(filename));
-	if (!writer.write(cont.getData())) {
-	  GUIHelper.showErrorMessage(TimeseriesPanel.this, "Failed to write timeseries #" + (i+1) + " to '" + filename + "'!");
-	  break;
-	}
+      for (i = 0; i < model.getRowCount(); i++) {
+	if (!((TimeseriesContainer) model.getContainerAt(i)).isVisible())
+	  continue;
+	cont = (TimeseriesContainer) model.getContainerAt(i);
+        filename = prefix + File.separator + FileUtils.createFilename(cont.getDisplayID(), "") + "." + ext[0];
+        writer.setOutput(new PlaceholderFile(filename));
+        if (!writer.write(cont.getData())) {
+          GUIHelper.showErrorMessage(TimeseriesPanel.this, "Failed to write timeseries #" + (i+1) + " to '" + filename + "'!");
+          break;
+        }
       }
     }
   }

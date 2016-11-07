@@ -595,7 +595,7 @@ public class LoadSpreadSheetDialog
 
     m_Indices = new int[indices.length];
     for (i = 0; i < indices.length; i++)
-      m_Indices[i] = ((Integer) m_TableData.getValueAt(indices[i], 0)) - 1;
+      m_Indices[i] = ((Integer) m_TableData.getValueAt(indices[i], 0)) - 2;
 
     setVisible(false);
 

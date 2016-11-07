@@ -15,7 +15,7 @@
 
 /*
  * TimeseriesPointHitDetector.java
- * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.timeseries;
@@ -25,7 +25,6 @@ import adams.data.timeseries.TimeseriesPoint;
 import adams.data.timeseries.TimeseriesUtils;
 import adams.gui.visualization.container.AbstractContainer;
 import adams.gui.visualization.container.NamedContainer;
-import adams.gui.visualization.container.VisibilityContainer;
 import adams.gui.visualization.core.AxisPanel;
 import adams.gui.visualization.core.plot.AbstractDistanceBasedHitDetector;
 import adams.gui.visualization.core.plot.Axis;
@@ -107,19 +106,21 @@ public class TimeseriesPointHitDetector
     int				index;
     double			dist;
     List<TimeseriesPoint>	points;
+    TimeseriesContainerModel	model;
 
-    result     = new ArrayList<TimeseriesPoint>();
+    result     = new ArrayList<>();
     axisBottom = m_Owner.getPlot().getAxis(Axis.BOTTOM);
     axisLeft   = m_Owner.getPlot().getAxis(Axis.LEFT);
     val        = axisLeft.posToValue((int) e.getY());
     time       = (long) axisBottom.posToValue((int) e.getX());
+    model      = (TimeseriesContainerModel) m_Owner.getTimeseriesContainerList().getContainerModel();
 
-    for (i = 0; i < m_Owner.getContainerManager().count(); i++) {
-      if (!((VisibilityContainer) m_Owner.getContainerManager().get(i)).isVisible())
+    for (i = 0; i < model.getRowCount(); i++) {
+      if (!((TimeseriesContainer) model.getContainerAt(i)).isVisible())
 	continue;
 
       // check for hit
-      s       = ((TimeseriesContainer) m_Owner.getContainerManager().get(i)).getData();
+      s       = ((TimeseriesContainer) model.getContainerAt(i)).getData();
       points  = s.toList();
       indices = TimeseriesUtils.findEnclosingTimestamps(points, new Date(time));
 
@@ -185,7 +186,7 @@ public class TimeseriesPointHitDetector
     List<TimeseriesPoint>	hits;
     int				i;
     Timeseries			tp;
-    AbstractContainer 			cont;
+    AbstractContainer 		cont;
 
     hits = (List<TimeseriesPoint>) hit;
 
