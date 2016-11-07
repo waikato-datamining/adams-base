@@ -84,6 +84,7 @@ public class JMap
 	TextDialog dialog = new TextDialog();
         dialog.setDefaultCloseOperation(TextDialog.DISPOSE_ON_CLOSE);
 	dialog.setTitle(adams.core.management.JMap.EXECUTABLE + " (" + fPid + ")");
+        dialog.setUpdateParentTitle(false);
 	dialog.setContent(m_Output);
 	dialog.setLocationRelativeTo(null);
 	dialog.setVisible(true);
