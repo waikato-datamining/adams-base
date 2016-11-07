@@ -171,25 +171,27 @@ public class InstancePointHitDetector
     Instance			inst;
     InstancePoint		ip;
     InstancePoint		ip2;
-    List<InstancePoint>	result;
+    List<InstancePoint>		result;
     AxisPanel			axisBottom;
     AxisPanel			axisLeft;
     int[]			indices;
     int				index;
     double			dist;
+    InstanceContainerModel 	model;
 
-    result     = new ArrayList<InstancePoint>();
+    result     = new ArrayList<>();
     axisBottom = m_Owner.getPlot().getAxis(Axis.BOTTOM);
     axisLeft   = m_Owner.getPlot().getAxis(Axis.LEFT);
     y          = axisLeft.posToValue((int) e.getY());
     x          = axisBottom.posToValue((int) e.getX());
+    model      = (InstanceContainerModel) m_Owner.getInstanceContainerList().getContainerModel();
 
-    for (i = 0; i < m_Owner.getContainerManager().count(); i++) {
-      if (!m_Owner.getContainerManager().get(i).isVisible())
+    for (i = 0; i < model.getRowCount(); i++) {
+      if (!model.getContainerAt(i).isVisible())
 	continue;
 
       // check for hit
-      inst    = m_Owner.getContainerManager().get(i).getData();
+      inst    = model.getContainerAt(i).getData();
       indices = findEnclosingAttributeIndices(inst, x);
 
       // do we have only one point available?
@@ -258,9 +260,9 @@ public class InstancePointHitDetector
   @Override
   protected Object processHit(MouseEvent e, Object hit) {
     String			result;
-    List<InstancePoint>	hits;
+    List<InstancePoint>		hits;
     int				i;
-    Instance			chr;
+    Instance 			inst;
     InstanceContainer 		cont;
 
     hits = (List<InstancePoint>) hit;
@@ -269,8 +271,8 @@ public class InstancePointHitDetector
     for (i = 0; i < hits.size(); i++) {
       if (i > 0)
 	result += ", ";
-      chr  = (Instance) hits.get(i).getParent();
-      cont = m_Owner.getContainerManager().newContainer(chr);
+      inst = (Instance) hits.get(i).getParent();
+      cont = m_Owner.getContainerManager().newContainer(inst);
       result += hits.get(i) + " (" + cont.getDisplayID() + ")";
     }
 

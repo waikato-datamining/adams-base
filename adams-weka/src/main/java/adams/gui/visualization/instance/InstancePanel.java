@@ -58,7 +58,6 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dialog.ModalityType;
@@ -66,7 +65,6 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Date;
@@ -82,7 +80,7 @@ import java.util.List;
 public class InstancePanel
   extends DataContainerPanelWithSidePanel<Instance, InstanceContainerManager>
   implements PaintListener, ContainerListPopupMenuSupplier<InstanceContainerManager,InstanceContainer>, PopupMenuCustomizer,
-             TipTextCustomizer, AntiAliasingSupporter {
+  TipTextCustomizer, AntiAliasingSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = 7985845939008731534L;
@@ -195,19 +193,10 @@ public class InstancePanel
     m_InstanceContainerList.setManager(getContainerManager());
     m_InstanceContainerList.setAllowSearch(props.getBoolean("ContainerList.AllowSearch", false));
     m_InstanceContainerList.setPopupMenuSupplier(this);
-    m_InstanceContainerList.addTableModelListener(new TableModelListener() {
-      @Override
-      public void tableChanged(TableModelEvent e) {
-	final ContainerTable table = m_InstanceContainerList.getTable();
-	if ((table.getRowCount() > 0) && (table.getSelectedRowCount() == 0)) {
-	  Runnable runnable = new Runnable() {
-	    @Override
-	    public void run() {
-	      table.getSelectionModel().addSelectionInterval(0, 0);
-	    }
-	  };
-	  SwingUtilities.invokeLater(runnable);
-	}
+    m_InstanceContainerList.addTableModelListener((TableModelEvent e) -> {
+      final ContainerTable table = m_InstanceContainerList.getTable();
+      if ((table.getRowCount() > 0) && (table.getSelectedRowCount() == 0)) {
+	SwingUtilities.invokeLater(() -> table.getSelectionModel().addSelectionInterval(0, 0));
       }
     });
 
@@ -237,9 +226,9 @@ public class InstancePanel
 
     try {
       getContainerManager().setColorProvider(
-	  (AbstractColorProvider) OptionUtils.forAnyCommandLine(
-	      AbstractColorProvider.class,
-	      props.getProperty("Plot.ColorProvider", DefaultColorProvider.class.getName())));
+	(AbstractColorProvider) OptionUtils.forAnyCommandLine(
+	  AbstractColorProvider.class,
+	  props.getProperty("Plot.ColorProvider", DefaultColorProvider.class.getName())));
     }
     catch (Exception e) {
       System.err.println(getClass().getName() + " - Failed to set the color provider:");
@@ -369,7 +358,7 @@ public class InstancePanel
       item.setText("Enable markers");
     item.addActionListener((ActionEvent ae) -> {
       m_InstancePaintlet.setMarkersDisabled(
-        !m_InstancePaintlet.isMarkersDisabled());
+	!m_InstancePaintlet.isMarkersDisabled());
       repaint();
     });
     menu.add(item);
@@ -407,73 +396,67 @@ public class InstancePanel
    */
   @Override
   public BasePopupMenu getContainerListPopupMenu(final ContainerTable<InstanceContainerManager,InstanceContainer> table, final int row) {
-    BasePopupMenu	result;
-    JMenuItem		item;
-    final int[] 	indices;
+    BasePopupMenu			result;
+    JMenuItem				item;
+    final int[] 			indices;
+    final InstanceContainerModel	model;
 
     result    = new BasePopupMenu();
+    model  = (InstanceContainerModel) getInstanceContainerList().getContainerModel();
     if (table.getSelectedRows().length == 0)
       indices = new int[]{row};
     else
       indices = table.getSelectedRows();
+    for (int i = 0; i < indices.length; i++) {
+      InstanceContainer cont = model.getContainerAt(indices[i]);
+      indices[i] = getContainerManager().indexOf(cont);
+    }
 
     item = new JMenuItem("Toggle visibility");
-    item.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	for (int i = 0; i < getContainerManager().count(); i++) {
-	  InstanceContainer c = getContainerManager().get(indices[i]);
-	  c.setVisible(!c.isVisible());
-	}
+    item.addActionListener((ActionEvent e) -> {
+      for (int i = 0; i < indices.length; i++) {
+	InstanceContainer c = getContainerManager().get(indices[i]);
+	c.setVisible(!c.isVisible());
       }
     });
     result.add(item);
 
     item = new JMenuItem("Show all");
-    item.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	for (int i = 0; i < getContainerManager().count(); i++) {
-	  if (!getContainerManager().get(i).isVisible())
-	    getContainerManager().get(i).setVisible(true);
-	}
+    item.addActionListener((ActionEvent e) -> {
+      for (int i = 0; i < model.getRowCount(); i++) {
+	if (!model.getContainerAt(i).isVisible())
+	  model.getContainerAt(i).setVisible(true);
       }
     });
     result.add(item);
 
     item = new JMenuItem("Hide all");
-    item.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	for (int i = 0; i < getContainerManager().count(); i++) {
-	  if (getContainerManager().get(i).isVisible())
-	    getContainerManager().get(i).setVisible(false);
-	}
+    item.addActionListener((ActionEvent e) -> {
+      for (int i = 0; i < model.getRowCount(); i++) {
+	if (model.getContainerAt(i).isVisible())
+	  model.getContainerAt(i).setVisible(false);
       }
     });
     result.add(item);
 
     item = new JMenuItem("Choose color...");
-    item.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	String msg = "Choose color";
-	InstanceContainer cont = null;
-	Color color = Color.BLUE;
-	if (indices.length == 1) {
-	  cont = getContainerManager().get(indices[0]);
-	  msg += " for " + cont.getData().getID();
-	  color = cont.getColor();
-	}
-	Color c = JColorChooser.showDialog(
-	    table,
-	    msg,
-	    color);
-	if (c == null)
-	  return;
-	for (int i: indices)
-	  getContainerManager().get(i).setColor(c);
+    item.addActionListener((ActionEvent e) -> {
+      String msg = "Choose color";
+      InstanceContainer cont = null;
+      Color color = Color.BLUE;
+      if (indices.length == 1) {
+	cont = getContainerManager().get(indices[0]);
+	msg += " for " + cont.getData().getID();
+	color = cont.getColor();
       }
+      Color c = JColorChooser.showDialog(
+	table,
+	msg,
+	color);
+      if (c == null)
+	return;
+      for (int index : indices)
+	getContainerManager().get(index).setColor(c);
     });
     result.add(item);
 
@@ -481,21 +464,11 @@ public class InstancePanel
       result.addSeparator();
 
       item = new JMenuItem("Remove");
-      item.addActionListener(new ActionListener() {
-	@Override
-	public void actionPerformed(ActionEvent e) {
-	  m_InstanceContainerList.getTable().removeContainers(indices);
-	}
-      });
+      item.addActionListener((ActionEvent e) -> m_InstanceContainerList.getTable().removeContainers(indices));
       result.add(item);
 
       item = new JMenuItem("Remove all");
-      item.addActionListener(new ActionListener() {
-	@Override
-	public void actionPerformed(ActionEvent e) {
-	  m_InstanceContainerList.getTable().removeAllContainers();
-	}
-      });
+      item.addActionListener((ActionEvent e) -> m_InstanceContainerList.getTable().removeAllContainers());
       result.add(item);
     }
 
@@ -518,22 +491,12 @@ public class InstancePanel
 
     item = new JMenuItem("Save as...");
     item.setEnabled(indices.length == 1);
-    item.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	saveInstance(getContainerManager().get(indices[0]));
-      }
-    });
+    item.addActionListener((ActionEvent e) -> saveInstance(getContainerManager().get(indices[0])));
     result.add(item);
 
     item = new JMenuItem("View as table");
     item.setEnabled(indices.length == 1);
-    item.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	viewInstance(getContainerManager().get(indices[0]));
-      }
-    });
+    item.addActionListener((ActionEvent e) -> viewInstance(getContainerManager().get(indices[0])));
     result.add(item);
 
     return result;
@@ -560,7 +523,7 @@ public class InstancePanel
     writer = m_FileChooser.getWriter();
     if (!writer.write(inst.toSpreadSheet(), m_FileChooser.getSelectedFile()))
       GUIHelper.showErrorMessage(
-	  this, "Failed to save instance to file:\n" + m_FileChooser.getSelectedFile());
+	this, "Failed to save instance to file:\n" + m_FileChooser.getSelectedFile());
   }
 
   /**
@@ -574,7 +537,7 @@ public class InstancePanel
     SpreadSheet		sheet;
 
     if (m_ViewDialogs == null)
-      m_ViewDialogs = new ArrayList<SpreadSheetDialog>();
+      m_ViewDialogs = new ArrayList<>();
 
     isnt  = cont.getData();
     sheet = isnt.toSpreadSheet();
@@ -719,14 +682,14 @@ public class InstancePanel
 
     result = tiptext;
     event  = new MouseEvent(
-			getPlot().getContent(),
-			MouseEvent.MOUSE_MOVED,
-			new Date().getTime(),
-			0,
-			(int) mouse.getX(),
-			(int) mouse.getY(),
-			0,
-			false);
+      getPlot().getContent(),
+      MouseEvent.MOUSE_MOVED,
+      new Date().getTime(),
+      0,
+      (int) mouse.getX(),
+      (int) mouse.getY(),
+      0,
+      false);
 
     hit = (String) m_InstancePointHitDetector.detect(event);
     if (hit != null)

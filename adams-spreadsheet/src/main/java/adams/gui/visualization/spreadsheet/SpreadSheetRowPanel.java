@@ -55,7 +55,6 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dialog.ModalityType;
@@ -78,7 +77,7 @@ import java.util.List;
 public class SpreadSheetRowPanel
   extends DataContainerPanelWithSidePanel<SpreadSheetRow, SpreadSheetRowContainerManager>
   implements PaintListener, ContainerListPopupMenuSupplier<SpreadSheetRowContainerManager,SpreadSheetRowContainer>, PopupMenuCustomizer,
-             TipTextCustomizer, AntiAliasingSupporter {
+  TipTextCustomizer, AntiAliasingSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = 7985845939008731534L;
@@ -191,19 +190,10 @@ public class SpreadSheetRowPanel
     m_InstanceContainerList.setManager(getContainerManager());
     m_InstanceContainerList.setAllowSearch(props.getBoolean("ContainerList.AllowSearch", false));
     m_InstanceContainerList.setPopupMenuSupplier(this);
-    m_InstanceContainerList.addTableModelListener(new TableModelListener() {
-      @Override
-      public void tableChanged(TableModelEvent e) {
-	final ContainerTable table = m_InstanceContainerList.getTable();
-	if ((table.getRowCount() > 0) && (table.getSelectedRowCount() == 0)) {
-	  Runnable runnable = new Runnable() {
-	    @Override
-	    public void run() {
-	      table.getSelectionModel().addSelectionInterval(0, 0);
-	    }
-	  };
-	  SwingUtilities.invokeLater(runnable);
-	}
+    m_InstanceContainerList.addTableModelListener((TableModelEvent e) -> {
+      final ContainerTable table = m_InstanceContainerList.getTable();
+      if ((table.getRowCount() > 0) && (table.getSelectedRowCount() == 0)) {
+	SwingUtilities.invokeLater(() -> table.getSelectionModel().addSelectionInterval(0, 0));
       }
     });
 
@@ -233,9 +223,9 @@ public class SpreadSheetRowPanel
 
     try {
       getContainerManager().setColorProvider(
-	  (AbstractColorProvider) OptionUtils.forAnyCommandLine(
-	      AbstractColorProvider.class,
-	      props.getProperty("Plot.ColorProvider", DefaultColorProvider.class.getName())));
+	(AbstractColorProvider) OptionUtils.forAnyCommandLine(
+	  AbstractColorProvider.class,
+	  props.getProperty("Plot.ColorProvider", DefaultColorProvider.class.getName())));
     }
     catch (Exception e) {
       System.err.println(getClass().getName() + " - Failed to set the color provider:");
@@ -365,7 +355,7 @@ public class SpreadSheetRowPanel
       item.setText("Enable markers");
     item.addActionListener((ActionEvent ae) -> {
       m_InstancePaintlet.setMarkersDisabled(
-        !m_InstancePaintlet.isMarkersDisabled());
+	!m_InstancePaintlet.isMarkersDisabled());
       repaint();
     });
     menu.add(item);
@@ -403,19 +393,25 @@ public class SpreadSheetRowPanel
    */
   @Override
   public BasePopupMenu getContainerListPopupMenu(final ContainerTable<SpreadSheetRowContainerManager,SpreadSheetRowContainer> table, final int row) {
-    BasePopupMenu	result;
-    JMenuItem		item;
-    final int[] 	indices;
+    BasePopupMenu			result;
+    JMenuItem				item;
+    final int[] 			indices;
+    final SpreadSheetRowContainerModel	model;
 
-    result    = new BasePopupMenu();
+    result = new BasePopupMenu();
+    model  = (SpreadSheetRowContainerModel) getInstanceContainerList().getContainerModel();
     if (table.getSelectedRows().length == 0)
       indices = new int[]{row};
     else
       indices = table.getSelectedRows();
+    for (int i = 0; i < indices.length; i++) {
+      SpreadSheetRowContainer cont = model.getContainerAt(indices[i]);
+      indices[i] = getContainerManager().indexOf(cont);
+    }
 
     item = new JMenuItem("Toggle visibility");
     item.addActionListener((ActionEvent e) -> {
-      for (int i = 0; i < getContainerManager().count(); i++) {
+      for (int i = 0; i < indices.length; i++) {
 	SpreadSheetRowContainer c = getContainerManager().get(indices[i]);
 	c.setVisible(!c.isVisible());
       }
@@ -424,18 +420,18 @@ public class SpreadSheetRowPanel
 
     item = new JMenuItem("Show all");
     item.addActionListener((ActionEvent e) -> {
-      for (int i = 0; i < getContainerManager().count(); i++) {
-	if (!getContainerManager().get(i).isVisible())
-	  getContainerManager().get(i).setVisible(true);
+      for (int i = 0; i < model.getRowCount(); i++) {
+	if (!model.getContainerAt(i).isVisible())
+	  model.getContainerAt(i).setVisible(true);
       }
     });
     result.add(item);
 
     item = new JMenuItem("Hide all");
     item.addActionListener((ActionEvent e) -> {
-      for (int i = 0; i < getContainerManager().count(); i++) {
-	if (getContainerManager().get(i).isVisible())
-	  getContainerManager().get(i).setVisible(false);
+      for (int i = 0; i < model.getRowCount(); i++) {
+	if (model.getContainerAt(i).isVisible())
+	  model.getContainerAt(i).setVisible(false);
       }
     });
     result.add(item);
@@ -456,8 +452,8 @@ public class SpreadSheetRowPanel
 	color);
       if (c == null)
 	return;
-      for (int i: indices)
-	getContainerManager().get(i).setColor(c);
+      for (int index : indices)
+	getContainerManager().get(index).setColor(c);
     });
     result.add(item);
 
@@ -524,7 +520,7 @@ public class SpreadSheetRowPanel
     writer = m_FileChooser.getWriter();
     if (!writer.write(row.toSpreadSheet(), m_FileChooser.getSelectedFile()))
       GUIHelper.showErrorMessage(
-	  this, "Failed to save instance to file:\n" + m_FileChooser.getSelectedFile());
+	this, "Failed to save instance to file:\n" + m_FileChooser.getSelectedFile());
   }
 
   /**
@@ -682,14 +678,14 @@ public class SpreadSheetRowPanel
 
     result = tiptext;
     event  = new MouseEvent(
-			getPlot().getContent(),
-			MouseEvent.MOUSE_MOVED,
-			new Date().getTime(),
-			0,
-			(int) mouse.getX(),
-			(int) mouse.getY(),
-			0,
-			false);
+      getPlot().getContent(),
+      MouseEvent.MOUSE_MOVED,
+      new Date().getTime(),
+      0,
+      (int) mouse.getX(),
+      (int) mouse.getY(),
+      0,
+      false);
 
     hit = (String) m_SpreadSheetRowPointHitDetector.detect(event);
     if (hit != null)

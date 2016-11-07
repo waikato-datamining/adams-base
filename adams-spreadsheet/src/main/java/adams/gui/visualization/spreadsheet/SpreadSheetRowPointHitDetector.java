@@ -160,30 +160,32 @@ public class SpreadSheetRowPointHitDetector
    */
   @Override
   protected Object isHit(MouseEvent e) {
-    double			y;
-    double			x;
-    double			diffY;
-    double			diffX;
-    int				diffPixel;
-    int				i;
-    SpreadSheetRow		inst;
-    SpreadSheetRowPoint		ip;
-    SpreadSheetRowPoint		ip2;
-    List<SpreadSheetRowPoint>	result;
-    AxisPanel			axisBottom;
-    AxisPanel			axisLeft;
-    int[]			indices;
-    int				index;
-    double			dist;
+    double				y;
+    double				x;
+    double				diffY;
+    double				diffX;
+    int					diffPixel;
+    int					i;
+    SpreadSheetRow			inst;
+    SpreadSheetRowPoint 		rp;
+    SpreadSheetRowPoint 		rp2;
+    List<SpreadSheetRowPoint>		result;
+    AxisPanel				axisBottom;
+    AxisPanel				axisLeft;
+    int[]				indices;
+    int					index;
+    double				dist;
+    SpreadSheetRowContainerModel 	model;
 
-    result     = new ArrayList<SpreadSheetRowPoint>();
+    result     = new ArrayList<>();
     axisBottom = m_Owner.getPlot().getAxis(Axis.BOTTOM);
     axisLeft   = m_Owner.getPlot().getAxis(Axis.LEFT);
     y          = axisLeft.posToValue((int) e.getY());
     x          = axisBottom.posToValue((int) e.getX());
+    model      = (SpreadSheetRowContainerModel) m_Owner.getInstanceContainerList().getContainerModel();
 
-    for (i = 0; i < m_Owner.getContainerManager().count(); i++) {
-      if (!m_Owner.getContainerManager().get(i).isVisible())
+    for (i = 0; i < model.getRowCount(); i++) {
+      if (!model.getContainerAt(i).isVisible())
 	continue;
 
       // check for hit
@@ -193,50 +195,50 @@ public class SpreadSheetRowPointHitDetector
       // do we have only one point available?
       if ((indices[0] < 0) || (indices[1] < 0)) {
 	index = findClosestAttributeIndex(inst, x);
-	ip    = findSpreadSheetRowPoint(inst, index);
-	if (ip == null) {
+	rp = findSpreadSheetRowPoint(inst, index);
+	if (rp == null) {
 	  getLogger().info("Failed to determine row point for attribute index #" + index + ": " + inst);
 	  continue;
 	}
 
 	// do X and Y fit?
-	diffX     = ip.getX() - x;
+	diffX     = rp.getX() - x;
 	diffPixel = Math.abs(axisBottom.valueToPos(diffX) - axisBottom.valueToPos(0));
 	getLogger().info("diff timestamp=" + diffPixel);
 	if (diffPixel > m_MinimumPixelDifference)
 	  continue;
-	diffY     = ip.getY() - y;
+	diffY     = rp.getY() - y;
 	diffPixel = Math.abs(axisLeft.valueToPos(diffY) - axisLeft.valueToPos(0));
 	getLogger().info("diff abundance=" + diffPixel);
 	if (diffPixel > m_MinimumPixelDifference)
 	  continue;
 
 	// add hit
-	result.add(ip);
+	result.add(rp);
       }
       else {
-	ip = findSpreadSheetRowPoint(inst, indices[0]);
-	if (ip == null) {
+	rp = findSpreadSheetRowPoint(inst, indices[0]);
+	if (rp == null) {
 	  getLogger().info("Failed to determine row point for attribute index #" + indices[0] + ": " + inst);
 	  continue;
 	}
 
-	ip2 = findSpreadSheetRowPoint(inst, indices[1]);
-	if (ip2 == null) {
-  getLogger().info("Failed to determine row point for attribute index #" + indices[1] + ": " + inst);
+	rp2 = findSpreadSheetRowPoint(inst, indices[1]);
+	if (rp2 == null) {
+	  getLogger().info("Failed to determine row point for attribute index #" + indices[1] + ": " + inst);
 	  continue;
 	}
 
 	dist = distance(
-	    	new Point2D.Double(axisBottom.valueToPos(ip.getX()), axisLeft.valueToPos(ip.getY())),
-	    	new Point2D.Double(axisBottom.valueToPos(ip2.getX()), axisLeft.valueToPos(ip2.getY())),
-	    	new Point2D.Double(e.getX(), e.getY()));
+	  new Point2D.Double(axisBottom.valueToPos(rp.getX()), axisLeft.valueToPos(rp.getY())),
+	  new Point2D.Double(axisBottom.valueToPos(rp2.getX()), axisLeft.valueToPos(rp2.getY())),
+	  new Point2D.Double(e.getX(), e.getY()));
 	getLogger().info("dist line=" + dist);
 	if (dist > m_MinimumPixelDifference)
 	  continue;
 
 	// add hit
-	result.add(ip);
+	result.add(rp);
       }
     }
 
