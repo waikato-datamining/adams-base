@@ -244,6 +244,7 @@ public abstract class AbstractEvaluation<T extends AbstractInvestigatorTab, R ex
    * @return			true if changed
    */
   protected boolean hasDataChanged(List<String> newDatasets, ComboBoxModel<String> currentModel) {
+    boolean	result;
     int		i;
     Set<String>	setDatasets;
     Set<String>	setModel;
@@ -253,8 +254,21 @@ public abstract class AbstractEvaluation<T extends AbstractInvestigatorTab, R ex
     for (i = 0; i < currentModel.getSize(); i++)
       setModel.add(currentModel.getElementAt(i));
 
-    return (setDatasets.size() != setModel.size())
+    // different datasets?
+    result = (setDatasets.size() != setModel.size())
       || !(setDatasets.containsAll(setModel) && setModel.containsAll(setDatasets));
+
+    // different order?
+    if (!result) {
+      for (i = 0; i < newDatasets.size(); i++) {
+	if (!newDatasets.get(i).equals(currentModel.getElementAt(i))) {
+	  result = true;
+	  break;
+	}
+      }
+    }
+
+    return result;
   }
 
   /**
