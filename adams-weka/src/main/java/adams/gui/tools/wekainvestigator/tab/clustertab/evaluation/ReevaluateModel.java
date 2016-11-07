@@ -243,6 +243,7 @@ public class ReevaluateModel
     runInfo.add("Relation", data.relationName());
     runInfo.add("# Attributes", data.numAttributes());
     runInfo.add("# Instances", data.numInstances());
+    addObjectSize(runInfo, "Model size", m_Model);
 
     eval = new ClusterEvaluation();
     eval.setClusterer(m_Model);

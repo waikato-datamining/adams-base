@@ -192,6 +192,7 @@ public class TrainTestSet
     model = (Clusterer) OptionUtils.shallowCopy(clusterer);
     getOwner().logMessage("Using '" + train.relationName() + "' to train " + OptionUtils.getCommandLine(clusterer));
     model.buildClusterer(train);
+    addObjectSize(runInfo, "Model size", model);
     getOwner().logMessage("Using '" + test.relationName() + "' to evaluate " + OptionUtils.getCommandLine(clusterer));
     eval = new ClusterEvaluation();
     eval.setClusterer(model);

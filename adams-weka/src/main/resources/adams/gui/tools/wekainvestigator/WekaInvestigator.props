@@ -26,6 +26,10 @@ General.RelationNameHeuristic=adams.data.weka.relationname.NoChange
 # (true|false)
 General.UndoEnabled=true
 
+# whether to calculate model sizes
+# (true|false)
+General.CalculateModelSize=false
+
 # The interval, ie number of rows, to use during testing (eg train/test or
 # train/test split) for outputting progress information
 General.TestingUpdateInterval=1000

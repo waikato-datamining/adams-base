@@ -278,6 +278,7 @@ public class TrainTestSplit
     model = (Clusterer) OptionUtils.shallowCopy(clusterer);
     getOwner().logMessage("Using " + m_TextPercentage.getText() + "% of '" + train.relationName() + "' to train " + OptionUtils.getCommandLine(clusterer));
     model.buildClusterer(train);
+    addObjectSize(runInfo, "Model size", model);
     getOwner().logMessage("Using remainder from '" + test.relationName() + "' to evaluate " + OptionUtils.getCommandLine(clusterer));
     eval = new ClusterEvaluation();
     eval.setClusterer(model);

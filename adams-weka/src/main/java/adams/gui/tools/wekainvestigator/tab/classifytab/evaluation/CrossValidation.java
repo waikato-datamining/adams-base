@@ -327,6 +327,7 @@ public class CrossValidation
       getOwner().logMessage("Building final model on '" + data.relationName() + "' using " + OptionUtils.getCommandLine(classifier));
       model = (Classifier) OptionUtils.shallowCopy(classifier);
       model.buildClassifier(data);
+      addObjectSize(runInfo, "Final model size", model);
     }
 
     // history

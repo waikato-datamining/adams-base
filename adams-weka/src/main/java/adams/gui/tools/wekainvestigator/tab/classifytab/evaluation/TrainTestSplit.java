@@ -313,6 +313,7 @@ public class TrainTestSplit
     model = (Classifier) OptionUtils.shallowCopy(classifier);
     getOwner().logMessage("Using " + m_TextPercentage.getText() + "% of '" + dataCont.getID() + "/" + train.relationName() + "' to train " + OptionUtils.getCommandLine(classifier));
     model.buildClassifier(train);
+    addObjectSize(runInfo, "Model size", model);
     getOwner().logMessage("Using remainder from '" + dataCont.getID() + "/" + test.relationName() + "' to evaluate " + OptionUtils.getCommandLine(classifier));
     eval = new Evaluation(train);
     eval.setDiscardPredictions(discard);

@@ -56,6 +56,7 @@ public class WekaInvestigatorPreferencesPanel
       adams.data.weka.relationname.AbstractRelationNameHeuristic.class,
       new NoChange(), true));
     addPropertyType("General.UndoEnabled", PropertyType.BOOLEAN);
+    addPropertyType("General.CalculateModelSize", PropertyType.BOOLEAN);
     addPropertyType("General.TestingUpdateInterval", PropertyType.INTEGER);
 
     // general

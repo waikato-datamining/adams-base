@@ -287,6 +287,7 @@ public class ReevaluateModel
     runInfo.add("Discard predictions", discard);
     if (m_SelectAdditionalAttributes.getCurrent().length > 0)
       runInfo.add("Additional attributes: ", Utils.flatten(m_SelectAdditionalAttributes.getCurrent(), ", "));
+    addObjectSize(runInfo, "Model size", m_Model);
 
     eval = new Evaluation(data);
     eval.setDiscardPredictions(discard);

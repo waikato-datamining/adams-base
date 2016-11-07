@@ -118,8 +118,11 @@ public class InvestigatorPanel
   /** the action for closing the investigator. */
   protected BaseAction m_ActionFileClose;
 
-  /** the action for enabling/disabling undo. */
-  protected JCheckBoxMenuItem m_MenuItemEditUndoEnabled;
+  /** the menu item for enabling/disabling undo. */
+  protected JCheckBoxMenuItem m_MenuItemOptionsUndoEnabled;
+
+  /** the menu item for enabling/disabling model size calculation. */
+  protected JCheckBoxMenuItem m_MenuItemOptionsCalculateModelSize;
 
   /** the action for loading a dataset. */
   protected BaseAction m_ActionFileOpen;
@@ -446,18 +449,24 @@ public class InvestigatorPanel
       // File/Close
       menu.add(m_ActionFileClose);
 
-      // Edit
-      menu = new JMenu("Edit");
-      menu.setMnemonic('E');
+      // Options
+      menu = new JMenu("Options");
+      menu.setMnemonic('O');
       menu.addChangeListener((ChangeEvent e) -> updateMenu());
       result.add(menu);
 
-      // Edit/Undo enabled
-      m_MenuItemEditUndoEnabled = new JCheckBoxMenuItem("Undo enabled");
-      m_MenuItemEditUndoEnabled.setIcon(GUIHelper.getIcon("undo.gif"));
-      m_MenuItemEditUndoEnabled.setSelected(getProperties().getBoolean("General.UndoEnabled", true));
-      m_MenuItemEditUndoEnabled.addActionListener((ActionEvent e) -> toggleUndo());
-      menu.add(m_MenuItemEditUndoEnabled);
+      // Options/Undo enabled
+      m_MenuItemOptionsUndoEnabled = new JCheckBoxMenuItem("Undo enabled");
+      m_MenuItemOptionsUndoEnabled.setIcon(GUIHelper.getIcon("undo.gif"));
+      m_MenuItemOptionsUndoEnabled.setSelected(getProperties().getBoolean("General.UndoEnabled", true));
+      m_MenuItemOptionsUndoEnabled.addActionListener((ActionEvent e) -> toggleUndo());
+      menu.add(m_MenuItemOptionsUndoEnabled);
+
+      // Options/Calculate model size
+      m_MenuItemOptionsCalculateModelSize = new JCheckBoxMenuItem("Calculate model size");
+      m_MenuItemOptionsCalculateModelSize.setIcon(GUIHelper.getIcon("object.gif"));
+      m_MenuItemOptionsCalculateModelSize.setSelected(getProperties().getBoolean("General.CalculateModelSize", false));
+      menu.add(m_MenuItemOptionsCalculateModelSize);
 
       // Tab
       menu = new JMenu("Tab");
@@ -922,7 +931,7 @@ public class InvestigatorPanel
    * @return		true if enabled
    */
   public boolean isUndoEnabled() {
-    return m_MenuItemEditUndoEnabled.isSelected();
+    return m_MenuItemOptionsUndoEnabled.isSelected();
   }
 
   /**
@@ -933,7 +942,7 @@ public class InvestigatorPanel
   public void setUndoEnabled(boolean value) {
     // make sure that the menu has been built
     getMenuBar();
-    m_MenuItemEditUndoEnabled.setSelected(value);
+    m_MenuItemOptionsUndoEnabled.setSelected(value);
   }
 
   /**
@@ -949,6 +958,18 @@ public class InvestigatorPanel
       this,
       isUndoEnabled() ? WekaInvestigatorDataEvent.UNDO_ENABLED : WekaInvestigatorDataEvent.UNDO_DISABLED);
     fireDataChange(event);
+  }
+
+  /**
+   * Returns whether model sizes should get calculated.
+   *
+   * @return		true if to calculate
+   */
+  public boolean calculateModelSize() {
+    if (m_MenuItemOptionsCalculateModelSize != null)
+      return m_MenuItemOptionsCalculateModelSize.isSelected();
+    else
+      return getProperties().getBoolean("General.CalculateModelSize", false);
   }
 
   /**

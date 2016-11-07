@@ -20,11 +20,14 @@
 
 package adams.gui.tools.wekainvestigator.evaluation;
 
+import adams.core.ByteFormat;
 import adams.core.GlobalInfoSupporter;
 import adams.core.MessageCollection;
 import adams.core.Properties;
+import adams.core.SizeOf;
 import adams.core.StatusMessageHandler;
 import adams.core.logging.LoggingObject;
+import adams.data.spreadsheet.MetaData;
 import adams.gui.core.AbstractNamedHistoryPanel;
 import adams.gui.tools.wekainvestigator.InvestigatorPanel;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
@@ -283,6 +286,23 @@ public abstract class AbstractEvaluation<T extends AbstractInvestigatorTab, R ex
     if (combobox.getSelectedIndex() >= getOwner().getData().size())
       return false;
     return true;
+  }
+
+  /**
+   * Adds the object size to the meta-data.
+   *
+   * @param meta	the meta-data to add the information to
+   * @param key		the key for the meta-data to use
+   * @param obj		the object to determine the size for
+   */
+  public void addObjectSize(MetaData meta, String key, Object obj) {
+    int		size;
+
+    if (!getOwner().getOwner().calculateModelSize())
+      return;
+
+    size = SizeOf.sizeOf(obj);
+    meta.add(key, ByteFormat.toBestFitBytes(size, 1) + " (" + size + " bytes)");
   }
 
   /**

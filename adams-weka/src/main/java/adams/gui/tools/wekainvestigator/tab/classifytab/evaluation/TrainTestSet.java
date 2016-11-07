@@ -238,6 +238,7 @@ public class TrainTestSet
     model = (Classifier) OptionUtils.shallowCopy(classifier);
     getOwner().logMessage("Using '" + trainCont.getID() + "/" + train.relationName() + "' to train " + OptionUtils.getCommandLine(classifier));
     model.buildClassifier(train);
+    addObjectSize(runInfo, "Model size", model);
     getOwner().logMessage("Using '" + testCont.getID() + "/" + test.relationName() + "' to evaluate " + OptionUtils.getCommandLine(classifier));
 
     eval = new Evaluation(train);

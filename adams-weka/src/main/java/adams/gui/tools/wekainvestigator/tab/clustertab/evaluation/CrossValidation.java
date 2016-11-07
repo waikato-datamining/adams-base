@@ -251,6 +251,7 @@ public class CrossValidation
       getOwner().logMessage("Building final model on '" + data.relationName() + "' using " + OptionUtils.getCommandLine(clusterer));
       model = (Clusterer) OptionUtils.shallowCopy(clusterer);
       model.buildClusterer(data);
+      addObjectSize(runInfo, "Final model size", model);
     }
 
     // history
