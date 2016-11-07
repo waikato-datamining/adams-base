@@ -15,7 +15,7 @@
 
 /*
  * JVisualVM.java
- * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -68,11 +68,7 @@ public class JVisualVM
 
     final long fPid = ProcessUtils.getVirtualMachinePID();
     final String fOptions = options;
-    Thread thread = new Thread(new Runnable() {
-      public void run() {
-	adams.core.management.JVisualVM.execute(fOptions, fPid);
-      }
-    });
+    Thread thread = new Thread(() -> adams.core.management.JVisualVM.execute(fOptions, fPid));
     thread.start();
   }
 
