@@ -16,10 +16,19 @@
 /**
  * DragAndDropTabbedPane.java
  * Copyright (C) TERAI Atsuhiro
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
 
+import adams.core.License;
+import adams.core.annotation.MixedCopyright;
+
+import javax.swing.Action;
+import javax.swing.ActionMap;
+import javax.swing.Icon;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+import javax.swing.SwingUtilities;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Component;
@@ -45,16 +54,6 @@ import java.awt.dnd.DropTargetListener;
 import java.awt.dnd.InvalidDnDOperationException;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
-
-import javax.swing.Action;
-import javax.swing.ActionMap;
-import javax.swing.Icon;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-import javax.swing.SwingUtilities;
-
-import adams.core.License;
-import adams.core.annotation.MixedCopyright;
 
 /**
  * Tabbed pane that allows reordering of tabs via drag-n-drop.
@@ -98,6 +97,9 @@ public class DragAndDropTabbedPane
   
   protected boolean m_IsPaintScrollArea;
 
+  /** whether the tab is being moved. */
+  protected boolean m_MovingTab;
+
   /**
    * Initializes the members.
    */
@@ -115,6 +117,7 @@ public class DragAndDropTabbedPane
     m_DragTabIndex      = -1;
     m_HasGhost          = true;
     m_IsPaintScrollArea = true;
+    m_MovingTab         = false;
   }
   
   /**
@@ -353,7 +356,9 @@ public class DragAndDropTabbedPane
     String tip    = getToolTipTextAt(prev);
     boolean flg   = isEnabledAt(prev);
     int tgtindex  = prev>next ? next : next-1;
+    m_MovingTab   = true;
     remove(prev);
+    m_MovingTab   = false;
     insertTab(str, icon, cmp, tip, tgtindex);
     setEnabledAt(tgtindex, flg);
     //When you drag'n'drop a disabled tab, it finishes enabled and selected.
