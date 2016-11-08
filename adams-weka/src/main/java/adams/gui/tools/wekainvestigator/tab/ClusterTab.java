@@ -301,6 +301,7 @@ public class ClusterTab
       result.add(menuitem);
 
       menuitem = new JMenuItem("Regenerate output" + (m_Owner.getOutputGenerators().length > 1 ? "s" : ""));
+      menuitem.setEnabled((indices.length == 1));
       menuitem.addActionListener((ActionEvent ae) -> regenerateOutput(getEntry(indices[0])));
       result.add(menuitem);
 
@@ -310,7 +311,7 @@ public class ClusterTab
         try {
           final AbstractOutputGenerator generator = (AbstractOutputGenerator) cls.newInstance();
           menuitem = new JMenuItem(generator.getTitle());
-          menuitem.setEnabled(generator.canGenerateOutput(getEntry(indices[0])));
+          menuitem.setEnabled((indices.length == 1) && generator.canGenerateOutput(getEntry(indices[0])));
           menuitem.addActionListener((ActionEvent ae) -> generateOutput(generator, getEntry(indices[0])));
           submenu.add(menuitem);
         }
@@ -323,7 +324,7 @@ public class ClusterTab
       result.add(submenu);
 
       menuitem = new JMenuItem("Export output...");
-      menuitem.setEnabled(getEntry(indices[0]).getTabbedPane().getTabCount() > 0);
+      menuitem.setEnabled((indices.length == 1) && getEntry(indices[0]).getTabbedPane().getTabCount() > 0);
       menuitem.addActionListener((ActionEvent ae) -> getEntry(indices[0]).getTabbedPane().export());
       result.add(menuitem);
 
