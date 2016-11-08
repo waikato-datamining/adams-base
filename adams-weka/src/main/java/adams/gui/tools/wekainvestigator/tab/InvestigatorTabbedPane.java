@@ -109,8 +109,10 @@ public class InvestigatorTabbedPane
 
     super.removeTabAt(index);
 
-    if (comp instanceof CleanUpHandler)
-      ((CleanUpHandler) comp).cleanUp();
+    if (!m_MovingTab) {
+      if (comp instanceof CleanUpHandler)
+	((CleanUpHandler) comp).cleanUp();
+    }
   }
 
   /**
