@@ -15,16 +15,14 @@
 
 /*
  * Exec.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import adams.core.Placeholders;
 import adams.core.QuickInfoHelper;
+import adams.core.base.BaseText;
 import adams.core.management.OS;
 import adams.core.management.ProcessUtils;
 import adams.core.management.ProcessUtils.ProcessResult;
@@ -32,6 +30,9 @@ import adams.core.option.OptionUtils;
 import adams.data.conversion.ConversionFromString;
 import adams.data.conversion.StringToString;
 import adams.flow.core.Token;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -120,7 +121,7 @@ public class Exec
   private static final long serialVersionUID = -132045002653940359L;
 
   /** the command to run. */
-  protected String m_Command;
+  protected BaseText m_Command;
 
   /** whether the replace string contains a placeholder, which needs to be
    * expanded first. */
@@ -163,7 +164,7 @@ public class Exec
 
     m_OptionManager.add(
 	    "cmd", "command",
-	    "ls -l .");
+	    new BaseText("ls -l ."));
 
     m_OptionManager.add(
 	    "placeholder", "commandContainsPlaceholder",
@@ -221,7 +222,7 @@ public class Exec
    *
    * @param value	the command
    */
-  public void setCommand(String value) {
+  public void setCommand(BaseText value) {
     m_Command = value;
     reset();
   }
@@ -231,7 +232,7 @@ public class Exec
    *
    * @return 		the command
    */
-  public String getCommand() {
+  public BaseText getCommand() {
     return m_Command;
   }
 
@@ -423,7 +424,7 @@ public class Exec
     m_Output.clear();
     
     // preprocess command
-    cmd = m_Command;
+    cmd = m_Command.getValue();
     if (m_CommandContainsVariable)
       cmd = getVariables().expand(cmd);
     if (m_CommandContainsPlaceholder)
