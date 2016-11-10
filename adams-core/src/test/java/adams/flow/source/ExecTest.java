@@ -15,13 +15,12 @@
 
 /*
  * ExecTest.java
- * Copyright (C) 2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import adams.core.base.BaseText;
 import adams.core.management.OS;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
@@ -29,6 +28,8 @@ import adams.flow.control.Flow;
 import adams.flow.core.Actor;
 import adams.flow.sink.DumpFile;
 import adams.test.TmpFile;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Tests the Exec actor.
@@ -79,9 +80,9 @@ public class ExecTest
     Exec ex = new Exec();
     ex.setOutputStdErr(true);
     if (OS.isWindows())
-      ex.setCommand("dir " + m_TestHelper.getTmpDirectory());
+      ex.setCommand(new BaseText("dir " + m_TestHelper.getTmpDirectory()));
     else
-      ex.setCommand("ls " + m_TestHelper.getTmpDirectory());
+      ex.setCommand(new BaseText("ls " + m_TestHelper.getTmpDirectory()));
 
     DumpFile df = new DumpFile();
     df.setOutputFile(new TmpFile("dumpfile.txt"));
