@@ -113,6 +113,9 @@ public abstract class AbstractApplicationFrame
   /** the user mode - determines what menu entries to display. */
   protected UserMode m_UserMode;
 
+  /** whether to not maximize the main window. */
+  protected boolean m_MinimalWindow;
+
   /** whether the application can be restarted (through Launcher class). */
   protected boolean m_EnableRestart;
 
@@ -155,6 +158,10 @@ public abstract class AbstractApplicationFrame
     m_OptionManager.add(
 	"user-mode", "userMode",
 	UserMode.EXPERT);
+
+    m_OptionManager.add(
+	"minimal-window", "minimalWindow",
+	false);
 
     m_OptionManager.add(
 	"start-up", "startUps",
@@ -321,6 +328,38 @@ public abstract class AbstractApplicationFrame
    */
   public String userModeTipText() {
     return "The user mode, which determines the visibility of the menu items.";
+  }
+
+  /**
+   * Sets whether the main window uses minimal size or gets extended to
+   * the full width of the screen.
+   *
+   * @param value 	true if minimal size
+   */
+  public void setMinimalWindow(boolean value) {
+    m_MinimalWindow = value;
+    if (m_InitFinished)
+      setSizeAndLocation();
+  }
+
+  /**
+   * Returns whether the main window uses minimal size or gets extended to
+   * the full width of the screen.
+   *
+   * @return 		true if minimal size
+   */
+  public boolean getMinimalWindow() {
+    return m_MinimalWindow;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String minimalWindowTipText() {
+    return "If enabled, the main window does not extend the full width of the screen.";
   }
 
   /**
@@ -532,7 +571,8 @@ public abstract class AbstractApplicationFrame
    */
   protected void setSizeAndLocation() {
     pack();
-    setSize(getGraphicsConfiguration().getBounds().width, getHeight());
+    if (!m_MinimalWindow)
+      setSize(getGraphicsConfiguration().getBounds().width, getHeight());
     setLocation(0, 0);
   }
 
