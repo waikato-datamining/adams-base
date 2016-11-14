@@ -53,6 +53,12 @@ public abstract class AbstractSingleClassPLS
   /** for centering the data */
   protected Filter m_Filter = null;
 
+  /** the class mean. */
+  protected double m_ClassMean;
+
+  /** the class stddev. */
+  protected double m_ClassStdDev;
+
   /**
    * Resets the scheme.
    */
@@ -99,8 +105,6 @@ public abstract class AbstractSingleClassPLS
    * @return the preprocessed data
    */
   protected Instances preTransform(Instances instances, Map<String,Object> params) throws Exception {
-    double 	classMean;
-    double 	classStdDev;
     double[] 	classValues;
 
     switch (m_PredictionType) {
@@ -114,41 +118,42 @@ public abstract class AbstractSingleClassPLS
     if (classValues != null)
       params.put(PARAM_CLASSVALUES, classValues);
 
-    if (m_ReplaceMissing) {
-      if (m_Missing == null)
+    if (!isInitialized()) {
+      if (m_ReplaceMissing) {
 	m_Missing = new ReplaceMissingValues();
-      m_Missing.setInputFormat(instances);
-    }
+	m_Missing.setInputFormat(instances);
+      }
+      else {
+	m_Missing = null;
+      }
 
-    switch (m_PreprocessingType) {
-      case CENTER:
-	classMean = instances.meanOrMode(instances.classIndex());
-	classStdDev = 1;
-	m_Filter      = new Center();
-	((Center) m_Filter).setIgnoreClass(true);
-	break;
-      case STANDARDIZE:
-	classMean = instances.meanOrMode(instances.classIndex());
-	classStdDev = StrictMath.sqrt(instances.variance(instances.classIndex()));
-	m_Filter      = new Standardize();
-	((Standardize) m_Filter).setIgnoreClass(true);
-	break;
-      case NONE:
-	classMean = 0;
-	classStdDev = 1;
-	m_Filter      = null;
-	break;
-      default:
-	throw new IllegalStateException("Unhandled preprocessing type; " + m_PreprocessingType);
+      switch (m_PreprocessingType) {
+	case CENTER:
+	  m_ClassMean   = instances.meanOrMode(instances.classIndex());
+	  m_ClassStdDev = 1;
+	  m_Filter      = new Center();
+	  ((Center) m_Filter).setIgnoreClass(true);
+	  break;
+	case STANDARDIZE:
+	  m_ClassMean   = instances.meanOrMode(instances.classIndex());
+	  m_ClassStdDev = StrictMath.sqrt(instances.variance(instances.classIndex()));
+	  m_Filter      = new Standardize();
+	  ((Standardize) m_Filter).setIgnoreClass(true);
+	  break;
+	case NONE:
+	  m_ClassMean   = 0;
+	  m_ClassStdDev = 1;
+	  m_Filter      = null;
+	  break;
+	default:
+	  throw new IllegalStateException("Unhandled preprocessing type; " + m_PreprocessingType);
+      }
+      if (m_Filter != null)
+	m_Filter.setInputFormat(instances);
     }
-    if (m_Filter != null)
-      m_Filter.setInputFormat(instances);
-
-    params.put(PARAM_CLASSMEAN, classMean);
-    params.put(PARAM_CLASSSTDEV, classStdDev);
 
     // filter data
-    if (m_ReplaceMissing)
+    if (m_Missing != null)
       instances = Filter.useFilter(instances, m_Missing);
     if (m_Filter != null)
       instances = Filter.useFilter(instances, m_Filter);
@@ -165,12 +170,8 @@ public abstract class AbstractSingleClassPLS
   protected Instances postTransform(Instances instances, Map<String,Object> params) throws Exception {
     int		i;
     double[] 	classValues;
-    double 	classValue;
-    double 	classMean;
-    double 	classStdDev;
+    Double 	classValue;
 
-    classMean   = (double) params.get(PARAM_CLASSMEAN);
-    classStdDev = (double) params.get(PARAM_CLASSSTDEV);
     classValues = (double[]) params.get(PARAM_CLASSVALUES);
 
     // add the mean to the class again if predictions are to be performed,
@@ -181,7 +182,7 @@ public abstract class AbstractSingleClassPLS
       }
       else {
         classValue = instances.instance(i).classValue();
-        instances.instance(i).setClassValue(classValue * classStdDev + classMean);
+        instances.instance(i).setClassValue(classValue * m_ClassStdDev + m_ClassMean);
       }
     }
 
