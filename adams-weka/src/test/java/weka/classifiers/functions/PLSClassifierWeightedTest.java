@@ -76,7 +76,7 @@ public class PLSClassifierWeightedTest
    */
   @Override
   public Classifier getClassifier() {
-    PLSClassifier classifier = new PLSClassifier();
+    PLSClassifierWeighted classifier = new PLSClassifierWeighted();
 
     PLSFilter filter = new PLSFilter();
     filter.setReplaceMissing(true);
