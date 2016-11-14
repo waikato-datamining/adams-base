@@ -25,21 +25,19 @@ import adams.core.MessageCollection;
 import adams.core.Properties;
 import adams.core.Range;
 import adams.core.base.BaseRegExp;
+import adams.core.option.OptionUtils;
 import adams.data.instancesanalysis.PLS;
-import adams.data.instancesanalysis.PLS.Algorithm;
 import adams.data.sequence.XYSequence;
 import adams.data.sequence.XYSequencePoint;
 import adams.data.sequence.XYSequencePointComparator.Comparison;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
-import adams.data.weka.WekaAttributeRange;
 import adams.flow.sink.sequenceplotter.SequencePlotterPanel;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.BaseTabbedPane;
-import adams.gui.core.NumberTextField;
-import adams.gui.core.NumberTextField.Type;
 import adams.gui.core.ParameterPanel;
 import adams.gui.event.WekaInvestigatorDataEvent;
+import adams.gui.goe.GenericObjectEditorPanel;
 import adams.gui.tools.wekainvestigator.InvestigatorPanel;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
 import adams.gui.tools.wekainvestigator.job.InvestigatorTabJob;
@@ -54,6 +52,8 @@ import adams.gui.visualization.stats.scatterplot.Coordinates;
 import adams.gui.visualization.stats.scatterplot.ScatterPlot;
 import adams.gui.visualization.stats.scatterplot.action.ViewDataClickAction;
 import weka.core.Instances;
+import weka.filters.supervised.attribute.pls.AbstractPLS;
+import weka.filters.supervised.attribute.pls.PLS1;
 
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
@@ -116,10 +116,7 @@ public class PartialLeastSquaresTab
   protected JTextField m_TextAttributeRange;
 
   /** the algorithm. */
-  protected JComboBox<Algorithm> m_ComboBoxAlgorithm;
-
-  /** the number of components. */
-  protected NumberTextField m_TextNumComponents;
+  protected GenericObjectEditorPanel m_PanelGOE;
 
   /** the button to start PLS. */
   protected JButton m_ButtonStart;
@@ -201,19 +198,8 @@ public class PartialLeastSquaresTab
     });
     m_PanelParameters.addParameter("Range", m_TextAttributeRange);
 
-    m_ComboBoxAlgorithm = new JComboBox<>(Algorithm.values());
-    m_ComboBoxAlgorithm.setSelectedItem(Algorithm.valueOf(props.getProperty("PartialLeastSquares.Algorithm", "SIMPLS")));
-    if (m_ComboBoxAlgorithm.getSelectedIndex() == -1)
-      m_ComboBoxAlgorithm.setSelectedIndex(0);
-    m_ComboBoxAlgorithm.addActionListener((ActionEvent e) -> {
-      m_PanelLoadings.setXRegExp(new BaseRegExp(m_ComboBoxAlgorithm.getSelectedItem() + "_1"));
-      m_PanelLoadings.setYRegExp(new BaseRegExp(m_ComboBoxAlgorithm.getSelectedItem() + "_2"));
-    });
-    m_PanelParameters.addParameter("Algorithm", m_ComboBoxAlgorithm);
-
-    m_TextNumComponents = new NumberTextField(Type.INTEGER, 20);
-    m_TextNumComponents.setValue(props.getInteger("PartialLeastSquares.NumComponents", 20));
-    m_PanelParameters.addParameter("Components", m_TextNumComponents);
+    m_PanelGOE = new GenericObjectEditorPanel(AbstractPLS.class, new PLS1());
+    m_PanelParameters.addParameter("Algorithm", m_PanelGOE);
 
     // buttons
     panelButtons = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -232,8 +218,8 @@ public class PartialLeastSquaresTab
     m_PanelRight.add(m_TabbedPanePlots, BorderLayout.CENTER);
 
     m_PanelLoadings = new ScatterPlot();
-    m_PanelLoadings.setXRegExp(new BaseRegExp(m_ComboBoxAlgorithm.getSelectedItem() + "_1"));
-    m_PanelLoadings.setYRegExp(new BaseRegExp(m_ComboBoxAlgorithm.getSelectedItem() + "_2"));
+    m_PanelLoadings.setXRegExp(new BaseRegExp(m_PanelGOE.getCurrent().getClass().getSimpleName() + "_1"));
+    m_PanelLoadings.setYRegExp(new BaseRegExp(m_PanelGOE.getCurrent().getClass().getSimpleName() + "_2"));
     m_PanelLoadings.getPlot().getAxis(Axis.LEFT).setTopMargin(0.01);
     m_PanelLoadings.getPlot().getAxis(Axis.LEFT).setBottomMargin(0.01);
     m_PanelLoadings.getPlot().getAxis(Axis.BOTTOM).setTopMargin(0.01);
@@ -420,9 +406,7 @@ public class PartialLeastSquaresTab
   protected String canVisualize() {
     String	rangeStr;
     Instances	data;
-    int 	algorithm;
 
-    algorithm = m_ComboBoxAlgorithm.getSelectedIndex();
     rangeStr = m_TextAttributeRange.getText();
     if (m_ComboBoxDatasets.getSelectedIndex() > -1)
       data = getData().get(m_ComboBoxDatasets.getSelectedIndex()).getData();
@@ -431,9 +415,6 @@ public class PartialLeastSquaresTab
 
     if (isBusy())
       return "Currently busy...";
-
-    if (algorithm == -1)
-      return "No algorithm selected!";
 
     if (data == null)
       return "No data selected!";
@@ -472,9 +453,7 @@ public class PartialLeastSquaresTab
 	try {
 	  DataContainer datacont = getData().get(m_ComboBoxDatasets.getSelectedIndex());
 	  PLS pls = new PLS();
-	  pls.setAttributeRange(new WekaAttributeRange(m_TextAttributeRange.getText()));
-	  pls.setAlgorithm((Algorithm) m_ComboBoxAlgorithm.getSelectedItem());
-	  pls.setNumComponents(m_TextNumComponents.getValue().intValue());
+	  pls.setAlgorithm((AbstractPLS) m_PanelGOE.getCurrent());
 	  String msg = pls.analyze(datacont.getData());
 	  if (msg != null) {
 	    logError(msg, "PLS Error");
@@ -560,8 +539,7 @@ public class PartialLeastSquaresTab
     result.put(KEY_LEFTPANELWIDTH, m_SplitPane.getDividerLocation());
     result.put(KEY_DATASET, m_ComboBoxDatasets.getSelectedIndex());
     result.put(KEY_RANGE, m_TextAttributeRange.getText());
-    result.put(KEY_ALGORITHM, m_ComboBoxAlgorithm.getSelectedIndex());
-    result.put(KEY_COMPONENTS, m_TextNumComponents.getValue().intValue());
+    result.put(KEY_ALGORITHM, OptionUtils.getCommandLine(m_PanelGOE.getCurrent()));
 
     return result;
   }
@@ -580,9 +558,13 @@ public class PartialLeastSquaresTab
       m_ComboBoxDatasets.setSelectedIndex((int) data.get(KEY_DATASET));
     if (data.containsKey(KEY_RANGE))
       m_TextAttributeRange.setText((String) data.get(KEY_RANGE));
-    if (data.containsKey(KEY_ALGORITHM))
-      m_ComboBoxAlgorithm.setSelectedIndex((int) data.get(KEY_ALGORITHM));
-    if (data.containsKey(KEY_COMPONENTS))
-      m_TextNumComponents.setValue((int) data.get(KEY_COMPONENTS));
+    if (data.containsKey(KEY_ALGORITHM)) {
+      try {
+	m_PanelGOE.setCurrent(OptionUtils.forAnyCommandLine(AbstractPLS.class, (String) data.get(KEY_ALGORITHM)));
+      }
+      catch (Exception e) {
+	m_PanelGOE.setCurrent(new PLS1());
+      }
+    }
   }
 }
