@@ -334,12 +334,12 @@ public abstract class AbstractPLS
 
   /**
    * Sets the type of prediction to perform.
+   * Calling this method does not result in a {@link #reset()} call.
    *
    * @param value 	the type
    */
   public void setPredictionType(PredictionType value) {
     m_PredictionType = value;
-    reset();
   }
 
   /**
