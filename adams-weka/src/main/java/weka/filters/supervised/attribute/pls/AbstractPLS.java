@@ -405,6 +405,21 @@ public abstract class AbstractPLS
   public abstract Matrix getMatrix(String name);
 
   /**
+   * Whether the algorithm supports return of loadings.
+   *
+   * @return		true if supported
+   * @see		#getLoadings()
+   */
+  public abstract boolean hasLoadings();
+
+  /**
+   * Returns the loadings, if available.
+   *
+   * @return		the loadings, null if not available
+   */
+  public abstract Matrix getLoadings();
+
+  /**
    * Returns whether the scheme has been initialized.
    *
    * @return		true if initialized

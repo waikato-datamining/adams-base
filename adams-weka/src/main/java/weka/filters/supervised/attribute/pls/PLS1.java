@@ -211,6 +211,25 @@ public class PLS1
   }
 
   /**
+   * Whether the algorithm supports return of loadings.
+   *
+   * @return		true if supported
+   * @see		#getLoadings()
+   */
+  public boolean hasLoadings() {
+    return true;
+  }
+
+  /**
+   * Returns the loadings, if available.
+   *
+   * @return		the loadings, null if not available
+   */
+  public Matrix getLoadings() {
+    return getMatrix("P");
+  }
+
+  /**
    * Transforms the data, initializes if necessary.
    *
    * @param data	the data to use
