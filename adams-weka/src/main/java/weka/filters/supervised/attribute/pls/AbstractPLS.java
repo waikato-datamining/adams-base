@@ -23,6 +23,7 @@ package weka.filters.supervised.attribute.pls;
 import weka.core.Capabilities;
 import weka.core.Capabilities.Capability;
 import weka.core.CapabilitiesHandler;
+import weka.core.GenericPLSMatrixAccess;
 import weka.core.Instances;
 import weka.core.Option;
 import weka.core.OptionHandler;
@@ -47,7 +48,8 @@ import java.util.Vector;
  * @version $Revision$
  */
 public abstract class AbstractPLS
-  implements Serializable, OptionHandler, CapabilitiesHandler, TechnicalInformationHandler {
+  implements Serializable, OptionHandler, CapabilitiesHandler,
+             TechnicalInformationHandler, GenericPLSMatrixAccess {
 
   private static final long serialVersionUID = -2619191840396410446L;
 

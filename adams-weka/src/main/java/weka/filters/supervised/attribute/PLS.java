@@ -22,6 +22,7 @@
 package weka.filters.supervised.attribute;
 
 import weka.core.Capabilities;
+import weka.core.GenericPLSMatrixAccess;
 import weka.core.Instances;
 import weka.core.Option;
 import weka.core.RevisionUtils;
@@ -85,7 +86,7 @@ import java.util.Vector;
  */
 public class PLS
   extends SimpleBatchFilter
-  implements SupervisedFilter, TechnicalInformationHandler {
+  implements SupervisedFilter, TechnicalInformationHandler, GenericPLSMatrixAccess {
 
   /** for serialization */
   static final long serialVersionUID = -3335106965521265631L;
