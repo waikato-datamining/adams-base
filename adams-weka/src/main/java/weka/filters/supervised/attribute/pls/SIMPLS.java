@@ -20,6 +20,7 @@
 
 package weka.filters.supervised.attribute.pls;
 
+import adams.core.Utils;
 import weka.core.Instances;
 import weka.core.TechnicalInformation;
 import weka.core.TechnicalInformation.Field;
@@ -108,6 +109,7 @@ public class SIMPLS
   @Override
   public String globalInfo() {
     return "Implementation of SIMPLS algorithm.\n\n"
+      + "Available matrices: " + Utils.flatten(getMatrixNames(), ", ") + "\n\n"
       + "For more information see:\n\n"
       + getTechnicalInformation().toString();
   }

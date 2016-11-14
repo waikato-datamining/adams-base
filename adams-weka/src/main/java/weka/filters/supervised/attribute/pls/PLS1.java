@@ -20,6 +20,7 @@
 
 package weka.filters.supervised.attribute.pls;
 
+import adams.core.Utils;
 import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.TechnicalInformation;
@@ -122,6 +123,7 @@ public class PLS1
   @Override
   public String globalInfo() {
     return "Implementation of PLS1 algorithm.\n\n"
+      + "Available matrices: " + Utils.flatten(getMatrixNames(), ", ") + "\n\n"
       + "For more information see:\n\n"
       + getTechnicalInformation().toString();
   }
