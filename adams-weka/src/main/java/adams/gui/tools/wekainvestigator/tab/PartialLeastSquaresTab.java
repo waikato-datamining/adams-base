@@ -24,7 +24,6 @@ import adams.core.Index;
 import adams.core.MessageCollection;
 import adams.core.Properties;
 import adams.core.Range;
-import adams.core.base.BaseRegExp;
 import adams.core.option.OptionUtils;
 import adams.data.instancesanalysis.PLS;
 import adams.data.sequence.XYSequence;
@@ -218,8 +217,8 @@ public class PartialLeastSquaresTab
     m_PanelRight.add(m_TabbedPanePlots, BorderLayout.CENTER);
 
     m_PanelLoadings = new ScatterPlot();
-    m_PanelLoadings.setXRegExp(new BaseRegExp(m_PanelGOE.getCurrent().getClass().getSimpleName() + "_1"));
-    m_PanelLoadings.setYRegExp(new BaseRegExp(m_PanelGOE.getCurrent().getClass().getSimpleName() + "_2"));
+    m_PanelLoadings.setXIndex(new Index("1"));
+    m_PanelLoadings.setYIndex(new Index("2"));
     m_PanelLoadings.getPlot().getAxis(Axis.LEFT).setTopMargin(0.01);
     m_PanelLoadings.getPlot().getAxis(Axis.LEFT).setBottomMargin(0.01);
     m_PanelLoadings.getPlot().getAxis(Axis.BOTTOM).setTopMargin(0.01);
