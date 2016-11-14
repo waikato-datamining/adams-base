@@ -26,10 +26,10 @@ import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.weka.WekaAttributeRange;
 import weka.core.Instances;
-import weka.core.SelectedTag;
 import weka.core.matrix.Matrix;
 import weka.filters.Filter;
-import weka.filters.supervised.attribute.PLSFilterWithLoadings;
+import weka.filters.supervised.attribute.pls.AbstractPLS;
+import weka.filters.supervised.attribute.pls.SIMPLS;
 import weka.filters.unsupervised.attribute.Remove;
 
 /**
@@ -43,25 +43,11 @@ public class PLS
 
   private static final long serialVersionUID = 7150143741822676345L;
 
-  /**
-   * The available algorithms.
-   *
-   * @author FracPete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
-   */
-  public enum Algorithm {
-    SIMPLS,
-    PLS1
-  }
-
   /** the range of attributes to work. */
   protected WekaAttributeRange m_AttributeRange;
 
   /** the algorithm to use. */
-  protected Algorithm m_Algorithm;
-
-  /** the number of components. */
-  protected int m_NumComponents;
+  protected AbstractPLS m_Algorithm;
 
   /** the loadings. */
   protected SpreadSheet m_Loadings;
@@ -92,11 +78,7 @@ public class PLS
 
     m_OptionManager.add(
       "algorithm", "algorithm",
-      Algorithm.SIMPLS);
-
-    m_OptionManager.add(
-      "num-components", "numComponents",
-      20, 1, null);
+      new SIMPLS());
   }
 
   /**
@@ -144,7 +126,7 @@ public class PLS
    *
    * @param value	the algorithm
    */
-  public void setAlgorithm(Algorithm value) {
+  public void setAlgorithm(AbstractPLS value) {
     m_Algorithm = value;
     reset();
   }
@@ -154,7 +136,7 @@ public class PLS
    *
    * @return		the algorithm
    */
-  public Algorithm getAlgorithm() {
+  public AbstractPLS getAlgorithm() {
     return m_Algorithm;
   }
 
@@ -166,37 +148,6 @@ public class PLS
    */
   public String algorithmTipText() {
     return "The algorithm to use.";
-  }
-
-  /**
-   * Sets the number of components.
-   *
-   * @param value	the components
-   */
-  public void setNumComponents(int value) {
-    if (getOptionManager().isValid("numComponents", value)) {
-      m_NumComponents = value;
-      reset();
-    }
-  }
-
-  /**
-   * Returns the number of components.
-   *
-   * @return		the components
-   */
-  public int getNumComponents() {
-    return m_NumComponents;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String numComponentsTipText() {
-    return "The number of components.";
   }
 
   /**
@@ -222,16 +173,16 @@ public class PLS
    */
   @Override
   protected String doAnalyze(Instances data) throws  Exception {
-    String 			result;
-    Remove 			remove;
-    PLSFilterWithLoadings 	pls;
-    WekaInstancesToSpreadSheet 	conv;
-    SpreadSheet 		transformed;
-    Matrix 			matrix;
-    SpreadSheet 		loadings;
-    Row 			row;
-    int				i;
-    int				n;
+    String 					result;
+    Remove 					remove;
+    weka.filters.supervised.attribute.PLS 	pls;
+    WekaInstancesToSpreadSheet 			conv;
+    SpreadSheet 				transformed;
+    Matrix 					matrix;
+    SpreadSheet 				loadings;
+    Row 					row;
+    int						i;
+    int					n;
 
     m_Loadings = null;
     m_Scores   = null;
@@ -251,18 +202,8 @@ public class PLS
     if (isLoggingEnabled())
       getLogger().info("Performing PLS...");
 
-    pls = new PLSFilterWithLoadings();
-    switch (m_Algorithm) {
-      case SIMPLS:
-	pls.setAlgorithm(new SelectedTag(PLSFilterWithLoadings.ALGORITHM_SIMPLS, PLSFilterWithLoadings.TAGS_ALGORITHM));
-	break;
-      case PLS1:
-	pls.setAlgorithm(new SelectedTag(PLSFilterWithLoadings.ALGORITHM_PLS1, PLSFilterWithLoadings.TAGS_ALGORITHM));
-	break;
-      default:
-	throw new IllegalStateException("Unhandled algorithm: " + m_Algorithm);
-    }
-    pls.setNumComponents(m_NumComponents);
+    pls = new weka.filters.supervised.attribute.PLS();
+    pls.setAlgorithm(m_Algorithm);
     pls.setInputFormat(data);
     data = Filter.useFilter(data, pls);
     conv = new WekaInstancesToSpreadSheet();
@@ -270,17 +211,8 @@ public class PLS
     result = conv.convert();
     if (result == null) {
       transformed = (SpreadSheet) conv.getOutput();
-      switch (m_Algorithm) {
-	case SIMPLS:
-	  matrix = pls.getSimplsW();
-	  break;
-	case PLS1:
-	  matrix = pls.getPLS1P();
-	  break;
-	default:
-	  throw new IllegalStateException("Unhandled algorithm: " + m_Algorithm);
-      }
-      loadings = new DefaultSpreadSheet();
+      matrix      = pls.getLoadings();
+      loadings    = new DefaultSpreadSheet();
       for (i = 0; i < matrix.getColumnDimension(); i++)
 	loadings.getHeaderRow().addCell("L-" + (i + 1)).setContentAsString("Loading-" + (i + 1));
       for (n = 0; n < matrix.getRowDimension(); n++) {
