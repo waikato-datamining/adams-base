@@ -170,7 +170,7 @@ public abstract class AbstractSingleClassPLS
   protected Instances postTransform(Instances instances, Map<String,Object> params) throws Exception {
     int		i;
     double[] 	classValues;
-    Double 	classValue;
+    double 	classValue;
 
     classValues = (double[]) params.get(PARAM_CLASSVALUES);
 
