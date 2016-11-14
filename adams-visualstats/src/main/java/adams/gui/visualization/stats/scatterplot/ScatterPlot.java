@@ -382,8 +382,8 @@ public class ScatterPlot
     m_PanelOverlay = new GenericArrayEditorPanel(m_DefaultOverlays);
     m_PanelOverlay.addChangeListener((ChangeEvent e) -> changeOverlay());
 
-    optionPanel.addParameter("Y attribute", m_ComboBoxY);
     optionPanel.addParameter("X attribute", m_ComboBoxX);
+    optionPanel.addParameter("Y attribute", m_ComboBoxY);
     optionPanel.addParameter("Color attribute", m_ComboBoxColor);
     optionPanel.addParameter("Overlays", m_PanelOverlay);
     optionPanel.addParameter("Paintlet", m_PanelPaintlet);
