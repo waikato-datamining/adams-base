@@ -457,22 +457,39 @@ public class InstanceTab
   }
 
   /**
-   * Updates the buttons.
+   * Returns whether data can be visualized.
+   *
+   * @return		null if can visualize, otherwise error message
    */
-  protected void updateButtons() {
+  protected String canVisualize() {
     String	rangeStr;
     Instances	data;
 
-    rangeStr = m_TextAttributeRange.getText();
     if (m_ComboBoxDatasets.getSelectedIndex() > -1)
       data = getData().get(m_ComboBoxDatasets.getSelectedIndex()).getData();
     else
       data = null;
+    if (data == null)
+      return "No data available!";
 
-    m_ButtonVisualize.setEnabled(
-      (data != null)
-	&& !rangeStr.isEmpty()
-	&& Range.isValid(rangeStr, data.numAttributes()));
+    rangeStr = m_TextAttributeRange.getText();
+    if (rangeStr.isEmpty())
+      return "No attribute range defined!";
+    if (!Range.isValid(rangeStr, data.numAttributes()))
+      return "Invalid attribute range!";
+
+    return null;
+  }
+
+  /**
+   * Updates the buttons.
+   */
+  protected void updateButtons() {
+    String	msg;
+
+    msg = canVisualize();
+    m_ButtonVisualize.setEnabled(msg == null);
+    m_ButtonVisualize.setToolTipText(msg);
   }
 
   /**

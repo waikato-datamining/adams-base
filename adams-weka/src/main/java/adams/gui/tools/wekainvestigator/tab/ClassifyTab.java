@@ -764,6 +764,7 @@ public class ClassifyTab
     cls = (Classifier) m_PanelGOE.getCurrent();
     msg = m_CurrentEvaluation.canEvaluate(cls);
     m_ButtonStart.setEnabled(!isBusy() && (m_CurrentEvaluation != null) && (msg == null));
+    m_ButtonStart.setToolTipText(msg);
     m_ButtonStop.setEnabled(isBusy() && !m_Stopping);
   }
 

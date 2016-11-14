@@ -379,9 +379,11 @@ public class PrincipalComponentsTab
   }
 
   /**
-   * Updates the buttons.
+   * Returns whether data can be visualized.
+   *
+   * @return		null if can visualize, otherwise error message
    */
-  protected void updateButtons() {
+  protected String canVisualize() {
     String	rangeStr;
     Instances	data;
 
@@ -391,11 +393,30 @@ public class PrincipalComponentsTab
     else
       data = null;
 
-    m_ButtonStart.setEnabled(
-      !isBusy()
-	&& (data != null)
-	&& !rangeStr.isEmpty()
-	&& Range.isValid(rangeStr, data.numAttributes()));
+    if (isBusy())
+      return "Currently busy...";
+
+    if (data == null)
+      return "No data selected!";
+
+    if (rangeStr.isEmpty())
+      return "No attribute range provided!";
+
+    if (!Range.isValid(rangeStr, data.numAttributes()))
+      return "Invalid attribute range!";
+
+    return null;
+  }
+
+  /**
+   * Updates the buttons.
+   */
+  protected void updateButtons() {
+    String	msg;
+
+    msg = canVisualize();
+    m_ButtonStart.setEnabled(msg == null);
+    m_ButtonStart.setToolTipText(msg);
     m_ButtonStop.setEnabled(isBusy());
   }
 

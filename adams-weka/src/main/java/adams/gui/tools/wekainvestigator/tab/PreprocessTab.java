@@ -399,11 +399,31 @@ public class PreprocessTab
   }
 
   /**
+   * Checks whether data can be filtered.
+   *
+   * @return		null if data can be filtered, otherwise error message
+   */
+  protected String canFilter() {
+    if (isBusy())
+      return "Currently busy...";
+
+    if (getSelectedRows().length == 0)
+      return "No dataset selected!";
+
+    return null;
+  }
+
+  /**
    * Updates the buttons.
    */
   public void updateButtons() {
+    String	msg;
+
     super.updateButtons();
-    m_ButtonStart.setEnabled(!isBusy() && (getSelectedRows().length > 0));
+
+    msg = canFilter();
+    m_ButtonStart.setEnabled(msg == null);
+    m_ButtonStart.setToolTipText(msg);
     m_ButtonStop.setEnabled(isBusy());
     m_ButtonSelectedAttributesAction.setEnabled(!isBusy() && (getSelectedRows().length == 1));
     m_ButtonSelectedAttributes.setEnabled(m_TextSelectedAttributes.getText().length() > 0);

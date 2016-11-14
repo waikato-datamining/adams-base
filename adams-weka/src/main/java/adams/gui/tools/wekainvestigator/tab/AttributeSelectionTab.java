@@ -802,6 +802,7 @@ public class AttributeSelectionTab
     search = (ASSearch) m_PanelSearch.getCurrent();
     msg    = m_CurrentEvaluation.canEvaluate(eval, search);
     m_ButtonStart.setEnabled(!isBusy() && (m_CurrentEvaluation != null) && (msg == null));
+    m_ButtonStart.setToolTipText(msg);
     m_ButtonStop.setEnabled(isBusy());
   }
 
