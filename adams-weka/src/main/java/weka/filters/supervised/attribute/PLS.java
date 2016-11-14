@@ -267,6 +267,25 @@ public class PLS
   }
 
   /**
+   * Whether the algorithm supports return of loadings.
+   *
+   * @return		true if supported
+   * @see		#getLoadings()
+   */
+  public boolean hasLoadings() {
+    return m_Algorithm.hasLoadings();
+  }
+
+  /**
+   * Returns the loadings, if available.
+   *
+   * @return		the loadings, null if not available
+   */
+  public Matrix getLoadings() {
+    return m_Algorithm.getLoadings();
+  }
+
+  /**
    * Returns the revision string.
    *
    * @return the revision
