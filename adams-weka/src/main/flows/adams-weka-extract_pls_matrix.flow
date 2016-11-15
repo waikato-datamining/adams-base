@@ -1,8 +1,8 @@
 # Project: adams
-# Date: 2016-02-15 15:23:47
+# Date: 2016-11-15 14:33:29
 # User: fracpete
 # Charset: UTF-8
-adams.flow.control.Flow -annotation "Trains a PLS classifier (PLS1) on a numeric dataset\\nand displays the content of the P matrix." -flow-execution-listener adams.flow.execution.NullListener
+adams.flow.control.Flow -annotation "Trains a PLS classifier (PLS1) on a numeric dataset\\nand displays the content of the P matrix.\\nUses the PLSClassifier class from the partial least squares Weka package." -flow-execution-listener adams.flow.execution.NullListener
  adams.flow.standalone.CallableActors
   adams.flow.source.WekaClassifierSetup -classifier "weka.classifiers.functions.PLSClassifierWeightedWithLoadings -filter \"weka.filters.supervised.attribute.PLSFilterWithLoadings -C 3 -M -A PLS1 -P center\""
  adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/bodyfat.arff

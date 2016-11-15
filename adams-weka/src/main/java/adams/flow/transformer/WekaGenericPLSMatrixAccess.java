@@ -169,7 +169,7 @@ public class WekaGenericPLSMatrixAccess
    */
   @Override
   public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "matrix", m_Matrix);
+    return QuickInfoHelper.toString(this, "matrix", m_Matrix, "matrix: ");
   }
 
   /**

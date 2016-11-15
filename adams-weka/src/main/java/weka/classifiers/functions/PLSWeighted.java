@@ -313,7 +313,7 @@ public class PLSWeighted
    * @return		the names of the matrices
    */
   public String[] getMatrixNames() {
-    return m_Algorithm.getMatrixNames();
+    return m_Filter.getMatrixNames();
   }
 
   /**
@@ -323,7 +323,7 @@ public class PLSWeighted
    * @return		the matrix, null if not available
    */
   public Matrix getMatrix(String name) {
-    return m_Algorithm.getMatrix(name);
+    return m_Filter.getMatrix(name);
   }
 
   /**
@@ -333,7 +333,7 @@ public class PLSWeighted
    * @see		#getLoadings()
    */
   public boolean hasLoadings() {
-    return m_Algorithm.hasLoadings();
+    return m_Filter.hasLoadings();
   }
 
   /**
@@ -342,7 +342,7 @@ public class PLSWeighted
    * @return		the loadings, null if not available
    */
   public Matrix getLoadings() {
-    return m_Algorithm.getLoadings();
+    return m_Filter.getLoadings();
   }
 
   /**
