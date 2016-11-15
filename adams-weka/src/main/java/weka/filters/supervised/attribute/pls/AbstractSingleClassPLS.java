@@ -43,10 +43,6 @@ public abstract class AbstractSingleClassPLS
 
   public static final String PARAM_CLASSVALUES = "classValues";
 
-  public static final String PARAM_CLASSMEAN = "classMean";
-
-  public static final String PARAM_CLASSSTDEV = "classStdev";
-
   /** for replacing missing values */
   protected Filter m_Missing = null;
 
