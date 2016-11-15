@@ -85,7 +85,7 @@ public abstract class AbstractSingleClassPLS
     prefix = getClass().getSimpleName();
     for (i = 0; i < getNumComponents(); i++)
       atts.add(new Attribute(prefix + "_" + (i + 1)));
-    atts.add(new Attribute("Class"));
+    atts.add(new Attribute(input.classAttribute().name()));
     result = new Instances(prefix, atts, 0);
     result.setClassIndex(result.numAttributes() - 1);
 
