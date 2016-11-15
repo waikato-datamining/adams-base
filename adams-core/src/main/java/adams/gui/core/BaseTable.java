@@ -31,6 +31,8 @@ import adams.gui.event.PopupMenuListener;
 import adams.gui.event.RemoveItemsEvent;
 import adams.gui.event.RemoveItemsListener;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
+import gnu.trove.list.TIntList;
+import gnu.trove.list.array.TIntArrayList;
 
 import javax.swing.Action;
 import javax.swing.JMenuItem;
@@ -631,5 +633,48 @@ public class BaseTable
     clearSelection();
     for (int index : indices)
       addRowSelectionInterval(index, index);
+  }
+
+    /**
+     * Returns the index of the first selected row, -1 if no row is selected.
+     * @return the index of the first selected row
+     */
+    public int getSelectedRow() {
+      int	result;
+
+      result = super.getSelectedRow();
+      if (result > -1) {
+	if (result >= getRowCount()) {
+	  System.out.println("invalid: " + result);
+	  result = -1;
+	}
+      }
+
+      return result;
+    }
+
+  /**
+   * Returns the indices of all selected rows.
+   *
+   * @return an array of integers containing the indices of all selected rows,
+   *         or an empty array if no row is selected
+   * @see #getSelectedRow
+   */
+  public int[] getSelectedRows() {
+    TIntList	result;
+    int		i;
+
+    result = new TIntArrayList(super.getSelectedRows());
+    i      = 0;
+    while (i < result.size()) {
+      if (result.get(i) >= getRowCount()) {
+	System.out.println("invalid: " + result.get(i));
+	result.removeAt(i);
+      }
+      else
+	i++;
+    }
+
+    return result.toArray();
   }
 }
