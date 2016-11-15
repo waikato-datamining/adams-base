@@ -18,13 +18,13 @@
  * Copyright (C) 2006-2016 University of Waikato, Hamilton, NZ
  */
 
-package weka.filters.supervised.attribute.pls;
+package adams.data.instancesanalysis.pls;
 
+import adams.core.TechnicalInformation;
+import adams.core.TechnicalInformation.Field;
+import adams.core.TechnicalInformation.Type;
 import adams.core.Utils;
 import weka.core.Instances;
-import weka.core.TechnicalInformation;
-import weka.core.TechnicalInformation.Field;
-import weka.core.TechnicalInformation.Type;
 import weka.core.matrix.Matrix;
 import weka.core.matrix.MatrixHelper;
 
