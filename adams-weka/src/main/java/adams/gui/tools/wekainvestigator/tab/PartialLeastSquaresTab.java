@@ -51,8 +51,8 @@ import adams.gui.visualization.stats.scatterplot.Coordinates;
 import adams.gui.visualization.stats.scatterplot.ScatterPlot;
 import adams.gui.visualization.stats.scatterplot.action.ViewDataClickAction;
 import weka.core.Instances;
-import weka.filters.supervised.attribute.pls.AbstractPLS;
-import weka.filters.supervised.attribute.pls.PLS1;
+import adams.data.instancesanalysis.pls.AbstractPLS;
+import adams.data.instancesanalysis.pls.PLS1;
 
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;

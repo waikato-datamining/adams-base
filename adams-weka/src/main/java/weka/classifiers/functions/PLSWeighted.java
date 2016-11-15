@@ -33,9 +33,9 @@ import weka.core.Utils;
 import weka.core.WeightedInstancesHandler;
 import weka.core.matrix.Matrix;
 import weka.filters.Filter;
-import weka.filters.supervised.attribute.pls.AbstractPLS;
-import weka.filters.supervised.attribute.pls.AbstractPLS.PredictionType;
-import weka.filters.supervised.attribute.pls.PLS1;
+import adams.data.instancesanalysis.pls.AbstractPLS;
+import adams.data.instancesanalysis.pls.PredictionType;
+import adams.data.instancesanalysis.pls.PLS1;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -135,15 +135,6 @@ public class PLSWeighted
 	"algorithm", 1, "-algorithm <algorithm specification>"));
 
     en = super.listOptions();
-    while (en.hasMoreElements())
-      result.addElement((Option) en.nextElement());
-
-    result.addElement(new Option(
-      "",
-      "", 0, "\nOptions specific to algorithm "
-      + getAlgorithm().getClass().getName() + " ('-algorithm'):"));
-
-    en = getAlgorithm().listOptions();
     while (en.hasMoreElements())
       result.addElement((Option) en.nextElement());
 

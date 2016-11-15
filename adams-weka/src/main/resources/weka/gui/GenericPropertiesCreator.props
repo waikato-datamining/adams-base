@@ -6,7 +6,3 @@ weka.core.setupgenerator.AbstractParameter=\
 weka.classifiers.AbstainingClassifier=\
   weka.classifiers.meta,\
   weka.classifiers.meta
-
-# the PLS implementations
-weka.filters.supervised.attribute.pls.AbstractPLS=\
-  weka.filters.supervised.attribute.pls

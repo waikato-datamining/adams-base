@@ -7,5 +7,3 @@ weka.core.setupgenerator.AbstractParameter=weka.gui.GenericObjectEditor
 weka.core.setupgenerator.AbstractParameter[]=weka.gui.GenericArrayEditor
 weka.classifiers.AbstainingClassifier=weka.gui.GenericObjectEditor
 weka.classifiers.AbstainingClassifier[]=weka.gui.GenericArrayEditor
-weka.filters.supervised.attribute.pls.AbstractPLS=weka.gui.GenericObjectEditor
-weka.filters.supervised.attribute.pls.AbstractPLS[]=weka.gui.GenericArrayEditor

@@ -18,7 +18,7 @@
  * Copyright (C) 2016 University of Waikato, Hamilton, NZ
  */
 
-package weka.filters.supervised.attribute.pls;
+package adams.data.instancesanalysis.pls;
 
 import weka.core.Attribute;
 import weka.core.Instances;
@@ -44,10 +44,10 @@ public abstract class AbstractSingleClassPLS
   public static final String PARAM_CLASSVALUES = "classValues";
 
   /** for replacing missing values */
-  protected Filter m_Missing = null;
+  protected Filter m_Missing;
 
   /** for centering the data */
-  protected Filter m_Filter = null;
+  protected Filter m_Filter;
 
   /** the class mean. */
   protected double m_ClassMean;

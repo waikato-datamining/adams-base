@@ -18,27 +18,22 @@
  * Copyright (C) 2016 University of Waikato, Hamilton, NZ
  */
 
-package weka.filters.supervised.attribute.pls;
+package adams.data.instancesanalysis.pls;
 
 import adams.core.base.BaseRegExp;
 import gnu.trove.list.TIntList;
 import gnu.trove.list.array.TIntArrayList;
 import weka.core.Attribute;
 import weka.core.Instances;
-import weka.core.Option;
-import weka.core.WekaOptionUtils;
 import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.Center;
 import weka.filters.unsupervised.attribute.ReplaceMissingValues;
 import weka.filters.unsupervised.attribute.Standardize;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 /**
  * Ancestor for schemes that predict multiple classes.
@@ -51,18 +46,16 @@ public abstract class AbstractMultiClassPLS
 
   private static final long serialVersionUID = 5649007256147616278L;
 
-  public final static String OPTION_CLASS_ATTRIBUTES = "class-attributes";
-
   public static final String PARAM_CLASSVALUES = "classValues";
 
   /** the regular expression for identifying class attributes (besides an explicitly set one). */
   protected BaseRegExp m_ClassAttributes = getDefaultClassAttributes();
 
   /** for replacing missing values */
-  protected Filter m_Missing = null;
+  protected Filter m_Missing;
 
   /** for centering the data */
-  protected Filter m_Filter = null;
+  protected Filter m_Filter;
 
   /** the class attribute indices. */
   protected TIntList m_ClassAttributeIndices;
@@ -86,45 +79,15 @@ public abstract class AbstractMultiClassPLS
   }
 
   /**
-   * Returns an enumeration describing the available options.
-   *
-   * @return 		an enumeration of all the available options.
+   * Adds options to the internal list of options.
    */
   @Override
-  public Enumeration<Option> listOptions() {
-    Vector<Option> result = new Vector<>();
+  public void defineOptions() {
+    super.defineOptions();
 
-    WekaOptionUtils.addOption(result, classAttributesTipText(), "" + getDefaultClassAttributes(), OPTION_CLASS_ATTRIBUTES);
-    WekaOptionUtils.add(result, super.listOptions());
-
-    return result.elements();
-  }
-
-  /**
-   * Parses a given list of options.
-   *
-   * @param options 	the list of options as an array of strings
-   * @throws Exception 	if an option is not supported
-   */
-  @Override
-  public void setOptions(String[] options) throws Exception {
-    setClassAttributes(new BaseRegExp(WekaOptionUtils.parse(options, OPTION_CLASS_ATTRIBUTES, getDefaultClassAttributes().getValue())));
-    super.setOptions(options);
-  }
-
-  /**
-   * Gets the current settings of the filter.
-   *
-   * @return an array of strings suitable for passing to setOptions
-   */
-  @Override
-  public String[] getOptions() {
-    List<String> result = new ArrayList<>();
-
-    WekaOptionUtils.add(result, OPTION_CLASS_ATTRIBUTES, getNumComponents());
-    result.addAll(Arrays.asList(super.getOptions()));
-
-    return result.toArray(new String[result.size()]);
+    m_OptionManager.add(
+      "class-attributes", "classAttributes",
+      new BaseRegExp(""));
   }
 
   /**

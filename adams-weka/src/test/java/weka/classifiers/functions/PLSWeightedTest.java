@@ -25,8 +25,8 @@ import junit.textui.TestRunner;
 import weka.classifiers.AbstractAdamsClassifierTest;
 import weka.classifiers.CheckClassifier;
 import weka.classifiers.Classifier;
-import weka.filters.supervised.attribute.pls.AbstractPLS.PreprocessingType;
-import weka.filters.supervised.attribute.pls.SIMPLS;
+import adams.data.instancesanalysis.pls.PreprocessingType;
+import adams.data.instancesanalysis.pls.SIMPLS;
 
 /**
  * Tests PLSWeighted. Run from the command line with:<br><br>

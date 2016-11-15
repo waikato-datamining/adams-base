@@ -35,8 +35,8 @@ import weka.core.WekaOptionUtils;
 import weka.core.matrix.Matrix;
 import weka.filters.SimpleBatchFilter;
 import weka.filters.SupervisedFilter;
-import weka.filters.supervised.attribute.pls.AbstractPLS;
-import weka.filters.supervised.attribute.pls.PLS1;
+import adams.data.instancesanalysis.pls.AbstractPLS;
+import adams.data.instancesanalysis.pls.PLS1;
 
 import java.util.ArrayList;
 import java.util.Collections;

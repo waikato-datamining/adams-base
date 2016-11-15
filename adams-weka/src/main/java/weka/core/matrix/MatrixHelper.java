@@ -97,13 +97,26 @@ public class MatrixHelper {
    * @return the class attribute
    */
   public static Matrix getY(Instances instances) {
+    return getY(instances, new int[]{instances.classIndex()});
+  }
+
+  /**
+   * returns the data class columns as matrix
+   *
+   * @param instances the data to work on
+   * @param cols the class columns
+   * @return the class attribute
+   */
+  public static Matrix getY(Instances instances, int[] cols) {
     double[][] y;
     Matrix result;
     int i;
+    int n;
 
-    y = new double[instances.numInstances()][1];
+    y = new double[instances.numInstances()][cols.length];
     for (i = 0; i < instances.numInstances(); i++) {
-      y[i][0] = instances.instance(i).classValue();
+      for (n = 0; n < cols.length; n++)
+        y[i][n] = instances.instance(i).classValue();
     }
 
     result = new Matrix(y);
@@ -256,5 +269,43 @@ public class MatrixHelper {
     for (i = 0; i < v.getRowDimension(); i++) {
       v.set(i, 0, v.get(i, 0) / sum);
     }
+  }
+
+  /**
+   * Compares the two matrices.
+   *
+   * @param m1		the first matrix
+   * @param m2		the second matrix
+   * @return		true if the same dimension and values, otherwise false
+   */
+  public static boolean equal(Matrix m1, Matrix m2) {
+    return equal(m1, m2, 0.0);
+  }
+
+  /**
+   * Compares the two matrices.
+   *
+   * @param m1		the first matrix
+   * @param m2		the second matrix
+   * @param epsilon	the minimal accepted difference between the cells
+   * @return		true if the same dimension and values, otherwise false
+   */
+  public static boolean equal(Matrix m1, Matrix m2, double epsilon) {
+    int		i;
+    int		n;
+
+    if (m1.getColumnDimension() != m2.getColumnDimension())
+      return false;
+    if (m1.getRowDimension() != m2.getRowDimension())
+      return false;
+
+    for (i = 0; i < m1.getRowDimension(); i++) {
+      for (n = 0; n < m1.getColumnDimension(); n++) {
+	if (Math.abs(m1.get(i, n) - m2.get(i, n)) > epsilon)
+	  return false;
+      }
+    }
+
+    return true;
   }
 }

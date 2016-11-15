@@ -1,4 +1,4 @@
-@relation 'PLS1-weka.filters.supervised.attribute.PLS-algorithmweka.filters.supervised.attribute.pls.PLS1 -preprocessing CENTER -C 5 -prediction NONE'
+@relation 'PLS1-weka.filters.supervised.attribute.PLS-algorithmadams.data.instancesanalysis.pls.PLS1 -replace-missing true -num-components 5'
 
 @attribute PLS1_1 numeric
 @attribute PLS1_2 numeric

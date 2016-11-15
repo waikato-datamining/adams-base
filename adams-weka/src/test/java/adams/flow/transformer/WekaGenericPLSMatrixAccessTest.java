@@ -28,8 +28,8 @@ import adams.flow.core.Actor;
 import adams.test.TmpFile;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import weka.filters.supervised.attribute.pls.AbstractPLS.PreprocessingType;
-import weka.filters.supervised.attribute.pls.PLS1;
+import adams.data.instancesanalysis.pls.PreprocessingType;
+import adams.data.instancesanalysis.pls.PLS1;
 
 /**
  * Test for WekaGenericPLSMatrixAccess actor.

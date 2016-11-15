@@ -28,8 +28,8 @@ import adams.data.weka.WekaAttributeRange;
 import weka.core.Instances;
 import weka.core.matrix.Matrix;
 import weka.filters.Filter;
-import weka.filters.supervised.attribute.pls.AbstractPLS;
-import weka.filters.supervised.attribute.pls.SIMPLS;
+import adams.data.instancesanalysis.pls.AbstractPLS;
+import adams.data.instancesanalysis.pls.SIMPLS;
 import weka.filters.unsupervised.attribute.Remove;
 
 /**

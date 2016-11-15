@@ -19,6 +19,10 @@ adams.opt.cso.ClassifierBasedCatSwarmOptimization=\
 adams.data.instances.AbstractInstanceGenerator=\
   adams.data.instances
 
+# the PLS implementations
+adams.data.instancesanalysis.pls.AbstractPLS=\
+  adams.data.instancesanalysis.pls
+
 # the ADAMS Experiment readers
 adams.data.io.input.AbstractAdamsExperimentReader=\
   adams.data.io.input

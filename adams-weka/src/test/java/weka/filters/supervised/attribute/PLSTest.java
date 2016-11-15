@@ -26,10 +26,10 @@ import weka.core.Instances;
 import weka.core.TestInstances;
 import weka.filters.AbstractAdamsFilterTest;
 import weka.filters.Filter;
-import weka.filters.supervised.attribute.pls.AbstractPLS;
-import weka.filters.supervised.attribute.pls.AbstractPLS.PreprocessingType;
-import weka.filters.supervised.attribute.pls.PLS1;
-import weka.filters.supervised.attribute.pls.SIMPLS;
+import adams.data.instancesanalysis.pls.AbstractPLS;
+import adams.data.instancesanalysis.pls.PreprocessingType;
+import adams.data.instancesanalysis.pls.PLS1;
+import adams.data.instancesanalysis.pls.SIMPLS;
 
 /**
  * Tests PLS. Run from the command line with: <br><br>

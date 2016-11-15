@@ -29,7 +29,7 @@ import weka.classifiers.Classifier;
 import weka.core.GenericPLSMatrixAccess;
 import weka.core.matrix.Matrix;
 import weka.filters.Filter;
-import weka.filters.supervised.attribute.pls.AbstractPLS;
+import adams.data.instancesanalysis.pls.AbstractPLS;
 
 /**
  <!-- globalinfo-start -->

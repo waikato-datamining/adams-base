@@ -18,28 +18,20 @@
  * Copyright (C) 2016 University of Waikato, Hamilton, NZ
  */
 
-package weka.filters.supervised.attribute.pls;
+package adams.data.instancesanalysis.pls;
 
+import adams.core.TechnicalInformation;
+import adams.core.TechnicalInformationHandler;
+import adams.core.option.AbstractOptionHandler;
 import weka.core.Capabilities;
 import weka.core.Capabilities.Capability;
 import weka.core.CapabilitiesHandler;
 import weka.core.GenericPLSMatrixAccess;
 import weka.core.Instances;
-import weka.core.Option;
-import weka.core.OptionHandler;
-import weka.core.TechnicalInformation;
-import weka.core.TechnicalInformationHandler;
-import weka.core.Utils;
-import weka.core.WekaOptionUtils;
 import weka.core.matrix.Matrix;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 /**
  * Ancestor for PLS implementations.
@@ -48,68 +40,28 @@ import java.util.Vector;
  * @version $Revision$
  */
 public abstract class AbstractPLS
-  implements Serializable, OptionHandler, CapabilitiesHandler,
-             TechnicalInformationHandler, GenericPLSMatrixAccess {
+  extends AbstractOptionHandler
+  implements CapabilitiesHandler, TechnicalInformationHandler, GenericPLSMatrixAccess {
 
   private static final long serialVersionUID = -2619191840396410446L;
-
-  public static final String OPTION_DEBUG = "debug";
-
-  public static final String OPTION_PREPROCESSING = "preprocessing";
-
-  public static final String OPTION_C = "C";
-
-  public static final String OPTION_PREDICTION = "prediction";
-
-  /**
-   * The preprocessing type.
-   */
-  public enum PreprocessingType {
-    NONE,
-    CENTER,
-    STANDARDIZE
-  }
-
-  /**
-   * The type of prediction to perform.
-   */
-  public enum PredictionType {
-    /** no prediction at all. */
-    NONE,
-    /** predict all Ys. */
-    ALL,
-    /** predict all Ys except class attribute. */
-    EXCEPT_CLASS
-  }
 
   /** whether the scheme has been initialized. */
   protected boolean m_Initialized;
 
-  /** Whether the classifier is run in debug mode. */
-  protected boolean m_Debug = getDefaultDebug();
-
   /** the preprocessing type to perform. */
-  protected PreprocessingType m_PreprocessingType = getDefaultPreprocessingType();
+  protected PreprocessingType m_PreprocessingType;
 
   /** whether to replace missing values */
-  protected boolean m_ReplaceMissing = getDefaultReplaceMissing();
+  protected boolean m_ReplaceMissing;
 
   /** the maximum number of components to generate */
-  protected int m_NumComponents = getDefaultNumComponents();
+  protected int m_NumComponents;
 
   /** the prediction type to perform. */
-  protected PredictionType m_PredictionType = getDefaultPredictionType();
+  protected PredictionType m_PredictionType;
 
   /** the output format. */
   protected Instances m_OutputFormat;
-
-  /**
-   * Returns a string describing this class.
-   *
-   * @return 		a description of the class suitable for displaying in the
-   *         		explorer/experimenter gui
-   */
-  public abstract String globalInfo();
 
   /**
    * Returns an instance of a TechnicalInformation object, containing detailed
@@ -122,98 +74,27 @@ public abstract class AbstractPLS
   public abstract TechnicalInformation getTechnicalInformation();
 
   /**
-   * Returns an enumeration describing the available options.
-   *
-   * @return 		an enumeration of all the available options.
+   * Adds options to the internal list of options.
    */
   @Override
-  public Enumeration<Option> listOptions() {
-    Vector<Option> result = new Vector<>();
+  public void defineOptions() {
+    super.defineOptions();
 
-    WekaOptionUtils.addOption(result, debugTipText(), "" + getDefaultDebug(), OPTION_DEBUG);
-    WekaOptionUtils.addOption(result, preprocessingTypeTipText(), "" + getDefaultPreprocessingType(), OPTION_PREPROCESSING);
-    WekaOptionUtils.addOption(result, numComponentsTipText(), "" + getDefaultNumComponents(), OPTION_C);
-    WekaOptionUtils.addOption(result, predictionTypeTipText(), "" + getDefaultPredictionType(), OPTION_PREDICTION);
+    m_OptionManager.add(
+      "preprocessing-type", "preprocessingType",
+      PreprocessingType.CENTER);
 
-    return result.elements();
-  }
+    m_OptionManager.add(
+      "replace-missing", "replaceMissing",
+      false);
 
-  /**
-   * Parses a given list of options.
-   *
-   * @param options 	the list of options as an array of strings
-   * @throws Exception 	if an option is not supported
-   */
-  @Override
-  public void setOptions(String[] options) throws Exception {
-    setDebug(Utils.getFlag(OPTION_DEBUG, options));
-    setPreprocessingType((PreprocessingType) WekaOptionUtils.parse(options, OPTION_PREPROCESSING, getDefaultPreprocessingType()));
-    setNumComponents(WekaOptionUtils.parse(options, OPTION_C, getDefaultNumComponents()));
-    setPredictionType((PredictionType) WekaOptionUtils.parse(options, OPTION_PREDICTION, getDefaultPredictionType()));
-  }
+    m_OptionManager.add(
+      "num-components", "numComponents",
+      20, 1, null);
 
-  /**
-   * Gets the current settings of the filter.
-   *
-   * @return an array of strings suitable for passing to setOptions
-   */
-  @Override
-  public String[] getOptions() {
-    List<String> result = new ArrayList<>();
-
-    WekaOptionUtils.add(result, OPTION_DEBUG, getDebug());
-    WekaOptionUtils.add(result, OPTION_PREPROCESSING, getPreprocessingType());
-    WekaOptionUtils.add(result, OPTION_C, getNumComponents());
-    WekaOptionUtils.add(result, OPTION_PREDICTION, getPredictionType());
-
-    return result.toArray(new String[result.size()]);
-  }
-
-  /**
-   * Returns the default debug setting.
-   *
-   * @return		the default
-   */
-  protected boolean getDefaultDebug() {
-    return false;
-  }
-
-  /**
-   * Set debugging mode.
-   *
-   * @param debug 	true if debug output should be printed
-   */
-  public void setDebug(boolean debug) {
-    m_Debug = debug;
-    reset();
-  }
-
-  /**
-   * Get whether debugging is turned on.
-   *
-   * @return 		true if debugging output is on
-   */
-  public boolean getDebug() {
-    return m_Debug;
-  }
-
-  /**
-   * Returns the tip text for this property
-   *
-   * @return 		tip text for this property suitable for displaying in the
-   *         		explorer/experimenter gui
-   */
-  public String debugTipText() {
-    return "If enabled, additional info may be output to the console.";
-  }
-
-  /**
-   * Returns the default preprocessing type.
-   *
-   * @return		the default
-   */
-  protected PreprocessingType getDefaultPreprocessingType() {
-    return PreprocessingType.CENTER;
+    m_OptionManager.add(
+      "prediction-type", "predictionType",
+      PredictionType.NONE);
   }
 
   /**
@@ -243,15 +124,6 @@ public abstract class AbstractPLS
    */
   public String preprocessingTypeTipText() {
     return "The type of preprocessing to perform.";
-  }
-
-  /**
-   * Returns the default replace missing setting.
-   *
-   * @return		the default
-   */
-  protected boolean getDefaultReplaceMissing() {
-    return false;
   }
 
   /**
@@ -286,15 +158,6 @@ public abstract class AbstractPLS
   }
 
   /**
-   * Returns the default number of components.
-   *
-   * @return		the default
-   */
-  protected int getDefaultNumComponents() {
-    return 20;
-  }
-
-  /**
    * sets the maximum number of attributes to use.
    *
    * @param value 	the maximum number of attributes
@@ -324,15 +187,6 @@ public abstract class AbstractPLS
   }
 
   /**
-   * Returns the default prediction type.
-   *
-   * @return		the default
-   */
-  protected PredictionType getDefaultPredictionType() {
-    return PredictionType.NONE;
-  }
-
-  /**
    * Sets the type of prediction to perform.
    * Calling this method does not result in a {@link #reset()} call.
    *
@@ -340,6 +194,7 @@ public abstract class AbstractPLS
    */
   public void setPredictionType(PredictionType value) {
     m_PredictionType = value;
+    //reset();
   }
 
   /**
@@ -365,6 +220,8 @@ public abstract class AbstractPLS
    * Resets the scheme.
    */
   public void reset() {
+    super.reset();
+
     m_Initialized  = false;
     m_OutputFormat = null;
   }
