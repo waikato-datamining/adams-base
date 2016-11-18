@@ -1319,7 +1319,7 @@ public class CsvSpreadSheetWriter
   protected boolean doWrite(SpreadSheet content, Writer writer) {
     boolean	result;
     
-    m_IsAppending = true;
+    m_IsAppending = m_Appending;
     result        = writeHeader(content.getHeaderRow(), writer);
     for (DataRow row: content.rows()) {
       result = doWrite(row, writer);
