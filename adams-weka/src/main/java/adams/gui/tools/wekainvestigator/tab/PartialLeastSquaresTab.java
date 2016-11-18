@@ -26,6 +26,8 @@ import adams.core.Properties;
 import adams.core.Range;
 import adams.core.option.OptionUtils;
 import adams.data.instancesanalysis.PLS;
+import adams.data.instancesanalysis.pls.AbstractPLS;
+import adams.data.instancesanalysis.pls.PLS1;
 import adams.data.sequence.XYSequence;
 import adams.data.sequence.XYSequencePoint;
 import adams.data.sequence.XYSequencePointComparator.Comparison;
@@ -39,6 +41,7 @@ import adams.gui.event.WekaInvestigatorDataEvent;
 import adams.gui.goe.GenericObjectEditorPanel;
 import adams.gui.tools.wekainvestigator.InvestigatorPanel;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
+import adams.gui.tools.wekainvestigator.evaluation.DatasetHelper;
 import adams.gui.tools.wekainvestigator.job.InvestigatorTabJob;
 import adams.gui.visualization.core.AxisPanel;
 import adams.gui.visualization.core.axis.FancyTickGenerator;
@@ -51,10 +54,7 @@ import adams.gui.visualization.stats.scatterplot.Coordinates;
 import adams.gui.visualization.stats.scatterplot.ScatterPlot;
 import adams.gui.visualization.stats.scatterplot.action.ViewDataClickAction;
 import weka.core.Instances;
-import adams.data.instancesanalysis.pls.AbstractPLS;
-import adams.data.instancesanalysis.pls.PLS1;
 
-import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -65,11 +65,8 @@ import javax.swing.event.DocumentListener;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Visualizes the PLS loadings and PLS space calculated from the selected
@@ -292,75 +289,6 @@ public class PartialLeastSquaresTab
   }
 
   /**
-   * Determines the index of the old dataset name in the current dataset model.
-   *
-   * @param oldDataset	the old dataset to look for
-   * @return		the index, -1 if not found
-   */
-  protected int indexOfDataset(String oldDataset) {
-    int 		result;
-    int			i;
-    DataContainer data;
-
-    result = -1;
-
-    if (oldDataset != null)
-      oldDataset = oldDataset.replaceAll("^[0-9]+: ", "");
-    for (i = 0; i < getOwner().getData().size(); i++) {
-      data = getOwner().getData().get(i);
-      if ((oldDataset != null) && data.getData().relationName().equals(oldDataset)) {
-	result = i;
-	break;
-      }
-    }
-
-    return result;
-  }
-
-  /**
-   * Checks whether the data has changed and the model needs updating.
-   *
-   * @param newDatasets		the new list of datasets
-   * @param currentModel	the current model
-   * @return			true if changed
-   */
-  protected boolean hasDataChanged(List<String> newDatasets, ComboBoxModel<String> currentModel) {
-    boolean	result;
-    int		i;
-    Set<String> setDatasets;
-    Set<String>	setModel;
-
-    setDatasets = new HashSet<>(newDatasets);
-    setModel    = new HashSet<>();
-    for (i = 0; i < currentModel.getSize(); i++)
-      setModel.add(currentModel.getElementAt(i));
-
-    result = (setDatasets.size() != setModel.size())
-      || !(setDatasets.containsAll(setModel) && setModel.containsAll(setDatasets));
-
-    return result;
-  }
-
-  /**
-   * Generates the list of datasets for a combobox.
-   *
-   * @return		the list
-   */
-  protected List<String> generateDatasetList() {
-    List<String> 	result;
-    int			i;
-    DataContainer 	data;
-
-    result = new ArrayList<>();
-    for (i = 0; i < getOwner().getData().size(); i++) {
-      data = getOwner().getData().get(i);
-      result.add((i + 1) + ": " + data.getData().relationName());
-    }
-
-    return result;
-  }
-
-  /**
    * Notifies the tab that the data changed.
    *
    * @param e		the event
@@ -375,9 +303,9 @@ public class PartialLeastSquaresTab
       return;
     }
 
-    datasets = generateDatasetList();
-    index    = indexOfDataset((String) m_ComboBoxDatasets.getSelectedItem());
-    if (hasDataChanged(datasets, m_ModelDatasets)) {
+    datasets = DatasetHelper.generateDatasetList(getData());
+    index    = DatasetHelper.indexOfDataset(getData(), (String) m_ComboBoxDatasets.getSelectedItem());
+    if (DatasetHelper.hasDataChanged(datasets, m_ModelDatasets)) {
       m_ModelDatasets = new DefaultComboBoxModel<>(datasets.toArray(new String[datasets.size()]));
       m_ComboBoxDatasets.setModel(m_ModelDatasets);
       if ((index == -1) && (m_ModelDatasets.getSize() > 0))

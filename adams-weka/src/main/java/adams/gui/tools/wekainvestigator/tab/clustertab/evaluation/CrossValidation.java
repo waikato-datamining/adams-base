@@ -30,6 +30,7 @@ import adams.gui.core.NumberTextField;
 import adams.gui.core.NumberTextField.Type;
 import adams.gui.core.ParameterPanel;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
+import adams.gui.tools.wekainvestigator.evaluation.DatasetHelper;
 import adams.gui.tools.wekainvestigator.tab.clustertab.ResultItem;
 import weka.clusterers.ClusterEvaluation;
 import weka.clusterers.Clusterer;
@@ -271,9 +272,9 @@ public class CrossValidation
     if (getOwner().getOwner() == null)
       return;
 
-    datasets = generateDatasetList();
-    index    = indexOfDataset((String) m_ComboBoxDatasets.getSelectedItem());
-    if (hasDataChanged(datasets, m_ModelDatasets)) {
+    datasets = DatasetHelper.generateDatasetList(getOwner().getData());
+    index    = DatasetHelper.indexOfDataset(getOwner().getData(), (String) m_ComboBoxDatasets.getSelectedItem());
+    if (DatasetHelper.hasDataChanged(datasets, m_ModelDatasets)) {
       m_ModelDatasets = new DefaultComboBoxModel<>(datasets.toArray(new String[datasets.size()]));
       m_ComboBoxDatasets.setModel(m_ModelDatasets);
       if ((index == -1) && (m_ModelDatasets.getSize() > 0))

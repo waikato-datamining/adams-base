@@ -35,6 +35,7 @@ import adams.gui.core.ParameterPanel;
 import adams.gui.event.WekaInvestigatorDataEvent;
 import adams.gui.tools.wekainvestigator.InvestigatorPanel;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
+import adams.gui.tools.wekainvestigator.evaluation.DatasetHelper;
 import adams.gui.tools.wekainvestigator.job.InvestigatorTabJob;
 import adams.gui.visualization.core.plot.Axis;
 import adams.gui.visualization.stats.scatterplot.AbstractScatterPlotOverlay;
@@ -43,7 +44,6 @@ import adams.gui.visualization.stats.scatterplot.ScatterPlot;
 import adams.gui.visualization.stats.scatterplot.action.ViewDataClickAction;
 import weka.core.Instances;
 
-import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -54,11 +54,8 @@ import javax.swing.event.DocumentListener;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Visualizes the PCA loadings and PCA space calculated from the selected
@@ -273,75 +270,6 @@ public class PrincipalComponentsTab
   }
 
   /**
-   * Determines the index of the old dataset name in the current dataset model.
-   *
-   * @param oldDataset	the old dataset to look for
-   * @return		the index, -1 if not found
-   */
-  protected int indexOfDataset(String oldDataset) {
-    int 		result;
-    int			i;
-    DataContainer data;
-
-    result = -1;
-
-    if (oldDataset != null)
-      oldDataset = oldDataset.replaceAll("^[0-9]+: ", "");
-    for (i = 0; i < getOwner().getData().size(); i++) {
-      data = getOwner().getData().get(i);
-      if ((oldDataset != null) && data.getData().relationName().equals(oldDataset)) {
-	result = i;
-	break;
-      }
-    }
-
-    return result;
-  }
-
-  /**
-   * Checks whether the data has changed and the model needs updating.
-   *
-   * @param newDatasets		the new list of datasets
-   * @param currentModel	the current model
-   * @return			true if changed
-   */
-  protected boolean hasDataChanged(List<String> newDatasets, ComboBoxModel<String> currentModel) {
-    boolean	result;
-    int		i;
-    Set<String> setDatasets;
-    Set<String>	setModel;
-
-    setDatasets = new HashSet<>(newDatasets);
-    setModel    = new HashSet<>();
-    for (i = 0; i < currentModel.getSize(); i++)
-      setModel.add(currentModel.getElementAt(i));
-
-    result = (setDatasets.size() != setModel.size())
-      || !(setDatasets.containsAll(setModel) && setModel.containsAll(setDatasets));
-
-    return result;
-  }
-
-  /**
-   * Generates the list of datasets for a combobox.
-   *
-   * @return		the list
-   */
-  protected List<String> generateDatasetList() {
-    List<String> 	result;
-    int			i;
-    DataContainer 	data;
-
-    result = new ArrayList<>();
-    for (i = 0; i < getOwner().getData().size(); i++) {
-      data = getOwner().getData().get(i);
-      result.add((i + 1) + ": " + data.getData().relationName());
-    }
-
-    return result;
-  }
-
-  /**
    * Notifies the tab that the data changed.
    *
    * @param e		the event
@@ -356,9 +284,9 @@ public class PrincipalComponentsTab
       return;
     }
 
-    datasets = generateDatasetList();
-    index    = indexOfDataset((String) m_ComboBoxDatasets.getSelectedItem());
-    if (hasDataChanged(datasets, m_ModelDatasets)) {
+    datasets = DatasetHelper.generateDatasetList(getData());
+    index    = DatasetHelper.indexOfDataset(getData(), (String) m_ComboBoxDatasets.getSelectedItem());
+    if (DatasetHelper.hasDataChanged(datasets, m_ModelDatasets)) {
       m_ModelDatasets = new DefaultComboBoxModel<>(datasets.toArray(new String[datasets.size()]));
       m_ComboBoxDatasets.setModel(m_ModelDatasets);
       if ((index == -1) && (m_ModelDatasets.getSize() > 0))

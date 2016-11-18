@@ -29,6 +29,7 @@ import adams.gui.chooser.SelectOptionPanel;
 import adams.gui.core.AbstractNamedHistoryPanel;
 import adams.gui.core.ParameterPanel;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
+import adams.gui.tools.wekainvestigator.evaluation.DatasetHelper;
 import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
@@ -271,11 +272,11 @@ public class TrainTestSet
     if (getOwner().getOwner() == null)
       return;
 
-    datasets = generateDatasetList();
+    datasets = DatasetHelper.generateDatasetList(getOwner().getData());
 
-    if (hasDataChanged(datasets, m_ModelDatasets)) {
+    if (DatasetHelper.hasDataChanged(datasets, m_ModelDatasets)) {
       // train
-      index = indexOfDataset((String) m_ComboBoxTrain.getSelectedItem());
+      index = DatasetHelper.indexOfDataset(getOwner().getData(), (String) m_ComboBoxTrain.getSelectedItem());
       m_ModelDatasets = new DefaultComboBoxModel<>(datasets.toArray(new String[datasets.size()]));
       m_ComboBoxTrain.setModel(m_ModelDatasets);
       if ((index == -1) && (m_ModelDatasets.getSize() > 0))
@@ -284,7 +285,7 @@ public class TrainTestSet
 	m_ComboBoxTrain.setSelectedIndex(index);
 
       // test
-      index = indexOfDataset((String) m_ComboBoxTest.getSelectedItem());
+      index = DatasetHelper.indexOfDataset(getOwner().getData(), (String) m_ComboBoxTest.getSelectedItem());
       m_ModelDatasets = new DefaultComboBoxModel<>(datasets.toArray(new String[datasets.size()]));
       m_ComboBoxTest.setModel(m_ModelDatasets);
       if ((index == -1) && (m_ModelDatasets.getSize() > 0))

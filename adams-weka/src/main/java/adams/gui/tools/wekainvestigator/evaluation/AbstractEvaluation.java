@@ -30,20 +30,14 @@ import adams.core.logging.LoggingObject;
 import adams.data.spreadsheet.MetaData;
 import adams.gui.core.AbstractNamedHistoryPanel;
 import adams.gui.tools.wekainvestigator.InvestigatorPanel;
-import adams.gui.tools.wekainvestigator.data.DataContainer;
 import adams.gui.tools.wekainvestigator.output.AbstractResultItem;
 import adams.gui.tools.wekainvestigator.tab.AbstractInvestigatorTab;
 
-import javax.swing.ComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Ancestor for evaluation setups.
@@ -168,110 +162,6 @@ public abstract class AbstractEvaluation<T extends AbstractInvestigatorTab, R ex
    */
   public void showStatus(String msg) {
     m_Owner.logMessage(msg);
-  }
-
-  /**
-   * Generates the list of datasets for a combobox.
-   *
-   * @return		the list
-   */
-  protected List<String> generateDatasetList() {
-    List<String> 	result;
-    int			i;
-    DataContainer 	data;
-
-    result = new ArrayList<>();
-    for (i = 0; i < getOwner().getData().size(); i++) {
-      data = getOwner().getData().get(i);
-      result.add(data.getID() + ": " + data.getData().relationName());
-    }
-
-    return result;
-  }
-
-  /**
-   * Determines the index of the old dataset name in the current dataset list.
-   *
-   * @param oldDataset	the old dataset to look for
-   * @return		the index, -1 if not found
-   */
-  protected int indexOfDataset(String oldDataset) {
-    int 		result;
-    int			i;
-    DataContainer	data;
-    String		idStr;
-    int			id;
-
-    result = -1;
-
-    if (oldDataset != null) {
-      // get ID
-      idStr = oldDataset.replaceAll(":.*", "");
-      try {
-	id = Integer.parseInt(idStr);
-      }
-      catch (Exception e) {
-	id = -1;
-      }
-
-      // try ID
-      for (i = 0; i < getOwner().getData().size(); i++) {
-	data = getOwner().getData().get(i);
-	if (data.getID() == id) {
-	  result = i;
-	  break;
-	}
-      }
-
-      // try relationname
-      if (result == -1) {
-	oldDataset = oldDataset.replaceAll("^[0-9]+: ", "");
-	for (i = 0; i < getOwner().getData().size(); i++) {
-	  data = getOwner().getData().get(i);
-	  if (data.getData().relationName().equals(oldDataset)) {
-	    result = i;
-	    break;
-	  }
-	}
-      }
-    }
-
-    return result;
-  }
-
-  /**
-   * Checks whether the data has changed and the model needs updating.
-   *
-   * @param newDatasets		the new list of datasets
-   * @param currentModel	the current model
-   * @return			true if changed
-   */
-  protected boolean hasDataChanged(List<String> newDatasets, ComboBoxModel<String> currentModel) {
-    boolean	result;
-    int		i;
-    Set<String>	setDatasets;
-    Set<String>	setModel;
-
-    setDatasets = new HashSet<>(newDatasets);
-    setModel    = new HashSet<>();
-    for (i = 0; i < currentModel.getSize(); i++)
-      setModel.add(currentModel.getElementAt(i));
-
-    // different datasets?
-    result = (setDatasets.size() != setModel.size())
-      || !(setDatasets.containsAll(setModel) && setModel.containsAll(setDatasets));
-
-    // different order?
-    if (!result) {
-      for (i = 0; i < newDatasets.size(); i++) {
-	if (!newDatasets.get(i).equals(currentModel.getElementAt(i))) {
-	  result = true;
-	  break;
-	}
-      }
-    }
-
-    return result;
   }
 
   /**

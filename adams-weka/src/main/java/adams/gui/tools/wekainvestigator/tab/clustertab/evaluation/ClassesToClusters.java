@@ -26,6 +26,7 @@ import adams.data.spreadsheet.MetaData;
 import adams.gui.core.AbstractNamedHistoryPanel;
 import adams.gui.core.ParameterPanel;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
+import adams.gui.tools.wekainvestigator.evaluation.DatasetHelper;
 import adams.gui.tools.wekainvestigator.tab.clustertab.ResultItem;
 import weka.clusterers.ClusterEvaluation;
 import weka.clusterers.Clusterer;
@@ -384,10 +385,10 @@ public class ClassesToClusters
     if (getOwner().getOwner() == null)
       return;
 
-    datasets   = generateDatasetList();
-    indexTrain = indexOfDataset((String) m_ComboBoxTrain.getSelectedItem());
-    indexTest  = indexOfDataset((String) m_ComboBoxTest.getSelectedItem());
-    if (hasDataChanged(datasets, m_ModelDatasets)) {
+    datasets   = DatasetHelper.generateDatasetList(getOwner().getData());
+    indexTrain = DatasetHelper.indexOfDataset(getOwner().getData(), (String) m_ComboBoxTrain.getSelectedItem());
+    indexTest  = DatasetHelper.indexOfDataset(getOwner().getData(), (String) m_ComboBoxTest.getSelectedItem());
+    if (DatasetHelper.hasDataChanged(datasets, m_ModelDatasets)) {
       m_ModelDatasets = new DefaultComboBoxModel<>(datasets.toArray(new String[datasets.size()]));
       // train
       m_ComboBoxTrain.setModel(m_ModelDatasets);
