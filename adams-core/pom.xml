@@ -284,6 +284,12 @@
       <artifactId>jblas</artifactId>
       <version>1.2.4</version>
     </dependency>
+
+    <dependency>
+      <groupId>com.github.fracpete</groupId>
+      <artifactId>romannumerals4j</artifactId>
+      <version>0.0.1</version>
+    </dependency>
   </dependencies>
 
   <build>
