@@ -146,6 +146,7 @@ public class WekaInvestigatorPreferencesPanel
     addPropertyType("PrincipalComponents.Variance", PropertyType.DOUBLE);
     addPropertyType("PrincipalComponents.MaxAttributes", PropertyType.INTEGER);
     addPropertyType("PrincipalComponents.MaxAttributeNames", PropertyType.INTEGER);
+    addPropertyType("PrincipalComponents.SkipNominal", PropertyType.BOOLEAN);
 
     // pls
     addPropertyType("PartialLeastSquares.LeftPanelWidth", PropertyType.INTEGER);

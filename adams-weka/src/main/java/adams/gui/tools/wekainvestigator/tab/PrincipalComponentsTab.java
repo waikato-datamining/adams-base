@@ -46,6 +46,7 @@ import weka.core.Instances;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -81,6 +82,8 @@ public class PrincipalComponentsTab
 
   public static final String KEY_MAXATTRIBUTENAMES = "maxattributenames";
 
+  public static final String KEY_SKIPNOMINAL = "skipnominal";
+
   /** the split pane. */
   protected BaseSplitPane m_SplitPane;
 
@@ -110,6 +113,9 @@ public class PrincipalComponentsTab
 
   /** the maximum number of attribute names. */
   protected NumberTextField m_TextMaxAttributeNames;
+
+  /** whether to skip nominal attributes. */
+  protected JCheckBox m_CheckBoxSkipNominal;
 
   /** the button to start PCA. */
   protected JButton m_ButtonStart;
@@ -197,6 +203,10 @@ public class PrincipalComponentsTab
     m_TextMaxAttributeNames = new NumberTextField(Type.INTEGER, 10);
     m_TextMaxAttributeNames.setValue(props.getInteger("PrincipalComponents.MaxAttributeNames", 5));
     m_PanelParameters.addParameter("Max attribute names", m_TextMaxAttributeNames);
+
+    m_CheckBoxSkipNominal = new JCheckBox();
+    m_CheckBoxSkipNominal.setSelected(props.getBoolean("PrincipalComponents.SkipNominal", false));
+    m_PanelParameters.addParameter("Skip nominal attributes", m_CheckBoxSkipNominal);
 
     // buttons
     panelButtons = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -361,6 +371,7 @@ public class PrincipalComponentsTab
         pca.setVariance(m_TextVariance.getValue().doubleValue());
         pca.setMaxAttributes(m_TextMaxAttributes.getValue().intValue());
         pca.setMaxAttributeNames(m_TextMaxAttributeNames.getValue().intValue());
+	pca.setSkipNominal(m_CheckBoxSkipNominal.isSelected());
         String result = pca.analyze(cont.getData());
         if (result != null) {
           logError(result, "PCA error");
@@ -420,6 +431,7 @@ public class PrincipalComponentsTab
     result.put(KEY_VARIANCE, m_TextVariance.getValue().doubleValue());
     result.put(KEY_MAXATTRIBUTES, m_TextMaxAttributes.getValue().intValue());
     result.put(KEY_MAXATTRIBUTENAMES, m_TextMaxAttributeNames.getValue().intValue());
+    result.put(KEY_SKIPNOMINAL, m_CheckBoxSkipNominal.isSelected());
 
     return result;
   }
@@ -444,5 +456,7 @@ public class PrincipalComponentsTab
       m_TextMaxAttributes.setValue((int) data.get(KEY_MAXATTRIBUTES));
     if (data.containsKey(KEY_MAXATTRIBUTENAMES))
       m_TextMaxAttributeNames.setValue((int) data.get(KEY_MAXATTRIBUTENAMES));
+    if (data.containsKey(KEY_SKIPNOMINAL))
+      m_CheckBoxSkipNominal.setSelected((boolean) data.get(KEY_MAXATTRIBUTENAMES));
   }
 }

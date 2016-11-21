@@ -206,6 +206,10 @@ PrincipalComponents.MaxAttributes=-1
 # (integer)
 PrincipalComponents.MaxAttributeNames=5
 
+# whether to skip nominal attributes in the PCA panel
+# (true|false)
+PrincipalComponents.SkipNominal=false
+
 # the width of the left-hand side of the PCA panel
 # (integer)
 PartialLeastSquares.LeftPanelWidth=275

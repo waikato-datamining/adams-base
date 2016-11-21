@@ -62,6 +62,9 @@ public class PCA
   /** the maximum number of attribute names. */
   protected int m_MaxAttributeNames;
 
+  /** whether to skip nominal attributes (and not apply NominalToBinary). */
+  protected boolean m_SkipNominal;
+
   /** the loadings. */
   protected SpreadSheet m_Loadings;
 
@@ -112,6 +115,10 @@ public class PCA
     m_OptionManager.add(
       "max-attribute-names", "maxAttributeNames",
       5, -1, null);
+
+    m_OptionManager.add(
+      "skip-nominal", "skipNominal",
+      false);
   }
 
   /**
@@ -252,6 +259,37 @@ public class PCA
   }
 
   /**
+   * Sets whether to skip NOMINAL attributes from the PCA process by turning
+   * them into STRING attributes.
+   *
+   * @param value	true if to skip
+   */
+  public void setSkipNominal(boolean value) {
+    m_SkipNominal = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to skip NOMINAL attributes from the PCA process by turning
+   * them into STRING attributes.
+   *
+   * @return		true if to skip
+   */
+  public boolean getSkipNominal() {
+    return m_SkipNominal;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String skipNominalTipText() {
+    return "If enabled, NOMINAL attributes won't get processed by the PCA filter by turning them into STRING attributes.";
+  }
+
+  /**
    * Hook method for checks.
    *
    * @param data	the data to check
@@ -335,6 +373,8 @@ public class PCA
     PartitionedMultiFilter 		part;
     Range 				rangeUnsupported;
     Range 				rangeSupported;
+    TIntList				listNominal;
+    Range 				rangeNominal;
     ArrayList<ArrayList<Double>> 	coeff;
     Instances				filtered;
     SpreadSheet				transformed;
@@ -357,12 +397,22 @@ public class PCA
     if (isLoggingEnabled())
       getLogger().info("Performing PCA...");
 
+    listNominal = new TIntArrayList();
+    if (m_SkipNominal) {
+      for (i = 0; i < data.numAttributes(); i++) {
+	if (i == data.classIndex())
+	  continue;
+	if (data.attribute(i).isNominal())
+	  listNominal.add(i);
+      }
+    }
+
     // check for unsupported attributes
     caps        = new PublicPrincipalComponents().getCapabilities();
     m_Supported = new TIntArrayList();
     m_Unsupported = new TIntArrayList();
     for (i = 0; i < data.numAttributes(); i++) {
-      if (!caps.test(data.attribute(i)) || (i == data.classIndex()))
+      if (!caps.test(data.attribute(i)) || (i == data.classIndex()) || (listNominal.contains(i)))
 	m_Unsupported.add(i);
       else
 	m_Supported.add(i);
