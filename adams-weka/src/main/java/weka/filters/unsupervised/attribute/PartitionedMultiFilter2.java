@@ -702,12 +702,13 @@ public class PartitionedMultiFilter2
 
       // class
       if (instances.classIndex() > -1) {
+	index = values.length - 1;
 	if (result.attribute(index).isString())
-	  values[values.length - 1] = result.attribute(instances.classIndex()).addStringValue(inst.stringValue(instances.classIndex()));
+	  values[index] = result.attribute(index).addStringValue(inst.stringValue(instances.classIndex()));
 	else if (result.attribute(index).isRelationValued())
-	  values[values.length - 1] = result.attribute(instances.classIndex()).addRelation(inst.relationalValue(instances.classIndex()));
+	  values[index] = result.attribute(index).addRelation(inst.relationalValue(instances.classIndex()));
 	else
-	  values[values.length - 1] = inst.value(instances.classIndex());
+	  values[index] = inst.value(instances.classIndex());
       }
 
       // generate and add instance
