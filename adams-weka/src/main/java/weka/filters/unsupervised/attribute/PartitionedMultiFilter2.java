@@ -14,19 +14,20 @@
  */
 
 /*
- * PartitionedMultiFilter.java
- * Copyright (C) 2006-2012 University of Waikato, Hamilton, New Zealand
+ * PartitionedMultiFilter2.java
+ * Copyright (C) 2006-2016 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package weka.filters.unsupervised.attribute;
 
+import gnu.trove.list.TIntList;
+import gnu.trove.list.array.TIntArrayList;
 import weka.core.Attribute;
 import weka.core.DenseInstance;
 import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.Option;
-import weka.core.OptionHandler;
 import weka.core.Range;
 import weka.core.RevisionUtils;
 import weka.core.SparseInstance;
@@ -38,29 +39,31 @@ import weka.filters.SimpleBatchFilter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Vector;
 
 /**
- * <!-- globalinfo-start --> A filter that applies filters on subsets of
+ <!-- globalinfo-start -->
+ * A filter that applies filters on subsets of
  * attributes and assembles the output into a new dataset. Attributes that are
  * not covered by any of the ranges can be either retained or removed from the
  * output.
  * <p/>
- * <!-- globalinfo-end -->
- * 
- * <!-- options-start --> Valid options are:
+ <!-- globalinfo-end -->
+ *
+ <!-- options-start --> Valid options are:
  * <p/>
- * 
+ *
  * <pre>
  * -D
  *  Turns on output of debugging information.
  * </pre>
- * 
+ *
  * <pre>
  * -F &lt;classname [options]&gt;
  *  A filter to apply (can be specified multiple times).
  * </pre>
- * 
+ *
  * <pre>
  * -R &lt;range&gt;
  *  An attribute range (can be specified multiple times).
@@ -68,29 +71,34 @@ import java.util.Vector;
  *  are valid indices. 'inv(...)' around the range denotes an
  *  inverted range.
  * </pre>
- * 
+ *
  * <pre>
  * -U
  *  Flag for leaving unused attributes out of the output, by default
  *  these are included in the filter output.
  * </pre>
- * 
- * <!-- options-end -->
- * 
+ *
+ <!-- options-end -->
+ *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision: 10215 $
  * @see weka.filters.StreamableFilter
  */
-public class PartitionedMultiFilter2 extends SimpleBatchFilter {
+public class PartitionedMultiFilter2
+  extends SimpleBatchFilter {
 
   /** for serialization. */
   private static final long serialVersionUID = -6293720886005713120L;
 
   /** The filters. */
-  protected Filter m_Filters[] = { new AllFilter() };
+  protected Filter m_Filters[] = {
+    new AllFilter()
+  };
 
   /** The attribute ranges. */
-  protected Range m_Ranges[] = { new Range("first-last") };
+  protected Range m_Ranges[] = {
+    new Range("first-last")
+  };
 
   /** Whether unused attributes are left out of the output. */
   protected boolean m_RemoveUnused = false;
@@ -100,7 +108,7 @@ public class PartitionedMultiFilter2 extends SimpleBatchFilter {
 
   /**
    * Returns a string describing this filter.
-   * 
+   *
    * @return a description of the filter suitable for displaying in the
    *         explorer/experimenter gui
    */
@@ -114,13 +122,12 @@ public class PartitionedMultiFilter2 extends SimpleBatchFilter {
 
   /**
    * Returns an enumeration describing the available options.
-   * 
+   *
    * @return an enumeration of all the available options.
    */
   @Override
   public Enumeration<Option> listOptions() {
-
-    Vector<Option> result = new Vector<Option>();
+    Vector<Option> result = new Vector<>();
 
     result.addElement(new Option(
       "\tA filter to apply (can be specified multiple times).", "F", 1,
@@ -143,82 +150,52 @@ public class PartitionedMultiFilter2 extends SimpleBatchFilter {
 
   /**
    * Parses a list of options for this object.
-   * <p/>
-   * 
-   * <!-- options-start --> Valid options are:
-   * <p/>
-   * 
-   * <pre>
-   * -D
-   *  Turns on output of debugging information.
-   * </pre>
-   * 
-   * <pre>
-   * -F &lt;classname [options]&gt;
-   *  A filter to apply (can be specified multiple times).
-   * </pre>
-   * 
-   * <pre>
-   * -R &lt;range&gt;
-   *  An attribute range (can be specified multiple times).
-   *  For each filter a range must be supplied. 'first' and 'last'
-   *  are valid indices. 'inv(...)' around the range denotes an
-   *  inverted range.
-   * </pre>
-   * 
-   * <pre>
-   * -U
-   *  Flag for leaving unused attributes out of the output, by default
-   *  these are included in the filter output.
-   * </pre>
-   * 
-   * <!-- options-end -->
-   * 
+   *
    * @param options the list of options as an array of strings
    * @throws Exception if an option is not supported
    */
   @Override
   public void setOptions(String[] options) throws Exception {
-    String tmpStr;
-    String classname;
-    String[] options2;
-    Vector<Object> objects;
-    Range range;
+    String 		tmpStr;
+    String 		classname;
+    String[] 		options2;
+    List<Filter> 	filters;
+    List<Range> 	ranges;
+    Range 		range;
 
     setRemoveUnused(Utils.getFlag("U", options));
 
-    objects = new Vector<Object>();
+    filters = new ArrayList<>();
     while ((tmpStr = Utils.getOption("F", options)).length() != 0) {
       options2 = Utils.splitOptions(tmpStr);
       classname = options2[0];
       options2[0] = "";
-      objects.add(Utils.forName(Filter.class, classname, options2));
+      filters.add((Filter) Utils.forName(Filter.class, classname, options2));
     }
 
     // at least one filter
-    if (objects.size() == 0) {
-      objects.add(new AllFilter());
-    }
+    if (filters.size() == 0)
+      filters.add(new AllFilter());
 
-    setFilters(objects.toArray(new Filter[objects.size()]));
+    setFilters(filters.toArray(new Filter[filters.size()]));
 
-    objects = new Vector<Object>();
+    ranges = new ArrayList<>();
     while ((tmpStr = Utils.getOption("R", options)).length() != 0) {
       if (tmpStr.startsWith("inv(") && tmpStr.endsWith(")")) {
         range = new Range(tmpStr.substring(4, tmpStr.length() - 1));
         range.setInvert(true);
-      } else {
+      }
+      else {
         range = new Range(tmpStr);
       }
-      objects.add(range);
+      ranges.add(range);
     }
 
     // at least one Range
-    if (objects.size() == 0) {
-      objects.add(new Range("first-last"));
-    }
+    if (ranges.size() == 0)
+      ranges.add(new Range("first-last"));
 
-    setRanges(objects.toArray(new Range[objects.size()]));
+    setRanges(ranges.toArray(new Range[filters.size()]));
 
     // is number of filters the same as ranges?
     checkDimensions();
@@ -230,25 +207,28 @@ public class PartitionedMultiFilter2 extends SimpleBatchFilter {
 
   /**
    * Gets the current settings of the filter.
-   * 
+   *
    * @return an array of strings suitable for passing to setOptions
    */
   @Override
   public String[] getOptions() {
+    List<String> 	result;
+    String 		tmpStr;
+    int			i;
 
-    Vector<String> result = new Vector<String>();
+    result = new ArrayList<>();
 
     if (getRemoveUnused()) {
       result.add("-U");
     }
 
-    for (int i = 0; i < getFilters().length; i++) {
+    for (i = 0; i < getFilters().length; i++) {
       result.add("-F");
       result.add(getFilterSpec(getFilter(i)));
     }
 
-    for (int i = 0; i < getRanges().length; i++) {
-      String tmpStr = getRange(i).getRanges();
+    for (i = 0; i < getRanges().length; i++) {
+      tmpStr = getRange(i).getRanges();
       if (getRange(i).getInvert()) {
         tmpStr = "inv(" + tmpStr + ")";
       }
@@ -263,33 +243,37 @@ public class PartitionedMultiFilter2 extends SimpleBatchFilter {
 
   /**
    * checks whether the dimensions of filters and ranges fit together.
-   * 
+   *
    * @throws Exception if dimensions differ
    */
   protected void checkDimensions() throws Exception {
     if (getFilters().length != getRanges().length) {
-      throw new IllegalArgumentException("Number of filters (= "
-        + getFilters().length + ") " + "and ranges (= " + getRanges().length
-        + ") don't match!");
+      throw new IllegalArgumentException(
+	"Number of filters (= " + getFilters().length + ") "
+	  + "and ranges (= " + getRanges().length + ") don't match!");
     }
   }
 
   /**
    * tests the data whether the filter can actually handle it.
-   * 
+   *
    * @param instanceInfo the data to test
    * @throws Exception if the test fails
    */
   @Override
   protected void testInputFormat(Instances instanceInfo) throws Exception {
-    for (int i = 0; i < getRanges().length; i++) {
-      Instances newi = new Instances(instanceInfo, 0);
-      if (instanceInfo.size() > 0) {
-        newi.add((Instance) instanceInfo.get(0).copy());
-      }
-      Range range = getRanges()[i];
+    int		i;
+    Instances	inst;
+    Range 	range;
+    Instances 	subset;
+
+    for (i = 0; i < getRanges().length; i++) {
+      inst = new Instances(instanceInfo, 0);
+      if (instanceInfo.size() > 0)
+        inst.add((Instance) instanceInfo.get(0).copy());
+      range = getRanges()[i];
       range.setUpper(instanceInfo.numAttributes() - 1);
-      Instances subset = generateSubset(newi, range);
+      subset = generateSubset(inst, range);
       getFilters()[i].setInputFormat(subset);
     }
   }
@@ -297,7 +281,7 @@ public class PartitionedMultiFilter2 extends SimpleBatchFilter {
   /**
    * Sets whether unused attributes (ones that are not covered by any of the
    * ranges) are removed from the output.
-   * 
+   *
    * @param value if true then the unused attributes get removed
    */
   public void setRemoveUnused(boolean value) {
@@ -307,7 +291,7 @@ public class PartitionedMultiFilter2 extends SimpleBatchFilter {
   /**
    * Gets whether unused attributes (ones that are not covered by any of the
    * ranges) are removed from the output.
-   * 
+   *
    * @return true if unused attributes are removed
    */
   public boolean getRemoveUnused() {
@@ -316,7 +300,7 @@ public class PartitionedMultiFilter2 extends SimpleBatchFilter {
 
   /**
    * Returns the tip text for this property.
-   * 
+   *
    * @return tip text for this property suitable for displaying in the
    *         explorer/experimenter gui
    */
@@ -328,7 +312,7 @@ public class PartitionedMultiFilter2 extends SimpleBatchFilter {
   /**
    * Sets the list of possible filters to choose from. Also resets the state of
    * the filter (this reset doesn't affect the options).
-   * 
+   *
    * @param filters an array of filters with all options set.
    * @see #reset()
    */
@@ -339,7 +323,7 @@ public class PartitionedMultiFilter2 extends SimpleBatchFilter {
 
   /**
    * Gets the list of possible filters to choose from.
-   * 
+   *
    * @return the array of Filters
    */
   public Filter[] getFilters() {
@@ -348,7 +332,7 @@ public class PartitionedMultiFilter2 extends SimpleBatchFilter {
 
   /**
    * Returns the tip text for this property.
-   * 
+   *
    * @return tip text for this property suitable for displaying in the
    *         explorer/experimenter gui
    */
@@ -358,7 +342,7 @@ public class PartitionedMultiFilter2 extends SimpleBatchFilter {
 
   /**
    * Gets a single filter from the set of available filters.
-   * 
+   *
    * @param index the index of the filter wanted
    * @return the Filter
    */
@@ -368,21 +352,20 @@ public class PartitionedMultiFilter2 extends SimpleBatchFilter {
 
   /**
    * returns the filter classname and the options as one string.
-   * 
+   *
    * @param filter the filter to get the specs for
    * @return the classname plus options
    */
   protected String getFilterSpec(Filter filter) {
-    String result;
+    String 	result;
 
     if (filter == null) {
       result = "";
-    } else {
-      result = filter.getClass().getName();
-      if (filter instanceof OptionHandler) {
-        result += " "
-          + Utils.joinOptions(((OptionHandler) filter).getOptions());
-      }
+    }
+    else {
+      result = filter.getClass().getName()
+	+ " "
+	+ Utils.joinOptions(filter.getOptions());
     }
 
     return result;
@@ -391,7 +374,7 @@ public class PartitionedMultiFilter2 extends SimpleBatchFilter {
   /**
    * Sets the list of possible Ranges to choose from. Also resets the state of
    * the Range (this reset doesn't affect the options).
-   * 
+   *
    * @param Ranges an array of Ranges with all options set.
    * @see #reset()
    */
@@ -402,7 +385,7 @@ public class PartitionedMultiFilter2 extends SimpleBatchFilter {
 
   /**
    * Gets the list of possible Ranges to choose from.
-   * 
+   *
    * @return the array of Ranges
    */
   public Range[] getRanges() {
@@ -411,7 +394,7 @@ public class PartitionedMultiFilter2 extends SimpleBatchFilter {
 
   /**
    * Returns the tip text for this property.
-   * 
+   *
    * @return tip text for this property suitable for displaying in the
    *         explorer/experimenter gui
    */
@@ -421,7 +404,7 @@ public class PartitionedMultiFilter2 extends SimpleBatchFilter {
 
   /**
    * Gets a single Range from the set of available Ranges.
-   * 
+   *
    * @param index the index of the Range wanted
    * @return the Range
    */
@@ -432,22 +415,21 @@ public class PartitionedMultiFilter2 extends SimpleBatchFilter {
   /**
    * determines the indices of unused attributes (ones that are not covered by
    * any of the range).
-   * 
+   *
    * @param data the data to base the determination on
    * @see #m_IndicesUnused
    */
   protected void determineUnusedIndices(Instances data) {
-    Vector<Integer> indices;
-    int i;
-    int n;
-    boolean covered;
+    TIntList 	indices;
+    int 	i;
+    int 	n;
+    boolean 	covered;
 
     // traverse all ranges
-    indices = new Vector<Integer>();
+    indices = new TIntArrayList();
     for (i = 0; i < data.numAttributes(); i++) {
-      if (i == data.classIndex()) {
+      if (i == data.classIndex())
         continue;
-      }
 
       covered = false;
       for (n = 0; n < getRanges().length; n++) {
@@ -457,52 +439,43 @@ public class PartitionedMultiFilter2 extends SimpleBatchFilter {
         }
       }
 
-      if (!covered) {
-        indices.add(new Integer(i));
-      }
+      if (!covered)
+        indices.add(i);
     }
 
     // create array
-    m_IndicesUnused = new int[indices.size()];
-    for (i = 0; i < indices.size(); i++) {
-      m_IndicesUnused[i] = indices.get(i).intValue();
-    }
+    m_IndicesUnused = indices.toArray();
 
-    if (getDebug()) {
-      System.out.println("Unused indices: "
-        + Utils.arrayToString(m_IndicesUnused));
-    }
+    if (getDebug())
+      System.out.println("Unused indices: " + Utils.arrayToString(m_IndicesUnused));
   }
 
   /**
    * generates a subset of the dataset with only the attributes from the range
    * (class is always added if present).
-   * 
+   *
    * @param data the data to work on
    * @param range the range of attribute to use
    * @return the generated subset
    * @throws Exception if creation fails
    */
-  protected Instances generateSubset(Instances data, Range range)
-    throws Exception {
-    Remove filter;
-    StringBuilder atts;
-    Instances result;
-    int[] indices;
-    int i;
+  protected Instances generateSubset(Instances data, Range range) throws Exception {
+    Remove 		filter;
+    StringBuilder 	atts;
+    Instances 		result;
+    int[] 		indices;
+    int 		i;
 
     // determine attributes
     indices = range.getSelection();
-    atts = new StringBuilder();
+    atts    = new StringBuilder();
     for (i = 0; i < indices.length; i++) {
-      if (i > 0) {
+      if (i > 0)
         atts.append(",");
-      }
       atts.append("" + (indices[i] + 1));
     }
-    if ((data.classIndex() > -1) && (!range.isInRange(data.classIndex()))) {
+    if ((data.classIndex() > -1) && (!range.isInRange(data.classIndex())))
       atts.append("," + (data.classIndex() + 1));
-    }
 
     // setup filter
     filter = new Remove();
@@ -519,38 +492,34 @@ public class PartitionedMultiFilter2 extends SimpleBatchFilter {
   /**
    * renames all the attributes in the dataset (excluding the class if present)
    * by adding the prefix to the name.
-   * 
+   *
    * @param data the data to work on
    * @param prefix the prefix for the attributes
    * @return a copy of the data with the attributes renamed
    * @throws Exception if renaming fails
    */
-  protected Instances renameAttributes(Instances data, String prefix)
-    throws Exception {
-    Instances result;
-    int i;
-    ArrayList<Attribute> atts;
+  protected Instances renameAttributes(Instances data, String prefix) throws Exception {
+    Instances 			result;
+    int 			i;
+    ArrayList<Attribute> 	atts;
 
     // rename attributes
-    atts = new ArrayList<Attribute>();
+    atts = new ArrayList<>();
     for (i = 0; i < data.numAttributes(); i++) {
-      if (i == data.classIndex()) {
+      if (i == data.classIndex())
         atts.add((Attribute) data.attribute(i).copy());
-      } else {
+      else
         atts.add(data.attribute(i).copy(prefix + data.attribute(i).name()));
-      }
     }
 
     // create new dataset
     result = new Instances(data.relationName(), atts, data.numInstances());
-    for (i = 0; i < data.numInstances(); i++) {
+    for (i = 0; i < data.numInstances(); i++)
       result.add((Instance) data.instance(i).copy());
-    }
 
     // set class if present
-    if (data.classIndex() > -1) {
+    if (data.classIndex() > -1)
       result.setClassIndex(data.classIndex());
-    }
 
     return result;
   }
@@ -560,7 +529,7 @@ public class PartitionedMultiFilter2 extends SimpleBatchFilter {
    * returns this otherwise null is returned. In case the output format cannot
    * be returned immediately, i.e., immediateOutputFormat() returns false, then
    * this method will be called from batchFinished().
-   * 
+   *
    * @param inputFormat the input format to base the output format on
    * @return the output format
    * @throws Exception in case the determination goes wrong
@@ -568,35 +537,32 @@ public class PartitionedMultiFilter2 extends SimpleBatchFilter {
    * @see #batchFinished()
    */
   @Override
-  protected Instances determineOutputFormat(Instances inputFormat)
-    throws Exception {
-    Instances result;
-    Instances processed;
-    int i;
-    int n;
-    ArrayList<Attribute> atts;
-    Attribute att;
+  protected Instances determineOutputFormat(Instances inputFormat) throws Exception {
+    Instances 			result;
+    Instances 			processed;
+    int 			i;
+    int 			n;
+    ArrayList<Attribute> 	atts;
+    Attribute 			att;
 
     if (!isFirstBatchDone()) {
       // we need the full dataset here, see process(Instances)
-      if (inputFormat.numInstances() == 0) {
+      if (inputFormat.numInstances() == 0)
         return null;
-      }
 
       checkDimensions();
 
       // determine unused indices
       determineUnusedIndices(inputFormat);
 
-      atts = new ArrayList<Attribute>();
+      atts = new ArrayList<>();
       for (i = 0; i < getFilters().length; i++) {
         if (!isFirstBatchDone()) {
           // generate subset
           processed = generateSubset(inputFormat, getRange(i));
           // set input format
-          if (!getFilter(i).setInputFormat(processed)) {
+          if (!getFilter(i).setInputFormat(processed))
             Filter.useFilter(processed, getFilter(i));
-          }
         }
 
         // get output format
@@ -607,9 +573,8 @@ public class PartitionedMultiFilter2 extends SimpleBatchFilter {
 
         // add attributes
         for (n = 0; n < processed.numAttributes(); n++) {
-          if (n == processed.classIndex()) {
+          if (n == processed.classIndex())
             continue;
-          }
           atts.add((Attribute) processed.attribute(n).copy());
         }
       }
@@ -623,16 +588,15 @@ public class PartitionedMultiFilter2 extends SimpleBatchFilter {
       }
 
       // add class if present
-      if (inputFormat.classIndex() > -1) {
+      if (inputFormat.classIndex() > -1)
         atts.add((Attribute) inputFormat.classAttribute().copy());
-      }
 
       // generate new dataset
       result = new Instances(inputFormat.relationName(), atts, 0);
-      if (inputFormat.classIndex() > -1) {
+      if (inputFormat.classIndex() > -1)
         result.setClassIndex(result.numAttributes() - 1);
-      }
-    } else {
+    }
+    else {
       result = getOutputFormat();
     }
 
@@ -642,7 +606,7 @@ public class PartitionedMultiFilter2 extends SimpleBatchFilter {
   /**
    * Processes the given data (may change the provided dataset) and returns the
    * modified version. This method is called in batchFinished().
-   * 
+   *
    * @param instances the data to process
    * @return the modified data
    * @throws Exception in case the processing goes wrong
@@ -650,16 +614,16 @@ public class PartitionedMultiFilter2 extends SimpleBatchFilter {
    */
   @Override
   protected Instances process(Instances instances) throws Exception {
-    Instances result;
-    int i;
-    int n;
-    int m;
-    int index;
-    Instances[] processed;
-    Instance inst;
-    Instance newInst;
-    double[] values;
-    Vector<Integer> errors;
+    Instances 		result;
+    int 		i;
+    int 		n;
+    int 		m;
+    int 		index;
+    Instances[] 	processed;
+    Instance 		inst;
+    Instance 		newInst;
+    double[] 		values;
+    TIntList 		errors;
 
     if (!isFirstBatchDone()) {
       checkDimensions();
@@ -692,11 +656,10 @@ public class PartitionedMultiFilter2 extends SimpleBatchFilter {
     }
 
     // check whether all filters didn't change the number of instances
-    errors = new Vector<Integer>();
+    errors = new TIntArrayList();
     for (i = 0; i < processed.length; i++) {
-      if (processed[i].numInstances() != instances.numInstances()) {
-        errors.add(new Integer(i));
-      }
+      if (processed[i].numInstances() != instances.numInstances())
+        errors.add(i);
     }
     if (errors.size() > 0) {
       throw new IllegalStateException(
@@ -705,25 +668,21 @@ public class PartitionedMultiFilter2 extends SimpleBatchFilter {
 
     // assemble data
     for (i = 0; i < instances.numInstances(); i++) {
-      inst = instances.instance(i);
+      inst   = instances.instance(i);
       values = new double[result.numAttributes()];
 
       // filtered data
       index = 0;
       for (n = 0; n < processed.length; n++) {
         for (m = 0; m < processed[n].numAttributes(); m++) {
-          if (m == processed[n].classIndex()) {
+          if (m == processed[n].classIndex())
             continue;
-          }
-          if (result.attribute(index).isString()) {
-            values[index] = result.attribute(index).addStringValue(
-              processed[n].instance(i).stringValue(m));
-          } else if (result.attribute(index).isRelationValued()) {
-            values[index] = result.attribute(index).addRelation(
-              processed[n].instance(i).relationalValue(m));
-          } else {
+          if (result.attribute(index).isString())
+            values[index] = result.attribute(index).addStringValue(processed[n].instance(i).stringValue(m));
+	  else if (result.attribute(index).isRelationValued())
+            values[index] = result.attribute(index).addRelation(processed[n].instance(i).relationalValue(m));
+	  else
             values[index] = processed[n].instance(i).value(m);
-          }
           index++;
         }
       }
@@ -731,15 +690,12 @@ public class PartitionedMultiFilter2 extends SimpleBatchFilter {
       // unused attributes
       if (!getRemoveUnused()) {
         for (n = 0; n < m_IndicesUnused.length; n++) {
-          if (result.attribute(index).isString()) {
-            values[index] = result.attribute(index).addStringValue(
-              inst.stringValue(m_IndicesUnused[n]));
-          } else if (result.attribute(index).isRelationValued()) {
-            values[index] = result.attribute(index).addRelation(
-              inst.relationalValue(m_IndicesUnused[n]));
-          } else {
+          if (result.attribute(index).isString())
+            values[index] = result.attribute(index).addStringValue(inst.stringValue(m_IndicesUnused[n]));
+          else if (result.attribute(index).isRelationValued())
+            values[index] = result.attribute(index).addRelation(inst.relationalValue(m_IndicesUnused[n]));
+          else
             values[index] = inst.value(m_IndicesUnused[n]);
-          }
           index++;
         }
       }
@@ -747,14 +703,14 @@ public class PartitionedMultiFilter2 extends SimpleBatchFilter {
       // class
       if (instances.classIndex() > -1) {
         values[values.length - 1] = inst.value(instances.classIndex());
+	// TODO
       }
 
       // generate and add instance
-      if (inst instanceof SparseInstance) {
+      if (inst instanceof SparseInstance)
         newInst = new SparseInstance(instances.instance(i).weight(), values);
-      } else {
+      else
         newInst = new DenseInstance(instances.instance(i).weight(), values);
-      }
       result.add(newInst);
     }
 
@@ -763,7 +719,7 @@ public class PartitionedMultiFilter2 extends SimpleBatchFilter {
 
   /**
    * Returns the revision string.
-   * 
+   *
    * @return the revision
    */
   @Override
@@ -773,7 +729,7 @@ public class PartitionedMultiFilter2 extends SimpleBatchFilter {
 
   /**
    * Main method for executing this class.
-   * 
+   *
    * @param args should contain arguments for the filter: use -h for help
    */
   public static void main(String[] args) {
