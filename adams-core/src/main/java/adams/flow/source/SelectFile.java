@@ -610,9 +610,9 @@ public class SelectFile
       if (!doInteract()) {
 	if (m_StopFlowIfCanceled) {
 	  if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
-	    stopExecution("Flow canceled: " + getFullName());
+	    getRoot().stopExecution("Flow canceled: " + getFullName());
 	  else
-	    stopExecution(m_CustomStopMessage);
+	    getRoot().stopExecution(m_CustomStopMessage);
 	}
       }
     }
@@ -620,9 +620,9 @@ public class SelectFile
       if (!doInteractHeadless()) {
 	if (m_StopFlowIfCanceled) {
 	  if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
-	    stopExecution("Flow canceled: " + getFullName());
+	    getRoot().stopExecution("Flow canceled: " + getFullName());
 	  else
-	    stopExecution(m_CustomStopMessage);
+	    getRoot().stopExecution(m_CustomStopMessage);
 	}
       }
     }

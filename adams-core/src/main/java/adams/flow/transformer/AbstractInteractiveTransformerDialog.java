@@ -586,9 +586,9 @@ public abstract class AbstractInteractiveTransformerDialog
       if (!doInteract()) {
 	if (m_StopFlowIfCanceled) {
 	  if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
-	    stopExecution("Flow canceled: " + getFullName());
+	    getRoot().stopExecution("Flow canceled: " + getFullName());
 	  else
-	    stopExecution(m_CustomStopMessage);
+	    getRoot().stopExecution(m_CustomStopMessage);
 	}
 	else {
 	  result = "User cancelled dialog!";
@@ -599,9 +599,9 @@ public abstract class AbstractInteractiveTransformerDialog
       if (!doInteractHeadless()) {
 	if (m_StopFlowIfCanceled) {
 	  if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
-	    stopExecution("Flow canceled: " + getFullName());
+	    getRoot().stopExecution("Flow canceled: " + getFullName());
 	  else
-	    stopExecution(m_CustomStopMessage);
+	    getRoot().stopExecution(m_CustomStopMessage);
 	}
 	else {
 	  result = "User cancelled dialog!";
