@@ -33,7 +33,7 @@ import weka.core.Capabilities;
 import weka.core.Instances;
 import weka.filters.AllFilter;
 import weka.filters.Filter;
-import weka.filters.unsupervised.attribute.PartitionedMultiFilter;
+import weka.filters.unsupervised.attribute.PartitionedMultiFilter2;
 import weka.filters.unsupervised.attribute.PublicPrincipalComponents;
 import weka.filters.unsupervised.attribute.Remove;
 
@@ -370,7 +370,7 @@ public class PCA
     PublicPrincipalComponents 		pca;
     int					i;
     Capabilities 			caps;
-    PartitionedMultiFilter 		part;
+    PartitionedMultiFilter2 part;
     Range 				rangeUnsupported;
     Range 				rangeSupported;
     TIntList				listNominal;
@@ -442,7 +442,7 @@ public class PCA
       rangeSupported = new Range();
       rangeSupported.setMax(data.numAttributes());
       rangeSupported.setIndices(m_Supported.toArray());
-      part = new PartitionedMultiFilter();
+      part = new PartitionedMultiFilter2();
       part.setFilters(new Filter[]{
 	pca,
 	new AllFilter(),

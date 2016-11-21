@@ -86,7 +86,7 @@ public class MetaPartitionedMultiFilter
   protected boolean m_RemoveUnused = false;
 
   /** the actual filter used internally for filtering the data. */
-  protected PartitionedMultiFilter m_ActualFilter = null;
+  protected PartitionedMultiFilter2 m_ActualFilter = null;
   
   /**
    * Returns a string describing this filter.
@@ -99,7 +99,7 @@ public class MetaPartitionedMultiFilter
     return 
 	"With each specified filter, a regular expression is associated that "
 	+ "defines the range of attributes to apply the filter to. This is "
-	+ "used to configure a " + PartitionedMultiFilter.class.getName() + " "
+	+ "used to configure a " + PartitionedMultiFilter2.class.getName() + " "
 	+ "internally to filter that actual data.\n"
 	+ "Unused attributes can be discarded as well.";
   }
@@ -396,7 +396,7 @@ public class MetaPartitionedMultiFilter
   public Capabilities getCapabilities() {
     Capabilities	result;
     
-    result = new PartitionedMultiFilter().getCapabilities();
+    result = new PartitionedMultiFilter2().getCapabilities();
     result.enable(Capability.NO_CLASS);
     
     return result;
@@ -416,7 +416,7 @@ public class MetaPartitionedMultiFilter
   public Capabilities getCapabilities(Instances data) {
     Capabilities	result;
     
-    result = new PartitionedMultiFilter().getCapabilities(data);
+    result = new PartitionedMultiFilter2().getCapabilities(data);
     result.enable(Capability.NO_CLASS);
     
     return result;
@@ -488,7 +488,7 @@ public class MetaPartitionedMultiFilter
       }
 
       // configure filter
-      m_ActualFilter = new PartitionedMultiFilter();
+      m_ActualFilter = new PartitionedMultiFilter2();
       m_ActualFilter.setRemoveUnused(m_RemoveUnused);
       m_ActualFilter.setFilters(filters.toArray(new Filter[filters.size()]));
       m_ActualFilter.setRanges(ranges.toArray(new Range[ranges.size()]));
