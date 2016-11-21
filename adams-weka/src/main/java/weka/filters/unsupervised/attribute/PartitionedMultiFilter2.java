@@ -135,13 +135,13 @@ public class PartitionedMultiFilter2
 
     result.addElement(new Option(
       "\tAn attribute range (can be specified multiple times).\n"
-        + "\tFor each filter a range must be supplied. 'first' and 'last'\n"
-        + "\tare valid indices. 'inv(...)' around the range denotes an\n"
-        + "\tinverted range.", "R", 1, "-R <range>"));
+	+ "\tFor each filter a range must be supplied. 'first' and 'last'\n"
+	+ "\tare valid indices. 'inv(...)' around the range denotes an\n"
+	+ "\tinverted range.", "R", 1, "-R <range>"));
 
     result.addElement(new Option(
       "\tFlag for leaving unused attributes out of the output, by default\n"
-        + "\tthese are included in the filter output.", "U", 0, "-U"));
+	+ "\tthese are included in the filter output.", "U", 0, "-U"));
 
     result.addAll(Collections.list(super.listOptions()));
 
@@ -182,11 +182,11 @@ public class PartitionedMultiFilter2
     ranges = new ArrayList<>();
     while ((tmpStr = Utils.getOption("R", options)).length() != 0) {
       if (tmpStr.startsWith("inv(") && tmpStr.endsWith(")")) {
-        range = new Range(tmpStr.substring(4, tmpStr.length() - 1));
-        range.setInvert(true);
+	range = new Range(tmpStr.substring(4, tmpStr.length() - 1));
+	range.setInvert(true);
       }
       else {
-        range = new Range(tmpStr);
+	range = new Range(tmpStr);
       }
       ranges.add(range);
     }
@@ -230,7 +230,7 @@ public class PartitionedMultiFilter2
     for (i = 0; i < getRanges().length; i++) {
       tmpStr = getRange(i).getRanges();
       if (getRange(i).getInvert()) {
-        tmpStr = "inv(" + tmpStr + ")";
+	tmpStr = "inv(" + tmpStr + ")";
       }
       result.add("-R");
       result.add(tmpStr);
@@ -270,7 +270,7 @@ public class PartitionedMultiFilter2
     for (i = 0; i < getRanges().length; i++) {
       inst = new Instances(instanceInfo, 0);
       if (instanceInfo.size() > 0)
-        inst.add((Instance) instanceInfo.get(0).copy());
+	inst.add((Instance) instanceInfo.get(0).copy());
       range = getRanges()[i];
       range.setUpper(instanceInfo.numAttributes() - 1);
       subset = generateSubset(inst, range);
@@ -429,18 +429,18 @@ public class PartitionedMultiFilter2
     indices = new TIntArrayList();
     for (i = 0; i < data.numAttributes(); i++) {
       if (i == data.classIndex())
-        continue;
+	continue;
 
       covered = false;
       for (n = 0; n < getRanges().length; n++) {
-        if (getRanges()[n].isInRange(i)) {
-          covered = true;
-          break;
-        }
+	if (getRanges()[n].isInRange(i)) {
+	  covered = true;
+	  break;
+	}
       }
 
       if (!covered)
-        indices.add(i);
+	indices.add(i);
     }
 
     // create array
@@ -471,7 +471,7 @@ public class PartitionedMultiFilter2
     atts    = new StringBuilder();
     for (i = 0; i < indices.length; i++) {
       if (i > 0)
-        atts.append(",");
+	atts.append(",");
       atts.append("" + (indices[i] + 1));
     }
     if ((data.classIndex() > -1) && (!range.isInRange(data.classIndex())))
@@ -507,9 +507,9 @@ public class PartitionedMultiFilter2
     atts = new ArrayList<>();
     for (i = 0; i < data.numAttributes(); i++) {
       if (i == data.classIndex())
-        atts.add((Attribute) data.attribute(i).copy());
+	atts.add((Attribute) data.attribute(i).copy());
       else
-        atts.add(data.attribute(i).copy(prefix + data.attribute(i).name()));
+	atts.add(data.attribute(i).copy(prefix + data.attribute(i).name()));
     }
 
     // create new dataset
@@ -548,7 +548,7 @@ public class PartitionedMultiFilter2
     if (!isFirstBatchDone()) {
       // we need the full dataset here, see process(Instances)
       if (inputFormat.numInstances() == 0)
-        return null;
+	return null;
 
       checkDimensions();
 
@@ -557,44 +557,44 @@ public class PartitionedMultiFilter2
 
       atts = new ArrayList<>();
       for (i = 0; i < getFilters().length; i++) {
-        if (!isFirstBatchDone()) {
-          // generate subset
-          processed = generateSubset(inputFormat, getRange(i));
-          // set input format
-          if (!getFilter(i).setInputFormat(processed))
-            Filter.useFilter(processed, getFilter(i));
-        }
+	if (!isFirstBatchDone()) {
+	  // generate subset
+	  processed = generateSubset(inputFormat, getRange(i));
+	  // set input format
+	  if (!getFilter(i).setInputFormat(processed))
+	    Filter.useFilter(processed, getFilter(i));
+	}
 
-        // get output format
-        processed = getFilter(i).getOutputFormat();
+	// get output format
+	processed = getFilter(i).getOutputFormat();
 
-        // rename attributes
-        processed = renameAttributes(processed, "filtered-" + i + "-");
+	// rename attributes
+	processed = renameAttributes(processed, "filtered-" + i + "-");
 
-        // add attributes
-        for (n = 0; n < processed.numAttributes(); n++) {
-          if (n == processed.classIndex())
-            continue;
-          atts.add((Attribute) processed.attribute(n).copy());
-        }
+	// add attributes
+	for (n = 0; n < processed.numAttributes(); n++) {
+	  if (n == processed.classIndex())
+	    continue;
+	  atts.add((Attribute) processed.attribute(n).copy());
+	}
       }
 
       // add unused attributes
       if (!getRemoveUnused()) {
-        for (i = 0; i < m_IndicesUnused.length; i++) {
-          att = inputFormat.attribute(m_IndicesUnused[i]);
-          atts.add(att.copy("unfiltered-" + att.name()));
-        }
+	for (i = 0; i < m_IndicesUnused.length; i++) {
+	  att = inputFormat.attribute(m_IndicesUnused[i]);
+	  atts.add(att.copy("unfiltered-" + att.name()));
+	}
       }
 
       // add class if present
       if (inputFormat.classIndex() > -1)
-        atts.add((Attribute) inputFormat.classAttribute().copy());
+	atts.add((Attribute) inputFormat.classAttribute().copy());
 
       // generate new dataset
       result = new Instances(inputFormat.relationName(), atts, 0);
       if (inputFormat.classIndex() > -1)
-        result.setClassIndex(result.numAttributes() - 1);
+	result.setClassIndex(result.numAttributes() - 1);
     }
     else {
       result = getOutputFormat();
@@ -630,7 +630,7 @@ public class PartitionedMultiFilter2
 
       // set upper limits
       for (i = 0; i < m_Ranges.length; i++) {
-        m_Ranges[i].setUpper(instances.numAttributes() - 1);
+	m_Ranges[i].setUpper(instances.numAttributes() - 1);
       }
 
       // determine unused indices
@@ -642,7 +642,7 @@ public class PartitionedMultiFilter2
     for (i = 0; i < getFilters().length; i++) {
       processed[i] = generateSubset(instances, getRange(i));
       if (!isFirstBatchDone()) {
-        getFilter(i).setInputFormat(processed[i]);
+	getFilter(i).setInputFormat(processed[i]);
       }
       processed[i] = Filter.useFilter(processed[i], getFilter(i));
     }
@@ -659,11 +659,11 @@ public class PartitionedMultiFilter2
     errors = new TIntArrayList();
     for (i = 0; i < processed.length; i++) {
       if (processed[i].numInstances() != instances.numInstances())
-        errors.add(i);
+	errors.add(i);
     }
     if (errors.size() > 0) {
       throw new IllegalStateException(
-        "The following filter(s) changed the number of instances: " + errors);
+	"The following filter(s) changed the number of instances: " + errors);
     }
 
     // assemble data
@@ -674,43 +674,47 @@ public class PartitionedMultiFilter2
       // filtered data
       index = 0;
       for (n = 0; n < processed.length; n++) {
-        for (m = 0; m < processed[n].numAttributes(); m++) {
-          if (m == processed[n].classIndex())
-            continue;
-          if (result.attribute(index).isString())
-            values[index] = result.attribute(index).addStringValue(processed[n].instance(i).stringValue(m));
+	for (m = 0; m < processed[n].numAttributes(); m++) {
+	  if (m == processed[n].classIndex())
+	    continue;
+	  if (result.attribute(index).isString())
+	    values[index] = result.attribute(index).addStringValue(processed[n].instance(i).stringValue(m));
 	  else if (result.attribute(index).isRelationValued())
-            values[index] = result.attribute(index).addRelation(processed[n].instance(i).relationalValue(m));
+	    values[index] = result.attribute(index).addRelation(processed[n].instance(i).relationalValue(m));
 	  else
-            values[index] = processed[n].instance(i).value(m);
-          index++;
-        }
+	    values[index] = processed[n].instance(i).value(m);
+	  index++;
+	}
       }
 
       // unused attributes
       if (!getRemoveUnused()) {
-        for (n = 0; n < m_IndicesUnused.length; n++) {
-          if (result.attribute(index).isString())
-            values[index] = result.attribute(index).addStringValue(inst.stringValue(m_IndicesUnused[n]));
-          else if (result.attribute(index).isRelationValued())
-            values[index] = result.attribute(index).addRelation(inst.relationalValue(m_IndicesUnused[n]));
-          else
-            values[index] = inst.value(m_IndicesUnused[n]);
-          index++;
-        }
+	for (n = 0; n < m_IndicesUnused.length; n++) {
+	  if (result.attribute(index).isString())
+	    values[index] = result.attribute(index).addStringValue(inst.stringValue(m_IndicesUnused[n]));
+	  else if (result.attribute(index).isRelationValued())
+	    values[index] = result.attribute(index).addRelation(inst.relationalValue(m_IndicesUnused[n]));
+	  else
+	    values[index] = inst.value(m_IndicesUnused[n]);
+	  index++;
+	}
       }
 
       // class
       if (instances.classIndex() > -1) {
-        values[values.length - 1] = inst.value(instances.classIndex());
-	// TODO
+	if (result.attribute(index).isString())
+	  values[values.length - 1] = result.attribute(instances.classIndex()).addStringValue(inst.stringValue(instances.classIndex()));
+	else if (result.attribute(index).isRelationValued())
+	  values[values.length - 1] = result.attribute(instances.classIndex()).addRelation(inst.relationalValue(instances.classIndex()));
+	else
+	  values[values.length - 1] = inst.value(instances.classIndex());
       }
 
       // generate and add instance
       if (inst instanceof SparseInstance)
-        newInst = new SparseInstance(instances.instance(i).weight(), values);
+	newInst = new SparseInstance(instances.instance(i).weight(), values);
       else
-        newInst = new DenseInstance(instances.instance(i).weight(), values);
+	newInst = new DenseInstance(instances.instance(i).weight(), values);
       result.add(newInst);
     }
 
