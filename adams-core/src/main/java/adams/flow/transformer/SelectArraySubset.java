@@ -23,7 +23,7 @@ package adams.flow.transformer;
 import adams.core.QuickInfoHelper;
 import adams.flow.core.Token;
 import adams.flow.core.Unknown;
-import adams.gui.core.BaseList;
+import adams.gui.core.BaseListWithButtons;
 import adams.gui.core.BasePanel;
 import com.googlecode.jfilechooserbookmarks.gui.BaseScrollPane;
 
@@ -150,7 +150,10 @@ public class SelectArraySubset
   protected DefaultListModel<Object> m_ListModel;
 
   /** the list in use. */
-  protected BaseList m_List;
+  protected BaseListWithButtons m_List;
+
+  /** the label for the message. */
+  protected JLabel m_LabelMessage;
 
   /** whether the data was accepted. */
   protected boolean m_Accepted;
@@ -299,7 +302,6 @@ public class SelectArraySubset
   @Override
   protected BasePanel newPanel() {
     BasePanel		result;
-    JLabel		label;
     JPanel		panel;
     final JButton 	buttonOK;
     final JButton	buttonCancel;
@@ -307,12 +309,12 @@ public class SelectArraySubset
     result = new BasePanel(new BorderLayout());
 
     m_ListModel = new DefaultListModel<>();
-    m_List      = new BaseList(m_ListModel);
+    m_List      = new BaseListWithButtons(m_ListModel);
     result.add(new BaseScrollPane(m_List), BorderLayout.CENTER);
 
-    label = new JLabel(getVariables().expand(m_Message));
+    m_LabelMessage = new JLabel();
     panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-    panel.add(label);
+    panel.add(m_LabelMessage);
     result.add(panel, BorderLayout.NORTH);
 
     panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
@@ -325,6 +327,7 @@ public class SelectArraySubset
       m_Dialog.setVisible(false);
     });
     panel.add(buttonOK);
+    m_List.setDoubleClickButton(buttonOK);
 
     buttonCancel = new JButton("Cancel");
     buttonCancel.setMnemonic('C');
@@ -348,6 +351,7 @@ public class SelectArraySubset
     int[]	indices;
     int		i;
 
+    m_LabelMessage.setText(getVariables().expand(m_Message));
     m_ListModel.clear();
     array = m_InputToken.getPayload();
     for (i = 0; i < Array.getLength(array); i++)
