@@ -1,4 +1,4 @@
-@relation 'FilterTest-weka.filters.unsupervised.attribute.PartitionedMultiFilter-U-Fweka.filters.AllFilter-Fweka.filters.AllFilter-R1,3-R2,4-weka.filters.unsupervised.attribute.MetaPartitionedMultiFilter-U-Fweka.filters.AllFilter-Fweka.filters.AllFilter-RNominal.*-RNumeric.*'
+@relation 'FilterTest-weka.filters.unsupervised.attribute.PartitionedMultiFilter2-U-Fweka.filters.AllFilter-Fweka.filters.AllFilter-R1,3-R2,4-weka.filters.unsupervised.attribute.MetaPartitionedMultiFilter-U-Fweka.filters.AllFilter-Fweka.filters.AllFilter-RNominal.*-RNumeric.*'
 
 @attribute filtered-0-NominalAtt1 {r,g,b}
 @attribute filtered-0-NominalAtt2 {a,b,c,d}
