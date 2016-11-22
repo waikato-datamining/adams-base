@@ -64,7 +64,11 @@ import java.awt.event.MouseListener;
   license = License.BSD3,
   url = "http://docs.oracle.com/javase/tutorial/uiswing/examples/components/TabComponentsDemoProject/src/components/ButtonTabComponent.java"
 )
-public class ButtonTabComponent extends JPanel {
+public class ButtonTabComponent
+  extends JPanel {
+
+  private static final long serialVersionUID = -6719514041129909013L;
+
   private final JTabbedPane pane;
 
   protected JLabel m_Label;
@@ -82,6 +86,8 @@ public class ButtonTabComponent extends JPanel {
 
     //make JLabel read titles from JTabbedPane
     m_Label = new JLabel() {
+      private static final long serialVersionUID = 6027202798775474389L;
+
       public String getText() {
 	int i = pane.indexOfTabComponent(ButtonTabComponent.this);
 	if (i != -1)
@@ -134,6 +140,8 @@ public class ButtonTabComponent extends JPanel {
     extends JButton
     implements ActionListener {
 
+    private static final long serialVersionUID = 1628783933894855989L;
+
     /** icon when focused. */
     protected ImageIcon m_CloseIconFocused;
 
@@ -160,9 +168,15 @@ public class ButtonTabComponent extends JPanel {
     }
 
     public void actionPerformed(ActionEvent e) {
-      int i = pane.indexOfTabComponent(ButtonTabComponent.this);
-      if (i != -1)
-	pane.remove(i);
+      int index = pane.indexOfTabComponent(ButtonTabComponent.this);
+      if (index == -1)
+        return;
+      // make sure we can close the tab
+      if (pane instanceof BaseTabbedPane) {
+        if (!((BaseTabbedPane) pane).canCloseTab(index))
+          return;
+      }
+      pane.remove(index);
     }
 
     //we don't want to update UI for this button

@@ -21,6 +21,7 @@ package adams.gui.core;
 
 import adams.core.CleanUpHandler;
 import adams.core.Shortening;
+import adams.gui.dialog.ApprovalDialog;
 
 import javax.swing.Icon;
 import javax.swing.JTabbedPane;
@@ -63,6 +64,9 @@ public class BaseTabbedPane
 
   /** whether to show a "close tab" button. */
   protected boolean m_ShowCloseTabButton;
+
+  /** whether to prompt user when closing a tab. */
+  protected boolean m_PromptUserWhenClosingTab;
 
   /** the maximum length in chars for titles before getting shortened. */
   protected int m_MaxTitleLength;
@@ -116,6 +120,7 @@ public class BaseTabbedPane
   protected void initialize() {
     m_CloseTabsWithMiddleMouseButton = false;
     m_ShowCloseTabButton             = false;
+    m_PromptUserWhenClosingTab       = false;
     m_MaxTitleLength                 = 30;
   }
 
@@ -163,6 +168,22 @@ public class BaseTabbedPane
   }
 
   /**
+   * Prompts the user whether the tab can be closed.
+   *
+   * @param index	the index of the tab to be closed
+   * @return		true if can be closed
+   */
+  public boolean canCloseTab(int index) {
+    int		retVal;
+
+    if (!m_PromptUserWhenClosingTab)
+      return true;
+
+    retVal = GUIHelper.showConfirmMessage(this, "Do you want to close the '" + getTitleAt(index) + "' tab?");
+    return (retVal == ApprovalDialog.APPROVE_OPTION);
+  }
+
+  /**
    * Hook method that checks whether the specified tab can really be closed
    * with a click of the middle mouse button.
    * <br><br>
@@ -173,7 +194,7 @@ public class BaseTabbedPane
    * @see		#getCloseTabsWithMiddelMouseButton()
    */
   protected boolean canCloseTabWithMiddleMouseButton(int index) {
-    return true;
+    return canCloseTab(index);
   }
 
   /**
@@ -249,10 +270,29 @@ public class BaseTabbedPane
 
   /**
    * Returns whether to show "close tab" buttons.
-   * @return
+   *
+   * @return		true if button displayed
    */
   public boolean getShowCloseTabButton() {
     return m_ShowCloseTabButton;
+  }
+
+  /**
+   * Sets whether to prompt the user when closing a tab.
+   *
+   * @param value	true if to prompt
+   */
+  public void setPromptUserWhenClosingTab(boolean value) {
+    m_PromptUserWhenClosingTab = value;
+  }
+
+  /**
+   * Returns whether to prompt the user when closing a tab.
+   *
+   * @return		true if to prompt
+   */
+  public boolean getPromptUserWhenClosingTab() {
+    return m_PromptUserWhenClosingTab;
   }
 
   /**
