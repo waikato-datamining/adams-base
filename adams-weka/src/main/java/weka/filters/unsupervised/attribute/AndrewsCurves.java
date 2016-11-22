@@ -21,11 +21,6 @@
 package weka.filters.unsupervised.attribute;
 
 import gnu.trove.list.array.TDoubleArrayList;
-
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Vector;
-
 import weka.core.Attribute;
 import weka.core.Capabilities;
 import weka.core.Capabilities.Capability;
@@ -41,6 +36,10 @@ import weka.core.TechnicalInformationHandler;
 import weka.core.Utils;
 import weka.filters.SimpleStreamFilter;
 import weka.filters.UnsupervisedFilter;
+
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Vector;
 
 /**
  <!-- globalinfo-start -->
@@ -318,6 +317,8 @@ public class AndrewsCurves
     // create instance
     result = new DenseInstance(instance.weight(), valuesNew.toArray());
     result.setDataset(getOutputFormat());
+
+    copyValues(result, false, instance.dataset(), getOutputFormat());
 
     return result;
   }

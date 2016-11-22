@@ -20,11 +20,6 @@
 
 package weka.filters.unsupervised.attribute;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.Vector;
-
 import weka.core.Attribute;
 import weka.core.Capabilities;
 import weka.core.Capabilities.Capability;
@@ -36,6 +31,11 @@ import weka.core.RevisionUtils;
 import weka.core.Utils;
 import weka.filters.SimpleStreamFilter;
 import weka.filters.UnsupervisedFilter;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.Vector;
 
 /**
  <!-- globalinfo-start -->
@@ -285,6 +285,8 @@ public class DownSample
     // create instance
     result = new DenseInstance(instance.weight(), values);
     result.setDataset(getOutputFormat());
+
+    copyValues(result, false, instance.dataset(), getOutputFormat());
 
     return result;
   }

@@ -20,10 +20,6 @@
 
 package weka.filters.unsupervised.attribute;
 
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Vector;
-
 import weka.core.Attribute;
 import weka.core.Capabilities;
 import weka.core.Capabilities.Capability;
@@ -39,6 +35,10 @@ import weka.core.TechnicalInformationHandler;
 import weka.core.Utils;
 import weka.filters.SimpleStreamFilter;
 import weka.filters.UnsupervisedFilter;
+
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Vector;
 
 /**
  <!-- globalinfo-start -->
@@ -110,14 +110,9 @@ public class SavitzkyGolay2
   implements TechnicalInformationHandler, UnsupervisedFilter {
 
   /** for serialization. */
- 
+  private static final long serialVersionUID = 6860559375223030676L;
 
-  /**
-	 * 
-	 */
-	private static final long serialVersionUID = 6860559375223030676L;
-
-/** the polynomial order. */
+  /** the polynomial order. */
   protected int m_PolynomialOrder = 2;
 
   /** the order of the derivative. */
@@ -140,10 +135,10 @@ public class SavitzkyGolay2
    */
   public String globalInfo() {
     return
-        "A filter that applies Savitzky-Golay smoothing.\n"
-      + "If a class attribute is present this will not be touched and moved to the end.\n\n"
-      + "For more information see:\n\n"
-      + getTechnicalInformation().toString();
+      "A filter that applies Savitzky-Golay smoothing.\n"
+        + "If a class attribute is present this will not be touched and moved to the end.\n\n"
+        + "For more information see:\n\n"
+        + getTechnicalInformation().toString();
   }
 
   /**
@@ -191,24 +186,24 @@ public class SavitzkyGolay2
     result = new Vector();
 
     result.addElement(new Option(
-	"\tThe number of points to the left (>= 0).\n"
-	+ "\t(default: 3)",
-	"left", 1, "-left <int>"));
+      "\tThe number of points to the left (>= 0).\n"
+        + "\t(default: 3)",
+      "left", 1, "-left <int>"));
 
     result.addElement(new Option(
-	"\tThe number of points to the right (>= 0).\n"
-	+ "\t(default: 3)",
-	"right", 1, "-right <int>"));
+      "\tThe number of points to the right (>= 0).\n"
+        + "\t(default: 3)",
+      "right", 1, "-right <int>"));
 
     result.addElement(new Option(
-	"\tThe polynomial order (>= 2).\n"
-	+ "\t(default: 2)",
-	"polynomial", 1, "-polynomial <int>"));
+      "\tThe polynomial order (>= 2).\n"
+        + "\t(default: 2)",
+      "polynomial", 1, "-polynomial <int>"));
 
     result.addElement(new Option(
-	"\tThe order of the derivative (>= 0).\n"
-	+ "\t(default: 1)",
-	"derivative", 1, "-derivative <int>"));
+      "\tThe order of the derivative (>= 0).\n"
+        + "\t(default: 1)",
+      "derivative", 1, "-derivative <int>"));
 
     return result.elements();
   }
@@ -233,7 +228,7 @@ public class SavitzkyGolay2
     else
       setNumPoints(3);
 
-   
+
 
     tmpStr = Utils.getOption("polynomial", options);
     if (tmpStr.length() > 0)
@@ -292,7 +287,7 @@ public class SavitzkyGolay2
     }
     else {
       System.err.println(
-	  "The polynomial order must be at least 2 (provided: " + value + ")!");
+        "The polynomial order must be at least 2 (provided: " + value + ")!");
     }
   }
 
@@ -327,7 +322,7 @@ public class SavitzkyGolay2
     }
     else {
       System.err.println(
-	  "The order of the derivative must be at least 0 (provided: " + value + ")!");
+        "The order of the derivative must be at least 0 (provided: " + value + ")!");
     }
   }
 
@@ -362,7 +357,7 @@ public class SavitzkyGolay2
     }
     else {
       System.err.println(
-	  "The number of points to the left must be at least 0 (provided: " + value + ")!");
+        "The number of points to the left must be at least 0 (provided: " + value + ")!");
     }
   }
 
@@ -385,7 +380,7 @@ public class SavitzkyGolay2
     return "The number of points left of a data point, >= 0.";
   }
 
-  
+
 
   /**
    * Returns the Capabilities of this filter. Derived filters have to
@@ -486,7 +481,7 @@ public class SavitzkyGolay2
     n         = 0;
     for (i = 0; i < instance.numAttributes(); i++) {
       if (i == instance.classIndex())
-	continue;
+        continue;
       valuesOld[n] = instance.value(i);
       n++;
     }
@@ -500,7 +495,7 @@ public class SavitzkyGolay2
     for (i = 0; i <= count - width; i++) {
       values[i] = 0;
       for (n = 0; n < width; n++)
-	values[i] += m_Coefficients[n] * valuesOld[i + n];
+        values[i] += m_Coefficients[n] * valuesOld[i + n];
     }
 
     // add class value
@@ -510,6 +505,8 @@ public class SavitzkyGolay2
     // create instance
     result = new DenseInstance(instance.weight(), values);
     result.setDataset(getOutputFormat());
+
+    copyValues(result, false, instance.dataset(), getOutputFormat());
 
     return result;
   }
