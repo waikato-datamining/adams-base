@@ -990,7 +990,7 @@ public class SequencePlotter
     SequencePlotterPanel	result;
 
     result = new SequencePlotterPanel(getTitle());
-    result.setPaintlet(getPaintlet());
+    result.setDataPaintlet(getPaintlet());
     result.setOverlayPaintlet((XYSequencePaintlet) getOverlayPaintlet().shallowCopy());
     result.setMarkerPaintlet((MarkerPaintlet) getMarkerPaintlet().shallowCopy());
     result.setErrorPaintlet((AbstractErrorPaintlet) getErrorPaintlet().shallowCopy());
@@ -1001,7 +1001,7 @@ public class SequencePlotter
     result.setOverlayColorProvider(getOverlayColorProvider().shallowCopy());
     result.setSidePanelVisible(m_ShowSidePanel);
 
-    ActorUtils.updateFlowAwarePaintlet(result.getPaintlet(), this);
+    ActorUtils.updateFlowAwarePaintlet(result.getDataPaintlet(), this);
     ActorUtils.updateFlowAwarePaintlet(result.getOverlayPaintlet(), this);
     ActorUtils.updateFlowAwarePaintlet(result.getMarkerPaintlet(), this);
     ActorUtils.updateFlowAwarePaintlet(result.getErrorPaintlet(), this);
@@ -1289,7 +1289,7 @@ public class SequencePlotter
       protected void initGUI() {
 	super.initGUI();
 	m_Panel = new SequencePlotterPanel(getTitle());
-	m_Panel.setPaintlet(getPaintlet());
+	m_Panel.setDataPaintlet(getPaintlet());
 	m_Panel.setOverlayPaintlet(m_OverlayPaintlet);
 	m_Panel.setMarkerPaintlet(getMarkerPaintlet());
 	m_Panel.setErrorPaintlet(m_ErrorPaintlet);
@@ -1300,7 +1300,7 @@ public class SequencePlotter
 	m_Panel.setOverlayColorProvider(m_OverlayColorProvider);
 	m_Panel.setSidePanelVisible(m_ShowSidePanel);
 	add(m_Panel, BorderLayout.CENTER);
-	ActorUtils.updateFlowAwarePaintlet(m_Panel.getPaintlet(), SequencePlotter.this);
+	ActorUtils.updateFlowAwarePaintlet(m_Panel.getDataPaintlet(), SequencePlotter.this);
 	ActorUtils.updateFlowAwarePaintlet(m_Panel.getOverlayPaintlet(), SequencePlotter.this);
 	ActorUtils.updateFlowAwarePaintlet(m_Panel.getMarkerPaintlet(), SequencePlotter.this);
 	ActorUtils.updateFlowAwarePaintlet(m_Panel.getErrorPaintlet(), SequencePlotter.this);

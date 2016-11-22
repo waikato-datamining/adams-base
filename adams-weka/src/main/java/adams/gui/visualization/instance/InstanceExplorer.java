@@ -27,13 +27,11 @@ import adams.core.StatusMessageHandler;
 import adams.core.Utils;
 import adams.core.io.PlaceholderFile;
 import adams.data.instance.Instance;
-import adams.data.statistics.ArrayHistogram;
-import adams.data.statistics.InformativeStatistic;
 import adams.data.weka.ArffUtils;
 import adams.env.Environment;
 import adams.env.InstanceExplorerDefinition;
+import adams.gui.core.AntiAliasingSupporter;
 import adams.gui.core.BasePanel;
-import adams.gui.core.BasePopupMenu;
 import adams.gui.core.BaseStatusBar;
 import adams.gui.core.BaseTabbedPane;
 import adams.gui.core.BaseTable;
@@ -51,27 +49,18 @@ import adams.gui.goe.GenericObjectEditorDialog;
 import adams.gui.sendto.SendToActionSupporter;
 import adams.gui.sendto.SendToActionUtils;
 import adams.gui.visualization.container.ContainerListManager;
-import adams.gui.visualization.container.ContainerListPopupMenuSupplier;
 import adams.gui.visualization.container.ContainerTable;
-import adams.gui.visualization.container.NotesFactory;
 import adams.gui.visualization.core.AbstractColorProvider;
 import adams.gui.visualization.core.Paintlet;
-import adams.gui.visualization.core.PopupMenuCustomizer;
 import adams.gui.visualization.report.ReportContainerList;
 import adams.gui.visualization.report.ReportFactory;
-import adams.gui.visualization.statistics.InformativeStatisticFactory;
-import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 import weka.core.Attribute;
 import weka.core.Instances;
-import weka.core.converters.AbstractFileSaver;
 import weka.core.converters.ConverterUtils.DataSink;
 import weka.experiment.InstanceQuery;
-import weka.gui.AdamsHelper;
-import weka.gui.ConverterFileChooser;
 import weka.gui.sql.SqlViewerDialog;
 
 import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JColorChooser;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -79,13 +68,10 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
 import javax.swing.event.ChangeEvent;
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
-import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -101,9 +87,7 @@ public class InstanceExplorer
   extends BasePanel
   implements MenuBarProvider, StatusMessageHandler,
              ContainerListManager<InstanceContainerManager>,
-             DataChangeListener, PopupMenuCustomizer,
-             ContainerListPopupMenuSupplier<InstanceContainerManager,InstanceContainer>,
-             CleanUpHandler, SendToActionSupporter {
+             DataChangeListener, CleanUpHandler, SendToActionSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = 4478483903068117980L;
@@ -230,7 +214,6 @@ public class InstanceExplorer
     // the instances
     m_PanelInstance = new InstancePanel();
     m_PanelInstance.getContainerManager().addDataChangeListener(this);
-    m_PanelInstance.getPlot().setPopupMenuCustomizer(this);
     m_PanelInstance.setStatusMessageHandler(this);
     panelData.add(m_PanelInstance, BorderLayout.CENTER);
 
@@ -271,7 +254,7 @@ public class InstanceExplorer
    * @return		the panel
    */
   public InstanceContainerList getInstanceContainerList() {
-    return m_PanelInstance.getInstanceContainerList();
+    return (InstanceContainerList) m_PanelInstance.getContainerList();
   }
 
   /**
@@ -332,6 +315,7 @@ public class InstanceExplorer
 
     m_MenuItemClearData.setEnabled(dataLoaded);
     m_MenuItemLoadRecent.setEnabled(m_RecentFilesHandler.size() > 0);
+    m_MenuItemViewAntiAliasing.setEnabled(getInstancePanel().getDataPaintlet() instanceof AntiAliasingSupporter);
     m_MenuItemViewAntiAliasing.setSelected(getInstancePanel().isAntiAliasingEnabled());
   }
 
@@ -618,7 +602,7 @@ public class InstanceExplorer
 	getInstancePanel().setAntiAliasingEnabled(false);
     }
 
-    listInst   = m_PanelInstance.getInstanceContainerList();
+    listInst   = (InstanceContainerList) m_PanelInstance.getContainerList();
     listReport = m_Reports.getReportContainerList();
 
     hasDBID = (dataset.attribute(ArffUtils.getDBIDName()) != null);
@@ -688,257 +672,6 @@ public class InstanceExplorer
   }
 
   /**
-   * Optional customizing of the menu that is about to be popped up.
-   *
-   * @param e		the mous event
-   * @param menu	the menu to customize
-   */
-  public void customizePopupMenu(MouseEvent e, JPopupMenu menu) {
-    JMenuItem	item;
-
-    menu.addSeparator();
-
-    item = new JMenuItem();
-    item.setIcon(GUIHelper.getEmptyIcon());
-    if (!getInstancePanel().getInstancePaintlet().isMarkersDisabled())
-      item.setText("Disable markers");
-    else
-      item.setText("Enable markers");
-    item.addActionListener((ActionEvent ae) -> {
-      getInstancePanel().getInstancePaintlet().setMarkersDisabled(
-        !getInstancePanel().getInstancePaintlet().isMarkersDisabled());
-      repaint();
-    });
-    menu.add(item);
-
-    item = new JMenuItem();
-    item.setIcon(GUIHelper.getEmptyIcon());
-    if (isSidePanelVisible())
-      item.setText("Hide side panel");
-    else
-      item.setText("Show side panel");
-    item.addActionListener((ActionEvent ae) -> setSidePanelVisible(!isSidePanelVisible()));
-    menu.add(item);
-
-    item = new JMenuItem();
-    item.setIcon(GUIHelper.getEmptyIcon());
-    if (getInstancePanel().getAdjustToVisibleData())
-      item.setText("Adjust to loaded data");
-    else
-      item.setText("Adjust to visible data");
-    item.addActionListener((ActionEvent ae) -> getInstancePanel().setAdjustToVisibleData(!getInstancePanel().getAdjustToVisibleData()));
-    menu.add(item);
-
-    menu.addSeparator();
-
-    item = new JMenuItem("Instance histogram", GUIHelper.getIcon("histogram.png"));
-    item.addActionListener((ActionEvent ae) -> showHistogram(getContainerManager().getAllVisible()));
-    menu.add(item);
-
-    item = new JMenuItem("Instance notes", GUIHelper.getEmptyIcon());
-    item.addActionListener((ActionEvent ae) -> showNotes(getContainerManager().getAllVisible()));
-    menu.add(item);
-
-    menu.addSeparator();
-
-    item = new JMenuItem("Save visible instances...", GUIHelper.getIcon("save.gif"));
-    item.addActionListener((ActionEvent ae) -> {
-      ConverterFileChooser fc = new ConverterFileChooser();
-      AdamsHelper.updateFileChooserAccessory(fc);
-      int retval = fc.showSaveDialog(InstanceExplorer.this);
-      if (retval != ConverterFileChooser.APPROVE_OPTION)
-        return;
-      weka.core.Instances dataset = null;
-      for (int i = 0; i < getContainerManager().count(); i++) {
-        InstanceContainer cont = getContainerManager().get(i);
-        if (i == 0)
-          dataset = new weka.core.Instances(cont.getData().getDatasetHeader(), 0);
-        if (cont.isVisible())
-          dataset.add((weka.core.Instance) cont.getData().toInstance().copy());
-      }
-      if (dataset == null)
-        return;
-      AbstractFileSaver saver = fc.getSaver();
-      saver.setInstances(dataset);
-      try {
-        saver.writeBatch();
-      }
-      catch (Exception ex) {
-        ex.printStackTrace();
-        GUIHelper.showErrorMessage(
-          InstanceExplorer.this, "Error saving instances:\n" + ex);
-      }
-    });
-    menu.add(item);
-  }
-
-  /**
-   * Returns a popup menu for the table of the instance list.
-   *
-   * @param table	the affected table
-   * @param row	the row the mouse is currently over
-   * @return		the popup menu
-   */
-  public BasePopupMenu getContainerListPopupMenu(final ContainerTable<InstanceContainerManager,InstanceContainer> table, final int row) {
-    BasePopupMenu	result;
-    JMenuItem		item;
-    final int[] 	indices;
-
-    result = new BasePopupMenu();
-    if (table.getSelectedRows().length == 0)
-      indices = new int[]{row};
-    else
-      indices = table.getSelectedRows();
-
-    item = new JMenuItem("Toggle visibility");
-    item.addActionListener((ActionEvent e) -> {
-      getContainerManager().startUpdate();
-      for (int i = 0; i < indices.length; i++) {
-	InstanceContainer cont = getContainerManager().get(indices[i]);
-	cont.setVisible(!cont.isVisible());
-      }
-      getContainerManager().finishUpdate();
-    });
-    result.add(item);
-
-    item = new JMenuItem("Choose color...");
-    item.addActionListener((ActionEvent e) -> {
-      Color c = null;
-      if (indices.length == 1) {
-	c = JColorChooser.showDialog(
-	  table,
-	  "Choose color for " + getContainerManager().get(indices[0]).getData().getID(),
-	  getContainerManager().get(indices[0]).getColor());
-      }
-      else {
-	c = JColorChooser.showDialog(
-	  table,
-	  "Choose color",
-	  getContainerManager().get(row).getColor());
-      }
-      if (c != null) {
-	getContainerManager().startUpdate();
-	for (int index: indices)
-	  getContainerManager().get(index).setColor(c);
-	getContainerManager().finishUpdate();
-      }
-    });
-    result.add(item);
-
-    if (getContainerManager().getAllowRemoval()) {
-      result.addSeparator();
-
-      item = new JMenuItem("Remove");
-      item.addActionListener((ActionEvent e) -> {
-	getContainerManager().startUpdate();
-	for (int i = indices.length - 1; i >= 0; i--)
-	  getContainerManager().remove(indices[i]);
-	getContainerManager().finishUpdate();
-      });
-      result.add(item);
-
-      item = new JMenuItem("Remove all");
-      item.addActionListener((ActionEvent e) -> getContainerManager().clear());
-      result.add(item);
-    }
-
-    result.addSeparator();
-
-    item = new JMenuItem("Copy ID" + (indices.length > 1 ? "s" : ""));
-    item.setEnabled(indices.length > 0);
-    item.addActionListener((ActionEvent e) -> {
-      StringBuilder id = new StringBuilder();
-      for (int i = 0; i < indices.length; i++) {
-	if (id.length() > 0)
-	  id.append("\n");
-	id.append(getContainerManager().get(indices[i]).getDisplayID());
-      }
-      ClipboardHelper.copyToClipboard(id.toString());
-    });
-    result.add(item);
-
-    item = new JMenuItem("Notes");
-    item.addActionListener((ActionEvent e) -> {
-      List<InstanceContainer> data = new ArrayList<>();
-      for (int i = 0; i < indices.length; i++)
-	data.add(getContainerManager().get(indices[i]));
-      showNotes(data);
-    });
-    result.add(item);
-
-    return result;
-  }
-
-  /**
-   * Displays the notes for the given chromatograms.
-   *
-   * @param data	the chromatograms to display
-   */
-  protected void showNotes(List<InstanceContainer> data) {
-    NotesFactory.Dialog		dialog;
-
-    if (getParentDialog() != null)
-      dialog = NotesFactory.getDialog(getParentDialog(), ModalityType.MODELESS);
-    else
-      dialog = NotesFactory.getDialog(getParentFrame(), false);
-    dialog.setData(data);
-    dialog.setLocationRelativeTo(this);
-    dialog.setVisible(true);
-  }
-
-  /**
-   * Displays a dialog with the given statistics.
-   *
-   * @param stats	the statistics to display
-   */
-  protected void showStatistics(List<InformativeStatistic> stats) {
-    InformativeStatisticFactory.Dialog	dialog;
-
-    if (getParentDialog() != null)
-      dialog = InformativeStatisticFactory.getDialog(getParentDialog(), ModalityType.MODELESS);
-    else
-      dialog = InformativeStatisticFactory.getDialog(getParentFrame(), false);
-
-    dialog.setStatistics(stats);
-    dialog.setVisible(true);
-  }
-
-  /**
-   * Displays the histograms for the given instances.
-   *
-   * @param data	the instances to display
-   */
-  protected void showHistogram(List<InstanceContainer> data) {
-    HistogramFactory.Dialog	dialog;
-    int				i;
-    Instance			inst;
-
-    // get parameters for histograms
-    if (m_HistogramSetup == null) {
-      if (getParentDialog() != null)
-	m_HistogramSetup = HistogramFactory.getSetupDialog(getParentDialog(), ModalityType.DOCUMENT_MODAL);
-      else
-	m_HistogramSetup = HistogramFactory.getSetupDialog(getParentFrame(), true);
-    }
-    m_HistogramSetup.setLocationRelativeTo(this);
-    m_HistogramSetup.setVisible(true);
-    if (m_HistogramSetup.getResult() != HistogramFactory.SetupDialog.APPROVE_OPTION)
-      return;
-
-    // generate histograms and display them
-    if (getParentDialog() != null)
-      dialog = HistogramFactory.getDialog(getParentDialog(), ModalityType.MODELESS);
-    else
-      dialog = HistogramFactory.getDialog(getParentFrame(), false);
-    for (i = 0; i < data.size(); i++) {
-      inst = data.get(i).getData();
-      dialog.add((ArrayHistogram) m_HistogramSetup.getCurrent(), inst, data.get(i).getID());
-    }
-    dialog.setLocationRelativeTo(this);
-    dialog.setVisible(true);
-  }
-
-  /**
    * Lets the user select a new color provider.
    */
   protected void selectColorProvider() {
@@ -950,10 +683,10 @@ public class InstanceExplorer
       m_DialogColorProvider.setTitle("Select color provider");
       m_DialogColorProvider.getGOEEditor().setClassType(AbstractColorProvider.class);
       m_DialogColorProvider.getGOEEditor().setCanChangeClassInDialog(true);
-      m_DialogColorProvider.setLocationRelativeTo(this);
     }
 
     m_DialogColorProvider.setCurrent(getContainerManager().getColorProvider().shallowCopy());
+    m_DialogColorProvider.setLocationRelativeTo(m_DialogColorProvider.getParent());
     m_DialogColorProvider.setVisible(true);
     if (m_DialogColorProvider.getResult() != GenericObjectEditorDialog.APPROVE_OPTION)
       return;
@@ -975,17 +708,17 @@ public class InstanceExplorer
       m_DialogPaintlet.setTitle("Select paintlet");
       m_DialogPaintlet.getGOEEditor().setClassType(AbstractInstancePaintlet.class);
       m_DialogPaintlet.getGOEEditor().setCanChangeClassInDialog(true);
-      m_DialogPaintlet.setLocationRelativeTo(this);
     }
 
-    m_DialogPaintlet.setCurrent(getInstancePanel().getInstancePaintlet().shallowCopy());
+    m_DialogPaintlet.setCurrent(getInstancePanel().getDataPaintlet().shallowCopy());
+    m_DialogPaintlet.setLocationRelativeTo(m_DialogPaintlet.getParent());
     m_DialogPaintlet.setVisible(true);
     if (m_DialogPaintlet.getResult() != GenericObjectEditorDialog.APPROVE_OPTION)
       return;
     paintlet = (Paintlet) m_DialogPaintlet.getCurrent();
-    paintlet.setPanel(getInstancePanel());
-    getInstancePanel().removePaintlet(getInstancePanel().getInstancePaintlet());
-    getInstancePanel().addPaintlet(paintlet);
+    if (paintlet instanceof AntiAliasingSupporter)
+      ((AntiAliasingSupporter) paintlet).setAntiAliasingEnabled(getInstancePanel().isAntiAliasingEnabled());
+    getInstancePanel().setDataPaintlet(paintlet);
     zoomVisible = getInstancePanel().isZoomOverviewPanelVisible();
     getInstancePanel().getZoomOverviewPanel().setDataContainerPanel(getInstancePanel());
     getInstancePanel().setZoomOverviewPanelVisible(zoomVisible);
@@ -1030,8 +763,8 @@ public class InstanceExplorer
 	  DataSink.write(((PlaceholderFile) result).getAbsolutePath(), inst);
 	}
 	catch (Exception e) {
-	  result = null;
 	  GUIHelper.showErrorMessage(this, "Failed to write instances to '" + result + "'!");
+	  result = null;
 	}
       }
     }

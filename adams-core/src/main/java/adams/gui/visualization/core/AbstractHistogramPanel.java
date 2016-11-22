@@ -85,7 +85,7 @@ public abstract class AbstractHistogramPanel<T>
     result.setSidePanelVisible(false);
     paintlet = new BarPaintlet();
     paintlet.setWidth(3);
-    result.setPaintlet(paintlet);
+    result.setDataPaintlet(paintlet);
     tick = new FancyTickGenerator();
     tick.setNumTicks(10);
     result.getPlot().getAxis(Axis.LEFT).setTickGenerator(tick);

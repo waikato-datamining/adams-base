@@ -184,7 +184,7 @@ public class InstancePointHitDetector
     axisLeft   = m_Owner.getPlot().getAxis(Axis.LEFT);
     y          = axisLeft.posToValue((int) e.getY());
     x          = axisBottom.posToValue((int) e.getX());
-    model      = (InstanceContainerModel) m_Owner.getInstanceContainerList().getContainerModel();
+    model      = (InstanceContainerModel) m_Owner.getContainerList().getContainerModel();
 
     for (i = 0; i < model.getRowCount(); i++) {
       if (!model.getContainerAt(i).isVisible())

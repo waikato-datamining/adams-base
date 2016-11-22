@@ -115,7 +115,7 @@ public class FixedClassifierErrorsPlot
 	// setup plot
 	SequencePlotterPanel plot = new SequencePlotterPanel(predInst.relationName());
 	CrossPaintlet paintlet = new CrossPaintlet();
-	plot.setPaintlet(paintlet);
+	plot.setDataPaintlet(paintlet);
 	MultiPaintlet overlays = new MultiPaintlet();
 	StraightLineOverlayPaintlet overlay = new StraightLineOverlayPaintlet();
 	overlay.setColor(Color.RED.darker());

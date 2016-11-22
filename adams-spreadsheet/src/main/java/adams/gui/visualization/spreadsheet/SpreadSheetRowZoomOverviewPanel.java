@@ -28,7 +28,7 @@ import adams.gui.visualization.container.AbstractDataContainerZoomOverviewPanel;
  * @version $Revision: 4914 $
  */
 public class SpreadSheetRowZoomOverviewPanel
-  extends AbstractDataContainerZoomOverviewPanel<SpreadSheetRowPanel, SpreadSheetRowLinePaintlet, SpreadSheetRowZoomOverviewPaintlet, SpreadSheetRow, SpreadSheetRowContainerManager> {
+  extends AbstractDataContainerZoomOverviewPanel<SpreadSheetRowPanel, AbstractSpreadSheetRowPaintlet, SpreadSheetRowZoomOverviewPaintlet, SpreadSheetRow, SpreadSheetRowContainerManager> {
 
   /** for serialization. */
   private static final long serialVersionUID = -5141649373267221710L;

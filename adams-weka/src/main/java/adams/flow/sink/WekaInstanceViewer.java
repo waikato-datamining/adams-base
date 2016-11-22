@@ -27,7 +27,6 @@ import adams.gui.core.BasePanel;
 import adams.gui.core.ExtensionFileFilter;
 import adams.gui.visualization.core.AbstractColorProvider;
 import adams.gui.visualization.core.DefaultColorProvider;
-import adams.gui.visualization.core.Paintlet;
 import adams.gui.visualization.instance.AbstractInstancePaintlet;
 import adams.gui.visualization.instance.AbstractInstancePanelUpdater;
 import adams.gui.visualization.instance.InstanceContainer;
@@ -406,16 +405,12 @@ public class WekaInstanceViewer
   @Override
   protected BasePanel newPanel() {
     BasePanel	result;
-    Paintlet	paintlet;
 
     result          = new BasePanel(new BorderLayout());
     m_InstancePanel = new InstancePanel();
     m_InstancePanel.setZoomOverviewPanelVisible(m_ZoomOverview);
     m_InstancePanel.getContainerManager().setColorProvider(m_ColorProvider.shallowCopy(true));
-    paintlet = m_Paintlet.shallowCopy(true);
-    paintlet.setPanel(m_InstancePanel);
-    m_InstancePanel.removePaintlet(m_InstancePanel.getInstancePaintlet());
-    m_InstancePanel.addPaintlet(paintlet);
+    m_InstancePanel.setDataPaintlet(m_Paintlet.shallowCopy(true));
     result.add(m_InstancePanel, BorderLayout.CENTER);
 
     return result;

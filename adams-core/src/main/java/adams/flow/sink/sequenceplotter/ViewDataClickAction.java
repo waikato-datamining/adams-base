@@ -121,8 +121,8 @@ public class ViewDataClickAction
     SpreadSheetDialog		dialog;
     List<String>		cols;
 
-    if (m_HitDetector.getOwner() != panel.getPaintlet())
-      m_HitDetector.setOwner(panel.getPaintlet());
+    if (m_HitDetector.getOwner() != panel.getDataPaintlet())
+      m_HitDetector.setOwner(panel.getDataPaintlet());
     located = m_HitDetector.locate(e);
     cols    = null;
     if (located instanceof Vector) {
@@ -139,7 +139,7 @@ public class ViewDataClickAction
 	if (hit instanceof SequencePlotPoint) {
 	  point = (SequencePlotPoint) hit;
 	  if (cols == null)
-	    cols = new ArrayList<String>();
+	    cols = new ArrayList<>();
 	  else
 	    cols.clear();
 	  // TODO errors?

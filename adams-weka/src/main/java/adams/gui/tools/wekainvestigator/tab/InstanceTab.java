@@ -33,6 +33,7 @@ import adams.gui.event.SearchEvent;
 import adams.gui.event.WekaInvestigatorDataEvent;
 import adams.gui.tools.wekainvestigator.InvestigatorPanel;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
+import adams.gui.visualization.core.PaintletWithMarkers;
 import adams.gui.visualization.instance.InstanceContainer;
 import adams.gui.visualization.instance.InstanceContainerManager;
 import adams.gui.visualization.instance.InstancePanel;
@@ -537,7 +538,8 @@ public class InstanceTab
     manager.clear();
 
     m_PanelInstance.setAntiAliasingEnabled(m_CheckBoxAntiAliasing.isSelected());
-    m_PanelInstance.getInstancePaintlet().setMarkersDisabled(!m_CheckBoxMarkers.isSelected());
+    if (m_PanelInstance.getDataPaintlet() instanceof PaintletWithMarkers)
+      ((PaintletWithMarkers) m_PanelInstance.getDataPaintlet()).setMarkersDisabled(!m_CheckBoxMarkers.isSelected());
 
     manager.startUpdate();
     for (i = 0; i < data.numInstances(); i++) {

@@ -90,7 +90,7 @@ public class ThresholdCurves
 	paintlet.setMinY(0.0);
 	paintlet.setMaxY(1.0);
 	paintlet.setPaintlet(basePaintlet);
-	panel.setPaintlet(paintlet);
+	panel.setDataPaintlet(paintlet);
 	XYSequenceContainerManager manager = panel.getContainerManager();
 	for (int i = 0; i < classAtt.numValues(); i++) {
 	  // generate curve

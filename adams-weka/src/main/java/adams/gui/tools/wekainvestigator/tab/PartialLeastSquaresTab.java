@@ -227,7 +227,7 @@ public class PartialLeastSquaresTab
     m_TabbedPanePlots.addTab("Loadings", m_PanelLoadings);
 
     m_PanelWeights = new SequencePlotterPanel("Weights");
-    m_PanelWeights.setPaintlet(new LinePaintlet());
+    m_PanelWeights.setDataPaintlet(new LinePaintlet());
     // x
     axis = m_PanelWeights.getPlot().getAxis(Axis.BOTTOM);
     axis.setAxisName("attribute");

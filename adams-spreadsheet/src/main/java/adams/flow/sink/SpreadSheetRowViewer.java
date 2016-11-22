@@ -415,10 +415,7 @@ public class SpreadSheetRowViewer
     m_SpreadSheetRowPanel = new SpreadSheetRowPanel();
     m_SpreadSheetRowPanel.setZoomOverviewPanelVisible(m_ZoomOverview);
     m_SpreadSheetRowPanel.getContainerManager().setColorProvider(m_ColorProvider.shallowCopy(true));
-    paintlet = m_Paintlet.shallowCopy(true);
-    paintlet.setPanel(m_SpreadSheetRowPanel);
-    m_SpreadSheetRowPanel.removePaintlet(m_SpreadSheetRowPanel.getInstancePaintlet());
-    m_SpreadSheetRowPanel.addPaintlet(paintlet);
+    m_SpreadSheetRowPanel.setDataPaintlet(m_Paintlet.shallowCopy(true));
     result.add(m_SpreadSheetRowPanel, BorderLayout.CENTER);
 
     return result;

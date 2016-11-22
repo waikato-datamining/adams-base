@@ -52,7 +52,7 @@ public class HistogramPanel
 
     result = super.newPanel(name);
     paintlet = new StickPaintlet();
-    result.setPaintlet(paintlet);
+    result.setDataPaintlet(paintlet);
 
     return result;
   }

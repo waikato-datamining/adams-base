@@ -151,7 +151,7 @@ public class MemoryMonitorPanel
       ((PaintletWithMarkers) paintlet.getPaintlet()).setMarkersDisabled(true);
     paintlet.setMinY(0.0);
     paintlet.setMaxY(scale(m_Memory.getHeapMemoryUsage().getMax()));
-    m_PlotPanel.setPaintlet(paintlet);
+    m_PlotPanel.setDataPaintlet(paintlet);
     // color provider
     m_PlotPanel.setColorProvider(AbstractColorProvider.forCommandLine(props.getProperty("ColorProvider", new DefaultColorProvider().toCommandLine())));
     

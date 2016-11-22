@@ -704,8 +704,8 @@ public class SimplePlot
     SequencePlotterPanel	result;
 
     result = new SequencePlotterPanel(getTitle());
-    result.setPaintlet(getPaintlet());
-    ActorUtils.updateFlowAwarePaintlet(result.getPaintlet(), this);
+    result.setDataPaintlet(getPaintlet());
+    ActorUtils.updateFlowAwarePaintlet(result.getDataPaintlet(), this);
     result.setOverlayPaintlet(getOverlayPaintlet());
     ActorUtils.updateFlowAwarePaintlet(result.getOverlayPaintlet(), this);
     result.setMouseClickAction(m_MouseClickAction);
@@ -982,8 +982,8 @@ public class SimplePlot
 	m_PlotUpdater = new SimplePlotUpdater();
 	((SimplePlotUpdater) m_PlotUpdater).setUpdateInterval(-1);
 	m_Panel = new SequencePlotterPanel(getTitle());
-	m_Panel.setPaintlet(getPaintlet());
-	ActorUtils.updateFlowAwarePaintlet(m_Panel.getPaintlet(), SimplePlot.this);
+	m_Panel.setDataPaintlet(getPaintlet());
+	ActorUtils.updateFlowAwarePaintlet(m_Panel.getDataPaintlet(), SimplePlot.this);
 	m_Panel.setMouseClickAction(m_MouseClickAction);
 	m_Panel.setOverlayPaintlet(getOverlayPaintlet());
 	ActorUtils.updateFlowAwarePaintlet(m_Panel.getOverlayPaintlet(), SimplePlot.this);

@@ -293,7 +293,7 @@ public class TimeseriesExplorer
     m_TabbedPane.addChangeListener(new ChangeListener() {
       @Override
       public void stateChanged(ChangeEvent e) {
-	ContainerTable dtable = getTimeseriesPanel().getTimeseriesContainerList().getTable();
+	ContainerTable dtable = getTimeseriesPanel().getContainerList().getTable();
 	// data
 	if (m_TabbedPane.getSelectedIndex() == 0) {
 	  BaseTable rtable = m_Reports.getReportContainerList().getTable();
@@ -1195,10 +1195,10 @@ public class TimeseriesExplorer
       m_DialogColorProvider.setTitle("Select color provider");
       m_DialogColorProvider.getGOEEditor().setClassType(AbstractColorProvider.class);
       m_DialogColorProvider.getGOEEditor().setCanChangeClassInDialog(true);
-      m_DialogColorProvider.setLocationRelativeTo(this);
     }
     
     m_DialogColorProvider.setCurrent(getContainerManager().getColorProvider().shallowCopy());
+    m_DialogColorProvider.setLocationRelativeTo(m_DialogColorProvider.getParent());
     m_DialogColorProvider.setVisible(true);
     if (m_DialogColorProvider.getResult() != GenericObjectEditorDialog.APPROVE_OPTION)
       return;
@@ -1220,10 +1220,10 @@ public class TimeseriesExplorer
       m_DialogPaintlet.setTitle("Select paintlet");
       m_DialogPaintlet.getGOEEditor().setClassType(AbstractTimeseriesPaintlet.class);
       m_DialogPaintlet.getGOEEditor().setCanChangeClassInDialog(true);
-      m_DialogPaintlet.setLocationRelativeTo(this);
     }
     
     m_DialogPaintlet.setCurrent(getTimeseriesPanel().getTimeseriesPaintlet().shallowCopy());
+    m_DialogPaintlet.setLocationRelativeTo(m_DialogPaintlet.getParent());
     m_DialogPaintlet.setVisible(true);
     if (m_DialogPaintlet.getResult() != GenericObjectEditorDialog.APPROVE_OPTION)
       return;

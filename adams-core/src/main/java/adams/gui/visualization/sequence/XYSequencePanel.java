@@ -44,27 +44,24 @@ import adams.gui.event.PaintListener;
 import adams.gui.scripting.AbstractScriptingEngine;
 import adams.gui.scripting.ScriptingEngine;
 import adams.gui.visualization.container.AbstractContainerManager;
-import adams.gui.visualization.container.ContainerListPopupMenuSupplier;
 import adams.gui.visualization.container.ContainerTable;
-import adams.gui.visualization.container.DataContainerPanelWithSidePanel;
+import adams.gui.visualization.container.DataContainerPanelWithContainerList;
 import adams.gui.visualization.container.DataHelper;
 import adams.gui.visualization.core.AbstractColorProvider;
 import adams.gui.visualization.core.AbstractPaintlet;
 import adams.gui.visualization.core.CoordinatesPaintlet;
 import adams.gui.visualization.core.CoordinatesPaintlet.Coordinates;
 import adams.gui.visualization.core.DefaultColorProvider;
+import adams.gui.visualization.core.Paintlet;
 import adams.gui.visualization.core.PaintletWithFixedXRange;
 import adams.gui.visualization.core.PaintletWithFixedYRange;
 import adams.gui.visualization.core.PlotPanel;
-import adams.gui.visualization.core.PopupMenuCustomizer;
 import adams.gui.visualization.core.axis.FixedLabelTickGenerator;
 import adams.gui.visualization.core.plot.AbstractHitDetector;
 import adams.gui.visualization.core.plot.Axis;
 import adams.gui.visualization.core.plot.HitDetectorSupporter;
 import adams.gui.visualization.core.plot.TipTextCustomizer;
-import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
-import javax.swing.JColorChooser;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JSpinner;
@@ -74,7 +71,6 @@ import java.awt.Color;
 import java.awt.Dialog.ModalityType;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
@@ -90,15 +86,11 @@ import java.util.List;
  * @version $Revision$
  */
 public class XYSequencePanel
-  extends DataContainerPanelWithSidePanel<XYSequence, XYSequenceContainerManager>
-  implements PaintListener, ContainerListPopupMenuSupplier<XYSequenceContainerManager,XYSequenceContainer>,
-             PopupMenuCustomizer, TipTextCustomizer {
+  extends DataContainerPanelWithContainerList<XYSequence, XYSequenceContainerManager, XYSequenceContainer>
+  implements PaintListener, TipTextCustomizer {
 
   /** for serialization. */
   private static final long serialVersionUID = 7985845939008731534L;
-
-  /** the sequence ID list. */
-  protected XYSequenceContainerList m_SequenceContainerList;
 
   /** paintlet for drawing the sequence data. */
   protected XYSequencePaintlet m_XYSequencePaintlet;
@@ -205,14 +197,6 @@ public class XYSequencePanel
 
     setAdjustToVisibleData(props.getBoolean("Plot.AdjustToVisibleData", false));
 
-    m_SequenceContainerList = new XYSequenceContainerList();
-    m_SequenceContainerList.setManager(getContainerManager());
-    m_SequenceContainerList.setAllowSearch(props.getBoolean("ContainerList.AllowSearch", false));
-    m_SequenceContainerList.setPopupMenuSupplier(this);
-
-    m_SidePanel.setLayout(new GridLayout(1, 1));
-    m_SidePanel.add(m_SequenceContainerList);
-
     getPlot().setPopupMenuCustomizer(this);
     getPlot().setTipTextCustomizer(this);
 
@@ -221,8 +205,8 @@ public class XYSequencePanel
     if (m_XYSequencePaintlet instanceof AntiAliasingSupporter)
       ((AntiAliasingSupporter) m_XYSequencePaintlet).setAntiAliasingEnabled(props.getBoolean("Plot.AntiAliasing", true));
     m_XYSequencePaintlet.setPanel(this);
-    setPaintlet(
-	(AbstractXYSequencePaintlet) AbstractPaintlet.forCommandLine(
+    setDataPaintlet(
+	AbstractPaintlet.forCommandLine(
 	    props.getPath("Plot.Paintlet", new StickPaintlet().toCommandLine())));
 
     m_CoordinatesPaintlet = new CoordinatesPaintlet();
@@ -244,6 +228,23 @@ public class XYSequencePanel
   }
 
   /**
+   * Returns the container list.
+   *
+   * @return		the list
+   */
+  @Override
+  protected XYSequenceContainerList createContainerList() {
+    XYSequenceContainerList 	result;
+
+    result = new XYSequenceContainerList();
+    result.setManager(getContainerManager());
+    result.setAllowSearch(getProperties().getBoolean("ContainerList.AllowSearch", false));
+    result.setPopupMenuSupplier(this);
+
+    return result;
+  }
+
+  /**
    * Returns the current container manager.
    *
    * @return		the manager
@@ -253,24 +254,25 @@ public class XYSequencePanel
   }
 
   /**
-   * Sets the paintlet to use.
-   *
-   * @param value	the paintlet
-   */
-  public void setPaintlet(XYSequencePaintlet value) {
-    removePaintlet(m_XYSequencePaintlet);
-    m_XYSequencePaintlet = value;
-    m_XYSequencePaintlet.setPanel(this);
-    update();
-  }
-
-  /**
-   * Returns the paintlet in use.
+   * Returns the paintlet used for painting the data.
    *
    * @return		the paintlet
    */
-  public XYSequencePaintlet getPaintlet() {
+  @Override
+  public XYSequencePaintlet getDataPaintlet() {
     return m_XYSequencePaintlet;
+  }
+
+  /**
+   * Sets the paintlet to use for painting the data.
+   *
+   * @param value	the paintlet
+   */
+  public void setDataPaintlet(Paintlet value) {
+    removePaintlet(m_XYSequencePaintlet);
+    m_XYSequencePaintlet = (AbstractXYSequencePaintlet) value;
+    m_XYSequencePaintlet.setPanel(this);
+    addPaintlet(m_XYSequencePaintlet);
   }
 
   /**
@@ -443,6 +445,39 @@ public class XYSequencePanel
   }
 
   /**
+   * Returns a popup menu for the table of the spectrum list.
+   *
+   * @param table	the affected table
+   * @param row	the row the mouse is currently over
+   * @return		the popup menu
+   */
+  @Override
+  public BasePopupMenu getContainerListPopupMenu(final ContainerTable table, final int row) {
+    BasePopupMenu		result;
+    JMenuItem			item;
+    final int[] 		indices;
+
+    result  = super.getContainerListPopupMenu(table, row);
+    indices = getSelectedContainerIndices(table, row);
+
+    result.addSeparator();
+
+    item = new JMenuItem("Save as...");
+    item.setEnabled(indices.length == 1);
+    item.addActionListener((ActionEvent e) ->
+      saveSequence(getContainerManager().get(indices[0])));
+    result.add(item);
+
+    item = new JMenuItem("View as table");
+    item.setEnabled(indices.length == 1);
+    item.addActionListener((ActionEvent e) ->
+      viewSequence(getContainerManager().get(indices[0])));
+    result.add(item);
+
+    return result;
+  }
+
+  /**
    * Optional customizing of the menu that is about to be popped up.
    *
    * @param e		the mous event
@@ -452,50 +487,13 @@ public class XYSequencePanel
   public void customizePopupMenu(MouseEvent e, JPopupMenu menu) {
     JMenuItem	item;
 
-    if (m_XYSequencePaintlet instanceof LinePaintlet) {
-      final LinePaintlet paintlet = (LinePaintlet) m_XYSequencePaintlet;
-      item = new JMenuItem();
-      item.setIcon(GUIHelper.getEmptyIcon());
-      if (!paintlet.isMarkersDisabled())
-	item.setText("Disable markers");
-      else
-	item.setText("Enable markers");
-      item.addActionListener((ActionEvent ae)-> {
-        paintlet.setMarkersDisabled(
-          !paintlet.isMarkersDisabled());
-        repaint();
-      });
-      menu.add(item);
-    }
-
-    if (m_XYSequencePaintlet instanceof AntiAliasingSupporter) {
-      final AntiAliasingSupporter paintlet = (AntiAliasingSupporter) m_XYSequencePaintlet;
-      item = new JMenuItem();
-      item.setIcon(GUIHelper.getEmptyIcon());
-      if (paintlet.isAntiAliasingEnabled())
-	item.setText("Disable anti-aliasing");
-      else
-	item.setText("Enable anti-aliasing");
-      item.addActionListener((ActionEvent ae) -> setAntiAliasingEnabled(!isAntiAliasingEnabled()));
-      menu.add(item);
-    }
+    super.customizePopupMenu(e, menu);
 
     if (getAllowResize()) {
       item = new JMenuItem("Resize...", GUIHelper.getEmptyIcon());
       item.addActionListener((ActionEvent ae) -> showResizeDialog());
       menu.add(item);
     }
-
-    menu.addSeparator();
-
-    item = new JMenuItem();
-    item.setIcon(GUIHelper.getEmptyIcon());
-    if (isSidePanelVisible())
-      item.setText("Hide side panel");
-    else
-      item.setText("Show side panel");
-    item.addActionListener((ActionEvent ae) -> setSidePanelVisible(!isSidePanelVisible()));
-    menu.add(item);
 
     item = new JMenuItem();
     item.setIcon(GUIHelper.getEmptyIcon());
@@ -522,128 +520,13 @@ public class XYSequencePanel
   }
 
   /**
-   * Returns a popup menu for the table of the spectrum list.
-   *
-   * @param table	the affected table
-   * @param row	the row the mouse is currently over
-   * @return		the popup menu
-   */
-  @Override
-  public BasePopupMenu getContainerListPopupMenu(final ContainerTable table, final int row) {
-    BasePopupMenu		result;
-    JMenuItem			item;
-    final int[] 		indices;
-
-    result    = new BasePopupMenu();
-    if (table.getSelectedRows().length == 0)
-      indices = new int[]{row};
-    else
-      indices = table.getSelectedRows();
-
-    item = new JMenuItem("Toggle visibility");
-    item.addActionListener((ActionEvent e) -> {
-	for (int i = 0; i < indices.length; i++) {
-	  XYSequenceContainer c = getContainerManager().get(indices[i]);
-	  c.setVisible(!c.isVisible());
-	}
-    });
-    result.add(item);
-
-    item = new JMenuItem("Show all");
-    item.addActionListener((ActionEvent e) -> {
-	for (int i = 0; i < getContainerManager().count(); i++) {
-	  if (!getContainerManager().get(i).isVisible())
-	    getContainerManager().get(i).setVisible(true);
-	}
-    });
-    result.add(item);
-
-    item = new JMenuItem("Hide all");
-    item.addActionListener((ActionEvent e) -> {
-	for (int i = 0; i < getContainerManager().count(); i++) {
-	  if (getContainerManager().get(i).isVisible())
-	    getContainerManager().get(i).setVisible(false);
-	}
-    });
-    result.add(item);
-
-    item = new JMenuItem("Choose color...");
-    item.addActionListener((ActionEvent e) -> {
-	String msg = "Choose color";
-	XYSequenceContainer cont = null;
-	Color color = Color.BLUE;
-	if (indices.length == 1) {
-	  cont = getContainerManager().get(indices[0]);
-	  msg += " for " + cont.getData().getID();
-	  color = cont.getColor();
-	}
-	Color c = JColorChooser.showDialog(
-	    table,
-	    msg,
-	    color);
-	if (c == null)
-	  return;
-	for (int i: indices)
-	  getContainerManager().get(i).setColor(c);
-    });
-    result.add(item);
-
-    if (getContainerManager().getAllowRemoval()) {
-      result.addSeparator();
-
-      item = new JMenuItem("Remove");
-      item.addActionListener((ActionEvent e) ->
-	m_SequenceContainerList.getTable().removeContainers(indices));
-      result.add(item);
-
-      item = new JMenuItem("Remove all");
-      item.addActionListener((ActionEvent e) ->
-	m_SequenceContainerList.getTable().removeAllContainers());
-      result.add(item);
-    }
-
-    result.addSeparator();
-
-    item = new JMenuItem("Copy ID" + (indices.length > 1 ? "s" : ""));
-    item.setEnabled(indices.length > 0);
-    item.addActionListener((ActionEvent e) -> {
-      StringBuilder id = new StringBuilder();
-      for (int i = 0; i < indices.length; i++) {
-	if (id.length() > 0)
-	  id.append("\n");
-	id.append(getContainerManager().get(indices[i]).getDisplayID());
-      }
-      ClipboardHelper.copyToClipboard(id.toString());
-    });
-    result.add(item);
-
-    result.addSeparator();
-
-    item = new JMenuItem("Save as...");
-    item.setEnabled(indices.length == 1);
-    item.addActionListener((ActionEvent e) ->
-      saveSequence(getContainerManager().get(indices[0])));
-    result.add(item);
-
-    item = new JMenuItem("View as table");
-    item.setEnabled(indices.length == 1);
-    item.addActionListener((ActionEvent e) ->
-      viewSequence(getContainerManager().get(indices[0])));
-    result.add(item);
-
-    return result;
-  }
-
-  /**
    * Sets whether to use anti-aliasing.
    *
    * @param value	if true then anti-aliasing is used
    */
   public void setAntiAliasingEnabled(boolean value) {
-    if (m_XYSequencePaintlet instanceof AntiAliasingSupporter) {
+    if (m_XYSequencePaintlet instanceof AntiAliasingSupporter)
       ((AntiAliasingSupporter) m_XYSequencePaintlet).setAntiAliasingEnabled(value);
-      repaint();
-    }
   }
 
   /**
@@ -652,10 +535,8 @@ public class XYSequencePanel
    * @return		true if anti-aliasing is used
    */
   public boolean isAntiAliasingEnabled() {
-    if (m_XYSequencePaintlet instanceof AntiAliasingSupporter)
-      return ((AntiAliasingSupporter) m_XYSequencePaintlet).isAntiAliasingEnabled();
-
-    return false;
+    return (m_XYSequencePaintlet instanceof AntiAliasingSupporter)
+      && ((AntiAliasingSupporter) m_XYSequencePaintlet).isAntiAliasingEnabled();
   }
 
   /**
@@ -668,11 +549,9 @@ public class XYSequencePanel
   protected void saveVisible(double[] xRange, double[] yRange) {
     SpreadSheetWriter 	writer;
     String 		prefix;
-    int 		i;
     XYSequence 		seq;
     String[] 		ext;
     String		filename;
-    XYSequenceContainer	cont;
     List<SpreadSheet>	data;
 
     if (m_ExportDialog == null) {
@@ -697,21 +576,18 @@ public class XYSequencePanel
       filename = FileUtils.createFilename(filename, "");
       filename = m_ExportDialog.getDirectory().getAbsolutePath() + File.separator + filename + "." + ext[0];
       data = new ArrayList<>();
-      for (i = 0; i < getContainerManager().count(); i++) {
-	cont = getContainerManager().get(i);
-	if (cont.isVisible())
-	  data.add(DataHelper.filter(cont.getData().toSpreadSheet(), "X", xRange, "Y", yRange));
-      }
+      for (XYSequenceContainer c: getTableModelContainers(true))
+	data.add(DataHelper.filter(c.getData().toSpreadSheet(), "X", xRange, "Y", yRange));
       if (!((MultiSheetSpreadSheetWriter) writer).write(data.toArray(new SpreadSheet[data.size()]), filename))
 	GUIHelper.showErrorMessage(this, "Failed to write sequence data to '" + filename + "'!");
     }
     else {
       prefix = m_ExportDialog.getDirectory().getAbsolutePath();
-      for (i = 0; i < getContainerManager().countVisible(); i++) {
-	seq      = getContainerManager().getVisible(i).getData();
+      for (XYSequenceContainer c: getTableModelContainers(true)) {
+	seq      = c.getData();
 	filename = prefix + File.separator + seq.getID() + "." + ext[0];
 	if (!writer.write(DataHelper.filter(seq.toSpreadSheet(), "X", xRange, "Y", yRange), filename)) {
-	  GUIHelper.showErrorMessage(this, "Failed to write sequence #" + (i+1) + " to '" + filename + "'!");
+	  GUIHelper.showErrorMessage(this, "Failed to write sequence #" + c + " to '" + filename + "'!");
 	  break;
 	}
       }
@@ -777,7 +653,7 @@ public class XYSequencePanel
     SpreadSheet		sheet;
 
     if (m_ViewDialogs == null)
-      m_ViewDialogs = new ArrayList<SpreadSheetDialog>();
+      m_ViewDialogs = new ArrayList<>();
 
     seq = cont.getData();
     sheet = seq.toSpreadSheet();
@@ -838,12 +714,24 @@ public class XYSequencePanel
   }
 
   /**
-   * Returns the container list.
+   * Returns true if storing the color in the report of container's data object
+   * is supported.
    *
-   * @return	the container list
+   * @return		true if supported
    */
-  public XYSequenceContainerList getContainerList() {
-    return m_SequenceContainerList;
+  @Override
+  protected boolean supportsStoreColorInReport() {
+    return false;
+  }
+
+  /**
+   * Does nothing.
+   *
+   * @param indices	the indices of the containers of the container manager
+   * @param name	the field name to use
+   */
+  @Override
+  protected void storeColorInReport(int[] indices, String name) {
   }
 
   /**

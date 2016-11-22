@@ -29,7 +29,7 @@ import adams.gui.visualization.container.AbstractDataContainerZoomOverviewPanel;
  * @version $Revision$
  */
 public class TimeseriesZoomOverviewPanel
-  extends AbstractDataContainerZoomOverviewPanel<TimeseriesPanel, TimeseriesPaintlet, TimeseriesZoomOverviewPaintlet, Timeseries, TimeseriesContainerManager> {
+  extends AbstractDataContainerZoomOverviewPanel<TimeseriesPanel, AbstractTimeseriesPaintlet, TimeseriesZoomOverviewPaintlet, Timeseries, TimeseriesContainerManager> {
 
   /** for serialization. */
   private static final long serialVersionUID = 3177044172306748613L;

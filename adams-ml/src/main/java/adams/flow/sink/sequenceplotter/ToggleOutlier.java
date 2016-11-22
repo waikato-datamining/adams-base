@@ -106,8 +106,8 @@ public class ToggleOutlier
     Vector<XYSequencePoint> 	hits;
     SequencePlotPoint		point;
 
-    if (m_HitDetector.getOwner() != panel.getPaintlet())
-      m_HitDetector.setOwner(panel.getPaintlet());
+    if (m_HitDetector.getOwner() != panel.getDataPaintlet())
+      m_HitDetector.setOwner(panel.getDataPaintlet());
     located = m_HitDetector.locate(e);
     if (located instanceof Vector) {
       hits = (Vector<XYSequencePoint>) located;

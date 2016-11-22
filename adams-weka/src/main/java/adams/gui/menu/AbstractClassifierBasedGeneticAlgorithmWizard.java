@@ -147,7 +147,7 @@ public abstract class AbstractClassifierBasedGeneticAlgorithmWizard
       axis = getDefaultAxisY();
       axis.configure(getPlot(), Axis.LEFT);
 
-      setPaintlet(new CirclePaintlet());
+      setDataPaintlet(new CirclePaintlet());
     }
 
   /**

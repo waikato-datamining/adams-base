@@ -775,8 +775,8 @@ public class ActualVsPredictedPlot
     }
     fixedPaintlet = new PaintletWithFixedXYRange();
     fixedPaintlet.setPaintlet(paintlet);
-    result.setPaintlet(fixedPaintlet);
-    ActorUtils.updateFlowAwarePaintlet(result.getPaintlet(), this);
+    result.setDataPaintlet(fixedPaintlet);
+    ActorUtils.updateFlowAwarePaintlet(result.getDataPaintlet(), this);
     result.setOverlayPaintlet(new StraightLineOverlayPaintlet());
     ActorUtils.updateFlowAwarePaintlet(result.getOverlayPaintlet(), this);
     getDefaultAxisX().configure(result.getPlot(), Axis.BOTTOM);
@@ -822,7 +822,7 @@ public class ActualVsPredictedPlot
     Cell 				cell;
     HashMap<String,Object>		meta;
 
-    paintlet = (PaintletWithFixedXYRange) panel.getPaintlet();
+    paintlet = (PaintletWithFixedXYRange) panel.getDataPaintlet();
     manager  = (SequencePlotContainerManager) panel.getContainerManager();
 
     m_Actual.setData(sheet);
@@ -962,8 +962,8 @@ public class ActualVsPredictedPlot
 	}
 	fixedPaintlet = new PaintletWithFixedXYRange();
 	fixedPaintlet.setPaintlet(paintlet);
-	m_Panel.setPaintlet(fixedPaintlet);
-	ActorUtils.updateFlowAwarePaintlet(m_Panel.getPaintlet(), ActualVsPredictedPlot.this);
+	m_Panel.setDataPaintlet(fixedPaintlet);
+	ActorUtils.updateFlowAwarePaintlet(m_Panel.getDataPaintlet(), ActualVsPredictedPlot.this);
 	m_Panel.setOverlayPaintlet(new StraightLineOverlayPaintlet());
 	ActorUtils.updateFlowAwarePaintlet(m_Panel.getOverlayPaintlet(), ActualVsPredictedPlot.this);
 	getDefaultAxisX().configure(m_Panel.getPlot(), Axis.BOTTOM);

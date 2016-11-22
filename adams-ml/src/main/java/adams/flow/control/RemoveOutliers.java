@@ -428,10 +428,10 @@ public class RemoveOutliers
     lrPaintlet.setOutputSlopeIntercept(true);
     overlays.setSubPaintlets(new XYSequencePaintlet[]{diagonal, lrPaintlet});
 
-    m_PlotterPanel.setPaintlet(paintlet);
+    m_PlotterPanel.setDataPaintlet(paintlet);
     m_PlotterPanel.setMouseClickAction(mouseClick);
     m_PlotterPanel.setOverlayPaintlet(overlays);
-    ActorUtils.updateFlowAwarePaintlet(m_PlotterPanel.getPaintlet(), this);
+    ActorUtils.updateFlowAwarePaintlet(m_PlotterPanel.getDataPaintlet(), this);
     result.add(m_PlotterPanel, BorderLayout.CENTER);
 
     panelRight = new JPanel(new BorderLayout());

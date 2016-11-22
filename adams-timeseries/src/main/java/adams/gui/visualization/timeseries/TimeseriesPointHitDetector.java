@@ -113,7 +113,7 @@ public class TimeseriesPointHitDetector
     axisLeft   = m_Owner.getPlot().getAxis(Axis.LEFT);
     val        = axisLeft.posToValue((int) e.getY());
     time       = (long) axisBottom.posToValue((int) e.getX());
-    model      = (TimeseriesContainerModel) m_Owner.getTimeseriesContainerList().getContainerModel();
+    model      = (TimeseriesContainerModel) m_Owner.getContainerList().getContainerModel();
 
     for (i = 0; i < model.getRowCount(); i++) {
       if (!((TimeseriesContainer) model.getContainerAt(i)).isVisible())

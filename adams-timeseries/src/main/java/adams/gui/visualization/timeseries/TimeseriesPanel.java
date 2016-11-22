@@ -21,12 +21,13 @@
 package adams.gui.visualization.timeseries;
 
 import adams.core.Properties;
-import adams.core.Range;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
 import adams.core.option.OptionUtils;
 import adams.data.io.output.AbstractTimeseriesWriter;
 import adams.data.io.output.MetaFileWriter;
+import adams.data.report.DataType;
+import adams.data.report.Field;
 import adams.data.report.Report;
 import adams.data.statistics.InformativeStatistic;
 import adams.data.timeseries.PeriodicityHelper;
@@ -37,34 +38,29 @@ import adams.db.AbstractDatabaseConnection;
 import adams.db.DatabaseConnection;
 import adams.gui.core.AntiAliasingSupporter;
 import adams.gui.core.BasePopupMenu;
+import adams.gui.core.ColorHelper;
 import adams.gui.core.GUIHelper;
 import adams.gui.dialog.SpreadSheetDialog;
 import adams.gui.event.PaintListener;
 import adams.gui.scripting.AbstractScriptingEngine;
-import adams.gui.scripting.Invisible;
 import adams.gui.scripting.ScriptingEngine;
-import adams.gui.scripting.Visible;
 import adams.gui.sendto.SendToActionUtils;
-import adams.gui.visualization.container.ContainerListPopupMenuSupplier;
+import adams.gui.visualization.container.ContainerModel;
 import adams.gui.visualization.container.ContainerTable;
-import adams.gui.visualization.container.DataContainerPanelWithSidePanel;
-import adams.gui.visualization.container.NotesFactory;
+import adams.gui.visualization.container.DataContainerPanelWithContainerList;
 import adams.gui.visualization.core.AbstractColorProvider;
 import adams.gui.visualization.core.CoordinatesPaintlet;
 import adams.gui.visualization.core.CoordinatesPaintlet.Coordinates;
 import adams.gui.visualization.core.DefaultColorProvider;
+import adams.gui.visualization.core.Paintlet;
 import adams.gui.visualization.core.PaintletWithFixedXRange;
 import adams.gui.visualization.core.PlotPanel;
-import adams.gui.visualization.core.PopupMenuCustomizer;
 import adams.gui.visualization.core.plot.Axis;
 import adams.gui.visualization.core.plot.TipTextCustomizer;
 import adams.gui.visualization.report.ReportContainer;
 import adams.gui.visualization.report.ReportFactory;
 import adams.gui.visualization.statistics.InformativeStatisticFactory;
-import com.github.fracpete.jclipboardhelper.ClipboardHelper;
-import gnu.trove.list.array.TIntArrayList;
 
-import javax.swing.JColorChooser;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -90,9 +86,8 @@ import java.util.List;
  * @version $Revision$
  */
 public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainerManager<C>, C extends TimeseriesContainer>
-  extends DataContainerPanelWithSidePanel<T, M>
-  implements PaintListener, ContainerListPopupMenuSupplier<M,C>,
-  PopupMenuCustomizer, TipTextCustomizer, AntiAliasingSupporter {
+  extends DataContainerPanelWithContainerList<T, M, C>
+  implements PaintListener, TipTextCustomizer, AntiAliasingSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = -9059718549932104312L;
@@ -111,9 +106,6 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
 
   /** paintlet for drawing the timeseries. */
   protected SelectedTimestampPaintlet m_SelectedTimestampPaintlet;
-
-  /** the panel listing the spectra. */
-  protected TimeseriesContainerList m_TimeseriesContainerList;
 
   /** for detecting hits. */
   protected TimeseriesPointHitDetector m_TimeseriesPointHitDetector;
@@ -193,16 +185,6 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
   }
 
   /**
-   * Returns whether the panel has a side panel. If that is the case, a
-   * JSplitPanel is used.
-   *
-   * @return		true if a side panel is to be added
-   */
-  protected boolean hasSidePanel() {
-    return true;
-  }
-
-  /**
    * Initializes the GUI.
    */
   @Override
@@ -217,21 +199,6 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
     m_ToolTipMaxColumns = props.getInteger("Plot.ToolTip.MaxColumns", 80);
 
     setAdjustToVisibleData(props.getBoolean("Plot.AdjustToVisibleData", false));
-
-    m_TimeseriesContainerList = new TimeseriesContainerList();
-    m_TimeseriesContainerList.setManager(getContainerManager());
-    m_TimeseriesContainerList.setAllowSearch(props.getBoolean("ContainerList.AllowSearch", false));
-    m_TimeseriesContainerList.setPopupMenuSupplier(this);
-    m_TimeseriesContainerList.setDisplayDatabaseID(true);
-    m_TimeseriesContainerList.addTableModelListener((TableModelEvent e) -> {
-        final ContainerTable table = m_TimeseriesContainerList.getTable();
-        if ((table.getRowCount() > 0) && (table.getSelectedRowCount() == 0)) {
-          SwingUtilities.invokeLater(() -> table.getSelectionModel().addSelectionInterval(0, 0));
-        }
-    });
-
-    m_SidePanel.setLayout(new BorderLayout(0, 0));
-    m_SidePanel.add(m_TimeseriesContainerList);
 
     panel = new JPanel();
     panel.setMinimumSize(new Dimension(1, props.getInteger("Axis.Bottom.Width", 0)));
@@ -278,6 +245,30 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
     m_PanelZoomOverview = new TimeseriesZoomOverviewPanel();
     m_PlotWrapperPanel.add(m_PanelZoomOverview, BorderLayout.SOUTH);
     m_PanelZoomOverview.setDataContainerPanel(this);
+  }
+
+  /**
+   * Returns the container list.
+   *
+   * @return		the list
+   */
+  @Override
+  protected TimeseriesContainerList createContainerList() {
+    TimeseriesContainerList 	result;
+
+    result = new TimeseriesContainerList();
+    result.setManager(getContainerManager());
+    result.setAllowSearch(getProperties().getBoolean("ContainerList.AllowSearch", false));
+    result.setPopupMenuSupplier(this);
+    result.setDisplayDatabaseID(true);
+    result.addTableModelListener((TableModelEvent e) -> {
+        final ContainerTable table = result.getTable();
+        if ((table.getRowCount() > 0) && (table.getSelectedRowCount() == 0)) {
+          SwingUtilities.invokeLater(() -> table.getSelectionModel().addSelectionInterval(0, 0));
+        }
+    });
+
+    return result;
   }
 
   /**
@@ -442,145 +433,19 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
    */
   @Override
   public BasePopupMenu getContainerListPopupMenu(final ContainerTable<M,C> table, final int row) {
-    BasePopupMenu			result;
-    JMenuItem				item;
-    final int[]				indices;
-    final TimeseriesContainerModel	model;
-    final int				actRow;
-    final List<TimeseriesContainer> 	visibleConts;
+    BasePopupMenu		result;
+    JMenuItem			item;
+    final int[]			indices;
+    final ContainerModel<M,C>	model;
+    final int			actRow;
+    final List<C> 		visibleConts;
 
-    result = new BasePopupMenu();
-    model  = (TimeseriesContainerModel) getTimeseriesContainerList().getContainerModel();
+    result = super.getContainerListPopupMenu(table, row);
 
-    if (table.getSelectedRows().length == 0)
-      indices = new int[]{row};
-    else
-      indices = table.getSelectedRows();
-    for (int i = 0; i < indices.length; i++) {
-      TimeseriesContainer cont = (TimeseriesContainer) model.getContainerAt(indices[i]);
-      indices[i] = ((TimeseriesContainerManager) getContainerManager()).indexOf(cont);
-    }
-    actRow = ((TimeseriesContainerManager) getContainerManager()).indexOf(model.getContainerAt(row));
-
-    visibleConts = new ArrayList<>();
-    for (int i = 0; i < model.getRowCount(); i++) {
-      if (((TimeseriesContainer) model.getContainerAt(i)).isVisible())
-	visibleConts.add((TimeseriesContainer) model.getContainerAt(i));
-    }
-
-    item = new JMenuItem("Toggle visibility");
-    item.addActionListener((ActionEvent e) -> {
-      TIntArrayList visible = new TIntArrayList();
-      TIntArrayList invisible = new TIntArrayList();
-      for (int i = 0; i < indices.length; i++) {
-	if (getContainerManager().isVisible(indices[i]))
-	  invisible.add(indices[i]);
-	else
-	  visible.add(indices[i]);
-      }
-      Range range = new Range();
-      range.setMax(getContainerManager().count());
-      if (invisible.size() > 0) {
-        range.setIndices(invisible.toArray());
-        getScriptingEngine().add(
-          TimeseriesPanel.this,
-          Invisible.ACTION + " " + range.getRange());
-      }
-      if (visible.size() > 0) {
-        range.setIndices(visible.toArray());
-        getScriptingEngine().add(
-          TimeseriesPanel.this,
-          Visible.ACTION + " " + range.getRange());
-      }
-    });
-    result.add(item);
-
-    item = new JMenuItem("Show all");
-    item.addActionListener((ActionEvent e) -> {
-      TIntArrayList list = new TIntArrayList();
-      for (int i = 0; i < model.getRowCount(); i++) {
-	int index = ((TimeseriesContainerManager) getContainerManager()).indexOf(model.getContainerAt(i));
-	if (!((TimeseriesContainer) model.getContainerAt(i)).isVisible())
-	  list.add(index);
-      }
-      if (list.size() > 0) {
-        Range range = new Range();
-        range.setMax(getContainerManager().count());
-        range.setIndices(list.toArray());
-        getScriptingEngine().add(
-          TimeseriesPanel.this,
-          Visible.ACTION + " " + range.getRange());
-      }
-    });
-    result.add(item);
-
-    item = new JMenuItem("Hide all");
-    item.addActionListener((ActionEvent e) -> {
-      TIntArrayList list = new TIntArrayList();
-      for (int i = 0; i < model.getRowCount(); i++) {
-	int index = ((TimeseriesContainerManager) getContainerManager()).indexOf(model.getContainerAt(i));
-	if (((TimeseriesContainer) model.getContainerAt(i)).isVisible())
-	  list.add(index);
-      }
-      if (list.size() > 0) {
-        Range range = new Range();
-        range.setMax(getContainerManager().count());
-        range.setIndices(list.toArray());
-        getScriptingEngine().add(
-          TimeseriesPanel.this,
-          Invisible.ACTION + " " + range.getRange());
-      }
-    });
-    result.add(item);
-
-    item = new JMenuItem("Choose color...");
-    item.addActionListener((ActionEvent e) -> {
-      Color c = null;
-      if (indices.length == 1) {
-        c = JColorChooser.showDialog(
-          table,
-          "Choose color for " + getContainerManager().get(indices[0]).getData().getID(),
-          getContainerManager().get(indices[0]).getColor());
-      }
-      else {
-        c = JColorChooser.showDialog(
-          table,
-          "Choose color",
-          getContainerManager().get(row).getColor());
-      }
-      if (c == null)
-	return;
-      for (int index: indices)
-	getContainerManager().get(index).setColor(c);
-    });
-    result.add(item);
-
-    if (getContainerManager().getAllowRemoval()) {
-      result.addSeparator();
-
-      item = new JMenuItem("Remove");
-      item.addActionListener((ActionEvent e) -> m_TimeseriesContainerList.getTable().removeContainers(indices));
-      result.add(item);
-
-      item = new JMenuItem("Remove all");
-      item.addActionListener((ActionEvent e) -> m_TimeseriesContainerList.getTable().removeAllContainers());
-      result.add(item);
-    }
-
-    result.addSeparator();
-
-    item = new JMenuItem("Copy ID" + (indices.length > 1 ? "s" : ""));
-    item.setEnabled(indices.length > 0);
-    item.addActionListener((ActionEvent e) -> {
-      StringBuilder id = new StringBuilder();
-      for (int i = 0; i < indices.length; i++) {
-        if (id.length() > 0)
-          id.append("\n");
-        id.append(getContainerManager().get(indices[i]).getDisplayID());
-      }
-      ClipboardHelper.copyToClipboard(id.toString());
-    });
-    result.add(item);
+    model        = getContainerList().getContainerModel();
+    actRow       = getContainerManager().indexOf(model.getContainerAt(row));
+    indices      = getSelectedContainerIndices(table, row);
+    visibleConts = getTableModelContainers(true);
 
     item = new JMenuItem("Information");
     item.addActionListener((ActionEvent e) -> {
@@ -600,10 +465,6 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
     item.addActionListener((ActionEvent e) -> showReports(visibleConts));
     result.add(item);
 
-    item = new JMenuItem("Notes");
-    item.addActionListener((ActionEvent e) -> showNotes(visibleConts));
-    result.add(item);
-
     return result;
   }
 
@@ -615,42 +476,12 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
    */
   @Override
   public void customizePopupMenu(MouseEvent e, JPopupMenu menu) {
-    JMenuItem				item;
-    final TimeseriesContainerModel	model;
-    final List<TimeseriesContainer> 	visibleConts;
+    JMenuItem			item;
+    final List<C> 		visibleConts;
 
-    model        = (TimeseriesContainerModel) getTimeseriesContainerList().getContainerModel();
-    visibleConts = new ArrayList<>();
-    for (int i = 0; i < model.getRowCount(); i++) {
-      if (((TimeseriesContainer) model.getContainerAt(i)).isVisible())
-	visibleConts.add((TimeseriesContainer) model.getContainerAt(i));
-    }
+    super.customizePopupMenu(e, menu);
 
-    menu.addSeparator();
-
-    if (m_TimeseriesPaintlet instanceof TimeseriesPaintlet) {
-      item = new JMenuItem();
-      item.setIcon(GUIHelper.getEmptyIcon());
-      if (!((TimeseriesPaintlet) getTimeseriesPaintlet()).isMarkersDisabled())
-        item.setText("Disable markers");
-      else
-        item.setText("Enable markers");
-      item.addActionListener((ActionEvent ae) -> {
-        ((TimeseriesPaintlet) getTimeseriesPaintlet()).setMarkersDisabled(
-          !((TimeseriesPaintlet) getTimeseriesPaintlet()).isMarkersDisabled());
-        repaint();
-      });
-      menu.add(item);
-    }
-
-    item = new JMenuItem();
-    item.setIcon(GUIHelper.getEmptyIcon());
-    if (isSidePanelVisible())
-      item.setText("Hide side panel");
-    else
-      item.setText("Show side panel");
-    item.addActionListener((ActionEvent ae) -> setSidePanelVisible(!isSidePanelVisible()));
-    menu.add(item);
+    visibleConts = getTableModelContainers(true);
 
     item = new JMenuItem();
     item.setIcon(GUIHelper.getEmptyIcon());
@@ -666,10 +497,8 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
     item = new JMenuItem("Series statistics", GUIHelper.getIcon("statistics.png"));
     item.addActionListener((ActionEvent ae) -> {
       List<InformativeStatistic> stats = new ArrayList<>();
-      for (int i = 0; i < model.getRowCount(); i++) {
-        if (((TimeseriesContainer) model.getContainerAt(i)).isVisible())
-          stats.add(((TimeseriesContainer) model.getContainerAt(i)).getData().toStatistic());
-      }
+      for (C cont: visibleConts)
+	stats.add(cont.getData().toStatistic());
       showStatistics(stats);
     });
     menu.add(item);
@@ -681,23 +510,6 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
     menu.add(item);
 
     SendToActionUtils.addSendToSubmenu(this, menu);
-  }
-
-  /**
-   * Displays the notes for the given chromatograms.
-   *
-   * @param data	the chromatograms to display
-   */
-  protected void showNotes(List<TimeseriesContainer> data) {
-    NotesFactory.Dialog		dialog;
-
-    if (getParentDialog() != null)
-      dialog = NotesFactory.getDialog(getParentDialog(), ModalityType.MODELESS);
-    else
-      dialog = NotesFactory.getDialog(getParentFrame(), false);
-    dialog.setData(data);
-    dialog.setLocationRelativeTo(this);
-    dialog.setVisible(true);
   }
 
   /**
@@ -722,7 +534,7 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
    *
    * @param cont	the container to display the raw data for
    */
-  protected void showRawData(TimeseriesContainer cont) {
+  protected void showRawData(C cont) {
     SpreadSheetDialog	dialog;
 
     if (getParentDialog() != null)
@@ -745,7 +557,7 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
    *
    * @param data	the timeseries to display the reports for
    */
-  protected void showReports(List<TimeseriesContainer> data) {
+  protected void showReports(List<C> data) {
     ReportFactory.Dialog	dialog;
     List<ReportContainer>	conts;
     ReportContainer		rc;
@@ -775,7 +587,7 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
    * @return		the indices
    */
   public int[] getSelectedIndices() {
-    return m_TimeseriesContainerList.getTable().getSelectedRows();
+    return m_ContainerList.getTable().getSelectedRows();
   }
 
   /**
@@ -783,29 +595,14 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
    *
    * @return		the spectra
    */
-  public Timeseries[] getSelectedSpectra() {
-    Timeseries[]	result;
-    int[]		indices;
-    int			i;
-    M			manager;
+  public Timeseries[] getSelectedSeries() {
+    List<Timeseries>		result;
 
-    indices = getSelectedIndices();
-    result  = new Timeseries[indices.length];
-    manager = getContainerManager();
+    result = new ArrayList<>();
+    for (int index: getSelectedIndices())
+      result.add(getContainerManager().get(index).getData());
 
-    for (i = 0; i < indices.length; i++)
-      result[i] = manager.get(i).getData();
-
-    return result;
-  }
-
-  /**
-   * Returns the panel listing the timeseries.
-   *
-   * @return		the panel
-   */
-  public TimeseriesContainerList getTimeseriesContainerList() {
-    return m_TimeseriesContainerList;
+    return result.toArray(new Timeseries[result.size()]);
   }
 
   /**
@@ -824,10 +621,10 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
    * @param value	if true then anti-aliasing is used
    */
   public void setAntiAliasingEnabled(boolean value) {
-    if (m_TimeseriesPaintlet instanceof AntiAliasingSupporter) {
+    if (m_TimeseriesPaintlet instanceof AntiAliasingSupporter)
       ((AntiAliasingSupporter) m_TimeseriesPaintlet).setAntiAliasingEnabled(value);
-      m_PanelZoomOverview.getContainerPaintlet().setAntiAliasingEnabled(value);
-    }
+    if (m_PanelZoomOverview.getContainerPaintlet() instanceof AntiAliasingSupporter)
+      ((AntiAliasingSupporter) m_PanelZoomOverview.getContainerPaintlet()).setAntiAliasingEnabled(value);
   }
 
   /**
@@ -836,10 +633,8 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
    * @return		true if anti-aliasing is used
    */
   public boolean isAntiAliasingEnabled() {
-    if (m_TimeseriesPaintlet instanceof AntiAliasingSupporter)
-      return ((AntiAliasingSupporter) m_TimeseriesPaintlet).isAntiAliasingEnabled();
-    else
-      return false;
+    return (m_TimeseriesPaintlet instanceof AntiAliasingSupporter)
+      && ((AntiAliasingSupporter) m_TimeseriesPaintlet).isAntiAliasingEnabled();
   }
 
   /**
@@ -889,17 +684,36 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
   }
 
   /**
+   * Returns the paintlet used for painting the data.
+   *
+   * @return		the paintlet
+   */
+  @Override
+  public Paintlet getDataPaintlet() {
+    return m_TimeseriesPaintlet;
+  }
+
+  /**
+   * Sets the paintlet to use for painting the data.
+   *
+   * @param value	the paintlet
+   */
+  public void setDataPaintlet(Paintlet value) {
+    removePaintlet(m_TimeseriesPaintlet);
+    m_TimeseriesPaintlet = (AbstractTimeseriesPaintlet) value;
+    m_TimeseriesPaintlet.setPanel(this);
+    addPaintlet(m_TimeseriesPaintlet);
+  }
+
+  /**
    * Saves the visible timeseries to a directory.
    */
   protected void saveVisibleSeries() {
     AbstractTimeseriesWriter 	writer;
     String 			filename;
-    int				i;
-    TimeseriesContainer 	cont;
     String[] 			ext;
     List<Timeseries> 		data;
     String 			prefix;
-    TimeseriesContainerModel	model;
 
     if (m_ExportDialog == null) {
       if (getParentDialog() != null)
@@ -911,8 +725,6 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
     m_ExportDialog.setVisible(true);
     if (m_ExportDialog.getOption() != TimeseriesExportDialog.APPROVE_OPTION)
       return;
-
-    model = (TimeseriesContainerModel) getTimeseriesContainerList().getContainerModel();
 
     // write data
     writer = m_ExportDialog.getExport();
@@ -926,28 +738,52 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
       filename = m_ExportDialog.getDirectory().getAbsolutePath() + File.separator + filename + "." + ext[0];
       writer.setOutput(new PlaceholderFile(filename));
       data = new ArrayList<>();
-      for (i = 0; i < model.getRowCount(); i++) {
-	if (!((TimeseriesContainer) model.getContainerAt(i)).isVisible())
-	  continue;
-	cont = (TimeseriesContainer) model.getContainerAt(i);
-	data.add(cont.getData());
-      }
+      for (C c: getTableModelContainers(true))
+	data.add(c.getData());
       if (!writer.write(data))
         GUIHelper.showErrorMessage(TimeseriesPanel.this, "Failed to write timeseries data to '" + filename + "'!");
     }
     else {
       prefix = m_ExportDialog.getDirectory().getAbsolutePath();
-      for (i = 0; i < model.getRowCount(); i++) {
-	if (!((TimeseriesContainer) model.getContainerAt(i)).isVisible())
-	  continue;
-	cont = (TimeseriesContainer) model.getContainerAt(i);
-        filename = prefix + File.separator + FileUtils.createFilename(cont.getDisplayID(), "") + "." + ext[0];
+      for (C c: getTableModelContainers(true)) {
+        filename = prefix + File.separator + FileUtils.createFilename(c.getDisplayID(), "") + "." + ext[0];
         writer.setOutput(new PlaceholderFile(filename));
-        if (!writer.write(cont.getData())) {
-          GUIHelper.showErrorMessage(TimeseriesPanel.this, "Failed to write timeseries #" + (i+1) + " to '" + filename + "'!");
+        if (!writer.write(c.getData())) {
+          GUIHelper.showErrorMessage(TimeseriesPanel.this, "Failed to write timeseries #" + c + " to '" + filename + "'!");
           break;
         }
       }
+    }
+  }
+
+  /**
+   * Returns true if storing the color in the report of container's data object
+   * is supported.
+   *
+   * @return		true if supported
+   */
+  @Override
+  protected boolean supportsStoreColorInReport() {
+    return true;
+  }
+
+  /**
+   * Stores the color of the container in the report of container's
+   * data object.
+   *
+   * @param indices	the indices of the containers of the container manager
+   * @param name	the field name to use
+   */
+  @Override
+  protected void storeColorInReport(int[] indices, String name) {
+    Field 	field;
+    C		cont;
+
+    field = new Field(name, DataType.STRING);
+    for (int index: indices) {
+      cont = getContainerManager().get(index);
+      cont.getData().getReport().addField(field);
+      cont.getData().getReport().setValue(field, ColorHelper.toHex(cont.getColor()));
     }
   }
 
@@ -956,7 +792,7 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
    */
   @Override
   public void cleanUp() {
-    m_TimeseriesContainerList.cleanUp();
+    m_ContainerList.cleanUp();
 
     if (m_ExportDialog != null) {
       m_ExportDialog.dispose();

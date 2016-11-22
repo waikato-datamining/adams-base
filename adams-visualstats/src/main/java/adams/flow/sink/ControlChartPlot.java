@@ -765,7 +765,7 @@ public class ControlChartPlot
     });
 
     result = new SequencePlotterPanel(getTitle());
-    result.setPaintlet(multi);
+    result.setDataPaintlet(multi);
     result.setMarkerPaintlet((MarkerPaintlet) m_SeparatorPaintlet.shallowCopy());
     result.setMouseClickAction(m_MouseClickAction);
     m_AxisX.configure(result.getPlot(), Axis.BOTTOM);
@@ -773,7 +773,7 @@ public class ControlChartPlot
     result.setColorProvider(getColorProvider().shallowCopy());
     result.getContainerList().setAllowSearch(false);
 
-    ActorUtils.updateFlowAwarePaintlet(result.getPaintlet(), this);
+    ActorUtils.updateFlowAwarePaintlet(result.getDataPaintlet(), this);
     ActorUtils.updateFlowAwarePaintlet(result.getMarkerPaintlet(), this);
 
     return result;

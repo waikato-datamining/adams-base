@@ -29,7 +29,7 @@ import adams.gui.visualization.container.AbstractDataContainerZoomOverviewPanel;
  * @version $Revision$
  */
 public class InstanceZoomOverviewPanel
-  extends AbstractDataContainerZoomOverviewPanel<InstancePanel, InstanceLinePaintlet, InstanceZoomOverviewPaintlet, Instance, InstanceContainerManager> {
+  extends AbstractDataContainerZoomOverviewPanel<InstancePanel, AbstractInstancePaintlet, InstanceZoomOverviewPaintlet, Instance, InstanceContainerManager> {
 
   /** for serialization. */
   private static final long serialVersionUID = -5141649373267221710L;
