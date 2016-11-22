@@ -677,7 +677,9 @@ public class PartitionedMultiFilter2
 	for (m = 0; m < processed[n].numAttributes(); m++) {
 	  if (m == processed[n].classIndex())
 	    continue;
-	  if (result.attribute(index).isString())
+	  if (processed[n].instance(i).isMissing(m))
+	    values[index] = Utils.missingValue();
+	  else if (result.attribute(index).isString())
 	    values[index] = result.attribute(index).addStringValue(processed[n].instance(i).stringValue(m));
 	  else if (result.attribute(index).isRelationValued())
 	    values[index] = result.attribute(index).addRelation(processed[n].instance(i).relationalValue(m));
@@ -690,7 +692,9 @@ public class PartitionedMultiFilter2
       // unused attributes
       if (!getRemoveUnused()) {
 	for (n = 0; n < m_IndicesUnused.length; n++) {
-	  if (result.attribute(index).isString())
+	  if (inst.isMissing(m_IndicesUnused[n]))
+	    values[index] = Utils.missingValue();
+	  else if (result.attribute(index).isString())
 	    values[index] = result.attribute(index).addStringValue(inst.stringValue(m_IndicesUnused[n]));
 	  else if (result.attribute(index).isRelationValued())
 	    values[index] = result.attribute(index).addRelation(inst.relationalValue(m_IndicesUnused[n]));
@@ -703,7 +707,9 @@ public class PartitionedMultiFilter2
       // class
       if (instances.classIndex() > -1) {
 	index = values.length - 1;
-	if (result.attribute(index).isString())
+	if (inst.classIsMissing())
+	  values[index] = Utils.missingValue();
+	else if (result.attribute(index).isString())
 	  values[index] = result.attribute(index).addStringValue(inst.stringValue(instances.classIndex()));
 	else if (result.attribute(index).isRelationValued())
 	  values[index] = result.attribute(index).addRelation(inst.relationalValue(instances.classIndex()));
