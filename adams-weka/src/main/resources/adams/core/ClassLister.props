@@ -111,6 +111,14 @@ adams.gui.tools.wekainvestigator.tab.clustertab.output.AbstractOutputGenerator=\
 adams.gui.tools.wekainvestigator.tab.preprocesstab.attributeselaction.AbstractSelectedAttributesAction=\
   adams.gui.tools.wekainvestigator.tab.preprocesstab.attributeselaction
 
+# The actions for the container list popup menu of data container panels
+adams.gui.visualization.container.datacontainerpanel.containerlistpopup.AbstractContainerListPopupCustomizer=\
+  adams.gui.visualization.instance.containerlistpopup
+
+# The actions for the plot popup menu of data container panels
+adams.gui.visualization.container.datacontainerpanel.plotpopup.AbstractPlotPopupCustomizer=\
+  adams.gui.visualization.instance.plotpopup
+
 # the paintlets for the instance panel
 adams.gui.visualization.instance.AbstractInstancePaintlet=\
   adams.gui.visualization.instance

@@ -63,7 +63,6 @@ import adams.gui.visualization.core.plot.HitDetectorSupporter;
 import adams.gui.visualization.core.plot.TipTextCustomizer;
 
 import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import java.awt.BorderLayout;
@@ -206,8 +205,8 @@ public class XYSequencePanel
       ((AntiAliasingSupporter) m_XYSequencePaintlet).setAntiAliasingEnabled(props.getBoolean("Plot.AntiAliasing", true));
     m_XYSequencePaintlet.setPanel(this);
     setDataPaintlet(
-	AbstractPaintlet.forCommandLine(
-	    props.getPath("Plot.Paintlet", new StickPaintlet().toCommandLine())));
+      AbstractPaintlet.forCommandLine(
+	props.getPath("Plot.Paintlet", new StickPaintlet().toCommandLine())));
 
     m_CoordinatesPaintlet = new CoordinatesPaintlet();
     m_CoordinatesPaintlet.setYInvisible(true);
@@ -478,48 +477,6 @@ public class XYSequencePanel
   }
 
   /**
-   * Optional customizing of the menu that is about to be popped up.
-   *
-   * @param e		the mous event
-   * @param menu	the menu to customize
-   */
-  @Override
-  public void customizePopupMenu(MouseEvent e, JPopupMenu menu) {
-    JMenuItem	item;
-
-    super.customizePopupMenu(e, menu);
-
-    if (getAllowResize()) {
-      item = new JMenuItem("Resize...", GUIHelper.getEmptyIcon());
-      item.addActionListener((ActionEvent ae) -> showResizeDialog());
-      menu.add(item);
-    }
-
-    item = new JMenuItem();
-    item.setIcon(GUIHelper.getEmptyIcon());
-    if (m_AdjustToVisibleData)
-      item.setText("Adjust to loaded data");
-    else
-      item.setText("Adjust to visible data");
-    item.addActionListener((ActionEvent ae) -> {
-      m_AdjustToVisibleData = !m_AdjustToVisibleData;
-      update();
-    });
-    if (!(m_XYSequencePaintlet instanceof PaintletWithFixedYRange))
-      menu.add(item);
-
-    menu.addSeparator();
-
-    item = new JMenuItem("Save visible sequences...", GUIHelper.getEmptyIcon());
-    item.addActionListener((ActionEvent ae) -> saveVisibleSequences());
-    menu.add(item);
-
-    item = new JMenuItem("Save visible data points...", GUIHelper.getEmptyIcon());
-    item.addActionListener((ActionEvent ae) -> saveVisibleDataPoints());
-    menu.add(item);
-  }
-
-  /**
    * Sets whether to use anti-aliasing.
    *
    * @param value	if true then anti-aliasing is used
@@ -598,7 +555,7 @@ public class XYSequencePanel
    * Saves all the visible sequences to a directory with a user-specified
    * spreadsheet writer.
    */
-  protected void saveVisibleSequences() {
+  public void saveVisibleSequences() {
     saveVisible(null, null);
   }
 
@@ -606,7 +563,7 @@ public class XYSequencePanel
    * Saves all the visible data points to a directory with a user-specified
    * spreadsheet writer.
    */
-  protected void saveVisibleDataPoints() {
+  public void saveVisibleDataPoints() {
     saveVisible(
       new double[]{
 	m_PlotPanel.getAxis(Axis.BOTTOM).getActualMinimum(),
@@ -623,7 +580,7 @@ public class XYSequencePanel
    *
    * @param cont	the sequence to save
    */
-  protected void saveSequence(XYSequenceContainer cont) {
+  public void saveSequence(XYSequenceContainer cont) {
     int			retVal;
     XYSequence 		seq;
     SpreadSheetWriter	writer;
@@ -647,7 +604,7 @@ public class XYSequencePanel
    *
    * @param cont	the sequence to save
    */
-  protected void viewSequence(XYSequenceContainer cont) {
+  public void viewSequence(XYSequenceContainer cont) {
     XYSequence 		seq;
     SpreadSheetDialog	dialog;
     SpreadSheet		sheet;
@@ -720,7 +677,7 @@ public class XYSequencePanel
    * @return		true if supported
    */
   @Override
-  protected boolean supportsStoreColorInReport() {
+  public boolean supportsStoreColorInReport() {
     return false;
   }
 
@@ -731,7 +688,7 @@ public class XYSequencePanel
    * @param name	the field name to use
    */
   @Override
-  protected void storeColorInReport(int[] indices, String name) {
+  public void storeColorInReport(int[] indices, String name) {
   }
 
   /**
@@ -767,7 +724,7 @@ public class XYSequencePanel
   /**
    * Shows a dialog that allows the user to resize the plot.
    */
-  protected void showResizeDialog() {
+  public void showResizeDialog() {
     ApprovalDialog	dialog;
     ParameterPanel		paramPanel;
     JSpinner			spinnerWidth;

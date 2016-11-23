@@ -33,7 +33,6 @@ import adams.db.AbstractDatabaseConnection;
 import adams.db.DatabaseConnection;
 import adams.gui.chooser.SpreadSheetFileChooser;
 import adams.gui.core.AntiAliasingSupporter;
-import adams.gui.core.BasePopupMenu;
 import adams.gui.core.ColorHelper;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.Undo;
@@ -53,13 +52,8 @@ import adams.gui.visualization.core.PlotPanel;
 import adams.gui.visualization.core.plot.Axis;
 import adams.gui.visualization.core.plot.TipTextCustomizer;
 import weka.core.Instances;
-import weka.core.converters.AbstractFileSaver;
-import weka.gui.AdamsHelper;
-import weka.gui.ConverterFileChooser;
 
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 import javax.swing.event.TableModelEvent;
 import java.awt.BorderLayout;
@@ -68,7 +62,6 @@ import java.awt.Dialog.ModalityType;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Point;
-import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Date;
@@ -360,7 +353,7 @@ public class InstancePanel
    * @return		true if supported
    */
   @Override
-  protected boolean supportsStoreColorInReport() {
+  public boolean supportsStoreColorInReport() {
     return true;
   }
 
@@ -372,7 +365,7 @@ public class InstancePanel
    * @param name	the field name to use
    */
   @Override
-  protected void storeColorInReport(int[] indices, String name) {
+  public void storeColorInReport(int[] indices, String name) {
     Field 		field;
     InstanceContainer	cont;
 
@@ -385,76 +378,11 @@ public class InstancePanel
   }
 
   /**
-   * Optional customizing of the menu that is about to be popped up.
-   *
-   * @param e		the mous event
-   * @param menu	the menu to customize
-   */
-  @Override
-  public void customizePopupMenu(MouseEvent e, JPopupMenu menu) {
-    JMenuItem	item;
-
-    super.customizePopupMenu(e, menu);
-
-    item = new JMenuItem();
-    item.setIcon(GUIHelper.getEmptyIcon());
-    if (m_AdjustToVisibleData)
-      item.setText("Adjust to loaded data");
-    else
-      item.setText("Adjust to visible data");
-    item.addActionListener((ActionEvent ae) -> {
-      m_AdjustToVisibleData = !m_AdjustToVisibleData;
-      update();
-    });
-    menu.add(item);
-
-    menu.addSeparator();
-
-    item = new JMenuItem("Instance histogram", GUIHelper.getIcon("histogram.png"));
-    item.addActionListener((ActionEvent ae) -> showHistogram(getContainerManager().getAllVisible()));
-    menu.add(item);
-
-    item = new JMenuItem("Instance notes", GUIHelper.getEmptyIcon());
-    item.addActionListener((ActionEvent ae) -> showNotes(getContainerManager().getAllVisible()));
-    menu.add(item);
-
-    menu.addSeparator();
-
-    item = new JMenuItem("Save visible instances...", GUIHelper.getIcon("save.gif"));
-    item.addActionListener((ActionEvent ae) -> {
-      ConverterFileChooser fc = new ConverterFileChooser();
-      AdamsHelper.updateFileChooserAccessory(fc);
-      int retval = fc.showSaveDialog(InstancePanel.this);
-      if (retval != ConverterFileChooser.APPROVE_OPTION)
-        return;
-      weka.core.Instances dataset = null;
-      for (InstanceContainer c: getTableModelContainers(true)) {
-        if (dataset == null)
-          dataset = new weka.core.Instances(c.getData().getDatasetHeader(), 0);
-	dataset.add((weka.core.Instance) c.getData().toInstance().copy());
-      }
-      if (dataset == null)
-        return;
-      AbstractFileSaver saver = fc.getSaver();
-      saver.setInstances(dataset);
-      try {
-        saver.writeBatch();
-      }
-      catch (Exception ex) {
-        ex.printStackTrace();
-        GUIHelper.showErrorMessage(
-          InstancePanel.this, "Error saving instances:\n" + ex);
-      }
-    });
-    menu.add(item);
-  }
-
-  /**
    * Displays the histograms for the given instances.
    *
    * @param data	the instances to display
    */
-  protected void showHistogram(List<InstanceContainer> data) {
+  public void showHistogram(List<InstanceContainer> data) {
     HistogramFactory.Dialog	dialog;
     int				i;
     Instance			inst;
@@ -485,42 +413,11 @@ public class InstancePanel
   }
 
   /**
-   * Returns a popup menu for the table of the spectrum list.
-   *
-   * @param table	the affected table
-   * @param row	the row the mouse is currently over
-   * @return		the popup menu
-   */
-  @Override
-  public BasePopupMenu getContainerListPopupMenu(final ContainerTable<InstanceContainerManager,InstanceContainer> table, final int row) {
-    BasePopupMenu	result;
-    JMenuItem		item;
-    final int[] 	indices;
-
-    result  = super.getContainerListPopupMenu(table, row);
-    indices = getSelectedContainerIndices(table, row);
-
-    result.addSeparator();
-
-    item = new JMenuItem("Save as...");
-    item.setEnabled(indices.length == 1);
-    item.addActionListener((ActionEvent e) -> saveInstance(getContainerManager().get(indices[0])));
-    result.add(item);
-
-    item = new JMenuItem("View as table");
-    item.setEnabled(indices.length == 1);
-    item.addActionListener((ActionEvent e) -> viewInstance(getContainerManager().get(indices[0])));
-    result.add(item);
-
-    return result;
-  }
-
-  /**
    * Saves the specified instance as spreadsheet file.
    *
    * @param cont	the instance to save
    */
-  protected void saveInstance(InstanceContainer cont) {
+  public void saveInstance(InstanceContainer cont) {
     int			retVal;
     Instance 		inst;
     SpreadSheetWriter	writer;
@@ -544,7 +441,7 @@ public class InstancePanel
    *
    * @param cont	the instance to view
    */
-  protected void viewInstance(InstanceContainer cont) {
+  public void viewInstance(InstanceContainer cont) {
     Instance 		isnt;
     SpreadSheetDialog	dialog;
     SpreadSheet		sheet;

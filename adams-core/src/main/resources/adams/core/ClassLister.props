@@ -577,6 +577,16 @@ adams.gui.tools.previewbrowser.AbstractContentHandler=\
 adams.gui.tools.previewbrowser.SerializedObjectViewer=\
   adams.gui.tools.previewbrowser
 
+# The actions for the container list popup menu of data container panels
+adams.gui.visualization.container.datacontainerpanel.containerlistpopup.AbstractContainerListPopupCustomizer=\
+  adams.gui.visualization.container.datacontainerpanel.containerlistpopup,\
+  adams.gui.visualization.sequence.containerlistpopup
+
+# The actions for the plot popup menu of data container panels
+adams.gui.visualization.container.datacontainerpanel.plotpopup.AbstractPlotPopupCustomizer=\
+  adams.gui.visualization.container.datacontainerpanel.plotpopup,\
+  adams.gui.visualization.sequence.plotpopup
+
 # the color providers to use for plotting
 adams.gui.visualization.core.AbstractColorProvider=\
   adams.gui.visualization.core

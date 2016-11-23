@@ -20,30 +20,25 @@
 
 package adams.gui.visualization.container;
 
-import adams.core.Range;
+import adams.core.ClassLister;
+import adams.core.logging.LoggingLevel;
 import adams.data.container.DataContainer;
-import adams.gui.core.AntiAliasingSupporter;
 import adams.gui.core.BasePopupMenu;
-import adams.gui.core.GUIHelper;
-import adams.gui.scripting.Invisible;
-import adams.gui.scripting.Visible;
-import adams.gui.sendto.SendToActionUtils;
+import adams.gui.core.ConsolePanel;
+import adams.gui.visualization.container.datacontainerpanel.PopupCustomizerComparator;
+import adams.gui.visualization.container.datacontainerpanel.containerlistpopup.AbstractContainerListPopupCustomizer;
+import adams.gui.visualization.container.datacontainerpanel.plotpopup.AbstractPlotPopupCustomizer;
 import adams.gui.visualization.core.Paintlet;
-import adams.gui.visualization.core.PaintletWithMarkers;
 import adams.gui.visualization.core.PopupMenuCustomizer;
-import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 import gnu.trove.list.TIntList;
 import gnu.trove.list.array.TIntArrayList;
 
-import javax.swing.JColorChooser;
-import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dialog.ModalityType;
-import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -61,6 +56,12 @@ public abstract class DataContainerPanelWithContainerList<T extends DataContaine
   /** the container list. */
   protected AbstractContainerList<M, C> m_ContainerList;
 
+  /** the customizers for the plot popup menu. */
+  protected List<AbstractPlotPopupCustomizer> m_PlotCustomizers;
+
+  /** the customizers for the container list popup menu. */
+  protected List<AbstractContainerListPopupCustomizer> m_ContainerListCustomizers;
+
   /**
    * Initializes the panel without title.
    */
@@ -75,6 +76,45 @@ public abstract class DataContainerPanelWithContainerList<T extends DataContaine
    */
   public DataContainerPanelWithContainerList(String title) {
     super(title);
+  }
+
+  /**
+   * Initializes the widgets.
+   */
+  @Override
+  protected void initialize() {
+    Class[]			classes;
+    PopupCustomizerComparator	comp;
+
+    super.initialize();
+
+    comp = new PopupCustomizerComparator();
+
+    m_PlotCustomizers = new ArrayList<>();
+    classes = ClassLister.getSingleton().getClasses(AbstractPlotPopupCustomizer.class);
+    for (Class c: classes) {
+      try {
+	m_PlotCustomizers.add((AbstractPlotPopupCustomizer) c.newInstance());
+      }
+      catch (Exception e) {
+	ConsolePanel.getSingleton().append(
+	  LoggingLevel.SEVERE, "Failed to instantiate plot popup customizer: " + c.getName(), e);
+      }
+    }
+    Collections.sort(m_PlotCustomizers, comp);
+
+    m_ContainerListCustomizers = new ArrayList<>();
+    classes = ClassLister.getSingleton().getClasses(AbstractContainerListPopupCustomizer.class);
+    for (Class c: classes) {
+      try {
+	m_ContainerListCustomizers.add((AbstractContainerListPopupCustomizer) c.newInstance());
+      }
+      catch (Exception e) {
+	ConsolePanel.getSingleton().append(
+	  LoggingLevel.SEVERE, "Failed to instantiate container list popup customizer: " + c.getName(), e);
+      }
+    }
+    Collections.sort(m_ContainerListCustomizers, comp);
   }
 
   /**
@@ -113,7 +153,7 @@ public abstract class DataContainerPanelWithContainerList<T extends DataContaine
    * @param visible	whether to return the visible or hidden ones
    * @return		the indices
    */
-  protected int[] getTableModelIndices(boolean visible) {
+  public int[] getTableModelIndices(boolean visible) {
     TIntList 			result;
     ContainerModel<M,C>		model;
     C 				cont;
@@ -141,7 +181,7 @@ public abstract class DataContainerPanelWithContainerList<T extends DataContaine
    * @param visible	whether to return the visible or hidden ones
    * @return		the containers
    */
-  protected List<C> getTableModelContainers(boolean visible) {
+  public List<C> getTableModelContainers(boolean visible) {
     List<C> 	result;
     int[]	indices;
 
@@ -160,7 +200,7 @@ public abstract class DataContainerPanelWithContainerList<T extends DataContaine
    * @param row  	the current row (used if no rows selected in table)
    * @return		the actual indices as used by the container manager
    */
-  protected int[] getSelectedContainerIndices(ContainerTable<M,C> table, int row) {
+  public int[] getSelectedContainerIndices(ContainerTable<M,C> table, int row) {
     int[] 			result;
     ContainerModel<M,C>		model;
 
@@ -188,144 +228,21 @@ public abstract class DataContainerPanelWithContainerList<T extends DataContaine
   @Override
   public BasePopupMenu getContainerListPopupMenu(final ContainerTable<M,C> table, final int row) {
     BasePopupMenu	result;
-    JMenuItem 		item;
-    final int[] 	indices;
-    final List<C> 	visibleConts;
-    boolean 		supportsVisibility;
-    boolean		supportsColor;
+    String		group;
 
-    result       = new BasePopupMenu();
-    indices      = getSelectedContainerIndices(table, row);
-    visibleConts = getTableModelContainers(true);
+    result = new BasePopupMenu();
 
-    supportsVisibility = (getContainerManager() instanceof VisibilityContainerManager);
-    supportsColor      = (getContainerManager() instanceof ColorContainerManager);
-
-    if (supportsVisibility) {
-      item = new JMenuItem("Toggle visibility");
-      item.addActionListener((ActionEvent e) -> {
-	TIntList visible = new TIntArrayList();
-	TIntList invisible = new TIntArrayList();
-	for (int index: indices) {
-	  if (((VisibilityContainer) getContainerManager().get(index)).isVisible())
-	    invisible.add(index);
-	  else
-	    visible.add(index);
-	}
-	Range range = new Range();
-	range.setMax(getContainerManager().count());
-	if (invisible.size() > 0) {
-	  range.setIndices(invisible.toArray());
-	  getScriptingEngine().add(
-	    this,
-	    processAction(Invisible.ACTION) + " " + range.getRange());
-	}
-	if (visible.size() > 0) {
-	  range.setIndices(visible.toArray());
-	  getScriptingEngine().add(
-	    this,
-	    processAction(Visible.ACTION) + " " + range.getRange());
-	}
-      });
-      result.add(item);
-
-      item = new JMenuItem("Show all");
-      item.addActionListener((ActionEvent e) -> {
-	int[] list = getTableModelIndices(false);
-	if (list.length > 0) {
-	  Range range = new Range();
-	  range.setMax(getContainerManager().count());
-	  range.setIndices(list);
-	  getScriptingEngine().add(
-	    this,
-	    processAction(Visible.ACTION) + " " + range.getRange());
-	}
-      });
-      result.add(item);
-
-      item = new JMenuItem("Hide all");
-      item.addActionListener((ActionEvent e) -> {
-	int[] list = getTableModelIndices(true);
-	if (list.length > 0) {
-	  Range range = new Range();
-	  range.setMax(getContainerManager().count());
-	  range.setIndices(list);
-	  getScriptingEngine().add(
-	    this,
-	    processAction(Invisible.ACTION) + " " + range.getRange());
-	}
-      });
-      result.add(item);
-    }
-
-    if (supportsColor) {
-      item = new JMenuItem("Choose color...");
-      item.addActionListener((ActionEvent e) -> {
-	String msg = "Choose color";
-	C cont;
-	Color color = Color.BLUE;
-	if (indices.length == 1) {
-	  cont = (C) getContainerManager().get(indices[0]);
-	  if (cont instanceof NamedContainer)
-	    msg += " for " + ((NamedContainer) cont).getID();
-	  color = ((ColorContainer) cont).getColor();
-	}
-	Color c = JColorChooser.showDialog(
-	  DataContainerPanelWithContainerList.this,
-	  msg,
-	  color);
-	if (c == null)
-	  return;
-	for (int index : indices)
-	  ((ColorContainer) getContainerManager().get(index)).setColor(c);
-      });
-      result.add(item);
-
-      if (supportsStoreColorInReport()) {
-	item = new JMenuItem("Store color in report...");
-	item.addActionListener((ActionEvent e) -> {
-	  String name = GUIHelper.showInputDialog(
-	    DataContainerPanelWithContainerList.this, "Please enter the field name for storing the color");
-	  if (name == null)
-	    return;
-	  storeColorInReport(indices, name);
-	});
-	result.add(item);
+    group = null;
+    for (AbstractContainerListPopupCustomizer customizer: m_ContainerListCustomizers) {
+      if (!customizer.handles(this))
+	continue;
+      if (group != null) {
+	if (!group.equals(customizer.getGroup()))
+	  result.addSeparator();
       }
+      customizer.customize(this, table, row, result);
+      group = customizer.getGroup();
     }
-
-    if (getContainerManager().getAllowRemoval()) {
-      result.addSeparator();
-
-      item = new JMenuItem("Remove");
-      item.addActionListener((ActionEvent e) -> m_ContainerList.getTable().removeContainers(indices));
-      result.add(item);
-
-      item = new JMenuItem("Remove all");
-      item.addActionListener((ActionEvent e) -> m_ContainerList.getTable().removeAllContainers());
-      result.add(item);
-    }
-
-    result.addSeparator();
-
-    if (getContainerManager() instanceof NamedContainerManager) {
-      item = new JMenuItem("Copy ID" + (indices.length > 1 ? "s" : ""));
-      item.setEnabled(indices.length > 0);
-      item.addActionListener((ActionEvent e) -> {
-	StringBuilder id = new StringBuilder();
-	for (int index: indices) {
-	  if (id.length() > 0)
-	    id.append("\n");
-	  id.append(((NamedContainer) getContainerManager().get(index)).getDisplayID());
-	}
-	ClipboardHelper.copyToClipboard(id.toString());
-      });
-      result.add(item);
-    }
-
-    item = new JMenuItem("Notes");
-    item.addActionListener((ActionEvent e) -> showNotes(visibleConts));
-    result.add(item);
 
     return result;
   }
@@ -338,55 +255,21 @@ public abstract class DataContainerPanelWithContainerList<T extends DataContaine
    */
   @Override
   public void customizePopupMenu(MouseEvent e, JPopupMenu menu) {
-    JMenuItem			item;
-    final List<C> 		visibleConts;
-    PaintletWithMarkers		paintlet;
-
-    visibleConts = getTableModelContainers(true);
+    String		group;
 
     menu.addSeparator();
 
-    if (getDataPaintlet() instanceof PaintletWithMarkers) {
-      paintlet = (PaintletWithMarkers) getDataPaintlet();
-      item = new JMenuItem();
-      item.setIcon(GUIHelper.getEmptyIcon());
-      if (!paintlet.isMarkersDisabled())
-	item.setText("Disable markers");
-      else
-	item.setText("Enable markers");
-      item.addActionListener((ActionEvent ae) -> {
-	paintlet.setMarkersDisabled(!paintlet.isMarkersDisabled());
-	repaint();
-      });
-      menu.add(item);
+    group = null;
+    for (AbstractPlotPopupCustomizer customizer: m_PlotCustomizers) {
+      if (!customizer.handles(this))
+	continue;
+      if (group != null) {
+	if (!group.equals(customizer.getGroup()))
+	  menu.addSeparator();
+      }
+      customizer.customize(this, e, menu);
+      group = customizer.getGroup();
     }
-
-    if (getDataPaintlet() instanceof AntiAliasingSupporter) {
-      final AntiAliasingSupporter aapaintlet = (AntiAliasingSupporter) getDataPaintlet();
-      item = new JMenuItem();
-      item.setIcon(GUIHelper.getEmptyIcon());
-      if (aapaintlet.isAntiAliasingEnabled())
-	item.setText("Disable anti-aliasing");
-      else
-	item.setText("Enable anti-aliasing");
-      item.addActionListener((ActionEvent ae) -> aapaintlet.setAntiAliasingEnabled(!aapaintlet.isAntiAliasingEnabled()));
-      menu.add(item);
-    }
-
-    item = new JMenuItem();
-    item.setIcon(GUIHelper.getEmptyIcon());
-    if (isSidePanelVisible())
-      item.setText("Hide side panel");
-    else
-      item.setText("Show side panel");
-    item.addActionListener((ActionEvent ae) -> setSidePanelVisible(!isSidePanelVisible()));
-    menu.add(item);
-
-    item = new JMenuItem("Notes", GUIHelper.getEmptyIcon());
-    item.addActionListener((ActionEvent ae) -> showNotes(visibleConts));
-    menu.add(item);
-
-    SendToActionUtils.addSendToSubmenu(this, menu);
   }
 
   /**
@@ -409,7 +292,7 @@ public abstract class DataContainerPanelWithContainerList<T extends DataContaine
    * @param action	the action to process
    * @return		the (potentially) updated name
    */
-  protected String processAction(String action) {
+  public String processAction(String action) {
     return action;
   }
 
@@ -418,7 +301,7 @@ public abstract class DataContainerPanelWithContainerList<T extends DataContaine
    *
    * @param data	the chromatograms to display
    */
-  protected void showNotes(List<C> data) {
+  public void showNotes(List<C> data) {
     NotesFactory.Dialog		dialog;
 
     if (getParentDialog() != null)
@@ -436,7 +319,7 @@ public abstract class DataContainerPanelWithContainerList<T extends DataContaine
    *
    * @return		true if supported
    */
-  protected abstract boolean supportsStoreColorInReport();
+  public abstract boolean supportsStoreColorInReport();
 
   /**
    * Stores the color of the container in the report of container's
@@ -445,7 +328,7 @@ public abstract class DataContainerPanelWithContainerList<T extends DataContaine
    * @param indices	the indices of the containers of the container manager
    * @param name	the field name to use
    */
-  protected abstract void storeColorInReport(int[] indices, String name);
+  public abstract void storeColorInReport(int[] indices, String name);
 
   /**
    * Cleans up data structures, frees up memory.

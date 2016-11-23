@@ -37,15 +37,12 @@ import adams.data.timeseries.TimeseriesPoint;
 import adams.db.AbstractDatabaseConnection;
 import adams.db.DatabaseConnection;
 import adams.gui.core.AntiAliasingSupporter;
-import adams.gui.core.BasePopupMenu;
 import adams.gui.core.ColorHelper;
 import adams.gui.core.GUIHelper;
 import adams.gui.dialog.SpreadSheetDialog;
 import adams.gui.event.PaintListener;
 import adams.gui.scripting.AbstractScriptingEngine;
 import adams.gui.scripting.ScriptingEngine;
-import adams.gui.sendto.SendToActionUtils;
-import adams.gui.visualization.container.ContainerModel;
 import adams.gui.visualization.container.ContainerTable;
 import adams.gui.visualization.container.DataContainerPanelWithContainerList;
 import adams.gui.visualization.core.AbstractColorProvider;
@@ -61,9 +58,7 @@ import adams.gui.visualization.report.ReportContainer;
 import adams.gui.visualization.report.ReportFactory;
 import adams.gui.visualization.statistics.InformativeStatisticFactory;
 
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 import javax.swing.event.TableModelEvent;
 import java.awt.BorderLayout;
@@ -72,7 +67,6 @@ import java.awt.Dialog.ModalityType;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Point;
-import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.ArrayList;
@@ -425,99 +419,11 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
   }
 
   /**
-   * Returns a popup menu for the table of the timeseries list.
-   *
-   * @param table	the affected table
-   * @param row	the row the mouse is currently over
-   * @return		the popup menu
-   */
-  @Override
-  public BasePopupMenu getContainerListPopupMenu(final ContainerTable<M,C> table, final int row) {
-    BasePopupMenu		result;
-    JMenuItem			item;
-    final int[]			indices;
-    final ContainerModel<M,C>	model;
-    final int			actRow;
-    final List<C> 		visibleConts;
-
-    result = super.getContainerListPopupMenu(table, row);
-
-    model        = getContainerList().getContainerModel();
-    actRow       = getContainerManager().indexOf(model.getContainerAt(row));
-    indices      = getSelectedContainerIndices(table, row);
-    visibleConts = getTableModelContainers(true);
-
-    item = new JMenuItem("Information");
-    item.addActionListener((ActionEvent e) -> {
-      List<InformativeStatistic> stats = new ArrayList<>();
-      for (TimeseriesContainer cont: visibleConts)
-	stats.add(cont.getData().toStatistic());
-      showStatistics(stats);
-    });
-    result.add(item);
-
-    item = new JMenuItem("Raw data");
-    item.setEnabled(indices.length == 1);
-    item.addActionListener((ActionEvent e) -> showRawData(getContainerManager().get(actRow)));
-    result.add(item);
-
-    item = new JMenuItem("Reports");
-    item.addActionListener((ActionEvent e) -> showReports(visibleConts));
-    result.add(item);
-
-    return result;
-  }
-
-  /**
-   * Optional customizing of the menu that is about to be popped up.
-   *
-   * @param e		the mous event
-   * @param menu	the menu to customize
-   */
-  @Override
-  public void customizePopupMenu(MouseEvent e, JPopupMenu menu) {
-    JMenuItem			item;
-    final List<C> 		visibleConts;
-
-    super.customizePopupMenu(e, menu);
-
-    visibleConts = getTableModelContainers(true);
-
-    item = new JMenuItem();
-    item.setIcon(GUIHelper.getEmptyIcon());
-    if (getAdjustToVisibleData())
-      item.setText("Adjust to loaded data");
-    else
-      item.setText("Adjust to visible data");
-    item.addActionListener((ActionEvent ae) -> setAdjustToVisibleData(!getAdjustToVisibleData()));
-    menu.add(item);
-
-    menu.addSeparator();
-
-    item = new JMenuItem("Series statistics", GUIHelper.getIcon("statistics.png"));
-    item.addActionListener((ActionEvent ae) -> {
-      List<InformativeStatistic> stats = new ArrayList<>();
-      for (C cont: visibleConts)
-	stats.add(cont.getData().toStatistic());
-      showStatistics(stats);
-    });
-    menu.add(item);
-
-    menu.addSeparator();
-
-    item = new JMenuItem("Save visible series...", GUIHelper.getIcon("save.gif"));
-    item.addActionListener((ActionEvent ae) -> saveVisibleSeries());
-    menu.add(item);
-
-    SendToActionUtils.addSendToSubmenu(this, menu);
-  }
-
-  /**
    * Displays a dialog with the given statistics.
    *
    * @param stats	the statistics to display
    */
-  protected void showStatistics(List<InformativeStatistic> stats) {
+  public void showStatistics(List<InformativeStatistic> stats) {
     InformativeStatisticFactory.Dialog	dialog;
 
     if (getParentDialog() != null)
@@ -534,7 +440,7 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
    *
    * @param cont	the container to display the raw data for
    */
-  protected void showRawData(C cont) {
+  public void showRawData(C cont) {
     SpreadSheetDialog	dialog;
 
     if (getParentDialog() != null)
@@ -557,7 +463,7 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
    *
    * @param data	the timeseries to display the reports for
    */
-  protected void showReports(List<C> data) {
+  public void showReports(List<C> data) {
     ReportFactory.Dialog	dialog;
     List<ReportContainer>	conts;
     ReportContainer		rc;
@@ -708,7 +614,7 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
   /**
    * Saves the visible timeseries to a directory.
    */
-  protected void saveVisibleSeries() {
+  public void saveVisibleSeries() {
     AbstractTimeseriesWriter 	writer;
     String 			filename;
     String[] 			ext;
@@ -763,7 +669,7 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
    * @return		true if supported
    */
   @Override
-  protected boolean supportsStoreColorInReport() {
+  public boolean supportsStoreColorInReport() {
     return true;
   }
 
@@ -775,7 +681,7 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
    * @param name	the field name to use
    */
   @Override
-  protected void storeColorInReport(int[] indices, String name) {
+  public void storeColorInReport(int[] indices, String name) {
     Field 	field;
     C		cont;
 

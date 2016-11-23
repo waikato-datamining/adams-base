@@ -31,7 +31,6 @@ import adams.db.AbstractDatabaseConnection;
 import adams.db.DatabaseConnection;
 import adams.gui.chooser.SpreadSheetFileChooser;
 import adams.gui.core.AntiAliasingSupporter;
-import adams.gui.core.BasePopupMenu;
 import adams.gui.core.ColorHelper;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.Undo;
@@ -51,9 +50,7 @@ import adams.gui.visualization.core.PlotPanel;
 import adams.gui.visualization.core.plot.Axis;
 import adams.gui.visualization.core.plot.TipTextCustomizer;
 
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 import javax.swing.event.TableModelEvent;
 import java.awt.BorderLayout;
@@ -62,7 +59,6 @@ import java.awt.Dialog.ModalityType;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Point;
-import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Date;
@@ -352,7 +348,7 @@ public class SpreadSheetRowPanel
    *
    * @param data	the instances to display
    */
-  protected void showHistogram(List<SpreadSheetRowContainer> data) {
+  public void showHistogram(List<SpreadSheetRowContainer> data) {
     HistogramFactory.Dialog	dialog;
     int				i;
     SpreadSheetRow		inst;
@@ -383,101 +379,11 @@ public class SpreadSheetRowPanel
   }
 
   /**
-   * Returns a popup menu for the table of the spectrum list.
-   *
-   * @param table	the affected table
-   * @param row	the row the mouse is currently over
-   * @return		the popup menu
-   */
-  @Override
-  public BasePopupMenu getContainerListPopupMenu(final ContainerTable<SpreadSheetRowContainerManager,SpreadSheetRowContainer> table, final int row) {
-    BasePopupMenu			result;
-    JMenuItem				item;
-    final int[] 			indices;
-    final SpreadSheetRowContainerModel	model;
-
-    result  = super.getContainerListPopupMenu(table, row);
-    indices = getSelectedContainerIndices(table, row);
-
-    result.addSeparator();
-
-    item = new JMenuItem("Save as...");
-    item.setEnabled(indices.length == 1);
-    item.addActionListener((ActionEvent e) -> saveInstance(getContainerManager().get(indices[0])));
-    result.add(item);
-
-    item = new JMenuItem("View as table");
-    item.setEnabled(indices.length == 1);
-    item.addActionListener((ActionEvent e) -> viewInstance(getContainerManager().get(indices[0])));
-    result.add(item);
-
-    return result;
-  }
-
-  /**
-   * Optional customizing of the menu that is about to be popped up.
-   *
-   * @param e		the mous event
-   * @param menu	the menu to customize
-   */
-  @Override
-  public void customizePopupMenu(MouseEvent e, JPopupMenu menu) {
-    JMenuItem	item;
-
-    super.customizePopupMenu(e, menu);
-
-    item = new JMenuItem();
-    item.setIcon(GUIHelper.getEmptyIcon());
-    if (m_AdjustToVisibleData)
-      item.setText("Adjust to loaded data");
-    else
-      item.setText("Adjust to visible data");
-    item.addActionListener((ActionEvent ae) -> {
-      m_AdjustToVisibleData = !m_AdjustToVisibleData;
-      update();
-    });
-    menu.add(item);
-
-    item = new JMenuItem("Row histogram", GUIHelper.getIcon("histogram.png"));
-    item.addActionListener((ActionEvent ae) -> showHistogram(getContainerManager().getAllVisible()));
-    menu.add(item);
-
-    item = new JMenuItem("Row notes", GUIHelper.getEmptyIcon());
-    item.addActionListener((ActionEvent ae) -> showNotes(getContainerManager().getAllVisible()));
-    menu.add(item);
-
-    menu.addSeparator();
-
-    item = new JMenuItem("Save visible rows...", GUIHelper.getIcon("save.gif"));
-    item.addActionListener((ActionEvent ae) -> {
-      SpreadSheetFileChooser fc = new SpreadSheetFileChooser();
-      int retval = fc.showSaveDialog(SpreadSheetRowPanel.this);
-      if (retval != SpreadSheetFileChooser.APPROVE_OPTION)
-        return;
-      SpreadSheet sheet = null;
-      for (int i = 0; i < getContainerManager().count(); i++) {
-        SpreadSheetRowContainer cont = getContainerManager().get(i);
-        if (i == 0)
-          sheet = cont.getData().getDatasetHeader().getHeader();
-        if (cont.isVisible())
-          sheet.addRow().assign(cont.getData().toRow());
-      }
-      if (sheet == null)
-        return;
-      SpreadSheetWriter writer = fc.getWriter();
-      if (!writer.write(sheet, fc.getSelectedFile()))
-        GUIHelper.showErrorMessage(
-          SpreadSheetRowPanel.this, "Error saving spreadsheet to:\n" + fc.getSelectedFile());
-    });
-    menu.add(item);
-  }
-
-  /**
    * Saves the specified instance as spreadsheet file.
    *
    * @param cont	the instance to save
    */
-  protected void saveInstance(SpreadSheetRowContainer cont) {
+  public void saveInstance(SpreadSheetRowContainer cont) {
     int			retVal;
     SpreadSheetRow 	row;
     SpreadSheetWriter	writer;
@@ -501,7 +407,7 @@ public class SpreadSheetRowPanel
    *
    * @param cont	the instance to view
    */
-  protected void viewInstance(SpreadSheetRowContainer cont) {
+  public void viewInstance(SpreadSheetRowContainer cont) {
     SpreadSheetRow 	row;
     SpreadSheetDialog	dialog;
     SpreadSheet		sheet;
@@ -624,7 +530,7 @@ public class SpreadSheetRowPanel
    * @return		true if supported
    */
   @Override
-  protected boolean supportsStoreColorInReport() {
+  public boolean supportsStoreColorInReport() {
     return true;
   }
 
@@ -636,7 +542,7 @@ public class SpreadSheetRowPanel
    * @param name	the field name to use
    */
   @Override
-  protected void storeColorInReport(int[] indices, String name) {
+  public void storeColorInReport(int[] indices, String name) {
     Field 			field;
     SpreadSheetRowContainer	cont;
 

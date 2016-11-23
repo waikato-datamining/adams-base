@@ -46,3 +46,11 @@ adams.gui.visualization.timeseries.TimeseriesXAxisPanelOptions=\
 # the axis panel options for timeseries (y axis)
 adams.gui.visualization.timeseries.TimeseriesYAxisPanelOptions=\
   adams.gui.visualization.timeseries
+
+# The actions for the container list popup menu of data container panels
+adams.gui.visualization.container.datacontainerpanel.containerlistpopup.AbstractContainerListPopupCustomizer=\
+  adams.gui.visualization.timeseries.containerlistpopup
+
+# The actions for the plot popup menu of data container panels
+adams.gui.visualization.container.datacontainerpanel.plotpopup.AbstractPlotPopupCustomizer=\
+  adams.gui.visualization.timeseries.plotpopup

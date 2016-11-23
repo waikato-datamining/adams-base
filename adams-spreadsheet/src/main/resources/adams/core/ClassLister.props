@@ -78,3 +78,11 @@ adams.gui.visualization.spreadsheet.AbstractSpreadSheetRowPaintlet=\
 # the spreadsheet row panel updaters
 adams.gui.visualization.spreadsheet.AbstractSpreadSheetRowPanelUpdater=\
   adams.gui.visualization.spreadsheet
+
+# The actions for the container list popup menu of data container panels
+adams.gui.visualization.container.datacontainerpanel.containerlistpopup.AbstractContainerListPopupCustomizer=\
+  adams.gui.visualization.spreadsheet.containerlistpopup
+
+# The actions for the plot popup menu of data container panels
+adams.gui.visualization.container.datacontainerpanel.plotpopup.AbstractPlotPopupCustomizer=\
+  adams.gui.visualization.spreadsheet.plotpopup
