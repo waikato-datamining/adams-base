@@ -176,7 +176,7 @@ public class SubRangeEvaluation
       }
 
       // add to history
-      itemSub = new ResultItem(evalSub, item.getTemplate(), null, new Instances(data, 0));
+      itemSub = new ResultItem(evalSub, item.getTemplate(), null, new Instances(data, 0), item.getRunInformation().getClone());
       history.addEntry(itemSub.getName(), itemSub);
       history.setSelectedIndex(history.count() - 1);
 
