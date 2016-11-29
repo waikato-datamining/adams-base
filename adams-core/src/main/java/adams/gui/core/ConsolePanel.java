@@ -71,7 +71,8 @@ public class ConsolePanel
    * @version $Revision$
    */
   public static class OutputPanel
-    extends BasePanel {
+    extends BasePanel
+    implements LogPanel {
 
     /** for serialization. */
     private static final long serialVersionUID = 8547336176163250862L;
@@ -230,6 +231,24 @@ public class ConsolePanel
      */
     public boolean getLineWrap() {
       return m_TextArea.getWordWrap();
+    }
+
+    /**
+     * Sets the current text.
+     *
+     * @param value	the text
+     */
+    public void setText(String value) {
+      m_TextArea.setText(value);
+    }
+
+    /**
+     * Returns the current text.
+     *
+     * @return		the tex
+     */
+    public String getText() {
+      return m_TextArea.getText();
     }
 
     /**

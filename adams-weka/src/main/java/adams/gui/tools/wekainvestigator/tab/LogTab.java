@@ -21,20 +21,12 @@
 package adams.gui.tools.wekainvestigator.tab;
 
 import adams.core.MessageCollection;
-import adams.core.io.FileUtils;
-import adams.gui.chooser.BaseFileChooser;
-import adams.gui.core.BaseTextAreaWithButtons;
-import adams.gui.core.ExtensionFileFilter;
-import adams.gui.core.Fonts;
-import adams.gui.core.GUIHelper;
+import adams.core.logging.LoggingLevel;
+import adams.gui.core.SimpleLogPanel;
 import adams.gui.event.WekaInvestigatorDataEvent;
 import adams.gui.tools.wekainvestigator.InvestigatorPanel;
-import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
 import java.util.Map;
 
 /**
@@ -50,39 +42,8 @@ public class LogTab
 
   public static final String KEY_LOG = "log";
 
-  /** the text area for the log. */
-  protected BaseTextAreaWithButtons m_TextLog;
-
-  /** the button for emptying the log. */
-  protected JButton m_ButtonClear;
-
-  /** the button for copying the text. */
-  protected JButton m_ButtonCopy;
-
-  /** the button for saving the text. */
-  protected JButton m_ButtonSave;
-
-  /** the checkbox for linewrap. */
-  protected JCheckBox m_CheckBoxLineWrap;
-
-  /** the filechooser for saving the log. */
-  protected BaseFileChooser m_FileChooser;
-
-  /**
-   * Initializes the members.
-   */
-  @Override
-  protected void initialize() {
-    ExtensionFileFilter		filter;
-
-    super.initialize();
-
-    m_FileChooser = new BaseFileChooser();
-    filter = ExtensionFileFilter.getLogFileFilter();
-    m_FileChooser.addChoosableFileFilter(filter);
-    m_FileChooser.addChoosableFileFilter(ExtensionFileFilter.getTextFileFilter());
-    m_FileChooser.setFileFilter(filter);
-  }
+  /** the log panel. */
+  protected SimpleLogPanel m_LogPanel;
 
   /**
    * Initializes the widgets.
@@ -93,55 +54,8 @@ public class LogTab
 
     m_ContentPanel.setLayout(new BorderLayout());
 
-    m_TextLog = new BaseTextAreaWithButtons();
-    m_TextLog.setTextFont(Fonts.getMonospacedFont());
-    m_TextLog.setEditable(false);
-    m_TextLog.setLineWrap(false);
-    m_TextLog.setWrapStyleWord(true);
-    m_ContentPanel.add(m_TextLog, BorderLayout.CENTER);
-
-    m_ButtonClear = new JButton("Clear", GUIHelper.getIcon("new.gif"));
-    m_ButtonClear.addActionListener((ActionEvent e) -> m_Owner.clearLog());
-    m_TextLog.addToButtonsPanel(m_ButtonClear);
-
-    m_ButtonCopy = new JButton("Copy", GUIHelper.getIcon("copy.gif"));
-    m_ButtonClear.addActionListener((ActionEvent e) -> {
-      if (m_TextLog.getSelectedText() != null)
-	ClipboardHelper.copyToClipboard(m_TextLog.getSelectedText());
-      else
-	ClipboardHelper.copyToClipboard(m_TextLog.getText());
-    });
-    m_TextLog.addToButtonsPanel(m_ButtonCopy);
-
-    m_ButtonSave = new JButton("Save...", GUIHelper.getIcon("save.gif"));
-    m_ButtonSave.addActionListener((ActionEvent e) -> {
-      int retVal = m_FileChooser.showSaveDialog(LogTab.this);
-      if (retVal != BaseFileChooser.APPROVE_OPTION)
-	return;
-      String msg = FileUtils.writeToFileMsg(
-	m_FileChooser.getSelectedFile().getAbsolutePath(),
-	m_TextLog.getText(),
-	false,
-	null);
-      if (msg != null)
-	GUIHelper.showErrorMessage(LogTab.this, msg);
-    });
-    m_TextLog.addToButtonsPanel(m_ButtonSave);
-
-    m_CheckBoxLineWrap = new JCheckBox("Line wrap");
-    m_CheckBoxLineWrap.setSelected(false);
-    m_CheckBoxLineWrap.addActionListener((ActionEvent e) -> m_TextLog.setLineWrap(m_CheckBoxLineWrap.isSelected()));
-    m_TextLog.addToButtonsPanel(m_CheckBoxLineWrap);
-  }
-
-  /**
-   * Finishes the initialization.
-   */
-  @Override
-  protected void finishInit() {
-    super.finishInit();
-
-    updateButtons();
+    m_LogPanel = new SimpleLogPanel();
+    m_ContentPanel.add(m_LogPanel, BorderLayout.CENTER);
   }
 
   /**
@@ -152,8 +66,7 @@ public class LogTab
   @Override
   public void setOwner(InvestigatorPanel value) {
     super.setOwner(value);
-    m_TextLog.setText(value.getLog().toString());
-    updateButtons();
+    m_LogPanel.setText(value.getLog().toString());
   }
 
   /**
@@ -176,24 +89,10 @@ public class LogTab
   }
 
   /**
-   * Updates the buttons.
-   */
-  protected void updateButtons() {
-    boolean	hasText;
-
-    hasText = (m_TextLog.getText().length() > 0);
-
-    m_ButtonClear.setEnabled(hasText);
-    m_ButtonCopy.setEnabled(hasText);
-    m_ButtonSave.setEnabled(hasText);
-  }
-
-  /**
    * Clears the log.
    */
   public void clearLog() {
-    m_TextLog.setText("");
-    updateButtons();
+    m_LogPanel.clear();
   }
 
   /**
@@ -202,10 +101,7 @@ public class LogTab
    * @param msg		the message
    */
   public void append(String msg) {
-    m_TextLog.append(msg);
-    m_TextLog.append("\n");
-    m_TextLog.setCaretPositionLast();
-    updateButtons();
+    m_LogPanel.append(LoggingLevel.INFO, msg);
   }
 
   /**
@@ -225,7 +121,7 @@ public class LogTab
     Map<String,Object>	result;
 
     result = super.doSerialize();
-    result.put(KEY_LOG, m_TextLog.getText());
+    result.put(KEY_LOG, m_LogPanel.getText());
 
     return result;
   }
@@ -239,6 +135,6 @@ public class LogTab
   protected void doDeserialize(Map<String,Object> data, MessageCollection errors) {
     super.doDeserialize(data, errors);
     if (data.containsKey(KEY_LOG))
-      m_TextLog.setText((String) data.get(KEY_LOG));
+      m_LogPanel.setText((String) data.get(KEY_LOG));
   }
 }
