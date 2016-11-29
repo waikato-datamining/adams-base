@@ -1141,9 +1141,9 @@ public class StatUtils {
    *
    * @param x		the x coordinates
    * @param y		the y coordinates
-   * @return		the slope
+   * @return		the slope and intercept
    */
-  public static double kendallTheil(double[] x, double[] y) {
+  public static double[] kendallTheil(double[] x, double[] y) {
     return kendallTheil(toNumberArray(x), toNumberArray(y));
   }
 
@@ -1154,9 +1154,10 @@ public class StatUtils {
    *
    * @param x		the x coordinates
    * @param y		the y coordinates
-   * @return		the slope
+   * @return		the slope and intercept
    */
-  public static double kendallTheil(Number[] x, Number[] y) {
+  public static double[] kendallTheil(Number[] x, Number[] y) {
+    double[]	result;
     double[]	slopes;
     int		i;
     int		j;
@@ -1167,7 +1168,7 @@ public class StatUtils {
 	  "Arrays differ in length: " + x.length + " != " + y.length);
 
     if (x.length <= 1)
-      return 1.0;
+      return new double[]{1.0, 0.0};
 
     slopes = new double[x.length * (x.length - 1) / 2];
     n      = 0;
@@ -1178,9 +1179,11 @@ public class StatUtils {
       }
     }
 
-    System.out.println(Utils.arrayToString(slopes));
+    result = new double[2];
+    result[0] = median(slopes);
+    result[1] = median(y) - result[0] * median(x);
 
-    return median(slopes);
+    return result;
   }
 
   /**

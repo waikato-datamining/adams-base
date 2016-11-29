@@ -26,7 +26,7 @@ import adams.core.TechnicalInformationHandler;
 
 /**
  <!-- globalinfo-start -->
- * Calculates the Kendall-Theil robust slope (also called Theil-Sen estimator) between the first array and the remaining arrays. The arrays must be numeric, of course.<br>
+ * Calculates the Kendall-Theil robust slope (also called Theil-Sen estimator) between the first array and the remaining arrays. The arrays must be numeric, of course. The slope is output in the first row, the intercept in the second.<br>
  * <br>
  * For more information:<br>
  * Wikipedia. Theil–Sen estimator.
@@ -61,7 +61,8 @@ public class ArrayKendallTheil<T extends Number>
     return
       "Calculates the Kendall-Theil robust slope (also called Theil-Sen estimator) "
         + "between the first array and the remaining arrays. The arrays must "
-        + "be numeric, of course.\n\n"
+        + "be numeric, of course. The slope is output in the first row, the "
+	+ "intercept in the second.\n\n"
         + "For more information:\n"
         + getTechnicalInformation();
   }
@@ -125,12 +126,15 @@ public class ArrayKendallTheil<T extends Number>
   protected StatisticContainer doCalculate() {
     StatisticContainer<Double>	result;
     int				i;
+    double[]			kt;
 
-    result = new StatisticContainer<>(1, size() - 1);
+    result = new StatisticContainer<>(2, size() - 1);
 
     for (i = 1; i < size(); i++) {
       result.setHeader(i - 1, "Kendall-Theil 1-" + (i+1));
-      result.setCell(0, i - 1, StatUtils.kendallTheil(get(0), get(i)));
+      kt = StatUtils.kendallTheil(get(0), get(i));
+      result.setCell(0, i - 1, kt[0]);
+      result.setCell(1, i - 1, kt[1]);
     }
 
     return result;
