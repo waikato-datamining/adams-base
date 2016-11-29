@@ -18,7 +18,7 @@
  * Copyright (C) 2016 University of Waikato, Hamilton, NZ
  */
 
-package adams.flow.sink.jfreechartplot.chart;
+package adams.gui.visualization.jfreechart.chart;
 
 import adams.core.QuickInfoHelper;
 import org.jfree.data.general.Dataset;

@@ -23,10 +23,10 @@ package adams.flow.sink;
 import adams.core.QuickInfoHelper;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.core.Token;
-import adams.flow.sink.jfreechartplot.chart.AbstractChartGenerator;
-import adams.flow.sink.jfreechartplot.chart.XYLineChart;
-import adams.flow.sink.jfreechartplot.dataset.AbstractDatasetGenerator;
-import adams.flow.sink.jfreechartplot.dataset.DefaultXY;
+import adams.gui.visualization.jfreechart.chart.AbstractChartGenerator;
+import adams.gui.visualization.jfreechart.chart.XYLineChart;
+import adams.gui.visualization.jfreechart.dataset.AbstractDatasetGenerator;
+import adams.gui.visualization.jfreechart.dataset.DefaultXY;
 import adams.gui.core.BasePanel;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -126,14 +126,14 @@ import java.awt.BorderLayout;
  * &nbsp;&nbsp;&nbsp;default: adams.gui.print.NullWriter
  * </pre>
  * 
- * <pre>-dataset &lt;adams.flow.sink.jfreechartplot.dataset.AbstractDatasetGenerator&gt; (property: dataset)
+ * <pre>-dataset &lt;adams.gui.visualization.jfreechart.dataset.AbstractDatasetGenerator&gt; (property: dataset)
  * &nbsp;&nbsp;&nbsp;The dataset generator to use.
- * &nbsp;&nbsp;&nbsp;default: adams.flow.sink.jfreechartplot.dataset.DefaultXY
+ * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.jfreechart.dataset.DefaultXY
  * </pre>
  * 
- * <pre>-chart &lt;adams.flow.sink.jfreechartplot.chart.AbstractChartGenerator&gt; (property: chart)
+ * <pre>-chart &lt;adams.gui.visualization.jfreechart.chart.AbstractChartGenerator&gt; (property: chart)
  * &nbsp;&nbsp;&nbsp;The chart generator to use.
- * &nbsp;&nbsp;&nbsp;default: adams.flow.sink.jfreechartplot.chart.XYLineChart
+ * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.jfreechart.chart.XYLineChart
  * </pre>
  * 
  <!-- options-end -->

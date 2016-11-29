@@ -25,10 +25,10 @@ import adams.data.image.BufferedImageContainer;
 import adams.data.io.output.AbstractImageWriter;
 import adams.data.io.output.JAIImageWriter;
 import adams.data.spreadsheet.SpreadSheet;
-import adams.flow.sink.jfreechartplot.chart.AbstractChartGenerator;
-import adams.flow.sink.jfreechartplot.chart.XYLineChart;
-import adams.flow.sink.jfreechartplot.dataset.AbstractDatasetGenerator;
-import adams.flow.sink.jfreechartplot.dataset.DefaultXY;
+import adams.gui.visualization.jfreechart.chart.AbstractChartGenerator;
+import adams.gui.visualization.jfreechart.chart.XYLineChart;
+import adams.gui.visualization.jfreechart.dataset.AbstractDatasetGenerator;
+import adams.gui.visualization.jfreechart.dataset.DefaultXY;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.general.Dataset;
 
@@ -87,14 +87,14 @@ import java.awt.image.BufferedImage;
  * &nbsp;&nbsp;&nbsp;default: ${CWD}
  * </pre>
  * 
- * <pre>-dataset &lt;adams.flow.sink.jfreechartplot.dataset.AbstractDatasetGenerator&gt; (property: dataset)
+ * <pre>-dataset &lt;adams.gui.visualization.jfreechart.dataset.AbstractDatasetGenerator&gt; (property: dataset)
  * &nbsp;&nbsp;&nbsp;The dataset generator to use.
- * &nbsp;&nbsp;&nbsp;default: adams.flow.sink.jfreechartplot.dataset.DefaultXY
+ * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.jfreechart.dataset.DefaultXY
  * </pre>
  * 
- * <pre>-chart &lt;adams.flow.sink.jfreechartplot.chart.AbstractChartGenerator&gt; (property: chart)
+ * <pre>-chart &lt;adams.gui.visualization.jfreechart.chart.AbstractChartGenerator&gt; (property: chart)
  * &nbsp;&nbsp;&nbsp;The chart generator to use.
- * &nbsp;&nbsp;&nbsp;default: adams.flow.sink.jfreechartplot.chart.XYLineChart
+ * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.jfreechart.chart.XYLineChart
  * </pre>
  * 
  * <pre>-width &lt;int&gt; (property: width)

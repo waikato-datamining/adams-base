@@ -48,12 +48,12 @@ adams.data.conversion.AbstractSpreadSheetConversion=\
   adams.data.conversion
 
 # the dataset generators for the JFreeChartPlot sink
-adams.flow.sink.jfreechartplot.dataset.AbstractDatasetGenerator=\
-  adams.flow.sink.jfreechartplot.dataset
+adams.gui.visualization.jfreechart.dataset.AbstractDatasetGenerator=\
+  adams.gui.visualization.jfreechart.dataset
 
 # the plot generators for the JFreeChartPlot sink
-adams.flow.sink.jfreechartplot.chart.AbstractChartGenerator=\
-  adams.flow.sink.jfreechartplot.chart
+adams.gui.visualization.jfreechart.chart.AbstractChartGenerator=\
+  adams.gui.visualization.jfreechart.chart
 
 # transformers for spreadsheets
 adams.flow.transformer.AbstractSpreadSheetTransformer=\
