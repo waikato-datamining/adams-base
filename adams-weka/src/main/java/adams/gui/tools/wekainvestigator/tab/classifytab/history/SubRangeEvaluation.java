@@ -21,6 +21,7 @@
 package adams.gui.tools.wekainvestigator.tab.classifytab.history;
 
 import adams.core.logging.LoggingLevel;
+import adams.data.spreadsheet.MetaData;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.NumberTextField;
@@ -149,6 +150,7 @@ public class SubRangeEvaluation
     int				i;
     Prediction			prd;
     ResultItem 			itemSub;
+    MetaData 			runInfoSub;
 
     try {
       // create dataset from predictions
@@ -176,7 +178,9 @@ public class SubRangeEvaluation
       }
 
       // add to history
-      itemSub = new ResultItem(evalSub, item.getTemplate(), null, new Instances(data, 0), item.getRunInformation().getClone());
+      runInfoSub = item.getRunInformation().getClone();
+      runInfoSub.add("Sub-range evaluation", "[" + range[0] + ";" + range[1] + "]");
+      itemSub = new ResultItem(evalSub, item.getTemplate(), null, new Instances(data, 0), runInfoSub);
       history.addEntry(itemSub.getName(), itemSub);
       history.setSelectedIndex(history.count() - 1);
 
