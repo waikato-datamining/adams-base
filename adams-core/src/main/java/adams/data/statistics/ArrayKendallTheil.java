@@ -26,12 +26,23 @@ import adams.core.TechnicalInformationHandler;
 
 /**
  <!-- globalinfo-start -->
- * Calculates the Kendall-Theil robust slope (also called Theil-Sen estimator) between the first array and the remaining arrays. The arrays must be numeric, of course. The slope is output in the first row, the intercept in the second.<br>
+ * Calculates the Kendall-Theil robust slope (also called Theil-Sen estimator) between the first array and the remaining arrays. The arrays must be numeric, of course.<br>
  * <br>
  * For more information:<br>
  * Wikipedia. Theil–Sen estimator.
  * <br><br>
  <!-- globalinfo-end -->
+ *
+ <!-- technical-bibtex-start -->
+ * <pre>
+ * &#64;misc{missing_id,
+ *    author = {Wikipedia},
+ *    title = {Theil–Sen estimator},
+ *    HTTP = {https:&#47;&#47;en.wikipedia.org&#47;wiki&#47;Theil%E2%80%93Sen_estimator}
+ * }
+ * </pre>
+ * <br><br>
+ <!-- technical-bibtex-end -->
  *
  <!-- options-start -->
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
@@ -61,8 +72,7 @@ public class ArrayKendallTheil<T extends Number>
     return
       "Calculates the Kendall-Theil robust slope (also called Theil-Sen estimator) "
         + "between the first array and the remaining arrays. The arrays must "
-        + "be numeric, of course. The slope is output in the first row, the "
-	+ "intercept in the second.\n\n"
+        + "be numeric, of course.\n\n"
         + "For more information:\n"
         + getTechnicalInformation();
   }
@@ -124,17 +134,25 @@ public class ArrayKendallTheil<T extends Number>
    * @return		the generated result
    */
   protected StatisticContainer doCalculate() {
-    StatisticContainer<Double>	result;
+    StatisticContainer<Number>	result;
     int				i;
-    double[]			kt;
+    double[] 			kt;
 
-    result = new StatisticContainer<>(2, size() - 1);
+    result = new StatisticContainer<>(1, (size() - 1)*2);
 
     for (i = 1; i < size(); i++) {
-      result.setHeader(i - 1, "Kendall-Theil 1-" + (i+1));
+      if (size() > 2) {
+	result.setHeader((i - 1)*2 + 0, "intercept_1-" + (i + 1));
+	result.setHeader((i - 1)*2 + 1, "slope_1-" + (i + 1));
+      }
+      else {
+	result.setHeader(0, "intercept");
+	result.setHeader(1, "slope");
+      }
+
       kt = StatUtils.kendallTheil(get(0), get(i));
-      result.setCell(0, i - 1, kt[0]);
-      result.setCell(1, i - 1, kt[1]);
+      result.setCell(0, (i - 1)*2 + 0, kt[0]);
+      result.setCell(0, (i - 1)*2 + 1, kt[1]);
     }
 
     return result;

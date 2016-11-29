@@ -1135,58 +1135,6 @@ public class StatUtils {
   }
 
   /**
-   * Computes the Kendall-Theil robust slope of the given data points.
-   * Also called Theil-Sen estimator (see
-   * <a href="https://en.wikipedia.org/wiki/Theil%E2%80%93Sen_estimator">here</a>).
-   *
-   * @param x		the x coordinates
-   * @param y		the y coordinates
-   * @return		the slope and intercept
-   */
-  public static double[] kendallTheil(double[] x, double[] y) {
-    return kendallTheil(toNumberArray(x), toNumberArray(y));
-  }
-
-  /**
-   * Computes the Kendall-Theil robust slope of the given data points.
-   * Also called Theil-Sen estimator (see
-   * <a href="https://en.wikipedia.org/wiki/Theil%E2%80%93Sen_estimator">here</a>).
-   *
-   * @param x		the x coordinates
-   * @param y		the y coordinates
-   * @return		the slope and intercept
-   */
-  public static double[] kendallTheil(Number[] x, Number[] y) {
-    double[]	result;
-    double[]	slopes;
-    int		i;
-    int		j;
-    int		n;
-
-    if (x.length != y.length)
-      throw new IllegalArgumentException(
-	  "Arrays differ in length: " + x.length + " != " + y.length);
-
-    if (x.length <= 1)
-      return new double[]{1.0, 0.0};
-
-    slopes = new double[x.length * (x.length - 1) / 2];
-    n      = 0;
-    for (i = 0; i < x.length - 1; i++) {
-      for (j = i + 1; j < x.length; j++) {
-	slopes[n] = (y[j].doubleValue() - y[i].doubleValue()) / (x[j].doubleValue() - x[i].doubleValue());
-	n++;
-      }
-    }
-
-    result = new double[2];
-    result[0] = median(slopes);
-    result[1] = median(y) - result[0] * median(x);
-
-    return result;
-  }
-
-  /**
    * Computes the root mean squared error between the two data vectors and returns it.
    *
    * @param actual	the second data array
@@ -1571,6 +1519,58 @@ public class StatUtils {
         / (n * StatUtils.sumOfSquares(x) - Math.pow(StatUtils.sum(x), 2));
 
     return new double[]{a, b};
+  }
+
+  /**
+   * Computes the Kendall-Theil robust regression of the given data points.
+   * Also called Theil-Sen estimator (see
+   * <a href="https://en.wikipedia.org/wiki/Theil%E2%80%93Sen_estimator">here</a>).
+   *
+   * @param x		the x coordinates
+   * @param y		the y coordinates
+   * @return		intercept/slope
+   */
+  public static double[] kendallTheil(double[] x, double[] y) {
+    return kendallTheil(toNumberArray(x), toNumberArray(y));
+  }
+
+  /**
+   * Computes the Kendall-Theil robust regression of the given data points.
+   * Also called Theil-Sen estimator (see
+   * <a href="https://en.wikipedia.org/wiki/Theil%E2%80%93Sen_estimator">here</a>).
+   *
+   * @param x		the x coordinates
+   * @param y		the y coordinates
+   * @return		intercept/slope
+   */
+  public static double[] kendallTheil(Number[] x, Number[] y) {
+    double[]	result;
+    double[]	slopes;
+    int		i;
+    int		j;
+    int		n;
+
+    if (x.length != y.length)
+      throw new IllegalArgumentException(
+	  "Arrays differ in length: " + x.length + " != " + y.length);
+
+    if (x.length <= 1)
+      return new double[]{1.0, 0.0};
+
+    slopes = new double[x.length * (x.length - 1) / 2];
+    n      = 0;
+    for (i = 0; i < x.length - 1; i++) {
+      for (j = i + 1; j < x.length; j++) {
+	slopes[n] = (y[j].doubleValue() - y[i].doubleValue()) / (x[j].doubleValue() - x[i].doubleValue());
+	n++;
+      }
+    }
+
+    result    = new double[2];
+    result[1] = median(slopes);
+    result[0] = median(y) - result[1] * median(x);
+
+    return result;
   }
 
   /**
