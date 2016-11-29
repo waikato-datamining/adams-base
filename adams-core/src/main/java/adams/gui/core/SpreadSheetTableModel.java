@@ -565,7 +565,7 @@ public class SpreadSheetTableModel
 	case BOOLEAN:
 	  return Boolean.class;
 	case LONG:
-	  return Long.class;
+	  return Double.class;  // see getComparisonValueAt
 	case DOUBLE:
 	  return Double.class;
 	case DATE:
@@ -594,17 +594,24 @@ public class SpreadSheetTableModel
    * @return		the field
    */
   public Object getComparisonValueAt(int row, int column) {
+    Object	result;
+
+    result = null;
+
     if (m_ShowRowColumn && (column == 0)) {
-      return new Integer(row + 2);
+      result = row + 2;
     }
     else {
       if (m_ShowRowColumn)
 	column--;
-      if (m_Sheet.hasCell(row, column) && !m_Sheet.getCell(row, column).isMissing())
-	return m_Sheet.getCell(row, column).getNative();
-      else
-	return null;
+      if (m_Sheet.hasCell(row, column) && !m_Sheet.getCell(row, column).isMissing()) {
+	result = m_Sheet.getCell(row, column).getNative();
+	if (result instanceof Long)  // see getComparisonColumnClass
+	  result = ((Long) result).doubleValue();
+      }
     }
+
+    return result;
   }
   
   /**
