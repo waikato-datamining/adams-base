@@ -15,7 +15,7 @@
 
 /*
  * StatUtils.java
- * Copyright (C) 2008-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.statistics;
@@ -1132,6 +1132,55 @@ public class StatUtils {
     }
 
     return c;
+  }
+
+  /**
+   * Computes the Kendall-Theil robust slope of the given data points.
+   * Also called Theil-Sen estimator (see
+   * <a href="https://en.wikipedia.org/wiki/Theil%E2%80%93Sen_estimator">here</a>).
+   *
+   * @param x		the x coordinates
+   * @param y		the y coordinates
+   * @return		the slope
+   */
+  public static double kendallTheil(double[] x, double[] y) {
+    return kendallTheil(toNumberArray(x), toNumberArray(y));
+  }
+
+  /**
+   * Computes the Kendall-Theil robust slope of the given data points.
+   * Also called Theil-Sen estimator (see
+   * <a href="https://en.wikipedia.org/wiki/Theil%E2%80%93Sen_estimator">here</a>).
+   *
+   * @param x		the x coordinates
+   * @param y		the y coordinates
+   * @return		the slope
+   */
+  public static double kendallTheil(Number[] x, Number[] y) {
+    double[]	slopes;
+    int		i;
+    int		j;
+    int		n;
+
+    if (x.length != y.length)
+      throw new IllegalArgumentException(
+	  "Arrays differ in length: " + x.length + " != " + y.length);
+
+    if (x.length <= 1)
+      return 1.0;
+
+    slopes = new double[x.length * (x.length - 1) / 2];
+    n      = 0;
+    for (i = 0; i < x.length - 1; i++) {
+      for (j = i + 1; j < x.length; j++) {
+	slopes[n] = (y[j].doubleValue() - y[i].doubleValue()) / (x[j].doubleValue() - x[i].doubleValue());
+	n++;
+      }
+    }
+
+    System.out.println(Utils.arrayToString(slopes));
+
+    return median(slopes);
   }
 
   /**
