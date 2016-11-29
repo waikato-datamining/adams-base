@@ -15,7 +15,7 @@
 
 /**
  * StyledTextEditorPanel.java
- * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
  * Copyright (C) Patrick Chan and Addison Wesley, Java Developers Almanac 2000 (undo/redo)
  */
 package adams.gui.core;
@@ -691,5 +691,23 @@ public class StyledTextEditorPanel
    */
   public  void append(String text, AttributeSet a) {
     m_TextPane.append(text, a);
+  }
+
+  /**
+   * Sets the current text.
+   *
+   * @param value	the text
+   */
+  public void setText(String value) {
+    m_TextPane.setText(value);
+  }
+
+  /**
+   * Returns the current text.
+   *
+   * @return		the tex
+   */
+  public String getText() {
+    return m_TextPane.getText();
   }
 }
