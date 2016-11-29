@@ -1,0 +1,1 @@
+${CWD}, dataset: DefaultXY (X: 1, Y: 2), chart: XYLineChart (title: Plot, x: x, y: y), width:800, height:600, writer: JAIImageWriter
