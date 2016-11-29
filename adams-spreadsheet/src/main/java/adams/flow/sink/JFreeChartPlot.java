@@ -294,6 +294,7 @@ public class JFreeChartPlot
   @Override
   public void clearPanel() {
     m_Panel.removeAll();
+    m_JFreeChart = null;
   }
 
   /**
@@ -347,10 +348,12 @@ public class JFreeChartPlot
       @Override
       public void clearPanel() {
 	removeAll();
+        m_JFreeChart = null;
       }
       @Override
       public void cleanUp() {
 	removeAll();
+        m_JFreeChart = null;
       }
       @Override
       public JComponent supplyComponent() {
