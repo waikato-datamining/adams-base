@@ -1,15 +1,15 @@
 # Project: adams
-# Date: 2016-11-30 15:18:05
+# Date: 2016-12-01 09:24:29
 # User: fracpete
 # Charset: UTF-8
 adams.flow.control.Flow -annotation "Calculates the eccentricity from the predictions of a regressor and displays the results." -flow-execution-listener adams.flow.execution.NullListener
  adams.flow.standalone.GridView -width 1200 -num-cols 3 -writer adams.gui.print.NullWriter
   adams.flow.sink.SpreadSheetDisplay -name Predictions -writer adams.data.io.output.NullWriter
-  adams.flow.sink.ImageViewer -name Matrix -writer adams.gui.print.NullWriter -selection-processor adams.gui.visualization.image.selection.NullProcessor -left-click-processor adams.gui.visualization.image.leftclick.NullProcessor -image-overlay "adams.gui.visualization.image.MetaDataText -x 1 -y 4 -color #ffffff -prefix \"Ecc: \" -field Eccentricity[N]"
+  adams.flow.sink.ImageViewer -name Matrix -writer adams.gui.print.NullWriter -selection-processor adams.gui.visualization.image.selection.NullProcessor -left-click-processor adams.gui.visualization.image.leftclick.NullProcessor -image-overlay "adams.gui.visualization.image.MetaDataText -x 1 -y 4 -prefix \"Ecc: \" -field Eccentricity[N]"
   adams.flow.sink.Display -name Eccentricity -writer adams.data.io.output.NullWriter
  adams.flow.source.FileSupplier -file ${HOME}/development/projects/adamsfamily/adams/adams-ml/src/main/flows/data/bodyfat_predictions.csv
  adams.flow.transformer.SpreadSheetFileReader -reader "adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.DefaultSpreadSheet"
- adams.flow.transformer.PredictionEccentricity -grid 50 -num-cycles 0
+ adams.flow.transformer.PredictionEccentricity -grid 50
  adams.flow.control.ContainerValuePicker -name predictions -value Predictions
   adams.flow.sink.CallableSink -callable Predictions
  adams.flow.control.ContainerValuePicker -name eccentricity -value Eccentricity
