@@ -37,7 +37,9 @@ import adams.flow.sink.sequenceplotter.SequencePlotPoint;
 import adams.flow.sink.sequenceplotter.SequencePlotSequence;
 import adams.flow.sink.sequenceplotter.SequencePlotterPanel;
 import adams.flow.sink.sequenceplotter.ViewDataClickAction;
+import adams.gui.core.AntiAliasingSupporter;
 import adams.gui.core.BasePanel;
+import adams.gui.core.GUIHelper;
 import adams.gui.visualization.core.AxisPanelOptions;
 import adams.gui.visualization.core.DefaultColorProvider;
 import adams.gui.visualization.core.axis.FancyTickGenerator;
@@ -207,6 +209,11 @@ import java.util.HashMap;
  * &nbsp;&nbsp;&nbsp;minimum: 1
  * </pre>
  * 
+ * <pre>-anti-aliasing-enabled &lt;boolean&gt; (property: antiAliasingEnabled)
+ * &nbsp;&nbsp;&nbsp;If enabled, uses anti-aliasing for drawing.
+ * &nbsp;&nbsp;&nbsp;default: true
+ * </pre>
+ * 
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
@@ -214,7 +221,7 @@ import java.util.HashMap;
  */
 public class ActualVsPredictedPlot
   extends AbstractGraphicalDisplay
-  implements DisplayPanelProvider {
+  implements DisplayPanelProvider, AntiAliasingSupporter {
 
   private static final long serialVersionUID = -278662766780196125L;
 
@@ -262,6 +269,9 @@ public class ActualVsPredictedPlot
 
   /** the diameter of the cross. */
   protected int m_Diameter;
+
+  /** whether anti-aliasing is enabled. */
+  protected boolean m_AntiAliasingEnabled;
 
   /**
    * Returns a string describing the object.
@@ -323,6 +333,10 @@ public class ActualVsPredictedPlot
     m_OptionManager.add(
       "diameter", "diameter",
       7, 1, null);
+
+    m_OptionManager.add(
+      "anti-aliasing-enabled", "antiAliasingEnabled",
+      GUIHelper.getBoolean(getClass(), "antiAliasingEnabled", true));
   }
 
   /**
@@ -672,6 +686,35 @@ public class ActualVsPredictedPlot
   }
 
   /**
+   * Sets whether to use anti-aliasing.
+   *
+   * @param value	if true then anti-aliasing is used
+   */
+  public void setAntiAliasingEnabled(boolean value) {
+    m_AntiAliasingEnabled = value;
+    reset();
+  }
+
+  /**
+   * Returns whether anti-aliasing is used.
+   *
+   * @return		true if anti-aliasing is used
+   */
+  public boolean isAntiAliasingEnabled() {
+    return m_AntiAliasingEnabled;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String antiAliasingEnabledTipText() {
+    return "If enabled, uses anti-aliasing for drawing.";
+  }
+
+  /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
@@ -773,6 +816,8 @@ public class ActualVsPredictedPlot
       paintlet = new ErrorCrossPaintlet();
       ((ErrorCrossPaintlet) paintlet).setDiameter(m_Diameter);
     }
+    if (paintlet instanceof AntiAliasingSupporter)
+      ((AntiAliasingSupporter) paintlet).setAntiAliasingEnabled(m_AntiAliasingEnabled);
     fixedPaintlet = new PaintletWithFixedXYRange();
     fixedPaintlet.setPaintlet(paintlet);
     result.setDataPaintlet(fixedPaintlet);
@@ -960,6 +1005,8 @@ public class ActualVsPredictedPlot
 	  paintlet = new ErrorCrossPaintlet();
 	  ((ErrorCrossPaintlet) paintlet).setDiameter(m_Diameter);
 	}
+	if (paintlet instanceof AntiAliasingSupporter)
+	  ((AntiAliasingSupporter) paintlet).setAntiAliasingEnabled(m_AntiAliasingEnabled);
 	fixedPaintlet = new PaintletWithFixedXYRange();
 	fixedPaintlet.setPaintlet(paintlet);
 	m_Panel.setDataPaintlet(fixedPaintlet);
