@@ -92,7 +92,7 @@ public class ToggleVisibility<T extends DataContainer, M extends AbstractContain
     JMenuItem	item;
     final int[] 	indices;
 
-    indices = panel.getSelectedContainerIndices(table, row);
+    indices = panel.getActualSelectedContainerIndices(table, row);
     item    = new JMenuItem("Toggle visibility");
     item.addActionListener((ActionEvent e) -> {
       TIntList visible = new TIntArrayList();

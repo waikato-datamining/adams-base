@@ -87,7 +87,7 @@ public class SaveAs
     JMenuItem		item;
     final int[]		indices;
 
-    indices = panel.getSelectedContainerIndices(table, row);
+    indices = panel.getActualSelectedContainerIndices(table, row);
     item    = new JMenuItem("Save as...");
     item.setEnabled(indices.length == 1);
     item.addActionListener((ActionEvent e) -> ((XYSequencePanel) panel).saveSequence(panel.getContainerManager().get(indices[0])));

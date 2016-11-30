@@ -85,7 +85,7 @@ public class Remove<T extends DataContainer, M extends AbstractContainerManager,
     JMenuItem		item;
     final int[] 	indices;
 
-    indices = panel.getSelectedContainerIndices(table, row);
+    indices = panel.getActualSelectedContainerIndices(table, row);
     item    = new JMenuItem("Remove");
     item.addActionListener((ActionEvent e) -> panel.getContainerList().getTable().removeContainers(indices));
     menu.add(item);

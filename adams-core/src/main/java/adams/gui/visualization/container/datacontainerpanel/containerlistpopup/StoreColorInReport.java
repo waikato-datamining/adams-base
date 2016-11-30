@@ -87,7 +87,7 @@ public class StoreColorInReport<T extends DataContainer, M extends AbstractConta
     JMenuItem		item;
     final int[] 	indices;
 
-    indices = panel.getSelectedContainerIndices(table, row);
+    indices = panel.getActualSelectedContainerIndices(table, row);
     item    = new JMenuItem("Store color in report...");
     item.addActionListener((ActionEvent e) -> {
       String name = GUIHelper.showInputDialog(

@@ -87,7 +87,7 @@ public class ViewAsTable
     JMenuItem		item;
     final int[]		indices;
 
-    indices = panel.getSelectedContainerIndices(table, row);
+    indices = panel.getActualSelectedContainerIndices(table, row);
     item = new JMenuItem("View as table");
     item.setEnabled(indices.length == 1);
     item.addActionListener((ActionEvent e) -> ((TimeseriesPanel) panel).showRawData((TimeseriesContainer) panel.getContainerManager().get(indices[0])));

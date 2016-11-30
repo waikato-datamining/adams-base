@@ -200,15 +200,30 @@ public abstract class DataContainerPanelWithContainerList<T extends DataContaine
    * @param row  	the current row (used if no rows selected in table)
    * @return		the actual indices as used by the container manager
    */
-  public int[] getSelectedContainerIndices(ContainerTable<M,C> table, int row) {
-    int[] 			result;
-    ContainerModel<M,C>		model;
+  public int[] getSelectedContainerIndices(ContainerTable<M, C> table, int row) {
+    int[] 		result;
 
-    model  = m_ContainerList.getContainerModel();
     if (table.getSelectedRows().length == 0)
       result = new int[]{row};
     else
       result = table.getSelectedRows();
+
+    return result;
+  }
+
+  /**
+   * Returns the actual indices in the container manager of the selected
+   * containers.
+   *
+   * @param row  	the current row (used if no rows selected in table)
+   * @return		the actual indices as used by the container manager
+   */
+  public int[] getActualSelectedContainerIndices(ContainerTable<M, C> table, int row) {
+    int[] 			result;
+    ContainerModel<M,C>		model;
+
+    result = getSelectedContainerIndices(table, row);
+    model  = m_ContainerList.getContainerModel();
 
     for (int i = 0; i < result.length; i++) {
       C cont = model.getContainerAt(result[i]);

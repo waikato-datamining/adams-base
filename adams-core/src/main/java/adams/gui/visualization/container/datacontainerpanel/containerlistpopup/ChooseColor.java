@@ -90,7 +90,7 @@ public class ChooseColor<T extends DataContainer, M extends AbstractContainerMan
     JMenuItem		item;
     final int[] 	indices;
 
-    indices = panel.getSelectedContainerIndices(table, row);
+    indices = panel.getActualSelectedContainerIndices(table, row);
     item    = new JMenuItem("Choose color...");
     item.addActionListener((ActionEvent e) -> {
       String msg = "Choose color";

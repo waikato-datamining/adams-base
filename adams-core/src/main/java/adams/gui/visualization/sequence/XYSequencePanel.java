@@ -457,7 +457,7 @@ public class XYSequencePanel
     final int[] 		indices;
 
     result  = super.getContainerListPopupMenu(table, row);
-    indices = getSelectedContainerIndices(table, row);
+    indices = getActualSelectedContainerIndices(table, row);
 
     result.addSeparator();
 

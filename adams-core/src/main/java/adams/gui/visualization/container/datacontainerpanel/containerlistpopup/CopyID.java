@@ -88,7 +88,7 @@ public class CopyID<T extends DataContainer, M extends AbstractContainerManager,
     JMenuItem		item;
     final int[] 	indices;
 
-    indices = panel.getSelectedContainerIndices(table, row);
+    indices = panel.getActualSelectedContainerIndices(table, row);
     item    = new JMenuItem("Copy ID" + (indices.length > 1 ? "s" : ""));
     item.setEnabled(indices.length > 0);
     item.addActionListener((ActionEvent e) -> {
