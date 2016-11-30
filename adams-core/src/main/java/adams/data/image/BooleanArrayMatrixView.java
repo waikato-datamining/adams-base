@@ -156,7 +156,7 @@ public class BooleanArrayMatrixView
     black  = Color.BLACK.getRGB();
     data   = new int[m_Data.length];
     for (i = 0; i < m_Data.length; i++)
-      data[i] = m_Data[i] ? white : black;
+      data[i] = !m_Data[i] ? white : black;
     result = new BufferedImage(getWidth(), getHeight(), type);
     result.setRGB(0, 0, getWidth(), getHeight(), data, 0, getWidth());
 
