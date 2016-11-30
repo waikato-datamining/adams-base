@@ -83,6 +83,9 @@ public abstract class AbstractInvestigatorTabWithDataTable
   /** the default data table height. */
   protected int m_DefaultDataTableHeight;
 
+  /** whether this is the first time a dataset gets added. */
+  protected boolean m_FirstAdd;
+
   /**
    * Initializes the members.
    */
@@ -91,6 +94,7 @@ public abstract class AbstractInvestigatorTabWithDataTable
     super.initialize();
 
     m_DefaultDataTableHeight = InvestigatorPanel.getProperties().getInteger("General.DefaultDataTableHeight", 150);
+    m_FirstAdd               = true;
   }
 
   /**
@@ -211,6 +215,7 @@ public abstract class AbstractInvestigatorTabWithDataTable
    */
   public void dataChanged(WekaInvestigatorDataEvent e) {
     DataContainer[]	backup;
+    int[]		widths;
 
     backup = backupSelection();
 
@@ -236,8 +241,15 @@ public abstract class AbstractInvestigatorTabWithDataTable
 	m_Model.removeTableModelListener(this);
 	m_Model = new DataTableModel(getOwner().getData(), hasReadOnlyTable());
 	m_Model.addTableModelListener(this);
+	widths = m_Table.getColumnWidths();
 	m_Table.setModel(m_Model);
-	m_Table.setOptimalColumnWidthBounded(DataTable.MAX_COLUMN_WIDTH);
+        if ((e.getType() == WekaInvestigatorDataEvent.ROWS_ADDED) && (e.getRows().length == getOwner().getData().size()) && m_FirstAdd) {
+	  m_Table.setOptimalColumnWidthBounded(DataTable.MAX_COLUMN_WIDTH);
+	  m_FirstAdd = false;
+	}
+	else {
+	  m_Table.setColumnWidths(widths);
+	}
 	restoreSelection(backup);
     }
   }
