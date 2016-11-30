@@ -24,6 +24,7 @@ import adams.core.ShallowCopySupporter;
 import adams.core.io.PlaceholderFile;
 import adams.data.image.AbstractImageContainer;
 import adams.data.image.BufferedImageContainer;
+import adams.data.image.BufferedImageSupporter;
 import adams.data.report.Report;
 import adams.flow.core.Token;
 import adams.gui.core.BasePanel;
@@ -254,6 +255,8 @@ public class ImageViewer
 	m_ImagePanel.setCurrentImage((BufferedImage) token.getPayload(), zoom);
       else if (token.getPayload() instanceof AbstractImageContainer)
 	m_ImagePanel.setCurrentImage((AbstractImageContainer) token.getPayload(), zoom);
+      else if (token.getPayload() instanceof BufferedImageSupporter)
+        m_ImagePanel.setCurrentImage(((BufferedImageSupporter) token.getPayload()).toBufferedImage(), zoom);
       m_ImagePanel.setShowProperties(m_Owner.getShowProperties());
       if (m_Owner.getShowProperties())
 	m_ImagePanel.getSplitPane().getRightComponent().setMinimumSize(new Dimension(m_Owner.getPropertiesWidth(), 0));
@@ -696,7 +699,7 @@ public class ImageViewer
    * @return		<!-- flow-accepts-start -->java.lang.String.class, java.io.File.class, java.awt.image.BufferedImage.class, adams.data.image.AbstractImageContainer.class<!-- flow-accepts-end -->
    */
   public Class[] accepts() {
-    return new Class[]{String.class, File.class, BufferedImage.class, AbstractImageContainer.class};
+    return new Class[]{String.class, File.class, BufferedImage.class, AbstractImageContainer.class, BufferedImageSupporter.class};
   }
 
   /**
@@ -722,6 +725,8 @@ public class ImageViewer
       m_ImagePanel.setCurrentImage((BufferedImage) token.getPayload(), zoom);
     else if (token.getPayload() instanceof AbstractImageContainer)
       m_ImagePanel.setCurrentImage((AbstractImageContainer) token.getPayload(), zoom);
+    else if (token.getPayload() instanceof BufferedImageSupporter)
+      m_ImagePanel.setCurrentImage(((BufferedImageSupporter) token.getPayload()).toBufferedImage(), zoom);
     m_ImagePanel.setShowProperties(m_ShowProperties);
     m_ImagePanel.setShowLog(false);
     m_ImagePanel.setBackgroundColor(m_BackgroundColor);
