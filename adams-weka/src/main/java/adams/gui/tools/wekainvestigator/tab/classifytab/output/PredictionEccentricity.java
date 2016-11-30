@@ -22,20 +22,22 @@ package adams.gui.tools.wekainvestigator.tab.classifytab.output;
 
 import adams.core.Utils;
 import adams.data.image.BooleanArrayMatrixView;
+import adams.data.spreadsheet.DefaultSpreadSheet;
+import adams.data.spreadsheet.Row;
+import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetColumnIndex;
 import adams.flow.container.PredictionEccentricityContainer;
 import adams.flow.container.WekaEvaluationContainer;
 import adams.flow.core.Token;
 import adams.flow.transformer.PredictionEccentricity.MorphologyCycle;
 import adams.flow.transformer.WekaPredictionsToSpreadSheet;
-import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
-import adams.gui.core.BaseTextArea;
+import adams.gui.core.BaseSplitPane;
+import adams.gui.core.SpreadSheetTable;
+import adams.gui.core.SpreadSheetTableModel;
 import adams.gui.tools.wekainvestigator.output.ComponentContentPanel;
 import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
 import adams.gui.visualization.image.ImagePanel;
-
-import java.awt.BorderLayout;
 
 /**
  * Generates classifier prediction eccentricity.
@@ -215,9 +217,12 @@ public class PredictionEccentricity
     String						msg;
     double						ecc;
     BooleanArrayMatrixView				matrix;
-    BasePanel 						panel;
+    BaseSplitPane 					panel;
     ImagePanel						imagePanel;
-    BaseTextArea					textArea;
+    SpreadSheetTable 					infoTable;
+    SpreadSheetTableModel 				infoModel;
+    SpreadSheet						runInfo;
+    Row							row;
 
     cont = new WekaEvaluationContainer(item.getEvaluation());
     p2s  = new WekaPredictionsToSpreadSheet();
@@ -249,14 +254,36 @@ public class PredictionEccentricity
       return "No matrix generated!";
     matrix = (BooleanArrayMatrixView) eccCont.getValue(PredictionEccentricityContainer.VALUE_MATRIX);
 
-    panel      = new BasePanel(new BorderLayout());
-    textArea   = new BaseTextArea("Eccentricity (1 - Inf): " + Utils.doubleToStringFixed(ecc, 2), 2, 30);
-    textArea.setEditable(false);
+    runInfo = new DefaultSpreadSheet();
+    runInfo.getHeaderRow().addCell("K").setContentAsString("Key");
+    runInfo.getHeaderRow().addCell("V").setContentAsString("Value");
+    row = runInfo.addRow();
+    row.addCell("K").setContentAsString("Eccentricity (1 - Inf)");
+    row.addCell("V").setContent(ecc);
+    row = runInfo.addRow();
+    row.addCell("K").setContentAsString("Grid");
+    row.addCell("V").setContent(m_Grid);
+    row = runInfo.addRow();
+    row.addCell("K").setContentAsString("Morphology");
+    row.addCell("V").setContent(m_MorphologyCycle.toString());
+    row = runInfo.addRow();
+    row.addCell("K").setContentAsString("# Cycles");
+    row.addCell("V").setContent(m_NumCycles);
+
+    panel      = new BaseSplitPane(BaseSplitPane.VERTICAL_SPLIT);
+    infoModel  = new SpreadSheetTableModel(runInfo);
+    infoModel.setUseSimpleHeader(true);
+    infoModel.setShowRowColumn(false);
+    infoModel.setReadOnly(true);
+    infoModel.setNumDecimals(2);
+    infoTable = new SpreadSheetTable(infoModel);
+    infoTable.setShowSimpleCellPopupMenu(true);
     imagePanel = new ImagePanel();
     imagePanel.setCurrentImage(matrix.toBufferedImage());
     imagePanel.setScale(-1);
-    panel.add(imagePanel, BorderLayout.CENTER);
-    panel.add(new BaseScrollPane(textArea), BorderLayout.NORTH);
+    panel.setBottomComponent(imagePanel);
+    panel.setTopComponent(new BaseScrollPane(infoTable));
+    panel.setDividerLocation(100);
 
     addTab(item, new ComponentContentPanel(panel, false));
 
