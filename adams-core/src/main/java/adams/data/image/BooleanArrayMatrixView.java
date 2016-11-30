@@ -30,7 +30,7 @@ import java.io.Serializable;
  * @version $Revision$
  */
 public class BooleanArrayMatrixView
-  implements Serializable {
+  implements Serializable, BufferedImageSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = -5901549787330341842L;
@@ -151,5 +151,14 @@ public class BooleanArrayMatrixView
     result.setRGB(0, 0, getWidth(), getHeight(), data, 0, getWidth());
 
     return result;
+  }
+
+  /**
+   * Turns the matrix into an image.
+   *
+   * @return		the image
+   */
+  public BufferedImage toBufferedImage() {
+    return toBufferedImage(BufferedImage.TYPE_INT_RGB);
   }
 }
