@@ -60,6 +60,30 @@ public class MetaData
   }
 
   /**
+   * Checks the meta-data for an existing key.
+   *
+   * @param key		the key to check
+   * @return		true if exists
+   */
+  public boolean has(String key) {
+    boolean 	result;
+    int		i;
+    Row		row;
+
+    result = false;
+
+    for (i = 0; i < m_Data.getRowCount(); i++) {
+      row = m_Data.getRow(i);
+      if (row.hasCell(0) && row.getCell(0).getContent().equals(key)) {
+	result = true;
+	break;
+      }
+    }
+
+    return result;
+  }
+
+  /**
    * Adds the meta-data.
    *
    * @param key		the key
