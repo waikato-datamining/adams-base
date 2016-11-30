@@ -56,15 +56,6 @@ public class SpreadSheetRowContainerManager
   /** the color provider for managing the colors. */
   protected AbstractColorProvider m_ColorProvider;
 
-  /** the current search term. */
-  protected String m_SearchString;
-
-  /** whether the current search is using regular expressions. */
-  protected boolean m_SearchRegexp;
-
-  /** the filtered containers. */
-  protected TIntArrayList m_FilteredList;
-
   /**
    * Initializes the manager.
    *
@@ -142,38 +133,6 @@ public class SpreadSheetRowContainerManager
   @Override
   public SpreadSheetRowContainer newContainer(Comparable o) {
     return new SpreadSheetRowContainer(this, (SpreadSheetRow) o);
-  }
-
-  /**
-   * Returns whether a search filter has been appplied.
-   *
-   * @return		true if search filter applied
-   */
-  @Override
-  public boolean isFiltered() {
-    return (m_FilteredList != null);
-  }
-
-  /**
-   * Whether to update the search whenever the content changes.
-   *
-   * @return		true if to update whenever data changes
-   */
-  protected boolean updateSearchOnUpdate() {
-    return true;
-  }
-
-  /**
-   * Finishes the update.
-   *
-   * @param notify	whether to notify the listeners about the update
-   * @see		#isUpdating()
-   */
-  @Override
-  public void finishUpdate(boolean notify) {
-    super.finishUpdate(notify);
-    if (updateSearchOnUpdate() && notify)
-      updateSearch();
   }
 
   /**
@@ -368,26 +327,6 @@ public class SpreadSheetRowContainerManager
   }
 
   /**
-   * Triggers the search.
-   *
-   * @param search	the search string
-   * @param regExp	whether to perform regexp matching
-   */
-  public void search(String search, boolean regExp) {
-    m_SearchString = search;
-    m_SearchRegexp = regExp;
-
-    updateSearch();
-  }
-
-  /**
-   * Clears any previous search settings.
-   */
-  public void clearSearch() {
-    search(null, false);
-  }
-
-  /**
    * Returns whether the container matches the current search.
    *
    * @param cont	the container to check
@@ -399,99 +338,5 @@ public class SpreadSheetRowContainerManager
       return cont.getID().matches(search);
     else
       return cont.getID().toLowerCase().contains(search);
-  }
-
-  /**
-   * Updates the search.
-   */
-  protected void updateSearch() {
-    TIntArrayList	filtered;
-    int			i;
-
-    if (m_SearchString == null) {
-      m_FilteredList = null;
-      notifyDataChangeListeners(new DataChangeEvent(this, Type.SEARCH));
-      return;
-    }
-
-    filtered = new TIntArrayList();
-    for (i = 0; i < m_List.size(); i++) {
-      if (isMatch(m_List.get(i), m_SearchString, m_SearchRegexp))
-	filtered.add(i);
-    }
-
-    m_FilteredList = filtered;
-    notifyDataChangeListeners(new DataChangeEvent(this, Type.SEARCH));
-  }
-
-  /**
-   * Returns the indices of all filtered containers.
-   *
-   * @return		all containers
-   */
-  public int[] getFilteredIndices() {
-    if (m_FilteredList != null)
-      return m_FilteredList.toArray();
-    else
-      return new int[0];
-  }
-
-  /**
-   * Returns whether the container at the specified position is filtered (= visibile).
-   *
-   * @param index	the container's position
-   * @return		true if the container is filtered
-   */
-  public boolean isFiltered(int index) {
-    return (m_FilteredList != null) && (m_FilteredList.contains(index));
-  }
-
-  /**
-   * Returns the nth filtered container.
-   *
-   * @param index	the index (relates only to the filtered containers!)
-   * @return		the container, null if index out of range
-   */
-  public SpreadSheetRowContainer getFiltered(int index) {
-    if (m_FilteredList == null)
-      return null;
-    else
-      return m_List.get(m_FilteredList.get(index));
-  }
-
-  /**
-   * Determines the index of the filtered container.
-   *
-   * @param c		the container to look for
-   * @return		the index of the container or -1 if not found
-   */
-  public int indexOfFiltered(SpreadSheetRowContainer c) {
-    int		result;
-    int		i;
-
-    result = -1;
-
-    if (m_FilteredList != null) {
-      for (i = 0; i < m_FilteredList.size(); i++) {
-	if (m_List.get(m_FilteredList.get(i)).equals(c)) {
-	  result = i;
-	  break;
-	}
-      }
-    }
-
-    return result;
-  }
-
-  /**
-   * Returns the number of filtered containers.
-   *
-   * @return		the number of filtered containers
-   */
-  public int countFiltered() {
-    if (m_FilteredList == null)
-      return 0;
-    else
-      return m_FilteredList.size();
   }
 }
