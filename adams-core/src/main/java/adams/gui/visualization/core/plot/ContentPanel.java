@@ -15,7 +15,7 @@
 
 /*
  * ContentPanel.java
- * Copyright (C) 2008-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.core.plot;
@@ -864,30 +864,33 @@ public class ContentPanel
 
     result = null;
 
-    for (Axis axis: Axis.values()) {
-      if (!getOwner().hasToolTipAxis(axis))
-        continue;
+    panel = getOwner().getAxis(Axis.BOTTOM);
+    if ((panel.getActualMinimum() != panel.getActualMaximum()) && !(Double.isNaN(panel.getActualMinimum()))) {
+      for (Axis axis : Axis.values()) {
+        if (!getOwner().hasToolTipAxis(axis))
+          continue;
 
-      panel = getOwner().getAxis(axis);
-      m_Format.applyPattern(panel.getNumberFormat());
+        panel = getOwner().getAxis(axis);
+        m_Format.applyPattern(panel.getNumberFormat());
 
-      if ((axis == Axis.LEFT) || (axis == Axis.RIGHT))
-        str = panel.valueToDisplay(panel.posToValue(event.getY()));
-      else
-        str = panel.valueToDisplay(panel.posToValue(event.getX()));
-      
-      if (str != null) {
-	if (result == null)
-	  result = "";
-	else
-	  result += ", ";
-	result += axis.getDisplayShort() + ": " + str;
+        if ((axis == Axis.LEFT) || (axis == Axis.RIGHT))
+          str = panel.valueToDisplay(panel.posToValue(event.getY()));
+        else
+          str = panel.valueToDisplay(panel.posToValue(event.getX()));
+
+        if (str != null) {
+          if (result == null)
+            result = "";
+          else
+            result += ", ";
+          result += axis.getDisplayShort() + ": " + str;
+        }
       }
-    }
 
-    // post-process tiptext?
-    if (m_TipTextCustomizer != null)
-      result = m_TipTextCustomizer.processTipText(getOwner(), event.getPoint(), result);
+      // post-process tiptext?
+      if (m_TipTextCustomizer != null)
+        result = m_TipTextCustomizer.processTipText(getOwner(), event.getPoint(), result);
+    }
 
     return result;
   }
