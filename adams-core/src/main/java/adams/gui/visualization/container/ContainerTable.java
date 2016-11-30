@@ -15,13 +15,12 @@
 
 /*
  * ContainerTable.java
- * Copyright (C) 2009-2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.container;
 
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
+import adams.gui.core.BaseTable;
 
 import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
@@ -31,8 +30,8 @@ import javax.swing.event.TableColumnModelListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
-
-import adams.gui.core.BaseTable;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 /**
  * A table for displaying the currently loaded containers.
@@ -79,7 +78,7 @@ public class ContainerTable<M extends AbstractContainerManager, C extends Abstra
     addKeyListener(new KeyAdapter() {
       public void keyPressed(KeyEvent e) {
 	if (e.getKeyCode() == KeyEvent.VK_DELETE) {
-	  removeContainers(getSelectedRows());
+	  removeContainers(getActualIndices(getSelectedRows()));
 	  e.consume();
 	}
 	if (!e.isConsumed())
@@ -102,6 +101,39 @@ public class ContainerTable<M extends AbstractContainerManager, C extends Abstra
     });
     
     resizeAndRepaint();
+  }
+
+  /**
+   * Returns the actual index in the container manager of the specified
+   * container.
+   *
+   * @param index	the index to convert
+   * @return		the actual index as used by the container manager
+   */
+  public int getActualIndex(int index) {
+    return getActualIndices(new int[]{index})[0];
+  }
+
+  /**
+   * Returns the actual indices in the container manager of the specified
+   * containers.
+   *
+   * @param indices	the indices to convert
+   * @return		the actual indices as used by the container manager
+   */
+  public int[] getActualIndices(int[] indices) {
+    int[] 			result;
+    ContainerModel<M,C>		model;
+
+    model  = (ContainerModel<M,C>) getModel();
+
+    result = new int[indices.length];
+    for (int i = 0; i < indices.length; i++) {
+      C cont = model.getContainerAt(indices[i]);
+      result[i] = getManager().indexOf(cont);
+    }
+
+    return result;
   }
 
   /**
@@ -163,8 +195,6 @@ public class ContainerTable<M extends AbstractContainerManager, C extends Abstra
    * Updates the column widths.
    */
   protected void updateColumnWidths() {
-    Runnable	runnable;
-
     if (getModel() == null)
       return;
     if (getColumnCount() != getColumnModel().getColumnCount())
@@ -172,20 +202,17 @@ public class ContainerTable<M extends AbstractContainerManager, C extends Abstra
     if (getTableHeader() == null)
       return;
 
-    runnable = new Runnable() {
-      public void run() {
-	ContainerModel<M,C> model = (ContainerModel<M,C>) getModel();
-	TableColumnModel colModel = getColumnModel();
-	synchronized(model) {
-	  synchronized(colModel) {
-	    for (int i = 0; i < colModel.getColumnCount(); i++)
-	      colModel.getColumn(i).setPreferredWidth(model.getColumnWidth(i));
-	  }
-	}
-      };
-    };
     m_ColumnWidthsSet = true;
-    SwingUtilities.invokeLater(runnable);
+    SwingUtilities.invokeLater(() -> {
+      ContainerModel<M,C> model = (ContainerModel<M,C>) getModel();
+      TableColumnModel colModel = getColumnModel();
+      synchronized(model) {
+	synchronized(colModel) {
+	  for (int i = 0; i < colModel.getColumnCount(); i++)
+	    colModel.getColumn(i).setPreferredWidth(model.getColumnWidth(i));
+	}
+      }
+    });
   }
 
   /**
