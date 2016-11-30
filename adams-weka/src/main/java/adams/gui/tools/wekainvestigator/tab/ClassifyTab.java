@@ -737,7 +737,8 @@ public class ClassifyTab
   public void generateOutput(ResultItem item) {
     for (int i = 0; i < m_OutputGenerators.length; i++) {
       try {
-	m_OutputGenerators[i].generateOutput(item);
+        if (m_OutputGenerators[i].canGenerateOutput(item))
+          m_OutputGenerators[i].generateOutput(item);
       }
       catch (Exception e) {
 	logError("Failed to generate output with " + m_OutputGenerators[i].toCommandLine(), e, "Classifier output generation");
