@@ -32,37 +32,47 @@ public class BinaryMorphology {
    * Performs an erode operation.
    *
    * @param data	the data to "erode"
+   * @return		the eroded data
    */
-  public static void erode(boolean[][] data) {
+  public static boolean[][] erode(boolean[][] data) {
+    boolean[][]	result;
     int		x;
     int		y;
 
+    result = new boolean[data.length][data[0].length];
     for (y = 1; y < data.length - 1; y++) {
       for (x = 1; x < data[y].length - 1; x++) {
-	data[y][x] =
+	result[y][x] =
 	  data[y - 1][x - 1] && data[y - 1][x] && data[y - 1][x + 1]
 	    && data[y][x - 1] && data[y][x] && data[y][x + 1]
 	    && data[y + 1][x - 1] && data[y + 1][x] && data[y + 1][x + 1];
       }
     }
+
+    return result;
   }
 
   /**
    * Performs a dilate operation.
    *
    * @param data	the data to "dilate"
+   * @return		the dilated data
    */
-  public static void dilate(boolean[][] data) {
+  public static boolean[][] dilate(boolean[][] data) {
+    boolean[][]	result;
     int		x;
     int		y;
 
+    result = new boolean[data.length][data[0].length];
     for (y = 1; y < data.length - 1; y++) {
       for (x = 1; x < data[y].length - 1; x++) {
-	data[y][x] =
+	result[y][x] =
 	  data[y - 1][x - 1] || data[y - 1][x] || data[y - 1][x + 1]
 	    || data[y][x - 1] || data[y][x] || data[y][x + 1]
 	    || data[y + 1][x - 1] || data[y + 1][x] || data[y + 1][x + 1];
       }
     }
+
+    return result;
   }
 }
