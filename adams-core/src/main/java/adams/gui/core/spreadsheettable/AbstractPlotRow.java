@@ -15,7 +15,7 @@
 
 /**
  * AbstractPlotRow.java
- * Copyright (C) 2015 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.core.spreadsheettable;
@@ -83,29 +83,31 @@ public abstract class AbstractPlotRow
    *
    * @param table	the source table
    * @param sheet	the spreadsheet to use as basis
-   * @param row	        the row in the spreadsheet
+   * @param actRow	the actual row in the spreadsheet
+   * @param selRow	the selected row in the table
    * @return		true if successful
    */
-  protected abstract boolean doPlotRow(SpreadSheetTable table, SpreadSheet sheet, int row);
+  protected abstract boolean doPlotRow(SpreadSheetTable table, SpreadSheet sheet, int actRow, int selRow);
 
   /**
    * Plots the specified row.
    *
    * @param table	the source table
    * @param sheet	the spreadsheet to use as basis
-   * @param row	        the row in the spreadsheet
+   * @param actRow	the actual row in the spreadsheet
+   * @param selRow	the selected row in the table
    * @return		true if successful
    */
-  public boolean plotRow(SpreadSheetTable table, SpreadSheet sheet, int row) {
+  public boolean plotRow(SpreadSheetTable table, SpreadSheet sheet, int actRow, int selRow) {
     boolean	result;
     String	error;
 
-    error = check(table, sheet, row);
+    error = check(table, sheet, actRow);
     result = (error == null);
     if (result)
-      result = doPlotRow(table, sheet, row);
+      result = doPlotRow(table, sheet, actRow, selRow);
     else
-      GUIHelper.showErrorMessage(table, "Failed to plot row #" + (row+1) + "\n" + error);
+      GUIHelper.showErrorMessage(table, "Failed to plot row #" + (actRow +1) + "\n" + error);
 
     return result;
   }

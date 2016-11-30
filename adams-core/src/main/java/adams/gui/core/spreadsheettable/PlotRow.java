@@ -15,7 +15,7 @@
 
 /**
  * PlotRow.java
- * Copyright (C) 2015 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.core.spreadsheettable;
@@ -37,8 +37,9 @@ public interface PlotRow
    *
    * @param table	the source table
    * @param sheet	the spreadsheet to use as basis
-   * @param row	        the row in the spreadsheet
+   * @param actRow	the actual row in the spreadsheet
+   * @param selRow	the selected row in the table
    * @return		true if successful
    */
-  public boolean plotRow(SpreadSheetTable table, SpreadSheet sheet, int row);
+  public boolean plotRow(SpreadSheetTable table, SpreadSheet sheet, int actRow, int selRow);
 }

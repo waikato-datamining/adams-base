@@ -408,7 +408,7 @@ public class SpreadSheetTable
     menuitem.addActionListener((ActionEvent ae) -> setOptimalColumnWidth());
     menu.add(menuitem);
 
-    SpreadSheetTablePopupMenuItemHelper.addToPopupMenu(this, menu, false, actRow, actCol);
+    SpreadSheetTablePopupMenuItemHelper.addToPopupMenu(this, menu, false, actRow, row, actCol);
 
     if (m_HeaderPopupMenuCustomizer != null)
       m_HeaderPopupMenuCustomizer.customizePopupMenu(e, menu);
@@ -529,7 +529,7 @@ public class SpreadSheetTable
     menuitem.addActionListener((ActionEvent ae) -> saveAs(TableRowRange.VISIBLE));
     submenu.add(menuitem);
 
-    SpreadSheetTablePopupMenuItemHelper.addToPopupMenu(this, menu, true, actRow, actCol);
+    SpreadSheetTablePopupMenuItemHelper.addToPopupMenu(this, menu, true, actRow, row, actCol);
 
     menu.addSeparator();
 

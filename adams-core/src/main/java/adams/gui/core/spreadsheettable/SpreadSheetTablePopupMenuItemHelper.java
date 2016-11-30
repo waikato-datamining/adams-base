@@ -15,7 +15,7 @@
 
 /**
  * SpreadSheetTablePopupMenuItemHelper.java
- * Copyright (C) 2015 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.core.spreadsheettable;
@@ -74,19 +74,20 @@ public class SpreadSheetTablePopupMenuItemHelper {
    *
    * @param table	the table this menu is for
    * @param isRow	whether this is for a row or a column
-   * @param row		the current row
+   * @param actRow	the current actual row
+   * @param selRow	the current selected row
    * @param column	the current column
    * @param sheet	the spreadsheet to use
    * @param menuitem	the menuitem to add the action to
    * @param item	the menu item scheme
    */
-  protected static void addAction(final SpreadSheetTable table, final SpreadSheet sheet, boolean isRow, final int row, final int column, final JMenuItem menuitem, final SpreadSheetTablePopupMenuItem item) {
+  protected static void addAction(final SpreadSheetTable table, final SpreadSheet sheet, boolean isRow, final int actRow, final int selRow, final int column, final JMenuItem menuitem, final SpreadSheetTablePopupMenuItem item) {
     if (isRow) {
       if (item instanceof PlotRow) {
 	menuitem.addActionListener(new ActionListener() {
 	  @Override
 	  public void actionPerformed(ActionEvent e) {
-	    ((PlotRow) item).plotRow(table, sheet, row);
+	    ((PlotRow) item).plotRow(table, sheet, actRow, selRow);
 	  }
 	});
       }
@@ -94,7 +95,7 @@ public class SpreadSheetTablePopupMenuItemHelper {
 	menuitem.addActionListener(new ActionListener() {
 	  @Override
 	  public void actionPerformed(ActionEvent e) {
-	    ((ProcessRow) item).processRow(table, sheet, row);
+	    ((ProcessRow) item).processRow(table, sheet, actRow, selRow);
 	  }
 	});
       }
@@ -102,7 +103,7 @@ public class SpreadSheetTablePopupMenuItemHelper {
 	menuitem.addActionListener(new ActionListener() {
 	  @Override
 	  public void actionPerformed(ActionEvent e) {
-	    ((ProcessCell) item).processCell(table, sheet, row, column);
+	    ((ProcessCell) item).processCell(table, sheet, actRow, column);
 	  }
 	});
       }
@@ -132,12 +133,13 @@ public class SpreadSheetTablePopupMenuItemHelper {
    *
    * @param table	the table this menu is for
    * @param isRow	whether this is for a row or a column
-   * @param row		the current row
+   * @param actRow	the current actual row
+   * @param selRow	the current selected row
    * @param column	the current column
    * @param menu	the menu to add the items to
    * @param items	the available schemes
    */
-  protected static void addToPopupMenu(SpreadSheetTable table, boolean isRow, int row, int column, JPopupMenu menu, List<SpreadSheetTablePopupMenuItem> items) {
+  protected static void addToPopupMenu(SpreadSheetTable table, boolean isRow, int actRow, int selRow, int column, JPopupMenu menu, List<SpreadSheetTablePopupMenuItem> items) {
     JMenuItem		menuitem;
     SpreadSheet		sheet;
 
@@ -152,7 +154,7 @@ public class SpreadSheetTablePopupMenuItemHelper {
       menuitem = new JMenuItem(item.getMenuItem());
       if (item.getIconName() != null)
         menuitem.setIcon(GUIHelper.getIcon(item.getIconName()));
-      addAction(table, sheet, isRow, row, column, menuitem, item);
+      addAction(table, sheet, isRow, actRow, selRow, column, menuitem, item);
       menu.add(menuitem);
     }
   }
@@ -163,19 +165,20 @@ public class SpreadSheetTablePopupMenuItemHelper {
    * @param table	the table this menu is for
    * @param menu	the menu to add the items to
    * @param isRow	whether this is for a row or a column
-   * @param row		the current row
+   * @param actRow	the current actual row
+   * @param selRow	the current selected row
    * @param column	the current column
    */
-  public static void addToPopupMenu(SpreadSheetTable table, JPopupMenu menu, boolean isRow, int row, int column) {
+  public static void addToPopupMenu(SpreadSheetTable table, JPopupMenu menu, boolean isRow, int actRow, int selRow, int column) {
     menu.addSeparator();
     if (isRow) {
-      addToPopupMenu(table, true, row, column, menu, getItems(PlotRow.class));
-      addToPopupMenu(table, true, row, column, menu, getItems(ProcessRow.class));
-      addToPopupMenu(table, true, row, column, menu, getItems(ProcessCell.class));
+      addToPopupMenu(table, true, actRow, selRow, column, menu, getItems(PlotRow.class));
+      addToPopupMenu(table, true, actRow, selRow, column, menu, getItems(ProcessRow.class));
+      addToPopupMenu(table, true, actRow, selRow, column, menu, getItems(ProcessCell.class));
     }
     else {
-      addToPopupMenu(table, false, row, column, menu, getItems(PlotColumn.class));
-      addToPopupMenu(table, false, row, column, menu, getItems(ProcessColumn.class));
+      addToPopupMenu(table, false, actRow, selRow, column, menu, getItems(PlotColumn.class));
+      addToPopupMenu(table, false, actRow, selRow, column, menu, getItems(ProcessColumn.class));
     }
   }
 }

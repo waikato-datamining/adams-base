@@ -67,11 +67,12 @@ public class RowStatistic
    *
    * @param table	the source table
    * @param sheet	the spreadsheet to use as basis
-   * @param row	the row in the spreadsheet
+   * @param actRow	the actual row in the spreadsheet
+   * @param selRow	the selected row in the table
    * @return		true if successful
    */
   @Override
-  protected boolean doProcessRow(SpreadSheetTable table, SpreadSheet sheet, int row) {
+  protected boolean doProcessRow(SpreadSheetTable table, SpreadSheet sheet, int actRow, int selRow) {
     GenericObjectEditorDialog 	setup;
     AbstractRowStatistic last;
     SpreadSheet			stats;
@@ -95,14 +96,14 @@ public class RowStatistic
       return false;
     last = (AbstractRowStatistic) setup.getCurrent();
     table.addLastSetup(getClass(), true, false, last);
-    stats = last.generate(sheet, row);
+    stats = last.generate(sheet, selRow);
     if (stats == null) {
       if (last.hasLastError())
 	GUIHelper.showErrorMessage(
-	  GUIHelper.getParentComponent(table), "Failed to calculate statistics for row #" + (row +1) + ": " + last.getLastError());
+	  GUIHelper.getParentComponent(table), "Failed to calculate statistics for row #" + (selRow +1) + ": " + last.getLastError());
       else
 	GUIHelper.showErrorMessage(
-	  GUIHelper.getParentComponent(table), "Failed to calculate statistics for row #" + (row +1) + "!");
+	  GUIHelper.getParentComponent(table), "Failed to calculate statistics for row #" + (selRow +1) + "!");
     }
     else {
       if (GUIHelper.getParentDialog(table) != null)
@@ -110,7 +111,7 @@ public class RowStatistic
       else
 	dialog = new SpreadSheetDialog(GUIHelper.getParentFrame(table), false);
       dialog.setDefaultCloseOperation(SpreadSheetDialog.DISPOSE_ON_CLOSE);
-      dialog.setTitle("Statistics for row #" + (row +1));
+      dialog.setTitle("Statistics for row #" + (selRow +1));
       dialog.setSpreadSheet(stats);
       dialog.pack();
       dialog.setLocationRelativeTo(null);

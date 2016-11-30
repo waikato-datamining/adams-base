@@ -156,7 +156,7 @@ public class Histogram
     if (isColumn)
       dialog.add(last, list.toArray(), "Column " + (index + 1) + "/" + sheet.getColumnName(index));
     else
-      dialog.add(last, list.toArray(), "Row " + (index + 1));
+      dialog.add(last, list.toArray(), "Row " + (index + 2));
     dialog.setLocationRelativeTo(GUIHelper.getParentComponent(table));
     dialog.setVisible(true);
   }
@@ -180,12 +180,13 @@ public class Histogram
    *
    * @param table	the source table
    * @param sheet	the spreadsheet to use as basis
-   * @param row	        the row in the spreadsheet
+   * @param actRow	the actual row in the spreadsheet
+   * @param selRow	the selected row in the table
    * @return		true if successful
    */
   @Override
-  public boolean plotRow(SpreadSheetTable table, SpreadSheet sheet, int row) {
-    plot(table, sheet, false, row);
+  public boolean plotRow(SpreadSheetTable table, SpreadSheet sheet, int actRow, int selRow) {
+    plot(table, sheet, false, actRow);
     return true;
   }
 }

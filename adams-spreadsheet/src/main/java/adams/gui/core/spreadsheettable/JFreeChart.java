@@ -188,7 +188,7 @@ public class JFreeChart
     // create new spreadsheet
     data = new DefaultSpreadSheet();
     data.getHeaderRow().addCell("x").setContentAsString(isColumn ? "Row" : "Column");
-    data.getHeaderRow().addCell("y").setContentAsString(isColumn ? sheet.getColumnName(index) : ("Row " + (index+1)));
+    data.getHeaderRow().addCell("y").setContentAsString(isColumn ? sheet.getColumnName(index) : ("Row " + (index+2)));
     for (i = 0; i < list.size(); i++) {
       srow = data.addRow();
       srow.addCell("x").setContent((double) i+1.0);
@@ -199,7 +199,7 @@ public class JFreeChart
     if (isColumn)
       title = "Column " + (index + 1) + "/" + sheet.getColumnName(index);
     else
-      title = "Row " + (index + 1);
+      title = "Row " + (index + 2);
     last.getChart().setTitle(data.getColumnName(1));
 
     worker = new SwingWorker() {
@@ -249,12 +249,13 @@ public class JFreeChart
    *
    * @param table	the source table
    * @param sheet	the spreadsheet to use as basis
-   * @param row	        the row in the spreadsheet
+   * @param actRow	the actual row in the spreadsheet
+   * @param selRow	the selected row in the table
    * @return		true if successful
    */
   @Override
-  public boolean plotRow(SpreadSheetTable table, SpreadSheet sheet, int row) {
-    plot(table, sheet, false, row);
+  public boolean plotRow(SpreadSheetTable table, SpreadSheet sheet, int actRow, int selRow) {
+    plot(table, sheet, false, actRow);
     return true;
   }
 }

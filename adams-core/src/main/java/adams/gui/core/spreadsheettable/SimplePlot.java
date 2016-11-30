@@ -187,7 +187,7 @@ public class SimplePlot
     if (isColumn)
       title = "Column " + (index + 1) + "/" + sheet.getColumnName(index);
     else
-      title = "Row " + (index + 1);
+      title = "Row " + (index + 2);
 
     worker = new SwingWorker() {
       @Override
@@ -244,12 +244,13 @@ public class SimplePlot
    *
    * @param table	the source table
    * @param sheet	the spreadsheet to use as basis
-   * @param row	        the row in the spreadsheet
+   * @param actRow	the actual row in the spreadsheet
+   * @param selRow	the selected row in the table
    * @return		true if successful
    */
   @Override
-  public boolean plotRow(SpreadSheetTable table, SpreadSheet sheet, int row) {
-    plot(table, sheet, false, row);
+  public boolean plotRow(SpreadSheetTable table, SpreadSheet sheet, int actRow, int selRow) {
+    plot(table, sheet, false, actRow);
     return true;
   }
 }
