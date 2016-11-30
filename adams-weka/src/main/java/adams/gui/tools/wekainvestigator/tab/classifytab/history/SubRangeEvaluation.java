@@ -99,11 +99,11 @@ public class SubRangeEvaluation
 
     // query user
     params = new ParameterPanel();
-    
+
     textMin = new NumberTextField(Type.DOUBLE);
     textMin.setValue(min);
     params.addParameter("Minimum", textMin);
-    
+
     textMax = new NumberTextField(Type.DOUBLE);
     textMax.setValue(max);
     params.addParameter("Maximum", textMax);
@@ -124,14 +124,49 @@ public class SubRangeEvaluation
     max = textMax.getValue().doubleValue();
     if (min >= max) {
       GUIHelper.showErrorMessage(
-	m_Owner,
-	"Minimum must be smaller than maximum!\n"
-	  + "min: " + min + "\n"
-	  + "max: " + max);
+        m_Owner,
+        "Minimum must be smaller than maximum!\n"
+          + "min: " + min + "\n"
+          + "max: " + max);
       return null;
     }
 
     return new double[]{min, max};
+  }
+
+  /**
+   * Adds the range information to a clone of the provided meta-data info
+   * and returns it.
+   *
+   * @param info	the info to clone/extend
+   * @param range	the range to add
+   * @return		the new meta-data
+   */
+  protected MetaData addSubRangeInfo(MetaData info, double[] range) {
+    MetaData 	result;
+    String	prefix;
+    String	key;
+    int		count;
+    boolean	added;
+
+    result = info.getClone();
+    prefix = "Sub-range evaluation";
+    count  = 0;
+    added  = false;
+    do {
+      if (count == 0)
+	key = prefix;
+      else
+        key = prefix + " (" + (count+1) + ")";
+      if (!result.has(key)) {
+	result.add(key, "[" + range[0] + ";" + range[1] + "]");
+	added = true;
+      }
+      count++;
+    }
+    while (!added);
+
+    return result;
   }
 
   /**
@@ -158,29 +193,28 @@ public class SubRangeEvaluation
       atts     = new ArrayList<>();
       atts.add(new Attribute("Prediction"));
       data     = new Instances(
-	"[" + range[0] + ";" + range[1] + "]-" + evalFull.getHeader().relationName(),
-	atts, evalFull.predictions().size());
+        "[" + range[0] + ";" + range[1] + "]-" + evalFull.getHeader().relationName(),
+        atts, evalFull.predictions().size());
       data.setClassIndex(0);
       for (Prediction pred: evalFull.predictions()) {
-	inst = new DenseInstance(1.0, new double[]{pred.actual()});
-	data.add(inst);
+        inst = new DenseInstance(1.0, new double[]{pred.actual()});
+        data.add(inst);
       }
 
       // evaluate subset
       evalSub = new Evaluation(data);
       for (i = 0; i < evalFull.predictions().size(); i++) {
-	prd = evalFull.predictions().get(i);
-	if ((prd.actual() >= range[0]) && (prd.actual() <= range[1])) {
-	  evalSub.evaluateModelOnceAndRecordPrediction(
-	    new double[]{prd.predicted()},
-	    data.instance(i));
-	}
+        prd = evalFull.predictions().get(i);
+        if ((prd.actual() >= range[0]) && (prd.actual() <= range[1])) {
+          evalSub.evaluateModelOnceAndRecordPrediction(
+            new double[]{prd.predicted()},
+            data.instance(i));
+        }
       }
 
       // add to history
-      runInfoSub = item.getRunInformation().getClone();
-      runInfoSub.add("Sub-range evaluation", "[" + range[0] + ";" + range[1] + "]");
-      itemSub = new ResultItem(evalSub, item.getTemplate(), null, new Instances(data, 0), runInfoSub);
+      runInfoSub = addSubRangeInfo(item.getRunInformation(), range);
+      itemSub    = new ResultItem(evalSub, item.getTemplate(), null, new Instances(data, 0), runInfoSub);
       history.addEntry(itemSub.getName(), itemSub);
       history.setSelectedIndex(history.count() - 1);
 
@@ -220,7 +254,7 @@ public class SubRangeEvaluation
     result.addActionListener((ActionEvent e) -> {
       double[] range = queryUser(item);
       if (range == null)
-	return;
+        return;
       createSubEvaluation(history, item, range);
     });
 
