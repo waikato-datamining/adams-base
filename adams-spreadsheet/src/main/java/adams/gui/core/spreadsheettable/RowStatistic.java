@@ -96,14 +96,14 @@ public class RowStatistic
       return false;
     last = (AbstractRowStatistic) setup.getCurrent();
     table.addLastSetup(getClass(), true, false, last);
-    stats = last.generate(sheet, selRow);
+    stats = last.generate(sheet, actRow);
     if (stats == null) {
       if (last.hasLastError())
 	GUIHelper.showErrorMessage(
-	  GUIHelper.getParentComponent(table), "Failed to calculate statistics for row #" + (selRow +1) + ": " + last.getLastError());
+	  GUIHelper.getParentComponent(table), "Failed to calculate statistics for row #" + (actRow + 1) + ": " + last.getLastError());
       else
 	GUIHelper.showErrorMessage(
-	  GUIHelper.getParentComponent(table), "Failed to calculate statistics for row #" + (selRow +1) + "!");
+	  GUIHelper.getParentComponent(table), "Failed to calculate statistics for row #" + (actRow + 2) + "!");
     }
     else {
       if (GUIHelper.getParentDialog(table) != null)
@@ -111,7 +111,7 @@ public class RowStatistic
       else
 	dialog = new SpreadSheetDialog(GUIHelper.getParentFrame(table), false);
       dialog.setDefaultCloseOperation(SpreadSheetDialog.DISPOSE_ON_CLOSE);
-      dialog.setTitle("Statistics for row #" + (selRow +1));
+      dialog.setTitle("Statistics for row #" + (actRow + 2));
       dialog.setSpreadSheet(stats);
       dialog.pack();
       dialog.setLocationRelativeTo(null);
