@@ -325,7 +325,7 @@ public class CrossValidation
     // final model?
     model = null;
     if (finalModel) {
-      getOwner().logMessage("Building final model on '" + data.relationName() + "' using " + OptionUtils.getCommandLine(classifier));
+      getOwner().logMessage("Building final model on '" + dataCont.getID() + "/" + data.relationName() + "' using " + OptionUtils.getCommandLine(classifier));
       model = (Classifier) OptionUtils.shallowCopy(classifier);
       model.buildClassifier(data);
       addObjectSize(runInfo, "Final model size", model);
