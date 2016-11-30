@@ -15,19 +15,18 @@
 
 /**
  * SpreadSheetCellRenderer.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
 
-import java.awt.Color;
-import java.awt.Component;
+import adams.data.spreadsheet.Cell;
 
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
-
-import adams.data.spreadsheet.Cell;
+import java.awt.Color;
+import java.awt.Component;
 
 /**
  * Custom cell renderer for displaying spreadsheets.
@@ -71,7 +70,7 @@ public class SpreadSheetCellRenderer
     numericVal = null;
 
     // row index
-    if (column == 0) {
+    if ((column == 0) && spTable.getShowRowColumn()) {
       ((JLabel) result).setHorizontalAlignment(SwingConstants.CENTER);
       ((JLabel) result).setToolTipText(null);
       if (isSelected)
