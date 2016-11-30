@@ -20,6 +20,7 @@
 
 package adams.gui.visualization.instances.instancestable;
 
+import adams.core.Utils;
 import adams.core.option.AbstractOptionHandler;
 import adams.data.statistics.ArrayHistogram;
 import adams.gui.core.GUIHelper;
@@ -27,7 +28,6 @@ import adams.gui.goe.GenericObjectEditorDialog;
 import adams.gui.visualization.instances.InstancesTable;
 import adams.gui.visualization.statistics.HistogramFactory;
 import gnu.trove.list.array.TDoubleArrayList;
-import weka.core.Instance;
 import weka.core.Instances;
 
 import java.awt.Dialog.ModalityType;
@@ -98,7 +98,9 @@ public class Histogram
     HistogramFactory.Dialog		dialog;
     int					i;
     ArrayHistogram                      last;
-    Instance 				inst;
+    int					col;
+    int					row;
+    Object				value;
 
     // let user customize histogram
     if (GUIHelper.getParentDialog(table) != null)
@@ -120,17 +122,18 @@ public class Histogram
     // get data from instances
     list = new TDoubleArrayList();
     if (isColumn) {
-      for (i = 0; i < data.numInstances(); i++) {
-	inst = data.instance(i);
-	if (!inst.isMissing(index) && data.attribute(index).isNumeric())
-	  list.add(inst.value(index));
+      col = index + 1;
+      for (i = 0; i < table.getRowCount(); i++) {
+	value = table.getValueAt(i, col);
+	if ((value != null) && (Utils.isDouble(value.toString())))
+	  list.add(Utils.toDouble(value.toString()));
       }
     }
     else {
-      inst = data.instance(index);
+      row = index;
       for (i = 0; i < data.numAttributes(); i++) {
-	if (!inst.isMissing(i) && data.attribute(i).isNumeric())
-	  list.add(inst.value(i));
+	if (data.attribute(i).isNumeric() && !data.instance(row).isMissing(i))
+	  list.add(data.instance(row).value(i));
       }
     }
 

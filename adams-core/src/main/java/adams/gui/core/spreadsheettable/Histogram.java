@@ -20,7 +20,9 @@
 
 package adams.gui.core.spreadsheettable;
 
+import adams.core.Utils;
 import adams.core.option.AbstractOptionHandler;
+import adams.data.spreadsheet.Cell;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.statistics.ArrayHistogram;
 import adams.gui.core.GUIHelper;
@@ -97,6 +99,10 @@ public class Histogram
     HistogramFactory.Dialog		dialog;
     int					i;
     ArrayHistogram                      last;
+    int					col;
+    int					row;
+    Object				value;
+    Cell 				cell;
 
     // let user customize histogram
     if (GUIHelper.getParentDialog(table) != null)
@@ -118,15 +124,23 @@ public class Histogram
     // get data from spreadsheet
     list = new TDoubleArrayList();
     if (isColumn) {
-      for (i = 0; i < sheet.getRowCount(); i++) {
-	if (sheet.hasCell(i, index) && sheet.getCell(i, index).isNumeric())
-	  list.add(sheet.getCell(i, index).toDouble());
+      col = index;
+      if (table.getShowRowColumn())
+	col++;
+      for (i = 0; i < table.getRowCount(); i++) {
+	value = table.getValueAt(i, col);
+	if ((value != null) && (Utils.isDouble(value.toString())))
+	  list.add(Utils.toDouble(value.toString()));
       }
     }
     else {
+      row = index;
       for (i = 0; i < sheet.getColumnCount(); i++) {
-	if (sheet.hasCell(index, i) && sheet.getCell(index, i).isNumeric())
-	  list.add(sheet.getCell(index, i).toDouble());
+	if (sheet.getRow(row).hasCell(i)) {
+	  cell = sheet.getRow(row).getCell(i);
+	  if (!cell.isMissing() && cell.isNumeric())
+	    list.add(cell.toDouble());
+	}
       }
     }
 

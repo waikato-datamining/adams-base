@@ -32,7 +32,6 @@ import adams.gui.core.BaseFrame;
 import adams.gui.core.GUIHelper;
 import adams.gui.goe.GenericObjectEditorDialog;
 import adams.gui.visualization.instances.InstancesTable;
-import weka.core.Instance;
 import weka.core.Instances;
 
 import javax.swing.SwingWorker;
@@ -113,7 +112,6 @@ public class SimplePlot
     final String		title;
     SwingWorker 		worker;
     adams.flow.sink.SimplePlot	last;
-    Instance			inst;
     int				numPoints;
     String			newPoints;
     int				col;
@@ -164,10 +162,9 @@ public class SimplePlot
     }
     else {
       row = index;
-      for (i = 0; i < table.getColumnCount(); i++) {
-	value = table.getValueAt(row, i);
-	if ((value != null) && (Utils.isDouble(value.toString())))
-	  tmp.add(Utils.toDouble(value.toString()));
+      for (i = 0; i < data.numAttributes(); i++) {
+	if (data.attribute(i).isNumeric() && !data.instance(row).isMissing(i))
+	  tmp.add(data.instance(row).value(i));
       }
     }
 

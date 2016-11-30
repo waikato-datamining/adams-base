@@ -22,6 +22,7 @@ package adams.gui.core.spreadsheettable;
 
 import adams.core.Utils;
 import adams.core.option.AbstractOptionHandler;
+import adams.data.spreadsheet.Cell;
 import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
@@ -119,6 +120,7 @@ public class JFreeChart
     int				col;
     int				row;
     Object			value;
+    Cell			cell;
 
     numPoints = isColumn ? sheet.getRowCount() : sheet.getColumnCount();
     if (numPoints > MAX_POINTS) {
@@ -166,13 +168,12 @@ public class JFreeChart
     }
     else {
       row = index;
-      col = 0;
-      if (table.getShowRowColumn())
-	col++;
-      for (i = col; i < table.getColumnCount(); i++) {
-	value = table.getValueAt(row, i);
-	if ((value != null) && (Utils.isDouble(value.toString())))
-	  tmp.add(Utils.toDouble(value.toString()));
+      for (i = 0; i < sheet.getColumnCount(); i++) {
+	if (sheet.getRow(row).hasCell(i)) {
+	  cell = sheet.getRow(row).getCell(i);
+	  if (!cell.isMissing() && cell.isNumeric())
+	    tmp.add(cell.toDouble());
+	}
       }
     }
 
