@@ -55,6 +55,16 @@ public class BooleanArrayMatrixView
   }
 
   /**
+   * Initializes the matrix view the provided boolean matrix (gets turned
+   * into an array in the process).
+   *
+   * @param data	the matrix to use
+   */
+  public BooleanArrayMatrixView(boolean[][] data) {
+    this(matrixToArray(data), data[0].length, data.length);
+  }
+
+  /**
    * Initializes the matrix view.
    *
    * @param data	the 1-dim array data
@@ -64,42 +74,42 @@ public class BooleanArrayMatrixView
   public BooleanArrayMatrixView(boolean[] data, int width, int height) {
     if (data.length != width * height)
       throw new IllegalArgumentException("Length of array and width*height don't match: " + data.length + " != " + width * height);
-    
+
     m_Data   = data;
     m_Width  = width;
     m_Height = height;
   }
-  
+
   /**
    * Returns the underlying data.
-   * 
+   *
    * @return		the data
    */
   public boolean[] getData() {
     return m_Data;
   }
-  
+
   /**
    * Returns the width of the matrix.
-   * 
+   *
    * @return 		the width
    */
   public int getWidth() {
     return m_Width;
   }
-  
+
   /**
    * Returns the height of the matrix.
-   * 
+   *
    * @return 		the height
    */
   public int getHeight() {
     return m_Height;
   }
-  
+
   /**
    * Returns the value at the specified location.
-   * 
+   *
    * @param x		the 0-based column
    * @param y		the 0-based row
    * @return		the value at the position
@@ -110,7 +120,7 @@ public class BooleanArrayMatrixView
 
   /**
    * Sets the value at the specified location.
-   * 
+   *
    * @param x		the 0-based column
    * @param y		the 0-based row
    * @param value	the value to set
@@ -121,7 +131,7 @@ public class BooleanArrayMatrixView
 
   /**
    * Returns a short description of the view.
-   * 
+   *
    * @return		the description
    */
   @Override
@@ -160,5 +170,29 @@ public class BooleanArrayMatrixView
    */
   public BufferedImage toBufferedImage() {
     return toBufferedImage(BufferedImage.TYPE_INT_RGB);
+  }
+
+  /**
+   * Turns the matrix into an array.
+   *
+   * @param data	the matrix to convert
+   * @return		the generated array
+   */
+  public static boolean[] matrixToArray(boolean[][] data) {
+    boolean[]	result;
+    int		x;
+    int		y;
+    int		i;
+
+    result = new boolean[data[0].length * data.length];
+    i      = 0;
+    for (y = 0; y < data.length; y++) {
+      for (x = 0; x < data[y].length; x++) {
+	result[i] = data[y][x];
+	i++;
+      }
+    }
+
+    return result;
   }
 }
