@@ -681,4 +681,22 @@ public class BaseTableWithButtons
   public SpreadSheet toSpreadSheet() {
     return m_Component.toSpreadSheet();
   }
+
+  /**
+   * Returns the column widths.
+   *
+   * @return		the current widths
+   */
+  public int[] getColumnWidths() {
+    return m_Component.getColumnWidths();
+  }
+
+  /**
+   * Sets the column widths.
+   *
+   * @param value	the widths
+   */
+  public void setColumnWidths(int[] value) {
+    m_Component.setColumnWidths(value);
+  }
 }

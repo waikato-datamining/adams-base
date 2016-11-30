@@ -677,4 +677,34 @@ public class BaseTable
 
     return result.toArray();
   }
+
+  /**
+   * Returns the column widths.
+   *
+   * @return		the current widths
+   */
+  public int[] getColumnWidths() {
+    int[]	result;
+    int		i;
+
+    result = new int[getColumnModel().getColumnCount()];
+    for (i = 0; i < getColumnModel().getColumnCount(); i++)
+      result[i] = getColumnModel().getColumn(i).getWidth();
+
+    return result;
+  }
+
+  /**
+   * Sets the column widths.
+   *
+   * @param value	the widths
+   */
+  public void setColumnWidths(int[] value) {
+    int		i;
+
+    for (i = 0; i < value.length && i < getColumnModel().getColumnCount(); i++) {
+      getColumnModel().getColumn(i).setWidth(value[i]);
+      getColumnModel().getColumn(i).setPreferredWidth(value[i]);
+    }
+  }
 }
