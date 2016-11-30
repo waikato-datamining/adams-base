@@ -686,6 +686,24 @@ public class SpreadSheetTable
   }
 
   /**
+   * Whether to display a simple header or an HTML one with the column indices.
+   *
+   * @param value	true if to display simple header
+   */
+  public void setUseSimpleHeader(boolean value) {
+    ((SpreadSheetTableModel) getUnsortedModel()).setUseSimpleHeader(value);
+  }
+
+  /**
+   * Returns whether to display a simple header or an HTML one with the column indices.
+   *
+   * @return		true if simple header displayed
+   */
+  public boolean getUseSimpleHeader() {
+    return ((SpreadSheetTableModel) getUnsortedModel()).getUseSimpleHeader();
+  }
+
+  /**
    * Sets whether the table is read-only.
    *
    * @param value	true if read-only
