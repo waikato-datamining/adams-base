@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * TODO: What class does.
+ * Helper class for run information.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
