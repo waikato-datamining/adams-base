@@ -20,6 +20,7 @@
 
 package adams.gui.tools.wekainvestigator.tab.classifytab.output;
 
+import adams.core.AutoOnOff;
 import adams.core.Utils;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetColumnIndex;
@@ -30,6 +31,7 @@ import adams.flow.sink.ActualVsPredictedPlot;
 import adams.flow.sink.ActualVsPredictedPlot.LimitType;
 import adams.flow.transformer.SpreadSheetMerge;
 import adams.flow.transformer.WekaPredictionsToSpreadSheet;
+import adams.gui.core.GUIHelper;
 import adams.gui.tools.wekainvestigator.output.ComponentContentPanel;
 import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
 
@@ -47,6 +49,9 @@ public class ClassifierErrors
   extends AbstractOutputGenerator {
 
   private static final long serialVersionUID = -6829245659118360739L;
+
+  /** the maximum number of data points before turning off anti-aliasing. */
+  public final static int MAX_DATA_POINTS = 1000;
 
   /** the limit type. */
   protected LimitType m_Limit;
@@ -68,6 +73,9 @@ public class ClassifierErrors
 
   /** whether to use the error for the cross-size. */
   protected boolean m_UseError;
+
+  /** whether anti-aliasing is enabled. */
+  protected AutoOnOff m_AntiAliasingEnabled;
 
   /**
    * Returns a string describing the object.
@@ -113,6 +121,10 @@ public class ClassifierErrors
     m_OptionManager.add(
       "use-error", "useError",
       false);
+
+    m_OptionManager.add(
+      "anti-aliasing-enabled", "antiAliasingEnabled",
+      AutoOnOff.AUTO);
   }
 
   /**
@@ -335,6 +347,35 @@ public class ClassifierErrors
   }
 
   /**
+   * Sets whether to use anti-aliasing.
+   *
+   * @param value	if anti-aliasing is used
+   */
+  public void setAntiAliasingEnabled(AutoOnOff value) {
+    m_AntiAliasingEnabled = value;
+    reset();
+  }
+
+  /**
+   * Returns whether anti-aliasing is used.
+   *
+   * @return		if anti-aliasing is used
+   */
+  public AutoOnOff isAntiAliasingEnabled() {
+    return m_AntiAliasingEnabled;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String antiAliasingEnabledTipText() {
+    return "In auto mode, anti-aliasing is turned off if more than " + MAX_DATA_POINTS + " present or the system wide setting has been turned off.";
+  }
+
+  /**
    * Checks whether output can be generated from this item.
    *
    * @param item	the item to check
@@ -406,6 +447,19 @@ public class ClassifierErrors
     sink.setLimit(m_Limit);
     sink.setDiameter(m_Diameter);
     sink.setShowSidePanel(false);
+    switch (m_AntiAliasingEnabled) {
+      case AUTO:
+	sink.setAntiAliasingEnabled(
+	  ((SpreadSheet) token.getPayload()).getRowCount() <= MAX_DATA_POINTS
+	    && GUIHelper.AntiAliasingEnabled);
+	break;
+      case ON:
+	sink.setAntiAliasingEnabled(true);
+	break;
+      case OFF:
+	sink.setAntiAliasingEnabled(false);
+	break;
+    }
     if (p2s.getShowError())
       sink.setError(new SpreadSheetColumnIndex("Error"));
     if ((additional != null) && (additional.size() > 0))
