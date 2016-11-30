@@ -87,6 +87,7 @@ public class WekaInvestigatorPreferencesPanel
     addPropertyType("Classify.TrainPercentage", PropertyType.DOUBLE);
     addPropertyType("Classify.PreserveOrder", PropertyType.BOOLEAN);
     addPropertyType("Classify.DiscardPredictions", PropertyType.BOOLEAN);
+    addPropertyType("Classify.ModelDirectory", PropertyType.DIRECTORY_ABSOLUTE);
     addPropertyType("Classify.OutputGenerators", PropertyType.ARRAY_EDITOR);
     setChooser("Classify.OutputGenerators", new GenericArrayEditorPanel(
       new adams.gui.tools.wekainvestigator.tab.classifytab.output.AbstractOutputGenerator[0]));
@@ -109,6 +110,7 @@ public class WekaInvestigatorPreferencesPanel
     addPropertyType("Cluster.UseViews", PropertyType.BOOLEAN);
     addPropertyType("Cluster.TrainPercentage", PropertyType.DOUBLE);
     addPropertyType("Cluster.PreserveOrder", PropertyType.BOOLEAN);
+    addPropertyType("Cluster.ModelDirectory", PropertyType.DIRECTORY_ABSOLUTE);
     addPropertyType("Cluster.OutputGenerators", PropertyType.ARRAY_EDITOR);
     setChooser("Cluster.OutputGenerators", new GenericArrayEditorPanel(
       new adams.gui.tools.wekainvestigator.tab.clustertab.output.AbstractOutputGenerator[0]));

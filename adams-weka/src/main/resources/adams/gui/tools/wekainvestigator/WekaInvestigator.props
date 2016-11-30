@@ -95,9 +95,13 @@ Classify.Seed=1
 # (double; 0-100)
 Classify.TrainPercentage=66
 
-# wether to preserve order (for random split)
+# whether to preserve order (for random split)
 # (true|false)
 Classify.PreserveOrder=false
+
+# The default output directory for models
+# (directory; %c=current, %h=user home, %t=temp directory)
+Classify.ModelDirectory=%c
 
 # the default output generators to use
 # (blank-separated list of "classname + options")
@@ -137,9 +141,13 @@ Cluster.UseViews=false
 # (double; 0-100)
 Cluster.TrainPercentage=66
 
-# wether to preserve order (for random split)
+# whether to preserve order (for random split)
 # (true|false)
 Cluster.PreserveOrder=false
+
+# The default output directory for models
+# (directory; %c=current, %h=user home, %t=temp directory)
+Cluster.ModelDirectory=%c
 
 # the default output generators to use
 # (blank-separated list of "classname + options")
