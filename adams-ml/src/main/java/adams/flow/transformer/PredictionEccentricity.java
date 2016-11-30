@@ -429,7 +429,7 @@ public class PredictionEccentricity
       predictions = new boolean[m_Grid][m_Grid];
       for (i = 0; i < actual.length; i++) {
 	x = (int) Math.round((actual[i] - min) / range * m_Grid);
-	y = (int) Math.round((predicted[i] - min) / range * m_Grid) + m_Grid - 1;
+	y = m_Grid - 1 - (int) Math.round((predicted[i] - min) / range * m_Grid);
 	if ((x >= 0) && (x < m_Grid) && (y >= 0) && (y < m_Grid))
 	  predictions[y][x] = true;
       }
