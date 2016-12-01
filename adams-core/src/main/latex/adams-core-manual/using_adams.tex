@@ -640,6 +640,8 @@ control actors. In the following a short introduction to the others:
 	error messages attached.
 	\item \textit{Sequence} -- Allows to specify multiple actors that get exectued
 	one after the other, with the output of one actor being the input of the next.
+	\item \textit{SetContainerValue} -- Updates a single value of the container
+	passing through, using either data obtained from storage or a callable actor.
 	\item \textit{SinkReset} -- resets all its sub-actors in case the monitored
 	variable changed value.
 	\item \textit{Sleep} -- Suspends the flow execution for the specified number of

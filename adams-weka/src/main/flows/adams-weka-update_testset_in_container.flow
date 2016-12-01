@@ -1,0 +1,21 @@
+# Project: adams
+# Date: 2016-12-01 15:16:51
+# User: fracpete
+# Charset: UTF-8
+adams.flow.control.Flow -annotation "Updates the test set of a train/test container." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.standalone.CallableActors
+  adams.flow.sink.HistoryDisplay -entry-name-variable entry
+ adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/anneal.arff
+ adams.flow.transformer.WekaFileReader -loader weka.core.converters.AArffLoader
+ adams.flow.transformer.WekaClassSelector
+ adams.flow.transformer.WekaRandomSplit
+ adams.flow.control.Tee -name original
+  adams.flow.transformer.SetVariable -var-name entry -var-value original
+  adams.flow.sink.CallableSink -callable HistoryDisplay
+ adams.flow.control.ContainerValuePicker -value Test
+  adams.flow.transformer.WekaFilter -filter "weka.filters.unsupervised.instance.Resample -S 1 -Z 50.0 -no-replacement"
+  adams.flow.transformer.SetStorageValue -storage-name test
+ adams.flow.control.SetContainerValue -storage-name test -use-storage true -value-name Test
+ adams.flow.control.Tee -name updated
+  adams.flow.transformer.SetVariable -var-name entry -var-value updated
+  adams.flow.sink.CallableSink -callable HistoryDisplay
