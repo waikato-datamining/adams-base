@@ -311,7 +311,7 @@ public class InstancesTable
     });
     menu.add(menuitem);
 
-    InstancesTablePopupMenuItemHelper.addToPopupMenu(this, menu, false, actRow, actCol);
+    InstancesTablePopupMenuItemHelper.addToPopupMenu(this, menu, false, actRow, row, actCol);
 
     return menu;
   }
@@ -406,7 +406,7 @@ public class InstancesTable
     menuitem.addActionListener((ActionEvent ae) -> saveAs(TableRowRange.VISIBLE));
     submenu.add(menuitem);
 
-    InstancesTablePopupMenuItemHelper.addToPopupMenu(this, menu, true, actRow, actCol);
+    InstancesTablePopupMenuItemHelper.addToPopupMenu(this, menu, true, actRow, row, actCol);
 
     return menu;
   }

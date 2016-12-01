@@ -237,12 +237,13 @@ public class SimplePlot
    *
    * @param table	the source table
    * @param data	the instances to use as basis
-   * @param row	        the row in the instances
+   * @param actRow	the actual row in the instances
+   * @param selRow 	the selected row in the table
    * @return		true if successful
    */
   @Override
-  public boolean plotRow(InstancesTable table, Instances data, int row) {
-    plot(table, data, false, row);
+  public boolean plotRow(InstancesTable table, Instances data, int actRow, int selRow) {
+    plot(table, data, false, actRow);
     return true;
   }
 }

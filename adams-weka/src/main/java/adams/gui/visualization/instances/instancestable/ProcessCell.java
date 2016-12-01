@@ -37,9 +37,10 @@ public interface ProcessCell
    *
    * @param table	the source table
    * @param data	the instances to use as basis
-   * @param row 	the row in the instances
+   * @param actRow 	the row in the instances
+   * @param selRow 	the selected row in the table
    * @param column	the column in the instances
    * @return		true if successful
    */
-  public boolean processCell(InstancesTable table, Instances data, int row, int column);
+  public boolean processCell(InstancesTable table, Instances data, int actRow, int selRow, int column);
 }

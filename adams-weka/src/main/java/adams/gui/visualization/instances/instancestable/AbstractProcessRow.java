@@ -63,18 +63,19 @@ public abstract class AbstractProcessRow
    *
    * @param table	the source table
    * @param data	the instances to use as basis
-   * @param row	the row in the instances
+   * @param actRow	the actual row in the instances
+   * @param selRow 	the selected row in the table
    * @return		null if passed, otherwise error message
    */
-  protected String check(InstancesTable table, Instances data, int row) {
+  protected String check(InstancesTable table, Instances data, int actRow, int selRow) {
     if (table == null)
       return "No source table available!";
     if (data == null)
       return "No instances available!";
-    if (row < 0)
+    if (actRow < 0)
       return "Negative row index!";
-    if (row >= data.numInstances())
-      return "Row index too large: " + (row + 1) + " > " + data.numInstances();
+    if (actRow >= data.numInstances())
+      return "Row index too large: " + (actRow + 1) + " > " + data.numInstances();
     return null;
   }
 
@@ -83,29 +84,31 @@ public abstract class AbstractProcessRow
    *
    * @param table	the source table
    * @param data	the instances to use as basis
-   * @param row	the row in the instances
+   * @param actRow	the actual row in the instances
+   * @param selRow 	the selected row in the table
    * @return		true if successful
    */
-  protected abstract boolean doProcessRow(InstancesTable table, Instances data, int row);
+  protected abstract boolean doProcessRow(InstancesTable table, Instances data, int actRow, int selRow);
 
   /**
    * Processes the specified row.
    *
    * @param table	the source table
    * @param data	the instances to use as basis
-   * @param row	the row in the instances
+   * @param actRow	the actual row in the instances
+   * @param selRow 	the selected row in the table
    * @return		true if successful
    */
-  public boolean processRow(InstancesTable table, Instances data, int row) {
+  public boolean processRow(InstancesTable table, Instances data, int actRow, int selRow) {
     boolean	result;
     String	error;
 
-    error = check(table, data, row);
+    error = check(table, data, actRow, selRow);
     result = (error == null);
     if (result)
-      result = doProcessRow(table, data, row);
+      result = doProcessRow(table, data, actRow, selRow);
     else
-      GUIHelper.showErrorMessage(table, "Failed to process row #" + (row+1) + "\n" + error);
+      GUIHelper.showErrorMessage(table, "Failed to process row #" + (actRow +1) + "\n" + error);
 
     return result;
   }

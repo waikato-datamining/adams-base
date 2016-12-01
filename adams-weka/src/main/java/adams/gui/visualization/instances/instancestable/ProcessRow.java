@@ -15,7 +15,7 @@
 
 /**
  * ProcessRow.java
- * Copyright (C) 2015 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.instances.instancestable;
@@ -37,8 +37,9 @@ public interface ProcessRow
    *
    * @param table	the source table
    * @param data	the instances to use as basis
-   * @param row		the row in the instances
+   * @param actRow	the actual row in the instances
+   * @param selRow 	the selected row in the table
    * @return		true if successful
    */
-  public boolean processRow(InstancesTable table, Instances data, int row);
+  public boolean processRow(InstancesTable table, Instances data, int actRow, int selRow);
 }

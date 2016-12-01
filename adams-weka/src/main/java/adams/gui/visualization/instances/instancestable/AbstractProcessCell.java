@@ -63,19 +63,20 @@ public abstract class AbstractProcessCell
    *
    * @param table	the source table
    * @param data	the instances to use as basis
-   * @param row         the row in the instances
+   * @param actRow      the row in the instances
+   * @param selRow 	the selected row in the table
    * @param column	the column in the instances
    * @return		null if passed, otherwise error message
    */
-  protected String check(InstancesTable table, Instances data, int row, int column) {
+  protected String check(InstancesTable table, Instances data, int actRow, int selRow, int column) {
     if (table == null)
       return "No source table available!";
     if (data == null)
       return "No instances available!";
-    if (row < 0)
+    if (actRow < 0)
       return "Negative row index!";
-    if (row >= data.numInstances())
-      return "Row index too large: " + (row + 1) + " > " + data.numInstances();
+    if (actRow >= data.numInstances())
+      return "Row index too large: " + (actRow + 1) + " > " + data.numInstances();
     if (column < 0)
       return "Negative column index!";
     if (column >= data.numAttributes())
@@ -88,31 +89,33 @@ public abstract class AbstractProcessCell
    *
    * @param table	the source table
    * @param data	the instances to use as basis
-   * @param row         the row in the instances
+   * @param actRow      the actual row in the instances
+   * @param selRow 	the selected row in the table
    * @param column	the column in the instances
    * @return		true if successful
    */
-  protected abstract boolean doProcessCell(InstancesTable table, Instances data, int row, int column);
+  protected abstract boolean doProcessCell(InstancesTable table, Instances data, int actRow, int selRow, int column);
 
   /**
    * Processes the specified column.
    *
    * @param table	the source table
    * @param data	the instances to use as basis
-   * @param row         the row in the instances
+   * @param actRow      the row in the instances
+   * @param selRow 	the selected row in the table
    * @param column	the column in the instances
    * @return		true if successful
    */
-  public boolean processCell(InstancesTable table, Instances data, int row, int column) {
+  public boolean processCell(InstancesTable table, Instances data, int actRow, int selRow, int column) {
     boolean	result;
     String	error;
 
-    error = check(table, data, row, column);
+    error = check(table, data, actRow, selRow, column);
     result = (error == null);
     if (result)
-      result = doProcessCell(table, data, row, column);
+      result = doProcessCell(table, data, actRow, selRow, column);
     else
-      GUIHelper.showErrorMessage(table, "Failed to process cell " + (row+1) + "/" + (column+1) + "\n" + error);
+      GUIHelper.showErrorMessage(table, "Failed to process cell " + (actRow +1) + "/" + (column+1) + "\n" + error);
 
     return result;
   }

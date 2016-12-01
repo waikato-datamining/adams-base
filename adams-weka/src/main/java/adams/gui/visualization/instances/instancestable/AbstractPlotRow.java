@@ -63,18 +63,19 @@ public abstract class AbstractPlotRow
    *
    * @param table	the source table
    * @param data	the instances to use as basis
-   * @param row		the row in the instances
+   * @param actRow	the actual row in the instances
+   * @param selRow 	the selected row in the table
    * @return		null if passed, otherwise error message
    */
-  protected String check(InstancesTable table, Instances data, int row) {
+  protected String check(InstancesTable table, Instances data, int actRow, int selRow) {
     if (table == null)
       return "No source table available!";
     if (data == null)
       return "No instances available!";
-    if (row < 0)
+    if (actRow < 0)
       return "Negative row index!";
-    if (row >= data.numInstances())
-      return "Row index too large: " + (row + 1) + " > " + data.numInstances();
+    if (actRow >= data.numInstances())
+      return "Row index too large: " + (actRow + 1) + " > " + data.numInstances();
     return null;
   }
 
@@ -83,29 +84,30 @@ public abstract class AbstractPlotRow
    *
    * @param table	the source table
    * @param data	the instances to use as basis
-   * @param row	        the row in the instances
+   * @param actRow	        the row in the instances
    * @return		true if successful
    */
-  protected abstract boolean doPlotRow(InstancesTable table, Instances data, int row);
+  protected abstract boolean doPlotRow(InstancesTable table, Instances data, int actRow);
 
   /**
    * Plots the specified row.
    *
    * @param table	the source table
    * @param data	the instances to use as basis
-   * @param row	        the row in the instances
+   * @param actRow	the actual row in the instances
+   * @param selRow 	the selected row in the table
    * @return		true if successful
    */
-  public boolean plotRow(InstancesTable table, Instances data, int row) {
+  public boolean plotRow(InstancesTable table, Instances data, int actRow, int selRow) {
     boolean	result;
     String	error;
 
-    error = check(table, data, row);
+    error = check(table, data, actRow, selRow);
     result = (error == null);
     if (result)
-      result = doPlotRow(table, data, row);
+      result = doPlotRow(table, data, actRow);
     else
-      GUIHelper.showErrorMessage(table, "Failed to plot row #" + (row+1) + "\n" + error);
+      GUIHelper.showErrorMessage(table, "Failed to plot row #" + (actRow +1) + "\n" + error);
 
     return result;
   }
