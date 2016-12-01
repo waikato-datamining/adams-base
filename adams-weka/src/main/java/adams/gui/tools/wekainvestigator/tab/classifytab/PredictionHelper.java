@@ -40,7 +40,7 @@ public class PredictionHelper {
   /**
    * Turns the result item into a spreadsheet with the predictions.
    *
-   * @param logger 	the object used for logging
+   * @param logger 	the object used for logging, can be null
    * @param errors 	for collecting errors
    * @param item	the result item to use
    * @param addAdditionalAttributes 	whether to add additional attributes
@@ -54,7 +54,7 @@ public class PredictionHelper {
   /**
    * Turns the result item into a spreadsheet with the predictions.
    *
-   * @param logger 	the object used for logging
+   * @param logger 	the object used for logging, can be null
    * @param errors 	for collecting errors
    * @param item	the result item to use
    * @param addAdditionalAttributes 	whether to add additional attributes
@@ -88,7 +88,8 @@ public class PredictionHelper {
     }
     catch (Exception e) {
       msg = "Failed to assemble predictions!";
-      Utils.handleException(logger, msg, e);
+      if (logger != null)
+	Utils.handleException(logger, msg, e);
       errors.add(msg, e);
       return null;
     }
@@ -103,7 +104,8 @@ public class PredictionHelper {
       msg = merge.execute();
       if (msg != null) {
 	msg = "Failed to merge predictions and additional attributes!\n" + msg;
-	logger.getLogger().severe(msg);
+	if (logger != null)
+	  logger.getLogger().severe(msg);
 	errors.add(msg);
 	token = new Token(sheet);
       }
