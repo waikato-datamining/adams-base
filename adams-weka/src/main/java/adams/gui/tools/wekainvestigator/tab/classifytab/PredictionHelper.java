@@ -43,21 +43,29 @@ public class PredictionHelper {
    * @param logger 	the object used for logging
    * @param errors 	for collecting errors
    * @param item	the result item to use
+   * @param addAdditionalAttributes 	whether to add additional attributes
    * @param showError 	whether to add the error in a separate column
    * @return		the generated spreadsheet
    */
-  public static SpreadSheet toSpreadSheet(LoggingSupporter logger, MessageCollection errors, ResultItem item, boolean showError) {
-    return toSpreadSheet(logger, errors, item, false, false, false, showError, false);
+  public static SpreadSheet toSpreadSheet(LoggingSupporter logger, MessageCollection errors, ResultItem item, boolean addAdditionalAttributes, boolean showError) {
+    return toSpreadSheet(logger, errors, item, addAdditionalAttributes, false, false, false, showError, false);
   }
 
   /**
    * Turns the result item into a spreadsheet with the predictions.
    *
+   * @param logger 	the object used for logging
+   * @param errors 	for collecting errors
    * @param item	the result item to use
+   * @param addAdditionalAttributes 	whether to add additional attributes
+   * @param addLabelIndex 	whether to add the label index in a separate column
+   * @param showDistribution 	whether to add the distribution in a separate column
+   * @param showProbability 	whether to add the probability in a separate column
    * @param showError 	whether to add the error in a separate column
+   * @param showWeight 	whether to add the weight in a separate column
    * @return		the generated spreadsheet, null if failed
    */
-  public static SpreadSheet toSpreadSheet(LoggingSupporter logger, MessageCollection errors, ResultItem item, boolean addLabelIndex, boolean showDistribution, boolean showProbability, boolean showError, boolean showWeight) {
+  public static SpreadSheet toSpreadSheet(LoggingSupporter logger, MessageCollection errors, ResultItem item, boolean addAdditionalAttributes, boolean addLabelIndex, boolean showDistribution, boolean showProbability, boolean showError, boolean showWeight) {
     WekaPredictionsToSpreadSheet 	p2s;
     WekaEvaluationContainer 		cont;
     Token 				token;
@@ -87,7 +95,7 @@ public class PredictionHelper {
     token = p2s.output();
 
     // add additional attributes
-    if (item.hasAdditionalAttributes()) {
+    if (addAdditionalAttributes && item.hasAdditionalAttributes()) {
       sheet = (SpreadSheet) token.getPayload();
       merge = new SpreadSheetMerge();
       token = new Token(new SpreadSheet[]{sheet, item.getAdditionalAttributes()});

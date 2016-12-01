@@ -274,7 +274,7 @@ public class Predictions
 
     errors = new MessageCollection();
     sheet  = PredictionHelper.toSpreadSheet(
-      this, errors, item, m_AddLabelIndex, m_ShowDistribution, m_ShowProbability, m_ShowError, m_ShowWeight);
+      this, errors, item, true, m_AddLabelIndex, m_ShowDistribution, m_ShowProbability, m_ShowError, m_ShowWeight);
     if (sheet == null) {
       if (errors.isEmpty())
 	return "Failed to generate prediction!";

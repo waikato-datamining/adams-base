@@ -403,7 +403,7 @@ public class ClassifierErrors
 
     errors    = new MessageCollection();
     showError = m_UseError && item.getEvaluation().getHeader().classAttribute().isNumeric();
-    sheet     = PredictionHelper.toSpreadSheet(this, errors, item, showError);
+    sheet     = PredictionHelper.toSpreadSheet(this, errors, item, true, showError);
     if (sheet == null) {
       if (errors.isEmpty())
 	return "Failed to generate prediction!";
