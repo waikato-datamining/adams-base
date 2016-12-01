@@ -265,7 +265,7 @@ public abstract class AbstractRowFinderApplier
    * @return 		tip text for this property suitable for
    * 			displaying in the explorer/experimenter gui
    */
-  public String onlyFistBatchTipText() {
+  public String onlyFirstBatchTipText() {
     return
 	"If enabled the row finder will only get applied during the first batch.";
   }
