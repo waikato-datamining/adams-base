@@ -100,6 +100,11 @@ import java.util.Iterator;
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
+ * <pre>-use-storage &lt;boolean&gt; (property: useStorage)
+ * &nbsp;&nbsp;&nbsp;Whether to use storage items or data from callable actors.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
  * <pre>-value-name &lt;adams.core.base.BaseString&gt; [-value-name ...] (property: valueNames)
  * &nbsp;&nbsp;&nbsp;The names to use for storing the values in the container:PlotName, X, Y, 
  * &nbsp;&nbsp;&nbsp;Content type, Error X, Error Y, MetaData.
@@ -167,6 +172,10 @@ public class MakeContainer
     m_OptionManager.add(
       "storage-name", "storageNames",
       new StorageName[0]);
+
+    m_OptionManager.add(
+      "use-storage", "useStorage",
+      false);
 
     m_OptionManager.add(
       "value-name", "valueNames",
