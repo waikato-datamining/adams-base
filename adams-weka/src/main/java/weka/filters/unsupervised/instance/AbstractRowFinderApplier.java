@@ -15,16 +15,15 @@
 
 /**
  * AbstractRowFinderApplier.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  */
 package weka.filters.unsupervised.instance;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.Vector;
-
+import adams.core.option.OptionUtils;
+import adams.data.weka.rowfinder.AbstractRowFinder;
+import adams.data.weka.rowfinder.NullFinder;
+import adams.data.weka.rowfinder.RowFinder;
+import adams.data.weka.rowfinder.TrainableRowFinder;
 import weka.core.Capabilities;
 import weka.core.Capabilities.Capability;
 import weka.core.CapabilitiesHandler;
@@ -32,11 +31,12 @@ import weka.core.Instances;
 import weka.core.Option;
 import weka.core.Utils;
 import weka.filters.SimpleBatchFilter;
-import adams.core.option.OptionUtils;
-import adams.data.weka.rowfinder.AbstractRowFinder;
-import adams.data.weka.rowfinder.NullFinder;
-import adams.data.weka.rowfinder.RowFinder;
-import adams.data.weka.rowfinder.TrainableRowFinder;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.Vector;
 
 /**
  * Ancestor for filters that apply {@link RowFinder} schemes to the data.
@@ -55,7 +55,10 @@ public abstract class AbstractRowFinderApplier
 
   /** Whether to invert the row indices. */
   protected boolean m_Invert = false;
-  
+
+  /** Whether to only apply during first batch. */
+  protected boolean m_OnlyFirstBatch = false;
+
   /**
    * Returns an enumeration describing the available options.
    *
@@ -84,6 +87,11 @@ public abstract class AbstractRowFinderApplier
 	+ "\t(default: off)",
 	"invert", 0, "-invert"));
 
+    result.addElement(new Option(
+	"\tWhether to only apply filtering to first batch.\n"
+	+ "\t(default: off)",
+	"onlu-first-batch", 0, "-only-first-batch"));
+
     return result.elements();
   }
 
@@ -98,7 +106,9 @@ public abstract class AbstractRowFinderApplier
     String	tmpStr;
 
     setInvert(Utils.getFlag("invert", options));
-    
+
+    setOnlyFirstBatch(Utils.getFlag("only-first-batch", options));
+
     tmpStr = Utils.getOption('W', options);
     if (tmpStr.length() == 0)
       tmpStr = NullFinder.class.getName();
@@ -116,10 +126,13 @@ public abstract class AbstractRowFinderApplier
   public String[] getOptions() {
     Vector<String>	result;
 
-    result = new Vector<String>(Arrays.asList(super.getOptions()));
+    result = new Vector<>(Arrays.asList(super.getOptions()));
 
     if (getInvert())
       result.add("-invert");
+
+    if (getOnlyFirstBatch())
+      result.add("-only-first-batch");
 
     result.add("-W");
     result.add(OptionUtils.getCommandLine(getRowFinder()));
@@ -229,6 +242,35 @@ public abstract class AbstractRowFinderApplier
   }
 
   /**
+   * Set whether to apply row finder during first batch.
+   *
+   * @param value 	true if to only apply during first batch
+   */
+  public void setOnlyFirstBatch(boolean value) {
+    m_OnlyFirstBatch = value;
+  }
+
+  /**
+   * Returns whether to apply row finder during first batch.
+   *
+   * @return 		true if to only apply during first batch
+   */
+  public boolean getOnlyFirstBatch() {
+    return m_OnlyFirstBatch;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the explorer/experimenter gui
+   */
+  public String onlyFistBatchTipText() {
+    return
+	"If enabled the row finder will only get applied during the first batch.";
+  }
+
+  /**
    * Determines the output format based on the input format and returns 
    * this. In case the output format cannot be returned immediately, i.e.,
    * immediateOutputFormat() returns false, then this method will be called
@@ -266,7 +308,10 @@ public abstract class AbstractRowFinderApplier
     HashSet<Integer>	set;
     ArrayList<Integer>	inverted;
     int			i;
-    
+
+    if (m_OnlyFirstBatch && isFirstBatchDone())
+      return instances;
+
     if (m_RowFinder instanceof TrainableRowFinder) {
       if (!((TrainableRowFinder) m_RowFinder).isRowFinderTrained())
 	((TrainableRowFinder) m_RowFinder).trainRowFinder(instances);
@@ -274,8 +319,8 @@ public abstract class AbstractRowFinderApplier
     indices = m_RowFinder.findRows(instances);
     
     if (m_Invert) {
-      set      = new HashSet<Integer>(adams.core.Utils.toList(indices));
-      inverted = new ArrayList<Integer>();
+      set      = new HashSet<>(adams.core.Utils.toList(indices));
+      inverted = new ArrayList<>();
       for (i = 0; i < instances.numInstances(); i++) {
 	if (!set.contains(i))
 	  inverted.add(i);
