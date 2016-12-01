@@ -90,7 +90,7 @@ public abstract class AbstractRowFinderApplier
     result.addElement(new Option(
 	"\tWhether to only apply filtering to first batch.\n"
 	+ "\t(default: off)",
-	"onlu-first-batch", 0, "-only-first-batch"));
+	"only-first-batch", 0, "-only-first-batch"));
 
     return result.elements();
   }
