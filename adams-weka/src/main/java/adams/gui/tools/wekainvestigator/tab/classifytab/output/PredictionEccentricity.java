@@ -29,7 +29,7 @@ import adams.data.spreadsheet.SpreadSheetColumnIndex;
 import adams.flow.container.PredictionEccentricityContainer;
 import adams.flow.container.WekaEvaluationContainer;
 import adams.flow.core.Token;
-import adams.flow.transformer.PredictionEccentricity.MorphologyCycle;
+import adams.flow.transformer.PredictionEccentricity.Morphology;
 import adams.flow.transformer.WekaPredictionsToSpreadSheet;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseSplitPane;
@@ -53,8 +53,8 @@ public class PredictionEccentricity
   /** the size of the grid. */
   protected int m_Grid;
 
-  /** the morphology cycle to apply. */
-  protected MorphologyCycle m_MorphologyCycle;
+  /** the morphologies to apply. */
+  protected Morphology[] m_Morphologies;
 
   /** the number of cycles to apply. */
   protected int m_NumCycles;
@@ -81,8 +81,8 @@ public class PredictionEccentricity
       100, 1, null);
 
     m_OptionManager.add(
-      "morphology-cycle", "morphologyCycle",
-      MorphologyCycle.DILATE);
+      "morphology", "morphologies",
+      new Morphology[]{Morphology.DILATE});
 
     m_OptionManager.add(
       "num-cycles", "numCycles",
@@ -121,22 +121,22 @@ public class PredictionEccentricity
   }
 
   /**
-   * Sets the type of the morphology cycle to apply.
+   * Sets the morphologies to apply.
    *
-   * @param value	the cycle
+   * @param value	the morphologies
    */
-  public void setMorphologyCycle(MorphologyCycle value) {
-    m_MorphologyCycle = value;
+  public void setMorphologies(Morphology[] value) {
+    m_Morphologies = value;
     reset();
   }
 
   /**
-   * Returns the type of the morphology cycle to apply.
+   * Returns the morphologies to apply.
    *
-   * @return		the cycle
+   * @return		the morphologies
    */
-  public MorphologyCycle getMorphologyCycle() {
-    return m_MorphologyCycle;
+  public Morphology[] getMorphologies() {
+    return m_Morphologies;
   }
 
   /**
@@ -145,8 +145,8 @@ public class PredictionEccentricity
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String morphologyCycleTipText() {
-    return "The type of the morphology cycle to apply.";
+  public String morphologiesTipText() {
+    return "The morphologies to apply.";
   }
 
   /**
@@ -237,7 +237,7 @@ public class PredictionEccentricity
 
     trans = new adams.flow.transformer.PredictionEccentricity();
     trans.setGrid(m_Grid);
-    trans.setMorphologyCycle(m_MorphologyCycle);
+    trans.setMorphologies(m_Morphologies);
     trans.setNumCycles(m_NumCycles);
     trans.setActual(new SpreadSheetColumnIndex("Actual"));
     trans.setPredicted(new SpreadSheetColumnIndex("Predicted"));
@@ -264,8 +264,8 @@ public class PredictionEccentricity
     row.addCell("K").setContentAsString("Grid");
     row.addCell("V").setContent(m_Grid);
     row = runInfo.addRow();
-    row.addCell("K").setContentAsString("Morphology");
-    row.addCell("V").setContent(m_MorphologyCycle.toString());
+    row.addCell("K").setContentAsString("Morphologies");
+    row.addCell("V").setContent(Utils.arrayToString(m_Morphologies));
     row = runInfo.addRow();
     row.addCell("K").setContentAsString("# Cycles");
     row.addCell("V").setContent(m_NumCycles);

@@ -106,8 +106,8 @@ import adams.flow.core.Token;
  * &nbsp;&nbsp;&nbsp;minimum: 1
  * </pre>
  * 
- * <pre>-morphology-cycle &lt;ERODE|DILATE|ERODE_AND_DILATE|DILATE_AND_ERODE&gt; (property: morphologyCycle)
- * &nbsp;&nbsp;&nbsp;The type of the morphology cycle to apply.
+ * <pre>-morphology &lt;ERODE|DILATE&gt; [-morphology ...] (property: morphologies)
+ * &nbsp;&nbsp;&nbsp;The morphologies to apply.
  * &nbsp;&nbsp;&nbsp;default: DILATE
  * </pre>
  * 
@@ -133,11 +133,9 @@ public class PredictionEccentricity
    * @author FracPete (fracpete at waikato dot ac dot nz)
    * @version $Revision$
    */
-  public enum MorphologyCycle {
+  public enum Morphology {
     ERODE,
     DILATE,
-    ERODE_AND_DILATE,
-    DILATE_AND_ERODE
   }
 
   /** the column with the actual values. */
@@ -149,8 +147,8 @@ public class PredictionEccentricity
   /** the size of the grid. */
   protected int m_Grid;
 
-  /** the morphology cycle to apply. */
-  protected MorphologyCycle m_MorphologyCycle;
+  /** the morphologies to apply. */
+  protected Morphology[] m_Morphologies;
 
   /** the number of cycles to apply. */
   protected int m_NumCycles;
@@ -192,8 +190,8 @@ public class PredictionEccentricity
       100, 1, null);
 
     m_OptionManager.add(
-      "morphology-cycle", "morphologyCycle",
-      MorphologyCycle.DILATE);
+      "morphology", "morphologies",
+      new Morphology[]{Morphology.DILATE});
 
     m_OptionManager.add(
       "num-cycles", "numCycles",
@@ -210,7 +208,7 @@ public class PredictionEccentricity
     String	result;
 
     result  = QuickInfoHelper.toString(this, "grid", m_Grid, "grid: ");
-    result += QuickInfoHelper.toString(this, "morphologyCycle", m_MorphologyCycle, ", cycle: ");
+    result += QuickInfoHelper.toString(this, "morphologies", m_Morphologies, ", morphologies: ");
     result += QuickInfoHelper.toString(this, "numCycles", m_NumCycles, ", #cycles: ");
 
     return result;
@@ -306,22 +304,22 @@ public class PredictionEccentricity
   }
 
   /**
-   * Sets the type of the morphology cycle to apply.
+   * Sets the morphologies to apply.
    *
-   * @param value	the cycle
+   * @param value	the morphologies
    */
-  public void setMorphologyCycle(MorphologyCycle value) {
-    m_MorphologyCycle = value;
+  public void setMorphologies(Morphology[] value) {
+    m_Morphologies = value;
     reset();
   }
 
   /**
-   * Returns the type of the morphology cycle to apply.
+   * Returns the morphologies to apply.
    *
-   * @return		the cycle
+   * @return		the morphologies
    */
-  public MorphologyCycle getMorphologyCycle() {
-    return m_MorphologyCycle;
+  public Morphology[] getMorphologies() {
+    return m_Morphologies;
   }
 
   /**
@@ -330,8 +328,8 @@ public class PredictionEccentricity
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String morphologyCycleTipText() {
-    return "The type of the morphology cycle to apply.";
+  public String morphologiesTipText() {
+    return "The morphologies to apply.";
   }
 
   /**
@@ -435,22 +433,18 @@ public class PredictionEccentricity
       }
 
       for (i = 0; i < m_NumCycles; i++) {
-	switch (m_MorphologyCycle) {
-	  case ERODE:
-	    predictions = BinaryMorphology.erode(predictions);
-	    break;
-	  case DILATE:
-	    predictions = BinaryMorphology.dilate(predictions);
-	    break;
-	  case ERODE_AND_DILATE:
-	    predictions = BinaryMorphology.dilate(BinaryMorphology.erode(predictions));
-	    break;
-	  case DILATE_AND_ERODE:
-	    predictions = BinaryMorphology.erode(BinaryMorphology.dilate(predictions));
-	    break;
-	  default:
-	    throw new IllegalStateException("Unsupported morphology cycle: " + m_MorphologyCycle);
-	}
+        for (Morphology morphology: m_Morphologies) {
+          switch (morphology) {
+            case ERODE:
+              predictions = BinaryMorphology.erode(predictions);
+              break;
+            case DILATE:
+              predictions = BinaryMorphology.dilate(predictions);
+              break;
+            default:
+              throw new IllegalStateException("Unsupported morphology: " + morphology);
+          }
+        }
       }
 
       m_OutputToken = new Token(
