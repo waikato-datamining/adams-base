@@ -108,6 +108,7 @@ public class Histogram
     else
       setup = HistogramFactory.getSetupDialog(GUIHelper.getParentFrame(table), true);
     setup.setDefaultCloseOperation(HistogramFactory.SetupDialog.DISPOSE_ON_CLOSE);
+    setup.setTitle("Histogram setup");
     last = (ArrayHistogram) table.getLastSetup(getClass(), true, !isColumn);
     if (last == null)
       last = new ArrayHistogram();
