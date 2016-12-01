@@ -33,6 +33,7 @@ import adams.data.sequence.XYSequencePoint;
 import adams.data.sequence.XYSequencePointComparator.Comparison;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
+import adams.data.weka.WekaAttributeRange;
 import adams.flow.sink.sequenceplotter.SequencePlotterPanel;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.BaseTabbedPane;
@@ -194,7 +195,7 @@ public class PartialLeastSquaresTab
     });
     m_PanelParameters.addParameter("Range", m_TextAttributeRange);
 
-    m_PanelGOE = new GenericObjectEditorPanel(AbstractPLS.class, new PLS1());
+    m_PanelGOE = new GenericObjectEditorPanel(AbstractPLS.class, new PLS1(), true);
     m_PanelParameters.addParameter("Algorithm", m_PanelGOE);
 
     // buttons
@@ -380,6 +381,7 @@ public class PartialLeastSquaresTab
 	try {
 	  DataContainer datacont = getData().get(m_ComboBoxDatasets.getSelectedIndex());
 	  PLS pls = new PLS();
+          pls.setAttributeRange(new WekaAttributeRange(m_TextAttributeRange.getText()));
 	  pls.setAlgorithm((AbstractPLS) m_PanelGOE.getCurrent());
 	  String msg = pls.analyze(datacont.getData());
 	  if (msg != null) {
