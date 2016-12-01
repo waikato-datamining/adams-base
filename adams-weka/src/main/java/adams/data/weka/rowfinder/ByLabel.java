@@ -146,7 +146,7 @@ public class ByLabel
     index = m_AttributeIndex.getIntIndex();
     if (index == -1)
       throw new IllegalStateException("Invalid index '" + m_AttributeIndex.getIndex() + "'?");
-    if (!data.attribute(index).isNominal() || !data.attribute(index).isString())
+    if (!data.attribute(index).isNominal() && !data.attribute(index).isString())
       throw new IllegalStateException("Attribute at index '" + m_AttributeIndex.getIndex() + "' is neither nominal nor string!");
     
     for (i = 0; i < data.numInstances(); i++) {
