@@ -35,7 +35,7 @@ import java.util.Vector;
 
 /**
  <!-- globalinfo-start -->
- * First applies the pre-filter to the data and the generated data is fed into the main filter. It is possible to apply the pre-filter only during the first batch ('training time').
+ * First applies the pre-filter to the data and the generated data is fed into the main filter.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -57,11 +57,7 @@ import java.util.Vector;
  * <pre> -main &lt;filter specification&gt;
  *  Full class name of main filter to use, followed by scheme options.
  *  (default: weka.filters.supervised.attribute.PLS)</pre>
- * 
- * <pre> -only-first-batch
- *  Whether to only apply pre-filtering to first batch.
- *  (default: off)</pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -78,9 +74,6 @@ public class FilteredFilter
 
   /** The main filter to apply to the data. */
   protected Filter m_MainFilter = getDefaultMainFilter();
-
-  /** Whether to only apply during first batch. */
-  protected boolean m_OnlyFirstBatch = false;
 
   /**
    * Returns a string describing this filter.
@@ -122,11 +115,6 @@ public class FilteredFilter
 	+ "\t(default: " + getDefaultMainFilter().getClass().getName() + ")",
 	"main", 1, "-main <filter specification>"));
 
-    result.addElement(new Option(
-	"\tWhether to only apply pre-filtering to first batch.\n"
-	+ "\t(default: off)",
-	"only-first-batch", 0, "-only-first-batch"));
-
     return result.elements();
   }
 
@@ -139,8 +127,6 @@ public class FilteredFilter
   @Override
   public void setOptions(String[] options) throws Exception {
     String	tmpStr;
-
-    setOnlyFirstBatch(Utils.getFlag("only-first-batch", options));
 
     tmpStr = Utils.getOption("pre", options);
     if (tmpStr.length() == 0)
@@ -165,9 +151,6 @@ public class FilteredFilter
     Vector<String>	result;
 
     result = new Vector<>(Arrays.asList(super.getOptions()));
-
-    if (getOnlyFirstBatch())
-      result.add("-only-first-batch");
 
     result.add("-pre");
     result.add(OptionUtils.getCommandLine(getPreFilter()));
@@ -281,36 +264,6 @@ public class FilteredFilter
   }
 
   /**
-   * Set whether to apply row finder during first batch.
-   *
-   * @param value 	true if to only apply during first batch
-   */
-  public void setOnlyFirstBatch(boolean value) {
-    m_OnlyFirstBatch = value;
-    reset();
-  }
-
-  /**
-   * Returns whether to apply row finder during first batch.
-   *
-   * @return 		true if to only apply during first batch
-   */
-  public boolean getOnlyFirstBatch() {
-    return m_OnlyFirstBatch;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the explorer/experimenter gui
-   */
-  public String onlyFistBatchTipText() {
-    return
-      "If enabled the row finder will only get applied during the first batch.";
-  }
-
-  /**
    * Returns whether to allow the determineOutputFormat(Instances) method access
    * to the full dataset rather than just the header.
    *
@@ -365,11 +318,9 @@ public class FilteredFilter
     Instances		reduced;
 
     // apply pre-filter
-    if (!m_OnlyFirstBatch || !isFirstBatchDone())
+    if (!isFirstBatchDone()) {
       m_PreFilter.setInputFormat(instances);
-    reduced = Filter.useFilter(instances, m_PreFilter);
-
-    if (!m_OnlyFirstBatch || !isFirstBatchDone()) {
+      reduced = Filter.useFilter(instances, m_PreFilter);
       m_MainFilter.setInputFormat(reduced);
       Filter.useFilter(reduced, m_MainFilter);
     }
