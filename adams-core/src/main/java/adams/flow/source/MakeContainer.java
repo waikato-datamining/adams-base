@@ -467,6 +467,8 @@ public class MakeContainer
     }
     if (cont.isValid())
       m_OutputToken = new Token(cont);
+    else
+      result = "Container (" + cont.getClass().getName() + ") not valid!";
 
     return result;
   }
