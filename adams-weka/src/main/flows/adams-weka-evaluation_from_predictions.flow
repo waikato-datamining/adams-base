@@ -1,0 +1,10 @@
+# Project: adams
+# Date: 2016-12-01 14:15:27
+# User: fracpete
+# Charset: UTF-8
+adams.flow.control.Flow -annotation "Lots predictions (actual/predicted) from a spreadsheet and generates \\na \\\"fake\\\" Evaluation object from it and displays the summary statistics." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/bodyfat_predictions.csv
+ adams.flow.transformer.SpreadSheetFileReader -reader "adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.DefaultSpreadSheet"
+ adams.flow.transformer.WekaSpreadSheetToPredictions
+ adams.flow.transformer.WekaEvaluationSummary
+ adams.flow.sink.Display -writer adams.data.io.output.NullWriter

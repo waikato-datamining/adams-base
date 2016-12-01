@@ -20,6 +20,7 @@
 
 package adams.flow.transformer;
 
+import adams.core.ClassCrossReference;
 import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
@@ -36,7 +37,10 @@ import java.util.ArrayList;
 
 /**
  <!-- globalinfo-start -->
- * Generates a SpreadSheet object from the predictions of an Evaluation object.
+ * Generates a SpreadSheet object from the predictions of an Evaluation object.<br>
+ * <br>
+ * See also:<br>
+ * adams.flow.transformer.WekaSpreadSheetToPredictions
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -133,7 +137,8 @@ import java.util.ArrayList;
  * @version $Revision$
  */
 public class WekaPredictionsToSpreadSheet
-  extends AbstractWekaPredictionsTransformer {
+  extends AbstractWekaPredictionsTransformer
+  implements ClassCrossReference {
 
   /** for serialization. */
   private static final long serialVersionUID = -1552754008462778501L;
@@ -146,6 +151,15 @@ public class WekaPredictionsToSpreadSheet
   @Override
   public String globalInfo() {
     return "Generates a SpreadSheet object from the predictions of an Evaluation object.";
+  }
+
+  /**
+   * Returns the cross-referenced classes.
+   *
+   * @return		the classes
+   */
+  public Class[] getClassCrossReferences() {
+    return new Class[]{WekaSpreadSheetToPredictions.class};
   }
 
   /**
