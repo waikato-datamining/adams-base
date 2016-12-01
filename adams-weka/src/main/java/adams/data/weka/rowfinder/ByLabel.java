@@ -15,19 +15,19 @@
 
 /**
  * ByLabel.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.weka.rowfinder;
 
-import java.util.ArrayList;
-
-import weka.core.Instances;
 import adams.core.Index;
 import adams.core.Utils;
 import adams.core.base.BaseRegExp;
+import weka.core.Instances;
+
+import java.util.ArrayList;
 
 /**
- * Returns indices of rows which label match the regular expression.
+ * Returns the indices of rows which attributes labels match the provided regular expression.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
@@ -51,7 +51,7 @@ public class ByLabel
    */
   @Override
   public String globalInfo() {
-    return "Returns the indices of attributes which names match the provided regular expression.";
+    return "Returns the indices of rows which attributes labels match the provided regular expression.";
   }
 
   /**
@@ -146,8 +146,8 @@ public class ByLabel
     index = m_AttributeIndex.getIntIndex();
     if (index == -1)
       throw new IllegalStateException("Invalid index '" + m_AttributeIndex.getIndex() + "'?");
-    if (!data.attribute(index).isNominal())
-      throw new IllegalStateException("Attribute at index '" + m_AttributeIndex.getIndex() + "' is not nominal!");
+    if (!data.attribute(index).isNominal() || !data.attribute(index).isString())
+      throw new IllegalStateException("Attribute at index '" + m_AttributeIndex.getIndex() + "' is neither nominal nor string!");
     
     for (i = 0; i < data.numInstances(); i++) {
       if (m_RegExp.isMatch(data.instance(i).stringValue(index)))
