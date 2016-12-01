@@ -63,18 +63,19 @@ public abstract class AbstractProcessRow
    *
    * @param table	the source table
    * @param sheet	the spreadsheet to use as basis
-   * @param row	the row in the spreadsheet
+   * @param actRow	the row in the spreadsheet
+   * @param selRow 	the selected row in the table
    * @return		null if passed, otherwise error message
    */
-  protected String check(SpreadSheetTable table, SpreadSheet sheet, int row) {
+  protected String check(SpreadSheetTable table, SpreadSheet sheet, int actRow, int selRow) {
     if (table == null)
       return "No source table available!";
     if (sheet == null)
       return "No spreadsheet available!";
-    if (row < 0)
+    if (actRow < 0)
       return "Negative row index!";
-    if (row >= sheet.getRowCount())
-      return "Row index too large: " + (row + 1) + " > " + sheet.getRowCount();
+    if (actRow >= sheet.getRowCount())
+      return "Row index too large: " + (actRow + 1) + " > " + sheet.getRowCount();
     return null;
   }
 
@@ -102,7 +103,7 @@ public abstract class AbstractProcessRow
     boolean	result;
     String	error;
 
-    error = check(table, sheet, actRow);
+    error = check(table, sheet, actRow, selRow);
     result = (error == null);
     if (result)
       result = doProcessRow(table, sheet, actRow, selRow);
