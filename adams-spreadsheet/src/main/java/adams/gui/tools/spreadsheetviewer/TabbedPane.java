@@ -28,9 +28,9 @@ import adams.gui.core.SpreadSheetTable;
 import adams.gui.tools.SpreadSheetViewerPanel;
 
 import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -76,20 +76,15 @@ public class TabbedPane
     setOwner(owner);
 
     setShowCloseTabButton(true);
-    getModel().addChangeListener(new ChangeListener() {
-      public void stateChanged(ChangeEvent e) {
-	tabSelected(e);
-      }
-    });
-    setMiddleMouseButtonCloseApprover(new MiddleMouseButtonCloseApprover() {
-      public boolean approveClosingWithMiddleMouseButton(BaseTabbedPane source) {
-	boolean	result = checkForModified();
-	// to avoid second popup from checkModified() in removeTab method
-	SpreadSheetPanel panel = getCurrentPanel();
-	if (result && panel.isModified())
-	  panel.setModified(false);
-	return result;
-      }
+    getModel().addChangeListener((ChangeEvent e) -> tabSelected(e));
+    setMiddleMouseButtonCloseApprover((BaseTabbedPane source, MouseEvent e) -> {
+      int index = indexAtLocation(e.getX(), e.getY());
+      SpreadSheetPanel panel = getPanelAt(index);
+      boolean result = checkForModified(panel);
+      // to avoid second popup from checkModified() in removeTab method
+      if (result && panel.isModified())
+        panel.setModified(false);
+      return result;
     });
   }
   
@@ -476,7 +471,7 @@ public class TabbedPane
 
   /**
    * Returns whether we can proceed with the operation or not, depending on
-   * whether the user saved the flow or discarded the changes.
+   * whether the user saved the sheet or discarded the changes.
    *
    * @return		true if safe to proceed
    */
@@ -484,6 +479,18 @@ public class TabbedPane
     if (m_Owner == null)
       return true;
     return m_Owner.checkForModified();
+  }
+
+  /**
+   * Returns whether we can proceed with the operation or not, depending on
+   * whether the user saved the sheet or discarded the changes.
+   *
+   * @return		true if safe to proceed
+   */
+  protected boolean checkForModified(SpreadSheetPanel panel) {
+    if (m_Owner == null)
+      return true;
+    return m_Owner.checkForModified(panel);
   }
 
   /**
@@ -571,7 +578,7 @@ public class TabbedPane
     ArrayList<String>	result;
     int			i;
     
-    result = new ArrayList<String>();
+    result = new ArrayList<>();
     
     for (i = 0; i < getTabCount(); i++)
       result.add(getTitleAt(i));
@@ -587,7 +594,7 @@ public class TabbedPane
     int			i;
     HashSet<String>	titles;
     
-    titles = new HashSet<String>(getTabTitles());
+    titles = new HashSet<>(getTabTitles());
     i      = 0;
     do {
       i++;
@@ -629,7 +636,7 @@ public class TabbedPane
 
     if (index < 0)
       return;
-    if (!checkForModified())
+    if (!checkForModified(getPanelAt(index)))
       return;
 
     panel = getPanelAt(index);

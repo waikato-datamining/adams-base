@@ -51,9 +51,12 @@ public class BaseTabbedPane
   public interface MiddleMouseButtonCloseApprover {
 
     /**
-     * Method gets called
+     * Method gets called when having to approve a middle mouse button click.
+     *
+     * @param source 	the origin of the click
+     * @param e		the mouse event
      */
-    public boolean approveClosingWithMiddleMouseButton(BaseTabbedPane source);
+    public boolean approveClosingWithMiddleMouseButton(BaseTabbedPane source, MouseEvent e);
   }
 
   /** Allows the user to close tabs with the middle mouse button. */
@@ -151,14 +154,14 @@ public class BaseTabbedPane
    * @see		#getCloseTabsWithMiddelMouseButton()
    * @see		#canCloseTabWithMiddleMouseButton(int)
    */
-  protected void tabClicked(MouseEvent e) {
+  protected void tabClicked(final MouseEvent e) {
     int		index;
     Component	comp;
 
     if (m_CloseTabsWithMiddleMouseButton) {
       index = indexAtLocation(e.getX(), e.getY());
       if ((index >= 0) && MouseUtils.isMiddleClick(e) && canCloseTabWithMiddleMouseButton(index)) {
-	if ((m_MiddleMouseButtonCloseApprover != null) && !m_MiddleMouseButtonCloseApprover.approveClosingWithMiddleMouseButton(this))
+	if ((m_MiddleMouseButtonCloseApprover != null) && !m_MiddleMouseButtonCloseApprover.approveClosingWithMiddleMouseButton(this, e))
 	  return;
 	comp = getComponentAt(index);
 	removeTabAt(index);

@@ -1114,29 +1114,42 @@ public class FlowEditorPanel
    *
    * @return		true if safe to proceed
    */
-  protected boolean checkForModified() {
+  public boolean checkForModified() {
+    if (!hasCurrentPanel())
+      return true;
+    else
+      return checkForModified(getCurrentPanel());
+  }
+
+  /**
+   * Returns whether we can proceed with the operation or not, depending on
+   * whether the user saved the flow or discarded the changes.
+   *
+   * @return		true if safe to proceed
+   */
+  public boolean checkForModified(FlowPanel panel) {
     boolean 	result;
     int		retVal;
     String	msg;
 
-    if (!hasCurrentPanel())
+    if (panel == null)
       return true;
 
-    result = !getCurrentPanel().isModified();
+    result = !panel.isModified();
 
     if (!result) {
-      if (getCurrentPanel().getCurrentFile() == null)
+      if (panel.getCurrentFile() == null)
 	msg = "Flow not saved - save?";
       else
-	msg = "Flow not saved - save?\n" + getCurrentPanel().getCurrentFile();
+	msg = "Flow not saved - save?\n" + panel.getCurrentFile();
       retVal = GUIHelper.showConfirmMessage(this, msg, "Flow not saved");
       switch (retVal) {
 	case GUIHelper.APPROVE_OPTION:
-	  if (getCurrentPanel().getCurrentFile() != null)
+	  if (panel.getCurrentFile() != null)
 	    save();
 	  else
 	    saveAs();
-	  result = !getCurrentPanel().isModified();
+	  result = !panel.isModified();
 	  break;
 	case GUIHelper.DISCARD_OPTION:
 	  result = true;

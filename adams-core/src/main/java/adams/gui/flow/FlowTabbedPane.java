@@ -31,6 +31,7 @@ import adams.gui.flow.tree.Tree;
 import javax.swing.event.ChangeEvent;
 import javax.swing.tree.TreePath;
 import java.awt.Component;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.lang.reflect.Constructor;
 
@@ -65,10 +66,11 @@ public class FlowTabbedPane
 
     setCloseTabsWithMiddleMouseButton(true);
     setShowCloseTabButton(true);
-    setMiddleMouseButtonCloseApprover((BaseTabbedPane source) -> {
-      boolean	result = checkForModified();
+    setMiddleMouseButtonCloseApprover((BaseTabbedPane source, MouseEvent e) -> {
+      int index = indexAtLocation(e.getX(), e.getY());
+      FlowPanel panel = getPanelAt(index);
+      boolean result = checkForModified(panel);
       // to avoid second popup from checkModified() in removeTab method
-      FlowPanel panel = getCurrentPanel();
       if (result && panel.isModified())
 	panel.setModified(false);
       return result;
@@ -252,6 +254,19 @@ public class FlowTabbedPane
   }
 
   /**
+   * Returns whether we can proceed with the operation or not, depending on
+   * whether the user saved the flow or discarded the changes.
+   *
+   * @param panel	the panel to check
+   * @return		true if safe to proceed
+   */
+  protected boolean checkForModified(FlowPanel panel) {
+    if (m_Owner == null)
+      return true;
+    return m_Owner.checkForModified(panel);
+  }
+
+  /**
    * Hook method that gets executed after a tab was successfully removed with
    * a middle mouse button click.
    * 
@@ -353,7 +368,7 @@ public class FlowTabbedPane
 
     if (index < 0)
       return;
-    if (!checkForModified())
+    if (!checkForModified(getPanelAt(index)))
       return;
 
     panel = getPanelAt(index);

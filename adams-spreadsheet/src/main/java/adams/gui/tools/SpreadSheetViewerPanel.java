@@ -59,9 +59,9 @@ import adams.gui.tools.spreadsheetviewer.menu.DataFilterColumns;
 import adams.gui.tools.spreadsheetviewer.menu.DataFilterRows;
 import adams.gui.tools.spreadsheetviewer.menu.DataSort;
 import adams.gui.tools.spreadsheetviewer.menu.DataTransform;
+import adams.gui.tools.spreadsheetviewer.menu.EditPasteAsNew;
 import adams.gui.tools.spreadsheetviewer.menu.FileCloseTab;
 import adams.gui.tools.spreadsheetviewer.menu.FileExit;
-import adams.gui.tools.spreadsheetviewer.menu.EditPasteAsNew;
 import adams.gui.tools.spreadsheetviewer.menu.FileOpen;
 import adams.gui.tools.spreadsheetviewer.menu.FileSave;
 import adams.gui.tools.spreadsheetviewer.menu.FileSaveAs;
@@ -86,7 +86,6 @@ import javax.swing.JTable;
 import javax.swing.SwingWorker;
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Cursor;
 import java.awt.Dialog.ModalityType;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -709,33 +708,47 @@ public class SpreadSheetViewerPanel
 
   /**
    * Returns whether we can proceed with the operation or not, depending on
-   * whether the user saved the flow or discarded the changes.
+   * whether the user saved the sheet or discarded the changes.
    *
    * @return		true if safe to proceed
    */
   public boolean checkForModified() {
+    if (getCurrentPanel() == null)
+      return true;
+    else
+      return checkForModified(getCurrentPanel());
+  }
+
+  /**
+   * Returns whether we can proceed with the operation or not, depending on
+   * whether the user saved the sheet or discarded the changes.
+   *
+   * @param panel 	the panel to check
+   * @return		true if safe to proceed
+   */
+  public boolean checkForModified(SpreadSheetPanel panel) {
     boolean 	result;
     int		retVal;
     String	msg;
 
-    if (getCurrentPanel() == null)
+    if (panel == null)
       return true;
 
-    result = !getCurrentPanel().isModified();
+    result = !panel.isModified();
 
     if (!result) {
-      if (getCurrentPanel().getFilename() == null)
+      if (panel.getFilename() == null)
 	msg = "Spreadsheet not saved - save?";
       else
-	msg = "Spreadsheet not saved - save?\n" + getCurrentPanel().getFilename();
+	msg = "Spreadsheet not saved - save?\n" + panel.getFilename();
       retVal = GUIHelper.showConfirmMessage(this, msg, "Spreadsheet not saved");
       switch (retVal) {
 	case GUIHelper.APPROVE_OPTION:
-	  if (getCurrentPanel().getFilename() != null)
+	  if (panel.getFilename() != null)
 	    save();
 	  else
 	    saveAs();
-	  result = !getCurrentPanel().isModified();
+	  result = !panel.isModified();
 	  break;
 	case GUIHelper.DISCARD_OPTION:
 	  result = true;
