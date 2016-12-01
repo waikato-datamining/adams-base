@@ -20,14 +20,11 @@
 
 package adams.gui.tools.wekainvestigator.tab.classifytab.output;
 
-import adams.core.Utils;
+import adams.core.MessageCollection;
 import adams.data.spreadsheet.SpreadSheet;
-import adams.flow.container.WekaEvaluationContainer;
-import adams.flow.core.Token;
-import adams.flow.transformer.SpreadSheetMerge;
-import adams.flow.transformer.WekaPredictionsToSpreadSheet;
 import adams.gui.core.SpreadSheetTable;
 import adams.gui.tools.wekainvestigator.output.TableContentPanel;
+import adams.gui.tools.wekainvestigator.tab.classifytab.PredictionHelper;
 import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
 
 /**
@@ -271,49 +268,19 @@ public class Predictions
    */
   @Override
   public String generateOutput(ResultItem item) {
-    WekaPredictionsToSpreadSheet 	conv;
-    WekaEvaluationContainer 		cont;
-    Token				token;
-    SpreadSheet				sheet;
-    SpreadSheetTable			table;
-    SpreadSheetMerge			merge;
-    String				msg;
+    SpreadSheet		sheet;
+    SpreadSheetTable	table;
+    MessageCollection	errors;
 
-    cont = new WekaEvaluationContainer(item.getEvaluation());
-    if (item.hasOriginalIndices())
-      cont.setValue(WekaEvaluationContainer.VALUE_ORIGINALINDICES, item.getOriginalIndices());
-    conv = new WekaPredictionsToSpreadSheet();
-    conv.setAddLabelIndex(m_AddLabelIndex);
-    conv.setShowDistribution(m_ShowDistribution);
-    conv.setShowProbability(m_ShowProbability);
-    conv.setShowError(m_ShowError);
-    conv.setShowWeight(m_ShowWeight);
-    conv.input(new Token(cont));
-    try {
-      conv.execute();
+    errors = new MessageCollection();
+    sheet  = PredictionHelper.toSpreadSheet(
+      this, errors, item, m_AddLabelIndex, m_ShowDistribution, m_ShowProbability, m_ShowError, m_ShowWeight);
+    if (sheet == null) {
+      if (errors.isEmpty())
+	return "Failed to generate prediction!";
+      else
+	return errors.toString();
     }
-    catch (Exception e) {
-      return Utils.handleException(this, "Failed to assemble predictions!", e);
-    }
-    token = conv.output();
-
-    // add additional attributes
-    if (item.hasAdditionalAttributes()) {
-      sheet = (SpreadSheet) token.getPayload();
-      merge = new SpreadSheetMerge();
-      token = new Token(new SpreadSheet[]{sheet, item.getAdditionalAttributes()});
-      merge.input(token);
-      msg = merge.execute();
-      if (msg != null) {
-	getLogger().severe("Failed to merge predictions and additional attributes!\n" + msg);
-	token = new Token(sheet);
-      }
-      else {
-	token = merge.output();
-      }
-    }
-
-    sheet = (SpreadSheet) token.getPayload();
     table = new SpreadSheetTable(sheet);
 
     addTab(item, new TableContentPanel(table, true));

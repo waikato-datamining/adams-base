@@ -21,18 +21,17 @@
 package adams.gui.tools.wekainvestigator.tab.classifytab.output;
 
 import adams.core.AutoOnOff;
+import adams.core.MessageCollection;
 import adams.core.Utils;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetColumnIndex;
 import adams.data.spreadsheet.SpreadSheetColumnRange;
-import adams.flow.container.WekaEvaluationContainer;
 import adams.flow.core.Token;
 import adams.flow.sink.ActualVsPredictedPlot;
 import adams.flow.sink.ActualVsPredictedPlot.LimitType;
-import adams.flow.transformer.SpreadSheetMerge;
-import adams.flow.transformer.WekaPredictionsToSpreadSheet;
 import adams.gui.core.GUIHelper;
 import adams.gui.tools.wekainvestigator.output.ComponentContentPanel;
+import adams.gui.tools.wekainvestigator.tab.classifytab.PredictionHelper;
 import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
 
 import javax.swing.JPanel;
@@ -395,49 +394,23 @@ public class ClassifierErrors
   public String generateOutput(ResultItem item) {
     ActualVsPredictedPlot 		sink;
     JPanel 				panel;
-    WekaPredictionsToSpreadSheet	p2s;
-    WekaEvaluationContainer		cont;
+    boolean				showError;
     Token				token;
     SpreadSheet				sheet;
-    SpreadSheetMerge			merge;
-    String				msg;
+    MessageCollection			errors;
     List<String>			additional;
     int					i;
 
-    cont = new WekaEvaluationContainer(item.getEvaluation());
-    if (item.hasOriginalIndices())
-      cont.setValue(WekaEvaluationContainer.VALUE_ORIGINALINDICES, item.getOriginalIndices());
-    p2s = new WekaPredictionsToSpreadSheet();
-    if (m_UseError && item.getEvaluation().getHeader().classAttribute().isNumeric())
-      p2s.setShowError(true);
-    p2s.input(new Token(cont));
-    try {
-      p2s.execute();
+    errors    = new MessageCollection();
+    showError = m_UseError && item.getEvaluation().getHeader().classAttribute().isNumeric();
+    sheet     = PredictionHelper.toSpreadSheet(this, errors, item, showError);
+    if (sheet == null) {
+      if (errors.isEmpty())
+	return "Failed to generate prediction!";
+      else
+	return errors.toString();
     }
-    catch (Exception e) {
-      return Utils.handleException(this, "Failed to assemble predictions!", e);
-    }
-    token = p2s.output();
-
-    // add additional attributes
-    additional = null;
-    if (item.hasAdditionalAttributes()) {
-      sheet = (SpreadSheet) token.getPayload();
-      merge = new SpreadSheetMerge();
-      token = new Token(new SpreadSheet[]{sheet, item.getAdditionalAttributes()});
-      merge.input(token);
-      msg = merge.execute();
-      if (msg != null) {
-	getLogger().severe("Failed to merge predictions and additional attributes!\n" + msg);
-	token = new Token(sheet);
-      }
-      else {
-	token = merge.output();
-      }
-      additional = new ArrayList<>();
-      for (i = 0; i < item.getAdditionalAttributes().getColumnCount(); i++)
-	additional.add(SpreadSheetColumnRange.escapeName(item.getAdditionalAttributes().getColumnName(i)));
-    }
+    token = new Token(sheet);
 
     sink  = new ActualVsPredictedPlot();
     sink.setActualMin(m_ActualMin);
@@ -460,8 +433,14 @@ public class ClassifierErrors
 	sink.setAntiAliasingEnabled(false);
 	break;
     }
-    if (p2s.getShowError())
+    if (showError)
       sink.setError(new SpreadSheetColumnIndex("Error"));
+    additional = null;
+    if (item.hasAdditionalAttributes()) {
+      additional = new ArrayList<>();
+      for (i = 0; i < item.getAdditionalAttributes().getColumnCount(); i++)
+	additional.add(SpreadSheetColumnRange.escapeName(item.getAdditionalAttributes().getColumnName(i)));
+    }
     if ((additional != null) && (additional.size() > 0))
       sink.setAdditional(new SpreadSheetColumnRange(Utils.flatten(additional, ",")));
     panel = sink.createDisplayPanel(token);
