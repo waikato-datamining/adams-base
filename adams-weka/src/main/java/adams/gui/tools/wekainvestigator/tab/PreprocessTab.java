@@ -53,6 +53,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.event.ChangeEvent;
 import javax.swing.event.ListSelectionEvent;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -191,6 +192,7 @@ public class PreprocessTab
     }
     m_PanelGOE = new GenericObjectEditorPanel(Filter.class, filter, true);
     m_PanelGOE.moveChooseButton(true);
+    m_PanelGOE.addChangeListener((ChangeEvent e) -> updateButtons());
     panel = new JPanel(new BorderLayout());
     panel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
     panel.add(m_PanelGOE, BorderLayout.CENTER);
