@@ -333,7 +333,7 @@ public class PreprocessTab
 	  logMessage("Starting filtering " + (i+1) + "/" + indices.length + " '" + cont.getID() + "/" + cont.getData().relationName() + "' using " + OptionUtils.getCommandLine(m_CurrentFilter));
 	  try {
 	    String oldName = cont.getData().relationName();
-	    if ((!batch && (i == 0)) || batch)
+	    if ((batch && (i == 0)) || !batch)
 	      m_CurrentFilter.setInputFormat(cont.getData());
 	    Instances filtered = Filter.useFilter(cont.getData(), m_CurrentFilter);
 	    if (keep)
