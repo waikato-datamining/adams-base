@@ -1,1 +1,1 @@
-grid: 100, cycle: DILATE, #cycles: 1
+grid: 100, morphologies: DILATE, #cycles: 1
