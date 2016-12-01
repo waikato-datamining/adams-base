@@ -86,6 +86,7 @@ public class HistogramFactory {
       m_PlotPanel = new SequencePlotterPanel("Histogram");
       m_PlotPanel.setColorProvider(new TranslucentColorProvider());
       m_PlotPanel.setDataPaintlet(paintlet);
+      m_PlotPanel.getPlot().clearToolTipAxes();
       m_PlotPanel.getPlot().getAxis(Axis.BOTTOM).setTickGenerator(new SimpleFixedLabelTickGenerator());
       m_PlotPanel.getPlot().getAxis(Axis.BOTTOM).setNumberFormat("");
       m_PlotPanel.getPlot().getAxis(Axis.LEFT).setTickGenerator(new FancyTickGenerator());
