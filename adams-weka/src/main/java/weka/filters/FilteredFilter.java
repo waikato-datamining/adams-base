@@ -125,7 +125,7 @@ public class FilteredFilter
     result.addElement(new Option(
 	"\tWhether to only apply pre-filtering to first batch.\n"
 	+ "\t(default: off)",
-	"onlu-first-batch", 0, "-only-first-batch"));
+	"only-first-batch", 0, "-only-first-batch"));
 
     return result.elements();
   }
@@ -362,16 +362,17 @@ public class FilteredFilter
   @Override
   protected Instances process(Instances instances) throws Exception {
     Instances		result;
+    Instances		reduced;
 
     // apply pre-filter
-    if (!m_OnlyFirstBatch || !isFirstBatchDone()) {
-      if (!isFirstBatchDone())
-	m_PreFilter.setInputFormat(instances);
-      instances = Filter.useFilter(instances, m_PreFilter);
-    }
+    if (!m_OnlyFirstBatch || !isFirstBatchDone())
+      m_PreFilter.setInputFormat(instances);
+    reduced = Filter.useFilter(instances, m_PreFilter);
 
-    if (!isFirstBatchDone())
-      m_MainFilter.setInputFormat(instances);
+    if (!m_OnlyFirstBatch || !isFirstBatchDone()) {
+      m_MainFilter.setInputFormat(reduced);
+      Filter.useFilter(reduced, m_MainFilter);
+    }
     result = Filter.useFilter(instances, m_MainFilter);
 
     return result;
