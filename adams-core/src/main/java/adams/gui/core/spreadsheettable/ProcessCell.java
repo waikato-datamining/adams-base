@@ -15,7 +15,7 @@
 
 /**
  * ProcessCell.java
- * Copyright (C) 2015 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.core.spreadsheettable;
@@ -37,9 +37,10 @@ public interface ProcessCell
    *
    * @param table	the source table
    * @param sheet	the spreadsheet to use as basis
-   * @param row 	the row in the spreadsheet
+   * @param actRow 	the actual row in the spreadsheet
+   * @param selRow 	the selected row in the table
    * @param column	the column in the spreadsheet
    * @return		true if successful
    */
-  public boolean processCell(SpreadSheetTable table, SpreadSheet sheet, int row, int column);
+  public boolean processCell(SpreadSheetTable table, SpreadSheet sheet, int actRow, int selRow, int column);
 }

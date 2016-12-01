@@ -64,19 +64,20 @@ public abstract class AbstractProcessCell
    *
    * @param table	the source table
    * @param sheet	the spreadsheet to use as basis
-   * @param row         the row in the spreadsheet
+   * @param actRow      the actual row in the spreadsheet
+   * @param selRow 	the selected row in the table
    * @param column	the column in the spreadsheet
    * @return		null if passed, otherwise error message
    */
-  protected String check(SpreadSheetTable table, SpreadSheet sheet, int row, int column) {
+  protected String check(SpreadSheetTable table, SpreadSheet sheet, int actRow, int selRow, int column) {
     if (table == null)
       return "No source table available!";
     if (sheet == null)
       return "No spreadsheet available!";
-    if (row < 0)
+    if (actRow < 0)
       return "Negative row index!";
-    if (row >= sheet.getRowCount())
-      return "Row index too large: " + (row + 1) + " > " + sheet.getRowCount();
+    if (actRow >= sheet.getRowCount())
+      return "Row index too large: " + (actRow + 1) + " > " + sheet.getRowCount();
     if (column < 0)
       return "Negative column index!";
     if (column >= sheet.getColumnCount())
@@ -89,31 +90,32 @@ public abstract class AbstractProcessCell
    *
    * @param table	the source table
    * @param sheet	the spreadsheet to use as basis
-   * @param row         the row in the spreadsheet
+   * @param actRow      the actual row in the spreadsheet
+   * @param selRow 	the selected row in the table
    * @param column	the column in the spreadsheet
    * @return		true if successful
    */
-  protected abstract boolean doProcessCell(SpreadSheetTable table, SpreadSheet sheet, int row, int column);
+  protected abstract boolean doProcessCell(SpreadSheetTable table, SpreadSheet sheet, int actRow, int selRow, int column);
 
   /**
    * Processes the specified column.
    *
    * @param table	the source table
    * @param sheet	the spreadsheet to use as basis
-   * @param row         the row in the spreadsheet
+   * @param actRow         the row in the spreadsheet
    * @param column	the column in the spreadsheet
    * @return		true if successful
    */
-  public boolean processCell(SpreadSheetTable table, SpreadSheet sheet, int row, int column) {
+  public boolean processCell(SpreadSheetTable table, SpreadSheet sheet, int actRow, int selRow, int column) {
     boolean	result;
     String	error;
 
-    error = check(table, sheet, row, column);
+    error = check(table, sheet, actRow, selRow, column);
     result = (error == null);
     if (result)
-      result = doProcessCell(table, sheet, row, column);
+      result = doProcessCell(table, sheet, actRow, selRow, column);
     else
-      GUIHelper.showErrorMessage(table, "Failed to process cell " + SpreadSheetUtils.getCellPosition(row, column) + "\n" + error);
+      GUIHelper.showErrorMessage(table, "Failed to process cell " + SpreadSheetUtils.getCellPosition(actRow, column) + "\n" + error);
 
     return result;
   }

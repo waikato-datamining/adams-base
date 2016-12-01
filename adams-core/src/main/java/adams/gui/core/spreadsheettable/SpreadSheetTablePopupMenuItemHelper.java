@@ -103,7 +103,7 @@ public class SpreadSheetTablePopupMenuItemHelper {
 	menuitem.addActionListener(new ActionListener() {
 	  @Override
 	  public void actionPerformed(ActionEvent e) {
-	    ((ProcessCell) item).processCell(table, sheet, actRow, column);
+	    ((ProcessCell) item).processCell(table, sheet, actRow, selRow, column);
 	  }
 	});
       }
