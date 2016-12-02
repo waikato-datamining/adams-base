@@ -152,6 +152,7 @@ public abstract class AbstractChooserPanel<T>
     add(m_PanelPrefix, BorderLayout.WEST);
 
     m_TextSelection = new JTextField(getSelectionColumns());
+    m_TextSelection.setTransferHandler(null);
     m_TextSelection.setText(getDefaultString());
     m_TextSelection.setEditable(false);
     m_TextSelection.setPreferredSize(
@@ -161,7 +162,7 @@ public abstract class AbstractChooserPanel<T>
     m_TextSelection.addMouseListener(new MouseAdapter() {
       @Override
       public void mouseClicked(MouseEvent e) {
-        if (MouseUtils.isDoubleClick(e)) {
+        if (MouseUtils.isDoubleClick(e) && !isEditable()) {
           e.consume();
           choose();
         }
@@ -352,15 +353,52 @@ public abstract class AbstractChooserPanel<T>
    * Copies the current settings to the clipboard.
    */
   protected void copyToClipboard() {
-    ClipboardHelper.copyToClipboard(m_TextSelection.getText());
+    if (m_TextSelection.getSelectedText() == null)
+      ClipboardHelper.copyToClipboard(m_TextSelection.getText());
+    else
+      ClipboardHelper.copyToClipboard(m_TextSelection.getSelectedText());
+  }
+
+  /**
+   * Returns the current string from the clipboard.
+   *
+   * @return		the string, null if not available
+   */
+  protected String getStringFromClipboard() {
+    if (isEditable())
+      return ClipboardHelper.pasteStringFromClipboard();
+    else
+      return OptionUtils.pasteSetupFromClipboard();
   }
 
   /**
    * Pastes the string representation from the clipboard.
    */
   protected void pasteFromClipboard() {
+    StringBuilder	text;
+    int			caret;
+    String 		clipboard;
+
     try {
-      setCurrent(fromString(OptionUtils.pasteSetupFromClipboard()));
+      caret     = m_TextSelection.getCaretPosition();
+      clipboard = getStringFromClipboard();
+      if (isEditable()) {
+	caret += clipboard.length();
+	if (m_TextSelection.getSelectedText() == null) {
+	  text = new StringBuilder(m_TextSelection.getText());
+	  text.insert(m_TextSelection.getCaretPosition(), clipboard);
+	}
+	else {
+	  text = new StringBuilder(m_TextSelection.getText());
+	  text.replace(m_TextSelection.getSelectionStart(), m_TextSelection.getSelectionEnd(), clipboard);
+	}
+	setCurrent(fromString(text.toString()));
+      }
+      else {
+	setCurrent(fromString(clipboard));
+      }
+      if (isEditable())
+	m_TextSelection.setCaretPosition(caret);
       notifyChangeListeners(new ChangeEvent(m_Self));
     }
     catch (Exception e) {
