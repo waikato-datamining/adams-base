@@ -332,7 +332,7 @@ public abstract class AbstractBaseDateTypeEditor<B extends BaseObject & DateValu
     dialog.setDefaultCloseOperation(HelpDialog.DISPOSE_ON_CLOSE);
     dialog.setHelp(m_Date.getGrammar(), false);
     dialog.setSize(GUIHelper.getDefaultSmallDialogDimension());
-    dialog.setLocationRelativeTo(null);
+    dialog.setLocationRelativeTo(dialog.getParent());
     dialog.setVisible(true);
   }
 

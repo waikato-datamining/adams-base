@@ -665,15 +665,13 @@ public class PropertySheetPanel extends BasePanel
       m_DialogHelp.setHelp(m_HelpTextHtml.toString(), true);
     else
       m_DialogHelp.setHelp(m_HelpText.toString(), false);
-    m_DialogHelp.setLocation(
-	m_PanelAbout.getTopLevelAncestor().getLocationOnScreen().x + m_PanelAbout.getTopLevelAncestor().getSize().width,
-	m_PanelAbout.getTopLevelAncestor().getLocationOnScreen().y);
     if (isHtml)
       m_DialogHelp.setSize(GUIHelper.getDefaultDialogDimension());
     else
       m_DialogHelp.setSize(
         GUIHelper.getInteger("DefaultTinyDialog.Width", 400),
         GUIHelper.getInteger("DefaultTinyDialog.Width", 400));
+    m_DialogHelp.setLocationRelativeTo(m_DialogHelp.getParent());
     m_DialogHelp.setVisible(true);
   }
 

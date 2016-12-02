@@ -220,10 +220,8 @@ public class ActorTreePanel
     producer.produce(actor);
     dialog.setHelp(producer.getOutput(), true);
     dialog.setTitle("Help on " + actor.getClass().getName());
-    dialog.setLocation(
-	getTopLevelAncestor().getLocationOnScreen().x + getTopLevelAncestor().getSize().width,
-	getTopLevelAncestor().getLocationOnScreen().y);
     dialog.setSize(GUIHelper.getDefaultDialogDimension());
+    dialog.setLocationRelativeTo(dialog.getParent());
     dialog.setVisible(true);
   }
 

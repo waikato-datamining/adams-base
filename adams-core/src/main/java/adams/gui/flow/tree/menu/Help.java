@@ -78,10 +78,8 @@ public class Help
     producer.produce(actor);
     dialog.setHelp(producer.getOutput(), true);
     dialog.setTitle("Help on " + actor.getClass().getName());
-    dialog.setLocation(
-	m_State.tree.getTopLevelAncestor().getLocationOnScreen().x + m_State.tree.getTopLevelAncestor().getSize().width,
-	m_State.tree.getTopLevelAncestor().getLocationOnScreen().y);
     dialog.setSize(GUIHelper.getDefaultDialogDimension());
+    dialog.setLocationRelativeTo(dialog.getParent());
     dialog.setVisible(true);
   }
 
