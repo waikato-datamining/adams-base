@@ -130,6 +130,7 @@ public class TextStatistics
     }
 
     text = new BaseTextArea();
+    text.setEditable(false);
     text.setTextFont(Fonts.getMonospacedFont());
     text.setText(buffer.toString());
     text.setCaretPosition(0);

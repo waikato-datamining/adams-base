@@ -95,6 +95,7 @@ public class Supplementary
       m_Title = item.getSupplementaryName();
 
     text = new BaseTextArea();
+    text.setEditable(false);
     text.setTextFont(Fonts.getMonospacedFont());
     text.setText(item.getSupplementaryData().toString());
     text.setCaretPosition(0);

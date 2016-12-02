@@ -127,6 +127,7 @@ public class SourceCode
       return "Classifier does not implement " + Sourcable.class.getName() + "!";
 
     text = new BaseTextArea();
+    text.setEditable(false);
     text.setTextFont(Fonts.getMonospacedFont());
     try {
       text.setText(((Sourcable) item.getModel()).toSource(m_Classname));

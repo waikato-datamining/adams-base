@@ -79,6 +79,7 @@ public class ModelOutput
       return "No model available!";
 
     text = new BaseTextArea();
+    text.setEditable(false);
     text.setTextFont(Fonts.getMonospacedFont());
     text.setText(item.getModel().toString());
     text.setCaretPosition(0);

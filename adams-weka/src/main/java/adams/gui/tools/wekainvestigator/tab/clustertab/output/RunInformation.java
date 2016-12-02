@@ -80,6 +80,7 @@ public class RunInformation
       return "No run information available!";
 
     text = new BaseTextArea();
+    text.setEditable(false);
     text.setTextFont(Fonts.getMonospacedFont());
     text.setText(RunInformationHelper.toString(item.getRunInformation().toSpreadSheet()));
     text.setCaretPosition(0);
