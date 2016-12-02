@@ -397,8 +397,14 @@ public abstract class AbstractChooserPanel<T>
       else {
 	setCurrent(fromString(clipboard));
       }
-      if (isEditable())
-	m_TextSelection.setCaretPosition(caret);
+      if (isEditable()) {
+	try {
+	  m_TextSelection.setCaretPosition(caret);
+	}
+	catch (Exception e) {
+	  // ignored
+	}
+      }
       notifyChangeListeners(new ChangeEvent(m_Self));
     }
     catch (Exception e) {
