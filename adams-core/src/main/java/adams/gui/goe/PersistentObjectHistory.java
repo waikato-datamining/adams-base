@@ -67,6 +67,14 @@ public class PersistentObjectHistory
   }
 
   /**
+   * Clears the history.
+   */
+  public synchronized void clear() {
+    super.clear();
+    m_CommandLines.clear();
+  }
+
+  /**
    * Sets the superclass to use.
    *
    * @param value	the class
