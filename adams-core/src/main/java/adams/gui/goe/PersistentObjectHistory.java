@@ -70,8 +70,8 @@ public class PersistentObjectHistory
    * Clears the history.
    */
   public synchronized void clear() {
-    super.clear();
     m_CommandLines.clear();
+    super.clear();
   }
 
   /**
