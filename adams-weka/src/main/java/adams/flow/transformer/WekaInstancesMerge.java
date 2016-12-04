@@ -15,7 +15,7 @@
 
 /*
  * WekaInstancesMerge.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -28,11 +28,14 @@ import adams.flow.provenance.Provenance;
 import adams.flow.provenance.ProvenanceContainer;
 import adams.flow.provenance.ProvenanceInformation;
 import adams.flow.provenance.ProvenanceSupporter;
+import gnu.trove.list.TIntList;
+import gnu.trove.list.array.TIntArrayList;
 import weka.core.Attribute;
 import weka.core.DenseInstance;
 import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.converters.ConverterUtils.DataSource;
+import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.Remove;
 
 import java.io.File;
@@ -63,13 +66,9 @@ import java.util.List;
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- * 
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  * 
  * <pre>-name &lt;java.lang.String&gt; (property: name)
@@ -77,28 +76,44 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default: WekaInstancesMerge
  * </pre>
  * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
- * <pre>-skip (property: skip)
+ * <pre>-skip &lt;boolean&gt; (property: skip)
  * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
  * &nbsp;&nbsp;&nbsp;as it is.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-stop-flow-on-error (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this 
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical 
+ * &nbsp;&nbsp;&nbsp;actors.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-use-prefix (property: usePrefix)
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-use-prefix &lt;boolean&gt; (property: usePrefix)
  * &nbsp;&nbsp;&nbsp;Whether to prefix the attribute names of each dataset with an index and 
  * &nbsp;&nbsp;&nbsp;an optional string.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-add-index (property: addIndex)
+ * <pre>-add-index &lt;boolean&gt; (property: addIndex)
  * &nbsp;&nbsp;&nbsp;Whether to add the index of the dataset to the prefix.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-remove &lt;boolean&gt; (property: remove)
+ * &nbsp;&nbsp;&nbsp;If true, only keep instances where data is available from each source.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
  * <pre>-prefix &lt;java.lang.String&gt; (property: prefix)
@@ -120,15 +135,21 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
- * <pre>-invert (property: invertMatchingSense)
+ * <pre>-invert &lt;boolean&gt; (property: invertMatchingSense)
  * &nbsp;&nbsp;&nbsp;Whether to invert the matching sense of excluding attributes, ie, the regular 
  * &nbsp;&nbsp;&nbsp;expression is used for including attributes.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
  * <pre>-unique-id &lt;java.lang.String&gt; (property: uniqueID)
  * &nbsp;&nbsp;&nbsp;The name of the attribute (string&#47;numeric) used for uniquely identifying 
  * &nbsp;&nbsp;&nbsp;rows among the datasets.
  * &nbsp;&nbsp;&nbsp;default: 
+ * </pre>
+ * 
+ * <pre>-keep-only-single-unique-id &lt;boolean&gt; (property: keepOnlySingleUniqueID)
+ * &nbsp;&nbsp;&nbsp;If enabled, only a single instance of the unique ID attribute is kept.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
  <!-- options-end -->
@@ -167,8 +188,14 @@ implements ProvenanceSupporter {
   /** the string or numeric attribute to use as unique identifier for rows. */
   protected String m_UniqueID;
 
+  /** whether to keep only a single instance of the unique ID attribute. */
+  protected boolean m_KeepOnlySingleUniqueID;
+
   /** the attribute type of the ID attribute. */
   protected int m_AttType;
+
+  /** the unique ID attributes. */
+  protected List<String> m_UniqueIDAtts;
 
   /**
    * Returns a string describing the object.
@@ -222,6 +249,10 @@ implements ProvenanceSupporter {
     m_OptionManager.add(
 	"unique-id", "uniqueID",
 	"");
+
+    m_OptionManager.add(
+	"keep-only-single-unique-id", "keepOnlySingleUniqueID",
+	false);
   }
 
   /**
@@ -471,6 +502,36 @@ implements ProvenanceSupporter {
   }
 
   /**
+   * Sets whether to keep only a single instance of the unique ID attribute.
+   *
+   * @param value	true if to keep only single instance
+   */
+  public void setKeepOnlySingleUniqueID(boolean value) {
+    m_KeepOnlySingleUniqueID = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to keep only a single instance of the unique ID attribute.
+   *
+   * @return		true if to keep only single instance
+   */
+  public boolean getKeepOnlySingleUniqueID() {
+    return m_KeepOnlySingleUniqueID;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String keepOnlySingleUniqueIDTipText() {
+    return
+	"If enabled, only a single instance of the unique ID attribute is kept.";
+  }
+
+  /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
@@ -496,13 +557,14 @@ implements ProvenanceSupporter {
     if (result.startsWith(", "))
       result = result.substring(2);
 
-    options = new ArrayList<String>();
+    options = new ArrayList<>();
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "addIndex", m_AddIndex, "index"));
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "usePrefix", m_UsePrefix, "prefix"));
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "invertMatchingSense", m_InvertMatchingSense, "invert"));
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "remove", m_Remove, "remove"));
+    QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "keepOnlySingleUniqueID", m_KeepOnlySingleUniqueID, "single unique ID"));
     result += QuickInfoHelper.flatten(options);
-    
+
     return result;
   }
 
@@ -565,6 +627,28 @@ implements ProvenanceSupporter {
   }
 
   /**
+   * Generates the prefix for the dataset/index.
+   *
+   * @param inst	the current dataset
+   * @param index	the index
+   * @return		the prefix
+   */
+  protected String createPrefix(Instances inst, int index) {
+    String 	result;
+
+    // generate prefix
+    if (m_Prefix.equals("@"))
+      result = inst.relationName();
+    else
+      result = m_Prefix;
+    if (m_AddIndex)
+      result += ((result.isEmpty() || result.endsWith(m_PrefixSeparator)) ? "" : m_PrefixSeparator) + (index + 1);
+    result += m_PrefixSeparator;
+
+    return result;
+  }
+
+  /**
    * Prefixes the attributes.
    *
    * @param index	the index of the dataset
@@ -577,17 +661,10 @@ implements ProvenanceSupporter {
     ArrayList<Attribute>	atts;
     int				i;
 
-    // generate prefix
-    if (m_Prefix.equals("@"))
-      prefix = inst.relationName();
-    else
-      prefix = m_Prefix;
-    if (m_AddIndex)
-      prefix += m_PrefixSeparator + (index + 1);
-    prefix += m_PrefixSeparator;
+    prefix = createPrefix(inst, index);
 
     // header
-    atts = new ArrayList<Attribute>();
+    atts = new ArrayList<>();
     for (i = 0; i < inst.numAttributes(); i++)
       atts.add(inst.attribute(i).copy(prefix + inst.attribute(i).name()));
 
@@ -612,6 +689,11 @@ implements ProvenanceSupporter {
     Instances	result;
 
     result = inst;
+
+    if (m_KeepOnlySingleUniqueID && !m_UniqueID.isEmpty() && (inst.attribute(m_UniqueID) != null)) {
+      if (index > 0)
+	m_UniqueIDAtts.add(createPrefix(inst, index) + m_UniqueID);
+    }
 
     // exclude attributes
     if (m_ExcludedAttributes.length() > 0)
@@ -690,7 +772,7 @@ implements ProvenanceSupporter {
     // create header
     if (isLoggingEnabled())
       getLogger().info("Creating merged header...");
-    atts       = new ArrayList<Attribute>();
+    atts       = new ArrayList<>();
     relation   = "";
     indexStart = new int[inst.length];
     for (i = 0; i < inst.length; i++) {
@@ -723,7 +805,7 @@ implements ProvenanceSupporter {
     Collections.sort(sortedIDs);
 
     // generate rows
-    hashmap = new HashMap<Integer,Integer>();
+    hashmap = new HashMap<>();
     for (i = 0; i < inst.length; i++) {
       if (isStopped())
 	return null;
@@ -786,7 +868,7 @@ implements ProvenanceSupporter {
     }
 
     if (getRemove()) {
-      hs = new HashSet<Instance>();
+      hs = new HashSet<>();
       for (Integer x: hashmap.keySet()){
 	if (hashmap.get(x) != inst.length)
 	  hs.add(result.get(x));
@@ -814,6 +896,8 @@ implements ProvenanceSupporter {
     Instance[]	rows;
     HashSet	ids;
     int		max;
+    TIntList	uniqueList;
+    Remove	remove;
 
     result = null;
 
@@ -885,8 +969,9 @@ implements ProvenanceSupporter {
       }
       // merge based on row IDs
       else {
-	m_AttType = -1;
-	max       = 0;
+	m_AttType      = -1;
+	max            = 0;
+	m_UniqueIDAtts = new ArrayList<>();
 	if (files != null) {
 	  orig = new Instances[files.length];
 	  for (i = 0; i < files.length; i++) {
@@ -915,6 +1000,20 @@ implements ProvenanceSupporter {
 	  inst[i] = prepareData(orig[i], i);
 	}
 	output = merge(orig, inst, ids);
+	// remove unnecessary unique ID attributes
+	if (m_KeepOnlySingleUniqueID) {
+	  uniqueList = new TIntArrayList();
+	  for (String att: m_UniqueIDAtts)
+	    uniqueList.add(output.attribute(att).index());
+	  if (uniqueList.size() > 0) {
+	    if (isLoggingEnabled())
+	      getLogger().info("Removing duplicate unique ID attributes: " + m_UniqueIDAtts);
+	    remove = new Remove();
+	    remove.setAttributeIndicesArray(uniqueList.toArray());
+	    remove.setInputFormat(output);
+	    output = Filter.useFilter(output, remove);
+	  }
+	}
       }
 
       if (!isStopped()) {
