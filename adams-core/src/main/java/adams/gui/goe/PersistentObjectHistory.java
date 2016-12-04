@@ -167,7 +167,7 @@ public class PersistentObjectHistory
 
     // clear history
     item = new JMenuItem("Clear history");
-    item.addActionListener((ActionEvent e) -> m_History.clear());
+    item.addActionListener((ActionEvent e) -> clear());
     submenu.add(item);
 
     // current history
