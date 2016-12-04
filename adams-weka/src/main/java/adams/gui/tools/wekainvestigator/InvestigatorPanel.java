@@ -735,6 +735,26 @@ public class InvestigatorPanel
   }
 
   /**
+   * Adds the specified file/loader combination to the recent files list.
+   *
+   * @param file	the file to add
+   * @param loader	the associated loader, if null uses auto-detect for loader
+   * @return		null if successful or no recent files being managed, otherwise error message
+   */
+  public String addRecentFile(File file, AbstractFileLoader loader) {
+    if (m_RecentFilesHandler == null)
+      return null;
+
+    if (loader == null)
+      loader = m_FileChooser.getReaderForFile(file);
+    if (loader == null)
+      return "Failed to determine loader for: " + file;
+
+    m_RecentFilesHandler.addRecentItem(new Setup(file, loader));
+    return null;
+  }
+
+  /**
    * Lets user select a dataset.
    */
   public void openFile() {
@@ -761,8 +781,7 @@ public class InvestigatorPanel
 	  updateRelationName(file, cont.getData());
 	  SwingUtilities.invokeLater(() -> {
 	    m_Data.add(cont);
-	    if (m_RecentFilesHandler != null)
-	      m_RecentFilesHandler.addRecentItem(new Setup(file, loader));
+	    addRecentFile(file, loader);
 	    logAndShowMessage("Loaded: " + file);
 	    fireDataChange(
 	      new WekaInvestigatorDataEvent(
@@ -796,8 +815,7 @@ public class InvestigatorPanel
 	updateRelationName(file, cont.getData());
 	SwingUtilities.invokeLater(() -> {
 	  m_Data.add(cont);
-	  if (m_RecentFilesHandler != null)
-	    m_RecentFilesHandler.addRecentItem(new Setup(file, loader));
+	  addRecentFile(file, loader);
 	  logAndShowMessage("Loaded: " + file);
 	  fireDataChange(new WekaInvestigatorDataEvent(
 	    InvestigatorPanel.this, WekaInvestigatorDataEvent.ROWS_ADDED, m_Data.size() - 1));

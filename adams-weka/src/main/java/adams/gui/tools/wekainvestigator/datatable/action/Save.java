@@ -82,6 +82,7 @@ public class Save
     PlaceholderFile 	suggested;
     AbstractFileSaver 	saver;
     File		file;
+    String		msg;
 
     conts = getSelectedData();
     rows  = getSelectedRows();
@@ -99,7 +100,7 @@ public class Save
 	break;
       file = m_FileChooser.getSelectedFile();
       try {
-	logMessage("Exporting " + data.getID() + "/" + data.getSource() + " to " + file);
+	showStatus("Exporting " + data.getID() + "/" + data.getSource() + " to " + file);
 	if (file.exists()) {
 	  if (!file.delete())
 	    logMessage("Failed to delete existing file: " + file);
@@ -107,9 +108,12 @@ public class Save
 	saver = m_FileChooser.getWriter();
 	saver.setFile(file);
 	DataSink.write(saver, data.getData());
-	logMessage("Saved " + data.getID() + "/" + data.getSource() + " to " + file);
+	showStatus("Saved " + data.getID() + "/" + data.getSource() + " to " + file);
 	cont = new FileContainer(m_FileChooser.getReaderForFile(file), file, data.getData());
 	getData().set(rows[i], cont);
+        msg = getOwner().getOwner().addRecentFile(file, null);
+	if (msg != null)
+	  showStatus(msg);
         fireDataChange(new WekaInvestigatorDataEvent(getOwner().getOwner(), WekaInvestigatorDataEvent.ROWS_MODIFIED, rows[i]));
       }
       catch (Exception ex) {
