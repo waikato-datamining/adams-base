@@ -33,6 +33,15 @@ public abstract class AbstractPersistentHistory<T>
   }
 
   /**
+   * Clears the history.
+   */
+  @Override
+  public synchronized void clear() {
+    super.clear();
+    save();
+  }
+
+  /**
    * Sets the file to load from/save to.
    * 
    * @param value	the history file
