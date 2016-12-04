@@ -19,12 +19,6 @@
  */
 package adams.flow.transformer;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-
 import adams.core.QuickInfoHelper;
 import adams.core.base.BaseRegExp;
 import adams.data.spreadsheet.Row;
@@ -34,6 +28,14 @@ import adams.data.spreadsheet.columnfinder.ByName;
 import adams.data.spreadsheet.columnfinder.ColumnFinder;
 import adams.data.spreadsheet.columnfinder.Invert;
 import adams.flow.core.Token;
+import gnu.trove.list.TIntList;
+import gnu.trove.list.array.TIntArrayList;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -46,18 +48,14 @@ import adams.flow.core.Token;
  * - accepts:<br>
  * &nbsp;&nbsp;&nbsp;adams.data.spreadsheet.SpreadSheet[]<br>
  * - generates:<br>
- * &nbsp;&nbsp;&nbsp;adams.data.spreadsheet.SpreadSheet[]<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.spreadsheet.SpreadSheet<br>
  * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- * 
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  * 
  * <pre>-name &lt;java.lang.String&gt; (property: name)
@@ -65,32 +63,44 @@ import adams.flow.core.Token;
  * &nbsp;&nbsp;&nbsp;default: SpreadSheetMerge
  * </pre>
  * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
- * <pre>-skip (property: skip)
+ * <pre>-skip &lt;boolean&gt; (property: skip)
  * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
  * &nbsp;&nbsp;&nbsp;as it is.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-stop-flow-on-error (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this 
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical 
+ * &nbsp;&nbsp;&nbsp;actors.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-use-prefix (property: usePrefix)
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-use-prefix &lt;boolean&gt; (property: usePrefix)
  * &nbsp;&nbsp;&nbsp;Whether to prefix the attribute names of each dataset with an index and 
  * &nbsp;&nbsp;&nbsp;an optional string.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-add-index (property: addIndex)
+ * <pre>-add-index &lt;boolean&gt; (property: addIndex)
  * &nbsp;&nbsp;&nbsp;Whether to add the index of the dataset to the prefix.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-remove (property: remove)
+ * <pre>-remove &lt;boolean&gt; (property: remove)
  * &nbsp;&nbsp;&nbsp;If true, only keep instances where data is available from each source.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
  * <pre>-prefix &lt;java.lang.String&gt; (property: prefix)
@@ -112,14 +122,20 @@ import adams.flow.core.Token;
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
- * <pre>-invert (property: invertMatchingSense)
+ * <pre>-invert &lt;boolean&gt; (property: invertMatchingSense)
  * &nbsp;&nbsp;&nbsp;Whether to invert the matching sense of excluding attributes, ie, the regular 
  * &nbsp;&nbsp;&nbsp;expression is used for including attributes.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
  * <pre>-unique-id &lt;java.lang.String&gt; (property: uniqueID)
  * &nbsp;&nbsp;&nbsp;The name of the column used for uniquely identifying rows among the spreadsheets.
  * &nbsp;&nbsp;&nbsp;default: 
+ * </pre>
+ * 
+ * <pre>-keep-only-single-unique-id &lt;boolean&gt; (property: keepOnlySingleUniqueID)
+ * &nbsp;&nbsp;&nbsp;If enabled, only a single instance of the unique ID attribute is kept.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
  <!-- options-end -->
@@ -156,6 +172,12 @@ public class SpreadSheetMerge
 
   /** the string or numeric attribute to use as unique identifier for rows. */
   protected String m_UniqueID;
+
+  /** whether to keep only a single instance of the unique ID attribute. */
+  protected boolean m_KeepOnlySingleUniqueID;
+
+  /** the unique ID attributes. */
+  protected List<String> m_UniqueIDAtts;
 
   /**
    * Returns a string describing the object.
@@ -207,6 +229,10 @@ public class SpreadSheetMerge
     m_OptionManager.add(
 	"unique-id", "uniqueID",
 	"");
+
+    m_OptionManager.add(
+	"keep-only-single-unique-id", "keepOnlySingleUniqueID",
+	false);
   }
 
   /**
@@ -456,6 +482,36 @@ public class SpreadSheetMerge
   }
 
   /**
+   * Sets whether to keep only a single instance of the unique ID attribute.
+   *
+   * @param value	true if to keep only single instance
+   */
+  public void setKeepOnlySingleUniqueID(boolean value) {
+    m_KeepOnlySingleUniqueID = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to keep only a single instance of the unique ID attribute.
+   *
+   * @return		true if to keep only single instance
+   */
+  public boolean getKeepOnlySingleUniqueID() {
+    return m_KeepOnlySingleUniqueID;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String keepOnlySingleUniqueIDTipText() {
+    return
+	"If enabled, only a single instance of the unique ID attribute is kept.";
+  }
+
+  /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
@@ -481,11 +537,12 @@ public class SpreadSheetMerge
     if (result.startsWith(", "))
       result = result.substring(2);
 
-    options = new ArrayList<String>();
+    options = new ArrayList<>();
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "addIndex", m_AddIndex, "index"));
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "usePrefix", m_UsePrefix, "prefix"));
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "invertMatchingSense", m_InvertMatchingSense, "invert"));
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "remove", m_Remove, "remove"));
+    QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "keepOnlySingleUniqueID", m_KeepOnlySingleUniqueID, "single unique ID"));
     result += QuickInfoHelper.flatten(options);
     
     return result;
@@ -514,7 +571,6 @@ public class SpreadSheetMerge
   /**
    * Excludes columns from the data.
    *
-   * @param index	the index of the spreadsheet
    * @param sheet	the data to process
    * @return		the processed data
    */
@@ -599,6 +655,11 @@ public class SpreadSheetMerge
     SpreadSheet	result;
 
     result = inst;
+
+    if (m_KeepOnlySingleUniqueID && !m_UniqueID.isEmpty() && (inst.getHeaderRow().indexOfContent(m_UniqueID) > -1)) {
+      if (index > 0)
+	m_UniqueIDAtts.add(createPrefix(index) + m_UniqueID);
+    }
 
     // exclude attributes
     if (m_ExcludedAttributes.length() > 0)
@@ -745,7 +806,7 @@ public class SpreadSheetMerge
       for (Integer ind: indices)
 	result.removeRow(ind);
     }
-    
+
     return result;
   }
 
@@ -763,6 +824,7 @@ public class SpreadSheetMerge
     SpreadSheet[]	sheet;
     HashSet		ids;
     int			max;
+    TIntList 		uniqueList;
 
     result = null;
 
@@ -797,6 +859,7 @@ public class SpreadSheetMerge
       }
       // merge based on row IDs
       else {
+	m_UniqueIDAtts = new ArrayList<>();
 	max = 0;
 	for (i = 0; i < orig.length; i++)
 	  max = Math.max(max, orig[i].getRowCount());
@@ -813,6 +876,20 @@ public class SpreadSheetMerge
 	  sheet[i] = prepareData(orig[i], i);
 	}
 	output = merge(orig, sheet, ids);
+
+	// remove duplicate unique IDs
+	if (m_UniqueIDAtts.size() > 0) {
+	  uniqueList = new TIntArrayList();
+	  for (String att: m_UniqueIDAtts)
+	    uniqueList.add(output.getHeaderRow().indexOfContent(att));
+	  uniqueList.sort();
+	  uniqueList.reverse();
+	  for (int unique: uniqueList.toArray()) {
+	    if (isLoggingEnabled())
+	      getLogger().info("Removing unique ID column: " + output.getColumnName(unique));
+	    output.removeColumn(unique);
+	  }
+	}
       }
 
       if (!isStopped())
