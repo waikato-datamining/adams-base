@@ -162,7 +162,7 @@ public abstract class AbstractChooserPanel<T>
     m_TextSelection.addMouseListener(new MouseAdapter() {
       @Override
       public void mouseClicked(MouseEvent e) {
-        if (MouseUtils.isDoubleClick(e) && !isEditable()) {
+        if (MouseUtils.isDoubleClick(e) && !isInlineEditingEnabled()) {
           e.consume();
           choose();
         }
