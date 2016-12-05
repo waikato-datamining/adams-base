@@ -382,7 +382,7 @@ public abstract class AbstractChooserPanel<T>
     try {
       caret     = m_TextSelection.getCaretPosition();
       clipboard = getStringFromClipboard();
-      if (isEditable()) {
+      if (isInlineEditingEnabled()) {
 	caret += clipboard.length();
 	if (m_TextSelection.getSelectedText() == null) {
 	  text = new StringBuilder(m_TextSelection.getText());
@@ -397,7 +397,9 @@ public abstract class AbstractChooserPanel<T>
       else {
 	setCurrent(fromString(clipboard));
       }
-      if (isEditable()) {
+      if (caret > m_TextSelection.getDocument().getLength())
+	caret = m_TextSelection.getDocument().getLength();
+      if (isInlineEditingEnabled()) {
 	try {
 	  m_TextSelection.setCaretPosition(caret);
 	}
