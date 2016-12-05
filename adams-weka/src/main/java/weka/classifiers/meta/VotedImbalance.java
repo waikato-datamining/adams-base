@@ -15,16 +15,18 @@
 
 /**
  * VotedImbalance.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package weka.classifiers.meta;
 
+import adams.core.base.BaseKeyValuePair;
 import adams.data.statistics.StatUtils;
 import weka.classifiers.AbstractClassifier;
 import weka.classifiers.Classifier;
 import weka.classifiers.RandomizableSingleClassifierEnhancer;
 import weka.classifiers.rules.ZeroR;
+import weka.core.AttributeStats;
 import weka.core.Capabilities;
 import weka.core.Capabilities.Capability;
 import weka.core.Instance;
@@ -50,75 +52,86 @@ import java.util.concurrent.TimeUnit;
 
 /**
  <!-- globalinfo-start -->
- * Generates an ensemble using the following approach:<br/>
- * - do x times:<br/>
- *   * create new dataset, resampled with specified bias<br/>
- *   * build base classifier with it<br/>
- * If no classifier gets built at all, use ZeroR as backup model, built on the full dataset.<br/>
- * At prediction time, the Vote meta-classifier (using the pre-built classifiers) is used to determining the class probabilities or regression value.
- * <p/>
+ * Generates an ensemble using the following approach:<br>
+ * - do x times:<br>
+ *   * create new dataset, resampled with specified bias<br>
+ *   * build base classifier with it<br>
+ * If no classifier gets built at all, use ZeroR as backup model, built on the full dataset.<br>
+ * At prediction time, the Vote meta-classifier (using the pre-built classifiers) is used to determining the class probabilities or regression value.<br>
+ * Instead of just using a fixed number of resampled models, you can also specify thresholds (= probability that the minority class does not meet) with associated number of resampled models to use.
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
- * 
+ * Valid options are: <p>
+ *
  * <pre> -num-slots &lt;num&gt;
  *  Number of execution slots.
  *  (default: 1 - i.e. no parallelism)</pre>
- * 
+ *
  * <pre> -combination-rule &lt;AVG|PROD|MAJ|MIN|MAX|MED&gt;
  *  The combination rule to use
  *  (default: AVG)</pre>
- * 
+ *
  * <pre> -num-balanced &lt;num&gt;
  *  Number of balanced datasets (= number of classifiers) to create.
  *  (default: 1)</pre>
- * 
+ *
+ * <pre> -thresholds &lt;prob=# [prob=# [...]]&gt;
+ *  Thresholds for number of resampled models (probability=#models); blank-separated list.
+ *  (default: none)</pre>
+ *
  * <pre> -num-balanced &lt;num&gt;
  *  Number of balanced datasets (= number of classifiers) to create.
  *  (default: 1)</pre>
- * 
+ *
  * <pre> -B &lt;num&gt;
  *  Bias factor towards uniform class distribution.
  *  0 = distribution in input data -- 1 = uniform distribution.
  *  (default 0)</pre>
- * 
+ *
  * <pre> -no-replacement
  *  Disables replacement of instances
  *  (default: with replacement)</pre>
- * 
+ *
  * <pre> -suppress-model-output
  *  Suppress model output
  *  (default: no)</pre>
- * 
+ *
  * <pre> -S &lt;num&gt;
  *  Random number seed.
  *  (default 1)</pre>
- * 
+ *
  * <pre> -W
  *  Full name of base classifier.
  *  (default: weka.classifiers.rules.ZeroR)</pre>
- * 
+ *
  * <pre> -output-debug-info
  *  If set, classifier is run in debug mode and
  *  may output additional info to the console</pre>
- * 
+ *
  * <pre> -do-not-check-capabilities
  *  If set, classifier capabilities are not checked before classifier is built
  *  (use with caution).</pre>
- * 
+ *
+ * <pre> -num-decimal-places
+ *  The number of decimal places for the output of numbers in the model (default 2).</pre>
+ *
  * <pre> 
  * Options specific to classifier weka.classifiers.rules.ZeroR:
  * </pre>
- * 
+ *
  * <pre> -output-debug-info
  *  If set, classifier is run in debug mode and
  *  may output additional info to the console</pre>
- * 
+ *
  * <pre> -do-not-check-capabilities
  *  If set, classifier capabilities are not checked before classifier is built
  *  (use with caution).</pre>
- * 
+ *
+ * <pre> -num-decimal-places
+ *  The number of decimal places for the output of numbers in the model (default 2).</pre>
+ *
  <!-- options-end -->
  *
  * Options after -- are passed to the designated classifier.
@@ -144,6 +157,12 @@ public class VotedImbalance
 
   /** the number of balanced datasets to generate. */
   protected int m_NumBalanced = 1;
+
+  /** the thresholds to use (pair: probability minority class = num balanced). */
+  protected BaseKeyValuePair[] m_Thresholds = new BaseKeyValuePair[0];
+
+  /** the actual number of balanced datasets to generate. */
+  protected int m_ActualNumBalanced;
 
   /** the bias for the dataset balancing (0 = distribution in input data -- 1 = uniform distribution). */
   protected double m_Bias = 0.0;
@@ -187,15 +206,18 @@ public class VotedImbalance
    */
   public String globalInfo() {
     return
-        "Generates an ensemble using the following approach:\n"
-      + "- do x times:\n"
-      + "  * create new dataset, resampled with specified bias\n"
-      + "  * build base classifier with it\n"
-      + "If no classifier gets built at all, use ZeroR as backup model, built on the "
-      + "full dataset.\n"
-      + "At prediction time, the Vote meta-classifier (using the pre-built "
-      + "classifiers) is used to determining the class probabilities or regression "
-      + "value.";
+      "Generates an ensemble using the following approach:\n"
+	+ "- do x times:\n"
+	+ "  * create new dataset, resampled with specified bias\n"
+	+ "  * build base classifier with it\n"
+	+ "If no classifier gets built at all, use ZeroR as backup model, built on the "
+	+ "full dataset.\n"
+	+ "At prediction time, the Vote meta-classifier (using the pre-built "
+	+ "classifiers) is used to determining the class probabilities or regression "
+	+ "value.\n"
+	+ "Instead of just using a fixed number of resampled models, you can also specify "
+	+ "thresholds (= probability that the minority class does not meet) with "
+	+ "associated number of resampled models to use.";
   }
 
   /**
@@ -211,38 +233,43 @@ public class VotedImbalance
 
     result.addElement(new Option(
       "\tNumber of execution slots.\n"
-        + "\t(default: 1 - i.e. no parallelism)",
+	+ "\t(default: 1 - i.e. no parallelism)",
       "num-slots", 1, "-num-slots <num>"));
 
     result.addElement(new Option(
       "\tThe combination rule to use\n"
-        + "\t(default: AVG)",
+	+ "\t(default: AVG)",
       "combination-rule", 1, "-combination-rule " + Tag.toOptionList(Vote.TAGS_RULES)));
 
     result.addElement(new Option(
       "\tNumber of balanced datasets (= number of classifiers) to create.\n"
-        + "\t(default: 1)",
+	+ "\t(default: 1)",
       "num-balanced", 1, "-num-balanced <num>"));
 
     result.addElement(new Option(
+      "\tThresholds for number of resampled models (probability=#models); blank-separated list.\n"
+	+ "\t(default: none)",
+      "thresholds", 1, "-thresholds <prob=# [prob=# [...]]>"));
+
+    result.addElement(new Option(
       "\tNumber of balanced datasets (= number of classifiers) to create.\n"
-        + "\t(default: 1)",
+	+ "\t(default: 1)",
       "num-balanced", 1, "-num-balanced <num>"));
 
     result.addElement(new Option(
       "\tBias factor towards uniform class distribution.\n"
-        + "\t0 = distribution in input data -- 1 = uniform distribution.\n"
-        + "\t(default 0)",
+	+ "\t0 = distribution in input data -- 1 = uniform distribution.\n"
+	+ "\t(default 0)",
       "B", 1, "-B <num>"));
 
     result.addElement(new Option(
       "\tDisables replacement of instances\n"
-        + "\t(default: with replacement)",
+	+ "\t(default: with replacement)",
       "no-replacement", 0, "-no-replacement"));
 
     result.addElement(new Option(
       "\tSuppress model output\n"
-        + "\t(default: no)",
+	+ "\t(default: no)",
       "suppress-model-output", 0, "-suppress-model-output"));
 
     enm = super.listOptions();
@@ -262,13 +289,13 @@ public class VotedImbalance
     String 	tmpStr;
 
     tmpStr = Utils.getOption("num-slots", options);
-    if (tmpStr.length() != 0)
+    if (!tmpStr.isEmpty())
       setNumExecutionSlots(Integer.parseInt(tmpStr));
     else
       setNumExecutionSlots(1);
 
     tmpStr = Utils.getOption("combination-rule", options);
-    if (tmpStr.length() != 0)
+    if (!tmpStr.isEmpty())
       setCombinationRule(new SelectedTag(tmpStr, Vote.TAGS_RULES));
     else
       setCombinationRule(new SelectedTag(Vote.AVERAGE_RULE, Vote.TAGS_RULES));
@@ -279,8 +306,14 @@ public class VotedImbalance
     else
       setNumBalanced(1);
 
+    tmpStr = Utils.getOption("thresholds", options);
+    if (!tmpStr.isEmpty())
+      setThresholds(tmpStr);
+    else
+      setThresholds("");
+
     tmpStr = Utils.getOption('B', options);
-    if (tmpStr.length() != 0)
+    if (!tmpStr.isEmpty())
       setBias(Double.parseDouble(tmpStr));
     else
       setBias(0);
@@ -299,7 +332,7 @@ public class VotedImbalance
   public String [] getOptions() {
     Vector<String>	result;
 
-    result = new Vector<String>();
+    result = new Vector<>();
 
     result.add("-num-slots");
     result.add("" + getNumExecutionSlots());
@@ -309,6 +342,11 @@ public class VotedImbalance
 
     result.add("-num-balanced");
     result.add("" + getNumBalanced());
+
+    if (!getThresholds().isEmpty()) {
+      result.add("-thresholds");
+      result.add(getThresholds());
+    }
 
     result.add("-B");
     result.add("" + getBias());
@@ -429,6 +467,76 @@ public class VotedImbalance
   }
 
   /**
+   * Set the pairs of threshold/number of resampled models.
+   *
+   * @param value 	the pairs (blank-separated list; probability=#models)
+   */
+  public void setThresholds(String value) {
+    String[]			parts;
+    List<BaseKeyValuePair>	pairs;
+    BaseKeyValuePair		pair;
+    int				i;
+
+    if (value.trim().isEmpty()) {
+      m_Thresholds = new BaseKeyValuePair[0];
+      return;
+    }
+
+    try {
+      pairs = new ArrayList<>();
+      parts = Utils.splitOptions(value);
+      for (i = 0; i < parts.length; i++) {
+	pair = new BaseKeyValuePair();
+	if (pair.isValid(parts[i])) {
+	  pair.setValue(parts[i]);
+	  if (!adams.core.Utils.isDouble(pair.getPairKey()) || (Double.parseDouble(pair.getPairKey()) < 0) || (Double.parseDouble(pair.getPairKey()) > 1)) {
+	    System.err.println("Key #" + (i+1) + " is not a valid probability (0-1): " + pair.getPairKey());
+	    continue;
+	  }
+	  if (!adams.core.Utils.isInteger(pair.getPairValue()) || (Integer.parseInt(pair.getPairValue()) < 1)) {
+	    System.err.println("Value #" + (i+1) + " is not a valid model amount: " + pair.getPairValue());
+	    continue;
+	  }
+	  pairs.add(pair);
+	}
+      }
+      m_Thresholds = pairs.toArray(new BaseKeyValuePair[pairs.size()]);
+    }
+    catch (Exception e) {
+      System.err.println("Invalid threshold specs: " + value);
+    }
+  }
+
+  /**
+   * Returns the pairs of threshold/number of resampled models.
+   *
+   * @return 		the pairs
+   */
+  public String getThresholds() {
+    String[]	result;
+    int		i;
+
+    result = new String[m_Thresholds.length];
+    for (i = 0; i < m_Thresholds.length; i++)
+      result[i] = m_Thresholds[i].getValue();
+
+    return Utils.joinOptions(result);
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the explorer/experimenter gui
+   */
+  public String thresholdsTipText() {
+    return
+      "The blank-separated list of probability thresholds for the minority "
+	+ "class with their associated number of resampled models; e.g.: "
+	+ "'0.5=1 0.3=3 0.1=5 0.05=10 0.01=25'.";
+  }
+
+  /**
    * Sets the bias towards a uniform class. A value of 0 leaves the class
    * distribution as-is, a value of 1 ensures the class distributions are
    * uniform in the output data.
@@ -529,8 +637,8 @@ public class VotedImbalance
       m_ExecutorPool.shutdownNow();
 
     m_ExecutorPool = new ThreadPoolExecutor(
-	m_NumExecutionSlots, m_NumExecutionSlots,
-        120, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
+      m_NumExecutionSlots, m_NumExecutionSlots,
+      120, TimeUnit.SECONDS, new LinkedBlockingQueue<>());
   }
 
   /**
@@ -541,7 +649,7 @@ public class VotedImbalance
   private synchronized void block(boolean wait) {
     if (wait) {
       try {
-        wait();
+	wait();
       }
       catch (InterruptedException ex) {
 	// ignored
@@ -603,7 +711,7 @@ public class VotedImbalance
     if (!success) {
       m_Failed++;
       if (m_Debug)
-        System.err.println("Building of classifier " + index + " failed!");
+	System.err.println("Building of classifier " + index + " failed!");
     }
     else {
       m_Completed++;
@@ -611,8 +719,8 @@ public class VotedImbalance
 
     if ((m_Completed + m_Failed) == m_Classifiers.length) {
       if (m_Failed > 0) {
-        if (m_Debug)
-          System.err.println("Problem building classifiers - some iterations failed.");
+	if (m_Debug)
+	  System.err.println("Problem building classifiers - some iterations failed.");
       }
 
       // have to shut the pool down or program executes as a server
@@ -631,32 +739,27 @@ public class VotedImbalance
    */
   protected synchronized void buildClassifiers() throws Exception {
     int		i;
-    Runnable 	newTask;
     Random	rand;
 
     rand = new Random(m_Seed);
     for (i = 0; i < m_Classifiers.length; i++) {
       final int index = i;
       final int seed = rand.nextInt();
-      if (m_Debug) {
+      if (getDebug())
 	System.out.print("Training classifier (" + (i +1) + ")");
-      }
-      newTask = new Runnable() {
-	public void run() {
-	  try {
-	    Instances train = getTrainingSet(index, seed);
-            m_Classifiers[index].buildClassifier(train);
-	    completedClassifier(index, true);
-	  }
-	  catch (Exception ex) {
-	    ex.printStackTrace();
-	    completedClassifier(index, false);
-	  }
-	}
-      };
-
       // launch this task
-      m_ExecutorPool.execute(newTask);
+      m_ExecutorPool.execute(() -> {
+	try {
+	  Instances train = getTrainingSet(index, seed);
+	  m_Classifiers[index].buildClassifier(train);
+	  completedClassifier(index, true);
+	}
+	catch (Exception ex) {
+	  System.err.println("Classifier #" + (index + 1) + " failed with:");
+	  ex.printStackTrace();
+	  completedClassifier(index, false);
+	}
+      });
     }
 
     if (m_Completed + m_Failed < m_Classifiers.length)
@@ -670,10 +773,10 @@ public class VotedImbalance
     Classifier		result;
     List<Classifier>    classifiers;
 
-    classifiers = new ArrayList<Classifier>();
+    classifiers = new ArrayList<>();
     for (Classifier cls: m_Classifiers) {
       if (cls == null)
-        continue;
+	continue;
       classifiers.add(cls);
     }
 
@@ -722,7 +825,13 @@ public class VotedImbalance
    * @throws Exception 	if the classifier could not be built successfully
    */
   public void buildClassifier(Instances data) throws Exception {
-    int     smallest;
+    int     		smallest;
+    double		minorityClass;
+    double		threshold;
+    double		lastThreshold;
+    AttributeStats	stats;
+    double		total;
+    int			i;
 
     // can classifier handle the data?
     getCapabilities().testWithFail(data);
@@ -732,15 +841,41 @@ public class VotedImbalance
     m_Data.deleteWithMissingClass();
     m_Header = new Instances(m_Data, 0);
 
-    if (data.numInstances() < m_NumBalanced) {
+    m_ActualNumBalanced = m_NumBalanced;
+    if (m_Thresholds.length > 0) {
+      // determine minority class
+      minorityClass = 1.0;
+      stats         = data.attributeStats(data.classIndex());
+      total         = StatUtils.sum(stats.nominalCounts);
+      for (i = 0; i < stats.nominalCounts.length; i++) {
+	if (stats.nominalCounts[i] == 0)
+	  continue;
+	minorityClass = Math.min((double) stats.nominalCounts[i] / total, minorityClass);
+      }
+      if (getDebug())
+	System.out.println("Minority class probability: " + minorityClass);
+      // determine threshold that applies
+      lastThreshold = 1.0;
+      for (i = 0; i < m_Thresholds.length; i++) {
+	threshold = Double.parseDouble(m_Thresholds[i].getPairKey());
+	if ((threshold > minorityClass) && (threshold < lastThreshold)) {
+	  lastThreshold = threshold;
+	  m_ActualNumBalanced = Integer.parseInt(m_Thresholds[i].getPairValue());
+	}
+      }
+      if (getDebug())
+	System.out.println("Actual # of resampled models: " + m_ActualNumBalanced);
+    }
+
+    if (data.numInstances() < m_ActualNumBalanced) {
       System.err.println(
-        "WARNING: generating more balanced datasets than rows in input dataset "
-          + "(" + m_NumBalanced + " > " + data.numInstances() + ")");
+	"WARNING: generating more balanced datasets than rows in input dataset "
+	  + "(" + m_ActualNumBalanced + " > " + data.numInstances() + ")");
     }
 
     if (m_Classifier == null)
       throw new Exception("A base classifier has not been specified!");
-    m_Classifiers = AbstractClassifier.makeCopies(m_Classifier, m_NumBalanced);
+    m_Classifiers = AbstractClassifier.makeCopies(m_Classifier, m_ActualNumBalanced);
 
     startExecutorPool();
 
