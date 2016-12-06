@@ -25,6 +25,7 @@ import adams.core.option.AbstractOptionHandler;
 import adams.flow.control.Flow;
 import adams.flow.control.StorageName;
 import adams.flow.core.Actor;
+import adams.flow.sink.sequenceplotter.ViewDataClickAction;
 import adams.flow.source.StorageValue;
 import adams.flow.transformer.ArrayToSequence;
 import adams.flow.transformer.MakePlotContainer;
@@ -140,8 +141,11 @@ public class SimplePlot
     setup.getGOEEditor().setClassType(Actor.class);
     setup.getGOEEditor().setCanChangeClassInDialog(false);
     last = (adams.flow.sink.SimplePlot) table.getLastSetup(getClass(), true, !isColumn);
-    if (last == null)
+    if (last == null) {
       last = new adams.flow.sink.SimplePlot();
+      last.setNoToolTips(true);
+      last.setMouseClickAction(new ViewDataClickAction());
+    }
     setup.setCurrent(last);
     setup.setLocationRelativeTo(GUIHelper.getParentComponent(table));
     setup.setVisible(true);
