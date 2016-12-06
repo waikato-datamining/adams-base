@@ -243,6 +243,9 @@ public class SimplePlot
   /** whether to show the side panel. */
   protected boolean m_ShowSidePanel;
 
+  /** whether to suppress the tooltips. */
+  protected boolean m_NoToolTips;
+
   /** the file to save the plot containers to. */
   protected PlaceholderFile m_OutputFile;
 
@@ -251,7 +254,7 @@ public class SimplePlot
 
   /** the plot updater to use. */
   protected AbstractPlotUpdater m_PlotUpdater;
-
+  
   /**
    * Returns a string describing the object.
    *
@@ -300,6 +303,10 @@ public class SimplePlot
     m_OptionManager.add(
       "show-side-panel", "showSidePanel",
       true);
+
+    m_OptionManager.add(
+      "no-tool-tips", "noToolTips",
+      false);
 
     m_OptionManager.add(
       "output", "outputFile",
@@ -643,6 +650,35 @@ public class SimplePlot
   }
 
   /**
+   * Sets whether to suppress the plot tool tips.
+   *
+   * @param value	true if to suppress
+   */
+  public void setNoToolTips(boolean value) {
+    m_NoToolTips = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to suppress the plot tool tips.
+   *
+   * @return		true if to suppress
+   */
+  public boolean getNoToolTips() {
+    return m_NoToolTips;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String noToolTipsTipText() {
+    return "If enabled, the tool tips of the plot get suppressed.";
+  }
+
+  /**
    * Returns the default output file.
    *
    * @return		the file
@@ -713,6 +749,10 @@ public class SimplePlot
     m_AxisY.configure(result.getPlot(), Axis.LEFT);
     result.setColorProvider(getColorProvider().shallowCopy());
     result.setSidePanelVisible(m_ShowSidePanel);
+    if (m_NoToolTips) {
+      result.getPlot().clearToolTipAxes();
+      result.getPlot().setTipTextCustomizer(null);
+    }
 
     return result;
   }
@@ -991,6 +1031,10 @@ public class SimplePlot
 	m_AxisY.configure(m_Panel.getPlot(), Axis.LEFT);
 	m_Panel.setColorProvider(m_ColorProvider);
 	m_Panel.setSidePanelVisible(m_ShowSidePanel);
+	if (m_NoToolTips) {
+	  m_Panel.getPlot().clearToolTipAxes();
+	  m_Panel.getPlot().setTipTextCustomizer(null);
+	}
 	add(m_Panel, BorderLayout.CENTER);
       }
       @Override
