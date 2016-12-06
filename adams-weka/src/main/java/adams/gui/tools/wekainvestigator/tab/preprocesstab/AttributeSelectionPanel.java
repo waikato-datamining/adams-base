@@ -34,6 +34,8 @@ import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
@@ -70,7 +72,7 @@ import java.util.regex.Pattern;
  */
 public class AttributeSelectionPanel
   extends JPanel
-  implements TableModelListener {
+  implements TableModelListener, ListSelectionListener {
 
   /** for serialization */
   private static final long serialVersionUID = 627131485290359194L;
@@ -142,16 +144,16 @@ public class AttributeSelectionPanel
     @Override
     public Object getValueAt(int row, int column) {
       if (row >= m_Instances.numAttributes())
-        return null;
+	return null;
       switch (column) {
-        case 0:
-          return (row + 1);
-        case 1:
-          return m_Selected.containsKey(m_Instances.attribute(row).name()) && m_Selected.get(m_Instances.attribute(row).name());
-        case 2:
-          return m_Instances.attribute(row).name();
-        default:
-          return null;
+	case 0:
+	  return (row + 1);
+	case 1:
+	  return m_Selected.containsKey(m_Instances.attribute(row).name()) && m_Selected.get(m_Instances.attribute(row).name());
+	case 2:
+	  return m_Instances.attribute(row).name();
+	default:
+	  return null;
       }
     }
 
@@ -164,14 +166,14 @@ public class AttributeSelectionPanel
     @Override
     public String getColumnName(int column) {
       switch (column) {
-        case 0:
-          return "No.";
-        case 1:
-          return "";
-        case 2:
-          return "Name";
-        default:
-          return null;
+	case 0:
+	  return "No.";
+	case 1:
+	  return "";
+	case 2:
+	  return "Name";
+	default:
+	  return null;
       }
     }
 
@@ -186,7 +188,7 @@ public class AttributeSelectionPanel
     public void setValueAt(Object value, int row, int col) {
       if (col == 1) {
 	m_Selected.put(m_Instances.attribute(row).name(), (Boolean) value);
-        fireTableRowsUpdated(0, getRowCount());
+	fireTableRowsUpdated(0, getRowCount());
       }
     }
 
@@ -242,7 +244,7 @@ public class AttributeSelectionPanel
       if (m_Instances == null)
 	return;
       for (int i = 0; i < m_Instances.numAttributes(); i++)
-        m_Selected.put(m_Instances.attribute(i).name(), true);
+	m_Selected.put(m_Instances.attribute(i).name(), true);
       fireTableRowsUpdated(0, getRowCount());
     }
 
@@ -253,7 +255,7 @@ public class AttributeSelectionPanel
       if (m_Instances == null)
 	return;
       for (int i = 0; i < m_Instances.numAttributes(); i++)
-        m_Selected.put(m_Instances.attribute(i).name(), false);
+	m_Selected.put(m_Instances.attribute(i).name(), false);
       fireTableRowsUpdated(0, getRowCount());
     }
 
@@ -296,10 +298,10 @@ public class AttributeSelectionPanel
       if (m_Instances == null)
 	return;
       if (selected.length != getRowCount())
-        throw new Exception(
+	throw new Exception(
 	  "Supplied array does not have the same number of elements as there are attributes!");
       for (int i = 0; i < selected.length; i++)
-        m_Selected.put(m_Instances.attribute(i).name(), selected[i]);
+	m_Selected.put(m_Instances.attribute(i).name(), selected[i]);
       fireTableRowsUpdated(0, getRowCount());
     }
   }
@@ -325,8 +327,11 @@ public class AttributeSelectionPanel
   /** The current regular expression. */
   protected String m_PatternRegEx = "";
 
-  /** the listeners for changes in the selection. */
+  /** the listeners for changes in the checked attributes. */
   protected Set<ChangeListener> m_ChangeListeners;
+
+  /** the listeners for changes in the selection. */
+  protected Set<ListSelectionListener> m_SelectionListeners;
 
   /**
    * Creates the attribute selection panel with no initial instances.
@@ -344,9 +349,10 @@ public class AttributeSelectionPanel
    * @param pattern true if the pattern button is to be shown
    */
   public AttributeSelectionPanel(boolean include, boolean remove,
-                                 boolean invert, boolean pattern) {
+				 boolean invert, boolean pattern) {
 
-    m_ChangeListeners = new HashSet<>();
+    m_ChangeListeners    = new HashSet<>();
+    m_SelectionListeners = new HashSet<>();
 
     m_ButtonAll.setToolTipText("Selects all attributes");
     m_ButtonAll.setEnabled(false);
@@ -378,6 +384,7 @@ public class AttributeSelectionPanel
     m_Table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     m_Table.setColumnSelectionAllowed(false);
     m_Table.setPreferredScrollableViewportSize(new Dimension(250, 150));
+    m_Table.getSelectionModel().addListSelectionListener(this);
 
     // Set up the layout
     JPanel p1 = new JPanel();
@@ -495,7 +502,7 @@ public class AttributeSelectionPanel
   }
 
   /**
-   * Adds the listener to the list of selection listeners.
+   * Adds the listener to the list of checked attributes listeners.
    *
    * @param l		the listener to add
    */
@@ -504,7 +511,7 @@ public class AttributeSelectionPanel
   }
 
   /**
-   * Removes the listener from the list of selection listeners.
+   * Removes the listener from the list of checked attributes listeners.
    *
    * @param l		the listener to remove
    */
@@ -513,7 +520,7 @@ public class AttributeSelectionPanel
   }
 
   /**
-   * Notifies all listeners that the selection has changed.
+   * Notifies all listeners that the checked attributes have changed.
    */
   protected void notifyChangeListeners() {
     ChangeEvent 	e;
@@ -535,6 +542,44 @@ public class AttributeSelectionPanel
   }
 
   /**
+   * Add a listener to the list that's notified each time a change
+   * to the selection occurs.
+   *
+   * @param l the ListSelectionListener
+   */
+  public void addSelectionListener(ListSelectionListener l) {
+    m_SelectionListeners.add(l);
+  }
+
+  /**
+   * Remove a listener from the list that's notified each time a
+   * change to the selection occurs.
+   *
+   * @param l the ListSelectionListener
+   */
+  public void removeSelectionListener(ListSelectionListener l) {
+    m_SelectionListeners.remove(l);
+  }
+
+  /**
+   * Notifies all listeners that the selection has changed.
+   */
+  protected void notifySelectionListeners(ListSelectionEvent e) {
+    for (ListSelectionListener l: m_SelectionListeners)
+      l.valueChanged(e);
+  }
+
+  /**
+   * Called whenever the value of the selection changes.
+   *
+   * @param e the event that characterizes the change.
+   * @see #notifySelectionListeners(ListSelectionEvent)
+   */
+  public void valueChanged(ListSelectionEvent e) {
+    notifySelectionListeners(e);
+  }
+
+  /**
    * Tests the attribute selection panel from the command line.
    *
    * @param args must contain the name of an arff file to load.
@@ -542,21 +587,21 @@ public class AttributeSelectionPanel
   public static void main(String[] args) {
     try {
       if (args.length == 0) {
-        throw new Exception("supply the name of an arff file");
+	throw new Exception("supply the name of an arff file");
       }
       Instances i = new Instances(new java.io.BufferedReader(
-        new java.io.FileReader(args[0])));
+	new java.io.FileReader(args[0])));
       weka.gui.AttributeSelectionPanel asp = new weka.gui.AttributeSelectionPanel();
       final javax.swing.JFrame jf = new javax.swing.JFrame(
-        "Attribute Selection Panel");
+	"Attribute Selection Panel");
       jf.getContentPane().setLayout(new BorderLayout());
       jf.getContentPane().add(asp, BorderLayout.CENTER);
       jf.addWindowListener(new java.awt.event.WindowAdapter() {
-        @Override
-        public void windowClosing(java.awt.event.WindowEvent e) {
-          jf.dispose();
-          System.exit(0);
-        }
+	@Override
+	public void windowClosing(java.awt.event.WindowEvent e) {
+	  jf.dispose();
+	  System.exit(0);
+	}
       });
       jf.pack();
       jf.setVisible(true);

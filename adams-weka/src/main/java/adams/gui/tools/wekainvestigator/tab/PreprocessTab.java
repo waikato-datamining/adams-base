@@ -278,7 +278,7 @@ public class PreprocessTab
       }
       m_ButtonSelectedAttributes.setEnabled(indices.length > 0);
     });
-    m_PanelAttSelection.getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> {
+    m_PanelAttSelection.addSelectionListener((ListSelectionEvent e) -> {
       // update other panels
       int[] indices = m_PanelAttSelection.getSelectedRows();
       if (indices.length == 1) {
