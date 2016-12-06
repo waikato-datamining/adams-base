@@ -110,10 +110,10 @@ public class ConsolePanel
       m_OutputEnabled = true;
       m_LevelAttributeSets = new HashMap<>();
       for (LoggingLevel l: LoggingLevel.values()) {
-	SimpleAttributeSet set = new SimpleAttributeSet();
-	StyleConstants.setForeground(set, levelToColor(l));
-	StyleConstants.setFontFamily(set, "monospaced");
-	m_LevelAttributeSets.put(l, set);
+        SimpleAttributeSet set = new SimpleAttributeSet();
+        StyleConstants.setForeground(set, levelToColor(l));
+        StyleConstants.setFontFamily(set, "monospaced");
+        m_LevelAttributeSets.put(l, set);
       }
     }
 
@@ -139,11 +139,11 @@ public class ConsolePanel
       m_ButtonEnabledDisable = new JButton("Disable");
       m_ButtonEnabledDisable.setMnemonic('a');
       m_ButtonEnabledDisable.addActionListener((ActionEvent e) -> {
-	m_OutputEnabled = !m_OutputEnabled;
-	if (m_OutputEnabled)
-	  m_ButtonEnabledDisable.setText("Disable");
-	else
-	  m_ButtonEnabledDisable.setText("Enable");
+        m_OutputEnabled = !m_OutputEnabled;
+        if (m_OutputEnabled)
+          m_ButtonEnabledDisable.setText("Disable");
+        else
+          m_ButtonEnabledDisable.setText("Enable");
       });
       panel.add(m_ButtonEnabledDisable);
 
@@ -259,15 +259,15 @@ public class ConsolePanel
       int		index;
 
       synchronized(m_TextArea) {
-	if (m_TextArea.getTextPane().getLineCount() > ((Number) m_SpinnerMaxLines.getValue()).intValue()) {
-	  buf   = new StringBuilder(m_TextArea.getContent());
-	  index = buf.indexOf("\n", (int) (buf.length() * 0.2));
-	  if (index == -1)
-	    buf = new StringBuilder();
-	  else
-	    buf.delete(0, index);
-	  m_TextArea.setContent(buf.toString());
-	}
+        if (m_TextArea.getTextPane().getLineCount() > ((Number) m_SpinnerMaxLines.getValue()).intValue()) {
+          buf   = new StringBuilder(m_TextArea.getContent());
+          index = buf.indexOf("\n", (int) (buf.length() * 0.2));
+          if (index == -1)
+            buf = new StringBuilder();
+          else
+            buf.delete(0, index);
+          m_TextArea.setContent(buf.toString());
+        }
       }
     }
 
@@ -278,13 +278,20 @@ public class ConsolePanel
      * @param msg	the message to append
      */
     public void append(final LoggingLevel level, final String msg) {
+      boolean 	caretIsLast;
+
       if (!m_OutputEnabled)
-	return;
+        return;
 
       synchronized(m_TextArea) {
-	m_TextArea.getTextPane().append(msg, m_LevelAttributeSets.get(level));
-	trimOutput();
-	m_TextArea.setCaretPositionLast();
+        caretIsLast = (m_TextArea.getCaretPosition() == m_TextArea.getDocument().getLength());
+
+        m_TextArea.getTextPane().append(msg, m_LevelAttributeSets.get(level));
+        trimOutput();
+
+        // only move cursor if at end of document
+        if (caretIsLast)
+          m_TextArea.setCaretPositionLast();
       }
     }
 
@@ -358,8 +365,8 @@ public class ConsolePanel
       m_Buffer.append(c);
 
       if (c == '\n') {
-	getSingleton().append(m_Level, m_Buffer.toString());
-	m_Buffer.delete(0, m_Buffer.length());
+        getSingleton().append(m_Level, m_Buffer.toString());
+        m_Buffer.delete(0, m_Buffer.length());
       }
     }
   }
@@ -465,8 +472,8 @@ public class ConsolePanel
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed N"));
       menuitem.setIcon(GUIHelper.getIcon("new.gif"));
       menuitem.addActionListener((ActionEvent e) -> {
-	if (getCurrentPanel() != null)
-	  getCurrentPanel().clear();
+        if (getCurrentPanel() != null)
+          getCurrentPanel().clear();
       });
       m_MenuItemClear = menuitem;
 
@@ -477,8 +484,8 @@ public class ConsolePanel
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl shift pressed N"));
       menuitem.setIcon(GUIHelper.getEmptyIcon());
       menuitem.addActionListener((ActionEvent e) -> {
-	for (int i = 0; i < m_TabbedPane.getTabCount(); i++)
-	  ((OutputPanel) m_TabbedPane.getComponentAt(i)).clear();
+        for (int i = 0; i < m_TabbedPane.getTabCount(); i++)
+          ((OutputPanel) m_TabbedPane.getComponentAt(i)).clear();
       });
       m_MenuItemClearAll = menuitem;
 
@@ -489,15 +496,15 @@ public class ConsolePanel
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl shift pressed S"));
       menuitem.setIcon(GUIHelper.getIcon("save.gif"));
       menuitem.addActionListener((ActionEvent e) -> {
-	if (getCurrentPanel() != null)
-	  getCurrentPanel().saveAs();
+        if (getCurrentPanel() != null)
+          getCurrentPanel().saveAs();
       });
       m_MenuItemSaveAs = menuitem;
 
       // File/Send to
       menu.addSeparator();
       if (SendToActionUtils.addSendToSubmenu(this, menu))
-	menu.addSeparator();
+        menu.addSeparator();
 
       // File/Exit
       menuitem = new JMenuItem("Close");
@@ -520,8 +527,8 @@ public class ConsolePanel
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed C"));
       menuitem.setIcon(GUIHelper.getIcon("copy.gif"));
       menuitem.addActionListener((ActionEvent e) -> {
-	if (getCurrentPanel() != null)
-	  getCurrentPanel().copy();
+        if (getCurrentPanel() != null)
+          getCurrentPanel().copy();
       });
       m_MenuItemCopy = menuitem;
 
@@ -533,8 +540,8 @@ public class ConsolePanel
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed L"));
       menuitem.setIcon(GUIHelper.getEmptyIcon());
       menuitem.addActionListener((ActionEvent e) -> {
-	if (getCurrentPanel() != null)
-	  getCurrentPanel().setLineWrap(!getCurrentPanel().getLineWrap());
+        if (getCurrentPanel() != null)
+          getCurrentPanel().setLineWrap(!getCurrentPanel().getLineWrap());
       });
       m_MenuItemFind = menuitem;
 
@@ -546,8 +553,8 @@ public class ConsolePanel
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed F"));
       menuitem.setIcon(GUIHelper.getIcon("find.gif"));
       menuitem.addActionListener((ActionEvent e) -> {
-	if (getCurrentPanel() != null)
-	  getCurrentPanel().find();
+        if (getCurrentPanel() != null)
+          getCurrentPanel().find();
       });
       m_MenuItemFind = menuitem;
 
@@ -558,8 +565,8 @@ public class ConsolePanel
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl shift pressed F"));
       menuitem.setIcon(GUIHelper.getEmptyIcon());
       menuitem.addActionListener((ActionEvent e) -> {
-	if (getCurrentPanel() != null)
-	  getCurrentPanel().findNext();
+        if (getCurrentPanel() != null)
+          getCurrentPanel().findNext();
       });
       m_MenuItemFindNext = menuitem;
 
@@ -593,11 +600,11 @@ public class ConsolePanel
   public OutputPanel getPanel(PanelType type) {
     switch (type) {
       case ALL:
-	return m_PanelAll;
+        return m_PanelAll;
       case ERRORS:
-	return m_PanelError;
+        return m_PanelError;
       default:
-	throw new IllegalArgumentException("Unhandled panel type: " + type);
+        throw new IllegalArgumentException("Unhandled panel type: " + type);
     }
   }
 
@@ -638,8 +645,8 @@ public class ConsolePanel
     e = new ConsolePanelEvent(this, level, msg);
     try {
       synchronized(m_Listeners) {
-	for (ConsolePanelListener l: m_Listeners)
-	  l.consolePanelMessageReceived(e);
+        for (ConsolePanelListener l: m_Listeners)
+          l.consolePanelMessageReceived(e);
       }
     }
     catch (Throwable t) {
@@ -719,11 +726,11 @@ public class ConsolePanel
     if ((SendToActionUtils.isAvailable(String.class, cls))) {
       result = getCurrentPanel().getContent();
       if (((String) result).length() == 0)
-	result = null;
+        result = null;
     }
     else if (SendToActionUtils.isAvailable(JTextComponent.class, cls)) {
       if (getCurrentPanel().getContent().length() > 0)
-	result = getCurrentPanel();
+        result = getCurrentPanel();
     }
 
     return result;
