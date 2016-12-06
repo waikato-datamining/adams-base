@@ -92,160 +92,167 @@ import java.util.HashMap;
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- *
+ * 
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: SequencePlotter
  * </pre>
- *
+ * 
  * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- *
+ * 
  * <pre>-skip &lt;boolean&gt; (property: skip)
  * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
  * &nbsp;&nbsp;&nbsp;as it is.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this 
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical 
+ * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-silent &lt;boolean&gt; (property: silent)
- * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console.
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-short-title &lt;boolean&gt; (property: shortTitle)
  * &nbsp;&nbsp;&nbsp;If enabled uses just the name for the title instead of the actor's full 
  * &nbsp;&nbsp;&nbsp;name.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-display-in-editor &lt;boolean&gt; (property: displayInEditor)
  * &nbsp;&nbsp;&nbsp;If enabled displays the panel in a tab in the flow editor rather than in 
  * &nbsp;&nbsp;&nbsp;a separate frame.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-width &lt;int&gt; (property: width)
  * &nbsp;&nbsp;&nbsp;The width of the dialog.
  * &nbsp;&nbsp;&nbsp;default: 800
  * &nbsp;&nbsp;&nbsp;minimum: -1
  * </pre>
- *
+ * 
  * <pre>-height &lt;int&gt; (property: height)
  * &nbsp;&nbsp;&nbsp;The height of the dialog.
  * &nbsp;&nbsp;&nbsp;default: 350
  * &nbsp;&nbsp;&nbsp;minimum: -1
  * </pre>
- *
+ * 
  * <pre>-x &lt;int&gt; (property: x)
  * &nbsp;&nbsp;&nbsp;The X position of the dialog (&gt;=0: absolute, -1: left, -2: center, -3: right
  * &nbsp;&nbsp;&nbsp;).
  * &nbsp;&nbsp;&nbsp;default: -1
  * &nbsp;&nbsp;&nbsp;minimum: -3
  * </pre>
- *
+ * 
  * <pre>-y &lt;int&gt; (property: y)
  * &nbsp;&nbsp;&nbsp;The Y position of the dialog (&gt;=0: absolute, -1: top, -2: center, -3: bottom
  * &nbsp;&nbsp;&nbsp;).
  * &nbsp;&nbsp;&nbsp;default: -1
  * &nbsp;&nbsp;&nbsp;minimum: -3
  * </pre>
- *
+ * 
  * <pre>-writer &lt;adams.gui.print.JComponentWriter&gt; (property: writer)
  * &nbsp;&nbsp;&nbsp;The writer to use for generating the graphics output.
  * &nbsp;&nbsp;&nbsp;default: adams.gui.print.NullWriter
  * </pre>
- *
+ * 
  * <pre>-comparison &lt;X|Y|X_AND_Y&gt; (property: comparisonType)
  * &nbsp;&nbsp;&nbsp;The type of comparison to use for the data points of the sequence.
  * &nbsp;&nbsp;&nbsp;default: X
  * </pre>
- *
+ * 
  * <pre>-meta-data-key &lt;java.lang.String&gt; (property: metaDataKey)
  * &nbsp;&nbsp;&nbsp;The optional meta-data key to use for comparing data points (apart from 
  * &nbsp;&nbsp;&nbsp;X&#47;Y).
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- *
+ * 
  * <pre>-paintlet &lt;adams.gui.visualization.sequence.XYSequencePaintlet&gt; (property: paintlet)
  * &nbsp;&nbsp;&nbsp;The paintlet to use for painting the data.
  * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.sequence.CirclePaintlet
  * </pre>
- *
+ * 
  * <pre>-overlay-paintlet &lt;adams.gui.visualization.sequence.XYSequencePaintlet&gt; (property: overlayPaintlet)
  * &nbsp;&nbsp;&nbsp;The paintlet to use for painting the overlay data (if any).
  * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.sequence.NullPaintlet
  * </pre>
- *
+ * 
  * <pre>-marker-paintlet &lt;adams.flow.sink.sequenceplotter.MarkerPaintlet&gt; (property: markerPaintlet)
  * &nbsp;&nbsp;&nbsp;The marker paintlet to use for painting marker overlays.
  * &nbsp;&nbsp;&nbsp;default: adams.flow.sink.sequenceplotter.NoMarkers
  * </pre>
- *
+ * 
  * <pre>-error-paintlet &lt;adams.flow.sink.sequenceplotter.AbstractErrorPaintlet&gt; (property: errorPaintlet)
  * &nbsp;&nbsp;&nbsp;The paintlet to use for painting error overlays.
  * &nbsp;&nbsp;&nbsp;default: adams.flow.sink.sequenceplotter.NoErrorPaintlet
  * </pre>
- *
+ * 
  * <pre>-mouse-click-action &lt;adams.flow.sink.sequenceplotter.MouseClickAction&gt; (property: mouseClickAction)
  * &nbsp;&nbsp;&nbsp;The action to use for mouse clicks on the canvas.
  * &nbsp;&nbsp;&nbsp;default: adams.flow.sink.sequenceplotter.NullClickAction
  * </pre>
- *
+ * 
  * <pre>-color-provider &lt;adams.gui.visualization.core.AbstractColorProvider&gt; (property: colorProvider)
  * &nbsp;&nbsp;&nbsp;The color provider in use for generating the colors for the various plots.
  * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.core.DefaultColorProvider
  * </pre>
- *
+ * 
  * <pre>-overlay-color-provider &lt;adams.gui.visualization.core.AbstractColorProvider&gt; (property: overlayColorProvider)
  * &nbsp;&nbsp;&nbsp;The color provider in use for generating the colors for the overlay plots.
  * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.core.DefaultColorProvider
  * </pre>
- *
+ * 
  * <pre>-title &lt;java.lang.String&gt; (property: title)
  * &nbsp;&nbsp;&nbsp;The title for the border around the plot.
  * &nbsp;&nbsp;&nbsp;default: Plot
  * </pre>
- *
+ * 
  * <pre>-axis-x &lt;adams.gui.visualization.core.AxisPanelOptions&gt; (property: axisX)
  * &nbsp;&nbsp;&nbsp;The setup for the X axis.
  * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.core.AxisPanelOptions -label x -tick-generator \"adams.gui.visualization.core.axis.SimpleTickGenerator -num-ticks 20\" -width 40
  * </pre>
- *
+ * 
  * <pre>-axis-y &lt;adams.gui.visualization.core.AxisPanelOptions&gt; (property: axisY)
  * &nbsp;&nbsp;&nbsp;The setup for the Y axis.
  * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.core.AxisPanelOptions -label y -tick-generator adams.gui.visualization.core.axis.SimpleTickGenerator -width 60
  * </pre>
- *
+ * 
  * <pre>-show-side-panel &lt;boolean&gt; (property: showSidePanel)
  * &nbsp;&nbsp;&nbsp;If enabled, the side panel with the plot names is visible.
  * &nbsp;&nbsp;&nbsp;default: true
  * </pre>
- *
- * <pre>-plot-updater &lt;adams.flow.core.AbstractDataPlotUpdater&gt; (property: plotUpdater)
+ * 
+ * <pre>-no-tool-tips &lt;boolean&gt; (property: noToolTips)
+ * &nbsp;&nbsp;&nbsp;If enabled, the tool tips of the plot get suppressed.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-plot-updater &lt;adams.flow.sink.sequenceplotter.AbstractPlotUpdater&gt; (property: plotUpdater)
  * &nbsp;&nbsp;&nbsp;The updating strategy for the plot.
  * &nbsp;&nbsp;&nbsp;default: adams.flow.sink.sequenceplotter.SimplePlotUpdater
  * </pre>
- *
+ * 
  * <pre>-post-processor &lt;adams.flow.sink.sequenceplotter.AbstractSequencePostProcessor&gt; (property: postProcessor)
  * &nbsp;&nbsp;&nbsp;The post-processor to use on the sequences after a token has been added.
  * &nbsp;&nbsp;&nbsp;default: adams.flow.sink.sequenceplotter.PassThrough
  * </pre>
- *
+ * 
  * <pre>-output &lt;adams.core.io.PlaceholderFile&gt; (property: outputFile)
  * &nbsp;&nbsp;&nbsp;The file to write the plot containers to (in CSV format); does not store 
  * &nbsp;&nbsp;&nbsp;the meta-data, as it can change from container to container; ignored if 
  * &nbsp;&nbsp;&nbsp;pointing to a directory.
  * &nbsp;&nbsp;&nbsp;default: ${CWD}
  * </pre>
- *
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -297,6 +304,9 @@ public class SequencePlotter
 
   /** whether to show the side panel. */
   protected boolean m_ShowSidePanel;
+
+  /** whether to suppress the tooltips. */
+  protected boolean m_NoToolTips;
 
   /** the plot updater to use. */
   protected AbstractPlotUpdater m_PlotUpdater;
@@ -381,6 +391,10 @@ public class SequencePlotter
     m_OptionManager.add(
       "show-side-panel", "showSidePanel",
       true);
+
+    m_OptionManager.add(
+      "no-tool-tips", "noToolTips",
+      false);
 
     m_OptionManager.add(
       "plot-updater", "plotUpdater",
@@ -842,6 +856,35 @@ public class SequencePlotter
   }
 
   /**
+   * Sets whether to suppress the plot tool tips.
+   *
+   * @param value	true if to suppress
+   */
+  public void setNoToolTips(boolean value) {
+    m_NoToolTips = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to suppress the plot tool tips.
+   *
+   * @return		true if to suppress
+   */
+  public boolean getNoToolTips() {
+    return m_NoToolTips;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String noToolTipsTipText() {
+    return "If enabled, the tool tips of the plot get suppressed.";
+  }
+
+  /**
    * Sets the title for border around the plot.
    *
    * @param value 	the title
@@ -1000,6 +1043,10 @@ public class SequencePlotter
     result.setColorProvider(getColorProvider().shallowCopy());
     result.setOverlayColorProvider(getOverlayColorProvider().shallowCopy());
     result.setSidePanelVisible(m_ShowSidePanel);
+    if (m_NoToolTips) {
+      result.getPlot().clearToolTipAxes();
+      result.getPlot().setTipTextCustomizer(null);
+    }
 
     ActorUtils.updateFlowAwarePaintlet(result.getDataPaintlet(), this);
     ActorUtils.updateFlowAwarePaintlet(result.getOverlayPaintlet(), this);
@@ -1299,6 +1346,10 @@ public class SequencePlotter
 	m_Panel.setColorProvider(m_ColorProvider);
 	m_Panel.setOverlayColorProvider(m_OverlayColorProvider);
 	m_Panel.setSidePanelVisible(m_ShowSidePanel);
+	if (m_NoToolTips) {
+	  m_Panel.getPlot().clearToolTipAxes();
+	  m_Panel.getPlot().setTipTextCustomizer(null);
+	}
 	add(m_Panel, BorderLayout.CENTER);
 	ActorUtils.updateFlowAwarePaintlet(m_Panel.getDataPaintlet(), SequencePlotter.this);
 	ActorUtils.updateFlowAwarePaintlet(m_Panel.getOverlayPaintlet(), SequencePlotter.this);
