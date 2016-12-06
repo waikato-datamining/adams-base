@@ -829,6 +829,8 @@ public class ActualVsPredictedPlot
     result.setColorProvider(new DefaultColorProvider());
     result.setSidePanelVisible(m_ShowSidePanel);
     result.setMouseClickAction(new ViewDataClickAction());
+    result.getPlot().clearToolTipAxes();
+    result.getPlot().setTipTextCustomizer(null);
 
     return result;
   }
@@ -1018,6 +1020,8 @@ public class ActualVsPredictedPlot
 	m_Panel.setColorProvider(new DefaultColorProvider());
 	m_Panel.setSidePanelVisible(m_ShowSidePanel);
 	m_Panel.setMouseClickAction(new ViewDataClickAction());
+	m_Panel.getPlot().clearToolTipAxes();
+	m_Panel.getPlot().setTipTextCustomizer(null);
 	add(m_Panel, BorderLayout.CENTER);
       }
       @Override
