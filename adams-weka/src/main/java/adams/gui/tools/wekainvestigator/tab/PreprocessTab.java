@@ -54,7 +54,6 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ChangeEvent;
-import javax.swing.event.ListSelectionEvent;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
@@ -265,7 +264,7 @@ public class PreprocessTab
 
     m_PanelAttSelection = new AttributeSelectionPanel();
     m_PanelAttSelection.setBorder(BorderFactory.createTitledBorder("Attributes"));
-    m_PanelAttSelection.getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> {
+    m_PanelAttSelection.addChangeListener((ChangeEvent e) -> {
       // update other panels
       int[] indices = m_PanelAttSelection.getSelectedRows();
       if (indices.length == 1) {

@@ -32,6 +32,10 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
@@ -40,6 +44,8 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 /**
@@ -62,7 +68,9 @@ import java.util.regex.Pattern;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision: 10216 $
  */
-public class AttributeSelectionPanel extends JPanel {
+public class AttributeSelectionPanel
+  extends JPanel
+  implements TableModelListener {
 
   /** for serialization */
   private static final long serialVersionUID = 627131485290359194L;
@@ -230,7 +238,7 @@ public class AttributeSelectionPanel extends JPanel {
     /**
      * Sets the state of all attributes to selected.
      */
-    public void includeAll() {
+    public void selectAll() {
       if (m_Instances == null)
 	return;
       for (int i = 0; i < m_Instances.numAttributes(); i++)
@@ -241,11 +249,11 @@ public class AttributeSelectionPanel extends JPanel {
     /**
      * Deselects all attributes.
      */
-    public void removeAll() {
+    public void selectNone() {
       if (m_Instances == null)
 	return;
       for (int i = 0; i < m_Instances.numAttributes(); i++)
-        m_Selected.put(m_Instances.attribute(i).name(), true);
+        m_Selected.put(m_Instances.attribute(i).name(), false);
       fireTableRowsUpdated(0, getRowCount());
     }
 
@@ -297,16 +305,16 @@ public class AttributeSelectionPanel extends JPanel {
   }
 
   /** Press to select all attributes */
-  protected JButton m_IncludeAll = new JButton("All");
+  protected JButton m_ButtonAll = new JButton("All");
 
   /** Press to deselect all attributes */
-  protected JButton m_RemoveAll = new JButton("None");
+  protected JButton m_ButtonNone = new JButton("None");
 
   /** Press to invert the current selection */
-  protected JButton m_Invert = new JButton("Invert");
+  protected JButton m_ButtonInvert = new JButton("Invert");
 
   /** Press to enter a perl regular expression for selection */
-  protected JButton m_Pattern = new JButton("Pattern");
+  protected JButton m_ButtonPattern = new JButton("Pattern");
 
   /** The table displaying attribute names and selection status */
   protected BaseTable m_Table = new BaseTable();
@@ -316,6 +324,9 @@ public class AttributeSelectionPanel extends JPanel {
 
   /** The current regular expression. */
   protected String m_PatternRegEx = "";
+
+  /** the listeners for changes in the selection. */
+  protected Set<ChangeListener> m_ChangeListeners;
 
   /**
    * Creates the attribute selection panel with no initial instances.
@@ -335,19 +346,21 @@ public class AttributeSelectionPanel extends JPanel {
   public AttributeSelectionPanel(boolean include, boolean remove,
                                  boolean invert, boolean pattern) {
 
-    m_IncludeAll.setToolTipText("Selects all attributes");
-    m_IncludeAll.setEnabled(false);
-    m_IncludeAll.addActionListener((ActionEvent e) -> m_Model.includeAll());
-    m_RemoveAll.setToolTipText("Unselects all attributes");
-    m_RemoveAll.setEnabled(false);
-    m_RemoveAll.addActionListener((ActionEvent e) -> m_Model.removeAll());
-    m_Invert.setToolTipText("Inverts the current attribute selection");
-    m_Invert.setEnabled(false);
-    m_Invert.addActionListener((ActionEvent e) -> m_Model.invert());
-    m_Pattern.setToolTipText("Selects all attributes that match a reg. expression");
-    m_Pattern.setEnabled(false);
-    m_Pattern.addActionListener((ActionEvent e) -> {
-      String patternStr = GUIHelper.showInputDialog(m_Pattern.getParent(),
+    m_ChangeListeners = new HashSet<>();
+
+    m_ButtonAll.setToolTipText("Selects all attributes");
+    m_ButtonAll.setEnabled(false);
+    m_ButtonAll.addActionListener((ActionEvent e) -> m_Model.selectAll());
+    m_ButtonNone.setToolTipText("Unselects all attributes");
+    m_ButtonNone.setEnabled(false);
+    m_ButtonNone.addActionListener((ActionEvent e) -> m_Model.selectNone());
+    m_ButtonInvert.setToolTipText("Inverts the current attribute selection");
+    m_ButtonInvert.setEnabled(false);
+    m_ButtonInvert.addActionListener((ActionEvent e) -> m_Model.invert());
+    m_ButtonPattern.setToolTipText("Selects all attributes that match a reg. expression");
+    m_ButtonPattern.setEnabled(false);
+    m_ButtonPattern.addActionListener((ActionEvent e) -> {
+      String patternStr = GUIHelper.showInputDialog(m_ButtonPattern.getParent(),
 	"Enter a Perl regular expression", m_PatternRegEx);
       if (patternStr != null) {
 	try {
@@ -356,7 +369,7 @@ public class AttributeSelectionPanel extends JPanel {
 	  m_Model.pattern(patternStr);
 	}
 	catch (Exception ex) {
-	  GUIHelper.showErrorMessage(m_Pattern.getParent(), "'" + patternStr
+	  GUIHelper.showErrorMessage(m_ButtonPattern.getParent(), "'" + patternStr
 	      + "' is not a valid Perl regular expression!", ex,
 	    "Error in Pattern...");
 	}
@@ -371,13 +384,13 @@ public class AttributeSelectionPanel extends JPanel {
     p1.setBorder(BorderFactory.createEmptyBorder(10, 5, 10, 5));
     p1.setLayout(new GridLayout(1, 4, 5, 5));
     if (include)
-      p1.add(m_IncludeAll);
+      p1.add(m_ButtonAll);
     if (remove)
-      p1.add(m_RemoveAll);
+      p1.add(m_ButtonNone);
     if (invert)
-      p1.add(m_Invert);
+      p1.add(m_ButtonInvert);
     if (pattern)
-      p1.add(m_Pattern);
+      p1.add(m_ButtonPattern);
 
     setLayout(new BorderLayout());
     if (include || remove || invert || pattern)
@@ -401,6 +414,7 @@ public class AttributeSelectionPanel extends JPanel {
   public void setInstances(Instances newInstances) {
     if (m_Model == null) {
       m_Model = new AttributeTableModel(newInstances);
+      m_Model.addTableModelListener(this);
       m_Table.setModel(m_Model);
       TableColumnModel tcm = m_Table.getColumnModel();
       tcm.getColumn(0).setMaxWidth(60);
@@ -411,10 +425,10 @@ public class AttributeSelectionPanel extends JPanel {
       m_Model.setInstances(newInstances);
       m_Table.clearSelection();
     }
-    m_IncludeAll.setEnabled(true);
-    m_RemoveAll.setEnabled(true);
-    m_Invert.setEnabled(true);
-    m_Pattern.setEnabled(true);
+    m_ButtonAll.setEnabled(true);
+    m_ButtonNone.setEnabled(true);
+    m_ButtonInvert.setEnabled(true);
+    m_ButtonPattern.setEnabled(true);
     m_Table.sizeColumnsToFit(2);
     m_Table.revalidate();
     m_Table.repaint();
@@ -478,6 +492,46 @@ public class AttributeSelectionPanel extends JPanel {
    */
   public ListSelectionModel getSelectionModel() {
     return m_Table.getSelectionModel();
+  }
+
+  /**
+   * Adds the listener to the list of selection listeners.
+   *
+   * @param l		the listener to add
+   */
+  public void addChangeListener(ChangeListener l) {
+    m_ChangeListeners.add(l);
+  }
+
+  /**
+   * Removes the listener from the list of selection listeners.
+   *
+   * @param l		the listener to remove
+   */
+  public void removeChangeListener(ChangeListener l) {
+    m_ChangeListeners.remove(l);
+  }
+
+  /**
+   * Notifies all listeners that the selection has changed.
+   */
+  protected void notifyChangeListeners() {
+    ChangeEvent 	e;
+
+    e = new ChangeEvent(this);
+    for (ChangeListener l: m_ChangeListeners)
+      l.stateChanged(e);
+  }
+
+  /**
+   * Gets called when the table model changes.
+   *
+   * @param e		the event
+   * @see 		#notifyChangeListeners()
+   */
+  @Override
+  public void tableChanged(TableModelEvent e) {
+    notifyChangeListeners();
   }
 
   /**
