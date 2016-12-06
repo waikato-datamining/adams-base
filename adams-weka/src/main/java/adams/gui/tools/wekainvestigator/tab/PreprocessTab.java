@@ -54,6 +54,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ChangeEvent;
+import javax.swing.event.ListSelectionEvent;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
@@ -265,17 +266,8 @@ public class PreprocessTab
     m_PanelAttSelection = new AttributeSelectionPanel();
     m_PanelAttSelection.setBorder(BorderFactory.createTitledBorder("Attributes"));
     m_PanelAttSelection.addChangeListener((ChangeEvent e) -> {
-      // update other panels
-      int[] indices = m_PanelAttSelection.getSelectedRows();
-      if (indices.length == 1) {
-	m_PanelAttSummary.setAttribute(indices[0]);
-	m_PanelAttVisualization.setAttribute(indices[0]);
-      }
-      else {
-	// TODO unset?
-      }
       // range
-      indices = m_PanelAttSelection.getSelectedAttributes();
+      int[] indices = m_PanelAttSelection.getSelectedAttributes();
       if (indices.length == 0) {
 	m_TextSelectedAttributes.setText("");
       }
@@ -285,6 +277,17 @@ public class PreprocessTab
 	m_TextSelectedAttributes.setText(range.getRange());
       }
       m_ButtonSelectedAttributes.setEnabled(indices.length > 0);
+    });
+    m_PanelAttSelection.getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> {
+      // update other panels
+      int[] indices = m_PanelAttSelection.getSelectedRows();
+      if (indices.length == 1) {
+	m_PanelAttSummary.setAttribute(indices[0]);
+	m_PanelAttVisualization.setAttribute(indices[0]);
+      }
+      else {
+	// TODO unset?
+      }
     });
     panel.add(m_PanelAttSelection, BorderLayout.CENTER);
 
