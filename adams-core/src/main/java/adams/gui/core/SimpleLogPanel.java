@@ -141,9 +141,17 @@ public class SimpleLogPanel
    */
   @Override
   public void append(LoggingLevel level, String msg) {
+    boolean 	caretIsLast;
+
+    caretIsLast = (m_TextLog.getCaretPosition() == m_TextLog.getDocument().getLength());
+
     m_TextLog.append(msg);
     m_TextLog.append("\n");
-    m_TextLog.setCaretPositionLast();
+
+    // only move cursor if at end of document
+    if (caretIsLast)
+      m_TextLog.setCaretPositionLast();
+
     updateButtons();
   }
 
