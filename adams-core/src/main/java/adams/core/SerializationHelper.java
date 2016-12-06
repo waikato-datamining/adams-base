@@ -15,7 +15,7 @@
 
 /*
  * SerializationHelper.java
- * Copyright (C) 2007-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2007-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core;
@@ -213,15 +213,18 @@ public class SerializationHelper {
    * @throws Exception	if serialization fails
    */
   public static void write(String filename, Object o) throws Exception {
-    FileOutputStream  fos;
+    FileOutputStream fos;
 
     fos = new FileOutputStream(filename);
-    if (filename.endsWith(".gz"))
-      write(new GZIPOutputStream(fos), o);
-    else
-      write(fos, o);
-
-    FileUtils.closeQuietly(fos);
+    try {
+      if (filename.endsWith(".gz"))
+	write(new GZIPOutputStream(fos), o);
+      else
+	write(fos, o);
+    }
+    finally {
+      FileUtils.closeQuietly(fos);
+    }
   }
 
   /**
@@ -238,9 +241,12 @@ public class SerializationHelper {
       stream = new BufferedOutputStream(stream);
 
     oos = new ObjectOutputStream(stream);
-    oos.writeObject(o);
-    oos.flush();
-    oos.close();
+    try {
+      oos.writeObject(o);
+    }
+    finally {
+      FileUtils.closeQuietly(oos);
+    }
   }
 
   /**
@@ -254,13 +260,15 @@ public class SerializationHelper {
     FileOutputStream	fos;
 
     fos = new FileOutputStream(filename);
-
-    if (filename.endsWith(".gz"))
-      writeAll(new GZIPOutputStream(fos), o);
-    else
-      writeAll(fos, o);
-
-    FileUtils.closeQuietly(fos);
+    try {
+      if (filename.endsWith(".gz"))
+	writeAll(new GZIPOutputStream(fos), o);
+      else
+	writeAll(fos, o);
+    }
+    finally {
+      FileUtils.closeQuietly(fos);
+    }
   }
 
   /**
@@ -278,10 +286,13 @@ public class SerializationHelper {
       stream = new BufferedOutputStream(stream);
 
     oos = new ObjectOutputStream(stream);
-    for (i = 0; i < o.length; i++)
-      oos.writeObject(o[i]);
-    oos.flush();
-    oos.close();
+    try {
+      for (i = 0; i < o.length; i++)
+	oos.writeObject(o[i]);
+    }
+    finally {
+      FileUtils.closeQuietly(oos);
+    }
   }
 
   /**
@@ -296,13 +307,15 @@ public class SerializationHelper {
     FileInputStream	fis;
 
     fis = new FileInputStream(filename);
-
-    if (filename.endsWith(".gz"))
-      result = read(new GZIPInputStream(fis));
-    else
-      result = read(fis);
-
-    FileUtils.closeQuietly(fis);
+    try {
+      if (filename.endsWith(".gz"))
+	result = read(new GZIPInputStream(fis));
+      else
+	result = read(fis);
+    }
+    finally {
+      FileUtils.closeQuietly(fis);
+    }
 
     return result;
   }
@@ -321,9 +334,13 @@ public class SerializationHelper {
     if (!(stream instanceof BufferedInputStream))
       stream = new BufferedInputStream(stream);
 
-    ois    = new ObjectInputStream(stream);
-    result = ois.readObject();
-    ois.close();
+    ois = new ObjectInputStream(stream);
+    try {
+      result = ois.readObject();
+    }
+    finally {
+      FileUtils.closeQuietly(ois);
+    }
 
     return result;
   }
@@ -336,10 +353,21 @@ public class SerializationHelper {
    * @throws Exception	if deserialization fails
    */
   public static Object[] readAll(String filename) throws Exception {
-    if (filename.endsWith(".gz"))
-      return readAll(new GZIPInputStream(new FileInputStream(filename)));
-    else
-      return readAll(new FileInputStream(filename));
+    Object[]		result;
+    InputStream 	is;
+
+    is = new FileInputStream(filename);
+    try {
+      if (filename.endsWith(".gz"))
+	result = readAll(new GZIPInputStream(is));
+      else
+	result = readAll(is);
+    }
+    finally {
+      FileUtils.closeQuietly(is);
+    }
+
+    return result;
   }
 
   /**
@@ -356,8 +384,8 @@ public class SerializationHelper {
     if (!(stream instanceof BufferedInputStream))
       stream = new BufferedInputStream(stream);
 
+    result = new ArrayList<>();
     ois    = new ObjectInputStream(stream);
-    result = new ArrayList<Object>();
     try {
       while (true) {
 	result.add(ois.readObject());
@@ -366,7 +394,9 @@ public class SerializationHelper {
     catch (Exception e) {
       // ignored
     }
-    ois.close();
+    finally {
+      FileUtils.closeQuietly(ois);
+    }
 
     return result.toArray(new Object[result.size()]);
   }
@@ -384,10 +414,13 @@ public class SerializationHelper {
 
     bos = new ByteArrayOutputStream();
     oos = new ObjectOutputStream(bos);
-    oos.writeObject(o);
-    oos.flush();
-    oos.close();
-    
+    try {
+      oos.writeObject(o);
+    }
+    finally {
+      FileUtils.closeQuietly(oos);
+    }
+
     return bos.toByteArray();
   }
 
@@ -404,11 +437,14 @@ public class SerializationHelper {
 
     bos = new ByteArrayOutputStream();
     oos = new ObjectOutputStream(bos);
-    for (Object o: os)
-      oos.writeObject(o);
-    oos.flush();
-    oos.close();
-    
+    try {
+      for (Object o : os)
+	oos.writeObject(o);
+    }
+    finally {
+      FileUtils.closeQuietly(oos);
+    }
+
     return bos.toByteArray();
   }
 
