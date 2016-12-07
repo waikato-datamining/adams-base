@@ -55,7 +55,7 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default: GridView
  * </pre>
  * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
@@ -67,14 +67,27 @@ import java.util.List;
  * </pre>
  * 
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this 
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical 
+ * &nbsp;&nbsp;&nbsp;actors.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
  * <pre>-short-title &lt;boolean&gt; (property: shortTitle)
  * &nbsp;&nbsp;&nbsp;If enabled uses just the name for the title instead of the actor's full 
  * &nbsp;&nbsp;&nbsp;name.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-display-in-editor &lt;boolean&gt; (property: displayInEditor)
+ * &nbsp;&nbsp;&nbsp;If enabled displays the panel in a tab in the flow editor rather than in 
+ * &nbsp;&nbsp;&nbsp;a separate frame.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
@@ -121,6 +134,17 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;minimum: 1
  * </pre>
  * 
+ * <pre>-add-headers &lt;boolean&gt; (property: addHeaders)
+ * &nbsp;&nbsp;&nbsp;If enabled, headers with the names of the actors as labels get added as 
+ * &nbsp;&nbsp;&nbsp;well.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-writer &lt;adams.gui.print.JComponentWriter&gt; (property: writer)
+ * &nbsp;&nbsp;&nbsp;The writer to use for generating the graphics output.
+ * &nbsp;&nbsp;&nbsp;default: adams.gui.print.NullWriter
+ * </pre>
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -138,6 +162,9 @@ public class GridView
 
   /** the number of columns to display. */
   protected int m_NumCols;
+
+  /** whether to add headers. */
+  protected boolean m_AddHeaders;
 
   /** the panels to display. */
   protected List<BasePanel> m_Panels;
@@ -173,6 +200,10 @@ public class GridView
     m_OptionManager.add(
 	    "num-cols", "numCols",
 	    1, 1, null);
+
+    m_OptionManager.add(
+	    "add-headers", "addHeaders",
+	    false);
 
     m_OptionManager.add(
 	    "writer", "writer",
@@ -264,6 +295,37 @@ public class GridView
   }
 
   /**
+   * Sets whether to add headers to the cells in the grid with the names
+   * of the actors.
+   *
+   * @param value	true if to add headers
+   */
+  public void setAddHeaders(boolean value) {
+    m_AddHeaders = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to add headers to the cells in the grid with the names
+   * of the actors.
+   *
+   * @return 		true if to add headers
+   */
+  public boolean getAddHeaders() {
+    return m_AddHeaders;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return		tip text for this property suitable for
+   *             	displaying in the GUI or for listing the options.
+   */
+  public String addHeadersTipText() {
+    return "If enabled, headers with the names of the actors as labels get added as well.";
+  }
+
+  /**
    * Sets the writer.
    *
    * @param value 	the writer
@@ -330,7 +392,7 @@ public class GridView
     result = new BasePanel(new GridLayout(m_NumRows, m_NumCols));
 
     // add dummy panels
-    m_Panels = new ArrayList<BasePanel>();
+    m_Panels = new ArrayList<>();
     for (i = 0; i < m_Actors.size(); i++) {
       panel = new BasePanel(new BorderLayout());
       label = new JLabel(m_Actors.get(i).getName(), JLabel.CENTER);
@@ -351,21 +413,27 @@ public class GridView
   @Override
   public void addPanel(Actor actor, BasePanel panel) {
     int		index;
-    Runnable	run;
-    
+
     index = indexOf(actor.getName());
     m_Panels.set(index, panel);
     
-    run = new Runnable() {
-      public void run() {
-	m_Panel.removeAll();
-	for (JComponent p: m_Panels)
-	  m_Panel.add(p);
-	m_Panel.validate();
-	m_Panel.doLayout();
-      };
-    };
-    SwingUtilities.invokeLater(run);
+    SwingUtilities.invokeLater(() -> {
+      m_Panel.removeAll();
+      for (int i = 0; i < m_Panels.size(); i++) {
+	if (m_AddHeaders) {
+	  BasePanel outer = new BasePanel(new BorderLayout());
+	  JLabel label = new JLabel(m_Actors.get(i).getName(), JLabel.LEFT);
+	  outer.add(label, BorderLayout.NORTH);
+	  outer.add(m_Panels.get(i), BorderLayout.CENTER);
+	  m_Panel.add(outer);
+	}
+	else {
+	  m_Panel.add(m_Panels.get(i));
+	}
+      }
+      m_Panel.validate();
+      m_Panel.doLayout();
+    });
   }
 
   /**
@@ -383,22 +451,16 @@ public class GridView
    */
   @Override
   public void wrapUp() {
-    Runnable	run;
-
     if (!(m_Writer instanceof NullWriter)) {
-      run = new Runnable() {
-	@Override
-	public void run() {
-	  try {
-	    m_Writer.setComponent(supplyComponent());
-	    m_Writer.toOutput();
-	  }
-	  catch (Exception e) {
-	    handleException("Failed to write graphical output", e);
-	  }
+      SwingUtilities.invokeLater(() -> {
+	try {
+	  m_Writer.setComponent(supplyComponent());
+	  m_Writer.toOutput();
 	}
-      };
-      SwingUtilities.invokeLater(run);
+	catch (Exception e) {
+	  handleException("Failed to write graphical output", e);
+	}
+      });
     }
     
     super.wrapUp();
