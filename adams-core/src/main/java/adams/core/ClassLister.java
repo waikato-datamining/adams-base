@@ -103,7 +103,73 @@ public class ClassLister
   }
 
   /**
-   * Adds a class hierarchy.
+   * Updates cache for the superclass.
+   *
+   * @param cache	the cache to update
+   * @param superclass	the superclass
+   * @param names	the names to add
+   */
+  protected void updateClassnames(HashMap<String,HashSet<String>> cache, String superclass, HashSet<String> names) {
+    if (!cache.containsKey(superclass))
+      cache.put(superclass, names);
+    else
+      cache.get(superclass).addAll(names);
+  }
+
+  /**
+   * Updates list for the superclass.
+   *
+   * @param list	the list to update
+   * @param superclass	the superclass
+   * @param names	the names to add
+   */
+  protected void updateClassnames(HashMap<String,List<String>> list, String superclass, List<String> names) {
+    if (!list.containsKey(superclass)) {
+      list.put(superclass, names);
+    }
+    else {
+      for (String name: names) {
+        if (!list.get(superclass).contains(name))
+          list.get(superclass).add(name);
+      }
+    }
+  }
+
+  /**
+   * Updates cache for the superclass.
+   *
+   * @param cache	the cache to update
+   * @param superclass	the superclass
+   * @param names	the names to add
+   */
+  protected void updateClasses(HashMap<String,HashSet<Class>> cache, String superclass, HashSet<Class> names) {
+    if (!cache.containsKey(superclass))
+      cache.put(superclass, names);
+    else
+      cache.get(superclass).addAll(names);
+  }
+
+  /**
+   * Updates list for the superclass.
+   *
+   * @param list	the list to update
+   * @param superclass	the superclass
+   * @param classes	the names to add
+   */
+  protected void updateClasses(HashMap<String,List<Class>> list, String superclass, List<Class> classes) {
+    if (!list.containsKey(superclass)) {
+      list.put(superclass, classes);
+    }
+    else {
+      for (Class cls : classes) {
+        if (!list.get(superclass).contains(cls))
+          list.get(superclass).add(cls);
+      }
+    }
+  }
+
+  /**
+   * Adds/appends a class hierarchy.
    *
    * @param superclass	the superclass
    * @param packages	the packages
@@ -148,10 +214,10 @@ public class ClassLister
       }
     }
     // create class list
-    m_CacheNames.put(superclass, new HashSet<>(names));
-    m_ListNames.put(superclass, new ArrayList<>(names));
-    m_CacheClasses.put(superclass, new HashSet<>(classes));
-    m_ListClasses.put(superclass, new ArrayList<>(classes));
+    updateClassnames(m_CacheNames, superclass, new HashSet<>(names));
+    updateClassnames(m_ListNames, superclass, new ArrayList<>(names));
+    updateClasses(m_CacheClasses, superclass, new HashSet<>(classes));
+    updateClasses(m_ListClasses, superclass, new ArrayList<>(classes));
   }
 
   /**
