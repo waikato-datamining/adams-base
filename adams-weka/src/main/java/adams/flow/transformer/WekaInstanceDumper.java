@@ -15,7 +15,7 @@
 
 /*
  * WekaInstanceDumper.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -797,7 +797,7 @@ public class WekaInstanceDumper
     else {
       values = (double[]) m_InputToken.getPayload();
       // create artificial dataset header
-      atts   = new ArrayList<Attribute>();
+      atts   = new ArrayList<>();
       for (i = 0; i < values.length; i++)
 	atts.add(new Attribute("att_" + (i+1)));
       newHeader = new Instances(getName(), atts, 0);
@@ -820,6 +820,9 @@ public class WekaInstanceDumper
 	}
       }
     }
+
+    if (!append)
+      FileUtils.delete(createFilename(inst.dataset()).getAbsolutePath());
 
     // buffer data and write to disk if necessary
     m_Buffer.add(inst);
