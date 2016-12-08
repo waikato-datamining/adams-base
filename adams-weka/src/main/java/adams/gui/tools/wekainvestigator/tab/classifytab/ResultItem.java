@@ -120,7 +120,7 @@ public class ResultItem
       + m_Template.getClass().getSimpleName();
 
     if (hasHeader())
-      result += " - " + Shortening.shortenEnd(m_Header.relationName(), MAX_RELATIONNAME_LENGTH);
+      result += " - " + m_Header.classAttribute().name() + " of " + Shortening.shortenEnd(m_Header.relationName(), MAX_RELATIONNAME_LENGTH);
 
     return result;
   }
