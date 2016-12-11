@@ -39,6 +39,10 @@ General.TestingUpdateInterval=1000
 # (true|false)
 General.SortAttributeNames=true
 
+# Whether to show tool tips in the result histories
+# (true|false)
+General.ResultHistoryToolTips=true
+
 # the default filter
 # (superclass: weka.filters.Filter)
 Preprocess.Filter=weka.filters.AllFilter

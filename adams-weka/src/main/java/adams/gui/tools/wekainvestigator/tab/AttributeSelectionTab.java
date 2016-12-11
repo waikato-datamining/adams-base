@@ -26,6 +26,7 @@ import adams.core.Properties;
 import adams.core.option.OptionUtils;
 import adams.gui.chooser.WekaFileChooser;
 import adams.gui.core.AbstractNamedHistoryPanel;
+import adams.gui.core.AbstractNamedHistoryPanel.HistoryEntryToolTipProvider;
 import adams.gui.core.BaseMenu;
 import adams.gui.core.BasePopupMenu;
 import adams.gui.core.BaseSplitPane;
@@ -40,6 +41,7 @@ import adams.gui.tools.wekainvestigator.InvestigatorPanel;
 import adams.gui.tools.wekainvestigator.data.MemoryContainer;
 import adams.gui.tools.wekainvestigator.history.AbstractHistoryPopupMenuItem;
 import adams.gui.tools.wekainvestigator.job.InvestigatorTabJob;
+import adams.gui.tools.wekainvestigator.output.RunInformationHelper;
 import adams.gui.tools.wekainvestigator.tab.attseltab.ResultItem;
 import adams.gui.tools.wekainvestigator.tab.attseltab.evaluation.AbstractAttributeSelectionEvaluation;
 import adams.gui.tools.wekainvestigator.tab.attseltab.output.AbstractOutputGenerator;
@@ -99,7 +101,8 @@ public class AttributeSelectionTab
    * Customized history panel.
    */
   public static class HistoryPanel
-    extends AbstractNamedHistoryPanel<ResultItem> {
+    extends AbstractNamedHistoryPanel<ResultItem>
+    implements HistoryEntryToolTipProvider<ResultItem> {
 
     private static final long serialVersionUID = 8740813441072965573L;
 
@@ -129,6 +132,46 @@ public class AttributeSelectionTab
       super.initialize();
 
       m_DatasetFileChooser = new WekaFileChooser();
+    }
+
+    /**
+     * Gets called when a tooltip needs to get generated.
+     *
+     * @param history	the history
+     * @param index 	the index in the history
+     * @return		the generated tool tip, null if not available
+     */
+    public String createHistoryEntryToolTip(AbstractNamedHistoryPanel<ResultItem> history, int index) {
+      String 		result;
+      ResultItem 	item;
+
+      result = null;
+      item   = history.getEntry(index);
+      if (item.hasRunInformation())
+	result = "<html>" + RunInformationHelper.toHTML(item.getRunInformation().toSpreadSheet()) + "</html>";
+
+      return result;
+    }
+
+    /**
+     * Sets whether to show tool tips.
+     *
+     * @param value	true if to show
+     */
+    public void setToolTipsEnabled(boolean value) {
+      if (value)
+	setHistoryEntryToolTipProvider(this);
+      else
+	setHistoryEntryToolTipProvider(null);
+    }
+
+    /**
+     * Returns whether to show tool tips.
+     *
+     * @return		true if to show
+     */
+    public boolean getToolTipsEnabled() {
+      return (getHistoryEntryToolTipProvider() != null);
     }
 
     /**
@@ -628,6 +671,7 @@ public class AttributeSelectionTab
 
     // history
     m_History = new HistoryPanel(this);
+    m_History.setToolTipsEnabled(props.getBoolean("General.ResultHistoryToolTips", true));
     m_PanelLeft.add(m_History, BorderLayout.CENTER);
 
     // status bar

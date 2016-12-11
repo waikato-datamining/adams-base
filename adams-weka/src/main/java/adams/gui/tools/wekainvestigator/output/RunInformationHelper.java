@@ -20,6 +20,7 @@
 
 package adams.gui.tools.wekainvestigator.output;
 
+import adams.core.Shortening;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 
@@ -33,6 +34,9 @@ import java.util.List;
  * @version $Revision$
  */
 public class RunInformationHelper {
+
+  /** the maximum length for HTML cells. */
+  public final static int MAX_HTML_LENGTH = 80;
 
   /**
    * Turns the run information into a string representation.
@@ -66,6 +70,32 @@ public class RunInformationHelper {
       result.append(values.get(i));
       result.append("\n");
     }
+
+    return result.toString();
+  }
+
+  /**
+   * Turns the run information into an html table.
+   *
+   * @param info	the run information
+   * @return		the html representation
+   */
+  public static String toHTML(SpreadSheet info) {
+    StringBuilder 	result;
+
+    result = new StringBuilder();
+    result.append("<table>");
+    for (Row row: info.rows()) {
+      result.append("<tr>");
+      result.append("<td>");
+      result.append(row.getCell(0).getContent());
+      result.append("</td>");
+      result.append("<td>");
+      result.append(Shortening.shortenEnd(row.getCell(1).getContent(), MAX_HTML_LENGTH));
+      result.append("</td>");
+      result.append("</tr>");
+    }
+    result.append("</table>");
 
     return result.toString();
   }
