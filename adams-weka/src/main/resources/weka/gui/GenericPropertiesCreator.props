@@ -5,7 +5,3 @@ weka.core.setupgenerator.AbstractParameter=\
 # abstaining classifiers
 weka.classifiers.AbstainingClassifier=\
   weka.classifiers.meta
-
-# classifiers
-weka.classifiers.Classifier=\
-  hr.irb.fastRandomForest

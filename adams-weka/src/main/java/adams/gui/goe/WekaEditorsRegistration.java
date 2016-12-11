@@ -21,12 +21,9 @@ package adams.gui.goe;
 
 
 import adams.core.ClassLister;
-import weka.core.PluginManager;
-import weka.gui.GenericPropertiesCreator;
 
 import java.beans.PropertyEditor;
 import java.beans.PropertyEditorManager;
-import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
@@ -46,12 +43,6 @@ public class WekaEditorsRegistration
 
   /** property indicating whether to use the Weka editors instead of the Adams ones. */
   public final static String PROPERTY_WEKAEDITORS = "adams.gui.wekaeditors";
-
-  /** the additional class hierarchies. */
-  public final static String ADDITIONAL_HIERARCHIES = "weka/gui/GenericPropertiesCreator.additional";
-
-  /** the additional editors. */
-  public final static String ADDITIONAL_EDITORS = "weka/gui/GUIEditors.additional";
 
   /** whether to use the Weka editors. */
   protected static boolean m_UseWekaEditors = Boolean.getBoolean(PROPERTY_WEKAEDITORS);
@@ -76,24 +67,6 @@ public class WekaEditorsRegistration
      */
     public static Properties getProperties() {
       return EDITOR_PROPERTIES;
-    }
-
-    /**
-     * registers the editors from the props file.
-     */
-    public static void registerEditors(Properties props) {
-      Enumeration		enm;
-      Object		key;
-      String		name;
-      String		value;
-
-      enm = props.propertyNames();
-      while (enm.hasMoreElements()) {
-	name = enm.nextElement().toString();
-	value = props.getProperty(name, "");
-
-	registerEditor(name, value);
-      }
     }
   }
 
@@ -199,38 +172,11 @@ public class WekaEditorsRegistration
    * @return		true if registration successful
    */
   protected boolean doRegister() {
-    adams.core.Properties  	props;
-    GenericPropertiesCreator 	creator;
-
     weka.gui.GenericObjectEditor.determineClasses();
     weka.gui.GenericObjectEditor.registerEditors();
-
-    // additional class hierarchies
-    try {
-      creator = new GenericPropertiesCreator(ADDITIONAL_HIERARCHIES);
-      creator.execute(false, true);
-      PluginManager.addFromProperties(creator.getOutputProperties());
-    }
-    catch (Exception e) {
-      System.err.println();
-      e.printStackTrace();
-      creator = null;
-    }
-
-    // additional editors
-    try {
-      props = adams.core.Properties.read(ADDITIONAL_EDITORS);
-    }
-    catch (Exception e) {
-      props = new adams.core.Properties();
-    }
-    registerEditors(props);
-
     if (!useWekaEditors())
       registerEditors(AccessibleGenericObjectEditor.getProperties());
     registerHierarchies(AccessibleGenericObjectEditor.getProperties());
-    if (creator != null)
-      registerHierarchies(creator.getOutputProperties());
     m_Registered = true;
     return true;
   }
