@@ -27,7 +27,6 @@ import adams.core.io.PlaceholderFile;
 import adams.core.option.OptionUtils;
 import adams.data.spreadsheet.MetaData;
 import adams.gui.chooser.FileChooserPanel;
-import adams.gui.core.AbstractNamedHistoryPanel;
 import adams.gui.core.ExtensionFileFilter;
 import adams.gui.core.ParameterPanel;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
@@ -159,14 +158,31 @@ public class BuildModel
   }
 
   /**
-   * Evaluates the clusterer and returns the generated evaluation object.
+   * Initializes the result item.
    *
-   * @param history	the history to add the result to
-   * @return		the generate history item
+   * @param clusterer	the current clusterer
+   * @return		the initialized history item
+   * @throws Exception	if initialization fails
+   */
+  public ResultItem init(Clusterer clusterer) throws Exception {
+    ResultItem 		result;
+    Instances		data;
+
+    data = getOwner().getData().get(m_ComboBoxDatasets.getSelectedIndex()).getData();
+    result = new ResultItem(clusterer, new Instances(data, 0));
+
+    return result;
+  }
+
+  /**
+   * Evaluates the clusterer and updates the result item.
+   *
+   * @param clusterer	the current clusterer
+   * @param item	the item to update
    * @throws Exception	if evaluation fails
    */
   @Override
-  protected ResultItem doEvaluate(Clusterer clusterer, AbstractNamedHistoryPanel<ResultItem> history) throws Exception {
+  protected void doEvaluate(Clusterer clusterer, ResultItem item) throws Exception {
     Clusterer		model;
     DataContainer 	dataCont;
     Instances		data;
@@ -198,10 +214,7 @@ public class BuildModel
     runInfo.add("Model file", m_PanelModel.getCurrent().getAbsolutePath());
     addObjectSize(runInfo, "Model size", model);
 
-    // history
-    return addToHistory(
-      history,
-      new ResultItem(null, clusterer, model, header, runInfo));
+    item.update(null, model, runInfo);
   }
 
   /**

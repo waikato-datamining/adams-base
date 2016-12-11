@@ -23,7 +23,6 @@ package adams.gui.tools.wekainvestigator.tab.clustertab.evaluation;
 import adams.core.MessageCollection;
 import adams.core.option.OptionUtils;
 import adams.data.spreadsheet.MetaData;
-import adams.gui.core.AbstractNamedHistoryPanel;
 import adams.gui.core.ParameterPanel;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
 import adams.gui.tools.wekainvestigator.evaluation.DatasetHelper;
@@ -179,6 +178,23 @@ public class ClassesToClusters
   }
 
   /**
+   * Initializes the result item.
+   *
+   * @param clusterer	the current clusterer
+   * @return		the initialized history item
+   * @throws Exception	if initialization fails
+   */
+  public ResultItem init(Clusterer clusterer) throws Exception {
+    ResultItem 		result;
+    Instances		data;
+
+    data = getOwner().getData().get(m_ComboBoxTrain.getSelectedIndex()).getData();
+    result = new ResultItem(clusterer, new Instances(data, 0));
+
+    return result;
+  }
+
+  /**
    * Returns the number of classes in the test set.
    *
    * @return		the number of classes, -1 in case of error
@@ -288,14 +304,14 @@ public class ClassesToClusters
   }
 
   /**
-   * Evaluates the clusterer and returns the generated evaluation object.
+   * Evaluates the clusterer and updates the result item.
    *
-   * @param history	the history to add the result to
-   * @return		the generate history item
+   * @param clusterer	the current clusterer
+   * @param item	the item to update
    * @throws Exception	if evaluation fails
    */
   @Override
-  protected ResultItem doEvaluate(Clusterer clusterer, AbstractNamedHistoryPanel<ResultItem> history) throws Exception {
+  protected void doEvaluate(Clusterer clusterer, ResultItem item) throws Exception {
     ClusterEvaluation 		eval;
     Clusterer			model;
     DataContainer		dataCont;
@@ -364,8 +380,7 @@ public class ClassesToClusters
 
     matrix = toMatrixString(numClusters, counts, clusterTotals, new Instances(data, 0));
 
-    // history
-    return addToHistory(history, new ResultItem(eval, "Classes to clusters", matrix, clusterer, model, new Instances(train, 0), runInfo));
+    item.update(eval, "Classes to clusters", matrix, model, runInfo);
   }
 
   /**

@@ -214,7 +214,8 @@ public class SubRangeEvaluation
 
       // add to history
       runInfoSub = addSubRangeInfo(item.getRunInformation(), range);
-      itemSub    = new ResultItem(evalSub, item.getTemplate(), null, new Instances(data, 0), runInfoSub);
+      itemSub    = new ResultItem(item.getTemplate(), new Instances(data, 0));
+      itemSub.update(evalSub, null, runInfoSub);
       history.addEntry(itemSub.getName(), itemSub);
       history.setSelectedIndex(history.count() - 1);
 

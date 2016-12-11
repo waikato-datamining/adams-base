@@ -730,7 +730,9 @@ public class AttributeSelectionTab
       protected void doRun() {
 	ResultItem item;
 	try {
-	  item = m_CurrentEvaluation.evaluate(m_CurrentEvaluator, m_CurrentSearch, m_History);
+          item = m_CurrentEvaluation.init(m_CurrentEvaluator, m_CurrentSearch);
+          m_CurrentEvaluation.addToHistory(m_History, item);
+	  m_CurrentEvaluation.evaluate(m_CurrentEvaluator, m_CurrentSearch, item);
 	}
 	catch (Exception e) {
 	  logError("Failed to perform attribute selection", e, "Attribute selection");

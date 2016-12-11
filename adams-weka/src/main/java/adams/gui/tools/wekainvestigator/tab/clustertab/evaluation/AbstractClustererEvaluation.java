@@ -21,7 +21,6 @@
 package adams.gui.tools.wekainvestigator.tab.clustertab.evaluation;
 
 import adams.core.ClassLister;
-import adams.gui.core.AbstractNamedHistoryPanel;
 import adams.gui.tools.wekainvestigator.evaluation.AbstractEvaluation;
 import adams.gui.tools.wekainvestigator.tab.ClusterTab;
 import adams.gui.tools.wekainvestigator.tab.clustertab.ResultItem;
@@ -42,38 +41,45 @@ public abstract class AbstractClustererEvaluation
   /**
    * Tests whether the clusterer can be evaluated.
    *
+   * @param clusterer	the current clusterer
    * @return		null if successful, otherwise error message
    */
   public abstract String canEvaluate(Clusterer clusterer);
 
   /**
-   * Evaluates the clusterer and returns the generated evaluation object.
+   * Initializes the result item.
    *
-   * @param history	the history to add the result to
-   * @return		the generate history item
-   * @throws Exception	if evaluation fails
+   * @param clusterer	the current clusterer
+   * @return		the initialized history item
+   * @throws Exception	if initialization fails
    */
-  protected abstract ResultItem doEvaluate(Clusterer clusterer, AbstractNamedHistoryPanel<ResultItem> history) throws Exception;
+  public abstract ResultItem init(Clusterer clusterer) throws Exception;
 
   /**
-   * Evaluates the clusterer and returns the generated evaluation object.
+   * Evaluates the clusterer and updates the result item.
    *
-   * @param history	the history to add the result to
-   * @return		the generate history item
+   * @param clusterer	the current clusterer
+   * @param item	the item to update
    * @throws Exception	if evaluation fails
    */
-  public ResultItem evaluate(Clusterer clusterer, AbstractNamedHistoryPanel<ResultItem> history) throws Exception {
-    ResultItem result;
+  protected abstract void doEvaluate(Clusterer clusterer, ResultItem item) throws Exception;
+
+  /**
+   * Evaluates the clusterer and updates the result item.
+   *
+   * @param clusterer	the current clusterer
+   * @param item	the item to update
+   * @throws Exception	if evaluation fails
+   */
+  public void evaluate(Clusterer clusterer, ResultItem item) throws Exception {
     StopWatch   watch;
 
     watch = new StopWatch();
     watch.start();
-    result = doEvaluate(clusterer, history);
+    doEvaluate(clusterer, item);
     watch.stop();
-    if (result.hasRunInformation())
-      result.getRunInformation().add("Total time", (watch.getTime() / 1000.0) + "s");
-
-    return result;
+    if (item.hasRunInformation())
+      item.getRunInformation().add("Total time", (watch.getTime() / 1000.0) + "s");
   }
 
   /**

@@ -650,7 +650,9 @@ public class ClusterTab
       protected void doRun() {
         ResultItem item;
         try {
-          item = m_CurrentEvaluation.evaluate(m_CurrentClusterer, m_History);
+          item = m_CurrentEvaluation.init(m_CurrentClusterer);
+          m_CurrentEvaluation.addToHistory(m_History, item);
+          m_CurrentEvaluation.evaluate(m_CurrentClusterer, item);
           logMessage("Finished evaluation '" + m_CurrentEvaluation.getName() + "' using: " + OptionUtils.getCommandLine(m_CurrentClusterer));
         }
         catch (Exception e) {

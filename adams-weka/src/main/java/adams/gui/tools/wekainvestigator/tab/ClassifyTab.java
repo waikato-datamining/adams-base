@@ -662,7 +662,9 @@ public class ClassifyTab
       protected void doRun() {
 	ResultItem item;
 	try {
-	  item = m_CurrentEvaluation.evaluate(m_CurrentClassifier, m_History);
+          item = m_CurrentEvaluation.init(m_CurrentClassifier);
+          m_CurrentEvaluation.addToHistory(m_History, item);
+	  m_CurrentEvaluation.evaluate(m_CurrentClassifier, item);
 	}
 	catch (Exception e) {
 	  logError("Failed to evaluate classifier", e, "Classifier evaluation");

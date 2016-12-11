@@ -27,7 +27,6 @@ import adams.core.io.PlaceholderFile;
 import adams.core.option.OptionUtils;
 import adams.data.spreadsheet.MetaData;
 import adams.gui.chooser.FileChooserPanel;
-import adams.gui.core.AbstractNamedHistoryPanel;
 import adams.gui.core.ExtensionFileFilter;
 import adams.gui.core.ParameterPanel;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
@@ -159,14 +158,32 @@ public class BuildModel
   }
 
   /**
-   * Evaluates the classifier and returns the generated evaluation object.
+   * Initializes the result item.
    *
-   * @param history	the history to add the result to
-   * @return		the generate history item
+   * @param classifier	the current classifier
+   * @return		the initialized history item
+   * @throws Exception	if initialization fails
+   */
+  @Override
+  public ResultItem init(Classifier classifier) throws Exception {
+    ResultItem		result;
+    Instances		data;
+
+    data = getOwner().getData().get(m_ComboBoxDatasets.getSelectedIndex()).getData();
+    result = new ResultItem(classifier, new Instances(data, 0));
+
+    return result;
+  }
+
+  /**
+   * Evaluates the classifier and updates the result item.
+   *
+   * @param classifier	the current classifier
+   * @param item	the item to update
    * @throws Exception	if evaluation fails
    */
   @Override
-  protected ResultItem doEvaluate(Classifier classifier, AbstractNamedHistoryPanel<ResultItem> history) throws Exception {
+  protected void doEvaluate(Classifier classifier, ResultItem item) throws Exception {
     Classifier		model;
     DataContainer 	dataCont;
     Instances		data;
@@ -199,10 +216,7 @@ public class BuildModel
     runInfo.add("Model file", m_PanelModel.getCurrent().getAbsolutePath());
     addObjectSize(runInfo, "Model size", model);
 
-    // history
-    return addToHistory(
-      history,
-      new ResultItem(null, classifier, model, header, runInfo));
+    item.update(null, model, runInfo);
   }
 
   /**

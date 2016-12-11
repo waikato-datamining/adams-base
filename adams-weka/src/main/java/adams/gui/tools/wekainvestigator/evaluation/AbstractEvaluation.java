@@ -128,7 +128,7 @@ public abstract class AbstractEvaluation<T extends AbstractInvestigatorTab, R ex
    * @param item	the item to add
    * @return		the item
    */
-  protected R addToHistory(AbstractNamedHistoryPanel<R> history, R item) {
+  public R addToHistory(AbstractNamedHistoryPanel<R> history, R item) {
     history.addEntry(item.getName(), item);
     history.setSelectedIndex(history.count() - 1);
     return item;

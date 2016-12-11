@@ -62,49 +62,16 @@ public class ResultItem
   /**
    * Initializes the item.
    *
-   * @param evaluation	the evaluation, can be null
    * @param template	the template
-   * @param model	the model, can be null
    * @param header	the header of the training set, can be null
    */
-  public ResultItem(Evaluation evaluation, Classifier template, Classifier model, Instances header) {
-    this(evaluation, template, model, header, null);
-  }
-
-  /**
-   * Initializes the item.
-   *
-   * @param evaluation	the evaluation, can be null
-   * @param model	the model, can be null
-   * @param header	the header of the training set, can be null
-   * @param runInfo	the meta-data for the run
-   */
-  public ResultItem(Evaluation evaluation, Classifier template, Classifier model, Instances header, MetaData runInfo) {
-    this(evaluation, template, model, header, runInfo, null, null);
-  }
-
-  /**
-   * Initializes the item.
-   *
-   * @param evaluation	the evaluation, can be null
-   * @param model	the model, can be null
-   * @param header	the header of the training set, can be null
-   * @param runInfo	the meta-data for the run
-   * @param original	the original indices, can be null
-   * @param additional 	the additional attributes, can be null
-   */
-  public ResultItem(Evaluation evaluation, Classifier template, Classifier model, Instances header, MetaData runInfo, int[] original, SpreadSheet additional) {
+  public ResultItem(Classifier template, Instances header) {
     super(header);
 
     if (template == null)
       throw new IllegalArgumentException("Template classifier cannot be null!");
 
-    m_Evaluation           = evaluation;
-    m_Template             = template;
-    m_Model                = model;
-    m_RunInformation       = runInfo;
-    m_OriginalIndices      = original;
-    m_AdditionalAttributes = additional;
+    m_Template = template;
   }
 
   /**
@@ -123,6 +90,44 @@ public class ResultItem
       result += " - " + m_Header.classAttribute().name() + " of " + Shortening.shortenEnd(m_Header.relationName(), MAX_RELATIONNAME_LENGTH);
 
     return result;
+  }
+
+  /**
+   * Updates the item.
+   *
+   * @param evaluation	the evaluation, can be null
+   * @param model	the model, can be null
+   */
+  public void update(Evaluation evaluation, Classifier model) {
+    update(evaluation, model, null);
+  }
+
+  /**
+   * Updates the item.
+   *
+   * @param evaluation	the evaluation, can be null
+   * @param model	the model, can be null
+   * @param runInfo	the meta-data for the run
+   */
+  public void update(Evaluation evaluation, Classifier model, MetaData runInfo) {
+    update(evaluation, model, runInfo, null, null);
+  }
+
+  /**
+   * Updates the item.
+   *
+   * @param evaluation	the evaluation, can be null
+   * @param model	the model, can be null
+   * @param runInfo	the meta-data for the run
+   * @param original	the original indices, can be null
+   * @param additional 	the additional attributes, can be null
+   */
+  public void update(Evaluation evaluation, Classifier model, MetaData runInfo, int[] original, SpreadSheet additional) {
+    m_Evaluation           = evaluation;
+    m_Model                = model;
+    m_RunInformation       = runInfo;
+    m_OriginalIndices      = original;
+    m_AdditionalAttributes = additional;
   }
 
   /**

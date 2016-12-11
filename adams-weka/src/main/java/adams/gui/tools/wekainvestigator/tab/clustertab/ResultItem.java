@@ -63,49 +63,16 @@ public class ResultItem
   /**
    * Initializes the item.
    *
-   * @param evaluation	the evaluation, can be null
    * @param template	the template
-   * @param model	the model, can be null
    * @param header	the header of the training set, can be null
-   * @param runInfo	the run information, can be null
    */
-  public ResultItem(ClusterEvaluation evaluation, Clusterer template, Clusterer model, Instances header, MetaData runInfo) {
-    this(evaluation, null, null, template, model, header, runInfo);
-  }
-
-  /**
-   * Initializes the item.
-   *
-   * @param supplementaryName	the name for the supplementary data, can be null
-   * @param supplementaryData	the supplementary data, can be null
-   * @param template	the template
-   * @param model	the model, can be null
-   * @param header	the header of the training set, can be null
-   * @param runInfo	the run information, can be null
-   */
-  public ResultItem(String supplementaryName, Serializable supplementaryData, Clusterer template, Clusterer model, Instances header, MetaData runInfo) {
-    this(null, supplementaryName, supplementaryData, template, model, header, runInfo);
-  }
-
-  /**
-   * Initializes the item.
-   *
-   * @param evaluation		the evaluation, can be null
-   * @param supplementaryName	the name for the supplementary data, can be null
-   * @param supplementaryData	the supplementary data, can be null
-   * @param template	the template
-   * @param model	the model, can be null
-   * @param header	the header of the training set, can be null
-   * @param runInfo	the run information, can be null
-   */
-  public ResultItem(ClusterEvaluation evaluation, String supplementaryName, Serializable supplementaryData, Clusterer template, Clusterer model, Instances header, MetaData runInfo) {
+  public ResultItem(Clusterer template, Instances header) {
     super(header);
-    m_Model             = model;
-    m_Template          = template;
-    m_SupplementaryName = supplementaryName;
-    m_SupplementaryData = supplementaryData;
-    m_Evaluation        = evaluation;
-    m_RunInformation    = runInfo;
+
+    if (template == null)
+      throw new IllegalArgumentException("Template classifier cannot be null!");
+
+    m_Template = template;
   }
 
   /**
@@ -124,6 +91,46 @@ public class ResultItem
       result += " - " + Shortening.shortenEnd(m_Header.relationName(), MAX_RELATIONNAME_LENGTH);
 
     return result;
+  }
+
+  /**
+   * Updates the item.
+   *
+   * @param evaluation	the evaluation, can be null
+   * @param model	the model, can be null
+   * @param runInfo	the run information, can be null
+   */
+  public void update(ClusterEvaluation evaluation, Clusterer model, MetaData runInfo) {
+    update(evaluation, null, null, model, runInfo);
+  }
+
+  /**
+   * Updates the item.
+   *
+   * @param supplementaryName	the name for the supplementary data, can be null
+   * @param supplementaryData	the supplementary data, can be null
+   * @param model	the model, can be null
+   * @param runInfo	the run information, can be null
+   */
+  public void update(String supplementaryName, Serializable supplementaryData, Clusterer model, MetaData runInfo) {
+    update(null, supplementaryName, supplementaryData, model, runInfo);
+  }
+
+  /**
+   * Updates the item.
+   *
+   * @param evaluation		the evaluation, can be null
+   * @param supplementaryName	the name for the supplementary data, can be null
+   * @param supplementaryData	the supplementary data, can be null
+   * @param model	the model, can be null
+   * @param runInfo	the run information, can be null
+   */
+  public void update(ClusterEvaluation evaluation, String supplementaryName, Serializable supplementaryData, Clusterer model, MetaData runInfo) {
+    m_Model             = model;
+    m_SupplementaryName = supplementaryName;
+    m_SupplementaryData = supplementaryData;
+    m_Evaluation        = evaluation;
+    m_RunInformation    = runInfo;
   }
 
   /**

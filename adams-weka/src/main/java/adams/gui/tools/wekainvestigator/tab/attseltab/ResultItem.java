@@ -62,57 +62,20 @@ public class ResultItem
   /**
    * Initializes the item.
    *
-   * @param attsel	the attribute selection
    * @param evaluator	the evaluation algorithm
    * @param search	the search algorithm
-   * @param full	the full dataset
-   * @param runInfo	the run information, can be null
+   * @param header	the header of the training set
    */
-  public ResultItem(AttributeSelection attsel, ASEvaluation evaluator, ASSearch search, Instances full, MetaData runInfo) {
-    this(attsel, evaluator, search, -1, full, new Instances(full, 0), runInfo);
-  }
-
-  /**
-   * Initializes the item.
-   *
-   * @param attsel	the attribute selection
-   * @param evaluator	the evaluation algorithm
-   * @param search	the search algorithm
-   * @param folds	the number of folds, ignored if < 2
-   * @param header	the header of the training set, can be null
-   * @param runInfo	the run information, can be null
-   */
-  public ResultItem(AttributeSelection attsel, ASEvaluation evaluator, ASSearch search, int folds, Instances header, MetaData runInfo) {
-    this(attsel, evaluator, search, folds, null, header, runInfo);
-  }
-
-  /**
-   * Initializes the item.
-   *
-   * @param attsel	the attribute selection
-   * @param evaluator	the evaluation algorithm
-   * @param search	the search algorithm
-   * @param folds	the number of folds, ignored if < 2
-   * @param full	the full dataset, can be null in case of cross-validation
-   * @param header	the header of the training set, can be null
-   * @param runInfo	the run information, can be null
-   */
-  protected ResultItem(AttributeSelection attsel, ASEvaluation evaluator, ASSearch search, int folds, Instances full, Instances header, MetaData runInfo) {
+  public ResultItem(ASEvaluation evaluator, ASSearch search, Instances header) {
     super(header);
 
-    if (attsel == null)
-      throw new IllegalArgumentException("Attribute selection cannot be null!");
     if (evaluator == null)
       throw new IllegalArgumentException("Evaluator cannot be null!");
     if (search == null)
       throw new IllegalArgumentException("Search cannot be null!");
 
-    m_AttributeSelection = attsel;
-    m_Search             = search;
-    m_Evaluator          = evaluator;
-    m_Folds              = folds;
-    m_Full               = full;
-    m_RunInformation     = runInfo;
+    m_Search    = search;
+    m_Evaluator = evaluator;
   }
 
   /**
@@ -126,6 +89,46 @@ public class ResultItem
       + m_Search.getClass().getSimpleName()  + "/" + m_Evaluator.getClass().getSimpleName()
       + " - "
       + Shortening.shortenEnd(m_Header.relationName(), MAX_RELATIONNAME_LENGTH);
+  }
+
+  /**
+   * Updates the item.
+   *
+   * @param attsel	the attribute selection
+   * @param full	the full dataset
+   * @param runInfo	the run information, can be null
+   */
+  public void update(AttributeSelection attsel, Instances full, MetaData runInfo) {
+    update(attsel, -1, full, runInfo);
+  }
+
+  /**
+   * Updates the item.
+   *
+   * @param attsel	the attribute selection
+   * @param folds	the number of folds, ignored if < 2
+   * @param runInfo	the run information, can be null
+   */
+  public void update(AttributeSelection attsel, int folds, MetaData runInfo) {
+    update(attsel, folds, null, runInfo);
+  }
+
+  /**
+   * Updates the item.
+   *
+   * @param attsel	the attribute selection
+   * @param folds	the number of folds, ignored if < 2
+   * @param full	the full dataset, can be null in case of cross-validation
+   * @param runInfo	the run information, can be null
+   */
+  protected void update(AttributeSelection attsel, int folds, Instances full, MetaData runInfo) {
+    if (attsel == null)
+      throw new IllegalArgumentException("Attribute selection cannot be null!");
+
+    m_AttributeSelection = attsel;
+    m_Folds              = folds;
+    m_Full               = full;
+    m_RunInformation     = runInfo;
   }
 
   /**

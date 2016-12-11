@@ -21,7 +21,10 @@
 package adams.gui.tools.wekainvestigator.output;
 
 import adams.core.CleanUpHandler;
+import adams.core.Utils;
+import adams.core.logging.LoggingLevel;
 import adams.core.logging.LoggingObject;
+import adams.gui.core.SimpleLogPanel;
 import weka.core.Instances;
 
 import java.util.Date;
@@ -50,6 +53,12 @@ public abstract class AbstractResultItem
   /** the header. */
   protected Instances m_Header;
 
+  /** the log. */
+  protected StringBuilder m_Log;
+
+  /** the log component. */
+  protected SimpleLogPanel m_LogPanel;
+
   /** the tabbed pane with the generated output. */
   protected transient OutputTabbedPane m_TabbedPane;
 
@@ -62,6 +71,8 @@ public abstract class AbstractResultItem
     m_Header    = header;
     m_Timestamp = new Date();
     m_Name      = null;
+    m_Log       = new StringBuilder();
+    m_LogPanel  = new SimpleLogPanel();
   }
 
   /**
@@ -112,6 +123,48 @@ public abstract class AbstractResultItem
       m_TabbedPane.setCloseTabsWithMiddleMouseButton(false);
     }
     return m_TabbedPane;
+  }
+
+  /**
+   * Returns the log panel.
+   *
+   * @return		the log panel
+   */
+  public SimpleLogPanel getLogPanel() {
+    return m_LogPanel;
+  }
+
+  /**
+   * Logs the message.
+   *
+   * @param msg		the log message
+   */
+  public void logMessage(String msg) {
+    if (!msg.isEmpty()) {
+      m_Log.append(msg);
+      m_Log.append("\n");
+      m_LogPanel.append(LoggingLevel.FINE, msg);
+    }
+  }
+
+  /**
+   * Logs the exception.
+   *
+   * @param msg		the log message
+   * @param t		the exception
+   */
+  public void logError(String msg, Throwable t) {
+    String	exc;
+
+    exc = Utils.throwableToString(t);
+
+    m_Log.append(msg);
+    m_Log.append("\n");
+    m_LogPanel.append(LoggingLevel.SEVERE, msg);
+
+    m_Log.append(exc);
+    m_Log.append("\n");
+    m_LogPanel.append(LoggingLevel.SEVERE, exc);
   }
 
   /**

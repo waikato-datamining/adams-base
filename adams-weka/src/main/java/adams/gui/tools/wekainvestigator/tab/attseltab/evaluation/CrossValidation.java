@@ -26,7 +26,6 @@ import adams.core.Utils;
 import adams.core.option.OptionUtils;
 import adams.data.spreadsheet.MetaData;
 import adams.flow.container.WekaTrainTestSetContainer;
-import adams.gui.core.AbstractNamedHistoryPanel;
 import adams.gui.core.NumberTextField;
 import adams.gui.core.NumberTextField.Type;
 import adams.gui.core.ParameterPanel;
@@ -185,14 +184,33 @@ public class CrossValidation
   }
 
   /**
-   * Performs attribute selection and returns the generated evaluation object.
+   * Initializes the result item.
    *
-   * @param history	the history to add the result to
-   * @return		the generate history item
+   * @param evaluator	the current evaluator
+   * @param search 	the current search
+   * @return		the initialized history item
+   * @throws Exception	if initialization fails
+   */
+  public ResultItem init(ASEvaluation evaluator, ASSearch search) throws Exception {
+    ResultItem		result;
+    Instances		data;
+
+    data = getOwner().getData().get(m_ComboBoxDatasets.getSelectedIndex()).getData();
+    result = new ResultItem(evaluator, search, new Instances(data, 0));
+
+    return result;
+  }
+
+  /**
+   * Performs attribute selections and updates the result item.
+   *
+   * @param evaluator	the current evaluator
+   * @param search 	the current search
+   * @param item 	the result item to update
    * @throws Exception	if evaluation fails
    */
   @Override
-  protected ResultItem doEvaluate(ASEvaluation evaluator, ASSearch search, AbstractNamedHistoryPanel<ResultItem> history) throws Exception {
+  protected void doEvaluate(ASEvaluation evaluator, ASSearch search, ResultItem item) throws Exception {
     String				msg;
     DataContainer			dataCont;
     Instances				data;
@@ -244,8 +262,7 @@ public class CrossValidation
       attsel.selectAttributesCVSplit(train);
     }
 
-    // history
-    return addToHistory(history, new ResultItem(attsel, eval, srch, folds, new Instances(data, 0), runInfo));
+    item.update(attsel, folds, runInfo);
   }
 
   /**

@@ -21,7 +21,6 @@
 package adams.gui.tools.wekainvestigator.tab.attseltab.evaluation;
 
 import adams.core.ClassLister;
-import adams.gui.core.AbstractNamedHistoryPanel;
 import adams.gui.tools.wekainvestigator.evaluation.AbstractEvaluation;
 import adams.gui.tools.wekainvestigator.tab.AttributeSelectionTab;
 import adams.gui.tools.wekainvestigator.tab.attseltab.ResultItem;
@@ -48,33 +47,42 @@ public abstract class AbstractAttributeSelectionEvaluation
   public abstract String canEvaluate(ASEvaluation evaluator, ASSearch search);
 
   /**
-   * Performs attribute selections and returns the generated evaluation object.
+   * Initializes the result item.
    *
-   * @param history	the history to add the result to
-   * @return		the generate history item
-   * @throws Exception	if evaluation fails
+   * @param evaluator	the current evaluator
+   * @param search 	the current search
+   * @return		the initialized history item
+   * @throws Exception	if initialization fails
    */
-  protected abstract ResultItem doEvaluate(ASEvaluation evaluator, ASSearch search, AbstractNamedHistoryPanel<ResultItem> history) throws Exception;
+  public abstract ResultItem init(ASEvaluation evaluator, ASSearch search) throws Exception;
 
   /**
-   * Performs attribute selections and returns the generated evaluation object.
+   * Performs attribute selections and updates the result item.
    *
-   * @param history	the history to add the result to
-   * @return		the generate history item
+   * @param evaluator	the current evaluator
+   * @param search 	the current search
+   * @param item 	the result item to update
    * @throws Exception	if evaluation fails
    */
-  public ResultItem evaluate(ASEvaluation evaluator, ASSearch search, AbstractNamedHistoryPanel<ResultItem> history) throws Exception {
-    ResultItem 	result;
+  protected abstract void doEvaluate(ASEvaluation evaluator, ASSearch search, ResultItem item) throws Exception;
+
+  /**
+   * Performs attribute selections and updates the result item.
+   *
+   * @param evaluator	the current evaluator
+   * @param search 	the current search
+   * @param item 	the result item to update
+   * @throws Exception	if evaluation fails
+   */
+  public void evaluate(ASEvaluation evaluator, ASSearch search, ResultItem item) throws Exception {
     StopWatch 	watch;
 
     watch = new StopWatch();
     watch.start();
-    result = doEvaluate(evaluator, search, history);
+    doEvaluate(evaluator, search, item);
     watch.stop();
-    if (result.hasRunInformation())
-      result.getRunInformation().add("Total time", (watch.getTime() / 1000.0) + "s");
-
-    return result;
+    if (item.hasRunInformation())
+      item.getRunInformation().add("Total time", (watch.getTime() / 1000.0) + "s");
   }
 
   /**

@@ -29,7 +29,6 @@ import adams.core.option.OptionUtils;
 import adams.data.spreadsheet.MetaData;
 import adams.gui.chooser.FileChooserPanel;
 import adams.gui.chooser.SelectOptionPanel;
-import adams.gui.core.AbstractNamedHistoryPanel;
 import adams.gui.core.ExtensionFileFilter;
 import adams.gui.core.ParameterPanel;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
@@ -252,14 +251,32 @@ public class ReevaluateModel
   }
 
   /**
-   * Evaluates the classifier and returns the generated evaluation object.
+   * Initializes the result item.
    *
-   * @param history	the history to add the result to
-   * @return		the generate history item
+   * @param classifier	the current classifier
+   * @return		the initialized history item
+   * @throws Exception	if initialization fails
+   */
+  @Override
+  public ResultItem init(Classifier classifier) throws Exception {
+    ResultItem		result;
+    Instances		data;
+
+    data = getOwner().getData().get(m_ComboBoxDatasets.getSelectedIndex()).getData();
+    result = new ResultItem(classifier, new Instances(data, 0));
+
+    return result;
+  }
+
+  /**
+   * Evaluates the classifier and updates the result item.
+   *
+   * @param classifier	the current classifier
+   * @param item	the item to update
    * @throws Exception	if evaluation fails
    */
   @Override
-  protected ResultItem doEvaluate(Classifier classifier, AbstractNamedHistoryPanel<ResultItem> history) throws Exception {
+  protected void doEvaluate(Classifier classifier, ResultItem item) throws Exception {
     Evaluation 		eval;
     DataContainer 	dataCont;
     Instances		data;
@@ -304,11 +321,9 @@ public class ReevaluateModel
     for (i = 0; i < data.numInstances(); i++)
       original.add(i);
 
-    // history
-    return addToHistory(
-      history,
-      new ResultItem(eval, classifier, m_Model, m_Header, runInfo,
-	original.toArray(), transferAdditionalAttributes(m_SelectAdditionalAttributes, data)));
+    item.update(
+      eval, m_Model, runInfo,
+      original.toArray(), transferAdditionalAttributes(m_SelectAdditionalAttributes, data));
   }
 
   /**

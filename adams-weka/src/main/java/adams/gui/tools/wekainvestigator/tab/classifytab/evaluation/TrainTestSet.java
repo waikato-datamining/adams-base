@@ -26,7 +26,6 @@ import adams.core.Utils;
 import adams.core.option.OptionUtils;
 import adams.data.spreadsheet.MetaData;
 import adams.gui.chooser.SelectOptionPanel;
-import adams.gui.core.AbstractNamedHistoryPanel;
 import adams.gui.core.ParameterPanel;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
 import adams.gui.tools.wekainvestigator.evaluation.DatasetHelper;
@@ -195,14 +194,32 @@ public class TrainTestSet
   }
 
   /**
-   * Evaluates the classifier and returns the generated evaluation object.
+   * Initializes the result item.
    *
-   * @param history	the history to add the result to
-   * @return		the generate history item
+   * @param classifier	the current classifier
+   * @return		the initialized history item
+   * @throws Exception	if initialization fails
+   */
+  @Override
+  public ResultItem init(Classifier classifier) throws Exception {
+    ResultItem		result;
+    Instances		data;
+
+    data = getOwner().getData().get(m_ComboBoxTrain.getSelectedIndex()).getData();
+    result = new ResultItem(classifier, new Instances(data, 0));
+
+    return result;
+  }
+
+  /**
+   * Evaluates the classifier and updates the result item.
+   *
+   * @param classifier	the current classifier
+   * @param item	the item to update
    * @throws Exception	if evaluation fails
    */
   @Override
-  protected ResultItem doEvaluate(Classifier classifier, AbstractNamedHistoryPanel<ResultItem> history) throws Exception {
+  protected void doEvaluate(Classifier classifier, ResultItem item) throws Exception {
     Evaluation 		eval;
     Classifier  	model;
     DataContainer 	trainCont;
@@ -252,11 +269,9 @@ public class TrainTestSet
     }
     getOwner().logMessage("Used " + test.numInstances() + " of '" + testCont.getID() + "/" + test.relationName() + "' to evaluate " + OptionUtils.getCommandLine(classifier));
 
-    // history
-    return addToHistory(
-      history,
-      new ResultItem(eval, classifier, model, new Instances(train, 0), runInfo,
-	null, transferAdditionalAttributes(m_SelectAdditionalAttributes, test)));
+    item.update(
+      eval, model, runInfo,
+      null, transferAdditionalAttributes(m_SelectAdditionalAttributes, test));
   }
 
   /**

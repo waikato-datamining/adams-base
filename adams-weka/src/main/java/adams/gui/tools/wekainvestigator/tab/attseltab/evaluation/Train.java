@@ -23,7 +23,6 @@ package adams.gui.tools.wekainvestigator.tab.attseltab.evaluation;
 import adams.core.MessageCollection;
 import adams.core.option.OptionUtils;
 import adams.data.spreadsheet.MetaData;
-import adams.gui.core.AbstractNamedHistoryPanel;
 import adams.gui.core.ParameterPanel;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
 import adams.gui.tools.wekainvestigator.evaluation.DatasetHelper;
@@ -129,14 +128,33 @@ public class Train
   }
 
   /**
-   * Performs attribute selection and returns the generated evaluation object.
+   * Initializes the result item.
    *
-   * @param history	the history to add the result to
-   * @return		the generate history item
+   * @param evaluator	the current evaluator
+   * @param search 	the current search
+   * @return		the initialized history item
+   * @throws Exception	if initialization fails
+   */
+  public ResultItem init(ASEvaluation evaluator, ASSearch search) throws Exception {
+    ResultItem		result;
+    Instances		data;
+
+    data = getOwner().getData().get(m_ComboBoxDatasets.getSelectedIndex()).getData();
+    result = new ResultItem(evaluator, search, new Instances(data, 0));
+
+    return result;
+  }
+
+  /**
+   * Performs attribute selections and updates the result item.
+   *
+   * @param evaluator	the current evaluator
+   * @param search 	the current search
+   * @param item 	the result item to update
    * @throws Exception	if evaluation fails
    */
   @Override
-  protected ResultItem doEvaluate(ASEvaluation evaluator, ASSearch search, AbstractNamedHistoryPanel<ResultItem> history) throws Exception {
+  protected void doEvaluate(ASEvaluation evaluator, ASSearch search, ResultItem item) throws Exception {
     String		msg;
     DataContainer	dataCont;
     Instances		data;
@@ -167,8 +185,7 @@ public class Train
     attsel.setEvaluator(eval);
     attsel.SelectAttributes(data);
 
-    // history
-    return addToHistory(history, new ResultItem(attsel, eval, srch, data, runInfo));
+    item.update(attsel, data, runInfo);
   }
 
   /**
