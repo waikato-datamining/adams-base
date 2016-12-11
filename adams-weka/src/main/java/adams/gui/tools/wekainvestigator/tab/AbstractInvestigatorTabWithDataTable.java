@@ -237,6 +237,10 @@ public abstract class AbstractInvestigatorTabWithDataTable
       case WekaInvestigatorDataEvent.UNDO_DISABLED:
 	// do nothing
 	break;
+      case WekaInvestigatorDataEvent.ATTRIBUTE_NAMES_SORTED:
+      case WekaInvestigatorDataEvent.ATTRIBUTES_NAMES_UNSORTED:
+        m_Table.setSortAttributes(e.getType() == WekaInvestigatorDataEvent.ATTRIBUTE_NAMES_SORTED);
+	break;
       default:
 	m_Model.removeTableModelListener(this);
 	m_Model = new DataTableModel(getOwner().getData(), hasReadOnlyTable());

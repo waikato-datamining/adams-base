@@ -34,6 +34,11 @@ General.CalculateModelSize=false
 # train/test split) for outputting progress information
 General.TestingUpdateInterval=1000
 
+# Whether to sort the attributes names for the dropdown list used to select
+# the class attribute in the data table
+# (true|false)
+General.SortAttributeNames=true
+
 # the default filter
 # (superclass: weka.filters.Filter)
 Preprocess.Filter=weka.filters.AllFilter

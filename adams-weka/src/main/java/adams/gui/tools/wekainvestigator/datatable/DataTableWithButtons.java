@@ -60,4 +60,22 @@ public class DataTableWithButtons
 
     return result;
   }
+
+  /**
+   * Sets whether to sort the attributes alphabetically for the dropdown list.
+   *
+   * @param value	true if to sort
+   */
+  public void setSortAttributes(boolean value) {
+    ((DataTable) m_Component).setSortAttributes(value);
+  }
+
+  /**
+   * Returns whether to sort the attributes alphabetically for the dropdown list.
+   *
+   * @return		true if to sort
+   */
+  public boolean getSortAttributes() {
+    return ((DataTable) m_Component).getSortAttributes();
+  }
 }

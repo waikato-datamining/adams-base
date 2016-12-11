@@ -56,6 +56,12 @@ public class WekaInvestigatorDataEvent
   /** undo disabled. */
   public final static int UNDO_DISABLED = 102;
 
+  /** sort attribute names. */
+  public final static int ATTRIBUTE_NAMES_SORTED = 103;
+
+  /** don't sort attribute names. */
+  public final static int ATTRIBUTES_NAMES_UNSORTED = 104;
+
   /** the event type. */
   protected int m_Type;
 

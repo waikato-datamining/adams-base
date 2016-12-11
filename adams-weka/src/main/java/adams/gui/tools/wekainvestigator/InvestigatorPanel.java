@@ -124,6 +124,9 @@ public class InvestigatorPanel
   /** the menu item for enabling/disabling model size calculation. */
   protected JCheckBoxMenuItem m_MenuItemOptionsCalculateModelSize;
 
+  /** the menu item for enabling/disabling sorting of attribute names. */
+  protected JCheckBoxMenuItem m_MenuItemOptionsSortAttributeNames;
+
   /** the action for loading a dataset. */
   protected BaseAction m_ActionFileOpen;
 
@@ -467,6 +470,13 @@ public class InvestigatorPanel
       m_MenuItemOptionsCalculateModelSize.setIcon(GUIHelper.getIcon("object.gif"));
       m_MenuItemOptionsCalculateModelSize.setSelected(getProperties().getBoolean("General.CalculateModelSize", false));
       menu.add(m_MenuItemOptionsCalculateModelSize);
+
+      // Options/Sort attribute names
+      m_MenuItemOptionsSortAttributeNames = new JCheckBoxMenuItem("Sort attribute names");
+      m_MenuItemOptionsSortAttributeNames.setIcon(GUIHelper.getIcon("sort-ascending.png"));
+      m_MenuItemOptionsSortAttributeNames.setSelected(getProperties().getBoolean("General.SortAttributeNames", true));
+      m_MenuItemOptionsSortAttributeNames.addActionListener((ActionEvent e) -> toggleSortAttributeNames());
+      menu.add(m_MenuItemOptionsSortAttributeNames);
 
       // Tab
       menu = new JMenu("Tab");
@@ -949,6 +959,8 @@ public class InvestigatorPanel
    * @return		true if enabled
    */
   public boolean isUndoEnabled() {
+    // make sure that the menu has been built
+    getMenuBar();
     return m_MenuItemOptionsUndoEnabled.isSelected();
   }
 
@@ -988,6 +1000,40 @@ public class InvestigatorPanel
       return m_MenuItemOptionsCalculateModelSize.isSelected();
     else
       return getProperties().getBoolean("General.CalculateModelSize", false);
+  }
+
+  /**
+   * Sets whether to sort the attribute names.
+   *
+   * @param value	true if to sort
+   */
+  public void setSortAttributeNames(boolean value) {
+    // make sure that the menu has been built
+    getMenuBar();
+    m_MenuItemOptionsSortAttributeNames.setSelected(value);
+  }
+
+  /**
+   * Returns whether to sort the attribute names.
+   *
+   * @return		true if to sort
+   */
+  public boolean getSortAttributeNames() {
+    // make sure that the menu has been built
+    getMenuBar();
+    return m_MenuItemOptionsSortAttributeNames.isSelected();
+  }
+
+  /**
+   * Toggles the "sort attribute names" option.
+   */
+  protected void toggleSortAttributeNames() {
+    WekaInvestigatorDataEvent 	event;
+
+    event = new WekaInvestigatorDataEvent(
+      this,
+      getSortAttributeNames() ? WekaInvestigatorDataEvent.ATTRIBUTE_NAMES_SORTED : WekaInvestigatorDataEvent.ATTRIBUTES_NAMES_UNSORTED);
+    fireDataChange(event);
   }
 
   /**

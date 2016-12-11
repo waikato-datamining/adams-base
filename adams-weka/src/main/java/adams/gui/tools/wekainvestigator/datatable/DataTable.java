@@ -51,6 +51,9 @@ public class DataTable
   /** the maximum column width. */
   public final static int MAX_COLUMN_WIDTH = 300;
 
+  /** whether to sort the attributes alphabetically. */
+  protected boolean m_SortAttributes;
+
   /**
    * Constructs a <code>DataTable</code> that is initialized with
    * <code>dm</code> as the data model, a default column model,
@@ -69,6 +72,8 @@ public class DataTable
   protected void initGUI() {
     super.initGUI();
 
+    m_SortAttributes = true;
+
     addHeaderPopupMenuListener((MouseEvent e) -> {
       JPopupMenu menu = new JPopupMenu();
       JMenuItem menuitem = new JMenuItem("Optimal width");
@@ -76,6 +81,24 @@ public class DataTable
       menu.add(menuitem);
       menu.show(getTableHeader(), e.getX(), e.getY());
     });
+  }
+
+  /**
+   * Sets whether to sort the attributes alphabetically for the dropdown list.
+   *
+   * @param value	true if to sort
+   */
+  public void setSortAttributes(boolean value) {
+    m_SortAttributes = value;
+  }
+
+  /**
+   * Returns whether to sort the attributes alphabetically for the dropdown list.
+   *
+   * @return		true if to sort
+   */
+  public boolean getSortAttributes() {
+    return m_SortAttributes;
   }
 
   /**
@@ -104,10 +127,11 @@ public class DataTable
         dmodel = (DataTableModel) model;
       cont = dmodel.getData().get(row);
       atts = new ArrayList<>();
-      atts.add("");  // no class
       for (i = 0; i < cont.getData().numAttributes(); i++)
         atts.add(cont.getData().attribute(i).name());
-      Collections.sort(atts, new StringCompare());
+      if (m_SortAttributes)
+	Collections.sort(atts, new StringCompare());
+      atts.add(0, "");  // no class
       combobox = new JComboBox<>(atts.toArray(new String[atts.size()]));
       result   = new DefaultCellEditor(combobox);
     }

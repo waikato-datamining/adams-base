@@ -58,6 +58,7 @@ public class WekaInvestigatorPreferencesPanel
     addPropertyType("General.UndoEnabled", PropertyType.BOOLEAN);
     addPropertyType("General.CalculateModelSize", PropertyType.BOOLEAN);
     addPropertyType("General.TestingUpdateInterval", PropertyType.INTEGER);
+    addPropertyType("General.SortAttributeNames", PropertyType.BOOLEAN);
 
     // general
     addPropertyType("Data.MaxColWidth", PropertyType.INTEGER);
