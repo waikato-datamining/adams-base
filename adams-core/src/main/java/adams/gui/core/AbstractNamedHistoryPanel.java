@@ -23,7 +23,6 @@ import adams.core.CleanUpHandler;
 import adams.core.MessageCollection;
 import adams.gui.core.SearchPanel.LayoutType;
 import adams.gui.event.SearchEvent;
-import adams.gui.event.SearchListener;
 import gnu.trove.list.array.TIntArrayList;
 
 import javax.swing.DefaultListModel;
@@ -33,15 +32,14 @@ import javax.swing.JPopupMenu;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Enumeration;
@@ -285,6 +283,24 @@ public abstract class AbstractNamedHistoryPanel<T>
     public abstract void updateEntry();
   }
 
+  /**
+   * Interface for classes that generate tool tips for entries in the history.
+   *
+   * @author  fracpete (fracpete at waikato dot ac dot nz)
+   * @version $Revision$
+   */
+  public static interface HistoryEntryToolTipProvider<T> {
+
+    /**
+     * Gets called when a tooltip needs to get generated.
+     *
+     * @param history	the history
+     * @param index 	the index in the history
+     * @return		the generated tool tip, null if not available
+     */
+    public String createHistoryEntryToolTip(AbstractNamedHistoryPanel<T> history, int index);
+  }
+
   /** the JList listing the history entries. */
   protected JList m_List;
 
@@ -320,7 +336,10 @@ public abstract class AbstractNamedHistoryPanel<T>
 
   /** whether to allow renaming of entries. */
   protected boolean m_AllowRename;
-  
+
+  /** the tool tip generator. */
+  protected HistoryEntryToolTipProvider<T> m_HistoryEntryToolTipProvider;
+
   /**
    * Initializes the members.
    */
@@ -328,8 +347,8 @@ public abstract class AbstractNamedHistoryPanel<T>
   protected void initialize() {
     super.initialize();
 
-    m_Entries                        = new Hashtable<String,T>();
-    m_Payloads                       = new Hashtable<String,Object>();
+    m_Entries                        = new Hashtable<>();
+    m_Payloads                       = new Hashtable<>();
     m_ListModel                      = new DefaultListModel();
     m_ListModelFiltered              = null;
     m_PopupCustomizer                = null;
@@ -337,7 +356,8 @@ public abstract class AbstractNamedHistoryPanel<T>
     m_SearchRegexp                   = false;
     m_AllowRemove                    = true;
     m_AllowRename                    = false;
-    m_HistoryEntrySelectionListeners = new HashSet<HistoryEntrySelectionListener>();
+    m_HistoryEntrySelectionListeners = new HashSet<>();
+    m_HistoryEntryToolTipProvider    = null;
   }
 
   /**
@@ -363,6 +383,19 @@ public abstract class AbstractNamedHistoryPanel<T>
         }
       }
     });
+    m_List.addMouseMotionListener(new MouseMotionAdapter() {
+      @Override
+      public void mouseMoved(MouseEvent e) {
+	if (m_HistoryEntryToolTipProvider != null) {
+	  int index = m_List.locationToIndex(e.getPoint());
+	  String tooltip = null;
+	  if (index > -1)
+	    tooltip = m_HistoryEntryToolTipProvider.createHistoryEntryToolTip(AbstractNamedHistoryPanel.this, index);
+	  m_List.setToolTipText(tooltip);
+	}
+	super.mouseMoved(e);
+      }
+    });
     m_List.addKeyListener(new KeyAdapter() {
       @Override
       public void keyPressed(KeyEvent e) {
@@ -382,33 +415,28 @@ public abstract class AbstractNamedHistoryPanel<T>
 	  super.keyPressed(e);
       }
     });
-    m_List.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-      public void valueChanged(ListSelectionEvent e) {
-	// update entry
-	String name = getSelectedEntry();
-	if (name != null)
-	  updateEntry(name);
-	// notify listeners
-	notifyHistoryEntrySelectionListeners(
-	    new HistoryEntrySelectionEvent(
-		AbstractNamedHistoryPanel.this, getSelectedEntries()));
-      }
+    m_List.getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> {
+      // update entry
+      String name = getSelectedEntry();
+      if (name != null)
+	updateEntry(name);
+      // notify listeners
+      notifyHistoryEntrySelectionListeners(
+	new HistoryEntrySelectionEvent(
+	  AbstractNamedHistoryPanel.this, getSelectedEntries()));
     });
     add(new BaseScrollPane(m_List), BorderLayout.CENTER);
     
     m_PanelSearch = new SearchPanel(LayoutType.HORIZONTAL, false, null, true, "");
     m_PanelSearch.setVisible(false);
-    m_PanelSearch.addSearchListener(new SearchListener() {
-      @Override
-      public void searchInitiated(SearchEvent e) {
-	if (!getAllowSearch())
-	  return;
-	m_SearchString = e.getParameters().getSearchString();
-	if (m_SearchString.isEmpty())
-	  m_SearchString = null;
-	m_SearchRegexp = e.getParameters().isRegExp();
-	updateSearch();
-      }
+    m_PanelSearch.addSearchListener((SearchEvent e) -> {
+      if (!getAllowSearch())
+	return;
+      m_SearchString = e.getParameters().getSearchString();
+      if (m_SearchString.isEmpty())
+	m_SearchString = null;
+      m_SearchRegexp = e.getParameters().isRegExp();
+      updateSearch();
     });
     add(m_PanelSearch, BorderLayout.SOUTH);
   }
@@ -488,23 +516,16 @@ public abstract class AbstractNamedHistoryPanel<T>
     // show
     menuitem = new JMenuItem("Show");
     menuitem.setEnabled(indices.length == 1);
-    menuitem.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	updateEntry(getEntryName(indices[0]));
-      }
-    });
+    menuitem.addActionListener((ActionEvent ae) -> updateEntry(getEntryName(indices[0])));
     result.add(menuitem);
 
     // show in new frame
     if (this instanceof FrameDisplaySupporter) {
       menuitem = new JMenuItem("Show in separate frame");
       menuitem.setEnabled(indices.length == 1);
-      menuitem.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          ((FrameDisplaySupporter) AbstractNamedHistoryPanel.this).showFrame(
-              getEntryName(indices[0]));
-        }
-      });
+      menuitem.addActionListener((ActionEvent ae) ->
+	((FrameDisplaySupporter) AbstractNamedHistoryPanel.this).showFrame(
+	  getEntryName(indices[0])));
       result.add(menuitem);
     }
 
@@ -518,21 +539,13 @@ public abstract class AbstractNamedHistoryPanel<T>
       menuitem.setText("Remove entry");
     menuitem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0));
     menuitem.setEnabled(indices.length >= 1);
-    menuitem.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	removeEntries(indices);
-      }
-    });
+    menuitem.addActionListener((ActionEvent ae) -> removeEntries(indices));
     result.add(menuitem);
 
     // remove all
     menuitem = new JMenuItem("Remove all");
     menuitem.setEnabled(m_Entries.size() > 0);
-    menuitem.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	clear();
-      }
-    });
+    menuitem.addActionListener((ActionEvent ae) -> clear());
     result.add(menuitem);
 
     // rename - if enabled
@@ -540,12 +553,7 @@ public abstract class AbstractNamedHistoryPanel<T>
       menuitem = new JMenuItem("Rename...");
       menuitem.setAccelerator(KeyStroke.getKeyStroke("F2"));
       menuitem.setEnabled(getSelectedIndices().length == 1);
-      menuitem.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-	  renameEntry();
-        }
-      });
+      menuitem.addActionListener((ActionEvent ae) -> renameEntry());
       result.add(menuitem);
     }
 
@@ -722,7 +730,7 @@ public abstract class AbstractNamedHistoryPanel<T>
 
     if (hasEntry(name)) {
       for (i = 0; i < getListModel().size(); i++) {
-	if (name.equals((String) getListModel().get(i))) {
+	if (name.equals(getListModel().get(i))) {
 	  result = i;
 	  break;
 	}
@@ -1116,7 +1124,25 @@ public abstract class AbstractNamedHistoryPanel<T>
     for (HistoryEntrySelectionListener l: m_HistoryEntrySelectionListeners)
       l.historyEntrySelected(e);
   }
-  
+
+  /**
+   * Sets the tool tip provider.
+   *
+   * @param l		the provider, null to turn tool tips off
+   */
+  public void setHistoryEntryToolTipProvider(HistoryEntryToolTipProvider<T> value) {
+    m_HistoryEntryToolTipProvider = value;
+  }
+
+  /**
+   * Returns the currently set tool tip provider.
+   *
+   * @return		the provider, null if none set
+   */
+  public HistoryEntryToolTipProvider<T> getHistoryEntryToolTipProvider() {
+    return m_HistoryEntryToolTipProvider;
+  }
+
   /**
    * Sets whether the entry list is searchable.
    * 
