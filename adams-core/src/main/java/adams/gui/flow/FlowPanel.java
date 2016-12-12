@@ -813,8 +813,10 @@ public class FlowPanel
 	  SwingUtilities.invokeLater(() -> setTabIcon("hourglass.png"));
 	  String check = ActorUtils.checkFlow(flow.getFullActor(), false, false);
 	  if (check != null) {
+	    String msg = "Pre-save check failed - continue with save?\n\nDetails:\n\n" + check;
+            showNotification(msg, true);
 	    int retVal = GUIHelper.showConfirmMessage(
-	      m_Owner, "Pre-save check failed - continue with save?\n\nDetails:\n\n" + check);
+	      m_Owner, msg);
 	    if (retVal != ApprovalDialog.APPROVE_OPTION) {
 	      showStatus("Cancelled saving!");
 	      m_Cancelled = true;
