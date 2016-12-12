@@ -26,6 +26,7 @@ import adams.gui.chooser.WekaFileChooser;
 import adams.gui.event.WekaInvestigatorDataEvent;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
 import adams.gui.tools.wekainvestigator.data.FileContainer;
+import adams.gui.tools.wekainvestigator.job.InvestigatorTabJob;
 import weka.core.converters.AbstractFileSaver;
 import weka.core.converters.ConverterUtils.DataSink;
 
@@ -76,20 +77,16 @@ public class Save
     DataContainer[]	conts;
     int[]		rows;
     int			i;
-    DataContainer 	data;
-    FileContainer 	cont;
     int			retVal;
     PlaceholderFile 	suggested;
-    AbstractFileSaver 	saver;
-    File		file;
-    String		msg;
 
     conts = getSelectedData();
     rows  = getSelectedRows();
     for (i = 0; i < conts.length; i++) {
-      data = conts[i];
+      final int index = i;
+      final DataContainer data = conts[i];
       if (data instanceof FileContainer)
-	suggested = new PlaceholderFile(data.getSource());
+        suggested = new PlaceholderFile(data.getSource());
       else
         suggested = new PlaceholderFile(m_FileChooser.getCurrentDirectory().getAbsolutePath() + File.separator + FileUtils.createFilename(data.getData().relationName(), "_"));
       m_FileChooser.setDialogTitle("Saving " + (i+1) + "/" + (rows.length) + ": " + data.getData().relationName());
@@ -97,29 +94,32 @@ public class Save
       m_FileChooser.setSelectedFile(suggested);
       retVal = m_FileChooser.showSaveDialog(getOwner());
       if (retVal != WekaFileChooser.APPROVE_OPTION)
-	break;
-      file = m_FileChooser.getSelectedFile();
-      try {
-	showStatus("Exporting " + data.getID() + "/" + data.getSource() + " to " + file);
-	if (file.exists()) {
-	  if (!file.delete())
-	    logMessage("Failed to delete existing file: " + file);
-	}
-	saver = m_FileChooser.getWriter();
-	saver.setFile(file);
-	DataSink.write(saver, data.getData());
-	showStatus("Saved " + data.getID() + "/" + data.getSource() + " to " + file);
-	cont = new FileContainer(m_FileChooser.getReaderForFile(file), file, data.getData());
-	getData().set(rows[i], cont);
-        msg = getOwner().getOwner().addRecentFile(file, null);
-	if (msg != null)
-	  showStatus(msg);
-        fireDataChange(new WekaInvestigatorDataEvent(getOwner().getOwner(), WekaInvestigatorDataEvent.ROWS_MODIFIED, rows[i]));
-      }
-      catch (Exception ex) {
-	logError("Failed to save: " + file + "\n", ex, "Save");
-	break;
-      }
+        break;
+      final File file = m_FileChooser.getSelectedFile();
+      getOwner().startExecution(new InvestigatorTabJob(getOwner(), m_FileChooser.getDialogTitle()) {
+        @Override
+        protected void doRun() {
+          try {
+            if (file.exists()) {
+              if (!file.delete())
+                logMessage("Failed to delete existing file: " + file);
+            }
+            AbstractFileSaver saver = m_FileChooser.getWriter();
+            saver.setFile(file);
+            DataSink.write(saver, data.getData());
+            showStatus("Saved " + data.getID() + "/" + data.getSource() + " to " + file);
+            FileContainer cont = new FileContainer(m_FileChooser.getReaderForFile(file), file, data.getData());
+            getData().set(rows[index], cont);
+            String msg = getOwner().getOwner().addRecentFile(file, null);
+            if (msg != null)
+              showStatus(msg);
+            fireDataChange(new WekaInvestigatorDataEvent(getOwner().getOwner(), WekaInvestigatorDataEvent.ROWS_MODIFIED, rows[index]));
+          }
+          catch (Exception ex) {
+            logError("Failed to save: " + file + "\n", ex, "Save");
+          }
+        }
+      });
     }
   }
 
