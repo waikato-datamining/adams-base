@@ -226,9 +226,21 @@ import java.util.HashMap;
  * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.core.AxisPanelOptions -label y -tick-generator adams.gui.visualization.core.axis.SimpleTickGenerator -width 60
  * </pre>
  * 
+ * <pre>-adjust-to-visible-data &lt;boolean&gt; (property: adjustToVisibleData)
+ * &nbsp;&nbsp;&nbsp;If enabled, the plot is adjusted to fit the visible data and not all loaded 
+ * &nbsp;&nbsp;&nbsp;data.
+ * &nbsp;&nbsp;&nbsp;default: true
+ * </pre>
+ * 
  * <pre>-show-side-panel &lt;boolean&gt; (property: showSidePanel)
  * &nbsp;&nbsp;&nbsp;If enabled, the side panel with the plot names is visible.
  * &nbsp;&nbsp;&nbsp;default: true
+ * </pre>
+ * 
+ * <pre>-side-panel-width &lt;int&gt; (property: sidePanelWidth)
+ * &nbsp;&nbsp;&nbsp;The width of the side panel (if visible).
+ * &nbsp;&nbsp;&nbsp;default: 150
+ * &nbsp;&nbsp;&nbsp;minimum: 1
  * </pre>
  * 
  * <pre>-no-tool-tips &lt;boolean&gt; (property: noToolTips)
@@ -302,8 +314,14 @@ public class SequencePlotter
   /** the options for the Y axis. */
   protected AxisPanelOptions m_AxisY;
 
+  /** whether to adjust to visible or loaded data. */
+  protected boolean m_AdjustToVisibleData;
+
   /** whether to show the side panel. */
   protected boolean m_ShowSidePanel;
+
+  /** the width of the side panel. */
+  protected int m_SidePanelWidth;
 
   /** whether to suppress the tooltips. */
   protected boolean m_NoToolTips;
@@ -389,8 +407,16 @@ public class SequencePlotter
       getDefaultAxisY());
 
     m_OptionManager.add(
+      "adjust-to-visible-data", "adjustToVisibleData",
+      true);
+
+    m_OptionManager.add(
       "show-side-panel", "showSidePanel",
       true);
+
+    m_OptionManager.add(
+      "side-panel-width", "sidePanelWidth",
+      150, 1, null);
 
     m_OptionManager.add(
       "no-tool-tips", "noToolTips",
@@ -827,6 +853,35 @@ public class SequencePlotter
   }
 
   /**
+   * Sets whether to adjust the plot to the visible data or all the loaded data.
+   *
+   * @param value	true if to adjust to visible only
+   */
+  public void setAdjustToVisibleData(boolean value) {
+    m_AdjustToVisibleData = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to adjust the plot to the visible data or all the loaded data.
+   *
+   * @return		true if to adjust to visible only
+   */
+  public boolean getAdjustToVisibleData() {
+    return m_AdjustToVisibleData;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String adjustToVisibleDataTipText() {
+    return "If enabled, the plot is adjusted to fit the visible data and not all loaded data.";
+  }
+
+  /**
    * Sets whether to show the side panel with the plot names.
    *
    * @param value	true if to show
@@ -853,6 +908,35 @@ public class SequencePlotter
    */
   public String showSidePanelTipText() {
     return "If enabled, the side panel with the plot names is visible.";
+  }
+
+  /**
+   * Sets the width of the side panel.
+   *
+   * @param value	the width
+   */
+  public void setSidePanelWidth(int value) {
+    m_SidePanelWidth = value;
+    reset();
+  }
+
+  /**
+   * Returns the width of the side panel.
+   *
+   * @return		the width
+   */
+  public int getSidePanelWidth() {
+    return m_SidePanelWidth;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String sidePanelWidthTipText() {
+    return "The width of the side panel (if visible).";
   }
 
   /**
@@ -1042,7 +1126,9 @@ public class SequencePlotter
     m_AxisY.configure(result.getPlot(), Axis.LEFT);
     result.setColorProvider(getColorProvider().shallowCopy());
     result.setOverlayColorProvider(getOverlayColorProvider().shallowCopy());
+    result.setAdjustToVisibleData(m_AdjustToVisibleData);
     result.setSidePanelVisible(m_ShowSidePanel);
+    result.setDividerLocation(m_Width - m_SidePanelWidth);
     if (m_NoToolTips) {
       result.getPlot().clearToolTipAxes();
       result.getPlot().setTipTextCustomizer(null);
@@ -1345,7 +1431,9 @@ public class SequencePlotter
 	m_AxisY.configure(m_Panel.getPlot(), Axis.LEFT);
 	m_Panel.setColorProvider(m_ColorProvider);
 	m_Panel.setOverlayColorProvider(m_OverlayColorProvider);
+	m_Panel.setAdjustToVisibleData(m_AdjustToVisibleData);
 	m_Panel.setSidePanelVisible(m_ShowSidePanel);
+	m_Panel.setDividerLocation(m_Width - m_SidePanelWidth);
 	if (m_NoToolTips) {
 	  m_Panel.getPlot().clearToolTipAxes();
 	  m_Panel.getPlot().setTipTextCustomizer(null);
