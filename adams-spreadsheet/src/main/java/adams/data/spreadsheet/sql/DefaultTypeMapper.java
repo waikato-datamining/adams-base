@@ -80,6 +80,8 @@ public class DefaultTypeMapper
 	return ContentType.DOUBLE;
       case Types.DOUBLE:
 	return ContentType.DOUBLE;
+      case Types.DECIMAL:
+	return ContentType.DOUBLE;
       default:
 	return ContentType.STRING;
     }
