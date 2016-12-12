@@ -120,6 +120,8 @@ public class SimplePlot
     int				row;
     Object			value;
     Cell			cell;
+    boolean			sorted;
+    boolean			asc;
 
     numPoints = isColumn ? sheet.getRowCount() : sheet.getColumnCount();
     if (numPoints > MAX_POINTS) {
@@ -128,7 +130,8 @@ public class SimplePlot
 	return;
       if (!Utils.isInteger(newPoints))
 	return;
-      numPoints = Integer.parseInt(newPoints);
+      if (Integer.parseInt(newPoints) != numPoints)
+        numPoints = Integer.parseInt(newPoints);
     }
     else {
       numPoints = -1;
@@ -157,11 +160,14 @@ public class SimplePlot
     table.addLastSetup(getClass(), true, !isColumn, last);
 
     // get data from spreadsheet
-    tmp = new ArrayList<>();
+    tmp    = new ArrayList<>();
+    sorted = false;
+    asc    = table.isAscending();
     if (isColumn) {
       col = index;
       if (table.getShowRowColumn())
 	col++;
+      sorted = (table.getSortColumn() == col);
       for (i = 0; i < table.getRowCount(); i++) {
 	value = table.getValueAt(i, col);
 	if ((value != null) && (Utils.isDouble(value.toString())))
@@ -182,6 +188,11 @@ public class SimplePlot
     if (numPoints > -1) {
       Collections.shuffle(tmp, new Random(1));
       list = tmp.subList(0, numPoints);
+      if (sorted) {
+	Collections.sort(list);
+	if (!asc)
+	  Collections.reverse(list);
+      }
     }
     else {
       list = tmp;
