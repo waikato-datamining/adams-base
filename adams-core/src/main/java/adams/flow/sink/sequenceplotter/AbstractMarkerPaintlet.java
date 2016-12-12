@@ -19,12 +19,12 @@
  */
 package adams.flow.sink.sequenceplotter;
 
-import java.awt.Color;
-import java.awt.Graphics;
-
 import adams.data.sequence.XYSequence;
 import adams.gui.event.PaintEvent.PaintMoment;
 import adams.gui.visualization.core.AbstractStrokePaintlet;
+
+import java.awt.Color;
+import java.awt.Graphics;
 
 /**
  * Ancestor for marker paintlets.
@@ -68,7 +68,15 @@ public abstract class AbstractMarkerPaintlet
    * @return		the color for the spectrum
    */
   public Color getColor(int index) {
-    return getPlotterPanel().getMarkerContainerManager().get(index).getColor();
+    String	id;
+    int		cindex;
+
+    id     = getPlotterPanel().getMarkerContainerManager().get(index).getID();
+    cindex = getPlotterPanel().getContainerManager().indexOf(id);
+    if (cindex > -1)
+      return getPlotterPanel().getContainerManager().get(cindex).getColor();
+    else
+      return getPlotterPanel().getMarkerContainerManager().get(index).getColor();
   }
 
   /**
