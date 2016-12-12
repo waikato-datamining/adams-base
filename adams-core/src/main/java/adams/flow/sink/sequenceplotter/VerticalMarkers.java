@@ -84,6 +84,13 @@ public class VerticalMarkers
     AxisPanel			axisX;
     AxisPanel			axisY;
     int				i;
+    int				index;
+
+    index = getPlotterPanel().getContainerManager().indexOf(data.getID());
+    if (index > -1) {
+      if (!getPlotterPanel().getContainerManager().isVisible(index))
+	return;
+    }
 
     points = data.toList();
     axisX  = getPanel().getPlot().getAxis(Axis.BOTTOM);
