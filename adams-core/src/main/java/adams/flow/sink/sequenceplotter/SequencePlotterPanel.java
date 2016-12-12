@@ -389,10 +389,10 @@ public class SequencePlotterPanel
       case VISIBILITY:
 	indices = toMarkerIndices(e.getIndices());
 	for (i = 0; i < indices.length; i++)
-	  getMarkerContainerManager().setVisible(indices[i], getContainerManager().isVisible(indices[i]));
+	  getMarkerContainerManager().setVisible(indices[i], getContainerManager().isVisible(e.getIndices()[i]));
 	indices = toOverlayIndices(e.getIndices());
 	for (i = 0; i < indices.length; i++)
-	  getOverlayContainerManager().setVisible(indices[i], getContainerManager().isVisible(indices[i]));
+	  getOverlayContainerManager().setVisible(indices[i], getContainerManager().isVisible(e.getIndices()[i]));
 	break;
 
       case BULK_UPDATE:
