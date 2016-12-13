@@ -126,7 +126,7 @@ public abstract class AbstractClassifierEvaluation
    *
    * @param select	the selected attributes
    * @param data	the data to transfer
-   * @return		the spreadsheet, null if not attributes selected
+   * @return		the spreadsheet
    */
   protected SpreadSheet transferAdditionalAttributes(SelectOptionPanel select, Instances data) {
     SpreadSheet			result;
@@ -138,9 +138,6 @@ public abstract class AbstractClassifierEvaluation
     Token			token;
     String			msg;
     int				i;
-
-    if (select.getCurrent().length == 0)
-      return null;
 
     atts    = select.getCurrent();
     indices = new TIntArrayList();
