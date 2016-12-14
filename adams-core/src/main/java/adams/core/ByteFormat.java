@@ -216,8 +216,6 @@ public class ByteFormat
     boolean	addUnit;
     Unit	unit;
 
-    // TODO "i"
-    
     if (format == null)
       return;
     if (format.length() < 2)
