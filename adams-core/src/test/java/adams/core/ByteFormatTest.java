@@ -20,12 +20,10 @@
 
 package adams.core;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-import adams.core.ByteFormat;
-import adams.core.Utils;
 import adams.env.Environment;
 import adams.test.AdamsTestCase;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Tests the adams.core.ByteFormat class. Run from commandline with: <br><br>
@@ -91,13 +89,42 @@ public class ByteFormatTest
     assertNotNull("format is null", b.getFormat());
     assertEquals("output differs", "1.0KB", b.format(1024));
     assertEquals("output differs", "2.0KB", b.format(2048));
-    assertEquals("output differs", "2.1KB", b.format(2200));
+    assertEquals("output differs", "2.2KB", b.format(2200));
 
     b = new ByteFormat("b.2K");
     assertNotNull("format is null", b.getFormat());
-    assertEquals("output differs", "1.00KB", b.format(1024));
-    assertEquals("output differs", "2.00KB", b.format(2048));
-    assertEquals("output differs", "2.14KB", b.format(2200));
+    assertEquals("output differs", "1.02KB", b.format(1024));
+    assertEquals("output differs", "2.04KB", b.format(2048));
+    assertEquals("output differs", "2.20KB", b.format(2200));
+  }
+
+  /**
+   * Tests kibi bytes.
+   */
+  public void testKibiBytes() {
+    ByteFormat b = new ByteFormat("bki");
+    assertNotNull("format is null", b.getFormat());
+    assertEquals("output differs", "1", b.format(1024));
+    assertEquals("output differs", "2", b.format(2048));
+    assertEquals("output differs", "2", b.format(2200));
+
+    b = new ByteFormat("bKi");
+    assertNotNull("format is null", b.getFormat());
+    assertEquals("output differs", "1KiB", b.format(1024));
+    assertEquals("output differs", "2KiB", b.format(2048));
+    assertEquals("output differs", "2KiB", b.format(2200));
+
+    b = new ByteFormat("b.1Ki");
+    assertNotNull("format is null", b.getFormat());
+    assertEquals("output differs", "1.0KiB", b.format(1024));
+    assertEquals("output differs", "2.0KiB", b.format(2048));
+    assertEquals("output differs", "2.1KiB", b.format(2200));
+
+    b = new ByteFormat("b.2Ki");
+    assertNotNull("format is null", b.getFormat());
+    assertEquals("output differs", "1.00KiB", b.format(1024));
+    assertEquals("output differs", "2.00KiB", b.format(2048));
+    assertEquals("output differs", "2.14KiB", b.format(2200));
   }
 
   /**
@@ -120,13 +147,42 @@ public class ByteFormatTest
     assertNotNull("format is null", b.getFormat());
     assertEquals("output differs", "1.0MB", b.format(1048576));
     assertEquals("output differs", "2.0MB", b.format(2097152));
-    assertEquals("output differs", "2.1MB", b.format(2252800));
+    assertEquals("output differs", "2.2MB", b.format(2252800));
 
     b = new ByteFormat("b.2M");
     assertNotNull("format is null", b.getFormat());
-    assertEquals("output differs", "1.00MB", b.format(1048576));
-    assertEquals("output differs", "2.00MB", b.format(2097152));
-    assertEquals("output differs", "2.14MB", b.format(2252800));
+    assertEquals("output differs", "1.04MB", b.format(1048576));
+    assertEquals("output differs", "2.09MB", b.format(2097152));
+    assertEquals("output differs", "2.25MB", b.format(2252800));
+  }
+
+  /**
+   * Tests mebi bytes.
+   */
+  public void testMebiBytes() {
+    ByteFormat b = new ByteFormat("bmi");
+    assertNotNull("format is null", b.getFormat());
+    assertEquals("output differs", "1", b.format(1048576));
+    assertEquals("output differs", "2", b.format(2097152));
+    assertEquals("output differs", "2", b.format(2252800));
+
+    b = new ByteFormat("bMi");
+    assertNotNull("format is null", b.getFormat());
+    assertEquals("output differs", "1MiB", b.format(1048576));
+    assertEquals("output differs", "2MiB", b.format(2097152));
+    assertEquals("output differs", "2MiB", b.format(2252800));
+
+    b = new ByteFormat("b.1Mi");
+    assertNotNull("format is null", b.getFormat());
+    assertEquals("output differs", "1.0MiB", b.format(1048576));
+    assertEquals("output differs", "2.0MiB", b.format(2097152));
+    assertEquals("output differs", "2.1MiB", b.format(2252800));
+
+    b = new ByteFormat("b.2Mi");
+    assertNotNull("format is null", b.getFormat());
+    assertEquals("output differs", "1.00MiB", b.format(1048576));
+    assertEquals("output differs", "2.00MiB", b.format(2097152));
+    assertEquals("output differs", "2.14MiB", b.format(2252800));
   }
 
   /**
@@ -148,14 +204,43 @@ public class ByteFormatTest
     b = new ByteFormat("b.1G");
     assertNotNull("format is null", b.getFormat());
     assertEquals("output differs", "1.0GB", b.format(1073741824.0));
-    assertEquals("output differs", "2.0GB", b.format(2147483648.0));
-    assertEquals("output differs", "2.1GB", b.format(2306867200.0));
+    assertEquals("output differs", "2.1GB", b.format(2147483648.0));
+    assertEquals("output differs", "2.3GB", b.format(2306867200.0));
 
     b = new ByteFormat("b.2G");
     assertNotNull("format is null", b.getFormat());
-    assertEquals("output differs", "1.00GB", b.format(1073741824.0));
-    assertEquals("output differs", "2.00GB", b.format(2147483648.0));
-    assertEquals("output differs", "2.14GB", b.format(2306867200.0));
+    assertEquals("output differs", "1.07GB", b.format(1073741824.0));
+    assertEquals("output differs", "2.14GB", b.format(2147483648.0));
+    assertEquals("output differs", "2.30svn commitGB", b.format(2306867200.0));
+  }
+
+  /**
+   * Tests gibi bytes.
+   */
+  public void testGibiBytes() {
+    ByteFormat b = new ByteFormat("bgi");
+    assertNotNull("format is null", b.getFormat());
+    assertEquals("output differs", "1", b.format(1073741824.0));
+    assertEquals("output differs", "2", b.format(2147483648.0));
+    assertEquals("output differs", "2", b.format(2306867200.0));
+
+    b = new ByteFormat("bGi");
+    assertNotNull("format is null", b.getFormat());
+    assertEquals("output differs", "1GiB", b.format(1073741824.0));
+    assertEquals("output differs", "2GiB", b.format(2147483648.0));
+    assertEquals("output differs", "2GiB", b.format(2306867200.0));
+
+    b = new ByteFormat("b.1Gi");
+    assertNotNull("format is null", b.getFormat());
+    assertEquals("output differs", "1.0GiB", b.format(1073741824.0));
+    assertEquals("output differs", "2.0GiB", b.format(2147483648.0));
+    assertEquals("output differs", "2.1GiB", b.format(2306867200.0));
+
+    b = new ByteFormat("b.2Gi");
+    assertNotNull("format is null", b.getFormat());
+    assertEquals("output differs", "1.00GiB", b.format(1073741824.0));
+    assertEquals("output differs", "2.00GiB", b.format(2147483648.0));
+    assertEquals("output differs", "2.14GiB", b.format(2306867200.0));
   }
 
   /**

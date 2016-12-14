@@ -15,7 +15,7 @@
 
 /**
  * ByteFormat.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.core;
 
@@ -53,22 +53,29 @@ public class ByteFormat
    * @version $Revision$
    */
   public enum Unit {
-    /** just bytes. */
-    BYTES(0, ""),
-    /** kilo. */
-    KILO_BYTES(1, "KB"),
-    /** mega. */
-    MEGA_BYTES(2, "MB"),
-    /** giga. */
-    GIGA_BYTES(3, "GB"),
-    /** tera. */
-    TERA_BYTES(4, "TB"),
-    /** peta. */
-    PETA_BYTES(5, "PB"),
-    /** exa. */
-    EXA_BYTES(6, "EB");
+    BYTES(1000, 0, ""),
+    KILO_BYTES(1000, 1, "KB"),
+    MEGA_BYTES(1000, 2, "MB"),
+    GIGA_BYTES(1000, 3, "GB"),
+    TERA_BYTES(1000, 4, "TB"),
+    PETA_BYTES(1000, 5, "PB"),
+    EXA_BYTES(1000, 6, "EB"),
+    ZETTA_BYTES(1000, 7, "ZB"),
+    YOTTA_BYTES(1000, 8, "YB"),
 
-    /** the power to base 1024. */
+    KIBI_BYTES(1024, 1, "KiB"),
+    MEBI_BYTES(1024, 2, "MiB"),
+    GIBI_BYTES(1024, 3, "GiB"),
+    TEBI_BYTES(1024, 4, "TiB"),
+    PEBI_BYTES(1024, 5, "PiB"),
+    EXBI_BYTES(1024, 6, "EiB"),
+    ZEBI_BYTES(1024, 7, "ZiB"),
+    YOBI_BYTES(1024, 8, "YiB");
+
+    /** the base. */
+    private int m_Base;
+
+    /** the power to base. */
     private int m_Power;
 
     /** the unit string. */
@@ -80,13 +87,23 @@ public class ByteFormat
      * @param power	the power
      * @param unit	the unit string
      */
-    private Unit(int power, String unit) {
+    private Unit(int base, int power, String unit) {
+      m_Base  = base;
       m_Power = power;
       m_Unit  = unit;
     }
 
     /**
-     * Returns the power to base 1024.
+     * Returns the base.
+     *
+     * @return		the base
+     */
+    public int getBase() {
+      return m_Base;
+    }
+
+    /**
+     * Returns the power to base.
      *
      * @return		the power
      */
@@ -104,7 +121,7 @@ public class ByteFormat
     }
 
     /**
-     * Parses the given string (k|K|m|M|g|G|t|T|p|P|e|E) and returns the
+     * Parses the given string (k|K|m|M|g|G|t|T|p|P|e|E|z|Z|y|Y)(i)? and returns the
      * corresponding unit.
      *
      * @param s		the string to parse
@@ -112,20 +129,45 @@ public class ByteFormat
      */
     public static Unit parse(String s) {
       s = s.toLowerCase();
-      if (s.equals("k"))
-	return Unit.KILO_BYTES;
-      else if (s.equals("m"))
-	return Unit.MEGA_BYTES;
-      else if (s.equals("g"))
-	return Unit.GIGA_BYTES;
-      else if (s.equals("t"))
-	return Unit.TERA_BYTES;
-      else if (s.equals("p"))
-	return Unit.PETA_BYTES;
-      else if (s.equals("e"))
-	return Unit.EXA_BYTES;
-      else
-	return null;
+
+      switch (s) {
+	case "k":
+	  return Unit.KILO_BYTES;
+	case "m":
+	  return Unit.MEGA_BYTES;
+	case "g":
+	  return Unit.GIGA_BYTES;
+	case "t":
+	  return Unit.TERA_BYTES;
+	case "p":
+	  return Unit.PETA_BYTES;
+	case "e":
+	  return Unit.EXA_BYTES;
+	case "z":
+	  return Unit.ZETTA_BYTES;
+	case "y":
+	  return Unit.YOTTA_BYTES;
+
+	case "ki":
+	  return Unit.KIBI_BYTES;
+	case "mi":
+	  return Unit.MEBI_BYTES;
+	case "gi":
+	  return Unit.GIBI_BYTES;
+	case "ti":
+	  return Unit.TEBI_BYTES;
+	case "pi":
+	  return Unit.PEBI_BYTES;
+	case "ei":
+	  return Unit.EXBI_BYTES;
+	case "zi":
+	  return Unit.ZEBI_BYTES;
+	case "yi":
+	  return Unit.YOBI_BYTES;
+
+	default:
+	  return null;
+      }
     }
   }
 
@@ -174,6 +216,8 @@ public class ByteFormat
     boolean	addUnit;
     Unit	unit;
 
+    // TODO "i"
+    
     if (format == null)
       return;
     if (format.length() < 2)
@@ -203,11 +247,11 @@ public class ByteFormat
     }
     if (decimalsStr.length() > 0)
       decimals = Integer.parseInt(decimalsStr);
-    if (s.length() != 1)
+    if (!((s.length()== 1) || ((s.length() == 2) && s.endsWith("i"))))
       return;
 
     // add unit?
-    addUnit = s.equals(s.toUpperCase());
+    addUnit = s.substring(0, 1).equals(s.substring(0, 1).toUpperCase());
 
     // unit
     unit = Unit.parse(s);
@@ -254,7 +298,7 @@ public class ByteFormat
     if (m_Format == null)
       return "" + bytes;
 
-    value  = bytes / Math.pow(1024.0, m_Unit.getPower());
+    value  = bytes / Math.pow(m_Unit.getBase(), m_Unit.getPower());
     result = Utils.doubleToStringFixed(value, m_NumDecimals);
     if (m_AddUnit)
       result = insertThousandSeparators(result) + m_Unit.getUnit();
@@ -378,6 +422,30 @@ public class ByteFormat
   }
 
   /**
+   * Turns the number of bytes into ZB.
+   * Uses 1024 as base.
+   *
+   * @param bytes	the number of bytes to format
+   * @param decimals	the number of decimals after the decimal point
+   * @return		the ZB string
+   */
+  public static String toZettaBytes(double bytes, int decimals) {
+    return new ByteFormat("B." + decimals + "Z").format(bytes);
+  }
+
+  /**
+   * Turns the number of bytes into YB.
+   * Uses 1024 as base.
+   *
+   * @param bytes	the number of bytes to format
+   * @param decimals	the number of decimals after the decimal point
+   * @return		the YB string
+   */
+  public static String toYottaBytes(double bytes, int decimals) {
+    return new ByteFormat("B." + decimals + "Y").format(bytes);
+  }
+
+  /**
    * Turns the number of bytes in the shortest representation (KB, MB, GB, ...).
    * Uses 1024 as base.
    *
@@ -389,10 +457,14 @@ public class ByteFormat
     double	exp;
 
     exp = Math.log(bytes) / Math.log(1024);
-    if (exp >= 6)
+    if (exp >= 8)
+      return toYottaBytes(bytes, decimals);
+    else if (exp >= 7)
+      return toZettaBytes(bytes, decimals);
+    else if (exp >= 6)
       return toExaBytes(bytes, decimals);
     else if (exp >= 5)
-      return toTeraBytes(bytes, decimals);
+      return toPetaBytes(bytes, decimals);
     else if (exp >= 4)
       return toTeraBytes(bytes, decimals);
     else if (exp >= 3)
@@ -401,6 +473,134 @@ public class ByteFormat
       return toMegaBytes(bytes, decimals);
     else if (exp >= 1)
       return toKiloBytes(bytes, decimals);
+    else
+      return bytes + "B";
+  }
+
+  /**
+   * Turns the number of bytes into KiB.
+   * Uses 1000 as base.
+   *
+   * @param bytes	the number of bytes to format
+   * @param decimals	the number of decimals after the decimal point
+   * @return		the KiB string
+   */
+  public static String toKibiBytes(double bytes, int decimals) {
+    return new ByteFormat("B." + decimals + "Ki").format(bytes);
+  }
+
+  /**
+   * Turns the number of bytes into MiB.
+   * Uses 1000 as base.
+   *
+   * @param bytes	the number of bytes to format
+   * @param decimals	the number of decimals after the decimal point
+   * @return		the MiB string
+   */
+  public static String toMebiBytes(double bytes, int decimals) {
+    return new ByteFormat("B." + decimals + "Mi").format(bytes);
+  }
+
+  /**
+   * Turns the number of bytes into GiB.
+   * Uses 1000 as base.
+   *
+   * @param bytes	the number of bytes to format
+   * @param decimals	the number of decimals after the decimal point
+   * @return		the GiB string
+   */
+  public static String toGibiBytes(double bytes, int decimals) {
+    return new ByteFormat("B." + decimals + "Gi").format(bytes);
+  }
+
+  /**
+   * Turns the number of bytes into TiB.
+   * Uses 1000 as base.
+   *
+   * @param bytes	the number of bytes to format
+   * @param decimals	the number of decimals after the decimal point
+   * @return		the TiB string
+   */
+  public static String toTebiBytes(double bytes, int decimals) {
+    return new ByteFormat("B." + decimals + "Ti").format(bytes);
+  }
+
+  /**
+   * Turns the number of bytes into PiB.
+   * Uses 1000 as base.
+   *
+   * @param bytes	the number of bytes to format
+   * @param decimals	the number of decimals after the decimal point
+   * @return		the PiB string
+   */
+  public static String toPebiBytes(double bytes, int decimals) {
+    return new ByteFormat("B." + decimals + "Pi").format(bytes);
+  }
+
+  /**
+   * Turns the number of bytes into EiB.
+   * Uses 1000 as base.
+   *
+   * @param bytes	the number of bytes to format
+   * @param decimals	the number of decimals after the decimal point
+   * @return		the EiB string
+   */
+  public static String toExbiBytes(double bytes, int decimals) {
+    return new ByteFormat("B." + decimals + "Ei").format(bytes);
+  }
+
+  /**
+   * Turns the number of bytes into ZiB.
+   * Uses 1000 as base.
+   *
+   * @param bytes	the number of bytes to format
+   * @param decimals	the number of decimals after the decimal point
+   * @return		the ZiB string
+   */
+  public static String toZebiBytes(double bytes, int decimals) {
+    return new ByteFormat("B." + decimals + "Zi").format(bytes);
+  }
+
+  /**
+   * Turns the number of bytes into YiB.
+   * Uses 1000 as base.
+   *
+   * @param bytes	the number of bytes to format
+   * @param decimals	the number of decimals after the decimal point
+   * @return		the YB string
+   */
+  public static String toYobiBytes(double bytes, int decimals) {
+    return new ByteFormat("B." + decimals + "Yi").format(bytes);
+  }
+
+  /**
+   * Turns the number of bytes in the shortest representation (KiB, MiB, GiB, ...).
+   * Uses 1000 as base.
+   *
+   * @param bytes	the bytes to convert
+   * @param decimals	the number of decimals after the decimal point
+   * @return		the optimal number string
+   */
+  public static String toBestFitBiBytes(double bytes, int decimals) {
+    double	exp;
+
+    exp = Math.log(bytes) / Math.log(1000);
+    if (exp >= 8)
+      return toYobiBytes(bytes, decimals);
+    else if (exp >= 7)
+      return toZebiBytes(bytes, decimals);
+    else if (exp >= 6)
+      return toExbiBytes(bytes, decimals);
+    else if (exp >= 5)
+      return toPebiBytes(bytes, decimals);
+    else if (exp >= 4)
+      return toTebiBytes(bytes, decimals);
+    else if (exp >= 3)
+      return toGibiBytes(bytes, decimals);
+    else if (exp >= 2)
+      return toMebiBytes(bytes, decimals);
+    else if (exp >= 1)
+      return toKibiBytes(bytes, decimals);
     else
       return bytes + "B";
   }
