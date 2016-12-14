@@ -65,6 +65,7 @@ adams.flow.core.ActorPath=adams.gui.goe.ActorPathEditor
 adams.core.Index=adams.gui.goe.IndexEditor
 adams.core.Range=adams.gui.goe.RangeEditor
 adams.core.ConfigurableEnumeration$Item=adams.gui.goe.ConfigurableEnumerationItemEditor
+adams.core.ByteFormatString=adams.gui.goe.BaseObjectEditor
 adams.data.DateFormatString=adams.gui.goe.BaseObjectEditor
 adams.data.DecimalFormatString=adams.gui.goe.BaseObjectEditor
 adams.data.report.Field=adams.gui.goe.FieldEditor

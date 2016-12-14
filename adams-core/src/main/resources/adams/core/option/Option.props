@@ -281,6 +281,11 @@ adams.core.VariableNameNoUpdate=true
 adams.core.VariableNameNoUpdate#toString=adams.gui.goe.BaseObjectEditor#toString
 adams.core.VariableNameNoUpdate#valueOf=adams.gui.goe.BaseObjectEditor#valueOf
 
+# ByteFormatString objects
+adams.core.ByteFormatString=true
+adams.core.ByteFormatString#toString=adams.gui.goe.BaseObjectEditor#toString
+adams.core.ByteFormatString#valueOf=adams.gui.goe.BaseObjectEditor#valueOf
+
 # DateFormatString objects
 adams.data.DateFormatString=true
 adams.data.DateFormatString#toString=adams.gui.goe.BaseObjectEditor#toString
