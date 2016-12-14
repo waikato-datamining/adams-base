@@ -20,6 +20,7 @@
 
 package adams.data.conversion;
 
+import adams.core.ByteFormatString;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import adams.env.Environment;
@@ -64,9 +65,15 @@ public class IntToStringTest
    */
   @Override
   protected Conversion[] getRegressionSetups() {
-    return new Conversion[]{
-	new IntToString()
-    };
+    IntToString[]	result;
+
+    result    = new IntToString[2];
+    result[0] = new IntToString();
+    result[1] = new IntToString();
+    result[1].setUseFormat(true);
+    result[1].setFormat(new ByteFormatString("B.2K"));
+
+    return result;
   }
 
   /**

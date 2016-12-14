@@ -15,26 +15,36 @@
 
 /**
  * IntToString.java
- * Copyright (C) 2011-2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
 
+import adams.core.ByteFormat;
+import adams.core.ByteFormatString;
+
 /**
  <!-- globalinfo-start -->
- * Turns an Integer into a String.
+ * Turns an Integer into a String.<br>
+ * Can be optionally formatted using a byte format string.
  * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- *
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- *
+ * 
+ * <pre>-use-format &lt;boolean&gt; (property: useFormat)
+ * &nbsp;&nbsp;&nbsp;If enabled, the byte format string will be used.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-format &lt;adams.core.ByteFormatString&gt; (property: format)
+ * &nbsp;&nbsp;&nbsp;The byte format string to use.
+ * &nbsp;&nbsp;&nbsp;default: 
+ * </pre>
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -46,13 +56,97 @@ public class IntToString
   /** for serialization. */
   private static final long serialVersionUID = 6744245717394758406L;
 
+  /** whether to use byte format string. */
+  protected boolean m_UseFormat;
+
+  /** the byte format string to use. */
+  protected ByteFormatString m_Format;
+
+  /** the byteformat instance in use. */
+  protected transient ByteFormat m_ByteFormat;
+
   /**
    * Returns a string describing the object.
    *
    * @return 			a description suitable for displaying in the gui
    */
   public String globalInfo() {
-    return "Turns an Integer into a String.";
+    return
+      "Turns an Integer into a String.\n"
+	+ "Can be optionally formatted using a byte format string.";
+  }
+
+  /**
+   * Adds options to the internal list of options.
+   */
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+      "use-format", "useFormat",
+      false);
+
+    m_OptionManager.add(
+      "format", "format",
+      new ByteFormatString());
+  }
+
+  /**
+   * Sets whether to use the format string.
+   *
+   * @param value	true if to use format
+   */
+  public void setUseFormat(boolean value) {
+    m_UseFormat = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to use the format string.
+   *
+   * @return 		true if to use format
+   */
+  public boolean getUseFormat() {
+    return m_UseFormat;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String useFormatTipText() {
+    return "If enabled, the byte format string will be used.";
+  }
+
+  /**
+   * Sets the byte format string.
+   *
+   * @param value	the format
+   */
+  public void setFormat(ByteFormatString value) {
+    m_Format = value;
+    reset();
+  }
+
+  /**
+   * Returns the byte format string.
+   *
+   * @return 		the format
+   */
+  public ByteFormatString getFormat() {
+    return m_Format;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String formatTipText() {
+    return "The byte format string to use.";
   }
 
   /**
@@ -71,6 +165,13 @@ public class IntToString
    * @throws Exception	if something goes wrong with the conversion
    */
   protected Object doConvert() throws Exception {
-    return ((Integer) m_Input).toString();
+    if (m_UseFormat) {
+      if (m_ByteFormat == null)
+	m_ByteFormat = m_Format.toByteFormat();
+      return m_ByteFormat.format((Integer) m_Input);
+    }
+    else {
+      return m_Input.toString();
+    }
   }
 }
