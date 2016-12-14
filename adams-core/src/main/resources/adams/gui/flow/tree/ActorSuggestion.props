@@ -227,6 +227,14 @@ adams-core.SetVariable12=\
   IF AFTER adams.flow.transformer.LookUp \
   THEN adams.flow.transformer.SetVariable
 
+adams-core.SetVariable13=\
+  IF AFTER adams.flow.source.CombineVariables \
+  THEN adams.flow.transformer.SetVariable
+
+adams-core.SetVariable14=\
+  IF AFTER adams.flow.source.CombineStorage \
+  THEN adams.flow.transformer.SetVariable
+
 adams-core-ContainerValuePicker=\
   IF PRECEDING GENERATES adams.flow.container.AbstractContainer \
   THEN adams.flow.control.ContainerValuePicker
