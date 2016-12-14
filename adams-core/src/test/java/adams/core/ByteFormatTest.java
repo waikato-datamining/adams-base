@@ -211,7 +211,7 @@ public class ByteFormatTest
     assertNotNull("format is null", b.getFormat());
     assertEquals("output differs", "1.07GB", b.format(1073741824.0));
     assertEquals("output differs", "2.14GB", b.format(2147483648.0));
-    assertEquals("output differs", "2.30svn commitGB", b.format(2306867200.0));
+    assertEquals("output differs", "2.30GB", b.format(2306867200.0));
   }
 
   /**
