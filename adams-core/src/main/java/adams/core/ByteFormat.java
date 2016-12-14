@@ -24,17 +24,18 @@ import java.io.Serializable;
 /**
  * Formatting class for turning byte amounts into kb, mb, etc.
  * <br><br>
- * Format: {b|B}[.N]{k|K|m|M|g|G|t|T|p|P|e|E}
+ * Format: {b|B}[.N]{k|K|m|M|g|G|t|T|p|P|e|E|z|Z|y|Y[i]}
  * <br><br>
  * <ul>
  *   <li>b|B<br>
  *   "b" outputs the amount without thousand separators, "B" includes them.</li>
  *   <li>.N<br>
  *   Prints "N" decimal places</li>
- *   <li>k|K|m|M|g|G|t|T|p|P|e|E<br>
+ *   <li>k|K|m|M|g|G|t|T|p|P|e|E|z|Z|y|Y<br>
  *   Specifies the unit to use: k|K=kilobytes, m|M=megabytes, g|G=gigabytes,
- *   t|T=terabytes, p|P=petabytes, e|E=exabytes<br>
+ *   t|T=terabytes, p|P=petabytes, e|E=exabytes, z|Z=zettabytes, y|Y=yottabytes<br>
  *   Lower case does not add a specifier like "KB", upper case does.</li>
+ *   <li>Adding "i" at the end uses 1024 as base instead of 1000.</li>
  * </ul>
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -200,15 +201,16 @@ public class ByteFormat
     m_Unit                  = Unit.BYTES;
     m_AddUnit               = false;
 
-    parseFormat(format);
+    parseFormat(format, false);
   }
 
   /**
    * Parses the format.
    *
    * @param format	the format to parse
+   * @param justTest 	if true then parameters derived won't be set
    */
-  protected void parseFormat(String format) {
+  protected boolean parseFormat(String format, boolean justTest) {
     String	s;
     boolean	useSep;
     int		decimals;
@@ -217,14 +219,14 @@ public class ByteFormat
     Unit	unit;
 
     if (format == null)
-      return;
+      return false;
     if (format.length() < 2)
-      return;
+      return false;
 
     // thousand separators?
     s = format.substring(0, 1);
     if (!s.equals("b") && !s.equals("B"))
-      return;
+      return false;
     useSep = s.equals("B");
 
     // decimals?
@@ -246,7 +248,7 @@ public class ByteFormat
     if (decimalsStr.length() > 0)
       decimals = Integer.parseInt(decimalsStr);
     if (!((s.length()== 1) || ((s.length() == 2) && s.endsWith("i"))))
-      return;
+      return false;
 
     // add unit?
     addUnit = s.substring(0, 1).equals(s.substring(0, 1).toUpperCase());
@@ -254,14 +256,28 @@ public class ByteFormat
     // unit
     unit = Unit.parse(s);
     if (unit == null)
-      return;
+      return false;
 
     // passed all tests
-    m_Format                = format;
-    m_UseThousandSeparators = useSep;
-    m_NumDecimals           = decimals;
-    m_Unit                  = unit;
-    m_AddUnit               = addUnit;
+    if (!justTest) {
+      m_Format = format;
+      m_UseThousandSeparators = useSep;
+      m_NumDecimals = decimals;
+      m_Unit = unit;
+      m_AddUnit = addUnit;
+    }
+
+    return true;
+  }
+
+  /**
+   * Tests the format.
+   *
+   * @param format	the format to test
+   * @return		true if valid
+   */
+  public boolean isValid(String format) {
+    return parseFormat(format, true);
   }
 
   /**
