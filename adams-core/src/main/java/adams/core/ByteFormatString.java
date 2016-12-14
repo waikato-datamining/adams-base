@@ -86,7 +86,7 @@ public class ByteFormatString
    */
   @Override
   public String getTipText() {
-    return "Format string for bytes (eg KB, MB, KiB, MiB).";
+    return "Format string for bytes, format: {b|B}[.N]{k|K|m|M|g|G|t|T|p|P|e|E|z|Z|y|Y[i]}";
   }
   
   /**
