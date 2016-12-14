@@ -50,50 +50,50 @@ import java.util.Map;
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- * 
+ *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: SetMapValue
  * </pre>
- * 
+ *
  * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- * 
+ *
  * <pre>-skip &lt;boolean&gt; (property: skip)
  * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
  * &nbsp;&nbsp;&nbsp;as it is.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
  * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
  * &nbsp;&nbsp;&nbsp; useful for critical actors.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-silent &lt;boolean&gt; (property: silent)
  * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
  * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-key &lt;java.lang.String&gt; (property: key)
  * &nbsp;&nbsp;&nbsp;The key of the value to set.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- * 
+ *
  * <pre>-value &lt;java.lang.String&gt; (property: value)
  * &nbsp;&nbsp;&nbsp;The value to set.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- * 
+ *
  * <pre>-source &lt;adams.flow.core.CallableActorReference&gt; (property: source)
  * &nbsp;&nbsp;&nbsp;The callable source to obtain the value from.
  * &nbsp;&nbsp;&nbsp;default: unknown
  * </pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -129,8 +129,8 @@ public class SetMapValue
   public String globalInfo() {
     return
       "Sets a value in a " + Map.class.getName() + " object.\n"
-      + "The value can be either supplied as string using the 'value' property "
-      + "or obtained from a callable actor (property 'source').";
+        + "The value can be either supplied as string using the 'value' property "
+        + "or obtained from a callable actor (property 'source').";
   }
 
   /**
@@ -152,7 +152,7 @@ public class SetMapValue
       "source", "source",
       new CallableActorReference("unknown"));
   }
-  
+
   /**
    * Initializes the members.
    */
@@ -287,9 +287,9 @@ public class SetMapValue
   public String getQuickInfo() {
     String	result;
     String	value;
-    
+
     result = null;
-    
+
     value  = QuickInfoHelper.toString(this, "key", m_Key);
     if (value != null) {
       result  = value;
@@ -298,7 +298,7 @@ public class SetMapValue
       result += " or from ";
       result += QuickInfoHelper.toString(this, "source", m_Source);
     }
-	
+
     return result;
   }
 
@@ -321,10 +321,10 @@ public class SetMapValue
     if (result == null) {
       source  = findCallableActor();
       if (source != null) {
-	if (source instanceof OutputProducer)
-	  m_SourceActor = source;
-	else
-	  result = "Callable actor '" + m_Source + "' does not produce any output!";
+        if (source instanceof OutputProducer)
+          m_SourceActor = source;
+        else
+          result = "Callable actor '" + m_Source + "' does not produce any output!";
       }
     }
 
@@ -345,27 +345,32 @@ public class SetMapValue
     result = null;
 
     map = (Map) m_InputToken.getPayload();
-    if (m_SourceActor == null) {
-      map.put(m_Key, m_Value);
+    if (map == null) {
+      result = "Null token instead of map received at input!";
     }
     else {
-      token  = null;
-      result = m_SourceActor.execute();
-      if (result != null) {
-	result = "Callable actor '" + m_Source + "' execution failed:\n" + result;
+      if (m_SourceActor == null) {
+        map.put(m_Key, m_Value);
       }
       else {
-	if (((OutputProducer) m_SourceActor).hasPendingOutput())
-	  token = ((OutputProducer) m_SourceActor).output();
-	else
-	  result = "Callable actor '" + m_Source + "' did not generate any output!";
+        token  = null;
+        result = m_SourceActor.execute();
+        if (result != null) {
+          result = "Callable actor '" + m_Source + "' execution failed:\n" + result;
+        }
+        else {
+          if (((OutputProducer) m_SourceActor).hasPendingOutput())
+            token = ((OutputProducer) m_SourceActor).output();
+          else
+            result = "Callable actor '" + m_Source + "' did not generate any output!";
+        }
+        if (token != null)
+          map.put(m_Key, token.getPayload());
       }
-      if (token != null)
-	map.put(m_Key, token.getPayload());
+
+      m_OutputToken = new Token(map);
     }
-    
-    m_OutputToken = new Token(map);
-    
+
     return result;
   }
 }
