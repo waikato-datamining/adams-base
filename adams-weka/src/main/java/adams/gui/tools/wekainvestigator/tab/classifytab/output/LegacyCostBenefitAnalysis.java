@@ -20,6 +20,7 @@
 
 package adams.gui.tools.wekainvestigator.tab.classifytab.output;
 
+import adams.core.MessageCollection;
 import adams.data.weka.WekaLabelIndex;
 import adams.flow.core.Token;
 import adams.flow.sink.WekaCostBenefitAnalysis;
@@ -27,6 +28,7 @@ import adams.gui.core.GUIHelper;
 import adams.gui.tools.wekainvestigator.output.ComponentContentPanel;
 import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
 
+import javax.swing.JComponent;
 import javax.swing.JPanel;
 
 /**
@@ -114,13 +116,13 @@ public class LegacyCostBenefitAnalysis
   }
 
   /**
-   * Generates output and adds it to the {@link ResultItem}.
+   * Generates output from the item.
    *
-   * @param item	the item to add the output to
-   * @return		null if output could be generated, otherwise error message
+   * @param item	the item to generate output for
+   * @param errors	for collecting error messages
+   * @return		the output component, null if failed to generate
    */
-  @Override
-  public String generateOutput(ResultItem item) {
+  public JComponent createOutput(ResultItem item, MessageCollection errors) {
     WekaCostBenefitAnalysis 	sink;
     JPanel 			panel;
 
@@ -129,8 +131,6 @@ public class LegacyCostBenefitAnalysis
     panel = sink.createDisplayPanel(new Token(item.getEvaluation()));
     panel.setPreferredSize(GUIHelper.getDefaultDialogDimension());
 
-    addTab(item, new ComponentContentPanel(panel, sink.displayPanelRequiresScrollPane()));
-
-    return null;
+    return new ComponentContentPanel(panel, sink.displayPanelRequiresScrollPane());
   }
 }

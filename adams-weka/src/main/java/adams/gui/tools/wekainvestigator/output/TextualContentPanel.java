@@ -25,12 +25,14 @@ import adams.core.io.FileUtils;
 import adams.gui.chooser.TextFileChooser;
 import adams.gui.core.BaseTextAreaWithButtons;
 import adams.gui.core.BaseTextPaneWithButtons;
+import adams.gui.core.GUIHelper;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 import com.googlecode.jfilechooserbookmarks.gui.BaseScrollPane;
 
 import javax.swing.JComponent;
 import javax.swing.text.JTextComponent;
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.io.File;
 
 /**
@@ -90,6 +92,7 @@ public class TextualContentPanel
   protected void initGUI(JComponent comp, boolean useScrollPane) {
     m_Component = comp;
 
+    setPreferredSize(new Dimension(GUIHelper.getDefaultTinyDialogDimension()));
     if (useScrollPane)
       getContentPanel().add(new BaseScrollPane(m_Component), BorderLayout.CENTER);
     else

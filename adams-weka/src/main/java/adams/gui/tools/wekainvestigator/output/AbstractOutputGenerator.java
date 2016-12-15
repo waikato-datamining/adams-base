@@ -20,8 +20,8 @@
 
 package adams.gui.tools.wekainvestigator.output;
 
+import adams.core.MessageCollection;
 import adams.core.option.AbstractOptionHandler;
-import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
 
 import javax.swing.JComponent;
 
@@ -64,10 +64,32 @@ public abstract class AbstractOutputGenerator<T extends AbstractResultItem>
   public abstract boolean canGenerateOutput(T item);
 
   /**
-   * Generates output and adds it to the {@link ResultItem}.
+   * Generates output from the item.
+   *
+   * @param item	the item to generate output for
+   * @param errors	for collecting error messages
+   * @return		the output component, null if failed to generate
+   */
+  public abstract JComponent createOutput(T item, MessageCollection errors);
+
+  /**
+   * Generates output and adds it to the {@link adams.gui.tools.wekainvestigator.tab.attseltab.ResultItem}.
    *
    * @param item	the item to add the output to
    * @return		null if output could be generated, otherwise error message
    */
-  public abstract String generateOutput(T item);
+  public String generateOutput(T item) {
+    JComponent		comp;
+    MessageCollection	errors;
+
+    errors = new MessageCollection();
+    comp   = createOutput(item, errors);
+    if (!errors.isEmpty())
+      return errors.toString();
+
+    if (comp != null)
+      addTab(item, comp);
+
+    return null;
+  }
 }

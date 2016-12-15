@@ -20,6 +20,7 @@
 
 package adams.gui.tools.wekainvestigator.tab.classifytab.output;
 
+import adams.core.MessageCollection;
 import adams.core.Range;
 import adams.data.weka.WekaLabelRange;
 import adams.flow.core.Token;
@@ -28,6 +29,7 @@ import adams.flow.sink.WekaThresholdCurve.AttributeName;
 import adams.gui.tools.wekainvestigator.output.ComponentContentPanel;
 import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
 
+import javax.swing.JComponent;
 import javax.swing.JPanel;
 
 /**
@@ -187,13 +189,13 @@ public class LegacyThresholdCurve
   }
 
   /**
-   * Generates output and adds it to the {@link ResultItem}.
+   * Generates output from the item.
    *
-   * @param item	the item to add the output to
-   * @return		null if output could be generated, otherwise error message
+   * @param item	the item to generate output for
+   * @param errors	for collecting error messages
+   * @return		the output component, null if failed to generate
    */
-  @Override
-  public String generateOutput(ResultItem item) {
+  public JComponent createOutput(ResultItem item, MessageCollection errors) {
     WekaThresholdCurve 	sink;
     JPanel 		panel;
 
@@ -203,8 +205,6 @@ public class LegacyThresholdCurve
     sink.setAttributeY(m_AttributeY);
     panel = sink.createDisplayPanel(new Token(item.getEvaluation()));
 
-    addTab(item, new ComponentContentPanel(panel, sink.displayPanelRequiresScrollPane()));
-
-    return null;
+    return new ComponentContentPanel(panel, sink.displayPanelRequiresScrollPane());
   }
 }

@@ -31,11 +31,13 @@ import adams.gui.core.AbstractNamedHistoryPanel;
 import adams.gui.core.AbstractNamedHistoryPanel.HistoryEntryToolTipProvider;
 import adams.gui.core.BaseMenu;
 import adams.gui.core.BasePopupMenu;
+import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.BaseStatusBar;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.ExtensionFileFilter;
 import adams.gui.core.GUIHelper;
+import adams.gui.dialog.ApprovalDialog;
 import adams.gui.event.WekaInvestigatorDataEvent;
 import adams.gui.goe.GenericArrayEditorDialog;
 import adams.gui.goe.GenericObjectEditorDialog;
@@ -56,6 +58,7 @@ import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
@@ -268,15 +271,13 @@ public class ClassifyTab
 
     /**
      * Prompts the user with a GOE for configuring the output generator and
-     * then generates the output.
+     * returns it if accepted.
      *
-     * @param generator		the generator to use customize
-     * @param item		the result item to use
+     * @param generator		the generator to customize
+     * @return			the customized generator, null if cancelled
      */
-    protected void generateOutput(AbstractOutputGenerator generator, ResultItem item) {
+    protected AbstractOutputGenerator configureOutput(AbstractOutputGenerator generator) {
       GenericObjectEditorDialog		dialog;
-      final AbstractOutputGenerator 	current;
-      SwingWorker			worker;
 
       if (getParentDialog() != null)
         dialog = new GenericObjectEditorDialog(getParentDialog(), ModalityType.DOCUMENT_MODAL);
@@ -291,17 +292,97 @@ public class ClassifyTab
       dialog.setLocationRelativeTo(getParent());
       dialog.setVisible(true);
       if (dialog.getResult() != GenericObjectEditorDialog.APPROVE_OPTION)
-        return;
+        return null;
+      else
+        return (AbstractOutputGenerator) dialog.getCurrent();
+    }
 
-      current = (AbstractOutputGenerator) dialog.getCurrent();
+    /**
+     * Prompts the user with a GOE for configuring the output generator and
+     * then generates the output.
+     *
+     * @param generator		the generator to use customize
+     * @param item		the result item to use
+     */
+    protected void generateOutput(AbstractOutputGenerator generator, ResultItem item) {
+      final AbstractOutputGenerator 	current;
+      SwingWorker			worker;
+
+      current = configureOutput(generator);
+      if (current == null)
+	return;
+
       worker = new SwingWorker() {
         @Override
         protected Object doInBackground() throws Exception {
           String msg = current.generateOutput(item);
 	  if (msg != null)
 	    m_Owner.logError(
-	      "Failed to generate output using: " + generator.toCommandLine() + "\n" + msg,
+	      "Failed to generate output using: " + current.toCommandLine() + "\n" + msg,
 	      "Error generating output");
+	  return null;
+        }
+      };
+      worker.execute();
+    }
+
+    /**
+     * Prompts the user with a GOE for configuring the output generator and
+     * then displays the generated outputs side by side.
+     *
+     * @param generator		the generator to use customize
+     * @param indices		the indices of the items to display
+     */
+    protected void compareOutput(AbstractOutputGenerator generator, final int[] indices) {
+      final AbstractOutputGenerator 	current;
+      SwingWorker			worker;
+
+      current = configureOutput(generator);
+      if (current == null)
+	return;
+
+      worker = new SwingWorker() {
+        @Override
+        protected Object doInBackground() throws Exception {
+	  List<JComponent> comps = new ArrayList<>();
+	  List<String> labels = new ArrayList<>();
+	  MessageCollection errors = new MessageCollection();
+	  for (int index: indices) {
+	    ResultItem item = getEntry(index);
+	    JComponent comp = current.createOutput(item, errors);
+	    if (comp != null) {
+	      comps.add(comp);
+	      labels.add(getEntryName(index));
+	    }
+	  }
+	  JPanel panel = null;
+	  if (comps.size() > 0) {
+	    panel = new JPanel(new GridLayout(1, comps.size()));
+	    for (int i = 0; i < comps.size(); i++) {
+	      JPanel subPanel = new JPanel(new BorderLayout());
+	      JLabel label = new JLabel(labels.get(i));
+	      subPanel.add(label, BorderLayout.NORTH);
+	      subPanel.add(comps.get(i), BorderLayout.CENTER);
+	      panel.add(subPanel);
+	    }
+	  }
+	  if (!errors.isEmpty())
+	    m_Owner.logError(
+	      "Failed to generate output using: " + current.toCommandLine() + "\n" + errors,
+	      "Error generating output");
+	  if (panel != null) {
+	    ApprovalDialog dialog;
+	    if (m_Owner.getParentDialog() != null)
+	      dialog = new ApprovalDialog(m_Owner.getParentDialog(), ModalityType.MODELESS);
+	    else
+	      dialog = new ApprovalDialog(m_Owner.getParentFrame(), false);
+	    dialog.setDefaultCloseOperation(ApprovalDialog.DISPOSE_ON_CLOSE);
+	    dialog.setTitle("Compare output");
+	    dialog.getContentPane().add(new BaseScrollPane(panel), BorderLayout.CENTER);
+	    dialog.setSize(GUIHelper.makeWider(GUIHelper.getDefaultDialogDimension()));
+	    dialog.setLocationRelativeTo(dialog.getParent());
+	    dialog.setVisible(true);
+	  }
 	  return null;
         }
       };
@@ -361,6 +442,27 @@ public class ClassifyTab
         }
       }
       submenu.sort();
+      result.add(submenu);
+
+      submenu = new BaseMenu("Compare output");
+      submenu.setEnabled((indices.length >= 2));
+      if (indices.length >= 2) {
+	classes = ClassLister.getSingleton().getClasses(AbstractOutputGenerator.class);
+	for (Class cls : classes) {
+	  try {
+	    final AbstractOutputGenerator generator = (AbstractOutputGenerator) cls.newInstance();
+	    menuitem = new JMenuItem(generator.getTitle());
+	    menuitem.setEnabled(generator.canGenerateOutput(getEntry(indices[0])));
+	    menuitem.addActionListener((ActionEvent ae) -> compareOutput(generator, indices));
+	    submenu.add(menuitem);
+	  }
+	  catch (Exception ex) {
+	    ConsolePanel.getSingleton().append(
+	      Level.SEVERE, "Failed to instantiate output generator: " + cls.getName(), ex);
+	  }
+	}
+	submenu.sort();
+      }
       result.add(submenu);
 
       menuitem = new JMenuItem("Export output...");

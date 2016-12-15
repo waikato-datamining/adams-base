@@ -20,7 +20,7 @@
 
 package adams.gui.tools.wekainvestigator.tab.classifytab.output;
 
-import adams.core.Utils;
+import adams.core.MessageCollection;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.core.Token;
 import adams.flow.transformer.WekaPredictionsToSpreadSheet;
@@ -35,6 +35,8 @@ import adams.gui.visualization.stats.histogram.Histogram;
 import adams.gui.visualization.stats.histogram.HistogramOptions;
 import adams.gui.visualization.stats.probabilityplot.NormalPlot;
 import adams.gui.visualization.stats.probabilityplot.NormalPlotOptions;
+
+import javax.swing.JComponent;
 
 /**
  * Generates the 4-in-1 plot: normal plot, histogram, residuals vs fit and vs order.
@@ -261,13 +263,13 @@ public class FourInOnePlot
   }
 
   /**
-   * Generates output and adds it to the {@link ResultItem}.
+   * Generates output from the item.
    *
-   * @param item	the item to add the output to
-   * @return		null if output could be generated, otherwise error message
+   * @param item	the item to generate output for
+   * @param errors	for collecting error messages
+   * @return		the output component, null if failed to generate
    */
-  @Override
-  public String generateOutput(ResultItem item) {
+  public JComponent createOutput(ResultItem item, MessageCollection errors) {
     BaseTabbedPane			tabbedPane;
     WekaPredictionsToSpreadSheet	p2s;
     Token				token;
@@ -287,7 +289,8 @@ public class FourInOnePlot
       p2s.execute();
     }
     catch (Exception e) {
-      return Utils.handleException(this, "Failed to assemble predictions!", e);
+      errors.add("Failed to assemble predictions!", e);
+      return null;
     }
     token = p2s.output();
     sheet = (SpreadSheet) token.getPayload();
@@ -316,8 +319,6 @@ public class FourInOnePlot
     vsOrder.setOptions(m_VersusOrderOptions);
     tabbedPane.addTab("Versus Order", vsOrder);
 
-    addTab(item, new ComponentContentPanel(tabbedPane, true));
-
-    return null;
+    return new ComponentContentPanel(tabbedPane, true);
   }
 }

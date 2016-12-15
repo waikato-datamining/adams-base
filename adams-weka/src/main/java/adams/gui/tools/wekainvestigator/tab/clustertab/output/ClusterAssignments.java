@@ -20,11 +20,14 @@
 
 package adams.gui.tools.wekainvestigator.tab.clustertab.output;
 
+import adams.core.MessageCollection;
 import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.gui.core.SpreadSheetTable;
 import adams.gui.tools.wekainvestigator.output.TableContentPanel;
 import adams.gui.tools.wekainvestigator.tab.clustertab.ResultItem;
+
+import javax.swing.JComponent;
 
 /**
  * Displays the cluster assignments.
@@ -67,13 +70,13 @@ public class ClusterAssignments
   }
 
   /**
-   * Generates output and adds it to the {@link ResultItem}.
+   * Generates output from the item.
    *
-   * @param item	the item to add the output to
-   * @return		null if output could be generated, otherwise error message
+   * @param item	the item to generate output for
+   * @param errors	for collecting error messages
+   * @return		the output component, null if failed to generate
    */
-  @Override
-  public String generateOutput(ResultItem item) {
+  public JComponent createOutput(ResultItem item, MessageCollection errors) {
     SpreadSheet		sheet;
     SpreadSheetTable	table;
 
@@ -88,8 +91,6 @@ public class ClusterAssignments
 
     table = new SpreadSheetTable(sheet);
 
-    addTab(item, new TableContentPanel(table, true));
-
-    return null;
+    return new TableContentPanel(table, true);
   }
 }

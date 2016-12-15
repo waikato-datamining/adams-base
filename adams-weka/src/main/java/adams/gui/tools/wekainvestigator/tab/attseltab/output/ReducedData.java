@@ -20,11 +20,13 @@
 
 package adams.gui.tools.wekainvestigator.tab.attseltab.output;
 
-import adams.core.Utils;
+import adams.core.MessageCollection;
 import adams.gui.tools.wekainvestigator.output.TableContentPanel;
 import adams.gui.tools.wekainvestigator.tab.attseltab.ResultItem;
 import adams.gui.visualization.instances.InstancesTable;
 import weka.core.Instances;
+
+import javax.swing.JComponent;
 
 /**
  * Generates the reduced dataset.
@@ -67,28 +69,30 @@ public class ReducedData
   }
 
   /**
-   * Generates output and adds it to the {@link ResultItem}.
+   * Generates output from the item.
    *
-   * @param item	the item to add the output to
-   * @return		null if output could be generated, otherwise error message
+   * @param item	the item to generate output for
+   * @param errors	for collecting error messages
+   * @return		the output component, null if failed to generate
    */
-  @Override
-  public String generateOutput(ResultItem item) {
+  public JComponent createOutput(ResultItem item, MessageCollection errors) {
     InstancesTable	table;
     Instances		reduced;
 
-    if (!item.hasFull())
-      return "No dataset available to reduce!";
+    if (!item.hasFull()) {
+      errors.add("No dataset available to reduce!");
+      return null;
+    }
 
     try {
       reduced = item.getAttributeSelection().reduceDimensionality(item.getFull());
     }
     catch (Exception e) {
-      return "Failed to reduce data:\n" + Utils.throwableToString(e);
+      errors.add("Failed to reduce data!", e);
+      return null;
     }
     table = new InstancesTable(reduced);
-    addTab(item, new TableContentPanel(table, true));
 
-    return null;
+    return new TableContentPanel(table, true);
   }
 }

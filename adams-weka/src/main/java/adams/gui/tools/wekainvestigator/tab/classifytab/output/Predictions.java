@@ -27,6 +27,8 @@ import adams.gui.tools.wekainvestigator.output.TableContentPanel;
 import adams.gui.tools.wekainvestigator.tab.classifytab.PredictionHelper;
 import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
 
+import javax.swing.JComponent;
+
 /**
  * Displays the predictions.
  *
@@ -261,30 +263,25 @@ public class Predictions
   }
 
   /**
-   * Generates output and adds it to the {@link ResultItem}.
+   * Generates output from the item.
    *
-   * @param item	the item to add the output to
-   * @return		null if output could be generated, otherwise error message
+   * @param item	the item to generate output for
+   * @param errors	for collecting error messages
+   * @return		the output component, null if failed to generate
    */
-  @Override
-  public String generateOutput(ResultItem item) {
+  public JComponent createOutput(ResultItem item, MessageCollection errors) {
     SpreadSheet		sheet;
     SpreadSheetTable	table;
-    MessageCollection	errors;
 
-    errors = new MessageCollection();
-    sheet  = PredictionHelper.toSpreadSheet(
+    sheet = PredictionHelper.toSpreadSheet(
       this, errors, item, true, m_AddLabelIndex, m_ShowDistribution, m_ShowProbability, m_ShowError, m_ShowWeight);
     if (sheet == null) {
       if (errors.isEmpty())
-	return "Failed to generate prediction!";
-      else
-	return errors.toString();
+	errors.add("Failed to generate prediction!");
+      return null;
     }
     table = new SpreadSheetTable(sheet);
 
-    addTab(item, new TableContentPanel(table, true));
-
-    return null;
+    return new TableContentPanel(table, true);
   }
 }

@@ -20,12 +20,14 @@
 
 package adams.gui.tools.wekainvestigator.tab.classifytab.output;
 
+import adams.core.MessageCollection;
 import adams.flow.core.Token;
 import adams.flow.sink.WekaTreeVisualizer;
 import adams.gui.tools.wekainvestigator.output.ComponentContentPanel;
 import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
 import weka.core.Drawable;
 
+import javax.swing.JComponent;
 import javax.swing.JPanel;
 
 /**
@@ -69,21 +71,19 @@ public class LegacyTreeVisualizer
   }
 
   /**
-   * Generates output and adds it to the {@link ResultItem}.
+   * Generates output from the item.
    *
-   * @param item	the item to add the output to
-   * @return		null if output could be generated, otherwise error message
+   * @param item	the item to generate output for
+   * @param errors	for collecting error messages
+   * @return		the output component, null if failed to generate
    */
-  @Override
-  public String generateOutput(ResultItem item) {
+  public JComponent createOutput(ResultItem item, MessageCollection errors) {
     WekaTreeVisualizer	sink;
     JPanel 		panel;
 
     sink  = new WekaTreeVisualizer();
     panel = sink.createDisplayPanel(new Token(item.getModel()));
 
-    addTab(item, new ComponentContentPanel(panel, sink.displayPanelRequiresScrollPane()));
-
-    return null;
+    return new ComponentContentPanel(panel, sink.displayPanelRequiresScrollPane());
   }
 }

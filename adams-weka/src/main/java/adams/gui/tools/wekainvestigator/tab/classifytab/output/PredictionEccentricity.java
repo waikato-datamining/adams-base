@@ -20,6 +20,7 @@
 
 package adams.gui.tools.wekainvestigator.tab.classifytab.output;
 
+import adams.core.MessageCollection;
 import adams.core.Utils;
 import adams.data.image.BooleanArrayMatrixView;
 import adams.data.spreadsheet.DefaultSpreadSheet;
@@ -38,6 +39,8 @@ import adams.gui.core.SpreadSheetTableModel;
 import adams.gui.tools.wekainvestigator.output.ComponentContentPanel;
 import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
 import adams.gui.visualization.image.ImagePanel;
+
+import javax.swing.JComponent;
 
 /**
  * Generates classifier prediction eccentricity.
@@ -202,13 +205,13 @@ public class PredictionEccentricity
   }
 
   /**
-   * Generates output and adds it to the {@link ResultItem}.
+   * Generates output from the item.
    *
-   * @param item	the item to add the output to
-   * @return		null if output could be generated, otherwise error message
+   * @param item	the item to generate output for
+   * @param errors	for collecting error messages
+   * @return		the output component, null if failed to generate
    */
-  @Override
-  public String generateOutput(ResultItem item) {
+  public JComponent createOutput(ResultItem item, MessageCollection errors) {
     adams.flow.transformer.PredictionEccentricity 	trans;
     WekaPredictionsToSpreadSheet			p2s;
     WekaEvaluationContainer				cont;
@@ -231,7 +234,8 @@ public class PredictionEccentricity
       p2s.execute();
     }
     catch (Exception e) {
-      return Utils.handleException(this, "Failed to assemble predictions!", e);
+      errors.add("Failed to assemble predictions!", e);
+      return null;
     }
     token = p2s.output();
 
@@ -243,15 +247,21 @@ public class PredictionEccentricity
     trans.setPredicted(new SpreadSheetColumnIndex("Predicted"));
     trans.input(token);
     msg = trans.execute();
-    if (msg != null)
-      return msg;
+    if (msg != null) {
+      errors.add(msg);
+      return null;
+    }
     token = trans.output();
     eccCont = (PredictionEccentricityContainer) token.getPayload();
-    if (!eccCont.hasValue(PredictionEccentricityContainer.VALUE_ECCENTRICITY))
-      return "No eccentricity calculated!";
+    if (!eccCont.hasValue(PredictionEccentricityContainer.VALUE_ECCENTRICITY)) {
+      errors.add("No eccentricity calculated!");
+      return null;
+    }
     ecc = (Double) eccCont.getValue(PredictionEccentricityContainer.VALUE_ECCENTRICITY);
-    if (!eccCont.hasValue(PredictionEccentricityContainer.VALUE_MATRIX))
-      return "No matrix generated!";
+    if (!eccCont.hasValue(PredictionEccentricityContainer.VALUE_MATRIX)) {
+      errors.add("No matrix generated!");
+      return null;
+    }
     matrix = (BooleanArrayMatrixView) eccCont.getValue(PredictionEccentricityContainer.VALUE_MATRIX);
 
     runInfo = new DefaultSpreadSheet();
@@ -285,8 +295,6 @@ public class PredictionEccentricity
     panel.setTopComponent(new BaseScrollPane(infoTable));
     panel.setDividerLocation(100);
 
-    addTab(item, new ComponentContentPanel(panel, false));
-
-    return null;
+    return new ComponentContentPanel(panel, false);
   }
 }

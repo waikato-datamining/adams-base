@@ -20,12 +20,14 @@
 
 package adams.gui.tools.wekainvestigator.tab.attseltab.output;
 
-import adams.core.Utils;
+import adams.core.MessageCollection;
 import adams.gui.core.BaseTextArea;
 import adams.gui.core.Fonts;
 import adams.gui.tools.wekainvestigator.output.RunInformationHelper;
 import adams.gui.tools.wekainvestigator.output.TextualContentPanel;
 import adams.gui.tools.wekainvestigator.tab.attseltab.ResultItem;
+
+import javax.swing.JComponent;
 
 /**
  * Generates basic text statistic.
@@ -112,13 +114,13 @@ public class TextStatistics
   }
 
   /**
-   * Generates output and adds it to the {@link ResultItem}.
+   * Generates output from the item.
    *
-   * @param item	the item to add the output to
-   * @return		null if output could be generated, otherwise error message
+   * @param item	the item to generate output for
+   * @param errors	for collecting error messages
+   * @return		the output component, null if failed to generate
    */
-  @Override
-  public String generateOutput(ResultItem item) {
+  public JComponent createOutput(ResultItem item, MessageCollection errors) {
     BaseTextArea 	text;
     StringBuilder	buffer;
 
@@ -128,7 +130,8 @@ public class TextStatistics
 	buffer.append(item.getAttributeSelection().CVResultsString());
     }
     catch (Exception e) {
-      return "Failed to generate statistics:\n" + Utils.throwableToString(e);
+      errors.add("Failed to generate statistics!", e);
+      return null;
     }
 
     // run information
@@ -142,8 +145,7 @@ public class TextStatistics
     text.setTextFont(Fonts.getMonospacedFont());
     text.setText(buffer.toString());
     text.setCaretPosition(0);
-    addTab(item, new TextualContentPanel(text, true));
 
-    return null;
+    return new TextualContentPanel(text, true);
   }
 }

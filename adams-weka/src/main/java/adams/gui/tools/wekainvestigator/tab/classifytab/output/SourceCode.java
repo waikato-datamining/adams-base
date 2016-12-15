@@ -20,12 +20,14 @@
 
 package adams.gui.tools.wekainvestigator.tab.classifytab.output;
 
-import adams.core.Utils;
+import adams.core.MessageCollection;
 import adams.gui.core.BaseTextArea;
 import adams.gui.core.Fonts;
 import adams.gui.tools.wekainvestigator.output.TextualContentPanel;
 import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
 import weka.classifiers.Sourcable;
+
+import javax.swing.JComponent;
 
 /**
  * Outputs source code from the model (if classifier implements {@link Sourcable}).
@@ -112,19 +114,23 @@ public class SourceCode
   }
 
   /**
-   * Generates output and adds it to the {@link ResultItem}.
+   * Generates output from the item.
    *
-   * @param item	the item to add the output to
-   * @return		null if output could be generated, otherwise error message
+   * @param item	the item to generate output for
+   * @param errors	for collecting error messages
+   * @return		the output component, null if failed to generate
    */
-  @Override
-  public String generateOutput(ResultItem item) {
+  public JComponent createOutput(ResultItem item, MessageCollection errors) {
     BaseTextArea 	text;
 
-    if (!item.hasModel())
-      return "No model available!";
-    if (!(item.getModel() instanceof Sourcable))
-      return "Classifier does not implement " + Sourcable.class.getName() + "!";
+    if (!item.hasModel()) {
+      errors.add("No model available!");
+      return null;
+    }
+    if (!(item.getModel() instanceof Sourcable)) {
+      errors.add("Classifier does not implement " + Sourcable.class.getName() + "!");
+      return null;
+    }
 
     text = new BaseTextArea();
     text.setEditable(false);
@@ -133,11 +139,11 @@ public class SourceCode
       text.setText(((Sourcable) item.getModel()).toSource(m_Classname));
     }
     catch (Exception e) {
-      return Utils.handleException(this, "Failed to generate source code!", e);
+      errors.add("Failed to generate source code!", e);
+      return null;
     }
     text.setCaretPosition(0);
-    addTab(item, new TextualContentPanel(text, true));
 
-    return null;
+    return new TextualContentPanel(text, true);
   }
 }

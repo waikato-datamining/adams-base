@@ -34,6 +34,7 @@ import adams.gui.tools.wekainvestigator.output.ComponentContentPanel;
 import adams.gui.tools.wekainvestigator.tab.classifytab.PredictionHelper;
 import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
 
+import javax.swing.JComponent;
 import javax.swing.JPanel;
 import java.util.ArrayList;
 import java.util.List;
@@ -385,30 +386,27 @@ public class ClassifierErrors
   }
 
   /**
-   * Generates output and adds it to the {@link ResultItem}.
+   * Generates output from the item.
    *
-   * @param item	the item to add the output to
-   * @return		null if output could be generated, otherwise error message
+   * @param item	the item to generate output for
+   * @param errors	for collecting error messages
+   * @return		the output component, null if failed to generate
    */
-  @Override
-  public String generateOutput(ResultItem item) {
+  public JComponent createOutput(ResultItem item, MessageCollection errors) {
     ActualVsPredictedPlot 		sink;
     JPanel 				panel;
     boolean				showError;
     Token				token;
     SpreadSheet				sheet;
-    MessageCollection			errors;
     List<String>			additional;
     int					i;
 
-    errors    = new MessageCollection();
     showError = m_UseError && item.getEvaluation().getHeader().classAttribute().isNumeric();
     sheet     = PredictionHelper.toSpreadSheet(this, errors, item, true, showError);
     if (sheet == null) {
       if (errors.isEmpty())
-	return "Failed to generate prediction!";
-      else
-	return errors.toString();
+	errors.add("Failed to generate prediction!");
+      return null;
     }
     token = new Token(sheet);
 
@@ -445,8 +443,6 @@ public class ClassifierErrors
       sink.setAdditional(new SpreadSheetColumnRange(Utils.flatten(additional, ",")));
     panel = sink.createDisplayPanel(token);
 
-    addTab(item, new ComponentContentPanel(panel, sink.displayPanelRequiresScrollPane()));
-
-    return null;
+    return new ComponentContentPanel(panel, sink.displayPanelRequiresScrollPane());
   }
 }

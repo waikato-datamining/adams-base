@@ -20,10 +20,13 @@
 
 package adams.gui.tools.wekainvestigator.tab.clustertab.output;
 
+import adams.core.MessageCollection;
 import adams.gui.core.BaseTextArea;
 import adams.gui.core.Fonts;
 import adams.gui.tools.wekainvestigator.output.TextualContentPanel;
 import adams.gui.tools.wekainvestigator.tab.clustertab.ResultItem;
+
+import javax.swing.JComponent;
 
 /**
  * Outputs the supplementary data if available.
@@ -79,17 +82,19 @@ public class Supplementary
   }
 
   /**
-   * Generates output and adds it to the {@link ResultItem}.
+   * Generates output from the item.
    *
-   * @param item	the item to add the output to
-   * @return		null if output could be generated, otherwise error message
+   * @param item	the item to generate output for
+   * @param errors	for collecting error messages
+   * @return		the output component, null if failed to generate
    */
-  @Override
-  public String generateOutput(ResultItem item) {
+  public JComponent createOutput(ResultItem item, MessageCollection errors) {
     BaseTextArea 	text;
 
-    if (!item.hasSupplementaryData())
-      return "No supplementary data available!";
+    if (!item.hasSupplementaryData()) {
+      errors.add("No supplementary data available!");
+      return null;
+    }
 
     if (item.hasSupplementaryName())
       m_Title = item.getSupplementaryName();
@@ -99,8 +104,7 @@ public class Supplementary
     text.setTextFont(Fonts.getMonospacedFont());
     text.setText(item.getSupplementaryData().toString());
     text.setCaretPosition(0);
-    addTab(item, new TextualContentPanel(text, true));
 
-    return null;
+    return new TextualContentPanel(text, true);
   }
 }
