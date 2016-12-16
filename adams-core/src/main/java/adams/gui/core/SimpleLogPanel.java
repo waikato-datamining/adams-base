@@ -58,22 +58,16 @@ public class SimpleLogPanel
   protected JCheckBox m_CheckBoxLineWrap;
 
   /** the filechooser for saving the log. */
-  protected BaseFileChooser m_FileChooser;
+  protected transient BaseFileChooser m_FileChooser;
 
   /**
    * Initializes the members.
    */
   @Override
   protected void initialize() {
-    ExtensionFileFilter		filter;
-
     super.initialize();
 
-    m_FileChooser = new BaseFileChooser();
-    filter = ExtensionFileFilter.getLogFileFilter();
-    m_FileChooser.addChoosableFileFilter(filter);
-    m_FileChooser.addChoosableFileFilter(ExtensionFileFilter.getTextFileFilter());
-    m_FileChooser.setFileFilter(filter);
+    m_FileChooser = createFileChooser();
   }
 
   /**
@@ -118,6 +112,35 @@ public class SimpleLogPanel
     super.finishInit();
 
     updateButtons();
+  }
+
+  /**
+   * Creates the filechooser.
+   *
+   * @return		the filechooser
+   */
+  protected BaseFileChooser createFileChooser() {
+    ExtensionFileFilter		filter;
+    BaseFileChooser 		result;
+
+    result = new BaseFileChooser();
+    filter = ExtensionFileFilter.getLogFileFilter();
+    result.addChoosableFileFilter(filter);
+    result.addChoosableFileFilter(ExtensionFileFilter.getTextFileFilter());
+    result.setFileFilter(filter);
+
+    return result;
+  }
+
+  /**
+   * Returns the filechooser to use.
+   *
+   * @return		the filechooser
+   */
+  protected BaseFileChooser getFileChooser() {
+    if (m_FileChooser == null)
+      m_FileChooser = createFileChooser();
+    return m_FileChooser;
   }
 
   /**
@@ -183,12 +206,12 @@ public class SimpleLogPanel
     int 	retVal;
     String 	msg;
 
-    retVal = m_FileChooser.showSaveDialog(this);
+    retVal = getFileChooser().showSaveDialog(this);
     if (retVal != BaseFileChooser.APPROVE_OPTION)
       return;
 
     msg = FileUtils.writeToFileMsg(
-      m_FileChooser.getSelectedFile().getAbsolutePath(),
+      getFileChooser().getSelectedFile().getAbsolutePath(),
       m_TextLog.getText(),
       false,
       null);
