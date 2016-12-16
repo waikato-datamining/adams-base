@@ -98,7 +98,7 @@ public class ComponentContentPanel
 
     result = null;
 
-    writer = m_FileChooser.getWriter();
+    writer = getFileChooser().getWriter();
     writer.setComponent(m_Component);
     writer.setFile(new PlaceholderFile(file));
     try {

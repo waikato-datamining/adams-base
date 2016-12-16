@@ -143,7 +143,7 @@ public class TextualContentPanel
       result = "Unhandled component: " + m_Component.getClass().getName();
 
     if (result == null) {
-      msg = FileUtils.writeToFileMsg(file.getAbsolutePath(), content, false, m_FileChooser.getEncoding());
+      msg = FileUtils.writeToFileMsg(file.getAbsolutePath(), content, false, getFileChooser().getEncoding());
       if (msg != null)
 	result = msg;
     }

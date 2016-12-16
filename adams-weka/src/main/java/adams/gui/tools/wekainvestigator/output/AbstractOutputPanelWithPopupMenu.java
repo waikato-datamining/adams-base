@@ -41,7 +41,7 @@ public abstract class AbstractOutputPanelWithPopupMenu<T extends BaseFileChooser
   private static final long serialVersionUID = -2818808520522758309L;
 
   /** the filechooser. */
-  protected T m_FileChooser;
+  protected transient T m_FileChooser;
 
   /**
    * Initializes the members.
@@ -61,6 +61,17 @@ public abstract class AbstractOutputPanelWithPopupMenu<T extends BaseFileChooser
   protected abstract T createFileChooser();
 
   /**
+   * Returns the filechooser to use.
+   *
+   * @return		the filechooser
+   */
+  protected T getFileChooser() {
+    if (m_FileChooser == null)
+      m_FileChooser = createFileChooser();
+    return m_FileChooser;
+  }
+
+  /**
    * Saves the content to the specified file.
    *
    * @param file	the file to save to
@@ -75,13 +86,13 @@ public abstract class AbstractOutputPanelWithPopupMenu<T extends BaseFileChooser
     int		retVal;
     String	msg;
 
-    retVal = m_FileChooser.showSaveDialog(this);
+    retVal = getFileChooser().showSaveDialog(this);
     if (retVal != BaseFileChooser.APPROVE_OPTION)
       return;
 
-    msg = save(m_FileChooser.getSelectedFile());
+    msg = save(getFileChooser().getSelectedFile());
     if (msg != null)
-      GUIHelper.showErrorMessage(this, "Failed to save content to: " + m_FileChooser.getSelectedFile() + "\n" + msg);
+      GUIHelper.showErrorMessage(this, "Failed to save content to: " + getFileChooser().getSelectedFile() + "\n" + msg);
   }
 
   /**

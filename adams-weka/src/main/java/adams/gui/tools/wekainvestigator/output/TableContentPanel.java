@@ -144,7 +144,7 @@ public class TableContentPanel
       result = "Unhandled component: " + m_Component.getClass().getName();
 
     if (result == null) {
-      writer = m_FileChooser.getWriter();
+      writer = getFileChooser().getWriter();
       if (!writer.write(content, file))
         result = "Failed to write data to: " + file;
     }
