@@ -513,12 +513,6 @@ public abstract class AbstractNamedHistoryPanel<T>
     result  = new BasePopupMenu();
     indices = getSelectedIndices();
 
-    // show
-    menuitem = new JMenuItem("Show");
-    menuitem.setEnabled(indices.length == 1);
-    menuitem.addActionListener((ActionEvent ae) -> updateEntry(getEntryName(indices[0])));
-    result.add(menuitem);
-
     // show in new frame
     if (this instanceof FrameDisplaySupporter) {
       menuitem = new JMenuItem("Show in separate frame");
@@ -527,9 +521,8 @@ public abstract class AbstractNamedHistoryPanel<T>
 	((FrameDisplaySupporter) AbstractNamedHistoryPanel.this).showFrame(
 	  getEntryName(indices[0])));
       result.add(menuitem);
+      result.addSeparator();
     }
-
-    result.addSeparator();
 
     // remove
     menuitem = new JMenuItem();
