@@ -14,7 +14,7 @@
  */
 
 /**
- * Moments.java
+ * MomentHelper.java
  * Copyright (C) 2016 University of Waikato, Hamilton, New Zealand
  */
 
@@ -22,7 +22,6 @@ package adams.data.image.moments;
 import adams.env.Environment;
 import java.util.ArrayList;
 import java.util.List;
-
 
 /**
  * Implements Image Moments for use in feature generation
@@ -35,6 +34,14 @@ import java.util.List;
  */
 public class MomentHelper {
 
+  /**
+   * Computes the moment.
+   *
+   * @param img		the matrix
+   * @param p		the p parameter, exponent for x
+   * @param q		the q parameter, exponent for y
+   * @return		the moment
+   */
   public static double moment(boolean[][] img, int p, int q) {
     double result = 0.0;
     // For every pixel that is not a background pixel
@@ -49,6 +56,15 @@ public class MomentHelper {
     return result;
   }
 
+  /**
+   * Computes the central moment.
+   * See <a href="https://en.wikipedia.org/wiki/Image_moment#Central_moments">here</a>
+   *
+   * @param img		the matrix
+   * @param p		the p parameter, exponent for x
+   * @param q		the q parameter, exponent for y
+   * @return		the moment
+   */
   public static double centralMoment(boolean[][] img, int p, int q) {
     double result   = 0.0;
     double area     = moment(img, 0, 0); // gives the area of the region
@@ -63,6 +79,15 @@ public class MomentHelper {
     return result;
   }
 
+  /**
+   * Computes the (normal) central moment.
+   *
+   * @param img		the matrix
+   * @param p		the p parameter, exponent for x
+   * @param q		the q parameter, exponent for y
+   * @return		the moment
+   * @see		#centralMoment(boolean[][], int, int)
+   */
   public static double normalCentralMoment(boolean[][] img, int p, int q) {
     double result;
     double m00 = moment(img, 0, 0);
@@ -71,10 +96,22 @@ public class MomentHelper {
     return result;
   }
 
+  /**
+   * Computes the orientation of the major axis.
+   *
+   * @param img		the matrix
+   * @return		the orientation
+   */
   public static double majorAxisDirection(boolean[][] img) {
     return 0.5 * Math.atan2(2 * centralMoment(img,1,1), centralMoment(img, 2 , 0) - centralMoment(img, 0, 2));
   }
 
+  /**
+   * Computes the orientation vector.
+   *
+   * @param img		the matrix
+   * @return		the orientation (x, y)
+   */
   public static List<Double> orientationVector(boolean[][] img) {
     double x;
     double y;
@@ -98,8 +135,9 @@ public class MomentHelper {
   /**
    * Measures the eccentricity of an object. A value of 1 is for a round object and the value can range from
    * 1 to infinity.
-   * @param img
-   * @return the eccentricity of the object
+   *
+   * @param img		the matrix
+   * @return 		the eccentricity of the object
    */
   public static double eccentricity(boolean[][] img) {
     double u_20 = centralMoment(img,2,0);
@@ -111,6 +149,12 @@ public class MomentHelper {
     return a1/a2;
   }
 
+  /**
+   * Computes Hu's moments.
+   *
+   * @param img		the matrix to use
+   * @return		the moments (1-7)
+   */
   public static List<Double> husMoments(boolean[][] img) {
     List<Double> result = new ArrayList<>();
     double u_20 = normalCentralMoment(img, 2, 0);
@@ -140,8 +184,12 @@ public class MomentHelper {
     return result;
   }
 
-
-  public static void main(String[] args) throws Exception {
+  /**
+   * Just for testing.
+   *
+   * @param args		ignored
+   */
+  public static void main(String[] args) {
     Environment.setEnvironmentClass(Environment.class);
     boolean[][] img = new boolean[][] {
       {false,false,false,false,true ,false,false},
@@ -163,12 +211,6 @@ public class MomentHelper {
       {false,false,false,true ,false,false,false}
     };
 
-    boolean[][] img3 = new boolean[][]{
-      {false,true,false},
-      {true,true,true},
-      {false,true,false}
-    };
-
     System.out.println("m00: " + moment(img,0,0));
     System.out.println("m00: " + moment(img2,0,0));
     System.out.println("centralMoment: " + centralMoment(img,0,0));
@@ -184,7 +226,4 @@ public class MomentHelper {
 
     System.out.println("Eccentricity: " + eccentricity(img2));
   }
-
-
-
 }
