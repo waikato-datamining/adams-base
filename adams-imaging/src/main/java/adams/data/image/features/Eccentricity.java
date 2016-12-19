@@ -14,7 +14,7 @@
  */
 
 /**
- * OrientationVector.java
+ * Eccentricity.java
  * Copyright (C) 2016 University of Waikato, Hamilton, New Zealand
  */
 
@@ -22,32 +22,68 @@ package adams.data.image.features;
 
 import adams.data.featureconverter.HeaderDefinition;
 import adams.data.image.BufferedImageContainer;
+import adams.data.image.moments.AbstractBufferedImageMoment;
 import adams.data.image.moments.MomentHelper;
 import adams.data.report.DataType;
 
-import java.awt.*;
-import java.awt.image.BufferedImage;
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Returns the eccentricity of the object
+ <!-- globalinfo-start -->
+ * Computes the eccentricity of the object.
+ * <br><br>
+ <!-- globalinfo-end -->
+ *
+ <!-- options-start -->
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
+ * </pre>
+ * 
+ * <pre>-converter &lt;adams.data.featureconverter.AbstractFeatureConverter&gt; (property: converter)
+ * &nbsp;&nbsp;&nbsp;The feature converter to use to produce the output data.
+ * &nbsp;&nbsp;&nbsp;default: adams.data.featureconverter.SpreadSheet -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.DefaultSpreadSheet
+ * </pre>
+ * 
+ * <pre>-field &lt;adams.data.report.Field&gt; [-field ...] (property: fields)
+ * &nbsp;&nbsp;&nbsp;The fields to add to the output.
+ * &nbsp;&nbsp;&nbsp;default: 
+ * </pre>
+ * 
+ * <pre>-notes &lt;adams.core.base.BaseString&gt; [-notes ...] (property: notes)
+ * &nbsp;&nbsp;&nbsp;The notes to add as attributes to the generated data, eg 'PROCESS INFORMATION'
+ * &nbsp;&nbsp;&nbsp;.
+ * &nbsp;&nbsp;&nbsp;default: 
+ * </pre>
+ * 
+ * <pre>-background-value &lt;java.awt.Color&gt; (property: backgroundValue)
+ * &nbsp;&nbsp;&nbsp;The background color.
+ * &nbsp;&nbsp;&nbsp;default: #ffffff
+ * </pre>
+ * 
+ <!-- options-end -->
  *
  * @author sjb90
  * @version $Revision$
  */
-public class Eccentricity extends AbstractBufferedImageFeatureGenerator {
+public class Eccentricity
+  extends AbstractBufferedImageFeatureGenerator {
+
+  private static final long serialVersionUID = 3584074710241497942L;
 
   /** the value of the background colour **/
   protected Color m_BackgroundValue;
 
-  public Color getBackgroundValue() {
-    return m_BackgroundValue;
-  }
-
-  public void setBackgroundValue(Color m_Background) {
-    this.m_BackgroundValue = m_Background;
-    reset();
+  /**
+   * Returns a string describing the object.
+   *
+   * @return a description suitable for displaying in the gui
+   */
+  @Override
+  public String globalInfo() {
+    return "Computes the eccentricity of the object.";
   }
 
   /**
@@ -59,6 +95,35 @@ public class Eccentricity extends AbstractBufferedImageFeatureGenerator {
     super.defineOptions();
 
     m_OptionManager.add("background-value", "backgroundValue", Color.WHITE);
+  }
+
+  /**
+   * Sets the background color.
+   *
+   * @param value        the color
+   */
+  public void setBackgroundValue(Color value) {
+    m_BackgroundValue = value;
+    reset();
+  }
+
+  /**
+   * Returns the background color.
+   *
+   * @return		the color
+   */
+  public Color getBackgroundValue() {
+    return m_BackgroundValue;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String backgroundValueTipText() {
+    return "The background color.";
   }
 
   /**
@@ -88,33 +153,8 @@ public class Eccentricity extends AbstractBufferedImageFeatureGenerator {
   public List<Object>[] generateRows(BufferedImageContainer img) {
     List<Object>[] result = new List[1];
     result[0] = new ArrayList<>();
-    result[0].add(MomentHelper.eccentricity(imageToMatrix(img)));
+    result[0].add(MomentHelper.eccentricity(AbstractBufferedImageMoment.imageToMatrix(img, m_BackgroundValue)));
 
-    return result;
-  }
-
-  /**
-   * Returns a string describing the object.
-   *
-   * @return a description suitable for displaying in the gui
-   */
-  @Override
-  public String globalInfo() {
-    return null;
-  }
-
-  public boolean[][] imageToMatrix(BufferedImageContainer img) {
-    BufferedImage image = img.toBufferedImage();
-    int bg = m_BackgroundValue.getRGB();
-    boolean[][] result = new boolean[image.getHeight()][image.getWidth()];
-    for (int y = 0; y < image.getHeight(); y++) {
-      for (int x = 0; x < image.getWidth(); x++) {
-	if(image.getRGB(x, y) == bg)
-	  result[y][x] = false;
-	else
-	  result[y][x] = true;
-      }
-    }
     return result;
   }
 }

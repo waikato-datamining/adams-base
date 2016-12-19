@@ -28,7 +28,8 @@ import adams.core.option.AbstractOptionHandler;
  * @author sjb90
  * @version $Revision$
  */
-public abstract class AbstractMoment<T> extends AbstractOptionHandler {
+public abstract class AbstractMoment<T>
+  extends AbstractOptionHandler {
 
   private static final long serialVersionUID = 6361679938889787199L;
 
@@ -39,10 +40,28 @@ public abstract class AbstractMoment<T> extends AbstractOptionHandler {
    */
   protected abstract boolean[][] imageToMatrix(T img);
 
+  /**
+   * Hook method for performing checks on the image.
+   *
+   * @param img		the image to check
+   * @return		true if successful
+   */
   protected abstract boolean check(T img);
 
+  /**
+   * Performs the actual calculation.
+   *
+   * @param img		the image to process
+   * @return		the calculated moment
+   */
   protected abstract double doCalculate(boolean[][] img);
 
+  /**
+   * Calculates the moment.
+   *
+   * @param img		the image to process
+   * @return		the calculated moment
+   */
   public double calculate(T img) {
     if (!check(img))
       throw new IllegalStateException("Image is invalid");

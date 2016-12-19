@@ -52,7 +52,7 @@ adams.flow.transformer.locateobjects.AbstractObjectLocator=\
   adams.flow.transformer.locateobjects
 
 # the moments used for feature generation
-adams.data.image.moments.AbstractBufferedMoment=\
+adams.data.image.moments.AbstractBufferedImageMoment=\
   adams.data.image.moments
 
 # the meta-data extractors
