@@ -27,15 +27,37 @@ import boofcv.struct.image.ImageUInt8;
 
 /**
  <!-- globalinfo-start -->
+ * Takes a binary image in the BoofCV Unsigned Int 8 format and inverts each pixel. If the image is notbinary behaviour is undefined.
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
+ * </pre>
+ * 
  <!-- options-end -->
  *
  * @author sjb90
  * @version $Revision$
  */
-public class Inverter extends AbstractBoofCVTransformer {
+public class Inverter
+  extends AbstractBoofCVTransformer {
+
+  private static final long serialVersionUID = 8829671646134900700L;
+
+  /**
+   * Returns a string describing the object.
+   *
+   * @return a description suitable for displaying in the gui
+   */
+  @Override
+  public String globalInfo() {
+    return "Takes a binary image in the BoofCV Unsigned Int 8 format and inverts each pixel. If the image is not" +
+      "binary behaviour is undefined.";
+  }
+
   /**
    * Performs the actual transforming of the image.
    *
@@ -54,16 +76,5 @@ public class Inverter extends AbstractBoofCVTransformer {
     result[0] = new BoofCVImageContainer();
     result[0].setImage(image);
     return result;
-  }
-
-  /**
-   * Returns a string describing the object.
-   *
-   * @return a description suitable for displaying in the gui
-   */
-  @Override
-  public String globalInfo() {
-    return "Takes a binary image in the BoofCV Unsigned Int 8 format and inverts each pixel. If the image is not" +
-      "binary behaviour is undefined.";
   }
 }
