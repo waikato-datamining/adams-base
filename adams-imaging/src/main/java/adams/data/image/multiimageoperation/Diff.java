@@ -20,13 +20,8 @@
 
 package adams.data.image.multiimageoperation;
 
-import adams.core.io.PlaceholderFile;
 import adams.data.image.BufferedImageContainer;
 import adams.data.image.BufferedImageHelper;
-import adams.data.io.output.AbstractImageWriter;
-import adams.data.io.output.JAIImageWriter;
-import adams.flow.sink.ImageWriter;
-
 
 import java.awt.image.BufferedImage;
 
@@ -135,8 +130,6 @@ public class Diff extends AbstractBufferedImageMultiImageOperation {
     result[0].setReport(images[0].getReport().getClone());
     result[0].getNotes().mergeWith(images[0].getNotes());
     result[0].setImage(output);
-    JAIImageWriter writer = new JAIImageWriter();
-    writer.write(new PlaceholderFile("/home/sjb90/Pictures/Binary test/diffout.png"), result[0]);
     return result;
   }
 
