@@ -1445,17 +1445,17 @@ public class FlowEditorPanel
       return;
 
     // TODO remove System.out calls again
-    System.out.println("--> SaveAs start: " + panel.getTitle());
+    //System.out.println("--> SaveAs start: " + panel.getTitle());
 
     file = panel.getCurrentFile();
-    System.out.println("File from current panel: " + file);
+    //System.out.println("File from current panel: " + file);
     if (file == null) {
       file = new PlaceholderFile(getCurrentDirectory() + File.separator + panel.getTitle() + "." + Actor.FILE_EXTENSION);
-      System.out.println("Generated file name: " + file);
+      //System.out.println("Generated file name: " + file);
     }
     if (file.exists()) {
       file = m_FilenameProposer.propose(file);
-      System.out.println("File existed, new proposed name: " + file);
+      //System.out.println("File existed, new proposed name: " + file);
     }
     m_FileChooser.setSelectedFile(file);
     retVal = m_FileChooser.showSaveDialog(this);
@@ -1465,7 +1465,7 @@ public class FlowEditorPanel
     file = m_FileChooser.getSelectedPlaceholderFile();
     panel.addUndoPoint("Saving undo data...", "Saving as '" + file.getName() + "'");
     showStatus("Saving as '" + file + "'...");
-    System.out.println("Saved as: " + file);
+    //System.out.println("Saved as: " + file);
 
     panel.save(m_FileChooser.getWriter(), m_FileChooser.getSelectedPlaceholderFile());
   }
