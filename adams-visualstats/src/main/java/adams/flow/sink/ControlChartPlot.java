@@ -15,7 +15,7 @@
 
 /*
  * ControlChartPlot.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -919,6 +919,8 @@ public class ControlChartPlot
       axisY.setManualMinimum(min);
       axisY.setManualMaximum(max);
 
+      manager.finishUpdate();
+
       // post-process
       m_PostProcessor.postProcess(manager, m_ChartName);
     }
@@ -945,6 +947,8 @@ public class ControlChartPlot
 	point    = new SequencePlotPoint("" + x, x, prepared[0]);
 	point.setMetaData(meta);
 	seq.add(point);
+
+	manager.finishUpdate();
 
 	// post-process
 	m_PostProcessor.postProcess(manager, m_ChartName);
@@ -993,6 +997,8 @@ public class ControlChartPlot
 	point = new SequencePlotPoint("" + x, x, prepared[0]);
 	point.setMetaData(meta);
 	seq.add(point);
+
+	manager.finishUpdate();
 
 	// post-process
 	m_PostProcessor.postProcess(manager, m_ChartName);
