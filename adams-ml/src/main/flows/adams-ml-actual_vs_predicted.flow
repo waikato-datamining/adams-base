@@ -1,0 +1,15 @@
+# Project: adams
+# Date: 2016-12-21 10:39:19
+# User: fracpete
+# Charset: UTF-8
+adams.flow.control.Flow -annotation "Plots actual vs predicted" -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.standalone.GridView -width 1200 -num-cols 3 -writer adams.gui.print.NullWriter
+  adams.flow.sink.SpreadSheetDisplay -name Predictions -writer adams.data.io.output.NullWriter
+  adams.flow.sink.ActualVsPredictedPlot -writer adams.gui.print.NullWriter
+ adams.flow.source.FileSupplier -file ${HOME}/development/projects/adamsfamily/adams/adams-ml/src/main/flows/data/bodyfat_predictions.csv
+ adams.flow.transformer.SpreadSheetFileReader -reader "adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.DefaultSpreadSheet"
+ adams.flow.transformer.PredictionEccentricity -grid 50
+ adams.flow.control.ContainerValuePicker -name predictions -value Predictions
+  adams.flow.sink.CallableSink -callable Predictions
+ adams.flow.control.ContainerValuePicker -name plot -value Predictions
+  adams.flow.sink.CallableSink -callable ActualVsPredictedPlot
