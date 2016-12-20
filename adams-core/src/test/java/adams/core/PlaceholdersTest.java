@@ -15,7 +15,7 @@
 
 /*
  * PlaceholdersTest.java
- * Copyright (C) 2009 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core;
@@ -88,6 +88,7 @@ public class PlaceholdersTest
     Placeholders.getSingleton().set("BLAH", "/some/where");
     String path = "/some/where.else/completely";
     assertEquals("shouldn't do a partial collapse", path, Placeholders.getSingleton().collapse(path));
+    Placeholders.getSingleton().remove("BLAH");
   }
 
   /**
