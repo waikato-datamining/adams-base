@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2016-02-15 15:22:06
+# Date: 2016-12-21 12:22:32
 # User: fracpete
 # Charset: UTF-8
 adams.flow.control.Flow -annotation "The flow loads classifier setups from a text file\\n(one setup per line), updates them via the SetVariable\\nactor in the CallableActors\\\' \\\"Classifier\\\" actor and then\\ncross-validates them on multiple datasets, outputting \\nthe results of the CV.\\nIn order to distinguish the results better from each other,\\nthe classifier setup is output as comment (attaching the \\n@{classifier} to the \\\"comment\\\" option in the EvaluationSummary\\nactor)." -flow-execution-listener adams.flow.execution.NullListener
@@ -21,4 +21,4 @@ adams.flow.control.Flow -annotation "The flow loads classifier setups from a tex
   adams.flow.control.Continue -condition "adams.flow.condition.bool.WekaCapabilities -capability NUMERIC_ATTRIBUTES -capability STRING_ATTRIBUTES -capability RELATIONAL_ATTRIBUTES -capability NUMERIC_CLASS -capability DATE_CLASS -capability STRING_CLASS -capability RELATIONAL_CLASS"
   adams.flow.transformer.WekaCrossValidationEvaluator -output weka.classifiers.evaluation.output.prediction.Null -classifier WekaClassifier -num-threads -1
   adams.flow.transformer.WekaEvaluationSummary -relation true -class-details true -comment @{classifier}
-  adams.flow.sink.HistoryDisplay -caret-at-start true -entry-name-variable entry
+  adams.flow.sink.HistoryDisplay -width 800 -caret-at-start true -entry-name-variable entry
