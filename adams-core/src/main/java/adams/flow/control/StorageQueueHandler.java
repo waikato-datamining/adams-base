@@ -249,7 +249,7 @@ public class StorageQueueHandler
   public synchronized Object remove() {
     Object	result;
 
-    result = m_Queue.remove(0);
+    result = m_Queue.poll();
     if (hasMonitoring())
       logMonitor("Remove", result);
     return result;
