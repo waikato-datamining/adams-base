@@ -1,0 +1,19 @@
+# Project: adams
+# Date: 2016-12-20 14:05:43
+# User: fracpete
+# Charset: UTF-8
+adams.flow.control.Flow -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/ellipse.png -file ${EXAMPLE_FLOWS}/data/circle.png
+ adams.flow.control.Tee -name "image name"
+  adams.flow.transformer.BaseName -remove-extensions true
+  adams.flow.transformer.SetVariable -var-name file
+ adams.flow.transformer.ImageReader -reader adams.data.io.input.JAIImageReader
+ adams.flow.control.Tee -name image
+  adams.flow.sink.DisplayPanelManager -width 740 -x -3 -provider "adams.flow.sink.ImageViewer -x -3 -writer adams.gui.print.NullWriter -selection-processor adams.gui.visualization.image.selection.NullProcessor -left-click-processor adams.gui.visualization.image.leftclick.NullProcessor -image-overlay adams.gui.visualization.image.NullOverlay" -entry-name-variable file
+ adams.flow.transformer.BufferedImageFeatureGenerator -algorithm "adams.data.image.features.MultiBufferedImageFeatureGenerator -converter adams.data.featureconverter.FeatureContainer -sub-generator \"adams.data.image.features.Moment -converter \\\"adams.data.featureconverter.SpreadSheet -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.DefaultSpreadSheet\\\" -moment \\\"adams.data.image.moments.Moment -p 2 -q 2\\\"\" -sub-generator \"adams.data.image.features.Moment -converter \\\"adams.data.featureconverter.SpreadSheet -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.DefaultSpreadSheet\\\" -moment \\\"adams.data.image.moments.NormalizedMoment -p 2 -q 2\\\"\" -sub-generator \"adams.data.image.features.Moment -converter \\\"adams.data.featureconverter.SpreadSheet -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.DefaultSpreadSheet\\\" -moment \\\"adams.data.image.moments.CentralMoment -p 2 -q 2\\\"\" -sub-generator \"adams.data.image.features.HusMoments -converter \\\"adams.data.featureconverter.SpreadSheet -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.DefaultSpreadSheet\\\"\" -sub-generator \"adams.data.image.features.Eccentricity -converter \\\"adams.data.featureconverter.SpreadSheet -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.DefaultSpreadSheet\\\"\""
+ adams.flow.transformer.ConvertFeatures -converter adams.data.featureconverter.FixedColumnText -output-type BOTH
+ adams.flow.control.SubProcess -name "header/row to string"
+  adams.flow.control.ArrayProcess
+   adams.flow.transformer.Convert -conversion adams.data.conversion.AnyToString
+  adams.flow.transformer.StringJoin -glue \n
+ adams.flow.sink.HistoryDisplay -entry-name-variable file
