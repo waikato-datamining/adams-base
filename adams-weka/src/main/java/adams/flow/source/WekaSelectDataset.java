@@ -26,7 +26,7 @@ import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
 import adams.flow.core.AutomatableInteractiveActor;
 import adams.flow.core.InteractiveActor;
-import weka.gui.AdamsHelper;
+import adams.gui.chooser.WekaFileChooser;
 import weka.gui.ConverterFileChooser;
 
 import java.io.File;
@@ -200,7 +200,7 @@ public class WekaSelectDataset
     List<String>	options;
 
     result  = QuickInfoHelper.toString(this, "initialDirectory", m_InitialDirectory, "directory: ");
-    options = new ArrayList<String>();
+    options = new ArrayList<>();
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "outputArray", m_OutputArray, "array"));
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "stopFlowIfCanceled", m_StopFlowIfCanceled, "stops flow if canceled"));
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "nonInteractive", m_NonInteractive, "non-interactive"));
@@ -415,7 +415,7 @@ public class WekaSelectDataset
     boolean			result;
     int				retVal;
     File[]			files;
-    ConverterFileChooser	fileChooser;
+    WekaFileChooser 		fileChooser;
     int				i;
 
     result = false;
@@ -428,8 +428,7 @@ public class WekaSelectDataset
       return true;
     }
     
-    fileChooser = new ConverterFileChooser();
-    AdamsHelper.updateFileChooserAccessory(fileChooser);
+    fileChooser = new WekaFileChooser();
     if (m_FileChooserTitle.length() > 0)
       fileChooser.setDialogTitle(m_FileChooserTitle);
     if (m_InitialFiles.length > 0)
