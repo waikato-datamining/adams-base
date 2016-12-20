@@ -1,13 +1,14 @@
 # Project: adams
-# Date: 2016-02-15 15:03:37
+# Date: 2016-12-21 11:16:35
 # User: fracpete
 # Charset: UTF-8
 adams.flow.control.Flow -annotation "Demonstrates the use of plot-processors when generating timeseries plots.\\nIn this flow, the raw data is plotted next to data smoothed using LOWESS \\nand Savitzky-Golay." -flow-execution-listener adams.flow.execution.NullListener
  adams.flow.standalone.CallableActors
-  adams.flow.sink.SequencePlotter -writer adams.gui.print.NullWriter -paintlet adams.gui.visualization.sequence.LinePaintlet -overlay-paintlet adams.gui.visualization.sequence.LinePaintlet -marker-paintlet adams.flow.sink.sequenceplotter.NoMarkers -error-paintlet adams.flow.sink.sequenceplotter.NoErrorPaintlet -mouse-click-action adams.flow.sink.sequenceplotter.NullClickAction -color-provider adams.gui.visualization.core.DefaultColorProvider -overlay-color-provider "adams.gui.visualization.core.GradientColorProvider -generator adams.gui.visualization.core.BiColorGenerator" -axis-x "adams.gui.visualization.core.AxisPanelOptions -label x -tick-generator \"adams.gui.visualization.core.axis.SimpleTickGenerator -num-ticks 20\" -width 40" -axis-y "adams.gui.visualization.core.AxisPanelOptions -label y -tick-generator adams.gui.visualization.core.axis.SimpleTickGenerator -width 60" -plot-updater adams.flow.sink.sequenceplotter.SimplePlotUpdater -post-processor adams.flow.sink.sequenceplotter.PassThrough
+  adams.flow.sink.SequencePlotter -writer adams.gui.print.NullWriter -paintlet adams.gui.visualization.sequence.LinePaintlet -overlay-paintlet adams.gui.visualization.sequence.LinePaintlet -marker-paintlet adams.flow.sink.sequenceplotter.NoMarkers -error-paintlet adams.flow.sink.sequenceplotter.NoErrorPaintlet -mouse-click-action adams.flow.sink.sequenceplotter.NullClickAction -color-provider adams.gui.visualization.core.DefaultColorProvider -overlay-color-provider "adams.gui.visualization.core.GradientColorProvider -generator adams.gui.visualization.core.BiColorGenerator" -axis-x "adams.gui.visualization.core.AxisPanelOptions -label x -type DATETIMEMSEC -tick-generator \"adams.gui.visualization.core.axis.SimpleTickGenerator -num-ticks 20\" -width 40 -custom-format d/M/y" -axis-y "adams.gui.visualization.core.AxisPanelOptions -label y -tick-generator adams.gui.visualization.core.axis.SimpleTickGenerator -width 60" -plot-updater adams.flow.sink.sequenceplotter.SimplePlotUpdater -post-processor adams.flow.sink.sequenceplotter.PassThrough
  adams.flow.source.FileSupplier -file ${FLOWS}/data/wine.arff
  adams.flow.transformer.WekaFileReader -loader weka.core.converters.ArffLoader
- adams.flow.transformer.Convert -conversion "adams.data.conversion.WekaInstancesToSpreadSheet -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.SpreadSheet"
+ adams.flow.transformer.Convert -conversion "adams.data.conversion.WekaInstancesToSpreadSheet -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.DefaultSpreadSheet"
+ adams.flow.transformer.SpreadSheetConvertCells -finder "adams.data.spreadsheet.cellfinder.CellRange -columns Date" -conversion "adams.data.conversion.StringToDateTimeType -format \"yyyy-MM-dd HH:mm:ss.SSS\" -datetime-type MSECS"
  adams.flow.transformer.SpreadSheetPlotGenerator -generator "adams.flow.transformer.plotgenerator.XYPlotGenerator -columns Fortified -x-column Date"
  adams.flow.control.Branch
   adams.flow.control.Sequence -name raw
