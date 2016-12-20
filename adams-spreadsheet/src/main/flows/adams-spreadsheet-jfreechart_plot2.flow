@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2016-11-29 13:51:11
+# Date: 2016-12-21 10:55:03
 # User: fracpete
 # Charset: UTF-8
 adams.flow.control.Flow -annotation "Plots actual vs predicted using JFreeChart." -flow-execution-listener adams.flow.execution.NullListener
@@ -8,4 +8,4 @@ adams.flow.control.Flow -annotation "Plots actual vs predicted using JFreeChart.
   adams.flow.transformer.BaseName -remove-extensions true
   adams.flow.transformer.SetVariable -var-name file
  adams.flow.transformer.SpreadSheetFileReader -reader "adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.DefaultSpreadSheet"
- adams.flow.sink.JFreeChartPlot -width 1200 -writer adams.gui.print.NullWriter -dataset adams.flow.sink.jfreechartplot.dataset.DefaultXY -chart "adams.flow.sink.jfreechartplot.chart.ScatterPlot -title @{file} -label-x actual -label-y predicted -orientation org.jfree.chart.plot.PlotOrientation"
+ adams.flow.sink.JFreeChartPlot -width 1200 -writer adams.gui.print.NullWriter -dataset adams.gui.visualization.jfreechart.dataset.DefaultXY -chart adams.gui.visualization.jfreechart.chart.ScatterPlot
