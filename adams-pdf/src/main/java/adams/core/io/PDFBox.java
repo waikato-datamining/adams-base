@@ -177,7 +177,7 @@ public class PDFBox {
     result   = false;
     document = load(file);
     if (document != null) {
-      result = print(document);
+      result = printWithDialog(document);
       close(document);
     }
 
