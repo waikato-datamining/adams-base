@@ -41,7 +41,7 @@ public class BoofCVHelper {
   /**
    * Turns the image into a buffered image.
    * 
-   * @img		the cimage to convert
+   * @param img		the image to convert
    * @return		the buffered image
    */
   public static BufferedImage toBufferedImage(ImageBase img) {
@@ -79,7 +79,7 @@ public class BoofCVHelper {
     if (img instanceof ImageSingleBand)
       return ((ImageSingleBand) img).clone();
     else
-      return img.subimage(0, 0, img.getWidth() - 1, img.getHeight() - 1, null);
+      return img.subimage(0, 0, img.getWidth(), img.getHeight(), null);
   }
 
   /**
@@ -115,7 +115,7 @@ public class BoofCVHelper {
       case BufferedImage.TYPE_INT_ARGB_PRE:
       case BufferedImage.TYPE_INT_BGR:
       case BufferedImage.TYPE_INT_RGB:
-        return toBoofCVMultiBandImage(img, BoofCVImageType.MULTIBAND);
+        return toBoofCVMultiBandImage(img);
       default:
 	return toBoofCVImage(img, BoofCVImageType.FLOAT_32);
     }
@@ -125,11 +125,10 @@ public class BoofCVHelper {
    * Converts the image to the specified type if necessary.
    *
    * @param img		the image to convert
-   * @param type	the type of image
-   * @return		the converted container
+   * @return		the converted image
    */
-  public static ImageBase toBoofCVMultiBandImage(BufferedImage img, BoofCVImageType type) {
-    return ConvertBufferedImage.convertFromMulti(img,null,true,ImageUInt8.class);
+  public static ImageBase toBoofCVMultiBandImage(BufferedImage img) {
+    return ConvertBufferedImage.convertFromMulti(img, null, true, ImageUInt8.class);
   }
 
   /**
