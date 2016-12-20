@@ -15,7 +15,7 @@
 
 /*
  * PDFViewer.java
- * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -23,7 +23,10 @@ package adams.flow.sink;
 import adams.core.io.JPod;
 import adams.core.io.PlaceholderFile;
 import adams.flow.core.Token;
+import adams.gui.chooser.BaseFileChooser;
 import adams.gui.core.BasePanel;
+import adams.gui.core.ExtensionFileFilter;
+import adams.gui.core.GUIHelper;
 import adams.gui.sendto.SendToActionSupporter;
 import adams.gui.sendto.SendToActionUtils;
 import adams.gui.visualization.pdf.PDFPanel;
@@ -131,6 +134,9 @@ public class PDFViewer
   /** the zoom level. */
   protected double m_Zoom;
 
+  /** the filedialog for saving the PDF file. */
+  protected transient BaseFileChooser m_PDFFileChooser;
+
   /**
    * Returns a string describing the object.
    *
@@ -231,6 +237,41 @@ public class PDFViewer
    */
   public Class[] accepts() {
     return new Class[]{String.class, File.class};
+  }
+
+  /**
+   * Returns (and initializes if necessary) the file chooser for the text.
+   *
+   * @return		the file chooser
+   */
+  protected BaseFileChooser getPDFFileChooser() {
+    BaseFileChooser	fileChooser;
+    ExtensionFileFilter filter;
+
+    if (m_PDFFileChooser == null) {
+      fileChooser = new BaseFileChooser();
+      filter = ExtensionFileFilter.getPdfFileFilter();
+      fileChooser.addChoosableFileFilter(filter);
+      fileChooser.setFileFilter(filter);
+      fileChooser.setDefaultExtension(filter.getExtensions()[0]);
+      m_PDFFileChooser = fileChooser;
+    }
+
+    return m_PDFFileChooser;
+  }
+
+  /**
+   * Saves the panel as picture.
+   */
+  protected void saveAs() {
+    int			retVal;
+
+    retVal = getPDFFileChooser().showSaveDialog(m_Panel);
+    if (retVal != BaseFileChooser.APPROVE_OPTION)
+      return;
+
+    if (!JPod.save(m_PDFPanel.getDocument(), getPDFFileChooser().getSelectedFile()))
+      GUIHelper.showErrorMessage(getParentComponent(), "Failed to save PDF document to: " + getPDFFileChooser().getSelectedFile());
   }
 
   /**
