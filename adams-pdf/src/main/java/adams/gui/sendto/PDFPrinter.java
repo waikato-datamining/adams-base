@@ -15,7 +15,7 @@
 
 /**
  * PDFPrinter.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2016 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.sendto;
 
@@ -86,7 +86,7 @@ public class PDFPrinter
     if (o instanceof de.intarsys.pdf.pd.PDDocument) {
       file = SendToActionUtils.nextTmpFile("pdfviewer", "pdf");
       if (JPod.save((de.intarsys.pdf.pd.PDDocument) o, file)) {
-        if (!PDFBox.print(file))
+        if (!PDFBox.printWithDialog(file))
           result = "Failed to print PDF document: " + file;
       }
       else {
