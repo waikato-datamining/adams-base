@@ -29,4 +29,5 @@ HOME=%h
 CWD=%c
 
 # the location of the example flows
+FLOWS=%c/src/main/flows
 EXAMPLE_FLOWS=%c/src/main/flows
