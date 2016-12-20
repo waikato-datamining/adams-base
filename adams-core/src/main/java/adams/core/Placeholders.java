@@ -263,7 +263,9 @@ public class Placeholders {
     String		value;
     String		bestKey;
     int			bestLeft;
+    int			bestKeyLen;
     int			currLeft;
+    int			currKeyLen;
     boolean		valid;
 
     if (s == null)
@@ -272,8 +274,9 @@ public class Placeholders {
     result  = s;
     bestKey = null;
     if ((result.length() > 0) && !result.equals(".")) {
-      bestLeft = result.length();
-      pholders = placeholders();
+      bestLeft   = result.length();
+      bestKeyLen = result.length();
+      pholders   = placeholders();
       while (pholders.hasMoreElements()) {
 	key   = pholders.nextElement();
 	value = get(key);
@@ -284,10 +287,19 @@ public class Placeholders {
 	  if ((result.length() > value.length()) && ((result.charAt(value.length()) == '/') || (result.charAt(value.length()) == '\\')))
 	    valid = true;
 	  if (valid) {
-	    currLeft = result.replace(value, "").length();
+	    currLeft   = result.replace(value, "").length();
+	    currKeyLen = key.length();
+	    // favor shorter path
 	    if (currLeft < bestLeft) {
-	      bestKey = key;
-	      bestLeft = currLeft;
+	      bestKey    = key;
+	      bestLeft   = currLeft;
+	    }
+	    else if (currLeft == bestLeft) {
+	      // favor shorter key
+	      if (currKeyLen < bestKeyLen) {
+		bestKey = key;
+		bestKeyLen = currKeyLen;
+	      }
 	    }
 	  }
 	}
@@ -400,6 +412,12 @@ public class Placeholders {
     while (enm.hasMoreElements()) {
       String placeholder = PLACEHOLDER_START + enm.nextElement() + PLACEHOLDER_END;
       System.out.println(placeholder + " -> " + getSingleton().expand(placeholder));
+    }
+
+    for (String arg: args) {
+      System.out.println("--> " + arg);
+      System.out.println("  collapsed: " + getSingleton().collapse(arg));
+      System.out.println("  expanded: " + getSingleton().expand(arg));
     }
   }
 }
