@@ -19,28 +19,19 @@
  */
 package adams.core;
 
-import adams.core.ClassCache.ClassFileFilter;
-import adams.core.ClassCache.DirectoryFilter;
+import adams.core.ClassPathTraversal.TraversalListener;
 import adams.core.logging.LoggingObject;
 
-import java.io.File;
-import java.net.URISyntaxException;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.List;
-import java.util.jar.Attributes;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
-import java.util.jar.Manifest;
-import java.util.logging.Level;
 
 /**
  * For locating classes on the classpath.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
+ * @see ClassPathTraversal
  */
 public class FindClass
   extends LoggingObject {
@@ -48,196 +39,66 @@ public class FindClass
   /** for serialization. */
   private static final long serialVersionUID = -2973185784363491578L;
 
-  /** the key for the default package. */
-  public final static String DEFAULT_PACKAGE = "DEFAULT";
-
-  /** the search string. */
-  protected String m_Search;
-
-  /** whether search is a regular expression. */
-  protected boolean m_RegExp;
-
-  /** the URLs that matched the search. */
-  protected List<URL> m_Matches;
-
-  /** the current URL. */
-  protected URL m_CurrentURL;
-
   /**
-   * Fixes the classname, turns "/" and "\" into "." and removes ".class".
+   * For collecting URLs.
    *
-   * @param classname	the classname to process
-   * @return		the processed classname
+   * @author  fracpete (fracpete at waikato dot ac dot nz)
+   * @version $Revision$
    */
-  protected String cleanUp(String classname) {
-    String	result;
+  public static class Listener
+    implements TraversalListener {
 
-    result = classname;
+    /** the search string. */
+    protected String m_Search;
 
-    if (result.contains("/"))
-      result = result.replace("/", ".");
-    if (result.contains("\\"))
-      result = result.replace("\\", ".");
-    if (result.endsWith(".class"))
-      result = result.substring(0, result.length() - 6);
+    /** whether search is a regular expression. */
+    protected boolean m_RegExp;
 
-    return result;
-  }
+    /** the URLs that matched the search. */
+    protected List<URL> m_Matches;
 
-  /**
-   * Checks the classname against the search.
-   *
-   * @param classname	the classname, automatically removes ".class" and
-   * 			turns "/" or "\" into "."
-   */
-  protected void check(String classname) {
-    boolean	match;
-
-    classname = cleanUp(classname);
-
-    if (m_RegExp)
-      match = (classname.matches(m_Search));
-    else
-      match = (classname.equals(m_Search));
-
-    if (match) {
-      if (!m_Matches.contains(m_CurrentURL))
-	m_Matches.add(m_CurrentURL);
+    /**
+     * Initializes the collector.
+     *
+     * @param search 	the search string
+     * @param regExp 	true if the search string is regular expression
+     */
+    public Listener(String search, boolean regExp) {
+      m_Matches = new ArrayList<>();
+      m_Search  = search;
+      m_RegExp  = regExp;
     }
-  }
 
-  /**
-   * Fills the class cache with classes in the specified directory.
-   *
-   * @param prefix	the package prefix so far, null for default package
-   * @param dir		the directory to search
-   */
-  protected void searchDir(String prefix, File dir) {
-    File[]	files;
+    /**
+     * Gets called when a class is being traversed.
+     *
+     * @param classname		the current classname
+     * @param classPathPart	the current classpath part this classname is
+     *                          located in
+     */
+    @Override
+    public void traversing(String classname, URL classPathPart) {
+      boolean	match;
 
-    // check classes
-    files = dir.listFiles(new ClassFileFilter());
-    for (File file: files) {
-      if (prefix == null)
-	check(file.getName());
+      if (m_RegExp)
+	match = (classname.matches(m_Search));
       else
-	check(prefix + "." + file.getName());
-    }
+	match = (classname.equals(m_Search));
 
-    // descend in directories
-    files = dir.listFiles(new DirectoryFilter());
-    for (File file: files) {
-      if (prefix == null)
-	searchDir(file.getName(), file);
-      else
-	searchDir(prefix + "." + file.getName(), file);
-    }
-  }
-
-  /**
-   * Fills the class cache with classes in the specified directory.
-   *
-   * @param dir		the directory to search
-   */
-  protected void searchDir(File dir) {
-    if (isLoggingEnabled())
-      getLogger().log(Level.INFO, "Analyzing directory: " + dir);
-    searchDir(null, dir);
-  }
-
-  /**
-   * Analyzes the MANIFEST.MF file of a jar whether additional jars are
-   * listed in the "Class-Path" key.
-   *
-   * @param manifest	the manifest to analyze
-   */
-  protected void searchManifest(Manifest manifest) {
-    Attributes	atts;
-    String	cp;
-    String[]	parts;
-
-    if (manifest == null)
-      return;
-
-    atts = manifest.getMainAttributes();
-    cp   = atts.getValue("Class-Path");
-    if (cp == null)
-      return;
-
-    parts = cp.split(" ");
-    for (String part: parts) {
-      if (part.trim().length() == 0)
-	return;
-      if (part.toLowerCase().endsWith(".jar") || !part.equals("."))
-	searchClasspathPart(part);
-    }
-  }
-
-  /**
-   * Fills the class cache with classes from the specified jar.
-   *
-   * @param file		the jar to inspect
-   */
-  protected void searchJar(File file) {
-    JarFile		jar;
-    JarEntry		entry;
-    Enumeration		enm;
-
-    if (isLoggingEnabled())
-      getLogger().log(Level.INFO, "Analyzing jar: " + file);
-
-    if (!file.exists()) {
-      getLogger().log(Level.WARNING, "Jar does not exist: " + file);
-      return;
-    }
-
-    try {
-      jar = new JarFile(file);
-      enm = jar.entries();
-      while (enm.hasMoreElements()) {
-	entry = (JarEntry) enm.nextElement();
-	if (entry.getName().endsWith(".class"))
-	  check(entry.getName());
-      }
-      searchManifest(jar.getManifest());
-    }
-    catch (Exception e) {
-      getLogger().log(Level.SEVERE, "Failed to inspect: " + file, e);
-    }
-  }
-
-  /**
-   * Analyzes a part of the classpath.
-   *
-   * @param part	the part to analyze
-   */
-  protected void searchClasspathPart(String part) {
-    File		file;
-
-    file = null;
-    if (part.startsWith("file:")) {
-      part = part.replace(" ", "%20");
-      try {
-	file = new File(new java.net.URI(part));
-      }
-      catch (URISyntaxException e) {
-	getLogger().log(Level.SEVERE, "Failed to generate URI: " + part, e);
+      if (match) {
+	if (!m_Matches.contains(classPathPart))
+	  m_Matches.add(classPathPart);
       }
     }
-    else {
-      file = new File(part);
-    }
-    if (file == null) {
-      if (isLoggingEnabled())
-	getLogger().log(Level.INFO, "Skipping: " + part);
-      return;
-    }
 
-    // find classes
-    if (file.isDirectory())
-      searchDir(file);
-    else if (file.exists())
-      searchJar(file);
+    /**
+     * Returns the matches.
+     *
+     * @return		the matches
+     */
+    public List<URL> getMatches() {
+      return m_Matches;
+    }
   }
 
   /**
@@ -248,24 +109,14 @@ public class FindClass
    * @return		the matching URLs
    */
   public List<URL> search(String search, boolean regExp) {
-    String		part;
-    URLClassLoader 	sysLoader;
-    URL[] 		urls;
+    ClassPathTraversal	traversal;
+    Listener 		listener;
 
-    m_Matches = new ArrayList<>();
-    m_Search  = search;
-    m_RegExp  = regExp;
-    sysLoader = (URLClassLoader) getClass().getClassLoader();
-    urls      = sysLoader.getURLs();
-    for (URL url: urls) {
-      m_CurrentURL = url;
-      if (isLoggingEnabled())
-	getLogger().log(Level.INFO, "Classpath URL: " + url);
-      part = url.toString();
-      searchClasspathPart(part);
-    }
+    traversal = new ClassPathTraversal();
+    listener  = new Listener(search, regExp);
+    traversal.traverse(listener);
 
-    return m_Matches;
+    return listener.getMatches();
   }
 
   /**

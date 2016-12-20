@@ -19,77 +19,95 @@
  */
 package adams.core;
 
+import adams.core.ClassPathTraversal.TraversalListener;
 import adams.core.logging.LoggingObject;
 
-import java.io.File;
-import java.io.FileFilter;
-import java.net.URISyntaxException;
 import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.Enumeration;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.jar.Attributes;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
-import java.util.jar.Manifest;
-import java.util.logging.Level;
+import java.util.List;
 
 /**
- * A singleton that stores all classes on the classpath.
+ * A class that stores all classes on the classpath.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class ClassCache 
+public class ClassCache
   extends LoggingObject {
 
   /** for serialization. */
   private static final long serialVersionUID = -2973185784363491578L;
 
   /**
-   * For filtering classes.
+   * For listening to the class traversal and populating the caches.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
    * @version $Revision$
    */
-  public static class ClassFileFilter
-    implements FileFilter {
+  public static class Listener
+    implements TraversalListener {
+
+    /** for caching all classes on the class path (package-name &lt;-&gt; HashSet with classnames). */
+    protected HashMap<String,HashSet<String>> m_NameCache;
+
+    /** for caching all classes on the class path (package-name &lt;-&gt; HashSet with classes). */
+    protected HashMap<String,HashSet<Class>> m_ClassCache;
 
     /**
-     * Checks whether the file is a class.
-     *
-     * @param pathname	the file to check
-     * @return		true if a class file
+     * Initializes the listener.
      */
-    public boolean accept(File pathname) {
-      return pathname.getName().endsWith(".class");
+    public Listener() {
+      m_NameCache  = new HashMap<>();
+      m_ClassCache = new HashMap<>();
     }
-  }
-
-  /**
-   * For filtering classes.
-   *
-   * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
-   */
-  public static class DirectoryFilter
-    implements FileFilter {
 
     /**
-     * Checks whether the file is a directory.
+     * Gets called when a class is being traversed.
      *
-     * @param pathname	the file to check
-     * @return		true if a directory
+     * @param classname		the current classname
+     * @param classPathPart	the current classpath part this classname is
+     *                          located in
      */
-    public boolean accept(File pathname) {
-      return pathname.isDirectory();
+    @Override
+    public void traversing(String classname, URL classPathPart) {
+      String		pkgname;
+      HashSet<String>	names;
+
+      // classname and package
+      pkgname = ClassPathTraversal.extractPackage(classname);
+
+      // add to cache
+      if (!m_NameCache.containsKey(pkgname))
+        m_NameCache.put(pkgname, new HashSet<>());
+      if (!m_ClassCache.containsKey(pkgname))
+        m_ClassCache.put(pkgname, new HashSet<>());
+      names = m_NameCache.get(pkgname);
+
+      names.add(classname);
+    }
+
+    /**
+     * Returns the name cache.
+     *
+     * @return		the cache
+     */
+    public HashMap<String,HashSet<String>> getNameCache() {
+      return m_NameCache;
+    }
+
+    /**
+     * Returns the class cache.
+     *
+     * @return		the cache
+     */
+    public HashMap<String,HashSet<Class>> getClassCache() {
+      return m_ClassCache;
     }
   }
-
-  /** the key for the default package. */
-  public final static String DEFAULT_PACKAGE = "DEFAULT";
 
   /** for caching all classes on the class path (package-name &lt;-&gt; HashSet with classnames). */
   protected HashMap<String,HashSet<String>> m_NameCache;
@@ -106,65 +124,6 @@ public class ClassCache
   }
 
   /**
-   * Fixes the classname, turns "/" and "\" into "." and removes ".class".
-   *
-   * @param classname	the classname to process
-   * @return		the processed classname
-   */
-  protected String cleanUp(String classname) {
-    String	result;
-
-    result = classname;
-
-    if (result.contains("/"))
-      result = result.replace("/", ".");
-    if (result.contains("\\"))
-      result = result.replace("\\", ".");
-    if (result.endsWith(".class"))
-      result = result.substring(0, result.length() - 6);
-
-    return result;
-  }
-
-  /**
-   * Extracts the package name from the (clean) classname.
-   *
-   * @param classname	the classname to extract the package from
-   * @return		the package name
-   */
-  protected String extractPackage(String classname) {
-    if (classname.contains("."))
-      return classname.substring(0, classname.lastIndexOf("."));
-    else
-      return DEFAULT_PACKAGE;
-  }
-
-  /**
-   * Adds the classname to the cache.
-   *
-   * @param classname	the classname, automatically removes ".class" and
-   * 			turns "/" or "\" into "."
-   * @return		true if adding changed the cache
-   */
-  public boolean add(String classname) {
-    String		pkgname;
-    HashSet<String>	names;
-
-    // classname and package
-    classname = cleanUp(classname);
-    pkgname   = extractPackage(classname);
-    
-    // add to cache
-    if (!m_NameCache.containsKey(pkgname))
-      m_NameCache.put(pkgname, new HashSet<>());
-    if (!m_ClassCache.containsKey(pkgname))
-      m_ClassCache.put(pkgname, new HashSet<>());
-    names = m_NameCache.get(pkgname);
-
-    return names.add(classname);
-  }
-
-  /**
    * Removes the classname from the cache.
    *
    * @param classname	the classname to remove
@@ -174,113 +133,13 @@ public class ClassCache
     String		pkgname;
     HashSet<String>	names;
 
-    classname = cleanUp(classname);
-    pkgname   = extractPackage(classname);
+    classname = ClassPathTraversal.cleanUp(classname);
+    pkgname   = ClassPathTraversal.extractPackage(classname);
     names     = m_NameCache.get(pkgname);
     if (names != null)
       return names.remove(classname);
     else
       return false;
-  }
-
-  /**
-   * Fills the class cache with classes in the specified directory.
-   *
-   * @param prefix	the package prefix so far, null for default package
-   * @param dir		the directory to search
-   */
-  protected void initFromDir(String prefix, File dir) {
-    File[]	files;
-
-    // check classes
-    files = dir.listFiles(new ClassFileFilter());
-    for (File file: files) {
-      if (prefix == null)
-	add(file.getName());
-      else
-	add(prefix + "." + file.getName());
-    }
-
-    // descend in directories
-    files = dir.listFiles(new DirectoryFilter());
-    for (File file: files) {
-      if (prefix == null)
-	initFromDir(file.getName(), file);
-      else
-	initFromDir(prefix + "." + file.getName(), file);
-    }
-  }
-
-  /**
-   * Fills the class cache with classes in the specified directory.
-   *
-   * @param dir		the directory to search
-   */
-  protected void initFromDir(File dir) {
-    if (isLoggingEnabled())
-      getLogger().log(Level.INFO, "Analyzing directory: " + dir);
-    initFromDir(null, dir);
-  }
-
-  /**
-   * Analyzes the MANIFEST.MF file of a jar whether additional jars are
-   * listed in the "Class-Path" key.
-   * 
-   * @param manifest	the manifest to analyze
-   */
-  protected void initFromManifest(Manifest manifest) {
-    Attributes	atts;
-    String	cp;
-    String[]	parts;
-
-    if (manifest == null)
-      return;
-
-    atts = manifest.getMainAttributes();
-    cp   = atts.getValue("Class-Path");
-    if (cp == null)
-      return;
-    
-    parts = cp.split(" ");
-    for (String part: parts) {
-      if (part.trim().length() == 0)
-	return;
-      if (part.toLowerCase().endsWith(".jar") || !part.equals("."))
-        initFromClasspathPart(part);
-    }
-  }
-  
-  /**
-   * Fills the class cache with classes from the specified jar.
-   *
-   * @param file		the jar to inspect
-   */
-  protected void initFromJar(File file) {
-    JarFile		jar;
-    JarEntry		entry;
-    Enumeration		enm;
-
-    if (isLoggingEnabled())
-      getLogger().log(Level.INFO, "Analyzing jar: " + file);
-
-    if (!file.exists()) {
-      getLogger().log(Level.WARNING, "Jar does not exist: " + file);
-      return;
-    }
-    
-    try {
-      jar = new JarFile(file);
-      enm = jar.entries();
-      while (enm.hasMoreElements()) {
-        entry = (JarEntry) enm.nextElement();
-        if (entry.getName().endsWith(".class"))
-          add(entry.getName());
-      }
-      initFromManifest(jar.getManifest());
-    }
-    catch (Exception e) {
-      getLogger().log(Level.SEVERE, "Failed to inspect: " + file, e);
-    }
   }
 
   /**
@@ -319,57 +178,18 @@ public class ClassCache
   }
 
   /**
-   * Analyzes a part of the classpath.
-   * 
-   * @param part	the part to analyze
-   */
-  protected void initFromClasspathPart(String part) {
-    File		file;
-
-    file = null;
-    if (part.startsWith("file:")) {
-      part = part.replace(" ", "%20");
-      try {
-	file = new File(new java.net.URI(part));
-      }
-      catch (URISyntaxException e) {
-	getLogger().log(Level.SEVERE, "Failed to generate URI: " + part, e);
-      }
-    }
-    else {
-      file = new File(part);
-    }
-    if (file == null) {
-      if (isLoggingEnabled())
-	getLogger().log(Level.INFO, "Skipping: " + part);
-      return;
-    }
-
-    // find classes
-    if (file.isDirectory())
-      initFromDir(file);
-    else if (file.exists())
-      initFromJar(file);
-  }
-  
-  /**
    * Initializes the cache.
    */
   protected void initialize() {
-    String		part;
-    URLClassLoader 	sysLoader;
-    URL[] 		urls;
+    ClassPathTraversal	traversal;
+    Listener 		listener;
 
-    m_NameCache  = new HashMap<>();
-    m_ClassCache = new HashMap<>();
-    sysLoader = (URLClassLoader) getClass().getClassLoader();
-    urls      = sysLoader.getURLs();
-    for (URL url: urls) {
-      if (isLoggingEnabled())
-	getLogger().log(Level.INFO, "Classpath URL: " + url);
-      part = url.toString();
-      initFromClasspathPart(part);
-    }
+    traversal = new ClassPathTraversal();
+    listener  = new Listener();
+    traversal.traverse(listener);
+
+    m_NameCache  = listener.getNameCache();
+    m_ClassCache = listener.getClassCache();
   }
 
   /**
@@ -380,9 +200,11 @@ public class ClassCache
   public static void main(String[] args) {
     ClassCache cache = new ClassCache();
     Iterator<String> packages = cache.packages();
-    while (packages.hasNext()) {
-      String key = packages.next();
+    List<String> sorted = new ArrayList<>();
+    while (packages.hasNext())
+      sorted.add(packages.next());
+    Collections.sort(sorted);
+    for (String key: sorted)
       System.out.println(key + ": " + cache.getClassnames(key).size());
-    }
   }
 }
