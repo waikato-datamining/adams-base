@@ -6,7 +6,7 @@ adams.flow.control.Flow -annotation "Demonstrates how to add page numbers to an 
  adams.flow.standalone.CallableActors
   adams.flow.control.Sequence -name display
    adams.flow.sink.DisplayPanelManager -width 800 -height 800 -provider "adams.flow.sink.PDFViewer -writer adams.gui.print.NullWriter -zoom 75.0" -entry-name-variable entry
- adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/multiple_images.pdf
+ adams.flow.source.FileSupplier -file ${FLOWS}/data/multiple_images.pdf
  adams.flow.control.Tee -name original
   adams.flow.transformer.SetVariable -var-name entry -var-value original
   adams.flow.sink.CallableSink -callable display

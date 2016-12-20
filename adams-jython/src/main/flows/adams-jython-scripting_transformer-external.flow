@@ -4,5 +4,5 @@
 # Charset: UTF-8
 adams.flow.control.Flow -annotation "Simple flow with a Jython script that just adds\\na user-supplied integer value to the (integer) tokens\\nbeing passed through.\\nNB: If you experience problems executing the flow,\\nsee src/main/resources/documentation/Troubleshooting.txt" -flow-execution-listener adams.flow.execution.NullListener
  adams.flow.source.ForLoop
- adams.flow.transformer.Jython -script ${EXAMPLE_FLOWS}/scripts/SimpleTransformer.py -options add=10
+ adams.flow.transformer.Jython -script ${FLOWS}/scripts/SimpleTransformer.py -options add=10
  adams.flow.sink.Display -writer adams.data.io.output.NullWriter

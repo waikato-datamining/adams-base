@@ -6,7 +6,7 @@ adams.flow.control.Flow -annotation "Generates cross-validation splits and evalu
  adams.flow.standalone.CallableActors
   adams.flow.source.WekaClassifierSetup -name WekaClassifier -classifier "weka.classifiers.trees.J48 -C 0.25 -M 2"
  adams.flow.standalone.SetVariable -var-name folds -var-value 10
- adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/anneal.arff
+ adams.flow.source.FileSupplier -file ${FLOWS}/data/anneal.arff
  adams.flow.transformer.WekaFileReader -loader weka.core.converters.ArffLoader
  adams.flow.transformer.WekaClassSelector
  adams.flow.transformer.WekaCrossValidationSplit -folds @{folds}

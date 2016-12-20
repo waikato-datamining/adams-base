@@ -3,7 +3,7 @@
 # User: fracpete
 # Charset: UTF-8
 adams.flow.control.Flow -annotation "This flow plots the class attribute of the UCI dataset \\\"bolts\\\"\\nvs the \\\"TIME\\\" attribute. The class attribute is sorted in\\ndescending manner." -flow-execution-listener adams.flow.execution.NullListener
- adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/bolts.csv
+ adams.flow.source.FileSupplier -file ${FLOWS}/data/bolts.csv
  adams.flow.transformer.SpreadSheetFileReader -reader "adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.SpreadSheet"
  adams.flow.transformer.SpreadSheetSort -sort-column last -sort-order false
  adams.flow.transformer.SpreadSheetPlotGenerator -generator "adams.flow.transformer.plotgenerator.SimplePlotGenerator -columns last_1,last"

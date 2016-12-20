@@ -11,7 +11,7 @@ adams.flow.control.Flow -annotation "This flow shows how to continue training an
   adams.flow.sink.HistoryDisplay -entry-name-variable name
  adams.flow.source.Start
  adams.flow.control.Trigger -name "setup training data"
-  adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/labor.arff
+  adams.flow.source.FileSupplier -file ${FLOWS}/data/labor.arff
   adams.flow.transformer.WekaFileReader -loader weka.core.converters.ArffLoader
   adams.flow.transformer.WekaClassSelector
   adams.flow.control.Tee -name "initial training data"

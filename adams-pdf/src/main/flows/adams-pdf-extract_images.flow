@@ -3,6 +3,6 @@
 # User: fracpete
 # Charset: UTF-8
 adams.flow.control.Flow -annotation "Extracts all the images from a PDF and displays them." -flow-execution-listener adams.flow.execution.NullListener
- adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/multiple_images.pdf
+ adams.flow.source.FileSupplier -file ${FLOWS}/data/multiple_images.pdf
  adams.flow.transformer.PDFExtractImages
  adams.flow.sink.DisplayPanelManager -width 1200 -height 600 -provider "adams.flow.sink.ImageViewer -writer adams.gui.print.NullWriter -show-properties true -properties-width 100 -selection-processor adams.gui.visualization.image.selection.NullProcessor -image-overlay adams.gui.visualization.image.NullOverlay"

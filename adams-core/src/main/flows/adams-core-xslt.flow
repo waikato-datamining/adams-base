@@ -3,7 +3,7 @@
 # User: fracpete
 # Charset: UTF-8
 adams.flow.control.Flow -annotation "This flow loads an XML file as DOM document \\nand applies an XSLT stylesheet to it." -flow-execution-listener adams.flow.execution.NullListener
- adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/cdcollection.xml
+ adams.flow.source.FileSupplier -file ${FLOWS}/data/cdcollection.xml
  adams.flow.transformer.XMLFileReader
- adams.flow.transformer.XSLT -stylesheet ${EXAMPLE_FLOWS}/data/cdcollection.xsl
+ adams.flow.transformer.XSLT -stylesheet ${FLOWS}/data/cdcollection.xsl
  adams.flow.sink.Display -writer adams.data.io.output.NullWriter

@@ -5,7 +5,7 @@
 adams.flow.control.Flow -annotation "Builds a classifier in batch mode and outputs generated tree model (as graphic and DOT format)." -flow-execution-listener adams.flow.execution.NullListener
  adams.flow.standalone.CallableActors
   adams.flow.source.WekaClassifierSetup -classifier "weka.classifiers.trees.J48 -C 0.25 -M 2"
- adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/anneal.arff
+ adams.flow.source.FileSupplier -file ${FLOWS}/data/anneal.arff
  adams.flow.transformer.WekaFileReader -loader weka.core.converters.ArffLoader
  adams.flow.transformer.WekaClassSelector
  adams.flow.transformer.WekaTrainClassifier -name WekaClassifier

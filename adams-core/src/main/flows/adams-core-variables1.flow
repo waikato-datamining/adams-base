@@ -6,7 +6,7 @@ adams.flow.control.Flow -annotation "Simple example for using variables:\\n1. Th
  adams.flow.source.ForLoop -upper 2
  adams.flow.control.Tee -name "Tee (set filename variable)"
   adams.flow.transformer.Convert -conversion adams.data.conversion.AnyToString
-  adams.flow.transformer.StringReplace -name "StringReplace (path)" -find ^ -replace ${EXAMPLE_FLOWS}/data/variable -placeholder true
+  adams.flow.transformer.StringReplace -name "StringReplace (path)" -find ^ -replace ${FLOWS}/data/variable -placeholder true
   adams.flow.transformer.StringReplace -name "StringReplace (extension)" -find $ -replace .txt
   adams.flow.transformer.SetVariable -var-name filename
  adams.flow.control.Trigger -name "Trigger (load and display file)"

@@ -5,7 +5,7 @@
 adams.flow.control.Flow -annotation "Cross-validates a classifier and displays\\nthe classifier errors (2D and 3D)." -flow-execution-listener adams.flow.execution.NullListener
  adams.flow.standalone.CallableActors
   adams.flow.source.WekaClassifierSetup -name WekaClassifier -classifier "weka.classifiers.functions.GaussianProcesses -L 0.01 -N 0 -K \"weka.classifiers.functions.supportVector.RBFKernel -G 0.01 -C 250007\" -S 1"
- adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/bodyfat.arff
+ adams.flow.source.FileSupplier -file ${FLOWS}/data/bodyfat.arff
  adams.flow.transformer.WekaFileReader -loader weka.core.converters.ArffLoader
  adams.flow.transformer.WekaClassSelector
  adams.flow.transformer.WekaFilter -name "Remove 1st attribute" -filter "weka.filters.unsupervised.attribute.Remove -R 1"

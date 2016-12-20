@@ -8,7 +8,7 @@ adams.flow.control.Flow -annotation "Performs attribute selection on a training 
   adams.flow.sink.DisplayPanelManager -name test -x -3 -provider "adams.flow.sink.WekaInstancesDisplay -writer adams.gui.print.NullWriter" -entry-name-variable name
  adams.flow.source.Start
  adams.flow.control.Trigger -name "attsel on train"
-  adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/anneal_train.arff
+  adams.flow.source.FileSupplier -file ${FLOWS}/data/anneal_train.arff
   adams.flow.transformer.WekaFileReader -loader weka.core.converters.ArffLoader
   adams.flow.transformer.WekaClassSelector
   adams.flow.control.Tee -name original
@@ -21,7 +21,7 @@ adams.flow.control.Flow -annotation "Performs attribute selection on a training 
    adams.flow.transformer.SetVariable -var-name name -var-value train_reduced
    adams.flow.sink.CallableSink -callable train
  adams.flow.control.Trigger -name "apply selection to test"
-  adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/anneal_test.arff
+  adams.flow.source.FileSupplier -file ${FLOWS}/data/anneal_test.arff
   adams.flow.transformer.WekaFileReader -loader weka.core.converters.ArffLoader
   adams.flow.transformer.WekaClassSelector
   adams.flow.control.Tee -name original

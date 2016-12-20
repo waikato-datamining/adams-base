@@ -3,7 +3,7 @@
 # User: fracpete
 # Charset: UTF-8
 adams.flow.control.Flow -annotation "This flow explains how to use the \\\"diff\\\" functionality,\\ngenerating and displaying the various types of diffs." -flow-execution-listener adams.flow.execution.NullListener
- adams.flow.source.FileSupplier -output-array true -file ${EXAMPLE_FLOWS}/data/diff1.txt -file ${EXAMPLE_FLOWS}/data/diff2.txt
+ adams.flow.source.FileSupplier -output-array true -file ${FLOWS}/data/diff1.txt -file ${FLOWS}/data/diff2.txt
  adams.flow.control.Tee -name brief
   adams.flow.transformer.Diff -type BRIEF
   adams.flow.sink.Display -name unified -writer adams.data.io.output.NullWriter

@@ -3,7 +3,7 @@
 # User: fracpete
 # Charset: UTF-8
 adams.flow.control.Flow -annotation "Outputs all the row indices where the value in column TIME is greater than 50." -flow-execution-listener adams.flow.execution.NullListener
- adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/bolts.csv
+ adams.flow.source.FileSupplier -file ${FLOWS}/data/bolts.csv
  adams.flow.transformer.SpreadSheetFileReader -reader "adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.DefaultSpreadSheet"
  adams.flow.transformer.SpreadSheetCellFinder -output-array true -finder "adams.data.spreadsheet.cellfinder.RowFinderRange -row-finder \"adams.data.spreadsheet.rowfinder.ByNumericValue -att-index TIME -minimum 50.0 -minimum-included true -maximum NaN\" -columns TIME"
  adams.flow.control.ArrayProcess

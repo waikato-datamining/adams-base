@@ -3,7 +3,7 @@
 # User: fracpete
 # Charset: UTF-8
 adams.flow.control.Flow -annotation "Shows how to load a serialized model and display the tree." -flow-execution-listener adams.flow.execution.NullListener
- adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/j48.model
+ adams.flow.source.FileSupplier -file ${FLOWS}/data/j48.model
  adams.flow.transformer.WekaModelReader
  adams.flow.transformer.WekaClassifierInfo -type GRAPH
  adams.flow.control.Branch

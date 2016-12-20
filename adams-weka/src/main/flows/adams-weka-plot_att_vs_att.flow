@@ -5,7 +5,7 @@
 adams.flow.control.Flow -annotation "Allows the user to generate individual plots from a matrix plot,\\nplotting two sets of attributes (selected by the user) against\\neach other." -flow-execution-listener adams.flow.execution.NullListener
  adams.flow.standalone.CallableActors
   adams.flow.sink.DisplayPanelManager -width 900 -height 600 -provider "adams.flow.sink.WekaInstancesPlot -writer adams.gui.print.NullWriter" -entry-name-variable label
- adams.flow.source.WekaSelectDataset -stop-if-canceled true -initial-file ${EXAMPLE_FLOWS}/data/bodyfat.arff
+ adams.flow.source.WekaSelectDataset -stop-if-canceled true -initial-file ${FLOWS}/data/bodyfat.arff
  adams.flow.transformer.WekaFileReader -loader weka.core.converters.AArffLoader
  adams.flow.transformer.SetStorageValue -storage-name data
  adams.flow.transformer.WekaFilter -filter "weka.filters.unsupervised.instance.RemoveRange -R first-last"

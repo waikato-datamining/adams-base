@@ -6,11 +6,11 @@ adams.flow.control.Flow -annotation "The flow loads classifier setups from a tex
  adams.flow.standalone.CallableActors
   adams.flow.source.WekaClassifierSetup -name WekaClassifier -classifier @{classifier}
   adams.flow.sink.SimplePlot -writer adams.gui.print.NullWriter -paintlet "adams.gui.visualization.sequence.LinePaintlet -paint-all true" -overlay-paintlet adams.gui.visualization.sequence.NullPaintlet -mouse-click-action adams.flow.sink.sequenceplotter.NullClickAction -color-provider adams.gui.visualization.core.DefaultColorProvider -axis-x "adams.gui.visualization.core.AxisPanelOptions -label \"False Positive Rate\" -tick-generator \"adams.gui.visualization.core.axis.FancyTickGenerator -num-ticks 20\" -nth-value 2 -width 40 -custom-format 0.00" -axis-y "adams.gui.visualization.core.AxisPanelOptions -label \"True Positive Rate\" -tick-generator adams.gui.visualization.core.axis.FancyTickGenerator -nth-value 2 -width 60 -custom-format 0.0"
- adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/wekaclassifier_setups.txt
+ adams.flow.source.FileSupplier -file ${FLOWS}/data/wekaclassifier_setups.txt
  adams.flow.transformer.TextFileReader -reader adams.data.io.input.LineByLineTextReader
  adams.flow.transformer.SetVariable -var-name classifier
  adams.flow.control.Trigger -name "evaluate classifier"
-  adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/anneal.arff
+  adams.flow.source.FileSupplier -file ${FLOWS}/data/anneal.arff
   adams.flow.transformer.WekaFileReader -loader weka.core.converters.ArffLoader
   adams.flow.transformer.WekaClassSelector
   adams.flow.transformer.WekaCrossValidationEvaluator -output weka.classifiers.evaluation.output.prediction.Null -classifier WekaClassifier -num-threads -1

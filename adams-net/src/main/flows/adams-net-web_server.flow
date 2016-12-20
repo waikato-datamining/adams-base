@@ -2,8 +2,8 @@
 # Date: 2016-02-15 14:45:52
 # User: fracpete
 # Charset: UTF-8
-adams.flow.control.Flow -annotation "Runs a simple file server on port 8081, serving\\nfiles from ${EXAMPLE_FLOWS}/www." -flow-execution-listener adams.flow.execution.NullListener
- adams.flow.standalone.WebServer -port 8081 -handler "adams.flow.standalone.webserver.ResourceHandler -document-root ${EXAMPLE_FLOWS}/www" -handler adams.flow.standalone.webserver.DefaultHandler
+adams.flow.control.Flow -annotation "Runs a simple file server on port 8081, serving\\nfiles from ${FLOWS}/www." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.standalone.WebServer -port 8081 -handler "adams.flow.standalone.webserver.ResourceHandler -document-root ${FLOWS}/www" -handler adams.flow.standalone.webserver.DefaultHandler
  adams.flow.source.Start
  adams.flow.control.WhileLoop -name "Running file server" -condition adams.flow.condition.bool.True
   adams.flow.source.Start

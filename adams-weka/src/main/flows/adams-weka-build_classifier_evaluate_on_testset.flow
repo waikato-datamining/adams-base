@@ -5,11 +5,11 @@
 adams.flow.control.Flow -annotation "Builds a classifier on a training set, evaluates it on\\na separate test set, accessible through the callable\\nactor \\\"test\\\", and then outputs the evaluation \\nsummary and also saves the built classifier to a file." -flow-execution-listener adams.flow.execution.NullListener
  adams.flow.standalone.CallableActors
   adams.flow.source.SequenceSource -name test
-   adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/anneal_test.arff
+   adams.flow.source.FileSupplier -file ${FLOWS}/data/anneal_test.arff
    adams.flow.transformer.WekaFileReader -loader weka.core.converters.ArffLoader
    adams.flow.transformer.WekaClassSelector
   adams.flow.source.WekaClassifierSetup -classifier "weka.classifiers.trees.J48 -C 0.25 -M 2"
- adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/anneal_train.arff
+ adams.flow.source.FileSupplier -file ${FLOWS}/data/anneal_train.arff
  adams.flow.transformer.WekaFileReader -loader weka.core.converters.ArffLoader
  adams.flow.transformer.WekaClassSelector
  adams.flow.transformer.WekaTrainClassifier
@@ -17,4 +17,4 @@ adams.flow.control.Flow -annotation "Builds a classifier on a training set, eval
   adams.flow.transformer.WekaTestSetEvaluator -output weka.classifiers.evaluation.output.prediction.Null -testset test
   adams.flow.transformer.WekaEvaluationSummary
   adams.flow.sink.Display -writer adams.data.io.output.NullWriter
- adams.flow.sink.WekaModelWriter -output ${EXAMPLE_FLOWS}/output/j48.model
+ adams.flow.sink.WekaModelWriter -output ${FLOWS}/output/j48.model

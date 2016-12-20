@@ -3,7 +3,7 @@
 # User: fracpete
 # Charset: UTF-8
 adams.flow.control.Flow -annotation "This flows loads both sheets from the spreadsheet\\nand displays them together in a DisplayPanelManager.\\nNB: You will have to adapt the path to the sample file." -flow-execution-listener adams.flow.execution.NullListener
- adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/sample.ods
+ adams.flow.source.FileSupplier -file ${FLOWS}/data/sample.ods
  adams.flow.transformer.SpreadSheetFileReader -reader "adams.data.io.input.ODFSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.SpreadSheet -sheets 1-2"
  adams.flow.control.Tee -name "get sheet name"
   adams.flow.transformer.SpreadSheetInfo -type NAME

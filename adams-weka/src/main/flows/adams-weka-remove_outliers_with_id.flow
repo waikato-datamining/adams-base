@@ -25,7 +25,7 @@ adams.flow.control.Flow
 			-tee
 				adams.flow.source.FileSupplier
 					-file
-					${EXAMPLE_FLOWS}/data/bodyfat.arff
+					${FLOWS}/data/bodyfat.arff
 			-tee
 				adams.flow.control.Trigger
 					-name

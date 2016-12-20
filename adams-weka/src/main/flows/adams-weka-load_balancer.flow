@@ -5,7 +5,7 @@
 adams.flow.control.Flow -annotation "The LoadBalancer actor allows the parallel execution of the \\nbalancer\\\'s sub-flow. Using \\\"-1\\\" as number of slots (ie threads)\\nall available CPUs/cores will be used to process the incoming\\ndata.\\nThis example cross-validates all available datasets with J48\\nand outputs the evaluation summary in the console." -flow-execution-listener adams.flow.execution.NullListener
  adams.flow.standalone.CallableActors
   adams.flow.source.WekaClassifierSetup -name WekaClassifier -classifier "weka.classifiers.trees.J48 -C 0.25 -M 2"
- adams.flow.source.DirectoryLister -dir ${EXAMPLE_FLOWS}/data -list-files true -regexp .*\\.arff
+ adams.flow.source.DirectoryLister -dir ${FLOWS}/data -list-files true -regexp .*\\.arff
  adams.flow.control.Tee
   adams.flow.sink.Display -writer adams.data.io.output.NullWriter
  adams.flow.control.LoadBalancer -load adams.flow.sink.Null -use-local-vars true

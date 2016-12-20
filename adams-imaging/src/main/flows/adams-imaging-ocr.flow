@@ -15,12 +15,12 @@ adams.flow.control.Flow -annotation "This flow performs OCR on an image containi
  adams.flow.standalone.TesseractConfiguration
  adams.flow.source.Start
  adams.flow.control.Trigger -name English
-  adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/ocr-eng.png
+  adams.flow.source.FileSupplier -file ${FLOWS}/data/ocr-eng.png
   adams.flow.transformer.CallableTransformer -callable image
   adams.flow.transformer.TesseractOCR -output-base ${TMP}/english -output-text true
   adams.flow.sink.CallableSink -callable Text
  adams.flow.control.Trigger -name German
-  adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/ocr-deu.png
+  adams.flow.source.FileSupplier -file ${FLOWS}/data/ocr-deu.png
   adams.flow.transformer.CallableTransformer -callable image
   adams.flow.transformer.TesseractOCR -language GERMAN -output-base ${TMP}/german -output-text true
   adams.flow.sink.CallableSink -callable Text

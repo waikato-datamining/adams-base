@@ -7,7 +7,7 @@ adams.flow.control.Flow -annotation "Lookup tables can be used a simple alternat
   adams.flow.sink.DisplayPanelManager -provider "adams.flow.sink.SpreadSheetDisplay -writer adams.data.io.output.NullWriter"
  adams.flow.source.Start
  adams.flow.control.Trigger -name "load lookup table"
-  adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/lookup.csv
+  adams.flow.source.FileSupplier -file ${FLOWS}/data/lookup.csv
   adams.flow.transformer.SpreadSheetFileReader -reader "adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.SpreadSheet"
   adams.flow.transformer.LookUpInit
  adams.flow.control.Trigger -name "output lookup table (1)"

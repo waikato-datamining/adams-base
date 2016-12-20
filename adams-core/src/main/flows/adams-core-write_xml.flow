@@ -5,4 +5,4 @@
 adams.flow.control.Flow -annotation "Here we create a DOM document from an input string\\nand store the object as XML file on disk." -flow-execution-listener adams.flow.execution.NullListener
  adams.flow.source.StringConstants -string "<note><to>Tove</to><from>Jani</from><heading>Reminder</heading><body>Don\\\'t forget me this weekend!</body></note>"
  adams.flow.transformer.Convert -conversion adams.data.conversion.XMLToDOM
- adams.flow.sink.XMLFileWriter -output ${EXAMPLE_FLOWS}/output/note.xml
+ adams.flow.sink.XMLFileWriter -output ${FLOWS}/output/note.xml

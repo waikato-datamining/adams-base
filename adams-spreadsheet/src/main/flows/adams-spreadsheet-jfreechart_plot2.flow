@@ -3,7 +3,7 @@
 # User: fracpete
 # Charset: UTF-8
 adams.flow.control.Flow -annotation "Plots actual vs predicted using JFreeChart." -flow-execution-listener adams.flow.execution.NullListener
- adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/predictions.csv
+ adams.flow.source.FileSupplier -file ${FLOWS}/data/predictions.csv
  adams.flow.control.Tee -name "file name"
   adams.flow.transformer.BaseName -remove-extensions true
   adams.flow.transformer.SetVariable -var-name file

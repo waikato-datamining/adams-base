@@ -9,11 +9,11 @@ adams.flow.control.Flow
 	-actor
 		adams.flow.source.FileSupplier
 			-file
-			${EXAMPLE_FLOWS}/data/datasets.zip
+			${FLOWS}/data/datasets.zip
 	-actor
 		adams.flow.transformer.UnZIP
 			-out-dir
-			${EXAMPLE_FLOWS}/output
+			${FLOWS}/output
 			-reg-exp
 			.*iris.*
 	-actor

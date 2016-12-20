@@ -13,7 +13,7 @@ adams.flow.control.Flow -annotation "Here we compare the impact of preprocessing
      adams.flow.transformer.WekaEvaluationSummary
      adams.flow.sink.HistoryDisplay -short-title true -entry-name-variable filter
     adams.flow.sink.DisplayPanelManager -short-title true -x -3 -provider "adams.flow.sink.WekaClassifierErrors -writer adams.gui.print.NullWriter -scaler \"adams.data.weka.predictions.AutoScaler -scaler adams.data.weka.predictions.RelativeNumericErrorScaler\"" -entry-name-variable filter
- adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/slug-original.arff
+ adams.flow.source.FileSupplier -file ${FLOWS}/data/slug-original.arff
  adams.flow.transformer.WekaFileReader -loader weka.core.converters.ArffLoader
  adams.flow.control.Branch -num-threads 0
   adams.flow.control.Sequence -name "no preprocessing"

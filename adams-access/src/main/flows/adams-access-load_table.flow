@@ -13,13 +13,13 @@ adams.flow.control.Flow
 			-file-chooser-title
 			Select Access database
 			-initial-dir
-			${EXAMPLE_FLOWS}/data
+			${FLOWS}/data
 			-extension
 			mdb
 			-extension
 			accdb
 			-initial-file
-			${EXAMPLE_FLOWS}/data/labor.mdb
+			${FLOWS}/data/labor.mdb
 	-actor
 		adams.flow.control.Tee
 			-name

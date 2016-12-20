@@ -3,7 +3,7 @@
 # User: fracpete
 # Charset: UTF-8
 adams.flow.control.Flow -annotation "Here, the  dataset is split into subsets based on the class value.\\nEach subset contains all rows of a unique class value." -flow-execution-listener adams.flow.execution.NullListener
- adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/anneal.arff
+ adams.flow.source.FileSupplier -file ${FLOWS}/data/anneal.arff
  adams.flow.transformer.WekaFileReader -loader weka.core.converters.ArffLoader
  adams.flow.transformer.WekaSubsets -index last
  adams.flow.sink.DisplayPanelManager -provider "adams.flow.sink.WekaInstancesDisplay -writer adams.gui.print.NullWriter"

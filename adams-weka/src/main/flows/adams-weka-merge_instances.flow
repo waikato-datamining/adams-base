@@ -3,7 +3,7 @@
 # User: fracpete
 # Charset: UTF-8
 adams.flow.control.Flow -annotation "This flows merges two Instances objects using the ID attribute\\nthat uniquely identifies each row." -flow-execution-listener adams.flow.execution.NullListener
- adams.flow.source.FileSupplier -output-array true -file ${EXAMPLE_FLOWS}/data/iris_sepal.arff -file ${EXAMPLE_FLOWS}/data/iris_petal.arff
+ adams.flow.source.FileSupplier -output-array true -file ${FLOWS}/data/iris_sepal.arff -file ${FLOWS}/data/iris_petal.arff
  adams.flow.control.ArrayProcess -array-class weka.core.Instances
   adams.flow.transformer.WekaFileReader -loader weka.core.converters.ArffLoader
   adams.flow.transformer.WekaClassSelector

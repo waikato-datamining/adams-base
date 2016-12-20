@@ -3,7 +3,7 @@
 # User: fracpete
 # Charset: UTF-8
 adams.flow.control.Flow -annotation "Computes an array statistic, in this case a histogram, on the\\nclass attribute and displays it, in tabular and graphical format." -flow-execution-listener adams.flow.execution.NullListener
- adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/bolts.csv
+ adams.flow.source.FileSupplier -file ${FLOWS}/data/bolts.csv
  adams.flow.transformer.SpreadSheetFileReader -reader "adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.SpreadSheet"
  adams.flow.transformer.SpreadSheetStatistic -location last -statistic "adams.data.statistics.ArrayHistogram -num-bins 10"
  adams.flow.control.Branch

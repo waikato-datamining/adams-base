@@ -3,10 +3,10 @@
 # User: fracpete
 # Charset: UTF-8
 adams.flow.control.Flow -annotation "Example flow demonstrating how to convert a CSV file\\nfrom German (de) locale, using \\\",\\\" as decimal separator\\nand \\\"\\\\t\\\" (tab) as column separator, into an English CSV \\nfile, using \\\".\\\" as decimal separator and \\\",\\\" as column \\nseparator." -flow-execution-listener adams.flow.execution.NullListener
- adams.flow.standalone.SetVariable -var-name output -var-value ${EXAMPLE_FLOWS}/output/english.csv
+ adams.flow.standalone.SetVariable -var-name output -var-value ${FLOWS}/output/english.csv
  adams.flow.source.Start
  adams.flow.control.Trigger -name convert
-  adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/german.csv
+  adams.flow.source.FileSupplier -file ${FLOWS}/data/german.csv
   adams.flow.control.Tee -name "display input"
    adams.flow.transformer.TextFileReader -reader adams.data.io.input.SingleStringTextReader
    adams.flow.sink.Display -name original -short-title true -writer adams.data.io.output.NullWriter

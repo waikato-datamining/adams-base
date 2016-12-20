@@ -5,7 +5,7 @@
 adams.flow.control.Flow -annotation "This flow demonstrates how to create empty \\nweka.core.Instance objects from an existing \\ndataset. Both, a dense and a sparse instance\\nare generated and displayed." -flow-execution-listener adams.flow.execution.NullListener
  adams.flow.standalone.CallableActors
   adams.flow.sink.HistoryDisplay
- adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/anneal.arff
+ adams.flow.source.FileSupplier -file ${FLOWS}/data/anneal.arff
  adams.flow.transformer.WekaFileReader -loader weka.core.converters.ArffLoader
  adams.flow.transformer.WekaClassSelector
  adams.flow.control.Branch

@@ -19,7 +19,7 @@ adams.flow.control.Flow
 			-var-name
 			output
 			-var-value
-			${EXAMPLE_FLOWS}/output/out.mdb
+			${FLOWS}/output/out.mdb
 	-actor
 		adams.flow.source.Start
 	-actor
@@ -39,7 +39,7 @@ adams.flow.control.Flow
 			-tee
 				adams.flow.source.FileSupplier
 					-file
-					${EXAMPLE_FLOWS}/data/labor.csv
+					${FLOWS}/data/labor.csv
 			-tee
 				adams.flow.transformer.SpreadSheetFileReader
 					-reader

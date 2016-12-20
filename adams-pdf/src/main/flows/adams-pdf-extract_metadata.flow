@@ -3,6 +3,6 @@
 # User: fracpete
 # Charset: UTF-8
 adams.flow.control.Flow -annotation "Extracts the meta-data from the \\nPDF document and displays it." -flow-execution-listener adams.flow.execution.NullListener
- adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/pdf_with_images.pdf
+ adams.flow.source.FileSupplier -file ${FLOWS}/data/pdf_with_images.pdf
  adams.flow.transformer.PDFMetaData
  adams.flow.sink.Display -writer adams.data.io.output.NullWriter

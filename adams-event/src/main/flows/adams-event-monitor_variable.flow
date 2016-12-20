@@ -45,7 +45,7 @@ adams.flow.control.Flow
 					-find
 					^
 					-replace
-					${EXAMPLE_FLOWS}/data/variable
+					${FLOWS}/data/variable
 					-placeholder
 					true
 			-tee

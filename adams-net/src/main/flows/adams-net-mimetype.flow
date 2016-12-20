@@ -3,7 +3,7 @@
 # User: fracpete
 # Charset: UTF-8
 adams.flow.control.Flow -annotation "Determines and displays the mime-types of several files." -flow-execution-listener adams.flow.execution.NullListener
- adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/3666455665_18795f0741.jpg -file ${EXAMPLE_FLOWS}/data/bolts.csv -file ${EXAMPLE_FLOWS}/data/books.xml
+ adams.flow.source.FileSupplier -file ${FLOWS}/data/3666455665_18795f0741.jpg -file ${FLOWS}/data/bolts.csv -file ${FLOWS}/data/books.xml
  adams.flow.control.Tee -name "Store filename in @{file}"
   adams.flow.transformer.BaseName
   adams.flow.transformer.SetVariable -var-name file

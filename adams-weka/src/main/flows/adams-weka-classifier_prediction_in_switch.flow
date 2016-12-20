@@ -5,14 +5,14 @@
 adams.flow.control.Flow -annotation "This flow demonstrates how to use the class label\\nindex from the prediction that a trained classifier\\nreturned in a Switch statement." -flow-execution-listener adams.flow.execution.NullListener
  adams.flow.standalone.CallableActors
   adams.flow.source.SequenceSource -name model
-   adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/anneal_train.arff
+   adams.flow.source.FileSupplier -file ${FLOWS}/data/anneal_train.arff
    adams.flow.transformer.WekaFileReader -loader weka.core.converters.ArffLoader
    adams.flow.transformer.WekaClassSelector
    adams.flow.transformer.WekaTrainClassifier -name WekaClassifier
    adams.flow.control.ContainerValuePicker -value Model -switch-outputs true
   adams.flow.sink.Display -writer adams.data.io.output.NullWriter
   adams.flow.source.WekaClassifierSetup -classifier "weka.classifiers.trees.J48 -C 0.25 -M 2"
- adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/anneal_test.arff
+ adams.flow.source.FileSupplier -file ${FLOWS}/data/anneal_test.arff
  adams.flow.transformer.WekaFileReader -loader weka.core.converters.ArffLoader -output-type INCREMENTAL
  adams.flow.transformer.WekaClassSelector
  adams.flow.control.Switch -condition "adams.flow.condition.bool.WekaClassification -model-actor model" -case adams.flow.sink.Null

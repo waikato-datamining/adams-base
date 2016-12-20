@@ -3,7 +3,7 @@
 # User: fracpete
 # Charset: UTF-8
 adams.flow.control.Flow -annotation "Ranks attributes using PCA and outputs the summary." -flow-execution-listener adams.flow.execution.NullListener
- adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/anneal.arff
+ adams.flow.source.FileSupplier -file ${FLOWS}/data/anneal.arff
  adams.flow.transformer.WekaFileReader -loader weka.core.converters.ArffLoader
  adams.flow.transformer.WekaClassSelector
  adams.flow.transformer.WekaAttributeSelection -evaluator "weka.attributeSelection.PrincipalComponents -R 0.95 -A 5" -search "weka.attributeSelection.Ranker -T -1.7976931348623157E308 -N -1" -folds 0

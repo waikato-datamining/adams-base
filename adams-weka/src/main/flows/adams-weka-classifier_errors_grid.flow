@@ -10,7 +10,7 @@ adams.flow.control.Flow -annotation "A bunch of classifier setups (varying Linea
  adams.flow.transformer.Convert -conversion adams.data.conversion.AnyToCommandline
  adams.flow.transformer.SetVariable -var-name classifier
  adams.flow.control.Trigger -name evaluate
-  adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/bodyfat.arff
+  adams.flow.source.FileSupplier -file ${FLOWS}/data/bodyfat.arff
   adams.flow.transformer.WekaFileReader -loader weka.core.converters.ArffLoader
   adams.flow.transformer.WekaClassSelector
   adams.flow.transformer.WekaCrossValidationEvaluator -output weka.classifiers.evaluation.output.prediction.Null

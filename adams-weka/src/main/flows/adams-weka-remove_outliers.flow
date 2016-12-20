@@ -5,7 +5,7 @@
 adams.flow.control.Flow -annotation "Allows the user to remove outliers interactively." -flow-execution-listener adams.flow.execution.NullListener
  adams.flow.standalone.CallableActors
   adams.flow.source.WekaClassifierSetup -classifier "weka.classifiers.functions.LinearRegression -S 0 -R 1.0E-8 -num-decimal-places 4"
- adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/bodyfat.arff
+ adams.flow.source.FileSupplier -file ${FLOWS}/data/bodyfat.arff
  adams.flow.transformer.WekaFileReader -loader weka.core.converters.AArffLoader
  adams.flow.transformer.WekaClassSelector
  adams.flow.transformer.WekaCrossValidationEvaluator -output weka.classifiers.evaluation.output.prediction.Null -always-use-container true

@@ -3,7 +3,7 @@
 # User: fracpete
 # Charset: UTF-8
 adams.flow.control.Flow -annotation "Plots spectral data using JFreeChart." -flow-execution-listener adams.flow.execution.NullListener
- adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/sample_nir_spectrum.csv
+ adams.flow.source.FileSupplier -file ${FLOWS}/data/sample_nir_spectrum.csv
  adams.flow.control.Tee -name "file name"
   adams.flow.transformer.BaseName -remove-extensions true
   adams.flow.transformer.SetVariable -var-name file

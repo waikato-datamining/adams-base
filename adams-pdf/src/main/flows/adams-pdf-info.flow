@@ -5,7 +5,7 @@
 adams.flow.control.Flow -annotation "Outputs information on a PDF file." -flow-execution-listener adams.flow.execution.NullListener
  adams.flow.standalone.CallableActors
   adams.flow.sink.Display -writer adams.data.io.output.NullWriter
- adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/multiple_pages.pdf
+ adams.flow.source.FileSupplier -file ${FLOWS}/data/multiple_pages.pdf
  adams.flow.control.Tee -name "# pages"
   adams.flow.transformer.PDFInfo
   adams.flow.transformer.Convert -conversion adams.data.conversion.AnyToString

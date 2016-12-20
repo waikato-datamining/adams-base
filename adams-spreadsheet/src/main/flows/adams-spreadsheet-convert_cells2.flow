@@ -3,7 +3,7 @@
 # User: fracpete
 # Charset: UTF-8
 adams.flow.control.Flow -annotation "This flows applies a conversion scheme (\\\"Round\\\") to all the cells\\nin columns 8, if the values in column 1 are between 10 and 20. \\nThe original and the converted spreadsheet are displayed side-by-side." -flow-execution-listener adams.flow.execution.NullListener
- adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/bolts.csv
+ adams.flow.source.FileSupplier -file ${FLOWS}/data/bolts.csv
  adams.flow.transformer.SpreadSheetFileReader -reader "adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.SpreadSheet"
  adams.flow.control.Tee
   adams.flow.sink.SpreadSheetDisplay -name original -short-title true -writer adams.data.io.output.NullWriter

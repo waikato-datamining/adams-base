@@ -3,7 +3,7 @@
 # User: fracpete
 # Charset: UTF-8
 adams.flow.control.Flow -annotation "Demonstrates how to access and display data in JSON files." -flow-execution-listener adams.flow.execution.NullListener
- adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/webapp.json
+ adams.flow.source.FileSupplier -file ${FLOWS}/data/webapp.json
  adams.flow.transformer.JsonFileReader
  adams.flow.control.Branch
   adams.flow.control.Sequence -name "full display"

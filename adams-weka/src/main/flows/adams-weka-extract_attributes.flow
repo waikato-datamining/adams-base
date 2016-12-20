@@ -17,7 +17,7 @@ adams.flow.control.Flow -annotation "The flow generates subsets from a dataset. 
   adams.flow.transformer.StringReplace -find $ -replace @{att_index}
   adams.flow.transformer.SetProperty -property filter.attributeIndices -actor-name WekaFilter
  adams.flow.control.Trigger -name "extract attributes"
-  adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/anneal.arff
+  adams.flow.source.FileSupplier -file ${FLOWS}/data/anneal.arff
   adams.flow.transformer.WekaFileReader -loader weka.core.converters.ArffLoader
   adams.flow.transformer.CallableTransformer -callable WekaFilter
   adams.flow.sink.WekaFileWriter -output @{output_file} -saver "weka.core.converters.ArffSaver -decimal 6"

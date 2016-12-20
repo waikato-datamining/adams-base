@@ -3,5 +3,5 @@
 # User: fracpete
 # Charset: UTF-8
 adams.flow.control.Flow -annotation "Example flow that uses an external Groovy source\\nscript to generate some random integers." -flow-execution-listener adams.flow.execution.NullListener
- adams.flow.source.Groovy -script ${EXAMPLE_FLOWS}/scripts/SimpleSource.groovy
+ adams.flow.source.Groovy -script ${FLOWS}/scripts/SimpleSource.groovy
  adams.flow.sink.Display -writer adams.data.io.output.NullWriter

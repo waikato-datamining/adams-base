@@ -3,6 +3,6 @@
 # User: fracpete
 # Charset: UTF-8
 adams.flow.control.Flow -annotation "The flow loads the UCI dataset \\\"waveform-5000\\\"\\nand displays all the 40 numeric attributes in \\nbox plots, side by side, with the same axis for\\nbetter comparison." -flow-execution-listener adams.flow.execution.NullListener
- adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/waveform-5000.csv
+ adams.flow.source.FileSupplier -file ${FLOWS}/data/waveform-5000.csv
  adams.flow.transformer.SpreadSheetFileReader -reader "adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.DefaultSpreadSheet"
  adams.flow.sink.BoxPlot -width 1300 -height 750 -writer adams.gui.print.NullWriter -height-plot 150 -num-horizontal 10 -same-axis true -attributes 1-40

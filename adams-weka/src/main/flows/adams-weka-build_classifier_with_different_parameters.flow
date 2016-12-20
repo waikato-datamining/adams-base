@@ -9,7 +9,7 @@ adams.flow.control.Flow -annotation "Since only classes implementing the ADAMS O
  adams.flow.transformer.SetVariable -var-name confidence
  adams.flow.transformer.SetProperty -property classifier.confidenceFactor -actor-name WekaClassifier
  adams.flow.control.Trigger
-  adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/labor.arff
+  adams.flow.source.FileSupplier -file ${FLOWS}/data/labor.arff
   adams.flow.transformer.WekaFileReader -loader weka.core.converters.ArffLoader
   adams.flow.transformer.WekaClassSelector
   adams.flow.transformer.WekaCrossValidationEvaluator -output weka.classifiers.evaluation.output.prediction.Null -classifier WekaClassifier -num-threads -1

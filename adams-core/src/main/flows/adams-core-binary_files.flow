@@ -2,8 +2,8 @@
 # Date: 2016-02-15 11:28:41
 # User: fracpete
 # Charset: UTF-8
-adams.flow.control.Flow -annotation "This flow loads a binary file, turns it into a BlobContainer,\\nadds some meta-data, displays the container and saves\\nthe file to ${EXAMPLE_FLOWS}/output/out.jpg" -flow-execution-listener adams.flow.execution.NullListener
- adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/3666455665_18795f0741.jpg
+adams.flow.control.Flow -annotation "This flow loads a binary file, turns it into a BlobContainer,\\nadds some meta-data, displays the container and saves\\nthe file to ${FLOWS}/output/out.jpg" -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.source.FileSupplier -file ${FLOWS}/data/3666455665_18795f0741.jpg
  adams.flow.control.Tee -name "get some info"
   adams.flow.control.Tee -name "file size"
    adams.flow.transformer.FileInfo -stop-flow-on-error true
@@ -19,4 +19,4 @@ adams.flow.control.Flow -annotation "This flow loads a binary file, turns it int
   adams.flow.transformer.SetReportValue -name "set last modified" -field lastmodified[S] -value @{lastmod}
  adams.flow.control.Tee
   adams.flow.sink.Display -writer adams.data.io.output.NullWriter
- adams.flow.sink.BinaryFileWriter -output ${EXAMPLE_FLOWS}/output/out.jpg
+ adams.flow.sink.BinaryFileWriter -output ${FLOWS}/output/out.jpg

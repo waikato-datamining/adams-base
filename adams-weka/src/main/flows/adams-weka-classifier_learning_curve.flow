@@ -12,12 +12,12 @@ adams.flow.control.Flow -annotation "Generates a learning curve for a J48 classi
   adams.flow.source.WekaClassifierSetup -classifier "weka.classifiers.trees.J48 -C 0.25 -M 2"
  adams.flow.source.Start
  adams.flow.control.Trigger -name "load testset"
-  adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/anneal_test.arff
+  adams.flow.source.FileSupplier -file ${FLOWS}/data/anneal_test.arff
   adams.flow.transformer.WekaFileReader -loader weka.core.converters.ArffLoader
   adams.flow.transformer.WekaClassSelector
   adams.flow.transformer.SetStorageValue -storage-name test
  adams.flow.control.Trigger -name "generate learning curve"
-  adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/anneal_train.arff
+  adams.flow.source.FileSupplier -file ${FLOWS}/data/anneal_train.arff
   adams.flow.transformer.WekaFileReader -loader weka.core.converters.ArffLoader -output-type INCREMENTAL
   adams.flow.transformer.WekaClassSelector
   adams.flow.transformer.WekaInstanceBuffer

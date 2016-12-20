@@ -5,13 +5,13 @@
 adams.flow.control.Flow -annotation "Outputs the chosen class distribution for each instance read from a dataset.\\nThe classifier used for performing the classification is generated from\\nanother dataset in the callable actor \\\"classifier\\\"." -flow-execution-listener adams.flow.execution.NullListener
  adams.flow.standalone.CallableActors
   adams.flow.source.SequenceSource -name classifier
-   adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/anneal.arff
+   adams.flow.source.FileSupplier -file ${FLOWS}/data/anneal.arff
    adams.flow.transformer.WekaFileReader -loader weka.core.converters.ArffLoader
    adams.flow.transformer.WekaClassSelector
    adams.flow.transformer.WekaTrainClassifier
    adams.flow.control.ContainerValuePicker -value Model -switch-outputs true
   adams.flow.source.WekaClassifierSetup -classifier "weka.classifiers.trees.J48 -C 0.25 -M 2"
- adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/anneal_test.arff
+ adams.flow.source.FileSupplier -file ${FLOWS}/data/anneal_test.arff
  adams.flow.transformer.WekaFileReader -loader weka.core.converters.ArffLoader -output-type INCREMENTAL
  adams.flow.transformer.WekaClassSelector
  adams.flow.transformer.WekaClassifying -model-actor classifier

@@ -5,7 +5,7 @@
 adams.flow.control.Flow -annotation "Builds SimpleKMeans models on several datasets.\\nOnly datasets with only letters in their filename \\n(apart from the extension) are considered. This\\navoids using the train/test splits also present in \\nthat directory." -flow-execution-listener adams.flow.execution.NullListener
  adams.flow.standalone.CallableActors
   adams.flow.source.WekaClustererSetup -clusterer "weka.clusterers.SimpleKMeans -init 0 -max-candidates 100 -periodic-pruning 10000 -min-density 2.0 -t1 -1.25 -t2 -1.0 -N 2 -A \"weka.core.EuclideanDistance -R first-last\" -I 500 -num-slots 1 -S 10"
- adams.flow.source.DirectoryLister -dir ${EXAMPLE_FLOWS}/data -list-files true -regexp [a-zA-Z]*\\.arff
+ adams.flow.source.DirectoryLister -dir ${FLOWS}/data -list-files true -regexp [a-zA-Z]*\\.arff
  adams.flow.control.Tee -name "get dataset name"
   adams.flow.transformer.BaseName -remove-extensions true
   adams.flow.transformer.SetVariable -var-name dataset

@@ -3,7 +3,7 @@
 # User: fracpete
 # Charset: UTF-8
 adams.flow.control.Flow -annotation "This flow loads an XML file as DOM document \\nand extracts data using XPath." -flow-execution-listener adams.flow.execution.NullListener
- adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/books.xml
+ adams.flow.source.FileSupplier -file ${FLOWS}/data/books.xml
  adams.flow.transformer.XMLFileReader
  adams.flow.transformer.XPath -annotation "Here we obtain all title nodes." -expression //title[@lang=\'en\']
  adams.flow.transformer.Convert -conversion adams.data.conversion.DOMNodeListToArray

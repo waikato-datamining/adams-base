@@ -9,11 +9,11 @@ adams.flow.control.Flow
 	-actor
 		adams.flow.source.FileSupplier
 			-file
-			${EXAMPLE_FLOWS}/data/anneal.arff
+			${FLOWS}/data/anneal.arff
 	-actor
 		adams.flow.transformer.GZIP
 			-output
-			${EXAMPLE_FLOWS}/output/anneal.arff.gz
+			${FLOWS}/output/anneal.arff.gz
 	-actor
 		adams.flow.sink.Display
 	-flow-execution-listener

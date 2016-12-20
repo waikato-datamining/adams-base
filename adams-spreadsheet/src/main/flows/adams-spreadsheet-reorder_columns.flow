@@ -6,7 +6,7 @@ adams.flow.control.Flow -annotation "Demonstrates how to reorder, duplicate and 
  adams.flow.standalone.GridView -width 1000 -num-cols 2 -writer adams.gui.print.NullWriter
   adams.flow.sink.SpreadSheetDisplay -name original -writer adams.data.io.output.NullWriter
   adams.flow.sink.SpreadSheetDisplay -name reordered -writer adams.data.io.output.NullWriter
- adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/bolts.csv
+ adams.flow.source.FileSupplier -file ${FLOWS}/data/bolts.csv
  adams.flow.transformer.SpreadSheetFileReader -reader "adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.SpreadSheet"
  adams.flow.control.Tee
   adams.flow.sink.CallableSink -callable original

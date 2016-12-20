@@ -5,7 +5,7 @@
 adams.flow.control.Flow -annotation "Shows how to merge two spreadsheets from storage\\nusing an ID attribute for aligning the rows in both\\nspreadsheets." -flow-execution-listener adams.flow.execution.NullListener
  adams.flow.standalone.CallableActors
   adams.flow.sink.DisplayPanelManager -name SpreadSheetDisplay -width 740 -provider "adams.flow.sink.SpreadSheetDisplay -writer adams.data.io.output.NullWriter" -entry-name-variable name
- adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/iris_with_id.csv
+ adams.flow.source.FileSupplier -file ${FLOWS}/data/iris_with_id.csv
  adams.flow.control.Tee -name "create first spreadsheet"
   adams.flow.transformer.SpreadSheetFileReader -reader "adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.SpreadSheet"
   adams.flow.transformer.SpreadSheetRemoveColumn -annotation "only leave first 4 columns" -position inv(1-3)

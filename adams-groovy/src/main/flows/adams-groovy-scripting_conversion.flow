@@ -9,5 +9,5 @@ adams.flow.control.Flow -annotation "Demonstrates how to use a Groovy script for
  adams.flow.transformer.Convert -name Convert-1 -conversion adams.data.conversion.IntToDouble
  adams.flow.control.Tee
   adams.flow.sink.CallableSink -callable Display
- adams.flow.transformer.Convert -conversion "adams.data.conversion.Groovy -script ${EXAMPLE_FLOWS}/scripts/SimpleConversion.groovy"
+ adams.flow.transformer.Convert -conversion "adams.data.conversion.Groovy -script ${FLOWS}/scripts/SimpleConversion.groovy"
  adams.flow.sink.CallableSink -callable Display

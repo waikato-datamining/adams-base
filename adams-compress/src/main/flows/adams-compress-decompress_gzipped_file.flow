@@ -9,13 +9,13 @@ adams.flow.control.Flow
 	-actor
 		adams.flow.source.FileSupplier
 			-file
-			${EXAMPLE_FLOWS}/data/iris.arff.gz
+			${FLOWS}/data/iris.arff.gz
 	-actor
 		adams.flow.transformer.GUNZIP
 			-use-out-dir
 			true
 			-out-dir
-			${EXAMPLE_FLOWS}/output
+			${FLOWS}/output
 	-actor
 		adams.flow.transformer.TextFileReader
 			-reader

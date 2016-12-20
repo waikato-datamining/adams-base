@@ -6,7 +6,7 @@ adams.flow.control.Flow -annotation "Uses prequential evaluation of an updateabl
  adams.flow.standalone.CallableActors
   adams.flow.source.WekaClassifierSetup -classifier weka.classifiers.bayes.NaiveBayesUpdateable
  adams.flow.standalone.SetVariable -var-name count -var-value 0
- adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/anneal.arff
+ adams.flow.source.FileSupplier -file ${FLOWS}/data/anneal.arff
  adams.flow.transformer.WekaFileReader -loader weka.core.converters.AArffLoader -output-type INCREMENTAL
  adams.flow.transformer.IncVariable -var-name count
  adams.flow.transformer.WekaClassSelector

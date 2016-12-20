@@ -5,7 +5,7 @@
 adams.flow.control.Flow -annotation "The outer loop in this flow generates the file name for\\nthe template generator which gets executed in the\\ninner loop." -flow-execution-listener adams.flow.execution.NullListener
  adams.flow.source.ForLoop -upper 3
  adams.flow.transformer.Convert -conversion adams.data.conversion.IntToString
- adams.flow.transformer.StringReplace -find ^ -replace ${EXAMPLE_FLOWS}/adams-meta-external_flow_variable- -placeholder true
+ adams.flow.transformer.StringReplace -find ^ -replace ${FLOWS}/adams-meta-external_flow_variable- -placeholder true
  adams.flow.transformer.StringReplace -name StringReplace-1 -find $ -replace .flow
  adams.flow.transformer.SetVariable -var-name filename
  adams.flow.control.Trigger

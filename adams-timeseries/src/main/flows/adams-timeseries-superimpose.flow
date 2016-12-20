@@ -5,7 +5,7 @@
 adams.flow.control.Flow -annotation "This flow demonstrates how to superimpose two timeseries\\nusing the TimeseriesAdd actor." -flow-execution-listener adams.flow.execution.NullListener
  adams.flow.standalone.CallableActors
   adams.flow.sink.TimeseriesDisplay -name Sales -writer adams.gui.print.NullWriter -paintlet adams.gui.visualization.timeseries.TimeseriesPaintlet -axis-x "adams.gui.visualization.timeseries.DefaultTimeseriesXAxisPanelOptions -label date -type DATE -tick-generator \"adams.gui.visualization.core.axis.PeriodicityTickGenerator -periodicity YEARLY -format yyyy\" -nth-value 2 -width 40 -custom-format yyyy -periodicity YEARLY" -axis-y "adams.gui.visualization.timeseries.DefaultTimeseriesYAxisPanelOptions -label \"sales (1000s ltr)\" -tick-generator adams.gui.visualization.core.axis.FancyTickGenerator -nth-value 2 -width 60 -custom-format 0" -color-provider adams.gui.visualization.core.DefaultColorProvider -plot-updater adams.flow.sink.timeseriesdisplay.SimplePlotUpdater
- adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/wine.arff
+ adams.flow.source.FileSupplier -file ${FLOWS}/data/wine.arff
  adams.flow.transformer.SpreadSheetFileReader -reader "adams.data.io.input.ArffSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.SpreadSheet"
  adams.flow.control.Tee -name red
   adams.flow.transformer.Convert -conversion "adams.data.conversion.SpreadSheetToTimeseries -date-column Date -value-column Red"

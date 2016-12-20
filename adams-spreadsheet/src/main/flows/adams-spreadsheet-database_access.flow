@@ -3,12 +3,12 @@
 # User: fracpete
 # Charset: UTF-8
 adams.flow.control.Flow -annotation "Demonstrates how to load spreadsheet data into a database (sqlite)\\nand return a subset using a SQL query." -error-handling ACTORS_DECIDE_TO_STOP_ON_ERROR -flow-execution-listener adams.flow.execution.NullListener
- adams.flow.standalone.DatabaseConnection -url jdbc:sqlite:${EXAMPLE_FLOWS}/output/test.db -data-type-setup adams.db.datatype.DummySetup
+ adams.flow.standalone.DatabaseConnection -url jdbc:sqlite:${FLOWS}/output/test.db -data-type-setup adams.db.datatype.DummySetup
  adams.flow.source.Start
  adams.flow.control.Trigger -name "drop database"
   adams.flow.standalone.ExecSQL -sql "drop table iris"
  adams.flow.control.Trigger -name "load data"
-  adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/iris.csv
+  adams.flow.source.FileSupplier -file ${FLOWS}/data/iris.csv
   adams.flow.transformer.SpreadSheetFileReader -reader "adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.SpreadSheet"
   adams.flow.sink.SpreadSheetDbWriter -table iris
  adams.flow.control.Trigger -name "create indices"

@@ -6,10 +6,10 @@ adams.flow.control.Flow -annotation "Builds a clusterer on a dataset with the cl
  adams.flow.standalone.CallableActors
   adams.flow.source.WekaClustererSetup -clusterer "weka.clusterers.SimpleKMeans -init 0 -max-candidates 100 -periodic-pruning 10000 -min-density 2.0 -t1 -1.25 -t2 -1.0 -N 2 -A \"weka.core.EuclideanDistance -R first-last\" -I 500 -num-slots 1 -S 10"
   adams.flow.source.SequenceSource -name Testset
-   adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/anneal_test.arff
+   adams.flow.source.FileSupplier -file ${FLOWS}/data/anneal_test.arff
    adams.flow.transformer.WekaFileReader -loader weka.core.converters.ArffLoader
    adams.flow.transformer.WekaFilter -filter "weka.filters.unsupervised.attribute.Remove -R last"
- adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/anneal_train.arff
+ adams.flow.source.FileSupplier -file ${FLOWS}/data/anneal_train.arff
  adams.flow.transformer.WekaFileReader -loader weka.core.converters.ArffLoader
  adams.flow.transformer.WekaFilter -filter "weka.filters.unsupervised.attribute.Remove -R last"
  adams.flow.transformer.WekaTrainClusterer -post-processor adams.flow.transformer.wekaclusterer.PassThrough

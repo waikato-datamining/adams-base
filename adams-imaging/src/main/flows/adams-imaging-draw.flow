@@ -5,7 +5,7 @@
 adams.flow.control.Flow -annotation "Drawing on images is easy using the Draw transformer and its\\nvarious draw operations." -flow-execution-listener adams.flow.execution.NullListener
  adams.flow.standalone.CallableActors
   adams.flow.source.SequenceSource -name image
-   adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/3666455665_18795f0741.jpg
+   adams.flow.source.FileSupplier -file ${FLOWS}/data/3666455665_18795f0741.jpg
    adams.flow.transformer.ImageReader -reader adams.data.io.input.JAIImageReader
    adams.flow.transformer.BufferedImageTransformer -transformer "adams.data.jai.transformer.Resize -width 100.0 -height 100.0"
  adams.flow.source.NewImage -width 600 -height 400 -conversion adams.data.conversion.BufferedImageToBufferedImage

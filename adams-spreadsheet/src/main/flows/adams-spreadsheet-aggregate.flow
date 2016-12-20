@@ -3,7 +3,7 @@
 # User: fracpete
 # Charset: UTF-8
 adams.flow.control.Flow -annotation "For each of the class label subsets (setosa, versicolor, virginica),\\nthe following statistics are calculated for each of the attributes:\\n  min, max, mean, stdev\\nThe aggregates are computed in two ways:\\n  1. using the SpreadSheetAggregate transformer\\n  2. using the SpreadSheetQuery transformer using an SQL-like query language\\nThe resulting spreadsheets are then displayed." -flow-execution-listener adams.flow.execution.NullListener
- adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/iris.csv
+ adams.flow.source.FileSupplier -file ${FLOWS}/data/iris.csv
  adams.flow.transformer.SpreadSheetFileReader -reader "adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.SpreadSheet -missing \"\""
  adams.flow.control.Branch
   adams.flow.control.Sequence -name aggregates

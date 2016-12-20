@@ -7,8 +7,8 @@ adams.flow.control.Flow -annotation "In this example, external flows (sources) a
   adams.flow.sink.Display -name output -writer adams.data.io.output.NullWriter
  adams.flow.source.Start
  adams.flow.control.Trigger -name "execute external flow (1)"
-  adams.flow.source.ExternalSource -file ${EXAMPLE_FLOWS}/adams-core-external_flow_sub-1.flow
+  adams.flow.source.ExternalSource -file ${FLOWS}/adams-core-external_flow_sub-1.flow
   adams.flow.sink.CallableSink -callable output
  adams.flow.control.Trigger -name "execute external flow (2)"
-  adams.flow.source.ExternalSource -file ${EXAMPLE_FLOWS}/adams-core-external_flow_sub-2.flow
+  adams.flow.source.ExternalSource -file ${FLOWS}/adams-core-external_flow_sub-2.flow
   adams.flow.sink.CallableSink -callable output

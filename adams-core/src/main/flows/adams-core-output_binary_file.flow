@@ -3,7 +3,7 @@
 # User: fracpete
 # Charset: UTF-8
 adams.flow.control.Flow -annotation "Outputs a binary file in hex notation, 16 bytes per row.\\nOnly the first 256 bytes are output." -flow-execution-listener adams.flow.execution.NullListener
- adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/3666455665_18795f0741.jpg
+ adams.flow.source.FileSupplier -file ${FLOWS}/data/3666455665_18795f0741.jpg
  adams.flow.transformer.BinaryFileReader -end 256
  adams.flow.transformer.Convert -conversion adams.data.conversion.ByteToHex
  adams.flow.transformer.SequenceToArray -length 16

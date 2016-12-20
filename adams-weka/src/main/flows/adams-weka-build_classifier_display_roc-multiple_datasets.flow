@@ -5,7 +5,7 @@
 adams.flow.control.Flow -annotation "Cross-validates a classifier on selected datasets and displays the ROC curves." -flow-execution-listener adams.flow.execution.NullListener
  adams.flow.standalone.CallableActors
   adams.flow.source.WekaClassifierSetup -classifier weka.classifiers.bayes.NaiveBayes
- adams.flow.source.SelectFile -stop-if-canceled true -file-chooser-title "Select datasets" -extension arff -initial-file ${EXAMPLE_FLOWS}/data/anneal.arff -initial-file ${EXAMPLE_FLOWS}/data/iris.arff -initial-file ${EXAMPLE_FLOWS}/data/labor.arff
+ adams.flow.source.SelectFile -stop-if-canceled true -file-chooser-title "Select datasets" -extension arff -initial-file ${FLOWS}/data/anneal.arff -initial-file ${FLOWS}/data/iris.arff -initial-file ${FLOWS}/data/labor.arff
  adams.flow.transformer.WekaFileReader -loader weka.core.converters.ArffLoader
  adams.flow.control.Tee -annotation "get relation name for plot"
   adams.flow.transformer.WekaInstancesInfo -type RELATION_NAME

@@ -5,7 +5,7 @@
 adams.flow.control.Flow -annotation "Outputs some basic information on the spreadsheet." -flow-execution-listener adams.flow.execution.NullListener
  adams.flow.standalone.CallableActors
   adams.flow.sink.Display -writer adams.data.io.output.NullWriter
- adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/bolts.csv
+ adams.flow.source.FileSupplier -file ${FLOWS}/data/bolts.csv
  adams.flow.transformer.SpreadSheetFileReader -reader "adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.SpreadSheet"
  adams.flow.control.Tee -name "# columns"
   adams.flow.transformer.SpreadSheetInfo -type NUM_COLUMNS

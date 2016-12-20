@@ -3,7 +3,7 @@
 # User: fracpete
 # Charset: UTF-8
 adams.flow.control.Flow -annotation "This flow shows how to extract a subset of elements\\nfrom an array, creating a new array." -flow-execution-listener adams.flow.execution.NullListener
- adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/bolts.csv
+ adams.flow.source.FileSupplier -file ${FLOWS}/data/bolts.csv
  adams.flow.transformer.TextFileReader -reader adams.data.io.input.LineArrayTextReader
  adams.flow.control.Tee
   adams.flow.transformer.ArrayToSequence

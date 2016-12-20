@@ -9,7 +9,7 @@ adams.flow.control.Flow -annotation "Locates objects in an image and displays th
  adams.flow.standalone.TabView -name Reports -short-title true -x -3
   adams.flow.sink.ReportDisplay -name "binary contours (report)"
   adams.flow.sink.ReportDisplay -name "canny edges (report)"
- adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/particles.jpg
+ adams.flow.source.FileSupplier -file ${FLOWS}/data/particles.jpg
  adams.flow.transformer.ImageReader -reader adams.data.io.input.JAIImageReader
  adams.flow.control.Branch
   adams.flow.control.Sequence -name "binary contours"

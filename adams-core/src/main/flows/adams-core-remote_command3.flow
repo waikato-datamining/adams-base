@@ -3,5 +3,5 @@
 # User: fracpete
 # Charset: UTF-8
 adams.flow.control.Flow -annotation "The newly created remote command simply gets executed.\\nCommand launches the text editor with a sample text file." -flow-execution-listener adams.flow.execution.NullListener
- adams.flow.source.NewRemoteCommand -command "adams.scripting.command.gui.MenuItem -menu-item adams.gui.menu.TextEditor -additional-parameter ${EXAMPLE_FLOWS}/data/diff1.txt"
+ adams.flow.source.NewRemoteCommand -command "adams.scripting.command.gui.MenuItem -menu-item adams.gui.menu.TextEditor -additional-parameter ${FLOWS}/data/diff1.txt"
  adams.flow.transformer.ExecuteRemoteCommand -permission-handler adams.scripting.permissionhandler.AllowAll

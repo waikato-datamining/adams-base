@@ -3,7 +3,7 @@
 # User: fracpete
 # Charset: UTF-8
 adams.flow.control.Flow -annotation "Example flow for turning a properties file into a spreadsheet." -flow-execution-listener adams.flow.execution.NullListener
- adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/simple.props
+ adams.flow.source.FileSupplier -file ${FLOWS}/data/simple.props
  adams.flow.transformer.PropertiesFileReader
  adams.flow.transformer.Convert -conversion adams.data.conversion.PropertiesToSpreadSheet
  adams.flow.sink.SpreadSheetDisplay -writer adams.data.io.output.NullWriter

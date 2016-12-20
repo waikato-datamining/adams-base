@@ -5,7 +5,7 @@
 adams.flow.control.Flow -annotation "Demonstrates how to perform queries on dates and how to update date cells." -flow-execution-listener adams.flow.execution.NullListener
  adams.flow.standalone.CallableActors
   adams.flow.sink.DisplayPanelManager -width 740 -provider "adams.flow.sink.SpreadSheetDisplay -writer adams.data.io.output.NullWriter" -entry-name-variable name
- adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/dates.csv
+ adams.flow.source.FileSupplier -file ${FLOWS}/data/dates.csv
  adams.flow.transformer.SpreadSheetFileReader -reader "adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.SpreadSheet -date-columns 1"
  adams.flow.control.Branch -num-threads 1
   adams.flow.control.Sequence -name original

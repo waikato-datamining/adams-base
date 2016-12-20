@@ -11,7 +11,7 @@ adams.flow.control.Flow -annotation "Generates multiple classifier set ups (Line
  adams.flow.control.Tee -name "display setup"
   adams.flow.sink.Display -name Setups -writer adams.data.io.output.NullWriter
  adams.flow.control.Trigger -name "evaluate setup"
-  adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/bodyfat.arff
+  adams.flow.source.FileSupplier -file ${FLOWS}/data/bodyfat.arff
   adams.flow.transformer.WekaFileReader -loader weka.core.converters.ArffLoader
   adams.flow.transformer.WekaClassSelector
   adams.flow.transformer.WekaCrossValidationEvaluator -output weka.classifiers.evaluation.output.prediction.Null -classifier WekaClassifier

@@ -3,7 +3,7 @@
 # User: fracpete
 # Charset: UTF-8
 adams.flow.control.Flow -annotation "In this flow, the user selects the attributes to use\\nfurther downstream in the flow. In this case, just\\na simple display of the dataset." -flow-execution-listener adams.flow.execution.NullListener
- adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/anneal.arff
+ adams.flow.source.FileSupplier -file ${FLOWS}/data/anneal.arff
  adams.flow.transformer.WekaFileReader -loader weka.core.converters.ArffLoader
  adams.flow.transformer.WekaChooseAttributes -stop-if-canceled true -custom-stop-message "User canceled selection of attributes!"
  adams.flow.transformer.WekaClassSelector

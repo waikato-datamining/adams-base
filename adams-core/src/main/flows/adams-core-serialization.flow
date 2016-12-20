@@ -3,7 +3,7 @@
 # User: fracpete
 # Charset: UTF-8
 adams.flow.control.Flow -annotation "Demonstrates how to save any (serializable) Java object in \\na file via serialization and also load it again, deserializing it." -flow-execution-listener adams.flow.execution.NullListener
- adams.flow.standalone.SetVariable -var-name file -var-value ${EXAMPLE_FLOWS}/output/pi.ser
+ adams.flow.standalone.SetVariable -var-name file -var-value ${FLOWS}/output/pi.ser
  adams.flow.source.Start
  adams.flow.control.Trigger -name serialize
   adams.flow.source.StringConstants -output-array true -string 3 -string 1 -string 4 -string 1 -string 6 -string 9 -string 2 -string 6

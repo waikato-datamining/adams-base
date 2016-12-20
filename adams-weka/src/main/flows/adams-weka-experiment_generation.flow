@@ -3,8 +3,8 @@
 # User: fracpete
 # Charset: UTF-8
 adams.flow.control.Flow -annotation "This flow generates an experiment template based on \\nclassifier setups stored in a text file. This template can \\nthen be used in conjunction with the Experiment actor." -flow-execution-listener adams.flow.execution.NullListener
- adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/wekaclassifier_setups.txt
+ adams.flow.source.FileSupplier -file ${FLOWS}/data/wekaclassifier_setups.txt
  adams.flow.transformer.TextFileReader -reader adams.data.io.input.LineArrayTextReader
  adams.flow.control.ArrayProcess -array-class weka.classifiers.Classifier
   adams.flow.transformer.Convert -conversion adams.data.conversion.CommandlineToAny
- adams.flow.sink.WekaExperimentGenerator -result-file ${EXAMPLE_FLOWS}/output/wekaexperiment_results.arff -output ${EXAMPLE_FLOWS}/output/wekaexperiment_template.xml
+ adams.flow.sink.WekaExperimentGenerator -result-file ${FLOWS}/output/wekaexperiment_results.arff -output ${FLOWS}/output/wekaexperiment_template.xml

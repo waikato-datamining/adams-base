@@ -5,22 +5,22 @@
 adams.flow.control.Flow -flow-execution-listener adams.flow.execution.NullListener
  adams.flow.standalone.CallableActors
   adams.flow.source.SequenceSource -name model
-   adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/j48.model
+   adams.flow.source.FileSupplier -file ${FLOWS}/data/j48.model
    adams.flow.transformer.WekaModelReader -output-only-model true
  adams.flow.source.Start
  adams.flow.control.Trigger -name "serialized model" -annotation "This flow uses a serialized model to make predictions on a \\ntest set (anneal_test.arff) and output the generated class \\ndistributions."
-  adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/anneal_test.arff
+  adams.flow.source.FileSupplier -file ${FLOWS}/data/anneal_test.arff
   adams.flow.transformer.WekaFileReader -loader weka.core.converters.ArffLoader -output-type INCREMENTAL
   adams.flow.transformer.WekaClassSelector
-  adams.flow.transformer.WekaClassifying -model ${EXAMPLE_FLOWS}/data/j48.model -on-the-fly true
+  adams.flow.transformer.WekaClassifying -model ${FLOWS}/data/j48.model -on-the-fly true
   adams.flow.control.ContainerValuePicker -value Distribution
    adams.flow.transformer.Convert -conversion adams.data.conversion.AnyToString
    adams.flow.sink.Display -name "Display class distribution (serialized)" -writer adams.data.io.output.NullWriter
  adams.flow.control.Trigger -name "callable actor" -annotation "This flow uses a model obtained from a callable actor to make \\npredictions on a  test set (anneal_test.arff) and output the \\ngenerated class distributions (the callable actor merely loads a\\nserialized model in this example)."
-  adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/anneal_test.arff
+  adams.flow.source.FileSupplier -file ${FLOWS}/data/anneal_test.arff
   adams.flow.transformer.WekaFileReader -loader weka.core.converters.ArffLoader -output-type INCREMENTAL
   adams.flow.transformer.WekaClassSelector
-  adams.flow.transformer.WekaClassifying -model ${EXAMPLE_FLOWS} -model-actor model -on-the-fly true
+  adams.flow.transformer.WekaClassifying -model ${FLOWS} -model-actor model -on-the-fly true
   adams.flow.control.ContainerValuePicker -value Distribution
    adams.flow.transformer.Convert -conversion adams.data.conversion.AnyToString
    adams.flow.sink.Display -name "Display class distribution (model)" -x -3 -writer adams.data.io.output.NullWriter

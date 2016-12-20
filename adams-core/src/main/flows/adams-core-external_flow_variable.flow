@@ -6,7 +6,7 @@ adams.flow.control.Flow -annotation "This flow shows how to use variables for dy
  adams.flow.source.ForLoop -upper 3
  adams.flow.control.Tee -name "assemble filename of external flow"
   adams.flow.transformer.Convert -conversion adams.data.conversion.IntToString
-  adams.flow.transformer.StringReplace -find .* -replace ${EXAMPLE_FLOWS}/adams-core-external_flow_variable-$0.flow -placeholder true
+  adams.flow.transformer.StringReplace -find .* -replace ${FLOWS}/adams-core-external_flow_variable-$0.flow -placeholder true
   adams.flow.transformer.SetVariable -var-name flow_name
   adams.flow.sink.Display -name "flow filename" -short-title true -writer adams.data.io.output.NullWriter
  adams.flow.control.Trigger -name "execute external flow"

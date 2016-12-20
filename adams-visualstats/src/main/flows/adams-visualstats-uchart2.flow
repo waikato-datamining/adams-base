@@ -3,7 +3,7 @@
 # User: fracpete
 # Charset: UTF-8
 adams.flow.control.Flow -annotation "Generates a u chart.\\nData taken from here:\\nhttp://www.spcforexcel.com/knowledge/attribute-control-charts/u-control-charts" -flow-execution-listener adams.flow.execution.NullListener
- adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/infections.csv
+ adams.flow.source.FileSupplier -file ${FLOWS}/data/infections.csv
  adams.flow.transformer.SpreadSheetFileReader -reader "adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.SpreadSheet"
  adams.flow.transformer.SpreadSheetColumnFilter -finder "adams.data.spreadsheet.columnfinder.ByIndex -columns 2-last"
  adams.flow.control.Branch

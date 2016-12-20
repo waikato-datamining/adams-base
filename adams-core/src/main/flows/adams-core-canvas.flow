@@ -4,8 +4,8 @@
 # Charset: UTF-8
 adams.flow.control.Flow -annotation "Plots data points obtained from a CSV file \\nusing the general purpose draw actor \\\"Canvas\\\".\\nA background image is used as well." -flow-execution-listener adams.flow.execution.NullListener
  adams.flow.standalone.CallableActors
-  adams.flow.sink.Canvas -writer adams.gui.print.NullWriter -background-paintlet "adams.gui.visualization.core.BackgroundImagePaintlet -image-file ${EXAMPLE_FLOWS}/data/3666455665_18795f0741.jpg" -paintlet adams.flow.sink.canvas.XYPaintlet -post-processor adams.flow.sink.canvas.PassThrough
- adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/bolts.csv
+  adams.flow.sink.Canvas -writer adams.gui.print.NullWriter -background-paintlet "adams.gui.visualization.core.BackgroundImagePaintlet -image-file ${FLOWS}/data/3666455665_18795f0741.jpg" -paintlet adams.flow.sink.canvas.XYPaintlet -post-processor adams.flow.sink.canvas.PassThrough
+ adams.flow.source.FileSupplier -file ${FLOWS}/data/bolts.csv
  adams.flow.transformer.TextFileReader -reader adams.data.io.input.LineByLineTextReader
  adams.flow.control.ConditionalTee -condition "adams.flow.condition.bool.Counting -min 2"
   adams.flow.transformer.StringReplace -find ([0-9.]*),([0-9.]*),.* -replace $1,$2

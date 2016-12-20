@@ -3,6 +3,6 @@
 # User: fracpete
 # Charset: UTF-8
 adams.flow.control.Flow -annotation "This flow simply outputs the number of pages\\nof a PDF document." -flow-execution-listener adams.flow.execution.NullListener
- adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/multiple_pages.pdf
+ adams.flow.source.FileSupplier -file ${FLOWS}/data/multiple_pages.pdf
  adams.flow.transformer.PDFPageCount
  adams.flow.sink.Display -writer adams.data.io.output.NullWriter

@@ -3,7 +3,7 @@
 # User: fracpete
 # Charset: UTF-8
 adams.flow.control.Flow -annotation "Shows how to detect faces in images." -flow-execution-listener adams.flow.execution.NullListener
- adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/three-generation.jpg -file ${EXAMPLE_FLOWS}/data/two-girl-friends-871278530751FPYN.jpg
+ adams.flow.source.FileSupplier -file ${FLOWS}/data/three-generation.jpg -file ${FLOWS}/data/two-girl-friends-871278530751FPYN.jpg
  adams.flow.transformer.SetVariable -var-name index -var-value 0
  adams.flow.control.Tee -name "file name"
   adams.flow.transformer.BaseName -remove-extensions true

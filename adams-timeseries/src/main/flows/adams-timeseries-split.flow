@@ -3,7 +3,7 @@
 # User: fracpete
 # Charset: UTF-8
 adams.flow.control.Flow -annotation "This flow demonstrates how to load a timeseries\\nand split it using a specific algorithm, in this case\\nthe date stored in the report." -flow-execution-listener adams.flow.execution.NullListener
- adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/dummy.sts
+ adams.flow.source.FileSupplier -file ${FLOWS}/data/dummy.sts
  adams.flow.transformer.TimeseriesFileReader -reader adams.data.io.input.SimpleTimeseriesReader
  adams.flow.transformer.TimeseriesSplit -splitter "adams.flow.transformer.timeseriessplit.ReportDate -field Date[S]"
  adams.flow.sink.TimeseriesDisplay -writer adams.gui.print.NullWriter -paintlet adams.gui.visualization.timeseries.TimeseriesPaintlet -axis-x "adams.gui.visualization.timeseries.DefaultTimeseriesXAxisPanelOptions -label time -tick-generator adams.gui.visualization.core.axis.PeriodicityTickGenerator -width 40" -axis-y "adams.gui.visualization.timeseries.DefaultTimeseriesYAxisPanelOptions -label value -tick-generator adams.gui.visualization.core.axis.SimpleTickGenerator -width 60" -color-provider adams.gui.visualization.core.DefaultColorProvider -plot-updater adams.flow.sink.timeseriesdisplay.SimplePlotUpdater

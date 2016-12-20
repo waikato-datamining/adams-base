@@ -5,11 +5,11 @@
 adams.flow.control.Flow -annotation "In this example, a TrainTestSetContainer gets assembled\\nusing the two callable actors \\\"train\\\" and \\\"test\\\" which output\\na train/test set. This container is then fed into the \\nTrainTestSetContainer for evaluating the callable J48 classifier." -flow-execution-listener adams.flow.execution.NullListener
  adams.flow.standalone.CallableActors
   adams.flow.source.SequenceSource -name train
-   adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/anneal_train.arff
+   adams.flow.source.FileSupplier -file ${FLOWS}/data/anneal_train.arff
    adams.flow.transformer.WekaFileReader -loader weka.core.converters.ArffLoader
    adams.flow.transformer.WekaClassSelector
   adams.flow.source.SequenceSource -name test
-   adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/anneal_test.arff
+   adams.flow.source.FileSupplier -file ${FLOWS}/data/anneal_test.arff
    adams.flow.transformer.WekaFileReader -loader weka.core.converters.ArffLoader
    adams.flow.transformer.WekaClassSelector
   adams.flow.source.WekaClassifierSetup -classifier "weka.classifiers.trees.J48 -C 0.25 -M 2"

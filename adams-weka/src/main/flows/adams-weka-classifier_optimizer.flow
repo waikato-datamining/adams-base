@@ -3,7 +3,7 @@
 # User: fracpete
 # Charset: UTF-8
 adams.flow.control.Flow -annotation "This flow loads a number of datasets and uses GridSearch\\nto find the optimal setup of a FilteredClassifier (using J48) \\nfor each of the datasets. The setups, prefixed by the dataset \\nfile name, are displayed." -flow-execution-listener adams.flow.execution.NullListener
- adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/anneal.arff -file ${EXAMPLE_FLOWS}/data/iris.arff -file ${EXAMPLE_FLOWS}/data/labor.arff
+ adams.flow.source.FileSupplier -file ${FLOWS}/data/anneal.arff -file ${FLOWS}/data/iris.arff -file ${FLOWS}/data/labor.arff
  adams.flow.control.Tee
   adams.flow.transformer.StringReplace -find .*\\/ -type ALL
   adams.flow.transformer.SetVariable -var-name dataset

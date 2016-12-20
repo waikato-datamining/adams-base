@@ -3,7 +3,7 @@
 # User: fracpete
 # Charset: UTF-8
 adams.flow.control.Flow -annotation "Flattens an XML document, generates a Properties \\nobject (key-value pairs) from it and displays it." -flow-execution-listener adams.flow.execution.NullListener
- adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/books.xml
+ adams.flow.source.FileSupplier -file ${FLOWS}/data/books.xml
  adams.flow.transformer.XMLFileReader
  adams.flow.transformer.Convert -conversion "adams.data.conversion.DOMToProperties -add-index true -store-attributes true"
  adams.flow.sink.PropertiesDisplay -writer adams.data.io.output.NullWriter

@@ -7,7 +7,7 @@ adams.flow.control.Flow -annotation "This flow demonstrates how to build, prime 
   adams.flow.source.WekaForecasterSetup -name setup -generator "adams.flow.source.wekaforecastersetup.WekaForecasterGenerator -classifier \"weka.classifiers.functions.GaussianProcesses -L 1.0 -N 0 -K \\\"weka.classifiers.functions.supportVector.PolyKernel -E 1.0 -C 250007\\\" -S 1\" -forecast-fields Fortified,Dry-white -lag-maker \"adams.flow.core.LagMakerOptions -adjust-for-trends true -time-stamp-field Date -month-of-year true -quarter true\""
   adams.flow.source.StorageValue -name model -storage-name model
   adams.flow.source.SequenceSource -name data
-   adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/wine.arff
+   adams.flow.source.FileSupplier -file ${FLOWS}/data/wine.arff
    adams.flow.transformer.WekaFileReader -loader weka.core.converters.ArffLoader
   adams.flow.sink.TimeseriesDisplay -writer adams.gui.print.NullWriter -paintlet adams.gui.visualization.timeseries.TimeseriesPaintlet -axis-x "adams.gui.visualization.timeseries.DefaultTimeseriesXAxisPanelOptions -label date -tick-generator adams.gui.visualization.core.axis.PeriodicityTickGenerator -nth-value 2 -width 40 -periodicity YEARLY" -axis-y "adams.gui.visualization.timeseries.DefaultTimeseriesYAxisPanelOptions -label sales -tick-generator adams.gui.visualization.core.axis.FancyTickGenerator -nth-value 1 -width 60 -custom-format 0" -color-provider "adams.gui.visualization.core.CustomColorProvider -color #0000ff -color #ff0000" -plot-updater adams.flow.sink.timeseriesdisplay.SimplePlotUpdater
  adams.flow.source.Start

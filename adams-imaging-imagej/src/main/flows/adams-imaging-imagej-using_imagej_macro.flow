@@ -3,7 +3,7 @@
 # User: fracpete
 # Charset: UTF-8
 adams.flow.control.Flow -annotation "Loads images from disk and displays the originals\\nand ones transformed using a pre-recorded ImageJ macro\\napplying a bandpass filter." -flow-execution-listener adams.flow.execution.NullListener
- adams.flow.source.DirectoryLister -dir ${EXAMPLE_FLOWS}/data -list-files true -regexp .*.jpg
+ adams.flow.source.DirectoryLister -dir ${FLOWS}/data -list-files true -regexp .*.jpg
  adams.flow.control.Tee -name "extract name"
   adams.flow.transformer.BaseName
   adams.flow.transformer.SetVariable -var-name name

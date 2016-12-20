@@ -20,7 +20,7 @@ adams.flow.control.Flow -annotation "This flow shows how to do timeseries analys
   adams.flow.transformer.Convert -name Convert-1 -conversion adams.data.conversion.DoubleToInt
   adams.flow.transformer.SetVariable -var-name num_timeseries
  adams.flow.control.Trigger -name "load dataset"
-  adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/wine.arff
+  adams.flow.source.FileSupplier -file ${FLOWS}/data/wine.arff
   adams.flow.transformer.WekaFileReader -loader weka.core.converters.ArffLoader
   adams.flow.transformer.Convert -conversion "adams.data.conversion.WekaInstancesToSpreadSheet -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.SpreadSheet"
   adams.flow.transformer.SetStorageValue -storage-name dataset-full

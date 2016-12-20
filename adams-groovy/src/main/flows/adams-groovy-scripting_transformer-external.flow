@@ -4,5 +4,5 @@
 # Charset: UTF-8
 adams.flow.control.Flow -annotation "Simple flow with a Groovy script that just adds\\na user-supplied integer value to the (integer) tokens\\nbeing passed through." -flow-execution-listener adams.flow.execution.NullListener
  adams.flow.source.ForLoop
- adams.flow.transformer.Groovy -script ${EXAMPLE_FLOWS}/scripts/SimpleTransformer.groovy -options add=10
+ adams.flow.transformer.Groovy -script ${FLOWS}/scripts/SimpleTransformer.groovy -options add=10
  adams.flow.sink.Display -writer adams.data.io.output.NullWriter

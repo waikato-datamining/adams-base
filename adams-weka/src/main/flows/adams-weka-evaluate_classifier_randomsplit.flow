@@ -5,7 +5,7 @@
 adams.flow.control.Flow -annotation "Trains and evaluates a classifier based on random split of a dataset \\nand outputs the evaluation summary." -flow-execution-listener adams.flow.execution.NullListener
  adams.flow.standalone.CallableActors
   adams.flow.source.WekaClassifierSetup -name WekaClassifier -classifier "weka.classifiers.trees.J48 -C 0.25 -M 2"
- adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/anneal.arff
+ adams.flow.source.FileSupplier -file ${FLOWS}/data/anneal.arff
  adams.flow.transformer.WekaFileReader -loader weka.core.converters.ArffLoader
  adams.flow.transformer.WekaClassSelector
  adams.flow.transformer.WekaRandomSplit

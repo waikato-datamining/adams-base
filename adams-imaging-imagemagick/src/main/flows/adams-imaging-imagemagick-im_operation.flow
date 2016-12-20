@@ -5,14 +5,14 @@
 adams.flow.control.Flow -annotation "Processes one or more image, apply the resizing and blurring operations." -flow-execution-listener adams.flow.execution.NullListener
  adams.flow.standalone.CallableActors
   adams.flow.sink.DisplayPanelManager -width 740 -x -3 -provider "adams.flow.sink.ImageViewer -x -3 -writer adams.gui.print.NullWriter -selection-processor adams.gui.visualization.image.selection.NullProcessor -image-overlay adams.gui.visualization.image.NullOverlay" -entry-name-variable name
- adams.flow.source.SelectFile -stop-if-canceled true -initial-dir ${EXAMPLE_FLOWS}/data
+ adams.flow.source.SelectFile -stop-if-canceled true -initial-dir ${FLOWS}/data
  adams.flow.control.Tee -name original
   adams.flow.transformer.ImageReader -reader adams.data.io.input.JAIImageReader
   adams.flow.transformer.SetVariable -var-name name -var-value original
   adams.flow.sink.CallableSink -callable DisplayPanelManager
  adams.flow.control.Tee -name "output filename"
   adams.flow.transformer.BaseName
-  adams.flow.transformer.PrependDir -prefix ${EXAMPLE_FLOWS}/output
+  adams.flow.transformer.PrependDir -prefix ${FLOWS}/output
   adams.flow.transformer.SetVariable -var-name outfile
  adams.flow.control.Tee -name "temp filename"
   adams.flow.transformer.BaseName

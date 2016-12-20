@@ -5,7 +5,7 @@
 adams.flow.control.Flow -annotation "Extracts the R, G and B channel from the image." -flow-execution-listener adams.flow.execution.NullListener
  adams.flow.standalone.CallableActors
   adams.flow.sink.DisplayPanelManager -provider "adams.flow.sink.ImageViewer -writer adams.gui.print.NullWriter -zoom -1.0 -selection-processor adams.gui.visualization.image.selection.NullProcessor -image-overlay adams.gui.visualization.image.NullOverlay"
- adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/particles.jpg
+ adams.flow.source.FileSupplier -file ${FLOWS}/data/particles.jpg
  adams.flow.transformer.ImageReader -reader adams.data.io.input.JAIImageReader
  adams.flow.control.Tee -name original
   adams.flow.sink.CallableSink -callable DisplayPanelManager

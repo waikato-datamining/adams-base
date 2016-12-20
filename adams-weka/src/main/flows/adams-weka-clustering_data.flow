@@ -5,13 +5,13 @@
 adams.flow.control.Flow -annotation "Outputs the chosen cluster for each instance read from a dataset.\\nThe clusterer used for performing the clustering is generated from\\nanother dataset in the callable actor \\\"clusterer\\\".\\nIn both cases, the class attribute is removed first." -flow-execution-listener adams.flow.execution.NullListener
  adams.flow.standalone.CallableActors
   adams.flow.source.SequenceSource -name clusterer
-   adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/anneal.arff
+   adams.flow.source.FileSupplier -file ${FLOWS}/data/anneal.arff
    adams.flow.transformer.WekaFileReader -loader weka.core.converters.ArffLoader
    adams.flow.transformer.WekaFilter -filter weka.filters.unsupervised.attribute.Remove
    adams.flow.transformer.WekaTrainClusterer -post-processor adams.flow.transformer.wekaclusterer.PassThrough
    adams.flow.control.ContainerValuePicker -value Model -switch-outputs true
   adams.flow.source.WekaClustererSetup -clusterer "weka.clusterers.SimpleKMeans -init 0 -max-candidates 100 -periodic-pruning 10000 -min-density 2.0 -t1 -1.25 -t2 -1.0 -N 2 -A \"weka.core.EuclideanDistance -R first-last\" -I 500 -num-slots 1 -S 10"
- adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/anneal_test.arff
+ adams.flow.source.FileSupplier -file ${FLOWS}/data/anneal_test.arff
  adams.flow.transformer.WekaFileReader -loader weka.core.converters.ArffLoader -output-type INCREMENTAL
  adams.flow.transformer.WekaFilter -filter weka.filters.unsupervised.attribute.Remove
  adams.flow.transformer.WekaClustering -model-actor clusterer

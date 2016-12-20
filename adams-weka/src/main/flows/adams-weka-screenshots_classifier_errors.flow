@@ -5,7 +5,7 @@
 adams.flow.control.Flow -annotation "Generates screenshots of the classifier errors.\\nOne for each dataset." -flow-execution-listener adams.flow.execution.NullListener
  adams.flow.standalone.CallableActors
   adams.flow.source.WekaClassifierSetup -name WekaClassifier -classifier "weka.classifiers.trees.J48 -C 0.25 -M 2"
- adams.flow.source.DirectoryLister -dir ${EXAMPLE_FLOWS}/data -list-files true -regexp .*\\.arff
+ adams.flow.source.DirectoryLister -dir ${FLOWS}/data -list-files true -regexp .*\\.arff
  adams.flow.control.Tee
   adams.flow.sink.Display -writer adams.data.io.output.NullWriter
  adams.flow.transformer.WekaFileReader -loader weka.core.converters.ArffLoader

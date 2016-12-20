@@ -3,7 +3,7 @@
 # User: fracpete
 # Charset: UTF-8
 adams.flow.control.Flow -annotation "Using the SpreadSheetVariableRowIterator, it is easy to traverse\\na whole spreadsheet and having access to the cell content via\\nvariables on a per-row basis." -flow-execution-listener adams.flow.execution.NullListener
- adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/lookup.csv
+ adams.flow.source.FileSupplier -file ${FLOWS}/data/lookup.csv
  adams.flow.transformer.SpreadSheetFileReader -reader "adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.SpreadSheet"
  adams.flow.transformer.SpreadSheetVariableRowIterator -missing-value ???
  adams.flow.control.Trigger

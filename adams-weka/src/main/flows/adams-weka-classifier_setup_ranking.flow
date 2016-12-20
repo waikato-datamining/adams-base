@@ -5,7 +5,7 @@
 adams.flow.control.Flow -annotation "Generates multiple classifier set ups (LinearRegression + PLS filter\\ninside a FilteredClassifier), ranks them using 2-fold cross-validation\\nand outputs the 3 best set ups." -flow-execution-listener adams.flow.execution.NullListener
  adams.flow.standalone.CallableActors
   adams.flow.source.SequenceSource -name train
-   adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/bodyfat.arff
+   adams.flow.source.FileSupplier -file ${FLOWS}/data/bodyfat.arff
    adams.flow.transformer.WekaFileReader -loader weka.core.converters.ArffLoader
    adams.flow.transformer.WekaClassSelector
  adams.flow.standalone.JobRunnerSetup -job-runner adams.multiprocess.LocalJobRunner

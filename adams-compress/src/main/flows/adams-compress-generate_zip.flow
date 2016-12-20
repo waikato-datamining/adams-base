@@ -11,7 +11,7 @@ adams.flow.control.Flow
 			-output-array
 			true
 			-dir
-			${EXAMPLE_FLOWS}/data
+			${FLOWS}/data
 			-list-files
 			true
 			-regexp
@@ -21,7 +21,7 @@ adams.flow.control.Flow
 	-actor
 		adams.flow.transformer.ZIP
 			-output
-			${EXAMPLE_FLOWS}/output/datasets.zip
+			${FLOWS}/output/datasets.zip
 			-strip-path
 			.*
 	-actor

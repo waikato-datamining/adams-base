@@ -3,6 +3,6 @@
 # User: fracpete
 # Charset: UTF-8
 adams.flow.control.Flow -annotation "Loads the predictions obtained from a cross-validated classifier and displays\\nthe zscores and errors of the predictions." -flow-execution-listener adams.flow.execution.NullListener
- adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/bodyfat_pred.csv
+ adams.flow.source.FileSupplier -file ${FLOWS}/data/bodyfat_pred.csv
  adams.flow.transformer.SpreadSheetFileReader -reader "adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.DefaultSpreadSheet"
  adams.flow.sink.ZScoreDisplay -writer adams.gui.print.NullWriter -overlay adams.gui.visualization.stats.zscore.Mean -overlay "adams.gui.visualization.stats.zscore.StdDev -color #ffc800 -standard-deviations 2.0" -overlay "adams.gui.visualization.stats.zscore.StdDev -color #ff0000 -standard-deviations 3.0" -paintlet adams.gui.visualization.stats.paintlet.ZScoreCircle -attribute last

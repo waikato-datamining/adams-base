@@ -5,7 +5,7 @@
 adams.flow.control.Flow -annotation "Shows how to use multi-image operations." -flow-execution-listener adams.flow.execution.NullListener
  adams.flow.standalone.CallableActors
   adams.flow.sink.DisplayPanelManager -width 740 -height 550 -provider "adams.flow.sink.ImageViewer -writer adams.gui.print.NullWriter -selection-processor adams.gui.visualization.image.selection.NullProcessor -image-overlay adams.gui.visualization.image.NullOverlay" -entry-name-variable entry
- adams.flow.source.FileSupplier -output-array true -file ${EXAMPLE_FLOWS}/data/helloworld.png -file ${EXAMPLE_FLOWS}/data/helloworld_mask.png
+ adams.flow.source.FileSupplier -output-array true -file ${FLOWS}/data/helloworld.png -file ${FLOWS}/data/helloworld_mask.png
  adams.flow.control.ArrayProcess
   adams.flow.control.Tee -name "get name"
    adams.flow.transformer.BaseName -remove-extensions true

@@ -3,9 +3,9 @@
 # User: fracpete
 # Charset: UTF-8
 adams.flow.control.Flow -annotation "Saves a plot image generated from spectral data using JFreeChart." -flow-execution-listener adams.flow.execution.NullListener
- adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/sample_nir_spectrum.csv
+ adams.flow.source.FileSupplier -file ${FLOWS}/data/sample_nir_spectrum.csv
  adams.flow.control.Tee -name "file name"
   adams.flow.transformer.BaseName -remove-extensions true
   adams.flow.transformer.SetVariable -var-name file
  adams.flow.transformer.SpreadSheetFileReader -reader "adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.DefaultSpreadSheet"
- adams.flow.sink.JFreeChartFileWriter -output ${EXAMPLE_FLOWS}/output/sample_nir_spectrum.png -dataset adams.flow.sink.jfreechartplot.dataset.DefaultXY -chart "adams.flow.sink.jfreechartplot.chart.XYLineChart -title @{file} -label-x waveno -label-y amplitude" -writer adams.data.io.output.JAIImageWriter
+ adams.flow.sink.JFreeChartFileWriter -output ${FLOWS}/output/sample_nir_spectrum.png -dataset adams.flow.sink.jfreechartplot.dataset.DefaultXY -chart "adams.flow.sink.jfreechartplot.chart.XYLineChart -title @{file} -label-x waveno -label-y amplitude" -writer adams.data.io.output.JAIImageWriter
