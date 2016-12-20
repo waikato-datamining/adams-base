@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2016-02-15 14:59:06
+# Date: 2016-12-21 10:57:36
 # User: fracpete
 # Charset: UTF-8
 adams.flow.control.Flow -annotation "Shows how to merge two spreadsheets from storage\\nusing an ID attribute for aligning the rows in both\\nspreadsheets." -flow-execution-listener adams.flow.execution.NullListener
@@ -7,14 +7,14 @@ adams.flow.control.Flow -annotation "Shows how to merge two spreadsheets from st
   adams.flow.sink.DisplayPanelManager -name SpreadSheetDisplay -width 740 -provider "adams.flow.sink.SpreadSheetDisplay -writer adams.data.io.output.NullWriter" -entry-name-variable name
  adams.flow.source.FileSupplier -file ${FLOWS}/data/iris_with_id.csv
  adams.flow.control.Tee -name "create first spreadsheet"
-  adams.flow.transformer.SpreadSheetFileReader -reader "adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.SpreadSheet"
+  adams.flow.transformer.SpreadSheetFileReader -reader "adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.DefaultSpreadSheet"
   adams.flow.transformer.SpreadSheetRemoveColumn -annotation "only leave first 4 columns" -position inv(1-3)
   adams.flow.transformer.SpreadSheetSort -annotation "sort by ID attribute (asc)" -no-copy true
   adams.flow.transformer.SetStorageValue -storage-name first
   adams.flow.transformer.SetVariable -var-name name -var-value first
   adams.flow.sink.CallableSink -callable SpreadSheetDisplay
  adams.flow.control.Tee -name "create second spreadsheet"
-  adams.flow.transformer.SpreadSheetFileReader -reader "adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.SpreadSheet"
+  adams.flow.transformer.SpreadSheetFileReader -reader "adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.DefaultSpreadSheet"
   adams.flow.transformer.SpreadSheetRemoveColumn -annotation "remove first 3 columns" -position 2-3
   adams.flow.transformer.SpreadSheetSort -annotation "sort by ID attribute (desc)" -no-copy true -sort-order false
   adams.flow.transformer.SetStorageValue -storage-name second
@@ -22,7 +22,6 @@ adams.flow.control.Flow -annotation "Shows how to merge two spreadsheets from st
   adams.flow.sink.CallableSink -callable SpreadSheetDisplay
  adams.flow.control.Trigger -name "merge spreadsheets"
   adams.flow.source.StorageValuesArray -storage-name first -storage-name second
-  adams.flow.transformer.SpreadSheetMerge -unique-id ID
-  adams.flow.transformer.SpreadSheetColumnFilter -annotation "remove the 2nd \\\"ID\\\" column" -finder "adams.data.spreadsheet.columnfinder.Invert -column-finder \"adams.data.spreadsheet.columnfinder.FilteredColumnFinder -filter \\\"adams.data.spreadsheet.columnfinder.ByIndex -columns 2-last\\\" -finder \\\"adams.data.spreadsheet.columnfinder.ByName -reg-exp ID\\\"\""
+  adams.flow.transformer.SpreadSheetMerge -unique-id ID -keep-only-single-unique-id true
   adams.flow.transformer.SetVariable -var-name name -var-value merged
   adams.flow.sink.CallableSink -callable SpreadSheetDisplay
