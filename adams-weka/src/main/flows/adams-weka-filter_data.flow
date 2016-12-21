@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2016-02-15 15:23:54
+# Date: 2016-12-21 12:28:17
 # User: fracpete
 # Charset: UTF-8
 adams.flow.control.Flow -annotation "Here we compare the impact of preprocessing on a dataset.\\nThe \\\"slug\\\" dataset contains length and weight of slugs, with\\nthe weight being the class attribute.\\nLinearRegression is used as regression scheme, once on the\\noriginal data and once on log-transformed data.\\nBoth results (evaluation summary and classifier errors) are\\ndisplayed for comparison." -flow-execution-listener adams.flow.execution.NullListener
@@ -15,7 +15,7 @@ adams.flow.control.Flow -annotation "Here we compare the impact of preprocessing
     adams.flow.sink.DisplayPanelManager -short-title true -x -3 -provider "adams.flow.sink.WekaClassifierErrors -writer adams.gui.print.NullWriter -scaler \"adams.data.weka.predictions.AutoScaler -scaler adams.data.weka.predictions.RelativeNumericErrorScaler\"" -entry-name-variable filter
  adams.flow.source.FileSupplier -file ${FLOWS}/data/slug-original.arff
  adams.flow.transformer.WekaFileReader -loader weka.core.converters.ArffLoader
- adams.flow.control.Branch -num-threads 0
+ adams.flow.control.Branch -num-threads 1
   adams.flow.control.Sequence -name "no preprocessing"
    adams.flow.transformer.SetVariable -var-name filter -var-value "original data"
    adams.flow.sink.CallableSink -callable evaluate
