@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # ----------------------------------------------------------------------------
 #  Copyright 2001-2006 The Apache Software Foundation.
 #
@@ -99,6 +99,7 @@ ARGS=
 OPTION=
 PRIORITY="-priority $REPO/java-cup-11b-2015.03.26.jar"
 COLLAPSE="-collapse"
+WHITESPACE="[[:space:]]"
 for ARG in "$@"
 do
   if [ "$ARG" = "-memory" ] || [ "$ARG" = "-main" ] || [ "$ARG" = "-jvm" ] || [ "$ARG" = "-cpa" ] || [ "$ARG" = "-priority" ] || [ "$ARG" = "-env" ]
@@ -123,12 +124,22 @@ do
     continue
   elif [ "$OPTION" = "-jvm" ]
   then
-    JVM="$JVM -jvm \"$ARG\""
+    if [[ $ARG =~ $WHITESPACE ]]
+    then
+      JVM="$JVM -jvm \"$ARG\""
+    else
+      JVM="$JVM -jvm $ARG"
+    fi
     OPTION=""
     continue
   elif [ "$OPTION" = "-cpa" ]
   then
-    CPA="-cpa \"$ARG\""
+    if [[ $ARG =~ $WHITESPACE ]]
+    then
+      CPA="-cpa \"$ARG\""
+    else
+      CPA="-cpa $ARG"
+    fi
     OPTION=""
     continue
   elif [ "$OPTION" = "-priority" ]
@@ -138,12 +149,22 @@ do
     continue
   elif [ "$OPTION" = "-env" ]
   then
-    ENVVARS="-env \"$ARG\""
+    if [[ $ARG =~ $WHITESPACE ]]
+    then
+      ENVVARS="-env \"$ARG\""
+    else
+      ENVVARS="-env $ARG"
+    fi
     OPTION=""
     continue
   fi
 
-  ARGS="$ARGS \"$ARG\""
+  if [[ $ARG =~ $WHITESPACE ]]
+  then
+    ARGS="$ARGS \"$ARG\""
+  else
+    ARGS="$ARGS $ARG"
+  fi
 done
 
 # launch class
