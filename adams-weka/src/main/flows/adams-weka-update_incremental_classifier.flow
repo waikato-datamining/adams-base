@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2016-02-15 15:26:44
+# Date: 2016-12-21 13:13:34
 # User: fracpete
 # Charset: UTF-8
 adams.flow.control.Flow -annotation "This flow shows how to continue training an incremental classifier \\nafter the initial batch-training phase." -flow-execution-listener adams.flow.execution.NullListener
@@ -8,7 +8,7 @@ adams.flow.control.Flow -annotation "This flow shows how to continue training an
   adams.flow.source.SequenceSource -name model
    adams.flow.source.StorageValue -storage-name model
    adams.flow.control.ContainerValuePicker -value Model -switch-outputs true
-  adams.flow.sink.HistoryDisplay -entry-name-variable name
+  adams.flow.sink.HistoryDisplay -width 800 -entry-name-variable name
  adams.flow.source.Start
  adams.flow.control.Trigger -name "setup training data"
   adams.flow.source.FileSupplier -file ${FLOWS}/data/labor.arff

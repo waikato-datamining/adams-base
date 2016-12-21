@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2016-02-15 15:26:38
+# Date: 2016-12-21 13:12:16
 # User: fracpete
 # Charset: UTF-8
 adams.flow.control.Flow -annotation "Uses prequential evaluation of an updateable Weka\\nclassifier. Every 100 instances, the evaluation is output\\nand displayed." -flow-execution-listener adams.flow.execution.NullListener
@@ -14,6 +14,6 @@ adams.flow.control.Flow -annotation "Uses prequential evaluation of an updateabl
  adams.flow.control.Branch
   adams.flow.control.Sequence -name summary
    adams.flow.transformer.WekaEvaluationSummary -confusion-matrix true -class-details true
-   adams.flow.sink.HistoryDisplay -entry-name-variable count
+   adams.flow.sink.HistoryDisplay -width 800 -entry-name-variable count
   adams.flow.control.Sequence -name roc
    adams.flow.sink.DisplayPanelManager -width 740 -x -3 -provider "adams.flow.sink.WekaThresholdCurve -writer adams.gui.print.NullWriter" -entry-name-variable count
