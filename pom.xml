@@ -5,7 +5,7 @@
 
   <groupId>nz.ac.waikato.cms.adams</groupId>
   <artifactId>adams-pom</artifactId>
-  <version>16.12.0</version>
+  <version>16.12.1-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>adams-pom</name>
@@ -86,9 +86,9 @@
   </properties>
 
   <scm>
-    <connection>scm:svn:https://svn.cms.waikato.ac.nz/svn/adams/base/tags/adams-pom-16.12.0</connection>
-    <developerConnection>scm:svn:https://svn.cms.waikato.ac.nz/svn/adams/base/tags/adams-pom-16.12.0</developerConnection>
-    <url>https://svn.cms.waikato.ac.nz/svn/adams/base/tags/adams-pom-16.12.0</url>
+    <connection>scm:svn:https://svn.cms.waikato.ac.nz/svn/adams/base/trunk</connection>
+    <developerConnection>scm:svn:https://svn.cms.waikato.ac.nz/svn/adams/base/trunk</developerConnection>
+    <url>https://svn.cms.waikato.ac.nz/svn/adams/base/trunk</url>
   </scm>
 
   <distributionManagement>
