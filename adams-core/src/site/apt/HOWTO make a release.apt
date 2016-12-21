@@ -51,8 +51,8 @@ HOWTO make a release
     version (best to use "adams-addons-all" as this is the most complete):
     
 +--
-  bin/run -main adams.core.ClassLister -super adams.flow.core.Actor > actors.txt
-  bin/run -main adams.core.ClassLister -super adams.data.conversion.Conversion > conversions.txt
+  bin/launcher.sh -main adams.core.ClassLister -super adams.flow.core.Actor > actors.txt
+  bin/launcher.sh -main adams.core.ClassLister -super adams.data.conversion.Conversion > conversions.txt
 +--
 
   * create a new directory on sf.net and upload the following files:
