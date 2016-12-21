@@ -97,4 +97,58 @@ HOWTO make a release
 +--
 
 
+* Order of release making
+
+  * adams-base
+    mvn --batch-mode release:prepare release:perform
+
+  * adams-addons
+    change parent pom version to just released adams-pom one (remove -SNAPSHOT)
+    change adams.version property to just released adams-pom one (remove -SNAPSHOT)
+    mvn --batch-mode release:prepare release:perform
+
+  * adams-libraries
+    change parent pom version to just released adams-pom one (remove -SNAPSHOT)
+    change adams.version property to just released adams-pom one (remove -SNAPSHOT)
+    mvn --batch-mode release:prepare release:perform
+
+  * adams-incubator
+    increment parent pom version (including -SNAPSHOT)
+    increment adams.version property (including -SNAPSHOT)
+
+  * adams-spectral-base
+    change parent pom version to just released adams-pom one (remove -SNAPSHOT)
+    change adams.version property to just released adams-pom one (remove -SNAPSHOT)
+    mvn --batch-mode release:prepare release:perform
+
+  * adams-spectral-addons
+    increment parent pom version (including -SNAPSHOT)
+    increment adams.version property (including -SNAPSHOT)
+
+  * adams-applications
+    change parent pom version to just released adams-pom one (remove -SNAPSHOT)
+    change adams.version property to just released adams-pom one (remove -SNAPSHOT)
+    comment out adams-incubator-all module
+    mvn --batch-mode release:prepare release:perform
+    uncomment adams-incubator-all module
+    increment parent pom version in adams-incubator-all module
+
+  * increment adams version in all other dependent modules
+
+  * copy target/*-bin.zip files and test them
+    adams-base-all
+    adams-addons-all
+    adams-annotator
+    adams-ml-app
+    adams-spectral-app
+
+  * compare actors/conversions with previous release (addons-all),
+    create README.md file
+
+  * upload -bin.zip files and README.md file to sf.net in new release version folder
+
+  * add README.md content to mloss.org as well
+
+
+
   $Revision$
