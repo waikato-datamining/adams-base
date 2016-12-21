@@ -457,8 +457,10 @@ public class WekaCrossValidationExecution
       generator.setUseViews(m_UseViews);
       if ((m_ActualNumThreads == 1) && !m_SeparateFolds) {
 	initOutputBuffer();
-	if (m_Output != null)
+	if (m_Output != null) {
 	  m_Output.setHeader(m_Data);
+	  m_Output.printHeader();
+	}
 	eval       = new Evaluation(m_Data);
 	eval.setDiscardPredictions(m_DiscardPredictions);
 	current    = 0;
@@ -476,6 +478,8 @@ public class WekaCrossValidationExecution
 	  eval.evaluateModel(cls, test, m_Output);
 	  current++;
 	}
+        if (m_Output != null)
+          m_Output.printFooter();
 	if (!isStopped())
 	  m_Evaluation = eval;
       }
