@@ -126,6 +126,7 @@ Order of release making
 * adams-incubator
 
   * increment parent pom version (including -SNAPSHOT)
+  * increment version (including -SNAPSHOT)
   * increment `adams.version` property (including -SNAPSHOT)
 
 * adams-spectral-base
