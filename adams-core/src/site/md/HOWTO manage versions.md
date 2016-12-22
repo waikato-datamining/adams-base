@@ -1,16 +1,17 @@
 HOWTO manage versions
+=====================
 
 * Checking for updates
 
-+---
+  ```
   mvn versions:display-dependency-updates -DprocessDependencies=true -DprocessDependencyManagement=false
-+---
+  ```
 
 * Upgrading to latest releases
 
-+---
+  ```
   mvn versions:update-parent versions:use-latest-releases -Dincludes=nz.ac.waikato.cms.adams:* -DgenerateBackupPoms=false
-+---
+  ```
 
 
-  $Revision$
+$Revision$

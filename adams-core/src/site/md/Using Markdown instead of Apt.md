@@ -1,8 +1,9 @@
 Using Markdown instead of Apt
+=============================
 
 * Add to pom.xml
 
-+---
+```
          <plugin>
               <groupId>org.apache.maven.plugins</groupId>
               <artifactId>maven-site-plugin</artifactId>
@@ -15,7 +16,7 @@ Using Markdown instead of Apt
                 </dependency>
               </dependencies>
             </plugin>
-+---
+```
 
 * places files in src/site/markdown/ with extension .md
 
