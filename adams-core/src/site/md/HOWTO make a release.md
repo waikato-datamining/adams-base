@@ -113,7 +113,7 @@ Order of release making
   * change `adams.version` property to just released adams-pom one (remove -SNAPSHOT)
   * `mvn --batch-mode release:prepare release:perform`
   * increment version of parent pom and add -SNAPSHOT
-  * increment version of `adams.version` proeprty and add -SNAPSHOT
+  * increment version of `adams.version` property and add -SNAPSHOT
 
 * adams-libraries
   
@@ -121,7 +121,7 @@ Order of release making
   * change `adams.version` property to just released adams-pom one (remove -SNAPSHOT)
   * `mvn --batch-mode release:prepare release:perform`
   * increment version of parent pom and add -SNAPSHOT
-  * increment version of `adams.version` proeprty and add -SNAPSHOT
+  * increment version of `adams.version` property and add -SNAPSHOT
 
 * adams-incubator
 
@@ -135,7 +135,7 @@ Order of release making
   * change `adams.version` property to just released adams-pom one (remove -SNAPSHOT)
   * `mvn --batch-mode release:prepare release:perform`
   * increment version of parent pom and add -SNAPSHOT
-  * increment version of `adams.version` proeprty and add -SNAPSHOT
+  * increment version of `adams.version` property and add -SNAPSHOT
 
 * adams-spectral-addons
 
@@ -151,7 +151,7 @@ Order of release making
   * uncomment adams-incubator-all module
   * increment parent pom version in adams-incubator-all module
   * increment version of parent pom and add -SNAPSHOT
-  * increment version of `adams.version` proeprty and add -SNAPSHOT
+  * increment version of `adams.version` property and add -SNAPSHOT
 
 * increment adams version in all other dependent modules
 
