@@ -43,65 +43,11 @@ Note: use the following option to avoid tests being run, though this is not enco
  -Darguments="-DskipTests=true"
 ```
 
-See *Order of release making* for detailed command sequences.
+See next section for detailed command sequences.
 
 
-Uploads/updates
----------------
-  
-* generate comparison of actors/conversions between current and previous
-  version (best to use "adams-addons-all" as this is the most complete):
-    
-  ```
-  bin/launcher.sh -main adams.core.ClassLister -super adams.flow.core.Actor > actors.txt
-  bin/launcher.sh -main adams.core.ClassLister -super adams.data.conversion.Conversion > conversions.txt
-  ```
-
-* create a new directory on sf.net and upload the following files:
-
-  * -bin.zip
-  * -doc.zip
-  * -flows.jar
-
-* create a README.md (markdown style) and upload this to the sf.net directory
-  as well
-    
-* copy same files onto adams.cms:
-
-  ```
-  adams.cms.waikato.ac.nz:/var/www/html/releases/adams
-  ```
-
-* deploy artifacts on Maven Central
-
-  ```
-  adams-core/src/main/scripts/central.sh  
-  ```
-
-* update adams webpage
-
-  ```
-  https://adams.cms.waikato.ac.nz/index.html
-  https://adams.cms.waikato.ac.nz/release.html
-  https://adams.cms.waikato.ac.nz/rollyourown.html
-  https://adams.cms.waikato.ac.nz/resources/rollyourown/modules/*
-  ```
-
-* publish release on Twitter
-
-* publish release on LinkedIn, blog
-
-* publish release on theadamsflow-dev and theadamsflow-user mailing lists
-
-* update entry on mloss.org
-
-  ```
-  https://mloss.org/software/view/425/
-  ```
-
-
-Order of release making
------------------------
+Order
+-----
 
 * adams-base
 
@@ -163,12 +109,62 @@ Order of release making
   * adams-ml-app
   * adams-spectral-app
 
-* compare actors/conversions with previous release (addons-all),
-  create README.md file
 
-* upload -bin.zip files and README.md file to sf.net in new release version folder
+Uploads/updates
+---------------
+  
+* generate comparison of actors/conversions between current and previous
+  version (best to use "adams-addons-all" as this is the most complete):
+    
+  ```
+  bin/launcher.sh -main adams.core.ClassLister -super adams.flow.core.Actor > actors.txt
+  bin/launcher.sh -main adams.core.ClassLister -super adams.data.conversion.Conversion > conversions.txt
+  ```
 
-* add README.md content to mloss.org as well
+* create a new directory on sf.net and upload the following files:
+
+  * -bin.zip
+  * -doc.zip
+  * -flows.jar
+
+* create a README.md (markdown style) and upload this to the sf.net directory
+  as well
+    
+* copy same files onto adams.cms:
+
+  ```
+  adams.cms.waikato.ac.nz:/var/www/html/releases/adams
+  ```
+
+* deploy artifacts on Maven Central
+
+  ```
+  adams-core/src/main/scripts/central.sh  
+  ```
+
+* update adams webpage
+
+  ```
+  https://adams.cms.waikato.ac.nz/index.html
+  https://adams.cms.waikato.ac.nz/release.html
+  https://adams.cms.waikato.ac.nz/rollyourown.html
+  https://adams.cms.waikato.ac.nz/resources/rollyourown/modules/*
+  ```
+
+* publish release on theadamsflow-dev and theadamsflow-user mailing lists
+
+  ```
+  https://groups.google.com/forum/#!forum/theadamsflow-user
+  https://groups.google.com/forum/#!forum/theadamsflow-dev
+  ```
+
+* update entry on mloss.org
+
+  ```
+  https://mloss.org/software/view/425/
+  ```
+
+* publish release on Twitter, LinkedIn, blog
 
 
 $Revision$
