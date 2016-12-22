@@ -43,12 +43,8 @@ Note: use the following option to avoid tests being run, though this is not enco
  -Darguments="-DskipTests=true"
 ```
 
-Before issuing the same command for adams-addons, change the "parent version" tag and
-"adams.version" property to the just released version of ADAMS (no -SNAPSHOT);
-commit the changes.
-After the Maven release command has succeeded, change these two tags over to the
-next -SNAPSHOT version of ADAMS; commit the changes.
-Update all pom.xml files in adams-incubator, incrementing the version number.
+See *Order of release making* for detailed command sequences.
+
 
 Uploads/updates
 ---------------
