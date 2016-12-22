@@ -21,7 +21,8 @@ HOWTO make a release
   subsection: Module
 +---
 
-  * has the java-cup dependency changed? If so, change all run and run.bat files
+  * has the java-cup dependency changed? If so, change launcher.sh and
+    launcher.bat files
 
   * all files need to be up-to-date and committed
 
