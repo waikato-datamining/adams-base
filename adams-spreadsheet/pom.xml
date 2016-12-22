@@ -6,7 +6,7 @@
   <parent>
     <groupId>nz.ac.waikato.cms.adams</groupId>
     <artifactId>adams-pom</artifactId>
-    <version>16.12.1</version>
+    <version>16.12.2-SNAPSHOT</version>
   </parent>
 
   <artifactId>adams-spreadsheet</artifactId>
