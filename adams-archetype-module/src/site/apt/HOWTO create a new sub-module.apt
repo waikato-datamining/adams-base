@@ -16,7 +16,7 @@ Creating a new sub-module
      -DinteractiveMode=false \
      -DarchetypeGroupId=nz.ac.waikato.cms.adams \
      -DarchetypeArtifactId=adams-archetype-module \
-     -DarchetypeVersion=16.12.0 \
+     -DarchetypeVersion=16.12.1 \
      -DgroupId=nz.ac.waikato.cms.adams \
      -DartifactId=adams-funky \
      -Dversion=0.0.1-SNAPSHOT
