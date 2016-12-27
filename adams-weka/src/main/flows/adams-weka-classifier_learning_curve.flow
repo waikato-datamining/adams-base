@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2016-02-15 15:19:59
+# Date: 2016-12-27 17:34:15
 # User: fracpete
 # Charset: UTF-8
 adams.flow.control.Flow -annotation "Generates a learning curve for a J48 classifier.\\nEvery 10 instances the classifiers gets evaluated\\nand Accuracy, RMSE and AUC plotted." -flow-execution-listener adams.flow.execution.NullListener
@@ -34,6 +34,6 @@ adams.flow.control.Flow -annotation "Generates a learning curve for a J48 classi
      adams.flow.transformer.MakePlotContainer -plot-name RMSE
      adams.flow.sink.CallableSink -callable RMSE
     adams.flow.control.Sequence -name AUC
-     adams.flow.transformer.WekaEvaluationValuePicker -statistic AREA_UNDER_ROC
+     adams.flow.transformer.WekaEvaluationValuePicker -statistic AREA_UNDER_ROC -index 2
      adams.flow.transformer.MakePlotContainer -plot-name AUC
      adams.flow.sink.CallableSink -callable AUC
