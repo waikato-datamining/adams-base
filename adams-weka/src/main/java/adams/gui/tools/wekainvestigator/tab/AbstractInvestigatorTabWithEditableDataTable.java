@@ -15,13 +15,14 @@
 
 /**
  * AbstractInvestigatorTabWithEditableDataTable.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab;
 
 import adams.core.ListHelper;
 import adams.core.logging.LoggingLevel;
+import adams.gui.core.BasePopupMenu;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.GUIHelper;
 import adams.gui.event.UndoEvent;
@@ -36,6 +37,7 @@ import com.jidesoft.swing.JideSplitButton;
 import javax.swing.JPanel;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -149,6 +151,8 @@ public abstract class AbstractInvestigatorTabWithEditableDataTable
     panel.add(m_ButtonUp);
     panel.add(m_ButtonDown);
     m_Table.addToButtonsPanel(panel);
+
+    m_Table.getComponent().addCellPopupMenuListener((MouseEvent e) -> showDataTablePopup(e));
   }
 
   /**
@@ -223,5 +227,21 @@ public abstract class AbstractInvestigatorTabWithEditableDataTable
    */
   public void undoOccurred(UndoEvent e) {
     updateButtons();
+  }
+
+  /**
+   * Displays popup for table.
+   *
+   * @param e 		the event that triggered the popup
+   */
+  protected void showDataTablePopup(MouseEvent e) {
+    BasePopupMenu	result;
+
+    result = new BasePopupMenu();
+    for (AbstractEditableDataTableAction action: m_Actions) {
+      action.update();
+      result.add(action);
+    }
+    result.show(e.getComponent(), e.getX(), e.getY());
   }
 }
