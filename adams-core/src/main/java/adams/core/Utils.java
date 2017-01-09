@@ -15,7 +15,7 @@
 
 /*
  * Utils.java
- * Copyright (C) 2008-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2017 University of Waikato, Hamilton, New Zealand
  * Copyright (C) 2006 Dr. Herong Yang, http://www.herongyang.com/
  * Copyright (C) 2008 Dave L., stackoverflow
  */
@@ -100,6 +100,9 @@ public class Utils {
     StringBuilder	remainder;
     char		separator;
     boolean		negative;
+
+    if (Double.isNaN(value) || Double.isInfinite(value))
+      return Double.toString(value);
 
     if (    (afterDecimalPoint < 0)
 	 || (value > Long.MAX_VALUE)
