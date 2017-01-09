@@ -22,12 +22,16 @@ package weka.classifiers.meta;
 
 import weka.classifiers.AbstainingClassifier;
 import weka.classifiers.MultipleClassifiersCombiner;
-import weka.classifiers.RandomizableMultipleClassifiersCombiner;
-import weka.core.*;
+import weka.core.Capabilities;
 import weka.core.Capabilities.Capability;
+import weka.core.Instance;
+import weka.core.Instances;
+import weka.core.Option;
+import weka.core.RevisionUtils;
+import weka.core.Utils;
+import weka.core.WeightedInstancesHandler;
 
 import java.util.Enumeration;
-import java.util.Random;
 import java.util.Vector;
 
 /**
@@ -60,7 +64,7 @@ public class AbstainAverage
   protected double[] m_Mins;
   protected double[] m_Maxes;
   protected boolean[] m_IsPercent;
-  protected String m_MaxDifferences_string="";
+  protected String m_MaxDifferences_string="0-100,10";
 
   /**
    * Returns a string describing classifier
