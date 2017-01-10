@@ -15,18 +15,18 @@
 
 /**
  * Regression.java
- * Copyright (C) 2010-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.test;
+
+import adams.core.DiffUtils;
+import adams.core.io.FileUtils;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-
-import adams.core.DiffUtils;
-import adams.core.io.FileUtils;
 
 /**
  * Helper class for regression tests.
@@ -125,7 +125,7 @@ public class Regression {
     if (result.length() == 0)
       return null;
     else
-      return result.toString();
+      return result;
   }
 
   /**
@@ -143,8 +143,8 @@ public class Regression {
     if (ignore.length == 0)
       return list;
 
-    result  = new ArrayList<String>();
-    ignored = new HashSet<Integer>();
+    result  = new ArrayList<>();
+    ignored = new HashSet<>();
     for (int ign: ignore)
       ignored.add(ign);
 
@@ -230,7 +230,7 @@ public class Regression {
     List<String>	content;
     int			i;
 
-    content = new ArrayList<String>();
+    content = new ArrayList<>();
     for (i = 0; i < files.length; i++) {
       content.add("--> " + files[i].getName());
       if (!files[i].exists()) {
@@ -259,7 +259,7 @@ public class Regression {
     List<String>	content;
     int			i;
 
-    content = new ArrayList<String>();
+    content = new ArrayList<>();
     for (i = 0; i < files.length; i++) {
       content.add("--> " + files[i].getName());
       if (!files[i].exists())
@@ -276,7 +276,6 @@ public class Regression {
    * Creates a reference file for the specified class.
    * 
    * @param regressionClass	the class to build the reference file name for
-   * @param suffix		the suffix to use (between classname and extension), null to omit
    * @return			the generated filename
    */
   public static File createReferenceFile(Class regressionClass) {
