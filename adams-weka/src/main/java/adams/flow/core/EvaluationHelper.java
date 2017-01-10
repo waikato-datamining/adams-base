@@ -15,7 +15,7 @@
 
 /**
  * EvaluationHelper.java
- * Copyright (C) 2009-2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.core;
 
@@ -39,103 +39,103 @@ public class EvaluationHelper {
    * @throws Exception	if evaluation fails
    */
   public static double getValue(Evaluation eval, EvaluationStatistic statistic, int classIndex) throws Exception {
-    double	result;
-
-    result = Double.NaN;
-
-    if (statistic == EvaluationStatistic.NUMBER_CORRECT)
-      result = eval.correct();
-    else if (statistic == EvaluationStatistic.NUMBER_INCORRECT)
-      result = eval.incorrect();
-    else if (statistic == EvaluationStatistic.NUMBER_UNCLASSIFIED)
-      result = eval.unclassified();
-    else if (statistic == EvaluationStatistic.PERCENT_CORRECT)
-      result = eval.pctCorrect();
-    else if (statistic == EvaluationStatistic.PERCENT_INCORRECT)
-      result = eval.pctIncorrect();
-    else if (statistic == EvaluationStatistic.PERCENT_UNCLASSIFIED)
-      result = eval.pctUnclassified();
-    else if (statistic == EvaluationStatistic.KAPPA_STATISTIC)
-      result = eval.kappa();
-    else if (statistic == EvaluationStatistic.MEAN_ABSOLUTE_ERROR)
-      result = eval.meanAbsoluteError();
-    else if (statistic == EvaluationStatistic.ROOT_MEAN_SQUARED_ERROR)
-      result = eval.rootMeanSquaredError();
-    else if (statistic == EvaluationStatistic.RELATIVE_ABSOLUTE_ERROR)
-      result = eval.relativeAbsoluteError();
-    else if (statistic == EvaluationStatistic.ROOT_RELATIVE_SQUARED_ERROR)
-      result = eval.rootRelativeSquaredError();
-    else if (statistic == EvaluationStatistic.CORRELATION_COEFFICIENT)
-      result = eval.correlationCoefficient();
-    else if (statistic == EvaluationStatistic.SF_PRIOR_ENTROPY)
-      result = eval.SFPriorEntropy();
-    else if (statistic == EvaluationStatistic.SF_SCHEME_ENTROPY)
-      result = eval.SFSchemeEntropy();
-    else if (statistic == EvaluationStatistic.SF_ENTROPY_GAIN)
-      result = eval.SFEntropyGain();
-    else if (statistic == EvaluationStatistic.SF_MEAN_PRIOR_ENTROPY)
-      result = eval.SFMeanPriorEntropy();
-    else if (statistic == EvaluationStatistic.SF_MEAN_SCHEME_ENTROPY)
-      result = eval.SFMeanSchemeEntropy();
-    else if (statistic == EvaluationStatistic.SF_MEAN_ENTROPY_GAIN)
-      result = eval.SFMeanEntropyGain();
-    else if (statistic == EvaluationStatistic.KB_INFORMATION)
-      result = eval.KBInformation();
-    else if (statistic == EvaluationStatistic.KB_MEAN_INFORMATION)
-      result = eval.KBMeanInformation();
-    else if (statistic == EvaluationStatistic.KB_RELATIVE_INFORMATION)
-      result = eval.KBRelativeInformation();
-    else if (statistic == EvaluationStatistic.TRUE_POSITIVE_RATE)
-      result = eval.truePositiveRate(classIndex);
-    else if (statistic == EvaluationStatistic.NUM_TRUE_POSITIVES)
-      result = eval.numTruePositives(classIndex);
-    else if (statistic == EvaluationStatistic.FALSE_POSITIVE_RATE)
-      result = eval.falsePositiveRate(classIndex);
-    else if (statistic == EvaluationStatistic.NUM_FALSE_POSITIVES)
-      result = eval.numFalsePositives(classIndex);
-    else if (statistic == EvaluationStatistic.TRUE_NEGATIVE_RATE)
-      result = eval.trueNegativeRate(classIndex);
-    else if (statistic == EvaluationStatistic.NUM_TRUE_NEGATIVES)
-      result = eval.numTrueNegatives(classIndex);
-    else if (statistic == EvaluationStatistic.FALSE_NEGATIVE_RATE)
-      result = eval.falseNegativeRate(classIndex);
-    else if (statistic == EvaluationStatistic.NUM_FALSE_NEGATIVES)
-      result = eval.numFalseNegatives(classIndex);
-    else if (statistic == EvaluationStatistic.IR_PRECISION)
-      result = eval.precision(classIndex);
-    else if (statistic == EvaluationStatistic.IR_RECALL)
-      result = eval.recall(classIndex);
-    else if (statistic == EvaluationStatistic.F_MEASURE)
-      result = eval.fMeasure(classIndex);
-    else if (statistic == EvaluationStatistic.MATTHEWS_CORRELATION_COEFFICIENT)
-      result = eval.matthewsCorrelationCoefficient(classIndex);
-    else if (statistic == EvaluationStatistic.AREA_UNDER_ROC)
-      result = eval.areaUnderROC(classIndex);
-    else if (statistic == EvaluationStatistic.AREA_UNDER_PRC)
-      result = eval.areaUnderPRC(classIndex);
-    else if (statistic == EvaluationStatistic.WEIGHTED_TRUE_POSITIVE_RATE)
-      result = eval.weightedTruePositiveRate();
-    else if (statistic == EvaluationStatistic.WEIGHTED_FALSE_POSITIVE_RATE)
-      result = eval.weightedFalsePositiveRate();
-    else if (statistic == EvaluationStatistic.WEIGHTED_TRUE_NEGATIVE_RATE)
-      result = eval.weightedTrueNegativeRate();
-    else if (statistic == EvaluationStatistic.WEIGHTED_FALSE_NEGATIVE_RATE)
-      result = eval.weightedFalseNegativeRate();
-    else if (statistic == EvaluationStatistic.WEIGHTED_IR_PRECISION)
-      result = eval.weightedPrecision();
-    else if (statistic == EvaluationStatistic.WEIGHTED_IR_RECALL)
-      result = eval.weightedRecall();
-    else if (statistic == EvaluationStatistic.WEIGHTED_F_MEASURE)
-      result = eval.weightedFMeasure();
-    else if (statistic == EvaluationStatistic.WEIGHTED_MATTHEWS_CORRELATION_COEFFICIENT)
-      result = eval.weightedMatthewsCorrelation();
-    else if (statistic == EvaluationStatistic.WEIGHTED_AREA_UNDER_ROC)
-      result = eval.weightedAreaUnderROC();
-    else if (statistic == EvaluationStatistic.WEIGHTED_AREA_UNDER_PRC)
-      result = eval.weightedAreaUnderPRC();
-    else
-      throw new IllegalArgumentException("Unhandled statistic field: " + statistic);
-
-    return result;
+    switch (statistic) {
+      case NUMBER_CORRECT:
+	return eval.correct();
+      case NUMBER_INCORRECT:
+	return eval.incorrect();
+      case NUMBER_UNCLASSIFIED:
+	return eval.unclassified();
+      case PERCENT_CORRECT:
+	return eval.pctCorrect();
+      case PERCENT_INCORRECT:
+	return eval.pctIncorrect();
+      case PERCENT_UNCLASSIFIED:
+	return eval.pctUnclassified();
+      case KAPPA_STATISTIC:
+	return eval.kappa();
+      case MEAN_ABSOLUTE_ERROR:
+	return eval.meanAbsoluteError();
+      case ROOT_MEAN_SQUARED_ERROR:
+	return eval.rootMeanSquaredError();
+      case RELATIVE_ABSOLUTE_ERROR:
+	return eval.relativeAbsoluteError();
+      case ROOT_RELATIVE_SQUARED_ERROR:
+	return eval.rootRelativeSquaredError();
+      case CORRELATION_COEFFICIENT:
+	return eval.correlationCoefficient();
+      case SF_PRIOR_ENTROPY:
+	return eval.SFPriorEntropy();
+      case SF_SCHEME_ENTROPY:
+	return eval.SFSchemeEntropy();
+      case SF_ENTROPY_GAIN:
+	return eval.SFEntropyGain();
+      case SF_MEAN_PRIOR_ENTROPY:
+	return eval.SFMeanPriorEntropy();
+      case SF_MEAN_SCHEME_ENTROPY:
+	return eval.SFMeanSchemeEntropy();
+      case SF_MEAN_ENTROPY_GAIN:
+	return eval.SFMeanEntropyGain();
+      case KB_INFORMATION:
+	return eval.KBInformation();
+      case KB_MEAN_INFORMATION:
+	return eval.KBMeanInformation();
+      case KB_RELATIVE_INFORMATION:
+	return eval.KBRelativeInformation();
+      case TRUE_POSITIVE_RATE:
+	return eval.truePositiveRate(classIndex);
+      case NUM_TRUE_POSITIVES:
+	return eval.numTruePositives(classIndex);
+      case FALSE_POSITIVE_RATE:
+	return eval.falsePositiveRate(classIndex);
+      case NUM_FALSE_POSITIVES:
+	return eval.numFalsePositives(classIndex);
+      case TRUE_NEGATIVE_RATE:
+	return eval.trueNegativeRate(classIndex);
+      case NUM_TRUE_NEGATIVES:
+	return eval.numTrueNegatives(classIndex);
+      case FALSE_NEGATIVE_RATE:
+	return eval.falseNegativeRate(classIndex);
+      case NUM_FALSE_NEGATIVES:
+	return eval.numFalseNegatives(classIndex);
+      case IR_PRECISION:
+	return eval.precision(classIndex);
+      case IR_RECALL:
+	return eval.recall(classIndex);
+      case F_MEASURE:
+	return eval.fMeasure(classIndex);
+      case MATTHEWS_CORRELATION_COEFFICIENT:
+	return eval.matthewsCorrelationCoefficient(classIndex);
+      case AREA_UNDER_ROC:
+	return eval.areaUnderROC(classIndex);
+      case AREA_UNDER_PRC:
+	return eval.areaUnderPRC(classIndex);
+      case WEIGHTED_TRUE_POSITIVE_RATE:
+	return eval.weightedTruePositiveRate();
+      case WEIGHTED_FALSE_POSITIVE_RATE:
+	return eval.weightedFalsePositiveRate();
+      case WEIGHTED_TRUE_NEGATIVE_RATE:
+	return eval.weightedTrueNegativeRate();
+      case WEIGHTED_FALSE_NEGATIVE_RATE:
+	return eval.weightedFalseNegativeRate();
+      case WEIGHTED_IR_PRECISION:
+	return eval.weightedPrecision();
+      case WEIGHTED_IR_RECALL:
+	return eval.weightedRecall();
+      case WEIGHTED_F_MEASURE:
+	return eval.weightedFMeasure();
+      case WEIGHTED_MATTHEWS_CORRELATION_COEFFICIENT:
+	return eval.weightedMatthewsCorrelation();
+      case WEIGHTED_AREA_UNDER_ROC:
+	return eval.weightedAreaUnderROC();
+      case WEIGHTED_AREA_UNDER_PRC:
+	return eval.weightedAreaUnderPRC();
+      case UNWEIGHTED_MACRO_F_MEASURE:
+	return eval.unweightedMacroFmeasure();
+      case UNWEIGHTED_MICRO_F_MEASURE:
+	return eval.unweightedMicroFmeasure();
+      default:
+	throw new IllegalArgumentException("Unhandled statistic field: " + statistic);
+    }
   }
 }

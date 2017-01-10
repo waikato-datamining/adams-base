@@ -15,7 +15,7 @@
 
 /**
  * EvaluationStatistic.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.core;
 
@@ -75,7 +75,9 @@ public enum EvaluationStatistic
   WEIGHTED_F_MEASURE("Weighted F measure", true),
   WEIGHTED_MATTHEWS_CORRELATION_COEFFICIENT("Weighted Matthews correlation coefficient", true),
   WEIGHTED_AREA_UNDER_ROC("Weighted area under ROC", true),
-  WEIGHTED_AREA_UNDER_PRC("Weighted area under PRC", true);
+  WEIGHTED_AREA_UNDER_PRC("Weighted area under PRC", true),
+  UNWEIGHTED_MACRO_F_MEASURE("Unweighted Macro F measure", true),
+  UNWEIGHTED_MICRO_F_MEASURE("Unweighted Micro F measure", true);
   
   /** the display value. */
   private String m_Display;
