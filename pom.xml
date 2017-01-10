@@ -69,9 +69,9 @@
     <class.adams.flowrunner>adams.flow.FlowRunner</class.adams.flowrunner>
     <class.adams.flowsetuprunner>adams.flow.FlowSetupRunner</class.adams.flowsetuprunner>
     <!-- module-dependent -->
-    <cxf.version>3.1.6</cxf.version>
-    <jetty.version>9.2.10.v20150310</jetty.version>
-    <xjc.version>3.0.5</xjc.version>
+    <cxf.version>3.1.9</cxf.version>
+    <jetty.version>9.2.15.v20160210</jetty.version>
+    <xjc.version>3.1.0</xjc.version>
     <moa.version>2014.04</moa.version>
     <weka.version>3.9.0-fork-0.0.1</weka.version>
     <postgresql.version>9.4-1201-jdbc41</postgresql.version>
