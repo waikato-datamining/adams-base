@@ -15,15 +15,10 @@
 
 /*
  * AutoColorCorrelogram.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.lire.features;
-
-import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import adams.core.TechnicalInformation;
 import adams.core.TechnicalInformation.Field;
@@ -36,13 +31,24 @@ import adams.data.image.features.AbstractBufferedImageFeatureGenerator;
 import adams.data.report.DataType;
 import adams.data.statistics.StatUtils;
 
+import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 /**
  <!-- globalinfo-start -->
- * Generates features using net.semanticmetadata.lire.imageanalysis.AutoColorCorrelogram.<br>
+ * Generates features using net.semanticmetadata.lire.imageanalysis.features.global.AutoColorCorrelogram.<br>
  * For more information on the LIRE project, see:<br>
- * http:&#47;&#47;code.google.com&#47;p&#47;lire&#47;<br>
+ * http:&#47;&#47;www.lire-project.net&#47;<br>
  * For more information see:<br>
- * Huang, J.; Kumar, S. R.; Mitra, M.; Zhu, W. &amp; Zabih, R. (2007). Image Indexing Using Color Correlograms. IEEE Computer Society..
+ * Huang, J.; Kumar, S. R.; Mitra, M.; Zhu, W. &amp; Zabih, R. (2007). Image Indexing Using Color Correlograms. IEEE Computer Society..<br>
+ * <br>
+ * Mathias Lux, Savvas A. Chatzichristofis: LIRE: Lucene Image Retrieval - An Extensible Java CBIR Library. In: 16th ACM International Conference on Multimedia, 1085-1088, 2008.<br>
+ * <br>
+ * Lux, Mathias: Content Based Image Retrieval with LIRe. In: 19th ACM International Conference on Multimedia, 735-738, 2011.<br>
+ * <br>
+ * Mathias Lux, Oge Marques (2013). . Morgan Claypool.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -54,6 +60,34 @@ import adams.data.statistics.StatUtils;
  *    title = {Image Indexing Using Color Correlograms},
  *    year = {2007},
  *    HTTP = {http:&#47;&#47;doi.ieeecomputersociety.org&#47;10.1109&#47;CVPR.1997.609412}
+ * }
+ * 
+ * &#64;inproceedings{Lux2008,
+ *    author = {Mathias Lux and Savvas A. Chatzichristofis},
+ *    booktitle = {16th ACM International Conference on Multimedia},
+ *    pages = {1085-1088},
+ *    publisher = {ACM},
+ *    title = {LIRE: Lucene Image Retrieval - An Extensible Java CBIR Library},
+ *    year = {2008},
+ *    URL = {http:&#47;&#47;doi.acm.org&#47;10.1145&#47;1459359.1459577}
+ * }
+ * 
+ * &#64;inproceedings{Lux2011,
+ *    author = {Lux, Mathias},
+ *    booktitle = {19th ACM International Conference on Multimedia},
+ *    pages = {735-738},
+ *    publisher = {ACM},
+ *    title = {Content Based Image Retrieval with LIRe},
+ *    year = {2011},
+ *    URL = {http:&#47;&#47;doi.acm.org&#47;10.1145&#47;2072298.2072432}
+ * }
+ * 
+ * &#64;book{Lux2013,
+ *    author = {Mathias Lux and Oge Marques},
+ *    booktitle = {Visual Information Retrieval using Java and LIRE},
+ *    publisher = {Morgan Claypool},
+ *    year = {2013},
+ *    ISBN = {9781608459186}
  * }
  * </pre>
  * <br><br>
@@ -67,7 +101,7 @@ import adams.data.statistics.StatUtils;
  * 
  * <pre>-converter &lt;adams.data.featureconverter.AbstractFeatureConverter&gt; (property: converter)
  * &nbsp;&nbsp;&nbsp;The feature converter to use to produce the output data.
- * &nbsp;&nbsp;&nbsp;default: adams.data.featureconverter.SpreadSheetFeatureConverter -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.SpreadSheet
+ * &nbsp;&nbsp;&nbsp;default: adams.data.featureconverter.SpreadSheet -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.DefaultSpreadSheet
  * </pre>
  * 
  * <pre>-field &lt;adams.data.report.Field&gt; [-field ...] (property: fields)
@@ -101,9 +135,9 @@ public class AutoColorCorrelogram
   @Override
   public String globalInfo() {
     return
-        "Generates features using " + net.semanticmetadata.lire.imageanalysis.AutoColorCorrelogram.class.getName() + ".\n"
+        "Generates features using " + net.semanticmetadata.lire.imageanalysis.features.global.AutoColorCorrelogram.class.getName() + ".\n"
         + "For more information on the LIRE project, see:\n"
-        + "http://code.google.com/p/lire/\n"
+        + "http://www.lire-project.net/\n"
         + "For more information see:\n"
         + getTechnicalInformation().toString();
   }
@@ -125,6 +159,8 @@ public class AutoColorCorrelogram
     result.setValue(Field.YEAR, "2007");
     result.setValue(Field.HTTP, "http://doi.ieeecomputersociety.org/10.1109/CVPR.1997.609412");
 
+    result.add(Citation.getTechnicalInformation());
+
     return result;
   }
 
@@ -140,12 +176,12 @@ public class AutoColorCorrelogram
     BufferedImage		image;
     double[]			histo;
     int				i;
-    net.semanticmetadata.lire.imageanalysis.AutoColorCorrelogram	features;
+    net.semanticmetadata.lire.imageanalysis.features.global.AutoColorCorrelogram	features;
 
     image    = BufferedImageHelper.convert(img.getImage(), BufferedImage.TYPE_3BYTE_BGR);
-    features = new net.semanticmetadata.lire.imageanalysis.AutoColorCorrelogram();
+    features = new net.semanticmetadata.lire.imageanalysis.features.global.AutoColorCorrelogram();
     features.extract(image);
-    histo    = features.getDoubleHistogram();
+    histo    = features.getFeatureVector();
     result   = new HeaderDefinition();
     for (i = 0; i < histo.length; i++)
       result.add("AutoColorCorrelogram-" + (i+1), DataType.NUMERIC);
@@ -164,14 +200,14 @@ public class AutoColorCorrelogram
     List<Object>[]		result;
     BufferedImage		image;
     double[]			histo;
-    net.semanticmetadata.lire.imageanalysis.AutoColorCorrelogram	features;
+    net.semanticmetadata.lire.imageanalysis.features.global.AutoColorCorrelogram	features;
 
     image     = BufferedImageHelper.convert(img.getImage(), BufferedImage.TYPE_3BYTE_BGR);
-    features  = new net.semanticmetadata.lire.imageanalysis.AutoColorCorrelogram();
+    features  = new net.semanticmetadata.lire.imageanalysis.features.global.AutoColorCorrelogram();
     features.extract(image);
-    histo     = features.getDoubleHistogram();
+    histo     = features.getFeatureVector();
     result    = new List[1];
-    result[0] = new ArrayList<Object>();
+    result[0] = new ArrayList<>();
     result[0].addAll(Arrays.asList(StatUtils.toNumberArray(histo)));
 
     return result;

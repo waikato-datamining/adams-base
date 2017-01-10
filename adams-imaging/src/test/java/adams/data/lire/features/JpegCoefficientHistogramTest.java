@@ -25,7 +25,7 @@ import adams.data.image.features.AbstractBufferedImageFeatureGenerator;
 import adams.env.Environment;
 
 /**
- * Test class for the JpegCoefficientHistogram flattener. Run from the command line with: <br><br>
+ * Test class for the JpegCoefficientHistogram feature generator. Run from the command line with: <br><br>
  * java adams.data.lire.features.JpegCoefficientHistogramTest
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)

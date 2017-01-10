@@ -25,7 +25,7 @@ import adams.data.image.features.AbstractBufferedImageFeatureGenerator;
 import adams.env.Environment;
 
 /**
- * Test class for the ColorLayout flattener. Run from the command line with: <br><br>
+ * Test class for the ColorLayout feature generator. Run from the command line with: <br><br>
  * java adams.data.lire.features.ColorLayoutTest
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)

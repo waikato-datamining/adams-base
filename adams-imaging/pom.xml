@@ -125,16 +125,16 @@
     </dependency>
 
     <dependency>
-      <groupId>com.github.kzwang</groupId>
+      <groupId>com.github.zengde</groupId>
       <artifactId>lire</artifactId>
-      <version>0.9.4-kzwang-beta1</version>
+      <version>1.0b2</version>
       <exclusions>
         <exclusion>
           <groupId>nz.ac.waikato.cms.weka</groupId>
           <artifactId>weka-stable</artifactId>
         </exclusion>
         <exclusion>
-          <groupId>com.stromberglabs</groupId>
+          <groupId>com.sangupta</groupId>
           <artifactId>jopensurf</artifactId>
         </exclusion>
       </exclusions> 

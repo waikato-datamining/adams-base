@@ -15,15 +15,10 @@
 
 /*
  * LocalBinaryPatterns.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.lire.features;
-
-import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import adams.data.featureconverter.HeaderDefinition;
 import adams.data.image.BufferedImageContainer;
@@ -32,11 +27,16 @@ import adams.data.image.features.AbstractBufferedImageFeatureGenerator;
 import adams.data.report.DataType;
 import adams.data.statistics.StatUtils;
 
+import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 /**
  <!-- globalinfo-start -->
- * Generates features using net.semanticmetadata.lire.imageanalysis.LocalBinaryPatterns.<br>
+ * Generates features using net.semanticmetadata.lire.imageanalysis.features.global.LocalBinaryPatterns.<br>
  * For more information on the LIRE project, see:<br>
- * http:&#47;&#47;code.google.com&#47;p&#47;lire&#47;
+ * http:&#47;&#47;www.lire-project.net&#47;
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -44,6 +44,11 @@ import adams.data.statistics.StatUtils;
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
+ * </pre>
+ * 
+ * <pre>-converter &lt;adams.data.featureconverter.AbstractFeatureConverter&gt; (property: converter)
+ * &nbsp;&nbsp;&nbsp;The feature converter to use to produce the output data.
+ * &nbsp;&nbsp;&nbsp;default: adams.data.featureconverter.SpreadSheet -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.DefaultSpreadSheet
  * </pre>
  * 
  * <pre>-field &lt;adams.data.report.Field&gt; [-field ...] (property: fields)
@@ -76,9 +81,9 @@ public class LocalBinaryPatterns
   @Override
   public String globalInfo() {
     return
-        "Generates features using " + net.semanticmetadata.lire.imageanalysis.LocalBinaryPatterns.class.getName() + ".\n"
+        "Generates features using " + net.semanticmetadata.lire.imageanalysis.features.global.LocalBinaryPatterns.class.getName() + ".\n"
         + "For more information on the LIRE project, see:\n"
-        + "http://code.google.com/p/lire/";
+        + "http://www.lire-project.net/";
   }
 
   /**
@@ -93,12 +98,12 @@ public class LocalBinaryPatterns
     BufferedImage		image;
     double[]			histo;
     int				i;
-    net.semanticmetadata.lire.imageanalysis.LocalBinaryPatterns	features;
+    net.semanticmetadata.lire.imageanalysis.features.global.LocalBinaryPatterns	features;
 
     image    = BufferedImageHelper.convert(img.getImage(), BufferedImage.TYPE_3BYTE_BGR);
-    features = new net.semanticmetadata.lire.imageanalysis.LocalBinaryPatterns();
+    features = new net.semanticmetadata.lire.imageanalysis.features.global.LocalBinaryPatterns();
     features.extract(image);
-    histo    = features.getDoubleHistogram();
+    histo    = features.getFeatureVector();
     result   = new HeaderDefinition();
     for (i = 0; i < histo.length; i++)
       result.add("LocalBinaryPatterns-" + (i+1), DataType.NUMERIC);
@@ -117,15 +122,14 @@ public class LocalBinaryPatterns
     List<Object>[]		result;
     double[]			histo;
     BufferedImage		image;
-    net.semanticmetadata.lire.imageanalysis.LocalBinaryPatterns	features;
+    net.semanticmetadata.lire.imageanalysis.features.global.LocalBinaryPatterns	features;
 
-    result   = null;
     image    = BufferedImageHelper.convert(img.getImage(), BufferedImage.TYPE_3BYTE_BGR);
-    features = new net.semanticmetadata.lire.imageanalysis.LocalBinaryPatterns();
+    features = new net.semanticmetadata.lire.imageanalysis.features.global.LocalBinaryPatterns();
     features.extract(image);
-    histo    = features.getDoubleHistogram();
+    histo    = features.getFeatureVector();
     result    = new List[1];
-    result[0] = new ArrayList<Object>();
+    result[0] = new ArrayList<>();
     result[0].addAll(Arrays.asList(StatUtils.toNumberArray(histo)));
 
     return result;

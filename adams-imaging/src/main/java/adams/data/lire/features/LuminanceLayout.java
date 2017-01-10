@@ -15,15 +15,10 @@
 
 /*
  * LuminanceLayout.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.lire.features;
-
-import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import adams.data.featureconverter.HeaderDefinition;
 import adams.data.image.BufferedImageContainer;
@@ -32,12 +27,17 @@ import adams.data.image.features.AbstractBufferedImageFeatureGenerator;
 import adams.data.report.DataType;
 import adams.data.statistics.StatUtils;
 
+import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 /**
  <!-- globalinfo-start -->
- * Generates features using net.semanticmetadata.lire.imageanalysis.LuminanceLayout.<br>
+ * Generates features using net.semanticmetadata.lire.imageanalysis.features.global.LuminanceLayout.<br>
  * Intended for grayscale or B&#47;W images. It scales an image down to a very small size and uses this smaller version as a descriptor. Interesting aspect is that white stripes are added to make the small image quadratic.<br>
  * For more information on the LIRE project, see:<br>
- * http:&#47;&#47;code.google.com&#47;p&#47;lire&#47;
+ * http:&#47;&#47;www.lire-project.net&#47;
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -45,6 +45,11 @@ import adams.data.statistics.StatUtils;
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
+ * </pre>
+ * 
+ * <pre>-converter &lt;adams.data.featureconverter.AbstractFeatureConverter&gt; (property: converter)
+ * &nbsp;&nbsp;&nbsp;The feature converter to use to produce the output data.
+ * &nbsp;&nbsp;&nbsp;default: adams.data.featureconverter.SpreadSheet -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.DefaultSpreadSheet
  * </pre>
  * 
  * <pre>-field &lt;adams.data.report.Field&gt; [-field ...] (property: fields)
@@ -77,12 +82,12 @@ public class LuminanceLayout
   @Override
   public String globalInfo() {
     return
-        "Generates features using " + net.semanticmetadata.lire.imageanalysis.LuminanceLayout.class.getName() + ".\n"
+        "Generates features using " + net.semanticmetadata.lire.imageanalysis.features.global.LuminanceLayout.class.getName() + ".\n"
         + "Intended for grayscale or B/W images. It scales an image down to a very "
         + "small size and uses this smaller version as a descriptor. Interesting "
         + "aspect is that white stripes are added to make the small image quadratic.\n"
         + "For more information on the LIRE project, see:\n"
-        + "http://code.google.com/p/lire/";
+        + "http://www.lire-project.net/";
   }
 
   /**
@@ -97,12 +102,12 @@ public class LuminanceLayout
     BufferedImage		image;
     double[]			histo;
     int				i;
-    net.semanticmetadata.lire.imageanalysis.LuminanceLayout	features;
+    net.semanticmetadata.lire.imageanalysis.features.global.LuminanceLayout	features;
 
     image    = BufferedImageHelper.convert(img.getImage(), BufferedImage.TYPE_3BYTE_BGR);
-    features = new net.semanticmetadata.lire.imageanalysis.LuminanceLayout();
+    features = new net.semanticmetadata.lire.imageanalysis.features.global.LuminanceLayout();
     features.extract(image);
-    histo    = features.getDoubleHistogram();
+    histo    = features.getFeatureVector();
     result   = new HeaderDefinition();
     for (i = 0; i < histo.length; i++)
       result.add("LuminanceLayout-" + (i+1), DataType.NUMERIC);
@@ -121,15 +126,14 @@ public class LuminanceLayout
     List<Object>[]		result;
     BufferedImage		image;
     double[]			histo;
-    net.semanticmetadata.lire.imageanalysis.LuminanceLayout	features;
+    net.semanticmetadata.lire.imageanalysis.features.global.LuminanceLayout	features;
 
-    result   = null;
     image    = BufferedImageHelper.convert(img.getImage(), BufferedImage.TYPE_BYTE_GRAY);
-    features = new net.semanticmetadata.lire.imageanalysis.LuminanceLayout();
+    features = new net.semanticmetadata.lire.imageanalysis.features.global.LuminanceLayout();
     features.extract(image);
-    histo    = features.getDoubleHistogram();
+    histo    = features.getFeatureVector();
     result    = new List[1];
-    result[0] = new ArrayList<Object>();
+    result[0] = new ArrayList<>();
     result[0].addAll(Arrays.asList(StatUtils.toNumberArray(histo)));
 
     return result;
