@@ -24,5 +24,5 @@ options[12] = "1";
 options[13] = "-K";
 options[14] = "weka.classifiers.functions.supportVector.PolyKernel -E 1.0 -C 250007";
 options[15] = "-calibrator";
-options[16] = "weka.classifiers.functions.Logistic -R 1.0E-8 -M -1";
+options[16] = "weka.classifiers.functions.Logistic -R 1.0E-8 -M -1 -num-decimal-places 4";
 

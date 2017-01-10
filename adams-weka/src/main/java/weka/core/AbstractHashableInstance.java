@@ -15,7 +15,7 @@
 
 /**
  * AbstractHashableInstance.java
- * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2017 University of Waikato, Hamilton, New Zealand
  */
 package weka.core;
 
@@ -86,6 +86,32 @@ public abstract class AbstractHashableInstance
       result = null;
     }
     
+    return result;
+  }
+
+  /**
+   * Copies the instance but fills up its values based on the given array
+   * of doubles. The copy has access to the same dataset.
+   *
+   * @param values the array with new values
+   * @return the new instance
+   */
+  @Override
+  public Instance copy(double[] values) {
+    AbstractHashableInstance	result;
+    Constructor constr;
+
+    try {
+      constr = getClass().getConstructor(new Class[]{Double.TYPE, double[].class});
+      result = (AbstractHashableInstance) constr.newInstance(new Object[]{weight(), values});
+      result.assign(this);
+    }
+    catch (Exception e) {
+      System.err.println("Failed to create copy of " + getClass().getName() + ":");
+      e.printStackTrace();
+      result = null;
+    }
+
     return result;
   }
 

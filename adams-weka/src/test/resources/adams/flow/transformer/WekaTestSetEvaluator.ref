@@ -8,8 +8,6 @@ Mean absolute error                      0.0519
 Root mean squared error                  0.1506
 Relative absolute error                 10.9481 %
 Root relative squared error             30.9353 %
-Coverage of cases (0.95 level)          98.8506 %
-Mean rel. region size (0.95 level)      54.7126 %
 Total Number of Instances              435     
 
 

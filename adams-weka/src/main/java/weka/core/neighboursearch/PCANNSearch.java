@@ -20,10 +20,6 @@
 
 package weka.core.neighboursearch;
 
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.Vector;
-
 import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.Option;
@@ -31,7 +27,11 @@ import weka.core.SelectedTag;
 import weka.core.Utils;
 import weka.filters.Filter;
 import weka.filters.supervised.attribute.PLSFilter;
-import weka.filters.unsupervised.attribute.PrincipalComponents;
+import weka.filters.unsupervised.attribute.PrincipalComponentsJ;
+
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.Vector;
 
 /**
  <!-- globalinfo-start -->
@@ -56,7 +56,7 @@ public class PCANNSearch
 
   private static final long serialVersionUID = 1915484723703917241L;
   /** The neighbourhood of instances to find neighbours in. */
-  protected PrincipalComponents m_pca=null;
+  protected PrincipalComponentsJ m_pca=null;
   /** the amount of varaince to cover in the original data when
   retaining the best n PC's. */
   protected double m_CoverVariance = 0.95;
@@ -158,8 +158,8 @@ public class PCANNSearch
     }
   }
   
-  protected PrincipalComponents buildFilter(double cv,int maxatt) {
-    PrincipalComponents pcafilter = new PrincipalComponents();
+  protected PrincipalComponentsJ buildFilter(double cv,int maxatt) {
+    PrincipalComponentsJ pcafilter = new PrincipalComponentsJ();
     pcafilter.setMaximumAttributeNames(maxatt);
     pcafilter.setVarianceCovered(cv);
     return(pcafilter);

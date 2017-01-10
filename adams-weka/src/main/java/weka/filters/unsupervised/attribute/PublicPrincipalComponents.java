@@ -16,6 +16,7 @@
 /**
  * PublicPrincipalComponents.java
  * Copyright (C) 2014 Dutch Sprouts, Wageningen, NL
+ * Copyright (C) 2017 University of Waikato, Hamilton, New Zealand
  */
 package weka.filters.unsupervised.attribute;
 
@@ -37,7 +38,7 @@ import java.util.ArrayList;
     copyright = "2014 Dutch Sprouts, Wageningen, NL"
 )
 public class PublicPrincipalComponents 
-  extends PrincipalComponents{
+  extends PrincipalComponentsJ {
 
   /** for serialization*/
   private static final long serialVersionUID = -3256644040958902529L;

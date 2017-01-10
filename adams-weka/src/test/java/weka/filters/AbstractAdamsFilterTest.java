@@ -15,7 +15,7 @@
 
 /**
  * AbstractAdamsFilterTest.java
- * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
  */
 package weka.filters;
 
@@ -43,6 +43,20 @@ public abstract class AbstractAdamsFilterTest
   public AbstractAdamsFilterTest(String name) {
     super(name);
     setUpEnvironment();
+  }
+
+  /**
+   * Called by JUnit before each test method. This implementation creates
+   * the default filter to test and loads a test set of Instances.
+   *
+   * @throws Exception if an error occurs reading the example instances.
+   */
+  @Override
+  protected void setUp() throws Exception {
+    super.setUp();
+
+    if (m_FilteredClassifier != null)
+      m_FilteredClassifier.setDoNotCheckForModifiedClassAttribute(true);
   }
 
   /**
