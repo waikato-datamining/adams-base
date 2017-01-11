@@ -15,7 +15,7 @@
 
 /*
  * ApplicationFrame.java
- * Copyright (C) 2008-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2017 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -861,7 +861,7 @@ public abstract class AbstractApplicationFrame
     newTitle = getApplicationTitle();
     name     = InternetHelper.getLocalHostName();
     if (name != null)
-      newTitle += "@" + name;
+      newTitle = name + ":" + newTitle;
 
     conns = DatabaseManager.getActiveConnectionObjects();
     if (conns.size() > 0) {
@@ -877,6 +877,8 @@ public abstract class AbstractApplicationFrame
     }
 
     if (title.length() != 0) {
+      if (title.contains(name + ":"))
+        title = title.replace(name + ":", "");
       if (title.length() > 50)
 	newTitle += " - " + title.substring(0, 50) + "...";
       else
@@ -1320,7 +1322,7 @@ public abstract class AbstractApplicationFrame
     result = title;
     name   = getHostnamePrefix();
     if (name != null) {
-      if (!result.startsWith(name))
+      if (!result.contains(name))
       result = name + result;
     }
 
