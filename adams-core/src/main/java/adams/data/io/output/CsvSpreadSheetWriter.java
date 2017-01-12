@@ -1238,23 +1238,25 @@ public class CsvSpreadSheetWriter
       for (String keyd: content.getOwner().getHeaderRow().cellKeys()) {
 	cell = content.getCell(keyd);
 
-	if (!first)
-	  writer.write(m_Separator);
-	if ((cell != null) && (cell.getContent() != null) && !cell.isMissing()) {
+	if (!first) {
+          writer.write(m_Separator);
+          first = false;
+        }
+	if ((cell != null) && !cell.isMissing()) {
 	  if (cell.isFormula() && !m_OutputAsDisplayed) {
 	    writer.write(quoteString(cell.getFormula()));
 	  }
 	  else {
 	    switch (cell.getContentType()) {
+              case DOUBLE:
+		writer.write(quoteNumber(format(cell.toDouble())));
+		break;
 	      case STRING:
 		writer.write(quoteString(cell.getContent()));
 		break;
 	      case LONG:
 		writer.write(quoteNumber(cell.toLong().toString()));
-		break;
-	      case DOUBLE:
-		writer.write(quoteNumber(format(cell.toDouble())));
-		break;
+                break;
 	      case DATE:
 		writer.write(quoteString(dformat.format(cell.toDate())));
 		break;
@@ -1282,8 +1284,6 @@ public class CsvSpreadSheetWriter
 	else {
 	  writer.write(quoteString(m_MissingValue));
 	}
-
-	first = false;
       }
       writer.write(m_NewLine);
     }

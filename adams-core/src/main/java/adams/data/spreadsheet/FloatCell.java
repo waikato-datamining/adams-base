@@ -15,7 +15,7 @@
 
 /*
  * FloatCell.java
- * Copyright (C) 2015-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.spreadsheet;
@@ -737,7 +737,7 @@ public class FloatCell
 	  return SpreadSheet.MISSING_VALUE;
 	return handler.format(m_Object);
       default:
-	return Float.toString(m_Content);
+	return "" + m_Content;
     }
   }
 

@@ -15,7 +15,7 @@
 
 /*
  * DoubleCell.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.spreadsheet;
@@ -737,7 +737,7 @@ public class DoubleCell
 	  return SpreadSheet.MISSING_VALUE;
 	return handler.format(m_Object);
       default:
-	return Double.toString(m_Content);
+	return "" + m_Content;
     }
   }
 

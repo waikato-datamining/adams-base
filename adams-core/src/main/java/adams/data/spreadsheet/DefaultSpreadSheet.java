@@ -15,7 +15,7 @@
 
 /*
  * DefaultSpreadSheet.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.spreadsheet;
@@ -1117,12 +1117,15 @@ public class DefaultSpreadSheet
    */
   @Override
   public String toString() {
-    StringWriter	writer;
+    StringWriter 		swriter;
+    CsvSpreadSheetWriter  	cwriter;
 
-    writer = new StringWriter();
-    new CsvSpreadSheetWriter().write(this, writer);
+    swriter = new StringWriter();
+    cwriter = new CsvSpreadSheetWriter();
+    cwriter.setUseSimpleNumberFormat(true);
+    cwriter.write(this, swriter);
 
-    return writer.toString();
+    return swriter.toString();
   }
 
   /**

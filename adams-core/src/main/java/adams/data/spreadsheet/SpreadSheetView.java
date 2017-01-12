@@ -1270,12 +1270,15 @@ public class SpreadSheetView
    */
   @Override
   public String toString() {
-    StringWriter writer;
+    StringWriter 		swriter;
+    CsvSpreadSheetWriter  	cwriter;
 
-    writer = new StringWriter();
-    new CsvSpreadSheetWriter().write(this, writer);
+    swriter = new StringWriter();
+    cwriter = new CsvSpreadSheetWriter();
+    cwriter.setUseSimpleNumberFormat(true);
+    cwriter.write(this, swriter);
 
-    return writer.toString();
+    return swriter.toString();
   }
 
   /**
