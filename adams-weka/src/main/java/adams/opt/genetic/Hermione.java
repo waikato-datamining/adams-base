@@ -491,9 +491,9 @@ public class Hermione
     for (int i = starts.get(pos); i < starts.get(pos) + numbits.get(pos) && c < newWeights.length; i++) {
       weights[i] = newWeights[c];
       if (newWeights[c] == 1)
-	m_Genes[chromosome].set(c);
+	m_Genes[chromosome].set(i);
       else
-	m_Genes[chromosome].clear(c);
+	m_Genes[chromosome].clear(i);
       c++;
     }
   }
