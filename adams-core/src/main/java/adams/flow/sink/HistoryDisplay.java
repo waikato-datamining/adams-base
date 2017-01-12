@@ -15,17 +15,21 @@
 
 /*
  * HistoryDisplay.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
 
-import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Hashtable;
+import adams.core.QuickInfoHelper;
+import adams.core.Utils;
+import adams.core.VariableNameNoUpdate;
+import adams.flow.core.Token;
+import adams.gui.core.AbstractNamedHistoryPanel.HistoryEntrySelectionEvent;
+import adams.gui.core.BasePanel;
+import adams.gui.core.BaseStatusBar;
+import adams.gui.core.BufferHistoryPanel;
+import adams.gui.core.GUIHelper;
+import adams.gui.core.TextEditorPanel;
 
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
@@ -33,19 +37,11 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JSplitPane;
 import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
-import adams.core.QuickInfoHelper;
-import adams.core.Utils;
-import adams.core.VariableNameNoUpdate;
-import adams.flow.core.Token;
-import adams.gui.core.AbstractNamedHistoryPanel.HistoryEntrySelectionEvent;
-import adams.gui.core.AbstractNamedHistoryPanel.HistoryEntrySelectionListener;
-import adams.gui.core.BasePanel;
-import adams.gui.core.BaseStatusBar;
-import adams.gui.core.BufferHistoryPanel;
-import adams.gui.core.GUIHelper;
-import adams.gui.core.TextEditorPanel;
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Hashtable;
 
 /**
  <!-- globalinfo-start -->
@@ -219,17 +215,14 @@ public class HistoryDisplay
 
       m_TextPanel = new TextEditorPanel();
       m_TextPanel.setTextFont(owner.getFont());
+      m_TextPanel.setLineWrap(owner.getLineWrap());
+      m_TextPanel.setWrapStyleWord(owner.getWrapStyleWord());
       m_TextPanel.setEditable(false);
       m_SplitPane.setBottomComponent(m_TextPanel);
 
       m_History = new BufferHistoryPanel();
       m_History.setTextArea(m_TextPanel.getTextArea());
-      m_History.addHistoryEntrySelectionListener(new HistoryEntrySelectionListener() {
-	@Override
-	public void historyEntrySelected(HistoryEntrySelectionEvent e) {
-	  m_StatusBar.setStatus(Utils.flatten(e.getNames(), ", "));
-	}
-      });
+      m_History.addHistoryEntrySelectionListener((HistoryEntrySelectionEvent e) -> m_StatusBar.setStatus(Utils.flatten(e.getNames(), ", ")));
       m_SplitPane.setTopComponent(m_History);
 
       m_SplitPane.setResizeWeight(0.1);
@@ -422,7 +415,19 @@ public class HistoryDisplay
 
   /** the "caret position" menu item. */
   protected JCheckBoxMenuItem m_MenuItemViewCaret;
-  
+
+  /** the line wrap menu item. */
+  protected JMenuItem m_MenuItemViewLineWrap;
+
+  /** the word wrap style menu item. */
+  protected JMenuItem m_MenuItemViewWrapStyleWord;
+
+  /** use line wrap. */
+  protected boolean m_LineWrap;
+
+  /** use word wrap style. */
+  protected boolean m_WrapStyleWord;
+
   /** the current count of tokens. */
   protected int m_CurrentCount;
   
@@ -458,24 +463,32 @@ public class HistoryDisplay
     super.defineOptions();
 
     m_OptionManager.add(
-	    "caret-at-start", "caretAtStart",
-	    false);
-    
-    m_OptionManager.add(
-	    "num-tokens", "numTokens",
-	    1, -1, null);
-    
-    m_OptionManager.add(
-	    "entry-name-variable", "entryNameVariable",
-	    new VariableNameNoUpdate("entryNameVariable"));
+      "caret-at-start", "caretAtStart",
+      false);
 
     m_OptionManager.add(
-	    "allow-merge", "allowMerge",
-	    false);
+      "line-wrap", "lineWrap",
+      false);
 
     m_OptionManager.add(
-	    "allow-search", "allowSearch",
-	    false);
+      "wrap-style-word", "wrapStyleWord",
+      false);
+
+    m_OptionManager.add(
+      "num-tokens", "numTokens",
+      1, -1, null);
+
+    m_OptionManager.add(
+      "entry-name-variable", "entryNameVariable",
+      new VariableNameNoUpdate("entryNameVariable"));
+
+    m_OptionManager.add(
+      "allow-merge", "allowMerge",
+      false);
+
+    m_OptionManager.add(
+      "allow-search", "allowSearch",
+      false);
   }
 
   /**
@@ -596,6 +609,75 @@ public class HistoryDisplay
     return
         "If set to true, then the caret will be positioned by default at the "
       + "start and not the end (can be changed in dialog: View -> Position caret at start).";
+  }
+
+  /**
+   * Enables/disables line wrap.
+   *
+   * @param value	if true line wrap gets enabled
+   */
+  public void setLineWrap(boolean value) {
+    m_LineWrap = value;
+    reset();
+  }
+
+  /**
+   * Returns whether line wrap is enabled.
+   *
+   * @return		true if line wrap enabled
+   */
+  public boolean getLineWrap() {
+    return m_LineWrap;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String lineWrapTipText() {
+    return "If enabled, line wrap is used.";
+  }
+
+  /**
+   * Sets the style of wrapping used if the text area is wrapping
+   * lines.  If set to true the lines will be wrapped at word
+   * boundaries (whitespace) if they are too long
+   * to fit within the allocated width.  If set to false,
+   * the lines will be wrapped at character boundaries.
+   * By default this property is false.
+   *
+   * @param value indicates if word boundaries should be used
+   *   for line wrapping
+   */
+  public void setWrapStyleWord(boolean value) {
+    m_WrapStyleWord = value;
+    reset();
+  }
+
+  /**
+   * Gets the style of wrapping used if the text area is wrapping
+   * lines.  If set to true the lines will be wrapped at word
+   * boundaries (ie whitespace) if they are too long
+   * to fit within the allocated width.  If set to false,
+   * the lines will be wrapped at character boundaries.
+   *
+   * @return if the wrap style should be word boundaries
+   *  instead of character boundaries
+   */
+  public boolean getWrapStyleWord() {
+    return m_WrapStyleWord;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String wrapStyleWordTipText() {
+    return "If enabled, wrapping occurs on word boundaries instead of character boundaries.";
   }
 
   /**
@@ -744,11 +826,9 @@ public class HistoryDisplay
     m_HistoryPanel = new HistorySplitPanel(this);
     m_HistoryPanel.setAllowSearch(m_AllowSearch);
     m_HistoryPanel.getHistory().setCaretAtStart(m_CaretAtStart);
-    m_HistoryPanel.getHistory().addHistoryEntrySelectionListener(new HistoryEntrySelectionListener() {
-      public void historyEntrySelected(HistoryEntrySelectionEvent e) {
-	updateMenu();
-      }
-    });
+    m_HistoryPanel.getHistory().setLineWrap(getLineWrap());
+    m_HistoryPanel.getHistory().setWrapStyleWord(getWrapStyleWord());
+    m_HistoryPanel.getHistory().addHistoryEntrySelectionListener((HistoryEntrySelectionEvent e) -> updateMenu());
 
     return m_HistoryPanel;
   }
@@ -771,11 +851,7 @@ public class HistoryDisplay
     menuitem.setMnemonic('P');
     menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed P"));
     menuitem.setIcon(GUIHelper.getIcon("print.gif"));
-    menuitem.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	m_HistoryPanel.getTextPanel().printText();
-      }
-    });
+    menuitem.addActionListener((ActionEvent e) -> m_HistoryPanel.getTextPanel().printText());
     pos = indexOfMenuItem(result, m_MenuItemFileClose);
     result.insertSeparator(pos);
     result.insert(menuitem, pos);
@@ -799,21 +875,13 @@ public class HistoryDisplay
     // Edit
     result = new JMenu("Edit");
     result.setMnemonic('E');
-    result.addChangeListener(new ChangeListener() {
-      public void stateChanged(ChangeEvent e) {
-	updateMenu();
-      }
-    });
+    result.addChangeListener((ChangeEvent e) -> updateMenu());
 
     // Edit/Copy
     menuitem = new JMenuItem("Copy", GUIHelper.getIcon("copy.gif"));
     menuitem.setMnemonic('C');
     menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed C"));
-    menuitem.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	fPanel.copy();
-      }
-    });
+    menuitem.addActionListener((ActionEvent e) -> fPanel.copy());
     result.add(menuitem);
     m_MenuItemEditCopy = menuitem;
 
@@ -821,11 +889,7 @@ public class HistoryDisplay
     menuitem = new JMenuItem("Select all", GUIHelper.getEmptyIcon());
     menuitem.setMnemonic('S');
     menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed A"));
-    menuitem.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	fPanel.selectAll();
-      }
-    });
+    menuitem.addActionListener((ActionEvent e) -> fPanel.selectAll());
     result.addSeparator();
     result.add(menuitem);
     m_MenuItemEditSelectAll = menuitem;
@@ -845,22 +909,14 @@ public class HistoryDisplay
     // View
     result = new JMenu("View");
     result.setMnemonic('V');
-    result.addChangeListener(new ChangeListener() {
-      public void stateChanged(ChangeEvent e) {
-	updateMenu();
-      }
-    });
+    result.addChangeListener((ChangeEvent e) -> updateMenu());
 
     // View/Font
     menuitem = new JMenuItem("Choose font...");
     result.add(menuitem);
     menuitem.setIcon(GUIHelper.getIcon("font.png"));
     menuitem.setMnemonic('f');
-    menuitem.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	m_HistoryPanel.getTextPanel().selectFont();
-      }
-    });
+    menuitem.addActionListener((ActionEvent e) -> m_HistoryPanel.getTextPanel().selectFont());
     m_MenuItemViewFont = menuitem;
 
     // View/Caret
@@ -869,12 +925,26 @@ public class HistoryDisplay
     result.add(menuitem);
     menuitem.setMnemonic('s');
     menuitem.setSelected(m_CaretAtStart);
-    menuitem.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	m_HistoryPanel.getHistory().setCaretAtStart(m_MenuItemViewCaret.isSelected());
-      }
-    });
+    menuitem.addActionListener((ActionEvent e) -> m_HistoryPanel.getHistory().setCaretAtStart(m_MenuItemViewCaret.isSelected()));
     m_MenuItemViewCaret = (JCheckBoxMenuItem) menuitem;
+
+    // View/Line wrap
+    menuitem = new JCheckBoxMenuItem("Line wrap");
+    menuitem.setSelected(((TextEditorPanel) m_Panel).getLineWrap());
+    result.add(menuitem);
+    menuitem.setIcon(GUIHelper.getEmptyIcon());
+    menuitem.setMnemonic('L');
+    menuitem.addActionListener((ActionEvent e) -> ((TextEditorPanel) m_Panel).setLineWrap(!((TextEditorPanel) m_Panel).getLineWrap()));
+    m_MenuItemViewLineWrap = menuitem;
+
+    // View/Wrap style word
+    menuitem = new JCheckBoxMenuItem("Word wrap style");
+    menuitem.setSelected(((TextEditorPanel) m_Panel).getWrapStyleWord());
+    result.add(menuitem);
+    menuitem.setIcon(GUIHelper.getEmptyIcon());
+    menuitem.setMnemonic('W');
+    menuitem.addActionListener((ActionEvent e) -> ((TextEditorPanel) m_Panel).setWrapStyleWord(!((TextEditorPanel) m_Panel).getWrapStyleWord()));
+    m_MenuItemViewWrapStyleWord = menuitem;
 
     return result;
   }

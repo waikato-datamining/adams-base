@@ -15,7 +15,7 @@
 
 /**
  * BufferHistoryPanel.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
 
@@ -114,6 +114,12 @@ public class BufferHistoryPanel
   /** whether to position the caret at beginning instead of end. */
   protected boolean m_CaretAtStart;
 
+  /** use line wrap. */
+  protected boolean m_LineWrap;
+
+  /** use word wrap style. */
+  protected boolean m_WrapStyleWord;
+
   /**
    * Initializes the members.
    */
@@ -161,6 +167,8 @@ public class BufferHistoryPanel
 
       if (m_CaretAtStart)
 	m_TextArea.setCaretPosition(0);
+      m_TextArea.setLineWrap(m_LineWrap);
+      m_TextArea.setWrapStyleWord(m_WrapStyleWord);
 
       // don't create new frame, only show it if it exists already
       if (hasFrame(name))
@@ -327,5 +335,56 @@ public class BufferHistoryPanel
    */
   public boolean isCaretAtStart() {
     return m_CaretAtStart;
+  }
+
+  /**
+   * Enables/disables line wrap.
+   *
+   * @param value	if true line wrap gets enabled
+   */
+  public void setLineWrap(boolean value) {
+    m_LineWrap = value;
+    if (getSelectedEntry() != null)
+      updateEntry(getSelectedEntry());
+  }
+
+  /**
+   * Returns whether line wrap is enabled.
+   *
+   * @return		true if line wrap enabled
+   */
+  public boolean getLineWrap() {
+    return m_LineWrap;
+  }
+
+  /**
+   * Sets the style of wrapping used if the text area is wrapping
+   * lines.  If set to true the lines will be wrapped at word
+   * boundaries (whitespace) if they are too long
+   * to fit within the allocated width.  If set to false,
+   * the lines will be wrapped at character boundaries.
+   * By default this property is false.
+   *
+   * @param value indicates if word boundaries should be used
+   *   for line wrapping
+   */
+  public void setWrapStyleWord(boolean value) {
+    m_WrapStyleWord = value;
+    if (getSelectedEntry() != null)
+      updateEntry(getSelectedEntry());
+  }
+
+  /**
+   * Gets the style of wrapping used if the text area is wrapping
+   * lines.  If set to true the lines will be wrapped at word
+   * boundaries (ie whitespace) if they are too long
+   * to fit within the allocated width.  If set to false,
+   * the lines will be wrapped at character boundaries.
+   *
+   * @return if the wrap style should be word boundaries
+   *  instead of character boundaries
+   */
+  public boolean getWrapStyleWord() {
+    return m_WrapStyleWord;
   }
 }

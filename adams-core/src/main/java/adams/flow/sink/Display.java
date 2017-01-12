@@ -15,20 +15,10 @@
 
 /*
  * Display.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
-
-import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import adams.data.io.output.NullWriter;
 import adams.flow.core.Token;
@@ -37,6 +27,14 @@ import adams.gui.core.ExtensionFileFilter;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.TextEditorPanel;
 
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.event.ChangeEvent;
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+
 /**
  <!-- globalinfo-start -->
  * Actor that outputs any object that arrives at its input port via the 'toString()' method.
@@ -44,68 +42,110 @@ import adams.gui.core.TextEditorPanel;
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input/output:<br>
+ * Input&#47;output:<br>
  * - accepts:<br>
  * &nbsp;&nbsp;&nbsp;java.lang.Object<br>
  * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- *
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- *
+ * 
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: Display
  * </pre>
- *
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * 
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default:
+ * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- *
- * <pre>-skip (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
+ * 
+ * <pre>-skip &lt;boolean&gt; (property: skip)
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
  * &nbsp;&nbsp;&nbsp;as it is.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
+ * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this 
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical 
+ * &nbsp;&nbsp;&nbsp;actors.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-short-title &lt;boolean&gt; (property: shortTitle)
+ * &nbsp;&nbsp;&nbsp;If enabled uses just the name for the title instead of the actor's full 
+ * &nbsp;&nbsp;&nbsp;name.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-display-in-editor &lt;boolean&gt; (property: displayInEditor)
+ * &nbsp;&nbsp;&nbsp;If enabled displays the panel in a tab in the flow editor rather than in 
+ * &nbsp;&nbsp;&nbsp;a separate frame.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
  * <pre>-width &lt;int&gt; (property: width)
  * &nbsp;&nbsp;&nbsp;The width of the dialog.
  * &nbsp;&nbsp;&nbsp;default: 640
- * &nbsp;&nbsp;&nbsp;minimum: 1
+ * &nbsp;&nbsp;&nbsp;minimum: -1
  * </pre>
- *
+ * 
  * <pre>-height &lt;int&gt; (property: height)
  * &nbsp;&nbsp;&nbsp;The height of the dialog.
  * &nbsp;&nbsp;&nbsp;default: 480
- * &nbsp;&nbsp;&nbsp;minimum: 1
+ * &nbsp;&nbsp;&nbsp;minimum: -1
  * </pre>
- *
+ * 
  * <pre>-x &lt;int&gt; (property: x)
  * &nbsp;&nbsp;&nbsp;The X position of the dialog (&gt;=0: absolute, -1: left, -2: center, -3: right
  * &nbsp;&nbsp;&nbsp;).
  * &nbsp;&nbsp;&nbsp;default: -1
  * &nbsp;&nbsp;&nbsp;minimum: -3
  * </pre>
- *
+ * 
  * <pre>-y &lt;int&gt; (property: y)
  * &nbsp;&nbsp;&nbsp;The Y position of the dialog (&gt;=0: absolute, -1: top, -2: center, -3: bottom
  * &nbsp;&nbsp;&nbsp;).
  * &nbsp;&nbsp;&nbsp;default: -1
  * &nbsp;&nbsp;&nbsp;minimum: -3
  * </pre>
- *
+ * 
  * <pre>-font &lt;java.awt.Font&gt; (property: font)
  * &nbsp;&nbsp;&nbsp;The font of the dialog.
  * &nbsp;&nbsp;&nbsp;default: Monospaced-PLAIN-12
  * </pre>
- *
+ * 
+ * <pre>-always-clear &lt;boolean&gt; (property: alwaysClear)
+ * &nbsp;&nbsp;&nbsp;If enabled, the display is always cleared before processing a token.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-writer &lt;adams.data.io.output.AbstractTextWriter&gt; (property: writer)
+ * &nbsp;&nbsp;&nbsp;The writer to use for storing the textual output.
+ * &nbsp;&nbsp;&nbsp;default: adams.data.io.output.NullWriter
+ * </pre>
+ * 
+ * <pre>-line-wrap &lt;boolean&gt; (property: lineWrap)
+ * &nbsp;&nbsp;&nbsp;If enabled, line wrap is used.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-wrap-style-word &lt;boolean&gt; (property: wrapStyleWord)
+ * &nbsp;&nbsp;&nbsp;If enabled, wrapping occurs on word boundaries instead of character boundaries.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -148,6 +188,18 @@ public class Display
   /** the font menu item. */
   protected JMenuItem m_MenuItemViewFont;
 
+  /** the line wrap menu item. */
+  protected JMenuItem m_MenuItemViewLineWrap;
+
+  /** the word wrap style menu item. */
+  protected JMenuItem m_MenuItemViewWrapStyleWord;
+
+  /** use line wrap. */
+  protected boolean m_LineWrap;
+
+  /** use word wrap style. */
+  protected boolean m_WrapStyleWord;
+
   /**
    * Returns a string describing the object.
    *
@@ -168,8 +220,16 @@ public class Display
     super.defineOptions();
 
     m_OptionManager.add(
-	    "writer", "writer",
-	    new NullWriter());
+      "writer", "writer",
+      new NullWriter());
+
+    m_OptionManager.add(
+      "line-wrap", "lineWrap",
+      false);
+
+    m_OptionManager.add(
+      "wrap-style-word", "wrapStyleWord",
+      false);
   }
 
   /**
@@ -193,6 +253,75 @@ public class Display
   }
 
   /**
+   * Enables/disables line wrap.
+   *
+   * @param value	if true line wrap gets enabled
+   */
+  public void setLineWrap(boolean value) {
+    m_LineWrap = value;
+    reset();
+  }
+
+  /**
+   * Returns whether line wrap is enabled.
+   *
+   * @return		true if line wrap enabled
+   */
+  public boolean getLineWrap() {
+    return m_LineWrap;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String lineWrapTipText() {
+    return "If enabled, line wrap is used.";
+  }
+
+  /**
+   * Sets the style of wrapping used if the text area is wrapping
+   * lines.  If set to true the lines will be wrapped at word
+   * boundaries (whitespace) if they are too long
+   * to fit within the allocated width.  If set to false,
+   * the lines will be wrapped at character boundaries.
+   * By default this property is false.
+   *
+   * @param value indicates if word boundaries should be used
+   *   for line wrapping
+   */
+  public void setWrapStyleWord(boolean value) {
+    m_WrapStyleWord = value;
+    reset();
+  }
+
+  /**
+   * Gets the style of wrapping used if the text area is wrapping
+   * lines.  If set to true the lines will be wrapped at word
+   * boundaries (ie whitespace) if they are too long
+   * to fit within the allocated width.  If set to false,
+   * the lines will be wrapped at character boundaries.
+   *
+   * @return if the wrap style should be word boundaries
+   *  instead of character boundaries
+   */
+  public boolean getWrapStyleWord() {
+    return m_WrapStyleWord;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String wrapStyleWordTipText() {
+    return "If enabled, wrapping occurs on word boundaries instead of character boundaries.";
+  }
+
+  /**
    * Creates the "File" menu.
    *
    * @return		the generated menu
@@ -210,11 +339,7 @@ public class Display
     menuitem.setMnemonic('P');
     menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed P"));
     menuitem.setIcon(GUIHelper.getIcon("print.gif"));
-    menuitem.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	((TextEditorPanel) m_Panel).printText();
-      }
-    });
+    menuitem.addActionListener((ActionEvent e) -> ((TextEditorPanel) m_Panel).printText());
     pos = indexOfMenuItem(result, m_MenuItemFileClose);
     result.insertSeparator(pos);
     result.insert(menuitem, pos);
@@ -238,11 +363,7 @@ public class Display
     // Edit
     result = new JMenu("Edit");
     result.setMnemonic('E');
-    result.addChangeListener(new ChangeListener() {
-      public void stateChanged(ChangeEvent e) {
-	updateMenu();
-      }
-    });
+    result.addChangeListener((ChangeEvent e) -> updateMenu());
 
     // Edit/Undo
     menuitem = new JMenuItem("Undo");
@@ -250,11 +371,7 @@ public class Display
     menuitem.setEnabled(fPanel.canUndo());
     menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed Z"));
     menuitem.setIcon(GUIHelper.getIcon("undo.gif"));
-    menuitem.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	fPanel.undo();
-      }
-    });
+    menuitem.addActionListener((ActionEvent e) -> fPanel.undo());
     result.add(menuitem);
     m_MenuItemEditUndo = menuitem;
 
@@ -263,11 +380,7 @@ public class Display
     menuitem.setEnabled(fPanel.canUndo());
     menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed Y"));
     menuitem.setIcon(GUIHelper.getIcon("redo.gif"));
-    menuitem.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	fPanel.redo();
-      }
-    });
+    menuitem.addActionListener((ActionEvent e) -> fPanel.redo());
     result.add(menuitem);
     m_MenuItemEditRedo = menuitem;
 
@@ -275,11 +388,7 @@ public class Display
     menuitem = new JMenuItem("Cut", GUIHelper.getIcon("cut.gif"));
     menuitem.setMnemonic('u');
     menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed X"));
-    menuitem.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	fPanel.cut();
-      }
-    });
+    menuitem.addActionListener((ActionEvent e) -> fPanel.cut());
     result.addSeparator();
     result.add(menuitem);
     m_MenuItemEditCut = menuitem;
@@ -288,11 +397,7 @@ public class Display
     menuitem = new JMenuItem("Copy", GUIHelper.getIcon("copy.gif"));
     menuitem.setMnemonic('C');
     menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed C"));
-    menuitem.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	fPanel.copy();
-      }
-    });
+    menuitem.addActionListener((ActionEvent e) -> fPanel.copy());
     result.add(menuitem);
     m_MenuItemEditCopy = menuitem;
 
@@ -300,11 +405,7 @@ public class Display
     menuitem = new JMenuItem("Paste", GUIHelper.getIcon("paste.gif"));
     menuitem.setMnemonic('P');
     menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed V"));
-    menuitem.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	fPanel.paste();
-      }
-    });
+    menuitem.addActionListener((ActionEvent e) -> fPanel.paste());
     result.add(menuitem);
     m_MenuItemEditPaste = menuitem;
 
@@ -312,11 +413,7 @@ public class Display
     menuitem = new JMenuItem("Select all", GUIHelper.getEmptyIcon());
     menuitem.setMnemonic('S');
     menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed A"));
-    menuitem.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	fPanel.selectAll();
-      }
-    });
+    menuitem.addActionListener((ActionEvent e) -> fPanel.selectAll());
     result.addSeparator();
     result.add(menuitem);
     m_MenuItemEditSelectAll = menuitem;
@@ -325,11 +422,7 @@ public class Display
     menuitem = new JMenuItem("Find", GUIHelper.getIcon("find.gif"));
     menuitem.setMnemonic('F');
     menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed F"));
-    menuitem.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	fPanel.find();
-      }
-    });
+    menuitem.addActionListener((ActionEvent e) -> fPanel.find());
     result.addSeparator();
     result.add(menuitem);
     m_MenuItemEditFind = menuitem;
@@ -338,11 +431,7 @@ public class Display
     menuitem = new JMenuItem("Find next", GUIHelper.getEmptyIcon());
     menuitem.setMnemonic('n');
     menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed G"));
-    menuitem.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	fPanel.findNext();
-      }
-    });
+    menuitem.addActionListener((ActionEvent e) -> fPanel.findNext());
     result.add(menuitem);
     m_MenuItemEditFindNext = menuitem;
 
@@ -361,23 +450,33 @@ public class Display
     // View
     result = new JMenu("View");
     result.setMnemonic('V');
-    result.addChangeListener(new ChangeListener() {
-      public void stateChanged(ChangeEvent e) {
-	updateMenu();
-      }
-    });
+    result.addChangeListener((ChangeEvent e) -> updateMenu());
 
     // View/Font
     menuitem = new JMenuItem("Choose font...");
     result.add(menuitem);
     menuitem.setIcon(GUIHelper.getIcon("font.png"));
     menuitem.setMnemonic('f');
-    menuitem.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	((TextEditorPanel) m_Panel).selectFont();
-      }
-    });
+    menuitem.addActionListener((ActionEvent e) -> ((TextEditorPanel) m_Panel).selectFont());
     m_MenuItemViewFont = menuitem;
+
+    // View/Line wrap
+    menuitem = new JCheckBoxMenuItem("Line wrap");
+    menuitem.setSelected(((TextEditorPanel) m_Panel).getLineWrap());
+    result.add(menuitem);
+    menuitem.setIcon(GUIHelper.getEmptyIcon());
+    menuitem.setMnemonic('L');
+    menuitem.addActionListener((ActionEvent e) -> ((TextEditorPanel) m_Panel).setLineWrap(!((TextEditorPanel) m_Panel).getLineWrap()));
+    m_MenuItemViewLineWrap = menuitem;
+
+    // View/Wrap style word
+    menuitem = new JCheckBoxMenuItem("Word wrap style");
+    menuitem.setSelected(((TextEditorPanel) m_Panel).getWrapStyleWord());
+    result.add(menuitem);
+    menuitem.setIcon(GUIHelper.getEmptyIcon());
+    menuitem.setMnemonic('W');
+    menuitem.addActionListener((ActionEvent e) -> ((TextEditorPanel) m_Panel).setWrapStyleWord(!((TextEditorPanel) m_Panel).getWrapStyleWord()));
+    m_MenuItemViewWrapStyleWord = menuitem;
 
     return result;
   }
@@ -441,6 +540,8 @@ public class Display
 
     result = new TextEditorPanel();
     result.setTextFont(getFont());
+    result.setLineWrap(getLineWrap());
+    result.setWrapStyleWord(getWrapStyleWord());
 
     return result;
   }
@@ -448,7 +549,7 @@ public class Display
   /**
    * Returns the text to save.
    *
-   * @return		the text, null if no text available
+   * @return the text, null if no text available
    */
   @Override
   public String supplyText() {
@@ -525,6 +626,9 @@ public class Display
 	super.initGUI();
 	setLayout(new BorderLayout());
 	m_TextEditorPanel = new TextEditorPanel();
+	m_TextEditorPanel.setTextFont(getFont());
+	m_TextEditorPanel.setLineWrap(getLineWrap());
+	m_TextEditorPanel.setWrapStyleWord(getWrapStyleWord());
 	add(m_TextEditorPanel, BorderLayout.CENTER);
       }
       @Override
