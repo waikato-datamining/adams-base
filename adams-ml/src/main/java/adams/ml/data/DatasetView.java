@@ -15,7 +15,7 @@
 
 /**
  * DatasetView.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.ml.data;
@@ -1516,12 +1516,15 @@ public class DatasetView
    */
   @Override
   public String toString() {
-    StringWriter writer;
+    StringWriter 		swriter;
+    CsvSpreadSheetWriter  	cwriter;
 
-    writer = new StringWriter();
-    new CsvSpreadSheetWriter().write(this, writer);
+    swriter = new StringWriter();
+    cwriter = new CsvSpreadSheetWriter();
+    cwriter.setUseSimpleNumberFormat(true);
+    cwriter.write(this, swriter);
 
-    return writer.toString();
+    return swriter.toString();
   }
 
   /**
