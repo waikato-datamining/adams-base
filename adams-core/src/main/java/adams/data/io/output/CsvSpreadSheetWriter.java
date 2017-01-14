@@ -1238,10 +1238,10 @@ public class CsvSpreadSheetWriter
       for (String keyd: content.getOwner().getHeaderRow().cellKeys()) {
 	cell = content.getCell(keyd);
 
-	if (!first) {
+	if (!first)
           writer.write(m_Separator);
+	else
           first = false;
-        }
 	if ((cell != null) && !cell.isMissing()) {
 	  if (cell.isFormula() && !m_OutputAsDisplayed) {
 	    writer.write(quoteString(cell.getFormula()));
