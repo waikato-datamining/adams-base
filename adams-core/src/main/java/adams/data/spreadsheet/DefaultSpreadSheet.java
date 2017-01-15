@@ -1122,7 +1122,6 @@ public class DefaultSpreadSheet
 
     swriter = new StringWriter();
     cwriter = new CsvSpreadSheetWriter();
-    cwriter.setUseSimpleNumberFormat(true);
     cwriter.write(this, swriter);
 
     return swriter.toString();

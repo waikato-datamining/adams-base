@@ -51,9 +51,6 @@ public abstract class AbstractFormattedSpreadSheetWriter
   /** the formatter to use. */
   protected transient NumberFormat m_Formatter;
 
-  /** whether to use simple number format instead. */
-  protected boolean m_UseSimpleNumberFormat;
-
   /**
    * Adds options to the internal list of options.
    */
@@ -68,10 +65,6 @@ public abstract class AbstractFormattedSpreadSheetWriter
     m_OptionManager.add(
 	    "number-format", "numberFormat",
 	    getDefaultNumberFormat());
-
-    m_OptionManager.add(
-	    "use-simple-number-format", "useSimpleNumberFormat",
-	    getDefaultUseSimpleNumberFormat());
   }
 
   /**
@@ -151,35 +144,6 @@ public abstract class AbstractFormattedSpreadSheetWriter
   }
 
   /**
-   * Sets whether to use the simple number format ('toString()' method of numbers).
-   *
-   * @param value	true if to use simple format
-   */
-  public void setUseSimpleNumberFormat(boolean value) {
-    m_UseSimpleNumberFormat = value;
-    reset();
-  }
-
-  /**
-   * Returns whether to use the simple number format ('toString()' method of numbers).
-   *
-   * @return		true if to use simple format
-   */
-  public boolean getUseSimpleNumberFormat() {
-    return m_UseSimpleNumberFormat;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   *         		displaying in the explorer/experimenter gui
-   */
-  public String useSimpleNumberFormatFormatTipText() {
-    return "Simply uses the 'toString()' method for numbers irrespective of the locale.";
-  }
-
-  /**
    * Formats the number according to the format and returns the generated
    * textual representation.
    *
@@ -188,9 +152,6 @@ public abstract class AbstractFormattedSpreadSheetWriter
    */
   protected synchronized String format(double value) {
     String	result;
-
-    if (m_UseSimpleNumberFormat)
-      return "" + value;
 
     if (m_NumberFormat.length() > 0) {
       if (m_Formatter == null) {
