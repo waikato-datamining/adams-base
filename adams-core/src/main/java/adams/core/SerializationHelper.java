@@ -213,17 +213,25 @@ public class SerializationHelper {
    * @throws Exception	if serialization fails
    */
   public static void write(String filename, Object o) throws Exception {
-    FileOutputStream fos;
+    FileOutputStream 	fos;
+    GZIPOutputStream	gos;
 
     fos = new FileOutputStream(filename);
+    gos = null;
     try {
-      if (filename.endsWith(".gz"))
-	write(new GZIPOutputStream(fos), o);
-      else
+      if (filename.endsWith(".gz")) {
+	gos = new GZIPOutputStream(fos);
+	write(gos, o);
+      }
+      else {
 	write(fos, o);
+      }
     }
     finally {
-      FileUtils.closeQuietly(fos);
+      if (gos != null)
+	FileUtils.closeQuietly(gos);
+      else
+	FileUtils.closeQuietly(fos);
     }
   }
 
