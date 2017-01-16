@@ -640,6 +640,9 @@ control actors. In the following a short introduction to the others:
 	error messages attached.
 	\item \textit{Sequence} -- Allows to specify multiple actors that get exectued
 	one after the other, with the output of one actor being the input of the next.
+	\item \textit{ConditionalSequence} -- Basically like the \textit{Sequence}
+	actor, but it allows you to impose constraints on when to process the tokens
+	with actors defined in the sequence.
 	\item \textit{SetContainerValue} -- Updates a single value of the container
 	passing through, using either data obtained from storage or a callable actor.
 	\item \textit{SinkReset} -- resets all its sub-actors in case the monitored
