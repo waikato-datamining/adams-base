@@ -15,7 +15,7 @@
 
 /*
  * SerializationHelper.java
- * Copyright (C) 2007-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2007-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core;
@@ -206,7 +206,7 @@ public class SerializationHelper {
   }
 
   /**
-   * serializes the given object to the specified file.
+   * Serializes the given object to the specified file.
    *
    * @param filename	the file to write the object to
    * @param o		the object to serialize
@@ -228,7 +228,8 @@ public class SerializationHelper {
   }
 
   /**
-   * serializes the given object to the specified stream.
+   * Serializes the given object to the specified stream.
+   * Does not close the stream.
    *
    * @param stream	the stream to write the object to
    * @param o		the object to serialize
@@ -241,16 +242,12 @@ public class SerializationHelper {
       stream = new BufferedOutputStream(stream);
 
     oos = new ObjectOutputStream(stream);
-    try {
-      oos.writeObject(o);
-    }
-    finally {
-      FileUtils.closeQuietly(oos);
-    }
+    oos.writeObject(o);
+    oos.flush();
   }
 
   /**
-   * serializes the given objects to the specified file.
+   * Serializes the given objects to the specified file.
    *
    * @param filename	the file to write the object to
    * @param o		the objects to serialize
@@ -258,21 +255,30 @@ public class SerializationHelper {
    */
   public static void writeAll(String filename, Object[] o) throws Exception {
     FileOutputStream	fos;
+    GZIPOutputStream	gos;
 
     fos = new FileOutputStream(filename);
+    gos = null;
     try {
-      if (filename.endsWith(".gz"))
-	writeAll(new GZIPOutputStream(fos), o);
-      else
+      if (filename.endsWith(".gz")) {
+	gos = new GZIPOutputStream(fos);
+	writeAll(gos, o);
+      }
+      else {
 	writeAll(fos, o);
+      }
     }
     finally {
-      FileUtils.closeQuietly(fos);
+      if (gos != null)
+	FileUtils.closeQuietly(gos);
+      else
+	FileUtils.closeQuietly(fos);
     }
   }
 
   /**
-   * serializes the given objects to the specified stream.
+   * Serializes the given objects to the specified stream.
+   * Does not close the stream.
    *
    * @param stream	the stream to write the object to
    * @param o		the objects to serialize
@@ -291,12 +297,17 @@ public class SerializationHelper {
 	oos.writeObject(o[i]);
     }
     finally {
-      FileUtils.closeQuietly(oos);
+      try {
+	oos.flush();
+      }
+      catch (Exception e) {
+	// ignored
+      }
     }
   }
 
   /**
-   * deserializes the given file and returns the object from it.
+   * Deserializes the given file and returns the object from it.
    *
    * @param filename	the file to deserialize from
    * @return		the deserialized object
@@ -305,23 +316,31 @@ public class SerializationHelper {
   public static Object read(String filename) throws Exception {
     Object		result;
     FileInputStream	fis;
+    GZIPInputStream	gis;
 
     fis = new FileInputStream(filename);
+    gis = null;
     try {
-      if (filename.endsWith(".gz"))
-	result = read(new GZIPInputStream(fis));
+      if (filename.endsWith(".gz")) {
+	gis    = new GZIPInputStream(fis);
+	result = read(gis);
+      }
       else
 	result = read(fis);
     }
     finally {
-      FileUtils.closeQuietly(fis);
+      if (gis != null)
+	FileUtils.closeQuietly(gis);
+      else
+	FileUtils.closeQuietly(fis);
     }
 
     return result;
   }
 
   /**
-   * deserializes from the given stream and returns the object from it.
+   * Deserializes from the given stream and returns the object from it.
+   * Does not close the stream.
    *
    * @param stream	the stream to deserialize from
    * @return		the deserialized object
@@ -334,13 +353,8 @@ public class SerializationHelper {
     if (!(stream instanceof BufferedInputStream))
       stream = new BufferedInputStream(stream);
 
-    ois = new ObjectInputStream(stream);
-    try {
-      result = ois.readObject();
-    }
-    finally {
-      FileUtils.closeQuietly(ois);
-    }
+    ois    = new ObjectInputStream(stream);
+    result = ois.readObject();
 
     return result;
   }
@@ -354,17 +368,25 @@ public class SerializationHelper {
    */
   public static Object[] readAll(String filename) throws Exception {
     Object[]		result;
-    InputStream 	is;
+    InputStream 	fis;
+    GZIPInputStream	gis;
 
-    is = new FileInputStream(filename);
+    fis = new FileInputStream(filename);
+    gis = null;
     try {
-      if (filename.endsWith(".gz"))
-	result = readAll(new GZIPInputStream(is));
-      else
-	result = readAll(is);
+      if (filename.endsWith(".gz")) {
+	gis    = new GZIPInputStream(fis);
+	result = readAll(gis);
+      }
+      else {
+	result = readAll(fis);
+      }
     }
     finally {
-      FileUtils.closeQuietly(is);
+      if (gis != null)
+	FileUtils.closeQuietly(gis);
+      else
+	FileUtils.closeQuietly(fis);
     }
 
     return result;
@@ -427,7 +449,7 @@ public class SerializationHelper {
   /**
    * Serializes the given object into a byte array.
    *
-   * @param o		the objects to serialize
+   * @param os		the objects to serialize
    * @return		the byte array
    * @throws Exception	if serialization fails
    */
