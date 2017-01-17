@@ -15,7 +15,7 @@
 
 /**
  * InvestigatorPanel.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator;
@@ -126,6 +126,9 @@ public class InvestigatorPanel
 
   /** the menu item for enabling/disabling sorting of attribute names. */
   protected JCheckBoxMenuItem m_MenuItemOptionsSortAttributeNames;
+
+  /** the action for clearing all datasets. */
+  protected BaseAction m_ActionFileClear;
 
   /** the action for loading a dataset. */
   protected BaseAction m_ActionFileOpen;
@@ -326,6 +329,17 @@ public class InvestigatorPanel
     m_ActionFileClose.setIcon("exit.png");
     m_ActionFileClose.setAccelerator("ctrl pressed Q");
 
+    m_ActionFileClear = new AbstractBaseAction() {
+      private static final long serialVersionUID = -1104246458353845500L;
+      @Override
+      protected void doActionPerformed(ActionEvent e) {
+	clear();
+      }
+    };
+    m_ActionFileClear.setName("Clear");
+    m_ActionFileClear.setIcon("new.gif");
+    m_ActionFileClear.setAccelerator("ctrl pressed N");
+
     m_ActionFileOpen = new AbstractBaseAction() {
       private static final long serialVersionUID = -1104246458353845500L;
       @Override
@@ -373,6 +387,7 @@ public class InvestigatorPanel
    * Updates the actions.
    */
   protected void updateActions() {
+    m_ActionFileClear.setEnabled(getData().size() > 0);
     m_ActionFileStopJob.setEnabled(isBusy());
     m_ActionTabCopyTab.setEnabled(m_TabbedPane.getSelectedIndex() > -1);
     m_ActionTabCloseTab.setEnabled(m_TabbedPane.getTabCount() > 0);
@@ -402,6 +417,9 @@ public class InvestigatorPanel
       menu.setMnemonic('F');
       menu.addChangeListener((ChangeEvent e) -> updateMenu());
       result.add(menu);
+
+      // File/Clear
+      menu.add(m_ActionFileClear);
 
       // File/Open file
       menu.add(m_ActionFileOpen);
@@ -544,7 +562,6 @@ public class InvestigatorPanel
   @Override
   protected void updateMenu() {
     updateActions();
-    // TODO
   }
 
   /**
@@ -762,6 +779,19 @@ public class InvestigatorPanel
 
     m_RecentFilesHandler.addRecentItem(new Setup(file, loader));
     return null;
+  }
+
+  /**
+   * Removes all currently loaded datasets.
+   */
+  public void clear() {
+    SwingUtilities.invokeLater(() -> {
+      getData().clear();
+      logAndShowMessage("Removed all datasets");
+      fireDataChange(
+        new WekaInvestigatorDataEvent(
+          InvestigatorPanel.this, WekaInvestigatorDataEvent.ROWS_DELETED));
+    });
   }
 
   /**
