@@ -29,6 +29,7 @@ import adams.core.option.OptionUtils;
 import adams.gui.chooser.BaseFileChooser;
 import adams.gui.core.AbstractNamedHistoryPanel;
 import adams.gui.core.AbstractNamedHistoryPanel.HistoryEntryToolTipProvider;
+import adams.gui.core.AdjustableGridPanel;
 import adams.gui.core.BaseMenu;
 import adams.gui.core.BasePopupMenu;
 import adams.gui.core.BaseScrollPane;
@@ -355,16 +356,17 @@ public class ClassifyTab
 	      labels.add(getEntryName(index));
 	    }
 	  }
-	  JPanel panel = null;
+	  AdjustableGridPanel panel = null;
 	  if (comps.size() > 0) {
-	    panel = new JPanel(new GridLayout(1, comps.size()));
+	    panel = new AdjustableGridPanel();
 	    for (int i = 0; i < comps.size(); i++) {
 	      JPanel subPanel = new JPanel(new BorderLayout());
 	      JLabel label = new JLabel(labels.get(i));
 	      subPanel.add(label, BorderLayout.NORTH);
 	      subPanel.add(comps.get(i), BorderLayout.CENTER);
-	      panel.add(subPanel);
+	      panel.addItem(subPanel);
 	    }
+            panel.updateLayout();
 	  }
 	  if (!errors.isEmpty())
 	    m_Owner.logError(
