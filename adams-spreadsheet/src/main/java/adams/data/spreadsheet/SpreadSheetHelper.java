@@ -19,6 +19,7 @@
  */
 package adams.data.spreadsheet;
 
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
@@ -177,6 +178,73 @@ public class SpreadSheetHelper
       row = result.addRow();
       row.addCell("K").setContentAsString("" + key);
       row.addCell("V").setNative(map.get(key));
+    }
+
+    return result;
+  }
+
+  /**
+   * Turns non-numeric cells into numeric ones. Missing cells can get skipped.
+   * Booleans gets turned into 0/1 (false/true).
+   * Date/time types get turned into numeric ones by using their Java epoch.
+   * Strings (per column) get a 0-based index assigned in the order they appear.
+   * Any other cell type get flagged as missing or, if provided, set to the unhandled value.
+   *
+   * @param sheet	the spreadsheet to convert
+   * @param mappings	the mappings (empty or already filled from previous run):
+   *                    col-index - (string - integer)
+   * @param missing	the value to replace missing values with, null if to keep missing cells
+   * @param unhandled	the value to use for replacing unhandled cell types
+   * @return		the converted spreadsheet (copy)
+   */
+  public static SpreadSheet convertToNumeric(SpreadSheet sheet, Map<Integer,Map<String,Integer>> mappings, Double missing, double unhandled) {
+    SpreadSheet		result;
+    int			i;
+    int			n;
+    Row			row;
+    Cell		cell;
+    String		content;
+
+    result = sheet.getClone();
+
+    for (n = 0; n < result.getRowCount(); n++) {
+      row = result.getRow(n);
+      for (i = 0; i < result.getColumnCount(); i++) {
+	if (!row.hasCell(i)) {
+	  if (missing != null)
+	    row.addCell(i).setContent(missing);
+	  continue;
+	}
+	cell = row.getCell(i);
+	if (cell.isNumeric())
+	  continue;
+	switch (cell.getContentType()) {
+	  case MISSING:
+	    if (missing != null)
+	      cell.setContent(missing);
+	    break;
+	  case BOOLEAN:
+	    cell.setContent(cell.toBoolean() ? 1 : 0);
+	    break;
+	  case TIME:
+	  case TIMEMSEC:
+	  case DATE:
+	  case DATETIME:
+	  case DATETIMEMSEC:
+	    cell.setContent(cell.toAnyDateType().getTime());
+	    break;
+	  case STRING:
+	    content = cell.getContent();
+	    if (!mappings.containsKey(i))
+	      mappings.put(i, new HashMap<>());
+	    if (!mappings.get(i).containsKey(content))
+	      mappings.get(i).put(content, mappings.get(i).size());
+	    cell.setContent(mappings.get(i).get(content));
+	    break;
+	  default:
+	    cell.setContent(unhandled);
+	}
+      }
     }
 
     return result;
