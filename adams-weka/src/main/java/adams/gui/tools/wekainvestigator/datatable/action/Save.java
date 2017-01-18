@@ -15,7 +15,7 @@
 
 /**
  * Save.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.datatable.action;
@@ -82,6 +82,7 @@ public class Save
 
     conts = getSelectedData();
     rows  = getSelectedRows();
+    // TODO requires queuing to work properly!
     for (i = 0; i < conts.length; i++) {
       final int index = i;
       final DataContainer data = conts[i];
@@ -128,6 +129,6 @@ public class Save
    */
   @Override
   public void update() {
-    setEnabled(!isBusy() && getTable().getSelectedRowCount() > 0);
+    setEnabled(!isBusy() && getTable().getSelectedRowCount() == 1);
   }
 }
