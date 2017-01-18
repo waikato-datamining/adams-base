@@ -15,7 +15,7 @@
 
 /*
  * WekaCrossValidationSplit.java
- * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -410,7 +410,7 @@ public class WekaCrossValidationSplit
       m_Generator.setUseViews(m_CreateView);
     }
     catch (Exception e) {
-      result = handleException("Failed to initalize fold generator!", e);
+      result = handleException("Failed to initialize fold generator!", e);
     }
 
     return result;
