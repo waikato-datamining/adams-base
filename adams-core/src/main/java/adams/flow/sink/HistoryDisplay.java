@@ -930,20 +930,20 @@ public class HistoryDisplay
 
     // View/Line wrap
     menuitem = new JCheckBoxMenuItem("Line wrap");
-    menuitem.setSelected(((TextEditorPanel) m_Panel).getLineWrap());
+    menuitem.setSelected(m_HistoryPanel.getHistory().getLineWrap());
     result.add(menuitem);
     menuitem.setIcon(GUIHelper.getEmptyIcon());
     menuitem.setMnemonic('L');
-    menuitem.addActionListener((ActionEvent e) -> ((TextEditorPanel) m_Panel).setLineWrap(!((TextEditorPanel) m_Panel).getLineWrap()));
+    menuitem.addActionListener((ActionEvent e) -> m_HistoryPanel.getHistory().setLineWrap(!m_HistoryPanel.getHistory().getLineWrap()));
     m_MenuItemViewLineWrap = menuitem;
 
     // View/Wrap style word
     menuitem = new JCheckBoxMenuItem("Word wrap style");
-    menuitem.setSelected(((TextEditorPanel) m_Panel).getWrapStyleWord());
+    menuitem.setSelected(m_HistoryPanel.getHistory().getWrapStyleWord());
     result.add(menuitem);
     menuitem.setIcon(GUIHelper.getEmptyIcon());
     menuitem.setMnemonic('W');
-    menuitem.addActionListener((ActionEvent e) -> ((TextEditorPanel) m_Panel).setWrapStyleWord(!((TextEditorPanel) m_Panel).getWrapStyleWord()));
+    menuitem.addActionListener((ActionEvent e) -> m_HistoryPanel.getHistory().setWrapStyleWord(!m_HistoryPanel.getHistory().getWrapStyleWord()));
     m_MenuItemViewWrapStyleWord = menuitem;
 
     return result;
