@@ -15,31 +15,15 @@
 
 /**
  * DisplayPanelGrid.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.sink;
-
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.swing.BorderFactory;
-import javax.swing.JComponent;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import adams.core.QuickInfoHelper;
 import adams.core.VariableNameNoUpdate;
 import adams.core.io.PlaceholderFile;
-import adams.flow.core.InputConsumer;
 import adams.flow.core.Token;
+import adams.gui.core.AdjustableGridPanel;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.GUIHelper;
@@ -49,6 +33,18 @@ import adams.gui.print.JComponentWriterFileChooser;
 import adams.gui.print.PNGWriter;
 import adams.gui.sendto.SendToActionSupporter;
 import adams.gui.sendto.SendToActionUtils;
+
+import javax.swing.BorderFactory;
+import javax.swing.JComponent;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.event.ChangeEvent;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -195,7 +191,7 @@ public class DisplayPanelGrid
   protected transient JComponentWriterFileChooser m_ComponentFileChooser;
 
   /** for displaying the panels. */
-  protected BasePanel m_PanelAll;
+  protected AdjustableGridPanel m_PanelGrid;
   
   /** the panels to display. */
   protected List<DisplayPanel> m_DisplayPanels;
@@ -247,7 +243,7 @@ public class DisplayPanelGrid
   protected void initialize() {
     super.initialize();
     
-    m_DisplayPanels = new ArrayList<DisplayPanel>();
+    m_DisplayPanels = new ArrayList<>();
   }
   
   /**
@@ -443,8 +439,8 @@ public class DisplayPanelGrid
    */
   @Override
   public Class[] accepts() {
-    if ((m_PanelProvider != null) && (m_PanelProvider instanceof InputConsumer))
-      return ((InputConsumer) m_PanelProvider).accepts();
+    if (m_PanelProvider != null)
+      return m_PanelProvider.accepts();
     else
       return new Class[]{Object.class};
   }
@@ -454,7 +450,7 @@ public class DisplayPanelGrid
    */
   @Override
   public void clearPanel() {
-    m_PanelAll.removeAll();
+    m_PanelGrid.removeAll();
   }
 
   /**
@@ -466,9 +462,9 @@ public class DisplayPanelGrid
   protected BasePanel newPanel() {
     BasePanel	result;
     
-    m_PanelAll = new BasePanel(new GridLayout(1, m_NumColumns));
-    result     = new BasePanel(new BorderLayout());
-    result.add(new BaseScrollPane(m_PanelAll), BorderLayout.CENTER);
+    m_PanelGrid = new AdjustableGridPanel(1, m_NumColumns);
+    result      = new BasePanel(new BorderLayout());
+    result.add(new BaseScrollPane(m_PanelGrid), BorderLayout.CENTER);
     
     return result;
   }
@@ -484,7 +480,6 @@ public class DisplayPanelGrid
     BasePanel		panel;
     DisplayPanel	dpanel;
     int			rows;
-    GridLayout		layout;
     String		title;
     
     if (getVariables().has(m_TitleVariable.getValue()))
@@ -502,19 +497,18 @@ public class DisplayPanelGrid
     m_DisplayPanels.add(dpanel);
     
     // increase rows?
-    rows   = (int) Math.ceil((double) m_DisplayPanels.size() / m_NumColumns) ;
-    layout = (GridLayout) m_PanelAll.getLayout();
-    if (layout.getRows() < rows)
-      layout.setRows(rows);
+    rows = (int) Math.ceil((double) m_DisplayPanels.size() / m_NumColumns) ;
+    if (m_PanelGrid.getRows() < rows)
+      m_PanelGrid.setRows(rows);
     
     // add to grid
     //if (m_PanelProvider.displayPanelRequiresScrollPane())
     //  panel.add(new BaseScrollPane((JComponent) dpanel), BorderLayout.CENTER);
     //else
       panel.add((JComponent) dpanel, BorderLayout.CENTER);
-    m_PanelAll.add(panel);
-    m_PanelAll.getParent().validate();
-    m_PanelAll.getParent().repaint();
+    m_PanelGrid.addItem(panel);
+    m_PanelGrid.getParent().validate();
+    m_PanelGrid.getParent().repaint();
   }
 
   /**
@@ -533,11 +527,7 @@ public class DisplayPanelGrid
     menu = new JMenu("File");
     result.add(menu);
     menu.setMnemonic('F');
-    menu.addChangeListener(new ChangeListener() {
-      public void stateChanged(ChangeEvent e) {
-	updateMenu();
-      }
-    });
+    menu.addChangeListener((ChangeEvent e) -> updateMenu());
 
     // File/Save As
     menuitem = new JMenuItem("Save as...");
@@ -545,11 +535,7 @@ public class DisplayPanelGrid
     menuitem.setMnemonic('a');
     menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed S"));
     menuitem.setIcon(GUIHelper.getIcon("save.gif"));
-    menuitem.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	saveAs();
-      }
-    });
+    menuitem.addActionListener((ActionEvent e) -> saveAs());
     m_MenuItemFileSaveAs = menuitem;
 
     // File/Send to
@@ -563,11 +549,7 @@ public class DisplayPanelGrid
     menuitem.setMnemonic('C');
     menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed Q"));
     menuitem.setIcon(GUIHelper.getIcon("exit.png"));
-    menuitem.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	close();
-      }
-    });
+    menuitem.addActionListener((ActionEvent e) -> close());
     m_MenuItemFileClose = menuitem;
 
     return result;
@@ -615,7 +597,7 @@ public class DisplayPanelGrid
    * Closes the dialog or frame.
    */
   protected void close() {
-    m_PanelAll.closeParent();
+    m_PanelGrid.closeParent();
   }
 
   /**
@@ -644,8 +626,8 @@ public class DisplayPanelGrid
    */
   @Override
   protected void cleanUpGUI() {
-    if (m_PanelAll != null)
-      m_PanelAll.removeAll();
+    if (m_PanelGrid != null)
+      m_PanelGrid.removeAll();
 
     m_DisplayPanels.clear();
     
@@ -662,7 +644,7 @@ public class DisplayPanelGrid
    * @return		the current panel, can be null
    */
   public JComponent supplyComponent() {
-    return m_PanelAll;
+    return m_PanelGrid;
   }
 
   /**
