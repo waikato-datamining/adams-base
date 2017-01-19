@@ -15,7 +15,7 @@
 
 /**
  * GridView.java
- * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.standalone;
 
@@ -23,6 +23,7 @@ import adams.core.QuickInfoHelper;
 import adams.flow.core.Actor;
 import adams.flow.sink.CallableSink;
 import adams.flow.sink.ComponentSupplier;
+import adams.gui.core.AdjustableGridPanel;
 import adams.gui.core.BasePanel;
 import adams.gui.print.JComponentWriter;
 import adams.gui.print.NullWriter;
@@ -31,7 +32,6 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
 import java.awt.BorderLayout;
-import java.awt.GridLayout;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -384,12 +384,12 @@ public class GridView
    */
   @Override
   protected BasePanel newPanel() {
-    BasePanel	result;
-    JLabel	label;
-    BasePanel	panel;
-    int		i;
-    
-    result = new BasePanel(new GridLayout(m_NumRows, m_NumCols));
+    AdjustableGridPanel	result;
+    JLabel		label;
+    BasePanel		panel;
+    int			i;
+
+    result = new AdjustableGridPanel(m_NumRows, m_NumCols);
 
     // add dummy panels
     m_Panels = new ArrayList<>();
@@ -397,7 +397,7 @@ public class GridView
       panel = new BasePanel(new BorderLayout());
       label = new JLabel(m_Actors.get(i).getName(), JLabel.CENTER);
       panel.add(label, BorderLayout.CENTER);
-      result.add(panel);
+      result.addItem(panel);
       m_Panels.add(panel);
     }
     
@@ -412,27 +412,27 @@ public class GridView
    */
   @Override
   public void addPanel(Actor actor, BasePanel panel) {
-    int		index;
+    int			index;
 
     index = indexOf(actor.getName());
     m_Panels.set(index, panel);
     
     SwingUtilities.invokeLater(() -> {
-      m_Panel.removeAll();
+      AdjustableGridPanel grid = (AdjustableGridPanel) m_Panel;
+      grid.clear();
       for (int i = 0; i < m_Panels.size(); i++) {
 	if (m_AddHeaders) {
 	  BasePanel outer = new BasePanel(new BorderLayout());
 	  JLabel label = new JLabel(m_Actors.get(i).getName(), JLabel.LEFT);
 	  outer.add(label, BorderLayout.NORTH);
 	  outer.add(m_Panels.get(i), BorderLayout.CENTER);
-	  m_Panel.add(outer);
+	  grid.addItem(outer);
 	}
 	else {
-	  m_Panel.add(m_Panels.get(i));
+	  grid.addItem(m_Panels.get(i));
 	}
       }
-      m_Panel.validate();
-      m_Panel.doLayout();
+      grid.updateLayout();
     });
   }
 
