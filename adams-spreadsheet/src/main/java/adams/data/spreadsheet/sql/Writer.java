@@ -15,7 +15,7 @@
 
 /**
  * Writer.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.spreadsheet.sql;
@@ -31,6 +31,7 @@ import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.db.SQL;
 
+import java.sql.BatchUpdateException;
 import java.sql.PreparedStatement;
 import java.util.Collection;
 import java.util.HashSet;
@@ -464,6 +465,11 @@ public class Writer
 	    lastInsert = count;
 	  }
 	}
+        catch (BatchUpdateException e) {
+          result = Utils.handleException(this, "Failed to insert batch (last successful batch insert at row " + lastInsert + ")!", e)
+            + Utils.handleException(this, "Next exception:", e.getNextException());
+          break;
+        }
 	catch (Exception e) {
 	  if (m_BatchSize == 1)
 	    result = Utils.handleException(this, "Failed to insert data: " + row + "\nusing: " + stmt, e);
