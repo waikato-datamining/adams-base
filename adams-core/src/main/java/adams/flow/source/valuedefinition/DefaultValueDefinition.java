@@ -14,8 +14,8 @@
  */
 
 /*
- * ValueDefinition.java
- * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
+ * DefaultValueDefinition.java
+ * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source.valuedefinition;
@@ -32,7 +32,7 @@ import adams.gui.core.PropertiesParameterPanel.PropertyType;
  * @version $Revision$
  * @see EnterManyValues
  */
-public class ValueDefinition
+public class DefaultValueDefinition
   extends AbstractValueDefinition {
 
   /** for serialization. */

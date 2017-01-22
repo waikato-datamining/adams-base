@@ -17,7 +17,9 @@ Rename=\
   Rename-filesearch,\
   Rename-filesearchwithcomparator,\
   Rename-filesearchwithcustomsort,\
-  Rename-filesearchwithtimestampconstraints
+  Rename-filesearchwithtimestampconstraints,\
+  Rename-valuedefinition,\
+  Rename-defaultvaluedefinition
 
 # general format for classname mappings ("rename"):
 # <key>=<old classname>-<new classname>
@@ -33,6 +35,8 @@ Rename-filesearch=adams.flow.source.filesystemsearch.FileSearch-adams.flow.sourc
 Rename-filesearchwithcomparator=adams.flow.source.filesystemsearch.FileSearchWithComparator-adams.flow.source.filesystemsearch.LocalFileSearchWithComparator
 Rename-filesearchwithcustomsort=adams.flow.source.filesystemsearch.-adams.flow.source.filesystemsearch.LocalFileSearchWithCustomSort
 Rename-filesearchwithtimestampconstraints=adams.flow.source.filesystemsearch.FileSearchWithTimestampConstraints-adams.flow.source.filesystemsearch.LocalFileSearchWithTimestampConstraints
+Rename-valuedefinition=adams.flow.source.ValueDefinition-adams.flow.source.valuedefinition.DefaultValueDefinition
+Rename-defaultvaluedefinition=adams.flow.source.valuedefinition.ValueDefinition-adams.flow.source.valuedefinition.DefaultValueDefinition
 
 # Lists the keys that contain partial classname renaming.
 PartialRename=\

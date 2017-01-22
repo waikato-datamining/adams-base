@@ -20,7 +20,7 @@
 
 package adams.flow.source;
 
-import adams.flow.source.valuedefinition.ValueDefinition;
+import adams.flow.source.valuedefinition.DefaultValueDefinition;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import adams.core.option.AbstractArgumentOption;
@@ -111,14 +111,14 @@ public class EnterManyValuesTest
       // Flow.EnterManyValues
       adams.flow.source.EnterManyValues entermanyvalues2 = new adams.flow.source.EnterManyValues();
       argOption = (AbstractArgumentOption) entermanyvalues2.getOptionManager().findByProperty("values");
-      ValueDefinition[] values3 = new ValueDefinition[4];
-      ValueDefinition valuedefinition4 = new ValueDefinition();
+      DefaultValueDefinition[] values3 = new DefaultValueDefinition[4];
+      DefaultValueDefinition valuedefinition4 = new DefaultValueDefinition();
       argOption = (AbstractArgumentOption) valuedefinition4.getOptionManager().findByProperty("name");
       valuedefinition4.setName((java.lang.String) argOption.valueOf("blah"));
       argOption = (AbstractArgumentOption) valuedefinition4.getOptionManager().findByProperty("defaultValue");
       valuedefinition4.setDefaultValue((java.lang.String) argOption.valueOf("hehe"));
       values3[0] = valuedefinition4;
-      ValueDefinition valuedefinition7 = new ValueDefinition();
+      DefaultValueDefinition valuedefinition7 = new DefaultValueDefinition();
       argOption = (AbstractArgumentOption) valuedefinition7.getOptionManager().findByProperty("name");
       valuedefinition7.setName((java.lang.String) argOption.valueOf("bloerk"));
       argOption = (AbstractArgumentOption) valuedefinition7.getOptionManager().findByProperty("type");
@@ -126,7 +126,7 @@ public class EnterManyValuesTest
       argOption = (AbstractArgumentOption) valuedefinition7.getOptionManager().findByProperty("defaultValue");
       valuedefinition7.setDefaultValue((java.lang.String) argOption.valueOf("1.0"));
       values3[1] = valuedefinition7;
-      ValueDefinition valuedefinition11 = new ValueDefinition();
+      DefaultValueDefinition valuedefinition11 = new DefaultValueDefinition();
       argOption = (AbstractArgumentOption) valuedefinition11.getOptionManager().findByProperty("name");
       valuedefinition11.setName((java.lang.String) argOption.valueOf("color"));
       argOption = (AbstractArgumentOption) valuedefinition11.getOptionManager().findByProperty("type");
@@ -134,7 +134,7 @@ public class EnterManyValuesTest
       argOption = (AbstractArgumentOption) valuedefinition11.getOptionManager().findByProperty("defaultValue");
       valuedefinition11.setDefaultValue((java.lang.String) argOption.valueOf("#000000"));
       values3[2] = valuedefinition11;
-      ValueDefinition valuedefinition15 = new ValueDefinition();
+      DefaultValueDefinition valuedefinition15 = new DefaultValueDefinition();
       argOption = (AbstractArgumentOption) valuedefinition15.getOptionManager().findByProperty("name");
       valuedefinition15.setName((java.lang.String) argOption.valueOf("trueorfalse"));
       argOption = (AbstractArgumentOption) valuedefinition15.getOptionManager().findByProperty("type");
