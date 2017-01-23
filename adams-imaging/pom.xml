@@ -137,7 +137,11 @@
           <groupId>com.sangupta</groupId>
           <artifactId>jopensurf</artifactId>
         </exclusion>
-      </exclusions> 
+        <exclusion>
+          <groupId>nu.pattern</groupId>
+          <artifactId>opencv</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     
     <dependency>

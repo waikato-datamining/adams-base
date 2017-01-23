@@ -104,6 +104,14 @@
           <groupId>pentaho.weka</groupId>
           <artifactId>pdm-3.7-ce</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>jfree</groupId>
+          <artifactId>jfreechart</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>jfree</groupId>
+          <artifactId>jcommon</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
   </dependencies>
