@@ -27,7 +27,7 @@ import adams.data.boofcv.BoofCVImageContainer;
 import adams.data.boofcv.BoofCVImageType;
 import boofcv.alg.enhance.EnhanceImageOps;
 import boofcv.alg.misc.ImageStatistics;
-import boofcv.struct.image.ImageUInt8;
+import boofcv.struct.image.GrayU8;
 
 /**
  <!-- globalinfo-start -->
@@ -82,13 +82,13 @@ public class HistogramBasedIntensityAdjustmentGray8
   @Override
   protected BoofCVImageContainer[] doTransform(BoofCVImageContainer img) {
     BoofCVImageContainer[]	result;
-    ImageUInt8			gray;
-    ImageUInt8			adjusted;
+    GrayU8			gray;
+    GrayU8			adjusted;
     int[] 			histogram;
     int[] 			transform;
 
-    gray     = (ImageUInt8) BoofCVHelper.toBoofCVImage(img.getImage(), BoofCVImageType.UNSIGNED_INT_8);
-    adjusted = new ImageUInt8(gray.width, gray.height);
+    gray     = (GrayU8) BoofCVHelper.toBoofCVImage(img.getImage(), BoofCVImageType.UNSIGNED_INT_8);
+    adjusted = new GrayU8(gray.width, gray.height);
 
     histogram = new int[256];
     transform = new int[256];

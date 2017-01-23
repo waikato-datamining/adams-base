@@ -15,7 +15,7 @@
 
 /**
  * CannyBinary.java
- * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer.locateobjects;
 
@@ -25,11 +25,11 @@ import adams.core.annotation.MixedCopyright;
 import boofcv.alg.feature.detect.edge.CannyEdge;
 import boofcv.alg.filter.binary.BinaryImageOps;
 import boofcv.alg.filter.binary.Contour;
-import boofcv.core.image.ConvertBufferedImage;
 import boofcv.factory.feature.detect.edge.FactoryEdgeDetectors;
+import boofcv.io.image.ConvertBufferedImage;
 import boofcv.struct.ConnectRule;
-import boofcv.struct.image.ImageFloat32;
-import boofcv.struct.image.ImageUInt8;
+import boofcv.struct.image.GrayF32;
+import boofcv.struct.image.GrayU8;
 import georegression.struct.point.Point2D_I32;
 
 import java.awt.image.BufferedImage;
@@ -312,19 +312,19 @@ public class CannyBinary
    */
   protected LocatedObjects doLocate(BufferedImage image, boolean annotateOnly) {
     LocatedObjects				result;
-    ImageFloat32 				input;
-    ImageUInt8 					binary;
-    CannyEdge<ImageFloat32,ImageFloat32> 	canny;
+    GrayF32 				input;
+    GrayU8 					binary;
+    CannyEdge<GrayF32,GrayF32> 	canny;
     List<Contour> 				contours;
     int						left;
     int						right;
     int						top;
     int						bottom;
 
-    input  = ConvertBufferedImage.convertFromSingle(image, null, ImageFloat32.class);
-    binary = new ImageUInt8(input.width, input.height);
+    input  = ConvertBufferedImage.convertFromSingle(image, null, GrayF32.class);
+    binary = new GrayU8(input.width, input.height);
     // Finds edges inside the image
-    canny = FactoryEdgeDetectors.canny(m_BlurRadius, true, true, ImageFloat32.class, ImageFloat32.class);
+    canny = FactoryEdgeDetectors.canny(m_BlurRadius, true, true, GrayF32.class, GrayF32.class);
     canny.process(input, m_ThresholdLow, m_ThresholdHigh, binary);
     contours = BinaryImageOps.contour(binary, m_ConnectRule, null);
     

@@ -15,7 +15,7 @@
 
 /**
  * SuperPixels.java
- * Copyright (C) 2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.boofcv.transformer;
@@ -27,7 +27,7 @@ import boofcv.abst.segmentation.ImageSuperpixels;
 import boofcv.factory.segmentation.ConfigSlic;
 import boofcv.factory.segmentation.FactoryImageSegmentation;
 import boofcv.gui.feature.VisualizeRegions;
-import boofcv.struct.image.ImageSInt32;
+import boofcv.struct.image.GrayS32;
 
 import java.awt.image.BufferedImage;
 
@@ -289,7 +289,7 @@ public class SuperPixels
    * @param numSegments the number of super pixels
    * @param image The image to be transformed
    */
-  protected void averageSegmentColour(ImageSInt32 pixelMap, int numSegments, BufferedImage image) {
+  protected void averageSegmentColour(GrayS32 pixelMap, int numSegments, BufferedImage image) {
     // Set the colour of the pixels to the average of the super pixel
     int[] count 	= new int[numSegments];
     int[][] runningSum 	= new int[numSegments][4];
@@ -334,7 +334,7 @@ public class SuperPixels
     BoofCVImageContainer[] result = new BoofCVImageContainer[1];
     result[0] = new BoofCVImageContainer();
     ImageSuperpixels alg = FactoryImageSegmentation.slic(new ConfigSlic(m_NumSegments, m_SpatialWeight), img.getImage().getImageType());
-    ImageSInt32 output = new ImageSInt32(img.getWidth(), img.getHeight());
+    GrayS32 output = new GrayS32(img.getWidth(), img.getHeight());
     alg.segment(img.getImage(),output);
     BufferedImage image = img.toBufferedImage();
 

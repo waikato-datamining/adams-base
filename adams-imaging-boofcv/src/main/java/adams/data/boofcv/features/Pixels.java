@@ -15,23 +15,23 @@
 
 /*
  * Pixels.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.boofcv.features;
-
-import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.List;
 
 import adams.data.boofcv.BoofCVImageContainer;
 import adams.data.featureconverter.HeaderDefinition;
 import adams.data.image.BufferedImageHelper;
 import adams.data.report.DataType;
-import boofcv.struct.image.ImageFloat32;
-import boofcv.struct.image.ImageFloat64;
-import boofcv.struct.image.ImageInteger;
-import boofcv.struct.image.ImageSInt64;
+import boofcv.struct.image.GrayF32;
+import boofcv.struct.image.GrayF64;
+import boofcv.struct.image.GrayI;
+import boofcv.struct.image.GrayS64;
+
+import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -114,10 +114,10 @@ public class Pixels
     int[]		pixels;
     int			i;
     int			n;
-    ImageInteger	integer;
-    ImageFloat32	float32;
-    ImageFloat64	float64;
-    ImageSInt64		sInt64;
+    GrayI	integer;
+    GrayF32	float32;
+    GrayF64	float64;
+    GrayS64		sInt64;
     BufferedImage	buff;
     int			height;
     int			width;
@@ -127,29 +127,29 @@ public class Pixels
     height    = img.getHeight();
     width     = img.getWidth();
     
-    if (img.getImage() instanceof ImageInteger) {
-      integer = (ImageInteger) img.getImage();
+    if (img.getImage() instanceof GrayI) {
+      integer = (GrayI) img.getImage();
       for (n = 0; n < height; n++) {
 	for (i = 0; i < width; i++)
 	  result[0].add(integer.get(i, n));
       }
     }
-    else if (img.getImage() instanceof ImageFloat32) {
-      float32 = (ImageFloat32) img.getImage();
+    else if (img.getImage() instanceof GrayF32) {
+      float32 = (GrayF32) img.getImage();
       for (n = 0; n < height; n++) {
 	for (i = 0; i < width; i++)
 	  result[0].add(float32.get(i, n));
       }
     }
-    else if (img.getImage() instanceof ImageFloat64) {
-      float64 = (ImageFloat64) img.getImage();
+    else if (img.getImage() instanceof GrayF64) {
+      float64 = (GrayF64) img.getImage();
       for (n = 0; n < height; n++) {
 	for (i = 0; i < width; i++)
 	  result[0].add(float64.get(i, n));
       }
     }
-    else if (img.getImage() instanceof ImageSInt64) {
-      sInt64 = (ImageSInt64) img.getImage();
+    else if (img.getImage() instanceof GrayS64) {
+      sInt64 = (GrayS64) img.getImage();
       for (n = 0; n < height; n++) {
 	for (i = 0; i < width; i++)
 	  result[0].add(sInt64.get(i, n));

@@ -15,7 +15,7 @@
 
 /*
  * XOr.java
- * Copyright (C) 2015-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.boofcv.multiimageoperation;
@@ -23,7 +23,7 @@ package adams.data.boofcv.multiimageoperation;
 import adams.data.boofcv.BoofCVHelper;
 import adams.data.boofcv.BoofCVImageContainer;
 import adams.data.boofcv.BoofCVImageType;
-import boofcv.struct.image.ImageUInt8;
+import boofcv.struct.image.GrayU8;
 
 /**
  <!-- globalinfo-start -->
@@ -107,14 +107,14 @@ public class XOr
     int				x;
     int				y;
     int 			xor;
-    ImageUInt8			img0;
-    ImageUInt8			img1;
-    ImageUInt8			output;
+    GrayU8			img0;
+    GrayU8			img1;
+    GrayU8			output;
 
     result    = new BoofCVImageContainer[1];
-    img0      = (ImageUInt8) BoofCVHelper.toBoofCVImage(images[0], BoofCVImageType.UNSIGNED_INT_8);
-    img1      = (ImageUInt8) BoofCVHelper.toBoofCVImage(images[1], BoofCVImageType.UNSIGNED_INT_8);
-    output    = (ImageUInt8) BoofCVHelper.clone(img0);
+    img0      = (GrayU8) BoofCVHelper.toBoofCVImage(images[0], BoofCVImageType.UNSIGNED_INT_8);
+    img1      = (GrayU8) BoofCVHelper.toBoofCVImage(images[1], BoofCVImageType.UNSIGNED_INT_8);
+    output    = (GrayU8) BoofCVHelper.clone(img0);
     for (y = 0; y < images[0].getHeight(); y++) {
       for (x = 0; x < images[0].getWidth(); x++) {
 	xor = ((img0.get(x, y) == 0) || (img1.get(x, y) == 0)) && (img0.get(x, y) != img1.get(x, y)) ? 0 : 1;

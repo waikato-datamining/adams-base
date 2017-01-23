@@ -15,16 +15,19 @@
 
 /**
  * BoofCVHelper.java
- * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.boofcv;
 
 import adams.data.Notes;
 import adams.data.image.AbstractImageContainer;
 import adams.data.report.Report;
-import boofcv.core.image.ConvertBufferedImage;
 import boofcv.gui.binary.VisualizeBinaryData;
-import boofcv.struct.image.*;
+import boofcv.io.image.ConvertBufferedImage;
+import boofcv.struct.image.GrayU8;
+import boofcv.struct.image.ImageBase;
+import boofcv.struct.image.ImageGray;
+import boofcv.struct.image.ImageMultiBand;
 
 import java.awt.image.BufferedImage;
 import java.util.HashSet;
@@ -46,11 +49,11 @@ public class BoofCVHelper {
    */
   public static BufferedImage toBufferedImage(ImageBase img) {
     BufferedImage dst = null;
-    if (ImageUInt8.class == img.getClass())
-      return VisualizeBinaryData.renderBinary((ImageUInt8) img, null);
+    if (GrayU8.class == img.getClass())
+      return VisualizeBinaryData.renderBinary((GrayU8) img, false, null);
     else {
-      if(img instanceof MultiSpectral){
-        int numBands = ((MultiSpectral) img).getNumBands();
+      if(img instanceof ImageMultiBand){
+        int numBands = ((ImageMultiBand) img).getNumBands();
 
         int w = img.getWidth();
         int h = img.getHeight();
@@ -76,8 +79,8 @@ public class BoofCVHelper {
    * @return		the clone
    */
   public static ImageBase clone(ImageBase img) {
-    if (img instanceof ImageSingleBand)
-      return ((ImageSingleBand) img).clone();
+    if (img instanceof ImageGray)
+      return ((ImageGray) img).clone();
     else
       return img.subimage(0, 0, img.getWidth(), img.getHeight(), null);
   }
@@ -128,7 +131,7 @@ public class BoofCVHelper {
    * @return		the converted image
    */
   public static ImageBase toBoofCVMultiBandImage(BufferedImage img) {
-    return ConvertBufferedImage.convertFromMulti(img, null, true, ImageUInt8.class);
+    return ConvertBufferedImage.convertFromMulti(img, null, true, GrayU8.class);
   }
 
   /**
@@ -219,7 +222,7 @@ public class BoofCVHelper {
    */
   public static boolean isBinary(BoofCVImageContainer img) {
     boolean result = true;
-    ImageUInt8 greyscale = (ImageUInt8) toBoofCVImage(img, BoofCVImageType.UNSIGNED_INT_8);
+    GrayU8 greyscale = (GrayU8) toBoofCVImage(img, BoofCVImageType.UNSIGNED_INT_8);
     Set<Byte> values = new HashSet<>();
     for(byte pixel : greyscale.getData()) {
       values.add(pixel);

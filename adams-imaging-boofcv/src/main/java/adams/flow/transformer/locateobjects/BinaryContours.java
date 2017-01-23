@@ -15,7 +15,7 @@
 
 /**
  * BinaryContours.java
- * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer.locateobjects;
 
@@ -26,10 +26,10 @@ import boofcv.alg.filter.binary.BinaryImageOps;
 import boofcv.alg.filter.binary.Contour;
 import boofcv.alg.filter.binary.ThresholdImageOps;
 import boofcv.alg.misc.ImageStatistics;
-import boofcv.core.image.ConvertBufferedImage;
+import boofcv.io.image.ConvertBufferedImage;
 import boofcv.struct.ConnectRule;
-import boofcv.struct.image.ImageFloat32;
-import boofcv.struct.image.ImageUInt8;
+import boofcv.struct.image.GrayF32;
+import boofcv.struct.image.GrayU8;
 import georegression.struct.point.Point2D_I32;
 
 import java.awt.image.BufferedImage;
@@ -213,9 +213,9 @@ public class BinaryContours
    */
   protected LocatedObjects doLocate(BufferedImage image, boolean annotateOnly) {
     LocatedObjects	result;
-    ImageFloat32 	input;
-    ImageUInt8 		binary;
-    ImageUInt8 		filtered;
+    GrayF32 	input;
+    GrayU8 		binary;
+    GrayU8 		filtered;
     List<Contour> 	contours;
     int			left;
     int			right;
@@ -223,8 +223,8 @@ public class BinaryContours
     int			bottom;
     double 		mean;
 
-    input  = ConvertBufferedImage.convertFromSingle(image, null, ImageFloat32.class);
-    binary = new ImageUInt8(input.width, input.height);
+    input  = ConvertBufferedImage.convertFromSingle(image, null, GrayF32.class);
+    binary = new GrayU8(input.width, input.height);
     // the mean pixel value is often a reasonable threshold when creating a binary image
     mean = ImageStatistics.mean(input);
     // create a binary image by thresholding

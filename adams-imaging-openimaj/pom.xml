@@ -88,6 +88,14 @@
           <groupId>bouncycastle</groupId>
           <artifactId>bcprov-jdk14</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>jfree</groupId>
+          <artifactId>jfreechart</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>jfree</groupId>
+          <artifactId>jcommon</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
 

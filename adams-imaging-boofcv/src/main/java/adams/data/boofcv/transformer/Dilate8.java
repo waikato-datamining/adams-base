@@ -15,7 +15,7 @@
 
 /**
  * Dilate8.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.boofcv.transformer;
 
@@ -23,7 +23,7 @@ import adams.data.boofcv.BoofCVHelper;
 import adams.data.boofcv.BoofCVImageContainer;
 import adams.data.boofcv.BoofCVImageType;
 import boofcv.alg.filter.binary.BinaryImageOps;
-import boofcv.struct.image.ImageUInt8;
+import boofcv.struct.image.GrayU8;
 
 /**
  <!-- globalinfo-start -->
@@ -117,10 +117,10 @@ public class Dilate8
   @Override
   protected BoofCVImageContainer[] doTransform(BoofCVImageContainer img) {
     BoofCVImageContainer[]	result;
-    ImageUInt8	 		input;
-    ImageUInt8 			filtered;
+    GrayU8	 		input;
+    GrayU8 			filtered;
     
-    input     = (ImageUInt8) BoofCVHelper.toBoofCVImage(img.getImage(), BoofCVImageType.UNSIGNED_INT_8);
+    input     = (GrayU8) BoofCVHelper.toBoofCVImage(img.getImage(), BoofCVImageType.UNSIGNED_INT_8);
     filtered  = BinaryImageOps.dilate8(input, m_NumTimes, null);
     result    = new BoofCVImageContainer[1];
     result[0] = (BoofCVImageContainer) img.getHeader();

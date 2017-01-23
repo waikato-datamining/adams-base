@@ -15,7 +15,7 @@
 
 /**
  * Inverter.java
- * Copyright (C) 2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.boofcv.transformer;
@@ -23,7 +23,7 @@ package adams.data.boofcv.transformer;
 import adams.data.boofcv.BoofCVHelper;
 import adams.data.boofcv.BoofCVImageContainer;
 import adams.data.boofcv.BoofCVImageType;
-import boofcv.struct.image.ImageUInt8;
+import boofcv.struct.image.GrayU8;
 
 /**
  <!-- globalinfo-start -->
@@ -66,7 +66,7 @@ public class Inverter
    */
   @Override
   protected BoofCVImageContainer[] doTransform(BoofCVImageContainer img) {
-    ImageUInt8 image = (ImageUInt8) BoofCVHelper.toBoofCVImage(img, BoofCVImageType.UNSIGNED_INT_8);
+    GrayU8 image = (GrayU8) BoofCVHelper.toBoofCVImage(img, BoofCVImageType.UNSIGNED_INT_8);
     BoofCVImageContainer[] result = new BoofCVImageContainer[1];
     byte[] data = image.getData();
     for (int i = 0; i < data.length; i++) {

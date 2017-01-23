@@ -121,6 +121,13 @@
       <artifactId>visualize</artifactId>
       <version>${boofcv.version}</version>
     </dependency>
+
+    <dependency>
+      <groupId>org.ejml</groupId>
+      <artifactId>core</artifactId>
+      <version>0.30</version>
+      <scope>compile</scope>
+    </dependency>
   </dependencies>
 
   <build>

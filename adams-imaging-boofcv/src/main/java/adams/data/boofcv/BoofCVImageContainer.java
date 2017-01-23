@@ -21,7 +21,7 @@ package adams.data.boofcv;
 
 import adams.data.image.AbstractImageContainer;
 import boofcv.struct.image.ImageBase;
-import boofcv.struct.image.ImageSingleBand;
+import boofcv.struct.image.ImageGray;
 
 import java.awt.image.BufferedImage;
 
@@ -64,7 +64,7 @@ public class BoofCVImageContainer
   }
   
   /**
-   * Returns a clone of the image. Actually, only for {@link ImageSingleBand}
+   * Returns a clone of the image. Actually, only for {@link ImageGray}
    * a clone is returned, all other types are a "subimage" with the same
    * size as the original.
    * 

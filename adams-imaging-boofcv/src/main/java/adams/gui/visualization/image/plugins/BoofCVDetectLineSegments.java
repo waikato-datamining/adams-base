@@ -15,7 +15,7 @@
 
 /**
  * BoofCVDetectLineSegments.java
- * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.image.plugins;
 
@@ -27,8 +27,8 @@ import adams.flow.core.Token;
 import adams.gui.dialog.SpreadSheetDialog;
 import adams.gui.visualization.image.BoofCVDetectLineSegmentsImageOverlay;
 import adams.gui.visualization.image.ImagePanel;
-import boofcv.core.image.ConvertBufferedImage;
-import boofcv.struct.image.ImageUInt8;
+import boofcv.io.image.ConvertBufferedImage;
+import boofcv.struct.image.GrayU8;
 
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -145,7 +145,7 @@ public class BoofCVDetectLineSegments
     result = null;
     
     cont   = new BoofCVImageContainer();
-    cont.setImage(ConvertBufferedImage.convertFromSingle(m_CurrentPanel.getCurrentImage(), null, ImageUInt8.class));
+    cont.setImage(ConvertBufferedImage.convertFromSingle(m_CurrentPanel.getCurrentImage(), null, GrayU8.class));
     detect = (adams.flow.transformer.BoofCVDetectLineSegments) getLastSetup();
     detect.input(new Token(cont));
     result = detect.execute();

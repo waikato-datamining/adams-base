@@ -15,7 +15,7 @@
 
 /**
  * BoofCVDetectLines.java
- * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
 
@@ -31,8 +31,7 @@ import adams.flow.core.Token;
 import boofcv.abst.feature.detect.line.DetectLineHoughPolar;
 import boofcv.factory.feature.detect.line.ConfigHoughPolar;
 import boofcv.factory.feature.detect.line.FactoryDetectLineAlgs;
-import boofcv.struct.image.ImageSInt16;
-import boofcv.struct.image.ImageUInt8;
+import boofcv.struct.image.GrayS16;
 import georegression.struct.line.LineParametric2D_F32;
 
 import java.util.List;
@@ -421,7 +420,7 @@ public class BoofCVDetectLines
   protected String doExecute() {
     String			result;
     AbstractImageContainer	 	cont;
-    ImageUInt8 			input;
+    GrayS16 			input;
     ConfigHoughPolar		config;
     DetectLineHoughPolar 	detector;
     List<LineParametric2D_F32> 	found;
@@ -432,7 +431,7 @@ public class BoofCVDetectLines
     
     try {
       cont   = (AbstractImageContainer) m_InputToken.getPayload();
-      input  = (ImageUInt8) BoofCVHelper.toBoofCVImage(cont, BoofCVImageType.UNSIGNED_INT_8);
+      input  = (GrayS16) BoofCVHelper.toBoofCVImage(cont, BoofCVImageType.SIGNED_INT_16);
       config = new ConfigHoughPolar(
 	  m_LocalMaxRadius, 
 	  m_MinCounts, 
@@ -442,8 +441,8 @@ public class BoofCVDetectLines
 	  m_MaxLines);
       detector = FactoryDetectLineAlgs.houghPolar(
 	  config, 
-	  ImageUInt8.class, 
-	  ImageSInt16.class);
+	  GrayS16.class,
+	  GrayS16.class);
       found = detector.detect(input);
       
       sheet = new DefaultSpreadSheet();

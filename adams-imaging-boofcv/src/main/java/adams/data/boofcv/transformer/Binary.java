@@ -15,26 +15,22 @@
 
 /*
  * Binary.java
- * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.boofcv.transformer;
 
 import adams.core.License;
 import adams.core.annotation.MixedCopyright;
-import adams.core.io.PlaceholderFile;
 import adams.data.boofcv.BoofCVHelper;
 import adams.data.boofcv.BoofCVImageContainer;
 import adams.data.boofcv.BoofCVImageType;
-import adams.data.io.input.BoofCVImageReader;
-import adams.data.io.output.BoofCVImageWriter;
-import adams.env.Environment;
 import boofcv.alg.filter.binary.BinaryImageOps;
 import boofcv.alg.filter.binary.GThresholdImageOps;
 import boofcv.alg.filter.binary.ThresholdImageOps;
 import boofcv.alg.misc.ImageStatistics;
-import boofcv.struct.image.ImageFloat32;
-import boofcv.struct.image.ImageUInt8;
+import boofcv.struct.image.GrayF32;
+import boofcv.struct.image.GrayU8;
 
 /**
  <!-- globalinfo-start -->
@@ -114,9 +110,9 @@ public class Binary
     /** using the mean. */
     MEAN,
     /** using adaptive gaussian. */
-    ADAPTIVE_GAUSSIAN,
+    LOCAL_GAUSSIAN,
     /** using adaptive square. */
-    ADAPTIVE_SQUARE,
+    LOCAL_SQUARE,
     /** using Otsu's method. */
     OTSU
   }
@@ -410,13 +406,13 @@ public class Binary
   @Override
   protected BoofCVImageContainer[] doTransform(BoofCVImageContainer img) {
     BoofCVImageContainer[]	result;
-    ImageFloat32 		input;
-    ImageUInt8 			binary;
+    GrayF32 		input;
+    GrayU8 			binary;
     double 			threshold;
-    ImageUInt8 			filtered;
+    GrayU8 			filtered;
 
-    input  = (ImageFloat32) BoofCVHelper.toBoofCVImage(img.getImage(), BoofCVImageType.FLOAT_32);
-    binary = new ImageUInt8(input.width,input.height);
+    input  = (GrayF32) BoofCVHelper.toBoofCVImage(img.getImage(), BoofCVImageType.FLOAT_32);
+    binary = new GrayU8(input.width,input.height);
 
     switch (m_ThresholdType) {
       case MANUAL:
@@ -427,14 +423,14 @@ public class Binary
 	getLogger().info("mean: " + threshold);
 	ThresholdImageOps.threshold(input, binary, (float) threshold, m_ThresholdDown);
 	break;
-      case ADAPTIVE_GAUSSIAN:
-	ThresholdImageOps.adaptiveGaussian(input, binary, m_GaussianRadius, m_Bias, m_ThresholdDown, null, null);
+      case LOCAL_GAUSSIAN:
+	ThresholdImageOps.localGaussian(input, binary, m_GaussianRadius, m_Bias, m_ThresholdDown, null, null);
 	break;
-      case ADAPTIVE_SQUARE:
-	ThresholdImageOps.adaptiveSquare(input, binary, m_SquareRadius, m_Bias, m_ThresholdDown, null, null);
+      case LOCAL_SQUARE:
+	ThresholdImageOps.localSquare(input, binary, m_SquareRadius, m_Bias, m_ThresholdDown, null, null);
 	break;
       case OTSU:
-	binary    = (ImageUInt8) BoofCVHelper.toBoofCVImage(img.getImage(), BoofCVImageType.UNSIGNED_INT_8);
+	binary    = (GrayU8) BoofCVHelper.toBoofCVImage(img.getImage(), BoofCVImageType.UNSIGNED_INT_8);
 	threshold = GThresholdImageOps.computeOtsu(binary, 0, 256);
 	getLogger().info("otsu: " + threshold);
 	ThresholdImageOps.threshold(input, binary, (float) threshold, m_ThresholdDown);

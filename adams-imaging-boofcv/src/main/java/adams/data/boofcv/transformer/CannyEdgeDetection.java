@@ -15,7 +15,7 @@
 
 /*
  * CannyEdgeDetection.java
- * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.boofcv.transformer;
@@ -33,13 +33,13 @@ import boofcv.alg.feature.detect.edge.CannyEdge;
 import boofcv.alg.feature.detect.edge.EdgeContour;
 import boofcv.alg.filter.binary.BinaryImageOps;
 import boofcv.alg.filter.binary.Contour;
-import boofcv.core.image.ConvertBufferedImage;
 import boofcv.factory.feature.detect.edge.FactoryEdgeDetectors;
 import boofcv.gui.binary.VisualizeBinaryData;
+import boofcv.io.image.ConvertBufferedImage;
 import boofcv.struct.ConnectRule;
-import boofcv.struct.image.ImageFloat32;
-import boofcv.struct.image.ImageSInt16;
-import boofcv.struct.image.ImageUInt8;
+import boofcv.struct.image.GrayF32;
+import boofcv.struct.image.GrayS16;
+import boofcv.struct.image.GrayU8;
 
 import java.awt.image.BufferedImage;
 import java.util.List;
@@ -311,20 +311,20 @@ public class CannyEdgeDetection
   @Override
   protected BoofCVImageContainer[] doTransform(BoofCVImageContainer img) {
     BoofCVImageContainer[]		result;
-    ImageUInt8 				gray;
-    ImageUInt8 				edgeImage;
-    CannyEdge<ImageUInt8,ImageSInt16> 	canny;
+    GrayU8 				gray;
+    GrayU8 				edgeImage;
+    CannyEdge<GrayU8,GrayS16> 	canny;
     List<EdgeContour> 			edgeContours;
     List<Contour> 			contours;
     BufferedImage			rendered;
     
-    gray      = (ImageUInt8) BoofCVHelper.toBoofCVImage(img.getImage(), BoofCVImageType.UNSIGNED_INT_8);
-    edgeImage = new ImageUInt8(gray.width, gray.height);
+    gray      = (GrayU8) BoofCVHelper.toBoofCVImage(img.getImage(), BoofCVImageType.UNSIGNED_INT_8);
+    edgeImage = new GrayU8(gray.width, gray.height);
 
     // Create a canny edge detector which will dynamically compute the threshold based on maximum edge intensity
     // It has also been configured to save the trace as a graph.  This is the graph created while performing
     // hysteresis thresholding.
-    canny = FactoryEdgeDetectors.canny(2, true, true, ImageUInt8.class, ImageSInt16.class);
+    canny = FactoryEdgeDetectors.canny(2, true, true, GrayU8.class, GrayS16.class);
 
     // The edge image is actually an optional parameter.  If you don't need it just pass in null
     canny.process(gray, m_LowThreshold, m_HighThreshold, edgeImage);
@@ -340,13 +340,14 @@ public class CannyEdgeDetection
     // render the result
     switch (m_Type) {
       case BINARY_EDGES:
-	rendered = VisualizeBinaryData.renderBinary(edgeImage, null);
+	rendered = VisualizeBinaryData.renderBinary(edgeImage, false, null);
 	break;
       case CONTOUR:
 	rendered = VisualizeBinaryData.renderContours(edgeContours, null, gray.width, gray.height, null);
 	break;
       case TRACE_GRAPH:
-	rendered = VisualizeBinaryData.renderExternal(contours, null, gray.width, gray.height, null);
+        rendered = new BufferedImage(gray.width, gray.height,BufferedImage.TYPE_INT_RGB);
+	VisualizeBinaryData.render(contours, (int[]) null, rendered);
 	break;
       default:
 	throw new IllegalStateException("Unhandled output type: " + m_Type);
@@ -354,7 +355,7 @@ public class CannyEdgeDetection
 
     result    = new BoofCVImageContainer[1];
     result[0] = (BoofCVImageContainer) img.getHeader();
-    result[0].setImage(ConvertBufferedImage.convertFrom(rendered, (ImageFloat32) null));
+    result[0].setImage(ConvertBufferedImage.convertFrom(rendered, (GrayF32) null));
     
     return result;
   }
