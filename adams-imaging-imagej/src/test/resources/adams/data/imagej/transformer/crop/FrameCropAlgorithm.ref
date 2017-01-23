@@ -1,20 +1,20 @@
 --> black_rectangle-out0.txt
 Image:
-imp[black_rectangle.png (420x300x1x1x1)]
+img[black_rectangle.png (420x300x1x1x1)]
 
 
 --> red_rectangle-out1.txt
 Image:
-imp[red_rectangle.png (420x300x1x1x1)]
+img[red_rectangle.png (420x300x1x1x1)]
 
 
 --> white_rectangle-out2.txt
 Image:
-imp[white_rectangle.png (420x300x1x1x1)]
+img[white_rectangle.png (420x300x1x1x1)]
 
 
 --> yellow_plate-out3.txt
 Image:
-imp[yellow_plate.jpg (702x308x1x1x1)]
+img[yellow_plate.jpg (702x308x1x1x1)]
 
 

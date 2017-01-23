@@ -1,6 +1,6 @@
 --> adams_logo-out0_0.txt
 Image:
-imp[adams_logo.png'-resized[w=-1,h=-1] (342x290x1x1x1)]imp[adams_logo.png'-resized[w=-1,h=-1] (342x290x1x1x1)]
+img[adams_logo.png'-resized[w=-1,h=-1] (342x290x1x1x1)]img[adams_logo.png'-resized[w=-1,h=-1] (342x290x1x1x1)]
 Report:
 
 Notes:
@@ -11,7 +11,7 @@ PROCESS INFORMATION:
 
 --> adams_logo-out1_0.txt
 Image:
-imp[adams_logo.png'-resized[w=50,h=50] (50x50x1x1x1)]imp[adams_logo.png'-resized[w=50,h=50] (50x50x1x1x1)]
+img[adams_logo.png'-resized[w=50,h=50] (50x50x1x1x1)]img[adams_logo.png'-resized[w=50,h=50] (50x50x1x1x1)]
 Report:
 
 Notes:

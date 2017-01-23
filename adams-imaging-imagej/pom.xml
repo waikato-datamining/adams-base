@@ -93,10 +93,9 @@
     </dependency>
 
     <dependency>
-      <groupId>gov.nih.imagej</groupId>
-      <artifactId>imagej</artifactId>
-      <version>1.47</version>
-      <type>jar</type>
+      <groupId>net.imagej</groupId>
+      <artifactId>ij</artifactId>
+      <version>1.51h</version>
     </dependency>
   </dependencies>
 

@@ -1,10 +1,10 @@
 --> yellow_plate-out0.txt
 Image:
-imp[yellow_plate.jpg (800x533x1x1x1)]
+img[yellow_plate.jpg (800x533x1x1x1)]
 
 
 --> yellow_plate-out1.txt
 Image:
-imp[yellow_plate.jpg (721x351x1x1x1)]
+img[yellow_plate.jpg (721x351x1x1x1)]
 
 
