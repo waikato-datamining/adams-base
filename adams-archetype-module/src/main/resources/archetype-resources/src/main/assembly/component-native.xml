@@ -8,18 +8,21 @@
       <outputDirectory>/lib/linux64</outputDirectory>
       <includes>
         <include>*:linux-x86_64</include>
+        <include>*:netlib-native_ref-linux-x86_64:*</include>
       </includes>
     </dependencySet>
     <dependencySet>
       <outputDirectory>/lib/windows64</outputDirectory>
       <includes>
         <include>*:windows-x86_64</include>
+        <include>*:netlib-native_ref-win-x86_64:*</include>
       </includes>
     </dependencySet>
     <dependencySet>
       <outputDirectory>/lib/macosx64</outputDirectory>
       <includes>
         <include>*:macosx-x86_64</include>
+        <include>*:netlib-native_ref-osx-x86_64:*</include>
       </includes>
     </dependencySet>
   </dependencySets>

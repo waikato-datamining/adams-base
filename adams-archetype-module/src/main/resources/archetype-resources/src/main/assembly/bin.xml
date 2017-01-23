@@ -79,9 +79,11 @@
         <exclude>*:android-x86</exclude>
         <exclude>*:linux-x86</exclude>
         <exclude>*:linux-x86_64</exclude>
+        <exclude>*:linux-ppc64le</exclude>
         <exclude>*:macosx-x86_64</exclude>
         <exclude>*:windows-x86</exclude>
         <exclude>*:windows-x86_64</exclude>
+        <exclude>*:natives</exclude>
       </excludes>
     </dependencySet>
   </dependencySets>
