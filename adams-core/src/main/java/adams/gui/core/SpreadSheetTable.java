@@ -15,7 +15,7 @@
 
 /**
  * SpreadSheetTable.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
 
@@ -23,6 +23,7 @@ import adams.data.io.output.SpreadSheetWriter;
 import adams.data.spreadsheet.Cell;
 import adams.data.spreadsheet.RowComparator;
 import adams.data.spreadsheet.SpreadSheet;
+import adams.data.spreadsheet.SpreadSheetView;
 import adams.gui.chooser.SpreadSheetFileChooser;
 import adams.gui.core.spreadsheettable.SpreadSheetTablePopupMenuItemHelper;
 import adams.gui.event.PopupMenuListener;
@@ -235,7 +236,7 @@ public class SpreadSheetTable
   public SpreadSheet toSpreadSheet() {
     return toSpreadSheet(TableRowRange.ALL);
   }
-  
+
   /**
    * Returns the underlying sheet.
    *
@@ -243,6 +244,17 @@ public class SpreadSheetTable
    * @return		the spread sheet
    */
   public SpreadSheet toSpreadSheet(TableRowRange range) {
+    return toSpreadSheet(range, false);
+  }
+
+  /**
+   * Returns the underlying sheet.
+   *
+   * @param range	the type of rows to return
+   * @param view	whether to return only a view (ignored if {@link TableRowRange#ALL})
+   * @return		the spread sheet
+   */
+  public SpreadSheet toSpreadSheet(TableRowRange range, boolean view) {
     SpreadSheet	result;
     SpreadSheet	full;
     int[] 	indices;
@@ -254,15 +266,28 @@ public class SpreadSheetTable
 	result = full;
 	break;
       case SELECTED:
-	result = full.getHeader();
 	indices = getSelectedRows();
-	for (i = 0; i < indices.length; i++)
-	  result.addRow().assign(full.getRow(getActualRow(indices[i])));
+	if (view) {
+	  result = new SpreadSheetView(full, indices, null);
+	}
+	else {
+	  result = full.getHeader();
+	  for (i = 0; i < indices.length; i++)
+	    result.addRow().assign(full.getRow(getActualRow(indices[i])));
+	}
 	break;
       case VISIBLE:
-	result = full.getHeader();
-	for (i = 0; i < getRowCount(); i++)
-	  result.addRow().assign(full.getRow(getActualRow(i)));
+	if (view) {
+	  indices = new int[getRowCount()];
+	  for (i = 0; i < getRowCount(); i++)
+	    indices[i] = getActualRow(i);
+	  result = new SpreadSheetView(full, indices, null);
+	}
+	else {
+	  result = full.getHeader();
+	  for (i = 0; i < getRowCount(); i++)
+	    result.addRow().assign(full.getRow(getActualRow(i)));
+	}
 	break;
       default:
 	throw new IllegalStateException("Unhandled row range: " + range);
