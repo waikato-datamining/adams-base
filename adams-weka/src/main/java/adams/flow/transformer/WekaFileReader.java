@@ -15,14 +15,13 @@
 
 /*
  * WekaFileReader.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
 import adams.core.Shortening;
-import adams.core.Utils;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
 import adams.core.option.OptionUtils;
@@ -405,14 +404,22 @@ public class WekaFileReader
     File		file;
     URL			url;
     boolean		isArff;
+    String[]		exts;
     String		ext;
 
     result = null;
 
     try {
       obj    = m_InputToken.getPayload();
-      ext    = FileUtils.getExtensions(obj.toString().toLowerCase())[0];
-      isArff = (ext.equals("arff") || ext.equals("arff.gz"));
+      exts   = FileUtils.getExtensions(obj.toString().toLowerCase());
+      if ((exts != null) && (exts.length > 0)) {
+        ext    = exts[0];
+        isArff = (ext.equals("arff") || ext.equals("arff.gz"));
+      }
+      else {
+        ext    = "";
+        isArff = false;
+      }
       file   = null;
       url    = null;
       if (obj instanceof File)
@@ -422,6 +429,7 @@ public class WekaFileReader
       else
 	file = new File((new PlaceholderFile((String) obj)).getAbsolutePath());
 
+      m_Source = null;
       if (m_UseCustomLoader) {
 	loader = m_CustomLoader;
 	if (url != null)
@@ -431,22 +439,30 @@ public class WekaFileReader
 	m_Source = new DataSource(loader);
       }
       else {
-	if (isArff) {
-	  loader = new AArffLoader();
-	  if (url != null)
-	    ((URLSourcedLoader) loader).setURL(url.toString());
-	  else
-	    loader.setFile(file);
-	  m_Source = new DataSource(loader);
-	}
-	else {
-	  if (url != null)
-	    m_Source = new DataSource(url.toString());
-	  else
-	    m_Source = new DataSource(file.getAbsolutePath());
-	}
+        if (ext.isEmpty()) {
+          result = "File has no extension to be used by file type detection, but no custom loader defined!";
+        }
+        else {
+          if (isArff) {
+            loader = new AArffLoader();
+            if (url != null)
+              ((URLSourcedLoader) loader).setURL(url.toString());
+            else
+              loader.setFile(file);
+            m_Source = new DataSource(loader);
+          }
+          else {
+            if (url != null)
+              m_Source = new DataSource(url.toString());
+            else
+              m_Source = new DataSource(file.getAbsolutePath());
+          }
+        }
       }
-      m_Structure = m_Source.getStructure();
+
+      // obtain structure
+      if (m_Source != null)
+	m_Structure = m_Source.getStructure();
     }
     catch (Exception e) {
       result = handleException("Failed load data from: " + m_InputToken.getPayload(), e);
