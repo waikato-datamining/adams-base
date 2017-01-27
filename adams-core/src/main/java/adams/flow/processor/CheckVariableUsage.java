@@ -15,7 +15,7 @@
 
 /**
  * CheckVariableUsage.java
- * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.processor;
 
@@ -34,6 +34,7 @@ import adams.core.option.ClassOption;
 import adams.core.option.OptionTraversalPath;
 import adams.core.option.OptionTraverser;
 import adams.flow.core.Actor;
+import adams.flow.core.ActorUtils;
 import adams.gui.dialog.TextPanel;
 
 import java.awt.Component;
@@ -85,7 +86,10 @@ public class CheckVariableUsage
   
   /** the warnings that were produced. */
   protected String m_Warnings;
-  
+
+  /** the variables to skip. */
+  protected Set<String> m_Skip;
+
   /**
    * Returns a string describing the object.
    *
@@ -107,6 +111,7 @@ public class CheckVariableUsage
     
     m_UsageCount = new NamedCounter();
     m_SetCount   = new NamedCounter();
+    m_Skip       = new HashSet<>();
     m_Warnings   = null;
   }
 
@@ -165,6 +170,11 @@ public class CheckVariableUsage
     
     m_UsageCount.clear();
     m_SetCount.clear();
+    m_Skip.clear();
+    m_Skip.add(ActorUtils.FLOW_DIR);
+    m_Skip.add(ActorUtils.FLOW_FILENAME_LONG);
+    m_Skip.add(ActorUtils.FLOW_FILENAME_SHORT);
+    m_Skip.add(ActorUtils.FLOW_ID);
     m_Warnings = null;
     
     actor.getOptionManager().traverse(new OptionTraverser() {
@@ -174,8 +184,11 @@ public class CheckVariableUsage
 	    incrementSetCount(Array.get(obj, i));
 	}
 	else {
-	  if (obj instanceof VariableName)
-	    m_SetCount.next(((VariableName) obj).getValue());
+	  if (obj instanceof VariableName) {
+            VariableName var = (VariableName) obj;
+            if (!m_Skip.contains(var.getValue()))
+              m_SetCount.next(var.getValue());
+          }
 	}
       }
       protected void incrementUsageCount(Object obj) {
@@ -184,8 +197,11 @@ public class CheckVariableUsage
 	    incrementUsageCount(Array.get(obj, i));
 	}
 	else {
-	  if (obj instanceof VariableName)
-	    m_UsageCount.next(((VariableName) obj).getValue());
+	  if (obj instanceof VariableName) {
+            VariableName var = (VariableName) obj;
+            if (!m_Skip.contains(var.getValue()))
+              m_UsageCount.next(var.getValue());
+          }
 	}
       }
       protected void extractVariables(Object obj) {
@@ -201,8 +217,10 @@ public class CheckVariableUsage
 	    val = ((BaseObject) obj).getValue();
 	  if (val != null) {
 	    String[] vars = Variables.extractNames(val);
-	    for (String var: vars)
-	      m_UsageCount.next(var);
+	    for (String var: vars) {
+              if (!m_Skip.contains(var))
+                m_UsageCount.next(var);
+            }
 	  }
 	}
       }
@@ -216,19 +234,20 @@ public class CheckVariableUsage
       public void handleArgumentOption(AbstractArgumentOption option, OptionTraversalPath path) {
 	// variable attached?
 	if (option.isVariableAttached()) {
-	  m_UsageCount.next(option.getVariableName());
+          if (!m_Skip.contains(option.getVariableName()))
+            m_UsageCount.next(option.getVariableName());
 	}
 	else {
 	  // updater
 	  if ((option.getOptionHandler() instanceof VariableUpdater) && (option.getBaseClass() == VariableName.class)) {
 	    if (((VariableUpdater) option.getOptionHandler()).isUpdatingVariables())
-	      incrementSetCount(option.getCurrentValue());
+              incrementSetCount(option.getCurrentValue());
 	    return;
 	  }
 	  // user
 	  else if ((option.getOptionHandler() instanceof VariableUser) && (option.getBaseClass() == VariableName.class)) {
 	    if (((VariableUser) option.getOptionHandler()).isUsingVariables())
-	      incrementUsageCount(option.getCurrentValue());
+              incrementUsageCount(option.getCurrentValue());
 	    return;
 	  }
 	  // string?
