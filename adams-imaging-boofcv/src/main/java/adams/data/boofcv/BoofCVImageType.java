@@ -19,7 +19,15 @@
  */
 package adams.data.boofcv;
 
-import boofcv.struct.image.*;
+import boofcv.struct.image.ImageFloat32;
+import boofcv.struct.image.ImageFloat64;
+import boofcv.struct.image.ImageMultiBand;
+import boofcv.struct.image.ImageSInt16;
+import boofcv.struct.image.ImageSInt32;
+import boofcv.struct.image.ImageSInt64;
+import boofcv.struct.image.ImageSInt8;
+import boofcv.struct.image.ImageUInt16;
+import boofcv.struct.image.ImageUInt8;
 
 /**
  * The different image types that are available.
@@ -29,21 +37,21 @@ import boofcv.struct.image.*;
  */
 public enum BoofCVImageType {
   /** float 32bit. */
-  FLOAT_32(GrayF32.class),
+  FLOAT_32(ImageFloat32.class),
   /** float 64bit. */
-  FLOAT_64(GrayF64.class),
+  FLOAT_64(ImageFloat64.class),
   /** signed int 8 bit. */
-  SIGNED_INT_8(GrayS8.class),
+  SIGNED_INT_8(ImageSInt8.class),
   /** unsigned int 8 bit. */
-  UNSIGNED_INT_8(GrayU8.class),
+  UNSIGNED_INT_8(ImageUInt8.class),
   /** signed int 16 bit. */
-  SIGNED_INT_16(GrayS16.class),
+  SIGNED_INT_16(ImageSInt16.class),
   /** unsigned int 16 bit. */
-  UNSIGNED_INT_16(GrayU16.class),
+  UNSIGNED_INT_16(ImageUInt16.class),
   /** signed int 32 bit. */
-  SIGNED_INT_32(GrayS32.class),
+  SIGNED_INT_32(ImageSInt32.class),
   /** signed int 64 bit. */
-  SIGNED_INT_64(GrayS64.class),
+  SIGNED_INT_64(ImageSInt64.class),
   /** multiband image */
   MULTIBAND(ImageMultiBand.class);
   

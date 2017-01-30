@@ -24,7 +24,7 @@ import adams.data.boofcv.BoofCVImageContainer;
 import adams.data.featureconverter.HeaderDefinition;
 import adams.data.report.DataType;
 import boofcv.alg.misc.ImageStatistics;
-import boofcv.struct.image.GrayU8;
+import boofcv.struct.image.ImageUInt8;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +32,7 @@ import java.util.List;
 /**
  <!-- globalinfo-start -->
  * Generates a histogram from the image. Supported image types:<br>
- * boofcv.struct.image.GrayU8
+ * boofcv.struct.image.ImageUInt8
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -79,7 +79,7 @@ public class Histogram
   public String globalInfo() {
     return 
 	"Generates a histogram from the image. Supported image types:\n" 
-	+ GrayU8.class.getName();
+	+ ImageUInt8.class.getName();
   }
 
   /**
@@ -94,7 +94,7 @@ public class Histogram
     int			i;
     int			numHistogram;
 
-    if (img.getImage() instanceof GrayU8) {
+    if (img.getImage() instanceof ImageUInt8) {
       numHistogram = 256;
     }
     else {
@@ -122,9 +122,9 @@ public class Histogram
     result    = new List[1];
     result[0] = new ArrayList<Object>();
 
-    if (img.getImage() instanceof GrayU8) {
+    if (img.getImage() instanceof ImageUInt8) {
       histogram = new int[256];
-      ImageStatistics.histogram((GrayU8) img.getImage(), histogram);
+      ImageStatistics.histogram((ImageUInt8) img.getImage(), histogram);
       for (int value: histogram)
 	result[0].add(value);
     }

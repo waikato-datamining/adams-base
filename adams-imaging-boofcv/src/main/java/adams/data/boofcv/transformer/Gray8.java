@@ -23,7 +23,7 @@ package adams.data.boofcv.transformer;
 import adams.data.boofcv.BoofCVHelper;
 import adams.data.boofcv.BoofCVImageContainer;
 import adams.data.boofcv.BoofCVImageType;
-import boofcv.struct.image.GrayU8;
+import boofcv.struct.image.ImageUInt8;
 
 /**
  <!-- globalinfo-start -->
@@ -70,9 +70,9 @@ public class Gray8
   @Override
   protected BoofCVImageContainer[] doTransform(BoofCVImageContainer img) {
     BoofCVImageContainer[]	result;
-    GrayU8			newImg;
+    ImageUInt8			newImg;
     
-    newImg    = (GrayU8) BoofCVHelper.toBoofCVImage(img.getImage(), BoofCVImageType.UNSIGNED_INT_8);
+    newImg    = (ImageUInt8) BoofCVHelper.toBoofCVImage(img.getImage(), BoofCVImageType.UNSIGNED_INT_8);
     result    = new BoofCVImageContainer[1];
     result[0] = (BoofCVImageContainer) img.getHeader();
     result[0].setImage(newImg);

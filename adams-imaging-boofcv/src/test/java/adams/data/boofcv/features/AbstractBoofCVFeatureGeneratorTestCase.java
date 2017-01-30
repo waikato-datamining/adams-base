@@ -31,8 +31,8 @@ import adams.test.AbstractTestHelper;
 import adams.test.AdamsTestCase;
 import adams.test.TestHelper;
 import adams.test.TmpFile;
-import boofcv.io.image.ConvertBufferedImage;
-import boofcv.struct.image.GrayS16;
+import boofcv.core.image.ConvertBufferedImage;
+import boofcv.struct.image.ImageSInt16;
 
 import javax.media.jai.RenderedOp;
 import java.io.File;
@@ -83,7 +83,7 @@ public abstract class AbstractBoofCVFeatureGeneratorTestCase
     op       = JAIHelper.read(fullName);
     if (op != null) {
       result = new BoofCVImageContainer();
-      result.setImage(ConvertBufferedImage.convertFromSingle(op.getAsBufferedImage(), null, GrayS16.class));
+      result.setImage(ConvertBufferedImage.convertFromSingle(op.getAsBufferedImage(), null, ImageSInt16.class));
       result.getReport().setStringValue(BoofCVImageContainer.FIELD_FILENAME, filename);
     }
     m_TestHelper.deleteFileFromTmp(filename);

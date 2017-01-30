@@ -30,7 +30,7 @@ import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.core.Token;
 import boofcv.abst.feature.detect.line.DetectLineSegmentsGridRansac;
 import boofcv.factory.feature.detect.line.FactoryDetectLineAlgs;
-import boofcv.struct.image.GrayF32;
+import boofcv.struct.image.ImageFloat32;
 import georegression.struct.line.LineSegment2D_F32;
 
 import java.util.List;
@@ -316,7 +316,7 @@ public class BoofCVDetectLineSegments
   protected String doExecute() {
     String				result;
     AbstractImageContainer	 	cont;
-    GrayF32 				input;
+    ImageFloat32 				input;
     DetectLineSegmentsGridRansac 	detector;
     List<LineSegment2D_F32> 		found;
     SpreadSheet  			sheet;
@@ -326,8 +326,8 @@ public class BoofCVDetectLineSegments
     
     try {
       cont     = (AbstractImageContainer) m_InputToken.getPayload();
-      input    = (GrayF32) BoofCVHelper.toBoofCVImage(cont, BoofCVImageType.FLOAT_32);
-      detector = FactoryDetectLineAlgs.lineRansac(m_RegionSize, m_ThresholdEdge, m_ThresholdAngle, m_ConnectLines, GrayF32.class, GrayF32.class);
+      input    = (ImageFloat32) BoofCVHelper.toBoofCVImage(cont, BoofCVImageType.FLOAT_32);
+      detector = FactoryDetectLineAlgs.lineRansac(m_RegionSize, m_ThresholdEdge, m_ThresholdAngle, m_ConnectLines, ImageFloat32.class, ImageFloat32.class);
       found    = detector.detect(input);
       
       sheet = new DefaultSpreadSheet();

@@ -23,7 +23,7 @@ package adams.data.boofcv.multiimageoperation;
 import adams.data.boofcv.BoofCVHelper;
 import adams.data.boofcv.BoofCVImageContainer;
 import adams.data.boofcv.BoofCVImageType;
-import boofcv.struct.image.GrayU8;
+import boofcv.struct.image.ImageUInt8;
 
 /**
  <!-- globalinfo-start -->
@@ -104,19 +104,19 @@ public class And
   @Override
   protected BoofCVImageContainer[] doProcess(BoofCVImageContainer[] images) {
     BoofCVImageContainer[]	result;
-    GrayU8[]		img;
+    ImageUInt8[]		img;
     int				x;
     int				y;
-    GrayU8			output;
+    ImageUInt8			output;
     int				i;
     int				val;
     boolean			same;
 
     result    = new BoofCVImageContainer[1];
-    img       = new GrayU8[images.length];
+    img       = new ImageUInt8[images.length];
     for (i = 0; i < images.length; i++)
-      img[i] = (GrayU8) BoofCVHelper.toBoofCVImage(images[i], BoofCVImageType.UNSIGNED_INT_8);
-    output    = (GrayU8) BoofCVHelper.clone(img[0]);
+      img[i] = (ImageUInt8) BoofCVHelper.toBoofCVImage(images[i], BoofCVImageType.UNSIGNED_INT_8);
+    output    = (ImageUInt8) BoofCVHelper.clone(img[0]);
     for (y = 0; y < images[0].getHeight(); y++) {
       for (x = 0; x < images[0].getWidth(); x++) {
 	val  = img[0].get(x, y);

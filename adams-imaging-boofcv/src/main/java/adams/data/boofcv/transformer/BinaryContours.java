@@ -26,10 +26,10 @@ import adams.data.boofcv.BoofCVImageContainer;
 import adams.data.boofcv.BoofCVImageType;
 import boofcv.alg.filter.binary.BinaryImageOps;
 import boofcv.alg.filter.binary.Contour;
+import boofcv.core.image.ConvertBufferedImage;
 import boofcv.gui.binary.VisualizeBinaryData;
-import boofcv.io.image.ConvertBufferedImage;
 import boofcv.struct.ConnectRule;
-import boofcv.struct.image.GrayU8;
+import boofcv.struct.image.ImageUInt8;
 
 import java.awt.image.BufferedImage;
 import java.util.List;
@@ -172,12 +172,12 @@ public class BinaryContours
   @Override
   protected BoofCVImageContainer[] doTransform(BoofCVImageContainer img) {
     BoofCVImageContainer[]	result;
-    GrayU8 			input;
-    GrayU8 			filtered;
+    ImageUInt8 			input;
+    ImageUInt8 			filtered;
     List<Contour> 		contours;
     BufferedImage		rendered;
     
-    input = (GrayU8) BoofCVHelper.toBoofCVImage(img.getImage(), BoofCVImageType.UNSIGNED_INT_8);
+    input = (ImageUInt8) BoofCVHelper.toBoofCVImage(img.getImage(), BoofCVImageType.UNSIGNED_INT_8);
     // reduce noise with some filtering?
     if (m_RemoveSmallBlobs) {
       filtered = BinaryImageOps.erode8(input, 1, null);
@@ -188,12 +188,11 @@ public class BinaryContours
     }
     // Find the contour around the shapes
     contours = BinaryImageOps.contour(filtered, m_ConnectRule, null);
-    rendered = new BufferedImage(input.width, input.height,BufferedImage.TYPE_INT_RGB);
-    VisualizeBinaryData.render(contours, (int[]) null, rendered);
+    rendered = VisualizeBinaryData.renderExternal(contours, null, input.width, input.height, null);
 
     result = new BoofCVImageContainer[1];
     result[0] = (BoofCVImageContainer) img.getHeader();
-    result[0].setImage(ConvertBufferedImage.convertFromSingle(rendered, null, GrayU8.class));
+    result[0].setImage(ConvertBufferedImage.convertFromSingle(rendered, null, ImageUInt8.class));
     
     return result;
   }

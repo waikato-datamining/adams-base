@@ -25,9 +25,9 @@ import adams.core.annotation.MixedCopyright;
 import boofcv.alg.feature.detect.edge.CannyEdge;
 import boofcv.alg.feature.detect.edge.EdgeContour;
 import boofcv.alg.feature.detect.edge.EdgeSegment;
+import boofcv.core.image.ConvertBufferedImage;
 import boofcv.factory.feature.detect.edge.FactoryEdgeDetectors;
-import boofcv.io.image.ConvertBufferedImage;
-import boofcv.struct.image.GrayF32;
+import boofcv.struct.image.ImageFloat32;
 import georegression.struct.point.Point2D_I32;
 
 import java.awt.image.BufferedImage;
@@ -246,17 +246,17 @@ public class CannyEdges
    */
   protected LocatedObjects doLocate(BufferedImage image, boolean annotateOnly) {
     LocatedObjects				result;
-    GrayF32 				input;
-    CannyEdge<GrayF32,GrayF32> 	canny;
+    ImageFloat32 				input;
+    CannyEdge<ImageFloat32,ImageFloat32> 	canny;
     List<EdgeContour> 				contours;
     int						left;
     int						right;
     int						top;
     int						bottom;
 
-    input  = ConvertBufferedImage.convertFromSingle(image, null, GrayF32.class);
+    input  = ConvertBufferedImage.convertFromSingle(image, null, ImageFloat32.class);
     // Finds edges inside the image
-    canny = FactoryEdgeDetectors.canny(m_BlurRadius, true, true, GrayF32.class, GrayF32.class);
+    canny = FactoryEdgeDetectors.canny(m_BlurRadius, true, true, ImageFloat32.class, ImageFloat32.class);
     canny.process(input, m_ThresholdLow, m_ThresholdHigh, null);
     contours = canny.getContours();
     

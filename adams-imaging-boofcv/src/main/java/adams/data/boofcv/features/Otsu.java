@@ -30,15 +30,15 @@ import adams.data.boofcv.BoofCVImageType;
 import adams.data.featureconverter.HeaderDefinition;
 import adams.data.report.DataType;
 import boofcv.alg.filter.binary.GThresholdImageOps;
-import boofcv.struct.image.GrayU8;
 import boofcv.struct.image.ImageBase;
+import boofcv.struct.image.ImageUInt8;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  <!-- globalinfo-start -->
- * Computes the variance based threshold using Otsu's method from an input image (gray scale; boofcv.struct.image.GrayU8).<br>
+ * Computes the variance based threshold using Otsu's method from an input image (gray scale; boofcv.struct.image.ImageUInt8).<br>
  * <br>
  * For more information see:<br>
  * WikiPedia. Otsu's method.
@@ -118,7 +118,7 @@ public class Otsu
   public String globalInfo() {
     return 
 	"Computes the variance based threshold using Otsu's method from "
-	+ "an input image (gray scale; " + GrayU8.class.getName() + ").\n\n"
+	+ "an input image (gray scale; " + ImageUInt8.class.getName() + ").\n\n"
 	+ "For more information see:\n"
 	+ getTechnicalInformation();
   }
@@ -246,7 +246,7 @@ public class Otsu
     result[0] = new ArrayList<Object>();
 
     gray = BoofCVHelper.toBoofCVImage(img.getImage(), BoofCVImageType.UNSIGNED_INT_8);
-    result[0].add(GThresholdImageOps.computeOtsu((GrayU8) gray, m_Min, m_Max));
+    result[0].add(GThresholdImageOps.computeOtsu((ImageUInt8) gray, m_Min, m_Max));
 
     return result;
   }

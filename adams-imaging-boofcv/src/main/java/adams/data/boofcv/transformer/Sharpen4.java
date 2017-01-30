@@ -24,7 +24,7 @@ import adams.data.boofcv.BoofCVHelper;
 import adams.data.boofcv.BoofCVImageContainer;
 import adams.data.boofcv.BoofCVImageType;
 import boofcv.alg.enhance.EnhanceImageOps;
-import boofcv.struct.image.GrayF32;
+import boofcv.struct.image.ImageFloat32;
 
 /**
  <!-- globalinfo-start -->
@@ -71,11 +71,11 @@ public class Sharpen4
   @Override
   protected BoofCVImageContainer[] doTransform(BoofCVImageContainer img) {
     BoofCVImageContainer[]	result;
-    GrayF32		input;
-    GrayF32		output;
+    ImageFloat32		input;
+    ImageFloat32		output;
     
-    input  = (GrayF32) BoofCVHelper.toBoofCVImage(img.getImage(), BoofCVImageType.FLOAT_32);
-    output = new GrayF32(input.width, input.height);
+    input  = (ImageFloat32) BoofCVHelper.toBoofCVImage(img.getImage(), BoofCVImageType.FLOAT_32);
+    output = new ImageFloat32(input.width, input.height);
 
     EnhanceImageOps.sharpen4(input, output);
 

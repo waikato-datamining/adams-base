@@ -27,7 +27,7 @@ import adams.data.boofcv.BoofCVImageContainer;
 import adams.data.boofcv.BoofCVImageType;
 import boofcv.abst.denoise.FactoryImageDenoise;
 import boofcv.abst.denoise.WaveletDenoiseFilter;
-import boofcv.struct.image.GrayF32;
+import boofcv.struct.image.ImageFloat32;
 
 /**
  <!-- globalinfo-start -->
@@ -127,13 +127,13 @@ public class WaveletDenoise
   @Override
   protected BoofCVImageContainer[] doTransform(BoofCVImageContainer img) {
     BoofCVImageContainer[]		result;
-    GrayF32 			input;
-    GrayF32 			denoised;
-    WaveletDenoiseFilter<GrayF32> 	denoiser;
+    ImageFloat32 			input;
+    ImageFloat32 			denoised;
+    WaveletDenoiseFilter<ImageFloat32> 	denoiser;
     
-    input    = (GrayF32) BoofCVHelper.toBoofCVImage(img.getImage(), BoofCVImageType.FLOAT_32);
-    denoised = new GrayF32(input.width,input.height);
-    denoiser = FactoryImageDenoise.waveletBayes(GrayF32.class, m_NumLevels, 0, 255);
+    input    = (ImageFloat32) BoofCVHelper.toBoofCVImage(img.getImage(), BoofCVImageType.FLOAT_32);
+    denoised = new ImageFloat32(input.width,input.height);
+    denoiser = FactoryImageDenoise.waveletBayes(ImageFloat32.class, m_NumLevels, 0, 255);
 
     denoiser.process(input, denoised);
 
