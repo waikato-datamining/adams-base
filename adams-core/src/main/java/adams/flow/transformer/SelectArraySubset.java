@@ -401,7 +401,7 @@ public class SelectArraySubset
       indices = m_List.getSelectedIndices();
       array   = Array.newInstance(m_InputToken.getPayload().getClass().getComponentType(), indices.length);
       for (i = 0; i < indices.length; i++)
-	Array.set(array, i, m_ListModel.get(indices[i]));
+	Array.set(array, i, m_ListModel.get(m_List.getActualIndex(indices[i])));
       m_OutputToken = new Token(array);
     }
 
