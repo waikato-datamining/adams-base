@@ -474,4 +474,14 @@ public class BaseListWithButtons
   public boolean getAllowSearch() {
     return m_PanelSearch.isVisible();
   }
+
+  /**
+   * Returns the actual index in the model.
+   *
+   * @param index	the index of the currently displayed data
+   * @return		the index in the underlying data
+   */
+  public int getActualIndex(int index) {
+    return ((SearchableBaseList) m_Component).getActualIndex(index);
+  }
 }
