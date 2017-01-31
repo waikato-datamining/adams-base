@@ -15,7 +15,7 @@
 
 /**
  * SelectArraySubset.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer;
@@ -146,6 +146,9 @@ public class SelectArraySubset
   /** the message for the user. */
   protected String m_Message;
 
+  /** whether to allow searching. */
+  protected boolean m_AllowSearch;
+
   /** the list model to use. */
   protected DefaultListModel<Object> m_ListModel;
 
@@ -178,8 +181,12 @@ public class SelectArraySubset
     super.defineOptions();
 
     m_OptionManager.add(
-	    "message", "message",
-	    "Please make your selection");
+      "message", "message",
+      "Please make your selection");
+
+    m_OptionManager.add(
+      "allow-search", "allowSearch",
+      false);
   }
 
   /**
@@ -267,6 +274,35 @@ public class SelectArraySubset
   }
 
   /**
+   * Sets whether to allow the user to search the table.
+   *
+   * @param value 	true if to allow search
+   */
+  public void setAllowSearch(boolean value) {
+    m_AllowSearch = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to allow the user to search the table.
+   *
+   * @return 		true if to allow search
+   */
+  public boolean getAllowSearch() {
+    return m_AllowSearch;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String allowSearchTipText() {
+    return "Whether to allow the user to search the list.";
+  }
+
+  /**
    * Returns the class that the consumer accepts.
    *
    * @return		the Class of objects that can be processed
@@ -310,6 +346,7 @@ public class SelectArraySubset
 
     m_ListModel = new DefaultListModel<>();
     m_List      = new BaseListWithButtons(m_ListModel);
+    m_List.setAllowSearch(m_AllowSearch);
     result.add(new BaseScrollPane(m_List), BorderLayout.CENTER);
 
     m_LabelMessage = new JLabel();
