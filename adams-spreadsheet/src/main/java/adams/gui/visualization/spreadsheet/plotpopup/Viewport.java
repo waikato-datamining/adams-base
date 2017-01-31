@@ -290,8 +290,6 @@ public class Viewport
     menu.add(submenu);
     menu.setEnabled(conts.size() > 0);
 
-    System.out.println(conts.size());
-
     if (conts.size() > 0) {
       item = new JMenuItem("Display...");
       item.addActionListener((ActionEvent ae) -> display(panel, conts));
