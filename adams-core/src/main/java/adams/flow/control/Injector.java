@@ -15,7 +15,7 @@
 
 /*
  * Injector.java
- * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -445,7 +445,7 @@ public class Injector
    * 			displaying in the GUI or for listing the options.
    */
   public String conversionTipText() {
-    return "The conversion to apply to the string before injecting it.";
+    return "The conversion to apply to the string before injecting it (does not apply to STORAGE injection).";
   }
 
   /**
