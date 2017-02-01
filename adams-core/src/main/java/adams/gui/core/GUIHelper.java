@@ -49,6 +49,7 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
 import javax.swing.UIManager;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -2401,5 +2402,27 @@ public class GUIHelper {
    */
   public static void setHeadless(boolean value) {
     HeadlessMode = value;
+  }
+
+  /**
+   * Launches a {@link SwingWorker}, executing the provided {@link Runnable}
+   * in the {@link SwingWorker#doInBackground()} method.
+   *
+   * @param runnable	the code to execute
+   * @return		the SwingWorker instance
+   */
+  public static SwingWorker doInBackground(final Runnable runnable) {
+    SwingWorker result;
+
+    result = new SwingWorker() {
+      @Override
+      protected Object doInBackground() throws Exception {
+        runnable.run();
+        return null;
+      }
+    };
+    result.execute();
+
+    return result;
   }
 }

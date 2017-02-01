@@ -15,7 +15,7 @@
 
 /**
  * AbstractSerializableWorkspaceManagerPanel.java
- * Copyright (C) 2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.workspace;
 
@@ -92,12 +92,12 @@ public abstract class AbstractSerializableWorkspaceManagerPanel<P extends Abstra
 
       // load workspace
       menuitem = new JMenuItem("Open...");
-      menuitem.addActionListener((ActionEvent ae) -> openWorkspace());
+      menuitem.addActionListener((ActionEvent ae) -> GUIHelper.doInBackground(() -> openWorkspace()));
       menu.add(menuitem);
 
       // save workspace
       menuitem = new JMenuItem("Save as...");
-      menuitem.addActionListener((ActionEvent ae) -> saveWorkspace());
+      menuitem.addActionListener((ActionEvent ae) -> GUIHelper.doInBackground(() -> saveWorkspace()));
       menu.add(menuitem);
 
       // show menu
