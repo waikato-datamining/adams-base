@@ -295,10 +295,12 @@ public class JTableHelper {
       if (width >= 0) {
         SwingUtilities.invokeLater(() -> {
           JTableHeader header = table.getTableHeader();
-          TableColumn column = table.getColumnModel().getColumn(col);
-          column.setPreferredWidth(width);
-          table.doLayout();
-          header.repaint();
+          if (col < table.getColumnModel().getColumnCount()) {
+            TableColumn column = table.getColumnModel().getColumn(col);
+            column.setPreferredWidth(width);
+            table.doLayout();
+            header.repaint();
+          }
         });
       }
     }
