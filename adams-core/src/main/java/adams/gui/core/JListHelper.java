@@ -15,7 +15,7 @@
 
 /*
  * JListHelper.java
- * Copyright (C) 2005 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2005-2017 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -40,7 +40,17 @@ public class JListHelper {
 
   /** moves items down. */
   public final static int MOVE_DOWN = 1;
-  
+
+  /**
+   * Returns whether the list model can be handled.
+   *
+   * @param list	the list to check
+   * @return		true if model can be used
+   */
+  protected static boolean canHandleModel(JList list) {
+    return (list.getModel() instanceof DefaultListModel);
+  }
+
   /**
    * moves the selected items by a certain amount of items in a given direction.
    *
@@ -96,7 +106,7 @@ public class JListHelper {
    * @param list        the JList to work on
    */
   public static void moveUp(JList list) {
-    if (canMoveUp(list))
+    if (canHandleModel(list) && canMoveUp(list))
       moveItems(list, 1, MOVE_UP);
   }
 
@@ -106,7 +116,7 @@ public class JListHelper {
    * @param list        the JList to work on
    */
   public static void moveDown(JList list) {
-    if (canMoveDown(list))
+    if (canHandleModel(list) && canMoveDown(list))
       moveItems(list, 1, MOVE_DOWN);
   }
 
@@ -119,7 +129,7 @@ public class JListHelper {
     int[]     indices;
     int       diff;
 
-    if (canMoveUp(list)) {
+    if (canHandleModel(list) && canMoveUp(list)) {
       indices = list.getSelectedIndices();
       diff    = indices[0];
       moveItems(list, diff, MOVE_UP);
@@ -135,7 +145,7 @@ public class JListHelper {
     int[]     indices;
     int       diff;
 
-    if (canMoveDown(list)) {
+    if (canHandleModel(list) && canMoveDown(list)) {
       indices = list.getSelectedIndices();
       diff    = list.getModel().getSize() - 1 - indices[indices.length - 1];
       moveItems(list, diff, MOVE_DOWN);
