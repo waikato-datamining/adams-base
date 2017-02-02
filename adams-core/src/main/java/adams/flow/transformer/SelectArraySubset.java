@@ -23,8 +23,8 @@ package adams.flow.transformer;
 import adams.core.QuickInfoHelper;
 import adams.flow.core.Token;
 import adams.flow.core.Unknown;
-import adams.gui.core.BaseListWithButtons;
 import adams.gui.core.BasePanel;
+import adams.gui.core.SearchableBaseListWithButtons;
 import com.googlecode.jfilechooserbookmarks.gui.BaseScrollPane;
 
 import javax.swing.DefaultListModel;
@@ -153,7 +153,7 @@ public class SelectArraySubset
   protected DefaultListModel<Object> m_ListModel;
 
   /** the list in use. */
-  protected BaseListWithButtons m_List;
+  protected SearchableBaseListWithButtons m_List;
 
   /** the label for the message. */
   protected JLabel m_LabelMessage;
@@ -345,7 +345,7 @@ public class SelectArraySubset
     result = new BasePanel(new BorderLayout());
 
     m_ListModel = new DefaultListModel<>();
-    m_List      = new BaseListWithButtons(m_ListModel);
+    m_List      = new SearchableBaseListWithButtons(m_ListModel);
     m_List.setAllowSearch(m_AllowSearch);
     result.add(new BaseScrollPane(m_List), BorderLayout.CENTER);
 

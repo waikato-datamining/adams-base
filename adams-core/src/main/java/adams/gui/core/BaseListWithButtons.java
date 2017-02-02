@@ -20,9 +20,7 @@
 
 package adams.gui.core;
 
-import adams.gui.core.SearchPanel.LayoutType;
 import adams.gui.event.RemoveItemsListener;
-import adams.gui.event.SearchEvent;
 
 import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
@@ -30,7 +28,6 @@ import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import java.awt.BorderLayout;
 import java.awt.event.MouseEvent;
 
 /**
@@ -48,9 +45,6 @@ public class BaseListWithButtons
 
   /** the model listener for updating the counts. */
   protected ListDataListener m_CountModelListener;
-
-  /** the search panel, if search is required. */
-  protected SearchPanel m_PanelSearch;
 
   /**
    * The default constructor.
@@ -72,20 +66,6 @@ public class BaseListWithButtons
   }
 
   /**
-   * Initializes the widgets.
-   */
-  @Override
-  protected void initGUI() {
-    super.initGUI();
-
-    m_PanelSearch = new SearchPanel(LayoutType.HORIZONTAL, false);
-    m_PanelSearch.setVisible(false);
-    m_PanelSearch.addSearchListener((SearchEvent e) ->
-      ((SearchableBaseList) m_Component).search(e.getParameters().getSearchString(), e.getParameters().isRegExp()));
-    m_PanelAll.add(m_PanelSearch, BorderLayout.SOUTH);
-  }
-
-  /**
    * Returns whether the component requires a JScrollPane around it.
    *
    * @return		true if the component requires a JScrollPane
@@ -100,9 +80,9 @@ public class BaseListWithButtons
    * @return		the component
    */
   protected BaseList createComponent() {
-    SearchableBaseList	result;
+    BaseList	result;
 
-    result = new SearchableBaseList();
+    result = new BaseList();
     result.addListSelectionListener(new ListSelectionListener() {
       public void valueChanged(ListSelectionEvent e) {
 	updateCounts();
@@ -455,33 +435,5 @@ public class BaseListWithButtons
     updateInfo(
 	"Total: " + m_Component.getModel().getSize()
 	+ ", Selected: " + m_Component.getSelectedIndices().length);
-  }
-
-  /**
-   * Sets whether searching is possible.
-   *
-   * @param value	true if to allow
-   */
-  public void setAllowSearch(boolean value) {
-    m_PanelSearch.setVisible(value);
-  }
-
-  /**
-   * Returns whether search is available.
-   *
-   * @return		true if allowed
-   */
-  public boolean getAllowSearch() {
-    return m_PanelSearch.isVisible();
-  }
-
-  /**
-   * Returns the actual index in the model.
-   *
-   * @param index	the index of the currently displayed data
-   * @return		the index in the underlying data
-   */
-  public int getActualIndex(int index) {
-    return ((SearchableBaseList) m_Component).getActualIndex(index);
   }
 }
