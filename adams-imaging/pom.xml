@@ -155,6 +155,12 @@
       <artifactId>georegression</artifactId>
       <version>0.7</version>
     </dependency>
+
+    <dependency>
+      <groupId>org.j3d</groupId>
+      <artifactId>j3d-core</artifactId>
+      <version>3.0.1</version>
+    </dependency>
   </dependencies>
 
   <build>
