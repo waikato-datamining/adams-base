@@ -15,7 +15,7 @@
 
 /**
  * DataTab.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab;
@@ -137,6 +137,7 @@ public class DataTab
     Set<DataContainer>	cached;
     Set<DataContainer>	current;
     InstancesTable	table;
+    DataContainer	con;
 
     super.dataChanged(e);
 
@@ -160,6 +161,16 @@ public class DataTab
 	  table.removeChangeListener(this);
 	  m_TimestampCache.remove(cont);
 	}
+      }
+    }
+    // other modified containers, e.g. UNDO
+    if (e.getType() == WekaInvestigatorDataEvent.ROWS_MODIFIED) {
+      for (int row: e.getRows()) {
+	con = getData().get(row);
+	table = m_TableCache.remove(con);
+	if (table != null)
+	  table.removeChangeListener(this);
+	m_TimestampCache.remove(con);
       }
     }
 
@@ -202,7 +213,7 @@ public class DataTab
 	model.setShowAttributeIndex(true);
 	m_CurrentTable = new InstancesTable(model);
 	m_CurrentTable.setUndoEnabled(true);
-        m_CurrentTable.addChangeListener(this);
+	m_CurrentTable.addChangeListener(this);
 	m_TableCache.put(cont, m_CurrentTable);
 	m_TimestampCache.put(cont, new Date(cont.lastUpdated().getTime()));
 	setOptimal = true;

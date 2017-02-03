@@ -15,7 +15,7 @@
 
 /**
  * InstanceTab.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab;
@@ -368,7 +368,7 @@ public class InstanceTab
 
     datasets = generateDatasetList();
     index    = indexOfDataset((String) m_ComboBoxDatasets.getSelectedItem());
-    if (hasDataChanged(datasets, m_ModelDatasets)) {
+    if (hasDataChanged(datasets, m_ModelDatasets) || (e.getType() == WekaInvestigatorDataEvent.ROWS_MODIFIED)) {
       m_ModelIDs.clear();
       m_ModelAttributes.removeAllElements();
       m_PanelInstance.getSequenceManager().clear();
