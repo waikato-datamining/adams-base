@@ -140,6 +140,11 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
+ * <pre>-show-controls &lt;boolean&gt; (property: showControls)
+ * &nbsp;&nbsp;&nbsp;If enabled, the controls for adjusting rows&#47;columns are visible.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
  * <pre>-writer &lt;adams.gui.print.JComponentWriter&gt; (property: writer)
  * &nbsp;&nbsp;&nbsp;The writer to use for generating the graphics output.
  * &nbsp;&nbsp;&nbsp;default: adams.gui.print.NullWriter
@@ -165,6 +170,9 @@ public class GridView
 
   /** whether to add headers. */
   protected boolean m_AddHeaders;
+
+  /** whether to show the controls. */
+  protected boolean m_ShowControls;
 
   /** the panels to display. */
   protected List<BasePanel> m_Panels;
@@ -203,6 +211,10 @@ public class GridView
 
     m_OptionManager.add(
 	    "add-headers", "addHeaders",
+	    false);
+
+    m_OptionManager.add(
+	    "show-controls", "showControls",
 	    false);
 
     m_OptionManager.add(
@@ -326,6 +338,35 @@ public class GridView
   }
 
   /**
+   * Sets whether to show the controls for adjusting rows/columns.
+   *
+   * @param value	true if to show controls
+   */
+  public void setShowControls(boolean value) {
+    m_ShowControls = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to show the controls for adjusting rows/columns.
+   *
+   * @return 		true if to show controls
+   */
+  public boolean getShowControls() {
+    return m_ShowControls;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return		tip text for this property suitable for
+   *             	displaying in the GUI or for listing the options.
+   */
+  public String showControlsTipText() {
+    return "If enabled, the controls for adjusting rows/columns are visible.";
+  }
+
+  /**
    * Sets the writer.
    *
    * @param value 	the writer
@@ -390,6 +431,7 @@ public class GridView
     int			i;
 
     result = new AdjustableGridPanel(m_NumRows, m_NumCols);
+    result.setControlsVisible(m_ShowControls);
 
     // add dummy panels
     m_Panels = new ArrayList<>();
