@@ -55,7 +55,7 @@ public class AdjustableGridPanel
   protected List<Component> m_Items;
 
   /** the panel with the dimensions. */
-  protected JPanel m_PanelDimensions;
+  protected JPanel m_PanelControl;
 
   /** the spinner for the rows. */
   protected JSpinner m_SpinnerRows;
@@ -132,24 +132,24 @@ public class AdjustableGridPanel
 
     setLayout(new BorderLayout());
 
-    m_PanelDimensions = new JPanel(new FlowLayout(FlowLayout.LEFT));
-    add(m_PanelDimensions, BorderLayout.NORTH);
+    m_PanelControl = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    add(m_PanelControl, BorderLayout.NORTH);
 
     m_SpinnerRows = new JSpinner();
     ((SpinnerNumberModel) m_SpinnerRows.getModel()).setMinimum(0);
     ((JSpinner.DefaultEditor) m_SpinnerRows.getEditor()).getTextField().setColumns(4);
     labelRows = new JLabel("Rows");
     labelRows.setLabelFor(m_SpinnerRows);
-    m_PanelDimensions.add(labelRows);
-    m_PanelDimensions.add(m_SpinnerRows);
+    m_PanelControl.add(labelRows);
+    m_PanelControl.add(m_SpinnerRows);
 
     m_SpinnerColumns = new JSpinner();
     ((SpinnerNumberModel) m_SpinnerColumns.getModel()).setMinimum(0);
     ((JSpinner.DefaultEditor) m_SpinnerColumns.getEditor()).getTextField().setColumns(4);
     labelColumns = new JLabel("Columns");
     labelColumns.setLabelFor(m_SpinnerColumns);
-    m_PanelDimensions.add(labelColumns);
-    m_PanelDimensions.add(m_SpinnerColumns);
+    m_PanelControl.add(labelColumns);
+    m_PanelControl.add(m_SpinnerColumns);
 
     m_ButtonApply = new JButton("Apply");
     m_ButtonApply.addActionListener((ActionEvent e) -> {
@@ -157,7 +157,7 @@ public class AdjustableGridPanel
       int cols = ((Number) m_SpinnerColumns.getValue()).intValue();
       setGrid(rows, cols);
     });
-    m_PanelDimensions.add(m_ButtonApply);
+    m_PanelControl.add(m_ButtonApply);
 
     m_PanelContent = new JPanel(new GridLayout());
     add(m_PanelContent, BorderLayout.CENTER);
@@ -288,5 +288,23 @@ public class AdjustableGridPanel
     m_SpinnerRows.setValue(m_Rows);
     m_SpinnerColumns.setValue(m_Columns);
     updateLayout();
+  }
+
+  /**
+   * Sets whether the controls are shown or not.
+   *
+   * @param value	true if to show controls
+   */
+  public void setControlsVisible(boolean value) {
+    m_PanelControl.setVisible(value);
+  }
+
+  /**
+   * Returns whether the controls are show or not.
+   *
+   * @return		true if controls shown
+   */
+  public boolean getControlsVisible() {
+    return m_PanelControl.isVisible();
   }
 }
