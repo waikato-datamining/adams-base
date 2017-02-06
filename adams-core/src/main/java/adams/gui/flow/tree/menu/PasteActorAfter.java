@@ -15,7 +15,7 @@
 
 /**
  * PasteActorAfter.java
- * Copyright (C) 2014-2015 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2014-2017 University of Waikato, Hamilton, NZ
  */
 package adams.gui.flow.tree.menu;
 
@@ -50,7 +50,7 @@ public class PasteActorAfter
    */
   @Override
   protected void doUpdate() {
-    setEnabled(m_State.editable && m_State.canPaste && m_State.isParentMutable);
+    setEnabled(m_State.editable && m_State.canPaste && m_State.isParentMutable && (m_State.numSel == 1));
   }
 
   /**
