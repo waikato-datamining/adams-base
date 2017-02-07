@@ -215,22 +215,31 @@ public class SerializationHelper {
   public static boolean isSerializedObject(String filename) {
     boolean		result;
     FileInputStream	fis;
+    GZIPInputStream	gis;
     byte[]		buffer;
     int			read;
 
     result = false;
 
     fis = null;
+    gis = null;
     try {
-      fis    = new FileInputStream(filename);
       buffer = new byte[2];
-      read   = fis.read(buffer, 0, 2);
+      fis    = new FileInputStream(filename);
+      if (filename.endsWith(".gz")) {
+	gis  = new GZIPInputStream(fis);
+	read = gis.read(buffer, 0, 2);
+      }
+      else {
+	read = fis.read(buffer, 0, 2);
+      }
       result = ((read == 2) && (buffer[0] == (byte) 0xAC) && (buffer[1] == (byte) 0xED));
     }
     catch (Exception e) {
       // ignored
     }
     finally {
+      FileUtils.closeQuietly(gis);
       FileUtils.closeQuietly(fis);
     }
 
