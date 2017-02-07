@@ -15,7 +15,7 @@
 
 /**
  * SpreadSheetMerge.java
- * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
 
@@ -684,6 +684,8 @@ public class SpreadSheetMerge
     int		i;
     int		index;
     boolean	numeric;
+    HashSet 	current;
+    Object	id;
 
     index = inst.getHeaderRow().indexOfContent(m_UniqueID);
     if (index == -1)
@@ -692,14 +694,19 @@ public class SpreadSheetMerge
 
     // get IDs
     numeric = inst.isNumeric(index);
+    current = new HashSet();
     for (i = 0; i < inst.getRowCount(); i++) {
       if (inst.hasCell(i, index) && !inst.getCell(i, index).isMissing()) {
 	if (numeric)
-	  ids.add(inst.getCell(i, index).toDouble());
+	  id = inst.getCell(i, index).toDouble();
 	else
-	  ids.add(inst.getCell(i, index).getContent());
+	  id = inst.getCell(i, index).getContent();
+	if (current.contains(id))
+	  throw new IllegalStateException("ID '" + id + "' is not unique in spreadsheet #" + (sheetIndex+1) + "!");
+	current.add(id);
       }
     }
+    ids.addAll(current);
   }
 
   /**
