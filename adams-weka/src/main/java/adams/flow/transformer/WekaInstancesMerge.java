@@ -15,7 +15,7 @@
 
 /*
  * WekaInstancesMerge.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -710,17 +710,21 @@ implements ProvenanceSupporter {
    * Updates the IDs in the hashset with the ones stored in the ID attribute
    * of the provided dataset.
    *
+   * @param instIndex 	the dataset index
    * @param inst	the dataset to obtain the IDs from
    * @param ids		the hashset to store the IDs in
    */
-  protected void updateIDs(Instances inst, HashSet ids) {
+  protected void updateIDs(int instIndex, Instances inst, HashSet ids) {
     Attribute	att;
     int		i;
+    boolean 	numeric;
+    HashSet 	current;
+    Object	id;
 
     att = inst.attribute(m_UniqueID);
     if (att == null)
       throw new IllegalStateException(
-	  "Attribute '" + m_UniqueID + "' not found in relation '" + inst.relationName() + "'!");
+	  "Attribute '" + m_UniqueID + "' not found in relation '" + inst.relationName() + "' (#" + (instIndex+1) + ")!");
 
     // determine/check type
     if (m_AttType == -1) {
@@ -728,21 +732,27 @@ implements ProvenanceSupporter {
 	m_AttType = att.type();
       else
 	throw new IllegalStateException(
-	    "Attribute '" + m_UniqueID + "' must be either NUMERIC or STRING!");
+	    "Attribute '" + m_UniqueID + "' must be either NUMERIC or STRING (#" + (instIndex+1) + ")!");
     }
     else {
       if (m_AttType != att.type())
 	throw new IllegalStateException(
-	    "Attribute '" + m_UniqueID + "' must have same attribute type in all the datasets!");
+	    "Attribute '" + m_UniqueID + "' must have same attribute type in all the datasets (#" + (instIndex+1) + ")!");
     }
 
     // get IDs
+    numeric = m_AttType == Attribute.NUMERIC;
+    current = new HashSet();
     for (i = 0; i < inst.numInstances(); i++) {
-      if (m_AttType == Attribute.NUMERIC)
-	ids.add(inst.instance(i).value(att));
+      if (numeric)
+	id = inst.instance(i).value(att);
       else
-	ids.add(inst.instance(i).stringValue(att));
+	id = inst.instance(i).stringValue(att);
+      if (current.contains(id))
+	throw new IllegalStateException("ID '" + id + "' is not unique in dataset #" + (instIndex+1) + "!");
+      current.add(id);
     }
+    ids.addAll(current);
   }
 
   /**
@@ -994,7 +1004,7 @@ implements ProvenanceSupporter {
 	    break;
 	  if (isLoggingEnabled())
 	    getLogger().info("Updating IDs #" + (i+1));
-	  updateIDs(orig[i], ids);
+	  updateIDs(i, orig[i], ids);
 	  if (isLoggingEnabled())
 	    getLogger().info("Preparing dataset #" + (i+1));
 	  inst[i] = prepareData(orig[i], i);
