@@ -1962,11 +1962,34 @@ public class GUIHelper {
     if (text == null)
       return null;
 
-    result = HtmlUtils.toHTML(text);
+    result = text;
     if (result.length() > width) {
+      result = HtmlUtils.toHTML(text);
       lines  = Utils.breakUp(result, width);
-      result = Utils.flatten(lines, "<br>");
+      result = processTipText(Utils.flatten(lines, "\n"));
     }
+
+    return result;
+  }
+
+  /**
+   * Parses the tool tip and turns it into HTML if it contains line breaks.
+   *
+   * @param text	the tiptext to parse, can be null
+   * @return		the processed tiptext
+   */
+  public static String processTipText(String text) {
+    String	result;
+    String[]	lines;
+
+    if (text == null)
+      return null;
+
+    if (!text.contains("\n"))
+      return text;
+
+    lines  = text.split("\n");
+    result = Utils.flatten(lines, "<br>");
     result = "<html>" + result + "</html>";
 
     return result;
