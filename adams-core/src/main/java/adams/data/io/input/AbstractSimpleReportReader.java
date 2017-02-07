@@ -15,18 +15,17 @@
 
 /*
  * AbstractSimpleReportReader.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.io.input;
 
-import java.io.FileReader;
+import adams.core.Properties;
+import adams.data.report.Report;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
-
-import adams.core.Properties;
-import adams.data.report.Report;
 
 /**
  * Abstract ancestor for reports to be written in properties format.
@@ -41,8 +40,11 @@ public abstract class AbstractSimpleReportReader<T extends Report>
   /** for serialization. */
   private static final long serialVersionUID = -196559365684130179L;
 
-  /** the file extensions. */
+  /** the file extension. */
   public final static String FILE_EXTENSION = "report";
+
+  /** the file extension for compressed files. */
+  public final static String FILE_EXTENSION_GZ = "report.gz";
 
   /**
    * Returns a string describing the object.
@@ -72,7 +74,7 @@ public abstract class AbstractSimpleReportReader<T extends Report>
    */
   @Override
   public String[] getFormatExtensions() {
-    return new String[]{FILE_EXTENSION};
+    return new String[]{FILE_EXTENSION, FILE_EXTENSION_GZ};
   }
 
   /**
@@ -95,16 +97,13 @@ public abstract class AbstractSimpleReportReader<T extends Report>
   protected List<T> readData() {
     List<T>		result;
     Properties		props;
-    FileReader		reader;
 
-    result = new ArrayList<T>();
+    result = new ArrayList<>();
 
     // loads properties
     try {
       props  = new Properties();
-      reader = new FileReader(m_Input.getAbsolutePath());
-      props.load(reader);
-      reader.close();
+      props.load(m_Input.getAbsolutePath());
     }
     catch (Exception e) {
       getLogger().log(Level.SEVERE, "Failed to read data from " + m_Input, e);

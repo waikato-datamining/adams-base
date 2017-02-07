@@ -72,7 +72,7 @@ public class ReportHandler
    */
   @Override
   public String[] getExtensions() {
-    return new String[]{"report", "csv"};
+    return new String[]{"report", "report.gz", "csv", "csv.gz"};
   }
 
   /**
@@ -89,7 +89,7 @@ public class ReportHandler
     DefaultSimpleReportReader		simple;
     ReportFactory.Table			table;
 
-    if (file.getName().endsWith("csv")) {
+    if (file.getName().endsWith("csv") || file.getName().endsWith("csv.gz")) {
       simpleCSV = new DefaultSimpleCSVReportReader();
       simpleCSV.setInput(new PlaceholderFile(file));
       reports = simpleCSV.read();

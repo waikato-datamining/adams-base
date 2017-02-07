@@ -15,13 +15,10 @@
 
 /*
  * AbstractSimpleCSVReportReader.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.io.input;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import adams.core.option.AbstractOption;
 import adams.data.report.DataType;
@@ -29,6 +26,9 @@ import adams.data.report.Field;
 import adams.data.report.Report;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Abstract ancestor for reports to be written in CSV format.
@@ -43,8 +43,11 @@ public abstract class AbstractSimpleCSVReportReader<T extends Report>
   /** for serialization. */
   private static final long serialVersionUID = 8997935127278404969L;
 
-  /** the file extensions. */
+  /** the file extension. */
   public final static String FILE_EXTENSION = "csv";
+
+  /** the file extension for compressed files. */
+  public final static String FILE_EXTENSION_GZ = "csv.gz";
 
   /**
    * Returns a string describing the object.
@@ -74,7 +77,7 @@ public abstract class AbstractSimpleCSVReportReader<T extends Report>
    */
   @Override
   public String[] getFormatExtensions() {
-    return new String[]{FILE_EXTENSION};
+    return new String[]{FILE_EXTENSION, FILE_EXTENSION_GZ};
   }
 
   /**

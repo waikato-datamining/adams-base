@@ -15,22 +15,25 @@
 
 /*
  * AbstractSimpleReportWriter.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.io.output;
 
+import adams.core.Properties;
+import adams.core.Utils;
+import adams.core.io.FileUtils;
+import adams.data.io.input.AbstractSimpleReportReader;
+import adams.data.report.AbstractField;
+import adams.data.report.Report;
+
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
-
-import adams.core.Properties;
-import adams.core.Utils;
-import adams.data.io.input.AbstractSimpleReportReader;
-import adams.data.report.AbstractField;
-import adams.data.report.Report;
+import java.util.zip.GZIPOutputStream;
 
 /**
  * Abstract ancestor for writing reports in properties format.
@@ -73,7 +76,7 @@ public abstract class AbstractSimpleReportWriter<T extends Report>
    */
   @Override
   public String[] getFormatExtensions() {
-    return new String[]{AbstractSimpleReportReader.FILE_EXTENSION};
+    return new String[]{AbstractSimpleReportReader.FILE_EXTENSION, AbstractSimpleReportReader.FILE_EXTENSION_GZ};
   }
 
   /**
@@ -90,6 +93,8 @@ public abstract class AbstractSimpleReportWriter<T extends Report>
     List<AbstractField>	fields;
     int			i;
     StringWriter	swriter;
+    FileOutputStream	fos;
+    GZIPOutputStream	gos;
     String[]		lines;
 
     props = new Properties();
@@ -105,19 +110,35 @@ public abstract class AbstractSimpleReportWriter<T extends Report>
     }
 
     // write props file
+    fos    = null;
+    gos    = null;
+    writer = null;
     try {
       swriter = new StringWriter();
       props.store(swriter, "Simple report format (= Java properties file format)");
       lines = swriter.toString().split("\n");
       Arrays.sort(lines);
-      writer = new FileWriter(m_Output.getAbsolutePath());
-      writer.write(Utils.flatten(lines, "\n"));
-      writer.close();
+      if (m_Output.getName().endsWith(".gz")) {
+	fos = new FileOutputStream(m_Output.getAbsolutePath());
+	gos = new GZIPOutputStream(fos);
+	gos.write(Utils.flatten(lines, "\n").getBytes());
+	gos.flush();
+      }
+      else {
+	writer = new FileWriter(m_Output.getAbsolutePath());
+	writer.write(Utils.flatten(lines, "\n"));
+	writer.flush();
+      }
       result = true;
     }
     catch (Exception e) {
       result = false;
       getLogger().log(Level.SEVERE, "Failed to write to " + m_Output, e);
+    }
+    finally {
+      FileUtils.closeQuietly(writer);
+      FileUtils.closeQuietly(gos);
+      FileUtils.closeQuietly(fos);
     }
 
     return result;

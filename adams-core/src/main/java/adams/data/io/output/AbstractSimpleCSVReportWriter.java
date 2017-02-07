@@ -15,7 +15,7 @@
 
 /*
  * AbstractCSVReportWriter.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.io.output;
@@ -81,7 +81,7 @@ public abstract class AbstractSimpleCSVReportWriter<T extends Report>
    */
   @Override
   public String[] getFormatExtensions() {
-    return new String[]{AbstractSimpleCSVReportReader.FILE_EXTENSION};
+    return new String[]{AbstractSimpleCSVReportReader.FILE_EXTENSION, AbstractSimpleCSVReportReader.FILE_EXTENSION_GZ};
   }
 
   /**
