@@ -141,7 +141,7 @@ public class ReevaluateModel
     m_PanelModel.addChoosableFileFilter(filter);
     m_PanelModel.setFileFilter(filter);
     m_PanelModel.setAcceptAllFileFilterUsed(true);
-    m_PanelModel.addChangeListener((ChangeEvent e) -> loadModel());
+    m_PanelModel.addChangeListener((ChangeEvent e) -> getOwner().updateButtons());
     m_PanelParameters.addParameter("Model", m_PanelModel);
 
     // additional attributes
@@ -174,9 +174,9 @@ public class ReevaluateModel
   /**
    * Attempts to load the model and (if available) the header.
    *
-   * @return		true if successfully loaded
+   * @return		null if successfully loaded, otherwise error message
    */
-  protected boolean loadModel() {
+  protected String loadModel() {
     File	file;
     Object[]	obj;
 
@@ -185,9 +185,12 @@ public class ReevaluateModel
 
     file = m_PanelModel.getCurrent();
     if (file.isDirectory())
-      return false;
+      return "Model points to a directory: " + file;
     if (!file.exists())
-      return false;
+      return "Model does not exist: " + file;
+
+    if (!SerializationHelper.isSerializedObject(file.getAbsolutePath()))
+      return "Model file is not a serialized object: " + file;
 
     try {
       obj = SerializationHelper.readAll(file.getAbsolutePath());
@@ -197,11 +200,10 @@ public class ReevaluateModel
 	m_Header = (Instances) obj[1];
     }
     catch (Exception e) {
-      showStatus("Failed to load model: " + file);
-      return false;
+      return "Failed to load model: " + file + "\n" + e;
     }
 
-    return true;
+    return null;
   }
 
   /**
@@ -213,6 +215,7 @@ public class ReevaluateModel
     Instances		data;
     File		file;
     Capabilities 	caps;
+    String		msg;
 
     if (!isValidDataIndex(m_ComboBoxDatasets))
       return "No data available!";
@@ -223,8 +226,11 @@ public class ReevaluateModel
     if (!file.exists())
       return "Model does not exist: " + file;
 
-    if (m_Model == null)
-      loadModel();
+    if (m_Model == null) {
+      msg = loadModel();
+      if (msg != null)
+	return msg;
+    }
     if (m_Model == null)
       return "Failed to load model: " + file;
 
