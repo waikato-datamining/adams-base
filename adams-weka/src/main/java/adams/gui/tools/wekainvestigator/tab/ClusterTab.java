@@ -15,7 +15,7 @@
 
 /**
  * ClusterTab.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab;
@@ -869,7 +869,7 @@ public class ClusterTab
     cls = (Clusterer) m_PanelGOE.getCurrent();
     msg = m_CurrentEvaluation.canEvaluate(cls);
     m_ButtonStart.setEnabled(!isBusy() && (m_CurrentEvaluation != null) && (msg == null));
-    m_ButtonStart.setToolTipText(msg);
+    m_ButtonStart.setToolTipText(GUIHelper.processTipText(msg));
     m_ButtonStop.setEnabled(isBusy());
   }
 
