@@ -206,6 +206,38 @@ public class SerializationHelper {
   }
 
   /**
+   * Checks whether the first two bytes of the file are AC ED, indicating
+   * that this file contains serialized objects.
+   *
+   * @param filename	the file to check
+   * @return		true if it is likely to be a serialized file (or failed to read)
+   */
+  public static boolean isSerializedObject(String filename) {
+    boolean		result;
+    FileInputStream	fis;
+    byte[]		buffer;
+    int			read;
+
+    result = false;
+
+    fis = null;
+    try {
+      fis    = new FileInputStream(filename);
+      buffer = new byte[2];
+      read   = fis.read(buffer, 0, 2);
+      result = ((read == 2) && (buffer[0] == (byte) 0xAC) && (buffer[1] == (byte) 0xED));
+    }
+    catch (Exception e) {
+      // ignored
+    }
+    finally {
+      FileUtils.closeQuietly(fis);
+    }
+
+    return result;
+  }
+
+  /**
    * Serializes the given object to the specified file.
    *
    * @param filename	the file to write the object to
@@ -326,6 +358,9 @@ public class SerializationHelper {
     FileInputStream	fis;
     GZIPInputStream	gis;
 
+    if (!isSerializedObject(filename))
+      throw new IllegalArgumentException("Not a serialized object: " + filename);
+
     fis = new FileInputStream(filename);
     gis = null;
     try {
@@ -378,6 +413,9 @@ public class SerializationHelper {
     Object[]		result;
     InputStream 	fis;
     GZIPInputStream	gis;
+
+    if (!isSerializedObject(filename))
+      throw new IllegalArgumentException("Is not a serialized object: " + filename);
 
     fis = new FileInputStream(filename);
     gis = null;
@@ -497,6 +535,7 @@ public class SerializationHelper {
    * @throws Exception	if something goes wrong
    */
   public static void main(String[] args) throws Exception {
+    /*
     if (args.length == 0) {
       System.out.println("\nUsage: " + SerializationHelper.class.getName() + " classname [classname [classname [...]]]\n");
       System.exit(1);
@@ -512,5 +551,7 @@ public class SerializationHelper {
       System.out.println("- " + SERIAL_VERSION_UID + ": private static final long serialVersionUID = " + getUID(args[i]) + "L;");
       System.out.println();
     }
+    */
+    System.out.println(isSerializedObject(args[0]));
   }
 }
