@@ -535,7 +535,6 @@ public class SerializationHelper {
    * @throws Exception	if something goes wrong
    */
   public static void main(String[] args) throws Exception {
-    /*
     if (args.length == 0) {
       System.out.println("\nUsage: " + SerializationHelper.class.getName() + " classname [classname [classname [...]]]\n");
       System.exit(1);
@@ -551,7 +550,5 @@ public class SerializationHelper {
       System.out.println("- " + SERIAL_VERSION_UID + ": private static final long serialVersionUID = " + getUID(args[i]) + "L;");
       System.out.println();
     }
-    */
-    System.out.println(isSerializedObject(args[0]));
   }
 }
