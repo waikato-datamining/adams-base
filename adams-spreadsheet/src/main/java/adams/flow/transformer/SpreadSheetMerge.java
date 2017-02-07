@@ -138,6 +138,11 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
+ * <pre>-strict &lt;boolean&gt; (property: strict)
+ * &nbsp;&nbsp;&nbsp;If enabled, ensures that IDs in unique ID column are truly unique.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -175,6 +180,9 @@ public class SpreadSheetMerge
 
   /** whether to keep only a single instance of the unique ID attribute. */
   protected boolean m_KeepOnlySingleUniqueID;
+
+  /** whether to fail if IDs not unique. */
+  protected boolean m_Strict;
 
   /** the unique ID attributes. */
   protected List<String> m_UniqueIDAtts;
@@ -232,6 +240,10 @@ public class SpreadSheetMerge
 
     m_OptionManager.add(
 	"keep-only-single-unique-id", "keepOnlySingleUniqueID",
+	false);
+
+    m_OptionManager.add(
+	"strict", "strict",
 	false);
   }
 
@@ -512,6 +524,35 @@ public class SpreadSheetMerge
   }
 
   /**
+   * Sets whether to enforce uniqueness in IDs.
+   *
+   * @param value	true if to enforce
+   */
+  public void setStrict(boolean value) {
+    m_Strict = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to enforce uniqueness in IDs.
+   *
+   * @return		true if to enforce
+   */
+  public boolean getStrict() {
+    return m_Strict;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String strictTipText() {
+    return "If enabled, ensures that IDs in unique ID column are truly unique.";
+  }
+
+  /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
@@ -543,6 +584,7 @@ public class SpreadSheetMerge
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "invertMatchingSense", m_InvertMatchingSense, "invert"));
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "remove", m_Remove, "remove"));
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "keepOnlySingleUniqueID", m_KeepOnlySingleUniqueID, "single unique ID"));
+    QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "strict", m_Strict, "strict"));
     result += QuickInfoHelper.flatten(options);
     
     return result;
@@ -701,7 +743,7 @@ public class SpreadSheetMerge
 	  id = inst.getCell(i, index).toDouble();
 	else
 	  id = inst.getCell(i, index).getContent();
-	if (current.contains(id))
+	if (m_Strict && current.contains(id))
 	  throw new IllegalStateException("ID '" + id + "' is not unique in spreadsheet #" + (sheetIndex+1) + "!");
 	current.add(id);
       }
