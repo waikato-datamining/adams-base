@@ -20,10 +20,10 @@
 
 package adams.gui.tools.wekainvestigator.datatable;
 
-import adams.core.StringCompare;
 import adams.gui.core.BaseTable;
 import adams.gui.core.SortableAndSearchableWrapperTableModel;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
+import nz.ac.waikato.cms.locator.StringCompare;
 
 import javax.swing.DefaultCellEditor;
 import javax.swing.JComboBox;

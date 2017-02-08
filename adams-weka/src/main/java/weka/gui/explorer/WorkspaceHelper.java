@@ -19,10 +19,10 @@
  */
 package weka.gui.explorer;
 
-import adams.core.ClassLocator;
 import adams.core.io.FileUtils;
 import adams.gui.chooser.BaseFileChooser;
 import adams.gui.core.ExtensionFileFilter;
+import nz.ac.waikato.cms.locator.ClassLocator;
 import weka.gui.explorer.Explorer.ExplorerPanel;
 
 import java.io.BufferedInputStream;

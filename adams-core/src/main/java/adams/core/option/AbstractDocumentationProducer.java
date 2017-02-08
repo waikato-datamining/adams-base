@@ -19,13 +19,13 @@
  */
 package adams.core.option;
 
+import adams.flow.core.Actor;
+import nz.ac.waikato.cms.locator.ClassLocator;
+
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
-import adams.core.ClassLocator;
-import adams.flow.core.Actor;
 
 /**
  * Ancestor for producers that generate documentation that is split into

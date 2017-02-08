@@ -20,8 +20,8 @@
 
 package adams.gui.visualization.debug.objectexport;
 
-import adams.core.ClassLocator;
 import adams.core.io.FileUtils;
+import nz.ac.waikato.cms.locator.ClassLocator;
 
 import java.io.BufferedWriter;
 import java.io.File;

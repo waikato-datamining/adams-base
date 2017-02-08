@@ -19,11 +19,11 @@
  */
 package adams.flow.condition.bool;
 
-import adams.core.ClassLocator;
 import adams.core.QuickInfoHelper;
 import adams.flow.core.Actor;
 import adams.flow.core.Token;
 import adams.flow.core.Unknown;
+import nz.ac.waikato.cms.locator.ClassLocator;
 
 /**
  <!-- globalinfo-start -->

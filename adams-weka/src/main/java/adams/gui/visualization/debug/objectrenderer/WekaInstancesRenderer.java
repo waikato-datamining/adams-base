@@ -20,12 +20,12 @@
 
 package adams.gui.visualization.debug.objectrenderer;
 
-import adams.core.ClassLocator;
 import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.visualization.instances.InstancesTable;
+import nz.ac.waikato.cms.locator.ClassLocator;
 import weka.core.Attribute;
 import weka.core.Instance;
 import weka.core.Instances;

@@ -6,16 +6,11 @@
 
 package adams.parser.templatesuggestion;
 
-import adams.core.ClassLocator;
-import adams.flow.core.AbstractActor;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorUtils;
 import adams.flow.template.AbstractActorTemplate;
 import adams.parser.ParserHelper;
-import java_cup.runtime.*;
-import java.io.*;
-import java.util.*;
-import java.util.logging.Level;
+import nz.ac.waikato.cms.locator.ClassLocator;
 
 /** CUP v0.11a beta 20060608 generated parser.
   * @version Tue May 03 13:11:58 NZST 2016

@@ -19,9 +19,6 @@
  */
 package adams.data.io.output;
 
-import java.io.File;
-
-import adams.core.ClassLocator;
 import adams.core.CleanUpHandler;
 import adams.core.Destroyable;
 import adams.core.io.FileUtils;
@@ -33,6 +30,9 @@ import adams.test.AdamsTestCase;
 import adams.test.Regression;
 import adams.test.TestHelper;
 import adams.test.TmpFile;
+import nz.ac.waikato.cms.locator.ClassLocator;
+
+import java.io.File;
 
 /**
  * Ancestor for spreadsheet writer test cases.

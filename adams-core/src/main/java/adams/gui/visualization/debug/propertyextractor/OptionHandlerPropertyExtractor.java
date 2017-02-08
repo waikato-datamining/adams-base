@@ -19,12 +19,12 @@
  */
 package adams.gui.visualization.debug.propertyextractor;
 
-import java.util.List;
-
-import adams.core.ClassLocator;
 import adams.core.option.AbstractArgumentOption;
 import adams.core.option.AbstractOption;
 import adams.core.option.OptionHandler;
+import nz.ac.waikato.cms.locator.ClassLocator;
+
+import java.util.List;
 
 /**
  * Extractor for objects supporting the {@link OptionHandler} interface.

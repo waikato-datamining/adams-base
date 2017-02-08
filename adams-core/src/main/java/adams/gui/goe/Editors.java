@@ -20,11 +20,11 @@
 package adams.gui.goe;
 
 import adams.core.ClassLister;
-import adams.core.ClassLocator;
 import adams.core.Properties;
 import adams.env.Environment;
 import adams.env.GOEBlacklistDefinition;
 import adams.env.GOEEditorsDefinition;
+import nz.ac.waikato.cms.locator.ClassLocator;
 
 import java.beans.PropertyEditorManager;
 import java.lang.reflect.Array;
@@ -90,7 +90,7 @@ public class Editors {
     // enums
     // 1. generate package list to search for enums
     uniquePackages = new HashSet<>();
-    packages       = ClassLister.getSingleton().getPackages();
+    packages       = new Properties(ClassLister.getSingleton().getPackages());
     enm            = (Enumeration<String>) packages.propertyNames();
     while (enm.hasMoreElements()) {
       classname  = enm.nextElement();

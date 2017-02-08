@@ -20,10 +20,10 @@
 
 package adams.gui.visualization.debug.objectrenderer;
 
-import adams.core.ClassLocator;
 import adams.data.report.Report;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.visualization.report.ReportFactory;
+import nz.ac.waikato.cms.locator.ClassLocator;
 
 import javax.swing.JPanel;
 import java.awt.BorderLayout;

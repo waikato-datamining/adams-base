@@ -14,7 +14,8 @@ java.beans.PropertyEditorSupport=\
 
 # the comparators
 java.util.Comparator=\
-  adams.core
+  adams.core,\
+  nz.ac.waikato.cms.locator
 
 # the filename generators
 adams.core.io.AbstractFilenameGenerator=\

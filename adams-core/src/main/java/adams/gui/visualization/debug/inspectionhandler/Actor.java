@@ -19,7 +19,7 @@
  */
 package adams.gui.visualization.debug.inspectionhandler;
 
-import adams.core.ClassLocator;
+import nz.ac.waikato.cms.locator.ClassLocator;
 
 import java.util.Hashtable;
 

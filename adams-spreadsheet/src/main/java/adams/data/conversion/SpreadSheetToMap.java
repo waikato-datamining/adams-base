@@ -19,11 +19,11 @@
  */
 package adams.data.conversion;
 
-import adams.core.ClassLocator;
 import adams.core.base.BaseClassname;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetColumnIndex;
+import nz.ac.waikato.cms.locator.ClassLocator;
 
 import java.util.HashMap;
 import java.util.Map;

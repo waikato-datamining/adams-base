@@ -19,12 +19,12 @@
  */
 package adams.core.option;
 
+import nz.ac.waikato.cms.locator.ClassLocator;
+
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
-
-import adams.core.ClassLocator;
 
 /**
  * Option class for OptionHandler options.

@@ -19,7 +19,7 @@
  */
 package adams.core.option;
 
-import adams.core.ClassLocator;
+import nz.ac.waikato.cms.locator.ClassLocator;
 
 import java.util.ArrayList;
 import java.util.Arrays;

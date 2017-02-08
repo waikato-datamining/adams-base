@@ -20,7 +20,7 @@
 
 package adams.flow.core;
 
-import adams.core.ClassLocator;
+import nz.ac.waikato.cms.locator.ClassLocator;
 
 import java.io.Serializable;
 import java.util.HashSet;

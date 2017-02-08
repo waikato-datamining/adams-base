@@ -19,9 +19,9 @@
  */
 package adams.gui.visualization.debug.propertyextractor;
 
-import adams.core.ClassLocator;
 import adams.data.Notes;
 import adams.data.NotesHandler;
+import nz.ac.waikato.cms.locator.ClassLocator;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -20,7 +20,6 @@
 
 package adams.gui.core;
 
-import adams.core.ClassLocator;
 import adams.core.Properties;
 import adams.core.Utils;
 import adams.core.logging.Logger;
@@ -35,6 +34,7 @@ import adams.gui.application.Child;
 import adams.gui.dialog.ApprovalDialog;
 import adams.gui.dialog.TextDialog;
 import adams.gui.dialog.TextPanel;
+import nz.ac.waikato.cms.locator.ClassLocator;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;

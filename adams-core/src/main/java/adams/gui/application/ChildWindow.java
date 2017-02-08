@@ -21,12 +21,12 @@
 
 package adams.gui.application;
 
-import adams.core.ClassLocator;
 import adams.core.CleanUpHandler;
 import adams.core.logging.Logger;
 import adams.db.DatabaseConnectionHandler;
 import adams.gui.core.BaseWindow;
 import adams.gui.core.GUIHelper;
+import nz.ac.waikato.cms.locator.ClassLocator;
 
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;

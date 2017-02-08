@@ -19,12 +19,12 @@
  */
 package adams.core.management;
 
-import adams.core.ClassLocator;
 import adams.core.Utils;
 import adams.core.logging.LoggingObject;
 import adams.core.option.OptionUtils;
 import adams.env.Environment;
 import adams.gui.core.GUIHelper;
+import nz.ac.waikato.cms.locator.ClassLocator;
 
 import java.io.File;
 import java.util.ArrayList;

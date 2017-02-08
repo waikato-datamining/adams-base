@@ -19,9 +19,9 @@
  */
 package adams.gui.visualization.debug.objecttree;
 
-import java.util.List;
+import nz.ac.waikato.cms.locator.ClassLocator;
 
-import adams.core.ClassLocator;
+import java.util.List;
 
 /**
  * Renders the list items, one per line, with the index prefixed.

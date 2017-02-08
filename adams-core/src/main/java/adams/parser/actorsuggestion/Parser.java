@@ -6,7 +6,6 @@
 
 package adams.parser.actorsuggestion;
 
-import adams.core.ClassLocator;
 import adams.flow.core.AbstractActor;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorHandler;
@@ -16,6 +15,7 @@ import adams.flow.core.InputConsumer;
 import adams.flow.core.OutputProducer;
 import adams.gui.flow.tree.Node;
 import adams.parser.ParserHelper;
+import nz.ac.waikato.cms.locator.ClassLocator;
 
 import java.util.logging.Level;
 

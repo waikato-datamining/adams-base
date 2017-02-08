@@ -21,7 +21,6 @@
 package adams.flow.core;
 
 import adams.core.ClassLister;
-import adams.core.ClassLocator;
 import adams.core.Utils;
 import adams.core.Variables;
 import adams.core.VariablesHandler;
@@ -58,6 +57,7 @@ import adams.gui.flow.tree.TreeHelper;
 import adams.gui.visualization.core.FlowAwarePaintlet;
 import adams.gui.visualization.core.PaintablePanel;
 import adams.gui.visualization.core.Paintlet;
+import nz.ac.waikato.cms.locator.ClassLocator;
 
 import java.awt.Dimension;
 import java.awt.GraphicsConfiguration;

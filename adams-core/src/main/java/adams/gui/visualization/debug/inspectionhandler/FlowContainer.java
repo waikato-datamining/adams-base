@@ -19,11 +19,11 @@
  */
 package adams.gui.visualization.debug.inspectionhandler;
 
+import adams.flow.container.AbstractContainer;
+import nz.ac.waikato.cms.locator.ClassLocator;
+
 import java.util.Hashtable;
 import java.util.Iterator;
-
-import adams.core.ClassLocator;
-import adams.flow.container.AbstractContainer;
 
 /**
  * Provides further insight into flow containers.

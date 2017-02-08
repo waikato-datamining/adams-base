@@ -20,10 +20,10 @@
 
 package adams.gui.tools.classhelp;
 
-import adams.core.ClassLocator;
 import adams.core.option.HtmlHelpProducer;
 import adams.core.option.OptionHandler;
 import adams.gui.core.ConsolePanel;
+import nz.ac.waikato.cms.locator.ClassLocator;
 
 import java.util.logging.Level;
 

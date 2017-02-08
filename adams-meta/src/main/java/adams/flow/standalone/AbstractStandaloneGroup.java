@@ -19,13 +19,13 @@
  */
 package adams.flow.standalone;
 
-import adams.core.ClassLocator;
 import adams.core.Utils;
 import adams.core.Variables;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorExecution;
 import adams.flow.core.ActorHandler;
 import adams.flow.core.ActorHandlerInfo;
+import nz.ac.waikato.cms.locator.ClassLocator;
 
 import java.util.List;
 

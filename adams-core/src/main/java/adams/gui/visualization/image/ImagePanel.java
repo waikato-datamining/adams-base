@@ -19,7 +19,6 @@
  */
 package adams.gui.visualization.image;
 
-import adams.core.ClassLocator;
 import adams.core.CleanUpHandler;
 import adams.core.StatusMessageHandler;
 import adams.core.Utils;
@@ -63,6 +62,7 @@ import adams.gui.print.PrintMouseListener;
 import adams.gui.visualization.image.paintlet.Paintlet;
 import adams.gui.visualization.report.ReportFactory;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
+import nz.ac.waikato.cms.locator.ClassLocator;
 
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;

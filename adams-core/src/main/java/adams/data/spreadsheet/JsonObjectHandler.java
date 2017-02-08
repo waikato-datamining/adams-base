@@ -19,11 +19,11 @@
  */
 package adams.data.spreadsheet;
 
-import java.util.logging.Level;
-
 import net.minidev.json.JSONAware;
 import net.minidev.json.parser.JSONParser;
-import adams.core.ClassLocator;
+import nz.ac.waikato.cms.locator.ClassLocator;
+
+import java.util.logging.Level;
 
 /**
  <!-- globalinfo-start -->

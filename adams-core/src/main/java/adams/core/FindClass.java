@@ -19,8 +19,9 @@
  */
 package adams.core;
 
-import adams.core.ClassPathTraversal.TraversalListener;
 import adams.core.logging.LoggingObject;
+import nz.ac.waikato.cms.locator.ClassPathTraversal;
+import nz.ac.waikato.cms.locator.ClassPathTraversal.TraversalListener;
 
 import java.net.URL;
 import java.util.ArrayList;

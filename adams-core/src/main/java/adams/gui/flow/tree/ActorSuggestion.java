@@ -19,7 +19,6 @@
  */
 package adams.gui.flow.tree;
 
-import adams.core.ClassLocator;
 import adams.core.Properties;
 import adams.core.Utils;
 import adams.core.io.FileUtils;
@@ -31,6 +30,7 @@ import adams.flow.core.Actor;
 import adams.flow.core.ActorHandler;
 import adams.flow.core.ActorUtils;
 import adams.parser.ActorSuggestion.SuggestionData;
+import nz.ac.waikato.cms.locator.ClassLocator;
 
 import java.io.File;
 import java.util.ArrayList;

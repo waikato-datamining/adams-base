@@ -19,7 +19,6 @@
  */
 package adams.gui.goe.classtree;
 
-import adams.core.ClassLocator;
 import adams.core.Utils;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorUtils;
@@ -27,6 +26,7 @@ import adams.flow.core.Compatibility;
 import adams.flow.core.InputConsumer;
 import adams.flow.core.OutputProducer;
 import adams.gui.core.dotnotationtree.AbstractItemFilter;
+import nz.ac.waikato.cms.locator.ClassLocator;
 
 import java.util.Hashtable;
 

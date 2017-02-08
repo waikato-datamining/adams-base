@@ -20,9 +20,9 @@
 
 package adams.gui.visualization.debug.objectrenderer;
 
-import adams.core.ClassLocator;
 import adams.data.image.BufferedImageSupporter;
 import adams.gui.visualization.image.ImagePanel;
+import nz.ac.waikato.cms.locator.ClassLocator;
 
 import javax.swing.JPanel;
 import java.awt.BorderLayout;

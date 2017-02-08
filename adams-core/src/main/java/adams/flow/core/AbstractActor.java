@@ -21,7 +21,6 @@
 package adams.flow.core;
 
 import adams.core.ClassLister;
-import adams.core.ClassLocator;
 import adams.core.Properties;
 import adams.core.SizeOf;
 import adams.core.Utils;
@@ -44,6 +43,7 @@ import adams.flow.control.StorageHandler;
 import adams.flow.execution.DefaultFlowExecutionListeningSupporter;
 import adams.flow.execution.FlowExecutionListeningSupporter;
 import adams.gui.core.GUIHelper;
+import nz.ac.waikato.cms.locator.ClassLocator;
 
 import java.awt.Component;
 import java.util.ArrayList;

@@ -19,9 +19,9 @@
  */
 package adams.gui.visualization.debug.objecttree;
 
-import java.util.Map;
+import nz.ac.waikato.cms.locator.ClassLocator;
 
-import adams.core.ClassLocator;
+import java.util.Map;
 
 /**
  * Renders the map items, one per line, with the key prefixed.

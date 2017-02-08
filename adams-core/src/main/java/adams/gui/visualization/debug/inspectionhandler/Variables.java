@@ -19,10 +19,10 @@
  */
 package adams.gui.visualization.debug.inspectionhandler;
 
+import nz.ac.waikato.cms.locator.ClassLocator;
+
 import java.util.Enumeration;
 import java.util.Hashtable;
-
-import adams.core.ClassLocator;
 
 /**
  * Provides further insight into {@link adams.core.Variables} objects.

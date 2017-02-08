@@ -20,10 +20,10 @@
 
 package adams.gui.visualization.debug.objectrenderer;
 
-import adams.core.ClassLocator;
 import adams.data.timeseries.Timeseries;
 import adams.gui.visualization.timeseries.TimeseriesContainer;
 import adams.gui.visualization.timeseries.TimeseriesPanel;
+import nz.ac.waikato.cms.locator.ClassLocator;
 
 import javax.swing.JPanel;
 import java.awt.BorderLayout;

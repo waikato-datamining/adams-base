@@ -21,7 +21,6 @@
 
 package adams.gui.goe;
 
-import adams.core.ClassLocator;
 import adams.core.CustomDisplayStringProvider;
 import adams.core.ObjectCopyHelper;
 import adams.core.Utils;
@@ -32,8 +31,8 @@ import adams.gui.core.BaseListWithButtons;
 import adams.gui.core.BasePanel;
 import adams.gui.core.GUIHelper;
 import adams.gui.event.RemoveItemsEvent;
-import adams.gui.event.RemoveItemsListener;
 import gnu.trove.set.hash.TIntHashSet;
+import nz.ac.waikato.cms.locator.ClassLocator;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
@@ -45,7 +44,6 @@ import javax.swing.JPanel;
 import javax.swing.ListCellRenderer;
 import javax.swing.SwingConstants;
 import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;

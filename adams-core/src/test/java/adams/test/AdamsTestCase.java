@@ -19,7 +19,6 @@
  */
 package adams.test;
 
-import adams.core.ClassLocator;
 import adams.core.DateUtils;
 import adams.core.QuickInfoSupporter;
 import adams.core.Utils;
@@ -33,6 +32,7 @@ import adams.gui.scripting.ScriptingEngine;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.textui.TestRunner;
+import nz.ac.waikato.cms.locator.ClassLocator;
 
 import java.io.Serializable;
 import java.lang.reflect.Constructor;

@@ -19,13 +19,13 @@
  */
 package adams.core.option;
 
-import adams.core.ClassLocator;
 import adams.core.Utils;
 import adams.core.base.AbstractBaseString;
 import adams.core.io.FileFormatHandler;
 import adams.core.net.HtmlUtils;
 import adams.gui.core.AbstractAdvancedScript;
 import adams.gui.core.AbstractSimpleScript;
+import nz.ac.waikato.cms.locator.ClassLocator;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;

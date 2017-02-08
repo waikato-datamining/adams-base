@@ -19,10 +19,10 @@
  */
 package adams.flow.source;
 
-import adams.core.ClassLocator;
 import adams.core.QuickInfoHelper;
 import adams.core.base.BaseClassname;
 import adams.flow.core.Token;
+import nz.ac.waikato.cms.locator.ClassLocator;
 
 import java.util.HashMap;
 import java.util.Map;

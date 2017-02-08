@@ -22,13 +22,13 @@
 package adams.test;
 
 import adams.core.ClassLister;
-import adams.core.ClassLocator;
 import adams.core.io.TempUtils;
 import adams.core.management.ProcessUtils;
 import adams.env.Environment;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;
+import nz.ac.waikato.cms.locator.ClassLocator;
 
 import java.util.ArrayList;
 import java.util.Collections;

@@ -20,11 +20,11 @@
 
 package adams.flow.processor;
 
-import adams.core.ClassLocator;
 import adams.core.base.BaseObject;
 import adams.core.option.AbstractArgumentOption;
 import adams.core.option.AbstractOption;
 import adams.core.option.OptionTraversalPath;
+import nz.ac.waikato.cms.locator.ClassLocator;
 
 /**
  <!-- globalinfo-start -->

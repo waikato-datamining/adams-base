@@ -19,11 +19,11 @@
  */
 package adams.core.option;
 
+import adams.core.VariablesHandler;
+import nz.ac.waikato.cms.locator.ClassLocator;
+
 import java.io.File;
 import java.lang.reflect.Array;
-
-import adams.core.ClassLocator;
-import adams.core.VariablesHandler;
 
 /**
  <!-- globalinfo-start -->

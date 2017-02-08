@@ -20,12 +20,12 @@
 
 package adams.gui.visualization.debug.objectexport;
 
-import adams.core.ClassLocator;
 import adams.data.io.output.AbstractSpreadSheetWriter;
 import adams.data.io.output.CsvSpreadSheetWriter;
 import adams.data.io.output.SpreadSheetWriter;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetSupporter;
+import nz.ac.waikato.cms.locator.ClassLocator;
 
 import java.io.File;
 import java.util.ArrayList;

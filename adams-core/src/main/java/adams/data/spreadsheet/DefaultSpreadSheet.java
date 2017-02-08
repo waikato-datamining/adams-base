@@ -20,7 +20,6 @@
 
 package adams.data.spreadsheet;
 
-import adams.core.ClassLocator;
 import adams.core.DateFormat;
 import adams.core.DateUtils;
 import adams.core.management.LocaleHelper;
@@ -29,6 +28,7 @@ import adams.data.io.output.CsvSpreadSheetWriter;
 import adams.data.spreadsheet.Cell.ContentType;
 import adams.env.Environment;
 import adams.event.SpreadSheetColumnInsertionEvent;
+import nz.ac.waikato.cms.locator.ClassLocator;
 
 import java.io.StringWriter;
 import java.lang.reflect.Constructor;

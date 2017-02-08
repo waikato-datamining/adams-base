@@ -20,7 +20,6 @@
 package adams.core.option;
 
 import adams.core.AdditionalInformationHandler;
-import adams.core.ClassLocator;
 import adams.core.io.FileFormatHandler;
 import adams.doc.docbook.Article;
 import adams.doc.docbook.Document;
@@ -38,6 +37,7 @@ import adams.flow.core.Actor;
 import adams.gui.core.BaseTreeNode;
 import adams.gui.flow.tree.Node;
 import adams.gui.flow.tree.Tree;
+import nz.ac.waikato.cms.locator.ClassLocator;
 
 import javax.swing.tree.TreeNode;
 import java.lang.reflect.Array;

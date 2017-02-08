@@ -19,11 +19,11 @@
  */
 package adams.gui.visualization.debug.propertyextractor;
 
+import adams.core.Variables;
+import nz.ac.waikato.cms.locator.ClassLocator;
+
 import java.util.Enumeration;
 import java.util.Vector;
-
-import adams.core.ClassLocator;
-import adams.core.Variables;
 
 
 /**

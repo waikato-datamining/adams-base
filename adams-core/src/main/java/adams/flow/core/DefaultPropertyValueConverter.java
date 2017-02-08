@@ -19,10 +19,10 @@
  */
 package adams.flow.core;
 
-import adams.core.ClassLocator;
 import adams.core.base.BaseObject;
 import adams.core.io.PlaceholderFile;
 import adams.core.option.OptionUtils;
+import nz.ac.waikato.cms.locator.ClassLocator;
 
 import java.io.File;
 import java.lang.reflect.Array;

@@ -20,15 +20,15 @@
 
 package adams.flow.processor;
 
-import java.lang.reflect.Array;
-import java.lang.reflect.Method;
-
-import adams.core.ClassLocator;
 import adams.core.base.BaseObject;
 import adams.core.option.AbstractArgumentOption;
 import adams.flow.control.Flow;
 import adams.flow.control.LocalScopeTrigger;
 import adams.flow.control.StorageName;
+import nz.ac.waikato.cms.locator.ClassLocator;
+
+import java.lang.reflect.Array;
+import java.lang.reflect.Method;
 
 /**
  <!-- globalinfo-start -->

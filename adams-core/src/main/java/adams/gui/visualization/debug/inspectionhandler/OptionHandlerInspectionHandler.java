@@ -19,11 +19,11 @@
  */
 package adams.gui.visualization.debug.inspectionhandler;
 
-import java.util.Hashtable;
-
-import adams.core.ClassLocator;
 import adams.core.option.AbstractOptionHandler;
 import adams.core.option.OptionHandler;
+import nz.ac.waikato.cms.locator.ClassLocator;
+
+import java.util.Hashtable;
 
 /**
  * Inspection handler for classes that support {@link AbstractOptionHandler}.

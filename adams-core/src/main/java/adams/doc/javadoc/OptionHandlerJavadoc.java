@@ -21,12 +21,12 @@
 package adams.doc.javadoc;
 
 
-import java.util.List;
-
-import adams.core.ClassLocator;
 import adams.core.option.AbstractOption;
 import adams.core.option.CommandlineHelpProducer;
 import adams.core.option.OptionHandler;
+import nz.ac.waikato.cms.locator.ClassLocator;
+
+import java.util.List;
 
 /**
  * Generates Javadoc comments from the OptionHandler's options. Can

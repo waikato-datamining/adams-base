@@ -20,10 +20,10 @@
 
 package adams.doc.javadoc;
 
-import adams.core.ClassLocator;
 import adams.core.Utils;
 import adams.flow.container.AbstractContainer;
 import adams.flow.core.ActorWithConditionalEquivalent;
+import nz.ac.waikato.cms.locator.ClassLocator;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;

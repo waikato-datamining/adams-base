@@ -19,9 +19,10 @@
  */
 package adams.core;
 
-import java.lang.reflect.Method;
-
 import adams.core.option.EnumOption;
+import nz.ac.waikato.cms.locator.ClassLocator;
+
+import java.lang.reflect.Method;
 
 /**
  * Helper class for enum-related operations.

@@ -19,7 +19,6 @@
  */
 package adams.gui.goe;
 
-import adams.core.ClassLocator;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorHandler;
 import adams.flow.core.ActorUtils;
@@ -33,6 +32,7 @@ import adams.gui.flow.FlowEditorPanel;
 import adams.gui.flow.FlowTreeHandler;
 import adams.gui.flow.tree.Node;
 import adams.gui.flow.tree.Tree;
+import nz.ac.waikato.cms.locator.ClassLocator;
 
 import java.awt.Component;
 import java.awt.Container;

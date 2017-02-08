@@ -19,11 +19,10 @@
  */
 package adams.gui.goe;
 
-import java.beans.PropertyEditor;
+import nz.ac.waikato.cms.locator.ClassLocator;
 
 import javax.swing.JPanel;
-
-import adams.core.ClassLocator;
+import java.beans.PropertyEditor;
 
 /**
  * Handler for the ADAMS GenericObjectEditor.

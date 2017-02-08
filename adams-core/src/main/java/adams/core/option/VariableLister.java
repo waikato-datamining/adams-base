@@ -19,8 +19,8 @@
  */
 package adams.core.option;
 
-import adams.core.ClassLocator;
 import adams.core.VariablesHandler;
+import nz.ac.waikato.cms.locator.ClassLocator;
 
 /**
  <!-- globalinfo-start -->

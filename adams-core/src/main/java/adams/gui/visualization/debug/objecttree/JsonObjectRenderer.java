@@ -20,7 +20,7 @@
 package adams.gui.visualization.debug.objecttree;
 
 import net.minidev.json.JSONAware;
-import adams.core.ClassLocator;
+import nz.ac.waikato.cms.locator.ClassLocator;
 
 /**
  * Renderer for JSON objects.

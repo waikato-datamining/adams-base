@@ -20,9 +20,9 @@
 
 package adams.gui.tools.classhelp;
 
-import adams.core.ClassLocator;
 import adams.core.EnumHelper;
 import adams.core.EnumWithCustomDisplay;
+import nz.ac.waikato.cms.locator.ClassLocator;
 
 /**
  * Handler for enums.

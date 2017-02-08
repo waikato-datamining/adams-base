@@ -19,10 +19,10 @@
  */
 package adams.gui.visualization.debug.objecttree;
 
+import nz.ac.waikato.cms.locator.ClassLocator;
+
 import java.util.Collection;
 import java.util.Iterator;
-
-import adams.core.ClassLocator;
 
 /**
  * Renders the items of a collection, one per line, with the index prefixed.

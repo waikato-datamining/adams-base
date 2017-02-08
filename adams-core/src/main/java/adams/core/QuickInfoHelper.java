@@ -26,6 +26,7 @@ import adams.core.option.OptionConsumer;
 import adams.core.option.OptionHandler;
 import adams.core.option.OptionProducer;
 import adams.gui.core.ColorHelper;
+import nz.ac.waikato.cms.locator.ClassLocator;
 
 import java.awt.Color;
 import java.lang.reflect.Array;

@@ -20,11 +20,11 @@
 
 package adams.gui.chooser;
 
-import adams.core.ClassLocator;
 import adams.core.option.OptionUtils;
 import adams.gui.core.GUIHelper;
 import adams.gui.goe.GenericObjectEditor;
 import adams.gui.goe.GenericObjectEditorDialog;
+import nz.ac.waikato.cms.locator.ClassLocator;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;

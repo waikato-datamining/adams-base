@@ -20,8 +20,8 @@
 
 package adams.doc.javadoc;
 
-import adams.core.ClassLocator;
 import adams.core.TechnicalInformationHandler;
+import nz.ac.waikato.cms.locator.ClassLocator;
 
 /**
  * Generates Javadoc comments from the TechnicalInformationHandler's data.

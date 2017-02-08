@@ -19,7 +19,6 @@
  */
 package adams.core.option;
 
-import adams.core.ClassLocator;
 import adams.core.CleanUpHandler;
 import adams.core.EnumWithCustomDisplay;
 import adams.core.Variables;
@@ -27,6 +26,7 @@ import adams.core.VariablesHandler;
 import adams.core.base.BaseObject;
 import adams.core.logging.Logger;
 import adams.flow.core.Actor;
+import nz.ac.waikato.cms.locator.ClassLocator;
 
 import java.beans.BeanInfo;
 import java.beans.Introspector;

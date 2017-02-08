@@ -19,10 +19,10 @@
  */
 package adams.gui.selection;
 
-import adams.core.ClassLocator;
 import adams.db.AbstractConditions;
 import adams.gui.core.GUIHelper;
 import adams.gui.goe.GenericObjectEditorDialog;
+import nz.ac.waikato.cms.locator.ClassLocator;
 
 import javax.swing.JButton;
 import java.awt.event.ActionEvent;

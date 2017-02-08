@@ -20,8 +20,8 @@
 
 package adams.gui.tools.classhelp;
 
-import adams.core.ClassLocator;
 import adams.gui.core.ConsolePanel;
+import nz.ac.waikato.cms.locator.ClassLocator;
 import weka.core.CapabilitiesHandler;
 import weka.core.MultiInstanceCapabilitiesHandler;
 import weka.core.OptionMetadata;

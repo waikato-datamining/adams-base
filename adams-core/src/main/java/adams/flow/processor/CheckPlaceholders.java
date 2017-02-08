@@ -19,7 +19,6 @@
  */
 package adams.flow.processor;
 
-import adams.core.ClassLocator;
 import adams.core.Placeholders;
 import adams.core.Utils;
 import adams.core.io.PlaceholderFile;
@@ -31,6 +30,7 @@ import adams.core.option.OptionTraversalPath;
 import adams.core.option.OptionTraverser;
 import adams.flow.core.Actor;
 import adams.gui.dialog.TextPanel;
+import nz.ac.waikato.cms.locator.ClassLocator;
 
 import java.awt.Component;
 import java.awt.Dimension;

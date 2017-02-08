@@ -20,13 +20,13 @@
 
 package adams.core.discovery.cso;
 
-import adams.core.ClassLocator;
 import adams.core.Utils;
 import adams.core.base.BaseClassname;
 import adams.core.discovery.IntrospectionHelper;
 import adams.core.discovery.IntrospectionHelper.IntrospectionContainer;
 import adams.core.discovery.PropertyPath.PropertyContainer;
 import adams.data.outlier.MinMax;
+import nz.ac.waikato.cms.locator.ClassLocator;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;

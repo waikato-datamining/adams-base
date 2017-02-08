@@ -20,10 +20,10 @@
 
 package adams.gui.goe.classtree;
 
-import adams.core.ClassLocator;
 import adams.flow.core.Actor;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.dotnotationtree.DotNotationRenderer;
+import nz.ac.waikato.cms.locator.ClassLocator;
 
 import javax.swing.Icon;
 import java.util.Hashtable;

@@ -20,7 +20,6 @@
 
 package adams.gui.core;
 
-import adams.core.ClassLocator;
 import adams.core.CleanUpHandler;
 import adams.core.CloneHandler;
 import adams.core.Shortening;
@@ -31,6 +30,7 @@ import adams.core.io.TempUtils;
 import adams.gui.event.UndoEvent;
 import adams.gui.event.UndoEvent.UndoType;
 import adams.gui.event.UndoListener;
+import nz.ac.waikato.cms.locator.ClassLocator;
 
 import java.io.File;
 import java.io.FileInputStream;

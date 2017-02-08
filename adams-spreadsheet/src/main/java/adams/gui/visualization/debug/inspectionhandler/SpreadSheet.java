@@ -19,9 +19,9 @@
  */
 package adams.gui.visualization.debug.inspectionhandler;
 
-import adams.core.ClassLocator;
 import adams.data.spreadsheet.Cell;
 import adams.data.spreadsheet.Row;
+import nz.ac.waikato.cms.locator.ClassLocator;
 
 import java.util.Hashtable;
 

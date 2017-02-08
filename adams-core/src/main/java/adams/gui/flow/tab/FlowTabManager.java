@@ -19,7 +19,6 @@
  */
 package adams.gui.flow.tab;
 
-import adams.core.ClassLocator;
 import adams.core.CleanUpHandler;
 import adams.core.Properties;
 import adams.core.logging.LoggingLevel;
@@ -33,6 +32,7 @@ import adams.gui.flow.FlowEditorPanel;
 import adams.gui.flow.FlowPanel;
 import adams.gui.flow.tree.Node;
 import adams.gui.flow.tree.Tree;
+import nz.ac.waikato.cms.locator.ClassLocator;
 
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;

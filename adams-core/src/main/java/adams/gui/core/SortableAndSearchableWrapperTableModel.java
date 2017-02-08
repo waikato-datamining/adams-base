@@ -20,8 +20,8 @@
 
 package adams.gui.core;
 
-import adams.core.ClassLocator;
 import gnu.trove.list.array.TIntArrayList;
+import nz.ac.waikato.cms.locator.ClassLocator;
 
 import javax.swing.JTable;
 import javax.swing.event.TableModelEvent;

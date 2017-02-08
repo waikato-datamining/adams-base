@@ -19,7 +19,6 @@
  */
 package adams.flow.processor;
 
-import adams.core.ClassLocator;
 import adams.core.Utils;
 import adams.core.base.BaseString;
 import adams.core.option.AbstractArgumentOption;
@@ -29,6 +28,7 @@ import adams.core.option.ClassOption;
 import adams.core.option.OptionTraversalPath;
 import adams.core.option.OptionTraverser;
 import adams.flow.core.Actor;
+import nz.ac.waikato.cms.locator.ClassLocator;
 
 import java.io.File;
 import java.lang.reflect.Array;

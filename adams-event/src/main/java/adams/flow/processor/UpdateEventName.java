@@ -19,10 +19,10 @@
  */
 package adams.flow.processor;
 
-import java.util.logging.Level;
-
-import adams.core.ClassLocator;
 import adams.flow.core.EventReference;
+import nz.ac.waikato.cms.locator.ClassLocator;
+
+import java.util.logging.Level;
 
 /**
  <!-- globalinfo-start -->

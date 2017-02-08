@@ -19,10 +19,10 @@
  */
 package adams.core.option;
 
-import adams.core.ClassLocator;
 import adams.core.EnumWithCustomDisplay;
 import adams.core.Utils;
 import adams.gui.goe.EnumEditor;
+import nz.ac.waikato.cms.locator.ClassLocator;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;

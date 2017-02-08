@@ -19,10 +19,10 @@
  */
 package adams.gui.visualization.debug.inspectionhandler;
 
-import java.util.Hashtable;
-
-import adams.core.ClassLocator;
 import adams.flow.core.ExternalActorHandler;
+import nz.ac.waikato.cms.locator.ClassLocator;
+
+import java.util.Hashtable;
 
 /**
  * Provides further insight into external actors.

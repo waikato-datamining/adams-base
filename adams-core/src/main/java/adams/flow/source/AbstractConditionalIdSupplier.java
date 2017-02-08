@@ -20,10 +20,10 @@
 
 package adams.flow.source;
 
-import adams.core.ClassLocator;
 import adams.core.QuickInfoHelper;
 import adams.db.AbstractConditions;
 import adams.db.AbstractLimitedConditions;
+import nz.ac.waikato.cms.locator.ClassLocator;
 
 /**
  * Abstract ancestor for ID suppliers that use a conditions object.

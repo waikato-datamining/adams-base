@@ -19,7 +19,6 @@
  */
 package adams.gui.flow.tree.menu;
 
-import adams.core.ClassLocator;
 import adams.core.VariableName;
 import adams.core.option.AbstractArgumentOption;
 import adams.core.option.AbstractOption;
@@ -31,6 +30,7 @@ import adams.flow.processor.ListStorageUsage;
 import adams.flow.processor.ListVariableUsage;
 import adams.gui.action.AbstractPropertiesAction;
 import adams.gui.core.GUIHelper;
+import nz.ac.waikato.cms.locator.ClassLocator;
 
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;

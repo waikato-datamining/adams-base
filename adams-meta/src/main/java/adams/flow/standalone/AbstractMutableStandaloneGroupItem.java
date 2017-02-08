@@ -20,7 +20,6 @@
 
 package adams.flow.standalone;
 
-import adams.core.ClassLocator;
 import adams.core.Utils;
 import adams.core.logging.LoggingLevel;
 import adams.flow.control.AbstractControlActor;
@@ -28,6 +27,7 @@ import adams.flow.core.Actor;
 import adams.flow.core.ActorExecution;
 import adams.flow.core.ActorHandlerInfo;
 import adams.flow.core.MutableActorHandler;
+import nz.ac.waikato.cms.locator.ClassLocator;
 
 /**
  * Ancestor for group items that can contain other actors.

@@ -20,14 +20,14 @@
 package adams.flow.core;
 
 import adams.core.option.OptionUtils;
+import adams.core.option.WekaCommandLineHandler;
+import nz.ac.waikato.cms.locator.ClassLocator;
 import weka.attributeSelection.ASEvaluation;
 import weka.attributeSelection.ASSearch;
 import weka.classifiers.Classifier;
 import weka.clusterers.Clusterer;
 import weka.core.OptionHandler;
 import weka.filters.Filter;
-import adams.core.ClassLocator;
-import adams.core.option.WekaCommandLineHandler;
 
 import java.lang.reflect.Array;
 

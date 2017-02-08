@@ -19,10 +19,10 @@
  */
 package adams.gui.tools.previewbrowser;
 
-import adams.core.ClassCompare;
 import adams.core.ClassLister;
 import adams.core.io.FileUtils;
 import adams.core.option.AbstractOptionHandler;
+import nz.ac.waikato.cms.locator.ClassCompare;
 
 import javax.swing.JPanel;
 import java.io.File;

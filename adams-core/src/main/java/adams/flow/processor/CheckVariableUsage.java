@@ -19,7 +19,6 @@
  */
 package adams.flow.processor;
 
-import adams.core.ClassLocator;
 import adams.core.NamedCounter;
 import adams.core.Utils;
 import adams.core.VariableName;
@@ -36,6 +35,7 @@ import adams.core.option.OptionTraverser;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorUtils;
 import adams.gui.dialog.TextPanel;
+import nz.ac.waikato.cms.locator.ClassLocator;
 
 import java.awt.Component;
 import java.awt.Dimension;

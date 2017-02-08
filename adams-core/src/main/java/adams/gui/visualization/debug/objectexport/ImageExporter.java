@@ -20,10 +20,10 @@
 
 package adams.gui.visualization.debug.objectexport;
 
-import adams.core.ClassLocator;
 import adams.data.image.BufferedImageHelper;
 import adams.data.image.BufferedImageSupporter;
 import adams.data.io.output.JAIImageWriter;
+import nz.ac.waikato.cms.locator.ClassLocator;
 
 import java.awt.image.BufferedImage;
 import java.io.File;

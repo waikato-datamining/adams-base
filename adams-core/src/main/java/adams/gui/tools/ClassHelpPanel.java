@@ -21,7 +21,6 @@
 package adams.gui.tools;
 
 import adams.core.ClassLister;
-import adams.core.ClassLocator;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.BrowserHelper.DefaultHyperlinkListener;
@@ -31,6 +30,7 @@ import adams.gui.core.SearchableBaseList;
 import adams.gui.tools.classhelp.AbstractHelpGenerator;
 import adams.gui.tools.classhelp.DefaultHelpGenerator;
 import com.googlecode.jfilechooserbookmarks.gui.BaseScrollPane;
+import nz.ac.waikato.cms.locator.ClassLocator;
 
 import javax.swing.BorderFactory;
 import javax.swing.JEditorPane;

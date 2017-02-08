@@ -21,6 +21,7 @@
 package adams.core;
 
 import adams.core.io.FileUtils;
+import nz.ac.waikato.cms.locator.ClassLocator;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;

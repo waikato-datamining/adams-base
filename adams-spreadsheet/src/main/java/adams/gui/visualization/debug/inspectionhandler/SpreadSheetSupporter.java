@@ -19,9 +19,9 @@
  */
 package adams.gui.visualization.debug.inspectionhandler;
 
-import java.util.Hashtable;
+import nz.ac.waikato.cms.locator.ClassLocator;
 
-import adams.core.ClassLocator;
+import java.util.Hashtable;
 
 /**
  * Provides further insight into spreadsheet supporters.

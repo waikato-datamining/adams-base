@@ -20,11 +20,11 @@
 
 package adams.core.discovery.genetic;
 
-import adams.core.ClassLocator;
 import adams.core.base.BaseClassname;
 import adams.core.discovery.IntrospectionHelper;
 import adams.core.discovery.IntrospectionHelper.IntrospectionContainer;
 import adams.core.discovery.PropertyPath.PropertyContainer;
+import nz.ac.waikato.cms.locator.ClassLocator;
 import weka.classifiers.functions.GPD;
 
 import java.beans.PropertyDescriptor;
