@@ -14,8 +14,8 @@
  */
 
 /**
- * PropertyHelper.java
- * Copyright (C) 2015 University of Waikato, Hamilton, NZ
+ * IntrospectionHelper.java
+ * Copyright (C) 2015-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.core.discovery;
@@ -99,8 +99,8 @@ public class IntrospectionHelper {
     if (obj instanceof OptionHandler) {
       bi         = Introspector.getBeanInfo(obj.getClass());
       optionsTmp = ((OptionHandler) obj).getOptionManager().getOptionsList();
-      options    = new ArrayList<AbstractOption>();
-      propdesc   = new ArrayList<PropertyDescriptor>();
+      options    = new ArrayList<>();
+      propdesc   = new ArrayList<>();
       for (i = 0; i < optionsTmp.size(); i++) {
 	if (optionsTmp.get(i) instanceof AbstractArgumentOption) {
           if (useBlacklist) {
@@ -146,15 +146,17 @@ public class IntrospectionHelper {
 
     bi         = Introspector.getBeanInfo(cls);
     properties = bi.getPropertyDescriptors();
-    propdesc   = new ArrayList<PropertyDescriptor>();
+    propdesc   = new ArrayList<>();
     for (PropertyDescriptor desc: properties) {
       if ((desc == null) || (desc.getReadMethod() == null) || (desc.getWriteMethod() == null))
         continue;
       cl = desc.getReadMethod().getReturnType();
-      if (Editors.isBlacklisted(cl, cl.isArray()))
-        continue;
-      if (Editors.isBlacklisted(cls, desc.getDisplayName()))
-        continue;
+      if (useBlacklist) {
+        if (Editors.isBlacklisted(cl, cl.isArray()))
+          continue;
+        if (Editors.isBlacklisted(cls, desc.getDisplayName()))
+          continue;
+      }
       propdesc.add(desc);
     }
     properties = propdesc.toArray(new PropertyDescriptor[propdesc.size()]);
