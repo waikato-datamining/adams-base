@@ -1,0 +1,11 @@
+#Mon Oct 31 12:27:27 NZDT 2011
+#Simple report format (= Java properties file format)
+Class=4
+Class\tDataType=S
+Dataset-Name=anneal-orig
+Dataset-Name\tDataType=S
+Dataset-Row=1.0
+Dataset-Row\tDataType=N
+Display-ID2=1.anneal-orig
+Display-ID2\tDataType=S
+Parent\ ID=-1
