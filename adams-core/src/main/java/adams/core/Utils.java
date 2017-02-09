@@ -37,6 +37,7 @@ import adams.core.logging.LoggingObject;
 import adams.core.logging.LoggingSupporter;
 import adams.core.management.LocaleHelper;
 import gnu.trove.list.array.TByteArrayList;
+import nz.ac.waikato.cms.jenericcmdline.core.OptionUtils;
 
 import java.io.PrintWriter;
 import java.io.Serializable;
@@ -392,31 +393,7 @@ public class Utils {
    * @see		#unbackQuoteChars(String, String[], char[])
    */
   public static String backQuoteChars(String string, char[] find, String[] replace) {
-    int 		index;
-    StringBuilder 	newStr;
-    int			i;
-
-    if (string == null)
-      return null;
-    
-    for (i = 0; i < find.length; i++) {
-      if (string.indexOf(find[i]) > -1 ) {
-	newStr = new StringBuilder();
-	while ((index = string.indexOf(find[i])) > -1) {
-	  if (index > 0)
-	    newStr.append(string.substring(0, index));
-	  newStr.append(replace[i]);
-	  if ((index + 1) < string.length())
-	    string = string.substring(index + 1);
-	  else
-	    string = "";
-	}
-	newStr.append(string);
-	string = newStr.toString();
-      }
-    }
-
-    return string;
+    return OptionUtils.backQuoteChars(string, find, replace);
   }
 
   /**
@@ -428,10 +405,7 @@ public class Utils {
    * @see		#unbackQuoteChars(String)
    */
   public static String backQuoteChars(String string) {
-    return backQuoteChars(
-	string,
-	new char[]  {'\\',   '\'',  '\t',  '\n',  '\r',  '"'},
-	new String[]{"\\\\", "\\'", "\\t", "\\n", "\\r", "\\\""});
+    return OptionUtils.backQuoteChars(string);
   }
 
   /**
@@ -445,45 +419,7 @@ public class Utils {
    * @see		#backQuoteChars(String, char[], String[])
    */
   public static String unbackQuoteChars(String string, String[] find, char[] replace) {
-    int 		index;
-    StringBuilder 	newStr;
-    int[] 		pos;
-    int			curPos;
-    String 		str;
-    int			i;
-
-    if (string == null)
-      return null;
-    
-    pos = new int[find.length];
-
-    str = new String(string);
-    newStr = new StringBuilder();
-    while (str.length() > 0) {
-      // get positions and closest character to replace
-      curPos = str.length();
-      index  = -1;
-      for (i = 0; i < pos.length; i++) {
-	pos[i] = str.indexOf(find[i]);
-	if ( (pos[i] > -1) && (pos[i] < curPos) ) {
-	  index  = i;
-	  curPos = pos[i];
-	}
-      }
-
-      // replace character if found, otherwise finished
-      if (index == -1) {
-	newStr.append(str);
-	str = "";
-      }
-      else {
-	newStr.append(str.substring(0, pos[index]));
-	newStr.append(replace[index]);
-	str = str.substring(pos[index] + find[index].length());
-      }
-    }
-
-    return newStr.toString();
+    return OptionUtils.unbackQuoteChars(string, find, replace);
   }
 
   /**
@@ -497,10 +433,7 @@ public class Utils {
    * @see		#backQuoteChars(String)
    */
   public static String unbackQuoteChars(String string) {
-    return unbackQuoteChars(
-      string,
-      new String[]{"\\\\", "\\'", "\\t", "\\n", "\\r", "\\\""},
-      new char[]{'\\', '\'', '\t', '\n', '\r', '"'});
+    return OptionUtils.unbackQuoteChars(string);
   }
 
   /**

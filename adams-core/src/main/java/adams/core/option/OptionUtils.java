@@ -15,7 +15,7 @@
 
 /**
  * OptionUtils.java
- * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
@@ -305,64 +305,8 @@ public class OptionUtils {
    * @throws Exception 	in case of an unterminated string, unknown character or
    * 			a parse error
    */
-  public static String[] splitOptions(String quotedOptionString) throws Exception{
-    List<String> 	result;
-    StringBuilder 	str;
-    int 		i;
-    String 		optStr;
-
-    result = new ArrayList<String>();
-    str    = new StringBuilder(quotedOptionString);
-
-    while (true) {
-      // trimLeft
-      i = 0;
-      while ((i < str.length()) && (Character.isWhitespace(str.charAt(i))))
-	i++;
-      str = str.delete(0, i);
-
-      // stop when str is empty
-      if (str.length() == 0)
-	break;
-
-      // if str start with a double quote
-      if (str.charAt(0) == '"') {
-	// find the first not anti-slashed double quote
-	i = 1;
-	while (i < str.length()) {
-	  if (str.charAt(i) == str.charAt(0))
-	    break;
-	  if (str.charAt(i) == '\\') {
-	    i += 1;
-	    if (i >= str.length())
-	      throw new Exception("String should not finish with \\");
-	  }
-	  i += 1;
-	}
-
-	if (i >= str.length())
-	  throw new Exception("Quote parse error.");
-
-	// add the found string to the option vector (without quotes)
-	optStr = str.substring(1, i);
-	optStr = Utils.unbackQuoteChars(optStr);
-	result.add(optStr);
-	str = str.delete(0, i+1);
-      }
-      else {
-	// find first whiteSpace
-	i = 0;
-	while ((i < str.length()) && (!Character.isWhitespace(str.charAt(i))))
-	  i++;
-
-	// add the found string to the option vector
-	optStr = str.substring(0, i);
-	result.add(optStr);
-	str = str.delete(0, i);
-      }
-    }
-
-    return result.toArray(new String[result.size()]);
+  public static String[] splitOptions(String quotedOptionString) throws Exception {
+    return nz.ac.waikato.cms.jenericcmdline.core.OptionUtils.splitOptions(quotedOptionString);
   }
 
   /**
@@ -373,39 +317,7 @@ public class OptionUtils {
    * @return the string containing all options.
    */
   public static String joinOptions(String[] optionArray) {
-    boolean 		escape;
-    StringBuilder 	optionString;
-    int			i;
-    int			n;
-
-    optionString = new StringBuilder();
-    for (i = 0; i < optionArray.length; i++) {
-      escape = false;
-
-      // an invalid option encountered?
-      if (optionArray[i] == null)
-	continue;
-
-      if (optionArray[i].equals(""))
-	escape = true;
-
-      for (n = 0; n < optionArray[i].length(); n++) {
-        if ( Character.isWhitespace(optionArray[i].charAt(n))
-          || (optionArray[i].charAt(n) == '"')
-          || (optionArray[i].charAt(n) == '\'') ) {
-	  escape = true;
-	  break;
-	}
-      }
-
-      if (escape)
-	optionString.append('"' + Utils.backQuoteChars(optionArray[i]) + '"');
-      else
-	optionString.append(optionArray[i]);
-
-      optionString.append(" ");
-    }
-    return optionString.toString().trim();
+    return nz.ac.waikato.cms.jenericcmdline.core.OptionUtils.joinOptions(optionArray);
   }
 
   /**

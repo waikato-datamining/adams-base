@@ -254,7 +254,13 @@
       <artifactId>jclasslocator</artifactId>
       <version>0.0.4</version>
     </dependency>
-    
+
+    <dependency>
+      <groupId>com.github.waikato</groupId>
+      <artifactId>jeneric-cmdline</artifactId>
+      <version>0.0.1</version>
+    </dependency>
+
     <dependency>
       <groupId>org.jodd</groupId>
       <artifactId>jodd-core</artifactId>
