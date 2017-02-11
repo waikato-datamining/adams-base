@@ -21,6 +21,7 @@
 package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
+import adams.core.Utils;
 import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
@@ -330,8 +331,8 @@ public class ConfusionMatrix
     Map<String,Integer> predIndices;
     String 		actLabel;
     String 		predLabel;
-    int			actIndex;
-    int			predIndex;
+    Integer		actIndex;
+    Integer		predIndex;
     int			i;
     int			n;
 
@@ -377,6 +378,10 @@ public class ConfusionMatrix
 	predLabel = row.getCell(predCol).getContent();
 	actIndex  = actIndices.get(actLabel);
 	predIndex = predIndices.get(predLabel);
+        if (predIndex == null) {
+          getLogger().warning("Predicted label '" + predLabel + "' not present in actual labels: " + Utils.flatten(actLabels, ", "));
+          continue;
+        }
 	matrix.getCell(actIndex, predIndex).setContent(matrix.getCell(actIndex, predIndex).toLong() + 1);
       }
 
