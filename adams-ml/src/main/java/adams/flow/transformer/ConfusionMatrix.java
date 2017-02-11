@@ -21,13 +21,13 @@
 package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
-import adams.core.Utils;
 import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetColumnIndex;
 import adams.flow.core.Token;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -327,12 +327,13 @@ public class ConfusionMatrix
     SpreadSheet		matrix;
     Row			row;
     List<String> 	actLabels;
+    List<String> 	predLabels;
     Map<String,Integer> actIndices;
     Map<String,Integer> predIndices;
     String 		actLabel;
     String 		predLabel;
-    Integer		actIndex;
-    Integer		predIndex;
+    int			actIndex;
+    int			predIndex;
     int			i;
     int			n;
 
@@ -352,12 +353,18 @@ public class ConfusionMatrix
       actIndices = new HashMap<>();
       predIndices = new HashMap<>();
       actLabels = sheet.getCellValues(actCol);
+      predLabels = sheet.getCellValues(predCol);
+      for (String label: actLabels) {
+	if (!predLabels.contains(label))
+	  predLabels.add(label);
+      }
+      Collections.sort(predLabels);
       matrix = new DefaultSpreadSheet();
       row = matrix.getHeaderRow();
       row.addCell("0").setContentAsString("x");
-      for (i = 0; i < actLabels.size(); i++) {
-	row.addCell("" + (i + 1)).setContentAsString(m_PredictedPrefix + actLabels.get(i));
-	predIndices.put(actLabels.get(i), i+1);
+      for (i = 0; i < predLabels.size(); i++) {
+	row.addCell("" + (i + 1)).setContentAsString(m_PredictedPrefix + predLabels.get(i));
+	predIndices.put(predLabels.get(i), i+1);
       }
       for (i = 0; i < actLabels.size(); i++) {
 	row = matrix.addRow();
@@ -378,10 +385,6 @@ public class ConfusionMatrix
 	predLabel = row.getCell(predCol).getContent();
 	actIndex  = actIndices.get(actLabel);
 	predIndex = predIndices.get(predLabel);
-        if (predIndex == null) {
-          getLogger().warning("Predicted label '" + predLabel + "' not present in actual labels: " + Utils.flatten(actLabels, ", "));
-          continue;
-        }
 	matrix.getCell(actIndex, predIndex).setContent(matrix.getCell(actIndex, predIndex).toLong() + 1);
       }
 
