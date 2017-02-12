@@ -28,6 +28,7 @@ import adams.gui.core.SortableAndSearchableTable;
 import adams.gui.core.TableRowRange;
 import adams.gui.core.UndoHandlerWithQuickAccess;
 import adams.gui.dialog.ApprovalDialog;
+import adams.gui.visualization.core.PopupMenuCustomizer;
 import adams.gui.visualization.instances.instancestable.InstancesTablePopupMenuItemHelper;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 import weka.core.Instance;
@@ -73,6 +74,12 @@ public class InstancesTable
   /** the listeners for changes. */
   protected HashSet<ChangeListener> m_ChangeListeners;
 
+  /** the customizer for the table header popup menu. */
+  protected PopupMenuCustomizer m_HeaderPopupMenuCustomizer;
+
+  /** the customizer for the table cells popup menu. */
+  protected PopupMenuCustomizer m_CellPopupMenuCustomizer;
+
   /**
    * Initializes the table with the data.
    *
@@ -98,10 +105,12 @@ public class InstancesTable
   protected void initGUI() {
     super.initGUI();
 
-    m_FileChooser     = new WekaFileChooser();
-    m_Renderer        = new AttributeValueCellRenderer();
-    m_LastSetup       = new HashMap<>();
-    m_ChangeListeners = new HashSet<>();
+    m_FileChooser               = new WekaFileChooser();
+    m_Renderer                  = new AttributeValueCellRenderer();
+    m_LastSetup                 = new HashMap<>();
+    m_ChangeListeners           = new HashSet<>();
+    m_HeaderPopupMenuCustomizer = null;
+    m_CellPopupMenuCustomizer   = null;
     setAutoResizeMode(SortableAndSearchableTable.AUTO_RESIZE_OFF);
     addHeaderPopupMenuListener((MouseEvent e) -> showHeaderPopup(e));
     addCellPopupMenuListener((MouseEvent e) -> showCellPopup(e));
@@ -314,6 +323,9 @@ public class InstancesTable
 
     InstancesTablePopupMenuItemHelper.addToPopupMenu(this, menu, false, actRow, row, actCol);
 
+    if (m_HeaderPopupMenuCustomizer != null)
+      m_HeaderPopupMenuCustomizer.customizePopupMenu(e, menu);
+
     return menu;
   }
 
@@ -432,7 +444,46 @@ public class InstancesTable
 
     InstancesTablePopupMenuItemHelper.addToPopupMenu(this, menu, true, actRow, row, actCol);
 
+    if (m_CellPopupMenuCustomizer != null)
+      m_CellPopupMenuCustomizer.customizePopupMenu(e, menu);
+
     return menu;
+  }
+
+  /**
+   * Sets the popup menu customizer to use (for the header).
+   *
+   * @param value	the customizer, null to remove it
+   */
+  public void setHeaderPopupMenuCustomizer(PopupMenuCustomizer value) {
+    m_HeaderPopupMenuCustomizer = value;
+  }
+
+  /**
+   * Returns the current popup menu customizer (for the header).
+   *
+   * @return		the customizer, null if none set
+   */
+  public PopupMenuCustomizer getHeaderPopupMenuCustomizer() {
+    return m_HeaderPopupMenuCustomizer;
+  }
+
+  /**
+   * Sets the popup menu customizer to use (for the cells).
+   *
+   * @param value	the customizer, null to remove it
+   */
+  public void setCellPopupMenuCustomizer(PopupMenuCustomizer value) {
+    m_CellPopupMenuCustomizer = value;
+  }
+
+  /**
+   * Returns the current popup menu customizer (for the cells).
+   *
+   * @return		the customizer, null if none set
+   */
+  public PopupMenuCustomizer getCellPopupMenuCustomizer() {
+    return m_CellPopupMenuCustomizer;
   }
 
   /**
