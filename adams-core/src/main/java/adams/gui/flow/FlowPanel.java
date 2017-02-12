@@ -65,6 +65,7 @@ import adams.gui.flow.tree.keyboardaction.AbstractKeyboardAction;
 import adams.gui.sendto.SendToActionSupporter;
 import adams.gui.sendto.SendToActionUtils;
 import adams.gui.tools.VariableManagementPanel;
+import adams.gui.visualization.debug.StoragePanel;
 
 import javax.swing.JComponent;
 import javax.swing.JMenu;

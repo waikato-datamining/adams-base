@@ -17,7 +17,7 @@
  * StoragePanel.java
  * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
  */
-package adams.gui.flow;
+package adams.gui.visualization.debug;
 
 import adams.core.CleanUpHandler;
 import adams.core.Utils;
@@ -37,7 +37,6 @@ import adams.gui.core.SortableAndSearchableTableWithButtons;
 import adams.gui.event.SearchEvent;
 import adams.gui.event.SearchListener;
 import adams.gui.goe.EditorHelper;
-import adams.gui.visualization.debug.InspectionPanel;
 import adams.gui.visualization.debug.objectexport.AbstractObjectExporter;
 import adams.gui.visualization.debug.objectrenderer.AbstractObjectRenderer;
 

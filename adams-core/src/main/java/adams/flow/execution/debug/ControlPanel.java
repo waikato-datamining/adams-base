@@ -38,7 +38,6 @@ import adams.gui.core.TextEditorPanel;
 import adams.gui.flow.FlowPanel;
 import adams.gui.flow.FlowTabbedPane;
 import adams.gui.flow.FlowTreeHandler;
-import adams.gui.flow.StoragePanel;
 import adams.gui.flow.tree.Tree;
 import adams.gui.goe.FlowHelper;
 import adams.gui.goe.GenericObjectEditorPanel;
@@ -46,6 +45,7 @@ import adams.gui.tools.ExpressionWatchPanel;
 import adams.gui.tools.ExpressionWatchPanel.ExpressionType;
 import adams.gui.tools.VariableManagementPanel;
 import adams.gui.visualization.debug.InspectionPanel;
+import adams.gui.visualization.debug.StoragePanel;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
 import javax.swing.BorderFactory;
