@@ -15,7 +15,7 @@
 
 /*
  * ReportFactory.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.report;
@@ -1801,6 +1801,9 @@ public class ReportFactory {
           GUIHelper.showErrorMessage(result, "Failed to save text to file: " + filename);
       });
       textArea.addToButtonsPanel(button);
+    }
+    else {
+      split.setBottomComponentHidden(true);
     }
 
     return result;
