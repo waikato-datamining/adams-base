@@ -15,7 +15,7 @@
 
 /**
  * InstancesTable.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.instances;
@@ -29,6 +29,7 @@ import adams.gui.core.TableRowRange;
 import adams.gui.core.UndoHandlerWithQuickAccess;
 import adams.gui.dialog.ApprovalDialog;
 import adams.gui.visualization.instances.instancestable.InstancesTablePopupMenuItemHelper;
+import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.Undoable;
@@ -366,6 +367,29 @@ public class InstancesTable
 
     menuitem = new JMenuItem("Invert selection", GUIHelper.getEmptyIcon());
     menuitem.addActionListener((ActionEvent ae) -> invertRowSelection());
+    menu.add(menuitem);
+
+    menu.addSeparator();
+
+    if (getSelectedRowCount() > 1)
+      menuitem = new JMenuItem("Copy rows");
+    else
+      menuitem = new JMenuItem("Copy row");
+    menuitem.setIcon(GUIHelper.getIcon("copy_row.gif"));
+    menuitem.setEnabled(getSelectedRowCount() > 0);
+    menuitem.addActionListener((ActionEvent ae) -> copyToClipboard());
+    menu.add(menuitem);
+
+    menuitem = new JMenuItem("Copy cell");
+    menuitem.setIcon(GUIHelper.getIcon("copy_cell.gif"));
+    menuitem.setEnabled(getSelectedRowCount() == 1);
+    menuitem.addActionListener((ActionEvent ae) -> {
+      if (row == -1)
+	return;
+      if (col == -1)
+	return;
+      ClipboardHelper.copyToClipboard("" + getValueAt(row, col));
+    });
     menu.add(menuitem);
 
     menu.addSeparator();
