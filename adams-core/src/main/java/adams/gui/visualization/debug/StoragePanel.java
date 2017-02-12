@@ -15,7 +15,7 @@
 
 /**
  * StoragePanel.java
- * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.debug;
 
@@ -28,6 +28,7 @@ import adams.gui.chooser.ObjectExporterFileChooser;
 import adams.gui.core.AbstractBaseTableModel;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.BasePanel;
+import adams.gui.core.BasePopupMenu;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.BaseTable;
 import adams.gui.core.GUIHelper;
@@ -35,20 +36,19 @@ import adams.gui.core.SearchPanel;
 import adams.gui.core.SearchPanel.LayoutType;
 import adams.gui.core.SortableAndSearchableTableWithButtons;
 import adams.gui.event.SearchEvent;
-import adams.gui.event.SearchListener;
 import adams.gui.goe.EditorHelper;
 import adams.gui.visualization.debug.objectexport.AbstractObjectExporter;
 import adams.gui.visualization.debug.objectrenderer.AbstractObjectRenderer;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
 import java.beans.PropertyEditorManager;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -56,7 +56,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
 
 /**
  * Displays the current items stored in the temp storage of a flow.
@@ -150,7 +149,7 @@ public class StoragePanel
       m_Data = new String[size][3];
       index  = 0;
       // regular
-      keys   = new ArrayList<StorageName>(m_Storage.keySet());
+      keys   = new ArrayList<>(m_Storage.keySet());
       Collections.sort(keys);
       for (StorageName key: keys) {
 	m_Data[index][0] = "";
@@ -162,7 +161,7 @@ public class StoragePanel
       caches = m_Storage.caches();
       while (caches.hasNext()) {
 	cache = caches.next();
-	keys  = new Vector<StorageName>(m_Storage.keySet(cache));
+	keys  = new ArrayList<>(m_Storage.keySet(cache));
 	Collections.sort(keys);
 	for (StorageName key: keys) {
 	  m_Data[index][0] = cache;
@@ -314,7 +313,7 @@ public class StoragePanel
   @Override
   protected void initGUI() {
     JPanel panelTable;
-    
+
     super.initGUI();
 
     setLayout(new BorderLayout());
@@ -336,61 +335,43 @@ public class StoragePanel
     m_Table      = new SortableAndSearchableTableWithButtons(m_TableModel);
     m_Table.setAutoResizeMode(BaseTable.AUTO_RESIZE_OFF);
     m_Table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-    m_Table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-      public void valueChanged(ListSelectionEvent e) {
-	updateButtons();
-	updatePreview();
-      }
+    m_Table.getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> {
+      updateButtons();
+      updatePreview();
     });
+    m_Table.addCellPopupMenuListener((MouseEvent e) -> showTablePopup(e));
     panelTable.add(m_Table, BorderLayout.CENTER);
 
     m_ButtonInspect = new JButton("Inspect...");
     m_ButtonInspect.setMnemonic('I');
-    m_ButtonInspect.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        inspect();
-      }
-    });
+    m_ButtonInspect.addActionListener((ActionEvent e) -> inspect());
     m_Table.addToButtonsPanel(m_ButtonInspect);
     m_Table.setDoubleClickButton(m_ButtonInspect);
 
     m_ButtonEdit = new JButton("Edit...");
     m_ButtonEdit.setMnemonic('E');
-    m_ButtonEdit.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        edit();
-      }
-    });
+    m_ButtonEdit.addActionListener((ActionEvent e) -> edit());
     m_Table.addToButtonsPanel(m_ButtonEdit);
 
     m_ButtonExport = new JButton("Export...");
     m_ButtonExport.setMnemonic('x');
-    m_ButtonExport.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	export();
-      }
-    });
+    m_ButtonExport.addActionListener((ActionEvent e) -> export());
     m_Table.addToButtonsPanel(m_ButtonExport);
 
     m_CheckBoxPreview = new JCheckBox("Preview");
     m_CheckBoxPreview.setSelected(true);
-    m_CheckBoxPreview.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	m_SplitPane.setBottomComponentHidden(!m_CheckBoxPreview.isSelected());
-	updatePreview();
-      }
+    m_CheckBoxPreview.addActionListener((ActionEvent e) -> {
+      m_SplitPane.setBottomComponentHidden(!m_CheckBoxPreview.isSelected());
+      updatePreview();
     });
     m_Table.addToButtonsPanel(m_CheckBoxPreview);
 
     // search
     m_PanelSearch = new SearchPanel(LayoutType.HORIZONTAL, true);
-    m_PanelSearch.addSearchListener(new SearchListener() {
-      public void searchInitiated(SearchEvent e) {
-	m_Table.getComponent().search(
-	    e.getParameters().getSearchString(),
-	    e.getParameters().isRegExp());
-      }
+    m_PanelSearch.addSearchListener((SearchEvent e) -> {
+      m_Table.getComponent().search(
+	e.getParameters().getSearchString(),
+	e.getParameters().isRegExp());
     });
     panelTable.add(m_PanelSearch, BorderLayout.SOUTH);
 
@@ -418,14 +399,14 @@ public class StoragePanel
   protected void updatePreview() {
     Object			obj;
     AbstractObjectRenderer	renderer;
-    
+
     if (!m_PanelPreview.isVisible())
       return;
     if (m_Table.getSelectedRowCount() != 1)
       return;
     obj = m_TableModel.getObject(
-	(String) m_Table.getValueAt(m_Table.getSelectedRow(), 0),
-	(String) m_Table.getValueAt(m_Table.getSelectedRow(), 1));
+      (String) m_Table.getValueAt(m_Table.getSelectedRow(), 0),
+      (String) m_Table.getValueAt(m_Table.getSelectedRow(), 1));
 
     m_PanelPreview.removeAll();
     renderer = AbstractObjectRenderer.getRenderer(obj).get(0);
@@ -433,6 +414,38 @@ public class StoragePanel
     m_PanelPreview.invalidate();
     m_PanelPreview.validate();
     m_PanelPreview.repaint();
+  }
+
+  /**
+   * Shows the preview in a new dialog.
+   */
+  protected void newPreview() {
+    Object			obj;
+    AbstractObjectRenderer	renderer;
+    JPanel 			preview;
+    BaseDialog			dialog;
+
+    if (m_Table.getSelectedRowCount() != 1)
+      return;
+    obj = m_TableModel.getObject(
+      (String) m_Table.getValueAt(m_Table.getSelectedRow(), 0),
+      (String) m_Table.getValueAt(m_Table.getSelectedRow(), 1));
+
+    preview = new JPanel(new BorderLayout());
+    renderer = AbstractObjectRenderer.getRenderer(obj).get(0);
+    renderer.render(obj, preview);
+
+    if (getParentDialog() != null)
+      dialog = new BaseDialog(getParentDialog());
+    else
+      dialog= new BaseDialog(getParentFrame());
+    dialog.setDefaultCloseOperation(BaseDialog.DISPOSE_ON_CLOSE);
+    dialog.getContentPane().setLayout(new BorderLayout());
+    dialog.getContentPane().add(preview, BorderLayout.CENTER);
+    dialog.setLocationRelativeTo(this);
+    dialog.setTitle("Preview (" + getSelectedObjectID() + ")");
+    dialog.setSize(GUIHelper.getDefaultDialogDimension());
+    dialog.setVisible(true);
   }
 
   /**
@@ -475,20 +488,49 @@ public class StoragePanel
    * Brings up the dialog for inspecting an item.
    */
   protected void inspect() {
-    if (m_DialogInspect == null) {
-      m_PanelInspect = new InspectionPanel();
+    inspect(false);
+  }
+
+  /**
+   * Brings up the dialog for inspecting an item.
+   *
+   * @param newDialog	true if to create a new dialog instead of using {@link #m_DialogInspect}
+   */
+  protected void inspect(boolean newDialog) {
+    BaseDialog		dialog;
+    InspectionPanel	inspectionPanel;
+
+    if (newDialog) {
+      inspectionPanel = new InspectionPanel();
       if (getParentDialog() != null)
-	m_DialogInspect = new BaseDialog(getParentDialog());
+	dialog = new BaseDialog(getParentDialog());
       else
-	m_DialogInspect = new BaseDialog(getParentFrame());
-      m_DialogInspect.getContentPane().setLayout(new BorderLayout());
-      m_DialogInspect.getContentPane().add(m_PanelInspect, BorderLayout.CENTER);
-      m_DialogInspect.setLocationRelativeTo(this);
+	dialog= new BaseDialog(getParentFrame());
+      dialog.setDefaultCloseOperation(BaseDialog.DISPOSE_ON_CLOSE);
+      dialog.getContentPane().setLayout(new BorderLayout());
+      dialog.getContentPane().add(inspectionPanel, BorderLayout.CENTER);
+      dialog.setLocationRelativeTo(this);
+      dialog.setTitle("Inspect (" + getSelectedObjectID() + ")");
+      inspectionPanel.setCurrent(getSelectedObject());
+      dialog.setSize(GUIHelper.getDefaultDialogDimension());
+      dialog.setVisible(true);
     }
-    m_DialogInspect.setTitle("Inspect (" + getSelectedObjectID() + ")");
-    m_PanelInspect.setCurrent(getSelectedObject());
-    m_DialogInspect.setSize(GUIHelper.getDefaultDialogDimension());
-    m_DialogInspect.setVisible(true);
+    else {
+      if (m_DialogInspect == null) {
+	m_PanelInspect = new InspectionPanel();
+	if (getParentDialog() != null)
+	  m_DialogInspect = new BaseDialog(getParentDialog());
+	else
+	  m_DialogInspect = new BaseDialog(getParentFrame());
+	m_DialogInspect.getContentPane().setLayout(new BorderLayout());
+	m_DialogInspect.getContentPane().add(m_PanelInspect, BorderLayout.CENTER);
+	m_DialogInspect.setLocationRelativeTo(this);
+      }
+      m_DialogInspect.setTitle("Inspect (" + getSelectedObjectID() + ")");
+      m_PanelInspect.setCurrent(getSelectedObject());
+      m_DialogInspect.setSize(GUIHelper.getDefaultDialogDimension());
+      m_DialogInspect.setVisible(true);
+    }
   }
 
   /**
@@ -559,6 +601,42 @@ public class StoragePanel
    */
   public StorageHandler getHandler() {
     return m_Handler;
+  }
+
+  /**
+   * Shows popup for table.
+   *
+   * @param e		the mouse event
+   */
+  protected void showTablePopup(MouseEvent e) {
+    BasePopupMenu	menu;
+    JMenuItem		menuitem;
+
+    menu = new BasePopupMenu();
+
+    menuitem = new JMenuItem("Inspect...");
+    menuitem.setEnabled(m_Table.getSelectedRowCount() == 1);
+    menuitem.addActionListener((ActionEvent ae) -> inspect());
+    menu.add(menuitem);
+
+    menuitem = new JMenuItem("Inspect (separate dialog)...");
+    menuitem.setEnabled(m_Table.getSelectedRowCount() == 1);
+    menuitem.addActionListener((ActionEvent ae) -> inspect(true));
+    menu.add(menuitem);
+
+    menu.addSeparator();
+
+    menuitem = new JMenuItem("Preview");
+    menuitem.setEnabled(m_Table.getSelectedRowCount() == 1);
+    menuitem.addActionListener((ActionEvent ae) -> updatePreview());
+    menu.add(menuitem);
+
+    menuitem = new JMenuItem("Preview (separate dialog)");
+    menuitem.setEnabled(m_Table.getSelectedRowCount() == 1);
+    menuitem.addActionListener((ActionEvent ae) -> newPreview());
+    menu.add(menuitem);
+
+    menu.show(m_Table.getComponent(), e.getX(), e.getY());
   }
 
   /**
