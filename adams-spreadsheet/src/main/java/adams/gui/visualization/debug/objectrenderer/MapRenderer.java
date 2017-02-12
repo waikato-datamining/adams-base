@@ -23,8 +23,7 @@ package adams.gui.visualization.debug.objectrenderer;
 import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
-import adams.gui.core.BaseScrollPane;
-import adams.gui.core.SpreadSheetTable;
+import adams.gui.dialog.SpreadSheetPanel;
 import nz.ac.waikato.cms.locator.ClassLocator;
 
 import javax.swing.JPanel;
@@ -65,8 +64,7 @@ public class MapRenderer
     Map			map;
     SpreadSheet		sheet;
     Row			row;
-    SpreadSheetTable 	table;
-    BaseScrollPane	scrollPane;
+    SpreadSheetPanel    sheetPanel;
 
     map   = (Map) obj;
     sheet = new DefaultSpreadSheet();
@@ -78,9 +76,10 @@ public class MapRenderer
       row.addCell("K").setNative(key);
       row.addCell("V").setNative(map.get(key));
     }
-    table      = new SpreadSheetTable(sheet);
-    scrollPane = new BaseScrollPane(table);
-    panel.add(scrollPane, BorderLayout.CENTER);
+    sheetPanel = new SpreadSheetPanel();
+    sheetPanel.setSpreadSheet(sheet);
+    sheetPanel.setShowSearch(true);
+    panel.add(sheetPanel, BorderLayout.CENTER);
 
     return null;
   }

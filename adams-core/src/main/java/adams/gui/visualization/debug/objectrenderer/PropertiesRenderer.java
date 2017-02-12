@@ -22,7 +22,10 @@ package adams.gui.visualization.debug.objectrenderer;
 
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.PropertiesTableModel;
+import adams.gui.core.SearchPanel;
+import adams.gui.core.SearchPanel.LayoutType;
 import adams.gui.core.SortableAndSearchableTable;
+import adams.gui.event.SearchEvent;
 import nz.ac.waikato.cms.locator.ClassLocator;
 
 import javax.swing.JPanel;
@@ -60,10 +63,11 @@ public class PropertiesRenderer
    */
   @Override
   protected String doRender(Object obj, JPanel panel) {
-    Properties 			props;
-    PropertiesTableModel	model;
-    SortableAndSearchableTable	table;
-    BaseScrollPane		scrollPane;
+    Properties 				props;
+    PropertiesTableModel		model;
+    final SortableAndSearchableTable	table;
+    SearchPanel				panelSearch;
+    BaseScrollPane			scrollPane;
 
     props      = (Properties) obj;
     model      = new PropertiesTableModel(props);
@@ -71,8 +75,13 @@ public class PropertiesRenderer
     table.setAutoResizeMode(SortableAndSearchableTable.AUTO_RESIZE_OFF);
     table.setShowSimpleCellPopupMenu(true);
     table.setOptimalColumnWidth();
+    panelSearch = new SearchPanel(LayoutType.HORIZONTAL, false);
+    panelSearch.addSearchListener((SearchEvent e) -> {
+      table.search(e.getParameters().getSearchString(), e.getParameters().isRegExp());
+    });
     scrollPane = new BaseScrollPane(table);
     panel.add(scrollPane, BorderLayout.CENTER);
+    panel.add(panelSearch, BorderLayout.SOUTH);
 
     return null;
   }

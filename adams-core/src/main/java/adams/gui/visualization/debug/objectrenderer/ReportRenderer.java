@@ -15,13 +15,12 @@
 
 /**
  * ReportRenderer.java
- * Copyright (C) 2015 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.debug.objectrenderer;
 
 import adams.data.report.Report;
-import adams.gui.core.BaseScrollPane;
 import adams.gui.visualization.report.ReportFactory;
 import nz.ac.waikato.cms.locator.ClassLocator;
 
@@ -60,13 +59,9 @@ public class ReportRenderer
   @Override
   protected String doRender(Object obj, JPanel panel) {
     Report			report;
-    ReportFactory.Table		table;
-    BaseScrollPane		scrollPane;
 
-    report     = (Report) obj;
-    table      = ReportFactory.getTable(report);
-    scrollPane = new BaseScrollPane(table);
-    panel.add(scrollPane, BorderLayout.CENTER);
+    report = (Report) obj;
+    panel.add(ReportFactory.getPanel(report, false), BorderLayout.CENTER);
 
     return null;
   }
