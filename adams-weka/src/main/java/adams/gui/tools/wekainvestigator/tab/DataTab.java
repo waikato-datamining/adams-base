@@ -20,21 +20,30 @@
 
 package adams.gui.tools.wekainvestigator.tab;
 
+import adams.gui.core.GUIHelper;
 import adams.gui.core.SearchPanel;
 import adams.gui.core.SearchPanel.LayoutType;
 import adams.gui.event.SearchEvent;
 import adams.gui.event.WekaInvestigatorDataEvent;
 import adams.gui.tools.wekainvestigator.InvestigatorPanel;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
+import adams.gui.tools.wekainvestigator.data.MemoryContainer;
+import adams.gui.visualization.core.PopupMenuCustomizer;
 import adams.gui.visualization.instances.InstancesTable;
 import adams.gui.visualization.instances.InstancesTableModel;
 import com.googlecode.jfilechooserbookmarks.gui.BaseScrollPane;
+import weka.core.Instance;
+import weka.core.Instances;
 
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseEvent;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -49,7 +58,7 @@ import java.util.Set;
  */
 public class DataTab
   extends AbstractInvestigatorTabWithEditableDataTable
-  implements ChangeListener {
+  implements ChangeListener, PopupMenuCustomizer {
 
   private static final long serialVersionUID = -94945456385486233L;
 
@@ -151,6 +160,7 @@ public class DataTab
     for (DataContainer cont: cached) {
       table = m_TableCache.remove(cont);
       table.removeChangeListener(this);
+      table.setCellPopupMenuCustomizer(null);
       m_TimestampCache.remove(cont);
     }
     // 2. remove containers that were modified
@@ -159,6 +169,7 @@ public class DataTab
 	if (!cont.lastUpdated().equals(m_TimestampCache.get(cont))) {
 	  table = m_TableCache.remove(cont);
 	  table.removeChangeListener(this);
+	  table.setCellPopupMenuCustomizer(null);
 	  m_TimestampCache.remove(cont);
 	}
       }
@@ -168,8 +179,10 @@ public class DataTab
       for (int row: e.getRows()) {
 	con = getData().get(row);
 	table = m_TableCache.remove(con);
-	if (table != null)
+	if (table != null) {
 	  table.removeChangeListener(this);
+	  table.setCellPopupMenuCustomizer(null);
+	}
 	m_TimestampCache.remove(con);
       }
     }
@@ -205,6 +218,7 @@ public class DataTab
       // table
       if (m_TableCache.containsKey(cont)) {
 	m_CurrentTable = m_TableCache.get(cont);
+	m_CurrentTable.setCellPopupMenuCustomizer(this);
 	setOptimal     = false;
       }
       else {
@@ -212,6 +226,7 @@ public class DataTab
 	model.setUndoHandler(getData().get(index));
 	model.setShowAttributeIndex(true);
 	m_CurrentTable = new InstancesTable(model);
+	m_CurrentTable.setCellPopupMenuCustomizer(this);
 	m_CurrentTable.setUndoEnabled(true);
 	m_CurrentTable.addChangeListener(this);
 	m_TableCache.put(cont, m_CurrentTable);
@@ -250,5 +265,45 @@ public class DataTab
       fireDataChange(new WekaInvestigatorDataEvent(getOwner(), WekaInvestigatorDataEvent.ROWS_MODIFIED, getSelectedRows()[0]));
     else
       fireDataChange(new WekaInvestigatorDataEvent(getOwner(), WekaInvestigatorDataEvent.TABLE_CHANGED));
+  }
+
+  /**
+   * Optional customizing of the menu that is about to be popped up.
+   *
+   * @param e		The mouse event
+   * @param menu	The menu to customize.
+   */
+  @Override
+  public void customizePopupMenu(MouseEvent e, JPopupMenu menu) {
+    JMenuItem	menuitem;
+
+    menuitem = new JMenuItem("Insert as dataset", GUIHelper.getIcon("new.gif"));
+    menuitem.setEnabled((m_CurrentTable != null) && (m_CurrentTable.getSelectedRowCount() > 0));
+    menuitem.addActionListener((ActionEvent ae) -> insertAsDataset());
+    menu.add(menuitem);
+  }
+
+  /**
+   * Inserts the currently selected rows as a new dataset.
+   */
+  protected void insertAsDataset() {
+    Instances		data;
+    Instances		newData;
+    int[]		indices;
+    int			i;
+    MemoryContainer	cont;
+
+    if ((m_CurrentTable == null) || (m_CurrentTable.getSelectedRowCount() == 0))
+      return;
+
+    indices = m_CurrentTable.getSelectedRows();
+    data    = m_CurrentTable.getInstances();
+    newData = new Instances(data, indices.length);
+    for (i = 0; i < indices.length; i++)
+      newData.add((Instance) data.instance(m_CurrentTable.getActualRow(indices[i])).copy());
+
+    cont = new MemoryContainer(newData);
+    getData().add(cont);
+    fireDataChange(new WekaInvestigatorDataEvent(getOwner(), WekaInvestigatorDataEvent.ROWS_ADDED, getData().size() - 1));
   }
 }
