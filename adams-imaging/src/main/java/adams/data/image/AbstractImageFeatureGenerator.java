@@ -15,7 +15,7 @@
 
 /*
  * AbstractImageFeatureGenerator.java
- * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.image;
@@ -51,7 +51,10 @@ public abstract class AbstractImageFeatureGenerator<T extends AbstractImageConta
 
   /** the feature converter to use. */
   protected AbstractFeatureConverter m_Converter;
-  
+
+  /** the prefix to use for the fields. */
+  protected String m_Prefix;
+
   /** fields to add to the output data. */
   protected Field[] m_Fields;
 
@@ -68,6 +71,10 @@ public abstract class AbstractImageFeatureGenerator<T extends AbstractImageConta
     m_OptionManager.add(
 	    "converter", "converter",
 	    new SpreadSheet());
+
+    m_OptionManager.add(
+	    "prefix", "prefix",
+	    "");
 
     m_OptionManager.add(
 	    "field", "fields",
@@ -116,6 +123,35 @@ public abstract class AbstractImageFeatureGenerator<T extends AbstractImageConta
    */
   public String converterTipText() {
     return "The feature converter to use to produce the output data.";
+  }
+
+  /**
+   * Sets the (optional) prefix for the feature names.
+   *
+   * @param value	the prefix
+   */
+  public void setPrefix(String value) {
+    m_Prefix = value;
+    reset();
+  }
+
+  /**
+   * Returns the (optional) prefix for the feature names.
+   *
+   * @return		the prefix
+   */
+  public String getPrefix() {
+    return m_Prefix;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String prefixTipText() {
+    return "The (optional) prefix to use for the feature names.";
   }
 
   /**
@@ -225,7 +261,7 @@ public abstract class AbstractImageFeatureGenerator<T extends AbstractImageConta
     int			i;
     
     result = header;
-    
+
     // notes
     for (i = 0; i < m_Notes.length; i++)
       header.add(m_Notes[i].getValue(), DataType.STRING);
@@ -233,7 +269,13 @@ public abstract class AbstractImageFeatureGenerator<T extends AbstractImageConta
     // fields
     for (i = 0; i < m_Fields.length; i++)
       header.add(m_Fields[i].getName(), m_Fields[i].getDataType());
-    
+
+    // prefix
+    if (!m_Prefix.isEmpty()) {
+      for (i = 0; i < header.size(); i++)
+	header.rename(i, m_Prefix + header.getName(i));
+    }
+
     return result;
   }
   
