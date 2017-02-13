@@ -15,7 +15,7 @@
 
 /*
  * AbstractFilter.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -28,6 +28,7 @@ import adams.data.filter.TrainableBatchFilter;
 import adams.db.DatabaseConnectionHandler;
 import adams.event.VariableChangeEvent;
 import adams.event.VariableChangeEvent.Type;
+import adams.flow.core.FlowContextHandler;
 import adams.flow.core.Token;
 import adams.flow.core.VariableMonitor;
 import adams.flow.provenance.ActorType;
@@ -63,6 +64,9 @@ public abstract class AbstractFilter
   /** whether the database connection has been updated. */
   protected boolean m_DatabaseConnectionUpdated;
 
+  /** whether the flow context has been updated. */
+  protected boolean m_FlowContextUpdated;
+
   /**
    * Returns a string describing the object.
    *
@@ -97,6 +101,7 @@ public abstract class AbstractFilter
     super.reset();
 
     m_DatabaseConnectionUpdated = false;
+    m_FlowContextUpdated        = false;
   }
 
   /**
@@ -262,6 +267,12 @@ public abstract class AbstractFilter
       m_DatabaseConnectionUpdated = true;
       if (m_Filter instanceof DatabaseConnectionHandler)
 	((DatabaseConnectionHandler) m_Filter).setDatabaseConnection(getDatabaseConnection());
+    }
+
+    if (!m_FlowContextUpdated) {
+      m_FlowContextUpdated = true;
+      if (m_Filter instanceof FlowContextHandler)
+	((FlowContextHandler) m_Filter).setFlowContext(this);
     }
 
     if (m_InputToken.getPayload() instanceof DataContainer) {
