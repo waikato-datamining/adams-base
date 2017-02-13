@@ -15,7 +15,7 @@
 
 /**
  * ActualVsPredictedPlot.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.sink;
@@ -189,6 +189,11 @@ import java.util.HashMap;
  * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts the range '...'; column names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last; numeric indices can be enforced by preceding them with '#' (eg '#12'); column names can be surrounded by double quotes.
  * </pre>
  * 
+ * <pre>-plot-name &lt;java.lang.String&gt; (property: plotName)
+ * &nbsp;&nbsp;&nbsp;The (optional) name for the plot.
+ * &nbsp;&nbsp;&nbsp;default: 
+ * </pre>
+ * 
  * <pre>-limit &lt;NONE|ACTUAL|SPECIFIED&gt; (property: limit)
  * &nbsp;&nbsp;&nbsp;The type of limit to impose on the axes; NONE just uses the range determined 
  * &nbsp;&nbsp;&nbsp;from the data; ACTUAL uses the min&#47;max from the actual column for both axes;
@@ -245,6 +250,9 @@ public class ActualVsPredictedPlot
 
   /** the column with the error values (optional). */
   protected SpreadSheetColumnIndex m_Error;
+
+  /** the (optional) plot name. */
+  protected String m_PlotName;
 
   /** the limit type. */
   protected LimitType m_Limit;
@@ -321,6 +329,10 @@ public class ActualVsPredictedPlot
     m_OptionManager.add(
       "additional", "additional",
       new SpreadSheetColumnRange(""));
+
+    m_OptionManager.add(
+      "plot-name", "plotName",
+      "");
 
     m_OptionManager.add(
       "limit", "limit",
@@ -590,6 +602,35 @@ public class ActualVsPredictedPlot
   }
 
   /**
+   * Sets the (optional) name for the plot.
+   *
+   * @param value	the name
+   */
+  public void setPlotName(String value) {
+    m_PlotName = value;
+    reset();
+  }
+
+  /**
+   * Returns the (optional) name for the plot.
+   *
+   * @return		the name
+   */
+  public String getPlotName() {
+    return m_PlotName;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String plotNameTipText() {
+    return "The (optional) name for the plot.";
+  }
+
+  /**
    * Sets the limit to impose on the axes.
    *
    * @param value	the limit type
@@ -728,6 +769,7 @@ public class ActualVsPredictedPlot
     result += QuickInfoHelper.toString(this, "predicted", m_Predicted, ", predicted: ");
     result += QuickInfoHelper.toString(this, "error", (m_Error.isEmpty() ? "-none-" : m_Error), ", error: ");
     result += QuickInfoHelper.toString(this, "additional", (m_Additional.isEmpty() ? "-none-" : m_Additional), ", additional: ");
+    result += QuickInfoHelper.toString(this, "plotName", (m_PlotName.isEmpty() ? "-default-" : m_PlotName), ", name: ");
     result += QuickInfoHelper.toString(this, "limit", m_Limit, ", limit: ");
     result += QuickInfoHelper.toString(this, "diameter", m_Diameter, ", diameter: ");
 
@@ -893,7 +935,9 @@ public class ActualVsPredictedPlot
     }
 
     // create plot data
-    if (sheet.hasName())
+    if (!m_PlotName.isEmpty())
+      id = m_PlotName;
+    else if (sheet.hasName())
       id = sheet.getName();
     else
       id = "act vs pred";
