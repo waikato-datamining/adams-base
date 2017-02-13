@@ -15,7 +15,7 @@
 
 /**
  * HashSet.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.condition.bool;
 
@@ -27,7 +27,7 @@ import adams.flow.transformer.HashSetInit;
 
 /**
  <!-- globalinfo-start -->
- * Evaluates to true if the payload of the current token is present in the specified hashset.
+ * Evaluates to true if the payload of the current token or the specified string (if non-empty) is present in the specified hashset.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -40,6 +40,12 @@ import adams.flow.transformer.HashSetInit;
  * <pre>-storage-name &lt;adams.flow.control.StorageName&gt; (property: storageName)
  * &nbsp;&nbsp;&nbsp;The name of the hashset in the internal storage.
  * &nbsp;&nbsp;&nbsp;default: hashset
+ * </pre>
+ * 
+ * <pre>-value &lt;java.lang.String&gt; (property: value)
+ * &nbsp;&nbsp;&nbsp;The value (if non-empty) to look for in the hashset, takes precedence of 
+ * &nbsp;&nbsp;&nbsp;the token passing through.
+ * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
  <!-- options-end -->
@@ -56,6 +62,9 @@ public class HashSet
   /** the name of the lookup table in the internal storage. */
   protected StorageName m_StorageName;
 
+  /** the value to check. */
+  protected String m_Value;
+
   /**
    * Returns a string describing the object.
    *
@@ -63,9 +72,9 @@ public class HashSet
    */
   @Override
   public String globalInfo() {
-    return 
-	"Evaluates to true if the payload of the current token is present "
-	+ "in the specified hashset.";
+    return
+      "Evaluates to true if the payload of the current token or the specified "
+	+ "string (if non-empty) is present in the specified hashset.";
   }
 
   /**
@@ -78,8 +87,12 @@ public class HashSet
     m_OptionManager.add(
 	    "storage-name", "storageName",
 	    new StorageName("hashset"));
-    
+
+    m_OptionManager.add(
+	    "value", "value",
+	    "");
   }
+
   /**
    * Returns the quick info string to be displayed in the flow editor.
    *
@@ -87,7 +100,12 @@ public class HashSet
    */
   @Override
   public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "storageName", m_StorageName, "storage: ");
+    String	result;
+
+    result = QuickInfoHelper.toString(this, "storageName", m_StorageName, "storage: ");
+    result += QuickInfoHelper.toString(this, "value", (m_Value.isEmpty() ? "-from token-" : m_Value), ", value: ");
+
+    return result;
   }
 
   /**
@@ -120,6 +138,37 @@ public class HashSet
   }
 
   /**
+   * Sets the (optional) value to look for in the hashset, takes precedence
+   * over the token passing through.
+   *
+   * @param value	the value
+   */
+  public void setValue(String value) {
+    m_Value = value;
+    reset();
+  }
+
+  /**
+   * Returns the (optional) value to look for in the hashset, takes precedence
+   * over the token passing through.
+   *
+   * @return		the value
+   */
+  public String getValue() {
+    return m_Value;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String valueTipText() {
+    return "The value (if non-empty) to look for in the hashset, takes precedence of the token passing through.";
+  }
+
+  /**
    * Returns the class that the consumer accepts.
    *
    * @return		adams.flow.core.Unknown.class
@@ -149,7 +198,10 @@ public class HashSet
     }
     else {
       hashset = (java.util.HashSet) owner.getStorageHandler().getStorage().get(m_StorageName);
-      value   = token.getPayload();
+      if (m_Value.isEmpty())
+	value = token.getPayload();
+      else
+        value = m_Value;
       result  = hashset.contains(value);
     }
 
