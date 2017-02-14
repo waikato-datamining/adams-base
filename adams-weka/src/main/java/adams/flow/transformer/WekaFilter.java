@@ -15,7 +15,7 @@
 
 /*
  * WekaFilter.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -23,12 +23,12 @@ package adams.flow.transformer;
 import adams.core.QuickInfoHelper;
 import adams.core.SerializationHelper;
 import adams.core.Shortening;
-import adams.core.Utils;
 import adams.core.io.ModelFileHandler;
 import adams.core.io.PlaceholderFile;
 import adams.core.option.OptionUtils;
 import adams.flow.container.OptionalContainerOutput;
 import adams.flow.container.WekaFilterContainer;
+import adams.flow.core.FlowContextHandler;
 import adams.flow.core.Token;
 import adams.flow.provenance.ActorType;
 import adams.flow.provenance.Provenance;
@@ -159,6 +159,9 @@ public class WekaFilter
 
   /** whether the filter has been initialized. */
   protected boolean m_Initialized;
+
+  /** whether the flow context has been updated. */
+  protected boolean m_FlowContextUpdated;
 
   /**
    * Returns a string describing the object.
@@ -428,7 +431,8 @@ public class WekaFilter
   protected void reset() {
     super.reset();
 
-    m_Initialized = false;
+    m_Initialized        = false;
+    m_FlowContextUpdated = false;
   }
 
   /**
@@ -514,6 +518,12 @@ public class WekaFilter
 	      throw new IllegalStateException("Filter file does not exist: " + m_ModelFile);
 	    }
 	  }
+	}
+
+	if (!m_FlowContextUpdated) {
+	  m_FlowContextUpdated = true;
+	  if (m_ActualFilter instanceof FlowContextHandler)
+	    ((FlowContextHandler) m_ActualFilter).setFlowContext(this);
 	}
 
 	// filter data
