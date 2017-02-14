@@ -15,7 +15,7 @@
 
 /*
  * AbstractStandalone.java
- * Copyright (C) 2009-2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.standalone;
@@ -33,4 +33,26 @@ public abstract class AbstractStandalone
 
   /** for serialization. */
   private static final long serialVersionUID = 2925242664771318860L;
+
+  /**
+   * Pre-execute hook.
+   * <br><br>
+   * Forcing update of variables, if any detected to ensure variables have
+   * been set in standalone block.
+   *
+   * @return		null if everything is fine, otherwise error message
+   */
+  @Override
+  protected String preExecute() {
+    String	result;
+
+    result = super.preExecute();
+
+    if (result == null) {
+      if ((m_DetectedVariables.size() > 0) || (m_DetectedObjectVariables.size() > 0))
+	updateVariables();
+    }
+
+    return result;
+  }
 }
