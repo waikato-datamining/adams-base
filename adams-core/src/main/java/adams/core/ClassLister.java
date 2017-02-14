@@ -73,7 +73,6 @@ public class ClassLister
     super();
     setPackages(Environment.getInstance().read(ClassListerDefinition.KEY));
     setBlacklist(Environment.getInstance().read(ClassListerBlacklistDefinition.KEY));
-    setOnlyDefaultConstructor(true);
     initialize();
   }
 
