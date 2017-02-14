@@ -50,7 +50,7 @@ public abstract class AbstractStandalone
 
     if (result == null) {
       if ((m_DetectedVariables.size() > 0) || (m_DetectedObjectVariables.size() > 0))
-	updateVariables();
+	getOptionManager().updateVariableValues(true);
     }
 
     return result;
