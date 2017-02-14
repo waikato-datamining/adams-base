@@ -41,6 +41,13 @@ public class ClassHelp
 
   /**
    * Initializes the menu item.
+   */
+  public ClassHelp() {
+    this(null);
+  }
+
+  /**
+   * Initializes the menu item.
    *
    * @param owner	the owning application
    */

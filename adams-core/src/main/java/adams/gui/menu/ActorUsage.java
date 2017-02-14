@@ -63,7 +63,14 @@ public class ActorUsage
 
   /** the flow editor for displaying flows. */
   protected adams.gui.flow.FlowEditorPanel m_FlowEditor;
-  
+
+  /**
+   * Initializes the menu item.
+   */
+  public ActorUsage() {
+    this(null);
+  }
+
   /**
    * Initializes the menu item.
    *

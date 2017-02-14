@@ -22,11 +22,11 @@
 package adams.gui.menu;
 
 import adams.core.base.BaseRegExp;
-import adams.core.io.lister.LocalDirectoryLister;
 import adams.core.io.FileComparator;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
+import adams.core.io.lister.LocalDirectoryLister;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.AbstractBasicMenuItemDefinition;
 import adams.gui.application.UserMode;
@@ -54,6 +54,13 @@ public class Documentation
 
   /** for serialization. */
   private static final long serialVersionUID = -6548349613973153076L;
+
+  /**
+   * Initializes the menu item.
+   */
+  public Documentation() {
+    this(null);
+  }
 
   /**
    * Initializes the menu item.

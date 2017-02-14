@@ -38,6 +38,13 @@ public class Homepage
 
   /**
    * Initializes the menu item.
+   */
+  public Homepage() {
+    this(null);
+  }
+
+  /**
+   * Initializes the menu item.
    *
    * @param owner	the owning application
    */
