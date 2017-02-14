@@ -487,7 +487,7 @@ public class TreeOperations
     getOwner().updateCurrentEditing((Node) currNode.getParent(), currNode);
     actorOld = currNode.getActor().shallowCopy();
     dialog   = GenericObjectEditorDialog.createDialog(getOwner());
-    editable = getOwner().isEditable() && currNode.isEditable();
+    editable = getOwner().isEditable() && !getOwner().isDebug() && currNode.isEditable();
     if (editable)
       dialog.setTitle("Edit...");
     else

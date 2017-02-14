@@ -15,7 +15,7 @@
 
 /*
  * Renderer.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.flow.tree;
@@ -540,7 +540,7 @@ public class Renderer
 	parent = pNode.getActor();
       icon = getIcon(parent, ((Node) value).getActor(), (!expanded && !leaf));
       if (icon != null) {
-	if (tree.isEditable() && tree.isEnabled() && cNode.isEditable()) {
+	if ((tree.isEditable() && tree.isEnabled() && cNode.isEditable()) || (!tree.isEditable() && ((Tree) tree).isDebug())) {
 	  setIcon(icon);
 	}
 	else if (!tree.isEditable() || !cNode.isEditable()) {

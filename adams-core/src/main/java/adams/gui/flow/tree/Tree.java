@@ -15,7 +15,7 @@
 
 /*
  * Tree.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.flow.tree;
@@ -207,6 +207,9 @@ public class Tree
   /** the classes for the tree popup. */
   protected List<Class> m_NodePopupClasses;
 
+  /** whether it is a debug flow (ie copy). */
+  protected boolean m_Debug;
+
   /**
    * Initializes the tree.
    *
@@ -269,6 +272,7 @@ public class Tree
     m_AllowKeyboardShortcuts      = true;
     m_KeyboardActions             = new ArrayList<>();
     m_NodePopupClasses            = null;
+    m_Debug                       = false;
 
     putClientProperty("JTree.lineStyle", "None");
     setLargeModel(true);
@@ -998,7 +1002,7 @@ public class Tree
     }
 
     // is the node editable
-    result.editable = isEditable() && result.nodeAtMouseLoc.isEditable();
+    result.editable = isEditable() && !isDebug() && result.nodeAtMouseLoc.isEditable();
 
     // can the node be deleted?
     result.canRemove = result.editable && (result.numSel > 0) && canRemoveActors(result.selPaths);
@@ -1103,6 +1107,8 @@ public class Tree
    * @param comment	the comment for the undo point
    */
   public void addUndoPoint(String comment) {
+    if (isDebug())
+      return;
     if (getOwner() != null)
       getOwner().addUndoPoint("Saving undo data...", comment);
   }
@@ -1336,8 +1342,11 @@ public class Tree
    * Sets whether the tree is modified or not.
    *
    * @param value	true if tree is modified
+   * @see		#isDebug()
    */
   public void setModified(boolean value) {
+    if (isDebug())
+      return;
     m_Modified = value;
   }
 
@@ -2003,6 +2012,24 @@ public class Tree
   public void updateLastTemplate(AbstractActorTemplate template, TreeOperations.InsertPosition position) {
     m_LastTemplate               = template;
     m_LastTemplateInsertPosition = position;
+  }
+
+  /**
+   * Sets the debug flag.
+   *
+   * @param value	true if it is a debug flow, ie copy
+   */
+  public void setDebug(boolean value) {
+    m_Debug = value;
+  }
+
+  /**
+   * Returns the debug flag.
+   *
+   * @return		true if it is a debug flow, ie copy
+   */
+  public boolean isDebug() {
+    return m_Debug;
   }
 
   /**

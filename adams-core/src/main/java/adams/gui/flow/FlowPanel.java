@@ -15,7 +15,7 @@
 
 /*
  * FlowPanel.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.flow;
@@ -757,8 +757,11 @@ public class FlowPanel
    * Sets whether the flow is modified or not.
    *
    * @param value	true if the flow is to be flagged as modified
+   * @see		#isDebug()
    */
   public void setModified(boolean value) {
+    if (isDebug())
+      return;
     getTree().setModified(value);
     update();
   }
@@ -1572,7 +1575,38 @@ public class FlowPanel
   public void clearNotification() {
     m_PanelNotification.clearNotification();
   }
-  
+
+  /**
+   * Sets the debug flag.
+   *
+   * @param value	true if it is a debug flow, ie copy
+   */
+  public void setDebug(boolean value) {
+    m_Tree.setDebug(value);
+    if (isDebug())
+      setTabIcon("run_debug.png");
+    else
+      setTabIcon(null);
+  }
+
+  /**
+   * Returns the debug flag.
+   *
+   * @return		true if it is a debug flow, ie copy
+   */
+  public boolean isDebug() {
+    return m_Tree.isDebug();
+  }
+
+  /**
+   * Returns whether an Undo manager is currently available.
+   *
+   * @return		true if an undo manager is set and not debugged
+   */
+  public boolean isUndoSupported() {
+    return super.isUndoSupported() && !isDebug();
+  }
+
   /**
    * Returns the properties that define the editor.
    *
