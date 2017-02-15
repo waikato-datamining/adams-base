@@ -23,7 +23,6 @@ package weka.core.converters;
 import adams.core.Utils;
 import adams.core.io.FileUtils;
 import adams.data.DateFormatString;
-import adams.data.io.input.SimpleArffSpreadSheetReader;
 import adams.data.spreadsheet.SpreadSheetUtils;
 import adams.env.Environment;
 import weka.core.Attribute;
@@ -76,7 +75,7 @@ public class SimpleArffLoader
    * @return		the description
    */
   public String globalInfo() {
-    return "Uses the simple ARFF loading functionality of ADAMS. No incremental loading possible.";
+    return "Uses the simple ARFF loading functionality of ADAMS. No incremental loading possible. Does not support relational attributes.";
   }
 
   /**
@@ -96,7 +95,7 @@ public class SimpleArffLoader
    */
   @Override
   public String[] getFileExtensions() {
-    return new SimpleArffSpreadSheetReader().getFormatExtensions();
+    return new String[]{".arff", ".arff.gz"};
   }
 
   /**
@@ -106,7 +105,7 @@ public class SimpleArffLoader
    */
   @Override
   public String getFileDescription() {
-    return new SimpleArffSpreadSheetReader().getFormatDescription();
+    return "Simple ARFF data files";
   }
 
   /**
@@ -226,7 +225,7 @@ public class SimpleArffLoader
     if (result.get("type").equals("" + Attribute.NOMINAL)) {
       current = current.substring(current.indexOf('{') + 1);
       current = current.substring(0, current.indexOf('}'));
-      result.put("values", current);
+      result.put("values", current.trim());
     }
 
     return result;
@@ -243,6 +242,7 @@ public class SimpleArffLoader
     Map<String,String> 	data;
     String[]		values;
     int			type;
+    int			i;
 
     result = null;
 
@@ -260,7 +260,9 @@ public class SimpleArffLoader
       case Attribute.NOMINAL:
 	if (!data.containsKey("values"))
 	  throw new IllegalStateException("No values listed for nominal attribute: " + line);
-	values = SpreadSheetUtils.split(data.get("values"), ',', true, '\'', true);
+	values = SpreadSheetUtils.split(data.get("values"), ',', false, '\'', true);
+	for (i = 0; i < values.length; i++)
+	  values[i] = Utils.unquote(values[i].trim());
 	result = new Attribute(data.get("name"), new ArrayList<>(Arrays.asList(values)));
 	break;
       case Attribute.STRING:
@@ -313,6 +315,7 @@ public class SimpleArffLoader
 	  lower = line.toLowerCase();
 	  if (lower.startsWith(KEYWORD_RELATION)) {
 	    relName = line.substring(KEYWORD_RELATION.length()).trim();
+	    relName = Utils.unquote(relName);
 	  }
 	  else if (lower.startsWith(KEYWORD_ATTRIBUTE)) {
 	    att = createAttribute(line);
@@ -330,8 +333,7 @@ public class SimpleArffLoader
 	    values[i] = weka.core.Utils.missingValue();
 	    if (cells[i].equals("?"))
 	      continue;
-	    if (!cells[i].equals("'?'"))
-	      cells[i] = Utils.unquote(cells[i]);
+            cells[i] = Utils.unquote(cells[i]);
 	    switch (result.attribute(i).type()) {
 	      case Attribute.NUMERIC:
 		values[i] = Double.parseDouble(cells[i]);

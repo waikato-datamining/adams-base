@@ -36,6 +36,7 @@ import weka.core.Instances;
 import weka.core.converters.AArffLoader;
 import weka.core.converters.AbstractFileLoader;
 import weka.core.converters.ConverterUtils.DataSource;
+import weka.core.converters.SimpleArffLoader;
 import weka.core.converters.URLSourcedLoader;
 
 import java.io.File;
@@ -180,7 +181,7 @@ public class WekaFileReader
 
     m_OptionManager.add(
 	    "loader", "customLoader",
-	    new AArffLoader());
+	    new SimpleArffLoader());
 
     m_OptionManager.add(
 	    "output-type", "outputType",
@@ -444,11 +445,14 @@ public class WekaFileReader
         }
         else {
           if (isArff) {
-            loader = new AArffLoader();
-            if (url != null)
+            if (url != null) {
+              loader = new AArffLoader();
               ((URLSourcedLoader) loader).setURL(url.toString());
-            else
+            }
+            else {
+              loader = new SimpleArffLoader();
               loader.setFile(file);
+            }
             m_Source = new DataSource(loader);
           }
           else {

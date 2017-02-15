@@ -20,10 +20,10 @@
 
 package adams.gui.chooser;
 
-import weka.core.converters.AArffLoader;
 import weka.core.converters.AbstractFileLoader;
 import weka.core.converters.AbstractFileSaver;
 import weka.core.converters.ArffSaver;
+import weka.core.converters.SimpleArffLoader;
 import weka.gui.GenericObjectEditor;
 
 import java.io.File;
@@ -217,7 +217,7 @@ public class WekaFileChooser
    */
   @Override
   protected AbstractFileLoader getDefaultReader() {
-    return new AArffLoader();
+    return new SimpleArffLoader();
   }
 
   /**
