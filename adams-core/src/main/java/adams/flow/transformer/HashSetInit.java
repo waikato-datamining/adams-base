@@ -15,7 +15,7 @@
 
 /**
  * HashSetInit.java
- * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
 
@@ -288,7 +288,7 @@ public class HashSetInit
       }
     }
     else {
-      array   = (Object) m_InputToken.getPayload();
+      array   = m_InputToken.getPayload();
       hashset = new HashSet();
       for (i = 0; i < Array.getLength(array); i++) {
 	val = Array.get(array, i);
@@ -296,6 +296,7 @@ public class HashSetInit
 	if (isLoggingEnabled())
 	  getLogger().info("Adding: '" + val + "'");
       }
+      getStorageHandler().getStorage().put(m_StorageName, hashset);
     }
     
     if (result == null)
