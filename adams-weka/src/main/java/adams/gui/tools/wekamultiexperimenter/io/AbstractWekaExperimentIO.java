@@ -27,6 +27,8 @@ import weka.experiment.Experiment;
 import weka.gui.experiment.ExperimenterDefaults;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Ancestor for classes that handle loading/saving of experiments.
@@ -94,5 +96,23 @@ public abstract class AbstractWekaExperimentIO<T extends Experiment>
    */
   public Class getExperimentClass() {
     return Experiment.class;
+  }
+
+  /**
+   * Returns the supported file extensions.
+   *
+   * @param read	whether for reading or writing
+   * @return		the extensions (no dot)
+   */
+  public String[] getSupportedFileExtensions(boolean read) {
+    List<String> 	result;
+
+    result = new ArrayList<>();
+    result.add(Experiment.FILE_EXTENSION.substring(1));
+    if (KOML.isPresent())
+      result.add(KOML.FILE_EXTENSION.substring(1));
+    result.add("xml");
+
+    return result.toArray(new String[result.size()]);
   }
 }

@@ -19,12 +19,19 @@
  */
 package adams.gui.tools.wekamultiexperimenter.io;
 
+import adams.core.ClassLister;
+import adams.core.io.FileFormatHandler;
+import adams.data.io.input.AbstractAdamsExperimentReader;
+import adams.data.io.output.AbstractAdamsExperimentWriter;
 import adams.gui.chooser.AdamsExperimentFileChooser;
 import adams.gui.chooser.BaseFileChooser;
 import adams.gui.tools.wekamultiexperimenter.ExperimenterPanel;
 import adams.gui.tools.wekamultiexperimenter.experiment.AbstractExperiment;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Ancestor for classes that handle loading/saving of experiments.
@@ -61,5 +68,41 @@ public abstract class AbstractAdamsExperimentIO<T extends AbstractExperiment>
    */
   public Class getExperimentClass() {
     return AbstractExperiment.class;
+  }
+
+  /**
+   * Returns the supported file extensions.
+   *
+   * @param read	whether for reading or writing
+   * @return		the extensions (no dot)
+   */
+  public String[] getSupportedFileExtensions(boolean read) {
+    List<String> 	result;
+    Class[]		classes;
+    FileFormatHandler	handler;
+    String[]		exts;
+
+    result = new ArrayList<>();
+    if (read)
+      classes = ClassLister.getSingleton().getClasses(AbstractAdamsExperimentReader.class);
+    else
+      classes = ClassLister.getSingleton().getClasses(AbstractAdamsExperimentWriter.class);
+
+    for (Class cls: classes) {
+      try {
+	handler = (FileFormatHandler) cls.newInstance();
+	exts    = handler.getFormatExtensions();
+	for (String ext: exts) {
+	  if (!result.contains(ext))
+	    result.add(ext);
+	}
+      }
+      catch (Exception e) {
+	// ignored
+      }
+    }
+    Collections.sort(result);
+
+    return result.toArray(new String[result.size()]);
   }
 }

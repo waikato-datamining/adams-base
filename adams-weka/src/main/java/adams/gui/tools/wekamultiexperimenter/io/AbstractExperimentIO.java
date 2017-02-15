@@ -19,7 +19,7 @@
  */
 package adams.gui.tools.wekamultiexperimenter.io;
 
-import adams.core.logging.LoggingObject;
+import adams.core.option.AbstractOptionHandler;
 import adams.gui.chooser.BaseFileChooser;
 import adams.gui.tools.wekamultiexperimenter.ExperimenterPanel;
 import adams.gui.tools.wekamultiexperimenter.runner.AbstractExperimentRunner;
@@ -34,7 +34,7 @@ import java.io.File;
  * @param <T> the type of experiment
  */
 public abstract class AbstractExperimentIO<T>
-  extends LoggingObject {
+  extends AbstractOptionHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = -1358953690042787633L;
@@ -100,4 +100,12 @@ public abstract class AbstractExperimentIO<T>
    * @return		the super class/interface
    */
   public abstract Class getExperimentClass();
+
+  /**
+   * Returns the supported file extensions.
+   *
+   * @param read	whether for reading or writing
+   * @return		the extensions (no dot)
+   */
+  public abstract String[] getSupportedFileExtensions(boolean read);
 }

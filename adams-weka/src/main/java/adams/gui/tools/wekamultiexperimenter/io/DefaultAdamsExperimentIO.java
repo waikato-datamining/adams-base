@@ -19,6 +19,7 @@
  */
 package adams.gui.tools.wekamultiexperimenter.io;
 
+import adams.core.Utils;
 import adams.core.io.PlaceholderFile;
 import adams.data.io.input.AbstractAdamsExperimentReader;
 import adams.data.io.output.AbstractAdamsExperimentWriter;
@@ -45,8 +46,22 @@ public class DefaultAdamsExperimentIO
   private static final long serialVersionUID = -7678768486122004558L;
 
   /**
+   * Returns a string describing the object.
+   *
+   * @return 			a description suitable for displaying in the gui
+   */
+  @Override
+  public String globalInfo() {
+    return
+      "Handles ADAMS experiments.\n"
+        + "Supported file extensions:\n"
+        + "- read: " + Utils.flatten(getSupportedFileExtensions(true), ",") + "\n"
+        + "- write: " + Utils.flatten(getSupportedFileExtensions(false), ",");
+  }
+
+  /**
    * Creates a new experiment.
-   * 
+   *
    * @return		the generated experiment, null if failed
    */
   @Override
@@ -56,7 +71,7 @@ public class DefaultAdamsExperimentIO
 
   /**
    * Loads an experiment.
-   * 
+   *
    * @param file	the file to load
    * @return		the experiment, null if failed to load
    */
@@ -82,7 +97,7 @@ public class DefaultAdamsExperimentIO
 
   /**
    * Saves an experiment.
-   * 
+   *
    * @param exp		the experiment to save
    * @param file	the file to save to
    * @return		false if failed to save
@@ -108,10 +123,10 @@ public class DefaultAdamsExperimentIO
       return false;
     }
   }
-  
+
   /**
    * Creates an experiment runner thread object.
-   * 
+   *
    * @param owner	the owning experimenter
    * @return		the runner
    * @throws Exception	if failed to instantiate runner

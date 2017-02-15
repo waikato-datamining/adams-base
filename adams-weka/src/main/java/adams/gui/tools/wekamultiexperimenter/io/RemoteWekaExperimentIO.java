@@ -19,6 +19,7 @@
  */
 package adams.gui.tools.wekamultiexperimenter.io;
 
+import adams.core.Utils;
 import adams.gui.tools.wekamultiexperimenter.ExperimenterPanel;
 import adams.gui.tools.wekamultiexperimenter.runner.AbstractExperimentRunner;
 import adams.gui.tools.wekamultiexperimenter.runner.RemoteWekaExperimentRunner;
@@ -39,6 +40,20 @@ public class RemoteWekaExperimentIO
 
   /** for serialization. */
   private static final long serialVersionUID = -7678768486122004558L;
+
+  /**
+   * Returns a string describing the object.
+   *
+   * @return 			a description suitable for displaying in the gui
+   */
+  @Override
+  public String globalInfo() {
+    return
+      "Handles native Weka remote experiments.\n"
+        + "Supported file extensions:\n"
+        + "- read: " + Utils.flatten(getSupportedFileExtensions(true), ",") + "\n"
+        + "- write: " + Utils.flatten(getSupportedFileExtensions(false), ",");
+  }
 
   /**
    * Creates a new experiment.
