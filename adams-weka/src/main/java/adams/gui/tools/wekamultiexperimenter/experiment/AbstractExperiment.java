@@ -992,10 +992,12 @@ public abstract class AbstractExperiment
    * Clears the progress of the experiment.
    */
   protected void clearProgress() {
-    if (m_StatusMessageHandler instanceof StatusMessageHandlerExt)
-      ((StatusMessageHandlerExt) m_StatusMessageHandler).showStatus(false, null);
-    else
-      m_StatusMessageHandler.showStatus(null);
+    if (m_StatusMessageHandler != null) {
+      if (m_StatusMessageHandler instanceof StatusMessageHandlerExt)
+        ((StatusMessageHandlerExt) m_StatusMessageHandler).showStatus(false, null);
+      else
+        m_StatusMessageHandler.showStatus(null);
+    }
   }
 
   /**
