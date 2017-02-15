@@ -107,7 +107,7 @@ public class SimpleArffSpreadSheetReader
    */
   @Override
   public String getFormatDescription() {
-    return "ARFF file";
+    return "Simple ARFF file";
   }
 
   /**
