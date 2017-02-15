@@ -15,7 +15,7 @@
 
 /**
  * AbstractWekaExperimentIO.java
- * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.wekamultiexperimenter.io;
 
@@ -85,5 +85,14 @@ public abstract class AbstractWekaExperimentIO<T extends Experiment>
       result.setFileFilter(xml);
     
     return result;
+  }
+
+  /**
+   * Returns the experiment superclass/interface.
+   *
+   * @return		the super class/interface
+   */
+  public Class getExperimentClass() {
+    return Experiment.class;
   }
 }

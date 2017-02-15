@@ -15,7 +15,7 @@
 
 /**
  * AbstractAdamsExperimentIO.java
- * Copyright (C) 2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.wekamultiexperimenter.io;
 
@@ -52,5 +52,14 @@ public abstract class AbstractAdamsExperimentIO<T extends AbstractExperiment>
       new File(ExperimenterPanel.getProperties().getPath("Setups.InitialDir", "%c")));
 
     return result;
+  }
+
+  /**
+   * Returns the experiment superclass/interface.
+   *
+   * @return		the super class/interface
+   */
+  public Class getExperimentClass() {
+    return AbstractExperiment.class;
   }
 }

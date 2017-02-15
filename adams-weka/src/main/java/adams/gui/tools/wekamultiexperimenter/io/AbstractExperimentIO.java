@@ -93,4 +93,11 @@ public abstract class AbstractExperimentIO<T>
    * @throws Exception	if failed to instantiate runner
    */
   public abstract AbstractExperimentRunner createRunner(ExperimenterPanel owner) throws Exception;
+
+  /**
+   * Returns the experiment superclass/interface.
+   *
+   * @return		the super class/interface
+   */
+  public abstract Class getExperimentClass();
 }
