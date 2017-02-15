@@ -21,7 +21,9 @@
 package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
+import adams.data.report.MutableReportHandler;
 import adams.data.report.Report;
+import adams.data.report.ReportHandler;
 import adams.flow.control.Storage;
 import adams.flow.control.StorageName;
 import adams.flow.control.StorageUser;
@@ -34,7 +36,7 @@ import adams.flow.core.Token;
 
 /**
  <!-- globalinfo-start -->
- * Allows the report passing through to to be merged with another one.
+ * Allows the report (or the report of a report handler) passing through to to be merged with another one.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -148,7 +150,7 @@ public class MergeReport
    */
   @Override
   public String globalInfo() {
-    return "Allows the report passing through to to be merged with another one.";
+    return "Allows the report (or the report of a report handler) passing through to to be merged with another one.";
   }
 
   /**
@@ -341,7 +343,7 @@ public class MergeReport
    */
   @Override
   public Class[] accepts() {
-    return new Class[]{Report.class};
+    return new Class[]{Report.class, ReportHandler.class};
   }
 
   /**
@@ -351,7 +353,7 @@ public class MergeReport
    */
   @Override
   public Class[] generates() {
-    return new Class[]{Report.class};
+    return new Class[]{Report.class, ReportHandler.class};
   }
 
   /**
@@ -369,11 +371,19 @@ public class MergeReport
     Report			merged;
     Report			other;
     Storage			storage;
+    ReportHandler		handler;
 
     result = null;
 
-    current = (Report) m_InputToken.getPayload();
-    other   = null;
+    if (m_InputToken.getPayload() instanceof ReportHandler) {
+      handler = (ReportHandler) m_InputToken.getPayload();
+      current = handler.getReport();
+    }
+    else {
+      handler = null;
+      current = (Report) m_InputToken.getPayload();
+    }
+    other = null;
     switch (m_Type) {
       case SOURCE:
 	source  = findCallableActor();
@@ -437,8 +447,18 @@ public class MergeReport
 	default:
 	  result = "Unhandled merge type: " + m_Merge;
       }
-      if (merged != null)
-	m_OutputToken = new Token(merged);
+      if (merged != null) {
+	if (handler != null) {
+	  if (handler instanceof MutableReportHandler)
+	    ((MutableReportHandler) handler).setReport(merged);
+	  else
+	    handler.getReport().assign(merged);
+	  m_OutputToken = new Token(handler);
+	}
+	else {
+	  m_OutputToken = new Token(merged);
+	}
+      }
     }
 
     return result;
