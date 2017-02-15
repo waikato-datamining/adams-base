@@ -167,6 +167,14 @@ weka.filters.StreamableFilter=\
   weka.filters.unsupervised.attribute,\
   weka.filters.unsupervised.instance
 
+# the experiments
+adams.gui.tools.wekamultiexperimenter.experiment.AbstractExperiment=\
+  adams.gui.tools.wekamultiexperimenter.experiment
+
+# the experiment IO handlers
+adams.gui.tools.wekamultiexperimenter.io.AbstractExperimentIO=\
+  adams.gui.tools.wekamultiexperimenter.io
+
 # the panels for specifying the experimenter output
 adams.gui.tools.wekamultiexperimenter.setup.weka.AbstractOutputPanel=\
   adams.gui.tools.wekamultiexperimenter.setup.weka
