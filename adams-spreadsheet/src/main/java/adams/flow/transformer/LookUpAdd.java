@@ -352,10 +352,22 @@ public class LookUpAdd
     }
     else {
       lookup = (HashMap<String,Object>) getStorageHandler().getStorage().get(m_StorageName);
-      if (m_InputToken.getPayload() instanceof String[]) {
+      if (m_InputToken.getPayload() instanceof SpreadSheet) {
+	sheet     = (SpreadSheet) m_InputToken.getPayload();
+	error     = new StringBuilder();
+	lookupAdd = LookUpHelper.load(sheet, m_KeyColumn.getIndex(), m_ValueColumn.getIndex(), m_UseNative, error);
+	if (lookupAdd == null) {
+	  result = error.toString();
+	}
+	else {
+	  lookup.putAll(lookupAdd);
+	  getStorageHandler().getStorage().put(m_StorageName, lookup);
+	}
+      }
+      else {
 	pair = (Object[]) m_InputToken.getPayload();
 	if (pair.length != 2) {
-	  result = "String array must have length 2, provided: " + pair.length;
+	  result = "Array must have length 2, provided: " + pair.length;
 	}
 	else {
 	  key = pair[0].toString();
@@ -367,18 +379,6 @@ public class LookUpAdd
 	      getLogger().info("Adding: '" + key + "' -> '" + value + "'");
 	  }
 	  lookup.put(key, value);
-	}
-      }
-      else if (m_InputToken.getPayload() instanceof SpreadSheet) {
-	sheet     = (SpreadSheet) m_InputToken.getPayload();
-	error     = new StringBuilder();
-	lookupAdd = LookUpHelper.load(sheet, m_KeyColumn.getIndex(), m_ValueColumn.getIndex(), m_UseNative, error);
-	if (lookupAdd == null) {
-	  result = error.toString();
-	}
-	else {
-	  lookup.putAll(lookupAdd);
-	  getStorageHandler().getStorage().put(m_StorageName, lookup);
 	}
       }
     }
