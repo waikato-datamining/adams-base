@@ -15,13 +15,13 @@
 
 /**
  * ColumnSubset.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.spreadsheet.rowscore;
 
-import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetColumnRange;
+import adams.data.spreadsheet.SpreadSheetView;
 
 /**
  <!-- globalinfo-start -->
@@ -59,10 +59,6 @@ public class ColumnSubset
   
   /** the subset of columns to use. */
   protected SpreadSheetColumnRange m_Columns;
-  
-  /** the header of the subset. */
-  protected SpreadSheet m_Header;
-  
   /**
    * Returns a string describing the object.
    *
@@ -85,16 +81,6 @@ public class ColumnSubset
     m_OptionManager.add(
 	    "columns", "columns",
 	    new SpreadSheetColumnRange(SpreadSheetColumnRange.ALL));
-  }
-
-  /**
-   * Resets the scheme.
-   */
-  @Override
-  protected void reset() {
-    super.reset();
-    
-    m_Header = null;
   }
 
   /**
@@ -138,52 +124,6 @@ public class ColumnSubset
   }
 
   /**
-   * Creates the header for the subset.
-   *
-   * @param sheet	the spreadsheet to generate the header from
-   * @return		the header
-   */
-  protected SpreadSheet createHeader(SpreadSheet sheet) {
-    SpreadSheet	result;
-    int[]	indices;
-    Row		header;
-    
-    result = sheet.newInstance();
-    m_Columns.setData(sheet);
-    indices = m_Columns.getIntIndices();
-    
-    header = result.getHeaderRow();
-    for (int index: indices)
-      header.addCell("" + result.getColumnCount()).assign(sheet.getHeaderRow().getCell(index));
-    
-    return result;
-  }
-
-  /**
-   * Creates spreadsheet with a single row that contains the subset of columns.
-   *
-   * @param sheet	the spreadsheet to generate the score for
-   * @param rowIndex	the row index
-   * @return		the generated subset spreadsheet
-   */
-  protected SpreadSheet createSubset(SpreadSheet sheet, int rowIndex) {
-    SpreadSheet	result;
-    int		i;
-    int[]	indices;
-    Row		rowOld;
-    Row		rowNew;
-    
-    result  = m_Header.getClone();
-    indices = m_Columns.getIntIndices();
-    rowOld  = sheet.getRow(rowIndex);
-    rowNew  = result.addRow();
-    for (i = 0; i < indices.length; i++)
-      rowNew.addCell(i).assign(rowOld.getCell(indices[i]));
-    
-    return result;
-  }
-
-  /**
    * Performs the actual calculation of the row score.
    *
    * @param sheet	the spreadsheet to generate the score for
@@ -196,16 +136,13 @@ public class ColumnSubset
     SpreadSheet	subset;
     
     result = null;
-    
-    // create header?
-    if (m_Header == null)
-      m_Header = createHeader(sheet);
 
-    // create subset
-    subset = createSubset(sheet, rowIndex);
-    
+    // create view
+    m_Columns.setData(sheet);
+    subset = new SpreadSheetView(sheet, null, m_Columns.getIntIndices());
+
     // calc score(s)
-    result = m_RowScore.calculateScore(subset, 0);
+    result = m_RowScore.calculateScore(subset, rowIndex);
     
     return result;
   }
