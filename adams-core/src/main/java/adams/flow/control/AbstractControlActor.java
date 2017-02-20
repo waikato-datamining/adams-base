@@ -15,7 +15,7 @@
 
 /*
  * AbstractControlActor.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -407,6 +407,9 @@ public abstract class AbstractControlActor
       if (!get(i).getSkip())
 	get(i).cleanUp();
     }
+
+    if (m_PauseStateManager != null)
+      m_PauseStateManager.removeListener(this);
 
     super.cleanUp();
 
