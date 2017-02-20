@@ -22,6 +22,7 @@ package adams.gui.visualization.debug;
 import adams.core.CleanUpHandler;
 import adams.core.Utils;
 import adams.event.StorageChangeEvent;
+import adams.event.StorageChangeEvent.Type;
 import adams.event.StorageChangeListener;
 import adams.flow.control.Storage;
 import adams.flow.control.StorageHandler;
@@ -47,7 +48,6 @@ import javax.swing.JCheckBox;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.ListSelectionModel;
-import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -341,6 +341,7 @@ public class StoragePanel
     m_Table.getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> {
       updateButtons();
       updatePreview();
+      updateInspection();
     });
     m_Table.addCellPopupMenuListener((MouseEvent e) -> showTablePopup(e));
     panelTable.add(m_Table, BorderLayout.CENTER);
@@ -417,6 +418,17 @@ public class StoragePanel
     m_PanelPreview.invalidate();
     m_PanelPreview.validate();
     m_PanelPreview.repaint();
+  }
+
+  /**
+   * Updates the inspection (if visible).
+   *
+   * @see		#inspect()
+   */
+  protected void updateInspection() {
+    if (m_DialogInspect == null)
+      return;
+    inspect();
   }
 
   /**
@@ -560,6 +572,7 @@ public class StoragePanel
     if (newObj != null) {
       m_Table.setValueAt(newObj, m_Table.getSelectedRow(), 2);
       updatePreview();
+      updateInspection();
     }
   }
 
@@ -651,29 +664,13 @@ public class StoragePanel
    * @param e		the event
    */
   public void storageChanged(StorageChangeEvent e) {
-    final String[] 	selected;
-    int			row;
-
-    // back up selected
-    selected = new String[2];
-    if (m_Table.getSelectedRow() > -1) {
-      row      = m_Table.getActualRow(m_Table.getSelectedRow());
-      selected[0] = (String) m_TableModel.getValueAt(row, 0);
-      selected[1] = (String) m_TableModel.getValueAt(row, 1);
+    if (e.getType() == Type.MODIFIED) {
+      m_TableModel.fireTableRowsUpdated(0, m_TableModel.getRowCount() - 1);
+      updatePreview();
+      updateInspection();
     }
-
-    m_TableModel.fireTableDataChanged();
-
-    if (m_Table.getSelectedRow() > -1) {
-      SwingUtilities.invokeLater(() -> {
-	for (int n = 0; n < m_Table.getRowCount(); n++) {
-	  if (m_Table.getValueAt(n, 0).equals(selected[0]) && m_Table.getValueAt(n, 1).equals(selected[1])) {
-	    m_Table.getSelectionModel().clearSelection();
-	    m_Table.getSelectionModel().setSelectionInterval(n, n);
-	    break;
-	  }
-	}
-      });
+    else {
+      m_TableModel.fireTableDataChanged();
     }
   }
 
