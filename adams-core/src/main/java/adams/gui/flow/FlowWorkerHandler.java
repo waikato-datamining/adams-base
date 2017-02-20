@@ -15,7 +15,7 @@
 
 /**
  * FlowWorkerHandler.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.flow;
@@ -25,6 +25,7 @@ import adams.core.StatusMessageHandler;
 import adams.flow.core.Actor;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.tools.VariableManagementPanel;
+import adams.gui.visualization.debug.StoragePanel;
 
 /**
  * Interface for classes that can make use of the {@link FlowWorker} worker
@@ -107,4 +108,11 @@ public interface FlowWorkerHandler
    * @return		the panel, null if not available
    */
   public VariableManagementPanel getVariablesPanel();
+
+  /**
+   * Returns the panel with the storage items.
+   *
+   * @return		the panel, null if not available
+   */
+  public StoragePanel getStoragePanel();
 }

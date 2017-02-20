@@ -15,7 +15,7 @@
 
 /**
  * FlowRunnerPanel.java
- * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow;
 
@@ -57,6 +57,7 @@ import adams.gui.event.RecentItemListener;
 import adams.gui.flow.tree.Node;
 import adams.gui.tools.LogEntryViewerPanel;
 import adams.gui.tools.VariableManagementPanel;
+import adams.gui.visualization.debug.StoragePanel;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -1187,6 +1188,15 @@ public class FlowRunnerPanel
    * @return		always null
    */
   public VariableManagementPanel getVariablesPanel() {
+    return null;
+  }
+
+  /**
+   * Returns the panel with the storage items.
+   *
+   * @return		always null
+   */
+  public StoragePanel getStoragePanel() {
     return null;
   }
 

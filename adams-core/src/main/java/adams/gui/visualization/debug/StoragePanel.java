@@ -47,6 +47,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -650,7 +651,30 @@ public class StoragePanel
    * @param e		the event
    */
   public void storageChanged(StorageChangeEvent e) {
+    final String[] 	selected;
+    int			row;
+
+    // back up selected
+    selected = new String[2];
+    if (m_Table.getSelectedRow() > -1) {
+      row      = m_Table.getActualRow(m_Table.getSelectedRow());
+      selected[0] = (String) m_TableModel.getValueAt(row, 0);
+      selected[1] = (String) m_TableModel.getValueAt(row, 1);
+    }
+
     m_TableModel.fireTableDataChanged();
+
+    if (m_Table.getSelectedRow() > -1) {
+      SwingUtilities.invokeLater(() -> {
+	for (int n = 0; n < m_Table.getRowCount(); n++) {
+	  if (m_Table.getValueAt(n, 0).equals(selected[0]) && m_Table.getValueAt(n, 1).equals(selected[1])) {
+	    m_Table.getSelectionModel().clearSelection();
+	    m_Table.getSelectionModel().setSelectionInterval(n, n);
+	    break;
+	  }
+	}
+      });
+    }
   }
 
   /**

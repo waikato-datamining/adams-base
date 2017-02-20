@@ -1252,7 +1252,16 @@ public class FlowPanel
   public VariableManagementPanel getVariablesPanel() {
     return m_PanelVariables;
   }
-  
+
+  /**
+   * Returns the panel with the storage items.
+   *
+   * @return		always null
+   */
+  public StoragePanel getStoragePanel() {
+    return m_PanelStorage;
+  }
+
   /**
    * Displays the variables in the currently running flow.
    */

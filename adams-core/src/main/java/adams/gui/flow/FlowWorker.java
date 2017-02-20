@@ -15,7 +15,7 @@
 
 /**
  * FlowWorker.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.flow;
@@ -153,6 +153,8 @@ public class FlowWorker
 
     if ((m_Owner.getVariablesPanel() != null) && (m_Owner.getVariablesPanel().getParentDialog() != null))
       m_Owner.getVariablesPanel().getParentDialog().setVisible(false);
+    if ((m_Owner.getStoragePanel() != null) && (m_Owner.getStoragePanel().getParentDialog() != null))
+      m_Owner.getStoragePanel().getParentDialog().setVisible(false);
 
     return null;
   }
