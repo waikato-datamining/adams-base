@@ -21,6 +21,8 @@ package adams.gui.visualization.debug;
 
 import adams.core.CleanUpHandler;
 import adams.core.Utils;
+import adams.event.StorageChangeEvent;
+import adams.event.StorageChangeListener;
 import adams.flow.control.Storage;
 import adams.flow.control.StorageHandler;
 import adams.flow.control.StorageName;
@@ -65,7 +67,7 @@ import java.util.List;
  */
 public class StoragePanel
   extends BasePanel
-  implements CleanUpHandler {
+  implements CleanUpHandler, StorageChangeListener {
 
   /** for serialization. */
   private static final long serialVersionUID = 8244881694557542183L;
@@ -587,10 +589,13 @@ public class StoragePanel
    * @param value	the handler to use
    */
   public void setHandler(StorageHandler value) {
+    if (m_Handler != null)
+      m_Handler.getStorage().removeChangeListener(this);
     m_Handler    = value;
     m_TableModel = new TableModel(value.getStorage());
     m_Table.setModel(m_TableModel);
     m_Table.setOptimalColumnWidth();
+    m_Handler.getStorage().addChangeListener(this);
     updateButtons();
   }
 
@@ -640,9 +645,20 @@ public class StoragePanel
   }
 
   /**
+   * Gets triggered when a storage item changed (added, modified, removed).
+   *
+   * @param e		the event
+   */
+  public void storageChanged(StorageChangeEvent e) {
+    m_TableModel.fireTableDataChanged();
+  }
+
+  /**
    * Cleans up data structures, frees up memory.
    */
   public void cleanUp() {
+    if (m_Handler != null)
+      m_Handler.getStorage().removeChangeListener(this);
     if (m_PanelInspect != null) {
       m_PanelInspect.closeParent();
       m_PanelInspect = null;

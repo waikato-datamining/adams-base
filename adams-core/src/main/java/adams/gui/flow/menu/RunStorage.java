@@ -56,6 +56,6 @@ public class RunStorage
    */
   @Override
   protected void doUpdate() {
-    setEnabled(m_State.isPaused());
+    setEnabled(m_State.isRunning());
   }
 }

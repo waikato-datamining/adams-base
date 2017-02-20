@@ -15,7 +15,7 @@
 
 /**
  * Storage.java
- * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.control;
 
@@ -23,11 +23,14 @@ import adams.core.CloneHandler;
 import adams.core.LRUCache;
 import adams.core.Utils;
 import adams.core.base.BaseRegExp;
+import adams.event.StorageChangeEvent;
+import adams.event.StorageChangeEvent.Type;
+import adams.event.StorageChangeListener;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -51,17 +54,21 @@ public class Storage
   public final static String END = "}";
 
   /** for storing the data. */
-  protected Hashtable<String,Object> m_Data;
+  protected HashMap<String,Object> m_Data;
 
   /** name LRU caches. */
-  protected Hashtable<String,LRUCache<String,Object>> m_Caches;
+  protected HashMap<String,LRUCache<String,Object>> m_Caches;
+
+  /** the listeners. */
+  protected Set<StorageChangeListener> m_ChangeListeners;
 
   /**
    * Initializes the storage.
    */
   public Storage() {
-    m_Data   = new Hashtable<String,Object>();
-    m_Caches = new Hashtable<String,LRUCache<String,Object>>();
+    m_Data            = new HashMap<>();
+    m_Caches          = new HashMap<>();
+    m_ChangeListeners = new HashSet<>();
   }
 
   /**
@@ -80,7 +87,7 @@ public class Storage
   public synchronized Iterator<String> caches() {
     List<String>	result;
 
-    result = new ArrayList<String>(m_Caches.keySet());
+    result = new ArrayList<>(m_Caches.keySet());
     Collections.sort(result);
 
     return result.iterator();
@@ -93,7 +100,7 @@ public class Storage
    * @param size	the size of the cache
    */
   public synchronized void addCache(String name, int size) {
-    m_Caches.put(name, new LRUCache<String,Object>(size));
+    m_Caches.put(name, new LRUCache<>(size));
   }
 
   /**
@@ -104,7 +111,12 @@ public class Storage
    * @return		any previous value stored under the same name
    */
   public synchronized Object put(StorageName name, Object value) {
-    return m_Data.put(name.getValue(), value);
+    Object	result;
+
+    result = m_Data.put(name.getValue(), value);
+    notifyChangeListeners(new StorageChangeEvent(this, (result != null) ? Type.MODIFIED : Type.ADDED, name.getValue()));
+
+    return result;
   }
 
   /**
@@ -116,8 +128,10 @@ public class Storage
    * @param value	the value to store
    */
   public synchronized void put(String cache, StorageName name, Object value) {
-    if (m_Caches.containsKey(cache))
+    if (m_Caches.containsKey(cache)) {
       m_Caches.get(cache).put(name.getValue(), value);
+      notifyChangeListeners(new StorageChangeEvent(this, Type.ADDED, name.getValue(), cache));
+    }
   }
 
   /**
@@ -139,10 +153,8 @@ public class Storage
    * @return		true if a value is stored under the name
    */
   public synchronized boolean has(String cache, StorageName name) {
-    if (m_Caches.containsKey(cache))
-      return m_Caches.get(cache).contains(name.getValue());
-    else
-      return false;
+    return (m_Caches.containsKey(cache))
+      && m_Caches.get(cache).contains(name.getValue());
   }
 
   /**
@@ -176,7 +188,14 @@ public class Storage
    * @return		the previously associated value, or null if none present
    */
   public synchronized Object remove(StorageName name) {
-    return m_Data.remove(name.getValue());
+    Object	result;
+
+    result = m_Data.remove(name.getValue());
+
+    if (result != null)
+      notifyChangeListeners(new StorageChangeEvent(this, Type.REMOVED, name.getValue()));
+
+    return result;
   }
 
   /**
@@ -187,10 +206,17 @@ public class Storage
    * @return		the previously associated value, or null if none present
    */
   public synchronized Object remove(String cache, StorageName name) {
+    Object	result;
+
+    result = null;
+
     if (m_Caches.containsKey(cache))
-      return m_Caches.get(cache).remove(name.getValue());
-    else
-      return null;
+      result = m_Caches.get(cache).remove(name.getValue());
+
+    if (result != null)
+      notifyChangeListeners(new StorageChangeEvent(this, Type.REMOVED, name.getValue(), cache));
+
+    return result;
   }
 
   /**
@@ -224,7 +250,7 @@ public class Storage
     HashSet<StorageName>	result;
     Set<String>			set;
 
-    result = new HashSet<StorageName>();
+    result = new HashSet<>();
     set    = m_Data.keySet();
     for (String key: set)
       result.add(new StorageName(key));
@@ -242,7 +268,7 @@ public class Storage
     HashSet<StorageName>	result;
     Set<String>			set;
 
-    result = new HashSet<StorageName>();
+    result = new HashSet<>();
 
     if (m_Caches.containsKey(cache)) {
       set = m_Caches.get(cache).keySet();
@@ -300,7 +326,7 @@ public class Storage
       cache = m_Caches.get(key).getClone();
       result.m_Caches.put(key, cache);
     }
-    result.m_Data = (Hashtable<String,Object>) m_Data.clone();
+    result.m_Data = (HashMap<String,Object>) m_Data.clone();
 
     return result;
   }
@@ -358,7 +384,7 @@ public class Storage
    * @return		the processed string
    */
   public synchronized String expand(String s) {
-    return expand(s, (s.indexOf(START + START) > -1));
+    return expand(s, s.contains(START + START));
   }
 
   /**
@@ -375,9 +401,9 @@ public class Storage
 
     result = s;
     part   = START;
-    if (result.indexOf(part) > -1) {
+    if (result.contains(part)) {
       names = keySet().iterator();
-      while (names.hasNext() && (result.indexOf(part) > -1)) {
+      while (names.hasNext() && result.contains(part)) {
 	name   = names.next();
 	result = result.replace(START + name.getValue() + END, "" + get(name));
       }
@@ -402,6 +428,34 @@ public class Storage
       result = expand(result);
 
     return result;
+  }
+
+  /**
+   * Adds the change listener.
+   *
+   * @param l		the listener to add
+   */
+  public void addChangeListener(StorageChangeListener l) {
+    m_ChangeListeners.add(l);
+  }
+
+  /**
+   * Removes the change listener.
+   *
+   * @param l		the listener to remove
+   */
+  public void removeChangeListener(StorageChangeListener l) {
+    m_ChangeListeners.remove(l);
+  }
+
+  /**
+   * Notifies all listeners.
+   *
+   * @param e		the event to send
+   */
+  protected void notifyChangeListeners(StorageChangeEvent e) {
+    for (StorageChangeListener l: m_ChangeListeners)
+      l.storageChanged(e);
   }
 
   /**
