@@ -33,13 +33,16 @@ import weka.core.RevisionUtils;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.zip.GZIPInputStream;
 
 /**
  * A simple ARFF loader, only supports batch loading.
@@ -75,7 +78,7 @@ public class SimpleArffLoader
    * @return		the description
    */
   public String globalInfo() {
-    return "Uses the simple ARFF loading functionality of ADAMS. No incremental loading possible. Does not support relational attributes.";
+    return "Simple ARFF loading functionality of ADAMS. No incremental loading possible. Does not support relational attributes.";
   }
 
   /**
@@ -387,6 +390,8 @@ public class SimpleArffLoader
     Instances		result;
     FileReader		freader;
     BufferedReader	breader;
+    FileInputStream	fis;
+    GZIPInputStream	gis;
 
     if (m_Data != null)
       return m_Data;
@@ -398,9 +403,18 @@ public class SimpleArffLoader
 
     freader = null;
     breader = null;
+    gis     = null;
+    fis     = null;
     try {
-      freader = new FileReader(m_sourceFile.getAbsolutePath());
-      breader = new BufferedReader(freader);
+      if (m_sourceFile.getName().endsWith(".gz")) {
+	fis     = new FileInputStream(m_sourceFile);
+	gis     = new GZIPInputStream(fis);
+	breader = new BufferedReader(new InputStreamReader(gis));
+      }
+      else {
+        freader = new FileReader(m_sourceFile.getAbsolutePath());
+        breader = new BufferedReader(freader);
+      }
       result  = read(breader);
     }
     catch (Exception e) {
@@ -411,6 +425,8 @@ public class SimpleArffLoader
     finally {
       FileUtils.closeQuietly(breader);
       FileUtils.closeQuietly(freader);
+      FileUtils.closeQuietly(gis);
+      FileUtils.closeQuietly(fis);
     }
 
     return result;
