@@ -15,7 +15,7 @@
 
 /**
  * FileContainer.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.data;
@@ -23,7 +23,6 @@ package adams.gui.tools.wekainvestigator.data;
 import adams.core.io.PlaceholderFile;
 import weka.core.Instances;
 import weka.core.converters.AbstractFileLoader;
-import weka.core.converters.ConverterUtils.DataSource;
 
 import java.io.File;
 import java.io.Serializable;
@@ -65,8 +64,9 @@ public class FileContainer
   public FileContainer(AbstractFileLoader loader, File source) {
     super();
     try {
-      loader.setFile(source.getAbsoluteFile());
-      m_Data   = DataSource.read(loader);
+      if ((loader.retrieveFile() == null) || !loader.retrieveFile().getAbsoluteFile().equals(source.getAbsoluteFile()))
+        loader.setFile(source.getAbsoluteFile());
+      m_Data   = loader.getDataSet();
       m_Source = source;
       m_Loader = loader;
     }

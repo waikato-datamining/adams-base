@@ -28,7 +28,6 @@ import adams.gui.tools.wekainvestigator.data.DataContainer;
 import adams.gui.tools.wekainvestigator.data.FileContainer;
 import adams.gui.tools.wekainvestigator.job.InvestigatorTabJob;
 import weka.core.converters.AbstractFileSaver;
-import weka.core.converters.ConverterUtils.DataSink;
 
 import java.awt.event.ActionEvent;
 import java.io.File;
@@ -107,7 +106,8 @@ public class Save
             }
             AbstractFileSaver saver = m_FileChooser.getWriter();
             saver.setFile(file);
-            DataSink.write(saver, data.getData());
+            saver.setInstances(data.getData());
+            saver.writeBatch();
             showStatus("Saved " + data.getID() + "/" + data.getSource() + " to " + file);
             FileContainer cont = new FileContainer(m_FileChooser.getReaderForFile(file), file, data.getData());
             getData().set(rows[index], cont);
