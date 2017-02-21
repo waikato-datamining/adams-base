@@ -469,7 +469,7 @@ public class WekaFileReader
 	m_Structure = m_Source.getStructure();
     }
     catch (Exception e) {
-      result = handleException("Failed load data from: " + m_InputToken.getPayload(), e);
+      result = handleException("Failed to load data from: " + m_InputToken.getPayload(), e);
     }
 
     return result;
