@@ -15,16 +15,16 @@
 
 /*
  * AbstractAxisModel.java
- * Copyright (C) 2008-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.core.axis;
 
-import java.util.List;
-import java.util.Stack;
-
 import adams.core.logging.LoggingObject;
 import adams.gui.visualization.core.AxisPanel;
+
+import java.util.List;
+import java.util.Stack;
 
 /**
  * An abstract class of an axis model.
@@ -89,6 +89,12 @@ public abstract class AbstractAxisModel
   /** the manual maximum. */
   protected Double m_ManualMaximum;
 
+  /** the manual top margin. */
+  protected Double m_ManualMarginTop;
+
+  /** the manual bottom margin. */
+  protected Double m_ManualMarginBottom;
+
   /**
    * Initializes the model.
    */
@@ -102,18 +108,22 @@ public abstract class AbstractAxisModel
    * Initializes the member variables.
    */
   protected void initialize() {
-    m_Parent            = null;
-    m_Minimum           = 0.0;
-    m_Maximum           = 1.0;
-    m_MarginTop         = 0.0;
-    m_MarginBottom      = 0.0;
-    m_PixelOffset       = 0;
-    m_Validated         = false;
-    m_Formatter         = Formatter.getDecimalFormatter(getDefaultNumberFormat());
-    m_CustomerFormatter = null;
-    m_ZoomHandler       = new ZoomHandler();
-    m_PixelOffsets      = new Stack<Integer>();
-    m_TickGenerator     = new SimpleTickGenerator();
+    m_Parent             = null;
+    m_Minimum            = 0.0;
+    m_Maximum            = 1.0;
+    m_ManualMinimum      = null;
+    m_ManualMaximum      = null;
+    m_MarginTop          = 0.0;
+    m_MarginBottom       = 0.0;
+    m_ManualMarginTop    = null;
+    m_ManualMarginBottom = null;
+    m_PixelOffset        = 0;
+    m_Validated          = false;
+    m_Formatter          = Formatter.getDecimalFormatter(getDefaultNumberFormat());
+    m_CustomerFormatter  = null;
+    m_ZoomHandler        = new ZoomHandler();
+    m_PixelOffsets       = new Stack<>();
+    m_TickGenerator      = new SimpleTickGenerator();
   }
   
   /**
@@ -300,6 +310,58 @@ public abstract class AbstractAxisModel
    */
   public double getBottomMargin() {
     return m_MarginBottom;
+  }
+
+  /**
+   * Sets the manual top margin factor (>= 0.0 or null).
+   *
+   * @param value	the top margin
+   */
+  public void setManualTopMargin(Double value) {
+    if ((value == null) || (value >= 0)) {
+      m_ManualMarginTop = value;
+      invalidate();
+      update();
+    }
+    else {
+      getLogger().warning(
+	  "Manual top margin factor must be null or at least 0.0 (provided: " + value + ")!");
+    }
+  }
+
+  /**
+   * Returns the currently set manual top margin factor (>= 0.0 or null).
+   *
+   * @return		the top margin
+   */
+  public Double getManualTopMargin() {
+    return m_ManualMarginTop;
+  }
+
+  /**
+   * Sets the manual bottom margin factor (>= 0.0 or null).
+   *
+   * @param value	the bottom margin
+   */
+  public void setManualBottomMargin(Double value) {
+    if ((value == null) || (value >= 0)) {
+      m_ManualMarginBottom = value;
+      invalidate();
+      update();
+    }
+    else {
+      getLogger().warning(
+	  "Manual bottom margin factor must be null or at least 0.0 (provided: " + value + ")!");
+    }
+  }
+
+  /**
+   * Returns the currently set manual bottom margin factor (>= 0.0 or null).
+   *
+   * @return		the bottom margin
+   */
+  public Double getManualBottomMargin() {
+    return m_ManualMarginBottom;
   }
 
   /**
@@ -567,12 +629,15 @@ public abstract class AbstractAxisModel
     double	range;
     double	min;
     double	max;
+    double	top;
+    double	bottom;
     double	offset;
     double	size;
 
     if (m_Validated)
       return;
 
+    // min/max
     if (m_ZoomHandler.isZoomed()) {
       min = m_ZoomHandler.peek().getMinimum();
       max = m_ZoomHandler.peek().getMaximum();
@@ -588,14 +653,24 @@ public abstract class AbstractAxisModel
 	max = m_Maximum;
     }
 
+    // margins
+    if (m_ManualMarginTop != null)
+      top = m_ManualMarginTop;
+    else
+      top = m_MarginTop;
+    if (m_ManualMarginBottom != null)
+      bottom = m_ManualMarginBottom;
+    else
+      bottom = m_MarginBottom;
+
     if (getParent().getLength() == 0)
       size = 1;
     else
       size = getParent().getLength();
     range           = Math.abs(max - min);
     offset          = range / size * (double) m_PixelOffset;
-    m_ActualMinimum = min - range * m_MarginBottom - offset;
-    m_ActualMaximum = max + range * m_MarginTop    - offset;
+    m_ActualMinimum = min - range * bottom - offset;
+    m_ActualMaximum = max + range * top    - offset;
 
     m_Validated = true;
   }
@@ -606,18 +681,22 @@ public abstract class AbstractAxisModel
    * @param model	the model to get the parameters from
    */
   public void assign(AbstractAxisModel model) {
-    m_Parent            = model.m_Parent;
-    m_Minimum           = model.m_Minimum;
-    m_Maximum           = model.m_Maximum;
-    m_MarginTop         = model.m_MarginTop;
-    m_MarginBottom      = model.m_MarginBottom;
-    m_ZoomHandler       = (ZoomHandler) model.m_ZoomHandler.getClone();
-    m_PixelOffsets      = (Stack<Integer>) model.m_PixelOffsets.clone();
-    m_PixelOffset       = model.getPixelOffset();
-    m_CustomerFormatter = model.m_CustomerFormatter;
-    m_TickGenerator     = model.getTickGenerator().shallowCopy();
+    m_Parent             = model.m_Parent;
+    m_Minimum            = model.m_Minimum;
+    m_Maximum            = model.m_Maximum;
+    m_ManualMinimum      = model.m_ManualMinimum;
+    m_ManualMaximum      = model.m_ManualMaximum;
+    m_MarginTop          = model.m_MarginTop;
+    m_MarginBottom       = model.m_MarginBottom;
+    m_ManualMarginTop    = model.m_ManualMarginTop;
+    m_ManualMarginBottom = model.m_ManualMarginBottom;
+    m_ZoomHandler        = model.m_ZoomHandler.getClone();
+    m_PixelOffsets       = (Stack<Integer>) model.m_PixelOffsets.clone();
+    m_PixelOffset        = model.getPixelOffset();
+    m_CustomerFormatter  = model.m_CustomerFormatter;
+    m_TickGenerator      = model.getTickGenerator().shallowCopy();
     m_TickGenerator.setParent(this);
-    m_NthValueToShow    = model.getNthValueToShow();
+    m_NthValueToShow     = model.getNthValueToShow();
 
     invalidate();
     update();

@@ -15,7 +15,7 @@
 
 /*
  * AxisPanel.java
- * Copyright (C) 2008-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.core;
@@ -620,6 +620,42 @@ public class AxisPanel
   }
 
   /**
+   * Sets the manual top margin factor (>= 0.0 or null).
+   *
+   * @param value	the top margin
+   */
+  public void setManualTopMargin(Double value) {
+    m_Model.setManualTopMargin(value);
+  }
+
+  /**
+   * Returns the currently set manual top margin factor (>= 0.0 or null).
+   *
+   * @return		the top margin
+   */
+  public Double getManualTopMargin() {
+    return m_Model.getManualTopMargin();
+  }
+
+  /**
+   * Sets the manual bottom margin factor (>= 0.0 or null).
+   *
+   * @param value	the bottom margin
+   */
+  public void setManualBottomMargin(Double value) {
+    m_Model.setManualBottomMargin(value);
+  }
+
+  /**
+   * Returns the currently set manual bottom margin factor (>= 0.0 or null).
+   *
+   * @return		the bottom margin
+   */
+  public Double getManualBottomMargin() {
+    return m_Model.getManualBottomMargin();
+  }
+
+  /**
    * Clears the panning.
    */
   public void clearPanning() {
@@ -784,10 +820,10 @@ public class AxisPanel
 
     panel = new ParameterPanel();
     textMin = new JTextField(10);
-    textMin.setText(Utils.doubleToString(getMinimum(), 8));
+    textMin.setText(Utils.doubleToString(getManualMinimum() == null ? getMinimum() : getManualMinimum(), 8));
     panel.addParameter("Minimum", textMin);
     textMax = new JTextField(10);
-    textMax.setText(Utils.doubleToString(getMaximum(), 8));
+    textMax.setText(Utils.doubleToString(getManualMinimum() == null ? getMaximum() : getManualMaximum(), 8));
     panel.addParameter("Maximum", textMax);
     
     if (getParentDialog() != null)
@@ -831,6 +867,69 @@ public class AxisPanel
   public void resetRange() {
     setManualMinimum(null);
     setManualMaximum(null);
+    clearZoom();
+    clearPanning();
+  }
+
+  /**
+   * Pops up a dialog letting the user choose the margins (top/bottom) for the
+   * axis.
+   */
+  public void selectMargins() {
+    ApprovalDialog	dialog;
+    ParameterPanel	panel;
+    final JTextField 	textTop;
+    final JTextField 	textBottom;
+    double 		top;
+    double 		bottom;
+
+    panel = new ParameterPanel();
+    textTop = new JTextField(10);
+    textTop.setText(Utils.doubleToString(getManualTopMargin() == null ? getTopMargin() : getManualTopMargin(), 8));
+    panel.addParameter("Top", textTop);
+    textBottom = new JTextField(10);
+    textBottom.setText(Utils.doubleToString(getManualBottomMargin() == null ? getBottomMargin() : getManualBottomMargin(), 8));
+    panel.addParameter("Bottom", textBottom);
+
+    if (getParentDialog() != null)
+      dialog = new ApprovalDialog(getParentDialog(), ModalityType.DOCUMENT_MODAL);
+    else
+      dialog = new ApprovalDialog(getParentFrame(), true);
+    dialog.setTitle("Select margins for " + getAxisName());
+    dialog.getContentPane().add(panel, BorderLayout.CENTER);
+    dialog.setCancelVisible(true);
+    dialog.setApproveVisible(true);
+    dialog.setDiscardVisible(false);
+    dialog.pack();
+    dialog.setLocationRelativeTo(getParent());
+    dialog.setVisible(true);
+    if (dialog.getOption() != ApprovalDialog.APPROVE_OPTION)
+      return;
+
+    try {
+      top    = Double.parseDouble(textTop.getText());
+      bottom = Double.parseDouble(textBottom.getText());
+      setManualTopMargin(top);
+      setManualBottomMargin(bottom);
+      clearZoom();
+      clearPanning();
+    }
+    catch (Exception e) {
+      GUIHelper.showErrorMessage(
+	  getParent(),
+	  "Failed to parse/set margins:\n"
+	  + textTop.getText() + "\n"
+	  + textBottom.getText() + "\n"
+	  + Utils.throwableToString(e));
+    }
+  }
+
+  /**
+   * Resets any manually set margins for the axis.
+   */
+  public void resetMargins() {
+    setManualTopMargin(null);
+    setManualBottomMargin(null);
     clearZoom();
     clearPanning();
   }
@@ -929,7 +1028,17 @@ public class AxisPanel
     item = new JMenuItem("Reset range");
     item.addActionListener((ActionEvent ae) -> resetRange());
     result.add(item);
-    
+
+    // margins
+    item = new JMenuItem("Margins...");
+    item.addActionListener((ActionEvent ae) -> selectMargins());
+    result.add(item);
+
+    // reset margins
+    item = new JMenuItem("Reset margins");
+    item.addActionListener((ActionEvent ae) -> resetMargins());
+    result.add(item);
+
     // customize it?
     if (m_PopupMenuCustomizer != null)
       m_PopupMenuCustomizer.customizePopupMenu(e, result);
