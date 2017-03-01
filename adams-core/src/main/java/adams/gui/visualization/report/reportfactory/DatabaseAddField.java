@@ -15,18 +15,26 @@
 
 /**
  * DatabaseAddField.java
- * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.report.reportfactory;
 
+import adams.core.Properties;
 import adams.core.option.AbstractOption;
 import adams.data.report.DataType;
 import adams.data.report.Field;
 import adams.data.report.Report;
 import adams.db.ReportProvider;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.PropertiesParameterPanel;
+import adams.gui.core.PropertiesParameterPanel.PropertyType;
+import adams.gui.dialog.ApprovalDialog;
 
+import java.awt.BorderLayout;
+import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Allows the user to add a new field to the report. The updated report gets 
@@ -55,32 +63,54 @@ public class DatabaseAddField
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    ReportProvider 	provider;
-    Report 		report;
-    String 		name;
-    String 		type;
-    String 		value;
-    Field 		field;
-    
-    name = GUIHelper.showInputDialog(
-	getTable(),
-	"Enter the name of the field");
-    if ((name == null) || (name.length() == 0))
+    ReportProvider 		provider;
+    Report 			report;
+    Field 			field;
+    PropertiesParameterPanel 	panel;
+    List<String> 		order;
+    Properties 			props;
+    ApprovalDialog 		dialog;
+
+    panel = new PropertiesParameterPanel();
+    order = new ArrayList<>();
+
+    panel.addPropertyType("name", PropertyType.STRING);
+    panel.setLabel("name", "Name");
+    panel.setHelp("name", "The name of the field");
+    order.add("name");
+
+    panel.addPropertyType("type", PropertyType.BLANK_SEPARATED_LIST_FIXED);
+    panel.setLabel("type", "Type");
+    panel.setHelp("type", "The name of the field");
+    order.add("type");
+
+    panel.addPropertyType("value", PropertyType.STRING);
+    panel.setLabel("value", "Value");
+    panel.setHelp("value", "The value for the field");
+    order.add("value");
+
+    props = new Properties();
+    props.setProperty("name", "field");
+    props.setProperty("type", "N S B U");
+    props.setProperty("value", "0.0");
+
+    panel.setProperties(props);
+
+    dialog = new ApprovalDialog(null, ModalityType.DOCUMENT_MODAL);
+    dialog.setTitle(getName());
+    dialog.getContentPane().add(panel, BorderLayout.CENTER);
+    dialog.pack();
+    dialog.setLocationRelativeTo(GUIHelper.getParentComponent(getTable()));
+    dialog.setVisible(true);
+
+    if (dialog.getOption() != ApprovalDialog.APPROVE_OPTION)
       return;
-    type = GUIHelper.showInputDialog(
-	getTable(),
-	"Enter the type of the field (N=numeric, B=boolean, S=string, U=unknown)", "S");
-    if ((type == null) || (type.length() != 1))
-      return;
-    value = GUIHelper.showInputDialog(
-	getTable(),
-	"Enter the initial value for the field");
-    if (value == null)
-      return;
-    field = new Field(name, DataType.valueOf((AbstractOption) null, type));
+
+    props  = panel.getProperties();
+    field  = new Field(props.getProperty("name"), DataType.valueOf((AbstractOption) null, props.getProperty("type")));
     provider = getReportProvider();
     report = getReport();
-    report.setValue(field, value);
+    report.setValue(field, props.getProperty("value"));
     provider.store(report.getDatabaseID(), report);
     setReport(report);
   }
