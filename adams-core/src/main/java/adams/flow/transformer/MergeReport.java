@@ -150,7 +150,11 @@ public class MergeReport
    */
   @Override
   public String globalInfo() {
-    return "Allows the report (or the report of a report handler) passing through to to be merged with another one.";
+    return
+      "Allows the report (or the report of a report handler) passing through "
+	+ "to be merged with another one.\n"
+	+ "If the 'silent' flag is set, no error output is generated if the other "
+	+ "report is not available (e.g., during first pass).";
   }
 
   /**
@@ -404,7 +408,7 @@ public class MergeReport
 	  else {
 	    if (((OutputProducer) source).hasPendingOutput())
 	      token = ((OutputProducer) source).output();
-	    else
+	    else if (!m_Silent)
 	      result = "Callable actor '" + m_Source + "' did not generate any output!";
 	  }
 	}
@@ -414,12 +418,10 @@ public class MergeReport
 
       case STORAGE:
 	storage = getStorageHandler().getStorage();
-	if (!storage.has(m_Storage)) {
-	  result = "Storage item not available: " + m_Storage;
-	}
-	else {
+	if (storage.has(m_Storage))
 	  other = (Report) storage.get(m_Storage);
-	}
+	else if (!m_Silent)
+	  result = "Storage item not available: " + m_Storage;
 	break;
 
       default:
