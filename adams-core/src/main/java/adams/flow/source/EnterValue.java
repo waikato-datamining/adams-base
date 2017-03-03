@@ -15,7 +15,7 @@
 
 /*
  * EnterValue.java
- * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
@@ -129,10 +129,10 @@ public class EnterValue
   private static final long serialVersionUID = 8200691218381875131L;
 
   /** the message for the user. */
-  protected String m_Message;
+  protected BaseString m_Message;
 
   /** the initial value. */
-  protected String m_InitialValue;
+  protected BaseString m_InitialValue;
 
   /** options to select from. */
   protected BaseString[] m_SelectionValues;
@@ -169,11 +169,11 @@ public class EnterValue
 
     m_OptionManager.add(
 	    "message", "message",
-	    "Please enter a value");
+	    new BaseString("Please enter a value"));
 
     m_OptionManager.add(
 	    "initial-value", "initialValue",
-	    "");
+	    new BaseString(""));
 
     m_OptionManager.add(
 	    "selection-values", "selectionValues",
@@ -214,7 +214,7 @@ public class EnterValue
    *
    * @param value	the message
    */
-  public void setMessage(String value) {
+  public void setMessage(BaseString value) {
     m_Message = value;
     reset();
   }
@@ -224,7 +224,7 @@ public class EnterValue
    *
    * @return 		the message
    */
-  public String getMessage() {
+  public BaseString getMessage() {
     return m_Message;
   }
 
@@ -243,7 +243,7 @@ public class EnterValue
    *
    * @param value	the initial value
    */
-  public void setInitialValue(String value) {
+  public void setInitialValue(BaseString value) {
     m_InitialValue = value;
     reset();
   }
@@ -253,7 +253,7 @@ public class EnterValue
    *
    * @return 		the initial value
    */
-  public String getInitialValue() {
+  public BaseString getInitialValue() {
     return m_InitialValue;
   }
 
@@ -386,9 +386,9 @@ public class EnterValue
     String	msg;
     String	initial;
 
-    msg     = m_Message;
+    msg     = m_Message.getValue();
     msg     = getVariables().expand(msg);
-    initial = m_InitialValue;
+    initial = m_InitialValue.getValue();
     initial = getVariables().expand(initial);
     m_Comm  = new GUIHelper.DialogCommunication();
 
@@ -434,9 +434,9 @@ public class EnterValue
     String	msg;
     String	initial;
 
-    msg     = m_Message;
+    msg     = m_Message.getValue();
     msg     = getVariables().expand(msg);
-    initial = m_InitialValue;
+    initial = m_InitialValue.getValue();
     initial = getVariables().expand(initial);
 
     if (m_NonInteractive) {
