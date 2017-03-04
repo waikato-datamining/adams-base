@@ -1,0 +1,45 @@
+# Project: adams
+# Date: 2017-03-04 16:48:36
+# User: fracpete
+# Charset: UTF-8
+adams.flow.control.Flow -annotation "Splits a user-selected dataset into 50/25/25 for train/validate/test.\\nTrains J48 on the 50% and then outputs summary statistics for\\nvalidation and test set." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.standalone.CallableActors
+  adams.flow.source.WekaClassifierSetup -classifier "weka.classifiers.trees.J48 -C 0.25 -M 2"
+  adams.flow.sink.Display -name Model -short-title true -writer adams.data.io.output.NullWriter
+  adams.flow.sink.Display -name Validation -short-title true -x -2 -writer adams.data.io.output.NullWriter
+  adams.flow.sink.Display -name Test -short-title true -x -3 -writer adams.data.io.output.NullWriter
+  adams.flow.source.StorageValue -name "validation set" -annotation "retrieves the validation set from storage" -storage-name validation
+  adams.flow.source.StorageValue -name "test set" -annotation "retrieves the test set from storage" -storage-name test
+ adams.flow.source.Start
+ adams.flow.control.Trigger -name "load data into storage"
+  adams.flow.source.SelectFile -stop-if-canceled true -extension arff
+  adams.flow.transformer.WekaFileReader -loader weka.core.converters.SimpleArffLoader
+  adams.flow.transformer.WekaClassSelector
+  adams.flow.transformer.SetStorageValue -storage-name full
+ adams.flow.control.Trigger -name "generate splits and put them in storage"
+  adams.flow.source.StorageValue -storage-name full
+  adams.flow.transformer.WekaRandomSplit -percentage 0.5
+  adams.flow.control.ContainerValuePicker -annotation "get training set" -value Train
+   adams.flow.transformer.SetStorageValue -storage-name training
+  adams.flow.control.ContainerValuePicker -name ContainerValuePicker-1 -annotation "get test set - used for validation/test" -value Test -switch-outputs true
+  adams.flow.transformer.WekaRandomSplit -name WekaRandomSplit-1 -percentage 0.5
+  adams.flow.control.ContainerValuePicker -name ContainerValuePicker-2 -annotation "get validation set" -value Train
+   adams.flow.transformer.SetStorageValue -storage-name validation
+  adams.flow.control.ContainerValuePicker -name ContainerValuePicker-3 -annotation "get test set" -value Test
+   adams.flow.transformer.SetStorageValue -storage-name test
+ adams.flow.control.Trigger -name "train classifier"
+  adams.flow.source.StorageValue -storage-name training
+  adams.flow.transformer.WekaTrainClassifier
+  adams.flow.transformer.SetStorageValue -storage-name model
+  adams.flow.control.ContainerValuePicker -value Model
+   adams.flow.sink.CallableSink -callable Model
+ adams.flow.control.Trigger -name validate
+  adams.flow.source.StorageValue -storage-name model
+  adams.flow.transformer.WekaTestSetEvaluator -output weka.classifiers.evaluation.output.prediction.Null -testset "validation set"
+  adams.flow.transformer.WekaEvaluationSummary
+  adams.flow.sink.CopyCallableSink -callable Validation
+ adams.flow.control.Trigger -name test
+  adams.flow.source.StorageValue -storage-name model
+  adams.flow.transformer.WekaTestSetEvaluator -output weka.classifiers.evaluation.output.prediction.Null -testset "test set"
+  adams.flow.transformer.WekaEvaluationSummary
+  adams.flow.sink.CopyCallableSink -callable Test
