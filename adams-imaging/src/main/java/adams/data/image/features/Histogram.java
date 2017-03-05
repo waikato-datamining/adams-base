@@ -50,35 +50,45 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- *
+ * 
  * <pre>-converter &lt;adams.data.featureconverter.AbstractFeatureConverter&gt; (property: converter)
  * &nbsp;&nbsp;&nbsp;The feature converter to use to produce the output data.
  * &nbsp;&nbsp;&nbsp;default: adams.data.featureconverter.SpreadSheet -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.DefaultSpreadSheet
  * </pre>
- *
+ * 
+ * <pre>-prefix &lt;java.lang.String&gt; (property: prefix)
+ * &nbsp;&nbsp;&nbsp;The (optional) prefix to use for the feature names.
+ * &nbsp;&nbsp;&nbsp;default: 
+ * </pre>
+ * 
  * <pre>-field &lt;adams.data.report.Field&gt; [-field ...] (property: fields)
  * &nbsp;&nbsp;&nbsp;The fields to add to the output.
- * &nbsp;&nbsp;&nbsp;default:
+ * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- *
+ * 
  * <pre>-notes &lt;adams.core.base.BaseString&gt; [-notes ...] (property: notes)
  * &nbsp;&nbsp;&nbsp;The notes to add as attributes to the generated data, eg 'PROCESS INFORMATION'
  * &nbsp;&nbsp;&nbsp;.
- * &nbsp;&nbsp;&nbsp;default:
+ * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- *
+ * 
  * <pre>-histo-type &lt;GRAY|RGB|YUV|YIQ|HSV&gt; (property: histogramType)
  * &nbsp;&nbsp;&nbsp;The type of histogram to generate.
  * &nbsp;&nbsp;&nbsp;default: RGB
  * </pre>
- *
+ * 
  * <pre>-num-bins &lt;int&gt; (property: numBins)
  * &nbsp;&nbsp;&nbsp;The number of bins per channel (1-256).
  * &nbsp;&nbsp;&nbsp;default: 256
  * &nbsp;&nbsp;&nbsp;minimum: 1
  * &nbsp;&nbsp;&nbsp;maximum: 256
  * </pre>
- *
+ * 
+ * <pre>-group-channels &lt;boolean&gt; (property: groupChannels)
+ * &nbsp;&nbsp;&nbsp;If enabled, grouping is by channel rather than by bin.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -210,6 +220,9 @@ public class Histogram
   /** the number of bins per channel. */
   protected int m_NumBins;
 
+  /** whether to group the channels. */
+  protected boolean m_GroupChannels;
+
   /**
    * Returns a string describing the object.
    *
@@ -238,6 +251,10 @@ public class Histogram
     m_OptionManager.add(
       "num-bins", "numBins",
       256, 1, 256);
+
+    m_OptionManager.add(
+      "group-channels", "groupChannels",
+      false);
   }
 
   /**
@@ -301,6 +318,57 @@ public class Histogram
   }
 
   /**
+   * Sets the whether to group by channels.
+   *
+   * @param value 	true if to group by channels
+   */
+  public void setGroupChannels(boolean value) {
+    m_GroupChannels = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to group by channels.
+   *
+   * @return 		true if to group by channels
+   */
+  public boolean getGroupChannels() {
+    return m_GroupChannels;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String groupChannelsTipText() {
+    return "If enabled, grouping is by channel rather than by bin.";
+  }
+
+  /**
+   * Returns the channel suffixes to use.
+   *
+   * @return		the suffixes
+   */
+  protected String[] getChannelSuffixes() {
+    switch (m_HistogramType) {
+      case GRAY:
+	return new String[]{"_"};
+      case RGB:
+	return new String[]{"_r_", "_g_", "_b_"};
+      case YUV:
+	return new String[]{"_y_", "_u_", "_v_"};
+      case YIQ:
+	return new String[]{"_y_", "_i_", "_q_"};
+      case HSV:
+	return new String[]{"_h_", "_s_", "_v_"};
+      default:
+        throw new IllegalStateException("Unhandled histogram type: " + m_HistogramType);
+    }
+  }
+
+  /**
    * Creates the header from a template image.
    *
    * @param img		the image to act as a template
@@ -308,39 +376,24 @@ public class Histogram
    */
   @Override
   public HeaderDefinition createHeader(BufferedImageContainer img) {
-    HeaderDefinition		result;
-    int				i;
-    int				numAtts;
+    HeaderDefinition	result;
+    int			i;
+    int			numAtts;
+    String[] 		channels;
 
-    result  = new HeaderDefinition();
-    numAtts = m_NumBins;
-    for (i = 0; i < numAtts; i++) {
-      switch (m_HistogramType) {
-	case GRAY:
-	  result.add("histo_" + (i+1), DataType.NUMERIC);
-	  break;
-	case RGB:
-	  result.add("histo_r_" + (i+1), DataType.NUMERIC);
-	  result.add("histo_g_" + (i+1), DataType.NUMERIC);
-	  result.add("histo_b_" + (i+1), DataType.NUMERIC);
-	  break;
-	case YUV:
-	  result.add("histo_y_" + (i+1), DataType.NUMERIC);
-	  result.add("histo_u_" + (i+1), DataType.NUMERIC);
-	  result.add("histo_v_" + (i+1), DataType.NUMERIC);
-	  break;
-	case YIQ:
-	  result.add("histo_y_" + (i+1), DataType.NUMERIC);
-	  result.add("histo_i_" + (i+1), DataType.NUMERIC);
-	  result.add("histo_q_" + (i+1), DataType.NUMERIC);
-	  break;
-	case HSV:
-	  result.add("histo_h_" + (i+1), DataType.NUMERIC);
-	  result.add("histo_s_" + (i+1), DataType.NUMERIC);
-	  result.add("histo_v_" + (i + 1), DataType.NUMERIC);
-	  break;
-	default:
-	  throw new IllegalStateException("Unhandled histogram type: " + m_HistogramType);
+    result   = new HeaderDefinition();
+    numAtts  = m_NumBins;
+    channels = getChannelSuffixes();
+    if (m_GroupChannels) {
+      for (String channel : channels) {
+	for (i = 0; i < numAtts; i++)
+	  result.add("histo" + channel + (i + 1), DataType.NUMERIC);
+      }
+    }
+    else {
+      for (i = 0; i < numAtts; i++) {
+	for (String channel : channels)
+	  result.add("histo" + channel + (i+1), DataType.NUMERIC);
       }
     }
 
@@ -367,6 +420,7 @@ public class Histogram
     float[]			conv;
     ArrayHistogram<Integer>	histogram;
     StatisticContainer		cont;
+    String[]			channels;
 
     result = null;
 
@@ -470,9 +524,18 @@ public class Histogram
 	break;
     }
 
+    channels  = getChannelSuffixes();
     result    = new List[1];
     result[0] = new ArrayList<>();
-    result[0].addAll(Arrays.asList(StatUtils.toNumberArray(values)));
+    if (m_GroupChannels) {
+      for (n = 0; n < channels.length; n++) {
+	for (i = 0; i < m_NumBins; i++)
+	  result[0].add(values[i * channels.length + n]);
+      }
+    }
+    else {
+      result[0].addAll(Arrays.asList(StatUtils.toNumberArray(values)));
+    }
 
     return result;
   }

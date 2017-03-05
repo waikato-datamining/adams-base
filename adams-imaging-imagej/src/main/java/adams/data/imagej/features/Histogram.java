@@ -15,11 +15,16 @@
 
 /*
  * Histogram.java
- * Copyright (C) 2010-2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.imagej.features;
 
+import adams.core.EnumWithCustomDisplay;
+import adams.core.option.AbstractOption;
+import adams.data.featureconverter.HeaderDefinition;
+import adams.data.imagej.ImagePlusContainer;
+import adams.data.report.DataType;
 import ij.ImagePlus;
 import ij.process.ByteProcessor;
 import ij.process.ColorProcessor;
@@ -27,12 +32,6 @@ import ij.process.ColorProcessor;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
-
-import adams.core.EnumWithCustomDisplay;
-import adams.core.option.AbstractOption;
-import adams.data.featureconverter.HeaderDefinition;
-import adams.data.imagej.ImagePlusContainer;
-import adams.data.report.DataType;
 
 /**
  <!-- globalinfo-start -->
@@ -42,13 +41,19 @@ import adams.data.report.DataType;
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
+ * </pre>
  * 
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-converter &lt;adams.data.featureconverter.AbstractFeatureConverter&gt; (property: converter)
+ * &nbsp;&nbsp;&nbsp;The feature converter to use to produce the output data.
+ * &nbsp;&nbsp;&nbsp;default: adams.data.featureconverter.SpreadSheet -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.DefaultSpreadSheet
+ * </pre>
+ * 
+ * <pre>-prefix &lt;java.lang.String&gt; (property: prefix)
+ * &nbsp;&nbsp;&nbsp;The (optional) prefix to use for the feature names.
+ * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
  * <pre>-field &lt;adams.data.report.Field&gt; [-field ...] (property: fields)
@@ -62,9 +67,14 @@ import adams.data.report.DataType;
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
- * <pre>-histo-type &lt;8-bit|RGB&gt; (property: histogramType)
+ * <pre>-histo-type &lt;EIGHT_BIT|RGB&gt; (property: histogramType)
  * &nbsp;&nbsp;&nbsp;The type of histogram to generate.
  * &nbsp;&nbsp;&nbsp;default: RGB
+ * </pre>
+ * 
+ * <pre>-group-channels &lt;boolean&gt; (property: groupChannels)
+ * &nbsp;&nbsp;&nbsp;If enabled, grouping is by channel rather than by bin.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
  <!-- options-end -->
@@ -195,6 +205,9 @@ public class Histogram
   /** the type of histogram to generate. */
   protected HistogramType m_HistogramType;
 
+  /** whether to group the channels. */
+  protected boolean m_GroupChannels;
+
   /**
    * Returns a string describing the object.
    *
@@ -216,8 +229,12 @@ public class Histogram
     super.defineOptions();
 
     m_OptionManager.add(
-	    "histo-type", "histogramType",
-	    HistogramType.RGB);
+      "histo-type", "histogramType",
+      HistogramType.RGB);
+
+    m_OptionManager.add(
+      "group-channels", "groupChannels",
+      false);
   }
 
   /**
@@ -250,6 +267,51 @@ public class Histogram
   }
 
   /**
+   * Sets the whether to group by channels.
+   *
+   * @param value 	true if to group by channels
+   */
+  public void setGroupChannels(boolean value) {
+    m_GroupChannels = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to group by channels.
+   *
+   * @return 		true if to group by channels
+   */
+  public boolean getGroupChannels() {
+    return m_GroupChannels;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String groupChannelsTipText() {
+    return "If enabled, grouping is by channel rather than by bin.";
+  }
+
+  /**
+   * Returns the channel suffixes to use.
+   *
+   * @return		the suffixes
+   */
+  protected String[] getChannelSuffixes() {
+    switch (m_HistogramType) {
+      case EIGHT_BIT:
+	return new String[]{"_"};
+      case RGB:
+	return new String[]{"_r_", "_g_", "_b_"};
+      default:
+        throw new IllegalStateException("Unhandled histogram type: " + m_HistogramType);
+    }
+  }
+
+  /**
    * Creates the header from a template image.
    *
    * @param img		the image to act as a template
@@ -257,24 +319,24 @@ public class Histogram
    */
   @Override
   public HeaderDefinition createHeader(ImagePlusContainer img) {
-    HeaderDefinition		result;
-    int				i;
-    int				numAtts;
+    HeaderDefinition	result;
+    int			i;
+    int			numAtts;
+    String[] 		channels;
 
     result  = new HeaderDefinition();
     numAtts = 256;
-    for (i = 0; i < numAtts; i++) {
-      switch (m_HistogramType) {
-	case EIGHT_BIT:
-	  result.add("histo_" + (i+1), DataType.NUMERIC);
-	  break;
-	case RGB:
-	  result.add("histo_r_" + (i+1), DataType.NUMERIC);
-	  result.add("histo_g_" + (i+1), DataType.NUMERIC);
-	  result.add("histo_b_" + (i+1), DataType.NUMERIC);
-	  break;
-	default:
-	  throw new IllegalStateException("Unhandled histogram type: " + m_HistogramType);
+    channels = getChannelSuffixes();
+    if (m_GroupChannels) {
+      for (String channel : channels) {
+	for (i = 0; i < numAtts; i++)
+	  result.add("histo" + channel + (i + 1), DataType.NUMERIC);
+      }
+    }
+    else {
+      for (i = 0; i < numAtts; i++) {
+	for (String channel : channels)
+	  result.add("histo" + channel + (i+1), DataType.NUMERIC);
       }
     }
 
@@ -301,7 +363,7 @@ public class Histogram
     byte[] 		B;
 
     result = new List[1];
-    result[0] = new ArrayList<Object>();
+    result[0] = new ArrayList<>();
     ip     = img.getImage();
 
     switch (m_HistogramType) {
@@ -331,8 +393,12 @@ public class Histogram
 	    for (i = 0; i < Array.getLength(pixels) * 3; i++)
 	      result[0].add(0);
 	  }
-	  for (i = 0; i < Array.getLength(pixels); i++)
-	    result[0].set(i*3 + n, Array.getDouble(pixels, i));
+	  for (i = 0; i < Array.getLength(pixels); i++) {
+            if (m_GroupChannels)
+              result[0].set(n * 256 + i, Array.getDouble(pixels, i));
+            else
+              result[0].set(i * 3 + n, Array.getDouble(pixels, i));
+          }
 	}
 	break;
 

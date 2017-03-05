@@ -15,7 +15,7 @@
 
 /*
  * Histogram.java
- * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.jai.features;
@@ -53,7 +53,12 @@ import java.util.List;
  * 
  * <pre>-converter &lt;adams.data.featureconverter.AbstractFeatureConverter&gt; (property: converter)
  * &nbsp;&nbsp;&nbsp;The feature converter to use to produce the output data.
- * &nbsp;&nbsp;&nbsp;default: adams.data.featureconverter.SpreadSheet -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.SpreadSheet
+ * &nbsp;&nbsp;&nbsp;default: adams.data.featureconverter.SpreadSheet -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.DefaultSpreadSheet
+ * </pre>
+ * 
+ * <pre>-prefix &lt;java.lang.String&gt; (property: prefix)
+ * &nbsp;&nbsp;&nbsp;The (optional) prefix to use for the feature names.
+ * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
  * <pre>-field &lt;adams.data.report.Field&gt; [-field ...] (property: fields)
@@ -77,6 +82,11 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default: 256
  * &nbsp;&nbsp;&nbsp;minimum: 1
  * &nbsp;&nbsp;&nbsp;maximum: 256
+ * </pre>
+ * 
+ * <pre>-group-channels &lt;boolean&gt; (property: groupChannels)
+ * &nbsp;&nbsp;&nbsp;If enabled, grouping is by channel rather than by bin.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
  <!-- options-end -->
@@ -210,6 +220,9 @@ public class Histogram
   /** the number of bins per channel. */
   protected int m_NumBins;
 
+  /** whether to group the channels. */
+  protected boolean m_GroupChannels;
+
   /**
    * Returns a string describing the object.
    *
@@ -232,12 +245,16 @@ public class Histogram
     super.defineOptions();
 
     m_OptionManager.add(
-	    "histo-type", "histogramType",
-	    HistogramType.RGB);
+      "histo-type", "histogramType",
+      HistogramType.RGB);
 
     m_OptionManager.add(
       "num-bins", "numBins",
       256, 1, 256);
+
+    m_OptionManager.add(
+      "group-channels", "groupChannels",
+      false);
   }
 
   /**
@@ -304,6 +321,51 @@ public class Histogram
   }
 
   /**
+   * Sets the whether to group by channels.
+   *
+   * @param value 	true if to group by channels
+   */
+  public void setGroupChannels(boolean value) {
+    m_GroupChannels = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to group by channels.
+   *
+   * @return 		true if to group by channels
+   */
+  public boolean getGroupChannels() {
+    return m_GroupChannels;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String groupChannelsTipText() {
+    return "If enabled, grouping is by channel rather than by bin.";
+  }
+
+  /**
+   * Returns the channel suffixes to use.
+   *
+   * @return		the suffixes
+   */
+  protected String[] getChannelSuffixes() {
+    switch (m_HistogramType) {
+      case EIGHT_BIT:
+	return new String[]{"_"};
+      case RGB:
+	return new String[]{"_r_", "_g_", "_b_"};
+      default:
+        throw new IllegalStateException("Unhandled histogram type: " + m_HistogramType);
+    }
+  }
+
+  /**
    * Creates the header from a template image.
    *
    * @param img		the image to act as a template
@@ -311,24 +373,24 @@ public class Histogram
    */
   @Override
   public HeaderDefinition createHeader(BufferedImageContainer img) {
-    HeaderDefinition		result;
-    int				i;
-    int				numAtts;
+    HeaderDefinition	result;
+    int			i;
+    int			numAtts;
+    String[] 		channels;
 
     result  = new HeaderDefinition();
     numAtts = m_NumBins;
-    for (i = 0; i < numAtts; i++) {
-      switch (m_HistogramType) {
-	case EIGHT_BIT:
-	  result.add("histo_" + (i+1), DataType.NUMERIC);
-	  break;
-	case RGB:
-	  result.add("histo_r_" + (i+1), DataType.NUMERIC);
-	  result.add("histo_g_" + (i+1), DataType.NUMERIC);
-	  result.add("histo_b_" + (i+1), DataType.NUMERIC);
-	  break;
-	default:
-	  throw new IllegalStateException("Unhandled histogram type: " + m_HistogramType);
+    channels = getChannelSuffixes();
+    if (m_GroupChannels) {
+      for (String channel : channels) {
+	for (i = 0; i < numAtts; i++)
+	  result.add("histo" + channel + (i + 1), DataType.NUMERIC);
+      }
+    }
+    else {
+      for (i = 0; i < numAtts; i++) {
+	for (String channel : channels)
+	  result.add("histo" + channel + (i+1), DataType.NUMERIC);
       }
     }
 
@@ -352,7 +414,9 @@ public class Histogram
     ParameterBlock 		pb;
     PlanarImage			dst;
     int				i;
+    int				n;
     BufferedImage		image;
+    String[]			channels;
 
     result = null;
     image  = BufferedImageHelper.convert(img.getImage(), BufferedImage.TYPE_3BYTE_BGR);
@@ -409,9 +473,18 @@ public class Histogram
 	break;
     }
 
+    channels  = getChannelSuffixes();
     result    = new List[1];
-    result[0] = new ArrayList<Object>();
-    result[0].addAll(Arrays.asList(StatUtils.toNumberArray(values)));
+    result[0] = new ArrayList<>();
+    if (m_GroupChannels) {
+      for (n = 0; n < channels.length; n++) {
+	for (i = 0; i < m_NumBins; i++)
+	  result[0].add(values[i * channels.length + n]);
+      }
+    }
+    else {
+      result[0].addAll(Arrays.asList(StatUtils.toNumberArray(values)));
+    }
 
     return result;
   }
