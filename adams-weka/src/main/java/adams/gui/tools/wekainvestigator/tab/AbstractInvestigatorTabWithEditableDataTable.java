@@ -59,6 +59,9 @@ public abstract class AbstractInvestigatorTabWithEditableDataTable
   /** the button for removing a dataset. */
   protected JideButton m_ButtonRemove;
 
+  /** the save button. */
+  protected JideButton m_ButtonSave;
+
   /** the action button. */
   protected JideSplitButton m_ButtonAction;
 
@@ -123,13 +126,17 @@ public abstract class AbstractInvestigatorTabWithEditableDataTable
     m_ButtonUndo.addActionListener((ActionEvent e) -> undo(m_Table.getSelectedRows()));
     m_Table.addToButtonsPanel(m_ButtonUndo);
 
-    m_ButtonAction = new JideSplitButton();
+    m_ButtonSave = new JideButton("Save", GUIHelper.getIcon("save.gif"));
+    m_ButtonSave.setButtonStyle(JideButton.TOOLBOX_STYLE);
+    m_Table.addToButtonsPanel(m_ButtonSave);
+
+    m_ButtonAction = new JideSplitButton("...", GUIHelper.getEmptyIcon());
     m_ButtonAction.setAlwaysDropdown(false);
     m_ButtonAction.setButtonEnabled(true);
     m_ButtonAction.setButtonStyle(JideSplitButton.TOOLBOX_STYLE);
     for (AbstractEditableDataTableAction action: m_Actions) {
       if (action instanceof Save)
-	m_ButtonAction.setAction(action);
+	m_ButtonSave.setAction(action);
       else
 	m_ButtonAction.add(action);
     }
