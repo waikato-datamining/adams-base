@@ -15,7 +15,7 @@
 
 /*
  * SpreadSheetGetCell.java
- * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -371,10 +371,10 @@ public class SpreadSheetGetCell
       rows = m_Row.getIntIndices();
       cols = m_Column.getIntIndices();
       if (rows.length == 0) {
-        result = "No rows selected?";
+        result = "No rows selected? " + m_Row.getRange();
       }
       else if (cols.length == 0) {
-        result = "No columns selected?";
+        result = "No columns selected? " + m_Column.getRange();
       }
       else {
         for (int r: rows) {
@@ -398,7 +398,7 @@ public class SpreadSheetGetCell
       m_Column.setSpreadSheet(row.getOwner());
       cols = m_Column.getIntIndices();
       if (cols.length == 0) {
-        result = "No columns selected?";
+        result = "No columns selected? " + m_Column.getRange();
       }
       else {
 	for (int c: cols) {
