@@ -15,7 +15,7 @@
 
 /*
  *    AttributeVisualizationPanel.java
- *    Copyright (C) 2003-2016 University of Waikato, Hamilton, New Zealand
+ *    Copyright (C) 2003-2017 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -809,8 +809,10 @@ public class AttributeVisualizationPanel extends JPanel {
   @Override
   public String getToolTipText(MouseEvent ev) {
 
-    if (m_as != null && m_as.nominalWeights != null) { // if current attrib is
-      // nominal
+    if (m_as == null)
+      return null;
+
+    if (m_as.nominalWeights != null) { // if current attrib is nominal
 
       float intervalWidth = this.getWidth()
 	/ (float) m_as.nominalWeights.length;
