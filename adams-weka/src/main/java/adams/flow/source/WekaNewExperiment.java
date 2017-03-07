@@ -179,7 +179,7 @@ public class WekaNewExperiment
    */
   @Override
   protected String doExecute() {
-    m_OutputToken = new Token( OptionUtils.shallowCopy(m_Experiment));
+    m_OutputToken = new Token(OptionUtils.shallowCopy(m_Experiment, true));
     return null;
   }
 }
