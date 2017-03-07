@@ -828,6 +828,9 @@ public class FlowPanel
 	      return null;
 	    }
 	  }
+          else {
+            clearNotification();
+          }
 	}
 
 	SwingUtilities.invokeLater(() -> setTabIcon("save.gif"));
