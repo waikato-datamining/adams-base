@@ -15,7 +15,7 @@
 
 /**
  * SpreadSheetExtractArray.java
- * Copyright (C) 2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
 
@@ -247,15 +247,6 @@ public class SpreadSheetExtractArray
    */
   public Class[] accepts() {
     return new Class[]{SpreadSheet.class};
-  }
-
-  /**
-   * Returns the class of objects that it generates.
-   *
-   * @return		<!-- flow-generates-start -->java.lang.Object[].class<!-- flow-generates-end -->
-   */
-  public Class[] generates() {
-    return new Class[]{Object[].class};
   }
 
   /**
