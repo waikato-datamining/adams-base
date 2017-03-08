@@ -15,7 +15,7 @@
 
 /*
  * WekaEvaluationValues.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -242,7 +242,7 @@ public class WekaEvaluationValues
     
     try {
       value = EvaluationHelper.getValue(eval, statistic, classIndex);
-      row   = sheet.addRow("" + sheet.getRowCount());
+      row   = sheet.addRow();
       name  = statistic.toDisplayShort();
       if (useIndex && statistic.isPerClass())
 	name += " (" + eval.getHeader().classAttribute().value(classIndex) + ")";
@@ -281,9 +281,9 @@ public class WekaEvaluationValues
     sheet = new DefaultSpreadSheet();
     sheet.getHeaderRow().addCell("0").setContent("Statistic");
     sheet.getHeaderRow().addCell("1").setContent("Value");
-    if (indices.length == 1) {
+    if (indices.length <= 1) {
       for (EvaluationStatistic statistic: m_StatisticValues) {
-	msg = addStatistic(eval, sheet, statistic, indices[0], true);
+	msg = addStatistic(eval, sheet, statistic, (indices.length == 0 ? 0 : indices[0]), true);
 	if (msg != null) {
 	  if (result == null)
 	    result = "";
