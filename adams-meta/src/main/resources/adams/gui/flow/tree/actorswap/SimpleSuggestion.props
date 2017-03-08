@@ -1,0 +1,25 @@
+# File for listing simple actor swap suggestion.
+#
+# Format:
+#   current actor class = suggested actor class
+#
+# Author: FracPete (fracpete at waikato dot ac dot nz)
+# Version: $Revision: 15239 $
+
+# CallableX - CopyCallableX
+adams.flow.source.CallableSource=adams.flow.source.CopyCallableSource
+adams.flow.source.CopyCallableSource=adams.flow.source.CallableSource
+adams.flow.transformer.CallableTransformer=adams.flow.transformer.CopyCallableTransformer
+adams.flow.transformer.CopyCallableTransformer=adams.flow.transformer.CallableTransformer
+adams.flow.sink.CallableSink=adams.flow.sink.CopyCallableSink
+adams.flow.sink.CopyCallableSink=adams.flow.sink.CallableSink
+
+# ExternalX - IncludeExternalX
+adams.flow.standalone.ExternalStandalone=adams.flow.standalone.IncludeExternalStandalone
+adams.flow.standalone.IncludeExternalStandalone=adams.flow.standalone.ExternalStandalone
+adams.flow.source.ExternalSource=adams.flow.source.IncludeExternalSource
+adams.flow.source.IncludeExternalSource=adams.flow.source.ExternalSource
+adams.flow.transformer.ExternalTransformer=adams.flow.transformer.IncludeExternalTransformer
+adams.flow.transformer.IncludeExternalTransformer=adams.flow.transformer.ExternalTransformer
+adams.flow.sink.ExternalSink=adams.flow.sink.IncludeExternalSink
+adams.flow.sink.IncludeExternalSink=adams.flow.sink.ExternalSink

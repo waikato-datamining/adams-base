@@ -14,29 +14,37 @@
  */
 
 /**
- * FileSupplierToSelectFileSuggestion.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * SimpleSuggestion.java
+ * Copyright (C) 2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.flow.tree.actorswap;
 
+import adams.core.Properties;
 import adams.flow.core.Actor;
-import adams.flow.source.FileSupplier;
-import adams.flow.source.SelectFile;
+import adams.flow.sink.Display;
+import adams.flow.sink.DumpFile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 /**
- * Suggests SelectFile as swap partner for FileSupplier.
+ * Suggests actors based on the {@link #PROPERTIES_FILENAME} rules.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class FileSupplierToSelectFileSuggestion
+public class SimpleSuggestion
   extends AbstractActorSwapSuggestion {
 
   private static final long serialVersionUID = -2879844263173160775L;
+
+  /** the properties file to load. */
+  public final static String PROPERTIES_FILENAME = "adams/gui/flow/tree/actorswap/SimpleSuggestion.props";
+
+  /** the properties. */
+  protected static Properties m_Properties;
 
   /**
    * Returns a string describing the object.
@@ -45,7 +53,7 @@ public class FileSupplierToSelectFileSuggestion
    */
   @Override
   public String globalInfo() {
-    return "Suggests " + SelectFile.class + " as swap partner for " + FileSupplier.class.getName() + ".";
+    return "Suggests " + DumpFile.class + " as swap partner for " + Display.class.getName() + ".";
   }
 
   /**
@@ -57,12 +65,41 @@ public class FileSupplierToSelectFileSuggestion
   @Override
   protected List<Actor> doSuggest(Actor current) {
     List<Actor>		result;
+    Properties		props;
+    String		name;
 
     result = new ArrayList<>();
 
-    if (current instanceof FileSupplier)
-      result.add(new SelectFile());
+    props = getProperties();
+    name  = current.getClass().getName();
+    if (props.hasKey(name)) {
+      try {
+	result.add((Actor) Class.forName(props.getProperty(name)).newInstance());
+      }
+      catch (Exception e) {
+	getLogger().log(Level.SEVERE, "Failed to instantiate suggestion for '" + name + "': " + props.getProperty(name), e);
+      }
+    }
 
     return result;
+  }
+
+  /**
+   * Returns the properties with the suggestions.
+   *
+   * @return		the suggestions
+   */
+  protected static synchronized Properties getProperties() {
+    if (m_Properties == null) {
+      try {
+	m_Properties = Properties.read(PROPERTIES_FILENAME);
+      }
+      catch (Exception e) {
+	System.err.println("Failed to read: " + PROPERTIES_FILENAME);
+	e.printStackTrace();
+	m_Properties = new Properties();
+      }
+    }
+    return m_Properties;
   }
 }

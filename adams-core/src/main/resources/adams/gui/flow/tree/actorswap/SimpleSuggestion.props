@@ -1,0 +1,23 @@
+# File for listing simple actor swap suggestion.
+#
+# Format:
+#   current actor class = suggested actor class
+#
+# Author: FracPete (fracpete at waikato dot ac dot nz)
+# Version: $Revision: 15239 $
+
+# SelectFile - FileSupplier
+adams.flow.source.FileSupplier=adams.flow.source.SelectFile
+adams.flow.source.SelectFile=adams.flow.source.FileSupplier
+
+# Display - DumpFile
+adams.flow.sink.Display=adams.flow.sink.DumpFile
+adams.flow.sink.DumpFile=adams.flow.sink.Display
+
+# SetVariable: transformer - standalone
+adams.flow.standalone.SetVariable=adams.flow.transformer.SetVariable
+adams.flow.transformer.SetVariable=adams.flow.standalone.SetVariable
+
+# ForLoop - StorageForLoop
+adams.flow.source.ForLoop=adams.flow.source.StorageForLoop
+adams.flow.source.StorageForLoop=adams.flow.source.ForLoop
