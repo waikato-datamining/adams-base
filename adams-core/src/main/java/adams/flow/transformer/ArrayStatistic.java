@@ -15,7 +15,7 @@
 
 /*
  * ArrayStatistic.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -31,6 +31,7 @@ import adams.flow.core.Token;
 /**
  <!-- globalinfo-start -->
  * Generates statistics from a double array or matrix.
+ * In case of an array, the data-type and location are ignored.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -133,7 +134,8 @@ public class ArrayStatistic
   @Override
   public String globalInfo() {
     return
-        "Generates statistics from a double array or matrix.";
+      "Generates statistics from a double array or matrix.\n"
+        + "In case of an array, the data-type and location are ignored.";
   }
 
   /**
