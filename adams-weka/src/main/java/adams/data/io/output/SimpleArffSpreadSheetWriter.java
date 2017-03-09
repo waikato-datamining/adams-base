@@ -14,19 +14,19 @@
  */
 
 /**
- * ArffSpreadSheetReader.java
- * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
+ * SimpleArffSpreadSheetWriter.java
+ * Copyright (C) 2017 University of Waikato, Hamilton, New Zealand
  */
-package adams.data.io.input;
+package adams.data.io.output;
 
-import adams.data.io.output.SimpleArffSpreadSheetWriter;
-import adams.data.io.output.SpreadSheetWriter;
-import weka.core.converters.AbstractFileLoader;
-import weka.core.converters.SimpleArffLoader;
+import adams.data.io.input.SimpleArffSpreadSheetReader;
+import adams.data.io.input.SpreadSheetReader;
+import weka.core.converters.AbstractFileSaver;
+import weka.core.converters.SimpleArffSaver;
 
 /**
  <!-- globalinfo-start -->
- * Reads WEKA datasets in ARFF format and turns them into spreadsheets.
+ * Writes a spreadsheet in ARFF file format (simple saver).
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -40,26 +40,16 @@ import weka.core.converters.SimpleArffLoader;
  * &nbsp;&nbsp;&nbsp;minimum: 0
  * </pre>
  * 
- * <pre>-missing &lt;java.lang.String&gt; (property: missingValue)
- * &nbsp;&nbsp;&nbsp;The placeholder for missing values.
- * &nbsp;&nbsp;&nbsp;default: ?
- * </pre>
- * 
- * <pre>-data-row-type &lt;DENSE|SPARSE&gt; (property: dataRowType)
- * &nbsp;&nbsp;&nbsp;The type of row to use for the data.
- * &nbsp;&nbsp;&nbsp;default: DENSE
- * </pre>
- * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class SimpleArffSpreadSheetReader
-  extends AbstractWekaSpreadSheetReader {
+public class SimpleArffSpreadSheetWriter
+  extends AbstractWekaSpreadSheetWriter {
 
   /** for serialization. */
-  private static final long serialVersionUID = 4421664099462099419L;
+  private static final long serialVersionUID = -677810919276444654L;
 
   /**
    * Returns a string describing the object.
@@ -68,16 +58,16 @@ public class SimpleArffSpreadSheetReader
    */
   @Override
   public String globalInfo() {
-    return "Reads WEKA datasets in ARFF format and turns them into spreadsheets (no relational attributes).";
+    return "Writes a spreadsheet in ARFF file format (simple saver).";
   }
 
   /**
-   * Returns, if available, the corresponding writer.
+   * Returns, if available, the corresponding reader.
    * 
-   * @return		the writer, null if none available
+   * @return		the reader, null if none available
    */
-  public SpreadSheetWriter getCorrespondingWriter() {
-    return new SimpleArffSpreadSheetWriter();
+  public SpreadSheetReader getCorrespondingReader() {
+    return new SimpleArffSpreadSheetReader();
   }
 
   /**
@@ -86,7 +76,7 @@ public class SimpleArffSpreadSheetReader
    * @return		the file loader
    */
   @Override
-  protected AbstractFileLoader newLoader() {
-    return new SimpleArffLoader();
+  protected AbstractFileSaver newSaver() {
+    return new SimpleArffSaver();
   }
 }

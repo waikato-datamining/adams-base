@@ -15,23 +15,22 @@
 
 /*
  * WekaFileWriter.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
 
-import java.io.File;
-
-import adams.core.Shortening;
-import weka.core.Instances;
-import weka.core.converters.AbstractFileSaver;
-import weka.core.converters.ArffSaver;
-import weka.core.converters.ConverterUtils;
-import weka.core.converters.ConverterUtils.DataSink;
 import adams.core.QuickInfoHelper;
-import adams.core.Utils;
+import adams.core.Shortening;
 import adams.core.io.FileUtils;
 import adams.core.option.OptionUtils;
+import weka.core.Instances;
+import weka.core.converters.AbstractFileSaver;
+import weka.core.converters.ConverterUtils;
+import weka.core.converters.ConverterUtils.DataSink;
+import weka.core.converters.SimpleArffSaver;
+
+import java.io.File;
 
 /**
  <!-- globalinfo-start -->
@@ -95,7 +94,7 @@ import adams.core.option.OptionUtils;
  *
  * <pre>-saver &lt;weka.core.converters.AbstractFileSaver [options]&gt; (property: customSaver)
  * &nbsp;&nbsp;&nbsp;The custom saver to use if enabled.
- * &nbsp;&nbsp;&nbsp;default: weka.core.converters.ArffSaver
+ * &nbsp;&nbsp;&nbsp;default: weka.core.converters.SimpleArffSaver
  * </pre>
  *
  <!-- options-end -->
@@ -148,7 +147,7 @@ public class WekaFileWriter
 
     m_OptionManager.add(
 	    "saver", "customSaver",
-	    new ArffSaver());
+	    new SimpleArffSaver());
   }
 
   /**

@@ -22,8 +22,8 @@ package adams.gui.chooser;
 
 import weka.core.converters.AbstractFileLoader;
 import weka.core.converters.AbstractFileSaver;
-import weka.core.converters.ArffSaver;
 import weka.core.converters.SimpleArffLoader;
+import weka.core.converters.SimpleArffSaver;
 import weka.gui.GenericObjectEditor;
 
 import java.io.File;
@@ -227,7 +227,7 @@ public class WekaFileChooser
    */
   @Override
   protected AbstractFileSaver getDefaultWriter() {
-    return new ArffSaver();
+    return new SimpleArffSaver();
   }
 
   /**
