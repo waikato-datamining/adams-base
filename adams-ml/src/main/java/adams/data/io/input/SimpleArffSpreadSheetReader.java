@@ -298,7 +298,7 @@ public class SimpleArffSpreadSheetReader
 	    row = result.getHeaderRow();
 	  lower = line.toLowerCase();
 	  if (lower.startsWith(KEYWORD_RELATION)) {
-	    result.setName(line.substring(KEYWORD_RELATION.length()).trim());
+	    result.setName(Utils.unquote(line.substring(KEYWORD_RELATION.length()).trim()));
 	  }
 	  else if (lower.startsWith(KEYWORD_ATTRIBUTE)) {
 	    row.addCell("" + row.getCellCount()).setContentAsString(getAttributeName(line));
@@ -313,6 +313,7 @@ public class SimpleArffSpreadSheetReader
 	  cells = SpreadSheetUtils.split(line, ',', false, '\'', true);
 	  row   = result.addRow();
 	  for (i = 0; i < cells.length && i < result.getColumnCount(); i++) {
+            cells[i] = cells[i].trim();
 	    if (cells[i].equals("?"))
 	      continue;
 	    cell = row.addCell(i);

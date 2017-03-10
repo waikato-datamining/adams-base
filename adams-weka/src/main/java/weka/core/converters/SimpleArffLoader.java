@@ -334,6 +334,7 @@ public class SimpleArffLoader
 	  values = new double[result.numAttributes()];
 	  for (i = 0; i < cells.length; i++) {
 	    values[i] = weka.core.Utils.missingValue();
+            cells[i] = cells[i].trim();
 	    if (cells[i].equals("?"))
 	      continue;
             cells[i] = Utils.unquote(cells[i]);
