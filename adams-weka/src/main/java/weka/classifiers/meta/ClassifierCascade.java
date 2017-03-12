@@ -22,6 +22,7 @@ package weka.classifiers.meta;
 
 import adams.core.option.OptionUtils;
 import adams.data.statistics.StatUtils;
+import adams.env.Environment;
 import adams.flow.container.WekaTrainTestSetContainer;
 import adams.flow.core.EvaluationHelper;
 import adams.flow.core.EvaluationStatistic;
@@ -33,6 +34,8 @@ import weka.classifiers.RandomizableMultipleClassifiersCombiner;
 import weka.classifiers.evaluation.NominalPrediction;
 import weka.classifiers.evaluation.Prediction;
 import weka.core.Attribute;
+import weka.core.Capabilities;
+import weka.core.Capabilities.Capability;
 import weka.core.DenseInstance;
 import weka.core.Instance;
 import weka.core.Instances;
@@ -87,7 +90,7 @@ public class ClassifierCascade
   protected EvaluationStatistic m_Statistic = EvaluationStatistic.PERCENT_CORRECT;
 
   /** the threshold for the statistic for termination. */
-  protected double m_Threshold = 90.0;
+  protected double m_Threshold = 97.0;
 
   /** whether to go below or above the threshold. */
   protected ThresholdCheck m_ThresholdCheck = ThresholdCheck.ABOVE;
@@ -146,6 +149,33 @@ public class ClassifierCascade
   }
 
   /**
+   * Returns combined capabilities of the base classifiers, i.e., the
+   * capabilities all of them have in common.
+   *
+   * @return      the capabilities of the base classifiers
+   */
+  @Override
+  public Capabilities getCapabilities() {
+    Capabilities 	result;
+    Capabilities	other;
+    int			i;
+
+    if (m_Classifiers.length == 0)
+      return new Capabilities(this);
+
+    result = m_Classifiers[0].getCapabilities();
+    for (i = 1; i < m_Classifiers.length; i++) {
+      other = m_Classifiers[i].getCapabilities();
+      result.and(other);
+      if (other.getMinimumNumberInstances() > result.getMinimumNumberInstances())
+	result.setMinimumNumberInstances(other.getMinimumNumberInstances());
+    }
+    result.enable(Capability.MISSING_CLASS_VALUES);
+
+    return result;
+  }
+
+  /**
    * Generates the dataset structure for the meta-levels.
    *
    * @param data	the training data
@@ -196,6 +226,7 @@ public class ClassifierCascade
    * @return		the meta-level instance, but with missing meta-level data
    */
   protected Instance createMetaLevelInstance(Instances metaLevel, Instance data) {
+    Instance		result;
     double[]		values;
     int			i;
     int			n;
@@ -240,7 +271,10 @@ public class ClassifierCascade
     }
     values[values.length - 1] = data.classValue();
 
-    return new DenseInstance(data.weight(), values);
+    result = new DenseInstance(data.weight(), values);
+    result.setDataset(metaLevel);
+
+    return result;
   }
 
   /**
@@ -295,8 +329,10 @@ public class ClassifierCascade
   public void buildClassifier(Instances data) throws Exception {
     Instances				train;
     Instances				test;
-    Instances				prior;
-    Instances				meta;
+    Instances 				priorTrain;
+    Instances 				priorTest;
+    Instances 				metaTrain;
+    Instances 				metaTest;
     RandomSplitGenerator		rand;
     WekaTrainTestSetContainer		cont;
     int					level;
@@ -317,15 +353,19 @@ public class ClassifierCascade
 
     getCapabilities().testWithFail(data);
 
+    data = new Instances(data);
+    data.deleteWithMissingClass();
+
     // data structure
     m_MetaLevelHeader = null;
 
     // train/test
-    rand    = new RandomSplitGenerator(data, m_Seed, (100.0 - m_HoldOutPercentage) / 100.0);
-    cont    = rand.next();
-    train   = (Instances) cont.getValue(WekaTrainTestSetContainer.VALUE_TRAIN);
-    test    = (Instances) cont.getValue(WekaTrainTestSetContainer.VALUE_TEST);
-    meta    = null;
+    rand      = new RandomSplitGenerator(data, m_Seed, (100.0 - m_HoldOutPercentage) / 100.0);
+    cont      = rand.next();
+    train     = (Instances) cont.getValue(WekaTrainTestSetContainer.VALUE_TRAIN);
+    test      = (Instances) cont.getValue(WekaTrainTestSetContainer.VALUE_TEST);
+    metaTrain = null;
+    metaTest  = null;
     m_Nominal = data.classAttribute().isNominal();
 
     m_Cascade         = new ArrayList<>();
@@ -336,8 +376,9 @@ public class ClassifierCascade
 	System.out.println("Level " + (level+1) + "...");
 
       // generate meta-level data
-      prior = meta;
-      meta  = new Instances(m_MetaLevelHeader, train.numInstances());
+      priorTrain = metaTrain;
+      priorTest  = metaTest;
+      metaTrain  = new Instances(m_MetaLevelHeader, train.numInstances());
       for (i = 0; i < m_Classifiers.length; i++) {
 	if (getDebug())
 	  System.out.println("- Classifier " + (i+1) + "...");
@@ -361,19 +402,19 @@ public class ClassifierCascade
 	if (i == 0) {
 	  unordered = new HashMap<>();
 	  for (int index : indices) {
-	    inst = createMetaLevelInstance(meta, train.instance(index));
+	    inst = createMetaLevelInstance(metaTrain, train.instance(index));
 	    unordered.put(index, inst);
 	  }
 	  for (n = 0; n < unordered.size(); n++)
-	    meta.add(unordered.get(n));
+	    metaTrain.add(unordered.get(n));
 	  unordered.clear();
 	}
 	// add predictions
 	for (n = 0; n < indices.length; n++) {
 	  if (m_Nominal)
-	    addMetaLevelPrediction(meta.instance(indices[n]), i, ((NominalPrediction) preds.get(n)).distribution());
+	    addMetaLevelPrediction(metaTrain.instance(indices[n]), i, ((NominalPrediction) preds.get(n)).distribution());
 	  else
-	    addMetaLevelPrediction(meta.instance(indices[n]), i, preds.get(n).predicted());
+	    addMetaLevelPrediction(metaTrain.instance(indices[n]), i, preds.get(n).predicted());
 	}
       }
 
@@ -381,22 +422,28 @@ public class ClassifierCascade
       current = new ArrayList<>();
       for (i = 0; i < m_Classifiers.length; i++) {
 	cls = (Classifier) OptionUtils.shallowCopy(m_Classifiers[i]);
-	if (prior == null) {
+	if (priorTrain == null) {
 	  cls.buildClassifier(train);
 	  current.add(cls);
 	}
 	else {
-	  cls.buildClassifier(meta);
+	  cls.buildClassifier(metaTrain);
 	  current.add(cls);
 	}
       }
       m_Cascade.get(m_Cascade.size() - 1).addAll(current);
 
-      // terminate? evaluate on test set
+      // evaluate on test set
       stats = new double[current.size()];
       for (i = 0; i < current.size(); i++) {
-	eval = new Evaluation(test);
-	eval.evaluateModel(current.get(i), test);
+	if (priorTest == null) {
+	  eval = new Evaluation(test);
+	  eval.evaluateModel(current.get(i), test);
+	}
+	else {
+	  eval = new Evaluation(metaTest);
+	  eval.evaluateModel(current.get(i), metaTest);
+	}
 	stats[i] = EvaluationHelper.getValue(eval, m_Statistic, m_ClassIndex);
       }
       if (getDebug())
@@ -404,6 +451,8 @@ public class ClassifierCascade
       stat = applyCombination(stats);
       if (getDebug())
 	System.out.println(m_Statistic + " (" + m_Combination + "): " + stat);
+
+      // converged?
       switch (m_ThresholdCheck) {
 	case ABOVE:
 	  converged = (stat > m_Threshold);
@@ -418,6 +467,23 @@ public class ClassifierCascade
 	System.out.println("Converged: " + converged);
       if (converged)
 	break;
+
+      // build next test set
+      metaTest = createMetaLevelHeader(test);
+      for (n = 0; n < test.numInstances(); n++)
+	metaTest.add(createMetaLevelInstance(metaTest, test.instance(n)));
+      for (i = 0; i < current.size(); i++) {
+	for (n = 0; n < metaTest.numInstances(); n++) {
+	  if (level == 0)
+	    inst = test.instance(n);
+	  else
+	    inst = metaTest.instance(n);
+	  if (m_Nominal)
+	    addMetaLevelPrediction(metaTest.instance(n), i, current.get(i).distributionForInstance(inst));
+	  else
+	    addMetaLevelPrediction(metaTest.instance(n), i, current.get(i).classifyInstance(inst));
+	}
+      }
     }
   }
 
@@ -453,11 +519,14 @@ public class ClassifierCascade
 	for (i = 0; i < current.size(); i++) {
 	  if (m_Nominal) {
 	    dist = current.get(i).distributionForInstance(instance);
+	    if (level == finalLevel)
+	      preds.add(dist);
 	    addMetaLevelPrediction(meta, i, dist);
 	  }
 	  else {
 	    cls = current.get(i).classifyInstance(instance);
-	    preds.add(cls);
+	    if (level == finalLevel)
+	      preds.add(cls);
 	    addMetaLevelPrediction(meta, i, cls);
 	  }
 	}
@@ -570,6 +639,7 @@ public class ClassifierCascade
    * @param args 	the options
    */
   public static void main(String[] args) throws Exception {
+    Environment.setEnvironmentClass(Environment.class);
     runClassifier(new ClassifierCascade(), args);
   }
 }
