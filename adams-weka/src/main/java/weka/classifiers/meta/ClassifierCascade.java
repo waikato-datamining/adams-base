@@ -40,17 +40,107 @@ import weka.core.DenseInstance;
 import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.Utils;
+import weka.core.WekaOptionUtils;
 
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 
 /**
  <!-- globalinfo-start -->
+ * Generates a classifier cascade, with each deeper level of classifiers being built on the input data and either the class distributions (nominal class) or classification (numeric class) of the classifiers of the previous level in the cascade.<br>
+ * The build process is stopped when either the maximum number of levels is reached, the termination criterion is satisfied or no further improvement is achieved.<br>
+ * In case of a level performing worse than the prior one, the build process is terminated immediately and the current level discarded.
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
+ * Valid options are: <p>
+ * 
+ * <pre> -max-levels &lt;value&gt;
+ *  The maximum number of levels to build.
+ *  (default: 10)</pre>
+ * 
+ * <pre> -statistic &lt;value&gt;
+ *  The statistic to evaluate on.
+ *  (default: Percent correct)</pre>
+ * 
+ * <pre> -threshold &lt;value&gt;
+ *  The threshold that, when reached, terminates the build process.
+ *  (default: 90.0)</pre>
+ * 
+ * <pre> -threshold-check &lt;value&gt;
+ *  How to apply the provided threshold.
+ *  (default: ABOVE)</pre>
+ * 
+ * <pre> -min-improvement &lt;value&gt;
+ *  The minimum improvement between levels, otherwise the build process gets terminated.
+ *  (default: 0.01)</pre>
+ * 
+ * <pre> -num-folds &lt;value&gt;
+ *  The number of folds to use for internal cross-validation.
+ *  (default: 10)</pre>
+ * 
+ * <pre> -num-threads &lt;value&gt;
+ *  The number of threads to use.
+ *  (default: -1)</pre>
+ * 
+ * <pre> -holdout-percentage &lt;value&gt;
+ *  The size of the validation set in percent (0-100).
+ *  (default: 20.0)</pre>
+ * 
+ * <pre> -class-index &lt;value&gt;
+ *  The 0-based index of the class-label to use for class-label-based statistics.
+ *  (default: 0)</pre>
+ * 
+ * <pre> -combination &lt;value&gt;
+ *  Determines how to combine the statistics.
+ *  (default: MEDIAN)</pre>
+ * 
+ * <pre> -S &lt;num&gt;
+ *  Random number seed.
+ *  (default 1)</pre>
+ * 
+ * <pre> -B &lt;classifier specification&gt;
+ *  Full class name of classifier to include, followed
+ *  by scheme options. May be specified multiple times.
+ *  (default: "weka.classifiers.rules.ZeroR")</pre>
+ * 
+ * <pre> -output-debug-info
+ *  If set, classifier is run in debug mode and
+ *  may output additional info to the console</pre>
+ * 
+ * <pre> -do-not-check-capabilities
+ *  If set, classifier capabilities are not checked before classifier is built
+ *  (use with caution).</pre>
+ * 
+ * <pre> -num-decimal-places
+ *  The number of decimal places for the output of numbers in the model (default 2).</pre>
+ * 
+ * <pre> -batch-size
+ *  The desired batch size for batch prediction  (default 100).</pre>
+ * 
+ * <pre> 
+ * Options specific to classifier weka.classifiers.rules.ZeroR:
+ * </pre>
+ * 
+ * <pre> -output-debug-info
+ *  If set, classifier is run in debug mode and
+ *  may output additional info to the console</pre>
+ * 
+ * <pre> -do-not-check-capabilities
+ *  If set, classifier capabilities are not checked before classifier is built
+ *  (use with caution).</pre>
+ * 
+ * <pre> -num-decimal-places
+ *  The number of decimal places for the output of numbers in the model (default 2).</pre>
+ * 
+ * <pre> -batch-size
+ *  The desired batch size for batch prediction  (default 100).</pre>
+ * 
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
@@ -64,6 +154,26 @@ public class ClassifierCascade
   /** the prefix for the additional cascade attributes. */
   public static final String ATTRIBUTE_PREFIX = "Cascade-";
 
+  public static final int DEFAULT_MAX_LEVELS = 10;
+
+  public static final EvaluationStatistic DEFAULT_STATISTIC = EvaluationStatistic.PERCENT_CORRECT;
+
+  public static final double DEFAULT_THRESHOLD = 90.0;
+
+  public static final ThresholdCheck DEFAULT_THRESHOLD_CHECK = ThresholdCheck.ABOVE;
+
+  public static final double DEFAULT_MIN_IMPROVEMENT = 0.01;
+
+  public static final int DEFAULT_NUM_FOLDS = 10;
+
+  public static final int DEFAULT_NUM_THREADS = -1;
+
+  public static final double DEFAULT_HOLDOUT_PERCENTAGE = 20.0;
+
+  public static final int DEFAULT_CLASS_INDEX = 0;
+
+  public static final Combination DEFAULT_COMBINATION = Combination.MEDIAN;
+
   /**
    * Defines how to combine the predictions of the final layer and turn it into
    * actual predictions.
@@ -72,7 +182,7 @@ public class ClassifierCascade
     /** average the probabilities/classifications. */
     AVERAGE,
     /** use the median of the probabilities/classifications. */
-    MEDIAN,
+    MEDIAN,;
   }
 
   /**
@@ -80,42 +190,62 @@ public class ClassifierCascade
    */
   public enum ThresholdCheck {
     BELOW,
-    ABOVE,
+    ABOVE,;
   }
 
+  protected static String MAX_LEVELS = "max-levels";
+
+  protected static String STATISTIC = "statistic";
+
+  protected static String THRESHOLD = "threshold";
+
+  protected static String THRESHOLD_CHECK = "threshold-check";
+
+  protected static String MIN_IMPROVEMENT = "min-improvement";
+
+  protected static String NUM_FOLDS = "num-folds";
+
+  protected static String NUM_THREADS = "num-threads";
+
+  protected static String HOLDOUT_PERCENTAGE = "holdout-percentage";
+
+  protected static String CLASS_INDEX = "class-index";
+
+  protected static String COMBINATION = "combination";
+
   /** the maximum number of levels in the cascade. */
-  protected int m_MaxLevels = 10;
+  protected int m_MaxLevels = DEFAULT_MAX_LEVELS;
 
   /** the statistic to use for termination. */
-  protected EvaluationStatistic m_Statistic = EvaluationStatistic.PERCENT_CORRECT;
+  protected EvaluationStatistic m_Statistic = DEFAULT_STATISTIC;
 
   /** the threshold for the statistic for termination. */
-  protected double m_Threshold = 97.0;
+  protected double m_Threshold = DEFAULT_THRESHOLD;
 
   /** whether to go below or above the threshold. */
-  protected ThresholdCheck m_ThresholdCheck = ThresholdCheck.ABOVE;
+  protected ThresholdCheck m_ThresholdCheck = DEFAULT_THRESHOLD_CHECK;
 
   /** the minimum improvement between levels that the statistic must improve. */
-  protected double m_MinImprovement = 0.01;
+  protected double m_MinImprovement = DEFAULT_MIN_IMPROVEMENT;
 
   /** the number of folds for cross-validation. */
-  protected int m_NumFolds = 10;
+  protected int m_NumFolds = DEFAULT_NUM_FOLDS;
 
   /** the number of threads to use. */
-  protected int m_NumThreads = -1;
+  protected int m_NumThreads = DEFAULT_NUM_THREADS;
 
   /** the percentage to use for validation set to determine termination criterion (0-100). */
-  protected double m_HoldOutPercentage = 20.0;
+  protected double m_HoldOutPercentage = DEFAULT_HOLDOUT_PERCENTAGE;
 
   /** the class index. */
-  protected int m_ClassIndex = 0;
+  protected int m_ClassIndex = DEFAULT_CLASS_INDEX;
 
   /** how to combine the statistics. */
-  protected Combination m_Combination = Combination.MEDIAN;
+  protected Combination m_Combination = DEFAULT_COMBINATION;
 
   // TODO
   // - (optionally) weight classifier output, using an evaluation statistic to determine weights
-  // - (optionally) build classifier on predictions (class probs or classification) to make predictions
+  // - (optionally) build classifier on final predictions (class probs or classification) to make predictions similar to SMO
 
   /** the cascade. */
   protected List<List<Classifier>> m_Cascade = null;
@@ -146,6 +276,271 @@ public class ClassifierCascade
 	+ "improvement is achieved.\n"
 	+ "In case of a level performing worse than the prior one, the build "
 	+ "process is terminated immediately and the current level discarded.";
+  }
+
+  /**
+   * Returns an enumeration describing the available options.
+   *
+   * @return 		an enumeration of all the available options.
+   */
+  public Enumeration listOptions() {
+    Vector result;
+
+    result = new Vector();
+
+    WekaOptionUtils.addOption(result, maxLevelsTipText(), "" + getMaxLevels(), MAX_LEVELS);
+    WekaOptionUtils.addOption(result, statisticTipText(), "" + getStatistic(), STATISTIC);
+    WekaOptionUtils.addOption(result, thresholdTipText(), "" + getThreshold(), THRESHOLD);
+    WekaOptionUtils.addOption(result, thresholdCheckTipText(), "" + getThresholdCheck(), THRESHOLD_CHECK);
+    WekaOptionUtils.addOption(result, minImprovementTipText(), "" + getMinImprovement(), MIN_IMPROVEMENT);
+    WekaOptionUtils.addOption(result, numFoldsTipText(), "" + getNumFolds(), NUM_FOLDS);
+    WekaOptionUtils.addOption(result, numThreadsTipText(), "" + getNumThreads(), NUM_THREADS);
+    WekaOptionUtils.addOption(result, holdOutPercentageTipText(), "" + getHoldOutPercentage(), HOLDOUT_PERCENTAGE);
+    WekaOptionUtils.addOption(result, classIndexTipText(), "" + getClassIndex(), CLASS_INDEX);
+    WekaOptionUtils.addOption(result, combinationTipText(), "" + getCombination(), COMBINATION);
+    WekaOptionUtils.add(result, super.listOptions());
+    return WekaOptionUtils.toEnumeration(result);
+  }
+
+  /**
+   * Parses a given list of options.
+   *
+   * @param options 	the list of options as an array of strings
+   * @throws Exception 	if an option is not supported
+   */
+  public void setOptions(String[] options) throws Exception {
+    setMaxLevels(WekaOptionUtils.parse(options, MAX_LEVELS, DEFAULT_MAX_LEVELS));
+    setStatistic((EvaluationStatistic) WekaOptionUtils.parse(options, STATISTIC, DEFAULT_STATISTIC));
+    setThreshold(WekaOptionUtils.parse(options, THRESHOLD, DEFAULT_THRESHOLD));
+    setThresholdCheck((ThresholdCheck) WekaOptionUtils.parse(options, THRESHOLD_CHECK, DEFAULT_THRESHOLD_CHECK));
+    setMinImprovement(WekaOptionUtils.parse(options, MIN_IMPROVEMENT, DEFAULT_MIN_IMPROVEMENT));
+    setNumFolds(WekaOptionUtils.parse(options, NUM_FOLDS, DEFAULT_NUM_FOLDS));
+    setNumThreads(WekaOptionUtils.parse(options, NUM_THREADS, DEFAULT_NUM_THREADS));
+    setHoldOutPercentage(WekaOptionUtils.parse(options, HOLDOUT_PERCENTAGE, DEFAULT_HOLDOUT_PERCENTAGE));
+    setClassIndex(WekaOptionUtils.parse(options, CLASS_INDEX, DEFAULT_CLASS_INDEX));
+    setCombination((Combination) WekaOptionUtils.parse(options, COMBINATION, DEFAULT_COMBINATION));
+    super.setOptions(options);
+  }
+
+  /**
+   * Gets the current settings of the classifier.
+   *
+   * @return 		an array of strings suitable for passing to setOptions
+   */
+  public String [] getOptions() {
+    List<String> result = new ArrayList<>();
+    WekaOptionUtils.add(result, MAX_LEVELS, getMaxLevels());
+    WekaOptionUtils.add(result, STATISTIC, getStatistic());
+    WekaOptionUtils.add(result, THRESHOLD, getThreshold());
+    WekaOptionUtils.add(result, THRESHOLD_CHECK, getThresholdCheck());
+    WekaOptionUtils.add(result, MIN_IMPROVEMENT, getMinImprovement());
+    WekaOptionUtils.add(result, NUM_FOLDS, getNumFolds());
+    WekaOptionUtils.add(result, NUM_THREADS, getNumThreads());
+    WekaOptionUtils.add(result, HOLDOUT_PERCENTAGE, getHoldOutPercentage());
+    WekaOptionUtils.add(result, CLASS_INDEX, getClassIndex());
+    WekaOptionUtils.add(result, COMBINATION, getCombination());
+    WekaOptionUtils.add(result, super.getOptions());
+    return WekaOptionUtils.toArray(result);
+  }
+
+  /** the maximum number of levels in the cascade. */
+  public void setMaxLevels(int maxLevels) {
+    m_MaxLevels = maxLevels;
+  }
+
+  /** the maximum number of levels in the cascade. */
+  public int getMaxLevels() {
+    return m_MaxLevels;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the explorer/experimenter gui
+   */
+  public String maxLevelsTipText() {
+    return "The maximum number of levels to build.";
+  }
+
+  /** the statistic to use for termination. */
+  public void setStatistic(EvaluationStatistic statistic) {
+    m_Statistic = statistic;
+  }
+
+  /** the statistic to use for termination. */
+  public EvaluationStatistic getStatistic() {
+    return m_Statistic;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the explorer/experimenter gui
+   */
+  public String statisticTipText() {
+    return "The statistic to evaluate on.";
+  }
+
+  /** the threshold for the statistic for termination. */
+  public void setThreshold(double threshold) {
+    m_Threshold = threshold;
+  }
+
+  /** the threshold for the statistic for termination. */
+  public double getThreshold() {
+    return m_Threshold;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the explorer/experimenter gui
+   */
+  public String thresholdTipText() {
+    return "The threshold that, when reached, terminates the build process.";
+  }
+
+  /** whether to go below or above the threshold. */
+  public void setThresholdCheck(ThresholdCheck thresholdCheck) {
+    m_ThresholdCheck = thresholdCheck;
+  }
+
+  /** whether to go below or above the threshold. */
+  public ThresholdCheck getThresholdCheck() {
+    return m_ThresholdCheck;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the explorer/experimenter gui
+   */
+  public String thresholdCheckTipText() {
+    return "How to apply the provided threshold.";
+  }
+
+  /** the minimum improvement between levels that the statistic must improve. */
+  public void setMinImprovement(double minImprovement) {
+    m_MinImprovement = minImprovement;
+  }
+
+  /** the minimum improvement between levels that the statistic must improve. */
+  public double getMinImprovement() {
+    return m_MinImprovement;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the explorer/experimenter gui
+   */
+  public String minImprovementTipText() {
+    return "The minimum improvement between levels, otherwise the build process gets terminated.";
+  }
+
+  /** the number of folds for cross-validation. */
+  public void setNumFolds(int numFolds) {
+    m_NumFolds = numFolds;
+  }
+
+  /** the number of folds for cross-validation. */
+  public int getNumFolds() {
+    return m_NumFolds;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the explorer/experimenter gui
+   */
+  public String numFoldsTipText() {
+    return "The number of folds to use for internal cross-validation.";
+  }
+
+  /** the number of threads to use. */
+  public void setNumThreads(int numThreads) {
+    m_NumThreads = numThreads;
+  }
+
+  /** the number of threads to use. */
+  public int getNumThreads() {
+    return m_NumThreads;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the explorer/experimenter gui
+   */
+  public String numThreadsTipText() {
+    return "The number of threads to use.";
+  }
+
+  /** the percentage to use for validation set to determine termination criterion (0-100). */
+  public void setHoldOutPercentage(double holdOutPercentage) {
+    m_HoldOutPercentage = holdOutPercentage;
+  }
+
+  /** the percentage to use for validation set to determine termination criterion (0-100). */
+  public double getHoldOutPercentage() {
+    return m_HoldOutPercentage;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the explorer/experimenter gui
+   */
+  public String holdOutPercentageTipText() {
+    return "The size of the validation set in percent (0-100).";
+  }
+
+  /** the class index. */
+  public void setClassIndex(int classIndex) {
+    m_ClassIndex = classIndex;
+  }
+
+  /** the class index. */
+  public int getClassIndex() {
+    return m_ClassIndex;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the explorer/experimenter gui
+   */
+  public String classIndexTipText() {
+    return "The 0-based index of the class-label to use for class-label-based statistics.";
+  }
+
+  /** how to combine the statistics. */
+  public void setCombination(Combination combination) {
+    m_Combination = combination;
+  }
+
+  /** how to combine the statistics. */
+  public Combination getCombination() {
+    return m_Combination;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the explorer/experimenter gui
+   */
+  public String combinationTipText() {
+    return "Determines how to combine the statistics.";
   }
 
   /**
@@ -339,6 +734,7 @@ public class ClassifierCascade
     Evaluation				eval;
     double[]				stats;
     double				stat;
+    double				priorStat;
     int					i;
     int					n;
     Classifier				cls;
@@ -350,6 +746,7 @@ public class ClassifierCascade
     Instance				inst;
     List<Classifier>			current;
     boolean				converged;
+    boolean				improved;
 
     getCapabilities().testWithFail(data);
 
@@ -366,6 +763,7 @@ public class ClassifierCascade
     test      = (Instances) cont.getValue(WekaTrainTestSetContainer.VALUE_TEST);
     metaTrain = null;
     metaTest  = null;
+    stat      = Double.NaN;
     m_Nominal = data.classAttribute().isNominal();
 
     m_Cascade         = new ArrayList<>();
@@ -376,6 +774,7 @@ public class ClassifierCascade
 	System.out.println("Level " + (level+1) + "...");
 
       // generate meta-level data
+      priorStat  = stat;
       priorTrain = metaTrain;
       priorTest  = metaTest;
       metaTrain  = new Instances(m_MetaLevelHeader, train.numInstances());
@@ -447,10 +846,10 @@ public class ClassifierCascade
 	stats[i] = EvaluationHelper.getValue(eval, m_Statistic, m_ClassIndex);
       }
       if (getDebug())
-	System.out.println(m_Statistic + " (all): " + Utils.arrayToString(stats));
+	System.out.println("--> " + m_Statistic + " (all): " + Utils.arrayToString(stats));
       stat = applyCombination(stats);
       if (getDebug())
-	System.out.println(m_Statistic + " (" + m_Combination + "): " + stat);
+	System.out.println("--> " + m_Statistic + " (" + m_Combination + "): " + stat);
 
       // converged?
       switch (m_ThresholdCheck) {
@@ -461,12 +860,32 @@ public class ClassifierCascade
 	  converged = (stat < m_Threshold);
 	  break;
 	default:
-	  throw new IllegalStateException("Unhandled threshold check: " + m_ThresholdCheck);
+	  throw new IllegalStateException("Unhandled threshold check (convergence): " + m_ThresholdCheck);
       }
       if (getDebug())
-	System.out.println("Converged: " + converged);
+	System.out.println("--> Converged: " + converged);
       if (converged)
 	break;
+
+      // no more improvement?
+      if (!Double.isNaN(priorStat)) {
+	switch (m_ThresholdCheck) {
+	  case ABOVE:
+	    improved = (stat >= priorStat + m_MinImprovement);
+	    break;
+	  case BELOW:
+	    improved = (stat <= priorStat - m_MinImprovement);
+	    break;
+	  default:
+	    throw new IllegalStateException("Unhandled threshold check (improvement): " + m_ThresholdCheck);
+	}
+	if (getDebug())
+	  System.out.println("--> Improved: " + improved);
+	if (!improved) {
+	  m_Cascade.remove(m_Cascade.size() - 1);
+	  break;
+	}
+      }
 
       // build next test set
       metaTest = createMetaLevelHeader(test);
