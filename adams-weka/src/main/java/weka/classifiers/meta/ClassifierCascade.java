@@ -936,7 +936,7 @@ public class ClassifierCascade
       meta = createMetaLevelInstance(m_MetaLevelHeader, instance);
       if (level == 0) {
 	for (i = 0; i < current.size(); i++) {
-	  if (m_Nominal) {
+	  if (distribution) {
 	    dist = current.get(i).distributionForInstance(instance);
 	    if (level == finalLevel)
 	      preds.add(dist);
@@ -952,7 +952,7 @@ public class ClassifierCascade
       }
       else {
 	for (i = 0; i < current.size(); i++) {
-	  if (m_Nominal) {
+	  if (distribution) {
 	    dist = current.get(i).distributionForInstance(prior);
 	    if (level == finalLevel)
 	      preds.add(dist);
