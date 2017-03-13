@@ -1133,6 +1133,8 @@ The following conversion are available:
 \begin{tight_itemize}
 	\item \textit{DOMToProperties} -- flattens a DOM document object into a 
 	properties object.
+	\item \textit{PropertiesToKeyValuePairs} -- turns the properties into an
+	array of key-value pairs.
 	\item \textit{PropertiesToString} -- turns the properties object into a string.
 	\item \textit{StringToProperties} -- parses the string and generates a properties object.
 \end{tight_itemize}
@@ -1175,7 +1177,7 @@ The following conversions are available:
 
 
 \newpage
-\section{YAML}
+\section{YAML and Maps}
 \label{yaml}
 Flows can process YAML\cite{yaml} files and strings as long as they are in map notation,
 which is commonly used for configuration files. \\
@@ -1205,6 +1207,8 @@ The following conversion are available:
 	object into a \textit{java.util.Map} object.
 	\item \textit{ReportToMap} -- turns a \textit{Report} object into a
 	\textit{java.util.Map} object.
+	\item \textit{MapToKeyValuePairs} -- turns the map into actual
+	key-value pair objects.
 	\item \textit{MapToYamlString} -- turns a \textit{java.util.Map} object
 	into a YAML string.
 	\item \textit{YamlStringToMap} -- generates a \textit{java.util.Map}
