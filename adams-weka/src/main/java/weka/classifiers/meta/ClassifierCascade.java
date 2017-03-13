@@ -682,8 +682,11 @@ public class ClassifierCascade
   protected void addMetaLevelPrediction(Instance inst, int index, double[] dist) {
     int		i;
 
-    for (i = 0; i < dist.length; i++)
+    for (i = 0; i < dist.length; i++) {
+      if (Double.isNaN(dist[i]))
+	throw new IllegalStateException("NaN in class distribution of classifier " + (index+1) + " at #" + (i+1));
       inst.setValue(m_MetaLevelStart.get(index) + i, dist[i]);
+    }
   }
 
   /**
@@ -694,6 +697,8 @@ public class ClassifierCascade
    * @param cls		the classification
    */
   protected void addMetaLevelPrediction(Instance inst, int index, double cls) {
+    if (Double.isNaN(cls))
+      throw new IllegalStateException("NaN in classification of classifier " + (index+1) + "!");
     inst.setValue(m_MetaLevelStart.get(index), cls);
   }
 
@@ -704,6 +709,14 @@ public class ClassifierCascade
    * @return		the combination
    */
   protected double applyCombination(double[] stats) {
+    int		i;
+
+    // check for NaNs
+    for (i = 0; i < stats.length; i++) {
+      if (Double.isNaN(stats[i]))
+	throw new IllegalStateException("NaN in statistics at #" + (i+1) + "!");
+    }
+
     switch (m_Combination) {
       case AVERAGE:
 	return StatUtils.mean(stats);
@@ -891,16 +904,14 @@ public class ClassifierCascade
       metaTest = createMetaLevelHeader(test);
       for (n = 0; n < test.numInstances(); n++)
 	metaTest.add(createMetaLevelInstance(metaTest, test.instance(n)));
+      if (priorTest == null)
+	priorTest = test;
       for (i = 0; i < current.size(); i++) {
 	for (n = 0; n < metaTest.numInstances(); n++) {
-	  if (level == 0)
-	    inst = test.instance(n);
-	  else
-	    inst = metaTest.instance(n);
 	  if (m_Nominal)
-	    addMetaLevelPrediction(metaTest.instance(n), i, current.get(i).distributionForInstance(inst));
+	    addMetaLevelPrediction(metaTest.instance(n), i, current.get(i).distributionForInstance(priorTest.instance(n)));
 	  else
-	    addMetaLevelPrediction(metaTest.instance(n), i, current.get(i).classifyInstance(inst));
+	    addMetaLevelPrediction(metaTest.instance(n), i, current.get(i).classifyInstance(priorTest.instance(n)));
 	}
       }
     }
