@@ -15,7 +15,7 @@
 
 /**
  * WekaSpreadSheetToPredictions.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer;
@@ -24,6 +24,7 @@ import adams.core.ClassCrossReference;
 import adams.core.QuickInfoHelper;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetColumnIndex;
+import adams.data.spreadsheet.SpreadSheetColumnRange;
 import adams.data.spreadsheet.SpreadSheetUtils;
 import adams.env.Environment;
 import adams.flow.core.Token;
@@ -34,11 +35,12 @@ import weka.core.Instance;
 import weka.core.Instances;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
  * Turns the predictions stored in the incoming spreadsheet (actual and predicted) into a Weka weka.classifiers.Evaluation object.<br>
- * NB: Only works for numeric classes.<br>
+ * For recreating the predictions of a nominal class, the class distributions must be present in the spreadsheet as well.<br>
  * <br>
  * See also:<br>
  * adams.flow.transformer.WekaPredictionsToSpreadSheet
@@ -101,6 +103,26 @@ import java.util.ArrayList;
  * &nbsp;&nbsp;&nbsp;example: An index is a number starting with 1; column names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last; numeric indices can be enforced by preceding them with '#' (eg '#12'); column names can be surrounded by double quotes.
  * </pre>
  * 
+ * <pre>-class-distribution &lt;adams.data.spreadsheet.SpreadSheetColumnRange&gt; (property: classDistribution)
+ * &nbsp;&nbsp;&nbsp;The columns containing the class distribution (nominal class).
+ * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts the range '...'; column names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last; numeric indices can be enforced by preceding them with '#' (eg '#12'); column names can be surrounded by double quotes.
+ * </pre>
+ * 
+ * <pre>-column-names-as-class-labels &lt;boolean&gt; (property: useColumnNamesAsClassLabels)
+ * &nbsp;&nbsp;&nbsp;If enabled, the names of the class distribution columns are used as labels 
+ * &nbsp;&nbsp;&nbsp;in the fake evaluation; automatically removes the surrounding 'Distribution 
+ * &nbsp;&nbsp;&nbsp;(...)'.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-weight &lt;adams.data.spreadsheet.SpreadSheetColumnIndex&gt; (property: weight)
+ * &nbsp;&nbsp;&nbsp;The (optional) column with the weights of the instances; 1.0 is assumed 
+ * &nbsp;&nbsp;&nbsp;by default.
+ * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;example: An index is a number starting with 1; column names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last; numeric indices can be enforced by preceding them with '#' (eg '#12'); column names can be surrounded by double quotes.
+ * </pre>
+ * 
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
@@ -118,6 +140,15 @@ public class WekaSpreadSheetToPredictions
   /** the column with the predicted values. */
   protected SpreadSheetColumnIndex m_Predicted;
 
+  /** the columns with the class distributions. */
+  protected SpreadSheetColumnRange m_ClassDistribution;
+
+  /** whether to use the column name as class labels. */
+  protected boolean m_UseColumnNamesAsClassLabels;
+
+  /** the (optional) column with the instance weights. */
+  protected SpreadSheetColumnIndex m_Weight;
+
   /**
    * Returns a string describing the object.
    *
@@ -127,8 +158,9 @@ public class WekaSpreadSheetToPredictions
   public String globalInfo() {
     return
       "Turns the predictions stored in the incoming spreadsheet (actual and "
-        + "predicted) into a Weka " + Evaluation.class.getName() + " object.\n"
-        + "NB: Only works for numeric classes.";
+	+ "predicted) into a Weka " + Evaluation.class.getName() + " object.\n"
+	+ "For recreating the predictions of a nominal class, the class distributions "
+	+ "must be present in the spreadsheet as well.";
   }
 
   /**
@@ -154,6 +186,18 @@ public class WekaSpreadSheetToPredictions
     m_OptionManager.add(
       "predicted", "predicted",
       new SpreadSheetColumnIndex("Predicted"));
+
+    m_OptionManager.add(
+      "class-distribution", "classDistribution",
+      new SpreadSheetColumnRange(""));
+
+    m_OptionManager.add(
+      "column-names-as-class-labels", "useColumnNamesAsClassLabels",
+      false);
+
+    m_OptionManager.add(
+      "weight", "weight",
+      new SpreadSheetColumnIndex(""));
   }
 
   /**
@@ -215,6 +259,98 @@ public class WekaSpreadSheetToPredictions
   }
 
   /**
+   * Sets the columns with the class distribution (nominal class).
+   *
+   * @param value	the range
+   */
+  public void setClassDistribution(SpreadSheetColumnRange value) {
+    m_ClassDistribution = value;
+    reset();
+  }
+
+  /**
+   * Returns the columns with the class distribution (nominal class).
+   *
+   * @return		the range
+   */
+  public SpreadSheetColumnRange getClassDistribution() {
+    return m_ClassDistribution;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String classDistributionTipText() {
+    return "The columns containing the class distribution (nominal class).";
+  }
+
+  /**
+   * Sets whether to use the names of the class distribution columns as
+   * labels in the fake evaluation.
+   *
+   * @param value	true if to use column names
+   */
+  public void setUseColumnNamesAsClassLabels(boolean value) {
+    m_UseColumnNamesAsClassLabels = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to use the names of the class distribution columns as
+   * labels in the fake evaluation.
+   *
+   * @return		true if to use column names
+   */
+  public boolean getUseColumnNamesAsClassLabels() {
+    return m_UseColumnNamesAsClassLabels;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String useColumnNamesAsClassLabelsTipText() {
+    return
+      "If enabled, the names of the class distribution columns are used as "
+	+ "labels in the fake evaluation; automatically removes the "
+	+ "surrounding 'Distribution (...)'.";
+  }
+
+  /**
+   * Sets the (optional) column with the instance weight values.
+   *
+   * @param value	the column
+   */
+  public void setWeight(SpreadSheetColumnIndex value) {
+    m_Weight = value;
+    reset();
+  }
+
+  /**
+   * Returns the (optional) column with the instance weight values.
+   *
+   * @return		the column
+   */
+  public SpreadSheetColumnIndex getWeight() {
+    return m_Weight;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String weightTipText() {
+    return "The (optional) column with the weights of the instances; 1.0 is assumed by default.";
+  }
+
+  /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
@@ -225,6 +361,8 @@ public class WekaSpreadSheetToPredictions
 
     result  = QuickInfoHelper.toString(this, "actual", m_Actual, "actual: ");
     result += QuickInfoHelper.toString(this, "predicted", m_Predicted, ", predicted: ");
+    result += QuickInfoHelper.toString(this, "classDistribution", (m_ClassDistribution.isEmpty() ? "-none-" : m_ClassDistribution.getRange()), ", class: ");
+    result += QuickInfoHelper.toString(this, "weight", (m_Weight.isEmpty() ? "-none-" : m_Weight.getIndex()), ", weight: ");
 
     return result;
   }
@@ -260,17 +398,26 @@ public class WekaSpreadSheetToPredictions
     SpreadSheet			sheet;
     double[]			actual;
     double[]			predicted;
+    double[][]			dist;
+    double[]			weight;
     Instances			data;
     ArrayList<Attribute>	atts;
+    List<String> 		labels;
     int				i;
+    int				n;
     Instance			inst;
     Evaluation 			eval;
+    int[]			cols;
+    double[]			clsDist;
+    String			name;
 
     result = null;
 
     sheet = (SpreadSheet) m_InputToken.getPayload();
     m_Actual.setData(sheet);
     m_Predicted.setData(sheet);
+    m_ClassDistribution.setData(sheet);
+    m_Weight.setData(sheet);
     if (m_Actual.getIntIndex() == -1)
       result = "'Actual' column not found: " + m_Actual;
     else if (m_Predicted.getIntIndex() == -1)
@@ -278,6 +425,8 @@ public class WekaSpreadSheetToPredictions
 
     actual    = null;
     predicted = null;
+    dist      = null;
+    weight    = null;
     if (result == null) {
       actual = SpreadSheetUtils.getNumericColumn(sheet, m_Actual.getIntIndex());
       predicted = SpreadSheetUtils.getNumericColumn(sheet, m_Predicted.getIntIndex());
@@ -285,24 +434,69 @@ public class WekaSpreadSheetToPredictions
 	result = "Number of actual and predicted values differ: " + actual.length + " != " + predicted.length;
       else if (actual.length == 0)
 	result = "No numeric values?";
+      // weights?
+      if (m_Weight.getIntIndex() != -1) {
+	weight = SpreadSheetUtils.getNumericColumn(sheet, m_Weight.getIntIndex());
+	if (actual.length != weight.length)
+	  result = "Number of actual and weight values differ: " + actual.length + " != " + weight.length;
+      }
+      // class distribution?
+      cols = m_ClassDistribution.getIntIndices();
+      if (cols.length > 0) {
+	dist = new double[cols.length][];
+	for (i = 0; i < cols.length; i++) {
+	  dist[i] = SpreadSheetUtils.getNumericColumn(sheet, cols[i]);
+	  if (actual.length != dist[i].length) {
+	    result = "Number of actual and class distribution (col #" + (cols[i] + 1) + ") values differ: " + actual.length + " != " + dist[i].length;
+	    break;
+	  }
+	}
+      }
     }
 
     if (result == null) {
       // create dataset from predictions
       atts = new ArrayList<>();
-      atts.add(new Attribute("Prediction"));
+      if (dist == null) {
+	atts.add(new Attribute("Prediction"));
+      }
+      else {
+	labels = new ArrayList<>();
+	cols   = m_ClassDistribution.getIntIndices();
+	for (i = 0; i < dist.length; i++) {
+	  if (m_UseColumnNamesAsClassLabels) {
+	    name = sheet.getColumnName(cols[i]);
+	    if (name.startsWith("Distribution (") && name.endsWith(")"))
+	      name = name.substring("Distribution (".length(), name.length() - 1);
+	    labels.add(name);
+	  }
+	  else {
+	    labels.add("" + (i + 1));
+	  }
+	}
+	atts.add(new Attribute("Prediction", labels));
+      }
       data = new Instances((sheet.hasName() ? sheet.getName() : Environment.getInstance().getProject()), atts, actual.length);
       data.setClassIndex(0);
       for (i = 0; i < actual.length; i++) {
-	inst = new DenseInstance(1.0, new double[]{actual[i]});
+	inst = new DenseInstance((weight == null) ? 1.0 : weight[i], new double[]{actual[i]});
 	data.add(inst);
       }
 
       // perform "fake" evaluation
       try {
 	eval = new Evaluation(data);
-	for (i = 0; i < actual.length; i++)
-	  eval.evaluateModelOnceAndRecordPrediction(new double[]{predicted[i]}, data.instance(i));
+	for (i = 0; i < actual.length; i++) {
+	  if (dist != null) {
+	    clsDist = new double[dist.length];
+	    for (n = 0; n < clsDist.length; n++)
+	      clsDist[n] = dist[n][i];
+	    eval.evaluateModelOnceAndRecordPrediction(clsDist, data.instance(i));
+	  }
+	  else {
+	    eval.evaluateModelOnceAndRecordPrediction(new double[]{predicted[i]}, data.instance(i));
+	  }
+	}
 	m_OutputToken = new Token(eval);
       }
       catch (Exception e) {
