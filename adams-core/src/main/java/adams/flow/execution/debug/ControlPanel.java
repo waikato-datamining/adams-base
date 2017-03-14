@@ -15,7 +15,7 @@
 
 /**
  * ControlPanel.java
- * Copyright (C) 2015-2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.execution.debug;
@@ -24,6 +24,7 @@ import adams.core.CleanUpHandler;
 import adams.core.option.DebugNestedProducer;
 import adams.core.option.NestedConsumer;
 import adams.flow.condition.bool.BooleanCondition;
+import adams.flow.condition.bool.BooleanConditionSupporter;
 import adams.flow.control.Breakpoint;
 import adams.flow.control.Flow;
 import adams.flow.core.Actor;
@@ -56,14 +57,12 @@ import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.Arrays;
 import java.util.HashSet;
 
@@ -214,52 +213,37 @@ public class ControlPanel
 
     m_ButtonPauseResume = new JButton("Resume", GUIHelper.getIcon("resume.gif"));
     m_ButtonPauseResume.setToolTipText("Pause/Resume execution");
-    m_ButtonPauseResume.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	pauseResumeExecution();
-      }
-    });
+    m_ButtonPauseResume.addActionListener((ActionEvent e) -> pauseResumeExecution());
     panelButtons.add(m_ButtonPauseResume);
 
     m_ButtonStep = new JButton("Step", GUIHelper.getIcon("step.gif"));
     m_ButtonStep.setMnemonic('e');
     m_ButtonStep.setToolTipText("Step to next actor");
-    m_ButtonStep.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	nextStep();
-      }
-    });
+    m_ButtonStep.addActionListener((ActionEvent e) -> nextStep());
     panelButtons.add(m_ButtonStep);
 
     m_ButtonToggle = new JButton("Disable", GUIHelper.getIcon("debug_off.png"));
     m_ButtonToggle.setMnemonic('D');
     m_ButtonToggle.setToolTipText("Disable the breakpoint");
-    m_ButtonToggle.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	disableEnableBreakpoint();
-      }
-    });
+    m_ButtonToggle.addActionListener((ActionEvent e) -> disableEnableBreakpoint());
     panelButtons.add(m_ButtonToggle);
 
     m_ButtonStop = new JButton("Stop", GUIHelper.getIcon("stop.gif"));
     m_ButtonStop.setMnemonic('S');
     m_ButtonStop.setToolTipText("Stops the flow execution immediately");
-    m_ButtonStop.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	stopFlowExecution();
-      }
-    });
+    m_ButtonStop.addActionListener((ActionEvent e) -> stopFlowExecution());
     panelButtons.add(m_ButtonStop);
 
     // condition
     m_PanelCondition = new JPanel(new FlowLayout(FlowLayout.LEFT));
     panel.add(m_PanelCondition, BorderLayout.CENTER);
     m_GOEPanelCondition = new GenericObjectEditorPanel(BooleanCondition.class, new Breakpoint().getCondition(), false);
-    m_GOEPanelCondition.setEditable(false);
-    m_GOEPanelCondition.addChangeListener(new ChangeListener() {
-      public void stateChanged(ChangeEvent e) {
-	update();
+    m_GOEPanelCondition.addChangeListener((ChangeEvent e) -> {
+      if (getCurrentBreakpoint() instanceof BooleanConditionSupporter) {
+	((BooleanConditionSupporter) getCurrentBreakpoint()).setCondition(
+	  (BooleanCondition) m_GOEPanelCondition.getCurrent());
       }
+      update();
     });
     m_PanelCondition.add(new JLabel("Condition"));
     m_PanelCondition.add(m_GOEPanelCondition);
@@ -274,66 +258,54 @@ public class ControlPanel
     m_ButtonExpressions = new JToggleButton("Expressions", GUIHelper.getIcon("glasses.gif"));
     m_ButtonExpressions.setMnemonic('x');
     m_ButtonExpressions.setToolTipText("Display dialog for watch expressions");
-    m_ButtonExpressions.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	m_Manual = true;
-	showWatchExpressions(m_ButtonExpressions.isSelected());
-      }
+    m_ButtonExpressions.addActionListener((ActionEvent e) -> {
+      m_Manual = true;
+      showWatchExpressions(m_ButtonExpressions.isSelected());
     });
     panelButtons.add(m_ButtonExpressions);
 
     m_ButtonVariables = new JToggleButton("Variables", GUIHelper.getIcon("variable.gif"));
     m_ButtonVariables.setMnemonic('V');
     m_ButtonVariables.setToolTipText("Display dialog with currently active variables");
-    m_ButtonVariables.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	m_Manual = true;
-	showVariables(m_ButtonVariables.isSelected());
-      }
+    m_ButtonVariables.addActionListener((ActionEvent e) -> {
+      m_Manual = true;
+      showVariables(m_ButtonVariables.isSelected());
     });
     panelButtons.add(m_ButtonVariables);
 
     m_ButtonStorage = new JToggleButton("Storage", GUIHelper.getIcon("disk.png"));
     m_ButtonStorage.setMnemonic('t');
     m_ButtonStorage.setToolTipText("Display dialog with items currently stored in temporary storage");
-    m_ButtonStorage.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	m_Manual = true;
-	showStorage(m_ButtonStorage.isSelected());
-      }
+    m_ButtonStorage.addActionListener((ActionEvent e) -> {
+      m_Manual = true;
+      showStorage(m_ButtonStorage.isSelected());
     });
     panelButtons.add(m_ButtonStorage);
 
     m_ButtonInspectToken = new JToggleButton("Inspect token", GUIHelper.getIcon("properties.gif"));
     m_ButtonInspectToken.setMnemonic('I');
     m_ButtonInspectToken.setToolTipText("Display dialog for inspecting the current token");
-    m_ButtonInspectToken.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	m_Manual = true;
-	inspectToken(m_ButtonInspectToken.isSelected());
-      }
+    m_ButtonInspectToken.addActionListener((ActionEvent e) -> {
+      m_Manual = true;
+      inspectToken(m_ButtonInspectToken.isSelected());
     });
     panelButtons.add(m_ButtonInspectToken);
 
     m_ButtonBreakpoints = new JToggleButton("Breakpoints", GUIHelper.getIcon("flow.gif"));
     m_ButtonBreakpoints.setMnemonic('n');
     m_ButtonBreakpoints.setToolTipText("Display dialog for inspecting the current flow");
-    m_ButtonBreakpoints.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	m_Manual = true;
-	showBreakpoints(m_ButtonBreakpoints.isSelected());
-      }
+    m_ButtonBreakpoints.addActionListener((ActionEvent e) -> {
+      m_Manual = true;
+      showBreakpoints(m_ButtonBreakpoints.isSelected());
     });
     panelButtons.add(m_ButtonBreakpoints);
 
     m_ButtonSource = new JToggleButton("Source", GUIHelper.getIcon("source.png"));
     m_ButtonSource.setMnemonic('o');
     m_ButtonSource.setToolTipText("Display current flow state as source (nested format)");
-    m_ButtonSource.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	m_Manual = true;
-	showSource(m_ButtonSource.isSelected());
-      }
+    m_ButtonSource.addActionListener((ActionEvent e) -> {
+      m_Manual = true;
+      showSource(m_ButtonSource.isSelected());
     });
     panelButtons.add(m_ButtonSource);
 
@@ -342,12 +314,7 @@ public class ControlPanel
     m_TextActorPath = new JTextField(30);
     m_TextActorPath.setEditable(false);
     m_ButtonActorPath = new JToggleButton(GUIHelper.getIcon("copy.gif"));
-    m_ButtonActorPath.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	ClipboardHelper.copyToClipboard(m_TextActorPath.getText());
-      }
-    });
+    m_ButtonActorPath.addActionListener((ActionEvent e) -> ClipboardHelper.copyToClipboard(m_TextActorPath.getText()));
     m_TextStage = new JTextField(15);
     m_TextStage.setEditable(false);
     panel.add(new JLabel("Actor path"));
@@ -464,15 +431,7 @@ public class ControlPanel
    * Queues a call to {@link #update()} in the swing thread.
    */
   public void queueUpdate() {
-    Runnable	run;
-
-    run = new Runnable() {
-      @Override
-      public void run() {
-	update();
-      }
-    };
-    SwingUtilities.invokeLater(run);
+    SwingUtilities.invokeLater(() -> update());
   }
 
   /**
@@ -597,7 +556,7 @@ public class ControlPanel
     if (getCurrentActor().getRoot() instanceof Flow) {
       flow = (Flow) getCurrentActor().getRoot();
       if (flow.isHeadless())
-	return result;
+	return null;
       if (flow.getParentComponent() != null) {
 	if (flow.getParentComponent() instanceof FlowPanel)
 	  result = ((FlowPanel) flow.getParentComponent()).getTree();
@@ -650,10 +609,7 @@ public class ControlPanel
    * @return		true if step mode is enabled
    */
   public boolean isStepModeEnabled() {
-    if (m_PanelBreakpoints != null)
-      return m_PanelBreakpoints.isStepModeEnabled();
-    else
-      return false;
+    return (m_PanelBreakpoints != null) && m_PanelBreakpoints.isStepModeEnabled();
   }
 
   /**
