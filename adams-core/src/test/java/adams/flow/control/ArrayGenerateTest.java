@@ -15,18 +15,20 @@
 
 /*
  * ArrayGenerateTest.java
- * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import adams.core.option.AbstractArgumentOption;
+import adams.data.conversion.NumberToDouble;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.core.Actor;
+import adams.flow.transformer.Convert;
 import adams.test.TmpFile;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Test for ArrayGenerate actor.
@@ -104,7 +106,7 @@ public class ArrayGenerateTest
     
     try {
       argOption = (AbstractArgumentOption) flow.getOptionManager().findByProperty("actors");
-      adams.flow.core.Actor[] actors1 = new adams.flow.core.Actor[5];
+      adams.flow.core.Actor[] actors1 = new adams.flow.core.Actor[6];
 
       // Flow.RandomNumberGenerator
       adams.flow.source.RandomNumberGenerator randomnumbergenerator2 = new adams.flow.source.RandomNumberGenerator();
@@ -115,6 +117,10 @@ public class ArrayGenerateTest
       argOption = (AbstractArgumentOption) randomnumbergenerator2.getOptionManager().findByProperty("maxNum");
       randomnumbergenerator2.setMaxNum((Integer) argOption.valueOf("5"));
       actors1[0] = randomnumbergenerator2;
+
+      Convert conv = new Convert();
+      conv.setConversion(new NumberToDouble());
+      actors1[1] = conv;
 
       // Flow.ArrayGenerate
       adams.flow.control.ArrayGenerate arraygenerate6 = new adams.flow.control.ArrayGenerate();
@@ -156,7 +162,7 @@ public class ArrayGenerateTest
       branches7[4] = mathexpression17;
       arraygenerate6.setBranches(branches7);
 
-      actors1[1] = arraygenerate6;
+      actors1[2] = arraygenerate6;
 
       // Flow.ArrayProcess
       adams.flow.control.ArrayProcess arrayprocess20 = new adams.flow.control.ArrayProcess();
@@ -172,13 +178,13 @@ public class ArrayGenerateTest
       actors21[0] = convert22;
       arrayprocess20.setActors(actors21);
 
-      actors1[2] = arrayprocess20;
+      actors1[3] = arrayprocess20;
 
       // Flow.StringJoin
       adams.flow.transformer.StringJoin stringjoin25 = new adams.flow.transformer.StringJoin();
       argOption = (AbstractArgumentOption) stringjoin25.getOptionManager().findByProperty("glue");
       stringjoin25.setGlue((java.lang.String) argOption.valueOf(","));
-      actors1[3] = stringjoin25;
+      actors1[4] = stringjoin25;
 
       // Flow.DumpFile
       adams.flow.sink.DumpFile dumpfile27 = new adams.flow.sink.DumpFile();
@@ -186,7 +192,7 @@ public class ArrayGenerateTest
       dumpfile27.setOutputFile((adams.core.io.PlaceholderFile) argOption.valueOf("${TMP}/dumpfile.txt"));
       dumpfile27.setAppend(true);
 
-      actors1[4] = dumpfile27;
+      actors1[5] = dumpfile27;
       flow.setActors(actors1);
 
       argOption = (AbstractArgumentOption) flow.getOptionManager().findByProperty("flowExecutionListener");

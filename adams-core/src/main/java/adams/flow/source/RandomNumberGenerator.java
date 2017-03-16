@@ -207,7 +207,7 @@ public class RandomNumberGenerator
    * @return		<!-- flow-generates-start -->java.lang.Double.class<!-- flow-generates-end -->
    */
   public Class[] generates() {
-    return new Class[]{Double.class};
+    return new Class[]{Number.class};
   }
 
   /**
@@ -242,7 +242,7 @@ public class RandomNumberGenerator
     Token	result;
 
     m_Count++;
-    result = new Token(new Double(m_Generator.next().doubleValue()));
+    result = new Token(m_Generator.next());
 
     return result;
   }

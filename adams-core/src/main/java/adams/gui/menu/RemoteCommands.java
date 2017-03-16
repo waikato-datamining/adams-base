@@ -15,7 +15,7 @@
 
 /*
  * RemoteCommands.java
- * Copyright (C) 2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -33,6 +33,7 @@ import adams.gui.core.PropertiesParameterPanel.PropertyType;
 import adams.gui.dialog.ApprovalDialog;
 import adams.gui.goe.GenericObjectEditorDialog;
 import adams.gui.goe.GenericObjectEditorPanel;
+import adams.gui.tools.remotecontrolcenter.RemoteControlCenterManagerPanel;
 import adams.scripting.command.RemoteCommand;
 import adams.scripting.command.basic.SystemInfo;
 import adams.scripting.connection.Connection;
@@ -59,6 +60,9 @@ public class RemoteCommands
   public static final String KEY_COMMAND = "command";
 
   public static final String KEY_CONNECTION = "connection";
+
+  /** the control center menu item. */
+  protected JMenuItem m_MenuItemCC;
 
   /** the start listening menu item. */
   protected JMenuItem m_MenuItemStart;
@@ -263,6 +267,13 @@ public class RemoteCommands
   protected JMenuItem[] getSubMenuItems() {
     JMenuItem[]		result;
 
+    m_MenuItemCC = new JMenuItem("Control center", GUIHelper.getIcon("remotecontrol.png"));
+    m_MenuItemCC.addActionListener((ActionEvent e) -> {
+      RemoteControlCenterManagerPanel center = new RemoteControlCenterManagerPanel();
+      center.setOwner(getOwner());
+      createChildFrame(center, GUIHelper.makeWider(GUIHelper.getDefaultLargeDialogDimension()));
+    });
+
     m_MenuItemStart = new JMenuItem("Start listening...", GUIHelper.getIcon("run.gif"));
     m_MenuItemStart.addActionListener((ActionEvent e) -> {
       startScripting();
@@ -283,7 +294,12 @@ public class RemoteCommands
 
     updateMenu();
 
-    result = new JMenuItem[]{m_MenuItemStart, m_MenuItemStop, m_MenuItemSend};
+    result = new JMenuItem[]{
+      m_MenuItemCC,
+      m_MenuItemStart,
+      m_MenuItemStop,
+      m_MenuItemSend,
+    };
 
     return result;
   }
