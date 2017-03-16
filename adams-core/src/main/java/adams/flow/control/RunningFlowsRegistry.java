@@ -15,7 +15,7 @@
 
 /**
  * RunningFlowsRegistry.java
- * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.control;
 
@@ -66,7 +66,16 @@ public class RunningFlowsRegistry
    */
   protected void finishInit() {
   }
-  
+
+  /**
+   * Returns the number of flows registered.
+   *
+   * @return		the number of flows
+   */
+  public int size() {
+    return m_Flows.size();
+  }
+
   /**
    * Adds the flow to the internal list of registered flows.
    * 
