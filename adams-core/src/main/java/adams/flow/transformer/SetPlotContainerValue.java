@@ -15,7 +15,7 @@
 
 /*
  * SetPlotContainerValue.java
- * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -340,13 +340,23 @@ public class SetPlotContainerValue
 	break;
 
       case X_VALUE:
-	dvalue = Utils.toDouble(m_Value.getValue());
-	newCont.setValue(SequencePlotterContainer.VALUE_X, dvalue);
+        if (Utils.isDouble(m_Value.getValue())) {
+          dvalue = Utils.toDouble(m_Value.getValue());
+          newCont.setValue(SequencePlotterContainer.VALUE_X, dvalue);
+        }
+        else {
+          newCont.setValue(SequencePlotterContainer.VALUE_X, m_Value.getValue());
+        }
 	break;
 
       case Y_VALUE:
-	dvalue = Utils.toDouble(m_Value.getValue());
-	newCont.setValue(SequencePlotterContainer.VALUE_Y, dvalue);
+        if (Utils.isDouble(m_Value.getValue())) {
+          dvalue = Utils.toDouble(m_Value.getValue());
+          newCont.setValue(SequencePlotterContainer.VALUE_Y, dvalue);
+        }
+        else {
+          newCont.setValue(SequencePlotterContainer.VALUE_Y, m_Value.getValue());
+        }
 	break;
 
       case META_DATA:
