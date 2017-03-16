@@ -15,7 +15,7 @@
 
 /**
  * GetFlow.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.scripting.command.flow;
@@ -61,7 +61,7 @@ public class GetFlow
 
     m_OptionManager.add(
       "id", "ID",
-      1, 0, null);
+      -1, -1, null);
   }
 
   /**
@@ -77,7 +77,7 @@ public class GetFlow
   /**
    * Sets the ID of the flow to get.
    *
-   * @param value	the ID
+   * @param value	the ID, -1 if to retrieve the only one
    */
   public void setID(int value) {
     m_ID = value;
@@ -87,7 +87,7 @@ public class GetFlow
   /**
    * Returns the ID of the flow to get.
    *
-   * @return		the ID
+   * @return		the ID, -1 if to retrieve the only one
    */
   public int getID() {
     return m_ID;
@@ -100,7 +100,7 @@ public class GetFlow
    * 			displaying in the gui
    */
   public String IDTipText() {
-    return "The ID of the flow to get.";
+    return "The ID of the flow to get; -1 if to retrieve the only one.";
   }
 
   /**
@@ -172,7 +172,13 @@ public class GetFlow
   @Override
   protected void prepareResponsePayload() {
     super.prepareResponsePayload();
-    m_Flow = RunningFlowsRegistry.getSingleton().getFlow(m_ID);
+    if (m_ID == -1) {
+      if (RunningFlowsRegistry.getSingleton().size() == 1)
+        m_Flow = RunningFlowsRegistry.getSingleton().flows()[0];
+    }
+    else {
+      m_Flow = RunningFlowsRegistry.getSingleton().getFlow(m_ID);
+    }
   }
 
   /**
