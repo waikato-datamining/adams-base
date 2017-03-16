@@ -15,7 +15,7 @@
 
 /**
  * AbstractCommandWithResponse.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.scripting.command;
@@ -43,9 +43,6 @@ public abstract class AbstractCommandWithResponse
 
   /** the response connection. */
   protected Connection m_ResponseConnection;
-
-  /** the response host port. */
-  protected int m_ResponsePort;
 
   /**
    * Adds options to the internal list of options.
