@@ -221,7 +221,7 @@ public class DrawTest
       tmp46[0] = tmp47;
       adams.flow.transformer.Convert tmp52 = new adams.flow.transformer.Convert();
       argOption = (AbstractArgumentOption) tmp52.getOptionManager().findByProperty("conversion");
-      adams.data.conversion.DoubleToInt tmp54 = new adams.data.conversion.DoubleToInt();
+      adams.data.conversion.NumberToInt tmp54 = new adams.data.conversion.NumberToInt();
       tmp52.setConversion(tmp54);
 
       tmp46[1] = tmp52;
