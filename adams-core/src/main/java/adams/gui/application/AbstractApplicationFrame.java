@@ -46,8 +46,6 @@ import adams.gui.core.AbstractFrameWithOptionHandling;
 import adams.gui.core.BasePanel;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MenuBarProvider;
-import adams.gui.event.RemoteScriptingEngineUpdateEvent;
-import adams.gui.event.RemoteScriptingEngineUpdateListener;
 import adams.gui.scripting.ScriptingEngine;
 import adams.gui.scripting.ScriptingEngineHandler;
 import adams.gui.scripting.ScriptingLogPanel;
@@ -75,7 +73,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import java.util.logging.Level;
 
 /**
@@ -142,10 +139,7 @@ public abstract class AbstractApplicationFrame
 
   /** the remote command scripting engine. */
   protected RemoteScriptingEngine m_RemoteScriptingEngine;
-
-  /** the listeners for changes to the remote scripting engine. */
-  protected Set<RemoteScriptingEngineUpdateListener> m_RemoteScriptingEngineUpdateListeners;
-
+  
   /**
    * Adds options to the internal list of options.
    */
@@ -205,8 +199,6 @@ public abstract class AbstractApplicationFrame
 
     m_AppMenu               = null;
     m_RemoteScriptingEngine = null;
-
-    m_RemoteScriptingEngineUpdateListeners = new HashSet<>();
   }
   
   /**
@@ -500,34 +492,6 @@ public abstract class AbstractApplicationFrame
     return
         "The command-line of the remote scripting engine to execute at startup "
 	  + "time; use empty string for disable scripting.";
-  }
-
-  /**
-   * Adds the listener for remote scripting engine changes.
-   *
-   * @param l		the listener
-   */
-  public void addRemoteScriptingEngineUpdateListener(RemoteScriptingEngineUpdateListener l) {
-    m_RemoteScriptingEngineUpdateListeners.add(l);
-  }
-
-  /**
-   * Removes the listener for remote scripting engine changes.
-   *
-   * @param l		the listener
-   */
-  public void removeRemoteScriptingEngineUpdateListener(RemoteScriptingEngineUpdateListener l) {
-    m_RemoteScriptingEngineUpdateListeners.remove(l);
-  }
-
-  /**
-   * Notifies all listeners of remote scripting engine changes.
-   *
-   * @param e		the event to send
-   */
-  public void notifyRemoteScriptingEngineUpdateListeners(RemoteScriptingEngineUpdateEvent e) {
-    for (RemoteScriptingEngineUpdateListener l: m_RemoteScriptingEngineUpdateListeners)
-      l.remoteScriptingEngineUpdated(e);
   }
 
   /**
@@ -1309,7 +1273,6 @@ public abstract class AbstractApplicationFrame
       getLogger().info("Start listening for remote commands: " + m_RemoteScriptingEngine.getClass().getName());
       new Thread(() -> m_RemoteScriptingEngine.execute()).start();
     }
-    notifyRemoteScriptingEngineUpdateListeners(new RemoteScriptingEngineUpdateEvent(this));
   }
 
   /**
