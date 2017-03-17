@@ -15,12 +15,14 @@
 
 /**
  * AbstractRequestHandler.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.scripting.requesthandler;
 
 import adams.core.option.AbstractOptionHandler;
+import adams.gui.application.AbstractApplicationFrame;
+import adams.gui.event.RemoteScriptingEngineUpdateEvent;
 import adams.scripting.engine.RemoteScriptingEngine;
 
 /**
@@ -98,5 +100,65 @@ public abstract class AbstractRequestHandler
    */
   public String enabledTipText() {
     return "Determines whether the handler is enabled, i.e., reacting to events.";
+  }
+
+  /**
+   * For inserting a request handler into the scripting engine.
+   *
+   * @param source 	the caller
+   * @param app		the application frame to update
+   * @param handler 	the handler to insert
+   * @return		true if not present and therefore inserted
+   */
+  public static boolean insertHandler(Object source, AbstractApplicationFrame app, RequestHandler handler) {
+    boolean 						result;
+    RemoteScriptingEngine 				engine;
+    adams.scripting.requesthandler.MultiHandler 	multiReq;
+    RequestHandler[]					reqHandlers;
+    int							i;
+    boolean						found;
+
+    engine = app.getRemoteScriptingEngine();
+    if (engine == null)
+      return false;
+
+    result = false;
+
+    if (engine.getRequestHandler() != handler) {
+      if (engine.getRequestHandler() instanceof adams.scripting.requesthandler.MultiHandler) {
+	multiReq = (adams.scripting.requesthandler.MultiHandler) engine.getRequestHandler();
+	found        = false;
+	for (i = 0; i < multiReq.getHandlers().length; i++) {
+	  if (multiReq.getHandlers()[i] == handler) {
+	    found = true;
+	    break;
+	  }
+	}
+	if (!found) {
+	  reqHandlers = new RequestHandler[multiReq.getHandlers().length + 1];
+	  for (i = 0; i < multiReq.getHandlers().length; i++)
+	    reqHandlers[i] = multiReq.getHandlers()[i];
+	  reqHandlers[reqHandlers.length - 1] = handler;
+	  multiReq.setHandlers(reqHandlers);
+	  engine.setRequestHandler(multiReq);
+	  result = true;
+	}
+      }
+      else {
+	multiReq = new adams.scripting.requesthandler.MultiHandler();
+	multiReq.setHandlers(new RequestHandler[]{
+	  engine.getRequestHandler(),
+	  handler,
+	});
+	engine.setRequestHandler(multiReq);
+	result = true;
+      }
+    }
+
+    // updated?
+    if (result)
+      app.notifyRemoteScriptingEngineUpdateListeners(new RemoteScriptingEngineUpdateEvent(source));
+
+    return result;
   }
 }

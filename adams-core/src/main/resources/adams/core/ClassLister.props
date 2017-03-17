@@ -578,6 +578,10 @@ adams.gui.tools.previewbrowser.AbstractContentHandler=\
 adams.gui.tools.previewbrowser.SerializedObjectViewer=\
   adams.gui.tools.previewbrowser
 
+# the tabs for the remote control center
+adams.gui.tools.remotecontrolcenter.panels.AbstractRemoteControlCenterTab=\
+  adams.gui.tools.remotecontrolcenter.panels
+
 # The actions for the container list popup menu of data container panels
 adams.gui.visualization.container.datacontainerpanel.containerlistpopup.AbstractContainerListPopupCustomizer=\
   adams.gui.visualization.container.datacontainerpanel.containerlistpopup,\

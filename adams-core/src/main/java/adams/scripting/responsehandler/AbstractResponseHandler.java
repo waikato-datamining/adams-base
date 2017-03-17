@@ -15,12 +15,14 @@
 
 /**
  * AbstractResponseHandler.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.scripting.responsehandler;
 
 import adams.core.option.AbstractOptionHandler;
+import adams.gui.application.AbstractApplicationFrame;
+import adams.gui.event.RemoteScriptingEngineUpdateEvent;
 import adams.scripting.engine.RemoteScriptingEngine;
 
 /**
@@ -98,5 +100,65 @@ public abstract class AbstractResponseHandler
    */
   public String enabledTipText() {
     return "Determines whether the handler is enabled, i.e., reacting to events.";
+  }
+
+  /**
+   * For inserting a response handler into the scripting engine.
+   *
+   * @param source 	the caller
+   * @param app		the application frame to update
+   * @param handler 	the handler to insert
+   * @return		true if not present and therefore inserted
+   */
+  public static boolean insertHandler(Object source, AbstractApplicationFrame app, ResponseHandler handler) {
+    boolean 						result;
+    RemoteScriptingEngine 				engine;
+    adams.scripting.responsehandler.MultiHandler 	multiRes;
+    ResponseHandler[]					resHandlers;
+    int							i;
+    boolean						found;
+
+    engine = app.getRemoteScriptingEngine();
+    if (engine == null)
+      return false;
+
+    result = false;
+
+    if (engine.getResponseHandler() != handler) {
+      if (engine.getResponseHandler() instanceof adams.scripting.responsehandler.MultiHandler) {
+	multiRes = (adams.scripting.responsehandler.MultiHandler) engine.getResponseHandler();
+	found        = false;
+	for (i = 0; i < multiRes.getHandlers().length; i++) {
+	  if (multiRes.getHandlers()[i] == handler) {
+	    found = true;
+	    break;
+	  }
+	}
+	if (!found) {
+	  resHandlers = new ResponseHandler[multiRes.getHandlers().length + 1];
+	  for (i = 0; i < multiRes.getHandlers().length; i++)
+	    resHandlers[i] = multiRes.getHandlers()[i];
+	  resHandlers[resHandlers.length - 1] = handler;
+	  multiRes.setHandlers(resHandlers);
+	  engine.setResponseHandler(multiRes);
+	  result = true;
+	}
+      }
+      else {
+	multiRes = new adams.scripting.responsehandler.MultiHandler();
+	multiRes.setHandlers(new ResponseHandler[]{
+	  engine.getResponseHandler(),
+	  handler,
+	});
+	engine.setResponseHandler(multiRes);
+	result = true;
+      }
+    }
+
+    // updated?
+    if (result)
+      app.notifyRemoteScriptingEngineUpdateListeners(new RemoteScriptingEngineUpdateEvent(source));
+
+    return result;
   }
 }
