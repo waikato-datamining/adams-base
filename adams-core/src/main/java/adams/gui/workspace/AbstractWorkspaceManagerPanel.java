@@ -15,7 +15,7 @@
 
 /**
  * AbstractWorkspaceManagerPanel.java
- * Copyright (C) 2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.workspace;
 
@@ -234,6 +234,16 @@ public abstract class AbstractWorkspaceManagerPanel<T extends AbstractWorkspaceP
    */
   public synchronized boolean removePanel(int index) {
     return removePanel(m_History.getEntryName(index));
+  }
+
+  /**
+   * Returns the panel with at the specified index.
+   *
+   * @param index	the index of the panel to retrieved
+   * @return		the panel, null if not found
+   */
+  public T getPanel(int index) {
+    return m_History.getEntry(index);
   }
 
   /**
