@@ -15,7 +15,7 @@
 
 /*
  * AbstractSelectorPanel.java
- * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.chooser;
@@ -48,6 +48,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 /**
  * A panel that contains a text field with the current choice and a
@@ -82,6 +83,29 @@ public abstract class AbstractChooserPanel<T>
     public void customizePopupMenu(AbstractChooserPanel owner, JPopupMenu menu);
   }
 
+  /**
+   * Interface for classes that listen to "choose" events.
+   *
+   * @author FracPete (fracpete at waikato dot ac dot nz)
+   * @version $Revision$
+   */
+  public interface ChooseListener {
+
+    /**
+     * Gets called before the user chooses a value.
+     *
+     * @param panel	the panel that triggered the event
+     */
+    public void beforeChoose(AbstractChooserPanel panel);
+
+    /**
+     * Gets called after the user chose a value.
+     *
+     * @param panel	the panel that triggered the event
+     */
+    public void afterChoose(AbstractChooserPanel panel);
+  }
+
   /** the panel itself. */
   protected AbstractChooserPanel m_Self;
 
@@ -104,7 +128,7 @@ public abstract class AbstractChooserPanel<T>
   protected JButton m_ButtonSelection;
 
   /** listeners that listen to changes of the selected value. */
-  protected HashSet<ChangeListener> m_ChangeListeners;
+  protected Set<ChangeListener> m_ChangeListeners;
 
   /** optional customizer of the popup. */
   protected PopupMenuCustomizer m_PopupMenuCustomizer;
@@ -114,6 +138,12 @@ public abstract class AbstractChooserPanel<T>
 
   /** whether inline editing is enabled. */
   protected boolean m_InlineEditingEnabled;
+
+  /** whether this is the first choose action ever. */
+  protected boolean m_NoChooseYet;
+
+  /** the listeners for choose events. */
+  protected Set<ChooseListener> m_ChooseListeners;
 
   /**
    * Initializes the panel with no value.
@@ -133,6 +163,8 @@ public abstract class AbstractChooserPanel<T>
     m_ChangeListeners      = new HashSet<>();
     m_Editable             = true;
     m_InlineEditingEnabled = false;
+    m_NoChooseYet          = true;
+    m_ChooseListeners      = new HashSet<>();
   }
 
   /**
@@ -295,6 +327,25 @@ public abstract class AbstractChooserPanel<T>
   protected abstract String toString(T value);
 
   /**
+   * Hook method before setting the current value.
+   *
+   * @param value	the value to set
+   * @return		the potentially updated value
+   */
+  protected T beforeSetCurrent(T value) {
+    return value;
+  }
+
+  /**
+   * Hook method after setting the current value.
+   *
+   * @param value	the value to set
+   * @param success	whether setting was successful
+   */
+  protected void afterSetCurrent(T value, boolean success) {
+  }
+
+  /**
    * Sets the current value.
    *
    * @param value	the value to use, can be null
@@ -320,6 +371,8 @@ public abstract class AbstractChooserPanel<T>
 
     m_TextSelection.setText(str);
     m_TextSelection.setCaretPosition(0);
+
+    afterSetCurrent(value, result);
 
     return result;
   }
@@ -372,12 +425,30 @@ public abstract class AbstractChooserPanel<T>
   }
 
   /**
+   * Hook method before pasting from clipboard.
+   * <br>
+   * Default implementation does nothing.
+   */
+  protected void beforePasteFromClipboard() {
+  }
+
+  /**
+   * Hook method after pasting from clipboard.
+   * <br>
+   * Default implementation does nothing.
+   */
+  protected void afterPasteFromClipboard() {
+  }
+
+  /**
    * Pastes the string representation from the clipboard.
    */
   protected void pasteFromClipboard() {
     StringBuilder	text;
     int			caret;
     String 		clipboard;
+
+    beforePasteFromClipboard();
 
     try {
       caret     = m_TextSelection.getCaretPosition();
@@ -414,10 +485,12 @@ public abstract class AbstractChooserPanel<T>
       GUIHelper.showErrorMessage(
 	  this, "Error processing clipboard content:\n" + e);
     }
+
+    afterPasteFromClipboard();
   }
 
   /**
-   * Adds a listener for connect/disconnect events to the internal list.
+   * Adds a listener for change events to the internal list.
    *
    * @param l		the listener to add
    */
@@ -426,7 +499,7 @@ public abstract class AbstractChooserPanel<T>
   }
 
   /**
-   * Removes a listener for connect/disconnect events from the internal list.
+   * Removes a listener for change events from the internal list.
    *
    * @param l		the listener to remove
    */
@@ -435,7 +508,7 @@ public abstract class AbstractChooserPanel<T>
   }
 
   /**
-   * Notifies all listeners with the given event.
+   * Notifies all change listeners with the given event.
    *
    * @param e		the event to send to the listeners
    */
@@ -445,6 +518,38 @@ public abstract class AbstractChooserPanel<T>
     iter = m_ChangeListeners.iterator();
     while (iter.hasNext())
       iter.next().stateChanged(e);
+  }
+
+  /**
+   * Adds a listener for choose events to the internal list.
+   *
+   * @param l		the listener to add
+   */
+  public void addChooseListener(ChooseListener l) {
+    m_ChooseListeners.add(l);
+  }
+
+  /**
+   * Removes a listener for choose events from the internal list.
+   *
+   * @param l		the listener to remove
+   */
+  public void removeChooseListener(ChooseListener l) {
+    m_ChooseListeners.remove(l);
+  }
+
+  /**
+   * Notifies all choose listeners with the given event.
+   *
+   * @param before	whether before or after choosing
+   */
+  protected void notifyChooseListeners(boolean before) {
+    for (ChooseListener l: m_ChooseListeners) {
+      if (before)
+	l.beforeChoose(this);
+      else
+	l.afterChoose(this);
+    }
   }
 
   /**
@@ -493,10 +598,19 @@ public abstract class AbstractChooserPanel<T>
    * Returns whether inline editing is enabled, i.e., editing without having
    * to bring up the chooser.
    *
-   * @return              true if inline editing enabled
+   * @return		true if inline editing enabled
    */
   public boolean isInlineEditingEnabled() {
     return m_InlineEditingEnabled;
+  }
+
+  /**
+   * Returns whether no choose action has occurred yet (ie button click).
+   *
+   * @return		true if no choose action has occurred yet
+   */
+  public boolean isNoChooseYet() {
+    return m_NoChooseYet;
   }
 
   /**
@@ -511,11 +625,34 @@ public abstract class AbstractChooserPanel<T>
   }
 
   /**
+   * Hook method before choosing.
+   *
+   * @see 		#notifyChooseListeners(boolean)
+   */
+  protected void beforeChoose() {
+    notifyChooseListeners(true);
+  }
+
+  /**
    * Performs the actual choosing of an object.
    *
    * @return		the chosen object or null if none chosen
    */
   protected abstract T doChoose();
+
+  /**
+   * Hook method after choosing, but before setting the current value.
+   * <br>
+   * Default implementation just returns the value
+   *
+   * @param value	the chosen value
+   * @return		the potentially updated value
+   * @see 		#notifyChooseListeners(boolean)
+   */
+  protected T afterChoose(T value) {
+    notifyChooseListeners(false);
+    return value;
+  }
 
   /**
    * Lets the user choose and updates the current value if choosing was
@@ -524,7 +661,9 @@ public abstract class AbstractChooserPanel<T>
   public void choose() {
     T	value;
 
+    beforeChoose();
     value = doChoose();
+    value = afterChoose(value);
     
     if (m_Editable) {
       if (value != null) {
@@ -532,6 +671,8 @@ public abstract class AbstractChooserPanel<T>
 	fireCurrentValueChanged();
       }
     }
+
+    m_NoChooseYet = false;
   }
 
   /**
