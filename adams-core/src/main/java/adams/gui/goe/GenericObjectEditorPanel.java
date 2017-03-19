@@ -15,7 +15,7 @@
 
 /*
  * GenericObjectEditorPanel.java
- * Copyright (C) 2008-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.goe;
@@ -28,6 +28,7 @@ import adams.gui.core.GUIHelper;
 import adams.gui.event.HistorySelectionEvent;
 import adams.gui.goe.Favorites.FavoriteSelectionEvent;
 import adams.gui.goe.GenericObjectEditor.GOEPanel;
+import adams.gui.goe.GenericObjectEditor.PostProcessObjectHandler;
 
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -236,5 +237,25 @@ public class GenericObjectEditorPanel
       m_PopupMenuCustomizer.customizePopupMenu(this, menu);
 
     return menu;
+  }
+
+  /**
+   * Sets the handler for post-processing objects after they have been selected
+   * but before updating the UI.
+   *
+   * @param value	the handler, null to remove
+   */
+  public void setPostProcessObjectHandler(PostProcessObjectHandler value) {
+    m_Editor.setPostProcessObjectHandler(value);
+  }
+
+  /**
+   * Returns the handler for post-processing objects after they have been
+   * selected but before updating the UI.
+   *
+   * @return		the handler, null if none set
+   */
+  public PostProcessObjectHandler getPostProcessObjectHandler() {
+    return m_Editor.getPostProcessObjectHandler();
   }
 }

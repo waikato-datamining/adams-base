@@ -15,7 +15,7 @@
 
 /*
  *    GenericObjectEditor.java
- *    Copyright (C) 2002-2016 University of Waikato, Hamilton, New Zealand
+ *    Copyright (C) 2002-2017 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -160,6 +160,9 @@ public class GenericObjectEditor
 
   /** the proposed classes. */
   protected Class[] m_ProposedClasses = new Class[0];
+
+  /** for post-processing objects. */
+  protected PostProcessObjectHandler m_PostProcessObjectHandler;
 
   /**
    * Creates a popup menu containing a tree that is aware
@@ -771,6 +774,24 @@ public class GenericObjectEditor
   }
 
   /**
+   * Interface for post-processing the object after selecting it, but before
+   * setting it.
+   *
+   * @see	GenericObjectEditor#setObject(Object)
+   */
+  public interface PostProcessObjectHandler {
+
+    /**
+     * Gets called just before the object would be set, i.e., updating the UI.
+     *
+     * @param goe	the generic object editor that triggered it
+     * @param o		the object to be set
+     * @return		the potentially updated object
+     */
+    public Object postProcessObject(GenericObjectEditor goe, Object o);
+  }
+
+  /**
    * Default constructor.
    */
   public GenericObjectEditor() {
@@ -787,9 +808,10 @@ public class GenericObjectEditor
     AdamsEditorsRegistration.registerEditors();
     Favorites.getSingleton();
 
-    m_DefaultValueDetermined = null;
-    m_DefaultValue           = null;
-    m_MinimumChars           = 0;
+    m_DefaultValueDetermined   = null;
+    m_DefaultValue             = null;
+    m_MinimumChars             = 0;
+    m_PostProcessObjectHandler = null;
 
     setCanChangeClassInDialog(canChangeClassInDialog);
   }
@@ -1043,21 +1065,28 @@ public class GenericObjectEditor
   /**
    * Sets the current Object.
    *
-   * @param c 		a value of type 'Object'
+   * @param obj 	a value of type 'Object'
    */
-  protected void setObject(Object c) {
+  protected void setObject(Object obj) {
+    Object	newObj;
+
     // This should really call equals() for comparison.
     boolean trueChange ;
     if (getValue() != null)
-      trueChange = (!c.equals(getValue()));
+      trueChange = (!obj.equals(getValue()));
     else
       trueChange = true;
 
     if (m_Object != null)
       m_Backup = m_Object;
     else
-      m_Backup = ObjectCopyHelper.copyObject(c);
-    m_Object = ObjectCopyHelper.copyObject(c);
+      m_Backup = ObjectCopyHelper.copyObject(obj);
+
+    newObj = ObjectCopyHelper.copyObject(obj);
+    if (m_PostProcessObjectHandler != null)
+      newObj = m_PostProcessObjectHandler.postProcessObject(this, newObj);
+
+    m_Object = newObj;
 
     if (m_EditorComponent != null)
       m_EditorComponent.updateChildPropertySheet();
@@ -1413,4 +1442,23 @@ public class GenericObjectEditor
     m_Support.firePropertyChange("", null, null);
   }
 
+  /**
+   * Sets the handler for post-processing objects after they have been selected
+   * but before updating the UI.
+   *
+   * @param value	the handler, null to remove
+   */
+  public void setPostProcessObjectHandler(PostProcessObjectHandler value) {
+    m_PostProcessObjectHandler = value;
+  }
+
+  /**
+   * Returns the handler for post-processing objects after they have been
+   * selected but before updating the UI.
+   *
+   * @return		the handler, null if none set
+   */
+  public PostProcessObjectHandler getPostProcessObjectHandler() {
+    return m_PostProcessObjectHandler;
+  }
 }
