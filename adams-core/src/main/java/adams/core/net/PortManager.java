@@ -15,7 +15,7 @@
 
 /**
  * PortManager.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.core.net;
@@ -238,7 +238,8 @@ public class PortManager
     int		index;
 
     index = m_Ports.indexOf(port);
-    m_Ports.remove(index);
+    if (index > -1)
+      m_Ports.remove(index);
     cls = m_PortClass.remove(port);
     if (cls != null)
       m_ClassPorts.get(cls).remove(port);
