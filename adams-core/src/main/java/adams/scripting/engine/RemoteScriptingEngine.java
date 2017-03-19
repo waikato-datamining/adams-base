@@ -15,13 +15,13 @@
 
 /**
  * RemoteScriptingEngine.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.scripting.engine;
 
 import adams.core.Pausable;
-import adams.core.Stoppable;
+import adams.core.StoppableWithFeedback;
 import adams.core.option.OptionHandler;
 import adams.flow.core.Actor;
 import adams.flow.core.FlowContextHandler;
@@ -38,7 +38,7 @@ import adams.scripting.responsehandler.ResponseHandler;
  * @version $Revision$
  */
 public interface RemoteScriptingEngine
-  extends OptionHandler, Pausable, Stoppable, FlowContextHandler {
+  extends OptionHandler, Pausable, StoppableWithFeedback, FlowContextHandler {
 
   /**
    * Sets the application context.

@@ -15,12 +15,11 @@
 
 /**
  * AbstractScriptingEngine.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.scripting.engine;
 
-import adams.core.StoppableWithFeedback;
 import adams.core.Utils;
 import adams.core.logging.LoggingHelper;
 import adams.core.logging.LoggingSupporter;
@@ -47,7 +46,7 @@ import adams.scripting.responsehandler.ResponseHandler;
  */
 public abstract class AbstractScriptingEngine
   extends AbstractOptionHandler
-  implements RemoteScriptingEngine, StoppableWithFeedback {
+  implements RemoteScriptingEngine {
 
   private static final long serialVersionUID = -3763240773922918567L;
 
