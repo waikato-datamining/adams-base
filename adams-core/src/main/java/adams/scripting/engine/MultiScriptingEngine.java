@@ -80,6 +80,30 @@ public class MultiScriptingEngine
   }
 
   /**
+   * Removes the scripting engine without resetting the scheme. Stops the engine.
+   * Safe to call at runtime.
+   *
+   * @param value	the engine to add
+   */
+  public void removeEngine(RemoteScriptingEngine value) {
+    RemoteScriptingEngine[]	engines;
+    int				i;
+    int				n;
+
+    engines = new RemoteScriptingEngine[m_Engines.length - 1];
+    n       = 0;
+    for (i = 0; i < m_Engines.length; i++) {
+      if (m_Engines[i].toCommandLine().equals(value.toCommandLine())) {
+	m_Engines[i].stopExecution();
+	continue;
+      }
+      engines[n] = m_Engines[i];
+      n++;
+    }
+    m_Engines = engines;
+  }
+
+  /**
    * Sets the engines use.
    *
    * @param value	the engines
