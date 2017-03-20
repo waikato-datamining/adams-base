@@ -719,6 +719,14 @@ adams.scripting.command.RemoteCommand=\
   adams.scripting.command.flow,\
   adams.scripting.command.gui
 
+# the remote scription commands that operate on specific flow
+adams.scripting.command.RemoteCommandOnFlow=\
+  adams.scripting.command,\
+  adams.scripting.command.basic,\
+  adams.scripting.command.distributed,\
+  adams.scripting.command.flow,\
+  adams.scripting.command.gui
+
 # handles connections for remote commands
 adams.scripting.connection.Connection=\
   adams.scripting.connection

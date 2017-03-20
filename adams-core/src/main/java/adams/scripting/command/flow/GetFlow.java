@@ -24,6 +24,7 @@ import adams.core.option.OptionUtils;
 import adams.flow.control.RunningFlowsRegistry;
 import adams.flow.core.Actor;
 import adams.scripting.command.AbstractCommandWithResponse;
+import adams.scripting.command.RemoteCommandOnFlow;
 
 /**
  * Retrieves a running/registered flow using its ID.
@@ -32,7 +33,8 @@ import adams.scripting.command.AbstractCommandWithResponse;
  * @version $Revision$
  */
 public class GetFlow
-  extends AbstractCommandWithResponse {
+  extends AbstractCommandWithResponse
+  implements RemoteCommandOnFlow {
 
   private static final long serialVersionUID = -3350680106789169314L;
 
