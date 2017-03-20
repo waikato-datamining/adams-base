@@ -20,6 +20,7 @@
 package adams.core.logging;
 
 import adams.core.io.FileUtils;
+import adams.core.io.PlaceholderFile;
 
 import java.io.File;
 import java.util.logging.Handler;
@@ -41,13 +42,23 @@ public class FileHandler
   protected boolean m_LogIsDir;
 
   /**
+   * Initializes the members.
+   */
+  @Override
+  protected void initialize() {
+    super.initialize();
+
+    setLogFile(new PlaceholderFile("."));
+  }
+
+  /**
    * Sets the log file to use.
    *
    * @param value	the file
    */
   public void setLogFile(File value) {
     m_LogFile  = value;
-    m_LogIsDir = m_LogFile.isDirectory();
+    m_LogIsDir = (m_LogFile == null) || m_LogFile.isDirectory();
   }
 
   /**
