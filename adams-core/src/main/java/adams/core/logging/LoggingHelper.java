@@ -351,7 +351,7 @@ public class LoggingHelper {
     prefix = record.getLoggerName();
 
     // any prefix to print?
-    if (prefix.length() > 0)
+    if ((prefix != null) && prefix.length() > 0)
       actualPrefix = "[" + prefix + suffix + "/" + m_DateFormat.format(new Date()) + "] ";
     else 
       actualPrefix = "";
