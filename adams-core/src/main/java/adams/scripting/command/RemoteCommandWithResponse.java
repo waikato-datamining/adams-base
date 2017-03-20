@@ -90,4 +90,16 @@ public interface RemoteCommandWithResponse
    * @param handler	for handling the response
    */
   public void handleResponse(RemoteScriptingEngine engine, ResponseHandler handler);
+
+  /**
+   * Hook method before sending the response.
+   */
+  public void beforeSendResponse();
+
+  /**
+   * Hook method after sending the response.
+   *
+   * @param error	null if successful, otherwise error message
+   */
+  public void afterSendResponse(String error);
 }

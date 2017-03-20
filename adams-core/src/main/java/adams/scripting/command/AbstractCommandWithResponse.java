@@ -162,6 +162,24 @@ public abstract class AbstractCommandWithResponse
   }
 
   /**
+   * Hook method before sending the response.
+   * <br>
+   * Default implementation does nothing.
+   */
+  public void beforeSendResponse() {
+  }
+
+  /**
+   * Hook method after sending the response.
+   * <br>
+   * Default implementation does nothing.
+   *
+   * @param error	null if successful, otherwise error message
+   */
+  public void afterSendResponse(String error) {
+  }
+
+  /**
    * Returns a short description of the command.
    *
    * @return		the description

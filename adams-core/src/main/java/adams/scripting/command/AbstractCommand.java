@@ -15,7 +15,7 @@
 
 /**
  * AbstractCommand.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.scripting.command;
@@ -179,7 +179,25 @@ public abstract class AbstractCommand
   }
 
   /**
-   * Returns a short description of the command.
+   * Hook method before sending the command.
+   * <br>
+   * Default implementation does nothing.
+   */
+  public void beforeSendRequest() {
+  }
+
+  /**
+   * Hook method after sending the request.
+   * <br>
+   * Default implementation does nothing.
+   *
+   * @param error	null if successful, otherwise error message
+   */
+  public void afterSendRequest(String error) {
+  }
+
+  /**
+   * Returns a short description of the request.
    *
    * @return		the description
    */

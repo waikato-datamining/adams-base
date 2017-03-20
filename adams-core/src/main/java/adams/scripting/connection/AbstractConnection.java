@@ -23,6 +23,7 @@ package adams.scripting.connection;
 import adams.core.option.AbstractOptionHandler;
 import adams.core.option.OptionUtils;
 import adams.scripting.command.RemoteCommand;
+import adams.scripting.command.RemoteCommandWithResponse;
 
 /**
  * Ancestor for connections.
@@ -69,8 +70,11 @@ public abstract class AbstractConnection
     String	result;
 
     result = checkRequest(cmd);
-    if (result == null)
+    if (result == null) {
+      cmd.beforeSendRequest();
       result = doSendRequest(cmd);
+      cmd.afterSendRequest(result);
+    }
 
     return result;
   }
@@ -108,8 +112,13 @@ public abstract class AbstractConnection
     String	result;
 
     result = checkResponse(cmd);
-    if (result == null)
+    if (result == null) {
+      if (cmd instanceof RemoteCommandWithResponse)
+	((RemoteCommandWithResponse) cmd).beforeSendResponse();
       result = doSendResponse(cmd);
+      if (cmd instanceof RemoteCommandWithResponse)
+	((RemoteCommandWithResponse) cmd).afterSendResponse(result);
+    }
 
     return result;
   }

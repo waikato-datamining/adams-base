@@ -15,7 +15,7 @@
 
 /**
  * RemoteCommand.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.scripting.command;
@@ -124,4 +124,16 @@ public interface RemoteCommand
    * @param handler	for handling the request
    */
   public void handleRequest(RemoteScriptingEngine engine, RequestHandler handler);
+
+  /**
+   * Hook method before sending the request.
+   */
+  public void beforeSendRequest();
+
+  /**
+   * Hook method after sending the request.
+   *
+   * @param error	null if successful, otherwise error message
+   */
+  public void afterSendRequest(String error);
 }
