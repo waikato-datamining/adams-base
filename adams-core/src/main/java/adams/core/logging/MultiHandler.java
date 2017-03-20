@@ -81,6 +81,28 @@ public class MultiHandler
   }
 
   /**
+   * Removes the specified handler.
+   *
+   * @param index	the handler index
+   */
+  public void removeHandler(int index) {
+    Handler[]		handlers;
+    int			i;
+    int			n;
+
+    handlers = new Handler[m_Handlers.length - 1];
+    n        = 0;
+    for (i = 0; i < m_Handlers.length; i++) {
+      if (i == index)
+	continue;
+      handlers[n] = m_Handlers[i];
+      n++;
+    }
+
+    m_Handlers = handlers;
+  }
+
+  /**
    * Flush any buffered output.
    */
   @Override
