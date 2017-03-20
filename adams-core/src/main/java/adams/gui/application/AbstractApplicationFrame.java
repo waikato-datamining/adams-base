@@ -51,6 +51,7 @@ import adams.gui.event.RemoteScriptingEngineUpdateListener;
 import adams.gui.scripting.ScriptingEngine;
 import adams.gui.scripting.ScriptingEngineHandler;
 import adams.gui.scripting.ScriptingLogPanel;
+import adams.scripting.engine.MultiScriptingEngine;
 import adams.scripting.engine.RemoteScriptingEngine;
 
 import javax.swing.ImageIcon;
@@ -1290,6 +1291,34 @@ public abstract class AbstractApplicationFrame
    */
   public ScriptingLogPanel getScriptingLogPanel() {
     return m_ScriptingLogPanel;
+  }
+
+  /**
+   * Adds the scripting engine to execute. Doesn't stop any running engines.
+   *
+   * @param value	the engine to add
+   */
+  public void addRemoteScriptingEngine(RemoteScriptingEngine value) {
+    MultiScriptingEngine	multi;
+
+    if (!value.isRunning())
+      new Thread(() -> value.execute()).start();
+
+    if (m_RemoteScriptingEngine == null) {
+      m_RemoteScriptingEngine = value;
+    }
+    else {
+      if (m_RemoteScriptingEngine instanceof MultiScriptingEngine) {
+	((MultiScriptingEngine) m_RemoteScriptingEngine).addEngine(value);
+      }
+      else {
+	multi = new MultiScriptingEngine();
+	new Thread(() -> multi.execute()).start();
+	multi.addEngine(m_RemoteScriptingEngine);
+	multi.addEngine(value);
+	m_RemoteScriptingEngine = multi;
+      }
+    }
   }
 
   /**
