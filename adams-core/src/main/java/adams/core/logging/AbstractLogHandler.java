@@ -15,7 +15,7 @@
 
 /**
  * AbstractLogHandler.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.logging;
 
@@ -32,7 +32,8 @@ import java.util.logging.LogRecord;
  * @version $Revision$
  */
 public abstract class AbstractLogHandler
-  extends Handler {
+  extends Handler
+  implements Comparable<Handler> {
 
   /** the log listeners. */
   protected HashSet<LoggingListener> m_LoggingListeners;
@@ -49,7 +50,7 @@ public abstract class AbstractLogHandler
    * Initializes the members.
    */
   protected void initialize() {
-    m_LoggingListeners = new HashSet<LoggingListener>();
+    m_LoggingListeners = new HashSet<>();
   }
   
   /**
@@ -146,7 +147,7 @@ public abstract class AbstractLogHandler
    * @return		the iterator
    */
   public Set<LoggingListener> loggingListeners() {
-    return new HashSet<LoggingListener>(m_LoggingListeners);
+    return new HashSet<>(m_LoggingListeners);
   }
   
   /**
@@ -160,5 +161,60 @@ public abstract class AbstractLogHandler
     listeners = m_LoggingListeners.toArray(new LoggingListener[0]);
     for (LoggingListener l: listeners)
       l.logEventOccurred(this, record);
+  }
+
+  /**
+   * Adds itself to the default handler, but only if not already present.
+   *
+   * @return		null if successful, otherwise error message
+   * @see		LoggingHelper#getDefaultHandler()
+   */
+  public String addToDefaultHandler() {
+    String		result;
+    MultiHandler	multi;
+    boolean		found;
+
+    result = null;
+
+    if (LoggingHelper.getDefaultHandler() instanceof MultiHandler) {
+      multi = (MultiHandler) LoggingHelper.getDefaultHandler();
+      found = false;
+      for (Handler h: multi.getHandlers()) {
+	if (h.equals(this)) {
+	  found = true;
+	  break;
+	}
+      }
+      if (!found)
+	multi.addHandler(this);
+    }
+    else {
+      result = "Default logging handler is not of type " + MultiHandler.class.getName() + " - failed to install " + this.getClass().getName() + "!";
+    }
+
+    return result;
+  }
+
+  /**
+   * Compares the handler with itself.
+   *
+   * @param o		the other handler
+   * @return		less than 0, equal to 0, or greater than 0 if the
+   * 			handler is less, equal to, or greater than this one
+   */
+  public int compareTo(Handler o) {
+    return getClass().getName().compareTo(o.getClass().getName());
+  }
+
+  /**
+   * Checks whether the provided object is the same as this handler.
+   *
+   * @param obj		the object to check
+   * @return		true if the same
+   * @see		#compareTo(Handler)
+   */
+  @Override
+  public boolean equals(Object obj) {
+    return (obj instanceof Handler) && (compareTo((Handler) obj) == 0);
   }
 }

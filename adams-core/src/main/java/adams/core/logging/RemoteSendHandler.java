@@ -23,6 +23,7 @@ package adams.core.logging;
 import adams.core.SerializationHelper;
 
 import java.net.Socket;
+import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 
@@ -175,6 +176,29 @@ public class RemoteSendHandler
       System.err.println(getClass().getName() + ": failed to send log record to " + m_Hostname + "/" + m_Port);
       e.printStackTrace();
     }
+  }
+
+  /**
+   * Compares the handler with itself.
+   *
+   * @param o		the other handler
+   * @return		less than 0, equal to 0, or greater than 0 if the
+   * 			handler is less, equal to, or greater than this one
+   */
+  public int compareTo(Handler o) {
+    int			result;
+    RemoteSendHandler	other;
+
+    result = super.compareTo(o);
+
+    if (result == 0) {
+      other  = (RemoteSendHandler) o;
+      result = getHostname().compareTo(other.getHostname());
+      if (result == 0)
+	result = new Integer(getPort()).compareTo(other.getPort());
+    }
+
+    return result;
   }
 
   /**

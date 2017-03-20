@@ -248,6 +248,27 @@ public class RemoteReceiveHandler
   }
 
   /**
+   * Compares the handler with itself.
+   *
+   * @param o		the other handler
+   * @return		less than 0, equal to 0, or greater than 0 if the
+   * 			handler is less, equal to, or greater than this one
+   */
+  public int compareTo(Handler o) {
+    int				result;
+    RemoteReceiveHandler	other;
+
+    result = super.compareTo(o);
+
+    if (result == 0) {
+      other  = (RemoteReceiveHandler) o;
+      result = new Integer(getPort()).compareTo(other.getPort());
+    }
+
+    return result;
+  }
+
+  /**
    * Just for testing.
    *
    * @param args	optionally supplying port and timeout

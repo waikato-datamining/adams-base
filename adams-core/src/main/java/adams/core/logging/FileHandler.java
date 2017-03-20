@@ -15,13 +15,14 @@
 
 /**
  * FileHandler.java
- * Copyright (C) 2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.logging;
 
 import adams.core.io.FileUtils;
 
 import java.io.File;
+import java.util.logging.Handler;
 import java.util.logging.LogRecord;
 
 /**
@@ -70,5 +71,26 @@ public class FileHandler
   protected void doPublish(LogRecord record) {
     if (!m_LogFile.isDirectory())
       FileUtils.writeToFile(m_LogFile.getAbsolutePath(), LoggingHelper.assembleMessage(record).toString(), true);
+  }
+
+  /**
+   * Compares the handler with itself.
+   *
+   * @param o		the other handler
+   * @return		less than 0, equal to 0, or greater than 0 if the
+   * 			handler is less, equal to, or greater than this one
+   */
+  public int compareTo(Handler o) {
+    int		result;
+    FileHandler	other;
+
+    result = super.compareTo(o);
+
+    if (result == 0) {
+      other  = (FileHandler) o;
+      result = getLogFile().compareTo(other.getLogFile());
+    }
+
+    return result;
   }
 }

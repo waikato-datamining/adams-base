@@ -147,4 +147,36 @@ public class MultiHandler
     for (Handler h: m_Handlers)
       h.publish(record);
   }
+
+  /**
+   * Compares the handler with itself.
+   *
+   * @param o		the other handler
+   * @return		less than 0, equal to 0, or greater than 0 if the
+   * 			handler is less, equal to, or greater than this one
+   */
+  public int compareTo(Handler o) {
+    int			result;
+    MultiHandler	other;
+    int			i;
+
+    result = super.compareTo(o);
+
+    if (result == 0) {
+      other  = (MultiHandler) o;
+      result = new Integer(getHandlers().length).compareTo(other.getHandlers().length);
+      if (result == 0) {
+	for (i = 0; i < getHandlers().length; i++) {
+	  if ((getHandlers()[i] instanceof AbstractLogHandler) && (other.getHandlers()[i] instanceof AbstractLogHandler))
+	    result = ((AbstractLogHandler) getHandlers()[i]).compareTo(other.getHandlers()[i]);
+	  else
+	    result = new Integer(getHandlers()[i].hashCode()).compareTo(other.getHandlers()[i].hashCode());
+	  if (result != 0)
+	    break;
+	}
+      }
+    }
+
+    return result;
+  }
 }
