@@ -1335,6 +1335,29 @@ public abstract class AbstractApplicationFrame
 	m_RemoteScriptingEngine = multi;
       }
     }
+    notifyRemoteScriptingEngineUpdateListeners(new RemoteScriptingEngineUpdateEvent(this));
+  }
+
+  /**
+   * Removes the scripting engine (and stops it). Doesn't stop any running engines.
+   *
+   * @param value	the engine to remove
+   */
+  public void removeRemoteScriptingEngine(RemoteScriptingEngine value) {
+    MultiScriptingEngine	multi;
+
+    if (m_RemoteScriptingEngine == null)
+      return;
+
+    if (m_RemoteScriptingEngine instanceof MultiScriptingEngine) {
+      multi = (MultiScriptingEngine) m_RemoteScriptingEngine;
+      multi.removeEngine(value);
+    }
+    else {
+      if (value.toCommandLine().equals(m_RemoteScriptingEngine.toCommandLine()))
+	setRemoteScriptingEngine(null);
+    }
+    notifyRemoteScriptingEngineUpdateListeners(new RemoteScriptingEngineUpdateEvent(this));
   }
 
   /**
