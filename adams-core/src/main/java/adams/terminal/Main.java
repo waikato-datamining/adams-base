@@ -22,6 +22,7 @@ package adams.terminal;
 
 import adams.core.logging.AbstractLogHandler;
 import adams.core.logging.LoggingHelper;
+import adams.core.logging.MultiHandler;
 import adams.db.AbstractDatabaseConnection;
 import adams.db.DatabaseConnection;
 import adams.env.Environment;
@@ -176,7 +177,12 @@ public class Main
    * @return		the handler
    */
   protected Handler createLogHandler() {
-    return new LogHandler(this);
+    MultiHandler result;
+
+    result = new MultiHandler();
+    result.setHandlers(new Handler[]{new LogHandler(this)});
+
+    return result;
   }
 
   /**

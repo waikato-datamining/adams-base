@@ -27,6 +27,7 @@ import adams.core.logging.ConsolePanelHandler;
 import adams.core.logging.Logger;
 import adams.core.logging.LoggingHelper;
 import adams.core.logging.LoggingLevel;
+import adams.core.logging.MultiHandler;
 import adams.core.management.Launcher;
 import adams.core.management.ProcessUtils;
 import adams.core.management.RestartableApplication;
@@ -77,6 +78,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Handler;
 import java.util.logging.Level;
 
 /**
@@ -584,7 +586,7 @@ public abstract class AbstractApplicationFrame
     createTitle("");
     m_InitFinished = true;
     setUserMode(m_UserMode);
-    LoggingHelper.setDefaultHandler(new ConsolePanelHandler());
+    LoggingHelper.setDefaultHandler(createLogHandler());
 
     if (!m_RemoteScriptingEngineCmdLine.isEmpty()) {
       try {
@@ -601,6 +603,20 @@ public abstract class AbstractApplicationFrame
       if (engine != null)
 	setRemoteScriptingEngine(engine);
     }
+  }
+
+  /**
+   * Returns the log handler to use.
+   *
+   * @return		the handler
+   */
+  protected Handler createLogHandler() {
+    MultiHandler 	result;
+
+    result = new MultiHandler();
+    result.setHandlers(new Handler[]{new ConsolePanelHandler()});
+
+    return result;
   }
 
   /**
