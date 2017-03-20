@@ -37,13 +37,17 @@ public class FileHandler
   /** the log file to use. */
   protected File m_LogFile;
 
+  /** whether the file points to a directory. */
+  protected boolean m_LogIsDir;
+
   /**
    * Sets the log file to use.
    *
    * @param value	the file
    */
   public void setLogFile(File value) {
-    m_LogFile = value;
+    m_LogFile  = value;
+    m_LogIsDir = m_LogFile.isDirectory();
   }
 
   /**
@@ -69,7 +73,7 @@ public class FileHandler
    */
   @Override
   protected void doPublish(LogRecord record) {
-    if (!m_LogFile.isDirectory())
+    if (!m_LogIsDir)
       FileUtils.writeToFile(m_LogFile.getAbsolutePath(), LoggingHelper.assembleMessage(record).toString(), true);
   }
 
