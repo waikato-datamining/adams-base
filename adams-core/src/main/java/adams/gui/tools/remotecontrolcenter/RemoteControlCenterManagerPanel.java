@@ -21,10 +21,13 @@
 package adams.gui.tools.remotecontrolcenter;
 
 import adams.gui.application.AbstractApplicationFrame;
+import adams.gui.core.BaseTabbedPane;
 import adams.gui.event.RemoteScriptingEngineUpdateEvent;
 import adams.gui.event.RemoteScriptingEngineUpdateListener;
 import adams.gui.workspace.AbstractWorkspaceManagerPanel;
 import adams.scripting.engine.RemoteScriptingEngine;
+
+import java.awt.BorderLayout;
 
 /**
  * Interface for remote controls.
@@ -41,6 +44,28 @@ public class RemoteControlCenterManagerPanel
   /** the owning application. */
   protected AbstractApplicationFrame m_Owner;
 
+  /** the tabbed pane for the engines and sessions. */
+  protected BaseTabbedPane m_TabbedPaneMain;
+
+  /** the panel for the engines. */
+  protected RemoteControlCenterEnginesPanel m_PanelEngines;
+
+  /**
+   * Initializes the widgets.
+   */
+  @Override
+  protected void initGUI() {
+    super.initGUI();
+
+    m_TabbedPaneMain = new BaseTabbedPane(BaseTabbedPane.TOP);
+
+    m_PanelEngines = new RemoteControlCenterEnginesPanel();
+    m_TabbedPaneMain.addTab("Engines", m_PanelEngines);
+    m_TabbedPaneMain.addTab("Commands", m_SplitPane);
+
+    add(m_TabbedPaneMain, BorderLayout.CENTER);
+  }
+
   /**
    * Sets the owning application.
    *
@@ -54,6 +79,8 @@ public class RemoteControlCenterManagerPanel
 
     if (m_Owner != null)
       m_Owner.addRemoteScriptingEngineUpdateListener(this);
+
+    m_PanelEngines.setOwner(value);
   }
 
   /**
@@ -142,5 +169,19 @@ public class RemoteControlCenterManagerPanel
    */
   public AbstractApplicationFrame getApplicationFrame() {
     return getOwner();
+  }
+
+  /**
+   * Cleans up data structures, frees up memory.
+   */
+  public void cleanUp() {
+    super.cleanUp();
+
+    if (m_Owner != null) {
+      m_Owner.removeRemoteScriptingEngineUpdateListener(this);
+      m_Owner = null;
+    }
+
+    m_PanelEngines.cleanUp();
   }
 }

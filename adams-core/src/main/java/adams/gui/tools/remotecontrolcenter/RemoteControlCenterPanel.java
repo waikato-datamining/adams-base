@@ -22,7 +22,6 @@ package adams.gui.tools.remotecontrolcenter;
 
 import adams.core.ClassLister;
 import adams.core.logging.LoggingLevel;
-import adams.core.option.OptionUtils;
 import adams.gui.action.AbstractBaseAction;
 import adams.gui.action.BaseAction;
 import adams.gui.application.AbstractApplicationFrame;
@@ -33,20 +32,16 @@ import adams.gui.core.ConsolePanel;
 import adams.gui.core.GUIHelper;
 import adams.gui.event.RemoteScriptingEngineUpdateEvent;
 import adams.gui.event.RemoteScriptingEngineUpdateListener;
-import adams.gui.goe.GenericObjectEditorDialog;
 import adams.gui.tools.remotecontrolcenter.panels.AbstractRemoteControlCenterTab;
 import adams.gui.tools.remotecontrolcenter.panels.LogTab;
 import adams.gui.tools.remotecontrolcenter.panels.SendCommandTab;
 import adams.gui.workspace.AbstractWorkspacePanel;
-import adams.scripting.engine.DefaultScriptingEngine;
-import adams.scripting.engine.RemoteScriptingEngine;
 
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.event.ChangeEvent;
 import java.awt.BorderLayout;
-import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
 
 /**
@@ -69,9 +64,6 @@ public class RemoteControlCenterPanel
 
   /** the statust bar. */
   protected BaseStatusBar m_StatusBar;
-
-  /** the action for setting the engine. */
-  protected BaseAction m_ActionFileEngine;
 
   /** the action for closing the control center. */
   protected BaseAction m_ActionFileClose;
@@ -136,17 +128,6 @@ public class RemoteControlCenterPanel
    * Initializes the actions.
    */
   protected void initActions() {
-    m_ActionFileEngine = new AbstractBaseAction() {
-      private static final long serialVersionUID = 2162739410818834253L;
-      @Override
-      protected void doActionPerformed(ActionEvent e) {
-	selectScriptingEngine();
-	updateMenu();
-      }
-    };
-    m_ActionFileEngine.setName("Scripting engine...");
-    m_ActionFileEngine.setIcon(GUIHelper.getEmptyIcon());
-
     m_ActionFileClose = new AbstractBaseAction() {
       private static final long serialVersionUID = -1104246458353845500L;
       @Override
@@ -228,16 +209,11 @@ public class RemoteControlCenterPanel
       menu.addChangeListener((ChangeEvent e) -> updateMenu());
       result.add(menu);
 
-      // File/Engine
-      menu.add(m_ActionFileEngine);
-
-      menu.addSeparator();
-
       // File/Close
       menu.add(m_ActionFileClose);
 
       // Tab
-      menu = new JMenu("Tab");
+      menu = new JMenu("Command tab");
       menu.setMnemonic('T');
       menu.addChangeListener((ChangeEvent e) -> updateMenu());
       result.add(menu);
@@ -332,34 +308,6 @@ public class RemoteControlCenterPanel
     ConsolePanel.getSingleton().append(LoggingLevel.SEVERE, msg);
     // TODO also log to Log panel
     GUIHelper.showErrorMessage(getParent(), msg, title);
-  }
-
-  /**
-   * Allows the user to select and configure a scripting engine before
-   * starting it.
-   */
-  protected void selectScriptingEngine() {
-    GenericObjectEditorDialog dialog;
-
-    if (getParentDialog() != null)
-      dialog = new GenericObjectEditorDialog(getParentDialog(), ModalityType.DOCUMENT_MODAL);
-    else
-      dialog = new GenericObjectEditorDialog(getParentFrame(), true);
-    dialog.setTitle("Scripting engine");
-    dialog.getGOEEditor().setClassType(RemoteScriptingEngine.class);
-    dialog.getGOEEditor().setCanChangeClassInDialog(true);
-    if (getOwner().getRemoteScriptingEngine() == null)
-      dialog.setCurrent(new DefaultScriptingEngine());
-    else
-      dialog.setCurrent(OptionUtils.shallowCopy(getOwner().getRemoteScriptingEngine()));
-    dialog.setLocationRelativeTo(null);
-    dialog.setVisible(true);
-    if (dialog.getResult() != GenericObjectEditorDialog.APPROVE_OPTION) {
-      dialog.dispose();
-      return;
-    }
-    getOwner().setRemoteScriptingEngine((RemoteScriptingEngine) dialog.getCurrent());
-    dialog.dispose();
   }
 
   /**
