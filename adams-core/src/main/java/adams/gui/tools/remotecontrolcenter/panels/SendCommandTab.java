@@ -14,12 +14,14 @@
  */
 
 /**
- * SendTab.java
+ * SendCommandTab.java
  * Copyright (C) 2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.remotecontrolcenter.panels;
 
+import adams.gui.chooser.AbstractChooserPanel;
+import adams.gui.chooser.AbstractChooserPanel.ChooseListener;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.ParameterPanel;
 import adams.gui.core.SimpleLogPanel;
@@ -44,7 +46,8 @@ import java.awt.event.ActionEvent;
  * @version $Revision$
  */
 public class SendCommandTab
-  extends AbstractRemoteControlCenterTab {
+  extends AbstractRemoteControlCenterTab
+  implements ChooseListener {
 
   private static final long serialVersionUID = -894258879660492792L;
 
@@ -66,6 +69,9 @@ public class SendCommandTab
   /** the response logger. */
   protected SimpleLogPanelResponseHandler m_ResponseLogger;
 
+  /** the response connection updater. */
+  protected GenericObjectEditorResponseConnectionUpdater m_ResponseConnectionUpdater;
+
   /**
    * Initializes the widgets.
    */
@@ -73,7 +79,8 @@ public class SendCommandTab
   protected void initialize() {
     super.initialize();
 
-    m_ResponseLogger = new SimpleLogPanelResponseHandler();
+    m_ResponseLogger            = new SimpleLogPanelResponseHandler();
+    m_ResponseConnectionUpdater = new GenericObjectEditorResponseConnectionUpdater();
   }
 
   /**
@@ -95,6 +102,8 @@ public class SendCommandTab
     panel.add(m_PanelParams, BorderLayout.CENTER);
 
     m_GOECommand = new GenericObjectEditorPanel(RemoteCommand.class, new Ping(), true);
+    m_GOECommand.setPostProcessObjectHandler(m_ResponseConnectionUpdater);
+    m_GOECommand.addChooseListener(this);
     m_PanelParams.addParameter("Command", m_GOECommand);
 
     m_GOEConnection = new GenericObjectEditorPanel(Connection.class, new DefaultConnection(), true);
@@ -162,5 +171,29 @@ public class SendCommandTab
    */
   public void remoteScriptingEngineUpdated(RemoteScriptingEngineUpdateEvent e) {
     AbstractResponseHandler.insertHandler(this, getApplicationFrame(), m_ResponseLogger);
+    m_ResponseConnectionUpdater.setApplication(getApplicationFrame());
+    m_GOECommand.setCurrent(m_ResponseConnectionUpdater.postProcessObject(null, m_GOECommand.getCurrent()));
+  }
+
+  /**
+   * Gets called before the user chooses a value.
+   *
+   * @param panel	the panel that triggered the event
+   */
+  @Override
+  public void beforeChoose(AbstractChooserPanel panel) {
+    if (panel == m_GOECommand) {
+      if (panel.isNoChooseYet())
+	m_ResponseConnectionUpdater.setApplication(getApplicationFrame());
+    }
+  }
+
+  /**
+   * Gets called after the user chose a value.
+   *
+   * @param panel	the panel that triggered the event
+   */
+  @Override
+  public void afterChoose(AbstractChooserPanel panel) {
   }
 }
