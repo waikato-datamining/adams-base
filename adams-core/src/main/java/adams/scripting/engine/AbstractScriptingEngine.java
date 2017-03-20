@@ -74,6 +74,9 @@ public abstract class AbstractScriptingEngine
   /** whether the engine is stopped. */
   protected boolean m_Stopped;
 
+  /** whether the engine is running. */
+  protected boolean m_Running;
+
   /**
    * Adds options to the internal list of options.
    */
@@ -336,6 +339,7 @@ public abstract class AbstractScriptingEngine
   public void stopExecution() {
     m_Stopped = true;
     m_Paused  = false;
+    m_Running = false;
   }
 
   /**
@@ -345,6 +349,37 @@ public abstract class AbstractScriptingEngine
    */
   public boolean isStopped() {
     return m_Stopped;
+  }
+
+  /**
+   * Returns whether the scripting engine is currently running.
+   *
+   * @return		true if running
+   */
+  public boolean isRunning() {
+    return m_Running;
+  }
+
+  /**
+   * Performs the actual execution of the scripting engine.
+   *
+   * @return		error message in case of failure to start up or run,
+   * 			otherwise null
+   */
+  protected abstract String doExecute();
+
+  /**
+   * Executes the scripting engine.
+   *
+   * @return		error message in case of failure to start up or run,
+   * 			otherwise null
+   */
+  @Override
+  public String execute() {
+    m_Paused  = false;
+    m_Stopped = false;
+    m_Running = true;
+    return doExecute();
   }
 
   /**

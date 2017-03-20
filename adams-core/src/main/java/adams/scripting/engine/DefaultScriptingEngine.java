@@ -15,7 +15,7 @@
 
 /**
  * DefaultScriptingEngine.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.scripting.engine;
@@ -221,7 +221,7 @@ public class DefaultScriptingEngine
    * 			otherwise null
    */
   @Override
-  public String execute() {
+  protected String doExecute() {
     String		result;
     Socket		client;
 

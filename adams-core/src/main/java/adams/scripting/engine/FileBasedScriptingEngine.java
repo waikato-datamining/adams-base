@@ -15,16 +15,16 @@
 
 /**
  * FileBasedScriptingEngine.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.scripting.engine;
 
 import adams.core.MessageCollection;
 import adams.core.Utils;
-import adams.core.io.lister.LocalDirectoryLister;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderDirectory;
+import adams.core.io.lister.LocalDirectoryLister;
 import adams.multiprocess.PausableFixedThreadPoolExecutor;
 import adams.scripting.command.CommandUtils;
 import adams.scripting.command.RemoteCommand;
@@ -357,7 +357,7 @@ public class FileBasedScriptingEngine
    * 			otherwise null
    */
   @Override
-  public String execute() {
+  protected String doExecute() {
     String		result;
     LocalDirectoryLister lister;
     String[]		files;
@@ -373,11 +373,10 @@ public class FileBasedScriptingEngine
       result = "'" + m_Processed + "' is not a directory!";
     if ((result == null) && !m_Failed.isDirectory())
       result = "'" + m_Failed + "' is not a directory!";
-    if (result != null)
+    if (result != null) {
+      m_Running = false;
       return result;
-
-    m_Paused  = false;
-    m_Stopped = false;
+    }
 
     // start up job queue
     m_Executor = new PausableFixedThreadPoolExecutor(m_MaxConcurrentJobs);

@@ -162,4 +162,11 @@ public interface RemoteScriptingEngine
    * 			otherwise null
    */
   public String execute();
+
+  /**
+   * Returns whether the scripting engine is currently running.
+   *
+   * @return		true if running
+   */
+  public boolean isRunning();
 }

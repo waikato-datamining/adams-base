@@ -104,7 +104,7 @@ public abstract class AbstractScriptingEngineEnhancer
    * 			otherwise null
    */
   @Override
-  public String execute() {
+  protected String doExecute() {
     String	result;
 
     result = preExecute();

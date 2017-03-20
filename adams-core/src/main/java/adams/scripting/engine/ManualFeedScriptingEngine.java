@@ -136,13 +136,11 @@ public class ManualFeedScriptingEngine
    * 			otherwise null
    */
   @Override
-  public String execute() {
+  protected String doExecute() {
     String		result;
     RemoteCommand	cmd;
 
-    result    = null;
-    m_Paused  = false;
-    m_Stopped = false;
+    result = null;
 
     // start up job queue
     m_Executor = new PausableFixedThreadPoolExecutor(m_MaxConcurrentJobs);
