@@ -15,7 +15,7 @@
 
 /**
  * ListFlows.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.scripting.command.flow;
@@ -26,6 +26,7 @@ import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.control.Flow;
 import adams.flow.control.RunningFlowsRegistry;
+import adams.flow.core.ActorUtils;
 import adams.scripting.command.AbstractCommandWithResponse;
 
 import java.io.StringReader;
@@ -76,6 +77,7 @@ public class  ListFlows
     result.getHeaderRow().addCell("I").setContent("ID");
     result.getHeaderRow().addCell("R").setContent("Root");
     result.getHeaderRow().addCell("A").setContent("Annotation");
+    result.getHeaderRow().addCell("P").setContent("Path");
 
     return result;
   }
@@ -163,6 +165,7 @@ public class  ListFlows
       row.addCell("I").setContent(id);
       row.addCell("R").setContent(flow.getRoot().getName());
       row.addCell("A").setContent(flow.getRoot().getAnnotations().getValue());
+      row.addCell("P").setContent(flow.getVariables().get(ActorUtils.FLOW_FILENAME_LONG));
     }
 
     m_Flows = sheet;
