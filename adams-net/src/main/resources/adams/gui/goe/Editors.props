@@ -16,5 +16,4 @@
 # Version: $Revision$
 
 adams.core.base.HtmlCode=adams.gui.goe.BaseObjectEditor
-adams.core.base.BaseHostname=adams.gui.goe.BaseObjectEditor
 adams.core.net.EmailAddress=adams.gui.goe.EmailAddressEditor

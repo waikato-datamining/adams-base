@@ -57,6 +57,7 @@ adams.core.base.BasePointFloat=adams.gui.goe.BaseObjectEditor
 adams.core.base.BasePointDouble=adams.gui.goe.BaseObjectEditor
 adams.core.base.BaseKeyValuePair=adams.gui.goe.BaseKeyValuePairEditor
 adams.core.base.BaseMarkdown=adams.gui.goe.BaseMarkdownEditor
+adams.core.base.BaseHostname=adams.gui.goe.BaseObjectEditor
 adams.gui.core.BaseShortcut=adams.gui.goe.BaseObjectEditor
 adams.core.io.PlaceholderDirectory=adams.gui.goe.PlaceholderDirectoryEditor
 adams.core.io.PlaceholderFile=adams.gui.goe.PlaceholderFileEditor
