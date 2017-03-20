@@ -37,7 +37,8 @@ import java.util.logging.LogRecord;
  * @version $Revision$
  */
 public class RemoteReceiveHandler
-  extends AbstractLogHandler {
+  extends AbstractLogHandler
+  implements EnhancingSingleHandler {
 
   /** the default port. */
   public final static int DEFAULT_PORT = 23456;
