@@ -15,7 +15,7 @@
 
 /**
  * LoggingHelper.java
- * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.logging;
 
@@ -282,9 +282,10 @@ public class LoggingHelper {
    * @return		true if handler updated
    */
   public static boolean useHandlerFromOptions(String[] options) {
-    boolean	result;
-    String	classname;
-    Handler	handler;
+    boolean		result;
+    String		classname;
+    Handler		handler;
+    MultiHandler	multi;
     
     result = false;
     
@@ -292,7 +293,9 @@ public class LoggingHelper {
     if (classname != null) {
       try {
 	handler = (Handler) Class.forName(classname).newInstance();
-	setDefaultHandler(handler);
+	multi   = new MultiHandler();
+	multi.setHandlers(new Handler[]{handler});
+	setDefaultHandler(multi);
 	result = true;
       }
       catch (Exception e) {
