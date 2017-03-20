@@ -35,6 +35,12 @@ import java.util.logging.LogRecord;
 public class RemoteSendHandler
   extends AbstractLogHandler {
 
+  /** the default host. */
+  public final static String DEFAULT_HOSTNAME = "127.0.0.1";
+
+  /** the default port. */
+  public final static int DEFAULT_PORT = RemoteReceiveHandler.DEFAULT_PORT;
+
   /** the remote host. */
   protected String m_Hostname;
 
@@ -54,8 +60,8 @@ public class RemoteSendHandler
   protected void initialize() {
     super.initialize();
 
-    m_Hostname         = "127.0.0.1";
-    m_Port             = 12345;
+    m_Hostname         = DEFAULT_HOSTNAME;
+    m_Port             = DEFAULT_PORT;
     m_Socket           = null;
     m_ConnectionFailed = false;
   }
@@ -177,10 +183,10 @@ public class RemoteSendHandler
    * @param args	optionally supply host and port
    */
   public static void main(String[] args) {
-    String host = "127.0.0.1";
+    String host = DEFAULT_HOSTNAME;
     if (args.length > 0)
       host = args[0];
-    int port = 12345;
+    int port = DEFAULT_PORT;
     if (args.length > 1)
       port = Integer.parseInt(args[1]);
     RemoteSendHandler handler = new RemoteSendHandler();

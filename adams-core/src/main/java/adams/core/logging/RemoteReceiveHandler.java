@@ -39,6 +39,12 @@ import java.util.logging.LogRecord;
 public class RemoteReceiveHandler
   extends AbstractLogHandler {
 
+  /** the default port. */
+  public final static int DEFAULT_PORT = 23456;
+
+  /** the default timeout. */
+  public final static int DEFAULT_TIMEOUT = 10000;
+
   /** the port to listen to. */
   protected int m_Port;
 
@@ -61,8 +67,8 @@ public class RemoteReceiveHandler
   protected void initialize() {
     super.initialize();
 
-    m_Port     = 12345;
-    m_TimeOut  = 10000;
+    m_Port     = DEFAULT_PORT;
+    m_TimeOut  = DEFAULT_TIMEOUT;
     m_Socket   = null;
     m_Handler  = new SimpleConsoleHandler();
     m_Runnable = null;
@@ -247,10 +253,10 @@ public class RemoteReceiveHandler
    * @param args	optionally supplying port and timeout
    */
   public static void main(String[] args) {
-    int port = 12345;
+    int port = DEFAULT_PORT;
     if (args.length > 0)
       port = Integer.parseInt(args[0]);
-    int timeout = 10000;
+    int timeout = DEFAULT_TIMEOUT;
     if (args.length > 1)
       timeout = Integer.parseInt(args[1]);
     RemoteReceiveHandler handler = new RemoteReceiveHandler();
