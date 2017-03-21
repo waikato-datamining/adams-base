@@ -20,7 +20,9 @@
 package adams.core.logging;
 
 import adams.core.io.FileUtils;
+import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
+import adams.env.Environment;
 
 import java.io.File;
 import java.util.logging.Handler;
@@ -46,9 +48,12 @@ public class FileHandler
    */
   @Override
   protected void initialize() {
+    PlaceholderDirectory	logDir;
+
     super.initialize();
 
-    setLogFile(new PlaceholderFile("."));
+    logDir = new PlaceholderDirectory(Environment.getInstance().getHome() + File.separator + "log");
+    setLogFile(new PlaceholderFile(logDir.getAbsolutePath() + File.separator + "console.log"));
   }
 
   /**
@@ -75,7 +80,18 @@ public class FileHandler
    */
   @Override
   protected void setUp() {
+    File	logDir;
+
     super.setUp();
+
+    if (m_LogFile != null) {
+      logDir = m_LogFile.getAbsoluteFile().getParentFile();
+      if (!logDir.exists()) {
+	if (!logDir.mkdirs())
+	  System.err.println(getClass().getName() + ": Failed to create log directory '" + logDir + "'?");
+      }
+    }
+
     m_LogIsDir = (m_LogFile == null) || m_LogFile.isDirectory();
   }
 
