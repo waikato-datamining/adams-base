@@ -29,6 +29,8 @@ import adams.flow.core.Actor;
 import adams.flow.core.ActorUtils;
 import adams.scripting.command.AbstractCommandWithResponse;
 import adams.scripting.command.RemoteCommandOnFlow;
+import adams.scripting.engine.RemoteScriptingEngine;
+import adams.scripting.responsehandler.ResponseHandler;
 
 /**
  * Retrieves a running/registered flow using its ID.
@@ -234,16 +236,6 @@ public class GetFlow
     }
 
     m_Flow = flow;
-
-    if (m_Flow != null) {
-      if (!m_OutputFile.isDirectory()) {
-	if (!ActorUtils.write(m_OutputFile.getAbsolutePath(), m_Flow))
-	  getLogger().severe("Failed to save flow to: " + m_OutputFile);
-      }
-      else {
-	getLogger().info(m_Flow.toCommandLine());
-      }
-    }
   }
 
   /**
@@ -297,5 +289,33 @@ public class GetFlow
    */
   public Object[] getResponsePayloadObjects() {
     return new Object[]{m_Flow};
+  }
+
+  /**
+   * Handles the response.
+   *
+   * @param engine	the remote engine handling the response
+   * @param handler	for handling the response
+   */
+  @Override
+  public void handleResponse(RemoteScriptingEngine engine, ResponseHandler handler) {
+    String	msg;
+
+    if (!m_OutputFile.isDirectory()) {
+      msg = null;
+      if (m_Flow != null) {
+	if (!ActorUtils.write(m_OutputFile.getAbsolutePath(), m_Flow))
+	  msg = "Failed to save flow to: " + m_OutputFile;
+      }
+      if (msg != null)
+	handler.responseFailed(this, msg);
+      else
+	super.handleResponse(engine, handler);
+    }
+    else {
+      if (m_Flow != null)
+	getLogger().info(m_Flow.toCommandLine());
+      super.handleResponse(engine, handler);
+    }
   }
 }
