@@ -1317,6 +1317,7 @@ public abstract class AbstractApplicationFrame
   public void addRemoteScriptingEngine(RemoteScriptingEngine value) {
     MultiScriptingEngine	multi;
 
+    value.setApplicationContext(this);
     if (!value.isRunning())
       new Thread(() -> value.execute()).start();
 
