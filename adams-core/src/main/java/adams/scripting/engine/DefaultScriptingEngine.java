@@ -268,7 +268,7 @@ public class DefaultScriptingEngine
 
     closeSocket();
 
-    if (!m_Executor.isTerminated()) {
+    if ((m_Executor != null) && !m_Executor.isTerminated()) {
       getLogger().info("Shutting down job queue...");
       m_Executor.shutdown();
       while (!m_Executor.isTerminated())
