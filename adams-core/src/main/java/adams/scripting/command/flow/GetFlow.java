@@ -23,7 +23,8 @@ package adams.scripting.command.flow;
 import adams.core.io.FileUtils;
 import adams.core.io.FileWriter;
 import adams.core.io.PlaceholderFile;
-import adams.core.option.OptionUtils;
+import adams.data.io.input.DefaultFlowReader;
+import adams.data.io.output.DefaultFlowWriter;
 import adams.flow.control.RunningFlowsRegistry;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorUtils;
@@ -31,6 +32,9 @@ import adams.scripting.command.AbstractCommandWithResponse;
 import adams.scripting.command.RemoteCommandOnFlow;
 import adams.scripting.engine.RemoteScriptingEngine;
 import adams.scripting.responsehandler.ResponseHandler;
+
+import java.io.StringReader;
+import java.io.StringWriter;
 
 /**
  * Retrieves a running/registered flow using its ID.
@@ -218,8 +222,10 @@ public class GetFlow
    */
   @Override
   public void setResponsePayload(byte[] value) {
-    Actor	flow;
-    String	cmd;
+    Actor		flow;
+    String		cmd;
+    StringReader	sreader;
+    DefaultFlowReader	freader;
 
     if (value.length == 0) {
       m_Flow = null;
@@ -229,7 +235,9 @@ public class GetFlow
     flow = null;
     cmd  = new String(value);
     try {
-      flow = (Actor) OptionUtils.forCommandLine(Actor.class, cmd);
+      sreader = new StringReader(cmd);
+      freader = new DefaultFlowReader();
+      flow    = freader.readActor(sreader);
     }
     catch (Exception e) {
       getLogger().severe("Failed to instantiate actor from:\n" + cmd);
@@ -245,10 +253,18 @@ public class GetFlow
    */
   @Override
   public byte[] getResponsePayload() {
+    DefaultFlowWriter 	fwriter;
+    StringWriter	swriter;
+
     if (m_Flow == null)
       return new byte[0];
-    else
-      return m_Flow.toCommandLine().getBytes();
+
+    swriter = new StringWriter();
+    fwriter = new DefaultFlowWriter();
+    fwriter.setUseCompact(true);
+    fwriter.write(m_Flow, swriter);
+
+    return swriter.toString().getBytes();
   }
 
   /**
