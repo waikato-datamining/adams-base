@@ -15,13 +15,14 @@
 
 /*
  * RemoteScriptingEngine.java
- * Copyright (C) 2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.standalone;
 
 import adams.core.QuickInfoHelper;
 import adams.flow.control.Flow;
+import adams.gui.application.AbstractApplicationFrame;
 import adams.scripting.engine.DefaultScriptingEngine;
 
 /**
@@ -156,11 +157,13 @@ public class RemoteScriptingEngine
   protected String doExecute() {
     new Thread(() -> {
       m_Engine.setFlowContext(this);
-      if (getRoot() instanceof Flow)
-	m_Engine.setApplicationContext(((Flow) getRoot()).getApplicationFrame());
       String msg = m_Engine.execute();
       if (msg != null)
-        stopExecution(msg);
+	stopExecution(msg);
+      if (getRoot() instanceof Flow) {
+	AbstractApplicationFrame frame = ((Flow) getRoot()).getApplicationFrame();
+	frame.addRemoteScriptingEngine(m_Engine);
+      }
     }).start();
     return null;
   }
@@ -170,8 +173,15 @@ public class RemoteScriptingEngine
    */
   @Override
   public void stopExecution() {
-    if (m_Engine != null)
-      m_Engine.stopExecution();
+    AbstractApplicationFrame 	frame;
+
+    if (m_Engine != null) {
+      frame = ((Flow) getRoot()).getApplicationFrame();
+      if (frame != null)
+	frame.removeRemoteScriptingEngine(m_Engine);
+      else
+	m_Engine.stopExecution();
+    }
     super.stopExecution();
   }
 }
