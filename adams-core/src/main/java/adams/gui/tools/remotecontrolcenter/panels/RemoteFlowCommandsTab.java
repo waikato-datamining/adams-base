@@ -24,6 +24,7 @@ import adams.core.MessageCollection;
 import adams.core.Utils;
 import adams.core.base.BaseHostname;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.SimpleLogPanel;
 import adams.gui.goe.GenericObjectEditorPanel;
 import adams.scripting.command.RemoteCommandOnFlow;
 import adams.scripting.command.RemoteCommandWithResponse;
@@ -33,12 +34,10 @@ import adams.scripting.command.flow.GetFlow;
 import adams.scripting.connection.DefaultConnection;
 import adams.scripting.engine.DefaultScriptingEngine;
 
-import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 
 /**
@@ -58,22 +57,41 @@ public class RemoteFlowCommandsTab
   /** the button for executing the command. */
   protected JButton m_ButtonExecute;
 
+  /** the log for the responses. */
+  protected SimpleLogPanel m_Log;
+
+  /** the response logger. */
+  protected SimpleLogPanelResponseHandler m_ResponseLogger;
+
+  /**
+   * Initializes the members.
+   */
+  @Override
+  protected void initialize() {
+    super.initialize();
+
+    m_ResponseLogger = new SimpleLogPanelResponseHandler();
+  }
+
   /**
    * Initializes the widgets.
    */
   @Override
   protected void initGUI() {
+    JPanel	panelAll;
     JPanel 	panelCmd;
     JPanel	panelButton;
 
     super.initGUI();
 
-    panelCmd = new JPanel(new GridLayout(2, 1));
-    add(panelCmd, BorderLayout.SOUTH);
+    panelAll = new JPanel(new BorderLayout());
+    add(panelAll, BorderLayout.SOUTH);
+
+    panelCmd = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    panelAll.add(panelCmd, BorderLayout.NORTH);
 
     m_GOECommand = new GenericObjectEditorPanel(RemoteCommandOnFlow.class, new GetFlow(), true);
     m_GOECommand.setPrefix("Command");
-    m_GOECommand.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
     panelCmd.add(m_GOECommand);
 
     m_ButtonExecute = new JButton(GUIHelper.getIcon("run.gif"));
@@ -81,6 +99,19 @@ public class RemoteFlowCommandsTab
     panelButton = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     panelButton.add(m_ButtonExecute);
     panelCmd.add(panelButton);
+
+    m_Log = new SimpleLogPanel();
+    m_Log.setRows(20);
+    panelAll.add(m_Log, BorderLayout.CENTER);
+  }
+
+  /**
+   * Finishes up the initialization.
+   */
+  @Override
+  protected void finishInit() {
+    super.finishInit();
+    m_ResponseLogger.setLog(m_Log);
   }
 
   /**
@@ -124,6 +155,7 @@ public class RemoteFlowCommandsTab
     // engine
     engine = new DefaultScriptingEngine();
     engine.setPort(local.portValue());
+    engine.setResponseHandler(m_ResponseLogger);
     new Thread(() -> engine.execute()).start();
 
     ids      = getSelectedFlowIDs();
