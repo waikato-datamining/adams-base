@@ -15,7 +15,7 @@
 
 /**
  * DefaultFlowReader.java
- * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.input;
 
@@ -32,7 +32,11 @@ import adams.flow.core.Actor;
 import adams.gui.flow.tree.Node;
 import adams.gui.flow.tree.TreeHelper;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -90,7 +94,7 @@ public class DefaultFlowReader
    */
   @Override
   protected InputType getInputType() {
-    return InputType.FILE;
+    return InputType.READER;
   }
 
   /**
@@ -144,11 +148,30 @@ public class DefaultFlowReader
   protected boolean isCompact(File file, List<String> data) {
     boolean		result;
     List<String>	lines;
+
+    lines  = FileUtils.loadFromFile(file, m_Encoding.getValue());
+    result = isCompact(lines);
+
+    // transfer data?
+    data.clear();
+    if (lines != null)
+      data.addAll(lines);
+
+    return result;
+  }
+
+  /**
+   * Determines whether the lines represent compact format or not.
+   *
+   * @param lines	the flow
+   * @return		true if in compact format
+   */
+  protected boolean isCompact(List<String> lines) {
+    boolean		result;
     int			i;
     int			count;
 
     result = false;
-    lines  = FileUtils.loadFromFile(file, m_Encoding.getValue());
     count  = 0;
     if (lines != null) {
       for (i = 0; i < lines.size(); i++) {
@@ -165,11 +188,6 @@ public class DefaultFlowReader
     // single actor
     if (count == 1)
       result = true;
-
-    // transfer data?
-    data.clear();
-    if (lines != null)
-      data.addAll(lines);
 
     return result;
   }
@@ -196,40 +214,16 @@ public class DefaultFlowReader
   }
 
   /**
-   * Reads the actor from the non-compact format.
-   *
-   * @param file	the file to read from
-   * @return		the actor, null if failed to read
-   */
-  protected Actor readNonCompact(File file) {
-    Actor		result;
-    NestedConsumer	consumer;
-
-    consumer = new NestedConsumer();
-    consumer.setEncoding(m_Encoding);
-    result = (Actor) consumer.fromFile(file);
-
-    // transfer errors/warnings
-    m_Errors.addAll(consumer.getErrors());
-    m_Warnings.addAll(consumer.getWarnings());
-
-    return result;
-  }
-
-  /**
    * Performs the actual reading.
    *
-   * @param file	the file to read from
+   * @param lines	the flow data
    * @return		the flow or null in case of an error
    */
-  @Override
-  protected Node doReadNode(File file) {
+  protected Node readNode(List<String> lines) {
     Node		result;
-    List<String>	lines;
     MessageCollection errors;
 
-    lines = new ArrayList<>();
-    if (isCompact(file, lines)) {
+    if (isCompact(lines)) {
       Utils.removeComments(lines, NestedProducer.COMMENT);
       errors = new MessageCollection();
       result = TreeHelper.buildTree(lines, errors);
@@ -250,15 +244,73 @@ public class DefaultFlowReader
    * @return		the flow or null in case of an error
    */
   @Override
-  protected Actor doReadActor(File file) {
-    Actor		result;
+  protected Node doReadNode(File file) {
+    Node		result;
     List<String>	lines;
+
+    lines = new ArrayList<>();
+    if (isCompact(file, lines))
+      result = readNode(lines);
+    else
+      result = TreeHelper.buildTree(readNonCompact(lines));
+
+    return result;
+  }
+
+  /**
+   * Performs the actual reading.
+   *
+   * @param r		the reader to read from
+   * @return		the flow or null in case of an error
+   * @see		#getInputType()
+   */
+  protected Node doReadNode(Reader r) {
+    List<String>	lines;
+    String		line;
+    BufferedReader 	reader;
+
+    lines = new ArrayList<>();
+    if (r instanceof BufferedReader)
+      reader = (BufferedReader) r;
+    else
+      reader = new BufferedReader(r);
+
+    try {
+      while ((line = reader.readLine()) != null)
+	lines.add(line);
+    }
+    catch (Exception e) {
+      m_Errors.add("Failed to read node data from reader:\n" + Utils.throwableToString(e));
+      return null;
+    }
+
+    return readNode(lines);
+  }
+
+  /**
+   * Performs the actual reading.
+   *
+   * @param in		the input stream to read from
+   * @return		the flow or null in case of an error
+   * @see		#getInputType()
+   */
+  protected Node doReadNode(InputStream in) {
+    return doReadNode(new InputStreamReader(in));
+  }
+
+  /**
+   * Performs the actual reading.
+   *
+   * @param lines	the flow data
+   * @return		the flow or null in case of an error
+   */
+  protected Actor readActor(List<String> lines) {
+    Actor		result;
     Node		node;
     MessageCollection	errors;
 
     result = null;
-    lines  = new ArrayList<>();
-    if (isCompact(file, lines)) {
+    if (isCompact(lines)) {
       Utils.removeComments(lines, NestedProducer.COMMENT);
       errors = new MessageCollection();
       node   = TreeHelper.buildTree(lines, errors);
@@ -270,6 +322,67 @@ public class DefaultFlowReader
     else {
       result = readNonCompact(lines);
     }
+
+    return result;
+  }
+
+  /**
+   * Performs the actual reading.
+   *
+   * @param r		the reader to read from
+   * @return		the flow or null in case of an error
+   * @see		#getInputType()
+   */
+  protected Actor doReadActor(Reader r) {
+    List<String>	lines;
+    String		line;
+    BufferedReader 	reader;
+
+    lines = new ArrayList<>();
+    if (r instanceof BufferedReader)
+      reader = (BufferedReader) r;
+    else
+      reader = new BufferedReader(r);
+
+    try {
+      while ((line = reader.readLine()) != null)
+	lines.add(line);
+    }
+    catch (Exception e) {
+      m_Errors.add("Failed to read data from reader:\n" + Utils.throwableToString(e));
+      return null;
+    }
+
+    return readActor(lines);
+  }
+
+  /**
+   * Performs the actual reading.
+   *
+   * @param in		the input stream to read from
+   * @return		the flow or null in case of an error
+   * @see		#getInputType()
+   */
+  protected Actor doReadActor(InputStream in) {
+    return doReadActor(new InputStreamReader(in));
+  }
+
+  /**
+   * Performs the actual reading.
+   *
+   * @param file	the file to read from
+   * @return		the flow or null in case of an error
+   */
+  @Override
+  protected Actor doReadActor(File file) {
+    Actor		result;
+    List<String>	lines;
+
+    lines = new ArrayList<>();
+    if (isCompact(file, lines))
+      result = readActor(lines);
+    else
+      result = readNonCompact(lines);
 
     return result;
   }
