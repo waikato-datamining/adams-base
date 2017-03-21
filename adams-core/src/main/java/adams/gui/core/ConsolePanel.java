@@ -20,12 +20,10 @@
 package adams.gui.core;
 
 import adams.core.Utils;
-import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
 import adams.core.logging.LoggingHelper;
 import adams.core.logging.LoggingLevel;
 import adams.core.logging.RotatingFileHandler;
-import adams.env.Environment;
 import adams.gui.event.ConsolePanelEvent;
 import adams.gui.event.ConsolePanelListener;
 import adams.gui.sendto.SendToActionSupporter;
@@ -48,7 +46,6 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
-import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -440,20 +437,7 @@ public class ConsolePanel
    * Initializes the logging.
    */
   protected void initializeLogging() {
-    PlaceholderDirectory	logDir;
-    RotatingFileHandler		handler;
-
-    logDir = new PlaceholderDirectory(Environment.getInstance().getHome() + File.separator + "log");
-    if (!logDir.exists()) {
-      if (!logDir.mkdirs())
-	System.err.println("Failed to create log directory? " + logDir);
-    }
-    m_Log  = new PlaceholderFile(logDir.getAbsolutePath() + File.separator + "console.log");
-
-    handler = new RotatingFileHandler();
-    handler.setRotatingExtensions(new String[]{".log.1", ".log.2", ".log.3", ".log.4", ".log.5"});
-    handler.setLogFile(m_Log);
-    LoggingHelper.addToDefaultHandler(handler);
+    LoggingHelper.addToDefaultHandler(new RotatingFileHandler());
   }
 
   /**
