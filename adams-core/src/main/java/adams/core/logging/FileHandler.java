@@ -109,8 +109,15 @@ public class FileHandler
    */
   @Override
   protected void doPublish(LogRecord record) {
-    if (!m_LogIsDir)
-      FileUtils.writeToFile(m_LogFile.getAbsolutePath(), LoggingHelper.assembleMessage(record).toString(), true);
+    String	msg;
+
+    if (!m_LogIsDir) {
+      msg = LoggingHelper.assembleMessage(record).toString();
+      if (!FileUtils.writeToFile(m_LogFile.getAbsolutePath(), msg, true)) {
+	m_LogFile.getParentFile().mkdirs();
+	FileUtils.writeToFile(m_LogFile.getAbsolutePath(), msg, true);
+      }
+    }
   }
 
   /**
