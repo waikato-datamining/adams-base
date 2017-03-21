@@ -271,7 +271,7 @@ public class RemoteCommands
     m_MenuItemCC.addActionListener((ActionEvent e) -> {
       RemoteControlCenterManagerPanel center = new RemoteControlCenterManagerPanel();
       center.setOwner(getOwner());
-      createChildFrame(center, GUIHelper.makeWider(GUIHelper.getDefaultDialogDimension()));
+      createChildFrame(center, GUIHelper.makeWider(GUIHelper.getDefaultLargeDialogDimension()));
     });
 
     m_MenuItemStart = new JMenuItem("Start listening...", GUIHelper.getIcon("run.gif"));
