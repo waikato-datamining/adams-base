@@ -20,11 +20,11 @@
 package adams.gui.core;
 
 import adams.core.Utils;
-import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
 import adams.core.logging.LoggingHelper;
 import adams.core.logging.LoggingLevel;
+import adams.core.logging.RotatingFileHandler;
 import adams.env.Environment;
 import adams.gui.event.ConsolePanelEvent;
 import adams.gui.event.ConsolePanelListener;
@@ -440,8 +440,8 @@ public class ConsolePanel
    * Initializes the logging.
    */
   protected void initializeLogging() {
-    PlaceholderFile		oldLog;
     PlaceholderDirectory	logDir;
+    RotatingFileHandler		handler;
 
     logDir = new PlaceholderDirectory(Environment.getInstance().getHome() + File.separator + "log");
     if (!logDir.exists()) {
@@ -449,20 +449,11 @@ public class ConsolePanel
 	System.err.println("Failed to create log directory? " + logDir);
     }
     m_Log  = new PlaceholderFile(logDir.getAbsolutePath() + File.separator + "console.log");
-    oldLog = FileUtils.replaceExtension(m_Log, ".bak");
 
-    if (oldLog.exists())
-      oldLog.delete();
-
-    if (m_Log.exists()) {
-      try {
-	FileUtils.move(m_Log, oldLog);
-      }
-      catch (Exception e) {
-	System.err.println("Failed to rename log file: " + m_Log + " to " + oldLog);
-	e.printStackTrace();
-      }
-    }
+    handler = new RotatingFileHandler();
+    handler.setRotatingExtensions(new String[]{".log.1", ".log.2", ".log.3", ".log.4", ".log.5"});
+    handler.setLogFile(m_Log);
+    LoggingHelper.addToDefaultHandler(handler);
   }
 
   /**
@@ -720,7 +711,6 @@ public class ConsolePanel
    * @param msg		the message to append
    */
   public void append(LoggingLevel level, String msg) {
-    FileUtils.writeToFile(m_Log.getAbsolutePath(), msg);
     m_PanelAll.append(level, msg);
     if (LoggingHelper.isAtMost(level.getLevel(), Level.WARNING))
       m_PanelError.append(level, msg);
