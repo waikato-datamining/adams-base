@@ -15,7 +15,7 @@
 
 /**
  * Tree.java
- * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.debug.objecttree;
 
@@ -41,9 +41,11 @@ import java.awt.event.MouseEvent;
 import java.beans.PropertyEditorManager;
 import java.io.File;
 import java.lang.reflect.Array;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
@@ -68,6 +70,9 @@ public class Tree
   /** the maximum number of array/list elements to show. */
   public final static int MAX_ITEMS = 100;
 
+  /** the maximum depth of the tree. */
+  public final static int MAX_DEPTH = 20;
+
   /** the current object. */
   protected transient Object m_Object;
 
@@ -83,11 +88,22 @@ public class Tree
   /** filechooser for exporting objects. */
   protected ObjectExporterFileChooser m_FileChooser;
 
+  /** caching the class / extractors relation. */
+  protected static Map<Class,List<AbstractPropertyExtractor>> m_ExtractorCache;
+
+  /** caching the class / inspection handler relation. */
+  protected static Map<Class,List<AbstractInspectionHandler>> m_InspectionHandlerCache;
+
   /**
    * Initializes the tree.
    */
   public Tree() {
     super();
+
+    if (m_ExtractorCache == null) {
+      m_ExtractorCache         = new HashMap<>();
+      m_InspectionHandlerCache = new HashMap<>();
+    }
 
     m_SearchString  = null;
     m_SearchPattern = null;
@@ -126,7 +142,7 @@ public class Tree
       model = new DefaultTreeModel(null);
     }
     else {
-      rootNode = buildTree(null, null, root, NodeType.NORMAL);
+      rootNode = buildTree(null, null, root, NodeType.NORMAL, 0);
       model    = new DefaultTreeModel(rootNode);
     }
 
@@ -138,8 +154,9 @@ public class Tree
    *
    * @param parent	the parent to add the array to
    * @param obj		the array to add
+   * @param depth	the current depth
    */
-  protected void addArray(Node parent, Object obj) {
+  protected void addArray(Node parent, Object obj, int depth) {
     int		len;
     int		i;
     Object	value;
@@ -149,7 +166,7 @@ public class Tree
     for (i = 0; (i < len) && (i < MAX_ITEMS); i++) {
       value = Array.get(obj, i);
       if (value != null) {
-	buildTree(parent, "[" + (i+1) + "]", value, NodeType.ARRAY_ELEMENT);
+	buildTree(parent, "[" + (i+1) + "]", value, NodeType.ARRAY_ELEMENT, depth + 1);
       }
       else {
 	child = new Node("[" + (i+1) + "]", null, NodeType.ARRAY_ELEMENT);
@@ -218,9 +235,10 @@ public class Tree
    * @param property	the name of the property the object belongs to (null == root)
    * @param obj		the object to add
    * @param type	the type of node
+   * @param depth	the current depth
    * @return		the generated node
    */
-  protected Node buildTree(Node parent, String property, Object obj, NodeType type) {
+  protected Node buildTree(Node parent, String property, Object obj, NodeType type, int depth) {
     Node				result;
     List<AbstractPropertyExtractor>	extractors;
     List<AbstractInspectionHandler>	handlers;
@@ -230,6 +248,14 @@ public class Tree
     HashSet<String>			labels;
     int					i;
     boolean				add;
+
+    // too deep?
+    if (depth >= MAX_DEPTH) {
+      result = new Node(property, "...", type);
+      if (parent != null)
+	parent.add(result);
+      return result;
+    }
 
     result = new Node(property, obj, type);
     if (parent != null)
@@ -241,13 +267,19 @@ public class Tree
 
     // array?
     if (obj.getClass().isArray())
-      addArray(result, obj);
+      addArray(result, obj, depth);
 
     labels = new HashSet<>();
 
     // child properties
     try {
-      extractors = AbstractPropertyExtractor.getExtractors(obj);
+      if (m_ExtractorCache.containsKey(obj.getClass())) {
+	extractors = m_ExtractorCache.get(obj.getClass());
+      }
+      else {
+	extractors = AbstractPropertyExtractor.getExtractors(obj);
+	m_ExtractorCache.put(obj.getClass(), extractors);
+      }
       for (AbstractPropertyExtractor extractor: extractors) {
 	extractor.setCurrent(obj);
 	for (i = 0; i < extractor.size(); i++) {
@@ -260,7 +292,7 @@ public class Tree
 	    add = add && !labels.contains(label);
 	    if (add) {
 	      labels.add(label);
-	      buildTree(result, label, current, NodeType.NORMAL);
+	      buildTree(result, label, current, NodeType.NORMAL, depth + 1);
 	    }
 	  }
 	}
@@ -272,13 +304,19 @@ public class Tree
     }
 
     // additional values obtained through inspection handlers
-    handlers = AbstractInspectionHandler.getHandler(obj);
+    if (m_InspectionHandlerCache.containsKey(obj.getClass())) {
+      handlers = m_InspectionHandlerCache.get(obj.getClass());
+    }
+    else {
+      handlers = AbstractInspectionHandler.getHandler(obj);
+      m_InspectionHandlerCache.put(obj.getClass(), handlers);
+    }
     for (AbstractInspectionHandler handler: handlers) {
       additional = handler.inspect(obj);
       for (String key: additional.keySet()) {
 	if (matches(key) && !labels.contains(key)) {
 	  labels.add(key);
-	  buildTree(result, key, additional.get(key), NodeType.NORMAL);
+	  buildTree(result, key, additional.get(key), NodeType.NORMAL, depth + 1);
 	}
       }
     }
