@@ -150,8 +150,10 @@ public class RemoteControlCenterEnginesPanel
 
     m_Owner = value;
 
-    if (m_Owner != null)
+    if (m_Owner != null) {
       m_Owner.addRemoteScriptingEngineUpdateListener(this);
+      refreshEngines();
+    }
   }
 
   /**
