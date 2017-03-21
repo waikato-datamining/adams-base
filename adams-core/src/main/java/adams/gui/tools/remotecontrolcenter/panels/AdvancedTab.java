@@ -14,7 +14,7 @@
  */
 
 /**
- * SendCommandTab.java
+ * AdvancedTab.java
  * Copyright (C) 2017 University of Waikato, Hamilton, NZ
  */
 
@@ -22,12 +22,15 @@ package adams.gui.tools.remotecontrolcenter.panels;
 
 import adams.gui.chooser.AbstractChooserPanel;
 import adams.gui.chooser.AbstractChooserPanel.ChooseListener;
+import adams.gui.core.BaseTabbedPane;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.ParameterPanel;
 import adams.gui.core.SimpleLogPanel;
 import adams.gui.event.RemoteScriptingEngineUpdateEvent;
 import adams.gui.goe.GenericObjectEditorPanel;
+import adams.gui.visualization.debug.InspectionPanel;
 import adams.scripting.command.RemoteCommand;
+import adams.scripting.command.RemoteCommandWithResponse;
 import adams.scripting.command.basic.Ping;
 import adams.scripting.connection.Connection;
 import adams.scripting.connection.DefaultConnection;
@@ -45,11 +48,84 @@ import java.awt.event.ActionEvent;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class SendCommandTab
+public class AdvancedTab
   extends AbstractRemoteControlCenterTab
   implements ChooseListener {
 
   private static final long serialVersionUID = -894258879660492792L;
+
+  /**
+   * Specialized response handler that populates an {@link InspectionPanel}.
+   */
+  public static class InspectionResponseHandler
+    extends AbstractResponseHandler {
+
+    private static final long serialVersionUID = -3925270844782740556L;
+
+    /** the inspection panel to use. */
+    protected InspectionPanel m_InspectionPanel;
+
+    /**
+     * Returns a string describing the object.
+     *
+     * @return 			a description suitable for displaying in the gui
+     */
+    @Override
+    public String globalInfo() {
+      return "Specialized response handler that populates an InspectionPanel.";
+    }
+
+    /**
+     * Sets the panel to use.
+     *
+     * @param value		the panel
+     */
+    public void setInspectionPanel(InspectionPanel value) {
+      m_InspectionPanel = value;
+    }
+
+    /**
+     * Returns the panel in use.
+     *
+     * @return			the panel, null if none set
+     */
+    public InspectionPanel getInspectionPanel() {
+      return m_InspectionPanel;
+    }
+
+    /**
+     * Handles successful responses.
+     *
+     * @param cmd		the command with the response
+     */
+    @Override
+    public void responseSuccessful(RemoteCommand cmd) {
+      Object	current;
+
+      if (m_InspectionPanel == null)
+	return;
+
+      current = null;
+
+      if (cmd instanceof RemoteCommandWithResponse)
+	current = ((RemoteCommandWithResponse) cmd).getResponsePayloadObjects();
+
+      m_InspectionPanel.setCurrent(current);
+    }
+
+    /**
+     * Handles failed responses.
+     *
+     * @param cmd		the command with the response
+     * @param msg		message, can be null
+     */
+    @Override
+    public void responseFailed(RemoteCommand cmd, String msg) {
+      if (m_InspectionPanel == null)
+	return;
+      m_InspectionPanel.setCurrent(null);
+    }
+  }
 
   /** the parameter panel. */
   protected ParameterPanel m_PanelParams;
@@ -63,11 +139,20 @@ public class SendCommandTab
   /** the button for sending the command. */
   protected JButton m_ButtonSend;
 
+  /** the tabbed pane for log/results. */
+  protected BaseTabbedPane m_TabbedPane;
+
   /** the log for the responses. */
   protected SimpleLogPanel m_Log;
 
+  /** for the results. */
+  protected InspectionPanel m_Results;
+
   /** the response logger. */
   protected SimpleLogPanelResponseHandler m_ResponseLogger;
+
+  /** the inspection handler. */
+  protected InspectionResponseHandler m_InspectionHandler;
 
   /** the response connection updater. */
   protected GenericObjectEditorResponseConnectionUpdater m_ResponseConnectionUpdater;
@@ -80,6 +165,7 @@ public class SendCommandTab
     super.initialize();
 
     m_ResponseLogger            = new SimpleLogPanelResponseHandler();
+    m_InspectionHandler         = new InspectionResponseHandler();
     m_ResponseConnectionUpdater = new GenericObjectEditorResponseConnectionUpdater();
   }
 
@@ -115,8 +201,17 @@ public class SendCommandTab
     m_ButtonSend.addActionListener((ActionEvent e) -> sendCommand());
     panelButtons.add(m_ButtonSend);
 
+    m_TabbedPane = new BaseTabbedPane();
+    add(m_TabbedPane, BorderLayout.CENTER);
+
     m_Log = new SimpleLogPanel();
-    add(m_Log, BorderLayout.CENTER);
+    m_TabbedPane.addTab("Log", m_Log);
+
+    m_Results = new InspectionPanel();
+    m_Results.setMaxDepth(5);
+    m_TabbedPane.addTab("Results", m_Results);
+
+    m_TabbedPane.setSelectedIndex(0);
   }
 
   /**
@@ -126,6 +221,7 @@ public class SendCommandTab
   protected void finishInit() {
     super.finishInit();
     m_ResponseLogger.setLog(m_Log);
+    m_InspectionHandler.setInspectionPanel(m_Results);
   }
 
   /**
@@ -135,7 +231,7 @@ public class SendCommandTab
    */
   @Override
   public String getTitle() {
-    return "Send command";
+    return "Advanced";
   }
 
   /**
@@ -171,6 +267,7 @@ public class SendCommandTab
    */
   public void remoteScriptingEngineUpdated(RemoteScriptingEngineUpdateEvent e) {
     AbstractResponseHandler.insertHandler(this, getApplicationFrame(), m_ResponseLogger);
+    AbstractResponseHandler.insertHandler(this, getApplicationFrame(), m_InspectionHandler);
     m_ResponseConnectionUpdater.setApplication(getApplicationFrame());
     m_GOECommand.setCurrent(m_ResponseConnectionUpdater.postProcessObject(null, m_GOECommand.getCurrent()));
   }

@@ -33,8 +33,8 @@ import adams.gui.core.GUIHelper;
 import adams.gui.event.RemoteScriptingEngineUpdateEvent;
 import adams.gui.event.RemoteScriptingEngineUpdateListener;
 import adams.gui.tools.remotecontrolcenter.panels.AbstractRemoteControlCenterTab;
+import adams.gui.tools.remotecontrolcenter.panels.AdvancedTab;
 import adams.gui.tools.remotecontrolcenter.panels.LogTab;
-import adams.gui.tools.remotecontrolcenter.panels.SendCommandTab;
 import adams.gui.workspace.AbstractWorkspacePanel;
 
 import javax.swing.JMenu;
@@ -107,7 +107,7 @@ public class RemoteControlCenterPanel
 
     initActions();
 
-    tab = new SendCommandTab();
+    tab = new AdvancedTab();
     tab.setOwner(this);
     m_TabbedPane.addTab(tab.getTitle(), tab);
     tab = new LogTab();
@@ -213,8 +213,8 @@ public class RemoteControlCenterPanel
       menu.add(m_ActionFileClose);
 
       // Tab
-      menu = new JMenu("Command tab");
-      menu.setMnemonic('T');
+      menu = new JMenu("Commands");
+      menu.setMnemonic('C');
       menu.addChangeListener((ChangeEvent e) -> updateMenu());
       result.add(menu);
 
