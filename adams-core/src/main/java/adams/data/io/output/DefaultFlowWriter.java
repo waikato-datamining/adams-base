@@ -15,7 +15,7 @@
 
 /**
  * DefaultFlowWriter.java
- * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.output;
 
@@ -33,8 +33,11 @@ import adams.gui.flow.tree.Node;
 import adams.gui.flow.tree.TreeHelper;
 
 import java.io.File;
+import java.io.OutputStream;
+import java.io.Writer;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
 
 /**
  * Writes flows in the default format (nested).
@@ -99,7 +102,7 @@ public class DefaultFlowWriter
    */
   @Override
   protected OutputType getOutputType() {
-    return OutputType.FILE;
+    return OutputType.WRITER;
   }
 
   /**
@@ -210,6 +213,70 @@ public class DefaultFlowWriter
   }
 
   /**
+   * Performs the actual writing. The caller must ensure that the writer gets
+   * closed.
+   *
+   * @param content	the content to write
+   * @param writer	the writer to write the content to
+   * @return		true if successfully written
+   */
+  protected boolean doWrite(Node content, Writer writer) {
+    List<String>	lines;
+
+    if (getUseCompact()) {
+      lines = TreeHelper.getCommandLines(content, true);
+      lines.add(0, NestedProducer.COMMENT + " " + NestedProducer.CHARSET + ": " + m_Encoding.charsetValue().name());
+      lines.add(0, NestedProducer.COMMENT + " " + NestedProducer.USER + ": " + System.getProperty("user.name"));
+      lines.add(0, NestedProducer.COMMENT + " " + NestedProducer.DATE + ": " + m_DateFormat.format(new Date()));
+      lines.add(0, NestedProducer.COMMENT + " " + NestedProducer.PROJECT + ": " + Environment.getInstance().getProject());
+      try {
+	writer.write(Utils.flatten(lines, "\n"));
+	writer.flush();
+	return true;
+      }
+      catch (Exception e) {
+	getLogger().log(Level.SEVERE, "Failed to writer node to writer!", e);
+	return false;
+      }
+    }
+    else {
+      return write(content.getFullActor(), writer);
+    }
+  }
+
+  /**
+   * Performs the actual writing. The caller must ensure that the output stream
+   * gets closed.
+   *
+   * @param content	the content to write
+   * @param out		the output stream to write the content to
+   * @return		true if successfully written
+   */
+  protected boolean doWrite(Node content, OutputStream out) {
+    List<String>	lines;
+
+    if (getUseCompact()) {
+      lines = TreeHelper.getCommandLines(content, true);
+      lines.add(0, NestedProducer.COMMENT + " " + NestedProducer.CHARSET + ": " + m_Encoding.charsetValue().name());
+      lines.add(0, NestedProducer.COMMENT + " " + NestedProducer.USER + ": " + System.getProperty("user.name"));
+      lines.add(0, NestedProducer.COMMENT + " " + NestedProducer.DATE + ": " + m_DateFormat.format(new Date()));
+      lines.add(0, NestedProducer.COMMENT + " " + NestedProducer.PROJECT + ": " + Environment.getInstance().getProject());
+      try {
+	out.write(Utils.flatten(lines, "\n").getBytes());
+	out.flush();
+	return true;
+      }
+      catch (Exception e) {
+	getLogger().log(Level.SEVERE, "Failed to writer node to output stream!", e);
+	return false;
+      }
+    }
+    else {
+      return write(content.getFullActor(), out);
+    }
+  }
+
+  /**
    * Writes the given content to the specified file.
    *
    * @param content	the content to write
@@ -229,6 +296,68 @@ public class DefaultFlowWriter
       producer.setEncoding(m_Encoding);
       producer.produce(content);
       return producer.write(file.getAbsolutePath());
+    }
+  }
+
+  /**
+   * Performs the actual writing. The caller must ensure that the writer gets
+   * closed.
+   *
+   * @param content	the content to write
+   * @param writer	the writer to write the content to
+   * @return		true if successfully written
+   */
+  protected boolean doWrite(Actor content, Writer writer) {
+    NestedProducer	producer;
+
+    if (getUseCompact()) {
+      return write(TreeHelper.buildTree(content), writer);
+    }
+    else {
+      producer = new NestedProducer();
+      producer.setOutputClasspath(false);
+      producer.setEncoding(m_Encoding);
+      producer.produce(content);
+      try {
+	writer.write(producer.toString());
+	writer.flush();
+	return true;
+      }
+      catch (Exception e) {
+	getLogger().log(Level.SEVERE, "Failed to write actor to writer!", e);
+	return false;
+      }
+    }
+  }
+
+  /**
+   * Performs the actual writing. The caller must ensure that the output stream
+   * gets closed.
+   *
+   * @param content	the content to write
+   * @param out		the output stream to write the content to
+   * @return		true if successfully written
+   */
+  protected boolean doWrite(Actor content, OutputStream out) {
+    NestedProducer	producer;
+
+    if (getUseCompact()) {
+      return write(TreeHelper.buildTree(content), out);
+    }
+    else {
+      producer = new NestedProducer();
+      producer.setOutputClasspath(false);
+      producer.setEncoding(m_Encoding);
+      producer.produce(content);
+      try {
+	out.write(producer.toString().getBytes());
+	out.flush();
+	return true;
+      }
+      catch (Exception e) {
+	getLogger().log(Level.SEVERE, "Failed to writer actor to output stream!", e);
+	return false;
+      }
     }
   }
 
