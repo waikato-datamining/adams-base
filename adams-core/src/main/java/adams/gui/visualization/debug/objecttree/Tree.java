@@ -88,6 +88,9 @@ public class Tree
   /** filechooser for exporting objects. */
   protected ObjectExporterFileChooser m_FileChooser;
 
+  /** the maximum depth to use. */
+  protected int m_MaxDepth;
+
   /** caching the class / extractors relation. */
   protected static Map<Class,List<AbstractPropertyExtractor>> m_ExtractorCache;
 
@@ -109,6 +112,7 @@ public class Tree
     m_SearchPattern = null;
     m_IsRegExp      = false;
     m_FileChooser   = null;
+    m_MaxDepth      = MAX_DEPTH;
     setShowsRootHandles(true);
     setRootVisible(true);
     setCellRenderer(new Renderer());
@@ -127,6 +131,24 @@ public class Tree
 	  super.mouseClicked(e);
       }
     });
+  }
+
+  /**
+   * Sets the maximum depth to use.
+   *
+   * @param value	the depth
+   */
+  public void setMaxDepth(int value) {
+    m_MaxDepth = value;
+  }
+
+  /**
+   * Returns the current maximum depth.
+   *
+   * @return		the depth
+   */
+  public int getMaxDepth() {
+    return m_MaxDepth;
   }
 
   /**
@@ -250,7 +272,7 @@ public class Tree
     boolean				add;
 
     // too deep?
-    if (depth >= MAX_DEPTH) {
+    if (depth >= m_MaxDepth) {
       result = new Node(property, "...", type);
       if (parent != null)
 	parent.add(result);

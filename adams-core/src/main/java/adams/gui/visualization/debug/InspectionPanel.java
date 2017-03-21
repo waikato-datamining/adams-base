@@ -15,7 +15,7 @@
 
 /**
  * InspectionPanel.java
- * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.debug;
 
@@ -27,7 +27,6 @@ import adams.gui.core.BaseSplitPane;
 import adams.gui.core.SearchPanel;
 import adams.gui.core.SearchPanel.LayoutType;
 import adams.gui.event.SearchEvent;
-import adams.gui.event.SearchListener;
 import adams.gui.visualization.debug.objectrenderer.AbstractObjectRenderer;
 import adams.gui.visualization.debug.objecttree.Node;
 import adams.gui.visualization.debug.objecttree.Tree;
@@ -36,11 +35,9 @@ import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 /**
  * Panel for inspecting an object and its values (accessible through bean
@@ -112,26 +109,20 @@ public class InspectionPanel
     m_SplitPane.setDividerLocation(450);
     
     m_Tree = new Tree();
-    m_Tree.getSelectionModel().addTreeSelectionListener(new TreeSelectionListener() {
-      public void valueChanged(TreeSelectionEvent e) {
-	if (m_Tree.getSelectionPath() == null)
-	  return;
-	Node node = (Node) m_Tree.getSelectionPath().getLastPathComponent();
-	m_PanelContent.removeAll();
-	AbstractObjectRenderer.getRenderer(node.getUserObject()).get(0).render(
-	  node.getUserObject(), m_PanelContent);
-	m_LastPath = node.getPropertyPath();
-	updateSize(node.getUserObject());
-      }
+    m_Tree.getSelectionModel().addTreeSelectionListener((TreeSelectionEvent e) -> {
+      if (m_Tree.getSelectionPath() == null)
+        return;
+      Node node = (Node) m_Tree.getSelectionPath().getLastPathComponent();
+      m_PanelContent.removeAll();
+      AbstractObjectRenderer.getRenderer(node.getUserObject()).get(0).render(
+        node.getUserObject(), m_PanelContent);
+      m_LastPath = node.getPropertyPath();
+      updateSize(node.getUserObject());
     });
     panel.add(new BaseScrollPane(m_Tree), BorderLayout.CENTER);
 
     m_PanelSearch = new SearchPanel(LayoutType.HORIZONTAL, true);
-    m_PanelSearch.addSearchListener(new SearchListener() {
-      public void searchInitiated(SearchEvent e) {
-	m_Tree.search(e.getParameters().getSearchString(), e.getParameters().isRegExp());
-      }
-    });
+    m_PanelSearch.addSearchListener((SearchEvent e) -> m_Tree.search(e.getParameters().getSearchString(), e.getParameters().isRegExp()));
     panel.add(m_PanelSearch, BorderLayout.SOUTH);
     
     m_PanelContent = new BasePanel(new BorderLayout());
@@ -141,13 +132,11 @@ public class InspectionPanel
     m_PanelContent.add(m_PanelSize, BorderLayout.SOUTH);
 
     m_CheckBoxSize = new JCheckBox("Size");
-    m_CheckBoxSize.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	if (m_Tree.getSelectionPath() == null)
-	  updateSize(null);
-	else
-	  updateSize(((Node) m_Tree.getSelectionPath().getLastPathComponent()).getUserObject());
-      }
+    m_CheckBoxSize.addActionListener((ActionEvent e) -> {
+      if (m_Tree.getSelectionPath() == null)
+        updateSize(null);
+      else
+        updateSize(((Node) m_Tree.getSelectionPath().getLastPathComponent()).getUserObject());
     });
     m_PanelSize.add(m_CheckBoxSize);
 
@@ -156,6 +145,24 @@ public class InspectionPanel
     m_PanelSize.add(m_TextSize);
 
     m_SplitPane.setRightComponent(m_PanelContent);
+  }
+
+  /**
+   * Sets the maximum depth to use.
+   *
+   * @param value	the depth
+   */
+  public void setMaxDepth(int value) {
+    m_Tree.setMaxDepth(value);
+  }
+
+  /**
+   * Returns the current maximum depth.
+   *
+   * @return		the depth
+   */
+  public int getMaxDepth() {
+    return m_Tree.getMaxDepth();
   }
 
   /**
