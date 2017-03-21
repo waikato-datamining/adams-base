@@ -20,36 +20,36 @@
 
 package adams.gui.tools.remotecontrolcenter.panels;
 
+import adams.core.base.BaseHostname;
 import adams.data.spreadsheet.SpreadSheet;
+import adams.gui.core.BaseObjectTextField;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.SpreadSheetTable;
 import adams.gui.core.SpreadSheetTableModel;
 import adams.gui.event.PopupMenuListener;
-import adams.gui.goe.GenericObjectEditorPanel;
 import adams.scripting.command.RemoteCommand;
 import adams.scripting.command.basic.StopEngine;
 import adams.scripting.command.basic.StopEngine.EngineType;
 import adams.scripting.command.flow.ListFlows;
-import adams.scripting.connection.Connection;
 import adams.scripting.connection.DefaultConnection;
 import adams.scripting.engine.DefaultScriptingEngine;
-import adams.scripting.engine.RemoteScriptingEngine;
 import adams.scripting.responsehandler.AbstractResponseHandler;
 import com.googlecode.jfilechooserbookmarks.gui.BaseScrollPane;
 
-import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 
 /**
  * Ancestor for tabs that get applied to remote flows using their ID(s).
+ * For simplicity, only uses {@link DefaultConnection} which communicates
+ * via sockets.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
@@ -137,11 +137,11 @@ public abstract class AbstractRemoteFlowTab
   /** the panel for the connection/table. */
   protected JPanel m_PanelFlows;
 
-  /** the GOE with the connection. */
-  protected GenericObjectEditorPanel m_GOEConnection;
+  /** the remote machine. */
+  protected BaseObjectTextField<BaseHostname> m_TextRemote;
 
-  /** the GOE for the engine for listening to refreshs. */
-  protected GenericObjectEditorPanel m_GOEEngine;
+  /** the local machine. */
+  protected BaseObjectTextField<BaseHostname> m_TextLocal;
 
   /** the button for refreshing the flows. */
   protected JButton m_ButtonRefresh;
@@ -156,7 +156,7 @@ public abstract class AbstractRemoteFlowTab
   protected void initGUI() {
     JPanel			panelConn;
     JPanel			panelButton;
-    DefaultScriptingEngine	engine;
+    JLabel 			label;
 
     super.initGUI();
 
@@ -165,20 +165,24 @@ public abstract class AbstractRemoteFlowTab
     m_PanelFlows = new JPanel(new BorderLayout());
     add(m_PanelFlows, getPlacement());
 
-    panelConn = new JPanel(new GridLayout(3, 1));
+    panelConn = new JPanel(new FlowLayout(FlowLayout.LEFT));
     m_PanelFlows.add(panelConn, BorderLayout.NORTH);
-
-    m_GOEConnection = new GenericObjectEditorPanel(Connection.class, new DefaultConnection(), true);
-    m_GOEConnection.setPrefix("Connection");
-    m_GOEConnection.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-    panelConn.add(m_GOEConnection);
-
-    engine = new DefaultScriptingEngine();
-    engine.setPort(DEFAULT_PORT);
-    m_GOEEngine = new GenericObjectEditorPanel(RemoteScriptingEngine.class, engine, true);
-    m_GOEEngine.setPrefix("Engine");
-    m_GOEEngine.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-    panelConn.add(m_GOEEngine);
+    
+    m_TextRemote = new BaseObjectTextField<>(new BaseHostname(), "127.0.0.1:12345");
+    m_TextRemote.setColumns(20);
+    label = new JLabel("Remote");
+    label.setDisplayedMnemonic('R');
+    label.setLabelFor(m_TextRemote);
+    panelConn.add(label);
+    panelConn.add(m_TextRemote);
+    
+    m_TextLocal = new BaseObjectTextField<>(new BaseHostname(), "127.0.0.1:" + DEFAULT_PORT);
+    m_TextLocal.setColumns(20);
+    label = new JLabel("Local");
+    label.setDisplayedMnemonic('L');
+    label.setLabelFor(m_TextLocal);
+    panelConn.add(label);
+    panelConn.add(m_TextLocal);
 
     m_ButtonRefresh = new JButton(GUIHelper.getIcon("refresh.gif"));
     m_ButtonRefresh.addActionListener((ActionEvent e) -> refreshFlows());
@@ -219,26 +223,32 @@ public abstract class AbstractRemoteFlowTab
   protected void refreshFlows() {
     ListFlows 			list;
     StopEngine			stop;
-    Connection			conn;
-    RemoteScriptingEngine	engine;
+    DefaultConnection		conn;
+    DefaultScriptingEngine	engine;
     DefaultConnection		connResp;
+    BaseHostname		local;
+    BaseHostname		remote;
     String			msg;
 
+    local  = m_TextLocal.getObject();
+    remote = m_TextRemote.getObject();
+
     // engine
-    engine = (RemoteScriptingEngine) m_GOEEngine.getCurrent();
+    engine = new DefaultScriptingEngine();
+    engine.setPort(local.portValue());
     engine.setResponseHandler(new FlowListResponseHandler(this));
     new Thread(() -> engine.execute()).start();
 
     // command
     list     = new ListFlows();
     connResp = new DefaultConnection();
-    if (engine instanceof DefaultScriptingEngine) {
-      connResp.setPort(((DefaultScriptingEngine) engine).getPort());
-      list.setResponseConnection(connResp);
-    }
+    connResp.setPort(local.portValue());
+    list.setResponseConnection(connResp);
 
     // send command
-    conn = (Connection) m_GOEConnection.getCurrent();
+    conn = new DefaultConnection();
+    conn.setHost(remote.hostnameValue());
+    conn.setPort(remote.portValue());
     msg  = conn.sendRequest(list);
     if (msg != null) {
       engine.stopExecution();

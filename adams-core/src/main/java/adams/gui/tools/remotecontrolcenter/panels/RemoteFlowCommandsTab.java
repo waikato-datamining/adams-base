@@ -22,6 +22,7 @@ package adams.gui.tools.remotecontrolcenter.panels;
 
 import adams.core.MessageCollection;
 import adams.core.Utils;
+import adams.core.base.BaseHostname;
 import adams.gui.core.GUIHelper;
 import adams.gui.goe.GenericObjectEditorPanel;
 import adams.scripting.command.RemoteCommandOnFlow;
@@ -29,10 +30,8 @@ import adams.scripting.command.RemoteCommandWithResponse;
 import adams.scripting.command.basic.StopEngine;
 import adams.scripting.command.basic.StopEngine.EngineType;
 import adams.scripting.command.flow.GetFlow;
-import adams.scripting.connection.Connection;
 import adams.scripting.connection.DefaultConnection;
 import adams.scripting.engine.DefaultScriptingEngine;
-import adams.scripting.engine.RemoteScriptingEngine;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -109,24 +108,31 @@ public class RemoteFlowCommandsTab
    */
   protected void executeCommand() {
     int[]			ids;
-    RemoteScriptingEngine	engine;
+    DefaultScriptingEngine	engine;
     RemoteCommandOnFlow		cmd;
-    Connection			conn;
+    DefaultConnection		conn;
     String			msg;
     MessageCollection 		errors;
     StopEngine 			stop;
     DefaultConnection		connResp;
+    BaseHostname 		local;
+    BaseHostname		remote;
+
+    local  = m_TextLocal.getObject();
+    remote = m_TextRemote.getObject();
 
     // engine
-    engine = (RemoteScriptingEngine) m_GOEEngine.getCurrent();
+    engine = new DefaultScriptingEngine();
+    engine.setPort(local.portValue());
     new Thread(() -> engine.execute()).start();
 
     ids      = getSelectedFlowIDs();
-    conn     = (Connection) m_GOEConnection.getCurrent();
+    conn     = new DefaultConnection();
+    conn.setHost(remote.hostnameValue());
+    conn.setPort(remote.portValue());
     errors   = new MessageCollection();
     connResp = new DefaultConnection();
-    if (engine instanceof DefaultScriptingEngine)
-      connResp.setPort(((DefaultScriptingEngine) engine).getPort());
+    connResp.setPort(local.portValue());
     for (int id: ids) {
       cmd = (RemoteCommandOnFlow) m_GOECommand.getCurrent();
       cmd.setID(id);

@@ -28,15 +28,16 @@ import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.core.BaseMenu;
 import adams.gui.core.BaseStatusBar;
 import adams.gui.core.BaseTabbedPane;
+import adams.gui.core.ButtonTabComponent;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.GUIHelper;
 import adams.gui.event.RemoteScriptingEngineUpdateEvent;
 import adams.gui.event.RemoteScriptingEngineUpdateListener;
 import adams.gui.tools.remotecontrolcenter.panels.AbstractRemoteControlCenterTab;
-import adams.gui.tools.remotecontrolcenter.panels.AdvancedTab;
-import adams.gui.tools.remotecontrolcenter.panels.LogTab;
+import adams.gui.tools.remotecontrolcenter.panels.RemoteFlowCommandsTab;
 import adams.gui.workspace.AbstractWorkspacePanel;
 
+import javax.swing.ImageIcon;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -92,13 +93,13 @@ public class RemoteControlCenterPanel
    */
   @Override
   protected void initGUI() {
-    AbstractRemoteControlCenterTab	tab;
-
     super.initGUI();
 
     setLayout(new BorderLayout());
 
     m_TabbedPane = new BaseTabbedPane();
+    m_TabbedPane.setShowCloseTabButton(true);
+    m_TabbedPane.setCloseTabsWithMiddleMouseButton(true);
     add(m_TabbedPane, BorderLayout.CENTER);
 
     m_StatusBar = new BaseStatusBar();
@@ -107,12 +108,7 @@ public class RemoteControlCenterPanel
 
     initActions();
 
-    tab = new AdvancedTab();
-    tab.setOwner(this);
-    m_TabbedPane.addTab(tab.getTitle(), tab);
-    tab = new LogTab();
-    tab.setOwner(this);
-    m_TabbedPane.addTab(tab.getTitle(), tab);
+    addTab(new RemoteFlowCommandsTab(), false);
     m_TabbedPane.setSelectedIndex(0);
   }
 
@@ -192,6 +188,11 @@ public class RemoteControlCenterPanel
     return "Remote control center";
   }
 
+  /**
+   * Returns the menu bar.
+   *
+   * @return		the bar
+   */
   @Override
   public JMenuBar getMenuBar() {
     JMenuBar				result;
@@ -233,10 +234,7 @@ public class RemoteControlCenterPanel
 	    menuitem.setIcon(GUIHelper.getIcon(tab.getTabIcon()));
 	  menuitem.addActionListener((ActionEvent e) -> {
 	    try {
-	      AbstractRemoteControlCenterTab tabNew = (AbstractRemoteControlCenterTab) cls.newInstance();
-	      tabNew.setOwner(this);
-	      m_TabbedPane.addTab(tabNew.getTitle(), tabNew);
-	      m_TabbedPane.setSelectedComponent(tabNew);
+	      addTab((AbstractRemoteControlCenterTab) cls.newInstance(), true);
 	    }
 	    catch (Exception ex) {
 	      ConsolePanel.getSingleton().append("Failed to instantiate tab class: " + cls.getName(), ex);
@@ -260,6 +258,34 @@ public class RemoteControlCenterPanel
     }
 
     return result;
+  }
+
+  /**
+   * Adds the tab.
+   *
+   * @param tab		the tab to add
+   * @param makeVisible	whether to make visible or just add
+   */
+  public void addTab(AbstractRemoteControlCenterTab tab, boolean makeVisible) {
+    ImageIcon		icon;
+    ButtonTabComponent 	button;
+    int			index;
+
+    if (tab.getTabIcon() == null)
+      icon = null;
+    else
+      icon = GUIHelper.getIcon(tab.getTabIcon());
+
+    tab.setOwner(this);
+    m_TabbedPane.addTab(tab.getTitle(), tab);
+
+    // icon
+    index = m_TabbedPane.getTabCount() - 1;
+    button = (ButtonTabComponent) m_TabbedPane.getTabComponentAt(index);
+    button.setIcon(icon);
+
+    if (makeVisible)
+      m_TabbedPane.setSelectedComponent(tab);
   }
 
   /**
