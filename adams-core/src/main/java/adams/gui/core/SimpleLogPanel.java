@@ -15,7 +15,7 @@
 
 /**
  * SimpleLogPanel.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.core;
@@ -257,5 +257,41 @@ public class SimpleLogPanel
    */
   public String getText() {
     return m_TextLog.getText();
+  }
+
+  /**
+   * Sets the rows.
+   *
+   * @param value	the rows
+   */
+  public void setRows(int value) {
+    m_TextLog.setRows(value);
+  }
+
+  /**
+   * Returns the rows.
+   *
+   * @return		the rows
+   */
+  public int getRows() {
+    return m_TextLog.getRows();
+  }
+
+  /**
+   * Sets the columns.
+   *
+   * @param value	the columns
+   */
+  public void setColumns(int value) {
+    m_TextLog.setColumns(value);
+  }
+
+  /**
+   * Returns the columns.
+   *
+   * @return		the columns
+   */
+  public int getColumns() {
+    return m_TextLog.getColumns();
   }
 }
