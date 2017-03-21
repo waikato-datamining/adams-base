@@ -61,10 +61,11 @@ public class RemoteSendHandler
   protected void initialize() {
     super.initialize();
 
-    m_Hostname         = DEFAULT_HOSTNAME;
-    m_Port             = DEFAULT_PORT;
     m_Socket           = null;
     m_ConnectionFailed = false;
+
+    setHostname(DEFAULT_HOSTNAME);
+    setPort(DEFAULT_PORT);
   }
 
   /**
@@ -74,7 +75,7 @@ public class RemoteSendHandler
    */
   public void setHostname(String value) {
     m_Hostname = value;
-    close();
+    reset();
   }
 
   /**
@@ -94,7 +95,7 @@ public class RemoteSendHandler
   public void setPort(int value) {
     if ((value >= 1) && (value < 65536)) {
       m_Port = value;
-      close();
+      reset();
     }
   }
 

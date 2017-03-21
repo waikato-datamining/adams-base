@@ -37,13 +37,26 @@ public abstract class AbstractLogHandler
 
   /** the log listeners. */
   protected HashSet<LoggingListener> m_LoggingListeners;
-  
+
+  /** whether the log has been used. */
+  protected boolean m_LogUsed;
+
   /**
    * Initializes the log handler.
    */
   protected AbstractLogHandler() {
     super();
+    reset();
     initialize();
+  }
+
+  /**
+   * Resets the handler.
+   */
+  protected void reset() {
+    m_LogUsed = false;
+    flush();
+    close();
   }
 
   /**
@@ -52,7 +65,13 @@ public abstract class AbstractLogHandler
   protected void initialize() {
     m_LoggingListeners = new HashSet<>();
   }
-  
+
+  /**
+   * Hook method for performing setup before processing first log record.
+   */
+  protected void setUp() {
+  }
+
   /**
    * Publish a <tt>LogRecord</tt>.
    * <p>
@@ -66,7 +85,18 @@ public abstract class AbstractLogHandler
    *                 silently ignored and is not published
    */
   protected abstract void doPublish(LogRecord record);
-  
+
+  /**
+   * Hook method after logging occurred.
+   *
+   * @param  record  description of the log event. A null record is
+   *                 silently ignored and is not published
+   */
+  protected void postPublish(LogRecord record) {
+    m_LogUsed = true;
+    notifyLoggingListeners(record);
+  }
+
   /**
    * Publish a <tt>LogRecord</tt>.
    * <p>
@@ -81,8 +111,10 @@ public abstract class AbstractLogHandler
    */
   @Override
   public void publish(LogRecord record) {
+    if (!m_LogUsed)
+      setUp();
     doPublish(record);
-    notifyLoggingListeners(record);
+    postPublish(record);
   }
 
   /**

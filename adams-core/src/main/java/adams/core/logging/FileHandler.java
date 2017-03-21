@@ -58,7 +58,7 @@ public class FileHandler
    */
   public void setLogFile(File value) {
     m_LogFile  = value;
-    m_LogIsDir = (m_LogFile == null) || m_LogFile.isDirectory();
+    reset();
   }
 
   /**
@@ -68,6 +68,15 @@ public class FileHandler
    */
   public File getLogFile() {
     return m_LogFile;
+  }
+
+  /**
+   * Hook method for performing setup before processing first log record.
+   */
+  @Override
+  protected void setUp() {
+    super.setUp();
+    m_LogIsDir = (m_LogFile == null) || m_LogFile.isDirectory();
   }
 
   /**

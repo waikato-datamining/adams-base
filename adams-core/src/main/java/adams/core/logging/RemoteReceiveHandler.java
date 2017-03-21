@@ -37,8 +37,7 @@ import java.util.logging.LogRecord;
  * @version $Revision$
  */
 public class RemoteReceiveHandler
-  extends AbstractLogHandler
-  implements EnhancingSingleHandler {
+  extends AbstractEnhancingSingleHandler {
 
   /** the default port. */
   public final static int DEFAULT_PORT = 23456;
@@ -55,9 +54,6 @@ public class RemoteReceiveHandler
   /** the socket in use. */
   protected ServerSocket m_Socket;
 
-  /** the base handler. */
-  protected Handler m_Handler;
-
   /** the runnable in use. */
   protected RunnableWithLogging m_Runnable;
 
@@ -68,29 +64,20 @@ public class RemoteReceiveHandler
   protected void initialize() {
     super.initialize();
 
-    m_Port     = DEFAULT_PORT;
-    m_TimeOut  = DEFAULT_TIMEOUT;
     m_Socket   = null;
-    m_Handler  = new SimpleConsoleHandler();
     m_Runnable = null;
+
+    setPort(DEFAULT_PORT);
+    setTimeOut(DEFAULT_TIMEOUT);
   }
 
   /**
-   * Sets the handler to use for outputting the log records.
+   * Returns the default handler.
    *
-   * @param value	the handler
+   * @return		the default
    */
-  public void setHandler(Handler value) {
-    m_Handler = value;
-  }
-
-  /**
-   * Returns the handler to use for outputting the log records.
-   *
-   * @return		the handler
-   */
-  public Handler getHandler() {
-    return m_Handler;
+  protected Handler getDefaultHandler() {
+    return new SimpleConsoleHandler();
   }
 
   /**
@@ -101,7 +88,7 @@ public class RemoteReceiveHandler
   public void setPort(int value) {
     if ((value >= 1) && (value < 65536)) {
       m_Port = value;
-      close();
+      reset();
     }
   }
 
@@ -122,7 +109,7 @@ public class RemoteReceiveHandler
   public void setTimeOut(int value) {
     if (value >= 1) {
       m_TimeOut = value;
-      close();
+      reset();
     }
   }
 

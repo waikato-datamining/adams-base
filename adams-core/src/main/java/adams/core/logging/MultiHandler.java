@@ -41,8 +41,7 @@ public class MultiHandler
   @Override
   protected void initialize() {
     super.initialize();
-
-    m_Handlers = new Handler[0];
+    setHandlers(new Handler[0]);
   }
 
   /**
@@ -52,6 +51,7 @@ public class MultiHandler
    */
   public void setHandlers(Handler[] value) {
     m_Handlers = value;
+    reset();
   }
 
   /**
@@ -108,8 +108,10 @@ public class MultiHandler
   @Override
   public void flush() {
     super.flush();
-    for (Handler h: m_Handlers)
-      h.flush();
+    if (m_Handlers != null) {
+      for (Handler h : m_Handlers)
+	h.flush();
+    }
   }
 
   /**
@@ -125,8 +127,10 @@ public class MultiHandler
    */
   @Override
   public void close() throws SecurityException {
-    for (Handler h: m_Handlers)
-      h.close();
+    if (m_Handlers != null) {
+      for (Handler h : m_Handlers)
+	h.close();
+    }
     super.close();
   }
 
