@@ -42,6 +42,24 @@ public class  ListFlows
 
   private static final long serialVersionUID = -3350680106789169314L;
 
+  /** the index of the ID column. */
+  public final static int COL_ID = 0;
+
+  /** the index of the paused column. */
+  public final static int COL_PAUSED = 1;
+
+  /** the index of the stopped column. */
+  public final static int COL_STOPPED = 2;
+
+  /** the index of the root actor name column. */
+  public final static int COL_ROOT = 3;
+
+  /** the index of the annotation column. */
+  public final static int COL_ANNOTATION = 4;
+
+  /** the index of the flow file column. */
+  public final static int COL_PATH = 5;
+
   /** the flows. */
   protected SpreadSheet m_Flows;
 
@@ -74,10 +92,12 @@ public class  ListFlows
     SpreadSheet 	result;
 
     result = new DefaultSpreadSheet();
-    result.getHeaderRow().addCell("I").setContent("ID");
-    result.getHeaderRow().addCell("R").setContent("Root");
-    result.getHeaderRow().addCell("A").setContent("Annotation");
-    result.getHeaderRow().addCell("P").setContent("Path");
+    result.getHeaderRow().addCell("" + COL_ID).setContent("ID");
+    result.getHeaderRow().addCell("" + COL_PAUSED).setContent("Paused");
+    result.getHeaderRow().addCell("" + COL_STOPPED).setContent("Stopped");
+    result.getHeaderRow().addCell("" + COL_ROOT).setContent("Root");
+    result.getHeaderRow().addCell("" + COL_ANNOTATION).setContent("Annotation");
+    result.getHeaderRow().addCell("" + COL_PATH).setContent("Path");
 
     return result;
   }
@@ -162,10 +182,12 @@ public class  ListFlows
       if (flow == null)
 	continue;
       row  = sheet.addRow();
-      row.addCell("I").setContent(id);
-      row.addCell("R").setContent(flow.getRoot().getName());
-      row.addCell("A").setContent(flow.getRoot().getAnnotations().getValue());
-      row.addCell("P").setContent(flow.getVariables().get(ActorUtils.FLOW_FILENAME_LONG));
+      row.addCell(COL_ID).setContent(id);
+      row.addCell(COL_PAUSED).setContent(flow.isPaused());
+      row.addCell(COL_STOPPED).setContent(flow.isStopped());
+      row.addCell(COL_ROOT).setContent(flow.getRoot().getName());
+      row.addCell(COL_ANNOTATION).setContent(flow.getRoot().getAnnotations().getValue());
+      row.addCell(COL_PATH).setContent(flow.getVariables().get(ActorUtils.FLOW_FILENAME_LONG));
     }
 
     m_Flows = sheet;

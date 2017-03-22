@@ -25,15 +25,17 @@ import adams.core.net.PortManager;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.gui.core.BaseObjectTextField;
 import adams.gui.core.BaseSplitPane;
+import adams.gui.core.BaseTable;
+import adams.gui.core.BaseTableWithButtons;
 import adams.gui.core.GUIHelper;
-import adams.gui.core.SpreadSheetTable;
 import adams.gui.core.SpreadSheetTableModel;
-import adams.gui.event.PopupMenuListener;
 import adams.scripting.command.RemoteCommand;
 import adams.scripting.command.RemoteCommandWithResponse;
 import adams.scripting.command.basic.StopEngine;
 import adams.scripting.command.basic.StopEngine.EngineType;
 import adams.scripting.command.flow.ListFlows;
+import adams.scripting.command.flow.SendFlowControlCommand;
+import adams.scripting.command.flow.SendFlowControlCommand.Command;
 import adams.scripting.connection.DefaultConnection;
 import adams.scripting.engine.DefaultScriptingEngine;
 import adams.scripting.requesthandler.RequestHandler;
@@ -41,17 +43,16 @@ import adams.scripting.requesthandler.SimpleLogPanelRequestHandler;
 import adams.scripting.responsehandler.AbstractResponseHandler;
 import adams.scripting.responsehandler.ResponseHandler;
 import adams.scripting.responsehandler.SimpleLogPanelResponseHandler;
-import com.googlecode.jfilechooserbookmarks.gui.BaseScrollPane;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.MouseEvent;
 
 /**
  * Ancestor for tabs that get applied to remote flows using their ID(s).
@@ -63,7 +64,7 @@ import java.awt.event.MouseEvent;
  */
 public abstract class AbstractRemoteFlowTab
   extends AbstractRemoteControlCenterTab
-  implements PopupMenuListener, ListSelectionListener {
+  implements ListSelectionListener {
 
   private static final long serialVersionUID = 321058606982723480L;
 
@@ -109,16 +110,19 @@ public abstract class AbstractRemoteFlowTab
      */
     @Override
     public void responseSuccessful(RemoteCommand cmd) {
-      ListFlows		list;
+      ListFlows			list;
+      SpreadSheetTableModel	model;
 
       if (cmd instanceof ListFlows) {
 	list = (ListFlows) cmd;
 	if (list.getResponsePayloadObjects().length > 0) {
-	  m_Tab.getFlowsTable().setModel(
-	    new SpreadSheetTableModel(
-	      (SpreadSheet) list.getResponsePayloadObjects()[0]));
-	  m_Tab.getFlowsTable().setShowRowColumn(false);
-	  m_Tab.getFlowsTable().setUseSimpleHeader(true);
+	  model = new SpreadSheetTableModel((SpreadSheet) list.getResponsePayloadObjects()[0]);
+	  model.setShowRowColumn(false);
+	  model.setUseSimpleHeader(true);
+	  SwingUtilities.invokeLater(() -> {
+	    m_Tab.getFlowsTable().setModel(model);
+	    m_Tab.getFlowsTable().setOptimalColumnWidth();
+	  });
 	}
       }
     }
@@ -157,7 +161,16 @@ public abstract class AbstractRemoteFlowTab
   protected JButton m_ButtonRefresh;
 
   /** the table with the remote flows. */
-  protected SpreadSheetTable m_TableFlows;
+  protected BaseTableWithButtons m_TableFlows;
+
+  /** the button for pausing the flow. */
+  protected JButton m_ButtonPauseFlow;
+
+  /** the button for resuming the flow. */
+  protected JButton m_ButtonResumeFlow;
+
+  /** the button for stopping the flow. */
+  protected JButton m_ButtonStopFlow;
 
   /**
    * Initializes the widgets.
@@ -167,6 +180,7 @@ public abstract class AbstractRemoteFlowTab
     JPanel			panelConn;
     JPanel			panelButton;
     JLabel 			label;
+    SpreadSheetTableModel	model;
 
     super.initGUI();
 
@@ -205,14 +219,27 @@ public abstract class AbstractRemoteFlowTab
     panelButton.add(m_ButtonRefresh);
     panelConn.add(panelButton);
 
-    m_TableFlows = new SpreadSheetTable(new SpreadSheetTableModel());
-    m_TableFlows.addCellPopupMenuListener(this);
-    m_TableFlows.setShowRowColumn(false);
-    m_TableFlows.setUseSimpleHeader(true);
+    model = new SpreadSheetTableModel();
+    model.setShowRowColumn(false);
+    model.setUseSimpleHeader(true);
+    m_TableFlows = new BaseTableWithButtons(model);
     m_TableFlows.getSelectionModel().addListSelectionListener(this);
-    m_PanelFlows.add(new BaseScrollPane(m_TableFlows), BorderLayout.CENTER);
-  }
+    m_TableFlows.setAutoResizeMode(BaseTable.AUTO_RESIZE_OFF);
+    m_PanelFlows.add(m_TableFlows, BorderLayout.CENTER);
 
+    m_ButtonPauseFlow = new JButton(GUIHelper.getIcon("pause.gif"));
+    m_ButtonPauseFlow.addActionListener((ActionEvent e) -> pauseFlow());
+    m_TableFlows.addToButtonsPanel(m_ButtonPauseFlow);
+
+    m_ButtonResumeFlow = new JButton(GUIHelper.getIcon("resume.gif"));
+    m_ButtonResumeFlow.addActionListener((ActionEvent e) -> resumeFlow());
+    m_TableFlows.addToButtonsPanel(m_ButtonResumeFlow);
+
+    m_ButtonStopFlow = new JButton(GUIHelper.getIcon("stop_blue.gif"));
+    m_ButtonStopFlow.addActionListener((ActionEvent e) -> stopFlow());
+    m_TableFlows.addToButtonsPanel(m_ButtonStopFlow);
+  }
+  
   /**
    * Finalizes the initialization.
    */
@@ -227,7 +254,7 @@ public abstract class AbstractRemoteFlowTab
    *
    * @return		the table
    */
-  public SpreadSheetTable getFlowsTable() {
+  public BaseTableWithButtons getFlowsTable() {
     return m_TableFlows;
   }
 
@@ -277,7 +304,7 @@ public abstract class AbstractRemoteFlowTab
    * the result.
    *
    * @param cmd			the command to send
-   * @param responseHandler 	the response handler for intercepting the result
+   * @param responseHandler 	the response handler for intercepting the result, can be null
    */
   public void sendCommand(RemoteCommandWithResponse cmd, ResponseHandler responseHandler) {
     StopEngine			stop;
@@ -339,26 +366,92 @@ public abstract class AbstractRemoteFlowTab
     sel    = m_TableFlows.getSelectedRows();
     result = new int[sel.length];
     for (i = 0; i < sel.length; i++)
-      result[i] = ((Number) m_TableFlows.getValueAt(i, 0)).intValue();
+      result[i] = ((Number) m_TableFlows.getValueAt(i, ListFlows.COL_ID)).intValue();
 
     return result;
   }
 
   /**
-   * Gets called when a cell in the flow table is right-clicked.
-   * <br>
-   * Default implementation does nothing.
-   *
-   * @param e		the mouse event that triggered the display of popup menu
+   * Pauses the selected flow(s).
    */
-  @Override
-  public void showPopupMenu(MouseEvent e) {
+  protected void pauseFlow() {
+    int[]			ids;
+    int[]			sel;
+    int				i;
+    boolean			paused;
+    boolean			stopped;
+    SendFlowControlCommand	cmd;
+
+    ids = getSelectedFlowIDs();
+    sel = m_TableFlows.getSelectedRows();
+    for (i = 0; i < sel.length; i++) {
+      paused  = Boolean.parseBoolean(m_TableFlows.getValueAt(sel[i], ListFlows.COL_PAUSED).toString());
+      stopped = Boolean.parseBoolean(m_TableFlows.getValueAt(sel[i], ListFlows.COL_STOPPED).toString());
+      if (!stopped && !paused) {
+	cmd = new SendFlowControlCommand();
+	cmd.setID(ids[i]);
+	cmd.setCommand(Command.PAUSE);
+	sendCommand(cmd, null);
+      }
+    }
+
+    refreshFlows();
+  }
+
+  /**
+   * Resumes the selected flow(s).
+   */
+  protected void resumeFlow() {
+    int[]			ids;
+    int[]			sel;
+    int				i;
+    boolean			paused;
+    boolean			stopped;
+    SendFlowControlCommand	cmd;
+
+    ids = getSelectedFlowIDs();
+    sel = m_TableFlows.getSelectedRows();
+    for (i = 0; i < sel.length; i++) {
+      paused  = Boolean.parseBoolean(m_TableFlows.getValueAt(sel[i], ListFlows.COL_PAUSED).toString());
+      stopped = Boolean.parseBoolean(m_TableFlows.getValueAt(sel[i], ListFlows.COL_STOPPED).toString());
+      if (!stopped && paused) {
+	cmd = new SendFlowControlCommand();
+	cmd.setID(ids[i]);
+	cmd.setCommand(Command.RESUME);
+	sendCommand(cmd, null);
+      }
+    }
+
+    refreshFlows();
+  }
+
+  /**
+   * Stops the selected flow(s).
+   */
+  protected void stopFlow() {
+    int[]			ids;
+    int[]			sel;
+    int				i;
+    boolean			stopped;
+    SendFlowControlCommand	cmd;
+
+    ids = getSelectedFlowIDs();
+    sel = m_TableFlows.getSelectedRows();
+    for (i = 0; i < sel.length; i++) {
+      stopped = Boolean.parseBoolean(m_TableFlows.getValueAt(sel[i], ListFlows.COL_STOPPED).toString());
+      if (!stopped) {
+	cmd = new SendFlowControlCommand();
+	cmd.setID(ids[i]);
+	cmd.setCommand(Command.STOP);
+	sendCommand(cmd, null);
+      }
+    }
+
+    refreshFlows();
   }
 
   /**
    * Gets called when the selection in the flow table changes.
-   * <br>
-   * Default implementation does nothing.
    *
    * @param e		the mouse event
    */
@@ -369,9 +462,10 @@ public abstract class AbstractRemoteFlowTab
 
   /**
    * Updates the state of the buttons.
-   * <br>
-   * Default implementation does nothing.
    */
   protected void updateButtons() {
+    m_ButtonPauseFlow.setEnabled(getSelectedFlowIDs().length > 0);
+    m_ButtonResumeFlow.setEnabled(getSelectedFlowIDs().length > 0);
+    m_ButtonStopFlow.setEnabled(getSelectedFlowIDs().length > 0);
   }
 }
