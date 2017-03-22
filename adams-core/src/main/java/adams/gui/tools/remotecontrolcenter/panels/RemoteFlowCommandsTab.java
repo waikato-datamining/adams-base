@@ -112,7 +112,6 @@ public class RemoteFlowCommandsTab
   @Override
   protected void finishInit() {
     super.finishInit();
-    m_ResponseLogger.setTab(this);
     m_ResponseLogger.setLog(m_Log);
   }
 
@@ -155,9 +154,8 @@ public class RemoteFlowCommandsTab
     remote = m_TextRemote.getObject();
 
     // engine
-    engine = new DefaultScriptingEngine();
-    engine.setPort(local.portValue());
-    engine.setResponseHandler(m_ResponseLogger);
+    engine = configureEngine();
+    ((adams.scripting.responsehandler.MultiHandler) engine.getResponseHandler()).addHandler(m_ResponseLogger);
     new Thread(() -> engine.execute()).start();
 
     ids      = getSelectedFlowIDs();

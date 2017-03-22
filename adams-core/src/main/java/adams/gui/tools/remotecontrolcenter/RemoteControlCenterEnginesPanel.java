@@ -31,6 +31,8 @@ import adams.gui.goe.GenericObjectEditorPanel;
 import adams.scripting.engine.DefaultScriptingEngine;
 import adams.scripting.engine.MultiScriptingEngine;
 import adams.scripting.engine.RemoteScriptingEngine;
+import adams.scripting.requesthandler.SimpleLogPanelRequestHandler;
+import adams.scripting.responsehandler.SimpleLogPanelResponseHandler;
 import gnu.trove.list.array.TIntArrayList;
 
 import javax.swing.BorderFactory;
@@ -57,8 +59,8 @@ public class RemoteControlCenterEnginesPanel
 
   private static final long serialVersionUID = -4281172076210274495L;
 
-  /** the application frame. */
-  protected AbstractApplicationFrame m_Owner;
+  /** the owner. */
+  protected RemoteControlCenterManagerPanel m_Owner;
 
   /** the GOE with the engine. */
   protected GenericObjectEditorPanel m_GOEEngine;
@@ -89,11 +91,16 @@ public class RemoteControlCenterEnginesPanel
    */
   @Override
   protected void initGUI() {
+    DefaultScriptingEngine	engine;
+
     super.initGUI();
 
     setLayout(new BorderLayout(5, 5));
 
-    m_GOEEngine = new GenericObjectEditorPanel(RemoteScriptingEngine.class, new DefaultScriptingEngine(), true);
+    engine = new DefaultScriptingEngine();
+    engine.setRequestHandler(new SimpleLogPanelRequestHandler());
+    engine.setResponseHandler(new SimpleLogPanelResponseHandler());
+    m_GOEEngine = new GenericObjectEditorPanel(RemoteScriptingEngine.class, engine, true);
     m_GOEEngine.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
     add(m_GOEEngine, BorderLayout.NORTH);
 
@@ -144,14 +151,14 @@ public class RemoteControlCenterEnginesPanel
    *
    * @param value	the owner
    */
-  public void setOwner(AbstractApplicationFrame value) {
-    if (m_Owner != null)
-      m_Owner.removeRemoteScriptingEngineUpdateListener(this);
+  public void setOwner(RemoteControlCenterManagerPanel value) {
+    if (getApplicationFrame() != null)
+      getApplicationFrame().removeRemoteScriptingEngineUpdateListener(this);
 
     m_Owner = value;
 
-    if (m_Owner != null) {
-      m_Owner.addRemoteScriptingEngineUpdateListener(this);
+    if (getApplicationFrame() != null) {
+      getApplicationFrame().addRemoteScriptingEngineUpdateListener(this);
       refreshEngines();
     }
   }
@@ -161,8 +168,30 @@ public class RemoteControlCenterEnginesPanel
    *
    * @return		the owner
    */
-  public AbstractApplicationFrame getOwner() {
+  public RemoteControlCenterManagerPanel getOwner() {
     return m_Owner;
+  }
+
+  /**
+   * Returns the application frame this panel belongs to.
+   *
+   * @return		the frame, null if not part of an app frame
+   */
+  public AbstractApplicationFrame getApplicationFrame() {
+    if (getOwner() != null)
+      return getOwner().getApplicationFrame();
+    return null;
+  }
+
+  /**
+   * Returns the log panel.
+   *
+   * @return		the panel, null if no owner set
+   */
+  public RemoteControlCenterLogPanel getLogPanel() {
+    if (getOwner() != null)
+      return getOwner().getLogPanel();
+    return null;
   }
 
   /**
@@ -230,7 +259,12 @@ public class RemoteControlCenterEnginesPanel
     RemoteScriptingEngine	engine;
 
     engine = (RemoteScriptingEngine) m_GOEEngine.getCurrent();
-    m_Owner.addRemoteScriptingEngine(engine);
+    if (engine.getRequestHandler() instanceof SimpleLogPanelRequestHandler)
+      ((SimpleLogPanelRequestHandler) engine.getRequestHandler()).setLog(getLogPanel().getRequestLog());
+    if (engine.getResponseHandler() instanceof SimpleLogPanelResponseHandler)
+      ((SimpleLogPanelResponseHandler) engine.getResponseHandler()).setLog(getLogPanel().getResponseLog());
+    if (getApplicationFrame() != null)
+      getApplicationFrame().addRemoteScriptingEngine(engine);
   }
 
   /**
@@ -258,7 +292,7 @@ public class RemoteControlCenterEnginesPanel
     }
 
     for (RemoteScriptingEngine e: engines)
-      m_Owner.removeRemoteScriptingEngine(e);
+      getApplicationFrame().removeRemoteScriptingEngine(e);
   }
 
   /**
@@ -302,8 +336,8 @@ public class RemoteControlCenterEnginesPanel
    * Cleans up data structures, frees up memory.
    */
   public void cleanUp() {
-    if (m_Owner != null) {
-      m_Owner.removeRemoteScriptingEngineUpdateListener(this);
+    if (getApplicationFrame() != null) {
+      getApplicationFrame().removeRemoteScriptingEngineUpdateListener(this);
       m_Owner = null;
     }
   }

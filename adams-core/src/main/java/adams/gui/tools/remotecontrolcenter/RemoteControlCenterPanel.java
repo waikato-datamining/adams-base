@@ -113,14 +113,6 @@ public class RemoteControlCenterPanel
   }
 
   /**
-   * Finishes the initialization.
-   */
-  @Override
-  protected void finishInit() {
-    super.finishInit();
-  }
-
-  /**
    * Initializes the actions.
    */
   protected void initActions() {
@@ -356,6 +348,17 @@ public class RemoteControlCenterPanel
   public AbstractApplicationFrame getApplicationFrame() {
     if (getOwner() != null)
       return getOwner().getApplicationFrame();
+    return null;
+  }
+
+  /**
+   * Returns the log panel.
+   *
+   * @return		the panel, null if no owner set
+   */
+  public RemoteControlCenterLogPanel getLogPanel() {
+    if (getOwner() != null)
+      return getOwner().getLogPanel();
     return null;
   }
 }

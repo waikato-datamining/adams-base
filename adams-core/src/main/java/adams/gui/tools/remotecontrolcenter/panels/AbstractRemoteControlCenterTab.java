@@ -24,6 +24,7 @@ import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.core.BasePanel;
 import adams.gui.event.RemoteScriptingEngineUpdateEvent;
 import adams.gui.event.RemoteScriptingEngineUpdateListener;
+import adams.gui.tools.remotecontrolcenter.RemoteControlCenterLogPanel;
 import adams.gui.tools.remotecontrolcenter.RemoteControlCenterPanel;
 
 /**
@@ -67,6 +68,17 @@ public abstract class AbstractRemoteControlCenterTab
   public AbstractApplicationFrame getApplicationFrame() {
     if (getOwner() != null)
       return getOwner().getApplicationFrame();
+    return null;
+  }
+
+  /**
+   * Returns the log panel.
+   *
+   * @return		the panel, null if no owner set
+   */
+  public RemoteControlCenterLogPanel getLogPanel() {
+    if (getOwner() != null)
+      return getOwner().getLogPanel();
     return null;
   }
 

@@ -33,7 +33,11 @@ import adams.scripting.command.basic.StopEngine.EngineType;
 import adams.scripting.command.flow.ListFlows;
 import adams.scripting.connection.DefaultConnection;
 import adams.scripting.engine.DefaultScriptingEngine;
+import adams.scripting.requesthandler.RequestHandler;
+import adams.scripting.requesthandler.SimpleLogPanelRequestHandler;
 import adams.scripting.responsehandler.AbstractResponseHandler;
+import adams.scripting.responsehandler.ResponseHandler;
+import adams.scripting.responsehandler.SimpleLogPanelResponseHandler;
 import com.googlecode.jfilechooserbookmarks.gui.BaseScrollPane;
 
 import javax.swing.JButton;
@@ -218,6 +222,47 @@ public abstract class AbstractRemoteFlowTab
   }
 
   /**
+   * Returns new instance of a configured scripting engine.
+   *
+   * @return		the engine
+   */
+  protected DefaultScriptingEngine configureEngine() {
+    DefaultScriptingEngine 				result;
+    BaseHostname					local;
+    adams.scripting.requesthandler.MultiHandler		multiRequest;
+    adams.scripting.responsehandler.MultiHandler	multiResponse;
+    SimpleLogPanelRequestHandler			simpleRequest;
+    SimpleLogPanelResponseHandler 			simpleResponse;
+
+    local  = m_TextLocal.getObject();
+    result = new DefaultScriptingEngine();
+    result.setPort(local.portValue());
+
+    // request
+    simpleRequest = new SimpleLogPanelRequestHandler();
+    simpleRequest.setLog(getLogPanel().getRequestLog());
+    multiRequest = new adams.scripting.requesthandler.MultiHandler();
+    multiRequest.setHandlers(new RequestHandler[]{
+      new adams.scripting.requesthandler.LoggingHandler(),
+      simpleRequest,
+    });
+    result.setRequestHandler(multiRequest);
+
+    // response
+    simpleResponse = new SimpleLogPanelResponseHandler();
+    simpleResponse.setLog(getLogPanel().getRequestLog());
+    multiResponse = new adams.scripting.responsehandler.MultiHandler();
+    multiResponse.setHandlers(new ResponseHandler[]{
+      new adams.scripting.responsehandler.LoggingHandler(),
+      simpleResponse,
+      new FlowListResponseHandler(this)
+    });
+    result.setResponseHandler(multiResponse);
+
+    return result;
+  }
+
+  /**
    * Refreshes the list of flows.
    */
   protected void refreshFlows() {
@@ -234,9 +279,7 @@ public abstract class AbstractRemoteFlowTab
     remote = m_TextRemote.getObject();
 
     // engine
-    engine = new DefaultScriptingEngine();
-    engine.setPort(local.portValue());
-    engine.setResponseHandler(new FlowListResponseHandler(this));
+    engine = configureEngine();
     new Thread(() -> engine.execute()).start();
 
     // command

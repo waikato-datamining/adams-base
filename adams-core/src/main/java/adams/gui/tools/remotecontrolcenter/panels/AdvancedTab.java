@@ -249,7 +249,6 @@ public class AdvancedTab
   @Override
   protected void finishInit() {
     super.finishInit();
-    m_ResponseLogger.setTab(this);
     m_ResponseLogger.setLog(m_Log);
     m_InspectionHandler.setTab(this);
     m_InspectionHandler.setInspectionPanel(m_Results);

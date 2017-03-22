@@ -14,32 +14,32 @@
  */
 
 /**
- * LogTab.java
+ * RemoteControlCenterLogPanel.java
  * Copyright (C) 2017 University of Waikato, Hamilton, NZ
  */
 
-package adams.gui.tools.remotecontrolcenter.panels;
+package adams.gui.tools.remotecontrolcenter;
 
+import adams.gui.application.AbstractApplicationFrame;
+import adams.gui.core.BasePanel;
 import adams.gui.core.BaseTabbedPane;
 import adams.gui.core.SimpleLogPanel;
-import adams.gui.event.RemoteScriptingEngineUpdateEvent;
-import adams.scripting.requesthandler.AbstractRequestHandler;
-import adams.scripting.requesthandler.SimpleLogPanelRequestHandler;
-import adams.scripting.responsehandler.AbstractResponseHandler;
-import adams.scripting.responsehandler.SimpleLogPanelResponseHandler;
 
 import java.awt.BorderLayout;
 
 /**
- * For logging.
+ * Displays logging information.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class LogTab
-  extends AbstractRemoteControlCenterTab {
+public class RemoteControlCenterLogPanel
+  extends BasePanel {
 
-  private static final long serialVersionUID = 4437668312078401117L;
+  private static final long serialVersionUID = 4110604734547592494L;
+
+  /** the owner. */
+  protected RemoteControlCenterManagerPanel m_Owner;
 
   /** the request log. */
   protected SimpleLogPanel m_LogRequest;
@@ -52,23 +52,6 @@ public class LogTab
 
   /** the tabbed pane. */
   protected BaseTabbedPane m_TabbedPane;
-
-  /** request logger. */
-  protected SimpleLogPanelRequestHandler m_RequestLogger;
-
-  /** response logger. */
-  protected SimpleLogPanelResponseHandler m_ResponseLogger;
-
-  /**
-   * Initializes the members.
-   */
-  @Override
-  protected void initialize() {
-    super.initialize();
-    
-    m_RequestLogger  = new SimpleLogPanelRequestHandler();
-    m_ResponseLogger = new SimpleLogPanelResponseHandler();
-  }
 
   /**
    * Initializes the widgets.
@@ -93,34 +76,52 @@ public class LogTab
   }
 
   /**
-   * Finishes up the initialization.
-   */
-  @Override
-  protected void finishInit() {
-    super.finishInit();
-
-    m_RequestLogger.setLog(getRequestLog());
-    m_ResponseLogger.setTab(this);
-    m_ResponseLogger.setLog(getResponseLog());
-  }
-
-  /**
-   * Returns the title of the tab.
-   *
-   * @return		the title
-   */
-  @Override
-  public String getTitle() {
-    return "Log";
-  }
-
-  /**
    * Returns the name of icon to use for the tab.
    *
    * @return		the icon
    */
   public String getTabIcon() {
     return "log.gif";
+  }
+
+  /**
+   * Sets the owning application.
+   *
+   * @param value	the owner
+   */
+  public void setOwner(RemoteControlCenterManagerPanel value) {
+    m_Owner = value;
+  }
+
+  /**
+   * Returns the owning application.
+   *
+   * @return		the owner
+   */
+  public RemoteControlCenterManagerPanel getOwner() {
+    return m_Owner;
+  }
+
+  /**
+   * Returns the application frame this panel belongs to.
+   *
+   * @return		the frame, null if not part of an app frame
+   */
+  public AbstractApplicationFrame getApplicationFrame() {
+    if (getOwner() != null)
+      return getOwner().getApplicationFrame();
+    return null;
+  }
+
+  /**
+   * Returns the log panel.
+   *
+   * @return		the panel, null if no owner set
+   */
+  public RemoteControlCenterLogPanel getLogPanel() {
+    if (getOwner() != null)
+      return getOwner().getLogPanel();
+    return null;
   }
 
   /**
@@ -148,15 +149,5 @@ public class LogTab
    */
   public SimpleLogPanel getOtherLog() {
     return m_LogOther;
-  }
-
-  /**
-   * Gets called in case the remote scripting engine got updated.
-   *
-   * @param e		the event
-   */
-  public void remoteScriptingEngineUpdated(RemoteScriptingEngineUpdateEvent e) {
-    AbstractRequestHandler.insertHandler(this, getApplicationFrame(), m_RequestLogger);
-    AbstractResponseHandler.insertHandler(this, getApplicationFrame(), m_ResponseLogger);
   }
 }

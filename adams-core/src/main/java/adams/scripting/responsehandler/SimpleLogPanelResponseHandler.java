@@ -24,7 +24,6 @@ import adams.core.logging.LoggingLevel;
 import adams.core.option.OptionUtils;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.SimpleLogPanel;
-import adams.gui.tools.remotecontrolcenter.panels.AbstractRemoteControlCenterTab;
 import adams.scripting.command.RemoteCommand;
 import adams.scripting.command.RemoteCommandWithErrorMessage;
 
@@ -39,29 +38,8 @@ public class SimpleLogPanelResponseHandler
 
   private static final long serialVersionUID = -6193490944184585319L;
 
-  /** the tab. */
-  protected AbstractRemoteControlCenterTab m_Tab;
-
   /** the log to use. */
   protected SimpleLogPanel m_Log;
-
-  /**
-   * Sets the tab this handler belongs to.
-   *
-   * @param value	the tab
-   */
-  public void setTab(AbstractRemoteControlCenterTab value) {
-    m_Tab = value;
-  }
-
-  /**
-   * Returns the tab this handler belongs to.
-   *
-   * @return		the tab, null if none set
-   */
-  public AbstractRemoteControlCenterTab getTab() {
-    return m_Tab;
-  }
 
   /**
    * Returns a string describing the object.
@@ -97,11 +75,8 @@ public class SimpleLogPanelResponseHandler
    * @param cmd		the command
    */
   protected void displayErrorMessage(RemoteCommandWithErrorMessage cmd) {
-    if (m_Tab == null)
-      GUIHelper.showErrorMessage(
-	m_Log, cmd.getErrorMessage(), cmd.getClass().getName());
-    else
-      m_Tab.getOwner().logError(cmd.getErrorMessage(), cmd.getClass().getName());
+    GUIHelper.showErrorMessage(
+      m_Log, cmd.getErrorMessage(), cmd.getClass().getName());
   }
 
   /**

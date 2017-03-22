@@ -50,6 +50,9 @@ public class RemoteControlCenterManagerPanel
   /** the panel for the engines. */
   protected RemoteControlCenterEnginesPanel m_PanelEngines;
 
+  /** the log panel. */
+  protected RemoteControlCenterLogPanel m_PanelLog;
+
   /**
    * Initializes the widgets.
    */
@@ -60,8 +63,13 @@ public class RemoteControlCenterManagerPanel
     m_TabbedPaneMain = new BaseTabbedPane(BaseTabbedPane.TOP);
 
     m_PanelEngines = new RemoteControlCenterEnginesPanel();
+    m_PanelEngines.setOwner(this);
+    m_PanelLog = new RemoteControlCenterLogPanel();
+    m_PanelLog.setOwner(this);
+
     m_TabbedPaneMain.addTab("Engines", m_PanelEngines);
     m_TabbedPaneMain.addTab("Commands", m_SplitPane);
+    m_TabbedPaneMain.addTab("Log", m_PanelLog);
 
     add(m_TabbedPaneMain, BorderLayout.CENTER);
   }
@@ -80,7 +88,9 @@ public class RemoteControlCenterManagerPanel
     if (m_Owner != null)
       m_Owner.addRemoteScriptingEngineUpdateListener(this);
 
-    m_PanelEngines.setOwner(value);
+    // refresh the owner
+    m_PanelEngines.setOwner(this);
+    m_PanelLog.setOwner(this);
   }
 
   /**
@@ -169,6 +179,15 @@ public class RemoteControlCenterManagerPanel
    */
   public AbstractApplicationFrame getApplicationFrame() {
     return getOwner();
+  }
+
+  /**
+   * Returns the log panel.
+   *
+   * @return		the log panel
+   */
+  public RemoteControlCenterLogPanel getLogPanel() {
+    return m_PanelLog;
   }
 
   /**
