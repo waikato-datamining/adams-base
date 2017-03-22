@@ -111,6 +111,7 @@ public class RemoteFlowCommandsTab
   @Override
   protected void finishInit() {
     super.finishInit();
+    m_ResponseLogger.setTab(this);
     m_ResponseLogger.setLog(m_Log);
   }
 

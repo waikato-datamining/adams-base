@@ -22,8 +22,10 @@ package adams.gui.tools.remotecontrolcenter.panels;
 
 import adams.core.logging.LoggingLevel;
 import adams.core.option.OptionUtils;
+import adams.gui.core.GUIHelper;
 import adams.gui.core.SimpleLogPanel;
 import adams.scripting.command.RemoteCommand;
+import adams.scripting.command.RemoteCommandWithErrorMessage;
 import adams.scripting.responsehandler.AbstractResponseHandler;
 
 /**
@@ -37,8 +39,29 @@ public class SimpleLogPanelResponseHandler
 
   private static final long serialVersionUID = -6193490944184585319L;
 
+  /** the tab. */
+  protected AbstractRemoteControlCenterTab m_Tab;
+
   /** the log to use. */
   protected SimpleLogPanel m_Log;
+
+  /**
+   * Sets the tab this handler belongs to.
+   *
+   * @param value	the tab
+   */
+  public void setTab(AbstractRemoteControlCenterTab value) {
+    m_Tab = value;
+  }
+
+  /**
+   * Returns the tab this handler belongs to.
+   *
+   * @return		the tab, null if none set
+   */
+  public AbstractRemoteControlCenterTab getTab() {
+    return m_Tab;
+  }
 
   /**
    * Returns a string describing the object.
@@ -69,15 +92,36 @@ public class SimpleLogPanelResponseHandler
   }
 
   /**
+   * Displays the error message.
+   *
+   * @param cmd		the command
+   */
+  protected void displayErrorMessage(RemoteCommandWithErrorMessage cmd) {
+    if (m_Tab == null)
+      GUIHelper.showErrorMessage(
+	m_Log, cmd.getErrorMessage(), cmd.getClass().getName());
+    else
+      m_Tab.getOwner().logError(cmd.getErrorMessage(), cmd.getClass().getName());
+  }
+
+  /**
    * Handles successful responses.
    *
    * @param cmd		the command with the response
    */
   @Override
   public void responseSuccessful(RemoteCommand cmd) {
-    if (m_Enabled && (m_Log != null))
+    if (!m_Enabled)
+      return;
+
+    if (m_Log != null)
       m_Log.append(LoggingLevel.INFO, "Successful response: " + OptionUtils.getCommandLine(cmd) + "\n" + cmd);
 
+    // error message?
+    if (cmd instanceof RemoteCommandWithErrorMessage) {
+      if (((RemoteCommandWithErrorMessage) cmd).hasErrorMessage())
+	displayErrorMessage((RemoteCommandWithErrorMessage) cmd);
+    }
   }
 
   /**
@@ -88,7 +132,16 @@ public class SimpleLogPanelResponseHandler
    */
   @Override
   public void responseFailed(RemoteCommand cmd, String msg) {
-    if (m_Enabled && (m_Log != null))
+    if (!m_Enabled)
+      return;
+
+    if (m_Log != null)
       m_Log.append(LoggingLevel.SEVERE, "Failed response: " + OptionUtils.getCommandLine(cmd) + "\nMessage: " + msg + "\n" + cmd);
+
+    // error message?
+    if (cmd instanceof RemoteCommandWithErrorMessage) {
+      if (((RemoteCommandWithErrorMessage) cmd).hasErrorMessage())
+	displayErrorMessage((RemoteCommandWithErrorMessage) cmd);
+    }
   }
 }

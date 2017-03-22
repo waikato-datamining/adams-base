@@ -62,6 +62,9 @@ public class AdvancedTab
 
     private static final long serialVersionUID = -3925270844782740556L;
 
+    /** the tab. */
+    protected AbstractRemoteControlCenterTab m_Tab;
+
     /** the inspection panel to use. */
     protected InspectionPanel m_InspectionPanel;
 
@@ -73,6 +76,24 @@ public class AdvancedTab
     @Override
     public String globalInfo() {
       return "Specialized response handler that populates an InspectionPanel.";
+    }
+
+    /**
+     * Sets the tab this handler belongs to.
+     *
+     * @param value	the tab
+     */
+    public void setTab(AbstractRemoteControlCenterTab value) {
+      m_Tab = value;
+    }
+
+    /**
+     * Returns the tab this handler belongs to.
+     *
+     * @return		the tab, null if none set
+     */
+    public AbstractRemoteControlCenterTab getTab() {
+      return m_Tab;
     }
 
     /**
@@ -124,6 +145,13 @@ public class AdvancedTab
       if (m_InspectionPanel == null)
 	return;
       m_InspectionPanel.setCurrent(null);
+
+      // display error
+      if (m_Tab == null)
+	GUIHelper.showErrorMessage(
+	  GUIHelper.getParentComponent(m_InspectionPanel), msg, cmd.getClass().getName());
+      else
+	m_Tab.getOwner().logError(msg, cmd.getClass().getName());
     }
   }
 
@@ -220,7 +248,9 @@ public class AdvancedTab
   @Override
   protected void finishInit() {
     super.finishInit();
+    m_ResponseLogger.setTab(this);
     m_ResponseLogger.setLog(m_Log);
+    m_InspectionHandler.setTab(this);
     m_InspectionHandler.setInspectionPanel(m_Results);
   }
 

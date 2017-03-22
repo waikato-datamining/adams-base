@@ -98,6 +98,7 @@ public class LogTab
     super.finishInit();
 
     m_RequestLogger.setLog(getRequestLog());
+    m_ResponseLogger.setTab(this);
     m_ResponseLogger.setLog(getResponseLog());
   }
 
