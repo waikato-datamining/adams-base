@@ -22,6 +22,7 @@ package adams.scripting.command.flow;
 
 import adams.core.Pausable;
 import adams.flow.control.Flow;
+import adams.flow.control.RunningFlowsRegistry;
 import adams.flow.core.Actor;
 import adams.scripting.command.AbstractRemoteCommandOnFlowWithResponse;
 
@@ -43,7 +44,7 @@ public class SendFlowControlCommand
     PAUSE,
     RESUME,
     STOP,
-    START,
+    RESTART,
   }
 
   /** response: success. */
@@ -61,9 +62,6 @@ public class SendFlowControlCommand
   /** response: already running. */
   public final static String RESPONSE_ALREADY_RUNNING = "Already running";
 
-  /** response: already stopped. */
-  public final static String RESPONSE_ALREADY_STOPPED = "Already stopped";
-
   /** response: root not a Flow actor. */
   public final static String RESPONSE_ROOT_NOT_FLOW = "Root is not a Flow actor";
 
@@ -80,7 +78,7 @@ public class SendFlowControlCommand
    */
   @Override
   public String globalInfo() {
-    return "Stops the running/registered flow using its ID.";
+    return "Sends a control command to the running/registered flow using its ID.";
   }
 
   /**
@@ -232,29 +230,25 @@ public class SendFlowControlCommand
 	  break;
 
 	case STOP:
-	  if (flow.isStopped()) {
-	    m_Response = RESPONSE_ALREADY_STOPPED;
-	  }
-	  else {
-	    flow.stopExecution();
-	    flow.wrapUp();
-	    flow.cleanUp();
-	    m_Response = RESPONSE_SUCCESS;
-	  }
+	  flow.stopExecution();
+	  flow.wrapUp();
+	  flow.cleanUp();
+	  m_Response = RESPONSE_SUCCESS;
 	  break;
 
-	case START:
-	  if (!flow.isStopped()) {
-	    m_Response = RESPONSE_ALREADY_RUNNING;
+	case RESTART:
+	  if (!flow.isStopped())
+	    flow.stopExecution();
+	  m_ErrorMessage = flow.setUp();
+	  if (m_ErrorMessage == null)
+	    m_ErrorMessage = flow.execute();
+	  if (m_ErrorMessage == null) {
+	    m_Response = RESPONSE_SUCCESS;
+	    // make sure flow is reregistered
+	    RunningFlowsRegistry.getSingleton().addFlow(flow);
 	  }
 	  else {
-	    m_ErrorMessage = flow.setUp();
-	    if (m_ErrorMessage == null)
-	      m_ErrorMessage = flow.execute();
-	    if (m_ErrorMessage == null)
-	      m_Response = RESPONSE_SUCCESS;
-	    else
-	      m_Response = RESPONSE_FAILED;
+	    m_Response = RESPONSE_FAILED;
 	  }
 	  break;
 
