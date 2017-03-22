@@ -15,7 +15,7 @@
 
 /**
  * MultiHandler.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.scripting.responsehandler;
@@ -77,6 +77,22 @@ public class MultiHandler
    */
   public ResponseHandler[] getHandlers() {
     return m_Handlers;
+  }
+
+  /**
+   * Adds the handler to use.
+   *
+   * @param value	the handler to add
+   */
+  public void addHandler(ResponseHandler value) {
+    ResponseHandler[]	handlers;
+    int			i;
+
+    handlers = new ResponseHandler[m_Handlers.length + 1];
+    for (i = 0; i < m_Handlers.length; i++)
+      handlers[i] = m_Handlers[i];
+    handlers[handlers.length - 1] = value;
+    setHandlers(handlers);
   }
 
   /**
