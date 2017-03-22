@@ -21,6 +21,7 @@
 package adams.gui.tools.remotecontrolcenter.panels;
 
 import adams.core.base.BaseHostname;
+import adams.core.net.PortManager;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.gui.core.BaseObjectTextField;
 import adams.gui.core.GUIHelper;
@@ -28,6 +29,7 @@ import adams.gui.core.SpreadSheetTable;
 import adams.gui.core.SpreadSheetTableModel;
 import adams.gui.event.PopupMenuListener;
 import adams.scripting.command.RemoteCommand;
+import adams.scripting.command.RemoteCommandWithResponse;
 import adams.scripting.command.basic.StopEngine;
 import adams.scripting.command.basic.StopEngine.EngineType;
 import adams.scripting.command.flow.ListFlows;
@@ -224,19 +226,18 @@ public abstract class AbstractRemoteFlowTab
   /**
    * Returns new instance of a configured scripting engine.
    *
-   * @return		the engine
+   * @param responseHandler	the handler to use for intercepting the result, can be null
+   * @return			the engine
    */
-  protected DefaultScriptingEngine configureEngine() {
+  protected DefaultScriptingEngine configureEngine(ResponseHandler responseHandler) {
     DefaultScriptingEngine 				result;
-    BaseHostname					local;
     adams.scripting.requesthandler.MultiHandler		multiRequest;
     adams.scripting.responsehandler.MultiHandler	multiResponse;
     SimpleLogPanelRequestHandler			simpleRequest;
     SimpleLogPanelResponseHandler 			simpleResponse;
 
-    local  = m_TextLocal.getObject();
     result = new DefaultScriptingEngine();
-    result.setPort(local.portValue());
+    result.setPort(PortManager.getSingleton().next(result.getClass(), DEFAULT_PORT));
 
     // request
     simpleRequest = new SimpleLogPanelRequestHandler();
@@ -255,18 +256,22 @@ public abstract class AbstractRemoteFlowTab
     multiResponse.setHandlers(new ResponseHandler[]{
       new adams.scripting.responsehandler.LoggingHandler(),
       simpleResponse,
-      new FlowListResponseHandler(this)
     });
+    if (responseHandler != null)
+      multiResponse.addHandler(responseHandler);
     result.setResponseHandler(multiResponse);
 
     return result;
   }
 
   /**
-   * Refreshes the list of flows.
+   * Sends the specified command and the response handler for intercepting
+   * the result.
+   *
+   * @param cmd			the command to send
+   * @param responseHandler 	the response handler for intercepting the result
    */
-  protected void refreshFlows() {
-    ListFlows 			list;
+  public void sendCommand(RemoteCommandWithResponse cmd, ResponseHandler responseHandler) {
     StopEngine			stop;
     DefaultConnection		conn;
     DefaultScriptingEngine	engine;
@@ -279,20 +284,20 @@ public abstract class AbstractRemoteFlowTab
     remote = m_TextRemote.getObject();
 
     // engine
-    engine = configureEngine();
+    engine = configureEngine(responseHandler);
     new Thread(() -> engine.execute()).start();
 
     // command
-    list     = new ListFlows();
     connResp = new DefaultConnection();
-    connResp.setPort(local.portValue());
-    list.setResponseConnection(connResp);
+    connResp.setHost(local.hostnameValue());
+    connResp.setPort(engine.getPort());
+    cmd.setResponseConnection(connResp);
 
     // send command
     conn = new DefaultConnection();
     conn.setHost(remote.hostnameValue());
     conn.setPort(remote.portValue());
-    msg  = conn.sendRequest(list);
+    msg  = conn.sendRequest(cmd);
     if (msg != null) {
       engine.stopExecution();
       getOwner().logError("Failed to refresh flow list:\n" + msg, "Scripting error");
@@ -304,6 +309,13 @@ public abstract class AbstractRemoteFlowTab
       stop.setResponseConnection(connResp);
       conn.sendRequest(stop);
     }
+  }
+
+  /**
+   * Refreshes the list of flows.
+   */
+  protected void refreshFlows() {
+    sendCommand(new ListFlows(), new FlowListResponseHandler(this));
   }
 
   /**

@@ -154,8 +154,7 @@ public class RemoteFlowCommandsTab
     remote = m_TextRemote.getObject();
 
     // engine
-    engine = configureEngine();
-    ((adams.scripting.responsehandler.MultiHandler) engine.getResponseHandler()).addHandler(m_ResponseLogger);
+    engine = configureEngine(m_ResponseLogger);
     new Thread(() -> engine.execute()).start();
 
     ids      = getSelectedFlowIDs();
