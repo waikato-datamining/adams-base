@@ -41,6 +41,9 @@ public abstract class AbstractCommandWithResponse
 
   private static final long serialVersionUID = -2803551461382517312L;
 
+  /** the key for the error message (optional). */
+  String KEY_ERRORMESSAGE = "ErrorMessage";
+
   /** the response connection. */
   protected Connection m_ResponseConnection;
 
@@ -116,6 +119,24 @@ public abstract class AbstractCommandWithResponse
   }
 
   /**
+   * Parses the header information.
+   *
+   * @param header	the header
+   * @return		null if successfully parsed, otherwise error message
+   */
+  public String parse(Properties header) {
+    String	result;
+
+    result = super.parse(header);
+    if (result == null) {
+      if (header.hasKey(KEY_ERRORMESSAGE))
+	m_ErrorMessage = header.getProperty(KEY_ERRORMESSAGE);
+    }
+
+    return null;
+  }
+
+  /**
    * Assembles the response header.
    *
    * @return		the response header
@@ -154,6 +175,8 @@ public abstract class AbstractCommandWithResponse
 
     // payload
     prepareResponsePayload();
+    if (hasErrorMessage())
+      header.setProperty(KEY_ERRORMESSAGE, getErrorMessage());
     payload = getResponsePayload();
     if (payload.length > 0)
       payload = GzipUtils.compress(payload);
