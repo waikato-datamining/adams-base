@@ -33,6 +33,7 @@ import adams.scripting.command.basic.StopEngine.EngineType;
 import adams.scripting.command.flow.GetFlow;
 import adams.scripting.connection.DefaultConnection;
 import adams.scripting.engine.DefaultScriptingEngine;
+import adams.scripting.responsehandler.SimpleLogPanelResponseHandler;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;

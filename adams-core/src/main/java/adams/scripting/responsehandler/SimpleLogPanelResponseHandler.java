@@ -18,15 +18,15 @@
  * Copyright (C) 2017 University of Waikato, Hamilton, NZ
  */
 
-package adams.gui.tools.remotecontrolcenter.panels;
+package adams.scripting.responsehandler;
 
 import adams.core.logging.LoggingLevel;
 import adams.core.option.OptionUtils;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.SimpleLogPanel;
+import adams.gui.tools.remotecontrolcenter.panels.AbstractRemoteControlCenterTab;
 import adams.scripting.command.RemoteCommand;
 import adams.scripting.command.RemoteCommandWithErrorMessage;
-import adams.scripting.responsehandler.AbstractResponseHandler;
 
 /**
  * For logging responses.

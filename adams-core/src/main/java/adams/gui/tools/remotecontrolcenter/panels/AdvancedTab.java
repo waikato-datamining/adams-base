@@ -35,6 +35,7 @@ import adams.scripting.command.basic.Ping;
 import adams.scripting.connection.Connection;
 import adams.scripting.connection.DefaultConnection;
 import adams.scripting.responsehandler.AbstractResponseHandler;
+import adams.scripting.responsehandler.SimpleLogPanelResponseHandler;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;

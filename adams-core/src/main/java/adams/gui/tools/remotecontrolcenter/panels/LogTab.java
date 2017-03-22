@@ -24,7 +24,9 @@ import adams.gui.core.BaseTabbedPane;
 import adams.gui.core.SimpleLogPanel;
 import adams.gui.event.RemoteScriptingEngineUpdateEvent;
 import adams.scripting.requesthandler.AbstractRequestHandler;
+import adams.scripting.requesthandler.SimpleLogPanelRequestHandler;
 import adams.scripting.responsehandler.AbstractResponseHandler;
+import adams.scripting.responsehandler.SimpleLogPanelResponseHandler;
 
 import java.awt.BorderLayout;
 
