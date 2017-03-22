@@ -791,6 +791,27 @@ public class TreeOperations
       result.actors[i]     = result.actorNodes[i].getActor();
     }
 
+    // restrict actor types
+    result.allowStandalones  = true;
+    result.allowSources      = true;
+    result.allowTransformers = true;
+    result.allowSinks        = true;
+    switch (position) {
+      case HERE:
+	result.allowSinks        = false;
+	result.allowStandalones  = ActorUtils.isStandalone(result.actors[result.position]) || ActorUtils.isSource(result.actors[result.position]);
+	result.allowSources      = !ActorUtils.isSource(result.actors[result.position]);
+	result.allowTransformers = !ActorUtils.isSource(result.actors[result.position]) && !ActorUtils.isStandalone(result.actors[result.position]);;
+        break;
+      case AFTER:
+	result.allowStandalones = ActorUtils.isStandalone(result.actors[result.position - 1]);
+	result.allowSources     = ActorUtils.isStandalone(result.actors[result.position - 1]);
+	result.allowSinks       = !ActorUtils.isStandalone(result.actors[result.position - 1]);
+        break;
+      case BENEATH:
+        break;
+    }
+
     return result;
   }
 

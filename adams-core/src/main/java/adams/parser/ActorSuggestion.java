@@ -15,12 +15,13 @@
 
 /**
  * ActorSuggestion.java
- * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.parser;
 
 import adams.flow.control.Flow;
 import adams.flow.core.Actor;
+import adams.flow.core.ActorUtils;
 import adams.gui.flow.tree.Node;
 import adams.parser.actorsuggestion.Parser;
 import adams.parser.actorsuggestion.Scanner;
@@ -156,6 +157,18 @@ public class ActorSuggestion
 
     /** the actor nodes on the same level. */
     public Node[] actorNodes;
+
+    /** whether standalones are allowed. */
+    public boolean allowStandalones;
+
+    /** whether sources are allowed. */
+    public boolean allowSources;
+
+    /** whether transformers are allowed. */
+    public boolean allowTransformers;
+
+    /** whether sinks are allowed. */
+    public boolean allowSinks;
   }
 
   /** the parent of the proposed actor. */
@@ -472,6 +485,14 @@ public class ActorSuggestion
       suggestion.setExpression(expr[i]);
       actor = suggestion.evaluate();
       if ((actor == null) || (result.contains(actor)))
+	continue;
+      if (ActorUtils.isStandalone(actor) && !data.allowStandalones)
+	continue;
+      if (ActorUtils.isSource(actor) && !data.allowSources)
+	continue;
+      if (ActorUtils.isTransformer(actor) && !data.allowTransformers)
+	continue;
+      if (ActorUtils.isSink(actor) && !data.allowSinks)
 	continue;
       result.add(actor);
     }
