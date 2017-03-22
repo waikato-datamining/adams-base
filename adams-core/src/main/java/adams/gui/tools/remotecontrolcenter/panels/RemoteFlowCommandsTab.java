@@ -86,7 +86,7 @@ public class RemoteFlowCommandsTab
     super.initGUI();
 
     panelAll = new JPanel(new BorderLayout());
-    add(panelAll, BorderLayout.SOUTH);
+    m_SplitPane.setBottomComponent(panelAll);
 
     panelCmd = new JPanel(new FlowLayout(FlowLayout.LEFT));
     panelAll.add(panelCmd, BorderLayout.NORTH);
@@ -185,5 +185,13 @@ public class RemoteFlowCommandsTab
 	"Failed to execute command for ID(s): " + Utils.arrayToString(ids) + "!\n"
 	  + errors, "Scripting error");
     }
+  }
+
+  /**
+   * Updates the state of the buttons.
+   */
+  protected void updateButtons() {
+    super.updateButtons();
+    m_ButtonExecute.setEnabled(m_TableFlows.getSelectedRowCount() > 0);
   }
 }

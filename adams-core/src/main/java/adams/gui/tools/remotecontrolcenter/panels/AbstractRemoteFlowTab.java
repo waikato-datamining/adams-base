@@ -24,6 +24,7 @@ import adams.core.base.BaseHostname;
 import adams.core.net.PortManager;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.gui.core.BaseObjectTextField;
+import adams.gui.core.BaseSplitPane;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.SpreadSheetTable;
 import adams.gui.core.SpreadSheetTableModel;
@@ -140,6 +141,9 @@ public abstract class AbstractRemoteFlowTab
   /** the default port to use for refreshing flows. */
   public final static int DEFAULT_PORT = 21345;
 
+  /** the split pane. */
+  protected BaseSplitPane m_SplitPane;
+
   /** the panel for the connection/table. */
   protected JPanel m_PanelFlows;
 
@@ -168,8 +172,13 @@ public abstract class AbstractRemoteFlowTab
 
     setLayout(new BorderLayout());
 
+    m_SplitPane = new BaseSplitPane(BaseSplitPane.VERTICAL_SPLIT);
+    m_SplitPane.setDividerLocation(200);
+    m_SplitPane.setResizeWeight(0.5);
+    add(m_SplitPane, BorderLayout.CENTER);
+
     m_PanelFlows = new JPanel(new BorderLayout());
-    add(m_PanelFlows, getPlacement());
+    m_SplitPane.setTopComponent(m_PanelFlows);
 
     panelConn = new JPanel(new FlowLayout(FlowLayout.LEFT));
     m_PanelFlows.add(panelConn, BorderLayout.NORTH);
@@ -205,13 +214,12 @@ public abstract class AbstractRemoteFlowTab
   }
 
   /**
-   * Returns the placement for the GOE connection and flow table.
-   *
-   * @return		the placement
-   * @see		BorderLayout
+   * Finalizes the initialization.
    */
-  protected String getPlacement() {
-    return BorderLayout.CENTER;
+  @Override
+  protected void finishInit() {
+    super.finishInit();
+    updateButtons();
   }
 
   /**
@@ -356,5 +364,14 @@ public abstract class AbstractRemoteFlowTab
    */
   @Override
   public void valueChanged(ListSelectionEvent e) {
+    updateButtons();
+  }
+
+  /**
+   * Updates the state of the buttons.
+   * <br>
+   * Default implementation does nothing.
+   */
+  protected void updateButtons() {
   }
 }
