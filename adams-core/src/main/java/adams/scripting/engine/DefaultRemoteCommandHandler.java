@@ -64,10 +64,14 @@ public class DefaultRemoteCommandHandler
       cmd.handleRequest(m_Owner, m_Owner.getRequestHandler());
     }
     else {
-      if (cmd instanceof RemoteCommandWithResponse)
+      if (cmd instanceof RemoteCommandWithResponse) {
+	if (((RemoteCommandWithResponse) cmd).hasErrorMessage())
+	  getLogger().severe(cmd.getClass().getName() + ": " + ((RemoteCommandWithResponse) cmd).getErrorMessage());
 	((RemoteCommandWithResponse) cmd).handleResponse(m_Owner, m_Owner.getResponseHandler());
-      else
+      }
+      else {
 	m_Owner.getResponseHandler().responseFailed(cmd, "Command does not support response handling!");
+      }
     }
 
     return null;

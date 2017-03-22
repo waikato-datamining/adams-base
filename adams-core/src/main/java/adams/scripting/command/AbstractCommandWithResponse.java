@@ -44,6 +44,9 @@ public abstract class AbstractCommandWithResponse
   /** the response connection. */
   protected Connection m_ResponseConnection;
 
+  /** the error message. */
+  protected String m_ErrorMessage;
+
   /**
    * Adds options to the internal list of options.
    */
@@ -95,6 +98,24 @@ public abstract class AbstractCommandWithResponse
   }
 
   /**
+   * Returns whether an error message is available.
+   *
+   * @return		true if an error message available
+   */
+  public boolean hasErrorMessage() {
+    return (m_ErrorMessage != null);
+  }
+
+  /**
+   * Returns the error message (if any).
+   *
+   * @return		the error message, null if none availabe
+   */
+  public String getErrorMessage() {
+    return m_ErrorMessage;
+  }
+
+  /**
    * Assembles the response header.
    *
    * @return		the response header
@@ -125,6 +146,8 @@ public abstract class AbstractCommandWithResponse
   public String assembleResponse() {
     Properties		header;
     byte[]		payload;
+
+    m_ErrorMessage = null;
 
     // header
     header = assembleResponseHeader();
