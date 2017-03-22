@@ -197,7 +197,7 @@ public class PortManager
     else {
       i       = m_Ports.indexOf(start);
       current = start;
-      while ((i < m_Ports.size()) && (current < MAX_PORT)) {
+      while ((i < m_Ports.size() - 1) && (current < MAX_PORT)) {
 	i++;
 	prior   = current;
 	current = m_Ports.get(i);
@@ -206,6 +206,10 @@ public class PortManager
 	  result = prior + 1;
 	  break;
 	}
+      }
+      if (result == NO_PORT) {
+	if (current < MAX_PORT)
+	  result = current + 1;
       }
     }
 
