@@ -279,23 +279,34 @@ public class GetFlow
     if (m_ID == -1) {
       if (RunningFlowsRegistry.getSingleton().size() == 1)
         m_Flow = RunningFlowsRegistry.getSingleton().flows()[0];
+      else
+	m_ErrorMessage = "Using ID '-1' is only allowed if there is just a single flow registered (registered: " + RunningFlowsRegistry.getSingleton().size() + ")";
     }
     else {
       m_Flow = RunningFlowsRegistry.getSingleton().getFlow(m_ID);
+      if (m_Flow == null)
+	m_ErrorMessage = "Failed to retrieve flow for ID " + m_ID + "!";
     }
 
     if ((m_Flow != null) && m_LoadFromDisk) {
       flowFile = m_Flow.getVariables().get(ActorUtils.FLOW_FILENAME_LONG);
       if (flowFile == null) {
-	getLogger().severe("Variable '" + ActorUtils.FLOW_FILENAME_LONG + "' not set, cannot load from disk!");
+	m_ErrorMessage = "Variable '" + ActorUtils.FLOW_FILENAME_LONG + "' not set, cannot load from disk!";
       }
       else {
-	if (FileUtils.fileExists(flowFile))
+	if (FileUtils.fileExists(flowFile)) {
 	  m_Flow = ActorUtils.read(flowFile);
-	else
-	  getLogger().severe("Failed to load flow from  '" + flowFile + "'!");
+	  if (m_Flow == null)
+	    m_ErrorMessage = "Failed to load flow from  '" + flowFile + "'!";
+	}
+	else {
+	  m_ErrorMessage = "Flow '" + flowFile + "' does not exist!";
+	}
       }
     }
+
+    if (m_ErrorMessage != null)
+      getLogger().severe(m_ErrorMessage);
   }
 
   /**
