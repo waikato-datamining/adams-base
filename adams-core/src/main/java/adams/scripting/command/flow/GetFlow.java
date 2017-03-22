@@ -20,16 +20,13 @@
 
 package adams.scripting.command.flow;
 
-import adams.core.io.FileUtils;
 import adams.core.io.FileWriter;
 import adams.core.io.PlaceholderFile;
 import adams.data.io.input.DefaultFlowReader;
 import adams.data.io.output.DefaultFlowWriter;
-import adams.flow.control.RunningFlowsRegistry;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorUtils;
-import adams.scripting.command.AbstractCommandWithResponse;
-import adams.scripting.command.RemoteCommandOnFlow;
+import adams.scripting.command.AbstractRemoteCommandOnFlowWithResponse;
 import adams.scripting.engine.RemoteScriptingEngine;
 import adams.scripting.responsehandler.ResponseHandler;
 
@@ -43,13 +40,10 @@ import java.io.StringWriter;
  * @version $Revision$
  */
 public class GetFlow
-  extends AbstractCommandWithResponse
-  implements RemoteCommandOnFlow, FileWriter {
+  extends AbstractRemoteCommandOnFlowWithResponse
+  implements FileWriter {
 
   private static final long serialVersionUID = -3350680106789169314L;
-
-  /** the ID of the flow to retrieve. */
-  protected Integer m_ID;
 
   /** whether to load the flow from disk. */
   protected boolean m_LoadFromDisk;
@@ -78,10 +72,6 @@ public class GetFlow
     super.defineOptions();
 
     m_OptionManager.add(
-      "id", "ID",
-      -1, -1, null);
-
-    m_OptionManager.add(
       "load-from-disk", "loadFromDisk",
       true);
 
@@ -98,25 +88,6 @@ public class GetFlow
     super.initialize();
 
     m_Flow = null;
-  }
-
-  /**
-   * Sets the ID of the flow to get.
-   *
-   * @param value	the ID, -1 if to retrieve the only one
-   */
-  public void setID(int value) {
-    m_ID = value;
-    reset();
-  }
-
-  /**
-   * Returns the ID of the flow to get.
-   *
-   * @return		the ID, -1 if to retrieve the only one
-   */
-  public int getID() {
-    return m_ID;
   }
 
   /**
@@ -272,41 +243,8 @@ public class GetFlow
    */
   @Override
   protected void prepareResponsePayload() {
-    String	flowFile;
-
     super.prepareResponsePayload();
-
-    if (m_ID == -1) {
-      if (RunningFlowsRegistry.getSingleton().size() == 1)
-        m_Flow = RunningFlowsRegistry.getSingleton().flows()[0];
-      else
-	m_ErrorMessage = "Using ID '-1' is only allowed if there is just a single flow registered (registered: " + RunningFlowsRegistry.getSingleton().size() + ")";
-    }
-    else {
-      m_Flow = RunningFlowsRegistry.getSingleton().getFlow(m_ID);
-      if (m_Flow == null)
-	m_ErrorMessage = "Failed to retrieve flow for ID " + m_ID + "!";
-    }
-
-    if ((m_Flow != null) && m_LoadFromDisk) {
-      flowFile = m_Flow.getVariables().get(ActorUtils.FLOW_FILENAME_LONG);
-      if (flowFile == null) {
-	m_ErrorMessage = "Variable '" + ActorUtils.FLOW_FILENAME_LONG + "' not set, cannot load from disk!";
-      }
-      else {
-	if (FileUtils.fileExists(flowFile)) {
-	  m_Flow = ActorUtils.read(flowFile);
-	  if (m_Flow == null)
-	    m_ErrorMessage = "Failed to load flow from  '" + flowFile + "'!";
-	}
-	else {
-	  m_ErrorMessage = "Flow '" + flowFile + "' does not exist!";
-	}
-      }
-    }
-
-    if (m_ErrorMessage != null)
-      getLogger().severe(m_ErrorMessage);
+    m_Flow = retrieveFlow(m_LoadFromDisk);
   }
 
   /**
