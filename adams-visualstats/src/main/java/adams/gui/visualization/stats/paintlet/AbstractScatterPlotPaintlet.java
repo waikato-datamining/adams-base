@@ -15,7 +15,7 @@
 
 /*
  * AbstractScatterPlotPaintlet.java
- * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.stats.paintlet;
@@ -25,8 +25,8 @@ import adams.data.spreadsheet.SpreadSheetUtils;
 import adams.gui.core.AntiAliasingSupporter;
 import adams.gui.core.GUIHelper;
 import adams.gui.event.PaintEvent.PaintMoment;
-import adams.gui.visualization.core.AbstractColorProvider;
 import adams.gui.visualization.core.AxisPanel;
+import adams.gui.visualization.core.ColorProvider;
 import adams.gui.visualization.core.DefaultColorProvider;
 import adams.gui.visualization.core.plot.Axis;
 import adams.gui.visualization.core.plot.HitDetectorSupporter;
@@ -74,7 +74,7 @@ public abstract class AbstractScatterPlotPaintlet
   protected Map<String,Color> m_ColorMapping;
 
   /** the color provider for the coloring. */
-  protected AbstractColorProvider m_ColorProvider;
+  protected ColorProvider m_ColorProvider;
 
   /** y axis of plot */
   protected AxisPanel m_AxisLeft;
@@ -164,7 +164,7 @@ public abstract class AbstractScatterPlotPaintlet
    *
    * @param value	the provider
    */
-  public void setColorProvider(AbstractColorProvider value) {
+  public void setColorProvider(ColorProvider value) {
     m_ColorProvider = value;
     memberChanged();
   }
@@ -174,7 +174,7 @@ public abstract class AbstractScatterPlotPaintlet
    *
    * @return		the provider
    */
-  public AbstractColorProvider getColorProvider() {
+  public ColorProvider getColorProvider() {
     return m_ColorProvider;
   }
 

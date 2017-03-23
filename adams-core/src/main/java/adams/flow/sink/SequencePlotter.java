@@ -51,8 +51,8 @@ import adams.flow.sink.sequenceplotter.SequencePlotterPanel;
 import adams.flow.sink.sequenceplotter.SimplePlotUpdater;
 import adams.gui.core.BasePanel;
 import adams.gui.core.ExtensionFileFilter;
-import adams.gui.visualization.core.AbstractColorProvider;
 import adams.gui.visualization.core.AxisPanelOptions;
+import adams.gui.visualization.core.ColorProvider;
 import adams.gui.visualization.core.DefaultColorProvider;
 import adams.gui.visualization.core.axis.SimpleTickGenerator;
 import adams.gui.visualization.core.axis.Type;
@@ -297,10 +297,10 @@ public class SequencePlotter
   protected AbstractErrorPaintlet m_ErrorPaintlet;
 
   /** the color provider to use. */
-  protected AbstractColorProvider m_ColorProvider;
+  protected ColorProvider m_ColorProvider;
 
   /** the color provider to use for the overlays. */
-  protected AbstractColorProvider m_OverlayColorProvider;
+  protected ColorProvider m_OverlayColorProvider;
 
   /** the mouse click action. */
   protected MouseClickAction m_MouseClickAction;
@@ -693,7 +693,7 @@ public class SequencePlotter
    *
    * @param value 	the color provider
    */
-  public void setColorProvider(AbstractColorProvider value) {
+  public void setColorProvider(ColorProvider value) {
     m_ColorProvider = value;
     reset();
   }
@@ -703,7 +703,7 @@ public class SequencePlotter
    *
    * @return 		the color provider
    */
-  public AbstractColorProvider getColorProvider() {
+  public ColorProvider getColorProvider() {
     return m_ColorProvider;
   }
 
@@ -722,7 +722,7 @@ public class SequencePlotter
    *
    * @param value 	the color provider
    */
-  public void setOverlayColorProvider(AbstractColorProvider value) {
+  public void setOverlayColorProvider(ColorProvider value) {
     m_OverlayColorProvider = value;
     reset();
   }
@@ -732,7 +732,7 @@ public class SequencePlotter
    *
    * @return 		the color provider
    */
-  public AbstractColorProvider getOverlayColorProvider() {
+  public ColorProvider getOverlayColorProvider() {
     return m_OverlayColorProvider;
   }
 

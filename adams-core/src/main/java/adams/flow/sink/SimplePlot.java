@@ -15,7 +15,7 @@
 
 /*
  * SimplePlot.java
- * Copyright (C) 2015-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -45,8 +45,8 @@ import adams.flow.sink.sequenceplotter.SequencePlotterPanel;
 import adams.flow.sink.sequenceplotter.SimplePlotUpdater;
 import adams.gui.core.BasePanel;
 import adams.gui.core.ExtensionFileFilter;
-import adams.gui.visualization.core.AbstractColorProvider;
 import adams.gui.visualization.core.AxisPanelOptions;
+import adams.gui.visualization.core.ColorProvider;
 import adams.gui.visualization.core.DefaultColorProvider;
 import adams.gui.visualization.core.axis.FancyTickGenerator;
 import adams.gui.visualization.core.axis.Type;
@@ -174,7 +174,7 @@ import java.util.HashMap;
  * &nbsp;&nbsp;&nbsp;default: adams.flow.sink.sequenceplotter.NullClickAction
  * </pre>
  * 
- * <pre>-color-provider &lt;adams.gui.visualization.core.AbstractColorProvider&gt; (property: colorProvider)
+ * <pre>-color-provider &lt;adams.gui.visualization.core.ColorProvider&gt; (property: colorProvider)
  * &nbsp;&nbsp;&nbsp;The color provider in use for generating the colors for the various plots.
  * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.core.DefaultColorProvider
  * </pre>
@@ -230,7 +230,7 @@ public class SimplePlot
   protected XYSequencePaintlet m_OverlayPaintlet;
 
   /** the color provider to use. */
-  protected AbstractColorProvider m_ColorProvider;
+  protected ColorProvider m_ColorProvider;
 
   /** the mouse click action. */
   protected MouseClickAction m_MouseClickAction;
@@ -464,7 +464,7 @@ public class SimplePlot
    *
    * @param value 	the color provider
    */
-  public void setColorProvider(AbstractColorProvider value) {
+  public void setColorProvider(ColorProvider value) {
     m_ColorProvider = value;
     reset();
   }
@@ -474,7 +474,7 @@ public class SimplePlot
    *
    * @return 		the color provider
    */
-  public AbstractColorProvider getColorProvider() {
+  public ColorProvider getColorProvider() {
     return m_ColorProvider;
   }
 

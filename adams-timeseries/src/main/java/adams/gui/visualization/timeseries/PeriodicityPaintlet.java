@@ -15,11 +15,18 @@
 
 /*
  * PeriodicityPaintlet.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.timeseries;
 
+import adams.data.timeseries.PeriodicityHelper;
+import adams.data.timeseries.PeriodicityType;
+import adams.gui.core.GUIHelper;
+import adams.gui.event.PaintEvent.PaintMoment;
+import adams.gui.visualization.core.AxisPanel;
+import adams.gui.visualization.core.ColorProvider;
+import adams.gui.visualization.core.plot.Axis;
 import gnu.trove.list.array.TDoubleArrayList;
 import gnu.trove.list.array.TIntArrayList;
 
@@ -27,14 +34,6 @@ import java.awt.Graphics;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-
-import adams.data.timeseries.PeriodicityHelper;
-import adams.data.timeseries.PeriodicityType;
-import adams.gui.core.GUIHelper;
-import adams.gui.event.PaintEvent.PaintMoment;
-import adams.gui.visualization.core.AbstractColorProvider;
-import adams.gui.visualization.core.AxisPanel;
-import adams.gui.visualization.core.plot.Axis;
 
 /**
  <!-- globalinfo-start -->
@@ -83,7 +82,7 @@ public class PeriodicityPaintlet
   protected PeriodicityType m_Periodicity;
   
   /** the color provider in use. */
-  protected AbstractColorProvider m_ColorProvider;
+  protected ColorProvider m_ColorProvider;
   
   /**
    * Returns a string describing the object.
@@ -108,7 +107,7 @@ public class PeriodicityPaintlet
 
     m_OptionManager.add(
 	    "color-provider", "colorProvider",
-	    (AbstractColorProvider) GUIHelper.getOptionHandler(getClass(), "colorProvider", new PeriodicityColorProvider()));
+	    (ColorProvider) GUIHelper.getOptionHandler(getClass(), "colorProvider", new PeriodicityColorProvider()));
   }
 
   /**
@@ -169,7 +168,7 @@ public class PeriodicityPaintlet
    *
    * @param value	the color provider
    */
-  public void setColorProvider(AbstractColorProvider value) {
+  public void setColorProvider(ColorProvider value) {
     m_ColorProvider = value;
     memberChanged();
   }
@@ -179,7 +178,7 @@ public class PeriodicityPaintlet
    *
    * @return		the color provider
    */
-  public AbstractColorProvider getColorProvider() {
+  public ColorProvider getColorProvider() {
     return m_ColorProvider;
   }
 

@@ -15,7 +15,7 @@
 
 /*
  * TimeseriesExplorer.java
- * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.timeseries;
@@ -91,7 +91,7 @@ import adams.gui.sendto.SendToActionUtils;
 import adams.gui.visualization.container.ContainerListManager;
 import adams.gui.visualization.container.ContainerTable;
 import adams.gui.visualization.container.FilterDialog;
-import adams.gui.visualization.core.AbstractColorProvider;
+import adams.gui.visualization.core.ColorProvider;
 import adams.gui.visualization.core.Paintlet;
 import adams.gui.visualization.core.axis.PeriodicityTickGenerator;
 import adams.gui.visualization.core.plot.Axis;
@@ -1193,7 +1193,7 @@ public class TimeseriesExplorer
       else
 	m_DialogColorProvider = new GenericObjectEditorDialog(getParentFrame(), true);
       m_DialogColorProvider.setTitle("Select color provider");
-      m_DialogColorProvider.getGOEEditor().setClassType(AbstractColorProvider.class);
+      m_DialogColorProvider.getGOEEditor().setClassType(ColorProvider.class);
       m_DialogColorProvider.getGOEEditor().setCanChangeClassInDialog(true);
     }
     
@@ -1202,7 +1202,7 @@ public class TimeseriesExplorer
     m_DialogColorProvider.setVisible(true);
     if (m_DialogColorProvider.getResult() != GenericObjectEditorDialog.APPROVE_OPTION)
       return;
-    getContainerManager().setColorProvider(((AbstractColorProvider) m_DialogColorProvider.getCurrent()).shallowCopy());
+    getContainerManager().setColorProvider(((ColorProvider) m_DialogColorProvider.getCurrent()).shallowCopy());
   }
 
   /**

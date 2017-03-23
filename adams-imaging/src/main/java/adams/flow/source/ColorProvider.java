@@ -15,12 +15,11 @@
 
 /**
  * ColorProvider.java
- * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.source;
 
 import adams.core.QuickInfoHelper;
-import adams.gui.visualization.core.AbstractColorProvider;
 import adams.gui.visualization.core.DefaultColorProvider;
 
 import java.awt.Color;
@@ -40,49 +39,49 @@ import java.awt.Color;
  *
  <!-- options-start -->
  * Valid options are: <br><br>
- * 
+ *
  * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 
+ * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to
  * &nbsp;&nbsp;&nbsp;the console (0 = off).
  * &nbsp;&nbsp;&nbsp;default: 0
  * &nbsp;&nbsp;&nbsp;minimum: 0
  * </pre>
- * 
+ *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: ColorProvider
  * </pre>
- * 
+ *
  * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
+ *
  * <pre>-skip (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
  * &nbsp;&nbsp;&nbsp;as it is.
  * </pre>
- * 
+ *
  * <pre>-stop-flow-on-error (property: stopFlowOnError)
  * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
  * &nbsp;&nbsp;&nbsp; useful for critical actors.
  * </pre>
- * 
+ *
  * <pre>-output-array (property: outputArray)
  * &nbsp;&nbsp;&nbsp;If enabled, outputs the colors in an array rather than one-by-one.
  * </pre>
- * 
+ *
  * <pre>-provider &lt;adams.gui.visualization.core.AbstractColorProvider&gt; (property: provider)
  * &nbsp;&nbsp;&nbsp;The color provider to use for generating the colors.
  * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.core.DefaultColorProvider
  * </pre>
- * 
+ *
  * <pre>-num-colors &lt;int&gt; (property: numColors)
  * &nbsp;&nbsp;&nbsp;The number of colors to generate with the color provider.
  * &nbsp;&nbsp;&nbsp;default: 10
  * &nbsp;&nbsp;&nbsp;minimum: 1
  * </pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -95,8 +94,8 @@ public class ColorProvider
   private static final long serialVersionUID = -3505768725369077351L;
 
   /** the color provider to use. */
-  protected AbstractColorProvider m_Provider;
-  
+  protected adams.gui.visualization.core.ColorProvider m_Provider;
+
   /** the number of colors to generate. */
   protected int m_NumColors;
 
@@ -109,7 +108,7 @@ public class ColorProvider
   public String globalInfo() {
     return "Uses the configured color provider to generate a number of colors.";
   }
-  
+
   /**
    * Adds options to the internal list of options.
    */
@@ -142,7 +141,7 @@ public class ColorProvider
    *
    * @param value	the provider
    */
-  public void setProvider(AbstractColorProvider value) {
+  public void setProvider(adams.gui.visualization.core.ColorProvider value) {
     m_Provider = value;
     reset();
   }
@@ -152,7 +151,7 @@ public class ColorProvider
    *
    * @return		the provider
    */
-  public AbstractColorProvider getProvider() {
+  public adams.gui.visualization.core.ColorProvider getProvider() {
     return m_Provider;
   }
 

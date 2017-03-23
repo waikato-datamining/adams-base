@@ -15,7 +15,7 @@
 
 /**
  * TranslucentColorProvider.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.core;
 
@@ -41,7 +41,7 @@ import java.awt.Color;
  * &nbsp;&nbsp;&nbsp;maximum: 255
  * </pre>
  * 
- * <pre>-provider &lt;adams.gui.visualization.core.AbstractColorProvider&gt; (property: provider)
+ * <pre>-provider &lt;adams.gui.visualization.core.ColorProvider&gt; (property: provider)
  * &nbsp;&nbsp;&nbsp;The base color provider to use.
  * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.core.DefaultColorProvider
  * </pre>
@@ -61,7 +61,7 @@ public class TranslucentColorProvider
   protected int m_Alpha;
   
   /** the base color provider. */
-  protected AbstractColorProvider m_Provider;
+  protected ColorProvider m_Provider;
   
   /**
    * Returns a string describing the object.
@@ -129,7 +129,7 @@ public class TranslucentColorProvider
    *
    * @param value	the colors to use
    */
-  public void setProvider(AbstractColorProvider value) {
+  public void setProvider(ColorProvider value) {
     m_Provider = value;
     reset();
     resetColors();
@@ -140,7 +140,7 @@ public class TranslucentColorProvider
    *
    * @return		the provider to use
    */
-  public AbstractColorProvider getProvider() {
+  public ColorProvider getProvider() {
     return m_Provider;
   }
 

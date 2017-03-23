@@ -20,12 +20,7 @@
 
 package adams.gui.visualization.core;
 
-import adams.core.base.BaseText;
-import adams.gui.visualization.core.AbstractColorProvider;
-import adams.test.TmpFile;
-
 import java.awt.Color;
-import java.io.File;
 
 /**
  * Tests the CustomColorProvider color provider.
@@ -61,7 +56,7 @@ public class CustomColorProviderTest
    *
    * @return		the setups
    */
-  protected AbstractColorProvider[] getRegressionSetups() {
+  protected ColorProvider[] getRegressionSetups() {
     CustomColorProvider[]	result;
 
     result    = new CustomColorProvider[4];

@@ -19,9 +19,6 @@
  */
 package adams.gui.visualization.core;
 
-import java.awt.Color;
-import java.util.Vector;
-
 import adams.core.CleanUpHandler;
 import adams.core.Destroyable;
 import adams.core.io.FileUtils;
@@ -31,6 +28,9 @@ import adams.test.AbstractTestHelper;
 import adams.test.AdamsTestCase;
 import adams.test.TestHelper;
 import adams.test.TmpFile;
+
+import java.awt.Color;
+import java.util.Vector;
 
 /**
  * Ancestor for color provider test cases.
@@ -67,7 +67,7 @@ public abstract class AbstractColorProviderTestCase
    * @param numColors	the number of colors to generate
    * @return		the generated colors
    */
-  protected Color[] generate(AbstractColorProvider scheme, int numColors) {
+  protected Color[] generate(ColorProvider scheme, int numColors) {
     Vector<Color>	result;
     int			i;
 
@@ -109,7 +109,7 @@ public abstract class AbstractColorProviderTestCase
    *
    * @return		the setups
    */
-  protected abstract AbstractColorProvider[] getRegressionSetups();
+  protected abstract ColorProvider[] getRegressionSetups();
 
   /**
    * Creates an output filename.
@@ -129,9 +129,9 @@ public abstract class AbstractColorProviderTestCase
     boolean			ok;
     String			regression;
     int				i;
-    AbstractColorProvider[]	setups;
+    ColorProvider[]		setups;
     int[]			numColors;
-    AbstractColorProvider	current;
+    ColorProvider		current;
     String[]			output;
     TmpFile[]			outputFiles;
 
@@ -145,7 +145,7 @@ public abstract class AbstractColorProviderTestCase
     // generate colors
     for (i = 0; i < setups.length; i++) {
       output[i] = createOutputFilename(i);
-      current   = (AbstractColorProvider) OptionUtils.shallowCopy((OptionHandler) setups[i], false);
+      current   = (ColorProvider) OptionUtils.shallowCopy((OptionHandler) setups[i], false);
       assertNotNull("Failed to create copy of color provider: " + OptionUtils.getCommandLine(setups[i]), current);
 
       processed = generate(current, numColors[i]);

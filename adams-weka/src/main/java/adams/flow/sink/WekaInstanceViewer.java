@@ -15,7 +15,7 @@
 
 /*
  * WekaInstanceViewer.java
- * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -25,7 +25,7 @@ import adams.data.report.Field;
 import adams.flow.core.Token;
 import adams.gui.core.BasePanel;
 import adams.gui.core.ExtensionFileFilter;
-import adams.gui.visualization.core.AbstractColorProvider;
+import adams.gui.visualization.core.ColorProvider;
 import adams.gui.visualization.core.DefaultColorProvider;
 import adams.gui.visualization.instance.AbstractInstancePaintlet;
 import adams.gui.visualization.instance.AbstractInstancePanelUpdater;
@@ -128,7 +128,7 @@ import java.awt.BorderLayout;
  * &nbsp;&nbsp;&nbsp;default: adams.gui.print.NullWriter
  * </pre>
  * 
- * <pre>-color-provider &lt;adams.gui.visualization.core.AbstractColorProvider&gt; (property: colorProvider)
+ * <pre>-color-provider &lt;adams.gui.visualization.core.ColorProvider&gt; (property: colorProvider)
  * &nbsp;&nbsp;&nbsp;The color provider in use for coloring the instances.
  * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.core.DefaultColorProvider
  * </pre>
@@ -169,7 +169,7 @@ public class WekaInstanceViewer
   protected InstancePanel m_InstancePanel;
 
   /** the color provider to use. */
-  protected AbstractColorProvider m_ColorProvider;
+  protected ColorProvider m_ColorProvider;
 
   /** the paintlet to use. */
   protected AbstractInstancePaintlet m_Paintlet;
@@ -248,7 +248,7 @@ public class WekaInstanceViewer
    *
    * @param value 	the color provider
    */
-  public void setColorProvider(AbstractColorProvider value) {
+  public void setColorProvider(ColorProvider value) {
     m_ColorProvider = value;
     reset();
   }
@@ -258,7 +258,7 @@ public class WekaInstanceViewer
    *
    * @return 		the color provider
    */
-  public AbstractColorProvider getColorProvider() {
+  public ColorProvider getColorProvider() {
     return m_ColorProvider;
   }
 

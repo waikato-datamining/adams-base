@@ -15,7 +15,7 @@
 
 /**
  * Histogram.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.spreadsheetviewer.chart;
 
@@ -41,8 +41,8 @@ import adams.flow.transformer.SpreadSheetPlotGenerator;
 import adams.flow.transformer.SpreadSheetRowFilter;
 import adams.flow.transformer.plotgenerator.RowWisePlotGenerator;
 import adams.flow.transformer.plotgenerator.SimplePlotGenerator;
-import adams.gui.visualization.core.AbstractColorProvider;
 import adams.gui.visualization.core.AxisPanelOptions;
+import adams.gui.visualization.core.ColorProvider;
 import adams.gui.visualization.core.DefaultColorProvider;
 import adams.gui.visualization.core.axis.FancyTickGenerator;
 import adams.gui.visualization.core.axis.SimpleTickGenerator;
@@ -104,7 +104,7 @@ import adams.gui.visualization.sequence.BarPaintlet;
  * &nbsp;&nbsp;&nbsp;default: adams.data.statistics.ArrayHistogram
  * </pre>
  * 
- * <pre>-color-provider &lt;adams.gui.visualization.core.AbstractColorProvider&gt; (property: colorProvider)
+ * <pre>-color-provider &lt;adams.gui.visualization.core.ColorProvider&gt; (property: colorProvider)
  * &nbsp;&nbsp;&nbsp;The color provider to use.
  * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.core.DefaultColorProvider
  * </pre>
@@ -156,7 +156,7 @@ public class Histogram
   protected ArrayHistogram m_Histogram;
   
   /** the color provider to use. */
-  protected AbstractColorProvider m_ColorProvider;
+  protected ColorProvider m_ColorProvider;
 
   /** the width of the bar. */
   protected int m_BarWidth;
@@ -366,7 +366,7 @@ public class Histogram
    *
    * @param value 	the color provider
    */
-  public void setColorProvider(AbstractColorProvider value) {
+  public void setColorProvider(ColorProvider value) {
     m_ColorProvider = value;
     reset();
   }
@@ -376,7 +376,7 @@ public class Histogram
    *
    * @return 		the color provider
    */
-  public AbstractColorProvider getColorProvider() {
+  public ColorProvider getColorProvider() {
     return m_ColorProvider;
   }
 

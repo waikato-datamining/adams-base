@@ -15,7 +15,7 @@
 
 /*
  * TimeseriesDisplay.java
- * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -31,7 +31,7 @@ import adams.flow.core.Token;
 import adams.flow.sink.timeseriesdisplay.AbstractPlotUpdater;
 import adams.flow.sink.timeseriesdisplay.SimplePlotUpdater;
 import adams.gui.core.BasePanel;
-import adams.gui.visualization.core.AbstractColorProvider;
+import adams.gui.visualization.core.ColorProvider;
 import adams.gui.visualization.core.DefaultColorProvider;
 import adams.gui.visualization.core.Paintlet;
 import adams.gui.visualization.core.axis.FancyTickGenerator;
@@ -157,7 +157,7 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.timeseries.DefaultTimeseriesYAxisPanelOptions -label value -tick-generator adams.gui.visualization.core.axis.FancyTickGenerator -nth-value 2 -width 60 -custom-format 0.0
  * </pre>
  * 
- * <pre>-color-provider &lt;adams.gui.visualization.core.AbstractColorProvider&gt; (property: colorProvider)
+ * <pre>-color-provider &lt;adams.gui.visualization.core.ColorProvider&gt; (property: colorProvider)
  * &nbsp;&nbsp;&nbsp;The color provider in use for generating the colors for the various plots.
  * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.core.DefaultColorProvider
  * </pre>
@@ -293,7 +293,7 @@ public class TimeseriesDisplay
   protected TimeseriesYAxisPanelOptions m_AxisY;
 
   /** the color provider to use. */
-  protected AbstractColorProvider m_ColorProvider;
+  protected ColorProvider m_ColorProvider;
   
   /** whether to show the side panel or not. */
   protected boolean m_ShowSidePanel;
@@ -528,7 +528,7 @@ public class TimeseriesDisplay
    *
    * @param value 	the color provider
    */
-  public void setColorProvider(AbstractColorProvider value) {
+  public void setColorProvider(ColorProvider value) {
     m_ColorProvider = value;
     reset();
   }
@@ -538,7 +538,7 @@ public class TimeseriesDisplay
    *
    * @return 		the color provider
    */
-  public AbstractColorProvider getColorProvider() {
+  public ColorProvider getColorProvider() {
     return m_ColorProvider;
   }
 

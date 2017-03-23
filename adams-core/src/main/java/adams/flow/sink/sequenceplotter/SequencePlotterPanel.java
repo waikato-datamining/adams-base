@@ -21,7 +21,7 @@ package adams.flow.sink.sequenceplotter;
 
 import adams.gui.core.AntiAliasingSupporter;
 import adams.gui.event.DataChangeEvent;
-import adams.gui.visualization.core.AbstractColorProvider;
+import adams.gui.visualization.core.ColorProvider;
 import adams.gui.visualization.sequence.LinePaintlet;
 import adams.gui.visualization.sequence.XYSequenceContainerManager;
 import adams.gui.visualization.sequence.XYSequencePaintlet;
@@ -257,7 +257,7 @@ public class SequencePlotterPanel
    *
    * @param value	the color provider
    */
-  public void setColorProvider(AbstractColorProvider value) {
+  public void setColorProvider(ColorProvider value) {
     getContainerManager().setColorProvider(value.shallowCopy(true));
     getMarkerContainerManager().setColorProvider(getColorProvider().shallowCopy(true));
   }
@@ -267,7 +267,7 @@ public class SequencePlotterPanel
    *
    * @return		the color provider in use
    */
-  public AbstractColorProvider getColorProvider() {
+  public ColorProvider getColorProvider() {
     return getContainerManager().getColorProvider();
   }
 
@@ -276,7 +276,7 @@ public class SequencePlotterPanel
    *
    * @param value	the color provider
    */
-  public void setOverlayColorProvider(AbstractColorProvider value) {
+  public void setOverlayColorProvider(ColorProvider value) {
     getOverlayContainerManager().setColorProvider(value.shallowCopy(true));
   }
 
@@ -285,7 +285,7 @@ public class SequencePlotterPanel
    *
    * @return		the color provider in use
    */
-  public AbstractColorProvider getOverlayColorProvider() {
+  public ColorProvider getOverlayColorProvider() {
     return getOverlayContainerManager().getColorProvider();
   }
 

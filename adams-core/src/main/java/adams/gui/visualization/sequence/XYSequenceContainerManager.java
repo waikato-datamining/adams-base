@@ -15,7 +15,7 @@
 
 /*
  * XYSequenceContainerManager.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.sequence;
@@ -29,7 +29,8 @@ import adams.gui.visualization.container.ColorContainerManager;
 import adams.gui.visualization.container.ContainerListManager;
 import adams.gui.visualization.container.NamedContainerManager;
 import adams.gui.visualization.container.VisibilityContainerManager;
-import adams.gui.visualization.core.AbstractColorProvider;
+import adams.gui.visualization.core.ColorProvider;
+import adams.gui.visualization.core.ColorProviderWithNameSupport;
 import adams.gui.visualization.core.DefaultColorProvider;
 import gnu.trove.list.array.TIntArrayList;
 
@@ -45,7 +46,8 @@ import java.util.List;
  */
 public class XYSequenceContainerManager
   extends AbstractContainerManager<XYSequenceContainer>
-  implements VisibilityContainerManager<XYSequenceContainer>, NamedContainerManager, ColorContainerManager {
+  implements VisibilityContainerManager<XYSequenceContainer>, NamedContainerManager,
+             ColorContainerManager<XYSequenceContainer> {
 
   /** for serialization. */
   private static final long serialVersionUID = -8391985519481058665L;
@@ -54,7 +56,7 @@ public class XYSequenceContainerManager
   protected ContainerListManager m_Owner;
 
   /** the color provider for managing the colors. */
-  protected AbstractColorProvider m_ColorProvider;
+  protected ColorProvider m_ColorProvider;
   
   /**
    * Initializes the manager.
@@ -85,12 +87,12 @@ public class XYSequenceContainerManager
    *
    * @param value	the color provider
    */
-  public synchronized void setColorProvider(AbstractColorProvider value) {
+  public synchronized void setColorProvider(ColorProvider value) {
     int		i;
     
     m_ColorProvider = value;
     for (i = 0; i < count(); i++)
-      get(i).setColor(getNextColor());
+      get(i).setColor(getColor(get(i)));
   }
 
   /**
@@ -98,17 +100,21 @@ public class XYSequenceContainerManager
    *
    * @return		the color provider in use
    */
-  public AbstractColorProvider getColorProvider() {
+  public ColorProvider getColorProvider() {
     return m_ColorProvider;
   }
 
   /**
-   * Returns the next color in line.
+   * Returns the color for the container.
    *
-   * @return		the next color
+   * @param cont	the container to get the color for
+   * @return		the color
    */
-  public Color getNextColor() {
-    return m_ColorProvider.next();
+  public Color getColor(XYSequenceContainer cont) {
+    if (m_ColorProvider instanceof ColorProviderWithNameSupport)
+      return ((ColorProviderWithNameSupport) m_ColorProvider).next(cont.getID());
+    else
+      return m_ColorProvider.next();
   }
 
   /**
@@ -139,7 +145,7 @@ public class XYSequenceContainerManager
    */
   @Override
   public void add(XYSequenceContainer c) {
-    c.setColor(getNextColor());
+    c.setColor(getColor(c));
 
     super.add(c);
   }

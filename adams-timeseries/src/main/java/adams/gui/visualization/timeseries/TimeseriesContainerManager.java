@@ -15,7 +15,7 @@
 
 /*
  * TimeseriesContainerManager.java
- * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.timeseries;
@@ -27,7 +27,8 @@ import adams.gui.visualization.container.ColorContainerManager;
 import adams.gui.visualization.container.DatabaseContainerManager;
 import adams.gui.visualization.container.NamedContainerManagerWithUniqueNames;
 import adams.gui.visualization.container.VisibilityContainerManager;
-import adams.gui.visualization.core.AbstractColorProvider;
+import adams.gui.visualization.core.ColorProvider;
+import adams.gui.visualization.core.ColorProviderWithNameSupport;
 import adams.gui.visualization.core.DefaultColorProvider;
 import gnu.trove.list.array.TIntArrayList;
 
@@ -45,7 +46,7 @@ import java.util.List;
 public class TimeseriesContainerManager<C extends TimeseriesContainer>
   extends AbstractContainerManager<C>
   implements VisibilityContainerManager<C>, 
-             ColorContainerManager, 
+             ColorContainerManager<TimeseriesContainer>, 
              DatabaseContainerManager<C>, 
              NamedContainerManagerWithUniqueNames<C> {
 
@@ -60,7 +61,7 @@ public class TimeseriesContainerManager<C extends TimeseriesContainer>
   protected boolean m_Reloadable;
 
   /** the color provider for managing the colors. */
-  protected AbstractColorProvider m_ColorProvider;
+  protected ColorProvider m_ColorProvider;
 
   /** the database connection. */
   protected AbstractDatabaseConnection m_DatabaseConnection;
@@ -130,12 +131,12 @@ public class TimeseriesContainerManager<C extends TimeseriesContainer>
    *
    * @param value	the color provider
    */
-  public synchronized void setColorProvider(AbstractColorProvider value) {
+  public synchronized void setColorProvider(ColorProvider value) {
     int		i;
     
     m_ColorProvider = value;
     for (i = 0; i < count(); i++)
-      get(i).setColor(getNextColor());
+      get(i).setColor(getColor(get(i)));
   }
 
   /**
@@ -143,17 +144,21 @@ public class TimeseriesContainerManager<C extends TimeseriesContainer>
    *
    * @return		the color provider in use
    */
-  public AbstractColorProvider getColorProvider() {
+  public ColorProvider getColorProvider() {
     return m_ColorProvider;
   }
 
   /**
-   * Returns the next color in line.
+   * Returns the color for the container.
    *
-   * @return		the next color
+   * @param cont	the container to get the color for
+   * @return		the color
    */
-  public Color getNextColor() {
-    return m_ColorProvider.next();
+  public Color getColor(TimeseriesContainer cont) {
+    if (m_ColorProvider instanceof ColorProviderWithNameSupport)
+      return ((ColorProviderWithNameSupport) m_ColorProvider).next(cont.getID());
+    else
+      return m_ColorProvider.next();
   }
 
   /**
@@ -177,7 +182,7 @@ public class TimeseriesContainerManager<C extends TimeseriesContainer>
   @Override
   public void postAdd(TimeseriesContainer c) {
     if (c.getColor() == Color.WHITE)
-      c.setColor(getNextColor());
+      c.setColor(getColor(c));
     else
       m_ColorProvider.exclude(c.getColor());
   }

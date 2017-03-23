@@ -15,7 +15,7 @@
 
 /*
  * InstancePanel.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.instance;
@@ -43,7 +43,7 @@ import adams.gui.scripting.ScriptingEngine;
 import adams.gui.visualization.container.AbstractContainerManager;
 import adams.gui.visualization.container.ContainerTable;
 import adams.gui.visualization.container.DataContainerPanelWithContainerList;
-import adams.gui.visualization.core.AbstractColorProvider;
+import adams.gui.visualization.core.ColorProvider;
 import adams.gui.visualization.core.CoordinatesPaintlet;
 import adams.gui.visualization.core.CoordinatesPaintlet.Coordinates;
 import adams.gui.visualization.core.DefaultColorProvider;
@@ -208,8 +208,8 @@ public class InstancePanel
 
     try {
       getContainerManager().setColorProvider(
-	(AbstractColorProvider) OptionUtils.forAnyCommandLine(
-	  AbstractColorProvider.class,
+	(ColorProvider) OptionUtils.forAnyCommandLine(
+	  ColorProvider.class,
 	  props.getProperty("Plot.ColorProvider", DefaultColorProvider.class.getName())));
     }
     catch (Exception e) {

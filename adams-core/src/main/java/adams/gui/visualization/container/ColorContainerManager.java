@@ -15,14 +15,14 @@
 
 /*
  * ColorContainerManager.java
- * Copyright (C) 2009 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.container;
 
-import java.awt.Color;
+import adams.gui.visualization.core.ColorProvider;
 
-import adams.gui.visualization.core.AbstractColorProvider;
+import java.awt.Color;
 
 /**
  * Indicator interface for container managers that manage containers
@@ -31,26 +31,27 @@ import adams.gui.visualization.core.AbstractColorProvider;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public interface ColorContainerManager {
+public interface ColorContainerManager<T extends AbstractContainer> {
 
   /**
    * Sets the color provider to use.
    *
    * @param value	the color provider
    */
-  public void setColorProvider(AbstractColorProvider value);
+  public void setColorProvider(ColorProvider value);
 
   /**
    * Returns the color provider to use.
    *
    * @return		the color provider in use
    */
-  public AbstractColorProvider getColorProvider();
+  public ColorProvider getColorProvider();
 
   /**
-   * Returns the next color in line.
+   * Returns the color for the container.
    *
-   * @return		the next color
+   * @param cont	the container to get the color for
+   * @return		the color
    */
-  public Color getNextColor();
+  public Color getColor(T cont);
 }

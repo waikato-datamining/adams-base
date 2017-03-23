@@ -15,7 +15,7 @@
 
 /**
  * AbstractXYChartGenerator.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.spreadsheetviewer.chart;
 
@@ -30,8 +30,8 @@ import adams.flow.transformer.SpreadSheetPlotGenerator;
 import adams.flow.transformer.plotgenerator.AbstractPlotGenerator;
 import adams.flow.transformer.plotgenerator.SimplePlotGenerator;
 import adams.flow.transformer.plotgenerator.XYPlotGenerator;
-import adams.gui.visualization.core.AbstractColorProvider;
 import adams.gui.visualization.core.AxisPanelOptions;
+import adams.gui.visualization.core.ColorProvider;
 import adams.gui.visualization.core.DefaultColorProvider;
 
 /**
@@ -53,7 +53,7 @@ public abstract class AbstractXYChartGenerator
   protected SpreadSheetColumnRange m_YColumns;
   
   /** the color provider to use. */
-  protected AbstractColorProvider m_ColorProvider;
+  protected ColorProvider m_ColorProvider;
 
   /**
    * Adds options to the internal list of options.
@@ -168,7 +168,7 @@ public abstract class AbstractXYChartGenerator
    *
    * @param value 	the color provider
    */
-  public void setColorProvider(AbstractColorProvider value) {
+  public void setColorProvider(ColorProvider value) {
     m_ColorProvider = value;
     reset();
   }
@@ -178,7 +178,7 @@ public abstract class AbstractXYChartGenerator
    *
    * @return 		the color provider
    */
-  public AbstractColorProvider getColorProvider() {
+  public ColorProvider getColorProvider() {
     return m_ColorProvider;
   }
 

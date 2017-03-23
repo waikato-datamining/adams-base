@@ -15,19 +15,19 @@
 
 /*
  * AbstractColorProvider.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.core;
 
-import java.awt.Color;
-import java.util.Vector;
-
-import adams.core.ShallowCopySupporter;
 import adams.core.option.AbstractOptionConsumer;
 import adams.core.option.AbstractOptionHandler;
 import adams.core.option.ArrayConsumer;
 import adams.core.option.OptionUtils;
+
+import java.awt.Color;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A class for providing colors.
@@ -37,7 +37,7 @@ import adams.core.option.OptionUtils;
  */
 public abstract class AbstractColorProvider
   extends AbstractOptionHandler
-  implements ShallowCopySupporter<AbstractColorProvider> {
+  implements ColorProvider {
 
   /** for serialization. */
   private static final long serialVersionUID = 1159553726314921425L;
@@ -52,16 +52,16 @@ public abstract class AbstractColorProvider
   protected boolean m_FirstIteration;
 
   /** contains the current colors. */
-  protected Vector<Color> m_Colors;
+  protected List<Color> m_Colors;
 
   /** contains the default colors. */
-  protected Vector<Color> m_DefaultColors;
+  protected List<Color> m_DefaultColors;
 
   /** recycled, i.e., returned colors. */
-  protected Vector<Color> m_RecycledColors;
+  protected List<Color> m_RecycledColors;
 
   /** excluded colors (already used). */
-  protected Vector<Color> m_ExcludedColors;
+  protected List<Color> m_ExcludedColors;
 
   /** whether darkening of colors is allowed. */
   protected boolean m_AllowDarkening;
@@ -76,10 +76,10 @@ public abstract class AbstractColorProvider
   protected void initialize() {
     super.initialize();
 
-    m_DefaultColors  = new Vector<Color>();
-    m_Colors         = new Vector<Color>();
-    m_RecycledColors = new Vector<Color>();
-    m_ExcludedColors = new Vector<Color>();
+    m_DefaultColors  = new ArrayList<>();
+    m_Colors         = new ArrayList<>();
+    m_RecycledColors = new ArrayList<>();
+    m_ExcludedColors = new ArrayList<>();
     m_AllowDarkening = true;
     m_CheckTooDark   = true;
   }
@@ -109,7 +109,7 @@ public abstract class AbstractColorProvider
 
     while (result == null) {
       if (m_RecycledColors.size() > 0) {
-	result = m_RecycledColors.firstElement();
+	result = m_RecycledColors.get(0);
 	m_RecycledColors.remove(0);
       }
       else {
@@ -189,7 +189,7 @@ public abstract class AbstractColorProvider
    *
    * @return		the shallow copy
    */
-  public AbstractColorProvider shallowCopy() {
+  public ColorProvider shallowCopy() {
     return shallowCopy(false);
   }
 
@@ -199,8 +199,8 @@ public abstract class AbstractColorProvider
    * @param expand	whether to expand variables to their current values
    * @return		the shallow copy
    */
-  public AbstractColorProvider shallowCopy(boolean expand) {
-    return (AbstractColorProvider) OptionUtils.shallowCopy(this, expand);
+  public ColorProvider shallowCopy(boolean expand) {
+    return (ColorProvider) OptionUtils.shallowCopy(this, expand);
   }
 
   /**
@@ -210,11 +210,11 @@ public abstract class AbstractColorProvider
    * @param options	the options for the provider
    * @return		the instantiated provider or null if an error occurred
    */
-  public static AbstractColorProvider forName(String classname, String[] options) {
-    AbstractColorProvider	result;
+  public static ColorProvider forName(String classname, String[] options) {
+    ColorProvider	result;
 
     try {
-      result = (AbstractColorProvider) OptionUtils.forName(AbstractColorProvider.class, classname, options);
+      result = (ColorProvider) OptionUtils.forName(ColorProvider.class, classname, options);
     }
     catch (Exception e) {
       e.printStackTrace();
@@ -233,7 +233,7 @@ public abstract class AbstractColorProvider
    * @return		the instantiated provider
    * 			or null if an error occurred
    */
-  public static AbstractColorProvider forCommandLine(String cmdline) {
-    return (AbstractColorProvider) AbstractOptionConsumer.fromString(ArrayConsumer.class, cmdline);
+  public static ColorProvider forCommandLine(String cmdline) {
+    return (ColorProvider) AbstractOptionConsumer.fromString(ArrayConsumer.class, cmdline);
   }
 }

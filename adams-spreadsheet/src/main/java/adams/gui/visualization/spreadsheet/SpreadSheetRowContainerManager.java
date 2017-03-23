@@ -15,7 +15,7 @@
 
 /*
  * SpreadSheetRowContainerManager.java
- * Copyright (C) 2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.spreadsheet;
@@ -28,7 +28,8 @@ import adams.gui.visualization.container.ColorContainerManager;
 import adams.gui.visualization.container.ContainerListManager;
 import adams.gui.visualization.container.NamedContainerManager;
 import adams.gui.visualization.container.VisibilityContainerManager;
-import adams.gui.visualization.core.AbstractColorProvider;
+import adams.gui.visualization.core.ColorProvider;
+import adams.gui.visualization.core.ColorProviderWithNameSupport;
 import adams.gui.visualization.core.DefaultColorProvider;
 import gnu.trove.list.array.TIntArrayList;
 
@@ -45,7 +46,7 @@ import java.util.List;
 public class SpreadSheetRowContainerManager
   extends AbstractContainerManager<SpreadSheetRowContainer>
   implements VisibilityContainerManager<SpreadSheetRowContainer>, NamedContainerManager,
-             ColorContainerManager {
+             ColorContainerManager<SpreadSheetRowContainer> {
 
   /** for serialization. */
   private static final long serialVersionUID = -4325235760470150191L;
@@ -54,7 +55,7 @@ public class SpreadSheetRowContainerManager
   protected ContainerListManager<SpreadSheetRowContainerManager> m_Owner;
 
   /** the color provider for managing the colors. */
-  protected AbstractColorProvider m_ColorProvider;
+  protected ColorProvider m_ColorProvider;
 
   /**
    * Initializes the manager.
@@ -86,12 +87,12 @@ public class SpreadSheetRowContainerManager
    *
    * @param value	the color provider
    */
-  public synchronized void setColorProvider(AbstractColorProvider value) {
+  public synchronized void setColorProvider(ColorProvider value) {
     int		i;
     
     m_ColorProvider = value;
     for (i = 0; i < count(); i++)
-      get(i).setColor(getNextColor());
+      get(i).setColor(getColor(get(i)));
   }
 
   /**
@@ -99,17 +100,21 @@ public class SpreadSheetRowContainerManager
    *
    * @return		the color provider in use
    */
-  public AbstractColorProvider getColorProvider() {
+  public ColorProvider getColorProvider() {
     return m_ColorProvider;
   }
 
   /**
-   * Returns the next color in line.
+   * Returns the color for the container.
    *
-   * @return		the next color
+   * @param cont	the container to get the color for
+   * @return		the color
    */
-  public Color getNextColor() {
-    return m_ColorProvider.next();
+  public Color getColor(SpreadSheetRowContainer cont) {
+    if (m_ColorProvider instanceof ColorProviderWithNameSupport)
+      return ((ColorProviderWithNameSupport) m_ColorProvider).next(cont.getID());
+    else
+      return m_ColorProvider.next();
   }
 
   /**
@@ -142,7 +147,7 @@ public class SpreadSheetRowContainerManager
    */
   @Override
   public void add(SpreadSheetRowContainer c) {
-    c.setColor(getNextColor());
+    c.setColor(getColor(c));
 
     super.add(c);
 

@@ -29,8 +29,8 @@ import adams.flow.sink.sequenceplotter.ViewDataClickAction;
 import adams.flow.transformer.SpreadSheetPlotGenerator;
 import adams.flow.transformer.plotgenerator.AbstractPlotGenerator;
 import adams.flow.transformer.plotgenerator.XYPlotGenerator;
-import adams.gui.visualization.core.AbstractColorProvider;
 import adams.gui.visualization.core.AxisPanelOptions;
+import adams.gui.visualization.core.ColorProvider;
 import adams.gui.visualization.core.DefaultColorProvider;
 import adams.gui.visualization.core.axis.SimpleTickGenerator;
 import adams.gui.visualization.core.axis.TickGenerator;
@@ -77,7 +77,7 @@ import adams.gui.visualization.sequence.XYSequencePaintlet;
  * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.sequence.LinePaintlet
  * </pre>
  * 
- * <pre>-color-provider &lt;adams.gui.visualization.core.AbstractColorProvider&gt; (property: colorProvider)
+ * <pre>-color-provider &lt;adams.gui.visualization.core.ColorProvider&gt; (property: colorProvider)
  * &nbsp;&nbsp;&nbsp;The color provider to use.
  * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.core.DefaultColorProvider
  * </pre>
@@ -110,7 +110,7 @@ public class GenericPlot
   protected XYSequencePaintlet m_Paintlet;
   
   /** the color provider to use. */
-  protected AbstractColorProvider m_ColorProvider;
+  protected ColorProvider m_ColorProvider;
   
   /** the tick generator for the X axis. */
   protected TickGenerator m_XTickGenerator;
@@ -237,7 +237,7 @@ public class GenericPlot
    *
    * @param value 	the color provider
    */
-  public void setColorProvider(AbstractColorProvider value) {
+  public void setColorProvider(ColorProvider value) {
     m_ColorProvider = value;
     reset();
   }
@@ -247,7 +247,7 @@ public class GenericPlot
    *
    * @return 		the color provider
    */
-  public AbstractColorProvider getColorProvider() {
+  public ColorProvider getColorProvider() {
     return m_ColorProvider;
   }
 

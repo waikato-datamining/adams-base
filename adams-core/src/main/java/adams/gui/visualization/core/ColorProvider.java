@@ -13,46 +13,50 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * DefaultColorProviderTest.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+/*
+ * ColorProvider.java
+ * Copyright (C) 2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.core;
 
+import adams.core.ShallowCopySupporter;
+import adams.core.option.OptionHandler;
+
+import java.awt.Color;
+
 /**
- * Tests the DefaultColorProvider color provider.
+ * Interface for color providing classes.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class DefaultColorProviderTest
-  extends AbstractColorProviderTestCase {
+public interface ColorProvider
+  extends OptionHandler, ShallowCopySupporter<ColorProvider> {
 
   /**
-   * Constructs the test case. Called by subclasses.
+   * Returns the next color.
    *
-   * @param name 	the name of the test
+   * @return		the next color
    */
-  public DefaultColorProviderTest(String name) {
-    super(name);
-  }
+  public Color next();
 
   /**
-   * Returns the number of colors to generate per regresion setup.
-   *
-   * @return		the number of colors to generate
+   * Resets the colors.
    */
-  protected int[] getRegressionNumColors() {
-    return new int[]{100};
-  }
+  public void resetColors();
 
   /**
-   * Returns the setups to use in the regression test.
+   * "Recycles" the specified colors, i.e., makes it available for future use.
    *
-   * @return		the setups
+   * @param c		the color to re-use
    */
-  protected ColorProvider[] getRegressionSetups() {
-    return new ColorProvider[]{new DefaultColorProvider()};
-  }
+  public void recycle(Color c);
+
+  /**
+   * "Excludes" the specified colors, i.e., makes it unavailable for future use.
+   *
+   * @param c		the color to exclude
+   */
+  public void exclude(Color c);
 }

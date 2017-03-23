@@ -56,7 +56,7 @@ public class GradientColorProviderTest
    * @return		the setups
    */
   @Override
-  protected AbstractColorProvider[] getRegressionSetups() {
+  protected ColorProvider[] getRegressionSetups() {
     GradientColorProvider[]	result;
 
     result    = new GradientColorProvider[2];

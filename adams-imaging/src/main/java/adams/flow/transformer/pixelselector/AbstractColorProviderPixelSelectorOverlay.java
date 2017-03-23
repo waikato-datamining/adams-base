@@ -14,12 +14,12 @@
  */
 
 /**
- * AbstractColorProviderPixelSelectorOverlay.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * ColorProviderPixelSelectorOverlay.java
+ * Copyright (C) 2012-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer.pixelselector;
 
-import adams.gui.visualization.core.AbstractColorProvider;
+import adams.gui.visualization.core.ColorProvider;
 import adams.gui.visualization.core.DefaultColorProvider;
 
 /**
@@ -36,7 +36,7 @@ public abstract class AbstractColorProviderPixelSelectorOverlay
   private static final long serialVersionUID = -2158576853112526562L;
   
   /** the color of the overlay. */
-  protected AbstractColorProvider m_ColorProvider;
+  protected ColorProvider m_ColorProvider;
 
   /**
    * Adds options to the internal list of options.
@@ -54,7 +54,7 @@ public abstract class AbstractColorProviderPixelSelectorOverlay
    * 
    * @return		the default color provider
    */
-  protected AbstractColorProvider getDefaultColorProvider() {
+  protected ColorProvider getDefaultColorProvider() {
     return new DefaultColorProvider();
   }
 
@@ -63,7 +63,7 @@ public abstract class AbstractColorProviderPixelSelectorOverlay
    *
    * @param value	the color provider
    */
-  public void setColorProvider(AbstractColorProvider value) {
+  public void setColorProvider(ColorProvider value) {
     m_ColorProvider = value;
     reset();
   }
@@ -73,7 +73,7 @@ public abstract class AbstractColorProviderPixelSelectorOverlay
    *
    * @return		the color provider
    */
-  public AbstractColorProvider getColorProvider() {
+  public ColorProvider getColorProvider() {
     return m_ColorProvider;
   }
 
