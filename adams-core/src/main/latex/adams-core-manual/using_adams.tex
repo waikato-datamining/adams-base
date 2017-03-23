@@ -1892,6 +1892,84 @@ available:
 	to further process either stdout or stderr.
 \end{tight_itemize}
 
+
+\newpage
+\section{Screenshots}
+\label{screenshots}
+Of course, ADAMS doesn't just allow you to create plots and other graphical
+output, it also allows you to save these to image files. There are several
+ways of exporting the graphical output, manual and automatic ones.
+
+\subsection{Manual}
+Any dialog that displays non-textual data, will allow you to export
+\textit{what you see} as an image. You can do this via the
+\textit{File $\rightarrow$ Send to $\rightarrow$ Export as image} (see Figure
+\ref{screenshots_manual}). Depending on the actor, you might also be able to
+use the \textit{File $\rightarrow$ Save as} functionality. For instance,
+the \textit{SequencePlotter} sink supports this.
+
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=12.0cm]{images/screenshots_manual.png}
+  \caption{Manual screenshot of plot.}
+  \label{screenshots_manual}
+\end{figure}
+
+\subsection{Automatic}
+For automatic screenshot generation, you have to consider, \textit{when} the
+screenshot is to be generated: after the flow finishes or while the flow is
+running (e.g., you want to generate many screenshots from many different
+datasets).
+
+The first case is quite easy and you can simply configure the \textit{writer}
+option of the graphical actor (e.g., \textit{SequencePlotter}) that you want
+to take a screenshot of. Instead of the \textit{NullWriter} simply choose one
+of the other ones like the \textit{PNGWriter} and set the correct filename.
+
+The second case requires you to place control actors in the correct locations
+in your flow:
+\begin{tight_itemize}
+  \item \textit{ClearCallableDisplay} -- for preparing the plot for the next
+  screenshot, clearing any data from a previous iteration.
+  \item \textit{CallableActorScreenshot} -- for generating the screenshot
+  and saving it to disk.
+\end{tight_itemize}
+
+Both actors require you to select the callable actor that you want to operate
+on. For specifying an output file, I recommend you to use the
+\textit{SimpleFixedFilenameGenerator} file name generator, with a variable
+attached to its \textit{name} option.
+
+A typical sequence of actors therefore looks like this:
+\begin{verbatim}
+ ...
+ CallableActors
+ |
+ +- SequencePlotter called "plot"
+ ...
+ |
+ +- ClearCallableDisplay on "plot"
+ |
+ +- [generate your plot/graph]
+ |
+ +- CallableActorScreenshot on "plot"
+ |
+ ...
+\end{verbatim}
+
+\subsection{Flickering dialogs}
+If you attach variables to plots/graphs, like the \textit{SequencePlotter},
+then you will experience the plot dialog getting reinitialized and
+disappearing/appearing each time the variable changes. This can be rather
+annoying as windows will keep popping up all over the place and your
+computer will become pretty much unusable. Unless you want to take a break
+and have a cup of tea, you can employ a simple trick. Instead of using the
+\textit{CallableActors} standalone, choose the \textit{GridView} actor.
+By wrapping your plot in this actor, the actor panel inside the \textit{GridView}
+will disappear/reappear, but not the window that it is in, eliminating the
+flickering in the process.
+
+
 %%%%%%%%%%%%%%%%%
 % Visualization %
 %%%%%%%%%%%%%%%%%
