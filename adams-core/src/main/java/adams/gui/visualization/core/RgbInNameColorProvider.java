@@ -14,7 +14,7 @@
  */
 
 /**
- * RgbInColorProvider.java
+ * RgbInNameColorProvider.java
  * Copyright (C) 2017 University of Waikato, Hamilton, NZ
  */
 
@@ -49,7 +49,7 @@ import java.awt.Color;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class RgbInColorProvider
+public class RgbInNameColorProvider
   extends AbstractOptionHandler
   implements ColorProviderWithNameSupport {
 
