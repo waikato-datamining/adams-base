@@ -51,6 +51,10 @@ adams.data.weka.predictions.AbstractErrorScaler=\
 adams.flow.transformer.wekaclusterer.AbstractClustererPostProcessor=\
   adams.flow.transformer.wekaclusterer
 
+# the evaluation post-processors
+adams.flow.transformer.wekaevaluationpostprocessor.AbstractWekaEvaluationPostProcessor=\
+  adams.flow.transformer.wekaevaluationpostprocessor
+
 # the heuristics for determining the class attribute
 adams.data.weka.classattribute.AbstractClassAttributeHeuristic=\
   adams.data.weka.classattribute
