@@ -458,7 +458,7 @@ public class WekaSpreadSheetToPredictions
       // create dataset from predictions
       atts = new ArrayList<>();
       if (dist == null) {
-	atts.add(new Attribute("Prediction"));
+	atts.add(new Attribute("Actual"));
       }
       else {
 	labels = new ArrayList<>();
@@ -474,7 +474,7 @@ public class WekaSpreadSheetToPredictions
 	    labels.add("" + (i + 1));
 	  }
 	}
-	atts.add(new Attribute("Prediction", labels));
+	atts.add(new Attribute("Actual", labels));
       }
       data = new Instances((sheet.hasName() ? sheet.getName() : Environment.getInstance().getProject()), atts, actual.length);
       data.setClassIndex(0);
