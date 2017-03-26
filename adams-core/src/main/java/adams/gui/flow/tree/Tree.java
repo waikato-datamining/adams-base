@@ -1836,7 +1836,7 @@ public class Tree
    */
   @Override
   protected boolean isDragEnabled() {
-    return true;
+    return !isDebug();
   }
 
   /**
@@ -1846,7 +1846,7 @@ public class Tree
    */
   @Override
   protected boolean isDropEnabled() {
-    return true;
+    return !isDebug();
   }
 
   /**
