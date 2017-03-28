@@ -29,6 +29,14 @@ This module offers additional schemes for the \textit{Convert} transformer:
 	\item \textit{WekaCapabilitiesToInstances} -- generates a dataset with
 	random data that adheres to the capabilities retrieved from a
 	\texttt{CapabilitiesHandler}.
+	\item \textit{WekaDrawableString} -- exports the graph from a decision
+	tree or bayesian network in 'dot' notation.
+	\item \textit{WekaEvaluationToCostCurve} -- turns an Evaluation into
+	cost curve data.
+	\item \textit{WekaEvaluationToMaringCurve} -- turns an Evaluation into
+	margin curve data.
+	\item \textit{WekaEvaluationToThresholdCurve} -- turns an Evaluation into
+	threshold curve data (eg ROC).
 	\item \textit{WekaCapabilitiesToSpreadSheet} -- generates a spreadsheet
 	with the  capabilities retrieved from a \texttt{CapabilitiesHandler}.
 	\item \textit{WekaCommandToCode} -- turns a WEKA command-line into
@@ -38,7 +46,7 @@ This module offers additional schemes for the \textit{Convert} transformer:
 	\item \textit{WekaInstanceToAdamsInstance} -- turns a WEKA instance into
 	an ADAMS one.
 	\item \textit{WekaPredictionContainerToSpreadSheet} -- generates a 
-	spreadsheet object from a predicition container (useful for display).
+	spreadsheet object from a prediction container (useful for display).
 \end{tight_itemize}
 
 \section{Conditions}
@@ -69,9 +77,11 @@ The following sources are available:
 	data generators.
 	\item \textit{WekaFilterGenerator} -- generates parameter sweeps for
 	filters.
-	\item \textit{WekaNewInstances} -- simple source for generating empty 
-	datasets.
-	\item \textit{WekaSelectDataset} -- source for selecting datasets interactively.
+	\item \textit{WekaNewExperiment} -- creates a new ADAMS experiment setup.
+	\item \textit{WekaNewInstances} -- for generating empty datasets.
+	\item \textit{WekaSelectDataset} -- for selecting datasets interactively.
+	\item \textit{WekaSelectObjects} -- for selecting Weka objects, like
+	classifiers.
 \end{tight_itemize}
 These transformers:
 \begin{tight_itemize}
@@ -83,10 +93,15 @@ These transformers:
 	Evaluation objects and forwards the current, aggregate state. 
 	\item \textit{WekaAttributeIterator} -- iterates through the names of a
 	dataset and outputs them.
-	\item \textit{WekaTrainClassifier} -- used for generating a trained
-	model using a dataset.
+	\item \textit{WekaAttributeSelection} -- for performing attribute selection.
+	\item \textit{WekaAttributeSelectionSummary} -- generates a summary of the
+	incoming attribute selection data.
+	\item \textit{WekaCatSwarmOptimization} -- uses cat swarm optimization
+	for parameter optimization.
 	\item \textit{WekaChooseAttributes} -- allows the user to interactively
 	select attributes to keep in a dataset.
+	\item \textit{WekaClassifierInfo} -- outputs basic information about
+	a classifier.
 	\item \textit{WekaClassifierOptimizer} -- applies a classifier optimizer
 	(e.g., GridSearch or MultiSearch) to a dataset and then forwards the best
 	(untrained) setup.
@@ -95,15 +110,24 @@ These transformers:
 	\item \textit{WekaClassifying} -- uses a serialized (or callable) model to
 	make predictions on incoming data.
 	\item \textit{WekaClassSelector} -- sets the class attribute in a dataset.
-	\item \textit{WekaTrainClusterer} -- trains a cluster algorithm setup
-	on a dataset.
+	\item \textit{WekaClusterAssignments} -- outputs the cluster assignments
+	from a cluster evaluation.
+	\item \textit{WekaClustererInfo} -- outputs basic info about a clusterer.
+	\item \textit{WekaClusterEvaluationSummary} -- generates a summary string
+	from a cluster evaluation object.
 	\item \textit{WekaClustering} -- applies a serialized (or callable) model
 	to incoming data.
+	\item \textit{WekaCrossValidationClustererEvaluator} -- performs cross-validation
+	on an incoming dataset using the referenced clusterer setup.
 	\item \textit{WekaCrossValidationEvaluator} -- performs cross-validation
-	on an incoming dataset using a referenced classifier setup.
-	\item \textit{WekaCrossValidationSplot} -- generates train/test set splits
+	on an incoming dataset using the referenced classifier setup.
+	\item \textit{WekaCrossValidationSplit} -- generates train/test set splits
 	like cross-validation would generate.
-	\item \textit{WekaEvaluationSummary} -- generates a summary for an 
+	\item \textit{WekaEvaluationInfo} -- outputs basic info about a Weka
+	Evaluation object.
+	\item \textit{WekaEvaluationPostProcessor} -- allows post-processing
+	of Evaluation objects, e.g., extraction sub-ranges.
+	\item \textit{WekaEvaluationSummary} -- generates a summary for an
 	Evaluation.
 	\item \textit{WekaEvaluationValuePicker} -- retrieves a single statistic
 	from an Evaluation.
@@ -113,11 +137,20 @@ These transformers:
 	Experimenter.
 	\item \textit{WekaExperimentEvaluation} -- evaluates a WEKA experiment,
 	generating text output of various sorts.
+	\item \textit{WekaExperimentExecution} -- executes an incoming ADAMS
+	experiment.
+	\item \textit{WekaExperimentFileReader} -- reads an experiment from disk.
 	\item \textit{WekaExtractArray} -- extracts a row or column from a WEKA
 	dataset (using the internal format).
-	\item \textit{WekaFileReader} -- reads any dataset that WEKA can handle, 
+	\item \textit{WekaExtractPLSMatrix} -- extracts PLS matrices from in
+	incoming PLS classifier (or scheme that gives access to internal PLS matrices).
+	\item \textit{WekaFileReader} -- reads any dataset that WEKA can handle,
 	either outputs the header, the complete dataset or row-by-row.
 	\item \textit{WekaFilter} -- applies a WEKA filter to the data.
+	\item \textit{WekaGenericPLSMatrixAccess} -- extracts PLS matrices from in
+	incoming PLS classifier (or scheme that gives access to internal PLS matrices).
+	\item \textit{WekaGeneticAlgorithm} -- applies the specified genetic
+	algorithm to the incoming dataset, e.g., for parameter optimization.
 	\item \textit{WekaGetCapabilities} -- retrieves the capabilities of a
 	\texttt{CapabilitiesHandler} (e.g., Filter or Classifier).
 	\item \textit{WekaGetInstanceValue} -- retrieves an attribute's value from
@@ -137,6 +170,8 @@ These transformers:
 	\item \textit{WekaInstancesInfo} -- outputs information on a dataset.
 	\item \textit{WekaInstancesMerge} -- allows the merging of several datasets 
 	(side-by-side).
+	\item \textit{WekaInstancesStatistic} -- computes statistics on rows
+	or columns of an Instances object.
 	\item \textit{WekaInstanceStreamPlotGenerator} -- generates plot containers
 	from a range of attributes of instance objects passing through (i.e., you 
 	can plot several attributes in one go).
@@ -150,10 +185,11 @@ These transformers:
 	a WEKA dataset (actual, predicted, etc).
 	\item \textit{WekaPredictionsToSpreadSheet} -- turns WEKA predictions into
 	a spreadsheet (actual, predicted, etc).
+	\item \textit{WekaPrincipalComponents} -- outputs loadings and transformed
+	data obtained from principal components analysis.
 	\item \textit{WekaRandomSplit} -- generates a random split of a dataset.
 	\item \textit{WekaRegexToRange} -- generates a range string using a regular
 	expression applied to the names of a dataset.
-	\item \textit{WekaRelationName} -- simply outputs the name of the dataset.
 	\item \textit{WekaRenameRelation} -- renames a dataset.
 	\item \textit{WekaReorderAttributesToReference} -- reorders the attributes
 	in incoming Instance/Instances based on an order defined in a reference
@@ -162,35 +198,54 @@ These transformers:
 	an instance object.
 	\item \textit{WekaSetInstancesValue} -- sets a specific attribute value in
 	a dataset object.
-	\item \textit{WekaStoreInstance} -- appends the passing through instance 
+	\item \textit{WekaSpreadSheetToPredictions} -- turns a spreadsheet back
+	into a fake Evaluation object. Allows processing of actual/predicted data
+	from other applications.
+	\item \textit{WekaStoreInstance} -- appends the passing through instance
+	\item \textit{WekaStreamEvaluator} -- performs prequential evaluation
+	of an incremental classifier on a data stream.
 	\item \textit{WekaStreamFilter} -- works the same as
 	\textit{WekaFilter} but only allows stream filters to be selected.
 	\item \textit{WekaSubsets} -- splits dataset into subsets using the unique
 	values of an attribute to identify subsets.
+	\item \textit{WekaTestSetClustererEvaluator} -- evaluates a trained
+	clusterer on a dataset obtained from a callable actor.
 	\item \textit{WekaTestSetEvaluator} -- evaluates a trained classifier on
 	a dataset obtained from a callable actor.
 	\item \textit{WekaTextDiectoryReader} -- reads in a directory with the 
 	documents in the sub-directories representing different classes.
+	\item \textit{WekaTrainClassifier} -- used for generating a trained
+	model using a dataset.
+	\item \textit{WekaTrainClusterer} -- trains a cluster algorithm setup
+	on a dataset.
+	\item \textit{WekaTrainTestSetClustererEvaluator} -- evaluates a referenced
+	clusterer using the incoming train/test split.
 	\item \textit{WekaTrainTestSetEvaluator} -- evaluates a referenced classifier
 	using the incoming train/test split.
 \end{tight_itemize}
 And these sinks:
 \begin{tight_itemize}
+	\item \textit{WekaAttributeSummary} -- displays the summary of one or more attributes.
 	\item \textit{WekaClassifierErrors} -- displays the errors of a classifier.
+	\item \textit{WekaCostBenefitAnalysis} -- displays a cost-benefit analysis dialog.
 	\item \textit{WekaCostCurve} -- generates a cost curve.
 	\item \textit{WekaDatabaseWriter} -- writes a dataset to a database.
-	\item \textit{WekaExperimentGenerator} -- generates a WEKA experiment by 
+	\item \textit{WekaExperimentFileWriter} -- writes an ADAMS experiment to disk.
+	\item \textit{WekaExperimentGenerator} -- generates a WEKA experiment by
 	adding the incoming classifier setups and writing it to disk.
 	\item \textit{WekaFileWriter} -- writes a dataset to any file format that
 	WEKA can handle.
+	\item \textit{WekaGraphVisualizer} -- displays a Bayesian network (from XML or BIF).
 	\item \textit{WekaInstancesDisplay} -- displays datasets in table format.
 	\item \textit{WekaInstancesPlot} -- plots one attribute vs another.
 	\item \textit{WekaInstanceViewer} -- visualizes incoming WEKA or ADAMS
 	instance objects the same way as the \textit{Instance Explorer} tool does.
-	\item \textit{WekaModelWriter} -- writes a model container or 
+	\item \textit{WekaMarginCurve} -- displays a margin curve.
+	\item \textit{WekaModelWriter} -- writes a model container or
 	classifier/clusterer to disk.
 	\item \textit{WekaThresholdCurve} -- displays threshold curves like, 
 	receiver-operator curve (ROC) or precision/recall.
+	\item \textit{WekaTreeVisualizer} -- displays a tree in 'dot' notation.
 \end{tight_itemize}
 
 \section{Templates}
