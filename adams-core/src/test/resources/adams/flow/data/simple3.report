@@ -1,0 +1,7 @@
+#Mon Oct 31 12:27:27 NZDT 2011
+#Simple report format (= Java properties file format)
+NumericValue=8.46
+NumericValue\tDataType=N
+OtherValue=12.36
+OtherValue\tDataType=N
+Parent\ ID=-1
