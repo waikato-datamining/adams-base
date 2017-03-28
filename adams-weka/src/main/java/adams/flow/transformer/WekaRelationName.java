@@ -15,13 +15,13 @@
 
 /**
  * WekaRelationName.java
- * Copyright (C) 2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
 
+import adams.flow.core.Token;
 import weka.core.Instance;
 import weka.core.Instances;
-import adams.flow.core.Token;
 
 /**
  <!-- globalinfo-start -->
@@ -66,6 +66,7 @@ import adams.flow.core.Token;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
+@Deprecated
 public class WekaRelationName
   extends AbstractTransformer {
 
@@ -79,8 +80,10 @@ public class WekaRelationName
    */
   public String globalInfo() {
     return
-        "Extracts the relation name of a weka.core.Instances or "
-      + "weka.core.Instance object.";
+      "DEPRECATED\n"
+        + "Use " + WekaInstancesInfo.class.getName() + " instead.\n\n"
+        + "Extracts the relation name of a weka.core.Instances or "
+        + "weka.core.Instance object.";
   }
 
   /**
