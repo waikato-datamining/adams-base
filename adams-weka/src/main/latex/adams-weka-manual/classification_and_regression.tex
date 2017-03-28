@@ -558,13 +558,33 @@ learning curve for the decision tree classifier J48, being evaluated every
 \end{figure}
 
 \subsection{Experiments}
-experiment generation\footnote{adams-weka-experiment\_generation.flow},
-execution and evaluation\footnote{adams-weka-experiment.flow}
+For generating and execution experiments, you have two options: use the
+existing Weka framework or the more flexible one provided by ADAMS (it
+still uses the same Weka methods for generating the statistics).
+
+For using the Weka framework, have a look at the following flows:
+\begin{tight_itemize}
+  \item experiment generation -- \textit{adams-weka-experiment\_generation.flow}
+  \item execution and evaluation -- \textit{adams-weka-experiment.flow}
+\end{tight_itemize}
+
+For using the ADAMS framework, check out these:
+\begin{tight_itemize}
+  \item \textit{adams-weka-experiment2.flow}
+  \item \textit{adams-weka-experiment3.flow}
+\end{tight_itemize}
 
 \subsection{Optimization}
-setup generators\footnote{adams-weka-classifier\_setup\_generation.flow},
-ranker\footnote{adams-weka-classifier\_setup\_ranking.flow},
-optimizer\footnote{adams-weka-classifier\_optimizer.flow}
+The following flows demonstrate some of the optimization capabilities:
+\begin{tight_itemize}
+  \item setup generators -- \textit{adams-weka-classifier\_setup\_generation.flow},
+  \item ranker -- \textit{adams-weka-classifier\_setup\_ranking.flow},
+  \item optimizer -- \textit{adams-weka-classifier\_optimizer.flow}
+\end{tight_itemize}
+
+You can also use the \textit{WekaGeneticAlgorithm} and
+\textit{WekaCatSwarmOptimization} transformers to optimize on an incoming
+dataset.
 
 \subsection{Provenance}
 Machine learning related actors can keep track of what operations happened
@@ -578,8 +598,8 @@ Enabled=true
 \end{verbatim}
 
 Figure \ref{advanced-provenance-flow} shows the flow that cross-validates a
-classifier on a pre-processed dataset. The provenance trace of loading
-the data, pre-processing and evaluating it, can be seen in Figure 
+classifier on a pre-processed dataset\footnote{adams-weka-crossvalidate\_classifier-display\_provenance.flow}.
+The provenance trace of loading the data, pre-processing and evaluating it, can be seen in Figure
 \ref{advanced-provenance-output}.
 
 \begin{figure}[ht]
@@ -598,12 +618,10 @@ the data, pre-processing and evaluating it, can be seen in Figure
   \end{minipage}
 \end{figure}
 
-provenance
-display\footnote{adams-weka-crossvalidate\_classifier-display\_provenance.flow}
-
 \subsection{Partial Least Squares}
 Using the \textit{WekaExtractPLSMatrix} transformer, you can extract various
 PLS matrices from a \textit{PLSFilterWithLoadings} filter or a 
 \textit{PLSClassifierWeightedWithLoadings} classifier (or a \textit{WekaModelContainer},
 if this container should have a \textit{PLSClassifierWeightedWithLoadings} classifier 
 stored).\footnote{adams-weka-extract\_pls\_matrix.flow}
+You can also use the \textit{WekaGenericPLSMatrixAccess} transformer.
