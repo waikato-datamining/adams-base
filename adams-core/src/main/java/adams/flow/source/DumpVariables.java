@@ -15,7 +15,7 @@
 
 /**
  * DumpVariables.java
- * Copyright (C) 2015-2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.source;
@@ -30,10 +30,13 @@ import adams.flow.core.Token;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  <!-- globalinfo-start -->
- * Outputs a spreadsheet with the variable names and their associated values.
+ * Outputs the variable names and their associated values in the specified format.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -67,13 +70,15 @@ import java.util.Collections;
  * </pre>
  * 
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this 
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical 
+ * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
  * <pre>-silent &lt;boolean&gt; (property: silent)
- * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console.
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
@@ -87,6 +92,11 @@ import java.util.Collections;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
+ * <pre>-output-type &lt;SPREADSHEET|PROPERTIES|MAP&gt; (property: outputType)
+ * &nbsp;&nbsp;&nbsp;The output format to use.
+ * &nbsp;&nbsp;&nbsp;default: SPREADSHEET
+ * </pre>
+ * 
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
@@ -97,11 +107,23 @@ public class DumpVariables
 
   private static final long serialVersionUID = -6626384935427295809L;
 
+  /**
+   * The output type.
+   */
+  public enum OutputType {
+    SPREADSHEET,
+    PROPERTIES,
+    MAP,
+  }
+
   /** the regular expression to match. */
   protected BaseRegExp m_RegExp;
 
   /** whether to invert the matching sense. */
   protected boolean m_Invert;
+
+  /** the output format. */
+  protected OutputType m_OutputType;
 
   /**
    * Returns a string describing the object.
@@ -110,7 +132,7 @@ public class DumpVariables
    */
   @Override
   public String globalInfo() {
-    return "Outputs a spreadsheet with the variable names and their associated values.";
+    return "Outputs the variable names and their associated values in the specified format.";
   }
 
   /**
@@ -121,12 +143,16 @@ public class DumpVariables
     super.defineOptions();
 
     m_OptionManager.add(
-	    "regexp", "regExp",
-	    new BaseRegExp(BaseRegExp.MATCH_ALL));
+      "regexp", "regExp",
+      new BaseRegExp(BaseRegExp.MATCH_ALL));
 
     m_OptionManager.add(
-	    "invert", "invert",
-	    false);
+      "invert", "invert",
+      false);
+
+    m_OptionManager.add(
+      "output-type", "outputType",
+      OutputType.SPREADSHEET);
   }
 
   /**
@@ -136,7 +162,12 @@ public class DumpVariables
    */
   @Override
   public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "regExp", m_RegExp, (m_Invert ? "! " : ""));
+    String	result;
+
+    result = QuickInfoHelper.toString(this, "regExp", m_RegExp, (m_Invert ? "! " : ""));
+    result += QuickInfoHelper.toString(this, "outputType", m_OutputType, ", output: ");
+
+    return result;
   }
 
   /**
@@ -198,13 +229,51 @@ public class DumpVariables
   }
 
   /**
+   * Sets the format to output the variables in.
+   *
+   * @param value	the format
+   */
+  public void setOutputType(OutputType value) {
+    m_OutputType = value;
+    reset();
+  }
+
+  /**
+   * Returns the format to output the variables in.
+   *
+   * @return		the format
+   */
+  public OutputType getOutputType() {
+    return m_OutputType;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String outputTypeTipText() {
+    return "The output format to use.";
+  }
+
+  /**
    * Returns the class of objects that it generates.
    *
    * @return		the Class of the generated tokens
    */
   @Override
   public Class[] generates() {
-    return new Class[]{SpreadSheet.class};
+    switch (m_OutputType) {
+      case SPREADSHEET:
+	return new Class[]{SpreadSheet.class};
+      case PROPERTIES:
+	return new Class[]{Properties.class};
+      case MAP:
+	return new Class[]{Map.class};
+      default:
+	throw new IllegalStateException("Unhandled output type: " + m_OutputType);
+    }
   }
 
   /**
@@ -214,10 +283,12 @@ public class DumpVariables
    */
   @Override
   protected String doExecute() {
-    ArrayList<String> 	names;
-    SpreadSheet		sheet;
-    Row 		row;
-    Variables 		var;
+    ArrayList<String> 		names;
+    SpreadSheet			sheet;
+    adams.core.Properties	props;
+    Map<String,String>		map;
+    Row 			row;
+    Variables 			var;
 
     names = new ArrayList<>();
     var = getVariables();
@@ -236,17 +307,38 @@ public class DumpVariables
 
     Collections.sort(names);
 
-    sheet = new DefaultSpreadSheet();
-    sheet.setName("Variables");
-    row   = sheet.getHeaderRow();
-    row.addCell("K").setContent("Name");
-    row.addCell("V").setContent("Value");
-    for (String name: names) {
-      row = sheet.addRow();
-      row.addCell("K").setContentAsString(name);
-      row.addCell("V").setContentAsString(var.get(name));
+    switch (m_OutputType) {
+      case SPREADSHEET:
+	sheet = new DefaultSpreadSheet();
+	sheet.setName("Variables");
+	row   = sheet.getHeaderRow();
+	row.addCell("K").setContent("Name");
+	row.addCell("V").setContent("Value");
+	for (String name: names) {
+	  row = sheet.addRow();
+	  row.addCell("K").setContentAsString(name);
+	  row.addCell("V").setContentAsString(var.get(name));
+	}
+	m_OutputToken = new Token(sheet);
+	break;
+
+      case PROPERTIES:
+	props = new adams.core.Properties();
+	for (String name: names)
+	  props.setProperty(name, var.get(name));
+	m_OutputToken = new Token(props);
+	break;
+
+      case MAP:
+	map = new HashMap<>();
+	for (String name: names)
+	  map.put(name, var.get(name));
+	m_OutputToken = new Token(map);
+	break;
+
+      default:
+	throw new IllegalStateException("Unhandled output type: " + m_OutputType);
     }
-    m_OutputToken = new Token(sheet);
 
     return null;
   }
