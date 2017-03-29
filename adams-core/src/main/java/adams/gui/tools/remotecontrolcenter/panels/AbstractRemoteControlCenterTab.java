@@ -20,12 +20,23 @@
 
 package adams.gui.tools.remotecontrolcenter.panels;
 
+import adams.core.base.BaseHostname;
+import adams.core.net.PortManager;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.core.BasePanel;
 import adams.gui.event.RemoteScriptingEngineUpdateEvent;
 import adams.gui.event.RemoteScriptingEngineUpdateListener;
 import adams.gui.tools.remotecontrolcenter.RemoteControlCenterLogPanel;
 import adams.gui.tools.remotecontrolcenter.RemoteControlCenterPanel;
+import adams.scripting.command.RemoteCommandWithResponse;
+import adams.scripting.command.basic.StopEngine;
+import adams.scripting.command.basic.StopEngine.EngineType;
+import adams.scripting.connection.DefaultConnection;
+import adams.scripting.engine.DefaultScriptingEngine;
+import adams.scripting.requesthandler.RequestHandler;
+import adams.scripting.requesthandler.SimpleLogPanelRequestHandler;
+import adams.scripting.responsehandler.ResponseHandler;
+import adams.scripting.responsehandler.SimpleLogPanelResponseHandler;
 
 /**
  * Ancestor for tabs to be shown in the Remote Control Center.
@@ -102,5 +113,92 @@ public abstract class AbstractRemoteControlCenterTab
    * @param e		the event
    */
   public void remoteScriptingEngineUpdated(RemoteScriptingEngineUpdateEvent e) {
+  }
+
+  /**
+   * Returns new instance of a configured scripting engine.
+   *
+   * @param responseHandler	the handler to use for intercepting the result, can be null
+   * @param defPort		the default port to use
+   * @return			the engine
+   */
+  protected DefaultScriptingEngine configureEngine(ResponseHandler responseHandler, int defPort) {
+    DefaultScriptingEngine 				result;
+    adams.scripting.requesthandler.MultiHandler		multiRequest;
+    adams.scripting.responsehandler.MultiHandler	multiResponse;
+    SimpleLogPanelRequestHandler simpleRequest;
+    SimpleLogPanelResponseHandler simpleResponse;
+
+    result = new DefaultScriptingEngine();
+    result.setPort(PortManager.getSingleton().next(result.getClass(), defPort));
+
+    // request
+    simpleRequest = new SimpleLogPanelRequestHandler();
+    simpleRequest.setLog(getLogPanel().getRequestLog());
+    multiRequest = new adams.scripting.requesthandler.MultiHandler();
+    multiRequest.setHandlers(new RequestHandler[]{
+      new adams.scripting.requesthandler.LoggingHandler(),
+      simpleRequest,
+    });
+    result.setRequestHandler(multiRequest);
+
+    // response
+    simpleResponse = new SimpleLogPanelResponseHandler();
+    simpleResponse.setLog(getLogPanel().getRequestLog());
+    multiResponse = new adams.scripting.responsehandler.MultiHandler();
+    multiResponse.setHandlers(new ResponseHandler[]{
+      new adams.scripting.responsehandler.LoggingHandler(),
+      simpleResponse,
+    });
+    if (responseHandler != null)
+      multiResponse.addHandler(responseHandler);
+    result.setResponseHandler(multiResponse);
+
+    return result;
+  }
+
+  /**
+   * Sends the specified command and the response handler for intercepting
+   * the result.
+   *
+   * @param cmd			the command to send
+   * @param responseHandler 	the response handler for intercepting the result, can be null
+   * @param local 		the local host
+   * @param remote 		the remote host
+   * @param defPort		the default port to use
+   */
+  public void sendCommand(RemoteCommandWithResponse cmd, ResponseHandler responseHandler, BaseHostname local, BaseHostname remote, int defPort) {
+    StopEngine stop;
+    DefaultConnection conn;
+    DefaultScriptingEngine	engine;
+    DefaultConnection		connResp;
+    String			msg;
+
+    // engine
+    engine = configureEngine(responseHandler, defPort);
+    new Thread(() -> engine.execute()).start();
+
+    // command
+    connResp = new DefaultConnection();
+    connResp.setHost(local.hostnameValue());
+    connResp.setPort(engine.getPort());
+    cmd.setResponseConnection(connResp);
+
+    // send command
+    conn = new DefaultConnection();
+    conn.setHost(remote.hostnameValue());
+    conn.setPort(remote.portValue());
+    msg  = conn.sendRequest(cmd);
+    if (msg != null) {
+      engine.stopExecution();
+      getOwner().logError("Failed to send command '" + cmd.toCommandLine() + "':\n" + msg, "Scripting error");
+    }
+    else {
+      // send stop signal
+      stop = new StopEngine();
+      stop.setType(EngineType.RESPONSE);
+      stop.setResponseConnection(connResp);
+      conn.sendRequest(stop);
+    }
   }
 }

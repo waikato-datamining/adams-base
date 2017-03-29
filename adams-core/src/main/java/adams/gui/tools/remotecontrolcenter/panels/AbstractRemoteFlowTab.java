@@ -21,7 +21,6 @@
 package adams.gui.tools.remotecontrolcenter.panels;
 
 import adams.core.base.BaseHostname;
-import adams.core.net.PortManager;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.gui.core.BaseObjectTextField;
 import adams.gui.core.BaseSplitPane;
@@ -31,18 +30,12 @@ import adams.gui.core.GUIHelper;
 import adams.gui.core.SpreadSheetTableModel;
 import adams.scripting.command.RemoteCommand;
 import adams.scripting.command.RemoteCommandWithResponse;
-import adams.scripting.command.basic.StopEngine;
-import adams.scripting.command.basic.StopEngine.EngineType;
 import adams.scripting.command.flow.ListFlows;
 import adams.scripting.command.flow.SendFlowControlCommand;
 import adams.scripting.command.flow.SendFlowControlCommand.Command;
 import adams.scripting.connection.DefaultConnection;
 import adams.scripting.engine.DefaultScriptingEngine;
-import adams.scripting.requesthandler.RequestHandler;
-import adams.scripting.requesthandler.SimpleLogPanelRequestHandler;
-import adams.scripting.responsehandler.AbstractResponseHandler;
 import adams.scripting.responsehandler.ResponseHandler;
-import adams.scripting.responsehandler.SimpleLogPanelResponseHandler;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -76,12 +69,9 @@ public abstract class AbstractRemoteFlowTab
    * @version $Revision$
    */
   public static class FlowListResponseHandler
-    extends AbstractResponseHandler {
+    extends AbstractTabResponseHandler<AbstractRemoteFlowTab> {
 
     private static final long serialVersionUID = 6205405220037007365L;
-
-    /** the owner. */
-    protected AbstractRemoteFlowTab m_Tab;
 
     /**
      * Initializes the handler.
@@ -89,18 +79,7 @@ public abstract class AbstractRemoteFlowTab
      * @param tab	the tab this handler belongs to
      */
     public FlowListResponseHandler(AbstractRemoteFlowTab tab) {
-      super();
-      m_Tab = tab;
-    }
-
-    /**
-     * Returns a string describing the object.
-     *
-     * @return 			a description suitable for displaying in the gui
-     */
-    @Override
-    public String globalInfo() {
-      return "Ties into " + AbstractRemoteFlowTab.class.getName() + " derived tabs.";
+      super(tab);
     }
 
     /**
@@ -265,38 +244,7 @@ public abstract class AbstractRemoteFlowTab
    * @return			the engine
    */
   protected DefaultScriptingEngine configureEngine(ResponseHandler responseHandler) {
-    DefaultScriptingEngine 				result;
-    adams.scripting.requesthandler.MultiHandler		multiRequest;
-    adams.scripting.responsehandler.MultiHandler	multiResponse;
-    SimpleLogPanelRequestHandler			simpleRequest;
-    SimpleLogPanelResponseHandler 			simpleResponse;
-
-    result = new DefaultScriptingEngine();
-    result.setPort(PortManager.getSingleton().next(result.getClass(), DEFAULT_PORT));
-
-    // request
-    simpleRequest = new SimpleLogPanelRequestHandler();
-    simpleRequest.setLog(getLogPanel().getRequestLog());
-    multiRequest = new adams.scripting.requesthandler.MultiHandler();
-    multiRequest.setHandlers(new RequestHandler[]{
-      new adams.scripting.requesthandler.LoggingHandler(),
-      simpleRequest,
-    });
-    result.setRequestHandler(multiRequest);
-
-    // response
-    simpleResponse = new SimpleLogPanelResponseHandler();
-    simpleResponse.setLog(getLogPanel().getRequestLog());
-    multiResponse = new adams.scripting.responsehandler.MultiHandler();
-    multiResponse.setHandlers(new ResponseHandler[]{
-      new adams.scripting.responsehandler.LoggingHandler(),
-      simpleResponse,
-    });
-    if (responseHandler != null)
-      multiResponse.addHandler(responseHandler);
-    result.setResponseHandler(multiResponse);
-
-    return result;
+    return configureEngine(responseHandler, DEFAULT_PORT);
   }
 
   /**
@@ -307,43 +255,7 @@ public abstract class AbstractRemoteFlowTab
    * @param responseHandler 	the response handler for intercepting the result, can be null
    */
   public void sendCommand(RemoteCommandWithResponse cmd, ResponseHandler responseHandler) {
-    StopEngine			stop;
-    DefaultConnection		conn;
-    DefaultScriptingEngine	engine;
-    DefaultConnection		connResp;
-    BaseHostname		local;
-    BaseHostname		remote;
-    String			msg;
-
-    local  = m_TextLocal.getObject();
-    remote = m_TextRemote.getObject();
-
-    // engine
-    engine = configureEngine(responseHandler);
-    new Thread(() -> engine.execute()).start();
-
-    // command
-    connResp = new DefaultConnection();
-    connResp.setHost(local.hostnameValue());
-    connResp.setPort(engine.getPort());
-    cmd.setResponseConnection(connResp);
-
-    // send command
-    conn = new DefaultConnection();
-    conn.setHost(remote.hostnameValue());
-    conn.setPort(remote.portValue());
-    msg  = conn.sendRequest(cmd);
-    if (msg != null) {
-      engine.stopExecution();
-      getOwner().logError("Failed to refresh flow list:\n" + msg, "Scripting error");
-    }
-    else {
-      // send stop signal
-      stop = new StopEngine();
-      stop.setType(EngineType.RESPONSE);
-      stop.setResponseConnection(connResp);
-      conn.sendRequest(stop);
-    }
+    sendCommand(cmd, responseHandler, m_TextLocal.getObject(), m_TextRemote.getObject(), DEFAULT_PORT);
   }
 
   /**
