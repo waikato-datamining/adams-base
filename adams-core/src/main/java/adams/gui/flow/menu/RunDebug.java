@@ -15,7 +15,7 @@
 
 /**
  * RunDebug.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.menu;
 
@@ -59,6 +59,7 @@ public class RunDebug
     setEnabled(
 	   m_State.hasCurrentPanel() 
 	&& isInputEnabled()
+        && !m_State.getCurrentPanel().getTree().isDebug()
 	&& m_State.getCurrentPanel().getTree().isFlow());
   }
 }

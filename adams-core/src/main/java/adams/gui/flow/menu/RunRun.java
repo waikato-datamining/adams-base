@@ -59,6 +59,7 @@ public class RunRun
     setEnabled(
 	   m_State.hasCurrentPanel() 
 	&& isInputEnabled()
+        && !m_State.getCurrentPanel().getTree().isDebug()
 	&& m_State.getCurrentPanel().getTree().isFlow());
   }
 }

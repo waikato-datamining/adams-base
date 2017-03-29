@@ -97,6 +97,7 @@ public class RunValidateSetup
   protected void doUpdate() {
     setEnabled(
 	   m_State.hasCurrentPanel() 
+        && !m_State.getCurrentPanel().getTree().isDebug()
 	&& isInputEnabled());
   }
 }
