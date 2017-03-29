@@ -17,6 +17,10 @@ java.util.Comparator=\
   adams.core,\
   nz.ac.waikato.cms.locator
 
+# the logging handlers
+java.util.logging.Handler=\
+  adams.core.logging
+
 # the filename generators
 adams.core.io.AbstractFilenameGenerator=\
   adams.core.io
