@@ -66,6 +66,9 @@ public class ClassLister
   /** the name of the props file. */
   public final static String BLACKLIST = "ClassLister.blacklist";
 
+  /** the singleton. */
+  protected static ClassLister m_Singleton;
+
   /**
    * Initializes the classlister.
    */
