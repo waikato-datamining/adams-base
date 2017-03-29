@@ -37,8 +37,8 @@ public class StopRemoteLogging
 
   private static final long serialVersionUID = -3350680106789169314L;
 
-  /** the local host. */
-  protected BaseHostname m_LocalHost;
+  /** the logging host. */
+  protected BaseHostname m_LoggingHost;
 
   /** the message (empty is successful, otherwise error message). */
   protected String m_Message;
@@ -61,27 +61,27 @@ public class StopRemoteLogging
     super.defineOptions();
 
     m_OptionManager.add(
-      "local-host", "localHost",
+      "logging-host", "loggingHost",
       new BaseHostname("127.0.0.1:" + RemoteReceiveHandler.DEFAULT_PORT));
   }
 
   /**
-   * Sets local host.
+   * Sets logging host.
    *
    * @param value	host/port
    */
-  public void setLocalHost(BaseHostname value) {
-    m_LocalHost = value;
+  public void setLoggingHost(BaseHostname value) {
+    m_LoggingHost = value;
     reset();
   }
 
   /**
-   * Returns the local host.
+   * Returns the logging host.
    *
    * @return		host/port
    */
-  public BaseHostname getLocalHost() {
-    return m_LocalHost;
+  public BaseHostname getLoggingHost() {
+    return m_LoggingHost;
   }
 
   /**
@@ -90,7 +90,7 @@ public class StopRemoteLogging
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String localHostTipText() {
+  public String loggingHostTipText() {
     return "The hostname and port in use by the remote machine.";
   }
 
@@ -146,7 +146,7 @@ public class StopRemoteLogging
 
     if (error == null) {
       handler = new RemoteReceiveHandler();
-      handler.setPort(m_LocalHost.portValue());
+      handler.setPort(m_LoggingHost.portValue());
       msg = LoggingHelper.unwrapDefaultHandler(handler);
       if (msg != null)
 	getLogger().severe("afterSendRequest/remove: " + msg);
@@ -187,8 +187,8 @@ public class StopRemoteLogging
     RemoteSendHandler 	handler;
 
     handler = new RemoteSendHandler();
-    handler.setHostname(m_LocalHost.hostnameValue());
-    handler.setPort(m_LocalHost.portValue());
+    handler.setHostname(m_LoggingHost.hostnameValue());
+    handler.setPort(m_LoggingHost.portValue());
     m_Message = LoggingHelper.removeFromDefaultHandler(handler);
   }
 

@@ -24,7 +24,10 @@ import adams.core.base.BaseHostname;
 import adams.core.logging.LoggingHelper;
 import adams.core.logging.RemoteReceiveHandler;
 import adams.core.logging.RemoteSendHandler;
+import adams.core.logging.SimpleConsoleHandler;
 import adams.scripting.command.AbstractCommandWithResponse;
+
+import java.util.logging.Handler;
 
 /**
  * Starts remote logging.
@@ -37,11 +40,14 @@ public class StartRemoteLogging
 
   private static final long serialVersionUID = -3350680106789169314L;
 
-  /** the local host. */
-  protected BaseHostname m_LocalHost;
+  /** the logging host (local machine). */
+  protected BaseHostname m_LoggingHost;
 
   /** the timeout to use. */
   protected int m_TimeOut;
+
+  /** the handler to use. */
+  protected Handler m_Handler;
 
   /** the message (null is successful, otherwise error message). */
   protected String m_Message;
@@ -64,31 +70,37 @@ public class StartRemoteLogging
     super.defineOptions();
 
     m_OptionManager.add(
-      "local-host", "localHost",
+      "loggingHost", "loggingHost",
       new BaseHostname("127.0.0.1:" + RemoteReceiveHandler.DEFAULT_PORT));
 
     m_OptionManager.add(
       "time-out", "timeOut",
       RemoteReceiveHandler.DEFAULT_TIMEOUT, 1, null);
+
+    m_OptionManager.add(
+      "handler", "handler",
+      new SimpleConsoleHandler());
   }
 
   /**
-   * Sets the local host.
+   * Sets the logging host, i.e., the host/port of the local machine to send the logging
+   * information to.
    *
    * @param value	host/port
    */
-  public void setLocalHost(BaseHostname value) {
-    m_LocalHost = value;
+  public void setLoggingHost(BaseHostname value) {
+    m_LoggingHost = value;
     reset();
   }
 
   /**
-   * Returns the local host.
+   * Returns the logging host, i.e., the host/port of the local machine to send the logging
+   * information to.
    *
    * @return		host/port
    */
-  public BaseHostname getLocalHost() {
-    return m_LocalHost;
+  public BaseHostname getLoggingHost() {
+    return m_LoggingHost;
   }
 
   /**
@@ -97,8 +109,8 @@ public class StartRemoteLogging
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String localHostTipText() {
-    return "The hostname and port to use by the remote machine.";
+  public String loggingHostTipText() {
+    return "The hostname and port of the local machine the remote machine will send the logging information to.";
   }
 
   /**
@@ -130,6 +142,35 @@ public class StartRemoteLogging
    */
   public String timeOutTipText() {
     return "The time-out in msec for accepting data.";
+  }
+
+  /**
+   * Sets the handler to use.
+   *
+   * @param value	handler
+   */
+  public void setHandler(Handler value) {
+    m_Handler = value;
+    reset();
+  }
+
+  /**
+   * Returns the handler to use.
+   *
+   * @return		handler
+   */
+  public Handler getHandler() {
+    return m_Handler;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String handlerTipText() {
+    return "The logging handler to use.";
   }
 
   /**
@@ -181,7 +222,8 @@ public class StartRemoteLogging
     super.beforeSendRequest();
 
     handler = new RemoteReceiveHandler();
-    handler.setPort(m_LocalHost.portValue());
+    handler.setHandler(m_Handler);
+    handler.setPort(m_LoggingHost.portValue());
     handler.setTimeOut(m_TimeOut);
     msg = LoggingHelper.wrapDefaultHandler(handler);
     if (msg != null)
@@ -224,8 +266,8 @@ public class StartRemoteLogging
     RemoteSendHandler 	handler;
 
     handler = new RemoteSendHandler();
-    handler.setHostname(m_LocalHost.hostnameValue());
-    handler.setPort(m_LocalHost.portValue());
+    handler.setHostname(m_LoggingHost.hostnameValue());
+    handler.setPort(m_LoggingHost.portValue());
     m_Message = LoggingHelper.addToDefaultHandler(handler);
   }
 
