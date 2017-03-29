@@ -28,6 +28,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.util.logging.Handler;
+import java.util.logging.Level;
 import java.util.logging.LogRecord;
 
 /**
@@ -38,6 +39,157 @@ import java.util.logging.LogRecord;
  */
 public class RemoteReceiveHandler
   extends AbstractEnhancingSingleHandler {
+
+  /**
+   * Ancestor for remote listeners.
+   *
+   * @author FracPete (fracpete at waikato dot ac dot nz)
+   * @version $Revision$
+   */
+  public static abstract class AbstractRemoteListenerRunnable
+    extends RunnableWithLogging {
+
+    private static final long serialVersionUID = 2095617474011098979L;
+
+    /** the port to use. */
+    protected int m_Port;
+
+    /** the timeout in msec. */
+    protected int m_TimeOut;
+
+    /** the socket in use. */
+    protected ServerSocket m_Socket;
+
+    /**
+     * Initializes the runnable.
+     *
+     * @param port	the port to listen on
+     * @param timeout	the timeout
+     */
+    protected AbstractRemoteListenerRunnable(int port, int timeout) {
+      super();
+
+      m_Port    = port;
+      m_TimeOut = timeout;
+    }
+
+    /**
+     * Publishes the record.
+     *
+     * @param record	the record
+     */
+    protected abstract void publish(LogRecord record);
+
+    /**
+     * Hook method before the run is started.
+     */
+    @Override
+    protected void preRun() {
+      super.preRun();
+
+      try {
+	m_Socket = new ServerSocket(m_Port);
+	m_Socket.setSoTimeout(m_TimeOut);
+      }
+      catch (Exception e) {
+	getLogger().log(Level.SEVERE, "Failed to create server socket on port " + m_Port, e);
+	m_Stopped = true;
+      }
+    }
+
+    /**
+     * Listens for records till stopped.
+     */
+    @Override
+    protected void doRun() {
+      TByteArrayList 	list;
+      Socket 		client;
+      int 		data;
+      LogRecord 	record;
+
+      list = new TByteArrayList();
+      while (!m_Socket.isClosed() && !m_Stopped) {
+	// read data
+	list.clear();
+	try {
+	  client = m_Socket.accept();
+	  while ((data = client.getInputStream().read()) != -1)
+	    list.add((byte) data);
+	}
+	catch (SocketTimeoutException e) {
+	  // ignored
+	  continue;
+	}
+	catch (Exception e) {
+	  getLogger().log(Level.SEVERE, "Failed to accept client connection!", e);
+	}
+	// extract log record
+	if (list.size() > 0) {
+	  try {
+	    record = (LogRecord) SerializationHelper.fromByteArray(list.toArray())[0];
+	    publish(record);
+	  }
+	  catch (Exception e) {
+	    getLogger().log(Level.SEVERE, "Failed to extract LogRecord from binary data!", e);
+	  }
+	}
+      }
+    }
+
+    /**
+     * Stops the execution.
+     */
+    @Override
+    public void stopExecution() {
+      super.stopExecution();
+      if ((m_Socket != null) && !m_Socket.isClosed()) {
+	try {
+	  m_Socket.close();
+	}
+	catch (Exception e) {
+	  // ignored
+	}
+      }
+    }
+  }
+
+  /**
+   * Publishes the logging records using the supplied handler.
+   *
+   * @author FracPete (fracpete at waikato dot ac dot nz)
+   * @version $Revision$
+   */
+  public static class RemoteListenerRunnableUsingHandler
+    extends AbstractRemoteListenerRunnable {
+
+    private static final long serialVersionUID = -3339471481050533817L;
+
+    /** the handler to use for publishing. */
+    protected Handler m_Handler;
+
+    /**
+     * Initializes the runnable.
+     *
+     * @param port    	the port to listen on
+     * @param timeout 	the timeout
+     * @param handler	the handler
+     */
+    protected RemoteListenerRunnableUsingHandler(int port, int timeout, Handler handler) {
+      super(port, timeout);
+      m_Handler = handler;
+    }
+
+    /**
+     * Publishes the record.
+     *
+     * @param record	the record
+     */
+    @Override
+    protected void publish(LogRecord record) {
+      if (m_Handler != null)
+	m_Handler.publish(record);
+    }
+  }
 
   /** the default port. */
   public final static int DEFAULT_PORT = 23456;
@@ -51,11 +203,8 @@ public class RemoteReceiveHandler
   /** the timeout to use (msec). */
   protected int m_TimeOut;
 
-  /** the socket in use. */
-  protected ServerSocket m_Socket;
-
   /** the runnable in use. */
-  protected RunnableWithLogging m_Runnable;
+  protected AbstractRemoteListenerRunnable m_Runnable;
 
   /**
    * Initializes the members.
@@ -64,7 +213,6 @@ public class RemoteReceiveHandler
   protected void initialize() {
     super.initialize();
 
-    m_Socket   = null;
     m_Runnable = null;
 
     setPort(DEFAULT_PORT);
@@ -140,16 +288,6 @@ public class RemoteReceiveHandler
       m_Runnable = null;
     }
 
-    if (m_Socket != null) {
-      try {
-	m_Socket.close();
-      }
-      catch (Exception e) {
-	// ignored
-      }
-      m_Socket = null;
-    }
-
     super.close();
   }
 
@@ -159,54 +297,9 @@ public class RemoteReceiveHandler
    * @return		true if successfully started
    */
   public boolean startListening() {
-    try {
-      m_Socket = new ServerSocket(m_Port);
-      m_Socket.setSoTimeout(m_TimeOut);
-      m_Runnable = new RunnableWithLogging() {
-	private static final long serialVersionUID = 6546465605007778490L;
-	@Override
-	protected void doRun() {
-	  TByteArrayList list = new TByteArrayList();
-	  while (!m_Socket.isClosed() && !m_Stopped) {
-	    Socket client;
-	    // read data
-	    list.clear();
-	    try {
-	      client = m_Socket.accept();
-	      int data;
-	      while ((data = client.getInputStream().read()) != -1)
-		list.add((byte) data);
-	    }
-	    catch (SocketTimeoutException e) {
-	      // ignored
-	      continue;
-	    }
-	    catch (Exception e) {
-	      System.err.println(getClass().getName() + ": failed to accept client connection!");
-	      e.printStackTrace();
-	    }
-	    // extract log record
-	    if (list.size() > 0) {
-	      try {
-		LogRecord record = (LogRecord) SerializationHelper.fromByteArray(list.toArray())[0];
-		publish(record);
-	      }
-	      catch (Exception e) {
-		System.err.println(getClass().getName() + ": failed to extract LogRecord from binary data!");
-		e.printStackTrace();
-	      }
-	    }
-	  }
-	}
-      };
-      new Thread(m_Runnable).start();
-      return true;
-    }
-    catch (Exception e) {
-      System.err.println(getClass().getName() + ": failed to listen to " + m_Port);
-      e.printStackTrace();
-      return false;
-    }
+    m_Runnable = new RemoteListenerRunnableUsingHandler(m_Port, m_TimeOut, this);
+    new Thread(m_Runnable).start();
+    return true;
   }
 
   /**
