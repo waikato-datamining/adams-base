@@ -15,7 +15,7 @@
 
 /**
  * AbstractCommandLineHandler.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
@@ -52,6 +52,22 @@ public abstract class AbstractCommandLineHandler
   static {
     m_Cache          = new Hashtable<>();
     m_HandlerClasses = null;
+  }
+
+  /**
+   * Initializes the handler.
+   */
+  protected AbstractCommandLineHandler() {
+    super();
+    initialize();
+  }
+
+  /**
+   * For initializing members.
+   * <br>
+   * Default implementation does nothing.
+   */
+  protected void initialize() {
   }
 
   /**

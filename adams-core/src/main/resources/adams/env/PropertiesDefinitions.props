@@ -25,6 +25,7 @@ Definitions=\
   adams.env.GOEEditorsDefinition,\
   adams.env.GUIHelperDefinition,\
   adams.env.ImageViewerPanelDefinition,\
+  adams.env.JenericCmdlineDefinition,\
   adams.env.LocaleDefinition,\
   adams.env.LogEntryDBViewerPanelDefinition,\
   adams.env.LogEntryDefinition,\

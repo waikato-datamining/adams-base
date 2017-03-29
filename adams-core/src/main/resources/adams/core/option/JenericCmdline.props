@@ -1,0 +1,10 @@
+# Configuration file listing the superclasses/interfaces to be handled by
+# the jeneric-cmdline library to add command-line functionality..
+#
+# Format:
+# class.name=true|false
+#
+# Author:  FracPete (fracpete at waikato dot ac dot nz)
+# Version: $Revision: 15816 $
+
+java.util.logging.Handler=true
