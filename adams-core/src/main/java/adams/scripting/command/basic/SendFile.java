@@ -15,7 +15,7 @@
 
 /**
  * SendFile.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.scripting.command.basic;
@@ -135,7 +135,7 @@ public class SendFile
   }
 
   /**
-   * Ignored.
+   * Sets the payload for the request.
    *
    * @param value	the payload
    */
@@ -157,7 +157,7 @@ public class SendFile
   }
 
   /**
-   * Always zero-length array.
+   * Returns the payload of the request, if any.
    *
    * @return		the payload
    */
