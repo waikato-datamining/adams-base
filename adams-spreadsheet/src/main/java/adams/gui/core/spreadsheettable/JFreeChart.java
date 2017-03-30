@@ -15,7 +15,7 @@
 
 /**
  * JFreeChart.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.core.spreadsheettable;
@@ -184,6 +184,7 @@ public class JFreeChart
     }
 
     if (numPoints > -1) {
+      numPoints = Math.min(numPoints, tmp.size());
       Collections.shuffle(tmp, new Random(1));
       list = tmp.subList(0, numPoints);
       if (sorted) {
