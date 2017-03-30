@@ -74,8 +74,8 @@
     <xjc.version>3.1.0</xjc.version>
     <moa.version>2014.04</moa.version>
     <weka.version>3.9.0-fork-0.0.1</weka.version>
-    <postgresql.version>9.4-1201-jdbc41</postgresql.version>
-    <postgis.version>1.5.3</postgis.version>
+    <postgresql.version>42.0.0</postgresql.version>
+    <postgis.version>2.2.1</postgis.version>
     <jodd.version>3.5.2</jodd.version>
     <boofcv.version>0.18</boofcv.version>
     <openimaj.version>1.3.1</openimaj.version>

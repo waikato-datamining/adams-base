@@ -64,7 +64,7 @@
     <dependency>
       <groupId>mysql</groupId>
       <artifactId>mysql-connector-java</artifactId>
-      <version>5.1.35</version>
+      <version>6.0.6</version>
       <type>jar</type>
     </dependency>
 
@@ -75,15 +75,15 @@
     </dependency>
 
     <dependency>
-      <groupId>hsqldb</groupId>
+      <groupId>org.hsqldb</groupId>
       <artifactId>hsqldb</artifactId>
-      <version>1.8.0.10</version>
+      <version>2.3.4</version>
     </dependency>
 
     <dependency>
       <groupId>org.xerial</groupId>
       <artifactId>sqlite-jdbc</artifactId>
-      <version>3.8.11.2</version>
+      <version>3.16.1</version>
     </dependency>
 
     <dependency>
@@ -258,7 +258,7 @@
     <dependency>
       <groupId>com.github.waikato</groupId>
       <artifactId>jeneric-cmdline</artifactId>
-      <version>0.0.2</version>
+      <version>0.0.3</version>
     </dependency>
 
     <dependency>
