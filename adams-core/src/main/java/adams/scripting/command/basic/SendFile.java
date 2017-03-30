@@ -21,11 +21,11 @@
 package adams.scripting.command.basic;
 
 import adams.core.Utils;
+import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
 import adams.scripting.command.AbstractCommand;
 import adams.scripting.engine.RemoteScriptingEngine;
-import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 
@@ -149,7 +149,7 @@ public class SendFile
    */
   protected void prepareRequestPayload() {
     try {
-      m_Content = FileUtils.readFileToByteArray(m_File.getAbsoluteFile());
+      m_Content = FileUtils.loadFromBinaryFile(m_File.getAbsoluteFile());
     }
     catch (Exception e) {
       Utils.handleException(this, "Failed to read data from file: " + m_File, e);
@@ -190,7 +190,7 @@ public class SendFile
     file = new File(m_RemoteDir.getAbsolutePath() + File.separator + m_File.getName());
     getLogger().info("Writing data to: " + file);
     try {
-      FileUtils.writeByteArrayToFile(file, m_Content, false);
+      FileUtils.writeToBinaryFile(file.getAbsolutePath(), m_Content);
     }
     catch (Exception e) {
       result = Utils.handleException(this, "Failed to write content to: " + file, e);
