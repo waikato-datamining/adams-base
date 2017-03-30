@@ -15,13 +15,13 @@
 
 /**
  * Restart.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.scripting.command.basic;
 
+import adams.core.ClassCrossReference;
 import adams.core.management.Launcher;
-import adams.scripting.command.AbstractCommand;
 import adams.scripting.engine.RemoteScriptingEngine;
 
 /**
@@ -31,7 +31,8 @@ import adams.scripting.engine.RemoteScriptingEngine;
  * @version $Revision$
  */
 public class Restart
-  extends AbstractCommand {
+  extends AbstractCommandWithFlowStopping
+  implements ClassCrossReference {
 
   private static final long serialVersionUID = -1657908444959620122L;
 
@@ -48,6 +49,15 @@ public class Restart
     return
       "Restarts the ADAMS instance. This only works if the ADAMS instance "
 	+ "was started through the " + Launcher.class.getName() + ".";
+  }
+
+  /**
+   * Returns the cross-referenced classes.
+   *
+   * @return		the classes
+   */
+  public Class[] getClassCrossReferences() {
+    return new Class[]{Kill.class, Stop.class};
   }
 
   /**
@@ -75,7 +85,7 @@ public class Restart
   /**
    * Returns whether to restart with more memory.
    *
-   * @return		the host
+   * @return		true if to restart with more memory
    */
   public boolean getMoreMemory() {
     return m_MoreMemory;
@@ -126,6 +136,9 @@ public class Restart
    * @return		null if successful, otherwise error message
    */
   protected String doHandleRequest(RemoteScriptingEngine engine) {
+    if (m_StopFlows)
+      stopFlows();
+
     if (getApplicationContext() != null) {
       if (getApplicationContext().getRemoteScriptingEngine() != null) {
         getLogger().info("Stopping scripting engine");
