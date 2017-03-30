@@ -336,6 +336,41 @@ public class FileUtils {
   }
 
   /**
+   * Writes the binary data to the specified file. The file is always overwritten.
+   *
+   * @param filename	the file to write to
+   * @param data	the data to write
+   * @return		true if writing was successful
+   */
+  public static boolean writeToBinaryFile(String filename, byte[] data) {
+    return writeToBinaryFile(filename, data, false);
+  }
+
+  /**
+   * Writes the binary data to the specified file.
+   *
+   * @param filename	the file to write to
+   * @param data	the data to write
+   * @param append	whether to append the file
+   * @return		true if writing was successful
+   */
+  public static boolean writeToBinaryFile(String filename, byte[] data, boolean append) {
+    StandardOpenOption[]	options;
+
+    try {
+      if (append)
+	options = new StandardOpenOption[]{StandardOpenOption.CREATE, StandardOpenOption.APPEND, StandardOpenOption.WRITE};
+      else
+	options = new StandardOpenOption[]{StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE};
+      Files.write(new File(filename).toPath(), data, options);
+      return true;
+    }
+    catch (Exception e) {
+      return false;
+    }
+  }
+
+  /**
    * Writes the given object to the specified file. The object is always
    * appended.
    *
