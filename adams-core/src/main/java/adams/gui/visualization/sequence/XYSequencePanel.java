@@ -435,6 +435,10 @@ public class XYSequencePanel
       minX -= 1;
       maxX += 1;
     }
+    if (minY == maxY) {
+      minY -= 1;
+      maxY += 1;
+    }
 
     // update axes
     getPlot().getAxis(Axis.LEFT).setMinimum(minY);
