@@ -15,13 +15,13 @@
 
 /**
  * WindowDuplicateInTab.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.menu;
 
-import java.awt.event.ActionEvent;
-
 import adams.gui.flow.FlowPanel;
+
+import java.awt.event.ActionEvent;
 
 /**
  * Duplicates the flow in a new tab.
@@ -61,6 +61,8 @@ public class WindowDuplicateInTab
       result.setCurrentFlow(current.getCurrentFlow());
       result.setCurrentFile(current.getCurrentFile());
       result.setModified(current.isModified());
+      result.setTitle("Copy of " + current.getTitle());
+      result.update();
     }
   }
 
