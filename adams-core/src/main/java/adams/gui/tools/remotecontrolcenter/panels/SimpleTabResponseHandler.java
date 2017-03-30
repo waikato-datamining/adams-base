@@ -59,6 +59,6 @@ public class SimpleTabResponseHandler
    */
   @Override
   public void responseFailed(RemoteCommand cmd, String msg) {
-    m_Tab.getOwner().logError(msg + "\n" + cmd, "Reponse failed");
+    m_Tab.getOwner().logError(msg + "\n" + cmd, "Response failed");
   }
 }
