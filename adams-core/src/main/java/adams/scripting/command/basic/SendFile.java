@@ -23,7 +23,7 @@ package adams.scripting.command.basic;
 import adams.core.Utils;
 import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
-import adams.scripting.command.AbstractFlowAwareCommand;
+import adams.scripting.command.AbstractCommand;
 import adams.scripting.engine.RemoteScriptingEngine;
 import org.apache.commons.io.FileUtils;
 
@@ -36,7 +36,7 @@ import java.io.File;
  * @version $Revision$
  */
 public class SendFile
-  extends AbstractFlowAwareCommand {
+  extends AbstractCommand {
 
   private static final long serialVersionUID = -1657908444959620122L;
 
