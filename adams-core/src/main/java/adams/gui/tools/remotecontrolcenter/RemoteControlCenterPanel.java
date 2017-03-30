@@ -35,6 +35,7 @@ import adams.gui.event.RemoteScriptingEngineUpdateEvent;
 import adams.gui.event.RemoteScriptingEngineUpdateListener;
 import adams.gui.tools.remotecontrolcenter.panels.AbstractRemoteControlCenterTab;
 import adams.gui.tools.remotecontrolcenter.panels.RemoteFlowCommandsTab;
+import adams.gui.tools.remotecontrolcenter.panels.RemoteLoggingTab;
 import adams.gui.workspace.AbstractWorkspacePanel;
 
 import javax.swing.ImageIcon;
@@ -108,6 +109,7 @@ public class RemoteControlCenterPanel
 
     initActions();
 
+    addTab(new RemoteLoggingTab(), false);
     addTab(new RemoteFlowCommandsTab(), false);
     m_TabbedPane.setSelectedIndex(0);
   }

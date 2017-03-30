@@ -70,6 +70,7 @@ public class RemoteControlCenterManagerPanel
     m_TabbedPaneMain.addTab("Engines", m_PanelEngines);
     m_TabbedPaneMain.addTab("Commands", m_SplitPane);
     m_TabbedPaneMain.addTab("Log", m_PanelLog);
+    m_TabbedPaneMain.setSelectedIndex(1);
 
     add(m_TabbedPaneMain, BorderLayout.CENTER);
   }
