@@ -15,11 +15,12 @@
 
 /**
  * Kill.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.scripting.command.basic;
 
+import adams.core.ClassCrossReference;
 import adams.scripting.command.AbstractCommand;
 import adams.scripting.engine.RemoteScriptingEngine;
 
@@ -30,7 +31,8 @@ import adams.scripting.engine.RemoteScriptingEngine;
  * @version $Revision$
  */
 public class Kill
-  extends AbstractCommand {
+  extends AbstractCommand
+  implements ClassCrossReference {
 
   private static final long serialVersionUID = -1657908444959620122L;
 
@@ -42,6 +44,15 @@ public class Kill
   @Override
   public String globalInfo() {
     return "Kills the ADAMS instance.";
+  }
+
+  /**
+   * Returns the cross-referenced classes.
+   *
+   * @return		the classes
+   */
+  public Class[] getClassCrossReferences() {
+    return new Class[]{Stop.class, Restart.class};
   }
 
   /**
@@ -80,13 +91,6 @@ public class Kill
    */
   @Override
   protected String doHandleRequest(RemoteScriptingEngine engine) {
-    if (getApplicationContext() != null) {
-      if (getApplicationContext().getRemoteScriptingEngine() != null) {
-        getLogger().info("Stopping scripting engine");
-        getApplicationContext().getRemoteScriptingEngine().stopExecution();
-      }
-    }
-
     getLogger().info("Exiting");
     System.exit(0);
     return null;
