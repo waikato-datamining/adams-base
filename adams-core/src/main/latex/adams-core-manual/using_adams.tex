@@ -2087,6 +2087,18 @@ menu item. The dialog that you get prompted with allows you to configure
 the remote command and the type of connection to use to reach the remote
 host.
 
+Since executing commands like this is a bit low-level, there is also a
+user interface available called \textit{Remote Control Center}, which you
+can find in the same menu. Figure \ref{remote_control_center} displays a screenshot
+of the interface, showing the tab that taps into the logging of a remote flow.
+
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=12.0cm]{images/remote_control_center.png}
+  \caption{Remote Control Center interface.}
+  \label{remote_control_center}
+\end{figure}
+
 The remote command functionality is not only available from the main menu,
 you can also use this functionality within flows, allowing for automation
 of tasks. However, you still need to start the remote scripting engine. Though
@@ -2162,6 +2174,25 @@ cd /opt/adams
     \begin{verbatim}
     @reboot /usr/local/bin/myflow.sh
     \end{verbatim}
+  \item Instead of a cronjob, you can also use a systemd startup script
+  \textit{adams.service} (using user/group adams/adams in this example):
+    {\scriptsize \begin{verbatim}
+# cat adams.service
+[Unit]
+Description=My Flow
+After=syslog.target network.target
+
+[Service]
+Type=simple
+User=adams
+Group=adams
+WorkingDirectory=/opt/adams
+ExecStart=/opt/jdk/bin/java -cp "./lib/*:./lib/linux64/*" adams.flow.FlowRunner -input "./flows/myflow.flow"
+# SuccessExitStatus=143
+
+[Install]
+WantedBy=multi-user.target
+    \end{verbatim}}
 \end{tight_itemize}
 
 \begin{figure}[htb]
