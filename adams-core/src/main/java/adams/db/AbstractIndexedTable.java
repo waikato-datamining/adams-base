@@ -15,7 +15,7 @@
 
 /*
  * Table.java
- * Copyright (C) 2008-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2017 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -101,8 +101,8 @@ public abstract class AbstractIndexedTable
     boolean ok = true;
     try {
       DatabaseMetaData dbmd = connection.getMetaData();
-      rs = new SimpleResultSet(dbmd.getColumns (null, null, m_TableName, null));
-      HashSet<String> columns = new HashSet<String>();
+      rs = new SimpleResultSet(dbmd.getColumns (null, null, m_TableName, "%"));
+      HashSet<String> columns = new HashSet<>();
       while(rs.next()) {
 	String cname = rs.getString("COLUMN_NAME").toUpperCase();
 	columns.add(cname);
