@@ -51,6 +51,12 @@ public class RemoteReceiveHandler
 
     private static final long serialVersionUID = 2095617474011098979L;
 
+    /** the default port. */
+    public final static int DEFAULT_PORT = 23456;
+
+    /** the default timeout. */
+    public final static int DEFAULT_TIMEOUT = 10000;
+
     /** the port to use. */
     protected int m_Port;
 
@@ -191,12 +197,6 @@ public class RemoteReceiveHandler
     }
   }
 
-  /** the default port. */
-  public final static int DEFAULT_PORT = 23456;
-
-  /** the default timeout. */
-  public final static int DEFAULT_TIMEOUT = 10000;
-
   /** the port to listen to. */
   protected int m_Port;
 
@@ -215,8 +215,8 @@ public class RemoteReceiveHandler
 
     m_Runnable = null;
 
-    setPort(DEFAULT_PORT);
-    setTimeOut(DEFAULT_TIMEOUT);
+    setPort(AbstractRemoteListenerRunnable.DEFAULT_PORT);
+    setTimeOut(AbstractRemoteListenerRunnable.DEFAULT_TIMEOUT);
   }
 
   /**
@@ -355,10 +355,10 @@ public class RemoteReceiveHandler
    * @param args	optionally supplying port and timeout
    */
   public static void main(String[] args) {
-    int port = DEFAULT_PORT;
+    int port = AbstractRemoteListenerRunnable.DEFAULT_PORT;
     if (args.length > 0)
       port = Integer.parseInt(args[0]);
-    int timeout = DEFAULT_TIMEOUT;
+    int timeout = AbstractRemoteListenerRunnable.DEFAULT_TIMEOUT;
     if (args.length > 1)
       timeout = Integer.parseInt(args[1]);
     RemoteReceiveHandler handler = new RemoteReceiveHandler();

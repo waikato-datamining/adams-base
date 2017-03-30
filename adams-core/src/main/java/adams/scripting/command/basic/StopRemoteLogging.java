@@ -23,6 +23,7 @@ package adams.scripting.command.basic;
 import adams.core.base.BaseHostname;
 import adams.core.logging.LoggingHelper;
 import adams.core.logging.RemoteReceiveHandler;
+import adams.core.logging.RemoteReceiveHandler.AbstractRemoteListenerRunnable;
 import adams.core.logging.RemoteSendHandler;
 import adams.scripting.command.AbstractCommandWithResponse;
 
@@ -62,7 +63,7 @@ public class StopRemoteLogging
 
     m_OptionManager.add(
       "logging-host", "loggingHost",
-      new BaseHostname("127.0.0.1:" + RemoteReceiveHandler.DEFAULT_PORT));
+      new BaseHostname("127.0.0.1:" + AbstractRemoteListenerRunnable.DEFAULT_PORT));
   }
 
   /**

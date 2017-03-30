@@ -21,6 +21,7 @@
 package adams.core.logging;
 
 import adams.core.SerializationHelper;
+import adams.core.logging.RemoteReceiveHandler.AbstractRemoteListenerRunnable;
 
 import java.net.Socket;
 import java.util.logging.Handler;
@@ -40,7 +41,7 @@ public class RemoteSendHandler
   public final static String DEFAULT_HOSTNAME = "127.0.0.1";
 
   /** the default port. */
-  public final static int DEFAULT_PORT = RemoteReceiveHandler.DEFAULT_PORT;
+  public final static int DEFAULT_PORT = AbstractRemoteListenerRunnable.DEFAULT_PORT;
 
   /** the remote host. */
   protected String m_Hostname;

@@ -23,6 +23,7 @@ package adams.scripting.command.basic;
 import adams.core.base.BaseHostname;
 import adams.core.logging.LoggingHelper;
 import adams.core.logging.RemoteReceiveHandler;
+import adams.core.logging.RemoteReceiveHandler.AbstractRemoteListenerRunnable;
 import adams.core.logging.RemoteSendHandler;
 import adams.core.logging.SimpleConsoleHandler;
 import adams.scripting.command.AbstractCommandWithResponse;
@@ -45,6 +46,9 @@ public class StartRemoteLogging
 
   /** the timeout to use. */
   protected int m_TimeOut;
+
+  /** whether to instal a listener. */
+  protected boolean m_InstallListener;
 
   /** the handler to use. */
   protected Handler m_Handler;
@@ -71,11 +75,15 @@ public class StartRemoteLogging
 
     m_OptionManager.add(
       "loggingHost", "loggingHost",
-      new BaseHostname("127.0.0.1:" + RemoteReceiveHandler.DEFAULT_PORT));
+      new BaseHostname("127.0.0.1:" + AbstractRemoteListenerRunnable.DEFAULT_PORT));
 
     m_OptionManager.add(
       "time-out", "timeOut",
-      RemoteReceiveHandler.DEFAULT_TIMEOUT, 1, null);
+      AbstractRemoteListenerRunnable.DEFAULT_TIMEOUT, 1, null);
+
+    m_OptionManager.add(
+      "install-listener", "installListener",
+      true);
 
     m_OptionManager.add(
       "handler", "handler",
@@ -142,6 +150,35 @@ public class StartRemoteLogging
    */
   public String timeOutTipText() {
     return "The time-out in msec for accepting data.";
+  }
+
+  /**
+   * Sets whether to install a listener.
+   *
+   * @param value	true if to install listener
+   */
+  public void setInstallListener(boolean value) {
+    m_InstallListener = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to install a listener.
+   *
+   * @return		true if to install listener
+   */
+  public boolean getInstallListener() {
+    return m_InstallListener;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String installListenerTipText() {
+    return "If enabled, a listener gets installed using the specified handler.";
   }
 
   /**
@@ -221,15 +258,17 @@ public class StartRemoteLogging
 
     super.beforeSendRequest();
 
-    handler = new RemoteReceiveHandler();
-    handler.setHandler(m_Handler);
-    handler.setPort(m_LoggingHost.portValue());
-    handler.setTimeOut(m_TimeOut);
-    msg = LoggingHelper.wrapDefaultHandler(handler);
-    if (msg != null)
-      getLogger().severe("beforeSendRequest/add: " + msg);
-    else
-      handler.startListening();
+    if (m_InstallListener) {
+      handler = new RemoteReceiveHandler();
+      handler.setHandler(m_Handler);
+      handler.setPort(m_LoggingHost.portValue());
+      handler.setTimeOut(m_TimeOut);
+      msg = LoggingHelper.wrapDefaultHandler(handler);
+      if (msg != null)
+	getLogger().severe("beforeSendRequest/add: " + msg);
+      else
+	handler.startListening();
+    }
   }
 
   /**
