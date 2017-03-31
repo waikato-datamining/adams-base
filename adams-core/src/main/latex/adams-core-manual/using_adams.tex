@@ -2209,6 +2209,22 @@ WantedBy=multi-user.target
   \label{example_dir_layout_data_processing}
 \end{figure}
 
+\section{Executing commands}
+Using the \textit{adams.scripting.CommandRunner} command-line utility, it is
+possible to send commands to remote ADAMS instances from within scripts, e.g.,
+for automating shutdowns or execution of flows.
+
+The following script sends the \textit{Stop} command to the ADAMS instance
+running on \textit{host.somewhere.org}, listening on port \textit{12345} for
+commands:
+\begin{verbatim}
+adams.scripting.CommandRunner \
+  -command
+  adams.scripting.command.basic.Stop
+  -connection
+  "adams.scripting.connection.DefaultConnection -host host.somewhere.org -port 12345"
+\end{verbatim}
+
 
 %%%%%%%%%
 % Tools %
