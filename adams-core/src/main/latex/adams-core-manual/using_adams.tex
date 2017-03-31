@@ -2087,6 +2087,40 @@ menu item. The dialog that you get prompted with allows you to configure
 the remote command and the type of connection to use to reach the remote
 host.
 
+Available commands:
+\begin{tight_itemize}
+  \item \textit{basic.Kill} -- kills the ADAMS instance, does not wait for flows
+  to stop
+  \item \textit{basic.Ping} -- simple request for are-you-alive message
+  \item \textit{basic.Restart} -- for restarting the ADAMS instance
+  \item \textit{basic.RetrieveFile} -- retrieves a remote file and saves it locally
+  \item \textit{basic.SendFile} -- sends a local file to the remote instance
+  \item \textit{basic.StartRemoteLogging} -- listens to the logging messages on the
+  remote ADAMS instance (communication only works via ports)
+  \item \textit{basic.Stop} -- stops the ADAMS instance after stopping all the flows
+  \item \textit{basic.StopEngine} -- stops either the remote of local scripting engine
+  (e.g., for temporary scripting engines, stopping the local one after processing
+  all commands)
+  \item \textit{basic.SystemInfo} -- retrieves system info from the remote instance
+  \item \textit{basic.Text} -- sends text to write to a remote file
+  \item \textit{distributed.DeregisterSlave} -- deregisters a slave scripting engine
+  \item \textit{distributed.JobRunner} -- sends a JobRunner instance for remote
+  execution (via serialization)
+  \item \textit{distributed.KillSlaves} -- kills all slaves
+  \item \textit{distributed.RegisterSlave} -- registers a slave scripting engine
+  with a master engine
+  \item \textit{flow.GetFlow} -- retrieves a registered flow from a remote instance
+  \item \textit{flow.ListFlows} -- lists all registered (and running) remote flows
+  \item \textit{flow.RemoteFlowExecution} -- executes a local flow remotely
+  (variables and storage can be attached, requires a flow context)
+  \item \textit{flow.RunRemoteFlow} -- loads a remote flow and runs in on the
+  remote instance
+  \item \textit{flow.SendFlowControlCommand} -- sends start/stop/pause/restart
+  command to the specified registered flow
+  \item \textit{gui.MenuItem} -- starts up the specified menu item on the
+  remote instance
+\end{tight_itemize}
+
 Since executing commands like this is a bit low-level, there is also a
 user interface available called \textit{Remote Control Center}, which you
 can find in the same menu. Figure \ref{remote_control_center} displays a screenshot
