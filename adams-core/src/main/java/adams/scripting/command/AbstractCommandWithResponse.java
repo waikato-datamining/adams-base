@@ -175,8 +175,10 @@ public abstract class AbstractCommandWithResponse
 
     // payload
     prepareResponsePayload();
-    if (hasErrorMessage())
+    if (hasErrorMessage()) {
       header.setProperty(KEY_ERRORMESSAGE, getErrorMessage());
+      getLogger().severe(getErrorMessage());
+    }
     payload = getResponsePayload();
     if (payload.length > 0)
       payload = GzipUtils.compress(payload);
