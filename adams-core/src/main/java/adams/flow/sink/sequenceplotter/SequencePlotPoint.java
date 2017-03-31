@@ -15,14 +15,14 @@
 
 /**
  * SequencePlotPoint.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.sink.sequenceplotter;
 
-import java.util.HashMap;
-
 import adams.data.container.DataPoint;
 import adams.data.sequence.XYSequencePoint;
+
+import java.util.HashMap;
 
 /**
  * Extended {@link XYSequencePoint} which can store X/Y error information
@@ -121,6 +121,34 @@ public class SequencePlotPoint
   }
 
   /**
+   * Returns the minimum for X.
+   *
+   * @return		the minimum
+   */
+  public double getMinX() {
+    if (!hasErrorX())
+      return m_X;
+    if (m_ErrorX.length == 1)
+      return Math.min(m_X, m_X - m_ErrorX[0]);  // delta
+    else
+      return Math.min(m_X, m_ErrorX[0]);
+  }
+
+  /**
+   * Returns the maximum for X.
+   *
+   * @return		the maximum
+   */
+  public double getMaxX() {
+    if (!hasErrorX())
+      return m_X;
+    if (m_ErrorX.length == 1)
+      return Math.max(m_X, m_X + m_ErrorX[0]);  // delta
+    else
+      return Math.max(m_X, m_ErrorX[1]);
+  }
+
+  /**
    * Checks whether error information for X is available.
    * 
    * @return		true if available
@@ -138,6 +166,34 @@ public class SequencePlotPoint
     return m_ErrorX;
   }
   
+  /**
+   * Returns the minimum for Y.
+   *
+   * @return		the minimum
+   */
+  public double getMinY() {
+    if (!hasErrorY())
+      return m_Y;
+    if (m_ErrorY.length == 1)
+      return Math.min(m_Y, m_Y - m_ErrorY[0]);  // delta
+    else
+      return Math.min(m_Y, m_ErrorY[0]);
+  }
+
+  /**
+   * Returns the maximum for Y.
+   *
+   * @return		the maximum
+   */
+  public double getMaxY() {
+    if (!hasErrorY())
+      return m_Y;
+    if (m_ErrorY.length == 1)
+      return Math.max(m_Y, m_Y + m_ErrorY[0]);  // delta
+    else
+      return Math.max(m_Y, m_ErrorY[1]);
+  }
+
   /**
    * Checks whether error information for Y is available.
    * 

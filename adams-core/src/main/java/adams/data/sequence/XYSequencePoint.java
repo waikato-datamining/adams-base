@@ -15,7 +15,7 @@
 
 /*
  * XYSequencePoint.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.sequence;
@@ -29,8 +29,6 @@ import adams.data.container.DataPoint;
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
- * @param <X> the type of X
- * @param <Y> the type of Y
  */
 public class XYSequencePoint
   extends AbstractDataPoint {
@@ -117,6 +115,24 @@ public class XYSequencePoint
   }
 
   /**
+   * Returns the minimum for X.
+   *
+   * @return		the minimum
+   */
+  public double getMinX() {
+    return m_X;
+  }
+
+  /**
+   * Returns the maximum for X.
+   *
+   * @return		the maximum
+   */
+  public double getMaxX() {
+    return m_X;
+  }
+
+  /**
    * Sets the Y value.
    *
    * @param value	the new Y value
@@ -131,6 +147,24 @@ public class XYSequencePoint
    * @return		the Y value
    */
   public double getY() {
+    return m_Y;
+  }
+
+  /**
+   * Returns the minimum for Y.
+   *
+   * @return		the minimum
+   */
+  public double getMinY() {
+    return m_Y;
+  }
+
+  /**
+   * Returns the maximum for Y.
+   *
+   * @return		the maximum
+   */
+  public double getMaxY() {
     return m_Y;
   }
 

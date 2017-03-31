@@ -419,13 +419,13 @@ public class XYSequencePanel
 
 	// determine min/max
 	if (determineXRange) {
-	  minX = Math.min(minX, XYSequencePoint.toDouble(seq.getMinX().getX()));
-	  maxX = Math.max(maxX, XYSequencePoint.toDouble(seq.getMaxX().getX()));
+	  minX = Math.min(minX, XYSequencePoint.toDouble(seq.getMinX().getMinX()));
+	  maxX = Math.max(maxX, XYSequencePoint.toDouble(seq.getMaxX().getMaxX()));
 	}
 
 	if (determineYRange) {
-	  minY = Math.min(minY, XYSequencePoint.toDouble(seq.getMinY().getY()));
-	  maxY = Math.max(maxY, XYSequencePoint.toDouble(seq.getMaxY().getY()));
+	  minY = Math.min(minY, XYSequencePoint.toDouble(seq.getMinY().getMinY()));
+	  maxY = Math.max(maxY, XYSequencePoint.toDouble(seq.getMaxY().getMaxY()));
 	}
       }
     }

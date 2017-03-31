@@ -342,13 +342,13 @@ public class XYSequence
       return;
     
     for (XYSequencePoint point: this) {
-      if ((m_MinX == null) || (point.getX() < m_MinX.getX()))
+      if ((m_MinX == null) || (point.getMinX() < m_MinX.getMinX()))
 	m_MinX = point;
-      if ((m_MaxX == null) || (point.getX() > m_MaxX.getX()))
+      if ((m_MaxX == null) || (point.getMaxX() > m_MaxX.getMaxX()))
 	m_MaxX = point;
-      if ((m_MinY == null) || (point.getY() < m_MinY.getY()))
+      if ((m_MinY == null) || (point.getMinY() < m_MinY.getMinY()))
 	m_MinY = point;
-      if ((m_MaxY == null) || (point.getY() > m_MaxY.getY()))
+      if ((m_MaxY == null) || (point.getMaxY() > m_MaxY.getMaxY()))
 	m_MaxY = point;
     }
   }
