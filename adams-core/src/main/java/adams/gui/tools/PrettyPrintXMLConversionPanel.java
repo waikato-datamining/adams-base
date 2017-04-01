@@ -15,15 +15,12 @@
 
 /**
  * PrettyPrintXMLConversionPanel.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools;
 
-import adams.data.conversion.Conversion;
-import adams.data.conversion.DOMToString;
-import adams.data.conversion.MultiConversion;
-import adams.data.conversion.XMLToDOM;
+import adams.data.conversion.PrettyPrintXML;
 import adams.gui.chooser.BaseFileChooser;
 import adams.gui.core.ExtensionFileFilter;
 import adams.gui.core.Fonts;
@@ -84,23 +81,16 @@ public class PrettyPrintXMLConversionPanel
    */
   @Override
   protected void convert() {
-    MultiConversion	multi;
-    XMLToDOM		xml2dom;
-    DOMToString		dom2str;
+    PrettyPrintXML	pretty;
     String		msg;
 
     m_TextAreaOutput.setText("");
 
-    xml2dom = new XMLToDOM();
-    dom2str = new DOMToString();
-    dom2str.setPrettyPrinting(true);
-    multi = new MultiConversion();
-    multi.setSubConversions(new Conversion[]{xml2dom, dom2str});
-
-    multi.setInput(m_TextAreaInput.getText());
-    msg = multi.convert();
+    pretty = new PrettyPrintXML();
+    pretty.setInput(m_TextAreaInput.getText());
+    msg = pretty.convert();
     if (msg == null) {
-      m_TextAreaOutput.setText((String) multi.getOutput());
+      m_TextAreaOutput.setText((String) pretty.getOutput());
       m_TextAreaOutput.setCaretPosition(0);
     }
     else {
