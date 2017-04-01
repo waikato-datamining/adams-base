@@ -15,7 +15,7 @@
 
 /**
  * DOMToString.java
- * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
 
@@ -59,6 +59,12 @@ import java.io.StringWriter;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
+ * <pre>-num-spaces &lt;int&gt; (property: numSpaces)
+ * &nbsp;&nbsp;&nbsp;The number of spaces to use for indentation (in case of pretty-printing).
+ * &nbsp;&nbsp;&nbsp;default: 2
+ * &nbsp;&nbsp;&nbsp;minimum: 0
+ * </pre>
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -76,6 +82,9 @@ public class DOMToString
 
   /** whether to use pretty printing. */
   protected boolean m_PrettyPrinting;
+
+  /** the number of spaces to use for indentation. */
+  protected int m_NumSpaces;
 
   /**
    * Returns a string describing the object.
@@ -105,8 +114,12 @@ public class DOMToString
     m_OptionManager.add(
       "pretty-printing", "prettyPrinting",
       false);
+
+    m_OptionManager.add(
+      "num-spaces", "numSpaces",
+      2, 0, null);
   }
-  
+
   /**
    * Sets the encoding to use.
    * 
@@ -163,6 +176,37 @@ public class DOMToString
    */
   public String prettyPrintingTipText() {
     return "If enabled, the XML is output in pretty-print format.";
+  }
+
+  /**
+   * Sets the number of spaces to use for pretty printing.
+   *
+   * @param value	the number of spaces
+   */
+  public void setNumSpaces(int value) {
+    if (getOptionManager().isValid("numSpaces", value)) {
+      m_NumSpaces = value;
+      reset();
+    }
+  }
+
+  /**
+   * Returns the number of spaces to use for pretty printing.
+   *
+   * @return		the number of spaces
+   */
+  public int getNumSpaces() {
+    return m_NumSpaces;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String numSpacesTipText() {
+    return "The number of spaces to use for indentation (in case of pretty-printing).";
   }
 
   /**
@@ -225,7 +269,7 @@ public class DOMToString
 
       factory = TransformerFactory.newInstance();
       if (m_PrettyPrinting)
-	factory.setAttribute("indent-number", 2);
+	factory.setAttribute("indent-number", m_NumSpaces);
       transformer = factory.newTransformer();
       transformer.setOutputProperty(OutputKeys.ENCODING, m_Encoding.charsetValue().toString());
       if (m_PrettyPrinting)
