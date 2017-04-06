@@ -135,6 +135,11 @@ import java.util.logging.Level;
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
+ * <pre>-absolute-error &lt;boolean&gt; (property: useAbsoluteError)
+ * &nbsp;&nbsp;&nbsp;If set to true, then the error will be absolute (no direction).
+ * &nbsp;&nbsp;&nbsp;default: true
+ * </pre>
+ * 
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
@@ -163,6 +168,9 @@ public class WekaBootstrapping
 
   /** the percentiles to output (0-1). */
   protected BaseDouble[] m_Percentiles;
+
+  /** whether to use absolute errors. */
+  protected boolean m_UseAbsoluteError;
 
   /**
    * Returns a string describing the object.
@@ -207,6 +215,10 @@ public class WekaBootstrapping
     m_OptionManager.add(
       "percentile", "percentiles",
       new BaseDouble[0]);
+
+    m_OptionManager.add(
+      "absolute-error", "useAbsoluteError",
+      true);
   }
 
   /**
@@ -362,7 +374,7 @@ public class WekaBootstrapping
   }
 
   /**
-   * Sets the percentiles to calculate.
+   * Sets the percentiles to calculate for the errors.
    *
    * @param value	the percentiles (0-1; 0.95 is 95th percentile)
    */
@@ -372,7 +384,7 @@ public class WekaBootstrapping
   }
 
   /**
-   * Returns the percentiles to calculate.
+   * Returns the percentiles to calculate for the errors.
    *
    * @return  		the percentiles (0-1; 0.95 is 95th percentile)
    */
@@ -387,7 +399,36 @@ public class WekaBootstrapping
    * 			displaying in the GUI or for listing the options.
    */
   public String percentilesTipText() {
-    return "The percentiles to calculate (0-1; 0.95 is 95th percentile).";
+    return "The percentiles to calculate for the errors (0-1; 0.95 is 95th percentile).";
+  }
+
+  /**
+   * Sets whether to use an absolute error (ie no direction).
+   *
+   * @param value	true if to use absolute error
+   */
+  public void setUseAbsoluteError(boolean value) {
+    m_UseAbsoluteError = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to use an absolute error (ie no direction).
+   *
+   * @return		true if to use absolute error
+   */
+  public boolean getUseAbsoluteError() {
+    return m_UseAbsoluteError;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String useAbsoluteErrorTipText() {
+    return "If set to true, then the error will be absolute (no direction).";
   }
 
   /**
@@ -454,7 +495,7 @@ public class WekaBootstrapping
     Instance 			inst;
     boolean			numeric;
     int				classIndex;
-    Double[]			values;
+    Double[]  			errors;
     Percentile<Double>		perc;
 
     result = null;
@@ -505,7 +546,7 @@ public class WekaBootstrapping
 	indices.shuffle(random);
 
 	// create dataset from predictions
-	values = new Double[size];
+	errors = new Double[size];
 	atts = new ArrayList<>();
 	atts.add(header.classAttribute().copy("Actual"));
 	data = new Instances(header.relationName() + "-" + (iteration+1), atts, size);
@@ -513,7 +554,9 @@ public class WekaBootstrapping
 	for (i = 0; i < size; i++) {
 	  inst = new DenseInstance(preds.get(indices.get(i)).weight(), new double[]{preds.get(indices.get(i)).actual()});
 	  data.add(inst);
-	  values[i] = preds.get(indices.get(i)).predicted();
+	  errors[i] = preds.get(indices.get(i)).actual() - preds.get(indices.get(i)).predicted();
+	  if (m_UseAbsoluteError)
+	    errors[i] = Math.abs(errors[i]);
 	}
 
 	// perform "fake" evaluation
@@ -545,7 +588,7 @@ public class WekaBootstrapping
 	}
 	for (i = 0; i < m_Percentiles.length; i++) {
 	  perc = new Percentile<>();
-	  perc.addAll(values);
+	  perc.addAll(errors);
 	  row.addCell("perc-" + i).setContent(perc.getPercentile(m_Percentiles[i].doubleValue()));
 	}
       }
