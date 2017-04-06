@@ -24,8 +24,10 @@ import adams.core.Utils;
 import adams.data.container.AbstractDataPoint;
 import adams.data.container.DataPoint;
 
+import java.util.HashMap;
+
 /**
- * A 2-dimensional point. With an optional ID string attached to it.
+ * A 2-dimensional point. With an optional ID string and meta-data attached to it.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
@@ -44,6 +46,9 @@ public class XYSequencePoint
 
   /** the Y value. */
   protected double m_Y;
+
+  /** the meta-data. */
+  protected HashMap<String,Object> m_MetaData;
 
   /**
    * Initializes the point with no points and no ID.
@@ -250,6 +255,36 @@ public class XYSequencePoint
 
     setX(point.getX());
     setY(point.getY());
+
+    if (other instanceof XYSequencePoint)
+      m_MetaData = (HashMap<String, Object>) point.getMetaData().clone();
+  }
+
+  /**
+   * Sets the meta-data to use.
+   *
+   * @param value	the meta-data
+   */
+  public void setMetaData(HashMap<String,Object> value) {
+    m_MetaData = value;
+  }
+
+  /**
+   * Returns the stored meta-data.
+   *
+   * @return		the meta-data, null if none available
+   */
+  public HashMap<String,Object> getMetaData() {
+    return m_MetaData;
+  }
+
+  /**
+   * Checks if any meta-data is available.
+   *
+   * @return		true if meta-data available
+   */
+  public boolean hasMetaData() {
+    return (m_MetaData != null) && (m_MetaData.size() > 0);
   }
 
   /**

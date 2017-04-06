@@ -22,8 +22,6 @@ package adams.flow.sink.sequenceplotter;
 import adams.data.container.DataPoint;
 import adams.data.sequence.XYSequencePoint;
 
-import java.util.HashMap;
-
 /**
  * Extended {@link XYSequencePoint} which can store X/Y error information
  * as well.
@@ -42,10 +40,7 @@ public class SequencePlotPoint
 
   /** the Y errors. */
   protected Double[] m_ErrorY;
-  
-  /** the meta-data. */
-  protected HashMap<String,Object> m_MetaData;
-  
+
   /**
    * Initializes the point.
    */
@@ -116,7 +111,6 @@ public class SequencePlotPoint
 
       m_ErrorX   = point.getErrorX().clone();
       m_ErrorY   = point.getErrorY().clone();
-      m_MetaData = (HashMap<String,Object>) point.getMetaData().clone();
     }
   }
 
@@ -210,32 +204,5 @@ public class SequencePlotPoint
    */
   public Double[] getErrorY() {
     return m_ErrorY;
-  }
-  
-  /**
-   * Sets the meta-data to use.
-   * 
-   * @param value	the meta-data
-   */
-  public void setMetaData(HashMap<String,Object> value) {
-    m_MetaData = value;
-  }
-  
-  /**
-   * Returns the stored meta-data.
-   * 
-   * @return		the meta-data, null if none available
-   */
-  public HashMap<String,Object> getMetaData() {
-    return m_MetaData;
-  }
-  
-  /**
-   * Checks if any meta-data is available.
-   * 
-   * @return		true if meta-data available
-   */
-  public boolean hasMetaData() {
-    return (m_MetaData != null) && (m_MetaData.size() > 0);
   }
 }
