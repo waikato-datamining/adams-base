@@ -131,13 +131,14 @@ import java.util.logging.Level;
  * </pre>
  * 
  * <pre>-percentile &lt;adams.core.base.BaseDouble&gt; [-percentile ...] (property: percentiles)
- * &nbsp;&nbsp;&nbsp;The percentiles to calculate (0-1; 0.95 is 95th percentile).
+ * &nbsp;&nbsp;&nbsp;The percentiles to calculate for the errors (0-1; 0.95 is 95th percentile
+ * &nbsp;&nbsp;&nbsp;).
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
- * <pre>-absolute-error &lt;boolean&gt; (property: useAbsoluteError)
- * &nbsp;&nbsp;&nbsp;If set to true, then the error will be absolute (no direction).
- * &nbsp;&nbsp;&nbsp;default: true
+ * <pre>-error-calculation &lt;ACTUAL_MINUS_PREDICTED|PREDICTED_MINUS_ACTUAL|BOTH|ABSOLUTE&gt; (property: errorCalculation)
+ * &nbsp;&nbsp;&nbsp;Determines how to calculate the error.
+ * &nbsp;&nbsp;&nbsp;default: ACTUAL_MINUS_PREDICTED
  * </pre>
  * 
  <!-- options-end -->
@@ -150,6 +151,14 @@ public class WekaBootstrapping
   implements Randomizable {
 
   private static final long serialVersionUID = 2599800854948082354L;
+
+  /** how to calculate the error. */
+  public enum ErrorCalculation {
+    ACTUAL_MINUS_PREDICTED,
+    PREDICTED_MINUS_ACTUAL,
+    BOTH,
+    ABSOLUTE,
+  }
 
   /** the random number seed. */
   protected long m_Seed;
@@ -169,8 +178,8 @@ public class WekaBootstrapping
   /** the percentiles to output (0-1). */
   protected BaseDouble[] m_Percentiles;
 
-  /** whether to use absolute errors. */
-  protected boolean m_UseAbsoluteError;
+  /** the error calculation. */
+  protected ErrorCalculation m_ErrorCalculation;
 
   /**
    * Returns a string describing the object.
@@ -217,8 +226,8 @@ public class WekaBootstrapping
       new BaseDouble[0]);
 
     m_OptionManager.add(
-      "absolute-error", "useAbsoluteError",
-      true);
+      "error-calculation", "errorCalculation",
+      ErrorCalculation.ACTUAL_MINUS_PREDICTED);
   }
 
   /**
@@ -403,22 +412,22 @@ public class WekaBootstrapping
   }
 
   /**
-   * Sets whether to use an absolute error (ie no direction).
+   * Sets how to calculate the errors for the percentiles.
    *
-   * @param value	true if to use absolute error
+   * @param value	the type
    */
-  public void setUseAbsoluteError(boolean value) {
-    m_UseAbsoluteError = value;
+  public void setErrorCalculation(ErrorCalculation value) {
+    m_ErrorCalculation = value;
     reset();
   }
 
   /**
-   * Returns whether to use an absolute error (ie no direction).
+   * Returns how to calculate the errors for the percentiles.
    *
-   * @return		true if to use absolute error
+   * @return  		the type
    */
-  public boolean getUseAbsoluteError() {
-    return m_UseAbsoluteError;
+  public ErrorCalculation getErrorCalculation() {
+    return m_ErrorCalculation;
   }
 
   /**
@@ -427,8 +436,8 @@ public class WekaBootstrapping
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String useAbsoluteErrorTipText() {
-    return "If set to true, then the error will be absolute (no direction).";
+  public String errorCalculationTipText() {
+    return "Determines how to calculate the error.";
   }
 
   /**
@@ -446,6 +455,7 @@ public class WekaBootstrapping
     result += QuickInfoHelper.toString(this, "statisticValues", m_StatisticValues.length + " statistic" + (m_StatisticValues.length != 1 ? "s" : ""), ", ");
     result += QuickInfoHelper.toString(this, "classIndex", m_ClassIndex, ", class label: ");
     result += QuickInfoHelper.toString(this, "percentiles", m_Percentiles.length + " percentile" + (m_Percentiles.length != 1 ? "s" : ""), ", ");
+    result += QuickInfoHelper.toString(this, "errorCalculation", m_ErrorCalculation, ", errors: ");
 
     return result;
   }
@@ -496,7 +506,9 @@ public class WekaBootstrapping
     boolean			numeric;
     int				classIndex;
     Double[]  			errors;
+    Double[]  			errorsRev;
     Percentile<Double>		perc;
+    Percentile<Double>		percRev;
 
     result = null;
 
@@ -518,8 +530,25 @@ public class WekaBootstrapping
       row.addCell("S").setContentAsString("Subsample");
       for (EvaluationStatistic s: m_StatisticValues)
 	row.addCell(s.toString()).setContentAsString(s.toString());
-      for (i = 0; i < m_Percentiles.length; i++)
-	row.addCell("perc-" + i).setContentAsString("Percentile-" + m_Percentiles[i]);
+      for (i = 0; i < m_Percentiles.length; i++) {
+	switch (m_ErrorCalculation) {
+	  case ACTUAL_MINUS_PREDICTED:
+	    row.addCell("perc-AmP-" + i).setContentAsString("Percentile-AmP-" + m_Percentiles[i]);
+	    break;
+	  case PREDICTED_MINUS_ACTUAL:
+	    row.addCell("perc-PmA-" + i).setContentAsString("Percentile-PmA-" + m_Percentiles[i]);
+	    break;
+	  case ABSOLUTE:
+	    row.addCell("perc-Abs-" + i).setContentAsString("Percentile-Abs-" + m_Percentiles[i]);
+	    break;
+	  case BOTH:
+	    row.addCell("perc-AmP-" + i).setContentAsString("Percentile-AmP-" + m_Percentiles[i]);
+	    row.addCell("perc-PmA-" + i).setContentAsString("Percentile-PmA-" + m_Percentiles[i]);
+	    break;
+	  default:
+	    throw new IllegalStateException("Unhandled error calculation: " + m_ErrorCalculation);
+	}
+      }
 
       // set up bootstrapping
       preds   = evalAll.predictions();
@@ -546,17 +575,32 @@ public class WekaBootstrapping
 	indices.shuffle(random);
 
 	// create dataset from predictions
-	errors = new Double[size];
-	atts = new ArrayList<>();
+	errors    = new Double[size];
+	errorsRev = new Double[size];
+	atts      = new ArrayList<>();
 	atts.add(header.classAttribute().copy("Actual"));
 	data = new Instances(header.relationName() + "-" + (iteration+1), atts, size);
 	data.setClassIndex(0);
 	for (i = 0; i < size; i++) {
 	  inst = new DenseInstance(preds.get(indices.get(i)).weight(), new double[]{preds.get(indices.get(i)).actual()});
 	  data.add(inst);
-	  errors[i] = preds.get(indices.get(i)).actual() - preds.get(indices.get(i)).predicted();
-	  if (m_UseAbsoluteError)
-	    errors[i] = Math.abs(errors[i]);
+	  switch (m_ErrorCalculation) {
+	    case ACTUAL_MINUS_PREDICTED:
+	      errors[i] = preds.get(indices.get(i)).actual() - preds.get(indices.get(i)).predicted();
+	      break;
+	    case PREDICTED_MINUS_ACTUAL:
+	      errorsRev[i] = preds.get(indices.get(i)).predicted() - preds.get(indices.get(i)).actual();
+	      break;
+	    case ABSOLUTE:
+	      errors[i] = Math.abs(preds.get(indices.get(i)).actual() - preds.get(indices.get(i)).predicted());
+	      break;
+	    case BOTH:
+	      errors[i] = preds.get(indices.get(i)).actual() - preds.get(indices.get(i)).predicted();
+	      errorsRev[i] = preds.get(indices.get(i)).predicted() - preds.get(indices.get(i)).actual();
+	      break;
+	    default:
+	      throw new IllegalStateException("Unhandled error calculation: " + m_ErrorCalculation);
+	  }
 	}
 
 	// perform "fake" evaluation
@@ -589,7 +633,25 @@ public class WekaBootstrapping
 	for (i = 0; i < m_Percentiles.length; i++) {
 	  perc = new Percentile<>();
 	  perc.addAll(errors);
-	  row.addCell("perc-" + i).setContent(perc.getPercentile(m_Percentiles[i].doubleValue()));
+	  percRev = new Percentile<>();
+	  percRev.addAll(errorsRev);
+	  switch (m_ErrorCalculation) {
+	    case ACTUAL_MINUS_PREDICTED:
+	      row.addCell("perc-AmP-" + i).setContent(perc.getPercentile(m_Percentiles[i].doubleValue()));
+	      break;
+	    case PREDICTED_MINUS_ACTUAL:
+	      row.addCell("perc-PmA-" + i).setContent(percRev.getPercentile(m_Percentiles[i].doubleValue()));
+	      break;
+	    case ABSOLUTE:
+	      row.addCell("perc-Abs-" + i).setContent(perc.getPercentile(m_Percentiles[i].doubleValue()));
+	      break;
+	    case BOTH:
+	      row.addCell("perc-AmP-" + i).setContent(perc.getPercentile(m_Percentiles[i].doubleValue()));
+	      row.addCell("perc-PmA-" + i).setContent(percRev.getPercentile(m_Percentiles[i].doubleValue()));
+	      break;
+	    default:
+	      throw new IllegalStateException("Unhandled error calculation: " + m_ErrorCalculation);
+	  }
 	}
       }
 
