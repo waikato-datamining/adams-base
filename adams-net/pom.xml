@@ -155,7 +155,13 @@
     <dependency>
       <groupId>org.jsoup</groupId>
       <artifactId>jsoup</artifactId>
-      <version>1.8.2</version>
+      <version>1.10.2</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.pusher</groupId>
+      <artifactId>java-websocket</artifactId>
+      <version>1.4.1</version>
     </dependency>
   </dependencies>
   
