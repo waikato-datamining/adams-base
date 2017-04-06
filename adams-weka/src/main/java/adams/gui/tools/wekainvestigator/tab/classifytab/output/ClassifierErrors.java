@@ -15,7 +15,7 @@
 
 /**
  * ClassifierErrors.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab.classifytab.output;
@@ -23,6 +23,7 @@ package adams.gui.tools.wekainvestigator.tab.classifytab.output;
 import adams.core.AutoOnOff;
 import adams.core.MessageCollection;
 import adams.core.Utils;
+import adams.core.option.OptionUtils;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetColumnIndex;
 import adams.data.spreadsheet.SpreadSheetColumnRange;
@@ -33,6 +34,8 @@ import adams.gui.core.GUIHelper;
 import adams.gui.tools.wekainvestigator.output.ComponentContentPanel;
 import adams.gui.tools.wekainvestigator.tab.classifytab.PredictionHelper;
 import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
+import adams.gui.visualization.sequence.metadatacolor.AbstractMetaDataColor;
+import adams.gui.visualization.sequence.metadatacolor.Dummy;
 
 import javax.swing.JComponent;
 import javax.swing.JPanel;
@@ -76,6 +79,9 @@ public class ClassifierErrors
 
   /** whether anti-aliasing is enabled. */
   protected AutoOnOff m_AntiAliasingEnabled;
+
+  /** for obtaining the color from the meta-data. */
+  protected AbstractMetaDataColor m_MetaDataColor;
 
   /**
    * Returns a string describing the object.
@@ -125,6 +131,10 @@ public class ClassifierErrors
     m_OptionManager.add(
       "anti-aliasing-enabled", "antiAliasingEnabled",
       AutoOnOff.AUTO);
+
+    m_OptionManager.add(
+      "meta-data-color", "metaDataColor",
+      new Dummy());
   }
 
   /**
@@ -376,6 +386,35 @@ public class ClassifierErrors
   }
 
   /**
+   * Sets the scheme for extracting the color from the meta-data.
+   *
+   * @param value	the scheme
+   */
+  public void setMetaDataColor(AbstractMetaDataColor value) {
+    m_MetaDataColor = value;
+    reset();
+  }
+
+  /**
+   * Returns the scheme for extracting the color from the meta-data.
+   *
+   * @return		the scheme
+   */
+  public AbstractMetaDataColor getMetaDataColor() {
+    return m_MetaDataColor;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String metaDataColorTipText() {
+    return "The scheme to use for extracting the color from the meta-data; ignored if " + Dummy.class.getName() + ".";
+  }
+
+  /**
    * Checks whether output can be generated from this item.
    *
    * @param item	the item to check
@@ -418,6 +457,7 @@ public class ClassifierErrors
     sink.setLimit(m_Limit);
     sink.setDiameter(m_Diameter);
     sink.setShowSidePanel(false);
+    sink.setMetaDataColor((AbstractMetaDataColor) OptionUtils.shallowCopy(m_MetaDataColor));
     switch (m_AntiAliasingEnabled) {
       case AUTO:
 	sink.setAntiAliasingEnabled(
