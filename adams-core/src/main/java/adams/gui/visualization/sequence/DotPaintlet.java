@@ -15,7 +15,7 @@
 
 /*
  * DotPaintlet.java
- * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.sequence;
@@ -25,6 +25,8 @@ import adams.data.sequence.XYSequencePoint;
 import adams.gui.event.PaintEvent.PaintMoment;
 import adams.gui.visualization.core.AxisPanel;
 import adams.gui.visualization.core.plot.Axis;
+import adams.gui.visualization.sequence.metadatacolor.AbstractMetaDataColor;
+import adams.gui.visualization.sequence.metadatacolor.Dummy;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -37,28 +39,30 @@ import java.util.List;
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- *
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- *
+ * 
  * <pre>-stroke-thickness &lt;float&gt; (property: strokeThickness)
  * &nbsp;&nbsp;&nbsp;The thickness of the stroke.
  * &nbsp;&nbsp;&nbsp;default: 1.0
  * &nbsp;&nbsp;&nbsp;minimum: 0.01
  * </pre>
- *
+ * 
+ * <pre>-meta-data-color &lt;adams.gui.visualization.sequence.metadatacolor.AbstractMetaDataColor&gt; (property: metaDataColor)
+ * &nbsp;&nbsp;&nbsp;The scheme to use for extracting the color from the meta-data; ignored if 
+ * &nbsp;&nbsp;&nbsp;adams.gui.visualization.sequence.metadatacolor.Dummy.
+ * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.sequence.metadatacolor.Dummy
+ * </pre>
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
 public class DotPaintlet
-  extends AbstractXYSequencePaintlet
+  extends AbstractXYSequenceMetaDataColorPaintlet
   implements PaintletWithCustomDataSupport {
 
   /** for serialization. */
@@ -100,19 +104,24 @@ public class DotPaintlet
     AxisPanel			axisX;
     AxisPanel			axisY;
     int				i;
+    AbstractMetaDataColor 	metaColor;
 
     points = data.toList();
     axisX  = getPanel().getPlot().getAxis(Axis.BOTTOM);
     axisY  = getPanel().getPlot().getAxis(Axis.LEFT);
+    if (m_MetaDataColor instanceof Dummy)
+      metaColor = null;
+    else
+      metaColor = m_MetaDataColor;
 
     // paint all points
     g.setColor(color);
 
-    currX = Integer.MIN_VALUE;
-    currY = Integer.MIN_VALUE;
-
     for (i = 0; i < data.size(); i++) {
-      curr = (XYSequencePoint) points.get(i);
+      curr = points.get(i);
+
+      if (metaColor != null)
+	g.setColor(metaColor.getColor(curr, color));
 
       // determine coordinates
       currX = axisX.valueToPos(XYSequencePoint.toDouble(curr.getX()));

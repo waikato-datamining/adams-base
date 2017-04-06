@@ -15,7 +15,7 @@
 
 /*
  * CrossPaintlet.java
- * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.sequence;
@@ -27,6 +27,8 @@ import adams.gui.core.GUIHelper;
 import adams.gui.event.PaintEvent.PaintMoment;
 import adams.gui.visualization.core.AxisPanel;
 import adams.gui.visualization.core.plot.Axis;
+import adams.gui.visualization.sequence.metadatacolor.AbstractMetaDataColor;
+import adams.gui.visualization.sequence.metadatacolor.Dummy;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -50,6 +52,12 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;minimum: 0.01
  * </pre>
  * 
+ * <pre>-meta-data-color &lt;adams.gui.visualization.sequence.metadatacolor.AbstractMetaDataColor&gt; (property: metaDataColor)
+ * &nbsp;&nbsp;&nbsp;The scheme to use for extracting the color from the meta-data; ignored if 
+ * &nbsp;&nbsp;&nbsp;adams.gui.visualization.sequence.metadatacolor.Dummy.
+ * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.sequence.metadatacolor.Dummy
+ * </pre>
+ * 
  * <pre>-diameter &lt;int&gt; (property: diameter)
  * &nbsp;&nbsp;&nbsp;The diameter of the cross in pixels.
  * &nbsp;&nbsp;&nbsp;default: 7
@@ -67,7 +75,7 @@ import java.util.List;
  * @version $Revision: 8902 $
  */
 public class CrossPaintlet
-  extends AbstractXYSequencePaintlet 
+  extends AbstractXYSequenceMetaDataColorPaintlet
   implements AntiAliasingSupporter, PaintletWithCustomDataSupport, DiameterBasedPaintlet {
 
   /** for serialization. */
@@ -78,7 +86,7 @@ public class CrossPaintlet
 
   /** whether anti-aliasing is enabled. */
   protected boolean m_AntiAliasingEnabled;
-  
+
   /**
    * Returns a string describing the object.
    *
@@ -97,12 +105,12 @@ public class CrossPaintlet
     super.defineOptions();
 
     m_OptionManager.add(
-	    "diameter", "diameter",
-	    7, 1, null);
+      "diameter", "diameter",
+      7, 1, null);
 
     m_OptionManager.add(
-	    "anti-aliasing-enabled", "antiAliasingEnabled",
-	    GUIHelper.getBoolean(getClass(), "antiAliasingEnabled", true));
+      "anti-aliasing-enabled", "antiAliasingEnabled",
+      GUIHelper.getBoolean(getClass(), "antiAliasingEnabled", true));
   }
 
   /**
@@ -190,26 +198,32 @@ public class CrossPaintlet
     AxisPanel			axisY;
     int				i;
     int 			radius;
+    AbstractMetaDataColor	metaColor;
 
     points = data.toList();
     axisX  = getPanel().getPlot().getAxis(Axis.BOTTOM);
     axisY  = getPanel().getPlot().getAxis(Axis.LEFT);
+    if (m_MetaDataColor instanceof Dummy)
+      metaColor = null;
+    else
+      metaColor = m_MetaDataColor;
 
     // paint all points
     g.setColor(color);
     GUIHelper.configureAntiAliasing(g, m_AntiAliasingEnabled);
 
-    currX  = Integer.MIN_VALUE;
-    currY  = Integer.MIN_VALUE;
     radius = m_Diameter / 2;
 
     for (i = 0; i < data.size(); i++) {
-      curr = (XYSequencePoint) points.get(i);
+      curr = points.get(i);
+
+      if (metaColor != null)
+	g.setColor(metaColor.getColor(curr, color));
 
       // determine coordinates
       currX = axisX.valueToPos(XYSequencePoint.toDouble(curr.getX()));
       currY = axisY.valueToPos(XYSequencePoint.toDouble(curr.getY()));
-      
+
       // draw cross
       g.drawLine(currX - radius, currY - radius, currX + radius, currY + radius);
       g.drawLine(currX + radius, currY - radius, currX - radius, currY + radius);
@@ -232,8 +246,8 @@ public class CrossPaintlet
       for (i = 0; i < getActualContainerManager().count(); i++) {
 	if (!getActualContainerManager().isVisible(i))
 	  continue;
-        if (getActualContainerManager().isFiltered() && !getActualContainerManager().isFiltered(i))
-          continue;
+	if (getActualContainerManager().isFiltered() && !getActualContainerManager().isFiltered(i))
+	  continue;
 	data = getActualContainerManager().get(i).getData();
 	if (data.size() == 0)
 	  continue;

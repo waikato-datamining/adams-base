@@ -15,7 +15,7 @@
 
 /*
  * BarPaintlet.java
- * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.sequence;
@@ -26,6 +26,8 @@ import adams.data.sequence.XYSequenceUtils;
 import adams.gui.event.PaintEvent.PaintMoment;
 import adams.gui.visualization.core.AxisPanel;
 import adams.gui.visualization.core.plot.Axis;
+import adams.gui.visualization.sequence.metadatacolor.AbstractMetaDataColor;
+import adams.gui.visualization.sequence.metadatacolor.Dummy;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -47,6 +49,12 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;The thickness of the stroke.
  * &nbsp;&nbsp;&nbsp;default: 1.0
  * &nbsp;&nbsp;&nbsp;minimum: 0.01
+ * </pre>
+ * 
+ * <pre>-meta-data-color &lt;adams.gui.visualization.sequence.metadatacolor.AbstractMetaDataColor&gt; (property: metaDataColor)
+ * &nbsp;&nbsp;&nbsp;The scheme to use for extracting the color from the meta-data; ignored if 
+ * &nbsp;&nbsp;&nbsp;adams.gui.visualization.sequence.metadatacolor.Dummy.
+ * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.sequence.metadatacolor.Dummy
  * </pre>
  * 
  * <pre>-width &lt;int&gt; (property: width)
@@ -72,7 +80,7 @@ import java.util.List;
  * @version $Revision$
  */
 public class BarPaintlet
-  extends AbstractXYSequencePaintlet
+  extends AbstractXYSequenceMetaDataColorPaintlet
   implements PaintletWithCustomDataSupport {
 
   /** for serialization. */
@@ -249,10 +257,15 @@ public class BarPaintlet
     int				i;
     int				start;
     int				end;
+    AbstractMetaDataColor 	metaColor;
 
     points = data.toList();
     axisX  = getPanel().getPlot().getAxis(Axis.BOTTOM);
     axisY  = getPanel().getPlot().getAxis(Axis.LEFT);
+    if (m_MetaDataColor instanceof Dummy)
+      metaColor = null;
+    else
+      metaColor = m_MetaDataColor;
 
     // paint all points
     g.setColor(color);
@@ -271,12 +284,10 @@ public class BarPaintlet
 	end++;
     }
 
-    currX  = Integer.MIN_VALUE;
-    currY  = Integer.MIN_VALUE;
     prevX  = axisX.valueToPos(points.get(start).getX());
 
     for (i = start; i <= end; i++) {
-      curr = (XYSequencePoint) points.get(i);
+      curr = points.get(i);
 
       // determine coordinates
       currX  = axisX.valueToPos(XYSequencePoint.toDouble(curr.getX()));
@@ -286,6 +297,9 @@ public class BarPaintlet
 	  continue;
       }
       currY = axisY.valueToPos(XYSequencePoint.toDouble(curr.getY()));
+
+      if (metaColor != null)
+	g.setColor(metaColor.getColor(curr, color));
 
       // draw rectangle
       g.fillRect(currX - (m_Width / 2), Math.min(axisY.valueToPos(0), currY), m_Width, Math.abs(axisY.valueToPos(0) - currY));

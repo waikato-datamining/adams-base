@@ -596,6 +596,10 @@ adams.gui.visualization.container.datacontainerpanel.plotpopup.AbstractPlotPopup
   adams.gui.visualization.container.datacontainerpanel.plotpopup,\
   adams.gui.visualization.sequence.plotpopup
 
+# the schemes for extracting colors from meta-data of sequence points
+adams.gui.visualization.sequence.metadatacolor.AbstractMetaDataColor=\
+  adams.gui.visualization.sequence.metadatacolor
+
 # the color providers to use for plotting
 adams.gui.visualization.core.ColorProvider=\
   adams.gui.visualization.core
