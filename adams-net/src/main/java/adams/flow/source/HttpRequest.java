@@ -15,7 +15,7 @@
 
 /**
  * HttpRequest.java
- * Copyright (C) 2015 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.source;
@@ -26,6 +26,7 @@ import adams.core.base.BaseURL;
 import adams.flow.container.HTMLRequestResult;
 import adams.flow.control.StorageName;
 import adams.flow.core.Token;
+import org.jsoup.Connection;
 import org.jsoup.Connection.Method;
 import org.jsoup.Connection.Response;
 import org.jsoup.Jsoup;
@@ -34,7 +35,7 @@ import java.util.Map;
 
 /**
  <!-- globalinfo-start -->
- * Submits the form parameters to the specified URL and forwards the retrieved HTML as text.<br>
+ * Submits the (optional) form parameters to the specified URL and forwards the retrieved HTML as text.<br>
  * Cookies can be retrieved and stored in internal storage, to be re-used with the next request.
  * <br><br>
  <!-- globalinfo-end -->
@@ -57,7 +58,7 @@ import java.util.Map;
  * 
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
- * &nbsp;&nbsp;&nbsp;default: SubmitHTMLForm
+ * &nbsp;&nbsp;&nbsp;default: HttpRequest
  * </pre>
  * 
  * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
@@ -72,13 +73,15 @@ import java.util.Map;
  * </pre>
  * 
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this 
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical 
+ * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
  * <pre>-silent &lt;boolean&gt; (property: silent)
- * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console.
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
@@ -90,6 +93,11 @@ import java.util.Map;
  * <pre>-method &lt;GET|POST|PUT|DELETE|PATCH&gt; (property: method)
  * &nbsp;&nbsp;&nbsp;The method to use for the request.
  * &nbsp;&nbsp;&nbsp;default: POST
+ * </pre>
+ * 
+ * <pre>-header &lt;adams.core.base.BaseKeyValuePair&gt; [-header ...] (property: headers)
+ * &nbsp;&nbsp;&nbsp;The (optional) request headers to send.
+ * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
  * <pre>-parameter &lt;adams.core.base.BaseKeyValuePair&gt; [-parameter ...] (property: parameters)
@@ -117,6 +125,9 @@ public class HttpRequest
 
   /** the action method to use. */
   protected Method m_Method;
+
+  /** the (optional) request headers. */
+  protected BaseKeyValuePair[] m_Headers;
 
   /** the form parameters. */
   protected BaseKeyValuePair[] m_Parameters;
@@ -147,6 +158,10 @@ public class HttpRequest
     m_OptionManager.add(
       "method", "method",
       Method.POST);
+
+    m_OptionManager.add(
+      "header", "headers",
+      new BaseKeyValuePair[0]);
 
     m_OptionManager.add(
       "parameter", "parameters",
@@ -232,6 +247,35 @@ public class HttpRequest
   }
 
   /**
+   * Sets the (optional) request headers for the request.
+   *
+   * @param value	the headers
+   */
+  public void setHeaders(BaseKeyValuePair[] value) {
+    m_Headers = value;
+    reset();
+  }
+
+  /**
+   * Returns the (optional) request headers for the request.
+   *
+   * @return		the headers
+   */
+  public BaseKeyValuePair[] getHeaders() {
+    return m_Headers;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String headersTipText() {
+    return "The (optional) request headers to send.";
+  }
+
+  /**
    * Sets the form parameters for the request.
    *
    * @param value	the parameters
@@ -307,9 +351,10 @@ public class HttpRequest
   @Override
   protected String doExecute() {
     String		result;
+    Connection		conn;
     Response 		res;
     HTMLRequestResult	cont;
-    Map<String,String> cookies;
+    Map<String,String>  cookies;
 
     result = null;
 
@@ -318,19 +363,14 @@ public class HttpRequest
       cookies = (Map<String,String>) getStorageHandler().getStorage().get(m_Cookies);
 
     try {
-      if (cookies == null) {
-	res = Jsoup.connect(m_URL.getValue())
-	  .data(BaseKeyValuePair.toMap(m_Parameters))
-	  .method(m_Method)
-	  .execute();
-      }
-      else {
-	res = Jsoup.connect(m_URL.getValue())
-	  .data(BaseKeyValuePair.toMap(m_Parameters))
-	  .cookies(cookies)
-	  .method(m_Method)
-	  .execute();
-      }
+      conn = Jsoup.connect(m_URL.getValue());
+      for (BaseKeyValuePair header: m_Headers)
+	conn.header(header.getPairKey(), header.getPairValue());
+      conn.data(BaseKeyValuePair.toMap(m_Parameters));
+      conn.method(m_Method);
+      if (cookies != null)
+	conn.cookies(cookies);
+      res           = conn.execute();
       cont          = new HTMLRequestResult(res.statusCode(), res.body(), res.cookies());
       m_OutputToken = new Token(cont);
     }
