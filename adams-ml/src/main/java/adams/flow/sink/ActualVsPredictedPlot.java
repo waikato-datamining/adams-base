@@ -21,6 +21,7 @@
 package adams.flow.sink;
 
 import adams.core.QuickInfoHelper;
+import adams.core.option.OptionUtils;
 import adams.data.DecimalFormatString;
 import adams.data.sequence.XYSequencePointComparator.Comparison;
 import adams.data.spreadsheet.Cell;
@@ -47,8 +48,11 @@ import adams.gui.visualization.core.axis.Type;
 import adams.gui.visualization.core.plot.Axis;
 import adams.gui.visualization.sequence.AbstractXYSequencePaintlet;
 import adams.gui.visualization.sequence.CrossPaintlet;
+import adams.gui.visualization.sequence.MetaDataColorPaintlet;
 import adams.gui.visualization.sequence.PaintletWithFixedXYRange;
 import adams.gui.visualization.sequence.StraightLineOverlayPaintlet;
+import adams.gui.visualization.sequence.metadatacolor.AbstractMetaDataColor;
+import adams.gui.visualization.sequence.metadatacolor.Dummy;
 
 import javax.swing.JComponent;
 import java.awt.BorderLayout;
@@ -219,6 +223,12 @@ import java.util.HashMap;
  * &nbsp;&nbsp;&nbsp;default: true
  * </pre>
  * 
+ * <pre>-meta-data-color &lt;adams.gui.visualization.sequence.metadatacolor.AbstractMetaDataColor&gt; (property: metaDataColor)
+ * &nbsp;&nbsp;&nbsp;The scheme to use for extracting the color from the meta-data; ignored if 
+ * &nbsp;&nbsp;&nbsp;adams.gui.visualization.sequence.metadatacolor.Dummy.
+ * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.sequence.metadatacolor.Dummy
+ * </pre>
+ * 
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
@@ -280,6 +290,9 @@ public class ActualVsPredictedPlot
 
   /** whether anti-aliasing is enabled. */
   protected boolean m_AntiAliasingEnabled;
+
+  /** for obtaining the color from the meta-data. */
+  protected AbstractMetaDataColor m_MetaDataColor;
 
   /**
    * Returns a string describing the object.
@@ -349,6 +362,10 @@ public class ActualVsPredictedPlot
     m_OptionManager.add(
       "anti-aliasing-enabled", "antiAliasingEnabled",
       GUIHelper.getBoolean(getClass(), "antiAliasingEnabled", true));
+
+    m_OptionManager.add(
+      "meta-data-color", "metaDataColor",
+      new Dummy());
   }
 
   /**
@@ -756,6 +773,35 @@ public class ActualVsPredictedPlot
   }
 
   /**
+   * Sets the scheme for extracting the color from the meta-data.
+   *
+   * @param value	the scheme
+   */
+  public void setMetaDataColor(AbstractMetaDataColor value) {
+    m_MetaDataColor = value;
+    reset();
+  }
+
+  /**
+   * Returns the scheme for extracting the color from the meta-data.
+   *
+   * @return		the scheme
+   */
+  public AbstractMetaDataColor getMetaDataColor() {
+    return m_MetaDataColor;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String metaDataColorTipText() {
+    return "The scheme to use for extracting the color from the meta-data; ignored if " + Dummy.class.getName() + ".";
+  }
+
+  /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
@@ -772,6 +818,7 @@ public class ActualVsPredictedPlot
     result += QuickInfoHelper.toString(this, "plotName", (m_PlotName.isEmpty() ? "-default-" : m_PlotName), ", name: ");
     result += QuickInfoHelper.toString(this, "limit", m_Limit, ", limit: ");
     result += QuickInfoHelper.toString(this, "diameter", m_Diameter, ", diameter: ");
+    result += QuickInfoHelper.toString(this, "metaDataColor", m_MetaDataColor, ", meta-color: ");
 
     return result;
   }
@@ -860,6 +907,8 @@ public class ActualVsPredictedPlot
     }
     if (paintlet instanceof AntiAliasingSupporter)
       ((AntiAliasingSupporter) paintlet).setAntiAliasingEnabled(m_AntiAliasingEnabled);
+    if (paintlet instanceof MetaDataColorPaintlet)
+      ((MetaDataColorPaintlet) paintlet).setMetaDataColor((AbstractMetaDataColor) OptionUtils.shallowCopy(m_MetaDataColor));
     fixedPaintlet = new PaintletWithFixedXYRange();
     fixedPaintlet.setPaintlet(paintlet);
     result.setDataPaintlet(fixedPaintlet);
@@ -1053,6 +1102,8 @@ public class ActualVsPredictedPlot
 	}
 	if (paintlet instanceof AntiAliasingSupporter)
 	  ((AntiAliasingSupporter) paintlet).setAntiAliasingEnabled(m_AntiAliasingEnabled);
+        if (paintlet instanceof MetaDataColorPaintlet)
+          ((MetaDataColorPaintlet) paintlet).setMetaDataColor((AbstractMetaDataColor) OptionUtils.shallowCopy(m_MetaDataColor));
 	fixedPaintlet = new PaintletWithFixedXYRange();
 	fixedPaintlet.setPaintlet(paintlet);
 	m_Panel.setDataPaintlet(fixedPaintlet);

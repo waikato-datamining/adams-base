@@ -1,0 +1,14 @@
+# Project: adams
+# Date: 2017-04-06 16:08:39
+# User: fracpete
+# Charset: UTF-8
+adams.flow.control.Flow -annotation "Plots actual vs predicted, but uses meta-data to color the data points." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.standalone.GridView -width 1200 -num-cols 3 -writer adams.gui.print.NullWriter
+  adams.flow.sink.SpreadSheetDisplay -name Predictions -writer adams.data.io.output.NullWriter
+  adams.flow.sink.ActualVsPredictedPlot -writer adams.gui.print.NullWriter -additional SPEED1 -meta-data-color "adams.gui.visualization.sequence.metadatacolor.ColorPerLabel -color-provider adams.gui.visualization.core.DefaultColorProvider -meta-data-key SPEED1"
+ adams.flow.source.FileSupplier -file ${FLOWS}/data/bolts_predictions.csv
+ adams.flow.transformer.SpreadSheetFileReader -reader "adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.DefaultSpreadSheet"
+ adams.flow.control.Tee -name predictions
+  adams.flow.sink.CallableSink -callable Predictions
+ adams.flow.control.Tee -name plot
+  adams.flow.sink.CallableSink -callable ActualVsPredictedPlot
