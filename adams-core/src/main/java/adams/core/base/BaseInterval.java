@@ -39,6 +39,9 @@ public class BaseInterval
   /** the placeholder for +Inf. */
   public final static String POSITIVE_INFINITY = "+Infinity";
 
+  /** the placeholder for all. */
+  public final static String ALL = "(-Infinity;+Infinity)";
+
   /** the lower bound of the interval. */
   protected double m_Lower;
 
