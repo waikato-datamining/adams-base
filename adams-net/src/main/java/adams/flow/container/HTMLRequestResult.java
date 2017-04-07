@@ -15,7 +15,7 @@
 
 /**
  * HTMLRequestResult.java
- * Copyright (C) 2015-2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.container;
@@ -39,6 +39,9 @@ public class HTMLRequestResult
   /** the identifier for the numeric status code. */
   public final static String VALUE_STATUSCODE = "Status code";
 
+  /** the identifier for the status message. */
+  public final static String VALUE_STATUSMESSAGE = "Status message";
+
   /** the identifier for the result body (HTML). */
   public final static String VALUE_BODY = "Body";
 
@@ -51,29 +54,33 @@ public class HTMLRequestResult
   public HTMLRequestResult() {
     super();
     store(VALUE_STATUSCODE, 200);
+    store(VALUE_STATUSMESSAGE, "OK");
     store(VALUE_BODY, "");
   }
 
   /**
    * Initializes the container with the status code and body.
    *
-   * @param statusCode	the status code
-   * @param body	the body (HTML)
+   * @param statusCode		the status code
+   * @param statusMessage	the status message
+   * @param body		the body (HTML)
    */
-  public HTMLRequestResult(int statusCode, String body) {
-    this(statusCode, body, null);
+  public HTMLRequestResult(int statusCode, String statusMessage, String body) {
+    this(statusCode, statusMessage, body, null);
   }
 
   /**
    * Initializes the container with the status code, body and cookies.
    *
    * @param statusCode	the status code
+   * @param statusMessage	the status message
    * @param body	the body (HTML)
    * @param cookies	the cookies, can be null
    */
-  public HTMLRequestResult(int statusCode, String body, Map<String,String> cookies) {
+  public HTMLRequestResult(int statusCode, String statusMessage, String body, Map<String,String> cookies) {
     this();
     store(VALUE_STATUSCODE, statusCode);
+    store(VALUE_STATUSMESSAGE, statusMessage);
     store(VALUE_BODY, body);
     store(VALUE_COOKIES, cookies);
   }
@@ -85,6 +92,7 @@ public class HTMLRequestResult
     super.initHelp();
 
     addHelp(VALUE_STATUSCODE, "HTTP status code; " + Integer.class.getName());
+    addHelp(VALUE_STATUSMESSAGE, "HTTP status message; " + String.class.getName());
     addHelp(VALUE_BODY, "HTML of the request; " + String.class.getName());
     addHelp(VALUE_COOKIES, "cookie mappings (String/String); " + Map.class.getName());
   }
@@ -98,9 +106,10 @@ public class HTMLRequestResult
   public Iterator<String> names() {
     List<String> result;
 
-    result = new ArrayList<String>();
+    result = new ArrayList<>();
 
     result.add(VALUE_STATUSCODE);
+    result.add(VALUE_STATUSMESSAGE);
     result.add(VALUE_BODY);
     result.add(VALUE_COOKIES);
 
