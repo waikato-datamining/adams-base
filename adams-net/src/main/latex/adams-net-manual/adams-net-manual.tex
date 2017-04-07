@@ -324,8 +324,9 @@ Some other basic, but useful actors are the following:
 	\item \textit{DownloadContent} -- downloads (textual) content via HTTP and 
 	forwards it.\footnote{adams-net-download\_content.flow}
 	\item \textit{HTMLFileReader} -- reads an HTML file, generating a DOM object.
-	\item \textit{HttpRequest} -- allows accessing URLs (POST/GET, sending data,
-	cookies), returns the HTML from the reponse as text.
+	\item \textit{HttpRequest} -- the source allows accessing URLs (POST/GET, sending data,
+	cookies), returns the HTML from the reponse as text; the transformer allows
+	sending the incoming text via HTTP request (and optional headers).
 	\item \textit{MimeType} -- determines the mime-type of
 	files.\footnote{adams-net-mimetype.flow}
 	\item \textit{Socket} -- source and sink allow you to receive and send
