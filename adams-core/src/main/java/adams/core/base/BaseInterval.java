@@ -33,6 +33,12 @@ public class BaseInterval
 
   private static final long serialVersionUID = -4760534825195874939L;
 
+  /** the placeholder for -Inf. */
+  public final static String NEGATIVE_INFINITY = "-Infinity";
+
+  /** the placeholder for +Inf. */
+  public final static String POSITIVE_INFINITY = "+Infinity";
+
   /** the lower bound of the interval. */
   protected double m_Lower;
 
