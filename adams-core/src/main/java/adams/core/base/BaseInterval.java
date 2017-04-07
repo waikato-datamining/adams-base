@@ -71,12 +71,39 @@ public class BaseInterval
   }
 
   /**
+   * Initializes the object with the specified (inclusive) bounds.
+   *
+   * @param lower		the lower bound
+   * @param upper		the upper bound
+   */
+  public BaseInterval(double lower, double upper) {
+    this(lower, true, upper, true);
+  }
+
+  /**
+   * Initializes the object with the specified bounds.
+   *
+   * @param lower		the lower bound
+   * @param lowerInclusive 	whether the lower bound is inclusive
+   * @param upper		the upper bound
+   * @param upperInclusive	whether the upper bound is inclusive
+   */
+  public BaseInterval(double lower, boolean lowerInclusive, double upper, boolean upperInclusive) {
+    super(
+      (Double.isInfinite(lower) ? "(" : lowerInclusive ? "[" : "(")
+	+ lower
+	+ ";"
+	+ upper
+	+ (Double.isInfinite(upper) ? ")" : upperInclusive ? "]" : ")"));
+  }
+
+  /**
    * Initializes the members.
    */
   @Override
   protected void initialize() {
     super.initialize();
-    
+
     m_Lower          = Double.NEGATIVE_INFINITY;
     m_LowerInclusive = false;
     m_Upper          = Double.POSITIVE_INFINITY;
@@ -200,7 +227,7 @@ public class BaseInterval
 
   /**
    * Returns whether the lower bound is inclusive.
-   * 
+   *
    * @return		true if inclusive
    */
   public boolean isLowerInclusive() {
@@ -209,7 +236,7 @@ public class BaseInterval
 
   /**
    * Returns the lower bound.
-   * 
+   *
    * @return		the lower bound
    */
   public double getLower() {
@@ -218,7 +245,7 @@ public class BaseInterval
 
   /**
    * Returns whether the upper bound is inclusive.
-   * 
+   *
    * @return		true if inclusive
    */
   public boolean isUpperInclusive() {
@@ -227,7 +254,7 @@ public class BaseInterval
 
   /**
    * Returns the upper bound.
-   * 
+   *
    * @return		the upper bound
    */
   public double getUpper() {
