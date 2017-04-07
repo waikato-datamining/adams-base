@@ -91,6 +91,8 @@ public class BaseIntervalTest
     assertTrue("Testing: " + i, b.isValid(i));
     i = "(-1;1]";
     assertTrue("Testing: " + i, b.isValid(i));
+    i = BaseInterval.ALL;
+    assertTrue("Testing: " + i, b.isValid(i));
   }
 
   /**
