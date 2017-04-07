@@ -1,0 +1,15 @@
+# Project: adams
+# Date: 2017-04-07 15:53:24
+# User: fracpete
+# Charset: UTF-8
+adams.flow.control.Flow -annotation "Sends a simple \\\"Hello World!\\\" to the server and places\\nthe received reponse in the \\\"messages\\\" queue. \\nOnce a message has been dequeued from that queue, \\nthe flow will get stopped.\\n\\nExecute the following flow first:\\nadams-net-websocket_echoserver.flow" -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.standalone.QueueInit -storage-name messages
+ adams.flow.source.Start
+ adams.flow.control.Trigger -name "send data"
+  adams.flow.source.StringConstants -string "Hello World!"
+  adams.flow.sink.WebSocketClient -generator "adams.flow.websocket.client.SimpleSendWithQueueGenerator -logging-level INFO -storage-name messages"
+ adams.flow.control.Trigger -name "get response"
+  adams.flow.source.DeQueue -storage-name messages
+  adams.flow.control.Tee -name display
+   adams.flow.sink.Display -writer adams.data.io.output.NullWriter
+  adams.flow.control.Stop

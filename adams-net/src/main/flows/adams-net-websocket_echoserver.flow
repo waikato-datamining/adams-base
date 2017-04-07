@@ -1,0 +1,10 @@
+# Project: adams
+# Date: 2017-04-07 14:59:15
+# User: fracpete
+# Charset: UTF-8
+adams.flow.control.Flow -annotation "Starts a simple websocket server that just echoes the message sent to it.\\nOutputs logging information in the console." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.standalone.WebSocketServer -generator "adams.flow.websocket.server.EchoServerGenerator -logging-level INFO"
+ adams.flow.source.Start
+ adams.flow.control.WhileLoop -condition adams.flow.condition.bool.True
+  adams.flow.source.Start
+  adams.flow.control.Sleep

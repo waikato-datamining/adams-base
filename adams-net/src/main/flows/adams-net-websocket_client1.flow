@@ -1,0 +1,7 @@
+# Project: adams
+# Date: 2017-04-07 15:00:10
+# User: fracpete
+# Charset: UTF-8
+adams.flow.control.Flow -annotation "Sends a simple \\\"Hello World!\\\" to the server.\\n\\nExecute the following flow first:\\nadams-net-websocket_echoserver.flow" -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.source.StringConstants -string "Hello World!"
+ adams.flow.sink.WebSocketClient -generator "adams.flow.websocket.client.SimpleSendGenerator -logging-level INFO" -disconnect true

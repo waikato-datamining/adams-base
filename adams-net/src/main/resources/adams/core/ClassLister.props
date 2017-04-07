@@ -42,4 +42,11 @@ adams.data.io.output.EmailFileWriter=\
 # the webserver handlers
 adams.flow.standalone.webserver.Handler=\
   adams.flow.standalone.webserver
- 
+
+# the websocket server generators
+adams.flow.websocket.server.WebSocketServerGenerator=\
+  adams.flow.websocket.server
+
+# the websocket client generators
+adams.flow.websocket.client.WebSocketClientGenerator=\
+  adams.flow.websocket.client
