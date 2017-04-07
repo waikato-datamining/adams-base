@@ -20,6 +20,8 @@
 
 package adams.flow.transformer.wekaevaluationpostprocessor;
 
+import adams.core.Utils;
+import adams.core.base.BaseInterval;
 import adams.flow.container.WekaEvaluationContainer;
 import gnu.trove.list.TIntList;
 import gnu.trove.list.array.TIntArrayList;
@@ -31,7 +33,7 @@ import java.util.List;
 
 /**
  <!-- globalinfo-start -->
- * Generates an Evaluation object based on the actual class values that fall within the specified min&#47;max range.
+ * Generates an Evaluation object based on the actual class values that fall within the specified interval ranges.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -41,14 +43,9 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  * 
- * <pre>-min &lt;double&gt; (property: min)
- * &nbsp;&nbsp;&nbsp;The minimum value to include.
- * &nbsp;&nbsp;&nbsp;default: -Infinity
- * </pre>
- * 
- * <pre>-max &lt;double&gt; (property: max)
- * &nbsp;&nbsp;&nbsp;The maximum value to include.
- * &nbsp;&nbsp;&nbsp;default: Infinity
+ * <pre>-range &lt;adams.core.base.BaseInterval&gt; [-range ...] (property: ranges)
+ * &nbsp;&nbsp;&nbsp;The ranges to include.
+ * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
  <!-- options-end -->
@@ -61,12 +58,9 @@ public class SubRange
 
   private static final long serialVersionUID = -1598212513856588223L;
 
-  /** the minimum value to include. */
-  protected double m_Min;
+  /** the intervals. */
+  protected BaseInterval[] m_Ranges;
 
-  /** the maximum value to include. */
-  protected double m_Max;
-  
   /**
    * Returns a string describing the object.
    *
@@ -76,7 +70,7 @@ public class SubRange
   public String globalInfo() {
     return
       "Generates an Evaluation object based on the actual class values that "
-	+ "fall within the specified min/max range.";
+	+ "fall within the specified interval ranges.";
   }
 
   /**
@@ -87,31 +81,27 @@ public class SubRange
     super.defineOptions();
 
     m_OptionManager.add(
-      "min", "min",
-      Double.NEGATIVE_INFINITY);
-
-    m_OptionManager.add(
-      "max", "max",
-      Double.POSITIVE_INFINITY);
+      "range", "ranges",
+      new BaseInterval[0]);
   }
 
   /**
-   * Sets the minimum value to include.
+   * Sets the ranges to include.
    *
-   * @param value	the minimum
+   * @param value	the ranges
    */
-  public void setMin(double value) {
-    m_Min = value;
+  public void setRanges(BaseInterval[] value) {
+    m_Ranges = value;
     reset();
   }
 
   /**
-   * Returns the minimum value to include.
+   * Returns the ranges to include.
    *
-   * @return		the minimum
+   * @return		the ranges
    */
-  public double getMin() {
-    return m_Min;
+  public BaseInterval[] getRanges() {
+    return m_Ranges;
   }
 
   /**
@@ -120,37 +110,8 @@ public class SubRange
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String minTipText() {
-    return "The minimum value to include.";
-  }
-
-  /**
-   * Sets the maximum value to include.
-   *
-   * @param value	the maximum
-   */
-  public void setMax(double value) {
-    m_Max = value;
-    reset();
-  }
-
-  /**
-   * Returns the maximum value to include.
-   *
-   * @return		the maximum
-   */
-  public double getMax() {
-    return m_Max;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String maxTipText() {
-    return "The maximum value to include.";
+  public String rangesTipText() {
+    return "The ranges to include.";
   }
 
   /**
@@ -188,16 +149,26 @@ public class SubRange
     Prediction				pred;
     TIntList 				indices;
     int					i;
+    int					n;
+    String				relName;
 
     result  = new ArrayList<>();
     indices = new TIntArrayList();
     eval    = (Evaluation) cont.getValue(WekaEvaluationContainer.VALUE_EVALUATION);
     for (i = 0; i < eval.predictions().size(); i++) {
       pred = eval.predictions().get(i);
-      if ((pred.actual() >= m_Min) && (pred.actual() <= m_Max))
-	indices.add(i);
+      for (n = 0; n < m_Ranges.length; n++) {
+	if (m_Ranges[n].isInside(pred.actual())) {
+	  indices.add(i);
+	  break;
+	}
+      }
     }
-    result.add(newContainer("-min:" + m_Min + ",max:" + m_Max, cont, indices));
+    if (m_Ranges.length == 1)
+      relName = m_Ranges[0].getValue();
+    else
+      relName = Utils.arrayToString(m_Ranges);
+    result.add(newContainer("-" + relName, cont, indices));
 
     return result;
   }

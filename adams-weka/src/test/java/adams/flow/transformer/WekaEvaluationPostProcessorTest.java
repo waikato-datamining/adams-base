@@ -20,6 +20,7 @@
 
 package adams.flow.transformer;
 
+import adams.core.base.BaseInterval;
 import adams.core.io.PlaceholderFile;
 import adams.core.option.AbstractArgumentOption;
 import adams.core.option.OptionUtils;
@@ -164,10 +165,7 @@ public class WekaEvaluationPostProcessorTest
       // Flow.WekaEvaluationPostProcessor
       WekaEvaluationPostProcessor wekaevaluationpostprocessor = new WekaEvaluationPostProcessor();
       SubRange subrange = new SubRange();
-      argOption = (AbstractArgumentOption) subrange.getOptionManager().findByProperty("min");
-      subrange.setMin((Double) argOption.valueOf("10.0"));
-      argOption = (AbstractArgumentOption) subrange.getOptionManager().findByProperty("max");
-      subrange.setMax((Double) argOption.valueOf("20.0"));
+      subrange.setRanges(new BaseInterval[]{new BaseInterval("[10.0;20.0]")});
       wekaevaluationpostprocessor.setPostProcessor(subrange);
 
       actors.add(wekaevaluationpostprocessor);
