@@ -378,11 +378,12 @@ public class HttpRequest
 
     try {
       conn = Jsoup.connect(m_URL.getValue());
-      for (BaseKeyValuePair header: m_Headers)
-	conn.header(header.getPairKey(), header.getPairValue());
-      conn.data(BaseKeyValuePair.toMap(m_Parameters));
+      if (m_Parameters.length > 0)
+	conn.data(BaseKeyValuePair.toMap(m_Parameters));
       conn.method(m_Method);
       conn.requestBody(payload);
+      for (BaseKeyValuePair header: m_Headers)
+	conn.header(header.getPairKey(), header.getPairValue());
       if (cookies != null)
 	conn.cookies(cookies);
       res           = conn.execute();
