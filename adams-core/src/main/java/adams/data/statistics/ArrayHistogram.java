@@ -24,6 +24,7 @@ import adams.core.TechnicalInformation.Field;
 import adams.core.TechnicalInformation.Type;
 import adams.core.TechnicalInformationHandler;
 import adams.core.Utils;
+import adams.core.base.BaseInterval;
 
 /**
  <!-- globalinfo-start -->
@@ -694,16 +695,14 @@ public class ArrayHistogram<T extends Number>
     }
     binWidth = (max - min) / numBins;
     bins     = new int[numBins];
-    result   = new StatisticContainer<Double>(size(), numBins);
+    result   = new StatisticContainer<>(size(), numBins);
     for (n = 0; n < numBins; n++) {
       if (m_DisplayRanges)
 	result.setHeader(
-	    n, 
-	    "[" 
-	    + Utils.doubleToString(min + binWidth * n, m_NumDecimals)
-	    + "-"
-	    + Utils.doubleToString(min + binWidth * (n + 1), m_NumDecimals)
-	    + ((n == numBins - 1) ? "]" : ")"));
+	    n,
+            new BaseInterval(
+              min + binWidth * n, true,
+              min + binWidth * (n + 1), (n == numBins - 1)).getValue());
       else
 	result.setHeader(
 	    n, 
