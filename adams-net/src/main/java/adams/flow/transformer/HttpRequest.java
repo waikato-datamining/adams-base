@@ -15,7 +15,7 @@
 
 /**
  * HttpRequest.java
- * Copyright (C) 2015-2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer;
@@ -24,19 +24,17 @@ import adams.core.QuickInfoHelper;
 import adams.core.base.BaseKeyValuePair;
 import adams.core.base.BaseURL;
 import adams.flow.container.HTMLRequestResult;
-import adams.flow.control.StorageName;
 import adams.flow.core.Token;
-import org.jsoup.Connection;
+import gnu.trove.list.array.TByteArrayList;
 import org.jsoup.Connection.Method;
-import org.jsoup.Connection.Response;
-import org.jsoup.Jsoup;
 
-import java.util.Map;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
 
 /**
  <!-- globalinfo-start -->
- * Sends the incoming text payload to the specified URL (with optional form parameters and headers) and forwards the retrieved HTML as text.<br>
- * Cookies can be retrieved and stored in internal storage, to be re-used with the next request.
+ * Sends the incoming text payload to the specified URL (with optional HTTP headers) and forwards the retrieved HTML as text.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -102,16 +100,6 @@ import java.util.Map;
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
- * <pre>-parameter &lt;adams.core.base.BaseKeyValuePair&gt; [-parameter ...] (property: parameters)
- * &nbsp;&nbsp;&nbsp;The form parameters to send with the request.
- * &nbsp;&nbsp;&nbsp;default: 
- * </pre>
- * 
- * <pre>-cookies &lt;adams.flow.control.StorageName&gt; (property: cookies)
- * &nbsp;&nbsp;&nbsp;The (optional) storage value with the cookies (map of strings).
- * &nbsp;&nbsp;&nbsp;default: storage
- * </pre>
- * 
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
@@ -131,19 +119,11 @@ public class HttpRequest
   /** the (optional) request headers. */
   protected BaseKeyValuePair[] m_Headers;
 
-  /** the form parameters. */
-  protected BaseKeyValuePair[] m_Parameters;
-
-  /** the storage value containing the cookies to use. */
-  protected StorageName m_Cookies;
-
   @Override
   public String globalInfo() {
     return
-      "Sends the incoming text payload to the specified URL (with optional form "
-	+ "parameters and headers) and forwards the retrieved HTML as text.\n"
-	+ "Cookies can be retrieved and stored in internal storage, to be "
-	+ "re-used with the next request.";
+      "Sends the incoming text payload to the specified URL (with optional "
+	+ "HTTP headers) and forwards the retrieved HTML as text.";
   }
 
   /**
@@ -164,14 +144,6 @@ public class HttpRequest
     m_OptionManager.add(
       "header", "headers",
       new BaseKeyValuePair[0]);
-
-    m_OptionManager.add(
-      "parameter", "parameters",
-      new BaseKeyValuePair[0]);
-
-    m_OptionManager.add(
-      "cookies", "cookies",
-      new StorageName());
   }
 
   /**
@@ -185,7 +157,6 @@ public class HttpRequest
 
     result  = QuickInfoHelper.toString(this, "URL", m_URL, "URL: ");
     result += QuickInfoHelper.toString(this, "method", m_Method, ", method: ");
-    result += QuickInfoHelper.toString(this, "cookies", m_Cookies, ", cookies: ");
 
     return result;
   }
@@ -278,64 +249,6 @@ public class HttpRequest
   }
 
   /**
-   * Sets the form parameters for the request.
-   *
-   * @param value	the parameters
-   */
-  public void setParameters(BaseKeyValuePair[] value) {
-    m_Parameters = value;
-    reset();
-  }
-
-  /**
-   * Returns the form parameters for the request.
-   *
-   * @return		the parameters
-   */
-  public BaseKeyValuePair[] getParameters() {
-    return m_Parameters;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String parametersTipText() {
-    return "The form parameters to send with the request.";
-  }
-
-  /**
-   * Sets the (optional) storage name with the cookies to use.
-   *
-   * @param value	the storage name
-   */
-  public void setCookies(StorageName value) {
-    m_Cookies = value;
-    reset();
-  }
-
-  /**
-   * Returns the (optional) storage name with the cookies to use.
-   *
-   * @return		the storage name
-   */
-  public StorageName getCookies() {
-    return m_Cookies;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String cookiesTipText() {
-    return "The (optional) storage value with the cookies (map of strings).";
-  }
-
-  /**
    * Returns the class that the consumer accepts.
    *
    * @return		the Class of objects that can be processed
@@ -364,30 +277,35 @@ public class HttpRequest
   protected String doExecute() {
     String			result;
     String			payload;
-    Connection			conn;
-    Response 			res;
+    HttpURLConnection		conn;
+    OutputStream		out;
+    InputStream			in;
     HTMLRequestResult		cont;
-    Map<String,String>  	cookies;
+    int				read;
+    TByteArrayList		response;
 
     result = null;
 
     payload = (String) m_InputToken.getPayload();
-    cookies = null;
-    if (getStorageHandler().getStorage().has(m_Cookies))
-      cookies = (Map<String,String>) getStorageHandler().getStorage().get(m_Cookies);
 
     try {
-      conn = Jsoup.connect(m_URL.getValue());
-      if (m_Parameters.length > 0)
-	conn.data(BaseKeyValuePair.toMap(m_Parameters));
-      conn.method(m_Method);
-      conn.requestBody(payload);
+      conn = (HttpURLConnection) m_URL.urlValue().openConnection();
+      conn.setDoOutput(true);
+      conn.setDoInput(true);
+      conn.setRequestMethod(m_Method.toString());
       for (BaseKeyValuePair header: m_Headers)
-	conn.header(header.getPairKey(), header.getPairValue());
-      if (cookies != null)
-	conn.cookies(cookies);
-      res           = conn.execute();
-      cont          = new HTMLRequestResult(res.statusCode(), res.body(), res.cookies());
+	conn.setRequestProperty(header.getPairKey(), header.getPairValue());
+      // write payload
+      out = conn.getOutputStream();
+      out.write(payload.getBytes());
+      out.flush();
+      out.close();
+      // read response
+      response = new TByteArrayList();
+      in = conn.getInputStream();
+      while ((read = in.read()) != -1)
+	response.add((byte) read);
+      cont          = new HTMLRequestResult(conn.getResponseCode(), conn.getResponseMessage(), new String(response.toArray()));
       m_OutputToken = new Token(cont);
     }
     catch (Exception e) {
