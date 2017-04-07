@@ -140,7 +140,7 @@ public class Percentile<E extends Comparable>
     sort();
 
     if (size() > 0) {
-      index  = (int) Math.round(((double) m_Values.size()) * percentage) - 1;
+      index  = (int) Math.ceil(((double) m_Values.size()) * percentage) -1 ;
       if (index < 0)
 	index = 0;
       result = m_Values.get(index);
