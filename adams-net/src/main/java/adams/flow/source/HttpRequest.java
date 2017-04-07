@@ -371,7 +371,7 @@ public class HttpRequest
       if (cookies != null)
 	conn.cookies(cookies);
       res           = conn.execute();
-      cont          = new HTMLRequestResult(res.statusCode(), res.body(), res.cookies());
+      cont          = new HTMLRequestResult(res.statusCode(), res.statusMessage(), res.body(), res.cookies());
       m_OutputToken = new Token(cont);
     }
     catch (Exception e) {
