@@ -15,7 +15,7 @@
 
 /*
  * SpreadSheetSetHeaderCell.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -279,6 +279,7 @@ public class SpreadSheetSetHeaderCell
 
     if (m_Column.getIntIndex() == -1) {
       result = "Illegal column index ('" + m_Column.getIndex() + "')?";
+      m_OutputToken = new Token(sheet);
     }
     else {
       row  = sheet.getHeaderRow();

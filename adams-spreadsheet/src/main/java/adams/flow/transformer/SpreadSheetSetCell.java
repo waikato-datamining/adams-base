@@ -158,8 +158,8 @@ public class SpreadSheetSetCell
 	    "");
 
     m_OptionManager.add(
-	    "force-string", "forceString",
-	    false);
+      "force-string", "forceString",
+      false);
   }
 
   /**
@@ -356,9 +356,11 @@ public class SpreadSheetSetCell
       cols = m_Column.getIntIndices();
       if (rows.length == 0) {
 	result = "No row(s) selected? " + m_Row.getRange();
+	m_OutputToken = new Token(sheet);
       }
       else if (cols.length == 0) {
 	result = "No column(s) selected? " + m_Column.getRange();
+	m_OutputToken = new Token(sheet);
       }
       else {
 	for (int r : rows) {
@@ -385,6 +387,7 @@ public class SpreadSheetSetCell
       cols = m_Column.getIntIndices();
       if (cols.length == 0) {
 	result = "No column(s) selected? " + m_Column.getRange();
+	m_OutputToken = new Token(row);
       }
       else {
 	for (int c : cols) {
