@@ -15,7 +15,7 @@
 
 /*
  * AbstractActor.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.core;
@@ -536,6 +536,8 @@ public abstract class AbstractActor
 	    stop = true;
 	  if (stop)
 	    flow.stopExecution(msg);
+          else if (!getSilent())
+            source.getLogger().warning(msg);
 	  msg = null;
 	  break;
 
@@ -547,6 +549,9 @@ public abstract class AbstractActor
       if (getStopFlowOnError()) {
 	source.getRoot().stopExecution(msg);
 	msg = null;
+      }
+      else if (!getSilent()) {
+        source.getLogger().warning(msg);
       }
     }
     
