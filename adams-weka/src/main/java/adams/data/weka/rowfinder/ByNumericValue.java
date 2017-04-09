@@ -269,7 +269,7 @@ public class ByNumericValue
     
     for (i = 0; i < data.numInstances(); i++) {
       row = data.instance(i);
-      if (!row.isMissing(index))
+      if (row.isMissing(index))
 	continue;
 
       value = row.value(index);
