@@ -58,6 +58,8 @@ public class AddBreakpoint
 	null,
 	new AddBreakpointHere(),
 	new AddBreakpointAfter(),
+	null,
+	new AttachBreakpointHere(),
     };
     
     return result;

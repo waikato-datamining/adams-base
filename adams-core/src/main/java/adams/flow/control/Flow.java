@@ -634,6 +634,7 @@ public class Flow
 
     if (listener instanceof NullListener) {
       debug = new Debug();
+      debug.setOwner(this);
       debug.setBreakpoints(new AbstractBreakpoint[]{breakpoint});
       debug.setScopeRestriction(restriction);
       setFlowExecutionListener(debug);
@@ -662,6 +663,7 @@ public class Flow
       }
       if (debug == null) {
 	debug = new Debug();
+	debug.setOwner(this);
 	debug.setBreakpoints(new AbstractBreakpoint[]{breakpoint});
 	debug.setScopeRestriction(restriction);
 	listeners = new ArrayList<>(Arrays.asList(multiListen.getSubListeners()));
@@ -684,11 +686,15 @@ public class Flow
     else {
       multiListen = new MultiListener();
       debug = new Debug();
+      debug.setOwner(this);
       debug.setBreakpoints(new AbstractBreakpoint[]{breakpoint});
       debug.setScopeRestriction(restriction);
       multiListen.setSubListeners(new FlowExecutionListener[]{listener, debug});
       setFlowExecutionListener(multiListen);
     }
+
+    if (!isHeadless() && (m_FlowExecutionListenerFrame == null))
+      m_FlowExecutionListenerFrame = ListenerUtils.createFrame(this);
   }
 
   /**
