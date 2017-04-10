@@ -628,6 +628,9 @@ public class Flow
     List<FlowExecutionListener>		listeners;
     List<AbstractBreakpoint> 		breakpoints;
 
+    if (isHeadless() || GUIHelper.isHeadless())
+      return;
+
     if (!isFlowExecutionListeningEnabled())
       setFlowExecutionListeningEnabled(true);
     listener = getFlowExecutionListener();
