@@ -67,6 +67,7 @@ The following boolean conditions, e.g., used in the \textit{IfThenElse} or
 \section{Actors}
 The following sources are available:
 \begin{tight_itemize}
+	\item \textit{WekaAssociatorSetup} -- outputs a single associator setup.
 	\item \textit{WekaClassifierGenerator} -- generates parameter sweeps for
 	\item \textit{WekaClassifierSetup} -- outputs a single classifier setup.
 	\item \textit{WekaClustererGenerator} -- generates parameter sweeps for
@@ -216,6 +217,8 @@ These transformers:
 	a dataset obtained from a callable actor.
 	\item \textit{WekaTextDiectoryReader} -- reads in a directory with the 
 	documents in the sub-directories representing different classes.
+	\item \textit{WekaTrainAssociator} -- used for building an associator
+	on a dataset.
 	\item \textit{WekaTrainClassifier} -- used for generating a trained
 	model using a dataset.
 	\item \textit{WekaTrainClusterer} -- trains a cluster algorithm setup

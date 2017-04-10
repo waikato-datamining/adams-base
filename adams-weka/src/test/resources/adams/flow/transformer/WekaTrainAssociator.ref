@@ -1,0 +1,12 @@
+--> dumpfile.txt
+[adoption-of-the-budget-resolution=y, physician-fee-freeze=n]: 219 ==> [Class=democrat]: 219   <conf:(1)> lift:(1.63) lev:(0.19) conv:(84.58) 
+[adoption-of-the-budget-resolution=y, physician-fee-freeze=n, aid-to-nicaraguan-contras=y]: 198 ==> [Class=democrat]: 198   <conf:(1)> lift:(1.63) lev:(0.18) conv:(76.47) 
+[physician-fee-freeze=n, aid-to-nicaraguan-contras=y]: 211 ==> [Class=democrat]: 210   <conf:(1)> lift:(1.62) lev:(0.19) conv:(40.74) 
+[physician-fee-freeze=n, education-spending=n]: 202 ==> [Class=democrat]: 201   <conf:(1)> lift:(1.62) lev:(0.18) conv:(39.01) 
+[physician-fee-freeze=n]: 247 ==> [Class=democrat]: 245   <conf:(0.99)> lift:(1.62) lev:(0.21) conv:(31.8) 
+[el-salvador-aid=n, Class=democrat]: 200 ==> [aid-to-nicaraguan-contras=y]: 197   <conf:(0.98)> lift:(1.77) lev:(0.2) conv:(22.18) 
+[el-salvador-aid=n]: 208 ==> [aid-to-nicaraguan-contras=y]: 204   <conf:(0.98)> lift:(1.76) lev:(0.2) conv:(18.46) 
+[adoption-of-the-budget-resolution=y, aid-to-nicaraguan-contras=y, Class=democrat]: 203 ==> [physician-fee-freeze=n]: 198   <conf:(0.98)> lift:(1.72) lev:(0.19) conv:(14.62) 
+[el-salvador-aid=n, aid-to-nicaraguan-contras=y]: 204 ==> [Class=democrat]: 197   <conf:(0.97)> lift:(1.57) lev:(0.17) conv:(9.85) 
+[aid-to-nicaraguan-contras=y, Class=democrat]: 218 ==> [physician-fee-freeze=n]: 210   <conf:(0.96)> lift:(1.7) lev:(0.2) conv:(10.47) 
+
