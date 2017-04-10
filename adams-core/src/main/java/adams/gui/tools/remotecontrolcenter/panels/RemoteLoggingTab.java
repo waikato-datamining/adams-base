@@ -27,6 +27,9 @@ import adams.core.logging.RemoteReceiveHandler.AbstractRemoteListenerRunnable;
 import adams.gui.core.BaseObjectTextField;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.NumberTextField;
+import adams.gui.core.NumberTextField.BoundedNumberCheckModel;
+import adams.gui.core.NumberTextField.Type;
 import adams.gui.core.SimpleLogPanel;
 import adams.scripting.command.RemoteCommand;
 import adams.scripting.command.basic.StartRemoteLogging;
@@ -155,6 +158,9 @@ public class RemoteLoggingTab
   /** the remote machine. */
   protected BaseObjectTextField<BaseHostname> m_TextRemote;
 
+  /** the maximum number of failures to tolerate. */
+  protected NumberTextField m_TextMaxFailures;
+
   /** the local machine. */
   protected BaseObjectTextField<BaseHostname> m_TextLocal;
 
@@ -217,6 +223,15 @@ public class RemoteLoggingTab
     label.setLabelFor(m_TextRemote);
     panelHosts.add(label);
     panelHosts.add(m_TextRemote);
+
+    m_TextMaxFailures = new NumberTextField(Type.INTEGER, "-1", 5);
+    m_TextMaxFailures.setCheckModel(new BoundedNumberCheckModel(Type.INTEGER, -1, null));
+    m_TextMaxFailures.setToolTipText("The maximum number of connection failures to tolerate on the sending side; -1 for infinite attempts");
+    label = new JLabel("Max failures");
+    label.setDisplayedMnemonic('f');
+    label.setLabelFor(m_TextMaxFailures);
+    panelHosts.add(label);
+    panelHosts.add(m_TextMaxFailures);
 
     m_TextLocal = new BaseObjectTextField<>(new BaseHostname(), "127.0.0.1:" + DEFAULT_PORT);
     m_TextLocal.setColumns(20);

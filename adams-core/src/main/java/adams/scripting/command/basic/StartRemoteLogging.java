@@ -53,6 +53,9 @@ public class StartRemoteLogging
   /** the handler to use. */
   protected Handler m_Handler;
 
+  /** the maximum number of failed send attempts to tolerate. */
+  protected int m_MaxFailures;
+
   /** the message (null is successful, otherwise error message). */
   protected String m_Message;
 
@@ -88,6 +91,10 @@ public class StartRemoteLogging
     m_OptionManager.add(
       "handler", "handler",
       new SimpleConsoleHandler());
+
+    m_OptionManager.add(
+      "max-failures", "maxFailures",
+      -1, -1, null);
   }
 
   /**
@@ -211,6 +218,37 @@ public class StartRemoteLogging
   }
 
   /**
+   * Sets the maximum number of failures to accept on the sending side.
+   *
+   * @param value	maximum number, less than 1 for infinite
+   */
+  public void setMaxFailures(int value) {
+    if (getOptionManager().isValid("maxFailures", value)) {
+      m_MaxFailures = value;
+      reset();
+    }
+  }
+
+  /**
+   * Returns the maximum number of failures to accept on the sending side.
+   *
+   * @return		maximum number, less than 1 for infinite
+   */
+  public int getMaxFailures() {
+    return m_MaxFailures;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String maxFailuresTipText() {
+    return "The maximum number of failures to tolerate on the sending side (< 1 for infinite).";
+  }
+
+  /**
    * Initializes the members.
    */
   @Override
@@ -307,6 +345,7 @@ public class StartRemoteLogging
     handler = new RemoteSendHandler();
     handler.setHostname(m_LoggingHost.hostnameValue());
     handler.setPort(m_LoggingHost.portValue());
+    handler.setMaxFailures(m_MaxFailures);
     m_Message = LoggingHelper.addToDefaultHandler(handler);
   }
 

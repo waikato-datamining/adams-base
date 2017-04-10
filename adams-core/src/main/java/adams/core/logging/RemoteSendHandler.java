@@ -43,17 +43,32 @@ public class RemoteSendHandler
   /** the default port. */
   public final static int DEFAULT_PORT = AbstractRemoteListenerRunnable.DEFAULT_PORT;
 
+  /** the default maximum number of send failures to accept. */
+  public final static int DEFAULT_MAXFAILURES = -1;
+
+  /** the maximum number of times doubling up the attempt interval (7: 2^7 = 64s). */
+  public final static int MAX_DOUBLE_ATTEMPT_INTERVAL = 7;
+
   /** the remote host. */
   protected String m_Hostname;
 
   /** the remote port. */
   protected int m_Port;
 
+  /** the maximum number of failures to accept before removing itself (-1 for infinite). */
+  protected int m_MaxFailures;
+
   /** the socket in use. */
   protected Socket m_Socket;
 
-  /** whether the connection has failed. */
-  protected boolean m_ConnectionFailed;
+  /** the number of times the connection has failed. */
+  protected int m_ConnectionFailed;
+
+  /** the last connection failure timestamp (msec). */
+  protected long m_LastFailureTimestamp;
+
+  /** the timestamp when next to attempt a connect. */
+  protected long m_NextAttemptTimestamp;
 
   /**
    * Initializes the members.
@@ -62,11 +77,25 @@ public class RemoteSendHandler
   protected void initialize() {
     super.initialize();
 
-    m_Socket           = null;
-    m_ConnectionFailed = false;
+    m_Socket               = null;
+    m_ConnectionFailed     = 0;
+    m_LastFailureTimestamp = 0;
+    m_NextAttemptTimestamp = 0;
 
     setHostname(DEFAULT_HOSTNAME);
     setPort(DEFAULT_PORT);
+    setMaxFailures(DEFAULT_MAXFAILURES);
+  }
+
+  /**
+   * Resets the scheme.
+   */
+  @Override
+  protected void reset() {
+    super.reset();
+    m_ConnectionFailed     = 0;
+    m_LastFailureTimestamp = 0;
+    m_NextAttemptTimestamp = 0;
   }
 
   /**
@@ -110,6 +139,27 @@ public class RemoteSendHandler
   }
 
   /**
+   * Sets the maximum number of failures to accept.
+   *
+   * @param value	the maximum, -1 for infinite tries
+   */
+  public void setMaxFailures(int value) {
+    if (value >= -1) {
+      m_MaxFailures = value;
+      reset();
+    }
+  }
+
+  /**
+   * Returns the maximum number of failures to accept.
+   *
+   * @return		the maximum, -1 for infinite tries
+   */
+  public int getMaxFailures() {
+    return m_MaxFailures;
+  }
+
+  /**
    * Close the <tt>Handler</tt> and free all associated resources.
    * <p>
    * The close method will perform a <tt>flush</tt> and then close the
@@ -131,7 +181,9 @@ public class RemoteSendHandler
       }
       m_Socket = null;
     }
-    m_ConnectionFailed = false;
+    m_ConnectionFailed     = 0;
+    m_LastFailureTimestamp = 0;
+    m_NextAttemptTimestamp = 0;
     super.close();
   }
 
@@ -139,14 +191,28 @@ public class RemoteSendHandler
    * Tries to open the socket.
    */
   protected void open() {
+    int		diff;
+
     try {
-      m_Socket           = new Socket(m_Hostname, m_Port);
-      m_ConnectionFailed = false;
+      m_Socket               = new Socket(m_Hostname, m_Port);
+      m_ConnectionFailed     = 0;
+      m_LastFailureTimestamp = 0;
+      m_NextAttemptTimestamp = 0;
     }
     catch (Exception e) {
       System.err.println(getClass().getName() + ": failed to connect to " + m_Hostname + "/" + m_Port);
       e.printStackTrace();
-      m_ConnectionFailed = true;
+      m_ConnectionFailed++;
+      if ((m_MaxFailures > 0) && (m_ConnectionFailed >= m_MaxFailures)) {
+	System.err.println("Too many failed attempts (" + m_ConnectionFailed + "), removing handler for sending log data!");
+	LoggingHelper.removeFromDefaultHandler(this);
+      }
+      else{
+	diff = 1000 * (int) Math.pow(2, Math.min(MAX_DOUBLE_ATTEMPT_INTERVAL, m_ConnectionFailed - 1));
+	System.err.println("Attempting again in " + diff + "msec");
+	m_LastFailureTimestamp = System.currentTimeMillis();
+	m_NextAttemptTimestamp = m_LastFailureTimestamp + diff;
+      }
     }
   }
 
@@ -164,10 +230,14 @@ public class RemoteSendHandler
    */
   @Override
   protected void doPublish(LogRecord record) {
-    if ((m_Socket == null) && !m_ConnectionFailed)
+    if ((m_ConnectionFailed == 0) || (System.currentTimeMillis() >= m_NextAttemptTimestamp))
       open();
+    else
+      return;
+
     if (m_Socket == null)
       return;
+
     try {
       m_Socket.getOutputStream().write(SerializationHelper.toByteArray(record));
       m_Socket.getOutputStream().flush();
