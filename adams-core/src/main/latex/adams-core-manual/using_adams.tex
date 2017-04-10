@@ -2190,7 +2190,7 @@ Ubuntu, is fairly easy:
   \item Download, extract and copy an Oracle JDK to \texttt{/opt/jdk}
   \item Download, extract and copy ADAMS to \texttt{/opt/adams}
   \item If your flow is processing files, create the directory structure
-  (see Figure \ref{example_dir_layout_data_processing} for an example).
+  (see Figure \ref{example_linux_dir_layout_data_processing} for an example).
   \item Make sure that all files and directories are owned by the \texttt{adams}
   user (using \texttt{chown}) and that the permissions for the \texttt{adams}
   group are set correctly as well (using \texttt{chmod}).
@@ -2240,9 +2240,52 @@ WantedBy=multi-user.target
  .4 processed \DTcomment{\textrm{successfully processed}}.
  .4 failed \DTcomment{\textrm{failed to process for some reason}}.
 }
-  \caption{Example directory layout for data processing.}
-  \label{example_dir_layout_data_processing}
+  \caption{Example Linux directory layout for data processing.}
+  \label{example_linux_dir_layout_data_processing}
 \end{figure}
+
+\section{Windows servers}
+ADAMS can be run as background process on Windows as well. Using the NSSM\cite{nssm}
+tool, you can install the following batch file called \textit{myflow.bat} (e.g., in
+directory \textit{C:\textbackslash adams\_services}) which executes the flow
+\textit{myflow.flow} (ADAMS is installed in directory \textit{C:\textbackslash adams}):
+
+{\scriptsize \begin{verbatim}
+REM starts myflow
+cd C:\\adams
+javaw -cp ".\\lib\\*;.\\lib\\windows64\\*" adams.flow.FlowRunner -input ".\\flows\\myflow.flow"
+\end{verbatim}}
+
+\noindent Use the following steps to install the batch file as service:
+\begin{tight_itemize}
+  \item Set up a new, non-privileged user called \textit{adams}, since we
+  don't want to run ADAMS with admin rights in order to avoid potential attacks.
+  \item Run \textit{nssm} from the command-line (from the directory the
+  \textit{nssm.exe} executable is located):
+    \begin{verbatim}
+    nssm install adams
+    \end{verbatim}
+  \item On the \textit{Application} tab, select \textit{myflow.bat} as the \textit{Path}.
+  \item On the \textit{Log on} tab, select \textit{This account} and supply user
+  and password to run ADAMS under.
+  \item Click on \textit{Install service}
+\end{tight_itemize}
+You can now start and stop the service \textit{adams} from the computer's
+control panel.
+
+\begin{figure}[htb]
+\dirtree{%
+ .1 C:/.
+ .3 data.
+ .4 incoming \DTcomment{\textrm{for receiving data}}.
+ .4 processing \DTcomment{\textrm{currently being processed}}.
+ .4 processed \DTcomment{\textrm{successfully processed}}.
+ .4 failed \DTcomment{\textrm{failed to process for some reason}}.
+}
+  \caption{Example Windows directory layout for data processing.}
+  \label{example_windows_dir_layout_data_processing}
+\end{figure}
+
 
 \section{Executing commands}
 Using the \textit{adams.scripting.CommandRunner} command-line utility, it is
