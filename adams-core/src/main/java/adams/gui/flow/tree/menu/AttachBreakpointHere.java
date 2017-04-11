@@ -21,7 +21,8 @@ package adams.gui.flow.tree.menu;
 
 import adams.flow.control.Flow;
 import adams.flow.core.ActorPath;
-import adams.flow.execution.debug.NoScopeRestriction;
+import adams.flow.execution.debug.AbstractScopeRestriction;
+import adams.flow.execution.debug.DebugScopeRestrictionHelper;
 import adams.flow.execution.debug.PathBreakpoint;
 
 import java.awt.event.ActionEvent;
@@ -64,12 +65,15 @@ public class AttachBreakpointHere
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    PathBreakpoint	breakpoint;
+    PathBreakpoint		breakpoint;
+    AbstractScopeRestriction	restriction;
 
     breakpoint = new PathBreakpoint();
     breakpoint.setOnPreExecute(true);
     breakpoint.setPath(new ActorPath(m_State.tree.getSelectedFullName()));
 
-    ((Flow) m_State.runningFlow).addBreakpoint(breakpoint, new NoScopeRestriction());
+    restriction = DebugScopeRestrictionHelper.getDebugScopeRestriction(m_State.selNode);
+
+    ((Flow) m_State.runningFlow).addBreakpoint(breakpoint, restriction);
   }
 }
