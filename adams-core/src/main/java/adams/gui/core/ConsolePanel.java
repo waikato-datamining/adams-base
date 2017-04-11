@@ -186,7 +186,9 @@ public class ConsolePanel
      * Clears the text.
      */
     public void clear() {
-      m_TextArea.clear();
+      synchronized (m_TextArea) {
+        m_TextArea.clear();
+      }
     }
 
     /**
