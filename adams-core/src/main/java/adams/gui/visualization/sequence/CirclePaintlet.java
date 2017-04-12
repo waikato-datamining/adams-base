@@ -221,11 +221,11 @@ public class CirclePaintlet
       currX = axisX.valueToPos(XYSequencePoint.toDouble(curr.getX()));
       currY = axisY.valueToPos(XYSequencePoint.toDouble(curr.getY()));
 
-      currX -= (m_Diameter / 2);
-      currY -= (m_Diameter / 2);
+      currX -= ((m_Diameter - 1) / 2);
+      currY -= ((m_Diameter - 1) / 2);
 
       // draw circle
-      g.drawOval(currX, currY, m_Diameter - 1, m_Diameter - 1);
+      g.drawOval(currX, currY, m_Diameter, m_Diameter);
     }
   }
 
