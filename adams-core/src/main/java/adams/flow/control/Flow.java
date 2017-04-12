@@ -654,6 +654,7 @@ public class Flow
 	restriction
       });
       debug.setScopeRestriction(multiScope);
+      debug.refreshGUI();
     }
     else if (listener instanceof MultiListener) {
       multiListen = (MultiListener) listener;
@@ -684,6 +685,7 @@ public class Flow
 	  restriction
 	});
 	debug.setScopeRestriction(multiScope);
+	debug.refreshGUI();
       }
     }
     else {

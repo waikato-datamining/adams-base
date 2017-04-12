@@ -576,6 +576,14 @@ public class Debug
   }
 
   /**
+   * Refreshes the control panel.
+   */
+  public void refreshGUI() {
+    if (m_ControlPanel != null)
+      m_ControlPanel.update();
+  }
+
+  /**
    * Closes the dialog.
    */
   @Override
