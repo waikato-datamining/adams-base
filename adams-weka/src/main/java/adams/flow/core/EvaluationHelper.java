@@ -20,6 +20,7 @@
 package adams.flow.core;
 
 import weka.classifiers.Evaluation;
+import weka.classifiers.evaluation.Bias;
 
 /**
  * A helper class for Evaluation related things.
@@ -134,6 +135,8 @@ public class EvaluationHelper {
 	return eval.unweightedMacroFmeasure();
       case UNWEIGHTED_MICRO_F_MEASURE:
 	return eval.unweightedMicroFmeasure();
+      case BIAS:
+        return eval.getPluginMetric(Bias.class.getName()).getStatistic(Bias.BIAS);
       default:
 	throw new IllegalArgumentException("Unhandled statistic field: " + statistic);
     }

@@ -1,0 +1,3 @@
+# additional evaluation metrics
+weka.classifiers.evaluation.AbstractEvaluationMetric=\
+  weka.classifiers.evaluation.Bias

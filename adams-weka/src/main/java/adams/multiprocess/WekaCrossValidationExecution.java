@@ -30,7 +30,7 @@ import adams.core.option.OptionUtils;
 import adams.data.weka.InstancesViewSupporter;
 import adams.flow.container.WekaTrainTestSetContainer;
 import adams.flow.standalone.JobRunnerSetup;
-import weka.classifiers.AggregateableEvaluation;
+import weka.classifiers.AggregateableEvaluationExt;
 import weka.classifiers.Classifier;
 import weka.classifiers.CrossValidationFoldGenerator;
 import weka.classifiers.CrossValidationHelper;
@@ -419,7 +419,7 @@ public class WekaCrossValidationExecution
   public String execute() {
     String				result;
     Evaluation 				eval;
-    AggregateableEvaluation 		evalAgg;
+    AggregateableEvaluationExt 		evalAgg;
     int					folds;
     CrossValidationFoldGenerator 	generator;
     JobList<WekaCrossValidationJob>	list;
@@ -507,7 +507,7 @@ public class WekaCrossValidationExecution
 	m_JobRunner.stop();
 	// aggregate data
 	if (!isStopped()) {
-	  evalAgg = new AggregateableEvaluation(m_Data);
+	  evalAgg = new AggregateableEvaluationExt(m_Data);
 	  evalAgg.setDiscardPredictions(m_DiscardPredictions);
 	  m_Evaluations = new Evaluation[m_JobRunner.getJobs().size()];
 	  for (i = 0; i < m_JobRunner.getJobs().size(); i++) {

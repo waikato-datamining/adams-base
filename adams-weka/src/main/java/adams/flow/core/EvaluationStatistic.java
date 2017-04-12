@@ -77,8 +77,9 @@ public enum EvaluationStatistic
   WEIGHTED_AREA_UNDER_ROC("Weighted area under ROC", true),
   WEIGHTED_AREA_UNDER_PRC("Weighted area under PRC", true),
   UNWEIGHTED_MACRO_F_MEASURE("Unweighted Macro F measure", true),
-  UNWEIGHTED_MICRO_F_MEASURE("Unweighted Micro F measure", true);
-  
+  UNWEIGHTED_MICRO_F_MEASURE("Unweighted Micro F measure", true),
+  BIAS("Bias", false);
+
   /** the display value. */
   private String m_Display;
 

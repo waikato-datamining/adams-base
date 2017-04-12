@@ -19,12 +19,12 @@
  */
 package adams.flow.transformer;
 
-import java.util.Hashtable;
-
-import weka.classifiers.AggregateableEvaluation;
-import weka.classifiers.Evaluation;
 import adams.flow.container.WekaEvaluationContainer;
 import adams.flow.core.Token;
+import weka.classifiers.AggregateableEvaluationExt;
+import weka.classifiers.Evaluation;
+
+import java.util.Hashtable;
 
 /**
  <!-- globalinfo-start -->
@@ -86,7 +86,7 @@ public class WekaAggregateEvaluations
   public final static String BACKUP_EVALUATION = "evaluation";
 
   /** the current evaluation state. */
-  protected AggregateableEvaluation m_Evaluation;
+  protected AggregateableEvaluationExt m_Evaluation;
   
   /**
    * Returns a string describing the object.
@@ -144,7 +144,7 @@ public class WekaAggregateEvaluations
   @Override
   protected void restoreState(Hashtable<String,Object> state) {
     if (state.containsKey(BACKUP_EVALUATION)) {
-      m_Evaluation = (AggregateableEvaluation) state.get(BACKUP_EVALUATION);
+      m_Evaluation = (AggregateableEvaluationExt) state.get(BACKUP_EVALUATION);
       state.remove(BACKUP_EVALUATION);
     }
 
@@ -189,7 +189,7 @@ public class WekaAggregateEvaluations
     
     try {
       if (m_Evaluation == null)
-	m_Evaluation = new AggregateableEvaluation(input);
+	m_Evaluation = new AggregateableEvaluationExt(input);
       m_Evaluation.aggregate(input);
       m_OutputToken = new Token(m_Evaluation);
     }
