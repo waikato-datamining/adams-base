@@ -177,7 +177,9 @@ public class RSquared
    */
   @Override
   public void updateStatsForPredictor(double predictedValue, Instance instance) throws Exception {
-    m_Actual.add(instance.classValue());
-    m_Predicted.add(predictedValue);
+    if (!instance.classIsMissing()) {
+      m_Actual.add(instance.classValue());
+      m_Predicted.add(predictedValue);
+    }
   }
 }
