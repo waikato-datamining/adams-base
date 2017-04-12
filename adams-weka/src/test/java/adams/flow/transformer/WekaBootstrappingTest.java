@@ -29,6 +29,7 @@ import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
 import adams.flow.core.AbstractActor;
 import adams.flow.core.Actor;
+import adams.flow.core.EvaluationStatistic;
 import adams.flow.execution.NullListener;
 import adams.flow.sink.DumpFile;
 import adams.flow.source.FileSupplier;
@@ -171,6 +172,7 @@ public class WekaBootstrappingTest
       wekabootstrapping.setPercentiles(percentiles.toArray(new BaseDouble[0]));
       actors.add(wekabootstrapping);
       wekabootstrapping.setWithReplacement(false);
+      wekabootstrapping.setStatisticValues(new EvaluationStatistic[]{EvaluationStatistic.MEAN_ABSOLUTE_ERROR});
 
       // Flow.DumpFile
       DumpFile dumpfile = new DumpFile();

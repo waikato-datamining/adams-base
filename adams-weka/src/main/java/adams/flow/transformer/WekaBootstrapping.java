@@ -119,9 +119,9 @@ import java.util.logging.Level;
  * &nbsp;&nbsp;&nbsp;maximum: 1.0
  * </pre>
  * 
- * <pre>-statistic &lt;Number correct|Number incorrect|Number unclassified|Percent correct|Percent incorrect|Percent unclassified|Kappa statistic|Mean absolute error|Root mean squared error|Relative absolute error|Root relative squared error|Correlation coefficient|SF prior entropy|SF scheme entropy|SF entropy gain|SF mean prior entropy|SF mean scheme entropy|SF mean entropy gain|KB information|KB mean information|KB relative information|True positive rate|Num true positives|False positive rate|Num false positives|True negative rate|Num true negatives|False negative rate|Num false negatives|IR precision|IR recall|F measure|Matthews correlation coefficient|Area under ROC|Area under PRC|Weighted true positive rate|Weighted false positive rate|Weighted true negative rate|Weighted false negative rate|Weighted IR precision|Weighted IR recall|Weighted F measure|Weighted Matthews correlation coefficient|Weighted area under ROC|Weighted area under PRC|Unweighted Macro F measure|Unweighted Micro F measure|Bias&gt; [-statistic ...] (property: statisticValues)
+ * <pre>-statistic &lt;Number correct|Number incorrect|Number unclassified|Percent correct|Percent incorrect|Percent unclassified|Kappa statistic|Mean absolute error|Root mean squared error|Relative absolute error|Root relative squared error|Correlation coefficient|SF prior entropy|SF scheme entropy|SF entropy gain|SF mean prior entropy|SF mean scheme entropy|SF mean entropy gain|KB information|KB mean information|KB relative information|True positive rate|Num true positives|False positive rate|Num false positives|True negative rate|Num true negatives|False negative rate|Num false negatives|IR precision|IR recall|F measure|Matthews correlation coefficient|Area under ROC|Area under PRC|Weighted true positive rate|Weighted false positive rate|Weighted true negative rate|Weighted false negative rate|Weighted IR precision|Weighted IR recall|Weighted F measure|Weighted Matthews correlation coefficient|Weighted area under ROC|Weighted area under PRC|Unweighted Macro F measure|Unweighted Micro F measure|Bias|R^2&gt; [-statistic ...] (property: statisticValues)
  * &nbsp;&nbsp;&nbsp;The evaluation values to extract and turn into a spreadsheet.
- * &nbsp;&nbsp;&nbsp;default: MEAN_ABSOLUTE_ERROR
+ * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
  * <pre>-class-index &lt;adams.data.weka.WekaLabelIndex&gt; (property: classIndex)
@@ -224,7 +224,7 @@ public class WekaBootstrapping
 
     m_OptionManager.add(
       "statistic", "statisticValues",
-      new EvaluationStatistic[]{EvaluationStatistic.MEAN_ABSOLUTE_ERROR});
+      new EvaluationStatistic[0]);
 
     m_OptionManager.add(
       "class-index", "classIndex",
