@@ -620,7 +620,7 @@ public class WekaBootstrapping
 	subset.clear();
 	if (m_WithReplacement) {
 	  for (i = 0; i < size; i++)
-	    subset.add(indices.get(random.nextInt(size)));
+	    subset.add(indices.get(random.nextInt(preds.size())));
 	}
 	else {
 	  indices.shuffle(random);
