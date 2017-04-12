@@ -109,7 +109,7 @@ public class PaintletWithFixedYRange
   @Override
   public void setPanel(PaintablePanel value) {
     if (m_Paintlet != null)
-      m_Paintlet.setPanel(value);
+      m_Paintlet.setPanel(value, false);
 
     super.setPanel(value);
   }
@@ -200,7 +200,10 @@ public class PaintletWithFixedYRange
       m_Paintlet.setPanel(null);
 
     m_Paintlet = value;
-    m_Paintlet.setPanel(getPanel());
+    m_Paintlet.setPanel(getPanel(), false);
+
+    if (m_Paintlet instanceof FlowAwarePaintlet)
+      ((FlowAwarePaintlet) m_Paintlet).setActor(m_Actor);
 
     memberChanged();
   }
@@ -256,6 +259,9 @@ public class PaintletWithFixedYRange
   @Override
   public void setActor(Actor actor) {
     m_Actor = actor;
+
+    if (m_Paintlet instanceof FlowAwarePaintlet)
+      ((FlowAwarePaintlet) m_Paintlet).setActor(m_Actor);
   }
 
   /**
