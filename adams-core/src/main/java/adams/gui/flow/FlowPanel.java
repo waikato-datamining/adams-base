@@ -175,6 +175,9 @@ public class FlowPanel
   /** the last flow writer used. */
   protected FlowWriter m_LastWriter;
 
+  /** the source panel for the debug panel. */
+  protected FlowPanel m_DebugSourcePanel;
+
   /**
    * Initializes the panel with no owner.
    */
@@ -216,6 +219,7 @@ public class FlowPanel
     m_CheckOnSave           = getProperties().getBoolean("CheckOnSave", true);
     m_LastReader            = null;
     m_LastWriter            = null;
+    m_DebugSourcePanel      = null;
   }
 
   /**
@@ -1045,6 +1049,7 @@ public class FlowPanel
    * Cleans up the last flow that was run.
    */
   public void cleanUp() {
+    m_DebugSourcePanel = null;
     if (m_LastFlow != null) {
       showStatus("Cleaning up");
       try {
@@ -1608,6 +1613,24 @@ public class FlowPanel
    */
   public boolean isDebug() {
     return m_Tree.isDebug();
+  }
+
+  /**
+   * Sets the source for this debug panel.
+   *
+   * @param value	the actual panel
+   */
+  public void setDebugSourcePanel(FlowPanel value) {
+    m_DebugSourcePanel = value;
+  }
+
+  /**
+   * Returns the source for this debug panel.
+   *
+   * @return		the actual panel, null if not available
+   */
+  public FlowPanel getDebugSourcePanel() {
+    return m_DebugSourcePanel;
   }
 
   /**

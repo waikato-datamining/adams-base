@@ -1021,8 +1021,13 @@ public class Tree
     // currently running flow
     result.runningFlow = null;
     if (getOwner() != null) {
-      if (getOwner().getRunningFlow() instanceof Flow)
+      if (getOwner().getRunningFlow() instanceof Flow) {
         result.runningFlow = (Flow) getOwner().getRunningFlow();
+      }
+      else if (getOwner().isDebug() && (getOwner().getDebugSourcePanel() != null)) {
+        if (getOwner().getDebugSourcePanel().getRunningFlow() instanceof Flow)
+          result.runningFlow = (Flow) getOwner().getDebugSourcePanel().getRunningFlow();
+      }
     }
 
     return result;

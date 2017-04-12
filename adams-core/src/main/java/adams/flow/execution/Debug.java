@@ -547,6 +547,7 @@ public class Debug
 	  panelCopy.setTitle(title);
 	  panelCopy.setDebug(true);
 	  panelCopy.updateTitle();
+          panelCopy.setDebugSourcePanel(panel);
 	  m_Owner.setParentComponent(panelCopy);
 	}
       }
