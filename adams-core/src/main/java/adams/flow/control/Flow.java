@@ -1081,12 +1081,13 @@ public class Flow
     start  = null;
     finish = null;
 
-    m_FlowExecutionListenerFrame = null;
-    if (m_FlowExecutionListeningEnabled) {
-      m_FlowExecutionListener.setOwner(this);
-      m_FlowExecutionListener.startListening();
-      if (!isHeadless())
-        m_FlowExecutionListenerFrame = ListenerUtils.createFrame(this);
+    if (m_FlowExecutionListenerFrame == null) {
+      if (m_FlowExecutionListeningEnabled) {
+	m_FlowExecutionListener.setOwner(this);
+	m_FlowExecutionListener.startListening();
+	if (!isHeadless())
+	  m_FlowExecutionListenerFrame = ListenerUtils.createFrame(this);
+      }
     }
     
     if (m_Headless) {
