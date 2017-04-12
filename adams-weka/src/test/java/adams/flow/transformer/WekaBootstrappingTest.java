@@ -170,6 +170,7 @@ public class WekaBootstrappingTest
       percentiles.add((BaseDouble) argOption.valueOf("0.95"));
       wekabootstrapping.setPercentiles(percentiles.toArray(new BaseDouble[0]));
       actors.add(wekabootstrapping);
+      wekabootstrapping.setWithReplacement(false);
 
       // Flow.DumpFile
       DumpFile dumpfile = new DumpFile();

@@ -116,10 +116,10 @@ import java.util.logging.Level;
  * &nbsp;&nbsp;&nbsp;The percentage of the sub-sample size (between 0 and 1).
  * &nbsp;&nbsp;&nbsp;default: 0.66
  * &nbsp;&nbsp;&nbsp;minimum: 1.0E-4
- * &nbsp;&nbsp;&nbsp;maximum: 0.9999
+ * &nbsp;&nbsp;&nbsp;maximum: 1.0
  * </pre>
  * 
- * <pre>-statistic &lt;Number correct|Number incorrect|Number unclassified|Percent correct|Percent incorrect|Percent unclassified|Kappa statistic|Mean absolute error|Root mean squared error|Relative absolute error|Root relative squared error|Correlation coefficient|SF prior entropy|SF scheme entropy|SF entropy gain|SF mean prior entropy|SF mean scheme entropy|SF mean entropy gain|KB information|KB mean information|KB relative information|True positive rate|Num true positives|False positive rate|Num false positives|True negative rate|Num true negatives|False negative rate|Num false negatives|IR precision|IR recall|F measure|Matthews correlation coefficient|Area under ROC|Area under PRC|Weighted true positive rate|Weighted false positive rate|Weighted true negative rate|Weighted false negative rate|Weighted IR precision|Weighted IR recall|Weighted F measure|Weighted Matthews correlation coefficient|Weighted area under ROC|Weighted area under PRC|Unweighted Macro F measure|Unweighted Micro F measure&gt; [-statistic ...] (property: statisticValues)
+ * <pre>-statistic &lt;Number correct|Number incorrect|Number unclassified|Percent correct|Percent incorrect|Percent unclassified|Kappa statistic|Mean absolute error|Root mean squared error|Relative absolute error|Root relative squared error|Correlation coefficient|SF prior entropy|SF scheme entropy|SF entropy gain|SF mean prior entropy|SF mean scheme entropy|SF mean entropy gain|KB information|KB mean information|KB relative information|True positive rate|Num true positives|False positive rate|Num false positives|True negative rate|Num true negatives|False negative rate|Num false negatives|IR precision|IR recall|F measure|Matthews correlation coefficient|Area under ROC|Area under PRC|Weighted true positive rate|Weighted false positive rate|Weighted true negative rate|Weighted false negative rate|Weighted IR precision|Weighted IR recall|Weighted F measure|Weighted Matthews correlation coefficient|Weighted area under ROC|Weighted area under PRC|Unweighted Macro F measure|Unweighted Micro F measure|Bias&gt; [-statistic ...] (property: statisticValues)
  * &nbsp;&nbsp;&nbsp;The evaluation values to extract and turn into a spreadsheet.
  * &nbsp;&nbsp;&nbsp;default: MEAN_ABSOLUTE_ERROR
  * </pre>
@@ -139,6 +139,12 @@ import java.util.logging.Level;
  * <pre>-error-calculation &lt;ACTUAL_MINUS_PREDICTED|PREDICTED_MINUS_ACTUAL|BOTH|ABSOLUTE&gt; (property: errorCalculation)
  * &nbsp;&nbsp;&nbsp;Determines how to calculate the error.
  * &nbsp;&nbsp;&nbsp;default: ACTUAL_MINUS_PREDICTED
+ * </pre>
+ * 
+ * <pre>-with-replacement &lt;boolean&gt; (property: withReplacement)
+ * &nbsp;&nbsp;&nbsp;If enabled, predictions are drawn using with replacement (i.e., duplicates 
+ * &nbsp;&nbsp;&nbsp;are possible).
+ * &nbsp;&nbsp;&nbsp;default: true
  * </pre>
  * 
  <!-- options-end -->
@@ -181,6 +187,9 @@ public class WekaBootstrapping
   /** the error calculation. */
   protected ErrorCalculation m_ErrorCalculation;
 
+  /** whether to use with replacement or not. */
+  protected boolean m_WithReplacement;
+
   /**
    * Returns a string describing the object.
    *
@@ -211,7 +220,7 @@ public class WekaBootstrapping
 
     m_OptionManager.add(
       "percentage", "percentage",
-      0.66, 0.0001, 0.9999);
+      0.66, 0.0001, 1.0);
 
     m_OptionManager.add(
       "statistic", "statisticValues",
@@ -228,6 +237,10 @@ public class WekaBootstrapping
     m_OptionManager.add(
       "error-calculation", "errorCalculation",
       ErrorCalculation.ACTUAL_MINUS_PREDICTED);
+
+    m_OptionManager.add(
+      "with-replacement", "withReplacement",
+      true);
   }
 
   /**
@@ -441,6 +454,35 @@ public class WekaBootstrapping
   }
 
   /**
+   * Sets whether to draw predictions using replacement.
+   *
+   * @param value	true if with replacement
+   */
+  public void setWithReplacement(boolean value) {
+    m_WithReplacement = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to draw predictions using replacement.
+   *
+   * @return  		true if with replacement
+   */
+  public boolean getWithReplacement() {
+    return m_WithReplacement;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String withReplacementTipText() {
+    return "If enabled, predictions are drawn using with replacement (i.e., duplicates are possible).";
+  }
+
+  /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
@@ -509,6 +551,7 @@ public class WekaBootstrapping
     Double[]  			errorsRev;
     Percentile<Double>		perc;
     Percentile<Double>		percRev;
+    TIntList			subset;
 
     result = null;
 
@@ -566,13 +609,24 @@ public class WekaBootstrapping
         indices.add(i);
 
       // create fake evalutions
+      subset = new TIntArrayList();
       for (iteration = 0; iteration < m_NumSubSamples; iteration++) {
 	if (m_Stopped) {
 	  sheet = null;
 	  break;
 	}
 
-	indices.shuffle(random);
+	// determine
+	subset.clear();
+	if (m_WithReplacement) {
+	  for (i = 0; i < size; i++)
+	    subset.add(indices.get(random.nextInt(size)));
+	}
+	else {
+	  indices.shuffle(random);
+	  for (i = 0; i < size; i++)
+	    subset.add(indices.get(i));
+	}
 
 	// create dataset from predictions
 	errors    = new Double[size];
@@ -581,22 +635,22 @@ public class WekaBootstrapping
 	atts.add(header.classAttribute().copy("Actual"));
 	data = new Instances(header.relationName() + "-" + (iteration+1), atts, size);
 	data.setClassIndex(0);
-	for (i = 0; i < size; i++) {
-	  inst = new DenseInstance(preds.get(indices.get(i)).weight(), new double[]{preds.get(indices.get(i)).actual()});
+	for (i = 0; i < subset.size(); i++) {
+	  inst = new DenseInstance(preds.get(subset.get(i)).weight(), new double[]{preds.get(subset.get(i)).actual()});
 	  data.add(inst);
 	  switch (m_ErrorCalculation) {
 	    case ACTUAL_MINUS_PREDICTED:
-	      errors[i] = preds.get(indices.get(i)).actual() - preds.get(indices.get(i)).predicted();
+	      errors[i] = preds.get(subset.get(i)).actual() - preds.get(subset.get(i)).predicted();
 	      break;
 	    case PREDICTED_MINUS_ACTUAL:
-	      errorsRev[i] = preds.get(indices.get(i)).predicted() - preds.get(indices.get(i)).actual();
+	      errorsRev[i] = preds.get(subset.get(i)).predicted() - preds.get(subset.get(i)).actual();
 	      break;
 	    case ABSOLUTE:
-	      errors[i] = Math.abs(preds.get(indices.get(i)).actual() - preds.get(indices.get(i)).predicted());
+	      errors[i] = Math.abs(preds.get(subset.get(i)).actual() - preds.get(subset.get(i)).predicted());
 	      break;
 	    case BOTH:
-	      errors[i] = preds.get(indices.get(i)).actual() - preds.get(indices.get(i)).predicted();
-	      errorsRev[i] = preds.get(indices.get(i)).predicted() - preds.get(indices.get(i)).actual();
+	      errors[i] = preds.get(subset.get(i)).actual() - preds.get(subset.get(i)).predicted();
+	      errorsRev[i] = preds.get(subset.get(i)).predicted() - preds.get(subset.get(i)).actual();
 	      break;
 	    default:
 	      throw new IllegalStateException("Unhandled error calculation: " + m_ErrorCalculation);
@@ -606,11 +660,11 @@ public class WekaBootstrapping
 	// perform "fake" evaluation
 	try {
 	  eval = new Evaluation(data);
-	  for (i = 0; i < size; i++) {
+	  for (i = 0; i < subset.size(); i++) {
 	    if (numeric)
-	      eval.evaluateModelOnceAndRecordPrediction(new double[]{preds.get(indices.get(i)).predicted()}, data.instance(i));
+	      eval.evaluateModelOnceAndRecordPrediction(new double[]{preds.get(subset.get(i)).predicted()}, data.instance(i));
 	    else
-	      eval.evaluateModelOnceAndRecordPrediction(((NominalPrediction) preds.get(indices.get(i))).distribution().clone(), data.instance(i));
+	      eval.evaluateModelOnceAndRecordPrediction(((NominalPrediction) preds.get(subset.get(i))).distribution().clone(), data.instance(i));
 	  }
 	}
 	catch (Exception e) {
