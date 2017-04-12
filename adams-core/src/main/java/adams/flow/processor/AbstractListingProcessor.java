@@ -63,7 +63,7 @@ public abstract class AbstractListingProcessor
   protected abstract boolean isValid(AbstractOption option, Object obj, OptionTraversalPath path);
 
   /**
-   * Returns the string representation of the object that is added to the list.
+   * Returns the string representation of the object that is to be added to the list.
    * <br><br>
    * Default implementation only calls the <code>toString()</code> method.
    * 
@@ -75,7 +75,21 @@ public abstract class AbstractListingProcessor
   protected String objectToString(AbstractOption option, Object obj, OptionTraversalPath path) {
     return obj.toString();
   }
-  
+
+  /**
+   * Returns the string array representation of the object that is to be added to the list.
+   * <br><br>
+   * Default implementation only calls the <code>toString()</code> method.
+   *
+   * @param option	the current option
+   * @param obj		the object to turn into a string
+   * @param path	the traversal path of properties
+   * @return		the string representation, null if to ignore the item
+   */
+  protected String[] objectToStrings(AbstractOption option, Object obj, OptionTraversalPath path) {
+    return new String[]{obj.toString()};
+  }
+
   /**
    * Processes the object.
    *
@@ -84,16 +98,32 @@ public abstract class AbstractListingProcessor
    * @param path	the traversal path of properties
    */
   protected void process(AbstractOption option, Object obj, OptionTraversalPath path) {
-    String	item;
+    String[]	items;
 
     if (isValid(option, obj, path)) {
-      item = objectToString(option, obj, path);
-      if (item == null)
+      if (generatesMultipleItems())
+	items = objectToStrings(option, obj, path);
+      else
+	items = new String[]{objectToString(option, obj, path)};
+      if ((items == null) || (items.length == 0) || ((items.length == 1) && (items[0] == null)))
 	return;
-      if (isUniqueList() && m_List.contains(item))
-	return;
-      m_List.add(item);
+      for (String item: items) {
+	if (isUniqueList() && m_List.contains(item))
+	  continue;
+	m_List.add(item);
+      }
     }
+  }
+
+  /**
+   * Returns whether the list generates a string array per object or not.
+   *
+   * @return		true if multiple items get generated
+   * @see		#objectToString(AbstractOption, Object, OptionTraversalPath)
+   * @see		#objectToStrings(AbstractOption, Object, OptionTraversalPath)
+   */
+  protected boolean generatesMultipleItems() {
+    return false;
   }
 
   /**
