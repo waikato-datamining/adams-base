@@ -15,7 +15,7 @@
 
 /*
  * ErrorCirclePaintlet.java
- * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink.sequenceplotter;
@@ -122,22 +122,19 @@ public class ErrorCirclePaintlet
     g.setColor(color);
     GUIHelper.configureAntiAliasing(g, m_AntiAliasingEnabled);
 
-    currX = Integer.MIN_VALUE;
-    currY = Integer.MIN_VALUE;
-
     for (i = 0; i < data.size(); i++) {
-      curr = (XYSequencePoint) points.get(i);
+      curr = points.get(i);
 
       // determine coordinates
       currX = axisX.valueToPos(XYSequencePoint.toDouble(curr.getX()));
       currY = axisY.valueToPos(XYSequencePoint.toDouble(curr.getY()));
 
       diameter  = getDiameter(axisX, axisY, currX, currY, curr);
-      currX    -= (diameter / 2);
-      currY    -= (diameter / 2);
+      currX    -= ((diameter - 1) / 2);
+      currY    -= ((diameter - 1) / 2);
       
       // draw circle
-      g.drawOval(currX, currY, diameter - 1, diameter - 1);
+      g.drawOval(currX, currY, diameter, diameter);
     }
   }
   
