@@ -15,7 +15,7 @@
 
 /*
  * ErrorCrossHitDetector.java
- * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink.sequenceplotter;
@@ -23,7 +23,6 @@ package adams.flow.sink.sequenceplotter;
 import adams.data.sequence.XYSequence;
 import adams.data.sequence.XYSequencePoint;
 import adams.data.sequence.XYSequenceUtils;
-import adams.gui.visualization.container.VisibilityContainer;
 import adams.gui.visualization.core.AxisPanel;
 import adams.gui.visualization.core.plot.Axis;
 import adams.gui.visualization.sequence.AbstractXYSequencePointHitDetector;
@@ -108,18 +107,18 @@ public class ErrorCrossHitDetector
     if (m_Owner == null)
       return null;
 
-    result     = new Vector<XYSequencePoint>();
+    result     = new Vector<>();
     axisBottom = m_Owner.getPlot().getAxis(Axis.BOTTOM);
     axisLeft   = m_Owner.getPlot().getAxis(Axis.LEFT);
-    y          = axisLeft.posToValue((int) e.getY());
-    x          = axisBottom.posToValue((int) e.getX());
+    y          = axisLeft.posToValue(e.getY());
+    x          = axisBottom.posToValue(e.getX());
     paintlet   = null;
     if (m_Owner instanceof ErrorCrossPaintlet)
       paintlet = (ErrorCrossPaintlet) m_Owner;
     logging    = isLoggingEnabled();
 
     for (i = 0; i < m_Owner.getSequencePanel().getContainerManager().count(); i++) {
-      if (!((VisibilityContainer) m_Owner.getSequencePanel().getContainerManager().get(i)).isVisible())
+      if (!m_Owner.getSequencePanel().getContainerManager().get(i).isVisible())
 	continue;
 
       // check for hit
