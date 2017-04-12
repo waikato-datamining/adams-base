@@ -15,7 +15,7 @@
 
 /*
  * DatabaseConnection.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.standalone;
@@ -93,7 +93,8 @@ package adams.flow.standalone;
  * @version $Revision$
  */
 public class DatabaseConnection
-  extends AbstractDatabaseConnection {
+  extends AbstractDatabaseConnection
+  implements DatabaseConnectionProvider {
 
   /** for serialization. */
   private static final long serialVersionUID = -1726172998200420556L;

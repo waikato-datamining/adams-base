@@ -15,7 +15,7 @@
 
 /*
  * ActorUtils.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.core;
@@ -931,13 +931,23 @@ public class ActorUtils {
    * @return		the connection object to use
    */
   public static adams.db.AbstractDatabaseConnection getDatabaseConnection(Actor actor, Class cls, adams.db.AbstractDatabaseConnection defCon) {
+    Object						closest;
     adams.db.AbstractDatabaseConnection			result;
-    adams.flow.standalone.AbstractDatabaseConnection	conn;
 
-    conn = (adams.flow.standalone.AbstractDatabaseConnection) ActorUtils.findClosestType(actor, cls, true);
-    if (conn != null) {
-      result = conn.getConnection();
-      LOGGER.fine("Database connection found: " + result + "\n" + Utils.getStackTrace(20));
+    closest = ActorUtils.findClosestType(actor, cls, true);
+    if (closest != null) {
+      if (closest instanceof adams.flow.standalone.AbstractDatabaseConnection) {
+	result = ((adams.flow.standalone.AbstractDatabaseConnection) closest).getConnection();
+	LOGGER.fine("Database connection found: " + result + "\n" + Utils.getStackTrace(20));
+      }
+      else  if (closest instanceof adams.flow.standalone.AbstractDatabaseConnectionProvider) {
+	result = ((adams.flow.standalone.AbstractDatabaseConnectionProvider) closest).getConnection();
+	LOGGER.fine("Database connection found: " + result + "\n" + Utils.getStackTrace(20));
+      }
+      else {
+	result = defCon;
+	LOGGER.warning("Unhandled actor type '" + closest.getClass().getName() + "', using default connection: " + defCon + "\n" + Utils.getStackTrace(20));
+      }
     }
     else {
       result = defCon;

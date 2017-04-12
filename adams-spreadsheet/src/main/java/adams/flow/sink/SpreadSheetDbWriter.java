@@ -15,7 +15,7 @@
 
 /*
  * SpreadSheetDbWriter.java
- * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -430,7 +430,7 @@ public class SpreadSheetDbWriter
   protected adams.db.AbstractDatabaseConnection getDatabaseConnection() {
     return ActorUtils.getDatabaseConnection(
       this,
-      adams.flow.standalone.DatabaseConnection.class,
+      adams.flow.standalone.DatabaseConnectionProvider.class,
       adams.db.DatabaseConnection.getSingleton());
   }
 

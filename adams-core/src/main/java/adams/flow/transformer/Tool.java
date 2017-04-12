@@ -15,14 +15,10 @@
 
 /*
  * Tool.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 import adams.core.QuickInfoHelper;
 import adams.core.io.PlaceholderFile;
@@ -37,6 +33,10 @@ import adams.tools.DatabaseIDProcessor;
 import adams.tools.InitializeTables;
 import adams.tools.InputFileHandler;
 import adams.tools.OutputFileGenerator;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -185,7 +185,7 @@ public class Tool
   protected adams.db.AbstractDatabaseConnection getDatabaseConnection() {
     return ActorUtils.getDatabaseConnection(
 	  this,
-	  adams.flow.standalone.DatabaseConnection.class,
+	  adams.flow.standalone.DatabaseConnectionProvider.class,
 	  getDefaultDatabaseConnection());
   }
 

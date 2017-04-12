@@ -15,7 +15,7 @@
 
 /*
  * Logger.java
- * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -108,7 +108,7 @@ public class Logger
       if (m_DatabaseConnection == null) {
         m_DatabaseConnection = ActorUtils.getDatabaseConnection(
           this,
-          adams.flow.standalone.DatabaseConnection.class,
+          adams.flow.standalone.DatabaseConnectionProvider.class,
           adams.db.DatabaseConnection.getSingleton());
         if (!m_DatabaseConnection.isConnected())
           result = "No active database connection available!";
