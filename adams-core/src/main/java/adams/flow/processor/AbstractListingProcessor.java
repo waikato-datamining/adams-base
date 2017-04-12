@@ -15,7 +15,7 @@
 
 /**
  * AbstractListingProcessor.java
- * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.processor;
 
@@ -49,7 +49,7 @@ public abstract class AbstractListingProcessor
   /** for serialization. */
   private static final long serialVersionUID = 5159872442351040225L;
   
-  /** for database connections. */
+  /** for storing the list items. */
   protected List<String> m_List;
   
   /**
