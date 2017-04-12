@@ -15,7 +15,7 @@
 
 /**
  * AbstractOptionProducer.java
- * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
@@ -84,8 +84,8 @@ public abstract class AbstractOptionProducer<O,I>
     m_LoggingLevel         = LoggingLevel.OFF;
     m_UsePropertyNames     = false;
     m_Output               = initOutput();
-    m_OutputVariableValues = (this instanceof DebugOptionProducer);
-    m_SkippedProperties    = new HashSet<String>();
+    m_OutputVariableValues = false;
+    m_SkippedProperties    = new HashSet<>();
   }
 
   /**

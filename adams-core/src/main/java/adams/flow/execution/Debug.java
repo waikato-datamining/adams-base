@@ -532,6 +532,7 @@ public class Debug
 	if (proc.getList().size() > 0) {
 	  consumer = new NestedConsumer();
 	  producer = new DebugNestedProducer();
+	  producer.setOutputVariableValues(false);
 	  consumer.setInput(producer.produce(getOwner()));
 	  expanded = (Actor) consumer.consume();
 	  title = "Debug: " + panel.getTitle();

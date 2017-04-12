@@ -749,6 +749,7 @@ public class ControlPanel
 
     if (visible) {
       producer = new DebugNestedProducer();
+      producer.setOutputVariableValues(true);
       producer.produce(getFlow());
       content = producer.toString();
       producer.cleanUp();
