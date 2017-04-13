@@ -16,7 +16,7 @@
 /*
  *    InlineEditor.java
  *
- *    Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
+ *    Copyright (C) 2012-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.goe;
@@ -28,6 +28,7 @@ import adams.gui.core.BasePopupMenu;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MouseUtils;
 import adams.gui.dialog.ApprovalDialog;
+import adams.gui.goe.Favorites.FavoriteSelectionEvent;
 import adams.gui.goe.PropertyPanel.PopupMenuCustomizer;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
@@ -48,7 +49,6 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.MouseAdapter;
@@ -57,9 +57,10 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyEditor;
 import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Vector;
+import java.util.List;
 
 /** 
  * Support for inline editing of editors that support this, in order to reduce
@@ -135,7 +136,7 @@ public class InlineEditor
   protected void initialize() {
     super.initialize();
     
-    m_PropertyChangeListeners = new HashSet<PropertyChangeListener>();  
+    m_PropertyChangeListeners = new HashSet<>();
   }
   
   /**
@@ -180,6 +181,16 @@ public class InlineEditor
           customizePopupMenu(InlineEditor.this, menu);
           if (m_PropertySheetPanel != null)
             VariableSupport.updatePopup(m_PropertySheetPanel, InlineEditor.this, menu);
+          if (getInlineEditor() instanceof InlineEditorSupportWithFavorites) {
+            InlineEditorSupportWithFavorites fav = (InlineEditorSupportWithFavorites) getInlineEditor();
+            if (fav.isInlineFavoritesEnabled()) {
+	      Favorites.getSingleton().customizePopupMenu(
+		menu,
+		getValue().getClass(),
+		getValue(),
+		(FavoriteSelectionEvent fe) -> setValue(fe.getFavorite().getObject()));
+	    }
+	  }
           menu.showAbsolute(m_TextField, e);
         }
         else {
@@ -194,11 +205,7 @@ public class InlineEditor
 	new Dimension(
 	    m_ButtonEditor.getPreferredSize().width,
 	    m_TextField.getPreferredSize().height));
-    m_ButtonEditor.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	showEditor();
-      }
-    });
+    m_ButtonEditor.addActionListener((ActionEvent e) -> showEditor());
     add(m_ButtonEditor, BorderLayout.EAST);
 
     updatePreferredSize();
@@ -389,24 +396,18 @@ public class InlineEditor
     menuitem = new JMenuItem("Copy");
     menuitem.setIcon(GUIHelper.getIcon("copy.gif"));
     menuitem.setEnabled(isValid(m_TextField.getText()));
-    menuitem.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	if (m_TextField.getSelectedText() != null)
-	  ClipboardHelper.copyToClipboard(m_TextField.getSelectedText());
-	else
-	  ClipboardHelper.copyToClipboard(m_TextField.getText());
-      }
+    menuitem.addActionListener((ActionEvent e) -> {
+      if (m_TextField.getSelectedText() != null)
+	ClipboardHelper.copyToClipboard(m_TextField.getSelectedText());
+      else
+	ClipboardHelper.copyToClipboard(m_TextField.getText());
     });
     menu.add(menuitem);
 
     menuitem = new JMenuItem("Paste");
     menuitem.setIcon(GUIHelper.getIcon("paste.gif"));
     menuitem.setEnabled(ClipboardHelper.canPasteStringFromClipboard());
-    menuitem.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	m_TextField.replaceSelection(ClipboardHelper.pasteStringFromClipboard());
-      }
-    });
+    menuitem.addActionListener((ActionEvent e) -> m_TextField.replaceSelection(ClipboardHelper.pasteStringFromClipboard()));
     menu.add(menuitem);
     
     // does the editor itself customize the menu?
@@ -635,7 +636,7 @@ public class InlineEditor
   public Object[] getSelectedObjects(Container parent) {
     Object[]			result;
     MultiLineValueDialog	dialog;
-    Vector<String>		lines;
+    List<String> 		lines;
     Class			cls;
     int				i;
     Object			backup;
@@ -649,7 +650,7 @@ public class InlineEditor
     cls    = backup.getClass();
     
     if (dialog.getOption() == ApprovalDialog.APPROVE_OPTION) {
-      lines = new Vector<String>(Arrays.asList(dialog.getContent().split("\n")));
+      lines = new ArrayList<>(Arrays.asList(dialog.getContent().split("\n")));
       Utils.removeEmptyLines(lines);
       result = (Object[]) Array.newInstance(cls, lines.size());
       for (i = 0; i < lines.size(); i++)
@@ -666,8 +667,8 @@ public class InlineEditor
   /**
    * Registers the text to display in a tool tip of the text field as well.
    *
-   * @param text  the string to display; if the text is <code>null</code>,
-   *              the tool tip is turned off for this component
+   * @param value  	the string to display; if the text is <code>null</code>,
+   *              	the tool tip is turned off for this component
    */
   public void setToolTipText(String value) {
     super.setToolTipText(value);
