@@ -95,4 +95,14 @@ public class JdbcUrl
   public String getTipText() {
     return "Format: 'jdbc:<sub-protocol>:<database url>'";
   }
+
+  /**
+   * Whether this object should have favorites support.
+   *
+   * @return		true if to support favorites
+   */
+  @Override
+  public boolean hasFavoritesSupport() {
+    return true;
+  }
 }
