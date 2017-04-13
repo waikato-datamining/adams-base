@@ -63,7 +63,7 @@ import java.util.Vector;
 public class BaseObjectEditor
   extends AbstractPropertyEditorSupport
   implements CustomStringRepresentationHandler, MultiSelectionEditor, 
-             InlineEditorSupport {
+             InlineEditorSupportWithFavorites {
 
   /** The text field with the value. */
   protected JTextComponent m_TextValue;
@@ -439,7 +439,25 @@ public class BaseObjectEditor
   public boolean isInlineValueValid(String value) {
     return isValid(value);
   }
-  
+
+  /**
+   * Checks whether favorites support is available.
+   *
+   * @return		true if enabled
+   */
+  public boolean isInlineFavoritesEnabled() {
+    return ((BaseObject) getValue()).hasFavoritesSupport();
+  }
+
+  /**
+   * Returns the class to use for favorites.
+   *
+   * @return		the class to use
+   */
+  public Class getInlineFavoritesClass() {
+    return getValue().getClass();
+  }
+
   /**
    * Returns a long help description, e.g., used in tiptexts.
    * <br><br>

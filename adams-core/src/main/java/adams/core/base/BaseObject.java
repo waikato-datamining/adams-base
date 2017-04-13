@@ -15,7 +15,7 @@
 
 /*
  * BaseObject.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.base;
@@ -225,6 +225,17 @@ public abstract class BaseObject
   @Override
   public String toString() {
     return getValue();
+  }
+
+  /**
+   * Whether this object should have favorites support.
+   * <br>
+   * Default is false.
+   *
+   * @return		true if to support favorites
+   */
+  public boolean hasFavoritesSupport() {
+    return false;
   }
 
   /**
