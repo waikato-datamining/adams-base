@@ -15,7 +15,7 @@
 
 /**
  * FavoritesManagementPanel.java
- * Copyright (C) 2009-2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools;
 
@@ -40,19 +40,16 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import java.awt.BorderLayout;
 import java.awt.Dialog.ModalityType;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Arrays;
-import java.util.Vector;
+import java.util.List;
 
 /**
  * A panel for managing one's GOE favorites.
@@ -158,7 +155,7 @@ public class FavoritesManagementPanel
      */
     @Override
     public void update() {
-      Vector<String>	classes;
+      List<String>	classes;
       int		i;
 
       clear();
@@ -244,12 +241,12 @@ public class FavoritesManagementPanel
      * @param value	the superclass
      */
     public void setSuperclass(Class value) {
-      Vector<String>	classes;
+      List<String>	classes;
 
       if (value == null) {
 	classes = m_Favorites.getSuperclasses();
 	if (classes.size() > 0) {
-	  setSuperclass(classes.firstElement());
+	  setSuperclass(classes.get(0));
 	  return;
 	}
       }
@@ -274,7 +271,7 @@ public class FavoritesManagementPanel
      */
     @Override
     public void update() {
-      Vector<Favorite>	favorites;
+      List<Favorite>	favorites;
       int		i;
 
       clear();
@@ -388,45 +385,37 @@ public class FavoritesManagementPanel
     m_PanelSuperclasses = new BaseListWithButtons();
     m_PanelSuperclasses.setBorder(BorderFactory.createTitledBorder("Superclass"));
     m_PanelSuperclasses.setModel(m_ListModelSuperclass);
-    m_PanelSuperclasses.addListSelectionListener(new ListSelectionListener() {
-      public void valueChanged(ListSelectionEvent e) {
-	if (m_PanelSuperclasses.getSelectedIndices().length == 1)
-	  m_ListModelFavorites.setSuperclass((String) m_PanelSuperclasses.getSelectedValue());
-	update();
-      }
+    m_PanelSuperclasses.addListSelectionListener((ListSelectionEvent e) -> {
+      if (m_PanelSuperclasses.getSelectedIndices().length == 1)
+	m_ListModelFavorites.setSuperclass((String) m_PanelSuperclasses.getSelectedValue());
+      update();
     });
     add(m_PanelSuperclasses);
 
     m_ButtonSuperclassAdd = new JButton("Add...");
-    m_ButtonSuperclassAdd.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	addSuperclass();
-	update();
-      }
+    m_ButtonSuperclassAdd.addActionListener((ActionEvent e) -> {
+      addSuperclass();
+      update();
     });
     m_PanelSuperclasses.addToButtonsPanel(m_ButtonSuperclassAdd);
 
     m_ButtonSuperclassRemove = new JButton("Remove");
-    m_ButtonSuperclassRemove.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	Object[] classes = m_PanelSuperclasses.getSelectedValues();
-	for (int i = 0; i < classes.length; i++)
-	  m_Favorites.removeFavorites(classes[i].toString());
-	m_ListModelSuperclass.update();
-	m_ListModelFavorites.update();
-	update();
-      }
+    m_ButtonSuperclassRemove.addActionListener((ActionEvent e) -> {
+      Object[] classes = m_PanelSuperclasses.getSelectedValues();
+      for (int i = 0; i < classes.length; i++)
+	m_Favorites.removeFavorites(classes[i].toString());
+      m_ListModelSuperclass.update();
+      m_ListModelFavorites.update();
+      update();
     });
     m_PanelSuperclasses.addToButtonsPanel(m_ButtonSuperclassRemove);
 
     m_ButtonSuperclassRemoveAll = new JButton("Remove all");
-    m_ButtonSuperclassRemoveAll.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	m_Favorites.clear();
-	m_ListModelFavorites.setSuperclass((Class) null);
-	m_ListModelSuperclass.update();
-	update();
-      }
+    m_ButtonSuperclassRemoveAll.addActionListener((ActionEvent e) -> {
+      m_Favorites.clear();
+      m_ListModelFavorites.setSuperclass((Class) null);
+      m_ListModelSuperclass.update();
+      update();
     });
     m_PanelSuperclasses.addToButtonsPanel(m_ButtonSuperclassRemoveAll);
 
@@ -434,66 +423,52 @@ public class FavoritesManagementPanel
     m_PanelFavorites = new BaseListWithButtons();
     m_PanelFavorites.setBorder(BorderFactory.createTitledBorder("Favorites"));
     m_PanelFavorites.setModel(m_ListModelFavorites);
-    m_PanelFavorites.addListSelectionListener(new ListSelectionListener() {
-      public void valueChanged(ListSelectionEvent e) {
-	update();
-      }
-    });
+    m_PanelFavorites.addListSelectionListener((ListSelectionEvent e) -> update());
     add(m_PanelFavorites);
 
     m_ButtonFavoriteAdd = new JButton("Add...");
-    m_ButtonFavoriteAdd.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	addFavorite(m_ListModelFavorites.getSuperclass());
-	update();
-      }
+    m_ButtonFavoriteAdd.addActionListener((ActionEvent e) -> {
+      addFavorite(m_ListModelFavorites.getSuperclass());
+      update();
     });
     m_PanelFavorites.addToButtonsPanel(m_ButtonFavoriteAdd);
 
     m_ButtonFavoriteEdit = new JButton("Edit...");
-    m_ButtonFavoriteEdit.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	editFavorite(m_ListModelFavorites.getSuperclass(), (String) m_PanelFavorites.getSelectedValue());
-	update();
-      }
+    m_ButtonFavoriteEdit.addActionListener((ActionEvent e) -> {
+      editFavorite(m_ListModelFavorites.getSuperclass(), (String) m_PanelFavorites.getSelectedValue());
+      update();
     });
     m_PanelFavorites.addToButtonsPanel(m_ButtonFavoriteEdit);
     m_PanelFavorites.setDoubleClickButton(m_ButtonFavoriteEdit);
 
     m_ButtonFavoriteRename = new JButton("Rename...");
-    m_ButtonFavoriteRename.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	renameFavorite(m_ListModelFavorites.getSuperclass(), (String) m_PanelFavorites.getSelectedValue());
-	update();
-      }
+    m_ButtonFavoriteRename.addActionListener((ActionEvent e) -> {
+      renameFavorite(m_ListModelFavorites.getSuperclass(), (String) m_PanelFavorites.getSelectedValue());
+      update();
     });
     m_PanelFavorites.addToButtonsPanel(m_ButtonFavoriteRename);
 
     m_ButtonFavoriteRemove = new JButton("Remove");
-    m_ButtonFavoriteRemove.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	if (m_ListModelFavorites.getSuperclass() == null)
-	  return;
-	int[] indices = m_PanelFavorites.getSelectedIndices();
-	for (int i = 0; i < indices.length; i++)
-	  m_Favorites.removeFavorite(m_ListModelFavorites.getSuperclass(), m_ListModelFavorites.getName(indices[i]));
-	m_ListModelSuperclass.update();
-	m_ListModelFavorites.update();
-	update();
-      }
+    m_ButtonFavoriteRemove.addActionListener((ActionEvent e) -> {
+      if (m_ListModelFavorites.getSuperclass() == null)
+	return;
+      int[] indices = m_PanelFavorites.getSelectedIndices();
+      for (int i = 0; i < indices.length; i++)
+	m_Favorites.removeFavorite(m_ListModelFavorites.getSuperclass(), m_ListModelFavorites.getName(indices[i]));
+      m_ListModelSuperclass.update();
+      m_ListModelFavorites.update();
+      update();
     });
     m_PanelFavorites.addToButtonsPanel(m_ButtonFavoriteRemove);
 
     m_ButtonFavoriteRemoveAll = new JButton("Remove all");
-    m_ButtonFavoriteRemoveAll.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	if (m_ListModelFavorites.getSuperclass() == null)
-	  return;
-	m_Favorites.removeFavorites(m_ListModelFavorites.getSuperclass());
-	m_ListModelSuperclass.update();
-	m_ListModelFavorites.update();
-	update();
-      }
+    m_ButtonFavoriteRemoveAll.addActionListener((ActionEvent e) -> {
+      if (m_ListModelFavorites.getSuperclass() == null)
+	return;
+      m_Favorites.removeFavorites(m_ListModelFavorites.getSuperclass());
+      m_ListModelSuperclass.update();
+      m_ListModelFavorites.update();
+      update();
     });
     m_PanelFavorites.addToButtonsPanel(m_ButtonFavoriteRemoveAll);
 
@@ -557,31 +532,25 @@ public class FavoritesManagementPanel
     dialog.getContentPane().add(panel, BorderLayout.SOUTH);
     buttonOK = new JButton("OK");
     buttonOK.setMnemonic('O');
-    buttonOK.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	try {
-	  Class cls = Class.forName((String) combobox.getSelectedItem());
-	  m_ListModelFavorites.setSuperclass(cls);
-	  dialogF.setVisible(false);
-	  addFavorite(cls);
-	}
-	catch (Exception ex) {
-	  dialogF.setVisible(false);
-	  ex.printStackTrace();
-	  GUIHelper.showErrorMessage(
-	      FavoritesManagementPanel.this,
-	      "Error encountered:\n" + ex.toString());
-	}
+    buttonOK.addActionListener((ActionEvent e) -> {
+      try {
+	Class cls = Class.forName((String) combobox.getSelectedItem());
+	m_ListModelFavorites.setSuperclass(cls);
+	dialogF.setVisible(false);
+	addFavorite(cls);
+      }
+      catch (Exception ex) {
+	dialogF.setVisible(false);
+	ex.printStackTrace();
+	GUIHelper.showErrorMessage(
+	  FavoritesManagementPanel.this,
+	  "Error encountered:\n" + ex.toString());
       }
     });
     panel.add(buttonOK);
     buttonCancel = new JButton("Cancel");
     buttonCancel.setMnemonic('C');
-    buttonCancel.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	dialogF.setVisible(false);
-      }
-    });
+    buttonCancel.addActionListener((ActionEvent e) -> dialogF.setVisible(false));
     panel.add(buttonCancel);
 
     dialog.pack();
@@ -741,11 +710,7 @@ public class FavoritesManagementPanel
       menu = new JMenu("File");
       result.add(menu);
       menu.setMnemonic('F');
-      menu.addChangeListener(new ChangeListener() {
-	public void stateChanged(ChangeEvent e) {
-	  updateMenu();
-	}
-      });
+      menu.addChangeListener((ChangeEvent e) -> updateMenu());
 
       // File/Save
       menuitem = new JMenuItem("Save");
@@ -753,11 +718,7 @@ public class FavoritesManagementPanel
       menuitem.setMnemonic('S');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed S"));
       menuitem.setIcon(GUIHelper.getIcon("save.gif"));
-      menuitem.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  save();
-	}
-      });
+      menuitem.addActionListener((ActionEvent e) -> save());
       m_MenuItemSave = menuitem;
 
       // File/Revert
@@ -765,11 +726,7 @@ public class FavoritesManagementPanel
       menu.add(menuitem);
       menuitem.setMnemonic('R');
       menuitem.setIcon(GUIHelper.getIcon("revert.png"));
-      menuitem.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  revert();
-	}
-      });
+      menuitem.addActionListener((ActionEvent e) -> revert());
       m_MenuItemRevert = menuitem;
 
       // File/Close
@@ -779,11 +736,7 @@ public class FavoritesManagementPanel
       menuitem.setMnemonic('C');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed Q"));
       menuitem.setIcon(GUIHelper.getIcon("exit.png"));
-      menuitem.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  close();
-	}
-      });
+      menuitem.addActionListener((ActionEvent e) -> close());
       m_MenuItemClose = menuitem;
 
       // update menu

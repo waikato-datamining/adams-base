@@ -15,24 +15,10 @@
 
 /*
  * Favorites.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.goe;
-
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.EventObject;
-import java.util.HashSet;
-import java.util.Vector;
-import java.util.logging.Level;
-
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
 
 import adams.core.CloneHandler;
 import adams.core.Properties;
@@ -40,6 +26,19 @@ import adams.core.logging.LoggingObject;
 import adams.core.option.OptionUtils;
 import adams.env.Environment;
 import adams.gui.core.GUIHelper;
+
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
+import java.awt.event.ActionEvent;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.EventObject;
+import java.util.HashSet;
+import java.util.List;
+import java.util.logging.Level;
 
 /**
  * A helper class for managing the GOE favorites.
@@ -384,13 +383,13 @@ public class Favorites
    * @param classname	the class to get the favorites for
    * @return		the favorites
    */
-  public Vector<Favorite> getFavorites(String classname) {
+  public List<Favorite> getFavorites(String classname) {
     try {
       return getFavorites(Class.forName(classname));
     }
     catch (Exception e) {
       e.printStackTrace();
-      return new Vector<Favorite>();
+      return new ArrayList<>();
     }
   }
 
@@ -400,14 +399,14 @@ public class Favorites
    * @param cls		the class to get the favorites for
    * @return		the favorites
    */
-  public Vector<Favorite> getFavorites(Class cls) {
-    Vector<Favorite>	result;
+  public List<Favorite> getFavorites(Class cls) {
+    List<Favorite>	result;
     Enumeration<String>	enm;
     String		key;
     String		prefix;
     Favorite		favorite;
 
-    result = new Vector<Favorite>();
+    result = new ArrayList<>();
 
     prefix = cls.getName() + SEPARATOR;
     enm    = (Enumeration<String>) getProperties().propertyNames();
@@ -429,14 +428,14 @@ public class Favorites
    *
    * @return		the classnames of the superclasses
    */
-  public Vector<String> getSuperclasses() {
-    Vector<String>	result;
+  public List<String> getSuperclasses() {
+    List<String>	result;
     HashSet<String>	set;
     Enumeration<String>	enm;
     String		key;
     String		classname;
 
-    set = new HashSet<String>();
+    set = new HashSet<>();
     enm = (Enumeration<String>) getProperties().propertyNames();
     while (enm.hasMoreElements()) {
       key       = enm.nextElement();
@@ -444,7 +443,7 @@ public class Favorites
       set.add(classname);
     }
 
-    result = new Vector<String>(set);
+    result = new ArrayList<>(set);
     Collections.sort(result);
 
     return result;
@@ -511,7 +510,7 @@ public class Favorites
    * @param cls		the class to remove the favorites for
    */
   public void removeFavorites(Class cls) {
-    Vector<Favorite>	favorites;
+    List<Favorite>	favorites;
     int			i;
 
     favorites = getFavorites(cls);
@@ -595,7 +594,7 @@ public class Favorites
     JMenu		submenu;
     JMenu		updatemenu;
     JMenuItem		item;
-    Vector<Favorite>	favorites;
+    List<Favorite>	favorites;
     int			i;
 
     favorites = getFavorites(cls);
@@ -608,23 +607,21 @@ public class Favorites
     final Class fCls = cls;
     final Object fCurrent = current;
     item = new JMenuItem("Add to favorites...");
-    item.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	String name = null;
-	do {
-	  name = GUIHelper.showInputDialog(null, "Please enter name for favorite:");
-	  if (name == null)
-	    return;
-	  name = name.trim();
-	  if (name.startsWith("$")) {
-	    GUIHelper.showErrorMessage(
-		null, "Name cannot start with '$'!");
-	    name = null;
-	  }
-	}
-	while (name == null);
-	addFavorite(fCls, fCurrent, name);
+    item.addActionListener((ActionEvent e) -> {
+      String name = null;
+      do {
+        name = GUIHelper.showInputDialog(null, "Please enter name for favorite:");
+        if (name == null)
+          return;
+        name = name.trim();
+        if (name.startsWith("$")) {
+          GUIHelper.showErrorMessage(
+            null, "Name cannot start with '$'!");
+          name = null;
+        }
       }
+      while (name == null);
+      addFavorite(fCls, fCurrent, name);
     });
     submenu.add(item);
     
@@ -638,20 +635,12 @@ public class Favorites
 	continue;
       updatemenu.setEnabled(true);
       item = new JMenuItem(name);
-      item.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  addFavorite(fCls, fCurrent, favorite.getName());
-	}
-      });
+      item.addActionListener((ActionEvent e) -> addFavorite(fCls, fCurrent, favorite.getName()));
       updatemenu.add(item);
     }
 
     item = new JMenuItem("Add as temporary favorite");
-    item.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	addFavorite(fCls, fCurrent, TEMPORARY);
-      }
-    });
+    item.addActionListener((ActionEvent e) -> addFavorite(fCls, fCurrent, TEMPORARY));
     submenu.add(item);
 
     // current favorites
@@ -664,11 +653,7 @@ public class Favorites
       if (name.equals(TEMPORARY))
 	name = "-Temp-";
       item = new JMenuItem(name);
-      item.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  fListener.favoriteSelected(new FavoriteSelectionEvent(fListener, favorite));
-	}
-      });
+      item.addActionListener((ActionEvent e) -> fListener.favoriteSelected(new FavoriteSelectionEvent(fListener, favorite)));
       submenu.add(item);
     }
   }
@@ -733,13 +718,13 @@ public class Favorites
   protected boolean removeTemporaryFavorites() {
     boolean		result;
     Enumeration<String>	enm;
-    Vector<String>	tmp;
+    List<String>	tmp;
     String		name;
     int			i;
 
     result = false;
 
-    tmp = new Vector<String>();
+    tmp = new ArrayList<>();
     enm = (Enumeration<String>) m_Properties.propertyNames();
     while (enm.hasMoreElements()) {
       name = enm.nextElement();
