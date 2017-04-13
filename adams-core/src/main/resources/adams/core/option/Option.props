@@ -306,6 +306,11 @@ adams.data.DecimalFormatString=true
 adams.data.DecimalFormatString#toString=adams.gui.goe.BaseObjectEditor#toString
 adams.data.DecimalFormatString#valueOf=adams.gui.goe.BaseObjectEditor#valueOf
 
+# JdbcUrl objects
+adams.db.JdbcUrl=true
+adams.db.JdbcUrl#toString=adams.gui.goe.BaseObjectEditor#toString
+adams.db.JdbcUrl#valueOf=adams.gui.goe.BaseObjectEditor#valueOf
+
 # SQLStatement objects
 adams.db.SQLStatement=true
 adams.db.SQLStatement#toString=adams.gui.goe.AbstractSimpleScriptEditor#toString

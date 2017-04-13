@@ -15,7 +15,7 @@
 
 /*
  * AbstractDatabaseConnection.java
- * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.standalone;
@@ -24,6 +24,7 @@ import adams.core.Placeholders;
 import adams.core.QuickInfoHelper;
 import adams.core.base.BasePassword;
 import adams.core.io.ConsoleHelper;
+import adams.db.JdbcUrl;
 import adams.db.datatype.AbstractDataTypeSetup;
 import adams.db.datatype.DummySetup;
 import adams.flow.core.OptionalPasswordPrompt;
@@ -47,7 +48,7 @@ public abstract class AbstractDatabaseConnection
   private static final long serialVersionUID = -1726172998200420556L;
 
   /** the URL to connect to the database. */
-  protected String m_URL;
+  protected JdbcUrl m_URL;
 
   /** database username. */
   protected String m_User;
@@ -79,7 +80,7 @@ public abstract class AbstractDatabaseConnection
 
     m_OptionManager.add(
 	    "url", "URL",
-	    "jdbc:mysql://somehost:3306/somedatabase", false);
+	    new JdbcUrl(JdbcUrl.DEFAULT_URL), false);
 
     m_OptionManager.add(
 	    "user", "user",
@@ -130,7 +131,7 @@ public abstract class AbstractDatabaseConnection
    *
    * @param value	the URL
    */
-  public void setURL(String value) {
+  public void setURL(JdbcUrl value) {
     m_URL = value;
     reset();
   }
@@ -140,7 +141,7 @@ public abstract class AbstractDatabaseConnection
    *
    * @return 		the URL
    */
-  public String getURL() {
+  public JdbcUrl getURL() {
     return m_URL;
   }
 
@@ -162,7 +163,7 @@ public abstract class AbstractDatabaseConnection
   public String getResolvedURL() {
     String	result;
     
-    result = m_URL;
+    result = m_URL.getValue();
     result = getVariables().expand(result);
     result = Placeholders.expandStr(result);
     

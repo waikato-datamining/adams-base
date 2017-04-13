@@ -20,13 +20,14 @@
 
 package adams.flow.standalone;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import adams.core.base.BaseRegExp;
+import adams.db.JdbcUrl;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
 import adams.flow.core.Actor;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Tests the DatabaseCheck actor.
@@ -53,7 +54,7 @@ public class DatabaseCheckTest
    */
   public Actor getActor() {
     DatabaseConnection dbcon = new DatabaseConnection();
-    dbcon.setURL(getDatabaseURL());
+    dbcon.setURL(new JdbcUrl(getDatabaseURL()));
     dbcon.setUser(getDatabaseUser());
     dbcon.setPassword(getDatabasePassword());
 

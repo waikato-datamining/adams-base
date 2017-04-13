@@ -26,6 +26,7 @@ import adams.core.option.BooleanOption;
 import adams.core.option.ClassOption;
 import adams.core.option.OptionTraversalPath;
 import adams.core.option.OptionTraverser;
+import adams.db.JdbcUrl;
 import adams.flow.core.Actor;
 
 import java.lang.reflect.Array;
@@ -259,9 +260,9 @@ public class ChangeDatabaseConnection
       protected void process(Object obj) {
 	if (obj instanceof adams.flow.standalone.AbstractDatabaseConnection) {
 	  adams.flow.standalone.AbstractDatabaseConnection conn = (adams.flow.standalone.AbstractDatabaseConnection) obj;
-	  if (!isMatch(conn.getURL()))
+	  if (!isMatch(conn.getURL().getValue()))
 	    return;
-	  conn.setURL(m_NewURL);
+	  conn.setURL(new JdbcUrl(m_NewURL));
 	  conn.setUser(m_NewUser);
 	  conn.setPassword(m_NewPassword);
 	  m_Modified = true;

@@ -20,14 +20,11 @@
 
 package adams.flow.transformer;
 
-import java.io.File;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import adams.core.io.FixedFilenameGenerator;
 import adams.core.io.PlaceholderDirectory;
 import adams.data.io.input.DefaultSimpleReportReader;
 import adams.data.io.output.DefaultSimpleCSVReportWriter;
+import adams.db.JdbcUrl;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
@@ -36,6 +33,10 @@ import adams.flow.source.FileSupplier;
 import adams.flow.standalone.DatabaseConnection;
 import adams.test.TmpDirectory;
 import adams.test.TmpFile;
+import junit.framework.Test;
+import junit.framework.TestSuite;
+
+import java.io.File;
 
 /**
  * Tests the ReportFileReader/Writer actor.
@@ -89,7 +90,7 @@ public class ReportFileWriterTest
   @Override
   public Actor getActor() {
     DatabaseConnection dbcon = new DatabaseConnection();
-    dbcon.setURL(getDatabaseURL());
+    dbcon.setURL(new JdbcUrl(getDatabaseURL()));
     dbcon.setUser(getDatabaseUser());
     dbcon.setPassword(getDatabasePassword());
 

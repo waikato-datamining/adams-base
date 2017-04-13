@@ -80,7 +80,7 @@ public class ListDatabaseConnections
   protected String objectToString(AbstractOption option, Object obj, OptionTraversalPath path) {
     if (obj instanceof adams.flow.standalone.AbstractDatabaseConnection) {
       adams.flow.standalone.AbstractDatabaseConnection conn = (adams.flow.standalone.AbstractDatabaseConnection) obj;
-      return conn.getURL();
+      return conn.getURL().getValue();
     }
     
     if (obj instanceof adams.db.AbstractDatabaseConnection) {

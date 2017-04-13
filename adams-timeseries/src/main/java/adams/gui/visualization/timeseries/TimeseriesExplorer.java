@@ -37,6 +37,7 @@ import adams.data.timeseries.TimeseriesUtils;
 import adams.db.AbstractDatabaseConnection;
 import adams.db.DatabaseConnection;
 import adams.db.DatabaseConnectionHandler;
+import adams.db.JdbcUrl;
 import adams.db.SQLStatement;
 import adams.event.DatabaseConnectionChangeEvent;
 import adams.event.DatabaseConnectionChangeEvent.EventType;
@@ -980,7 +981,7 @@ public class TimeseriesExplorer
     
     props = m_DialogSQL.getProperties(false);
     adams.flow.standalone.DatabaseConnection dbcon = new adams.flow.standalone.DatabaseConnection();
-    dbcon.setURL(props.getProperty(DatabaseConnectionPage.CONNECTION_URL));
+    dbcon.setURL(new JdbcUrl(props.getProperty(DatabaseConnectionPage.CONNECTION_URL)));
     dbcon.setUser(props.getProperty(DatabaseConnectionPage.CONNECTION_USER));
     dbcon.setPassword(props.getPassword(DatabaseConnectionPage.CONNECTION_PASSWORD));
     seq.add(dbcon);
