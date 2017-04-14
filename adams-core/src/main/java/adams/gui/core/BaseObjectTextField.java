@@ -21,6 +21,8 @@
 package adams.gui.core;
 
 import adams.core.base.BaseObject;
+import adams.gui.goe.Favorites;
+import adams.gui.goe.Favorites.FavoriteSelectionEvent;
 
 /**
  * Text field designed for entering a strings checked by a BaseObject derived
@@ -84,6 +86,15 @@ public class BaseObjectTextField<T extends BaseObject>
 
       return result;
     }
+
+    /**
+     * Returns the base object instance used for checking.
+     *
+     * @return		the instance
+     */
+    public T getCheck() {
+      return m_Check;
+    }
   }
 
   /**
@@ -121,5 +132,29 @@ public class BaseObjectTextField<T extends BaseObject>
    */
   public T getObject() {
     return ((BaseObjectCheckModel<T>) m_CheckModel).newObject(getText());
+  }
+
+  /**
+   * Returns a popup menu when right-clicking on the edit field.
+   *
+   * @return		the menu, null if non available
+   */
+  protected BasePopupMenu getPopupMenu() {
+    BasePopupMenu 	result;
+    T			check;
+
+    result = super.getPopupMenu();
+
+    check = ((BaseObjectCheckModel<T>) m_CheckModel).getCheck();
+    if (check.hasFavoritesSupport()) {
+      result.addSeparator();
+      Favorites.getSingleton().customizePopupMenu(
+	result,
+	check.getClass(),
+	getObject(),
+	(FavoriteSelectionEvent fe) -> setText("" + fe.getFavorite().getObject()));
+    }
+
+    return result;
   }
 }
