@@ -174,7 +174,7 @@ public class BaseTextArea
   /**
    * Returns the number of lines in the document (= # of elements).
    * 
-   * @return
+   * @return		the number of lines
    */
   @Override
   public int getLineCount() {
