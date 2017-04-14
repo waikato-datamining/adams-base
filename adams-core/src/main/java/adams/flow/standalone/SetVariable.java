@@ -15,23 +15,24 @@
 
 /*
  * SetVariable.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.standalone;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import adams.core.QuickInfoHelper;
 import adams.core.VariableName;
 import adams.core.VariableUpdater;
 import adams.core.base.BaseText;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  <!-- globalinfo-start -->
  * Sets the value of a variable.<br>
- * Optionally, the specified value (or incoming value) can be expanded, in case it is made up of variables itself.
+ * Optionally, the specified value (or incoming value) can be expanded, in case it is made up of variables itself.<br>
+ * It is also possible to override the variable value with the value obtained from an environment variable.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -61,8 +62,15 @@ import adams.core.base.BaseText;
  * </pre>
  * 
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this 
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical 
+ * &nbsp;&nbsp;&nbsp;actors.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
@@ -80,6 +88,18 @@ import adams.core.base.BaseText;
  * &nbsp;&nbsp;&nbsp;If enabled, the value gets expanded first in case it is made up of variables 
  * &nbsp;&nbsp;&nbsp;itself.
  * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-override-with-env-var &lt;boolean&gt; (property: overrideWithEnvVar)
+ * &nbsp;&nbsp;&nbsp;If enabled, the value gets overriden by the value obtained from the specified 
+ * &nbsp;&nbsp;&nbsp;environment variable.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-env-variable &lt;java.lang.String&gt; (property: envVariable)
+ * &nbsp;&nbsp;&nbsp;The name of the environment variable to use for overriding the variable 
+ * &nbsp;&nbsp;&nbsp;value.
+ * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
  <!-- options-end -->
@@ -103,6 +123,12 @@ public class SetVariable
   /** whether to expand the value. */
   protected boolean m_ExpandValue;
 
+  /** whether to override using an environment variable. */
+  protected boolean m_OverrideWithEnvVar;
+
+  /** the environment variable to use. */
+  protected String m_EnvVariable;
+
   /**
    * Returns a string describing the object.
    *
@@ -110,10 +136,12 @@ public class SetVariable
    */
   @Override
   public String globalInfo() {
-    return 
-	"Sets the value of a variable.\n"
-	+ "Optionally, the specified value (or incoming value) can be expanded, "
-	+ "in case it is made up of variables itself.";
+    return
+      "Sets the value of a variable.\n"
+        + "Optionally, the specified value (or incoming value) can be expanded, "
+        + "in case it is made up of variables itself.\n"
+        + "It is also possible to override the variable value with the value "
+        + "obtained from an environment variable.";
   }
 
   /**
@@ -134,6 +162,14 @@ public class SetVariable
     m_OptionManager.add(
 	    "expand-value", "expandValue",
 	    false);
+
+    m_OptionManager.add(
+	    "override-with-env-var", "overrideWithEnvVar",
+	    false);
+
+    m_OptionManager.add(
+	    "env-variable", "envVariable",
+	    "");
   }
 
   /**
@@ -226,6 +262,66 @@ public class SetVariable
   }
 
   /**
+   * Sets whether to override the value with the one obtained from the
+   * specified environment variable.
+   *
+   * @param value	true if to override
+   */
+  public void setOverrideWithEnvVar(boolean value) {
+    m_OverrideWithEnvVar = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to override the value with the one obtained from the
+   * specified environment variable.
+   *
+   * @return		true if to override
+   */
+  public boolean getOverrideWithEnvVar() {
+    return m_OverrideWithEnvVar;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String overrideWithEnvVarTipText() {
+    return "If enabled, the value gets overriden by the value obtained from the specified environment variable.";
+  }
+
+  /**
+   * Sets the name of the environment variable to use.
+   *
+   * @param value	the name
+   */
+  public void setEnvVariable(String value) {
+    m_EnvVariable = value;
+    reset();
+  }
+
+  /**
+   * Returns the name of the environment variable to use.
+   *
+   * @return		the name
+   */
+  public String getEnvVariable() {
+    return m_EnvVariable;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String envVariableTipText() {
+    return "The name of the environment variable to use for overriding the variable value.";
+  }
+
+  /**
    * Returns whether variables are being updated.
    * 
    * @return		true if variables are updated
@@ -251,14 +347,20 @@ public class SetVariable
       result = variable;
     else
       result = m_VariableName.paddedValue();
-    value = QuickInfoHelper.toString(this, "variableValue", m_VariableValue.getValue(), " = ");
-    if (value != null)
-      result += value;
 
-    // further options
-    options = new ArrayList<String>();
-    QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "expandValue", m_ExpandValue, "expand"));
-    result += QuickInfoHelper.flatten(options);
+    if (m_OverrideWithEnvVar && !m_EnvVariable.isEmpty()) {
+      result += QuickInfoHelper.toString(this, "envVariable", m_EnvVariable, ", use env var: ");
+    }
+    else {
+      value = QuickInfoHelper.toString(this, "variableValue", m_VariableValue.getValue(), " = ");
+      if (value != null)
+	result += value;
+
+      // further options
+      options = new ArrayList<>();
+      QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "expandValue", m_ExpandValue, "expand"));
+      result += QuickInfoHelper.flatten(options);
+    }
 
     return result;
   }
@@ -275,9 +377,22 @@ public class SetVariable
 
     result = null;
 
-    value = m_VariableValue.getValue();
-    if (m_ExpandValue)
-      value = getVariables().expand(value);
+    value = null;
+    if (m_OverrideWithEnvVar) {
+      if (m_EnvVariable.isEmpty()) {
+	getLogger().warning("No environment variable specified!");
+      }
+      else {
+	value = System.getenv(m_EnvVariable);
+	if (value == null)
+	  getLogger().warning("Environment variable '" + m_EnvVariable + "' not set?");
+      }
+    }
+    if (value == null) {
+      value = m_VariableValue.getValue();
+      if (m_ExpandValue)
+	value = getVariables().expand(value);
+    }
     
     getVariables().set(m_VariableName.getValue(), value);
     if (isLoggingEnabled())
