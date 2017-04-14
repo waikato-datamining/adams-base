@@ -15,7 +15,7 @@
 
 /*
  * BaseClassname.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.base;
@@ -88,5 +88,15 @@ public class BaseClassname
    */
   public Class classValue() {
     return Utils.stringToClass(getValue());
+  }
+
+  /**
+   * Whether this object should have favorites support.
+   *
+   * @return		true if to support favorites
+   */
+  @Override
+  public boolean hasFavoritesSupport() {
+    return true;
   }
 }
