@@ -15,14 +15,14 @@
 
 /*
  * EmailAddress.java
- * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.net;
 
-import javax.mail.internet.InternetAddress;
-
 import adams.core.base.AbstractBaseString;
+
+import javax.mail.internet.InternetAddress;
 
 /**
  * Wrapper for a regular expression string to be editable in the GOE. Basically
@@ -121,5 +121,15 @@ public class EmailAddress
       return result;
     else
       return result.substring(result.lastIndexOf('<') + 1, result.lastIndexOf('>'));
+  }
+
+  /**
+   * Whether this object should have favorites support.
+   *
+   * @return		true if to support favorites
+   */
+  @Override
+  public boolean hasFavoritesSupport() {
+    return true;
   }
 }
