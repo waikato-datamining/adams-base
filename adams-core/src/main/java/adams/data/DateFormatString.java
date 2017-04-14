@@ -15,7 +15,7 @@
 
 /**
  * DateFormatString.java
- * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.data;
 
@@ -149,5 +149,15 @@ public class DateFormatString
    */
   public String getHelpIcon() {
     return "help2.png";
+  }
+
+  /**
+   * Whether this object should have favorites support.
+   *
+   * @return		true if to support favorites
+   */
+  @Override
+  public boolean hasFavoritesSupport() {
+    return true;
   }
 }

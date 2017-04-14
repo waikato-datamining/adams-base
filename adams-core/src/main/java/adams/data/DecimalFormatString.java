@@ -15,13 +15,13 @@
 
 /**
  * DecimalFormatString.java
- * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.data;
 
-import java.text.DecimalFormat;
-
 import adams.core.base.AbstractBaseString;
+
+import java.text.DecimalFormat;
 
 /**
  * Wrapper for decimal formats.
@@ -133,5 +133,15 @@ public class DecimalFormatString
    */
   public String getHelpIcon() {
     return "help2.png";
+  }
+
+  /**
+   * Whether this object should have favorites support.
+   *
+   * @return		true if to support favorites
+   */
+  @Override
+  public boolean hasFavoritesSupport() {
+    return true;
   }
 }

@@ -15,7 +15,7 @@
 
 /**
  * ByteFormatString.java
- * Copyright (C) 2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.core;
 
@@ -96,5 +96,15 @@ public class ByteFormatString
    */
   public ByteFormat toByteFormat() {
     return new ByteFormat(getValue());
+  }
+
+  /**
+   * Whether this object should have favorites support.
+   *
+   * @return		true if to support favorites
+   */
+  @Override
+  public boolean hasFavoritesSupport() {
+    return true;
   }
 }
