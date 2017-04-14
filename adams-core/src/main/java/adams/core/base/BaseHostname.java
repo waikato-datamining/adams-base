@@ -130,6 +130,16 @@ public class BaseHostname
   }
 
   /**
+   * Whether this object should have favorites support.
+   *
+   * @return		true if to support favorites
+   */
+  @Override
+  public boolean hasFavoritesSupport() {
+    return true;
+  }
+
+  /**
    * Returns a tool tip for the GUI editor (ignored if null is returned).
    *
    * @return		the tool tip
