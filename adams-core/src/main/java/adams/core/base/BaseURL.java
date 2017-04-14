@@ -15,7 +15,7 @@
 
 /*
  * BaseURL.java
- * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.base;
@@ -147,5 +147,15 @@ public class BaseURL
   @Override
   public String getTipText() {
     return "An URL (uniform resource locator).";
+  }
+
+  /**
+   * Whether this object should have favorites support.
+   *
+   * @return		true if to support favorites
+   */
+  @Override
+  public boolean hasFavoritesSupport() {
+    return true;
   }
 }
