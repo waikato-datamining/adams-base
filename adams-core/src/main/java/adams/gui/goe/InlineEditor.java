@@ -184,6 +184,7 @@ public class InlineEditor
           if (getInlineEditor() instanceof InlineEditorSupportWithFavorites) {
             InlineEditorSupportWithFavorites fav = (InlineEditorSupportWithFavorites) getInlineEditor();
             if (fav.isInlineFavoritesEnabled()) {
+	      menu.addSeparator();
 	      Favorites.getSingleton().customizePopupMenu(
 		menu,
 		getValue().getClass(),
