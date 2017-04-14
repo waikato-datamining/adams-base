@@ -19,12 +19,19 @@
  */
 package adams.gui.core;
 
+import com.github.fracpete.jclipboardhelper.ClipboardHelper;
+
+import javax.swing.JMenuItem;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.Document;
 import java.awt.Color;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.Serializable;
 
 /**
@@ -380,6 +387,103 @@ public class CheckedTextField
 	  indicateValidity();
       }
     });
+    addMouseListener(new MouseAdapter() {
+      @Override
+      public void mouseClicked(MouseEvent e) {
+        if (MouseUtils.isRightClick(e)) {
+          e.consume();
+          BasePopupMenu menu = getPopupMenu();
+          if (menu != null)
+            menu.showAbsolute(CheckedTextField.this, e);
+        }
+        else {
+          super.mouseClicked(e);
+        }
+      }
+    });
+    addKeyListener(new KeyAdapter() {
+      @Override
+      public void keyPressed(KeyEvent e) {
+        if (KeyUtils.isCopy(e)) {
+          e.consume();
+          copyToClipboard();
+        }
+        else if (KeyUtils.isPaste(e) && ClipboardHelper.canPasteStringFromClipboard()) {
+          e.consume();
+          pasteFromClipboard();
+        }
+
+        if (!e.isConsumed())
+          super.keyPressed(e);
+      }
+    });
+  }
+
+  /**
+   * Copies the current settings to the clipboard.
+   */
+  protected void copyToClipboard() {
+    if (getSelectedText() == null)
+      ClipboardHelper.copyToClipboard(getText());
+    else
+      ClipboardHelper.copyToClipboard(getSelectedText());
+  }
+
+  /**
+   * Pastes the string representation from the clipboard.
+   */
+  protected void pasteFromClipboard() {
+    StringBuilder	text;
+    int			caret;
+    String 		clipboard;
+
+    try {
+      caret     = getCaretPosition();
+      clipboard = ClipboardHelper.pasteStringFromClipboard();
+      caret += clipboard.length();
+      if (getSelectedText() == null) {
+        text = new StringBuilder(getText());
+        text.insert(getCaretPosition(), clipboard);
+      }
+      else {
+        text = new StringBuilder(getText());
+        text.replace(getSelectionStart(), getSelectionEnd(), clipboard);
+      }
+      setText(text.toString());
+      if (caret > getDocument().getLength())
+	caret = getDocument().getLength();
+      setCaretPosition(caret);
+    }
+    catch (Exception e) {
+      e.printStackTrace();
+      GUIHelper.showErrorMessage(
+	  this, "Error processing clipboard content:\n" + e);
+    }
+  }
+
+  /**
+   * Returns a popup menu when right-clicking on the edit field.
+   *
+   * @return		the menu, null if non available
+   */
+  protected BasePopupMenu getPopupMenu() {
+    BasePopupMenu	result;
+    JMenuItem 		menuitem;
+
+    result = new BasePopupMenu();
+
+    menuitem = new JMenuItem("Copy", GUIHelper.getIcon("copy.gif"));
+    menuitem.setAccelerator(GUIHelper.getKeyStroke("control pressed C"));
+    menuitem.addActionListener(e -> copyToClipboard());
+    result.add(menuitem);
+
+    menuitem = new JMenuItem("Paste", GUIHelper.getIcon("paste.gif"));
+    menuitem.setAccelerator(GUIHelper.getKeyStroke("control pressed V"));
+    menuitem.setEnabled(isEditable() && ClipboardHelper.canPasteStringFromClipboard());
+    menuitem.addActionListener(e -> pasteFromClipboard());
+    result.add(menuitem);
+
+    return result;
   }
 
   /**
