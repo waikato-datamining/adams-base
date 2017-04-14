@@ -15,7 +15,7 @@
 
 /**
  * CheckedTextField.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
 
@@ -452,7 +452,6 @@ public class CheckedTextField
   public String getText() {
     String	result;
     String	current;
-    Runnable	run;
 
     current = getTextUnchecked();
 
@@ -463,14 +462,7 @@ public class CheckedTextField
       else {
 	result = m_CheckModel.getDefaultValue();
 	final String s = result;
-	// fix input as well
-	run = new Runnable() {
-	  @Override
-	  public void run() {
-	    setTextUnchecked(s);
-	  }
-	};
-	SwingUtilities.invokeLater(run);
+	SwingUtilities.invokeLater(() -> setTextUnchecked(s));
       }
     }
     else {
