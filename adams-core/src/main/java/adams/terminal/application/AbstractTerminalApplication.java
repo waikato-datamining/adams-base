@@ -38,7 +38,10 @@ import adams.event.DatabaseConnectionChangeEvent.EventType;
 import adams.event.DatabaseConnectionChangeListener;
 import adams.gui.application.AbstractInitialization;
 import adams.gui.application.ApplicationContext;
+import adams.gui.event.RemoteScriptingEngineUpdateEvent;
+import adams.gui.event.RemoteScriptingEngineUpdateListener;
 import adams.gui.scripting.ScriptingEngine;
+import adams.scripting.engine.MultiScriptingEngine;
 import adams.scripting.engine.RemoteScriptingEngine;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.gui2.DefaultWindowManager;
@@ -51,6 +54,8 @@ import com.googlecode.lanterna.screen.TerminalScreen;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 import com.googlecode.lanterna.terminal.Terminal;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 
@@ -91,6 +96,9 @@ public abstract class AbstractTerminalApplication
   /** the remote command scripting engine. */
   protected RemoteScriptingEngine m_RemoteScriptingEngine;
 
+  /** the listeners for changes to the remote scripting engine. */
+  protected Set<RemoteScriptingEngineUpdateListener> m_RemoteScriptingEngineUpdateListeners;
+
   /**
    * Default constructor.
    */
@@ -107,6 +115,9 @@ public abstract class AbstractTerminalApplication
     m_MainWindow            = null;
     m_DbConn                = getDefaultDatabaseConnection();
     m_DbConn.addChangeListener(this);
+
+    m_RemoteScriptingEngine                = null;
+    m_RemoteScriptingEngineUpdateListeners = new HashSet<>();
   }
 
   /**
@@ -301,6 +312,58 @@ public abstract class AbstractTerminalApplication
   }
 
   /**
+   * Adds the scripting engine to execute. Doesn't stop any running engines.
+   *
+   * @param value	the engine to add
+   */
+  public void addRemoteScriptingEngine(RemoteScriptingEngine value) {
+    MultiScriptingEngine multi;
+
+    value.setApplicationContext(this);
+    if (!value.isRunning())
+      new Thread(() -> value.execute()).start();
+
+    if (m_RemoteScriptingEngine == null) {
+      m_RemoteScriptingEngine = value;
+    }
+    else {
+      if (m_RemoteScriptingEngine instanceof MultiScriptingEngine) {
+	((MultiScriptingEngine) m_RemoteScriptingEngine).addEngine(value);
+      }
+      else {
+	multi = new MultiScriptingEngine();
+	new Thread(() -> multi.execute()).start();
+	multi.addEngine(m_RemoteScriptingEngine);
+	multi.addEngine(value);
+	m_RemoteScriptingEngine = multi;
+      }
+    }
+    notifyRemoteScriptingEngineUpdateListeners(new RemoteScriptingEngineUpdateEvent(this));
+  }
+
+  /**
+   * Removes the scripting engine (and stops it). Doesn't stop any running engines.
+   *
+   * @param value	the engine to remove
+   */
+  public void removeRemoteScriptingEngine(RemoteScriptingEngine value) {
+    MultiScriptingEngine	multi;
+
+    if (m_RemoteScriptingEngine == null)
+      return;
+
+    if (m_RemoteScriptingEngine instanceof MultiScriptingEngine) {
+      multi = (MultiScriptingEngine) m_RemoteScriptingEngine;
+      multi.removeEngine(value);
+    }
+    else {
+      if (value.toCommandLine().equals(m_RemoteScriptingEngine.toCommandLine()))
+	setRemoteScriptingEngine(null);
+    }
+    notifyRemoteScriptingEngineUpdateListeners(new RemoteScriptingEngineUpdateEvent(this));
+  }
+
+  /**
    * Sets the scripting engine to execute. Any running engine is stopped first.
    *
    * @param value	the engine to use, null to turn off scripting
@@ -317,6 +380,7 @@ public abstract class AbstractTerminalApplication
       getLogger().info("Start listening for remote commands: " + m_RemoteScriptingEngine.getClass().getName());
       new Thread(() -> m_RemoteScriptingEngine.execute()).start();
     }
+    notifyRemoteScriptingEngineUpdateListeners(new RemoteScriptingEngineUpdateEvent(this));
   }
 
   /**
@@ -326,6 +390,34 @@ public abstract class AbstractTerminalApplication
    */
   public RemoteScriptingEngine getRemoteScriptingEngine() {
     return m_RemoteScriptingEngine;
+  }
+
+  /**
+   * Adds the listener for remote scripting engine changes.
+   *
+   * @param l		the listener
+   */
+  public void addRemoteScriptingEngineUpdateListener(RemoteScriptingEngineUpdateListener l) {
+    m_RemoteScriptingEngineUpdateListeners.add(l);
+  }
+
+  /**
+   * Removes the listener for remote scripting engine changes.
+   *
+   * @param l		the listener
+   */
+  public void removeRemoteScriptingEngineUpdateListener(RemoteScriptingEngineUpdateListener l) {
+    m_RemoteScriptingEngineUpdateListeners.remove(l);
+  }
+
+  /**
+   * Notifies all listeners of remote scripting engine changes.
+   *
+   * @param e		the event to send
+   */
+  public void notifyRemoteScriptingEngineUpdateListeners(RemoteScriptingEngineUpdateEvent e) {
+    for (RemoteScriptingEngineUpdateListener l: m_RemoteScriptingEngineUpdateListeners)
+      l.remoteScriptingEngineUpdated(e);
   }
 
   /**

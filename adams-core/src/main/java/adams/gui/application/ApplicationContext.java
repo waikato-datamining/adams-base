@@ -20,10 +20,11 @@
 
 package adams.gui.application;
 
+import adams.gui.event.RemoteScriptingEngineUpdateListener;
 import adams.scripting.engine.RemoteScriptingEngine;
 
 /**
- * The applicatio context.
+ * The application context.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
@@ -31,9 +32,44 @@ import adams.scripting.engine.RemoteScriptingEngine;
 public interface ApplicationContext {
 
   /**
+   * Adds the scripting engine to execute. Doesn't stop any running engines.
+   *
+   * @param value	the engine to add
+   */
+  public void addRemoteScriptingEngine(RemoteScriptingEngine value);
+
+  /**
+   * Removes the scripting engine (and stops it). Doesn't stop any running engines.
+   *
+   * @param value	the engine to remove
+   */
+  public void removeRemoteScriptingEngine(RemoteScriptingEngine value);
+
+  /**
+   * Sets the scripting engine to execute. Any running engine is stopped first.
+   *
+   * @param value	the engine to use, null to turn off scripting
+   */
+  public void setRemoteScriptingEngine(RemoteScriptingEngine value);
+
+  /**
    * Returns the current scripting engine if any.
    *
    * @return		the engine in use, null if none running
    */
   public RemoteScriptingEngine getRemoteScriptingEngine();
+
+  /**
+   * Adds the listener for remote scripting engine changes.
+   *
+   * @param l		the listener
+   */
+  public void addRemoteScriptingEngineUpdateListener(RemoteScriptingEngineUpdateListener l);
+
+  /**
+   * Removes the listener for remote scripting engine changes.
+   *
+   * @param l		the listener
+   */
+  public void removeRemoteScriptingEngineUpdateListener(RemoteScriptingEngineUpdateListener l);
 }
