@@ -41,10 +41,17 @@ import adams.flow.core.ActorUtils;
 import adams.flow.processor.ManageInteractiveActors;
 import adams.gui.application.AbstractInitialization;
 import adams.gui.core.GUIHelper;
+import adams.gui.event.RemoteScriptingEngineUpdateEvent;
+import adams.gui.event.RemoteScriptingEngineUpdateListener;
+import adams.scripting.RemoteScriptingEngineHandler;
+import adams.scripting.engine.MultiScriptingEngine;
+import adams.scripting.engine.RemoteScriptingEngine;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 
 /**
@@ -100,6 +107,12 @@ import java.util.logging.Level;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
+ * <pre>-remote-scripting-engine-cmdline &lt;java.lang.String&gt; (property: remoteScriptingEngineCmdLine)
+ * &nbsp;&nbsp;&nbsp;The command-line of the remote scripting engine to execute at startup time;
+ * &nbsp;&nbsp;&nbsp; use empty string for disable scripting.
+ * &nbsp;&nbsp;&nbsp;default: 
+ * </pre>
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -107,7 +120,7 @@ import java.util.logging.Level;
  */
 public class FlowRunner
   extends AbstractOptionHandler
-  implements Stoppable, Pausable {
+  implements Stoppable, Pausable, RemoteScriptingEngineHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = 5693250462014974198L;
@@ -139,6 +152,12 @@ public class FlowRunner
 
   /** the commandline of the remote scripting engine to use at startup time. */
   protected String m_RemoteScriptingEngineCmdLine;
+
+  /** the remote command scripting engine. */
+  protected RemoteScriptingEngine m_RemoteScriptingEngine;
+
+  /** the listeners for changes to the remote scripting engine. */
+  protected Set<RemoteScriptingEngineUpdateListener> m_RemoteScriptingEngineUpdateListeners;
 
   /** the actor to execute. */
   protected Actor m_Actor;
@@ -211,8 +230,10 @@ public class FlowRunner
   protected void initialize() {
     super.initialize();
 
-    m_Actor = null;
-    m_LastActor   = null;
+    m_Actor                                = null;
+    m_LastActor                            = null;
+    m_RemoteScriptingEngine                = null;
+    m_RemoteScriptingEngineUpdateListeners = new HashSet<>();
   }
 
   /**
@@ -462,6 +483,115 @@ public class FlowRunner
     return
         "The command-line of the remote scripting engine to execute at startup "
 	  + "time; use empty string for disable scripting.";
+  }
+
+  /**
+   * Adds the scripting engine to execute. Doesn't stop any running engines.
+   *
+   * @param value	the engine to add
+   */
+  public void addRemoteScriptingEngine(RemoteScriptingEngine value) {
+    MultiScriptingEngine multi;
+
+    value.setRemoteScriptingEngineHandler(this);
+    if (!value.isRunning())
+      new Thread(() -> value.execute()).start();
+
+    if (m_RemoteScriptingEngine == null) {
+      m_RemoteScriptingEngine = value;
+    }
+    else {
+      if (m_RemoteScriptingEngine instanceof MultiScriptingEngine) {
+	((MultiScriptingEngine) m_RemoteScriptingEngine).addEngine(value);
+      }
+      else {
+	multi = new MultiScriptingEngine();
+	new Thread(() -> multi.execute()).start();
+	multi.addEngine(m_RemoteScriptingEngine);
+	multi.addEngine(value);
+	m_RemoteScriptingEngine = multi;
+      }
+    }
+    notifyRemoteScriptingEngineUpdateListeners(new RemoteScriptingEngineUpdateEvent(this));
+  }
+
+  /**
+   * Removes the scripting engine (and stops it). Doesn't stop any running engines.
+   *
+   * @param value	the engine to remove
+   */
+  public void removeRemoteScriptingEngine(RemoteScriptingEngine value) {
+    MultiScriptingEngine	multi;
+
+    if (m_RemoteScriptingEngine == null)
+      return;
+
+    if (m_RemoteScriptingEngine instanceof MultiScriptingEngine) {
+      multi = (MultiScriptingEngine) m_RemoteScriptingEngine;
+      multi.removeEngine(value);
+    }
+    else {
+      if (value.toCommandLine().equals(m_RemoteScriptingEngine.toCommandLine()))
+	setRemoteScriptingEngine(null);
+    }
+    notifyRemoteScriptingEngineUpdateListeners(new RemoteScriptingEngineUpdateEvent(this));
+  }
+
+  /**
+   * Sets the scripting engine to execute. Any running engine is stopped first.
+   *
+   * @param value	the engine to use, null to turn off scripting
+   */
+  public void setRemoteScriptingEngine(RemoteScriptingEngine value) {
+    if (m_RemoteScriptingEngine != null) {
+      getLogger().info("Stop listening for remote commands: " + m_RemoteScriptingEngine.getClass().getName());
+      m_RemoteScriptingEngine.stopExecution();
+      m_RemoteScriptingEngine.setRemoteScriptingEngineHandler(null);
+    }
+    m_RemoteScriptingEngine = value;
+    if (m_RemoteScriptingEngine != null) {
+      m_RemoteScriptingEngine.setRemoteScriptingEngineHandler(this);
+      getLogger().info("Start listening for remote commands: " + m_RemoteScriptingEngine.getClass().getName());
+      new Thread(() -> m_RemoteScriptingEngine.execute()).start();
+    }
+    notifyRemoteScriptingEngineUpdateListeners(new RemoteScriptingEngineUpdateEvent(this));
+  }
+
+  /**
+   * Returns the current scripting engine if any.
+   *
+   * @return		the engine in use, null if none running
+   */
+  public RemoteScriptingEngine getRemoteScriptingEngine() {
+    return m_RemoteScriptingEngine;
+  }
+
+  /**
+   * Adds the listener for remote scripting engine changes.
+   *
+   * @param l		the listener
+   */
+  public void addRemoteScriptingEngineUpdateListener(RemoteScriptingEngineUpdateListener l) {
+    m_RemoteScriptingEngineUpdateListeners.add(l);
+  }
+
+  /**
+   * Removes the listener for remote scripting engine changes.
+   *
+   * @param l		the listener
+   */
+  public void removeRemoteScriptingEngineUpdateListener(RemoteScriptingEngineUpdateListener l) {
+    m_RemoteScriptingEngineUpdateListeners.remove(l);
+  }
+
+  /**
+   * Notifies all listeners of remote scripting engine changes.
+   *
+   * @param e		the event to send
+   */
+  public void notifyRemoteScriptingEngineUpdateListeners(RemoteScriptingEngineUpdateEvent e) {
+    for (RemoteScriptingEngineUpdateListener l: m_RemoteScriptingEngineUpdateListeners)
+      l.remoteScriptingEngineUpdated(e);
   }
 
   /**
