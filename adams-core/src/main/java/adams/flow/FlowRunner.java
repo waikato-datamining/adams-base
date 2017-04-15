@@ -614,6 +614,7 @@ public class FlowRunner
     LocalDirectoryLister lister;
     String[]			flows;
     ManageInteractiveActors	procInteractive;
+    RemoteScriptingEngine 	engine;
 
     result              = null;
     m_InterruptedByUser = false;
@@ -622,6 +623,23 @@ public class FlowRunner
       getLogger().info("PID: " + ProcessUtils.getVirtualMachinePID());
 
     AbstractInitialization.initAll();
+
+    // start scripting engine?
+    if (!m_RemoteScriptingEngineCmdLine.isEmpty() && (getRemoteScriptingEngine() == null)) {
+      try {
+	engine = (RemoteScriptingEngine) OptionUtils.forAnyCommandLine(RemoteScriptingEngine.class, m_RemoteScriptingEngineCmdLine);
+      }
+      catch (Exception e) {
+	engine = null;
+	getLogger().log(
+	  Level.SEVERE,
+	  "Failed to instantiate remote scripting engine from commandline: '"
+	    + m_RemoteScriptingEngineCmdLine + "'",
+	  e);
+      }
+      if (engine != null)
+	setRemoteScriptingEngine(engine);
+    }
 
     // clean up last run
     if (m_LastActor != null)
