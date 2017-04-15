@@ -37,10 +37,10 @@ import adams.event.DatabaseConnectionChangeEvent;
 import adams.event.DatabaseConnectionChangeEvent.EventType;
 import adams.event.DatabaseConnectionChangeListener;
 import adams.gui.application.AbstractInitialization;
-import adams.gui.application.ApplicationContext;
 import adams.gui.event.RemoteScriptingEngineUpdateEvent;
 import adams.gui.event.RemoteScriptingEngineUpdateListener;
 import adams.gui.scripting.ScriptingEngine;
+import adams.scripting.RemoteScriptingEngineHandler;
 import adams.scripting.engine.MultiScriptingEngine;
 import adams.scripting.engine.RemoteScriptingEngine;
 import com.googlecode.lanterna.TextColor;
@@ -68,7 +68,7 @@ import java.util.logging.Level;
 public abstract class AbstractTerminalApplication
   extends AbstractOptionHandler
   implements DatabaseConnectionHandler, DatabaseConnectionChangeListener,
-             ApplicationContext {
+  RemoteScriptingEngineHandler {
 
   private static final long serialVersionUID = 2187425015130568365L;
 
@@ -319,7 +319,7 @@ public abstract class AbstractTerminalApplication
   public void addRemoteScriptingEngine(RemoteScriptingEngine value) {
     MultiScriptingEngine multi;
 
-    value.setApplicationContext(this);
+    value.setRemoteScriptingEngineHandler(this);
     if (!value.isRunning())
       new Thread(() -> value.execute()).start();
 
@@ -372,11 +372,11 @@ public abstract class AbstractTerminalApplication
     if (m_RemoteScriptingEngine != null) {
       getLogger().info("Stop listening for remote commands: " + m_RemoteScriptingEngine.getClass().getName());
       m_RemoteScriptingEngine.stopExecution();
-      m_RemoteScriptingEngine.setApplicationContext(null);
+      m_RemoteScriptingEngine.setRemoteScriptingEngineHandler(null);
     }
     m_RemoteScriptingEngine = value;
     if (m_RemoteScriptingEngine != null) {
-      m_RemoteScriptingEngine.setApplicationContext(this);
+      m_RemoteScriptingEngine.setRemoteScriptingEngineHandler(this);
       getLogger().info("Start listening for remote commands: " + m_RemoteScriptingEngine.getClass().getName());
       new Thread(() -> m_RemoteScriptingEngine.execute()).start();
     }

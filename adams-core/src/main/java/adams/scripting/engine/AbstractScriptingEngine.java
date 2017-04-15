@@ -30,9 +30,9 @@ import adams.core.option.ArrayConsumer;
 import adams.core.option.OptionUtils;
 import adams.env.Environment;
 import adams.flow.core.Actor;
-import adams.gui.application.ApplicationContext;
 import adams.gui.scripting.ScriptingEngine;
 import adams.multiprocess.CallableWithResult;
+import adams.scripting.RemoteScriptingEngineHandler;
 import adams.scripting.permissionhandler.AllowAll;
 import adams.scripting.permissionhandler.PermissionHandler;
 import adams.scripting.requesthandler.RequestHandler;
@@ -51,7 +51,7 @@ public abstract class AbstractScriptingEngine
   private static final long serialVersionUID = -3763240773922918567L;
 
   /** the application context. */
-  protected ApplicationContext m_ApplicationContext;
+  protected RemoteScriptingEngineHandler m_RemoteScriptingEngineHandler;
 
   /** the flow context. */
   protected Actor m_FlowContext;
@@ -256,8 +256,8 @@ public abstract class AbstractScriptingEngine
    *
    * @param value	the context
    */
-  public void setApplicationContext(ApplicationContext value) {
-    m_ApplicationContext = value;
+  public void setRemoteScriptingEngineHandler(RemoteScriptingEngineHandler value) {
+    m_RemoteScriptingEngineHandler = value;
   }
 
   /**
@@ -265,8 +265,8 @@ public abstract class AbstractScriptingEngine
    *
    * @return		the context, null if none set
    */
-  public ApplicationContext getApplicationContext() {
-    return m_ApplicationContext;
+  public RemoteScriptingEngineHandler getRemoteScriptingEngineHandler() {
+    return m_RemoteScriptingEngineHandler;
   }
 
   /**

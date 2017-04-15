@@ -25,7 +25,7 @@ import adams.core.Utils;
 import adams.core.io.GzipUtils;
 import adams.core.option.AbstractOptionHandler;
 import adams.core.option.OptionUtils;
-import adams.gui.application.ApplicationContext;
+import adams.scripting.RemoteScriptingEngineHandler;
 import adams.scripting.engine.RemoteScriptingEngine;
 import adams.scripting.requesthandler.RequestHandler;
 
@@ -42,7 +42,7 @@ public abstract class AbstractCommand
   private static final long serialVersionUID = 4357645457118740255L;
 
   /** the application context. */
-  protected ApplicationContext m_ApplicationContext;
+  protected RemoteScriptingEngineHandler m_RemoteScriptingEngineHandler;
 
   /** whether the command is a request or response. */
   protected boolean m_Request;
@@ -55,7 +55,7 @@ public abstract class AbstractCommand
     super.initialize();
 
     m_Request            = true;
-    m_ApplicationContext = null;
+    m_RemoteScriptingEngineHandler = null;
   }
 
   /**
@@ -63,8 +63,8 @@ public abstract class AbstractCommand
    *
    * @param value	the context
    */
-  public void setApplicationContext(ApplicationContext value) {
-    m_ApplicationContext = value;
+  public void setRemoteScriptingEngineHandler(RemoteScriptingEngineHandler value) {
+    m_RemoteScriptingEngineHandler = value;
   }
 
   /**
@@ -72,8 +72,8 @@ public abstract class AbstractCommand
    *
    * @return		the context, null if none set
    */
-  public ApplicationContext getApplicationContext() {
-    return m_ApplicationContext;
+  public RemoteScriptingEngineHandler getRemoteScriptingEngineHandler() {
+    return m_RemoteScriptingEngineHandler;
   }
 
   /**

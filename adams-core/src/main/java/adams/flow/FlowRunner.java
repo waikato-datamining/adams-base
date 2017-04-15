@@ -15,7 +15,7 @@
 
 /*
  * FlowRunner.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow;
@@ -137,6 +137,9 @@ public class FlowRunner
    * automatically. */
   protected boolean m_CleanUp;
 
+  /** the commandline of the remote scripting engine to use at startup time. */
+  protected String m_RemoteScriptingEngineCmdLine;
+
   /** the actor to execute. */
   protected Actor m_Actor;
 
@@ -195,6 +198,10 @@ public class FlowRunner
     m_OptionManager.add(
       "no-execute", "noExecute",
       false);
+
+    m_OptionManager.add(
+      "remote-scripting-engine-cmdline", "remoteScriptingEngineCmdLine",
+      "");
   }
 
   /**
@@ -424,6 +431,37 @@ public class FlowRunner
     return
       "If set to true, then flow execution is suppressed; flow is only "
 	+ "loaded, set up and wrapped up.";
+  }
+
+  /**
+   * Sets the commandline of the remote scripting engine to execute at startup time.
+   *
+   * @param value	the commandline, use empty string if not to use one
+   */
+  public void setRemoteScriptingEngineCmdLine(String value) {
+    m_RemoteScriptingEngineCmdLine = value;
+    reset();
+  }
+
+  /**
+   * Returns the commandline of the remote scripting engine to execute at startup time.
+   *
+   * @return		the commandline, empty string it not to use one
+   */
+  public String getRemoteScriptingEngineCmdLine() {
+    return m_RemoteScriptingEngineCmdLine;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String remoteScriptingEngineCmdLineTipText() {
+    return
+        "The command-line of the remote scripting engine to execute at startup "
+	  + "time; use empty string for disable scripting.";
   }
 
   /**

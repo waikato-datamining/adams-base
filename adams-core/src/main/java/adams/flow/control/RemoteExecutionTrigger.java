@@ -360,7 +360,7 @@ public class RemoteExecutionTrigger
       // assemble command
       remote = new RemoteFlowExecution();
       if (getParentComponent() instanceof Container)
-	remote.setApplicationContext((AbstractApplicationFrame) GUIHelper.getParent((Container) getParentComponent(), AbstractApplicationFrame.class));
+	remote.setRemoteScriptingEngineHandler((AbstractApplicationFrame) GUIHelper.getParent((Container) getParentComponent(), AbstractApplicationFrame.class));
       remote.setFlowContext(this);
       remote.setStorageNames(m_StorageNames);
       remote.setVariableNames(m_VariableNames);

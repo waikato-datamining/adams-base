@@ -52,6 +52,7 @@ import adams.gui.event.RemoteScriptingEngineUpdateListener;
 import adams.gui.scripting.ScriptingEngine;
 import adams.gui.scripting.ScriptingEngineHandler;
 import adams.gui.scripting.ScriptingLogPanel;
+import adams.scripting.RemoteScriptingEngineHandler;
 import adams.scripting.engine.MultiScriptingEngine;
 import adams.scripting.engine.RemoteScriptingEngine;
 
@@ -90,7 +91,7 @@ import java.util.logging.Level;
 public abstract class AbstractApplicationFrame
   extends AbstractFrameWithOptionHandling
   implements DatabaseConnectionHandler, DatabaseConnectionChangeListener,
-             RestartableApplication, ApplicationContext {
+             RestartableApplication, RemoteScriptingEngineHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = -5800519559483605870L;
@@ -1317,7 +1318,7 @@ public abstract class AbstractApplicationFrame
   public void addRemoteScriptingEngine(RemoteScriptingEngine value) {
     MultiScriptingEngine	multi;
 
-    value.setApplicationContext(this);
+    value.setRemoteScriptingEngineHandler(this);
     if (!value.isRunning())
       new Thread(() -> value.execute()).start();
 
@@ -1370,11 +1371,11 @@ public abstract class AbstractApplicationFrame
     if (m_RemoteScriptingEngine != null) {
       getLogger().info("Stop listening for remote commands: " + m_RemoteScriptingEngine.getClass().getName());
       m_RemoteScriptingEngine.stopExecution();
-      m_RemoteScriptingEngine.setApplicationContext(null);
+      m_RemoteScriptingEngine.setRemoteScriptingEngineHandler(null);
     }
     m_RemoteScriptingEngine = value;
     if (m_RemoteScriptingEngine != null) {
-      m_RemoteScriptingEngine.setApplicationContext(this);
+      m_RemoteScriptingEngine.setRemoteScriptingEngineHandler(this);
       getLogger().info("Start listening for remote commands: " + m_RemoteScriptingEngine.getClass().getName());
       new Thread(() -> m_RemoteScriptingEngine.execute()).start();
     }

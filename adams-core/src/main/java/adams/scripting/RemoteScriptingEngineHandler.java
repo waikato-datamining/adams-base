@@ -14,22 +14,22 @@
  */
 
 /**
- * ApplicationContext.java
+ * RemoteScriptingEngineHandler.java
  * Copyright (C) 2016 University of Waikato, Hamilton, NZ
  */
 
-package adams.gui.application;
+package adams.scripting;
 
 import adams.gui.event.RemoteScriptingEngineUpdateListener;
 import adams.scripting.engine.RemoteScriptingEngine;
 
 /**
- * The application context.
+ * Interface for remote scripting engine handlers, like applications.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public interface ApplicationContext {
+public interface RemoteScriptingEngineHandler {
 
   /**
    * Adds the scripting engine to execute. Doesn't stop any running engines.

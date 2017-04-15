@@ -242,7 +242,7 @@ public class RemoteCommands
     }
 
     // send command
-    m_LastCommand.setApplicationContext(getOwner());
+    m_LastCommand.setRemoteScriptingEngineHandler(getOwner());
     msg = m_LastConnection.sendRequest(m_LastCommand);
     if (msg != null)
       GUIHelper.showErrorMessage(null, "Failed to send command:\n" + msg);

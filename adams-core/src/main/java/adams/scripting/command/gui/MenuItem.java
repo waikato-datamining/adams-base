@@ -176,9 +176,9 @@ public class MenuItem
       if (m_FlowContext.getRoot() instanceof Flow)
 	m_MenuItem.setOwner(((Flow) m_FlowContext.getRoot()).getApplicationFrame());
     }
-    else if (m_ApplicationContext != null) {
-      if (m_ApplicationContext instanceof AbstractApplicationFrame)
-      m_MenuItem.setOwner((AbstractApplicationFrame) m_ApplicationContext);
+    else if (m_RemoteScriptingEngineHandler != null) {
+      if (m_RemoteScriptingEngineHandler instanceof AbstractApplicationFrame)
+      m_MenuItem.setOwner((AbstractApplicationFrame) m_RemoteScriptingEngineHandler);
     }
 
     // additional parameters?

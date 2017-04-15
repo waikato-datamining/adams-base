@@ -23,7 +23,7 @@ package adams.scripting.command;
 import adams.core.Properties;
 import adams.core.logging.LoggingSupporter;
 import adams.core.option.OptionHandler;
-import adams.gui.application.ApplicationContext;
+import adams.scripting.RemoteScriptingEngineHandler;
 import adams.scripting.engine.RemoteScriptingEngine;
 import adams.scripting.requesthandler.RequestHandler;
 
@@ -58,14 +58,14 @@ public interface RemoteCommand
    *
    * @param value	the context
    */
-  public void setApplicationContext(ApplicationContext value);
+  public void setRemoteScriptingEngineHandler(RemoteScriptingEngineHandler value);
 
   /**
    * Returns the application context.
    *
    * @return		the context, null if none set
    */
-  public ApplicationContext getApplicationContext();
+  public RemoteScriptingEngineHandler getRemoteScriptingEngineHandler();
 
   /**
    * Parses the header information.

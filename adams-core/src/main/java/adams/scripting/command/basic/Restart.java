@@ -139,10 +139,10 @@ public class Restart
     if (m_StopFlows)
       stopFlows();
 
-    if (getApplicationContext() != null) {
-      if (getApplicationContext().getRemoteScriptingEngine() != null) {
+    if (getRemoteScriptingEngineHandler() != null) {
+      if (getRemoteScriptingEngineHandler().getRemoteScriptingEngine() != null) {
         getLogger().info("Stopping scripting engine");
-        getApplicationContext().getRemoteScriptingEngine().stopExecution();
+        getRemoteScriptingEngineHandler().getRemoteScriptingEngine().stopExecution();
       }
     }
 

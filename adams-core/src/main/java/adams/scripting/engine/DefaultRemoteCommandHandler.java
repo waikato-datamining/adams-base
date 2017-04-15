@@ -56,7 +56,7 @@ public class DefaultRemoteCommandHandler
     if (isLoggingEnabled())
       getLogger().info("Handling command: " + cmd.getClass().getName());
 
-    cmd.setApplicationContext(m_Owner.getApplicationContext());
+    cmd.setRemoteScriptingEngineHandler(m_Owner.getRemoteScriptingEngineHandler());
     if ((cmd instanceof FlowAwareRemoteCommand) && (m_Owner.getFlowContext() != null))
       ((FlowAwareRemoteCommand) cmd).setFlowContext(m_Owner.getFlowContext());
 

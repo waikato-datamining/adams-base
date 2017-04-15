@@ -246,7 +246,7 @@ public class ExecuteRemoteCommand
       m_ScriptingEngine = new ManualFeedScriptingEngine();
       m_ScriptingEngine.setMaxCommands(m_MaxCommands);
       if (getRoot() instanceof Flow)
-	m_ScriptingEngine.setApplicationContext(((Flow) getRoot()).getApplicationFrame());
+	m_ScriptingEngine.setRemoteScriptingEngineHandler(((Flow) getRoot()).getApplicationFrame());
       m_ScriptingEngine.setPermissionHandler((PermissionHandler) OptionUtils.shallowCopy(m_PermissionHandler));
       new Thread(() -> {
 	String msg = m_ScriptingEngine.execute();
