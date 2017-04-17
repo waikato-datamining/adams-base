@@ -214,6 +214,7 @@ public abstract class AbstractCommandLineHandler
     AbstractCommandLineHandler	result;
     AbstractCommandLineHandler	handler;
     int				i;
+    boolean			jeneric;
 
     result = null;
 
@@ -232,9 +233,14 @@ public abstract class AbstractCommandLineHandler
     }
 
     // find suitable handler
+    jeneric = false;
     for (i = 0; i < m_HandlerClasses.length; i++) {
       if (m_HandlerClasses[i] == DefaultCommandLineHandler.class)
 	continue;
+      if (m_HandlerClasses[i] == JenericCommandLineHandler.class) {
+	jeneric = true;
+	continue;
+      }
       try {
 	handler = (AbstractCommandLineHandler) m_HandlerClasses[i].newInstance();
 	if (handler.handles(cls)) {
@@ -247,8 +253,12 @@ public abstract class AbstractCommandLineHandler
       }
     }
 
-    if (result == null)
-      result = new DefaultCommandLineHandler();
+    if (result == null) {
+      if (jeneric)
+	result = new JenericCommandLineHandler();
+      else
+	result = new DefaultCommandLineHandler();
+    }
 
     // store in cache
     m_Cache.put(cls, result.getClass());
