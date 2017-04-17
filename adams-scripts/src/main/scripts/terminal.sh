@@ -18,7 +18,7 @@
 #   Copyright (c) 2001-2002 The Apache Software Foundation.  All rights
 #   reserved.
 
-#   Copyright (C) 2011-2016 University of Waikato, Hamilton, NZ
+#   Copyright (C) 2011-2017 University of Waikato, Hamilton, NZ
 
 BASEDIR=`dirname $0`/..
 BASEDIR=`(cd "$BASEDIR"; pwd)`
@@ -76,7 +76,7 @@ fi
 
 REPO="$BASEDIR"/lib
 RESOURCES="$BASEDIR"/resources
-CLASSPATH="$RESOURCES":"$REPO/*"
+CLASSPATH="$RESOURCES":"$REPO/java-cup-11b-2015.03.26.jar":"$REPO/*"
 
 # For Cygwin, switch paths to Windows format before running java
 if $cygwin; then
@@ -85,7 +85,6 @@ if $cygwin; then
   [ -n "$HOME" ] && HOME=`cygpath --path --windows "$HOME"`
   [ -n "$BASEDIR" ] && BASEDIR=`cygpath --path --windows "$BASEDIR"`
   [ -n "$REPO" ] && REPO=`cygpath --path --windows "$REPO"`
-  [ -n "$AGENT" ] && AGENT=`cygpath --path --windows "$AGENT"`
 fi
 
 # check options
@@ -94,7 +93,7 @@ MAIN=adams.terminal.Main
 OPTION=
 for ARG in "$@"
 do
-  if [ "$ARG" = "-memory" ] || [ "$ARG" = "-main" ] || [ "$ARG" = "-jvm" ] || [ "$ARG" = "-cpa" ] || [ "$ARG" = "-priority" ] || [ "$ARG" = "-env" ]
+  if [ "$ARG" = "-memory" ] || [ "$ARG" = "-main" ] || [ "$ARG" = "-title" ]
   then
   	OPTION=$ARG
   	continue
@@ -120,7 +119,7 @@ done
 
 # launch class
 "$JCMD" \
-  -classpath "$REPO/java-cup-11b-2015.03.26.jar:$CLASSPATH" \
+  -classpath "$CLASSPATH" \
   -Xmx$MEMORY \
   -Djava.awt.headless=true \
   $MAIN \

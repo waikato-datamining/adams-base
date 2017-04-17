@@ -16,7 +16,7 @@
 @REM
 
 @REM ----------------------------------------------------------------------------
-@REM Copyright (C) 2011-2016 University of Waikato, Hamilton, NZ
+@REM Copyright (C) 2011-2017 University of Waikato, Hamilton, NZ
 @REM ----------------------------------------------------------------------------
 
 @echo off
@@ -73,13 +73,13 @@ if not "%JAVACMD%"=="" set JCMD=%JAVACMD%
 
 set REPO=%BASEDIR%\lib
 set RESOURCES=%BASEDIR%\resources
-set CLASSPATH="%RESOURCES%";"%REPO%\*"
+set CLASSPATH="%RESOURCES%";"%REPO%\java-cup-11b-2015.03.26.jar";"%REPO%\*"
 goto endInit
 
 @REM Reaching here means variables are defined and arguments have been captured
 :endInit
 
-%JCMD% -Xmx%MEMORY% -Djava.awt.headless=true -classpath %REPO%\java-cup-11b-2015.03.26.jar;%CLASSPATH% %MAIN% -title %TITLE%
+%JCMD% -Xmx%MEMORY% -Djava.awt.headless=true -classpath %CLASSPATH% %MAIN% -title %TITLE%
 if ERRORLEVEL 1 goto error
 goto end
 
