@@ -52,7 +52,7 @@ set HEADLESS=
     set OPTION=
     goto next
   )
-  if "%OPTION%"=="-headless" (
+  if "%OPTION%"=="-no-gui" (
     set HEADLESS="-Djava.awt.headless=true"
     goto next
   )

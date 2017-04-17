@@ -111,7 +111,7 @@ do
     MAIN=$ARG
     OPTION=""
     continue
-  elif [ "$OPTION" = "-headless" ]
+  elif [ "$OPTION" = "-no-gui" ]
   then
     HEADLESS="-Djava.awt.headless=true"
     OPTION=""
