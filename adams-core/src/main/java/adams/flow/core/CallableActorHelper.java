@@ -28,6 +28,7 @@ import adams.flow.source.CallableSource;
 import adams.flow.standalone.CallableActors;
 import adams.flow.transformer.CallableTransformer;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -46,11 +47,11 @@ public class CallableActorHelper
    * Checks a control actor's children whether they contain the callable actor
    * that we're looking for.
    *
-   * @param group	the group to check
+   * @param handler	the handler to check
    * @param name	the name of the callable actor
    * @return		the callable actor or null if not found
    */
-  public Actor findCallableActor(ActorHandler group, CallableActorReference name) {
+  public Actor findCallableActor(ActorHandler handler, CallableActorReference name) {
     Actor			result;
     int				i;
     CallableActorHandler	callable;
@@ -59,17 +60,17 @@ public class CallableActorHelper
 
     result = null;
 
-    for (i = 0; i < group.size(); i++) {
-      if (group.get(i) instanceof CallableActorHandler) {
-	callable = (CallableActorHandler) group.get(i);
+    for (i = 0; i < handler.size(); i++) {
+      if (handler.get(i) instanceof CallableActorHandler) {
+	callable = (CallableActorHandler) handler.get(i);
 	index  = callable.indexOf(name.toString());
 	if (index > -1) {
 	  result = callable.get(index);
 	  break;
 	}
       }
-      else if (group.get(i) instanceof ExternalActorHandler) {
-	external = (ExternalActorHandler) group.get(i);
+      else if (handler.get(i) instanceof ExternalActorHandler) {
+	external = (ExternalActorHandler) handler.get(i);
 	if (external.getExternalActor() instanceof ActorHandler) {
 	  result = findCallableActor((ActorHandler) external.getExternalActor(), name);
 	  if (result != null)
@@ -131,6 +132,72 @@ public class CallableActorHelper
       if (result != null)
 	break;
     }
+
+    return result;
+  }
+
+  /**
+   * Locates callable actors.
+   *
+   * @param handler	the handler to check
+   * @param collected	the actors collected so far
+   */
+  protected void findCallableActors(ActorHandler handler, List<Actor> collected) {
+    int				i;
+    int				n;
+    CallableActorHandler	callable;
+    ExternalActorHandler	external;
+
+    for (i = 0; i < handler.size(); i++) {
+      if (handler.get(i) instanceof CallableActorHandler) {
+	callable = (CallableActorHandler) handler.get(i);
+	for (n = 0; n < callable.size(); n++)
+	  collected.add(callable.get(n));
+      }
+      else if (handler.get(i) instanceof ExternalActorHandler) {
+	external = (ExternalActorHandler) handler.get(i);
+	if (external.getExternalActor() instanceof ActorHandler)
+	  findCallableActors((ActorHandler) external.getExternalActor(), collected);
+      }
+    }
+  }
+
+  /**
+   * Locates callable actors.
+   *
+   * @param root	the root to search in
+   * @param collected	the actors collected so far
+   */
+  protected void findCallableActors(Actor root, List<Actor> collected) {
+    if (root == null) {
+      getLogger().severe("No root container found!");
+    }
+    else if (!(root instanceof AbstractDirectedControlActor)) {
+      getLogger().severe(
+	  "Root is not a container ('" + root.getFullName() + "'/"
+	  + root.getClass().getName() + ")!");
+      root = null;
+    }
+
+    if (root != null)
+      findCallableActors((ActorHandler) root, collected);
+  }
+
+  /**
+   * Locates all callable actors .
+   *
+   * @param actor	the actor to start from
+   * @return		the callable actors
+   */
+  public List<Actor> findCallableActorsRecursive(Actor actor) {
+    List<Actor>		result;
+    List<ActorHandler>	handlers;
+    int			i;
+
+    result   = new ArrayList<>();
+    handlers = ActorUtils.findActorHandlers(actor, true);
+    for (i = 0; i < handlers.size(); i++)
+      findCallableActors(handlers.get(i), result);
 
     return result;
   }

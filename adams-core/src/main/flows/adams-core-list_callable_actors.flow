@@ -1,0 +1,28 @@
+# Project: adams
+# Date: 2017-04-19 11:05:20
+# User: fracpete
+# Charset: UTF-8
+adams.flow.control.Flow -annotation "Shows how to list callable actors from within a specific context." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.standalone.CallableActors
+  adams.flow.source.NewReport -name new-report
+  adams.flow.source.DumpStorage -name dump-storage
+  adams.flow.source.DumpVariables -name dump-variables
+  adams.flow.sink.Display -writer adams.data.io.output.NullWriter
+ adams.flow.source.Start
+ adams.flow.control.Trigger -name "list all"
+  adams.flow.source.ListCallableActors -output-array true
+  adams.flow.transformer.StringJoin -glue ", "
+  adams.flow.transformer.StringInsert -position first -value "all: "
+  adams.flow.sink.CallableSink -callable Display
+ adams.flow.control.Trigger -name "list \"dump-*\""
+  adams.flow.source.ListCallableActors -output-array true -regexp dump-.*
+  adams.flow.transformer.StringJoin -glue ", "
+  adams.flow.transformer.StringInsert -position first -value "\\\\\\\"dump-*\\\\\\\": "
+  adams.flow.sink.CallableSink -callable Display
+ adams.flow.control.Trigger -name "list \"new-*\""
+  adams.flow.standalone.CallableActors
+   adams.flow.source.NewReport -name new-report2
+  adams.flow.source.ListCallableActors -output-array true -regexp new-.*
+  adams.flow.transformer.StringJoin -glue ", "
+  adams.flow.transformer.StringInsert -position first -value "\\\\\\\"new-*\\\\\\\": "
+  adams.flow.sink.CallableSink -callable Display

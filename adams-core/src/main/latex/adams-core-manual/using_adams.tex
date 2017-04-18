@@ -1276,7 +1276,10 @@ In addition to the \textit{CallableSink} actor, there are also the
 \textit{CallableSource} actor (for using the same source multiple times in a flow)
 and the \textit{CallableTransformer} actor (for instance for using the same
 preprocessing multiple times). They are used in the same fashion as the
-\textit{CallableSink} actor that we just introduced.
+\textit{CallableSink} actor that we just introduced. The \textit{ListCallableActors}
+source allows you to list all the available callable actors available in the
+scope of this listing actor. Useful when iterating through a number of predefined
+setups.
 
 \heading{Combining views}
 The \textit{GridView} standalone allows you to define several graphical actors

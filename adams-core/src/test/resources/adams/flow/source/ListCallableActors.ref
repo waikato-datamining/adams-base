@@ -1,0 +1,5 @@
+--> dumpfile.txt
+all: DumpFile, dump-storage, dump-variables, new-report
+"dump-*": dump-storage, dump-variables
+"new-*": new-report, new-report2
+
