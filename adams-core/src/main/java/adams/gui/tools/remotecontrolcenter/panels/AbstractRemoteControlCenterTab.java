@@ -28,6 +28,7 @@ import adams.gui.event.RemoteScriptingEngineUpdateEvent;
 import adams.gui.event.RemoteScriptingEngineUpdateListener;
 import adams.gui.tools.remotecontrolcenter.RemoteControlCenterLogPanel;
 import adams.gui.tools.remotecontrolcenter.RemoteControlCenterPanel;
+import adams.scripting.command.RemoteCommand;
 import adams.scripting.command.RemoteCommandWithResponse;
 import adams.scripting.command.basic.StopEngine;
 import adams.scripting.command.basic.StopEngine.EngineType;
@@ -158,6 +159,25 @@ public abstract class AbstractRemoteControlCenterTab
   }
 
   /**
+   * Sends the specified command, not waiting for a response.
+   *
+   * @param cmd			the command to send
+   * @param remote 		the remote host
+   */
+  public void sendCommand(RemoteCommand cmd, BaseHostname remote) {
+    DefaultConnection 	conn;
+    String		msg;
+
+    // send command
+    conn = new DefaultConnection();
+    conn.setHost(remote.hostnameValue());
+    conn.setPort(remote.portValue());
+    msg = conn.sendRequest(cmd);
+    if (msg != null)
+      getOwner().logError("Failed to send command '" + cmd.toCommandLine() + "':\n" + msg, "Scripting error");
+  }
+
+  /**
    * Sends the specified command and the response handler for intercepting
    * the result.
    *
@@ -167,7 +187,7 @@ public abstract class AbstractRemoteControlCenterTab
    * @param remote 		the remote host
    * @param defPort		the default port to use
    */
-  public void sendCommand(RemoteCommandWithResponse cmd, ResponseHandler responseHandler, BaseHostname local, BaseHostname remote, int defPort) {
+  public void sendCommandWithReponse(RemoteCommandWithResponse cmd, ResponseHandler responseHandler, BaseHostname local, BaseHostname remote, int defPort) {
     StopEngine stop;
     DefaultConnection conn;
     DefaultScriptingEngine	engine;
