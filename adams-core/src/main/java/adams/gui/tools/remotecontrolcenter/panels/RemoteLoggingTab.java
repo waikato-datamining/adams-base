@@ -274,7 +274,7 @@ public class RemoteLoggingTab
       m_Runnable.stopExecution();
       m_Runnable = null;
       updateButtons();
-      sendCommand(stop, new LoggingResponseHandler(this), m_TextLocal.getObject(), m_TextRemote.getObject(), DEFAULT_PORT);
+      sendCommandWithReponse(stop, new LoggingResponseHandler(this), m_TextLocal.getObject(), m_TextRemote.getObject(), DEFAULT_PORT);
     }
     else {
       m_Runnable = new RemoteListenerRunnableWithLog(m_TextLocal.getObject().portValue(), RemoteListenerRunnableWithLog.DEFAULT_TIMEOUT, this);
@@ -283,7 +283,7 @@ public class RemoteLoggingTab
       start.setInstallListener(false);
       start.setLoggingHost(m_TextLocal.getObject());
       updateButtons();
-      sendCommand(start, new LoggingResponseHandler(this), m_TextLocal.getObject(), m_TextRemote.getObject(), DEFAULT_PORT);
+      sendCommandWithReponse(start, new LoggingResponseHandler(this), m_TextLocal.getObject(), m_TextRemote.getObject(), DEFAULT_PORT);
     }
   }
 
