@@ -30,6 +30,8 @@ import adams.gui.core.GUIHelper;
 import adams.gui.core.SpreadSheetTableModel;
 import adams.scripting.command.RemoteCommand;
 import adams.scripting.command.RemoteCommandWithResponse;
+import adams.scripting.command.basic.Kill;
+import adams.scripting.command.basic.Stop;
 import adams.scripting.command.flow.ListFlows;
 import adams.scripting.command.flow.SendFlowControlCommand;
 import adams.scripting.command.flow.SendFlowControlCommand.Command;
@@ -151,6 +153,12 @@ public abstract class AbstractRemoteFlowTab
   /** the button for stopping the flow. */
   protected JButton m_ButtonStopFlow;
 
+  /** the button for stopping the ADAMS instance. */
+  protected JButton m_ButtonStopAdams;
+
+  /** the button for killing the ADAMS isntance. */
+  protected JButton m_ButtonKillAdams;
+
   /**
    * Initializes the widgets.
    */
@@ -217,6 +225,14 @@ public abstract class AbstractRemoteFlowTab
     m_ButtonStopFlow = new JButton(GUIHelper.getIcon("stop_blue.gif"));
     m_ButtonStopFlow.addActionListener((ActionEvent e) -> stopFlow());
     m_TableFlows.addToButtonsPanel(m_ButtonStopFlow);
+
+    m_ButtonStopAdams = new JButton(GUIHelper.getIcon("exit.png"));
+    m_ButtonStopAdams.addActionListener((ActionEvent e) -> stopAdams());
+    m_TableFlows.addToButtonsPanel(m_ButtonStopAdams);
+
+    m_ButtonKillAdams = new JButton(GUIHelper.getIcon("kill.png"));
+    m_ButtonKillAdams.addActionListener((ActionEvent e) -> killAdams());
+    m_TableFlows.addToButtonsPanel(m_ButtonKillAdams);
   }
   
   /**
@@ -248,21 +264,40 @@ public abstract class AbstractRemoteFlowTab
   }
 
   /**
+   * Sends the specified command, not waiting for a response.
+   *
+   * @param cmd			the command to send
+   */
+  public void sendCommand(RemoteCommand cmd) {
+    sendCommand(cmd, m_TextRemote.getObject());
+  }
+
+  /**
+   * Sends the specified command. Uses a default response handler for intercepting
+   * the result.
+   *
+   * @param cmd			the command to send
+   */
+  public void sendCommandWithReponse(RemoteCommandWithResponse cmd) {
+    sendCommandWithReponse(cmd, null);
+  }
+
+  /**
    * Sends the specified command and the response handler for intercepting
    * the result.
    *
    * @param cmd			the command to send
    * @param responseHandler 	the response handler for intercepting the result, can be null
    */
-  public void sendCommand(RemoteCommandWithResponse cmd, ResponseHandler responseHandler) {
-    sendCommand(cmd, responseHandler, m_TextLocal.getObject(), m_TextRemote.getObject(), DEFAULT_PORT);
+  public void sendCommandWithReponse(RemoteCommandWithResponse cmd, ResponseHandler responseHandler) {
+    sendCommandWithReponse(cmd, responseHandler, m_TextLocal.getObject(), m_TextRemote.getObject(), DEFAULT_PORT);
   }
 
   /**
    * Refreshes the list of flows.
    */
   protected void refreshFlows() {
-    sendCommand(new ListFlows(), new FlowListResponseHandler(this));
+    sendCommandWithReponse(new ListFlows(), new FlowListResponseHandler(this));
   }
 
   /**
@@ -303,7 +338,7 @@ public abstract class AbstractRemoteFlowTab
 	cmd = new SendFlowControlCommand();
 	cmd.setID(ids[i]);
 	cmd.setCommand(Command.PAUSE);
-	sendCommand(cmd, null);
+	sendCommandWithReponse(cmd);
       }
     }
 
@@ -330,7 +365,7 @@ public abstract class AbstractRemoteFlowTab
 	cmd = new SendFlowControlCommand();
 	cmd.setID(ids[i]);
 	cmd.setCommand(Command.RESUME);
-	sendCommand(cmd, null);
+	sendCommandWithReponse(cmd);
       }
     }
 
@@ -355,11 +390,25 @@ public abstract class AbstractRemoteFlowTab
 	cmd = new SendFlowControlCommand();
 	cmd.setID(ids[i]);
 	cmd.setCommand(Command.STOP);
-	sendCommand(cmd, null);
+	sendCommandWithReponse(cmd);
       }
     }
 
     refreshFlows();
+  }
+
+  /**
+   * Stops the ADAMS instance.
+   */
+  protected void stopAdams() {
+    sendCommand(new Stop());
+  }
+
+  /**
+   * Kills the ADAMS instance.
+   */
+  protected void killAdams() {
+    sendCommand(new Kill());
   }
 
   /**
