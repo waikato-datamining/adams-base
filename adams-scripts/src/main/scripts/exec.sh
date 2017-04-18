@@ -95,7 +95,7 @@ HEADLESS=
 WHITESPACE="[[:space:]]"
 for ARG in "$@"
 do
-  if [ "$ARG" = "-memory" ] || [ "$ARG" = "-main" ]
+  if [ "$ARG" = "-memory" ] || [ "$ARG" = "-main" ] || [ "$ARG" = "-no-gui" ]
   then
   	OPTION=$ARG
   	continue
@@ -111,10 +111,10 @@ do
     MAIN=$ARG
     OPTION=""
     continue
-  fi
-  if [ "$ARG" = "-no-gui" ]
+  elif [ "$OPTION" = "-no-gui" ]
   then
     HEADLESS="-Djava.awt.headless=true"
+    OPTION=""
     continue
   fi
 
