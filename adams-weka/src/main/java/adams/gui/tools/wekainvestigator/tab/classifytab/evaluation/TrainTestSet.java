@@ -15,7 +15,7 @@
 
 /**
  * TrainTestSet.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab.classifytab.evaluation;
@@ -166,7 +166,7 @@ public class TrainTestSet
 	if (caps.getFailReason() != null)
 	  return caps.getFailReason().getMessage();
 	else
-	  return "Classifier cannot handle tain data!";
+	  return "Classifier cannot handle train data!";
       }
     }
     catch (Exception e) {
