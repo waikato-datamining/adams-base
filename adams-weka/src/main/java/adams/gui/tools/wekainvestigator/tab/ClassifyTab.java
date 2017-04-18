@@ -818,8 +818,16 @@ public class ClassifyTab
 	  logError("Failed to evaluate classifier", e, "Classifier evaluation");
 	  item = null;
 	}
-	if (item != null)
-	  generateOutput(item);
+	if (item != null) {
+          generateOutput(item);
+          if (item.hasNestedItems()) {
+            for (String name: item.nestedItemNames()) {
+              ResultItem nested = (ResultItem) item.getNestedItem(name);
+              m_CurrentEvaluation.addToHistory(m_History, nested);
+              generateOutput(nested);
+            }
+          }
+        }
       }
     });
   }

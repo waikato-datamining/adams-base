@@ -24,7 +24,7 @@ import adams.core.DateUtils;
 import adams.core.Shortening;
 import adams.data.spreadsheet.MetaData;
 import adams.data.spreadsheet.SpreadSheet;
-import adams.gui.tools.wekainvestigator.output.AbstractResultItem;
+import adams.gui.tools.wekainvestigator.output.AbstractNestableResultItem;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
 import weka.core.Instances;
@@ -37,7 +37,7 @@ import weka.core.Instances;
  * @version $Revision$
  */
 public class ResultItem
-  extends AbstractResultItem {
+  extends AbstractNestableResultItem {
 
   private static final long serialVersionUID = -3409493446200539772L;
 
@@ -85,6 +85,9 @@ public class ResultItem
     result = DateUtils.getTimeFormatterMsecs().format(m_Timestamp)
       + " - "
       + m_Template.getClass().getSimpleName();
+
+    if (m_NameSuffix != null)
+      result += " - " + m_NameSuffix;
 
     if (hasHeader())
       result += " - " + m_Header.classAttribute().name() + " of " + Shortening.shortenEnd(m_Header.relationName(), MAX_RELATIONNAME_LENGTH);
