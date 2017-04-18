@@ -2244,6 +2244,47 @@ WantedBy=multi-user.target
   \label{example_linux_dir_layout_data_processing}
 \end{figure}
 
+\subsection{Starting a daemon}
+Below is a slightly more elaborate script for starting a daemon. It tells the
+\textit{FlowRunner} to launch a scripting engine that listens on port 12345.
+This allows you to remotely log in to a server, launch the ADAMS user interface
+using an X session and communicate with the daemon flow using the Remote control
+center.
+{\scriptsize
+\begin{verbatim}
+BASEDIR=`dirname $0`/..
+BASEDIR=`(cd "$BASEDIR"; pwd)`
+. "$BASEDIR"/bin/env.sh
+CLASSPATH="$RESOURCES":"$PRIORITY":"$REPO/*"
+"$JCMD" \
+  -classpath "$CLASSPATH" \
+  -Xmx1g \
+  adams.flow.FlowRunner \
+  -headless \
+  -input "$BASEDIR/flows/myflow.flow" \
+  -remote-scripting-engine-cmdline "adams.scripting.engine.DefaultScriptingEngine -port 12345" \
+  -non-interactive true \
+  -clean-up true \
+  &
+\end{verbatim}}
+
+\subsection{Stopping a daemon}
+For stopping a daemon flow properly instead of killing the process, you can
+send the \textit{Stop} command using the following script:
+{\scriptsize
+\begin{verbatim}
+BASEDIR=`dirname $0`/..
+BASEDIR=`(cd "$BASEDIR"; pwd)`
+. "$BASEDIR"/bin/env.sh
+CLASSPATH="$RESOURCES":"$PRIORITY":"$REPO/*"
+"$JCMD" \
+  -classpath "$CLASSPATH" \
+  adams.scripting.CommandRunner \
+  -start-local-engine false \
+  -connection "adams.scripting.connection.DefaultConnection -host 127.0.0.1 -port 12345" \
+  -command adams.scripting.command.basic.Stop
+\end{verbatim}}
+
 \section{Windows servers}
 ADAMS can be run as background process on Windows as well. Using the NSSM\cite{nssm}
 tool, you can install the following batch file called \textit{myflow.bat} (e.g., in
@@ -2285,6 +2326,44 @@ control panel.
   \caption{Example Windows directory layout for data processing.}
   \label{example_windows_dir_layout_data_processing}
 \end{figure}
+
+\subsection{Starting a service}
+Below is a slightly more elaborate batch file for starting a server. It tells the
+\textit{FlowRunner} to launch a scripting engine that listens on port 12345.
+This allows you to remotely log in to a server, launch the ADAMS user interface
+via RDP and communicate with the service flow using the Remote control center.
+{\scriptsize
+\begin{verbatim}
+@echo off
+set JCMD=java
+if not "%JAVA_HOME%"=="" set JCMD="%JAVA_HOME%\bin\java"
+if not "%JAVACMD%"=="" set JCMD=%JAVACMD%
+set REPO=%BASEDIR%\lib
+set RESOURCES=%BASEDIR%\resources
+set CLASSPATH="%RESOURCES%";"%REPO%\java-cup-11b-2015.03.26.jar";"%REPO%\*"
+%JCMD% -classpath %CLASSPATH% -Xmx1g adams.flow.FlowRunner headless^
+ -input "%BASEDIR%\flows\myflow.flow"^
+ -remote-scripting-engine-cmdline^ "adams.scripting.engine.DefaultScriptingEngine -port 12345"^
+ -non-interactive true -clean-up true
+\end{verbatim}}
+
+\subsection{Stopping a service}
+For stopping a daemon flow properly instead of killing the process, you can
+send the \textit{Stop} command using the following batch file (the last command
+is spread over three lines to fit on the page):
+{\scriptsize
+\begin{verbatim}
+@echo off
+set JCMD=java
+if not "%JAVA_HOME%"=="" set JCMD="%JAVA_HOME%\bin\java"
+if not "%JAVACMD%"=="" set JCMD=%JAVACMD%
+set REPO=%BASEDIR%\lib
+set RESOURCES=%BASEDIR%\resources
+set CLASSPATH="%RESOURCES%";"%REPO%\java-cup-11b-2015.03.26.jar";"%REPO%\*"
+%JCMD% -classpath %CLASSPATH% adams.scripting.CommandRunner -start-local-engine false^
+ -connection "adams.scripting.connection.DefaultConnection -host 127.0.0.1 -port 12345"^
+ -command adams.scripting.command.basic.Stop
+\end{verbatim}}
 
 
 \section{Executing commands}
