@@ -144,7 +144,7 @@ public abstract class AbstractCommandWithFlowStopping
       while (!flow.isStopped() && (System.currentTimeMillis() < end))
 	Utils.wait(this, 100, 100);
       if (!flow.isStopped())
-	getLogger().warning("Flow did not finish withing " + m_TimeOut + "msec: " + idStr);
+	getLogger().warning("Flow did not finish within " + m_TimeOut + "msec: " + idStr);
     }
   }
 }
