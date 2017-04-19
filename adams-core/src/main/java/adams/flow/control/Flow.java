@@ -239,6 +239,9 @@ public class Flow
   /** the flow ID. */
   protected int m_FlowID;
 
+  /** whether to register the flow. */
+  protected boolean m_Register;
+
   /**
    * Returns a string describing the object.
    *
@@ -934,8 +937,8 @@ public class Flow
     // properties
     if (result == null) {
       props = Environment.getInstance().read(FlowDefinition.KEY);
-      // auto-register?
-      if (props.getBoolean("AutoRegister", false))
+      // register?
+      if (m_Register || props.getBoolean("AutoRegister", false))
 	RunningFlowsRegistry.getSingleton().addFlow(this);
     }
 
@@ -1017,6 +1020,27 @@ public class Flow
    */
   public int getFlowID() {
     return m_FlowID;
+  }
+
+  /**
+   * Sets whether to register the flow with the running flows registry,
+   * making it visible to remote commands.
+   *
+   * @param value	true if to register
+   */
+  public void setRegister(boolean value) {
+    m_Register = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to register the flow with the running flows registry,
+   * making it visible to remote commands.
+   *
+   * @return		true if to register
+   */
+  public boolean getRegister() {
+    return m_Register;
   }
 
   /**
