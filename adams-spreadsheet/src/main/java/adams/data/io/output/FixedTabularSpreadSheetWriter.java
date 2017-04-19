@@ -613,7 +613,7 @@ public class FixedTabularSpreadSheetWriter
     try {
       // sufficient widths defined?
       if (m_ColumnWidth.length > 1) {
-	if (m_ColumnWidth.length != content.getColumnCount())
+	if (m_ColumnWidth.length < content.getColumnCount())
 	  throw new IllegalStateException(
 	    "Not enough column widths defined: " + m_ColumnWidth.length + " < " + content.getColumnCount());
       }
