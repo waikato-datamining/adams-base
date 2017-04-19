@@ -898,7 +898,9 @@ public class Flow
     // variables
     forceVariables(getVariables());
     getVariables().set(ActorUtils.FLOW_ID, "" + getFlowID());
-    
+    getVariables().set(ActorUtils.IS_HEADLESS, "" + isHeadless());
+    getVariables().set(ActorUtils.HAS_GUI, "" + !isHeadless());
+
     result = super.setUp();
 
     m_LogEntries.clear();

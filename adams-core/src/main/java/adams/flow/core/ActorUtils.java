@@ -96,6 +96,12 @@ public class ActorUtils {
   /** the variable for the flow ID. */
   public final static String FLOW_ID = "flow_id";
 
+  /** the variable for the headless flag. */
+  public final static String IS_HEADLESS = "is_headless";
+
+  /** the variable for the gui flag. */
+  public final static String HAS_GUI = "has_gui";
+
   /** functional type: primitive. */
   public final static String FUNCTIONAL_PRIMITIVE = "primitive";
 
