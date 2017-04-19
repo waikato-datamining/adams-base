@@ -84,6 +84,12 @@ import java.util.logging.Level;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
+ * <pre>-register &lt;boolean&gt; (property: register)
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow gets register with the 'running flows registry',
+ * &nbsp;&nbsp;&nbsp; making it visible to remote commands.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
  * <pre>-input &lt;adams.core.io.PlaceholderFile&gt; (property: input)
  * &nbsp;&nbsp;&nbsp;The file (or directory containing flows) to load the actor from.
  * &nbsp;&nbsp;&nbsp;default: ${CWD}
@@ -139,6 +145,9 @@ public class FlowRunner
 
   /** whether the use non-interactive execution. */
   protected boolean m_NonInteractive;
+
+  /** whether to register the flow. */
+  protected boolean m_Register;
 
   /** the directory to use as the project's home directory. */
   protected String m_Home;
@@ -200,6 +209,10 @@ public class FlowRunner
 
     m_OptionManager.add(
       "non-interactive", "nonInteractive",
+      false);
+
+    m_OptionManager.add(
+      "register", "register",
       false);
 
     m_OptionManager.add(
@@ -326,6 +339,37 @@ public class FlowRunner
    */
   public String nonInteractiveTipText() {
     return "If set to true, interactive actors suppress their interaction with the user.";
+  }
+
+  /**
+   * Sets whether to register the flow with the running flows registry,
+   * making it visible to remote commands.
+   *
+   * @param value	true if to register
+   */
+  public void setRegister(boolean value) {
+    m_Register = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to register the flow with the running flows registry,
+   * making it visible to remote commands.
+   *
+   * @return		true if to register
+   */
+  public boolean getRegister() {
+    return m_Register;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String registerTipText() {
+    return "If set to true, the flow gets register with the 'running flows registry', making it visible to remote commands.";
   }
 
   /**
@@ -700,10 +744,16 @@ public class FlowRunner
 
     try {
       // initialize actor
-      if (m_Actor instanceof Flow)
+      if (m_Actor instanceof Flow) {
+	// headless?
 	((Flow) m_Actor).setHeadless(isHeadless() || GUIHelper.isHeadless());
-      if (isLoggingEnabled() && m_Actor.isHeadless())
-	getLogger().info("Running in headless mode");
+	if (isLoggingEnabled() && m_Actor.isHeadless())
+	  getLogger().info("Running in headless mode");
+	// register?
+	((Flow) m_Actor).setRegister(m_Register);
+	if (isLoggingEnabled() && ((Flow) m_Actor).getRegister())
+	  getLogger().info("Flow added to running flow registry");
+      }
 
       result = m_Actor.setUp();
       if (isLoggingEnabled())
