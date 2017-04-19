@@ -38,6 +38,7 @@ import adams.data.io.input.FlowReader;
 import adams.data.io.output.DefaultFlowWriter;
 import adams.data.io.output.FlowWriter;
 import adams.env.Environment;
+import adams.flow.control.Flow;
 import adams.flow.control.Sequence;
 import adams.flow.control.SubProcess;
 import adams.flow.processor.AbstractActorProcessor;
@@ -1369,6 +1370,29 @@ public class ActorUtils {
     handler.getLocalVariables().set(FLOW_DIR,            flow.getParentFile().getAbsolutePath());
     handler.getLocalVariables().set(FLOW_FILENAME_LONG,  flow.getAbsolutePath());
     handler.getLocalVariables().set(FLOW_FILENAME_SHORT, flow.getName());
+
+    return true;
+  }
+
+  /**
+   * Adds some variables.
+   *
+   * @param handler	the handler to add the filenames to
+   * @param context	the flow context
+   * @return		true if successfully added
+   * @see		#FLOW_ID
+   * @see		#HAS_GUI
+   * @see		#IS_HEADLESS
+   */
+  public static boolean updateVariables(VariablesHandler handler, Actor context) {
+    if (context == null)
+      return false;
+    if (context.getRoot() == null)
+      return false;
+
+    handler.getLocalVariables().set(ActorUtils.FLOW_ID, (context.getRoot() instanceof Flow) ? "" + ((Flow) context.getRoot()).getFlowID() : "-1");
+    handler.getLocalVariables().set(ActorUtils.IS_HEADLESS, "" + context.getRoot().isHeadless());
+    handler.getLocalVariables().set(ActorUtils.HAS_GUI, "" + !context.getRoot().isHeadless());
 
     return true;
   }

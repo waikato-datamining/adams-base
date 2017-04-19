@@ -118,6 +118,7 @@ public class FlowWorker
       m_Output = m_Flow.setUp();
       if ((m_Output == null) && !m_Flow.isStopped()) {
 	if (m_Flow instanceof VariablesHandler) {
+	  ActorUtils.updateVariables((VariablesHandler) m_Flow, m_Flow);
 	  if (ActorUtils.updateVariablesWithFlowFilename((VariablesHandler) m_Flow, m_File)) {
 	    if (m_Owner.isModified())
 	      m_Flow.getLogger().warning("Flow '" + m_File + "' not saved, flow variables like '" + ActorUtils.FLOW_DIR + "' might not be accurate!");

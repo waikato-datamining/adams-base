@@ -229,6 +229,7 @@ public class RunRemoteFlow
       return;
 
     // run
+    ActorUtils.updateVariables(flow, flow);
     ActorUtils.updateVariablesWithFlowFilename(flow, m_FlowFile);
     new Thread(() -> {
       flow.execute();

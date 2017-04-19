@@ -712,6 +712,7 @@ public class FlowRunner
       // execute actor
       if (!m_NoExecute) {
 	if (result == null) {
+	  ActorUtils.updateVariables((VariablesHandler) m_Actor, m_Actor);
 	  if (m_Actor instanceof VariablesHandler)
 	    ActorUtils.updateVariablesWithFlowFilename((VariablesHandler) m_Actor, m_Input);
 	  result = m_Actor.execute();
