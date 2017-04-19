@@ -72,6 +72,22 @@ public class WekaInvestigatorPreferencesPanel
     addPropertyType("Preprocess.KeepName", PropertyType.BOOLEAN);
     addPropertyType("Preprocess.BatchFilter", PropertyType.BOOLEAN);
 
+    // associate
+    addPropertyType("Associate.Associator", PropertyType.OBJECT_EDITOR);
+    setChooser("Associate.Associator", new GenericObjectEditorPanel(
+      weka.associations.Associator.class, new weka.associations.Apriori(), true));
+    addPropertyType("Associate.Evaluation", PropertyType.OBJECT_EDITOR);
+    setChooser("Associate.Evaluation", new GenericObjectEditorPanel(
+      adams.gui.tools.wekainvestigator.tab.associatetab.evaluation.AbstractAssociatorEvaluation.class,
+      new adams.gui.tools.wekainvestigator.tab.associatetab.evaluation.Train(), true));
+    addPropertyType("Associate.LeftPanelWidth", PropertyType.INTEGER);
+    addPropertyType("Associate.OutputGenerators", PropertyType.ARRAY_EDITOR);
+    setChooser("Associate.OutputGenerators", new GenericArrayEditorPanel(
+      new adams.gui.tools.wekainvestigator.tab.associatetab.output.AbstractOutputGenerator[0]));
+    setArrayClass("Associate.OutputGenerators",
+      adams.gui.tools.wekainvestigator.tab.associatetab.output.AbstractOutputGenerator.class);
+    setArraySeparator("Associate.OutputGenerators", " ");
+
     // classify
     addPropertyType("Classify.Classifier", PropertyType.OBJECT_EDITOR);
     setChooser("Classify.Classifier", new GenericObjectEditorPanel(

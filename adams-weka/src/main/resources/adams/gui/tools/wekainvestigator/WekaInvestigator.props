@@ -64,6 +64,24 @@ Preprocess.BatchFilter=false
 # (integer)
 Data.MaxColWidth=100
 
+# the default associator
+# (superclass: weka.associations.Associator)
+Associate.Associator=weka.associations.Apriori
+
+# the default evaluation to use
+# (superclass: adams.gui.tools.wekainvestigator.tab.associatetab.evaluation.AbstractAssociatorEvaluation)
+Associate.Evaluation=adams.gui.tools.wekainvestigator.tab.associatetab.evaluation.Train
+
+# the width of the left-hand side of the associate panel
+# (integer)
+Associate.LeftPanelWidth=275
+
+# the default output generators to use
+# (blank-separated list of "classname + options")
+Associate.OutputGenerators=\
+  adams.gui.tools.wekainvestigator.tab.associatetab.output.ModelOutput \
+  adams.gui.tools.wekainvestigator.tab.associatetab.output.Rules
+
 # the default classifier
 # (superclass: weka.classifiers.Classifier)
 Classify.Classifier=weka.classifiers.rules.ZeroR

@@ -4,6 +4,7 @@
 
 # tab shortcuts
 # (format: Tab-<classname>=<shortcut>)
+Tab-adams.gui.tools.wekainvestigator.tab.AssociateTab=ctrl shift A
 Tab-adams.gui.tools.wekainvestigator.tab.AttributeSelectionTab=ctrl shift T
 Tab-adams.gui.tools.wekainvestigator.tab.BoxPlotTab=ctrl shift B
 Tab-adams.gui.tools.wekainvestigator.tab.ClassifyTab=ctrl shift C

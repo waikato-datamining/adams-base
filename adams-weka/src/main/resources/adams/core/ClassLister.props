@@ -75,6 +75,18 @@ adams.gui.tools.wekainvestigator.tab.AbstractInvestigatorTab=\
 adams.gui.tools.wekainvestigator.datatable.action.AbstractEditableDataTableAction=\
   adams.gui.tools.wekainvestigator.datatable.action
 
+# the associate evaluations
+adams.gui.tools.wekainvestigator.tab.associatetab.evaluation.AbstractAssociatorEvaluation=\
+  adams.gui.tools.wekainvestigator.tab.associatetab.evaluation
+
+# the menu items for the associate history popup menu
+adams.gui.tools.wekainvestigator.tab.associatetab.history.AbstractHistoryPopupMenuItem=\
+  adams.gui.tools.wekainvestigator.tab.associatetab.history
+
+# the output generators
+adams.gui.tools.wekainvestigator.tab.associatetab.output.AbstractOutputGenerator=\
+  adams.gui.tools.wekainvestigator.tab.associatetab.output
+
 # the attribute selection evaluations
 adams.gui.tools.wekainvestigator.tab.attseltab.evaluation.AbstractAttributeSelectionEvaluation=\
   adams.gui.tools.wekainvestigator.tab.attseltab.evaluation
