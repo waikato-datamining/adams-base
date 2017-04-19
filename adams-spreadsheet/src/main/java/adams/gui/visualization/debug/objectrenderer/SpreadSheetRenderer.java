@@ -15,14 +15,13 @@
 
 /**
  * SpreadSheetRenderer.java
- * Copyright (C) 2015-2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.debug.objectrenderer;
 
 import adams.data.spreadsheet.SpreadSheet;
-import adams.gui.core.BaseScrollPane;
-import adams.gui.core.SpreadSheetTable;
+import adams.gui.dialog.SpreadSheetPanel;
 import nz.ac.waikato.cms.locator.ClassLocator;
 
 import javax.swing.JPanel;
@@ -60,13 +59,13 @@ public class SpreadSheetRenderer
   @Override
   protected String doRender(Object obj, JPanel panel) {
     SpreadSheet		sheet;
-    SpreadSheetTable 	table;
-    BaseScrollPane	scrollPane;
+    SpreadSheetPanel 	sheetPanel;
 
     sheet      = (SpreadSheet) obj;
-    table      = new SpreadSheetTable(sheet);
-    scrollPane = new BaseScrollPane(table);
-    panel.add(scrollPane, BorderLayout.CENTER);
+    sheetPanel = new SpreadSheetPanel();
+    sheetPanel.setSpreadSheet(sheet);
+    sheetPanel.setShowSearch(true);
+    panel.add(sheetPanel, BorderLayout.CENTER);
 
     return null;
   }
