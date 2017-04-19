@@ -2225,7 +2225,7 @@ Type=simple
 User=adams
 Group=adams
 WorkingDirectory=/opt/adams
-ExecStart=/opt/jdk/bin/java -cp "./lib/*:./lib/linux64/*" adams.flow.FlowRunner -input "./flows/myflow.flow"
+ExecStart=/opt/jdk/bin/java -cp "./lib/*:./lib/linux64/*" adams.flow.FlowRunner -input "./flows/myflow.flow" -headless true -register true -non-interactive true
 # SuccessExitStatus=143
 
 [Install]
@@ -2263,10 +2263,11 @@ CLASSPATH="$RESOURCES":"$PRIORITY":"$REPO/*"
   -classpath "$CLASSPATH" \
   -Xmx1g \
   adams.flow.FlowRunner \
-  -headless \
   -input "$BASEDIR/flows/myflow.flow" \
   -remote-scripting-engine-cmdline "adams.scripting.engine.DefaultScriptingEngine -port 12345" \
+  -headless true \
   -non-interactive true \
+  -register true \
   -clean-up true \
   &
 \end{verbatim}}
@@ -2297,7 +2298,11 @@ directory \textit{C:\textbackslash adams\_services}) which executes the flow
 {\scriptsize \begin{verbatim}
 REM starts myflow
 cd C:\\adams
-javaw -cp ".\\lib\\*;.\\lib\\windows64\\*" adams.flow.FlowRunner -input ".\\flows\\myflow.flow"
+javaw -cp ".\\lib\\*;.\\lib\\windows64\\*" adams.flow.FlowRunner^
+ -input ".\\flows\\myflow.flow"^
+ -headless true^
+ -register true^
+ -non-interactive true
 \end{verbatim}}
 
 \noindent Use the following steps to install the batch file as service:
@@ -2344,10 +2349,13 @@ if not "%JAVACMD%"=="" set JCMD=%JAVACMD%
 set REPO=%BASEDIR%\lib
 set RESOURCES=%BASEDIR%\resources
 set CLASSPATH="%RESOURCES%";"%REPO%\java-cup-11b-2015.03.26.jar";"%REPO%\*"
-%JCMD% -classpath %CLASSPATH% -Xmx1g adams.flow.FlowRunner headless^
+%JCMD% -classpath %CLASSPATH% -Xmx1g adams.flow.FlowRunner^
  -input "%BASEDIR%\flows\myflow.flow"^
  -remote-scripting-engine-cmdline^ "adams.scripting.engine.DefaultScriptingEngine -port 12345"^
- -non-interactive true -clean-up true
+ -headless true^
+ -non-interactive true^
+ -register true^
+ -clean-up true
 \end{verbatim}}
 
 \subsection{Stopping a service}
