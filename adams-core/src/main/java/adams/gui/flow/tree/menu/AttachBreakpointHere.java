@@ -74,6 +74,6 @@ public class AttachBreakpointHere
 
     restriction = DebugScopeRestrictionHelper.getDebugScopeRestriction(m_State.selNode);
 
-    ((Flow) m_State.runningFlow).addBreakpoint(breakpoint, restriction);
+    ((Flow) m_State.runningFlow).addBreakpoint(breakpoint, restriction, true);
   }
 }

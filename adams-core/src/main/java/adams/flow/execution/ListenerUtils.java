@@ -21,6 +21,7 @@ package adams.flow.execution;
 
 import adams.flow.control.Flow;
 import adams.gui.core.BaseFrame;
+import adams.gui.core.BasePanel;
 import adams.gui.core.GUIHelper;
 import adams.gui.flow.FlowTreeHandler;
 import adams.gui.flow.tree.Tree;
@@ -141,11 +142,15 @@ public class ListenerUtils {
     GraphicalFlowExecutionListener	graphical;
     Flow				flow;
     GraphicsConfiguration 		gc;
+    BasePanel 				panel;
 
     result = null;
     
     if (supporter.getFlowExecutionListener() instanceof GraphicalFlowExecutionListener) {
       graphical = (GraphicalFlowExecutionListener) supporter.getFlowExecutionListener();
+      panel     = graphical.newListenerPanel();
+      if (panel == null)
+	return null;
 
       gc = null;
       if (supporter instanceof Flow) {

@@ -31,8 +31,8 @@ import adams.flow.core.ControlActor;
 import adams.flow.core.Unknown;
 import adams.flow.execution.debug.AbstractScopeRestriction;
 import adams.flow.execution.debug.NoScopeRestriction;
-import adams.flow.execution.debug.View;
 import adams.flow.execution.debug.PathBreakpoint;
+import adams.flow.execution.debug.View;
 import adams.flow.transformer.AbstractTransformer;
 import adams.gui.tools.ExpressionWatchPanel.ExpressionType;
 
@@ -618,7 +618,7 @@ public class Breakpoint
         breakpoint.setWatchTypes(m_WatchTypes.clone());
 	breakpoint.setPath(new ActorPath(getFullName()));
 
-	flow.addBreakpoint(breakpoint, m_ScopeRestriction);
+	flow.addBreakpoint(breakpoint, m_ScopeRestriction, false);
       }
       else {
 	result = "Root actor is not a flow, failed to set breakpoint!";

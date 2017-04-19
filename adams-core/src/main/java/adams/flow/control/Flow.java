@@ -622,8 +622,9 @@ public class Flow
    *
    * @param breakpoint		the breakpoint to add
    * @param restriction		the scope restriction to use
+   * @param showFrame		whether to show the debug frame
    */
-  public void addBreakpoint(AbstractBreakpoint breakpoint, AbstractScopeRestriction restriction) {
+  public void addBreakpoint(AbstractBreakpoint breakpoint, AbstractScopeRestriction restriction, boolean showFrame) {
     Debug				debug;
     MultiListener 			multiListen;
     MultiScopeRestriction		multiScope;
@@ -701,7 +702,7 @@ public class Flow
       setFlowExecutionListener(multiListen);
     }
 
-    if (!isHeadless() && (m_FlowExecutionListenerFrame == null))
+    if (!isHeadless() && (m_FlowExecutionListenerFrame == null) && showFrame)
       m_FlowExecutionListenerFrame = ListenerUtils.createFrame(this);
   }
 

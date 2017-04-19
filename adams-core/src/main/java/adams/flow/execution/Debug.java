@@ -517,6 +517,9 @@ public class Debug
     String				title;
     int					index;
 
+    if (m_Owner == null)
+      return null;
+
     m_ControlPanel = new ControlPanel();
     m_ControlPanel.setOwner(this);
     for (i = 0; i < m_Watches.length; i++)

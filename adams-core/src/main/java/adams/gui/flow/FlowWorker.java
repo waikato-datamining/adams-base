@@ -111,7 +111,7 @@ public class FlowWorker
 	  if (((Flow) m_Flow).firstActive() != null) {
 	    breakpoint = new AnyActorBreakpoint();
 	    breakpoint.setOnPreExecute(true);
-	    ((Flow) m_Flow).addBreakpoint(breakpoint, new NoScopeRestriction());
+	    ((Flow) m_Flow).addBreakpoint(breakpoint, new NoScopeRestriction(), true);
 	  }
 	}
       }
@@ -148,6 +148,8 @@ public class FlowWorker
       }
     }
     catch (Throwable e) {
+      if (m_Flow instanceof Flow)
+        ((Flow) m_Flow).setParentComponent(null);
       e.printStackTrace();
       m_Output = Utils.throwableToString(e);
     }
@@ -171,6 +173,8 @@ public class FlowWorker
 
     showStatus("Finishing up");
     m_Flow.wrapUp();
+    if (m_Flow instanceof Flow)
+      ((Flow) m_Flow).setParentComponent(null);
     if (m_Owner.getRunGC())
       System.gc();
 
