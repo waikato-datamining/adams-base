@@ -72,6 +72,8 @@ public class ByNameErrorPaintlet
   public void defineOptions() {
     super.defineOptions();
 
+    m_OptionManager.removeByProperty("strokeThickness");
+
     m_OptionManager.add(
       "regexp", "regExp",
       new BaseRegExp(BaseRegExp.MATCH_ALL));

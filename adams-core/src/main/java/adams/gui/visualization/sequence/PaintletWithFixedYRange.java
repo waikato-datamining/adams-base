@@ -70,6 +70,8 @@ public class PaintletWithFixedYRange
   public void defineOptions() {
     super.defineOptions();
 
+    m_OptionManager.removeByProperty("strokeThickness");
+
     m_OptionManager.add(
 	    "min-y", "minY",
 	    0.0, null, null);
