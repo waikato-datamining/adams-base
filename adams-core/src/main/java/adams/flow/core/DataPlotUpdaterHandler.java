@@ -15,7 +15,7 @@
 
 /**
  * DataPlotUpdaterHandler.java
- * Copyright (C) 2015 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.core;
@@ -23,7 +23,7 @@ package adams.flow.core;
 import adams.core.option.OptionHandler;
 
 /**
- * TODO: What class does.
+ * Interface for plots that support updating.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
