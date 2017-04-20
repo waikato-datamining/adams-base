@@ -15,15 +15,14 @@
 
 /**
  * AbstractAddBreakpointAction.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
 package adams.gui.flow.tree.menu;
 
 import adams.flow.control.Breakpoint;
 import adams.flow.core.Actor;
-import adams.gui.flow.tree.BreakpointSuggestion;
+import adams.flow.execution.debug.DebugScopeRestrictionHelper;
 import adams.gui.flow.tree.TreeOperations.InsertPosition;
-import adams.parser.ActorSuggestion.SuggestionData;
 
 import javax.swing.tree.TreePath;
 
@@ -47,16 +46,10 @@ public abstract class AbstractAddBreakpointAction
    * @return		the actors
    */
   protected Actor suggestBreakpoint(TreePath path, InsertPosition position) {
-    Actor		result;
-    SuggestionData 	context;
-    Actor[]		suggestions;
+    Breakpoint 		result;
 
-    context     = m_State.tree.getOperations().configureSuggestionContext(path, position);
-    suggestions = BreakpointSuggestion.getSingleton().suggest(context);
-    if (suggestions.length > 0)
-      result = suggestions[0];
-    else
-      result = new Breakpoint();
+    result = new Breakpoint();
+    result.setScopeRestriction(DebugScopeRestrictionHelper.getDebugScopeRestriction(m_State.selNode));
 
     return result;
   }

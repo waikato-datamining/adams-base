@@ -20,6 +20,8 @@
 
 package adams.flow.execution.debug;
 
+import adams.gui.flow.tree.Node;
+
 /**
  * Interface for actors that limit the scope for debugging.
  *
@@ -34,4 +36,12 @@ public interface DebugScopeRestrictionHandler {
    * @return		the scope restriction
    */
   public AbstractScopeRestriction getDebugScopeRestriction();
+
+  /**
+   * Returns the scope restriction in place.
+   *
+   * @param context	the actor's node
+   * @return		the scope restriction
+   */
+  public AbstractScopeRestriction getDebugScopeRestriction(Node context);
 }

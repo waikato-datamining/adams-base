@@ -68,7 +68,7 @@ public class DebugScopeRestrictionHelper {
 
     while (node != null) {
       if (node.getActor() instanceof DebugScopeRestrictionHandler) {
-	result = ((DebugScopeRestrictionHandler) node.getActor()).getDebugScopeRestriction();
+	result = ((DebugScopeRestrictionHandler) node.getActor()).getDebugScopeRestriction(node);
 	break;
       }
       node = (Node) node.getParent();
