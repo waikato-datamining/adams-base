@@ -23,7 +23,6 @@ import adams.core.base.BaseRegExp;
 import adams.flow.core.Actor;
 import adams.gui.visualization.core.FlowAwarePaintlet;
 import adams.gui.visualization.core.PaintablePanel;
-import adams.gui.visualization.sequence.PaintletWithCustomDataSupport;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -188,12 +187,6 @@ public class ByNameErrorPaintlet
 
     m_Paintlet = value;
     m_Paintlet.setPanel(getPanel(), false);
-
-    if (!(m_Paintlet instanceof PaintletWithCustomDataSupport)) {
-      getLogger().warning(
-	"Base paintlet " + m_Paintlet.getClass().getName() + " does not implement "
-	  + PaintletWithCustomDataSupport.class.getName() + ", cannot perform plotting of subset!");
-    }
 
     if (m_Paintlet instanceof FlowAwarePaintlet)
       ((FlowAwarePaintlet) m_Paintlet).setActor(m_Actor);
