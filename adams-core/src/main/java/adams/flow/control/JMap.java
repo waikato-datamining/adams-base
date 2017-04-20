@@ -15,12 +15,10 @@
 
 /*
  * JMap.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
-
-import java.io.File;
 
 import adams.core.io.PlaceholderFile;
 import adams.core.management.ProcessUtils;
@@ -148,43 +146,13 @@ public class JMap
   }
 
   /**
-   * Returns the filename of the jmap executable.
-   *
-   * @return		the executable
-   */
-  protected String getJMapExecutable() {
-    String	result;
-    String	os;
-
-    os = System.getProperty("os.name").toLowerCase();
-    if (os.indexOf("windows") > -1)
-      result = "jmap.exe";
-    else
-      result = "jmap";
-
-    return result;
-  }
-
-  /**
    * Returns the full path of the JMap executable, if possible.
    *
    * @return		the full path of the executable if possible, otherwise
    * 			just the executable
    */
   protected String getJMapExecutablePath() {
-    String	result;
-    File	jvmPath;
-
-    jvmPath = new File(System.getProperty("java.home"));
-    if (jvmPath.getAbsolutePath().endsWith(File.separator + "jre"))
-      jvmPath = jvmPath.getParentFile();
-    jvmPath = new File(jvmPath.getAbsolutePath() + File.separator + "bin");
-    if (jvmPath.exists())
-      result = jvmPath.getAbsolutePath() + File.separator + getJMapExecutable();
-    else
-      result = getJMapExecutable();
-
-    return result;
+    return adams.core.management.JMap.getExecutablePath();
   }
 
   /**
