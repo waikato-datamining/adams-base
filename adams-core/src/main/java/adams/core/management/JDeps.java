@@ -84,4 +84,15 @@ public class JDeps
     options = "-cp " + Java.getClassPath(false) + " " + options;
     return execute(getExecutablePath(), options);
   }
+
+  /**
+   * Executes the executable and returns the output.
+   *
+   * @param executable	the jvisualvm executable to use
+   * @param options	additional options for jvisualvm
+   * @return		the output
+   */
+  public static String execute(String executable, String options) {
+    return Java.execute(executable, options);
+  }
 }
