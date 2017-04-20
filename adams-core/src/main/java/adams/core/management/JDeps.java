@@ -81,6 +81,7 @@ public class JDeps
    * @return		the output
    */
   public static String execute(String options) {
+    options = "-cp " + Java.getClassPath(false) + " " + options;
     return execute(getExecutablePath(), options);
   }
 }
