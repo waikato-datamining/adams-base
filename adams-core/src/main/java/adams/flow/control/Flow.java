@@ -76,79 +76,79 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- * 
+ *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: Flow
  * </pre>
- * 
+ *
  * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- * 
+ *
  * <pre>-skip &lt;boolean&gt; (property: skip)
  * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
  * &nbsp;&nbsp;&nbsp;as it is.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
  * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
  * &nbsp;&nbsp;&nbsp; useful for critical actors.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-silent &lt;boolean&gt; (property: silent)
  * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
  * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-finish-before-stopping &lt;boolean&gt; (property: finishBeforeStopping)
  * &nbsp;&nbsp;&nbsp;If enabled, actor first finishes processing all data before stopping.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-actor &lt;adams.flow.core.Actor&gt; [-actor ...] (property: actors)
  * &nbsp;&nbsp;&nbsp;All the actors that define this flow.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- * 
+ *
  * <pre>-error-handling &lt;ACTORS_ALWAYS_STOP_ON_ERROR|ACTORS_DECIDE_TO_STOP_ON_ERROR&gt; (property: errorHandling)
  * &nbsp;&nbsp;&nbsp;Defines how errors are handled that occur during execution of the flow; 
  * &nbsp;&nbsp;&nbsp;ACTORS_DECIDE_TO_STOP_ON_ERROR stops the flow only if the actor has the '
  * &nbsp;&nbsp;&nbsp;stopFlowOnError' flag set.
  * &nbsp;&nbsp;&nbsp;default: ACTORS_ALWAYS_STOP_ON_ERROR
  * </pre>
- * 
+ *
  * <pre>-log-errors &lt;boolean&gt; (property: logErrors)
  * &nbsp;&nbsp;&nbsp;If set to true, errors are logged and can be retrieved after execution.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-execute-on-error &lt;adams.core.io.FlowFile&gt; (property: executeOnError)
  * &nbsp;&nbsp;&nbsp;The external flow to execute in case the flow finishes with an error; allows 
  * &nbsp;&nbsp;&nbsp;the user to call a clean-up flow.
  * &nbsp;&nbsp;&nbsp;default: ${CWD}
  * </pre>
- * 
+ *
  * <pre>-execute-on-finish &lt;adams.core.io.FlowFile&gt; (property: executeOnFinish)
  * &nbsp;&nbsp;&nbsp;The external flow to execute in case the flow finishes normal, without any 
  * &nbsp;&nbsp;&nbsp;errors.
  * &nbsp;&nbsp;&nbsp;default: ${CWD}
  * </pre>
- * 
+ *
  * <pre>-flow-execution-listening-enabled &lt;boolean&gt; (property: flowExecutionListeningEnabled)
  * &nbsp;&nbsp;&nbsp;Enables&#47;disables the flow execution listener.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-flow-execution-listener &lt;adams.flow.execution.FlowExecutionListener&gt; (property: flowExecutionListener)
  * &nbsp;&nbsp;&nbsp;The listener for the flow execution; must be enabled explicitly.
  * &nbsp;&nbsp;&nbsp;default: adams.flow.execution.NullListener
  * </pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -157,8 +157,8 @@ import java.util.List;
 public class Flow
   extends MutableConnectedControlActor
   implements MutableLogEntryHandler, StorageHandler,
-             VariablesHandler, TriggerableEvent, PauseStateHandler,
-             FlowExecutionListeningSupporter, ScopeHandler {
+  VariablesHandler, TriggerableEvent, PauseStateHandler,
+  FlowExecutionListeningSupporter, ScopeHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = 723059748204261319L;
@@ -208,25 +208,25 @@ public class Flow
 
   /** the actor that was executed after the flow finished. */
   protected Actor m_AfterExecuteActor;
-  
+
   /** for managing the pause state. */
   protected PauseStateManager m_PauseStateManager;
 
   /** whether flow execution listening is enabled. */
   protected boolean m_FlowExecutionListeningEnabled;
-  
+
   /** the execution listener to use. */
   protected FlowExecutionListener m_FlowExecutionListener;
-  
+
   /** the frame for graphical flow execution listeners. */
   protected transient BaseFrame m_FlowExecutionListenerFrame;
-  
+
   /** the callable names. */
   protected CallableNamesRecorder m_CallableNames;
-  
+
   /** whether the callable name check is enforced. */
   protected boolean m_EnforceCallableNameCheck;
-  
+
   /** the parent component to use for interactive actors. */
   protected transient Component m_ParentComponent;
 
@@ -260,28 +260,28 @@ public class Flow
     super.defineOptions();
 
     m_OptionManager.add(
-	"error-handling", "errorHandling",
-	ErrorHandling.ACTORS_ALWAYS_STOP_ON_ERROR);
+      "error-handling", "errorHandling",
+      ErrorHandling.ACTORS_ALWAYS_STOP_ON_ERROR);
 
     m_OptionManager.add(
-	"log-errors", "logErrors",
-	false);
+      "log-errors", "logErrors",
+      false);
 
     m_OptionManager.add(
-	"execute-on-error", "executeOnError",
-	new FlowFile("."));
+      "execute-on-error", "executeOnError",
+      new FlowFile("."));
 
     m_OptionManager.add(
-	"execute-on-finish", "executeOnFinish",
-	new FlowFile("."));
-    
+      "execute-on-finish", "executeOnFinish",
+      new FlowFile("."));
+
     m_OptionManager.add(
-	"flow-execution-listening-enabled", "flowExecutionListeningEnabled",
-	false);
-    
+      "flow-execution-listening-enabled", "flowExecutionListeningEnabled",
+      false);
+
     m_OptionManager.add(
-	"flow-execution-listener", "flowExecutionListener",
-	new NullListener());
+      "flow-execution-listener", "flowExecutionListener",
+      new NullListener());
   }
 
   /**
@@ -337,14 +337,14 @@ public class Flow
 	result += ", ";
       result += "on finish: " + value;
     }
-    
+
     if (m_FlowExecutionListeningEnabled || QuickInfoHelper.hasVariable(this, "executionListener")) {
       value = QuickInfoHelper.toString(this, "executionListener", m_FlowExecutionListener, "listener: ");
       if (result.length() > 0)
 	result += ", ";
       result += value;
     }
-    
+
     if (super.getQuickInfo() != null)
       result += ", " + super.getQuickInfo();
 
@@ -389,9 +389,9 @@ public class Flow
    */
   public String errorHandlingTipText() {
     return
-        "Defines how errors are handled that occur during execution of the "
-      + "flow; " + ErrorHandling.ACTORS_DECIDE_TO_STOP_ON_ERROR + " stops the "
-      + "flow only if the actor has the 'stopFlowOnError' flag set.";
+      "Defines how errors are handled that occur during execution of the "
+	+ "flow; " + ErrorHandling.ACTORS_DECIDE_TO_STOP_ON_ERROR + " stops the "
+	+ "flow only if the actor has the 'stopFlowOnError' flag set.";
   }
 
   /**
@@ -450,8 +450,8 @@ public class Flow
    */
   public String executeOnErrorTipText() {
     return
-        "The external flow to execute in case the flow finishes with an "
-      + "error; allows the user to call a clean-up flow.";
+      "The external flow to execute in case the flow finishes with an "
+	+ "error; allows the user to call a clean-up flow.";
   }
 
   /**
@@ -483,23 +483,23 @@ public class Flow
    */
   public String executeOnFinishTipText() {
     return
-        "The external flow to execute in case the flow finishes normal, without "
-      + "any errors.";
+      "The external flow to execute in case the flow finishes normal, without "
+	+ "any errors.";
   }
-  
+
   /**
    * Sets whether flow execution listening is enabled.
-   * 
+   *
    * @param value	true if to enable listening
    */
   public void setFlowExecutionListeningEnabled(boolean value) {
     m_FlowExecutionListeningEnabled = value;
     reset();
   }
-  
+
   /**
    * Returns whether flow execution listening is enabled.
-   * 
+   *
    * @return		true if listening is enabled
    */
   public boolean isFlowExecutionListeningEnabled() {
@@ -515,20 +515,20 @@ public class Flow
   public String flowExecutionListeningEnabledTipText() {
     return "Enables/disables the flow execution listener.";
   }
-  
+
   /**
    * Sets the listener to use.
-   * 
+   *
    * @param l		the listener to use
    */
   public void setFlowExecutionListener(FlowExecutionListener l) {
     m_FlowExecutionListener = l;
     reset();
   }
-  
+
   /**
    * Returns the current listener in use.
-   * 
+   *
    * @return		the listener
    */
   public FlowExecutionListener getFlowExecutionListener() {
@@ -544,19 +544,19 @@ public class Flow
   public String flowExecutionListenerTipText() {
     return "The listener for the flow execution; must be enabled explicitly.";
   }
-  
+
   /**
    * Returns whether listeners can be attached at runtime.
-   * 
+   *
    * @return		true if listeners can be attached dynamically
    */
   public boolean canStartListeningAtRuntime() {
     return true;
   }
-  
+
   /**
    * Attaches the listener and starts listening.
-   * 
+   *
    * @param l		the listener to attach and use immediately, 
    * 			{@link NullListener} disables the listening
    * @return		true if listening could be started successfully
@@ -565,9 +565,9 @@ public class Flow
     boolean			result;
     MultiListener		multi;
     List<FlowExecutionListener>	listeners;
-    
+
     result = true;
-    
+
     // disable listening?
     if (l instanceof NullListener) {
       if (m_FlowExecutionListeningEnabled) {
@@ -580,11 +580,11 @@ public class Flow
       m_FlowExecutionListener.setOwner(this);
       return result;
     }
-    
+
     // enable listening
     if (!m_FlowExecutionListeningEnabled)
       m_FlowExecutionListeningEnabled = true;
-    
+
     if (m_FlowExecutionListener instanceof NullListener) {
       m_FlowExecutionListener.finishListening();
       m_FlowExecutionListener = l;
@@ -599,7 +599,7 @@ public class Flow
       else {
 	multi     = new MultiListener();
 	listeners = new ArrayList<>();
-        multi.setOwner(this);
+	multi.setOwner(this);
 	multi.startListening();
       }
       listeners.add(l);
@@ -613,7 +613,7 @@ public class Flow
       m_FlowExecutionListenerFrame.dispose();
     if (!isHeadless())
       m_FlowExecutionListenerFrame = ListenerUtils.createFrame(this);
-    
+
     return result;
   }
 
@@ -631,6 +631,7 @@ public class Flow
     FlowExecutionListener		listener;
     List<FlowExecutionListener>		listeners;
     List<AbstractBreakpoint> 		breakpoints;
+    boolean				present;
 
     if (isHeadless() || GUIHelper.isHeadless())
       return;
@@ -647,18 +648,27 @@ public class Flow
       setFlowExecutionListener(debug);
     }
     else if (listener instanceof Debug) {
-      debug = (Debug) listener;
-      breakpoints = new ArrayList<>(Arrays.asList(debug.getBreakpoints()));
-      breakpoints.add(breakpoint);
-      debug.setBreakpoints(breakpoints.toArray(new AbstractBreakpoint[breakpoints.size()]));
-      multiScope = new MultiScopeRestriction();
-      multiScope.setCombination(ScopeCombination.OR);
-      multiScope.setRestrictions(new AbstractScopeRestriction[]{
-	debug.getScopeRestriction(),
-	restriction
-      });
-      debug.setScopeRestriction(multiScope);
-      debug.refreshGUI();
+      debug   = (Debug) listener;
+      present = false;
+      for (AbstractBreakpoint bp: debug.getBreakpoints()) {
+	if (bp.toCommandLine().equals(breakpoint.toCommandLine())) {
+	  present = true;
+	  break;
+	}
+      }
+      if (!present) {
+	breakpoints = new ArrayList<>(Arrays.asList(debug.getBreakpoints()));
+	breakpoints.add(breakpoint);
+	debug.setBreakpoints(breakpoints.toArray(new AbstractBreakpoint[breakpoints.size()]));
+	multiScope = new MultiScopeRestriction();
+	multiScope.setCombination(ScopeCombination.OR);
+	multiScope.setRestrictions(new AbstractScopeRestriction[]{
+	  debug.getScopeRestriction(),
+	  restriction
+	});
+	debug.setScopeRestriction(multiScope);
+	debug.refreshGUI();
+      }
     }
     else if (listener instanceof MultiListener) {
       multiListen = (MultiListener) listener;
@@ -679,17 +689,27 @@ public class Flow
 	multiListen.setSubListeners(listeners.toArray(new FlowExecutionListener[listeners.size()]));
       }
       else {
-	breakpoints = new ArrayList<>(Arrays.asList(debug.getBreakpoints()));
-	breakpoints.add(breakpoint);
-	debug.setBreakpoints(breakpoints.toArray(new AbstractBreakpoint[breakpoints.size()]));
-	multiScope = new MultiScopeRestriction();
-	multiScope.setCombination(ScopeCombination.OR);
-	multiScope.setRestrictions(new AbstractScopeRestriction[]{
-	  debug.getScopeRestriction(),
-	  restriction
-	});
-	debug.setScopeRestriction(multiScope);
-	debug.refreshGUI();
+	// breakpoint already present?
+	present = false;
+	for (AbstractBreakpoint bp: debug.getBreakpoints()) {
+	  if (bp.toCommandLine().equals(breakpoint.toCommandLine())) {
+	    present = true;
+	    break;
+	  }
+	}
+	if (!present) {
+	  breakpoints = new ArrayList<>(Arrays.asList(debug.getBreakpoints()));
+	  breakpoints.add(breakpoint);
+	  debug.setBreakpoints(breakpoints.toArray(new AbstractBreakpoint[breakpoints.size()]));
+	  multiScope = new MultiScopeRestriction();
+	  multiScope.setCombination(ScopeCombination.OR);
+	  multiScope.setRestrictions(new AbstractScopeRestriction[]{
+	    debug.getScopeRestriction(),
+	    restriction
+	  });
+	  debug.setScopeRestriction(multiScope);
+	  debug.refreshGUI();
+	}
       }
     }
     else {
@@ -708,16 +728,16 @@ public class Flow
 
   /**
    * Sets the use for interactive actors.
-   * 
+   *
    * @param value	the parent, can be null
    */
   public void setParentComponent(Component value) {
     m_ParentComponent = value;
   }
-  
+
   /**
    * Returns the current parent component for interactive actors.
-   * 
+   *
    * @return		the parent, null if not set
    */
   @Override
@@ -829,7 +849,7 @@ public class Flow
 
   /**
    * Returns the pause state manager.
-   * 
+   *
    * @return		the manager
    */
   public PauseStateManager getPauseStateManager() {
@@ -866,14 +886,14 @@ public class Flow
   @Override
   protected String setUpSubActors() {
     String	result;
-    
+
     result = super.setUpSubActors();
     if (result == null)
       result = ActorUtils.checkForSource(getActors());
-    
+
     return result;
   }
-  
+
   /**
    * Updates the Variables instance in use.
    * <br><br>
@@ -931,7 +951,7 @@ public class Flow
 	  result = m_ExecuteOnFinishActor.setUp();
       }
     }
-    
+
     if (result != null)
       getLogger().severe(result);
 
@@ -1046,16 +1066,16 @@ public class Flow
 
   /**
    * Sets whether to enforce the callable name check.
-   * 
+   *
    * @param value	true if to enforce check
    */
   public void setEnforceCallableNameCheck(boolean value) {
     m_EnforceCallableNameCheck = value;
   }
-  
+
   /**
    * Returns whether the check of callable names is enforced.
-   * 
+   *
    * @return		true if check enforced
    */
   public boolean getEnforceCallableNameCheck() {
@@ -1064,7 +1084,7 @@ public class Flow
 
   /**
    * Checks whether a callable name is already in use.
-   * 
+   *
    * @param actor	the actor name to check
    * @see		#getEnforceCallableNameCheck()
    */
@@ -1077,7 +1097,7 @@ public class Flow
 
   /**
    * Adds the callable name to the list of used ones.
-   * 
+   *
    * @param actor	the actor name to add
    * @return		null if successfully added, otherwise error message
    * @see		#getEnforceCallableNameCheck()
@@ -1085,10 +1105,10 @@ public class Flow
   public String addCallableName(Actor actor) {
     if (!getEnforceCallableNameCheck())
       return null;
-    
+
     if (isCallableNameUsed(actor))
       return "Callable name '" + actor.getName() + "' is already used in this scope ('" + getFullName() + "')!";
-    
+
     m_CallableNames.add(actor);
     return null;
   }
@@ -1115,7 +1135,7 @@ public class Flow
 	  m_FlowExecutionListenerFrame = ListenerUtils.createFrame(this);
       }
     }
-    
+
     if (m_Headless) {
       start = new Date();
       ConsoleHelper.printlnOut("");
@@ -1162,12 +1182,12 @@ public class Flow
   @Override
   public String execute() {
     String	result;
-    
+
     result = super.execute();
-    
+
     if (result != null)
       getLogger().severe(result);
-    
+
     return result;
   }
 
@@ -1213,7 +1233,7 @@ public class Flow
       m_FlowExecutionListenerFrame.dispose();
       m_FlowExecutionListenerFrame = null;
     }
-    
+
     m_Variables.cleanUp();
 
     super.cleanUp();
