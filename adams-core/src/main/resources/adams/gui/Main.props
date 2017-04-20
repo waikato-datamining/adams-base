@@ -72,6 +72,7 @@ Menu-Help=\
   adams.gui.menu.MemoryMonitor,\
   adams.gui.menu.TakeScreenshot,\
   -,\
+  adams.gui.menu.JDeps,\
   adams.gui.menu.JMap,\
   adams.gui.menu.JConsole,\
   adams.gui.menu.JVisualVM,\
