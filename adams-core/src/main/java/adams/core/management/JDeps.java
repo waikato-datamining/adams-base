@@ -76,23 +76,25 @@ public class JDeps
 
   /**
    * Executes jdeps and returns the output.
+   * Automatically adds classpath to commandline.
    *
    * @param options	additional options for jdeps
    * @return		the output
    */
   public static String execute(String options) {
-    options = "-cp " + Java.getClassPath(false) + " " + options;
     return execute(getExecutablePath(), options);
   }
 
   /**
    * Executes the executable and returns the output.
+   * Automatically adds classpath to commandline.
    *
-   * @param executable	the jvisualvm executable to use
+   * @param executable	the jdeps executable to use
    * @param options	additional options for jvisualvm
    * @return		the output
    */
   public static String execute(String executable, String options) {
+    options = "-cp " + Java.getClassPath(false) + " " + options;
     return Java.execute(executable, options);
   }
 }
