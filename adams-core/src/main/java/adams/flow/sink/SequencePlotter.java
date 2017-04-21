@@ -1356,7 +1356,8 @@ public class SequencePlotter
    */
   @Override
   public void updatePlot() {
-    m_PlotUpdater.update((SequencePlotterPanel) getPanel());
+    if (getPanel() != null)
+      m_PlotUpdater.update((SequencePlotterPanel) getPanel());
   }
 
   /**
