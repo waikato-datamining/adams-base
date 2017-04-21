@@ -741,7 +741,8 @@ public class TimeseriesDisplay
    */
   @Override
   public void updatePlot() {
-    m_PlotUpdater.update(((TimeseriesExplorer) getPanel()).getTimeseriesPanel());
+    if (getPanel() != null)
+      m_PlotUpdater.update(((TimeseriesExplorer) getPanel()).getTimeseriesPanel());
   }
 
   /**
