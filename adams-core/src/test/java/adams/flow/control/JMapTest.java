@@ -15,19 +15,19 @@
 
 /*
  * JMapTest.java
- * Copyright (C) 2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import adams.core.base.BaseString;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.core.AbstractActor;
 import adams.flow.sink.Display;
 import adams.flow.source.StringConstants;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Tests the JMap actor.
@@ -45,30 +45,6 @@ public class JMapTest
    */
   public JMapTest(String name) {
     super(name);
-  }
-
-  /**
-   * Called by JUnit before each test method.
-   *
-   * @throws Exception if an error occurs
-   */
-  protected void setUp() throws Exception {
-    super.setUp();
-
-    m_TestHelper.deleteFileFromTmp("dumpfile.txt");
-    m_TestHelper.deleteFileFromTmp("dumpfile-tee.txt");
-  }
-
-  /**
-   * Called by JUnit after each test method.
-   *
-   * @throws Exception	if tear-down fails
-   */
-  protected void tearDown() throws Exception {
-    m_TestHelper.deleteFileFromTmp("dumpfile.txt");
-    m_TestHelper.deleteFileFromTmp("dumpfile-tee.txt");
-
-    super.tearDown();
   }
 
   /**
