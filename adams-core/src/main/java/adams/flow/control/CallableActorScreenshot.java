@@ -15,7 +15,7 @@
 
 /**
  * CallableActorScreenshot.java
- * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.control;
 
@@ -28,7 +28,7 @@ import adams.flow.core.Actor;
 import adams.flow.core.CallableActorHelper;
 import adams.flow.core.CallableActorReference;
 import adams.flow.core.ControlActor;
-import adams.flow.core.DataPlotUpdaterHandler;
+import adams.flow.core.DataPlotUpdaterSupporter;
 import adams.flow.core.InputConsumer;
 import adams.flow.core.OutputProducer;
 import adams.flow.core.Token;
@@ -465,8 +465,8 @@ public class CallableActorScreenshot
 	public void run() {
 	  synchronized(m_CallableActor) {
             // force update
-            if (m_CallableActor instanceof DataPlotUpdaterHandler)
-              ((DataPlotUpdaterHandler) m_CallableActor).updatePlot();
+            if (m_CallableActor instanceof DataPlotUpdaterSupporter)
+              ((DataPlotUpdaterSupporter) m_CallableActor).updatePlot();
 	    JComponent comp = ((ComponentSupplier) m_CallableActor).supplyComponent();
 	    if ((comp != null) && (comp.getWidth() > 0) && (comp.getHeight() > 0)) {
 	      getLogger().info("Saving to: " + filename);

@@ -25,7 +25,7 @@ import adams.flow.core.Actor;
 import adams.flow.core.CallableActorHelper;
 import adams.flow.core.CallableActorReference;
 import adams.flow.core.ControlActor;
-import adams.flow.core.DataPlotUpdaterHandler;
+import adams.flow.core.DataPlotUpdaterSupporter;
 import adams.flow.core.InputConsumer;
 import adams.flow.core.OutputProducer;
 import adams.flow.core.Token;
@@ -127,7 +127,7 @@ public class UpdateCallableDisplay
    */
   @Override
   public String globalInfo() {
-    return "Updates callable display actors that implement " +  DataPlotUpdaterHandler.class.getName() + ".";
+    return "Updates callable display actors that implement " +  DataPlotUpdaterSupporter.class.getName() + ".";
   }
 
   /**
@@ -261,8 +261,8 @@ public class UpdateCallableDisplay
         result = "Couldn't find callable actor '" + getCallableName() + "'!";
       }
       else {
-	if (!(m_CallableActor instanceof DataPlotUpdaterHandler)) {
-	  result = "Callable actor '" + getCallableName() + "' is not a " + DataPlotUpdaterHandler.class.getName() + "!";
+	if (!(m_CallableActor instanceof DataPlotUpdaterSupporter)) {
+	  result = "Callable actor '" + getCallableName() + "' is not a " + DataPlotUpdaterSupporter.class.getName() + "!";
 	}
 	else {
 	  variables = findVariables(m_CallableActor);
@@ -327,8 +327,8 @@ public class UpdateCallableDisplay
 	public void run() {
 	  synchronized(m_CallableActor) {
             // force update
-            if (m_CallableActor instanceof DataPlotUpdaterHandler)
-              ((DataPlotUpdaterHandler) m_CallableActor).updatePlot();
+            if (m_CallableActor instanceof DataPlotUpdaterSupporter)
+              ((DataPlotUpdaterSupporter) m_CallableActor).updatePlot();
 	    synchronized(m_Self) {
 	      try {
 		m_Self.notifyAll();

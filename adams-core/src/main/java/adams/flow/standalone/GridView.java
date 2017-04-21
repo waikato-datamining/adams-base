@@ -21,6 +21,7 @@ package adams.flow.standalone;
 
 import adams.core.QuickInfoHelper;
 import adams.flow.core.Actor;
+import adams.flow.core.DataPlotUpdaterSupporter;
 import adams.flow.sink.CallableSink;
 import adams.flow.sink.ComponentSupplier;
 import adams.gui.core.AdjustableGridPanel;
@@ -157,7 +158,7 @@ import java.util.List;
  */
 public class GridView
   extends AbstractMultiView 
-  implements ComponentSupplier {
+  implements ComponentSupplier, DataPlotUpdaterSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = -4454052058077687116L;
@@ -404,6 +405,18 @@ public class GridView
   @Override
   public String actorsTipText() {
     return "The panel-generating actors to display in the grid.";
+  }
+
+  /**
+   * Updates the data container panel regardless, notifying the listeners.
+   */
+  public void updatePlot() {
+    int		i;
+
+    for (i = 0; i < m_Panels.size(); i++) {
+      if (m_Panels.get(i) instanceof DataPlotUpdaterSupporter)
+	((DataPlotUpdaterSupporter) m_Panels.get(i)).updatePlot();
+    }
   }
 
   /**

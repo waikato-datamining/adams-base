@@ -31,6 +31,7 @@ import adams.flow.core.ActorHandler;
 import adams.flow.core.ActorHandlerInfo;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.CallableActorHandler;
+import adams.flow.core.DataPlotUpdaterSupporter;
 import adams.flow.core.Flushable;
 import adams.flow.core.InputConsumer;
 import adams.flow.sink.ComponentSupplier;
@@ -77,7 +78,7 @@ public abstract class AbstractMultiView
    */
   public static class ViewWrapper
     extends AbstractDisplay
-    implements InputConsumer, ComponentSupplier, TextSupplier, Flushable {
+    implements InputConsumer, ComponentSupplier, TextSupplier, Flushable, DataPlotUpdaterSupporter {
 
     /** for serialization. */
     private static final long serialVersionUID = -1571827759359015717L;
@@ -318,6 +319,15 @@ public abstract class AbstractMultiView
     @Override
     protected Runnable newDisplayRunnable() {
       return null;
+    }
+
+    /**
+     * Updates the data container panel regardless, notifying the listeners.
+     */
+    @Override
+    public void updatePlot() {
+      if (getParent() instanceof DataPlotUpdaterSupporter)
+        ((DataPlotUpdaterSupporter) getParent()).updatePlot();
     }
   }
 

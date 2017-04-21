@@ -35,7 +35,7 @@ import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.container.SequencePlotterContainer;
 import adams.flow.container.SequencePlotterContainer.ContentType;
 import adams.flow.core.ActorUtils;
-import adams.flow.core.DataPlotUpdaterHandler;
+import adams.flow.core.DataPlotUpdaterSupporter;
 import adams.flow.core.Token;
 import adams.flow.sink.sequenceplotter.AbstractPlotUpdater;
 import adams.flow.sink.sequenceplotter.MouseClickAction;
@@ -220,7 +220,7 @@ import java.util.HashMap;
 public class SimplePlot
   extends AbstractGraphicalDisplay
   implements DisplayPanelProvider, FileWriter, ClassCrossReference,
-             TextSupplier, DataPlotUpdaterHandler<AbstractPlotUpdater> {
+             TextSupplier, DataPlotUpdaterSupporter<AbstractPlotUpdater> {
 
   /** for serialization. */
   private static final long serialVersionUID = 3238389451500168650L;
@@ -963,38 +963,6 @@ public class SimplePlot
       writePlotContainer(plotName, type, x, y, dX, dY, errorX, errorY);
 
     m_PlotUpdater.update((SequencePlotterPanel) getPanel(), plotCont);
-  }
-
-  /**
-   * Sets the plot updater to use.
-   *
-   * @param value 	the updater
-   */
-  @Override
-  public void setPlotUpdater(AbstractPlotUpdater value) {
-    m_PlotUpdater = value;
-    reset();
-  }
-
-  /**
-   * Returns the plot updater in use.
-   *
-   * @return 		the updater
-   */
-  @Override
-  public AbstractPlotUpdater getPlotUpdater() {
-    return m_PlotUpdater;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  @Override
-  public String plotUpdaterTipText() {
-    return "The plot updater in use";
   }
 
   /**

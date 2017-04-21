@@ -14,8 +14,8 @@
  */
 
 /**
- * DataPlotUpdaterHandler.java
- * Copyright (C) 2015-2017 University of Waikato, Hamilton, NZ
+ * DataPlotUpdaterSupporter.java
+ * Copyright (C) 2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.core;
@@ -26,30 +26,7 @@ package adams.flow.core;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public interface DataPlotUpdaterHandler<T extends AbstractDataPlotUpdater>
-  extends DataPlotUpdaterSupporter<T> {
-
-  /**
-   * Sets the plot updater to use.
-   *
-   * @param value 	the updater
-   */
-  public void setPlotUpdater(T value);
-
-  /**
-   * Returns the plot updater in use.
-   *
-   * @return 		the updater
-   */
-  public T getPlotUpdater();
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String plotUpdaterTipText();
+public interface DataPlotUpdaterSupporter<T extends AbstractDataPlotUpdater> {
 
   /**
    * Updates the data container panel regardless, notifying the listeners.

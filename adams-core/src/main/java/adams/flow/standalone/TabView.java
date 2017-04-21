@@ -22,6 +22,7 @@ package adams.flow.standalone;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetSupporter;
 import adams.flow.core.Actor;
+import adams.flow.core.DataPlotUpdaterSupporter;
 import adams.flow.sink.CallableSink;
 import adams.flow.sink.ComponentSupplier;
 import adams.flow.sink.TextSupplier;
@@ -114,7 +115,7 @@ import java.awt.BorderLayout;
  */
 public class TabView
   extends AbstractMultiView
-  implements ComponentSupplier, TextSupplier, SpreadSheetSupporter {
+  implements ComponentSupplier, TextSupplier, SpreadSheetSupporter, DataPlotUpdaterSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = -4454052058077687116L;
@@ -297,5 +298,18 @@ public class TabView
     }
 
     return null;
+  }
+
+  /**
+   * Updates the data container panel regardless, notifying the listeners.
+   */
+  @Override
+  public void updatePlot() {
+    int		i;
+
+    for (i = 0; i < m_Actors.size(); i++) {
+      if (m_Actors.get(i) instanceof DataPlotUpdaterSupporter)
+	((DataPlotUpdaterSupporter) m_Actors.get(i)).updatePlot();
+    }
   }
 }
