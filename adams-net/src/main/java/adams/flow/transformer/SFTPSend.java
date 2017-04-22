@@ -32,6 +32,7 @@ import adams.core.io.PlaceholderFile;
 import adams.core.io.fileoperations.RemoteDirection;
 import adams.core.io.fileoperations.SftpFileOperations;
 import adams.flow.core.ActorUtils;
+import adams.flow.core.Token;
 import adams.flow.standalone.SSHConnection;
 
 import java.io.File;
@@ -255,6 +256,10 @@ public class SFTPSend
     ops.setProvider(m_Connection);
     ops.setDirection(RemoteDirection.LOCAL_TO_REMOTE);
     result     = ops.copy(file.getAbsolutePath(), remotefile);
+    if (result == null)
+      m_OutputToken = new Token(filename);
+    else
+      m_OutputToken = null;
 
     return result;
   }

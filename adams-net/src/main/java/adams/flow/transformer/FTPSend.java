@@ -25,6 +25,7 @@ import adams.core.io.PlaceholderFile;
 import adams.core.io.fileoperations.FtpFileOperations;
 import adams.core.io.fileoperations.RemoteDirection;
 import adams.flow.core.ActorUtils;
+import adams.flow.core.Token;
 import adams.flow.standalone.FTPConnection;
 import org.apache.commons.net.ftp.FTPClient;
 
@@ -221,6 +222,10 @@ public class FTPSend
     ops.setDirection(RemoteDirection.LOCAL_TO_REMOTE);
     ops.setClient(client);
     result     = ops.copy(file.getAbsolutePath(), remotefile);
+    if (result == null)
+      m_OutputToken = new Token(filename);
+    else
+      m_OutputToken = null;
 
     return result;
   }
