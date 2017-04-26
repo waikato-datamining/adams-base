@@ -361,12 +361,12 @@ public class ActorUtils {
 
     // create unique name
     baseName = actor.getName();
-    i        = 0;
+    i        = 1;
     do {
-      if (i == 0)
+      if (i == 1)
 	name = baseName;
       else
-	name = baseName + "-" + i;
+	name = baseName + " (" + i + ")";
       i++;
     }
     while (names.contains(name));
