@@ -29,7 +29,7 @@ adams.flow.control.Flow
 			-branch
 				adams.flow.control.Sequence
 					-name
-					Sequence-1
+					Sequence (2)
 					-actor
 						adams.flow.transformer.Convert
 							-conversion
