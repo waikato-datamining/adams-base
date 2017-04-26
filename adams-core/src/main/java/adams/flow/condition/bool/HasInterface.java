@@ -15,7 +15,7 @@
 
 /**
  * HasInterface.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.condition.bool;
 
@@ -95,9 +95,9 @@ public class HasInterface
   }
   
   /**
-   * Sets the directory to look for.
+   * Sets the interface to check.
    *
-   * @param value	the directory
+   * @param value	the classname
    */
   public void setInterface(String value) {
     m_Interface = value;
@@ -105,9 +105,9 @@ public class HasInterface
   }
 
   /**
-   * Returns the directory to look for.
+   * Returns the interface to check.
    *
-   * @return		the directory
+   * @return		the classname
    */
   public String getInterface() {
     return m_Interface;

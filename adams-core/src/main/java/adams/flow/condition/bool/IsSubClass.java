@@ -15,7 +15,7 @@
 
 /**
  * IsSubClass.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.condition.bool;
 
@@ -95,9 +95,9 @@ public class IsSubClass
   }
   
   /**
-   * Sets the directory to look for.
+   * Sets the superclass to check.
    *
-   * @param value	the directory
+   * @param value	the classname
    */
   public void setSuperClass(String value) {
     m_SuperClass = value;
@@ -105,9 +105,9 @@ public class IsSubClass
   }
 
   /**
-   * Returns the directory to look for.
+   * Returns the superclass to check.
    *
-   * @return		the directory
+   * @return		the classname
    */
   public String getSuperClass() {
     return m_SuperClass;
