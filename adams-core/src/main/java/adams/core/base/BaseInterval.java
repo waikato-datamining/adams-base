@@ -42,6 +42,12 @@ public class BaseInterval
   /** the placeholder for all. */
   public final static String ALL = "(-Infinity;+Infinity)";
 
+  /** the number of decimals value for just using Double.toString method. */
+  public final static int DOUBLE_TOSTRING = -1;
+
+  /** the default number of decimals to use. */
+  public final static int DEFAULT_NUM_DECIMALS = 6;
+
   /** the lower bound of the interval. */
   protected double m_Lower;
 
@@ -54,11 +60,24 @@ public class BaseInterval
   /** whether the upper is inclusive. */
   protected boolean m_UpperInclusive;
 
+  /** the number of decimals to display (-1 for Double.toString). */
+  protected int m_NumDecimals;
+
   /**
    * Initializes the string with empty string.
    */
   public BaseInterval() {
+    this(DEFAULT_NUM_DECIMALS);
+  }
+
+  /**
+   * Initializes the string with empty string.
+   *
+   * @param numDecimals		the number of decimals to use for printing the ranges; -1 for Double.toString
+   */
+  public BaseInterval(int numDecimals) {
     super("");
+    m_NumDecimals = numDecimals;
   }
 
   /**
@@ -67,7 +86,18 @@ public class BaseInterval
    * @param s		the interval to parse
    */
   public BaseInterval(String s) {
+    this(s, DEFAULT_NUM_DECIMALS);
+  }
+
+  /**
+   * Initializes the object with the specified interval.
+   *
+   * @param s			the interval to parse
+   * @param numDecimals		the number of decimals to use for printing the ranges; -1 for Double.toString
+   */
+  public BaseInterval(String s, int numDecimals) {
     super(s);
+    m_NumDecimals = numDecimals;
   }
 
   /**
@@ -77,7 +107,18 @@ public class BaseInterval
    * @param upper		the upper bound
    */
   public BaseInterval(double lower, double upper) {
-    this(lower, true, upper, true);
+    this(lower, upper, DEFAULT_NUM_DECIMALS);
+  }
+
+  /**
+   * Initializes the object with the specified (inclusive) bounds.
+   *
+   * @param lower		the lower bound
+   * @param upper		the upper bound
+   * @param numDecimals		the number of decimals to use for printing the ranges; -1 for Double.toString
+   */
+  public BaseInterval(double lower, double upper, int numDecimals) {
+    this(lower, true, upper, true, numDecimals);
   }
 
   /**
@@ -89,12 +130,26 @@ public class BaseInterval
    * @param upperInclusive	whether the upper bound is inclusive
    */
   public BaseInterval(double lower, boolean lowerInclusive, double upper, boolean upperInclusive) {
+    this(lower, lowerInclusive, upper, upperInclusive, DEFAULT_NUM_DECIMALS);
+  }
+
+  /**
+   * Initializes the object with the specified bounds.
+   *
+   * @param lower		the lower bound
+   * @param lowerInclusive 	whether the lower bound is inclusive
+   * @param upper		the upper bound
+   * @param upperInclusive	whether the upper bound is inclusive
+   * @param numDecimals		the number of decimals to use for printing the ranges; -1 for Double.toString
+   */
+  public BaseInterval(double lower, boolean lowerInclusive, double upper, boolean upperInclusive, int numDecimals) {
     super(
       (Double.isInfinite(lower) ? "(" : lowerInclusive ? "[" : "(")
 	+ lower
 	+ ";"
 	+ upper
 	+ (Double.isInfinite(upper) ? ")" : upperInclusive ? "]" : ")"));
+    m_NumDecimals = numDecimals;
   }
 
   /**
@@ -108,6 +163,26 @@ public class BaseInterval
     m_LowerInclusive = false;
     m_Upper          = Double.POSITIVE_INFINITY;
     m_UpperInclusive = false;
+    m_NumDecimals    = DEFAULT_NUM_DECIMALS;
+  }
+
+  /**
+   * Sets the number of decimals to use in the ranges.
+   *
+   * @param value	the number of decimals; -1 for Double.toString
+   */
+  public void setNumDecimals(int value) {
+    if (value >= DOUBLE_TOSTRING)
+      m_NumDecimals = value;
+  }
+
+  /**
+   * Returns the number of decimals to use in the ranges.
+   *
+   * @return		the number of decimals; -1 for Double.toString
+   */
+  public int getNumDecimals() {
+    return m_NumDecimals;
   }
 
   /**
@@ -216,9 +291,9 @@ public class BaseInterval
 
       result =
 	(m_LowerInclusive ? "[" : "(")
-	  + m_Lower
+	  + ((m_NumDecimals == DOUBLE_TOSTRING) ? ("" + m_Lower) : Utils.doubleToString(m_Lower, m_NumDecimals))
 	  + ";"
-	  + m_Upper
+	  + ((m_NumDecimals == DOUBLE_TOSTRING) ? ("" + m_Upper) : Utils.doubleToString(m_Upper, m_NumDecimals))
 	  + (m_UpperInclusive ? "]" : ")");
     }
 
