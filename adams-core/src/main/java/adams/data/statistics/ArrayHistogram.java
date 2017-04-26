@@ -702,7 +702,8 @@ public class ArrayHistogram<T extends Number>
 	    n,
             new BaseInterval(
               min + binWidth * n, true,
-              min + binWidth * (n + 1), (n == numBins - 1)).getValue());
+              min + binWidth * (n + 1), (n == numBins - 1),
+              m_NumDecimals).getValue());
       else
 	result.setHeader(
 	    n, 
