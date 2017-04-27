@@ -244,9 +244,6 @@ public class MathExpression
   /** for serialization. */
   private static final long serialVersionUID = -8477454145267616359L;
 
-  /** the placeholder for the input value. */
-  public final static String PLACEHOLDER_INPUT = "X";
-
   /** the mathematical expression to evaluate. */
   protected MathematicalExpressionText m_Expression;
 
@@ -268,7 +265,7 @@ public class MathExpression
   public String globalInfo() {
     return
         "Evaluates a mathematical expression.\n"
-      + "The input value (double or integer) can be accessed via '" + PLACEHOLDER_INPUT + "'.\n"
+      + "The input value (double or integer) can be accessed via '" + MathematicalExpression.PLACEHOLDER_OBJECT + "'.\n"
       + "Variables are supported as well, e.g.: pow(X,@{exp}) with '@{exp}' "
       + "being a variable available at execution time.\n\n"
       + "The following grammar is used for the expressions:\n\n"
@@ -293,7 +290,7 @@ public class MathExpression
 
     m_OptionManager.add(
       "expression", "expression",
-      new MathematicalExpressionText(PLACEHOLDER_INPUT));
+      new MathematicalExpressionText(MathematicalExpression.PLACEHOLDER_OBJECT));
 
     m_OptionManager.add(
       "output-value-pair", "outputValuePair",
@@ -351,7 +348,7 @@ public class MathExpression
   public String expressionTipText() {
     return
         "The mathematical expression to evaluate; the input value can be "
-      + "accessed via '" + PLACEHOLDER_INPUT + "'.";
+      + "accessed via '" + MathematicalExpression.PLACEHOLDER_OBJECT + "'.";
   }
 
   /**
