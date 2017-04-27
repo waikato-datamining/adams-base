@@ -373,6 +373,7 @@
             <argument>${project.basedir}/src/main/resources/adams/parser/booleanexpression</argument>
             <argument>${project.basedir}/src/main/resources/adams/parser/mathematicalexpression</argument>
             <argument>${project.basedir}/src/main/resources/adams/parser/spreadsheetformula</argument>
+            <argument>${project.basedir}/src/main/resources/adams/parser/stringexpression</argument>
             <argument>${project.basedir}/src/main/resources/adams/parser/templatesuggestion</argument>
           </arguments>
         </configuration>

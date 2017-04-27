@@ -1,0 +1,8 @@
+# Project: adams
+# Date: 2017-04-27 16:10:09
+# User: fracpete
+# Charset: UTF-8
+adams.flow.control.Flow -annotation "Uses the a \\\"string expression\\\" to process the incoming string." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.source.StringConstants -string "Hello World!"
+ adams.flow.transformer.StringExpression -expression "trim(left(upper(X), 5))"
+ adams.flow.sink.Display -writer adams.data.io.output.NullWriter

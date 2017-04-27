@@ -331,6 +331,11 @@ adams.parser.SpreadSheetFormulaText=true
 adams.parser.SpreadSheetFormulaText#toString=adams.gui.goe.AbstractSimpleScriptEditor#toString
 adams.parser.SpreadSheetFormulaText#valueOf=adams.gui.goe.AbstractSimpleScriptEditor#valueOf
 
+# StringExpressionText objects
+adams.parser.StringExpressionText=true
+adams.parser.StringExpressionText#toString=adams.gui.goe.AbstractSimpleScriptEditor#toString
+adams.parser.StringExpressionText#valueOf=adams.gui.goe.AbstractSimpleScriptEditor#valueOf
+
 # StorageName objects
 adams.flow.control.StorageName=true
 adams.flow.control.StorageName#toString=adams.gui.goe.BaseObjectEditor#toString

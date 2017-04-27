@@ -81,4 +81,5 @@ adams.db.SQLStatement=adams.gui.goe.AbstractSimpleScriptEditor
 adams.parser.BooleanExpressionText=adams.gui.goe.AbstractSimpleScriptEditor
 adams.parser.MathematicalExpressionText=adams.gui.goe.AbstractSimpleScriptEditor
 adams.parser.SpreadSheetFormulaText=adams.gui.goe.AbstractSimpleScriptEditor
+adams.parser.StringExpressionText=adams.gui.goe.AbstractSimpleScriptEditor
 adams.flow.control.StorageName=adams.gui.goe.BaseObjectEditor
