@@ -77,7 +77,7 @@ public class BaseInterval
    */
   public BaseInterval(int numDecimals) {
     super("");
-    m_NumDecimals = numDecimals;
+    setNumDecimals(numDecimals);
   }
 
   /**
@@ -97,7 +97,7 @@ public class BaseInterval
    */
   public BaseInterval(String s, int numDecimals) {
     super(s);
-    m_NumDecimals = numDecimals;
+    setNumDecimals(numDecimals);
   }
 
   /**
@@ -149,7 +149,7 @@ public class BaseInterval
 	+ ";"
 	+ upper
 	+ (Double.isInfinite(upper) ? ")" : upperInclusive ? "]" : ")"));
-    m_NumDecimals = numDecimals;
+    setNumDecimals(numDecimals);
   }
 
   /**
@@ -172,8 +172,10 @@ public class BaseInterval
    * @param value	the number of decimals; -1 for Double.toString
    */
   public void setNumDecimals(int value) {
-    if (value >= DOUBLE_TOSTRING)
+    if (value >= DOUBLE_TOSTRING) {
       m_NumDecimals = value;
+      setValue(getValue());
+    }
   }
 
   /**
