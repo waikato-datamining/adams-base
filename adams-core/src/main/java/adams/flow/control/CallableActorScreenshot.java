@@ -19,10 +19,12 @@
  */
 package adams.flow.control;
 
+import adams.core.DateUtils;
 import adams.core.QuickInfoHelper;
 import adams.core.io.AbstractFilenameGenerator;
 import adams.core.io.DefaultFilenameGenerator;
 import adams.core.io.PlaceholderFile;
+import adams.data.image.BufferedImageContainer;
 import adams.flow.core.AbstractActor;
 import adams.flow.core.Actor;
 import adams.flow.core.CallableActorHelper;
@@ -39,12 +41,17 @@ import adams.gui.print.NullWriter;
 
 import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.image.BufferedImage;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Hashtable;
 
 /**
  <!-- globalinfo-start -->
- * Takes a screenshot of a callable actor whenever a token passes through.
+ * Takes a screenshot of a callable actor whenever a token passes through.<br>
+ * The screenshot can either be written to disk (and the input token is forwarded), or the screenshot is forwarded as adams.data.image.BufferedImageContainer (dropping the input token).
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -68,7 +75,7 @@ import java.util.Hashtable;
  * &nbsp;&nbsp;&nbsp;default: CallableActorScreenshot
  * </pre>
  * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
@@ -80,14 +87,26 @@ import java.util.Hashtable;
  * </pre>
  * 
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this 
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical 
+ * &nbsp;&nbsp;&nbsp;actors.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
  * <pre>-callable &lt;adams.flow.core.CallableActorReference&gt; (property: callableName)
  * &nbsp;&nbsp;&nbsp;The name of the callable actor to use.
  * &nbsp;&nbsp;&nbsp;default: unknown
+ * </pre>
+ * 
+ * <pre>-output-type &lt;FILE|BUFFEREDIMAGE_CONTAINER&gt; (property: outputType)
+ * &nbsp;&nbsp;&nbsp;The type of output to generate.
+ * &nbsp;&nbsp;&nbsp;default: FILE
  * </pre>
  * 
  * <pre>-filename-generator &lt;adams.core.io.AbstractFilenameGenerator&gt; (property: filenameGenerator)
@@ -112,6 +131,14 @@ public class CallableActorScreenshot
   /** for serialization. */
   private static final long serialVersionUID = -7346814880631564292L;
 
+  /**
+   * Determines how to output the screenshot.
+   */
+  public enum OutputType {
+    FILE,
+    BUFFEREDIMAGE_CONTAINER,
+  }
+
   /** the key for storing the current counter in the backup. */
   public final static String BACKUP_COUNTER = "counter";
 
@@ -126,6 +153,9 @@ public class CallableActorScreenshot
 
   /** the output token. */
   protected Token m_OutputToken;
+
+  /** the output type. */
+  protected OutputType m_OutputType;
 
   /** the writer to use. */
   protected JComponentWriter m_Writer;
@@ -152,7 +182,10 @@ public class CallableActorScreenshot
    */
   @Override
   public String globalInfo() {
-    return "Takes a screenshot of a callable actor whenever a token passes through.";
+    return
+      "Takes a screenshot of a callable actor whenever a token passes through.\n"
+	+ "The screenshot can either be written to disk (and the input token is forwarded), "
+	+ "or the screenshot is forwarded as " + BufferedImageContainer.class.getName() + " (dropping the input token).";
   }
 
   /**
@@ -165,6 +198,10 @@ public class CallableActorScreenshot
     m_OptionManager.add(
 	    "callable", "callableName",
 	    new CallableActorReference("unknown"));
+
+    m_OptionManager.add(
+	    "output-type", "outputType",
+	    OutputType.FILE);
 
     m_OptionManager.add(
 	    "filename-generator", "filenameGenerator",
@@ -256,6 +293,7 @@ public class CallableActorScreenshot
     String	result;
     
     result  = QuickInfoHelper.toString(this, "callableName", m_CallableName, "callable: ");
+    result += QuickInfoHelper.toString(this, "outputType", m_OutputType, ", output: ");
     result += QuickInfoHelper.toString(this, "filenameGenerator", m_FilenameGenerator, ", generator: ");
     
     return result;
@@ -288,6 +326,35 @@ public class CallableActorScreenshot
    */
   public String callableNameTipText() {
     return "The name of the callable actor to use.";
+  }
+
+  /**
+   * Sets how to output the screenshot.
+   *
+   * @param value 	the type
+   */
+  public void setOutputType(OutputType value) {
+    m_OutputType = value;
+    reset();
+  }
+
+  /**
+   * Returns how to output the screenshot.
+   *
+   * @return 		the type
+   */
+  public OutputType getOutputType() {
+    return m_OutputType;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String outputTypeTipText() {
+    return "The type of output to generate.";
   }
 
   /**
@@ -461,32 +528,55 @@ public class CallableActorScreenshot
     filename           = generateFilename();
 
     if (!isHeadless()) {
-      run = new Runnable() {
-	public void run() {
-	  synchronized(m_CallableActor) {
-            // force update
-            if (m_CallableActor instanceof DataPlotUpdaterSupporter)
-              ((DataPlotUpdaterSupporter) m_CallableActor).updatePlot();
-	    JComponent comp = ((ComponentSupplier) m_CallableActor).supplyComponent();
-	    if ((comp != null) && (comp.getWidth() > 0) && (comp.getHeight() > 0)) {
-	      getLogger().info("Saving to: " + filename);
-	      m_Writer.setComponent(((ComponentSupplier) m_CallableActor).supplyComponent());
-	      m_Writer.setFile(filename);
-	      try {
-		m_Writer.toOutput();
-	      }
-	      catch (Exception e) {
-		m_ScreenshotResult = handleException("Failed to generate screenshot ('" + filename + "'): ", e);
-	      }
-	      m_Writer.setComponent(null);
+      run = () -> {
+	synchronized(m_CallableActor) {
+	  // force update
+	  if (m_CallableActor instanceof DataPlotUpdaterSupporter)
+	    ((DataPlotUpdaterSupporter) m_CallableActor).updatePlot();
+	  JComponent comp = ((ComponentSupplier) m_CallableActor).supplyComponent();
+	  if ((comp != null) && (comp.getWidth() > 0) && (comp.getHeight() > 0)) {
+	    switch (m_OutputType) {
+	      case FILE:
+		getLogger().info("Saving to: " + filename);
+		m_Writer.setComponent(comp);
+		m_Writer.setFile(filename);
+		try {
+		  m_Writer.toOutput();
+		}
+		catch (Exception e) {
+		  m_ScreenshotResult = handleException("Failed to generate screenshot ('" + filename + "'): ", e);
+		}
+		m_Writer.setComponent(null);
+		break;
+
+	      case BUFFEREDIMAGE_CONTAINER:
+		// take screenshot
+		BufferedImage img = new BufferedImage(comp.getWidth(), comp.getHeight(), BufferedImage.TYPE_INT_RGB);
+		Graphics g = img.getGraphics();
+		g.setPaintMode();
+		g.setColor(Color.WHITE);
+		g.fillRect(0, 0, comp.getWidth(), comp.getHeight());
+		comp.printAll(g);
+		// create token
+		BufferedImageContainer cont = new BufferedImageContainer();
+		cont.setContent(img);
+		cont.getReport().setStringValue("Callable actor", m_CallableName.toString());
+		cont.getReport().setStringValue("Timestamp", DateUtils.getTimeFormatterMsecs().format(new Date()));
+		cont.getReport().setNumericValue("Width", comp.getWidth());
+		cont.getReport().setNumericValue("Height", comp.getHeight());
+		m_OutputToken = new Token(cont);
+		break;
+
+	      default:
+		getLogger().severe("Unhandled output type: " + m_OutputType);
 	    }
-	    synchronized(m_Self) {
-	      try {
-		m_Self.notifyAll();
-	      }
-	      catch (Exception e) {
-		handleException("Failed to notify all", e);
-	      }
+	  }
+	  synchronized(m_Self) {
+	    try {
+	      m_Self.notifyAll();
+	    }
+	    catch (Exception e) {
+	      handleException("Failed to notify all", e);
 	    }
 	  }
 	}
@@ -505,7 +595,8 @@ public class CallableActorScreenshot
 
     result             = m_ScreenshotResult;
     m_ScreenshotResult = null;
-    m_OutputToken      = m_InputToken;
+    if (m_OutputType == OutputType.FILE)
+      m_OutputToken = m_InputToken;
 
     return result;
   }
