@@ -15,7 +15,7 @@
 
 /*
  * MathExpression.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -518,7 +518,6 @@ public class MathExpression
     Double	x;
     Double	y;
     String	exp;
-    Report	report;
 
     result = null;
 
@@ -532,31 +531,11 @@ public class MathExpression
 	getLogger().info("--> expanded: " + exp);
       
       // get input
-      x      = null;
-      report = null;
-      if (m_InputToken.getPayload() instanceof Integer)
-	x = ((Integer) m_InputToken.getPayload()).doubleValue();
-      else if (m_InputToken.getPayload() instanceof Long)
-	x = ((Long) m_InputToken.getPayload()).doubleValue();
-      else if (m_InputToken.getPayload() instanceof Double)
-	x = (Double) m_InputToken.getPayload();
-      else if (m_InputToken.getPayload() instanceof Report)
-	report = (Report) m_InputToken.getPayload();
-      else if (m_InputToken.getPayload() instanceof ReportHandler)
-	report = ((ReportHandler) m_InputToken.getPayload()).getReport();
+      symbols = MathematicalExpression.objectToSymbols(m_InputToken.getPayload());
+      x       = (m_InputToken.getPayload() instanceof Number ? ((Number) m_InputToken.getPayload()).doubleValue() : null);
+      y       = MathematicalExpression.evaluate(exp, symbols);
 
-      // evaluate the expression
-      y = null;
-      if (x != null) {
-	symbols = new HashMap();
-	symbols.put(PLACEHOLDER_INPUT, new Double(x));
-	y = MathematicalExpression.evaluate(exp, symbols);
-      }
-      else if (report != null) {
-	y = MathematicalExpression.evaluate(exp, report);
-      }
-
-      if (y != null) {
+      if (!Double.isNaN(y)) {
 	y = applyRounding(y);
 	if (m_OutputValuePair)
 	  m_OutputToken = new Token(new Double[]{x, y});

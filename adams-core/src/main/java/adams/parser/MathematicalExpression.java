@@ -15,7 +15,7 @@
 
 /*
  * MathematicalExpression.java
- * Copyright (C) 2008-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.parser;
@@ -23,6 +23,7 @@ package adams.parser;
 import adams.core.Utils;
 import adams.data.report.AbstractField;
 import adams.data.report.Report;
+import adams.data.report.ReportHandler;
 import adams.parser.mathematicalexpression.Parser;
 import adams.parser.mathematicalexpression.Scanner;
 import java_cup.runtime.DefaultSymbolFactory;
@@ -218,6 +219,9 @@ public class MathematicalExpression
   /** for serialization. */
   private static final long serialVersionUID = 8014316012335802585L;
 
+  /** the default placeholder for a single symbol. */
+  public final static String PLACEHOLDER_OBJECT = "X";
+
   /**
    * Returns a string describing the object.
    *
@@ -408,6 +412,72 @@ public class MathematicalExpression
   }
 
   /**
+   * Turns the content of the report into symbols.
+   *
+   * @param report	the report
+   * @return		the evaluated result
+   */
+  public static HashMap reportToSymbols(Report report) {
+    HashMap 		result;
+    List<AbstractField>	fields;
+
+    // transfer values
+    result = new HashMap();
+    fields = report.getFields();
+    for (AbstractField field: fields) {
+      switch (field.getDataType()) {
+	case NUMERIC:
+	  result.put(field.toString(), report.getDoubleValue(field));
+	  break;
+	case BOOLEAN:
+	  result.put(field.toString(), report.getBooleanValue(field));
+	  break;
+	default:
+	  result.put(field.toString(), "" + report.getValue(field));
+      }
+    }
+
+    return result;
+  }
+
+  /**
+   * Helper method to turn an object into symbols used in the evaluation.
+   * If the object is a number the {@link #PLACEHOLDER_OBJECT} placeholder
+   * is used to denote the number symbol.
+   *
+   * @param obj		the object to turn into symbols (number or report)
+   * @return		the generated symbols
+   * @see		#reportToSymbols(Report)
+   * @see		#PLACEHOLDER_OBJECT
+   */
+  public static HashMap objectToSymbols(Object obj) {
+    HashMap	result;
+    Double	x;
+    Report	report;
+
+    result = new HashMap();
+    x      = null;
+    report = null;
+    if (obj instanceof Number)
+      x = ((Number) obj).doubleValue();
+    else if (obj instanceof Report)
+      report = (Report) obj;
+    else if (obj instanceof ReportHandler)
+      report = ((ReportHandler) obj).getReport();
+
+    // generate symbols
+    if (x != null) {
+      result = new HashMap();
+      result.put(PLACEHOLDER_OBJECT, new Double(x));
+    }
+    else if (report != null) {
+      result = reportToSymbols(report);
+    }
+
+    return result;
+  }
+
+  /**
    * Parses and evaluates the given expression.
    * Returns the result of the mathematical expression, based on the given
    * values of the symbols.
@@ -418,6 +488,7 @@ public class MathematicalExpression
    * @throws Exception	if something goes wrong
    */
   public static double evaluate(String expr, HashMap symbols) throws Exception {
+    Double			result;
     SymbolFactory 		sf;
     ByteArrayInputStream 	parserInput;
     Parser 			parser;
@@ -428,7 +499,9 @@ public class MathematicalExpression
     parser.setSymbols(symbols);
     parser.parse();
 
-    return parser.getResult();
+    result = parser.getResult();
+
+    return (result == null) ? Double.NaN : result;
   }
 
   /**
@@ -442,26 +515,7 @@ public class MathematicalExpression
    * @throws Exception	if something goes wrong
    */
   public static double evaluate(String expr, Report report) throws Exception {
-    HashMap		values;
-    List<AbstractField>	fields;
-    
-    // transfer values
-    values = new HashMap();
-    fields = report.getFields();
-    for (AbstractField field: fields) {
-      switch (field.getDataType()) {
-	case NUMERIC:
-	  values.put(field.toString(), report.getDoubleValue(field));
-	  break;
-	case BOOLEAN:
-	  values.put(field.toString(), report.getBooleanValue(field));
-	  break;
-	default:
-	  values.put(field.toString(), "" + report.getValue(field));
-      }
-    }
-
-    return evaluate(expr, values);
+    return evaluate(expr, reportToSymbols(report));
   }
 
   /**

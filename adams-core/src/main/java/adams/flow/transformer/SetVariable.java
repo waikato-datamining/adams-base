@@ -15,7 +15,7 @@
 
 /*
  * SetVariable.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -25,15 +25,273 @@ import adams.core.VariableName;
 import adams.core.VariableUpdater;
 import adams.core.base.BaseText;
 import adams.flow.core.Unknown;
+import adams.flow.core.VariableValueType;
+import adams.parser.BooleanExpression;
+import adams.parser.MathematicalExpression;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
  <!-- globalinfo-start -->
  * Sets the value of a variable. Each time a token passes through, the variable value will get updated according to the update type.<br>
  * Optionally, the specified value (or incoming value) can be expanded, in case it is made up of variables itself.<br>
- * The transformer just forwards tokens that it receives after the variable has been set.
+ * The transformer just forwards tokens that it receives after the variable has been set.<br>
+ * <br>
+ * Grammar for mathematical expressions (value type 'MATH_EXPRESSION'):<br>
+ * <br>
+ * expr_list ::= '=' expr_list expr_part | expr_part ;<br>
+ * expr_part ::=  expr ;<br>
+ * <br>
+ * expr      ::=   ( expr )<br>
+ * <br>
+ * # data types<br>
+ *               | number<br>
+ *               | string<br>
+ *               | boolean<br>
+ *               | date<br>
+ * <br>
+ * # constants<br>
+ *               | true<br>
+ *               | false<br>
+ *               | pi<br>
+ *               | e<br>
+ *               | now()<br>
+ *               | today()<br>
+ * <br>
+ * # negating numeric value<br>
+ *               | -expr<br>
+ * <br>
+ * # comparisons<br>
+ *               | expr &lt; expr<br>
+ *               | expr &lt;= expr<br>
+ *               | expr &gt; expr<br>
+ *               | expr &gt;= expr<br>
+ *               | expr = expr<br>
+ *               | expr != expr (or: expr &lt;&gt; expr)<br>
+ * <br>
+ * # boolean operations<br>
+ *               | ! expr (or: not expr)<br>
+ *               | expr &amp; expr (or: expr and expr)<br>
+ *               | expr | expr (or: expr or expr)<br>
+ *               | if[else] ( expr , expr (if true) , expr (if false) )<br>
+ *               | ifmissing ( variable , expr (default value if variable is missing) )<br>
+ *               | isNaN ( expr )<br>
+ * <br>
+ * # arithmetics<br>
+ *               | expr + expr<br>
+ *               | expr - expr<br>
+ *               | expr * expr<br>
+ *               | expr &#47; expr<br>
+ *               | expr ^ expr (power of)<br>
+ *               | expr % expr (modulo)<br>
+ *               ;<br>
+ * <br>
+ * # numeric functions<br>
+ *               | abs ( expr )<br>
+ *               | sqrt ( expr )<br>
+ *               | cbrt ( expr )<br>
+ *               | log ( expr )<br>
+ *               | log10 ( expr )<br>
+ *               | exp ( expr )<br>
+ *               | sin ( expr )<br>
+ *               | sinh ( expr )<br>
+ *               | cos ( expr )<br>
+ *               | cosh ( expr )<br>
+ *               | tan ( expr )<br>
+ *               | tanh ( expr )<br>
+ *               | atan ( expr )<br>
+ *               | atan2 ( exprY , exprX )<br>
+ *               | hypot ( exprX , exprY )<br>
+ *               | signum ( expr )<br>
+ *               | rint ( expr )<br>
+ *               | floor ( expr )<br>
+ *               | pow[er] ( expr , expr )<br>
+ *               | ceil ( expr )<br>
+ *               | min ( expr1 , expr2 )<br>
+ *               | max ( expr1 , expr2 )<br>
+ *               | year ( expr )<br>
+ *               | month ( expr )<br>
+ *               | day ( expr )<br>
+ *               | hour ( expr )<br>
+ *               | minute ( expr )<br>
+ *               | second ( expr )<br>
+ *               | weekday ( expr )<br>
+ *               | weeknum ( expr )<br>
+ * <br>
+ * # string functions<br>
+ *               | substr ( expr , start [, end] )<br>
+ *               | left ( expr , len )<br>
+ *               | mid ( expr , start , len )<br>
+ *               | right ( expr , len )<br>
+ *               | rept ( expr , count )<br>
+ *               | concatenate ( expr1 , expr2 [, expr3-5] )<br>
+ *               | lower[case] ( expr )<br>
+ *               | upper[case] ( expr )<br>
+ *               | trim ( expr )<br>
+ *               | matches ( expr , regexp )<br>
+ *               | trim ( expr )<br>
+ *               | len[gth] ( str )<br>
+ *               | find ( search , expr [, pos] )<br>
+ *               | replace ( str , pos , len , newstr )<br>
+ *               | substitute ( str , find , replace [, occurrences] )<br>
+ *               ;<br>
+ * <br>
+ * Notes:<br>
+ * - Variables are either all upper case letters (e.g., "ABC") or any character   apart from "]" enclosed by "[" and "]" (e.g., "[Hello World]").<br>
+ * - 'start' and 'end' for function 'substr' are indices that start at 1.<br>
+ * - Index 'end' for function 'substr' is excluded (like Java's 'String.substring(int,int)' method)<br>
+ * - Line comments start with '#'.<br>
+ * - Semi-colons (';') or commas (',') can be used as separator in the formulas,<br>
+ *   e.g., 'pow(2,2)' is equivalent to 'pow(2;2)'<br>
+ * - dates have to be of format 'yyyy-MM-dd' or 'yyyy-MM-dd HH:mm:ss'<br>
+ * - times have to be of format 'HH:mm:ss' or 'yyyy-MM-dd HH:mm:ss'<br>
+ * - the characters in square brackets in function names are optional:<br>
+ *   e.g. 'len("abc")' is the same as 'length("abc")'<br>
+ * <br>
+ * A lot of the functions have been modeled after LibreOffice:<br>
+ *   https:&#47;&#47;help.libreoffice.org&#47;Calc&#47;Functions_by_Category<br>
+ * <br>
+ * Additional functions:<br>
+ * - env(String): String<br>
+ * &nbsp;&nbsp;&nbsp;First argument is the name of the environment variable to retrieve.<br>
+ * &nbsp;&nbsp;&nbsp;The result is the value of the environment variable.<br>
+ * <br>
+ * Additional procedures:<br>
+ * - println(...)<br>
+ * &nbsp;&nbsp;&nbsp;One or more arguments are printed as comma-separated list to stdout.<br>
+ * &nbsp;&nbsp;&nbsp;If no argument is provided, a simple line feed is output.<br>
+ * <br>
+ * <br>
+ * Grammar for boolean expressions (value type 'BOOL_EXPRESSION'):<br>
+ * <br>
+ * expr_list ::= '=' expr_list expr_part | expr_part ;<br>
+ * expr_part ::=  expr ;<br>
+ * <br>
+ * expr      ::=   ( expr )<br>
+ * <br>
+ * # data types<br>
+ *               | number<br>
+ *               | string<br>
+ *               | boolean<br>
+ *               | date<br>
+ * <br>
+ * # constants<br>
+ *               | true<br>
+ *               | false<br>
+ *               | pi<br>
+ *               | e<br>
+ *               | now()<br>
+ *               | today()<br>
+ * <br>
+ * # negating numeric value<br>
+ *               | -expr<br>
+ * <br>
+ * # comparisons<br>
+ *               | expr &lt; expr<br>
+ *               | expr &lt;= expr<br>
+ *               | expr &gt; expr<br>
+ *               | expr &gt;= expr<br>
+ *               | expr = expr<br>
+ *               | expr != expr (or: expr &lt;&gt; expr)<br>
+ * <br>
+ * # boolean operations<br>
+ *               | ! expr (or: not expr)<br>
+ *               | expr &amp; expr (or: expr and expr)<br>
+ *               | expr | expr (or: expr or expr)<br>
+ *               | if[else] ( expr , expr (if true) , expr (if false) )<br>
+ *               | ifmissing ( variable , expr (default value if variable is missing) )<br>
+ *               | isNaN ( expr )<br>
+ * <br>
+ * # arithmetics<br>
+ *               | expr + expr<br>
+ *               | expr - expr<br>
+ *               | expr * expr<br>
+ *               | expr &#47; expr<br>
+ *               | expr ^ expr (power of)<br>
+ *               | expr % expr (modulo)<br>
+ *               ;<br>
+ * <br>
+ * # numeric functions<br>
+ *               | abs ( expr )<br>
+ *               | sqrt ( expr )<br>
+ *               | cbrt ( expr )<br>
+ *               | log ( expr )<br>
+ *               | log10 ( expr )<br>
+ *               | exp ( expr )<br>
+ *               | sin ( expr )<br>
+ *               | sinh ( expr )<br>
+ *               | cos ( expr )<br>
+ *               | cosh ( expr )<br>
+ *               | tan ( expr )<br>
+ *               | tanh ( expr )<br>
+ *               | atan ( expr )<br>
+ *               | atan2 ( exprY , exprX )<br>
+ *               | hypot ( exprX , exprY )<br>
+ *               | signum ( expr )<br>
+ *               | rint ( expr )<br>
+ *               | floor ( expr )<br>
+ *               | pow[er] ( expr , expr )<br>
+ *               | ceil ( expr )<br>
+ *               | min ( expr1 , expr2 )<br>
+ *               | max ( expr1 , expr2 )<br>
+ *               | year ( expr )<br>
+ *               | month ( expr )<br>
+ *               | day ( expr )<br>
+ *               | hour ( expr )<br>
+ *               | minute ( expr )<br>
+ *               | second ( expr )<br>
+ *               | weekday ( expr )<br>
+ *               | weeknum ( expr )<br>
+ * <br>
+ * # string functions<br>
+ *               | substr ( expr , start [, end] )<br>
+ *               | left ( expr , len )<br>
+ *               | mid ( expr , start , len )<br>
+ *               | right ( expr , len )<br>
+ *               | rept ( expr , count )<br>
+ *               | concatenate ( expr1 , expr2 [, expr3-5] )<br>
+ *               | lower[case] ( expr )<br>
+ *               | upper[case] ( expr )<br>
+ *               | trim ( expr )<br>
+ *               | matches ( expr , regexp )<br>
+ *               | trim ( expr )<br>
+ *               | len[gth] ( str )<br>
+ *               | find ( search , expr [, pos] )<br>
+ *               | replace ( str , pos , len , newstr )<br>
+ *               | substitute ( str , find , replace [, occurrences] )<br>
+ * <br>
+ * # array functions<br>
+ *               | len[gth] ( array )<br>
+ *               | get ( array , index )<br>
+ *               ;<br>
+ * <br>
+ * Notes:<br>
+ * - Variables are either all upper case letters (e.g., "ABC") or any character   apart from "]" enclosed by "[" and "]" (e.g., "[Hello World]").<br>
+ * - 'start' and 'end' for function 'substr' are indices that start at 1.<br>
+ * - 'index' for function 'get' starts at 1.<br>
+ * - Index 'end' for function 'substr' is excluded (like Java's 'String.substring(int,int)' method)<br>
+ * - Line comments start with '#'<br>
+ * - Semi-colons (';') or commas (',') can be used as separator in the formulas,<br>
+ *   e.g., 'pow(2,2)' is equivalent to 'pow(2;2)'<br>
+ * - dates have to be of format 'yyyy-MM-dd' or 'yyyy-MM-dd HH:mm:ss'<br>
+ * - times have to be of format 'HH:mm:ss' or 'yyyy-MM-dd HH:mm:ss'<br>
+ * - the characters in square brackets in function names are optional:<br>
+ *   e.g. 'len("abc")' is the same as 'length("abc")'<br>
+ * <br>
+ * A lot of the functions have been modeled after LibreOffice:<br>
+ *   https:&#47;&#47;help.libreoffice.org&#47;Calc&#47;Functions_by_Category<br>
+ * <br>
+ * Additional functions:<br>
+ * - env(String): String<br>
+ * &nbsp;&nbsp;&nbsp;First argument is the name of the environment variable to retrieve.<br>
+ * &nbsp;&nbsp;&nbsp;The result is the value of the environment variable.<br>
+ * <br>
+ * Additional procedures:<br>
+ * - println(...)<br>
+ * &nbsp;&nbsp;&nbsp;One or more arguments are printed as comma-separated list to stdout.<br>
+ * &nbsp;&nbsp;&nbsp;If no argument is provided, a simple line feed is output.<br>
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -69,8 +327,15 @@ import java.util.List;
  * </pre>
  * 
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this 
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical 
+ * &nbsp;&nbsp;&nbsp;actors.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
@@ -82,6 +347,11 @@ import java.util.List;
  * <pre>-var-value &lt;adams.core.base.BaseText&gt; (property: variableValue)
  * &nbsp;&nbsp;&nbsp;The fixed value to use instead of the current token; only used if non-empty.
  * &nbsp;&nbsp;&nbsp;default: 
+ * </pre>
+ * 
+ * <pre>-value-type &lt;STRING|MATH_EXPRESSION|BOOL_EXPRESSION&gt; (property: valueType)
+ * &nbsp;&nbsp;&nbsp;How to interpret the 'value' string.
+ * &nbsp;&nbsp;&nbsp;default: STRING
  * </pre>
  * 
  * <pre>-update-type &lt;REPLACE|APPEND|PREPEND&gt; (property: updateType)
@@ -128,6 +398,9 @@ public class SetVariable
   /** the optional fixed value. */
   protected BaseText m_VariableValue;
 
+  /** how to interpret the value. */
+  protected VariableValueType m_ValueType;
+
   /** how to update the variable value. */
   protected UpdateType m_UpdateType;
   
@@ -148,7 +421,13 @@ public class SetVariable
 	+ "Optionally, the specified value (or incoming value) can be expanded, "
 	+ "in case it is made up of variables itself.\n"
 	+ "The transformer just forwards tokens that it receives after the "
-	+ "variable has been set.";
+	+ "variable has been set.\n"
+	+ "\n"
+	+ "Grammar for mathematical expressions (value type '" + VariableValueType.MATH_EXPRESSION + "'):\n\n"
+        + new MathematicalExpression().getGrammar()
+	+ "\n\n"
+	+ "Grammar for boolean expressions (value type '" + VariableValueType.BOOL_EXPRESSION + "'):\n\n"
+        + new BooleanExpression().getGrammar();
   }
 
   /**
@@ -165,6 +444,10 @@ public class SetVariable
     m_OptionManager.add(
 	    "var-value", "variableValue",
 	    new BaseText(""));
+
+    m_OptionManager.add(
+	    "value-type", "valueType",
+	    VariableValueType.STRING);
 
     m_OptionManager.add(
 	    "update-type", "updateType",
@@ -231,6 +514,35 @@ public class SetVariable
    */
   public String variableValueTipText() {
     return "The fixed value to use instead of the current token; only used if non-empty.";
+  }
+
+  /**
+   * Sets how to interpret the value string.
+   *
+   * @param value	the type
+   */
+  public void setValueType(VariableValueType value) {
+    m_ValueType = value;
+    reset();
+  }
+
+  /**
+   * Returns how to interpret the value string.
+   *
+   * @return		the type
+   */
+  public VariableValueType getValueType() {
+    return m_ValueType;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String valueTypeTipText() {
+    return "How to interpret the 'value' string.";
   }
 
   /**
@@ -326,7 +638,8 @@ public class SetVariable
       result += value;
 
     // further options
-    options = new ArrayList<String>();
+    options = new ArrayList<>();
+    QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "valueType", m_ValueType));
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "updateType", m_UpdateType));
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "expandValue", m_ExpandValue, "expand"));
     result += QuickInfoHelper.flatten(options);
@@ -352,6 +665,8 @@ public class SetVariable
   protected String doExecute() {
     String	result;
     String	value;
+    String	newValue;
+    String	msg;
     String	current;
 
     result = null;
@@ -377,23 +692,48 @@ public class SetVariable
 	
 	switch (m_UpdateType) {
 	  case REPLACE:
-	    getVariables().set(m_VariableName.getValue(), value);
-	    if (isLoggingEnabled())
-	      getLogger().info("Replacing variable '" + m_VariableName + "' (" + getVariables().hashCode() + "): " + value);
+	    newValue = value;
+	    msg      = "Replacing";
 	    break;
 	  case APPEND:
-	    getVariables().set(m_VariableName.getValue(), current + value);
-	    if (isLoggingEnabled())
-	      getLogger().info("Appending variable '" + m_VariableName + "' (" + getVariables().hashCode() + "): " + current + value);
+	    newValue = current + value;
+	    msg      = "Appending";
 	    break;
 	  case PREPEND:
-	    getVariables().set(m_VariableName.getValue(), value + current);
-	    if (isLoggingEnabled())
-	      getLogger().info("Prepending variable '" + m_VariableName + "' (" + getVariables().hashCode() + "): " + value + current);
+	    newValue = value + current;
+	    msg      = "Prepending";
 	    break;
 	  default:
 	    throw new IllegalStateException("Unhandled update type: " + m_UpdateType);
 	}
+
+	switch (m_ValueType) {
+	  case STRING:
+	    // nothing to do
+	    break;
+	  case MATH_EXPRESSION:
+	    try {
+	      newValue = "" + MathematicalExpression.evaluate(newValue, new HashMap());
+	    }
+	    catch (Exception e) {
+	      result = handleException("Failed to parse mathematical expression: " + newValue, e);
+	    }
+	    break;
+	  case BOOL_EXPRESSION:
+	    try {
+	      newValue = "" + BooleanExpression.evaluate(newValue, new HashMap());
+	    }
+	    catch (Exception e) {
+	      result = handleException("Failed to parse boolean expression: " + newValue, e);
+	    }
+	    break;
+	  default:
+	    throw new IllegalStateException("Unhandled value type: " + m_ValueType);
+	}
+
+	getVariables().set(m_VariableName.getValue(), newValue);
+	if (isLoggingEnabled())
+	  getLogger().info(msg + " variable '" + m_VariableName + "' (" + getVariables().hashCode() + "): " + newValue);
       }
     }
     catch (Exception e) {
