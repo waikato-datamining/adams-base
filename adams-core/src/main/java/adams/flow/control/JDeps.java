@@ -21,14 +21,18 @@
 package adams.flow.control;
 
 import adams.core.io.FileUtils;
+import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
 import adams.flow.core.Token;
 import adams.flow.transformer.AbstractTransformer;
 
+import java.io.File;
+
 /**
  <!-- globalinfo-start -->
  * Runs jdeps on the classname arriving at the input.<br>
- * The application's classpath is automatically added to the command-line.
+ * The application's classpath is automatically added to the command-line if no classpath directories or jars are provided.<br>
+ * Classpath directories and jars get combined, but directories take precedence over jars.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -80,6 +84,16 @@ import adams.flow.transformer.AbstractTransformer;
  * &nbsp;&nbsp;&nbsp;The full path to the jdeps executable.
  * </pre>
  * 
+ * <pre>-classpath-dir &lt;adams.core.io.PlaceholderDirectory&gt; [-classpath-dir ...] (property: classpathDirs)
+ * &nbsp;&nbsp;&nbsp;The directories to use instead of the application's classpath.
+ * &nbsp;&nbsp;&nbsp;default: 
+ * </pre>
+ * 
+ * <pre>-classpath-jar &lt;adams.core.io.PlaceholderFile&gt; [-classpath-jar ...] (property: classpathJars)
+ * &nbsp;&nbsp;&nbsp;The jars to use instead of the application's classpath.
+ * &nbsp;&nbsp;&nbsp;default: 
+ * </pre>
+ * 
  * <pre>-additional &lt;java.lang.String&gt; (property: additionalOptions)
  * &nbsp;&nbsp;&nbsp;Additional options for the jdeps execution.
  * &nbsp;&nbsp;&nbsp;default: 
@@ -99,6 +113,12 @@ public class JDeps
   /** the jdeps executable. */
   protected PlaceholderFile m_Executable;
 
+  /** the classpath directories. */
+  protected PlaceholderDirectory[] m_ClasspathDirs;
+
+  /** the classpath jars. */
+  protected PlaceholderFile[] m_ClasspathJars;
+
   /** additional options for jdeps. */
   protected String m_AdditionalOptions;
 
@@ -111,7 +131,10 @@ public class JDeps
   public String globalInfo() {
     return
       "Runs jdeps on the classname arriving at the input.\n"
-      + "The application's classpath is automatically added to the command-line.";
+	+ "The application's classpath is automatically added to the command-line "
+	+ "if no classpath directories or jars are provided.\n"
+	+ "Classpath directories and jars get combined, but directories take "
+	+ "precedence over jars.";
   }
 
   /**
@@ -124,6 +147,14 @@ public class JDeps
     m_OptionManager.add(
 	    "executable", "executable",
 	    new PlaceholderFile(getJDepsExecutablePath()), false);
+
+    m_OptionManager.add(
+	    "classpath-dir", "classpathDirs",
+	    new PlaceholderDirectory[0]);
+
+    m_OptionManager.add(
+	    "classpath-jar", "classpathJars",
+	    new PlaceholderFile[0]);
 
     m_OptionManager.add(
 	    "additional", "additionalOptions",
@@ -167,6 +198,68 @@ public class JDeps
    */
   public String executableTipText() {
     return "The full path to the jdeps executable.";
+  }
+
+  /**
+   * Sets the classpath directories to use instead of the application's
+   * classpath.
+   *
+   * @param value	the directories
+   */
+  public void setClasspathDirs(PlaceholderDirectory[] value) {
+    m_ClasspathDirs = value;
+    reset();
+  }
+
+  /**
+   * Returns the classpath directories to use instead of the application's
+   * classpath.
+   *
+   * @return		the directories
+   */
+  public PlaceholderDirectory[] getClasspathDirs() {
+    return m_ClasspathDirs;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String classpathDirsTipText() {
+    return "The directories to use instead of the application's classpath.";
+  }
+
+  /**
+   * Sets the classpath jars to use instead of the application's
+   * classpath.
+   *
+   * @param value	the jars
+   */
+  public void setClasspathJars(PlaceholderFile[] value) {
+    m_ClasspathJars = value;
+    reset();
+  }
+
+  /**
+   * Returns the classpath jars to use instead of the application's
+   * classpath.
+   *
+   * @return		the jars
+   */
+  public PlaceholderFile[] getClasspathJars() {
+    return m_ClasspathJars;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String classpathJarsTipText() {
+    return "The jars to use instead of the application's classpath.";
   }
 
   /**
@@ -254,9 +347,27 @@ public class JDeps
   @Override
   protected String doExecute() {
     String	outputStr;
+    File[]	classpath;
+    int		i;
+    int		n;
 
+    // assemble classpath
+    classpath = new File[m_ClasspathDirs.length + m_ClasspathJars.length];
+    n         = 0;
+    for (i = 0; i < m_ClasspathDirs.length; i++) {
+      classpath[n] = m_ClasspathDirs[i];
+      n++;
+    }
+    for (i = 0; i < m_ClasspathJars.length; i++) {
+      classpath[n] = m_ClasspathJars[i];
+      n++;
+    }
+
+    // execute
     outputStr = adams.core.management.JDeps.execute(
-	  m_Executable.getAbsolutePath(), m_AdditionalOptions + " " + m_InputToken.getPayload());
+      m_Executable.getAbsolutePath(),
+      classpath,
+      m_AdditionalOptions + " " + m_InputToken.getPayload());
 
     if (isLoggingEnabled())
       getLogger().info("output: " + outputStr);

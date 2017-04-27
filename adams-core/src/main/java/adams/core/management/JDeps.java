@@ -90,11 +90,40 @@ public class JDeps
    * Automatically adds classpath to commandline.
    *
    * @param executable	the jdeps executable to use
-   * @param options	additional options for jvisualvm
+   * @param options	additional options for jdeps
    * @return		the output
    */
   public static String execute(String executable, String options) {
-    options = "-cp " + Java.getClassPath(false) + " " + options;
+    return execute(executable, null, options);
+  }
+
+  /**
+   * Executes the executable and returns the output.
+   * Automatically adds classpath to commandline.
+   *
+   * @param executable	the jdeps executable to use
+   * @param classpath 	the classpath parts (directories and jar files); uses
+   *                    application classpath if null or 0-length
+   * @param options	additional options for jdeps
+   * @return		the output
+   */
+  public static String execute(String executable, File[] classpath, String options) {
+    StringBuilder	fullClasspath;
+    int			i;
+
+    fullClasspath = new StringBuilder();
+    if ((classpath != null) && (classpath.length > 0)) {
+      for (i = 0; i < classpath.length; i++) {
+	if (i > 0)
+	  fullClasspath.append(File.pathSeparator);
+	fullClasspath.append(classpath[i].getAbsolutePath());
+      }
+    }
+    else {
+      fullClasspath.append(Java.getClassPath(false));
+    }
+
+    options = "-cp " + fullClasspath + " " + options;
     return Java.execute(executable, options);
   }
 }
