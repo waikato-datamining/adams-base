@@ -1,0 +1,18 @@
+# Project: adams
+# Date: 2017-04-27 12:31:59
+# User: fracpete
+# Charset: UTF-8
+adams.flow.control.Flow -annotation "Shows how to use mathematical and boolean expressions as part of \\nthe SetVariable actors (standalone and transformer)." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.standalone.SetVariable -name formula -var-name formula -var-value "log(@{a}) + pow(@{b}, 2)"
+ adams.flow.standalone.SetVariable -name "variable a" -var-name a -var-value 2.0
+ adams.flow.standalone.SetVariable -name "variable b" -var-name b -var-value 3.14159
+ adams.flow.standalone.SetVariable -name "calc c" -var-name c -var-value @{formula} -value-type MATH_EXPRESSION -expand-value true
+ adams.flow.source.Start
+ adams.flow.control.Trigger -name calculate
+  adams.flow.source.StringConstants -string 4.1
+  adams.flow.transformer.SetVariable -name "update a" -var-name a
+  adams.flow.transformer.SetVariable -name "calc d" -var-name d -var-value @{formula} -value-type MATH_EXPRESSION -expand-value true
+  adams.flow.transformer.SetVariable -name "set bool" -var-name c_less_than_d -var-value "@{c} < @{d}" -value-type BOOL_EXPRESSION -expand-value true
+ adams.flow.control.Trigger -name "output vars"
+  adams.flow.source.CombineVariables -expression "c: @{c}\\nd: @{d}\\nc_less_than_d: @{c_less_than_d}"
+  adams.flow.sink.Display -writer adams.data.io.output.NullWriter
