@@ -36,4 +36,6 @@ public enum VariableValueType {
   MATH_EXPRESSION,
   /** boolean expression. */
   BOOL_EXPRESSION,
+  /** string expression. */
+  STRING_EXPRESSION,
 }
