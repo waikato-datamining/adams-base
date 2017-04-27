@@ -20,17 +20,15 @@
 
 package adams.parser;
 
-import java.io.ByteArrayInputStream;
-import java.util.HashMap;
-import java.util.List;
-import java.util.logging.Level;
-
-import java_cup.runtime.DefaultSymbolFactory;
-import java_cup.runtime.SymbolFactory;
-import adams.data.report.AbstractField;
 import adams.data.report.Report;
 import adams.parser.booleanexpression.Parser;
 import adams.parser.booleanexpression.Scanner;
+import java_cup.runtime.DefaultSymbolFactory;
+import java_cup.runtime.SymbolFactory;
+
+import java.io.ByteArrayInputStream;
+import java.util.HashMap;
+import java.util.logging.Level;
 
 /**
  <!-- globalinfo-start -->
@@ -430,34 +428,6 @@ public class BooleanExpression
   }
 
   /**
-   * Turns the report into symbols for the expression evaluation.
-   * 
-   * @param reports	the report to turn into symbols
-   * @return		the generated symbols
-   */
-  public static HashMap reportToSymbols(Report report) {
-    HashMap		result;
-    List<AbstractField>	fields;
-    
-    result = new HashMap();
-    fields = report.getFields();
-    for (AbstractField field: fields) {
-      switch (field.getDataType()) {
-	case NUMERIC:
-	  result.put(field.toString(), report.getDoubleValue(field));
-	  break;
-	case BOOLEAN:
-	  result.put(field.toString(), report.getBooleanValue(field));
-	  break;
-	default:
-	  result.put(field.toString(), "" + report.getValue(field));
-      }
-    }
-    
-    return result;
-  }
-  
-  /**
    * Parses and evaluates the given expression.
    * Returns the result of the mathematical expression, based on the given
    * values of the symbols.
@@ -468,7 +438,7 @@ public class BooleanExpression
    * @throws Exception	if something goes wrong
    */
   public static boolean evaluate(String expr, Report report) throws Exception {
-    return evaluate(expr, reportToSymbols(report));
+    return evaluate(expr, ParserHelper.reportToSymbols(report));
   }
 
   /**

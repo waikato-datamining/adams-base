@@ -21,7 +21,6 @@
 package adams.parser;
 
 import adams.core.Utils;
-import adams.data.report.AbstractField;
 import adams.data.report.Report;
 import adams.data.report.ReportHandler;
 import adams.parser.mathematicalexpression.Parser;
@@ -31,7 +30,6 @@ import java_cup.runtime.SymbolFactory;
 
 import java.io.ByteArrayInputStream;
 import java.util.HashMap;
-import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -412,42 +410,13 @@ public class MathematicalExpression
   }
 
   /**
-   * Turns the content of the report into symbols.
-   *
-   * @param report	the report
-   * @return		the evaluated result
-   */
-  public static HashMap reportToSymbols(Report report) {
-    HashMap 		result;
-    List<AbstractField>	fields;
-
-    // transfer values
-    result = new HashMap();
-    fields = report.getFields();
-    for (AbstractField field: fields) {
-      switch (field.getDataType()) {
-	case NUMERIC:
-	  result.put(field.toString(), report.getDoubleValue(field));
-	  break;
-	case BOOLEAN:
-	  result.put(field.toString(), report.getBooleanValue(field));
-	  break;
-	default:
-	  result.put(field.toString(), "" + report.getValue(field));
-      }
-    }
-
-    return result;
-  }
-
-  /**
    * Helper method to turn an object into symbols used in the evaluation.
    * If the object is a number the {@link #PLACEHOLDER_OBJECT} placeholder
    * is used to denote the number symbol.
    *
    * @param obj		the object to turn into symbols (number or report)
    * @return		the generated symbols
-   * @see		#reportToSymbols(Report)
+   * @see                ParserHelper#reportToSymbols(Report)
    * @see		#PLACEHOLDER_OBJECT
    */
   public static HashMap objectToSymbols(Object obj) {
@@ -471,7 +440,7 @@ public class MathematicalExpression
       result.put(PLACEHOLDER_OBJECT, new Double(x));
     }
     else if (report != null) {
-      result = reportToSymbols(report);
+      result = ParserHelper.reportToSymbols(report);
     }
 
     return result;
@@ -515,7 +484,7 @@ public class MathematicalExpression
    * @throws Exception	if something goes wrong
    */
   public static double evaluate(String expr, Report report) throws Exception {
-    return evaluate(expr, reportToSymbols(report));
+    return evaluate(expr, ParserHelper.reportToSymbols(report));
   }
 
   /**

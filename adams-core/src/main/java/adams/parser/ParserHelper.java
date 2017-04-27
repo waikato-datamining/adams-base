@@ -24,6 +24,8 @@ import adams.core.base.BaseDate;
 import adams.core.base.BaseDateTime;
 import adams.core.base.BaseTime;
 import adams.core.logging.LoggingObject;
+import adams.data.report.AbstractField;
+import adams.data.report.Report;
 import adams.parser.plugin.AbstractParserFunction;
 import adams.parser.plugin.AbstractParserProcedure;
 import adams.parser.plugin.ParserFunction;
@@ -66,6 +68,35 @@ public class ParserHelper
   public ParserHelper() {
     super();
     initialize();
+  }
+
+  /**
+   * Turns the content of the report into symbols.
+   *
+   * @param report	the report
+   * @return		the evaluated result
+   */
+  public static HashMap reportToSymbols(Report report) {
+    HashMap 		result;
+    List<AbstractField>	fields;
+
+    // transfer values
+    result = new HashMap();
+    fields = report.getFields();
+    for (AbstractField field: fields) {
+      switch (field.getDataType()) {
+	case NUMERIC:
+	  result.put(field.toString(), report.getDoubleValue(field));
+	  break;
+	case BOOLEAN:
+	  result.put(field.toString(), report.getBooleanValue(field));
+	  break;
+	default:
+	  result.put(field.toString(), "" + report.getValue(field));
+      }
+    }
+
+    return result;
   }
 
   /**

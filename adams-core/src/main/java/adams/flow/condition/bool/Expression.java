@@ -23,8 +23,8 @@ import adams.data.report.Report;
 import adams.data.report.ReportHandler;
 import adams.flow.core.Actor;
 import adams.flow.core.Token;
-import adams.parser.BooleanExpression;
 import adams.parser.BooleanExpressionText;
+import adams.parser.ParserHelper;
 
 import java.util.HashMap;
 
@@ -257,9 +257,9 @@ public class Expression
       else if ((token.getPayload() instanceof String) && hasString)
 	exp = exp.replace("\"X\"", "\"" + token.getPayload() + "\"");
       else if (token.getPayload() instanceof Report)
-	symbols = BooleanExpression.reportToSymbols((Report) token.getPayload());
+	symbols = ParserHelper.reportToSymbols((Report) token.getPayload());
       else if ((token.getPayload() instanceof ReportHandler) && (((ReportHandler) token.getPayload()).hasReport()))
-	symbols = BooleanExpression.reportToSymbols(((ReportHandler) token.getPayload()).getReport());
+	symbols = ParserHelper.reportToSymbols(((ReportHandler) token.getPayload()).getReport());
     }
 
     try {
