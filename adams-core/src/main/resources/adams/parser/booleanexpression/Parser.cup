@@ -53,7 +53,7 @@ parser code {:
   /** variable - value relation. */
   protected HashMap m_Symbols = new HashMap();
 
-  /** for storing the result of the expresion. */
+  /** for storing the result of the expression. */
   protected Boolean m_Result = null;
 
   /** the helper. */
