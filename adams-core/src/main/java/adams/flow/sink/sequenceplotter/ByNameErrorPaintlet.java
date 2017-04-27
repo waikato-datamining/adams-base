@@ -173,7 +173,7 @@ public class ByNameErrorPaintlet
    * 			displaying in the GUI or for listing the options.
    */
   public String invertTipText() {
-    return "If enabled, the machine sense of the regular expression gets inverted.";
+    return "If enabled, the matching sense of the regular expression gets inverted.";
   }
 
   /**
