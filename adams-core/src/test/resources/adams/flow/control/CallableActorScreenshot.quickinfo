@@ -1,1 +1,1 @@
-callable: unknown, generator: DefaultFilenameGenerator
+callable: unknown, output: FILE, generator: DefaultFilenameGenerator
