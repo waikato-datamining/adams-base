@@ -103,6 +103,16 @@ public class ActorUtils {
   /** the variable for the gui flag. */
   public final static String HAS_GUI = "has_gui";
 
+  /** programmatically set variables. */
+  public final static String[] PROGRAMMATIC_VARIABLES = {
+    FLOW_FILENAME_LONG,
+    FLOW_FILENAME_SHORT,
+    FLOW_DIR,
+    FLOW_ID,
+    IS_HEADLESS,
+    HAS_GUI,
+  };
+
   /** functional type: primitive. */
   public final static String FUNCTIONAL_PRIMITIVE = "primitive";
 
@@ -1296,11 +1306,12 @@ public class ActorUtils {
    * Checks the flow.
    *
    * @param actor	the flow to check
+   * @param file	the actor file to use
    * @return		null if all checks passed, otherwise the warnings
    * @see		CheckProcessor
    */
-  public static String checkFlow(Actor actor) {
-    return checkFlow(actor, true, true);
+  public static String checkFlow(Actor actor, File file) {
+    return checkFlow(actor, true, true, file);
   }
 
   /**
@@ -1309,10 +1320,11 @@ public class ActorUtils {
    * @param actor	the flow to check
    * @param variables	whether the check variable usage
    * @param storage	whether to check storage usage
+   * @param file	the actor file to use
    * @return		null if all checks passed, otherwise the warnings
    * @see		CheckProcessor
    */
-  public static String checkFlow(Actor actor, boolean variables, boolean storage) {
+  public static String checkFlow(Actor actor, boolean variables, boolean storage, File file) {
     String				result;
     MultiProcessor			processor;
     String[]				names;
@@ -1321,7 +1333,11 @@ public class ActorUtils {
     int					i;
 
     // general check
-    actor  = actor.shallowCopy();
+    actor = actor.shallowCopy();
+    if (actor instanceof VariablesHandler) {
+      ActorUtils.updateVariables((VariablesHandler) actor, actor);
+      ActorUtils.updateVariablesWithFlowFilename((VariablesHandler) actor, file);
+    }
     result = actor.setUp();
     actor.destroy();
     
@@ -1362,6 +1378,7 @@ public class ActorUtils {
    * @see		#FLOW_FILENAME_LONG
    * @see		#FLOW_FILENAME_SHORT
    * @see		#FLOW_DIR
+   * @see		#PROGRAMMATIC_VARIABLES
    */
   public static boolean updateVariablesWithFlowFilename(VariablesHandler handler, File flow) {
     if (flow == null)
@@ -1383,6 +1400,7 @@ public class ActorUtils {
    * @see		#FLOW_ID
    * @see		#HAS_GUI
    * @see		#IS_HEADLESS
+   * @see		#PROGRAMMATIC_VARIABLES
    */
   public static boolean updateVariables(VariablesHandler handler, Actor context) {
     if (context == null)

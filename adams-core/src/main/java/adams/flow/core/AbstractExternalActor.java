@@ -15,7 +15,7 @@
 
 /*
  * AbstractExternalActor.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.core;
@@ -24,6 +24,7 @@ import adams.core.QuickInfoHelper;
 import adams.core.Utils;
 import adams.core.Variables;
 import adams.core.io.FlowFile;
+import adams.core.io.PlaceholderFile;
 import adams.event.VariableChangeEvent;
 import adams.event.VariableChangeEvent.Type;
 import adams.flow.control.FlowStructureModifier;
@@ -107,7 +108,10 @@ public abstract class AbstractExternalActor
    * 			displaying in the GUI or for listing the options.
    */
   public String actorFileTipText() {
-    return "The file containing the external actor.";
+    return
+      "The file containing the external actor; programmatic variables "
+	+ "like '" + ActorUtils.FLOW_DIR + "' can be used as part of the file "
+	+ "name as they get expanded before attempting to load the file.";
   }
 
   /**
@@ -177,22 +181,29 @@ public abstract class AbstractExternalActor
     String		result;
     List<String>	errors;
     String		warning;
+    PlaceholderFile 	file;
 
     result = null;
 
-    if (!m_ActorFile.isFile()) {
-      result = "'" + m_ActorFile.getAbsolutePath() + "' does not point to a file!";
+    file = m_ActorFile;
+
+    // programmatic variable maybe?
+    if (file.toString().startsWith(Variables.START))
+      file = new PlaceholderFile(getVariables().expand(file.toString()));
+
+    if (!file.isFile()) {
+      result = "'" + file.getAbsolutePath() + "' does not point to a file!";
     }
     else {
       errors = new ArrayList<>();
       if (isLoggingEnabled())
-	getLogger().fine("Attempting to load actor file: " + m_ActorFile);
-      m_ExternalActor = ActorUtils.read(m_ActorFile.getAbsolutePath(), errors);
+	getLogger().fine("Attempting to load actor file: " + file);
+      m_ExternalActor = ActorUtils.read(file.getAbsolutePath(), errors);
       if (!errors.isEmpty()) {
-	result = "Error loading external actor '" + m_ActorFile.getAbsolutePath() + "':\n" + Utils.flatten(errors, "\n");
+	result = "Error loading external actor '" + file.getAbsolutePath() + "':\n" + Utils.flatten(errors, "\n");
       }
       else if (m_ExternalActor == null) {
-	result = "Error loading external actor '" + m_ActorFile.getAbsolutePath() + "'!";
+	result = "Error loading external actor '" + file.getAbsolutePath() + "'!";
       }
       else {
 	m_ExternalActor.setParent(this);
@@ -205,7 +216,7 @@ public abstract class AbstractExternalActor
 	  warning = m_ExternalActor.getOptionManager().updateVariableValues(true);
 	  if (warning != null)
 	    getLogger().severe(
-		"Updating variables ('" + getFullName() + "'/'" + m_ActorFile + "') resulted in the following error output "
+		"Updating variables ('" + getFullName() + "'/'" + file + "') resulted in the following error output "
 	    + "(which gets ignored since variables might get initialized later on):\n" + warning);
 	}
       }

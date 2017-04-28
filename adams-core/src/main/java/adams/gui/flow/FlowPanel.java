@@ -819,7 +819,7 @@ public class FlowPanel
 
 	if (getCheckOnSave()) {
 	  SwingUtilities.invokeLater(() -> setTabIcon("hourglass.png"));
-	  String check = ActorUtils.checkFlow(flow.getFullActor(), false, false);
+	  String check = ActorUtils.checkFlow(flow.getFullActor(), false, false, file);
 	  if (check != null) {
 	    String msg = "Pre-save check failed - continue with save?\n\nDetails:\n\n" + check;
             showNotification(msg, true);

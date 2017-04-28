@@ -77,7 +77,7 @@ public class RunValidateSetup
 
     // perform some checks
     if (msg == null)
-      msg = ActorUtils.checkFlow(actor);
+      msg = ActorUtils.checkFlow(actor, m_State.getCurrentFile());
 
     if (msg == null) {
       msg = "The flow passed validation!";

@@ -224,13 +224,13 @@ public class RunRemoteFlow
     flow = (Flow) actor;
 
     // setup
+    ActorUtils.updateVariables(flow, flow);
+    ActorUtils.updateVariablesWithFlowFilename(flow, m_FlowFile);
     m_ErrorMessage = flow.setUp();
     if (m_ErrorMessage != null)
       return;
 
     // run
-    ActorUtils.updateVariables(flow, flow);
-    ActorUtils.updateVariablesWithFlowFilename(flow, m_FlowFile);
     new Thread(() -> {
       flow.execute();
       flow.cleanUp();
