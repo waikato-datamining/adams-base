@@ -15,7 +15,7 @@
 
 /*
  * SelectDirectory.java
- * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
@@ -346,6 +346,7 @@ public class SelectDirectory
     if (m_DirectoryChooserTitle.length() > 0)
       dirChooser.setDialogTitle(m_DirectoryChooserTitle);
     dirChooser.setCurrentDirectory(m_InitialDirectory);
+    dirChooser.setSelectedFile(m_InitialDirectory);
     retVal = dirChooser.showOpenDialog(getParentComponent());
     if (retVal == BaseDirectoryChooser.APPROVE_OPTION) {
       result = true;
