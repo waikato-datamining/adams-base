@@ -1334,10 +1334,8 @@ public class ActorUtils {
 
     // general check
     actor = actor.shallowCopy();
-    if (actor instanceof VariablesHandler) {
-      ActorUtils.updateVariables((VariablesHandler) actor, actor);
-      ActorUtils.updateVariablesWithFlowFilename((VariablesHandler) actor, file);
-    }
+    if (actor instanceof VariablesHandler)
+      ActorUtils.updateProgrammaticVariables((VariablesHandler & Actor) actor, file);
     result = actor.setUp();
     actor.destroy();
     
@@ -1369,50 +1367,55 @@ public class ActorUtils {
   }
 
   /**
-   * Adds the flow filename (long and short) to the variables of the provided
-   * variables handler.
+   * Adds some programmatic variables.
    *
-   * @param handler	the handler to add the filenames to
+   * @param context	the actor, must be a
    * @param flow	the flow file name
-   * @return		true if successfully added
    * @see		#FLOW_FILENAME_LONG
    * @see		#FLOW_FILENAME_SHORT
    * @see		#FLOW_DIR
-   * @see		#PROGRAMMATIC_VARIABLES
-   */
-  public static boolean updateVariablesWithFlowFilename(VariablesHandler handler, File flow) {
-    if (flow == null)
-      return false;
-
-    handler.getLocalVariables().set(FLOW_DIR,            flow.getParentFile().getAbsolutePath());
-    handler.getLocalVariables().set(FLOW_FILENAME_LONG,  flow.getAbsolutePath());
-    handler.getLocalVariables().set(FLOW_FILENAME_SHORT, flow.getName());
-
-    return true;
-  }
-
-  /**
-   * Adds some variables.
-   *
-   * @param handler	the handler to add the filenames to
-   * @param context	the flow context
-   * @return		true if successfully added
    * @see		#FLOW_ID
    * @see		#HAS_GUI
    * @see		#IS_HEADLESS
    * @see		#PROGRAMMATIC_VARIABLES
    */
-  public static boolean updateVariables(VariablesHandler handler, Actor context) {
-    if (context == null)
-      return false;
-    if (context.getRoot() == null)
-      return false;
+  public static <T extends Actor & VariablesHandler> void updateProgrammaticVariables(T context, File flow) {
+    if (flow != null) {
+      context.getLocalVariables().set(FLOW_DIR, flow.getParentFile().getAbsolutePath());
+      context.getLocalVariables().set(FLOW_FILENAME_LONG, flow.getAbsolutePath());
+      context.getLocalVariables().set(FLOW_FILENAME_SHORT, flow.getName());
+    }
+    if ((context != null) && (context.getRoot() != null)) {
+      context.getLocalVariables().set(ActorUtils.FLOW_ID, (context.getRoot() instanceof Flow) ? "" + ((Flow) context.getRoot()).getFlowID() : "-1");
+      context.getLocalVariables().set(ActorUtils.IS_HEADLESS, "" + context.getRoot().isHeadless());
+      context.getLocalVariables().set(ActorUtils.HAS_GUI, "" + !context.getRoot().isHeadless());
+    }
+  }
 
-    handler.getLocalVariables().set(ActorUtils.FLOW_ID, (context.getRoot() instanceof Flow) ? "" + ((Flow) context.getRoot()).getFlowID() : "-1");
-    handler.getLocalVariables().set(ActorUtils.IS_HEADLESS, "" + context.getRoot().isHeadless());
-    handler.getLocalVariables().set(ActorUtils.HAS_GUI, "" + !context.getRoot().isHeadless());
-
-    return true;
+  /**
+   * Adds some programmatic variables.
+   *
+   * @param handler	the handler to add the filenames to
+   * @param flow	the flow file name
+   * @see		#FLOW_FILENAME_LONG
+   * @see		#FLOW_FILENAME_SHORT
+   * @see		#FLOW_DIR
+   * @see		#FLOW_ID
+   * @see		#HAS_GUI
+   * @see		#IS_HEADLESS
+   * @see		#PROGRAMMATIC_VARIABLES
+   */
+  public static void updateProgrammaticVariables(VariablesHandler handler, Actor context, File flow) {
+    if (flow != null) {
+      handler.getLocalVariables().set(FLOW_DIR, flow.getParentFile().getAbsolutePath());
+      handler.getLocalVariables().set(FLOW_FILENAME_LONG, flow.getAbsolutePath());
+      handler.getLocalVariables().set(FLOW_FILENAME_SHORT, flow.getName());
+    }
+    if ((context != null) && (context.getRoot() != null)) {
+      handler.getLocalVariables().set(ActorUtils.FLOW_ID, (context.getRoot() instanceof Flow) ? "" + ((Flow) context.getRoot()).getFlowID() : "-1");
+      handler.getLocalVariables().set(ActorUtils.IS_HEADLESS, "" + context.getRoot().isHeadless());
+      handler.getLocalVariables().set(ActorUtils.HAS_GUI, "" + !context.getRoot().isHeadless());
+    }
   }
 
   /**

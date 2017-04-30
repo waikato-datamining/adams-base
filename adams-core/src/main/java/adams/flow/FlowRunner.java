@@ -755,10 +755,9 @@ public class FlowRunner
 	  getLogger().info("Flow added to running flow registry");
       }
 
-      ActorUtils.updateVariables((VariablesHandler) m_Actor, m_Actor);
-      if (m_Actor instanceof VariablesHandler)
-        ActorUtils.updateVariablesWithFlowFilename((VariablesHandler) m_Actor, m_Input);
+      ActorUtils.updateProgrammaticVariables((VariablesHandler & Actor) m_Actor, m_Input);
       result = m_Actor.setUp();
+      ActorUtils.updateProgrammaticVariables((VariablesHandler & Actor) m_Actor, m_Input);
       if (isLoggingEnabled())
 	getLogger().info("setUp() result: " + result);
 
