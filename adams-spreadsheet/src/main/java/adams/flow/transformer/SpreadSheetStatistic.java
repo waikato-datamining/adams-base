@@ -103,23 +103,8 @@ public class SpreadSheetStatistic
   /** for serialization. */
   private static final long serialVersionUID = -540187402790189753L;
 
-  /**
-   * Defines what data to retrieve from an Instances object.
-   *
-   * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
-   */
-  public enum DataType {
-    /** obtains rows. */
-    ROW_BY_INDEX,
-    /** obtains columns (by index). */
-    COLUMN_BY_INDEX,
-    /** obtains columns (by reg exp). */
-    COLUMN_BY_REGEXP
-  }
-
   /** the type of data to get from the Instances object (rows or columns). */
-  protected DataType m_DataType;
+  protected SpreadSheetStatisticDataType m_DataType;
 
   /** the array of indices/regular expressions. */
   protected BaseString[] m_Locations;
@@ -148,7 +133,7 @@ public class SpreadSheetStatistic
 
     m_OptionManager.add(
 	    "type", "dataType",
-	    DataType.COLUMN_BY_INDEX);
+	    SpreadSheetStatisticDataType.COLUMN_BY_INDEX);
 
     m_OptionManager.add(
 	    "location", "locations",
@@ -164,7 +149,7 @@ public class SpreadSheetStatistic
    *
    * @param value	the type of conversion
    */
-  public void setDataType(DataType value) {
+  public void setDataType(SpreadSheetStatisticDataType value) {
     m_DataType = value;
     reset();
   }
@@ -174,7 +159,7 @@ public class SpreadSheetStatistic
    *
    * @return		the type of conversion
    */
-  public DataType getDataType() {
+  public SpreadSheetStatisticDataType getDataType() {
     return m_DataType;
   }
 

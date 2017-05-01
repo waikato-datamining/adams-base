@@ -20,8 +20,6 @@
 
 package adams.flow.transformer;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import adams.core.base.BaseString;
 import adams.data.statistics.AbstractArrayStatistic;
 import adams.data.statistics.ArrayMean;
@@ -33,8 +31,9 @@ import adams.flow.control.Flow;
 import adams.flow.core.Actor;
 import adams.flow.sink.DumpFile;
 import adams.flow.source.FileSupplier;
-import adams.flow.transformer.SpreadSheetStatistic.DataType;
 import adams.test.TmpFile;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Tests the SpreadSheetStatistic actor.
@@ -98,7 +97,7 @@ public class SpreadSheetStatisticTest
 	new ArrayMean()
     });
     SpreadSheetStatistic is = new SpreadSheetStatistic();
-    is.setDataType(DataType.COLUMN_BY_INDEX);
+    is.setDataType(SpreadSheetStatisticDataType.COLUMN_BY_INDEX);
     is.setLocations(new BaseString[]{
 	new BaseString("1"),
 	new BaseString("last")
