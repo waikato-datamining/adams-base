@@ -104,21 +104,8 @@ public class ArrayStatistic
   /** for serialization. */
   private static final long serialVersionUID = 8536100625511019961L;
 
-  /**
-   * Defines what data to retrieve from the double matrix.
-   *
-   * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
-   */
-  public enum DataType {
-    /** obtains rows. */
-    ROW_BY_INDEX,
-    /** obtains columns (by index). */
-    COLUMN_BY_INDEX,
-  }
-
   /** the type of data to get from the double matrix (rows or columns). */
-  protected DataType m_DataType;
+  protected ArrayStatisticDataType m_DataType;
 
   /** the array of indices expressions. */
   protected BaseString[] m_Locations;
@@ -147,7 +134,7 @@ public class ArrayStatistic
 
     m_OptionManager.add(
 	    "type", "dataType",
-	    DataType.COLUMN_BY_INDEX);
+	    ArrayStatisticDataType.COLUMN_BY_INDEX);
 
     m_OptionManager.add(
 	    "location", "locations",
@@ -163,7 +150,7 @@ public class ArrayStatistic
    *
    * @param value	the type of conversion
    */
-  public void setDataType(DataType value) {
+  public void setDataType(ArrayStatisticDataType value) {
     m_DataType = value;
     reset();
   }
@@ -173,7 +160,7 @@ public class ArrayStatistic
    *
    * @return		the type of conversion
    */
-  public DataType getDataType() {
+  public ArrayStatisticDataType getDataType() {
     return m_DataType;
   }
 

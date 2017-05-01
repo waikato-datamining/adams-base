@@ -34,7 +34,7 @@ import adams.flow.sink.SequencePlotter;
 import adams.flow.sink.sequenceplotter.SimplePlotUpdater;
 import adams.flow.sink.sequenceplotter.ViewDataClickAction;
 import adams.flow.transformer.ArrayStatistic;
-import adams.flow.transformer.ArrayStatistic.DataType;
+import adams.flow.transformer.ArrayStatisticDataType;
 import adams.flow.transformer.Convert;
 import adams.flow.transformer.SpreadSheetColumnFilter;
 import adams.flow.transformer.SpreadSheetPlotGenerator;
@@ -507,10 +507,10 @@ public class Histogram
     stats.setStatistic(m_Histogram.shallowCopy(true));
     switch (m_Selection) {
       case COLUMN:
-	stats.setDataType(DataType.COLUMN_BY_INDEX);
+	stats.setDataType(ArrayStatisticDataType.COLUMN_BY_INDEX);
 	break;
       case ROW:
-	stats.setDataType(DataType.ROW_BY_INDEX);
+	stats.setDataType(ArrayStatisticDataType.ROW_BY_INDEX);
 	break;
       default:
 	throw new IllegalStateException("Unhandled selection: " + m_Selection);
