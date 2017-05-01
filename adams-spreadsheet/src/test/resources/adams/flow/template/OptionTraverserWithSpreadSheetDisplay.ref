@@ -14,16 +14,6 @@ adams.flow.control.Trigger
 								adams.data.spreadsheet.DenseDataRow
 							-spreadsheet-type
 								adams.data.spreadsheet.DefaultSpreadSheet
-									-date-lenient
-									true
-									-date-time-lenient
-									true
-									-date-time-msec-lenient
-									true
-									-time-lenient
-									true
-									-time-msec-lenient
-									true
 	-tee
 		adams.flow.sink.DisplayPanelManager
 			-provider
@@ -50,16 +40,6 @@ adams.flow.control.Once
 										adams.data.spreadsheet.DenseDataRow
 									-spreadsheet-type
 										adams.data.spreadsheet.DefaultSpreadSheet
-											-date-lenient
-											true
-											-date-time-lenient
-											true
-											-date-time-msec-lenient
-											true
-											-time-lenient
-											true
-											-time-msec-lenient
-											true
 			-tee
 				adams.flow.sink.SpreadSheetDisplay
 					-writer
