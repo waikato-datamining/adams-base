@@ -20,7 +20,6 @@
 
 package adams.flow.transformer;
 
-import weka.core.Instances;
 import adams.core.Index;
 import adams.core.QuickInfoHelper;
 import adams.core.base.BaseString;
@@ -29,6 +28,7 @@ import adams.data.statistics.AbstractArrayStatistic;
 import adams.data.statistics.ArrayMean;
 import adams.data.statistics.StatUtils;
 import adams.flow.core.Token;
+import weka.core.Instances;
 
 /**
  <!-- globalinfo-start -->
@@ -318,7 +318,7 @@ public class WekaInstancesStatistic
 	    break;
 
 	  default:
-	    throw new IllegalStateException("Unhandlded data type: " + m_DataType);
+	    throw new IllegalStateException("Unhandled data type: " + m_DataType);
 	}
       }
 

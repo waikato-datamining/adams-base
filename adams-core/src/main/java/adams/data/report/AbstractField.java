@@ -219,7 +219,7 @@ public abstract class AbstractField
 	  result = Boolean.parseBoolean(s);
 	  break;
 	default:
-	  throw new IllegalStateException("Unhandlded type '" + m_DataType + "'!");
+	  throw new IllegalStateException("Unhandled type '" + m_DataType + "'!");
       }
     }
     catch(Exception e) {

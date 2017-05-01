@@ -307,7 +307,7 @@ public class ArrayStatistic
 	      break;
 
 	    default:
-	      throw new IllegalStateException("Unhandlded data type: " + m_DataType);
+	      throw new IllegalStateException("Unhandled data type: " + m_DataType);
 	  }
 	}
       }
