@@ -20,8 +20,6 @@
 
 package adams.flow.transformer;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import adams.core.base.BaseString;
 import adams.data.statistics.AbstractArrayStatistic;
 import adams.data.statistics.ArrayMean;
@@ -34,8 +32,9 @@ import adams.flow.core.Actor;
 import adams.flow.sink.DumpFile;
 import adams.flow.source.FileSupplier;
 import adams.flow.transformer.WekaFileReader.OutputType;
-import adams.flow.transformer.WekaInstancesStatistic.DataType;
 import adams.test.TmpFile;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Tests the WekaInstancesStatistic actor.
@@ -100,7 +99,7 @@ public class WekaInstancesStatisticTest
 	new ArrayMean()
     });
     WekaInstancesStatistic is = new WekaInstancesStatistic();
-    is.setDataType(DataType.COLUMN_BY_INDEX);
+    is.setDataType(WekaInstancesStatisticDataType.COLUMN_BY_INDEX);
     is.setLocations(new BaseString[]{
 	new BaseString("1"),
 	new BaseString("last")

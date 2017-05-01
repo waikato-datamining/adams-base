@@ -98,23 +98,8 @@ public class WekaInstancesStatistic
   /** for serialization. */
   private static final long serialVersionUID = -8493694755948450901L;
 
-  /**
-   * Defines what data to retrieve from an Instances object.
-   *
-   * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
-   */
-  public enum DataType {
-    /** obtains rows. */
-    ROW_BY_INDEX,
-    /** obtains columns (by index). */
-    COLUMN_BY_INDEX,
-    /** obtains columns (by reg exp). */
-    COLUMN_BY_REGEXP
-  }
-
   /** the type of data to get from the Instances object (rows or columns). */
-  protected DataType m_DataType;
+  protected WekaInstancesStatisticDataType m_DataType;
 
   /** the array of indices/regular expressions. */
   protected BaseString[] m_Locations;
@@ -144,7 +129,7 @@ public class WekaInstancesStatistic
 
     m_OptionManager.add(
 	    "type", "dataType",
-	    DataType.COLUMN_BY_INDEX);
+	    WekaInstancesStatisticDataType.COLUMN_BY_INDEX);
 
     m_OptionManager.add(
 	    "location", "locations",
@@ -160,7 +145,7 @@ public class WekaInstancesStatistic
    *
    * @param value	the type of conversion
    */
-  public void setDataType(DataType value) {
+  public void setDataType(WekaInstancesStatisticDataType value) {
     m_DataType = value;
     reset();
   }
@@ -170,7 +155,7 @@ public class WekaInstancesStatistic
    *
    * @return		the type of conversion
    */
-  public DataType getDataType() {
+  public WekaInstancesStatisticDataType getDataType() {
     return m_DataType;
   }
 

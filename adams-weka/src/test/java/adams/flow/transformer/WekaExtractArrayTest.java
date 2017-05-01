@@ -20,8 +20,6 @@
 
 package adams.flow.transformer;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import adams.core.Index;
 import adams.core.base.BaseString;
 import adams.data.statistics.AbstractArrayStatistic;
@@ -38,8 +36,9 @@ import adams.flow.source.WekaClassifierSetup;
 import adams.flow.standalone.CallableActors;
 import adams.flow.transformer.WekaExtractArray.ExtractionType;
 import adams.flow.transformer.WekaFileReader.OutputType;
-import adams.flow.transformer.WekaInstancesStatistic.DataType;
 import adams.test.TmpFile;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import weka.classifiers.functions.LinearRegressionJ;
 
 /**
@@ -120,7 +119,7 @@ public class WekaExtractArrayTest
 	new ArrayStandardScores()
     });
     WekaInstancesStatistic is = new WekaInstancesStatistic();
-    is.setDataType(DataType.COLUMN_BY_REGEXP);
+    is.setDataType(WekaInstancesStatisticDataType.COLUMN_BY_REGEXP);
     is.setLocations(new BaseString[]{
 	new BaseString("Predicted")
     });
