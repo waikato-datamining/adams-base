@@ -15,14 +15,13 @@
 
 /*
  * RandomNumberGenerator.java
- * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
 
 import adams.core.QuickInfoHelper;
 import adams.data.random.JavaRandomDouble;
-import adams.flow.core.Token;
 
 /**
  <!-- globalinfo-start -->
@@ -33,7 +32,7 @@ import adams.flow.core.Token;
  <!-- flow-summary-start -->
  * Input&#47;output:<br>
  * - generates:<br>
- * &nbsp;&nbsp;&nbsp;java.lang.Double<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.Number<br>
  * <br><br>
  <!-- flow-summary-end -->
  *
@@ -48,7 +47,7 @@ import adams.flow.core.Token;
  * &nbsp;&nbsp;&nbsp;default: RandomNumberGenerator
  * </pre>
  * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
@@ -60,8 +59,20 @@ import adams.flow.core.Token;
  * </pre>
  * 
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this 
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical 
+ * &nbsp;&nbsp;&nbsp;actors.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-output-array &lt;boolean&gt; (property: outputArray)
+ * &nbsp;&nbsp;&nbsp;If enabled, the random numbers are output as array rather than one by one.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
@@ -82,7 +93,7 @@ import adams.flow.core.Token;
  * @version $Revision$
  */
 public class RandomNumberGenerator
-  extends AbstractSource {
+  extends AbstractArrayProvider {
 
   /** for serialization. */
   private static final long serialVersionUID = 6216146938771296415L;
@@ -92,9 +103,6 @@ public class RandomNumberGenerator
 
   /** the maximum number of random numbers to generate. */
   protected int m_MaxNum;
-
-  /** the counter for the random numbers generated. */
-  protected int m_Count;
 
   /**
    * Returns a string describing the object.
@@ -123,6 +131,27 @@ public class RandomNumberGenerator
   }
 
   /**
+   * Returns the based class of the items.
+   *
+   * @return		the class
+   */
+  @Override
+  protected Class getItemClass() {
+    return Number.class;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  @Override
+  public String outputArrayTipText() {
+    return "If enabled, the random numbers are output as array rather than one by one.";
+  }
+
+  /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
@@ -133,6 +162,7 @@ public class RandomNumberGenerator
 
     result  = QuickInfoHelper.toString(this, "generator", m_Generator);
     result += QuickInfoHelper.toString(this, "maxNum", m_MaxNum, "/");
+    result += QuickInfoHelper.toString(this, "outputArray", (m_OutputArray ? "as array" : "one by one"), ", ");
 
     return result;
   }
@@ -202,15 +232,6 @@ public class RandomNumberGenerator
   }
 
   /**
-   * Returns the class of objects that it generates.
-   *
-   * @return		<!-- flow-generates-start -->java.lang.Double.class<!-- flow-generates-end -->
-   */
-  public Class[] generates() {
-    return new Class[]{Number.class};
-  }
-
-  /**
    * Resets the scheme.
    */
   @Override
@@ -228,33 +249,12 @@ public class RandomNumberGenerator
    */
   @Override
   protected String doExecute() {
-    m_Count = 0;
+    int		i;
+
+    m_Queue.clear();
+    for (i = 0; i < m_MaxNum; i++)
+      m_Queue.add(m_Generator.next());
+
     return null;
-  }
-
-  /**
-   * Returns the generated token.
-   *
-   * @return		the generated token
-   */
-  @Override
-  public Token output() {
-    Token	result;
-
-    m_Count++;
-    result = new Token(m_Generator.next());
-
-    return result;
-  }
-
-  /**
-   * Checks whether there is pending output to be collected after
-   * executing the flow item.
-   *
-   * @return		true if there is pending output
-   */
-  @Override
-  public boolean hasPendingOutput() {
-    return m_Executed && (((m_MaxNum > -1) && (m_Count < m_MaxNum)) || (m_MaxNum == -1));
   }
 }
