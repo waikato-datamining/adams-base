@@ -370,6 +370,6 @@ public class BaseInterval
    */
   @Override
   public String getTipText() {
-    return "Interval definition: (min;max) exclusive borders, [min;max] inclusive borders";
+    return "Interval definition: (min;max) exclusive borders, [min;max] inclusive borders; " + NEGATIVE_INFINITY + " and " + POSITIVE_INFINITY + " can be used as well";
   }
 }
