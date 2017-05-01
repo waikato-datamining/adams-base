@@ -237,13 +237,13 @@ public abstract class AbstractCommandLineHandler
     for (i = 0; i < m_HandlerClasses.length; i++) {
       if (m_HandlerClasses[i] == DefaultCommandLineHandler.class)
 	continue;
-      if (m_HandlerClasses[i] == JenericCommandLineHandler.class) {
-	jeneric = true;
-	continue;
-      }
       try {
 	handler = (AbstractCommandLineHandler) m_HandlerClasses[i].newInstance();
 	if (handler.handles(cls)) {
+          if (m_HandlerClasses[i] == JenericCommandLineHandler.class) {
+            jeneric = true;
+            continue;
+          }
 	  result = handler;
 	  break;
 	}

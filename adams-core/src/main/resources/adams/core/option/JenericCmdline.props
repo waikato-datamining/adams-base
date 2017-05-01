@@ -8,3 +8,5 @@
 # Version: $Revision: 15816 $
 
 java.util.logging.Handler=true
+adams.core.option.OptionProducer=true
+adams.core.option.OptionConsumer=true
