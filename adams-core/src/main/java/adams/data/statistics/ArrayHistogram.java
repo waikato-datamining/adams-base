@@ -15,7 +15,7 @@
 
 /**
  * ArrayHistogram.java
- * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.statistics;
 
@@ -52,7 +52,7 @@ import adams.core.base.BaseInterval;
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  * 
- * <pre>-bin-calc &lt;MANUAL|DENSITY|STURGES|SCOTT|SQRT&gt; (property: binCalculation)
+ * <pre>-bin-calc &lt;MANUAL|FREQUENCY|DENSITY|STURGES|SCOTT|SQRT&gt; (property: binCalculation)
  * &nbsp;&nbsp;&nbsp;Defines how the number of bins are calculated.
  * &nbsp;&nbsp;&nbsp;default: MANUAL
  * </pre>
@@ -142,6 +142,8 @@ public class ArrayHistogram<T extends Number>
   public enum BinCalculation {
     /** manual. */
     MANUAL,
+    /** frequency. */
+    FREQUENCY,
     /** density. */
     DENSITY,
     /** Sturges' formula. */
@@ -593,6 +595,9 @@ public class ArrayHistogram<T extends Number>
 	}
 	return (max - min) / m_NumBins;
 
+      case FREQUENCY:
+	return -1.0;   // not necessary
+
       case DENSITY:
 	return m_BinWidth;
 
@@ -633,6 +638,7 @@ public class ArrayHistogram<T extends Number>
 
     switch (m_BinCalculation) {
       case MANUAL:
+      case FREQUENCY:
 	return m_NumBins;
 
       case DENSITY:
@@ -654,6 +660,49 @@ public class ArrayHistogram<T extends Number>
   }
 
   /**
+   * Calculates the starting values for the bins.
+   *
+   * @param array	the array to work on
+   * @param width	the width of the bins
+   * @param numBins	the number of bins to use
+   * @param min		the minimum value
+   * @param max		the maximum value
+   * @return		the starting values of the bins (+ one after)
+   */
+  protected double[] calcBinStarts(Number[] array, double width, int numBins, double min, double max) {
+    double[]	result;
+    Number[]	sorted;
+    int		i;
+
+    result = new double[(numBins > 0) ? numBins + 1 : (m_NumBins + 1)];
+
+    switch (m_BinCalculation) {
+      case MANUAL:
+      case DENSITY:
+      case STURGES:
+      case SCOTT:
+      case SQRT:
+	for (i = 0; i < numBins; i++)
+	  result[i] = min + i*width;
+	break;
+
+      case FREQUENCY:
+	sorted = StatUtils.sort(array, true);
+	for (i = 0; i < m_NumBins; i++)
+	  result[i] = sorted[i * (int)((double) sorted.length) / m_NumBins].doubleValue();
+	break;
+
+      default:
+	throw new IllegalStateException(
+	    "Unhandled bin start calculation: " + m_BinCalculation);
+    }
+
+    result[result.length - 1] = max;
+
+    return result;
+  }
+
+  /**
    * Generates the actual result.
    *
    * @return		the generated result
@@ -662,6 +711,7 @@ public class ArrayHistogram<T extends Number>
   protected StatisticContainer doCalculate() {
     StatisticContainer<Double>	result;
     int				n;
+    int				i;
     double			binWidth;
     int				numBins;
     Number[]			array;
@@ -670,7 +720,9 @@ public class ArrayHistogram<T extends Number>
     double			min;
     double			max;
     double[]			binX;
+    double[]			binStart;
     String			prefix;
+    double			value;
 
     array = get(0);
     if (m_Normalize)
@@ -694,15 +746,16 @@ public class ArrayHistogram<T extends Number>
       max = m_ManualMax;
     }
     binWidth = (max - min) / numBins;
-    bins     = new int[numBins];
-    result   = new StatisticContainer<>(size(), numBins);
+    binStart = calcBinStarts(array, binWidth, numBins, min, max);
+    bins     = new int[(numBins > 0) ? numBins : m_NumBins];
+    result   = new StatisticContainer<>(size(), bins.length);
     for (n = 0; n < numBins; n++) {
       if (m_DisplayRanges)
 	result.setHeader(
 	    n,
             new BaseInterval(
-              min + binWidth * n, true,
-              min + binWidth * (n + 1), (n == numBins - 1),
+              binStart[n], true,
+              binStart[n + 1], (n == numBins - 1),
               m_NumDecimals).getValue());
       else
 	result.setHeader(
@@ -712,22 +765,24 @@ public class ArrayHistogram<T extends Number>
 
     // fill bins
     for (n = 0; n < array.length; n++) {
-      bin = (int) Math.floor((array[n].doubleValue() - min) / binWidth);
-      // max belongs in the top-most bin
-      if (bin == numBins)
-	bin--;
+      bin   = 0;
+      value = array[n].doubleValue();
+      for (i = 0; i < binStart.length - 1; i++) {
+	if (value >= binStart[i])
+	  bin = i;
+      }
       bins[bin]++;
     }
 
     // fill spreadsheet
-    binX = new double[numBins];
+    binX = new double[bins.length];
     for (n = 0; n < bins.length; n++) {
       binX[n] = min + n * binWidth;
       result.setCell(0, n, new Double(bins[n]));
     }
 
     // add meta-data
-    result.setMetaData(METADATA_NUMBINS,  numBins);
+    result.setMetaData(METADATA_NUMBINS,  bins.length);
     result.setMetaData(METADATA_BINWIDTH, binWidth);
     result.setMetaData(METADATA_BINX,     binX);
     result.setMetaData(METADATA_MINIMUM,  min);
