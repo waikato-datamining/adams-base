@@ -393,13 +393,13 @@ public class SpreadSheetTableModel
 	else if (cell.getContentType() == ContentType.DOUBLE) {
 	  d = cell.toDouble();
 	  if (Double.isNaN(d)) {
-	    result = "NaN";
+	    result = Utils.NAN;
 	  }
 	  else if (Double.isInfinite(d)) {
             if (d < 0)
-              result = "-Infinity";
+              result = Utils.NEGATIVE_INFINITY;
             else
-              result = "+Infinity";
+              result = Utils.POSITIVE_INFINITY;
 	  }
 	  else {
 	    if (m_NumDecimals > -1) {

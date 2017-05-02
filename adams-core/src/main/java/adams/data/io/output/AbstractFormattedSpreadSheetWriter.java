@@ -154,13 +154,13 @@ public abstract class AbstractFormattedSpreadSheetWriter
     String	result;
 
     if (Double.isNaN(value)) {
-      return "NaN";
+      return Utils.NAN;
     }
     else if (Double.isInfinite(value)) {
       if (value < 0)
-        return "-Infinity";
+        return Utils.NEGATIVE_INFINITY;
       else
-        return "+Infinity";
+        return Utils.POSITIVE_INFINITY;
     }
 
     if (m_NumberFormat.length() > 0) {

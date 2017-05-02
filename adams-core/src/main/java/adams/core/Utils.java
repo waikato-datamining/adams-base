@@ -68,7 +68,13 @@ public class Utils {
 
   /** the indicator for arrays. */
   public static final String ARRAY_INDICATOR = "[]";
-  
+
+  public static final String NAN = "NaN";
+
+  public static final String NEGATIVE_INFINITY = "-Infinity";
+
+  public static final String POSITIVE_INFINITY = "+Infinity";
+
   /**
    * Rounds a double and converts it into String. Always displays the
    * specified number of decimals. Uses the default locale.
@@ -102,8 +108,16 @@ public class Utils {
     char		separator;
     boolean		negative;
 
-    if (Double.isNaN(value) || Double.isInfinite(value))
-      return Double.toString(value);
+    // special numbers
+    if (Double.isNaN(value)) {
+      return NAN;
+    }
+    else if (Double.isInfinite(value)) {
+      if (value < 0)
+        return NEGATIVE_INFINITY;
+      else
+        return POSITIVE_INFINITY;
+    }
 
     if (    (afterDecimalPoint < 0)
 	 || (value > Long.MAX_VALUE)
@@ -161,6 +175,17 @@ public class Utils {
     int 		currentPos;
     long 		precisionValue;
     char		separator;
+
+    // special numbers
+    if (Double.isNaN(value)) {
+      return NAN;
+    }
+    else if (Double.isInfinite(value)) {
+      if (value < 0)
+        return NEGATIVE_INFINITY;
+      else
+        return POSITIVE_INFINITY;
+    }
 
     temp = value * Math.pow(10.0, afterDecimalPoint);
     if (Math.abs(temp) < Long.MAX_VALUE) {
@@ -233,6 +258,17 @@ public class Utils {
     int		i;
     int 	offset;
     char	separator;
+
+    // special numbers
+    if (Double.isNaN(value)) {
+      return NAN;
+    }
+    else if (Double.isInfinite(value)) {
+      if (value < 0)
+        return NEGATIVE_INFINITY;
+      else
+        return POSITIVE_INFINITY;
+    }
 
     tempString = doubleToString(value, afterDecimalPoint, locale);
     if ((afterDecimalPoint >= width)
