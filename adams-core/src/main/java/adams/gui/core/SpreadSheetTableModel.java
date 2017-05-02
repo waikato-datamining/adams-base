@@ -15,7 +15,7 @@
 
 /*
  * SpreadSheetTableModel.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
@@ -394,6 +394,12 @@ public class SpreadSheetTableModel
 	  d = cell.toDouble();
 	  if (Double.isNaN(d)) {
 	    result = "NaN";
+	  }
+	  else if (Double.isInfinite(d)) {
+            if (d < 0)
+              result = "-Infinity";
+            else
+              result = "+Infinity";
 	  }
 	  else {
 	    if (m_NumDecimals > -1) {
