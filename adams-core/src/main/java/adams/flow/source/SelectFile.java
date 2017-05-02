@@ -15,24 +15,29 @@
 
 /*
  * SelectFile.java
- * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
 
+import adams.core.Properties;
 import adams.core.QuickInfoHelper;
 import adams.core.base.BaseString;
 import adams.core.io.ConsoleHelper;
 import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
+import adams.core.option.OptionUtils;
 import adams.flow.core.AutomatableInteractiveActor;
 import adams.flow.core.InteractiveActor;
+import adams.flow.core.RestorableActor;
+import adams.flow.core.RestorableActorHelper;
 import adams.gui.chooser.BaseFileChooser;
 import adams.gui.core.ExtensionFileFilter;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 /**
  <!-- globalinfo-start -->
@@ -58,7 +63,7 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default: SelectFile
  * </pre>
  * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
@@ -70,8 +75,15 @@ import java.util.List;
  * </pre>
  * 
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this 
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical 
+ * &nbsp;&nbsp;&nbsp;actors.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
@@ -122,6 +134,17 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
+ * <pre>-restoration-enabled &lt;boolean&gt; (property: restorationEnabled)
+ * &nbsp;&nbsp;&nbsp;If enabled, the state of the actor is being preserved and attempted to read 
+ * &nbsp;&nbsp;&nbsp;in again next time this actor is executed.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-restoration-file &lt;adams.core.io.PlaceholderFile&gt; (property: restorationFile)
+ * &nbsp;&nbsp;&nbsp;The file to store the restoration information in.
+ * &nbsp;&nbsp;&nbsp;default: ${CWD}
+ * </pre>
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -129,10 +152,14 @@ import java.util.List;
  */
 public class SelectFile
   extends AbstractArrayProvider
-  implements InteractiveActor, AutomatableInteractiveActor {
+  implements InteractiveActor, AutomatableInteractiveActor, RestorableActor {
 
   /** for serialization. */
   private static final long serialVersionUID = 8200691218381875131L;
+
+  public static final String KEY_INITIAL_DIR = "initial_dir";
+
+  public static final String KEY_INITIAL_FILES = "initial_files";
 
   /** the title of the file chooser dialog. */
   protected String m_FileChooserTitle;
@@ -157,6 +184,12 @@ public class SelectFile
 
   /** whether to automate the actor. */
   protected boolean m_NonInteractive;
+
+  /** whether restoration is enabled. */
+  protected boolean m_RestorationEnabled;
+
+  /** the file to store the restoration state in. */
+  protected PlaceholderFile m_RestorationFile;
 
   /**
    * Returns a string describing the object.
@@ -208,6 +241,14 @@ public class SelectFile
     m_OptionManager.add(
 	    "non-interactive", "nonInteractive",
 	    false);
+
+    m_OptionManager.add(
+	    "restoration-enabled", "restorationEnabled",
+	    false);
+
+    m_OptionManager.add(
+	    "restoration-file", "restorationFile",
+	    new PlaceholderFile());
   }
 
   /**
@@ -477,6 +518,70 @@ public class SelectFile
   }
 
   /**
+   * Sets whether to enable restoration.
+   *
+   * @param value	true if to enable restoration
+   */
+  @Override
+  public void setRestorationEnabled(boolean value) {
+    m_RestorationEnabled = value;
+    reset();
+  }
+
+  /**
+   * Returns whether restoration is enabled.
+   *
+   * @return		true if restoration enabled
+   */
+  @Override
+  public boolean isRestorationEnabled() {
+    return m_RestorationEnabled;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  @Override
+  public String restorationEnabledTipText() {
+    return "If enabled, the state of the actor is being preserved and attempted to read in again next time this actor is executed.";
+  }
+
+  /**
+   * Sets the file for storing the state.
+   *
+   * @param value	the file
+   */
+  @Override
+  public void setRestorationFile(PlaceholderFile value) {
+    m_RestorationFile = value;
+    reset();
+  }
+
+  /**
+   * Returns the file for storing the state.
+   *
+   * @return		the file
+   */
+  @Override
+  public PlaceholderFile getRestorationFile() {
+    return m_RestorationFile;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  @Override
+  public String restorationFileTipText() {
+    return "The file to store the restoration information in.";
+  }
+
+  /**
    * Returns the base class of the items.
    *
    * @return		the class
@@ -492,12 +597,18 @@ public class SelectFile
    * @return		true if successfully interacted
    */
   public boolean doInteract() {
-    boolean		result;
-    int			retVal;
-    File[]		files;
-    BaseFileChooser	fileChooser;
-    ExtensionFileFilter	filter;
-    ExtensionFileFilter	activeFilter;
+    boolean			result;
+    int				retVal;
+    File[]			files;
+    BaseFileChooser		fileChooser;
+    ExtensionFileFilter		filter;
+    ExtensionFileFilter		activeFilter;
+    PlaceholderDirectory 	initialDir;
+    PlaceholderFile[]		initialFiles;
+    String[]			initialFilesStr;
+    Properties			props;
+    String			msg;
+    int				i;
 
     result = false;
 
@@ -512,7 +623,37 @@ public class SelectFile
       }
       return true;
     }
-    
+
+    initialDir      = m_InitialDirectory;
+    initialFiles    = m_InitialFiles;
+    initialFilesStr = new String[m_InitialFiles.length];
+    for (i = 0; i < initialFiles.length; i++)
+      initialFilesStr[i] = initialFiles[i].getAbsolutePath();
+    if (m_RestorationEnabled && RestorableActorHelper.canRead(m_RestorationFile)) {
+      props = new Properties();
+      props.setProperty(KEY_INITIAL_DIR, m_InitialDirectory.getAbsolutePath());
+      props.setProperty(KEY_INITIAL_FILES, OptionUtils.joinOptions(initialFilesStr));
+      msg = RestorableActorHelper.read(m_RestorationFile, props);
+      if (msg != null)
+	getLogger().warning(msg);
+      else {
+	if (props.hasKey(KEY_INITIAL_DIR)) {
+	  initialDir = new PlaceholderDirectory(props.getProperty(KEY_INITIAL_DIR));
+	}
+	if (props.hasKey(KEY_INITIAL_FILES)) {
+	  try {
+	    initialFilesStr = OptionUtils.splitOptions(props.getProperty(KEY_INITIAL_FILES));
+	    initialFiles    = new PlaceholderFile[initialFilesStr.length];
+	    for (i = 0; i < initialFilesStr.length; i++)
+	      initialFiles[i] = new PlaceholderFile(initialFilesStr[i]);
+	  }
+	  catch (Exception e) {
+	    getLogger().log(Level.WARNING, "Failed to process '" + KEY_INITIAL_FILES + "' from restoration data!", e);
+	  }
+	}
+      }
+    }
+
     fileChooser = new BaseFileChooser();
     fileChooser.resetChoosableFileFilters();
     activeFilter = null;
@@ -524,14 +665,14 @@ public class SelectFile
     }
     if (m_FileChooserTitle.length() > 0)
       fileChooser.setDialogTitle(m_FileChooserTitle);
-    if (m_InitialFiles.length > 0)
-      fileChooser.setCurrentDirectory(m_InitialFiles[0].getParentFile());
+    if (initialFiles.length > 0)
+      fileChooser.setCurrentDirectory(initialFiles[0].getParentFile());
     else
-      fileChooser.setCurrentDirectory(m_InitialDirectory);
+      fileChooser.setCurrentDirectory(initialDir);
     fileChooser.setFileSelectionMode(BaseFileChooser.FILES_ONLY);
     fileChooser.setAcceptAllFileFilterUsed(true);
     fileChooser.setMultiSelectionEnabled(true);
-    fileChooser.setSelectedFiles(m_InitialFiles);
+    fileChooser.setSelectedFiles(initialFiles);
     if (activeFilter != null)
       fileChooser.setFileFilter(activeFilter);
     else
@@ -545,6 +686,17 @@ public class SelectFile
 	  m_Queue.add(file.getAbsolutePath());
 	else
 	  m_Queue.add(new PlaceholderFile(file).toString());
+      }
+      if (m_RestorationEnabled) {
+	initialFilesStr = new String[files.length];
+	for (i = 0; i < files.length; i++)
+	  initialFilesStr[i] = files[i].getAbsolutePath();
+	props = new Properties();
+	props.setProperty(KEY_INITIAL_DIR, fileChooser.getCurrentDirectory().getAbsolutePath());
+	props.setProperty(KEY_INITIAL_FILES, OptionUtils.joinOptions(initialFilesStr));
+	msg = RestorableActorHelper.write(props, m_RestorationFile);
+	if (msg != null)
+	  getLogger().warning(msg);
       }
     }
 
@@ -569,6 +721,8 @@ public class SelectFile
     boolean		result;
     String[]		files;
     PlaceholderFile	filePh;
+    Properties		props;
+    String		msg;
 
     result = false;
 
@@ -593,6 +747,14 @@ public class SelectFile
 	  m_Queue.add(filePh.getAbsolutePath());
 	else
 	  m_Queue.add(filePh.toString());
+      }
+      if (m_RestorationEnabled) {
+	props = new Properties();
+	props.setProperty(KEY_INITIAL_DIR, m_InitialDirectory.getAbsolutePath());
+	props.setProperty(KEY_INITIAL_FILES, OptionUtils.joinOptions(files));
+	msg = RestorableActorHelper.write(props, m_RestorationFile);
+	if (msg != null)
+	  getLogger().warning(msg);
       }
     }
 

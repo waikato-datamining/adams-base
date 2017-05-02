@@ -15,17 +15,20 @@
 
 /*
  * EnterManyValues.java
- * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
 
 import adams.core.Properties;
 import adams.core.QuickInfoHelper;
+import adams.core.io.PlaceholderFile;
 import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.core.AutomatableInteractiveActor;
+import adams.flow.core.RestorableActor;
+import adams.flow.core.RestorableActorHelper;
 import adams.flow.core.Token;
 import adams.flow.source.valuedefinition.AbstractValueDefinition;
 import adams.gui.core.PropertiesParameterPanel;
@@ -122,6 +125,17 @@ import java.util.Map;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
+ * <pre>-restoration-enabled &lt;boolean&gt; (property: restorationEnabled)
+ * &nbsp;&nbsp;&nbsp;If enabled, the state of the actor is being preserved and attempted to read 
+ * &nbsp;&nbsp;&nbsp;in again next time this actor is executed.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-restoration-file &lt;adams.core.io.PlaceholderFile&gt; (property: restorationFile)
+ * &nbsp;&nbsp;&nbsp;The file to store the restoration information in.
+ * &nbsp;&nbsp;&nbsp;default: ${CWD}
+ * </pre>
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -129,7 +143,7 @@ import java.util.Map;
  */
 public class EnterManyValues
   extends AbstractInteractiveSource
-  implements AutomatableInteractiveActor {
+  implements AutomatableInteractiveActor, RestorableActor {
 
   /** for serialization. */
   private static final long serialVersionUID = 8200691218381875131L;
@@ -155,7 +169,13 @@ public class EnterManyValues
 
   /** whether to automate the actor. */
   protected boolean m_NonInteractive;
-  
+
+  /** whether restoration is enabled. */
+  protected boolean m_RestorationEnabled;
+
+  /** the file to store the restoration state in. */
+  protected PlaceholderFile m_RestorationFile;
+
   /** the list of tokens to output. */
   protected List m_Queue;
 
@@ -191,6 +211,14 @@ public class EnterManyValues
     m_OptionManager.add(
 	    "non-interactive", "nonInteractive",
 	    false);
+
+    m_OptionManager.add(
+	    "restoration-enabled", "restorationEnabled",
+	    false);
+
+    m_OptionManager.add(
+	    "restoration-file", "restorationFile",
+	    new PlaceholderFile());
   }
 
   /**
@@ -225,7 +253,7 @@ public class EnterManyValues
 
     result = QuickInfoHelper.toString(this, "message", m_Message);
 
-    options = new ArrayList<String>();
+    options = new ArrayList<>();
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "stopFlowIfCanceled", m_StopFlowIfCanceled, "stops flow if canceled"));
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "nonInteractive", m_NonInteractive, "non-interactive"));
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "outputType", m_OutputType));
@@ -348,6 +376,70 @@ public class EnterManyValues
    */
   public String nonInteractiveTipText() {
     return "If enabled, the initial value is forwarded without user interaction.";
+  }
+
+  /**
+   * Sets whether to enable restoration.
+   *
+   * @param value	true if to enable restoration
+   */
+  @Override
+  public void setRestorationEnabled(boolean value) {
+    m_RestorationEnabled = value;
+    reset();
+  }
+
+  /**
+   * Returns whether restoration is enabled.
+   *
+   * @return		true if restoration enabled
+   */
+  @Override
+  public boolean isRestorationEnabled() {
+    return m_RestorationEnabled;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  @Override
+  public String restorationEnabledTipText() {
+    return "If enabled, the state of the actor is being preserved and attempted to read in again next time this actor is executed.";
+  }
+
+  /**
+   * Sets the file for storing the state.
+   *
+   * @param value	the file
+   */
+  @Override
+  public void setRestorationFile(PlaceholderFile value) {
+    m_RestorationFile = value;
+    reset();
+  }
+
+  /**
+   * Returns the file for storing the state.
+   *
+   * @return		the file
+   */
+  @Override
+  public PlaceholderFile getRestorationFile() {
+    return m_RestorationFile;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  @Override
+  public String restorationFileTipText() {
+    return "The file to store the restoration information in.";
   }
 
   /**
@@ -548,7 +640,18 @@ public class EnterManyValues
       }
     }
     panel.setPropertyOrder(order);
-    panel.setProperties(getDefaultProperties());
+    if (m_RestorationEnabled && RestorableActorHelper.canRead(m_RestorationFile)) {
+      props = getDefaultProperties();
+      msg   = RestorableActorHelper.read(m_RestorationFile, props);
+      if (msg != null) {
+	getLogger().warning(msg);
+	props = getDefaultProperties();
+      }
+    }
+    else {
+      props = getDefaultProperties();
+    }
+    panel.setProperties(props);
     panelMsg = new JPanel(new FlowLayout(FlowLayout.LEFT));
     msg = m_Message;
     msg = getVariables().expand(msg);
@@ -591,6 +694,11 @@ public class EnterManyValues
     if (dialog.getOption() == ApprovalDialog.APPROVE_OPTION) {
       props = panel.getProperties();
       m_Queue.addAll(Arrays.asList(propertiesToOutputType(props)));
+      if (m_RestorationEnabled) {
+	msg = RestorableActorHelper.write(props, m_RestorationFile);
+	if (msg != null)
+	  getLogger().warning(msg);
+      }
       return true;
     }
     else {
@@ -616,15 +724,26 @@ public class EnterManyValues
     boolean	result;
     String	value;
     Properties	props;
+    String	msg;
 
     if (m_NonInteractive) {
       m_Queue.addAll(Arrays.asList(propertiesToOutputType(getDefaultProperties())));
       return true;
     }
 
+    props = new Properties();
+    if (m_RestorationEnabled && RestorableActorHelper.canRead(m_RestorationFile)) {
+      msg = RestorableActorHelper.read(m_RestorationFile, props);
+      if (msg != null) {
+	getLogger().warning(msg);
+	props = new Properties();
+      }
+    }
+
     result = true;
-    props  = new Properties();
     for (AbstractValueDefinition valueDef: m_Values) {
+      if (props.hasKey(valueDef.getName()))
+	valueDef.setDefaultValueAsString(props.getProperty(valueDef.getName()));
       value = valueDef.headlessInteraction();
       if (value == null) {
 	result = false;
@@ -632,8 +751,14 @@ public class EnterManyValues
       }
       props.setProperty(valueDef.getName(), value);
     }
-    if (result)
+    if (result) {
       m_Queue.addAll(Arrays.asList(propertiesToOutputType(props)));
+      if (m_RestorationEnabled) {
+	msg = RestorableActorHelper.write(props, m_RestorationFile);
+	if (msg != null)
+	  getLogger().warning(msg);
+      }
+    }
 
     return result;
   }

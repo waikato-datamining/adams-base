@@ -20,11 +20,15 @@
 
 package adams.flow.source;
 
+import adams.core.Properties;
 import adams.core.QuickInfoHelper;
 import adams.core.base.BaseObject;
 import adams.core.base.BaseString;
 import adams.core.io.ConsoleHelper;
+import adams.core.io.PlaceholderFile;
 import adams.flow.core.AutomatableInteractiveActor;
+import adams.flow.core.RestorableActor;
+import adams.flow.core.RestorableActorHelper;
 import adams.flow.core.Token;
 import adams.gui.core.GUIHelper;
 
@@ -67,13 +71,15 @@ import java.util.List;
  * </pre>
  * 
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this 
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical 
+ * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
  * <pre>-silent &lt;boolean&gt; (property: silent)
- * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console.
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
@@ -88,13 +94,13 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
- * <pre>-message &lt;java.lang.String&gt; (property: message)
+ * <pre>-message &lt;adams.core.base.BaseString&gt; (property: message)
  * &nbsp;&nbsp;&nbsp;The message to prompt the user with; variables get expanded prior to prompting 
  * &nbsp;&nbsp;&nbsp;user.
  * &nbsp;&nbsp;&nbsp;default: Please enter a value
  * </pre>
  * 
- * <pre>-initial-value &lt;java.lang.String&gt; (property: initialValue)
+ * <pre>-initial-value &lt;adams.core.base.BaseString&gt; (property: initialValue)
  * &nbsp;&nbsp;&nbsp;The initial value to prompt the user with; variables get expanded prior 
  * &nbsp;&nbsp;&nbsp;to prompting user.
  * &nbsp;&nbsp;&nbsp;default: 
@@ -116,6 +122,17 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
+ * <pre>-restoration-enabled &lt;boolean&gt; (property: restorationEnabled)
+ * &nbsp;&nbsp;&nbsp;If enabled, the state of the actor is being preserved and attempted to read 
+ * &nbsp;&nbsp;&nbsp;in again next time this actor is executed.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-restoration-file &lt;adams.core.io.PlaceholderFile&gt; (property: restorationFile)
+ * &nbsp;&nbsp;&nbsp;The file to store the restoration information in.
+ * &nbsp;&nbsp;&nbsp;default: ${CWD}
+ * </pre>
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -123,10 +140,12 @@ import java.util.List;
  */
 public class EnterValue
   extends AbstractInteractiveSource
-  implements AutomatableInteractiveActor {
+  implements AutomatableInteractiveActor, RestorableActor {
 
   /** for serialization. */
   private static final long serialVersionUID = 8200691218381875131L;
+
+  public static final String KEY_INITIAL = "initial";
 
   /** the message for the user. */
   protected BaseString m_Message;
@@ -142,7 +161,13 @@ public class EnterValue
 
   /** whether to use buttons instead of a dropdown list. */
   protected boolean m_UseButtons;
-  
+
+  /** whether restoration is enabled. */
+  protected boolean m_RestorationEnabled;
+
+  /** the file to store the restoration state in. */
+  protected PlaceholderFile m_RestorationFile;
+
   /** the output token to broadcast. */
   protected Token m_OutputToken;
 
@@ -186,6 +211,14 @@ public class EnterValue
     m_OptionManager.add(
 	    "non-interactive", "nonInteractive",
 	    false);
+
+    m_OptionManager.add(
+	    "restoration-enabled", "restorationEnabled",
+	    false);
+
+    m_OptionManager.add(
+	    "restoration-file", "restorationFile",
+	    new PlaceholderFile());
   }
 
   /**
@@ -200,7 +233,7 @@ public class EnterValue
 
     result = QuickInfoHelper.toString(this, "message", m_Message);
 
-    options = new ArrayList<String>();
+    options = new ArrayList<>();
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "stopFlowIfCanceled", m_StopFlowIfCanceled, "stops flow if canceled"));
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "nonInteractive", m_NonInteractive, "non-interactive"));
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "useButtons", m_UseButtons, "buttons"));
@@ -357,6 +390,70 @@ public class EnterValue
   }
 
   /**
+   * Sets whether to enable restoration.
+   *
+   * @param value	true if to enable restoration
+   */
+  @Override
+  public void setRestorationEnabled(boolean value) {
+    m_RestorationEnabled = value;
+    reset();
+  }
+
+  /**
+   * Returns whether restoration is enabled.
+   *
+   * @return		true if restoration enabled
+   */
+  @Override
+  public boolean isRestorationEnabled() {
+    return m_RestorationEnabled;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  @Override
+  public String restorationEnabledTipText() {
+    return "If enabled, the state of the actor is being preserved and attempted to read in again next time this actor is executed.";
+  }
+
+  /**
+   * Sets the file for storing the state.
+   *
+   * @param value	the file
+   */
+  @Override
+  public void setRestorationFile(PlaceholderFile value) {
+    m_RestorationFile = value;
+    reset();
+  }
+
+  /**
+   * Returns the file for storing the state.
+   *
+   * @return		the file
+   */
+  @Override
+  public PlaceholderFile getRestorationFile() {
+    return m_RestorationFile;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  @Override
+  public String restorationFileTipText() {
+    return "The file to store the restoration information in.";
+  }
+
+  /**
    * Resets the scheme.
    */
   @Override
@@ -385,6 +482,7 @@ public class EnterValue
     String	value;
     String	msg;
     String	initial;
+    Properties	props;
 
     msg     = m_Message.getValue();
     msg     = getVariables().expand(msg);
@@ -395,6 +493,16 @@ public class EnterValue
     if (m_NonInteractive) {
       m_OutputToken = new Token(initial);
       return true;
+    }
+
+    if (m_RestorationEnabled && RestorableActorHelper.canRead(m_RestorationFile)) {
+      props = new Properties();
+      props.setProperty(KEY_INITIAL, initial);
+      msg = RestorableActorHelper.read(m_RestorationFile, props);
+      if (msg != null)
+	getLogger().warning(msg);
+      else if (props.hasKey(KEY_INITIAL))
+	initial = props.getProperty(KEY_INITIAL);
     }
     
     if (m_SelectionValues.length > 0)
@@ -407,8 +515,16 @@ public class EnterValue
         GUIHelper.getParentComponent(getParentComponent()),
         msg, initial, getName(), m_Comm);
 
-    if ((value != null) && (value.length() > 0))
+    if ((value != null) && (value.length() > 0)) {
       m_OutputToken = new Token(value);
+      if (m_RestorationEnabled) {
+	props = new Properties();
+	props.setProperty(KEY_INITIAL, value);
+	msg = RestorableActorHelper.write(props, m_RestorationFile);
+	if (msg != null)
+	  getLogger().warning(msg);
+      }
+    }
 
     m_Comm = null;
 
@@ -433,6 +549,7 @@ public class EnterValue
     String	value;
     String	msg;
     String	initial;
+    Properties	props;
 
     msg     = m_Message.getValue();
     msg     = getVariables().expand(msg);
@@ -444,13 +561,31 @@ public class EnterValue
       return true;
     }
 
+    if (m_RestorationEnabled && RestorableActorHelper.canRead(m_RestorationFile)) {
+      props = new Properties();
+      props.setProperty(KEY_INITIAL, initial);
+      msg = RestorableActorHelper.read(m_RestorationFile, props);
+      if (msg != null)
+	getLogger().warning(msg);
+      else if (props.hasKey(KEY_INITIAL))
+	initial = props.getProperty(KEY_INITIAL);
+    }
+
     if (m_SelectionValues.length > 0)
       value = ConsoleHelper.selectOption(msg, BaseObject.toStringArray(m_SelectionValues), initial);
     else
       value = ConsoleHelper.enterValue(msg, initial);
 
-    if ((value != null) && (value.length() > 0))
+    if ((value != null) && (value.length() > 0)) {
       m_OutputToken = new Token(value);
+      if (m_RestorationEnabled) {
+	props = new Properties();
+	props.setProperty(KEY_INITIAL, value);
+	msg = RestorableActorHelper.write(props, m_RestorationFile);
+	if (msg != null)
+	  getLogger().warning(msg);
+      }
+    }
 
     return ((value != null) && (value.length() > 0));
   }

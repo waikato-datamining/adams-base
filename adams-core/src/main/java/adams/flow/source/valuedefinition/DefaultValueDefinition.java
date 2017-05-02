@@ -129,6 +129,15 @@ public class DefaultValueDefinition
   }
 
   /**
+   * Sets the default value as string.
+   *
+   * @param value	the default value
+   */
+  public void setDefaultValueAsString(String value) {
+    setDefaultValue(value);
+  }
+
+  /**
    * Returns the default of the value as string.
    *
    * @return 		the default

@@ -15,7 +15,7 @@
 
 /**
  * AbstractGOEValueDefinition.java
- * Copyright (C) 2015-2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.source.valuedefinition;
@@ -141,6 +141,15 @@ public abstract class AbstractGOEValueDefinition
   @Override
   public PropertyType getType() {
     return PropertyType.OBJECT_EDITOR;
+  }
+
+  /**
+   * Sets the default value as string.
+   *
+   * @param value	the default value
+   */
+  public void setDefaultValueAsString(String value) {
+    m_DefaultClass.setValue(value);
   }
 
   /**

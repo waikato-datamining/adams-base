@@ -20,10 +20,14 @@
 
 package adams.flow.source;
 
+import adams.core.Properties;
 import adams.core.QuickInfoHelper;
 import adams.core.io.ConsoleHelper;
 import adams.core.io.PlaceholderDirectory;
+import adams.core.io.PlaceholderFile;
 import adams.flow.core.AutomatableInteractiveActor;
+import adams.flow.core.RestorableActor;
+import adams.flow.core.RestorableActorHelper;
 import adams.flow.core.Token;
 import adams.gui.chooser.BaseDirectoryChooser;
 
@@ -45,13 +49,9 @@ import java.util.List;
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- * 
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  * 
  * <pre>-name &lt;java.lang.String&gt; (property: name)
@@ -59,23 +59,33 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default: SelectDirectory
  * </pre>
  * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
- * <pre>-skip (property: skip)
+ * <pre>-skip &lt;boolean&gt; (property: skip)
  * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
  * &nbsp;&nbsp;&nbsp;as it is.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-stop-flow-on-error (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this 
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical 
+ * &nbsp;&nbsp;&nbsp;actors.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-stop-if-canceled (property: stopFlowIfCanceled)
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-stop-if-canceled &lt;boolean&gt; (property: stopFlowIfCanceled)
  * &nbsp;&nbsp;&nbsp;If enabled, the flow gets stopped in case the user cancels the dialog.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
  * <pre>-custom-stop-message &lt;java.lang.String&gt; (property: customStopMessage)
@@ -94,13 +104,26 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default: ${CWD}
  * </pre>
  * 
- * <pre>-absolute (property: absoluteDirectoryName)
+ * <pre>-absolute &lt;boolean&gt; (property: absoluteDirectoryName)
  * &nbsp;&nbsp;&nbsp;If enabled, the directory name is output in absolute instead of relative 
  * &nbsp;&nbsp;&nbsp;form.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-non-interactive (property: nonInteractive)
+ * <pre>-non-interactive &lt;boolean&gt; (property: nonInteractive)
  * &nbsp;&nbsp;&nbsp;If enabled, the initial directory is forwarded without user interaction.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-restoration-enabled &lt;boolean&gt; (property: restorationEnabled)
+ * &nbsp;&nbsp;&nbsp;If enabled, the state of the actor is being preserved and attempted to read 
+ * &nbsp;&nbsp;&nbsp;in again next time this actor is executed.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-restoration-file &lt;adams.core.io.PlaceholderFile&gt; (property: restorationFile)
+ * &nbsp;&nbsp;&nbsp;The file to store the restoration information in.
+ * &nbsp;&nbsp;&nbsp;default: ${CWD}
  * </pre>
  * 
  <!-- options-end -->
@@ -110,10 +133,12 @@ import java.util.List;
  */
 public class SelectDirectory
   extends AbstractInteractiveSource 
-  implements AutomatableInteractiveActor {
+  implements AutomatableInteractiveActor, RestorableActor {
 
   /** for serialization. */
   private static final long serialVersionUID = -3223325917850709883L;
+
+  public static final String KEY_INITIAL = "initial";
 
   /** the title of the directory chooser dialog. */
   protected String m_DirectoryChooserTitle;
@@ -126,6 +151,12 @@ public class SelectDirectory
 
   /** whether to automate the actor. */
   protected boolean m_NonInteractive;
+
+  /** whether restoration is enabled. */
+  protected boolean m_RestorationEnabled;
+
+  /** the file to store the restoration state in. */
+  protected PlaceholderFile m_RestorationFile;
 
   /** for the chosen directory. */
   protected Token m_OutputToken;
@@ -164,6 +195,14 @@ public class SelectDirectory
     m_OptionManager.add(
 	    "non-interactive", "nonInteractive",
 	    false);
+
+    m_OptionManager.add(
+	    "restoration-enabled", "restorationEnabled",
+	    false);
+
+    m_OptionManager.add(
+	    "restoration-file", "restorationFile",
+	    new PlaceholderFile());
   }
 
   /**
@@ -313,6 +352,70 @@ public class SelectDirectory
   }
 
   /**
+   * Sets whether to enable restoration.
+   *
+   * @param value	true if to enable restoration
+   */
+  @Override
+  public void setRestorationEnabled(boolean value) {
+    m_RestorationEnabled = value;
+    reset();
+  }
+
+  /**
+   * Returns whether restoration is enabled.
+   *
+   * @return		true if restoration enabled
+   */
+  @Override
+  public boolean isRestorationEnabled() {
+    return m_RestorationEnabled;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  @Override
+  public String restorationEnabledTipText() {
+    return "If enabled, the state of the actor is being preserved and attempted to read in again next time this actor is executed.";
+  }
+
+  /**
+   * Sets the file for storing the state.
+   *
+   * @param value	the file
+   */
+  @Override
+  public void setRestorationFile(PlaceholderFile value) {
+    m_RestorationFile = value;
+    reset();
+  }
+
+  /**
+   * Returns the file for storing the state.
+   *
+   * @return		the file
+   */
+  @Override
+  public PlaceholderFile getRestorationFile() {
+    return m_RestorationFile;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  @Override
+  public String restorationFileTipText() {
+    return "The file to store the restoration information in.";
+  }
+
+  /**
    * Returns the base class of the items.
    *
    * @return		the class
@@ -330,8 +433,11 @@ public class SelectDirectory
   public boolean doInteract() {
     boolean			result;
     int				retVal;
-    File			file;
+    File dir;
     BaseDirectoryChooser	dirChooser;
+    Properties			props;
+    String			msg;
+    PlaceholderDirectory	initial;
 
     if (m_NonInteractive) {
       if (m_AbsoluteDirectoryName)
@@ -340,21 +446,39 @@ public class SelectDirectory
 	m_OutputToken = new Token(m_InitialDirectory.toString());
       return true;
     }
-    
+
+    initial = m_InitialDirectory;
+    if (m_RestorationEnabled && RestorableActorHelper.canRead(m_RestorationFile)) {
+      props = new Properties();
+      props.setProperty(KEY_INITIAL, m_InitialDirectory.getAbsolutePath());
+      msg = RestorableActorHelper.read(m_RestorationFile, props);
+      if (msg != null)
+	getLogger().warning(msg);
+      else if (props.hasKey(KEY_INITIAL))
+	initial = new PlaceholderDirectory(props.getProperty(KEY_INITIAL));
+    }
+
     result     = false;
     dirChooser = new BaseDirectoryChooser();
     if (m_DirectoryChooserTitle.length() > 0)
       dirChooser.setDialogTitle(m_DirectoryChooserTitle);
-    dirChooser.setCurrentDirectory(m_InitialDirectory);
-    dirChooser.setSelectedFile(m_InitialDirectory);
+    dirChooser.setCurrentDirectory(initial);
+    dirChooser.setSelectedFile(initial);
     retVal = dirChooser.showOpenDialog(getParentComponent());
     if (retVal == BaseDirectoryChooser.APPROVE_OPTION) {
       result = true;
-      file = dirChooser.getSelectedFile();
+      dir = dirChooser.getSelectedFile();
       if (m_AbsoluteDirectoryName)
-	m_OutputToken = new Token(file.getAbsolutePath());
+	m_OutputToken = new Token(dir.getAbsolutePath());
       else
-	m_OutputToken = new Token(file.toString());
+	m_OutputToken = new Token(dir.toString());
+      if (m_RestorationEnabled) {
+	props = new Properties();
+	props.setProperty(KEY_INITIAL, dir.getAbsolutePath());
+	msg = RestorableActorHelper.write(props, m_RestorationFile);
+	if (msg != null)
+	  getLogger().warning(msg);
+      }
     }
 
     return result;
@@ -378,6 +502,9 @@ public class SelectDirectory
     boolean			result;
     String 			dirStr;
     PlaceholderDirectory	dir;
+    Properties			props;
+    String			msg;
+    PlaceholderDirectory	initial;
 
     if (m_NonInteractive) {
       if (m_AbsoluteDirectoryName)
@@ -387,8 +514,19 @@ public class SelectDirectory
       return true;
     }
 
+    initial = m_InitialDirectory;
+    if (m_RestorationEnabled && RestorableActorHelper.canRead(m_RestorationFile)) {
+      props = new Properties();
+      props.setProperty(KEY_INITIAL, m_InitialDirectory.getAbsolutePath());
+      msg = RestorableActorHelper.read(m_RestorationFile, props);
+      if (msg != null)
+	getLogger().warning(msg);
+      else if (props.hasKey(KEY_INITIAL))
+	initial = new PlaceholderDirectory(props.getProperty(KEY_INITIAL));
+    }
+
     result = false;
-    dirStr = ConsoleHelper.enterValue(m_DirectoryChooserTitle, m_InitialDirectory.toString());
+    dirStr = ConsoleHelper.enterValue(m_DirectoryChooserTitle, initial.toString());
     if ((dirStr != null) && !dirStr.isEmpty()) {
       dir    = new PlaceholderDirectory(dirStr);
       result = dir.isDirectory();
@@ -397,6 +535,13 @@ public class SelectDirectory
 	  m_OutputToken = new Token(dir.getAbsolutePath());
 	else
 	  m_OutputToken = new Token(dir.toString());
+      if (m_RestorationEnabled) {
+	props = new Properties();
+	props.setProperty(KEY_INITIAL, dir.getAbsolutePath());
+	msg = RestorableActorHelper.write(props, m_RestorationFile);
+	if (msg != null)
+	  getLogger().warning(msg);
+      }
       }
     }
 

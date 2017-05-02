@@ -15,7 +15,7 @@
 
 /**
  * RegExpConstrainedStringDefinition.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.source.valuedefinition;
@@ -139,13 +139,22 @@ public class RegExpConstrainedStringDefinition
   }
 
   /**
+   * Sets the default value as string.
+   *
+   * @param value	the default value
+   */
+  public void setDefaultValueAsString(String value) {
+    setDefaultValue(value);
+  }
+
+  /**
    * Returns the default of the value as string.
    *
    * @return 		the default
    */
   @Override
   public String getDefaultValueAsString() {
-    return m_DefaultValue;
+    return getDefaultValue();
   }
 
   /**

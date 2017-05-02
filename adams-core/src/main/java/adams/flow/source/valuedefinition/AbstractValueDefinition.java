@@ -162,6 +162,13 @@ public abstract class AbstractValueDefinition
   public abstract PropertyType getType();
 
   /**
+   * Sets the default value as string.
+   *
+   * @param value	the default value
+   */
+  public abstract void setDefaultValueAsString(String value);
+
+  /**
    * Returns the default of the value as string.
    *
    * @return 		the default
