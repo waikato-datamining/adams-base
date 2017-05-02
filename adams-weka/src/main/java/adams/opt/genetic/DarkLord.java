@@ -65,9 +65,10 @@ public class DarkLord
      * @param num	the number of chromsomes
      * @param w		the initial weights
      * @param data	the data to use
+     * @param testData	the test data to use, null for cross-validation
      */
-    public DarkLordJob(DarkLord g, int num, int[] w, Instances data) {
-      super(g, num, w, data);
+    public DarkLordJob(DarkLord g, int num, int[] w, Instances data, Instances testData) {
+      super(g, num, w, data, testData);
     }
 
     /**
@@ -277,9 +278,11 @@ public class DarkLord
    * @param w		the initial weights
    * @return		the instance
    * @param data	the data to use
+   * @param testData	the test data to use, null for cross-validation
    */
-  protected DarkLordJob newJob(int chromosome, int[] w, Instances data) {
-    return new DarkLordJob(this, chromosome, w, data);
+  @Override
+  protected DarkLordJob newJob(int chromosome, int[] w, Instances data, Instances testData) {
+    return new DarkLordJob(this, chromosome, w, data, testData);
   }
 
   /**

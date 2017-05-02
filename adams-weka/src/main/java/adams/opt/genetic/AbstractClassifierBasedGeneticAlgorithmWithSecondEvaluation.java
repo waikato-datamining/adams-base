@@ -15,7 +15,7 @@
 
 /**
  * AbstractClassifierBasedGeneticAlgorithmWithSecondEvaluation.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.opt.genetic;
@@ -69,9 +69,10 @@ public abstract class AbstractClassifierBasedGeneticAlgorithmWithSecondEvaluatio
      * @param chromosome the chromsome index
      * @param w   	the initial weights
      * @param data	the data to use
+     * @param testData	the test data to use, null for cross-validation
      */
-    public ClassifierBasedGeneticAlgorithmWithSecondEvaluationJob(T g, int chromosome, int[] w, Instances data) {
-      super(g, chromosome, w, data);
+    public ClassifierBasedGeneticAlgorithmWithSecondEvaluationJob(T g, int chromosome, int[] w, Instances data, Instances testData) {
+      super(g, chromosome, w, data, testData);
 
       m_UseSecondEvaluation = g.getUseSecondEvaluation();
       m_SecondFolds         = g.getSecondFolds();

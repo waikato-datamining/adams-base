@@ -15,7 +15,7 @@
 
 /**
  * AbstractClassifierBasedGeneticAlgorithm.java
- * Copyright (C) 2015 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.opt.genetic;
@@ -75,6 +75,9 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
     /** the data to use. */
     protected Instances m_Data;
 
+    /** the test data to use (can be null). */
+    protected Instances m_TestData;
+
     /** the cross-validation seed. */
     protected int m_Seed;
 
@@ -88,14 +91,16 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
      * @param chromosome the chromsome index
      * @param w   	the initial weights
      * @param data	the data to use
+     * @param testData	the test data to use, null for cross-validation
      */
-    public ClassifierBasedGeneticAlgorithmJob(T g, int chromosome, int[] w, Instances data) {
+    public ClassifierBasedGeneticAlgorithmJob(T g, int chromosome, int[] w, Instances data, Instances testData) {
       super(g, chromosome, w);
 
-      m_Measure = g.getMeasure();
-      m_Data    = data;
-      m_Seed    = g.getCrossValidationSeed();
-      m_Folds   = g.getFolds();
+      m_Measure  = g.getMeasure();
+      m_Data     = data;
+      m_TestData = testData;
+      m_Seed     = g.getCrossValidationSeed();
+      m_Folds    = g.getFolds();
     }
 
     /**
@@ -105,6 +110,15 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
      */
     protected Instances getInstances() {
       return m_Data;
+    }
+
+    /**
+     * Returns the test instances in use by the genetic algorithm.
+     *
+     * @return		the instances
+     */
+    protected Instances getTestInstances() {
+      return m_TestData;
     }
 
     /**
@@ -168,6 +182,25 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
 
       evaluation = new Evaluation(data);
       evaluation.crossValidateModel(cls, data, folds, new Random(seed));
+
+      return getMeasure().extract(evaluation, true);
+    }
+
+    /**
+     * Evaluates the classifier on the dataset and returns the metric.
+     *
+     * @param cls		the classifier to evaluate
+     * @param data		the data to use for evaluation
+     * @param test		the test data to use
+     * @return			the metric
+     * @throws Exception	if the evaluation fails
+     */
+    protected double evaluateClassifier(Classifier cls, Instances data, Instances test) throws Exception {
+      Evaluation 	evaluation;
+
+      evaluation = new Evaluation(data);
+      cls.buildClassifier(data);
+      evaluation.evaluateModel(cls, test);
 
       return getMeasure().extract(evaluation, true);
     }
@@ -314,6 +347,9 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
   /** the data to use for cross-validation. */
   protected Instances m_Instances;
 
+  /** the data to use for evaluation (if null, cross-validation is used). */
+  protected Instances m_TestInstances;
+
   /** the bits per gene to use. */
   protected int m_BitsPerGene;
 
@@ -446,6 +482,24 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
    */
   public Instances getInstances() {
     return m_Instances;
+  }
+
+  /**
+   * Sets the currently set test set (if null, cross-validation is used).
+   *
+   * @param value	the dataset
+   */
+  public void setTestInstances(Instances value) {
+    m_TestInstances = value;
+  }
+
+  /**
+   * Returns the currently set test set (if null, cross-validation is used).
+   *
+   * @return		the dataset
+   */
+  public Instances getTestInstances() {
+    return m_TestInstances;
   }
 
   /**
@@ -846,8 +900,9 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
    * @param w		the initial weights
    * @return		the instance
    * @param data	the data to use
+   * @param testData	the test data to use, null for cross-validation
    */
-  protected abstract ClassifierBasedGeneticAlgorithmJob newJob(int chromosome, int[] w, Instances data);
+  protected abstract ClassifierBasedGeneticAlgorithmJob newJob(int chromosome, int[] w, Instances data, Instances testData);
 
   /**
    * Calculates the fitness of the population.
@@ -888,7 +943,7 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
       }
       if (generateWeights)
 	getLogger().fine("[" + m_CurrentIteration + "] before job: Chromosome " + i + " " + weightStr.toString());
-      jobs.add(newJob(i, weights, m_Instances));
+      jobs.add(newJob(i, weights, m_Instances, m_TestInstances));
     }
     m_JobRunner.add(jobs);
     m_JobRunner.start();

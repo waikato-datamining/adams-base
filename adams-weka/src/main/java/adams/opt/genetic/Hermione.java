@@ -21,10 +21,10 @@
 package adams.opt.genetic;
 
 import adams.core.Properties;
-import adams.core.discovery.genetic.AbstractGeneticDiscoveryHandler;
 import adams.core.discovery.DefaultPropertyDiscovery;
 import adams.core.discovery.PropertyPath;
 import adams.core.discovery.PropertyPath.PropertyContainer;
+import adams.core.discovery.genetic.AbstractGeneticDiscoveryHandler;
 import adams.core.logging.LoggingHelper;
 import adams.core.option.OptionUtils;
 import weka.classifiers.Classifier;
@@ -208,9 +208,10 @@ public class Hermione
      * @param num	the number of chromsomes
      * @param w		the initial weights
      * @param data	the data to use
+     * @param testData	the test data to use, null for cross-validation
      */
-    public HermioneJob(Hermione g, int num, int[] w, Instances data) {
-      super(g, num, w, data);
+    public HermioneJob(Hermione g, int num, int[] w, Instances data, Instances testData) {
+      super(g, num, w, data, testData);
     }
 
     /**
@@ -265,6 +266,7 @@ public class Hermione
       Double 		measure;
       String		weightsStr;
       Instances 	newInstances;
+      Instances		newTest;
       Classifier 	newClassifier;
       Classifier 	newSecondClassifier;
 
@@ -283,17 +285,23 @@ public class Hermione
 	}
 
 	newInstances = new Instances(getInstances());
+	newTest = null;
+	if (getTestInstances() != null)
+	  newTest = new Instances(getTestInstances());
 
 	// evaluate classifier
 	newClassifier = getOwner().generateClassifier(m_Chromosome, m_Weights);
-	m_Fitness     = evaluateClassifier(newClassifier, newInstances, getFolds(), getSeed());
+	if (newTest == null)
+	  m_Fitness = evaluateClassifier(newClassifier, newInstances, getFolds(), getSeed());
+	else
+	  m_Fitness = evaluateClassifier(newClassifier, newInstances, newTest);
 
 	// process fitness
 	if (getOwner().isBetterFitness(m_Fitness)) {
 	  canAdd = true;
 
 	  // second evaluation?
-	  if (getUseSecondEvaluation()) {
+	  if (getUseSecondEvaluation() && (newTest == null)) {
 	    newSecondClassifier = getOwner().generateClassifier(m_Chromosome, m_Weights);
 	    m_SecondFitness = evaluateClassifier(newSecondClassifier , newInstances, getSecondFolds(), getSecondSeed());
 	    canAdd = getOwner().isSecondBetterFitness(m_SecondFitness);
@@ -389,13 +397,15 @@ public class Hermione
   /**
    * Creates a new Job instance.
    *
-   * @param chromosome		the number of chromosomes
+   * @param chromosome	the number of chromosomes
    * @param w		the initial weights
    * @return		the instance
    * @param data	the data to use
+   * @param testData	the test data to use, null for cross-validation
    */
-  protected HermioneJob newJob(int chromosome, int[] w, Instances data) {
-    return new HermioneJob(this, chromosome, w, data);
+  @Override
+  protected HermioneJob newJob(int chromosome, int[] w, Instances data, Instances testData) {
+    return new HermioneJob(this, chromosome, w, data, testData);
   }
 
   /**

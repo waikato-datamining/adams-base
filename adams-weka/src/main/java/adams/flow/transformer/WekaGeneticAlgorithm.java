@@ -15,18 +15,19 @@
 
 /*
  * WekaGeneticAlgorithm.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
 import adams.core.Pausable;
 import adams.core.QuickInfoHelper;
-import adams.event.GeneticFitnessChangeEvent;
-import adams.event.GeneticFitnessChangeListener;
 import adams.event.FlowPauseStateEvent;
 import adams.event.FlowPauseStateListener;
+import adams.event.GeneticFitnessChangeEvent;
+import adams.event.GeneticFitnessChangeListener;
 import adams.flow.container.WekaGeneticAlgorithmContainer;
+import adams.flow.control.StorageName;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.CallableActorHelper;
@@ -63,7 +64,7 @@ import java.util.Hashtable;
  * &nbsp;&nbsp;&nbsp;adams.flow.container.WekaGeneticAlgorithmContainer<br>
  * <br><br>
  * Container information:<br>
- * - adams.flow.container.WekaGeneticAlgorithmContainer: Setup, Measure, Fitness
+ * - adams.flow.container.WekaGeneticAlgorithmContainer: Setup, Measure, Fitness, WeightsStr, Weights
  * <br><br>
  <!-- flow-summary-end -->
  *
@@ -90,19 +91,21 @@ import java.util.Hashtable;
  * </pre>
  * 
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this 
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical 
+ * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
  * <pre>-silent &lt;boolean&gt; (property: silent)
- * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console.
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-algorithm &lt;adams.genetic.AbstractClassifierBasedGeneticAlgorithm&gt; (property: algorithm)
+ * <pre>-algorithm &lt;adams.opt.genetic.AbstractClassifierBasedGeneticAlgorithm&gt; (property: algorithm)
  * &nbsp;&nbsp;&nbsp;The genetic algorithm to apply to the dataset.
- * &nbsp;&nbsp;&nbsp;default: adams.genetic.DarkLord -stopping-criterion adams.genetic.stopping.MaxIterations -classifier weka.classifiers.rules.ZeroR
+ * &nbsp;&nbsp;&nbsp;default: adams.opt.genetic.DarkLord -stopping-criterion adams.opt.genetic.stopping.MaxIterations -initial-setups-provider adams.opt.genetic.initialsetups.EmptyInitialSetupsProvider -classifier weka.classifiers.rules.ZeroR
  * </pre>
  * 
  * <pre>-callable &lt;adams.flow.core.CallableActorReference&gt; (property: callableName)
@@ -115,6 +118,12 @@ import java.util.Hashtable;
  * &nbsp;&nbsp;&nbsp;If enabled, then the callable sink is optional, ie no error is raised if 
  * &nbsp;&nbsp;&nbsp;not found, merely ignored.
  * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-test-data &lt;adams.flow.control.StorageName&gt; (property: testData)
+ * &nbsp;&nbsp;&nbsp;The storage item with the test data; cross-validation is performed if not 
+ * &nbsp;&nbsp;&nbsp;present or the algorithm doesn't support test data handling.
+ * &nbsp;&nbsp;&nbsp;default: storage
  * </pre>
  * 
  <!-- options-end -->
@@ -157,6 +166,9 @@ public class WekaGeneticAlgorithm
   /** whether the callable actor is optional. */
   protected boolean m_Optional;
 
+  /** the storage name of the test data. */
+  protected StorageName m_TestData;
+
   /** the pause state manager. */
   protected PauseStateManager m_PauseStateManager;
 
@@ -194,6 +206,10 @@ public class WekaGeneticAlgorithm
     m_OptionManager.add(
       "optional", "optional",
       false);
+
+    m_OptionManager.add(
+      "test-data", "testData",
+      new StorageName());
   }
 
   /**
@@ -229,6 +245,7 @@ public class WekaGeneticAlgorithm
     result  = QuickInfoHelper.toString(this, "algorithm", m_Algorithm, "algorithm: ");
     result += QuickInfoHelper.toString(this, "callableName", m_CallableName, ", callable: ");
     result += QuickInfoHelper.toString(this, "optional", m_Optional, "optional", ", ");
+    result += QuickInfoHelper.toString(this, "testData", m_TestData, ", test: ");
 
     return result;
   }
@@ -320,6 +337,37 @@ public class WekaGeneticAlgorithm
     return
 	"If enabled, then the callable sink is optional, ie no error is "
 	+ "raised if not found, merely ignored.";
+  }
+
+  /**
+   * Sets the (optional) storage item that contains the test data;
+   * cross-validation is performed if not present.
+   *
+   * @param value 	the storage name
+   */
+  public void setTestData(StorageName value) {
+    m_TestData = value;
+    reset();
+  }
+
+  /**
+   * Returns the (optional) storage item that contains the test data;
+   * cross-validation is performed if not present.
+   *
+   * @return 		the storage name
+   */
+  public StorageName getTestData() {
+    return m_TestData;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String testDataTipText() {
+    return "The storage item with the test data; cross-validation is performed if not present or the algorithm doesn't support test data handling.";
   }
 
   /**
@@ -515,6 +563,8 @@ public class WekaGeneticAlgorithm
     m_ActualAlgorithm.setFlowContext(this);
     try {
       m_ActualAlgorithm.setInstances(data);
+      if (getStorageHandler().getStorage().has(m_TestData))
+	m_ActualAlgorithm.setTestInstances((Instances) getStorageHandler().getStorage().get(m_TestData));
       m_ActualAlgorithm.run();
       if (m_ActualAlgorithm.isStopped())
 	result = "Genetic algorithm stopped!";
