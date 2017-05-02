@@ -153,6 +153,16 @@ public abstract class AbstractFormattedSpreadSheetWriter
   protected synchronized String format(double value) {
     String	result;
 
+    if (Double.isNaN(value)) {
+      return "NaN";
+    }
+    else if (Double.isInfinite(value)) {
+      if (value < 0)
+        return "-Infinity";
+      else
+        return "+Infinity";
+    }
+
     if (m_NumberFormat.length() > 0) {
       if (m_Formatter == null) {
 	try {
