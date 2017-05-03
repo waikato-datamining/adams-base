@@ -27,6 +27,7 @@ import adams.data.spreadsheet.SpreadSheet;
 import adams.data.statistics.AbstractArrayStatistic;
 import adams.data.statistics.ArrayMean;
 import adams.data.statistics.StatUtils;
+import adams.data.weka.WekaAttributeIndex;
 import adams.flow.core.Token;
 import weka.core.Instances;
 
@@ -38,55 +39,66 @@ import weka.core.Instances;
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input/output:<br>
+ * Input&#47;output:<br>
  * - accepts:<br>
  * &nbsp;&nbsp;&nbsp;weka.core.Instances<br>
  * - generates:<br>
- * &nbsp;&nbsp;&nbsp;adams.core.io.SpreadSheet<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.spreadsheet.SpreadSheet<br>
  * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- *
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- *
+ * 
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
- * &nbsp;&nbsp;&nbsp;default: InstancesStatistic
+ * &nbsp;&nbsp;&nbsp;default: WekaInstancesStatistic
  * </pre>
- *
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * 
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default:
+ * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- *
- * <pre>-skip (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
+ * 
+ * <pre>-skip &lt;boolean&gt; (property: skip)
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
  * &nbsp;&nbsp;&nbsp;as it is.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
+ * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this 
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical 
+ * &nbsp;&nbsp;&nbsp;actors.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
  * <pre>-type &lt;ROW_BY_INDEX|COLUMN_BY_INDEX|COLUMN_BY_REGEXP&gt; (property: dataType)
  * &nbsp;&nbsp;&nbsp;Whether to retrieve rows or columns from the Instances object.
  * &nbsp;&nbsp;&nbsp;default: COLUMN_BY_INDEX
  * </pre>
- *
+ * 
  * <pre>-location &lt;adams.core.base.BaseString&gt; [-location ...] (property: locations)
- * &nbsp;&nbsp;&nbsp;The locations of the data, depending on the chosen data type that can be
- * &nbsp;&nbsp;&nbsp;either indices or regular expressions on the attribute names.
- * &nbsp;&nbsp;&nbsp;default:
+ * &nbsp;&nbsp;&nbsp;The locations of the data, depending on the chosen data type that can be 
+ * &nbsp;&nbsp;&nbsp;either indices, attribute names or regular expressions on the attribute 
+ * &nbsp;&nbsp;&nbsp;names.
+ * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- *
- * <pre>-statistic &lt;adams.data.statistics.AbstractArrayStatistic [options]&gt; (property: statistic)
+ * 
+ * <pre>-statistic &lt;adams.data.statistics.AbstractArrayStatistic&gt; (property: statistic)
  * &nbsp;&nbsp;&nbsp;The statistic to generate from the data.
  * &nbsp;&nbsp;&nbsp;default: adams.data.statistics.ArrayMean
  * </pre>
- *
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -197,7 +209,7 @@ public class WekaInstancesStatistic
   public String locationsTipText() {
     return
         "The locations of the data, depending on the chosen data type that "
-      + "can be either indices or regular expressions on the attribute names.";
+      + "can be either indices, attribute names or regular expressions on the attribute names.";
   }
 
   /**
@@ -251,7 +263,7 @@ public class WekaInstancesStatistic
   /**
    * Returns the class of objects that it generates.
    *
-   * @return		<!-- flow-generates-start -->adams.core.io.SpreadSheet.class<!-- flow-generates-end -->
+   * @return		<!-- flow-generates-start -->adams.data.spreadsheet.SpreadSheet.class<!-- flow-generates-end -->
    */
   public Class[] generates() {
     return new Class[]{SpreadSheet.class};
@@ -288,8 +300,8 @@ public class WekaInstancesStatistic
 	    break;
 
 	  case COLUMN_BY_INDEX:
-	    index = new Index(m_Locations[i].stringValue());
-	    index.setMax(data.numAttributes());
+	    index = new WekaAttributeIndex(m_Locations[i].stringValue());
+            ((WekaAttributeIndex) index).setData(data);
 	    stat.add(StatUtils.toNumberArray(data.attributeToDoubleArray(index.getIntIndex())));
 	    break;
 
