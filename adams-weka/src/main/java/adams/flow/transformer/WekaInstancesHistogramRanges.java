@@ -27,6 +27,7 @@ import adams.data.spreadsheet.SpreadSheet;
 import adams.data.statistics.ArrayHistogram;
 import adams.data.statistics.ArrayHistogram.BinCalculation;
 import adams.data.statistics.StatUtils;
+import adams.data.weka.WekaAttributeIndex;
 import weka.core.Instances;
 
 /**
@@ -41,7 +42,7 @@ import weka.core.Instances;
  * - accepts:<br>
  * &nbsp;&nbsp;&nbsp;weka.core.Instances<br>
  * - generates:<br>
- * &nbsp;&nbsp;&nbsp;adams.data.spreadsheet.SpreadSheet<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.String<br>
  * <br><br>
  <!-- flow-summary-end -->
  *
@@ -92,7 +93,8 @@ import weka.core.Instances;
  * 
  * <pre>-location &lt;adams.core.base.BaseString&gt; [-location ...] (property: locations)
  * &nbsp;&nbsp;&nbsp;The locations of the data, depending on the chosen data type that can be 
- * &nbsp;&nbsp;&nbsp;either indices or regular expressions on the attribute names.
+ * &nbsp;&nbsp;&nbsp;either indices, attribute names or regular expressions on the attribute 
+ * &nbsp;&nbsp;&nbsp;names.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
@@ -323,7 +325,7 @@ public class WekaInstancesHistogramRanges
   public String locationsTipText() {
     return
         "The locations of the data, depending on the chosen data type that "
-      + "can be either indices or regular expressions on the attribute names.";
+      + "can be either indices, attribute names or regular expressions on the attribute names.";
   }
 
   /**
@@ -628,8 +630,8 @@ public class WekaInstancesHistogramRanges
 	    break;
 
 	  case COLUMN_BY_INDEX:
-	    index = new Index(m_Locations[i].stringValue());
-	    index.setMax(data.numAttributes());
+	    index = new WekaAttributeIndex(m_Locations[i].stringValue());
+	    ((WekaAttributeIndex) index).setData(data);
 	    stat.add(StatUtils.toNumberArray(data.attributeToDoubleArray(index.getIntIndex())));
 	    break;
 
