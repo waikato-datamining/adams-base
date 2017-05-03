@@ -26,6 +26,7 @@ import adams.core.base.BaseString;
 import adams.data.spreadsheet.Cell;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
+import adams.data.spreadsheet.SpreadSheetColumnIndex;
 import adams.data.statistics.ArrayHistogram;
 import adams.data.statistics.ArrayHistogram.BinCalculation;
 
@@ -92,7 +93,7 @@ import adams.data.statistics.ArrayHistogram.BinCalculation;
  * 
  * <pre>-location &lt;adams.core.base.BaseString&gt; [-location ...] (property: locations)
  * &nbsp;&nbsp;&nbsp;The locations of the data, depending on the chosen data type that can be 
- * &nbsp;&nbsp;&nbsp;either indices or regular expressions on the attribute names.
+ * &nbsp;&nbsp;&nbsp;either indices, column names or regular expressions on the column names.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
@@ -322,7 +323,7 @@ public class SpreadSheetHistogramRanges
   public String locationsTipText() {
     return
         "The locations of the data, depending on the chosen data type that "
-      + "can be either indices or regular expressions on the attribute names.";
+      + "can be either indices, column names or regular expressions on the column names.";
   }
 
   /**
@@ -681,8 +682,8 @@ public class SpreadSheetHistogramRanges
 	    break;
 
 	  case COLUMN_BY_INDEX:
-	    index = new Index(m_Locations[i].stringValue());
-	    index.setMax(data.getColumnCount());
+	    index = new SpreadSheetColumnIndex(m_Locations[i].stringValue());
+	    ((SpreadSheetColumnIndex) index).setData(data);
 	    stat.add(getColumn(data, index.getIntIndex()));
 	    break;
 
