@@ -35,7 +35,7 @@ import adams.data.spreadsheet.SpreadSheet;
  * - accepts:<br>
  * &nbsp;&nbsp;&nbsp;adams.data.spreadsheet.SpreadSheet<br>
  * - generates:<br>
- * &nbsp;&nbsp;&nbsp;java.lang.Object[]<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.Object<br>
  * <br><br>
  <!-- flow-summary-end -->
  *
@@ -62,8 +62,9 @@ import adams.data.spreadsheet.SpreadSheet;
  * </pre>
  * 
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this 
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical 
+ * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
@@ -87,6 +88,11 @@ import adams.data.spreadsheet.SpreadSheet;
  * &nbsp;&nbsp;&nbsp;The index of the row&#47;column to extract.
  * &nbsp;&nbsp;&nbsp;default: first
  * &nbsp;&nbsp;&nbsp;example: An index is a number starting with 1; the following placeholders can be used as well: first, second, third, last_2, last_1, last
+ * </pre>
+ * 
+ * <pre>-use-native &lt;boolean&gt; (property: useNative)
+ * &nbsp;&nbsp;&nbsp;If enabled, native objects are output rather than strings.
+ * &nbsp;&nbsp;&nbsp;default: true
  * </pre>
  * 
  <!-- options-end -->
@@ -119,6 +125,9 @@ public class SpreadSheetExtractArray
   /** the index of the row/column to extract. */
   protected Index m_Index;
 
+  /** whether to output native objects rather than strings. */
+  protected boolean m_UseNative;
+
   /**
    * Returns a string describing the object.
    *
@@ -144,6 +153,10 @@ public class SpreadSheetExtractArray
     m_OptionManager.add(
 	    "index", "index",
 	    new Index(Index.FIRST));
+
+    m_OptionManager.add(
+	    "use-native", "useNative",
+	    true);
   }
 
   /**
@@ -153,7 +166,10 @@ public class SpreadSheetExtractArray
    */
   @Override
   protected Class getItemClass() {
-    return Object.class;
+    if (m_UseNative)
+      return Object.class;
+    else
+      return String.class;
   }
 
   /**
@@ -175,9 +191,13 @@ public class SpreadSheetExtractArray
   @Override
   public String getQuickInfo() {
     String	result;
+    String	value;
 
     result  = QuickInfoHelper.toString(this, "type", m_Type);
     result += QuickInfoHelper.toString(this, "index", m_Index, ": ");
+    value = QuickInfoHelper.toString(this, "useNative", m_UseNative, ", native");
+    if (value != null)
+      result += value;
 
     return result;
   }
@@ -241,6 +261,35 @@ public class SpreadSheetExtractArray
   }
 
   /**
+   * Sets whether to output native objects rather than strings.
+   *
+   * @param value	true if to output native objects
+   */
+  public void setUseNative(boolean value) {
+    m_UseNative = value;
+    reset();
+  }
+
+  /**
+   * Returns whether native objects are output rather than strings.
+   *
+   * @return		true if native objects are used
+   */
+  public boolean getUseNative() {
+    return m_UseNative;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String useNativeTipText() {
+    return "If enabled, native objects are output rather than strings.";
+  }
+
+  /**
    * Returns the class that the consumer accepts.
    *
    * @return		<!-- flow-accepts-start -->adams.data.spreadsheet.SpreadSheet.class<!-- flow-accepts-end -->
@@ -280,15 +329,23 @@ public class SpreadSheetExtractArray
       if (m_Type == ExtractionType.COLUMN) {
         for (i = 0; i < sheet.getRowCount(); i++) {
           cell = sheet.getCell(i, index);
-          if ((cell != null) && !cell.isMissing())
-            m_Queue.add(cell.getNative());
+          if ((cell != null) && !cell.isMissing()) {
+	    if (m_UseNative)
+	      m_Queue.add(cell.getNative());
+	    else
+	      m_Queue.add(cell.getContent());
+	  }
         }
       }
       else {
         for (i = 0; i < sheet.getColumnCount(); i++) {
           cell = sheet.getCell(index, i);
-          if ((cell != null) && !cell.isMissing())
-            m_Queue.add(cell.getNative());
+          if ((cell != null) && !cell.isMissing()) {
+	    if (m_UseNative)
+	      m_Queue.add(cell.getNative());
+	    else
+	      m_Queue.add(cell.getContent());
+	  }
         }
       }
     }
