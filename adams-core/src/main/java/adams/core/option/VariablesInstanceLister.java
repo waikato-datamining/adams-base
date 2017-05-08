@@ -15,7 +15,7 @@
 
 /**
  * VariablesInstanceLister.java
- * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
@@ -88,13 +88,25 @@ public class VariablesInstanceLister
    */
   @Override
   public void handleBooleanOption(BooleanOption option, OptionTraversalPath path) {
+    Variables	vars;
+
     m_Result.append(path.getPath());
     m_Result.append("\t");
     m_Result.append(option.getOptionHandler().getClass().getName());
     m_Result.append("\t");
     m_Result.append(option.getProperty());
     m_Result.append("\t");
-    m_Result.append("-/-");
+    m_Result.append(option.getOwner().getVariables().hashCode());
+    if (option.getOptionHandler() instanceof Actor) {
+      vars = ((Actor) option.getOptionHandler()).getVariables();
+      if (vars != null)
+	m_Result.append("/" + vars.hashCode());
+      else
+	m_Result.append("/-");
+    }
+    else {
+      m_Result.append("/-");
+    }
     m_Result.append("\n");
   }
 
