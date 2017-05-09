@@ -20,6 +20,7 @@
 
 package adams.flow.control;
 
+import adams.core.Variables;
 import adams.core.logging.LoggingLevel;
 import adams.flow.condition.bool.BooleanCondition;
 import adams.flow.condition.bool.BooleanConditionSupporter;
@@ -227,6 +228,19 @@ public class WhileLoop
   @Override
   public String getQuickInfo() {
     return m_Condition.getQuickInfo();
+  }
+
+  /**
+   * Updates the Variables instance in use.
+   * <br><br>
+   * Use with caution!
+   *
+   * @param value	the instance to use
+   */
+  @Override
+  protected void forceVariables(Variables value) {
+    super.forceVariables(value);
+    m_Actors.forceVariables(value);
   }
 
   /**

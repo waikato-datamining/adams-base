@@ -15,12 +15,13 @@
 
 /*
  * AbstractTee.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
 
 import adams.core.QuickInfoHelper;
+import adams.core.Variables;
 import adams.core.logging.LoggingLevel;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorHandlerInfo;
@@ -301,6 +302,19 @@ public abstract class AbstractTee
     m_Actors.setName(getName());
     m_Actors.setParent(null);
     m_Actors.setParent(getParent());
+  }
+
+  /**
+   * Updates the Variables instance in use.
+   * <br><br>
+   * Use with caution!
+   *
+   * @param value	the instance to use
+   */
+  @Override
+  protected void forceVariables(Variables value) {
+    super.forceVariables(value);
+    m_Actors.forceVariables(value);
   }
 
   /**

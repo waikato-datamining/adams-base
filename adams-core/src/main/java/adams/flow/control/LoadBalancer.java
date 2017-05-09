@@ -670,6 +670,19 @@ public class LoadBalancer
   }
 
   /**
+   * Updates the Variables instance in use.
+   * <br><br>
+   * Use with caution!
+   *
+   * @param value	the instance to use
+   */
+  @Override
+  protected void forceVariables(Variables value) {
+    super.forceVariables(value);
+    m_Actors.forceVariables(value);
+  }
+
+  /**
    * Returns the size of the group.
    *
    * @return		the number of actors
