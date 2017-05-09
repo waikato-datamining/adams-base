@@ -67,6 +67,7 @@ do
 done
 
 # launch class
+unset DISPLAY
 "$JCMD" \
   -classpath "$CLASSPATH" \
   -Xmx$MEMORY \
