@@ -21,14 +21,14 @@
 package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
+import adams.core.discovery.PropertyPath;
 import adams.flow.core.Token;
 import adams.flow.core.Unknown;
-import adams.core.discovery.PropertyPath;
 
 /**
  <!-- globalinfo-start -->
  * Retrieves a value from an object's property using a bean property path.<br>
- * A bean property conists usually of a get and set method, e.g.:<br>
+ * A bean property consists usually of a get and set method, e.g.:<br>
  * - setDebug(boolean)<br>
  * - boolean getDebug()<br>
  * The property name for this pair is:<br>
@@ -102,7 +102,7 @@ public class GetObjectProperty
     return 
 	"Retrieves a value from an object's property using a bean property "
 	+ "path.\n"
-	+ "A bean property conists usually of a get and set method, e.g.:\n"
+	+ "A bean property consists usually of a get and set method, e.g.:\n"
 	+ "- setDebug(boolean)\n"
 	+ "- boolean getDebug()\n"
 	+ "The property name for this pair is:\n"
