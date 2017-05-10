@@ -27,6 +27,7 @@ import adams.event.FlowPauseStateListener;
 import adams.event.GeneticFitnessChangeEvent;
 import adams.event.GeneticFitnessChangeListener;
 import adams.flow.container.WekaGeneticAlgorithmContainer;
+import adams.flow.container.WekaGeneticAlgorithmInitializationContainer;
 import adams.flow.control.StorageName;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorUtils;
@@ -60,10 +61,12 @@ import java.util.Hashtable;
  * Input&#47;output:<br>
  * - accepts:<br>
  * &nbsp;&nbsp;&nbsp;weka.core.Instances<br>
+ * &nbsp;&nbsp;&nbsp;adams.flow.container.WekaGeneticAlgorithmInitializationContainer<br>
  * - generates:<br>
  * &nbsp;&nbsp;&nbsp;adams.flow.container.WekaGeneticAlgorithmContainer<br>
  * <br><br>
  * Container information:<br>
+ * - adams.flow.container.WekaGeneticAlgorithmInitializationContainer: Algorithm, Data<br>
  * - adams.flow.container.WekaGeneticAlgorithmContainer: Setup, Measure, Fitness, WeightsStr, Weights
  * <br><br>
  <!-- flow-summary-end -->
@@ -373,10 +376,10 @@ public class WekaGeneticAlgorithm
   /**
    * Returns the class that the consumer accepts.
    *
-   * @return		<!-- flow-accepts-start -->weka.core.Instances.class<!-- flow-accepts-end -->
+   * @return		<!-- flow-accepts-start -->weka.core.Instances.class, adams.flow.container.WekaGeneticAlgorithmInitializationContainer.class<!-- flow-accepts-end -->
    */
   public Class[] accepts() {
-    return new Class[]{Instances.class};
+    return new Class[]{Instances.class, WekaGeneticAlgorithmInitializationContainer.class};
   }
 
   /**
@@ -552,12 +555,22 @@ public class WekaGeneticAlgorithm
     String					result;
     Instances					data;
     WekaGeneticAlgorithmContainer		cont;
+    WekaGeneticAlgorithmInitializationContainer	init;
+    AbstractClassifierBasedGeneticAlgorithm	algorithm;
 
     result = null;
 
-    data              = (Instances) m_InputToken.getPayload();
+    if (m_InputToken.getPayload() instanceof WekaGeneticAlgorithmInitializationContainer) {
+      init      = (WekaGeneticAlgorithmInitializationContainer) m_InputToken.getPayload();
+      data      = (Instances) init.getValue(WekaGeneticAlgorithmInitializationContainer.VALUE_DATA);
+      algorithm = (AbstractClassifierBasedGeneticAlgorithm) init.getValue(WekaGeneticAlgorithmInitializationContainer.VALUE_ALGORITHM);
+    }
+    else {
+      data      = (Instances) m_InputToken.getPayload();
+      algorithm = m_Algorithm;
+    }
     cont              = null;
-    m_ActualAlgorithm = (AbstractClassifierBasedGeneticAlgorithm) m_Algorithm.shallowCopy(true);
+    m_ActualAlgorithm = (AbstractClassifierBasedGeneticAlgorithm) algorithm.shallowCopy(true);
     m_ActualAlgorithm.addFitnessChangeListener(this);
     m_ActualAlgorithm.setJobRunnerSetup(m_JobRunnerSetup);
     m_ActualAlgorithm.setFlowContext(this);
