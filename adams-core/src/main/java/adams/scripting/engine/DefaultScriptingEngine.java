@@ -239,7 +239,7 @@ public class DefaultScriptingEngine
       PortManager.getSingleton().bind(this, m_Port);
     }
     catch (Exception e) {
-      result   = Utils.handleException(this, "Failed to set up server socket!", e);
+      result   = Utils.handleException(this, "Failed to set up server socket, using port " + m_Port + "!", e);
       m_Server = null;
     }
 
