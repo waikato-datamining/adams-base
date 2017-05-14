@@ -281,6 +281,7 @@ public class RemoteLoggingTab
       new Thread(m_Runnable).start();
       start = new StartRemoteLogging();
       start.setInstallListener(false);
+      start.setMaxFailures(m_TextMaxFailures.getValue().intValue());
       start.setLoggingHost(m_TextLocal.getObject());
       updateButtons();
       sendCommandWithReponse(start, new LoggingResponseHandler(this), m_TextLocal.getObject(), m_TextRemote.getObject(), DEFAULT_PORT);
