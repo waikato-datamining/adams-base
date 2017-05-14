@@ -45,6 +45,9 @@ public class DefaultScriptingEngine
 
   private static final long serialVersionUID = -3763240773922918567L;
 
+  /** the default port. */
+  public final static int DEFAULT_PORT = 12345;
+
   /** for accepting connections. */
   protected transient ServerSocket m_Server;
 
@@ -73,7 +76,7 @@ public class DefaultScriptingEngine
 
     m_OptionManager.add(
       "port", "port",
-      12345, 1, 65535);
+      DEFAULT_PORT, 1, 65535);
 
     m_OptionManager.add(
       "timeout", "timeout",
