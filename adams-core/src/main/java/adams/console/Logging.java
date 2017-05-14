@@ -14,7 +14,7 @@
  */
 
 /**
- * CaptureLogging.java
+ * Logging.java
  * Copyright (C) 2017 University of Waikato, Hamilton, NZ
  */
 
@@ -42,7 +42,7 @@ import java.util.logging.LogRecord;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class CaptureLogging
+public class Logging
   extends AbstractConsoleApplication
   implements StoppableWithFeedback {
 
@@ -331,7 +331,7 @@ public class CaptureLogging
    * @throws Exception	if start up fails
    */
   public static void main(String[] args) throws Exception {
-    runApplication(Environment.class, CaptureLogging.class, args);
+    runApplication(Environment.class, Logging.class, args);
     System.exit(0);
   }
 }
