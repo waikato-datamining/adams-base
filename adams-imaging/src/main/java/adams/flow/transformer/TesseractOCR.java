@@ -15,7 +15,7 @@
 
 /*
  * TesseractOCR.java
- * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -28,7 +28,6 @@ import adams.core.io.PlaceholderFile;
 import adams.core.io.TempUtils;
 import adams.core.io.lister.LocalDirectoryLister;
 import adams.core.management.ProcessUtils;
-import adams.core.management.ProcessUtils.ProcessResult;
 import adams.core.option.OptionUtils;
 import adams.data.image.AbstractImageContainer;
 import adams.data.image.BufferedImageHelper;
@@ -37,6 +36,7 @@ import adams.flow.core.TesseractLanguage;
 import adams.flow.core.TesseractPageSegmentation;
 import adams.flow.core.Token;
 import adams.flow.standalone.TesseractConfiguration;
+import com.github.fracpete.processoutput4j.output.CollectingProcessOutput;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -477,7 +477,7 @@ public class TesseractOCR
     String		fileStr;
     File		file;
     String[]		cmd;
-    ProcessResult	proc;
+    CollectingProcessOutput proc;
     LocalDirectoryLister lister;
     String[]		files;
     StringBuilder	content;

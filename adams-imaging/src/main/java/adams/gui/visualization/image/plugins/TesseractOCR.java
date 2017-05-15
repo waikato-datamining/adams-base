@@ -15,7 +15,7 @@
 
 /**
  * TesseractOCR.java
- * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.image.plugins;
 
@@ -24,12 +24,12 @@ import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
 import adams.core.io.TempUtils;
 import adams.core.management.ProcessUtils;
-import adams.core.management.ProcessUtils.ProcessResult;
 import adams.core.option.OptionUtils;
 import adams.data.tesseract.TesseractHelper;
 import adams.gui.core.GUIHelper;
 import adams.gui.dialog.TextDialog;
 import adams.gui.visualization.image.ImagePanel;
+import com.github.fracpete.processoutput4j.output.CollectingProcessOutput;
 
 import javax.imageio.ImageIO;
 import java.io.File;
@@ -113,7 +113,7 @@ public class TesseractOCR
     String[]		cmd;
     File		tmp;
     File		tmp2;
-    ProcessResult	proc;
+    CollectingProcessOutput proc;
     List<String>	lines;
     TextDialog		dialog;
 

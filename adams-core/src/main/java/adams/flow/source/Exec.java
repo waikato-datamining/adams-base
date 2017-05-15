@@ -15,7 +15,7 @@
 
 /*
  * Exec.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
@@ -25,11 +25,11 @@ import adams.core.QuickInfoHelper;
 import adams.core.base.BaseText;
 import adams.core.management.OS;
 import adams.core.management.ProcessUtils;
-import adams.core.management.ProcessUtils.ProcessResult;
 import adams.core.option.OptionUtils;
 import adams.data.conversion.ConversionFromString;
 import adams.data.conversion.StringToString;
 import adams.flow.core.Token;
+import com.github.fracpete.processoutput4j.output.CollectingProcessOutput;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -414,7 +414,7 @@ public class Exec
   protected String doExecute() {
     String		result;
     String		cmd;
-    ProcessResult	proc;
+    CollectingProcessOutput proc;
     String[]		items;
     String		msg;
     String		output;
@@ -433,7 +433,7 @@ public class Exec
     try {
       proc = ProcessUtils.execute(OptionUtils.splitOptions(cmd));
       if (!proc.hasSucceeded()) {
-	result = proc.toErrorOutput();
+	result = ProcessUtils.toErrorOutput(proc);
       }
       else {
 	if (m_OutputStdErr)

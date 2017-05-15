@@ -15,18 +15,18 @@
 
 /**
  * Java.java
- * Copyright (C) 2010-2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.management;
+
+import adams.core.io.FileUtils;
+import adams.core.option.OptionUtils;
+import com.github.fracpete.processoutput4j.output.CollectingProcessOutput;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import adams.core.io.FileUtils;
-import adams.core.management.ProcessUtils.ProcessResult;
-import adams.core.option.OptionUtils;
 
 /**
  * A helper class for Java (JRE/JDK) related things.
@@ -181,19 +181,19 @@ public class Java {
    * @return		the output
    */
   protected static String execute(String executable, String options) {
-    ProcessResult	proc;
+    CollectingProcessOutput proc;
     String		result;
     List<String>	cmd;
 
     try {
       // assemble command
-      cmd = new ArrayList<String>(Arrays.asList(OptionUtils.splitOptions(options)));
+      cmd = new ArrayList<>(Arrays.asList(OptionUtils.splitOptions(options)));
       cmd.add(0, executable);
 
       // execute command
       proc = ProcessUtils.execute(cmd.toArray(new String[cmd.size()]));
       if (!proc.hasSucceeded())
-	result = proc.toErrorOutput();
+	result = ProcessUtils.toErrorOutput(proc);
       else
 	result = proc.getStdOut();
     }
