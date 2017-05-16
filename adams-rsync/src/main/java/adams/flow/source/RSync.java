@@ -20,11 +20,15 @@
 
 package adams.flow.source;
 
+import adams.flow.core.Token;
+import com.github.fracpete.processoutput4j.output.CollectingProcessOutput;
 import com.github.fracpete.rsync4j.Binaries;
 
 /**
  <!-- globalinfo-start -->
  * Supports synchronization using rsync.
+ * <br>
+ * In case of an error, the stderr output is forwarded, otherwise stdout output.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -951,7 +955,9 @@ public class RSync
    */
   @Override
   public String globalInfo() {
-    return "Supports synchronization using rsync.";
+    return
+      "Supports synchronization using rsync.\n"
+      + "In case of an error, the stderr output is forwarded, otherwise stdout output.";
   }
 
   /**
@@ -3103,6 +3109,7 @@ public class RSync
   protected String doExecute() {
     String				result;
     com.github.fracpete.rsync4j.RSync	rsync;
+    CollectingProcessOutput		output;
 
     result = null;
 
@@ -3231,6 +3238,12 @@ public class RSync
       rsync.outputCommandline(m_OutputCommandline);
       rsync.source(m_Source);
       rsync.destination(m_Destination);
+
+      output = rsync.execute();
+      if (output.getExitCode() > 0)
+	m_OutputToken = new Token(output.getStdErr());
+      else
+	m_OutputToken = new Token(output.getStdOut());
     }
     catch (Exception e) {
       result = handleException("Failed to execute rsync!", e);
