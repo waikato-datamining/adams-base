@@ -49,7 +49,6 @@ done
 # launch class
 "$JCMD" \
   -classpath "$CLASSPATH" \
-  -Xmx$MEMORY \
   $HEADLESS \
   $MAIN \
   $ARGS
