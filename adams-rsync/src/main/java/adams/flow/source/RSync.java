@@ -27,8 +27,7 @@ import com.github.fracpete.rsync4j.Binaries;
 
 /**
  <!-- globalinfo-start -->
- * Supports synchronization using rsync.
- * <br>
+ * Supports synchronization using rsync.<br>
  * In case of an error, the stderr output is forwarded, otherwise stdout output.
  * <br><br>
  <!-- globalinfo-end -->
@@ -45,651 +44,651 @@ import com.github.fracpete.rsync4j.Binaries;
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- *
+ * 
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: RSync
  * </pre>
- *
+ * 
  * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- *
+ * 
  * <pre>-skip &lt;boolean&gt; (property: skip)
  * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
  * &nbsp;&nbsp;&nbsp;as it is.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
  * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this 
  * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical 
  * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-silent &lt;boolean&gt; (property: silent)
  * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
  * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-source &lt;java.lang.String&gt; (property: source)
  * &nbsp;&nbsp;&nbsp;The local or remote source path (path or [user&#64;]host:path)
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- *
+ * 
  * <pre>-destination &lt;java.lang.String&gt; (property: destination)
  * &nbsp;&nbsp;&nbsp;The local or remote destination path (path or [user&#64;]host:path)
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- *
+ * 
  * <pre>-outputCommandline &lt;boolean&gt; (property: outputCommandline)
  * &nbsp;&nbsp;&nbsp;output the command-line generated for the rsync binary
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-verbose &lt;boolean&gt; (property: verbose)
  * &nbsp;&nbsp;&nbsp;increase verbosity
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-info &lt;java.lang.String&gt; (property: info)
  * &nbsp;&nbsp;&nbsp;fine-grained informational verbosity
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- *
+ * 
  * <pre>-debug &lt;java.lang.String&gt; (property: debug)
  * &nbsp;&nbsp;&nbsp;fine-grained debug verbosity
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- *
+ * 
  * <pre>-msgs2stderr &lt;boolean&gt; (property: msgs2stderr)
  * &nbsp;&nbsp;&nbsp;special output handling for debugging
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-quiet &lt;boolean&gt; (property: quiet)
  * &nbsp;&nbsp;&nbsp;suppress non-error messages
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-no_motd &lt;boolean&gt; (property: noMotd)
  * &nbsp;&nbsp;&nbsp;suppress daemon-mode MOTD
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-checksum &lt;boolean&gt; (property: checksum)
  * &nbsp;&nbsp;&nbsp;skip based on checksum, not mod-time &amp; size
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-archive &lt;boolean&gt; (property: archive)
  * &nbsp;&nbsp;&nbsp;archive mode; equals -rlptgoD (no -H,-A,-X)
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-recursive &lt;boolean&gt; (property: recursive)
  * &nbsp;&nbsp;&nbsp;recurse into directories
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-relative &lt;boolean&gt; (property: relative)
  * &nbsp;&nbsp;&nbsp;use relative path names
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-no_implied_dirs &lt;boolean&gt; (property: noImpliedDirs)
  * &nbsp;&nbsp;&nbsp;use relative path names
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-backup &lt;boolean&gt; (property: backup)
  * &nbsp;&nbsp;&nbsp;make backups (see --suffix &amp; --backup-dir)
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-backup_dir &lt;java.lang.String&gt; (property: backupDir)
  * &nbsp;&nbsp;&nbsp;make backups into hierarchy based in DIR
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- *
+ * 
  * <pre>-suffix &lt;java.lang.String&gt; (property: suffix)
  * &nbsp;&nbsp;&nbsp;set backup suffix (default ~ w&#47;o --backup-dir)
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- *
+ * 
  * <pre>-update &lt;boolean&gt; (property: update)
  * &nbsp;&nbsp;&nbsp;skip files that are newer on the receiver
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-inplace &lt;boolean&gt; (property: inplace)
  * &nbsp;&nbsp;&nbsp;update destination files in-place
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-append &lt;boolean&gt; (property: append)
  * &nbsp;&nbsp;&nbsp;append data onto shorter files
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-append_verify &lt;boolean&gt; (property: appendVerify)
  * &nbsp;&nbsp;&nbsp;like --append, but with old data in file checksum
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-dirs &lt;boolean&gt; (property: dirs)
  * &nbsp;&nbsp;&nbsp;transfer directories without recursing
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-links &lt;boolean&gt; (property: links)
  * &nbsp;&nbsp;&nbsp;copy symlinks as symlinks
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-copy_links &lt;boolean&gt; (property: copyLinks)
  * &nbsp;&nbsp;&nbsp;transform symlink into referent file&#47;dir
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-copy_unsafe_links &lt;boolean&gt; (property: copyUnsafeLinks)
  * &nbsp;&nbsp;&nbsp;only "unsafe" symlinks are transformed
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-safe_links &lt;boolean&gt; (property: safeLinks)
  * &nbsp;&nbsp;&nbsp;ignore symlinks that point outside the source tree
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-munge_links &lt;boolean&gt; (property: mungeLinks)
  * &nbsp;&nbsp;&nbsp;munge symlinks to make them safer (but unusable)
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-copy_dirlinks &lt;boolean&gt; (property: copyDirlinks)
  * &nbsp;&nbsp;&nbsp;transform symlink to a dir into referent dir
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-keep_dirlinks &lt;boolean&gt; (property: keepDirlinks)
  * &nbsp;&nbsp;&nbsp;treat symlinked dir on receiver as dir
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-hard_links &lt;boolean&gt; (property: hardLinks)
  * &nbsp;&nbsp;&nbsp;preserve hard links
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-perms &lt;boolean&gt; (property: perms)
  * &nbsp;&nbsp;&nbsp;preserve permissions
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-executability &lt;boolean&gt; (property: executability)
  * &nbsp;&nbsp;&nbsp;preserve the file's executability
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-chmod &lt;java.lang.String&gt; (property: chmod)
  * &nbsp;&nbsp;&nbsp;affect file and&#47;or directory permissions
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- *
+ * 
  * <pre>-xattrs &lt;boolean&gt; (property: xattrs)
  * &nbsp;&nbsp;&nbsp;preserve extended attributes
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-owner &lt;boolean&gt; (property: owner)
  * &nbsp;&nbsp;&nbsp;preserve owner (super-user only)
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-group &lt;boolean&gt; (property: group)
  * &nbsp;&nbsp;&nbsp;preserve group
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-devices &lt;boolean&gt; (property: devices)
  * &nbsp;&nbsp;&nbsp;preserve device files (super-user only)
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-specials &lt;boolean&gt; (property: specials)
  * &nbsp;&nbsp;&nbsp;preserve special files
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-times &lt;boolean&gt; (property: times)
  * &nbsp;&nbsp;&nbsp;preserve modification times
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-omit_dir_times &lt;boolean&gt; (property: omitDirTimes)
  * &nbsp;&nbsp;&nbsp;omit directories from --times
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-omit_link_times &lt;boolean&gt; (property: omitLinkTimes)
  * &nbsp;&nbsp;&nbsp;omit symlinks from --times
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-super_ &lt;boolean&gt; (property: super_)
  * &nbsp;&nbsp;&nbsp;receiver attempts super-user activities
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-fake_super &lt;boolean&gt; (property: fakeSuper)
  * &nbsp;&nbsp;&nbsp;store&#47;recover privileged attrs using xattrs
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-sparse &lt;boolean&gt; (property: sparse)
  * &nbsp;&nbsp;&nbsp;handle sparse files efficiently
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-preallocate &lt;boolean&gt; (property: preallocate)
  * &nbsp;&nbsp;&nbsp;allocate dest files before writing them
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-dry_run &lt;boolean&gt; (property: dryRun)
  * &nbsp;&nbsp;&nbsp;perform a trial run with no changes made
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-whole_file &lt;boolean&gt; (property: wholeFile)
  * &nbsp;&nbsp;&nbsp;copy files whole (without delta-xfer algorithm)
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-one_file_system &lt;boolean&gt; (property: oneFileSystem)
  * &nbsp;&nbsp;&nbsp;don't cross filesystem boundaries
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-block_size &lt;java.lang.String&gt; (property: blockSize)
  * &nbsp;&nbsp;&nbsp;force a fixed checksum block-size
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- *
+ * 
  * <pre>-rsh &lt;java.lang.String&gt; (property: rsh)
  * &nbsp;&nbsp;&nbsp;specify the remote shell to use
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- *
+ * 
  * <pre>-rsync_path &lt;java.lang.String&gt; (property: rsyncPath)
  * &nbsp;&nbsp;&nbsp;specify the rsync to run on the remote machine
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- *
+ * 
  * <pre>-existing &lt;boolean&gt; (property: existing)
  * &nbsp;&nbsp;&nbsp;skip creating new files on receiver
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-ignore_existing &lt;boolean&gt; (property: ignoreExisting)
  * &nbsp;&nbsp;&nbsp;skip updating files that already exist on receiver
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-remove_source_files &lt;boolean&gt; (property: removeSourceFiles)
  * &nbsp;&nbsp;&nbsp;sender removes synchronized files (non-dirs)
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-delete &lt;boolean&gt; (property: delete)
  * &nbsp;&nbsp;&nbsp;delete extraneous files from destination dirs
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-delete_before &lt;boolean&gt; (property: deleteBefore)
  * &nbsp;&nbsp;&nbsp;receiver deletes before transfer, not during
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-delete_during &lt;boolean&gt; (property: deleteDuring)
  * &nbsp;&nbsp;&nbsp;receiver deletes during the transfer
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-delete_delay &lt;boolean&gt; (property: deleteDelay)
  * &nbsp;&nbsp;&nbsp;find deletions during, delete after
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-delete_after &lt;boolean&gt; (property: deleteAfter)
  * &nbsp;&nbsp;&nbsp;receiver deletes after transfer, not during
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-delete_excluded &lt;boolean&gt; (property: deleteExcluded)
  * &nbsp;&nbsp;&nbsp;also delete excluded files from destination dirs
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-ignore_missing_args &lt;boolean&gt; (property: ignoreMissingArgs)
  * &nbsp;&nbsp;&nbsp;ignore missing source args without error
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-delete_missing_args &lt;boolean&gt; (property: deleteMissingArgs)
  * &nbsp;&nbsp;&nbsp;delete missing source args from destination
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-ignore_errors &lt;boolean&gt; (property: ignoreErrors)
  * &nbsp;&nbsp;&nbsp;delete even if there are I&#47;O errors
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-force &lt;boolean&gt; (property: force)
  * &nbsp;&nbsp;&nbsp;force deletion of directories even if not empty
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-max_delete &lt;int&gt; (property: maxDelete)
  * &nbsp;&nbsp;&nbsp;don't delete more than NUM files
  * &nbsp;&nbsp;&nbsp;default: -1
  * </pre>
- *
+ * 
  * <pre>-max_size &lt;int&gt; (property: maxSize)
  * &nbsp;&nbsp;&nbsp;don't transfer any file larger than SIZE
  * &nbsp;&nbsp;&nbsp;default: -1
  * </pre>
- *
+ * 
  * <pre>-min_size &lt;int&gt; (property: minSize)
  * &nbsp;&nbsp;&nbsp;don't transfer any file smaller than SIZE
  * &nbsp;&nbsp;&nbsp;default: -1
  * </pre>
- *
+ * 
  * <pre>-partial &lt;boolean&gt; (property: partial)
  * &nbsp;&nbsp;&nbsp;keep partially transferred files
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-partial_dir &lt;java.lang.String&gt; (property: partialDir)
  * &nbsp;&nbsp;&nbsp;put a partially transferred file into DIR
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- *
+ * 
  * <pre>-delay_updates &lt;boolean&gt; (property: delayUpdates)
  * &nbsp;&nbsp;&nbsp;put all updated files into place at transfer's end
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-prune_empty_dirs &lt;boolean&gt; (property: pruneEmptyDirs)
  * &nbsp;&nbsp;&nbsp;prune empty directory chains from the file-list
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-numeric_ids &lt;boolean&gt; (property: numericIds)
  * &nbsp;&nbsp;&nbsp;don't map uid&#47;gid values by user&#47;group name
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-usermap &lt;java.lang.String&gt; (property: usermap)
  * &nbsp;&nbsp;&nbsp;custom username mapping
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- *
+ * 
  * <pre>-groupmap &lt;java.lang.String&gt; (property: groupmap)
  * &nbsp;&nbsp;&nbsp;custom groupname mapping
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- *
+ * 
  * <pre>-chown &lt;java.lang.String&gt; (property: chown)
  * &nbsp;&nbsp;&nbsp;simple username&#47;groupname mapping
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- *
+ * 
  * <pre>-timeout &lt;int&gt; (property: timeout)
  * &nbsp;&nbsp;&nbsp;set I&#47;O timeout in seconds
  * &nbsp;&nbsp;&nbsp;default: -1
  * </pre>
- *
+ * 
  * <pre>-contimeout &lt;int&gt; (property: contimeout)
  * &nbsp;&nbsp;&nbsp;set daemon connection timeout in seconds
  * &nbsp;&nbsp;&nbsp;default: -1
  * </pre>
- *
+ * 
  * <pre>-ignore_times &lt;boolean&gt; (property: ignoreTimes)
  * &nbsp;&nbsp;&nbsp;don't skip files that match in size and mod-time
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-remote_option &lt;java.lang.String&gt; (property: remoteOption)
  * &nbsp;&nbsp;&nbsp;send OPTION to the remote side only
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- *
+ * 
  * <pre>-size_only &lt;boolean&gt; (property: sizeOnly)
  * &nbsp;&nbsp;&nbsp;skip files that match in size
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-modify_window &lt;int&gt; (property: modifyWindow)
  * &nbsp;&nbsp;&nbsp;compare mod-times with reduced accuracy
  * &nbsp;&nbsp;&nbsp;default: -1
  * </pre>
- *
+ * 
  * <pre>-temp_dir &lt;java.lang.String&gt; (property: tempDir)
  * &nbsp;&nbsp;&nbsp;create temporary files in directory DIR
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- *
+ * 
  * <pre>-fuzzy &lt;boolean&gt; (property: fuzzy)
  * &nbsp;&nbsp;&nbsp;find similar file for basis if no dest file
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-compare_dest &lt;java.lang.String&gt; (property: compareDest)
  * &nbsp;&nbsp;&nbsp;also compare destination files relative to DIR
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- *
+ * 
  * <pre>-copy_dest &lt;java.lang.String&gt; (property: copyDest)
  * &nbsp;&nbsp;&nbsp;... and include copies of unchanged files
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- *
+ * 
  * <pre>-link_dest &lt;java.lang.String&gt; (property: linkDest)
  * &nbsp;&nbsp;&nbsp;hardlink to files in DIR when unchanged
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- *
+ * 
  * <pre>-compress &lt;boolean&gt; (property: compress)
  * &nbsp;&nbsp;&nbsp;compress file data during the transfer
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-compress_level &lt;int&gt; (property: compressLevel)
  * &nbsp;&nbsp;&nbsp;explicitly set compression level
  * &nbsp;&nbsp;&nbsp;default: -1
  * </pre>
- *
+ * 
  * <pre>-skip_compress &lt;java.lang.String&gt; (property: skipCompress)
  * &nbsp;&nbsp;&nbsp;skip compressing files with a suffix in LIST
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- *
+ * 
  * <pre>-cvs_exclude &lt;boolean&gt; (property: cvsExclude)
  * &nbsp;&nbsp;&nbsp;auto-ignore files the same way CVS does
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-filter &lt;java.lang.String&gt; (property: filter)
  * &nbsp;&nbsp;&nbsp;add a file-filtering RULE
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- *
+ * 
  * <pre>-exclude &lt;java.lang.String&gt; (property: exclude)
  * &nbsp;&nbsp;&nbsp;exclude files matching PATTERN
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- *
+ * 
  * <pre>-exclude_from &lt;java.lang.String&gt; (property: excludeFrom)
  * &nbsp;&nbsp;&nbsp;read exclude patterns from FILE
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- *
+ * 
  * <pre>-include &lt;java.lang.String&gt; (property: include)
  * &nbsp;&nbsp;&nbsp;include files matching PATTERN
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- *
+ * 
  * <pre>-include_from &lt;java.lang.String&gt; (property: includeFrom)
  * &nbsp;&nbsp;&nbsp;read include patterns from FILE
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- *
+ * 
  * <pre>-files_from &lt;java.lang.String&gt; (property: filesFrom)
  * &nbsp;&nbsp;&nbsp;read list of source-file names from FILE
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- *
+ * 
  * <pre>-from0 &lt;boolean&gt; (property: from0)
  * &nbsp;&nbsp;&nbsp;all *-from&#47;filter files are delimited by 0s
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-protect_args &lt;boolean&gt; (property: protectArgs)
  * &nbsp;&nbsp;&nbsp;no space-splitting; only wildcard special-chars
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-address &lt;java.lang.String&gt; (property: address)
  * &nbsp;&nbsp;&nbsp;bind address for outgoing socket to daemon
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- *
+ * 
  * <pre>-port &lt;int&gt; (property: port)
  * &nbsp;&nbsp;&nbsp;specify double-colon alternate port number
  * &nbsp;&nbsp;&nbsp;default: -1
  * </pre>
- *
+ * 
  * <pre>-sockopts &lt;java.lang.String&gt; (property: sockopts)
  * &nbsp;&nbsp;&nbsp;specify custom TCP options
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- *
+ * 
  * <pre>-blocking_io &lt;boolean&gt; (property: blockingIO)
  * &nbsp;&nbsp;&nbsp;use blocking I&#47;O for the remote shell
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-stats &lt;boolean&gt; (property: stats)
  * &nbsp;&nbsp;&nbsp;give some file-transfer stats
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-eight_bit_output &lt;boolean&gt; (property: eightBitOutput)
  * &nbsp;&nbsp;&nbsp;leave high-bit chars unescaped in output
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-human_readable &lt;boolean&gt; (property: humanReadable)
  * &nbsp;&nbsp;&nbsp;output numbers in a human-readable format
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-progress &lt;boolean&gt; (property: progress)
  * &nbsp;&nbsp;&nbsp;show progress during transfer
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-itemize_changes &lt;boolean&gt; (property: itemizeChanges)
  * &nbsp;&nbsp;&nbsp;output a change-summary for all updates
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-out_format &lt;java.lang.String&gt; (property: outFormat)
  * &nbsp;&nbsp;&nbsp;output updates using the specified FORMAT
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- *
+ * 
  * <pre>-log_file &lt;java.lang.String&gt; (property: logFile)
  * &nbsp;&nbsp;&nbsp;log what we're doing to the specified FILE
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- *
+ * 
  * <pre>-log_file_format &lt;java.lang.String&gt; (property: logFileFormat)
  * &nbsp;&nbsp;&nbsp;log updates using the specified FMT
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- *
+ * 
  * <pre>-password_file &lt;java.lang.String&gt; (property: passwordFile)
  * &nbsp;&nbsp;&nbsp;read daemon-access password from FILE
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- *
+ * 
  * <pre>-list_only &lt;boolean&gt; (property: listOnly)
  * &nbsp;&nbsp;&nbsp;list the files instead of copying them
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-bwlimit &lt;int&gt; (property: bwlimit)
  * &nbsp;&nbsp;&nbsp;limit socket I&#47;O bandwidth
  * &nbsp;&nbsp;&nbsp;default: -1
  * </pre>
- *
- * <pre>-outbuf &lt;char&gt; (property: outbuf)
+ * 
+ * <pre>-outbuf &lt;java.lang.String&gt; (property: outbuf)
  * &nbsp;&nbsp;&nbsp;set output buffering to None, Line, or Block (N|L|B)
- * &nbsp;&nbsp;&nbsp;default: java.lang.Character
+ * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- *
+ * 
  * <pre>-write_batch &lt;java.lang.String&gt; (property: writeBatch)
  * &nbsp;&nbsp;&nbsp;write a batched update to FILE
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- *
+ * 
  * <pre>-only_write_batch &lt;java.lang.String&gt; (property: onlyWriteBatch)
  * &nbsp;&nbsp;&nbsp;like --write-batch but w&#47;o updating destination
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- *
+ * 
  * <pre>-read_batch &lt;java.lang.String&gt; (property: readBatch)
  * &nbsp;&nbsp;&nbsp;read a batched update from FILE
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- *
+ * 
  * <pre>-protocol &lt;int&gt; (property: protocol)
  * &nbsp;&nbsp;&nbsp;force an older protocol version to be used
  * &nbsp;&nbsp;&nbsp;default: -1
  * </pre>
- *
+ * 
  * <pre>-iconv &lt;java.lang.String&gt; (property: iconv)
  * &nbsp;&nbsp;&nbsp;request charset conversion of filenames
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- *
+ * 
  * <pre>-checksum_seed &lt;int&gt; (property: checksumSeed)
  * &nbsp;&nbsp;&nbsp;set block&#47;file checksum seed (advanced)
  * &nbsp;&nbsp;&nbsp;default: -1
  * </pre>
- *
+ * 
  * <pre>-ipv4 &lt;boolean&gt; (property: ipv4)
  * &nbsp;&nbsp;&nbsp;prefer IPv4
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-ipv6 &lt;boolean&gt; (property: ipv6)
  * &nbsp;&nbsp;&nbsp;prefer IPv6
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-version &lt;boolean&gt; (property: version)
  * &nbsp;&nbsp;&nbsp;print version number
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
@@ -929,7 +928,7 @@ public class RSync
 
   protected int m_Bwlimit;
 
-  protected char m_Outbuf;
+  protected String m_Outbuf;
 
   protected String m_WriteBatch;
 
@@ -1422,7 +1421,7 @@ public class RSync
 
     m_OptionManager.add(
       "outbuf", "outbuf",
-      '\0');
+      "");
 
     m_OptionManager.add(
       "write_batch", "writeBatch",
@@ -2961,11 +2960,11 @@ public class RSync
     return "limit socket I/O bandwidth";
   }
 
-  public char getOutbuf() {
+  public String getOutbuf() {
     return m_Outbuf;
   }
 
-  public void setOutbuf(char value) {
+  public void setOutbuf(String value) {
     m_Outbuf = value;
     reset();
   }
@@ -3241,7 +3240,8 @@ public class RSync
       rsync.passwordFile(m_PasswordFile);
       rsync.listOnly(m_ListOnly);
       rsync.bwlimit(m_Bwlimit);
-      rsync.outbuf(m_Outbuf);
+      if (m_Outbuf.length() == 1)
+	rsync.outbuf(m_Outbuf.charAt(0));
       rsync.writeBatch(m_WriteBatch);
       rsync.onlyWriteBatch(m_OnlyWriteBatch);
       rsync.readBatch(m_ReadBatch);
