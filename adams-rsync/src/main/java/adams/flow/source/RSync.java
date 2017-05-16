@@ -20,6 +20,7 @@
 
 package adams.flow.source;
 
+import adams.core.QuickInfoHelper;
 import adams.flow.core.Token;
 import com.github.fracpete.processoutput4j.output.CollectingProcessOutput;
 import com.github.fracpete.rsync4j.Binaries;
@@ -3088,6 +3089,22 @@ public class RSync
 
   public String versionTipText() {
     return "print version number";
+  }
+
+  /**
+   * Returns a quick info about the actor, which will be displayed in the GUI.
+   *
+   * @return		null if no info available, otherwise short string
+   */
+  @Override
+  public String getQuickInfo() {
+    String		result;
+
+    result  = QuickInfoHelper.toString(this, "source", m_Source.isEmpty() ? "-none-" : m_Source, "src: ");
+    result += QuickInfoHelper.toString(this, "destination", m_Destination.isEmpty() ? "-none-" : m_Destination, ", dst: ");
+    result += QuickInfoHelper.toString(this, "recursive", m_Recursive, "recursive", ", ");
+
+    return result;
   }
 
   /**
