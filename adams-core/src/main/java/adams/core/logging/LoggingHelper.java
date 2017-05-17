@@ -310,18 +310,37 @@ public class LoggingHelper {
    * @see		#getDefaultHandler()
    */
   public static String addToDefaultHandler(Handler handler) {
+    return addToDefaultHandler(handler, false);
+  }
+
+  /**
+   * Adds the handler to the default handler, but only if not already present.
+   *
+   * @param wrap	whether to wrap in a {@link MultiHandler} if necessary
+   * @return		null if successful, otherwise error message
+   * @see		#getDefaultHandler()
+   */
+  public static String addToDefaultHandler(Handler handler, boolean wrap) {
     String		result;
     MultiHandler	multi;
 
     result = null;
 
     if (getDefaultHandler() instanceof MultiHandler) {
-      multi = (MultiHandler) LoggingHelper.getDefaultHandler();
+      multi = (MultiHandler) getDefaultHandler();
       if (indexOfDefaultHandler(handler) == -1)
 	multi.addHandler(handler);
     }
     else {
-      result = "Default logging handler is not of type " + MultiHandler.class.getName() + " - failed to install " + handler.getClass().getName() + "!";
+      if (wrap) {
+	multi = new MultiHandler();
+	multi.addHandler(LoggingHelper.getDefaultHandler());
+	multi.addHandler(handler);
+	setDefaultHandler(multi);
+      }
+      else {
+	result = "Default logging handler is not of type " + MultiHandler.class.getName() + " - failed to install " + handler.getClass().getName() + "!";
+      }
     }
 
     return result;
