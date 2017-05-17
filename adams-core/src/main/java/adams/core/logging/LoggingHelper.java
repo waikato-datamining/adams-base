@@ -45,10 +45,16 @@ public class LoggingHelper {
   protected final static LevelComparator m_LevelComparator = new LevelComparator();
 
   /** the global logging handler. */
-  protected static Handler m_DefaultHandler = new SimpleConsoleHandler();
+  protected static Handler m_DefaultHandler;
 
   /** the formatter for the timestamp. */
-  protected static DateFormat m_DateFormat = new DateFormat("yyyyMMdd-HHmmss.SSS");
+  protected static DateFormat m_DateFormat;
+
+  static {
+    m_DefaultHandler = new MultiHandler();
+    ((MultiHandler) m_DefaultHandler).addHandler(new SimpleConsoleHandler());
+    m_DateFormat = new DateFormat("yyyyMMdd-HHmmss.SSS");
+  }
 
   /**
    * Returns the log level for the specified class. E.g., for the class
@@ -310,17 +316,6 @@ public class LoggingHelper {
    * @see		#getDefaultHandler()
    */
   public static String addToDefaultHandler(Handler handler) {
-    return addToDefaultHandler(handler, false);
-  }
-
-  /**
-   * Adds the handler to the default handler, but only if not already present.
-   *
-   * @param wrap	whether to wrap in a {@link MultiHandler} if necessary
-   * @return		null if successful, otherwise error message
-   * @see		#getDefaultHandler()
-   */
-  public static String addToDefaultHandler(Handler handler, boolean wrap) {
     String		result;
     MultiHandler	multi;
 
@@ -332,15 +327,7 @@ public class LoggingHelper {
 	multi.addHandler(handler);
     }
     else {
-      if (wrap) {
-	multi = new MultiHandler();
-	multi.addHandler(LoggingHelper.getDefaultHandler());
-	multi.addHandler(handler);
-	setDefaultHandler(multi);
-      }
-      else {
-	result = "Default logging handler is not of type " + MultiHandler.class.getName() + " - failed to install " + handler.getClass().getName() + "!";
-      }
+      result = "Default logging handler is not of type " + MultiHandler.class.getName() + " - failed to install " + handler.getClass().getName() + "!";
     }
 
     return result;
