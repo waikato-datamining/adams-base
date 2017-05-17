@@ -2233,7 +2233,6 @@ User=adams
 Group=adams
 WorkingDirectory=/opt/adams
 ExecStart=/opt/jdk/bin/java -cp "./lib/*:./lib/linux64/*" adams.flow.FlowRunner -input "./flows/myflow.flow" -headless true -register true -non-interactive true
-# SuccessExitStatus=143
 
 [Install]
 WantedBy=multi-user.target
