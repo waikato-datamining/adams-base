@@ -346,7 +346,7 @@ public class StartRemoteLogging
     handler.setHostname(m_LoggingHost.hostnameValue());
     handler.setPort(m_LoggingHost.portValue());
     handler.setMaxFailures(m_MaxFailures);
-    m_Message = LoggingHelper.addToDefaultHandler(handler);
+    m_Message = LoggingHelper.addToDefaultHandler(handler, true);
   }
 
   /**
