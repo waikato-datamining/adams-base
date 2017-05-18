@@ -15,19 +15,21 @@
 
 /*
  * StorageValuesArray.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
 
-import java.lang.reflect.Array;
-
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
+import adams.data.conversion.Conversion;
+import adams.data.conversion.UnknownToUnknown;
 import adams.flow.control.StorageName;
 import adams.flow.control.StorageUser;
 import adams.flow.core.Token;
 import adams.flow.core.Unknown;
+
+import java.lang.reflect.Array;
 
 /**
  <!-- globalinfo-start -->
@@ -43,13 +45,9 @@ import adams.flow.core.Unknown;
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- * 
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  * 
  * <pre>-name &lt;java.lang.String&gt; (property: name)
@@ -57,19 +55,28 @@ import adams.flow.core.Unknown;
  * &nbsp;&nbsp;&nbsp;default: StorageValuesArray
  * </pre>
  * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
- * <pre>-skip (property: skip)
+ * <pre>-skip &lt;boolean&gt; (property: skip)
  * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
  * &nbsp;&nbsp;&nbsp;as it is.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-stop-flow-on-error (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this 
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical 
+ * &nbsp;&nbsp;&nbsp;actors.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
  * <pre>-storage-name &lt;adams.flow.control.StorageName&gt; [-storage-name ...] (property: storageNames)
@@ -81,6 +88,11 @@ import adams.flow.core.Unknown;
  * &nbsp;&nbsp;&nbsp;The class to use for the array; if none is specified, the class of the first 
  * &nbsp;&nbsp;&nbsp;storage item is used.
  * &nbsp;&nbsp;&nbsp;default: 
+ * </pre>
+ * 
+ * <pre>-conversion &lt;adams.data.conversion.Conversion&gt; (property: conversion)
+ * &nbsp;&nbsp;&nbsp;The type of conversion to perform.
+ * &nbsp;&nbsp;&nbsp;default: adams.data.conversion.UnknownToUnknown
  * </pre>
  * 
  <!-- options-end -->
@@ -103,6 +115,9 @@ public class StorageValuesArray
 
   /** the stored value. */
   protected Object m_StoredValue;
+
+  /** the type of conversion. */
+  protected Conversion m_Conversion;
 
   /**
    * Returns a string describing the object.
@@ -130,6 +145,10 @@ public class StorageValuesArray
     m_OptionManager.add(
 	    "array-class", "arrayClass",
 	    "");
+
+    m_OptionManager.add(
+	    "conversion", "conversion",
+	    new UnknownToUnknown());
   }
 
   /**
@@ -195,6 +214,36 @@ public class StorageValuesArray
   }
 
   /**
+   * Sets the type of conversion to perform.
+   *
+   * @param value	the type of conversion
+   */
+  public void setConversion(Conversion value) {
+    m_Conversion = value;
+    m_Conversion.setOwner(this);
+    reset();
+  }
+
+  /**
+   * Returns the type of conversion to perform.
+   *
+   * @return		the type of conversion
+   */
+  public Conversion getConversion() {
+    return m_Conversion;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String conversionTipText() {
+    return "The type of conversion to perform.";
+  }
+
+  /**
    * Returns whether storage items are being used.
    * 
    * @return		true if storage items are used
@@ -216,6 +265,7 @@ public class StorageValuesArray
     if (result == null)
       result = "-no names specified-";
     result += QuickInfoHelper.toString(this, "arrayClass", (m_ArrayClass.length() != 0) ? m_ArrayClass : "-from 1st storage item-", ", Class: ");
+    result += QuickInfoHelper.toString(this, "conversion", m_Conversion, ", conversion: ");
 
     return result;
   }
@@ -291,8 +341,15 @@ public class StorageValuesArray
 	  m_StoredValue = Array.newInstance(values[0].getClass(), values.length);
 	else
 	  m_StoredValue = Utils.newArray(m_ArrayClass, values.length);
-	for (i = 0; i < values.length; i++)
-	  Array.set(m_StoredValue, i, values[i]);
+        for (i = 0; i < values.length; i++) {
+          m_Conversion.setInput(values[i]);
+          result = m_Conversion.convert();
+          if (result != null)
+            result = getFullName() + ": " + result;
+          if ((result == null) && (m_Conversion.getOutput() != null))
+            Array.set(m_StoredValue, i, m_Conversion.getOutput());
+          m_Conversion.cleanUp();
+        }
       }
       catch (Exception e) {
 	result = handleException("Failed to generate array:", e);

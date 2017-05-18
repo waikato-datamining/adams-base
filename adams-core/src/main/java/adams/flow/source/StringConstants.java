@@ -15,13 +15,15 @@
 
 /*
  * StringConstants.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
 
 import adams.core.QuickInfoHelper;
 import adams.core.base.BaseString;
+import adams.data.conversion.Conversion;
+import adams.data.conversion.StringToString;
 
 /**
  <!-- globalinfo-start -->
@@ -30,46 +32,62 @@ import adams.core.base.BaseString;
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input/output:<br>
+ * Input&#47;output:<br>
  * - generates:<br>
  * &nbsp;&nbsp;&nbsp;java.lang.String<br>
  * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- *
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- *
+ * 
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: StringConstants
  * </pre>
- *
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * 
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default:
+ * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- *
- * <pre>-skip (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
+ * 
+ * <pre>-skip &lt;boolean&gt; (property: skip)
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
  * &nbsp;&nbsp;&nbsp;as it is.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
- * <pre>-output-array (property: outputArray)
+ * 
+ * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this 
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical 
+ * &nbsp;&nbsp;&nbsp;actors.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-output-array &lt;boolean&gt; (property: outputArray)
  * &nbsp;&nbsp;&nbsp;Whether to output the strings as an array or one by one.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-string &lt;adams.core.base.BaseString&gt; [-string ...] (property: strings)
  * &nbsp;&nbsp;&nbsp;The strings to provide.
- * &nbsp;&nbsp;&nbsp;default:
+ * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- *
+ * 
+ * <pre>-conversion &lt;adams.data.conversion.Conversion&gt; (property: conversion)
+ * &nbsp;&nbsp;&nbsp;The type of conversion to perform.
+ * &nbsp;&nbsp;&nbsp;default: adams.data.conversion.StringToString
+ * </pre>
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -83,6 +101,9 @@ public class StringConstants
 
   /** the strings to provide. */
   protected BaseString[] m_Strings;
+
+  /** the type of conversion. */
+  protected Conversion m_Conversion;
 
   /**
    * Returns a string describing the object.
@@ -104,6 +125,10 @@ public class StringConstants
     m_OptionManager.add(
 	    "string", "strings",
 	    new BaseString[0]);
+
+    m_OptionManager.add(
+	    "conversion", "conversion",
+	    new StringToString());
   }
 
   /**
@@ -117,6 +142,7 @@ public class StringConstants
 
     result  = QuickInfoHelper.toString(this, "strings", (m_Strings.length == 1 ? m_Strings[0] : m_Strings.length + " values"));
     result += QuickInfoHelper.toString(this, "outputArray", (m_OutputArray ? "as array" : "one by one"), ", ");
+    result += QuickInfoHelper.toString(this, "conversion", m_Conversion, ", conversion: ");
 
     return result;
   }
@@ -172,6 +198,36 @@ public class StringConstants
   }
 
   /**
+   * Sets the type of conversion to perform.
+   *
+   * @param value	the type of conversion
+   */
+  public void setConversion(Conversion value) {
+    m_Conversion = value;
+    m_Conversion.setOwner(this);
+    reset();
+  }
+
+  /**
+   * Returns the type of conversion to perform.
+   *
+   * @return		the type of conversion
+   */
+  public Conversion getConversion() {
+    return m_Conversion;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String conversionTipText() {
+    return "The type of conversion to perform.";
+  }
+
+  /**
    * Executes the flow item.
    *
    * @return		null if everything is fine, otherwise error message
@@ -183,8 +239,15 @@ public class StringConstants
 
     result = null;
 
-    for (i = 0; i < m_Strings.length; i++)
-      m_Queue.add(m_Strings[i].stringValue());
+    for (i = 0; i < m_Strings.length; i++) {
+      m_Conversion.setInput(m_Strings[i].stringValue());
+      result = m_Conversion.convert();
+      if (result != null)
+	result = getFullName() + ": " + result;
+      if ((result == null) && (m_Conversion.getOutput() != null))
+	m_Queue.add(m_Conversion.getOutput());
+      m_Conversion.cleanUp();
+    }
 
     return result;
   }

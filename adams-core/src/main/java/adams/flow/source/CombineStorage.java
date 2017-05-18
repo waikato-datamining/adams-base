@@ -15,14 +15,17 @@
 
 /*
  * CombineStorage.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
 
 import adams.core.QuickInfoHelper;
+import adams.core.Shortening;
 import adams.core.Variables;
 import adams.core.base.BaseText;
+import adams.data.conversion.Conversion;
+import adams.data.conversion.StringToString;
 import adams.flow.control.Storage;
 import adams.flow.core.Token;
 
@@ -65,14 +68,26 @@ import adams.flow.core.Token;
  * </pre>
  * 
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this 
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical 
+ * &nbsp;&nbsp;&nbsp;actors.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
  * <pre>-expression &lt;adams.core.base.BaseText&gt; (property: expression)
  * &nbsp;&nbsp;&nbsp;The expression to use for combining the variables and storage placeholders.
  * &nbsp;&nbsp;&nbsp;default: 
+ * </pre>
+ * 
+ * <pre>-conversion &lt;adams.data.conversion.Conversion&gt; (property: conversion)
+ * &nbsp;&nbsp;&nbsp;The type of conversion to perform.
+ * &nbsp;&nbsp;&nbsp;default: adams.data.conversion.StringToString
  * </pre>
  * 
  <!-- options-end -->
@@ -88,7 +103,10 @@ public class CombineStorage
 
   /** the expression containing the variables/storage placeholders. */
   protected BaseText m_Expression;
-  
+
+  /** the type of conversion. */
+  protected Conversion m_Conversion;
+
   /**
    * Returns a string describing the object.
    *
@@ -116,6 +134,10 @@ public class CombineStorage
     m_OptionManager.add(
 	    "expression", "expression",
 	    new BaseText(""));
+
+    m_OptionManager.add(
+	    "conversion", "conversion",
+	    new StringToString());
   }
   
   /**
@@ -148,13 +170,48 @@ public class CombineStorage
   }
 
   /**
+   * Sets the type of conversion to perform.
+   *
+   * @param value	the type of conversion
+   */
+  public void setConversion(Conversion value) {
+    m_Conversion = value;
+    m_Conversion.setOwner(this);
+    reset();
+  }
+
+  /**
+   * Returns the type of conversion to perform.
+   *
+   * @return		the type of conversion
+   */
+  public Conversion getConversion() {
+    return m_Conversion;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String conversionTipText() {
+    return "The type of conversion to perform.";
+  }
+
+  /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
    */
   @Override
   public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "expression", m_Expression.stringValue());
+    String	result;
+
+    result  = QuickInfoHelper.toString(this, "expression", m_Expression.isEmpty() ? "-empty-" : Shortening.shortenEnd(m_Expression.stringValue(), 40));
+    result += QuickInfoHelper.toString(this, "conversion", m_Conversion, ", conversion: ");
+
+    return result;
   }
 
   /**
@@ -163,7 +220,7 @@ public class CombineStorage
    * @return		<!-- flow-generates-start -->java.lang.String.class<!-- flow-generates-end -->
    */
   public Class[] generates() {
-    return new Class[]{String.class};
+    return new Class[]{m_Conversion.generates()};
   }
 
   /**
@@ -176,12 +233,18 @@ public class CombineStorage
     String	result;
     String	expanded;
 
-    result   = null;
     expanded = getVariables().expand(m_Expression.getValue());
     expanded = getStorageHandler().getStorage().expand(expanded);
     if (isLoggingEnabled())
       getLogger().info(m_Expression.getValue() + " -> " + expanded);
-    m_OutputToken = new Token(expanded);
+
+    m_Conversion.setInput(expanded);
+    result = m_Conversion.convert();
+    if (result != null)
+      result = getFullName() + ": " + result;
+    if ((result == null) && (m_Conversion.getOutput() != null))
+      m_OutputToken = new Token(m_Conversion.getOutput());
+    m_Conversion.cleanUp();
 
     return result;
   }

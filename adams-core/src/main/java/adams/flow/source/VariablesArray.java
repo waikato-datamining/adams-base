@@ -15,7 +15,7 @@
 
 /*
  * VariablesArray.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
@@ -24,7 +24,13 @@ import adams.core.QuickInfoHelper;
 import adams.core.Utils;
 import adams.core.VariableName;
 import adams.core.VariableUser;
+import adams.data.conversion.Conversion;
+import adams.data.conversion.StringToString;
 import adams.flow.core.Token;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -40,8 +46,6 @@ import adams.flow.core.Token;
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- * 
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
@@ -52,7 +56,7 @@ import adams.flow.core.Token;
  * &nbsp;&nbsp;&nbsp;default: VariablesArray
  * </pre>
  * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
@@ -64,14 +68,26 @@ import adams.flow.core.Token;
  * </pre>
  * 
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this 
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical 
+ * &nbsp;&nbsp;&nbsp;actors.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
  * <pre>-var-name &lt;adams.core.VariableName&gt; [-var-name ...] (property: variableNames)
  * &nbsp;&nbsp;&nbsp;The names of the variables to retrieve as array.
  * &nbsp;&nbsp;&nbsp;default: 
+ * </pre>
+ * 
+ * <pre>-conversion &lt;adams.data.conversion.Conversion&gt; (property: conversion)
+ * &nbsp;&nbsp;&nbsp;The type of conversion to perform.
+ * &nbsp;&nbsp;&nbsp;default: adams.data.conversion.StringToString
  * </pre>
  * 
  <!-- options-end -->
@@ -90,7 +106,10 @@ public class VariablesArray
   protected VariableName[] m_VariableNames;
 
   /** the stored value. */
-  protected String[] m_StoredValue;
+  protected Object m_StoredValue;
+
+  /** the type of conversion. */
+  protected Conversion m_Conversion;
 
   /**
    * Returns a string describing the object.
@@ -114,6 +133,10 @@ public class VariablesArray
     m_OptionManager.add(
 	    "var-name", "variableNames",
 	    new VariableName[0]);
+
+    m_OptionManager.add(
+	    "conversion", "conversion",
+	    new StringToString());
   }
 
   /**
@@ -146,6 +169,36 @@ public class VariablesArray
   }
 
   /**
+   * Sets the type of conversion to perform.
+   *
+   * @param value	the type of conversion
+   */
+  public void setConversion(Conversion value) {
+    m_Conversion = value;
+    m_Conversion.setOwner(this);
+    reset();
+  }
+
+  /**
+   * Returns the type of conversion to perform.
+   *
+   * @return		the type of conversion
+   */
+  public Conversion getConversion() {
+    return m_Conversion;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String conversionTipText() {
+    return "The type of conversion to perform.";
+  }
+
+  /**
    * Returns whether variables are being used.
    * 
    * @return		true if variables are used
@@ -166,6 +219,7 @@ public class VariablesArray
     result = QuickInfoHelper.toString(this, "variableNames", Utils.flatten(m_VariableNames, ", "), "Names: ");
     if (result == null)
       result = "-no names specified-";
+    result += QuickInfoHelper.toString(this, "conversion", m_Conversion, ", conversion: ");
 
     return result;
   }
@@ -176,7 +230,7 @@ public class VariablesArray
    * @return		<!-- flow-generates-start -->java.lang.String[].class<!-- flow-generates-end -->
    */
   public Class[] generates() {
-    return new Class[]{String[].class};
+    return new Class[]{Array.newInstance(m_Conversion.generates(), 0).getClass()};
   }
 
   /**
@@ -221,6 +275,7 @@ public class VariablesArray
     String	result;
     int		i;
     String[]	values;
+    List 	objects;
     
     result = null;
 
@@ -235,10 +290,24 @@ public class VariablesArray
 	break;
     }
     
-    if (result == null)
-      m_StoredValue = values;
-    else
+    if ((result == null) && (values.length > 0)) {
+      objects = new ArrayList();
+      for (i = 0; i < values.length; i++) {
+	m_Conversion.setInput(values[i]);
+	result = m_Conversion.convert();
+	if (result != null)
+	  result = getFullName() + ": " + result;
+	if ((result == null) && (m_Conversion.getOutput() != null))
+	  objects.add(m_Conversion.getOutput());
+	m_Conversion.cleanUp();
+      }
+      m_StoredValue = Array.newInstance(objects.get(0).getClass(), objects.size());
+      for (i = 0; i < objects.size(); i++)
+	Array.set(m_StoredValue, i, objects.get(i));
+    }
+    else {
       m_StoredValue = null;
+    }
 
     return result;
   }

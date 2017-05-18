@@ -15,16 +15,17 @@
 
 /*
  * StorageValue.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
 
 import adams.core.QuickInfoHelper;
+import adams.data.conversion.Conversion;
+import adams.data.conversion.UnknownToUnknown;
 import adams.flow.control.StorageName;
 import adams.flow.control.StorageUser;
 import adams.flow.core.Token;
-import adams.flow.core.Unknown;
 
 /**
  <!-- globalinfo-start -->
@@ -42,8 +43,6 @@ import adams.flow.core.Unknown;
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- * 
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
@@ -54,7 +53,7 @@ import adams.flow.core.Unknown;
  * &nbsp;&nbsp;&nbsp;default: StorageValue
  * </pre>
  * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
@@ -66,8 +65,15 @@ import adams.flow.core.Unknown;
  * </pre>
  * 
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this 
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical 
+ * &nbsp;&nbsp;&nbsp;actors.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
@@ -80,6 +86,11 @@ import adams.flow.core.Unknown;
  * <pre>-storage-name &lt;adams.flow.control.StorageName&gt; (property: storageName)
  * &nbsp;&nbsp;&nbsp;The name of the stored value to retrieve.
  * &nbsp;&nbsp;&nbsp;default: storage
+ * </pre>
+ * 
+ * <pre>-conversion &lt;adams.data.conversion.Conversion&gt; (property: conversion)
+ * &nbsp;&nbsp;&nbsp;The type of conversion to perform.
+ * &nbsp;&nbsp;&nbsp;default: adams.data.conversion.UnknownToUnknown
  * </pre>
  * 
  <!-- options-end -->
@@ -102,6 +113,9 @@ public class StorageValue
 
   /** the stored value. */
   protected Object m_StoredValue;
+
+  /** the type of conversion. */
+  protected Conversion m_Conversion;
 
   /**
    * Returns a string describing the object.
@@ -132,6 +146,10 @@ public class StorageValue
     m_OptionManager.add(
 	    "storage-name", "storageName",
 	    new StorageName());
+
+    m_OptionManager.add(
+	    "conversion", "conversion",
+	    new UnknownToUnknown());
   }
 
   /**
@@ -193,6 +211,36 @@ public class StorageValue
   }
 
   /**
+   * Sets the type of conversion to perform.
+   *
+   * @param value	the type of conversion
+   */
+  public void setConversion(Conversion value) {
+    m_Conversion = value;
+    m_Conversion.setOwner(this);
+    reset();
+  }
+
+  /**
+   * Returns the type of conversion to perform.
+   *
+   * @return		the type of conversion
+   */
+  public Conversion getConversion() {
+    return m_Conversion;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String conversionTipText() {
+    return "The type of conversion to perform.";
+  }
+
+  /**
    * Returns whether storage items are being used.
    * 
    * @return		true if storage items are used
@@ -215,6 +263,7 @@ public class StorageValue
     value  = QuickInfoHelper.toString(this, "cache", (m_Cache.length() > 0 ? m_Cache : ""), " cache: ");
     if (value != null)
       result += value;
+    result += QuickInfoHelper.toString(this, "conversion", m_Conversion, ", conversion: ");
 
     return result;
   }
@@ -225,7 +274,7 @@ public class StorageValue
    * @return		<!-- flow-generates-start -->adams.flow.core.Unknown.class<!-- flow-generates-end -->
    */
   public Class[] generates() {
-    return new Class[]{Unknown.class};
+    return new Class[]{m_Conversion.generates()};
   }
 
   /**
@@ -281,8 +330,15 @@ public class StorageValue
 	m_StoredValue = getStorageHandler().getStorage().get(m_Cache, m_StorageName);
     }
     
-    if (m_StoredValue != null)
-      m_OutputToken = new Token(m_StoredValue);
+    if (m_StoredValue != null) {
+      m_Conversion.setInput(m_StoredValue);
+      result = m_Conversion.convert();
+      if (result != null)
+	result = getFullName() + ": " + result;
+      if ((result == null) && (m_Conversion.getOutput() != null))
+	m_OutputToken = new Token(m_Conversion.getOutput());
+      m_Conversion.cleanUp();
+    }
 
     return result;
   }
