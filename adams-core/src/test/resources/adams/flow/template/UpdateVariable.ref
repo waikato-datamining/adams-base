@@ -6,6 +6,8 @@ adams.flow.control.Trigger
 		adams.flow.source.Variable
 			-var-name
 			blah
+			-conversion
+				adams.data.conversion.StringToString
 	-tee
 		adams.flow.transformer.SetVariable
 			-var-name

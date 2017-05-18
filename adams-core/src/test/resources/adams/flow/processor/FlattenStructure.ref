@@ -28,6 +28,8 @@ adams.flow.control.Flow
 										adams.flow.source.Variable
 											-var-name
 											i
+											-conversion
+												adams.data.conversion.StringToString
 									-actor
 										adams.flow.transformer.Convert
 											-conversion

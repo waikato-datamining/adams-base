@@ -18,6 +18,8 @@ adams.flow.control.Flow
 			3
 			-string
 			4
+			-conversion
+				adams.data.conversion.StringToString
 	-actor
 		adams.flow.control.Branch
 			-branch

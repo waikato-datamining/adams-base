@@ -1,4 +1,6 @@
 --> adams.flow.template.DummySource-out0.txt
 adams.flow.source.StringConstants
+	-conversion
+		adams.data.conversion.StringToString
 
 

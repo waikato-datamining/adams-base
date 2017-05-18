@@ -18,6 +18,8 @@ adams.flow.control.Flow
 			some
 			-string
 			thing
+			-conversion
+				adams.data.conversion.StringToString
 	-actor
 		adams.flow.transformer.IncVariable
 			-var-name
@@ -36,6 +38,8 @@ adams.flow.control.Flow
 						adams.flow.source.StorageValue
 							-storage-name
 							funky
+							-conversion
+								adams.data.conversion.UnknownToUnknown
 					-tee
 						adams.flow.transformer.StringInsert
 							-after
@@ -54,6 +58,8 @@ adams.flow.control.Flow
 						adams.flow.source.StorageValue
 							-storage-name
 							funky
+							-conversion
+								adams.data.conversion.UnknownToUnknown
 					-tee
 						adams.flow.transformer.StringInsert
 							-position
