@@ -615,6 +615,7 @@ public class SimpleRSync
     result  = QuickInfoHelper.toString(this, "source", m_Source.isEmpty() ? "-none-" : m_Source, "src: ");
     result += QuickInfoHelper.toString(this, "destination", m_Destination.isEmpty() ? "-none-" : m_Destination, ", dst: ");
     result += QuickInfoHelper.toString(this, "recursive", m_Recursive, "recursive", ", ");
+    result += QuickInfoHelper.toString(this, "dryRun", m_DryRun, "dry-run", ", ");
 
     return result;
   }
