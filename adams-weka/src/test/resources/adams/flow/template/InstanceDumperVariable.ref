@@ -6,6 +6,8 @@ adams.flow.control.Trigger
 		adams.flow.source.Variable
 			-var-name
 			flow_filename_long
+			-conversion
+				adams.data.conversion.StringToString
 	-tee
 		adams.flow.transformer.StringReplace
 			-find
