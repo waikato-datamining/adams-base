@@ -1724,7 +1724,7 @@ a snapshot in time of the storage inspection panel available through the
 \end{figure}
 
 \heading{Overview of actors}
-The following actors are available to handle variables:
+The following actors are available to handle storage values:
 \begin{tight_itemize}
 	\item \textit{InitStorageCache} -- standalone actor for initializing a named
 	LRU cache with a specific size.
@@ -1745,6 +1745,7 @@ The following actors are available to handle variables:
 	associated with the specified name.
 	\item \textit{StorageValuesArray} -- source actor for outputting the 
 	storage values associated with the specified names as an array.
+	\item \textit{SetStorageFlag} -- sets/unsets the boolean flag in storage
 	\item \textit{SetStorageValue} -- updates the specified storage value
 	(transformer).
 	\item \textit{IncStorageValue} -- increments the value of the stored integer or
