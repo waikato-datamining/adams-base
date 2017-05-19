@@ -15,7 +15,7 @@
 
 /*
  * MessageDigest.java
- * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -33,7 +33,8 @@ import java.security.DigestInputStream;
 
 /**
  <!-- globalinfo-start -->
- * Generates a message digest and forwards that. The digest is either generated on the string being passed through or from the content of a file (if a File object is used as input).
+ * Generates a message digest and forwards that. The digest is either generated on the string being passed through or from the content of a file (if a File object is used as input).<br>
+ * If arrays are being passed into the actor, then the digest is computed over all of them.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -42,46 +43,53 @@ import java.security.DigestInputStream;
  * - accepts:<br>
  * &nbsp;&nbsp;&nbsp;java.lang.String<br>
  * &nbsp;&nbsp;&nbsp;java.io.File<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.String[]<br>
+ * &nbsp;&nbsp;&nbsp;java.io.File[]<br>
  * - generates:<br>
  * &nbsp;&nbsp;&nbsp;java.lang.String<br>
  * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- *
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- *
+ * 
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: MessageDigest
  * </pre>
- *
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * 
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default:
+ * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- *
- * <pre>-skip (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
+ * 
+ * <pre>-skip &lt;boolean&gt; (property: skip)
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
  * &nbsp;&nbsp;&nbsp;as it is.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
- * <pre>-stop-flow-on-error (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * 
+ * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this 
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical 
+ * &nbsp;&nbsp;&nbsp;actors.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
- * <pre>-type &lt;MD2|MD5|SHA-1|SHA-256|SHA-384|SHA-512&gt; (property: type)
+ * 
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-type &lt;MD2|MD5|SHA1|SHA256|SHA384|SHA512&gt; (property: type)
  * &nbsp;&nbsp;&nbsp;The type of message digest (algorithm) to use.
- * &nbsp;&nbsp;&nbsp;default: MD5
+ * &nbsp;&nbsp;&nbsp;default: SHA256
  * </pre>
- *
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -230,7 +238,9 @@ public class MessageDigest
     return
         "Generates a message digest and forwards that. The digest is either "
       + "generated on the string being passed through or from the content of a "
-      + "file (if a File object is used as input).";
+      + "file (if a File object is used as input).\n"
+      + "If arrays are being passed into the actor, then the digest is computed "
+      + "over all of them.";
   }
 
   /**
@@ -242,7 +252,7 @@ public class MessageDigest
 
     m_OptionManager.add(
 	    "type", "type",
-	    MessageDigestType.MD5);
+	    MessageDigestType.SHA256);
   }
 
   /**
@@ -277,10 +287,10 @@ public class MessageDigest
   /**
    * Returns the class that the consumer accepts.
    *
-   * @return		<!-- flow-accepts-start -->java.lang.String.class, java.io.File.class<!-- flow-accepts-end -->
+   * @return		<!-- flow-accepts-start -->java.lang.String.class, java.io.File.class, java.lang.String[].class, java.io.File[].class<!-- flow-accepts-end -->
    */
   public Class[] accepts() {
-    return new Class[]{String.class, File.class};
+    return new Class[]{String.class, File.class, String[].class, File[].class};
   }
 
   /**
@@ -299,8 +309,7 @@ public class MessageDigest
    */
   @Override
   protected String doExecute() {
-    String			result;
-    String			input;
+    String result;
     java.security.MessageDigest	md;
     byte[]			digest;
     StringBuilder		hex;
@@ -316,21 +325,39 @@ public class MessageDigest
     try {
       md = java.security.MessageDigest.getInstance(m_Type.toDisplay());
       if (m_InputToken.getPayload() instanceof String) {
-	input = (String) m_InputToken.getPayload();
-	md.update(input.getBytes());
+	md.update(((String) m_InputToken.getPayload()).getBytes());
       }
-      else {
+      else if (m_InputToken.getPayload() instanceof String[]) {
+	for (String input : (String[]) m_InputToken.getPayload())
+	  md.update(input.toString().getBytes());
+      }
+      else if (m_InputToken.getPayload() instanceof File) {
 	file   = (File) m_InputToken.getPayload();
 	fis    = new FileInputStream(file.getAbsolutePath());
 	stream = new DigestInputStream(new BufferedInputStream(fis), md);
 	buffer = new byte[1024];
 	while (stream.read(buffer) != -1);
       }
-      digest = md.digest();
-      hex    = new StringBuilder();
-      for (byte b: digest)
-	hex.append(Utils.toHex(b));
-      m_OutputToken = new Token(hex.toString());
+      else if (m_InputToken.getPayload() instanceof File[]) {
+	for (File f: (File[]) m_InputToken.getPayload()) {
+	  fis    = new FileInputStream(f.getAbsolutePath());
+	  stream = new DigestInputStream(new BufferedInputStream(fis), md);
+	  buffer = new byte[1024];
+	  while (stream.read(buffer) != -1) ;
+	  FileUtils.closeQuietly(stream);
+	  FileUtils.closeQuietly(fis);
+	}
+      }
+      else {
+	result = "Unhandled input: " + Utils.classToString(m_InputToken.getPayload().getClass());
+      }
+      if (result == null) {
+	digest = md.digest();
+	hex = new StringBuilder();
+	for (byte b : digest)
+	  hex.append(Utils.toHex(b));
+	m_OutputToken = new Token(hex.toString());
+      }
     }
     catch (Exception e) {
       m_OutputToken = null;
