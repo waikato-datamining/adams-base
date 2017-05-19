@@ -21,6 +21,7 @@
 package adams.flow.source;
 
 import adams.core.QuickInfoHelper;
+import adams.core.io.PlaceholderFile;
 import adams.flow.core.Token;
 import com.github.fracpete.processoutput4j.output.CollectingProcessOutput;
 import com.github.fracpete.rsync4j.Binaries;
@@ -153,9 +154,9 @@ import com.github.fracpete.rsync4j.Binaries;
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
- * <pre>-exclude_from &lt;java.lang.String&gt; (property: excludeFrom)
+ * <pre>-exclude_from &lt;adams.core.io.PlaceholderFile&gt; (property: excludeFrom)
  * &nbsp;&nbsp;&nbsp;read exclude patterns from FILE
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default: ${CWD}
  * </pre>
  * 
  * <pre>-include &lt;java.lang.String&gt; (property: include)
@@ -163,13 +164,18 @@ import com.github.fracpete.rsync4j.Binaries;
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
- * <pre>-include_from &lt;java.lang.String&gt; (property: includeFrom)
+ * <pre>-include_from &lt;adams.core.io.PlaceholderFile&gt; (property: includeFrom)
  * &nbsp;&nbsp;&nbsp;read include patterns from FILE
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default: ${CWD}
  * </pre>
  * 
- * <pre>-files_from &lt;java.lang.String&gt; (property: filesFrom)
+ * <pre>-files_from &lt;adams.core.io.PlaceholderFile&gt; (property: filesFrom)
  * &nbsp;&nbsp;&nbsp;read list of source-file names from FILE
+ * &nbsp;&nbsp;&nbsp;default: ${CWD}
+ * </pre>
+ * 
+ * <pre>-filter &lt;java.lang.String&gt; (property: filter)
+ * &nbsp;&nbsp;&nbsp;add a file-filtering RULE
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
@@ -217,13 +223,15 @@ public class SimpleRSync
 
   protected String m_Exclude;
 
-  protected String m_ExcludeFrom;
+  protected PlaceholderFile m_ExcludeFrom;
 
   protected String m_Include;
 
-  protected String m_IncludeFrom;
+  protected PlaceholderFile m_IncludeFrom;
 
-  protected String m_FilesFrom;
+  protected PlaceholderFile m_FilesFrom;
+
+  protected String m_Filter;
 
   /**
    * Returns a string describing the object.
@@ -308,7 +316,7 @@ public class SimpleRSync
 
     m_OptionManager.add(
       "exclude_from", "excludeFrom",
-      "");
+      new PlaceholderFile());
 
     m_OptionManager.add(
       "include", "include",
@@ -316,10 +324,14 @@ public class SimpleRSync
 
     m_OptionManager.add(
       "include_from", "includeFrom",
-      "");
+      new PlaceholderFile());
 
     m_OptionManager.add(
       "files_from", "filesFrom",
+      new PlaceholderFile());
+
+    m_OptionManager.add(
+      "filter", "filter",
       "");
   }
 
@@ -551,11 +563,11 @@ public class SimpleRSync
     return "exclude files matching PATTERN";
   }
 
-  public String getExcludeFrom() {
+  public PlaceholderFile getExcludeFrom() {
     return m_ExcludeFrom;
   }
 
-  public void setExcludeFrom(String value) {
+  public void setExcludeFrom(PlaceholderFile value) {
     m_ExcludeFrom = value;
     reset();
   }
@@ -577,11 +589,11 @@ public class SimpleRSync
     return "include files matching PATTERN";
   }
 
-  public String getIncludeFrom() {
+  public PlaceholderFile getIncludeFrom() {
     return m_IncludeFrom;
   }
 
-  public void setIncludeFrom(String value) {
+  public void setIncludeFrom(PlaceholderFile value) {
     m_IncludeFrom = value;
     reset();
   }
@@ -590,17 +602,30 @@ public class SimpleRSync
     return "read include patterns from FILE";
   }
 
-  public String getFilesFrom() {
+  public PlaceholderFile getFilesFrom() {
     return m_FilesFrom;
   }
 
-  public void setFilesFrom(String value) {
+  public void setFilesFrom(PlaceholderFile value) {
     m_FilesFrom = value;
     reset();
   }
 
   public String filesFromTipText() {
     return "read list of source-file names from FILE";
+  }
+
+  public String getFilter() {
+    return m_Filter;
+  }
+
+  public void setFilter(String value) {
+    m_Filter = value;
+    reset();
+  }
+
+  public String filterTipText() {
+    return "add a file-filtering RULE";
   }
 
   /**
@@ -659,10 +684,13 @@ public class SimpleRSync
       rsync.rsyncPath(m_RsyncPath);
       rsync.delete(m_Delete);
       rsync.exclude(m_Exclude);
-      rsync.excludeFrom(m_ExcludeFrom);
+      if (!m_ExcludeFrom.isDirectory())
+        rsync.excludeFrom(m_ExcludeFrom.getAbsolutePath());
       rsync.include(m_Include);
-      rsync.includeFrom(m_IncludeFrom);
-      rsync.filesFrom(m_FilesFrom);
+      if (!m_IncludeFrom.isDirectory())
+        rsync.includeFrom(m_IncludeFrom.getAbsolutePath());
+      if (!m_FilesFrom.isDirectory())
+        rsync.filesFrom(m_FilesFrom.getAbsolutePath());
 
       rsync.source(m_Source);
       rsync.destination(m_Destination);

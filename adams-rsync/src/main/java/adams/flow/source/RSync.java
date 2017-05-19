@@ -21,6 +21,7 @@
 package adams.flow.source;
 
 import adams.core.QuickInfoHelper;
+import adams.core.io.PlaceholderFile;
 import adams.flow.core.Token;
 import com.github.fracpete.processoutput4j.output.CollectingProcessOutput;
 import com.github.fracpete.rsync4j.Binaries;
@@ -534,9 +535,9 @@ import com.github.fracpete.rsync4j.Binaries;
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
- * <pre>-exclude_from &lt;java.lang.String&gt; (property: excludeFrom)
+ * <pre>-exclude_from &lt;adams.core.io.PlaceholderFile&gt; (property: excludeFrom)
  * &nbsp;&nbsp;&nbsp;read exclude patterns from FILE
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default: ${CWD}
  * </pre>
  * 
  * <pre>-include &lt;java.lang.String&gt; (property: include)
@@ -544,14 +545,14 @@ import com.github.fracpete.rsync4j.Binaries;
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
- * <pre>-include_from &lt;java.lang.String&gt; (property: includeFrom)
+ * <pre>-include_from &lt;adams.core.io.PlaceholderFile&gt; (property: includeFrom)
  * &nbsp;&nbsp;&nbsp;read include patterns from FILE
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default: ${CWD}
  * </pre>
  * 
- * <pre>-files_from &lt;java.lang.String&gt; (property: filesFrom)
+ * <pre>-files_from &lt;adams.core.io.PlaceholderFile&gt; (property: filesFrom)
  * &nbsp;&nbsp;&nbsp;read list of source-file names from FILE
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default: ${CWD}
  * </pre>
  * 
  * <pre>-from0 &lt;boolean&gt; (property: from0)
@@ -614,9 +615,9 @@ import com.github.fracpete.rsync4j.Binaries;
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
- * <pre>-log_file &lt;java.lang.String&gt; (property: logFile)
+ * <pre>-log_file &lt;adams.core.io.PlaceholderFile&gt; (property: logFile)
  * &nbsp;&nbsp;&nbsp;log what we're doing to the specified FILE
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default: ${CWD}
  * </pre>
  * 
  * <pre>-log_file_format &lt;java.lang.String&gt; (property: logFileFormat)
@@ -644,19 +645,19 @@ import com.github.fracpete.rsync4j.Binaries;
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
- * <pre>-write_batch &lt;java.lang.String&gt; (property: writeBatch)
+ * <pre>-write_batch &lt;adams.core.io.PlaceholderFile&gt; (property: writeBatch)
  * &nbsp;&nbsp;&nbsp;write a batched update to FILE
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default: ${CWD}
  * </pre>
  * 
- * <pre>-only_write_batch &lt;java.lang.String&gt; (property: onlyWriteBatch)
+ * <pre>-only_write_batch &lt;adams.core.io.PlaceholderFile&gt; (property: onlyWriteBatch)
  * &nbsp;&nbsp;&nbsp;like --write-batch but w&#47;o updating destination
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default: ${CWD}
  * </pre>
  * 
- * <pre>-read_batch &lt;java.lang.String&gt; (property: readBatch)
+ * <pre>-read_batch &lt;adams.core.io.PlaceholderFile&gt; (property: readBatch)
  * &nbsp;&nbsp;&nbsp;read a batched update from FILE
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default: ${CWD}
  * </pre>
  * 
  * <pre>-protocol &lt;int&gt; (property: protocol)
@@ -886,13 +887,13 @@ public class RSync
 
   protected String m_Exclude;
 
-  protected String m_ExcludeFrom;
+  protected PlaceholderFile m_ExcludeFrom;
 
   protected String m_Include;
 
-  protected String m_IncludeFrom;
+  protected PlaceholderFile m_IncludeFrom;
 
-  protected String m_FilesFrom;
+  protected PlaceholderFile m_FilesFrom;
 
   protected boolean m_From0;
 
@@ -918,7 +919,7 @@ public class RSync
 
   protected String m_OutFormat;
 
-  protected String m_LogFile;
+  protected PlaceholderFile m_LogFile;
 
   protected String m_LogFileFormat;
 
@@ -930,11 +931,11 @@ public class RSync
 
   protected String m_Outbuf;
 
-  protected String m_WriteBatch;
+  protected PlaceholderFile m_WriteBatch;
 
-  protected String m_OnlyWriteBatch;
+  protected PlaceholderFile m_OnlyWriteBatch;
 
-  protected String m_ReadBatch;
+  protected PlaceholderFile m_ReadBatch;
 
   protected int m_Protocol;
 
@@ -1337,7 +1338,7 @@ public class RSync
 
     m_OptionManager.add(
       "exclude_from", "excludeFrom",
-      "");
+      new PlaceholderFile());
 
     m_OptionManager.add(
       "include", "include",
@@ -1345,11 +1346,11 @@ public class RSync
 
     m_OptionManager.add(
       "include_from", "includeFrom",
-      "");
+      new PlaceholderFile());
 
     m_OptionManager.add(
       "files_from", "filesFrom",
-      "");
+      new PlaceholderFile());
 
     m_OptionManager.add(
       "from0", "from0",
@@ -1401,7 +1402,7 @@ public class RSync
 
     m_OptionManager.add(
       "log_file", "logFile",
-      "");
+      new PlaceholderFile());
 
     m_OptionManager.add(
       "log_file_format", "logFileFormat",
@@ -1425,15 +1426,15 @@ public class RSync
 
     m_OptionManager.add(
       "write_batch", "writeBatch",
-      "");
+      new PlaceholderFile());
 
     m_OptionManager.add(
       "only_write_batch", "onlyWriteBatch",
-      "");
+      new PlaceholderFile());
 
     m_OptionManager.add(
       "read_batch", "readBatch",
-      "");
+      new PlaceholderFile());
 
     m_OptionManager.add(
       "protocol", "protocol",
@@ -2687,11 +2688,11 @@ public class RSync
     return "exclude files matching PATTERN";
   }
 
-  public String getExcludeFrom() {
+  public PlaceholderFile getExcludeFrom() {
     return m_ExcludeFrom;
   }
 
-  public void setExcludeFrom(String value) {
+  public void setExcludeFrom(PlaceholderFile value) {
     m_ExcludeFrom = value;
     reset();
   }
@@ -2713,11 +2714,11 @@ public class RSync
     return "include files matching PATTERN";
   }
 
-  public String getIncludeFrom() {
+  public PlaceholderFile getIncludeFrom() {
     return m_IncludeFrom;
   }
 
-  public void setIncludeFrom(String value) {
+  public void setIncludeFrom(PlaceholderFile value) {
     m_IncludeFrom = value;
     reset();
   }
@@ -2726,11 +2727,11 @@ public class RSync
     return "read include patterns from FILE";
   }
 
-  public String getFilesFrom() {
+  public PlaceholderFile getFilesFrom() {
     return m_FilesFrom;
   }
 
-  public void setFilesFrom(String value) {
+  public void setFilesFrom(PlaceholderFile value) {
     m_FilesFrom = value;
     reset();
   }
@@ -2895,11 +2896,11 @@ public class RSync
     return "output updates using the specified FORMAT";
   }
 
-  public String getLogFile() {
+  public PlaceholderFile getLogFile() {
     return m_LogFile;
   }
 
-  public void setLogFile(String value) {
+  public void setLogFile(PlaceholderFile value) {
     m_LogFile = value;
     reset();
   }
@@ -2973,11 +2974,11 @@ public class RSync
     return "set output buffering to None, Line, or Block (N|L|B)";
   }
 
-  public String getWriteBatch() {
+  public PlaceholderFile getWriteBatch() {
     return m_WriteBatch;
   }
 
-  public void setWriteBatch(String value) {
+  public void setWriteBatch(PlaceholderFile value) {
     m_WriteBatch = value;
     reset();
   }
@@ -2986,11 +2987,11 @@ public class RSync
     return "write a batched update to FILE";
   }
 
-  public String getOnlyWriteBatch() {
+  public PlaceholderFile getOnlyWriteBatch() {
     return m_OnlyWriteBatch;
   }
 
-  public void setOnlyWriteBatch(String value) {
+  public void setOnlyWriteBatch(PlaceholderFile value) {
     m_OnlyWriteBatch = value;
     reset();
   }
@@ -2999,11 +3000,11 @@ public class RSync
     return "like --write-batch but w/o updating destination";
   }
 
-  public String getReadBatch() {
+  public PlaceholderFile getReadBatch() {
     return m_ReadBatch;
   }
 
-  public void setReadBatch(String value) {
+  public void setReadBatch(PlaceholderFile value) {
     m_ReadBatch = value;
     reset();
   }
@@ -3220,10 +3221,13 @@ public class RSync
       rsync.cvsExclude(m_CvsExclude);
       rsync.filter(m_Filter);
       rsync.exclude(m_Exclude);
-      rsync.excludeFrom(m_ExcludeFrom);
+      if (!m_ExcludeFrom.isDirectory())
+	rsync.excludeFrom(m_ExcludeFrom.getAbsolutePath());
       rsync.include(m_Include);
-      rsync.includeFrom(m_IncludeFrom);
-      rsync.filesFrom(m_FilesFrom);
+      if (!m_IncludeFrom.isDirectory())
+	rsync.includeFrom(m_IncludeFrom.getAbsolutePath());
+      if (!m_FilesFrom.isDirectory())
+	rsync.filesFrom(m_FilesFrom.getAbsolutePath());
       rsync.from0(m_From0);
       rsync.protectArgs(m_ProtectArgs);
       rsync.address(m_Address);
@@ -3236,16 +3240,20 @@ public class RSync
       rsync.progress(m_Progress);
       rsync.itemizeChanges(m_ItemizeChanges);
       rsync.outFormat(m_OutFormat);
-      rsync.logFile(m_LogFile);
+      if (!m_LogFile.isDirectory())
+	rsync.logFile(m_LogFile.getAbsolutePath());
       rsync.logFileFormat(m_LogFileFormat);
       rsync.passwordFile(m_PasswordFile);
       rsync.listOnly(m_ListOnly);
       rsync.bwlimit(m_Bwlimit);
       if (m_Outbuf.length() == 1)
 	rsync.outbuf(m_Outbuf.charAt(0));
-      rsync.writeBatch(m_WriteBatch);
-      rsync.onlyWriteBatch(m_OnlyWriteBatch);
-      rsync.readBatch(m_ReadBatch);
+      if (!m_WriteBatch.isDirectory())
+	rsync.writeBatch(m_WriteBatch.getAbsolutePath());
+      if (!m_OnlyWriteBatch.isDirectory())
+	rsync.onlyWriteBatch(m_OnlyWriteBatch.getAbsolutePath());
+      if (!m_ReadBatch.isDirectory())
+	rsync.readBatch(m_ReadBatch.getAbsolutePath());
       rsync.protocol(m_Protocol);
       rsync.iconv(m_Iconv);
       rsync.checksumSeed(m_ChecksumSeed);
