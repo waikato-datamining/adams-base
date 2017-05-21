@@ -433,76 +433,76 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- * 
+ *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: SetVariable
  * </pre>
- * 
+ *
  * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- * 
+ *
  * <pre>-skip &lt;boolean&gt; (property: skip)
  * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
  * &nbsp;&nbsp;&nbsp;as it is.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
  * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this 
  * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical 
  * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-silent &lt;boolean&gt; (property: silent)
  * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
  * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-var-name &lt;adams.core.VariableName&gt; (property: variableName)
  * &nbsp;&nbsp;&nbsp;The name of the variable to update.
  * &nbsp;&nbsp;&nbsp;default: variable
  * </pre>
- * 
+ *
  * <pre>-var-value &lt;adams.core.base.BaseText&gt; (property: variableValue)
  * &nbsp;&nbsp;&nbsp;The value for the variable to use.
  * &nbsp;&nbsp;&nbsp;default: value
  * </pre>
- * 
+ *
  * <pre>-value-type &lt;STRING|MATH_EXPRESSION|BOOL_EXPRESSION|STRING_EXPRESSION&gt; (property: valueType)
  * &nbsp;&nbsp;&nbsp;How to interpret the 'value' string.
  * &nbsp;&nbsp;&nbsp;default: STRING
  * </pre>
- * 
+ *
  * <pre>-expand-value &lt;boolean&gt; (property: expandValue)
  * &nbsp;&nbsp;&nbsp;If enabled, the value gets expanded first in case it is made up of variables 
  * &nbsp;&nbsp;&nbsp;itself.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-override-with-env-var &lt;boolean&gt; (property: overrideWithEnvVar)
  * &nbsp;&nbsp;&nbsp;If enabled, the value gets overriden by the value obtained from the specified 
  * &nbsp;&nbsp;&nbsp;environment variable.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-env-variable &lt;java.lang.String&gt; (property: envVariable)
  * &nbsp;&nbsp;&nbsp;The name of the environment variable to use for overriding the variable 
  * &nbsp;&nbsp;&nbsp;value.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
 public class SetVariable
-  extends AbstractStandalone 
+  extends AbstractStandalone
   implements VariableUpdater {
 
   /** for serialization. */
@@ -535,19 +535,19 @@ public class SetVariable
   public String globalInfo() {
     return
       "Sets the value of a variable.\n"
-        + "Optionally, the specified value (or incoming value) can be expanded, "
-        + "in case it is made up of variables itself.\n"
-        + "It is also possible to override the variable value with the value "
-        + "obtained from an environment variable.\n"
+	+ "Optionally, the specified value (or incoming value) can be expanded, "
+	+ "in case it is made up of variables itself.\n"
+	+ "It is also possible to override the variable value with the value "
+	+ "obtained from an environment variable.\n"
 	+ "\n"
 	+ "Grammar for mathematical expressions (value type '" + VariableValueType.MATH_EXPRESSION + "'):\n\n"
-        + new MathematicalExpression().getGrammar()
+	+ new MathematicalExpression().getGrammar()
 	+ "\n\n"
 	+ "Grammar for boolean expressions (value type '" + VariableValueType.BOOL_EXPRESSION + "'):\n\n"
-        + new BooleanExpression().getGrammar()
+	+ new BooleanExpression().getGrammar()
 	+ "\n\n"
 	+ "Grammar for string expressions (value type '" + VariableValueType.STRING_EXPRESSION + "'):\n\n"
-        + new adams.parser.StringExpression().getGrammar();
+	+ new adams.parser.StringExpression().getGrammar();
   }
 
   /**
@@ -558,28 +558,28 @@ public class SetVariable
     super.defineOptions();
 
     m_OptionManager.add(
-	    "var-name", "variableName",
-	    new VariableName());
+      "var-name", "variableName",
+      new VariableName());
 
     m_OptionManager.add(
-	    "var-value", "variableValue",
-	    new BaseText("value"));
+      "var-value", "variableValue",
+      new BaseText("value"));
 
     m_OptionManager.add(
-	    "value-type", "valueType",
-	    VariableValueType.STRING);
+      "value-type", "valueType",
+      VariableValueType.STRING);
 
     m_OptionManager.add(
-	    "expand-value", "expandValue",
-	    false);
+      "expand-value", "expandValue",
+      false);
 
     m_OptionManager.add(
-	    "override-with-env-var", "overrideWithEnvVar",
-	    false);
+      "override-with-env-var", "overrideWithEnvVar",
+      false);
 
     m_OptionManager.add(
-	    "env-variable", "envVariable",
-	    "");
+      "env-variable", "envVariable",
+      "");
   }
 
   /**
@@ -681,7 +681,7 @@ public class SetVariable
   }
 
   /**
-   * Returns whether the value gets expanded before setting it 
+   * Returns whether the value gets expanded before setting it
    * (eg if it is made up of variables itself).
    *
    * @return		true if expanded
@@ -762,7 +762,7 @@ public class SetVariable
 
   /**
    * Returns whether variables are being updated.
-   * 
+   *
    * @return		true if variables are updated
    */
   public boolean isUpdatingVariables() {
@@ -830,8 +830,11 @@ public class SetVariable
     }
     if (value == null) {
       value = m_VariableValue.getValue();
-      if (m_ExpandValue)
+      if (m_ExpandValue) {
 	value = getVariables().expand(value);
+	if (isLoggingEnabled())
+	  getLogger().info("Expanded value: " + value);
+      }
     }
 
     switch (m_ValueType) {
@@ -865,7 +868,7 @@ public class SetVariable
       default:
 	throw new IllegalStateException("Unhandled value type: " + m_ValueType);
     }
-    
+
     getVariables().set(m_VariableName.getValue(), value);
     if (isLoggingEnabled())
       getLogger().info("Setting variable '" + m_VariableName + "': " + value);
