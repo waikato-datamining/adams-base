@@ -96,6 +96,7 @@ import adams.gui.flow.menu.RunStop;
 import adams.gui.flow.menu.RunStorage;
 import adams.gui.flow.menu.RunValidateSetup;
 import adams.gui.flow.menu.RunVariables;
+import adams.gui.flow.menu.ViewFullExpansion;
 import adams.gui.flow.menu.ViewRedraw;
 import adams.gui.flow.menu.ViewShowAnnotations;
 import adams.gui.flow.menu.ViewShowInputOutput;
@@ -340,6 +341,9 @@ public class FlowEditorPanel
 
   /** the "show source" action. */
   protected FlowEditorAction m_ActionViewShowSource;
+
+  /** the "full expansion" action. */
+  protected FlowEditorAction m_ActionViewFullExpansion;
 
   /** the "statistic" action. */
   protected FlowEditorAction m_ActionViewStatistics;
@@ -716,6 +720,11 @@ public class FlowEditorPanel
     m_ActionViewShowSource = action;
     m_MenuItems.add(action);
 
+    // View/Full expansion
+    action = new ViewFullExpansion();
+    m_ActionViewFullExpansion = action;
+    m_MenuItems.add(action);
+
     // View/Statistics
     action = new ViewStatistics();
     m_ActionViewStatistics = action;
@@ -1025,6 +1034,7 @@ public class FlowEditorPanel
       menu.add(m_ActionViewZoom);
       menu.addSeparator();
       menu.add(m_ActionViewShowSource);
+      menu.add(m_ActionViewFullExpansion);
       menu.add(m_ActionViewStatistics);
 
       // Window

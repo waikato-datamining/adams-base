@@ -63,6 +63,7 @@ adams.gui.flow.menu.ViewShowQuickInfo-Shortcut=
 adams.gui.flow.menu.ViewShowAnnotations-Shortcut=
 adams.gui.flow.menu.ViewShowInputOutput-Shortcut=
 adams.gui.flow.menu.ViewShowSource-Shortcut=
+adams.gui.flow.menu.ViewShowFullExpansion-Shortcut=
 adams.gui.flow.menu.ViewStatistics-Shortcut=
 adams.gui.flow.menu.ViewRedraw-Shortcut=F5
 adams.gui.flow.menu.ViewZoom-Shortcut=
