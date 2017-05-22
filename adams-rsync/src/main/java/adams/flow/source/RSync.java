@@ -22,6 +22,8 @@ package adams.flow.source;
 
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
+import adams.core.base.BaseObject;
+import adams.core.base.BaseString;
 import adams.core.io.PlaceholderFile;
 import adams.flow.core.Token;
 import com.github.fracpete.processoutput4j.output.CollectingProcessOutput;
@@ -401,14 +403,14 @@ import com.github.fracpete.rsync4j.Binaries;
  * &nbsp;&nbsp;&nbsp;default: -1
  * </pre>
  * 
- * <pre>-max_size &lt;int&gt; (property: maxSize)
+ * <pre>-max_size &lt;java.lang.String&gt; (property: maxSize)
  * &nbsp;&nbsp;&nbsp;don't transfer any file larger than SIZE
- * &nbsp;&nbsp;&nbsp;default: -1
+ * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
- * <pre>-min_size &lt;int&gt; (property: minSize)
+ * <pre>-min_size &lt;java.lang.String&gt; (property: minSize)
  * &nbsp;&nbsp;&nbsp;don't transfer any file smaller than SIZE
- * &nbsp;&nbsp;&nbsp;default: -1
+ * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
  * <pre>-partial &lt;boolean&gt; (property: partial)
@@ -491,17 +493,17 @@ import com.github.fracpete.rsync4j.Binaries;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-compare_dest &lt;java.lang.String&gt; (property: compareDest)
+ * <pre>-compare_dest &lt;adams.core.base.BaseString&gt; [-compare_dest ...] (property: compareDest)
  * &nbsp;&nbsp;&nbsp;also compare destination files relative to DIR
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
- * <pre>-copy_dest &lt;java.lang.String&gt; (property: copyDest)
+ * <pre>-copy_dest &lt;adams.core.base.BaseString&gt; [-copy_dest ...] (property: copyDest)
  * &nbsp;&nbsp;&nbsp;... and include copies of unchanged files
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
- * <pre>-link_dest &lt;java.lang.String&gt; (property: linkDest)
+ * <pre>-link_dest &lt;adams.core.base.BaseString&gt; [-link_dest ...] (property: linkDest)
  * &nbsp;&nbsp;&nbsp;hardlink to files in DIR when unchanged
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
@@ -526,12 +528,12 @@ import com.github.fracpete.rsync4j.Binaries;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-filter &lt;java.lang.String&gt; (property: filter)
+ * <pre>-filter &lt;adams.core.base.BaseString&gt; [-filter ...] (property: filter)
  * &nbsp;&nbsp;&nbsp;add a file-filtering RULE
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
- * <pre>-exclude &lt;java.lang.String&gt; (property: exclude)
+ * <pre>-exclude &lt;adams.core.base.BaseString&gt; [-exclude ...] (property: exclude)
  * &nbsp;&nbsp;&nbsp;exclude files matching PATTERN
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
@@ -541,7 +543,7 @@ import com.github.fracpete.rsync4j.Binaries;
  * &nbsp;&nbsp;&nbsp;default: ${CWD}
  * </pre>
  * 
- * <pre>-include &lt;java.lang.String&gt; (property: include)
+ * <pre>-include &lt;adams.core.base.BaseString&gt; [-include ...] (property: include)
  * &nbsp;&nbsp;&nbsp;include files matching PATTERN
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
@@ -636,9 +638,9 @@ import com.github.fracpete.rsync4j.Binaries;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-bwlimit &lt;int&gt; (property: bwlimit)
+ * <pre>-bwlimit &lt;java.lang.String&gt; (property: bwlimit)
  * &nbsp;&nbsp;&nbsp;limit socket I&#47;O bandwidth
- * &nbsp;&nbsp;&nbsp;default: -1
+ * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
  * <pre>-outbuf &lt;java.lang.String&gt; (property: outbuf)
@@ -834,9 +836,9 @@ public class RSync
 
   protected int m_MaxDelete;
 
-  protected int m_MaxSize;
+  protected String m_MaxSize;
 
-  protected int m_MinSize;
+  protected String m_MinSize;
 
   protected boolean m_Partial;
 
@@ -870,11 +872,11 @@ public class RSync
 
   protected boolean m_Fuzzy;
 
-  protected String m_CompareDest;
+  protected BaseString[] m_CompareDest;
 
-  protected String m_CopyDest;
+  protected BaseString[] m_CopyDest;
 
-  protected String m_LinkDest;
+  protected BaseString[] m_LinkDest;
 
   protected boolean m_Compress;
 
@@ -884,13 +886,13 @@ public class RSync
 
   protected boolean m_CvsExclude;
 
-  protected String m_Filter;
+  protected BaseString[] m_Filter;
 
-  protected String m_Exclude;
+  protected BaseString[] m_Exclude;
 
   protected PlaceholderFile m_ExcludeFrom;
 
-  protected String m_Include;
+  protected BaseString[] m_Include;
 
   protected PlaceholderFile m_IncludeFrom;
 
@@ -928,7 +930,7 @@ public class RSync
 
   protected boolean m_ListOnly;
 
-  protected int m_Bwlimit;
+  protected String m_Bwlimit;
 
   protected String m_Outbuf;
 
@@ -1231,11 +1233,11 @@ public class RSync
 
     m_OptionManager.add(
       "max_size", "maxSize",
-      -1);
+      "");
 
     m_OptionManager.add(
       "min_size", "minSize",
-      -1);
+      "");
 
     m_OptionManager.add(
       "partial", "partial",
@@ -1303,15 +1305,15 @@ public class RSync
 
     m_OptionManager.add(
       "compare_dest", "compareDest",
-      "");
+      new BaseString[0]);
 
     m_OptionManager.add(
       "copy_dest", "copyDest",
-      "");
+      new BaseString[0]);
 
     m_OptionManager.add(
       "link_dest", "linkDest",
-      "");
+      new BaseString[0]);
 
     m_OptionManager.add(
       "compress", "compress",
@@ -1331,11 +1333,11 @@ public class RSync
 
     m_OptionManager.add(
       "filter", "filter",
-      "");
+      new BaseString[0]);
 
     m_OptionManager.add(
       "exclude", "exclude",
-      "");
+      new BaseString[0]);
 
     m_OptionManager.add(
       "exclude_from", "excludeFrom",
@@ -1343,7 +1345,7 @@ public class RSync
 
     m_OptionManager.add(
       "include", "include",
-      "");
+      new BaseString[0]);
 
     m_OptionManager.add(
       "include_from", "includeFrom",
@@ -1419,7 +1421,7 @@ public class RSync
 
     m_OptionManager.add(
       "bwlimit", "bwlimit",
-      -1);
+      "");
 
     m_OptionManager.add(
       "outbuf", "outbuf",
@@ -2338,11 +2340,11 @@ public class RSync
     return "don't delete more than NUM files";
   }
 
-  public int getMaxSize() {
+  public String getMaxSize() {
     return m_MaxSize;
   }
 
-  public void setMaxSize(int value) {
+  public void setMaxSize(String value) {
     m_MaxSize = value;
     reset();
   }
@@ -2351,11 +2353,11 @@ public class RSync
     return "don't transfer any file larger than SIZE";
   }
 
-  public int getMinSize() {
+  public String getMinSize() {
     return m_MinSize;
   }
 
-  public void setMinSize(int value) {
+  public void setMinSize(String value) {
     m_MinSize = value;
     reset();
   }
@@ -2572,11 +2574,11 @@ public class RSync
     return "find similar file for basis if no dest file";
   }
 
-  public String getCompareDest() {
+  public BaseString[] getCompareDest() {
     return m_CompareDest;
   }
 
-  public void setCompareDest(String value) {
+  public void setCompareDest(BaseString[] value) {
     m_CompareDest = value;
     reset();
   }
@@ -2585,11 +2587,11 @@ public class RSync
     return "also compare destination files relative to DIR";
   }
 
-  public String getCopyDest() {
+  public BaseString[] getCopyDest() {
     return m_CopyDest;
   }
 
-  public void setCopyDest(String value) {
+  public void setCopyDest(BaseString[] value) {
     m_CopyDest = value;
     reset();
   }
@@ -2598,11 +2600,11 @@ public class RSync
     return "... and include copies of unchanged files";
   }
 
-  public String getLinkDest() {
+  public BaseString[] getLinkDest() {
     return m_LinkDest;
   }
 
-  public void setLinkDest(String value) {
+  public void setLinkDest(BaseString[] value) {
     m_LinkDest = value;
     reset();
   }
@@ -2663,11 +2665,11 @@ public class RSync
     return "auto-ignore files the same way CVS does";
   }
 
-  public String getFilter() {
+  public BaseString[] getFilter() {
     return m_Filter;
   }
 
-  public void setFilter(String value) {
+  public void setFilter(BaseString[] value) {
     m_Filter = value;
     reset();
   }
@@ -2676,11 +2678,11 @@ public class RSync
     return "add a file-filtering RULE";
   }
 
-  public String getExclude() {
+  public BaseString[] getExclude() {
     return m_Exclude;
   }
 
-  public void setExclude(String value) {
+  public void setExclude(BaseString[] value) {
     m_Exclude = value;
     reset();
   }
@@ -2702,11 +2704,11 @@ public class RSync
     return "read exclude patterns from FILE";
   }
 
-  public String getInclude() {
+  public BaseString[] getInclude() {
     return m_Include;
   }
 
-  public void setInclude(String value) {
+  public void setInclude(BaseString[] value) {
     m_Include = value;
     reset();
   }
@@ -2949,11 +2951,11 @@ public class RSync
     return "list the files instead of copying them";
   }
 
-  public int getBwlimit() {
+  public String getBwlimit() {
     return m_Bwlimit;
   }
 
-  public void setBwlimit(int value) {
+  public void setBwlimit(String value) {
     m_Bwlimit = value;
     reset();
   }
@@ -3213,18 +3215,18 @@ public class RSync
       rsync.modifyWindow(m_ModifyWindow);
       rsync.tempDir(m_TempDir);
       rsync.fuzzy(m_Fuzzy);
-      rsync.compareDest(m_CompareDest);
-      rsync.copyDest(m_CopyDest);
-      rsync.linkDest(m_LinkDest);
+      rsync.compareDest(BaseObject.toStringArray(m_CompareDest));
+      rsync.copyDest(BaseObject.toStringArray(m_CopyDest));
+      rsync.linkDest(BaseObject.toStringArray(m_LinkDest));
       rsync.compress(m_Compress);
       rsync.compressLevel(m_CompressLevel);
       rsync.skipCompress(m_SkipCompress);
       rsync.cvsExclude(m_CvsExclude);
-      rsync.filter(m_Filter);
-      rsync.exclude(m_Exclude);
+      rsync.filter(BaseObject.toStringArray(m_Filter));
+      rsync.exclude(BaseObject.toStringArray(m_Exclude));
       if (!m_ExcludeFrom.isDirectory())
 	rsync.excludeFrom(m_ExcludeFrom.getAbsolutePath());
-      rsync.include(m_Include);
+      rsync.include(BaseObject.toStringArray(m_Include));
       if (!m_IncludeFrom.isDirectory())
 	rsync.includeFrom(m_IncludeFrom.getAbsolutePath());
       if (!m_FilesFrom.isDirectory())

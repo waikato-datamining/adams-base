@@ -22,6 +22,8 @@ package adams.flow.source;
 
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
+import adams.core.base.BaseObject;
+import adams.core.base.BaseString;
 import adams.core.io.PlaceholderFile;
 import adams.flow.core.Token;
 import com.github.fracpete.processoutput4j.output.CollectingProcessOutput;
@@ -150,7 +152,7 @@ import com.github.fracpete.rsync4j.Binaries;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-exclude &lt;java.lang.String&gt; (property: exclude)
+ * <pre>-exclude &lt;adams.core.base.BaseString&gt; [-exclude ...] (property: exclude)
  * &nbsp;&nbsp;&nbsp;exclude files matching PATTERN
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
@@ -160,7 +162,7 @@ import com.github.fracpete.rsync4j.Binaries;
  * &nbsp;&nbsp;&nbsp;default: ${CWD}
  * </pre>
  * 
- * <pre>-include &lt;java.lang.String&gt; (property: include)
+ * <pre>-include &lt;adams.core.base.BaseString&gt; [-include ...] (property: include)
  * &nbsp;&nbsp;&nbsp;include files matching PATTERN
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
@@ -175,7 +177,7 @@ import com.github.fracpete.rsync4j.Binaries;
  * &nbsp;&nbsp;&nbsp;default: ${CWD}
  * </pre>
  * 
- * <pre>-filter &lt;java.lang.String&gt; (property: filter)
+ * <pre>-filter &lt;adams.core.base.BaseString&gt; [-filter ...] (property: filter)
  * &nbsp;&nbsp;&nbsp;add a file-filtering RULE
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
@@ -222,17 +224,17 @@ public class SimpleRSync
 
   protected boolean m_Delete;
 
-  protected String m_Exclude;
+  protected BaseString[] m_Exclude;
 
   protected PlaceholderFile m_ExcludeFrom;
 
-  protected String m_Include;
+  protected BaseString[] m_Include;
 
   protected PlaceholderFile m_IncludeFrom;
 
   protected PlaceholderFile m_FilesFrom;
 
-  protected String m_Filter;
+  protected BaseString[] m_Filter;
 
   /**
    * Returns a string describing the object.
@@ -313,7 +315,7 @@ public class SimpleRSync
 
     m_OptionManager.add(
       "exclude", "exclude",
-      "");
+      new BaseString[0]);
 
     m_OptionManager.add(
       "exclude_from", "excludeFrom",
@@ -321,7 +323,7 @@ public class SimpleRSync
 
     m_OptionManager.add(
       "include", "include",
-      "");
+      new BaseString[0]);
 
     m_OptionManager.add(
       "include_from", "includeFrom",
@@ -333,7 +335,7 @@ public class SimpleRSync
 
     m_OptionManager.add(
       "filter", "filter",
-      "");
+      new BaseString[0]);
   }
 
   /**
@@ -551,11 +553,11 @@ public class SimpleRSync
     return "delete extraneous files from destination dirs";
   }
 
-  public String getExclude() {
+  public BaseString[] getExclude() {
     return m_Exclude;
   }
 
-  public void setExclude(String value) {
+  public void setExclude(BaseString[] value) {
     m_Exclude = value;
     reset();
   }
@@ -577,11 +579,11 @@ public class SimpleRSync
     return "read exclude patterns from FILE";
   }
 
-  public String getInclude() {
+  public BaseString[] getInclude() {
     return m_Include;
   }
 
-  public void setInclude(String value) {
+  public void setInclude(BaseString[] value) {
     m_Include = value;
     reset();
   }
@@ -616,11 +618,11 @@ public class SimpleRSync
     return "read list of source-file names from FILE";
   }
 
-  public String getFilter() {
+  public BaseString[] getFilter() {
     return m_Filter;
   }
 
-  public void setFilter(String value) {
+  public void setFilter(BaseString[] value) {
     m_Filter = value;
     reset();
   }
@@ -684,14 +686,15 @@ public class SimpleRSync
       rsync.rsh(m_Rsh);
       rsync.rsyncPath(m_RsyncPath);
       rsync.delete(m_Delete);
-      rsync.exclude(m_Exclude);
+      rsync.exclude(BaseObject.toStringArray(m_Exclude));
       if (!m_ExcludeFrom.isDirectory())
         rsync.excludeFrom(m_ExcludeFrom.getAbsolutePath());
-      rsync.include(m_Include);
+      rsync.include(BaseObject.toStringArray(m_Include));
       if (!m_IncludeFrom.isDirectory())
         rsync.includeFrom(m_IncludeFrom.getAbsolutePath());
       if (!m_FilesFrom.isDirectory())
         rsync.filesFrom(m_FilesFrom.getAbsolutePath());
+      rsync.include(BaseObject.toStringArray(m_Filter));
 
       rsync.source(m_Source);
       rsync.destination(m_Destination);
