@@ -32,7 +32,6 @@ if $cygwin; then
   [ -n "$CLASSPATH" ] && CLASSPATH=`cygpath --path --windows "$CLASSPATH"`
 fi
 
-# launch class
 if [ "$1" = "start" ] && [ $# = 4 ]
 then
   unset DISPLAY
