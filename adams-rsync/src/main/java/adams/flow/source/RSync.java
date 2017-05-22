@@ -21,6 +21,7 @@
 package adams.flow.source;
 
 import adams.core.QuickInfoHelper;
+import adams.core.Utils;
 import adams.core.io.PlaceholderFile;
 import adams.flow.core.Token;
 import com.github.fracpete.processoutput4j.output.CollectingProcessOutput;
@@ -3264,6 +3265,9 @@ public class RSync
       rsync.outputCommandline(m_OutputCommandline);
       rsync.source(m_Source);
       rsync.destination(m_Destination);
+
+      if (isLoggingEnabled())
+	getLogger().info("Rsync:\n" + Utils.flatten(rsync.commandLineArgs(), " "));
 
       output = rsync.execute();
       if (output.getExitCode() > 0)
