@@ -15,7 +15,7 @@
 
 /*
  * WekaPredictionsToSpreadSheet.java
- * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -239,13 +239,19 @@ public class WekaPredictionsToSpreadSheet
         pred = predictions.get(i);
 	row  = data.addRow();
 	// actual
-	row.addCell(0).setContent(pred.actual());
+        if (nominal)
+	  row.addCell(0).setContent(header.classAttribute().value((int) pred.actual()));
+        else
+	  row.addCell(0).setContent(pred.actual());
 	// predicted
-	row.addCell(1).setContent(pred.predicted());
+        if (nominal)
+	  row.addCell(0).setContent(header.classAttribute().value((int) pred.predicted()));
+        else
+	  row.addCell(1).setContent(pred.predicted());
 	// error
 	if (m_ShowError) {
 	  if (nominal) {
-            row.addCell(indexErr).setContent((pred.actual() != pred.predicted() ? "y" : "n"));
+            row.addCell(indexErr).setContent((pred.actual() != pred.predicted() ? "true" : "false"));
           }
 	  else {
             if (m_UseAbsoluteError)
