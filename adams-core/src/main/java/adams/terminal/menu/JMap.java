@@ -15,7 +15,7 @@
 
 /*
  * JMap.java
- * Copyright (C) 2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -23,9 +23,15 @@ package adams.terminal.menu;
 
 import adams.core.management.ProcessUtils;
 import adams.terminal.application.AbstractTerminalApplication;
+import adams.terminal.dialog.ComponentDialog;
+import com.googlecode.lanterna.gui2.Borders;
+import com.googlecode.lanterna.gui2.TextBox;
+import com.googlecode.lanterna.gui2.Window.Hint;
 import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
-import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
 import com.googlecode.lanterna.gui2.dialogs.TextInputDialog;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Runs jmap and displays the result.
@@ -64,6 +70,7 @@ public class JMap
   protected void doLaunch(final WindowBasedTextGUI context) {
     String	options;
     String 	output;
+    TextBox	textBox;
 
     options = TextInputDialog.showDialog(
       context, getTitle(),
@@ -72,9 +79,9 @@ public class JMap
     if (options == null)
       return;
 
-    output = adams.core.management.JMap.execute(options, ProcessUtils.getVirtualMachinePID());
-
-    MessageDialog.showMessageDialog(context, getTitle(), output);
+    output  = adams.core.management.JMap.execute(options, ProcessUtils.getVirtualMachinePID());
+    textBox = new TextBox(context.getScreen().getTerminalSize(), output);
+    ComponentDialog.showDialog(context, "JMap", null, textBox.withBorder(Borders.singleLine()), new ArrayList<>(Arrays.asList(Hint.CENTERED, Hint.FIT_TERMINAL_WINDOW)));
   }
 
   /**
