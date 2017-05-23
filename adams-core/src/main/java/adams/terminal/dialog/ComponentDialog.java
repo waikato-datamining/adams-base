@@ -72,20 +72,19 @@ public class ComponentDialog
    */
   public ComponentDialog(String title, String description, Component component, Collection<Hint> hints) {
     super(title);
-    Panel buttonPanel = new Panel();
-    buttonPanel.setLayoutManager(new GridLayout(2).setHorizontalSpacing(1));
-    buttonPanel.addComponent(new Button(LocalizedString.OK.toString(), () -> onOK())
-      .setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.CENTER, GridLayout.Alignment.CENTER, true, false)));
-    buttonPanel.addComponent(new Button(LocalizedString.Cancel.toString(), () -> onCancel()));
+    Panel panelButtons = new Panel(new GridLayout(2));
+    panelButtons.setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.END, GridLayout.Alignment.CENTER, true, false, 2, 1));
+    panelButtons.addComponent(new Button(LocalizedString.OK.toString(), () -> onOK()));
+    panelButtons.addComponent(new Button(LocalizedString.Cancel.toString(), () -> onCancel()));
 
-    Panel mainPanel = new Panel();
-    mainPanel.setLayoutManager(new BorderLayout());
+    Panel contentPanel = new Panel();
+    contentPanel.setLayoutManager(new BorderLayout());
     if (description != null)
-      mainPanel.addComponent(new Label(description), Location.TOP);
+      contentPanel.addComponent(new Label(description), Location.TOP);
     setHints(hints);
-    mainPanel.addComponent(component, Location.CENTER);
-    mainPanel.addComponent(buttonPanel, Location.BOTTOM);
-    setComponent(mainPanel);
+    contentPanel.addComponent(component, Location.CENTER);
+    contentPanel.addComponent(panelButtons, Location.BOTTOM);
+    setComponent(contentPanel);
   }
 
   /**
