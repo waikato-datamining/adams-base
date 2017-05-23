@@ -245,7 +245,7 @@ public class WekaPredictionsToSpreadSheet
 	  row.addCell(0).setContent(pred.actual());
 	// predicted
         if (nominal)
-	  row.addCell(0).setContent(header.classAttribute().value((int) pred.predicted()));
+	  row.addCell(1).setContent(header.classAttribute().value((int) pred.predicted()));
         else
 	  row.addCell(1).setContent(pred.predicted());
 	// error
