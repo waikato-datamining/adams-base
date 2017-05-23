@@ -19,7 +19,7 @@
  * Copyright (C) 2017 University of Waikato, Hamilton, NZ
  */
 
-package adams.terminal.core;
+package adams.terminal.dialog;
 
 import adams.core.License;
 import adams.core.annotation.MixedCopyright;
