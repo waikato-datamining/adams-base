@@ -15,7 +15,7 @@
 
 /*
  * SystemInfo.java
- * Copyright (C) 2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -27,6 +27,7 @@ import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.ActionListBox;
 import com.googlecode.lanterna.gui2.BorderLayout;
 import com.googlecode.lanterna.gui2.BorderLayout.Location;
+import com.googlecode.lanterna.gui2.Borders;
 import com.googlecode.lanterna.gui2.Panel;
 import com.googlecode.lanterna.gui2.TextBox;
 import com.googlecode.lanterna.gui2.Window.Hint;
@@ -91,8 +92,8 @@ public class SystemInfo
 	value.setCaretPosition(0, 0);
       });
     panel = new Panel(new BorderLayout());
-    panel.addComponent(keys, Location.CENTER);
-    panel.addComponent(value, Location.BOTTOM);
+    panel.addComponent(keys.withBorder(Borders.singleLine("Property")), Location.CENTER);
+    panel.addComponent(value.withBorder(Borders.singleLine("Value")), Location.BOTTOM);
     panel.setPreferredSize(new TerminalSize(40, 15));
 
     ComponentDialog.showDialog(context, "System info", null, panel, Arrays.asList(Hint.CENTERED));
