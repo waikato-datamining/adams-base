@@ -168,6 +168,10 @@ public class ComponentDialog
    * @return		the button that was selected
    */
   public static MessageDialogButton showDialog(WindowBasedTextGUI textGUI, String title, String description, Component component, Collection<Hint> hints) {
+    if (!hints.contains(Hint.FIXED_POSITION)) {
+      hints = new ArrayList<>(hints);
+      hints.add(Hint.CENTERED);
+    }
     ComponentDialog dialog = new ComponentDialog(title, description, component, hints);
     return dialog.showDialog(textGUI);
   }
