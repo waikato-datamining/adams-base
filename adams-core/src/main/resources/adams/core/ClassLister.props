@@ -763,6 +763,10 @@ adams.opt.cso.stopping.AbstractStoppingCriterion=\
 adams.terminal.menu.AbstractMenuItemDefinition=\
   adams.terminal.menu
 
+# the remote command actions
+adams.terminal.menu.remotecommand.AbstractRemoteCommandAction=\
+  adams.terminal.menu.remotecommand
+
 # the tools
 adams.tools.AbstractTool=\
   adams.tools
