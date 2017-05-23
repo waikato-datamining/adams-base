@@ -15,7 +15,7 @@
 
 /*
  * Modules.java
- * Copyright (C) 2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -24,6 +24,7 @@ package adams.terminal.menu;
 import adams.env.Modules.Module;
 import adams.terminal.application.AbstractTerminalApplication;
 import adams.terminal.dialog.ComponentDialog;
+import com.googlecode.lanterna.gui2.Borders;
 import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
 import com.googlecode.lanterna.gui2.table.Table;
 
@@ -70,7 +71,7 @@ public class Modules
     table   = new Table<>("Name", "Version", "Build timestamp");
     for (Module module: modules)
       table.getTableModel().addRow(module.getName(), module.getVersion(), module.getBuildTimestamp().getValue());
-    ComponentDialog.showDialog(context, "Modules", "Available modules", table);
+    ComponentDialog.showDialog(context, "Modules", null, table.withBorder(Borders.singleLine("Available modules")));
   }
 
   /**
