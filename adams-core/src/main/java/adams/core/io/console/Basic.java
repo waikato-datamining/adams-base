@@ -15,13 +15,14 @@
 
 /**
  * Basic.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.core.io.console;
 
 import adams.core.Utils;
 import adams.core.base.BasePassword;
+import adams.core.io.PlaceholderDirectory;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -251,6 +252,23 @@ public class Basic
     }
 
     return result;
+  }
+
+  /**
+   * Lets the user select a directory.
+   *
+   * @param msg		the message to output
+   * @param initial	the initial directory
+   * @return		the directory, null if cancelled
+   */
+  public PlaceholderDirectory selectDirectory(String msg, PlaceholderDirectory initial) {
+    String 	result;
+
+    result = enterValue(msg, initial.getAbsolutePath());
+    if (result == null)
+      return null;
+
+    return new PlaceholderDirectory(result);
   }
 
   /**

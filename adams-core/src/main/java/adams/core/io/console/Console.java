@@ -15,12 +15,13 @@
 
 /**
  * ConsoleHelper.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.core.io.console;
 
 import adams.core.base.BasePassword;
+import adams.core.io.PlaceholderDirectory;
 
 /**
  * Interface for classes that allow the user to interact in the terminal.
@@ -89,6 +90,15 @@ public interface Console {
    * @return		the selected option, null if cancelled or failed to read input
    */
   public String selectOption(String msg, String[] options, String initial);
+
+  /**
+   * Lets the user select a directory.
+   *
+   * @param msg		the message to output
+   * @param initial	the initial directory
+   * @return		the directory, null if cancelled
+   */
+  public PlaceholderDirectory selectDirectory(String msg, PlaceholderDirectory initial);
 
   /**
    * Outputs the message.

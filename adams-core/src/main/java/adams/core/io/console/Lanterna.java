@@ -15,17 +15,20 @@
 
 /**
  * ConsoleHelper.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.core.io.console;
 
 import adams.core.base.BasePassword;
+import adams.core.io.PlaceholderDirectory;
+import adams.terminal.core.DirectoryDialog;
 import adams.terminal.dialog.OptionDialog;
 import com.googlecode.lanterna.gui2.MultiWindowTextGUI;
 import com.googlecode.lanterna.gui2.TextBox;
 import com.googlecode.lanterna.gui2.dialogs.TextInputDialog;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -171,6 +174,28 @@ public class Lanterna
       msg = "Please select an option:";
 
     return OptionDialog.showDialog(m_Context, "Select option", msg, options, initial);
+  }
+
+  /**
+   * Lets the user select a directory.
+   *
+   * @param msg		the message to output
+   * @param initial	the initial directory
+   * @return		the directory, null if cancelled
+   */
+  public PlaceholderDirectory selectDirectory(String msg, PlaceholderDirectory initial) {
+    DirectoryDialog	dialog;
+    File 		result;
+
+    dialog = new DirectoryDialog(
+      "Select directory", msg, "Select", m_Context.getScreen().getTerminalSize(),
+      false, initial.getAbsoluteFile());
+
+    result = dialog.showDialog(m_Context);
+    if (result == null)
+      return null;
+
+    return new PlaceholderDirectory(result);
   }
 
   /**
