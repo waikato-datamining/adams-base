@@ -24,8 +24,6 @@ import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.gui2.Button;
 import com.googlecode.lanterna.gui2.Window.Hint;
 import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
-import com.googlecode.lanterna.gui2.dialogs.ActionListDialog;
-import com.googlecode.lanterna.gui2.dialogs.ActionListDialogBuilder;
 
 import java.util.Arrays;
 
@@ -39,7 +37,7 @@ public class Menu
   extends Button {
 
   /** for generating the menu. */
-  protected ActionListDialogBuilder builder;
+  protected MenuListDialogBuilder builder;
 
   /** the context. */
   protected WindowBasedTextGUI context;
@@ -52,17 +50,27 @@ public class Menu
   public Menu(String label, final WindowBasedTextGUI context) {
     super(label);
     this.context = context;
-    builder = new ActionListDialogBuilder();
-    builder.setTitle("");
-    addListener((Button button) -> {
-      ActionListDialog dialog = builder.build();
+    this.builder = new MenuListDialogBuilder();
+    this.builder.setTitle("");
+    addListener(newListener());
+  }
+
+  /**
+   * Returns the button listener, which pops up the action list dialog
+   * displaying the menu.
+   *
+   * @return		the listener
+   */
+  protected Listener newListener() {
+    return (Button button) -> {
+      MenuListDialog dialog = builder.build();
       dialog.setHints(Arrays.asList(Hint.FIXED_POSITION));
       dialog.setPosition(
 	new TerminalPosition(
 	  Menu.this.getPosition().getColumn() + 2,
 	  Menu.this.getPosition().getRow() + 3));
       dialog.showDialog(context);
-    });
+    };
   }
 
   /**
