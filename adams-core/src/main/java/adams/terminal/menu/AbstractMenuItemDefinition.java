@@ -15,12 +15,13 @@
 
 /**
  * AbstractMenuItemDefinition.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.terminal.menu;
 
 import adams.terminal.application.AbstractTerminalApplication;
+import adams.terminal.core.MenuItem;
 import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
 
 import java.io.Serializable;
@@ -32,7 +33,7 @@ import java.io.Serializable;
  * @version $Revision$
  */
 public abstract class AbstractMenuItemDefinition
-  implements Serializable, Comparable<AbstractMenuItemDefinition> {
+  implements Serializable, Comparable<AbstractMenuItemDefinition>, MenuItem {
 
   /** the "Program" category. */
   public final static String CATEGORY_PROGRAM = "Program";

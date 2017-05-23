@@ -21,21 +21,14 @@ package adams.terminal.application;
 
 import adams.core.ClassLister;
 import adams.core.logging.LoggingObject;
+import adams.terminal.core.Menu;
+import adams.terminal.core.MenuBar;
 import adams.terminal.menu.AbstractMenuItemDefinition;
 import adams.terminal.menu.ProgramExit;
-import com.googlecode.lanterna.TerminalPosition;
-import com.googlecode.lanterna.gui2.Button;
-import com.googlecode.lanterna.gui2.Direction;
-import com.googlecode.lanterna.gui2.LinearLayout;
-import com.googlecode.lanterna.gui2.Panel;
-import com.googlecode.lanterna.gui2.Window.Hint;
 import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
-import com.googlecode.lanterna.gui2.dialogs.ActionListDialog;
-import com.googlecode.lanterna.gui2.dialogs.ActionListDialogBuilder;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -84,20 +77,16 @@ public class ApplicationMenu
    * @param context	the context to use
    * @return		the menu bar
    */
-  public Panel getMenuBar(final WindowBasedTextGUI context) {
-    Panel						result;
+  public MenuBar getMenuBar(final WindowBasedTextGUI context) {
+    MenuBar 						result;
     Class[]						classes;
     AbstractMenuItemDefinition 				definition;
     Map<String,List<AbstractMenuItemDefinition>> 	menus;
-    List<AbstractMenuItemDefinition>			menuitems;
     List<String>					categories;
-    ActionListDialogBuilder 				actionsProgram;
-    ActionListDialogBuilder				actionsHelp;
-    final Button					buttonProgram;
-    final Button					buttonHelp;
+    Menu 						menuProgram;
+    Menu						menuHelp;
 
-    result = new Panel();
-    result.setLayoutManager(new LinearLayout(Direction.HORIZONTAL));
+    result = new MenuBar();
 
     // collect menu items
     classes = ClassLister.getSingleton().getClasses(AbstractMenuItemDefinition.class);
@@ -119,70 +108,34 @@ public class ApplicationMenu
 
     // build menu
     // first menu is "Program"
-    menuitems      = menus.get(AbstractMenuItemDefinition.CATEGORY_PROGRAM);
-    actionsProgram = new ActionListDialogBuilder();
-    actionsProgram.setTitle("");
-    for (AbstractMenuItemDefinition def: menuitems) {
+    menuProgram = new Menu(AbstractMenuItemDefinition.CATEGORY_PROGRAM, context);
+    for (AbstractMenuItemDefinition def: menus.get(AbstractMenuItemDefinition.CATEGORY_PROGRAM)) {
       // Exit is always last
       if (def.getClass() == ProgramExit.class)
 	continue;
-      actionsProgram.addAction(def.getTitle(), def.getRunnable(context));
+      menuProgram.addMenuItem(def);
     }
     definition = new ProgramExit();
     definition.setOwner(getOwner());
-    actionsProgram.addAction(definition.getTitle(), definition.getRunnable(context));
-    buttonProgram = new Button(AbstractMenuItemDefinition.CATEGORY_PROGRAM);
-    buttonProgram.addListener((Button button) -> {
-      ActionListDialog dialog = actionsProgram.build();
-      dialog.setHints(Arrays.asList(Hint.FIXED_POSITION));
-      dialog.setPosition(
-	new TerminalPosition(
-	  buttonProgram.getPosition().getColumn() + 2,
-	  buttonProgram.getPosition().getRow() + 3));
-      dialog.showDialog(context);
-    });
-    result.addComponent(buttonProgram);
+    menuProgram.addMenuItem(definition);
+    result.addMenu(menuProgram);
 
     // other categories
     categories = new ArrayList<>(menus.keySet());
     categories.remove(AbstractMenuItemDefinition.CATEGORY_PROGRAM);
     categories.remove(AbstractMenuItemDefinition.CATEGORY_HELP);
     for (String category : categories) {
-      menuitems = menus.get(category);
-      final ActionListDialogBuilder actions = new ActionListDialogBuilder();
-      actions.setTitle("");
-      for (AbstractMenuItemDefinition def: menuitems)
-	actions.addAction(def.getTitle(), def.getRunnable(context));
-      final Button buttonMenu = new Button(category);
-      buttonMenu.addListener((Button button) -> {
-	ActionListDialog dialog = actions.build();
-	dialog.setHints(Arrays.asList(Hint.FIXED_POSITION));
-	dialog.setPosition(
-	  new TerminalPosition(
-	    buttonMenu.getPosition().getColumn() + 2,
-	    buttonMenu.getPosition().getRow() + 3));
-	dialog.showDialog(context);
-      });
-      result.addComponent(buttonMenu);
+      final Menu menu = new Menu(category, context);
+      for (AbstractMenuItemDefinition def: menus.get(category))
+	menu.addMenuItem(def);
+      result.addMenu(menu);
     }
 
     // last menu is "Help"
-    menuitems   = menus.get(AbstractMenuItemDefinition.CATEGORY_HELP);
-    actionsHelp = new ActionListDialogBuilder();
-    actionsHelp.setTitle(AbstractMenuItemDefinition.CATEGORY_HELP);
-    for (AbstractMenuItemDefinition def: menuitems)
-      actionsHelp.addAction(def.getTitle(), def.getRunnable(context));
-    buttonHelp = new Button(AbstractMenuItemDefinition.CATEGORY_HELP);
-    buttonHelp.addListener((Button button) -> {
-      ActionListDialog dialog = actionsHelp.build();
-      dialog.setHints(Arrays.asList(Hint.FIXED_POSITION));
-      dialog.setPosition(
-	new TerminalPosition(
-	  buttonHelp.getPosition().getColumn() + 2,
-	  buttonHelp.getPosition().getRow() + 3));
-      dialog.showDialog(context);
-    });
-    result.addComponent(buttonHelp);
+    menuHelp = new Menu(AbstractMenuItemDefinition.CATEGORY_HELP, context);
+    for (AbstractMenuItemDefinition def: menus.get(AbstractMenuItemDefinition.CATEGORY_HELP))
+      menuHelp.addMenuItem(def);
+    result.addMenu(menuHelp);
 
     return result;
   }
