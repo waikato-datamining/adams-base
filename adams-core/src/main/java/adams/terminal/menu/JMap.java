@@ -30,7 +30,6 @@ import com.googlecode.lanterna.gui2.Window.Hint;
 import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
 import com.googlecode.lanterna.gui2.dialogs.TextInputDialog;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
@@ -81,7 +80,7 @@ public class JMap
 
     output  = adams.core.management.JMap.execute(options, ProcessUtils.getVirtualMachinePID());
     textBox = new TextBox(context.getScreen().getTerminalSize(), output);
-    ComponentDialog.showDialog(context, "JMap", null, textBox.withBorder(Borders.singleLine()), new ArrayList<>(Arrays.asList(Hint.CENTERED, Hint.FIT_TERMINAL_WINDOW)));
+    ComponentDialog.showDialog(context, "JMap", null, textBox.withBorder(Borders.singleLine()), Arrays.asList(Hint.CENTERED, Hint.FIT_TERMINAL_WINDOW));
   }
 
   /**
