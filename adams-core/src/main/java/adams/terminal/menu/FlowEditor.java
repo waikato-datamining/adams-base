@@ -15,7 +15,7 @@
 
 /**
  * FlowEditor.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.terminal.menu;
@@ -25,7 +25,6 @@ import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
 import adams.core.option.NestedConsumer;
 import adams.terminal.dialog.ComponentDialog;
-import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.TextBox;
 import com.googlecode.lanterna.gui2.Window.Hint;
 import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
@@ -113,9 +112,8 @@ public class FlowEditor
       return;
     }
 
-    textBox = new TextBox(new TerminalSize(30, 10));
-    textBox.setText(Utils.flatten(lines, "\n"));
-    retVal = ComponentDialog.showDialog(context, "Flow editor", "Flow:\n" + file, textBox, Arrays.asList(Hint.CENTERED));
+    textBox = new TextBox(Utils.flatten(lines, "\n"));
+    retVal = ComponentDialog.showDialog(context, "Flow editor", "Flow:\n" + file, textBox, Arrays.asList(Hint.CENTERED, Hint.FIT_TERMINAL_WINDOW));
     if (retVal == MessageDialogButton.OK) {
       flow = textBox.getText();
       if (!isValid(flow)) {
