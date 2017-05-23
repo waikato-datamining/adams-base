@@ -15,15 +15,16 @@
 
 /**
  * ComponentDialog.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.terminal.dialog;
 
 import com.googlecode.lanterna.TerminalSize;
+import com.googlecode.lanterna.gui2.BorderLayout;
+import com.googlecode.lanterna.gui2.BorderLayout.Location;
 import com.googlecode.lanterna.gui2.Button;
 import com.googlecode.lanterna.gui2.Component;
-import com.googlecode.lanterna.gui2.EmptySpace;
 import com.googlecode.lanterna.gui2.GridLayout;
 import com.googlecode.lanterna.gui2.Label;
 import com.googlecode.lanterna.gui2.LocalizedString;
@@ -78,31 +79,38 @@ public class ComponentDialog
     buttonPanel.addComponent(new Button(LocalizedString.Cancel.toString(), () -> onCancel()));
 
     Panel mainPanel = new Panel();
-    mainPanel.setLayoutManager(
-      new GridLayout(1)
-	.setLeftMarginSize(1)
-	.setRightMarginSize(1));
-    if (description != null) {
-      mainPanel.addComponent(new Label(description));
-    }
+    mainPanel.setLayoutManager(new BorderLayout());
+    if (description != null)
+      mainPanel.addComponent(new Label(description), Location.TOP);
     setHints(hints);
-    mainPanel.addComponent(new EmptySpace(TerminalSize.ONE));
-    component.setLayoutData(
-      GridLayout.createLayoutData(
-        GridLayout.Alignment.FILL,
-        GridLayout.Alignment.CENTER,
-        true,
-        false))
-      .addTo(mainPanel);
-    mainPanel.addComponent(new EmptySpace(TerminalSize.ONE));
-    buttonPanel.setLayoutData(
-      GridLayout.createLayoutData(
-	GridLayout.Alignment.END,
-	GridLayout.Alignment.CENTER,
-	false,
-	false))
-      .addTo(mainPanel);
+    mainPanel.addComponent(component, Location.CENTER);
+    mainPanel.addComponent(buttonPanel, Location.BOTTOM);
     setComponent(mainPanel);
+  }
+
+  /**
+   * Sets the width and height of the dialog according to the percentage of the
+   * overall available screen real estate.
+   *
+   * @param textGUI 	for determining the maximum dimensions
+   * @param width	the width percentage (0-1) or number of columns (> 1)
+   * @param height	the height percentage (0-1) or number of rows (> 1)
+   */
+  public void setSize(WindowBasedTextGUI textGUI, double width, double height) {
+    int		actWidth;
+    int		actHeight;
+    
+    if (width <= 1.0)
+      actWidth = (int) (textGUI.getScreen().getTerminalSize().getColumns() * width);
+    else
+      actWidth = (int) width;
+
+    if (height <= 1.0)
+      actHeight = (int) (textGUI.getScreen().getTerminalSize().getRows() * height);
+    else
+      actHeight = (int) height;
+    
+    setSize(new TerminalSize(actWidth, actHeight));
   }
 
   protected void onOK() {
