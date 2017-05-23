@@ -22,6 +22,7 @@ package adams.core.io.console;
 
 import adams.core.base.BasePassword;
 import adams.core.io.PlaceholderDirectory;
+import adams.core.io.PlaceholderFile;
 
 /**
  * Interface for classes that allow the user to interact in the terminal.
@@ -99,6 +100,15 @@ public interface Console {
    * @return		the directory, null if cancelled
    */
   public PlaceholderDirectory selectDirectory(String msg, PlaceholderDirectory initial);
+
+  /**
+   * Lets the user select files.
+   *
+   * @param msg		the message to output
+   * @param initial	the initial files
+   * @return		the directory, null if cancelled
+   */
+  public PlaceholderFile[] selectFiles(String msg, PlaceholderFile... initial);
 
   /**
    * Outputs the message.

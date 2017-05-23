@@ -22,10 +22,12 @@ package adams.core.io.console;
 
 import adams.core.base.BasePassword;
 import adams.core.io.PlaceholderDirectory;
+import adams.core.io.PlaceholderFile;
 import adams.terminal.core.DirectoryDialog;
 import adams.terminal.dialog.OptionDialog;
 import com.googlecode.lanterna.gui2.MultiWindowTextGUI;
 import com.googlecode.lanterna.gui2.TextBox;
+import com.googlecode.lanterna.gui2.dialogs.FileDialog;
 import com.googlecode.lanterna.gui2.dialogs.TextInputDialog;
 
 import java.io.File;
@@ -196,6 +198,33 @@ public class Lanterna
       return null;
 
     return new PlaceholderDirectory(result);
+  }
+
+  /**
+   * Lets the user select files.
+   *
+   * @param msg		the message to output
+   * @param initial	the initial files
+   * @return		the directory, null if cancelled
+   */
+  public PlaceholderFile[] selectFiles(String msg, PlaceholderFile... initial) {
+    List<PlaceholderFile>	result;
+    File			file;
+    FileDialog			dialog;
+
+    result = new ArrayList<>();
+
+    do {
+      dialog = new FileDialog("Select file", msg, "Select", m_Context.getScreen().getTerminalSize(), false, null);
+      file   = dialog.showDialog(m_Context);
+      if (file != null)
+	result.add(new PlaceholderFile(file));
+    }
+    while (file != null);
+
+    if (result.size() == 0)
+      return null;
+    return result.toArray(new PlaceholderFile[result.size()]);
   }
 
   /**

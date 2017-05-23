@@ -23,6 +23,7 @@ package adams.core.io.console;
 import adams.core.Utils;
 import adams.core.base.BasePassword;
 import adams.core.io.PlaceholderDirectory;
+import adams.core.io.PlaceholderFile;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -269,6 +270,29 @@ public class Basic
       return null;
 
     return new PlaceholderDirectory(result);
+  }
+
+  /**
+   * Lets the user select files.
+   *
+   * @param msg		the message to output
+   * @param initial	the initial files
+   * @return		the directory, null if cancelled
+   */
+  public PlaceholderFile[] selectFiles(String msg, PlaceholderFile... initial) {
+    PlaceholderFile[]	result;
+    String[]		values;
+    int			i;
+
+    values = enterMultipleValues(msg);
+    if (values == null)
+      return null;
+
+    result = new PlaceholderFile[values.length];
+    for (i = 0; i < values.length; i++)
+      result[i] = new PlaceholderFile(values[i]);
+
+    return result;
   }
 
   /**

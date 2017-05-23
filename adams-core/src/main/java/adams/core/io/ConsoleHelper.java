@@ -150,6 +150,17 @@ public class ConsoleHelper {
   }
 
   /**
+   * Lets the user select files.
+   *
+   * @param msg		the message to output
+   * @param initial	the initial files
+   * @return		the directory, null if cancelled
+   */
+  public static PlaceholderFile[] selectFiles(String msg, PlaceholderFile... initial) {
+    return m_Helper.selectFiles(msg, initial);
+  }
+
+  /**
    * Outputs the message.
    *
    * @param msg		the message to output

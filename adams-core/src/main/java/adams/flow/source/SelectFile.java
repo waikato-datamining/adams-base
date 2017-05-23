@@ -719,10 +719,11 @@ public class SelectFile
    */
   public boolean doInteractHeadless() {
     boolean		result;
-    String[]		files;
-    PlaceholderFile	filePh;
+    PlaceholderFile[]	files;
+    String[]		filesStr;
     Properties		props;
     String		msg;
+    int			i;
 
     result = false;
 
@@ -738,20 +739,24 @@ public class SelectFile
       return true;
     }
 
-    files = ConsoleHelper.enterMultipleValues(m_FileChooserTitle);
+    files = ConsoleHelper.selectFiles(m_FileChooserTitle);
     if (files != null) {
-      result = true;
-      for (String fileStr : files) {
-	filePh = new PlaceholderFile(fileStr);
-	if (m_AbsoluteFileNames)
-	  m_Queue.add(filePh.getAbsolutePath());
-	else
-	  m_Queue.add(filePh.toString());
+      result   = true;
+      filesStr = new String[files.length];
+      for (i = 0; i < files.length; i++) {
+	if (m_AbsoluteFileNames) {
+	  filesStr[i] = files[i].getAbsolutePath();
+	  m_Queue.add(filesStr[i]);
+	}
+	else {
+	  filesStr[i] = files[i].toString();
+	  m_Queue.add(filesStr[i]);
+	}
       }
       if (m_RestorationEnabled) {
 	props = new Properties();
 	props.setProperty(KEY_INITIAL_DIR, m_InitialDirectory.getAbsolutePath());
-	props.setProperty(KEY_INITIAL_FILES, OptionUtils.joinOptions(files));
+	props.setProperty(KEY_INITIAL_FILES, OptionUtils.joinOptions(filesStr));
 	msg = RestorableActorHelper.write(props, m_RestorationFile);
 	if (msg != null)
 	  getLogger().warning(msg);
