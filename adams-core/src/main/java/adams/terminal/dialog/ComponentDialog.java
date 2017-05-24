@@ -53,6 +53,7 @@ public class ComponentDialog
 
   /**
    * Default constructor, takes a title for the dialog and runs code shared for dialogs
+   * Shows OK and Cancel buttons.
    *
    * @param title       Title of the window
    * @param description	the optional description, can be null
@@ -64,6 +65,7 @@ public class ComponentDialog
 
   /**
    * Default constructor, takes a title for the dialog and runs code shared for dialogs
+   * Shows OK and Cancel buttons.
    *
    * @param title       Title of the window
    * @param description	the optional description, can be null
@@ -71,11 +73,30 @@ public class ComponentDialog
    * @param hints	the window hints
    */
   public ComponentDialog(String title, String description, Component component, Collection<Hint> hints) {
+    this(title, description, component, hints, true, true, false);
+  }
+
+  /**
+   * Default constructor, takes a title for the dialog and runs code shared for dialogs
+   *
+   * @param title       Title of the window
+   * @param description	the optional description, can be null
+   * @param component   the component to display
+   * @param hints	the window hints
+   * @param hasOK 	whether to display the OK button
+   * @param hasCancel	whether to display the Cancel button
+   * @param hasClose	whether to display the Close button
+   */
+  public ComponentDialog(String title, String description, Component component, Collection < Hint > hints, boolean hasOK, boolean hasCancel, boolean hasClose) {
     super(title);
     Panel panelButtons = new Panel(new GridLayout(2));
     panelButtons.setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.END, GridLayout.Alignment.CENTER, true, false, 2, 1));
-    panelButtons.addComponent(new Button(LocalizedString.OK.toString(), () -> onOK()));
-    panelButtons.addComponent(new Button(LocalizedString.Cancel.toString(), () -> onCancel()));
+    if (hasOK)
+      panelButtons.addComponent(new Button(LocalizedString.OK.toString(), () -> onOK()));
+    if (hasCancel)
+      panelButtons.addComponent(new Button(LocalizedString.Cancel.toString(), () -> onCancel()));
+    if (hasClose)
+      panelButtons.addComponent(new Button(LocalizedString.Close.toString(), () -> onClose()));
 
     Panel contentPanel = new Panel();
     contentPanel.setLayoutManager(new BorderLayout());
@@ -122,6 +143,11 @@ public class ComponentDialog
     close();
   }
 
+  protected void onClose() {
+    result = MessageDialogButton.Close;
+    close();
+  }
+
   /**
    * Shows the dialog.
    *
@@ -146,6 +172,7 @@ public class ComponentDialog
 
   /**
    * Shortcut for quickly showing a {@code OptionDialog}.
+   * Shows OK and Cancel buttons.
    *
    * @param textGUI     GUI to show the dialog on
    * @param title       Title of the dialog
@@ -159,6 +186,7 @@ public class ComponentDialog
 
   /**
    * Shortcut for quickly showing a {@code OptionDialog}.
+   * Shows OK and Cancel buttons.
    *
    * @param textGUI     GUI to show the dialog on
    * @param title       Title of the dialog
@@ -168,11 +196,28 @@ public class ComponentDialog
    * @return		the button that was selected
    */
   public static MessageDialogButton showDialog(WindowBasedTextGUI textGUI, String title, String description, Component component, Collection<Hint> hints) {
+    return showDialog(textGUI, title, description, component, hints, true, true, false);
+  }
+
+  /**
+   * Shortcut for quickly showing a {@code OptionDialog}.
+   *
+   * @param textGUI     GUI to show the dialog on
+   * @param title       Title of the dialog
+   * @param description Description of the dialog
+   * @param component	the component
+   * @param hints	the window hints
+   * @param hasOK 	whether to display the OK button
+   * @param hasCancel	whether to display the Cancel button
+   * @param hasClose	whether to display the Close button
+   * @return		the button that was selected
+   */
+  public static MessageDialogButton showDialog(WindowBasedTextGUI textGUI, String title, String description, Component component, Collection<Hint> hints, boolean hasOK, boolean hasCancel, boolean hasClose) {
     if (!hints.contains(Hint.FIXED_POSITION)) {
       hints = new ArrayList<>(hints);
       hints.add(Hint.CENTERED);
     }
-    ComponentDialog dialog = new ComponentDialog(title, description, component, hints);
+    ComponentDialog dialog = new ComponentDialog(title, description, component, hints, hasOK, hasCancel, hasClose);
     return dialog.showDialog(textGUI);
   }
 }
