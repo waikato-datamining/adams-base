@@ -329,6 +329,9 @@ public class RemoteLogging
     m_TextLog = new LogTextBox("", Style.MULTI_LINE);
     panelMain.addComponent(m_TextLog.withBorder(Borders.singleLine("Log")), Location.CENTER);
 
-    ComponentDialog.showDialog(context, getTitle(), null, panelMain, Arrays.asList(Hint.CENTERED, Hint.FIT_TERMINAL_WINDOW, Hint.FULL_SCREEN));
+    ComponentDialog.showDialog(
+      context, getTitle(), null, panelMain,
+      Arrays.asList(Hint.CENTERED, Hint.FIT_TERMINAL_WINDOW, Hint.FULL_SCREEN),
+      false, false, true);
   }
 }

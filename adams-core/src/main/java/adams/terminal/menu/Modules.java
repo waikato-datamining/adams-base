@@ -71,7 +71,7 @@ public class Modules
     table   = new Table<>("Name", "Version", "Build timestamp");
     for (Module module: modules)
       table.getTableModel().addRow(module.getName(), module.getVersion(), module.getBuildTimestamp().getValue());
-    ComponentDialog.showDialog(context, "Modules", null, table.withBorder(Borders.singleLine("Available modules")));
+    ComponentDialog.showDialog(context, "Modules", null, table.withBorder(Borders.singleLine("Available modules")), false, false, true);
   }
 
   /**

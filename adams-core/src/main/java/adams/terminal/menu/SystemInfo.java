@@ -96,7 +96,7 @@ public class SystemInfo
     panel.addComponent(value.withBorder(Borders.singleLine("Value")), Location.BOTTOM);
     panel.setPreferredSize(new TerminalSize(40, 15));
 
-    ComponentDialog.showDialog(context, "System info", null, panel, Arrays.asList(Hint.CENTERED));
+    ComponentDialog.showDialog(context, "System info", null, panel, Arrays.asList(Hint.CENTERED), false, false, true);
   }
 
   /**
