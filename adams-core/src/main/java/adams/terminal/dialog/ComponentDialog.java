@@ -65,6 +65,20 @@ public class ComponentDialog
 
   /**
    * Default constructor, takes a title for the dialog and runs code shared for dialogs
+   *
+   * @param title       Title of the window
+   * @param description	the optional description, can be null
+   * @param component   the component to display
+   * @param hasOK 	whether to display the OK button
+   * @param hasCancel	whether to display the Cancel button
+   * @param hasClose	whether to display the Close button
+   */
+  public ComponentDialog(String title, String description, Component component, boolean hasOK, boolean hasCancel, boolean hasClose) {
+    this(title, description, component, new ArrayList<>(), hasOK, hasCancel, hasClose);
+  }
+
+  /**
+   * Default constructor, takes a title for the dialog and runs code shared for dialogs
    * Shows OK and Cancel buttons.
    *
    * @param title       Title of the window
@@ -72,7 +86,7 @@ public class ComponentDialog
    * @param component   the component to display
    * @param hints	the window hints
    */
-  public ComponentDialog(String title, String description, Component component, Collection<Hint> hints) {
+  public ComponentDialog(String title, String description, Component component, Collection < Hint > hints) {
     this(title, description, component, hints, true, true, false);
   }
 
@@ -87,7 +101,8 @@ public class ComponentDialog
    * @param hasCancel	whether to display the Cancel button
    * @param hasClose	whether to display the Close button
    */
-  public ComponentDialog(String title, String description, Component component, Collection < Hint > hints, boolean hasOK, boolean hasCancel, boolean hasClose) {
+  public ComponentDialog(String title, String description, Component component, Collection < Hint > hints,
+    boolean hasOK, boolean hasCancel, boolean hasClose) {
     super(title);
     Panel panelButtons = new Panel(new GridLayout(2));
     panelButtons.setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.END, GridLayout.Alignment.CENTER, true, false, 2, 1));
