@@ -15,13 +15,14 @@
 
 /*
  * SpreadSheetSubset.java
- * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
 import adams.core.Range;
+import adams.core.base.MatrixSubset;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetColumnRange;
@@ -66,8 +67,9 @@ import adams.flow.core.Token;
  * </pre>
  * 
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this 
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical 
+ * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
@@ -94,8 +96,14 @@ import adams.flow.core.Token;
  * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts the range '...'; column names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last; numeric indices can be enforced by preceding them with '#' (eg '#12'); column names can be surrounded by double quotes.
  * </pre>
  * 
+ * <pre>-subset &lt;adams.core.base.MatrixSubset&gt; (property: subset)
+ * &nbsp;&nbsp;&nbsp;R-like matrix subsets with format '&lt;rows&gt;,&lt;cols&gt;'; eg '1:4,' means rows 
+ * &nbsp;&nbsp;&nbsp;1 to 4 and all columns.
+ * &nbsp;&nbsp;&nbsp;default: 
+ * </pre>
+ * 
  * <pre>-create-view &lt;boolean&gt; (property: createView)
- * &nbsp;&nbsp;&nbsp;If enabled, only a view of the column subset is created.
+ * &nbsp;&nbsp;&nbsp;If enabled, then only a view of the subset is created.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
@@ -116,6 +124,9 @@ public class SpreadSheetSubset
 
   /** the columns of the subset to obtain. */
   protected SpreadSheetColumnRange m_Columns;
+
+  /** the matrix subset. */
+  protected MatrixSubset m_Subset;
 
   /** whether to create a view only. */
   protected boolean m_CreateView;
@@ -146,6 +157,10 @@ public class SpreadSheetSubset
       new SpreadSheetColumnRange(Range.ALL));
 
     m_OptionManager.add(
+      "subset", "subset",
+      new MatrixSubset(""));
+
+    m_OptionManager.add(
       "create-view", "createView",
       false);
   }
@@ -171,8 +186,13 @@ public class SpreadSheetSubset
     String	result;
     String	value;
 
-    result  = QuickInfoHelper.toString(this, "rows", m_Rows, "rows: ");
-    result += QuickInfoHelper.toString(this, "columns", m_Columns, "/cols: ");
+    if (m_Subset.isEmpty() && !getOptionManager().hasVariableForProperty("subset")) {
+      result = QuickInfoHelper.toString(this, "rows", m_Rows, "rows: ");
+      result += QuickInfoHelper.toString(this, "columns", m_Columns, "/cols: ");
+    }
+    else {
+      result = QuickInfoHelper.toString(this, "subset", m_Subset, "subset: ");
+    }
     value  = QuickInfoHelper.toString(this, "createView", m_CreateView, ", view only");
     if (value != null)
       result += value;
@@ -239,6 +259,35 @@ public class SpreadSheetSubset
   }
 
   /**
+   * Sets the R-like matrix subset (eg '1:4,').
+   *
+   * @param value	the subset
+   */
+  public void setSubset(MatrixSubset value) {
+    m_Subset = value;
+    reset();
+  }
+
+  /**
+   * Returns the R-like matrix subset (eg '1:4,').
+   *
+   * @return		the subset
+   */
+  public MatrixSubset getSubset() {
+    return m_Subset;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String subsetTipText() {
+    return m_Subset.getTipText();
+  }
+
+  /**
    * Sets whether to create a view only.
    *
    * @param value	true if to create a view only
@@ -277,6 +326,8 @@ public class SpreadSheetSubset
     String	result;
     SpreadSheet	sheet;
     SpreadSheet	subset;
+    Range	rowRange;
+    Range	colRange;
     Row		row;
     Row		subrow;
     int[]	rows;
@@ -287,11 +338,21 @@ public class SpreadSheetSubset
     result = null;
 
     sheet = (SpreadSheet) m_InputToken.getPayload();
-    m_Rows.setMax(sheet.getRowCount());
-    m_Columns.setSpreadSheet(sheet);
+    if (m_Subset.isEmpty()) {
+      m_Rows.setMax(sheet.getRowCount());
+      m_Columns.setSpreadSheet(sheet);
+      rowRange = m_Rows;
+      colRange = m_Columns;
+    }
+    else {
+      rowRange = m_Subset.rowsValue();
+      colRange = m_Subset.columnsValue();
+      rowRange.setMax(sheet.getRowCount());
+      colRange.setMax(sheet.getColumnCount());
+    }
 
-    rows = m_Rows.getIntIndices();
-    cols = m_Columns.getIntIndices();
+    rows = rowRange.getIntIndices();
+    cols = colRange.getIntIndices();
     if (cols.length == 0) {
       result = "No columns selected!";
     }
