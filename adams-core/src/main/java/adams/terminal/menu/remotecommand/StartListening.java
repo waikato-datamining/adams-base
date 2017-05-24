@@ -64,6 +64,11 @@ public class StartListening
     super(owner);
   }
 
+  /**
+   * Returns the title of the action.
+   *
+   * @return 		the title
+   */
   @Override
   public String getTitle() {
     return "Start listening...";

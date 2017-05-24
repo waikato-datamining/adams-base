@@ -48,6 +48,11 @@ public class StopListening
     super(owner);
   }
 
+  /**
+   * Returns the title of the action.
+   *
+   * @return 		the title
+   */
   @Override
   public String getTitle() {
     return "Stop listening";
