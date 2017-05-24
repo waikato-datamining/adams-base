@@ -256,6 +256,11 @@ adams.core.base.JsonPathExpression=true
 adams.core.base.JsonPathExpression#toString=adams.gui.goe.BaseObjectEditor#toString
 adams.core.base.JsonPathExpression#valueOf=adams.gui.goe.BaseObjectEditor#valueOf
 
+# MatrixSubset objects
+adams.core.base.MatrixSubset=true
+adams.core.base.MatrixSubset#toString=adams.gui.goe.BaseObjectEditor#toString
+adams.core.base.MatrixSubset#valueOf=adams.gui.goe.BaseObjectEditor#valueOf
+
 # BaseShortcut objects
 adams.gui.core.BaseShortcut=true
 adams.gui.core.BaseShortcut#toString=adams.gui.goe.BaseObjectEditor#toString

@@ -23,7 +23,7 @@ package adams.core.io.console;
 import adams.core.base.BasePassword;
 import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
-import adams.terminal.core.DirectoryDialog;
+import adams.terminal.dialog.DirectoryDialog;
 import adams.terminal.dialog.OptionDialog;
 import com.googlecode.lanterna.gui2.MultiWindowTextGUI;
 import com.googlecode.lanterna.gui2.TextBox;
