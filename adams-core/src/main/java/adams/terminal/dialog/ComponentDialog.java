@@ -221,6 +221,22 @@ public class ComponentDialog
    * @param title       Title of the dialog
    * @param description Description of the dialog
    * @param component	the component
+   * @param hasOK 	whether to display the OK button
+   * @param hasCancel	whether to display the Cancel button
+   * @param hasClose	whether to display the Close button
+   * @return		the button that was selected
+   */
+  public static MessageDialogButton showDialog(WindowBasedTextGUI textGUI, String title, String description, Component component, boolean hasOK, boolean hasCancel, boolean hasClose) {
+    return showDialog(textGUI, title, description, component, new ArrayList<>(), hasOK, hasCancel, hasClose);
+  }
+
+  /**
+   * Shortcut for quickly showing a {@code OptionDialog}.
+   *
+   * @param textGUI     GUI to show the dialog on
+   * @param title       Title of the dialog
+   * @param description Description of the dialog
+   * @param component	the component
    * @param hints	the window hints
    * @param hasOK 	whether to display the OK button
    * @param hasCancel	whether to display the Cancel button
