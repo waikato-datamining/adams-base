@@ -34,7 +34,6 @@ import adams.gui.core.SimpleLogPanel;
 import adams.scripting.command.RemoteCommand;
 import adams.scripting.command.basic.StartRemoteLogging;
 import adams.scripting.command.basic.StopRemoteLogging;
-import adams.scripting.responsehandler.SimpleLogPanelResponseHandler;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -170,9 +169,6 @@ public class RemoteLoggingTab
   /** the log for the responses. */
   protected SimpleLogPanel m_Log;
 
-  /** the response logger. */
-  protected SimpleLogPanelResponseHandler m_ResponseLogger;
-
   /** the runnable. */
   protected RemoteListenerRunnableWithLog m_Runnable;
 
@@ -183,8 +179,7 @@ public class RemoteLoggingTab
   protected void initialize() {
     super.initialize();
 
-    m_ResponseLogger = new SimpleLogPanelResponseHandler();
-    m_Runnable       = null;
+    m_Runnable  = null;
   }
 
   /**
@@ -246,15 +241,6 @@ public class RemoteLoggingTab
     m_Log = new SimpleLogPanel();
     m_Log.setRows(20);
     panelAll.add(m_Log, BorderLayout.CENTER);
-  }
-
-  /**
-   * Finishes up the initialization.
-   */
-  @Override
-  protected void finishInit() {
-    super.finishInit();
-    m_ResponseLogger.setLog(m_Log);
   }
 
   /**
