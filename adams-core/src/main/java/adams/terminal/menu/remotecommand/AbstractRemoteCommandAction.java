@@ -20,7 +20,20 @@
 
 package adams.terminal.menu.remotecommand;
 
+import adams.core.base.BaseHostname;
+import adams.core.net.PortManager;
+import adams.scripting.command.RemoteCommand;
+import adams.scripting.command.RemoteCommandWithResponse;
+import adams.scripting.command.basic.StopEngine;
+import adams.scripting.command.basic.StopEngine.EngineType;
+import adams.scripting.connection.DefaultConnection;
+import adams.scripting.engine.DefaultScriptingEngine;
+import adams.scripting.requesthandler.LogTextBoxRequestHandler;
+import adams.scripting.requesthandler.RequestHandler;
+import adams.scripting.responsehandler.LogTextBoxResponseHandler;
+import adams.scripting.responsehandler.ResponseHandler;
 import adams.terminal.application.AbstractTerminalApplication;
+import adams.terminal.core.LogTextBox;
 import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
 
 /**
@@ -87,6 +100,149 @@ public abstract class AbstractRemoteCommandAction
    * @return 		the title
    */
   public abstract String getTitle();
+
+  /**
+   * Returns the LogTextBox to use.
+   *
+   * @return		the log to use
+   */
+  protected LogTextBox getLogTextBox() {
+    return m_Owner.getLogTextBox();
+  }
+
+  /**
+   * Logs the message.
+   *
+   * @param msg		the message to log
+   */
+  public void logMessage(String msg) {
+    m_Owner.logMessage(msg);
+  }
+
+  /**
+   * Logs the error.
+   *
+   * @param msg		the error message to log
+   */
+  public void logError(String msg) {
+    m_Owner.logError(msg);
+  }
+
+  /**
+   * Logs the error.
+   *
+   * @param msg		the error message to log
+   * @param t 		the exception
+   */
+  public void logError(String msg, Throwable t) {
+    m_Owner.logError(msg, t);
+  }
+
+  /**
+   * Returns new instance of a configured scripting engine.
+   *
+   * @param responseHandler	the handler to use for intercepting the result, can be null
+   * @param defPort		the default port to use
+   * @return			the engine
+   */
+  protected DefaultScriptingEngine configureEngine(ResponseHandler responseHandler, int defPort) {
+    DefaultScriptingEngine 				result;
+    adams.scripting.requesthandler.MultiHandler		multiRequest;
+    adams.scripting.responsehandler.MultiHandler	multiResponse;
+    LogTextBoxRequestHandler 				simpleRequest;
+    LogTextBoxResponseHandler 				simpleResponse;
+
+    result = new DefaultScriptingEngine();
+    result.setPort(PortManager.getSingleton().next(result.getClass(), defPort));
+
+    // request
+    simpleRequest = new LogTextBoxRequestHandler();
+    simpleRequest.setLog(getLogTextBox());
+    multiRequest = new adams.scripting.requesthandler.MultiHandler();
+    multiRequest.setHandlers(new RequestHandler[]{
+      new adams.scripting.requesthandler.LoggingHandler(),
+      simpleRequest,
+    });
+    result.setRequestHandler(multiRequest);
+
+    // response
+    simpleResponse = new LogTextBoxResponseHandler();
+    simpleResponse.setLog(getLogTextBox());
+    multiResponse = new adams.scripting.responsehandler.MultiHandler();
+    multiResponse.setHandlers(new ResponseHandler[]{
+      new adams.scripting.responsehandler.LoggingHandler(),
+      simpleResponse,
+    });
+    if (responseHandler != null)
+      multiResponse.addHandler(responseHandler);
+    result.setResponseHandler(multiResponse);
+
+    return result;
+  }
+
+  /**
+   * Sends the specified command, not waiting for a response.
+   *
+   * @param cmd			the command to send
+   * @param remote 		the remote host
+   */
+  public void sendCommand(RemoteCommand cmd, BaseHostname remote) {
+    DefaultConnection 	conn;
+    String		msg;
+
+    // send command
+    conn = new DefaultConnection();
+    conn.setHost(remote.hostnameValue());
+    conn.setPort(remote.portValue());
+    msg = conn.sendRequest(cmd);
+    if (msg != null)
+      logError("Failed to send command '" + cmd.toCommandLine() + "':\n" + msg);
+  }
+
+  /**
+   * Sends the specified command and the response handler for intercepting
+   * the result.
+   *
+   * @param cmd			the command to send
+   * @param responseHandler 	the response handler for intercepting the result, can be null
+   * @param local 		the local host
+   * @param remote 		the remote host
+   * @param defPort		the default port to use
+   */
+  public void sendCommandWithReponse(RemoteCommandWithResponse cmd, ResponseHandler responseHandler, BaseHostname local, BaseHostname remote, int defPort) {
+    StopEngine stop;
+    DefaultConnection conn;
+    DefaultScriptingEngine	engine;
+    DefaultConnection		connResp;
+    String			msg;
+
+    // engine
+    engine = configureEngine(responseHandler, defPort);
+    new Thread(() -> engine.execute()).start();
+
+    // command
+    connResp = new DefaultConnection();
+    connResp.setHost(local.hostnameValue());
+    connResp.setPort(engine.getPort());
+    cmd.setResponseConnection(connResp);
+
+    // send command
+    conn = new DefaultConnection();
+    conn.setHost(remote.hostnameValue());
+    conn.setPort(remote.portValue());
+    msg  = conn.sendRequest(cmd);
+    if (msg != null) {
+      engine.stopExecution();
+      logError("Failed to send command '" + cmd.toCommandLine() + "':\n" + msg);
+    }
+    else {
+      // send stop signal
+      stop = new StopEngine();
+      stop.setType(EngineType.RESPONSE);
+      stop.setResponseConnection(connResp);
+      conn.sendRequest(stop);
+    }
+  }
 
   /**
    * Prepares before the execution.

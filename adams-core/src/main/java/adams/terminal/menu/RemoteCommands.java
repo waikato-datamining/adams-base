@@ -62,6 +62,7 @@ public class RemoteCommands
     Class[] 				classes;
 
     builder = new ActionListDialogBuilder();
+    builder.setTitle("Remote commands");
     classes = ClassLister.getSingleton().getClasses(AbstractRemoteCommandAction.class);
     actions = new ArrayList<>();
     for (Class cls: classes) {

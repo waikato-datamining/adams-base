@@ -20,6 +20,7 @@
 
 package adams.terminal.application;
 
+import adams.core.Utils;
 import adams.core.io.ConsoleHelper;
 import adams.core.logging.LoggingHelper;
 import adams.core.logging.LoggingLevel;
@@ -43,11 +44,11 @@ import adams.gui.scripting.ScriptingEngine;
 import adams.scripting.RemoteScriptingEngineHandler;
 import adams.scripting.engine.MultiScriptingEngine;
 import adams.scripting.engine.RemoteScriptingEngine;
+import adams.terminal.core.LogTextBox;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.gui2.DefaultWindowManager;
 import com.googlecode.lanterna.gui2.EmptySpace;
 import com.googlecode.lanterna.gui2.MultiWindowTextGUI;
-import com.googlecode.lanterna.gui2.TextBox;
 import com.googlecode.lanterna.gui2.Window;
 import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.screen.TerminalScreen;
@@ -146,8 +147,45 @@ public abstract class AbstractTerminalApplication
    *
    * @return		the textbox, null if not available
    */
-  protected TextBox getLogTextBox() {
+  public LogTextBox getLogTextBox() {
     return null;
+  }
+
+  /**
+   * Logs the message.
+   *
+   * @param msg		the message to log
+   */
+  public void logMessage(String msg) {
+    if (getLogTextBox() != null)
+      getLogTextBox().addLine(msg);
+    else
+      System.out.println(msg);
+  }
+
+  /**
+   * Logs the error.
+   *
+   * @param msg		the error message to log
+   */
+  public void logError(String msg) {
+    if (getLogTextBox() != null)
+      getLogTextBox().addLine(msg);
+    else
+      System.err.println(msg);
+  }
+
+  /**
+   * Logs the error.
+   *
+   * @param msg		the error message to log
+   * @param t 		the exception
+   */
+  public void logError(String msg, Throwable t) {
+    if (getLogTextBox() != null)
+      getLogTextBox().addLine(msg + "\n" + Utils.throwableToString(t));
+    else
+      System.err.println(msg + "\n" + Utils.throwableToString(t));
   }
 
   /**

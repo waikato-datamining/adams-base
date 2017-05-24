@@ -20,6 +20,7 @@
 
 package adams.terminal.menu;
 
+import adams.core.Utils;
 import adams.terminal.application.AbstractTerminalApplication;
 import adams.terminal.core.MenuItem;
 import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
@@ -96,6 +97,43 @@ public abstract class AbstractMenuItemDefinition
    */
   public AbstractTerminalApplication getOwner() {
     return m_Owner;
+  }
+
+  /**
+   * Logs the message.
+   *
+   * @param msg		the message to log
+   */
+  public void logMessage(String msg) {
+    if (m_Owner != null)
+      m_Owner.logMessage(msg);
+    else
+      System.out.println(msg);
+  }
+
+  /**
+   * Logs the error.
+   *
+   * @param msg		the error message to log
+   */
+  public void logError(String msg) {
+    if (m_Owner != null)
+      m_Owner.logError(msg);
+    else
+      System.err.println(msg);
+  }
+
+  /**
+   * Logs the error.
+   *
+   * @param msg		the error message to log
+   * @param t 		the exception
+   */
+  public void logError(String msg, Throwable t) {
+    if (m_Owner != null)
+      m_Owner.logError(msg, t);
+    else
+      System.err.println(msg + "\n" + Utils.throwableToString(t));
   }
 
   /**

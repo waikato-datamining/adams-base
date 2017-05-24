@@ -28,14 +28,17 @@ import adams.db.DatabaseConnection;
 import adams.env.Environment;
 import adams.terminal.application.AbstractTerminalApplication;
 import adams.terminal.application.ApplicationMenu;
+import adams.terminal.core.LogTextBox;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.BasicWindow;
 import com.googlecode.lanterna.gui2.BorderLayout;
 import com.googlecode.lanterna.gui2.BorderLayout.Location;
 import com.googlecode.lanterna.gui2.Borders;
+import com.googlecode.lanterna.gui2.Button;
+import com.googlecode.lanterna.gui2.Direction;
 import com.googlecode.lanterna.gui2.EmptySpace;
+import com.googlecode.lanterna.gui2.LinearLayout;
 import com.googlecode.lanterna.gui2.Panel;
-import com.googlecode.lanterna.gui2.TextBox;
 import com.googlecode.lanterna.gui2.Window;
 
 import java.util.Arrays;
@@ -94,7 +97,10 @@ public class Main
   protected Panel m_MenuBar;
 
   /** the textbox for the logging. */
-  protected TextBox m_TextBoxLog;
+  protected LogTextBox m_TextBoxLog;
+
+  /** the button for clearing the log. */
+  protected Button m_ButtonClear;
 
   /**
    * Returns a string describing the object.
@@ -113,6 +119,7 @@ public class Main
   protected void initTerminal() {
     ApplicationMenu   	menu;
     Panel		panel;
+    Panel		panelButtons;
 
     super.initTerminal();
 
@@ -130,8 +137,14 @@ public class Main
 
     panel.addComponent(new EmptySpace(), Location.TOP);
 
-    m_TextBoxLog = new TextBox(new TerminalSize(40, 10));
+    m_TextBoxLog = new LogTextBox(new TerminalSize(40, 10));
     panel.addComponent(m_TextBoxLog.withBorder(Borders.singleLine("Log")), Location.CENTER);
+
+    panelButtons = new Panel(new LinearLayout(Direction.HORIZONTAL));
+    panel.addComponent(panelButtons, Location.BOTTOM);
+
+    m_ButtonClear = new Button("Clear", () -> m_TextBoxLog.clear());
+    panelButtons.addComponent(m_ButtonClear);
   }
 
   /**
@@ -167,7 +180,7 @@ public class Main
    *
    * @return		the textbox, null if not available
    */
-  protected TextBox getLogTextBox() {
+  public LogTextBox getLogTextBox() {
     return m_TextBoxLog;
   }
 
