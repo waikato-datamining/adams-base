@@ -21,6 +21,7 @@
 package adams.terminal.core;
 
 import adams.core.logging.LoggingLevel;
+import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.TextBox;
 
@@ -104,6 +105,26 @@ public class LogTextBox
    */
   public void append(LoggingLevel level, String msg) {
     addLine(msg);
+  }
+
+  /**
+   * Adds a single line to the {@code TextBox} at the end, this only works when in multi-line mode
+   * @param line Line to add at the end of the content in this {@code TextBox}
+   * @return Itself
+   */
+  public synchronized TextBox addLine(String line) {
+    TerminalPosition  	pos;
+    boolean		moveToEnd;
+
+    pos       = getCaretPosition();
+    moveToEnd = (pos.getRow() == getLineCount() - 1);
+
+    super.addLine(line);
+
+    if (moveToEnd)
+      setCaretPosition(getLineCount() - 1, 0);
+
+    return this;
   }
 
   /**
