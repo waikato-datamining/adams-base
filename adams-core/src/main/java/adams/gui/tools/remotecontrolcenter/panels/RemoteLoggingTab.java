@@ -173,9 +173,6 @@ public class RemoteLoggingTab
   /** the response logger. */
   protected SimpleLogPanelResponseHandler m_ResponseLogger;
 
-  /** whether logging is currently active. */
-  protected boolean m_LoggingActive;
-
   /** the runnable. */
   protected RemoteListenerRunnableWithLog m_Runnable;
 
@@ -187,7 +184,6 @@ public class RemoteLoggingTab
     super.initialize();
 
     m_ResponseLogger = new SimpleLogPanelResponseHandler();
-    m_LoggingActive  = false;
     m_Runnable       = null;
   }
 
