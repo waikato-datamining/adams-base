@@ -1011,6 +1011,9 @@ And transformers:
 	modified timestamp.
 	\item \textit{FilenameGenerator} -- allows to create filenames using various
 	generators, with some of them utilizing the token passing through.
+	\item \textit{FileTailer} -- similar to the \textit{tail -f} command on
+	Unix systems, this actor monitors a text file for data being appended and
+	outputs it, e.g., for monitoring log files.
 	\item \textit{MakeDir} -- creates the directory received on the input port
 	(also available as standalone actor).
 	\item \textit{MoveFile} -- moves/renames a file.
