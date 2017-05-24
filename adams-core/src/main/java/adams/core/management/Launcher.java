@@ -15,7 +15,7 @@
 
 /**
  * Launcher.java
- * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.management;
 
@@ -634,13 +634,13 @@ public class Launcher {
 	return execute();
       }
       else if (retVal != 0) {
-	msg = "Application exited unexpected with exit code " + retVal + ", "
+	msg = "Application exited unexpectedly with exit code " + retVal + ", "
 	    + "options used for starting process:\n\n"
 	    + Utils.flatten(cmd, "\n");
 	System.err.println(msg);
 	if (!m_SuppressErrorDialog && !GUIHelper.isHeadless())
 	  GUIHelper.showErrorMessage(
-	      null, msg, "Application exited unexpected!");
+	      null, msg, "Application exited unexpectedly!");
       }
     }
     catch (Exception e) {
