@@ -1221,6 +1221,48 @@ public class Utils {
   }
 
   /**
+   * Pads the string with a padding character with to at most "width" width.
+   * Does not truncate the string.
+   *
+   * @param s		the string to pad
+   * @param padding	the padding character
+   * @param width	the maximum width
+   * @return		the padded string
+   */
+  public static String padRight(String s, char padding, int width) {
+    return padRight(s, padding, width, false);
+  }
+
+  /**
+   * Pads the string with a padding character with to at most "width" width.
+   * Truncating, if string is longer than "width", is optional.
+   *
+   * @param s		the string to pad
+   * @param padding	the padding character
+   * @param width	the maximum width
+   * @param truncate	if true then the string can be truncated (on the left)
+   * 			to fit width
+   * @return		the padded string
+   */
+  public static String padRight(String s, char padding, int width, boolean truncate) {
+    StringBuilder	result;
+
+    result = new StringBuilder(s);
+
+    // pad
+    while (result.length() < width)
+      result.append(padding);
+
+    // truncate
+    if (truncate) {
+      if (result.length() > width)
+	result.deleteCharAt(result.length() - 1);
+    }
+
+    return result.toString();
+  }
+
+  /**
    * Returns the stacktrace of the throwable as string.
    *
    * @param t		the throwable to get the stacktrace for
