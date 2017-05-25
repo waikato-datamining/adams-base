@@ -29,7 +29,6 @@ import adams.scripting.command.basic.StartRemoteLogging;
 import adams.scripting.command.basic.StopRemoteLogging;
 import adams.terminal.application.AbstractTerminalApplication;
 import adams.terminal.core.LogTextBox;
-import adams.terminal.dialog.ComponentDialog;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.BorderLayout;
 import com.googlecode.lanterna.gui2.BorderLayout.Location;
@@ -41,10 +40,7 @@ import com.googlecode.lanterna.gui2.LinearLayout;
 import com.googlecode.lanterna.gui2.Panel;
 import com.googlecode.lanterna.gui2.TextBox;
 import com.googlecode.lanterna.gui2.TextBox.Style;
-import com.googlecode.lanterna.gui2.Window.Hint;
-import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
 
-import java.util.Arrays;
 import java.util.logging.LogRecord;
 import java.util.regex.Pattern;
 
@@ -55,7 +51,7 @@ import java.util.regex.Pattern;
  * @version $Revision$
  */
 public class RemoteLogging
-  extends AbstractRemoteCommandAction {
+  extends AbstractRemoteCommandActionWithGUI {
 
   /** the default port to use for receiving logging messages. */
   public final static int DEFAULT_PORT = 31345;
@@ -293,19 +289,19 @@ public class RemoteLogging
   }
 
   /**
-   * Actual execution.
+   * Creates the panel to display.
    *
-   * @param context	the context to use
+   * @return		the panel
    */
   @Override
-  protected void doRun(WindowBasedTextGUI context) {
-    Panel 		panelMain;
-    Panel		panel;
+  protected Panel createPanel() {
+    Panel 	result;
+    Panel	panel;
 
-    panelMain = new Panel(new BorderLayout());
+    result = new Panel(new BorderLayout());
 
     panel = new Panel(new LinearLayout(Direction.HORIZONTAL));
-    panelMain.addComponent(panel, Location.TOP);
+    result.addComponent(panel, Location.TOP);
     
     m_TextRemote = new TextBox(new TerminalSize(15, 1), "127.0.0.1:12345");
     panel.addComponent(new Label("Remote"));
@@ -327,11 +323,8 @@ public class RemoteLogging
     panel.addComponent(m_ButtonStop);
 
     m_TextLog = new LogTextBox("", Style.MULTI_LINE);
-    panelMain.addComponent(m_TextLog.withBorder(Borders.singleLine("Log")), Location.CENTER);
+    result.addComponent(m_TextLog.withBorder(Borders.singleLine("Log")), Location.CENTER);
 
-    ComponentDialog.showDialog(
-      context, getTitle(), null, panelMain,
-      Arrays.asList(Hint.CENTERED, Hint.FIT_TERMINAL_WINDOW, Hint.FULL_SCREEN),
-      false, false, true);
+    return result;
   }
 }

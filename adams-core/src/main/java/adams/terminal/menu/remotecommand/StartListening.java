@@ -46,7 +46,10 @@ import java.util.Arrays;
  * @version $Revision$
  */
 public class StartListening
-  extends AbstractRemoteCommandAction {
+  extends AbstractRemoteCommandActionWithGUI {
+
+  /** the remote engine commandline. */
+  protected TextBox m_Engine;
 
   /**
    * Initializes the action with no owner.
@@ -75,26 +78,35 @@ public class StartListening
   }
 
   /**
+   * Creates the panel to display.
+   *
+   * @return		the panel
+   */
+  protected Panel createPanel() {
+    Panel 	result;
+
+    result = new Panel();
+    result.setLayoutManager(new BorderLayout());
+
+    result.addComponent(new Label("Engine"), Location.TOP);
+    m_Engine = new TextBox(new TerminalSize(20, 3));
+    m_Engine.setText(new DefaultScriptingEngine().toCommandLine());
+    result.addComponent(m_Engine, Location.CENTER);
+
+    return result;
+  }
+
+  /**
    * Actual execution.
    *
    * @param context	the context to use
    */
   @Override
   protected void doRun(WindowBasedTextGUI context) {
-    TextBox engine;
-    Panel panel;
-    ComponentDialog dialog;
-    MessageDialogButton retVal;
+    ComponentDialog 		dialog;
+    MessageDialogButton 	retVal;
 
-    panel = new Panel();
-    panel.setLayoutManager(new BorderLayout());
-
-    panel.addComponent(new Label("Engine"), Location.TOP);
-    engine = new TextBox(new TerminalSize(20, 3));
-    engine.setText(new DefaultScriptingEngine().toCommandLine());
-    panel.addComponent(engine, Location.CENTER);
-
-    dialog = new ComponentDialog("Start listening", null, panel);
+    dialog = new ComponentDialog("Start listening", null, createPanel());
     dialog.setSize(context, 0.75, 0.5);
     dialog.setHints(Arrays.asList(Hint.FIXED_SIZE, Hint.CENTERED));
     retVal = dialog.showDialog(context);
@@ -102,10 +114,12 @@ public class StartListening
       return;
 
     try {
-      getOwner().setRemoteScriptingEngine((RemoteScriptingEngine) OptionUtils.forAnyCommandLine(RemoteScriptingEngine.class, engine.getText()));
+      getOwner().setRemoteScriptingEngine(
+	(RemoteScriptingEngine) OptionUtils.forAnyCommandLine(RemoteScriptingEngine.class, m_Engine.getText()));
     }
     catch (Exception e) {
-      MessageDialog.showMessageDialog(context, "Error", "Failed to start listening!\n" + Utils.throwableToString(e), MessageDialogButton.OK);
+      MessageDialog.showMessageDialog(
+	context, "Error", "Failed to start listening!\n" + Utils.throwableToString(e), MessageDialogButton.OK);
     }
   }
 }
