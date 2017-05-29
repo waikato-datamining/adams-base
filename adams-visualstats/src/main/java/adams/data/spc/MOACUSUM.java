@@ -116,7 +116,7 @@ public class MOACUSUM
    */
   @Override
   public String getName() {
-    return "MOACUSUM";
+    return "MOA-CUSUM";
   }
 
   /**
