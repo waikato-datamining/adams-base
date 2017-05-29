@@ -15,7 +15,7 @@
 
 /**
  * OptionUtils.java
- * Copyright (C) 2015 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2017 University of Waikato, Hamilton, NZ
  */
 
 package weka.core;
@@ -920,6 +920,28 @@ public class WekaOptionUtils {
    */
   public static void addOption(Vector options, String text, String defValue, String option) {
     options.add(new Option("\t" + text + "\n\t(default: " + defValue + ")", option, 0, "-" + option + " <value>"));
+  }
+
+  /**
+   * Adds an Option for a flag to the list of options.
+   *
+   * @param options   the options to extend
+   * @param text      the description
+   * @param option    the option (no dash)
+   */
+  public static void addOption(Vector options, String text, OptionHandler defValue, char option) {
+    addOption(options, text, defValue, "" + option);
+  }
+
+  /**
+   * Adds an Option for a flag to the list of options.
+   *
+   * @param options   the options to extend
+   * @param text      the description
+   * @param option    the option (no dash)
+   */
+  public static void addOption(Vector options, String text, OptionHandler defValue, String option) {
+    options.add(new Option("\t" + text + "\n\t(default: " + OptionUtils.getCommandLine(defValue) + ")", option, 0, "-" + option + " <value>"));
   }
 
   /**
