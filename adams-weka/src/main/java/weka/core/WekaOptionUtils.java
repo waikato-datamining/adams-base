@@ -945,6 +945,94 @@ public class WekaOptionUtils {
   }
 
   /**
+   * Adds an Option for a flag to the list of options.
+   *
+   * @param options   the options to extend
+   * @param text      the description
+   * @param option    the option (no dash)
+   */
+  public static void addOption(Vector options, String text, adams.core.Index defValue, char option) {
+    addOption(options, text, defValue, "" + option);
+  }
+
+  /**
+   * Adds an Option for a flag to the list of options.
+   *
+   * @param options   the options to extend
+   * @param text      the description
+   * @param option    the option (no dash)
+   */
+  public static void addOption(Vector options, String text, adams.core.Index defValue, String option) {
+    options.add(new Option("\t" + text + "\n\t(default: " + defValue.getIndex() + ")", option, 0, "-" + option + " <value>"));
+  }
+
+  /**
+   * Adds an Option for a flag to the list of options.
+   *
+   * @param options   the options to extend
+   * @param text      the description
+   * @param option    the option (no dash)
+   */
+  public static void addOption(Vector options, String text, adams.core.Range defValue, char option) {
+    addOption(options, text, defValue, "" + option);
+  }
+
+  /**
+   * Adds an Option for a flag to the list of options.
+   *
+   * @param options   the options to extend
+   * @param text      the description
+   * @param option    the option (no dash)
+   */
+  public static void addOption(Vector options, String text, adams.core.Range defValue, String option) {
+    options.add(new Option("\t" + text + "\n\t(default: " + defValue.getRange() + ")", option, 0, "-" + option + " <value>"));
+  }
+
+  /**
+   * Adds an Option for a flag to the list of options.
+   *
+   * @param options   the options to extend
+   * @param text      the description
+   * @param option    the option (no dash)
+   */
+  public static void addOption(Vector options, String text, weka.core.SingleIndex defValue, char option) {
+    addOption(options, text, defValue, "" + option);
+  }
+
+  /**
+   * Adds an Option for a flag to the list of options.
+   *
+   * @param options   the options to extend
+   * @param text      the description
+   * @param option    the option (no dash)
+   */
+  public static void addOption(Vector options, String text, weka.core.SingleIndex defValue, String option) {
+    options.add(new Option("\t" + text + "\n\t(default: " + defValue.getIndex() + ")", option, 0, "-" + option + " <value>"));
+  }
+
+  /**
+   * Adds an Option for a flag to the list of options.
+   *
+   * @param options   the options to extend
+   * @param text      the description
+   * @param option    the option (no dash)
+   */
+  public static void addOption(Vector options, String text, weka.core.Range defValue, char option) {
+    addOption(options, text, defValue, "" + option);
+  }
+
+  /**
+   * Adds an Option for a flag to the list of options.
+   *
+   * @param options   the options to extend
+   * @param text      the description
+   * @param option    the option (no dash)
+   */
+  public static void addOption(Vector options, String text, weka.core.Range defValue, String option) {
+    options.add(new Option("\t" + text + "\n\t(default: " + defValue.getRanges() + ")", option, 0, "-" + option + " <value>"));
+  }
+
+  /**
    * Adds the option description of the super class.
    *
    * @param current       the current option descriptions to extend
