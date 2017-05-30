@@ -732,7 +732,7 @@ public class ControlChartPlot
     String	result;
 
     result = super.getQuickInfo();
-    result += QuickInfoHelper.toString(this, "violoationFinder", m_ViolationFinder, "violations: ");
+    result += QuickInfoHelper.toString(this, "violoationFinder", m_ViolationFinder, ", violations: ");
 
     return result;
   }
