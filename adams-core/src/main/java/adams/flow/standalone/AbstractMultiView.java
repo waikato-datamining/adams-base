@@ -15,7 +15,7 @@
 
 /**
  * AbstractMultiView.java
- * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.standalone;
 
@@ -184,9 +184,11 @@ public abstract class AbstractMultiView
 
       if (m_Panel == null) {
         result = m_Wrapped.execute();
-        if (result == null) {
-          m_Panel = ((AbstractDisplay) m_Wrapped).getPanel();
-          ((AbstractMultiView) getParent()).addPanel(m_Wrapped, m_Panel);
+        if (!isHeadless()) {
+          if (result == null) {
+            m_Panel = ((AbstractDisplay) m_Wrapped).getPanel();
+            ((AbstractMultiView) getParent()).addPanel(m_Wrapped, m_Panel);
+          }
         }
       }
 
