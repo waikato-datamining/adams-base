@@ -15,19 +15,18 @@
 
 /**
  * SpreadSheetSplitColumnTest.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.conversion;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-import adams.core.base.BaseRegExp;
 import adams.data.io.input.CsvSpreadSheetReader;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetColumnIndex;
 import adams.env.Environment;
 import adams.test.TmpFile;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Tests the SpreadSheetSplitColumn conversion.
@@ -109,7 +108,7 @@ public class SpreadSheetSplitColumnTest
     result[0] = new SpreadSheetSplitColumn();
     result[1] = new SpreadSheetSplitColumn();
     result[1].setColumn(new SpreadSheetColumnIndex("2"));
-    result[1].setExpression(new BaseRegExp("\\/"));
+    result[1].setExpression("\\/");
 
     return result;
   }
