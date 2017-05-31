@@ -15,7 +15,7 @@
 
 /**
  * SpreadSheetToWekaInstances.java
- * Copyright (C) 2011-2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
 
@@ -45,20 +45,16 @@ import java.util.HashSet;
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- * 
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  * 
  * <pre>-max-labels &lt;int&gt; (property: maxLabels)
  * &nbsp;&nbsp;&nbsp;The maximum number of labels that a NOMINAL attribute can have before it 
- * &nbsp;&nbsp;&nbsp;is switched to a STRING attribute.
+ * &nbsp;&nbsp;&nbsp;is switched to a STRING attribute; use -1 to enforce STRING attributes.
  * &nbsp;&nbsp;&nbsp;default: 25
- * &nbsp;&nbsp;&nbsp;minimum: 1
+ * &nbsp;&nbsp;&nbsp;minimum: -1
  * </pre>
  * 
  <!-- options-end -->
@@ -99,7 +95,7 @@ public class SpreadSheetToWekaInstances
 
     m_OptionManager.add(
 	    "max-labels", "maxLabels",
-	    25, 1, null);
+	    25, -1, null);
   }
 
   /**
@@ -108,8 +104,10 @@ public class SpreadSheetToWekaInstances
    * @param value 	the maximum
    */
   public void setMaxLabels(int value) {
-    m_MaxLabels = value;
-    reset();
+    if (getOptionManager().isValid("maxLabels", value)) {
+      m_MaxLabels = value;
+      reset();
+    }
   }
 
   /**
@@ -130,7 +128,7 @@ public class SpreadSheetToWekaInstances
   public String maxLabelsTipText() {
     return 
 	"The maximum number of labels that a NOMINAL attribute can have "
-	+ "before it is switched to a STRING attribute.";
+	+ "before it is switched to a STRING attribute; use -1 to enforce STRING attributes.";
   }
 
   /**
@@ -180,7 +178,7 @@ public class SpreadSheetToWekaInstances
     sheet = (SpreadSheet) m_Input;
 
     // create header
-    atts = new ArrayList<Attribute>();
+    atts = new ArrayList<>();
     for (i = 0; i < sheet.getColumnCount(); i++) {
       added = false;
       types = sheet.getContentTypes(i);
@@ -208,18 +206,18 @@ public class SpreadSheetToWekaInstances
       }
       
       if (!added) {
-	unique = new HashSet<String>();
+	unique = new HashSet<>();
 	for (n = 0; n < sheet.getRowCount(); n++) {
 	  row  = sheet.getRow(n);
 	  cell = row.getCell(i);
 	  if ((cell != null) && !cell.isMissing())
 	    unique.add(cell.getContent());
 	}
-	if (unique.size() > m_MaxLabels) {
+	if ((unique.size() > m_MaxLabels) || (m_MaxLabels < 1)) {
 	  atts.add(new Attribute(sheet.getHeaderRow().getCell(i).getContent(), (FastVector) null));
 	}
 	else {
-	  labels = new ArrayList<String>(unique);
+	  labels = new ArrayList<>(unique);
 	  Collections.sort(labels);
 	  atts.add(new Attribute(sheet.getHeaderRow().getCell(i).getContent(), labels));
 	}
