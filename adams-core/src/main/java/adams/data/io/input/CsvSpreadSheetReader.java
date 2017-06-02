@@ -15,7 +15,7 @@
 
 /**
  * CsvSpreadSheetReader.java
- * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.input;
 
@@ -255,6 +255,12 @@ import java.util.logging.Level;
  * &nbsp;&nbsp;&nbsp;default: true
  * </pre>
  * 
+ * <pre>-skip-differing-rows &lt;boolean&gt; (property: skipDifferingRows)
+ * &nbsp;&nbsp;&nbsp;If enabled, skips rows that have either too many or too few cells compared 
+ * &nbsp;&nbsp;&nbsp;to the header row.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -387,6 +393,9 @@ public class CsvSpreadSheetReader
 
     /** whether to parse formula-like cells. */
     protected boolean m_ParseFormulas;
+
+    /** whether to drop rows with too few or too many cells. */
+    protected boolean m_SkipDifferingRows;
 
     /** the automatically determined column types. */
     protected ContentType[] m_AutoTypes;
@@ -648,6 +657,10 @@ public class CsvSpreadSheetReader
 
           // window not yet reached?
           canAdd = true;
+	  if (!isHeader && m_SkipDifferingRows) {
+	    if (m_HeaderCells.size() != cells.size())
+	      canAdd = false;
+	  }
           if (!isHeader) {
             m_RowCount++;
             if (m_RowCount < m_FirstRow)
@@ -796,6 +809,7 @@ public class CsvSpreadSheetReader
       m_AutoTypes           = null;
       m_NumRowsAuto         = m_Owner.getNumRowsColumnTypeDiscovery();
       m_ParseFormulas       = m_Owner.getParseFormulas();
+      m_SkipDifferingRows   = m_Owner.getSkipDifferingRows();
 
       m_DateTimeMsecFormat = m_Owner.getDateTimeMsecFormat().toDateFormat();
       m_DateTimeMsecFormat.setLenient(m_Owner.isDateTimeMsecLenient());
@@ -904,6 +918,9 @@ public class CsvSpreadSheetReader
 
   /** whether to parse formulas. */
   protected boolean m_ParseFormulas;
+
+  /** whether to drop rows with too few or too many cells. */
+  protected boolean m_SkipDifferingRows;
 
   /** for reading the actual data. */
   protected ChunkReader m_Reader;
@@ -1050,6 +1067,10 @@ public class CsvSpreadSheetReader
     m_OptionManager.add(
       "parse-formulas", "parseFormulas",
       true);
+
+    m_OptionManager.add(
+      "skip-differing-rows", "skipDifferingRows",
+      false);
   }
 
   /**
@@ -1940,6 +1961,35 @@ public class CsvSpreadSheetReader
    */
   public String parseFormulasTipText() {
     return "Whether to try parsing formula-like cells.";
+  }
+
+  /**
+   * Sets whether to skip rows that have too few/many cells.
+   *
+   * @param value	true if to skip
+   */
+  public void setSkipDifferingRows(boolean value) {
+    m_SkipDifferingRows = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to skip rows that have too few/many cells.
+   *
+   * @return		true if to skip
+   */
+  public boolean getSkipDifferingRows() {
+    return m_SkipDifferingRows;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the gui
+   */
+  public String skipDifferingRowsTipText() {
+    return "If enabled, skips rows that have either too many or too few cells compared to the header row.";
   }
 
   /**
