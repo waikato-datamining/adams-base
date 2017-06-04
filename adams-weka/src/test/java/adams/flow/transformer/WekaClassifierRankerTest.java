@@ -123,6 +123,7 @@ public class WekaClassifierRankerTest
     });
 
     WekaClassifierRanker cr = new WekaClassifierRanker();
+    cr.setNumThreads(1);
     cr.setMax(3);
     cr.setFolds(10);
     cr.setMeasure(Measure.ACC);
