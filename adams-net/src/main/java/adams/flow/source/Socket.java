@@ -368,8 +368,8 @@ public class Socket
     }
 
     if (m_ServerSocket != null) {
-      while (!m_Stopped && (m_OutputToken == null)) {
-	while (isPaused() && !m_Stopped)
+      while (!isStopped() && (m_OutputToken == null)) {
+	while (isPaused() && !isStopped())
 	  Utils.wait(this, this, 1000, 50);
 	if (m_ServerSocket.isClosed())
 	  break;
@@ -389,7 +389,7 @@ public class Socket
 	  // ignored
 	}
 	catch (SocketException se) {
-	  if (!m_Stopped)
+	  if (!isStopped())
 	    result = handleException("Failed to accept connection!", se);
 	}
 	catch (Exception e) {

@@ -318,7 +318,7 @@ public class HexReplace
 	}
 
 	// flow stopped?
-	if (m_Stopped)
+	if (isStopped())
 	  break;
       }
 

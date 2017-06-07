@@ -611,7 +611,7 @@ public class WekaBootstrapping
       // create fake evalutions
       subset = new TIntArrayList();
       for (iteration = 0; iteration < m_NumSubSamples; iteration++) {
-	if (m_Stopped) {
+	if (isStopped()) {
 	  sheet = null;
 	  break;
 	}
