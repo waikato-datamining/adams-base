@@ -15,7 +15,7 @@
 
 /*
  * PartitionedMultiFilter2.java
- * Copyright (C) 2006-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2006-2017 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -105,6 +105,10 @@ public class PartitionedMultiFilter2
 
   /** the indices of the unused attributes. */
   protected int[] m_IndicesUnused = new int[0];
+
+  /** temporary filter results when determining output format to avoid
+   * duplicate processing of data. */
+  protected Instances[] m_Processed;
 
   /**
    * Returns a string describing this filter.
@@ -413,6 +417,16 @@ public class PartitionedMultiFilter2
   }
 
   /**
+   * Returns whether to allow the determineOutputFormat(Instances) method access
+   * to the full dataset rather than just the header.
+   *
+   * @return whether determineOutputFormat has access to the full input dataset
+   */
+  public boolean allowAccessToFullInputFormat() {
+    return true;
+  }
+
+  /**
    * determines the indices of unused attributes (ones that are not covered by
    * any of the range).
    *
@@ -539,43 +553,36 @@ public class PartitionedMultiFilter2
   @Override
   protected Instances determineOutputFormat(Instances inputFormat) throws Exception {
     Instances 			result;
-    Instances 			processed;
     int 			i;
     int 			n;
     ArrayList<Attribute> 	atts;
     Attribute 			att;
 
     if (!isFirstBatchDone()) {
-      // we need the full dataset here, see process(Instances)
-      if (inputFormat.numInstances() == 0)
-	return null;
-
       checkDimensions();
 
       // determine unused indices
       determineUnusedIndices(inputFormat);
+      for (i = 0; i < m_Ranges.length; i++)
+	m_Ranges[i].setUpper(inputFormat.numAttributes() - 1);
 
-      atts = new ArrayList<>();
+      atts      = new ArrayList<>();
+      m_Processed = new Instances[getFilters().length];
       for (i = 0; i < getFilters().length; i++) {
-	if (!isFirstBatchDone()) {
-	  // generate subset
-	  processed = generateSubset(inputFormat, getRange(i));
-	  // set input format
-	  if (!getFilter(i).setInputFormat(processed))
-	    Filter.useFilter(processed, getFilter(i));
-	}
-
-	// get output format
-	processed = getFilter(i).getOutputFormat();
+	// generate subset
+	m_Processed[i] = generateSubset(inputFormat, getRange(i));
+	// set input format
+	getFilter(i).setInputFormat(m_Processed[i]);
+	m_Processed[i] = Filter.useFilter(m_Processed[i], getFilter(i));
 
 	// rename attributes
-	processed = renameAttributes(processed, "filtered-" + i + "-");
+	m_Processed[i] = renameAttributes(m_Processed[i], "filtered-" + i + "-");
 
 	// add attributes
-	for (n = 0; n < processed.numAttributes(); n++) {
-	  if (n == processed.classIndex())
+	for (n = 0; n < m_Processed[i].numAttributes(); n++) {
+	  if (n == m_Processed[i].classIndex())
 	    continue;
-	  atts.add((Attribute) processed.attribute(n).copy());
+	  atts.add((Attribute) m_Processed[i].attribute(n).copy());
 	}
       }
 
@@ -625,35 +632,23 @@ public class PartitionedMultiFilter2
     double[] 		values;
     TIntList 		errors;
 
-    if (!isFirstBatchDone()) {
-      checkDimensions();
-
-      // set upper limits
-      for (i = 0; i < m_Ranges.length; i++) {
-	m_Ranges[i].setUpper(instances.numAttributes() - 1);
-      }
-
-      // determine unused indices
-      determineUnusedIndices(instances);
-    }
-
     // pass data through all filters
-    processed = new Instances[getFilters().length];
-    for (i = 0; i < getFilters().length; i++) {
-      processed[i] = generateSubset(instances, getRange(i));
-      if (!isFirstBatchDone()) {
-	getFilter(i).setInputFormat(processed[i]);
+    if (m_Processed != null) {
+      processed   = m_Processed;
+      m_Processed = null;
+    }
+    else {
+      processed = new Instances[getFilters().length];
+      for (i = 0; i < getFilters().length; i++) {
+	processed[i] = generateSubset(instances, getRange(i));
+	if (!isFirstBatchDone()) {
+	  getFilter(i).setInputFormat(processed[i]);
+	}
+	processed[i] = Filter.useFilter(processed[i], getFilter(i));
       }
-      processed[i] = Filter.useFilter(processed[i], getFilter(i));
     }
 
-    // set output format (can only be determined with full dataset, hence here)
-    if (!isFirstBatchDone()) {
-      result = determineOutputFormat(instances);
-      setOutputFormat(result);
-    } else {
-      result = getOutputFormat();
-    }
+    result = getOutputFormat();
 
     // check whether all filters didn't change the number of instances
     errors = new TIntArrayList();
