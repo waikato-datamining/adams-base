@@ -122,7 +122,10 @@ public class ReevaluateModel
     m_PanelModel.addChoosableFileFilter(filter);
     m_PanelModel.setFileFilter(filter);
     m_PanelModel.setAcceptAllFileFilterUsed(true);
-    m_PanelModel.addChangeListener((ChangeEvent e) -> getOwner().updateButtons());
+    m_PanelModel.addChangeListener((ChangeEvent e) -> {
+      m_Model = null;
+      getOwner().updateButtons();
+    });
     m_PanelParameters.addParameter("Model", m_PanelModel);
   }
 
