@@ -15,7 +15,7 @@
 
 /**
  * ReevaluateModel.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab.classifytab.evaluation;
@@ -141,7 +141,10 @@ public class ReevaluateModel
     m_PanelModel.addChoosableFileFilter(filter);
     m_PanelModel.setFileFilter(filter);
     m_PanelModel.setAcceptAllFileFilterUsed(true);
-    m_PanelModel.addChangeListener((ChangeEvent e) -> getOwner().updateButtons());
+    m_PanelModel.addChangeListener((ChangeEvent e) -> {
+      m_Model = null;
+      getOwner().updateButtons();
+    });
     m_PanelParameters.addParameter("Model", m_PanelModel);
 
     // additional attributes
