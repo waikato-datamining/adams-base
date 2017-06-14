@@ -204,6 +204,26 @@ public class Normalize
   }
 
   /**
+   * Hook method for checks (training data).
+   *
+   * @param data	the spreadsheet to filter
+   * @return		the filtered spreadsheet
+   */
+  @Override
+  protected String checkTrain(SpreadSheet data) {
+    String	result;
+
+    result = super.checkTrain(data);
+
+    if (result == null) {
+      if (m_Upper <= m_Lower)
+	result = "Upper bound must be larger than lower one: lower=" + m_Lower + ", upper=" + m_Upper;
+    }
+
+    return result;
+  }
+
+  /**
    * Performs the actual retraining on the spreadsheet.
    *
    * @param data	the spreadsheet to train with and filter
