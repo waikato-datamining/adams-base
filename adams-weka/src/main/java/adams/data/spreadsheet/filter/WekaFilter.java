@@ -20,6 +20,7 @@
 
 package adams.data.spreadsheet.filter;
 
+import adams.core.QuickInfoHelper;
 import adams.core.option.OptionUtils;
 import adams.data.conversion.SpreadSheetToWekaInstances;
 import adams.data.conversion.WekaInstancesToSpreadSheet;
@@ -135,6 +136,20 @@ public class WekaFilter
     return
 	"The maximum number of labels that a NOMINAL attribute can have "
 	+ "before it is switched to a STRING attribute; use -1 to enforce STRING attributes.";
+  }
+
+  /**
+   * Returns a quick info about the object, which can be displayed in the GUI.
+   *
+   * @return		null if no info available, otherwise short string
+   */
+  public String getQuickInfo() {
+    String	result;
+
+    result  = QuickInfoHelper.toString(this, "filter", m_Filter, "filter: ");
+    result += QuickInfoHelper.toString(this, "maxLabels", m_MaxLabels, ", max-labels: ");
+
+    return result;
   }
 
   /**

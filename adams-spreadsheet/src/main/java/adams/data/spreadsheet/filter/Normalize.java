@@ -20,6 +20,7 @@
 
 package adams.data.spreadsheet.filter;
 
+import adams.core.QuickInfoHelper;
 import adams.data.spreadsheet.Cell;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
@@ -201,6 +202,20 @@ public class Normalize
    */
   public String upperTipText() {
     return "The upper bound to use.";
+  }
+
+  /**
+   * Returns a quick info about the object, which can be displayed in the GUI.
+   *
+   * @return		null if no info available, otherwise short string
+   */
+  public String getQuickInfo() {
+    String	result;
+
+    result  = QuickInfoHelper.toString(this, "lower", m_Lower, "lower: ");
+    result += QuickInfoHelper.toString(this, "upper", m_Upper, ", upper: ");
+
+    return result;
   }
 
   /**

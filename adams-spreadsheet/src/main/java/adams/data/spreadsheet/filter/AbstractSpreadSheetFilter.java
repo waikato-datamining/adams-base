@@ -20,6 +20,7 @@
 
 package adams.data.spreadsheet.filter;
 
+import adams.core.QuickInfoSupporter;
 import adams.core.option.AbstractOptionHandler;
 import adams.data.spreadsheet.SpreadSheet;
 
@@ -31,9 +32,20 @@ import adams.data.spreadsheet.SpreadSheet;
  */
 public abstract class AbstractSpreadSheetFilter
   extends AbstractOptionHandler
-  implements SpreadSheetFilter {
+  implements SpreadSheetFilter, QuickInfoSupporter {
 
   private static final long serialVersionUID = 7811561046971207234L;
+
+  /**
+   * Returns a quick info about the object, which can be displayed in the GUI.
+   * <br>
+   * Default implementation returns null.
+   *
+   * @return		null if no info available, otherwise short string
+   */
+  public String getQuickInfo() {
+    return null;
+  }
 
   /**
    * Hook method for checks.
