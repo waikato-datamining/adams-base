@@ -20,6 +20,7 @@
 
 package adams.data.spreadsheet.filter;
 
+import adams.core.option.OptionUtils;
 import adams.data.conversion.SpreadSheetToWekaInstances;
 import adams.data.conversion.WekaInstancesToSpreadSheet;
 import adams.data.spreadsheet.SpreadSheet;
@@ -40,6 +41,9 @@ public class WekaFilter
 
   /** the filter to use. */
   protected Filter m_Filter;
+
+  /** the actual filter in use. */
+  protected Filter m_ActualFilter;
 
   /** the threshold for number of labels before an attribute gets switched
    * to {@link Attribute#STRING}. */
@@ -190,9 +194,10 @@ public class WekaFilter
     Instances		inst;
     Instances		filtered;
 
-    inst = toInstances(data);
-    m_Filter.setInputFormat(inst);
-    filtered = Filter.useFilter(inst, m_Filter);
+    m_ActualFilter = (Filter) OptionUtils.shallowCopy(m_Filter);
+    inst           = toInstances(data);
+    m_ActualFilter.setInputFormat(inst);
+    filtered = Filter.useFilter(inst, m_ActualFilter);
 
     return toSpreadSheet(filtered);
   }
@@ -210,7 +215,7 @@ public class WekaFilter
     Instances		filtered;
 
     inst = toInstances(data);
-    filtered = Filter.useFilter(inst, m_Filter);
+    filtered = Filter.useFilter(inst, m_ActualFilter);
 
     return toSpreadSheet(filtered);
   }
