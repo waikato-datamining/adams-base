@@ -39,6 +39,10 @@ adams.data.spreadsheet.matrixstatistic.AbstractMatrixStatistic=\
 adams.data.spreadsheet.rowscore.AbstractRowScore=\
   adams.data.spreadsheet.rowscore
 
+# The spreadsheet filters
+adams.data.spreadsheet.filter.SpreadSheetFilter=\
+  adams.data.spreadsheet.filter
+
 # the type mappers
 adams.data.spreadsheet.sql.AbstractTypeMapper=\
   adams.data.spreadsheet.sql
