@@ -672,7 +672,7 @@ public class SpreadSheetMerge
     int			i;
     Row			row;
 
-    result = inst;
+    result = inst.getClone();
 
     // generate prefix
     prefix = createPrefix(index);
