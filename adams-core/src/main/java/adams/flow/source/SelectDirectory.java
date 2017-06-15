@@ -23,6 +23,8 @@ package adams.flow.source;
 import adams.core.Properties;
 import adams.core.QuickInfoHelper;
 import adams.core.io.ConsoleHelper;
+import adams.core.io.FileUtils;
+import adams.core.io.ForwardSlashSupporter;
 import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
 import adams.flow.core.AutomatableInteractiveActor;
@@ -53,79 +55,85 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- *
+ * 
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: SelectDirectory
  * </pre>
- *
+ * 
  * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- *
+ * 
  * <pre>-skip &lt;boolean&gt; (property: skip)
  * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
  * &nbsp;&nbsp;&nbsp;as it is.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
  * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this 
  * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical 
  * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-silent &lt;boolean&gt; (property: silent)
  * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
  * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-stop-if-canceled &lt;boolean&gt; (property: stopFlowIfCanceled)
  * &nbsp;&nbsp;&nbsp;If enabled, the flow gets stopped in case the user cancels the dialog.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-custom-stop-message &lt;java.lang.String&gt; (property: customStopMessage)
  * &nbsp;&nbsp;&nbsp;The custom stop message to use in case a user cancelation stops the flow 
  * &nbsp;&nbsp;&nbsp;(default is the full name of the actor)
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- *
+ * 
  * <pre>-dir-chooser-title &lt;java.lang.String&gt; (property: directoryChooserTitle)
  * &nbsp;&nbsp;&nbsp;The title for the directory chooser dialog.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- *
+ * 
  * <pre>-initial-dir &lt;adams.core.io.PlaceholderDirectory&gt; (property: initialDirectory)
  * &nbsp;&nbsp;&nbsp;The initial directory for the directory chooser.
  * &nbsp;&nbsp;&nbsp;default: ${CWD}
  * </pre>
- *
+ * 
  * <pre>-absolute &lt;boolean&gt; (property: absoluteDirectoryName)
  * &nbsp;&nbsp;&nbsp;If enabled, the directory name is output in absolute instead of relative 
  * &nbsp;&nbsp;&nbsp;form.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
+ * <pre>-use-forward-slashes &lt;boolean&gt; (property: useForwardSlashes)
+ * &nbsp;&nbsp;&nbsp;If enabled, forward slashes are used in the output (but the '\\' prefix 
+ * &nbsp;&nbsp;&nbsp;of UNC paths is not converted).
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
  * <pre>-non-interactive &lt;boolean&gt; (property: nonInteractive)
  * &nbsp;&nbsp;&nbsp;If enabled, the initial directory is forwarded without user interaction.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-restoration-enabled &lt;boolean&gt; (property: restorationEnabled)
  * &nbsp;&nbsp;&nbsp;If enabled, the state of the actor is being preserved and attempted to read 
  * &nbsp;&nbsp;&nbsp;in again next time this actor is executed.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
  * <pre>-restoration-file &lt;adams.core.io.PlaceholderFile&gt; (property: restorationFile)
  * &nbsp;&nbsp;&nbsp;The file to store the restoration information in.
  * &nbsp;&nbsp;&nbsp;default: ${CWD}
  * </pre>
- *
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -133,7 +141,7 @@ import java.util.List;
  */
 public class SelectDirectory
   extends AbstractInteractiveSource
-  implements AutomatableInteractiveActor, RestorableActor {
+  implements AutomatableInteractiveActor, RestorableActor, ForwardSlashSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = -3223325917850709883L;
@@ -148,6 +156,9 @@ public class SelectDirectory
 
   /** whether to use absolute file/dir names. */
   protected boolean m_AbsoluteDirectoryName;
+
+  /** whether to output forward slashes. */
+  protected boolean m_UseForwardSlashes;
 
   /** whether to automate the actor. */
   protected boolean m_NonInteractive;
@@ -193,6 +204,10 @@ public class SelectDirectory
       false);
 
     m_OptionManager.add(
+      "use-forward-slashes", "useForwardSlashes",
+      false);
+
+    m_OptionManager.add(
       "non-interactive", "nonInteractive",
       false);
 
@@ -226,8 +241,9 @@ public class SelectDirectory
     List<String>	options;
 
     result = QuickInfoHelper.toString(this, "initialDirectory", m_InitialDirectory, "directory: ");
-    options = new ArrayList<String>();
+    options = new ArrayList<>();
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "absoluteDirectoryName", m_AbsoluteDirectoryName, "absolute"));
+    QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "useForwardSlashes", m_UseForwardSlashes, "forward"));
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "stopFlowIfCanceled", m_StopFlowIfCanceled, "stops flow if canceled"));
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "nonInteractive", m_NonInteractive, "non-interactive"));
     result += QuickInfoHelper.flatten(options);
@@ -320,6 +336,37 @@ public class SelectDirectory
    */
   public String absoluteDirectoryNameTipText() {
     return "If enabled, the directory name is output in absolute instead of relative form.";
+  }
+
+  /**
+   * Sets whether to use forward slashes in the output.
+   *
+   * @param value	if true then use forward slashes
+   */
+  public void setUseForwardSlashes(boolean value) {
+    m_UseForwardSlashes = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to use forward slashes in the output.
+   *
+   * @return		true if forward slashes are used
+   */
+  public boolean getUseForwardSlashes() {
+    return m_UseForwardSlashes;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String useForwardSlashesTipText() {
+    return
+	"If enabled, forward slashes are used in the output (but "
+	+ "the '\\\\' prefix of UNC paths is not converted).";
   }
 
   /**
@@ -425,6 +472,28 @@ public class SelectDirectory
   }
 
   /**
+   * Converts the file object into a string.
+   *
+   * @param file	the file to convert
+   * @return		the generated string
+   * @see		#getAbsoluteDirectoryName()
+   * @see		#getUseForwardSlashes()
+   */
+  protected String convert(File file) {
+    String	result;
+
+    if (m_AbsoluteDirectoryName)
+      result = file.getAbsolutePath();
+    else
+      result = new PlaceholderFile(file).toString();
+
+    if (m_UseForwardSlashes)
+      result = FileUtils.useForwardSlashes(result);
+
+    return result;
+  }
+
+  /**
    * Performs the interaction with the user.
    *
    * @return		true if successfully interacted
@@ -440,10 +509,7 @@ public class SelectDirectory
     PlaceholderDirectory	initial;
 
     if (m_NonInteractive) {
-      if (m_AbsoluteDirectoryName)
-        m_OutputToken = new Token(m_InitialDirectory.getAbsolutePath());
-      else
-        m_OutputToken = new Token(m_InitialDirectory.toString());
+      m_OutputToken = new Token(convert(m_InitialDirectory));
       return true;
     }
 
@@ -468,10 +534,7 @@ public class SelectDirectory
     if (retVal == BaseDirectoryChooser.APPROVE_OPTION) {
       result = true;
       dir = dirChooser.getSelectedFile();
-      if (m_AbsoluteDirectoryName)
-        m_OutputToken = new Token(dir.getAbsolutePath());
-      else
-        m_OutputToken = new Token(dir.toString());
+      m_OutputToken = new Token(convert(dir));
       if (m_RestorationEnabled) {
         props = new Properties();
         props.setProperty(KEY_INITIAL, dir.getAbsolutePath());
@@ -506,10 +569,7 @@ public class SelectDirectory
     PlaceholderDirectory	initial;
 
     if (m_NonInteractive) {
-      if (m_AbsoluteDirectoryName)
-        m_OutputToken = new Token(m_InitialDirectory.getAbsolutePath());
-      else
-        m_OutputToken = new Token(m_InitialDirectory.toString());
+      m_OutputToken = new Token(convert(m_InitialDirectory));
       return true;
     }
 
@@ -529,10 +589,7 @@ public class SelectDirectory
     if (dir != null) {
       result = dir.isDirectory();
       if (result) {
-        if (m_AbsoluteDirectoryName)
-          m_OutputToken = new Token(dir.getAbsolutePath());
-        else
-          m_OutputToken = new Token(dir.toString());
+	m_OutputToken = new Token(convert(dir));
         if (m_RestorationEnabled) {
           props = new Properties();
           props.setProperty(KEY_INITIAL, dir.getAbsolutePath());

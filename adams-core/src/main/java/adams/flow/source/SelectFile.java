@@ -24,6 +24,8 @@ import adams.core.Properties;
 import adams.core.QuickInfoHelper;
 import adams.core.base.BaseString;
 import adams.core.io.ConsoleHelper;
+import adams.core.io.FileUtils;
+import adams.core.io.ForwardSlashSupporter;
 import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
 import adams.core.option.OptionUtils;
@@ -129,6 +131,12 @@ import java.util.logging.Level;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
+ * <pre>-use-forward-slashes &lt;boolean&gt; (property: useForwardSlashes)
+ * &nbsp;&nbsp;&nbsp;If enabled, forward slashes are used in the output (but the '\\' prefix 
+ * &nbsp;&nbsp;&nbsp;of UNC paths is not converted).
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
  * <pre>-non-interactive &lt;boolean&gt; (property: nonInteractive)
  * &nbsp;&nbsp;&nbsp;If enabled, the initial value is forwarded without user interaction.
  * &nbsp;&nbsp;&nbsp;default: false
@@ -152,7 +160,8 @@ import java.util.logging.Level;
  */
 public class SelectFile
   extends AbstractArrayProvider
-  implements InteractiveActor, AutomatableInteractiveActor, RestorableActor {
+  implements InteractiveActor, AutomatableInteractiveActor, RestorableActor,
+             ForwardSlashSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = 8200691218381875131L;
@@ -175,6 +184,9 @@ public class SelectFile
   
   /** whether to use absolute file/dir names. */
   protected boolean m_AbsoluteFileNames;
+
+  /** whether to output forward slashes. */
+  protected boolean m_UseForwardSlashes;
 
   /** whether to stop the flow if canceled. */
   protected boolean m_StopFlowIfCanceled;
@@ -239,6 +251,10 @@ public class SelectFile
 	    false);
 
     m_OptionManager.add(
+	    "use-forward-slashes", "useForwardSlashes",
+	    false);
+
+    m_OptionManager.add(
 	    "non-interactive", "nonInteractive",
 	    false);
 
@@ -262,8 +278,9 @@ public class SelectFile
     List<String>	options;
 
     result  = QuickInfoHelper.toString(this, "initialDirectory", m_InitialDirectory, "directory: ");
-    options = new ArrayList<String>();
+    options = new ArrayList<>();
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "absoluteFileNames", m_AbsoluteFileNames, "absolute"));
+    QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "useForwardSlashes", m_UseForwardSlashes, "forward"));
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "outputArray", m_OutputArray, "array"));
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "stopFlowIfCanceled", m_StopFlowIfCanceled, "stops flow if canceled"));
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "nonInteractive", m_NonInteractive, "non-interactive"));
@@ -426,6 +443,37 @@ public class SelectFile
    */
   public String absoluteFileNamesTipText() {
     return "If enabled, absolute file names instead of relative ones are output.";
+  }
+
+  /**
+   * Sets whether to use forward slashes in the output.
+   *
+   * @param value	if true then use forward slashes
+   */
+  public void setUseForwardSlashes(boolean value) {
+    m_UseForwardSlashes = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to use forward slashes in the output.
+   *
+   * @return		true if forward slashes are used
+   */
+  public boolean getUseForwardSlashes() {
+    return m_UseForwardSlashes;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String useForwardSlashesTipText() {
+    return
+	"If enabled, forward slashes are used in the output (but "
+	+ "the '\\\\' prefix of UNC paths is not converted).";
   }
 
   /**
@@ -592,6 +640,28 @@ public class SelectFile
   }
 
   /**
+   * Converts the file object into a string.
+   *
+   * @param file	the file to convert
+   * @return		the generated string
+   * @see		#getAbsoluteFileNames()
+   * @see		#getUseForwardSlashes()
+   */
+  protected String convert(File file) {
+    String	result;
+
+    if (m_AbsoluteFileNames)
+      result = file.getAbsolutePath();
+    else
+      result = new PlaceholderFile(file).toString();
+
+    if (m_UseForwardSlashes)
+      result = FileUtils.useForwardSlashes(result);
+
+    return result;
+  }
+
+  /**
    * Performs the interaction with the user.
    *
    * @return		true if successfully interacted
@@ -615,12 +685,8 @@ public class SelectFile
     m_Queue.clear();
 
     if (m_NonInteractive) {
-      for (File file: m_InitialFiles) {
-	if (m_AbsoluteFileNames)
-	  m_Queue.add(file.getAbsolutePath());
-	else
-	  m_Queue.add(new PlaceholderFile(file).toString());
-      }
+      for (File file: m_InitialFiles)
+        m_Queue.add(convert(file));
       return true;
     }
 
@@ -681,12 +747,8 @@ public class SelectFile
     if (retVal == BaseFileChooser.APPROVE_OPTION) {
       result = true;
       files  = fileChooser.getSelectedFiles();
-      for (File file: files) {
-	if (m_AbsoluteFileNames)
-	  m_Queue.add(file.getAbsolutePath());
-	else
-	  m_Queue.add(new PlaceholderFile(file).toString());
-      }
+      for (File file: files)
+        m_Queue.add(convert(file));
       if (m_RestorationEnabled) {
 	initialFilesStr = new String[files.length];
 	for (i = 0; i < files.length; i++)
@@ -730,12 +792,8 @@ public class SelectFile
     m_Queue.clear();
 
     if (m_NonInteractive) {
-      for (File file: m_InitialFiles) {
-	if (m_AbsoluteFileNames)
-	  m_Queue.add(file.getAbsolutePath());
-	else
-	  m_Queue.add(new PlaceholderFile(file).toString());
-      }
+      for (File file: m_InitialFiles)
+	m_Queue.add(convert(file));
       return true;
     }
 
@@ -744,14 +802,8 @@ public class SelectFile
       result   = true;
       filesStr = new String[files.length];
       for (i = 0; i < files.length; i++) {
-	if (m_AbsoluteFileNames) {
-	  filesStr[i] = files[i].getAbsolutePath();
-	  m_Queue.add(filesStr[i]);
-	}
-	else {
-	  filesStr[i] = files[i].toString();
-	  m_Queue.add(filesStr[i]);
-	}
+	filesStr[i] = convert(files[i]);
+	m_Queue.add(filesStr[i]);
       }
       if (m_RestorationEnabled) {
 	props = new Properties();
