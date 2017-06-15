@@ -15,14 +15,14 @@
 
 /**
  * BooleanExpressionTest.java
- * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.parser;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import adams.core.base.BaseString;
 import adams.env.Environment;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Tests the adams.parser.BooleanExpression class. Run from commandline with: <br><br>
@@ -153,6 +153,10 @@ public class BooleanExpressionTest
 	  {/** no symbols necessary */},		// 99
 	  {/** no symbols necessary */},		// 100
 	  {/** no symbols necessary */},		// 101
+	  {/** no symbols necessary */},		// 102
+	  {/** no symbols necessary */},		// 103
+	  {/** no symbols necessary */},		// 104
+	  {/** no symbols necessary */},		// 105
 	}
     };
   }
@@ -267,6 +271,10 @@ public class BooleanExpressionTest
 	  "hypot(4, 3) = 5", 	// 99
 	  "signum(-3.7) = -1", 	// 100
 	  "signum(2.1) = 1", 	// 101
+	  "str(2.1) = \"2.1\"", 	// 102
+	  "str(2.1, 0) = \"2\"", 	// 103
+	  "str(2.123, 2) = \"2.12\"", 	// 104
+	  "str(2234.1, \"#,###.000\") = \"2,234.100\"", 	// 105
 	}
     };
   }

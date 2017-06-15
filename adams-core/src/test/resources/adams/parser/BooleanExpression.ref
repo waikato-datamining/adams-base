@@ -100,4 +100,8 @@
 'hypot(4, 3) = 5: true
 'signum(-3.7) = -1: true
 'signum(2.1) = 1: true
+'str(2.1) = "2.1": true
+'str(2.1, 0) = "2": true
+'str(2.123, 2) = "2.12": true
+'str(2234.1, "#,###.000") = "2,234.100": true
 

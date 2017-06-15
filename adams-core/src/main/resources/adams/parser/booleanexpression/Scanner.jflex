@@ -129,6 +129,7 @@ import java.io.*;
   "find" { return sf.newSymbol("Find", sym.FIND); }
   "concatenate" { return sf.newSymbol("Concantenate", sym.CONCATENATE); }
   "rept" { return sf.newSymbol("repeat", sym.REPEAT); }
+  "str" { return sf.newSymbol("str", sym.STR); }
   "now" { return sf.newSymbol("Now", sym.NOW); }
   "today" { return sf.newSymbol("Today", sym.TODAY); }
   "year" { return sf.newSymbol("Year", sym.YEAR); }

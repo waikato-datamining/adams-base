@@ -173,7 +173,7 @@ terminal ABS, SQRT, LOG, EXP, SIN, COS, TAN, RINT, FLOOR, POW, CEIL, MIN, MAX, I
 terminal CBRT, LOG10, COSH, SINH, TANH, ATAN, ATAN2, HYPOT, SIGNUM;
 terminal IFMISSING, LENGTH, GET, TRIM;
 terminal SUBSTR, LOWERCASE, UPPERCASE, MATCHES;
-terminal LEFT, RIGHT, MID, REPLACE, SUBSTITUTE, FIND, CONCATENATE, REPEAT;
+terminal LEFT, RIGHT, MID, REPLACE, SUBSTITUTE, FIND, CONCATENATE, REPEAT, STR;
 terminal TRUE, FALSE, LT, LE, GT, GE, EQ, NOT_EQ, NOT, AND, OR;
 terminal PI, E;
 terminal NOW, TODAY, YEAR, MONTH, DAY, HOUR, MINUTE, SECOND, WEEKNUM, WEEKDAY;
@@ -194,7 +194,7 @@ precedence left PLUS, MINUS;
 precedence left TIMES, DIVISION, MODULO;
 precedence left EXPONENT;
 precedence left LPAREN, RPAREN;
-precedence left ABS, SQRT, LOG, EXP, SIN, COS, TAN, RINT, FLOOR, POW, CEIL, MIN, MAX, IFELSE, IFMISSING, ISNAN, LENGTH, GET, SUBSTR, LOWERCASE, UPPERCASE, MATCHES, TRIM, LEFT, RIGHT, MID, REPLACE, SUBSTITUTE, FIND, CONCATENATE, REPEAT, FUNCTION, PROCEDURE;
+precedence left ABS, SQRT, LOG, EXP, SIN, COS, TAN, RINT, FLOOR, POW, CEIL, MIN, MAX, IFELSE, IFMISSING, ISNAN, LENGTH, GET, SUBSTR, LOWERCASE, UPPERCASE, MATCHES, TRIM, LEFT, RIGHT, MID, REPLACE, SUBSTITUTE, FIND, CONCATENATE, REPEAT, STR, FUNCTION, PROCEDURE;
 precedence left NOT, UMINUS;
 
 expr_list ::= expr_list expr_part | expr_part;
@@ -440,6 +440,12 @@ expr      ::=
                 {: RESULT = parser.getHelper().substitute(parser.getHelper().toString(s), parser.getHelper().toString(f), parser.getHelper().toString(r)); :}
               | SUBSTITUTE LPAREN expr:s semi_or_comma expr:f semi_or_comma expr:r semi_or_comma expr:o RPAREN
                 {: RESULT = parser.getHelper().substitute(parser.getHelper().toString(s), parser.getHelper().toString(f), parser.getHelper().toString(r), parser.getHelper().toInteger(o)); :}
+              | STR LPAREN expr:s RPAREN
+                {: RESULT = parser.getHelper().toString(s); :}
+              | STR LPAREN expr:d semi_or_comma NUMBER:n RPAREN
+                {: RESULT = adams.core.Utils.doubleToString(parser.getHelper().toDouble(d), parser.getHelper().toInteger(n)); :}
+              | STR LPAREN expr:d semi_or_comma STRING:f RPAREN
+                {: RESULT = new java.text.DecimalFormat(f).format(parser.getHelper().toDouble(d)); :}
               ;
 
 semi_or_comma ::= SEMICOLON | COMMA ;

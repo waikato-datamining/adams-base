@@ -132,6 +132,9 @@ import java.util.logging.Level;
  *               | find ( search , expr [, pos] )<br>
  *               | replace ( str , pos , len , newstr )<br>
  *               | substitute ( str , find , replace [, occurrences] )<br>
+ *               | str ( expr )<br>
+ *               | str ( expr , numdecimals )<br>
+ *               | str ( expr , decimalformat )<br>
  * <br>
  * # array functions<br>
  *               | len[gth] ( array )<br>
@@ -316,6 +319,9 @@ public class StringExpression
       + "              | find ( search , expr [, pos] )\n"
       + "              | replace ( str , pos , len , newstr )\n"
       + "              | substitute ( str , find , replace [, occurrences] )\n"
+      + "              | str ( expr )\n"
+      + "              | str ( expr  , numdecimals )\n"
+      + "              | str ( expr  , decimalformat )\n"
       + "\n"
       + "# array functions\n"
       + "              | len[gth] ( array )\n"
