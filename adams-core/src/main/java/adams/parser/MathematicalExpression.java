@@ -148,6 +148,7 @@ import java.util.HashMap;
  * - times have to be of format 'HH:mm:ss' or 'yyyy-MM-dd HH:mm:ss'<br>
  * - the characters in square brackets in function names are optional:<br>
  *   e.g. 'len("abc")' is the same as 'length("abc")'<br>
+ * - 'str' uses java.text.DecimalFormat when supplying a format string<br>
  * <br>
  * A lot of the functions have been modeled after LibreOffice:<br>
  *   https:&#47;&#47;help.libreoffice.org&#47;Calc&#47;Functions_by_Category<br>
@@ -355,6 +356,7 @@ public class MathematicalExpression
       + "- times have to be of format 'HH:mm:ss' or 'yyyy-MM-dd HH:mm:ss'\n"
       + "- the characters in square brackets in function names are optional:\n"
       + "  e.g. 'len(\"abc\")' is the same as 'length(\"abc\")'\n"
+      + "- 'str' uses "  + java.text.DecimalFormat.class.getName() + " when supplying a format string\n"
       + "\n"
       + "A lot of the functions have been modeled after LibreOffice:\n"
       + "  https://help.libreoffice.org/Calc/Functions_by_Category\n"
