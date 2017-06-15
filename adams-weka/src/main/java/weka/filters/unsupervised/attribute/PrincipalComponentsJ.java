@@ -38,49 +38,44 @@ import weka.filters.UnsupervisedFilter;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Vector;
 
 /**
- * <!-- globalinfo-start --> Performs a principal components analysis and
- * transformation of the data.<br/>
- * Dimensionality reduction is accomplished by choosing enough eigenvectors to
- * account for some percentage of the variance in the original data -- default
- * 0.95 (95%).<br/>
- * Based on code of the attribute selection scheme 'PrincipalComponents' by Mark
- * Hall and Gabi Schmidberger.
- * <p/>
+ * <!-- globalinfo-start -->
+ * * Performs a principal components analysis and transformation of the data.<br>
+ * * Dimensionality reduction is accomplished by choosing enough eigenvectors to account for some percentage of the variance in the original data -- default 0.95 (95%).<br>
+ * * Based on code of the attribute selection scheme 'PrincipalComponents' by Mark Hall and Gabi Schmidberger.
+ * * <br><br>
  * <!-- globalinfo-end -->
  * 
- * <!-- options-start --> Valid options are:
- * <p/>
- * 
- * <pre>
- * -C
- *  Center (rather than standardize) the
- *  data and compute PCA using the covariance (rather
- *   than the correlation) matrix.
- * </pre>
- * 
- * <pre>
- * -R &lt;num&gt;
- *  Retain enough PC attributes to account
- *  for this proportion of variance in the original data.
- *  (default: 0.95)
- * </pre>
- * 
- * <pre>
- * -A &lt;num&gt;
- *  Maximum number of attributes to include in 
- *  transformed attribute names.
- *  (-1 = include all, default: 5)
- * </pre>
- * 
- * <pre>
- * -M &lt;num&gt;
- *  Maximum number of PC attributes to retain.
- *  (-1 = include all, default: -1)
- * </pre>
- * 
+ * <!-- options-start -->
+ * * Valid options are: <p>
+ * * 
+ * * <pre> -C
+ * *  Center (rather than standardize) the
+ * *  data and compute PCA using the covariance (rather
+ * *   than the correlation) matrix.</pre>
+ * * 
+ * * <pre> -R &lt;num&gt;
+ * *  Retain enough PC attributes to account
+ * *  for this proportion of variance in the original data.
+ * *  (default: 0.95)</pre>
+ * * 
+ * * <pre> -A &lt;num&gt;
+ * *  Maximum number of attributes to include in 
+ * *  transformed attribute names.
+ * *  (-1 = include all, default: 5)</pre>
+ * * 
+ * * <pre> -M &lt;num&gt;
+ * *  Maximum number of PC attributes to retain.
+ * *  (-1 = include all, default: -1)</pre>
+ * * 
+ * * <pre> -simple-attribute-names
+ * *  Whether to simply number the attributes instead of compiling
+ * *  them from other attribute names.
+ * *  (default: off)</pre>
+ * * 
  * <!-- options-end -->
  * 
  * @author Mark Hall (mhall@cs.waikato.ac.nz) -- attribute selection code
@@ -88,8 +83,9 @@ import java.util.Vector;
  * @author fracpete (fracpete at waikato dot ac dot nz) -- filter code
  * @version $Revision: 12037 $
  */
-public class PrincipalComponentsJ extends Filter implements OptionHandler,
-  UnsupervisedFilter {
+public class PrincipalComponentsJ
+  extends Filter
+  implements OptionHandler, UnsupervisedFilter {
 
   /** for serialization. */
   private static final long serialVersionUID = -5649876869480249303L;
@@ -169,6 +165,9 @@ public class PrincipalComponentsJ extends Filter implements OptionHandler,
   /** maximum number of attributes in the transformed data (-1 for all). */
   protected int m_MaxAttributes = -1;
 
+  /** whether to just number the attributes rather than compiling them from other attribute names. */
+  protected boolean m_SimpleAttributeNames = false;
+
   /**
    * Returns a string describing this filter.
    * 
@@ -192,8 +191,7 @@ public class PrincipalComponentsJ extends Filter implements OptionHandler,
    */
   @Override
   public Enumeration<Option> listOptions() {
-
-    Vector<Option> result = new Vector<Option>();
+    Vector<Option> result = new Vector<>();
 
     result.addElement(new Option("\tCenter (rather than standardize) the"
       + "\n\tdata and compute PCA using the covariance (rather"
@@ -212,73 +210,42 @@ public class PrincipalComponentsJ extends Filter implements OptionHandler,
       "\tMaximum number of PC attributes to retain.\n"
         + "\t(-1 = include all, default: -1)", "M", 1, "-M <num>"));
 
+    result.addElement(new Option(
+      "\tWhether to simply number the attributes instead of compiling\n"
+	+ "\tthem from other attribute names.\n"
+        + "\t(default: off)", "simple-attribute-names", 0, "-simple-attribute-names"));
+
     return result.elements();
   }
 
   /**
    * Parses a list of options for this object.
-   * <p/>
-   * 
-   * <!-- options-start --> Valid options are:
-   * <p/>
-   * 
-   * <pre>
-   * -C
-   *  Center (rather than standardize) the
-   *  data and compute PCA using the covariance (rather
-   *   than the correlation) matrix.
-   * </pre>
-   * 
-   * <pre>
-   * -R &lt;num&gt;
-   *  Retain enough PC attributes to account
-   *  for this proportion of variance in the original data.
-   *  (default: 0.95)
-   * </pre>
-   * 
-   * <pre>
-   * -A &lt;num&gt;
-   *  Maximum number of attributes to include in 
-   *  transformed attribute names.
-   *  (-1 = include all, default: 5)
-   * </pre>
-   * 
-   * <pre>
-   * -M &lt;num&gt;
-   *  Maximum number of PC attributes to retain.
-   *  (-1 = include all, default: -1)
-   * </pre>
-   * 
-   * <!-- options-end -->
-   * 
+   *
    * @param options the list of options as an array of strings
    * @throws Exception if an option is not supported
    */
   @Override
   public void setOptions(String[] options) throws Exception {
-
     String tmpStr = Utils.getOption('R', options);
-    if (tmpStr.length() != 0) {
+    if (tmpStr.length() != 0)
       setVarianceCovered(Double.parseDouble(tmpStr));
-    } else {
+    else
       setVarianceCovered(0.95);
-    }
 
     tmpStr = Utils.getOption('A', options);
-    if (tmpStr.length() != 0) {
+    if (tmpStr.length() != 0)
       setMaximumAttributeNames(Integer.parseInt(tmpStr));
-    } else {
+    else
       setMaximumAttributeNames(5);
-    }
 
     tmpStr = Utils.getOption('M', options);
-    if (tmpStr.length() != 0) {
+    if (tmpStr.length() != 0)
       setMaximumAttributes(Integer.parseInt(tmpStr));
-    } else {
+    else
       setMaximumAttributes(-1);
-    }
 
     setCenterData(Utils.getFlag('C', options));
+    setSimpleAttributeNames(Utils.getFlag("simple-attribute-names", options));
 
     Utils.checkForRemainingOptions(options);
   }
@@ -290,8 +257,7 @@ public class PrincipalComponentsJ extends Filter implements OptionHandler,
    */
   @Override
   public String[] getOptions() {
-
-    Vector<String> result = new Vector<String>();
+    List<String> result = new ArrayList<>();
 
     result.add("-R");
     result.add("" + getVarianceCovered());
@@ -302,9 +268,11 @@ public class PrincipalComponentsJ extends Filter implements OptionHandler,
     result.add("-M");
     result.add("" + getMaximumAttributes());
 
-    if (getCenterData()) {
+    if (getCenterData())
       result.add("-C");
-    }
+
+    if (getSimpleAttributeNames())
+      result.add("-simple-attribute-names");
 
     return result.toArray(new String[result.size()]);
   }
@@ -429,6 +397,34 @@ public class PrincipalComponentsJ extends Filter implements OptionHandler,
   }
 
   /**
+   * Returns the tip text for this property
+   *
+   * @return tip text for this property suitable for displaying in the
+   *         explorer/experimenter gui
+   */
+  public String simpleAttributesNamesTipText() {
+    return "If enabled, the new attribute names will be simply numbered rather than made up of other attribute names.";
+  }
+
+  /**
+   * Set whether to just number the attributes rather than compiling names.
+   *
+   * @param value true if to just number the attributes
+   */
+  public void setSimpleAttributeNames(boolean value) {
+    m_SimpleAttributeNames = value;
+  }
+
+  /**
+   * Get whether to just number the attributes rather than compiling names.
+   *
+   * @return true if to just number the attributes
+   */
+  public boolean getSimpleAttributeNames() {
+    return m_SimpleAttributeNames;
+  }
+
+  /**
    * Returns the capabilities of this evaluator.
    * 
    * @return the capabilities of this evaluator
@@ -467,8 +463,7 @@ public class PrincipalComponentsJ extends Filter implements OptionHandler,
    * @throws Exception in case the determination goes wrong
    * @see #batchFinished()
    */
-  protected Instances determineOutputFormat(Instances inputFormat)
-    throws Exception {
+  protected Instances determineOutputFormat(Instances inputFormat) throws Exception {
     double cumulative;
     ArrayList<Attribute> attributes;
     int i;
@@ -480,74 +475,69 @@ public class PrincipalComponentsJ extends Filter implements OptionHandler,
     double coeff_value;
     int numAttsLowerBound;
 
-    if (m_Eigenvalues == null) {
+    if (m_Eigenvalues == null)
       return inputFormat;
-    }
 
-    if (m_MaxAttributes > 0) {
+    if (m_MaxAttributes > 0)
       numAttsLowerBound = m_NumAttribs - m_MaxAttributes;
-    } else {
+    else
       numAttsLowerBound = 0;
-    }
-    if (numAttsLowerBound < 0) {
+    if (numAttsLowerBound < 0)
       numAttsLowerBound = 0;
-    }
 
     cumulative = 0.0;
-    attributes = new ArrayList<Attribute>();
+    attributes = new ArrayList<>();
     for (i = m_NumAttribs - 1; i >= numAttsLowerBound; i--) {
       attName = new StringBuffer();
       // build array of coefficients
       coeff_mags = new double[m_NumAttribs];
-      for (j = 0; j < m_NumAttribs; j++) {
+      for (j = 0; j < m_NumAttribs; j++)
         coeff_mags[j] = -Math.abs(m_Eigenvectors[j][m_SortedEigens[i]]);
-      }
-      num_attrs = (m_MaxAttrsInName > 0) ? Math.min(m_NumAttribs,
-        m_MaxAttrsInName) : m_NumAttribs;
+      num_attrs = (m_MaxAttrsInName > 0) ? Math.min(m_NumAttribs, m_MaxAttrsInName) : m_NumAttribs;
 
       // this array contains the sorted indices of the coefficients
       if (m_NumAttribs > 0) {
         // if m_maxAttrsInName > 0, sort coefficients by decreasing magnitude
         coeff_inds = Utils.sort(coeff_mags);
-      } else {
+      }
+      else {
         // if m_maxAttrsInName <= 0, use all coeffs in original order
         coeff_inds = new int[m_NumAttribs];
-        for (j = 0; j < m_NumAttribs; j++) {
+        for (j = 0; j < m_NumAttribs; j++)
           coeff_inds[j] = j;
-        }
       }
       // build final attName string
-      for (j = 0; j < num_attrs; j++) {
-        coeff_value = m_Eigenvectors[coeff_inds[j]][m_SortedEigens[i]];
-        if (j > 0 && coeff_value >= 0) {
-          attName.append("+");
-        }
-        attName.append(Utils.doubleToString(coeff_value, 5, 3)
-          + inputFormat.attribute(coeff_inds[j]).name());
+      if (m_SimpleAttributeNames) {
+	attName.append("PCA_" + (attributes.size()+1));
       }
-      if (num_attrs < m_NumAttribs) {
-        attName.append("...");
+      else {
+	for (j = 0; j < num_attrs; j++) {
+	  coeff_value = m_Eigenvectors[coeff_inds[j]][m_SortedEigens[i]];
+	  if (j > 0 && coeff_value >= 0)
+	    attName.append("+");
+	  attName.append(Utils.doubleToString(coeff_value, 5, 3)
+	    + inputFormat.attribute(coeff_inds[j]).name());
+	}
+	if (num_attrs < m_NumAttribs)
+	  attName.append("...");
       }
 
       attributes.add(new Attribute(attName.toString()));
       cumulative += m_Eigenvalues[m_SortedEigens[i]];
 
-      if ((cumulative / m_SumOfEigenValues) >= m_CoverVariance) {
+      if ((cumulative / m_SumOfEigenValues) >= m_CoverVariance)
         break;
-      }
     }
 
-    if (m_HasClass) {
+    if (m_HasClass)
       attributes.add((Attribute) m_TrainCopy.classAttribute().copy());
-    }
 
     Instances outputFormat = new Instances(m_TrainCopy.relationName()
       + "_principal components", attributes, 0);
 
     // set the class to be the last attribute if necessary
-    if (m_HasClass) {
+    if (m_HasClass)
       outputFormat.setClassIndex(outputFormat.numAttributes() - 1);
-    }
 
     m_OutputNumAtts = outputFormat.numAttributes();
 
@@ -555,14 +545,13 @@ public class PrincipalComponentsJ extends Filter implements OptionHandler,
   }
 
   protected void fillCovariance() throws Exception {
-
-
     // just center the data or standardize it?
     if (m_center) {
       m_centerFilter = new Center();
       m_centerFilter.setInputFormat(m_TrainInstances);
       m_TrainInstances = Filter.useFilter(m_TrainInstances, m_centerFilter);
-    } else {
+    }
+    else {
       m_standardizeFilter = new Standardize();
       m_standardizeFilter.setInputFormat(m_TrainInstances);
       m_TrainInstances = Filter.useFilter(m_TrainInstances, m_standardizeFilter);
@@ -573,11 +562,9 @@ public class PrincipalComponentsJ extends Filter implements OptionHandler,
 
     for (int i = 0; i < m_NumAttribs; i++) {
       for (int j = i; j < m_NumAttribs; j++) {
-
         double cov = 0;
-        for (Instance inst: m_TrainInstances) {
+        for (Instance inst: m_TrainInstances)
           cov += inst.value(i) * inst.value(j);
-        }
 
         cov /= m_TrainInstances.numInstances() - 1;
         m_Correlation[i][j] = cov;
@@ -624,45 +611,40 @@ public class PrincipalComponentsJ extends Filter implements OptionHandler,
       m_standardizeFilter.input(tempInst);
       m_standardizeFilter.batchFinished();
       tempInst = m_standardizeFilter.output();
-    } else {
+    }
+    else {
       m_centerFilter.input(tempInst);
       m_centerFilter.batchFinished();
       tempInst = m_centerFilter.output();
     }
 
-    if (m_HasClass) {
+    if (m_HasClass)
       newVals[m_OutputNumAtts - 1] = instance.value(instance.classIndex());
-    }
 
-    if (m_MaxAttributes > 0) {
+    if (m_MaxAttributes > 0)
       numAttsLowerBound = m_NumAttribs - m_MaxAttributes;
-    } else {
+    else
       numAttsLowerBound = 0;
-    }
-    if (numAttsLowerBound < 0) {
+    if (numAttsLowerBound < 0)
       numAttsLowerBound = 0;
-    }
 
     cumulative = 0;
     for (i = m_NumAttribs - 1; i >= numAttsLowerBound; i--) {
       tempval = 0.0;
-      for (j = 0; j < m_NumAttribs; j++) {
+      for (j = 0; j < m_NumAttribs; j++)
         tempval += m_Eigenvectors[j][m_SortedEigens[i]] * tempInst.value(j);
-      }
 
       newVals[m_NumAttribs - i - 1] = tempval;
       cumulative += m_Eigenvalues[m_SortedEigens[i]];
-      if ((cumulative / m_SumOfEigenValues) >= m_CoverVariance) {
+      if ((cumulative / m_SumOfEigenValues) >= m_CoverVariance)
         break;
-      }
     }
 
     // create instance
-    if (instance instanceof SparseInstance) {
+    if (instance instanceof SparseInstance)
       result = new SparseInstance(instance.weight(), newVals);
-    } else {
+    else
       result = new DenseInstance(instance.weight(), newVals);
-    }
 
     return result;
   }
@@ -701,27 +683,25 @@ public class PrincipalComponentsJ extends Filter implements OptionHandler,
       m_NominalToBinaryFilter);
 
     // delete any attributes with only one distinct value or are all missing
-    deleteCols = new Vector<Integer>();
+    deleteCols = new Vector<>();
     for (i = 0; i < m_TrainInstances.numAttributes(); i++) {
-      if (m_TrainInstances.numDistinctValues(i) <= 1) {
+      if (m_TrainInstances.numDistinctValues(i) <= 1)
         deleteCols.addElement(i);
-      }
     }
 
     if (m_TrainInstances.classIndex() >= 0) {
       // get rid of the class column
       m_HasClass = true;
       m_ClassIndex = m_TrainInstances.classIndex();
-      deleteCols.addElement(new Integer(m_ClassIndex));
+      deleteCols.addElement(m_ClassIndex);
     }
 
     // remove columns from the data if necessary
     if (deleteCols.size() > 0) {
       m_AttributeFilter = new Remove();
       todelete = new int[deleteCols.size()];
-      for (i = 0; i < deleteCols.size(); i++) {
-        todelete[i] = (deleteCols.elementAt(i)).intValue();
-      }
+      for (i = 0; i < deleteCols.size(); i++)
+        todelete[i] = deleteCols.elementAt(i);
       m_AttributeFilter.setAttributeIndicesArray(todelete);
       m_AttributeFilter.setInvertSelection(false);
       m_AttributeFilter.setInputFormat(m_TrainInstances);
@@ -743,18 +723,16 @@ public class PrincipalComponentsJ extends Filter implements OptionHandler,
     V = eig.getV();
     v = new double[m_NumAttribs][m_NumAttribs];
     for (i = 0; i < v.length; i++) {
-      for (j = 0; j < v[0].length; j++) {
+      for (j = 0; j < v[0].length; j++)
         v[i][j] = V.get(i, j);
-      }
     }
     m_Eigenvectors = v.clone();
     m_Eigenvalues = eig.getRealEigenvalues().clone();
 
     // any eigenvalues less than 0 are not worth anything --- change to 0
     for (i = 0; i < m_Eigenvalues.length; i++) {
-      if (m_Eigenvalues[i] < 0) {
+      if (m_Eigenvalues[i] < 0)
         m_Eigenvalues[i] = 0.0;
-      }
     }
     m_SortedEigens = Utils.sort(m_Eigenvalues);
     m_SumOfEigenValues = Utils.sum(m_Eigenvalues);
@@ -800,9 +778,8 @@ public class PrincipalComponentsJ extends Filter implements OptionHandler,
   public boolean input(Instance instance) throws Exception {
     Instance inst;
 
-    if (getInputFormat() == null) {
+    if (getInputFormat() == null)
       throw new IllegalStateException("No input instance format defined");
-    }
 
     if (isNewBatch()) {
       resetQueue();
@@ -814,7 +791,8 @@ public class PrincipalComponentsJ extends Filter implements OptionHandler,
       inst.setDataset(getOutputFormat());
       push(inst, false); // No need to copy
       return true;
-    } else {
+    }
+    else {
       bufferInput(instance);
       return false;
     }
@@ -833,15 +811,13 @@ public class PrincipalComponentsJ extends Filter implements OptionHandler,
     Instances insts;
     Instance inst;
 
-    if (getInputFormat() == null) {
+    if (getInputFormat() == null)
       throw new NullPointerException("No input instance format defined");
-    }
 
     insts = getInputFormat();
 
-    if (!isFirstBatchDone()) {
+    if (!isFirstBatchDone())
       setup(insts);
-    }
 
     for (i = 0; i < insts.numInstances(); i++) {
       inst = convertInstance(insts.instance(i));
