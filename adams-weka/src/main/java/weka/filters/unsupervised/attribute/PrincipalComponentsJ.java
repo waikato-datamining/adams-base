@@ -402,7 +402,7 @@ public class PrincipalComponentsJ
    * @return tip text for this property suitable for displaying in the
    *         explorer/experimenter gui
    */
-  public String simpleAttributesNamesTipText() {
+  public String simpleAttributeNamesTipText() {
     return "If enabled, the new attribute names will be simply numbered rather than made up of other attribute names.";
   }
 
