@@ -23,6 +23,7 @@ package adams.flow.source;
 import adams.core.Placeholders;
 import adams.core.QuickInfoHelper;
 import adams.core.base.BaseText;
+import adams.core.io.PlaceholderDirectory;
 import adams.core.management.OS;
 import adams.core.management.ProcessUtils;
 import adams.core.option.OptionUtils;
@@ -48,8 +49,6 @@ import java.util.List;
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- * 
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
@@ -60,7 +59,7 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default: Exec
  * </pre>
  * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
@@ -72,14 +71,26 @@ import java.util.List;
  * </pre>
  * 
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this 
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical 
+ * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-cmd &lt;java.lang.String&gt; (property: command)
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-cmd &lt;adams.core.base.BaseText&gt; (property: command)
  * &nbsp;&nbsp;&nbsp;The external command to run.
  * &nbsp;&nbsp;&nbsp;default: ls -l .
+ * </pre>
+ * 
+ * <pre>-working-directory &lt;java.lang.String&gt; (property: workingDirectory)
+ * &nbsp;&nbsp;&nbsp;The current working directory for the command.
+ * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
  * <pre>-placeholder &lt;boolean&gt; (property: commandContainsPlaceholder)
@@ -94,19 +105,27 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-stderr &lt;boolean&gt; (property: outputStdErr)
- * &nbsp;&nbsp;&nbsp;If set to true, then stderr is output instead of stdout.
- * &nbsp;&nbsp;&nbsp;default: false
+ * <pre>-output-type &lt;STDOUT|STDERR|BOTH&gt; (property: outputType)
+ * &nbsp;&nbsp;&nbsp;Determines the output type; if BOTH is selected then an array is output 
+ * &nbsp;&nbsp;&nbsp;with stdout as first element and stderr as second
+ * &nbsp;&nbsp;&nbsp;default: STDOUT
  * </pre>
  * 
  * <pre>-split-output &lt;boolean&gt; (property: splitOutput)
- * &nbsp;&nbsp;&nbsp;If set to true, then the output gets split on newline.
+ * &nbsp;&nbsp;&nbsp;If set to true, then the output gets split on newline; does not apply when 
+ * &nbsp;&nbsp;&nbsp;outputting stdout and stderr together.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
  * <pre>-conversion &lt;adams.data.conversion.ConversionFromString&gt; (property: conversion)
- * &nbsp;&nbsp;&nbsp;The conversion scheme to apply to the output.
+ * &nbsp;&nbsp;&nbsp;The conversion scheme to apply to the output; does not apply when outputting 
+ * &nbsp;&nbsp;&nbsp;stdout and stderr together.
  * &nbsp;&nbsp;&nbsp;default: adams.data.conversion.StringToString
+ * </pre>
+ * 
+ * <pre>-fail-on-process-error &lt;boolean&gt; (property: failOnProcessError)
+ * &nbsp;&nbsp;&nbsp;If enabled, the actor will fail as well if the process failed.
+ * &nbsp;&nbsp;&nbsp;default: true
  * </pre>
  * 
  <!-- options-end -->
@@ -120,8 +139,20 @@ public class Exec
   /** for serialization. */
   private static final long serialVersionUID = -132045002653940359L;
 
+  /**
+   * What to output.
+   */
+  public enum OutputType {
+    STDOUT,
+    STDERR,
+    BOTH,
+  }
+
   /** the command to run. */
   protected BaseText m_Command;
+
+  /** the current working directory. */
+  protected String m_WorkingDirectory;
 
   /** whether the replace string contains a placeholder, which needs to be
    * expanded first. */
@@ -132,7 +163,7 @@ public class Exec
   protected boolean m_CommandContainsVariable;
 
   /** whether to output stderr instead of stdout. */
-  protected boolean m_OutputStdErr;
+  protected OutputType m_OutputType;
   
   /** whether to split the string output on the new line before converting. */
   protected boolean m_SplitOutput;
@@ -142,6 +173,9 @@ public class Exec
   
   /** the tokens to forward. */
   protected List m_Output;
+
+  /** whether to fail on process error. */
+  protected boolean m_FailOnProcessError;
 
   /**
    * Returns a string describing the object.
@@ -167,6 +201,10 @@ public class Exec
 	    new BaseText("ls -l ."));
 
     m_OptionManager.add(
+	    "working-directory", "workingDirectory",
+	    "");
+
+    m_OptionManager.add(
 	    "placeholder", "commandContainsPlaceholder",
 	    false);
 
@@ -175,8 +213,8 @@ public class Exec
 	    false);
 
     m_OptionManager.add(
-	    "stderr", "outputStdErr",
-	    false);
+	    "output-type", "outputType",
+	    OutputType.STDOUT);
 
     m_OptionManager.add(
 	    "split-output", "splitOutput",
@@ -185,6 +223,10 @@ public class Exec
     m_OptionManager.add(
 	    "conversion", "conversion",
 	    new StringToString());
+
+    m_OptionManager.add(
+	    "fail-on-process-error", "failOnProcessError",
+	    true);
   }
   
   /**
@@ -244,6 +286,35 @@ public class Exec
    */
   public String commandTipText() {
     return "The external command to run.";
+  }
+
+  /**
+   * Sets the current working directory for the command.
+   *
+   * @param value	the directory, ignored if empty
+   */
+  public void setWorkingDirectory(String value) {
+    m_WorkingDirectory = value;
+    reset();
+  }
+
+  /**
+   * Returns the current working directory for the command.
+   *
+   * @return 		the directory, ignored if empty
+   */
+  public String getWorkingDirectory() {
+    return m_WorkingDirectory;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return		tip text for this property suitable for
+   *             	displaying in the GUI or for listing the options.
+   */
+  public String workingDirectoryTipText() {
+    return "The current working directory for the command.";
   }
 
   /**
@@ -309,22 +380,22 @@ public class Exec
   }
 
   /**
-   * Sets whether to output stderr instead of stdout.
+   * Sets what output from the process to forward.
    *
-   * @param value	if true then stderr is output instead of stdout
+   * @param value	the output type
    */
-  public void setOutputStdErr(boolean value) {
-    m_OutputStdErr = value;
+  public void setOutputType(OutputType value) {
+    m_OutputType = value;
     reset();
   }
 
   /**
-   * Returns whether stderr instead of stdout is output.
+   * Returns what output from the process to forward.
    *
-   * @return 		true if stderr is output instead of stdout
+   * @return 		the output type
    */
-  public boolean getOutputStdErr() {
-    return m_OutputStdErr;
+  public OutputType getOutputType() {
+    return m_OutputType;
   }
 
   /**
@@ -333,8 +404,11 @@ public class Exec
    * @return		tip text for this property suitable for
    *             	displaying in the GUI or for listing the options.
    */
-  public String outputStdErrTipText() {
-    return "If set to true, then stderr is output instead of stdout.";
+  public String outputTypeTipText() {
+    return
+      "Determines the output type; if " + OutputType.BOTH + " is selected "
+	+ "then an array is output with stdout as first element and stderr as "
+	+ "second";
   }
 
   /**
@@ -363,7 +437,7 @@ public class Exec
    *             	displaying in the GUI or for listing the options.
    */
   public String splitOutputTipText() {
-    return "If set to true, then the output gets split on " + (OS.isWindows() ? "CRLF" : "newline") + ".";
+    return "If set to true, then the output gets split on " + (OS.isWindows() ? "CRLF" : "newline") + "; does not apply when outputting stdout and stderr together.";
   }
 
   /**
@@ -392,7 +466,36 @@ public class Exec
    *             	displaying in the GUI or for listing the options.
    */
   public String conversionTipText() {
-    return "The conversion scheme to apply to the output.";
+    return "The conversion scheme to apply to the output; does not apply when outputting stdout and stderr together.";
+  }
+
+  /**
+   * Sets whether to fail as well if the process failed.
+   *
+   * @param value	true if to fail as well
+   */
+  public void setFailOnProcessError(boolean value) {
+    m_FailOnProcessError = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to fail as well if the process failed.
+   *
+   * @return		true if to fail as well
+   */
+  public boolean getFailOnProcessError() {
+    return m_FailOnProcessError;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String failOnProcessErrorTipText() {
+    return "If enabled, the actor will fail as well if the process failed.";
   }
 
   /**
@@ -402,7 +505,10 @@ public class Exec
    */
   @Override
   public Class[] generates() {
-    return new Class[]{m_Conversion.generates()};
+    if (m_OutputType == OutputType.BOTH)
+      return new Class[]{String[].class};
+    else
+      return new Class[]{m_Conversion.generates()};
   }
 
   /**
@@ -417,7 +523,8 @@ public class Exec
     CollectingProcessOutput proc;
     String[]		items;
     String		msg;
-    String		output;
+    String[]		output;
+    int			i;
 
     result = null;
 
@@ -429,33 +536,57 @@ public class Exec
       cmd = getVariables().expand(cmd);
     if (m_CommandContainsPlaceholder)
       cmd = Placeholders.getSingleton().expand(cmd).replace("\\", "/");
+    if (isLoggingEnabled()) {
+      getLogger().info("Command: " + cmd);
+      if (!m_WorkingDirectory.isEmpty())
+	getLogger().info("Working dir: " + m_WorkingDirectory);
+    }
     
     try {
-      proc = ProcessUtils.execute(OptionUtils.splitOptions(cmd));
-      if (!proc.hasSucceeded()) {
+      if (m_WorkingDirectory.isEmpty())
+	proc = ProcessUtils.execute(OptionUtils.splitOptions(cmd));
+      else
+	proc = ProcessUtils.execute(OptionUtils.splitOptions(cmd), new PlaceholderDirectory(m_WorkingDirectory));
+      if (!proc.hasSucceeded() && m_FailOnProcessError) {
 	result = ProcessUtils.toErrorOutput(proc);
       }
       else {
-	if (m_OutputStdErr)
-	  output = proc.getStdErr();
-	else
-	  output = proc.getStdOut();
-	if (m_SplitOutput) {
-	  if (OS.isWindows())
-	    items = output.split("\r\n");
-	  else
-	    items = output.split("\n");
+	switch (m_OutputType) {
+	  case STDOUT:
+	    output = new String[]{proc.getStdOut()};
+	    break;
+	  case STDERR:
+	    output = new String[]{proc.getStdErr()};
+	    break;
+	  case BOTH:
+	    output = new String[]{proc.getStdOut(), proc.getStdErr()};
+	    break;
+	  default:
+	    throw new IllegalStateException("Unhandled output type: " + m_OutputType);
+	}
+	if (m_OutputType != OutputType.BOTH) {
+	  if (m_SplitOutput) {
+	    if (OS.isWindows())
+	      items = output[0].split("\r\n");
+	    else
+	      items = output[0].split("\n");
+	  }
+	  else {
+	    items = new String[]{output[0]};
+	  }
+	  for (i = 0; i < items.length; i++) {
+	    for (String item : items) {
+	      m_Conversion.setInput(item);
+	      msg = m_Conversion.convert();
+	      if (msg == null)
+		m_Output.add(m_Conversion.getOutput());
+	      else
+		getLogger().severe("Failed to convert '" + item + "'!");
+	    }
+	  }
 	}
 	else {
-	  items = new String[]{output};
-	}
-	for (String item: items) {
-	  m_Conversion.setInput(item);
-	  msg = m_Conversion.convert();
-	  if (msg == null)
-	    m_Output.add(m_Conversion.getOutput());
-	  else
-	    getLogger().severe("Failed to convert '" + item + "'!");
+	  m_Output.add(output);
 	}
       }
     }
