@@ -23,8 +23,11 @@ package adams.gui.tools.wekainvestigator.tab;
 import adams.core.MessageCollection;
 import adams.core.Properties;
 import adams.core.Range;
+import adams.core.SerializationHelper;
+import adams.core.io.PlaceholderFile;
 import adams.core.logging.LoggingLevel;
 import adams.core.option.OptionUtils;
+import adams.gui.chooser.FileChooserPanel;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.GUIHelper;
 import adams.gui.event.WekaInvestigatorDataEvent;
@@ -59,6 +62,7 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -82,6 +86,10 @@ public class PreprocessTab
 
   public static final String KEY_REPLACE = "replace";
 
+  public static final String KEY_SERIALIZE = "serialize";
+
+  public static final String KEY_SERIALIZE_FILE = "serialize-file";
+
   /** the GOe with the filter. */
   protected GenericObjectEditorPanel m_PanelGOE;
 
@@ -99,6 +107,12 @@ public class PreprocessTab
 
   /** the whether to keep the relation name. */
   protected JCheckBox m_CheckBoxKeepName;
+
+  /** the whether to serialize the filter to a file. */
+  protected JCheckBox m_CheckBoxSerialize;
+
+  /** the file to serialize the trained filter to. */
+  protected FileChooserPanel m_FileSerialize;
 
   /** the button for starting the filtering. */
   protected JButton m_ButtonStart;
@@ -223,6 +237,14 @@ public class PreprocessTab
     m_CheckBoxBatchFilter.setSelected(props.getBoolean("Preprocess.BatchFilter", false));
     panel.add(m_CheckBoxBatchFilter);
 
+    m_CheckBoxSerialize = new JCheckBox("Serialize");
+    m_CheckBoxSerialize.setSelected(props.getBoolean("Preprocess.Serialize", false));
+    panel.add(m_CheckBoxSerialize);
+
+    m_FileSerialize = new FileChooserPanel(props.getPath("Preprocess.SerializeFile", "."));
+    m_FileSerialize.setTextColumns(5);
+    panel.add(m_FileSerialize);
+
     // main
     m_PanelMain = new JPanel(new GridLayout(1, 2));
     m_PanelMain.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
@@ -317,6 +339,7 @@ public class PreprocessTab
     final boolean		batch;
     final boolean 		replace;
     final boolean		keep;
+    final File 			serialize;
     final InvestigatorPanel	owner;
 
     if (!canStartExecution())
@@ -327,6 +350,7 @@ public class PreprocessTab
     batch           = m_CheckBoxBatchFilter.isSelected();
     replace         = m_CheckBoxReplace.isSelected();
     keep            = m_CheckBoxKeepName.isSelected();
+    serialize       = (m_CheckBoxSerialize.isSelected() && !m_FileSerialize.getCurrent().isDirectory() ? m_FileSerialize.getCurrent() : null);
     indices         = getSelectedRows();
 
     startExecution(new InvestigatorTabJob(this, "Filtering") {
@@ -351,6 +375,10 @@ public class PreprocessTab
 	      cont = new MemoryContainer(filtered);
 	      getData().add(cont);
 	      fireDataChange(new WekaInvestigatorDataEvent(owner, WekaInvestigatorDataEvent.ROWS_ADDED, getData().size() - 1));
+	    }
+	    if ((i == 0) && (serialize != null)) {
+	      SerializationHelper.write(serialize.getAbsolutePath(), m_CurrentFilter);
+	      logMessage("Serialized filter to: " + serialize);
 	    }
 	  }
 	  catch (Exception e) {
@@ -564,6 +592,8 @@ public class PreprocessTab
     result.put(KEY_BATCHFILTER, m_CheckBoxBatchFilter.isSelected());
     result.put(KEY_KEEPNAME, m_CheckBoxKeepName.isSelected());
     result.put(KEY_REPLACE, m_CheckBoxReplace.isSelected());
+    result.put(KEY_SERIALIZE, m_CheckBoxSerialize.isSelected());
+    result.put(KEY_SERIALIZE_FILE, m_FileSerialize.getCurrent().getAbsolutePath());
 
     return result;
   }
@@ -591,5 +621,9 @@ public class PreprocessTab
       m_CheckBoxKeepName.setSelected((Boolean) data.get(KEY_KEEPNAME));
     if (data.containsKey(KEY_REPLACE))
       m_CheckBoxReplace.setSelected((Boolean) data.get(KEY_REPLACE));
+    if (data.containsKey(KEY_SERIALIZE))
+      m_CheckBoxSerialize.setSelected((Boolean) data.get(KEY_SERIALIZE));
+    if (data.containsKey(KEY_SERIALIZE_FILE))
+      m_FileSerialize.setCurrent(new PlaceholderFile((String) data.get(KEY_SERIALIZE_FILE)));
   }
 }

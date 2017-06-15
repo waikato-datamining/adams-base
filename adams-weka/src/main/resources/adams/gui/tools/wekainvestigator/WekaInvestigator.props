@@ -60,6 +60,14 @@ Preprocess.KeepName=true
 # (true|false)
 Preprocess.BatchFilter=false
 
+# Whether to serialize the trained filter to a file
+# (true|false)
+Preprocess.Serialize=false
+
+# The file to serialize a trained filter to
+# (file)
+Preprocess.SerializeFile=.
+
 # The default maximum width for data columns.
 # (integer)
 Data.MaxColWidth=100

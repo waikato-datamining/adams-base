@@ -71,6 +71,8 @@ public class WekaInvestigatorPreferencesPanel
     addPropertyType("Preprocess.ReplaceDatasets", PropertyType.BOOLEAN);
     addPropertyType("Preprocess.KeepName", PropertyType.BOOLEAN);
     addPropertyType("Preprocess.BatchFilter", PropertyType.BOOLEAN);
+    addPropertyType("Preprocess.Serialize", PropertyType.BOOLEAN);
+    addPropertyType("Preprocess.SerializeFile", PropertyType.FILE_ABSOLUTE);
 
     // associate
     addPropertyType("Associate.Associator", PropertyType.OBJECT_EDITOR);
