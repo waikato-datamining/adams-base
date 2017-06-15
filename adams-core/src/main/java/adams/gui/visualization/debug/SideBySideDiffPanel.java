@@ -15,7 +15,7 @@
 
 /**
  * SideBySideDiffPanel.java
- * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.debug;
 
@@ -25,6 +25,7 @@ import adams.core.Shortening;
 import adams.core.io.PlaceholderFile;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
+import adams.gui.core.BaseSplitPane;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MouseUtils;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
@@ -34,10 +35,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -90,7 +89,7 @@ public class SideBySideDiffPanel
   protected String m_LabelTextRight;
 
   /** for the two sides of a diff. */
-  protected BasePanel m_PanelAll;
+  protected BaseSplitPane m_PanelAll;
   
   /** whether to ignore viewport changes for the left panel. */
   protected boolean m_IgnoreViewportChangesLeft;
@@ -123,22 +122,22 @@ public class SideBySideDiffPanel
     
     super.initGUI();
     
-    m_PanelAll = new BasePanel(new GridLayout(1, 2));
+    m_PanelAll = new BaseSplitPane();
+    m_PanelAll.setOneTouchExpandable(true);
+    m_PanelAll.setResizeWeight(0.5);
     add(m_PanelAll, BorderLayout.CENTER);
     
     // left
     m_TextLeft = new DiffTextPane();
     m_TextLeft.setLeft(true);
     m_ScrollPaneLeft = new BaseScrollPane(m_TextLeft);
-    m_ScrollPaneLeft.getViewport().addChangeListener(new ChangeListener() {
-      public void stateChanged(ChangeEvent e) {
-	if (m_IgnoreViewportChangesLeft)
-	  return;
-	m_IgnoreViewportChangesRight = true;
-	m_ScrollPaneRight.getViewport().setViewPosition(
-	    m_ScrollPaneLeft.getViewport().getViewPosition());
-	m_IgnoreViewportChangesRight = false;
-      }
+    m_ScrollPaneLeft.getViewport().addChangeListener((ChangeEvent e) -> {
+      if (m_IgnoreViewportChangesLeft)
+        return;
+      m_IgnoreViewportChangesRight = true;
+      m_ScrollPaneRight.getViewport().setViewPosition(
+        m_ScrollPaneLeft.getViewport().getViewPosition());
+      m_IgnoreViewportChangesRight = false;
     });
     m_LabelLeft = new JLabel();
     m_LabelLeft.addMouseListener(new MouseAdapter() {
@@ -158,21 +157,19 @@ public class SideBySideDiffPanel
     m_PanelLeft = new BasePanel(new BorderLayout());
     m_PanelLeft.add(panel, BorderLayout.NORTH);
     m_PanelLeft.add(m_ScrollPaneLeft, BorderLayout.CENTER);
-    m_PanelAll.add(m_PanelLeft);
+    m_PanelAll.setLeftComponent(m_PanelLeft);
     
     // right
     m_TextRight = new DiffTextPane();
     m_TextRight.setLeft(false);
     m_ScrollPaneRight = new BaseScrollPane(m_TextRight);
-    m_ScrollPaneRight.getViewport().addChangeListener(new ChangeListener() {
-      public void stateChanged(ChangeEvent e) {
-	if (m_IgnoreViewportChangesRight)
-	  return;
-	m_IgnoreViewportChangesLeft = true;
-	m_ScrollPaneLeft.getViewport().setViewPosition(
-	    m_ScrollPaneRight.getViewport().getViewPosition());
-	m_IgnoreViewportChangesLeft = false;
-      }
+    m_ScrollPaneRight.getViewport().addChangeListener((ChangeEvent e) -> {
+      if (m_IgnoreViewportChangesRight)
+        return;
+      m_IgnoreViewportChangesLeft = true;
+      m_ScrollPaneLeft.getViewport().setViewPosition(
+        m_ScrollPaneRight.getViewport().getViewPosition());
+      m_IgnoreViewportChangesLeft = false;
     });
     m_LabelRight = new JLabel();
     m_LabelRight.addMouseListener(new MouseAdapter() {
@@ -192,7 +189,7 @@ public class SideBySideDiffPanel
     m_PanelRight = new BasePanel(new BorderLayout());
     m_PanelRight.add(panel, BorderLayout.NORTH);
     m_PanelRight.add(m_ScrollPaneRight, BorderLayout.CENTER);
-    m_PanelAll.add(m_PanelRight);
+    m_PanelAll.setRightComponent(m_PanelRight);
   }
 
   @Override
