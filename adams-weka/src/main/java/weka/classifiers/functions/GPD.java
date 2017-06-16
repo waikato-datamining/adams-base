@@ -15,7 +15,7 @@
 
 /*
  * GPD.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -84,7 +84,7 @@ import java.util.Vector;
  * 
  * <pre> -L &lt;double&gt;
  *  Level of Gaussian Noise.
- *  (default: 1.0)</pre>
+ *  (default: 0.01)</pre>
  * 
  * <pre> -G &lt;double&gt;
  *  Gamma for the RBF kernel.
@@ -219,7 +219,7 @@ public class GPD
 
     result.addElement(new Option(
       "\tLevel of Gaussian Noise.\n"
-        + "\t(default: 1.0)",
+        + "\t(default: 0.01)",
       "L", 1, "-L <double>"));
 
     result.addElement(new Option(
@@ -252,7 +252,7 @@ public class GPD
     if (tmpStr.length() != 0)
       setNoise(Double.parseDouble(tmpStr));
     else
-      setNoise(1.0);
+      setNoise(0.01);
 
     tmpStr = Utils.getOption('G', options);
     if (tmpStr.length() != 0)
