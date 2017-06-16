@@ -15,20 +15,20 @@
 
 /*
  * SideBySideDiff.java
- * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
-
-import java.awt.BorderLayout;
-
-import javax.swing.JComponent;
 
 import adams.core.DiffUtils;
 import adams.flow.core.Token;
 import adams.gui.core.BasePanel;
 import adams.gui.core.ExtensionFileFilter;
 import adams.gui.visualization.debug.SideBySideDiffPanel;
+
+import javax.swing.JComponent;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 
 /**
  <!-- globalinfo-start -->
@@ -171,6 +171,7 @@ public class SideBySideDiff
   @Override
   protected BasePanel newPanel() {
     m_SideBySideDiffPanel = new SideBySideDiffPanel();
+    adjustSize(m_SideBySideDiffPanel);
     return m_SideBySideDiffPanel;
   }
 
@@ -181,6 +182,21 @@ public class SideBySideDiff
    */
   public Class[] accepts() {
     return new Class[]{DiffUtils.SideBySideDiff.class};
+  }
+
+  /**
+   * Adjusts the size of the left/right panels to fit the actors size.
+   *
+   * @param panel	the panel to adjust
+   */
+  protected void adjustSize(SideBySideDiffPanel panel) {
+    int 	width;
+    int 	height;
+
+    width  = (int) (getWidth() * 0.45);
+    height = (int) (getHeight() * 0.95);
+    panel.getPanel(true).setPreferredSize(new Dimension(width, height));
+    panel.getPanel(false).setPreferredSize(new Dimension(width, height));
   }
 
   /**
@@ -222,6 +238,7 @@ public class SideBySideDiff
 	super.initGUI();
 	setLayout(new BorderLayout());
 	m_SideBySideDiffPanel = new SideBySideDiffPanel();
+	adjustSize(m_SideBySideDiffPanel);
 	add(m_SideBySideDiffPanel, BorderLayout.CENTER);
       }
       @Override
