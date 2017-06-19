@@ -1,0 +1,8 @@
+--> out-0.txt
+A
+=SUM(A1:A1)
+
+--> out-1.txt
+CV
+=SUM(A1:CV1)
+
