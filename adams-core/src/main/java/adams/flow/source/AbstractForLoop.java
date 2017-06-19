@@ -15,7 +15,7 @@
 
 /*
  * AbstractForLoop.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
@@ -202,12 +202,14 @@ public abstract class AbstractForLoop
     result = super.setUp();
 
     if (result == null) {
-      if (m_LoopStep == 0)
-	result = "Step size must be either greater or smaller than 0!";
-      else if ((m_LoopLower > m_LoopUpper) && (m_LoopStep > 0))
-	result = "Lower bound cannot be larger than upper bound!";
-      else if ((m_LoopLower < m_LoopUpper) && (m_LoopStep < 0))
-	result = "Upper bound cannot be larger than lower bound!";
+      if (!getOptionManager().hasVariableForProperty("loopLower") && !getOptionManager().hasVariableForProperty("loopUpper") && !getOptionManager().hasVariableForProperty("loopStep")) {
+        if (m_LoopStep == 0)
+          result = "Step size must be either greater or smaller than 0!";
+        else if ((m_LoopLower > m_LoopUpper) && (m_LoopStep > 0))
+          result = "Lower bound cannot be larger than upper bound!";
+        else if ((m_LoopLower < m_LoopUpper) && (m_LoopStep < 0))
+          result = "Upper bound cannot be larger than lower bound!";
+      }
     }
 
     return result;
