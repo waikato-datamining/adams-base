@@ -15,7 +15,7 @@
 
 /**
  * PropertiesParameterPanel.java
- * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
 
@@ -103,6 +103,8 @@ public class PropertiesParameterPanel
     BOOLEAN,
     /** integer. */
     INTEGER,
+    /** long. */
+    LONG,
     /** double. */
     DOUBLE,
     /** string. */
@@ -981,6 +983,12 @@ public class PropertiesParameterPanel
             spinner.setToolTipText(help);
             addProperty(key, label, spinner);
             break;
+          case LONG:
+            spinner = new JSpinner();
+            spinner.setValue(value.getLong(key));
+            spinner.setToolTipText(help);
+            addProperty(key, label, spinner);
+            break;
           case FONT:
             fontPanel = new FontChooserPanel();
             fontPanel.setCurrent((Font) FontEditor.valueOf(null, value.getProperty(key)));
@@ -1214,6 +1222,10 @@ public class PropertiesParameterPanel
         case INTEGER:
           spinner = (JSpinner) comp;
           result.setInteger(key, ((Number) spinner.getValue()).intValue());
+          break;
+        case LONG:
+          spinner = (JSpinner) comp;
+          result.setLong(key, ((Number) spinner.getValue()).longValue());
           break;
         case FONT:
           fontPanel = (FontChooserPanel) comp;

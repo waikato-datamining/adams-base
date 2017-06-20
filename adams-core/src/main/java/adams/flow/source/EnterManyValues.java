@@ -521,6 +521,9 @@ public class EnterManyValues
 	case INTEGER:
 	  row.addCell(val.getName()).setContent(props.getInteger(val.getName()));
 	  break;
+	case LONG:
+	  row.addCell(val.getName()).setContent(props.getLong(val.getName()));
+	  break;
 	case DOUBLE:
 	  row.addCell(val.getName()).setContent(props.getDouble(val.getName()));
 	  break;
