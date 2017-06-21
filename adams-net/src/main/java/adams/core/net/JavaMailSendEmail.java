@@ -15,11 +15,12 @@
 
 /**
  * JavaMailSendEmail.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.net;
 
-import java.io.File;
+import adams.core.base.BasePassword;
+import adams.core.io.FileUtils;
 
 import javax.activation.DataHandler;
 import javax.mail.Authenticator;
@@ -35,16 +36,13 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
-
-import adams.core.base.BasePassword;
+import javax.mail.util.ByteArrayDataSource;
 
 /**
  * Uses JavaMail for sending emails.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
- * @see EmailHelper#initializeSmtpSession(String, int, boolean, int, boolean, String, BasePassword)
- * @see EmailHelper#sendMail(Session, String, String[], String[], String[], String, String, File[])
  */
 public class JavaMailSendEmail
   extends AbstractSendEmail {
@@ -116,7 +114,6 @@ public class JavaMailSendEmail
    * @param requiresAuth	whether authentication is required
    * @param user		the SMTP user
    * @param pw			the SMTP password
-   * @return			the session
    * @throws Exception		if initialization fails
    */
   @Override
@@ -229,7 +226,7 @@ public class JavaMailSendEmail
     // attachments
     for (i = 0; i < email.getAttachments().length; i++) {
       messageBodyPart = new MimeBodyPart();
-      messageBodyPart.setDataHandler(new DataHandler(email.getAttachments()[i].toURI().toURL()));
+      messageBodyPart.setDataHandler(new DataHandler(new ByteArrayDataSource(FileUtils.loadFromBinaryFile(email.getAttachments()[i]), MimeTypeHelper.getMimeType(email.getAttachments()[i]).toString())));
       messageBodyPart.setFileName(email.getAttachments()[i].getName());
       multipart.addBodyPart(messageBodyPart);
     }
