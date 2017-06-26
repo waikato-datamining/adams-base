@@ -285,7 +285,7 @@ public class WekaOptionUtils {
       return defValue;
     Object result = Array.newInstance(cls, values.size());
     for (int i = 0; i < values.size(); i++)
-      Array.set(result, i, OptionUtils.forAnyCommandLine(OptionHandler.class, values.get(i)));
+      Array.set(result, i, OptionUtils.forAnyCommandLine(cls, values.get(i)));
     return result;
   }
 
@@ -375,7 +375,7 @@ public class WekaOptionUtils {
       return defValue;
     Object result = Array.newInstance(cls, values.size());
     for (int i = 0; i < values.size(); i++)
-      Array.set(result, i, OptionUtils.forAnyCommandLine(OptionHandler.class, values.get(i)));
+      Array.set(result, i, OptionUtils.forAnyCommandLine(cls, values.get(i)));
     return result;
   }
 
