@@ -15,7 +15,7 @@
 
 /*
  * SSHConnection.java
- * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2017 University of Waikato, Hamilton, New Zealand
  * Copyright (C) JSch
  */
 
@@ -31,8 +31,8 @@ import adams.core.annotation.MixedCopyright;
 import adams.core.base.BasePassword;
 import adams.core.io.ConsoleHelper;
 import adams.core.io.PlaceholderFile;
-import adams.core.net.SSHAuthenticationType;
 import adams.core.net.JSchUtils;
+import adams.core.net.SSHAuthenticationType;
 import adams.core.net.SSHSessionProvider;
 import adams.flow.core.OptionalPasswordPrompt;
 import adams.gui.dialog.PasswordDialog;
@@ -953,52 +953,61 @@ public class SSHConnection
 
     result = null;
 
-    // password
-    switch (m_AuthenticationType) {
-      case CREDENTIALS:
-	m_ActualPassword = m_Password;
-	break;
-      case PUBLIC_KEY:
-	m_ActualPassword = m_PrivateKeyPassphrase;
-	break;
-      default:
-	throw new IllegalStateException("Unhandled authentication type: " + m_AuthenticationType);
-    }
+    if (m_Session == null) {
+      if (isLoggingEnabled())
+        getLogger().info("Starting new session");
 
-    if (m_PromptForPassword && (m_Password.getValue().length() == 0)) {
-      if (!isHeadless()) {
-        if (!doInteract()) {
-          if (m_StopFlowIfCanceled) {
-            if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
-              getRoot().stopExecution("Flow canceled: " + getFullName());
-            else
-              getRoot().stopExecution(m_CustomStopMessage);
-            result = getStopMessage();
+      // password
+      switch (m_AuthenticationType) {
+        case CREDENTIALS:
+          m_ActualPassword = m_Password;
+          break;
+        case PUBLIC_KEY:
+          m_ActualPassword = m_PrivateKeyPassphrase;
+          break;
+        default:
+          throw new IllegalStateException("Unhandled authentication type: " + m_AuthenticationType);
+      }
+
+      if (m_PromptForPassword && (m_Password.getValue().length() == 0)) {
+        if (!isHeadless()) {
+          if (!doInteract()) {
+            if (m_StopFlowIfCanceled) {
+              if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
+                getRoot().stopExecution("Flow canceled: " + getFullName());
+              else
+                getRoot().stopExecution(m_CustomStopMessage);
+              result = getStopMessage();
+            }
+          }
+        }
+        else if (supportsHeadlessInteraction()) {
+          if (!doInteractHeadless()) {
+            if (m_StopFlowIfCanceled) {
+              if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
+                getRoot().stopExecution("Flow canceled: " + getFullName());
+              else
+                getRoot().stopExecution(m_CustomStopMessage);
+              result = getStopMessage();
+            }
           }
         }
       }
-      else if (supportsHeadlessInteraction()) {
-        if (!doInteractHeadless()) {
-          if (m_StopFlowIfCanceled) {
-            if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
-              getRoot().stopExecution("Flow canceled: " + getFullName());
-            else
-              getRoot().stopExecution(m_CustomStopMessage);
-            result = getStopMessage();
-          }
+
+      if (result == null) {
+        if (!m_Host.isEmpty()) {
+          m_Session = newSession();
+          if (m_Session == null)
+            result = "Failed to connect to '" + m_Host + "' as user '" + m_User + "'!";
+        }
+        else {
+          getLogger().warning("No host supplied, not initiating session!");
         }
       }
     }
-
-    if (result == null) {
-      if (!m_Host.isEmpty()) {
-        m_Session = newSession();
-        if (m_Session == null)
-          result = "Failed to connect to '" + m_Host + "' as user '" + m_User + "'!";
-      }
-      else {
-        getLogger().warning("No host supplied, not initiating session!");
-      }
+    else {
+      if (isLoggingEnabled())
+        getLogger().info("Re-using current session");
     }
 
     return result;

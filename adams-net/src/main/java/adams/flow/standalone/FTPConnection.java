@@ -20,22 +20,21 @@
 
 package adams.flow.standalone;
 
-import java.awt.Dialog;
-import java.awt.Dialog.ModalityType;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Level;
-
+import adams.core.QuickInfoHelper;
+import adams.core.base.BasePassword;
 import adams.core.io.ConsoleHelper;
+import adams.flow.core.OptionalPasswordPrompt;
+import adams.gui.dialog.PasswordDialog;
 import org.apache.commons.net.ProtocolCommandEvent;
 import org.apache.commons.net.ProtocolCommandListener;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPReply;
 
-import adams.core.QuickInfoHelper;
-import adams.core.base.BasePassword;
-import adams.flow.core.OptionalPasswordPrompt;
-import adams.gui.dialog.PasswordDialog;
+import java.awt.Dialog;
+import java.awt.Dialog.ModalityType;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
 
 /**
  <!-- globalinfo-start -->
@@ -555,39 +554,45 @@ public class FTPConnection
     String	result;
 
     result = null;
-    
-    // close any active connection first
-    disconnect();
-    
-    m_ActualPassword = m_Password;
-    
-    if (m_PromptForPassword && (m_Password.getValue().length() == 0)) {
-      if (!isHeadless()) {
-	if (!doInteract()) {
-	  if (m_StopFlowIfCanceled) {
-	    if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
-	      getRoot().stopExecution("Flow canceled: " + getFullName());
-	    else
-	      getRoot().stopExecution(m_CustomStopMessage);
-	    result = getStopMessage();
-	  }
-	}
-      }
-      else if (supportsHeadlessInteraction()) {
-	if (!doInteractHeadless()) {
-	  if (m_StopFlowIfCanceled) {
-	    if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
-	      getRoot().stopExecution("Flow canceled: " + getFullName());
-	    else
-	      getRoot().stopExecution(m_CustomStopMessage);
-	    result = getStopMessage();
-	  }
-	}
-      }
-    }
 
-    if (result == null)
-      result = connect();
+    if (m_Client == null) {
+      if (isLoggingEnabled())
+        getLogger().info("Starting new session");
+
+      m_ActualPassword = m_Password;
+
+      if (m_PromptForPassword && (m_Password.getValue().length() == 0)) {
+        if (!isHeadless()) {
+          if (!doInteract()) {
+            if (m_StopFlowIfCanceled) {
+              if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
+                getRoot().stopExecution("Flow canceled: " + getFullName());
+              else
+                getRoot().stopExecution(m_CustomStopMessage);
+              result = getStopMessage();
+            }
+          }
+        }
+        else if (supportsHeadlessInteraction()) {
+          if (!doInteractHeadless()) {
+            if (m_StopFlowIfCanceled) {
+              if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
+                getRoot().stopExecution("Flow canceled: " + getFullName());
+              else
+                getRoot().stopExecution(m_CustomStopMessage);
+              result = getStopMessage();
+            }
+          }
+        }
+      }
+
+      if (result == null)
+        result = connect();
+    }
+    else {
+      if (isLoggingEnabled())
+        getLogger().info("Re-using current session");
+    }
 
     return result;
   }

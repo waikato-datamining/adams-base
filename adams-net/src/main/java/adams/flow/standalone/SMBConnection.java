@@ -403,36 +403,45 @@ public class SMBConnection
 
     result = null;
 
-    // password
-    m_ActualPassword = m_Password;
+    if (m_Session == null) {
+      if (isLoggingEnabled())
+        getLogger().info("Starting new session");
 
-    if (m_PromptForPassword && (m_Password.getValue().length() == 0)) {
-      if (!isHeadless()) {
-        if (!doInteract()) {
-          if (m_StopFlowIfCanceled) {
-            if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
-              getRoot().stopExecution("Flow canceled: " + getFullName());
-            else
-              getRoot().stopExecution(m_CustomStopMessage);
-            result = getStopMessage();
+      // password
+      m_ActualPassword = m_Password;
+
+      if (m_PromptForPassword && (m_Password.getValue().length() == 0)) {
+        if (!isHeadless()) {
+          if (!doInteract()) {
+            if (m_StopFlowIfCanceled) {
+              if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
+                getRoot().stopExecution("Flow canceled: " + getFullName());
+              else
+                getRoot().stopExecution(m_CustomStopMessage);
+              result = getStopMessage();
+            }
+          }
+        }
+        else if (supportsHeadlessInteraction()) {
+          if (!doInteractHeadless()) {
+            if (m_StopFlowIfCanceled) {
+              if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
+                getRoot().stopExecution("Flow canceled: " + getFullName());
+              else
+                getRoot().stopExecution(m_CustomStopMessage);
+              result = getStopMessage();
+            }
           }
         }
       }
-      else if (supportsHeadlessInteraction()) {
-        if (!doInteractHeadless()) {
-          if (m_StopFlowIfCanceled) {
-            if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
-              getRoot().stopExecution("Flow canceled: " + getFullName());
-            else
-              getRoot().stopExecution(m_CustomStopMessage);
-            result = getStopMessage();
-          }
-        }
-      }
+
+      if (result == null)
+        m_Session = newAuthentication();
     }
-
-    if (result == null)
-      m_Session = newAuthentication();
+    else {
+      if (isLoggingEnabled())
+        getLogger().info("Re-using current session");
+    }
 
     return result;
   }
