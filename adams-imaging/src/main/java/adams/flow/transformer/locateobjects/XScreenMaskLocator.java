@@ -28,7 +28,8 @@ import adams.data.image.transformer.crop.NoCrop;
 import javax.media.jai.Interpolation;
 import javax.media.jai.RenderedOp;
 import javax.media.jai.operator.ScaleDescriptor;
-import java.awt.*;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -428,16 +429,18 @@ public class XScreenMaskLocator extends AbstractObjectLocator {
           int left = (int) (Math.round(rect[0] / m_Scale) + offset.getX()), top = (int) (Math.round(rect[1] / m_Scale) + offset.getY());
           int width = (int) Math.round((rect[2] - rect[0] + 1) / m_Scale), height = (int) Math.round((rect[3] - rect[1] + 1) / m_Scale);
           if (width >= m_MinSize && width <= m_MaxSize && height >= m_MinSize && height <= m_MaxSize) {
-            try {
-              objects.add(new LocatedObject(annotateOnly ? null : image.getSubimage(left, top, width, height), left, top, width, height));
-            }
-            catch (Exception e) {
-              getLogger().log(
-                Level.SEVERE,
-                "Failed to create location using: "
-		  + "imgwidth=" + image.getWidth() + ", imgheight=" + image.getHeight()
-                  + ", left=" + left + ", top=" + top + ", width=" + width + ", height=" + height
-		  + ", scale=" + m_Scale, e);
+            if ((left + width < image.getWidth()) && (top + height < image.getHeight())) {
+              try {
+                objects.add(new LocatedObject(annotateOnly ? null : image.getSubimage(left, top, width, height), left, top, width, height));
+              }
+              catch (Exception e) {
+                getLogger().log(
+                  Level.SEVERE,
+                  "Failed to create location using: "
+                    + "imgwidth=" + image.getWidth() + ", imgheight=" + image.getHeight()
+                    + ", left=" + left + ", top=" + top + ", width=" + width + ", height=" + height
+                    + ", scale=" + m_Scale, e);
+              }
             }
           }
         }
