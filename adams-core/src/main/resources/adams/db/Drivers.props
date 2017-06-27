@@ -5,7 +5,7 @@
 
 # the JDBC driver classes (comma-separated lst)
 Drivers=\
-  com.mysql.cj.jdbc.Driver,\
+  com.mysql.jdbc.Driver,\
   org.sqlite.JDBC,\
   org.hsqldb.jdbcDriver,\
   org.postgresql.Driver,\
