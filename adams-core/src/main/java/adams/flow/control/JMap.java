@@ -20,6 +20,7 @@
 
 package adams.flow.control;
 
+import adams.core.Utils;
 import adams.core.io.PlaceholderFile;
 import adams.core.management.ProcessUtils;
 import adams.flow.core.Token;
@@ -152,7 +153,7 @@ public class JMap
    * 			just the executable
    */
   protected String getJMapExecutablePath() {
-    return adams.core.management.JMap.getExecutablePath();
+    return Utils.unDoubleQuote(adams.core.management.JMap.getExecutablePath());
   }
 
   /**

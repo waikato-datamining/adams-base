@@ -20,6 +20,7 @@
 
 package adams.flow.control;
 
+import adams.core.Utils;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
@@ -168,7 +169,7 @@ public class JDeps
    * 			just the executable
    */
   protected String getJDepsExecutablePath() {
-    return adams.core.management.JDeps.getExecutablePath();
+    return Utils.unDoubleQuote(adams.core.management.JDeps.getExecutablePath());
   }
 
   /**
