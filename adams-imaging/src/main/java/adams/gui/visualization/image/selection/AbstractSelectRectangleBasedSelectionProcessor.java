@@ -70,11 +70,11 @@ public abstract class AbstractSelectRectangleBasedSelectionProcessor
 
     m_OptionManager.add(
       "prefix", "prefix",
-      "Object.");
+      getDefaultPrefix());
 
     m_OptionManager.add(
       "num-digits", "numDigits",
-      4, 0, null);
+      getDefaultNumDigits(), 0, null);
   }
 
   /**
@@ -85,6 +85,15 @@ public abstract class AbstractSelectRectangleBasedSelectionProcessor
     super.reset();
 
     m_Locations = null;
+  }
+
+  /**
+   * Returns the default prefix to use for the objects.
+   *
+   * @return		the default
+   */
+  protected String getDefaultPrefix() {
+    return "Object.";
   }
 
   /**
@@ -114,6 +123,15 @@ public abstract class AbstractSelectRectangleBasedSelectionProcessor
    */
   public String prefixTipText() {
     return "The prefix to use for the fields in the report.";
+  }
+
+  /**
+   * Returns the default number of digits to use.
+   *
+   * @return		the default
+   */
+  protected int getDefaultNumDigits() {
+    return 4;
   }
 
   /**
