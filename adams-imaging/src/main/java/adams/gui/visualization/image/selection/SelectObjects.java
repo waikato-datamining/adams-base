@@ -20,13 +20,10 @@
 package adams.gui.visualization.image.selection;
 
 import adams.core.Utils;
-import adams.data.report.AbstractField;
 import adams.data.report.DataType;
 import adams.data.report.Field;
 import adams.data.report.Report;
-import adams.flow.transformer.locateobjects.LocatedObjects;
 import adams.gui.visualization.image.ImagePanel;
-import adams.gui.visualization.image.ImagePanel.PaintPanel;
 
 import java.awt.Color;
 import java.awt.Point;
@@ -76,32 +73,11 @@ import java.util.List;
  * @version $Revision: 364 $
  */
 public class SelectObjects
-  extends AbstractPaintingSelectionProcessor {
+  extends AbstractSelectRectangleBasedSelectionProcessor {
 
   /** for serialization. */
   private static final long serialVersionUID = -5879410661391670242L;
 
-  /** the key for the X location. */
-  public final static String KEY_X = LocatedObjects.KEY_X;
-
-  /** the key for the Y location. */
-  public final static String KEY_Y = LocatedObjects.KEY_Y;
-
-  /** the key for the width. */
-  public final static String KEY_WIDTH = LocatedObjects.KEY_WIDTH;
-
-  /** the key for the height. */
-  public final static String KEY_HEIGHT = LocatedObjects.KEY_HEIGHT;
-  
-  /** the prefix for the objects. */
-  protected String m_Prefix;
-  
-  /** the number of digits to use for left-padding the index. */
-  protected int m_NumDigits;
-  
-  /** the current rectangles. */
-  protected List<SelectionRectangle> m_Locations;
-  
   /**
    * Returns a string describing the object.
    *
@@ -117,177 +93,13 @@ public class SelectObjects
   }
 
   /**
-   * Adds options to the internal list of options.
-   */
-  @Override
-  public void defineOptions() {
-    super.defineOptions();
-
-    m_OptionManager.add(
-	"prefix", "prefix",
-	"Object.");
-
-    m_OptionManager.add(
-	"num-digits", "numDigits",
-	4, 0, null);
-  }
-  
-  /**
-   * Resets the scheme.
-   */
-  @Override
-  protected void reset() {
-    super.reset();
-    
-    m_Locations = null;
-  }
-  
-  /**
    * Returns the default color to use.
-   * 
+   *
    * @return		the color
    */
   @Override
   protected Color getDefaultColor() {
     return Color.RED;
-  }
-
-  /**
-   * Sets the prefix to use for the objects.
-   *
-   * @param value 	the prefix
-   */
-  public void setPrefix(String value) {
-    m_Prefix = value;
-    reset();
-  }
-
-  /**
-   * Returns the prefix to use for the objects.
-   *
-   * @return 		the prefix
-   */
-  public String getPrefix() {
-    return m_Prefix;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String prefixTipText() {
-    return "The prefix to use for the fields in the report.";
-  }
-
-  /**
-   * Sets the number of digits to use for the left-padded index.
-   *
-   * @param value 	the number of digits
-   */
-  public void setNumDigits(int value) {
-    m_NumDigits = value;
-    reset();
-  }
-
-  /**
-   * Returns the number of digits to use for the left-padded index.
-   *
-   * @return 		the number of digits
-   */
-  public int getNumDigits() {
-    return m_NumDigits;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String numDigitsTipText() {
-    return "The number of digits to use for left-padding the index with zeroes.";
-  }
-
-  /**
-   * Determines the last index used with the given prefix.
-   */
-  protected int findLastIndex(Report report) {
-    int			result;
-    List<AbstractField>	fields;
-    String		name;
-    int			current;
-    
-    result = 0;
-    fields = report.getFields();
-    
-    for (AbstractField field: fields) {
-      if (field.getName().startsWith(m_Prefix)) {
-	name = field.getName().substring(m_Prefix.length());
-	if (name.indexOf('.') > -1)
-	  name = name.substring(0, name.indexOf('.'));
-	try {
-	  current = Integer.parseInt(name);
-	  if (current > result)
-	    result = current;
-	}
-	catch (Exception e) {
-	  // ignored
-	}
-      }
-    }
-    
-    return result;
-  }
-  
-  /**
-   * Retruns all currently stored locations.
-   * 
-   * @param report	the report to get the locations from
-   * @return		the locations
-   */
-  protected List<SelectionRectangle> getLocations(Report report) {
-    List<SelectionRectangle>	result;
-    List<AbstractField>		fields;
-    String			name;
-    SelectionRectangle		rect;
-    
-    result = new ArrayList<>();
-    fields = report.getFields();
-    
-    for (AbstractField field: fields) {
-      if (field.getName().startsWith(m_Prefix)) {
-	name = field.getName().substring(m_Prefix.length());
-	if (name.indexOf('.') > -1)
-	  name = name.substring(0, name.indexOf('.'));
-	try {
-	  rect = new SelectionRectangle(
-	      report.getDoubleValue(m_Prefix + name + KEY_X).intValue(),
-	      report.getDoubleValue(m_Prefix + name + KEY_Y).intValue(),
-	      report.getDoubleValue(m_Prefix + name + KEY_WIDTH).intValue(),
-	      report.getDoubleValue(m_Prefix + name + KEY_HEIGHT).intValue(),
-	      Integer.parseInt(name));
-	  if (!result.contains(rect))
-	    result.add(rect);
-	}
-	catch (Exception e) {
-	  // ignored
-	}
-      }
-    }
-    
-    return result;
-  }
-
-  /**
-   * Notifies the overlay that the image has changed.
-   *
-   * @param panel	the panel this overlay belongs to
-   */
-  @Override
-  protected void doImageChanged(PaintPanel panel) {
-    m_Locations = null;
   }
 
   /**
