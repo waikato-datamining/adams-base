@@ -15,22 +15,13 @@
 
 /*
  * AbstractScriptingEngine.java
- * Copyright (C) 2008-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.scripting;
 
-import java.io.File;
-import java.lang.reflect.Constructor;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.logging.Level;
-
 import adams.core.DateUtils;
+import adams.core.ErrorProvider;
 import adams.core.Properties;
 import adams.core.io.FileUtils;
 import adams.core.logging.LoggingHelper;
@@ -46,6 +37,16 @@ import adams.gui.core.BasePanel;
 import adams.gui.event.ScriptingInfoEvent;
 import adams.gui.event.ScriptingInfoListener;
 
+import java.io.File;
+import java.lang.reflect.Constructor;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.logging.Level;
+
 /**
  * Processes scripting commands.
  *
@@ -55,7 +56,7 @@ import adams.gui.event.ScriptingInfoListener;
  */
 public abstract class AbstractScriptingEngine
   extends LoggingObject
-  implements DatabaseConnectionHandler, DatabaseConnectionChangeListener {
+  implements DatabaseConnectionHandler, DatabaseConnectionChangeListener, ErrorProvider {
 
   /** for serialization. */
   private static final long serialVersionUID = -532845009254256601L;

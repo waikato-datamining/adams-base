@@ -15,11 +15,12 @@
 
 /*
  * AbstractRowScore.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.spreadsheet.rowscore;
 
+import adams.core.ErrorProvider;
 import adams.core.option.AbstractOptionHandler;
 import adams.data.spreadsheet.SpreadSheet;
 
@@ -30,7 +31,8 @@ import adams.data.spreadsheet.SpreadSheet;
  * @version $Revision: 9765 $
  */
 public abstract class AbstractRowScore
-  extends AbstractOptionHandler {
+  extends AbstractOptionHandler
+  implements ErrorProvider {
 
   /** for serialization. */
   private static final long serialVersionUID = 3225015615927453223L;

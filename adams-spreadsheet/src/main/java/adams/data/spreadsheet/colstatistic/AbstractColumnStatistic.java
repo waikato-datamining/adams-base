@@ -15,11 +15,12 @@
 
 /*
  * AbstractColumnStatistic.java
- * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.spreadsheet.colstatistic;
 
+import adams.core.ErrorProvider;
 import adams.core.option.AbstractOptionHandler;
 import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.Row;
@@ -32,7 +33,8 @@ import adams.data.spreadsheet.SpreadSheet;
  * @version $Revision$
  */
 public abstract class AbstractColumnStatistic
-  extends AbstractOptionHandler {
+  extends AbstractOptionHandler
+  implements ErrorProvider {
 
   /** for serialization. */
   private static final long serialVersionUID = -7187115330070305271L;

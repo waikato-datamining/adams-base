@@ -15,11 +15,12 @@
 
 /**
  * AbstractOutlierDetector.java
- * Copyright (C) 2015 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.control.removeoutliers;
 
+import adams.core.ErrorProvider;
 import adams.core.QuickInfoSupporter;
 import adams.core.option.AbstractOptionHandler;
 import adams.data.spreadsheet.SpreadSheet;
@@ -35,7 +36,7 @@ import java.util.Set;
  */
 public abstract class AbstractOutlierDetector
   extends AbstractOptionHandler
-  implements QuickInfoSupporter {
+  implements QuickInfoSupporter, ErrorProvider {
 
   private static final long serialVersionUID = -2791096934947903275L;
 

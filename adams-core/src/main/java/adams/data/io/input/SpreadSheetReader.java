@@ -15,10 +15,11 @@
 
 /**
  * SpreadSheetReader.java
- * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.input;
 
+import adams.core.ErrorProvider;
 import adams.core.StoppableWithFeedback;
 import adams.core.io.FileFormatHandler;
 import adams.core.option.OptionHandler;
@@ -38,7 +39,7 @@ import java.io.Serializable;
  * @version $Revision$
  */
 public interface SpreadSheetReader
-  extends Serializable, StoppableWithFeedback, OptionHandler, FileFormatHandler {
+  extends Serializable, StoppableWithFeedback, OptionHandler, FileFormatHandler, ErrorProvider {
 
   /**
    * Returns a string describing the format (used in the file chooser).

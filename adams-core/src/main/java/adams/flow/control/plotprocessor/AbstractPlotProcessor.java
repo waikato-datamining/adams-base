@@ -15,11 +15,12 @@
 
 /**
  * AbstractPlotProcessor.java
- * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.control.plotprocessor;
 
 import adams.core.CleanUpHandler;
+import adams.core.ErrorProvider;
 import adams.core.QuickInfoHelper;
 import adams.core.QuickInfoSupporter;
 import adams.core.option.AbstractOptionHandler;
@@ -41,7 +42,7 @@ import java.util.List;
  */
 public abstract class AbstractPlotProcessor
   extends AbstractOptionHandler
-  implements QuickInfoSupporter, CleanUpHandler {
+  implements QuickInfoSupporter, CleanUpHandler, ErrorProvider {
 
   /** for serialization. */
   private static final long serialVersionUID = 6709551233400282459L;

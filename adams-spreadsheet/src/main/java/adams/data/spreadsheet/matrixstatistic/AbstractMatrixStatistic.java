@@ -15,11 +15,12 @@
 
 /*
  * AbstractMatrixStatistic.java
- * Copyright (C) 2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.spreadsheet.matrixstatistic;
 
+import adams.core.ErrorProvider;
 import adams.core.Range;
 import adams.core.option.AbstractOptionHandler;
 import adams.data.spreadsheet.Cell;
@@ -39,7 +40,8 @@ import gnu.trove.list.array.TDoubleArrayList;
  * @version $Revision: 9765 $
  */
 public abstract class AbstractMatrixStatistic
-  extends AbstractOptionHandler {
+  extends AbstractOptionHandler
+  implements ErrorProvider {
 
   /** for serialization. */
   private static final long serialVersionUID = -7187115330070305271L;
