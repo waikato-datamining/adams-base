@@ -30,7 +30,6 @@ import adams.gui.visualization.image.ImagePanel.PaintPanel;
 
 import java.awt.Color;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
@@ -82,64 +81,6 @@ public class SelectObjects
   /** for serialization. */
   private static final long serialVersionUID = -5879410661391670242L;
 
-  /**
-   * Stores the index in the report as well.
-   *
-   * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision: 364 $
-   */
-  public static class SelectionRectangle
-    extends Rectangle {
-
-    /** for serialization. */
-    private static final long serialVersionUID = -4195121456711918920L;
-    
-    /** the associated index. */
-    protected int m_Index;
-    
-    /**
-     * Constructs a new <code>SelectionRectangle</code> whose upper-left corner is
-     * specified as
-     * {@code (x,y)} and whose width and height
-     * are specified by the arguments of the same name.
-     * Uses -1 for associated index.
-     * 
-     * @param x		the specified X coordinate
-     * @param y		the specified Y coordinate
-     * @param width	the width of the <code>SelectionRectangle</code>
-     * @param height	the height of the <code>SelectionRectangle</code>
-     */
-    public SelectionRectangle(int x, int y, int width, int height) {
-      this(x, y, width, height, -1);
-    }
-    
-    /**
-     * Constructs a new <code>SelectionRectangle</code> whose upper-left corner is
-     * specified as
-     * {@code (x,y)} and whose width and height
-     * are specified by the arguments of the same name.
-     * 
-     * @param x		the specified X coordinate
-     * @param y		the specified Y coordinate
-     * @param width	the width of the <code>SelectionRectangle</code>
-     * @param height	the height of the <code>SelectionRectangle</code>
-     * @param index	the associated index
-     */
-    public SelectionRectangle(int x, int y, int width, int height, int index) {
-      super(x, y, width, height);
-      m_Index = index;
-    }
-    
-    /**
-     * Returns the stored index.
-     * 
-     * @return		the index
-     */
-    public int getIndex() {
-      return m_Index;
-    }
-  }
-  
   /** the key for the X location. */
   public final static String KEY_X = LocatedObjects.KEY_X;
 
