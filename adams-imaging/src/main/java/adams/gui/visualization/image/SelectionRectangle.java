@@ -18,7 +18,7 @@
  * Copyright (C) 2017 University of Waikato, Hamilton, NZ
  */
 
-package adams.gui.visualization.image.selection;
+package adams.gui.visualization.image;
 
 import java.awt.Rectangle;
 

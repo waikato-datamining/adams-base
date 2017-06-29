@@ -23,6 +23,7 @@ import adams.data.report.AbstractField;
 import adams.data.report.Report;
 import adams.flow.transformer.locateobjects.LocatedObjects;
 import adams.gui.visualization.image.ImagePanel.PaintPanel;
+import adams.gui.visualization.image.SelectionRectangle;
 
 import java.util.ArrayList;
 import java.util.List;

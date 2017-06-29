@@ -24,6 +24,7 @@ import adams.data.report.DataType;
 import adams.data.report.Field;
 import adams.data.report.Report;
 import adams.gui.visualization.image.ImagePanel;
+import adams.gui.visualization.image.SelectionRectangle;
 
 import java.awt.Color;
 import java.awt.Point;
@@ -119,7 +120,7 @@ public class SelectObjects
     int				y;
     int				w;
     int				h;
-    SelectionRectangle		rect;
+    SelectionRectangle rect;
     boolean			modified;
     List<SelectionRectangle>	queue;
 
