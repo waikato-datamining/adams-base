@@ -79,7 +79,7 @@
     <postgis.version>2.2.1</postgis.version>
     <jodd.version>3.5.2</jodd.version>
     <boofcv.version>0.18</boofcv.version>
-    <openimaj.version>1.2</openimaj.version>
+    <openimaj.version>1.3.1</openimaj.version>
     <nd4j.version>0.8.0</nd4j.version>
     <dl4j.version>0.8.0</dl4j.version>
     <jackson.version>2.5.1</jackson.version>
