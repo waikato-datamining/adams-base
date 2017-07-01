@@ -14,15 +14,13 @@
  */
 
 /**
- * RandomBoundingBox.java
+ * FixedBoundingBox.java
  * Copyright (C) 2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.image.leftclick;
 
-import adams.core.Randomizable;
 import adams.core.Utils;
-import adams.core.base.BaseInterval;
 import adams.data.report.DataType;
 import adams.data.report.Field;
 import adams.data.report.Report;
@@ -33,11 +31,10 @@ import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 /**
  <!-- globalinfo-start -->
- * Allows the user to create randomly sized bounding boxes around the left-click position.
+ * Allows the user to create fixed-sized bounding boxes around the left-click position (&lt;ctrl&gt; left-click in box removes it).
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -58,19 +55,16 @@ import java.util.Random;
  * &nbsp;&nbsp;&nbsp;minimum: 0
  * </pre>
  * 
- * <pre>-seed &lt;long&gt; (property: seed)
- * &nbsp;&nbsp;&nbsp;The seed value for the random bounding boxes.
- * &nbsp;&nbsp;&nbsp;default: 1
+ * <pre>-width &lt;int&gt; (property: width)
+ * &nbsp;&nbsp;&nbsp;The width of the bounding box.
+ * &nbsp;&nbsp;&nbsp;default: 10
+ * &nbsp;&nbsp;&nbsp;minimum: 1
  * </pre>
  * 
- * <pre>-range-width &lt;adams.core.base.BaseInterval&gt; (property: rangeWidth)
- * &nbsp;&nbsp;&nbsp;The range of pixels for the bounding box width.
- * &nbsp;&nbsp;&nbsp;default: [10;50]
- * </pre>
- * 
- * <pre>-range-height &lt;adams.core.base.BaseInterval&gt; (property: rangeHeight)
- * &nbsp;&nbsp;&nbsp;The range of pixels for the bounding box height.
- * &nbsp;&nbsp;&nbsp;default: [10;50]
+ * <pre>-height &lt;int&gt; (property: height)
+ * &nbsp;&nbsp;&nbsp;The height of the bounding box.
+ * &nbsp;&nbsp;&nbsp;default: 10
+ * &nbsp;&nbsp;&nbsp;minimum: 1
  * </pre>
  * 
  <!-- options-end -->
@@ -78,23 +72,16 @@ import java.util.Random;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class RandomBoundingBox
-  extends AbstractSelectionRectangleBasedLeftClickProcessor
-  implements Randomizable {
+public class FixedBoundingBox
+  extends AbstractSelectionRectangleBasedLeftClickProcessor {
 
   private static final long serialVersionUID = 4069769951854697560L;
 
-  /** the seed value. */
-  protected long m_Seed;
+  /** the width. */
+  protected int m_Width;
 
-  /** the range for the width. */
-  protected BaseInterval m_RangeWidth;
-
-  /** the range for the height. */
-  protected BaseInterval m_RangeHeight;
-
-  /** the random number generator to use. */
-  protected Random m_Random;
+  /** the height. */
+  protected int m_Height;
 
   /**
    * Returns a string describing the object.
@@ -104,7 +91,7 @@ public class RandomBoundingBox
   @Override
   public String globalInfo() {
     return
-      "Allows the user to create randomly sized bounding boxes around the "
+      "Allows the user to create fixed-sized bounding boxes around the "
         + "left-click position (<ctrl> left-click in box removes it).";
   }
 
@@ -116,47 +103,31 @@ public class RandomBoundingBox
     super.defineOptions();
 
     m_OptionManager.add(
-      "seed", "seed",
-      1L);
+      "width", "width",
+      10, 1, null);
 
     m_OptionManager.add(
-      "range-width", "rangeWidth",
-      new BaseInterval(10, 50));
-
-    m_OptionManager.add(
-      "range-height", "rangeHeight",
-      new BaseInterval(10, 50));
+      "height", "height",
+      10, 1, null);
   }
 
   /**
-   * Resets the scheme.
-   */
-  @Override
-  protected void reset() {
-    super.reset();
-
-    m_Random = null;
-  }
-
-  /**
-   * Sets the seed value.
+   * Sets the width of the bounding box.
    *
-   * @param value	the seed
+   * @param value 	the width
    */
-  @Override
-  public void setSeed(long value) {
-    m_Seed = value;
+  public void setWidth(int value) {
+    m_Width = value;
     reset();
   }
 
   /**
-   * Returns the seed value.
+   * Returns the width of the bounding box.
    *
-   * @return  		the seed
+   * @return 		the width
    */
-  @Override
-  public long getSeed() {
-    return m_Seed;
+  public int getWidth() {
+    return m_Width;
   }
 
   /**
@@ -165,28 +136,27 @@ public class RandomBoundingBox
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  @Override
-  public String seedTipText() {
-    return "The seed value for the random bounding boxes.";
+  public String widthTipText() {
+    return "The width of the bounding box.";
   }
 
   /**
-   * Sets the pixel range for the bounding box width.
+   * Sets the height of the bounding box.
    *
-   * @param value 	the range
+   * @param value 	the height
    */
-  public void setRangeWidth(BaseInterval value) {
-    m_RangeWidth = value;
+  public void setHeight(int value) {
+    m_Height = value;
     reset();
   }
 
   /**
-   * Returns the pixel range for the bounding box width.
+   * Returns the height of the bounding box.
    *
-   * @return 		the range
+   * @return 		the height
    */
-  public BaseInterval getRangeWidth() {
-    return m_RangeWidth;
+  public int getHeight() {
+    return m_Height;
   }
 
   /**
@@ -195,37 +165,8 @@ public class RandomBoundingBox
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String rangeWidthTipText() {
-    return "The range of pixels for the bounding box width.";
-  }
-
-  /**
-   * Sets the pixel range for the bounding box height.
-   *
-   * @param value 	the range
-   */
-  public void setRangeHeight(BaseInterval value) {
-    m_RangeHeight = value;
-    reset();
-  }
-
-  /**
-   * Returns the pixel range for the bounding box height.
-   *
-   * @return 		the range
-   */
-  public BaseInterval getRangeHeight() {
-    return m_RangeHeight;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String rangeHeightTipText() {
-    return "The range of pixels for the bounding box height.";
+  public String heightTipText() {
+    return "The height of the bounding box.";
   }
 
   /**
@@ -240,8 +181,6 @@ public class RandomBoundingBox
     Report			report;
     int				x;
     int				y;
-    int				w;
-    int				h;
     boolean			modified;
     List<SelectionRectangle>	queue;
     String			current;
@@ -251,8 +190,6 @@ public class RandomBoundingBox
     report = panel.getAdditionalProperties().getClone();
     if (m_Locations == null)
       m_Locations = getLocations(report);
-    if (m_Random == null)
-      m_Random = new Random(m_Seed);
 
     x         = panel.mouseToPixelLocation(position).x;
     y         = panel.mouseToPixelLocation(position).y;
@@ -273,17 +210,15 @@ public class RandomBoundingBox
       m_Locations.removeAll(queue);
     }
     else {
-      w = (int) (m_RangeWidth.getLower()  + m_Random.nextDouble() * (m_RangeWidth.getUpper()  - m_RangeWidth.getLower()));
-      h = (int) (m_RangeHeight.getLower() + m_Random.nextDouble() * (m_RangeHeight.getUpper() - m_RangeHeight.getLower()));
-      rect = new SelectionRectangle(x - w / 2, y - h / 2, w, h);
+      rect = new SelectionRectangle(x - m_Width / 2, y - m_Height / 2, m_Width, m_Height);
       if (!m_Locations.contains(rect)) {
 	modified  = true;
 	lastIndex = findLastIndex(report);
 	current   = m_Prefix + (Utils.padLeft("" + (lastIndex + 1), '0', m_NumDigits));
 	report.setNumericValue(current + KEY_X, x);
 	report.setNumericValue(current + KEY_Y, y);
-	report.setNumericValue(current + KEY_WIDTH, w);
-	report.setNumericValue(current + KEY_HEIGHT, h);
+	report.setNumericValue(current + KEY_WIDTH, m_Width);
+	report.setNumericValue(current + KEY_HEIGHT, m_Height);
 	m_Locations.add(rect);
       }
     }
