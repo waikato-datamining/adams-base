@@ -14,7 +14,7 @@
  */
 
 /**
- * AbstractSelectRectangleBasedSelectionProcessor.java
+ * AbstractSelectionRectangleBasedSelectionProcessor.java
  * Copyright (C) 2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.image.selection;
@@ -35,7 +35,7 @@ import java.util.List;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision: 364 $
  */
-public abstract class AbstractSelectRectangleBasedSelectionProcessor
+public abstract class AbstractSelectionRectangleBasedSelectionProcessor
   extends AbstractPaintingSelectionProcessor {
 
   /** for serialization. */

@@ -74,7 +74,7 @@ import java.util.List;
  * @version $Revision: 364 $
  */
 public class SelectObjects
-  extends AbstractSelectRectangleBasedSelectionProcessor {
+  extends AbstractSelectionRectangleBasedSelectionProcessor {
 
   /** for serialization. */
   private static final long serialVersionUID = -5879410661391670242L;
