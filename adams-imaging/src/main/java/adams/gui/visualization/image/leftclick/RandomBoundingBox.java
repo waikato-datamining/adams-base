@@ -260,7 +260,7 @@ public class RandomBoundingBox
     modified  = false;
     if ((modifiersEx & MouseEvent.CTRL_DOWN_MASK) != 0) {
       for (SelectionRectangle r: m_Locations) {
-	if (r.contains(position)) {
+	if (r.contains(x, y)) {
 	  modified  = true;
 	  current   = m_Prefix + (Utils.padLeft("" + r.getIndex(), '0', m_NumDigits));
 	  report.removeValue(new Field(current + KEY_X, DataType.NUMERIC));
@@ -280,10 +280,10 @@ public class RandomBoundingBox
 	modified  = true;
 	lastIndex = findLastIndex(report);
 	current   = m_Prefix + (Utils.padLeft("" + (lastIndex + 1), '0', m_NumDigits));
-	report.setNumericValue(current + KEY_X, x);
-	report.setNumericValue(current + KEY_Y, y);
-	report.setNumericValue(current + KEY_WIDTH, w);
-	report.setNumericValue(current + KEY_HEIGHT, h);
+	report.setNumericValue(current + KEY_X, rect.getX());
+	report.setNumericValue(current + KEY_Y, rect.getY());
+	report.setNumericValue(current + KEY_WIDTH, rect.getWidth());
+	report.setNumericValue(current + KEY_HEIGHT, rect.getHeight());
 	m_Locations.add(rect);
       }
     }
