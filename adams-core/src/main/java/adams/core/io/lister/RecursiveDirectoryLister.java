@@ -21,7 +21,7 @@
 package adams.core.io.lister;
 
 /**
- * Interface for recrusive directory listers.
+ * Interface for recursive directory listers.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
