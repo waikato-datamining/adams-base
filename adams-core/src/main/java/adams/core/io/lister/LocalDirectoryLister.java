@@ -15,7 +15,7 @@
 
 /*
  * LocalDirectoryLister.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.io.lister;
@@ -40,7 +40,8 @@ import java.util.List;
  * @version $Revision$
  */
 public class LocalDirectoryLister
-  extends AbstractRecursiveDirectoryLister {
+  extends AbstractRecursiveDirectoryLister
+  implements RelativeDirectoryLister {
 
   /** for serialization. */
   private static final long serialVersionUID = -1846677500660003814L;
@@ -60,6 +61,9 @@ public class LocalDirectoryLister
   /** the maximum file timestamp ("last modified"). */
   protected BaseDateTime m_MaxFileTimestamp;
 
+  /** whether to output relative paths. */
+  protected boolean m_UseRelativePaths;
+
   /**
    * Initializes the object.
    */
@@ -70,6 +74,7 @@ public class LocalDirectoryLister
     m_StopFileEncountered = false;
     m_MinFileTimestamp    = new BaseDateTime(BaseDateTime.INF_PAST);
     m_MaxFileTimestamp    = new BaseDateTime(BaseDateTime.INF_FUTURE);
+    m_UseRelativePaths    = false;
   }
 
   /**
@@ -160,6 +165,24 @@ public class LocalDirectoryLister
    */
   public BaseDateTime getMaxFileTimestamp() {
     return m_MaxFileTimestamp;
+  }
+
+  /**
+   * Sets whether to output relative paths.
+   *
+   * @param value 	true if to output relative paths
+   */
+  public void setUseRelativePaths(boolean value) {
+    m_UseRelativePaths = value;
+  }
+
+  /**
+   * Returns whether to output relative paths.
+   *
+   * @return 		true if to output relative paths
+   */
+  public boolean getUseRelativePaths() {
+    return m_UseRelativePaths;
   }
 
   /**
@@ -360,11 +383,16 @@ public class LocalDirectoryLister
     String[]		result;
     FileObject[]	files;
     int			i;
+    String		parent;
 
+    parent = new PlaceholderFile(getWatchDir()).getAbsolutePath() + File.separator;
     files  = listObjects();
     result = new String[files.length];
-    for (i = 0; i < files.length; i++)
+    for (i = 0; i < files.length; i++) {
       result[i] = files[i].getFile().getAbsolutePath();
+      if (m_UseRelativePaths)
+	result[i] = result[i].replace(parent, "");
+    }
 
     return result;
   }
