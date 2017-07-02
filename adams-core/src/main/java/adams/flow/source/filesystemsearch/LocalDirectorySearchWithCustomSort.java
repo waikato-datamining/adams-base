@@ -15,7 +15,7 @@
 
 /**
  * LocalDirectorySearchWithCustomSort.java
- * Copyright (C) 2015-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.source.filesystemsearch;
 
@@ -83,6 +83,11 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;The maximum depth to search in recursive mode (1 = only search directory,
  * &nbsp;&nbsp;&nbsp; -1 = infinite).
  * &nbsp;&nbsp;&nbsp;default: -1
+ * </pre>
+ * 
+ * <pre>-use-relative-paths &lt;boolean&gt; (property: useRelativePaths)
+ * &nbsp;&nbsp;&nbsp;If enabled, paths relative to the specified directory.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
  <!-- options-end -->
@@ -222,6 +227,10 @@ public class LocalDirectorySearchWithCustomSort
     m_OptionManager.add(
 	    "max-depth", "maxDepth",
 	    -1);
+
+    m_OptionManager.add(
+	    "use-relative-paths", "useRelativePaths",
+	    false);
   }
 
   /**
@@ -500,6 +509,35 @@ public class LocalDirectorySearchWithCustomSort
   }
 
   /**
+   * Sets whether to output relative paths.
+   *
+   * @param value 	true if to output relative paths
+   */
+  public void setUseRelativePaths(boolean value) {
+    m_Lister.setUseRelativePaths(value);
+    reset();
+  }
+
+  /**
+   * Returns whether to output relative paths.
+   *
+   * @return 		true if to output relative paths
+   */
+  public boolean getUseRelativePaths() {
+    return m_Lister.getUseRelativePaths();
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String useRelativePathsTipText() {
+    return "If enabled, paths relative to the specified directory.";
+  }
+
+  /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
@@ -518,6 +556,7 @@ public class LocalDirectorySearchWithCustomSort
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "sortDescending", getSortDescending(), "descending"));
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "recursive", getRecursive(), "recursive"));
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "maxItems", (getMaxItems() > 0 ? getMaxItems() : null), "max="));
+    QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "useRelativePaths", getUseRelativePaths(), "relative"));
     result += QuickInfoHelper.flatten(options);
 
     return result;
