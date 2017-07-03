@@ -29,6 +29,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -469,8 +470,11 @@ public class SerializationHelper {
 	result.add(ois.readObject());
       }
     }
-    catch (Exception e) {
-      // ignored
+    catch (IOException e) {
+      // unfortunately, ois.available() is always 0, so we have
+      // to check whether we read beyond the stream's end
+      if (!e.getMessage().toLowerCase().contains("stream closed"))
+	throw(e);
     }
     finally {
       FileUtils.closeQuietly(ois);
