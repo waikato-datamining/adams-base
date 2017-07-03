@@ -27,9 +27,9 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.EOFException;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -470,9 +470,15 @@ public class SerializationHelper {
 	result.add(ois.readObject());
       }
     }
-    catch (IOException e) {
-      // unfortunately, ois.available() is always 0, so we have
-      // to check whether we read beyond the stream's end
+    // unfortunately, ois.available() is always 0, so we have
+    // to check whether we read beyond the stream's end
+    catch (NullPointerException npe) {
+      // ignored, since reading beyond end of stream
+    }
+    catch (EOFException eof) {
+      // ignored, since reading beyond end of stream
+    }
+    catch (Exception e) {
       if (!e.getMessage().toLowerCase().contains("stream closed"))
 	throw(e);
     }
