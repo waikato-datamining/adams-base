@@ -133,7 +133,7 @@
         </exclusion>
         <exclusion>
           <groupId>com.github.fommil.netlib</groupId>
-          <artifactId>	netlib-native_ref-win-i686</artifactId>
+          <artifactId>netlib-native_ref-win-i686</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
