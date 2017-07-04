@@ -111,6 +111,30 @@
           <groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
           <artifactId>java-cup</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>com.github.fommil.netlib</groupId>
+          <artifactId>netlib-native_system-linux-armhf</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.github.fommil.netlib</groupId>
+          <artifactId>netlib-native_system-linux-i686</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.github.fommil.netlib</groupId>
+          <artifactId>netlib-native_system-win-i686</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.github.fommil.netlib</groupId>
+          <artifactId>netlib-native_ref-linux-armhf</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.github.fommil.netlib</groupId>
+          <artifactId>netlib-native_ref-linux-i686</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.github.fommil.netlib</groupId>
+          <artifactId>	netlib-native_ref-win-i686</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
 
