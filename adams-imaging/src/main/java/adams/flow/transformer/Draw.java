@@ -174,7 +174,7 @@ public class Draw
   }
 
   /**
-   * Sets whether to skip creating a copy of the spreadsheet before setting value.
+   * Sets whether to skip creating a copy of the image before setting value.
    *
    * @param value	true if to skip creating copy
    */
@@ -184,7 +184,7 @@ public class Draw
   }
 
   /**
-   * Returns whether to skip creating a copy of the spreadsheet before setting value.
+   * Returns whether to skip creating a copy of the image before setting value.
    *
    * @return		true if copying is skipped
    */
@@ -199,7 +199,7 @@ public class Draw
    * 			displaying in the GUI or for listing the options.
    */
   public String noCopyTipText() {
-    return "If enabled, no copy of the spreadsheet is created before processing it.";
+    return "If enabled, no copy of the image is created before processing it.";
   }
 
   /**
