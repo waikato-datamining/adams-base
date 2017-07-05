@@ -20,8 +20,6 @@
 
 package adams.flow.transformer;
 
-import java.awt.image.BufferedImage;
-
 import adams.core.QuickInfoHelper;
 import adams.data.InPlaceProcessing;
 import adams.data.image.AbstractImageContainer;
@@ -30,6 +28,8 @@ import adams.data.image.BufferedImageHelper;
 import adams.flow.core.Token;
 import adams.flow.transformer.draw.AbstractDrawOperation;
 import adams.flow.transformer.draw.Pixel;
+
+import java.awt.image.BufferedImage;
 
 /**
  <!-- globalinfo-start -->
@@ -97,7 +97,7 @@ public class Draw
   /** for serialization. */
   private static final long serialVersionUID = -7871688022041775952L;
 
-  /** whether to skip creating a copy of the spreadsheet. */
+  /** whether to skip creating a copy of the image. */
   protected boolean m_NoCopy;
   
   /** the draw operation. */
