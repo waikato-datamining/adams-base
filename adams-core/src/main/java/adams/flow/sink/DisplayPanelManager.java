@@ -15,7 +15,7 @@
 
 /*
  * DisplayPanelManager.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -84,91 +84,91 @@ import java.util.Hashtable;
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- * 
+ *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: DisplayPanelManager
  * </pre>
- * 
+ *
  * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- * 
+ *
  * <pre>-skip &lt;boolean&gt; (property: skip)
  * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
  * &nbsp;&nbsp;&nbsp;as it is.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
  * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
  * &nbsp;&nbsp;&nbsp; useful for critical actors.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-short-title &lt;boolean&gt; (property: shortTitle)
  * &nbsp;&nbsp;&nbsp;If enabled uses just the name for the title instead of the actor's full 
  * &nbsp;&nbsp;&nbsp;name.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-width &lt;int&gt; (property: width)
  * &nbsp;&nbsp;&nbsp;The width of the dialog.
  * &nbsp;&nbsp;&nbsp;default: 640
  * &nbsp;&nbsp;&nbsp;minimum: -1
  * </pre>
- * 
+ *
  * <pre>-height &lt;int&gt; (property: height)
  * &nbsp;&nbsp;&nbsp;The height of the dialog.
  * &nbsp;&nbsp;&nbsp;default: 480
  * &nbsp;&nbsp;&nbsp;minimum: -1
  * </pre>
- * 
+ *
  * <pre>-x &lt;int&gt; (property: x)
  * &nbsp;&nbsp;&nbsp;The X position of the dialog (&gt;=0: absolute, -1: left, -2: center, -3: right
  * &nbsp;&nbsp;&nbsp;).
  * &nbsp;&nbsp;&nbsp;default: -1
  * &nbsp;&nbsp;&nbsp;minimum: -3
  * </pre>
- * 
+ *
  * <pre>-y &lt;int&gt; (property: y)
  * &nbsp;&nbsp;&nbsp;The Y position of the dialog (&gt;=0: absolute, -1: top, -2: center, -3: bottom
  * &nbsp;&nbsp;&nbsp;).
  * &nbsp;&nbsp;&nbsp;default: -1
  * &nbsp;&nbsp;&nbsp;minimum: -3
  * </pre>
- * 
+ *
  * <pre>-provider &lt;adams.flow.sink.DisplayPanelProvider&gt; (property: panelProvider)
  * &nbsp;&nbsp;&nbsp;The actor for generating the display panels.
  * &nbsp;&nbsp;&nbsp;default: adams.flow.sink.ImageViewer -writer adams.gui.print.NullWriter -selection-processor adams.gui.visualization.image.selection.NullProcessor -image-overlay adams.gui.visualization.image.NullOverlay
  * </pre>
- * 
+ *
  * <pre>-num-tokens &lt;int&gt; (property: numTokens)
  * &nbsp;&nbsp;&nbsp;The number of tokens to accept per created panel.
  * &nbsp;&nbsp;&nbsp;default: 1
  * &nbsp;&nbsp;&nbsp;minimum: -1
  * </pre>
- * 
+ *
  * <pre>-entry-name-variable &lt;adams.core.VariableNameNoUpdate&gt; (property: entryNameVariable)
  * &nbsp;&nbsp;&nbsp;The variable to use for naming the entries; gets ignored if variable not 
  * &nbsp;&nbsp;&nbsp;available; an existing history entry gets replaced if a new one with the 
  * &nbsp;&nbsp;&nbsp;same name gets added.
  * &nbsp;&nbsp;&nbsp;default: entryNameVariable
  * </pre>
- * 
+ *
  * <pre>-allow-merge &lt;boolean&gt; (property: allowMerge)
  * &nbsp;&nbsp;&nbsp;If enabled and the display panel is derived from adams.flow.sink.MergeableDisplayPanel 
  * &nbsp;&nbsp;&nbsp;then entries with the same name (ie when using 'entryNameVariable') get 
  * &nbsp;&nbsp;&nbsp;merged.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-allow-search &lt;boolean&gt; (property: allowSearch)
  * &nbsp;&nbsp;&nbsp;Whether to allow the user to search the entries.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -226,13 +226,13 @@ public class DisplayPanelManager
       m_Panel.removeAll();
 
       if (name != null) {
-        // update panel
-        if (hasEntry(name)) {
-          m_Panel.add((JPanel) getEntry(name));
-          m_Panel.getParent().invalidate();
-          m_Panel.getParent().validate();
-          m_Panel.getParent().repaint();
-        }
+	// update panel
+	if (hasEntry(name)) {
+	  m_Panel.add((JPanel) getEntry(name));
+	  m_Panel.getParent().invalidate();
+	  m_Panel.getParent().validate();
+	  m_Panel.getParent().repaint();
+	}
       }
     }
 
@@ -273,7 +273,7 @@ public class DisplayPanelManager
 
     /** the split pane for the components. */
     protected JSplitPane m_SplitPane;
-    
+
     /** the status bar. */
     protected BaseStatusBar m_StatusBar;
 
@@ -318,7 +318,7 @@ public class DisplayPanelManager
 
       m_SplitPane.setResizeWeight(0.1);
       m_SplitPane.setDividerLocation(Math.max(150, m_History.getPreferredSize().width));
-      
+
       m_StatusBar = new BaseStatusBar();
       m_StatusBar.setMouseListenerActive(true);
       add(m_StatusBar, BorderLayout.SOUTH);
@@ -361,27 +361,70 @@ public class DisplayPanelManager
     }
 
     /**
-     * Adds the given text.
+     * Generates a new history ID.
      *
-     * @param result	the text to add
+     * @return		the ID
      */
-    public synchronized void addResult(DisplayPanel result) {
+    public String newID() {
+      String 	result;
       String	baseID;
-      String	id;
       String	var;
-      boolean	add;
 
-      // determine a unique ID
       var = m_Owner.getEntryNameVariable().getValue();
       if (m_Owner.getVariables().has(var)) {
-	id = m_Owner.getVariables().get(var);
+	result = m_Owner.getVariables().get(var);
       }
       else {
 	synchronized(m_Format) {
 	  baseID = m_Format.format(new Date());
 	}
-	id = m_History.newEntryName(baseID);
+	result = m_History.newEntryName(baseID);
       }
+
+      return result;
+    }
+
+    /**
+     * Checks whether the ID is already used in the history panel.
+     *
+     * @param id	the ID to check
+     * @return		true if already present
+     */
+    public synchronized boolean hasResult(String id) {
+      return m_History.hasEntry(id);
+    }
+
+    /**
+     * Returns the entry associated with the ID.
+     *
+     * @param id	the ID of the result to retrieve
+     * @return		the panel, null if not found
+     */
+    public synchronized DisplayPanel getResult(String id) {
+      return m_History.getEntry(id);
+    }
+
+    /**
+     * Selects the panel with the given ID.
+     *
+     * @param id	the ID of the panel to select
+     */
+    public synchronized void setSelectedResult(String id) {
+      if (m_History.hasEntry(id))
+	m_History.setSelectedEntry(id);
+    }
+
+    /**
+     * Adds the given text.
+     *
+     * @param result	the text to add
+     */
+    public synchronized void addResult(DisplayPanel result) {
+      String	id;
+      boolean	add;
+
+      // determine a unique ID
+      id = newID();
 
       // add result
       add = true;
@@ -392,8 +435,8 @@ public class DisplayPanelManager
 	}
 	else {
 	  m_Owner.getLogger().warning(
-	      result.getClass().getName() + " does not implement " 
-		  + MergeableDisplayPanel.class.getName() + ", merging not possible!");
+	    result.getClass().getName() + " does not implement "
+	      + MergeableDisplayPanel.class.getName() + ", merging not possible!");
 	}
       }
 
@@ -403,19 +446,19 @@ public class DisplayPanelManager
       // select this entry immediately
       m_History.setSelectedEntry(id);
     }
-    
+
     /**
      * Sets whether the entry list is searchable.
-     * 
+     *
      * @param value	true if to make the list searchable
      */
     public void setAllowSearch(boolean value) {
       m_History.setAllowSearch(value);
     }
-    
+
     /**
      * Returns whether the entry list is searchable.
-     * 
+     *
      * @return		true if list is searchable
      */
     public boolean getAllowSearch() {
@@ -437,10 +480,10 @@ public class DisplayPanelManager
 
   /** the variable to use for naming the entries. */
   protected VariableNameNoUpdate m_EntryNameVariable;
-  
+
   /** the number of tokens to accept for a single panel. */
   protected int m_NumTokens;
-  
+
   /** the menu bar, if used. */
   protected JMenuBar m_MenuBar;
 
@@ -458,16 +501,16 @@ public class DisplayPanelManager
 
   /** the filedialog for loading/saving flows. */
   protected transient TextFileChooser m_TextFileChooser;
-  
+
   /** the current count of tokens. */
   protected int m_CurrentCount;
-  
+
   /** the current panel, if any. */
   protected DisplayPanel m_CurrentPanel;
-  
+
   /** whether to allow merging of panel content. */
   protected boolean m_AllowMerge;
-  
+
   /** whether to allow searching. */
   protected boolean m_AllowSearch;
 
@@ -479,9 +522,9 @@ public class DisplayPanelManager
   @Override
   public String globalInfo() {
     return
-        "Actor that displays a 'history' of panels created by the selected "
-      + "panel provider. The provider can be an actor that generates classifier "
-      + "errors, for instance.";
+      "Actor that displays a 'history' of panels created by the selected "
+	+ "panel provider. The provider can be an actor that generates classifier "
+	+ "errors, for instance.";
   }
 
   /**
@@ -492,24 +535,24 @@ public class DisplayPanelManager
     super.defineOptions();
 
     m_OptionManager.add(
-	    "provider", "panelProvider",
-	    new ImageViewer());
-    
-    m_OptionManager.add(
-	    "num-tokens", "numTokens",
-	    1, -1, null);
-    
-    m_OptionManager.add(
-	    "entry-name-variable", "entryNameVariable",
-	    new VariableNameNoUpdate("entryNameVariable"));
+      "provider", "panelProvider",
+      new ImageViewer());
 
     m_OptionManager.add(
-	    "allow-merge", "allowMerge",
-	    false);
+      "num-tokens", "numTokens",
+      1, -1, null);
 
     m_OptionManager.add(
-	    "allow-search", "allowSearch",
-	    false);
+      "entry-name-variable", "entryNameVariable",
+      new VariableNameNoUpdate("entryNameVariable"));
+
+    m_OptionManager.add(
+      "allow-merge", "allowMerge",
+      false);
+
+    m_OptionManager.add(
+      "allow-search", "allowSearch",
+      false);
   }
 
   /**
@@ -518,7 +561,7 @@ public class DisplayPanelManager
   @Override
   protected void reset() {
     super.reset();
-    
+
     m_CurrentCount = 0;
     m_CurrentPanel = null;
   }
@@ -529,11 +572,11 @@ public class DisplayPanelManager
   @Override
   protected void pruneBackup() {
     super.pruneBackup();
-    
+
     pruneBackup(BACKUP_CURRENTCOUNT);
     pruneBackup(BACKUP_CURRENTPANEL);
   }
-  
+
   /**
    * Backs up the current state of the actor before update the variables.
    *
@@ -733,8 +776,8 @@ public class DisplayPanelManager
    * 			displaying in the GUI or for listing the options.
    */
   public String allowMergeTipText() {
-    return 
-	"If enabled and the display panel is derived from " 
+    return
+      "If enabled and the display panel is derived from "
 	+ MergeableDisplayPanel.class.getName() + " then entries with the "
 	+ "same name (ie when using 'entryNameVariable') get merged.";
   }
@@ -767,7 +810,7 @@ public class DisplayPanelManager
   public String allowSearchTipText() {
     return "Whether to allow the user to search the entries.";
   }
-  
+
   /**
    * Updates the Variables instance in use.
    * <br><br>
@@ -822,7 +865,7 @@ public class DisplayPanelManager
 
   /**
    * Returns a custom file filter for the file chooser.
-   * 
+   *
    * @return		the file filter, null if to use default one
    */
   public ExtensionFileFilter getCustomTextFileFilter() {
@@ -899,37 +942,37 @@ public class DisplayPanelManager
   protected BaseFrame doCreateFrame(BasePanel panel) {
     BaseFrame	result;
     ImageIcon	icon;
-    
+
     result = super.doCreateFrame(panel);
-    
+
     icon = GUIHelper.getIcon(m_PanelProvider.getClass());
     if (icon != null)
       result.setIconImage(icon.getImage());
-    
+
     return result;
   }
-  
+
   /**
    * Returns (and initializes if necessary) the file chooser for the components.
-   * 
+   *
    * @return		the file chooser
    */
   protected JComponentWriterFileChooser getComponentFileChooser() {
     if (m_ComponentFileChooser == null)
       m_ComponentFileChooser = new JComponentWriterFileChooser();
-    
+
     return m_ComponentFileChooser;
   }
-  
+
   /**
    * Returns (and initializes if necessary) the file chooser for the text.
-   * 
+   *
    * @return		the file chooser
    */
   protected TextFileChooser getTextFileChooser() {
     TextFileChooser	fileChooser;
     ExtensionFileFilter	filter;
-    
+
     if (m_TextFileChooser == null) {
       fileChooser = new TextFileChooser();
       filter      = getCustomTextFileFilter();
@@ -941,10 +984,10 @@ public class DisplayPanelManager
       }
       m_TextFileChooser = fileChooser;
     }
-    
+
     return m_TextFileChooser;
   }
-  
+
   /**
    * Returns the class that the consumer accepts.
    *
@@ -966,20 +1009,32 @@ public class DisplayPanelManager
   @Override
   protected void display(Token token) {
     boolean	newPanel;
-    
+    String	id;
+
     newPanel = false;
     if ((m_NumTokens > 0) && (m_CurrentCount % m_NumTokens == 0))
       newPanel = true;
     else if ((m_NumTokens <= 0) && (m_CurrentCount == 0))
       newPanel = true;
 
-    if (newPanel) {
-      synchronized(m_HistoryPanel) {
+    // panel already present?
+    if (!newPanel) {
+      id       = m_HistoryPanel.newID();
+      newPanel = !m_HistoryPanel.hasResult(id);
+    }
+
+    synchronized(m_HistoryPanel) {
+      if (newPanel) {
 	m_CurrentPanel = m_PanelProvider.createDisplayPanel(null);
 	m_HistoryPanel.addResult(m_CurrentPanel);
       }
+      else {
+	id = m_HistoryPanel.newID();
+	if (m_HistoryPanel.hasResult(id))
+	  m_CurrentPanel = m_HistoryPanel.getResult(id);
+      }
     }
-    
+
     if (m_CurrentPanel != null) {
       m_CurrentPanel.display(token);
       SwingUtilities.invokeLater(() -> ((JPanel) m_CurrentPanel).repaint());
@@ -1080,8 +1135,8 @@ public class DisplayPanelManager
 
     m_MenuItemFileSaveAs.setEnabled(
       (    (m_PanelProvider instanceof ComponentSupplier)
-        || (m_PanelProvider instanceof TextSupplier) )
-      && (getSelectedPanel() != null));
+	|| (m_PanelProvider instanceof TextSupplier) )
+	&& (getSelectedPanel() != null));
 
     m_MenuItemFileClear.setEnabled(m_HistoryPanel.count() > 0);
   }
@@ -1111,13 +1166,13 @@ public class DisplayPanelManager
 	return;
 
       String msg = FileUtils.writeToFileMsg(
-        getTextFileChooser().getSelectedFile().getAbsolutePath(),
-        supplyText(),
-        false,
-        getTextFileChooser().getEncoding());
+	getTextFileChooser().getSelectedFile().getAbsolutePath(),
+	supplyText(),
+	false,
+	getTextFileChooser().getEncoding());
 
       if (msg != null)
-        getLogger().severe("Error saving text to '" + getTextFileChooser().getSelectedFile() + "':\n" + msg);
+	getLogger().severe("Error saving text to '" + getTextFileChooser().getSelectedFile() + "':\n" + msg);
     }
     else if (m_PanelProvider instanceof ComponentSupplier) {
       getComponentFileChooser().setSelectedFile(new File(filename));
