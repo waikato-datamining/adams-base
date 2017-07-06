@@ -20,6 +20,7 @@
 package adams.core.option;
 
 import adams.core.logging.LoggingLevel;
+import adams.data.baseline.NamedSetup;
 import adams.data.baseline.SlidingWindow;
 import adams.env.Environment;
 import adams.test.AdamsTestCase;
@@ -252,6 +253,20 @@ public class OptionUtilsTest
       assertEquals("option #" + (i+1) + " differs", optionsFilter[i], optionsObj[i]);
     prodFilter.cleanUp();
     prodObj.cleanUp();
+  }
+
+  /**
+   * Tests the shallowCopy (array) method.
+   */
+  public void testShallowCopyArray() {
+    adams.data.filter.BaselineCorrection[] array = new adams.data.filter.BaselineCorrection[2];
+    array[0] = new adams.data.filter.BaselineCorrection();
+    array[0].setBaselineCorrection(new SlidingWindow());
+    array[1] = new adams.data.filter.BaselineCorrection();
+    array[1].setBaselineCorrection(new NamedSetup());
+    OptionHandler[] copy = OptionUtils.shallowCopy(array, false);
+    assertNotNull("shallow copy shouldn't be null", copy);
+    assertEqualsArrays("arrays differs", array, copy);
   }
 
   /**

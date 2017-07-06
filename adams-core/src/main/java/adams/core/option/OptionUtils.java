@@ -685,7 +685,29 @@ public class OptionUtils {
   }
 
   /**
-   * Attempts to create an object object with the same options as the specified one.
+   * Creates an OptionHandler array with the same options as the specified one.
+   * Also transfers the database connection object, if the object implements
+   * the DatabaseConnectionHandler interface.
+   *
+   * @param o		the template
+   * @param expand	whether to expand variables to their current value
+   * 			instead of using the placeholders
+   * @return		the copy with the same options, null in case of an error
+   * @see		DatabaseConnectionHandler
+   */
+  public static OptionHandler[] shallowCopy(OptionHandler[] o, boolean expand) {
+    Object	result;
+    int		i;
+
+    result = Array.newInstance(o.getClass().getComponentType(), o.length);
+    for (i = 0; i < o.length; i++)
+      Array.set(result, i, shallowCopy(o[i], expand));
+
+    return (OptionHandler[]) result;
+  }
+
+  /**
+   * Attempts to create an object with the same options as the specified one.
    * Works for objects implementing {@link OptionHandler} and other command-line
    * handling objects.
    *
@@ -712,6 +734,26 @@ public class OptionUtils {
       e.printStackTrace();
     }
     
+    return result;
+  }
+
+  /**
+   * Attempts to create an object array with the same options as the specified one.
+   * Works for objects implementing {@link OptionHandler} and other command-line
+   * handling objects.
+   *
+   * @param o		the object array
+   * @return		the copy with the same options, null in case of an error
+   * @see		#shallowCopy(Object)
+   */
+  public static Object shallowCopy(Object[] o) {
+    Object	result;
+    int		i;
+
+    result = Array.newInstance(o.getClass().getComponentType());
+    for (i = 0; i < o.length; i++)
+      Array.set(result, i, shallowCopy(o[i]));
+
     return result;
   }
 
