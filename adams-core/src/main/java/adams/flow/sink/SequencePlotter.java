@@ -15,7 +15,7 @@
 
 /*
  * SequencePlotter.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -26,6 +26,7 @@ import adams.core.Utils;
 import adams.core.io.FileUtils;
 import adams.core.io.FileWriter;
 import adams.core.io.PlaceholderFile;
+import adams.core.option.OptionUtils;
 import adams.data.io.output.CsvSpreadSheetWriter;
 import adams.data.sequence.XYSequence;
 import adams.data.sequence.XYSequencePoint;
@@ -54,6 +55,7 @@ import adams.gui.core.ExtensionFileFilter;
 import adams.gui.visualization.core.AxisPanelOptions;
 import adams.gui.visualization.core.ColorProvider;
 import adams.gui.visualization.core.DefaultColorProvider;
+import adams.gui.visualization.core.Paintlet;
 import adams.gui.visualization.core.axis.SimpleTickGenerator;
 import adams.gui.visualization.core.axis.Type;
 import adams.gui.visualization.core.plot.Axis;
@@ -1423,15 +1425,15 @@ public class SequencePlotter
       protected void initGUI() {
 	super.initGUI();
 	m_Panel = new SequencePlotterPanel(getTitle());
-	m_Panel.setDataPaintlet(getPaintlet());
-	m_Panel.setOverlayPaintlet(m_OverlayPaintlet);
-	m_Panel.setMarkerPaintlet(getMarkerPaintlet());
-	m_Panel.setErrorPaintlet(m_ErrorPaintlet);
-	m_Panel.setMouseClickAction(m_MouseClickAction);
+	m_Panel.setDataPaintlet((Paintlet) OptionUtils.shallowCopy(getPaintlet()));
+	m_Panel.setOverlayPaintlet((XYSequencePaintlet) OptionUtils.shallowCopy(m_OverlayPaintlet));
+	m_Panel.setMarkerPaintlet((MarkerPaintlet) OptionUtils.shallowCopy(getMarkerPaintlet()));
+	m_Panel.setErrorPaintlet((AbstractErrorPaintlet) OptionUtils.shallowCopy(m_ErrorPaintlet));
+	m_Panel.setMouseClickAction((MouseClickAction) OptionUtils.shallowCopy(m_MouseClickAction));
 	m_AxisX.configure(m_Panel.getPlot(), Axis.BOTTOM);
 	m_AxisY.configure(m_Panel.getPlot(), Axis.LEFT);
-	m_Panel.setColorProvider(m_ColorProvider);
-	m_Panel.setOverlayColorProvider(m_OverlayColorProvider);
+	m_Panel.setColorProvider((ColorProvider) OptionUtils.shallowCopy(m_ColorProvider));
+	m_Panel.setOverlayColorProvider((ColorProvider) OptionUtils.shallowCopy(m_OverlayColorProvider));
 	m_Panel.setAdjustToVisibleData(m_AdjustToVisibleData);
 	m_Panel.setSidePanelVisible(m_ShowSidePanel);
 	m_Panel.setDividerLocation(m_Width - m_SidePanelWidth);

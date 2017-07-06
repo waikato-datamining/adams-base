@@ -15,11 +15,12 @@
 
 /*
  * MatrixPlot.java
- * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
 
+import adams.core.option.OptionUtils;
 import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.core.Token;
@@ -335,8 +336,8 @@ public class MatrixPlot
       @Override
       public void display(Token token) {
 	m_Plot.setPlotSize(m_PlotSize);
-	m_Plot.setOverlays(m_Overlays);
-	m_Plot.setPaintlet(m_Paintlet);
+	m_Plot.setOverlays((AbstractScatterPlotOverlay[]) OptionUtils.shallowCopy(m_Overlays));
+	m_Plot.setPaintlet((AbstractScatterPlotPaintlet) OptionUtils.shallowCopy(m_Paintlet));
 	m_Plot.setPercent(m_Percent);
 	m_Plot.setData((SpreadSheet) token.getPayload());
 	m_Plot.reset();

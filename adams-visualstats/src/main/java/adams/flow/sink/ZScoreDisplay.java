@@ -15,13 +15,14 @@
 
 /*
  * ZScoreDisplay.java
- * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
 
 import adams.core.Index;
 import adams.core.base.BaseRegExp;
+import adams.core.option.OptionUtils;
 import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.core.Token;
@@ -390,8 +391,8 @@ public class ZScoreDisplay
 	  m_ZScore.setAttReg(m_Att);
 	  m_ZScore.setAttindex(new Index(m_AttIndex));
 	  m_ZScore.setData((SpreadSheet) token.getPayload());
-	  m_ZScore.setOverlays(m_Overlays);
-	  m_ZScore.setPaintlet(m_Paintlet);
+	  m_ZScore.setOverlays((AbstractZScoreOverlay[]) OptionUtils.shallowCopy(m_Overlays));
+	  m_ZScore.setPaintlet((AbstractZScorePaintlet) OptionUtils.shallowCopy(m_Paintlet));
 	  m_ZScore.reset();
 	}
 	catch (Exception e) {

@@ -15,7 +15,7 @@
 
 /*
  * ScatterDisplay.java
- * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -608,8 +608,8 @@ public class ScatterDisplay
 	m_ScatterPlot.setYIndex(new Index(m_YAttribute));
 	m_ScatterPlot.setColorIndex(new Index(m_ColorAttribute));
 	m_ScatterPlot.setData((SpreadSheet) token.getPayload());
-	m_ScatterPlot.setOverlays(m_Overlays);
-	m_ScatterPlot.setPaintlet(m_Paintlet);
+	m_ScatterPlot.setOverlays((AbstractScatterPlotOverlay[]) OptionUtils.shallowCopy(m_Overlays));
+	m_ScatterPlot.setPaintlet((AbstractScatterPlotPaintlet) OptionUtils.shallowCopy(m_Paintlet));
         m_ScatterPlot.setMouseClickAction((MouseClickAction) OptionUtils.shallowCopy(m_MouseClickAction));
 	m_ScatterPlot.reset();
       }
