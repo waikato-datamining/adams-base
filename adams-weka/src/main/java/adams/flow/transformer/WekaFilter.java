@@ -321,7 +321,7 @@ public class WekaFilter
   }
 
   /**
-   * Sets the report source actor.
+   * Sets the filter source actor.
    *
    * @param value	the source
    */
@@ -331,7 +331,7 @@ public class WekaFilter
   }
 
   /**
-   * Returns the report source actor.
+   * Returns the filter source actor.
    *
    * @return		the source
    */
@@ -350,7 +350,7 @@ public class WekaFilter
   }
 
   /**
-   * Sets the report storage item.
+   * Sets the filter storage item.
    *
    * @param value	the storage item
    */
@@ -360,7 +360,7 @@ public class WekaFilter
   }
 
   /**
-   * Returns the report storage item.
+   * Returns the filter storage item.
    *
    * @return		the storage item
    */
