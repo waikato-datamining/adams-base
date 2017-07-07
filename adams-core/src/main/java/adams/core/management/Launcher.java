@@ -46,6 +46,9 @@ import java.util.Map;
  * Note: No checks are performed if the same parameter is defined in this
  * env variable and on the commandline.
  * <br><br>
+ * The <code>ADAMS_LIBRARY_PATH</code> allows you to supply additional libraries
+ * that you would normally supply to the JVM using '-Djava.library.path=...'.
+ * <br><br>
  * Use <code>-help</code> to output all available parameters.
  * <br><br>
  * When run from commandline, the method <code>addShutdownHook()</code> gets
@@ -67,6 +70,9 @@ public class Launcher {
 
   /** the environment variable with additional options. */
   public final static String ENV_ADAMS_OPTS = "ADAMS_OPTS";
+
+  /** the environment variable for the library path. */
+  public final static String ENV_ADAMS_LIBRARY_PATH = "ADAMS_LIBRARY_PATH";
 
   /** the amount of memory to use for the process. */
   protected String m_Memory;
@@ -558,6 +564,12 @@ public class Launcher {
     cmd.add(getClassPath());
     if (m_JavaAgentJar.length() > 0)
       cmd.add("-javaagent:" + m_JavaAgentJar);
+
+    if (!m_IgnoreEnvironmentOptions) {
+      if (System.getenv(ENV_ADAMS_LIBRARY_PATH) != null)
+        cmd.add("-Djava.library.path=" + System.getenv(ENV_ADAMS_LIBRARY_PATH));
+    }
+
     cmd.add(m_MainClass);
     if (enableRestart)
       cmd.add(RestartableApplication.FLAG_ENABLE_RESTART);
@@ -754,6 +766,10 @@ public class Launcher {
     cleanOptions(args);
 
     if (OptionUtils.helpRequested(args)) {
+      System.out.println("Environment variables:");
+      System.out.println("- ADAMS_OPTS - additional options to the main class");
+      System.out.println("- ADAMS_LIBRARY_PATH - paths supplied to JVM via '-Djava.library.path=...'");
+      System.out.println();
       System.out.println("Options:");
       System.out.println("-debug <level>");
       System.out.println("\tThe debug level with 0=off and the higher the number");
