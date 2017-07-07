@@ -15,7 +15,7 @@
 
 /*
  * Min.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -27,15 +27,17 @@ import adams.flow.core.Token;
 
 /**
  <!-- globalinfo-start -->
- * Returns the minimum value from a double/int array or the index of the minimum value.
+ * Returns the minimum value from a double&#47;int array or the index of the minimum value.
  * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input/output:<br>
+ * Input&#47;output:<br>
  * - accepts:<br>
  * &nbsp;&nbsp;&nbsp;java.lang.Integer[]<br>
  * &nbsp;&nbsp;&nbsp;java.lang.Double[]<br>
+ * &nbsp;&nbsp;&nbsp;int[]<br>
+ * &nbsp;&nbsp;&nbsp;double[]<br>
  * - generates:<br>
  * &nbsp;&nbsp;&nbsp;java.lang.Integer<br>
  * &nbsp;&nbsp;&nbsp;java.lang.Double<br>
@@ -43,32 +45,51 @@ import adams.flow.core.Token;
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- *
- * <pre>-D (property: debug)
- * &nbsp;&nbsp;&nbsp;If set to true, scheme may output additional info to the console.
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- *
+ * 
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: Min
  * </pre>
- *
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * 
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default:
+ * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- *
- * <pre>-skip (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
+ * 
+ * <pre>-skip &lt;boolean&gt; (property: skip)
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
  * &nbsp;&nbsp;&nbsp;as it is.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
- * <pre>-index (property: returnIndex)
- * &nbsp;&nbsp;&nbsp;If set to true, then the index of the minimum is returned instead of the
+ * 
+ * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this 
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical 
+ * &nbsp;&nbsp;&nbsp;actors.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-index &lt;boolean&gt; (property: returnIndex)
+ * &nbsp;&nbsp;&nbsp;If set to true, then the index of the minimum is returned instead of the 
  * &nbsp;&nbsp;&nbsp;value.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- *
+ * 
+ * <pre>-use-one-based-index &lt;boolean&gt; (property: useOneBasedIndex)
+ * &nbsp;&nbsp;&nbsp;If enabled, 1-based indices are returned instead of 0-based ones.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -82,6 +103,9 @@ public class Min
 
   /** whether to return the index instead of the value. */
   protected boolean m_ReturnIndex;
+
+  /** whether to return 1-based indices. */
+  protected boolean m_UseOneBasedIndex;
 
   /**
    * Returns a string describing the object.
@@ -103,6 +127,10 @@ public class Min
     m_OptionManager.add(
 	    "index", "returnIndex",
 	    false);
+
+    m_OptionManager.add(
+	    "use-one-based-index", "useOneBasedIndex",
+	    false);
   }
 
   /**
@@ -112,7 +140,12 @@ public class Min
    */
   @Override
   public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "returnIndex", (m_ReturnIndex ? "Index" : "Value"));
+    String	result;
+
+    result  = QuickInfoHelper.toString(this, "returnIndex", (m_ReturnIndex ? "Index" : "Value"));
+    result += QuickInfoHelper.toString(this, "useOneBasedIndex", m_UseOneBasedIndex, "one-based index", ", ");
+
+    return result;
   }
 
   /**
@@ -145,9 +178,38 @@ public class Min
   }
 
   /**
+   * Sets whether to return 1-based indices or 0-based ones.
+   *
+   * @param value	true if to return 1-based indices
+   */
+  public void setUseOneBasedIndex(boolean value) {
+    m_UseOneBasedIndex = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to return 1-based indices or 0-based ones.
+   *
+   * @return		true if to return 1-based indices
+   */
+  public boolean getUseOneBasedIndex() {
+    return m_UseOneBasedIndex;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String useOneBasedIndexTipText() {
+    return "If enabled, 1-based indices are returned instead of 0-based ones.";
+  }
+
+  /**
    * Returns the class that the consumer accepts.
    *
-   * @return		<!-- flow-accepts-start -->java.lang.Integer[].class, java.lang.Double[].class<!-- flow-accepts-end -->
+   * @return		<!-- flow-accepts-start -->java.lang.Integer[].class, java.lang.Double[].class, int[].class, double[].class<!-- flow-accepts-end -->
    */
   public Class[] accepts() {
     return new Class[]{Integer[].class, Double[].class, int[].class, double[].class};
@@ -174,37 +236,39 @@ public class Min
     double[]	doublesP;
     Integer[]	integersO;
     int[]	integersP;
+    int		inc;
 
     result = null;
 
+    inc = (m_UseOneBasedIndex ? 1 : 0);
     try {
       if (m_InputToken.getPayload() instanceof Double[]) {
 	doublesO = (Double[]) m_InputToken.getPayload();
 	if (m_ReturnIndex)
-	  m_OutputToken = new Token(new Integer(StatUtils.minIndex(doublesO)));
+	  m_OutputToken = new Token(StatUtils.minIndex(doublesO) + inc);
 	else
-	  m_OutputToken = new Token((Double) (StatUtils.min(doublesO)));
+	  m_OutputToken = new Token((Double) StatUtils.min(doublesO));
       }
       else if (m_InputToken.getPayload() instanceof double[]) {
 	doublesP = (double[]) m_InputToken.getPayload();
 	if (m_ReturnIndex)
-	  m_OutputToken = new Token(new Integer(StatUtils.minIndex(doublesP)));
+	  m_OutputToken = new Token(StatUtils.minIndex(doublesP) + inc);
 	else
-	  m_OutputToken = new Token((Double) (StatUtils.min(doublesP)));
+	  m_OutputToken = new Token((Double) StatUtils.min(doublesP));
       }
       else if (m_InputToken.getPayload() instanceof Integer[]) {
 	integersO = (Integer[]) m_InputToken.getPayload();
 	if (m_ReturnIndex)
-	  m_OutputToken = new Token(new Integer(StatUtils.minIndex(integersO)));
+	  m_OutputToken = new Token(StatUtils.minIndex(integersO) + inc);
 	else
-	  m_OutputToken = new Token((Integer) (StatUtils.min(integersO)));
+	  m_OutputToken = new Token((Integer) StatUtils.min(integersO));
       }
       else if (m_InputToken.getPayload() instanceof int[]) {
 	integersP = (int[]) m_InputToken.getPayload();
 	if (m_ReturnIndex)
-	  m_OutputToken = new Token(new Integer(StatUtils.minIndex(integersP)));
+	  m_OutputToken = new Token(StatUtils.minIndex(integersP) + inc);
 	else
-	  m_OutputToken = new Token((Integer) (StatUtils.min(integersP)));
+	  m_OutputToken = new Token((Integer) StatUtils.min(integersP));
       }
       else {
 	result = "Unhandled class: " + Utils.classToString(m_InputToken.getPayload().getClass());
