@@ -15,21 +15,22 @@
 
 /**
  * Exec.java
- * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.sink;
 
-import java.io.BufferedWriter;
-import java.io.OutputStreamWriter;
-import java.util.Hashtable;
-
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
+import adams.core.base.BaseText;
 import adams.core.management.LoggingObjectOutputPrinter;
 import adams.core.management.OutputProcessStream;
 import adams.core.option.OptionUtils;
 import adams.data.conversion.AnyToString;
 import adams.data.conversion.ConversionToString;
+
+import java.io.BufferedWriter;
+import java.io.OutputStreamWriter;
+import java.util.Hashtable;
 
 /**
  <!-- globalinfo-start -->
@@ -121,7 +122,7 @@ public class Exec
   public final static String BACKUP_OUTPUTPROCESSOR_STDERR = "output processor stderr";
   
   /** the command to run. */
-  protected String m_Command;
+  protected BaseText m_Command;
 
   /** the conversion scheme to turn the input into strings. */
   protected ConversionToString m_Conversion;
@@ -165,7 +166,7 @@ public class Exec
 
     m_OptionManager.add(
 	    "cmd", "command",
-	    "mysql test");
+	    new BaseText("mysql test"));
 
     m_OptionManager.add(
 	    "conversion", "conversion",
@@ -277,7 +278,7 @@ public class Exec
    *
    * @param value	the command
    */
-  public void setCommand(String value) {
+  public void setCommand(BaseText value) {
     m_Command = value;
     reset();
   }
@@ -287,7 +288,7 @@ public class Exec
    *
    * @return 		the command
    */
-  public String getCommand() {
+  public BaseText getCommand() {
     return m_Command;
   }
 
@@ -457,7 +458,7 @@ public class Exec
 
     if (m_Process == null) {
       try {
-	cmd       = OptionUtils.splitOptions(m_Command);
+	cmd       = OptionUtils.splitOptions(m_Command.getValue());
 	m_Process = Runtime.getRuntime().exec(cmd);
 	m_Writer  = new BufferedWriter(new OutputStreamWriter(m_Process.getOutputStream()));
 	m_Stdout  = new OutputProcessStream(m_Process, LoggingObjectOutputPrinter.class, true);
