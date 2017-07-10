@@ -15,7 +15,7 @@
 
 /**
  * AbstractFileReaderScriptlet.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.scripting;
@@ -63,9 +63,11 @@ public abstract class AbstractFileReaderScriptlet
 	handler = (ReportHandler) cont;
 	report  = handler.getReport();
 	// reader
-	field = new Field(READER_SETUP, DataType.STRING);
-	report.addField(field);
-	report.setStringValue(field.getName(), cmdline);
+        if (report != null) {
+          field = new Field(READER_SETUP, DataType.STRING);
+          report.addField(field);
+          report.setStringValue(field.getName(), cmdline);
+        }
       }
     }
   }
