@@ -648,6 +648,22 @@ public class OptionUtils {
    * @see		DatabaseConnectionHandler
    */
   public static OptionHandler shallowCopy(OptionHandler o, boolean expand) {
+    return shallowCopy(o, expand, true);
+  }
+
+  /**
+   * Creates an OptionHandler object with the same options as the specified one.
+   * Also transfers the database connection object, if the object implements
+   * the DatabaseConnectionHandler interface.
+   *
+   * @param o		the template
+   * @param expand	whether to expand variables to their current value
+   * 			instead of using the placeholders
+   * @param transferVars  if not expanding variables, whether to transfer the variables
+   * @return		the copy with the same options, null in case of an error
+   * @see		DatabaseConnectionHandler
+   */
+  public static OptionHandler shallowCopy(OptionHandler o, boolean expand, boolean transferVars) {
     OptionHandler	result;
     NestedProducer	producer;
     NestedConsumer	consumer;
@@ -669,7 +685,7 @@ public class OptionUtils {
       }
 
       // transfer variables
-      if (!expand) {
+      if (!expand && transferVars) {
         result.getOptionManager().setVariables(o.getOptionManager().getVariables());
         result.getOptionManager().updateVariablesInstance(o.getOptionManager().getVariables());
         result.getOptionManager().updateVariableValues(true);
@@ -696,12 +712,28 @@ public class OptionUtils {
    * @see		DatabaseConnectionHandler
    */
   public static OptionHandler[] shallowCopy(OptionHandler[] o, boolean expand) {
+    return shallowCopy(o, expand, true);
+  }
+
+  /**
+   * Creates an OptionHandler array with the same options as the specified one.
+   * Also transfers the database connection object, if the object implements
+   * the DatabaseConnectionHandler interface.
+   *
+   * @param o		the template
+   * @param expand	whether to expand variables to their current value
+   * 			instead of using the placeholders
+   * @param transferVars  if not expanding variables, whether to transfer the variables
+   * @return		the copy with the same options, null in case of an error
+   * @see		DatabaseConnectionHandler
+   */
+  public static OptionHandler[] shallowCopy(OptionHandler[] o, boolean expand, boolean transferVars) {
     Object	result;
     int		i;
 
     result = Array.newInstance(o.getClass().getComponentType(), o.length);
     for (i = 0; i < o.length; i++)
-      Array.set(result, i, shallowCopy(o[i], expand));
+      Array.set(result, i, shallowCopy(o[i], expand, transferVars));
 
     return (OptionHandler[]) result;
   }
@@ -720,7 +752,7 @@ public class OptionUtils {
   public static Object shallowCopy(Object o) {
     Object	result;
     String	cmdline;
-    
+
     try {
       cmdline = getCommandLine(o);
       if (o instanceof OptionHandler)
@@ -733,7 +765,7 @@ public class OptionUtils {
       System.err.println("Failed to create shallow copy for object!");
       e.printStackTrace();
     }
-    
+
     return result;
   }
 
