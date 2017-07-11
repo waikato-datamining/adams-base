@@ -15,12 +15,12 @@
 
 /**
  * TempUtils.java
- * Copyright (C) 2015-2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.core.io;
 
-import adams.core.management.ProcessUtils;
+import adams.core.UniqueIDs;
 
 import java.io.File;
 
@@ -37,12 +37,6 @@ public class TempUtils {
 
   /** property indicating the temp directory to use. */
   public final static String PROPERTY_TMPDIR = "adams.io.tmpdir";
-
-  /** the counter for temp file names. */
-  protected static long m_TempFileCounter;
-  static {
-    m_TempFileCounter = 0;
-  }
 
   /** the temporary directory. */
   protected static String m_TempDir;
@@ -61,8 +55,6 @@ public class TempUtils {
   public static synchronized File createTempFile(PlaceholderDirectory dir, String prefix, String suffix) {
     String	filename;
 
-    m_TempFileCounter++;
-
     if (dir == null)
       filename = getTempDirectory() + File.separator;
     else
@@ -71,9 +63,7 @@ public class TempUtils {
     if (prefix != null)
       filename += prefix;
 
-    filename += Long.toHexString(System.nanoTime())
-	+ "-" + Long.toHexString(ProcessUtils.getVirtualMachinePID())
-	+ "-" + Long.toHexString(m_TempFileCounter);
+    filename += UniqueIDs.next();
 
     if (suffix != null)
       filename += suffix;
