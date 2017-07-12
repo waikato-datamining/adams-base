@@ -15,18 +15,20 @@
 
 /*
  * LoadBalancer.java
- * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
 
+import adams.core.ObjectCopyHelper;
 import adams.core.Performance;
 import adams.core.QuickInfoHelper;
+import adams.core.UniqueIDs;
 import adams.core.Variables;
 import adams.core.base.BaseAnnotation;
 import adams.core.logging.LoggingLevel;
+import adams.core.option.OptionUtils;
 import adams.flow.core.Actor;
-import adams.flow.core.ActorExecution;
 import adams.flow.core.ActorHandler;
 import adams.flow.core.ActorHandlerInfo;
 import adams.flow.core.ActorUtils;
@@ -36,7 +38,9 @@ import adams.flow.core.Token;
 import adams.flow.core.Unknown;
 import adams.flow.sink.CallableSink;
 import adams.flow.sink.Null;
+import adams.flow.source.StorageValue;
 import adams.flow.transformer.CallableTransformer;
+import adams.flow.transformer.DeleteStorageValue;
 import adams.multiprocess.CallableWithResult;
 import adams.multiprocess.PausableFixedThreadPoolExecutor;
 
@@ -48,6 +52,7 @@ import java.util.concurrent.TimeUnit;
 /**
  <!-- globalinfo-start -->
  * Runs the specified 'load actor' in as many separate threads as specified with the 'num-threads' parameter.<br>
+ * Always uses a copy of the variables.<br>
  * NB: no callable transformer or sink allowed.
  * <br><br>
  <!-- globalinfo-end -->
@@ -82,8 +87,15 @@ import java.util.concurrent.TimeUnit;
  * </pre>
  * 
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this 
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical 
+ * &nbsp;&nbsp;&nbsp;actors.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
@@ -95,15 +107,7 @@ import java.util.concurrent.TimeUnit;
  * <pre>-num-threads &lt;int&gt; (property: numThreads)
  * &nbsp;&nbsp;&nbsp;The number of threads to use for load-balancing (-1 means one for each core
  * &nbsp;&nbsp;&nbsp;&#47;cpu).
- * &nbsp;&nbsp;&nbsp;default: -1
- * &nbsp;&nbsp;&nbsp;minimum: -1
- * </pre>
- * 
- * <pre>-use-local-vars &lt;boolean&gt; (property: useLocalVariables)
- * &nbsp;&nbsp;&nbsp;If enabled, then each thread will restrict the scope of variables to be 
- * &nbsp;&nbsp;&nbsp;local; initially, a copy of all variables is taken at the  thread's time 
- * &nbsp;&nbsp;&nbsp;of creation.
- * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;default: 0
  * </pre>
  * 
  * <pre>-use-local-storage &lt;boolean&gt; (property: useLocalStorage)
@@ -130,261 +134,6 @@ public class LoadBalancer
   /** for serialization. */
   private static final long serialVersionUID = -8782869993629454572L;
 
-  /**
-   * A special class for wrapping the threaded sub-actors, allowing local
-   * scope for variables and storage.
-   *
-   * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
-   */
-  protected static class ThreadShell
-    extends AbstractControlActor
-    implements InputConsumer, StorageHandler {
-
-    /** for serialization. */
-    private static final long serialVersionUID = -3358113395261199819L;
-
-    /** the only actor. */
-    protected Actor m_Actor;
-
-    /** the local storage to use (either clone or reference). */
-    protected Storage m_LocalStorage;
-
-    /** the local variables to use (either clone or reference). */
-    protected Variables m_LocalVariables;
-
-    /** the input token. */
-    protected Token m_InputToken;
-
-    /**
-     * Initializes the shell.
-     *
-     * @param actor	the actor execute
-     * @param vars	the variables to use
-     * @param storage	the storage to use
-     */
-    public ThreadShell(Actor actor, Variables vars, Storage storage) {
-      super();
-
-      if (actor == null)
-	throw new IllegalArgumentException("Actor cannot be null!");
-      if (vars == null)
-	throw new IllegalArgumentException("Variables cannot be null!");
-      if (storage == null)
-	throw new IllegalArgumentException("Storage cannot be null!");
-
-      m_Actor          = actor;
-      m_LocalVariables = vars;
-      m_LocalStorage   = storage;
-      m_Actor.setVariables(vars);
-    }
-
-    /**
-     * Returns a string describing the object.
-     *
-     * @return 			a description suitable for displaying in the gui
-     */
-    @Override
-    public String globalInfo() {
-      return
-          "Shell around a LoadBalancer thread, in order to provide optional "
-        + "local scope for variables and storage.";
-    }
-
-    /**
-     * Returns some information about the actor handler, e.g., whether it can
-     * contain standalones and the actor execution.
-     *
-     * @return		the info
-     */
-    @Override
-    public ActorHandlerInfo getActorHandlerInfo() {
-      if (m_Actor instanceof ActorHandler)
-	return ((ActorHandler) m_Actor).getActorHandlerInfo();
-      else
-	return new ActorHandlerInfo(false, ActorExecution.PARALLEL, true);
-    }
-
-    /**
-     * Returns the size of the group.
-     *
-     * @return		always 1
-     */
-    @Override
-    public int size() {
-      return 1;
-    }
-
-    /**
-     * Returns the wrapped actor.
-     * 
-     * @return		the actor
-     */
-    public Actor getActor() {
-      return m_Actor;
-    }
-    
-    /**
-     * Returns the actor at the given position.
-     *
-     * @param index	the position
-     * @return		the actor
-     */
-    @Override
-    public Actor get(int index) {
-      if (index == 0)
-	return m_Actor;
-      else
-	throw new IllegalArgumentException("Illegal index: " + index);
-    }
-
-    /**
-     * Sets the actor at the given position.
-     *
-     * @param index	the position
-     * @param actor	the actor to set at this position
-     */
-    @Override
-    public void set(int index, Actor actor) {
-      if (index == 0) {
-	m_Actor = actor;
-	reset();
-	updateParent();
-      }
-      else {
-	throw new IllegalArgumentException("Illegal index: " + index);
-      }
-    }
-
-    /**
-     * Returns the index of the actor.
-     *
-     * @param actor	the name of the actor to look for
-     * @return		the index of -1 if not found
-     */
-    @Override
-    public int indexOf(String actor) {
-      if (m_Actor.getName().equals(actor))
-	return 0;
-      else
-	return -1;
-    }
-
-    /**
-     * Returns the Variables instance to use.
-     *
-     * @return		the variables instance
-     */
-    @Override
-    public synchronized Variables getVariables() {
-      return m_LocalVariables;
-    }
-
-    /**
-     * Returns the storage container.
-     *
-     * @return		the container
-     */
-    public Storage getStorage() {
-      return m_LocalStorage;
-    }
-
-    /**
-     * Returns the storage handler, ie itself.
-     *
-     * @return		the storage handler
-     */
-    @Override
-    public StorageHandler getStorageHandler() {
-      return this;
-    }
-
-    /**
-     * Returns the class that the consumer accepts.
-     *
-     * @return		the Class of objects that can be processed
-     */
-    public Class[] accepts() {
-      if (m_Actor instanceof InputConsumer)
-	return ((InputConsumer) m_Actor).accepts();
-      else
-	return new Class[0];
-    }
-    
-    /**
-     * Initializes the sub-actors for flow execution.
-     *
-     * @return		null if everything is fine, otherwise error message
-     */
-    @Override
-    public String setUp() {
-      m_Actor.getOptionManager().updateVariableValues(true);
-      return super.setUp();
-    }
-
-    /**
-     * The method that accepts the input token and then processes it.
-     *
-     * @param token	the token to accept and process
-     */
-    public void input(Token token) {
-      m_InputToken = token;
-      if (m_Actor instanceof InputConsumer) {
-	if (getFlowExecutionListeningSupporter().isFlowExecutionListeningEnabled())
-	  getFlowExecutionListeningSupporter().getFlowExecutionListener().preInput(m_Actor, token);
-	((InputConsumer) m_Actor).input(token);
-	if (getFlowExecutionListeningSupporter().isFlowExecutionListeningEnabled())
-	  getFlowExecutionListeningSupporter().getFlowExecutionListener().postInput(m_Actor);
-      }
-    }
-
-    /**
-     * Returns whether an input token is currently present.
-     *
-     * @return		true if input token present
-     */
-    public boolean hasInput() {
-      return (m_InputToken != null);
-    }
-
-    /**
-     * Returns the current input token, if any.
-     *
-     * @return		the input token, null if none present
-     */
-    public Token currentInput() {
-      return m_InputToken;
-    }
-
-    /**
-     * Executes the flow item.
-     *
-     * @return		null if everything is fine, otherwise error message
-     */
-    @Override
-    protected String doExecute() {
-      String	result;
-      
-      if (getFlowExecutionListeningSupporter().isFlowExecutionListeningEnabled())
-	getFlowExecutionListeningSupporter().getFlowExecutionListener().preExecute(m_Actor);
-      result = m_Actor.execute();
-      if (getFlowExecutionListeningSupporter().isFlowExecutionListeningEnabled())
-	getFlowExecutionListeningSupporter().getFlowExecutionListener().postExecute(m_Actor);
-
-      m_InputToken = null;
-
-      return result;
-    }
-    
-    /**
-     * Stops the processing of tokens without stopping the flow.
-     */
-    public void flushExecution() {
-      if (m_Actor instanceof ActorHandler)
-	((ActorHandler) m_Actor).flushExecution();
-    }
-  }
-
   /** the key for storing the current token in the backup. */
   public final static String BACKUP_CURRENT = "current";
 
@@ -403,17 +152,11 @@ public class LoadBalancer
   /** the executor service to use for parallel execution. */
   protected PausableFixedThreadPoolExecutor m_Executor;
 
-  /** whether the load actor contains callable transformers somewhere or not. */
-  protected boolean m_HasGlobalTransformers;
-
   /** the actors to clean up in the end. */
   protected List<Actor> m_ToCleanUp;
 
   /** the count of threads spawned so far. */
   protected int m_ThreadsSpawned;
-
-  /** whether to use local variables. */
-  protected boolean m_UseLocalVariables;
 
   /** whether to use local storage. */
   protected boolean m_UseLocalStorage;
@@ -429,9 +172,10 @@ public class LoadBalancer
   @Override
   public String globalInfo() {
     return
-        "Runs the specified 'load actor' in as many separate threads as "
-      + "specified with the 'num-threads' parameter.\n"
-      + "NB: no callable transformer or sink allowed.";
+      "Runs the specified 'load actor' in as many separate threads as "
+	+ "specified with the 'num-threads' parameter.\n"
+	+ "Always uses a copy of the variables.\n"
+	+ "NB: no callable transformer or sink allowed.";
   }
 
   /**
@@ -450,10 +194,6 @@ public class LoadBalancer
 	    0);
 
     m_OptionManager.add(
-	    "use-local-vars", "useLocalVariables",
-	    false);
-
-    m_OptionManager.add(
 	    "use-local-storage", "useLocalStorage",
 	    false);
 
@@ -470,7 +210,7 @@ public class LoadBalancer
     super.initialize();
 
     m_CurrentToken = null;
-    m_ToCleanUp    = new ArrayList<Actor>();
+    m_ToCleanUp    = new ArrayList<>();
     m_Actors       = new Sequence();
     m_Actors.setAllowStandalones(true);
     m_Actors.setAllowSource(true);
@@ -559,38 +299,6 @@ public class LoadBalancer
   }
 
   /**
-   * Sets whether to use local variable scope.
-   *
-   * @param value	if true local variable scope will be used
-   */
-  public void setUseLocalVariables(boolean value) {
-    m_UseLocalVariables = value;
-    reset();
-  }
-
-  /**
-   * Returns whether to use user local variable scope.
-   *
-   * @return		true if local variable scope enabled
-   */
-  public boolean getUseLocalVariables() {
-    return m_UseLocalVariables;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String useLocalVariablesTipText() {
-    return
-        "If enabled, then each thread will restrict the scope of variables "
-      + "to be local; initially, a copy of all variables is taken at the  "
-      + "thread's time of creation.";
-  }
-
-  /**
    * Sets whether to use local storage scope.
    *
    * @param value	if true local storage scope will be used
@@ -661,7 +369,6 @@ public class LoadBalancer
     String	result;
 
     result  = QuickInfoHelper.toString(this, "numThreads", Performance.getNumThreadsQuickInfo(m_NumThreads));
-    result += QuickInfoHelper.toString(this, "useLocalVariables", m_UseLocalVariables, "local vars", ", ");
     result += QuickInfoHelper.toString(this, "useLocalStorage", m_UseLocalStorage, "local storage", ", ");
     if (m_UseLocalStorage || QuickInfoHelper.hasVariable(this, "useLocalStorage"))
       result += " (" + QuickInfoHelper.toString(this, "deepCopy", m_DeepCopy, "deep copy") + ")";
@@ -944,10 +651,15 @@ public class LoadBalancer
   protected String doExecute() {
     String			result;
     CallableWithResult<String>	job;
-    final ThreadShell		shell;
+    final Flow			shell;
     final int 			count;
     final Token			token;
-    Sequence			actor;
+    int				i;
+    Object			svalue;
+    String			inputName;
+    StorageValue		storageValue;
+    DeleteStorageValue		delValue;
+    Variables			vars;
 
     result = null;
 
@@ -960,17 +672,30 @@ public class LoadBalancer
     m_ThreadsSpawned++;
     token = m_CurrentToken;
     count = m_ThreadsSpawned;
-    actor = (Sequence) m_Actors.shallowCopy(false);
-    actor.setAllowStandalones(true);
-    shell = new ThreadShell(
-	actor,
-	(m_UseLocalVariables ? getVariables().getClone() : getVariables()),
-	(m_UseLocalStorage ? (m_DeepCopy ? getStorageHandler().getStorage().getClone() : getStorageHandler().getStorage().getShallowCopy()) : getStorageHandler().getStorage()));
-    shell.setName(getName());
-    shell.setParent(null);
-    shell.setParent(getParent());
+    inputName = UniqueIDs.next() + "-" + count;
+    vars = getVariables().getClone();
+    shell = new Flow();
+    shell.setName(getFullName());
     shell.setLoggingLevel(getLoggingLevel());
     shell.setAnnotations(new BaseAnnotation("Thread #" + count));
+    storageValue = new StorageValue();
+    storageValue.setStorageName(new StorageName(inputName));
+    shell.add(storageValue);
+    delValue = new DeleteStorageValue();
+    delValue.setStorageName(new StorageName(inputName));
+    shell.add(delValue);
+    for (i = 0; i < m_Actors.size(); i++)
+      shell.add((Actor) OptionUtils.shallowCopy(m_Actors.get(i), false, false));
+    shell.getVariables().assign(vars);
+    shell.setUp();
+    for (StorageName sname: getStorageHandler().getStorage().keySet()) {
+      svalue = getStorageHandler().getStorage().get(sname);
+      if (m_UseLocalStorage)
+	shell.getStorage().put(sname, ObjectCopyHelper.copyObject(svalue));
+      else
+	shell.getStorage().put(sname, svalue);
+    }
+    shell.getStorage().put(new StorageName(inputName), token.getPayload());
     m_ToCleanUp.add(shell);
     job = new CallableWithResult<String>() {
       protected String doCall() throws Exception {
@@ -978,16 +703,9 @@ public class LoadBalancer
 	try {
 	  if (isLoggingEnabled())
 	    getLogger().info("Starting thread #" + count);
-	  result = shell.setUp();
-	  if (result == null) {
-	    shell.input(token);
-	    result = shell.execute();
-	    if (result != null)
-	      shell.getLogger().severe(result);
-	  }
-	  else {
+	  result = shell.execute();
+	  if (result != null)
 	    shell.getLogger().severe(result);
-	  }
 	  if (isLoggingEnabled())
 	    getLogger().info("...finished thread #" + (count) + ((result == null) ? "" : " with error"));
 	}
