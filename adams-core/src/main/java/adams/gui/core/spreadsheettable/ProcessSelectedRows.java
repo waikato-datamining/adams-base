@@ -40,6 +40,13 @@ public interface ProcessSelectedRows
   public int minNumRows();
 
   /**
+   * Returns the maximum number of rows that the plugin requires.
+   *
+   * @return		the maximum, -1 for none
+   */
+  public int maxNumRows();
+
+  /**
    * Processes the specified row.
    *
    * @param table	the source table

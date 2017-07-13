@@ -193,12 +193,19 @@ public class SpreadSheetTablePopupMenuItemHelper {
    */
   public static void addProcessSelectedRowsAction(SpreadSheetTable table, SpreadSheet sheet, JPopupMenu menu, int[] actRows, int[] selRows, SpreadSheetTablePopupMenuItem item) {
     JMenuItem		menuitem;
+    ProcessSelectedRows	proc;
+    boolean		enabled;
 
+    proc = (ProcessSelectedRows) item;
     menuitem = new JMenuItem(item.getMenuItem());
     if (item.getIconName() != null)
       menuitem.setIcon(GUIHelper.getIcon(item.getIconName()));
+    enabled = (selRows.length >= proc.minNumRows());
+    if (proc.maxNumRows() > -1)
+      enabled = enabled && (selRows.length <= proc.maxNumRows());
+    menuitem.setEnabled(enabled);
     menuitem.addActionListener((ActionEvent e) -> {
-      ((ProcessSelectedRows) item).processSelectedRows(table, sheet, actRows, selRows);
+      proc.processSelectedRows(table, sheet, actRows, selRows);
     });
     menu.add(menuitem);
   }

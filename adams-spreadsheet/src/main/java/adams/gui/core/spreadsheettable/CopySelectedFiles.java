@@ -146,6 +146,16 @@ public class CopySelectedFiles
   }
 
   /**
+   * Returns the maximum number of rows that the plugin requires.
+   *
+   * @return		the maximum, -1 for none
+   */
+  @Override
+  public int maxNumRows() {
+    return -1;
+  }
+
+  /**
    * Returns the name for the menu item.
    *
    * @return            the name
