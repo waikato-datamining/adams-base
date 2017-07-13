@@ -38,15 +38,20 @@ import adams.gui.core.SpreadSheetColumnComboBox;
 import adams.gui.core.SpreadSheetTable;
 import adams.gui.core.SpreadSheetTableModel;
 import adams.gui.core.TableRowRange;
+import adams.gui.core.spreadsheettable.ProcessSelectedRows;
+import adams.gui.core.spreadsheettable.SpreadSheetTablePopupMenuItemHelper;
 import adams.gui.event.SearchEvent;
 import adams.gui.event.SearchListener;
 import adams.gui.sendto.SendToActionUtils;
+import adams.gui.visualization.core.PopupMenuCustomizer;
 
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JTable;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -248,6 +253,28 @@ public class SpreadSheetDisplay
 	});
 	add(m_PanelSearch, BorderLayout.SOUTH);
       }
+
+      if (m_Owner.getSelectedRowsProcessors().length > 0) {
+	PopupMenuCustomizer customizer = new PopupMenuCustomizer() {
+	  @Override
+	  public void customizePopupMenu(MouseEvent e, JPopupMenu menu) {
+	    SpreadSheet sheet = m_Table.toSpreadSheet();
+	    int[] rows;
+	    int[] actRows;
+	    if (m_Table.getSelectedRows().length == 0)
+	      rows = new int[]{m_Table.rowAtPoint(e.getPoint())};
+	    else
+	      rows = m_Table.getSelectedRows();
+	    actRows = new int[rows.length];
+	    for (int i = 0; i < rows.length; i++)
+	      actRows[i] = m_Table.getActualRow(rows[i]);
+	    for (ProcessSelectedRows proc: m_Owner.getSelectedRowsProcessors()) {
+	      SpreadSheetTablePopupMenuItemHelper.addProcessSelectedRowsAction(m_Table, sheet, menu, actRows, rows, proc);
+	    }
+	  }
+	};
+	m_Table.setCellPopupMenuCustomizer(customizer);
+      }
     }
 
     /**
@@ -359,6 +386,9 @@ public class SpreadSheetDisplay
   /** whether the table is read only. */
   protected boolean m_ReadOnly;
 
+  /** for processing the selected rows. */
+  protected ProcessSelectedRows[] m_SelectedRowsProcessors;
+
   /**
    * Returns a string describing the object.
    *
@@ -417,6 +447,10 @@ public class SpreadSheetDisplay
     m_OptionManager.add(
       "writer", "writer",
       new NullWriter());
+
+    m_OptionManager.add(
+      "selected-rows-processor", "selectedRowsProcessors",
+      new ProcessSelectedRows[0]);
   }
 
   /**
@@ -710,6 +744,35 @@ public class SpreadSheetDisplay
   }
 
   /**
+   * Sets the processors for the selected rows.
+   *
+   * @param value 	the processors
+   */
+  public void setSelectedRowsProcessors(ProcessSelectedRows[] value) {
+    m_SelectedRowsProcessors = value;
+    reset();
+  }
+
+  /**
+   * Returns the processors for the selected rows.
+   *
+   * @return 		the processors
+   */
+  public ProcessSelectedRows[] getSelectedRowsProcessors() {
+    return m_SelectedRowsProcessors;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String selectedRowsProcessorsTipText() {
+    return "The schemes that allow processing of the selected rows.";
+  }
+
+  /**
    * Returns the default width for the dialog.
    *
    * @return		the default width
@@ -748,6 +811,7 @@ public class SpreadSheetDisplay
     BasePanel			result;
     JPanel			panel;
     SpreadSheetColumnComboBox	columnCombo;
+    PopupMenuCustomizer		customizer;
 
     result       = new BasePanel(new BorderLayout());
     m_TableModel = new SpreadSheetTableModel(new DefaultSpreadSheet());
@@ -771,6 +835,28 @@ public class SpreadSheetDisplay
 	}
       });
       result.add(m_PanelSearch, BorderLayout.SOUTH);
+    }
+
+    if (m_SelectedRowsProcessors.length > 0) {
+      customizer = new PopupMenuCustomizer() {
+	@Override
+	public void customizePopupMenu(MouseEvent e, JPopupMenu menu) {
+	  SpreadSheet sheet = m_Table.toSpreadSheet();
+	  int[] rows;
+	  int[] actRows;
+	  if (m_Table.getSelectedRows().length == 0)
+	    rows = new int[]{m_Table.rowAtPoint(e.getPoint())};
+	  else
+	    rows = m_Table.getSelectedRows();
+	  actRows = new int[rows.length];
+	  for (int i = 0; i < rows.length; i++)
+	    actRows[i] = m_Table.getActualRow(rows[i]);
+	  for (ProcessSelectedRows proc: m_SelectedRowsProcessors) {
+	    SpreadSheetTablePopupMenuItemHelper.addProcessSelectedRowsAction(m_Table, sheet, menu, actRows, rows, proc);
+	  }
+	}
+      };
+      m_Table.setCellPopupMenuCustomizer(customizer);
     }
 
     return result;

@@ -15,7 +15,7 @@
 
 /**
  * SpreadSheetTablePopupMenuItemHelper.java
- * Copyright (C) 2015-2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.core.spreadsheettable;
@@ -180,5 +180,51 @@ public class SpreadSheetTablePopupMenuItemHelper {
       addToPopupMenu(table, false, actRow, selRow, column, menu, getItems(PlotColumn.class));
       addToPopupMenu(table, false, actRow, selRow, column, menu, getItems(ProcessColumn.class));
     }
+  }
+
+  /**
+   * Adds the available menu items to the menu for processing selected rows.
+   *
+   * @param table	the table this menu is for
+   * @param menu	the menu to add the items to
+   * @param actRows	the current actual row
+   * @param selRows	the current selected row
+   * @see		ProcessSelectedRows
+   */
+  public static void addProcessSelectedRowsAction(SpreadSheetTable table, SpreadSheet sheet, JPopupMenu menu, int[] actRows, int[] selRows, SpreadSheetTablePopupMenuItem item) {
+    JMenuItem		menuitem;
+
+    menuitem = new JMenuItem(item.getMenuItem());
+    if (item.getIconName() != null)
+      menuitem.setIcon(GUIHelper.getIcon(item.getIconName()));
+    menuitem.addActionListener((ActionEvent e) -> {
+      ((ProcessSelectedRows) item).processSelectedRows(table, sheet, actRows, selRows);
+    });
+    menu.add(menuitem);
+  }
+
+  /**
+   * Adds the available menu items to the menu for processing selected rows.
+   *
+   * @param table	the table this menu is for
+   * @param menu	the menu to add the items to
+   * @param actRows	the current actual row
+   * @param selRows	the current selected row
+   * @see		ProcessSelectedRows
+   */
+  public static void addProcessSelectedRowsToPopupMenu(SpreadSheetTable table, JPopupMenu menu, int[] actRows, int[] selRows) {
+    List<SpreadSheetTablePopupMenuItem> items;
+    SpreadSheet				sheet;
+
+    items = getItems(ProcessSelectedRows.class);
+    if (items.size() == 0)
+      return;
+
+    sheet = table.toSpreadSheet();
+
+    if (menu.getComponent(menu.getComponentCount() - 1) instanceof JMenuItem)
+      menu.addSeparator();
+    for (SpreadSheetTablePopupMenuItem item: items)
+      addProcessSelectedRowsAction(table, sheet, menu, actRows, selRows, item);
   }
 }
