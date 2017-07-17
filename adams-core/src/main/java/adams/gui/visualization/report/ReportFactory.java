@@ -1752,6 +1752,7 @@ public class ReportFactory {
 
     split = new BaseSplitPane(BaseSplitPane.VERTICAL_SPLIT);
     split.setOneTouchExpandable(true);
+    split.setResizeWeight(0.9);
     result.add(split, BorderLayout.CENTER);
 
     panelTop = new JPanel(new BorderLayout());
