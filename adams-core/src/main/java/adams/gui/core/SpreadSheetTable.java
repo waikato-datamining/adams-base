@@ -538,6 +538,29 @@ public class SpreadSheetTable
 
     menu.addSeparator();
 
+    menuitem = new JMenuItem("Select all");
+    menuitem.setIcon(GUIHelper.getEmptyIcon());
+    menuitem.addActionListener((ActionEvent ae) -> {
+      selectAll();
+    });
+    menu.add(menuitem);
+
+    menuitem = new JMenuItem("Select none");
+    menuitem.setIcon(GUIHelper.getEmptyIcon());
+    menuitem.addActionListener((ActionEvent ae) -> {
+      clearSelection();
+    });
+    menu.add(menuitem);
+
+    menuitem = new JMenuItem("Invert selection");
+    menuitem.setIcon(GUIHelper.getEmptyIcon());
+    menuitem.addActionListener((ActionEvent ae) -> {
+      invertRowSelection();
+    });
+    menu.add(menuitem);
+
+    menu.addSeparator();
+
     submenu = new JMenu("Save");
     submenu.setIcon(GUIHelper.getIcon("save.gif"));
     menu.add(submenu);
