@@ -15,7 +15,7 @@
 
 /**
  * SimplePreviewBrowserDialog.java
- * Copyright (C) 2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.dialog;
 
@@ -24,6 +24,7 @@ import adams.gui.core.BaseDialog;
 import adams.gui.core.GUIHelper;
 import adams.gui.tools.previewbrowser.PreviewDisplay;
 
+import javax.swing.JTextField;
 import java.awt.BorderLayout;
 import java.awt.Dialog;
 import java.awt.Frame;
@@ -43,6 +44,9 @@ public class SimplePreviewBrowserDialog
 
   /** the preview panel. */
   protected PreviewDisplay m_PanelDisplay;
+
+  /** for displaying the filename. */
+  protected JTextField m_TextFilename;
 
   /**
    * Creates a modeless dialog without a title and without a specified Frame
@@ -105,7 +109,11 @@ public class SimplePreviewBrowserDialog
     setSize(GUIHelper.getDefaultDialogDimension());
 
     m_PanelDisplay = new PreviewDisplay();
-    getContentPane().add(m_PanelDisplay);
+    getContentPane().add(m_PanelDisplay, BorderLayout.CENTER);
+
+    m_TextFilename = new JTextField();
+    m_TextFilename.setEditable(false);
+    getContentPane().add(m_TextFilename, BorderLayout.NORTH);
   }
   
   /**
@@ -114,6 +122,7 @@ public class SimplePreviewBrowserDialog
    * @param file	the file to preview
    */
   public void open(PlaceholderFile file) {
+    m_TextFilename.setText("" + file);
     m_PanelDisplay.display(new File[]{file}, false);
   }
 }
