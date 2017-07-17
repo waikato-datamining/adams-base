@@ -14,43 +14,32 @@
  */
 
 /**
- * CopySelectedFiles.java
+ * PreviewSelectedFile.java
  * Copyright (C) 2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.core.spreadsheettable;
 
-import adams.core.MessageCollection;
-import adams.core.io.FileUtils;
-import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetColumnIndex;
-import adams.gui.chooser.BaseDirectoryChooser;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.SpreadSheetTable;
-
-import java.io.File;
+import adams.gui.dialog.SimplePreviewBrowserDialog;
 
 /**
- * Allows copying of the selected files to a target directory.
+ * Allows preview of the selected file in separate dialog.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class CopySelectedFiles
+public class PreviewSelectedFile
   extends AbstractProcessSelectedRows {
 
   private static final long serialVersionUID = 7786133414905315983L;
 
   /** the column that contains the filename. */
   protected SpreadSheetColumnIndex m_Column;
-
-  /** the target directory. */
-  protected PlaceholderDirectory m_TargetDir;
-
-  /** the directory chooser for the target dir. */
-  protected BaseDirectoryChooser m_TargetChooser;
 
   /**
    * Returns a string describing the object.
@@ -59,7 +48,7 @@ public class CopySelectedFiles
    */
   @Override
   public String globalInfo() {
-    return "Allows the user to copy the selected files in the specified column.";
+    return "Allows the user to preview the selected file in the specified column.";
   }
 
   /**
@@ -71,10 +60,6 @@ public class CopySelectedFiles
     m_OptionManager.add(
       "column", "column",
       new SpreadSheetColumnIndex(SpreadSheetColumnIndex.FIRST));
-
-    m_OptionManager.add(
-      "target-dir", "targetDir",
-      new PlaceholderDirectory());
   }
 
   /**
@@ -107,45 +92,6 @@ public class CopySelectedFiles
   }
 
   /**
-   * Sets the initial target directory.
-   *
-   * @param value 	the directory
-   */
-  public void setTargetDir(PlaceholderDirectory value) {
-    m_TargetDir = value;
-    reset();
-  }
-
-  /**
-   * Returns the initial target directory.
-   *
-   * @return 		the directory
-   */
-  public PlaceholderDirectory getTargetDir() {
-    return m_TargetDir;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String targetDirTipText() {
-    return "The initial target directory for the copy operation.";
-  }
-
-  /**
-   * Returns the name of the icon.
-   *
-   * @return            the name, null if none available
-   */
-  @Override
-  public String getIconName() {
-    return "copy.gif";
-  }
-
-  /**
    * Returns the minimum number of rows that the plugin requires.
    *
    * @return		the minimum
@@ -162,7 +108,17 @@ public class CopySelectedFiles
    */
   @Override
   public int maxNumRows() {
-    return -1;
+    return 1;
+  }
+
+  /**
+   * Returns the name of the icon.
+   *
+   * @return            the name, null if none available
+   */
+  @Override
+  public String getIconName() {
+    return "previewbrowser.png";
   }
 
   /**
@@ -171,7 +127,7 @@ public class CopySelectedFiles
    * @return            the name
    */
   protected String getDefaultMenuItem() {
-    return "Copy selected file(s)";
+    return "Preview selected file";
   }
 
   /**
@@ -185,11 +141,8 @@ public class CopySelectedFiles
    */
   @Override
   protected boolean doProcessSelectedRows(SpreadSheetTable table, SpreadSheet sheet, int[] actRows, int[] selRows) {
-    int			retVal;
-    int			col;
-    File		sourceFile;
-    File		targetDir;
-    MessageCollection	errors;
+    int				col;
+    SimplePreviewBrowserDialog	dialog;
 
     // determine column
     m_Column.setData(sheet);
@@ -199,32 +152,12 @@ public class CopySelectedFiles
       return false;
     }
 
-    // select target dir
-    if (m_TargetChooser == null) {
-      m_TargetChooser = new BaseDirectoryChooser();
-      m_TargetChooser.setSelectedFile(m_TargetDir);
-      m_TargetChooser.setDialogTitle(getMenuItem());
-    }
-    retVal = m_TargetChooser.showOpenDialog(table.getParent());
-    if (retVal != BaseDirectoryChooser.APPROVE_OPTION)
-      return false;
-    targetDir = m_TargetChooser.getSelectedDirectory();
+    dialog = new SimplePreviewBrowserDialog();
+    dialog.open(new PlaceholderFile(sheet.getCell(actRows[0], col).toString()));
+    dialog.setLocationRelativeTo(table.getParent());
+    dialog.setVisible(true);
+    dialog.setDefaultCloseOperation(SimplePreviewBrowserDialog.DISPOSE_ON_CLOSE);
 
-    errors = new MessageCollection();
-    for (int row: actRows) {
-      sourceFile = new PlaceholderFile(sheet.getCell(row, col).toString());
-      try {
-	if (!FileUtils.copy(sourceFile, targetDir))
-	  errors.add("Failed to copy '" + sourceFile + "' to '" + targetDir + "'!");
-      }
-      catch (Exception e) {
-	errors.add("Failed to copy '" + sourceFile + "' to '" + targetDir + "'!", e);
-      }
-    }
-
-    if (!errors.isEmpty())
-      GUIHelper.showErrorMessage(table.getParent(), "Failed to copy files:\n" + errors);
-
-    return errors.isEmpty();
+    return true;
   }
 }

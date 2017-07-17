@@ -258,7 +258,6 @@ public class SpreadSheetDisplay
 	PopupMenuCustomizer customizer = new PopupMenuCustomizer() {
 	  @Override
 	  public void customizePopupMenu(MouseEvent e, JPopupMenu menu) {
-	    SpreadSheet sheet = m_Table.toSpreadSheet();
 	    int[] rows;
 	    int[] actRows;
 	    if (m_Table.getSelectedRows().length == 0)
@@ -268,9 +267,7 @@ public class SpreadSheetDisplay
 	    actRows = new int[rows.length];
 	    for (int i = 0; i < rows.length; i++)
 	      actRows[i] = m_Table.getActualRow(rows[i]);
-	    for (ProcessSelectedRows proc: m_Owner.getSelectedRowsProcessors()) {
-	      SpreadSheetTablePopupMenuItemHelper.addProcessSelectedRowsAction(m_Table, sheet, menu, actRows, rows, proc);
-	    }
+	    SpreadSheetTablePopupMenuItemHelper.addProcessSelectedRowsToPopupMenu(m_Table, menu, actRows, rows, Arrays.asList(m_Owner.getSelectedRowsProcessors()));
 	  }
 	};
 	m_Table.setCellPopupMenuCustomizer(customizer);
@@ -841,7 +838,6 @@ public class SpreadSheetDisplay
       customizer = new PopupMenuCustomizer() {
 	@Override
 	public void customizePopupMenu(MouseEvent e, JPopupMenu menu) {
-	  SpreadSheet sheet = m_Table.toSpreadSheet();
 	  int[] rows;
 	  int[] actRows;
 	  if (m_Table.getSelectedRows().length == 0)
@@ -851,9 +847,7 @@ public class SpreadSheetDisplay
 	  actRows = new int[rows.length];
 	  for (int i = 0; i < rows.length; i++)
 	    actRows[i] = m_Table.getActualRow(rows[i]);
-	  for (ProcessSelectedRows proc: m_SelectedRowsProcessors) {
-	    SpreadSheetTablePopupMenuItemHelper.addProcessSelectedRowsAction(m_Table, sheet, menu, actRows, rows, proc);
-	  }
+	  SpreadSheetTablePopupMenuItemHelper.addProcessSelectedRowsToPopupMenu(m_Table, menu, actRows, rows, Arrays.asList(m_SelectedRowsProcessors));
 	}
       };
       m_Table.setCellPopupMenuCustomizer(customizer);

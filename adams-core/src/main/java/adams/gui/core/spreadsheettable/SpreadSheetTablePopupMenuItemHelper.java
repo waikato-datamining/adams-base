@@ -219,11 +219,9 @@ public class SpreadSheetTablePopupMenuItemHelper {
    * @param selRows	the current selected row
    * @see		ProcessSelectedRows
    */
-  public static void addProcessSelectedRowsToPopupMenu(SpreadSheetTable table, JPopupMenu menu, int[] actRows, int[] selRows) {
-    List<SpreadSheetTablePopupMenuItem> items;
-    SpreadSheet				sheet;
+  public static void addProcessSelectedRowsToPopupMenu(SpreadSheetTable table, JPopupMenu menu, int[] actRows, int[] selRows, List<SpreadSheetTablePopupMenuItem>items) {
+    SpreadSheet		sheet;
 
-    items = getItems(ProcessSelectedRows.class);
     if (items.size() == 0)
       return;
 

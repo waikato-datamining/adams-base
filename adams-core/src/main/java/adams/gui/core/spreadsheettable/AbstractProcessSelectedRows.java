@@ -38,6 +38,78 @@ public abstract class AbstractProcessSelectedRows
 
   private static final long serialVersionUID = 7979833588446267882L;
 
+  /** the menu item caption. */
+  protected String m_MenuItemText;
+
+  /**
+   * Adds options to the internal list of options.
+   */
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+      "menu-item-text", "menuItemText",
+      "");
+  }
+
+  /**
+   * Sets the (optional) custom menu item text.
+   *
+   * @param value 	the text
+   */
+  public void setMenuItemText(String value) {
+    m_MenuItemText = value;
+    reset();
+  }
+
+  /**
+   * Returns the (optional) cuistom menu item text.
+   *
+   * @return 		the text
+   */
+  public String getMenuItemText() {
+    return m_MenuItemText;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String menuItemTextTipText() {
+    return "The (optional) custom text for the menu item.";
+  }
+
+  /**
+   * Returns the name of the icon.
+   *
+   * @return            the name, null if none available
+   */
+  public String getIconName() {
+    return null;
+  }
+
+  /**
+   * Returns the default name for the menu item.
+   *
+   * @return            the name
+   */
+  protected abstract String getDefaultMenuItem();
+
+  /**
+   * Returns the name for the menu item.
+   *
+   * @return            the name
+   */
+  @Override
+  public String getMenuItem() {
+    if ((m_MenuItemText == null) || m_MenuItemText.isEmpty())
+      return getDefaultMenuItem();
+    else
+      return m_MenuItemText;
+  }
+
   /**
    * For sorting the menu items.
    *
@@ -48,15 +120,6 @@ public abstract class AbstractProcessSelectedRows
   @Override
   public int compareTo(SpreadSheetTablePopupMenuItem o) {
     return getMenuItem().compareTo(o.getMenuItem());
-  }
-
-  /**
-   * Returns the name of the icon.
-   *
-   * @return            the name, null if none available
-   */
-  public String getIconName() {
-    return null;
   }
 
   /**
