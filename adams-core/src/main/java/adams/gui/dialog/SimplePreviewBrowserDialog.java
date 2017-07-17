@@ -24,6 +24,9 @@ import adams.gui.core.BaseDialog;
 import adams.gui.core.GUIHelper;
 import adams.gui.tools.previewbrowser.PreviewDisplay;
 
+import javax.swing.BorderFactory;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JTextField;
 import java.awt.BorderLayout;
 import java.awt.Dialog;
@@ -102,6 +105,9 @@ public class SimplePreviewBrowserDialog
    */
   @Override
   protected void initGUI() {
+    JPanel	panel;
+    JLabel	label;
+
     super.initGUI();
 
     setTitle("Preview browser");
@@ -111,9 +117,14 @@ public class SimplePreviewBrowserDialog
     m_PanelDisplay = new PreviewDisplay();
     getContentPane().add(m_PanelDisplay, BorderLayout.CENTER);
 
+    panel = new JPanel(new BorderLayout(5, 5));
+    panel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+    getContentPane().add(panel, BorderLayout.NORTH);
     m_TextFilename = new JTextField();
     m_TextFilename.setEditable(false);
-    getContentPane().add(m_TextFilename, BorderLayout.NORTH);
+    label = new JLabel("File");
+    panel.add(label, BorderLayout.WEST);
+    panel.add(m_TextFilename, BorderLayout.CENTER);
   }
   
   /**
