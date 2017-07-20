@@ -294,7 +294,7 @@ The imaging module offers some more actors that have not been introduced yet.
 	\item \textit{Draw} -- Performs draw operations on images, like setting
 	pixels, drawing lines, rectangles, ovals, text, images\footnote{adams-imaging-draw.flow}
 	and even barcodes (e.g., EAN and QRCode)\footnote{adams-imaging-barcode.flow}.
-	\item \texttt{transformer.ImageAnnotator} -- allows the user to interactively
+	\item \texttt{ImageAnnotator} -- allows the user to interactively
 	 annotate objects (i.e., attach labels) that were located in an image.
 	\item \textit{ImageInfo} -- Allows you to obtain \textit{width} and
 	\textit{height} information from an image.
@@ -306,9 +306,11 @@ The imaging module offers some more actors that have not been introduced yet.
 	\item \textit{ImageSharpness} -- determines whether image is in focus or not.
 	\item \textit{LocateObjects} -- provides a framework for algorithms that
 	locate objects in images.
-	\item \texttt{transformer.MergeObjectLocations} -- merges objects locations
+	\item \texttt{MergeObjectLocations} -- merges objects locations
 	in the current image container with the ones obtained from a report
 	available from storage.
+	\item \texttt{ScaleReportObjects} -- scales the x/y and width/height
+	of the objects stored in reports.
 \end{tight_itemize}
 
 
