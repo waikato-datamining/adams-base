@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2017-07-21 15:45:11
+# Date: 2017-07-21 16:12:09
 # User: fracpete
 # Charset: UTF-8
 adams.flow.control.Flow -annotation "Trains an OpenCV Haar classifier cascade using annotated background images \\nand annotated images with objects." -flow-execution-listener adams.flow.execution.NullListener
@@ -7,7 +7,7 @@ adams.flow.control.Flow -annotation "Trains an OpenCV Haar classifier cascade us
   adams.flow.sink.Display -name Info -short-title true -writer adams.data.io.output.NullWriter
  adams.flow.source.Start
  adams.flow.control.Trigger -name "prompt user"
-  adams.flow.source.EnterManyValues -stop-if-canceled true -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name bg_dir -display \"Dir with annotated background images\" -type DIRECTORY_ABSOLUTE -default-value /home/fracpete/temp/zespri/input/bg/" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name img_dir -display \"Dir with annotated images\" -type DIRECTORY_ABSOLUTE -default-value /home/fracpete/temp/zespri/input/objects/" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name scale -display \"Scale factor for images\" -type DOUBLE -default-value 0.25" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name prefix -display \"Prefix of objects in reports\" -default-value Object." -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name max_width -display \"Max width for objects (after scaling)\" -type INTEGER -default-value 100" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name max_height -display \"Max height for objects (after scaling)\" -type INTEGER -default-value 100" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name samples_exec -display \"Executable for creating samples\" -help \"OpenCV executable\" -type FILE_ABSOLUTE -default-value /usr/bin/opencv_createsamples" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name samples_options -display \"Additional options for creating samples\"" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name train_exec -display \"Executable for training haar classifier\" -help \"OpenCV executable\" -type FILE_ABSOLUTE -default-value /usr/bin/opencv_haartraining" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name train_options -display \"Additional options for training\" -default-value \"-nstages 5 -nneg 500\"" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name out_dir -display \"Output directory\" -help \"for images and cascade\" -type DIRECTORY_ABSOLUTE -default-value /home/fracpete/temp/zespri/output/" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name clean_out_dir -display \"Clean output dir?\" -type BOOLEAN -default-value true" -output-type MAP
+  adams.flow.source.EnterManyValues -stop-if-canceled true -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name bg_dir -display \"Dir with annotated background images\" -type DIRECTORY_ABSOLUTE -default-value /home/fracpete/temp/zespri/input/bg/" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name img_dir -display \"Dir with annotated images\" -type DIRECTORY_ABSOLUTE -default-value /home/fracpete/temp/zespri/input/objects/" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name scale -display \"Scale factor for images\" -type DOUBLE -default-value 0.1" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name prefix -display \"Prefix of objects in reports\" -default-value Object." -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name max_width -display \"Max width for objects (after scaling)\" -type INTEGER -default-value 32" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name max_height -display \"Max height for objects (after scaling)\" -type INTEGER -default-value 32" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name samples_exec -display \"Executable for creating samples\" -help \"OpenCV executable\" -type FILE_ABSOLUTE -default-value /usr/bin/opencv_createsamples" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name samples_options -display \"Additional options for creating samples\"" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name train_exec -display \"Executable for training haar classifier\" -help \"OpenCV executable\" -type FILE_ABSOLUTE -default-value /usr/bin/opencv_haartraining" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name train_options -display \"Additional options for training\" -default-value \"-nstages 5 -nneg 100\"" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name out_dir -display \"Output directory\" -help \"for images and cascade\" -type DIRECTORY_ABSOLUTE -default-value /home/fracpete/temp/zespri/output/" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name clean_out_dir -display \"Clean output dir?\" -type BOOLEAN -default-value true" -output-type MAP
   adams.flow.control.Tee -name info
    adams.flow.transformer.Convert -conversion adams.data.conversion.MapToYamlString
    adams.flow.transformer.StringInsert -position first -value "--> parameters\\\\n"
@@ -59,6 +59,9 @@ adams.flow.control.Flow -annotation "Trains an OpenCV Haar classifier cascade us
  adams.flow.control.Trigger -name "annotated images"
   adams.flow.standalone.SetVariable -name "reset total" -var-name total_annotations -var-value 0
   adams.flow.source.SelectFile -output-array true -stop-if-canceled true -file-chooser-title "Annotated images" -initial-dir @{img_dir} -extension jpg,jpeg,png -absolute true
+  adams.flow.control.Trigger -name info
+   adams.flow.source.CombineVariables -expression "\\n--> annotated images" -conversion adams.data.conversion.StringToString
+   adams.flow.sink.CallableSink -callable Info
   adams.flow.control.Trigger -name "remove old annotations file"
    adams.flow.source.Variable -var-name annotations_file -conversion adams.data.conversion.StringToString
    adams.flow.transformer.DeleteFile
@@ -96,10 +99,6 @@ adams.flow.control.Flow -annotation "Trains an OpenCV Haar classifier cascade us
   adams.flow.transformer.MatchReportFields -output-array true -regexp @{prefix_regexp}
   adams.flow.control.Tee -name "process annotations"
    adams.flow.transformer.SetVariable -var-name annotations -var-value " "
-   adams.flow.control.Tee -name "# annotations"
-    adams.flow.transformer.ArrayLength
-    adams.flow.transformer.SetVariable -var-name num_annotations
-    adams.flow.transformer.IncVariable -var-name total_annotations -inc-int @{num_annotations}
    adams.flow.transformer.ArrayToSequence
    adams.flow.control.Tee -name "object variables"
     adams.flow.transformer.Convert -conversion adams.data.conversion.FieldToString
@@ -128,9 +127,15 @@ adams.flow.control.Flow -annotation "Trains an OpenCV Haar classifier cascade us
      adams.flow.transformer.GetReportValue -field @{field_height}
      adams.flow.transformer.Convert -conversion adams.data.conversion.DoubleToInt
      adams.flow.transformer.SetVariable -var-name height
+   adams.flow.control.Continue -condition "adams.flow.condition.bool.Expression -expression \"(@{height} > @{max_height}) or (@{width} > @{max_width})\""
+   adams.flow.transformer.IncVariable -name "inc annotations" -var-name num_annotations
+   adams.flow.transformer.IncVariable -name "inc total annotations" -var-name total_annotations
    adams.flow.control.Trigger -name "append annotation"
     adams.flow.source.Variable -var-name annotations -conversion adams.data.conversion.StringToString
     adams.flow.transformer.SetVariable -var-name annotations -var-value "  @{x} @{y} @{width} @{height}" -update-type APPEND -expand-value true
+   adams.flow.control.Trigger -name info
+    adams.flow.source.CombineVariables -expression "@{index}: @{x} @{y} @{width} @{height}" -conversion adams.data.conversion.StringToString
+    adams.flow.sink.CallableSink -callable Info
   adams.flow.control.Trigger -name "output annotation"
    adams.flow.source.CombineVariables -expression "@{annotated_sub_dir}/@{file_rel} @{num_annotations} @{annotations}" -conversion adams.data.conversion.StringToString
    adams.flow.sink.DumpFile -output @{annotations_file} -append true
