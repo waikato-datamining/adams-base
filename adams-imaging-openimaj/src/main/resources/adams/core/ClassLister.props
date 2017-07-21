@@ -10,3 +10,7 @@
 # the face detector wrappers
 adams.data.openimaj.facedetector.AbstractFaceDetector=\
   adams.data.openimaj.facedetector
+
+# the object detector wrappers
+adams.data.openimaj.objectdetector.AbstractObjectDetector=\
+  adams.data.openimaj.objectdetector
