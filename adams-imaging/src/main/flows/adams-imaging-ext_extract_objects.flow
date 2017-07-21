@@ -1,8 +1,8 @@
 # Project: adams
-# Date: 2017-07-21 14:46:07
+# Date: 2017-07-21 14:47:35
 # User: fracpete
 # Charset: UTF-8
-adams.flow.control.Trigger -name "extract images" -annotation "Expects the following variabes:\\n- image_dir: the directory with the annotated images\\n- output_dir: directory for storing the extracted objects\\n- max_obj_width: the maximum width of objects to extract, -1 to ignore\\n- max_obj_height: the maximum height of objects to extract, -1 to ignore\\n- dialog_title: the title for the file chooser dialog\\n"
+adams.flow.control.Trigger -name "extract images" -annotation "Expects the following variabes:\\n- image_dir: the directory with the annotated images\\n- output_dir: directory for storing the extracted objects\\n- max_obj_width: the maximum width of objects to extract, -1 to ignore\\n- max_obj_height: the maximum height of objects to extract, -1 to ignore\\n- scale: factor for scaling the images (0-1)\\n- dialog_title: the title for the file chooser dialog\\n"
  adams.flow.source.SelectFile -stop-if-canceled true -file-chooser-title @{dialog_title} -initial-dir @{image_dir} -extension jpg,jpeg,png -absolute true
  adams.flow.control.Tee -name report
   adams.flow.transformer.Convert -conversion "adams.data.conversion.ReplaceFileExtension -extension .report"

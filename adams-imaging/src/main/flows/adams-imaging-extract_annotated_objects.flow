@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2017-07-21 14:42:43
+# Date: 2017-07-21 14:47:54
 # User: fracpete
 # Charset: UTF-8
 adams.flow.control.Flow -annotation "Extracts objects from annotated images \\nand saves them to an output directory." -error-handling ACTORS_DECIDE_TO_STOP_ON_ERROR -flow-execution-listener adams.flow.execution.NullListener
@@ -14,6 +14,7 @@ adams.flow.control.Flow -annotation "Extracts objects from annotated images \\na
   adams.flow.standalone.SetVariable -name "max width" -var-name max_obj_width -var-value -1
   adams.flow.standalone.SetVariable -name "max height" -var-name max_obj_height -var-value -1
   adams.flow.standalone.SetVariable -name "dialog title" -var-name dialog_title -var-value "Annotated images"
+  adams.flow.standalone.SetVariable -name scale -var-name scale -var-value 1.0
   adams.flow.source.CombineVariables -expression "--> annotated images" -conversion adams.data.conversion.StringToString
   adams.flow.control.Tee -name info
    adams.flow.sink.CallableSink -callable Info
